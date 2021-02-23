@@ -1,3 +1,48 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  html,
+  body {
+    background-color: #171717;
+  }
+}
+
+@layer components {
+  .bg-light-green {
+    background-color: #35cfff;
+  }
+}
+
+.footer {
+  position: absolute;
+  width: 435px;
+  bottom: 50px;
+  height: 17px;
+  margin: auto;
+  right: 25%;
+  left: 50%;
+  margin-left: -200px;
+
+  font-family: Inter;
+  font-style: normal;
+  font-weight: 200;
+  font-size: 14px;
+  line-height: 17px;
+  /* identical to box height */
+
+  display: flex;
+  align-items: center;
+  text-align: center;
+
+  color: #ffffff;
+}
+
+.bottom-logo {
+  position: absolute;
+  width: 90px;
+  height: 100px;
+  bottom: 50px;
+  right: 72px;
+}
