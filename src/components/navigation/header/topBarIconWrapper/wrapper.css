@@ -1,0 +1,13 @@
+.content {
+  display: flex;
+  flex: 1;
+  padding: 4px 15px;
+  border: 1px solid white;
+  border-radius: 13px;
+  color: white;
+  width: auto;
+}
+
+.icon {
+  padding-right: 4px;
+}

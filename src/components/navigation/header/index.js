@@ -1,21 +1,29 @@
 import React from "react";
-import Logo from "../../logo";
-import { Link } from "gatsby";
+import Brand from "./brand";
 
 import "./header.css";
 
-function Header() {
+// Other components
+import Notification from "./notification";
+import Wallet from "./wallet";
+import PendingTx from "./pendingTx";
+
+const Header = () => {
   // const [isExpanded, toggleExpansion] = useState(false);
 
   return (
-    <header className="header p-3">
-      <div className="flex flex-wrap items-center justify-between max-w-4xl mx-auto md:p-8">
-        <Link to="/">
-          <Logo />
-        </Link>
+    <header className="header p-1">
+      <div className="flex flex-row items-center justify-between mx-auto">
+        <Brand />
+
+        <div className="right-top-bar justify-between mr-6">
+          <Notification />
+          <PendingTx />
+          <Wallet />
+        </div>
       </div>
     </header>
   );
-}
+};
 
 export default Header;

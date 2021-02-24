@@ -17,8 +17,12 @@
 
 .bottom-logo {
   position: absolute;
-  width: 113px;
-  height: 118px;
-  bottom: 0px;
-  right: 72px;
+  width: 80px;
+  height: 80px;
+  bottom: 5rem;
+  right: 4rem;
+}
+
+.full-height {
+  height: 90vh;
 }
