@@ -2,10 +2,9 @@ import React from "react";
 
 import Layout from "../components/layout";
 import SEO from "../components/seo";
-// import Button from "../components/button";
-import Footer from "../components/footer";
+import Footer from "../components/navigation/footer";
 import { Link } from "gatsby";
-import logo from "../images/logo.inline.svg";
+import logo from "../images/logo-illustration.svg";
 
 function IndexPage() {
   return (
@@ -20,13 +19,6 @@ function IndexPage() {
           <div className="absolute top-0 inset-x-0 p-2 transition transform origin-top-right md:hidden">
             <div className="rounded-lg shadow-md bg-white ring-1 ring-black ring-opacity-5 overflow-hidden">
               <div className="px-5 pt-4 flex items-center justify-between">
-                <div>
-                  <img
-                    className="h-8 w-auto"
-                    src="https://tailwindui.com/img/logos/workflow-mark-indigo-600.svg"
-                    alt=""
-                  />
-                </div>
                 <div className="-mr-2">
                   <button
                     type="button"
@@ -52,7 +44,7 @@ function IndexPage() {
                 <div className="rounded-md mt-5" to="/dashboarb">
                   <Link
                     className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white hover md:py-4 md:text-lg md:px-10 bg-light-green"
-                    to="/app"
+                    to="/social"
                   >
                     Launch App
                   </Link>

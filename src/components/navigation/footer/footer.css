@@ -1,0 +1,23 @@
+.footer {
+  position: absolute;
+  width: 435px;
+  bottom: 50px;
+  height: 17px;
+  margin: auto;
+  right: 25%;
+  left: 50%;
+  margin-left: -200px;
+
+  font-family: Inter;
+  font-style: normal;
+  font-weight: 200;
+  font-size: 14px;
+  line-height: 17px;
+  /* identical to box height */
+
+  display: flex;
+  align-items: center;
+  text-align: center;
+
+  color: #ffffff;
+}
