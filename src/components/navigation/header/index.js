@@ -16,7 +16,7 @@ const Header = () => {
       <div className="flex flex-row items-center justify-between mx-auto">
         <Brand />
 
-        <div className="right-top-bar justify-between mr-6">
+        <div className="right-top-bar justify-between mr-4">
           <Notification />
           <PendingTx />
           <Wallet />

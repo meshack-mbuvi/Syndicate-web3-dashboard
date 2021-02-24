@@ -4,7 +4,6 @@ import PropTypes from "prop-types";
 
 export const SideBarNavItem = ({ url, urlText }) => {
   return (
-    // <div className="link">
       <Link
         to={`${url}`}
         className="flex items-center text-white link"
@@ -12,7 +11,6 @@ export const SideBarNavItem = ({ url, urlText }) => {
       >
         {urlText}
       </Link>
-    // </div>
   );
 };
 

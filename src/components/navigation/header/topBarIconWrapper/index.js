@@ -4,7 +4,7 @@ import PropTypes from "prop-types";
 import "./wrapper.css";
 
 export const TopBarIconWrapper = ({ children }) => {
-  return <p className="content ml-5">{children}</p>;
+  return <p className="content mr-5">{children}</p>;
 };
 
 TopBarIconWrapper.propTypes = {
