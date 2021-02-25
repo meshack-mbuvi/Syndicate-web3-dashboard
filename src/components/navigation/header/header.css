@@ -1,0 +1,8 @@
+/* header styles */
+.header {
+  border-bottom: 1px solid #797979;
+}
+
+.right-top-bar {
+  display: flex;
+}

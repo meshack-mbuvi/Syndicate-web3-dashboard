@@ -1,0 +1,19 @@
+/* sidebar */
+.sidebar {
+  border-right: 1px solid #797979;
+  width: 15%;
+}
+
+.active {
+  color: #35cfff;
+  border-right: 3px solid #35cfff;
+}
+
+.link {
+  margin: 4px 0 4px 22px;
+  height: 27px;
+  font-family: Inter;
+  font-style: normal;
+  font-weight: bold;
+  font-size: 16px;
+}

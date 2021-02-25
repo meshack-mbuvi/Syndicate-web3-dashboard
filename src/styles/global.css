@@ -1,3 +1,29 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  html,
+  body {
+    background-color: #171717;
+    font-family: Inter;
+  }
+}
+
+@layer components {
+  .bg-light-green {
+    background-color: #35cfff;
+  }
+}
+
+.bottom-logo {
+  position: absolute;
+  width: 80px;
+  height: 80px;
+  bottom: 5rem;
+  right: 4rem;
+}
+
+.full-height {
+  height: 90vh;
+}
