@@ -7,6 +7,8 @@ import SocialFeed from "src/components/socialPage/socialFeed";
 import Discovery from "src/components/socialPage/discovery";
 // import ConnectWallet from "src/components/connectWallet";
 
+import Modal from "src/components/modal";
+
 const SocialPage = () => {
   // const [showModal] = useState(true);
   return (
