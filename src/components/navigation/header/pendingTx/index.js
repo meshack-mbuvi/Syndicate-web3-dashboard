@@ -1,7 +1,7 @@
 import React from "react";
 
 import { TopBarIconWrapper } from "../topBarIconWrapper";
-import Icon from "../../../../images/greenIcon.svg";
+import Icon from "src/images/greenIcon.svg";
 
 import "./pendingTx.css";
 

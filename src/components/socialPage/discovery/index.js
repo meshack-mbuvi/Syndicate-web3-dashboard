@@ -1,6 +1,6 @@
 import React from "react";
 
-import PageHeader from "../pageHeader";
+import PageHeader from "src/components/pageHeader";
 
 const Discovery = () => {
   return (

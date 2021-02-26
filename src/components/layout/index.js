@@ -8,12 +8,12 @@ import ContentWrapper from "./content-wrapper";
 import SEO from "../seo";
 
 // Other components
-import Header from "../navigation/header";
-import Sidebar from "../navigation/sidebar";
-import { SideBarNavItem } from "../navigation/sidebar/sidebar-item";
+import Header from "src/components/navigation/header";
+import Sidebar from "src/components/navigation/sidebar";
+import { SideBarNavItem } from "src/components/navigation/sidebar/sidebar-item";
 
 // constants
-import { sidebarLinks } from "../../utils/sidebarLinks";
+import { sidebarLinks } from "src/utils/sidebarLinks";
 
 export const Layout = ({ children }) => {
   return (

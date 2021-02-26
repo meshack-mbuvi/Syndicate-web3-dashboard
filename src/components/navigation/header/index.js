@@ -9,8 +9,6 @@ import Wallet from "./wallet";
 import PendingTx from "./pendingTx";
 
 const Header = () => {
-  // const [isExpanded, toggleExpansion] = useState(false);
-
   return (
     <header className="header p-1">
       <div className="flex flex-row items-center justify-between mx-auto">

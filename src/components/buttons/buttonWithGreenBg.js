@@ -9,7 +9,7 @@ export const ButtonWithGreenBg = ({ children }) => {
   );
 };
 
-ButtonWithGreenBg.protoTypes = {
+ButtonWithGreenBg.propTypes = {
   children: PropTypes.node.isRequired,
 };
 

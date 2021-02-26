@@ -1,9 +1,9 @@
 import React from "react";
 
-import SEO from "../components/seo";
-import Footer from "../components/navigation/footer";
+import SEO from "src/components/seo";
+import Footer from "src/components/navigation/footer";
 import { Link } from "gatsby";
-import brand from "../images/brand.svg";
+import brand from "src/images/brand.svg";
 
 function IndexPage() {
   return (
