@@ -25,7 +25,7 @@ export const Layout = ({ children }) => {
       {/* Top bar component */}
       <Header />
 
-      <div className="flex">
+      <div className="flex main">
         <Sidebar>
           {sidebarLinks.map(({ url, urlText }) => (
             <SideBarNavItem {...{ url, urlText }} key={url} />
