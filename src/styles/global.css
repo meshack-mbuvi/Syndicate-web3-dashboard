@@ -7,6 +7,9 @@
   body {
     background-color: #171717;
     font-family: Inter;
+    color: white;
+    font-family: Inter;
+    font-style: normal;
   }
 }
 
@@ -26,4 +29,22 @@
 
 .full-height {
   height: 90vh;
+}
+
+.btn-round {
+  background: #35cfff;
+  font-size: 47px;
+  background: #35cfff;
+  border-radius: 50%;
+  height: 82px;
+  width: 82px;
+}
+
+.round-btn-container {
+  position: relative;
+  width: 53px;
+  height: 52px;
+  left: 94.08%;
+  right: 5.65%;
+  bottom: 10.08%;
 }

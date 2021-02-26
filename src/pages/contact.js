@@ -1,7 +1,7 @@
 import React from "react";
 
-import Layout from "../components/layout";
-import SEO from "../components/seo";
+import Layout from "src/components/layout";
+import SEO from "src/components/seo";
 
 function ContactPage() {
   return (
@@ -13,7 +13,8 @@ function ContactPage() {
       <section>
         <form>
           <h2 className="mb-8 leading-loose">
-            Here is an example of a form built using the official Tailwind CSS Forms plugin.{` `}
+            Here is an example of a form built using the official Tailwind CSS
+            Forms plugin.{` `}
             <a
               className="font-bold text-gray-700 no-underline"
               href="https://github.com/tailwindlabs/tailwindcss-forms"

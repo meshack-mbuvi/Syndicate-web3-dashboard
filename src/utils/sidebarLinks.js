@@ -5,5 +5,5 @@ export const sidebarLinks = [
   { url: "/investments", urlText: "My Investments" },
   { url: "/network", urlText: "My Network" },
   { url: "/messages", urlText: "My Messages" },
-  { url: "/news", urlText: "Discover" },
+  { url: "/discover", urlText: "Discover" },
 ];

@@ -12,6 +12,7 @@ module.exports = {
   plugins: [
     `gatsby-plugin-eslint`,
     `gatsby-plugin-react-helmet`,
+    "gatsby-plugin-root-import",
     {
       resolve: `gatsby-plugin-manifest`,
       options: {
