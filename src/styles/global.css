@@ -19,6 +19,10 @@
   }
 }
 
+.main {
+  height: 100vh;
+}
+
 .bottom-logo {
   position: absolute;
   width: 80px;
