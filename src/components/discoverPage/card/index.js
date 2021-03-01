@@ -1,14 +1,15 @@
 import React from "react";
 import PropTypes from "prop-types";
-import "./card.css";
 
 const Card = ({ content, customClass, subText }) => {
   return (
     <div className="m-2">
-      <div className={`card flex ${customClass}`}>
+      <div className={`w-44 h-40 rounded-lg flex ${customClass}`}>
         <span className="m-auto">{content}</span>
       </div>
-      <p className="subText mt-2">{subText}</p>
+      <p className="leading-4 text-xs text-gray-400 mt-2 w-44 mx-2">
+        {subText}
+      </p>
     </div>
   );
 };

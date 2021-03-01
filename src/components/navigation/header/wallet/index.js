@@ -3,12 +3,10 @@ import React from "react";
 import { TopBarIconWrapper } from "../topBarIconWrapper";
 import Icon from "src/images/greenIcon.svg";
 
-import "./wallet.css";
-
 export const Wallet = () => {
   return (
     <TopBarIconWrapper>
-      <img src={Icon} className="wallet-icon mr-2" />
+      <img src={Icon} className="w-4 pr-1 wallet-icon  mr-2" />
       Loading...
     </TopBarIconWrapper>
   );

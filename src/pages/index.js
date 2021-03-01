@@ -31,10 +31,10 @@ function IndexPage() {
 
         <main className="mt-16 mx-auto max-w-7xl px-4 sm:mt-24">
           <div className="text-center">
-            <h1 className="text-4xl tracking-tight font-extrabold text-gray-900 sm:text-5xl md:text-6xl">
-              <p className="join-the-revolution">Join the Revolution.</p>
-            </h1>
-            <p className="sub-heading">
+            <p className="text-8xl tracking-tight font-extrabold text-white sm:text-5xl md:text-8xl leading-10 mb-8">
+              Join the Revolution.
+            </p>
+            <p className="text-white text-3xl">
               Crypto investing protocol and social network
             </p>
 

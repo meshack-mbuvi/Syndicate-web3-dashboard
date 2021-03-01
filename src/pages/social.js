@@ -5,7 +5,7 @@ import Layout from "src/components/layout";
 // Social page components
 import SocialFeed from "src/components/socialPage/socialFeed";
 import Discovery from "src/components/socialPage/discovery";
-import ConnectWallet from "src/components/connectWallet";
+// import ConnectWallet from "src/components/connectWallet";
 
 const SocialPage = () => {
   // const [showModal] = useState(true);
@@ -16,7 +16,7 @@ const SocialPage = () => {
 
       {/* connect wallet we need to find a way to control
        when this component is fired up*/}
-      <ConnectWallet />
+      {/* <ConnectWallet /> */}
     </Layout>
   );
 };

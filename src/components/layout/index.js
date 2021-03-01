@@ -1,6 +1,5 @@
 import React from "react";
 import PropTypes from "prop-types";
-import "./layout.css";
 
 // Layout wrappers
 import ContentWrapper from "./content-wrapper";

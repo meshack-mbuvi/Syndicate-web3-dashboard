@@ -9,7 +9,8 @@ import walletConnectIcon from "src/images/walletConnect.png";
 /**
  * This component renders a modal with:
  * 1. Metamask button
- * 2.
+ * 2. Gnosis
+ * 3. Wallet Connet
  */
 export const ConnectWallet = () => {
   return (

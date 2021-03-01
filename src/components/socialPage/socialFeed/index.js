@@ -3,7 +3,6 @@ import React, { useState } from "react";
 import PageHeader from "src/components/pageHeader";
 
 import { SocialFeedAnimatedLoader } from "./socialFeedAnimatedLoader";
-import "./animation.css";
 
 /**
  * Renders feeds on socialPage. During loading, loading animation is

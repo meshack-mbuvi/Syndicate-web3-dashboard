@@ -1,5 +1,5 @@
 import React from "react";
-import { Divider } from "src/components/divider";
+import HorizontalDivider from "src/components/horizontalDivider";
 
 /**
  * Renders an animated loader for social feed
@@ -25,7 +25,7 @@ export const SocialFeedAnimatedLoader = () => {
             </div>
             <div className="card-placeholder"></div>
           </div>
-          <Divider />
+          <HorizontalDivider />
         </>
       );
     }

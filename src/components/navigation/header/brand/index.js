@@ -5,7 +5,7 @@ import brand from "src/images/brand.svg";
 const BrandWrapper = () => {
   return (
     <Link to="/" className="m-4">
-      <img src={brand} className="brand ml-2" />
+      <img src={brand} className="ml-2" />
     </Link>
   );
 };

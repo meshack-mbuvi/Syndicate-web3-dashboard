@@ -1,6 +1,5 @@
 import React from "react";
 import CancelButton from "src/components/buttons/buttonWithGreenBg";
-import "./modal.css";
 import PropTypes from "prop-types";
 
 const Modal = (props) => {
@@ -25,7 +24,9 @@ const Modal = (props) => {
           aria-modal="true"
           aria-labelledby="modal-headline"
         >
-          <div className="modal-header mb-4">{title}</div>
+          <div className="modal-header mb-4 text-black font-medium text-center leading-8 text-lg">
+            {title}
+          </div>
           <div>{children}</div>
           <div className="mt-5 sm:mt-6 flex justify-center">
             <CancelButton customClass="px-6 py-1 focus:outline-none focus:ring focus:border-green-300">
