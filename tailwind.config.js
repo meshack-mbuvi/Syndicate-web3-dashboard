@@ -9,11 +9,13 @@ module.exports = {
     extend: {
       colors: {
         cyan: colors.cyan,
+        black: "#171717",
       },
     },
+    borderColor: (theme) => ({
+      ...theme("colors"),
+      DEFAULT: theme("colors.gray.300", "currentColor"),
+      gray: "#5F5F5F",
+    }),
   },
-  plugins: [
-    // ...
-    require("@tailwindcss/forms"),
-  ],
 };

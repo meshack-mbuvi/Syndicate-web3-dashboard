@@ -1,16 +1,22 @@
 import React from "react";
 
-import Layout from "../components/layout";
+import Layout from "src/components/layout";
 
 // Social page components
-import SocialFeed from "../components/socialPage/socialFeed";
-import Discovery from "../components/socialPage/discovery";
+import SocialFeed from "src/components/socialPage/socialFeed";
+import Discovery from "src/components/socialPage/discovery";
+// import ConnectWallet from "src/components/connectWallet";
 
 const SocialPage = () => {
+  // const [showModal] = useState(true);
   return (
     <Layout>
       <SocialFeed />
       <Discovery />
+
+      {/* connect wallet we need to find a way to control
+       when this component is fired up*/}
+      {/* <ConnectWallet /> */}
     </Layout>
   );
 };

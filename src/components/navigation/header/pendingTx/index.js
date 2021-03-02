@@ -1,14 +1,15 @@
 import React from "react";
 
 import { TopBarIconWrapper } from "../topBarIconWrapper";
-import Icon from "../../../../images/greenIcon.svg";
-
-import "./pendingTx.css";
+import Icon from "src/images/greenIcon.svg";
 
 export const PendingTransaction = () => {
   return (
     <TopBarIconWrapper>
-      <img src={Icon} className="pending-tx-icon mr-2" />
+      <img
+        src={Icon}
+        className="border-2 rounded-full border-white mr-2 w-4 mt-1 h-4"
+      />
       Loading...
     </TopBarIconWrapper>
   );

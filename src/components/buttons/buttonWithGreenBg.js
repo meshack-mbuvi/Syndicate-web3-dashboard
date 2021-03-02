@@ -1,16 +1,21 @@
 import React from "react";
 import PropTypes from "prop-types";
 
-export const ButtonWithGreenBg = ({ children }) => {
+export const ButtonWithGreenBg = (props) => {
+  const { children, customClass = "", ...rest } = props;
   return (
-    <button className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white md:py-4 md:text-lg md:px-10 bg-light-green">
+    <button
+      className={`flex items-center justify-center  border border-transparent text-base font-medium rounded-md text-white md:text-lg  bg-light-green ${customClass}`}
+      {...rest}
+    >
       {children}
     </button>
   );
 };
 
-ButtonWithGreenBg.protoTypes = {
+ButtonWithGreenBg.propTypes = {
   children: PropTypes.node.isRequired,
+  customClass: PropTypes.string,
 };
 
 export default ButtonWithGreenBg;
