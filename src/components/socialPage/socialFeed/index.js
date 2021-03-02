@@ -1,4 +1,7 @@
 import React, { useState } from "react";
+import { connect } from "react-redux";
+import PropTypes from "prop-types";
+import { useWeb3React } from "@web3-react/core";
 
 import PageHeader from "src/components/pageHeader";
 
@@ -9,6 +12,8 @@ import { SocialFeedAnimatedLoader } from "./socialFeedAnimatedLoader";
  * shown until the content is loaded
  */
 const SocialFeed = () => {
+  const { library } = useWeb3React();
+
   const [isLoading] = useState(true);
   return (
     <div className="w-3/4 mr-4">
@@ -22,4 +27,11 @@ const SocialFeed = () => {
   );
 };
 
-export default SocialFeed;
+SocialFeed.propTypes = {
+  props: PropTypes.any,
+};
+
+const mapStateToProps = (state) => {
+  return { state };
+};
+export default connect(mapStateToProps, null)(SocialFeed);

@@ -2,7 +2,7 @@ import React from "react";
 import { Link } from "gatsby";
 import PropTypes from "prop-types";
 
-export const SideBarNavItem = ({ url, urlText }) => {
+export const NavBarNavItem = ({ url, urlText }) => {
   return (
     <Link
       to={`${url}`}
@@ -14,7 +14,7 @@ export const SideBarNavItem = ({ url, urlText }) => {
   );
 };
 
-SideBarNavItem.propTypes = {
+NavBarNavItem.propTypes = {
   url: PropTypes.string.isRequired,
   urlText: PropTypes.string.isRequired,
 };
