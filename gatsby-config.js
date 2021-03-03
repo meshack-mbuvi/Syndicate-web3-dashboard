@@ -1,3 +1,4 @@
+const path = require('path');
 const resolveConfig = require("tailwindcss/resolveConfig");
 const tailwindConfig = require("./tailwind.config.js");
 
@@ -44,6 +45,13 @@ module.exports = {
           include: /\.inline\.svg$/,
         },
       },
+    },
+    {
+      resolve: 'gatsby-plugin-root-import',
+      options: {
+        src: path.join(__dirname, 'src'),
+        pages: path.join(__dirname, 'src/pages')
+      }
     },
     `gatsby-plugin-offline`,
   ],
