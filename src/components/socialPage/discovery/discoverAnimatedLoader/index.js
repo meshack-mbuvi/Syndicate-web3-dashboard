@@ -1,7 +1,6 @@
 import React from "react";
 import HorizontalDivider from "src/components/horizontalDivider";
 
-
 /**
  * Renders an animated loader for social feed
  */
@@ -13,9 +12,9 @@ export const DiscoverAnimatedLoader = () => {
    */
   const showLoader = (count) => {
     const animations = [];
-    for (let i = 0; i < count; i++) {
+    for (let index = 0; index < count; index++) {
       animations.push(
-        <>
+        <React.Fragment key={index}>
           <div className="wrapper-cell flex justify-between">
             <div className="flex flex-1">
               <div className="text">
@@ -25,7 +24,7 @@ export const DiscoverAnimatedLoader = () => {
             <div className="discover-placeholder w-1 h-1"></div>
           </div>
           <HorizontalDivider />
-        </>
+        </React.Fragment>
       );
     }
     return animations;

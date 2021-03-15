@@ -1,7 +1,7 @@
 import React from "react";
 
 const HorizontalDivider = () => (
-  <React.Fragment className="mr-3 mb-3 divide-y border-b border-gray "></React.Fragment>
+  <div className="mr-3 mb-3 divide-y border-b border-gray"></div>
 );
 
 export default HorizontalDivider;

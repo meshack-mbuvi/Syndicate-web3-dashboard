@@ -2,7 +2,11 @@ import React from "react";
 import PropTypes from "prop-types";
 
 export const TopBarIconWrapper = ({ children }) => {
-  return <p className="flex px-4 py-1 border rounded-full mr-5">{children}</p>;
+  return (
+    <div className="flex px-4 py-2 bg-gray rounded-full mr-5 cursor-pointer">
+      {children}
+    </div>
+  );
 };
 
 TopBarIconWrapper.propTypes = {

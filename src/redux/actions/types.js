@@ -1,0 +1,8 @@
+export const SET_WEB3 = "SET_WEB3";
+export const SET_LOADING = "SET_LOADING";
+export const SET_PROVIDER = "SET_PROVIDER";
+export const CONNECTING = "CONNECTING";
+export const CONNECTED = "CONNECTED";
+export const DISCONNECTED = "DISCONNECTED";
+export const SHOW_WALLET_MODAL = "SHOW_WALLET_MODAL";
+export const HIDE_WALLET_MODAL = "HIDE_WALLET_MODAL";

@@ -1,5 +1,8 @@
 import React from "react";
 import PropTypes from "prop-types";
+import { Web3Provider } from "@ethersproject/providers";
+import { Web3ReactProvider } from "@web3-react/core";
+// import store from "src/redux/store";
 
 // Layout wrappers
 import ContentWrapper from "./content-wrapper";
@@ -8,31 +11,28 @@ import SEO from "../seo";
 
 // Other components
 import Header from "src/components/navigation/header";
-import Sidebar from "src/components/navigation/sidebar";
-import { SideBarNavItem } from "src/components/navigation/sidebar/sidebar-item";
+import HorizontalDivider from "src/components/horizontalDivider";
 
-// constants
-import { sidebarLinks } from "src/utils/sidebarLinks";
+const getLibrary = (provider) => {
+  const library = new Web3Provider(provider);
+  library.pollingInterval = 12000;
+  return library;
+};
 
 export const Layout = ({ children }) => {
   return (
     <>
-      <SEO
-        keywords={[`gatsby`, `tailwind`, `react`, `tailwindcss`]}
-        title="Home"
-      />
-      {/* Top bar component */}
-      <Header />
-
-      <div className="flex main">
-        <Sidebar>
-          {sidebarLinks.map(({ url, urlText }) => (
-            <SideBarNavItem {...{ url, urlText }} key={url} />
-          ))}
-        </Sidebar>
-
-        <ContentWrapper>{children}</ContentWrapper>
-      </div>
+      <Web3ReactProvider getLibrary={getLibrary}>
+        <div>
+          <SEO
+            keywords={[`gatsby`, `tailwind`, `react`, `tailwindcss`]}
+            title="Home"
+          />
+          <Header />
+          <HorizontalDivider />
+          <ContentWrapper>{children}</ContentWrapper>
+        </div>
+      </Web3ReactProvider>
     </>
   );
 };

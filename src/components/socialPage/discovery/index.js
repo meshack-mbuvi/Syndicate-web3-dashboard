@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from "prop-types";
 
 import PageHeader from "src/components/pageHeader";
 import { DiscoverAnimatedLoader } from "./discoverAnimatedLoader";
@@ -10,6 +11,10 @@ const Discovery = () => {
       <DiscoverAnimatedLoader />
     </div>
   );
+};
+
+Discovery.propTypes = {
+  props: PropTypes.any,
 };
 
 export default Discovery;
