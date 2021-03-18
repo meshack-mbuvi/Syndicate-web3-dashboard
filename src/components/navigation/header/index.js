@@ -4,8 +4,9 @@ import Brand from "./brand";
 // Other components
 import Notification from "./notification";
 import Wallet from "./wallet";
-import PendingTx from "./pendingTx";
-import Refresh from "./refresh";
+import UserProfile from "./userProfile";
+import Transaction from "./transaction";
+import { UserProfileWrapper } from "./UserProfileWrapper";
 
 import { NavBarNavItem } from "./navbarItems";
 
@@ -19,7 +20,7 @@ const navbarLinks = [
 const Header = () => {
   return (
     <>
-      <header className="p-1">
+      <header className="divide-y border-b border-gray-90">
         <div className="flex flex-row items-center justify-between mx-auto">
           <div className="flex justify-between">
             <Brand />
@@ -29,10 +30,12 @@ const Header = () => {
           </div>
 
           <div className="flex justify-between mr-4">
+            <Transaction />
             <Notification />
-            <Refresh />
-            <Wallet />
-            <PendingTx />
+            <UserProfileWrapper>
+              <UserProfile />
+              <Wallet />
+            </UserProfileWrapper>
           </div>
         </div>
       </header>

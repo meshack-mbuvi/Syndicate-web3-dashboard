@@ -11,7 +11,6 @@ import {
 
 export const web3Reducer = (state = initialState, action) => {
   const { web3 } = state;
-
   switch (action.type) {
     case SET_WEB3:
       return {

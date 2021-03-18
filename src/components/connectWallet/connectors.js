@@ -1,5 +1,4 @@
 import { InjectedConnector } from "@web3-react/injected-connector";
-// import { NetworkConnector } from "@web3-react/network-connector";
 import { WalletConnectConnector } from "@web3-react/walletconnect-connector";
 
 const POLLING_INTERVAL = 12000;
@@ -28,8 +27,8 @@ export const WalletConnect = new WalletConnectConnector({
 
 /**
  * We are using wallet connect to connect to Gnosis safe.
- * NOTE: The return chain Id from gnosis connect is 4.
- * Will link documentation when I get it
+ * NOTE: The returned chain Id from gnosis connect is 4.
+ * Will link documentation when I get it about gnosis chain Id
  */
 export const gnosisSafeConnect = new WalletConnectConnector({
   rpc: { 4: RPC_URLS[1] },

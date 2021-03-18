@@ -3,10 +3,12 @@ import { connect } from "react-redux";
 import PropTypes from "prop-types";
 
 import { showWalletModal } from "src/redux/actions/web3Provider";
-
-import { TopBarIconWrapper } from "../topBarIconWrapper";
-import walletIcon from "src/images/wallet.png";
 import ConnectWallet from "src/components/connectWallet";
+
+// icons
+
+import walletConnectedIcon from "src/images/walletConnected.png";
+import walletDisConnectedIcon from "src/images/walletDisconnected.png";
 
 export const Wallet = (props) => {
   /**
@@ -15,12 +17,18 @@ export const Wallet = (props) => {
    * The instance is in the application's store and is passed here as props
    */
   const { web3, dispatch } = props;
+  const { status } = web3;
+
+  /**
+   * wallet icon for when wallet is connected and when not connected
+   */
+  const walletIcon =
+    status === "connected" ? walletConnectedIcon : walletDisConnectedIcon;
 
   /**
    * open variable is used to determine whether to show or hide
    *  the wallet connection modal.
    */
-  // const [show, setShow] = useState(false);
   const connectWallet = () => dispatch(showWalletModal());
 
   /**
@@ -28,6 +36,7 @@ export const Wallet = (props) => {
    *  wallet account is connected
    */
   const [address, setAddress] = useState(null);
+  console.log({ web3 });
 
   useEffect(() => {
     /**
@@ -54,14 +63,15 @@ export const Wallet = (props) => {
   }, [web3]);
 
   return (
-    <TopBarIconWrapper>
-      <img src={walletIcon} className="w-4 h-3 pr-1 wallet-icon mt-1 mr-2" />
+    <div className="flex flex-row bg-gray-90 rounded-full my-1 px-4">
+      <img src={walletIcon} className="w-5 h-4 pr-1 mt-3 mr-2" />
+
       <button onClick={connectWallet} className="focus:outline-none">
         {address ? address : "Not connected"}
       </button>
 
       <ConnectWallet />
-    </TopBarIconWrapper>
+    </div>
   );
 };
 

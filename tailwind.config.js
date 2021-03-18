@@ -8,17 +8,22 @@ module.exports = {
       colors: {
         cyan: colors.cyan,
         black: "#171717",
-        // gray:""
+        gray: {
+          ...colors.coolGray,
+          85: "#d9d9d9",
+          90: "#5F5F5F",
+          99: "#fcfcfc",
+          dark: "#272727",
+          light: "#E5E5E5",
+        },
+        blue: {
+          ...colors.blue,
+          light: "#35cfff",
+        },
       },
+      fill: (theme) => ({
+        gray: theme("colors.gray.light"),
+      }),
     },
-    borderColor: (theme) => ({
-      ...theme("colors"),
-      DEFAULT: theme("colors.gray.300", "currentColor"),
-      gray: "#5F5F5F",
-    }),
-    backgroundColor: (theme) => ({
-      ...theme("colors"),
-      gray: "#272727",
-    }),
   },
 };

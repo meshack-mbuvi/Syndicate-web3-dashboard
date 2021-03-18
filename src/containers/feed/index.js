@@ -1,11 +1,10 @@
 import React from "react";
 import PropTypes from "prop-types";
 
-import Layout from "src/components/layout";
-
 // Social page components
-import SocialFeed from "src/components/socialPage/socialFeed";
-import Discovery from "src/components/socialPage/discovery";
+import SocialFeed from "./socialFeed";
+import Discovery from "./discovery";
+import Layout from "src/components/layout";
 
 /**
  * Manages feeds page

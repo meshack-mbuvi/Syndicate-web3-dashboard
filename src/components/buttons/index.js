@@ -6,11 +6,11 @@ import PropTypes from "prop-types";
  * @param {*} props
  */
 export const PrimaryButton = (props) => {
-  const { children, customClasses = "", ...rest } = props;
+  const { children, customClasses = "bg-light-green", ...rest } = props;
 
   return (
     <button
-      className={`flex items-center justify-center  border border-transparent text-base font-medium rounded-md text-white focus:outline-none focus:ring bg-light-green ${customClasses}`}
+      className={`flex items-center justify-center border border-transparent text-base font-medium rounded-md text-white focus:outline-none focus:ring ${customClasses}`}
       {...rest}
     >
       {children}

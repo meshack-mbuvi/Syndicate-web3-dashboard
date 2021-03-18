@@ -9,7 +9,7 @@ import React from "react";
  */
 const ContentWrapper = (props) => {
   const { children } = props;
-  return <div className="flex w-auto w-full py-4 px-8 ">{children}</div>;
+  return <div className="flex w-auto w-full py-4 px-8">{children}</div>;
 };
 
 ContentWrapper.propTypes = {

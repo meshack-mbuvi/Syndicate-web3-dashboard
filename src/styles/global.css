@@ -13,21 +13,7 @@
   }
 
   a.active {
-    color: #35cfff;
-  }
-}
-
-@layer components {
-  .bg-light-green {
-    background-color: #35cfff;
-  }
-
-  .bg-gray {
-    background-color: #272727;
-  }
-
-  .border-light-blue {
-    border-color: #35cfff;
+    opacity: 0.3;
   }
 }
 
@@ -35,38 +21,29 @@
   height: 100vh;
 }
 
-.bottom-logo {
-  position: absolute;
-  width: 80px;
-  height: 80px;
-  bottom: 5rem;
-  right: 4rem;
+/* custom styles for all inputs */
+input {
+  font-family: IBM Plex Mono;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 14px;
+  line-height: 18px;
+  display: flex;
+  align-items: center;
+  color: #000000;
 }
 
-.full-height {
-  height: 90vh;
+/* react-datepicker wrapper */
+.react-datepicker-wrapper {
+  display: flex;
+  flex-grow: 1;
 }
 
-.btn-round {
-  background: #35cfff;
-  font-size: 47px;
-  background: #35cfff;
-  border-radius: 50%;
-  height: 82px;
-  width: 82px;
-}
-
-.round-btn-container {
-  position: relative;
-  width: 53px;
-  height: 52px;
-  left: 94.08%;
-  right: 5.65%;
-  bottom: 10.08%;
+.rotate-180 {
+  transform: rotate(180deg);
 }
 
 /* styles for linear gradients in dicosver page */
-
 .lilMiquela {
   background: linear-gradient(180deg, #1200e3 0%, #cc00ff 100%);
 }

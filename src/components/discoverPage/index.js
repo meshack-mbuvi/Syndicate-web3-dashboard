@@ -7,7 +7,7 @@ import Card from "./card";
 import { sectionCards } from "src/utils/sectionCards";
 import HorizontalDivider from "src/components/horizontalDivider";
 
-import AddButton from "src/components/buttons/addButton";
+// import AddButton from "src/components/buttons/addButton";
 
 /**
  * Renders a section with title and other components
@@ -62,7 +62,7 @@ const Discover = () => {
       ))}
 
       <div className="mb-4 round-btn-container">
-        <AddButton>+</AddButton>
+        {/* <AddButton>+</AddButton> */}
       </div>
     </div>
   );

@@ -20,8 +20,15 @@ import brightTurguoiseLogo from "src/images/brightTurguoiseLogo.svg";
  * @returns an html node in a form of a modal
  */
 export const Modal = (props) => {
-  const { title, children, show, closeModal, type = "normal" } = props;
-  console.log({ props });
+  const {
+    title,
+    children,
+    show,
+    closeModal,
+    type = "normal",
+    customWidth = "w-2/5",
+  } = props;
+
   return (
     <>
       {show ? (
@@ -41,15 +48,15 @@ export const Modal = (props) => {
                     <div className="absolute top-4 left-1/2 align-center justify-center">
                       <img src={lemonLogo} className="w-20 h-20" />
                     </div>
-                    <div className="absolute top-1/3 left-60 flex align-center justify-center">
+                    <div className="absolute top-1/3 left-20 flex align-center justify-center">
                       <img src={lighteningYellowLogo} className="w-20 h-20" />
                     </div>
 
-                    <div className="absolute top-2/3 left-1/4 flex align-center justify-center">
+                    <div className="absolute top-2/3 left-48 flex align-center justify-center">
                       <img src={redOrangeLogo} className="w-20 h-20" />
                     </div>
 
-                    <div className="absolute top-1/2 right-1/4 flex align-center justify-center">
+                    <div className="absolute top-1/2 right-48 flex align-center justify-center">
                       <img src={springGreenishLogo} className="w-16 h-16" />
                     </div>
                     <div className="absolute bottom-0 right-1/3 flex align-center justify-center">
@@ -62,21 +69,13 @@ export const Modal = (props) => {
               </div>
             </div>
 
-            {/* This element is to trick the browser into centering the modal contents.  */}
-            <span
-              className="sm:inline-block sm:align-middle sm:h-screen"
-              aria-hidden="true"
-            >
-              &#8203;
-            </span>
-
             <div
-              className="mx-8 inline-block align-bottom bg-white rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full sm:p-6"
+              className={`inline-block align-bottom bg-white rounded-lg my-28 p-6 text-left overflow-hidden shadow-xl transform transition-all ${customWidth}`}
               role="dialog"
               aria-modal="true"
               aria-labelledby="modal-headline"
             >
-              <div className="hidden sm:block absolute top-0 right-0 pt-4 pr-4">
+              <div className="hidden sm:block absolute p-4 top-0 right-0">
                 {/* close button at the right top of the modal */}
                 <button
                   type="button"

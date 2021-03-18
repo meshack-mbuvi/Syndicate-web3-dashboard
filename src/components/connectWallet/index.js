@@ -2,7 +2,17 @@ import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { useWeb3React } from "@web3-react/core";
-import { injected, WalletConnect, gnosisSafeConnect } from "./connectors";
+
+// set up smart contract and pass it as context
+import { Contract } from "@ethersproject/contracts";
+import SyndicateABI from "src/contracts/SyndicateSPV.json";
+
+import {
+  injected,
+  WalletConnect,
+  //  gnosisSafeConnect
+} from "./connectors";
+
 // actions
 import {
   setLibrary,
@@ -16,7 +26,7 @@ import { Modal } from "src/components/modal";
 
 // icons
 import metamaskIcon from "src/images/metamask.png";
-import gnosisSafeIcon from "src/images/gnosisSafe.png";
+// import gnosisSafeIcon from "src/images/gnosisSafe.png";
 import walletConnectIcon from "src/images/walletConnect.png";
 import CancelButton from "src/components/buttons";
 
@@ -42,14 +52,13 @@ export const ConnectWallet = (props) => {
 
   // control whether to show success connection modal or not
   const [showSuccessModal, setShowSuccessModal] = useState(false);
-  // const close
 
   // This variable controls loading animation modal
   const loading = status == "connecting" ? true : false;
 
   // activate method handles connection to any wallet account while library will
   // contain the web3 provider selected
-  const { activate, library, deactivate, account, ...rest } = useWeb3React();
+  const { activate, library, deactivate, account } = useWeb3React();
 
   // The providers supported are listed in here with their custom details
   const providers = [
@@ -72,13 +81,31 @@ export const ConnectWallet = (props) => {
     },
   ];
 
+  /**
+   * Instantiates contract, and adds it together with web3 provider details to
+   * store
+   */
   const setWeb3 = () => {
-    return dispatch(setLibrary({ library, account }));
+    let contract = null;
+    if (library) {
+      /**
+       * The address is coming from the tests.
+       * const daiContractAddress = "0x6b175474e89094c44da98b954eedeac495271d0f
+       */
+      const daiContractAddress = "0x6b175474e89094c44da98b954eedeac495271d0f";
+      contract = new Contract(
+        daiContractAddress,
+        SyndicateABI.abi,
+        library.getSigner()
+      );
+    }
+
+    return dispatch(setLibrary({ library, account, contract }));
   };
 
   useEffect(() => {
     setWeb3();
-  }, [activate, library]);
+  }, [activate, library, account]);
 
   /**
    * This activate any provide passed to the function where
@@ -147,15 +174,17 @@ export const ConnectWallet = (props) => {
    *
    * Ticket reference: SYN-49
    */
-  const activateGnosisSafe = async () => {
-    await activateProvider(gnosisSafeConnect);
-  };
+  // const activateGnosisSafe = async () => {
+  //   await activateProvider(gnosisSafeConnect);
+  // };
 
   const cancelWalletConnection = async () => {
     // set the wallet connection status to disconnected; this stops
     // the loader modal
     dispatch(setDisConnected());
   };
+
+  // showConnectWalletModal
 
   return (
     <div>
@@ -167,7 +196,7 @@ export const ConnectWallet = (props) => {
         {providers.map(({ name, icon, providerToActivate }) => (
           <div className="flex justify-center m-auto mb-4" key={name}>
             <button
-              className="border rounded-full py-3 px-6 p-2 w-3/4 flex focus:outline-none focus:border-blue-300"
+              className="border border-gray-300 rounded-full py-3 px-6 p-2 w-3/4 flex focus:outline-none focus:border-blue-300"
               onClick={() => providerToActivate()}
             >
               <img alt="icon" src={icon} className="inline  mr-4 ml-2" />
@@ -179,7 +208,7 @@ export const ConnectWallet = (props) => {
         {/* Show cance button */}
         <div className="mt-5 sm:mt-6 flex justify-center">
           <CancelButton
-            customClasses="px-4 py-2 focus:outline-none focus:ring focus:border-green-300"
+            customClasses="bg-blue-light px-4 py-2 focus:outline-none focus:ring focus:border-green-300"
             onClick={closeWalletModal}
           >
             Cancel
