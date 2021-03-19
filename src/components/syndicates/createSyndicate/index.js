@@ -2,10 +2,15 @@ import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import { useForm, Controller } from "react-hook-form";
 import { connect } from "react-redux";
+import { Link } from "gatsby";
+
+// fontawesome icons
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCopy } from "@fortawesome/free-regular-svg-icons";
+import { faCheckCircle } from "@fortawesome/free-solid-svg-icons";
+
 import { CopyToClipboard } from "react-copy-to-clipboard";
-import { Link } from "gatsby";
+
 import { toEther } from "src/utils";
 
 // Used for validating form inputs
@@ -20,6 +25,7 @@ import DatePicker from "react-datepicker";
 
 // redux actions
 import { showWalletModal } from "src/redux/actions/web3Provider";
+import { InfoIcon } from "src/components/iconWrappers";
 
 // validation schema for new syndicate form
 const syndicateSchema = Joi.object({
@@ -144,7 +150,6 @@ const CreateSyndicate = (props) => {
         parseFloat(syndicateProtocolProfitSharePercent) * 100
       );
 
-
       const maxDeposits = toEther(data.maxDeposits);
       const maxTotalDeposits = toEther(data.maxTotalDeposits);
 
@@ -219,7 +224,10 @@ const CreateSyndicate = (props) => {
         title="Create New Syndicate"
       >
         {/* modal sub title */}
-        <div className="flex justify-start mb-1 text-blue font-medium text-center leading-8 text-lg">
+        <div
+          className="flex justify-start mb-1 text-blue font-medium 
+          text-center leading-8 text-lg"
+        >
           <p className="text-blue-light ml-4">Onchain Data</p>
         </div>
 
@@ -300,22 +308,7 @@ const CreateSyndicate = (props) => {
 
                   {/* icon */}
                   <div className="w-6 ml-4 mt-1">
-                    <span className="w-8 h-5 mt-1">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="gray"
-                        className="rotate-180"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth="1.5"
-                          d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                        />
-                      </svg>
-                    </span>
+                    <InfoIcon />
                   </div>
                 </div>
               </div>
@@ -406,22 +399,7 @@ const CreateSyndicate = (props) => {
 
                   {/* icon */}
                   <div className="w-6 ml-4 mt-1">
-                    <span className="w-8 h-5 mt-1">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="gray"
-                        className="rotate-180"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth="1.5"
-                          d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                        />
-                      </svg>
-                    </span>
+                    <InfoIcon />
                   </div>
                 </div>
               </div>
@@ -439,21 +417,15 @@ const CreateSyndicate = (props) => {
           {/* agree to terms */}
           <div className="flex my-4 w-full justify-center py-4">
             <p className="flex text-black">
-              I agree to the{" "}
+              I agree to the
               <span className="mx-2 text-blue-light"> terms of service</span>
               (required):
-              <span className="w-7 h-7 ml-2">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 20 20"
-                  className="fill-gray"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                    clipRule="evenodd"
-                  />
-                </svg>
+              <span className="ml-2">
+                <FontAwesomeIcon
+                  icon={faCheckCircle}
+                  size="lg"
+                  className="text-gray-light"
+                />
               </span>
             </p>
           </div>

@@ -1,6 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import DatePicker from "react-datepicker";
+import { InfoIcon } from "src/components/iconWrappers";
 
 /**
  * A date input component with label and icon at the right end
@@ -32,21 +33,7 @@ export const DateInput = (props) => {
         />
         {/* icon */}
         <div className="w-6 ml-4 mt-1">
-          <span className="w-8 h-5 mt-1">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="gray"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="1.5"
-                d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-              />
-            </svg>
-          </span>
+          <InfoIcon />
         </div>
       </div>
     </div>
