@@ -13,7 +13,7 @@ import { SocialFeedAnimatedLoader } from "./socialFeedAnimatedLoader";
 const SocialFeed = () => {
   const [isLoading] = useState(true);
   return (
-    <div className="w-3/4 mr-4">
+    <div className="w-full sm:w-3/4 mr-4 mt-4">
       <PageHeader>Social Feed</PageHeader>
       {isLoading ? (
         <SocialFeedAnimatedLoader />

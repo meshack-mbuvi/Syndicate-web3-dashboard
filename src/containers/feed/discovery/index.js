@@ -6,7 +6,7 @@ import { DiscoverAnimatedLoader } from "./discoverAnimatedLoader";
 
 const Discovery = () => {
   return (
-    <div className="w-1/4">
+    <div className="sm:w-1/4 mt-4">
       <PageHeader>Discovery </PageHeader>
       <DiscoverAnimatedLoader />
     </div>

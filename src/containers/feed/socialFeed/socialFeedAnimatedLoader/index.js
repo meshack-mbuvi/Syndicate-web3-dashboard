@@ -14,8 +14,8 @@ export const SocialFeedAnimatedLoader = () => {
     const animations = [];
     for (let i = 0; i < count; i++) {
       animations.push(
-        <React.Fragment key={i}>
-          <div className="wrapper-cell flex justify-between m-auto">
+        <div key={i}>
+          <div className="wrapper-cell w-full flex justify-between sm:m-auto">
             <div className="flex flex-1">
               <div className="image"></div>
               <div className="text">
@@ -23,10 +23,10 @@ export const SocialFeedAnimatedLoader = () => {
                 <div className="text-line w-1/2"></div>
               </div>
             </div>
-            <div className="card-placeholder"></div>
+            <div className="card-placeholder w-16 sm:w-24"></div>
           </div>
           <HorizontalDivider />
-        </React.Fragment>
+        </div>
       );
     }
     return animations;

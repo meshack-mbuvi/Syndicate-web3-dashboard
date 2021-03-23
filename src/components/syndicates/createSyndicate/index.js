@@ -15,7 +15,6 @@ import { toEther } from "src/utils";
 
 // Used for validating form inputs
 import { joiResolver } from "@hookform/resolvers/joi";
-import Joi from "joi";
 
 // Other usefull components
 import Button from "src/components/buttons";
@@ -27,43 +26,7 @@ import DatePicker from "react-datepicker";
 import { showWalletModal } from "src/redux/actions/web3Provider";
 import { InfoIcon } from "src/components/iconWrappers";
 
-// validation schema for new syndicate form
-const syndicateSchema = Joi.object({
-  closeDate: Joi.date().required().label("Close date").messages({
-    "any.empty": "Fund Close date must be provided.",
-  }),
-  depositToken: Joi.string().required().label("Deposit token").messages({
-    "any.empty": "Deposit token must be provided.",
-  }),
-  maxDeposits: Joi.number().required().label("Maximum deposits").messages({
-    "any.empty": "Max deposits must be provided.",
-  }),
-  maxTotalDeposits: Joi.number()
-    .min(Joi.ref("maxDeposits"))
-    .required()
-    .label("Maximum Total deposits")
-    .messages({
-      "any.empty": "Total maximum deposits must be provided.",
-      "number.min":
-        "Total maximum deposits must be greater than or equal to max deposits",
-    }),
-  distributionToken: Joi.string()
-    .required()
-    .label("Distribution Token")
-    .messages({
-      "any.empty": "Distribution token must be provided.",
-    }),
-  profitShareToSyndProtocol: Joi.string()
-    .regex(/^\d+(\.\d{0,2})?$/)
-    .messages({
-      "object.regex": "Should have atmost 2 decimal places",
-    }),
-  profitShareToSyndicateLead: Joi.string()
-    .regex(/^\d+(\.\d{0,2})?$/)
-    .messages({
-      "object.regex": "Must have atmost 2 decimal places",
-    }),
-});
+import { syndicateSchema } from "../validators";
 
 /**
  * Diplays all syndicates.
@@ -75,7 +38,7 @@ const syndicateSchema = Joi.object({
 const CreateSyndicate = (props) => {
   // retrive contract details
   const {
-    web3: { contract, account },
+    web3: { syndicateInstance, account },
     dispatch,
     showModal,
     setShowModal,
@@ -97,12 +60,12 @@ const CreateSyndicate = (props) => {
      * address so we need to connect to wallet first which will handle contract
      * instantiation.
      */
-    if (!contract) {
+    if (!syndicateInstance) {
       dispatch(showWalletModal());
     } else {
-      setSyndicateAddress(contract.address);
+      setSyndicateAddress(account);
     }
-  }, [contract]);
+  }, [syndicateInstance]);
 
   // this controls the toggle button for manually whitelisting depositors
   const toggleAllowlistEnabled = () => setAllowlistEnabled(!allowlistEnabled);
@@ -120,19 +83,14 @@ const CreateSyndicate = (props) => {
      * If we are not connected and the form modal is open, user can trigger
      * creation of Syndicate. We therefore catch this here and request for
      * wallet connection.
-     * Note: We need to find a way, like an customized alert to inform user this.
+     * Note: We need to find a way, like a customized alert to inform user this.
      */
-    if (!contract) {
+    if (!syndicateInstance) {
       // Hide New Syndicate modal to give room to wallet connection modal
       setShowModal(false);
 
       return dispatch(showWalletModal());
     }
-
-    const zeroAddress = "0x0000000000000000000000000000000000000000";
-
-    // when secondaryAddress is not provided
-    const secondaryERC20ContractAddress = zeroAddress;
 
     // get closeDate and syndicateProtocolProfitSharePercent
     const closeDate = data.closeDate.toString();
@@ -147,27 +105,25 @@ const CreateSyndicate = (props) => {
        * to ether. We need to convert bigNumbers to string before passing them
        */
       const syndicateProfitSharePercent = toEther(
-        parseFloat(syndicateProtocolProfitSharePercent) * 100
+        parseFloat(syndicateProtocolProfitSharePercent) * 1000
       );
 
       const maxDeposits = toEther(data.maxDeposits);
       const maxTotalDeposits = toEther(data.maxTotalDeposits);
 
-      const timeUntilSPVCloseDate = new Date(closeDate).getTime().toString();
+      const timeUntilSPVCloseDate = new Date(closeDate).toDateString();
 
-      const spv = await contract.createSPV(
+      await syndicateInstance.createSPV(
         primaryERC20ContractAddress,
-        secondaryERC20ContractAddress,
-        syndicateProfitSharePercent,
+        syndicateProfitSharePercent.toString(),
         timeUntilSPVCloseDate,
         maxDeposits,
         maxTotalDeposits,
         allowlistEnabled,
         { from: account, gasLimit: 800000 }
       );
-      console.log({ spv });
 
-      // before showing success modal, we need to get the shareable link
+      // before showing success modal, we need to set the shareable link
       setShareableLink(
         `www.syndicateprotocol.org/${primaryERC20ContractAddress}`
       );

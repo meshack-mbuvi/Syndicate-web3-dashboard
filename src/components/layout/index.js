@@ -1,9 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
 
-// Layout wrapper is the container component for all other other nodes in the app
-import ContentWrapper from "./content-wrapper";
-
 import SEO from "../seo";
 
 import Header from "src/components/navigation/header";
@@ -16,7 +13,9 @@ export const Layout = ({ children }) => {
         title="Home"
       />
       <Header />
-      <ContentWrapper>{children}</ContentWrapper>
+      <div className="flex w-auto w-full flex-col sm:flex-row md:py-4 px-4">
+        {children}
+      </div>
     </div>
   );
 };

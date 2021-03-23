@@ -63,7 +63,7 @@ export const Wallet = (props) => {
   }, [web3]);
 
   return (
-    <div className="flex flex-row bg-gray-90 rounded-full my-1 px-4">
+    <div className="flex flex-row bg-gray-dark rounded-full my-1 px-4">
       <img src={walletIcon} className="w-5 h-4 pr-1 mt-3 mr-2" />
 
       <button onClick={connectWallet} className="focus:outline-none">

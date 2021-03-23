@@ -41,7 +41,7 @@ const App = () => (
     <Router>
       <Feed path="/feed" />
       <Syndicates path="/syndicates" />
-      <SyndicateDeposits path="/syndicates/:address" />
+      <SyndicateDeposits path="/syndicates/:spvAddress" />
       <Messages path="/messages" />
       <Discover path="/discover" />
     </Router>

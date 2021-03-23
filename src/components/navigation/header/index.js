@@ -21,8 +21,8 @@ const Header = () => {
   return (
     <>
       <header className="divide-y border-b border-gray-90">
-        <div className="flex flex-row items-center justify-between mx-auto">
-          <div className="flex justify-between">
+        <div className="flex flex-col sm:flex-row items-center justify-between mx-auto">
+          <div className="flex flex-col sm:flex-row justify-between">
             <Brand />
             {navbarLinks.map(({ url, urlText }) => (
               <NavBarNavItem {...{ url, urlText }} key={url} />

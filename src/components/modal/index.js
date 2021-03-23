@@ -33,13 +33,13 @@ export const Modal = (props) => {
     <>
       {show ? (
         <div className="fixed z-10 inset-0 overflow-y-auto">
-          <div className="flex items-end justify-center text-black min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+          <div className="flex items-end justify-center text-black min-h-screen sm:pt-4 sm:px-4 pb-20 text-center sm:block sm:p-0">
             <div
               className="fixed inset-0 transition-opacity"
               aria-hidden="true"
             >
               <div
-                className="absolute inset-0  bg-gray opacity-70"
+                className="absolute inset-0  bg-gray-9 opacity-95"
                 onClick={closeModal}
               >
                 {/* show syndicate icons/logos in the background */}
@@ -70,7 +70,7 @@ export const Modal = (props) => {
             </div>
 
             <div
-              className={`inline-block align-bottom bg-white rounded-lg my-28 p-6 text-left overflow-hidden shadow-xl transform transition-all ${customWidth}`}
+              className={`inline-block align-bottom bg-white rounded-lg sm:my-28 sm:p-6 text-left overflow-hidden shadow-xl transform transition-all ${customWidth}`}
               role="dialog"
               aria-modal="true"
               aria-labelledby="modal-headline"

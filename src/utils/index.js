@@ -1,1 +1,1 @@
-export { toEther } from "./toEther";
+export { toEther, etherToNumber, fromNumberToPercent } from "./conversions";

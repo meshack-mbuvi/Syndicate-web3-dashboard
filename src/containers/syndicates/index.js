@@ -18,7 +18,7 @@ import Layout from "src/components/layout";
 const Syndicates = (props) => {
   // retrieve contract details
   const {
-    web3: { contract },
+    web3: { syndicateInstance },
     dispatch,
   } = props;
 
@@ -27,7 +27,7 @@ const Syndicates = (props) => {
 
   const showSyndicateForm = () => {
     // Trigger wallet connection if wallet is not connected
-    if (!contract) {
+    if (!syndicateInstance) {
       return dispatch(showWalletModal());
     }
     setShowModal(true);

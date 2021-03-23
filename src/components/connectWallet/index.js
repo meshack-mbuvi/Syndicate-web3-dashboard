@@ -85,22 +85,28 @@ export const ConnectWallet = (props) => {
    * Instantiates contract, and adds it together with web3 provider details to
    * store
    */
-  const setWeb3 = () => {
-    let contract = null;
+  const setWeb3 = async () => {
+    let syndicateInstance = null;
     if (library) {
-      /**
+      /**SyndicateABI.networks["5777"].address;
        * The address is coming from the tests.
        * const daiContractAddress = "0x6b175474e89094c44da98b954eedeac495271d0f
+       * get address from truffle =>0x15333C7B5eddB2c08A0931645C591a575eDeAde7
        */
-      const daiContractAddress = "0x6b175474e89094c44da98b954eedeac495271d0f";
-      contract = new Contract(
-        daiContractAddress,
+      const contract = await new Contract(
+        process.env.GATSBY_SPV_CONTRACT_ADDRESS,
         SyndicateABI.abi,
         library.getSigner()
       );
+
+      try {
+        syndicateInstance = await contract.deployed();
+      } catch (error) {
+        console.log({ error });
+      }
     }
 
-    return dispatch(setLibrary({ library, account, contract }));
+    return dispatch(setLibrary({ library, account, syndicateInstance }));
   };
 
   useEffect(() => {
@@ -196,10 +202,10 @@ export const ConnectWallet = (props) => {
         {providers.map(({ name, icon, providerToActivate }) => (
           <div className="flex justify-center m-auto mb-4" key={name}>
             <button
-              className="border border-gray-300 rounded-full py-3 px-6 p-2 w-3/4 flex focus:outline-none focus:border-blue-300"
+              className="w-full p-2 border border-gray-300 rounded-full sm:py-3 sm:px-6 sm:w-3/4 flex focus:outline-none focus:border-blue-300"
               onClick={() => providerToActivate()}
             >
-              <img alt="icon" src={icon} className="inline  mr-4 ml-2" />
+              <img alt="icon" src={icon} className="inline mr-4 ml-2" />
               <span>{name}</span>
             </button>
           </div>
