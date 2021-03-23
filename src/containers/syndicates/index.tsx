@@ -7,6 +7,8 @@ import PageHeader from "src/components/pageHeader";
 import CreateSyndicate from "src/components/syndicates/createSyndicate";
 import { showWalletModal } from "src/redux/actions/web3Provider";
 
+import MySyndicates from "src/components/mySyndicates";
+
 /**
  * Diplays all syndicates.
  * The main groups for syndicates are active and inactive
@@ -37,9 +39,9 @@ const Syndicates = (props: any) => {
       <div className="w-full">
         {/* Show page header and button to create new syndicate */}
         <div className="flex justify-between w-full">
-          <PageHeader>My Syndicates</PageHeader>
+          <PageHeader>Active</PageHeader>
 
-          <div className="mb-4">
+          <div className="mb-2">
             <Button
               customClasses="border border-white h-12 w-48 p-3 pt-3 text-sm"
               onClick={showSyndicateForm}>
@@ -47,6 +49,9 @@ const Syndicates = (props: any) => {
             </Button>
           </div>
         </div>
+
+        {/* show my syndicates */}
+        <MySyndicates />
         {/* Component to create syndicate  */}
         <CreateSyndicate {...{ showModal, setShowModal }} />
       </div>
