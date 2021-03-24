@@ -13,7 +13,7 @@ export const Layout = ({ children }) => {
         title="Home"
       />
       <Header />
-      <div className="flex w-auto w-full flex-col sm:flex-row md:py-4 px-4">
+      <div className="flex w-auto w-full flex-col sm:flex-row md:py-4 px-4 md:px-6">
         {children}
       </div>
     </div>

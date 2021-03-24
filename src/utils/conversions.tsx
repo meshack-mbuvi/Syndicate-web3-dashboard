@@ -30,4 +30,5 @@ export const etherToNumber = (value) =>
  * @param { number } number to be converted
  * @returns {double|float}
  */
+
 export const fromNumberToPercent = (number) => number / 1000;

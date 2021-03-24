@@ -94,3 +94,15 @@ input {
   background: linear-gradient(180deg, #e36d00 0%, #faff00 100%);
 }
 /* end of linear-gradient styles  */
+
+.lawn-green {
+  background: linear-gradient(180deg, #00ffc2 0%, #73ff04 100%);
+}
+
+.pinky-blue {
+  background: linear-gradient(180deg, #00a3ff 0%, #ff007a 100%);
+}
+
+.yellowish-light-blue {
+  background: linear-gradient(180deg, #00c2ff 0%, #ff8a00 100%);
+}

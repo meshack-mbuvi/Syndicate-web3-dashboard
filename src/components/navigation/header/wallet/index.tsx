@@ -32,7 +32,6 @@ export const Wallet = (props) => {
    *  wallet account is connected
    */
   const [address, setAddress] = useState(null);
-  console.log({ web3 });
 
   useEffect(() => {
     /**

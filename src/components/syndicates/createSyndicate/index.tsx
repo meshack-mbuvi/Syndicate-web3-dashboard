@@ -1,31 +1,24 @@
-import React, { useState, useEffect } from "react";
-import PropTypes from "prop-types";
-import { useForm, Controller } from "react-hook-form";
-import { connect } from "react-redux";
-import Link from "next/link";
-
-// fontawesome icons
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCopy } from "@fortawesome/free-regular-svg-icons";
 import { faCheckCircle } from "@fortawesome/free-solid-svg-icons";
-
-import { CopyToClipboard } from "react-copy-to-clipboard";
-
-import { toEther } from "src/utils";
-
+// fontawesome icons
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 // Used for validating form inputs
 import { joiResolver } from "@hookform/resolvers/joi";
-
+import Link from "next/link";
+import PropTypes from "prop-types";
+import React, { useEffect, useState } from "react";
+import { CopyToClipboard } from "react-copy-to-clipboard";
+import DatePicker from "react-datepicker";
+import { Controller, useForm } from "react-hook-form";
+import { connect } from "react-redux";
 // Other useful components
 import Button from "src/components/buttons";
+import { InfoIcon } from "src/components/iconWrappers";
 import { TextInput, Toggle } from "src/components/inputs";
 import { Modal } from "src/components/modal";
-import DatePicker from "react-datepicker";
-
 // redux actions
 import { showWalletModal } from "src/redux/actions/web3Provider";
-import { InfoIcon } from "src/components/iconWrappers";
-
+import { toEther } from "src/utils";
 import { syndicateSchema } from "../validators";
 
 /**
@@ -74,7 +67,7 @@ const CreateSyndicate = (props) => {
 
   // react-hook-form provides Performant, flexible and
   // extensible forms with easy-to-use validation.
-  const { register, handleSubmit, control, errors } = useForm({
+  const { register, handleSubmit, control } = useForm({
     resolver: joiResolver(syndicateSchema),
   });
 
@@ -111,9 +104,9 @@ const CreateSyndicate = (props) => {
       const maxDeposits = toEther(data.maxDeposits);
       const maxTotalDeposits = toEther(data.maxTotalDeposits);
 
-      const timeUntilSPVCloseDate = new Date(closeDate).toDateString();
+      const timeUntilSPVCloseDate = new Date(closeDate).getTime();
 
-      await syndicateInstance.createSPV(
+      const syndicate = await syndicateInstance.createSyndicate(
         primaryERC20ContractAddress,
         syndicateProfitSharePercent.toString(),
         timeUntilSPVCloseDate,
@@ -122,6 +115,17 @@ const CreateSyndicate = (props) => {
         allowlistEnabled,
         { from: account, gasLimit: 800000 }
       );
+
+      // this is for testing purpose. It should be removed before launch
+      await syndicateInstance.allowAddresses(
+        account,
+        ["0x176890F8a0d17a82DaC2cF6B4a5F2833bFdbf16F"],
+        {
+          from: account,
+        }
+      );
+
+      console.log({ syndicate });
 
       // before showing success modal, we need to set the shareable link
       setShareableLink(
@@ -177,13 +181,11 @@ const CreateSyndicate = (props) => {
           closeModal,
           customWidth: "w-3/5",
         }}
-        title="Create New Syndicate"
-      >
+        title="Create New Syndicate">
         {/* modal sub title */}
         <div
           className="flex justify-start mb-1 text-blue font-medium 
-          text-center leading-8 text-lg"
-        >
+          text-center leading-8 text-lg">
           <p className="text-blue-light ml-4">Onchain Data</p>
         </div>
 
@@ -242,8 +244,7 @@ const CreateSyndicate = (props) => {
                 <div className="mr-2 w-5/12 flex justify-end">
                   <label
                     htmlFor="syndicateAddress"
-                    className="block pt-2 text-black text-sm font-medium"
-                  >
+                    className="block pt-2 text-black text-sm font-medium">
                     Close Date:
                   </label>
                 </div>
@@ -283,8 +284,7 @@ const CreateSyndicate = (props) => {
                 <div className="mr-2 w-5/12 flex justify-end">
                   <label
                     htmlFor="syndicateAddress"
-                    className="block pt-2 text-black text-sm font-medium"
-                  >
+                    className="block pt-2 text-black text-sm font-medium">
                     Profit Share to Syndicate Protocol:
                   </label>
                 </div>
@@ -292,8 +292,7 @@ const CreateSyndicate = (props) => {
                 {/* shows 4 equal grids used to get the input for profit share */}
                 <div className="w-7/12 flex justify-between">
                   <div
-                    className={`grid grid-cols-4 w-4/5 border gray-85 flex flex-grow rounded-md`}
-                  >
+                    className={`grid grid-cols-4 w-4/5 border gray-85 flex flex-grow rounded-md`}>
                     <button
                       className={`flex justify-center pt-2 border-r focus:outline-none ${
                         syndicateProfitSharePercent == "0.3"
@@ -301,8 +300,7 @@ const CreateSyndicate = (props) => {
                           : "gray-85"
                       }`}
                       onClick={() => setProfitShareToSyndProtocol("0.3")}
-                      type="button"
-                    >
+                      type="button">
                       0.3%
                     </button>
 
@@ -313,8 +311,7 @@ const CreateSyndicate = (props) => {
                           : "gray-85"
                       }`}
                       onClick={() => setProfitShareToSyndProtocol("1")}
-                      type="button"
-                    >
+                      type="button">
                       1%
                     </button>
 
@@ -325,8 +322,7 @@ const CreateSyndicate = (props) => {
                           : "gray-85"
                       }`}
                       type="button"
-                      onClick={() => setProfitShareToSyndProtocol("3")}
-                    >
+                      onClick={() => setProfitShareToSyndProtocol("3")}>
                       3%
                     </button>
 
@@ -334,9 +330,7 @@ const CreateSyndicate = (props) => {
                       <Controller
                         control={control}
                         name="profitShareToSyndProtocol"
-                        rules={
-                          ({ min: "30", max: "100"})
-                        }
+                        rules={{ min: "30", max: "100" }}
                         render={({ onChange }) => (
                           <input
                             type="text"
@@ -389,8 +383,7 @@ const CreateSyndicate = (props) => {
           <div className="flex my-4 w-full justify-center py-2">
             <Button
               type="submit"
-              customClasses="rounded-full bg-blue-light w-auto px-10 py-2 text-lg"
-            >
+              customClasses="rounded-full bg-blue-light w-auto px-10 py-2 text-lg">
               Launch
             </Button>
           </div>
@@ -404,8 +397,7 @@ const CreateSyndicate = (props) => {
           closeModal: () => setShowSuccessModal(false),
           type: "success",
           customWidth: "w-3/5",
-        }}
-      >
+        }}>
         <div className="flex flex-col justify-center m-auto mb-4">
           <div className="flex align-center justify-center">
             <div className="border-4 border-light-blue m-8 rounded-full h-24 w-24 flex items-center justify-center">
@@ -414,8 +406,7 @@ const CreateSyndicate = (props) => {
                 height="26"
                 viewBox="0 0 34 26"
                 fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
+                xmlns="http://www.w3.org/2000/svg">
                 <path
                   d="M2 13.5723L11.2243 22.7966L32 2"
                   stroke="#35CFFF"
@@ -472,7 +463,10 @@ const CreateSyndicate = (props) => {
 };
 
 CreateSyndicate.propTypes = {
-  props: PropTypes.any,
+  web3: PropTypes.any,
+  dispatch: PropTypes.func,
+  showModal: PropTypes.bool,
+  setShowModal: PropTypes.func,
 };
 
 const mapStateToProps = ({ web3Reducer }) => {

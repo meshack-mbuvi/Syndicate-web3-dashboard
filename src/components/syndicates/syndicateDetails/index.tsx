@@ -1,14 +1,10 @@
-import React, { useState, useEffect } from "react";
 import { useRouter } from "next/router";
-import { connect } from "react-redux";
 import PropTypes from "prop-types";
-
-import moment from "moment";
-
+import React, { useEffect, useState } from "react";
+import { connect } from "react-redux";
 import { ExternalLinkIcon } from "src/components/iconWrappers";
-
+import { etherToNumber, formatDate, fromNumberToPercent } from "src/utils";
 import { BadgeCard, DetailsCard } from "../shared";
-import { etherToNumber, fromNumberToPercent } from "src/utils";
 
 const SyndicateDetails = (props) => {
   const {
@@ -16,8 +12,6 @@ const SyndicateDetails = (props) => {
     dispatch,
   } = props;
   const router = useRouter();
-
-  console.log({ props });
 
   const [syndicateSPV, setSyndicateSPV] = useState({
     maxDeposit: 0,
@@ -51,9 +45,22 @@ const SyndicateDetails = (props) => {
         syndicateInstance
           .getSyndicateValues(spvAddress)
           .then((data) => {
-            console.log(data);
-            const closeDate = moment(data.closeDate).format("DD/MM/YYYY");
-            const createdDate = moment(data.creationDate).format("DD/MM/YYYY");
+            console.log({
+              data,
+              creationDate: data.creationDate.toNumber(),
+              date: etherToNumber(data.closeDate),
+              number: new Date(data.closeDate.toNumber()),
+            });
+
+            const closeDate = formatDate(new Date(data.closeDate.toNumber()));
+            /**
+             * block.timestamp which is the one used to save creationDate is in
+             * seconds. We multiply by 1000 to convert to milliseconds and then
+             * convert this to javascript date object
+             */
+            const createdDate = formatDate(
+              new Date(data.creationDate.toNumber() * 1000)
+            );
 
             const maxDeposit = data.maxDeposit.toString();
             const profitShareToSyndicateProtocol = fromNumberToPercent(
@@ -81,11 +88,11 @@ const SyndicateDetails = (props) => {
               { header: "Deposit/Distribution Token", subText: "USDC / USDC" },
               {
                 header: "Profit Share to Syndicate Leads",
-                subText: profitShareToSyndicateProtocol,
+                subText: `${profitShareToSyndicateProtocol} %`,
               },
               {
                 header: "Profit Share to Protocol",
-                subText: profitShareToSyndicateProtocol,
+                subText: `${profitShareToSyndicateProtocol} %`,
               },
             ]);
           })
@@ -95,7 +102,6 @@ const SyndicateDetails = (props) => {
       }
     }
   }, [syndicateInstance, account]);
-  console.log({ syndicateSPV, detailSections });
 
   const { openToDeposits } = syndicateSPV;
 
@@ -111,8 +117,7 @@ const SyndicateDetails = (props) => {
         <a
           href={`https://etherscan.io/address/${spvAddress}`}
           target="_blank"
-          className="text-blue-cyan px-2 flex"
-        >
+          className="text-blue-cyan px-2 flex">
           view on etherscan <ExternalLinkIcon className="ml-2" />
         </a>
 

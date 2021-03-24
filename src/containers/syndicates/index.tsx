@@ -7,7 +7,7 @@ import PageHeader from "src/components/pageHeader";
 import CreateSyndicate from "src/components/syndicates/createSyndicate";
 import { showWalletModal } from "src/redux/actions/web3Provider";
 
-import MySyndicates from "src/components/mySyndicates";
+import MySyndicates from "src/components/syndicates/mySyndicates";
 
 /**
  * Diplays all syndicates.
@@ -22,6 +22,7 @@ const Syndicates = (props: any) => {
     web3: { syndicateInstance },
     dispatch,
   } = props;
+  console.log({syndicateInstance})
 
   // controls show/hide new syndicate creation modal
   const [showModal, setShowModal] = useState(false);

@@ -1,29 +1,21 @@
-import React, { useState, useEffect } from "react";
-import PropTypes from "prop-types";
-import { connect } from "react-redux";
-import { useWeb3React } from "@web3-react/core";
-
 // set up smart contract and pass it as context
 import { Contract } from "@ethersproject/contracts";
-import SyndicateABI from "src/contracts/Syndicate.json";
-
-import {
-  injected,
-  WalletConnect,
-  //  gnosisSafeConnect
-} from "./connectors";
-
+import { useWeb3React } from "@web3-react/core";
+import PropTypes from "prop-types";
+import React, { useEffect, useState } from "react";
+import { connect } from "react-redux";
+import CancelButton from "src/components/buttons";
+import { Modal } from "src/components/modal";
+import Syndicate from "src/contracts/Syndicate.json";
 // actions
 import {
-  setLibrary,
-  setConnecting,
-  setConnected,
-  setDisConnected,
   hideWalletModal,
+  setConnected,
+  setConnecting,
+  setDisConnected,
+  setLibrary,
 } from "src/redux/actions/web3Provider";
-
-import { Modal } from "src/components/modal";
-import CancelButton from "src/components/buttons";
+import { injected, WalletConnect } from "./connectors";
 
 /**
  * The component shows a modal with buttons to connect to different
@@ -89,13 +81,15 @@ export const ConnectWallet = (props) => {
        * get address from truffle =>0x15333C7B5eddB2c08A0931645C591a575eDeAde7
        */
       const contract = await new Contract(
-        process.env.NEXT_PUBLIC_SPV_CONTRACT_ADDRESS,
-        SyndicateABI.abi,
+        process.env.GATSBY_SPV_CONTRACT_ADDRESS,
+        Syndicate.abi,
         library.getSigner()
       );
 
       try {
+        console.log({ contract });
         syndicateInstance = await contract.deployed();
+        console.log({ syndicateInstance });
       } catch (error) {
         console.log({ error });
       }
@@ -190,15 +184,13 @@ export const ConnectWallet = (props) => {
     <div>
       <Modal
         title="Connect Crypto Wallet"
-        {...{ show: showWalletModal, closeModal: closeWalletModal }}
-      >
+        {...{ show: showWalletModal, closeModal: closeWalletModal }}>
         {/* show wallet providers */}
         {providers.map(({ name, icon, providerToActivate }) => (
           <div className="flex justify-center m-auto mb-4" key={name}>
             <button
               className="w-full p-2 border border-gray-300 rounded-full sm:py-3 sm:px-6 sm:w-3/4 flex focus:outline-none focus:border-blue-300"
-              onClick={() => providerToActivate()}
-            >
+              onClick={() => providerToActivate()}>
               <img alt="icon" src={icon} className="inline mr-4 ml-2" />
               <span>{name}</span>
             </button>
@@ -209,8 +201,7 @@ export const ConnectWallet = (props) => {
         <div className="mt-5 sm:mt-6 flex justify-center">
           <CancelButton
             customClasses="bg-blue-light px-4 py-2 focus:outline-none focus:ring focus:border-green-300"
-            onClick={closeWalletModal}
-          >
+            onClick={closeWalletModal}>
             Cancel
           </CancelButton>
         </div>
@@ -232,8 +223,7 @@ export const ConnectWallet = (props) => {
           show: showSuccessModal,
           closeModal: () => setShowSuccessModal(false),
           type: "success",
-        }}
-      >
+        }}>
         <div className="flex flex-col justify-center m-auto mb-4">
           <div className="flex align-center justify-center">
             <div className="border-4 border-light-blue m-8 rounded-full h-24 w-24 flex items-center justify-center">
@@ -242,8 +232,7 @@ export const ConnectWallet = (props) => {
                 height="26"
                 viewBox="0 0 34 26"
                 fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
+                xmlns="http://www.w3.org/2000/svg">
                 <path
                   d="M2 13.5723L11.2243 22.7966L32 2"
                   stroke="#35CFFF"
@@ -267,6 +256,7 @@ export const ConnectWallet = (props) => {
 ConnectWallet.propTypes = {
   dispatch: PropTypes.any.isRequired,
   web3: PropTypes.object.isRequired,
+  showWallet: PropTypes.bool.isRequired,
 };
 
 const mapStateToProps = ({ web3Reducer }) => {

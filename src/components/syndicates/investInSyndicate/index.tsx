@@ -1,16 +1,25 @@
-import React, { useEffect, useState } from "react";
-import { useRouter } from "next/router";
-import { connect } from "react-redux";
-
-import { useForm } from "react-hook-form";
-import PropTypes from "prop-types";
-
 import { joiResolver } from "@hookform/resolvers/joi";
-import { depositSchema } from "../validators";
-
+import { useRouter } from "next/router";
+import PropTypes from "prop-types";
+import React, { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { connect } from "react-redux";
+import Syndicate from "src/contracts/Syndicate.json";
 // action to initiate wallet connect
 import { showWalletModal } from "src/redux/actions/web3Provider";
+// utils
+import { toEther } from "src/utils";
 import { DetailsCard } from "../shared";
+import { depositSchema } from "../validators";
+
+const Web3 = require("web3");
+
+const daiABI = require("src/utils/abi/dai");
+const erc20ABI = require("src/utils/abi/erc20");
+
+const contractAddress = process.env.GATSBY_SPV_CONTRACT_ADDRESS;
+const daiContractAddress = "0x6b175474e89094c44da98b954eedeac495271d0f";
+const daiWhale = "0xBE0eB53F46cd790Cd13851d5EFf43D12404d33E8";
 
 const InvestInSyndicate = (props) => {
   const {
@@ -19,18 +28,90 @@ const InvestInSyndicate = (props) => {
   } = props;
   const router = useRouter();
 
-  // this should be updated after Syndicate details are retrieved
-  const [sections, setSections] = useState([
-    { header: "My Deposits", subText: "0" },
-    { header: "My % of This Syndicate", subText: "0" },
-  ]);
-
   /**
    * all syndicates are handled by the SyndicateSPV contract, so the contract
    * address is the same for all of them while the spvAddress that is passed
    * into the contract is different
    */
   const { spvAddress } = router.query;
+
+  const web3 = new Web3(Web3.givenProvider || "ws://localhost:8545");
+  web3.eth.defaultAccount = web3.eth.accounts[0];
+
+  const daiContract = new web3.eth.Contract(daiABI, daiContractAddress);
+
+  const contract = new web3.eth.Contract(Syndicate.abi, contractAddress);
+  console.log(account);
+  contract.events.lpInvestedInSyndicate({}).on("data", (error, event) => {
+    console.log({ event });
+  });
+
+  // this should be updated after Syndicate details are retrieved
+  const [sections, setSections] = useState([
+    { header: "My Deposits", subText: "0" },
+    { header: "My % of This Syndicate", subText: "0" },
+  ]);
+
+  // This function sends DAI to an address to initialize it with
+  // Based on https://github.com/ryanio/truffle-mint-dai/blob/master/test/dai.js
+  // fromAccount is the Dai address
+  const sendDai = async (fromAccount, toAccount, amount) => {
+    console.log({ toAccount, fromAccount });
+    try {
+      await daiContract.methods
+        // Ether requires a string or a BN to avoid precision issues, and .transfer also requires a string
+        .transfer(
+          "0x176890f8a0d17a82dac2cf6b4a5f2833bfdbf16f",
+          amount.toString()
+        )
+        .send({
+          from: "0xbe0eb53f46cd790cd13851d5eff43d12404d33e8",
+          gasLimit: 800000,
+        });
+      const daiBalance = await daiContract.methods.balanceOf(toAccount).call();
+      // console.log({ daiBalance });
+
+      return daiBalance;
+    } catch (error) {
+      console.log({ error });
+      const daiBalance = await daiContract.methods.balanceOf(toAccount).call();
+      console.log({ daiBalance });
+    }
+  };
+
+  // Approve sending the daiBalance from the user to the manager. Note that the
+  // approval goes to the contract, since that is what executes the transferFrom
+  // call.
+  // See https://forum.openzeppelin.com/t/uniswap-transferfrom-error-dai-insufficient-allowance/4996/4
+  // and https://forum.openzeppelin.com/t/example-on-how-to-use-erc20-token-in-another-contract/1682
+  // This prevents the error "Dai/insufficient-allowance"
+  // Setting an amount specifies the approval level
+  const approveManager = async (account, managerAddress, amount) => {
+    // 100 is for testing
+    const amountDai = toEther("100").toString();
+    try {
+      // send some DAI to this account first
+      await sendDai(daiWhale, account, amountDai);
+    } catch (error) {
+      console.log({ error });
+    }
+    try {
+      await daiContract.methods
+        .approve(managerAddress, amountDai)
+        .call({ from: account, gasLimit: 800000 });
+
+      // Check the approval amount
+      const daiAllowance = await daiContract.methods
+        .allowance(account.toString(), managerAddress)
+        .call({ from: account });
+
+      console.log("daiAllowance is " + daiAllowance);
+      return daiAllowance;
+    } catch (approveError) {
+      console.log({ approveError });
+      return 0;
+    }
+  };
 
   useEffect(() => {
     /**
@@ -40,8 +121,6 @@ const InvestInSyndicate = (props) => {
      */
     if (!syndicateInstance) {
       dispatch(showWalletModal());
-    } else {
-      // setSyndicateAddress(contract.address);
     }
   }, [syndicateInstance]);
 
@@ -65,8 +144,18 @@ const InvestInSyndicate = (props) => {
       // user needs to connect wallet first
       return dispatch(showWalletModal());
     }
-    console.log({ data });
+
     const { depositAmount, accredited } = data;
+
+    const approvedAllowance = await approveManager(
+      account,
+      syndicateInstance.address,
+      depositAmount
+    );
+    if (approvedAllowance === 0) {
+      // inform user that his account does not have allowance to invest.
+      return;
+    }
 
     try {
       /**
@@ -79,12 +168,17 @@ const InvestInSyndicate = (props) => {
        * allowlist before an LP can invest.
        */
 
+      // await syndicateInstance.allowAddresses(spvAddress, [account], {
+      //   from: spvAddress,
+      // });
+
       /**
        * If deposit amount exceeds the allowed investment deposit, this will fail.
        */
-      await syndicateInstance.lpInvestInSPV(
+      const amountToInvest = toEther(depositAmount);
+      await syndicateInstance.lpInvestInSyndicate(
         spvAddress,
-        depositAmount,
+        amountToInvest,
         accredited,
         { from: account, gasLimit: 800000 }
       );
@@ -144,8 +238,7 @@ const InvestInSyndicate = (props) => {
 
             <button
               className={`flex w-full items-center justify-center font-medium rounded-md text-black bg-white focus:outline-none focus:ring py-4`}
-              type="submit"
-            >
+              type="submit">
               Continue
             </button>
 
