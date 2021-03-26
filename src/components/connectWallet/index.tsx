@@ -16,7 +16,6 @@ import {
   setLibrary,
 } from "src/redux/actions/web3Provider";
 import { injected, WalletConnect } from "./connectors";
-
 /**
  * The component shows a modal with buttons to connect to different
  * wallets namely: metamask and walletConnect.
@@ -29,8 +28,11 @@ import { injected, WalletConnect } from "./connectors";
  * @param {*} props
  */
 export const ConnectWallet = (props) => {
-  const { web3, dispatch, showWalletModal } = props;
-  const { status } = web3;
+  const {
+    web3: { status },
+    dispatch,
+    showWalletModal,
+  } = props;
 
   // This handles closing the modal after user selects a provider to activate
   const closeWalletModal = () => {
@@ -87,15 +89,16 @@ export const ConnectWallet = (props) => {
       );
 
       try {
-        console.log({ contract });
         syndicateInstance = await contract.deployed();
-        console.log({ syndicateInstance });
+        return dispatch(setLibrary({ library, account, syndicateInstance }));
       } catch (error) {
         console.log({ error });
+        console.log({
+          message:
+            "web3 instance not instantiated correctly. This could be an issue with the deployed contract",
+        });
       }
     }
-
-    return dispatch(setLibrary({ library, account, syndicateInstance }));
   };
 
   useEffect(() => {
@@ -256,7 +259,7 @@ export const ConnectWallet = (props) => {
 ConnectWallet.propTypes = {
   dispatch: PropTypes.any.isRequired,
   web3: PropTypes.object.isRequired,
-  showWallet: PropTypes.bool.isRequired,
+  showWalletModal: PropTypes.bool.isRequired,
 };
 
 const mapStateToProps = ({ web3Reducer }) => {

@@ -15,11 +15,6 @@ const shuffle = (array) => {
   }
 };
 
-const getRandomStyle = () => {
-  const index = Math.floor(Math.random() * styles.length);
-  return styles[index];
-};
-
 /**
  * My Syndicates: IF their wallet (a) is leading a syndicate or
  * (b) has deposited into a syndicate, the syndicates shows up on
@@ -30,91 +25,94 @@ const getRandomStyle = () => {
  */
 const MySyndicates = (props) => {
   shuffle(styles);
-
-  // active syndicates are shown from this object
-  const activeSyndicates = [
+  const syndicates = [
     {
-      address: "0xa4d7a0C6Fa256C017f68EBFa76307dEDD69e12sa",
+      address: "0x8895BD7C5d81d48B4F4f655643cf96d3B3B26924",
       createdDate: new Date(),
       closeDate: new Date(),
       depositors: 60000,
-      deposits: 10000000,
+      deposits: 100,
       activity: "-",
       distributions: "-",
       myDeposits: 1000,
       myWithdraws: "-",
       styles: styles[0],
+      maxTotalDeposits: 100000,
+      inactive: false,
+      syndicateOpen: true,
+      distributionsEnabled: false,
     },
-    {
-      address: "0xa4d7a0C6Fa256C017f68EBFa76307dEDD69e12DE",
-      createdDate: new Date(),
-      closeDate: new Date(),
-      depositors: 60000,
-      deposits: 10000000,
-      activity: "-",
-      distributions: "-",
-      myDeposits: 1000,
-      myWithdraws: "-",
-      styles: styles[1],
-    },
-    {
-      address: "0xa4d7a0C6Fa256C017f68EBFa76307dEDD69e12Df",
-      createdDate: new Date(),
-      closeDate: new Date(),
-      depositors: 60000,
-      deposits: 10000000,
-      activity: "-",
-      distributions: "-",
-      myDeposits: 1000,
-      myWithdraws: "-",
-      styles: styles[2],
-    },
+    // {
+    //   address: "0x8895BD7C5d81d48B4F4f655643cf96d3B3B26924",
+    //   createdDate: new Date(),
+    //   closeDate: new Date(),
+    //   depositors: 60000,
+    //   deposits: 100,
+    //   activity: "-",
+    //   distributions: "-",
+    //   myDeposits: 1000,
+    //   myWithdraws: "-",
+    //   styles: styles[1],
+    //   inactive: false,
+    //   maxTotalDeposits: 100000,
+    //   syndicateOpen: true,
+    //   distributionsEnabled: false,
+    // },
+    // {
+    //   address: "0xa4d7a0C6Fa256C017f68EBFa76307dEDD69e12Df",
+    //   createdDate: new Date(),
+    //   closeDate: new Date(),
+    //   depositors: 60000,
+    //   deposits: 100,
+    //   activity: "-",
+    //   distributions: "-",
+    //   myDeposits: 1000,
+    //   myWithdraws: "-",
+    //   styles: styles[2],
+    //   maxTotalDeposits: 100000,
+    //   inactive: false,
+    //   syndicateOpen: true,
+    //   distributionsEnabled: false,
+    // },
+    // {
+    //   address: "0xa4d7a0C6Fa256C017f68EBFa76307dEDD69e12sa",
+    //   createdDate: new Date(),
+    //   closeDate: new Date(),
+    //   depositors: 60000,
+    //   deposits: 100,
+    //   activity: "-",
+    //   distributions: "-",
+    //   myDeposits: 1000,
+    //   myWithdraws: "-",
+    //   maxTotalDeposits: 100000,
+    //   inactive: true,
+    //   distributionsEnabled: false,
+    // },
+    // {
+    //   address: "0xa4d7a0C6Fa256C017f68EBFa76307dEDD69e12DE",
+    //   createdDate: new Date(),
+    //   closeDate: new Date(),
+    //   depositors: 60000,
+    //   deposits: 100,
+    //   activity: "-",
+    //   distributions: "-",
+    //   myDeposits: 1000,
+    //   maxTotalDeposits: 100000,
+    //   myWithdraws: "-",
+    //   inactive: true,
+    //   distributionsEnabled: false,
+    // },
   ];
+
+  // active syndicates are shown from this object
+  const activeSyndicates = syndicates.filter(
+    (syndicate) => syndicate.inactive === false
+  );
 
   // inactive syndicate do not have custom styling like above
-  const inActiveSyndicates = [
-    {
-      address: "0xa4d7a0C6Fa256C017f68EBFa76307dEDD69e12sa",
-      createdDate: new Date(),
-      closeDate: new Date(),
-      depositors: 60000,
-      deposits: 10000000,
-      activity: "-",
-      distributions: "-",
-      myDeposits: 1000,
-      myWithdraws: "-",
-    },
-    {
-      address: "0xa4d7a0C6Fa256C017f68EBFa76307dEDD69e12DE",
-      createdDate: new Date(),
-      closeDate: new Date(),
-      depositors: 60000,
-      deposits: 10000000,
-      activity: "-",
-      distributions: "-",
-      myDeposits: 1000,
-      myWithdraws: "-",
-    },
-  ];
-  const [provider, setProvider] = useState(null);
-  const { web3 } = props;
-
-  const { syndicateInstance } = web3;
-  useEffect(() => {
-    setProvider(syndicateInstance?.provider);
-  }, [syndicateInstance]);
-
-  useEffect(() => {
-    if (provider) {
-      try {
-        provider.getEvents().then((events) => console.log({ events }));
-
-        provider.getNetwork().then((network) => console.log(network));
-      } catch (error) {
-        console.log({ error });
-      }
-    }
-  }, [provider]);
+  const inActiveSyndicates = syndicates.filter(
+    (syndicate) => syndicate.inactive === true
+  );
 
   return (
     <div className="mt-4">

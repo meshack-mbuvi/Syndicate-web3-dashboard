@@ -1,5 +1,5 @@
 import React from "react";
-import { Header, SyndicateItem } from "../../shared";
+import SyndicateItem, { Header } from "../../shared";
 
 export const InActiveSyndicates = (props) => {
   const { syndicates } = props;

@@ -42,15 +42,24 @@ const InvestInSyndicate = (props) => {
 
   const contract = new web3.eth.Contract(Syndicate.abi, contractAddress);
   console.log(account);
-  contract.events.lpInvestedInSyndicate({}).on("data", (error, event) => {
+  contract.events.lpInvestedInSyndicate({}).on("data", (event, error) => {
     console.log({ event });
   });
+  contract.events
+    .allEvents()
+    .on("data", (event) => {
+      console.log({ event });
+    })
+    .on("error", console.error);
 
   // this should be updated after Syndicate details are retrieved
   const [sections, setSections] = useState([
     { header: "My Deposits", subText: "0" },
     { header: "My % of This Syndicate", subText: "0" },
   ]);
+
+  const events = contract.events.allEvents({ address: account },(data)=>console.log({data})); // get all events
+  console.log({ events });
 
   // This function sends DAI to an address to initialize it with
   // Based on https://github.com/ryanio/truffle-mint-dai/blob/master/test/dai.js
@@ -88,17 +97,17 @@ const InvestInSyndicate = (props) => {
   // Setting an amount specifies the approval level
   const approveManager = async (account, managerAddress, amount) => {
     // 100 is for testing
-    const amountDai = toEther("100").toString();
+    const amountDai = toEther(amount).toString();
+    // try {
+    //   // send some DAI to this account first
+    //   await sendDai(daiWhale, account, amountDai);
+    // } catch (error) {
+    //   console.log({ error });
+    // }
     try {
-      // send some DAI to this account first
-      await sendDai(daiWhale, account, amountDai);
-    } catch (error) {
-      console.log({ error });
-    }
-    try {
-      await daiContract.methods
-        .approve(managerAddress, amountDai)
-        .call({ from: account, gasLimit: 800000 });
+      // await daiContract.methods
+      //   .approve(managerAddress, amountDai)
+      //   .call({ from: account, gasLimit: 800000 });
 
       // Check the approval amount
       const daiAllowance = await daiContract.methods
@@ -176,6 +185,7 @@ const InvestInSyndicate = (props) => {
        * If deposit amount exceeds the allowed investment deposit, this will fail.
        */
       const amountToInvest = toEther(depositAmount);
+      console.log({ amountToInvest: amountToInvest.toString() });
       await syndicateInstance.lpInvestInSyndicate(
         spvAddress,
         amountToInvest,
