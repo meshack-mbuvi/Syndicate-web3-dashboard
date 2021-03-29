@@ -10,6 +10,12 @@ const Button = ({ children, link = "#", ...rest }) => (
   </button>
 );
 
+Button.propTypes = {
+  children: PropTypes.string,
+  link: PropTypes.string,
+  rest: PropTypes.any,
+};
+
 const SyndicateItem = (props) => {
   const {
     address,
@@ -175,6 +181,18 @@ const mapStateToProps = ({ web3Reducer }) => {
 };
 
 SyndicateItem.propTypes = {
+  address: PropTypes.string.isRequired,
+  createdDate: PropTypes.string,
+  closeDate: PropTypes.string,
+  depositors: PropTypes.string,
+  deposits: PropTypes.string,
+  activity: PropTypes.string,
+  distributions: PropTypes.string,
+  myDeposits: PropTypes.string,
+  myWithdraws: PropTypes.string,
+  styles: PropTypes.string,
+  inactive: PropTypes.bool.isRequired,
+  syndicateOpen: PropTypes.string,
   web3: PropTypes.any,
 };
 

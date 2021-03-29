@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from "prop-types";
 import SyndicateItem, { Header } from "../../shared";
 
 const styles = [
@@ -23,6 +24,10 @@ export const ActiveSyndicates = (props) => {
       ))}
     </div>
   );
+};
+
+ActiveSyndicates.propTypes = {
+  syndicates: PropTypes.any,
 };
 
 export default ActiveSyndicates;

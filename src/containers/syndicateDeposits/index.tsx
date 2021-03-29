@@ -15,9 +15,10 @@ const SyndicateInvestment = () => {
 
         <div className="flex w-full block my-8 justify-center m-auto p-auto">
           <p className="w-2/3 text-center flex justify-center flex-wrap	">
-            Syndicate's contract has been formally verified but is still being
-            audited. Do not deposit more than you are willing to lose during our
-            alpha test. Our audits will be complete soon.
+            Syndicate `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;` contract has been
+            formally verified but is still being audited. Do not deposit more
+            than you are willing to lose during our alpha test. Our audits will
+            be complete soon.
           </p>
         </div>
       </div>

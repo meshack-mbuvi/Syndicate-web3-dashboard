@@ -9,7 +9,6 @@ import { BadgeCard, DetailsCard } from "../shared";
 const SyndicateDetails = (props) => {
   const {
     web3: { syndicateInstance, account },
-    dispatch,
   } = props;
   const router = useRouter();
 
@@ -189,6 +188,6 @@ const mapStateToProps = ({ web3Reducer }) => {
 };
 
 SyndicateDetails.propTypes = {
-  props: PropTypes.any,
+  web3: PropTypes.any,
 };
 export default connect(mapStateToProps)(SyndicateDetails);

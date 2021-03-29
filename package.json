@@ -31,6 +31,7 @@
     "moment": "^2.29.1",
     "next": "^10.1.2",
     "os-browserify": "^0.3.0",
+    "patch-package": "^6.4.7",
     "process": "^0.11.10",
     "react": "^17.0.0",
     "react-copy-to-clipboard": "^5.0.3",

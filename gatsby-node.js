@@ -2,6 +2,20 @@ const path = require("path");
 const webpack = require("webpack");
 
 exports.onCreateWebpackConfig = ({ actions, loaders, stage }) => {
+  console.log({ stage });
+  // if (stage === "build-html") {
+  //   console.log("in if");
+  //   actions.setWebpackConfig({
+  //     module: {
+  //       rules: [
+  //         {
+  //           test: /web3-providers-ws/,
+  //           use: loaders.null(),
+  //         },
+  //       ],
+  //     },
+  //   });
+  // }
   actions.setWebpackConfig({
     resolve: {
       alias: {
@@ -21,7 +35,7 @@ exports.onCreateWebpackConfig = ({ actions, loaders, stage }) => {
       new webpack.ProvidePlugin({
         Buffer: ["buffer", "Buffer"],
         process: "process/browser",
-        btoa: "btoa/",
+        // btoa: "btoa/",
       }),
     ],
   });

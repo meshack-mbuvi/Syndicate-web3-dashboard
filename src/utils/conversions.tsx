@@ -1,5 +1,4 @@
 import { ethers } from "ethers";
-const BN = require("bn.js");
 import { BigNumber } from "bignumber.js";
 
 /**

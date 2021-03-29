@@ -10,15 +10,14 @@ import { InfoIcon } from "src/components/iconWrappers";
  * @param {*} props
  */
 export const DateInput = (props) => {
-  const { label, name, startDate, onChangeHandler, register, ...rest } = props;
+  const { label, name, startDate, onChangeHandler, register } = props;
 
   return (
     <div className="flex flex-row justify-end">
       <div className="mr-4 w-5/12 flex justify-end">
         <label
           htmlFor="syndicateAddress"
-          className="block pt-2 text-black text-sm font-medium"
-        >
+          className="block pt-2 text-black text-sm font-medium">
           {label}
         </label>
       </div>
@@ -44,4 +43,6 @@ DateInput.propTypes = {
   label: PropTypes.string.isRequired,
   name: PropTypes.string.isRequired,
   register: PropTypes.any.isRequired,
+  startDate: PropTypes.any,
+  onChangeHandler: PropTypes.func,
 };

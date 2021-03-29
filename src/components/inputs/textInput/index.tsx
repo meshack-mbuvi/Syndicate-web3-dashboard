@@ -20,8 +20,7 @@ export const TextInput = (props: {value?, label: string, name?, register?, disab
       <div className="mr-2 w-5/12 flex justify-end">
         <label
           htmlFor="syndicateAddress"
-          className="block pt-2 text-black text-sm font-medium"
-        >
+          className="block pt-2 text-black text-sm font-medium">
           {label}
         </label>
       </div>
@@ -49,4 +48,5 @@ TextInput.propTypes = {
   label: PropTypes.string.isRequired,
   name: PropTypes.string.isRequired,
   register: PropTypes.any,
+  disabled: PropTypes.bool,
 };

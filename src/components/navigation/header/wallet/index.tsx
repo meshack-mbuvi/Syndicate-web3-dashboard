@@ -82,6 +82,7 @@ const mapStateToProps = ({ web3Reducer: { web3 } }) => {
 
 Wallet.propTypes = {
   web3: PropTypes.object.isRequired,
+  dispatch: PropTypes.any,
 };
 
 export default connect(mapStateToProps)(Wallet);

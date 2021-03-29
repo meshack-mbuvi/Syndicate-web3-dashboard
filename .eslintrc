@@ -29,7 +29,6 @@
     // https://github.com/yannickcr/eslint-plugin-react#recommended
     "plugin:react/recommended",
     // https://github.com/benmosher/eslint-plugin-import
-    "plugin:import/recommended",
-    "prettier/prettier"
+    "plugin:import/recommended"
   ]
 }

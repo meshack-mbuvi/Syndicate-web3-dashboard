@@ -15,11 +15,9 @@ import { depositSchema } from "../validators";
 const Web3 = require("web3");
 
 const daiABI = require("src/utils/abi/dai");
-const erc20ABI = require("src/utils/abi/erc20");
 
 const contractAddress = process.env.GATSBY_SPV_CONTRACT_ADDRESS;
 const daiContractAddress = "0x6b175474e89094c44da98b954eedeac495271d0f";
-const daiWhale = "0xBE0eB53F46cd790Cd13851d5EFf43D12404d33E8";
 
 const InvestInSyndicate = (props) => {
   const {
@@ -42,7 +40,7 @@ const InvestInSyndicate = (props) => {
 
   const contract = new web3.eth.Contract(Syndicate.abi, contractAddress);
   console.log(account);
-  contract.events.lpInvestedInSyndicate({}).on("data", (event, error) => {
+  contract.events.lpInvestedInSyndicate({}).on("data", (event) => {
     console.log({ event });
   });
   contract.events
@@ -53,40 +51,15 @@ const InvestInSyndicate = (props) => {
     .on("error", console.error);
 
   // this should be updated after Syndicate details are retrieved
-  const [sections, setSections] = useState([
+  const [sections] = useState([
     { header: "My Deposits", subText: "0" },
     { header: "My % of This Syndicate", subText: "0" },
   ]);
 
-  const events = contract.events.allEvents({ address: account },(data)=>console.log({data})); // get all events
+  const events = contract.events.allEvents({ address: account }, (data) =>
+    console.log({ data })
+  ); // get all events
   console.log({ events });
-
-  // This function sends DAI to an address to initialize it with
-  // Based on https://github.com/ryanio/truffle-mint-dai/blob/master/test/dai.js
-  // fromAccount is the Dai address
-  const sendDai = async (fromAccount, toAccount, amount) => {
-    console.log({ toAccount, fromAccount });
-    try {
-      await daiContract.methods
-        // Ether requires a string or a BN to avoid precision issues, and .transfer also requires a string
-        .transfer(
-          "0x176890f8a0d17a82dac2cf6b4a5f2833bfdbf16f",
-          amount.toString()
-        )
-        .send({
-          from: "0xbe0eb53f46cd790cd13851d5eff43d12404d33e8",
-          gasLimit: 800000,
-        });
-      const daiBalance = await daiContract.methods.balanceOf(toAccount).call();
-      // console.log({ daiBalance });
-
-      return daiBalance;
-    } catch (error) {
-      console.log({ error });
-      const daiBalance = await daiContract.methods.balanceOf(toAccount).call();
-      console.log({ daiBalance });
-    }
-  };
 
   // Approve sending the daiBalance from the user to the manager. Note that the
   // approval goes to the contract, since that is what executes the transferFrom
@@ -98,16 +71,11 @@ const InvestInSyndicate = (props) => {
   const approveManager = async (account, managerAddress, amount) => {
     // 100 is for testing
     const amountDai = toEther(amount).toString();
-    // try {
-    //   // send some DAI to this account first
-    //   await sendDai(daiWhale, account, amountDai);
-    // } catch (error) {
-    //   console.log({ error });
-    // }
+
     try {
-      // await daiContract.methods
-      //   .approve(managerAddress, amountDai)
-      //   .call({ from: account, gasLimit: 800000 });
+      await daiContract.methods
+        .approve(managerAddress, amountDai)
+        .call({ from: account, gasLimit: 800000 });
 
       // Check the approval amount
       const daiAllowance = await daiContract.methods
@@ -133,7 +101,7 @@ const InvestInSyndicate = (props) => {
     }
   }, [syndicateInstance]);
 
-  const { register, handleSubmit, errors } = useForm({
+  const { register, handleSubmit } = useForm({
     resolver: joiResolver(depositSchema),
   });
 
@@ -176,10 +144,6 @@ const InvestInSyndicate = (props) => {
        * Addresses must be pre-approved by the manager and added to the
        * allowlist before an LP can invest.
        */
-
-      // await syndicateInstance.allowAddresses(spvAddress, [account], {
-      //   from: spvAddress,
-      // });
 
       /**
        * If deposit amount exceeds the allowed investment deposit, this will fail.
@@ -282,7 +246,8 @@ const mapStateToProps = ({ web3Reducer }) => {
 };
 
 InvestInSyndicate.propTypes = {
-  props: PropTypes.any,
+  web3: PropTypes.any,
+  dispatch: PropTypes.any,
 };
 
 export default connect(mapStateToProps)(InvestInSyndicate);

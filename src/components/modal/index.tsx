@@ -29,12 +29,10 @@ export const Modal = (props) => {
           <div className="flex items-end justify-center text-black min-h-screen sm:pt-4 sm:px-4 pb-20 text-center sm:block sm:p-0">
             <div
               className="fixed inset-0 transition-opacity"
-              aria-hidden="true"
-            >
+              aria-hidden="true">
               <div
                 className="absolute inset-0  bg-gray-9 opacity-95"
-                onClick={closeModal}
-              >
+                onClick={closeModal}>
                 {/* show syndicate icons/logos in the background */}
                 {type === "success" ? (
                   <>
@@ -78,15 +76,13 @@ export const Modal = (props) => {
               className={`inline-block align-bottom bg-white rounded-lg sm:my-28 sm:p-6 text-left overflow-hidden shadow-xl transform transition-all ${customWidth}`}
               role="dialog"
               aria-modal="true"
-              aria-labelledby="modal-headline"
-            >
+              aria-labelledby="modal-headline">
               <div className="hidden sm:block absolute p-4 top-0 right-0">
                 {/* close button at the right top of the modal */}
                 <button
                   type="button"
                   className="bg-white rounded-md text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                  onClick={closeModal}
-                >
+                  onClick={closeModal}>
                   <span className="sr-only">Close</span>
                   <svg
                     className="h-6 w-6"
@@ -94,8 +90,7 @@ export const Modal = (props) => {
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
-                    aria-hidden="true"
-                  >
+                    aria-hidden="true">
                     <path
                       strokeLinecap="round"
                       strokeLinejoin="round"
@@ -127,6 +122,8 @@ Modal.propTypes = {
   children: PropTypes.node.isRequired,
   show: PropTypes.bool.isRequired,
   closeModal: PropTypes.func.isRequired,
+  type: PropTypes.string,
+  customWidth: PropTypes.string,
 };
 
 export default Modal;

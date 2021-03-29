@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
 
@@ -15,7 +15,7 @@ import PageHeader from "src/components/pageHeader";
  * Data is pulled from the smart contract and syndicate’s wallet state.
  * @returns
  */
-const MySyndicates = (props) => {
+const MySyndicates = () => {
   const syndicates = [
     {
       address: "0x8895BD7C5d81d48B4F4f655643cf96d3B3B26924",
@@ -64,6 +64,10 @@ MySyndicates.propTypes = {
 const mapStateToProps = ({ web3Reducer }) => {
   const { web3 } = web3Reducer;
   return { web3 };
+};
+
+MySyndicates.propTypes = {
+  syndicates: PropTypes.any,
 };
 
 export default connect(mapStateToProps)(MySyndicates);

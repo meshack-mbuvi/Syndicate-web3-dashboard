@@ -27,5 +27,7 @@ export const DetailsCard = (props: {sections, title: string, customStyles}) => {
 };
 
 DetailsCard.propTypes = {
-  props: PropTypes.any,
+  sections: PropTypes.any,
+  title: PropTypes.string,
+  customStyles: PropTypes.string,
 };
