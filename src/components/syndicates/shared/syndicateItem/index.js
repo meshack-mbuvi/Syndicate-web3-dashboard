@@ -2,11 +2,11 @@ import Link from "next/link";
 import PropTypes from "prop-types";
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
-import { formatDate, toEther } from "src/utils";
+import { formatDate } from "src/utils";
 
-const Button = ({ children, ...rest }) => (
+const Button = ({ children, link = "#", ...rest }) => (
   <button {...rest}>
-    <Link to="#">{children}</Link>
+    <Link to={`/syndicate/${link}`}>{children}</Link>
   </button>
 );
 
@@ -25,6 +25,7 @@ const SyndicateItem = (props) => {
     inactive,
     syndicateOpen,
   } = props;
+  console.log({ props });
 
   const { web3 } = props;
 
@@ -74,13 +75,10 @@ const SyndicateItem = (props) => {
         address,
         account
       );
-      /**
-       * This needs a getter for total distributions per ERC20 and Syndicate
-       * on the syndicate.
-       * TODO: update this when its method getter is implemented
-       **/
-
-      const totalSyndicateDistributions = toEther("1000");
+      const totalSyndicateDistributions = await syndicateInstance.getTotalDistributions(
+        address,
+        account
+      );
 
       const lpDeposits = syndicateLPInfo[0];
       const totalSyndicateContributions = syndicateValues.totalDeposits;
@@ -122,16 +120,19 @@ const SyndicateItem = (props) => {
 
   let buttonText = "View more";
   let buttonStyles = "border";
+  let link = "details";
   if (!inactive) {
     // monitors whether syndicate is open to deposits
     if (syndicateOpen) {
       buttonText = "Deposit more";
       buttonStyles = "bg-white text-black";
+      link = "deposit";
     }
 
     if (eligibleWithdraw > 0) {
       buttonText = "Withdraws available";
       buttonStyles = "border border-blue-light";
+      link = "withdraw";
     }
   }
 
@@ -140,36 +141,27 @@ const SyndicateItem = (props) => {
       <div className="w-8">
         <p className={`h-5 w-5 rounded-full ${styles}`}></p>
       </div>
-      <span className="text-sm' mx-1 text-gray-300 w-28 text-center">
+      <span className="text-sm' mx-1 text-gray-300 w-28">
         {formattedAddress}
       </span>
-      <span className="text-sm mx-2 text-gray-300 text-center">
+      <span className="text-sm mx-2 text-gray-300">
         {formatDate(createdDate)}
       </span>
-      <span className="text-sm mx-2 text-gray-300 w-40 text-center">
+      <span className="text-sm mx-2 text-gray-300 w-40">
         open until {formatDate(closeDate)}
       </span>
-      <span className="text-sm mx-4  text-gray-300  w-20 text-center text-center">
+      <span className="text-sm mx-2  text-gray-300  w-20">
         {depositors / 1000} k
       </span>
-      <span className="text-sm mx-2 text-gray-300 w-24 text-center">
-        {deposits} DAI
-      </span>
-      <span className="text-sm mx-4 text-gray-300 w-8 text-center w-14 text-center">
-        {activity}
-      </span>
-      <span className="text-sm mx-2 text-gray-300 flex justify-center w-24 text-center">
-        {distributions}
-      </span>
-      <span className="text-sm mx-4 text-gray-300 w-18 text-center text-center w-20">
-        {myDeposits}
-      </span>
-      <span className="text-sm mx-2 text-gray-300 flex justify-center w-24 text-center">
-        {myWithdraws}
-      </span>
+      <span className="text-sm mx-2 text-gray-300 w-20">{deposits} DAI</span>
+      <span className="text-sm mx-2 text-gray-300 w-16">{activity}</span>
+      <span className="text-sm mx-2 text-gray-300 w-24">{distributions}</span>
+      <span className="text-sm mx-4 text-gray-300 w-20">{myDeposits}</span>
+      <span className="text-sm mx-2 text-gray-300 w-24">{myWithdraws}</span>
       <span>
         <Button
-          className={`text-xs mx-2 rounded-full p-2 px-3 text-center w-36 ${buttonStyles}`}>
+          className={`text-xs mx-2 rounded-full p-2 px-3 w-36 ${buttonStyles}`}
+          link={link}>
           {buttonText}
         </Button>
       </span>

@@ -106,3 +106,14 @@ input {
 .yellowish-light-blue {
   background: linear-gradient(180deg, #00c2ff 0%, #ff8a00 100%);
 }
+
+.violet-red {
+  background: linear-gradient(180deg, #ff0000 0%, #5200ff 100%);
+}
+
+.violet-yellow {
+  background: linear-gradient(180deg, #faff00 0%, #dd0eff 99.99%, #ff8a00 100%);
+}
+.tst{
+  background: linear-gradient(180deg, #FA00FF 0%, #73FF04 100%)
+}
