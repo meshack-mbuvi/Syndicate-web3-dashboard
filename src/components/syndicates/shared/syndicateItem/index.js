@@ -1,4 +1,5 @@
 import Link from "next/link";
+import PropTypes from "prop-types";
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { formatDate, toEther } from "src/utils";
@@ -20,7 +21,6 @@ const SyndicateItem = (props) => {
     distributions,
     myDeposits,
     myWithdraws,
-    maxTotalDeposits,
     styles,
     inactive,
     syndicateOpen,
@@ -176,8 +176,14 @@ const SyndicateItem = (props) => {
     </div>
   );
 };
+
 const mapStateToProps = ({ web3Reducer }) => {
   const { web3 } = web3Reducer;
   return { web3 };
 };
+
+SyndicateItem.propTypes = {
+  web3: PropTypes.any,
+};
+
 export default connect(mapStateToProps)(SyndicateItem);
