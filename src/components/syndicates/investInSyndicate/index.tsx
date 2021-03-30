@@ -28,7 +28,15 @@ const InvestInSyndicate = (props) => {
   const router = useRouter();
 
   const { allowlistEnabled } = syndicate;
-  const [submitting, setSubmitting] = useState(false);
+  const [submitting, setSubmitting] = useState<boolean>(false);
+  const [myLPDeposits, setMyLPDeposits] = useState<string>("0");
+
+  console.log({ syndicate });
+  const [mySyndicateshare, setMySyndicateShare] = useState<string>("0");
+  const sections = [
+    { header: "My Deposits", subText: myLPDeposits },
+    { header: "My % of This Syndicate", subText: mySyndicateshare },
+  ];
 
   /**
    * all syndicates are handled by the SyndicateSPV contract, so the contract
@@ -38,7 +46,6 @@ const InvestInSyndicate = (props) => {
   const { syndicateAddress } = router.query;
 
   const web3 = new Web3(Web3.givenProvider || "ws://localhost:8545");
-  // web3.eth.defaultAccount = web3.eth.accounts[0];
 
   const daiContract = new web3.eth.Contract(daiABI, daiContractAddress);
 
@@ -51,7 +58,7 @@ const InvestInSyndicate = (props) => {
   contract.events.lpInvestedInSyndicate({}).on("data", (event) => {
     console.log({ ...event });
     // retrieve details of new investment and add them to state.
-    // We might find a way to store this data on our caching server.
+    // We might need find a way to store this data on our caching server.
     if (event.returnValues) {
       const {
         amountInvested,
@@ -62,25 +69,63 @@ const InvestInSyndicate = (props) => {
       dispatch(
         addSyndicateInvestments({ amountInvested, lpAddress, syndicateAddress })
       );
+      getSyndicateLPInfo();
     }
   });
 
+  /**
+   * retrieve syndicateLPInfo to get wallet total deposits
+   */
   useEffect(() => {
     if (syndicateInstance) {
-      console.log("useeffet");
       getSyndicateLPInfo();
     }
   }, [account, syndicateInstance]);
 
+  /**
+   * whenever we get syndicate details, we neet to trigger calculation of wallet
+   * syndicate share.
+   */
+  useEffect(() => {
+    if (syndicate) {
+      calculateMyLPShare();
+    }
+  }, [syndicate]);
+
+  /**
+   * Calculates the % share of the wallet onwer(lpAddress) which is a ration of
+   * the total investments made by the wallet to the total deposits made in the
+   * syndicate. This value is then converted to %
+   * @returns
+   */
+  const calculateMyLPShare = () => {
+    if (!syndicate.totalDeposits) {
+      return;
+    }
+    const MySyndicateShare =
+      (parseInt(myLPDeposits) * 100) / syndicate.totalDeposits;
+    setMySyndicateShare(`${MySyndicateShare} %`);
+  };
+
+  /**
+   * Retrieves syndicateInfo for the connected wallet. We need to find out
+   * how much the wallet account has invested in this syndicate, and then use
+   * this date in calculateMyLPShare() above to caluclate the share of the account.
+   * @returns
+   */
   const getSyndicateLPInfo = async () => {
     if (!syndicateInstance) return;
     try {
       const syndicateLPInfo = await syndicateInstance.getSyndicateLPInfo(
-        syndicateInstance.address,
+        syndicateAddress,
         account
       );
-      const totalLPDeposits = syndicateLPInfo[0].toNumber();
-      console.log({ syndicateLPInfo, totalLPDeposits });
+      const myTotalLPDeposits = web3.utils.fromWei(
+        syndicateLPInfo[0].toString()
+      );
+      console.log({ syndicateLPInfo, myTotalLPDeposits });
+      setMyLPDeposits(`${myTotalLPDeposits} DAI`);
+      calculateMyLPShare();
     } catch (error) {
       console.log({ error });
     }
@@ -92,12 +137,6 @@ const InvestInSyndicate = (props) => {
       console.log({ event });
     })
     .on("error", console.error);
-
-  //TODO: this should be updated after Syndicate details are retrieved
-  const [sections] = useState([
-    { header: "My Deposits", subText: "0" },
-    { header: "My % of This Syndicate", subText: "0" },
-  ]);
 
   // Approve sending the daiBalance from the user to the manager. Note that the
   // approval goes to the contract, since that is what executes the transferFrom
@@ -292,7 +331,6 @@ const InvestInSyndicate = (props) => {
 
 const mapStateToProps = ({ web3Reducer, syndicateInvestmentsReducer }) => {
   const { web3 } = web3Reducer;
-  console.log({ syndicateInvestmentsReducer });
   return { web3 };
 };
 
