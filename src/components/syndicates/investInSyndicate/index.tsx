@@ -23,18 +23,21 @@ const InvestInSyndicate = (props) => {
   const {
     web3: { syndicateInstance, account },
     dispatch,
+    syndicate,
   } = props;
   const router = useRouter();
+
+  const { allowlistEnabled } = syndicate;
 
   /**
    * all syndicates are handled by the SyndicateSPV contract, so the contract
    * address is the same for all of them while the spvAddress that is passed
    * into the contract is different
    */
-  const { spvAddress } = router.query;
+  const { syndicateAddress } = router.query;
 
   const web3 = new Web3(Web3.givenProvider || "ws://localhost:8545");
-  web3.eth.defaultAccount = web3.eth.accounts[0];
+  // web3.eth.defaultAccount = web3.eth.accounts[0];
 
   const daiContract = new web3.eth.Contract(daiABI, daiContractAddress);
 
@@ -50,7 +53,7 @@ const InvestInSyndicate = (props) => {
     })
     .on("error", console.error);
 
-  // this should be updated after Syndicate details are retrieved
+  //TODO: this should be updated after Syndicate details are retrieved
   const [sections] = useState([
     { header: "My Deposits", subText: "0" },
     { header: "My % of This Syndicate", subText: "0" },
@@ -59,7 +62,7 @@ const InvestInSyndicate = (props) => {
   const events = contract.events.allEvents({ address: account }, (data) =>
     console.log({ data })
   ); // get all events
-  console.log({ events });
+  console.log({ events: events.logs });
 
   // Approve sending the daiBalance from the user to the manager. Note that the
   // approval goes to the contract, since that is what executes the transferFrom
@@ -69,7 +72,6 @@ const InvestInSyndicate = (props) => {
   // This prevents the error "Dai/insufficient-allowance"
   // Setting an amount specifies the approval level
   const approveManager = async (account, managerAddress, amount) => {
-    // 100 is for testing
     const amountDai = toEther(amount).toString();
 
     try {
@@ -82,6 +84,7 @@ const InvestInSyndicate = (props) => {
         .allowance(account.toString(), managerAddress)
         .call({ from: account });
 
+      // Testing; should be removed
       console.log("daiAllowance is " + daiAllowance);
       return daiAllowance;
     } catch (approveError) {
@@ -149,9 +152,9 @@ const InvestInSyndicate = (props) => {
        * If deposit amount exceeds the allowed investment deposit, this will fail.
        */
       const amountToInvest = toEther(depositAmount);
-      console.log({ amountToInvest: amountToInvest.toString() });
+      // console.log({ amountToInvest: amountToInvest.toString() });
       await syndicateInstance.lpInvestInSyndicate(
-        spvAddress,
+        syndicateAddress,
         amountToInvest,
         accredited,
         { from: account, gasLimit: 800000 }
@@ -170,7 +173,9 @@ const InvestInSyndicate = (props) => {
         <div className="px-2">
           {/* show this text if whitelist is enabled */}
           <p className="ml-4 py-4 text-green-screamin">
-            Whitelist enabled: You’re pre-approved
+            {allowlistEnabled
+              ? "Whitelist enabled: You’re pre-approved"
+              : "Whitelist disabled: You will need to be approved"}
           </p>
 
           <form onSubmit={handleSubmit(onSubmit)}>
@@ -248,6 +253,7 @@ const mapStateToProps = ({ web3Reducer }) => {
 InvestInSyndicate.propTypes = {
   web3: PropTypes.any,
   dispatch: PropTypes.any,
+  syndicate: PropTypes.object,
 };
 
 export default connect(mapStateToProps)(InvestInSyndicate);

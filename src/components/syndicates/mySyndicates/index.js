@@ -47,12 +47,21 @@ const MySyndicates = () => {
   return (
     <div className="mt-4">
       {/* show active syndicates here */}
-      <ActiveSyndicates syndicates={activeSyndicates} />
+      {activeSyndicates.length ? (
+        <ActiveSyndicates syndicates={activeSyndicates} />
+      ) : (
+        ""
+      )}
+
       {/* show inactive syndicates here */}
-      <div className="mt-8">
-        <PageHeader>Inactive</PageHeader>
-        <InActiveSyndicates syndicates={inActiveSyndicates} />
-      </div>
+      {inActiveSyndicates.length ? (
+        <div className="mt-8">
+          <PageHeader>Inactive</PageHeader>
+          <InActiveSyndicates syndicates={inActiveSyndicates} />
+        </div>
+      ) : (
+        ""
+      )}
     </div>
   );
 };

@@ -12,7 +12,7 @@ const SyndicateDetails = (props) => {
   } = props;
   const router = useRouter();
 
-  const [syndicateSPV, setSyndicateSPV] = useState({
+  const [syndicate, setSyndicate] = useState({
     maxDeposit: 0,
     profitShareToSyndicateProtocol: 0.3,
     openToDeposits: false,
@@ -22,27 +22,27 @@ const SyndicateDetails = (props) => {
     createdDate: "",
   });
 
-  const [detailSections, setSections] = useState([
-    { header: "Created on", subText: syndicateSPV.createdDate },
-    { header: "Close Date", subText: syndicateSPV.closeDate },
+  const details = [
+    { header: "Created on", subText: syndicate.createdDate },
+    { header: "Close Date", subText: syndicate.closeDate },
     { header: "Deposit/Distribution Token", subText: "USDC / USDC" },
     {
       header: "Profit Share to Syndicate Leads",
-      subText: syndicateSPV.profitShareToSyndicateProtocol,
+      subText: syndicate.profitShareToSyndicateProtocol,
     },
     {
       header: "Profit Share to Protocol",
-      subText: syndicateSPV.profitShareToSyndicateProtocol,
+      subText: syndicate.profitShareToSyndicateProtocol,
     },
-  ]);
+  ];
 
-  const { spvAddress } = router.query;
+  const { syndicateAddress } = router.query;
 
   useEffect(() => {
     if (syndicateInstance) {
       try {
         syndicateInstance
-          .getSyndicateValues(spvAddress)
+          .getSyndicateValues(syndicateAddress)
           .then((data) => {
             console.log({
               data,
@@ -78,22 +78,7 @@ const SyndicateDetails = (props) => {
               createdDate: "",
             };
 
-            setSyndicateSPV(syndicateDetails);
-
-            // update detail sections
-            setSections([
-              { header: "Created on", subText: createdDate },
-              { header: "Close Date", subText: closeDate },
-              { header: "Deposit/Distribution Token", subText: "USDC / USDC" },
-              {
-                header: "Profit Share to Syndicate Leads",
-                subText: `${profitShareToSyndicateProtocol} %`,
-              },
-              {
-                header: "Profit Share to Protocol",
-                subText: `${profitShareToSyndicateProtocol} %`,
-              },
-            ]);
+            setSyndicate(syndicateDetails);
           })
           .catch((err) => console.log({ err }));
       } catch (err) {
@@ -102,7 +87,7 @@ const SyndicateDetails = (props) => {
     }
   }, [syndicateInstance, account]);
 
-  const { openToDeposits } = syndicateSPV;
+  const { openToDeposits } = syndicate;
 
   return (
     <div className="w-full sm:w-2/3 h-fit-content px-2 md:px-0 rounded-md bg-gray-9">
@@ -111,10 +96,10 @@ const SyndicateDetails = (props) => {
           Syndicate
         </span>
         <p className="sm:text-2xl flex text-lg flex-wrap px-2 break-all">
-          {spvAddress}
+          {syndicateAddress}
         </p>
         <a
-          href={`https://etherscan.io/address/${spvAddress}`}
+          href={`https://etherscan.io/address/${syndicateAddress}`}
           target="_blank"
           className="text-blue-cyan px-2 flex">
           view on etherscan <ExternalLinkIcon className="ml-2" />
@@ -161,7 +146,7 @@ const SyndicateDetails = (props) => {
       {/* Syndicate details 
       This component should be shown when we have details about user deposits */}
       <DetailsCard
-        {...{ title: "Details", sections: detailSections }}
+        {...{ title: "Details", sections: details }}
         customStyles={"p-4 sm:w-2/3 sm:ml-12 py-4 border-b border-gray-49"}
       />
 
@@ -172,7 +157,7 @@ const SyndicateDetails = (props) => {
           sections: [
             {
               header: "Total Deposits",
-              subText: syndicateSPV.totalDeposits,
+              subText: syndicate?.totalDeposits,
             },
           ],
         }}
@@ -189,5 +174,6 @@ const mapStateToProps = ({ web3Reducer }) => {
 
 SyndicateDetails.propTypes = {
   web3: PropTypes.any,
+  syndicate: PropTypes.object,
 };
 export default connect(mapStateToProps)(SyndicateDetails);
