@@ -6,4 +6,5 @@ export const initialState = {
   },
   loading: false,
   showWalletModal: false,
+  syndicateInvestments:[],
 };

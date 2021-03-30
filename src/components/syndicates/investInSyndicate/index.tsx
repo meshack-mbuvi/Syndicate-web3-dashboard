@@ -28,6 +28,7 @@ const InvestInSyndicate = (props) => {
   const router = useRouter();
 
   const { allowlistEnabled } = syndicate;
+  const [submitting, setSubmitting] = useState(false);
 
   /**
    * all syndicates are handled by the SyndicateSPV contract, so the contract
@@ -42,10 +43,49 @@ const InvestInSyndicate = (props) => {
   const daiContract = new web3.eth.Contract(daiABI, daiContractAddress);
 
   const contract = new web3.eth.Contract(Syndicate.abi, contractAddress);
-  console.log(account);
+
+  /**
+   * when an investment is made, this event will be fired. We process the data
+   * and send it to the application state
+   */
   contract.events.lpInvestedInSyndicate({}).on("data", (event) => {
-    console.log({ event });
+    console.log({ ...event });
+    // retrieve details of new investment and add them to state.
+    // We might find a way to store this data on our caching server.
+    if (event.returnValues) {
+      const {
+        amountInvested,
+        lpAddress,
+        syndicateAddress,
+      } = event.returnValues;
+
+      dispatch(
+        addSyndicateInvestments({ amountInvested, lpAddress, syndicateAddress })
+      );
+    }
   });
+
+  useEffect(() => {
+    if (syndicateInstance) {
+      console.log("useeffet");
+      getSyndicateLPInfo();
+    }
+  }, [account, syndicateInstance]);
+
+  const getSyndicateLPInfo = async () => {
+    if (!syndicateInstance) return;
+    try {
+      const syndicateLPInfo = await syndicateInstance.getSyndicateLPInfo(
+        syndicateInstance.address,
+        account
+      );
+      const totalLPDeposits = syndicateLPInfo[0].toNumber();
+      console.log({ syndicateLPInfo, totalLPDeposits });
+    } catch (error) {
+      console.log({ error });
+    }
+  };
+
   contract.events
     .allEvents()
     .on("data", (event) => {
@@ -58,11 +98,6 @@ const InvestInSyndicate = (props) => {
     { header: "My Deposits", subText: "0" },
     { header: "My % of This Syndicate", subText: "0" },
   ]);
-
-  const events = contract.events.allEvents({ address: account }, (data) =>
-    console.log({ data })
-  ); // get all events
-  console.log({ events: events.logs });
 
   // Approve sending the daiBalance from the user to the manager. Note that the
   // approval goes to the contract, since that is what executes the transferFrom
@@ -124,6 +159,7 @@ const InvestInSyndicate = (props) => {
       // user needs to connect wallet first
       return dispatch(showWalletModal());
     }
+    setSubmitting(true);
 
     const { depositAmount, accredited } = data;
 
@@ -134,6 +170,8 @@ const InvestInSyndicate = (props) => {
     );
     if (approvedAllowance === 0) {
       // inform user that his account does not have allowance to invest.
+      setSubmitting(false);
+
       return;
     }
 
@@ -152,16 +190,17 @@ const InvestInSyndicate = (props) => {
        * If deposit amount exceeds the allowed investment deposit, this will fail.
        */
       const amountToInvest = toEther(depositAmount);
-      // console.log({ amountToInvest: amountToInvest.toString() });
       await syndicateInstance.lpInvestInSyndicate(
         syndicateAddress,
         amountToInvest,
         accredited,
         { from: account, gasLimit: 800000 }
       );
+      setSubmitting(false);
     } catch (error) {
       // show error message for failed investment
       console.log({ error });
+      setSubmitting(false);
     }
   };
 
@@ -215,11 +254,17 @@ const InvestInSyndicate = (props) => {
               confirm receipt and withdraw timing.
             </p>
 
-            <button
-              className={`flex w-full items-center justify-center font-medium rounded-md text-black bg-white focus:outline-none focus:ring py-4`}
-              type="submit">
-              Continue
-            </button>
+            {/* when form submittion is triggered, we show loader, otherwise
+             we show submit button */}
+            {submitting ? (
+              <div className="loader ease-linear rounded-full border-8 border-t-8 border-white h-4 w-4"></div>
+            ) : (
+              <button
+                className={`flex w-full items-center justify-center font-medium rounded-md text-black bg-white focus:outline-none focus:ring py-4`}
+                type="submit">
+                Continue
+              </button>
+            )}
 
             <div className="flex justify-center">
               <div className="w-2/3 text-sm my-5 text-gray-dim justify-self-center text-center">
@@ -245,8 +290,9 @@ const InvestInSyndicate = (props) => {
   );
 };
 
-const mapStateToProps = ({ web3Reducer }) => {
+const mapStateToProps = ({ web3Reducer, syndicateInvestmentsReducer }) => {
   const { web3 } = web3Reducer;
+  console.log({ syndicateInvestmentsReducer });
   return { web3 };
 };
 

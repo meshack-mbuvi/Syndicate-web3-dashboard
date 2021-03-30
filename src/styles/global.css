@@ -114,6 +114,34 @@ input {
 .violet-yellow {
   background: linear-gradient(180deg, #faff00 0%, #dd0eff 99.99%, #ff8a00 100%);
 }
-.tst{
-  background: linear-gradient(180deg, #FA00FF 0%, #73FF04 100%)
+.tst {
+  background: linear-gradient(180deg, #fa00ff 0%, #73ff04 100%);
+}
+
+/* circula loader */
+
+.loader {
+  border-top-color: #3498db;
+  -webkit-animation: spinner 1.5s linear infinite;
+  animation: spinner 1.5s linear infinite;
+  width: 35px !important;
+  height: 35px !important;
+}
+
+@-webkit-keyframes spinner {
+  0% {
+    -webkit-transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
+  }
+}
+
+@keyframes spinner {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }

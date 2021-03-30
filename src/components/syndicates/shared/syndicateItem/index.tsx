@@ -6,7 +6,7 @@ import { formatDate } from "src/utils";
 
 const Button = ({ children, link = "#", ...rest }) => (
   <button {...rest}>
-    <Link to={`/syndicate/${link}`}>{children}</Link>
+    <Link href={`/syndicate/${link}`}>{children}</Link>
   </button>
 );
 

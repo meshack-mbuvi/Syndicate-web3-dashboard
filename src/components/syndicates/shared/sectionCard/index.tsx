@@ -26,5 +26,5 @@ export const SectionCard = (props) => {
 
 SectionCard.propTypes = {
   header: PropTypes.string.isRequired,
-  subText: PropTypes.string.isRequired,
+  subText: PropTypes.any.isRequired,
 };
