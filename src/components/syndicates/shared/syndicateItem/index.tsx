@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { formatDate } from "src/utils";
+import Web3 from "web3";
 
 const Button = ({ children, link = "#", ...rest }) => (
   <button {...rest}>
@@ -23,21 +24,22 @@ const SyndicateItem = (props) => {
     closeDate,
     depositors,
     deposits,
-    activity,
-    distributions,
-    myDeposits,
-    myWithdraws,
+    activity = "-",
+    distributions = "-",
+    myWithdraws = "-",
     styles,
     inactive,
     syndicateOpen,
   } = props;
-  console.log({ props });
 
-  const { web3 } = props;
+  const {
+    web3: { syndicateInstance, account },
+  } = props;
 
-  const { syndicateInstance, account } = web3;
+  const web3 = new Web3(Web3.givenProvider || "ws://localhost:8545");
 
-  const [eligibleWithdraw, setEligibleWithdraw] = useState(0);
+  const [eligibleWithdraw, setEligibleWithdraw] = useState<any>(0);
+  const [lpDeposits, setLpDeposits] = useState<string>("0");
 
   const formattedAddress = `${address.slice(0, 5)}...${address.slice(
     address.length - 4,
@@ -49,7 +51,6 @@ const SyndicateItem = (props) => {
   useEffect(() => {
     calculateEligibleWithdrawal()
       .then((data) => {
-        console.log({ data });
         setEligibleWithdraw(data);
         // we need to update syndicate data here or set loading to false for this syndicate
       })
@@ -72,6 +73,9 @@ const SyndicateItem = (props) => {
     // we need these to be able to access the syndicate contract
     if (!syndicateInstance || !account) return;
 
+    // this happens for the case where the wallet owner is the one leading the syndicate
+    if (address === account) return;
+
     //
     try {
       const syndicateValues = await syndicateInstance.getSyndicateValues(
@@ -81,18 +85,21 @@ const SyndicateItem = (props) => {
         address,
         account
       );
-      const totalSyndicateDistributions = await syndicateInstance.getTotalDistributions(
-        address,
-        account
+      const totalSyndicateDistributions = web3.utils.fromWei(
+        await syndicateInstance.getTotalDistributions(address, account)
       );
 
       const lpDeposits = syndicateLPInfo[0];
-      const totalSyndicateContributions = syndicateValues.totalDeposits;
+      const totalSyndicateContributions = web3.utils.fromWei(
+        syndicateValues.totalDeposits
+      );
       const lpClaimedPrimaryDistributions = syndicateLPInfo[1];
+
+      setLpDeposits(web3.utils.fromWei(lpDeposits));
 
       // no need to calculate eligible when totalSyndicateDistributions === 0
       // Therefore wallet account can withdraw 0 tokens
-      if (totalSyndicateDistributions.toNumber() === 0) return 0;
+      if (totalSyndicateDistributions === "0") return 0;
 
       // send request to calculate eligibleWithdraw
       const eligibleWithdrawal = await syndicateInstance.calculateEligibleWithdrawal(
@@ -102,7 +109,7 @@ const SyndicateItem = (props) => {
         totalSyndicateDistributions
       );
 
-      return eligibleWithdrawal.toNumber();
+      return web3.utils.fromWei(eligibleWithdrawal);
     } catch (error) {
       console.log({ error }, "getting syndicate data");
       throw error;
@@ -127,7 +134,10 @@ const SyndicateItem = (props) => {
   let buttonText = "View more";
   let buttonStyles = "border";
   let link = "details";
-  if (!inactive) {
+
+  // check that wallet owner is not the creater of the syndicate
+
+  if (!inactive && address !== account) {
     // monitors whether syndicate is open to deposits
     if (syndicateOpen) {
       buttonText = "Deposit more";
@@ -150,19 +160,20 @@ const SyndicateItem = (props) => {
       <span className="text-sm' mx-1 text-gray-300 w-28">
         {formattedAddress}
       </span>
-      <span className="text-sm mx-2 text-gray-300">
-        {formatDate(createdDate)}
-      </span>
+      <span className="text-sm mx-2 text-gray-300">{createdDate}</span>
       <span className="text-sm mx-2 text-gray-300 w-40">
         open until {formatDate(closeDate)}
       </span>
       <span className="text-sm mx-2  text-gray-300  w-20">
-        {depositors / 1000} k
+        {depositors ? `${depositors / 1000} k` : "-"}
       </span>
-      <span className="text-sm mx-2 text-gray-300 w-20">{deposits} DAI</span>
+      <span className="text-sm mx-2 text-gray-300 w-20">
+        {" "}
+        {deposits ? `${deposits / 1000} DAI` : "-"}
+      </span>
       <span className="text-sm mx-2 text-gray-300 w-16">{activity}</span>
       <span className="text-sm mx-2 text-gray-300 w-24">{distributions}</span>
-      <span className="text-sm mx-4 text-gray-300 w-20">{myDeposits}</span>
+      <span className="text-sm mx-4 text-gray-300 w-20">{lpDeposits}</span>
       <span className="text-sm mx-2 text-gray-300 w-24">{myWithdraws}</span>
       <span>
         <Button
@@ -188,7 +199,6 @@ SyndicateItem.propTypes = {
   deposits: PropTypes.string,
   activity: PropTypes.string,
   distributions: PropTypes.string,
-  myDeposits: PropTypes.string,
   myWithdraws: PropTypes.string,
   styles: PropTypes.string,
   inactive: PropTypes.bool.isRequired,

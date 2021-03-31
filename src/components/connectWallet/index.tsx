@@ -15,7 +15,14 @@ import {
   setDisConnected,
   setLibrary,
 } from "src/redux/actions/web3Provider";
+import Web3 from "web3";
 import { injected, WalletConnect } from "./connectors";
+
+const contractAddress = process.env.GATSBY_SPV_CONTRACT_ADDRESS;
+
+const daiABI = require("src/utils/abi/dai");
+const daiContractAddress = "0x6b175474e89094c44da98b954eedeac495271d0f";
+
 /**
  * The component shows a modal with buttons to connect to different
  * wallets namely: metamask and walletConnect.
@@ -83,14 +90,36 @@ export const ConnectWallet = (props) => {
        * get address from truffle =>0x15333C7B5eddB2c08A0931645C591a575eDeAde7
        */
       const contract = await new Contract(
-        process.env.GATSBY_SPV_CONTRACT_ADDRESS,
+        contractAddress,
         Syndicate.abi,
         library.getSigner()
       );
 
+      /**
+       * set up web3 event listener here
+       * we can use to get access to all events emitted by the contract
+       *
+       */
+      const web3 = new Web3(Web3.givenProvider || "ws://localhost:8545");
+      const web3contractInstance = new web3.eth.Contract(
+        Syndicate.abi,
+        contractAddress
+      );
+
+      // set up DAI contract
+      const daiContract = new web3.eth.Contract(daiABI, daiContractAddress);
+
       try {
         syndicateInstance = await contract.deployed();
-        return dispatch(setLibrary({ library, account, syndicateInstance }));
+        return dispatch(
+          setLibrary({
+            library,
+            account,
+            syndicateInstance,
+            web3contractInstance,
+            daiContract,
+          })
+        );
       } catch (error) {
         console.log({ error });
         console.log({

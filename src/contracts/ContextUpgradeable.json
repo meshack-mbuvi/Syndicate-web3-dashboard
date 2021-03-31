@@ -14,9 +14,15 @@
   "ast": {
     "absolutePath": "@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol",
     "exportedSymbols": {
-      "AddressUpgradeable": [3541],
-      "ContextUpgradeable": [3586],
-      "Initializable": [3219]
+      "AddressUpgradeable": [
+        3541
+      ],
+      "ContextUpgradeable": [
+        3586
+      ],
+      "Initializable": [
+        3219
+      ]
     },
     "id": 3587,
     "license": "MIT",
@@ -24,7 +30,15 @@
     "nodes": [
       {
         "id": 3543,
-        "literals": ["solidity", ">=", "0.6", ".0", "<", "0.8", ".0"],
+        "literals": [
+          "solidity",
+          ">=",
+          "0.6",
+          ".0",
+          "<",
+          "0.8",
+          ".0"
+        ],
         "nodeType": "PragmaDirective",
         "src": "33:31:7"
       },
@@ -59,11 +73,16 @@
             "src": "643:13:7"
           }
         ],
-        "contractDependencies": [3219],
+        "contractDependencies": [
+          3219
+        ],
         "contractKind": "contract",
         "fullyImplemented": true,
         "id": 3586,
-        "linearizedBaseContracts": [3586, 3219],
+        "linearizedBaseContracts": [
+          3586,
+          3219
+        ],
         "name": "ContextUpgradeable",
         "nodeType": "ContractDefinition",
         "nodes": [
@@ -463,16 +482,30 @@
     "attributes": {
       "absolutePath": "@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol",
       "exportedSymbols": {
-        "AddressUpgradeable": [3541],
-        "ContextUpgradeable": [3586],
-        "Initializable": [3219]
+        "AddressUpgradeable": [
+          3541
+        ],
+        "ContextUpgradeable": [
+          3586
+        ],
+        "Initializable": [
+          3219
+        ]
       },
       "license": "MIT"
     },
     "children": [
       {
         "attributes": {
-          "literals": ["solidity", ">=", "0.6", ".0", "<", "0.8", ".0"]
+          "literals": [
+            "solidity",
+            ">=",
+            "0.6",
+            ".0",
+            "<",
+            "0.8",
+            ".0"
+          ]
         },
         "id": 3543,
         "name": "PragmaDirective",
@@ -484,7 +517,9 @@
           "absolutePath": "@openzeppelin/contracts-upgradeable/proxy/Initializable.sol",
           "file": "../proxy/Initializable.sol",
           "scope": 3587,
-          "symbolAliases": [null],
+          "symbolAliases": [
+            null
+          ],
           "unitAlias": ""
         },
         "id": 3544,
@@ -494,10 +529,15 @@
       {
         "attributes": {
           "abstract": true,
-          "contractDependencies": [3219],
+          "contractDependencies": [
+            3219
+          ],
           "contractKind": "contract",
           "fullyImplemented": true,
-          "linearizedBaseContracts": [3586, 3219],
+          "linearizedBaseContracts": [
+            3586,
+            3219
+          ],
           "name": "ContextUpgradeable",
           "scope": 3587
         },
@@ -534,7 +574,9 @@
             "children": [
               {
                 "attributes": {
-                  "parameters": [null]
+                  "parameters": [
+                    null
+                  ]
                 },
                 "children": [],
                 "id": 3547,
@@ -543,7 +585,9 @@
               },
               {
                 "attributes": {
-                  "parameters": [null]
+                  "parameters": [
+                    null
+                  ]
                 },
                 "children": [],
                 "id": 3550,
@@ -555,7 +599,9 @@
                 "children": [
                   {
                     "attributes": {
-                      "overloadedDeclarations": [null],
+                      "overloadedDeclarations": [
+                        null
+                      ],
                       "referencedDeclaration": 3202,
                       "type": "modifier ()",
                       "value": "initializer"
@@ -575,13 +621,17 @@
                     "children": [
                       {
                         "attributes": {
-                          "arguments": [null],
+                          "arguments": [
+                            null
+                          ],
                           "isConstant": false,
                           "isLValue": false,
                           "isPure": false,
                           "isStructConstructorCall": false,
                           "lValueRequested": false,
-                          "names": [null],
+                          "names": [
+                            null
+                          ],
                           "tryCall": false,
                           "type": "tuple()",
                           "type_conversion": false
@@ -589,8 +639,12 @@
                         "children": [
                           {
                             "attributes": {
-                              "argumentTypes": [null],
-                              "overloadedDeclarations": [null],
+                              "argumentTypes": [
+                                null
+                              ],
+                              "overloadedDeclarations": [
+                                null
+                              ],
                               "referencedDeclaration": 3561,
                               "type": "function ()",
                               "value": "__Context_init_unchained"
@@ -633,7 +687,9 @@
             "children": [
               {
                 "attributes": {
-                  "parameters": [null]
+                  "parameters": [
+                    null
+                  ]
                 },
                 "children": [],
                 "id": 3556,
@@ -642,7 +698,9 @@
               },
               {
                 "attributes": {
-                  "parameters": [null]
+                  "parameters": [
+                    null
+                  ]
                 },
                 "children": [],
                 "id": 3559,
@@ -654,7 +712,9 @@
                 "children": [
                   {
                     "attributes": {
-                      "overloadedDeclarations": [null],
+                      "overloadedDeclarations": [
+                        null
+                      ],
                       "referencedDeclaration": 3202,
                       "type": "modifier ()",
                       "value": "initializer"
@@ -670,7 +730,9 @@
               },
               {
                 "attributes": {
-                  "statements": [null]
+                  "statements": [
+                    null
+                  ]
                 },
                 "children": [],
                 "id": 3560,
@@ -687,7 +749,9 @@
               "implemented": true,
               "isConstructor": false,
               "kind": "function",
-              "modifiers": [null],
+              "modifiers": [
+                null
+              ],
               "name": "_msgSender",
               "scope": 3586,
               "stateMutability": "view",
@@ -697,7 +761,9 @@
             "children": [
               {
                 "attributes": {
-                  "parameters": [null]
+                  "parameters": [
+                    null
+                  ]
                 },
                 "children": [],
                 "id": 3562,
@@ -757,7 +823,9 @@
                         "children": [
                           {
                             "attributes": {
-                              "overloadedDeclarations": [null],
+                              "overloadedDeclarations": [
+                                null
+                              ],
                               "referencedDeclaration": 4294967281,
                               "type": "msg",
                               "value": "msg"
@@ -791,7 +859,9 @@
               "implemented": true,
               "isConstructor": false,
               "kind": "function",
-              "modifiers": [null],
+              "modifiers": [
+                null
+              ],
               "name": "_msgData",
               "scope": 3586,
               "stateMutability": "view",
@@ -801,7 +871,9 @@
             "children": [
               {
                 "attributes": {
-                  "parameters": [null]
+                  "parameters": [
+                    null
+                  ]
                 },
                 "children": [],
                 "id": 3571,
@@ -847,7 +919,9 @@
                     "children": [
                       {
                         "attributes": {
-                          "overloadedDeclarations": [null],
+                          "overloadedDeclarations": [
+                            null
+                          ],
                           "referencedDeclaration": 4294967268,
                           "type": "contract ContextUpgradeable",
                           "value": "this"
@@ -878,7 +952,9 @@
                         "children": [
                           {
                             "attributes": {
-                              "overloadedDeclarations": [null],
+                              "overloadedDeclarations": [
+                                null
+                              ],
                               "referencedDeclaration": 4294967281,
                               "type": "msg",
                               "value": "msg"

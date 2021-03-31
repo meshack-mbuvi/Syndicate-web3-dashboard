@@ -4,7 +4,6 @@ import PropTypes from "prop-types";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { connect } from "react-redux";
-import Syndicate from "src/contracts/Syndicate.json";
 // action to initiate wallet connect
 import { showWalletModal } from "src/redux/actions/web3Provider";
 // utils
@@ -21,7 +20,7 @@ const daiContractAddress = "0x6b175474e89094c44da98b954eedeac495271d0f";
 
 const InvestInSyndicate = (props) => {
   const {
-    web3: { syndicateInstance, account },
+    web3: { syndicateInstance, account, daiContract },
     dispatch,
     syndicate,
   } = props;
@@ -46,32 +45,6 @@ const InvestInSyndicate = (props) => {
   const { syndicateAddress } = router.query;
 
   const web3 = new Web3(Web3.givenProvider || "ws://localhost:8545");
-
-  const daiContract = new web3.eth.Contract(daiABI, daiContractAddress);
-
-  const contract = new web3.eth.Contract(Syndicate.abi, contractAddress);
-
-  /**
-   * when an investment is made, this event will be fired. We process the data
-   * and send it to the application state
-   */
-  contract.events.lpInvestedInSyndicate({}).on("data", (event) => {
-    console.log({ ...event });
-    // retrieve details of new investment and add them to state.
-    // We might need find a way to store this data on our caching server.
-    if (event.returnValues) {
-      const {
-        amountInvested,
-        lpAddress,
-        syndicateAddress,
-      } = event.returnValues;
-
-      dispatch(
-        addSyndicateInvestments({ amountInvested, lpAddress, syndicateAddress })
-      );
-      getSyndicateLPInfo();
-    }
-  });
 
   /**
    * retrieve syndicateLPInfo to get wallet total deposits
@@ -99,9 +72,10 @@ const InvestInSyndicate = (props) => {
    * @returns
    */
   const calculateMyLPShare = () => {
-    if (!syndicate.totalDeposits) {
+    if (syndicate === null) {
       return;
     }
+    console.log({ myLPDeposits });
     const MySyndicateShare =
       (parseInt(myLPDeposits) * 100) / syndicate.totalDeposits;
     setMySyndicateShare(`${MySyndicateShare} %`);
@@ -130,13 +104,6 @@ const InvestInSyndicate = (props) => {
       console.log({ error });
     }
   };
-
-  contract.events
-    .allEvents()
-    .on("data", (event) => {
-      console.log({ event });
-    })
-    .on("error", console.error);
 
   // Approve sending the daiBalance from the user to the manager. Note that the
   // approval goes to the contract, since that is what executes the transferFrom
@@ -246,74 +213,84 @@ const InvestInSyndicate = (props) => {
   return (
     <div className="w-full sm:w-1/2 mt-4 sm:mt-0">
       <div className="h-fit-content rounded-t-md mx-2 lg:p-6 bg-gray-9 sm:ml-6 border border-b-0 border-gray-49">
-        <p className="fold-bold text-xl p-4">Deposit Into Syndicate</p>
-
-        <div className="px-2">
-          {/* show this text if whitelist is enabled */}
-          <p className="ml-4 py-4 text-green-screamin">
-            {allowlistEnabled
-              ? "Whitelist enabled: You’re pre-approved"
-              : "Whitelist disabled: You will need to be approved"}
-          </p>
-
-          <form onSubmit={handleSubmit(onSubmit)}>
-            <div className="flex justify-between my-1">
-              <input
-                name="depositAmount"
-                type="text"
-                placeholder="400"
-                ref={register}
-                className="rounded-md bg-gray-9 border border-gray-24 text-white focus:outline-none focus:ring-gray-24 focus:border-gray-24 font-ibm"
-              />
-
-              {/* In the new design, this would be a drop down from which
-               a user selects currency */}
-              <p className="flex justify-between pt-2">
-                <span className="mx-2">
-                  <img src="/images/usdcIcon.svg" />
-                </span>
-                USDC
+        {syndicate !== null ? (
+          <>
+            <p className="fold-bold text-xl p-4">Deposit Into Syndicate</p>
+            <div className="px-2">
+              {/* show this text if whitelist is enabled */}
+              <p className="ml-4 py-4 text-green-screamin">
+                {syndicate?.allowlistEnabled
+                  ? "Whitelist enabled: You’re pre-approved"
+                  : "Whitelist disabled: You will need to be approved"}
               </p>
-            </div>
 
-            {/* checkbox for user to confirm they are accredited investor */}
-            <div className="flex mt-4">
-              <input
-                type="checkbox"
-                name="accredited"
-                ref={register}
-                className="mt-1 rounded-md focus:ring-0"
-              />
-              <span className="ml-4">I’m an accredited investor</span>
-            </div>
+              <form onSubmit={handleSubmit(onSubmit)}>
+                <div className="flex justify-between my-1">
+                  <input
+                    name="depositAmount"
+                    type="text"
+                    placeholder="400"
+                    ref={register}
+                    className="rounded-md bg-gray-9 border border-gray-24 text-white focus:outline-none focus:ring-gray-24 focus:border-gray-24 font-ibm"
+                  />
 
-            <p className="text-sm my-5 text-gray-dim">
-              By depositing tokens, you attest you are accredited below to join
-              this syndicate. After depositing, contact the syndicate leads to
-              confirm receipt and withdraw timing.
-            </p>
+                  {/* In the new design, this would be a drop down from which
+               a user selects currency */}
+                  <p className="flex justify-between pt-2">
+                    <span className="mx-2">
+                      <img src="/images/usdcIcon.svg" />
+                    </span>
+                    USDC
+                  </p>
+                </div>
 
-            {/* when form submittion is triggered, we show loader, otherwise
+                {/* checkbox for user to confirm they are accredited investor */}
+                <div className="flex mt-4">
+                  <input
+                    type="checkbox"
+                    name="accredited"
+                    ref={register}
+                    className="mt-1 rounded-md focus:ring-0"
+                  />
+                  <span className="ml-4">I’m an accredited investor</span>
+                </div>
+
+                <p className="text-sm my-5 text-gray-dim">
+                  By depositing tokens, you attest you are accredited below to
+                  join this syndicate. After depositing, contact the syndicate
+                  leads to confirm receipt and withdraw timing.
+                </p>
+
+                {/* when form submittion is triggered, we show loader, otherwise
              we show submit button */}
-            {submitting ? (
-              <div className="loader ease-linear rounded-full border-8 border-t-8 border-white h-4 w-4"></div>
-            ) : (
-              <button
-                className={`flex w-full items-center justify-center font-medium rounded-md text-black bg-white focus:outline-none focus:ring py-4`}
-                type="submit">
-                Continue
-              </button>
-            )}
+                {submitting ? (
+                  <div className="loader ease-linear rounded-full border-8 border-t-8 border-white h-4 w-4"></div>
+                ) : (
+                  <button
+                    className={`flex w-full items-center justify-center font-medium rounded-md text-black bg-white focus:outline-none focus:ring py-4`}
+                    type="submit">
+                    Continue
+                  </button>
+                )}
 
-            <div className="flex justify-center">
-              <div className="w-2/3 text-sm my-5 text-gray-dim justify-self-center text-center">
-                Deposits can only be changed while the Syndicate is open. After
-                the manager closes the Syndicate, all deposits are final and
-                cannot be changed
-              </div>
+                <div className="flex justify-center">
+                  <div className="w-2/3 text-sm my-5 text-gray-dim justify-self-center text-center">
+                    Deposits can only be changed while the Syndicate is open.
+                    After the manager closes the Syndicate, all deposits are
+                    final and cannot be changed
+                  </div>
+                </div>
+              </form>
             </div>
-          </form>
-        </div>
+          </>
+        ) : (
+          <div className="flex justify-center">
+            <p>
+              No syndicate with given address. Please check the address
+              provided.
+            </p>
+          </div>
+        )}
       </div>
 
       {/* This component should be shown when we have details about user deposits */}

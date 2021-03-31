@@ -29,7 +29,7 @@ import { syndicateSchema } from "../validators";
  * with a form to create a new syndicate
  */
 const CreateSyndicate = (props) => {
-  // retrive contract details
+  // retrieve contract details
   const {
     web3: { syndicateInstance, account },
     dispatch,
@@ -467,6 +467,7 @@ CreateSyndicate.propTypes = {
   dispatch: PropTypes.func,
   showModal: PropTypes.bool,
   setShowModal: PropTypes.func,
+  web3Events: PropTypes.any,
 };
 
 const mapStateToProps = ({ web3Reducer }) => {

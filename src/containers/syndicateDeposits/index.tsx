@@ -21,15 +21,7 @@ const SyndicateInvestment = (props) => {
   } = props;
   const { syndicateAddress } = useParams();
 
-  const [syndicate, setSyndicate] = useState({
-    maxDeposit: 0,
-    profitShareToSyndicateProtocol: 0.3,
-    openToDeposits: false,
-    totalDeposits: 0,
-    closeDate: formatDate(new Date()),
-    createdDate: formatDate(new Date()),
-    inactive: true,
-  });
+  const [syndicate, setSyndicate] = useState(null);
 
   useEffect(() => {
     if (syndicateInstance) {
@@ -78,6 +70,7 @@ const SyndicateInvestment = (props) => {
         <div className="w-full flex flex-col">
           <div className="w-full flex flex-col sm:flex-row">
             <SyndicateDetails syndicate={syndicate} />
+
             <InvestInSyndicate syndicate={syndicate} />
           </div>
 

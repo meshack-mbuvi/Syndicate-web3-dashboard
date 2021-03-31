@@ -1,4 +1,10 @@
+<<<<<<< HEAD:src/components/syndicates/syndicateDetails/index.tsx
 import { useRouter } from "next/router";
+=======
+import React, { useState, useEffect } from "react";
+import { connect } from "react-redux";
+import { useParams } from "@reach/router";
+>>>>>>> Process all events retrieving syndicates a wallet account has invested in and:src/components/syndicates/syndicateDetails/index.js
 import PropTypes from "prop-types";
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
@@ -12,6 +18,7 @@ const SyndicateDetails = (props) => {
   } = props;
   const router = useRouter();
 
+<<<<<<< HEAD:src/components/syndicates/syndicateDetails/index.tsx
   const [syndicate, setSyndicate] = useState({
     maxDeposit: 0,
     profitShareToSyndicateProtocol: 0.3,
@@ -21,20 +28,41 @@ const SyndicateDetails = (props) => {
     inactive: true,
     createdDate: "",
   });
+=======
+  const [details, setDetails] = useState([]);
+  const [openToDeposits, setOpenToDeposit] = useState(false);
+  const [totalDeposits, setTotalDeposits] = useState(0);
+  console.log({ syndicate });
+>>>>>>> Process all events retrieving syndicates a wallet account has invested in and:src/components/syndicates/syndicateDetails/index.js
 
-  const details = [
-    { header: "Created on", subText: syndicate.createdDate },
-    { header: "Close Date", subText: syndicate.closeDate },
-    { header: "Deposit/Distribution Token", subText: "USDC / USDC" },
-    {
-      header: "Profit Share to Syndicate Leads",
-      subText: syndicate.profitShareToSyndicateProtocol,
-    },
-    {
-      header: "Profit Share to Protocol",
-      subText: syndicate.profitShareToSyndicateProtocol,
-    },
-  ];
+  useEffect(() => {
+    if (syndicate) {
+      const {
+        openToDeposits,
+        totalDeposits,
+        closeDate,
+        createdDate,
+        profitShareToSyndicateProtocol,
+      } = syndicate;
+
+      setOpenToDeposit(openToDeposits);
+      setTotalDeposits(totalDeposits);
+
+      setDetails([
+        { header: "Created on", subText: createdDate },
+        { header: "Close Date", subText: closeDate },
+        { header: "Deposit/Distribution Token", subText: "USDC / USDC" },
+        {
+          header: "Profit Share to Syndicate Leads",
+          subText: profitShareToSyndicateProtocol,
+        },
+        {
+          header: "Profit Share to Protocol",
+          subText: profitShareToSyndicateProtocol,
+        },
+      ]);
+    }
+  }, [syndicate]);
 
   const { syndicateAddress } = router.query;
 
@@ -145,10 +173,14 @@ const SyndicateDetails = (props) => {
 
       {/* Syndicate details 
       This component should be shown when we have details about user deposits */}
-      <DetailsCard
-        {...{ title: "Details", sections: details }}
-        customStyles={"p-4 sm:w-2/3 sm:ml-12 py-4 border-b border-gray-49"}
-      />
+      {details ? (
+        <DetailsCard
+          {...{ title: "Details", sections: details }}
+          customStyles={"p-4 sm:w-2/3 sm:ml-12 py-4 border-b border-gray-49"}
+        />
+      ) : (
+        ""
+      )}
 
       {/* Total deposits */}
       <DetailsCard
