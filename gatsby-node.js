@@ -1,7 +1,7 @@
 const path = require("path");
 const webpack = require("webpack");
 
-exports.onCreateWebpackConfig = ({ actions, loaders, stage }) => {
+exports.onCreateWebpackConfig = ({ actions, stage }) => {
   /**
    * During server side rendering, we should use the node process module,
    * otherwise we use the browser process implementation.

@@ -32,8 +32,11 @@ const SyndicateDetails = (props) => {
   const [details, setDetails] = useState([]);
   const [openToDeposits, setOpenToDeposit] = useState(false);
   const [totalDeposits, setTotalDeposits] = useState(0);
+<<<<<<< HEAD:src/components/syndicates/syndicateDetails/index.tsx
   console.log({ syndicate });
 >>>>>>> Process all events retrieving syndicates a wallet account has invested in and:src/components/syndicates/syndicateDetails/index.js
+=======
+>>>>>>> Show totalDeposits, distributions, totalLpdeposits and lpWithdrawals on my syndicates screen.:src/components/syndicates/syndicateDetails/index.js
 
   useEffect(() => {
     if (syndicate) {

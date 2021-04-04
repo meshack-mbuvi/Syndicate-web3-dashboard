@@ -1,10 +1,15 @@
-import React, { useState, useEffect } from "react";
-import { connect } from "react-redux";
 import PropTypes from "prop-types";
-
-import { showWalletModal } from "src/redux/actions/web3Provider";
+import React, { useEffect, useState } from "react";
+import { connect } from "react-redux";
 import ConnectWallet from "src/components/connectWallet";
+<<<<<<< HEAD:src/components/navigation/header/wallet/index.tsx
 
+=======
+// icons
+import walletConnectedIcon from "src/images/walletConnected.png";
+import walletDisConnectedIcon from "src/images/walletDisconnected.png";
+import { showWalletModal } from "src/redux/actions/web3Provider";
+>>>>>>> Show totalDeposits, distributions, totalLpdeposits and lpWithdrawals on my syndicates screen.:src/components/navigation/header/wallet/index.js
 
 export const Wallet = (props) => {
   /**
@@ -58,8 +63,8 @@ export const Wallet = (props) => {
   }, [web3]);
 
   return (
-    <div className="flex flex-row bg-gray-dark rounded-full my-1 px-4">
-      <img src={walletIcon} className="w-5 h-4 pr-1 mt-3 mr-2" />
+    <div className="flex flex-row bg-gray-dark rounded-full px-4">
+      <img src={walletIcon} className="w-5 h-4 pr-1 mt-2 mr-2" />
 
       <button onClick={connectWallet} className="focus:outline-none">
         {address ? address : "Not connected"}

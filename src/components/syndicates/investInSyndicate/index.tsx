@@ -26,11 +26,8 @@ const InvestInSyndicate = (props) => {
   } = props;
   const router = useRouter();
 
-  const { allowlistEnabled } = syndicate;
   const [submitting, setSubmitting] = useState<boolean>(false);
   const [myLPDeposits, setMyLPDeposits] = useState<string>("0");
-
-  console.log({ syndicate });
   const [mySyndicateshare, setMySyndicateShare] = useState<string>("0");
   const sections = [
     { header: "My Deposits", subText: myLPDeposits },
@@ -47,11 +44,11 @@ const InvestInSyndicate = (props) => {
   const web3 = new Web3(Web3.givenProvider || "ws://localhost:8545");
 
   /**
-   * retrieve syndicateLPInfo to get wallet total deposits
+   * get wallet total deposits
    */
   useEffect(() => {
     if (syndicateInstance) {
-      getSyndicateLPInfo();
+      getSyndicateLPDeposits();
     }
   }, [account, syndicateInstance]);
 
@@ -66,6 +63,14 @@ const InvestInSyndicate = (props) => {
   }, [syndicate]);
 
   /**
+   *
+   * calculate my % share in syndicate
+   */
+  useEffect(() => {
+    calculateMyLPShare();
+  }, [myLPDeposits]);
+
+  /**
    * Calculates the % share of the wallet onwer(lpAddress) which is a ration of
    * the total investments made by the wallet to the total deposits made in the
    * syndicate. This value is then converted to %
@@ -75,7 +80,6 @@ const InvestInSyndicate = (props) => {
     if (syndicate === null) {
       return;
     }
-    console.log({ myLPDeposits });
     const MySyndicateShare =
       (parseInt(myLPDeposits) * 100) / syndicate.totalDeposits;
     setMySyndicateShare(`${MySyndicateShare} %`);
@@ -87,7 +91,7 @@ const InvestInSyndicate = (props) => {
    * this date in calculateMyLPShare() above to caluclate the share of the account.
    * @returns
    */
-  const getSyndicateLPInfo = async () => {
+  const getSyndicateLPDeposits = async () => {
     if (!syndicateInstance) return;
     try {
       const syndicateLPInfo = await syndicateInstance.getSyndicateLPInfo(
@@ -97,9 +101,8 @@ const InvestInSyndicate = (props) => {
       const myTotalLPDeposits = web3.utils.fromWei(
         syndicateLPInfo[0].toString()
       );
-      console.log({ syndicateLPInfo, myTotalLPDeposits });
       setMyLPDeposits(`${myTotalLPDeposits} DAI`);
-      calculateMyLPShare();
+      return myTotalLPDeposits;
     } catch (error) {
       console.log({ error });
     }

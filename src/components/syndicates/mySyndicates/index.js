@@ -1,14 +1,13 @@
+import PropTypes from "prop-types";
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
-import PropTypes from "prop-types";
-
-import ActiveSyndicates from "./activeSyndicates";
-import InActiveSyndicates from "./activeSyndicates";
-
 import PageHeader from "src/components/pageHeader";
-import Web3 from "web3";
 import { formatDate } from "src/utils";
-//etherToNumber, fromNumberToPercent,
+import Web3 from "web3";
+import {
+  default as ActiveSyndicates,
+  default as InActiveSyndicates,
+} from "./activeSyndicates";
 
 /**
  * My Syndicates: IF their wallet (a) is leading a syndicate or
@@ -31,11 +30,10 @@ const MySyndicates = (props) => {
   const getAllEvents = async () => {
     try {
       const currentBlock = await web3.eth.getBlockNumber();
-      console.log({ currentBlock });
 
       web3contractInstance
         .getPastEvents("allEvents", {
-          fromBlock: currentBlock - 1,
+          fromBlock: currentBlock - 10,
           toBlock: "latest",
         })
         .then(function (events) {
@@ -156,7 +154,10 @@ const MySyndicates = (props) => {
     <div className="mt-4">
       {/* show active syndicates here */}
       {activeSyndicates.length ? (
-        <ActiveSyndicates syndicates={activeSyndicates} />
+        <div>
+          <PageHeader>Active</PageHeader>
+          <ActiveSyndicates syndicates={activeSyndicates} />
+        </div>
       ) : (
         ""
       )}
