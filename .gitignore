@@ -1,5 +1,4 @@
-# Based on gatsby-starter-default's .gitignore
-# https://github.com/gatsbyjs/gatsby-starter-default/blob/master/.gitignore
+# Remove gatsby-related content after migrating to NextJS.
 
 # Logs
 logs
@@ -57,9 +56,6 @@ typings/
 # dotenv environment variable files
 .env*
 
-# gatsby files
-.cache/
-public
 
 # Mac files
 .DS_Store
@@ -74,3 +70,6 @@ yarn-error.log
 
 # This should not be pushed, a new one should be generated during deploy stage
 build
+
+# Next compiled output folder.
+.next
