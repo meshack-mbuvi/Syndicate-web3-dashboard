@@ -15,11 +15,11 @@
       "version": "detect"
     },
     "import/resolver": {
-      "alias": [["src", "./src"]],
-      "node": {
-        "paths": ["src"],
-        "extensions": [".js", ".jsx", ".ts", ".tsx"]
-      }
+      "alias": [["src", "./src"]]
+      // "node": {
+      //   "paths": ["src"],
+      //   "extensions": [".js", ".jsx", ".ts", ".tsx"]
+      // }
     }
   },
   "extends": [

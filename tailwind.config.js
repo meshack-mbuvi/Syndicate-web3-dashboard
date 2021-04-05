@@ -2,10 +2,10 @@ const colors = require("tailwindcss/colors");
 
 module.exports = {
   plugins: [require("@tailwindcss/forms")],
-  purge: ["./src/**/*.js"],
+  purge: [],
   theme: {
     extend: {
-      height: (theme) => ({
+      height: () => ({
         "fit-content": "fit-content",
       }),
       fontFamily: {

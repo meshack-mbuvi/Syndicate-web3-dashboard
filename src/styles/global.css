@@ -11,12 +11,11 @@
     font-family: Inter;
     font-style: normal;
   }
-
-  a.active {
-    opacity: 0.3;
-  }
 }
-
+.active {
+  opacity: 0.3;
+  color: green;
+}
 .main {
   height: 100vh;
 }
