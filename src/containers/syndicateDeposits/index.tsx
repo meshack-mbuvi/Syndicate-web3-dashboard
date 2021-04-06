@@ -1,15 +1,13 @@
+import { useRouter } from "next/router";
+import PropTypes from "prop-types";
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
-import PropTypes from "prop-types";
-import { useParams } from "@reach/router";
-
-import Layout from "src/components/layout";
-import SyndicateDetails from "src/components/syndicates/syndicateDetails";
-import InvestInSyndicate from "src/components/syndicates/investInSyndicate";
-
 import ErrorBoundary from "src/components/errorBoundary";
+import Layout from "src/components/layout";
+import InvestInSyndicate from "src/components/syndicates/investInSyndicate";
+import SyndicateDetails from "src/components/syndicates/syndicateDetails";
+import { etherToNumber, formatDate, fromNumberToPercent } from "src/utils";
 
-import { etherToNumber, fromNumberToPercent, formatDate } from "src/utils";
 /**
  * Renders syndicate component with details section on the left and
  * deposit section on the right
@@ -19,7 +17,9 @@ const SyndicateInvestment = (props) => {
   const {
     web3: { syndicateInstance, account },
   } = props;
-  const { syndicateAddress } = useParams();
+  const router = useRouter();
+
+  const { syndicateAddress } = router.query;
 
   const [syndicate, setSyndicate] = useState(null);
 

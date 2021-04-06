@@ -3,7 +3,6 @@ import React from "react";
 import Footer from "src/components/navigation/footer";
 import SEO from "src/components/seo";
 
-
 function IndexPage() {
   return (
     <>
@@ -53,6 +52,8 @@ function IndexPage() {
         <Footer />
         <img src="/images/brand.svg" className="bottom-logo" />
       </div>
-    </}
+    </>
+  );
+}
 
 export default IndexPage;

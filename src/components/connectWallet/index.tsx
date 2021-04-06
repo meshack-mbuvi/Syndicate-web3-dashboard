@@ -15,8 +15,8 @@ import {
   setDisConnected,
   setLibrary,
 } from "src/redux/actions/web3Provider";
-import Web3 from "web3";
 import { injected, WalletConnect } from "./connectors";
+const Web3 = require("web3");
 
 const contractAddress = process.env.NEXT_PUBLIC_SYNDICATE_CONTRACT_ADDRESS;
 
