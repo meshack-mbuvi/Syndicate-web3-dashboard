@@ -1,10 +1,4 @@
-<<<<<<< HEAD:src/components/syndicates/syndicateDetails/index.tsx
 import { useRouter } from "next/router";
-=======
-import React, { useState, useEffect } from "react";
-import { connect } from "react-redux";
-import { useParams } from "@reach/router";
->>>>>>> Process all events retrieving syndicates a wallet account has invested in and:src/components/syndicates/syndicateDetails/index.js
 import PropTypes from "prop-types";
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
@@ -17,8 +11,8 @@ const SyndicateDetails = (props) => {
     web3: { syndicateInstance, account },
   } = props;
   const router = useRouter();
+  const [details, setDetails] = useState([]);
 
-<<<<<<< HEAD:src/components/syndicates/syndicateDetails/index.tsx
   const [syndicate, setSyndicate] = useState({
     maxDeposit: 0,
     profitShareToSyndicateProtocol: 0.3,
@@ -28,28 +22,14 @@ const SyndicateDetails = (props) => {
     inactive: true,
     createdDate: "",
   });
-=======
-  const [details, setDetails] = useState([]);
-  const [openToDeposits, setOpenToDeposit] = useState(false);
-  const [totalDeposits, setTotalDeposits] = useState(0);
-<<<<<<< HEAD:src/components/syndicates/syndicateDetails/index.tsx
-  console.log({ syndicate });
->>>>>>> Process all events retrieving syndicates a wallet account has invested in and:src/components/syndicates/syndicateDetails/index.js
-=======
->>>>>>> Show totalDeposits, distributions, totalLpdeposits and lpWithdrawals on my syndicates screen.:src/components/syndicates/syndicateDetails/index.js
 
   useEffect(() => {
     if (syndicate) {
-      const {
-        openToDeposits,
-        totalDeposits,
+      let {
         closeDate,
         createdDate,
         profitShareToSyndicateProtocol,
       } = syndicate;
-
-      setOpenToDeposit(openToDeposits);
-      setTotalDeposits(totalDeposits);
 
       setDetails([
         { header: "Created on", subText: createdDate },
