@@ -3,10 +3,6 @@ import React, { useState } from "react";
 import { connect } from "react-redux";
 import Button from "src/components/buttons";
 import Layout from "src/components/layout";
-<<<<<<< HEAD:src/containers/syndicates/index.tsx
-import PageHeader from "src/components/pageHeader";
-=======
->>>>>>> Show totalDeposits, distributions, totalLpdeposits and lpWithdrawals on my syndicates screen.:src/containers/syndicates/index.js
 import CreateSyndicate from "src/components/syndicates/createSyndicate";
 import MySyndicates from "src/components/syndicates/mySyndicates";
 import { showWalletModal } from "src/redux/actions/web3Provider";
@@ -61,7 +57,11 @@ const Syndicates = (props: any) => {
         {/* show my syndicates */}
         <MySyndicates />
         {/* Component to create syndicate  */}
-        <CreateSyndicate {...{ showModal, setShowModal }} />
+        {syndicateInstance ? (
+          <CreateSyndicate {...{ showModal, setShowModal }} />
+        ) : (
+          ""
+        )}
       </div>
     </Layout>
   );

@@ -1,14 +1,12 @@
 import React from "react";
 import Brand from "./brand";
-
+import { NavBarNavItem } from "./navbarItems";
 // Other components
 import Notification from "./notification";
-import Wallet from "./wallet";
-import UserProfile from "./userProfile";
 import Transaction from "./transaction";
+import UserProfile from "./userProfile";
 import { UserProfileWrapper } from "./UserProfileWrapper";
-
-import { NavBarNavItem } from "./navbarItems";
+import Wallet from "./wallet";
 
 const navbarLinks = [
   { url: "/discover", urlText: "Discover" },
@@ -20,7 +18,7 @@ const navbarLinks = [
 const Header = () => {
   return (
     <>
-      <header className="divide-y border-b border-gray-90">
+      <header className="divide-y border-b border-gray-90 py-2">
         <div className="flex flex-col sm:flex-row items-center justify-between mx-auto">
           <div className="flex flex-col sm:flex-row justify-between">
             <Brand />

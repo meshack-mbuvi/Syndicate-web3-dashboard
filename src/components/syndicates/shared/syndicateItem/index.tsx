@@ -18,7 +18,17 @@ Button.propTypes = {
 };
 
 const SyndicateItem = (props) => {
-  const { address, styles } = props;
+  const {
+    address,
+    styles,
+    closeDate,
+    createdDate,
+    inactive,
+    maxTotalDeposits,
+    openToDeposits,
+    totalDeposits,
+    depositors,
+  } = props;
   console.log({ props });
 
   const {
@@ -27,23 +37,11 @@ const SyndicateItem = (props) => {
 
   const web3 = new Web3(Web3.givenProvider || "ws://localhost:8545");
 
-<<<<<<< HEAD:src/components/syndicates/shared/syndicateItem/index.tsx
-  const [eligibleWithdraw, setEligibleWithdraw] = useState<any>(0);
-  const [lpDeposits, setLpDeposits] = useState<string>("0");
-=======
-  const [eligibleWithdraw, setEligibleWithdraw] = useState(0);
-  const [lpDeposits, setLpDeposits] = useState(0);
-  const [totalDistributions, setTotalDistributions] = useState(0);
-  const [closeDate, setCloseDate] = useState(null);
-  const [createdDate, setCreatedDate] = useState(null);
+  const [eligibleWithdraw, setEligibleWithdraw] = useState<any>("0");
+  const [lpDeposits, setLpDeposits] = useState("0");
+  const [totalDistributions, setTotalDistributions] = useState("0");
   const [syndicateLpInfo, setSyndicateLpInfo] = useState(null);
-  const [claimedDistributions, setClaimedDistributions] = useState(0);
-  const [openToDeposits, setOpenToDeposits] = useState(false);
-  const [inactive, setInactive] = useState(false);
-  const [totalDeposits, setTotalDeposits] = useState(0);
-  const [maxTotalDeposit, setMaxTotalDeposit] = useState(0);
-  const [depositors] = useState(0);
->>>>>>> Show totalDeposits, distributions, totalLpdeposits and lpWithdrawals on my syndicates screen.:src/components/syndicates/shared/syndicateItem/index.js
+  const [claimedDistributions, setClaimedDistributions] = useState("0");
 
   const formattedAddress = `${address.slice(0, 5)}...${address.slice(
     address.length - 4,
@@ -61,14 +59,6 @@ const SyndicateItem = (props) => {
       );
     }
   }, [syndicateLpInfo]);
-
-  useEffect(() => {
-    if (syndicateInstance) {
-      getSyndicate().then((syndicate) => {
-        console.log({ syndicate });
-      });
-    }
-  }, [syndicateInstance]);
 
   /** when user account is loaded, let's find the eligible balance for this
    * contract */
@@ -139,7 +129,7 @@ const SyndicateItem = (props) => {
 
       return web3.utils.fromWei(eligibleWithdrawal);
     } catch (error) {
-      console.log({ error }, "getting syndicate data");
+      console.log({ error });
     }
   };
 
@@ -156,54 +146,6 @@ const SyndicateItem = (props) => {
     return web3.utils.fromWei(totalDistributions.toString());
   };
 
-  /**
-   * Retrieves syndicateInfo for the connected wallet. We need to find out
-   * how much the wallet account has invested in this syndicate, and then use
-   * this date in calculateMyLPShare() above to caluclate the share of the account.
-   * @returns
-   */
-  const getSyndicate = async () => {
-    try {
-      syndicateInstance
-        .getSyndicateValues(address)
-        .then((data) => {
-          console.log({ data });
-          const closeDate = formatDate(new Date(data.closeDate.toNumber()));
-          const createdDate = formatDate(
-            new Date(data.creationDate.toNumber() * 1000)
-          );
-          const openToDeposits = data.syndicateOpen;
-
-          const totalDeposits = web3.utils.fromWei(
-            data.totalDeposits.toString()
-          );
-          const maxTotalDeposits = web3.utils.fromWei(
-            data.maxTotalDeposits.toString()
-          );
-          setInactive(inactive);
-          setCloseDate(closeDate);
-          setTotalDeposits(totalDeposits);
-          setMaxTotalDeposit(maxTotalDeposits);
-          setCreatedDate(createdDate);
-          setOpenToDeposits(openToDeposits);
-
-          return {
-            openToDeposits,
-            closeDate,
-            maxTotalDeposits,
-            totalDeposits,
-            createdDate,
-            inactive: data.inactive,
-          };
-        })
-        .catch((err) => {
-          throw err;
-        });
-    } catch (error) {
-      console.log({ error });
-    }
-  };
-
   /*Status Options:
    * Open for deposits until XX/XX/XX” if the syndicate is not closed to
    * new deposits and hasn’t hit the maximum amount of deposits. And it must be active.
@@ -212,8 +154,8 @@ const SyndicateItem = (props) => {
    */
   let status = "";
   if (!inactive) {
-    if (openToDeposits && totalDeposits < maxTotalDeposit) {
-      status = `open until ${formatDate(closeDate)}`;
+    if (openToDeposits && totalDeposits < maxTotalDeposits) {
+      status = `Open until ${formatDate(closeDate)}`;
     } else {
       status = "Operating";
     }
@@ -236,7 +178,6 @@ const SyndicateItem = (props) => {
   let link = "details";
 
   // check that wallet owner is not the creater of the syndicate
-
   if (!inactive) {
     if (address !== account) {
       // monitors whether syndicate is open to deposits
@@ -259,7 +200,7 @@ const SyndicateItem = (props) => {
   }
 
   return (
-    <div className="flex my-2 py-2 border-b border-gray-90">
+    <div className="flex my-2 py-2 border-b border-gray-90 justify-between">
       <div className="w-8">
         <p className={`h-5 w-5 rounded-full ${styles}`}></p>
       </div>
@@ -269,7 +210,7 @@ const SyndicateItem = (props) => {
       <span className="text-sm mx-2 text-gray-300">{createdDate}</span>
       <span className="text-sm mx-2 text-gray-300 w-40">{status}</span>
       <span className="text-sm mx-2  text-gray-300  w-20">
-        {depositors ? `${depositors / 1000} k` : "-"}
+        {`${depositors / 1000} k`}
       </span>
       <span className="text-sm mx-2 text-gray-300 w-20">
         {`${totalDeposits} DAI`}
@@ -309,6 +250,8 @@ SyndicateItem.propTypes = {
   inactive: PropTypes.bool.isRequired,
   syndicateOpen: PropTypes.string,
   maxTotalDeposits: PropTypes.string,
+  openToDeposits: PropTypes.bool,
+  totalDeposits: PropTypes.string,
   web3: PropTypes.any,
 };
 

@@ -18,7 +18,7 @@ import {
 import Web3 from "web3";
 import { injected, WalletConnect } from "./connectors";
 
-const contractAddress = process.env.GATSBY_SPV_CONTRACT_ADDRESS;
+const contractAddress = process.env.NEXT_PUBLIC_SYNDICATE_CONTRACT_ADDRESS;
 
 const daiABI = require("src/utils/abi/dai");
 const daiContractAddress = "0x6b175474e89094c44da98b954eedeac495271d0f";
@@ -89,6 +89,7 @@ export const ConnectWallet = (props) => {
        * const daiContractAddress = "0x6b175474e89094c44da98b954eedeac495271d0f
        * get address from truffle =>0x15333C7B5eddB2c08A0931645C591a575eDeAde7
        */
+      console.log({ contractAddress });
       const contract = await new Contract(
         contractAddress,
         Syndicate.abi,

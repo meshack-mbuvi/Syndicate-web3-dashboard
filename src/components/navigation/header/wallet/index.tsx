@@ -2,14 +2,7 @@ import PropTypes from "prop-types";
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import ConnectWallet from "src/components/connectWallet";
-<<<<<<< HEAD:src/components/navigation/header/wallet/index.tsx
-
-=======
-// icons
-import walletConnectedIcon from "src/images/walletConnected.png";
-import walletDisConnectedIcon from "src/images/walletDisconnected.png";
 import { showWalletModal } from "src/redux/actions/web3Provider";
->>>>>>> Show totalDeposits, distributions, totalLpdeposits and lpWithdrawals on my syndicates screen.:src/components/navigation/header/wallet/index.js
 
 export const Wallet = (props) => {
   /**
@@ -24,7 +17,9 @@ export const Wallet = (props) => {
    * wallet icon for when wallet is connected and when not connected
    */
   const walletIcon =
-    status === "connected" ? "/images/walletConnected.png": "/images/walletDisconnected.png";
+    status === "connected"
+      ? "/images/walletConnected.png"
+      : "/images/walletDisconnected.png";
 
   /**
    * open variable is used to determine whether to show or hide
@@ -63,7 +58,7 @@ export const Wallet = (props) => {
   }, [web3]);
 
   return (
-    <div className="flex flex-row bg-gray-dark rounded-full px-4">
+    <div className="flex flex-row bg-gray-dark rounded-full my-1 px-2 h-8">
       <img src={walletIcon} className="w-5 h-4 pr-1 mt-2 mr-2" />
 
       <button onClick={connectWallet} className="focus:outline-none">

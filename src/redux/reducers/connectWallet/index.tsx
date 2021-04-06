@@ -1,13 +1,13 @@
-import { initialState } from "../initialState";
 import {
-  SET_WEB3,
-  SET_PROVIDER,
-  CONNECTING,
   CONNECTED,
+  CONNECTING,
   DISCONNECTED,
-  SHOW_WALLET_MODAL,
   HIDE_WALLET_MODAL,
+  SET_PROVIDER,
+  SET_WEB3,
+  SHOW_WALLET_MODAL,
 } from "src/redux/actions/types";
+import { initialState } from "../initialState";
 
 export const web3Reducer = (state = initialState, action) => {
   const { web3 } = state;
@@ -15,7 +15,7 @@ export const web3Reducer = (state = initialState, action) => {
     case SET_WEB3:
       return {
         ...state,
-        web3: { ...web3, ...action.data },
+        web3: { ...web3, status: "connected", ...action.data },
       };
 
     case SET_PROVIDER:

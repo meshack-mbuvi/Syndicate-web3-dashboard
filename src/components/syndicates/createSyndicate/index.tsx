@@ -36,6 +36,7 @@ const CreateSyndicate = (props) => {
     showModal,
     setShowModal,
   } = props;
+  console.log({ props });
 
   const [primaryERC20ContractAddress, setSyndicateAddress] = useState("");
   const [allowlistEnabled, setAllowlistEnabled] = useState(false);
@@ -53,9 +54,7 @@ const CreateSyndicate = (props) => {
      * address so we need to connect to wallet first which will handle contract
      * instantiation.
      */
-    if (!syndicateInstance) {
-      dispatch(showWalletModal());
-    } else {
+    if (syndicateInstance) {
       setSyndicateAddress(account);
     }
   }, [syndicateInstance]);

@@ -11,13 +11,6 @@
     font-family: Inter;
     font-style: normal;
   }
-<<<<<<< HEAD
-=======
-
-  a.active {
-    color: #35cfff;
-  }
->>>>>>> Show totalDeposits, distributions, totalLpdeposits and lpWithdrawals on my syndicates screen.
 }
 .active {
   opacity: 0.3;
