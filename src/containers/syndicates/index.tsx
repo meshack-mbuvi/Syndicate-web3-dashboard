@@ -47,7 +47,7 @@ const Syndicates = (props: any) => {
           </div> */}
           {/* <div className="mb-2"> */}
           <Button
-            customClasses="border bottom-4 right-4 border-white absolute bg-blue-light rounded-full h-16 w-16 p-3 pt-3 text-5xl"
+            customClasses="bottom-4 right-4 absolute bg-blue-light rounded-full h-16 w-16 p-3 pt-3 text-5xl"
             onClick={showSyndicateForm}>
             +
           </Button>
