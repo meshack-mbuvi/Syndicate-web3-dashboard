@@ -4,22 +4,20 @@
     "browser": true,
     "node": true
   },
-  // https://github.com/babel/babel-eslint
-  "parser": "babel-eslint",
+  "parser": "@typescript-eslint/parser",
   "rules": {
     // https://eslint.org/docs/2.0.0/rules/strict
     "strict": 0,
-    "no-unresolved": "off"
+    "import/no-unresolved": "off"
   },
   "settings": {
     "react": {
       "version": "detect"
     },
     "import/resolver": {
-      "alias": ["src", "./src"],
-      "node": {
-        "extensions": [".js", ".jsx", ".ts", ".tsx"],
-        "paths": ["."]
+      "alias": {
+        "map": [["src", "./src"]],
+        "extensions": [".js", ".jsx", ".ts", ".tsx"]
       }
     }
   },
@@ -29,6 +27,7 @@
     // https://github.com/yannickcr/eslint-plugin-react#recommended
     "plugin:react/recommended",
     // https://github.com/benmosher/eslint-plugin-import
-    "plugin:import/recommended"
+    "plugin:import/recommended",
+    "plugin:import/typescript"
   ]
 }

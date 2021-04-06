@@ -31,7 +31,6 @@ const MySyndicates = (props) => {
   const [syndicates, setSyndicates] = useState([]);
 
   const web3 = new Web3(Web3.givenProvider || "ws://localhost:8545");
-  console.log({ syndicates });
 
   /**
    * retrieves details for a given syndicate
