@@ -38,6 +38,12 @@ export const syndicateSchema = Joi.object({
       "object.regex":
         "Profit shares can only include at most two decimal places. For example, 1.005% is not allowed. 1.05% is allowed, as well as 1.5% or 1%",
     }),
+  expectedAnnualOperatingFees: Joi.string()
+    .regex(/^\d+(\.\d{0,2})?$/)
+    .messages({
+      "object.regex":
+        "Expected Annual Operating Fees can only include at most two decimal places. For example, 1.005% is not allowed. 1.05% is allowed, as well as 1.5% or 1%",
+    }),
 });
 
 export const depositSchema = Joi.object({
@@ -46,10 +52,8 @@ export const depositSchema = Joi.object({
     .label("Deposit amount")
     .messages({ "any.empty": "Deposit amount is required" }),
   currency: Joi.string(),
-  accredited: Joi.boolean()
-    .invalid(false)
-    .messages({
-      "any.invalid":
-        "You must attest that you are an accredited investor by checking the accredited investor box to confirm.",
-    }),
+  accredited: Joi.boolean().invalid(false).messages({
+    "any.invalid":
+      "You must attest that you are an accredited investor by checking the accredited investor box to confirm.",
+  }),
 });

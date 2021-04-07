@@ -29,6 +29,7 @@ const MySyndicates = (props) => {
   } = props;
 
   const [syndicates, setSyndicates] = useState([]);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const web3 = new Web3(Web3.givenProvider || "ws://localhost:8545");
 
@@ -70,6 +71,7 @@ const MySyndicates = (props) => {
 
   const getAllEvents = async () => {
     try {
+      setLoading(true);
       const currentBlock = await web3.eth.getBlockNumber();
 
       web3contractInstance
@@ -155,8 +157,11 @@ const MySyndicates = (props) => {
               console.error({ message: "Error retrieving syndicate data" });
             }
           });
+          setLoading(false);
         });
     } catch (error) {
+      setLoading(false);
+
       console.log({
         error,
         message: "An error occured while retrieving all events",
@@ -185,24 +190,30 @@ const MySyndicates = (props) => {
 
   return (
     <div className="mt-4">
-      {/* show active syndicates here */}
-      {activeSyndicates.length ? (
-        <div>
-          <PageHeader>Active</PageHeader>
-          <ActiveSyndicates syndicates={activeSyndicates} />
-        </div>
-      ) : (
-        ""
-      )}
+      {!loading ? (
+        <>
+          {/* show active syndicates here */}
+          {activeSyndicates.length ? (
+            <div>
+              <PageHeader>Active</PageHeader>
+              <ActiveSyndicates syndicates={activeSyndicates} />
+            </div>
+          ) : (
+            ""
+          )}
 
-      {/* show inactive syndicates here */}
-      {inActiveSyndicates.length ? (
-        <div className="mt-8">
-          <PageHeader>Inactive</PageHeader>
-          <InActiveSyndicates syndicates={inActiveSyndicates} />
-        </div>
+          {/* show inactive syndicates here */}
+          {inActiveSyndicates.length ? (
+            <div className="mt-8">
+              <PageHeader>Inactive</PageHeader>
+              <InActiveSyndicates syndicates={inActiveSyndicates} />
+            </div>
+          ) : (
+            ""
+          )}
+        </>
       ) : (
-        ""
+        "Hang tight. We are rerieving your syndicates"
       )}
     </div>
   );

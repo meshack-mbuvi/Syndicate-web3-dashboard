@@ -1,6 +1,5 @@
-import React from "react";
 import PropTypes from "prop-types";
-
+import React from "react";
 import { InfoIcon } from "src/components/iconWrappers";
 
 export const Toggle = (props) => {
@@ -15,11 +14,10 @@ export const Toggle = (props) => {
 
   return (
     <div className="flex flex-row justify-center w-2/3">
-      <div className="mr-4 w-auto flex justify-end">
+      <div className="mr-4 w-5/12 flex justify-end">
         <label
           htmlFor="syndicateAddress"
-          className="block pt-2 text-black text-sm font-medium"
-        >
+          className="block pt-2 text-black text-sm font-medium">
           {label}
         </label>
       </div>
@@ -30,14 +28,12 @@ export const Toggle = (props) => {
           type="button"
           className={`${backgroundClass} relative inline-flex flex-shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 mt-1`}
           aria-pressed={enabled}
-          onClick={() => toggleEnabled()}
-        >
+          onClick={() => toggleEnabled()}>
           <span className="sr-only">Manually whitelist depositors</span>
           {/* <!-- Enabled: "translate-x-5", Not Enabled: "translate-x-0" --> */}
           <span
             aria-hidden="true"
-            className={`${translateClass} pointer-events-none inline-block h-5 w-5 rounded-full bg-white shadow transform ring-0 transition ease-in-out duration-200`}
-          ></span>
+            className={`${translateClass} pointer-events-none inline-block h-5 w-5 rounded-full bg-white shadow transform ring-0 transition ease-in-out duration-200`}></span>
         </button>
 
         <div className="w-6 ml-4 mt-1">

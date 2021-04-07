@@ -1,5 +1,5 @@
-import React from "react";
 import PropTypes from "prop-types";
+import React from "react";
 import { InfoIcon } from "src/components/iconWrappers";
 
 /**
@@ -8,8 +8,23 @@ import { InfoIcon } from "src/components/iconWrappers";
  *  small text is rendered.
  * @param {*} props
  */
-export const TextInput = (props: {value?, label: string, name?, register?, disabled?: boolean, placeholder?: string}) => {
-  const { label, name, register, disabled = false, ...rest } = props;
+export const TextInput = (props: {
+  value?;
+  label: string;
+  name?;
+  register?;
+  disabled?: boolean;
+  placeholder?: string;
+  defaultValue?: string | number;
+}) => {
+  const {
+    label,
+    name,
+    register,
+    defaultValue,
+    disabled = false,
+    ...rest
+  } = props;
 
   const disabledClasses = disabled
     ? "text-sm text-gray-500 border-0"
@@ -34,6 +49,7 @@ export const TextInput = (props: {value?, label: string, name?, register?, disab
           className={`flex flex-grow focus:ring-indigo-500 focus:border-indigo-500 rounded-md ${disabledClasses}`}
           {...rest}
           disabled={disabled}
+          defaultValue={defaultValue}
         />
         {/* icon */}
         <div className="w-6 ml-4 mt-1">
@@ -49,4 +65,5 @@ TextInput.propTypes = {
   name: PropTypes.string.isRequired,
   register: PropTypes.any,
   disabled: PropTypes.bool,
+  defaultValue: PropTypes.any,
 };

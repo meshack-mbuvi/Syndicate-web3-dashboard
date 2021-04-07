@@ -21,7 +21,7 @@ export const DiscoverAnimatedLoader = () => {
                 <div className="text-line"></div>
               </div>
             </div>
-            <div className="discover-placeholder w-1 h-1"></div>
+            <div className="discover-placeholder w-6 h-6"></div>
           </div>
           <HorizontalDivider />
         </React.Fragment>

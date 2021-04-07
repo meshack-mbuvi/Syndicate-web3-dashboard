@@ -18,7 +18,6 @@ import { TextInput, Toggle } from "src/components/inputs";
 import { Modal } from "src/components/modal";
 // redux actions
 import { showWalletModal } from "src/redux/actions/web3Provider";
-import { toEther } from "src/utils";
 import { syndicateSchema } from "../validators";
 
 /**
@@ -31,15 +30,15 @@ import { syndicateSchema } from "../validators";
 const CreateSyndicate = (props) => {
   // retrieve contract details
   const {
-    web3: { syndicateInstance, account },
+    web3: { syndicateInstance, account, web3 },
     dispatch,
     showModal,
     setShowModal,
   } = props;
-  console.log({ props });
 
   const [primaryERC20ContractAddress, setSyndicateAddress] = useState("");
   const [allowlistEnabled, setAllowlistEnabled] = useState(false);
+  const [modifiable, setModifiable] = useState(false);
   const [syndicateProfitSharePercent, setProfitShareToSyndProtocol] = useState(
     "1"
   );
@@ -61,15 +60,24 @@ const CreateSyndicate = (props) => {
 
   // this controls the toggle button for manually whitelisting depositors
   const toggleAllowlistEnabled = () => setAllowlistEnabled(!allowlistEnabled);
+  const toggleModifiable = () => setModifiable(!modifiable);
 
   const closeModal = () => setShowModal(false);
 
   // react-hook-form provides Performant, flexible and
   // extensible forms with easy-to-use validation.
-  const { register, handleSubmit, control } = useForm({
+  const { register, handleSubmit, control, errors } = useForm({
     resolver: joiResolver(syndicateSchema),
   });
+  console.log({ errors });
 
+  /**
+   * This method implements manager steps to create a syndicate
+   * NOTE: we need to have the feature for setting deposit and distribution token
+   * as capture on the UI
+   * @param data form data
+   * @returns
+   */
   const onSubmit = async (data) => {
     /**
      * If we are not connected and the form modal is open, user can trigger
@@ -85,7 +93,6 @@ const CreateSyndicate = (props) => {
     }
 
     // get closeDate and syndicateProtocolProfitSharePercent
-    const closeDate = data.closeDate.toString();
     const syndicateProtocolProfitSharePercent =
       syndicateProfitSharePercent == null
         ? data.profitShareToSyndProtocol
@@ -94,36 +101,37 @@ const CreateSyndicate = (props) => {
     try {
       /**
        * Convert maxDeposits, totalMaxDeposits and syndicateProfitSharePercent
-       * to ether. We need to convert bigNumbers to string before passing them
+       * to wei since the contract does not take normal javascript numbers
        */
-      const syndicateProfitSharePercent = toEther(
-        parseFloat(syndicateProtocolProfitSharePercent) * 1000
+      const syndicateProfitSharePercent = web3.utils.toWei(
+        `${parseFloat(syndicateProtocolProfitSharePercent) * 1000}`
       );
 
-      const maxDeposits = toEther(data.maxDeposits);
-      const maxTotalDeposits = toEther(data.maxTotalDeposits);
+      const maxDeposits = web3.utils.toWei(data.maxDeposits.toString());
+      const maxTotalDeposits = web3.utils.toWei(
+        data.maxTotalDeposits.toString()
+      );
+      const managerManagementFeeBasisPoints = web3.utils.toWei(
+        `${parseFloat(data.expectedAnnualOperatingFees) * 1000}`
+      );
+      const managerPerformanceFeePercent = web3.utils.toWei(
+        `${parseFloat(data.profitShareToSyndicateLead) * 1000}`
+      );
 
-      const timeUntilSPVCloseDate = new Date(closeDate).getTime();
+      const closeDate = data.closeDate.getTime();
 
       const syndicate = await syndicateInstance.createSyndicate(
         primaryERC20ContractAddress,
-        syndicateProfitSharePercent.toString(),
-        timeUntilSPVCloseDate,
         maxDeposits,
         maxTotalDeposits,
+        closeDate,
+        syndicateProfitSharePercent.toString(),
+        managerManagementFeeBasisPoints,
+        managerPerformanceFeePercent,
         allowlistEnabled,
+        modifiable,
         { from: account, gasLimit: 800000 }
       );
-
-      // this is for testing purpose. It should be removed before launch
-      await syndicateInstance.allowAddresses(
-        account,
-        ["0x176890F8a0d17a82DaC2cF6B4a5F2833bFdbf16F"],
-        {
-          from: account,
-        }
-      );
-
       console.log({ syndicate });
 
       // before showing success modal, we need to set the shareable link
@@ -178,7 +186,7 @@ const CreateSyndicate = (props) => {
         {...{
           show: showModal,
           closeModal,
-          customWidth: "w-3/5",
+          customWidth: "w-full lg:w-3/5",
         }}
         title="Create New Syndicate">
         {/* modal sub title */}
@@ -192,7 +200,6 @@ const CreateSyndicate = (props) => {
           <div className="border border-gray-85 bg-gray-99 rounded-xl p-4">
             <div className="space-y-4">
               {/* syndicate address */}
-
               <TextInput
                 {...{
                   label: "Syndicate Address:",
@@ -207,10 +214,12 @@ const CreateSyndicate = (props) => {
                 {...{
                   label: "Deposit Token:",
                 }}
+                defaultValue="USDC"
                 register={register({ required: true })}
                 name="depositToken"
                 placeholder="USDC"
               />
+
               {/* distribution token */}
               <TextInput
                 {...{
@@ -218,26 +227,32 @@ const CreateSyndicate = (props) => {
                 }}
                 register={register({ required: true })}
                 name="distributionToken"
+                defaultValue="USDC"
                 placeholder="USDC"
               />
+
               {/* max deposits */}
               <TextInput
                 {...{
-                  label: "Max Deposits:",
+                  label: "Max Deposits(Per Depositor):",
                 }}
                 register={register({ required: true })}
                 name="maxDeposits"
-                placeholder="5,000"
+                defaultValue="100"
+                placeholder="5000"
               />
+
               {/* Max Total deposits */}
               <TextInput
                 {...{
-                  label: "Max Total Deposits:",
+                  label: "Max Deposits(Total):",
                 }}
                 register={register({ required: true })}
                 name="maxTotalDeposits"
-                placeholder="10,000"
+                defaultValue="100"
+                placeholder="10000"
               />
+
               {/* close date */}
               <div className="flex flex-row justify-end">
                 <div className="mr-2 w-5/12 flex justify-end">
@@ -269,13 +284,25 @@ const CreateSyndicate = (props) => {
                 </div>
               </div>
 
+              {/* Expected Annual Operating Fees */}
+              <TextInput
+                {...{
+                  label: "Expected Annual Operating Fees:",
+                }}
+                register={register}
+                name="expectedAnnualOperatingFees"
+                defaultValue="2"
+                placeholder="2"
+              />
+
               <TextInput
                 {...{
                   label: "Profit Share to Syndicate Lead:",
                 }}
                 register={register}
                 name="profitShareToSyndicateLead"
-                placeholder="10%"
+                placeholder="10"
+                defaultValue="10"
               />
 
               {/* Profit Share to Syndicate Protocol: */}
@@ -357,6 +384,15 @@ const CreateSyndicate = (props) => {
                   enabled: allowlistEnabled,
                   toggleEnabled: toggleAllowlistEnabled,
                   label: "Manually Whitelist Depositors:",
+                }}
+              />
+
+              {/* modifiable */}
+              <Toggle
+                {...{
+                  enabled: modifiable,
+                  toggleEnabled: toggleModifiable,
+                  label: "Modifiable:",
                 }}
               />
             </div>
@@ -471,6 +507,7 @@ CreateSyndicate.propTypes = {
 
 const mapStateToProps = ({ web3Reducer }) => {
   const { web3 } = web3Reducer;
+  console.log({ web3 });
   return { web3 };
 };
 

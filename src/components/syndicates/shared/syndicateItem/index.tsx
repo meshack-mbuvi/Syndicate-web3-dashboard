@@ -2,8 +2,6 @@ import Link from "next/link";
 import PropTypes from "prop-types";
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
-import { formatDate } from "src/utils";
-import Web3 from "web3";
 
 const Button = ({ children, link = "#", ...rest }) => (
   <button {...rest}>
@@ -29,13 +27,10 @@ const SyndicateItem = (props) => {
     totalDeposits,
     depositors,
   } = props;
-  console.log({ props });
 
   const {
-    web3: { syndicateInstance, account },
+    web3: { syndicateInstance, account, web3 },
   } = props;
-
-  const web3 = new Web3(Web3.givenProvider || "ws://localhost:8545");
 
   const [eligibleWithdraw, setEligibleWithdraw] = useState<any>("0");
   const [lpDeposits, setLpDeposits] = useState("0");
@@ -155,7 +150,7 @@ const SyndicateItem = (props) => {
   let status = "";
   if (!inactive) {
     if (openToDeposits && totalDeposits < maxTotalDeposits) {
-      status = `Open until ${formatDate(closeDate)}`;
+      status = `Open until ${closeDate}`;
     } else {
       status = "Operating";
     }
@@ -172,7 +167,6 @@ const SyndicateItem = (props) => {
    * zero from the syndicate.
    * “View” in any other case.
    */
-
   let buttonText = "View";
   let buttonStyles = "border";
   let link = "details";

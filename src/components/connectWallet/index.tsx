@@ -89,8 +89,7 @@ export const ConnectWallet = (props) => {
        * const daiContractAddress = "0x6b175474e89094c44da98b954eedeac495271d0f
        * get address from truffle =>0x15333C7B5eddB2c08A0931645C591a575eDeAde7
        */
-      console.log({ contractAddress });
-      const contract = await new Contract(
+      const contract = new Contract(
         contractAddress,
         Syndicate.abi,
         library.getSigner()
@@ -119,6 +118,7 @@ export const ConnectWallet = (props) => {
             syndicateInstance,
             web3contractInstance,
             daiContract,
+            web3,
           })
         );
       } catch (error) {

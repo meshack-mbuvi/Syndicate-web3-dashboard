@@ -2,6 +2,7 @@ import PropTypes from "prop-types";
 import React, { useState } from "react";
 import { connect } from "react-redux";
 import Button from "src/components/buttons";
+import ErrorBoundary from "src/components/errorBoundary";
 import Layout from "src/components/layout";
 import CreateSyndicate from "src/components/syndicates/createSyndicate";
 import MySyndicates from "src/components/syndicates/mySyndicates";
@@ -34,35 +35,37 @@ const Syndicates = (props: any) => {
 
   return (
     <Layout>
-      <div className="w-full">
-        {/* Show page header and button to create new syndicate */}
-        <div className="flex justify-between w-full">
-          {/* This button is already styed for v2 designs */}
-          {/* <div className="mb-2">
+      <ErrorBoundary>
+        <div className="w-full">
+          {/* Show page header and button to create new syndicate */}
+          <div className="flex justify-between w-full">
+            {/* This button is already styed for v2 designs */}
+            {/* <div className="mb-2">
             <Button
               customClasses="border border-white h-12 w-48 p-3 pt-3 text-sm"
               onClick={showSyndicateForm}>
               Create a syndicate
             </Button>
           </div> */}
-          {/* <div className="mb-2"> */}
-          <Button
-            customClasses="bottom-4 right-4 absolute bg-blue-light rounded-full h-16 w-16 p-3 pt-3 text-5xl"
-            onClick={showSyndicateForm}>
-            +
-          </Button>
-          {/* </div> */}
-        </div>
+            {/* <div className="mb-2"> */}
+            <Button
+              customClasses="bottom-4 right-4 absolute bg-blue-light rounded-full h-16 w-16 p-3 pt-3 text-5xl"
+              onClick={showSyndicateForm}>
+              +
+            </Button>
+            {/* </div> */}
+          </div>
 
-        {/* show my syndicates */}
-        <MySyndicates />
-        {/* Component to create syndicate  */}
-        {syndicateInstance ? (
-          <CreateSyndicate {...{ showModal, setShowModal }} />
-        ) : (
-          ""
-        )}
-      </div>
+          {/* show my syndicates */}
+          <MySyndicates />
+          {/* Component to create syndicate  */}
+          {syndicateInstance ? (
+            <CreateSyndicate {...{ showModal, setShowModal }} />
+          ) : (
+            ""
+          )}
+        </div>
+      </ErrorBoundary>
     </Layout>
   );
 };
