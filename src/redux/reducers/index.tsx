@@ -1,10 +1,10 @@
 import { combineReducers } from "redux";
 import { web3Reducer } from "./connectWallet";
-import { syndicateInvestmentsReducer } from "./syndicateInvestments";
+import { syndicatesReducer } from "./syndicates";
 
 export const rootReducer = combineReducers({
   web3Reducer,
-  syndicateInvestmentsReducer,
+  syndicatesReducer,
 });
 
 export default rootReducer;

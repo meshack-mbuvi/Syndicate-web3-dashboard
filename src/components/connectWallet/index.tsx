@@ -119,6 +119,7 @@ export const ConnectWallet = (props) => {
             web3contractInstance,
             daiContract,
             web3,
+            status: "connected",
           })
         );
       } catch (error) {

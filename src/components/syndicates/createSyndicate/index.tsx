@@ -46,6 +46,7 @@ const CreateSyndicate = (props) => {
 
   const [shareableLink, setShareableLink] = useState("");
   const [copied, setCopied] = useState(false);
+  const [submitting, setSumbitting] = useState(false);
 
   useEffect(() => {
     /**
@@ -66,10 +67,9 @@ const CreateSyndicate = (props) => {
 
   // react-hook-form provides Performant, flexible and
   // extensible forms with easy-to-use validation.
-  const { register, handleSubmit, control, errors } = useForm({
+  const { register, handleSubmit, control } = useForm({
     resolver: joiResolver(syndicateSchema),
   });
-  console.log({ errors });
 
   /**
    * This method implements manager steps to create a syndicate
@@ -79,6 +79,8 @@ const CreateSyndicate = (props) => {
    * @returns
    */
   const onSubmit = async (data) => {
+    closeModal();
+
     /**
      * If we are not connected and the form modal is open, user can trigger
      * creation of Syndicate. We therefore catch this here and request for
@@ -86,11 +88,12 @@ const CreateSyndicate = (props) => {
      * Note: We need to find a way, like a customized alert to inform user this.
      */
     if (!syndicateInstance) {
-      // Hide New Syndicate modal to give room to wallet connection modal
-      setShowModal(false);
-
+      // Request wallet connect
       return dispatch(showWalletModal());
     }
+
+    // show loading modal
+    setSumbitting(true);
 
     // get closeDate and syndicateProtocolProfitSharePercent
     const syndicateProtocolProfitSharePercent =
@@ -120,7 +123,7 @@ const CreateSyndicate = (props) => {
 
       const closeDate = data.closeDate.getTime();
 
-      const syndicate = await syndicateInstance.createSyndicate(
+      await syndicateInstance.createSyndicate(
         primaryERC20ContractAddress,
         maxDeposits,
         maxTotalDeposits,
@@ -132,7 +135,9 @@ const CreateSyndicate = (props) => {
         modifiable,
         { from: account, gasLimit: 800000 }
       );
-      console.log({ syndicate });
+
+      // close loading modal
+      setSumbitting(false);
 
       // before showing success modal, we need to set the shareable link
       setShareableLink(
@@ -145,6 +150,9 @@ const CreateSyndicate = (props) => {
       // show success modal
       setShowSuccessModal(true);
     } catch (error) {
+      // close loading modal
+      setSumbitting(false);
+
       // This error will be shown when the designs are ready
       console.log({ error });
     }
@@ -425,6 +433,16 @@ const CreateSyndicate = (props) => {
         </form>
       </Modal>
 
+      {/* Loading modal */}
+      <Modal {...{ show: submitting, closeModal: () => setSumbitting(false) }}>
+        <div className="flex flex-col justify-center m-auto mb-4">
+          <div className="loader">Loading...</div>
+          <div className="modal-header mb-4 text-black font-medium text-center leading-8 text-lg">
+            Please wait, we are creating your syndicate.
+          </div>
+        </div>
+      </Modal>
+
       {/* show success modal */}
       <Modal
         {...{
@@ -507,7 +525,6 @@ CreateSyndicate.propTypes = {
 
 const mapStateToProps = ({ web3Reducer }) => {
   const { web3 } = web3Reducer;
-  console.log({ web3 });
   return { web3 };
 };
 
