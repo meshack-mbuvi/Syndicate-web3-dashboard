@@ -1,7 +1,6 @@
 import React from "react";
 import Head from "next/head";
-import { Provider } from "react-redux";
-import store from "../redux/store";
+import { wrapper } from "../redux/store";
 import { Web3Provider } from "@ethersproject/providers";
 import { Web3ReactProvider } from "@web3-react/core";
 
@@ -35,14 +34,10 @@ function App({ Component, pageProps }) {
         />
       </Head>
       <Web3ReactProvider getLibrary={getLibrary}>
-        <Provider store={store()}>
-          <div>
-            <Component {...pageProps} />
-          </div>
-        </Provider>
+        <Component {...pageProps}  />
       </Web3ReactProvider>
     </>
   );
 }
 
-export default App;
+export default wrapper.withRedux(App);

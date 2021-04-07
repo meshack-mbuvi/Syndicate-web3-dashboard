@@ -3,6 +3,7 @@ export const initialState = {
     library: null,
     status: "disconnected",
     showConnectionModal: false,
+    address: null,
   },
   loading: false,
   showWalletModal: false,
