@@ -14,6 +14,8 @@ import {
   setConnecting,
   setDisConnected,
   setLibrary,
+  showErrorModal,
+  hideErrorModal
 } from "src/redux/actions/web3Provider";
 import { injected, WalletConnect } from "./connectors";
 const Web3 = require("web3");
@@ -36,9 +38,14 @@ const daiContractAddress = "0x6b175474e89094c44da98b954eedeac495271d0f";
  */
 export const ConnectWallet = (props) => {
   const {
-    web3: { status },
+    web3: { 
+      status,    
+      isErrorModalOpen,
+      error 
+    },
     dispatch,
     showWalletModal,
+
   } = props;
 
   // This handles closing the modal after user selects a provider to activate
@@ -84,6 +91,8 @@ export const ConnectWallet = (props) => {
   const setWeb3 = async () => {
     let syndicateInstance = null;
     if (library) {
+      dispatch(setConnecting());
+
       /**SyndicateABI.networks["5777"].address;
        * The address is coming from the tests.
        * const daiContractAddress = "0x6b175474e89094c44da98b954eedeac495271d0f
@@ -112,6 +121,8 @@ export const ConnectWallet = (props) => {
       try {
         syndicateInstance = await contract.deployed();
 
+        dispatch(setConnected());
+        dispatch(hideErrorModal());
         return dispatch(
           setLibrary({
             library,
@@ -128,6 +139,8 @@ export const ConnectWallet = (props) => {
           message:
             "web3 instance not instantiated correctly. This could be an issue with the deployed contract",
         });
+        dispatch(setDisConnected());
+        dispatch(showErrorModal("web3 instance not instantiated correctly. This could be an issue with the deployed contract"))
       }
     }
   };
@@ -156,11 +169,12 @@ export const ConnectWallet = (props) => {
       // dispatch action to start loader
       await activate(provider, undefined, true);
 
-      // provider is connected, this stops the loader modal
-      dispatch(setConnected());
+      // // provider is connected, this stops the loader modal
+      // dispatch(setConnected());
 
-      // show success modal
-      setShowSuccessModal(true);
+      // // show success modal
+      // setShowSuccessModal(true);
+      await setWeb3();
     } catch (error) {
       // an error occured during connection process
       // dispatch(setDisConnected());
@@ -283,6 +297,36 @@ export const ConnectWallet = (props) => {
           </div>
         </div>
       </Modal>
+
+       {/* error modal */}
+       <Modal
+        {...{
+          show: isErrorModalOpen,
+          closeModal: () => dispatch(hideErrorModal()),
+          type: "error",
+        }}>
+        <div className="flex flex-col justify-center m-auto mb-4">
+          <div className="flex align-center justify-center">
+            <div className="border-4 border-light-blue m-8 rounded-full h-24 w-24 flex items-center justify-center">
+              <svg
+                width="34"
+                height="26"
+                viewBox="0 0 34 26"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg">
+                <path
+                  d="M2 13.5723L11.2243 22.7966L32 2"
+                  stroke="#35CFFF"
+                  strokeWidth="4"
+                />
+              </svg>
+            </div>
+          </div>
+          <div className="modal-header mb-4 text-black font-medium text-center ">
+            <p className="text-3xl">{error}</p>
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 };
@@ -294,8 +338,8 @@ ConnectWallet.propTypes = {
 };
 
 const mapStateToProps = ({ web3Reducer }) => {
-  const { web3, showWalletModal } = web3Reducer;
-  return { web3, showWalletModal };
+  const { web3, showWalletModal, isErrorModalOpen } = web3Reducer;
+  return { web3, showWalletModal, isErrorModalOpen };
 };
 
 export default connect(mapStateToProps)(ConnectWallet);

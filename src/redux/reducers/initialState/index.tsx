@@ -10,6 +10,8 @@ export const initialState = {
     library: null,
     status: "disconnected",
     showConnectionModal: false,
+    isErrorModalOpen: false,
+    error: null,
     address: null,
     web3: null,
     web3contractInstance: null,
@@ -19,3 +21,4 @@ export const initialState = {
   showWalletModal: false,
   syndicateInvestments: [],
 };
+ 
