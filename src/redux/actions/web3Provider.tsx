@@ -1,11 +1,11 @@
 import {
-  SET_WEB3,
-  SET_PROVIDER,
+  CONNECTED,
   CONNECTING,
   DISCONNECTED,
-  CONNECTED,
-  SHOW_WALLET_MODAL,
   HIDE_WALLET_MODAL,
+  SET_PROVIDER,
+  SET_WEB3,
+  SHOW_WALLET_MODAL,
 } from "./types";
 
 export const setLibrary = (data) => async (dispatch) => {

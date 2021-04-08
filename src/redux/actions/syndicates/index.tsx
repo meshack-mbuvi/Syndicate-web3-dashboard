@@ -1,7 +1,5 @@
-import { formatDate } from "src/utils";
-import { ADD_NEW_INVESTMENT, ALL_SYNDICATES } from "../types";
-
-const Web3 = require("web3");
+import { getSyndicate } from "src/helpers/syndicate";
+import { ADD_NEW_INVESTMENT, ALL_SYNDICATES, NEW_SYNDICATE } from "../types";
 
 type Depositors = {
   address?: {
@@ -10,17 +8,14 @@ type Depositors = {
 };
 
 /**
- * Adds a new investment to the state.
- * The investment object has the following properties:
- *  - amountInvested
- *  - lpAddress: wallet address of the investor
- *  - syndicateAddress: address of the syndicate to which new investment is made
+ * Read all syndicates from all events and add them to the store
+ * The syndicates added to store are those the wallet account has invested in
+ * or is leading
  * @param {object} data
  * @returns
  */
 export const addSyndicates = (data) => async (dispatch) => {
   if (!data) return;
-  const allSyndicates = [];
 
   const { syndicateInstance, account, web3contractInstance, web3 } = data;
   try {
@@ -79,7 +74,13 @@ export const addSyndicates = (data) => async (dispatch) => {
 
     /**
      * Get syndicate details for all address of obtained from events
+     * NOTE: we are using for loop instead of build in map/forEach function.
+     * This is because the built in functions above do not update the length of
+     * const allSyndicates = []; after array.push method
+     *
      */
+    const allSyndicates = [];
+
     for (let index = 0; index < filteredSyndicateAddresses.length; index++) {
       try {
         const syndicate = await getSyndicate(
@@ -114,40 +115,11 @@ export const addSyndicates = (data) => async (dispatch) => {
   }
 };
 
-/**
- * retrieves details for a given syndicate
- */
-const getSyndicate = async (address: string, syndicateInstance) => {
-  const web3 = new Web3(Web3.givenProvider || "ws://localhost:8545");
-
-  try {
-    const syndicateData = await syndicateInstance.getSyndicateValues(address);
-    const closeDate = formatDate(new Date(syndicateData.closeDate.toNumber()));
-    const createdDate = formatDate(
-      new Date(syndicateData.creationDate.toNumber() * 1000)
-    );
-    const openToDeposits = syndicateData.syndicateOpen;
-
-    const totalDeposits = web3.utils.fromWei(
-      syndicateData.totalDeposits.toString()
-    );
-
-    const maxTotalDeposits = web3.utils.fromWei(
-      syndicateData.maxTotalDeposits.toString()
-    );
-
-    return {
-      address,
-      openToDeposits,
-      closeDate,
-      maxTotalDeposits,
-      totalDeposits,
-      createdDate,
-      inactive: syndicateData.inactive,
-    };
-  } catch (error) {
-    console.log({ error });
-  }
+export const addNewSyndicate = (data: object) => async (dispatch) => {
+  return dispatch({
+    data,
+    type: NEW_SYNDICATE,
+  });
 };
 
 /**

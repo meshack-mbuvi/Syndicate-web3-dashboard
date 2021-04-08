@@ -48,6 +48,17 @@ const MySyndicates = (props) => {
     <div className="mt-4">
       {!loading ? (
         <>
+          {syndicates.length ? (
+            ""
+          ) : (
+            <div className="flex justify-center text-center flex-col">
+              <p className="text-2xl">
+                There are no syndicates you are leading or have invested in at
+                the moment.
+              </p>
+              <p className="text-2xl">Please create a new fund</p>
+            </div>
+          )}
           {/* show active syndicates here */}
           {syndicates.length ? (
             <div>

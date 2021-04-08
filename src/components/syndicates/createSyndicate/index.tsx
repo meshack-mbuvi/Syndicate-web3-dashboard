@@ -1,5 +1,9 @@
+import { addNewSyndicate } from "@/redux/actions/syndicates";
 import { faCopy } from "@fortawesome/free-regular-svg-icons";
-import { faCheckCircle } from "@fortawesome/free-solid-svg-icons";
+import {
+  faCheckCircle,
+  faExclamationTriangle,
+} from "@fortawesome/free-solid-svg-icons";
 // fontawesome icons
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 // Used for validating form inputs
@@ -16,6 +20,7 @@ import Button from "src/components/buttons";
 import { InfoIcon } from "src/components/iconWrappers";
 import { TextInput, Toggle } from "src/components/inputs";
 import { Modal } from "src/components/modal";
+import { getSyndicate } from "src/helpers/syndicate";
 // redux actions
 import { showWalletModal } from "src/redux/actions/web3Provider";
 import { syndicateSchema } from "../validators";
@@ -27,7 +32,7 @@ import { syndicateSchema } from "../validators";
  * At the top-right of the page, there is a create button which opens a modal
  * with a form to create a new syndicate
  */
-const CreateSyndicate = (props) => {
+const CreateSyndicate = (props: any) => {
   // retrieve contract details
   const {
     web3: { syndicateInstance, account, web3 },
@@ -43,6 +48,8 @@ const CreateSyndicate = (props) => {
     "1"
   );
   const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [showErrorMessage, setShowErrorMessage] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const [shareableLink, setShareableLink] = useState("");
   const [copied, setCopied] = useState(false);
@@ -136,6 +143,12 @@ const CreateSyndicate = (props) => {
         { from: account, gasLimit: 800000 }
       );
 
+      // retrieve details of the newly created syndicate
+      const syndicate = await getSyndicate(account, syndicateInstance);
+
+      // add the newly created syndicate to application state
+      dispatch(addNewSyndicate({ ...syndicate, depositors: 0 }));
+
       // close loading modal
       setSumbitting(false);
 
@@ -152,9 +165,49 @@ const CreateSyndicate = (props) => {
     } catch (error) {
       // close loading modal
       setSumbitting(false);
+      let errorMessage = "";
 
-      // This error will be shown when the designs are ready
-      console.log({ error });
+      // check whether this text appears in the error message
+      const syndicateExists = error.message.search(
+        "ERR_SYNDICATE_ALREADY_EXISTS"
+      );
+      const profitShareError = error.message.search(
+        "Syndicate profit share must be greater than or equal to 300 (0.3%)"
+      );
+      const closeDateError = error.message.search(
+        "ERR_CLOSE_DATE_MUST_BE_AFTER_BLOCK_TIMESTAMP"
+      );
+      const accountNonceError = error.message.search(
+        "the tx doesn't have the correct nonce"
+      );
+      const managesSyndicate = error.message.search(
+        "ERR_MSG_SENDER_ALREADY_MANAGES_ONE_SYNDICATE"
+      );
+
+      const NOT_FOUND_CODE = -1;
+
+      if (
+        syndicateExists > NOT_FOUND_CODE ||
+        managesSyndicate > NOT_FOUND_CODE
+      ) {
+        errorMessage =
+          "Your wallet address already manages the maximum of one Syndicate";
+      } else if (profitShareError > NOT_FOUND_CODE) {
+        errorMessage =
+          "Syndicate profit share must be greater than or equal to 300 (0.3%)";
+      } else if (closeDateError > NOT_FOUND_CODE) {
+        errorMessage = "ERR_CLOSE_DATE_MUST_BE_AFTER_BLOCK_TIMESTAMP";
+      } else if (accountNonceError > NOT_FOUND_CODE) {
+        errorMessage =
+          "Please reset you account. It appears to have incorrect count of transactions.";
+      } else {
+        errorMessage =
+          "Your wallet address already manages the maximum of one Syndicate";
+      }
+      setErrorMessage(errorMessage);
+
+      // Show the message to the end user
+      setShowErrorMessage(true);
     }
   };
 
@@ -225,17 +278,6 @@ const CreateSyndicate = (props) => {
                 defaultValue="USDC"
                 register={register({ required: true })}
                 name="depositToken"
-                placeholder="USDC"
-              />
-
-              {/* distribution token */}
-              <TextInput
-                {...{
-                  label: "Distribution Token:",
-                }}
-                register={register({ required: true })}
-                name="distributionToken"
-                defaultValue="USDC"
                 placeholder="USDC"
               />
 
@@ -443,6 +485,29 @@ const CreateSyndicate = (props) => {
         </div>
       </Modal>
 
+      {/* Error message modal */}
+      <Modal
+        {...{
+          show: showErrorMessage,
+          closeModal: () => {
+            setShowErrorMessage(false);
+            setErrorMessage("");
+          },
+        }}>
+        <div className="flex justify-center m-auto mb-4">
+          <div className="modal-header mb-4 flex-col font-medium text-center flex justify-center leading-8 text-lg">
+            <div className="w-full flex justify-center mb-4">
+              <FontAwesomeIcon
+                icon={faExclamationTriangle}
+                size="10x"
+                className="cursor-pointer h-4 text-red-500 text-7xl"
+              />
+            </div>
+            <p className="text-red-500 text-lg">{errorMessage}</p>
+          </div>
+        </div>
+      </Modal>
+
       {/* show success modal */}
       <Modal
         {...{
@@ -520,7 +585,7 @@ CreateSyndicate.propTypes = {
   dispatch: PropTypes.func,
   showModal: PropTypes.bool,
   setShowModal: PropTypes.func,
-  web3Events: PropTypes.any,
+  web3contractInstance: PropTypes.any,
 };
 
 const mapStateToProps = ({ web3Reducer }) => {

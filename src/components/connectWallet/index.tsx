@@ -111,6 +111,7 @@ export const ConnectWallet = (props) => {
 
       try {
         syndicateInstance = await contract.deployed();
+
         return dispatch(
           setLibrary({
             library,
@@ -119,7 +120,6 @@ export const ConnectWallet = (props) => {
             web3contractInstance,
             daiContract,
             web3,
-            status: "connected",
           })
         );
       } catch (error) {

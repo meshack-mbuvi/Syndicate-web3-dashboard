@@ -20,12 +20,6 @@ export const syndicateSchema = Joi.object({
       "number.min":
         "Total maximum deposits must be greater than or equal to max deposits",
     }),
-  distributionToken: Joi.string()
-    .required()
-    .label("Distribution Token")
-    .messages({
-      "any.empty": "Distribution token must be provided.",
-    }),
   profitShareToSyndProtocol: Joi.string()
     .regex(/^\d+(\.\d{0,2})?$/)
     .messages({

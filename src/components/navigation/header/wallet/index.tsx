@@ -36,10 +36,12 @@ export const Wallet = (props) => {
   };
 
   return (
-    <div className="flex flex-row bg-gray-dark rounded-full my-1 px-2 h-8">
+    <div className="flex flex-row bg-gray-dark rounded-full my-1 lg:px-2 h-8">
       <img src={walletIcon} className="w-5 h-4 pr-1 mt-2 mr-2" />
 
-      <button onClick={connectWallet} className="focus:outline-none mr-1">
+      <button
+        onClick={connectWallet}
+        className="focus:outline-none mr-1 text-sm lg:text-lg">
         {account ? formatAddress(account) : "Not connected"}
       </button>
 
