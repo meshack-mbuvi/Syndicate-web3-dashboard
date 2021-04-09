@@ -274,18 +274,18 @@ export const ConnectWallet = (props) => {
         <div className="flex flex-col justify-center m-auto mb-4">
           <div className="flex align-center justify-center">
             <div className="border-4 border-light-blue m-8 rounded-full h-24 w-24 flex items-center justify-center">
-              <svg
-                width="34"
-                height="26"
-                viewBox="0 0 34 26"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg">
-                <path
-                  d="M2 13.5723L11.2243 22.7966L32 2"
-                  stroke="#35CFFF"
-                  strokeWidth="4"
-                />
-              </svg>
+            <svg 
+              height="365pt" 
+              viewBox="0 0 365.71733 365" 
+              width="365pt" 
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-10"
+            >
+              <g fill="#f44336">
+                <path d="m356.339844 296.347656-286.613282-286.613281c-12.5-12.5-32.765624-12.5-45.246093 0l-15.105469 15.082031c-12.5 12.503906-12.5 32.769532 0 45.25l286.613281 286.613282c12.503907 12.5 32.769531 12.5 45.25 0l15.082031-15.082032c12.523438-12.480468 12.523438-32.75.019532-45.25zm0 0"/>
+                <path d="m295.988281 9.734375-286.613281 286.613281c-12.5 12.5-12.5 32.769532 0 45.25l15.082031 15.082032c12.503907 12.5 32.769531 12.5 45.25 0l286.632813-286.59375c12.503906-12.5 12.503906-32.765626 0-45.246094l-15.082032-15.082032c-12.5-12.523437-32.765624-12.523437-45.269531-.023437zm0 0"/>
+              </g>
+            </svg>
             </div>
           </div>
           <div className="modal-header mb-4 text-black font-medium text-center ">
