@@ -18,7 +18,7 @@ export const initialState = {
   },
   syndicates: [],
   loading: false,
+  submitting: false,
   showWalletModal: false,
   syndicateInvestments: [],
 };
- 

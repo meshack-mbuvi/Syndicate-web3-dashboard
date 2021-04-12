@@ -58,6 +58,7 @@ const Syndicates = (props: any) => {
 
           {/* show my syndicates */}
           <MySyndicates />
+
           {/* Component to create syndicate  */}
           {syndicateInstance ? (
             <CreateSyndicate {...{ showModal, setShowModal }} />

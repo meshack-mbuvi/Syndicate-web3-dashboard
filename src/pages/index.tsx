@@ -27,15 +27,15 @@ function IndexPage() {
 
         <main className="mt-16 mx-auto max-w-7xl px-4 sm:mt-24">
           <div className="text-center">
-            <p className="text-8xl tracking-tight font-extrabold text-white sm:text-5xl md:text-8xl leading-10 mb-8">
+            <p className="text-4xl tracking-tight font-extrabold text-white sm:text-5xl md:text-6xl leading-10 mb-8">
               Join the Revolution.
             </p>
-            <p className="text-white text-3xl">
+            <p className="text-white text-xl sm:text-3xl">
               Crypto investing protocol and social network
             </p>
 
-            <div className="mt-5 max-w-md mx-auto sm:flex sm:justify-center md:mt-8">
-              <div className="rounded-md mt-5">
+            <div className="flex items-center justify-center mt-14 sm:mt-28 w-full">
+              <div className="rounded-md">
                 <Link href="/syndicates">
                   <a className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white hover md:py-4 md:text-lg md:px-10 bg-blue-light">
                     Use Syndicate
@@ -50,7 +50,7 @@ function IndexPage() {
       {/* footer */}
       <div className="flex absolute w-full bottom-4">
         <Footer />
-        <img src="/images/brand.svg" className="bottom-logo" />
+        <img src="/images/brand.svg" className="my-8 mx-4 h-8 w-8" />
       </div>
     </>
   );

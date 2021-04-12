@@ -1,5 +1,10 @@
 import { getSyndicate } from "src/helpers/syndicate";
-import { ADD_NEW_INVESTMENT, ALL_SYNDICATES, NEW_SYNDICATE } from "../types";
+import {
+  ADD_NEW_INVESTMENT,
+  ALL_SYNDICATES,
+  NEW_SYNDICATE,
+  SET_LOADING,
+} from "../types";
 
 type Depositors = {
   address?: {
@@ -19,12 +24,18 @@ export const addSyndicates = (data) => async (dispatch) => {
 
   const { syndicateInstance, account, web3contractInstance, web3 } = data;
   try {
+    dispatch({
+      data: true,
+      type: SET_LOADING,
+    });
     const currentBlock = await web3.eth.getBlockNumber();
+    console.log({ currentBlock });
 
     const events = await web3contractInstance.getPastEvents("allEvents", {
-      fromBlock: currentBlock - 10,
+      fromBlock: currentBlock - 2,
       toBlock: "latest",
     });
+    console.log({ events });
 
     const syndicates = [];
     const syndicateDepositors: Depositors = {};
@@ -102,12 +113,19 @@ export const addSyndicates = (data) => async (dispatch) => {
         console.error({ message: "Error retrieving syndicate data" });
       }
     }
-
+    dispatch({
+      data: false,
+      type: SET_LOADING,
+    });
     return dispatch({
       data: allSyndicates,
       type: ALL_SYNDICATES,
     });
   } catch (error) {
+    dispatch({
+      data: false,
+      type: SET_LOADING,
+    });
     console.log({
       error,
       message: "An error occured while retrieving all events",

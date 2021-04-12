@@ -15,10 +15,10 @@ export const DiscoverAnimatedLoader = () => {
     for (let index = 0; index < count; index++) {
       animations.push(
         <React.Fragment key={index}>
-          <div className="wrapper-cell flex justify-between">
+          <div className="mb-2 flex justify-between">
             <div className="flex flex-1">
-              <div className="text">
-                <div className="text-line"></div>
+              <div className="w-3/4">
+                <div className="animated h-2 my-2 "></div>
               </div>
             </div>
             <div className="discover-placeholder w-6 h-6"></div>

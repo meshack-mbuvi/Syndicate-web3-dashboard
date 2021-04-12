@@ -22,7 +22,7 @@ import { TextInput, Toggle } from "src/components/inputs";
 import { Modal } from "src/components/modal";
 import { getSyndicate } from "src/helpers/syndicate";
 // redux actions
-import { showWalletModal } from "src/redux/actions/web3Provider";
+import { setSumbitting, showWalletModal,setLoading } from "src/redux/actions";
 import { syndicateSchema } from "../validators";
 
 /**
@@ -39,6 +39,7 @@ const CreateSyndicate = (props: any) => {
     dispatch,
     showModal,
     setShowModal,
+    submitting,
   } = props;
 
   const [primaryERC20ContractAddress, setSyndicateAddress] = useState("");
@@ -53,7 +54,6 @@ const CreateSyndicate = (props: any) => {
 
   const [shareableLink, setShareableLink] = useState("");
   const [copied, setCopied] = useState(false);
-  const [submitting, setSumbitting] = useState(false);
 
   useEffect(() => {
     /**
@@ -100,7 +100,7 @@ const CreateSyndicate = (props: any) => {
     }
 
     // show loading modal
-    setSumbitting(true);
+    dispatch(setSumbitting(true));
 
     // get closeDate and syndicateProtocolProfitSharePercent
     const syndicateProtocolProfitSharePercent =
@@ -149,8 +149,10 @@ const CreateSyndicate = (props: any) => {
       // add the newly created syndicate to application state
       dispatch(addNewSyndicate({ ...syndicate, depositors: 0 }));
 
+      dispatch(setLoading(true))
+
       // close loading modal
-      setSumbitting(false);
+      dispatch(setSumbitting(false));
 
       // before showing success modal, we need to set the shareable link
       setShareableLink(
@@ -163,8 +165,9 @@ const CreateSyndicate = (props: any) => {
       // show success modal
       setShowSuccessModal(true);
     } catch (error) {
+      console.log({ error });
       // close loading modal
-      setSumbitting(false);
+      dispatch(setSumbitting(false));
       let errorMessage = "";
 
       // check whether this text appears in the error message
@@ -589,8 +592,9 @@ CreateSyndicate.propTypes = {
 };
 
 const mapStateToProps = ({ web3Reducer }) => {
-  const { web3 } = web3Reducer;
-  return { web3 };
+  const { web3, submitting } = web3Reducer;
+  console.log({ web3Reducer });
+  return { web3, submitting };
 };
 
 export default connect(mapStateToProps)(CreateSyndicate);

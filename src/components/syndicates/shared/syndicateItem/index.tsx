@@ -21,7 +21,7 @@ const SyndicateItem = (props) => {
     styles,
     closeDate,
     createdDate,
-    inactive,
+    active,
     maxTotalDeposits,
     openToDeposits,
     totalDeposits,
@@ -148,7 +148,7 @@ const SyndicateItem = (props) => {
    * “Inactive” if the syndicate has been designated as inactive by the syndicate lead.
    */
   let status = "";
-  if (!inactive) {
+  if (active) {
     if (openToDeposits && totalDeposits < maxTotalDeposits) {
       status = `Open until ${closeDate}`;
     } else {
@@ -172,7 +172,7 @@ const SyndicateItem = (props) => {
   let link = "details";
 
   // check that wallet owner is not the creater of the syndicate
-  if (!inactive) {
+  if (active) {
     if (address !== account) {
       // monitors whether syndicate is open to deposits
       if (openToDeposits) {
@@ -195,6 +195,7 @@ const SyndicateItem = (props) => {
 
   return (
     <div className="flex my-2 py-2 border-b border-gray-90 justify-between">
+      <div className="text-line"></div>
       <div className="w-8">
         <p className={`h-5 w-5 rounded-full ${styles}`}></p>
       </div>
@@ -237,11 +238,11 @@ SyndicateItem.propTypes = {
   address: PropTypes.string.isRequired,
   createdDate: PropTypes.string,
   closeDate: PropTypes.string,
-  depositors: PropTypes.string,
+  depositors: PropTypes.number,
   deposits: PropTypes.string,
   activity: PropTypes.string,
   styles: PropTypes.string,
-  inactive: PropTypes.bool.isRequired,
+  active: PropTypes.bool.isRequired,
   syndicateOpen: PropTypes.string,
   maxTotalDeposits: PropTypes.string,
   openToDeposits: PropTypes.bool,

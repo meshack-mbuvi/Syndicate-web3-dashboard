@@ -8,6 +8,9 @@ module.exports = {
       height: () => ({
         "fit-content": "fit-content",
       }),
+      width: () => ({
+        "fit-content": "fit-content",
+      }),
       fontFamily: {
         ibm: ["IBM Plex Mono"],
       },
