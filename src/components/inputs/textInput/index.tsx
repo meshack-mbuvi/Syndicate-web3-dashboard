@@ -16,12 +16,14 @@ export const TextInput = (props: {
   disabled?: boolean;
   placeholder?: string;
   defaultValue?: string | number;
+  error?: string;
 }) => {
   const {
     label,
     name,
     register,
     defaultValue,
+    error,
     disabled = false,
     ...rest
   } = props;
@@ -39,22 +41,24 @@ export const TextInput = (props: {
           {label}
         </label>
       </div>
-
-      <div className="w-7/12 flex justify-between">
+      <div className="w-7/12 flex flex-col justify-between">
         {/* input field */}
-        <input
-          type="text"
-          name={name}
-          ref={register}
-          className={`flex flex-grow focus:ring-indigo-500 focus:border-indigo-500 rounded-md ${disabledClasses}`}
-          {...rest}
-          disabled={disabled}
-          defaultValue={defaultValue}
-        />
-        {/* icon */}
-        <div className="w-6 ml-4 mt-1">
-          <InfoIcon />
+        <div className="flex">
+          <input
+            type="text"
+            name={name}
+            ref={register}
+            className={`flex flex-grow focus:ring-indigo-500 focus:border-indigo-500 rounded-md ${disabledClasses}`}
+            {...rest}
+            disabled={disabled}
+            defaultValue={defaultValue}
+          />
+          {/* icon */}
+          <div className="w-6 ml-4 mt-1">
+            <InfoIcon />
+          </div>
         </div>
+        {error ? <p className="text-red-500 text-sm">{error}</p> : null}
       </div>
     </div>
   );

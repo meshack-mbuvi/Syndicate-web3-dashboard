@@ -1,3 +1,3 @@
-export { toEther, etherToNumber, fromNumberToPercent } from "./conversions";
+export { etherToNumber, fromNumberToPercent, toEther } from "./conversions";
 export { formatDate } from "./formatDate";
-export { web3Utils } from "./web3Utils";
+export { web3 } from "./web3Utils";

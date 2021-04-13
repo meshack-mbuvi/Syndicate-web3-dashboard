@@ -10,7 +10,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { joiResolver } from "@hookform/resolvers/joi";
 import Link from "next/link";
 import PropTypes from "prop-types";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import DatePicker from "react-datepicker";
 import { Controller, useForm } from "react-hook-form";
@@ -22,7 +22,7 @@ import { TextInput, Toggle } from "src/components/inputs";
 import { Modal } from "src/components/modal";
 import { getSyndicate } from "src/helpers/syndicate";
 // redux actions
-import { setSumbitting, showWalletModal,setLoading } from "src/redux/actions";
+import { setLoading, setSumbitting, showWalletModal } from "src/redux/actions";
 import { syndicateSchema } from "../validators";
 
 /**
@@ -42,7 +42,6 @@ const CreateSyndicate = (props: any) => {
     submitting,
   } = props;
 
-  const [primaryERC20ContractAddress, setSyndicateAddress] = useState("");
   const [allowlistEnabled, setAllowlistEnabled] = useState(false);
   const [modifiable, setModifiable] = useState(false);
   const [syndicateProfitSharePercent, setProfitShareToSyndProtocol] = useState(
@@ -55,17 +54,6 @@ const CreateSyndicate = (props: any) => {
   const [shareableLink, setShareableLink] = useState("");
   const [copied, setCopied] = useState(false);
 
-  useEffect(() => {
-    /**
-     * When contract instance is null or undefined, we can't access syndicate
-     * address so we need to connect to wallet first which will handle contract
-     * instantiation.
-     */
-    if (syndicateInstance) {
-      setSyndicateAddress(account);
-    }
-  }, [syndicateInstance]);
-
   // this controls the toggle button for manually whitelisting depositors
   const toggleAllowlistEnabled = () => setAllowlistEnabled(!allowlistEnabled);
   const toggleModifiable = () => setModifiable(!modifiable);
@@ -74,10 +62,9 @@ const CreateSyndicate = (props: any) => {
 
   // react-hook-form provides Performant, flexible and
   // extensible forms with easy-to-use validation.
-  const { register, handleSubmit, control } = useForm({
+  const { register, handleSubmit, control, errors } = useForm({
     resolver: joiResolver(syndicateSchema),
   });
-
   /**
    * This method implements manager steps to create a syndicate
    * NOTE: we need to have the feature for setting deposit and distribution token
@@ -128,6 +115,8 @@ const CreateSyndicate = (props: any) => {
         `${parseFloat(data.profitShareToSyndicateLead) * 1000}`
       );
 
+      const primaryERC20ContractAddress = data.depositToken;
+
       const closeDate = data.closeDate.getTime();
 
       await syndicateInstance.createSyndicate(
@@ -149,7 +138,7 @@ const CreateSyndicate = (props: any) => {
       // add the newly created syndicate to application state
       dispatch(addNewSyndicate({ ...syndicate, depositors: 0 }));
 
-      dispatch(setLoading(true))
+      dispatch(setLoading(true));
 
       // close loading modal
       dispatch(setSumbitting(false));
@@ -268,7 +257,7 @@ const CreateSyndicate = (props: any) => {
                 {...{
                   label: "Syndicate Address:",
                 }}
-                value={primaryERC20ContractAddress}
+                value={account}
                 name="syndicateAddress"
                 disabled
               />
@@ -277,8 +266,9 @@ const CreateSyndicate = (props: any) => {
               <TextInput
                 {...{
                   label: "Deposit Token:",
+                  error: errors.depositToken?.message,
                 }}
-                defaultValue="USDC"
+                defaultValue="Provide an ERC20 or DAI address"
                 register={register({ required: true })}
                 name="depositToken"
                 placeholder="USDC"
@@ -288,6 +278,7 @@ const CreateSyndicate = (props: any) => {
               <TextInput
                 {...{
                   label: "Max Deposits(Per Depositor):",
+                  error: errors.maxDeposits?.message,
                 }}
                 register={register({ required: true })}
                 name="maxDeposits"
@@ -299,6 +290,7 @@ const CreateSyndicate = (props: any) => {
               <TextInput
                 {...{
                   label: "Max Deposits(Total):",
+                  error: errors.maxTotalDeposits?.message,
                 }}
                 register={register({ required: true })}
                 name="maxTotalDeposits"
@@ -341,6 +333,7 @@ const CreateSyndicate = (props: any) => {
               <TextInput
                 {...{
                   label: "Expected Annual Operating Fees:",
+                  error: errors.expectedAnnualOperatingFees?.message,
                 }}
                 register={register}
                 name="expectedAnnualOperatingFees"
@@ -351,6 +344,7 @@ const CreateSyndicate = (props: any) => {
               <TextInput
                 {...{
                   label: "Profit Share to Syndicate Lead:",
+                  error: errors.profitShareToSyndicateLead?.message,
                 }}
                 register={register}
                 name="profitShareToSyndicateLead"
@@ -538,9 +532,7 @@ const CreateSyndicate = (props: any) => {
           </div>
           <div className="modal-header mb-4 text-black font-medium text-center ">
             <p className="text-3xl">Syndicate Successfully Launched</p>
-            <p className="leading-8 text-sm text-gray-500 m-4">
-              {primaryERC20ContractAddress}
-            </p>
+            <p className="leading-8 text-sm text-gray-500 m-4">{account}</p>
             <div className="flex justify-between">
               <div className="flex flex-grow flex-col rounded-full p-3 bg-blue-light text-white">
                 <p className="text-xs">Your shareable deposit link:</p>
