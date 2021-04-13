@@ -3,16 +3,19 @@ import PropTypes from "prop-types";
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import ErrorBoundary from "src/components/errorBoundary";
+import Link from "next/link";
 import Layout from "src/components/layout";
 import InvestInSyndicate from "src/components/syndicates/investInSyndicate";
 import SyndicateDetails from "src/components/syndicates/syndicateDetails";
 import { etherToNumber, formatDate, fromNumberToPercent } from "src/utils";
+import Head from "src/components/syndicates/shared/HeaderTitle";
 
 /**
  * Renders syndicate component with details section on the left and
  * deposit section on the right
  * @param {object} props
  */
+
 const SyndicateInvestment = (props) => {
   const {
     web3: { syndicateInstance, account },
@@ -31,6 +34,7 @@ const SyndicateInvestment = (props) => {
           .then((data) => {
             console.log({ data });
             const closeDate = formatDate(new Date(data.closeDate.toNumber()));
+
             /**
              * block.timestamp which is the one used to save creationDate is in
              * seconds. We multiply by 1000 to convert to milliseconds and then
@@ -41,10 +45,13 @@ const SyndicateInvestment = (props) => {
             );
 
             const maxDeposit = data.maxDeposit.toString();
+
             const profitShareToSyndicateProtocol = fromNumberToPercent(
-              etherToNumber(data.syndicateProfitSharePercent.toString())
+              etherToNumber(data.syndicateProfitShareBasisPoints.toString())
             );
-            const openToDeposits = data.spvOpen;
+
+            const openToDeposits = data.syndicateOpen;
+
             const totalDeposits = etherToNumber(data.totalDeposits.toString());
 
             setSyndicate({
@@ -54,7 +61,7 @@ const SyndicateInvestment = (props) => {
               totalDeposits,
               closeDate,
               createdDate,
-              inactive: data.inactive,
+              active: data.active,
               allowlistEnabled: data.allowlistEnabled,
             });
           })
@@ -64,10 +71,17 @@ const SyndicateInvestment = (props) => {
       }
     }
   }, [syndicateInstance, account]);
+
   return (
     <Layout>
+      <Head title="Syndicate" />
       <ErrorBoundary>
         <div className="w-full flex flex-col">
+          <Link href="/syndicates">
+            <a className="text-blue-cyan p-2 my-4 text-sm">
+              {"< Back To My Syndicates"}
+            </a>
+          </Link>
           <div className="w-full flex flex-col sm:flex-row">
             <SyndicateDetails syndicate={syndicate} />
 

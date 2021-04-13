@@ -7,6 +7,7 @@ import Layout from "src/components/layout";
 import CreateSyndicate from "src/components/syndicates/createSyndicate";
 import MySyndicates from "src/components/syndicates/mySyndicates";
 import { showWalletModal } from "src/redux/actions/web3Provider";
+import Head from "src/components/syndicates/shared/HeaderTitle";
 
 /**
  * Diplays all syndicates.
@@ -35,6 +36,7 @@ const Syndicates = (props: any) => {
 
   return (
     <Layout>
+      <Head title="My Syndicates" />
       <ErrorBoundary>
         <div className="w-full">
           {/* Show page header and button to create new syndicate */}
@@ -50,7 +52,8 @@ const Syndicates = (props: any) => {
             {/* <div className="mb-2"> */}
             <Button
               customClasses="bottom-4 right-4 absolute bg-blue-light rounded-full h-16 w-16 p-3 pt-3 text-5xl"
-              onClick={showSyndicateForm}>
+              onClick={showSyndicateForm}
+            >
               +
             </Button>
             {/* </div> */}

@@ -2,7 +2,7 @@ const colors = require("tailwindcss/colors");
 
 module.exports = {
   plugins: [require("@tailwindcss/forms")],
-  purge: [],
+  purge: false,
   theme: {
     extend: {
       height: () => ({

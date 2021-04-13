@@ -7,7 +7,9 @@ import {
   SET_WEB3,
   SHOW_WALLET_MODAL,
   SHOW_ERROR_MODAL,
-  HIDE_ERROR_MODAL
+  HIDE_ERROR_MODAL,
+  DEPOSIT_MODE,
+  WITHDRAWAL_MODE,
 } from "src/redux/actions/types";
 import { initialState } from "../initialState";
 
@@ -23,7 +25,7 @@ export const web3Reducer = (state = initialState, action) => {
     case SET_PROVIDER:
       return {
         ...state,
-        web3: { ...web3, provider: action.data }, 
+        web3: { ...web3, provider: action.data },
       };
 
     case SHOW_WALLET_MODAL:
@@ -59,22 +61,33 @@ export const web3Reducer = (state = initialState, action) => {
     case SHOW_ERROR_MODAL:
       return {
         ...state,
-        web3: { 
-          ...web3,  
+        web3: {
+          ...web3,
           isErrorModalOpen: true,
           error: action.data,
-        }
-      }
-    
-      case HIDE_ERROR_MODAL:
-        return {
-          ...state,
-          web3: { 
-            ...web3,  
-            isErrorModalOpen: false,
-            error: null,
-          }
-        }
+        },
+      };
+
+    case HIDE_ERROR_MODAL:
+      return {
+        ...state,
+        web3: {
+          ...web3,
+          isErrorModalOpen: false,
+          error: null,
+        },
+      };
+    case DEPOSIT_MODE:
+      return {
+        ...state,
+        depositMode: true,
+      };
+
+    case WITHDRAWAL_MODE:
+      return {
+        ...state,
+        withdrawalMode: true,
+      };
 
     default:
       return state;

@@ -4,7 +4,8 @@ import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { ExternalLinkIcon } from "src/components/iconWrappers";
 import { etherToNumber, formatDate, fromNumberToPercent } from "src/utils";
-import { BadgeCard, DetailsCard } from "../shared";
+import { BadgeCard, DetailsCard, SectionCard } from "../shared";
+import { DistributionsGraph } from "../shared/distributionsGraph";
 
 const SyndicateDetails = (props) => {
   const {
@@ -22,6 +23,19 @@ const SyndicateDetails = (props) => {
     inactive: true,
     createdDate: "",
   });
+
+  const [
+    depositsAndDistributionsSections,
+    setDepositsAndDistributionsSections,
+  ] = useState([
+    { header: "Total Deposits", subText: "0 USDC (0 depositors)" },
+    { header: "Total Distributions", subText: "0 USDC" },
+    { header: "Total Withdrawn", subText: "0 USDC" },
+    {
+      header: "Profit Share to Syndicate Leads",
+      subText: syndicate.profitShareToSyndicateProtocol,
+    },
+  ]);
 
   useEffect(() => {
     if (syndicate) {
@@ -73,11 +87,13 @@ const SyndicateDetails = (props) => {
             );
 
             const maxDeposit = data.maxDeposit.toString();
+            
             const profitShareToSyndicateProtocol = fromNumberToPercent(
-              etherToNumber(data.syndicateProfitSharePercent.toString())
+              etherToNumber(data.syndicateProfitShareBasisPoints.toString())
             );
-            const openToDeposits = data.spvOpen;
-            const totalDeposits = etherToNumber(data.totalDeposits.toString());
+            
+            const openToDeposits = data.syndicateOpen;
+            const totalDeposits = etherToNumber(data.totalDeposits.toString());            
 
             const syndicateDetails = {
               maxDeposit,
@@ -86,7 +102,7 @@ const SyndicateDetails = (props) => {
               totalDeposits,
               closeDate,
               inactive: data.inactive,
-              createdDate: "",
+              createdDate,
             };
 
             setSyndicate(syndicateDetails);
@@ -101,9 +117,9 @@ const SyndicateDetails = (props) => {
   const { openToDeposits } = syndicate;
 
   return (
-    <div className="w-full sm:w-2/3 h-fit-content px-2 md:px-0 rounded-md bg-gray-9">
+    <div className="w-full sm:w-2/3 h-fit-content p-4 md:px-6 rounded-md bg-gray-9">
       <div className="h-fit-content w-fit-content rounded-t-md bg-gray-9 md:ml-2">
-        <span className="fold-bold px-2 text-gray-dim leading-loose text-xl uppercase">
+        <span className="fold-bold px-2 text-gray-dim leading-loose text-lg uppercase">
           Syndicate
         </span>
         <p className="sm:text-2xl flex text-lg flex-wrap px-2 break-all">
@@ -112,7 +128,8 @@ const SyndicateDetails = (props) => {
         <a
           href={`https://etherscan.io/address/${syndicateAddress}`}
           target="_blank"
-          className="text-blue-cyan px-2 flex">
+          className="text-blue-cyan px-2 flex"
+        >
           view on etherscan <ExternalLinkIcon className="ml-2" />
         </a>
 
@@ -159,7 +176,7 @@ const SyndicateDetails = (props) => {
       {details ? (
         <DetailsCard
           {...{ title: "Details", sections: details }}
-          customStyles={"p-4 sm:w-2/3 sm:ml-12 py-4 border-b border-gray-49"}
+          customStyles={"p-4 sm:w-2/3 py-4 border-b border-gray-49"}
         />
       ) : (
         ""
@@ -168,16 +185,33 @@ const SyndicateDetails = (props) => {
       {/* Total deposits */}
       <DetailsCard
         {...{
-          title: "Deposits",
+          title: "Deposits & Distributions",
+          infoIcon: true,
           sections: [
             {
-              header: "Total Deposits",
+              header: "Total Distributions / Deposits",
               subText: syndicate?.totalDeposits,
             },
           ],
         }}
-        customStyles={"px-4 sm:w-2/3 sm:ml-12 py-8 border-gray-49"}
+        customStyles={"px-4 sm:w-2/3 py-8 border-gray-49"}
       />
+
+      {/* distributions graph  */}
+      <DistributionsGraph customStyles={"px-4 sm:w-2/3 py-8 border-gray-49"} />
+
+      <div className="grid grid-cols-3 gap-4 px-4 py-8 border-gray-49">
+        {depositsAndDistributionsSections.map((sectionDetail, index) => {
+          return (
+            <div className="pl-4 w-full" key={index}>
+              <SectionCard
+                {...{ ...sectionDetail }}
+                infoIcon={false}
+              />
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 };

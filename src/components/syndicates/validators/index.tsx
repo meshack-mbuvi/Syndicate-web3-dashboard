@@ -43,11 +43,6 @@ export const syndicateSchema = Joi.object({
 export const depositSchema = Joi.object({
   depositAmount: Joi.string()
     .required()
-    .label("Deposit amount")
-    .messages({ "any.empty": "Deposit amount is required" }),
-  currency: Joi.string(),
-  accredited: Joi.boolean().invalid(false).messages({
-    "any.invalid":
-      "You must attest that you are an accredited investor by checking the accredited investor box to confirm.",
-  }),
+    .label("Amount")
+    .messages({ "any.empty": "Amount is required" }),
 });

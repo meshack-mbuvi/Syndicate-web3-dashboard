@@ -1,11 +1,12 @@
 import React from "react";
-
+import Head from "src/components/syndicates/shared/HeaderTitle";
 import Layout from "src/components/layout";
 import SEO from "src/components/seo";
 
 function AboutPage() {
   return (
     <Layout>
+      <Head title="About" />
       <SEO
         keywords={[`next`, `tailwind`, `react`, `tailwindcss`]}
         title="About"

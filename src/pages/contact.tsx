@@ -1,15 +1,11 @@
 import React from "react";
-
+import Head from "src/components/syndicates/shared/HeaderTitle";
 import Layout from "src/components/layout";
-import SEO from "src/components/seo";
 
 function ContactPage() {
   return (
     <Layout>
-      <SEO
-        keywords={[`next`, `tailwind`, `react`, `tailwindcss`]}
-        title="Contact"
-      />
+      <Head title="Contact" />
       <section>
         <form>
           <h2 className="mb-8 leading-loose">

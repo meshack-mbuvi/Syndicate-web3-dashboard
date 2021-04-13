@@ -8,6 +8,8 @@ import {
   SET_WEB3,
   SHOW_ERROR_MODAL,
   SHOW_WALLET_MODAL,
+  DEPOSIT_MODE,
+  WITHDRAWAL_MODE,
 } from "./types";
 
 export const setLibrary = (data) => async (dispatch) => {
@@ -65,4 +67,18 @@ export const hideErrorModal = () => {
   return {
     type: HIDE_ERROR_MODAL,
   };
+};
+
+export const setDepositMode = () => async (dispatch) => {
+  return dispatch({
+    type: DEPOSIT_MODE,
+    status,
+  });
+};
+
+export const setWithdrawalMode = (status) => async (dispatch) => {
+  return dispatch({
+    type: WITHDRAWAL_MODE,
+    status,
+  });
 };

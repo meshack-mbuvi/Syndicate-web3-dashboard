@@ -1,6 +1,6 @@
-import Link from "next/link";
-import PropTypes from "prop-types";
 import React from "react";
+import Link from "src/components/syndicates/shared/ActiveLink";
+import PropTypes from "prop-types";
 
 export const NavBarNavItem = ({ url, urlText }) => {
   return (

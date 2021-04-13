@@ -21,4 +21,6 @@ export const initialState = {
   submitting: false,
   showWalletModal: false,
   syndicateInvestments: [],
+  withdrawalMode: true,
+  depositMode: false,
 };
