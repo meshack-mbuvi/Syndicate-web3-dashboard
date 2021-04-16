@@ -13,6 +13,7 @@ module.exports = {
       }),
       fontFamily: {
         ibm: ["IBM Plex Mono"],
+        inter: ["Inter"],
       },
       colors: {
         cyan: colors.cyan,
@@ -29,6 +30,8 @@ module.exports = {
           light: "#E5E5E5",
           dim: "#717171",
           nero: "#252525",
+          manatee: "#8F97AB",
+          matterhorn: "#515151",
         },
         green: {
           ...colors.green,
@@ -38,6 +41,7 @@ module.exports = {
           ...colors.blue,
           light: "#35cfff",
           cyan: "#2AA3EF",
+          deepAzure: "#0C1F30",
         },
       },
       fill: (theme) => ({

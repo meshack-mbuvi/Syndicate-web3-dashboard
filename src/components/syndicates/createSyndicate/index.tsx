@@ -100,33 +100,33 @@ const CreateSyndicate = (props: any) => {
        * Convert maxDeposits, totalMaxDeposits and syndicateProfitSharePercent
        * to wei since the contract does not take normal javascript numbers
        */
-      const syndicateProfitSharePercent = web3.utils.toWei(
-        `${parseFloat(syndicateProtocolProfitSharePercent) * 1000}`
-      );
+      const syndicateProfitShareBasisPoints = `${
+        parseFloat(syndicateProtocolProfitSharePercent) * 100
+      }`;
 
-      const maxDeposits = web3.utils.toWei(data.maxDeposits.toString());
+      const maxDeposit = web3.utils.toWei(data.maxDeposits.toString());
       const maxTotalDeposits = web3.utils.toWei(
         data.maxTotalDeposits.toString()
       );
-      const managerManagementFeeBasisPoints = web3.utils.toWei(
-        `${parseFloat(data.expectedAnnualOperatingFees) * 1000}`
-      );
-      const managerPerformanceFeePercent = web3.utils.toWei(
-        `${parseFloat(data.profitShareToSyndicateLead) * 1000}`
-      );
+      const managerManagementFeeBasisPoints = `${
+        parseFloat(data.expectedAnnualOperatingFees) * 100
+      }`;
+      const managerPerformanceFeeBasisPoints = `${
+        parseFloat(data.profitShareToSyndicateLead) * 100
+      }`;
 
-      const primaryERC20ContractAddress = data.depositToken;
+      const depositERC20ContractAddress = data.depositToken;
 
       const closeDate = data.closeDate.getTime();
 
       await syndicateInstance.createSyndicate(
-        primaryERC20ContractAddress,
-        maxDeposits,
+        depositERC20ContractAddress,
+        maxDeposit,
         maxTotalDeposits,
         closeDate,
-        syndicateProfitSharePercent.toString(),
+        syndicateProfitShareBasisPoints.toString(),
         managerManagementFeeBasisPoints,
-        managerPerformanceFeePercent,
+        managerPerformanceFeeBasisPoints,
         allowlistEnabled,
         modifiable,
         { from: account, gasLimit: 800000 }
@@ -145,7 +145,7 @@ const CreateSyndicate = (props: any) => {
 
       // before showing success modal, we need to set the shareable link
       setShareableLink(
-        `www.syndicateprotocol.org/${primaryERC20ContractAddress}`
+        `www.syndicateprotocol.org/${depositERC20ContractAddress}`
       );
 
       // close new syndicate form modal
@@ -164,7 +164,7 @@ const CreateSyndicate = (props: any) => {
         "ERR_SYNDICATE_ALREADY_EXISTS"
       );
       const profitShareError = error.message.search(
-        "Syndicate profit share must be greater than or equal to 300 (0.3%)"
+        "Syndicate profit share must be greater than or equal to 50 (0.5%)"
       );
       const closeDateError = error.message.search(
         "ERR_CLOSE_DATE_MUST_BE_AFTER_BLOCK_TIMESTAMP"
@@ -186,7 +186,7 @@ const CreateSyndicate = (props: any) => {
           "Your wallet address already manages the maximum of one Syndicate";
       } else if (profitShareError > NOT_FOUND_CODE) {
         errorMessage =
-          "Syndicate profit share must be greater than or equal to 300 (0.3%)";
+          "Syndicate profit share must be greater than or equal to 50 (0.5%)";
       } else if (closeDateError > NOT_FOUND_CODE) {
         errorMessage = "ERR_CLOSE_DATE_MUST_BE_AFTER_BLOCK_TIMESTAMP";
       } else if (accountNonceError > NOT_FOUND_CODE) {
@@ -241,11 +241,13 @@ const CreateSyndicate = (props: any) => {
           closeModal,
           customWidth: "w-full lg:w-3/5",
         }}
-        title="Create New Syndicate">
+        title="Create New Syndicate"
+      >
         {/* modal sub title */}
         <div
           className="flex justify-start mb-1 text-blue font-medium 
-          text-center leading-8 text-lg">
+          text-center leading-8 text-lg"
+        >
           <p className="text-blue-light ml-4">Onchain Data</p>
         </div>
 
@@ -303,7 +305,8 @@ const CreateSyndicate = (props: any) => {
                 <div className="mr-2 w-5/12 flex justify-end">
                   <label
                     htmlFor="syndicateAddress"
-                    className="block pt-2 text-black text-sm font-medium">
+                    className="block pt-2 text-black text-sm font-medium"
+                  >
                     Close Date:
                   </label>
                 </div>
@@ -357,7 +360,8 @@ const CreateSyndicate = (props: any) => {
                 <div className="mr-2 w-5/12 flex justify-end">
                   <label
                     htmlFor="syndicateAddress"
-                    className="block pt-2 text-black text-sm font-medium">
+                    className="block pt-2 text-black text-sm font-medium"
+                  >
                     Profit Share to Syndicate Protocol:
                   </label>
                 </div>
@@ -365,16 +369,18 @@ const CreateSyndicate = (props: any) => {
                 {/* shows 4 equal grids used to get the input for profit share */}
                 <div className="w-7/12 flex justify-between">
                   <div
-                    className={`grid grid-cols-4 w-4/5 border gray-85 flex flex-grow rounded-md`}>
+                    className={`grid grid-cols-4 w-4/5 border gray-85 flex flex-grow rounded-md`}
+                  >
                     <button
                       className={`flex justify-center pt-2 border-r focus:outline-none ${
-                        syndicateProfitSharePercent == "0.3"
+                        syndicateProfitSharePercent == "0.5"
                           ? "bg-blue-100 text-black"
                           : "gray-85"
                       }`}
-                      onClick={() => setProfitShareToSyndProtocol("0.3")}
-                      type="button">
-                      0.3%
+                      onClick={() => setProfitShareToSyndProtocol("0.5")}
+                      type="button"
+                    >
+                      0.5%
                     </button>
 
                     <button
@@ -384,7 +390,8 @@ const CreateSyndicate = (props: any) => {
                           : "gray-85"
                       }`}
                       onClick={() => setProfitShareToSyndProtocol("1")}
-                      type="button">
+                      type="button"
+                    >
                       1%
                     </button>
 
@@ -395,7 +402,8 @@ const CreateSyndicate = (props: any) => {
                           : "gray-85"
                       }`}
                       type="button"
-                      onClick={() => setProfitShareToSyndProtocol("3")}>
+                      onClick={() => setProfitShareToSyndProtocol("3")}
+                    >
                       3%
                     </button>
 
@@ -465,7 +473,8 @@ const CreateSyndicate = (props: any) => {
           <div className="flex my-4 w-full justify-center py-2">
             <Button
               type="submit"
-              customClasses="rounded-full bg-blue-light w-auto px-10 py-2 text-lg">
+              customClasses="rounded-full bg-blue-light w-auto px-10 py-2 text-lg"
+            >
               Launch
             </Button>
           </div>
@@ -490,7 +499,8 @@ const CreateSyndicate = (props: any) => {
             setShowErrorMessage(false);
             setErrorMessage("");
           },
-        }}>
+        }}
+      >
         <div className="flex justify-center m-auto mb-4">
           <div className="modal-header mb-4 flex-col font-medium text-center flex justify-center leading-8 text-lg">
             <div className="w-full flex justify-center mb-4">
@@ -512,7 +522,8 @@ const CreateSyndicate = (props: any) => {
           closeModal: () => setShowSuccessModal(false),
           type: "success",
           customWidth: "w-3/5",
-        }}>
+        }}
+      >
         <div className="flex flex-col justify-center m-auto mb-4">
           <div className="flex align-center justify-center">
             <div className="border-4 border-light-blue m-8 rounded-full h-24 w-24 flex items-center justify-center">
@@ -521,7 +532,8 @@ const CreateSyndicate = (props: any) => {
                 height="26"
                 viewBox="0 0 34 26"
                 fill="none"
-                xmlns="http://www.w3.org/2000/svg">
+                xmlns="http://www.w3.org/2000/svg"
+              >
                 <path
                   d="M2 13.5723L11.2243 22.7966L32 2"
                   stroke="#35CFFF"

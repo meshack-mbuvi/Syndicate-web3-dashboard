@@ -34,7 +34,7 @@ export const getSyndicate = async (address: string, syndicateInstance) => {
       createdDate,
       depositors: 0, // depositors does not exist in returned data; it will be
       //recalculated by counting all lpInvestInsyndicate events
-      active: syndicateData.active,
+      active: true,
     };
   } catch (error) {
     console.log({ error });
