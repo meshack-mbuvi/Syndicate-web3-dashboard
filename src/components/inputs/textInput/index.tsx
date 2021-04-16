@@ -12,16 +12,17 @@ export const TextInput = (props: {
   value?;
   label: string;
   name?;
-  register?;
+  onChange?;
   disabled?: boolean;
   placeholder?: string;
   defaultValue?: string | number;
   error?: string;
+  required?: boolean;
 }) => {
   const {
     label,
     name,
-    register,
+    onChange,
     defaultValue,
     error,
     disabled = false,
@@ -37,7 +38,7 @@ export const TextInput = (props: {
       <div className="mr-2 w-5/12 flex justify-end">
         <label
           htmlFor="syndicateAddress"
-          className="block pt-2 text-black text-sm font-medium">
+          className="block pt-2 text-black text-lg font-medium">
           {label}
         </label>
       </div>
@@ -47,7 +48,7 @@ export const TextInput = (props: {
           <input
             type="text"
             name={name}
-            ref={register}
+            onChange={onChange}
             className={`flex flex-grow focus:ring-indigo-500 focus:border-indigo-500 rounded-md ${disabledClasses}`}
             {...rest}
             disabled={disabled}

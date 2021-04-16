@@ -1,4 +1,5 @@
 import { addNewSyndicate } from "@/redux/actions/syndicates";
+import { Validate } from "@/utils/inputValidators";
 import { faCopy } from "@fortawesome/free-regular-svg-icons";
 import {
   faCheckCircle,
@@ -6,14 +7,10 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 // fontawesome icons
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-// Used for validating form inputs
-import { joiResolver } from "@hookform/resolvers/joi";
 import Link from "next/link";
-import PropTypes from "prop-types";
 import React, { useState } from "react";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import DatePicker from "react-datepicker";
-import { Controller, useForm } from "react-hook-form";
 import { connect } from "react-redux";
 // Other useful components
 import Button from "src/components/buttons";
@@ -22,9 +19,7 @@ import { TextInput, Toggle } from "src/components/inputs";
 import { Modal } from "src/components/modal";
 import { getSyndicate } from "src/helpers/syndicate";
 // redux actions
-import { setLoading, setSumbitting, showWalletModal } from "src/redux/actions";
-import { syndicateSchema } from "../validators";
-
+import { setSumbitting, showWalletModal } from "src/redux/actions";
 /**
  * Diplays all syndicates.
  * The main groups for syndicates are active and inactive
@@ -42,17 +37,157 @@ const CreateSyndicate = (props: any) => {
     submitting,
   } = props;
 
-  const [allowlistEnabled, setAllowlistEnabled] = useState(false);
-  const [modifiable, setModifiable] = useState(false);
-  const [syndicateProfitSharePercent, setProfitShareToSyndProtocol] = useState(
-    "1"
-  );
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [showErrorMessage, setShowErrorMessage] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
+  // input field error messages
+  const [
+    profitShareToSyndProtocolError,
+    setProfitShareToSyndProtocolError,
+  ] = useState("");
+  const [
+    primaryERC20ContractAddressError,
+    setPrimaryERC20ContractAddressError,
+  ] = useState("");
+  const [maxDepositsError, setMaxDepositsError] = useState("");
+  const [maxTotalDepositsError, setMaxTotalDepositsError] = useState("");
+  const [
+    expectedAnnualOperatingFeesError,
+    setExpectedAnnualOperatingFeesError,
+  ] = useState("");
+  const [
+    profitShareToSyndicateLeadError,
+    setprofitShareToSyndicateLeadError,
+  ] = useState("");
+
+  let validated = false;
+
+  if (
+    profitShareToSyndProtocolError ||
+    primaryERC20ContractAddressError ||
+    maxDepositsError ||
+    maxTotalDepositsError ||
+    expectedAnnualOperatingFeesError ||
+    profitShareToSyndicateLeadError
+  ) {
+    validated = false;
+  } else {
+    validated = true;
+  }
+
+  // input fields
+  const [
+    primaryERC20ContractAddress,
+    setPrimaryERC20ContractAddress,
+  ] = useState(account);
+  const [maxDeposits, setMaxDeposits] = useState("");
+  const [maxTotalDeposits, setMaxTotalDeposits] = useState("");
+  const [
+    expectedAnnualOperatingFees,
+    setExpectedAnnualOperatingFees,
+  ] = useState("");
+  const [profitShareToSyndicateLead, setProfitShareToSyndicateLead] = useState(
+    ""
+  );
+  const [allowlistEnabled, setAllowlistEnabled] = useState(false);
+  const [modifiable, setModifiable] = useState(false);
+  const [syndicateProfitSharePercent, setProfitShareToSyndProtocol] = useState(
+    "0.5"
+  );
+
+  // input onchange handlers
+  const handlesetPrimaryERC20ContractAddress = (event: any) => {
+    event.preventDefault();
+    const { value } = event.target;
+
+    setPrimaryERC20ContractAddress(value);
+
+    if (!value.trim()) {
+      setPrimaryERC20ContractAddressError("Deposit token is required");
+    } else if (!web3.utils.isAddress(value)) {
+      setPrimaryERC20ContractAddressError(
+        "Deposit token should be a valid ERC20 address"
+      );
+    } else {
+      setPrimaryERC20ContractAddressError("");
+    }
+  };
+
+  // maxDeposits onChangehandle
+  const handleSetMaxDeposits = (event: any) => {
+    event.preventDefault();
+    const { value } = event.target;
+
+    setMaxDeposits(value);
+
+    const message = Validate(value);
+    if (message) {
+      setMaxDepositsError(`Max deposits ${message}`);
+    } else {
+      setMaxDepositsError("");
+    }
+  };
+
+  // maxTotalDeposits onChangehandle
+  const maxTotalDepositsHandler = (event: any) => {
+    event.preventDefault();
+    const { value } = event.target;
+
+    setMaxTotalDeposits(value);
+
+    const message = Validate(value);
+    if (message) {
+      return setMaxTotalDepositsError(`Max total deposits ${message}`);
+    } else {
+      setMaxTotalDepositsError("");
+    }
+
+    if (+value < +maxDeposits) {
+      setMaxTotalDepositsError(
+        "Max Total deposits must not be less than maxDeposit per LP"
+      );
+    } else {
+      setMaxTotalDepositsError("");
+    }
+  };
+
+  const expectedAnnualOperatingFeesHandler = (event: any) => {
+    event.preventDefault();
+
+    const { value } = event.target;
+    setExpectedAnnualOperatingFees(value);
+
+    const message = Validate(value);
+
+    if (message) {
+      setExpectedAnnualOperatingFeesError(
+        `Expected Annual operating fee ${message}`
+      );
+    } else {
+      setExpectedAnnualOperatingFeesError("");
+    }
+  };
+
+  const profitShareToSyndicateLeadHandler = (event: any) => {
+    event.preventDefault();
+    const { value } = event.target;
+
+    setProfitShareToSyndicateLead(value);
+
+    const message = Validate(value);
+    if (message) {
+      setprofitShareToSyndicateLeadError(
+        `Profit share to syndicate lead ${message}`
+      );
+    } else {
+      setprofitShareToSyndicateLeadError("");
+    }
+  };
+
   const [shareableLink, setShareableLink] = useState("");
   const [copied, setCopied] = useState(false);
+  const [selectedDate, setSelectedDate] = useState(new Date());
 
   // this controls the toggle button for manually whitelisting depositors
   const toggleAllowlistEnabled = () => setAllowlistEnabled(!allowlistEnabled);
@@ -60,11 +195,11 @@ const CreateSyndicate = (props: any) => {
 
   const closeModal = () => setShowModal(false);
 
-  // react-hook-form provides Performant, flexible and
-  // extensible forms with easy-to-use validation.
-  const { register, handleSubmit, control, errors } = useForm({
-    resolver: joiResolver(syndicateSchema),
-  });
+  // set closeDate
+  const handleDateSelect = (date) => {
+    setSelectedDate(date);
+  };
+
   /**
    * This method implements manager steps to create a syndicate
    * NOTE: we need to have the feature for setting deposit and distribution token
@@ -72,9 +207,8 @@ const CreateSyndicate = (props: any) => {
    * @param data form data
    * @returns
    */
-  const onSubmit = async (data) => {
-    closeModal();
-
+  const onSubmit = async (event) => {
+    event.preventDefault();
     /**
      * If we are not connected and the form modal is open, user can trigger
      * creation of Syndicate. We therefore catch this here and request for
@@ -86,14 +220,23 @@ const CreateSyndicate = (props: any) => {
       return dispatch(showWalletModal());
     }
 
-    // show loading modal
-    dispatch(setSumbitting(true));
-
     // get closeDate and syndicateProtocolProfitSharePercent
-    const syndicateProtocolProfitSharePercent =
-      syndicateProfitSharePercent == null
-        ? data.profitShareToSyndProtocol
-        : syndicateProfitSharePercent;
+    const syndicateProtocolProfitSharePercent = syndicateProfitSharePercent;
+
+    // check whether syndicateProfitShareBasisPoints meets the minimum of 0.5%
+    if (+syndicateProtocolProfitSharePercent < 0.5) {
+      setProfitShareToSyndProtocolError(
+        "Syndicate protocol profit should be a minimum 0f 0.5%"
+      );
+      return;
+    } else {
+      setProfitShareToSyndProtocolError("");
+    }
+
+    /**
+     * close modal after validating the minimum requirement for syndicateProfitShare
+     */
+    closeModal();
 
     try {
       /**
@@ -104,27 +247,32 @@ const CreateSyndicate = (props: any) => {
         parseFloat(syndicateProtocolProfitSharePercent) * 100
       }`;
 
-      const maxDeposit = web3.utils.toWei(data.maxDeposits.toString());
-      const maxTotalDeposits = web3.utils.toWei(
-        data.maxTotalDeposits.toString()
-      );
+      /// 2% management fee (200 basis points).
+      /// This is displayed in the UI as "Expected Annual Operating Fees"
+      /// on the Create Syndicate page.
+      // SO to get the correct value from the UI, we take the % passed
+      // and multiply by 100 eg 2% would be (2/100)* 10000=> 2 * 100 = 200 basis points
+      const wMaxDeposits = web3.utils.toWei(maxDeposits.toString());
+      const wMaxTotalDeposits = web3.utils.toWei(maxTotalDeposits.toString());
       const managerManagementFeeBasisPoints = `${
-        parseFloat(data.expectedAnnualOperatingFees) * 100
+        parseFloat(expectedAnnualOperatingFees) * 100
       }`;
+
       const managerPerformanceFeeBasisPoints = `${
-        parseFloat(data.profitShareToSyndicateLead) * 100
+        parseFloat(profitShareToSyndicateLead) * 100
       }`;
 
-      const depositERC20ContractAddress = data.depositToken;
+      const closeDate = new Date(selectedDate).getTime();
 
-      const closeDate = data.closeDate.getTime();
+      // show loading modal
+      dispatch(setSumbitting(true));
 
       await syndicateInstance.createSyndicate(
-        depositERC20ContractAddress,
-        maxDeposit,
-        maxTotalDeposits,
+        primaryERC20ContractAddress,
+        wMaxDeposits,
+        wMaxTotalDeposits,
         closeDate,
-        syndicateProfitShareBasisPoints.toString(),
+        syndicateProfitShareBasisPoints,
         managerManagementFeeBasisPoints,
         managerPerformanceFeeBasisPoints,
         allowlistEnabled,
@@ -138,15 +286,11 @@ const CreateSyndicate = (props: any) => {
       // add the newly created syndicate to application state
       dispatch(addNewSyndicate({ ...syndicate, depositors: 0 }));
 
-      dispatch(setLoading(true));
-
       // close loading modal
       dispatch(setSumbitting(false));
 
       // before showing success modal, we need to set the shareable link
-      setShareableLink(
-        `www.syndicateprotocol.org/${depositERC20ContractAddress}`
-      );
+      setShareableLink(`www.syndicateprotocol.org/${account}`);
 
       // close new syndicate form modal
       setShowModal(false);
@@ -194,7 +338,7 @@ const CreateSyndicate = (props: any) => {
           "Please reset you account. It appears to have incorrect count of transactions.";
       } else {
         errorMessage =
-          "Your wallet address already manages the maximum of one Syndicate";
+          "An error occured while creating the syndicate. Please try again later.";
       }
       setErrorMessage(errorMessage);
 
@@ -203,20 +347,38 @@ const CreateSyndicate = (props: any) => {
     }
   };
 
-  // sanitize and format profitShareToSyndProtocol
+  /**
+   * This method retrieves the value of profitShareToSyndicateProtocol from the
+   * input, checks whether value is a valid number character or not and updates
+   * the error message approproately. We also check whether the value meets the
+   * minimum required value of 0.5, otherwise we show an error about the minimum
+   * value
+   * @param event
+   */
   const profitShareToSyndicateOnchangeHandler = (event) => {
     event.preventDefault();
     const { value } = event.target;
-    if (!isNaN(value)) {
-      // what is store here will help to determine whether to read value from
-      // the buttons or from the input field. See implementation of onSubmit to
-      // find out why
-      if (value == "1" || value == "0.3" || value == "3") {
-        setProfitShareToSyndProtocol(value);
+    if (!value.trim()) {
+      setProfitShareToSyndProtocolError(
+        "Syndicate protocol profit is required"
+      );
+    } else if (!isNaN(value)) {
+      // what is stored here will help to determine whether to read value from
+      // the buttons or from the input field. See implementation of onSubmit
+
+      if (+value < 0.5) {
+        setProfitShareToSyndProtocolError(
+          "Syndicate protocol profit should be a minimum of 0.5"
+        );
       } else {
-        setProfitShareToSyndProtocol(null);
+        setProfitShareToSyndProtocolError("");
       }
+    } else {
+      setProfitShareToSyndProtocolError(
+        "Syndicate protocol profit should be a valid number or decimal. eg 0.5 but not 0.5%"
+      );
     }
+    setProfitShareToSyndProtocol(value);
   };
 
   /**
@@ -228,6 +390,19 @@ const CreateSyndicate = (props: any) => {
     setTimeout(() => {
       setCopied(false);
     }, 2000);
+  };
+
+  /**
+   * The method updates syndicate syndicateProfitSharePercent based on the
+   * button badge clicked. The options are 0.5, 1, and 3 which are pre-configured
+   * on the buttons.
+   * Since these values are within the minimum value required, we set the
+   * corresponding error message to an empty string.
+   * @param value a decimal string eg 0.5
+   */
+  const updateProfitShareToSyndProtocol = (value) => {
+    setProfitShareToSyndProtocol(value);
+    setProfitShareToSyndProtocolError("");
   };
 
   return (
@@ -251,7 +426,7 @@ const CreateSyndicate = (props: any) => {
           <p className="text-blue-light ml-4">Onchain Data</p>
         </div>
 
-        <form onSubmit={handleSubmit(onSubmit)}>
+        <form onSubmit={onSubmit}>
           <div className="border border-gray-85 bg-gray-99 rounded-xl p-4">
             <div className="space-y-4">
               {/* syndicate address */}
@@ -268,36 +443,38 @@ const CreateSyndicate = (props: any) => {
               <TextInput
                 {...{
                   label: "Deposit Token:",
-                  error: errors.depositToken?.message,
+                  error: primaryERC20ContractAddressError,
                 }}
-                defaultValue="Provide an ERC20 or DAI address"
-                register={register({ required: true })}
+                value={primaryERC20ContractAddress}
+                onChange={handlesetPrimaryERC20ContractAddress}
                 name="depositToken"
-                placeholder="USDC"
+                placeholder="Please provide an ERC20 token address"
               />
 
               {/* max deposits */}
               <TextInput
                 {...{
                   label: "Max Deposits(Per Depositor):",
-                  error: errors.maxDeposits?.message,
+                  error: maxDepositsError,
                 }}
-                register={register({ required: true })}
+                onChange={handleSetMaxDeposits}
                 name="maxDeposits"
-                defaultValue="100"
-                placeholder="5000"
+                value={maxDeposits}
+                placeholder="Enter max deposit per LP"
+                required
               />
 
               {/* Max Total deposits */}
               <TextInput
                 {...{
                   label: "Max Deposits(Total):",
-                  error: errors.maxTotalDeposits?.message,
+                  error: maxTotalDepositsError,
                 }}
-                register={register({ required: true })}
+                onChange={maxTotalDepositsHandler}
                 name="maxTotalDeposits"
-                defaultValue="100"
-                placeholder="10000"
+                value={maxTotalDeposits}
+                placeholder="Enter expected total deposits"
+                required
               />
 
               {/* close date */}
@@ -305,24 +482,21 @@ const CreateSyndicate = (props: any) => {
                 <div className="mr-2 w-5/12 flex justify-end">
                   <label
                     htmlFor="syndicateAddress"
-                    className="block pt-2 text-black text-sm font-medium"
-                  >
+                    className="block pt-2 text-black text-lg font-medium">
                     Close Date:
                   </label>
                 </div>
 
                 <div className="w-7/12 flex justify-between">
-                  <Controller
-                    control={control}
+                  <DatePicker
+                    selected={selectedDate}
+                    onSelect={handleDateSelect}
+                    className={`flex flex-grow focus:ring-indigo-500 focus:border-indigo-500 rounded-md text-black border-gray-85 w-full`}
+                    placeholder={new Date()}
+                    minDate={new Date()}
+                    selectsStart
                     name="closeDate"
-                    render={({ onChange, value }) => (
-                      <DatePicker
-                        selected={value}
-                        onChange={onChange}
-                        className={`flex flex-grow focus:ring-indigo-500 focus:border-indigo-500 rounded-md text-black border-gray-85 w-full`}
-                        placeholder={new Date()}
-                      />
-                    )}
+                    dropdownMode="select"
                   />
 
                   {/* icon */}
@@ -336,32 +510,33 @@ const CreateSyndicate = (props: any) => {
               <TextInput
                 {...{
                   label: "Expected Annual Operating Fees:",
-                  error: errors.expectedAnnualOperatingFees?.message,
+                  error: expectedAnnualOperatingFeesError,
                 }}
-                register={register}
+                onChange={expectedAnnualOperatingFeesHandler}
                 name="expectedAnnualOperatingFees"
-                defaultValue="2"
-                placeholder="2"
+                value={expectedAnnualOperatingFees}
+                placeholder=""
+                required
               />
 
               <TextInput
                 {...{
                   label: "Profit Share to Syndicate Lead:",
-                  error: errors.profitShareToSyndicateLead?.message,
+                  error: profitShareToSyndicateLeadError,
                 }}
-                register={register}
+                onChange={profitShareToSyndicateLeadHandler}
                 name="profitShareToSyndicateLead"
-                placeholder="10"
-                defaultValue="10"
+                placeholder=""
+                value={profitShareToSyndicateLead}
+                required
               />
 
               {/* Profit Share to Syndicate Protocol: */}
               <div className="h-10 flex flex-row justify-center">
                 <div className="mr-2 w-5/12 flex justify-end">
                   <label
-                    htmlFor="syndicateAddress"
-                    className="block pt-2 text-black text-sm font-medium"
-                  >
+                    htmlFor="profitShareToSyndProtocol"
+                    className="block pt-2 text-black text-lg font-medium">
                     Profit Share to Syndicate Protocol:
                   </label>
                 </div>
@@ -377,9 +552,8 @@ const CreateSyndicate = (props: any) => {
                           ? "bg-blue-100 text-black"
                           : "gray-85"
                       }`}
-                      onClick={() => setProfitShareToSyndProtocol("0.5")}
-                      type="button"
-                    >
+                      onClick={() => updateProfitShareToSyndProtocol(0.5)}
+                      type="button">
                       0.5%
                     </button>
 
@@ -389,9 +563,10 @@ const CreateSyndicate = (props: any) => {
                           ? "bg-blue-100 text-black"
                           : "gray-85"
                       }`}
-                      onClick={() => setProfitShareToSyndProtocol("1")}
-                      type="button"
-                    >
+                      onClick={() => {
+                        updateProfitShareToSyndProtocol(1);
+                      }}
+                      type="button">
                       1%
                     </button>
 
@@ -402,27 +577,20 @@ const CreateSyndicate = (props: any) => {
                           : "gray-85"
                       }`}
                       type="button"
-                      onClick={() => setProfitShareToSyndProtocol("3")}
-                    >
+                      onClick={() => {
+                        updateProfitShareToSyndProtocol(3);
+                      }}>
                       3%
                     </button>
 
                     <div>
-                      <Controller
-                        control={control}
+                      <input
+                        type="text"
+                        className="flex flex-grow w-full h-full outline-none border-0 focus:border-0 rounded-br-md rounded-tr-md"
+                        placeholder="other"
                         name="profitShareToSyndProtocol"
-                        rules={{ min: "30", max: "100" }}
-                        render={({ onChange }) => (
-                          <input
-                            type="text"
-                            className="flex flex-grow w-full h-full outline-none border-0 focus:border-0 rounded-br-md rounded-tr-md"
-                            placeholder="other"
-                            onChange={(value) => {
-                              profitShareToSyndicateOnchangeHandler(value);
-                              onChange(value);
-                            }}
-                          />
-                        )}
+                        onChange={profitShareToSyndicateOnchangeHandler}
+                        value={syndicateProfitSharePercent}
                       />
                     </div>
                   </div>
@@ -433,6 +601,14 @@ const CreateSyndicate = (props: any) => {
                   </div>
                 </div>
               </div>
+              <p className="flex flex-row justify-center">
+                <p className="mr-2 w-5/12 flex"></p>
+                {profitShareToSyndProtocolError ? (
+                  <p className="mr-2 w-7/12 text-red-500 text-sm -mt-3">
+                    {profitShareToSyndProtocolError}
+                  </p>
+                ) : null}
+              </p>
 
               <Toggle
                 {...{
@@ -473,8 +649,10 @@ const CreateSyndicate = (props: any) => {
           <div className="flex my-4 w-full justify-center py-2">
             <Button
               type="submit"
-              customClasses="rounded-full bg-blue-light w-auto px-10 py-2 text-lg"
-            >
+              customClasses={`rounded-full bg-blue-light w-auto px-10 py-2 text-lg ${
+                validated ? "" : "opacity-50"
+              }`}
+              disabled={validated ? false : true}>
               Launch
             </Button>
           </div>
@@ -482,10 +660,14 @@ const CreateSyndicate = (props: any) => {
       </Modal>
 
       {/* Loading modal */}
-      <Modal {...{ show: submitting, closeModal: () => setSumbitting(false) }}>
+      <Modal
+        {...{
+          show: submitting,
+          closeModal: () => dispatch(setSumbitting(false)),
+        }}>
         <div className="flex flex-col justify-center m-auto mb-4">
           <div className="loader">Loading...</div>
-          <div className="modal-header mb-4 text-black font-medium text-center leading-8 text-lg">
+          <div className="modal-header mb-4 text-green-400 font-medium text-center leading-8 text-lg">
             Please wait, we are creating your syndicate.
           </div>
         </div>
@@ -547,8 +729,10 @@ const CreateSyndicate = (props: any) => {
             <p className="leading-8 text-sm text-gray-500 m-4">{account}</p>
             <div className="flex justify-between">
               <div className="flex flex-grow flex-col rounded-full p-3 bg-blue-light text-white">
-                <p className="text-xs">Your shareable deposit link:</p>
-                <p className="text-sm">{shareableLink}</p>
+                <p className="text-xs sm:text-lg">
+                  Your shareable deposit link:
+                </p>
+                <p className="text-sm sm:text-lg">{shareableLink}</p>
               </div>
               <div className="flex align-center justify-center mx-auto my-4 ml-2">
                 {copied ? (
@@ -558,7 +742,7 @@ const CreateSyndicate = (props: any) => {
                     <FontAwesomeIcon
                       icon={faCopy}
                       size="2x"
-                      className="cursor-pointer border-blue text-blue-light"
+                      className="w-8 cursor-pointer border-blue text-blue-light"
                     />
                   </CopyToClipboard>
                 )}
@@ -587,17 +771,9 @@ const CreateSyndicate = (props: any) => {
   );
 };
 
-CreateSyndicate.propTypes = {
-  web3: PropTypes.any,
-  dispatch: PropTypes.func,
-  showModal: PropTypes.bool,
-  setShowModal: PropTypes.func,
-  web3contractInstance: PropTypes.any,
-};
-
-const mapStateToProps = ({ web3Reducer }) => {
-  const { web3, submitting } = web3Reducer;
-  console.log({ web3Reducer });
+const mapStateToProps = ({ web3Reducer, loadingReducer }) => {
+  const { web3 } = web3Reducer;
+  const { submitting } = loadingReducer;
   return { web3, submitting };
 };
 

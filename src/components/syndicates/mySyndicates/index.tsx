@@ -72,7 +72,6 @@ const MySyndicates = (props) => {
   const inActiveSyndicates = syndicates.filter(
     (syndicate) => !syndicate.active
   );
-  console.log({ syndicates });
 
   return (
     <div className="mt-4">
@@ -86,9 +85,7 @@ const MySyndicates = (props) => {
                   <PageHeader>Active</PageHeader>
                   <ActiveSyndicates syndicates={activeSyndicates} />
                 </div>
-              ) : (
-                ""
-              )}
+              ) : null}
 
               {/* show inactive syndicates here */}
               {inActiveSyndicates.length ? (
@@ -96,9 +93,7 @@ const MySyndicates = (props) => {
                   <PageHeader>Inactive</PageHeader>
                   <InActiveSyndicates syndicates={inActiveSyndicates} />
                 </div>
-              ) : (
-                ""
-              )}
+              ) : null}
             </>
           ) : account ? (
             // if connected, then it means no syndicates for this wallet
@@ -107,7 +102,7 @@ const MySyndicates = (props) => {
                 There are no syndicates you are leading or have invested in at
                 the moment.
               </p>
-              <p className="text-2xl">Please create a new fund</p>
+              <p className="text-2xl">Please create a new syndicate</p>
             </div>
           ) : (
             // Account = undefined means wallet not connected, hence we are
@@ -136,9 +131,10 @@ MySyndicates.propTypes = {
 };
 
 const mapStateToProps = (state) => {
-  const { web3Reducer, syndicatesReducer } = state;
-  const { web3, loading } = web3Reducer;
+  const { web3Reducer, syndicatesReducer, loadingReducer } = state;
+  const { web3 } = web3Reducer;
   const { syndicates } = syndicatesReducer;
+  const { loading } = loadingReducer;
 
   return { web3, syndicates, loading };
 };

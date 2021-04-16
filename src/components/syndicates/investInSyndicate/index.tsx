@@ -1,15 +1,13 @@
-import { joiResolver } from "@hookform/resolvers/joi";
+import { Validate } from "@/utils/inputValidators";
 import { useRouter } from "next/router";
 import PropTypes from "prop-types";
 import React, { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
 import { connect } from "react-redux";
 // action to initiate wallet connect
 import { showWalletModal } from "src/redux/actions/web3Provider";
 // utils
 import { toEther } from "src/utils";
 import { DetailsCard } from "../shared";
-import { depositSchema } from "../validators";
 
 const Web3 = require("web3");
 
@@ -40,7 +38,9 @@ const InvestInSyndicate = (props) => {
   ] = useState<string>("0");
 
   // TODO: To update this dynamically from drop-down based on available ERC20
-  const [currentERC20, setCurrentERC20] = useState<string>("DAI");
+  const [currentERC20, setCurrentERC20] = useState<string>(account);
+  const [depositAmount, setDepositAmount] = useState(0);
+  const [depositAmountError, setDepositAmountError] = useState("");
 
   const sections = [
     {
@@ -270,9 +270,19 @@ const InvestInSyndicate = (props) => {
     }
   }, [syndicateInstance]);
 
-  const { register, handleSubmit } = useForm({
-    resolver: joiResolver(depositSchema),
-  });
+  const handleSetAmount = (event: any) => {
+    event.preventDefault();
+    const { value } = event.target;
+
+    setDepositAmount(value);
+
+    const message = Validate(value);
+    if (message) {
+      setDepositAmountError(`Deposit amount ${message}`);
+    } else {
+      setDepositAmountError("");
+    }
+  };
 
   /**
    * This methods is used to invest in LP(syndicate)
@@ -335,15 +345,14 @@ const InvestInSyndicate = (props) => {
   };
 
   // handle deposit/withdrawal form submit.
-  const onSubmit = async (data) => {
+  const onSubmit = async (event: any) => {
+    event.preventDefault();
     if (!syndicateInstance) {
       // user needs to connect wallet first
       return dispatch(showWalletModal());
     }
 
     setSubmitting(true);
-
-    const { depositAmount, accredited } = data;
 
     const approvedAllowance = await approveManager(
       account,
@@ -406,13 +415,13 @@ const InvestInSyndicate = (props) => {
                   : statusNotApprovedText}
               </p>
 
-              <form onSubmit={handleSubmit(onSubmit)}>
+              <form onSubmit={onSubmit}>
                 <div className="flex justify-between my-1">
                   <input
                     name="depositAmount"
                     type="text"
                     placeholder="400"
-                    ref={register}
+                    onChange={handleSetAmount}
                     className={`rounded-md bg-gray-9 border border-gray-24 text-white focus:outline-none focus:ring-gray-24 focus:border-gray-24 font-ibm ${
                       withdrawalMode ? "mb-5" : "mb-0"
                     }`}
@@ -428,6 +437,11 @@ const InvestInSyndicate = (props) => {
                   </p>
                 </div>
 
+                {depositAmountError ? (
+                  <p className="mr-2 w-full text-red-500 text-sm -mt-3 mb-4">
+                    {depositAmountError}
+                  </p>
+                ) : null}
                 {/* checkbox for user to confirm they are accredited investor if this is a deposit */}
                 {depositMode ? (
                   <p className="text-sm my-5 text-gray-dim">
@@ -443,9 +457,11 @@ const InvestInSyndicate = (props) => {
                   <div className="loader ease-linear rounded-full border-8 border-t-8 border-white h-4 w-4"></div>
                 ) : (
                   <button
-                    className={`flex w-full items-center justify-center font-medium rounded-md text-black bg-white focus:outline-none focus:ring py-4`}
+                    className={`flex w-full items-center justify-center font-medium rounded-md text-black bg-white focus:outline-none focus:ring py-4 ${
+                      depositAmountError ? "opacity-50" : ""
+                    }`}
                     type="submit"
-                  >
+                    disabled={depositAmountError ? true : false}>
                     Continue
                   </button>
                 )}
@@ -490,6 +506,8 @@ InvestInSyndicate.propTypes = {
   web3: PropTypes.any,
   dispatch: PropTypes.any,
   syndicate: PropTypes.object,
+  withdrawalMode: PropTypes.any,
+  depositMode: PropTypes.any,
 };
 
 export default connect(mapStateToProps)(InvestInSyndicate);

@@ -63,7 +63,7 @@ const SyndicateItem = (props) => {
         setEligibleWithdraw(data);
       })
       .catch((err) => {
-        console.log({ err }, "getting aligiblewithraw");
+        console.log({ err });
         // set this to 0 whenever an error occurs during calculation
         setEligibleWithdraw(0);
       });

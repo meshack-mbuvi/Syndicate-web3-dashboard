@@ -1,5 +1,5 @@
-import React from "react";
 import PropTypes from "prop-types";
+import React from "react";
 import DatePicker from "react-datepicker";
 import { InfoIcon } from "src/components/iconWrappers";
 
@@ -10,7 +10,7 @@ import { InfoIcon } from "src/components/iconWrappers";
  * @param {*} props
  */
 export const DateInput = (props) => {
-  const { label, name, startDate, onChangeHandler, register } = props;
+  const { label, name, startDate, onChangeHandler, register, error } = props;
 
   return (
     <div className="flex flex-row justify-end">
@@ -35,6 +35,7 @@ export const DateInput = (props) => {
           <InfoIcon />
         </div>
       </div>
+      {error ? <p className="text-red-500 text-sm">{error}</p> : null}
     </div>
   );
 };
@@ -45,4 +46,5 @@ DateInput.propTypes = {
   register: PropTypes.any.isRequired,
   startDate: PropTypes.any,
   onChangeHandler: PropTypes.func,
+  error: PropTypes.string.isRequired,
 };

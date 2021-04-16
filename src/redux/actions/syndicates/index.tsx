@@ -29,13 +29,11 @@ export const addSyndicates = (data) => async (dispatch) => {
       type: SET_LOADING,
     });
     const currentBlock = await web3.eth.getBlockNumber();
-    console.log({ currentBlock });
 
     const events = await web3contractInstance.getPastEvents("allEvents", {
       fromBlock: currentBlock - 2,
       toBlock: "latest",
     });
-    console.log({ events });
 
     const syndicates = [];
     const syndicateDepositors: Depositors = {};
