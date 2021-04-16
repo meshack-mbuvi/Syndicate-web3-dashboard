@@ -3,16 +3,17 @@ import PropTypes from "prop-types";
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
 
-const Button = ({ children, link = "#", ...rest }) => (
+const Button = ({ children, link = "#", address, ...rest }) => (
   <button {...rest}>
-    <Link href={`/syndicate/${link}`}>{children}</Link>
+    <Link href={`/syndicates/${address}/${link}`}>{children}</Link>
   </button>
 );
 
 Button.propTypes = {
-  children: PropTypes.string,
-  link: PropTypes.string,
+  children: PropTypes.string.isRequired,
+  link: PropTypes.string.isRequired,
   rest: PropTypes.any,
+  address: PropTypes.string.isRequired,
 };
 
 const SyndicateItem = (props) => {
@@ -221,7 +222,8 @@ const SyndicateItem = (props) => {
       <span>
         <Button
           className={`text-xs mx-4 rounded-full p-2 px-4 w-36 ml-8 ${buttonStyles}`}
-          link={link}>
+          link={link}
+          address={address}>
           {buttonText}
         </Button>
       </span>
