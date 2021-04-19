@@ -52,6 +52,7 @@ const CreateSyndicate = (props: any) => {
   ] = useState("");
   const [maxDepositsError, setMaxDepositsError] = useState("");
   const [maxTotalDepositsError, setMaxTotalDepositsError] = useState("");
+  const [maxLPsError, setMaxLPsError] = useState("");
   const [
     expectedAnnualOperatingFeesError,
     setExpectedAnnualOperatingFeesError,
@@ -68,6 +69,7 @@ const CreateSyndicate = (props: any) => {
     primaryERC20ContractAddressError ||
     maxDepositsError ||
     maxTotalDepositsError ||
+    maxLPsError ||
     expectedAnnualOperatingFeesError ||
     profitShareToSyndicateLeadError
   ) {
@@ -82,6 +84,7 @@ const CreateSyndicate = (props: any) => {
     setPrimaryERC20ContractAddress,
   ] = useState(account);
   const [maxDeposits, setMaxDeposits] = useState("");
+  const [maxLPs, setMaxLPs] = useState("");
   const [maxTotalDeposits, setMaxTotalDeposits] = useState("");
   const [
     expectedAnnualOperatingFees,
@@ -149,6 +152,21 @@ const CreateSyndicate = (props: any) => {
       );
     } else {
       setMaxTotalDepositsError("");
+    }
+  };
+
+  // max LPs onChangehandle
+  const maxLPsHandler = (event: any) => {
+    event.preventDefault();
+    const { value } = event.target;
+
+    setMaxLPs(value);
+
+    const message = Validate(value);
+    if (message) {
+      setMaxLPsError(`Max LPs ${message}`);
+    } else {
+      setMaxLPsError("");
     }
   };
 
@@ -253,6 +271,7 @@ const CreateSyndicate = (props: any) => {
       // SO to get the correct value from the UI, we take the % passed
       // and multiply by 100 eg 2% would be (2/100)* 10000=> 2 * 100 = 200 basis points
       const wMaxDeposits = web3.utils.toWei(maxDeposits.toString());
+      const wMaxLPs = web3.utils.toWei(maxLPs.toString());
       const wMaxTotalDeposits = web3.utils.toWei(maxTotalDeposits.toString());
       const managerManagementFeeBasisPoints = `${
         parseFloat(expectedAnnualOperatingFees) * 100
@@ -271,6 +290,7 @@ const CreateSyndicate = (props: any) => {
         primaryERC20ContractAddress,
         wMaxDeposits,
         wMaxTotalDeposits,
+        wMaxLPs,
         closeDate,
         syndicateProfitShareBasisPoints,
         managerManagementFeeBasisPoints,
@@ -477,12 +497,26 @@ const CreateSyndicate = (props: any) => {
                 required
               />
 
+              {/* Max LPs deposits */}
+              <TextInput
+                {...{
+                  label: "Max LPs(Total Depositors):",
+                  error: maxLPsError,
+                }}
+                onChange={maxLPsHandler}
+                name="maxLPs"
+                value={maxLPs}
+                placeholder="Enter maximum number of depositors"
+                required
+              />
+
               {/* close date */}
               <div className="flex flex-row justify-end">
                 <div className="mr-2 w-5/12 flex justify-end">
                   <label
                     htmlFor="syndicateAddress"
-                    className="block pt-2 text-black text-lg font-medium">
+                    className="block pt-2 text-black text-lg font-medium"
+                  >
                     Close Date:
                   </label>
                 </div>
@@ -536,7 +570,8 @@ const CreateSyndicate = (props: any) => {
                 <div className="mr-2 w-5/12 flex justify-end">
                   <label
                     htmlFor="profitShareToSyndProtocol"
-                    className="block pt-2 text-black text-lg font-medium">
+                    className="block pt-2 text-black text-lg font-medium"
+                  >
                     Profit Share to Syndicate Protocol:
                   </label>
                 </div>
@@ -553,7 +588,8 @@ const CreateSyndicate = (props: any) => {
                           : "gray-85"
                       }`}
                       onClick={() => updateProfitShareToSyndProtocol(0.5)}
-                      type="button">
+                      type="button"
+                    >
                       0.5%
                     </button>
 
@@ -566,7 +602,8 @@ const CreateSyndicate = (props: any) => {
                       onClick={() => {
                         updateProfitShareToSyndProtocol(1);
                       }}
-                      type="button">
+                      type="button"
+                    >
                       1%
                     </button>
 
@@ -579,7 +616,8 @@ const CreateSyndicate = (props: any) => {
                       type="button"
                       onClick={() => {
                         updateProfitShareToSyndProtocol(3);
-                      }}>
+                      }}
+                    >
                       3%
                     </button>
 
@@ -652,7 +690,8 @@ const CreateSyndicate = (props: any) => {
               customClasses={`rounded-full bg-blue-light w-auto px-10 py-2 text-lg ${
                 validated ? "" : "opacity-50"
               }`}
-              disabled={validated ? false : true}>
+              disabled={validated ? false : true}
+            >
               Launch
             </Button>
           </div>
@@ -664,7 +703,8 @@ const CreateSyndicate = (props: any) => {
         {...{
           show: submitting,
           closeModal: () => dispatch(setSumbitting(false)),
-        }}>
+        }}
+      >
         <div className="flex flex-col justify-center m-auto mb-4">
           <div className="loader">Loading...</div>
           <div className="modal-header mb-4 text-green-400 font-medium text-center leading-8 text-lg">
