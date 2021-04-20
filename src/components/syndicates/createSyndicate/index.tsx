@@ -49,6 +49,7 @@ const CreateSyndicate = (props: any) => {
     setPrimaryERC20ContractAddressError,
   ] = useState("");
   const [maxDepositsError, setMaxDepositsError] = useState("");
+  const [minDepositsError, setMinDepositsError] = useState("");
   const [maxTotalDepositsError, setMaxTotalDepositsError] = useState("");
   const [maxLPsError, setMaxLPsError] = useState("");
   const [
@@ -82,6 +83,7 @@ const CreateSyndicate = (props: any) => {
     setPrimaryERC20ContractAddress,
   ] = useState(account);
   const [maxDeposits, setMaxDeposits] = useState("");
+  const [minDeposits, setMinDeposits] = useState("");
   const [maxLPs, setMaxLPs] = useState("");
   const [maxTotalDeposits, setMaxTotalDeposits] = useState("");
   const [
@@ -123,10 +125,30 @@ const CreateSyndicate = (props: any) => {
     setMaxDeposits(value);
 
     const message = Validate(value);
+
     if (message) {
       setMaxDepositsError(`Max deposits ${message}`);
+    } else if (+value < +minDeposits) {
+      setMaxDepositsError(
+        "Max Deposits must not be less than minDeposit per LP"
+      );
     } else {
       setMaxDepositsError("");
+    }
+  };
+
+  // minDeposits onChangehandle
+  const handleSetMinDeposits = (event: any) => {
+    event.preventDefault();
+    const { value } = event.target;
+
+    setMinDeposits(value);
+
+    const message = Validate(value);
+    if (message) {
+      setMinDepositsError(`Min deposits ${message}`);
+    } else {
+      setMinDepositsError("");
     }
   };
 
@@ -147,6 +169,10 @@ const CreateSyndicate = (props: any) => {
     if (+value < +maxDeposits) {
       setMaxTotalDepositsError(
         "Max Total deposits must not be less than maxDeposit per LP"
+      );
+    } else if (+value < +minDeposits) {
+      setMaxTotalDepositsError(
+        "Max Total deposits must not be less than minDeposit per LP"
       );
     } else {
       setMaxTotalDepositsError("");
@@ -283,6 +309,7 @@ const CreateSyndicate = (props: any) => {
       /// on the Create Syndicate page.
       // SO to get the correct value from the UI, we take the % passed
       // and multiply by 100 eg 2% would be (2/100)* 10000=> 2 * 100 = 200 basis points
+      const wMinDeposits = web3.utils.toWei(minDeposits.toString());
       const wMaxDeposits = web3.utils.toWei(maxDeposits.toString());
       const wMaxLPs = web3.utils.toWei(maxLPs.toString());
       const wMaxTotalDeposits = web3.utils.toWei(maxTotalDeposits.toString());
@@ -304,6 +331,7 @@ const CreateSyndicate = (props: any) => {
 
       await syndicateInstance.createSyndicate(
         primaryERC20ContractAddress,
+        wMinDeposits,
         wMaxDeposits,
         wMaxTotalDeposits,
         wMaxLPs,
@@ -481,6 +509,19 @@ const CreateSyndicate = (props: any) => {
                 onChange={handlesetPrimaryERC20ContractAddress}
                 name="depositToken"
                 placeholder="Please provide an ERC20 token address"
+              />
+
+              {/* min deposits */}
+              <TextInput
+                {...{
+                  label: "Min Deposits(Per Depositor):",
+                  error: minDepositsError,
+                }}
+                onChange={handleSetMinDeposits}
+                name="minDeposits"
+                value={minDeposits}
+                placeholder="Enter min deposit per LP"
+                required
               />
 
               {/* max deposits */}
