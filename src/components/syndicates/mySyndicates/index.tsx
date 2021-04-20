@@ -1,4 +1,3 @@
-import HorizontalDivider from "@/components/horizontalDivider";
 import { addSyndicates } from "@/redux/actions/syndicates";
 import PropTypes from "prop-types";
 import React, { useEffect } from "react";
@@ -8,36 +7,7 @@ import {
   default as ActiveSyndicates,
   default as InActiveSyndicates,
 } from "./activeSyndicates";
-const showLoader = (count) => {
-  const animations = [];
-  for (let i = 0; i < count; i++) {
-    animations.push(
-      <div key={i}>
-        <div className="w-full flex justify-between sm:m-auto mb-4">
-          <div className="flex flex-1">
-            <div className="image"></div>
-            <div className="w-3/4s flex mb-4 flex-row justify-between">
-              <div className="animated w-1/12 my-2 h-3 mx-2"></div>
-              <div className="w-28 animated my-2 h-3 mx-2"></div>
-              <div className="w-28 animated my-2 h-3 mx-2"></div>
-              <span className="text-sm mx-1 text-gray-300 w-28 w-28 animated h-3 my-2"></span>
-              <span className="text-sm mx-2 text-gray-300 animated h-3 my-2"></span>
-              <span className="text-sm mx-2 text-gray-300 w-40 animated h-3 my-2"></span>
-              <span className="text-sm mx-2  text-gray-300  w-20 animated h-3 my-2"></span>
-              <span className="text-sm mx-2 text-gray-300 w-20 animated h-3 my-2"></span>
-              <span className="text-sm mx-2 text-gray-300 w-16 animated h-3 my-2"></span>
-              <span className="text-sm mx-2 text-gray-300 w-24 animated h-3 my-2"></span>
-              <span className="text-sm mx-4 text-gray-300 w-20 animated h-3 my-2"></span>
-              <span className="text-sm mx-2 text-gray-300 w-24 animated h-3 my-2"></span>
-            </div>
-          </div>
-        </div>
-        <HorizontalDivider />
-      </div>
-    );
-  }
-  return animations;
-};
+
 /**
  * My Syndicates: IF their wallet (a) is leading a syndicate or
  * (b) has deposited into a syndicate, the syndicates shows up on
@@ -120,7 +90,7 @@ const MySyndicates = (props) => {
         </>
       ) : (
         // show some animations during loading process
-        <>{showLoader(6)}</>
+        <div className="loader"></div>
       )}
     </div>
   );

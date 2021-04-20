@@ -53,3 +53,14 @@ export const depositSchema = Joi.object({
     .label("Amount")
     .messages({ "string.empty": "This field cannot be empty." }),
 });
+
+export const distributeTokenSchema = Joi.object({
+  distributionERC20Address: Joi.string()
+    .required()
+    .label("Token to distribute")
+    .messages({ "any.empty": "Token to Distribute is required" }),
+  amount: Joi.string()
+    .required()
+    .label("Tokens Amount")
+    .messages({ "any.empty": "Amount of Tokens is required" }),
+});

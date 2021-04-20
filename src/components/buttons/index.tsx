@@ -1,4 +1,3 @@
-import PropTypes from "prop-types";
 import React from "react";
 
 /**
@@ -21,11 +20,6 @@ export const PrimaryButton = (props: {
       {children}
     </button>
   );
-};
-
-PrimaryButton.propTypes = {
-  children: PropTypes.string.isRequired,
-  customClasses: PropTypes.string,
 };
 
 export default PrimaryButton;

@@ -1,3 +1,6 @@
+import ErrorBoundary from "@/components/errorBoundary";
+import { getTotalDistributions } from "@/helpers";
+import { getClaimedDistributions } from "@/helpers/distributions";
 import { Validate } from "@/utils/inputValidators";
 import { useRouter } from "next/router";
 import PropTypes from "prop-types";
@@ -38,7 +41,7 @@ const InvestInSyndicate = (props) => {
   ] = useState<string>("0");
 
   // TODO: To update this dynamically from drop-down based on available ERC20
-  const [currentERC20, setCurrentERC20] = useState<string>(account);
+  const [currentERC20] = useState<string>(account);
   const [depositAmount, setDepositAmount] = useState(0);
   const [depositAmountError, setDepositAmountError] = useState("");
 
@@ -87,16 +90,34 @@ const InvestInSyndicate = (props) => {
    * syndicate share.
    */
   useEffect(() => {
-    if (syndicate) {
+    if (syndicate && syndicateInstance) {
       calculateMyLPShare();
 
       // get claimed distrbutions.
       // this updates the value of 'My Distributions to Date' on the UI
-      getClaimedDistributions(syndicateAddress, account, daiContract._address);
+      getClaimedDistributions(
+        syndicateInstance,
+        syndicateAddress,
+        account,
+        daiContract._address
+      ).then((claimedDistributions) => {
+        setMyClaimedDistributions(
+          web3.utils.fromWei(claimedDistributions.toString())
+        );
+      });
 
       // get total distributions.
       // this updates the distributions available value on the syndicate page
-      getTotalDistributions(syndicateAddress, daiContract._address);
+      getTotalDistributions(
+        syndicateInstance,
+        syndicateAddress,
+        daiContract._address,
+        account
+      ).then((totalDistributions: string) => {
+        setTotalAvailableDistributions(
+          web3.utils.fromWei(totalDistributions.toString())
+        );
+      });
     }
   }, [syndicate]);
 
@@ -201,60 +222,6 @@ const InvestInSyndicate = (props) => {
     } catch (approveError) {
       console.log({ approveError });
       return 0;
-    }
-  };
-
-  /** This method gets a Syndicate's total distributions for a given ERC20
-   * @param syndicateAddress The address of the Syndicate
-   * @param distributionERC20ContractAddress The address of the ERC20
-   * to return total distributions
-   * @return totalDistributions for a given distributionERC20ContractAddress
-   * */
-  const getTotalDistributions = async (
-    address: string | string[],
-    distributionERC20ContractAddress: string | string[]
-  ) => {
-    try {
-      const totalDistributions = await syndicateInstance.getTotalDistributions(
-        address,
-        distributionERC20ContractAddress,
-        { from: account, gasLimit: 800000 }
-      );
-
-      setTotalAvailableDistributions(
-        web3.utils.fromWei(totalDistributions.toString())
-      );
-    } catch (error) {
-      console.log({ error });
-    }
-  };
-
-  /** Method to get an LP's claimed distributions for a given ERC20
-   * @param syndicateAddress The address of the Syndicate
-   * @param lpAddress The address of the LP whose info is being queried
-   * @param distributionERC20ContractAddress The address of the ERC20
-   * to return the LP's claimed distributions
-   * @return claimedDistributions by an LP for a given
-   * distributionERC20ContractAddress
-   * */
-  const getClaimedDistributions = async (
-    address: string | string[],
-    lpAddress: string,
-    ERC20ContractAddress: string
-  ) => {
-    try {
-      const claimedDistributions = await syndicateInstance.getClaimedDistributions(
-        address,
-        lpAddress,
-        ERC20ContractAddress,
-        { from: account, gasLimit: 800000 }
-      );
-
-      setMyClaimedDistributions(
-        web3.utils.fromWei(claimedDistributions.toString())
-      );
-    } catch (error) {
-      console.log({ error });
     }
   };
 
@@ -401,99 +368,101 @@ const InvestInSyndicate = (props) => {
   }
 
   return (
-    <div className="w-full sm:w-1/2 mt-4 sm:mt-0">
-      <div className="h-fit-content rounded-t-md mx-2 lg:p-6 bg-gray-9 sm:ml-6 border border-b-0 border-gray-49">
-        {syndicate !== null ? (
-          <>
-            <p className="fold-bold text-xl p-4">{titleText}</p>
+    <ErrorBoundary>
+      <div className="w-full sm:w-1/2 mt-4 sm:mt-0">
+        <div className="h-fit-content rounded-t-md mx-2 lg:p-6 bg-gray-9 sm:ml-6 border border-b-0 border-gray-49">
+          {syndicate !== null ? (
+            <>
+              <p className="fold-bold text-xl p-4">{titleText}</p>
 
-            <div className="px-2">
-              {/* show this text if whitelist is enabled for deposits */}
-              <p className="ml-4 py-4 text-green-screamin font-ibm">
-                {syndicate?.allowlistEnabled
-                  ? statusApprovedText
-                  : statusNotApprovedText}
-              </p>
+              <div className="px-2">
+                {/* show this text if whitelist is enabled for deposits */}
+                <p className="ml-4 py-4 text-green-screamin font-ibm">
+                  {syndicate?.allowlistEnabled
+                    ? statusApprovedText
+                    : statusNotApprovedText}
+                </p>
 
-              <form onSubmit={onSubmit}>
-                <div className="flex justify-between my-1">
-                  <input
-                    name="depositAmount"
-                    type="text"
-                    placeholder="400"
-                    onChange={handleSetAmount}
-                    className={`rounded-md bg-gray-9 border border-gray-24 text-white focus:outline-none focus:ring-gray-24 focus:border-gray-24 font-ibm ${
-                      withdrawalMode ? "mb-5" : "mb-0"
-                    }`}
-                  />
+                <form onSubmit={onSubmit}>
+                  <div className="flex justify-between my-1">
+                    <input
+                      name="depositAmount"
+                      type="text"
+                      placeholder="400"
+                      onChange={handleSetAmount}
+                      className={`rounded-md bg-gray-9 border border-gray-24 text-white focus:outline-none focus:ring-gray-24 focus:border-gray-24 font-ibm ${
+                        withdrawalMode ? "mb-5" : "mb-0"
+                      }`}
+                    />
 
-                  {/* In the new design, this would be a drop down from which
+                    {/* In the new design, this would be a drop down from which
                 a user selects currency */}
-                  <p className="flex justify-between pt-2">
-                    <span className="mx-2">
-                      <img src="/images/usdcIcon.svg" />
-                    </span>
-                    USDC
-                  </p>
-                </div>
-
-                {depositAmountError ? (
-                  <p className="mr-2 w-full text-red-500 text-sm -mt-3 mb-4">
-                    {depositAmountError}
-                  </p>
-                ) : null}
-                {/* checkbox for user to confirm they are accredited investor if this is a deposit */}
-                {depositMode ? (
-                  <p className="text-sm my-5 text-gray-dim">
-                    By depositing tokens, you attest you are accredited below to
-                    join this syndicate. After depositing, contact the syndicate
-                    leads to confirm receipt and withdraw timing.
-                  </p>
-                ) : null}
-
-                {/* when form submittion is triggered, we show loader, otherwise
-                we show submit button */}
-                {submitting ? (
-                  <div className="loader ease-linear rounded-full border-8 border-t-8 border-white h-4 w-4"></div>
-                ) : (
-                  <button
-                    className={`flex w-full items-center justify-center font-medium rounded-md text-black bg-white focus:outline-none focus:ring py-4 ${
-                      depositAmountError ? "opacity-50" : ""
-                    }`}
-                    type="submit"
-                    disabled={depositAmountError ? true : false}>
-                    Continue
-                  </button>
-                )}
-
-                <div className="flex justify-center">
-                  <div className="w-2/3 text-sm my-5 text-gray-dim justify-self-center text-center">
-                    {disclaimerText}
+                    <p className="flex justify-between pt-2">
+                      <span className="mx-2">
+                        <img src="/images/usdcIcon.svg" />
+                      </span>
+                      USDC
+                    </p>
                   </div>
-                </div>
-              </form>
-            </div>
-          </>
-        ) : (
-          <div className="flex justify-center">
-            <p>
-              No syndicate with given address. Please check the address
-              provided.
-            </p>
-          </div>
-        )}
-      </div>
 
-      {/* This component should be shown when we have details about user deposits */}
-      {/* <div className="ml-6 border border-gray-49"> */}
-      <DetailsCard
-        {...{ title: "My Stats", sections }}
-        customStyles={
-          "sm:ml-6 p-4 mx-2 sm:px-8 sm:py-4 sm:ml-0 rounded-b-md border border-gray-49"
-        }
-      />
-      {/* </div> */}
-    </div>
+                  {depositAmountError ? (
+                    <p className="mr-2 w-full text-red-500 text-sm -mt-3 mb-4">
+                      {depositAmountError}
+                    </p>
+                  ) : null}
+                  {/* checkbox for user to confirm they are accredited investor if this is a deposit */}
+                  {depositMode ? (
+                    <p className="text-sm my-5 text-gray-dim">
+                      By depositing tokens, you attest you are accredited below
+                      to join this syndicate. After depositing, contact the
+                      syndicate leads to confirm receipt and withdraw timing.
+                    </p>
+                  ) : null}
+
+                  {/* when form submittion is triggered, we show loader, otherwise
+                we show submit button */}
+                  {submitting ? (
+                    <div className="loader ease-linear rounded-full border-8 border-t-8 border-white h-4 w-4"></div>
+                  ) : (
+                    <button
+                      className={`flex w-full items-center justify-center font-medium rounded-md text-black bg-white focus:outline-none focus:ring py-4 ${
+                        depositAmountError ? "opacity-50" : ""
+                      }`}
+                      type="submit"
+                      disabled={depositAmountError ? true : false}>
+                      Continue
+                    </button>
+                  )}
+
+                  <div className="flex justify-center">
+                    <div className="w-2/3 text-sm my-5 text-gray-dim justify-self-center text-center">
+                      {disclaimerText}
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </>
+          ) : (
+            <div className="flex justify-center">
+              <p>
+                No syndicate with given address. Please check the address
+                provided.
+              </p>
+            </div>
+          )}
+        </div>
+
+        {/* This component should be shown when we have details about user deposits */}
+        {/* <div className="ml-6 border border-gray-49"> */}
+        <DetailsCard
+          {...{ title: "My Stats", sections }}
+          customStyles={
+            "sm:ml-6 p-4 mx-2 sm:px-8 sm:py-4 sm:ml-0 rounded-b-md border border-gray-49"
+          }
+        />
+        {/* </div> */}
+      </div>
+    </ErrorBoundary>
   );
 };
 

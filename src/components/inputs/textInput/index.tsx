@@ -9,22 +9,21 @@ import { InfoIcon } from "src/components/iconWrappers";
  * @param {*} props
  */
 export const TextInput = (props: {
-  value?;
   label: string;
-  name?;
+  name?: string;
   onChange?;
   disabled?: boolean;
   placeholder?: string;
-  defaultValue?: string | number;
   error?: string;
   required?: boolean;
+  value: string | number;
 }) => {
   const {
     label,
     name,
     onChange,
-    defaultValue,
     error,
+    value,
     disabled = false,
     ...rest
   } = props;
@@ -52,7 +51,7 @@ export const TextInput = (props: {
             className={`flex flex-grow focus:ring-indigo-500 focus:border-indigo-500 rounded-md ${disabledClasses}`}
             {...rest}
             disabled={disabled}
-            defaultValue={defaultValue}
+            value={value}
           />
           {/* icon */}
           <div className="w-6 ml-4 mt-1">

@@ -17,7 +17,7 @@ export const DateInput = (props) => {
       <div className="mr-4 w-5/12 flex justify-end">
         <label
           htmlFor="syndicateAddress"
-          className="block pt-2 text-black text-sm font-medium">
+          className="block pt-2 text-black text-lg font-medium">
           {label}
         </label>
       </div>

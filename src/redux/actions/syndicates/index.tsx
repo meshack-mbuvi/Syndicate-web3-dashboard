@@ -1,3 +1,4 @@
+import { getPastEvents } from "@/helpers/retrieveEvents";
 import { getSyndicate } from "src/helpers/syndicate";
 import {
   ADD_NEW_INVESTMENT,
@@ -28,12 +29,7 @@ export const addSyndicates = (data) => async (dispatch) => {
       data: true,
       type: SET_LOADING,
     });
-    const currentBlock = await web3.eth.getBlockNumber();
-
-    const events = await web3contractInstance.getPastEvents("allEvents", {
-      fromBlock: currentBlock - 2,
-      toBlock: "latest",
-    });
+    const events = await getPastEvents(web3, web3contractInstance);
 
     const syndicates = [];
     const syndicateDepositors: Depositors = {};
@@ -41,7 +37,11 @@ export const addSyndicates = (data) => async (dispatch) => {
     await events.forEach(async (event) => {
       const { syndicateAddress } = event.returnValues;
       // check whether event belongs to this wallet owner
-      if (event.event === "createdSyndicate" && syndicateAddress === account) {
+      if (
+        (event.event === "createdSyndicate" ||
+          event.event === "closedSyndicate") &&
+        syndicateAddress === account
+      ) {
         syndicates.push(syndicateAddress);
       }
 
@@ -52,9 +52,9 @@ export const addSyndicates = (data) => async (dispatch) => {
 
         // record depositors for each address
         if (syndicateDepositors.address) {
-          syndicateDepositors.address.depositors += 1;
+          syndicateDepositors[address] += 1;
         } else {
-          syndicateDepositors.address.depositors = 0;
+          syndicateDepositors[address] = 1;
         }
 
         if (lpAddress === account) {
@@ -96,6 +96,7 @@ export const addSyndicates = (data) => async (dispatch) => {
           filteredSyndicateAddresses[index],
           syndicateInstance
         );
+        let { address } = syndicate;
 
         /**
          * We check whether we have data returned; for the case of an error,
@@ -104,7 +105,7 @@ export const addSyndicates = (data) => async (dispatch) => {
         if (syndicate) {
           allSyndicates.push({
             ...syndicate,
-            depositors: syndicateDepositors.address?.depositors || 0,
+            depositors: syndicateDepositors[address] || 0,
           });
         }
       } catch (error) {

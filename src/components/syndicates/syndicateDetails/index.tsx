@@ -16,7 +16,7 @@ const SyndicateDetails = (props) => {
 
   const [syndicate, setSyndicate] = useState({
     maxDeposit: 0,
-    profitShareToSyndicateProtocol: 0.3,
+    profitShareToSyndicateProtocol: 0,
     openToDeposits: false,
     totalDeposits: 0,
     closeDate: "",
@@ -24,10 +24,7 @@ const SyndicateDetails = (props) => {
     createdDate: "",
   });
 
-  const [
-    depositsAndDistributionsSections,
-    setDepositsAndDistributionsSections,
-  ] = useState([
+  const [depositsAndDistributionsSections] = useState([
     { header: "Total Deposits", subText: "0 USDC (0 depositors)" },
     { header: "Total Distributions", subText: "0 USDC" },
     { header: "Total Withdrawn", subText: "0 USDC" },
@@ -87,13 +84,13 @@ const SyndicateDetails = (props) => {
             );
 
             const maxDeposit = data.maxDeposit.toString();
-            
+
             const profitShareToSyndicateProtocol = fromNumberToPercent(
               etherToNumber(data.syndicateProfitShareBasisPoints.toString())
             );
-            
+
             const openToDeposits = data.syndicateOpen;
-            const totalDeposits = etherToNumber(data.totalDeposits.toString());            
+            const totalDeposits = etherToNumber(data.totalDeposits.toString());
 
             const syndicateDetails = {
               maxDeposit,
@@ -129,7 +126,7 @@ const SyndicateDetails = (props) => {
           href={`https://etherscan.io/address/${syndicateAddress}`}
           target="_blank"
           className="text-blue-cyan px-2 flex"
-        >
+          rel="no-referer noreferrer">
           view on etherscan <ExternalLinkIcon className="ml-2" />
         </a>
 
@@ -204,10 +201,7 @@ const SyndicateDetails = (props) => {
         {depositsAndDistributionsSections.map((sectionDetail, index) => {
           return (
             <div className="pl-4 w-full" key={index}>
-              <SectionCard
-                {...{ ...sectionDetail }}
-                infoIcon={false}
-              />
+              <SectionCard {...{ ...sectionDetail }} infoIcon={false} />
             </div>
           );
         })}

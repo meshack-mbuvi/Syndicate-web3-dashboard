@@ -1,5 +1,5 @@
-import React from "react";
 import PropTypes from "prop-types";
+import React from "react";
 
 /**
  * Displays a vertically centered modal
@@ -66,9 +66,7 @@ export const Modal = (props) => {
                       />
                     </div>
                   </>
-                ) : (
-                  ""
-                )}
+                ) : null}
               </div>
             </div>
 
@@ -110,9 +108,7 @@ export const Modal = (props) => {
             </div>
           </div>
         </div>
-      ) : (
-        ""
-      )}
+      ) : null}
     </>
   );
 };
