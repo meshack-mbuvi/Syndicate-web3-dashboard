@@ -54,8 +54,7 @@ typings/
 *.tgz
 
 # dotenv environment variable files
-.env*
-
+.env-secrets
 
 # Mac files
 .DS_Store
