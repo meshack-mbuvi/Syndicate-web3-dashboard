@@ -5,6 +5,7 @@ import {
   HIDE_WALLET_MODAL,
   SET_PROVIDER,
   SET_WEB3,
+  UNSET_WEB3,
   SHOW_WALLET_MODAL,
   SHOW_ERROR_MODAL,
   HIDE_ERROR_MODAL,
@@ -22,6 +23,11 @@ export const web3Reducer = (state = initialState, action) => {
         web3: { ...web3, status: "connected", ...action.data },
       };
 
+    case UNSET_WEB3:
+      return {
+        ...state,
+        web3: initialState.web3,
+      };
     case SET_PROVIDER:
       return {
         ...state,

@@ -1,4 +1,5 @@
 export const SET_WEB3 = "SET_WEB3";
+export const UNSET_WEB3 = "UNSET_WEB3";
 export const SET_LOADING = "SET_LOADING";
 export const SET_PROVIDER = "SET_PROVIDER";
 export const CONNECTING = "CONNECTING";

@@ -1,3 +1,4 @@
+import { parse, stringify } from "flatted";
 import {
   CONNECTED,
   CONNECTING,
@@ -6,6 +7,7 @@ import {
   HIDE_WALLET_MODAL,
   SET_PROVIDER,
   SET_WEB3,
+  UNSET_WEB3,
   SHOW_ERROR_MODAL,
   SHOW_WALLET_MODAL,
   DEPOSIT_MODE,
@@ -13,10 +15,32 @@ import {
 } from "./types";
 
 export const setLibrary = (data) => async (dispatch) => {
+  // flatten json and store in local storage
+  localStorage.setItem("cache", stringify(data));
   return dispatch({
     data,
     type: SET_WEB3,
   });
+};
+
+export const getLibrary = () => (dispatch) => {
+  const ISSERVER = typeof window === "undefined";
+
+  if (!ISSERVER) {
+    const cacheWallet = localStorage.getItem("cache") || null;
+
+    if (cacheWallet) {
+      const parseCasheWallet = parse(cacheWallet);
+      return dispatch({
+        data: parseCasheWallet,
+        type: SET_WEB3,
+      });
+    }
+    localStorage.removeItem("cache");
+    return dispatch({
+      type: UNSET_WEB3,
+    });
+  }
 };
 
 export const setProvider = (data) => async (dispatch) => {
