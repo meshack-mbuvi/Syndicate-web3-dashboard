@@ -7,11 +7,12 @@ import {
   SET_LOADING,
 } from "../types";
 
-type Depositors = {
-  address?: {
-    depositors?: number;
+interface SyndicateInfo {
+  [address: string]: {
+    depositors: number;
+    activities: number;
   };
-};
+}
 
 /**
  * Read all syndicates from all events and add them to the store
@@ -23,38 +24,46 @@ type Depositors = {
 export const addSyndicates = (data) => async (dispatch) => {
   if (!data) return;
 
-  const { syndicateInstance, account, web3contractInstance, web3 } = data;
+  const { syndicateInstance, account, web3contractInstance } = data;
   try {
     dispatch({
       data: true,
       type: SET_LOADING,
     });
-    const events = await getPastEvents(web3, web3contractInstance);
+    const events = await getPastEvents(web3contractInstance);
 
     const syndicates = [];
-    const syndicateDepositors: Depositors = {};
+    const syndicateInfo: SyndicateInfo = {};
 
     await events.forEach(async (event) => {
       const { syndicateAddress } = event.returnValues;
       // check whether event belongs to this wallet owner
-      if (
-        (event.event === "createdSyndicate" ||
-          event.event === "closedSyndicate") &&
-        syndicateAddress === account
-      ) {
+      if (syndicateAddress === account) {
         syndicates.push(syndicateAddress);
+        syndicateInfo[syndicateAddress] = {
+          activities: 0,
+          depositors: 0,
+        };
       }
 
       // get syndicates this wallet has invested in
       if (event.event === "lpInvestedInSyndicate") {
         const address = event.returnValues["0"];
         const lpAddress = event.returnValues["1"];
+        console.log({ event });
 
         // record depositors for each address
-        if (syndicateDepositors.address) {
-          syndicateDepositors[address] += 1;
+        if (syndicateInfo[address] && syndicateInfo[address]["depositors"]) {
+          syndicateInfo[address]["depositors"] += 1;
         } else {
-          syndicateDepositors[address] = 1;
+          syndicateInfo[address] = { ...syndicateInfo[address], depositors: 1 };
+        }
+
+        // save activities for the syndicate
+        if (syndicateInfo[address] && syndicateInfo[address]["activities"]) {
+          syndicateInfo[address]["activities"] += 1;
+        } else {
+          syndicateInfo[address] = { ...syndicateInfo[address], activities: 1 };
         }
 
         if (lpAddress === account) {
@@ -96,8 +105,7 @@ export const addSyndicates = (data) => async (dispatch) => {
           filteredSyndicateAddresses[index],
           syndicateInstance
         );
-        let { address } = syndicate;
-
+        const { address } = syndicate;
         /**
          * We check whether we have data returned; for the case of an error,
          * the returned value is undefined
@@ -105,11 +113,11 @@ export const addSyndicates = (data) => async (dispatch) => {
         if (syndicate) {
           allSyndicates.push({
             ...syndicate,
-            depositors: syndicateDepositors[address] || 0,
+            ...syndicateInfo[address],
           });
         }
       } catch (error) {
-        console.error({ message: "Error retrieving syndicate data" });
+        console.log({ error });
       }
     }
     dispatch({

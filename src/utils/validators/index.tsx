@@ -1,4 +1,5 @@
 import { web3 } from "../web3Utils";
+
 export const AddressValidator = (value, helpers) => {
   if (!web3.utils.isAddress(value)) {
     return helpers.error("any.invalid");
@@ -29,4 +30,15 @@ export const Validate = (value) => {
     message = "";
   }
   return message;
+};
+
+/**
+ * This checks whether the address provided is a zero address.
+ * eg: 0x0000000000000000000000000000000000000000
+ * @param address
+ * @returns boolean indicating the resulf of the check
+ */
+export const isZeroAddress = (address: string) => {
+  // Checking for address 0x0000000; the default value set by solidity
+  return /^0x0+$/.test(address);
 };

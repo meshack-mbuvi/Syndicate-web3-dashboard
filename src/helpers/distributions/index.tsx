@@ -37,7 +37,7 @@ export const getClaimedDistributions = async (
   syndicateInstance: any,
   address: string | string[],
   lpAddress: string,
-  ERC20ContractAddress: string
+  ERC20ContractAddress: string = ""
 ) => {
   try {
     const claimedDistributions = await syndicateInstance.getClaimedDistributions(

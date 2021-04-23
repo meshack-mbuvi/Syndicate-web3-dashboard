@@ -1,6 +1,6 @@
 import { ErrorModal } from "@/components/shared";
 import { addNewSyndicate } from "@/redux/actions/syndicates";
-import { Validate } from "@/utils/inputValidators";
+import { Validate } from "@/utils/validators";
 import { faCopy } from "@fortawesome/free-regular-svg-icons";
 import { faCheckCircle } from "@fortawesome/free-solid-svg-icons";
 // fontawesome icons
@@ -63,20 +63,6 @@ const CreateSyndicate = (props: any) => {
 
   let validated = false;
 
-  if (
-    profitShareToSyndProtocolError ||
-    primaryERC20ContractAddressError ||
-    maxDepositsError ||
-    maxTotalDepositsError ||
-    maxLPsError ||
-    expectedAnnualOperatingFeesError ||
-    profitShareToSyndicateLeadError
-  ) {
-    validated = false;
-  } else {
-    validated = true;
-  }
-
   // input fields
   const [
     primaryERC20ContractAddress,
@@ -98,6 +84,36 @@ const CreateSyndicate = (props: any) => {
   const [syndicateProfitSharePercent, setProfitShareToSyndProtocol] = useState(
     "0.5"
   );
+
+  /**
+   * if any error message is set on the input fields, then the input
+   * fields are not valid. We therefore set validated = false
+   *
+   * Also, if we have any empty input field, the form is not yet valid,
+   * so we set validated to false
+   */
+  if (
+    profitShareToSyndProtocolError ||
+    primaryERC20ContractAddressError ||
+    maxDepositsError ||
+    maxTotalDepositsError ||
+    maxLPsError ||
+    expectedAnnualOperatingFeesError ||
+    profitShareToSyndicateLeadError ||
+    !maxDeposits ||
+    !minDeposits ||
+    !profitShareToSyndicateLead ||
+    !primaryERC20ContractAddress ||
+    !maxLPs ||
+    !maxTotalDeposits ||
+    !expectedAnnualOperatingFees ||
+    !profitShareToSyndicateLead ||
+    !syndicateProfitSharePercent
+  ) {
+    validated = false;
+  } else {
+    validated = true;
+  }
 
   // input onchange handlers
   const handlesetPrimaryERC20ContractAddress = (event: any) => {
@@ -265,31 +281,6 @@ const CreateSyndicate = (props: any) => {
     // get closeDate and syndicateProtocolProfitSharePercent
     const syndicateProtocolProfitSharePercent = syndicateProfitSharePercent;
 
-    // check whether syndicateProfitShareBasisPoints meets the minimum of 0.5%
-    if (+syndicateProtocolProfitSharePercent < 0.5) {
-      setProfitShareToSyndProtocolError(
-        "Syndicate protocol profit should be a minimum 0f 0.5%"
-      );
-      return;
-    } else {
-      setProfitShareToSyndProtocolError("");
-    }
-
-    /**
-     * close modal after validating the minimum requirement for syndicateProfitShare
-     */
-    closeModal();
-
-    // check whether syndicateProfitShareBasisPoints meets the minimum of 0.5%
-    if (+syndicateProtocolProfitSharePercent < 0.5) {
-      setProfitShareToSyndProtocolError(
-        "Syndicate protocol profit should be a minimum 0f 0.5%"
-      );
-      return;
-    } else {
-      setProfitShareToSyndProtocolError("");
-    }
-
     /**
      * close modal after validating the minimum requirement for syndicateProfitShare
      */
@@ -347,17 +338,21 @@ const CreateSyndicate = (props: any) => {
       // retrieve details of the newly created syndicate
       const syndicate = await getSyndicate(account, syndicateInstance);
 
-      // add the newly created syndicate to application state
-      dispatch(addNewSyndicate({ ...syndicate, depositors: 0 }));
-
       // close loading modal
       dispatch(setSumbitting(false));
 
-      // before showing success modal, we need to set the shareable link
-      setShareableLink(`www.syndicateprotocol.org/${account}`);
-
       // close new syndicate form modal
       setShowModal(false);
+      setErrorMessage("");
+
+      // Show the message to the end user
+      setShowErrorMessage(false);
+
+      // add the newly created syndicate to application state
+      dispatch(addNewSyndicate({ ...syndicate, depositors: 0 }));
+
+      // before showing success modal, we need to set the shareable link
+      setShareableLink(`www.syndicateprotocol.org/${account}`);
 
       // show success modal
       setShowSuccessModal(true);
@@ -422,26 +417,18 @@ const CreateSyndicate = (props: any) => {
   const profitShareToSyndicateOnchangeHandler = (event) => {
     event.preventDefault();
     const { value } = event.target;
-    if (!value.trim()) {
-      setProfitShareToSyndProtocolError(
-        "Syndicate protocol profit is required"
-      );
-    } else if (!isNaN(value)) {
-      // what is stored here will help to determine whether to read value from
-      // the buttons or from the input field. See implementation of onSubmit
 
-      if (+value < 0.5) {
-        setProfitShareToSyndProtocolError(
-          "Syndicate protocol profit should be a minimum of 0.5"
-        );
-      } else {
-        setProfitShareToSyndProtocolError("");
-      }
-    } else {
+    const message = Validate(value);
+    if (message) {
+      setProfitShareToSyndProtocolError(`Field ${message}`);
+    } else if (+value < 0.5) {
       setProfitShareToSyndProtocolError(
-        "Syndicate protocol profit should be a valid number or decimal. eg 0.5 but not 0.5%"
+        "Syndicate protocol profit should be a minimum of 0.5"
       );
+    } else {
+      setProfitShareToSyndProtocolError("");
     }
+
     setProfitShareToSyndProtocol(value);
   };
 
@@ -514,7 +501,7 @@ const CreateSyndicate = (props: any) => {
               {/* min deposits */}
               <TextInput
                 {...{
-                  label: "Min Deposits(Per Depositor):",
+                  label: "Minimum Deposits(Per Depositor):",
                   error: minDepositsError,
                 }}
                 onChange={handleSetMinDeposits}
@@ -527,20 +514,20 @@ const CreateSyndicate = (props: any) => {
               {/* max deposits */}
               <TextInput
                 {...{
-                  label: "Max Deposits(Per Depositor):",
+                  label: "Maximum Deposits(Per Depositor):",
                   error: maxDepositsError,
                 }}
                 onChange={handleSetMaxDeposits}
                 name="maxDeposits"
                 value={maxDeposits}
-                placeholder="Enter max deposit per LP"
+                placeholder="Enter maximum deposit per LP address"
                 required
               />
 
               {/* Max Total deposits */}
               <TextInput
                 {...{
-                  label: "Max Deposits(Total):",
+                  label: "Maximum Deposits(Total):",
                   error: maxTotalDepositsError,
                 }}
                 onChange={maxTotalDepositsHandler}
@@ -553,7 +540,7 @@ const CreateSyndicate = (props: any) => {
               {/* Max LPs deposits */}
               <TextInput
                 {...{
-                  label: "Max LPs(Total Depositors):",
+                  label: "Maximum LPs(Total Depositors):",
                   error: maxLPsError,
                 }}
                 onChange={maxLPsHandler}
@@ -565,16 +552,15 @@ const CreateSyndicate = (props: any) => {
 
               {/* close date */}
               <div className="flex flex-row justify-end">
-                <div className="mr-2 w-5/12 flex justify-end">
+                <div className="mr-2 w-1/2 flex justify-end">
                   <label
                     htmlFor="syndicateAddress"
-                    className="block pt-2 text-black text-lg font-medium"
-                  >
+                    className="block pt-2 text-black text-lg font-medium">
                     Close Date:
                   </label>
                 </div>
 
-                <div className="w-7/12 flex justify-between">
+                <div className="w-1/2 flex justify-between">
                   <DatePicker
                     selected={selectedDate}
                     onSelect={handleDateSelect}
@@ -620,17 +606,16 @@ const CreateSyndicate = (props: any) => {
 
               {/* Profit Share to Syndicate Protocol: */}
               <div className="h-10 flex flex-row justify-center">
-                <div className="mr-2 w-5/12 flex justify-end">
+                <div className="mr-2 w-1/2 flex justify-end">
                   <label
                     htmlFor="profitShareToSyndProtocol"
-                    className="block pt-2 text-black text-lg font-medium"
-                  >
+                    className="block pt-2 text-black text-lg font-medium">
                     Profit Share to Syndicate Protocol:
                   </label>
                 </div>
 
                 {/* shows 4 equal grids used to get the input for profit share */}
-                <div className="w-7/12 flex justify-between">
+                <div className="w-1/2 flex justify-between">
                   <div
                     className={`grid grid-cols-4 w-4/5 border gray-85 flex flex-grow rounded-md`}>
                     <button
@@ -640,8 +625,7 @@ const CreateSyndicate = (props: any) => {
                           : "gray-85"
                       }`}
                       onClick={() => updateProfitShareToSyndProtocol(0.5)}
-                      type="button"
-                    >
+                      type="button">
                       0.5%
                     </button>
 
@@ -654,8 +638,7 @@ const CreateSyndicate = (props: any) => {
                       onClick={() => {
                         updateProfitShareToSyndProtocol(1);
                       }}
-                      type="button"
-                    >
+                      type="button">
                       1%
                     </button>
 
@@ -668,8 +651,7 @@ const CreateSyndicate = (props: any) => {
                       type="button"
                       onClick={() => {
                         updateProfitShareToSyndProtocol(3);
-                      }}
-                    >
+                      }}>
                       3%
                     </button>
 
@@ -692,9 +674,9 @@ const CreateSyndicate = (props: any) => {
                 </div>
               </div>
               <div className="flex flex-row justify-center">
-                <p className="mr-2 w-5/12 flex"></p>
+                <p className="mr-2 w-1/2 flex"></p>
                 {profitShareToSyndProtocolError ? (
-                  <p className="mr-2 w-7/12 text-red-500 text-sm -mt-3">
+                  <p className="mr-2 w-1/2 text-red-500 text-sm -mt-3">
                     {profitShareToSyndProtocolError}
                   </p>
                 ) : null}
@@ -742,8 +724,7 @@ const CreateSyndicate = (props: any) => {
               customClasses={`rounded-full bg-blue-light w-auto px-10 py-2 text-lg ${
                 validated ? "" : "opacity-50"
               }`}
-              disabled={validated ? false : true}
-            >
+              disabled={validated ? false : true}>
               Launch
             </Button>
           </div>
@@ -755,12 +736,11 @@ const CreateSyndicate = (props: any) => {
         {...{
           show: submitting,
           closeModal: () => dispatch(setSumbitting(false)),
-        }}
-      >
+        }}>
         <div className="flex flex-col justify-center m-auto mb-4">
           <div className="loader">Loading...</div>
           <div className="modal-header mb-4 text-green-400 font-medium text-center leading-8 text-lg">
-            Please wait, we are creating your syndicate.
+            Please wait as we are creating your syndicate.
           </div>
         </div>
       </Modal>

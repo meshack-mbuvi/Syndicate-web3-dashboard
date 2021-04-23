@@ -13,7 +13,7 @@ export const Toggle = (props) => {
   }
 
   return (
-    <div className="flex flex-row justify-center w-2/3">
+    <div className="flex flex-row justify-center w-full">
       <div className="mr-4 w-1/2 flex justify-end">
         <label
           htmlFor="syndicateAddress"
@@ -22,7 +22,7 @@ export const Toggle = (props) => {
         </label>
       </div>
 
-      <div className="flex justify-start">
+      <div className="flex justify-start w-1/2">
         {/* <!-- Enabled: "translate-x-5", Not Enabled: "translate-x-0" --> */}
         <button
           type="button"

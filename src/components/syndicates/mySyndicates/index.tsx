@@ -83,7 +83,10 @@ const MySyndicates = (props) => {
                 application
               </p>
               <p className="text-2xl">
-                Please connect your wallet to access syndicates
+                Please <span className="text-blue-300">click</span> the button
+                labelled{" "}
+                <span className="text-blue-light mr-1">Not connected</span>
+                on the navbar to get started.
               </p>
             </div>
           )}

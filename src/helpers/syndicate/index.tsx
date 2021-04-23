@@ -11,7 +11,13 @@ export const getSyndicate = async (address: string, syndicateInstance) => {
 
   try {
     const syndicateData = await syndicateInstance.getSyndicateValues(address);
-    const closeDate = formatDate(new Date(syndicateData.closeDate.toNumber()));
+
+    // The value stored in syndicate during creation is in seconds, hence the need
+    // to multiply by 1000 to convert to milliseconds and then initialize a
+    // date object
+    const closeDate = formatDate(
+      new Date(syndicateData.closeDate.toNumber() * 1000)
+    );
     const createdDate = formatDate(
       new Date(syndicateData.creationDate.toNumber() * 1000)
     );
@@ -24,6 +30,7 @@ export const getSyndicate = async (address: string, syndicateInstance) => {
     const maxTotalDeposits = web3.utils.fromWei(
       syndicateData.maxTotalDeposits.toString()
     );
+    const { depositERC20ContractAddress, currentManager } = syndicateData;
 
     return {
       address,
@@ -35,6 +42,8 @@ export const getSyndicate = async (address: string, syndicateInstance) => {
       depositors: 0, // depositors does not exist in returned data; it will be
       //recalculated by counting all lpInvestInsyndicate events
       active: true,
+      currentManager,
+      depositERC20ContractAddress,
     };
   } catch (error) {
     console.log({ error });

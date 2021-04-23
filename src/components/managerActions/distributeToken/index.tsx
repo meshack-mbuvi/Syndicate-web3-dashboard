@@ -6,7 +6,7 @@ import { approveManager } from "@/helpers";
 import { getPastEvents } from "@/helpers/retrieveEvents";
 import { showWalletModal } from "@/redux/actions";
 import { etherToNumber } from "@/utils";
-import { Validate } from "@/utils/inputValidators";
+import { isZeroAddress, Validate } from "@/utils/validators";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
@@ -78,7 +78,7 @@ const DistributeToken = (props: Props) => {
   useEffect(() => {
     if (syndicate) {
       // Checking for address 0x0000000; the default value set by solidity
-      if (/^0x0+$/.test(syndicate.currentManager)) {
+      if (isZeroAddress(syndicate.currentManager)) {
         // address is empty
         setValideSyndicate(false);
       } else {
@@ -93,7 +93,6 @@ const DistributeToken = (props: Props) => {
 
   const getTotalClaimedDistributionsByCountingWithdrawals = async () => {
     const events = await getPastEvents(
-      web3,
       web3contractInstance,
       "lpWithdrewDistributionFromSyndicate"
     );

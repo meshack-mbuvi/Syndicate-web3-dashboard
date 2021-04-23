@@ -1,7 +1,7 @@
 import ErrorBoundary from "@/components/errorBoundary";
 import { getTotalDistributions } from "@/helpers";
 import { getClaimedDistributions } from "@/helpers/distributions";
-import { Validate } from "@/utils/inputValidators";
+import { Validate } from "@/utils/validators";
 import { useRouter } from "next/router";
 import PropTypes from "prop-types";
 import React, { useEffect, useState } from "react";
@@ -41,7 +41,8 @@ const InvestInSyndicate = (props) => {
   ] = useState<string>("0");
 
   // TODO: To update this dynamically from drop-down based on available ERC20
-  const [currentERC20] = useState<string>(account);
+  // This can be DAI/ USDC
+  const [currentERC20] = useState<string>("DAI");
   const [depositAmount, setDepositAmount] = useState(0);
   const [depositAmountError, setDepositAmountError] = useState("");
 

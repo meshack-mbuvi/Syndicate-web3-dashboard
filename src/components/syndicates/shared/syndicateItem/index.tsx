@@ -1,22 +1,36 @@
+import { getTotalDistributions } from "@/helpers";
 import Link from "next/link";
-import PropTypes from "prop-types";
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
 
-const Button = ({ children, link = "#", address, ...rest }) => (
+interface ButtonProps {
+  children: any;
+  link: string;
+  address: string;
+  className?: string;
+}
+const Button = ({ children, link = "#", address, ...rest }: ButtonProps) => (
   <button {...rest}>
     <Link href={`/syndicates/${address}/${link}`}>{children}</Link>
   </button>
 );
 
-Button.propTypes = {
-  children: PropTypes.string.isRequired,
-  link: PropTypes.string.isRequired,
-  rest: PropTypes.any,
-  address: PropTypes.string.isRequired,
-};
+interface SyndicateItemProps {
+  address: string;
+  styles: string;
+  closeDate: string;
+  createdDate: string;
+  active: boolean;
+  maxTotalDeposits: string | number;
+  openToDeposits: boolean;
+  totalDeposits: string | number;
+  depositors: number;
+  depositERC20ContractAddress: string;
+  web3: any;
+  activities: number | string;
+}
 
-const SyndicateItem = (props) => {
+const SyndicateItem = (props: SyndicateItemProps) => {
   const {
     address,
     styles,
@@ -27,6 +41,8 @@ const SyndicateItem = (props) => {
     openToDeposits,
     totalDeposits,
     depositors,
+    activities,
+    depositERC20ContractAddress,
   } = props;
 
   const {
@@ -69,8 +85,13 @@ const SyndicateItem = (props) => {
         setEligibleWithdraw(0);
       });
 
-    getTotalDistributions().then((distributions) => {
-      setTotalDistributions(distributions);
+    getTotalDistributions(
+      syndicateInstance,
+      address,
+      depositERC20ContractAddress,
+      account
+    ).then((distributions) => {
+      setTotalDistributions(web3.utils.fromWei(distributions.toString()));
     });
   }, [account, syndicateInstance]);
 
@@ -123,23 +144,10 @@ const SyndicateItem = (props) => {
         totalSyndicateDistributions
       );
 
-      return web3.utils.fromWei(eligibleWithdrawal);
+      return web3.utils.fromWei(eligibleWithdrawal.toString());
     } catch (error) {
       console.log({ error });
     }
-  };
-
-  /**
-   * retrieve totalDistributions for a given syndicate per lpAccount
-   * @returns
-   */
-  const getTotalDistributions = async () => {
-    const totalDistributions = await syndicateInstance.getTotalDistributions(
-      address,
-      account
-    );
-    setTotalDistributions(web3.utils.fromWei(totalDistributions.toString()));
-    return web3.utils.fromWei(totalDistributions.toString());
   };
 
   /*Status Options:
@@ -211,7 +219,7 @@ const SyndicateItem = (props) => {
       <span className="text-sm mx-2 text-gray-300 w-20">
         {`${totalDeposits} DAI`}
       </span>
-      <span className="text-sm mx-2 text-gray-300 w-16">-</span>
+      <span className="text-sm mx-2 text-gray-300 w-16">{activities}</span>
       <span className="text-sm mx-2 text-gray-300 w-24">
         {totalDistributions}
       </span>
@@ -234,22 +242,6 @@ const SyndicateItem = (props) => {
 const mapStateToProps = ({ web3Reducer }) => {
   const { web3 } = web3Reducer;
   return { web3 };
-};
-
-SyndicateItem.propTypes = {
-  address: PropTypes.string.isRequired,
-  createdDate: PropTypes.string,
-  closeDate: PropTypes.string,
-  depositors: PropTypes.number,
-  deposits: PropTypes.string,
-  activity: PropTypes.string,
-  styles: PropTypes.string,
-  active: PropTypes.bool.isRequired,
-  syndicateOpen: PropTypes.string,
-  maxTotalDeposits: PropTypes.string,
-  openToDeposits: PropTypes.bool,
-  totalDeposits: PropTypes.string,
-  web3: PropTypes.any,
 };
 
 export default connect(mapStateToProps)(SyndicateItem);

@@ -1,6 +1,5 @@
-import React from "react";
 import PropTypes from "prop-types";
-
+import React from "react";
 import { InfoIcon } from "src/components/iconWrappers";
 
 // Description of SectionCard props
@@ -8,7 +7,7 @@ interface SectionCardProps {
   /** Header text for the section card */
   header: string;
   /** Subtext to render on this component */
-  subText: string | number;
+  subText: any;
   /** Optional property used to determine whether to
    * render the info icon */
   infoIcon?: boolean;
@@ -31,8 +30,7 @@ export const SectionCard = (props: SectionCardProps) => {
             header === "Total Withdraws / Deposits"
               ? "text-green-screamin leading-loose font-ibm"
               : "leading-loose font-ibm"
-          }
-        >
+          }>
           {subText?.toString()}
         </p>
       </div>

@@ -1,14 +1,14 @@
+import Link from "next/link";
 import { useRouter } from "next/router";
 import PropTypes from "prop-types";
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import ErrorBoundary from "src/components/errorBoundary";
-import Link from "next/link";
 import Layout from "src/components/layout";
 import InvestInSyndicate from "src/components/syndicates/investInSyndicate";
+import Head from "src/components/syndicates/shared/HeaderTitle";
 import SyndicateDetails from "src/components/syndicates/syndicateDetails";
 import { etherToNumber, formatDate, fromNumberToPercent } from "src/utils";
-import Head from "src/components/syndicates/shared/HeaderTitle";
 
 /**
  * Renders syndicate component with details section on the left and
@@ -33,7 +33,11 @@ const SyndicateInvestment = (props) => {
           .getSyndicateValues(syndicateAddress)
           .then((data) => {
             console.log({ data });
-            const closeDate = formatDate(new Date(data.closeDate.toNumber()));
+            const closeDate = formatDate(
+              new Date(data.closeDate.toNumber() * 1000)
+            );
+
+            console.log({ closeDate });
 
             /**
              * block.timestamp which is the one used to save creationDate is in

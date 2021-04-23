@@ -71,11 +71,11 @@ const Header = () => {
         </div>
 
         <div className="flex flex-col mx-2 md:flex-row justify-between mr-4">
-          <Transaction />
           <Notification />
+          <Transaction />
           <UserProfileWrapper>
-            <UserProfile />
             <Wallet />
+            <UserProfile />
           </UserProfileWrapper>
         </div>
       </nav>

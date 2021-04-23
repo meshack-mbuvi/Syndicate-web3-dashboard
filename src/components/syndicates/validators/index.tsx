@@ -1,4 +1,4 @@
-import { AddressValidator } from "@/utils/inputValidators";
+import { AddressValidator } from "@/utils/validators";
 import Joi from "@hapi/joi";
 
 // validation schema for new syndicate form

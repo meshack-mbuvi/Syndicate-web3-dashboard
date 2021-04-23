@@ -34,14 +34,14 @@ export const TextInput = (props: {
 
   return (
     <div className="flex flex-row justify-center">
-      <div className="mr-2 w-5/12 flex justify-end">
+      <div className="mr-2 w-1/2 flex justify-end">
         <label
           htmlFor="syndicateAddress"
           className="block pt-2 text-black text-lg font-medium">
           {label}
         </label>
       </div>
-      <div className="w-7/12 flex flex-col justify-between">
+      <div className="w-1/2 flex flex-col justify-between">
         {/* input field */}
         <div className="flex">
           <input

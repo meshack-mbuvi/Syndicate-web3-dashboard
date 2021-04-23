@@ -36,7 +36,6 @@ const GenerateDai = (props: Props) => {
       daiABI,
       rinkebyDaiContractAddress
     );
-    console.log({ daiAddres: daiContract._address });
     const balance = await daiContract.methods
       .balanceOf(account)
       .call({ from: account });

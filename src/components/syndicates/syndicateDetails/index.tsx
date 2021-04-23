@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { ExternalLinkIcon } from "src/components/iconWrappers";
-import { etherToNumber, formatDate, fromNumberToPercent } from "src/utils";
+import { etherToNumber, formatDate } from "src/utils";
 import { BadgeCard, DetailsCard, SectionCard } from "../shared";
 import { DistributionsGraph } from "../shared/distributionsGraph";
 
@@ -16,12 +16,14 @@ const SyndicateDetails = (props) => {
 
   const [syndicate, setSyndicate] = useState({
     maxDeposit: 0,
-    profitShareToSyndicateProtocol: 0,
+    syndicateProfitShareBasisPoints: "0",
     openToDeposits: false,
     totalDeposits: 0,
     closeDate: "",
-    inactive: true,
+    active: true,
     createdDate: "",
+    managerManagementFeeBasisPoints: "0",
+    depositERC20ContractAddress: "",
   });
 
   const [depositsAndDistributionsSections] = useState([
@@ -30,7 +32,7 @@ const SyndicateDetails = (props) => {
     { header: "Total Withdrawn", subText: "0 USDC" },
     {
       header: "Profit Share to Syndicate Leads",
-      subText: syndicate.profitShareToSyndicateProtocol,
+      subText: syndicate.syndicateProfitShareBasisPoints,
     },
   ]);
 
@@ -39,20 +41,25 @@ const SyndicateDetails = (props) => {
       let {
         closeDate,
         createdDate,
-        profitShareToSyndicateProtocol,
+        syndicateProfitShareBasisPoints,
+        managerManagementFeeBasisPoints,
+        depositERC20ContractAddress,
       } = syndicate;
 
       setDetails([
         { header: "Created on", subText: createdDate },
         { header: "Close Date", subText: closeDate },
-        { header: "Deposit/Distribution Token", subText: "USDC / USDC" },
+        {
+          header: "Deposit/Distribution Token",
+          subText: depositERC20ContractAddress,
+        },
         {
           header: "Profit Share to Syndicate Leads",
-          subText: profitShareToSyndicateProtocol,
+          subText: managerManagementFeeBasisPoints,
         },
         {
           header: "Profit Share to Protocol",
-          subText: profitShareToSyndicateProtocol,
+          subText: syndicateProfitShareBasisPoints,
         },
       ]);
     }
@@ -73,7 +80,9 @@ const SyndicateDetails = (props) => {
               number: new Date(data.closeDate.toNumber()),
             });
 
-            const closeDate = formatDate(new Date(data.closeDate.toNumber()));
+            const closeDate = formatDate(
+              new Date(data.closeDate.toNumber() * 1000)
+            );
             /**
              * block.timestamp which is the one used to save creationDate is in
              * seconds. We multiply by 1000 to convert to milliseconds and then
@@ -85,21 +94,33 @@ const SyndicateDetails = (props) => {
 
             const maxDeposit = data.maxDeposit.toString();
 
-            const profitShareToSyndicateProtocol = fromNumberToPercent(
-              etherToNumber(data.syndicateProfitShareBasisPoints.toString())
-            );
+            const {
+              syndicateProfitShareBasisPoints,
+              managerManagementFeeBasisPoints,
+              depositERC20ContractAddress,
+              minDeposit,
+            } = data;
+
+            console.log({ minDeposit: minDeposit.toString() });
 
             const openToDeposits = data.syndicateOpen;
             const totalDeposits = etherToNumber(data.totalDeposits.toString());
 
             const syndicateDetails = {
               maxDeposit,
-              profitShareToSyndicateProtocol,
+              syndicateProfitShareBasisPoints: `${
+                parseInt(syndicateProfitShareBasisPoints.toString()) / 100
+              }%`,
               openToDeposits,
               totalDeposits,
               closeDate,
-              inactive: data.inactive,
+              active: true,
+              minDeposit,
               createdDate,
+              depositERC20ContractAddress,
+              managerManagementFeeBasisPoints: `${
+                parseInt(managerManagementFeeBasisPoints.toString()) / 100
+              }%`,
             };
 
             setSyndicate(syndicateDetails);
