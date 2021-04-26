@@ -1,90 +1,207 @@
 import ErrorBoundary from "@/components/errorBoundary";
 import { getTotalDistributions } from "@/helpers";
-import { getClaimedDistributions } from "@/helpers/distributions";
 import { Validate } from "@/utils/validators";
 import { useRouter } from "next/router";
 import PropTypes from "prop-types";
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
-// action to initiate wallet connect
+// actions
 import { showWalletModal } from "src/redux/actions/web3Provider";
-// utils
+import { setSyndicateDetails } from "src/redux/actions/syndicateDetails";
+import { updateSyndicateLPDetails } from "src/redux/actions/syndicateLPDetails";
+// utils and helpers
 import { toEther } from "src/utils";
+import { floatedNumberWithCommas } from "src/utils/numberWithCommas";
+import { approveManager } from "src/helpers/approveAllowance";
+
+// shared components
 import { DetailsCard } from "../shared";
+import { TokenSelect } from "../shared/tokenSelect";
+import { constants } from "../shared/Constants";
+
+// ABI
+import syndicateABI from "src/contracts/Syndicate.json";
+import ERC20ABI from "src/utils/abi/rinkeby-dai";
 
 const Web3 = require("web3");
 
 const InvestInSyndicate = (props) => {
   const {
-    web3: { syndicateInstance, account, daiContract },
+    web3: { syndicateInstance, account },
     dispatch,
     syndicate,
-    withdrawalMode,
-    depositMode,
+    syndicateAction,
+    syndicateLPDetails,
   } = props;
   const router = useRouter();
 
+  // the block on which the contract was deployed.
+  // we'll start listening to events starting from here.
+  const startBlock = process.env.NEXT_PUBLIC_FROM_BLOCK;
+
   const [submitting, setSubmitting] = useState<boolean>(false);
-  const [myLPDeposits, setMyLPDeposits] = useState<string>("0");
-  const [mySyndicateshare, setMySyndicateShare] = useState<string>("0");
-  const [myClaimedDistributions, setMyClaimedDistributions] = useState<string>(
-    "0"
-  );
-  const [myWithdrawsToDate, setMyWithdrawsToDate] = useState<string>("0");
-  const [
-    withdrawalsToDepositPercentage,
-    setWithdrawalsToDepositPercentage,
-  ] = useState<string>("0");
   const [
     totalAvailableDistributions,
     setTotalAvailableDistributions,
   ] = useState<string>("0");
 
-  // TODO: To update this dynamically from drop-down based on available ERC20
-  // This can be DAI/ USDC
-  const [currentERC20] = useState<string>("DAI");
   const [depositAmount, setDepositAmount] = useState(0);
   const [depositAmountError, setDepositAmountError] = useState("");
+  const [currentERC20] = useState<string>("DAI");
+  const [currentERC20Contract, setCurrentERC20Contract] = useState({});
+  const [
+    depositsAndWithdrawalsAvailable,
+    setDepositsAndWithdrawalsAvailable,
+  ] = useState<Boolean>(true);
+
+  const {
+    myDeposits,
+    myPercentageOfThisSyndicate,
+    withdrawalsToDepositPercentage,
+    myWithdrawalsToDate,
+    myDistributionsToDate,
+  } = syndicateLPDetails;
+
+  const { withdraw, deposit, generalView } = syndicateAction;
 
   const sections = [
     {
       header: "My Deposits",
-      subText: `${myLPDeposits} ${currentERC20} ($${parseInt(
-        myLPDeposits
-      ).toFixed(2)})`,
+      subText: `${myDeposits} ${currentERC20} ($${floatedNumberWithCommas(
+        myDeposits
+      )})`,
     },
-    { header: "My % of This Syndicate", subText: mySyndicateshare },
+    {
+      header: "My % of This Syndicate",
+      subText: `${myPercentageOfThisSyndicate}%`,
+    },
     {
       header: "My Distributions to Date",
-      subText: `${myClaimedDistributions} ${currentERC20}`,
+      subText: `${myDistributionsToDate} ${currentERC20}`,
     },
     {
       header: "My Withdraws to Date",
-      subText: `${myWithdrawsToDate} ${currentERC20}`,
+      subText: `${myWithdrawalsToDate} ${currentERC20}`,
     },
     {
       header: "Total Withdraws / Deposits",
-      subText: `${withdrawalsToDepositPercentage} %`,
+      subText: `${withdrawalsToDepositPercentage}%`,
     },
   ];
 
   /**
-   * all syndicates are handled by the SyndicateSPV contract, so the contract
-   * address is the same for all of them while the spvAddress that is passed
+   * all syndicates are handled by the Syndicate contract, so the contract
+   * address is the same for all of them while the syndicate address that is passed
    * into the contract is different
    */
   const { syndicateAddress } = router.query;
-
   const web3 = new Web3(Web3.givenProvider || "ws://localhost:8545");
 
-  /**
-   * get wallet total deposits
-   */
+  // check whether the current syndicate is accepting deposits
+  // or withdrawals
   useEffect(() => {
-    if (syndicateInstance) {
-      getSyndicateLPDeposits();
+    if (syndicate) {
+      const { syndicateOpen, distributionsEnabled, active } = syndicate;
+
+      // if a syndicate is closed and distributions have not been enabled
+      // the LP cannot deposit or withdraw from it.
+      const closedToDepositsWithNoDistribution =
+        !syndicateOpen && !distributionsEnabled;
+
+      if (closedToDepositsWithNoDistribution) {
+        setDepositsAndWithdrawalsAvailable(false);
+      }
     }
-  }, [account, syndicateInstance]);
+  }, [syndicate]);
+
+  // get values for the current LP(connected wallet account)
+  // when this component initially renders.
+  useEffect(() => {
+    const lpAccount = account;
+    dispatch(
+      updateSyndicateLPDetails({
+        syndicateInstance,
+        lpAccount,
+        syndicateAddress,
+        syndicate,
+        web3,
+        totalAvailableDistributions,
+      })
+    );
+  }, [
+    syndicate,
+    syndicateInstance,
+    currentERC20Contract,
+    totalAvailableDistributions,
+  ]);
+
+  useEffect(() => {
+    // set up syndicate contract to listen to events.
+    if (syndicateInstance && syndicate) {
+      // set up current ERC20Contract and
+      // and save it to the local state
+      const ERC20Contract = new web3.eth.Contract(
+        ERC20ABI,
+        syndicate.depositERC20ContractAddress
+      );
+
+      setCurrentERC20Contract(ERC20Contract);
+
+      // set up syndicate contract.
+      const syndicateContract = new web3.eth.Contract(
+        syndicateABI.abi,
+        syndicateInstance.address
+      );
+
+      // subscribe to deposit and withdraw events
+      // we can only trigger an update to syndicate LP details once this
+      // event is emitted
+      syndicateContract.events
+        .lpInvestedInSyndicate({
+          filter: { lpAddress: account },
+          fromBlock: startBlock,
+        })
+        .on("data", () => {
+          // once event is emitted, dispatch action to save
+          // the latest syndicate LP details to the redux store.
+          const lpAccount = account;
+          dispatch(
+            updateSyndicateLPDetails({
+              syndicateInstance,
+              lpAccount,
+              syndicateAddress,
+              syndicate,
+              web3,
+              totalAvailableDistributions,
+            })
+          );
+        })
+        .on("error", (error) => console.log({ error }));
+
+      // subscribe to withdraw events.
+      syndicateContract.events
+        .lpWithdrewDistributionFromSyndicate({
+          filter: { lpAddress: account },
+          fromBlock: startBlock,
+        })
+        .on("data", () => {
+          // once event is emitted, dispatch action to save
+          // the latest syndicate LP details to the redux store.
+          const lpAccount = account;
+          dispatch(
+            updateSyndicateLPDetails({
+              syndicateInstance,
+              lpAccount,
+              syndicateAddress,
+              syndicate,
+              web3,
+              totalAvailableDistributions,
+            })
+          );
+        })
+        .on("error", (error) => console.log({ error }));
+    }
+  }, [syndicateInstance, syndicate]);
 
   /**
    * whenever we get syndicate details, we neet to trigger calculation of wallet
@@ -92,27 +209,12 @@ const InvestInSyndicate = (props) => {
    */
   useEffect(() => {
     if (syndicate && syndicateInstance) {
-      calculateMyLPShare();
-
-      // get claimed distrbutions.
-      // this updates the value of 'My Distributions to Date' on the UI
-      getClaimedDistributions(
-        syndicateInstance,
-        syndicateAddress,
-        account,
-        daiContract._address
-      ).then((claimedDistributions) => {
-        setMyClaimedDistributions(
-          web3.utils.fromWei(claimedDistributions.toString())
-        );
-      });
-
       // get total distributions.
       // this updates the distributions available value on the syndicate page
       getTotalDistributions(
         syndicateInstance,
         syndicateAddress,
-        daiContract._address,
+        syndicate.depositERC20ContractAddress,
         account
       ).then((totalDistributions: string) => {
         setTotalAvailableDistributions(
@@ -120,114 +222,9 @@ const InvestInSyndicate = (props) => {
         );
       });
     }
-  }, [syndicate]);
-
-  /**
-   *
-   * calculate my % share in syndicate
-   */
-  useEffect(() => {
-    calculateMyLPShare();
-  }, [myLPDeposits]);
-
-  /**
-   * Calculates the % share of the wallet onwer(lpAddress) which is a ration of
-   * the total investments made by the wallet to the total deposits made in the
-   * syndicate. This value is then converted to %
-   * @returns
-   */
-  const calculateMyLPShare = () => {
-    if (syndicate === null) {
-      return;
-    }
-
-    const myLPDepositsNum = parseInt(myLPDeposits, 10);
-
-    /** Zero deposits into a syndicate with zero total deposits
-     * should return 0%. Otherwise, calculate percentage.
-     * */
-    const MySyndicateShare =
-      myLPDepositsNum === 0
-        ? 0
-        : (parseInt(myLPDeposits, 10) * 100) / syndicate.totalDeposits;
-
-    // update mySindicateShare percentage state.
-    setMySyndicateShare(`${MySyndicateShare} %`);
-  };
-
-  /**
-   * Retrieves syndicateInfo for the connected wallet. We need to find out
-   * how much the wallet account has invested in this syndicate, and then use
-   * this date in calculateMyLPShare() above to caluclate the share of the account.
-   * @returns
-   */
-  const getSyndicateLPDeposits = async () => {
-    if (!syndicateInstance) return;
-    try {
-      const syndicateLPInfo = await syndicateInstance.getSyndicateLPInfo(
-        syndicateAddress,
-        account
-      );
-
-      const myTotalLPDeposits = web3.utils.fromWei(
-        syndicateLPInfo[0].toString()
-      );
-
-      const withdrawalsToDate = web3.utils.fromWei(
-        syndicateLPInfo[1].toString()
-      );
-
-      const withdrawalsToDepositPercentage =
-        parseInt(myTotalLPDeposits) <= 0
-          ? 0
-          : (parseInt(withdrawalsToDate) / parseInt(myTotalLPDeposits)) * 100;
-
-      // sets 'My Deposits' field
-      setMyLPDeposits(`${myTotalLPDeposits}`);
-
-      // sets 'My Withdraws to Date' field
-      setMyWithdrawsToDate(`${withdrawalsToDate}`);
-
-      // sets 'Total Withdraws / Deposits' field
-
-      setWithdrawalsToDepositPercentage(`${withdrawalsToDepositPercentage}`);
-
-      return myTotalLPDeposits;
-    } catch (error) {
-      console.log({ error });
-    }
-  };
-
-  // Approve sending the daiBalance from the user to the manager. Note that the
-  // approval goes to the contract, since that is what executes the transferFrom
-  // call.
-  // See https://forum.openzeppelin.com/t/uniswap-transferfrom-error-dai-insufficient-allowance/4996/4
-  // and https://forum.openzeppelin.com/t/example-on-how-to-use-erc20-token-in-another-contract/1682
-  // This prevents the error "Dai/insufficient-allowance"
-  // Setting an amount specifies the approval level
-  const approveManager = async (account, managerAddress, amount) => {
-    const amountDai = toEther(amount).toString();
-
-    try {
-      await daiContract.methods
-        .approve(managerAddress, amountDai)
-        .send({ from: account, gasLimit: 800000 });
-
-      // Check the approval amount
-      /** @returns string */
-      const daiAllowance = await daiContract.methods
-        .allowance(account.toString(), managerAddress)
-        .call({ from: account });
-
-      return parseInt(daiAllowance);
-    } catch (approveError) {
-      console.log({ approveError });
-      return 0;
-    }
-  };
+  }, [syndicate, account, syndicateInstance, currentERC20Contract]);
 
   useEffect(() => {
-    //
     /**
      * When contract instance is null or undefined, we can't access syndicate
      * address so we need to connect to wallet first which will handle contract
@@ -256,11 +253,7 @@ const InvestInSyndicate = (props) => {
    * This methods is used to invest in LP(syndicate)
    * The account that is investing is obtained from the connected wallet from
    * which funds will be transferred.
-   *
-   * Note: For a user to invest in LP, s/he must be an accredited investor,
-   * which we get from the checkbox on this form
-   *
-   * The LpAddress is obtained from the page params
+   * The syndicate address is obtained from the page params
    * @param {object} data contains depositAmount, and accredited
    */
   const investInSyndicate = async (depositAmount: number) => {
@@ -278,10 +271,32 @@ const InvestInSyndicate = (props) => {
      * If deposit amount exceeds the allowed investment deposit, this will fail.
      */
     const amountToInvest = toEther(depositAmount);
-    await syndicateInstance.lpInvestInSyndicate(
-      syndicateAddress,
-      amountToInvest,
-      { from: account, gasLimit: 800000 }
+    try {
+      await syndicateInstance.lpInvestInSyndicate(
+        syndicateAddress,
+        amountToInvest,
+        { from: account, gasLimit: 800000 }
+      );
+    } catch (err) {
+      console.log(err);
+    }
+
+    // dispatch action to get details about the syndicate
+    // These values will be used to update syndicate details
+    // under the graph section on the UI.
+    const {
+      depositERC20ContractAddress,
+      profitShareToSyndicateLead,
+      profitShareToSyndicateProtocol,
+    } = syndicate;
+    dispatch(
+      setSyndicateDetails(
+        syndicateInstance,
+        depositERC20ContractAddress,
+        profitShareToSyndicateLead,
+        profitShareToSyndicateProtocol,
+        syndicate
+      )
     );
   };
 
@@ -298,11 +313,32 @@ const InvestInSyndicate = (props) => {
        * manager to the LP.
        * @param amount The amount to withdraw
        */
+
       await syndicateInstance.lpWithdrawFromSyndicate(
         syndicateAddress,
-        daiContract._address,
+        syndicate.depositERC20ContractAddress,
         amountToWithdraw,
         { from: account, gasLimit: 800000 }
+      );
+
+      // update redux store with new syndicate details
+      // dispatch action to get details about the syndicate
+      // These values will be used to update syndicate details
+      // under the graph section on the UI.
+      const {
+        depositERC20ContractAddress,
+        profitShareToSyndicateLead,
+        profitShareToSyndicateProtocol,
+      } = syndicate;
+
+      dispatch(
+        setSyndicateDetails(
+          syndicateInstance,
+          depositERC20ContractAddress,
+          profitShareToSyndicateLead,
+          profitShareToSyndicateProtocol,
+          syndicate
+        )
       );
 
       // TODO: Add success message on the UI.
@@ -311,6 +347,11 @@ const InvestInSyndicate = (props) => {
       // TODO: Add error message on the UI.
     }
   };
+
+  // consolidate all deposit modes
+  // the 'view' (generalView state ) and 'deposit more' (deposit state) buttons
+  // will load deposit components
+  const depositModes = deposit || generalView;
 
   // handle deposit/withdrawal form submit.
   const onSubmit = async (event: any) => {
@@ -323,6 +364,7 @@ const InvestInSyndicate = (props) => {
     setSubmitting(true);
 
     const approvedAllowance = await approveManager(
+      currentERC20Contract,
       account,
       syndicateInstance.address,
       depositAmount
@@ -335,12 +377,15 @@ const InvestInSyndicate = (props) => {
     }
 
     // Call invest or withdrawal functions based on current state.
+    // deposit - page is in deposit mode
+    // withdraw - page is in withdraw mode
+    // these values are fetched from the redux store.
     try {
-      if (depositMode) {
+      if (depositModes) {
         await investInSyndicate(depositAmount);
       }
 
-      if (withdrawalMode) {
+      if (withdraw) {
         await withdrawFromSyndicate(depositAmount);
       }
 
@@ -352,132 +397,177 @@ const InvestInSyndicate = (props) => {
     }
   };
 
-  // set title and texts of section based on whether this is a withdrawal or a deposit.
-  let titleText = "Deposit Into Syndicate";
-  let statusApprovedText = "Whitelist enabled: You’re pre-approved";
-  let statusNotApprovedText =
-    "Whitelist disabled: You will need to be approved";
-  let disclaimerText =
-    "All deposits are final and can only be changed by Syndicate leads.";
-  if (withdrawalMode) {
-    titleText = "Withdraw My Distributions.";
-
-    // update actual amounts on this text after receiving syndicate details
-
-    statusApprovedText = `${totalAvailableDistributions} ${currentERC20} ($${totalAvailableDistributions}) distributions available.`;
-    disclaimerText = "Remember, all withdraws are final.";
-  }
+  // set title and texts of section based on
+  // whether this is a withdrawal or a deposit.
+  const totalDistributionsText = `${floatedNumberWithCommas(
+    totalAvailableDistributions
+  )} ${currentERC20} ($${floatedNumberWithCommas(
+    totalAvailableDistributions
+  )}) distributions available.`;
+  const {
+    depositTitleText,
+    depositMoreTitleText,
+    depositStatusApprovedText,
+    depositStatusNotApprovedText,
+    depositDisclaimerText,
+    depositLPAccreditedText,
+    withdrawalTitleText,
+    withdrawalDisclaimerText,
+    noSyndicateText,
+    depositsAndWithdrawalsUnavailableText,
+    depositsAndWithdrawalsUnavailableTitleText,
+  } = constants;
 
   return (
     <ErrorBoundary>
       <div className="w-full sm:w-1/2 mt-4 sm:mt-0">
-        <div className="h-fit-content rounded-t-md mx-2 lg:p-6 bg-gray-9 sm:ml-6 border border-b-0 border-gray-49">
+        <div className="h-fit-content rounded-t-custom mx-2 p-4 pb-2 md:p-6 bg-gray-9 sm:ml-6 border border-b-0 border-gray-49">
           {syndicate !== null ? (
-            <>
-              <p className="fold-bold text-xl p-4">{titleText}</p>
-
-              <div className="px-2">
-                {/* show this text if whitelist is enabled for deposits */}
-                <p className="ml-4 py-4 text-green-screamin font-ibm">
-                  {syndicate?.allowlistEnabled
-                    ? statusApprovedText
-                    : statusNotApprovedText}
+            depositsAndWithdrawalsAvailable ? (
+              <>
+                <p className="font-semibold text-xl p-2">
+                  {deposit
+                    ? depositMoreTitleText
+                    : generalView
+                    ? depositTitleText
+                    : withdrawalTitleText}
                 </p>
 
-                <form onSubmit={onSubmit}>
-                  <div className="flex justify-between my-1">
-                    <input
-                      name="depositAmount"
-                      type="text"
-                      placeholder="400"
-                      onChange={handleSetAmount}
-                      className={`rounded-md bg-gray-9 border border-gray-24 text-white focus:outline-none focus:ring-gray-24 focus:border-gray-24 font-ibm ${
-                        withdrawalMode ? "mb-5" : "mb-0"
-                      }`}
-                    />
+                <div className="px-2">
+                  {/* show this text if whitelist is enabled for deposits */}
+                  <p className="py-4 pt-2 text-green-screamin font-ibm">
+                    {depositModes
+                      ? syndicate?.allowlistEnabled
+                        ? depositStatusApprovedText
+                        : depositStatusNotApprovedText
+                      : withdraw
+                      ? totalDistributionsText
+                      : null}
+                  </p>
 
-                    {/* In the new design, this would be a drop down from which
+                  <form onSubmit={onSubmit}>
+                    <div className="flex justify-between my-1">
+                      <input
+                        name="depositAmount"
+                        type="text"
+                        placeholder="400"
+                        onChange={handleSetAmount}
+                        className={`rounded-md bg-gray-9 border border-gray-24 text-white focus:outline-none focus:ring-gray-24 focus:border-gray-24 font-ibm w-7/12 mr-2 ${
+                          withdraw ? "mb-5" : "mb-0"
+                        }`}
+                      />
+
+                      {/* In the new design, this would be a drop down from which
                 a user selects currency */}
-                    <p className="flex justify-between pt-2">
-                      <span className="mx-2">
-                        <img src="/images/usdcIcon.svg" />
-                      </span>
-                      USDC
-                    </p>
-                  </div>
-
-                  {depositAmountError ? (
-                    <p className="mr-2 w-full text-red-500 text-sm -mt-3 mb-4">
-                      {depositAmountError}
-                    </p>
-                  ) : null}
-                  {/* checkbox for user to confirm they are accredited investor if this is a deposit */}
-                  {depositMode ? (
-                    <p className="text-sm my-5 text-gray-dim">
-                      By depositing tokens, you attest you are accredited below
-                      to join this syndicate. After depositing, contact the
-                      syndicate leads to confirm receipt and withdraw timing.
-                    </p>
-                  ) : null}
-
-                  {/* when form submittion is triggered, we show loader, otherwise
-                we show submit button */}
-                  {submitting ? (
-                    <div className="loader ease-linear rounded-full border-8 border-t-8 border-white h-4 w-4"></div>
-                  ) : (
-                    <button
-                      className={`flex w-full items-center justify-center font-medium rounded-md text-black bg-white focus:outline-none focus:ring py-4 ${
-                        depositAmountError ? "opacity-50" : ""
-                      }`}
-                      type="submit"
-                      disabled={depositAmountError ? true : false}>
-                      Continue
-                    </button>
-                  )}
-
-                  <div className="flex justify-center">
-                    <div className="w-2/3 text-sm my-5 text-gray-dim justify-self-center text-center">
-                      {disclaimerText}
+                      {withdraw ? (
+                        <TokenSelect />
+                      ) : (
+                        <p className="pt-2 w-4/12">{currentERC20}</p>
+                      )}
                     </div>
-                  </div>
-                </form>
+
+                    {depositAmountError ? (
+                      <p className="mr-2 w-full text-red-500 text-sm -mt-3 mb-4">
+                        {depositAmountError}
+                      </p>
+                    ) : null}
+                    {/* checkbox for user to confirm they are accredited investor if this is a deposit */}
+                    {depositModes ? (
+                      <p className="text-sm my-5 text-gray-dim">
+                        {depositLPAccreditedText}
+                      </p>
+                    ) : null}
+
+                    {/* when form submittion is triggered, we show loader, otherwise
+                we show submit button */}
+                    {submitting ? (
+                      <div className="loader ease-linear rounded-full border-8 border-t-8 border-white h-4 w-4"></div>
+                    ) : (
+                      <button
+                        className={`flex w-full items-center justify-center font-medium rounded-md text-black bg-white focus:outline-none focus:ring py-4 ${
+                          depositAmountError ? "opacity-50" : ""
+                        }`}
+                        type="submit"
+                        disabled={depositAmountError ? true : false}
+                      >
+                        Continue
+                      </button>
+                    )}
+
+                    <div className="flex justify-center">
+                      <div className="w-2/3 text-sm my-5 text-gray-dim justify-self-center text-center">
+                        {depositModes
+                          ? depositDisclaimerText
+                          : withdrawalDisclaimerText}
+                      </div>
+                    </div>
+                  </form>
+                </div>
+              </>
+            ) : (
+              <div>
+                <p className="font-semibold text-xl p-2">
+                  {depositsAndWithdrawalsUnavailableTitleText}
+                </p>
+                <p className="p-4 pl-6 text-gray-dim text-sm">
+                  {depositsAndWithdrawalsUnavailableText}
+                </p>
               </div>
-            </>
+            )
           ) : (
             <div className="flex justify-center">
-              <p>
-                No syndicate with given address. Please check the address
-                provided.
-              </p>
+              <p>{noSyndicateText}</p>
             </div>
           )}
         </div>
 
         {/* This component should be shown when we have details about user deposits */}
-        {/* <div className="ml-6 border border-gray-49"> */}
         <DetailsCard
           {...{ title: "My Stats", sections }}
           customStyles={
-            "sm:ml-6 p-4 mx-2 sm:px-8 sm:py-4 sm:ml-0 rounded-b-md border border-gray-49"
+            "sm:ml-6 p-4 mx-2 sm:px-8 sm:py-4 rounded-b-custom bg-gray-9 border border-gray-49"
           }
+          customInnerWidth={"w-full"}
         />
-        {/* </div> */}
+
+        {syndicate?.syndicateOpen && myDeposits > 0 ? (
+          <>
+            <p className="sm:ml-2 p-4 mx-2 sm:px-8 sm:py-4 text-xs text-gray-dim leading-4">
+              MORE
+            </p>
+            <div className="flex justify-start py-4 px-6 sm:ml-6 mx-2 rounded-custom bg-gray-9">
+              <img
+                className="mr-4 h-6"
+                src="/images/withdrawDepositIcon.jpeg"
+                alt="share"
+              />
+              <p className="font-medium text-lg">Withdraw My Deposit</p>
+            </div>
+          </>
+        ) : null}
       </div>
     </ErrorBoundary>
   );
 };
 
-const mapStateToProps = ({ web3Reducer }) => {
-  const { web3, withdrawalMode, depositMode } = web3Reducer;
-  return { web3, withdrawalMode, depositMode };
+const mapStateToProps = ({ web3Reducer, syndicateLPDetailsReducer }) => {
+  const { web3, syndicateAction } = web3Reducer;
+  const {
+    syndicateLPDetails,
+    syndicateLPDetailsLoading,
+  } = syndicateLPDetailsReducer;
+  return {
+    web3,
+    syndicateAction,
+    syndicateLPDetails,
+    syndicateLPDetailsLoading,
+  };
 };
 
 InvestInSyndicate.propTypes = {
   web3: PropTypes.any,
   dispatch: PropTypes.any,
   syndicate: PropTypes.object,
-  withdrawalMode: PropTypes.any,
-  depositMode: PropTypes.any,
 };
 
 export default connect(mapStateToProps)(InvestInSyndicate);

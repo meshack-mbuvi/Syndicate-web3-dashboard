@@ -33,6 +33,21 @@ input {
   color: #000000;
 }
 
+/* custom border radii */
+.rounded-custom {
+  border-radius: 0.625rem;
+}
+
+.rounded-t-custom {
+  border-top-right-radius: 0.625rem;
+  border-top-left-radius: 0.625rem;
+}
+
+.rounded-b-custom {
+  border-bottom-right-radius: 0.625rem;
+  border-bottom-left-radius: 0.625rem;
+}
+
 /* react-datepicker wrapper */
 .react-datepicker-wrapper {
   display: flex;
@@ -43,7 +58,7 @@ input {
   transform: rotate(180deg);
 }
 
-/* styles for linear gradients in dicosver page */
+/* styles for linear gradients in dicover page */
 .lilMiquela {
   background: linear-gradient(180deg, #1200e3 0%, #cc00ff 100%);
 }

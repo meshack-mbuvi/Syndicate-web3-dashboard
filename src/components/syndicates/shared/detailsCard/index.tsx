@@ -12,20 +12,22 @@ import { InfoIcon } from "src/components/iconWrappers";
 export const DetailsCard = (props: {
   sections;
   title: string;
-  customStyles;
+  customStyles: string;
   infoIcon?: boolean;
+  customInnerWidth?: string;
 }) => {
   const {
     sections = [],
     title = "My Stats",
     customStyles = "",
     infoIcon,
+    customInnerWidth = "",
   } = props;
 
   return (
-    <div className={`h-fit-content bg-gray-9 ${customStyles}`}>
-      <div className="flex justify-between">
-        <p className="fold-bold text-xl">{title}</p>
+    <div className={`h-fit-content ${customStyles}`}>
+      <div className={`flex ${customInnerWidth} justify-between`}>
+        <p className="fold-bold  text-xl">{title}</p>
         {infoIcon ? (
           <div className="flex align-center">
             <InfoIcon />
@@ -33,13 +35,10 @@ export const DetailsCard = (props: {
         ) : null}
       </div>
 
-      <div className="pl-4 w-full">
+      <div className={`pl-4 ${customInnerWidth}`}>
         {sections.map((section, index) => (
           <div className="flex justify-between sm:my-4" key={index}>
-            <SectionCard
-              {...{ ...section }}
-              infoIcon={!infoIcon}
-            />
+            <SectionCard {...{ ...section }} infoIcon={!infoIcon} />
           </div>
         ))}
       </div>

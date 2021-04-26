@@ -21,6 +21,28 @@ export const initialState = {
   submitting: false,
   showWalletModal: false,
   syndicateInvestments: [],
-  withdrawalMode: false,
-  depositMode: true,
+  syndicateAction: {
+    withdraw: false,
+    deposit: false,
+    managerView: false,
+    generalView: true,
+  },
+
+  syndicateDetails: {
+    totalDepositors: 0,
+    totalDeposits: 0,
+    totalWithdrawn: 0.0,
+    profitSharedToSyndicateProtocol: 0,
+    profitSharedToSyndicateLead: 0,
+    totalOperatingFees: 0,
+  },
+  syndicateLPDetails: {
+    myDeposits: 0,
+    myPercentageOfThisSyndicate: 0,
+    myDistributionsToDate: 0,
+    myWithdrawalsToDate: 0,
+    withdrawalsToDepositPercentage: 0,
+  },
+  syndicateDetailsLoading: false,
+  syndicateLPDetailsLoading: false,
 };

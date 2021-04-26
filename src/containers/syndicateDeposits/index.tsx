@@ -27,7 +27,7 @@ const SyndicateInvestment = (props) => {
   const [syndicate, setSyndicate] = useState(null);
 
   useEffect(() => {
-    if (syndicateInstance) {
+    if (syndicateInstance && syndicateAddress) {
       try {
         syndicateInstance
           .getSyndicateValues(syndicateAddress)
@@ -36,8 +36,6 @@ const SyndicateInvestment = (props) => {
             const closeDate = formatDate(
               new Date(data.closeDate.toNumber() * 1000)
             );
-
-            console.log({ closeDate });
 
             /**
              * block.timestamp which is the one used to save creationDate is in
@@ -48,25 +46,34 @@ const SyndicateInvestment = (props) => {
               new Date(data.creationDate.toNumber() * 1000)
             );
 
-            const maxDeposit = data.maxDeposit.toString();
+            const maxDeposit = data.maxTotalDeposits.toString();
 
-            const profitShareToSyndicateProtocol = fromNumberToPercent(
-              etherToNumber(data.syndicateProfitShareBasisPoints.toString())
-            );
+            const profitShareToSyndicateProtocol = data.syndicateProfitShareBasisPoints.toNumber();
+            const profitShareToSyndicateLead = data.managerPerformanceFeeBasisPoints.toNumber();
+            const depositERC20ContractAddress =
+              data.depositERC20ContractAddress;
 
             const openToDeposits = data.syndicateOpen;
+            const currentManager = data.currentManager;
+            const syndicateOpen = data.syndicateOpen;
+            const distributionsEnabled = data.distributionsEnabled;
 
             const totalDeposits = etherToNumber(data.totalDeposits.toString());
 
             setSyndicate({
               maxDeposit,
               profitShareToSyndicateProtocol,
+              profitShareToSyndicateLead,
               openToDeposits,
               totalDeposits,
               closeDate,
               createdDate,
               active: data.active,
               allowlistEnabled: data.allowlistEnabled,
+              depositERC20ContractAddress,
+              currentManager,
+              syndicateOpen,
+              distributionsEnabled,
             });
           })
           .catch((err) => console.log({ err }));

@@ -10,8 +10,7 @@ import {
   UNSET_WEB3,
   SHOW_ERROR_MODAL,
   SHOW_WALLET_MODAL,
-  DEPOSIT_MODE,
-  WITHDRAWAL_MODE,
+  SET_SYNDICATE_ACTION,
 } from "./types";
 
 export const setLibrary = (data) => async (dispatch) => {
@@ -93,16 +92,14 @@ export const hideErrorModal = () => {
   };
 };
 
-export const setDepositMode = () => async (dispatch) => {
+export const setSyndicateAction = (data: {
+  withdraw: Boolean;
+  deposit: Boolean;
+  managerView: Boolean;
+  generalView: Boolean;
+}) => async (dispatch) => {
   return dispatch({
-    type: DEPOSIT_MODE,
-    status,
-  });
-};
-
-export const setWithdrawalMode = (status) => async (dispatch) => {
-  return dispatch({
-    type: WITHDRAWAL_MODE,
-    status,
+    type: SET_SYNDICATE_ACTION,
+    data,
   });
 };

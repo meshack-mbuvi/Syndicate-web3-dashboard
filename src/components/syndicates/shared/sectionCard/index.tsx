@@ -20,17 +20,23 @@ interface SectionCardProps {
  */
 export const SectionCard = (props: SectionCardProps) => {
   const { header, subText, infoIcon = true } = props;
+  const greenSubtext =
+    header === "Total Withdraws / Deposits" ||
+    header === "Total Distributions / Deposits";
 
   return (
     <>
       <div>
-        <p className="text-gray-dim leading-loose">{header?.toString()}</p>
+        <p className="text-lg text-gray-dim leading-loose">
+          {header?.toString()}
+        </p>
         <p
           className={
-            header === "Total Withdraws / Deposits"
-              ? "text-green-screamin leading-loose font-ibm"
-              : "leading-loose font-ibm"
-          }>
+            greenSubtext
+              ? "text-base text-green-screamin leading-5 font-ibm"
+              : "text-base leading-5 font-ibm"
+          }
+        >
           {subText?.toString()}
         </p>
       </div>

@@ -9,13 +9,12 @@ import {
   SHOW_WALLET_MODAL,
   SHOW_ERROR_MODAL,
   HIDE_ERROR_MODAL,
-  DEPOSIT_MODE,
-  WITHDRAWAL_MODE,
+  SET_SYNDICATE_ACTION,
 } from "src/redux/actions/types";
 import { initialState } from "../initialState";
 
 export const web3Reducer = (state = initialState, action) => {
-  const { web3 } = state;
+  const { web3, syndicateAction } = state;
   switch (action.type) {
     case SET_WEB3:
       return {
@@ -83,16 +82,11 @@ export const web3Reducer = (state = initialState, action) => {
           error: null,
         },
       };
-    case DEPOSIT_MODE:
-      return {
-        ...state,
-        depositMode: true,
-      };
 
-    case WITHDRAWAL_MODE:
+    case SET_SYNDICATE_ACTION:
       return {
         ...state,
-        withdrawalMode: true,
+        syndicateAction: { ...syndicateAction, ...action.data },
       };
 
     default:

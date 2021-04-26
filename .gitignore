@@ -69,7 +69,6 @@ yarn-error.log
 
 # This should not be pushed, a new one should be generated during deploy stage
 build
-public
 
 # Next compiled output folder.
 .next
