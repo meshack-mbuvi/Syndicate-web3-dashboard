@@ -13,14 +13,7 @@ import React from "react";
  * @returns an html node in a form of a modal
  */
 export const Modal = (props) => {
-  const {
-    title,
-    children,
-    show,
-    closeModal,
-    type = "normal",
-    customWidth = "w-2/5",
-  } = props;
+  const { title, children, show, closeModal, customWidth = "w-2/5" } = props;
 
   return (
     <>
@@ -32,42 +25,7 @@ export const Modal = (props) => {
               aria-hidden="true">
               <div
                 className="absolute inset-0  bg-gray-9 opacity-95"
-                onClick={closeModal}>
-                {/* show syndicate icons/logos in the background */}
-                {type === "success" ? (
-                  <>
-                    <div className="absolute top-4 left-1/2 align-center justify-center">
-                      <img src="/images/lemonLogo.svg" className="w-20 h-20" />
-                    </div>
-                    <div className="absolute top-1/3 left-20 flex align-center justify-center">
-                      <img
-                        src="/images/lighteningYellowLogo.svg"
-                        className="w-20 h-20"
-                      />
-                    </div>
-
-                    <div className="absolute top-2/3 left-48 flex align-center justify-center">
-                      <img
-                        src="/images/redOrangeLogo.svg"
-                        className="w-20 h-20"
-                      />
-                    </div>
-
-                    <div className="absolute top-1/2 right-48 flex align-center justify-center">
-                      <img
-                        src="/images/spring-greenishLogo.svg"
-                        className="w-16 h-16"
-                      />
-                    </div>
-                    <div className="absolute bottom-0 right-1/3 flex align-center justify-center">
-                      <img
-                        src="/images/brightTurguoiseLogo.svg"
-                        className="w-20 h-20"
-                      />
-                    </div>
-                  </>
-                ) : null}
-              </div>
+                onClick={closeModal}></div>
             </div>
 
             <div

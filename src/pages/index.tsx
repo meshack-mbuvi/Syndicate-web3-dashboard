@@ -2,56 +2,48 @@ import Link from "next/link";
 import React from "react";
 import Footer from "src/components/navigation/footer";
 import SEO from "src/components/seo";
+import { homePageConstants } from "src/components/syndicates/shared/Constants";
 
 function IndexPage() {
+  const {
+    primaryHeaderText,
+    secondaryHeaderText,
+    homeButtonText,
+  } = homePageConstants;
   return (
     <>
       <SEO
         keywords={[`next`, `tailwind`, `react`, `tailwindcss`]}
         title="Home"
       />
-      <div className="full-height pt-6 pb-16 sm:pb-24">
-        <div className="absolute top-0 inset-x-0 p-2 transition transform origin-top-right md:hidden">
-          <div className="rounded-lg shadow-md bg-white ring-1 ring-black ring-opacity-5 overflow-hidden">
-            <div className="px-5 pt-4 flex items-center justify-between">
-              <div className="-mr-2">
-                <button
-                  type="button"
-                  className="bg-white rounded-md p-2 inline-flex items-center justify-center text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500"
-                >
-                  <span className="sr-only">Close menu</span>
-                </button>
-              </div>
-            </div>
-          </div>
+      <div className="flex justify-between flex-col full-height relative h-screen">
+        <div className="flex justify-center w-full">
+          <img src="/images/logo.svg" className="h-12 w-12 mt-8 mx-4" />
         </div>
 
-        <main className="mt-16 mx-auto max-w-7xl px-4 sm:mt-24">
-          <div className="text-center">
-            <p className="text-4xl tracking-tight font-extrabold text-white sm:text-5xl md:text-6xl leading-10 mb-8">
-              Join the Revolution.
+        <main className="flex flex-col justify-center px-4">
+          <div className="flex flex-col items-center justify-center text-center">
+            <p className="text-4xl tracking-tight font-bold text-white sm:text-5xl md:text-7xl leading-10 mb-8">
+              {primaryHeaderText}
             </p>
-            <p className="text-white text-xl sm:text-3xl">
-              Crypto investing protocol and social network
+            <p className="text-white font-normal text-xl sm:text-2xl">
+              {secondaryHeaderText}
             </p>
 
-            <div className="flex items-center justify-center mt-14 sm:mt-28 w-full">
+            <div className="flex items-center justify-center mt-10 sm:mt-20 w-full">
               <div className="rounded-md">
                 <Link href="/syndicates">
-                  <a className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white hover md:py-4 md:text-lg md:px-10 bg-blue-light">
-                    Use Syndicate
+                  <a className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-custom text-white hover md:py-4 md:text-lg md:px-10 bg-blue-light">
+                    {homeButtonText}
                   </a>
                 </Link>
               </div>
             </div>
           </div>
         </main>
-      </div>
-
-      {/* footer */}
-      <div className="flex absolute w-full bottom-4">
-        <Footer />
-        <img src="/images/brand.svg" className="my-8 mx-4 h-8 w-8" />
+        <div className="flex w-full">
+          <Footer />
+        </div>
       </div>
     </>
   );

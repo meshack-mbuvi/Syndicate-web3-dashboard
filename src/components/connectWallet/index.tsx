@@ -303,7 +303,7 @@ export const ConnectWallet = (props) => {
         {...{
           show: showSuccessModal,
           closeModal: () => setShowSuccessModal(false),
-          type: "success",
+          
         }}>
         <div className="flex flex-col justify-center m-auto mb-4">
           <div className="flex align-center justify-center">

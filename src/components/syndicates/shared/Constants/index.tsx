@@ -3,7 +3,7 @@
 
 // constants for the invest/deposit page.
 const depositTitleText = "Deposit Into Syndicate";
-const depositMoreTitleText = "Deposit More Into Syndicate"
+const depositMoreTitleText = "Deposit More Into Syndicate";
 const depositStatusApprovedText = "Whitelist enabled: You’re pre-approved.";
 const depositStatusNotApprovedText =
   "Whitelist disabled: You will need to be approved.";
@@ -19,6 +19,14 @@ const depositsAndWithdrawalsUnavailableText =
   "Deposits and withdraws are not currently available";
 const depositsAndWithdrawalsUnavailableTitleText = "Deposits & Withdraws";
 
+// texts on the home page
+const primaryHeaderText = "Join the Revolution.";
+const secondaryHeaderText = "Crypto investing protocol and social network";
+const homeFooterText =
+  "Syndicate received a spot check from Consensys Diligence but has not been fully audited. Please use at your own risk while our full audit proceeds in May.";
+const homeButtonText = "Use Syndicate";
+
+// invest/deposit page
 export const constants = {
   depositTitleText,
   depositMoreTitleText,
@@ -31,4 +39,12 @@ export const constants = {
   noSyndicateText,
   depositsAndWithdrawalsUnavailableText,
   depositsAndWithdrawalsUnavailableTitleText,
+};
+
+// home page
+export const homePageConstants = {
+  primaryHeaderText,
+  secondaryHeaderText,
+  homeFooterText,
+  homeButtonText,
 };

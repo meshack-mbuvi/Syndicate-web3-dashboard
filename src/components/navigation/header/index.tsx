@@ -9,12 +9,7 @@ import UserProfile from "./userProfile";
 import { UserProfileWrapper } from "./UserProfileWrapper";
 import Wallet from "./wallet";
 
-const navbarLinks = [
-  { url: "/discover", urlText: "Discover" },
-  { url: "/syndicates", urlText: "Syndicates" },
-  { url: "/messages", urlText: "Messages" },
-  { url: "/feed", urlText: "Feed" },
-];
+const navbarLinks = [{ url: "/syndicates", urlText: "Syndicates" }];
 
 const Header = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -35,33 +30,37 @@ const Header = () => {
   };
 
   return (
-    <header className="flex flex-wrap w-full border-b border-gray-90 py-2 flex-col md:flex-row">
+    <header className="flex flex-wrap w-full border-b border-gray-90 py-4 flex-col md:flex-row">
       <Link href="/">
         <a className="w-fit-content">
           <span className="sr-only">Syndicate</span>
           <img
-            src="/images/brand.svg"
-            className="ml-6 h-8 my-2 px-4"
+            src="/images/logo.svg"
+            className="ml-6 h-10 my-2 px-4"
             alt="Syndicate Logo"
           />
         </a>
       </Link>
       <button
         className="absolute right-4 md:hidden w-8 h-8 my-2 bg-gray-200 text-gray-600 p-1"
-        onClick={toggleMobileMenuOpen}>
+        onClick={toggleMobileMenuOpen}
+      >
         <svg
           fill="currentColor"
           viewBox="0 0 20 20"
-          xmlns="http://www.w3.org/2000/svg">
+          xmlns="http://www.w3.org/2000/svg"
+        >
           <path
             fillRule="evenodd"
             d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"
-            clipRule="evenodd"></path>
+            clipRule="evenodd"
+          ></path>
         </svg>
       </button>
       <nav
-        className={`flex flex-col md:flex-row justify-between sm:mx-4 flex-grow
-        ${isMobile && !mobileMenuOpen ? "hidden" : ""}`}>
+        className={`flex flex-col md:flex-row justify-between items-center sm:mx-4 flex-grow
+        ${isMobile && !mobileMenuOpen ? "hidden" : ""}`}
+      >
         <div className="flex flex-col md:flex-row">
           <div className="flex flex-col md:flex-row justify-between">
             {navbarLinks.map(({ url, urlText }) => (
@@ -71,11 +70,9 @@ const Header = () => {
         </div>
 
         <div className="flex flex-col mx-2 md:flex-row justify-between mr-4">
-          <Notification />
           <Transaction />
           <UserProfileWrapper>
             <Wallet />
-            <UserProfile />
           </UserProfileWrapper>
         </div>
       </nav>

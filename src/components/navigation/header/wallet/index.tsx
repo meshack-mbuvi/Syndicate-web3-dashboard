@@ -18,8 +18,8 @@ export const Wallet = (props) => {
    */
   const walletIcon =
     status === "connected"
-      ? "/images/walletConnected.png"
-      : "/images/walletDisconnected.png";
+      ? "/images/walletConnected.svg"
+      : "/images/walletDisconnected.svg";
 
   /**
    * open variable is used to determine whether to show or hide
@@ -36,12 +36,13 @@ export const Wallet = (props) => {
   };
 
   return (
-    <div className="flex bg-gray-dark rounded-full my-1 lg:px-2 h-8">
+    <div className="flex bg-gray-dark rounded-full my-1 px-4 py-2">
       <img src={walletIcon} className="w-5 h-4 pr-1 m-2" />
 
       <button
         onClick={connectWallet}
-        className="focus:outline-none mr-1 text-sm">
+        className="focus:outline-none mr-1 text-sm"
+      >
         {account ? formatAddress(account) : "Not connected"}
       </button>
 
