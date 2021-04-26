@@ -65,7 +65,7 @@ const SyndicateItem = (props: SyndicateItemProps) => {
    * claimedDistributions(which are totalWithdrawals per erc20 token per lpAddress)
    */
   useEffect(() => {
-    if (syndicateLpInfo) {
+    if (syndicateLpInfo && web3) {
       setClaimedDistributions(
         web3.utils.fromWei(syndicateLpInfo[1].toString())
       );

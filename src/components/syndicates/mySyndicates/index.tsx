@@ -1,8 +1,11 @@
+import { showWalletModal } from "@/redux/actions";
 import { addSyndicates } from "@/redux/actions/syndicates";
 import PropTypes from "prop-types";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
+import Button from "src/components/buttons";
 import PageHeader from "src/components/pageHeader";
+import CreateSyndicate from "src/components/syndicates/createSyndicate";
 import {
   default as ActiveSyndicates,
   default as InActiveSyndicates,
@@ -43,16 +46,42 @@ const MySyndicates = (props) => {
     (syndicate) => !syndicate.active
   );
 
+  // controls show/hide new syndicate creation modal
+  const [showModal, setShowModal] = useState(false);
+
+  const showSyndicateForm = () => {
+    // Trigger wallet connection if wallet is not connected
+    if (!syndicateInstance) {
+      return dispatch(showWalletModal());
+    }
+    setShowModal(true);
+  };
+
   return (
     <div className="mt-4">
       {!loading ? (
         <>
+          {/* Show page header and button to create new syndicate */}
+          <div className="flex justify-between w-full">
+            <div>
+              {activeSyndicates.length ? (
+                <PageHeader>Your Syndicates</PageHeader>
+              ) : null}
+            </div>
+
+            <div className="mb-2 ">
+              <Button
+                customClasses="border border-white h-12 w-48 p-3 pt-3 text-sm"
+                onClick={showSyndicateForm}>
+                Create a syndicate
+              </Button>
+            </div>
+          </div>
           {syndicates.length ? (
             <>
               {/* show active syndicates here */}
               {activeSyndicates.length ? (
                 <div>
-                  <PageHeader>Active</PageHeader>
                   <ActiveSyndicates syndicates={activeSyndicates} />
                 </div>
               ) : null}
@@ -60,7 +89,7 @@ const MySyndicates = (props) => {
               {/* show inactive syndicates here */}
               {inActiveSyndicates.length ? (
                 <div className="mt-8">
-                  <PageHeader>Inactive</PageHeader>
+                  <PageHeader>Other Syndicatesß</PageHeader>
                   <InActiveSyndicates syndicates={inActiveSyndicates} />
                 </div>
               ) : null}
@@ -95,6 +124,11 @@ const MySyndicates = (props) => {
         // show some animations during loading process
         <div className="loader"></div>
       )}
+
+      {/* Component to create syndicate  */}
+      {syndicateInstance ? (
+        <CreateSyndicate {...{ showModal, setShowModal }} />
+      ) : null}
     </div>
   );
 };

@@ -12,6 +12,7 @@ export const getTotalDistributions = async (
   account: string
 ) => {
   try {
+    console.log({ syndicateInstance });
     const totalDistributions = await syndicateInstance.getTotalDistributions(
       address,
       distributionERC20ContractAddress,
