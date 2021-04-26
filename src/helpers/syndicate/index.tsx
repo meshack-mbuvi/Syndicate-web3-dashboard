@@ -65,8 +65,8 @@ export const showLoader = (count) => {
           <div className="flex flex-1">
             <div className="image"></div>
             <div className="w-3/4">
-              <div className="animated w-full my-2 h-2"></div>
-              <div className="animated w-1/2 my-2 h-2"></div>
+              <div className="custom-animation w-full my-2 h-2"></div>
+              <div className="custom-animation w-1/2 my-2 h-2"></div>
             </div>
           </div>
           <div className="card-placeholder w-16 sm:w-24 mb-2"></div>
