@@ -6,7 +6,19 @@ import React from "react";
  * The wrapper renders an image with src attribute set to the custom svg icon
  * @param {object} props an object containing custom properties for styling
  */
-export const InfoIcon = (props) => <img src="/images/info.svg" {...props} />;
+export const InfoIcon = (props: { toolTip?: string }) => {
+  const { toolTip } = props;
+  return (
+    <div>
+      <div className="tooltip">
+        <img src="/images/info.svg" {...props} className="image-tooltip" />
+        {toolTip ? (
+          <p className="tooltiptext w-fit-content mt-1">{toolTip}</p>
+        ) : null}
+      </div>
+    </div>
+  );
+};
 
 /**Shows an icon for external links */
 export const ExternalLinkIcon = (props) => (

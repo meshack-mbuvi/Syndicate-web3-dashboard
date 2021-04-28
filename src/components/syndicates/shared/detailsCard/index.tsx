@@ -1,9 +1,8 @@
-import React from "react";
 import PropTypes from "prop-types";
-
-import { SectionCard } from "../sectionCard";
+import React from "react";
 import { InfoIcon } from "src/components/iconWrappers";
 import { EditButton } from "src/components/syndicates/shared/editButton";
+import { SectionCard } from "../sectionCard";
 
 /**
  * TODO: update propType validation
@@ -40,13 +39,11 @@ export const DetailsCard = (props: {
 
       <div className={`pl-4 ${customInnerWidth}`}>
         {sections.map((section, index) => (
-          <div className="flex justify-start">
+          <div className="flex justify-start" key={index}>
             <div
               className={`flex justify-between items-center sm:my-4 ${
                 syndicateDetails ? "w-7/12" : "w-full"
-              }`}
-              key={index}
-            >
+              }`}>
               <SectionCard {...{ ...section }} infoIcon={!infoIcon} />
             </div>
             {section?.isEditable ? (

@@ -4,36 +4,49 @@ import { Validate } from "@/utils/validators";
 import { useRouter } from "next/router";
 import PropTypes from "prop-types";
 import React, { useEffect, useState } from "react";
-import { connect } from "react-redux";
-// actions
-import { showWalletModal } from "src/redux/actions/web3Provider";
-import { setSyndicateDetails } from "src/redux/actions/syndicateDetails";
-import { updateSyndicateLPDetails } from "src/redux/actions/syndicateLPDetails";
-// utils and helpers
-import { toEther } from "src/utils";
-import { floatedNumberWithCommas } from "src/utils/numberWithCommas";
-import { approveManager } from "src/helpers/approveAllowance";
-
-// shared components
-import { DetailsCard } from "../shared";
-import { TokenSelect } from "../shared/tokenSelect";
-import { constants } from "../shared/Constants";
-
+import { connect, useDispatch } from "react-redux";
 // ABI
 import syndicateABI from "src/contracts/Syndicate.json";
+import { approveManager } from "src/helpers/approveAllowance";
+import { setSyndicateDetails } from "src/redux/actions/syndicateDetails";
+import { updateSyndicateLPDetails } from "src/redux/actions/syndicateLPDetails";
+// actions
+import { showWalletModal } from "src/redux/actions/web3Provider";
+// utils and helpers
+import { toEther } from "src/utils";
 import ERC20ABI from "src/utils/abi/rinkeby-dai";
+import { floatedNumberWithCommas } from "src/utils/numberWithCommas";
+// shared components
+import { DetailsCard } from "../shared";
+import {
+  constants,
+  myDepositsToolTip,
+  myDistributionsToDateToolTip,
+  myPercentageOfThisSyndicateToolTip,
+  myWithDrawalsToDateTooltip,
+  withdrawalsToDepositPercentageToolTip,
+} from "../shared/Constants";
+import { TokenSelect } from "../shared/tokenSelect";
 
 const Web3 = require("web3");
 
-const InvestInSyndicate = (props) => {
+interface InvestInSyndicateProps {
+  web3: any;
+  syndicate: any;
+  syndicateAction: any;
+  syndicateLPDetails: any;
+}
+
+const InvestInSyndicate = (props: InvestInSyndicateProps) => {
   const {
     web3: { syndicateInstance, account },
-    dispatch,
     syndicate,
     syndicateAction,
     syndicateLPDetails,
   } = props;
   const router = useRouter();
+
+  const dispatch = useDispatch();
 
   // the block on which the contract was deployed.
   // we'll start listening to events starting from here.
@@ -70,22 +83,27 @@ const InvestInSyndicate = (props) => {
       subText: `${myDeposits} ${currentERC20} ($${floatedNumberWithCommas(
         myDeposits
       )})`,
+      toolTip: myDepositsToolTip,
     },
     {
       header: "My % of This Syndicate",
       subText: `${myPercentageOfThisSyndicate}%`,
+      toolTip: myPercentageOfThisSyndicateToolTip,
     },
     {
       header: "My Distributions to Date",
       subText: `${myDistributionsToDate} ${currentERC20}`,
+      toolTip: myDistributionsToDateToolTip,
     },
     {
       header: "My Withdraws to Date",
       subText: `${myWithdrawalsToDate} ${currentERC20}`,
+      toolTip: myWithDrawalsToDateTooltip,
     },
     {
       header: "Total Withdraws / Deposits",
       subText: `${withdrawalsToDepositPercentage}%`,
+      toolTip:withdrawalsToDepositPercentageToolTip,
     },
   ];
 
@@ -101,7 +119,7 @@ const InvestInSyndicate = (props) => {
   // or withdrawals
   useEffect(() => {
     if (syndicate) {
-      const { syndicateOpen, distributionsEnabled, active } = syndicate;
+      const { syndicateOpen, distributionsEnabled } = syndicate;
 
       // if a syndicate is closed and distributions have not been enabled
       // the LP cannot deposit or withdraw from it.
@@ -491,8 +509,7 @@ const InvestInSyndicate = (props) => {
                           depositAmountError ? "opacity-50" : ""
                         }`}
                         type="submit"
-                        disabled={depositAmountError ? true : false}
-                      >
+                        disabled={depositAmountError ? true : false}>
                         Continue
                       </button>
                     )}

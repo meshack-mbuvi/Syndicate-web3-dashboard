@@ -17,6 +17,7 @@ export const TextInput = (props: {
   error?: string;
   required?: boolean;
   value: string | number;
+  toolTip: string;
 }) => {
   const {
     label,
@@ -24,6 +25,7 @@ export const TextInput = (props: {
     onChange,
     error,
     value,
+    toolTip,
     disabled = false,
     ...rest
   } = props;
@@ -55,7 +57,7 @@ export const TextInput = (props: {
           />
           {/* icon */}
           <div className="w-6 ml-4 mt-1">
-            <InfoIcon />
+            <InfoIcon toolTip={toolTip} />
           </div>
         </div>
         {error ? <p className="text-red-500 text-sm">{error}</p> : null}

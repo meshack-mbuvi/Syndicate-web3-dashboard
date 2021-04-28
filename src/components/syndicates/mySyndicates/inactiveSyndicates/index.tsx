@@ -1,7 +1,7 @@
 import React from "react";
 import SyndicateItem, { Header } from "../../shared";
 
-export const InActiveSyndicates = (props) => {
+export const InActiveSyndicates = (props: { syndicates }) => {
   const { syndicates } = props;
   return (
     <div className="mt-4">

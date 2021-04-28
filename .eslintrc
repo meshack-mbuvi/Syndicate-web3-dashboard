@@ -29,5 +29,8 @@
     // https://github.com/benmosher/eslint-plugin-import
     "plugin:import/recommended",
     "plugin:import/typescript"
-  ]
+  ],
+  "globals": {
+    "JSX": "readonly"
+  }
 }

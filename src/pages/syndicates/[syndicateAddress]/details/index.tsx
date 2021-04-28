@@ -1,10 +1,10 @@
-import React, { useEffect } from "react";
-import { connect } from "react-redux";
 import SyndicateActions from "@/containers/syndicateActions";
+import React, { useEffect } from "react";
+import { connect, useDispatch } from "react-redux";
 import { setSyndicateAction } from "src/redux/actions/web3Provider";
 
-const SyndicateDetailsView = (props) => {
-  const { dispatch } = props;
+const SyndicateDetailsView = () => {
+  const dispatch = useDispatch();
   useEffect(() => {
     // dispatch to indicate that this is a details view
     // this will in turn load the correct components

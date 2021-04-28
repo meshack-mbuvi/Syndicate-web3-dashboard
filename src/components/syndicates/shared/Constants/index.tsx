@@ -54,6 +54,66 @@ export const constants = {
   depositsAndWithdrawalsUnavailableTitleText,
 };
 
+// Tooltips
+export const closeDateToolTip =
+  "This is the date on which the syndicate will automatically close.";
+export const syndicateAddressToolTip =
+  "This is the address of the connected wallet account. It will be the manager of the newly created syndicate";
+export const depositTokenToolTip =
+  "This is the address of the ERC20 to be used for deposits and withdrawals. (eg. DAI or USDC). Stablecoins are strongly recommended, especially for funds that are open for an extended period of time. (Otherwise one contributor might contribute one unit when a token is $100, and another contributor might contribute one unit when a token is $200, and they would have the same percentage ownership because they have both contributed one unit of a token. Stablecoins prevent this because the value is consistent.) ";
+
+export const minimumDepositToolTip =
+  "This is the minimum amount a user can deposit into the syndicate.";
+
+export const maximumDepositToolTip =
+  "The maximum amount a user can deposit into the syndicate.";
+export const totalMaximumDepositToolTip =
+  "Total funds to be raised for this syndicate.";
+export const maxLpsToolTip =
+  "Maximum number of users(LP) who can deposit into this syndicate.";
+
+export const expectedAnnualOperatingFeesToolTip =
+  "This is a flat fee that will be paid to the manager annually. A standard structure would be a 2% management fee.";
+
+export const profitShareToSyndicateLeadToolTip =
+  "This is the manager's share of the profits from the syndicate investment. A standard structure would be 20%.";
+
+export const profitShareToSyndicateProtocolToolTip =
+  "This is the profit share in % that will be sent to Syndicate Treasury. A minimum profit share of 0.5% is required.";
+
+export const allowListEnabledToolTip =
+  "This should be checked if the Syndicate ONLY allows deposits from allowed addresses, or unchecked if any(accredited) LP can deposit";
+
+export const modifiableToolTip =
+  "This should be checked if a manager can modify a Syndicate's deposit and distribution amounts or unchecked if deposit and distribution cannot be modified by the manager. This choice is permanent-- once set here during creation, it cannot be changed.";
+export const myDepositsToolTip =
+  "Total deposits this wallet account has already made to the syndicate";
+
+export const myPercentageOfThisSyndicateToolTip =
+  "Percentage ownership the connected wallet has in this syndicate";
+
+export const myDistributionsToDateToolTip =
+  "All accumulated distributions this wallet address has been awarded to date.";
+
+export const myWithDrawalsToDateTooltip =
+  "All accumulated amounts the connected wallet account has withdrawn from this syndicate.";
+
+export const withdrawalsToDepositPercentageToolTip =
+  "Ratio of total withdrawals to deposits the connected wallet has made to the syndicate";
+
+export const createdDateToolTip =
+  "This is the date this syndicate was created/launched.";
+export const totalDepositsToolTip = "Total deposits made to this syndicate";
+export const totalDistributionsToolTip =
+  "Total distributions set on this syndicate.";
+export const totalClaimedDistributions =
+  "Total distributions withdrawn from this syndicate.";
+export const distributionTokenToolTip =
+  "This is the address which can fund depositors accounts. Withdrawals will be made from this address so ensure this account has enough funds to cater for the distributions set.";
+
+export const distributionAmountToolTip =
+  "This is the amount of token to be distributed back to depositors.";
+
 // home page
 export const homePageConstants = {
   primaryHeaderText,

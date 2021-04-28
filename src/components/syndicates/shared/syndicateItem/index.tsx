@@ -3,18 +3,6 @@ import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
 
-interface ButtonProps {
-  children: any;
-  link: string;
-  address: string;
-  className?: string;
-}
-const Button = ({ children, link = "#", address, ...rest }: ButtonProps) => (
-  <button {...rest}>
-    <Link href={`/syndicates/${address}/${link}`}>{children}</Link>
-  </button>
-);
-
 interface SyndicateItemProps {
   address: string;
   styles: string;
@@ -227,13 +215,13 @@ const SyndicateItem = (props: SyndicateItemProps) => {
       <span className="text-sm mx-2 text-gray-300 w-24">
         {claimedDistributions}
       </span>
-      <span>
-        <Button
-          className={`text-xs mx-4 rounded-full p-2 px-4 w-36 ml-8 ${buttonStyles}`}
-          link={link}
-          address={address}>
-          {buttonText}
-        </Button>
+      <span className="mb-2">
+        <Link href={`/syndicates/${address}/${link}`}>
+          <a
+            className={`text-sm mx-4 rounded-full py-3 my-1 ml-8 ${buttonStyles}`}>
+            <button className="w-36 focus:outline-none">{buttonText}</button>
+          </a>
+        </Link>
       </span>
     </div>
   );

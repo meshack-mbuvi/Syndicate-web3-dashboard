@@ -1,24 +1,37 @@
 import { useRouter } from "next/router";
 import PropTypes from "prop-types";
 import React, { useEffect, useState } from "react";
-import { connect } from "react-redux";
 import { CopyToClipboard } from "react-copy-to-clipboard";
+import { connect, useDispatch } from "react-redux";
 import { ExternalLinkIcon } from "src/components/iconWrappers";
-import { BadgeCard, DetailsCard } from "../shared";
 import { setSyndicateDetails } from "src/redux/actions/syndicateDetails";
-
-// utils
-import { formatAddress } from "src/utils/formatAddress";
 import { etherToNumber, formatDate } from "src/utils";
 import { ERC20TokenDetails } from "src/utils/ERC20Methods";
+// utils
+import { formatAddress } from "src/utils/formatAddress";
+import { BadgeCard, DetailsCard } from "../shared";
+import {
+  closeDateToolTip,
+  createdDateToolTip,
+  depositTokenToolTip,
+  expectedAnnualOperatingFeesToolTip,
+  profitShareToSyndicateLeadToolTip,
+  profitShareToSyndicateProtocolToolTip,
+} from "../shared/Constants";
 
-const SyndicateDetails = (props) => {
+const SyndicateDetails = (props: {
+  web3: any;
+  syndicateDetails: any;
+  lpIsManager;
+}) => {
   const {
     web3: { syndicateInstance, account },
-    dispatch,
     syndicateDetails,
     lpIsManager,
   } = props;
+
+  const dispatch = useDispatch();
+
   const router = useRouter();
   const [details, setDetails] = useState([]);
   const [syndicate, setSyndicate] = useState({
@@ -69,25 +82,37 @@ const SyndicateDetails = (props) => {
       } = syndicate;
 
       setDetails([
-        { header: "Created on", subText: createdDate },
-        { header: "Close Date", subText: closeDate },
+        {
+          header: "Created on",
+          subText: createdDate,
+          toolTip: createdDateToolTip,
+        },
+        {
+          header: "Close Date",
+          subText: closeDate,
+          toolTip: closeDateToolTip,
+        },
         {
           header: "Deposit/Distribution Token",
           subText: `${tokenSymbol} / ${tokenSymbol}`,
+          toolTip: depositTokenToolTip,
         },
         {
           header: "Expected Annual Operating Fees",
           subText: `${managerManagementFeeBasisPoints / 100}%`,
           isEditable: lpIsManager ? true : false,
+          toolTip: expectedAnnualOperatingFeesToolTip,
         },
         {
           header: "Profit Share to Syndicate Lead",
           subText: `${profitShareToSyndicateLead / 100}%`,
           isEditable: lpIsManager ? true : false,
+          toolTip: profitShareToSyndicateLeadToolTip,
         },
         {
           header: "Profit Share to Protocol",
           subText: `${profitShareToSyndicateProtocol / 100}%`,
+          toolTip: profitShareToSyndicateProtocolToolTip,
         },
       ]);
     }
@@ -287,8 +312,7 @@ const SyndicateDetails = (props) => {
             </CopyToClipboard>
 
             <p
-              className={`h-6 w-6 sm:h-10 sm:w-10 md:h-16 md:w-16 ml-4 rounded-full ideo-liquidity inline`}
-            ></p>
+              className={`h-6 w-6 sm:h-10 sm:w-10 md:h-16 md:w-16 ml-4 rounded-full ideo-liquidity inline`}></p>
           </p>
         </div>
       </div>
@@ -296,7 +320,7 @@ const SyndicateDetails = (props) => {
         href={`https://etherscan.io/address/${syndicateAddress}`}
         target="_blank"
         className="text-blue-cyan px-2 flex"
-      >
+        rel="noreferrer">
         view on etherscan <ExternalLinkIcon className="ml-2" />
       </a>
       <div className="h-fit-content flex w-full justify-start md:ml-2 mb-12">
@@ -311,9 +335,7 @@ const SyndicateDetails = (props) => {
           customStyles={"pl-4 pr-2 w-full py-4 pb-8"}
           customInnerWidth="w-full"
         />
-      ) : (
-        ""
-      )}
+      ) : null}
     </div>
   );
 };

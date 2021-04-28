@@ -1,3 +1,5 @@
+// manager components
+import ManagerActions from "@/containers/managerActions";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import PropTypes from "prop-types";
@@ -8,9 +10,7 @@ import Layout from "src/components/layout";
 import InvestInSyndicate from "src/components/syndicates/investInSyndicate";
 import Head from "src/components/syndicates/shared/HeaderTitle";
 import SyndicateDetails from "src/components/syndicates/syndicateDetails";
-import { etherToNumber, formatDate, fromNumberToPercent } from "src/utils";
-// manager components
-import ManagerActions from "@/containers/managerActions";
+import { etherToNumber, formatDate } from "src/utils";
 
 /**
  * Renders syndicate component with details section on the left and
@@ -107,7 +107,7 @@ const SyndicateInvestment = (props) => {
             </a>
           </Link>
           <div className="w-full flex flex-col sm:flex-row">
-            <SyndicateDetails syndicate={syndicate} lpIsManager={lpIsManager}/>
+            <SyndicateDetails syndicate={syndicate} lpIsManager={lpIsManager} />
 
             {lpIsManager ? (
               <ManagerActions />

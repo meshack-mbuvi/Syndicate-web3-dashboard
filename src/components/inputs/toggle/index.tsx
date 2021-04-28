@@ -1,9 +1,13 @@
-import PropTypes from "prop-types";
 import React from "react";
 import { InfoIcon } from "src/components/iconWrappers";
 
-export const Toggle = (props) => {
-  const { toggleEnabled, label, enabled = false } = props;
+export const Toggle = (props: {
+  enabled: boolean;
+  toggleEnabled: () => void;
+  label: string;
+  toolTip: string;
+}) => {
+  const { toggleEnabled, label, toolTip, enabled = false } = props;
   let translateClass = "translate-x-0";
   let backgroundClass = "bg-gray-light";
 
@@ -29,7 +33,7 @@ export const Toggle = (props) => {
           className={`${backgroundClass} relative inline-flex flex-shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 mt-1`}
           aria-pressed={enabled}
           onClick={() => toggleEnabled()}>
-          <span className="sr-only">Manually whitelist depositors</span>
+          <span className="sr-only">{label}</span>
           {/* <!-- Enabled: "translate-x-5", Not Enabled: "translate-x-0" --> */}
           <span
             aria-hidden="true"
@@ -37,15 +41,9 @@ export const Toggle = (props) => {
         </button>
 
         <div className="w-6 ml-4 mt-1">
-          <InfoIcon />
+          <InfoIcon toolTip={toolTip} />
         </div>
       </div>
     </div>
   );
-};
-
-Toggle.propTypes = {
-  enabled: PropTypes.bool.isRequired,
-  toggleEnabled: PropTypes.func.isRequired,
-  label: PropTypes.string.isRequired,
 };

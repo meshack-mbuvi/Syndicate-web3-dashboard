@@ -11,6 +11,7 @@ interface SectionCardProps {
   /** Optional property used to determine whether to
    * render the info icon */
   infoIcon?: boolean;
+  toolTip: string;
 }
 
 /**
@@ -19,7 +20,7 @@ interface SectionCardProps {
  * @returns
  */
 export const SectionCard = (props: SectionCardProps) => {
-  const { header, subText, infoIcon = true } = props;
+  const { header, subText, toolTip, infoIcon = true } = props;
   const greenSubtext =
     header === "Total Withdraws / Deposits" ||
     header === "Total Distributions / Deposits";
@@ -35,16 +36,15 @@ export const SectionCard = (props: SectionCardProps) => {
             greenSubtext
               ? "text-base text-green-screamin leading-5 font-ibm"
               : "text-base leading-5 font-ibm"
-          }
-        >
+          }>
           {subText?.toString()}
         </p>
       </div>
-        {!infoIcon ? null : (
-          <div>
-            <InfoIcon />
-          </div>
-        )}
+      {!infoIcon ? null : (
+        <div>
+          <InfoIcon toolTip={toolTip} />
+        </div>
+      )}
     </>
   );
 };

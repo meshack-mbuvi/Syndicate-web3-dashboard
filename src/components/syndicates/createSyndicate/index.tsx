@@ -18,6 +18,20 @@ import { Modal } from "src/components/modal";
 import { getSyndicate } from "src/helpers/syndicate";
 // redux actions
 import { setSumbitting, showWalletModal } from "src/redux/actions";
+import {
+  allowListEnabledToolTip,
+  closeDateToolTip,
+  depositTokenToolTip,
+  expectedAnnualOperatingFeesToolTip,
+  maximumDepositToolTip,
+  maxLpsToolTip,
+  minimumDepositToolTip,
+  modifiableToolTip,
+  profitShareToSyndicateLeadToolTip,
+  profitShareToSyndicateProtocolToolTip,
+  syndicateAddressToolTip,
+  totalMaximumDepositToolTip,
+} from "../shared/Constants";
 /**
  * Diplays all syndicates.
  * The main groups for syndicates are active and inactive
@@ -482,6 +496,7 @@ const CreateSyndicate = (props: any) => {
               <TextInput
                 {...{
                   label: "Syndicate Address:",
+                  toolTip: syndicateAddressToolTip,
                 }}
                 value={account}
                 name="syndicateAddress"
@@ -493,6 +508,7 @@ const CreateSyndicate = (props: any) => {
                 {...{
                   label: "Deposit Token:",
                   error: primaryERC20ContractAddressError,
+                  toolTip: depositTokenToolTip,
                 }}
                 value={primaryERC20ContractAddress}
                 onChange={handlesetPrimaryERC20ContractAddress}
@@ -505,6 +521,7 @@ const CreateSyndicate = (props: any) => {
                 {...{
                   label: "Minimum Deposits(Per Depositor):",
                   error: minDepositsError,
+                  toolTip: minimumDepositToolTip,
                 }}
                 onChange={handleSetMinDeposits}
                 name="minDeposits"
@@ -518,6 +535,7 @@ const CreateSyndicate = (props: any) => {
                 {...{
                   label: "Maximum Deposits(Per Depositor):",
                   error: maxDepositsError,
+                  toolTip: maximumDepositToolTip,
                 }}
                 onChange={handleSetMaxDeposits}
                 name="maxDeposits"
@@ -531,6 +549,7 @@ const CreateSyndicate = (props: any) => {
                 {...{
                   label: "Maximum Deposits(Total):",
                   error: maxTotalDepositsError,
+                  toolTip: totalMaximumDepositToolTip,
                 }}
                 onChange={maxTotalDepositsHandler}
                 name="maxTotalDeposits"
@@ -544,6 +563,7 @@ const CreateSyndicate = (props: any) => {
                 {...{
                   label: "Maximum LPs(Total Depositors):",
                   error: maxLPsError,
+                  toolTip: maxLpsToolTip,
                 }}
                 onChange={maxLPsHandler}
                 name="maxLPs"
@@ -577,7 +597,7 @@ const CreateSyndicate = (props: any) => {
 
                   {/* icon */}
                   <div className="w-6 ml-4 mt-1">
-                    <InfoIcon />
+                    <InfoIcon toolTip={closeDateToolTip} />
                   </div>
                 </div>
               </div>
@@ -587,6 +607,7 @@ const CreateSyndicate = (props: any) => {
                 {...{
                   label: "Expected Annual Operating Fees:",
                   error: expectedAnnualOperatingFeesError,
+                  toolTip: expectedAnnualOperatingFeesToolTip,
                 }}
                 onChange={expectedAnnualOperatingFeesHandler}
                 name="expectedAnnualOperatingFees"
@@ -599,6 +620,7 @@ const CreateSyndicate = (props: any) => {
                 {...{
                   label: "Profit Share to Syndicate Lead:",
                   error: profitShareToSyndicateLeadError,
+                  toolTip: profitShareToSyndicateLeadToolTip,
                 }}
                 onChange={profitShareToSyndicateLeadHandler}
                 name="profitShareToSyndicateLead"
@@ -677,7 +699,7 @@ const CreateSyndicate = (props: any) => {
 
                   {/* icon */}
                   <div className="w-6 ml-4 mt-1">
-                    <InfoIcon />
+                    <InfoIcon toolTip={profitShareToSyndicateProtocolToolTip} />
                   </div>
                 </div>
               </div>
@@ -695,6 +717,7 @@ const CreateSyndicate = (props: any) => {
                   enabled: allowlistEnabled,
                   toggleEnabled: toggleAllowlistEnabled,
                   label: "Manually Whitelist Depositors:",
+                  toolTip: allowListEnabledToolTip,
                 }}
               />
 
@@ -704,6 +727,7 @@ const CreateSyndicate = (props: any) => {
                   enabled: modifiable,
                   toggleEnabled: toggleModifiable,
                   label: "Modifiable:",
+                  toolTip: modifiableToolTip,
                 }}
               />
             </div>

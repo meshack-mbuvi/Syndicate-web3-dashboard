@@ -1,5 +1,5 @@
-import React from "react";
 import PropTypes from "prop-types";
+import React from "react";
 import { EditButton } from "src/components/syndicates/shared/editButton";
 
 export const BadgeCard = (props: {

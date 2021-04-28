@@ -2,6 +2,10 @@ import { TextInput } from "@/components/inputs";
 import Modal from "@/components/modal";
 import { ErrorModal } from "@/components/shared";
 import { syndicateProps } from "@/components/shared/interfaces";
+import {
+  distributionTokenToolTip,
+  syndicateAddressToolTip,
+} from "@/components/syndicates/shared/Constants";
 import { approveManager } from "@/helpers";
 import { getPastEvents } from "@/helpers/retrieveEvents";
 import { showWalletModal } from "@/redux/actions";
@@ -321,6 +325,7 @@ const DistributeToken = (props: Props) => {
                   <TextInput
                     {...{
                       label: "Syndicate Wallet Address:",
+                      toolTip: syndicateAddressToolTip,
                     }}
                     value={syndicateAddress.toString()}
                     name="syndicateAddress"
@@ -334,13 +339,14 @@ const DistributeToken = (props: Props) => {
                       value: distributionERC20Address,
                       onChange: handleTokenAddressChange,
                       error: distributionERC20AddressError,
+                      toolTip: distributionTokenToolTip,
                     }}
                     defaultValue={defaultDistributionERC20ContractAddress}
                     name="distributionERC20Address"
                     placeholder="Enter valid distributionERC20Address"
                   />
 
-                  {/* max deposits */}
+                  {/* amount */}
                   <TextInput
                     {...{
                       label: "Amount:",
@@ -348,6 +354,7 @@ const DistributeToken = (props: Props) => {
                       onChange: handleAmountChange,
                       defaultValue: 0,
                       error: amountError,
+                      toolTip: distributionTokenToolTip,
                     }}
                     name="amount"
                     placeholder="10"
