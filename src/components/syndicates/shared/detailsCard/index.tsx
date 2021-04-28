@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 
 import { SectionCard } from "../sectionCard";
 import { InfoIcon } from "src/components/iconWrappers";
+import { EditButton } from "src/components/syndicates/shared/editButton";
 
 /**
  * TODO: update propType validation
@@ -15,6 +16,7 @@ export const DetailsCard = (props: {
   customStyles: string;
   infoIcon?: boolean;
   customInnerWidth?: string;
+  syndicateDetails?: boolean;
 }) => {
   const {
     sections = [],
@@ -22,12 +24,13 @@ export const DetailsCard = (props: {
     customStyles = "",
     infoIcon,
     customInnerWidth = "",
+    syndicateDetails = false,
   } = props;
 
   return (
     <div className={`h-fit-content ${customStyles}`}>
       <div className={`flex ${customInnerWidth} justify-between`}>
-        <p className="fold-bold  text-xl">{title}</p>
+        <p className="fold-bold text-xl">{title}</p>
         {infoIcon ? (
           <div className="flex align-center">
             <InfoIcon />
@@ -37,8 +40,20 @@ export const DetailsCard = (props: {
 
       <div className={`pl-4 ${customInnerWidth}`}>
         {sections.map((section, index) => (
-          <div className="flex justify-between sm:my-4" key={index}>
-            <SectionCard {...{ ...section }} infoIcon={!infoIcon} />
+          <div className="flex justify-start">
+            <div
+              className={`flex justify-between items-center sm:my-4 ${
+                syndicateDetails ? "w-7/12" : "w-full"
+              }`}
+              key={index}
+            >
+              <SectionCard {...{ ...section }} infoIcon={!infoIcon} />
+            </div>
+            {section?.isEditable ? (
+              <div className="sm:my-4 flex w-1/4 items-center">
+                <EditButton />
+              </div>
+            ) : null}
           </div>
         ))}
       </div>

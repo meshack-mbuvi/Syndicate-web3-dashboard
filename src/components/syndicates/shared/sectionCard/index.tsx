@@ -40,11 +40,11 @@ export const SectionCard = (props: SectionCardProps) => {
           {subText?.toString()}
         </p>
       </div>
-      {!infoIcon ? null : (
-        <div>
-          <InfoIcon />
-        </div>
-      )}
+        {!infoIcon ? null : (
+          <div>
+            <InfoIcon />
+          </div>
+        )}
     </>
   );
 };

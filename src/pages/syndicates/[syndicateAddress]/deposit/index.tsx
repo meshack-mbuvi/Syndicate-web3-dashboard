@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { connect } from "react-redux";
-import SyndicateDeposits from "src/containers/syndicateDeposits";
+import SyndicateActions from "@/containers/syndicateActions";
 import { setSyndicateAction } from "src/redux/actions/web3Provider";
 
 const SyndicateDepositView = (props) => {
@@ -17,7 +17,7 @@ const SyndicateDepositView = (props) => {
     };
     dispatch(setSyndicateAction(syndicateActions));
   });
-  return <SyndicateDeposits />;
+  return <SyndicateActions />;
 };
 
 export default connect(null, null)(SyndicateDepositView);

@@ -50,7 +50,6 @@ export const addSyndicates = (data) => async (dispatch) => {
       if (event.event === "lpInvestedInSyndicate") {
         const address = event.returnValues["0"];
         const lpAddress = event.returnValues["1"];
-        console.log({ event });
 
         // record depositors for each address
         if (syndicateInfo[address] && syndicateInfo[address]["depositors"]) {

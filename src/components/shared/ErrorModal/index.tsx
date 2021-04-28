@@ -20,7 +20,8 @@ export const ErrorModal = (props: Props) => {
           setShowErrorMessage(false);
           setErrorMessage("");
         },
-      }}>
+      }}
+    >
       <div className="flex justify-center m-auto mb-4">
         <div className="modal-header mb-4 flex-col font-medium text-center flex justify-center leading-8 text-lg">
           <div className="w-full flex justify-center mb-4">

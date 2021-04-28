@@ -9,6 +9,8 @@ import InvestInSyndicate from "src/components/syndicates/investInSyndicate";
 import Head from "src/components/syndicates/shared/HeaderTitle";
 import SyndicateDetails from "src/components/syndicates/syndicateDetails";
 import { etherToNumber, formatDate, fromNumberToPercent } from "src/utils";
+// manager components
+import ManagerActions from "@/containers/managerActions";
 
 /**
  * Renders syndicate component with details section on the left and
@@ -25,6 +27,7 @@ const SyndicateInvestment = (props) => {
   const { syndicateAddress } = router.query;
 
   const [syndicate, setSyndicate] = useState(null);
+  const [lpIsManager, setLpIsManager] = useState<boolean>(false);
 
   useEffect(() => {
     if (syndicateInstance && syndicateAddress) {
@@ -83,6 +86,16 @@ const SyndicateInvestment = (props) => {
     }
   }, [syndicateInstance, account]);
 
+  // check whether the current connected wallet account is the manager of the syndicate
+  // we'll use this information to load the manager view
+  useEffect(() => {
+    if (syndicate && syndicate.currentManager == account) {
+      setLpIsManager(true);
+    } else {
+      setLpIsManager(false);
+    }
+  }, [syndicate, account]);
+
   return (
     <Layout>
       <Head title="Syndicate" />
@@ -94,9 +107,13 @@ const SyndicateInvestment = (props) => {
             </a>
           </Link>
           <div className="w-full flex flex-col sm:flex-row">
-            <SyndicateDetails syndicate={syndicate} />
+            <SyndicateDetails syndicate={syndicate} lpIsManager={lpIsManager}/>
 
-            <InvestInSyndicate syndicate={syndicate} />
+            {lpIsManager ? (
+              <ManagerActions />
+            ) : (
+              <InvestInSyndicate syndicate={syndicate} />
+            )}
           </div>
 
           <div className="flex w-full block my-8 justify-center m-auto p-auto">

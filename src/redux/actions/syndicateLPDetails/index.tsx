@@ -65,6 +65,9 @@ export const updateSyndicateLPDetails = (data: SyndicateLPData) => async (
       syndicateLPInfo[1].toString()
     );
 
+    // check if LP is on the allowedAddresses list
+    const myAddressAllowed = syndicateLPInfo[2];
+
     // update LP's withdrawals to deposits percentage
     let withdrawalsToDepositPercentage = 0;
     if (
@@ -99,15 +102,18 @@ export const updateSyndicateLPDetails = (data: SyndicateLPData) => async (
       myWithdrawalsToDate,
       withdrawalsToDepositPercentage,
       myDistributionsToDate,
+      myAddressAllowed,
     };
 
     // format all syndicate LP details
     // values should have commas, if they are longer than 3 characters long
     // and be rounded to two decimal places.
     Object.keys(syndicateLPDetails).map((key) => {
-      syndicateLPDetails[key] = floatedNumberWithCommas(
-        syndicateLPDetails[key]
-      );
+      if (key !== "myAddressAllowed") {
+        syndicateLPDetails[key] = floatedNumberWithCommas(
+          syndicateLPDetails[key]
+        );
+      }
       return;
     });
 

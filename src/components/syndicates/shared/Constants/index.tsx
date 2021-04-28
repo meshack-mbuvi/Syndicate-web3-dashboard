@@ -26,6 +26,19 @@ const homeFooterText =
   "Syndicate received a spot check from Consensys Diligence but has not been fully audited. Please use at your own risk while our full audit proceeds in May.";
 const homeButtonText = "Use Syndicate";
 
+// texts on the manager view screen
+// Pre-approval of depositor addresses
+const approveAddressesWarning =
+  "WARNING: The more addresses added, the higher the gas cost, as this function uses an array and loop to add addresses to the smart contract. We recommend minimizing the number of addresses being added if possible.";
+const approveAddressesHeadingText =
+  "Pre-approve addresses that can deposit to this syndicate. These addresses will be added to this syndicate’s pre-approved list.";
+const textAreaTitle = "Pre-Approved Depositor List";
+const approvedAddressesLabel = "Approved Address:";
+const separateWithCommas = "(separate with commas)";
+const buttonText = "Confirm";
+
+// exports
+
 // invest/deposit page
 export const constants = {
   depositTitleText,
@@ -47,4 +60,16 @@ export const homePageConstants = {
   secondaryHeaderText,
   homeFooterText,
   homeButtonText,
+};
+
+// manager view
+
+//approval of addresses
+export const managerApproveAddressesConstants = {
+  approveAddressesWarning,
+  approveAddressesHeadingText,
+  textAreaTitle,
+  approvedAddressesLabel,
+  separateWithCommas,
+  buttonText,
 };

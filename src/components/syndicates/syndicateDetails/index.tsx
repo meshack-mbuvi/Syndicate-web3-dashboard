@@ -17,6 +17,7 @@ const SyndicateDetails = (props) => {
     web3: { syndicateInstance, account },
     dispatch,
     syndicateDetails,
+    lpIsManager,
   } = props;
   const router = useRouter();
   const [details, setDetails] = useState([]);
@@ -47,7 +48,7 @@ const SyndicateDetails = (props) => {
     openToDeposits,
     distributionsEnabled,
     depositERC20ContractAddress,
-    active
+    active,
   } = syndicate;
 
   useEffect(() => {
@@ -77,10 +78,12 @@ const SyndicateDetails = (props) => {
         {
           header: "Expected Annual Operating Fees",
           subText: `${managerManagementFeeBasisPoints / 100}%`,
+          isEditable: lpIsManager ? true : false,
         },
         {
           header: "Profit Share to Syndicate Lead",
           subText: `${profitShareToSyndicateLead / 100}%`,
+          isEditable: lpIsManager ? true : false,
         },
         {
           header: "Profit Share to Protocol",
@@ -224,6 +227,7 @@ const SyndicateDetails = (props) => {
           title: "Status",
           subTitle: "Open to Deposits",
           text: "Depositing available",
+          isEditable: lpIsManager ? true : false,
           icon: (
             <span className="rounded-full bg-yellow-300 mt-2 w-4 h-4 ml-1"></span>
           ),
@@ -237,6 +241,7 @@ const SyndicateDetails = (props) => {
           title: "Status",
           subTitle: "Operating",
           text: "Withdrawals available",
+          isEditable: lpIsManager ? true : false,
           icon: (
             <span className="rounded-full bg-green-300 mt-2 w-4 h-4 ml-1"></span>
           ),
@@ -250,6 +255,7 @@ const SyndicateDetails = (props) => {
           title: "Status",
           subTitle: "Inactive",
           text: "Deposits and withdrawals not available",
+          isEditable: lpIsManager ? true : false,
           icon: (
             <span className="rounded-full bg-yellow-300 mt-2 w-4 h-4 ml-1"></span>
           ),
@@ -293,7 +299,7 @@ const SyndicateDetails = (props) => {
       >
         view on etherscan <ExternalLinkIcon className="ml-2" />
       </a>
-      <div className="h-fit-content w-7/12  md:ml-2 mb-12">
+      <div className="h-fit-content flex w-full justify-start md:ml-2 mb-12">
         {syndicateBadge}
       </div>
 
@@ -301,9 +307,9 @@ const SyndicateDetails = (props) => {
       This component should be shown when we have details about user deposits */}
       {details ? (
         <DetailsCard
-          {...{ title: "Details", sections: details }}
+          {...{ title: "Details", sections: details, syndicateDetails: true }}
           customStyles={"pl-4 pr-2 w-full py-4 pb-8"}
-          customInnerWidth="w-7/12"
+          customInnerWidth="w-full"
         />
       ) : (
         ""

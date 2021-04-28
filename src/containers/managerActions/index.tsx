@@ -1,6 +1,7 @@
 import React, { useState } from "react";
-import ErrorBoundary from "../errorBoundary";
+import ErrorBoundary from "../../components/errorBoundary";
 import DistributeToken from "./distributeToken";
+import PreApproveDepositor from "./preApproveDepositor";
 import ManagerAction from "./ManagerAction";
 import MoreManagerActions from "./MoreManagerActions";
 
@@ -21,6 +22,7 @@ const moreActions = [
 
 const ManagerActions = () => {
   const [showDistributeToken, setShowDistributeToken] = useState(false);
+  const [showPreApproveDepositor, setShowPreApproveDepositor] = useState(false);
 
   const actions = [
     {
@@ -33,8 +35,7 @@ const ManagerActions = () => {
     {
       icon: <img src="/images/UserPlus.svg" />,
       title: "Pre-approve depositor addresses",
-      onClickHandler: () =>
-        console.log("Show modal for pre-approve depositor address"),
+      onClickHandler: () => setShowPreApproveDepositor(true),
       description:
         "Pre-approve accredited investor addresses that can deposit into this syndicate.",
     },
@@ -50,12 +51,13 @@ const ManagerActions = () => {
   return (
     <ErrorBoundary>
       <div className="w-full sm:w-1/2 mt-4 sm:mt-0">
-        <div className="h-fit-content rounded-t-md mx-2 lg:p-6 bg-gray-9 sm:ml-6">
-          <div className="text-xl mb-6 font-inter">Manager Actions</div>
-          <div className="flex bg-gray-24 h-12 rounded-md items-center ">
-            <img src="/images/rightPointedHand.svg" className="mx-4" />
-
-            <div>You manage this syndicate</div>
+        <div className="h-fit-content rounded-custom p-4 mx-2 lg:p-6 bg-gray-9 sm:ml-6">
+          <div className="text-xl font-inter">Manager Actions</div>
+          <div className="flex h-12 rounded-custom items-center ">
+            <img src="/images/rightPointedHand.svg" className="mr-2" />
+            <div className="text-gray-dim leading-snug">
+              You manage this syndicate
+            </div>
           </div>
           {actions.map(({ icon, title, description, onClickHandler }) => {
             return (
@@ -81,6 +83,10 @@ const ManagerActions = () => {
         {showDistributeToken ? (
           <DistributeToken
             {...{ showDistributeToken, setShowDistributeToken }}
+          />
+        ) : showPreApproveDepositor ? (
+          <PreApproveDepositor
+            {...{ showPreApproveDepositor, setShowPreApproveDepositor }}
           />
         ) : null}
       </div>

@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { connect } from "react-redux";
 import { setSyndicateAction } from "src/redux/actions/web3Provider";
-import SyndicateManage from "src/containers/syndicateManage";
+import SyndicateActions from "@/containers/syndicateActions";
 
 /**
  * This page shows the manager component for a given syndicate address
@@ -21,7 +21,7 @@ const ManageSyndicatePage = (props) => {
 
     dispatch(setSyndicateAction(syndicateActions));
   });
-  return <SyndicateManage />;
+  return <SyndicateActions />;
 };
 
 export default connect(null, null)(ManageSyndicatePage);

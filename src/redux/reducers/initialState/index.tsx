@@ -40,6 +40,7 @@ export const initialState = {
     myDeposits: 0,
     myPercentageOfThisSyndicate: 0,
     myDistributionsToDate: 0,
+    myAddressAllowed: false,
     myWithdrawalsToDate: 0,
     withdrawalsToDepositPercentage: 0,
   },

@@ -418,6 +418,9 @@ const InvestInSyndicate = (props) => {
     depositsAndWithdrawalsUnavailableTitleText,
   } = constants;
 
+  // check if LP address is on the allowed address list
+  const { myAddressAllowed } = syndicateLPDetails;
+
   return (
     <ErrorBoundary>
       <div className="w-full sm:w-1/2 mt-4 sm:mt-0">
@@ -437,7 +440,7 @@ const InvestInSyndicate = (props) => {
                   {/* show this text if whitelist is enabled for deposits */}
                   <p className="py-4 pt-2 text-green-screamin font-ibm">
                     {depositModes
-                      ? syndicate?.allowlistEnabled
+                      ? myAddressAllowed
                         ? depositStatusApprovedText
                         : depositStatusNotApprovedText
                       : withdraw
