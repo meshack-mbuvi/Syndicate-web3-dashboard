@@ -27,6 +27,33 @@ const MySyndicates = (props) => {
     loading,
   } = props;
 
+  // Assume by default this user has an open syndicate
+  const [managerWithOpenSyndicate, setManagerWithOpenSyndicate] = useState(
+    true
+  );
+
+  // Find whether there is a syndicate address that matches the connected
+  // wallet account. If so, the account has an open syndicate, else the account
+  // does not have an open syndicate.
+  useEffect(() => {
+    if (syndicates.length) {
+      const syndicateAddresses = [];
+      syndicates.forEach((syndicate) => {
+        syndicateAddresses.push(syndicate.address);
+      });
+      console.log({ syndicateAddresses });
+      const accountHasSyndicate = syndicateAddresses.find(
+        (address) => address == account
+      );
+      if (accountHasSyndicate) {
+        setManagerWithOpenSyndicate(true);
+      }
+      console.log({ accountHasSyndicate });
+    } else {
+      setManagerWithOpenSyndicate(false);
+    }
+  }, [syndicates, syndicateInstance]);
+
   /**
    * We need to be sure syndicateInstance is initialized before retrieving events.
    */
@@ -70,11 +97,13 @@ const MySyndicates = (props) => {
             </div>
 
             <div className="mb-2 ">
-              <Button
-                customClasses="border border-white h-12 w-48 p-3 pt-3 text-sm"
-                onClick={showSyndicateForm}>
-                Create a syndicate
-              </Button>
+              {account && !managerWithOpenSyndicate ? (
+                <Button
+                  customClasses="border border-white h-12 w-48 p-3 pt-3 text-sm"
+                  onClick={showSyndicateForm}>
+                  Create a syndicate
+                </Button>
+              ) : null}
             </div>
           </div>
           {syndicates.length ? (
