@@ -1,6 +1,6 @@
 import { ErrorModal } from "@/components/shared";
 import { addNewSyndicate } from "@/redux/actions/syndicates";
-import { Validate } from "@/utils/validators";
+import { Validate, ValidatePercent } from "@/utils/validators";
 import { faCopy } from "@fortawesome/free-regular-svg-icons";
 import { faCheckCircle } from "@fortawesome/free-solid-svg-icons";
 // fontawesome icons
@@ -13,7 +13,7 @@ import { connect } from "react-redux";
 // Other useful components
 import Button from "src/components/buttons";
 import { InfoIcon } from "src/components/iconWrappers";
-import { TextInput, Toggle } from "src/components/inputs";
+import { PercentInput, TextInput, Toggle } from "src/components/inputs";
 import { Modal } from "src/components/modal";
 import { getSyndicate } from "src/helpers/syndicate";
 // redux actions
@@ -89,9 +89,9 @@ const CreateSyndicate = (props: any) => {
   const [
     expectedAnnualOperatingFees,
     setExpectedAnnualOperatingFees,
-  ] = useState("");
+  ] = useState("2");
   const [profitShareToSyndicateLead, setProfitShareToSyndicateLead] = useState(
-    ""
+    "20"
   );
   const [allowlistEnabled, setAllowlistEnabled] = useState(false);
   const [modifiable, setModifiable] = useState(false);
@@ -231,11 +231,20 @@ const CreateSyndicate = (props: any) => {
     setExpectedAnnualOperatingFees(value);
 
     const message = Validate(value);
+    setExpectedAnnualOperatingFees(value);
+
+    let invalidPercent = "";
+
+    if (!message) {
+      invalidPercent = ValidatePercent(value);
+    }
 
     if (message) {
       setExpectedAnnualOperatingFeesError(
         `Expected Annual operating fee ${message}`
       );
+    } else if (invalidPercent) {
+      setExpectedAnnualOperatingFeesError(invalidPercent);
     } else {
       setExpectedAnnualOperatingFeesError("");
     }
@@ -245,13 +254,21 @@ const CreateSyndicate = (props: any) => {
     event.preventDefault();
     const { value } = event.target;
 
+    const message = Validate(value);
     setProfitShareToSyndicateLead(value);
 
-    const message = Validate(value);
+    let invalidPercent = "";
+
+    if (!message) {
+      invalidPercent = ValidatePercent(value);
+    }
+
     if (message) {
       setprofitShareToSyndicateLeadError(
         `Profit share to syndicate lead ${message}`
       );
+    } else if (invalidPercent) {
+      setprofitShareToSyndicateLeadError(invalidPercent);
     } else {
       setprofitShareToSyndicateLeadError("");
     }
@@ -433,12 +450,16 @@ const CreateSyndicate = (props: any) => {
     const { value } = event.target;
 
     const message = Validate(value);
+    let invalidPercent = "";
+
+    if (!message) {
+      invalidPercent = ValidatePercent(value);
+    }
+
     if (message) {
       setProfitShareToSyndProtocolError(`Field ${message}`);
-    } else if (+value < 0.5) {
-      setProfitShareToSyndProtocolError(
-        "Syndicate protocol profit should be a minimum of 0.5"
-      );
+    } else if (invalidPercent) {
+      setProfitShareToSyndProtocolError(invalidPercent);
     } else {
       setProfitShareToSyndProtocolError("");
     }
@@ -479,13 +500,11 @@ const CreateSyndicate = (props: any) => {
           closeModal,
           customWidth: "w-full lg:w-3/5",
         }}
-        title="Create New Syndicate"
-      >
+        title="Create New Syndicate">
         {/* modal sub title */}
         <div
           className="flex justify-start mb-1 text-blue font-medium 
-          text-center leading-8 text-lg"
-        >
+          text-center leading-8 text-lg">
           <p className="text-blue-light ml-4">Onchain Data</p>
         </div>
 
@@ -577,8 +596,7 @@ const CreateSyndicate = (props: any) => {
                 <div className="mr-2 w-1/2 flex justify-end">
                   <label
                     htmlFor="syndicateAddress"
-                    className="block pt-2 text-black text-lg font-medium"
-                  >
+                    className="block pt-2 text-black text-lg font-medium">
                     Close Date:
                   </label>
                 </div>
@@ -603,7 +621,7 @@ const CreateSyndicate = (props: any) => {
               </div>
 
               {/* Expected Annual Operating Fees */}
-              <TextInput
+              <PercentInput
                 {...{
                   label: "Expected Annual Operating Fees:",
                   error: expectedAnnualOperatingFeesError,
@@ -616,7 +634,7 @@ const CreateSyndicate = (props: any) => {
                 required
               />
 
-              <TextInput
+              <PercentInput
                 {...{
                   label: "Profit Share to Syndicate Lead:",
                   error: profitShareToSyndicateLeadError,
@@ -634,8 +652,7 @@ const CreateSyndicate = (props: any) => {
                 <div className="mr-2 w-1/2 flex justify-end">
                   <label
                     htmlFor="profitShareToSyndProtocol"
-                    className="block pt-2 text-black text-lg font-medium"
-                  >
+                    className="block pt-2 text-black text-lg font-medium">
                     Profit Share to Syndicate Protocol:
                   </label>
                 </div>
@@ -643,8 +660,7 @@ const CreateSyndicate = (props: any) => {
                 {/* shows 4 equal grids used to get the input for profit share */}
                 <div className="w-1/2 flex justify-between">
                   <div
-                    className={`grid grid-cols-4 w-4/5 border gray-85 flex flex-grow rounded-md`}
-                  >
+                    className={`grid grid-cols-4 w-4/5 border h-12 gray-85 flex flex-grow rounded-md`}>
                     <button
                       className={`flex justify-center pt-2 border-r focus:outline-none ${
                         syndicateProfitSharePercent == "0.5"
@@ -652,8 +668,7 @@ const CreateSyndicate = (props: any) => {
                           : "gray-85"
                       }`}
                       onClick={() => updateProfitShareToSyndProtocol(0.5)}
-                      type="button"
-                    >
+                      type="button">
                       0.5%
                     </button>
 
@@ -666,8 +681,7 @@ const CreateSyndicate = (props: any) => {
                       onClick={() => {
                         updateProfitShareToSyndProtocol(1);
                       }}
-                      type="button"
-                    >
+                      type="button">
                       1%
                     </button>
 
@@ -680,20 +694,44 @@ const CreateSyndicate = (props: any) => {
                       type="button"
                       onClick={() => {
                         updateProfitShareToSyndProtocol(3);
-                      }}
-                    >
+                      }}>
                       3%
                     </button>
+                    {/* flex  w-12 pl-2 ml-1 py-2 pr-0 rounded-md focus:outline-none outline-none focus:ring-0 focus:border-none border-0 */}
 
-                    <div>
+                    <div className="flex p-0 percentage-input rounded-br-md rounded-tr-md ">
                       <input
-                        type="text"
-                        className="flex flex-grow w-full h-full outline-none border-0 focus:border-0 rounded-br-md rounded-tr-md"
+                        type="number"
+                        className={`flex pl-1 pr-1 py-1 ml-1 focus:outline-none outline-none focus:ring-0 focus:border-none border-0`}
                         placeholder="other"
                         name="profitShareToSyndProtocol"
                         onChange={profitShareToSyndicateOnchangeHandler}
                         value={syndicateProfitSharePercent}
+                        style={{
+                          width: `${
+                            syndicateProfitSharePercent.toString().length > 1
+                              ? syndicateProfitSharePercent.toString().length +
+                                1
+                              : 2
+                          }ch`,
+                        }}
                       />
+                      <span className="flex flex-1 py-2 pt-3 text-gray-500">
+                        %
+                      </span>
+
+                      {/* <PercentInput
+                        {...{
+                          label: "Profit Share to Syndicate Lead:",
+                          error: profitShareToSyndicateLeadError,
+                          toolTip: profitShareToSyndicateLeadToolTip,
+                        }}
+                        onChange={profitShareToSyndicateOnchangeHandler}
+                        name="profitShareToSyndProtocol"
+                        placeholder="other"
+                        value={syndicateProfitSharePercent}
+                        required
+                      /> */}
                     </div>
                   </div>
 
@@ -756,8 +794,7 @@ const CreateSyndicate = (props: any) => {
               customClasses={`rounded-full bg-blue-light w-auto px-10 py-2 text-lg ${
                 validated ? "" : "opacity-50"
               }`}
-              disabled={validated ? false : true}
-            >
+              disabled={validated ? false : true}>
               Launch
             </Button>
           </div>
@@ -769,8 +806,7 @@ const CreateSyndicate = (props: any) => {
         {...{
           show: submitting,
           closeModal: () => dispatch(setSumbitting(false)),
-        }}
-      >
+        }}>
         <div className="flex flex-col justify-center m-auto mb-4">
           <div className="loader">Loading...</div>
           <div className="modal-header mb-4 text-green-400 font-medium text-center leading-8 text-lg">
@@ -786,8 +822,7 @@ const CreateSyndicate = (props: any) => {
           setShowErrorMessage,
           setErrorMessage,
           errorMessage,
-        }}
-      ></ErrorModal>
+        }}></ErrorModal>
 
       {/* show success modal */}
       <Modal
@@ -796,8 +831,7 @@ const CreateSyndicate = (props: any) => {
           closeModal: () => setShowSuccessModal(false),
           type: "success",
           customWidth: "w-3/5",
-        }}
-      >
+        }}>
         <div className="flex flex-col justify-center m-auto mb-4">
           <div className="flex align-center justify-center">
             <div className="border-4 border-light-blue m-8 rounded-full h-24 w-24 flex items-center justify-center">
@@ -806,8 +840,7 @@ const CreateSyndicate = (props: any) => {
                 height="26"
                 viewBox="0 0 34 26"
                 fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
+                xmlns="http://www.w3.org/2000/svg">
                 <path
                   d="M2 13.5723L11.2243 22.7966L32 2"
                   stroke="#35CFFF"

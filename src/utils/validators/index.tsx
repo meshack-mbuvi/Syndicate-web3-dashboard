@@ -32,6 +32,11 @@ export const Validate = (value) => {
   return message;
 };
 
+export const ValidatePercent = (value) => {
+  if (value > 100) return "The percentage value should not exceed 100%";
+  if (value < 0) return "The percentage value should not be below than 0%";
+};
+
 /**
  * This checks whether the address provided is a zero address.
  * eg: 0x0000000000000000000000000000000000000000

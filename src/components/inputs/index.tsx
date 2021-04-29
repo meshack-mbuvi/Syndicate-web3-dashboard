@@ -1,4 +1,5 @@
-export { TextInput } from "./textInput";
 export { DateInput } from "./dateInput";
-export { Toggle } from "./toggle";
+export { PercentInput } from "./percentInput";
 export { TextArea } from "./textArea";
+export { TextInput } from "./textInput";
+export { Toggle } from "./toggle";
