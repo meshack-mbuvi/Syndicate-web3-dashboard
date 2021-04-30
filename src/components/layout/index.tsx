@@ -100,6 +100,8 @@ export const Layout = ({ children }) => {
         title="Home"
       />
       <Header />
+      {/* This banner should be shown in V2 */}
+      {/* <SyndicateInBetaBanner /> */}
       <div className="flex w-auto w-full flex-col sm:flex-row md:py-4 px-4 md:px-6">
         {children}
       </div>

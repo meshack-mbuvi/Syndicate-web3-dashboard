@@ -43,6 +43,10 @@ module.exports = {
           cyan: "#2AA3EF",
           deepAzure: "#0C1F30",
         },
+        yellow: {
+          ...colors.yellow,
+          light: "#FFD02B",
+        },
       },
       fill: (theme) => ({
         gray: theme("colors.gray.light"),

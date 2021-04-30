@@ -114,6 +114,9 @@ export const distributionTokenToolTip =
 export const distributionAmountToolTip =
   "This is the amount of token to be distributed back to depositors.";
 
+export const SyndicateInBetaBannerText =
+  "Syndicate is currently in private beta. We take security seriously, but bugs may still exist.";
+
 // home page
 export const homePageConstants = {
   primaryHeaderText,
