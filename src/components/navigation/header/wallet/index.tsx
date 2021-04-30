@@ -2,7 +2,7 @@ import PropTypes from "prop-types";
 import React from "react";
 import { connect } from "react-redux";
 import ConnectWallet from "src/components/connectWallet";
-import { showWalletModal } from "src/redux/actions/web3Provider";
+import { showWalletModal } from "@/redux/actions/web3Provider";
 
 export const Wallet = (props) => {
   /**

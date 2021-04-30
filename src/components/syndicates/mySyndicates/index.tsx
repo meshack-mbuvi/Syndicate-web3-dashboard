@@ -41,14 +41,12 @@ const MySyndicates = (props) => {
       syndicates.forEach((syndicate) => {
         syndicateAddresses.push(syndicate.address);
       });
-      console.log({ syndicateAddresses });
       const accountHasSyndicate = syndicateAddresses.find(
         (address) => address == account
       );
       if (accountHasSyndicate) {
         setManagerWithOpenSyndicate(true);
       }
-      console.log({ accountHasSyndicate });
     } else {
       setManagerWithOpenSyndicate(false);
     }
@@ -58,6 +56,7 @@ const MySyndicates = (props) => {
    * We need to be sure syndicateInstance is initialized before retrieving events.
    */
   useEffect(() => {
+    console.log({ syndicateInstance });
     if (syndicateInstance) {
       dispatch(addSyndicates(props.web3));
     }

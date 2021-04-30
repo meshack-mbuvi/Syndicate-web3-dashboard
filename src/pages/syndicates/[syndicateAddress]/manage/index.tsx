@@ -1,7 +1,7 @@
 import SyndicateActions from "@/containers/syndicateActions";
 import React, { useEffect } from "react";
 import { connect, useDispatch } from "react-redux";
-import { setSyndicateAction } from "src/redux/actions/web3Provider";
+import { setSyndicateAction } from "@/redux/actions/web3Provider";
 
 /**
  * This page shows the manager component for a given syndicate address

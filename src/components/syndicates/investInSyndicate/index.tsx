@@ -11,7 +11,7 @@ import { approveManager } from "src/helpers/approveAllowance";
 import { setSyndicateDetails } from "src/redux/actions/syndicateDetails";
 import { updateSyndicateLPDetails } from "src/redux/actions/syndicateLPDetails";
 // actions
-import { showWalletModal } from "src/redux/actions/web3Provider";
+import { showWalletModal } from "@/redux/actions/web3Provider";
 // utils and helpers
 import { toEther } from "src/utils";
 import ERC20ABI from "src/utils/abi/rinkeby-dai";

@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { connect } from "react-redux";
 import SyndicateActions from "@/containers/syndicateActions";
-import { setSyndicateAction } from "src/redux/actions/web3Provider";
+import { setSyndicateAction } from "@/redux/actions/web3Provider";
 
 const SyndicateWithdrawalView = (props) => {
   const { dispatch } = props;

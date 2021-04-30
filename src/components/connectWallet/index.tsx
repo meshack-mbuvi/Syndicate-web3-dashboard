@@ -22,7 +22,7 @@ import {
   setDisConnected,
   setLibrary,
   showErrorModal,
-} from "src/redux/actions/web3Provider";
+} from "@/redux/actions/web3Provider";
 import { injected, WalletConnect } from "./connectors";
 
 const Web3 = require("web3");
@@ -206,7 +206,6 @@ export const ConnectWallet = (props) => {
       await setWeb3();
     } catch (error) {
       // an error occured during connection process
-      // dispatch(setDisConnected());
 
       /**
        * we need to find a way(designs) to show feedback to the user about
@@ -303,7 +302,6 @@ export const ConnectWallet = (props) => {
         {...{
           show: showSuccessModal,
           closeModal: () => setShowSuccessModal(false),
-          
         }}>
         <div className="flex flex-col justify-center m-auto mb-4">
           <div className="flex align-center justify-center">
