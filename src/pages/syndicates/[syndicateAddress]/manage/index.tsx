@@ -20,6 +20,16 @@ const ManageSyndicatePage = () => {
     };
 
     dispatch(setSyndicateAction(syndicateActions));
+    return () => {
+      // reset syndicate actions when the component is unmounted
+      const syndicateActions = {
+        withdraw: false,
+        deposit: false,
+        managerView: false,
+        generalView: false,
+      };
+      dispatch(setSyndicateAction(syndicateActions));
+    };
   });
   return <SyndicateActions />;
 };

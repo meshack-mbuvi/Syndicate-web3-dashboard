@@ -18,6 +18,33 @@ const noSyndicateText =
 const depositsAndWithdrawalsUnavailableText =
   "Deposits and withdraws are not currently available";
 const depositsAndWithdrawalsUnavailableTitleText = "Deposits & Withdraws";
+const loaderWithdrawalHeaderText =
+  "Please wait while the Withdrawal transaction completes...";
+const loaderDepositHeaderText =
+  "Please wait while the Deposit transaction completes...";
+const loaderApprovalHeaderText =
+  "Please wait while the Approval transaction completes...";
+const loaderGeneralHeaderText =
+  "Please wait while the transaction completes...";
+const loaderSubtext =
+  "This could take anywhere from seconds to hours depending on the gas fees you set for the transaction.";
+const increaseDepositAllowanceErrorMessage =
+  "By increasing the deposit amount, you must approve the additional amount before depositing";
+const depositBannerText =
+  "By invitation only. Do not publicly market this deposit page. Only share directly with people and organizations who have been qualified.";
+const amountConversionErrorText = "Error converting amount. Please try again.";
+const actionFailedError =
+  "An error occurred while completing the transaction. Please try again.";
+
+// syndicate details section
+const syndicateDetailsFooterText =
+  "Syndicate v1 was security audited by Quanstamp March 2021.";
+const syndicateDetailsLinkText = "View the audit report here.";
+
+export const syndicateDetailsConstants = {
+  syndicateDetailsFooterText,
+  syndicateDetailsLinkText,
+};
 
 // texts on the home page
 const primaryHeaderText = "Join the Revolution.";
@@ -52,6 +79,15 @@ export const constants = {
   noSyndicateText,
   depositsAndWithdrawalsUnavailableText,
   depositsAndWithdrawalsUnavailableTitleText,
+  loaderWithdrawalHeaderText,
+  loaderDepositHeaderText,
+  loaderApprovalHeaderText,
+  increaseDepositAllowanceErrorMessage,
+  loaderGeneralHeaderText,
+  loaderSubtext,
+  depositBannerText,
+  amountConversionErrorText,
+  actionFailedError,
 };
 
 // Tooltips

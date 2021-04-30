@@ -30,11 +30,6 @@ export const DetailsCard = (props: {
     <div className={`h-fit-content ${customStyles}`}>
       <div className={`flex ${customInnerWidth} justify-between`}>
         <p className="fold-bold text-xl">{title}</p>
-        {infoIcon ? (
-          <div className="flex align-center">
-            <InfoIcon />
-          </div>
-        ) : null}
       </div>
 
       <div className={`pl-4 ${customInnerWidth}`}>
@@ -44,7 +39,7 @@ export const DetailsCard = (props: {
               className={`flex justify-between items-center sm:my-4 ${
                 syndicateDetails ? "w-7/12" : "w-full"
               }`}>
-              <SectionCard {...{ ...section }} infoIcon={!infoIcon} />
+              <SectionCard {...{ ...section }} infoIcon={infoIcon} />
             </div>
             {section?.isEditable ? (
               <div className="sm:my-4 flex w-1/4 items-center">

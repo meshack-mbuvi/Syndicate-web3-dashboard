@@ -6,7 +6,6 @@ import { connect, useDispatch } from "react-redux";
 import { ExternalLinkIcon } from "src/components/iconWrappers";
 import { setSyndicateDetails } from "src/redux/actions/syndicateDetails";
 import { etherToNumber, formatDate } from "src/utils";
-import { ERC20TokenDetails } from "src/utils/ERC20Methods";
 // utils
 import { formatAddress } from "src/utils/formatAddress";
 import { BadgeCard, DetailsCard } from "../shared";
@@ -17,7 +16,10 @@ import {
   expectedAnnualOperatingFeesToolTip,
   profitShareToSyndicateLeadToolTip,
   profitShareToSyndicateProtocolToolTip,
+  syndicateDetailsConstants,
 } from "../shared/Constants";
+import { TokenMappings } from "src/utils/tokenMappings";
+import { floatedNumberWithCommas } from "@/utils/numberWithCommas";
 
 const SyndicateDetails = (props: {
   web3: any;
@@ -54,6 +56,12 @@ const SyndicateDetails = (props: {
   // state to handle details about the current ERC20 token
   const [tokenSymbol, setTokenSymbol] = useState<string>("DAI");
 
+  // states to show general syndicate details
+  const [
+    syndicateCummulativeDetails,
+    setSyndicateCummulativeDetails,
+  ] = useState([]);
+
   // get syndicate address from the url
   const { syndicateAddress } = router.query;
 
@@ -64,12 +72,35 @@ const SyndicateDetails = (props: {
     active,
   } = syndicate;
 
+  const {
+    syndicateDetailsFooterText,
+    syndicateDetailsLinkText,
+  } = syndicateDetailsConstants;
+
+  // get and set current token details
   useEffect(() => {
-    // get and set current token details
     if (depositERC20ContractAddress) {
       getERC20TokenDetails(depositERC20ContractAddress);
     }
   }, [syndicate, syndicateInstance]);
+
+  // set syndicate cummulative values
+  useEffect(() => {
+    if (syndicate) {
+      const { totalDeposits } = syndicate;
+      const { totalDepositors } = syndicateDetails;
+      setSyndicateCummulativeDetails([
+        {
+          header: "Total Deposits",
+          subText: `${floatedNumberWithCommas(
+            totalDeposits
+          )} ${tokenSymbol} (${totalDepositors} ${
+            parseInt(totalDepositors) < 2 ? "depositor" : "depositors"
+          })`,
+        },
+      ]);
+    }
+  }, [syndicate, syndicateDetails, syndicateDetails]);
 
   useEffect(() => {
     if (syndicate) {
@@ -120,22 +151,16 @@ const SyndicateDetails = (props: {
 
   /**
    * method used to get details on the current ERC20 token
-   * @param depositERC20ContractAddress The address of the ERC20 token.
-   * updates token symbol and decimals in the state.
    */
-  const getERC20TokenDetails = async (
-    depositERC20ContractAddress: string | string[]
-  ) => {
-    const erc20Token = new ERC20TokenDetails(depositERC20ContractAddress);
-    const symbol = await erc20Token.getTokenSymbol();
-
+  const getERC20TokenDetails = async (depositERC20ContractAddress: string) => {
     // getting token symbol doesn't seem to return a valid hex value
-    // returns 0x0000000000000000000000000000000000000000000000000000000000000020
-    // the above translates to an empty string
-    // need to find a proper way to get the correct symbol.
-    // putting in this temporary fix for now.
-    if (symbol.trim().length < 10) {
-      setTokenSymbol(symbol);
+    // using this manual mapping for the time being
+    const tokenAddress = depositERC20ContractAddress;
+    const mappedTokenAddress = Object.keys(TokenMappings).find(
+      (key) => key.toLowerCase() == tokenAddress.toLowerCase()
+    );
+    if (mappedTokenAddress) {
+      setTokenSymbol(TokenMappings[mappedTokenAddress]);
     }
   };
 
@@ -156,7 +181,8 @@ const SyndicateDetails = (props: {
           depositERC20ContractAddress,
           profitShareToSyndicateLead,
           profitShareToSyndicateProtocol,
-          syndicate
+          syndicate,
+          syndicateAddress
         )
       );
     }
@@ -290,52 +316,80 @@ const SyndicateDetails = (props: {
   }
 
   return (
-    <div className="w-full sm:w-2/3 h-fit-content p-6 md:p-10">
-      <span className="fold-bold px-2 text-gray-dim leading-4 text-lg uppercase">
-        Syndicate
-      </span>
-      <div className="flex justify-between items-center">
-        <div className="flex-shrink">
-          <p className="flex text-sm sm:text-2xl lg:text-3xl flex-wrap pl-2 break-all flex items-center">
-            {formattedSyndicateAddress}
-            <CopyToClipboard text={syndicateAddress}>
-              <div className="flex items-center ml-4 relative w-10">
-                {showCopyState ? (
-                  <span className="absolute text-xs -top-5">copied</span>
-                ) : null}
-                <img
-                  src="/images/copy-clipboard.png"
-                  className="cursor-pointer h-4"
-                  onClick={updateAddresCopyState}
-                />
-              </div>
-            </CopyToClipboard>
+    <div className="flex flex-col w-full md:w-2/3">
+      <div className="w-full h-fit-content p-6 md:p-10 rounded-custom bg-gray-100">
+        <span className="fold-bold px-2 text-gray-dim leading-4 text-sm uppercase">
+          Syndicate
+        </span>
 
-            <p
-              className={`h-6 w-6 sm:h-10 sm:w-10 md:h-16 md:w-16 ml-4 rounded-full ideo-liquidity inline`}></p>
+        <div className="flex justif-start items-center">
+          <p className="flex-shrink font-ibm text-xl sm:text-2xl md:text-lg lg:text-3xl flex-wrap pl-2 break-all">
+            {formattedSyndicateAddress}
           </p>
+          <CopyToClipboard text={syndicateAddress}>
+            <div className="flex items-center ml-4 relative w-10">
+              {showCopyState ? (
+                <span className="absolute text-xs -top-5">copied</span>
+              ) : null}
+              <img
+                src="/images/copy-clipboard.png"
+                className="cursor-pointer h-4"
+                onClick={updateAddresCopyState}
+              />
+            </div>
+          </CopyToClipboard>
+          <p className="flex-shrink-0 h-8 w-8 sm:h-10 sm:w-10 md:h-16 md:w-16 ml-4 rounded-full ideo-liquidity inline"></p>
+        </div>
+
+        <a
+          href={`https://etherscan.io/address/${syndicateAddress}`}
+          target="_blank"
+          className="text-blue-cyan px-2 flex"
+          rel="noreferrer"
+        >
+          view on etherscan <ExternalLinkIcon className="ml-2" />
+        </a>
+        <div className="h-fit-content flex w-full justify-start md:ml-2 mb-12">
+          {syndicateBadge}
+        </div>
+
+        {/* Syndicate details 
+      This component should be shown when we have details about user deposits */}
+        {details ? (
+          <DetailsCard
+            {...{ title: "Details", sections: details, syndicateDetails: true }}
+            customStyles={"pl-4 pr-2 w-full py-4 pb-8"}
+            customInnerWidth="w-full"
+          />
+        ) : null}
+        <div className="w-full border-gray-49 border-t pt-4">
+          {syndicateCummulativeDetails ? (
+            <DetailsCard
+              {...{
+                title: "Deposits",
+                sections: syndicateCummulativeDetails,
+                syndicateDetails: true,
+                infoIcon: false,
+              }}
+              customStyles={"pl-4 pr-2 w-full py-4 pb-8"}
+              customInnerWidth="w-full"
+            />
+          ) : null}
         </div>
       </div>
-      <a
-        href={`https://etherscan.io/address/${syndicateAddress}`}
-        target="_blank"
-        className="text-blue-cyan px-2 flex"
-        rel="noreferrer">
-        view on etherscan <ExternalLinkIcon className="ml-2" />
-      </a>
-      <div className="h-fit-content flex w-full justify-start md:ml-2 mb-12">
-        {syndicateBadge}
+      <div className="flex w-full block my-8 justify-center m-auto p-auto">
+        <p className="text-center text-sm flex justify-center flex-wrap	font-extralight">
+          <span>{syndicateDetailsFooterText}&nbsp;</span>
+          <a
+            className="font-normal text-blue-cyan"
+            href="#"
+            target="_blank"
+            rel="noreferrer"
+          >
+            {syndicateDetailsLinkText}
+          </a>
+        </p>
       </div>
-
-      {/* Syndicate details 
-      This component should be shown when we have details about user deposits */}
-      {details ? (
-        <DetailsCard
-          {...{ title: "Details", sections: details, syndicateDetails: true }}
-          customStyles={"pl-4 pr-2 w-full py-4 pb-8"}
-          customInnerWidth="w-full"
-        />
-      ) : null}
     </div>
   );
 };

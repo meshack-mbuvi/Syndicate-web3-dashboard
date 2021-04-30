@@ -16,9 +16,42 @@ export const approveManager = async (
   amount
 ) => {
   const amountDai = toEther(amount).toString();
+
   try {
     await currentERC20Contract.methods
       .approve(managerAddress, amountDai)
+      .send({ from: account, gasLimit: 800000 });
+
+    // Check the approval amount
+    /** @returns wei allowance as a string */
+    const daiAllowance = await currentERC20Contract.methods
+      .allowance(account.toString(), managerAddress)
+      .call({ from: account });
+
+    return parseInt(daiAllowance);
+  } catch (approveError) {
+    console.log({ approveError });
+    return 0;
+  }
+};
+
+/** Method to increase the allowance of the LP
+ * This happens when the LP opts to increase the allowance they had set
+ * in order to deposit a larger amount into the syndicate.
+ * https://docs.openzeppelin.com/contracts/3.x/api/token/erc20#ERC20-increaseAllowance-address-uint256-
+ */
+
+export const increaseAllowance = async (
+  currentERC20Contract,
+  account,
+  managerAddress,
+  amount
+) => {
+  const amountDai = toEther(amount).toString();
+
+  try {
+    await currentERC20Contract.methods
+      .increaseAllowance(managerAddress, amountDai)
       .send({ from: account, gasLimit: 800000 });
 
     // Check the approval amount

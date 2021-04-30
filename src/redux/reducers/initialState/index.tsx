@@ -25,7 +25,7 @@ export const initialState = {
     withdraw: false,
     deposit: false,
     managerView: false,
-    generalView: true,
+    generalView: false,
   },
 
   syndicateDetails: {

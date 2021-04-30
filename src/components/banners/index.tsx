@@ -1,6 +1,7 @@
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import { SyndicateInBetaBannerText } from "../syndicates/shared/Constants";
+import { constants } from "src/components/syndicates/shared/Constants";
 
 export const SyndicateInBetaBanner = () => {
   const [showBanner, setShowBanner] = useState(false);
@@ -46,7 +47,8 @@ export const SyndicateInBetaBanner = () => {
       className={`pl-4 pr-8 py-3 w-full relative rounded bg-yellow-light text-black text-center ${
         showBanner ? "" : "hidden"
       }`}
-      role="alert">
+      role="alert"
+    >
       <p>
         <span className="block sm:inline">{SyndicateInBetaBannerText}</span>{" "}
         <Link href="#">
@@ -57,6 +59,19 @@ export const SyndicateInBetaBanner = () => {
         <span className="absolute mx-3 py-1 cursor-pointer absolute right-0">
           <img src="/images/close.svg" alt="" onClick={hideBanner} />
         </span>
+      </p>
+    </div>
+  );
+};
+
+// banner text to display at the top of the deposit page
+const { depositBannerText } = constants;
+export const DepositsPageBanner = () => {
+  return (
+    <div className="w-full bg-blue-dark px-4 py-4 text-center">
+      <p className="text-sm font-extralight">
+        <span className="font-medium">IMPORTANT: </span>
+        {depositBannerText}
       </p>
     </div>
   );

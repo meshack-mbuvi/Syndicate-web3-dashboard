@@ -106,7 +106,7 @@ const SyndicateInvestment = (props) => {
               {"< Back To My Syndicates"}
             </a>
           </Link>
-          <div className="w-full flex flex-col sm:flex-row">
+          <div className="w-full flex flex-col md:flex-row">
             <SyndicateDetails syndicate={syndicate} lpIsManager={lpIsManager} />
 
             {lpIsManager ? (
@@ -114,14 +114,6 @@ const SyndicateInvestment = (props) => {
             ) : (
               <InvestInSyndicate syndicate={syndicate} />
             )}
-          </div>
-
-          <div className="flex w-full block my-8 justify-center m-auto p-auto">
-            <p className="w-2/3 text-center flex justify-center flex-wrap	">
-              Syndicate&apos;s contract has been formally verified but is still
-              being audited. Do not deposit more than you are willing to lose
-              during our alpha test. Our audits will be complete soon.
-            </p>
           </div>
         </div>
       </ErrorBoundary>

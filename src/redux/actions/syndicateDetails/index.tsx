@@ -34,13 +34,15 @@ const onlyUnique = (value, index, self) => {
  * @param profitShareToSyndicateLead profit share to syndicate lead in basis points
  * @param profitShareToSyndicateProtocol profit share to Syndicate Protocol in basis points
  * @param syndicate details of the syndicate fetched with getSyndicateValues()
+ * @param syndicateAddress the address of the syndicate
  */
 export const setSyndicateDetails = (
   syndicateInstance,
   depositERC20ContractAddress,
   profitShareToSyndicateLead,
   profitShareToSyndicateProtocol,
-  syndicate
+  syndicate,
+  syndicateAddress
 ) => async (dispatch) => {
   if (!syndicateInstance) return;
   // initialise syndicate contract
@@ -71,6 +73,7 @@ export const setSyndicateDetails = (
   await syndicateContract.getPastEvents(
     "lpInvestedInSyndicate",
     {
+      filter: { syndicateAddress },
       fromBlock: startBlock,
       toBlock: "latest",
     },
@@ -95,6 +98,7 @@ export const setSyndicateDetails = (
   const lpWithdrewDistribution = await syndicateContract.getPastEvents(
     "lpWithdrewDistributionFromSyndicate",
     {
+      filter: { syndicateAddress },
       fromBlock: startBlock,
       toBlock: "latest",
     }

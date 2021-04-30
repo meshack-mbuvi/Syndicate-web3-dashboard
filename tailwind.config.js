@@ -26,6 +26,7 @@ module.exports = {
           85: "#d9d9d9",
           90: "#5F5F5F",
           99: "#fcfcfc",
+          100: "#101010",
           dark: "#272727",
           light: "#E5E5E5",
           dim: "#717171",
@@ -42,6 +43,7 @@ module.exports = {
           light: "#35cfff",
           cyan: "#2AA3EF",
           deepAzure: "#0C1F30",
+          dark: "#11ACDC",
         },
         yellow: {
           ...colors.yellow,

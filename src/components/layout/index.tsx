@@ -4,20 +4,24 @@ import { Contract } from "ethers";
 import { parse } from "flatted";
 import PropTypes from "prop-types";
 import React, { useEffect } from "react";
+import { connect } from "react-redux";
 import { useDispatch } from "react-redux";
 import Header from "src/components/navigation/header";
 import Syndicate from "src/contracts/Syndicate.json";
 import { injected } from "../connectWallet/connectors";
 import SEO from "../seo";
+import { DepositsPageBanner } from "src/components/banners";
 
 const contractAddress = process.env.NEXT_PUBLIC_SYNDICATE_CONTRACT_ADDRESS;
 const Web3 = require("web3");
 const daiABI = require("src/utils/abi/dai");
 const daiContractAddress = "0x6b175474e89094c44da98b954eedeac495271d0f";
 
-export const Layout = ({ children }) => {
+export const Layout = ({ children, syndicateAction }) => {
   const { activate, library, account } = useWeb3React();
   const dispatch = useDispatch();
+  // check deposit pages to display info banner
+  const { deposit, generalView } = syndicateAction;
 
   const setWeb3 = async () => {
     let syndicateInstance = null;
@@ -102,6 +106,8 @@ export const Layout = ({ children }) => {
       <Header />
       {/* This banner should be shown in V2 */}
       {/* <SyndicateInBetaBanner /> */}
+
+      {deposit || generalView ? <DepositsPageBanner /> : null}
       <div className="flex w-auto w-full flex-col sm:flex-row md:py-4 px-4 md:px-6">
         {children}
       </div>
@@ -113,4 +119,14 @@ Layout.propTypes = {
   children: PropTypes.node.isRequired,
 };
 
-export default Layout;
+const mapStateToProps = ({ web3Reducer: { syndicateAction } }) => {
+  return {
+    syndicateAction,
+  };
+};
+
+Layout.propTypes = {
+  syndicateAction: PropTypes.object,
+};
+
+export default connect(mapStateToProps)(Layout);
