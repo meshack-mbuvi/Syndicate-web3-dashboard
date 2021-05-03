@@ -191,39 +191,47 @@ const SyndicateItem = (props: SyndicateItemProps) => {
   }
 
   return (
-    <div className="flex my-2 py-2 border-b border-gray-90 justify-between">
-      <div className="text-line"></div>
-      <div className="w-8">
+    <tr className="border-b border-gray-90">
+      <td
+        scope="col"
+        className="pl-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
         <p className={`h-5 w-5 rounded-full ${styles}`}></p>
-      </div>
-      <span className="text-sm' mx-1 text-gray-300 w-28">
+      </td>
+      <td className="px-5 py-4 whitespace-nowrap text-sm font-medium text-sm text-gray-300 whitespace-nowrap">
         {formattedAddress}
-      </span>
-      <span className="text-sm mx-2 text-gray-300">{createdDate}</span>
-      <span className="text-sm mx-2 text-gray-300 w-40">{status}</span>
-      <span className="text-sm mx-2  text-gray-300  w-20">
+      </td>
+      <td className="px-4 py-4 whitespace-nowrap text-sm font-medium text-sm text-gray-300 whitespace-nowrap">
+        {createdDate}
+      </td>
+      <td className="text-sm px-6s py-4 whitespace-nowrap text-sm font-medium text-gray-300 whitespace-nowrap">
+        {status}
+      </td>
+      <td className="text-sm px-6 py-4 whitespace-nowrap text-sm font-mediumtext-gray-300 whitespace-nowrap">
         {`${depositors / 1000} k`}
-      </span>
-      <span className="text-sm mx-2 text-gray-300 w-20">
+      </td>
+      <td className="text-sm px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-300 whitespace-nowrap">
         {`${totalDeposits} DAI`}
-      </span>
-      <span className="text-sm mx-2 text-gray-300 w-16">{activities}</span>
-      <span className="text-sm mx-2 text-gray-300 w-24">
+      </td>
+      <td className="text-sm px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-300 whitespace-nowrap">
+        {activities}
+      </td>
+      <td className="text-sm px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-300 whitespace-nowrap">
         {totalDistributions}
-      </span>
-      <span className="text-sm mx-4 text-gray-300 w-20">{lpDeposits}</span>
-      <span className="text-sm mx-2 text-gray-300 w-24">
+      </td>
+      <td className="text-sm px-3 py-4 whitespace-nowrap text-sm font-medium text-gray-300 whitespace-nowrap">
+        {lpDeposits}
+      </td>
+      <td className="text-sm px-3 py-4 whitespace-nowrap text-sm font-medium text-gray-300 whitespace-nowrap">
         {claimedDistributions}
-      </span>
-      <span className="mb-2">
+      </td>
+      <td className="mb-2">
         <Link href={`/syndicates/${address}/${link}`}>
-          <a
-            className={`text-sm mx-4 rounded-full py-3 my-1 ml-8 ${buttonStyles}`}>
+          <a className={`text-sm mx-4 rounded-full py-3 my-1 ${buttonStyles}`}>
             <button className="w-36 focus:outline-none">{buttonText}</button>
           </a>
         </Link>
-      </span>
-    </div>
+      </td>
+    </tr>
   );
 };
 

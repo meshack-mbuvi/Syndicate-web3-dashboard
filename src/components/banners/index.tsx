@@ -1,7 +1,7 @@
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
-import { SyndicateInBetaBannerText } from "../syndicates/shared/Constants";
 import { constants } from "src/components/syndicates/shared/Constants";
+import { SyndicateInBetaBannerText } from "../syndicates/shared/Constants";
 
 export const SyndicateInBetaBanner = () => {
   const [showBanner, setShowBanner] = useState(false);
@@ -44,11 +44,10 @@ export const SyndicateInBetaBanner = () => {
 
   return (
     <div
-      className={`pl-4 pr-8 py-3 w-full relative rounded bg-yellow-light text-black text-center ${
+      className={`pl-4 pr-8 py-3 w-full relative bg-yellow-light text-black text-center ${
         showBanner ? "" : "hidden"
       }`}
-      role="alert"
-    >
+      role="alert">
       <p>
         <span className="block sm:inline">{SyndicateInBetaBannerText}</span>{" "}
         <Link href="#">

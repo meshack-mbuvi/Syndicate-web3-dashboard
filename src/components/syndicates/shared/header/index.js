@@ -2,34 +2,52 @@ import React from "react";
 
 export const Header = () => {
   return (
-    <div className="flex px-4">
-      <div className="flex justify-between w-10/12 ml-4">
-        <span className="uppercase text-gray-dim text-xs flex align-start ml-4 mr-3 w-28">
+    <thead>
+      <tr>
+        <th
+          scope="col"
+          className="pl-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"></th>
+        <th
+          scope="col"
+          className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
           Address
-        </span>
-        <span className="uppercase text-gray-dim text-xs mx-1 w-20">
+        </th>
+
+        <th
+          scope="col"
+          className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
           Created
-        </span>
-        <span className="uppercase text-gray-dim text-xs mx-2 w-40">
+        </th>
+        <th
+          scope="col"
+          className="py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
           Status
-        </span>
-        <span className="uppercase text-gray-dim text-xs mx-2 w-20">
+        </th>
+        <th
+          scope="col"
+          className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
           Depositors
-        </span>
-        <span className="uppercase text-gray-dim text-xs mx-2 w-20">
+        </th>
+
+        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
           Deposits
-        </span>
-        <span className="uppercase text-gray-dim text-xs mx-2 ">Activity</span>
-        <span className="uppercase text-gray-dim text-xs mx-4">
+        </th>
+        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+          Activity
+        </th>
+        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
           Distributions
-        </span>
-        <span className="uppercase text-gray-dim text-xs mx-2">
+        </th>
+        <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">
           My Deposits
-        </span>
-        <span className="uppercase text-gray-dim text-xs mx-2">
+        </th>
+        <th className="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">
           My withdrawals
-        </span>
-      </div>
-    </div>
+        </th>
+        <th scope="col" className=" px-6 py-3">
+          <span className="sr-only">Action</span>
+        </th>
+      </tr>
+    </thead>
   );
 };
