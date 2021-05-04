@@ -2,7 +2,6 @@
 import ManagerActions from "@/containers/managerActions";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import PropTypes from "prop-types";
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import ErrorBoundary from "src/components/errorBoundary";
@@ -18,7 +17,7 @@ import { etherToNumber, formatDate } from "src/utils";
  * @param {object} props
  */
 
-const SyndicateInvestment = (props) => {
+const SyndicateInvestment = (props: { web3 }) => {
   const {
     web3: { syndicateInstance, account },
   } = props;
@@ -29,13 +28,22 @@ const SyndicateInvestment = (props) => {
   const [syndicate, setSyndicate] = useState(null);
   const [lpIsManager, setLpIsManager] = useState<boolean>(false);
 
+  // A manager should not access deposit page but should be redirected
+  // to syndicates page
+  useEffect(() => {
+    if (syndicateAddress !== undefined && account !== undefined) {
+      if (syndicateAddress == account) {
+        router.replace(`/syndicates/${syndicateAddress}/manage`);
+      }
+    }
+  }, [account]);
+
   useEffect(() => {
     if (syndicateInstance && syndicateAddress) {
       try {
         syndicateInstance
           .getSyndicateValues(syndicateAddress)
           .then((data) => {
-            console.log({ data });
             const closeDate = formatDate(
               new Date(data.closeDate.toNumber() * 1000)
             );
@@ -119,10 +127,6 @@ const SyndicateInvestment = (props) => {
       </ErrorBoundary>
     </Layout>
   );
-};
-
-SyndicateInvestment.propTypes = {
-  web3: PropTypes.object,
 };
 
 const mapStateToProps = ({ web3Reducer }) => {

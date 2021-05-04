@@ -1,10 +1,11 @@
-import React, { useEffect } from "react";
-import { connect } from "react-redux";
 import SyndicateActions from "@/containers/syndicateActions";
 import { setSyndicateAction } from "@/redux/actions/web3Provider";
+import React, { useEffect } from "react";
+import { useDispatch } from "react-redux";
 
-const SyndicateWithdrawalView = (props) => {
-  const { dispatch } = props;
+const SyndicateWithdrawalView = () => {
+  const dispatch = useDispatch();
+
   useEffect(() => {
     // dispatch to indicate that this is a withdrawal
     // this will in turn load the correct components
@@ -31,4 +32,4 @@ const SyndicateWithdrawalView = (props) => {
   return <SyndicateActions />;
 };
 
-export default connect(null, null)(SyndicateWithdrawalView);
+export default SyndicateWithdrawalView;

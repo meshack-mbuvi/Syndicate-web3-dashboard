@@ -79,7 +79,7 @@ export const Layout = ({ children, syndicateAction }) => {
       const parseCasheWallet = parse(cacheWallet);
       const provider = parseCasheWallet.library.provider || null;
       if (provider.isMetaMask) {
-        activateProvider(injected).then((Data) => console.log({ Data }));
+        activateProvider(injected).then(() => {});
       }
     }
   }, []);

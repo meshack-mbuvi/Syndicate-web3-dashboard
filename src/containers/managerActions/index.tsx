@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import ErrorBoundary from "../../components/errorBoundary";
 import DistributeToken from "./distributeToken";
-import PreApproveDepositor from "./preApproveDepositor";
 import ManagerAction from "./ManagerAction";
 import MoreManagerActions from "./MoreManagerActions";
+import PreApproveDepositor from "./preApproveDepositor";
 
 const moreActions = [
   {
