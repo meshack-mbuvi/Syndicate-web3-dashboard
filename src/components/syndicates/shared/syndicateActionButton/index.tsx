@@ -6,6 +6,9 @@ interface ButtonProps {
   amountError?: boolean;
   disableApprovalButton?: boolean;
   disableDepositButton?: boolean;
+  action?: string;
+  approved?: boolean;
+  depositAmountChanged?: boolean;
 }
 
 export const SyndicateActionButton = (props: ButtonProps) => {
@@ -14,6 +17,9 @@ export const SyndicateActionButton = (props: ButtonProps) => {
     amountError = "",
     disableApprovalButton,
     disableDepositButton,
+    action,
+    approved,
+    depositAmountChanged,
   } = props;
 
   // this button will be disabled if
@@ -24,6 +30,15 @@ export const SyndicateActionButton = (props: ButtonProps) => {
     disableButton = true;
   }
 
+  // show check mark if button is used for approvals
+  // only show check mark if amount has been approved.
+  let showApprovalCheckmark = false;
+  if (action === "approval") {
+    if (approved && !depositAmountChanged) {
+      showApprovalCheckmark = true;
+    }
+  }
+
   return (
     <button
       className={`flex w-full items-center justify-center font-medium rounded-md text-black bg-white focus:outline-none focus:ring py-4 ${
@@ -32,7 +47,12 @@ export const SyndicateActionButton = (props: ButtonProps) => {
       type="submit"
       disabled={disableButton}
     >
-      {buttonText}
+      {showApprovalCheckmark ? (
+        <span>
+          <img src="/images/checkmark.svg" className="h-4 mr-2" />
+        </span>
+      ) : null}
+      <span className="text-lg">{buttonText}</span>
     </button>
   );
 };

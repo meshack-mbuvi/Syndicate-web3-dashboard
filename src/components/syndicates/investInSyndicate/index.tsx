@@ -609,6 +609,7 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
       setApproved(true);
       setAllowanceApprovalError("");
       setLPCanDeposit(true);
+      setDepositAmountChanged(false);
     }
   }, [depositAmount]);
 
@@ -726,6 +727,9 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
           amountError={Boolean(depositAmountError)}
           buttonText={`${approvalButtonText} ${amountToApprove} ${currentERC20}`}
           disableApprovalButton={disableApprovalButton}
+          action="approval"
+          approved={approved}
+          depositAmountChanged={depositAmountChanged}
         />
       </div>
       <div className="mb-4">
@@ -820,6 +824,7 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
                             name="depositAmount"
                             type="text"
                             placeholder="400"
+                            disabled={!myAddressAllowed}
                             defaultValue={depositAmount}
                             onChange={handleSetAmount}
                             className={`rounded-md bg-gray-9 border border-gray-24 text-white focus:outline-none focus:ring-gray-24 focus:border-gray-24 font-ibm w-7/12 mr-2 ${
