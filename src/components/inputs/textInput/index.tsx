@@ -39,7 +39,7 @@ export const TextInput = (props: {
       <div className="mr-2 w-1/2 flex justify-end">
         <label
           htmlFor="syndicateAddress"
-          className="block pt-2 text-black text-lg font-medium">
+          className="block pt-2 text-black text-base font-medium">
           {label}
         </label>
       </div>

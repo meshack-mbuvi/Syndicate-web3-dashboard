@@ -77,11 +77,11 @@ const CreateSyndicate = (props: any) => {
 
   let validated = false;
 
-  // input fields
+  // set defualt to our test DAI address
   const [
     primaryERC20ContractAddress,
     setPrimaryERC20ContractAddress,
-  ] = useState(account);
+  ] = useState("0xc3dbf84abb494ce5199d5d4d815b10ec29529ff8");
   const [maxDeposits, setMaxDeposits] = useState("");
   const [minDeposits, setMinDeposits] = useState("");
   const [maxLPs, setMaxLPs] = useState("");
@@ -89,9 +89,9 @@ const CreateSyndicate = (props: any) => {
   const [
     expectedAnnualOperatingFees,
     setExpectedAnnualOperatingFees,
-  ] = useState("2");
+  ] = useState("0");
   const [profitShareToSyndicateLead, setProfitShareToSyndicateLead] = useState(
-    "20"
+    "0"
   );
   const [allowlistEnabled, setAllowlistEnabled] = useState(false);
   const [modifiable, setModifiable] = useState(false);
@@ -276,7 +276,12 @@ const CreateSyndicate = (props: any) => {
 
   const [shareableLink, setShareableLink] = useState("");
   const [copied, setCopied] = useState(false);
-  const [selectedDate, setSelectedDate] = useState(new Date());
+
+  // minimum closeDate should be 12 hours in the future
+  const minimumCloseDate = new Date(
+    new Date().setHours(new Date().getHours() + 24)
+  );
+  const [selectedDate, setSelectedDate] = useState(minimumCloseDate);
 
   // this controls the toggle button for manually whitelisting depositors
   const toggleAllowlistEnabled = () => setAllowlistEnabled(!allowlistEnabled);
@@ -363,7 +368,7 @@ const CreateSyndicate = (props: any) => {
         managerPerformanceFeeBasisPoints,
         allowlistEnabled,
         modifiable,
-        { from: account, gasLimit: 800000 }
+        { from: account }
       );
 
       // retrieve details of the newly created syndicate
@@ -596,7 +601,7 @@ const CreateSyndicate = (props: any) => {
                 <div className="mr-2 w-1/2 flex justify-end">
                   <label
                     htmlFor="syndicateAddress"
-                    className="block pt-2 text-black text-lg font-medium">
+                    className="block pt-2 text-black text-base font-medium">
                     Close Date:
                   </label>
                 </div>
@@ -606,8 +611,7 @@ const CreateSyndicate = (props: any) => {
                     selected={selectedDate}
                     onSelect={handleDateSelect}
                     className={`flex flex-grow focus:ring-indigo-500 focus:border-indigo-500 rounded-md text-black border-gray-85 w-full`}
-                    placeholder={new Date()}
-                    minDate={new Date()}
+                    minDate={minimumCloseDate}
                     selectsStart
                     name="closeDate"
                     dropdownMode="select"
@@ -652,7 +656,7 @@ const CreateSyndicate = (props: any) => {
                 <div className="mr-2 w-1/2 flex justify-end">
                   <label
                     htmlFor="profitShareToSyndProtocol"
-                    className="block pt-2 text-black text-lg font-medium">
+                    className="block pt-2 text-black text-base font-medium">
                     Profit Share to Syndicate Protocol:
                   </label>
                 </div>
