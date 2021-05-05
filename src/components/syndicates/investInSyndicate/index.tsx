@@ -102,6 +102,7 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
   const [depositAmountChanged, setDepositAmountChanged] = useState<boolean>(
     false
   );
+  const [depositsAvailable, setDepositsAvailable] = useState<boolean>(true);
 
   const [lpCanDeposit, setLPCanDeposit] = useState<boolean>(false);
   const [conversionError, setConversionError] = useState<string>("");
@@ -148,6 +149,9 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
     loaderGeneralHeaderText,
     amountConversionErrorText,
     actionFailedError,
+    depositStatusAllowApprovedText,
+    depositsUnavailableText,
+    depositsUnavailableTitleText,
   } = constants;
 
   const { withdraw, deposit, generalView } = syndicateAction;
@@ -225,6 +229,12 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
 
       if (closedToDepositsWithNoDistribution) {
         setDepositsAndWithdrawalsAvailable(false);
+      }
+
+      // if the syndicate is closed, deposits are not available.
+      // This check is important should a member try to access the deposit/details page of a closed syndicate.
+      if (!syndicateOpen) {
+        setDepositsAvailable(false);
       }
     }
   }, [syndicate]);
@@ -658,7 +668,23 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
   ]);
 
   // check if LP address is on the allowed address list
+  // if allowlist is enabled.
+  // if allowlist is disabled, any address can deposit.
+  // set correct status text to display.
   const { myAddressAllowed } = syndicateLPDetails;
+  let depositApprovalText;
+  let disableAmountInput = false;
+  if (syndicate) {
+    const { allowlistEnabled } = syndicate;
+    if (allowlistEnabled && myAddressAllowed) {
+      depositApprovalText = depositStatusAllowApprovedText;
+    } else if (allowlistEnabled && !myAddressAllowed) {
+      depositApprovalText = depositStatusNotApprovedText;
+      disableAmountInput = true;
+    } else if (!allowlistEnabled) {
+      depositApprovalText = depositStatusApprovedText;
+    }
+  }
 
   // if the current deposit amount exceeds the already approved amount
   // the approval button should be disabled
@@ -666,7 +692,7 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
   let disableApprovalButton = false;
   if (
     (amountToDeposit <= allowanceAmountApproved && approved) ||
-    !myAddressAllowed ||
+    disableAmountInput ||
     (amountToDeposit <= 0 && !approved)
   ) {
     disableApprovalButton = true;
@@ -683,7 +709,7 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
     !approved ||
     increasedDepositAmount ||
     amountToDeposit <= 0 ||
-    !myAddressAllowed
+    disableAmountInput
   ) {
     disableDepositButton = true;
   }
@@ -785,7 +811,16 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
       <div className="w-full md:w-1/2 mt-4 sm:mt-0">
         <div className="h-fit-content rounded-t-custom mx-2 p-4 pb-2 md:p-6 bg-gray-7 sm:ml-6 border border-b-0 border-gray-49">
           {syndicate !== null ? (
-            depositsAndWithdrawalsAvailable ? (
+            !depositsAvailable && depositModes ? (
+              <div>
+                <p className="font-semibold text-xl p-2">
+                  {depositsUnavailableTitleText}
+                </p>
+                <p className="p-4 pl-6 text-gray-dim text-sm">
+                  {depositsUnavailableText}
+                </p>
+              </div>
+            ) : depositsAndWithdrawalsAvailable ? (
               <>
                 {submittingAllowanceApproval || submitting ? (
                   <SyndicateActionLoader
@@ -810,9 +845,7 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
                       {/* show this text if whitelist is enabled for deposits */}
                       <p className="py-4 pt-2 text-green-screamin font-ibm">
                         {depositModes
-                          ? myAddressAllowed
-                            ? depositStatusApprovedText
-                            : depositStatusNotApprovedText
+                          ? depositApprovalText
                           : withdraw
                           ? totalDistributionsText
                           : null}
@@ -824,7 +857,7 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
                             name="depositAmount"
                             type="text"
                             placeholder="400"
-                            disabled={!myAddressAllowed}
+                            disabled={disableAmountInput}
                             defaultValue={depositAmount}
                             onChange={handleSetAmount}
                             className={`rounded-md bg-gray-9 border border-gray-24 text-white focus:outline-none focus:ring-gray-24 focus:border-gray-24 font-ibm w-7/12 mr-2 ${

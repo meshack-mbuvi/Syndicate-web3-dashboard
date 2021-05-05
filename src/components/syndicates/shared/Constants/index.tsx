@@ -4,9 +4,10 @@
 // constants for the invest/deposit page.
 const depositTitleText = "Deposit Into Syndicate";
 const depositMoreTitleText = "Deposit More Into Syndicate";
-const depositStatusApprovedText = "Whitelist enabled: You’re pre-approved.";
+const depositStatusApprovedText = "Allowlist disabled: You’re pre-approved.";
 const depositStatusNotApprovedText =
-  "Whitelist disabled: You will need to be approved.";
+  "Allowlist enabled: You will need to be approved.";
+const depositStatusAllowApprovedText = "Allowlist enabled: You're approved."
 const depositDisclaimerText =
   "All deposits are final and can only be changed by Syndicate leads.";
 const depositLPAccreditedText =
@@ -17,6 +18,8 @@ const noSyndicateText =
   "No syndicate with given address. Please check the address provided.";
 const depositsAndWithdrawalsUnavailableText =
   "Deposits and withdraws are not currently available";
+const depositsUnavailableTitleText = "Deposits"
+const depositsUnavailableText = "Syndicate closed. Deposits unavailable."
 const depositsAndWithdrawalsUnavailableTitleText = "Deposits & Withdraws";
 const loaderWithdrawalHeaderText =
   "Please wait while the Withdrawal transaction completes...";
@@ -88,6 +91,9 @@ export const constants = {
   depositBannerText,
   amountConversionErrorText,
   actionFailedError,
+  depositStatusAllowApprovedText,
+  depositsUnavailableText,
+  depositsUnavailableTitleText
 };
 
 // Tooltips
