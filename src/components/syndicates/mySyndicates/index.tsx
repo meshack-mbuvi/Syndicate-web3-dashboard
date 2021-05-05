@@ -83,6 +83,7 @@ const MySyndicates = (props) => {
     setShowModal(true);
   };
 
+
   return (
     <div className="mt-4">
       {!loading ? (

@@ -32,6 +32,7 @@ import {
   syndicateAddressToolTip,
   totalMaximumDepositToolTip,
 } from "../shared/Constants";
+
 /**
  * Diplays all syndicates.
  * The main groups for syndicates are active and inactive
@@ -274,7 +275,6 @@ const CreateSyndicate = (props: any) => {
     }
   };
 
-  const [shareableLink, setShareableLink] = useState("");
   const [copied, setCopied] = useState(false);
 
   // minimum closeDate should be 12 hours in the future
@@ -303,6 +303,7 @@ const CreateSyndicate = (props: any) => {
    */
   const onSubmit = async (event) => {
     event.preventDefault();
+
     /**
      * If we are not connected and the form modal is open, user can trigger
      * creation of Syndicate. We therefore catch this here and request for
@@ -386,9 +387,6 @@ const CreateSyndicate = (props: any) => {
 
       // add the newly created syndicate to application state
       dispatch(addNewSyndicate({ ...syndicate, depositors: 0 }));
-
-      // before showing success modal, we need to set the shareable link
-      setShareableLink(`www.syndicateprotocol.org/${account}`);
 
       // show success modal
       setShowSuccessModal(true);
@@ -861,13 +859,15 @@ const CreateSyndicate = (props: any) => {
                 <p className="text-xs sm:text-lg">
                   Your shareable deposit link:
                 </p>
-                <p className="text-sm sm:text-lg">{shareableLink}</p>
+                <p className="text-sm sm:text-sm word-break">{`${window.location.origin}/syndicates/${account}/deposit`}</p>
               </div>
               <div className="flex align-center justify-center mx-auto my-4 ml-2">
                 {copied ? (
                   <span className="text-green-400">Copied</span>
                 ) : (
-                  <CopyToClipboard text={shareableLink} onCopy={handleOnCopy}>
+                  <CopyToClipboard
+                    text={`${window.location.origin}/syndicates/${account}/manage`}
+                    onCopy={handleOnCopy}>
                     <FontAwesomeIcon
                       icon={faCopy}
                       size="2x"
@@ -879,7 +879,7 @@ const CreateSyndicate = (props: any) => {
             </div>
 
             <div className="text-light-blue">
-              <Link href={`/syndicates/${account}`}>
+              <Link href={`/syndicates/${account}/deposit`}>
                 <a className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium  text-blue-light hover md:py-4 md:text-lg md:px-10 bg-light-green">
                   {" "}
                   Go to Syndicate Deposit Page
