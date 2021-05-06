@@ -7,7 +7,7 @@ const depositMoreTitleText = "Deposit More Into Syndicate";
 const depositStatusApprovedText = "Allowlist disabled: You’re pre-approved.";
 const depositStatusNotApprovedText =
   "Allowlist enabled: You will need to be approved.";
-const depositStatusAllowApprovedText = "Allowlist enabled: You're approved."
+const depositStatusAllowApprovedText = "Allowlist enabled: You're approved.";
 const depositDisclaimerText =
   "All deposits are final and can only be changed by Syndicate leads.";
 const depositLPAccreditedText =
@@ -18,15 +18,15 @@ const noSyndicateText =
   "No syndicate with given address. Please check the address provided.";
 const depositsAndWithdrawalsUnavailableText =
   "Deposits and withdraws are not currently available";
-const depositsUnavailableTitleText = "Deposits"
-const depositsUnavailableText = "Syndicate closed. Deposits unavailable."
+const depositsUnavailableTitleText = "Deposits";
+const depositsUnavailableText = "Syndicate closed. Deposits unavailable.";
 const depositsAndWithdrawalsUnavailableTitleText = "Deposits & Withdraws";
 const loaderWithdrawalHeaderText =
-  "Please wait while the Withdrawal transaction completes...";
+  "Please wait while the withdrawal transaction completes...";
 const loaderDepositHeaderText =
-  "Please wait while the Deposit transaction completes...";
+  "Please wait while the deposit transaction completes...";
 const loaderApprovalHeaderText =
-  "Please wait while the Approval transaction completes...";
+  "Please wait while the approval transaction completes...";
 const loaderGeneralHeaderText =
   "Please wait while the transaction completes...";
 const loaderSubtext =
@@ -38,6 +38,12 @@ const depositBannerText =
 const amountConversionErrorText = "Error converting amount. Please try again.";
 const actionFailedError =
   "An error occurred while completing the transaction. Please try again.";
+const connectWalletMessageTitle = "Wallet Not Connected";
+const connectWalletMessage = "Connect your wallet to view syndicate actions.";
+const connectWalletDepositMessage =
+  "Connect your wallet to deposit into this syndicate.";
+const connectWalletWithdrawMessage =
+  "Connect your wallet to withdraw from this syndicate.";
 
 // syndicate details section
 const syndicateDetailsFooterText =
@@ -93,7 +99,11 @@ export const constants = {
   actionFailedError,
   depositStatusAllowApprovedText,
   depositsUnavailableText,
-  depositsUnavailableTitleText
+  depositsUnavailableTitleText,
+  connectWalletMessageTitle,
+  connectWalletMessage,
+  connectWalletWithdrawMessage,
+  connectWalletDepositMessage,
 };
 
 // Tooltips

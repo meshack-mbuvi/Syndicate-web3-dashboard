@@ -10,7 +10,15 @@ import {
   SET_WEB3,
   SHOW_ERROR_MODAL,
   SHOW_WALLET_MODAL,
+  STORE_SYNDICATE_INSTANCE,
 } from "../types";
+
+export const storeSyndicateInstance = (data) => async (dispatch) => {
+  return dispatch({
+    data,
+    type: STORE_SYNDICATE_INSTANCE,
+  });
+};
 
 export const setLibrary = (data) => async (dispatch) => {
   // flatten json and store in local storage

@@ -46,4 +46,5 @@ export const initialState = {
   },
   syndicateDetailsLoading: false,
   syndicateLPDetailsLoading: false,
+  syndicateContractInstance: {},
 };

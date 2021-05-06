@@ -9,17 +9,18 @@ import Layout from "src/components/layout";
 import InvestInSyndicate from "src/components/syndicates/investInSyndicate";
 import Head from "src/components/syndicates/shared/HeaderTitle";
 import SyndicateDetails from "src/components/syndicates/syndicateDetails";
-import { etherToNumber, formatDate } from "src/utils";
-
+import { formatDate } from "src/utils";
+import { ERC20TokenDetails } from "src/utils/ERC20Methods";
 /**
  * Renders syndicate component with details section on the left and
  * deposit section on the right
  * @param {object} props
  */
 
-const SyndicateInvestment = (props: { web3 }) => {
+const SyndicateInvestment = (props: { web3; syndicateContractInstance }) => {
   const {
-    web3: { syndicateInstance, account },
+    web3: { account },
+    syndicateContractInstance,
   } = props;
   const router = useRouter();
 
@@ -27,6 +28,14 @@ const SyndicateInvestment = (props: { web3 }) => {
 
   const [syndicate, setSyndicate] = useState(null);
   const [lpIsManager, setLpIsManager] = useState<boolean>(false);
+  const [tokenDecimals, setTokenDecimals] = useState<number>(18);
+
+  // get number of decimal places for the current deposit token
+  const getTokenDecimals = async (depositERC20ContractAddress) => {
+    const ERC20Details = new ERC20TokenDetails(depositERC20ContractAddress);
+    const tokenDecimals = await ERC20Details.getTokenDecimals();
+    setTokenDecimals(parseInt(tokenDecimals));
+  };
 
   // A manager should not access deposit page but should be redirected
   // to syndicates page
@@ -39,13 +48,14 @@ const SyndicateInvestment = (props: { web3 }) => {
   }, [account]);
 
   useEffect(() => {
-    if (syndicateInstance && syndicateAddress) {
+    if (syndicateContractInstance.methods) {
       try {
-        syndicateInstance
+        syndicateContractInstance.methods
           .getSyndicateValues(syndicateAddress)
+          .call()
           .then((data) => {
             const closeDate = formatDate(
-              new Date(data.closeDate.toNumber() * 1000)
+              new Date(parseInt(data.closeDate) * 1000)
             );
 
             /**
@@ -54,22 +64,31 @@ const SyndicateInvestment = (props: { web3 }) => {
              * convert this to javascript date object
              */
             const createdDate = formatDate(
-              new Date(data.creationDate.toNumber() * 1000)
+              new Date(parseInt(data.creationDate) * 1000)
             );
 
-            const maxDeposit = data.maxTotalDeposits.toString();
-
-            const profitShareToSyndicateProtocol = data.syndicateProfitShareBasisPoints.toNumber();
-            const profitShareToSyndicateLead = data.managerPerformanceFeeBasisPoints.toNumber();
+            const profitShareToSyndicateProtocol =
+              parseInt(data.syndicateProfitShareBasisPoints) / 100;
+            const profitShareToSyndicateLead =
+              parseInt(data.managerPerformanceFeeBasisPoints) / 100;
+            const managerManagementFeeBasisPoints =
+              parseInt(data.managerManagementFeeBasisPoints) / 100;
             const depositERC20ContractAddress =
               data.depositERC20ContractAddress;
+
+            getTokenDecimals(depositERC20ContractAddress);
 
             const openToDeposits = data.syndicateOpen;
             const currentManager = data.currentManager;
             const syndicateOpen = data.syndicateOpen;
             const distributionsEnabled = data.distributionsEnabled;
+            const maxDeposit =
+              parseFloat(data.maxTotalDeposits) / Math.pow(10, tokenDecimals);
 
-            const totalDeposits = etherToNumber(data.totalDeposits.toString());
+            const totalDeposits =
+              parseFloat(data.totalDeposits) / Math.pow(10, tokenDecimals);
+
+            const totalDepositors = data.totalLPs;
 
             setSyndicate({
               maxDeposit,
@@ -79,20 +98,23 @@ const SyndicateInvestment = (props: { web3 }) => {
               totalDeposits,
               closeDate,
               createdDate,
-              active: data.active,
               allowlistEnabled: data.allowlistEnabled,
               depositERC20ContractAddress,
               currentManager,
               syndicateOpen,
               distributionsEnabled,
+              managerManagementFeeBasisPoints,
+              totalDepositors,
             });
           })
           .catch((err) => console.log({ err }));
       } catch (err) {
-        console.log({ err });
+        if (syndicateAddress) {
+          setSyndicate(null);
+        }
       }
     }
-  }, [syndicateInstance, account]);
+  }, [syndicateContractInstance, syndicateAddress, tokenDecimals]);
 
   // check whether the current connected wallet account is the manager of the syndicate
   // we'll use this information to load the manager view
@@ -129,9 +151,12 @@ const SyndicateInvestment = (props: { web3 }) => {
   );
 };
 
-const mapStateToProps = ({ web3Reducer }) => {
+const mapStateToProps = ({
+  web3Reducer,
+  syndicateInstanceReducer: { syndicateContractInstance },
+}) => {
   const { web3 } = web3Reducer;
-  return { web3 };
+  return { web3, syndicateContractInstance };
 };
 
 export default connect(mapStateToProps)(SyndicateInvestment);

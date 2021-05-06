@@ -25,30 +25,19 @@ const SyndicateDetails = (props: {
   web3: any;
   syndicateDetails: any;
   lpIsManager;
+  syndicate: any;
 }) => {
   const {
     web3: { syndicateInstance, account },
     syndicateDetails,
     lpIsManager,
+    syndicate,
   } = props;
 
   const dispatch = useDispatch();
 
   const router = useRouter();
   const [details, setDetails] = useState([]);
-  const [syndicate, setSyndicate] = useState({
-    maxDeposit: 0,
-    openToDeposits: false,
-    totalDeposits: 0,
-    managerManagementFeeBasisPoints: 0,
-    depositERC20ContractAddress: "",
-    profitShareToSyndicateLead: 0,
-    profitShareToSyndicateProtocol: 0,
-    closeDate: "",
-    active: true,
-    createdDate: "",
-    distributionsEnabled: false,
-  });
 
   // state to handle copying of the syndicate address to clipboard.
   const [showCopyState, setShowCopyState] = useState<boolean>(false);
@@ -65,12 +54,13 @@ const SyndicateDetails = (props: {
   // get syndicate address from the url
   const { syndicateAddress } = router.query;
 
-  const {
-    openToDeposits,
-    distributionsEnabled,
-    depositERC20ContractAddress,
-    active,
-  } = syndicate;
+  if (syndicate) {
+    var {
+      openToDeposits,
+      distributionsEnabled,
+      depositERC20ContractAddress,
+    } = syndicate;
+  }
 
   const {
     syndicateDetailsFooterText,
@@ -87,15 +77,14 @@ const SyndicateDetails = (props: {
   // set syndicate cummulative values
   useEffect(() => {
     if (syndicate) {
-      const { totalDeposits } = syndicate;
-      const { totalDepositors } = syndicateDetails;
+      const { totalDeposits, totalDepositors } = syndicate;
       setSyndicateCummulativeDetails([
         {
           header: "Total Deposits",
           subText: `${floatedNumberWithCommas(
             totalDeposits
           )} ${tokenSymbol} (${totalDepositors} ${
-            parseInt(totalDepositors) < 2 ? "depositor" : "depositors"
+            parseInt(totalDepositors) === 1 ? "depositor" : "depositors"
           })`,
         },
       ]);
@@ -130,19 +119,19 @@ const SyndicateDetails = (props: {
         },
         {
           header: "Expected Annual Operating Fees",
-          subText: `${managerManagementFeeBasisPoints / 100}%`,
+          subText: `${managerManagementFeeBasisPoints}%`,
           isEditable: lpIsManager ? true : false,
           toolTip: expectedAnnualOperatingFeesToolTip,
         },
         {
           header: "Profit Share to Syndicate Lead",
-          subText: `${profitShareToSyndicateLead / 100}%`,
+          subText: `${profitShareToSyndicateLead}%`,
           isEditable: lpIsManager ? true : false,
           toolTip: profitShareToSyndicateLeadToolTip,
         },
         {
           header: "Profit Share to Protocol",
-          subText: `${profitShareToSyndicateProtocol / 100}%`,
+          subText: `${profitShareToSyndicateProtocol}%`,
           toolTip: profitShareToSyndicateProtocolToolTip,
         },
       ]);
@@ -165,7 +154,7 @@ const SyndicateDetails = (props: {
   };
 
   useEffect(() => {
-    if (syndicateInstance) {
+    if (syndicateInstance && syndicate) {
       // dispatch action to get details about the syndicate
       // These values will be used in other components that might
       // need them.
@@ -187,64 +176,6 @@ const SyndicateDetails = (props: {
       );
     }
   }, [syndicate, syndicateAddress]);
-
-  useEffect(() => {
-    if (syndicateInstance) {
-      try {
-        syndicateInstance
-          .getSyndicateValues(syndicateAddress)
-          .then((data) => {
-            const closeDate = formatDate(
-              new Date(data.closeDate.toNumber() * 1000)
-            );
-            /**
-             * block.timestamp which is the one used to save creationDate is in
-             * seconds. We multiply by 1000 to convert to milliseconds and then
-             * convert this to javascript date object
-             */
-            const createdDate = formatDate(
-              new Date(data.creationDate.toNumber() * 1000)
-            );
-
-            const maxDeposit = data.maxDeposit.toString();
-            const minDeposit = data.minDeposit.toString();
-
-            const profitShareToSyndicateProtocol = data.syndicateProfitShareBasisPoints.toNumber();
-
-            const profitShareToSyndicateLead = data.managerPerformanceFeeBasisPoints.toNumber();
-            const openToDeposits = data.syndicateOpen;
-            const totalDeposits = etherToNumber(data.totalDeposits.toString());
-            const managerManagementFeeBasisPoints = data.managerManagementFeeBasisPoints.toNumber();
-            const depositERC20ContractAddress =
-              data.depositERC20ContractAddress;
-            const distributionsEnabled = data.distributionsEnabled;
-
-            // get details about the current ERC20 token
-            getERC20TokenDetails(depositERC20ContractAddress);
-
-            const syndicateDetails = {
-              maxDeposit,
-              openToDeposits,
-              totalDeposits,
-              managerManagementFeeBasisPoints,
-              depositERC20ContractAddress,
-              profitShareToSyndicateLead,
-              closeDate,
-              minDeposit,
-              active: true,
-              createdDate,
-              profitShareToSyndicateProtocol,
-              distributionsEnabled,
-            };
-
-            setSyndicate(syndicateDetails);
-          })
-          .catch((err) => console.log({ err }));
-      } catch (err) {
-        console.log({ err });
-      }
-    }
-  }, [syndicateInstance, account]);
 
   // format an account address in the format 0x3f6q9z52…54h2kjh51h5zfa
   const formattedSyndicateAddress = formatAddress(syndicateAddress, 10, 14);
@@ -295,20 +226,6 @@ const SyndicateDetails = (props: {
           isEditable: lpIsManager ? true : false,
           icon: (
             <span className="rounded-full bg-green-300 mt-2 w-4 h-4 ml-1"></span>
-          ),
-        }}
-      />
-    );
-  } else if (!active) {
-    syndicateBadge = (
-      <BadgeCard
-        {...{
-          title: "Status",
-          subTitle: "Inactive",
-          text: "Deposits and withdrawals not available",
-          isEditable: lpIsManager ? true : false,
-          icon: (
-            <span className="rounded-full bg-yellow-300 mt-2 w-4 h-4 ml-1"></span>
           ),
         }}
       />

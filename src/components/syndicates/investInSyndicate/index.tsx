@@ -152,8 +152,14 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
     depositStatusAllowApprovedText,
     depositsUnavailableText,
     depositsUnavailableTitleText,
+    connectWalletMessageTitle,
+    connectWalletMessage,
+    connectWalletWithdrawMessage,
+    connectWalletDepositMessage,
   } = constants;
 
+  // get the state of the current syndicate action
+  // This is used to show withdrawal or deposit components.
   const { withdraw, deposit, generalView } = syndicateAction;
 
   const WithdrawalSections = [
@@ -806,12 +812,33 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
     errorMessageText = conversionError;
   }
 
+  // set correct text to show when the wallet account is not connected
+  let noWalletAccountText = connectWalletMessage;
+  if (depositModes) {
+    noWalletAccountText = connectWalletDepositMessage;
+  } else if (withdraw) {
+    noWalletAccountText = connectWalletWithdrawMessage;
+  }
+
   return (
     <ErrorBoundary>
       <div className="w-full md:w-1/2 mt-4 sm:mt-0">
-        <div className="h-fit-content rounded-t-custom mx-2 p-4 pb-2 md:p-6 bg-gray-7 sm:ml-6 border border-b-0 border-gray-49">
+        <div
+          className={`h-fit-content  mx-2 p-4 pb-2 md:p-6 bg-gray-7 sm:ml-6 border ${
+            !account ? "rounded-custom" : `border-b-0 rounded-t-custom`
+          } border-gray-49`}
+        >
           {syndicate !== null ? (
-            !depositsAvailable && depositModes ? (
+            !account ? (
+              <div>
+                <p className="font-semibold text-xl p-2">
+                  {connectWalletMessageTitle}
+                </p>
+                <p className="p-4 pl-6 text-gray-dim text-sm">
+                  {noWalletAccountText}
+                </p>
+              </div>
+            ) : !depositsAvailable && depositModes ? (
               <div>
                 <p className="font-semibold text-xl p-2">
                   {depositsUnavailableTitleText}
@@ -917,13 +944,15 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
         </div>
 
         {/* This component should be shown when we have details about user deposits */}
-        <DetailsCard
-          {...{ title: "My Stats", sections }}
-          customStyles={
-            "sm:ml-6 p-4 mx-2 sm:px-8 sm:py-4 rounded-b-custom bg-gray-9 border border-gray-49"
-          }
-          customInnerWidth={"w-full"}
-        />
+        {account ? (
+          <DetailsCard
+            {...{ title: "My Stats", sections }}
+            customStyles={
+              "sm:ml-6 p-4 mx-2 sm:px-8 sm:py-4 rounded-b-custom bg-gray-9 border border-gray-49"
+            }
+            customInnerWidth={"w-full"}
+          />
+        ) : null}
 
         {syndicate?.syndicateOpen && myDeposits > 0 ? (
           <>

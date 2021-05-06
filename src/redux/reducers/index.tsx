@@ -4,6 +4,7 @@ import { loadingReducer } from "./helpers";
 import { syndicatesReducer } from "./syndicates";
 import { syndicateDetailsReducer } from "./syndicateDetails";
 import { syndicateLPDetailsReducer } from "./syndicateLPDetails";
+import { syndicateInstanceReducer } from "./syndicateInstance";
 
 export const rootReducer = combineReducers({
   web3Reducer,
@@ -11,6 +12,7 @@ export const rootReducer = combineReducers({
   loadingReducer,
   syndicateDetailsReducer,
   syndicateLPDetailsReducer,
+  syndicateInstanceReducer,
 });
 
 export default rootReducer;
