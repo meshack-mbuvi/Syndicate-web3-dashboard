@@ -1,18 +1,4 @@
 // set up smart contract and pass it as context
-import { Contract } from "@ethersproject/contracts";
-import { UnsupportedChainIdError, useWeb3React } from "@web3-react/core";
-import { UserRejectedRequestError as UserRejectedRequestErrorFrame } from "@web3-react/frame-connector";
-import {
-  NoEthereumProviderError,
-  UserRejectedRequestError as UserRejectedRequestErrorInjected,
-} from "@web3-react/injected-connector";
-import { UserRejectedRequestError as UserRejectedRequestErrorWalletConnect } from "@web3-react/walletconnect-connector";
-import PropTypes from "prop-types";
-import React, { useEffect, useState } from "react";
-import { connect } from "react-redux";
-import CancelButton from "src/components/buttons";
-import { Modal } from "src/components/modal";
-import Syndicate from "src/contracts/Syndicate.json";
 // actions
 import {
   hideErrorModal,
@@ -23,6 +9,19 @@ import {
   setLibrary,
   showErrorModal,
 } from "@/redux/actions/web3Provider";
+import { Contract } from "@ethersproject/contracts";
+import { UnsupportedChainIdError, useWeb3React } from "@web3-react/core";
+import { UserRejectedRequestError as UserRejectedRequestErrorFrame } from "@web3-react/frame-connector";
+import {
+  NoEthereumProviderError,
+  UserRejectedRequestError as UserRejectedRequestErrorInjected,
+} from "@web3-react/injected-connector";
+import { UserRejectedRequestError as UserRejectedRequestErrorWalletConnect } from "@web3-react/walletconnect-connector";
+import React, { useEffect, useState } from "react";
+import { connect, useDispatch } from "react-redux";
+import CancelButton from "src/components/buttons";
+import { Modal } from "src/components/modal";
+import Syndicate from "src/contracts/Syndicate.json";
 import { injected, WalletConnect } from "./connectors";
 
 const Web3 = require("web3");
@@ -66,12 +65,13 @@ const getErrorMessage = (error: Error) => {
  * Once wallet is connected, an action to update library is emitted.
  * @param {*} props
  */
-export const ConnectWallet = (props) => {
+export const ConnectWallet = (props: { web3; showWalletModal }) => {
   const {
-    web3: { status, isErrorModalOpen, error },
-    dispatch,
+    web3: { isErrorModalOpen, error },
     showWalletModal,
   } = props;
+
+  const dispatch = useDispatch();
 
   // This handles closing the modal after user selects a provider to activate
   const closeWalletModal = () => {
@@ -80,9 +80,7 @@ export const ConnectWallet = (props) => {
 
   // control whether to show success connection modal or not
   const [showSuccessModal, setShowSuccessModal] = useState(false);
-
-  // This variable controls loading animation modal
-  const loading = status == "connecting" ? true : false;
+  const [walletConnecting, setWalletConnecting] = useState(false);
 
   // activate method handles connection to any wallet account while library will
   // contain the web3 provider selected
@@ -145,8 +143,6 @@ export const ConnectWallet = (props) => {
 
       try {
         syndicateInstance = await contract.deployed();
-
-        dispatch(setConnected());
         dispatch(hideErrorModal());
         return dispatch(
           setLibrary({
@@ -186,8 +182,7 @@ export const ConnectWallet = (props) => {
   const activateProvider = async (provider) => {
     closeWalletModal();
 
-    // set status to connecting; this triggers the loader
-    dispatch(setConnecting());
+    setWalletConnecting(true);
     try {
       // Let disconnect previously connected provider first.
       if (library?.provider) {
@@ -200,6 +195,7 @@ export const ConnectWallet = (props) => {
 
       // provider is connected, this stops the loader modal
       dispatch(setConnected());
+      setWalletConnecting(false);
 
       // show success modal
       setShowSuccessModal(true);
@@ -288,7 +284,8 @@ export const ConnectWallet = (props) => {
       </Modal>
 
       {/* Loading modal */}
-      <Modal {...{ show: loading, closeModal: cancelWalletConnection }}>
+      <Modal
+        {...{ show: walletConnecting, closeModal: cancelWalletConnection }}>
         <div className="flex flex-col justify-center m-auto mb-4">
           <div className="loader">Loading...</div>
           <div className="modal-header mb-4 text-black font-medium text-center leading-8 text-lg">
@@ -348,12 +345,6 @@ export const ConnectWallet = (props) => {
       </Modal>
     </div>
   );
-};
-
-ConnectWallet.propTypes = {
-  dispatch: PropTypes.any.isRequired,
-  web3: PropTypes.object.isRequired,
-  showWalletModal: PropTypes.bool.isRequired,
 };
 
 const mapStateToProps = ({ web3Reducer }) => {
