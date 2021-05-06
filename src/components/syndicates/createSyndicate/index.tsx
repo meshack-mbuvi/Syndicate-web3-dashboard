@@ -2,7 +2,6 @@ import { ErrorModal } from "@/components/shared";
 import { addNewSyndicate } from "@/redux/actions/syndicates";
 import { Validate, ValidatePercent } from "@/utils/validators";
 import { faCopy } from "@fortawesome/free-regular-svg-icons";
-import { faCheckCircle } from "@fortawesome/free-solid-svg-icons";
 // fontawesome icons
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Link from "next/link";
@@ -13,12 +12,18 @@ import { connect } from "react-redux";
 // Other useful components
 import Button from "src/components/buttons";
 import { InfoIcon } from "src/components/iconWrappers";
-import { PercentInput, TextInput, Toggle } from "src/components/inputs";
+import {
+  CheckBox,
+  PercentInput,
+  TextInput,
+  Toggle,
+} from "src/components/inputs";
 import { Modal } from "src/components/modal";
 import { getSyndicate } from "src/helpers/syndicate";
 // redux actions
 import { setSumbitting, showWalletModal } from "src/redux/actions";
 import {
+  AgreeToOurTermsOfService,
   allowListEnabledToolTip,
   closeDateToolTip,
   depositTokenToolTip,
@@ -99,6 +104,8 @@ const CreateSyndicate = (props: any) => {
   const [syndicateProfitSharePercent, setProfitShareToSyndProtocol] = useState(
     "0.5"
   );
+  const [termsOfServiceError, setTermsOfServiceError] = useState("");
+  const [termsOfService, setTermsOfService] = useState(false);
 
   /**
    * if any error message is set on the input fields, then the input
@@ -123,7 +130,8 @@ const CreateSyndicate = (props: any) => {
     !maxTotalDeposits ||
     !expectedAnnualOperatingFees ||
     !profitShareToSyndicateLead ||
-    !syndicateProfitSharePercent
+    !syndicateProfitSharePercent ||
+    !termsOfService
   ) {
     validated = false;
   } else {
@@ -494,6 +502,21 @@ const CreateSyndicate = (props: any) => {
     setProfitShareToSyndProtocolError("");
   };
 
+  /**
+   * Handles agree or disagree with terms of service.
+   * When user unchecks our terms of service, we inform them that this is a
+   * requirement by displaying the appropriate message.
+   * @param event
+   */
+  const handleTermsOfService = (event: any) => {
+    setTermsOfService(event.target.checked);
+    if (!event.target.checked) {
+      setTermsOfServiceError(AgreeToOurTermsOfService);
+    } else {
+      setTermsOfServiceError("");
+    }
+  };
+
   return (
     <div className="w-full">
       {/* Modal to create a new syndicate */}
@@ -699,7 +722,6 @@ const CreateSyndicate = (props: any) => {
                       }}>
                       3%
                     </button>
-                    {/* flex  w-12 pl-2 ml-1 py-2 pr-0 rounded-md focus:outline-none outline-none focus:ring-0 focus:border-none border-0 */}
 
                     <div className="flex p-0 percentage-input rounded-br-md rounded-tr-md ">
                       <input
@@ -721,19 +743,6 @@ const CreateSyndicate = (props: any) => {
                       <span className="flex flex-1 py-2 pt-3 text-gray-500">
                         %
                       </span>
-
-                      {/* <PercentInput
-                        {...{
-                          label: "Profit Share to Syndicate Lead:",
-                          error: profitShareToSyndicateLeadError,
-                          toolTip: profitShareToSyndicateLeadToolTip,
-                        }}
-                        onChange={profitShareToSyndicateOnchangeHandler}
-                        name="profitShareToSyndProtocol"
-                        placeholder="other"
-                        value={syndicateProfitSharePercent}
-                        required
-                      /> */}
                     </div>
                   </div>
 
@@ -774,19 +783,27 @@ const CreateSyndicate = (props: any) => {
           </div>
 
           {/* agree to terms */}
-          <div className="flex my-4 w-full justify-center py-4">
-            <p className="flex text-black">
+          <div className="flex my-4 w-full flex-col align-center justify-center py-4">
+            <p className="flex text-black justify-center">
               I agree to the
               <span className="mx-2 text-blue-light"> terms of service</span>
               (required):
-              <span className="ml-2">
-                <FontAwesomeIcon
-                  icon={faCheckCircle}
-                  size="lg"
-                  className="text-gray-light"
-                />
-              </span>
+              <CheckBox
+                {...{
+                  error: termsOfServiceError,
+                }}
+                onChange={handleTermsOfService}
+                name="termsOfService"
+                value={maxLPs}
+                required
+              />
             </p>
+
+            {termsOfServiceError ? (
+              <p className="flex mt-2 text-red-500 text-sm justify-center">
+                {termsOfServiceError}
+              </p>
+            ) : null}
           </div>
 
           {/* submit button */}

@@ -1,4 +1,3 @@
-import PropTypes from "prop-types";
 import React from "react";
 import { InfoIcon } from "src/components/iconWrappers";
 
@@ -64,12 +63,4 @@ export const TextInput = (props: {
       </div>
     </div>
   );
-};
-
-TextInput.propTypes = {
-  label: PropTypes.string.isRequired,
-  name: PropTypes.string.isRequired,
-  register: PropTypes.any,
-  disabled: PropTypes.bool,
-  defaultValue: PropTypes.any,
 };

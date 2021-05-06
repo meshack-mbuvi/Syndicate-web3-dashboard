@@ -169,6 +169,8 @@ export const distributionAmountToolTip =
 export const SyndicateInBetaBannerText =
   "Syndicate is currently in private beta. We take security seriously, but bugs may still exist.";
 
+export const AgreeToOurTermsOfService =
+  "Please agree to our terms of service to continue.";
 // home page
 export const homePageConstants = {
   primaryHeaderText,
