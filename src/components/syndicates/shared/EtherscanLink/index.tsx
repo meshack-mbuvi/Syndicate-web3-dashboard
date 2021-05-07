@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { ExternalLinkIcon } from "src/components/iconWrappers";
 
 interface LinkProp {
@@ -10,9 +11,17 @@ interface LinkProp {
  */
 export const EtherscanLink = (props: LinkProp) => {
   const { contractAddress } = props;
+  // get debug mode from the .env
+  // If we're in debug mode, we'll use the rinkeby testnet.
+  const debugging = process.env.NEXT_PUBLIC_DEBUG;
+  let etherscanLink = "https://etherscan.io/address/";
+  if (debugging == "true") {
+    etherscanLink = "https://rinkeby.etherscan.io/address/";
+  }
+
   return (
     <a
-      href={`https://etherscan.io/address/${contractAddress}`}
+      href={`${etherscanLink}${contractAddress}`}
       target="_blank"
       className="text-blue-cyan px-2 flex"
       rel="noreferrer"

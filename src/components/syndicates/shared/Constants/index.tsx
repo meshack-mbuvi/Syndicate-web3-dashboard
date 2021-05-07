@@ -171,6 +171,24 @@ export const SyndicateInBetaBannerText =
 
 export const AgreeToOurTermsOfService =
   "Please agree to our terms of service to continue.";
+
+// syndicate actions page
+const noSyndicateTitleText = "No Syndicate DAO found at that address.";
+const noSyndicateMessageText =
+  "Check for more details on Etherscan to see if your transaction is pending or failed.";
+const syndicateAddressInvalidTitleText = "Invalid syndicate address";
+const syndicateAddressInvalidMessageText =
+  "Check to ensure you have the correct address.";
+const backLinkText = "< Back To My Syndicates";
+
+export const syndicateActionConstants = {
+  noSyndicateTitleText,
+  noSyndicateMessageText,
+  syndicateAddressInvalidMessageText,
+  syndicateAddressInvalidTitleText,
+  backLinkText,
+};
+
 // home page
 export const homePageConstants = {
   primaryHeaderText,

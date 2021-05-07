@@ -41,7 +41,7 @@ export const ValidatePercent = (value) => {
  * This checks whether the address provided is a zero address.
  * eg: 0x0000000000000000000000000000000000000000
  * @param address
- * @returns boolean indicating the resulf of the check
+ * @returns boolean indicating the result of the check
  */
 export const isZeroAddress = (address: string) => {
   // Checking for address 0x0000000; the default value set by solidity

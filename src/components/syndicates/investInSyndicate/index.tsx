@@ -35,6 +35,7 @@ import { SyndicateActionButton } from "../shared/syndicateActionButton";
 import { SyndicateActionLoader } from "../shared/syndicateActionLoader";
 import { TokenMappings } from "src/utils/tokenMappings";
 import { ErrorModal } from "src/components/shared/ErrorModal";
+import { SkeletonLoader } from "src/components/skeletonLoader";
 
 const Web3 = require("web3");
 
@@ -820,6 +821,17 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
     noWalletAccountText = connectWalletWithdrawMessage;
   }
 
+  // component to show any unavailable state for deposits, withdrawals,
+  // and instances where the wallet account is not connected.
+  const UnavailableState = ({ title, message }) => {
+    return (
+      <div>
+        <p className="font-semibold text-xl p-2">{title}</p>
+        <p className="p-4 pl-6 text-gray-dim text-sm">{message}</p>
+      </div>
+    );
+  };
+
   return (
     <ErrorBoundary>
       <div className="w-full md:w-1/2 mt-4 sm:mt-0">
@@ -828,56 +840,54 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
             !account ? "rounded-custom" : `border-b-0 rounded-t-custom`
           } border-gray-49`}
         >
-          {syndicate !== null ? (
-            !account ? (
-              <div>
-                <p className="font-semibold text-xl p-2">
-                  {connectWalletMessageTitle}
-                </p>
-                <p className="p-4 pl-6 text-gray-dim text-sm">
-                  {noWalletAccountText}
-                </p>
-              </div>
-            ) : !depositsAvailable && depositModes ? (
-              <div>
-                <p className="font-semibold text-xl p-2">
-                  {depositsUnavailableTitleText}
-                </p>
-                <p className="p-4 pl-6 text-gray-dim text-sm">
-                  {depositsUnavailableText}
-                </p>
-              </div>
-            ) : depositsAndWithdrawalsAvailable ? (
-              <>
-                {submittingAllowanceApproval || submitting ? (
-                  <SyndicateActionLoader
-                    contractAddress={
-                      submittingAllowanceApproval
-                        ? syndicate?.depositERC20ContractAddress
-                        : syndicateAddress
-                    }
-                    headerText={loaderHeaderText}
-                  />
-                ) : (
-                  <>
-                    <p className="font-semibold text-xl p-2">
-                      {deposit
-                        ? depositMoreTitleText
-                        : generalView
-                        ? depositTitleText
-                        : withdrawalTitleText}
+          {!account ? (
+            <UnavailableState
+              title={connectWalletMessageTitle}
+              message={noWalletAccountText}
+            />
+          ) : !depositsAvailable && depositModes ? (
+            <UnavailableState
+              title={depositsUnavailableTitleText}
+              message={depositsUnavailableText}
+            />
+          ) : depositsAndWithdrawalsAvailable ? (
+            <>
+              {submittingAllowanceApproval || submitting ? (
+                <SyndicateActionLoader
+                  contractAddress={
+                    submittingAllowanceApproval
+                      ? syndicate?.depositERC20ContractAddress
+                      : syndicateAddress
+                  }
+                  headerText={loaderHeaderText}
+                />
+              ) : (
+                <>
+                  <p className="font-semibold text-xl p-2">
+                    {deposit
+                      ? depositMoreTitleText
+                      : generalView
+                      ? depositTitleText
+                      : withdraw
+                      ? withdrawalTitleText
+                      : null}
+                  </p>
+
+                  <div className="px-2">
+                    {/* show this text if whitelist is enabled for deposits */}
+                    <p className="py-4 pt-2 text-green-screamin font-ibm">
+                      {depositModes
+                        ? depositApprovalText
+                        : withdraw
+                        ? totalDistributionsText
+                        : null}
                     </p>
 
-                    <div className="px-2">
-                      {/* show this text if whitelist is enabled for deposits */}
-                      <p className="py-4 pt-2 text-green-screamin font-ibm">
-                        {depositModes
-                          ? depositApprovalText
-                          : withdraw
-                          ? totalDistributionsText
-                          : null}
-                      </p>
-
+                    {!syndicate ? (
+                      <div className="flex justify-between my-1">
+                        <SkeletonLoader width="full" height="10" />
+                      </div>
+                    ) : (
                       <form onSubmit={onSubmit}>
                         <div className="flex justify-between my-1">
                           <input
@@ -922,31 +932,23 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
                           </div>
                         </div>
                       </form>
-                    </div>
-                  </>
-                )}
-              </>
-            ) : (
-              <div>
-                <p className="font-semibold text-xl p-2">
-                  {depositsAndWithdrawalsUnavailableTitleText}
-                </p>
-                <p className="p-4 pl-6 text-gray-dim text-sm">
-                  {depositsAndWithdrawalsUnavailableText}
-                </p>
-              </div>
-            )
+                    )}
+                  </div>
+                </>
+              )}
+            </>
           ) : (
-            <div className="flex justify-center">
-              <p>{noSyndicateText}</p>
-            </div>
+            <UnavailableState
+              title={depositsAndWithdrawalsUnavailableTitleText}
+              message={depositsAndWithdrawalsUnavailableText}
+            />
           )}
         </div>
 
         {/* This component should be shown when we have details about user deposits */}
         {account ? (
           <DetailsCard
-            {...{ title: "My Stats", sections }}
+            {...{ title: "My Stats", sections, syndicate }}
             customStyles={
               "sm:ml-6 p-4 mx-2 sm:px-8 sm:py-4 rounded-b-custom bg-gray-9 border border-gray-49"
             }

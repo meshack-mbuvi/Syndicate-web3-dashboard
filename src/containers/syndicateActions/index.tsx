@@ -1,4 +1,6 @@
 // manager components
+import { faExclamationTriangle } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import ManagerActions from "@/containers/managerActions";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -10,7 +12,10 @@ import InvestInSyndicate from "src/components/syndicates/investInSyndicate";
 import Head from "src/components/syndicates/shared/HeaderTitle";
 import SyndicateDetails from "src/components/syndicates/syndicateDetails";
 import { formatDate } from "src/utils";
+import { isZeroAddress } from "src/utils/validators";
 import { ERC20TokenDetails } from "src/utils/ERC20Methods";
+import { EtherscanLink } from "src/components/syndicates/shared/EtherscanLink";
+import { syndicateActionConstants } from "src/components/syndicates/shared/Constants";
 /**
  * Renders syndicate component with details section on the left and
  * deposit section on the right
@@ -29,6 +34,11 @@ const SyndicateInvestment = (props: { web3; syndicateContractInstance }) => {
   const [syndicate, setSyndicate] = useState(null);
   const [lpIsManager, setLpIsManager] = useState<boolean>(false);
   const [tokenDecimals, setTokenDecimals] = useState<number>(18);
+  const [
+    syndicateAddressIsValid,
+    setSyndicateAddressIsValid,
+  ] = useState<boolean>(true);
+  const [syndicateFound, setSyndicateFound] = useState<boolean>(true);
 
   // get number of decimal places for the current deposit token
   const getTokenDecimals = async (depositERC20ContractAddress) => {
@@ -54,6 +64,11 @@ const SyndicateInvestment = (props: { web3; syndicateContractInstance }) => {
           .getSyndicateValues(syndicateAddress)
           .call()
           .then((data) => {
+            if (isZeroAddress(data.currentManager)) {
+              setSyndicateAddressIsValid(true);
+              setSyndicateFound(false);
+              return;
+            }
             const closeDate = formatDate(
               new Date(parseInt(data.closeDate) * 1000)
             );
@@ -106,11 +121,14 @@ const SyndicateInvestment = (props: { web3; syndicateContractInstance }) => {
               managerManagementFeeBasisPoints,
               totalDepositors,
             });
+            setSyndicateFound(true);
+            setSyndicateAddressIsValid(true);
           })
           .catch((err) => console.log({ err }));
       } catch (err) {
         if (syndicateAddress) {
-          setSyndicate(null);
+          setSyndicateAddressIsValid(false);
+          setSyndicateFound(true);
         }
       }
     }
@@ -126,25 +144,71 @@ const SyndicateInvestment = (props: { web3; syndicateContractInstance }) => {
     }
   }, [syndicate, account]);
 
+  // get static text from constants
+  const {
+    noSyndicateTitleText,
+    noSyndicateMessageText,
+    syndicateAddressInvalidMessageText,
+    syndicateAddressInvalidTitleText,
+    backLinkText,
+  } = syndicateActionConstants;
+
+  // set texts to display on empty state
+  // we'll initialize this to instances where address is not a syndicate.
+  // if the address is invalid, this texts will be updated accordingly.
+  let emptyStateTitle = noSyndicateTitleText;
+  let emptyStateMessage = noSyndicateMessageText;
+  if (!syndicateAddressIsValid) {
+    emptyStateTitle = syndicateAddressInvalidTitleText;
+    emptyStateMessage = syndicateAddressInvalidMessageText;
+  }
+
+  // set syndicate empty state.
+  // component will be rendered if the address is not a syndicate or
+  // if the address is invalid.
+  const syndicateEmptyState = (
+    <div className="flex justify-center items-center h-full w-full mt-6 sm:mt-10">
+      <div className="flex flex-col items-center justify-center sm:w-7/12 md:w-5/12 rounded-custom bg-gray-100 p-10">
+        <div className="w-full flex justify-center mb-6">
+          <FontAwesomeIcon
+            icon={faExclamationTriangle}
+            className="h-12 text-gray-500 text-7xl"
+          />
+        </div>
+        <p className="font-semibold text-2xl text-center">{emptyStateTitle}</p>
+        <p className="text-sm my-5 font-normal text-gray-dim text-center">
+          {emptyStateMessage}
+        </p>
+        {!syndicateAddressIsValid ? null : (
+          <EtherscanLink contractAddress={syndicateAddress} />
+        )}
+      </div>
+    </div>
+  );
+
   return (
     <Layout>
       <Head title="Syndicate" />
       <ErrorBoundary>
         <div className="w-full flex flex-col">
           <Link href="/syndicates">
-            <a className="text-blue-cyan p-2 my-4 text-sm">
-              {"< Back To My Syndicates"}
-            </a>
+            <a className="text-blue-cyan p-2 my-4 text-sm">{backLinkText}</a>
           </Link>
-          <div className="w-full flex flex-col md:flex-row">
-            <SyndicateDetails syndicate={syndicate} lpIsManager={lpIsManager} />
-
-            {lpIsManager ? (
-              <ManagerActions />
-            ) : (
-              <InvestInSyndicate syndicate={syndicate} />
-            )}
-          </div>
+          {!syndicateFound || !syndicateAddressIsValid ? (
+            syndicateEmptyState
+          ) : (
+            <div className="w-full flex flex-col md:flex-row">
+              <SyndicateDetails
+                syndicate={syndicate}
+                lpIsManager={lpIsManager}
+              />
+              {lpIsManager ? (
+                <ManagerActions />
+              ) : (
+                <InvestInSyndicate syndicate={syndicate} />
+              )}
+            </div>
+          )}
         </div>
       </ErrorBoundary>
     </Layout>

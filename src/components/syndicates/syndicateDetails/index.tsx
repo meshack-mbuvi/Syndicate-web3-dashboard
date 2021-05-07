@@ -5,7 +5,6 @@ import { CopyToClipboard } from "react-copy-to-clipboard";
 import { connect, useDispatch } from "react-redux";
 import { ExternalLinkIcon } from "src/components/iconWrappers";
 import { setSyndicateDetails } from "src/redux/actions/syndicateDetails";
-import { etherToNumber, formatDate } from "src/utils";
 // utils
 import { formatAddress } from "src/utils/formatAddress";
 import { BadgeCard, DetailsCard } from "../shared";
@@ -20,6 +19,7 @@ import {
 } from "../shared/Constants";
 import { TokenMappings } from "src/utils/tokenMappings";
 import { floatedNumberWithCommas } from "@/utils/numberWithCommas";
+import { EtherscanLink } from "src/components/syndicates/shared/EtherscanLink";
 
 const SyndicateDetails = (props: {
   web3: any;
@@ -28,7 +28,7 @@ const SyndicateDetails = (props: {
   syndicate: any;
 }) => {
   const {
-    web3: { syndicateInstance, account },
+    web3: { syndicateInstance },
     syndicateDetails,
     lpIsManager,
     syndicate,
@@ -37,7 +37,43 @@ const SyndicateDetails = (props: {
   const dispatch = useDispatch();
 
   const router = useRouter();
-  const [details, setDetails] = useState([]);
+  const [details, setDetails] = useState([
+    {
+      header: "Created on",
+      subText: "",
+      toolTip: "",
+    },
+    {
+      header: "Close Date",
+      subText: "",
+      toolTip: "",
+      isEditable: false,
+    },
+    {
+      header: "Deposit/Distribution Token",
+      subText: "",
+      toolTip: "",
+      isEditable: false,
+    },
+    {
+      header: "Expected Annual Operating Fees",
+      subText: "",
+      toolTip: "",
+      isEditable: false,
+    },
+    {
+      header: "Profit Share to Syndicate Lead",
+      subText: "",
+      toolTip: "",
+      isEditable: false,
+    },
+    {
+      header: "Profit Share to Protocol",
+      subText: "",
+      toolTip: "",
+      isEditable: false,
+    },
+  ]);
 
   // state to handle copying of the syndicate address to clipboard.
   const [showCopyState, setShowCopyState] = useState<boolean>(false);
@@ -49,7 +85,12 @@ const SyndicateDetails = (props: {
   const [
     syndicateCummulativeDetails,
     setSyndicateCummulativeDetails,
-  ] = useState([]);
+  ] = useState([
+    {
+      header: "Total Deposits",
+      subText: "",
+    },
+  ]);
 
   // get syndicate address from the url
   const { syndicateAddress } = router.query;
@@ -195,6 +236,7 @@ const SyndicateDetails = (props: {
         title: "Status",
         subTitle: "Closed to Deposits",
         text: "Depositing not available",
+        syndicate,
         icon: (
           <span className="rounded-full bg-yellow-300 mt-2 w-4 h-4 ml-1"></span>
         ),
@@ -210,6 +252,7 @@ const SyndicateDetails = (props: {
           subTitle: "Open to Deposits",
           text: "Depositing available",
           isEditable: lpIsManager ? true : false,
+          syndicate,
           icon: (
             <span className="rounded-full bg-yellow-300 mt-2 w-4 h-4 ml-1"></span>
           ),
@@ -224,6 +267,7 @@ const SyndicateDetails = (props: {
           subTitle: "Operating",
           text: "Withdrawals available",
           isEditable: lpIsManager ? true : false,
+          syndicate,
           icon: (
             <span className="rounded-full bg-green-300 mt-2 w-4 h-4 ml-1"></span>
           ),
@@ -258,40 +302,35 @@ const SyndicateDetails = (props: {
           <p className="flex-shrink-0 h-8 w-8 sm:h-10 sm:w-10 md:h-16 md:w-16 ml-4 rounded-full ideo-liquidity inline"></p>
         </div>
 
-        <a
-          href={`https://etherscan.io/address/${syndicateAddress}`}
-          target="_blank"
-          className="text-blue-cyan px-2 flex"
-          rel="noreferrer"
-        >
-          view on etherscan <ExternalLinkIcon className="ml-2" />
-        </a>
+        <EtherscanLink contractAddress={syndicateAddress} />
         <div className="h-fit-content flex w-full justify-start md:ml-2 mb-12">
           {syndicateBadge}
         </div>
 
         {/* Syndicate details 
       This component should be shown when we have details about user deposits */}
-        {details ? (
+        <DetailsCard
+          {...{
+            title: "Details",
+            sections: details,
+            syndicateDetails: true,
+            syndicate,
+          }}
+          customStyles={"pl-4 pr-2 w-full py-4 pb-8"}
+          customInnerWidth="w-full"
+        />
+        <div className="w-full border-gray-49 border-t pt-4">
           <DetailsCard
-            {...{ title: "Details", sections: details, syndicateDetails: true }}
+            {...{
+              title: "Deposits",
+              sections: syndicateCummulativeDetails,
+              syndicateDetails: true,
+              infoIcon: false,
+              syndicate,
+            }}
             customStyles={"pl-4 pr-2 w-full py-4 pb-8"}
             customInnerWidth="w-full"
           />
-        ) : null}
-        <div className="w-full border-gray-49 border-t pt-4">
-          {syndicateCummulativeDetails ? (
-            <DetailsCard
-              {...{
-                title: "Deposits",
-                sections: syndicateCummulativeDetails,
-                syndicateDetails: true,
-                infoIcon: false,
-              }}
-              customStyles={"pl-4 pr-2 w-full py-4 pb-8"}
-              customInnerWidth="w-full"
-            />
-          ) : null}
         </div>
       </div>
       <div className="flex w-full block my-8 justify-center m-auto p-auto">

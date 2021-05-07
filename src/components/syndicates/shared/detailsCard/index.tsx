@@ -1,8 +1,8 @@
 import PropTypes from "prop-types";
 import React from "react";
-import { InfoIcon } from "src/components/iconWrappers";
 import { EditButton } from "src/components/syndicates/shared/editButton";
 import { SectionCard } from "../sectionCard";
+import { SkeletonLoader } from "src/components/skeletonLoader";
 
 /**
  * TODO: update propType validation
@@ -16,6 +16,7 @@ export const DetailsCard = (props: {
   infoIcon?: boolean;
   customInnerWidth?: string;
   syndicateDetails?: boolean;
+  syndicate?: any;
 }) => {
   const {
     sections = [],
@@ -24,6 +25,7 @@ export const DetailsCard = (props: {
     infoIcon,
     customInnerWidth = "",
     syndicateDetails = false,
+    syndicate,
   } = props;
 
   return (
@@ -38,8 +40,13 @@ export const DetailsCard = (props: {
             <div
               className={`flex justify-between items-center sm:my-4 ${
                 syndicateDetails ? "w-7/12" : "w-full"
-              }`}>
-              <SectionCard {...{ ...section }} infoIcon={infoIcon} />
+              }`}
+            >
+              {syndicate ? (
+                <SectionCard {...{ ...section }} infoIcon={infoIcon} />
+              ) : (
+                <SkeletonLoader height="8" width="full" />
+              )}
             </div>
             {section?.isEditable ? (
               <div className="sm:my-4 flex w-1/4 items-center">
