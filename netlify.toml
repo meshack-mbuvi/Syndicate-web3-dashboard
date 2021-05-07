@@ -1,5 +1,5 @@
 [build]
-  functions = "functions"
+  functions = "functions/build"
   command = "npm run build && npm run lambda-build"
 [functions]
-  directory = "functions"
+  directory = "functions/build"
