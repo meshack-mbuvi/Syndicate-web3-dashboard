@@ -20,12 +20,18 @@ export class ERC20TokenDetails {
   }
 
   // get the number of decimal places for the current token
-  getTokenDecimals = async () => {
-    const result = await this.tokenContract?.methods.decimals().call();
-    return result;
+  getTokenDecimals = () => {
+    if (this.tokenContract) {
+      const result = this.tokenContract.methods
+        .decimals()
+        .call()
+        .then((result) => result)
+        .catch(() => 18);
+      return result;
+    }
   };
 
-  //get the symbol for the current token e.g. DAI, USDC, etc.
+  // get the symbol for the current token e.g. DAI, USDC, etc.
   getTokenSymbol = async () => {
     const result = await this.tokenContract?.methods.symbol().call();
     return web3.utils.hexToAscii(result);

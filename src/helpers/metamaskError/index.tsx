@@ -1,34 +1,45 @@
 /**
- * This function returns appropriate message based on the code and action
+ * This function returns an appropriate message based on the code and action
  * that was passed. These parameters are obtained from user interaction with
  *  metamask when confirming or rejecting transactions
- *
- * The specific error codes can be obtained from the link below:
- * https://docs.metamask.io/guide/ethereum-provider.html#errors
- * @param errorCode The code returned by metamask to which is used to identify the error.
- * @param action The action the user is performing. It can be creating a syndicate,
- *  depositing into a syndicate, etc
- * @returns
  */
+import { metamaskConstants } from "src/components/syndicates/shared/Constants";
+const {
+  metamaskRejectByUserMessage,
+  metamaskInvalidParamsMessage,
+  metamaskInternalErrorMessage,
+  metamaskUnknownErrorMessage,
+  metamaskInvalidAddressMessage,
+} = metamaskConstants;
+
+/**
+ *  Error codes include:
+ * 4001: The request was rejected by the user.
+ * -32602: The parameters were invalid.
+ * -32603: Internal error
+ * https://docs.metamask.io/guide/ethereum-provider.html#errors
+ * @param errorCode the error code from metamask.
+ * @param action the action that triggered the error
+ * @returns error message string.
+ * */
 export const getMetamaskError = (
   errorCode: number | string,
   action: string
 ) => {
   switch (errorCode) {
     case 4001:
-      return `${action} request was rejected by the user. Please try again.`;
+      return `${action} ${metamaskRejectByUserMessage}`;
 
     case -32602:
-      return "Invalid parameters provided. Please try again.";
+      return `${metamaskInvalidParamsMessage}`;
 
     case -32603:
-      return "Internal server error. Please try again";
+      return `${metamaskInternalErrorMessage}`;
 
-    // This error is not from metamask, rather its from the function call
     case "INVALID_ARGUMENT":
-      return "Input values error. Please verify that you are using valid values.";
+      return `${metamaskInvalidAddressMessage}`;
 
     default:
-      return "An unknown error occured on our end. Please try again.";
+      return `${metamaskUnknownErrorMessage}`;
   }
 };

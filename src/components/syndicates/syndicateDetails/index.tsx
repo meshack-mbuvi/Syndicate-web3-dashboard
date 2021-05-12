@@ -3,7 +3,6 @@ import PropTypes from "prop-types";
 import React, { useEffect, useState } from "react";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import { connect, useDispatch } from "react-redux";
-import { ExternalLinkIcon } from "src/components/iconWrappers";
 import { setSyndicateDetails } from "src/redux/actions/syndicateDetails";
 // utils
 import { formatAddress } from "src/utils/formatAddress";
@@ -130,7 +129,7 @@ const SyndicateDetails = (props: {
         },
       ]);
     }
-  }, [syndicate, syndicateDetails, syndicateDetails]);
+  }, [syndicate, syndicateDetails]);
 
   useEffect(() => {
     if (syndicate) {

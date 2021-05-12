@@ -16,6 +16,9 @@ import SyndicateDetails from "src/components/syndicates/syndicateDetails";
 import { formatDate } from "src/utils";
 import { ERC20TokenDetails } from "src/utils/ERC20Methods";
 import { isZeroAddress } from "src/utils/validators";
+import { getWeiAmount, basisPointsToPercentage } from "src/utils/conversions";
+const Web3 = require("web3");
+const web3 = new Web3(Web3.givenProvider || "ws://localhost:8545");
 /**
  * Renders syndicate component with details section on the left and
  * deposit section on the right
@@ -57,80 +60,117 @@ const SyndicateInvestment = (props: { web3; syndicateContractInstance }) => {
     }
   }, [account]);
 
+  // get syndicate values
+  const getSyndicateValues = () => {
+    try {
+      syndicateContractInstance.methods
+        .getSyndicateValues(syndicateAddress)
+        .call()
+        .then((data) => {
+          // if the current manager has not been set,
+          // then the syndicate does not exist.
+          if (isZeroAddress(data.currentManager)) {
+            setSyndicateAddressIsValid(true);
+            setSyndicateFound(false);
+            return;
+          }
+
+          const closeDate = formatDate(
+            new Date(parseInt(data.closeDate) * 1000)
+          );
+
+          /**
+           * block.timestamp which is the one used to save creationDate is in
+           * seconds. We multiply by 1000 to convert to milliseconds and then
+           * convert this to javascript date object
+           */
+          const createdDate = formatDate(
+            new Date(parseInt(data.creationDate) * 1000)
+          );
+
+          const profitShareToSyndicateProtocol = basisPointsToPercentage(
+            data.syndicateProfitShareBasisPoints
+          );
+
+          const profitShareToSyndicateLead = basisPointsToPercentage(
+            data.managerPerformanceFeeBasisPoints
+          );
+
+          const managerManagementFeeBasisPoints = basisPointsToPercentage(
+            data.managerManagementFeeBasisPoints
+          );
+
+          const depositERC20ContractAddress = data.depositERC20ContractAddress;
+
+          getTokenDecimals(depositERC20ContractAddress);
+
+          const openToDeposits = data.syndicateOpen;
+          const currentManager = data.currentManager;
+          const syndicateOpen = data.syndicateOpen;
+          const distributionsEnabled = data.distributionsEnabled;
+
+          const maxTotalDeposits = getWeiAmount(
+            data.maxTotalDeposits,
+            tokenDecimals,
+            false,
+            web3
+          );
+          const totalDeposits = getWeiAmount(
+            data.totalDeposits,
+            tokenDecimals,
+            false,
+            web3
+          );
+          const minDeposit = getWeiAmount(
+            data.minDeposit,
+            tokenDecimals,
+            false,
+            web3
+          );
+
+          const maxDeposit = getWeiAmount(
+            data.maxDeposit,
+            tokenDecimals,
+            false,
+            web3
+          );
+          const totalDepositors = data.totalLPs;
+          const maxLPs = data.maxLPs;
+
+          setSyndicate({
+            maxDeposit,
+            profitShareToSyndicateProtocol,
+            profitShareToSyndicateLead,
+            openToDeposits,
+            totalDeposits,
+            closeDate,
+            createdDate,
+            allowlistEnabled: data.allowlistEnabled,
+            depositERC20ContractAddress,
+            currentManager,
+            syndicateOpen,
+            distributionsEnabled,
+            managerManagementFeeBasisPoints,
+            totalDepositors,
+            maxLPs,
+            minDeposit,
+            maxTotalDeposits,
+          });
+          setSyndicateFound(true);
+          setSyndicateAddressIsValid(true);
+        })
+        .catch((err) => console.log({ err }));
+    } catch (err) {
+      if (syndicateAddress) {
+        setSyndicateAddressIsValid(false);
+        setSyndicateFound(true);
+      }
+    }
+  };
+
   useEffect(() => {
     if (syndicateContractInstance.methods) {
-      try {
-        syndicateContractInstance.methods
-          .getSyndicateValues(syndicateAddress)
-          .call()
-          .then((data) => {
-            if (isZeroAddress(data.currentManager)) {
-              setSyndicateAddressIsValid(true);
-              setSyndicateFound(false);
-              return;
-            }
-            const closeDate = formatDate(
-              new Date(parseInt(data.closeDate) * 1000)
-            );
-
-            /**
-             * block.timestamp which is the one used to save creationDate is in
-             * seconds. We multiply by 1000 to convert to milliseconds and then
-             * convert this to javascript date object
-             */
-            const createdDate = formatDate(
-              new Date(parseInt(data.creationDate) * 1000)
-            );
-
-            const profitShareToSyndicateProtocol =
-              parseInt(data.syndicateProfitShareBasisPoints) / 100;
-            const profitShareToSyndicateLead =
-              parseInt(data.managerPerformanceFeeBasisPoints) / 100;
-            const managerManagementFeeBasisPoints =
-              parseInt(data.managerManagementFeeBasisPoints) / 100;
-            const depositERC20ContractAddress =
-              data.depositERC20ContractAddress;
-
-            getTokenDecimals(depositERC20ContractAddress);
-
-            const openToDeposits = data.syndicateOpen;
-            const currentManager = data.currentManager;
-            const syndicateOpen = data.syndicateOpen;
-            const distributionsEnabled = data.distributionsEnabled;
-            const maxDeposit =
-              parseFloat(data.maxTotalDeposits) / Math.pow(10, tokenDecimals);
-
-            const totalDeposits =
-              parseFloat(data.totalDeposits) / Math.pow(10, tokenDecimals);
-
-            const totalDepositors = data.totalLPs;
-
-            setSyndicate({
-              maxDeposit,
-              profitShareToSyndicateProtocol,
-              profitShareToSyndicateLead,
-              openToDeposits,
-              totalDeposits,
-              closeDate,
-              createdDate,
-              allowlistEnabled: data.allowlistEnabled,
-              depositERC20ContractAddress,
-              currentManager,
-              syndicateOpen,
-              distributionsEnabled,
-              managerManagementFeeBasisPoints,
-              totalDepositors,
-            });
-            setSyndicateFound(true);
-            setSyndicateAddressIsValid(true);
-          })
-          .catch((err) => console.log({ err }));
-      } catch (err) {
-        if (syndicateAddress) {
-          setSyndicateAddressIsValid(false);
-          setSyndicateFound(true);
-        }
-      }
+      getSyndicateValues();
     }
   }, [syndicateContractInstance, syndicateAddress, tokenDecimals]);
 
@@ -205,7 +245,10 @@ const SyndicateInvestment = (props: { web3; syndicateContractInstance }) => {
               {lpIsManager ? (
                 <ManagerActions />
               ) : (
-                <InvestInSyndicate syndicate={syndicate} />
+                <InvestInSyndicate
+                  syndicate={syndicate}
+                  getSyndicateValues={getSyndicateValues}
+                />
               )}
             </div>
           )}

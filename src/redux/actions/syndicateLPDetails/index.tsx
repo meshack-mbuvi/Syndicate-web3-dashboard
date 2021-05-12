@@ -3,6 +3,7 @@ import {
   SET_SYNDICATE_LP_DETAILS,
 } from "../types";
 import { floatedNumberWithCommas } from "@/utils/numberWithCommas";
+import { getWeiAmount, divideIfNotByZero } from "src/utils/conversions";
 
 export const setSyndicateLPDetails = (data) => {
   return {
@@ -23,8 +24,9 @@ interface SyndicateLPData {
   lpAccount: string;
   web3: any;
   syndicateAddress: string | string[];
-  syndicate: any;
+  syndicateDepositsTotal: string;
   totalAvailableDistributions: string;
+  currentERC20Decimals: number;
 }
 
 /** action creator to trigger updates to the redux store whenever
@@ -41,12 +43,16 @@ export const updateSyndicateLPDetails = (data: SyndicateLPData) => async (
     lpAccount,
     web3,
     syndicateAddress,
-    syndicate,
+    syndicateDepositsTotal,
     totalAvailableDistributions,
+    currentERC20Decimals,
   } = data;
 
   // we cannot query relevant values without the syndicate instance
   if (!syndicateInstance) return;
+
+  // initialize BN
+  const BN = web3.utils.BN;
 
   // Retrieves syndicateInfo for the connected wallet. We need to find out
   // how much the wallet account has invested in this syndicate
@@ -58,11 +64,19 @@ export const updateSyndicateLPDetails = (data: SyndicateLPData) => async (
     );
 
     // update total LP deposits
-    const myDeposits = web3.utils.fromWei(syndicateLPInfo[0].toString());
+    const myDeposits = getWeiAmount(
+      syndicateLPInfo[0].toString(),
+      currentERC20Decimals,
+      false,
+      web3
+    );
 
     // update LP's withdrawals to date
-    const myWithdrawalsToDate = web3.utils.fromWei(
-      syndicateLPInfo[1].toString()
+    const myWithdrawalsToDate = getWeiAmount(
+      syndicateLPInfo[1].toString(),
+      currentERC20Decimals,
+      false,
+      web3
     );
 
     // check if LP is on the allowedAddresses list
@@ -70,31 +84,30 @@ export const updateSyndicateLPDetails = (data: SyndicateLPData) => async (
 
     // update LP's withdrawals to deposits percentage
     let withdrawalsToDepositPercentage = 0;
-    if (
-      parseInt(myDeposits.toString()) > 0 &&
-      parseInt(myWithdrawalsToDate.toString()) > 0
-    ) {
-      withdrawalsToDepositPercentage =
-        (parseFloat(myWithdrawalsToDate.toString()) /
-          parseFloat(myDeposits.toString())) *
-        100;
-    }
+    const withdrawalsToDate = parseFloat(myWithdrawalsToDate) * 100;
+    const myTotalDeposits = parseFloat(myDeposits);
+
+    withdrawalsToDepositPercentage = divideIfNotByZero(
+      withdrawalsToDate,
+      myTotalDeposits
+    );
 
     // get the current LP's percentage share in the syndicate
     // (totalLPDeposits / totalSyndicateDeposits) * 100
-    const myLPDeposits = parseFloat(myDeposits.toString());
-    const totalSyndicateDeposits = syndicate?.totalDeposits;
-    let myPercentageOfThisSyndicate = 0;
-    if (totalSyndicateDeposits > 0) {
-      myPercentageOfThisSyndicate =
-        (myLPDeposits * 100) / totalSyndicateDeposits;
-    }
+    const myLPDeposits = parseFloat(myDeposits) * 100;
+    const totalSyndicateDeposits = parseFloat(
+      syndicateDepositsTotal.toString()
+    );
+    const myPercentageOfThisSyndicate = divideIfNotByZero(
+      myLPDeposits,
+      totalSyndicateDeposits
+    );
 
     // update LP's total distributions to date
     // totalDistributions * (deposit/totalDeposits)
     const totalSyndicateDistributions = parseFloat(totalAvailableDistributions);
     const myDistributionsToDate =
-      totalSyndicateDistributions * (myPercentageOfThisSyndicate / 100);
+      (totalSyndicateDistributions * myPercentageOfThisSyndicate) / 100;
 
     const syndicateLPDetails = {
       myDeposits,
