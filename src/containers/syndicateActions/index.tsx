@@ -1,7 +1,7 @@
 // manager components
+import ManagerActions from "@/containers/managerActions";
 import { faExclamationTriangle } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import ManagerActions from "@/containers/managerActions";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
@@ -9,13 +9,13 @@ import { connect } from "react-redux";
 import ErrorBoundary from "src/components/errorBoundary";
 import Layout from "src/components/layout";
 import InvestInSyndicate from "src/components/syndicates/investInSyndicate";
+import { syndicateActionConstants } from "src/components/syndicates/shared/Constants";
+import { EtherscanLink } from "src/components/syndicates/shared/EtherscanLink";
 import Head from "src/components/syndicates/shared/HeaderTitle";
 import SyndicateDetails from "src/components/syndicates/syndicateDetails";
 import { formatDate } from "src/utils";
-import { isZeroAddress } from "src/utils/validators";
 import { ERC20TokenDetails } from "src/utils/ERC20Methods";
-import { EtherscanLink } from "src/components/syndicates/shared/EtherscanLink";
-import { syndicateActionConstants } from "src/components/syndicates/shared/Constants";
+import { isZeroAddress } from "src/utils/validators";
 /**
  * Renders syndicate component with details section on the left and
  * deposit section on the right
@@ -216,10 +216,9 @@ const SyndicateInvestment = (props: { web3; syndicateContractInstance }) => {
 };
 
 const mapStateToProps = ({
-  web3Reducer,
+  web3Reducer: { web3 },
   syndicateInstanceReducer: { syndicateContractInstance },
 }) => {
-  const { web3 } = web3Reducer;
   return { web3, syndicateContractInstance };
 };
 

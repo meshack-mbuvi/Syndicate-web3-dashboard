@@ -29,7 +29,7 @@ const loaderApprovalHeaderText =
   "Please wait while the approval transaction completes...";
 const loaderGeneralHeaderText =
   "Please wait while the transaction completes...";
-const loaderSubtext =
+export const loaderSubtext =
   "This could take anywhere from seconds to hours depending on the gas fees you set for the transaction.";
 const increaseDepositAllowanceErrorMessage =
   "By increasing the deposit amount, you must approve the additional amount before depositing";
@@ -181,6 +181,8 @@ const syndicateAddressInvalidMessageText =
   "Check to ensure you have the correct address.";
 const backLinkText = "< Back To My Syndicates";
 
+export const MAX_INTERGER = BigInt(2 ** 256) - BigInt(1);
+
 export const syndicateActionConstants = {
   noSyndicateTitleText,
   noSyndicateMessageText,
@@ -208,3 +210,11 @@ export const managerApproveAddressesConstants = {
   separateWithCommas,
   buttonText,
 };
+
+// contract transaction state constants
+export const pendingState =
+  "Creating your syndicate, please wait for the transaction to complete";
+
+export const confirmWalletText = "Waiting for wallet confirmation";
+export const confirmWalletSubText =
+  " Please confirm this transaction on your wallet.";

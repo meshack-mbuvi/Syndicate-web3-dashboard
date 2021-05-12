@@ -6,11 +6,16 @@ const Web3 = require("web3");
 /**
  * retrieves details for a given syndicate
  */
-export const getSyndicate = async (address: string, syndicateInstance) => {
+export const getSyndicate = async (
+  syndicateAddress: string,
+  syndicateInstance
+) => {
   const web3 = new Web3(Web3.givenProvider || "ws://localhost:8545");
 
   try {
-    const syndicateData = await syndicateInstance.getSyndicateValues(address);
+    const syndicateData = await syndicateInstance.getSyndicateValues(
+      syndicateAddress
+    );
 
     // The value stored in syndicate during creation is in seconds, hence the need
     // to multiply by 1000 to convert to milliseconds and then initialize a
@@ -33,7 +38,7 @@ export const getSyndicate = async (address: string, syndicateInstance) => {
     const { depositERC20ContractAddress, currentManager } = syndicateData;
 
     return {
-      address,
+      syndicateAddress,
       openToDeposits,
       closeDate,
       maxTotalDeposits,

@@ -23,7 +23,7 @@ export const ActiveSyndicates = (props: { syndicates }) => {
                   {syndicates
                     ? syndicates.map((syndicate, index) => (
                         <SyndicateItem
-                          key={syndicate.address}
+                          key={syndicate.syndicateAddress}
                           {...syndicate}
                           styles={styles[index]}
                         />

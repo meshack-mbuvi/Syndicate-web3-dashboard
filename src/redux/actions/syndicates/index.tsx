@@ -104,7 +104,7 @@ export const addSyndicates = (data) => async (dispatch) => {
           filteredSyndicateAddresses[index],
           syndicateInstance
         );
-        const { address } = syndicate;
+        const { syndicateAddress } = syndicate;
         /**
          * We check whether we have data returned; for the case of an error,
          * the returned value is undefined
@@ -112,7 +112,7 @@ export const addSyndicates = (data) => async (dispatch) => {
         if (syndicate) {
           allSyndicates.push({
             ...syndicate,
-            ...syndicateInfo[address],
+            ...syndicateInfo[syndicateAddress],
           });
         }
       } catch (error) {

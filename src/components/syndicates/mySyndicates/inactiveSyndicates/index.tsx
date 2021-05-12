@@ -7,7 +7,7 @@ export const InActiveSyndicates = (props: { syndicates }) => {
     <div className="mt-4">
       <Header />
       {syndicates.map((syndicate) => (
-        <SyndicateItem key={syndicate.address} {...syndicate} />
+        <SyndicateItem key={syndicate.syndicateAddress} {...syndicate} />
       ))}
     </div>
   );

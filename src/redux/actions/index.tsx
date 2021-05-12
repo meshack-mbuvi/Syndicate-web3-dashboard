@@ -1,2 +1,2 @@
-export { setLoading, setSumbitting } from "./helpers";
+export { setLoading, setSubmitting } from "./helpers";
 export { showWalletModal } from "./web3Provider";

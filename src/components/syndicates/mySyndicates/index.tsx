@@ -1,8 +1,7 @@
 import { showWalletModal } from "@/redux/actions";
 import { addSyndicates } from "@/redux/actions/syndicates";
-import PropTypes from "prop-types";
 import React, { useEffect, useState } from "react";
-import { connect } from "react-redux";
+import { connect, useDispatch } from "react-redux";
 import Button from "src/components/buttons";
 import PageHeader from "src/components/pageHeader";
 import CreateSyndicate from "src/components/syndicates/createSyndicate";
@@ -11,6 +10,11 @@ import {
   default as InActiveSyndicates,
 } from "./activeSyndicates";
 
+interface MySyndicateProps {
+  web3: any;
+  syndicates;
+  loading: boolean;
+}
 /**
  * My Syndicates: IF their wallet (a) is leading a syndicate or
  * (b) has deposited into a syndicate, the syndicates shows up on
@@ -19,13 +23,13 @@ import {
  * Data is pulled from the smart contract and syndicate’s wallet state.
  * @returns
  */
-const MySyndicates = (props) => {
+const MySyndicates = (props: MySyndicateProps) => {
   const {
     web3: { syndicateInstance, account },
     syndicates,
-    dispatch,
     loading,
   } = props;
+  const dispatch = useDispatch();
 
   // Assume by default this user has an open syndicate
   const [managerWithOpenSyndicate, setManagerWithOpenSyndicate] = useState(
@@ -56,7 +60,6 @@ const MySyndicates = (props) => {
    * We need to be sure syndicateInstance is initialized before retrieving events.
    */
   useEffect(() => {
-    console.log({ syndicateInstance });
     if (syndicateInstance) {
       dispatch(addSyndicates(props.web3));
     }
@@ -82,7 +85,6 @@ const MySyndicates = (props) => {
     }
     setShowModal(true);
   };
-
 
   return (
     <div className="mt-4">
@@ -162,10 +164,6 @@ const MySyndicates = (props) => {
   );
 };
 
-MySyndicates.propTypes = {
-  props: PropTypes.any,
-};
-
 const mapStateToProps = (state) => {
   const { web3Reducer, syndicatesReducer, loadingReducer } = state;
   const { web3 } = web3Reducer;
@@ -173,14 +171,6 @@ const mapStateToProps = (state) => {
   const { loading } = loadingReducer;
 
   return { web3, syndicates, loading };
-};
-
-MySyndicates.propTypes = {
-  syndicates: PropTypes.any,
-  syndicateInstance: PropTypes.any,
-  web3: PropTypes.object,
-  dispatch: PropTypes.func,
-  loading: PropTypes.bool,
 };
 
 export default connect(mapStateToProps)(MySyndicates);

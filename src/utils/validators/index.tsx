@@ -24,6 +24,8 @@ export const Validate = (value) => {
     message = "is required";
   } else if (isNaN(value)) {
     message = "should be a valid decimal/number";
+  } else if (value < 0) {
+    message = "cannot be a negative number";
   } else if (!regex.test(value)) {
     message = "can only include at most two decimal places.";
   } else {

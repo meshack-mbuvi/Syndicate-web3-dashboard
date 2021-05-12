@@ -4,7 +4,7 @@ export const CheckBox = (props: {
   name: string;
   onChange;
   required?: boolean;
-  value: string | number;
+  value: boolean;
 }) => {
   const { name, onChange, value } = props;
   return (
@@ -15,8 +15,8 @@ export const CheckBox = (props: {
             type="checkbox"
             name={name}
             onChange={onChange}
-            value={value}
-            className="ml-2 mt-1 focus:outline-none cursor-pointer h-5 w-5 text-gray-light border-gray-300 rounded-full"
+            className="ml-2 mt-1 focus:ring-indigo-500 cursor-pointer h-5 w-5 text-indigo-500 border-indigo-500 rounded-full"
+            checked={value ? true : false}
           />
         </div>
       </div>
