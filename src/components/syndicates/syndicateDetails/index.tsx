@@ -277,7 +277,7 @@ const SyndicateDetails = (props: {
 
   return (
     <div className="flex flex-col w-full md:w-2/3">
-      <div className="w-full h-fit-content p-6 md:p-10 rounded-custom bg-gray-100">
+      <div className="w-full h-fit-content p-6 md:p-10 rounded-custom bg-gray-6">
         <span className="fold-bold px-2 text-gray-dim leading-4 text-sm uppercase">
           Syndicate
         </span>

@@ -208,7 +208,7 @@ const SyndicateInvestment = (props: { web3; syndicateContractInstance }) => {
   // if the address is invalid.
   const syndicateEmptyState = (
     <div className="flex justify-center items-center h-full w-full mt-6 sm:mt-10">
-      <div className="flex flex-col items-center justify-center sm:w-7/12 md:w-5/12 rounded-custom bg-gray-100 p-10">
+      <div className="flex flex-col items-center justify-center sm:w-7/12 md:w-5/12 rounded-custom bg-gray-6 p-10">
         <div className="w-full flex justify-center mb-6">
           <FontAwesomeIcon
             icon={faExclamationTriangle}
