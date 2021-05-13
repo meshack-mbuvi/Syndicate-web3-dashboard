@@ -38,18 +38,18 @@ export const TextInput = (props: {
       <div className="mr-2 w-1/2 flex justify-end">
         <label
           htmlFor="syndicateAddress"
-          className="block pt-2 text-black text-base font-medium">
+          className="block pt-2 text-black text-sm font-medium">
           {label}
         </label>
       </div>
-      <div className="w-1/2 flex flex-col justify-between">
+      <div className="w-3/5 flex-grow flex flex-col justify-between">
         {/* input field */}
         <div className="flex">
           <input
             type="text"
             name={name}
             onChange={onChange}
-            className={`flex flex-grow focus:ring-indigo-500 focus:border-indigo-500 rounded-md ${disabledClasses}`}
+            className={`flex flex-grow text-sm focus:ring-indigo-500 focus:border-indigo-500 rounded-md ${disabledClasses}`}
             {...rest}
             disabled={disabled}
             value={value}

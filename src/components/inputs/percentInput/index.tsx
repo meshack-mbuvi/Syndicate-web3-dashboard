@@ -29,11 +29,11 @@ export const PercentInput = (props: {
       <div className="mr-2 w-1/2 flex justify-end">
         <label
           htmlFor="syndicateAddress"
-          className="block pt-2 text-black text-base font-medium">
+          className="block pt-2 text-black text-sm font-medium">
           {label}
         </label>
       </div>
-      <div className="w-1/2 flex flex-col justify-between">
+      <div className="w-3/5 flex flex-col justify-between">
         {/* input field */}
         <div className="flex">
           <div className="flex percentage-input rounded-md flex-grow border border-gray-85">

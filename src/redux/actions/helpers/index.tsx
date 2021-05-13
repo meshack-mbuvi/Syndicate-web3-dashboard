@@ -7,7 +7,7 @@ export const setLoading = (data: boolean) => async (dispatch) => {
   });
 };
 
-export const setSumbitting = (data: boolean) => async (dispatch) => {
+export const setSubmitting = (data: boolean) => async (dispatch) => {
   return dispatch({
     data,
     type: SET_SUBMITTING,

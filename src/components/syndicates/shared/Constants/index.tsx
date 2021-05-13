@@ -11,7 +11,7 @@ const depositStatusAllowApprovedText = "Allowlist enabled: You're approved.";
 const depositDisclaimerText =
   "All deposits are final and can only be changed by Syndicate leads.";
 const depositLPAccreditedText =
-  "By depositing tokens, you attest you are accredited below to join this syndicate. After depositing, contact the syndicate leads to confirm receipt and withdraw timing.";
+  "By depositing tokens, you attest you are accredited to join this syndicate. After depositing, contact the syndicate leads to confirm receipt and withdraw timing.";
 const withdrawalTitleText = "Withdraw My Distributions.";
 const withdrawalDisclaimerText = "Remember, all withdraws are final.";
 const noSyndicateText =
@@ -20,6 +20,8 @@ const depositsAndWithdrawalsUnavailableText =
   "Deposits and withdraws are not currently available";
 const depositsUnavailableTitleText = "Deposits";
 const depositsUnavailableText = "Syndicate closed. Deposits unavailable.";
+const depositsUnavailableMaxLPsZeroText =
+  "Deposits are unavailable at the moment. Please contact the syndicate leads.";
 const depositsAndWithdrawalsUnavailableTitleText = "Deposits & Withdraws";
 const loaderWithdrawalHeaderText =
   "Please wait while the withdrawal transaction completes...";
@@ -29,7 +31,7 @@ const loaderApprovalHeaderText =
   "Please wait while the approval transaction completes...";
 const loaderGeneralHeaderText =
   "Please wait while the transaction completes...";
-const loaderSubtext =
+export const loaderSubtext =
   "This could take anywhere from seconds to hours depending on the gas fees you set for the transaction.";
 const increaseDepositAllowanceErrorMessage =
   "By increasing the deposit amount, you must approve the additional amount before depositing";
@@ -44,6 +46,20 @@ const connectWalletDepositMessage =
   "Connect your wallet to deposit into this syndicate.";
 const connectWalletWithdrawMessage =
   "Connect your wallet to withdraw from this syndicate.";
+
+// deposit success texts
+const depositSuccessTitleText = "You just made a deposit.";
+const depositSuccessSubtext = "Deposit transaction was successful.";
+const depositSuccessButtonText = "Deposit more";
+
+// approval success texts
+const approvalSuccessTitleText = "Allowance approved.";
+const approvalSuccessSubtext = "Allowance approval transaction successful.";
+const approvalSuccessButtonText = "Make a deposit";
+
+// retry or dismiss text
+const retryButtonText = "Retry";
+const dismissButtonText = "Dismiss";
 
 // syndicate details section
 const syndicateDetailsFooterText =
@@ -73,7 +89,44 @@ const approvedAddressesLabel = "Approved Address:";
 const separateWithCommas = "(separate with commas)";
 const buttonText = "Confirm";
 
-// exports
+// metamask error texts
+const metamaskRejectByUserMessage = "request was rejected.";
+const metamaskInvalidParamsMessage = "Invalid parameters provided.";
+const metamaskInternalErrorMessage = "Internal server error.";
+const metamaskUnknownErrorMessage = "An unknown error occured on our end.";
+const metamaskErrorMessageTitleText = "Transaction rejected.";
+const metamaskTryAgainText = "Please try again.";
+const metamaskInvalidAddressMessage = "Invalid address provided.";
+
+export const metamaskConstants = {
+  metamaskRejectByUserMessage,
+  metamaskInvalidParamsMessage,
+  metamaskInternalErrorMessage,
+  metamaskUnknownErrorMessage,
+  metamaskTryAgainText,
+  metamaskErrorMessageTitleText,
+  metamaskInvalidAddressMessage,
+};
+
+const walletPendingConfirmPendingTitleText = "Confirmation pending.";
+const walletPendingConfirmPendingMessage =
+  "Please confirm the transaction from your wallet.";
+
+export const walletConfirmConstants = {
+  walletPendingConfirmPendingTitleText,
+  walletPendingConfirmPendingMessage,
+};
+
+// amount error messages on the deposit page
+const amountLessThanMinDepositErrorMessage =
+  "Amount cannot be less than the minimum deposit of";
+const amountMoreThanMaxDepositErrorMessage =
+  "Amount cannot be more than the maximum allowed deposit of";
+const maxTotalDepositsExceededErrorMessage =
+  "You cannot deposit this amount. The maximum syndicate deposit of";
+const maxTotalLPDepositsExceededErrorMessage =
+  "You cannot deposit this amount. Your maximum allowed deposit of";
+const amountExceededText = "will be exceeded";
 
 // invest/deposit page
 export const constants = {
@@ -104,6 +157,20 @@ export const constants = {
   connectWalletMessage,
   connectWalletWithdrawMessage,
   connectWalletDepositMessage,
+  depositsUnavailableMaxLPsZeroText,
+  depositSuccessTitleText,
+  depositSuccessSubtext,
+  depositSuccessButtonText,
+  approvalSuccessTitleText,
+  approvalSuccessSubtext,
+  approvalSuccessButtonText,
+  retryButtonText,
+  dismissButtonText,
+  amountLessThanMinDepositErrorMessage,
+  amountMoreThanMaxDepositErrorMessage,
+  maxTotalDepositsExceededErrorMessage,
+  maxTotalLPDepositsExceededErrorMessage,
+  amountExceededText,
 };
 
 // Tooltips
@@ -181,6 +248,8 @@ const syndicateAddressInvalidMessageText =
   "Check to ensure you have the correct address.";
 const backLinkText = "< Back To My Syndicates";
 
+export const MAX_INTEGER = BigInt(2 ** 256) - BigInt(1);
+
 export const syndicateActionConstants = {
   noSyndicateTitleText,
   noSyndicateMessageText,
@@ -208,3 +277,11 @@ export const managerApproveAddressesConstants = {
   separateWithCommas,
   buttonText,
 };
+
+// contract transaction state constants
+export const pendingState =
+  "Creating your syndicate, please wait for the transaction to complete";
+
+export const confirmWalletText = "Waiting for wallet confirmation";
+export const confirmWalletSubText =
+  " Please confirm this transaction on your wallet.";

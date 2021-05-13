@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
 
 interface SyndicateItemProps {
-  address: string;
+  syndicateAddress: string;
   styles: string;
   closeDate: string;
   createdDate: string;
@@ -20,7 +20,7 @@ interface SyndicateItemProps {
 
 const SyndicateItem = (props: SyndicateItemProps) => {
   const {
-    address,
+    syndicateAddress,
     styles,
     closeDate,
     createdDate,
@@ -43,9 +43,12 @@ const SyndicateItem = (props: SyndicateItemProps) => {
   const [syndicateLpInfo, setSyndicateLpInfo] = useState(null);
   const [claimedDistributions, setClaimedDistributions] = useState("0");
 
-  const formattedAddress = `${address.slice(0, 5)}...${address.slice(
-    address.length - 4,
-    address.length
+  const formattedAddress = `${syndicateAddress.slice(
+    0,
+    5
+  )}...${syndicateAddress.slice(
+    syndicateAddress.length - 4,
+    syndicateAddress.length
   )}`;
 
   /**
@@ -75,7 +78,7 @@ const SyndicateItem = (props: SyndicateItemProps) => {
 
     getTotalDistributions(
       syndicateInstance,
-      address,
+      syndicateAddress,
       depositERC20ContractAddress,
       account
     ).then((distributions) => {
@@ -96,19 +99,19 @@ const SyndicateItem = (props: SyndicateItemProps) => {
     if (!syndicateInstance || !account) return;
 
     // this happens for the case where the wallet owner is the one leading the syndicate
-    if (address === account) return;
+    if (syndicateAddress === account) return;
 
     //
     try {
       const syndicateValues = await syndicateInstance.getSyndicateValues(
-        address
+        syndicateAddress
       );
       const syndicateLPInfo = await syndicateInstance.getSyndicateLPInfo(
-        address,
+        syndicateAddress,
         account
       );
       const totalSyndicateDistributions = await syndicateInstance.getTotalDistributions(
-        address,
+        syndicateAddress,
         account
       );
 
@@ -170,7 +173,7 @@ const SyndicateItem = (props: SyndicateItemProps) => {
 
   // check that wallet owner is not the creater of the syndicate
   if (active) {
-    if (address !== account) {
+    if (syndicateAddress !== account) {
       // monitors whether syndicate is open to deposits
       if (openToDeposits) {
         buttonText = "Deposit more";
@@ -194,7 +197,8 @@ const SyndicateItem = (props: SyndicateItemProps) => {
     <tr className="border-b border-gray-90">
       <td
         scope="col"
-        className="pl-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+        className="pl-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900"
+      >
         <p className={`h-5 w-5 rounded-full ${styles}`}></p>
       </td>
       <td className="px-5 py-4 whitespace-nowrap text-sm font-medium text-sm text-gray-300 whitespace-nowrap">
@@ -225,7 +229,7 @@ const SyndicateItem = (props: SyndicateItemProps) => {
         {claimedDistributions}
       </td>
       <td className="mb-2">
-        <Link href={`/syndicates/${address}/${link}`}>
+        <Link href={`/syndicates/${syndicateAddress}/${link}`}>
           <a className={`text-sm mx-4 rounded-full py-3 my-1 ${buttonStyles}`}>
             <button className="w-36 focus:outline-none">{buttonText}</button>
           </a>

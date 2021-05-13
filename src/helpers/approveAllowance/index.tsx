@@ -30,8 +30,7 @@ export const approveManager = async (
 
     return parseInt(daiAllowance);
   } catch (approveError) {
-    console.log({ approveError });
-    return 0;
+    return approveError;
   }
 };
 

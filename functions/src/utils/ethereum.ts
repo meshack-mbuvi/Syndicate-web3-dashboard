@@ -1,8 +1,10 @@
-import Web3 from "web3-eth";
+const Web3 = require("web3-eth");
+const CoinGecko = require("coingecko-api");
 
 const { ETH_API_URL } = process.env;
 
 const web3 = new Web3(ETH_API_URL);
+const CoinGeckoClient = new CoinGecko();
 
 const signatureObjectSchema = {
   messageHash: (value) => /0x[a-z|0-9]+/.test(value),
@@ -70,4 +72,29 @@ export async function verifyMessageSignature(data) {
     `;
     return { message };
   }
+}
+
+export async function getCoinFromContractAddress(contractAddress) {
+  /**
+   * This function receives the contractAddress as a parameter
+   * and returns the following coin information:
+   *  {
+   *    "name": "0x",
+   *    "symbol": "zrx",
+   *    "price": 1.95,
+   *    "percentageChange": -0.42862,
+   *    "logo":"https://assets.coingecko.com/coins/images/863/large/0x.png?1547034672"
+   * }
+   */
+
+  const coinInfo = await CoinGeckoClient.coins.fetchCoinContractInfo(
+    contractAddress
+  );
+  return {
+    name: coinInfo.data.name,
+    symbol: coinInfo.data.symbol,
+    price: coinInfo.data.market_data.current_price.usd,
+    percentageChange: coinInfo.data.market_data.price_change_percentage_24h,
+    logo: coinInfo.data.image.large,
+  };
 }

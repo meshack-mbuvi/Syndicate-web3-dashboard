@@ -21,12 +21,12 @@ export const Toggle = (props: {
       <div className="mr-4 w-1/2 flex justify-end">
         <label
           htmlFor="syndicateAddress"
-          className="block pt-2 text-black text-base font-medium">
+          className="block pt-2 text-black text-sm font-medium">
           {label}
         </label>
       </div>
 
-      <div className="flex justify-start w-1/2">
+      <div className="flex justify-start w-3/5">
         {/* <!-- Enabled: "translate-x-5", Not Enabled: "translate-x-0" --> */}
         <button
           type="button"

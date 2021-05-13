@@ -6,10 +6,11 @@ import RootReducer from "../reducers";
 
 const middleware = [thunk];
 
-const makeStore = () =>
-  createStore(
-    RootReducer,
-    composeWithDevTools(compose(applyMiddleware(...middleware)))
-  );
+export const store = createStore(
+  RootReducer,
+  composeWithDevTools(compose(applyMiddleware(...middleware)))
+);
+
+const makeStore = () => store;
 
 export const wrapper = createWrapper(makeStore);

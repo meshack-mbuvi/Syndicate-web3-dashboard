@@ -8,10 +8,6 @@ import { connect, useDispatch } from "react-redux";
 
 // ABI
 import syndicateABI from "src/contracts/Syndicate.json";
-import {
-  approveManager,
-  increaseAllowance,
-} from "src/helpers/approveAllowance";
 import { setSyndicateDetails } from "src/redux/actions/syndicateDetails";
 import { updateSyndicateLPDetails } from "src/redux/actions/syndicateLPDetails";
 // actions
@@ -29,6 +25,8 @@ import {
   myPercentageOfThisSyndicateToolTip,
   myWithDrawalsToDateTooltip,
   withdrawalsToDepositPercentageToolTip,
+  metamaskConstants,
+  walletConfirmConstants,
 } from "../shared/Constants";
 import { TokenSelect } from "../shared/tokenSelect";
 import { SyndicateActionButton } from "../shared/syndicateActionButton";
@@ -36,6 +34,9 @@ import { SyndicateActionLoader } from "../shared/syndicateActionLoader";
 import { TokenMappings } from "src/utils/tokenMappings";
 import { ErrorModal } from "src/components/shared/ErrorModal";
 import { SkeletonLoader } from "src/components/skeletonLoader";
+import { ERC20TokenDetails } from "src/utils/ERC20Methods";
+import { getWeiAmount } from "src/utils/conversions";
+import { getMetamaskError } from "src/helpers/metamaskError";
 
 const Web3 = require("web3");
 
@@ -44,6 +45,8 @@ interface InvestInSyndicateProps {
   syndicate: any;
   syndicateAction: any;
   syndicateLPDetails: any;
+  getSyndicateValues: Function;
+  syndicateContractInstance: any;
 }
 
 const InvestInSyndicate = (props: InvestInSyndicateProps) => {
@@ -52,6 +55,8 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
     syndicate,
     syndicateAction,
     syndicateLPDetails,
+    syndicateContractInstance,
+    getSyndicateValues,
   } = props;
   const router = useRouter();
 
@@ -65,22 +70,20 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
   const [
     totalAvailableDistributions,
     setTotalAvailableDistributions,
-  ] = useState<string>("0");
+  ] = useState<string>("0.00");
 
   const [depositAmount, setDepositAmount] = useState<number>(0);
-  const [depositAmountError, setDepositAmountError] = useState("");
+  const [depositAmountError, setDepositAmountError] = useState<string>("");
+  const [currentDistributionToken, setCurrentDistributionToken] = useState<
+    string[]
+  >([]);
+  const [
+    currentDistributionTokenDecimals,
+    setCurrentDistributionTokenDecimals,
+  ] = useState<number>(18);
+  const [currentERC20Decimals, setCurrentERC20Decimals] = useState<number>(18);
   const [currentERC20, setCurrentERC20] = useState<string>("DAI");
-  const [currentERC20Contract, setCurrentERC20Contract] = useState({
-    methods: {
-      allowance: (address: string, syndicateAddress: string) => {
-        return {
-          call: ({ from: any }) => {
-            return 0;
-          },
-        };
-      },
-    },
-  });
+  const [currentERC20Contract, setCurrentERC20Contract] = useState<any>({});
   const [
     depositsAndWithdrawalsAvailable,
     setDepositsAndWithdrawalsAvailable,
@@ -109,19 +112,45 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
   const [conversionError, setConversionError] = useState<string>("");
   const [showErrorMessage, setShowErrorMessage] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>("");
+  const [maxLPsZero, setMaxLPsZero] = useState<boolean>(false);
 
   // convert deposit and allowance values to floats for more accurate calculations.
   const amountToDeposit = parseFloat(depositAmount.toString());
   const allowanceAmountApproved = parseFloat(approvedAllowanceAmount);
 
-  // if there is a change in the deposit amount
-  // an updated allowance amount has to be calculated
-  // set new allowanceAmount to be used when increasing LP allowance.
-  let newAllowanceAmount = 0;
-  const allowanceDifference = amountToDeposit - allowanceAmountApproved;
-  if (allowanceDifference > 0) {
-    newAllowanceAmount = allowanceDifference;
-  }
+  // check maximum and minimum deposits to disallow deposits
+  const [
+    amountLessThanMinDeposit,
+    setAmountLessThanMinDeposit,
+  ] = useState<boolean>(false);
+  const [
+    amountMoreThanMaxDeposit,
+    setAmountMoreThanMaxDeposit,
+  ] = useState<boolean>(false);
+
+  const [
+    maxTotalDepositsExceeded,
+    setMaxTotalDepositsExceeded,
+  ] = useState<boolean>(true);
+
+  const [
+    maxTotalLPDepositsExceeded,
+    setMaxTotalLPDepositsExceeded,
+  ] = useState<boolean>(false);
+
+  // handle metamask errors
+  const [metamaskApprovalError, setMetamaskApprovalError] = useState<string>(
+    ""
+  );
+  const [metamaskDepositError, setMetamaskDepositError] = useState<string>("");
+
+  // deposit success state
+  const [successfulDeposit, setSuccessfulDeposit] = useState<boolean>(false);
+
+  // set metamask loading state
+  const [metamaskConfirmPending, setMetamaskConfirmPending] = useState<boolean>(
+    false
+  );
 
   const {
     myDeposits,
@@ -140,7 +169,6 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
     depositLPAccreditedText,
     withdrawalTitleText,
     withdrawalDisclaimerText,
-    noSyndicateText,
     depositsAndWithdrawalsUnavailableText,
     depositsAndWithdrawalsUnavailableTitleText,
     loaderWithdrawalHeaderText,
@@ -157,6 +185,7 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
     connectWalletMessage,
     connectWalletWithdrawMessage,
     connectWalletDepositMessage,
+    depositsUnavailableMaxLPsZeroText,
   } = constants;
 
   // get the state of the current syndicate action
@@ -209,8 +238,18 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
   const { syndicateAddress } = router.query;
   const web3 = new Web3(Web3.givenProvider || "ws://localhost:8545");
 
+  const getTokenDecimals = async (tokenAddress) => {
+    // set token decimals based on the token address
+    const ERC20Details = new ERC20TokenDetails(tokenAddress);
+    const tokenDecimals = await ERC20Details.getTokenDecimals();
+    if (tokenDecimals !== null) {
+      setCurrentERC20Decimals(parseInt(tokenDecimals));
+    }
+  };
+
   // set token symbol based on deposit token address
   // we'll manually map the token symbol for now.
+  // we'll also set the token decimals of the deposit/Withdrawal ERC20 token here
   useEffect(() => {
     if (syndicate) {
       // set token symbol based on token address
@@ -221,13 +260,66 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
       if (mappedTokenAddress) {
         setCurrentERC20(TokenMappings[mappedTokenAddress]);
       }
+
+      // set token decimal places.
+      getTokenDecimals(tokenAddress);
     }
   }, [syndicate]);
+
+  // check whether the current deposit amount exceeds max LP deposit allowed
+  // or if the deposit amount is less than the min LP deposit allowed.
+  // or if the maximum total deposits has been exceeded
+  useEffect(() => {
+    if (syndicate) {
+      const {
+        minDeposit,
+        maxDeposit,
+        totalDeposits,
+        maxTotalDeposits,
+      } = syndicate;
+      const amountToDeposit = parseFloat(depositAmount.toString());
+      const minimumDeposit = parseFloat(minDeposit);
+      const maximumDeposit = parseFloat(maxDeposit);
+      const totalSyndicateDeposits = parseFloat(totalDeposits);
+      const maxAllowedTotalDeposits = parseFloat(maxTotalDeposits);
+      const lpTotalDeposits = parseFloat(myDeposits);
+
+      if (amountToDeposit > 0 && amountToDeposit < minimumDeposit) {
+        setAmountLessThanMinDeposit(true);
+        setMaxTotalDepositsExceeded(false);
+        setAmountMoreThanMaxDeposit(false);
+        setMaxTotalLPDepositsExceeded(false);
+      } else if (amountToDeposit > maximumDeposit) {
+        setAmountMoreThanMaxDeposit(true);
+        setAmountLessThanMinDeposit(false);
+        setMaxTotalDepositsExceeded(false);
+        setMaxTotalLPDepositsExceeded(false);
+      } else if (
+        amountToDeposit + totalSyndicateDeposits >
+        maxAllowedTotalDeposits
+      ) {
+        setMaxTotalDepositsExceeded(true);
+        setAmountMoreThanMaxDeposit(false);
+        setAmountLessThanMinDeposit(false);
+        setMaxTotalLPDepositsExceeded(false);
+      } else if (lpTotalDeposits + amountToDeposit > maximumDeposit) {
+        setMaxTotalLPDepositsExceeded(true);
+        setMaxTotalDepositsExceeded(false);
+        setAmountMoreThanMaxDeposit(false);
+        setAmountLessThanMinDeposit(false);
+      } else {
+        setAmountLessThanMinDeposit(false);
+        setAmountMoreThanMaxDeposit(false);
+        setMaxTotalDepositsExceeded(false);
+        setMaxTotalLPDepositsExceeded(false);
+      }
+    }
+  }, [depositAmount, syndicate]);
   // check whether the current syndicate is accepting deposits
   // or withdrawals
   useEffect(() => {
     if (syndicate) {
-      const { syndicateOpen, distributionsEnabled } = syndicate;
+      const { syndicateOpen, distributionsEnabled, maxLPs } = syndicate;
 
       // if a syndicate is closed and distributions have not been enabled
       // the LP cannot deposit or withdraw from it.
@@ -242,24 +334,38 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
       // This check is important should a member try to access the deposit/details page of a closed syndicate.
       if (!syndicateOpen) {
         setDepositsAvailable(false);
+        setMaxLPsZero(false);
+      }
+
+      // if the maxLPs value for the syndicate is set to zero,
+      // then deposits are not available for the syndicate even though it's open
+      if (parseInt(maxLPs) < 1) {
+        setMaxLPsZero(true);
+        setDepositsAvailable(false);
       }
     }
   }, [syndicate]);
 
+  const [loadingLPDetails, setLoadingLPDetails] = useState<boolean>(false);
+
   // get values for the current LP(connected wallet account)
   // when this component initially renders.
   useEffect(() => {
+    setLoadingLPDetails(true);
     const lpAccount = account;
+    const syndicateDepositsTotal = syndicate?.totalDeposits;
     dispatch(
       updateSyndicateLPDetails({
         syndicateInstance,
         lpAccount,
         syndicateAddress,
-        syndicate,
+        syndicateDepositsTotal,
         web3,
         totalAvailableDistributions,
+        currentERC20Decimals,
       })
     );
+    setLoadingLPDetails(false);
   }, [
     syndicate,
     syndicateInstance,
@@ -285,70 +391,26 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
         syndicateInstance.address
       );
 
-      // subscribe to deposit and withdraw events
-      // we can only trigger an update to syndicate LP details once this
-      // event is emitted
-      syndicateContract.events
-        .lpInvestedInSyndicate({
-          filter: { lpAddress: account },
-          fromBlock: startBlock,
-        })
-        .on("data", () => {
-          // once event is emitted, dispatch action to save
-          // the latest syndicate LP details to the redux store.
-          const lpAccount = account;
-          dispatch(
-            updateSyndicateLPDetails({
-              syndicateInstance,
-              lpAccount,
-              syndicateAddress,
-              syndicate,
-              web3,
-              totalAvailableDistributions,
-            })
-          );
-          // update state after an invest event has been triggered.
-          // once an LP makes a deposit, a new allowance has to be set
-          // for them to be able to make another deposit.
-          // to avoid too many unneccessary re-renders, we'll check if a
-          // value is true before unsetting it.
-          if (approved) {
-            setApproved(false);
-          }
-
-          // reset allowance error
-          if (allowanceApprovalError) {
-            setAllowanceApprovalError("");
-          }
-          // reset approval amount
-          if (approvedAllowanceAmount) {
-            setApprovedAllowanceAmount("0");
-          }
-          // reset loading state if the deposit loading state is true
-          if (setSubmitting) {
-            setSubmitting(false);
-          }
-        })
-        .on("error", (error) => console.log({ error }));
-
       // subscribe to withdraw events.
       syndicateContract.events
         .lpWithdrewDistributionFromSyndicate({
-          filter: { lpAddress: account },
+          filter: { syndicateAddress, lpAddress: account },
           fromBlock: startBlock,
         })
         .on("data", () => {
           // once event is emitted, dispatch action to save
           // the latest syndicate LP details to the redux store.
           const lpAccount = account;
+          const syndicateDepositsTotal = syndicate?.totalDeposits;
           dispatch(
             updateSyndicateLPDetails({
               syndicateInstance,
               lpAccount,
               syndicateAddress,
-              syndicate,
+              syndicateDepositsTotal,
               web3,
               totalAvailableDistributions,
+              currentERC20Decimals,
             })
           );
         })
@@ -370,9 +432,14 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
         syndicate.depositERC20ContractAddress,
         account
       ).then((totalDistributions: string) => {
-        setTotalAvailableDistributions(
-          web3.utils.fromWei(totalDistributions.toString())
+        const totalDistributionsAvailable = getWeiAmount(
+          totalDistributions,
+          currentDistributionTokenDecimals,
+          false,
+          web3
         );
+
+        setTotalAvailableDistributions(totalDistributionsAvailable);
       });
     }
   }, [syndicate, account, syndicateInstance, currentERC20Contract]);
@@ -412,7 +479,7 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
   const investInSyndicate = async (depositAmount: number) => {
     /**
      * All addresses are allowed, and investments can be rejected after the
-     * fact. This is useful if you want to allow anyone to invest in an SPV
+     * fact. This is useful if you want to allow anyone to invest in a syndicate
      *  (for example, for a non-profit might enable this because there is
      * no expectation of profits and therefore they wouldn't need to be as
      * concerned about US securities regulations)
@@ -424,18 +491,65 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
      * If deposit amount exceeds the allowed investment deposit, this will fail.
      */
     const amountToInvest = toEther(depositAmount);
+    setMetamaskConfirmPending(true);
     try {
-      await syndicateInstance.lpInvestInSyndicate(
-        syndicateAddress,
-        amountToInvest,
-        { from: account, gasLimit: 800000 }
-      );
+      await syndicateContractInstance.methods
+        .lpInvestInSyndicate(syndicateAddress, amountToInvest)
+        .send({ from: account, gasLimit: 800000 })
+        .on("transactionHash", () => {
+          // user has confirmed the transaction so we should start loader state.
+          // show loading modal
+          setMetamaskConfirmPending(false);
+          setSubmitting(true);
+        })
+        .on("receipt", () => {
+          // transaction was succesful
+          // get syndicate updated values
+          getSyndicateValues();
+          const syndicateDepositsTotal = syndicate.totalDeposits;
+          const lpAccount = account;
+          dispatch(
+            updateSyndicateLPDetails({
+              syndicateInstance,
+              lpAccount,
+              syndicateAddress,
+              syndicateDepositsTotal,
+              web3,
+              totalAvailableDistributions,
+              currentERC20Decimals,
+            })
+          );
 
-      // reset approved allowance states
-      // so the LP can set new allowances before investing again
-      setLPCanDeposit(false);
-    } catch (err) {
-      console.log(err);
+          if (approved) {
+            setApproved(false);
+          }
+
+          // reset allowance error
+          if (allowanceApprovalError) {
+            setAllowanceApprovalError("");
+          }
+          // reset approval amount
+          if (approvedAllowanceAmount) {
+            setApprovedAllowanceAmount("0");
+          }
+          // cancel submitting state and show success notification.
+          setSubmitting(false);
+          setSuccessfulDeposit(true);
+          // reset approved allowance states
+          // so the LP can set new allowances before investing again
+          setLPCanDeposit(false);
+        })
+        .on("error", (error) => {
+          const { code } = error;
+          const errorMessage = getMetamaskError(code, "Deposit");
+          setMetamaskDepositError(errorMessage);
+          setSubmitting(false);
+        });
+    } catch (error) {
+      const { code } = error;
+      const errorMessage = getMetamaskError(code, "Deposit");
+      setMetamaskDepositError(errorMessage);
+      setSubmitting(false);
     }
 
     // dispatch action to get details about the syndicate
@@ -516,56 +630,60 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
   // before a deposit can be made
   const handleAllowanceApproval = async (event: any) => {
     event.preventDefault();
-    setSubmittingAllowanceApproval(true);
+    setMetamaskConfirmPending(true);
 
-    let approvedAllowance = 0;
-    let increasedAllowance = 0;
+    // set correct wei amount to approve
+    const amountToApprove = getWeiAmount(
+      depositAmount.toString(),
+      currentERC20Decimals,
+      true,
+      web3
+    );
+    try {
+      await currentERC20Contract.methods
+        .approve(syndicateContractInstance._address, amountToApprove)
+        .send({ from: account, gasLimit: 800000 })
+        .on("transactionHash", () => {
+          // user clicked on confirm
+          // show loading state
+          setSubmittingAllowanceApproval(true);
+          setMetamaskConfirmPending(false);
+        })
+        .on("receipt", (receipt) => {
+          // approval transaction successful
+          const { Approval } = receipt.events;
+          const { returnValues } = Approval;
+          const { value } = returnValues;
+          const lpApprovedAllowance = getWeiAmount(
+            value,
+            currentERC20Decimals,
+            false,
+            web3
+          );
 
-    if (approved && !lpCanDeposit) {
-      increasedAllowance = await increaseAllowance(
-        currentERC20Contract,
-        account,
-        syndicateInstance.address,
-        newAllowanceAmount
-      );
-      try {
-        // get total LP allowance after increasing it.
-        const lpApprovedAllowance = web3.utils.fromWei(
-          increasedAllowance.toString()
-        );
-        setApprovedAllowanceAmount(`${lpApprovedAllowance}`);
-        setAllowanceApprovalError("");
-        setApproved(true);
-        setLPCanDeposit(true);
-      } catch (error) {
-        setConversionError(amountConversionErrorText);
-      }
-    } else if (!approved && !lpCanDeposit) {
-      approvedAllowance = await approveManager(
-        currentERC20Contract,
-        account,
-        syndicateInstance.address,
-        depositAmount
-      );
-
-      try {
-        // get total approved allowance for the LP.
-        const lpApprovedAllowance = web3.utils.fromWei(
-          approvedAllowance.toString()
-        );
-        setApprovedAllowanceAmount(`${lpApprovedAllowance}`);
-        setAllowanceApprovalError("");
-        setApproved(true);
-        setLPCanDeposit(true);
-      } catch (error) {
-        setConversionError(amountConversionErrorText);
-      }
-
-      if (approvedAllowance === 0) {
-        return;
-      }
+          setApprovedAllowanceAmount(`${lpApprovedAllowance}`);
+          setAllowanceApprovalError("");
+          setApproved(true);
+          setLPCanDeposit(true);
+          setSubmittingAllowanceApproval(false);
+        })
+        .on("error", (error) => {
+          // user clicked reject.
+          const { code } = error;
+          const errorMessage = getMetamaskError(code, "Allowance approval");
+          setMetamaskApprovalError(errorMessage);
+          setSubmittingAllowanceApproval(false);
+          setMetamaskConfirmPending(false);
+        });
+    } catch (error) {
+      // error occured before wallet prompt.
+      const { code } = error;
+      const errorMessage = getMetamaskError(code, "Allowance approval");
+      setMetamaskConfirmPending(false);
+      setMetamaskApprovalError(errorMessage);
+      setSubmittingAllowanceApproval(false);
+      setMetamaskConfirmPending(false);
     }
-    setSubmittingAllowanceApproval(false);
   };
 
   // handle deposit/withdrawal form submit.
@@ -580,7 +698,6 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
       // set LP allowance first before making a deposit.
       handleAllowanceApproval(event);
     } else {
-      setSubmitting(true);
       setSubmittingWithdrawal(true);
       // Call invest or withdrawal functions based on current state.
       // deposit - page is in deposit mode
@@ -644,11 +761,14 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
         .call({ from: account });
 
       try {
-        const currentLPAllowanceAmount = web3.utils.fromWei(
-          lpAllowanceAmount.toString()
+        const currentLPAllowanceAmount = getWeiAmount(
+          lpAllowanceAmount.toString(),
+          currentERC20Decimals,
+          false,
+          web3
         );
 
-        if (parseInt(currentLPAllowanceAmount) > 0) {
+        if (currentLPAllowanceAmount > 0) {
           setApprovedAllowanceAmount(`${currentLPAllowanceAmount}`);
           setApproved(true);
           setAllowanceApprovalError("");
@@ -700,7 +820,11 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
   if (
     (amountToDeposit <= allowanceAmountApproved && approved) ||
     disableAmountInput ||
-    (amountToDeposit <= 0 && !approved)
+    (amountToDeposit <= 0 && !approved) ||
+    amountMoreThanMaxDeposit ||
+    maxTotalDepositsExceeded ||
+    amountLessThanMinDeposit ||
+    maxTotalLPDepositsExceeded
   ) {
     disableApprovalButton = true;
   }
@@ -716,7 +840,11 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
     !approved ||
     increasedDepositAmount ||
     amountToDeposit <= 0 ||
-    disableAmountInput
+    disableAmountInput ||
+    amountMoreThanMaxDeposit ||
+    maxTotalDepositsExceeded ||
+    amountLessThanMinDeposit ||
+    maxTotalLPDepositsExceeded
   ) {
     disableDepositButton = true;
   }
@@ -807,10 +935,37 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
 
   // show error message depending on what triggered it
   let errorMessageText = depositAmountError;
-  if (allowanceApprovalError) {
+  if (allowanceApprovalError && depositAmountError) {
+    errorMessageText = depositAmountError;
+  } else if (allowanceApprovalError && !depositAmountError) {
     errorMessageText = allowanceApprovalError;
   } else if (conversionError) {
     errorMessageText = conversionError;
+  }
+
+  // check if minDeposit, maxDeposit, or maxTotalDeposits has been violated
+  // show an error message and disable deposit and approval buttons if this is the case
+  if (syndicate) {
+    var { minDeposit, maxDeposit, maxTotalDeposits } = syndicate;
+  }
+
+  // get error message texts.
+  const {
+    amountLessThanMinDepositErrorMessage,
+    amountMoreThanMaxDepositErrorMessage,
+    maxTotalDepositsExceededErrorMessage,
+    maxTotalLPDepositsExceededErrorMessage,
+    amountExceededText,
+  } = constants;
+
+  if (amountLessThanMinDeposit) {
+    errorMessageText = `${amountLessThanMinDepositErrorMessage} ${minDeposit} ${currentERC20}`;
+  } else if (amountMoreThanMaxDeposit) {
+    errorMessageText = `${amountMoreThanMaxDepositErrorMessage} ${maxDeposit} ${currentERC20}`;
+  } else if (maxTotalDepositsExceeded) {
+    errorMessageText = `${maxTotalDepositsExceededErrorMessage} ${maxTotalDeposits} ${currentERC20} ${amountExceededText}`;
+  } else if (maxTotalLPDepositsExceeded) {
+    errorMessageText = `${maxTotalLPDepositsExceededErrorMessage} ${maxDeposit} ${currentERC20} ${amountExceededText}`;
   }
 
   // set correct text to show when the wallet account is not connected
@@ -832,6 +987,52 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
     );
   };
 
+  // set appropriate text for a syndicate that is closed
+  // or one that's open but has maxLPs set to zero
+  let unavailableForDepositsText = depositsUnavailableText;
+  if (maxLPsZero) {
+    unavailableForDepositsText = depositsUnavailableMaxLPsZeroText;
+  }
+
+  //set deposit title
+  let depositTitle = depositTitleText;
+  if (parseFloat(myDeposits) > 0) {
+    depositTitle = depositMoreTitleText;
+  }
+
+  // set metamask error message
+  const { metamaskErrorMessageTitleText } = metamaskConstants;
+  let metamaskErrorMessageText = metamaskApprovalError;
+  if (metamaskDepositError) {
+    metamaskErrorMessageText = metamaskDepositError;
+  }
+
+  // close the syndicate action loader
+  const closeSyndicateActionLoader = () => {
+    setAllowanceApprovalError("");
+    setSubmittingAllowanceApproval(false);
+    setMetamaskApprovalError("");
+    setMetamaskDepositError("");
+    setSubmitting(false);
+    setSuccessfulDeposit(false);
+    setMetamaskConfirmPending(false);
+  };
+
+  // texts for deposit and approval success/error states
+  const {
+    depositSuccessTitleText,
+    depositSuccessSubtext,
+    depositSuccessButtonText,
+    dismissButtonText,
+  } = constants;
+
+  // texts for metamask confirmation pending
+
+  const {
+    walletPendingConfirmPendingTitleText,
+    walletPendingConfirmPendingMessage,
+  } = walletConfirmConstants;
+
   return (
     <ErrorBoundary>
       <div className="w-full md:w-1/2 mt-4 sm:mt-0">
@@ -845,10 +1046,11 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
               title={connectWalletMessageTitle}
               message={noWalletAccountText}
             />
-          ) : !depositsAvailable && depositModes ? (
+          ) : (!depositsAvailable && depositModes) ||
+            (depositModes && maxLPsZero) ? (
             <UnavailableState
               title={depositsUnavailableTitleText}
-              message={depositsUnavailableText}
+              message={unavailableForDepositsText}
             />
           ) : depositsAndWithdrawalsAvailable ? (
             <>
@@ -861,29 +1063,69 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
                   }
                   headerText={loaderHeaderText}
                 />
+              ) : metamaskApprovalError || metamaskDepositError ? (
+                <SyndicateActionLoader
+                  contractAddress={
+                    metamaskApprovalError || metamaskDepositError
+                      ? syndicate?.depositERC20ContractAddress
+                      : syndicateAddress
+                  }
+                  headerText={metamaskErrorMessageTitleText}
+                  subText={metamaskErrorMessageText}
+                  error={true}
+                  showRetryButton={true}
+                  buttonText={dismissButtonText}
+                  closeLoader={closeSyndicateActionLoader}
+                />
+              ) : metamaskConfirmPending ? (
+                <SyndicateActionLoader
+                  headerText={walletPendingConfirmPendingTitleText}
+                  subText={walletPendingConfirmPendingMessage}
+                  pending={true}
+                />
+              ) : successfulDeposit ? (
+                <SyndicateActionLoader
+                  contractAddress={syndicateAddress}
+                  headerText={depositSuccessTitleText}
+                  subText={depositSuccessSubtext}
+                  showRetryButton={true}
+                  success={true}
+                  buttonText={depositSuccessButtonText}
+                  closeLoader={closeSyndicateActionLoader}
+                />
               ) : (
                 <>
-                  <p className="font-semibold text-xl p-2">
-                    {deposit
-                      ? depositMoreTitleText
-                      : generalView
-                      ? depositTitleText
-                      : withdraw
-                      ? withdrawalTitleText
-                      : null}
-                  </p>
+                  {!syndicate || loadingLPDetails ? (
+                    <div className="flex justify-between my-1 px-2">
+                      <SkeletonLoader width="full" height="5" />
+                    </div>
+                  ) : (
+                    <p className="font-semibold text-xl p-2">
+                      {deposit
+                        ? depositTitle
+                        : withdraw
+                        ? withdrawalTitleText
+                        : null}
+                    </p>
+                  )}
 
                   <div className="px-2">
                     {/* show this text if whitelist is enabled for deposits */}
-                    <p className="py-4 pt-2 text-green-screamin font-ibm">
-                      {depositModes
-                        ? depositApprovalText
-                        : withdraw
-                        ? totalDistributionsText
-                        : null}
-                    </p>
+                    {!syndicate || loadingLPDetails ? (
+                      <div className="flex justify-between my-1">
+                        <SkeletonLoader width="full" height="5" />
+                      </div>
+                    ) : (
+                      <p className="py-4 pt-2 text-green-screamin font-ibm">
+                        {depositModes
+                          ? depositApprovalText
+                          : withdraw
+                          ? totalDistributionsText
+                          : null}
+                      </p>
+                    )}
 
-                    {!syndicate ? (
+                    {!syndicate || loadingLPDetails ? (
                       <div className="flex justify-between my-1">
                         <SkeletonLoader width="full" height="10" />
                       </div>
@@ -894,7 +1136,7 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
                             name="depositAmount"
                             type="text"
                             placeholder="400"
-                            disabled={disableAmountInput}
+                            disabled={!myAddressAllowed}
                             defaultValue={depositAmount}
                             onChange={handleSetAmount}
                             className={`rounded-md bg-gray-9 border border-gray-24 text-white focus:outline-none focus:ring-gray-24 focus:border-gray-24 font-ibm w-7/12 mr-2 ${
@@ -910,7 +1152,11 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
 
                         {depositAmountError ||
                         allowanceApprovalError ||
-                        conversionError ? (
+                        conversionError ||
+                        amountLessThanMinDeposit ||
+                        amountMoreThanMaxDeposit ||
+                        maxTotalDepositsExceeded ||
+                        maxTotalLPDepositsExceeded ? (
                           <p className="mr-2 w-full text-red-500 text-xs mt-2 mb-4">
                             {errorMessageText}
                           </p>
@@ -948,7 +1194,7 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
         {/* This component should be shown when we have details about user deposits */}
         {account ? (
           <DetailsCard
-            {...{ title: "My Stats", sections, syndicate }}
+            {...{ title: "My Stats", sections, syndicate, loadingLPDetails }}
             customStyles={
               "sm:ml-6 p-4 mx-2 sm:px-8 sm:py-4 rounded-b-custom bg-gray-9 border border-gray-49"
             }
@@ -985,8 +1231,13 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
   );
 };
 
-const mapStateToProps = ({ web3Reducer, syndicateLPDetailsReducer }) => {
+const mapStateToProps = ({
+  web3Reducer,
+  syndicateLPDetailsReducer,
+  syndicateInstanceReducer: { syndicateContractInstance },
+}) => {
   const { web3, syndicateAction } = web3Reducer;
+
   const {
     syndicateLPDetails,
     syndicateLPDetailsLoading,
@@ -996,6 +1247,7 @@ const mapStateToProps = ({ web3Reducer, syndicateLPDetailsReducer }) => {
     syndicateAction,
     syndicateLPDetails,
     syndicateLPDetailsLoading,
+    syndicateContractInstance,
   };
 };
 
@@ -1003,6 +1255,7 @@ InvestInSyndicate.propTypes = {
   web3: PropTypes.any,
   dispatch: PropTypes.any,
   syndicate: PropTypes.object,
+  syndicateContractInstance: PropTypes.object,
 };
 
 export default connect(mapStateToProps)(InvestInSyndicate);

@@ -17,6 +17,7 @@ export const DetailsCard = (props: {
   customInnerWidth?: string;
   syndicateDetails?: boolean;
   syndicate?: any;
+  loadingLPDetails?: boolean;
 }) => {
   const {
     sections = [],
@@ -26,6 +27,7 @@ export const DetailsCard = (props: {
     customInnerWidth = "",
     syndicateDetails = false,
     syndicate,
+    loadingLPDetails,
   } = props;
 
   return (
@@ -42,10 +44,10 @@ export const DetailsCard = (props: {
                 syndicateDetails ? "w-7/12" : "w-full"
               }`}
             >
-              {syndicate ? (
-                <SectionCard {...{ ...section }} infoIcon={infoIcon} />
-              ) : (
+              {!syndicate || (loadingLPDetails && !syndicateDetails )? (
                 <SkeletonLoader height="8" width="full" />
+              ) : (
+                <SectionCard {...{ ...section }} infoIcon={infoIcon} />
               )}
             </div>
             {section?.isEditable ? (
