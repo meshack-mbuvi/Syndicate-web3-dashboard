@@ -276,9 +276,12 @@ const SyndicateDetails = (props: {
   }
 
   return (
-    <div className="flex flex-col w-full md:w-2/3">
-      <div className="w-full h-fit-content p-6 md:p-10 rounded-custom bg-gray-6">
-        <span className="fold-bold px-2 text-gray-dim leading-4 text-sm uppercase">
+    <div className="flex flex-col lg:w-3/5 w-full mr-2 lg:mr-6">
+      <div
+        className="h-fit-content p-6 md:p-10 rounded-custom bg-gray-6"
+        style={{ border: "1px solid white" }}
+      >
+        <span className="font-bold px-2 text-gray-dim leading-4 text-sm uppercase">
           Syndicate
         </span>
 
@@ -300,8 +303,9 @@ const SyndicateDetails = (props: {
           </CopyToClipboard>
           <p className="flex-shrink-0 h-8 w-8 sm:h-10 sm:w-10 md:h-16 md:w-16 ml-4 rounded-full ideo-liquidity inline"></p>
         </div>
-
-        <EtherscanLink contractAddress={syndicateAddress} />
+        <div className="w-fit-content">
+          <EtherscanLink contractAddress={syndicateAddress} />
+        </div>
         <div className="h-fit-content flex w-full justify-start md:ml-2 mb-12">
           {syndicateBadge}
         </div>
@@ -331,19 +335,6 @@ const SyndicateDetails = (props: {
             customInnerWidth="w-full"
           />
         </div>
-      </div>
-      <div className="flex w-full block my-8 justify-center m-auto p-auto">
-        <p className="text-center text-sm flex justify-center flex-wrap	font-extralight">
-          <span>{syndicateDetailsFooterText}&nbsp;</span>
-          <a
-            className="font-normal text-blue-cyan"
-            href="#"
-            target="_blank"
-            rel="noreferrer"
-          >
-            {syndicateDetailsLinkText}
-          </a>
-        </p>
       </div>
     </div>
   );

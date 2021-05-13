@@ -9,7 +9,10 @@ import { connect } from "react-redux";
 import ErrorBoundary from "src/components/errorBoundary";
 import Layout from "src/components/layout";
 import InvestInSyndicate from "src/components/syndicates/investInSyndicate";
-import { syndicateActionConstants } from "src/components/syndicates/shared/Constants";
+import {
+  syndicateActionConstants,
+  syndicateDetailsConstants,
+} from "src/components/syndicates/shared/Constants";
 import { EtherscanLink } from "src/components/syndicates/shared/EtherscanLink";
 import Head from "src/components/syndicates/shared/HeaderTitle";
 import SyndicateDetails from "src/components/syndicates/syndicateDetails";
@@ -19,6 +22,7 @@ import { isZeroAddress } from "src/utils/validators";
 import { getWeiAmount, basisPointsToPercentage } from "src/utils/conversions";
 const Web3 = require("web3");
 const web3 = new Web3(Web3.givenProvider || "ws://localhost:8545");
+
 /**
  * Renders syndicate component with details section on the left and
  * deposit section on the right
@@ -193,6 +197,11 @@ const SyndicateInvestment = (props: { web3; syndicateContractInstance }) => {
     backLinkText,
   } = syndicateActionConstants;
 
+  const {
+    syndicateDetailsFooterText,
+    syndicateDetailsLinkText,
+  } = syndicateDetailsConstants;
+
   // set texts to display on empty state
   // we'll initialize this to instances where address is not a syndicate.
   // if the address is invalid, this texts will be updated accordingly.
@@ -230,10 +239,13 @@ const SyndicateInvestment = (props: { web3; syndicateContractInstance }) => {
     <Layout>
       <Head title="Syndicate" />
       <ErrorBoundary>
-        <div className="w-full flex flex-col">
-          <Link href="/syndicates">
-            <a className="text-blue-cyan p-2 my-4 text-sm">{backLinkText}</a>
-          </Link>
+        <div className="w-full">
+          <div className="py-4">
+            <Link href="/syndicates">
+              <a className="text-blue-cyan text-sm">{backLinkText}</a>
+            </Link>
+          </div>
+
           {!syndicateFound || !syndicateAddressIsValid ? (
             syndicateEmptyState
           ) : (
@@ -252,6 +264,19 @@ const SyndicateInvestment = (props: { web3; syndicateContractInstance }) => {
               )}
             </div>
           )}
+          <div className="flex w-full my-8 justify-center m-auto p-auto">
+            <p className="text-center text-sm flex justify-center flex-wrap	font-extralight">
+              <span>{syndicateDetailsFooterText}&nbsp;</span>
+              <a
+                className="font-normal text-blue-cyan"
+                href="#"
+                target="_blank"
+                rel="noreferrer"
+              >
+                {syndicateDetailsLinkText}
+              </a>
+            </p>
+          </div>
         </div>
       </ErrorBoundary>
     </Layout>
