@@ -43,7 +43,7 @@ const MySyndicates = (props: MySyndicateProps) => {
     if (syndicates.length) {
       const syndicateAddresses = [];
       syndicates.forEach((syndicate) => {
-        syndicateAddresses.push(syndicate.address);
+        syndicateAddresses.push(syndicate.syndicateAddress);
       });
       const accountHasSyndicate = syndicateAddresses.find(
         (address) => address == account
