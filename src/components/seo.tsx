@@ -1,8 +1,12 @@
-import Head from 'next/head'
-import config from '../next-config'
+import Head from "next/head";
+import config from "../next-config";
 
-export default function SEO({ keywords, description="Official dashboard for Syndicate Protocol", title }) {
-  const siteTitle = config.title
+export default function SEO({
+  keywords,
+  description = "Official dashboard for Syndicate Protocol",
+  title,
+}) {
+  const siteTitle = config.title;
 
   return (
     <Head>
@@ -18,5 +22,5 @@ export default function SEO({ keywords, description="Official dashboard for Synd
       <meta property="twitter:title" content={title} />
       <meta property="twitter:description" content={description} />
     </Head>
-  )
+  );
 }

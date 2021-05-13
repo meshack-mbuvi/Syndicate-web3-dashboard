@@ -110,7 +110,7 @@ export const Layout = ({ children, syndicateAction }) => {
       <SyndicateInBetaBanner />
 
       {deposit || generalView ? <DepositsPageBanner /> : null}
-      <div className="flex w-auto w-full flex-col sm:flex-row md:py-4 px-4 md:px-6">
+      <div className="flex w-auto flex-col sm:flex-row md:py-4 px-4 md:px-6">
         {children}
       </div>
     </div>
