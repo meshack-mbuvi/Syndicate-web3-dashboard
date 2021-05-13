@@ -90,3 +90,10 @@ export const setSyndicateAction = (data: {
     data,
   });
 };
+
+export const getWeb3 = () => (dispatch, getState) => {
+  // grab current state
+  const state = getState();
+
+  return state;
+};

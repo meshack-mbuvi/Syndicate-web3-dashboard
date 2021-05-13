@@ -197,7 +197,8 @@ const SyndicateItem = (props: SyndicateItemProps) => {
     <tr className="border-b border-gray-90">
       <td
         scope="col"
-        className="pl-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+        className="pl-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900"
+      >
         <p className={`h-5 w-5 rounded-full ${styles}`}></p>
       </td>
       <td className="px-5 py-4 whitespace-nowrap text-sm font-medium text-sm text-gray-300 whitespace-nowrap">

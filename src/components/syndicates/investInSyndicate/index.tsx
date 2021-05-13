@@ -1136,7 +1136,7 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
                             name="depositAmount"
                             type="text"
                             placeholder="400"
-                            disabled={disableAmountInput}
+                            disabled={!myAddressAllowed}
                             defaultValue={depositAmount}
                             onChange={handleSetAmount}
                             className={`rounded-md bg-gray-9 border border-gray-24 text-white focus:outline-none focus:ring-gray-24 focus:border-gray-24 font-ibm w-7/12 mr-2 ${
