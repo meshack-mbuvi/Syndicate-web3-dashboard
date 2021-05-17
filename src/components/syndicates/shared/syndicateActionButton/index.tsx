@@ -1,3 +1,5 @@
+import React from "react";
+
 /**
  * button used to initiate deposits, approve allowances, and make withdrawals.
  */
@@ -45,8 +47,7 @@ export const SyndicateActionButton = (props: ButtonProps) => {
         disableButton ? "opacity-50 cursor-not-allowed" : ""
       }`}
       type="submit"
-      disabled={disableButton}
-    >
+      disabled={disableButton}>
       {showApprovalCheckmark ? (
         <span>
           <img src="/images/checkmark.svg" className="h-4 mr-2" />

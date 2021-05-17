@@ -1,5 +1,6 @@
-import { ethers } from "ethers";
 import { BigNumber } from "bignumber.js";
+import { ethers } from "ethers";
+const Web3 = require("web3");
 
 /**
  * Converts a number to ether
@@ -45,9 +46,10 @@ export const fromNumberToPercent = (number) => number / 1000;
 export const getWeiAmount = (
   amount: string,
   tokenDecimals: number,
-  multiplication: boolean,
-  web3: any
+  multiplication: boolean
 ) => {
+  const web3 = new Web3(Web3.givenProvider || "ws://localhost:8545");
+
   const BN = web3.utils.BN;
   const tokenFactor = new BN(Math.pow(10, tokenDecimals).toString());
   if (multiplication) {

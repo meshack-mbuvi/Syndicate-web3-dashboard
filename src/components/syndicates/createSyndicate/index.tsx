@@ -25,12 +25,16 @@ import {
 import { Modal } from "src/components/modal";
 // redux actions
 import { setSubmitting, showWalletModal } from "src/redux/actions";
+import { getWeiAmount } from "src/utils/conversions";
+import { ERC20TokenDetails } from "src/utils/ERC20Methods";
 import {
-  AgreeToOurTermsOfService,
+  AgreeToOurTermsOfServiceText,
   allowListEnabledToolTip,
   closeDateToolTip,
+  confirmCreateSyndicateSubText,
   depositTokenToolTip,
   expectedAnnualOperatingFeesToolTip,
+  loaderSubtext,
   maximumDepositToolTip,
   maxLpsToolTip,
   MAX_INTEGER,
@@ -42,8 +46,7 @@ import {
   syndicateAddressToolTip,
   totalMaximumDepositToolTip,
 } from "../shared/Constants";
-import { ERC20TokenDetails } from "src/utils/ERC20Methods";
-import { getWeiAmount } from "src/utils/conversions";
+import { EtherscanLink } from "../shared/EtherscanLink";
 
 /**
  * Diplays all syndicates.
@@ -372,16 +375,16 @@ const CreateSyndicate = (props: any) => {
 
       // use the user provided values, otherwise use defaults for mim and max fields.
       const wMinDeposits = minDeposits
-        ? getWeiAmount(minDeposits, depositTokenDecimals, true, web3)
-        : getWeiAmount("0", depositTokenDecimals, true, web3);
+        ? getWeiAmount(minDeposits, depositTokenDecimals, true)
+        : getWeiAmount("0", depositTokenDecimals, true);
 
       const wMaxDeposits = maxDeposits
-        ? getWeiAmount(maxDeposits, depositTokenDecimals, true, web3)
+        ? getWeiAmount(maxDeposits, depositTokenDecimals, true)
         : MAX_INTEGER;
 
       const wMaxLPs = maxLPs ? maxLPs.toString() : MAX_INTEGER;
       const wMaxTotalDeposits = maxTotalDeposits
-        ? getWeiAmount(maxTotalDeposits, depositTokenDecimals, true, web3)
+        ? getWeiAmount(maxTotalDeposits, depositTokenDecimals, true)
         : MAX_INTEGER;
 
       const managerManagementFeeBasisPoints = `${
@@ -581,7 +584,7 @@ const CreateSyndicate = (props: any) => {
   const handleTermsOfService = (event: any) => {
     setTermsOfService(event.target.checked);
     if (!event.target.checked) {
-      setTermsOfServiceError(AgreeToOurTermsOfService);
+      setTermsOfServiceError(AgreeToOurTermsOfServiceText);
     } else {
       setTermsOfServiceError("");
     }
@@ -610,14 +613,12 @@ const CreateSyndicate = (props: any) => {
           closeModal,
           customWidth: "w-full lg:w-2/3",
         }}
-        title="Create New Syndicate"
-      >
+        title="Create New Syndicate">
         <>
           {/* modal sub title */}
           <div
             className="flex justify-start mb-1 text-blue font-medium 
-          text-center leading-8 text-lg"
-          >
+          text-center leading-8 text-lg">
             <p className="text-blue-light ml-4">Onchain Data</p>
           </div>
 
@@ -709,8 +710,7 @@ const CreateSyndicate = (props: any) => {
                   <div className="mr-2 w-1/2 flex justify-end">
                     <label
                       htmlFor="syndicateAddress"
-                      className="block pt-2 text-black text-sm font-medium"
-                    >
+                      className="block pt-2 text-black text-sm font-medium">
                       Close Date:
                     </label>
                   </div>
@@ -765,8 +765,7 @@ const CreateSyndicate = (props: any) => {
                   <div className="mr-2 w-1/2 flex justify-end">
                     <label
                       htmlFor="profitShareToSyndProtocol"
-                      className="block pt-2 text-black text-base font-medium"
-                    >
+                      className="block pt-2 text-black text-base font-medium">
                       Profit Share to Syndicate Protocol:
                     </label>
                   </div>
@@ -774,8 +773,7 @@ const CreateSyndicate = (props: any) => {
                   {/* shows 4 equal grids used to get the input for profit share */}
                   <div className="w-3/5 flex justify-between">
                     <div
-                      className={`grid grid-cols-4 w-4/5 border h-12 gray-85 flex flex-grow rounded-md`}
-                    >
+                      className={`grid grid-cols-4 w-4/5 border h-12 gray-85 flex flex-grow rounded-md`}>
                       <button
                         className={`flex justify-center pt-3 border-r focus:outline-none ${
                           syndicateProfitSharePercent == "0.5"
@@ -783,8 +781,7 @@ const CreateSyndicate = (props: any) => {
                             : "gray-85"
                         }`}
                         onClick={() => updateProfitShareToSyndProtocol(0.5)}
-                        type="button"
-                      >
+                        type="button">
                         0.5%
                       </button>
 
@@ -797,8 +794,7 @@ const CreateSyndicate = (props: any) => {
                         onClick={() => {
                           updateProfitShareToSyndProtocol(1);
                         }}
-                        type="button"
-                      >
+                        type="button">
                         1%
                       </button>
 
@@ -811,8 +807,7 @@ const CreateSyndicate = (props: any) => {
                         type="button"
                         onClick={() => {
                           updateProfitShareToSyndProtocol(3);
-                        }}
-                      >
+                        }}>
                         3%
                       </button>
 
@@ -903,8 +898,7 @@ const CreateSyndicate = (props: any) => {
                 customClasses={`rounded-full bg-blue-light w-auto px-10 py-2 text-lg ${
                   validated ? "" : "opacity-50"
                 }`}
-                disabled={validated ? false : true}
-              >
+                disabled={validated ? false : true}>
                 Launch
               </Button>
             </div>
@@ -913,15 +907,28 @@ const CreateSyndicate = (props: any) => {
       </Modal>
 
       {/* Tell user to confirm transaction on their wallet */}
-      <ConfirmStateModal show={showWalletConfirmationModal} />
+      <ConfirmStateModal show={showWalletConfirmationModal}>
+        <div className="flex flex-col justify-center m-auto mb-4">
+          <p className="text-sm text-center mx-8 opacity-60">
+            {confirmCreateSyndicateSubText}
+          </p>
+        </div>
+      </ConfirmStateModal>
       {/* Loading modal */}
       <PendingStateModal
         {...{
           show: submitting,
-          syndicateAddress: account,
-          feedbackText: pendingState,
-        }}
-      />
+        }}>
+        <div className="modal-header mb-4 font-medium text-center leading-8 text-lg">
+          {pendingState}
+        </div>
+        <div className="flex flex-col justify-center m-auto mb-4">
+          <p className="text-sm text-center mx-8 opacity-60">{loaderSubtext}</p>
+        </div>
+        <div className="flex justify-center">
+          <EtherscanLink contractAddress={account} />
+        </div>
+      </PendingStateModal>
 
       {/* Error message modal */}
       <ErrorModal
@@ -930,8 +937,7 @@ const CreateSyndicate = (props: any) => {
           setShowErrorMessage,
           setErrorMessage,
           errorMessage,
-        }}
-      ></ErrorModal>
+        }}></ErrorModal>
 
       {/* show success modal */}
       <Modal
@@ -940,8 +946,7 @@ const CreateSyndicate = (props: any) => {
           closeModal: () => setShowSuccessModal(false),
           type: "success",
           customWidth: "w-3/5",
-        }}
-      >
+        }}>
         <div className="flex flex-col justify-center m-auto mb-4">
           <div className="flex align-center justify-center">
             <div className="border-4 border-light-blue m-8 rounded-full h-24 w-24 flex items-center justify-center">
@@ -950,8 +955,7 @@ const CreateSyndicate = (props: any) => {
                 height="26"
                 viewBox="0 0 34 26"
                 fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
+                xmlns="http://www.w3.org/2000/svg">
                 <path
                   d="M2 13.5723L11.2243 22.7966L32 2"
                   stroke="#35CFFF"
@@ -976,8 +980,7 @@ const CreateSyndicate = (props: any) => {
                 ) : (
                   <CopyToClipboard
                     text={`${window.location.origin}/syndicates/${account}/deposit`}
-                    onCopy={handleOnCopy}
-                  >
+                    onCopy={handleOnCopy}>
                     <FontAwesomeIcon
                       icon={faCopy}
                       size="2x"

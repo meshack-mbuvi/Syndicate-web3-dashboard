@@ -1,10 +1,15 @@
 import { getPastEvents } from "@/helpers/retrieveEvents";
+import { formatDate } from "@/utils";
+import { basisPointsToPercentage, getWeiAmount } from "@/utils/conversions";
+import { ERC20TokenDetails } from "@/utils/ERC20Methods";
 import { getSyndicate } from "src/helpers/syndicate";
 import {
   ADD_NEW_INVESTMENT,
   ALL_SYNDICATES,
+  INVALID_SYNDICATE_ADDRESS,
   NEW_SYNDICATE,
   SET_LOADING,
+  SYNDICATE_BY_ADDRESS,
 } from "../types";
 
 interface SyndicateInfo {
@@ -156,4 +161,143 @@ export const addSyndicateInvestment = (data) => async (dispatch) => {
     data,
     type: ADD_NEW_INVESTMENT,
   });
+};
+
+/**
+ * Retrieve single syndicate from the contract by syndicateAddress
+ */
+export const getSyndicateByAddress = (
+  syndicateAddress: string | string[],
+  syndicateContractInstance
+) => async (dispatch) => {
+  try {
+    const syndicate = await syndicateContractInstance.methods
+      .getSyndicateValues(syndicateAddress)
+      .call();
+
+    const tokenDecimals = await getTokenDecimals(
+      syndicate.depositERC20ContractAddress
+    );
+
+    const syndicateDetails = processSyndicateDetails(syndicate, tokenDecimals);
+
+    // set these incase they are not reset
+    dispatch({
+      data: { syndicateAddressIsValid: true, syndicateFound: true },
+      type: INVALID_SYNDICATE_ADDRESS,
+    });
+
+    // set syndicate details
+    return dispatch({
+      data: syndicateDetails,
+      type: SYNDICATE_BY_ADDRESS,
+    });
+  } catch (err) {
+    // syndicate not found
+    // syndicateAddress is not valid
+    dispatch({
+      data: { syndicateAddressIsValid: false, syndicateFound: false },
+      type: INVALID_SYNDICATE_ADDRESS,
+    });
+  }
+};
+
+// get number of decimal places for any ERC20 contract address
+export const getTokenDecimals = async (contractAddress: string) => {
+  try {
+    const ERC20Details = new ERC20TokenDetails(contractAddress);
+    const tokenDecimals = await ERC20Details.getTokenDecimals();
+    return tokenDecimals;
+  } catch (error) {
+    // we should return default value here which is 18
+    return 18;
+  }
+};
+
+/**
+ * This method formats syndicate data to be displayed in frontend
+ * @param syndicateData an object containing syndicate data
+ * @param tokenDecimals
+ * @returns {} an object containing formatted syndicate data
+ */
+export const processSyndicateDetails = (syndicateData, tokenDecimals = 18) => {
+  if (!syndicateData) return;
+
+  const closeDate = formatDate(
+    new Date(parseInt(syndicateData.closeDate) * 1000)
+  );
+
+  /**
+   * block.timestamp which is the one used to save creationDate is in
+   * seconds. We multiply by 1000 to convert to milliseconds and then
+   * convert this to javascript date object
+   */
+  const createdDate = formatDate(
+    new Date(parseInt(syndicateData.creationDate) * 1000)
+  );
+
+  const profitShareToSyndicateProtocol = basisPointsToPercentage(
+    syndicateData.syndicateProfitShareBasisPoints
+  );
+
+  const profitShareToSyndicateLead = basisPointsToPercentage(
+    syndicateData.managerPerformanceFeeBasisPoints
+  );
+
+  const managerManagementFeeBasisPoints = basisPointsToPercentage(
+    syndicateData.managerManagementFeeBasisPoints
+  );
+
+  const depositERC20ContractAddress = syndicateData.depositERC20ContractAddress;
+
+  getTokenDecimals(depositERC20ContractAddress);
+
+  const openToDeposits = syndicateData.syndicateOpen;
+  const currentManager = syndicateData.currentManager;
+  const syndicateOpen = syndicateData.syndicateOpen;
+  const distributionsEnabled = syndicateData.distributionsEnabled;
+
+  const maxTotalDeposits = getWeiAmount(
+    syndicateData.maxTotalDeposits,
+    tokenDecimals,
+    false
+  );
+  const totalDeposits = getWeiAmount(
+    syndicateData.totalDeposits,
+    tokenDecimals,
+    false
+  );
+  const minDeposit = getWeiAmount(
+    syndicateData.minDeposit,
+    tokenDecimals,
+    false
+  );
+
+  const maxDeposit = getWeiAmount(
+    syndicateData.maxDeposit,
+    tokenDecimals,
+    false
+  );
+  const totalDepositors = syndicateData.totalLPs;
+  const maxLPs = syndicateData.maxLPs;
+
+  return {
+    minDeposit,
+    maxDeposit,
+    maxTotalDeposits,
+    profitShareToSyndicateProtocol,
+    profitShareToSyndicateLead,
+    openToDeposits,
+    totalDeposits,
+    closeDate,
+    createdDate,
+    allowlistEnabled: syndicateData.allowlistEnabled,
+    depositERC20ContractAddress,
+    currentManager,
+    syndicateOpen,
+    distributionsEnabled,
+    managerManagementFeeBasisPoints,
+    totalDepositors,
+    maxLPs,
+  };
 };

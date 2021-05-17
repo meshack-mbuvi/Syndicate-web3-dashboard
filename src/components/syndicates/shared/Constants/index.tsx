@@ -236,7 +236,7 @@ export const distributionAmountToolTip =
 export const SyndicateInBetaBannerText =
   "Syndicate is currently in private beta. We take security seriously, but bugs may still exist.";
 
-export const AgreeToOurTermsOfService =
+export const AgreeToOurTermsOfServiceText =
   "Please agree to our terms of service to continue.";
 
 // syndicate actions page
@@ -257,6 +257,9 @@ export const syndicateActionConstants = {
   syndicateAddressInvalidTitleText,
   backLinkText,
 };
+
+export const SyndicateCannotBeReopenedOnceClosedText =
+  "Once a syndicate is closed, it cannot be re-opened.";
 
 // home page
 export const homePageConstants = {
@@ -282,6 +285,14 @@ export const managerApproveAddressesConstants = {
 export const pendingState =
   "Creating your syndicate, please wait for the transaction to complete";
 
-export const confirmWalletText = "Waiting for wallet confirmation";
-export const confirmWalletSubText =
+export const confirmWalletText = "Waiting for confirmation";
+export const confirmCreateSyndicateSubText =
   " Please confirm this transaction on your wallet.";
+export const confirmCloseSyndicateText =
+  "Confirm the transaction in your wallet to close your syndicate to deposits.";
+export const irreversibleActionText = "This action is irreversible.";
+export const rejectTransactionText =
+  "If this was a mistake, reject the transaction.";
+export const confirmingTransaction = "Confirming Transaction"
+export const waitTransactionTobeConfirmedText =
+  "Please wait while the wallet transaction is confirmed.";

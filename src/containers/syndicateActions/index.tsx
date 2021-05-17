@@ -1,11 +1,12 @@
 // manager components
 import ManagerActions from "@/containers/managerActions";
+import { getSyndicateByAddress } from "@/redux/actions/syndicates";
 import { faExclamationTriangle } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
-import { connect } from "react-redux";
+import { connect, useDispatch } from "react-redux";
 import ErrorBoundary from "src/components/errorBoundary";
 import Layout from "src/components/layout";
 import InvestInSyndicate from "src/components/syndicates/investInSyndicate";
@@ -16,12 +17,6 @@ import {
 import { EtherscanLink } from "src/components/syndicates/shared/EtherscanLink";
 import Head from "src/components/syndicates/shared/HeaderTitle";
 import SyndicateDetails from "src/components/syndicates/syndicateDetails";
-import { formatDate } from "src/utils";
-import { ERC20TokenDetails } from "src/utils/ERC20Methods";
-import { isZeroAddress } from "src/utils/validators";
-import { getWeiAmount, basisPointsToPercentage } from "src/utils/conversions";
-const Web3 = require("web3");
-const web3 = new Web3(Web3.givenProvider || "ws://localhost:8545");
 
 /**
  * Renders syndicate component with details section on the left and
@@ -29,30 +24,27 @@ const web3 = new Web3(Web3.givenProvider || "ws://localhost:8545");
  * @param {object} props
  */
 
-const SyndicateInvestment = (props: { web3; syndicateContractInstance }) => {
+const SyndicateInvestment = (props: {
+  web3;
+  syndicateContractInstance;
+  syndicate;
+  syndicateFound;
+  syndicateAddressIsValid;
+}) => {
   const {
     web3: { account },
     syndicateContractInstance,
+    syndicate,
+    syndicateFound,
+    syndicateAddressIsValid,
   } = props;
+
   const router = useRouter();
+  const dispatch = useDispatch();
 
   const { syndicateAddress } = router.query;
 
-  const [syndicate, setSyndicate] = useState(null);
   const [lpIsManager, setLpIsManager] = useState<boolean>(false);
-  const [tokenDecimals, setTokenDecimals] = useState<number>(18);
-  const [
-    syndicateAddressIsValid,
-    setSyndicateAddressIsValid,
-  ] = useState<boolean>(true);
-  const [syndicateFound, setSyndicateFound] = useState<boolean>(true);
-
-  // get number of decimal places for the current deposit token
-  const getTokenDecimals = async (depositERC20ContractAddress) => {
-    const ERC20Details = new ERC20TokenDetails(depositERC20ContractAddress);
-    const tokenDecimals = await ERC20Details.getTokenDecimals();
-    setTokenDecimals(parseInt(tokenDecimals));
-  };
 
   // A manager should not access deposit page but should be redirected
   // to syndicates page
@@ -64,119 +56,13 @@ const SyndicateInvestment = (props: { web3; syndicateContractInstance }) => {
     }
   }, [account]);
 
-  // get syndicate values
-  const getSyndicateValues = () => {
-    try {
-      syndicateContractInstance.methods
-        .getSyndicateValues(syndicateAddress)
-        .call()
-        .then((data) => {
-          // if the current manager has not been set,
-          // then the syndicate does not exist.
-          if (isZeroAddress(data.currentManager)) {
-            setSyndicateAddressIsValid(true);
-            setSyndicateFound(false);
-            return;
-          }
-
-          const closeDate = formatDate(
-            new Date(parseInt(data.closeDate) * 1000)
-          );
-
-          /**
-           * block.timestamp which is the one used to save creationDate is in
-           * seconds. We multiply by 1000 to convert to milliseconds and then
-           * convert this to javascript date object
-           */
-          const createdDate = formatDate(
-            new Date(parseInt(data.creationDate) * 1000)
-          );
-
-          const profitShareToSyndicateProtocol = basisPointsToPercentage(
-            data.syndicateProfitShareBasisPoints
-          );
-
-          const profitShareToSyndicateLead = basisPointsToPercentage(
-            data.managerPerformanceFeeBasisPoints
-          );
-
-          const managerManagementFeeBasisPoints = basisPointsToPercentage(
-            data.managerManagementFeeBasisPoints
-          );
-
-          const depositERC20ContractAddress = data.depositERC20ContractAddress;
-
-          getTokenDecimals(depositERC20ContractAddress);
-
-          const openToDeposits = data.syndicateOpen;
-          const currentManager = data.currentManager;
-          const syndicateOpen = data.syndicateOpen;
-          const distributionsEnabled = data.distributionsEnabled;
-
-          const maxTotalDeposits = getWeiAmount(
-            data.maxTotalDeposits,
-            tokenDecimals,
-            false,
-            web3
-          );
-          const totalDeposits = getWeiAmount(
-            data.totalDeposits,
-            tokenDecimals,
-            false,
-            web3
-          );
-          const minDeposit = getWeiAmount(
-            data.minDeposit,
-            tokenDecimals,
-            false,
-            web3
-          );
-
-          const maxDeposit = getWeiAmount(
-            data.maxDeposit,
-            tokenDecimals,
-            false,
-            web3
-          );
-          const totalDepositors = data.totalLPs;
-          const maxLPs = data.maxLPs;
-
-          setSyndicate({
-            maxDeposit,
-            profitShareToSyndicateProtocol,
-            profitShareToSyndicateLead,
-            openToDeposits,
-            totalDeposits,
-            closeDate,
-            createdDate,
-            allowlistEnabled: data.allowlistEnabled,
-            depositERC20ContractAddress,
-            currentManager,
-            syndicateOpen,
-            distributionsEnabled,
-            managerManagementFeeBasisPoints,
-            totalDepositors,
-            maxLPs,
-            minDeposit,
-            maxTotalDeposits,
-          });
-          setSyndicateFound(true);
-          setSyndicateAddressIsValid(true);
-        })
-        .catch((err) => console.log({ err }));
-    } catch (err) {
-      if (syndicateAddress) {
-        setSyndicateAddressIsValid(false);
-        setSyndicateFound(true);
-      }
-    }
-  };
-
   useEffect(() => {
     if (syndicateContractInstance.methods) {
-      getSyndicateValues();
+      dispatch(
+        getSyndicateByAddress(syndicateAddress, syndicateContractInstance)
+      );
     }
-  }, [syndicateContractInstance, syndicateAddress, tokenDecimals]);
+  }, [syndicateContractInstance, syndicateAddress, account]);
 
   // check whether the current connected wallet account is the manager of the syndicate
   // we'll use this information to load the manager view
@@ -251,16 +137,13 @@ const SyndicateInvestment = (props: { web3; syndicateContractInstance }) => {
           ) : (
             <div className="w-full flex flex-col md:flex-row">
               <SyndicateDetails
-                syndicate={syndicate}
                 lpIsManager={lpIsManager}
+                syndicate={syndicate}
               />
               {lpIsManager ? (
                 <ManagerActions />
               ) : (
-                <InvestInSyndicate
-                  syndicate={syndicate}
-                  getSyndicateValues={getSyndicateValues}
-                />
+                <InvestInSyndicate syndicate={syndicate} />
               )}
             </div>
           )}
@@ -271,8 +154,7 @@ const SyndicateInvestment = (props: { web3; syndicateContractInstance }) => {
                 className="font-normal text-blue-cyan"
                 href="#"
                 target="_blank"
-                rel="noreferrer"
-              >
+                rel="noreferrer">
                 {syndicateDetailsLinkText}
               </a>
             </p>
@@ -286,8 +168,15 @@ const SyndicateInvestment = (props: { web3; syndicateContractInstance }) => {
 const mapStateToProps = ({
   web3Reducer: { web3 },
   syndicateInstanceReducer: { syndicateContractInstance },
+  syndicatesReducer: { syndicate, syndicateFound, syndicateAddressIsValid },
 }) => {
-  return { web3, syndicateContractInstance };
+  return {
+    web3,
+    syndicateContractInstance,
+    syndicate,
+    syndicateFound,
+    syndicateAddressIsValid,
+  };
 };
 
 export default connect(mapStateToProps)(SyndicateInvestment);

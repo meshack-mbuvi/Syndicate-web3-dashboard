@@ -1,11 +1,13 @@
+import { floatedNumberWithCommas } from "@/utils/numberWithCommas";
 import { useRouter } from "next/router";
-import PropTypes from "prop-types";
 import React, { useEffect, useState } from "react";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import { connect, useDispatch } from "react-redux";
+import { EtherscanLink } from "src/components/syndicates/shared/EtherscanLink";
 import { setSyndicateDetails } from "src/redux/actions/syndicateDetails";
 // utils
 import { formatAddress } from "src/utils/formatAddress";
+import { TokenMappings } from "src/utils/tokenMappings";
 import { BadgeCard, DetailsCard } from "../shared";
 import {
   closeDateToolTip,
@@ -16,20 +18,17 @@ import {
   profitShareToSyndicateProtocolToolTip,
   syndicateDetailsConstants,
 } from "../shared/Constants";
-import { TokenMappings } from "src/utils/tokenMappings";
-import { floatedNumberWithCommas } from "@/utils/numberWithCommas";
-import { EtherscanLink } from "src/components/syndicates/shared/EtherscanLink";
 
 const SyndicateDetails = (props: {
   web3: any;
   syndicateDetails: any;
   lpIsManager;
-  syndicate: any;
+  syndicateContractInstance;
+  syndicate;
 }) => {
   const {
     web3: { syndicateInstance },
     syndicateDetails,
-    lpIsManager,
     syndicate,
   } = props;
 
@@ -160,13 +159,11 @@ const SyndicateDetails = (props: {
         {
           header: "Expected Annual Operating Fees",
           subText: `${managerManagementFeeBasisPoints}%`,
-          isEditable: lpIsManager ? true : false,
           toolTip: expectedAnnualOperatingFeesToolTip,
         },
         {
           header: "Profit Share to Syndicate Lead",
           subText: `${profitShareToSyndicateLead}%`,
-          isEditable: lpIsManager ? true : false,
           toolTip: profitShareToSyndicateLeadToolTip,
         },
         {
@@ -193,6 +190,9 @@ const SyndicateDetails = (props: {
     }
   };
 
+  /**
+   * Extracts some syndicate data and dispatches an action to set the details
+   */
   useEffect(() => {
     if (syndicateInstance && syndicate) {
       // dispatch action to get details about the syndicate
@@ -250,7 +250,6 @@ const SyndicateDetails = (props: {
           title: "Status",
           subTitle: "Open to Deposits",
           text: "Depositing available",
-          isEditable: lpIsManager ? true : false,
           syndicate,
           icon: (
             <span className="rounded-full bg-yellow-300 mt-2 w-4 h-4 ml-1"></span>
@@ -265,7 +264,6 @@ const SyndicateDetails = (props: {
           title: "Status",
           subTitle: "Operating",
           text: "Withdrawals available",
-          isEditable: lpIsManager ? true : false,
           syndicate,
           icon: (
             <span className="rounded-full bg-green-300 mt-2 w-4 h-4 ml-1"></span>
@@ -279,8 +277,7 @@ const SyndicateDetails = (props: {
     <div className="flex flex-col lg:w-3/5 w-full mr-2 lg:mr-6">
       <div
         className="h-fit-content p-6 md:p-10 rounded-custom bg-gray-6"
-        style={{ border: "1px solid white" }}
-      >
+        style={{ border: "1px solid white" }}>
         <span className="font-bold px-2 text-gray-dim leading-4 text-sm uppercase">
           Syndicate
         </span>
@@ -340,7 +337,11 @@ const SyndicateDetails = (props: {
   );
 };
 
-const mapStateToProps = ({ web3Reducer, syndicateDetailsReducer }) => {
+const mapStateToProps = ({
+  web3Reducer,
+  syndicateDetailsReducer,
+  syndicateInstanceReducer: { syndicateContractInstance },
+}) => {
   const { web3, depositMode, withdrawalMode } = web3Reducer;
   const { syndicateDetails, syndicateDetailsLoading } = syndicateDetailsReducer;
 
@@ -350,11 +351,8 @@ const mapStateToProps = ({ web3Reducer, syndicateDetailsReducer }) => {
     syndicateDetailsLoading,
     depositMode,
     withdrawalMode,
+    syndicateContractInstance,
   };
 };
 
-SyndicateDetails.propTypes = {
-  web3: PropTypes.any,
-  syndicate: PropTypes.object,
-};
 export default connect(mapStateToProps)(SyndicateDetails);

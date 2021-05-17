@@ -1,9 +1,9 @@
+import { floatedNumberWithCommas } from "@/utils/numberWithCommas";
+import { divideIfNotByZero, getWeiAmount } from "src/utils/conversions";
 import {
   LOADING_SYNDICATE_LP_DETAILS,
   SET_SYNDICATE_LP_DETAILS,
 } from "../types";
-import { floatedNumberWithCommas } from "@/utils/numberWithCommas";
-import { getWeiAmount, divideIfNotByZero } from "src/utils/conversions";
 
 export const setSyndicateLPDetails = (data) => {
   return {
@@ -20,7 +20,7 @@ export const setSyndicateLPDetailsLoading = (data) => {
 };
 
 interface SyndicateLPData {
-  syndicateInstance: any;
+  syndicateContractInstance: any;
   lpAccount: string;
   web3: any;
   syndicateAddress: string | string[];
@@ -39,9 +39,8 @@ export const updateSyndicateLPDetails = (data: SyndicateLPData) => async (
   dispatch
 ) => {
   const {
-    syndicateInstance,
+    syndicateContractInstance,
     lpAccount,
-    web3,
     syndicateAddress,
     syndicateDepositsTotal,
     totalAvailableDistributions,
@@ -49,38 +48,27 @@ export const updateSyndicateLPDetails = (data: SyndicateLPData) => async (
   } = data;
 
   // we cannot query relevant values without the syndicate instance
-  if (!syndicateInstance) return;
-
-  // initialize BN
-  const BN = web3.utils.BN;
+  if (!syndicateContractInstance) return;
 
   // Retrieves syndicateInfo for the connected wallet. We need to find out
   // how much the wallet account has invested in this syndicate
   try {
     setSyndicateLPDetailsLoading(true);
-    const syndicateLPInfo = await syndicateInstance.getSyndicateLPInfo(
-      syndicateAddress,
-      lpAccount
-    );
+    const syndicateLPInfo = await syndicateContractInstance.methods
+      .getSyndicateLPInfo(syndicateAddress, lpAccount)
+      .call();
+
+    const [lpDeposits, lpWithdrawals, myAddressAllowed] = syndicateLPInfo;
 
     // update total LP deposits
-    const myDeposits = getWeiAmount(
-      syndicateLPInfo[0].toString(),
-      currentERC20Decimals,
-      false,
-      web3
-    );
+    const myDeposits = getWeiAmount(lpDeposits, currentERC20Decimals, false);
 
     // update LP's withdrawals to date
     const myWithdrawalsToDate = getWeiAmount(
-      syndicateLPInfo[1].toString(),
+      lpWithdrawals,
       currentERC20Decimals,
-      false,
-      web3
+      false
     );
-
-    // check if LP is on the allowedAddresses list
-    const myAddressAllowed = syndicateLPInfo[2];
 
     // update LP's withdrawals to deposits percentage
     let withdrawalsToDepositPercentage = 0;

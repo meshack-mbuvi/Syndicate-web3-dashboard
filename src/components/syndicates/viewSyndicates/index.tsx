@@ -5,10 +5,7 @@ import { connect, useDispatch } from "react-redux";
 import Button from "src/components/buttons";
 import PageHeader from "src/components/pageHeader";
 import CreateSyndicate from "src/components/syndicates/createSyndicate";
-import {
-  default as ActiveSyndicates,
-  default as InActiveSyndicates,
-} from "./activeSyndicates";
+import { default as YourSyndicates } from "./yourSyndicates";
 
 interface MySyndicateProps {
   web3: any;
@@ -23,7 +20,7 @@ interface MySyndicateProps {
  * Data is pulled from the smart contract and syndicate’s wallet state.
  * @returns
  */
-const MySyndicates = (props: MySyndicateProps) => {
+const ViewSyndicates = (props: MySyndicateProps) => {
   const {
     web3: { syndicateInstance, account },
     syndicates,
@@ -66,14 +63,12 @@ const MySyndicates = (props: MySyndicateProps) => {
   }, [syndicateInstance]);
 
   // active syndicates are shown from this object
-  const activeSyndicates = syndicates.filter((syndicate) => {
+  const yourSyndicates = syndicates.filter((syndicate) => {
     return syndicate.active;
   });
 
   // inactive syndicate do not have custom styling like above
-  const inActiveSyndicates = syndicates.filter(
-    (syndicate) => !syndicate.active
-  );
+  const OtherSyndicates = syndicates.filter((syndicate) => !syndicate.active);
 
   // controls show/hide new syndicate creation modal
   const [showModal, setShowModal] = useState(false);
@@ -93,7 +88,7 @@ const MySyndicates = (props: MySyndicateProps) => {
           {/* Show page header and button to create new syndicate */}
           <div className="flex justify-between w-full">
             <div>
-              {activeSyndicates.length ? (
+              {yourSyndicates.length ? (
                 <PageHeader>Your Syndicates</PageHeader>
               ) : null}
             </div>
@@ -111,17 +106,17 @@ const MySyndicates = (props: MySyndicateProps) => {
           {syndicates.length ? (
             <>
               {/* show active syndicates here */}
-              {activeSyndicates.length ? (
+              {yourSyndicates.length ? (
                 <div>
-                  <ActiveSyndicates syndicates={activeSyndicates} />
+                  <YourSyndicates syndicates={yourSyndicates} />
                 </div>
               ) : null}
 
               {/* show inactive syndicates here */}
-              {inActiveSyndicates.length ? (
+              {OtherSyndicates.length ? (
                 <div className="mt-8">
                   <PageHeader>Other Syndicatesß</PageHeader>
-                  <InActiveSyndicates syndicates={inActiveSyndicates} />
+                  <OtherSyndicates syndicates={OtherSyndicates} />
                 </div>
               ) : null}
             </>
@@ -173,4 +168,4 @@ const mapStateToProps = (state) => {
   return { web3, syndicates, loading };
 };
 
-export default connect(mapStateToProps)(MySyndicates);
+export default connect(mapStateToProps)(ViewSyndicates);

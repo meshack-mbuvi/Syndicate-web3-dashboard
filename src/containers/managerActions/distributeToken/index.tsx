@@ -66,6 +66,7 @@ const DistributeToken = (props: Props) => {
   const [claimedDistributions, setClaimedDistributions] = useState<string>("0");
   const [unClaimedDistributions, setUnClaimedDistributions] = useState(0);
   const [submitting, setSubmitting] = useState(false);
+  console.log({ totalDistributions });
 
   useEffect(() => {
     const unClaimedDistributions =
@@ -153,6 +154,7 @@ const DistributeToken = (props: Props) => {
         syndicateAddress,
         depositERC20ContractAddress
       );
+      console.log({ totalDistributions });
       setTotalDistributions(
         etherToNumber(totalDistributions.toString()).toString()
       );

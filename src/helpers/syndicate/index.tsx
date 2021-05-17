@@ -3,6 +3,8 @@ import React from "react";
 import { formatDate } from "src/utils";
 const Web3 = require("web3");
 
+
+
 /**
  * retrieves details for a given syndicate
  */
