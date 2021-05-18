@@ -1,6 +1,5 @@
-import window from "global";
 import Link from "next/link";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { NavBarNavItem } from "./navbarItems";
 // Other components
 import Notification from "./notification";
@@ -12,71 +11,50 @@ import Wallet from "./wallet";
 const navbarLinks = [{ url: "/syndicates", urlText: "Syndicates" }];
 
 const Header = () => {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [width, setWidth] = useState<number>(window.innerWidth);
-  function handleWindowSizeChange() {
-    setWidth(window.innerWidth);
-  }
-  useEffect(() => {
-    window.addEventListener("resize", handleWindowSizeChange);
-    return () => {
-      window.removeEventListener("resize", handleWindowSizeChange);
-    };
-  }, []);
-
-  let isMobile: boolean = width <= 768;
-  const toggleMobileMenuOpen = () => {
-    setMobileMenuOpen(!mobileMenuOpen);
-  };
-
   return (
-    <header className="flex flex-wrap w-full border-b border-gray-90 py-4 flex-col md:flex-row">
-      <Link href="/">
-        <a className="w-fit-content">
-          <span className="sr-only">Syndicate</span>
-          <img
-            src="/images/logo.svg"
-            className="ml-6 h-10 my-2 px-4"
-            alt="Syndicate Logo"
-          />
-        </a>
-      </Link>
-      <button
-        className="absolute right-4 md:hidden w-8 h-8 my-2 bg-gray-200 text-gray-600 p-1"
-        onClick={toggleMobileMenuOpen}
-      >
-        <svg
-          fill="currentColor"
-          viewBox="0 0 20 20"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            fillRule="evenodd"
-            d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"
-            clipRule="evenodd"
-          ></path>
-        </svg>
-      </button>
-      <nav
-        className={`flex flex-col md:flex-row justify-between items-center sm:mx-4 flex-grow
-        ${isMobile && !mobileMenuOpen ? "hidden" : ""}`}
-      >
-        <div className="flex flex-col md:flex-row">
-          <div className="flex flex-col md:flex-row justify-between">
-            {navbarLinks.map(({ url, urlText }) => (
-              <NavBarNavItem {...{ url, urlText }} key={url} />
-            ))}
+    <nav className="bg-black h-20 fixed top-0 inset-x-0 align-middle border-b border-gray-90 py-4 bg-opacity-95">
+      <div className="max-w-8xl mx-auto px-4 h-full">
+        <div className="flex justify-between items-center h-full">
+          <div className="flex space-x-4 items-center">
+            {/* logo */}
+            <div>
+              <a
+                href="#"
+                className="flex items-center py-5 md:px-2 text-gray-700 hover:text-gray-900"
+              >
+                <Link href="/">
+                  <a className="flex items-center">
+                    <span className="sr-only">Syndicate</span>
+                    <img
+                      src="/images/logo.svg"
+                      className="py-4"
+                      alt="Syndicate Logo"
+                    />
+                  </a>
+                </Link>
+              </a>
+            </div>
+
+            {/* primary nav */}
+            <div className="hidden md:flex items-center space-x-1">
+              {navbarLinks.map(({ url, urlText }) => (
+                <NavBarNavItem {...{ url, urlText }} key={url} />
+              ))}
+            </div>
+          </div>
+
+          {/* secondary nav */}
+          <div className="flex items-center space-x-1">
+            <div className="py-2">
+              <Transaction />
+            </div>
+            <UserProfileWrapper>
+              <Wallet />
+            </UserProfileWrapper>
           </div>
         </div>
-
-        <div className="flex flex-col mx-2 md:flex-row justify-between mr-4">
-          <Transaction />
-          <UserProfileWrapper>
-            <Wallet />
-          </UserProfileWrapper>
-        </div>
-      </nav>
-    </header>
+      </div>
+    </nav>
   );
 };
 

@@ -100,7 +100,7 @@ export const Layout = ({ children, syndicateAction }) => {
     }
   };
   return (
-    <div>
+    <div className="py-20">
       <SEO
         keywords={[`next`, `tailwind`, `react`, `tailwindcss`]}
         title="Home"
@@ -110,7 +110,7 @@ export const Layout = ({ children, syndicateAction }) => {
       <SyndicateInBetaBanner />
 
       {deposit || generalView ? <DepositsPageBanner /> : null}
-      <div className="flex w-auto w-full flex-col sm:flex-row md:py-4 px-4 md:px-6">
+      <div className="flex w-full flex-col sm:flex-row md:py-4 px-4 md:px-6">
         {children}
       </div>
     </div>
