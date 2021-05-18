@@ -1,3 +1,4 @@
+import { ErrorModal } from "@/components/shared";
 import { PendingStateModal } from "@/components/shared/transactionStates";
 import ConfirmStateModal from "@/components/shared/transactionStates/confirm";
 import FinalStateModal from "@/components/shared/transactionStates/final";
@@ -6,6 +7,7 @@ import {
   confirmingTransaction,
   irreversibleActionText,
   rejectTransactionText,
+  syndicateActionConstants,
   waitTransactionTobeConfirmedText,
 } from "@/components/syndicates/shared/Constants";
 import { getMetamaskError } from "@/helpers";
@@ -16,34 +18,23 @@ import { connect, useDispatch } from "react-redux";
 import ErrorBoundary from "../../components/errorBoundary";
 import DistributeToken from "./distributeToken";
 import ManagerAction from "./ManagerAction";
+import ModifySyndicateCapTable from "./modifySyndicateCapTable";
 import MoreManagerActions from "./MoreManagerActions";
 import PreApproveDepositor from "./preApproveDepositor";
 
-const moreActions = [
-  {
-    icon: <img src="/images/invertedInfo.svg" />,
-    text: "Overwrite syndicate cap table",
-  },
-  {
-    icon: <img src="/images/exclamation-triangle.svg" />,
-    text: "Reject deposit or depositor address",
-  },
-  {
-    icon: <img src="/images/settings.svg" />,
-    text: "Change syndicate settings",
-  },
-];
-
-const ManagerActions = (props: {
-  syndicate;
+interface ManageActionProps {
+  syndicate: any;
   web3;
   syndicateContractInstance;
-}) => {
+}
+
+const ManagerActions = (props: ManageActionProps) => {
   const {
     syndicate,
     web3: { account },
     syndicateContractInstance,
   } = props;
+  console.log({ syndicate });
   const dispatch = useDispatch();
 
   const router = useRouter();
@@ -54,11 +45,22 @@ const ManagerActions = (props: {
     showWalletConfirmationModal,
     setShowWalletConfirmationModal,
   ] = useState(false);
+
   const [showFinalState, setShowFinalState] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
   const [showDistributeToken, setShowDistributeToken] = useState(false);
   const [showPreApproveDepositor, setShowPreApproveDepositor] = useState(false);
+  const [showModifyCapTable, setShowModifyCapTable] = useState(false);
+  const [showSyndicateNotModifiable, setShowSyndicateNotModifiable] = useState(
+    false
+  );
+  const [errorMessage, setErrorMessage] = useState("");
+
+  const {
+    nonModifiableSyndicateErrorText,
+    enableDistributionToModifySyndicateText,
+  } = syndicateActionConstants;
 
   const actions = [
     {
@@ -108,11 +110,7 @@ const ManagerActions = (props: {
 
           setSubmitting(true);
         })
-        .on("receipt", async (receipt) => {
-          // we can process the transaction data here together with emitted
-          console.log({ receipt });
-
-          // createSyndicate event
+        .on("receipt", async () => {
           setSubmitting(false);
 
           setShowFinalState(true);
@@ -152,6 +150,39 @@ const ManagerActions = (props: {
         setFinalStateFeedback(errorMessage);
       }
       setShowFinalState(true);
+    }
+  };
+
+  const moreActions = [
+    {
+      icon: <img src="/images/invertedInfo.svg" />,
+      text: "Overwrite syndicate cap table",
+      onClickHandler: () => showModifyCapTableModal(),
+    },
+    {
+      icon: <img src="/images/exclamation-triangle.svg" />,
+      text: "Reject deposit or depositor address",
+    },
+    {
+      icon: <img src="/images/settings.svg" />,
+      text: "Change syndicate settings",
+    },
+  ];
+
+  const showModifyCapTableModal = () => {
+    setErrorMessage("");
+    if (syndicate?.modifiable) {
+      setShowModifyCapTable(true);
+    } else {
+      // tell manager this syndicate cannot be modified
+      setShowSyndicateNotModifiable(true);
+
+      // set message based on whether syndicate is modifiable and/or distributions are disabled
+      if (!syndicate.modifable) {
+        setErrorMessage(nonModifiableSyndicateErrorText);
+      } else {
+        setErrorMessage(enableDistributionToModifySyndicateText);
+      }
     }
   };
 
@@ -203,8 +234,13 @@ const ManagerActions = (props: {
           <div className="font-semibold tracking-widest text-sm leading-6 text-gray-matterhorn my-6 mx-4">
             MORE
           </div>
-          {moreActions.map(({ icon, text }) => (
-            <MoreManagerActions key={text} icon={icon} text={text} />
+          {moreActions.map(({ icon, text, onClickHandler }) => (
+            <MoreManagerActions
+              key={text}
+              icon={icon}
+              text={text}
+              onClickHandler={onClickHandler}
+            />
           ))}
         </div>
         {showDistributeToken ? (
@@ -214,6 +250,19 @@ const ManagerActions = (props: {
         ) : showPreApproveDepositor ? (
           <PreApproveDepositor
             {...{ showPreApproveDepositor, setShowPreApproveDepositor }}
+          />
+        ) : showModifyCapTable ? (
+          <ModifySyndicateCapTable
+            {...{ showModifyCapTable, setShowModifyCapTable }}
+          />
+        ) : showSyndicateNotModifiable ? (
+          <ErrorModal
+            {...{
+              show: showSyndicateNotModifiable,
+              setShowErrorMessage: setShowSyndicateNotModifiable,
+              setErrorMessage,
+              errorMessage,
+            }}
           />
         ) : null}
       </div>
@@ -259,12 +308,10 @@ const ManagerActions = (props: {
 };
 
 const mapStateToProps = ({
-  syndicatesReducer: { syndicate },
   web3Reducer: { web3 },
   syndicateInstanceReducer: { syndicateContractInstance },
 }) => {
   return {
-    syndicate,
     web3,
     syndicateContractInstance,
   };

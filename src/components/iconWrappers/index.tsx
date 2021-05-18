@@ -7,11 +7,11 @@ import React from "react";
  * @param {object} props an object containing custom properties for styling
  */
 export const InfoIcon = (props: { toolTip?: string }) => {
-  const { toolTip } = props;
+  const { toolTip, ...rest } = props;
   return (
     <div>
       <div className="tooltip">
-        <img src="/images/info.svg" {...props} className="image-tooltip" />
+        <img src="/images/info.svg" {...rest} className="image-tooltip" />
         {toolTip ? (
           <p className="tooltiptext w-fit-content mt-1">{toolTip}</p>
         ) : null}

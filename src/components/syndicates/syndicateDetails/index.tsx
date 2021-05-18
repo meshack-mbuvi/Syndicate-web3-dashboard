@@ -16,7 +16,6 @@ import {
   expectedAnnualOperatingFeesToolTip,
   profitShareToSyndicateLeadToolTip,
   profitShareToSyndicateProtocolToolTip,
-  syndicateDetailsConstants,
 } from "../shared/Constants";
 
 const SyndicateDetails = (props: {
@@ -100,11 +99,6 @@ const SyndicateDetails = (props: {
       depositERC20ContractAddress,
     } = syndicate;
   }
-
-  const {
-    syndicateDetailsFooterText,
-    syndicateDetailsLinkText,
-  } = syndicateDetailsConstants;
 
   // get and set current token details
   useEffect(() => {

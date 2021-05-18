@@ -112,6 +112,9 @@ const walletPendingConfirmPendingTitleText = "Confirmation pending.";
 const walletPendingConfirmPendingMessage =
   "Please confirm the transaction from your wallet.";
 
+export const depositorAddressToolTip =
+  "Address the depositor used to send funds to the manager.";
+
 export const walletConfirmConstants = {
   walletPendingConfirmPendingTitleText,
   walletPendingConfirmPendingMessage,
@@ -250,12 +253,19 @@ const backLinkText = "< Back To My Syndicates";
 
 export const MAX_INTEGER = BigInt(2 ** 256) - BigInt(1);
 
+const nonModifiableSyndicateErrorText =
+  "This syndicate is not modifable. This means you cannot modify the syndicate details.";
+const enableDistributionToModifySyndicateText =
+  "Distributions must be set before modifying syndicate details.";
+
 export const syndicateActionConstants = {
   noSyndicateTitleText,
   noSyndicateMessageText,
   syndicateAddressInvalidMessageText,
   syndicateAddressInvalidTitleText,
   backLinkText,
+  nonModifiableSyndicateErrorText,
+  enableDistributionToModifySyndicateText,
 };
 
 export const SyndicateCannotBeReopenedOnceClosedText =
@@ -293,6 +303,12 @@ export const confirmCloseSyndicateText =
 export const irreversibleActionText = "This action is irreversible.";
 export const rejectTransactionText =
   "If this was a mistake, reject the transaction.";
-export const confirmingTransaction = "Confirming Transaction"
+export const confirmingTransaction = "Confirming Transaction";
 export const waitTransactionTobeConfirmedText =
   "Please wait while the wallet transaction is confirmed.";
+
+export const web3InstantiationErrorText =
+  "Sorry! We are unable to connect to network where the contract is deployed. Please ensure you have access to stable network and retry the connection.";
+
+export const confirmModifySyndicateCapTableText =
+  "Confirm you want to alter deposits for the member address.";

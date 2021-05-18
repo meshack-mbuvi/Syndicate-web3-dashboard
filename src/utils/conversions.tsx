@@ -75,7 +75,7 @@ export const basisPointsToPercentage = (basisPoints: string) => {
  * @returns division result as a float
  */
 export const divideIfNotByZero = (numerator, denominator) => {
-  if (denominator === 0 || isNaN(denominator)) {
+  if (denominator === 0 || numerator === 0 || isNaN(denominator)) {
     return 0;
   } else {
     return numerator / denominator;

@@ -17,7 +17,6 @@ import {
 import { EtherscanLink } from "src/components/syndicates/shared/EtherscanLink";
 import Head from "src/components/syndicates/shared/HeaderTitle";
 import SyndicateDetails from "src/components/syndicates/syndicateDetails";
-
 /**
  * Renders syndicate component with details section on the left and
  * deposit section on the right
@@ -141,7 +140,7 @@ const SyndicateInvestment = (props: {
                 syndicate={syndicate}
               />
               {lpIsManager ? (
-                <ManagerActions />
+                <ManagerActions syndicate={syndicate} />
               ) : (
                 <InvestInSyndicate syndicate={syndicate} />
               )}

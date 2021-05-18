@@ -1,7 +1,6 @@
 import ErrorBoundary from "@/components/errorBoundary";
 import { getTotalDistributions } from "@/helpers";
 import { getSyndicateByAddress } from "@/redux/actions/syndicates";
-// actions
 import { showWalletModal } from "@/redux/actions/web3Provider";
 import { Validate } from "@/utils/validators";
 import { useRouter } from "next/router";
@@ -10,8 +9,6 @@ import React, { useEffect, useState } from "react";
 import { connect, useDispatch } from "react-redux";
 import { ErrorModal } from "src/components/shared/ErrorModal";
 import { SkeletonLoader } from "src/components/skeletonLoader";
-// ABI
-import syndicateABI from "src/contracts/Syndicate.json";
 import { getMetamaskError } from "src/helpers/metamaskError";
 import { setSyndicateDetails } from "src/redux/actions/syndicateDetails";
 import { updateSyndicateLPDetails } from "src/redux/actions/syndicateLPDetails";
@@ -73,10 +70,7 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
   const [depositAmount, setDepositAmount] = useState<number>(0);
   const [depositAmountError, setDepositAmountError] = useState<string>("");
 
-  const [
-    currentDistributionTokenDecimals,
-    setCurrentDistributionTokenDecimals,
-  ] = useState<number>(18);
+  const [currentDistributionTokenDecimals] = useState<number>(18);
   const [currentERC20Decimals, setCurrentERC20Decimals] = useState<number>(18);
   const [currentERC20, setCurrentERC20] = useState<string>("DAI");
   const [currentERC20Contract, setCurrentERC20Contract] = useState<any>({});
@@ -381,14 +375,8 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
 
       setCurrentERC20Contract(ERC20Contract);
 
-      // set up syndicate contract.
-      const syndicateContract = new web3.eth.Contract(
-        syndicateABI.abi,
-        syndicateInstance.address
-      );
-
       // subscribe to withdraw events.
-      syndicateContract.events
+      syndicateContractInstance.events
         .lpWithdrewDistributionFromSyndicate({
           filter: { syndicateAddress, lpAddress: account },
           fromBlock: startBlock,
@@ -1137,7 +1125,7 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
                             name="depositAmount"
                             type="text"
                             placeholder="400"
-                            disabled={!myAddressAllowed}
+                            disabled={myAddressAllowed}
                             defaultValue={depositAmount}
                             onChange={handleSetAmount}
                             className={`rounded-md bg-gray-9 border border-gray-24 text-white focus:outline-none focus:ring-gray-24 focus:border-gray-24 font-ibm w-7/12 mr-2 ${

@@ -222,6 +222,21 @@ export const getTokenDecimals = async (contractAddress: string) => {
  */
 export const processSyndicateDetails = (syndicateData, tokenDecimals = 18) => {
   if (!syndicateData) return;
+  let {
+    modifiable,
+    creationDate,
+    syndicateProfitShareBasisPoints,
+    managerPerformanceFeeBasisPoints,
+    managerManagementFeeBasisPoints,
+    depositERC20ContractAddress,
+    syndicateOpen,
+    currentManager,
+    distributionsEnabled,
+    maxTotalDeposits,
+    totalDeposits,
+    minDeposit,
+    maxDeposit,
+  } = syndicateData;
 
   const closeDate = formatDate(
     new Date(parseInt(syndicateData.closeDate) * 1000)
@@ -232,52 +247,27 @@ export const processSyndicateDetails = (syndicateData, tokenDecimals = 18) => {
    * seconds. We multiply by 1000 to convert to milliseconds and then
    * convert this to javascript date object
    */
-  const createdDate = formatDate(
-    new Date(parseInt(syndicateData.creationDate) * 1000)
-  );
+  const createdDate = formatDate(new Date(parseInt(creationDate) * 1000));
 
   const profitShareToSyndicateProtocol = basisPointsToPercentage(
-    syndicateData.syndicateProfitShareBasisPoints
+    syndicateProfitShareBasisPoints
   );
 
   const profitShareToSyndicateLead = basisPointsToPercentage(
-    syndicateData.managerPerformanceFeeBasisPoints
+    managerPerformanceFeeBasisPoints
   );
 
-  const managerManagementFeeBasisPoints = basisPointsToPercentage(
-    syndicateData.managerManagementFeeBasisPoints
+  managerManagementFeeBasisPoints = basisPointsToPercentage(
+    managerManagementFeeBasisPoints
   );
 
-  const depositERC20ContractAddress = syndicateData.depositERC20ContractAddress;
+  const openToDeposits = syndicateOpen;
+  maxTotalDeposits = getWeiAmount(maxTotalDeposits, tokenDecimals, false);
 
-  getTokenDecimals(depositERC20ContractAddress);
+  totalDeposits = getWeiAmount(totalDeposits, tokenDecimals, false);
+  minDeposit = getWeiAmount(minDeposit, tokenDecimals, false);
 
-  const openToDeposits = syndicateData.syndicateOpen;
-  const currentManager = syndicateData.currentManager;
-  const syndicateOpen = syndicateData.syndicateOpen;
-  const distributionsEnabled = syndicateData.distributionsEnabled;
-
-  const maxTotalDeposits = getWeiAmount(
-    syndicateData.maxTotalDeposits,
-    tokenDecimals,
-    false
-  );
-  const totalDeposits = getWeiAmount(
-    syndicateData.totalDeposits,
-    tokenDecimals,
-    false
-  );
-  const minDeposit = getWeiAmount(
-    syndicateData.minDeposit,
-    tokenDecimals,
-    false
-  );
-
-  const maxDeposit = getWeiAmount(
-    syndicateData.maxDeposit,
-    tokenDecimals,
-    false
-  );
+  maxDeposit = getWeiAmount(maxDeposit, tokenDecimals, false);
   const totalDepositors = syndicateData.totalLPs;
   const maxLPs = syndicateData.maxLPs;
 
@@ -299,5 +289,7 @@ export const processSyndicateDetails = (syndicateData, tokenDecimals = 18) => {
     managerManagementFeeBasisPoints,
     totalDepositors,
     maxLPs,
+    modifiable,
+    tokenDecimals,
   };
 };

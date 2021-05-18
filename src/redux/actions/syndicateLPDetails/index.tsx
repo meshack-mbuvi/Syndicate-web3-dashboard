@@ -58,7 +58,9 @@ export const updateSyndicateLPDetails = (data: SyndicateLPData) => async (
       .getSyndicateLPInfo(syndicateAddress, lpAccount)
       .call();
 
-    const [lpDeposits, lpWithdrawals, myAddressAllowed] = syndicateLPInfo;
+    const lpDeposits = syndicateLPInfo[0];
+    const lpWithdrawals = syndicateLPInfo[1];
+    const myAddressAllowed = syndicateLPInfo[2];
 
     // update total LP deposits
     const myDeposits = getWeiAmount(lpDeposits, currentERC20Decimals, false);
