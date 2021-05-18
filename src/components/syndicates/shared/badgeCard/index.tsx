@@ -1,6 +1,5 @@
 import PropTypes from "prop-types";
 import React from "react";
-import { EditButton } from "src/components/syndicates/shared/editButton";
 import { SkeletonLoader } from "src/components/skeletonLoader";
 
 export const BadgeCard = (props: {
@@ -8,10 +7,9 @@ export const BadgeCard = (props: {
   subTitle;
   text;
   icon?: JSX.Element;
-  isEditable?: boolean;
   syndicate?: any;
 }) => {
-  const { title, subTitle, text, icon, isEditable, syndicate } = props;
+  const { title, subTitle, text, icon, syndicate } = props;
 
   return (
     <div className="w-full mt-4 m-2">
@@ -32,11 +30,6 @@ export const BadgeCard = (props: {
             </div>
           )}
         </div>
-        {isEditable ? (
-          <div className="flex items-center h-full">
-            <EditButton />
-          </div>
-        ) : null}
       </div>
     </div>
   );

@@ -1,5 +1,13 @@
-import PropTypes from "prop-types";
 import React from "react";
+
+interface ModalProps {
+  title?: string;
+  children: JSX.Element;
+  show: boolean;
+  closeModal: Function;
+  type?: string;
+  customWidth?: string;
+}
 
 /**
  * Displays a vertically centered modal
@@ -9,10 +17,10 @@ import React from "react";
  *   - show: a boolean variable that controls whether to show the modal or not
  *   - closeModal: a function that changes the state of show variable to false
  *   - type: can be either success or normal. Default is normal
- *       NOTE: A success modal has syndicate logos in the background
+ *      - NOTE: A success modal has syndicate logos in the background
  * @returns an html node in a form of a modal
  */
-export const Modal = (props) => {
+export const Modal = (props: ModalProps) => {
   const { title, children, show, closeModal, customWidth = "w-2/5" } = props;
 
   return (
@@ -24,8 +32,8 @@ export const Modal = (props) => {
               className="fixed inset-0 transition-opacity"
               aria-hidden="true">
               <div
-                className="absolute inset-0  bg-gray-9 opacity-95"
-                onClick={closeModal}></div>
+                className="absolute inset-0  bg-gray-9 opacity-80"
+                onClick={() => closeModal()}></div>
             </div>
 
             <div
@@ -38,22 +46,9 @@ export const Modal = (props) => {
                 <button
                   type="button"
                   className="bg-white rounded-md text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                  onClick={closeModal}>
+                  onClick={() => closeModal()}>
                   <span className="sr-only">Close</span>
-                  <svg
-                    className="h-6 w-6"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    aria-hidden="true">
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M6 18L18 6M6 6l12 12"
-                    />
-                  </svg>
+                  <img src="/images/close.svg" className="p-2 opacity-50" />
                 </button>
               </div>
               {/* modal title */}
@@ -69,15 +64,6 @@ export const Modal = (props) => {
       ) : null}
     </>
   );
-};
-
-Modal.propTypes = {
-  title: PropTypes.string,
-  children: PropTypes.node.isRequired,
-  show: PropTypes.bool.isRequired,
-  closeModal: PropTypes.func.isRequired,
-  type: PropTypes.string,
-  customWidth: PropTypes.string,
 };
 
 export default Modal;

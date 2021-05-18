@@ -1,42 +1,39 @@
 import ErrorBoundary from "@/components/errorBoundary";
 import { getTotalDistributions } from "@/helpers";
+import { getSyndicateByAddress } from "@/redux/actions/syndicates";
+import { showWalletModal } from "@/redux/actions/web3Provider";
 import { Validate } from "@/utils/validators";
 import { useRouter } from "next/router";
 import PropTypes from "prop-types";
 import React, { useEffect, useState } from "react";
 import { connect, useDispatch } from "react-redux";
-
-// ABI
-import syndicateABI from "src/contracts/Syndicate.json";
+import { ErrorModal } from "src/components/shared/ErrorModal";
+import { SkeletonLoader } from "src/components/skeletonLoader";
+import { getMetamaskError } from "src/helpers/metamaskError";
 import { setSyndicateDetails } from "src/redux/actions/syndicateDetails";
 import { updateSyndicateLPDetails } from "src/redux/actions/syndicateLPDetails";
-// actions
-import { showWalletModal } from "@/redux/actions/web3Provider";
 // utils and helpers
 import { toEther } from "src/utils";
 import ERC20ABI from "src/utils/abi/rinkeby-dai";
+import { getWeiAmount } from "src/utils/conversions";
+import { ERC20TokenDetails } from "src/utils/ERC20Methods";
 import { floatedNumberWithCommas } from "src/utils/numberWithCommas";
+import { TokenMappings } from "src/utils/tokenMappings";
 // shared components
 import { DetailsCard } from "../shared";
 import {
   constants,
+  metamaskConstants,
   myDepositsToolTip,
   myDistributionsToDateToolTip,
   myPercentageOfThisSyndicateToolTip,
   myWithDrawalsToDateTooltip,
-  withdrawalsToDepositPercentageToolTip,
-  metamaskConstants,
   walletConfirmConstants,
+  withdrawalsToDepositPercentageToolTip,
 } from "../shared/Constants";
-import { TokenSelect } from "../shared/tokenSelect";
 import { SyndicateActionButton } from "../shared/syndicateActionButton";
 import { SyndicateActionLoader } from "../shared/syndicateActionLoader";
-import { TokenMappings } from "src/utils/tokenMappings";
-import { ErrorModal } from "src/components/shared/ErrorModal";
-import { SkeletonLoader } from "src/components/skeletonLoader";
-import { ERC20TokenDetails } from "src/utils/ERC20Methods";
-import { getWeiAmount } from "src/utils/conversions";
-import { getMetamaskError } from "src/helpers/metamaskError";
+import { TokenSelect } from "../shared/tokenSelect";
 
 const Web3 = require("web3");
 
@@ -45,7 +42,6 @@ interface InvestInSyndicateProps {
   syndicate: any;
   syndicateAction: any;
   syndicateLPDetails: any;
-  getSyndicateValues: Function;
   syndicateContractInstance: any;
 }
 
@@ -56,7 +52,6 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
     syndicateAction,
     syndicateLPDetails,
     syndicateContractInstance,
-    getSyndicateValues,
   } = props;
   const router = useRouter();
 
@@ -74,13 +69,8 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
 
   const [depositAmount, setDepositAmount] = useState<number>(0);
   const [depositAmountError, setDepositAmountError] = useState<string>("");
-  const [currentDistributionToken, setCurrentDistributionToken] = useState<
-    string[]
-  >([]);
-  const [
-    currentDistributionTokenDecimals,
-    setCurrentDistributionTokenDecimals,
-  ] = useState<number>(18);
+
+  const [currentDistributionTokenDecimals] = useState<number>(18);
   const [currentERC20Decimals, setCurrentERC20Decimals] = useState<number>(18);
   const [currentERC20, setCurrentERC20] = useState<string>("DAI");
   const [currentERC20Contract, setCurrentERC20Contract] = useState<any>({});
@@ -356,7 +346,7 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
     const syndicateDepositsTotal = syndicate?.totalDeposits;
     dispatch(
       updateSyndicateLPDetails({
-        syndicateInstance,
+        syndicateContractInstance,
         lpAccount,
         syndicateAddress,
         syndicateDepositsTotal,
@@ -385,14 +375,8 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
 
       setCurrentERC20Contract(ERC20Contract);
 
-      // set up syndicate contract.
-      const syndicateContract = new web3.eth.Contract(
-        syndicateABI.abi,
-        syndicateInstance.address
-      );
-
       // subscribe to withdraw events.
-      syndicateContract.events
+      syndicateContractInstance.events
         .lpWithdrewDistributionFromSyndicate({
           filter: { syndicateAddress, lpAddress: account },
           fromBlock: startBlock,
@@ -404,7 +388,7 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
           const syndicateDepositsTotal = syndicate?.totalDeposits;
           dispatch(
             updateSyndicateLPDetails({
-              syndicateInstance,
+              syndicateContractInstance,
               lpAccount,
               syndicateAddress,
               syndicateDepositsTotal,
@@ -435,8 +419,7 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
         const totalDistributionsAvailable = getWeiAmount(
           totalDistributions,
           currentDistributionTokenDecimals,
-          false,
-          web3
+          false
         );
 
         setTotalAvailableDistributions(totalDistributionsAvailable);
@@ -505,12 +488,16 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
         .on("receipt", () => {
           // transaction was succesful
           // get syndicate updated values
-          getSyndicateValues();
+
+          dispatch(
+            getSyndicateByAddress(syndicateAddress, syndicateContractInstance)
+          );
+
           const syndicateDepositsTotal = syndicate.totalDeposits;
           const lpAccount = account;
           dispatch(
             updateSyndicateLPDetails({
-              syndicateInstance,
+              syndicateContractInstance,
               lpAccount,
               syndicateAddress,
               syndicateDepositsTotal,
@@ -605,7 +592,7 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
 
       dispatch(
         setSyndicateDetails(
-          syndicateInstance,
+          syndicateContractInstance,
           depositERC20ContractAddress,
           profitShareToSyndicateLead,
           profitShareToSyndicateProtocol,
@@ -636,8 +623,7 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
     const amountToApprove = getWeiAmount(
       depositAmount.toString(),
       currentERC20Decimals,
-      true,
-      web3
+      true
     );
     try {
       await currentERC20Contract.methods
@@ -657,8 +643,7 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
           const lpApprovedAllowance = getWeiAmount(
             value,
             currentERC20Decimals,
-            false,
-            web3
+            false
           );
 
           setApprovedAllowanceAmount(`${lpApprovedAllowance}`);
@@ -764,8 +749,7 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
         const currentLPAllowanceAmount = getWeiAmount(
           lpAllowanceAmount.toString(),
           currentERC20Decimals,
-          false,
-          web3
+          false
         );
 
         if (currentLPAllowanceAmount > 0) {
@@ -978,7 +962,13 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
 
   // component to show any unavailable state for deposits, withdrawals,
   // and instances where the wallet account is not connected.
-  const UnavailableState = ({ title, message }) => {
+  const UnavailableState = ({
+    title,
+    message,
+  }: {
+    title: string;
+    message: string;
+  }) => {
     return (
       <div>
         <p className="font-semibold text-xl p-2">{title}</p>
@@ -1039,8 +1029,7 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
         <div
           className={`h-fit-content  mx-2 p-4 pb-2 md:p-6 bg-gray-7 sm:ml-6 border ${
             !account ? "rounded-custom" : `border-b-0 rounded-t-custom`
-          } border-gray-49`}
-        >
+          } border-gray-49`}>
           {!account ? (
             <UnavailableState
               title={connectWalletMessageTitle}
@@ -1136,7 +1125,7 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
                             name="depositAmount"
                             type="text"
                             placeholder="400"
-                            disabled={!myAddressAllowed}
+                            disabled={myAddressAllowed}
                             defaultValue={depositAmount}
                             onChange={handleSetAmount}
                             className={`rounded-md bg-gray-9 border border-gray-24 text-white focus:outline-none focus:ring-gray-24 focus:border-gray-24 font-ibm w-7/12 mr-2 ${
@@ -1225,8 +1214,7 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
           setShowErrorMessage,
           setErrorMessage,
           errorMessage,
-        }}
-      ></ErrorModal>
+        }}></ErrorModal>
     </ErrorBoundary>
   );
 };

@@ -1,6 +1,5 @@
 import PropTypes from "prop-types";
 import React from "react";
-import { EditButton } from "src/components/syndicates/shared/editButton";
 import { SectionCard } from "../sectionCard";
 import { SkeletonLoader } from "src/components/skeletonLoader";
 
@@ -50,11 +49,6 @@ export const DetailsCard = (props: {
                 <SectionCard {...{ ...section }} infoIcon={infoIcon} />
               )}
             </div>
-            {section?.isEditable ? (
-              <div className="sm:my-4 flex w-1/4 items-center">
-                <EditButton />
-              </div>
-            ) : null}
           </div>
         ))}
       </div>

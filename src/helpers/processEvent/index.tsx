@@ -1,5 +1,4 @@
 import { formatDate } from "@/utils";
-import { parse } from "flatted";
 
 /**
  * This function retrieves data from createdSyndicate event which is emitted when
@@ -43,8 +42,8 @@ export const processCreatedSyndicateEvent = ({ returnValues }) => {
     managerPerformanceFeeBasisPoints,
     allowlistEnabled,
     modifiable,
-    creationDate,
     activities: 0,
+    createdDate: creationDate,
     currentManager: syndicateAddress,
   };
 };

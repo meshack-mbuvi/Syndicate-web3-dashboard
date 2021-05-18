@@ -15,11 +15,9 @@ export const approveManager = async (
   managerAddress,
   amount
 ) => {
-  const amountDai = toEther(amount).toString();
-
   try {
     await currentERC20Contract.methods
-      .approve(managerAddress, amountDai)
+      .approve(managerAddress, amount)
       .send({ from: account, gasLimit: 800000 });
 
     // Check the approval amount
@@ -30,6 +28,7 @@ export const approveManager = async (
 
     return parseInt(daiAllowance);
   } catch (approveError) {
+    console.log({ approveError });
     return approveError;
   }
 };
@@ -111,7 +110,7 @@ export const managerSetDistribution = async (
     approveManager(
       currentERC20Contract,
       account,
-      syndicateInstance.address,
+      syndicateInstance._address,
       amount
     );
   } catch (error) {
@@ -121,7 +120,7 @@ export const managerSetDistribution = async (
   // set distribution
   try {
     const amountDai = toEther(amount).toString();
-    const receipt = await syndicateInstance.setDistribution(
+    await syndicateInstance.setDistribution(
       syndicateAddress,
       syndicate.depositERC20ContractAddress,
       amountDai,

@@ -66,6 +66,7 @@ const DistributeToken = (props: Props) => {
   const [claimedDistributions, setClaimedDistributions] = useState<string>("0");
   const [unClaimedDistributions, setUnClaimedDistributions] = useState(0);
   const [submitting, setSubmitting] = useState(false);
+  console.log({ totalDistributions });
 
   useEffect(() => {
     const unClaimedDistributions =
@@ -153,6 +154,7 @@ const DistributeToken = (props: Props) => {
         syndicateAddress,
         depositERC20ContractAddress
       );
+      console.log({ totalDistributions });
       setTotalDistributions(
         etherToNumber(totalDistributions.toString()).toString()
       );
@@ -308,7 +310,7 @@ const DistributeToken = (props: Props) => {
             <p className="text-blue-light mx-4 my-4 text-xl">
               Create Distribution
             </p>
-            <div className="bg-gray-100 rounded-xl p-4 py-8">
+            <div className="border border-gray-93 bg-gray-99 rounded-xl p-4 py-8">
               {loading ? (
                 <div className="space-y-4 text-center loader">Loading</div>
               ) : !syndicateOpen ? (
@@ -366,7 +368,7 @@ const DistributeToken = (props: Props) => {
             <p className="text-gray-500 mx-4 my-4 mt-10 text-xl">
               Distribution Details
             </p>
-            <div className="bg-gray-100 mt-4 py-8 rounded-xl p-4">
+            <div className="border border-gray-93 bg-gray-99 mt-4 py-8 rounded-xl p-4">
               {loading ? (
                 <div className="space-y-4 text-center loader">Loading</div>
               ) : syndicateError ? (

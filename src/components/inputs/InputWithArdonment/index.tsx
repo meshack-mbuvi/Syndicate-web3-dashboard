@@ -7,7 +7,7 @@ import { InfoIcon } from "src/components/iconWrappers";
  *  small text is rendered.
  * @param {*} props
  */
-export const TextInput = (props: {
+export const InputWithAddon = (props: {
   label: string;
   name?: string;
   onChange?;
@@ -17,7 +17,7 @@ export const TextInput = (props: {
   required?: boolean;
   value: string | number;
   toolTip: string;
-  type?: string;
+  addOn: string;
 }) => {
   const {
     label,
@@ -25,15 +25,19 @@ export const TextInput = (props: {
     onChange,
     error,
     value,
+    addOn,
     toolTip,
-    disabled = false,
-    type = "text",
+    disabled,
     ...rest
   } = props;
+  let variableWidth = 6;
+  if (value.toString().length >= 6) {
+    variableWidth = value.toString().length + 1;
+  }
 
   const disabledClasses = disabled
-    ? "text-sm text-gray-500 border-0"
-    : "text-black border-gray-85";
+    ? "text-gray-500 border-0"
+    : "text-black border border-gray-85";
 
   return (
     <div className="flex flex-row justify-center">
@@ -44,19 +48,22 @@ export const TextInput = (props: {
           {label}
         </label>
       </div>
-      <div className="w-3/5 flex-grow flex flex-col justify-between">
+      <div className="w-3/5 flex flex-col justify-between">
         {/* input field */}
-        <div className="flex flex-grow">
-          <input
-            type={type}
-            name={name}
-            onChange={onChange}
-            className={`flex flex-grow text-sm focus:ring-indigo-500 focus:border-indigo-500 rounded-md ${disabledClasses}`}
-            {...rest}
-            disabled={disabled}
-            value={value}
-            step="1"
-          />
+        <div className="flex">
+          <div className={`flex rounded-md flex-grow ${disabledClasses}`}>
+            <input
+              type="number"
+              name={name}
+              onChange={onChange}
+              className={`flex px-1 ml-1 py-2 text-sm rounded-md focus:outline-none outline-none focus:ring-0 focus:border-none border-0`}
+              style={{ width: `${variableWidth}ch` }}
+              {...rest}
+              value={value}
+              disabled={disabled}
+            />
+            <span className="flex flex-1 py-2 text-gray-500">{addOn}</span>
+          </div>
           {/* icon */}
           <div className="w-6 ml-4 mt-1">
             <InfoIcon toolTip={toolTip} />

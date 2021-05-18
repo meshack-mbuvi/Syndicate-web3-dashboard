@@ -1,6 +1,7 @@
-import { EtherscanLink } from "src/components/syndicates/shared/EtherscanLink";
-import { constants } from "src/components/syndicates/shared/Constants";
+import React from "react";
 import { Spinner } from "src/components/shared/spinner";
+import { constants } from "src/components/syndicates/shared/Constants";
+import { EtherscanLink } from "src/components/syndicates/shared/EtherscanLink";
 
 interface LoaderProp {
   // the contract address the etherscan link should point to
@@ -61,8 +62,7 @@ export const SyndicateActionLoader = (props: LoaderProp) => {
       {showRetryButton ? (
         <button
           className={`flex w-full items-center justify-center font-medium rounded-md text-black bg-white focus:outline-none focus:ring py-4 mt-4`}
-          onClick={() => closeLoader()}
-        >
+          onClick={() => closeLoader()}>
           <span className="text-lg">{buttonText}</span>
         </button>
       ) : null}

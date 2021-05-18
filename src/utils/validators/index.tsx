@@ -34,6 +34,15 @@ export const Validate = (value) => {
   return message;
 };
 
+/**
+ *
+ * @param num number to check
+ * @returns boolean indicating whether the number is a whole number or not
+ */
+export const isWholeNumber = (num) => {
+  return +num === Math.round(num);
+};
+
 export const ValidatePercent = (value) => {
   if (value > 100) return "The percentage value should not exceed 100%";
   if (value < 0) return "The percentage value should not be below than 0%";

@@ -23,6 +23,7 @@ import { connect, useDispatch } from "react-redux";
 import CancelButton from "src/components/buttons";
 import { Modal } from "src/components/modal";
 import Syndicate from "src/contracts/Syndicate.json";
+import { web3InstantiationErrorText } from "../syndicates/shared/Constants";
 import { injected, WalletConnect } from "./connectors";
 
 const Web3 = require("web3");
@@ -160,16 +161,8 @@ export const ConnectWallet = (props: { web3; showWalletModal }) => {
         );
       } catch (error) {
         console.log({ error });
-        console.log({
-          message:
-            "web3 instance not instantiated correctly. This could be an issue with the deployed contract",
-        });
         dispatch(setDisConnected());
-        dispatch(
-          showErrorModal(
-            "web3 instance not instantiated correctly. This could be an issue with the deployed contract"
-          )
-        );
+        dispatch(showErrorModal(web3InstantiationErrorText));
       }
     }
   };

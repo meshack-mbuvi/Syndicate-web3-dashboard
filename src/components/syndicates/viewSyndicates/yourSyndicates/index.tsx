@@ -14,7 +14,7 @@ const styles = [
   "violet-yellow",
 ];
 
-export const ActiveSyndicates = (props: { syndicates }) => {
+export const YourSyndicates = (props: { syndicates }) => {
   const { syndicates } = props;
 
   const COLUMNS = [
@@ -123,4 +123,4 @@ export const ActiveSyndicates = (props: { syndicates }) => {
   );
 };
 
-export default ActiveSyndicates;
+export default YourSyndicates;

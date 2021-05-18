@@ -10,7 +10,7 @@ interface Props {
  * @returns an html node in a form of a modal
  */
 export const StateModal = (props: Props) => {
-  const { children, show, width = "w-2/5" } = props;
+  const { children, show, width = "w-1/3" } = props;
 
   return (
     <>

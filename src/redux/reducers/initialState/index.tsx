@@ -17,6 +17,9 @@ export const initialState = {
     web3contractInstance: null,
   },
   syndicates: [],
+  syndicate: null,
+  syndicateFound: true,
+  syndicateAddressIsValid: true,
   loading: false,
   submitting: false,
   showWalletModal: false,
@@ -27,7 +30,6 @@ export const initialState = {
     managerView: false,
     generalView: false,
   },
-
   syndicateDetails: {
     totalDepositors: 0,
     totalDeposits: 0,
