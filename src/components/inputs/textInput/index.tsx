@@ -55,6 +55,7 @@ export const TextInput = (props: {
             {...rest}
             disabled={disabled}
             value={value}
+            step="1"
           />
           {/* icon */}
           <div className="w-6 ml-4 mt-1">

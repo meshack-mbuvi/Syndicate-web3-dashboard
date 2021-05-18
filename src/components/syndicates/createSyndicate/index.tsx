@@ -4,7 +4,7 @@ import ConfirmStateModal from "@/components/shared/transactionStates/confirm";
 import { getMetamaskError } from "@/helpers";
 import { processCreatedSyndicateEvent } from "@/helpers/processEvent";
 import { addNewSyndicate } from "@/redux/actions/syndicates";
-import { Validate, ValidatePercent } from "@/utils/validators";
+import { isWholeNumber, Validate, ValidatePercent } from "@/utils/validators";
 import { faCopy } from "@fortawesome/free-regular-svg-icons";
 // fontawesome icons
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -248,12 +248,15 @@ const CreateSyndicate = (props: any) => {
   const maxLPsHandler = (event: any) => {
     event.preventDefault();
     const { value } = event.target;
+    setMaxLPsError("");
 
     setMaxLPs(value);
+    const checkIsWholeNumber = isWholeNumber(value);
 
-    const message = Validate(value);
-    if (message) {
-      setMaxLPsError(`Max LPs ${message}`);
+    if (value < 0) {
+      setMaxLPsError("Max Lps must be equal to or greater than 0");
+    } else if (!checkIsWholeNumber) {
+      setMaxLPsError(`Max LPs must be a whole number`);
     } else {
       setMaxLPsError("");
     }
