@@ -6,7 +6,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
-import { connect, useDispatch } from "react-redux";
+import { RootStateOrAny, useDispatch, useSelector } from "react-redux";
 import ErrorBoundary from "src/components/errorBoundary";
 import Layout from "src/components/layout";
 import InvestInSyndicate from "src/components/syndicates/investInSyndicate";
@@ -23,20 +23,19 @@ import SyndicateDetails from "src/components/syndicates/syndicateDetails";
  * @param {object} props
  */
 
-const SyndicateInvestment = (props: {
-  web3;
-  syndicateContractInstance;
-  syndicate;
-  syndicateFound;
-  syndicateAddressIsValid;
-}) => {
+const SyndicateInvestment = () => {
+  // retrieve state
   const {
     web3: { account },
-    syndicateContractInstance,
-    syndicate,
-    syndicateFound,
-    syndicateAddressIsValid,
-  } = props;
+  } = useSelector((state: RootStateOrAny) => state.web3Reducer);
+
+  const { syndicateContractInstance } = useSelector(
+    (state: RootStateOrAny) => state.syndicateInstanceReducer
+  );
+
+  const { syndicate, syndicateFound, syndicateAddressIsValid } = useSelector(
+    (state: RootStateOrAny) => state.syndicatesReducer
+  );
 
   const router = useRouter();
   const dispatch = useDispatch();
@@ -140,7 +139,7 @@ const SyndicateInvestment = (props: {
                 syndicate={syndicate}
               />
               {lpIsManager ? (
-                <ManagerActions syndicate={syndicate} />
+                <ManagerActions />
               ) : (
                 <InvestInSyndicate syndicate={syndicate} />
               )}
@@ -164,18 +163,4 @@ const SyndicateInvestment = (props: {
   );
 };
 
-const mapStateToProps = ({
-  web3Reducer: { web3 },
-  syndicateInstanceReducer: { syndicateContractInstance },
-  syndicatesReducer: { syndicate, syndicateFound, syndicateAddressIsValid },
-}) => {
-  return {
-    web3,
-    syndicateContractInstance,
-    syndicate,
-    syndicateFound,
-    syndicateAddressIsValid,
-  };
-};
-
-export default connect(mapStateToProps)(SyndicateInvestment);
+export default SyndicateInvestment;

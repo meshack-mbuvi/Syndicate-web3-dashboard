@@ -14,7 +14,7 @@ import { getMetamaskError } from "@/helpers";
 import { getSyndicateByAddress } from "@/redux/actions/syndicates";
 import { useRouter } from "next/router";
 import React, { useState } from "react";
-import { connect, useDispatch } from "react-redux";
+import { RootStateOrAny, useDispatch, useSelector } from "react-redux";
 import ErrorBoundary from "../../components/errorBoundary";
 import DistributeToken from "./distributeToken";
 import ManagerAction from "./ManagerAction";
@@ -22,19 +22,19 @@ import ModifySyndicateCapTable from "./modifySyndicateCapTable";
 import MoreManagerActions from "./MoreManagerActions";
 import PreApproveDepositor from "./preApproveDepositor";
 
-interface ManageActionProps {
-  syndicate: any;
-  web3;
-  syndicateContractInstance;
-}
-
-const ManagerActions = (props: ManageActionProps) => {
+const ManagerActions = () => {
   const {
-    syndicate,
     web3: { account },
-    syndicateContractInstance,
-  } = props;
-  console.log({ syndicate });
+  } = useSelector((state: RootStateOrAny) => state.web3Reducer);
+
+  const { syndicateContractInstance } = useSelector(
+    (state: RootStateOrAny) => state.syndicateInstanceReducer
+  );
+
+  const { syndicate } = useSelector(
+    (state: RootStateOrAny) => state.syndicatesReducer
+  );
+
   const dispatch = useDispatch();
 
   const router = useRouter();
@@ -307,14 +307,4 @@ const ManagerActions = (props: ManageActionProps) => {
   );
 };
 
-const mapStateToProps = ({
-  web3Reducer: { web3 },
-  syndicateInstanceReducer: { syndicateContractInstance },
-}) => {
-  return {
-    web3,
-    syndicateContractInstance,
-  };
-};
-
-export default connect(mapStateToProps)(ManagerActions);
+export default ManagerActions;

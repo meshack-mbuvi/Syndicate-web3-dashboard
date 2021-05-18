@@ -19,16 +19,12 @@ import { TokenMappings } from "@/utils/tokenMappings";
 import { isZeroAddress, Validate } from "@/utils/validators";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
-import { connect, useDispatch } from "react-redux";
+import { RootStateOrAny, useDispatch, useSelector } from "react-redux";
 import Button from "src/components/buttons";
 
 interface Props {
-  dispatch: Function;
   showModifyCapTable: boolean;
   setShowModifyCapTable: Function;
-  web3: any;
-  syndicateContractInstance;
-  syndicate;
 }
 
 /**
@@ -38,13 +34,21 @@ interface Props {
  * @returns
  */
 const ModifySyndicateCapTable = (props: Props) => {
+  const { showModifyCapTable, setShowModifyCapTable } = props;
+
   const {
-    showModifyCapTable,
-    setShowModifyCapTable,
-    web3: { syndicateInstance, web3, account },
-    syndicateContractInstance,
-    syndicate,
-  } = props;
+    web3: { account, web3 },
+  } = useSelector((state: RootStateOrAny) => state.web3Reducer);
+
+  const { syndicateContractInstance } = useSelector(
+    (state: RootStateOrAny) => state.syndicateInstanceReducer
+  );
+
+  const { syndicate } = useSelector(
+    (state: RootStateOrAny) => state.syndicatesReducer
+  );
+
+  const dispatch = useDispatch();
 
   const [
     showWalletConfirmationModal,
@@ -206,9 +210,9 @@ const ModifySyndicateCapTable = (props: Props) => {
      * wallet connection.
      * Note: We need to find a way, like a customized alert to inform user this.
      */
-    if (!syndicateInstance) {
+    if (!syndicateContractInstance) {
       // Request wallet connect
-      const { dispatch } = props;
+
       return dispatch(showWalletModal());
     }
 
@@ -300,8 +304,6 @@ const ModifySyndicateCapTable = (props: Props) => {
   const [finalStateFeedback, setFinalStateFeedback] = useState("");
   const [finalStateIcon, setFinalStateIcon] = useState("");
   const [showFinalState, setShowFinalState] = useState(false);
-
-  const dispatch = useDispatch();
 
   const handleCloseFinalStateModal = async () => {
     setShowFinalState(false);
@@ -504,12 +506,4 @@ const ModifySyndicateCapTable = (props: Props) => {
   );
 };
 
-const mapStateToProps = ({
-  web3Reducer: { web3, submitting },
-  syndicatesReducer: { syndicate },
-  syndicateInstanceReducer: { syndicateContractInstance },
-}) => {
-  return { web3, submitting, syndicateContractInstance, syndicate };
-};
-
-export default connect(mapStateToProps)(ModifySyndicateCapTable);
+export default ModifySyndicateCapTable;

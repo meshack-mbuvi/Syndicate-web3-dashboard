@@ -1,7 +1,7 @@
 import { getTotalDistributions } from "@/helpers";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
-import { connect } from "react-redux";
+import { connect, RootStateOrAny, useSelector } from "react-redux";
 
 interface SyndicateItemProps {
   syndicateAddress: string;
@@ -34,8 +34,12 @@ const SyndicateItem = (props: SyndicateItemProps) => {
   } = props;
 
   const {
-    web3: { syndicateInstance, account, web3 },
+    web3: { account, web3 },
   } = props;
+
+  const { syndicateContractInstance } = useSelector((state: RootStateOrAny) => {
+    return state.syndicateInstanceReducer;
+  });
 
   const [eligibleWithdraw, setEligibleWithdraw] = useState<any>("0");
   const [lpDeposits, setLpDeposits] = useState("0");
@@ -77,14 +81,14 @@ const SyndicateItem = (props: SyndicateItemProps) => {
       });
 
     getTotalDistributions(
-      syndicateInstance,
+      syndicateContractInstance,
       syndicateAddress,
       depositERC20ContractAddress,
       account
     ).then((distributions) => {
       setTotalDistributions(web3.utils.fromWei(distributions.toString()));
     });
-  }, [account, syndicateInstance]);
+  }, [account, syndicateContractInstance]);
 
   /**
    * if user can withdraw, we set text to Withdraws available.
@@ -96,21 +100,21 @@ const SyndicateItem = (props: SyndicateItemProps) => {
    */
   const calculateEligibleWithdrawal = async () => {
     // we need these to be able to access the syndicate contract
-    if (!syndicateInstance || !account) return;
+    if (!syndicateContractInstance || !account) return;
 
     // this happens for the case where the wallet owner is the one leading the syndicate
     if (syndicateAddress === account) return;
 
     //
     try {
-      const syndicateValues = await syndicateInstance.getSyndicateValues(
+      const syndicateValues = await syndicateContractInstance.methods.getSyndicateValues(
         syndicateAddress
       );
-      const syndicateLPInfo = await syndicateInstance.getSyndicateLPInfo(
+      const syndicateLPInfo = await syndicateContractInstance.methods.getSyndicateLPInfo(
         syndicateAddress,
         account
       );
-      const totalSyndicateDistributions = await syndicateInstance.getTotalDistributions(
+      const totalSyndicateDistributions = await syndicateContractInstance.methods.getTotalDistributions(
         syndicateAddress,
         account
       );
@@ -120,6 +124,7 @@ const SyndicateItem = (props: SyndicateItemProps) => {
       const lpDeposits = syndicateLPInfo[0];
       const totalSyndicateContributions = syndicateValues.totalDeposits;
       const lpClaimedPrimaryDistributions = syndicateLPInfo[1];
+      console.log({ lpDeposits });
 
       setLpDeposits(web3.utils.fromWei(lpDeposits.toString()));
 
@@ -128,7 +133,7 @@ const SyndicateItem = (props: SyndicateItemProps) => {
       if (totalSyndicateDistributions === "0") return 0;
 
       // send request to calculate eligibleWithdraw
-      const eligibleWithdrawal = await syndicateInstance.calculateEligibleWithdrawal(
+      const eligibleWithdrawal = await syndicateContractInstance.methods.calculateEligibleWithdrawal(
         lpDeposits,
         totalSyndicateContributions,
         lpClaimedPrimaryDistributions,
@@ -193,12 +198,13 @@ const SyndicateItem = (props: SyndicateItemProps) => {
     }
   }
 
+  console.log({ totalDeposits });
+
   return (
     <tr className="border-b border-gray-90">
       <td
         scope="col"
-        className="pl-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900"
-      >
+        className="pl-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
         <p className={`h-5 w-5 rounded-full ${styles}`}></p>
       </td>
       <td className="px-5 py-4 whitespace-nowrap text-sm font-medium text-sm text-gray-300 whitespace-nowrap">

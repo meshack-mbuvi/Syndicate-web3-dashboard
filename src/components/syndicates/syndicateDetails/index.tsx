@@ -2,7 +2,7 @@ import { floatedNumberWithCommas } from "@/utils/numberWithCommas";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { CopyToClipboard } from "react-copy-to-clipboard";
-import { connect, useDispatch } from "react-redux";
+import { connect, RootStateOrAny, useDispatch, useSelector } from "react-redux";
 import { EtherscanLink } from "src/components/syndicates/shared/EtherscanLink";
 import { setSyndicateDetails } from "src/redux/actions/syndicateDetails";
 // utils
@@ -19,17 +19,15 @@ import {
 } from "../shared/Constants";
 
 const SyndicateDetails = (props: {
-  web3: any;
   syndicateDetails: any;
   lpIsManager;
   syndicateContractInstance;
   syndicate;
 }) => {
-  const {
-    web3: { syndicateInstance },
-    syndicateDetails,
-    syndicate,
-  } = props;
+  const { syndicateDetails, syndicate } = props;
+  const { syndicateContractInstance } = useSelector(
+    (state: RootStateOrAny) => state.syndicateInstanceReducer
+  );
 
   const dispatch = useDispatch();
 
@@ -105,7 +103,7 @@ const SyndicateDetails = (props: {
     if (depositERC20ContractAddress) {
       getERC20TokenDetails(depositERC20ContractAddress);
     }
-  }, [syndicate, syndicateInstance]);
+  }, [syndicate, syndicateContractInstance]);
 
   // set syndicate cummulative values
   useEffect(() => {
@@ -188,7 +186,7 @@ const SyndicateDetails = (props: {
    * Extracts some syndicate data and dispatches an action to set the details
    */
   useEffect(() => {
-    if (syndicateInstance && syndicate) {
+    if (syndicateContractInstance && syndicate) {
       // dispatch action to get details about the syndicate
       // These values will be used in other components that might
       // need them.
@@ -200,7 +198,7 @@ const SyndicateDetails = (props: {
 
       dispatch(
         setSyndicateDetails(
-          syndicateInstance,
+          syndicateContractInstance,
           depositERC20ContractAddress,
           profitShareToSyndicateLead,
           profitShareToSyndicateProtocol,

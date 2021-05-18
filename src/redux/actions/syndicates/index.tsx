@@ -29,7 +29,7 @@ interface SyndicateInfo {
 export const addSyndicates = (data) => async (dispatch) => {
   if (!data) return;
 
-  const { syndicateInstance, account, web3contractInstance } = data;
+  const { account, web3contractInstance } = data;
   try {
     dispatch({
       data: true,
@@ -94,6 +94,8 @@ export const addSyndicates = (data) => async (dispatch) => {
       }
     }, []);
 
+    console.log({ syndicateInfo });
+
     /**
      * Get syndicate details for all address of obtained from events
      * NOTE: we are using for loop instead of build in map/forEach function.
@@ -107,7 +109,7 @@ export const addSyndicates = (data) => async (dispatch) => {
       try {
         const syndicate = await getSyndicate(
           filteredSyndicateAddresses[index],
-          syndicateInstance
+          web3contractInstance
         );
         const { syndicateAddress } = syndicate;
         /**
@@ -236,6 +238,9 @@ export const processSyndicateDetails = (syndicateData, tokenDecimals = 18) => {
     totalDeposits,
     minDeposit,
     maxDeposit,
+    totalLPs,
+    maxLPs,
+    allowlistEnabled,
   } = syndicateData;
 
   const closeDate = formatDate(
@@ -268,8 +273,6 @@ export const processSyndicateDetails = (syndicateData, tokenDecimals = 18) => {
   minDeposit = getWeiAmount(minDeposit, tokenDecimals, false);
 
   maxDeposit = getWeiAmount(maxDeposit, tokenDecimals, false);
-  const totalDepositors = syndicateData.totalLPs;
-  const maxLPs = syndicateData.maxLPs;
 
   return {
     minDeposit,
@@ -281,15 +284,16 @@ export const processSyndicateDetails = (syndicateData, tokenDecimals = 18) => {
     totalDeposits,
     closeDate,
     createdDate,
-    allowlistEnabled: syndicateData.allowlistEnabled,
+    allowlistEnabled,
     depositERC20ContractAddress,
     currentManager,
     syndicateOpen,
     distributionsEnabled,
     managerManagementFeeBasisPoints,
-    totalDepositors,
     maxLPs,
     modifiable,
     tokenDecimals,
+    totalLPs,
+    totalDepositors: totalLPs,
   };
 };

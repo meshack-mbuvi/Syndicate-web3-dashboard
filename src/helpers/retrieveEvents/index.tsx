@@ -7,11 +7,13 @@
  */
 export const getPastEvents = async (
   web3contractInstance,
-  eventName = "allEvents"
+  eventName = "allEvents",
+  filter = {}
 ) => {
   try {
     const fromBlock = process.env.NEXT_PUBLIC_FROM_BLOCK;
     const events = await web3contractInstance.getPastEvents(eventName, {
+      filter,
       fromBlock,
       toBlock: "latest",
     });

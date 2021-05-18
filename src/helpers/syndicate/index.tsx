@@ -1,56 +1,31 @@
 import HorizontalDivider from "@/components/horizontalDivider";
+import {
+  getTokenDecimals,
+  processSyndicateDetails,
+} from "@/redux/actions/syndicates";
 import React from "react";
-import { formatDate } from "src/utils";
-const Web3 = require("web3");
-
-
 
 /**
  * retrieves details for a given syndicate
  */
 export const getSyndicate = async (
   syndicateAddress: string,
-  syndicateInstance
+  syndicateContractInstance
 ) => {
-  const web3 = new Web3(Web3.givenProvider || "ws://localhost:8545");
-
   try {
-    const syndicateData = await syndicateInstance.getSyndicateValues(
-      syndicateAddress
+    const syndicate = await syndicateContractInstance.methods
+      .getSyndicateValues(syndicateAddress)
+      .call();
+
+    const tokenDecimals = await getTokenDecimals(
+      syndicate.depositERC20ContractAddress
     );
 
-    // The value stored in syndicate during creation is in seconds, hence the need
-    // to multiply by 1000 to convert to milliseconds and then initialize a
-    // date object
-    const closeDate = formatDate(
-      new Date(syndicateData.closeDate.toNumber() * 1000)
-    );
-    const createdDate = formatDate(
-      new Date(syndicateData.creationDate.toNumber() * 1000)
-    );
-    const openToDeposits = syndicateData.syndicateOpen;
-
-    const totalDeposits = web3.utils.fromWei(
-      syndicateData.totalDeposits.toString()
-    );
-
-    const maxTotalDeposits = web3.utils.fromWei(
-      syndicateData.maxTotalDeposits.toString()
-    );
-    const { depositERC20ContractAddress, currentManager } = syndicateData;
-
+    const syndicateDetails = processSyndicateDetails(syndicate, tokenDecimals);
     return {
+      ...syndicateDetails,
       syndicateAddress,
-      openToDeposits,
-      closeDate,
-      maxTotalDeposits,
-      totalDeposits,
-      createdDate,
-      depositors: 0, // depositors does not exist in returned data; it will be
-      //recalculated by counting all lpInvestInsyndicate events
       active: true,
-      currentManager,
-      depositERC20ContractAddress,
     };
   } catch (error) {
     console.log({ error });

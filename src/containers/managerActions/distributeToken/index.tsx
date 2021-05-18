@@ -154,7 +154,7 @@ const DistributeToken = (props: Props) => {
         syndicateAddress,
         depositERC20ContractAddress
       );
-      console.log({ totalDistributions });
+
       setTotalDistributions(
         etherToNumber(totalDistributions.toString()).toString()
       );

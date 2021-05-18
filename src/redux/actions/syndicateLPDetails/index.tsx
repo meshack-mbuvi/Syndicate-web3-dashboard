@@ -48,12 +48,14 @@ export const updateSyndicateLPDetails = (data: SyndicateLPData) => async (
   } = data;
 
   // we cannot query relevant values without the syndicate instance
-  if (!syndicateContractInstance) return;
+  if (!syndicateContractInstance || !lpAccount) return;
 
   // Retrieves syndicateInfo for the connected wallet. We need to find out
   // how much the wallet account has invested in this syndicate
   try {
     setSyndicateLPDetailsLoading(true);
+
+    // This method call fails when lpAccount is undefined
     const syndicateLPInfo = await syndicateContractInstance.methods
       .getSyndicateLPInfo(syndicateAddress, lpAccount)
       .call();
@@ -85,9 +87,7 @@ export const updateSyndicateLPDetails = (data: SyndicateLPData) => async (
     // get the current LP's percentage share in the syndicate
     // (totalLPDeposits / totalSyndicateDeposits) * 100
     const myLPDeposits = parseFloat(myDeposits) * 100;
-    const totalSyndicateDeposits = parseFloat(
-      syndicateDepositsTotal.toString()
-    );
+    const totalSyndicateDeposits = parseFloat(syndicateDepositsTotal);
     const myPercentageOfThisSyndicate = divideIfNotByZero(
       myLPDeposits,
       totalSyndicateDeposits

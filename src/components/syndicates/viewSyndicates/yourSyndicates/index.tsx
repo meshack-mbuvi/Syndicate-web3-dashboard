@@ -1,10 +1,11 @@
+import { formatToMillion, formatToThousands } from "@/utils/numberWithCommas";
 import React, { useMemo } from "react";
 import ActiveSyndicatesTable from "./ActiveSyndicatesTable";
+import GetClaimedDistributions from "./GetClaimedDistributions";
 import GetDistributions from "./GetDistributions";
 import GetLPDeposits from "./GetLPDeposits";
-import GetClaimedDistributions from "./GetClaimedDistributions";
-import SyndicateActionButton from "./SyndicateActionButton";
 import GradientAvatar from "./GradientAvatar";
+import SyndicateActionButton from "./SyndicateActionButton";
 
 const styles = [
   "lawn-green",
@@ -64,15 +65,15 @@ export const YourSyndicates = (props: { syndicates }) => {
       showSort: true,
     },
     {
-      Header: "Depositors",
-      accessor: "depositors",
-      Cell: ({ value }) => `${value / 1000} k`,
+      Header: "Members",
+      accessor: "totalLPs",
+      Cell: ({ value }) => formatToThousands(value), //`${value / 1000} k`,
       showSort: true,
     },
     {
       Header: "Deposits",
       accessor: "totalDeposits",
-      Cell: ({ value }) => `${value} DAI`,
+      Cell: ({ value }) => `${formatToMillion(value)} DAI`,
       showSort: true,
     },
     {

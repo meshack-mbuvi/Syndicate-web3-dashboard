@@ -1,11 +1,8 @@
-import { LOADING_SYNDICATE_DETAILS, SET_SYNDICATE_DETAILS } from "../types";
+import { getPastEvents } from "@/helpers/retrieveEvents";
+import { etherToNumber, toEther } from "src/utils/conversions";
 import { ERC20TokenDetails } from "src/utils/ERC20Methods";
-import syndicateABI from "src/contracts/Syndicate.json";
 import { numberWithCommas } from "src/utils/numberWithCommas";
-import { toEther, etherToNumber } from "src/utils/conversions";
-const Web3 = require("web3");
-const web3 = new Web3(Web3.givenProvider || "ws://localhost:8545");
-const startBlock = process.env.NEXT_PUBLIC_FROM_BLOCK;
+import { LOADING_SYNDICATE_DETAILS, SET_SYNDICATE_DETAILS } from "../types";
 
 const updateSyndicateDetails = (data) => {
   return {
@@ -29,7 +26,7 @@ const onlyUnique = (value, index, self) => {
 };
 
 /** action creator to fetch and update syndicate details
- * @param syndicateInstance the instance of the syndicate
+ * @param syndicateContractInstancee the instance of the syndicate
  * @param depositERC20ContractAddress the ERC20 token used to make withdrawals/deposits
  * @param profitShareToSyndicateLead profit share to syndicate lead in basis points
  * @param profitShareToSyndicateProtocol profit share to Syndicate Protocol in basis points
@@ -37,20 +34,15 @@ const onlyUnique = (value, index, self) => {
  * @param syndicateAddress the address of the syndicate
  */
 export const setSyndicateDetails = (
-  syndicateInstance,
+  syndicateContractInstance,
   depositERC20ContractAddress,
   profitShareToSyndicateLead,
   profitShareToSyndicateProtocol,
   syndicate,
   syndicateAddress
 ) => async (dispatch) => {
-  if (!syndicateInstance) return;
+  if (!syndicateContractInstance) return;
   // initialise syndicate contract
-  const syndicateContract = new web3.eth.Contract(
-    syndicateABI.abi,
-    syndicateInstance.address
-  );
-
   // get number of decimal places for the current ERC20 token
   let tokenDecimals;
   if (depositERC20ContractAddress) {
@@ -70,42 +62,32 @@ export const setSyndicateDetails = (
   setLoadingSyndicateDetails(true);
 
   // get events where an LP invested in a syndicate.
-  await syndicateContract.getPastEvents(
+  const lpInvestedInSyndicateEvents = await getPastEvents(
+    syndicateContractInstance,
     "lpInvestedInSyndicate",
-    {
-      filter: { syndicateAddress },
-      fromBlock: startBlock,
-      toBlock: "latest",
-    },
-    (error, eventResults) => {
-      if (!error) {
-        eventResults.map((event) => {
-          // get the total number of depositors
-          // we'll get all the lpAddresses from this event and then get a unique count
-          const { lpAddress } = event.returnValues;
-          totalDepositors.push(lpAddress);
-
-          //set total deposits
-          totalDeposits = syndicate.totalDeposits;
-        });
-      } else if (error) {
-        console.log(error);
-      }
-    }
+    { syndicateAddress }
   );
+
+  // process lpInvestedInSyndicate events
+  lpInvestedInSyndicateEvents.map((event) => {
+    // get the total number of depositors
+    // we'll get all the lpAddresses from this event and then get a unique count
+    const { lpAddress } = event.returnValues;
+    totalDepositors.push(lpAddress);
+
+    //set total deposits
+    totalDeposits = syndicate.totalDeposits;
+  });
 
   // get syndicate event(s) where distribution was withdrawn.
-  const lpWithdrewDistribution = await syndicateContract.getPastEvents(
+  const lpWithdrewDistributionEvents = await getPastEvents(
+    syndicateContractInstance,
     "lpWithdrewDistributionFromSyndicate",
-    {
-      filter: { syndicateAddress },
-      fromBlock: startBlock,
-      toBlock: "latest",
-    }
+    { syndicateAddress }
   );
 
-  for (let i = 0; i < lpWithdrewDistribution.length; i++) {
-    let event = lpWithdrewDistribution[i];
+  for (let i = 0; i < lpWithdrewDistributionEvents.length; i++) {
+    let event = lpWithdrewDistributionEvents[i];
     // get total value withdrawn
     const { amountWithdrawn } = event.returnValues;
     const etherAmountWithdrawn =
@@ -116,7 +98,7 @@ export const setSyndicateDetails = (
     // returns a Tuple of the amounts (toUser, toSyndicate, toManager) that will
     // be transferred, together adding up to the passed amount.
     try {
-      const profitShareValues = await syndicateInstance.calculateProfitShare(
+      const profitShareValues = await syndicateContractInstance.methods.calculateProfitShare(
         BNamountWithdrawn,
         profitShareToSyndicateLead,
         profitShareToSyndicateProtocol

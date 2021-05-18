@@ -6,7 +6,7 @@ import { Validate } from "@/utils/validators";
 import { useRouter } from "next/router";
 import PropTypes from "prop-types";
 import React, { useEffect, useState } from "react";
-import { connect, useDispatch } from "react-redux";
+import { connect, RootStateOrAny, useDispatch, useSelector } from "react-redux";
 import { ErrorModal } from "src/components/shared/ErrorModal";
 import { SkeletonLoader } from "src/components/skeletonLoader";
 import { getMetamaskError } from "src/helpers/metamaskError";
@@ -47,13 +47,15 @@ interface InvestInSyndicateProps {
 
 const InvestInSyndicate = (props: InvestInSyndicateProps) => {
   const {
-    web3: { syndicateInstance, account },
+    web3: { account },
     syndicate,
     syndicateAction,
     syndicateLPDetails,
-    syndicateContractInstance,
   } = props;
   const router = useRouter();
+  const { syndicateContractInstance } = useSelector(
+    (state: RootStateOrAny) => state.syndicateInstanceReducer
+  );
 
   const dispatch = useDispatch();
 
@@ -341,31 +343,34 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
   // get values for the current LP(connected wallet account)
   // when this component initially renders.
   useEffect(() => {
-    setLoadingLPDetails(true);
-    const lpAccount = account;
-    const syndicateDepositsTotal = syndicate?.totalDeposits;
-    dispatch(
-      updateSyndicateLPDetails({
-        syndicateContractInstance,
-        lpAccount,
-        syndicateAddress,
-        syndicateDepositsTotal,
-        web3,
-        totalAvailableDistributions,
-        currentERC20Decimals,
-      })
-    );
-    setLoadingLPDetails(false);
+    if (account) {
+      setLoadingLPDetails(true);
+      const lpAccount = account;
+      const syndicateDepositsTotal = syndicate?.totalDeposits;
+      dispatch(
+        updateSyndicateLPDetails({
+          syndicateContractInstance,
+          lpAccount,
+          syndicateAddress,
+          syndicateDepositsTotal,
+          web3,
+          totalAvailableDistributions,
+          currentERC20Decimals,
+        })
+      );
+      setLoadingLPDetails(false);
+    }
   }, [
     syndicate,
-    syndicateInstance,
+    syndicateContractInstance,
     currentERC20Contract,
     totalAvailableDistributions,
+    account,
   ]);
 
   useEffect(() => {
     // set up syndicate contract to listen to events.
-    if (syndicateInstance && syndicate) {
+    if (syndicateContractInstance?.methods && syndicate) {
       // set up current ERC20Contract and
       // and save it to the local state
       const ERC20Contract = new web3.eth.Contract(
@@ -400,18 +405,18 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
         })
         .on("error", (error) => console.log({ error }));
     }
-  }, [syndicateInstance, syndicate]);
+  }, [syndicateContractInstance, syndicate]);
 
   /**
    * whenever we get syndicate details, we neet to trigger calculation of wallet
    * syndicate share.
    */
   useEffect(() => {
-    if (syndicate && syndicateInstance) {
+    if (syndicate && syndicateContractInstance) {
       // get total distributions.
       // this updates the distributions available value on the syndicate page
       getTotalDistributions(
-        syndicateInstance,
+        syndicateContractInstance,
         syndicateAddress,
         syndicate.depositERC20ContractAddress,
         account
@@ -425,7 +430,7 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
         setTotalAvailableDistributions(totalDistributionsAvailable);
       });
     }
-  }, [syndicate, account, syndicateInstance, currentERC20Contract]);
+  }, [syndicate, account, syndicateContractInstance, currentERC20Contract]);
 
   useEffect(() => {
     /**
@@ -433,10 +438,10 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
      * address so we need to connect to wallet first which will handle contract
      * instantiation.
      */
-    if (!syndicateInstance) {
+    if (!syndicateContractInstance) {
       dispatch(showWalletModal());
     }
-  }, [syndicateInstance]);
+  }, [syndicateContractInstance]);
 
   const handleSetAmount = (event: any) => {
     event.preventDefault();
@@ -549,7 +554,7 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
     } = syndicate;
     dispatch(
       setSyndicateDetails(
-        syndicateInstance,
+        syndicateContractInstance,
         depositERC20ContractAddress,
         profitShareToSyndicateLead,
         profitShareToSyndicateProtocol,
@@ -573,7 +578,7 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
        * @param amount The amount to withdraw
        */
 
-      await syndicateInstance.lpWithdrawFromSyndicate(
+      await syndicateContractInstance.methods.lpWithdrawFromSyndicate(
         syndicateAddress,
         syndicate.depositERC20ContractAddress,
         amountToWithdraw,
@@ -674,7 +679,7 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
   // handle deposit/withdrawal form submit.
   const onSubmit = async (event: any) => {
     event.preventDefault();
-    if (!syndicateInstance) {
+    if (!syndicateContractInstance) {
       // user needs to connect wallet first
       return dispatch(showWalletModal());
     }
@@ -736,13 +741,13 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
   // This check also needs to be done after a deposit has been made
   // as the allowance will be reset
   const checkLPAllowanceAmount = async () => {
-    if (currentERC20Contract.methods && syndicateInstance) {
+    if (currentERC20Contract.methods && syndicateContractInstance && account) {
       /**
        * Check the approval amount
        *  @returns wei allowance as a string
        * */
       const lpAllowanceAmount = await currentERC20Contract.methods
-        .allowance(account.toString(), syndicateInstance.address)
+        .allowance(account.toString(), syndicateContractInstance._address)
         .call({ from: account });
 
       try {
@@ -773,7 +778,7 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
   }, [
     account,
     currentERC20Contract,
-    syndicateInstance,
+    syndicateContractInstance,
     approvedAllowanceAmount,
     approved,
   ]);
