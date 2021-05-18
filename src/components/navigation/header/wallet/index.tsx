@@ -36,7 +36,7 @@ export const Wallet = (props) => {
   };
 
   return (
-    <div className="flex bg-gray-dark rounded-full my-1 px-4 py-2">
+    <div className="flex bg-gray-dark rounded-full my-1 px-4 py-2 items-center">
       <img src={walletIcon} className="w-5 h-4 pr-1 m-2" />
 
       <button
