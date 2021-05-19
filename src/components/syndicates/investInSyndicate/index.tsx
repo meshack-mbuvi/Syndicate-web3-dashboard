@@ -1133,7 +1133,7 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
                             disabled={myAddressAllowed}
                             defaultValue={depositAmount}
                             onChange={handleSetAmount}
-                            className={`rounded-md bg-gray-9 border border-gray-24 text-white focus:outline-none focus:ring-gray-24 focus:border-gray-24 font-ibm w-7/12 mr-2 ${
+                            className={`rounded-md bg-gray-9 border border-gray-24 text-white focus:outline-none focus:ring-gray-24 focus:border-gray-24 w-7/12 mr-2 ${
                               withdraw ? "mb-5" : "mb-0"
                             }`}
                           />

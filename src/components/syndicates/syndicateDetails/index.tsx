@@ -275,7 +275,7 @@ const SyndicateDetails = (props: {
         </span>
 
         <div className="flex justif-start items-center">
-          <p className="flex-shrink font-ibm text-xl sm:text-2xl md:text-lg lg:text-3xl flex-wrap pl-2 break-all">
+          <p className="flex-shrink text-xl sm:text-2xl md:text-lg lg:text-3xl flex-wrap pl-2 break-all">
             {formattedSyndicateAddress}
           </p>
           <CopyToClipboard text={syndicateAddress}>

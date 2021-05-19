@@ -34,9 +34,10 @@ export const SectionCard = (props: SectionCardProps) => {
         <p
           className={
             greenSubtext
-              ? "text-base text-green-screamin leading-5 font-ibm"
-              : "text-base leading-5 font-ibm"
-          }>
+              ? "text-base text-green-screamin leading-5"
+              : "text-base leading-5"
+          }
+        >
           {subText?.toString()}
         </p>
       </div>

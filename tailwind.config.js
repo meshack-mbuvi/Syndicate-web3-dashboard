@@ -12,8 +12,7 @@ module.exports = {
         "fit-content": "fit-content",
       }),
       fontFamily: {
-        ibm: ["IBM Plex Mono"],
-        inter: ["Inter"],
+        whyte: ["ABC Whyte Regular", "Helvetica", "Arial", "sans-serif"],
       },
       colors: {
         cyan: colors.cyan,

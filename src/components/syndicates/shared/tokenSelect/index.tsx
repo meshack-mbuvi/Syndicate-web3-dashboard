@@ -28,7 +28,7 @@ export const TokenSelect = () => {
       {({ open }) => (
         <>
           <div className="relative w-5/12">
-            <Listbox.Button className="relative w-full bg-gray-9 border border-gray-24 rounded-md shadow-sm pl-3 pr-10 py-3 text-left cursor-pointer focus:outline-none focus:ring-1 focus:ring-gray-24 focus:border-gray-24 sm:text-sm font-ibm">
+            <Listbox.Button className="relative w-full bg-gray-9 border border-gray-24 rounded-md shadow-sm pl-3 pr-10 py-3 text-left cursor-pointer focus:outline-none focus:ring-1 focus:ring-gray-24 focus:border-gray-24 sm:text-sm">
               <span className="flex items-center">
                 <span className="ml-3 block truncate">{selected.name}</span>
               </span>

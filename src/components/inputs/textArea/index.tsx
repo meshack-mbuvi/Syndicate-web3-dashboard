@@ -27,7 +27,7 @@ export const TextArea = (props: {
       <textarea
         name={name}
         onChange={onChange}
-        className={`border border-gray-french font-ibm rounded-lg w-full bg-white p-4 h-96 focus:border-indigo-500 ${disabledClasses}`}
+        className={`border border-gray-french rounded-lg w-full bg-white p-4 h-96 focus:border-indigo-500 ${disabledClasses}`}
         {...rest}
         cols={4}
         disabled={disabled}

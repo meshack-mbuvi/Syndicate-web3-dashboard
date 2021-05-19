@@ -1,17 +1,75 @@
-@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&display=swap");
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@100;300;400;500;600;700;800&display=swap");
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   html,
+  @font-face {
+    font-family: ABC Whyte Inktrap Variable;
+    src: url(/fonts/ABC_Whyte_Inktrap_Variable/ABCWhyteInktrapVariable-Trial.woff)
+      format("woff");
+  }
+
+  @font-face {
+    font-family: ABC Whyte Variable;
+    src: url(/fonts/ABC_Whyte_Variable/ABCWhyteVariable-Trial.woff)
+      format("woff");
+  }
+
+  @font-face {
+    font-family: ABC Whyte Medium;
+    src: url(/fonts/Whyte/ABCWhyte-Medium.woff) format("woff");
+  }
+
+  @font-face {
+    font-family: ABC Whyte Regular;
+    src: url(/fonts/Whyte/ABCWhyte-Regular.woff) format("woff");
+  }
+
+  @font-face {
+    font-family: ABC Whyte Light;
+    src: url(/fonts/Whyte/ABCWhyte-Light-Trial.woff) format("woff");
+  }
+
+  @font-face {
+    font-family: ABC Whyte Inktrap Medium;
+    src: url(/fonts/Whyte\ Inktrap/ABCWhyteInktrap-Medium.woff) format("woff");
+  }
+
+  @font-face {
+    font-family: ABC Whyte Inktrap Regular;
+    src: url(/fonts/Whyte\ Inktrap/ABCWhyteInktrap-Regular.woff) format("woff");
+  }
+
   body {
     background-color: #000000;
-    font-family: Inter;
+    font-family: "ABC Whyte Regular";
     color: white;
-    font-family: Inter;
     font-style: normal;
+  }
+
+  h1 {
+    font-family: "ABC Whyte Inktrap Regular";
+  }
+
+  h2 {
+    font-family: "ABC Whyte Regular";
+  }
+
+  h3 {
+    font-family: "ABC Whyte Medium";
+  }
+
+  h4 {
+    font-family: "ABC Whyte Medium";
+  }
+
+  .font-normal {
+    font-family: "ABC Whyte Regular";
+  }
+
+  .font-medium {
+    font-family: "ABC Whyte Medium";
   }
 }
 .active {
@@ -23,7 +81,7 @@
 
 /* custom styles for all inputs */
 input {
-  font-family: IBM Plex Mono;
+  font-family: Whyte;
   font-style: normal;
   font-weight: normal;
   font-size: 14px;
