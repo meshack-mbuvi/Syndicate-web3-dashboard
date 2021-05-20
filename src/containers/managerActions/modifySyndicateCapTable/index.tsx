@@ -337,7 +337,7 @@ const ModifySyndicateCapTable = (props: Props) => {
                   <TextInput
                     {...{
                       label: "Member Address:",
-                      toolTip: depositorAddressToolTip,
+                      tooltip: depositorAddressToolTip,
                       onChange: handleDepositAddressChange,
                       error: depositorAddressError,
                     }}
@@ -349,7 +349,7 @@ const ModifySyndicateCapTable = (props: Props) => {
                     {...{
                       label: "Current Deposit Amount:",
                       value: currentDepositAmount,
-                      toolTip: distributionTokenToolTip,
+                      tooltip: distributionTokenToolTip,
                       addOn: currentERC20,
                       name: "currentDeposit",
                       disabled: true,
@@ -363,7 +363,7 @@ const ModifySyndicateCapTable = (props: Props) => {
                       onChange: handleAmountChange,
                       defaultValue: 0,
                       error: amountError,
-                      toolTip: distributionTokenToolTip,
+                      tooltip: distributionTokenToolTip,
                       type: "number",
                       addOn: currentERC20,
                       name: "amount",

@@ -81,3 +81,11 @@ export const divideIfNotByZero = (numerator, denominator) => {
     return numerator / denominator;
   }
 };
+
+/** Function to filter a given array by unique values
+ * use this as a callback inside an array filter method
+ * @params details on the current index
+ */
+export const onlyUnique = (value, index, self) => {
+  return self.indexOf(value) === index;
+};

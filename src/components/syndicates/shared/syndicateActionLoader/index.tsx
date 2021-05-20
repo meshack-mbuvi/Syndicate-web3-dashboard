@@ -14,6 +14,7 @@ interface LoaderProp {
   buttonText?: string;
   success?: boolean;
   pending?: boolean;
+  retryButtonClasses?: string;
 }
 
 const { loaderSubtext } = constants;
@@ -34,14 +35,22 @@ export const SyndicateActionLoader = (props: LoaderProp) => {
     success,
     buttonText,
     pending = false,
+    retryButtonClasses = "",
   } = props;
+
+  let retryButtonStyles =
+    "flex w-full items-center justify-center font-medium rounded-md text-black bg-white focus:outline-none focus:ring py-4 mt-4";
+  if (retryButtonClasses) {
+    retryButtonStyles = retryButtonClasses;
+  }
+
   return (
-    <div className="flex flex-col items-center justify-center my-6 mx-6 md:mx-10 md:my-20 lg:mx-12 lg:my-24">
+    <div className="flex flex-col items-center justify-center my-8 mx-6">
       {error ? (
         <img
           className="mb-4 h-12 w-12"
-          src="/images/exclamation.svg"
-          alt="exclamation"
+          src="/images/errorClose.svg"
+          alt="error"
         />
       ) : success ? (
         <img
@@ -60,9 +69,7 @@ export const SyndicateActionLoader = (props: LoaderProp) => {
         <EtherscanLink contractAddress={contractAddress} />
       )}
       {showRetryButton ? (
-        <button
-          className={`flex w-full items-center justify-center font-medium rounded-md text-black bg-white focus:outline-none focus:ring py-4 mt-4`}
-          onClick={() => closeLoader()}>
+        <button className={retryButtonStyles} onClick={() => closeLoader()}>
           <span className="text-lg">{buttonText}</span>
         </button>
       ) : null}

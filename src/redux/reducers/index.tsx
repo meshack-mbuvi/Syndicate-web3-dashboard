@@ -5,6 +5,7 @@ import { syndicatesReducer } from "./syndicates";
 import { syndicateDetailsReducer } from "./syndicateDetails";
 import { syndicateLPDetailsReducer } from "./syndicateLPDetails";
 import { syndicateInstanceReducer } from "./syndicateInstance";
+import { tokenDetailsReducer } from "./tokenAllowances";
 
 export const rootReducer = combineReducers({
   web3Reducer,
@@ -13,6 +14,7 @@ export const rootReducer = combineReducers({
   syndicateDetailsReducer,
   syndicateLPDetailsReducer,
   syndicateInstanceReducer,
+  tokenDetailsReducer,
 });
 
 export default rootReducer;

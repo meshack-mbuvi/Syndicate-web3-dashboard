@@ -33,102 +33,23 @@ export const approveManager = async (
   }
 };
 
-/** Method to increase the allowance of the LP
- * This happens when the LP opts to increase the allowance they had set
- * in order to deposit a larger amount into the syndicate.
- * https://docs.openzeppelin.com/contracts/3.x/api/token/erc20#ERC20-increaseAllowance-address-uint256-
+/** Method to check the allowance amount set on an account
+ * @param currentERC20Contract the contract of the deposit/distribution token
+ * @param account the account whose allowance we need to check
+ * @param syndicateContractAddress the address of the syndicate contract
+ * @returns the allowance amount(wei) as a string
  */
-
-export const increaseAllowance = async (
-  currentERC20Contract,
-  account,
-  managerAddress,
-  amount
+export const checkAccountAllowance = async (
+  currentERC20Contract: any,
+  account: string,
+  syndicateContractAddress: string | string[]
 ) => {
-  const amountDai = toEther(amount).toString();
-
   try {
-    await currentERC20Contract.methods
-      .increaseAllowance(managerAddress, amountDai)
-      .send({ from: account, gasLimit: 800000 });
-
-    // Check the approval amount
-    /** @returns wei allowance as a string */
-    const daiAllowance = await currentERC20Contract.methods
-      .allowance(account.toString(), managerAddress)
+    const accountAllowance = await currentERC20Contract.methods
+      .allowance(account, syndicateContractAddress)
       .call({ from: account });
-
-    return parseInt(daiAllowance);
-  } catch (approveError) {
-    console.log({ approveError });
+    return accountAllowance;
+  } catch (allowanceError) {
     return 0;
-  }
-};
-
-// use this function in case syndicate has allowlistEnabled set to true.
-// get current manager to allow addresses
-// should not be used once we have the manager screen fully implemented.
-export const managerAllowAddresses = async (
-  syndicateInstance,
-  managerAccount,
-  lpAddresses: string[]
-) => {
-  try {
-    await syndicateInstance.allowAddresses(managerAccount, lpAddresses, {
-      from: managerAccount,
-    });
-  } catch (err) {
-    console.log({ "Allow address error": err });
-  }
-};
-
-// get current manager to set distribution
-// use this function to test withdrawals on Rinkeby testnet for now
-// should not be used once we have the manager screen fully implemented.
-export const managerSetDistribution = async (
-  syndicate,
-  syndicateInstance,
-  syndicateAddress,
-  managerAccount,
-  amount,
-  currentERC20Contract,
-  account
-) => {
-  // close the syndicate first if it is open.
-  if (syndicate.syndicateOpen) {
-    try {
-      await syndicateInstance.closeSyndicate(syndicateAddress, {
-        from: managerAccount,
-      });
-    } catch (err) {
-      console.log("Cannot close syndicate", err);
-    }
-  }
-
-  // set allowances
-  try {
-    approveManager(
-      currentERC20Contract,
-      account,
-      syndicateInstance._address,
-      amount
-    );
-  } catch (error) {
-    console.log({ error });
-  }
-
-  // set distribution
-  try {
-    const amountDai = toEther(amount).toString();
-    await syndicateInstance.setDistribution(
-      syndicateAddress,
-      syndicate.depositERC20ContractAddress,
-      amountDai,
-      {
-        from: managerAccount,
-      }
-    );
-  } catch (err) {
-    console.log("Set Distribution error", err);
   }
 };

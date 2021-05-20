@@ -84,7 +84,6 @@ const SyndicateItem = (props: SyndicateItemProps) => {
       syndicateContractInstance,
       syndicateAddress,
       depositERC20ContractAddress,
-      account
     ).then((distributions) => {
       setTotalDistributions(web3.utils.fromWei(distributions.toString()));
     });
@@ -124,7 +123,6 @@ const SyndicateItem = (props: SyndicateItemProps) => {
       const lpDeposits = syndicateLPInfo[0];
       const totalSyndicateContributions = syndicateValues.totalDeposits;
       const lpClaimedPrimaryDistributions = syndicateLPInfo[1];
-      console.log({ lpDeposits });
 
       setLpDeposits(web3.utils.fromWei(lpDeposits.toString()));
 
@@ -197,8 +195,6 @@ const SyndicateItem = (props: SyndicateItemProps) => {
       link = "manage";
     }
   }
-
-  console.log({ totalDeposits });
 
   return (
     <tr className="border-b border-gray-90">

@@ -8,8 +8,9 @@ export const numberWithCommas = (num) => {
 
 // add two decimal places
 export const floatedNumberWithCommas = (num) => {
-  if (!num) return;
-
+  if (!num) {
+    return numberWithCommas(parseFloat("0".toString()).toFixed(2));
+  }
   return numberWithCommas(parseFloat(num.toString()).toFixed(2));
 };
 

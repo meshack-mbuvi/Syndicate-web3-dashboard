@@ -24,7 +24,6 @@ const GetDistributions = ({
       syndicateContractInstance,
       syndicateAddress,
       depositERC20ContractAddress,
-      account
     ).then((distributions) => {
       setTotalDistributions(web3.utils.fromWei(distributions.toString()));
     });

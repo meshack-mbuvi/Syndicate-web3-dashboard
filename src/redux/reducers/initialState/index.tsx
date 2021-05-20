@@ -49,4 +49,6 @@ export const initialState = {
   syndicateDetailsLoading: false,
   syndicateLPDetailsLoading: false,
   syndicateContractInstance: {},
+  depositTokenAllowanceDetails: [],
+  distributionTokensAllowanceDetails: [],
 };

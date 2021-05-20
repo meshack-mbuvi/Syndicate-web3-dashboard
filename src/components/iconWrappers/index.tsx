@@ -6,14 +6,16 @@ import React from "react";
  * The wrapper renders an image with src attribute set to the custom svg icon
  * @param {object} props an object containing custom properties for styling
  */
-export const InfoIcon = (props: { toolTip?: string }) => {
-  const { toolTip, ...rest } = props;
+export const InfoIcon = (props: { tooltip?: string }) => {
+  const { tooltip } = props;
   return (
-    <div>
-      <div className="tooltip">
-        <img src="/images/info.svg" {...rest} className="image-tooltip" />
-        {toolTip ? (
-          <p className="tooltiptext w-fit-content mt-1">{toolTip}</p>
+    <div className="flex-shrink-0 flex items-center justify-center">
+      <div className="tooltip px-4">
+        <img src="/images/info.svg" {...props} className="image-tooltip" />
+        {tooltip ? (
+          <p className="text-sm font-light tooltiptext w-fit-content mt-1">
+            {tooltip}
+          </p>
         ) : null}
       </div>
     </div>

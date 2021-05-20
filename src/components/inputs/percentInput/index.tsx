@@ -16,9 +16,9 @@ export const PercentInput = (props: {
   error?: string;
   required?: boolean;
   value: string | number;
-  toolTip: string;
+  tooltip: string;
 }) => {
-  const { label, name, onChange, error, value, toolTip, ...rest } = props;
+  const { label, name, onChange, error, value, tooltip, ...rest } = props;
   let variableWidth = 2;
   if (value.toString().length > 1) {
     variableWidth = value.toString().length + 1;
@@ -51,7 +51,7 @@ export const PercentInput = (props: {
           </div>
           {/* icon */}
           <div className="w-6 ml-4 mt-1">
-            <InfoIcon toolTip={toolTip} />
+            <InfoIcon tooltip={tooltip} />
           </div>
         </div>
         {error ? <p className="text-red-500 text-sm">{error}</p> : null}

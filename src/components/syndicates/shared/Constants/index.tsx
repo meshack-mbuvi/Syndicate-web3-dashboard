@@ -4,10 +4,13 @@
 // constants for the invest/deposit page.
 const depositTitleText = "Deposit Into Syndicate";
 const depositMoreTitleText = "Deposit More Into Syndicate";
-const depositStatusApprovedText = "Allowlist disabled: You’re pre-approved.";
-const depositStatusNotApprovedText =
+const allowListDisabledApprovedText =
+  "Allowlist disabled: You’re pre-approved.";
+const allowListDisabledNotApprovedText =
+  "Allowlist disabled: You will need to be approved.";
+const allowListEnabledNotApprovedText =
   "Allowlist enabled: You will need to be approved.";
-const depositStatusAllowApprovedText = "Allowlist enabled: You're approved.";
+const allowListEnabledApprovedText = "Allowlist enabled: You're approved.";
 const depositDisclaimerText =
   "All deposits are final and can only be changed by Syndicate leads.";
 const depositLPAccreditedText =
@@ -29,6 +32,8 @@ const loaderDepositHeaderText =
   "Please wait while the deposit transaction completes...";
 const loaderApprovalHeaderText =
   "Please wait while the approval transaction completes...";
+const loaderDistributionHeaderText =
+  "Please wait while the distribution transaction completes...";
 const loaderGeneralHeaderText =
   "Please wait while the transaction completes...";
 export const loaderSubtext =
@@ -93,7 +98,7 @@ const buttonText = "Confirm";
 const metamaskRejectByUserMessage = "request was rejected.";
 const metamaskInvalidParamsMessage = "Invalid parameters provided.";
 const metamaskInternalErrorMessage = "Internal server error.";
-const metamaskUnknownErrorMessage = "An unknown error occured on our end.";
+const metamaskUnknownErrorMessage = "An error occured.";
 const metamaskErrorMessageTitleText = "Transaction rejected.";
 const metamaskTryAgainText = "Please try again.";
 const metamaskInvalidAddressMessage = "Invalid address provided.";
@@ -135,8 +140,9 @@ const amountExceededText = "will be exceeded";
 export const constants = {
   depositTitleText,
   depositMoreTitleText,
-  depositStatusApprovedText,
-  depositStatusNotApprovedText,
+  allowListDisabledApprovedText,
+  allowListDisabledNotApprovedText,
+  allowListEnabledApprovedText,
   depositDisclaimerText,
   depositLPAccreditedText,
   withdrawalTitleText,
@@ -147,13 +153,14 @@ export const constants = {
   loaderWithdrawalHeaderText,
   loaderDepositHeaderText,
   loaderApprovalHeaderText,
+  loaderDistributionHeaderText,
   increaseDepositAllowanceErrorMessage,
   loaderGeneralHeaderText,
   loaderSubtext,
   depositBannerText,
   amountConversionErrorText,
   actionFailedError,
-  depositStatusAllowApprovedText,
+  allowListEnabledNotApprovedText,
   depositsUnavailableText,
   depositsUnavailableTitleText,
   connectWalletMessageTitle,

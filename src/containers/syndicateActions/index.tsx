@@ -10,10 +10,7 @@ import { RootStateOrAny, useDispatch, useSelector } from "react-redux";
 import ErrorBoundary from "src/components/errorBoundary";
 import Layout from "src/components/layout";
 import InvestInSyndicate from "src/components/syndicates/investInSyndicate";
-import {
-  syndicateActionConstants,
-  syndicateDetailsConstants,
-} from "src/components/syndicates/shared/Constants";
+import { syndicateActionConstants } from "src/components/syndicates/shared/Constants";
 import { EtherscanLink } from "src/components/syndicates/shared/EtherscanLink";
 import Head from "src/components/syndicates/shared/HeaderTitle";
 import SyndicateDetails from "src/components/syndicates/syndicateDetails";
@@ -83,11 +80,6 @@ const SyndicateInvestment = () => {
     backLinkText,
   } = syndicateActionConstants;
 
-  const {
-    syndicateDetailsFooterText,
-    syndicateDetailsLinkText,
-  } = syndicateDetailsConstants;
-
   // set texts to display on empty state
   // we'll initialize this to instances where address is not a syndicate.
   // if the address is invalid, this texts will be updated accordingly.
@@ -147,18 +139,6 @@ const SyndicateInvestment = () => {
               )}
             </div>
           )}
-          <div className="flex w-full my-8 justify-center m-auto p-auto">
-            <p className="text-center text-sm flex justify-center flex-wrap	font-extralight">
-              <span>{syndicateDetailsFooterText}&nbsp;</span>
-              <a
-                className="font-normal text-blue-cyan"
-                href="#"
-                target="_blank"
-                rel="noreferrer">
-                {syndicateDetailsLinkText}
-              </a>
-            </p>
-          </div>
         </div>
       </ErrorBoundary>
     </Layout>

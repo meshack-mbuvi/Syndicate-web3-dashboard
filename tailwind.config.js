@@ -51,6 +51,12 @@ module.exports = {
           light: "#FFD02B",
         },
       },
+      borderWidth: {
+        1: "1px",
+      },
+      spacing: {
+        '33': '8.5rem',
+      },
       fill: (theme) => ({
         gray: theme("colors.gray.light"),
       }),

@@ -16,7 +16,7 @@ export const InputWithAddon = (props: {
   error?: string;
   required?: boolean;
   value: string | number;
-  toolTip: string;
+  tooltip: string;
   addOn: string;
 }) => {
   const {
@@ -26,7 +26,7 @@ export const InputWithAddon = (props: {
     error,
     value,
     addOn,
-    toolTip,
+    tooltip,
     disabled,
     ...rest
   } = props;
@@ -66,7 +66,7 @@ export const InputWithAddon = (props: {
           </div>
           {/* icon */}
           <div className="w-6 ml-4 mt-1">
-            <InfoIcon toolTip={toolTip} />
+            <InfoIcon tooltip={tooltip} />
           </div>
         </div>
         {error ? <p className="text-red-500 text-sm">{error}</p> : null}

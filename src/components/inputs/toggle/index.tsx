@@ -5,9 +5,9 @@ export const Toggle = (props: {
   enabled: boolean;
   toggleEnabled: () => void;
   label: string;
-  toolTip: string;
+  tooltip: string;
 }) => {
-  const { toggleEnabled, label, toolTip, enabled = false } = props;
+  const { toggleEnabled, label, tooltip, enabled = false } = props;
   let translateClass = "translate-x-0";
   let backgroundClass = "bg-gray-light";
 
@@ -41,7 +41,7 @@ export const Toggle = (props: {
         </button>
 
         <div className="w-6 ml-4 mt-2">
-          <InfoIcon toolTip={toolTip} />
+          <InfoIcon tooltip={tooltip} />
         </div>
       </div>
     </div>

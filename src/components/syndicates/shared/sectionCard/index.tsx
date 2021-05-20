@@ -11,7 +11,7 @@ interface SectionCardProps {
   /** Optional property used to determine whether to
    * render the info icon */
   infoIcon?: boolean;
-  toolTip: string;
+  tooltip: string;
 }
 
 /**
@@ -20,7 +20,7 @@ interface SectionCardProps {
  * @returns
  */
 export const SectionCard = (props: SectionCardProps) => {
-  const { header, subText, toolTip, infoIcon = true } = props;
+  const { header, subText, tooltip, infoIcon = true } = props;
   const greenSubtext =
     header === "Total Withdraws / Deposits" ||
     header === "Total Distributions / Deposits";
@@ -42,8 +42,8 @@ export const SectionCard = (props: SectionCardProps) => {
         </p>
       </div>
       {!infoIcon ? null : (
-        <div>
-          <InfoIcon toolTip={toolTip} />
+        <div className="flex">
+          <InfoIcon tooltip={tooltip} />
         </div>
       )}
     </>

@@ -93,8 +93,6 @@ export const addSyndicates = (data) => async (dispatch) => {
       }
     }, []);
 
-    console.log({ syndicateInfo });
-
     /**
      * Get syndicate details for all address of obtained from events
      * NOTE: we are using for loop instead of build in map/forEach function.

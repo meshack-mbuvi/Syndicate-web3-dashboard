@@ -133,7 +133,6 @@ const PreApproveDepositor = (props: Props) => {
             setShowLPError(false);
           } else {
             setShowLPError(true);
-            console.log({ showLPError });
             setLpAddressesError(`${value} is not a valid ERC20 address`);
           }
         })

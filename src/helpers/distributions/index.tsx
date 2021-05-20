@@ -7,17 +7,14 @@
  * */
 export const getTotalDistributions = async (
   syndicateContractInstance,
-  address: string | string[],
+  syndicateAddress,
   distributionERC20ContractAddress: string | string[],
-  account: string
 ) => {
   if (!syndicateContractInstance) return;
-  console.log({ syndicateContractInstance });
   try {
     const totalDistributions = await syndicateContractInstance.methods
-      .getTotalDistributions(address, distributionERC20ContractAddress)
-      .call({ from: account, gasLimit: 800000 });
-    console.log({ totalDistributions });
+      .getTotalDistributions(syndicateAddress, distributionERC20ContractAddress)
+      .call();
 
     return totalDistributions.toString();
   } catch (error) {

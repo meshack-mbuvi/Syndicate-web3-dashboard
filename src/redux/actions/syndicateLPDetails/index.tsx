@@ -53,76 +53,84 @@ export const updateSyndicateLPDetails = (data: SyndicateLPData) => async (
   // Retrieves syndicateInfo for the connected wallet. We need to find out
   // how much the wallet account has invested in this syndicate
   try {
-    setSyndicateLPDetailsLoading(true);
+    if (lpAccount && syndicateAddress && syndicateDepositsTotal) {
+      setSyndicateLPDetailsLoading(true);
+      await syndicateContractInstance.methods
+        .getSyndicateLPInfo(syndicateAddress, lpAccount)
+        .call()
+        .then((result) => {
+          // update total LP deposits
+          const myDeposits = getWeiAmount(
+            result[0],
+            currentERC20Decimals,
+            false
+          );
 
-    // This method call fails when lpAccount is undefined
-    const syndicateLPInfo = await syndicateContractInstance.methods
-      .getSyndicateLPInfo(syndicateAddress, lpAccount)
-      .call();
+          // update LP's withdrawals to date
+          const myWithdrawalsToDate = getWeiAmount(
+            result[1],
+            currentERC20Decimals,
+            false
+          );
 
-    const lpDeposits = syndicateLPInfo[0];
-    const lpWithdrawals = syndicateLPInfo[1];
-    const myAddressAllowed = syndicateLPInfo[2];
+          // update LP's address allowed
+          const myAddressAllowed = result[2];
 
-    // update total LP deposits
-    const myDeposits = getWeiAmount(lpDeposits, currentERC20Decimals, false);
+          // update LP's withdrawals to deposits percentage
+          let withdrawalsToDepositPercentage = 0;
+          const withdrawalsToDate = parseFloat(myWithdrawalsToDate) * 100;
+          const myTotalDeposits = parseFloat(myDeposits);
 
-    // update LP's withdrawals to date
-    const myWithdrawalsToDate = getWeiAmount(
-      lpWithdrawals,
-      currentERC20Decimals,
-      false
-    );
+          withdrawalsToDepositPercentage = divideIfNotByZero(
+            withdrawalsToDate,
+            myTotalDeposits
+          );
 
-    // update LP's withdrawals to deposits percentage
-    let withdrawalsToDepositPercentage = 0;
-    const withdrawalsToDate = parseFloat(myWithdrawalsToDate) * 100;
-    const myTotalDeposits = parseFloat(myDeposits);
+          // get the current LP's percentage share in the syndicate
+          // (totalLPDeposits / totalSyndicateDeposits) * 100
+          const myLPDeposits = parseFloat(myDeposits) * 100;
+          const totalSyndicateDeposits = parseFloat(
+            syndicateDepositsTotal.toString()
+          );
+          const myPercentageOfThisSyndicate = divideIfNotByZero(
+            myLPDeposits,
+            totalSyndicateDeposits
+          );
 
-    withdrawalsToDepositPercentage = divideIfNotByZero(
-      withdrawalsToDate,
-      myTotalDeposits
-    );
+          // update LP's total distributions to date
+          // totalDistributions * (deposit/totalDeposits)
+          const totalSyndicateDistributions = parseFloat(
+            totalAvailableDistributions
+          );
+          const myDistributionsToDate =
+            (totalSyndicateDistributions * myPercentageOfThisSyndicate) / 100;
 
-    // get the current LP's percentage share in the syndicate
-    // (totalLPDeposits / totalSyndicateDeposits) * 100
-    const myLPDeposits = parseFloat(myDeposits) * 100;
-    const totalSyndicateDeposits = parseFloat(syndicateDepositsTotal);
-    const myPercentageOfThisSyndicate = divideIfNotByZero(
-      myLPDeposits,
-      totalSyndicateDeposits
-    );
+          const syndicateLPDetails = {
+            myDeposits,
+            myPercentageOfThisSyndicate,
+            myWithdrawalsToDate,
+            withdrawalsToDepositPercentage,
+            myDistributionsToDate,
+            myAddressAllowed,
+          };
 
-    // update LP's total distributions to date
-    // totalDistributions * (deposit/totalDeposits)
-    const totalSyndicateDistributions = parseFloat(totalAvailableDistributions);
-    const myDistributionsToDate =
-      (totalSyndicateDistributions * myPercentageOfThisSyndicate) / 100;
+          // format all syndicate LP details
+          // values should have commas, if they are longer than 3 characters long
+          // and be rounded to two decimal places.
+          Object.keys(syndicateLPDetails).map((key) => {
+            if (key !== "myAddressAllowed") {
+              syndicateLPDetails[key] = floatedNumberWithCommas(
+                syndicateLPDetails[key]
+              );
+            }
+            return;
+          });
 
-    const syndicateLPDetails = {
-      myDeposits,
-      myPercentageOfThisSyndicate,
-      myWithdrawalsToDate,
-      withdrawalsToDepositPercentage,
-      myDistributionsToDate,
-      myAddressAllowed,
-    };
-
-    // format all syndicate LP details
-    // values should have commas, if they are longer than 3 characters long
-    // and be rounded to two decimal places.
-    Object.keys(syndicateLPDetails).map((key) => {
-      if (key !== "myAddressAllowed") {
-        syndicateLPDetails[key] = floatedNumberWithCommas(
-          syndicateLPDetails[key]
-        );
-      }
-      return;
-    });
-
-    // dispatch action to update syndicate LP details
-    dispatch(setSyndicateLPDetails(syndicateLPDetails));
-    setSyndicateLPDetailsLoading(false);
+          // dispatch action to update syndicate LP details
+          dispatch(setSyndicateLPDetails(syndicateLPDetails));
+          setSyndicateLPDetailsLoading(false);
+        });
+    }
   } catch (error) {
     console.log({ error });
   }

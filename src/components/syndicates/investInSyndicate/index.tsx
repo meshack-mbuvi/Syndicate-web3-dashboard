@@ -155,8 +155,10 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
   const {
     depositTitleText,
     depositMoreTitleText,
-    depositStatusApprovedText,
-    depositStatusNotApprovedText,
+    allowListDisabledApprovedText,
+    allowListDisabledNotApprovedText,
+    allowListEnabledApprovedText,
+    allowListEnabledNotApprovedText,
     depositDisclaimerText,
     depositLPAccreditedText,
     withdrawalTitleText,
@@ -170,7 +172,6 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
     loaderGeneralHeaderText,
     amountConversionErrorText,
     actionFailedError,
-    depositStatusAllowApprovedText,
     depositsUnavailableText,
     depositsUnavailableTitleText,
     connectWalletMessageTitle,
@@ -188,19 +189,19 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
     {
       header: "My Distributions to Date",
       subText: `${myDistributionsToDate} ${currentERC20}`,
-      toolTip: myDistributionsToDateToolTip,
+      tooltip: myDistributionsToDateToolTip,
       screen: "withdrawal",
     },
     {
       header: "My Withdraws to Date",
       subText: `${myWithdrawalsToDate} ${currentERC20}`,
-      toolTip: myWithDrawalsToDateTooltip,
+      tooltip: myWithDrawalsToDateTooltip,
       screen: "withdrawal",
     },
     {
       header: "Total Withdraws / Deposits",
       subText: `${withdrawalsToDepositPercentage}%`,
-      toolTip: withdrawalsToDepositPercentageToolTip,
+      tooltip: withdrawalsToDepositPercentageToolTip,
       screen: "withdrawal",
     },
   ];
@@ -211,13 +212,13 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
       subText: `${myDeposits} ${currentERC20} ($${floatedNumberWithCommas(
         myDeposits
       )})`,
-      toolTip: myDepositsToolTip,
+      tooltip: myDepositsToolTip,
       screen: "deposit",
     },
     {
       header: "My % of This Syndicate",
       subText: `${myPercentageOfThisSyndicate}%`,
-      toolTip: myPercentageOfThisSyndicateToolTip,
+      tooltip: myPercentageOfThisSyndicateToolTip,
       screen: "deposit",
     },
   ];
@@ -327,6 +328,9 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
       if (!syndicateOpen) {
         setDepositsAvailable(false);
         setMaxLPsZero(false);
+      } else {
+        setDepositsAvailable(true);
+        setMaxLPsZero(false);
       }
 
       // if the maxLPs value for the syndicate is set to zero,
@@ -334,6 +338,9 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
       if (parseInt(maxLPs) < 1) {
         setMaxLPsZero(true);
         setDepositsAvailable(false);
+      } else {
+        setMaxLPsZero(false);
+        setDepositsAvailable(true);
       }
     }
   }, [syndicate]);
@@ -343,7 +350,7 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
   // get values for the current LP(connected wallet account)
   // when this component initially renders.
   useEffect(() => {
-    if (account) {
+    if (account && syndicateContractInstance) {
       setLoadingLPDetails(true);
       const lpAccount = account;
       const syndicateDepositsTotal = syndicate?.totalDeposits;
@@ -419,7 +426,6 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
         syndicateContractInstance,
         syndicateAddress,
         syndicate.depositERC20ContractAddress,
-        account
       ).then((totalDistributions: string) => {
         const totalDistributionsAvailable = getWeiAmount(
           totalDistributions,
@@ -790,15 +796,19 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
   const { myAddressAllowed } = syndicateLPDetails;
   let depositApprovalText;
   let disableAmountInput = false;
+
   if (syndicate) {
     const { allowlistEnabled } = syndicate;
     if (allowlistEnabled && myAddressAllowed) {
-      depositApprovalText = depositStatusAllowApprovedText;
+      depositApprovalText = allowListEnabledApprovedText;
     } else if (allowlistEnabled && !myAddressAllowed) {
-      depositApprovalText = depositStatusNotApprovedText;
+      depositApprovalText = allowListEnabledNotApprovedText;
       disableAmountInput = true;
-    } else if (!allowlistEnabled) {
-      depositApprovalText = depositStatusApprovedText;
+    } else if (!allowlistEnabled && myAddressAllowed) {
+      depositApprovalText = allowListDisabledApprovedText;
+    } else if (!allowlistEnabled && !myAddressAllowed) {
+      depositApprovalText = allowListDisabledNotApprovedText;
+      disableAmountInput = true;
     }
   }
 
@@ -854,11 +864,12 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
     amountToApprove = floatedNumberWithCommas(allowanceAmountApproved);
   } else if (!approved) {
     amountToApprove = floatedNumberWithCommas(amountToDeposit);
+  } else {
   }
 
   // text to show on approval button
   let approvalButtonText = "Approved";
-  if (depositAmountGreater || allowanceAmountApproved == 0) {
+  if (depositAmountGreater || allowanceAmountApproved === 0) {
     approvalButtonText = "Approve";
   }
 
@@ -875,7 +886,9 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
       <div className="mb-4">
         <SyndicateActionButton
           amountError={Boolean(depositAmountError)}
-          buttonText={`${approvalButtonText} ${amountToApprove} ${currentERC20}`}
+          buttonText={`${approvalButtonText} ${
+            amountToApprove ? amountToApprove : floatedNumberWithCommas("0")
+          } ${currentERC20}`}
           disableApprovalButton={disableApprovalButton}
           action="approval"
           approved={approved}
@@ -1022,7 +1035,6 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
   } = constants;
 
   // texts for metamask confirmation pending
-
   const {
     walletPendingConfirmPendingTitleText,
     walletPendingConfirmPendingMessage,
@@ -1034,7 +1046,8 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
         <div
           className={`h-fit-content  mx-2 p-4 pb-2 md:p-6 bg-gray-7 sm:ml-6 border ${
             !account ? "rounded-custom" : `border-b-0 rounded-t-custom`
-          } border-gray-49`}>
+          } border-gray-49`}
+        >
           {!account ? (
             <UnavailableState
               title={connectWalletMessageTitle}
@@ -1095,7 +1108,7 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
                     </div>
                   ) : (
                     <p className="font-semibold text-xl p-2">
-                      {deposit
+                      {depositModes
                         ? depositTitle
                         : withdraw
                         ? withdrawalTitleText
@@ -1130,10 +1143,10 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
                             name="depositAmount"
                             type="text"
                             placeholder="400"
-                            disabled={myAddressAllowed}
+                            disabled={!myAddressAllowed}
                             defaultValue={depositAmount}
                             onChange={handleSetAmount}
-                            className={`rounded-md bg-gray-9 border border-gray-24 text-white focus:outline-none focus:ring-gray-24 focus:border-gray-24 w-7/12 mr-2 ${
+                            className={`rounded-md bg-gray-9 border border-gray-24 text-white font-whyte focus:outline-none focus:ring-gray-24 focus:border-gray-24 w-7/12 mr-2 ${
                               withdraw ? "mb-5" : "mb-0"
                             }`}
                           />
@@ -1219,7 +1232,8 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
           setShowErrorMessage,
           setErrorMessage,
           errorMessage,
-        }}></ErrorModal>
+        }}
+      ></ErrorModal>
     </ErrorBoundary>
   );
 };
@@ -1235,6 +1249,7 @@ const mapStateToProps = ({
     syndicateLPDetails,
     syndicateLPDetailsLoading,
   } = syndicateLPDetailsReducer;
+
   return {
     web3,
     syndicateAction,

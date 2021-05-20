@@ -34,7 +34,8 @@ const ActiveSyndicatesTable = ({ columns, data }: Props) => {
             <tr
               key={index}
               {...headerGroup.getHeaderGroupProps()}
-              className="ml-4">
+              className="ml-4"
+            >
               {headerGroup.headers.map((column, index) => {
                 const {
                   showSort,
@@ -45,14 +46,16 @@ const ActiveSyndicatesTable = ({ columns, data }: Props) => {
                   <th
                     key={index}
                     {...column.getHeaderProps(column.getSortByToggleProps())}
-                    className="uppercase text-gray-dim text-xs py-4 table-fixed">
+                    className="uppercase text-gray-dim text-xs py-4 table-fixed"
+                  >
                     <div className="flex items-center font-normal w-full">
                       <div
                         className="flex"
                         onMouseEnter={() =>
                           setActiveHeader(headerGroup.headers[index].Header)
                         }
-                        onMouseLeave={() => setActiveHeader(null)}>
+                        onMouseLeave={() => setActiveHeader(null)}
+                      >
                         <div className="mr-6">{column.render("Header")}</div>
                         <div className="w-5">
                           {activeHeader === column.render("Header") &&
@@ -91,7 +94,8 @@ const ActiveSyndicatesTable = ({ columns, data }: Props) => {
                     <td
                       key={index}
                       {...cell.getCellProps()}
-                      className="m-0 relative py-2 border-b border-gray-90 font-iter text-xs">
+                      className="m-0 relative py-2 border-b border-gray-90 font-iter text-xs"
+                    >
                       {cell.render("Cell")}
                     </td>
                   );
