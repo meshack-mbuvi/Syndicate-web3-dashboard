@@ -1,18 +1,27 @@
 import { TextArea } from "@/components/inputs";
 import Modal from "@/components/modal";
-import { ErrorModal } from "@/components/shared";
-import { syndicateProps } from "@/components/shared/interfaces";
+import { PendingStateModal } from "@/components/shared/transactionStates";
+import ConfirmStateModal from "@/components/shared/transactionStates/confirm";
+import FinalStateModal from "@/components/shared/transactionStates/final";
+import { getMetamaskError } from "@/helpers";
 import { showWalletModal } from "@/redux/actions";
+import { getSyndicateByAddress } from "@/redux/actions/syndicates";
+import { isZeroAddress } from "@/utils/validators";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
-import { connect } from "react-redux";
-import { managerApproveAddressesConstants } from "src/components/syndicates/shared/Constants";
+import { RootStateOrAny, useDispatch, useSelector } from "react-redux";
+import {
+  confirmingTransaction,
+  confirmPreApproveAddressesText,
+  managerApproveAddressesConstants,
+  preApproveMoreAddress,
+  rejectTransactionText,
+  waitTransactionTobeConfirmedText,
+} from "src/components/syndicates/shared/Constants";
 
 interface Props {
-  dispatch: Function;
   showPreApproveDepositor: boolean;
   setShowPreApproveDepositor: Function;
-  web3: any;
 }
 
 /**
@@ -22,26 +31,37 @@ interface Props {
  */
 
 const PreApproveDepositor = (props: Props) => {
-  const {
-    showPreApproveDepositor,
-    setShowPreApproveDepositor,
-    web3: { syndicateInstance, web3, account },
-  } = props;
+  const { showPreApproveDepositor, setShowPreApproveDepositor } = props;
 
-  const [syndicate, setSyndicate] = useState<syndicateProps>(null);
+  const {
+    web3: { account, web3 },
+  } = useSelector((state: RootStateOrAny) => state.web3Reducer);
+
+  const { syndicateContractInstance } = useSelector(
+    (state: RootStateOrAny) => state.syndicateInstanceReducer
+  );
+
+  const { syndicate } = useSelector(
+    (state: RootStateOrAny) => state.syndicatesReducer
+  );
+
+  const [
+    showWalletConfirmationModal,
+    setShowWalletConfirmationModal,
+  ] = useState(false);
 
   const [validSyndicate, setValideSyndicate] = useState(false);
 
   const router = useRouter();
   const { syndicateAddress } = router.query;
 
-  const [loading, setLoading] = useState(false);
+  const dispatch = useDispatch();
 
   // no syndicate exists without a manager, so if no manager, then syndicate does not exist
   useEffect(() => {
     if (syndicate) {
       // Checking for address 0x0000000; the default value set by solidity
-      if (/^0x0+$/.test(syndicate.currentManager)) {
+      if (isZeroAddress(syndicate.currentManager)) {
         // address is empty
         setValideSyndicate(false);
       } else {
@@ -50,42 +70,36 @@ const PreApproveDepositor = (props: Props) => {
     }
   }, [syndicate]);
 
-  const getSyndicate = async () => {
-    setShowErrorMessage(false);
-    setErrorMessage("");
-    if (!syndicateInstance) return;
-    setLoading(true);
-
-    try {
-      const syndicate = await syndicateInstance.getSyndicateValues(
-        syndicateAddress
-      );
-      setSyndicate(syndicate);
-
-      setLoading(false);
-    } catch (error) {
-      console.log({ error });
-      setLoading(false);
-
-      setSyndicateError("An error occurred while fetching syndicate values");
-    }
-  };
-
-  useEffect(() => {
-    if (syndicateInstance) {
-      getSyndicate();
-    }
-  }, [syndicateInstance]);
-
-  const [syndicateError, setSyndicateError] = useState<string>("");
-
   // array of addresses to be allowed by the Syndicate, of maximum size equal to the maximum number of LPs.",
   const [lpAddresses, setLpAddresses] = useState("");
   const [lpAddressesError, setLpAddressesError] = useState<string>("");
   const [showLPError, setShowLPError] = useState<boolean>(false);
-  const [showErrorMessage, setShowErrorMessage] = useState<boolean>(false);
-  const [errorMessage, setErrorMessage] = useState<string>("");
   const [submitting, setSubmitting] = useState(false);
+
+  /**
+   * Final state variables
+   */
+  const [finalStateButtonText, setFinalButtonText] = useState("Done");
+  const [finalStateFeedback, setFinalStateFeedback] = useState(
+    preApproveMoreAddress
+  );
+  const [finalStateHeaderText, setFinalStateHeaderText] = useState(
+    "Addresses Successfully Pre-Approved"
+  );
+
+  const [finalStateIcon, setFinalStateIcon] = useState(
+    "/images/checkCircle.svg"
+  );
+  const [showFinalState, setShowFinalState] = useState(false);
+
+  const handleCloseFinalStateModal = async () => {
+    setShowFinalState(false);
+    setShowPreApproveDepositor(false);
+
+    await dispatch(
+      getSyndicateByAddress(syndicateAddress, syndicateContractInstance)
+    );
+  };
 
   /**
    * This method sets the approved addresses
@@ -129,6 +143,25 @@ const PreApproveDepositor = (props: Props) => {
     setLpAddresses(splitArr.join());
   };
 
+  const handleError = (error) => {
+    // capture metamask error
+    setShowWalletConfirmationModal(false);
+    setSubmitting(false);
+
+    const { code } = error;
+    const errorMessage = getMetamaskError(code, "Member deposit modified.");
+    setFinalButtonText("Dismiss");
+    setFinalStateIcon("/images/roundedXicon.svg");
+    setFinalStateFeedback("");
+
+    if (code == 4001) {
+      setFinalStateHeaderText("Transaction Rejected");
+    } else {
+      setFinalStateHeaderText(errorMessage);
+    }
+    setShowFinalState(true);
+  };
+
   /**
    * send data to set distributions for a syndicate
    * @param {object} data contains amount, syndicateAddress and distribution
@@ -136,11 +169,7 @@ const PreApproveDepositor = (props: Props) => {
    */
   const handleSubmit = async () => {
     if (!validSyndicate) {
-      setShowErrorMessage(true);
-      setErrorMessage(
-        "This syndicate does not exist and therefore we can't update its details."
-      );
-      return;
+      throw "This syndicate does not exist and therefore we can't update its details.";
     }
 
     if (!lpAddresses) {
@@ -149,23 +178,18 @@ const PreApproveDepositor = (props: Props) => {
       return;
     }
 
-    setShowErrorMessage(false);
-    setErrorMessage("");
     /**
      * If we are not connected and the form modal is open, user can trigger
      * creation of Syndicate. We therefore catch this here and request for
      * wallet connection.
      * Note: We need to find a way, like a customized alert to inform user this.
      */
-    if (!syndicateInstance) {
+    if (!syndicateContractInstance) {
       // Request wallet connect
-      const { dispatch } = props;
       return dispatch(showWalletModal());
     }
 
     try {
-      setSubmitting(true);
-
       // convert comma separated string into array
       const splitArr = lpAddresses.split(",");
 
@@ -180,21 +204,30 @@ const PreApproveDepositor = (props: Props) => {
         newSplitArr.pop();
       }
 
-      await syndicateInstance.allowAddresses(syndicateAddress, newSplitArr, {
-        from: account,
-        gasLimit: 800000,
-      });
+      setShowWalletConfirmationModal(true);
 
-      // // close pre-approve modal
-      setShowPreApproveDepositor(false);
-      setSubmitting(false);
+      await syndicateContractInstance.methods
+        .allowAddresses(syndicateAddress, newSplitArr)
+        .send({ from: account, gasLimit: 800000 })
+        .on("transactionHash", () => {
+          // close wallet confirmation modal
+          setShowWalletConfirmationModal(false);
+          setSubmitting(true);
+        })
+        .on("receipt", async () => {
+          setSubmitting(false);
+
+          setShowFinalState(true);
+          setFinalStateHeaderText("Addresses Successfully Pre-Approved");
+          setFinalStateFeedback(preApproveMoreAddress);
+          setFinalStateIcon("/images/checkCircle.svg");
+          setFinalButtonText("Done");
+        })
+        .on("error", (error) => {
+          handleError(error);
+        });
     } catch (error) {
-      setSubmitting(false);
-      console.log({ error });
-      setShowErrorMessage(true);
-      setErrorMessage(
-        "An error occured while setting pre-approve depositors. Please try again"
-      );
+      handleError(error);
     }
   };
 
@@ -215,78 +248,86 @@ const PreApproveDepositor = (props: Props) => {
           show: showPreApproveDepositor,
           closeModal: () => setShowPreApproveDepositor(false),
           customWidth: "sm:w-2/3",
-        }}
-      >
+        }}>
         <div className="mt-5 sm:mt-6 flex justify-center">
-          {loading ? (
-            <div className="space-y-4 text-center loader">Loading</div>
-          ) : syndicateError ? (
-            <div className="space-y-4">
-              <div className="flex flex-row justify-center">
-                <p className="text-red-500">{syndicateError}</p>
-              </div>
+          <div>
+            <div className="text-gray-400 py-6">
+              {approveAddressesHeadingText}
             </div>
-          ) : (
-            <div>
-              <div className="text-gray-400 py-6">
-                {approveAddressesHeadingText}
-              </div>
-              <div className="font-bold	">{approveAddressesWarning}</div>
-              <div className="text-blue-light font-semibold	pt-10 pl-4">
-                {textAreaTitle}
-              </div>
-              <div className="border-2 rounded-lg	bg-gray-99 mt-2 flex px-10 py-6">
-                <div className="w-2/5 mt-6">
-                  <p>{approvedAddressesLabel}:</p>
-                  <p>{separateWithCommas}</p>
-                </div>
-                <TextArea
-                  {...{
-                    name: "addresses",
-                    value: lpAddresses,
-                    onChange: handleLpAddressesChange,
-                    error: lpAddressesError,
-                  }}
-                  defaultValue=""
-                  name="approvedAddresses"
-                  placeholder=""
-                />
-              </div>
-              <div className="flex items-center	justify-center pt-6">
-                {submitting ? (
-                  <div className="loader"></div>
-                ) : (
-                  <button
-                    className={`bg-blue-light text-white	py-2 px-10 rounded-full ${
-                      showLPError ? "cursor-not-allowed" : null
-                    }`}
-                    onClick={handleSubmit}
-                    disabled={showLPError}
-                  >
-                    {buttonText}
-                  </button>
-                )}
-              </div>
+            <div className="font-bold	">{approveAddressesWarning}</div>
+            <div className="text-blue-light font-semibold	pt-10 pl-4">
+              {textAreaTitle}
             </div>
-          )}
+            <div className="border-2 rounded-lg	bg-gray-99 mt-2 flex px-10 py-6">
+              <div className="w-2/5 mt-6">
+                <p>{approvedAddressesLabel}:</p>
+                <p>{separateWithCommas}</p>
+              </div>
+              <TextArea
+                {...{
+                  name: "addresses",
+                  value: lpAddresses,
+                  onChange: handleLpAddressesChange,
+                  error: lpAddressesError,
+                }}
+                defaultValue=""
+                name="approvedAddresses"
+                placeholder=""
+              />
+            </div>
+            <div className="flex items-center	justify-center pt-6">
+              {submitting ? (
+                <div className="loader"></div>
+              ) : (
+                <button
+                  className={`bg-blue-light text-white	py-2 px-10 rounded-full ${
+                    showLPError ? "cursor-not-allowed" : null
+                  }`}
+                  onClick={handleSubmit}
+                  disabled={showLPError}>
+                  {buttonText}
+                </button>
+              )}
+            </div>
+          </div>
         </div>
       </Modal>
-      {/* Error message modal */}
-      <ErrorModal
+      {/* Tell user to confirm transaction on their wallet */}
+      <ConfirmStateModal show={showWalletConfirmationModal}>
+        <div className="flex flex-col justify-centers m-auto mb-4">
+          <p className="text-sm text-center mx-8 opacity-60">
+            {confirmPreApproveAddressesText}
+          </p>
+          <p className="text-sm text-center mx-8 mt-2 opacity-60">
+            {rejectTransactionText}
+          </p>
+        </div>
+      </ConfirmStateModal>
+      {/* Loading modal */}
+      <PendingStateModal
         {...{
-          show: showErrorMessage,
-          setShowErrorMessage,
-          setErrorMessage,
-          errorMessage,
-        }}
-      ></ErrorModal>
+          show: submitting,
+        }}>
+        <div className="modal-header mb-4 font-medium text-center leading-8 text-2xl">
+          {confirmingTransaction}
+        </div>
+        <div className="flex flex-col justify-center m-auto mb-4">
+          <p className="text-sm text-center mx-8 opacity-60">
+            {waitTransactionTobeConfirmedText}
+          </p>
+        </div>
+      </PendingStateModal>
+
+      <FinalStateModal
+        show={showFinalState}
+        handleCloseModal={async () => await handleCloseFinalStateModal()}
+        icon={finalStateIcon}
+        buttonText={finalStateButtonText}
+        feedbackText={finalStateFeedback}
+        headerText={finalStateHeaderText}
+      />
     </>
   );
 };
 
-const mapStateToProps = ({ web3Reducer }) => {
-  const { web3, submitting } = web3Reducer;
-  return { web3, submitting };
-};
-
-export default connect(mapStateToProps)(PreApproveDepositor);
+export default PreApproveDepositor;

@@ -7,7 +7,8 @@ interface Props {
   handleCloseModal: Function;
   icon: any;
   buttonText: string;
-  feedbackText: string;
+  feedbackText?: string;
+  headerText: string;
 }
 
 /**
@@ -15,7 +16,15 @@ interface Props {
  * @returns an html node in a form of a modal
  */
 export const FinalStateModal = (props: Props) => {
-  const { handleCloseModal, icon, buttonText, feedbackText, ...rest } = props;
+  const {
+    handleCloseModal,
+    icon,
+    buttonText,
+    feedbackText,
+    headerText,
+    ...rest
+  } = props;
+
   return (
     <TransactionStateModal {...rest}>
       <>
@@ -23,10 +32,16 @@ export const FinalStateModal = (props: Props) => {
           <div className="flex justify-center my-5">
             <img src={icon} className="w-14" />
           </div>
+          <p className="modal-header mb-4 font-medium text-center leading-8 text-lg">
+            {headerText}
+          </p>
 
-          <div className="modal-header mb-4 font-medium text-center leading-8 text-lg">
-            {feedbackText}
-          </div>
+          {feedbackText ? (
+            <p className="mb-4 text-center font-whyte text-gray-dim text-sm mx-6">
+              {feedbackText}
+            </p>
+          ) : null}
+
           <div className="flex justify-center my-5">
             <Button
               customClasses="bg-blue-cyan w-40 p-2 rounded-full"

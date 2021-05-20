@@ -64,13 +64,6 @@ const ManagerActions = () => {
 
   const actions = [
     {
-      icon: <img src="/images/UserPlus.svg" />,
-      title: "Pre-approve depositor addresses",
-      onClickHandler: () => setShowPreApproveDepositor(true),
-      description:
-        "Pre-approve accredited investor addresses that can deposit into this syndicate.",
-    },
-    {
       icon: <img src="/images/socialProfile.svg" />,
       title: "Create a public-facing social profile",
       onClickHandler: () => console.log("move to create social profile"),
@@ -83,7 +76,7 @@ const ManagerActions = () => {
    * Final state variables
    */
   const [finalStateButtonText, setFinalButtonText] = useState("");
-  const [finalStateFeedback, setFinalStateFeedback] = useState("");
+  const [finalStateHeaderText, setFinalStateHeaderText] = useState("");
   const [finalStateIcon, setFinalStateIcon] = useState("");
 
   const handleCloseFinalStateModal = async () => {
@@ -114,7 +107,7 @@ const ManagerActions = () => {
           setSubmitting(false);
 
           setShowFinalState(true);
-          setFinalStateFeedback("Closed to Deposits");
+          setFinalStateHeaderText("Closed to Deposits");
           setFinalStateIcon("/images/checkCircle.svg");
           setFinalButtonText("Done");
         })
@@ -129,9 +122,9 @@ const ManagerActions = () => {
           setFinalStateIcon("/images/roundedXicon.svg");
 
           if (code == 4001) {
-            setFinalStateFeedback("Transaction Rejected");
+            setFinalStateHeaderText("Transaction Rejected");
           } else {
-            setFinalStateFeedback(errorMessage);
+            setFinalStateHeaderText(errorMessage);
           }
           setShowFinalState(true);
         });
@@ -145,9 +138,9 @@ const ManagerActions = () => {
       setFinalStateIcon("/images/roundedXicon.svg");
 
       if (code == 4001) {
-        setFinalStateFeedback("Transaction Rejected");
+        setFinalStateHeaderText("Transaction Rejected");
       } else {
-        setFinalStateFeedback(errorMessage);
+        setFinalStateHeaderText(errorMessage);
       }
       setShowFinalState(true);
     }
@@ -217,6 +210,18 @@ const ManagerActions = () => {
               onClickHandler={() => setShowDistributeToken(true)}
             />
           )}
+
+          {/* show pre-approve depositor option when syndicate is open and allowList is enabled */}
+          {syndicate?.syndicateOpen && syndicate?.allowlistEnabled ? (
+            <ManagerAction
+              title={"Pre-approve depositor addresses"}
+              description={
+                "Pre-approve accredited investor addresses that can deposit into this syndicate."
+              }
+              icon={<img src="/images/UserPlus.svg" />}
+              onClickHandler={() => setShowPreApproveDepositor(true)}
+            />
+          ) : null}
 
           {actions.map(({ icon, title, description, onClickHandler }) => {
             return (
@@ -301,7 +306,7 @@ const ManagerActions = () => {
         handleCloseModal={async () => await handleCloseFinalStateModal()}
         icon={finalStateIcon}
         buttonText={finalStateButtonText}
-        feedbackText={finalStateFeedback}
+        headerText={finalStateHeaderText}
       />
     </ErrorBoundary>
   );

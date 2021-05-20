@@ -35,10 +35,10 @@ const DistributeToken = (props: Props) => {
 
   const {
     web3: {
-      syndicateInstance,
       web3,
       account,
       web3contractInstance,
+      syndicateInstance,
       daiContract,
     },
   } = useSelector((state: RootStateOrAny) => state.web3Reducer);

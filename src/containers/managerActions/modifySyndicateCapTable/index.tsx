@@ -192,6 +192,24 @@ const ModifySyndicateCapTable = (props: Props) => {
     }
   };
 
+  const handleError = (error) => {
+    // capture metamask error
+    setShowWalletConfirmationModal(false);
+    setSubmitting(false);
+
+    const { code } = error;
+    const errorMessage = getMetamaskError(code, "Member deposit modified.");
+    setFinalButtonText("Dismiss");
+    setFinalStateIcon("/images/roundedXicon.svg");
+
+    if (code == 4001) {
+      setFinalStateHeaderText("Transaction Rejected");
+    } else {
+      setFinalStateHeaderText(errorMessage);
+    }
+    setShowFinalState(true);
+  };
+
   /**
    * send data to set distributions for a syndicate
    * @param {object} data contains amount, syndicateAddress and distribution
@@ -231,43 +249,16 @@ const ModifySyndicateCapTable = (props: Props) => {
           setSubmitting(false);
 
           setShowFinalState(true);
-          setFinalStateFeedback("Member deposit modified.");
+          setFinalStateHeaderText("Member deposit modified.");
           setFinalStateIcon("/images/checkCircle.svg");
           setFinalButtonText("Done");
           setSubmitting(false);
         })
         .on("error", (error) => {
-          // capture metamask error
-          setShowWalletConfirmationModal(false);
-          setSubmitting(false);
-
-          const { code } = error;
-          const errorMessage = getMetamaskError(
-            code,
-            "Member deposit modified."
-          );
-          setFinalButtonText("Dismiss");
-          setFinalStateIcon("/images/roundedXicon.svg");
-
-          if (code == 4001) {
-            setFinalStateFeedback("Transaction Rejected");
-          } else {
-            setFinalStateFeedback(errorMessage);
-          }
-          setShowFinalState(true);
+          handleError(error);
         });
     } catch (error) {
-      const { code } = error;
-      const errorMessage = getMetamaskError(code, "Member deposit modified.");
-      setFinalButtonText("Dismiss");
-      setFinalStateIcon("/images/roundedXicon.svg");
-
-      if (code == 4001) {
-        setFinalStateFeedback("Transaction Rejected");
-      } else {
-        setFinalStateFeedback(errorMessage);
-      }
-      setShowFinalState(true);
+      handleError(error);
     }
   };
 
@@ -301,7 +292,7 @@ const ModifySyndicateCapTable = (props: Props) => {
    * Final state variables
    */
   const [finalStateButtonText, setFinalButtonText] = useState("");
-  const [finalStateFeedback, setFinalStateFeedback] = useState("");
+  const [finalStateHeaderText, setFinalStateHeaderText] = useState("");
   const [finalStateIcon, setFinalStateIcon] = useState("");
   const [showFinalState, setShowFinalState] = useState(false);
 
@@ -500,7 +491,7 @@ const ModifySyndicateCapTable = (props: Props) => {
         handleCloseModal={async () => await handleCloseFinalStateModal()}
         icon={finalStateIcon}
         buttonText={finalStateButtonText}
-        feedbackText={finalStateFeedback}
+        headerText={finalStateHeaderText}
       />
     </>
   );

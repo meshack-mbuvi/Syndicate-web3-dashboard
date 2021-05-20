@@ -84,8 +84,8 @@ const approveAddressesWarning =
   "WARNING: The more addresses added, the higher the gas cost, as this function uses an array and loop to add addresses to the smart contract. We recommend minimizing the number of addresses being added if possible.";
 const approveAddressesHeadingText =
   "Pre-approve addresses that can deposit to this syndicate. These addresses will be added to this syndicate’s pre-approved list.";
-const textAreaTitle = "Pre-Approved Depositor List";
-const approvedAddressesLabel = "Approved Address:";
+const textAreaTitle = "Pre-Approve Depositor List";
+const approvedAddressesLabel = "Approve Address";
 const separateWithCommas = "(separate with commas)";
 const buttonText = "Confirm";
 
@@ -312,3 +312,7 @@ export const web3InstantiationErrorText =
 
 export const confirmModifySyndicateCapTableText =
   "Confirm you want to alter deposits for the member address.";
+export const confirmPreApproveAddressesText =
+  "Confirm the transaction on your wallet if you want to approve new depositors.";
+export const preApproveMoreAddress =
+  "You can pre-approve more member addresses at any time whilst the syndicate is open.";
