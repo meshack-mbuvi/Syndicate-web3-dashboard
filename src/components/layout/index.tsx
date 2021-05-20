@@ -9,6 +9,7 @@ import {
   DepositsPageBanner,
   SyndicateInBetaBanner,
 } from "src/components/banners";
+import ConnectWallet from "src/components/connectWallet";
 import Header from "src/components/navigation/header";
 import Syndicate from "src/contracts/Syndicate.json";
 import { injected } from "../connectWallet/connectors";
@@ -110,9 +111,10 @@ export const Layout = ({ children, syndicateAction }) => {
       <SyndicateInBetaBanner />
 
       {deposit || generalView ? <DepositsPageBanner /> : null}
-      <div className="flex w-full flex-col sm:flex-row md:py-4 px-4 md:px-6">
+      <div className="flex w-full flex-col sm:flex-row md:py-4 px-4 md:px-6 z-0">
         {children}
       </div>
+      <ConnectWallet />
     </div>
   );
 };

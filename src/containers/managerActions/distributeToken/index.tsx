@@ -13,7 +13,7 @@ import { etherToNumber } from "@/utils";
 import { isZeroAddress, Validate } from "@/utils/validators";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
-import { connect } from "react-redux";
+import { connect, RootStateOrAny, useSelector } from "react-redux";
 import Button from "src/components/buttons";
 
 interface Props {
@@ -31,9 +31,9 @@ interface Props {
  * @returns
  */
 const DistributeToken = (props: Props) => {
+  const { showDistributeToken, setShowDistributeToken } = props;
+
   const {
-    showDistributeToken,
-    setShowDistributeToken,
     web3: {
       syndicateInstance,
       web3,
@@ -41,7 +41,7 @@ const DistributeToken = (props: Props) => {
       web3contractInstance,
       daiContract,
     },
-  } = props;
+  } = useSelector((state: RootStateOrAny) => state.web3Reducer);
 
   const [syndicate, setSyndicate] = useState<syndicateProps>();
 
@@ -293,8 +293,7 @@ const DistributeToken = (props: Props) => {
           show: showDistributeToken,
           closeModal: () => setShowDistributeToken(false),
           customWidth: "sm:w-2/3",
-        }}
-      >
+        }}>
         <div className="mx-4 mb-8">
           <p className="text-gray-500 text-sm">
             Choose a token and specify an amount to distribute from this
@@ -384,16 +383,14 @@ const DistributeToken = (props: Props) => {
                     <div className="mr-2 w-7/12 flex justify-end">
                       <label
                         htmlFor="syndicateAddress"
-                        className="block text-black text-lg font-medium"
-                      >
+                        className="block text-black text-lg font-medium">
                         Profit Share to Syndicate Lead:
                       </label>
                     </div>
 
                     <div className="w-5/12 flex justify-between">
                       <p
-                        className={`flex flex-grow rounded-md text-gray-500  px-4 text-lg`}
-                      >
+                        className={`flex flex-grow rounded-md text-gray-500  px-4 text-lg`}>
                         {managerPerformanceFeePercent.toLocaleString()} (
                         {managerPerformanceFeePercent / 100}%)
                       </p>
@@ -404,16 +401,14 @@ const DistributeToken = (props: Props) => {
                     <div className="mr-2 w-7/12 flex justify-end">
                       <label
                         htmlFor="syndicateAddress"
-                        className="block text-black text-lg font-medium"
-                      >
+                        className="block text-black text-lg font-medium">
                         Profit Share to Syndicate Protocol:
                       </label>
                     </div>
 
                     <div className="w-5/12 flex justify-between">
                       <p
-                        className={`flex flex-grow rounded-md text-gray-500  px-4 text-lg`}
-                      >
+                        className={`flex flex-grow rounded-md text-gray-500  px-4 text-lg`}>
                         {syndicateProfitShareBasisPoints.toLocaleString()} (
                         {syndicateProfitShareBasisPoints / 100}%)
                       </p>
@@ -424,8 +419,7 @@ const DistributeToken = (props: Props) => {
                     <div className="mr-2 w-7/12 flex justify-end">
                       <label
                         htmlFor="syndicateAddress"
-                        className="block text-black text-lg font-medium"
-                      >
+                        className="block text-black text-lg font-medium">
                         Available for Depositors to Withdraw:
                       </label>
                     </div>
@@ -451,8 +445,7 @@ const DistributeToken = (props: Props) => {
                     customClasses={`rounded-full bg-blue-light w-auto px-10 py-2 text-lg ${
                       validated && !loading ? "" : "opacity-50"
                     }`}
-                    disabled={validated && !loading ? false : true}
-                  >
+                    disabled={validated && !loading ? false : true}>
                     Confirm
                   </Button>
                 )}
@@ -468,8 +461,7 @@ const DistributeToken = (props: Props) => {
           setShowErrorMessage,
           setErrorMessage,
           errorMessage,
-        }}
-      ></ErrorModal>
+        }}></ErrorModal>
     </>
   );
 };

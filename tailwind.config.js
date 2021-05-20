@@ -33,6 +33,7 @@ module.exports = {
           nero: "#252525",
           manatee: "#8F97AB",
           matterhorn: "#515151",
+          nightrider: "#353535",
         },
         green: {
           ...colors.green,

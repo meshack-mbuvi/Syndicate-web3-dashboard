@@ -28,9 +28,11 @@ const SyndicateInvestment = () => {
   const {
     web3: { account },
   } = useSelector((state: RootStateOrAny) => state.web3Reducer);
+  
 
   const { syndicateContractInstance } = useSelector(
     (state: RootStateOrAny) => state.syndicateInstanceReducer
+
   );
 
   const { syndicate, syndicateFound, syndicateAddressIsValid } = useSelector(

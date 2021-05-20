@@ -269,7 +269,7 @@ const SyndicateDetails = (props: {
     <div className="flex flex-col lg:w-3/5 w-full mr-2 lg:mr-6">
       <div
         className="h-fit-content p-6 md:p-10 rounded-custom bg-gray-6"
-        style={{ border: "1px solid white" }}>
+        >
         <span className="font-bold px-2 text-gray-dim leading-4 text-sm uppercase">
           Syndicate
         </span>

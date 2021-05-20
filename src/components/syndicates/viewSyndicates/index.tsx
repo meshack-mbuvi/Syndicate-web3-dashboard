@@ -1,3 +1,4 @@
+import { Spinner } from "@/components/shared/spinner";
 import { showWalletModal } from "@/redux/actions";
 import { addSyndicates } from "@/redux/actions/syndicates";
 import React, { useEffect, useState } from "react";
@@ -148,7 +149,7 @@ const ViewSyndicates = (props: MySyndicateProps) => {
         </>
       ) : (
         // show some animations during loading process
-        <div className="loader"></div>
+        <Spinner />
       )}
 
       {/* Component to create syndicate  */}

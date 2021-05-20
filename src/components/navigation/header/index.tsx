@@ -1,10 +1,7 @@
 import Link from "next/link";
 import React from "react";
 import { NavBarNavItem } from "./navbarItems";
-// Other components
-import Notification from "./notification";
 import Transaction from "./transaction";
-import UserProfile from "./userProfile";
 import { UserProfileWrapper } from "./UserProfileWrapper";
 import Wallet from "./wallet";
 
@@ -20,8 +17,7 @@ const Header = () => {
             <div>
               <a
                 href="#"
-                className="flex items-center py-5 md:px-2 text-gray-700 hover:text-gray-900"
-              >
+                className="flex items-center py-5 md:px-2 text-gray-700 hover:text-gray-900">
                 <Link href="/">
                   <a className="flex items-center">
                     <span className="sr-only">Syndicate</span>

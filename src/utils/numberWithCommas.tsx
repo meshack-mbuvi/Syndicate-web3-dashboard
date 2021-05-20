@@ -8,10 +8,13 @@ export const numberWithCommas = (num) => {
 
 // add two decimal places
 export const floatedNumberWithCommas = (num) => {
+  if (!num) return;
+
   return numberWithCommas(parseFloat(num.toString()).toFixed(2));
 };
 
 export const formatToThousands = (num) => {
+  if (!num) return;
   if (num > 1000) {
     return `${Math.round(num / 1000)}k`;
   }
@@ -19,6 +22,8 @@ export const formatToThousands = (num) => {
 };
 
 export const formatToMillion = (num) => {
+  if (!num) return;
+
   if (num > 1000000) {
     return `${Math.round(num / 1000000)}M`;
   }

@@ -2,17 +2,13 @@ import { ErrorModal } from "@/components/shared";
 import { PendingStateModal } from "@/components/shared/transactionStates";
 import ConfirmStateModal from "@/components/shared/transactionStates/confirm";
 import { getMetamaskError } from "@/helpers";
-import { processCreatedSyndicateEvent } from "@/helpers/processEvent";
-import { addNewSyndicate } from "@/redux/actions/syndicates";
+import { addSyndicates } from "@/redux/actions/syndicates";
 import { isWholeNumber, Validate, ValidatePercent } from "@/utils/validators";
-import { faCopy } from "@fortawesome/free-regular-svg-icons";
-// fontawesome icons
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Link from "next/link";
 import React, { useState } from "react";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import DatePicker from "react-datepicker";
-import { connect } from "react-redux";
+import { RootStateOrAny, useDispatch, useSelector } from "react-redux";
 // Other useful components
 import Button from "src/components/buttons";
 import { InfoIcon } from "src/components/iconWrappers";
@@ -57,14 +53,20 @@ import { EtherscanLink } from "../shared/EtherscanLink";
  */
 const CreateSyndicate = (props: any) => {
   // retrieve contract details
+  const { showModal, setShowModal } = props;
+
   const {
-    web3: { syndicateInstance, account, web3 },
-    dispatch,
-    showModal,
-    setShowModal,
-    submitting,
-    syndicateContractInstance,
-  } = props;
+    web3: { account, web3 },
+  } = useSelector((state: RootStateOrAny) => state.web3Reducer);
+
+  const { syndicateContractInstance } = useSelector(
+    (state: RootStateOrAny) => state.syndicateInstanceReducer
+  );
+  const { submitting } = useSelector(
+    (state: RootStateOrAny) => state.loadingReducer
+  );
+
+  const dispatch = useDispatch();
 
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [showErrorMessage, setShowErrorMessage] = useState(false);
@@ -348,7 +350,7 @@ const CreateSyndicate = (props: any) => {
      * wallet connection.
      * Note: We need to find a way, like a customized alert to inform user this.
      */
-    if (!syndicateInstance) {
+    if (!syndicateContractInstance) {
       // Request wallet connect
       return dispatch(showWalletModal());
     }
@@ -426,23 +428,10 @@ const CreateSyndicate = (props: any) => {
 
           dispatch(setSubmitting(true));
         })
-        .on("receipt", async (receipt) => {
+        .on("receipt", async () => {
           // we can process the transaction data here together with emitted
 
-          // retrieve details of the newly created syndicate
-          const syndicate = processCreatedSyndicateEvent(
-            receipt.events.createdSyndicate
-          );
-          // add the newly created syndicate to application state
-          dispatch(
-            addNewSyndicate({
-              ...syndicate,
-              depositors: 0,
-              openToDeposits: true,
-              totalDeposits: 0,
-              active: true,
-            })
-          );
+          dispatch(addSyndicates(props.web3));
           // createSyndicate event
           dispatch(setSubmitting(false));
 
@@ -614,7 +603,7 @@ const CreateSyndicate = (props: any) => {
         {...{
           show: showModal,
           closeModal,
-          customWidth: "w-full lg:w-2/3",
+          customWidth: "w-full lg:w-3/5",
         }}
         title="Create New Syndicate">
         <>
@@ -948,65 +937,69 @@ const CreateSyndicate = (props: any) => {
           show: showSuccessModal,
           closeModal: () => setShowSuccessModal(false),
           type: "success",
-          customWidth: "w-3/5",
+          customWidth: "w-5/12",
         }}>
         <div className="flex flex-col justify-center m-auto mb-4">
-          <div className="flex align-center justify-center">
-            <div className="border-4 border-light-blue m-8 rounded-full h-24 w-24 flex items-center justify-center">
-              <svg
-                width="34"
-                height="26"
-                viewBox="0 0 34 26"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg">
-                <path
-                  d="M2 13.5723L11.2243 22.7966L32 2"
-                  stroke="#35CFFF"
-                  strokeWidth="4"
-                />
-              </svg>
-            </div>
+          <div className="flex align-center justify-center my-2 mb-6">
+            <img src="/images/checkCircle.svg" className="w-16" />
           </div>
           <div className="modal-header mb-4 text-black font-medium text-center ">
-            <p className="text-3xl">Syndicate Successfully Launched</p>
-            <p className="leading-8 text-sm text-gray-500 m-4">{account}</p>
-            <div className="flex justify-between">
-              <div className="flex flex-grow flex-col rounded-full p-3 bg-blue-light text-white">
-                <p className="text-xs sm:text-lg">
-                  Your shareable deposit link:
-                </p>
-                <p className="text-sm sm:text-sm word-break">{`${window.location.origin}/syndicates/${account}/deposit`}</p>
+            <p className="text-2xl font-whyte ">
+              Syndicate Successfully Launched
+            </p>
+            <p className="font-whyte leading-8 text-sm text-gray-500 mt-4">
+              Your syndicate's permanent address is:
+            </p>
+
+            <span className="font-whyte leading-8 p-1 my-2 rounded-sm text-sm text-gray-500 bg-gray-93 mb-4">
+              {account}
+            </span>
+            <p className="font-whyte leading-8 text-sm text-gray-500 mt-4">
+              Your syndicate deposit link:
+            </p>
+            <div className="flex justify-between mx-2">
+              <div className="flex flex-grow flex-col w-3/5">
+                <input
+                  disabled
+                  className="font-whyte text-sm sm:text-base word-break p-2 overflow-hidden overflow-x-scroll border border-blue-light rounded-full"
+                  value={`${window.location.origin}/syndicates/${account}/deposit`}></input>
               </div>
-              <div className="flex align-center justify-center mx-auto my-4 ml-2">
+              <div className="flex align-center justify-center mx-auto my-2">
                 {copied ? (
-                  <span className="text-green-400">Copied</span>
+                  <span className="text-sm text-gray-nightrider font-whyte ml-2 opacity-80">
+                    Link copied
+                  </span>
                 ) : (
-                  <CopyToClipboard
-                    text={`${window.location.origin}/syndicates/${account}/deposit`}
-                    onCopy={handleOnCopy}>
-                    <FontAwesomeIcon
-                      icon={faCopy}
-                      size="2x"
-                      className="w-8 cursor-pointer border-blue text-blue-light"
-                    />
-                  </CopyToClipboard>
+                  <>
+                    <CopyToClipboard
+                      text={`${window.location.origin}/syndicates/${account}/deposit`}
+                      onCopy={handleOnCopy}>
+                      <p className="flex font-whyte text-sm cursor-pointer hover:opacity-80 text-gray-nightrider">
+                        <img
+                          src="/images/copy.svg"
+                          className="w-4 ml-2 mr-1 font-whyte cursor-pointer border-blue text-blue-light"
+                        />
+                        Copy link
+                      </p>
+                    </CopyToClipboard>
+                  </>
                 )}
               </div>
             </div>
 
-            <div className="text-light-blue">
+            <div className="my-5">
               <Link href={`/syndicates/${account}/deposit`}>
-                <a className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium  text-blue-light hover md:py-4 md:text-lg md:px-10 bg-light-green">
-                  {" "}
+                <a className="font-whyte text-center py-3 text-sm font-medium  text-blue-light hover bg-light-green">
                   Go to Syndicate Deposit Page
                 </a>
               </Link>
             </div>
             <div>
-              <p className="font-light">
-                <span className="font-medium">IMPORTANT: </span>Do not publicly
-                market deposit link. Only share directly with people and
-                organizations you have qualified.
+              {/* font-whytes font-light text-gray-dim */}
+              <p className="font-thin text-gray-dim text-sm opacity-70">
+                <span className="font-thin text-gray-dim">IMPORTANT: </span>
+                Do not publicly market deposit link. Only share directly with
+                people and organizations you have qualified.
               </p>
             </div>
           </div>
@@ -1016,14 +1009,4 @@ const CreateSyndicate = (props: any) => {
   );
 };
 
-const mapStateToProps = ({
-  web3Reducer,
-  loadingReducer,
-  syndicateInstanceReducer: { syndicateContractInstance },
-}) => {
-  const { web3 } = web3Reducer;
-  const { submitting } = loadingReducer;
-  return { web3, submitting, syndicateContractInstance };
-};
-
-export default connect(mapStateToProps)(CreateSyndicate);
+export default CreateSyndicate;

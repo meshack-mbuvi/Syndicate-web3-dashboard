@@ -25,7 +25,6 @@ const ActiveSyndicatesTable = ({ columns, data }: Props) => {
   );
 
   const firstPageRows = rows.slice(0, 20);
-  console.log({ rows });
 
   return (
     <>

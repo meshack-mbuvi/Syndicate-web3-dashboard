@@ -7,7 +7,6 @@ import {
   ADD_NEW_INVESTMENT,
   ALL_SYNDICATES,
   INVALID_SYNDICATE_ADDRESS,
-  NEW_SYNDICATE,
   SET_LOADING,
   SYNDICATE_BY_ADDRESS,
 } from "../types";
@@ -144,13 +143,6 @@ export const addSyndicates = (data) => async (dispatch) => {
       message: "An error occured while retrieving all events",
     });
   }
-};
-
-export const addNewSyndicate = (data: object) => async (dispatch) => {
-  return dispatch({
-    data,
-    type: NEW_SYNDICATE,
-  });
 };
 
 /**

@@ -1,8 +1,7 @@
+import { showWalletModal } from "@/redux/actions/web3Provider";
 import PropTypes from "prop-types";
 import React from "react";
 import { connect } from "react-redux";
-import ConnectWallet from "src/components/connectWallet";
-import { showWalletModal } from "@/redux/actions/web3Provider";
 
 export const Wallet = (props) => {
   /**
@@ -41,12 +40,9 @@ export const Wallet = (props) => {
 
       <button
         onClick={connectWallet}
-        className="focus:outline-none mr-1 text-sm"
-      >
+        className="focus:outline-none mr-1 text-sm">
         {account ? formatAddress(account) : "Not connected"}
       </button>
-
-      <ConnectWallet />
     </div>
   );
 };
