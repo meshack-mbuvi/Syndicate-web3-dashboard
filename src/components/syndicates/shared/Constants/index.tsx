@@ -51,6 +51,9 @@ const connectWalletDepositMessage =
   "Connect your wallet to deposit into this syndicate.";
 const connectWalletWithdrawMessage =
   "Connect your wallet to withdraw from this syndicate.";
+const maxMemberDepositsTitleText = "Maximum Deposit Reached.";
+const maxMemberDepositsText =
+  "You have reached your maximum allowed deposit for this syndicate.";
 
 // deposit success texts
 const depositSuccessTitleText = "You just made a deposit.";
@@ -181,6 +184,8 @@ export const constants = {
   maxTotalDepositsExceededErrorMessage,
   maxTotalLPDepositsExceededErrorMessage,
   amountExceededText,
+  maxMemberDepositsTitleText,
+  maxMemberDepositsText,
 };
 
 // Tooltips

@@ -21,10 +21,10 @@ export const setSyndicateLPDetailsLoading = (data) => {
 
 interface SyndicateLPData {
   syndicateContractInstance: any;
-  lpAccount: string;
+  account: string;
   web3: any;
   syndicateAddress: string | string[];
-  syndicateDepositsTotal: string;
+  syndicate: any;
   totalAvailableDistributions: string;
   currentERC20Decimals: number;
 }
@@ -40,23 +40,23 @@ export const updateSyndicateLPDetails = (data: SyndicateLPData) => async (
 ) => {
   const {
     syndicateContractInstance,
-    lpAccount,
+    account,
     syndicateAddress,
-    syndicateDepositsTotal,
+    syndicate,
     totalAvailableDistributions,
     currentERC20Decimals,
   } = data;
 
   // we cannot query relevant values without the syndicate instance
-  if (!syndicateContractInstance || !lpAccount) return;
+  if (!syndicateContractInstance || !account) return;
 
   // Retrieves syndicateInfo for the connected wallet. We need to find out
   // how much the wallet account has invested in this syndicate
   try {
-    if (lpAccount && syndicateAddress && syndicateDepositsTotal) {
+    if (account && syndicateAddress && syndicate) {
       setSyndicateLPDetailsLoading(true);
       await syndicateContractInstance.methods
-        .getSyndicateLPInfo(syndicateAddress, lpAccount)
+        .getSyndicateLPInfo(syndicateAddress, account)
         .call()
         .then((result) => {
           // update total LP deposits
@@ -88,10 +88,9 @@ export const updateSyndicateLPDetails = (data: SyndicateLPData) => async (
 
           // get the current LP's percentage share in the syndicate
           // (totalLPDeposits / totalSyndicateDeposits) * 100
+          const { totalDeposits } = syndicate;
           const myLPDeposits = parseFloat(myDeposits) * 100;
-          const totalSyndicateDeposits = parseFloat(
-            syndicateDepositsTotal.toString()
-          );
+          const totalSyndicateDeposits = parseFloat(totalDeposits.toString());
           const myPercentageOfThisSyndicate = divideIfNotByZero(
             myLPDeposits,
             totalSyndicateDeposits
@@ -105,29 +104,37 @@ export const updateSyndicateLPDetails = (data: SyndicateLPData) => async (
           const myDistributionsToDate =
             (totalSyndicateDistributions * myPercentageOfThisSyndicate) / 100;
 
-          const syndicateLPDetails = {
+          // check whether the member has reached their maximum deposit cap.
+          const { maxDeposit } = syndicate;
+          const maxDepositReached = +maxDeposit === +myDeposits;
+
+          const memberNumDetails = {
             myDeposits,
             myPercentageOfThisSyndicate,
             myWithdrawalsToDate,
             withdrawalsToDepositPercentage,
             myDistributionsToDate,
-            myAddressAllowed,
           };
 
-          // format all syndicate LP details
+          const memberBoolDetails = {
+            myAddressAllowed,
+            maxDepositReached,
+          };
+
+          // format member number details
           // values should have commas, if they are longer than 3 characters long
           // and be rounded to two decimal places.
-          Object.keys(syndicateLPDetails).map((key) => {
-            if (key !== "myAddressAllowed") {
-              syndicateLPDetails[key] = floatedNumberWithCommas(
-                syndicateLPDetails[key]
-              );
-            }
+          Object.keys(memberNumDetails).map((key) => {
+            memberNumDetails[key] = floatedNumberWithCommas(
+              memberNumDetails[key]
+            );
             return;
           });
 
           // dispatch action to update syndicate LP details
-          dispatch(setSyndicateLPDetails(syndicateLPDetails));
+          dispatch(
+            setSyndicateLPDetails({ ...memberNumDetails, ...memberBoolDetails })
+          );
           setSyndicateLPDetailsLoading(false);
         });
     }

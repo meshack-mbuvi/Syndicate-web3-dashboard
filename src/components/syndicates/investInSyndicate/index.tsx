@@ -150,6 +150,7 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
     withdrawalsToDepositPercentage,
     myWithdrawalsToDate,
     myDistributionsToDate,
+    maxDepositReached,
   } = syndicateLPDetails;
 
   const {
@@ -179,6 +180,8 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
     connectWalletWithdrawMessage,
     connectWalletDepositMessage,
     depositsUnavailableMaxLPsZeroText,
+    maxMemberDepositsTitleText,
+    maxMemberDepositsText,
   } = constants;
 
   // get the state of the current syndicate action
@@ -258,6 +261,24 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
       getTokenDecimals(tokenAddress);
     }
   }, [syndicate]);
+
+  /** Method to store updated member details in the redux store
+   * This will be called whenever member details need to be updated
+   * after an action.
+   */
+  const storeMemberDetails = () => {
+    dispatch(
+      updateSyndicateLPDetails({
+        syndicateContractInstance,
+        account,
+        syndicateAddress,
+        syndicate,
+        web3,
+        totalAvailableDistributions,
+        currentERC20Decimals,
+      })
+    );
+  };
 
   // check whether the current deposit amount exceeds max LP deposit allowed
   // or if the deposit amount is less than the min LP deposit allowed.
@@ -352,19 +373,8 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
   useEffect(() => {
     if (account && syndicateContractInstance) {
       setLoadingLPDetails(true);
-      const lpAccount = account;
-      const syndicateDepositsTotal = syndicate?.totalDeposits;
-      dispatch(
-        updateSyndicateLPDetails({
-          syndicateContractInstance,
-          lpAccount,
-          syndicateAddress,
-          syndicateDepositsTotal,
-          web3,
-          totalAvailableDistributions,
-          currentERC20Decimals,
-        })
-      );
+      // push member details to the redix store
+      storeMemberDetails();
       setLoadingLPDetails(false);
     }
   }, [
@@ -396,19 +406,7 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
         .on("data", () => {
           // once event is emitted, dispatch action to save
           // the latest syndicate LP details to the redux store.
-          const lpAccount = account;
-          const syndicateDepositsTotal = syndicate?.totalDeposits;
-          dispatch(
-            updateSyndicateLPDetails({
-              syndicateContractInstance,
-              lpAccount,
-              syndicateAddress,
-              syndicateDepositsTotal,
-              web3,
-              totalAvailableDistributions,
-              currentERC20Decimals,
-            })
-          );
+          storeMemberDetails();
         })
         .on("error", (error) => console.log({ error }));
     }
@@ -425,7 +423,7 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
       getTotalDistributions(
         syndicateContractInstance,
         syndicateAddress,
-        syndicate.depositERC20ContractAddress,
+        syndicate.depositERC20ContractAddress
       ).then((totalDistributions: string) => {
         const totalDistributionsAvailable = getWeiAmount(
           totalDistributions,
@@ -504,19 +502,8 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
             getSyndicateByAddress(syndicateAddress, syndicateContractInstance)
           );
 
-          const syndicateDepositsTotal = syndicate.totalDeposits;
-          const lpAccount = account;
-          dispatch(
-            updateSyndicateLPDetails({
-              syndicateContractInstance,
-              lpAccount,
-              syndicateAddress,
-              syndicateDepositsTotal,
-              web3,
-              totalAvailableDistributions,
-              currentERC20Decimals,
-            })
-          );
+          //store updated member details
+          storeMemberDetails();
 
           if (approved) {
             setApproved(false);
@@ -1099,6 +1086,13 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
                   success={true}
                   buttonText={depositSuccessButtonText}
                   closeLoader={closeSyndicateActionLoader}
+                />
+              ) : maxDepositReached && maxDepositReached ? (
+                <SyndicateActionLoader
+                  headerText={maxMemberDepositsTitleText}
+                  subText={maxMemberDepositsText}
+                  error={true}
+                  showRetryButton={false}
                 />
               ) : (
                 <>

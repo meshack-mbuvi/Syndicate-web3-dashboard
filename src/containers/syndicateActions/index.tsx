@@ -34,8 +34,6 @@ const SyndicateInvestment = () => {
     (state: RootStateOrAny) => state.syndicatesReducer
   );
 
-  console.log({ syndicate });
-
   const router = useRouter();
   const dispatch = useDispatch();
 
