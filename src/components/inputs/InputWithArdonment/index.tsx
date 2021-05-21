@@ -18,6 +18,7 @@ export const InputWithAddon = (props: {
   value: string | number;
   tooltip: string;
   addOn: string;
+  column?: boolean;
 }) => {
   const {
     label,
@@ -28,6 +29,7 @@ export const InputWithAddon = (props: {
     addOn,
     tooltip,
     disabled,
+    column = false,
     ...rest
   } = props;
   let variableWidth = 6;
@@ -40,15 +42,21 @@ export const InputWithAddon = (props: {
     : "text-black border border-gray-85";
 
   return (
-    <div className="flex flex-row justify-center">
-      <div className="mr-2 w-2/5 flex justify-end">
+    <div
+      className={`flex ${
+        column ? `flex-col mr-2 sm:mr-4` : `flex-row`
+      } justify-center`}>
+      <div
+        className={`flex mr-2 ${
+          column ? `w-full justify-start mb-2` : `w-1/2 justify-end`
+        }`}>
         <label
           htmlFor="syndicateAddress"
           className="block pt-2 text-black text-sm font-medium">
           {label}
         </label>
       </div>
-      <div className="w-3/5 flex flex-col justify-between">
+      <div className="w-full flex-grow flex flex-col justify-between">
         {/* input field */}
         <div className="flex">
           <div className={`flex rounded-md flex-grow ${disabledClasses}`}>
@@ -56,20 +64,27 @@ export const InputWithAddon = (props: {
               type="number"
               name={name}
               onChange={onChange}
-              className={`flex px-1 ml-1 py-2 text-sm rounded-md focus:outline-none outline-none focus:ring-0 focus:border-none border-0`}
+              className={`flex px-1 ml-1 py-2 text-sm rounded-md focus:outline-none outline-none focus:ring-0 focus:border-none border-0 font-whyte`}
               style={{ width: `${variableWidth}ch` }}
               {...rest}
               value={value}
               disabled={disabled}
             />
-            <span className="flex flex-1 py-2 text-gray-500">{addOn}</span>
+            <span className="flex flex-1 py-2 text-gray-500 font-whyte">
+              {addOn}
+            </span>
           </div>
           {/* icon */}
-          <div className="w-6 ml-4 mt-1">
-            <InfoIcon tooltip={tooltip} />
-          </div>
+          {/* icon */}
+          {tooltip ? (
+            <div className="w-auto mt-1 flex">
+              <InfoIcon tooltip={tooltip} />
+            </div>
+          ) : null}
         </div>
-        {error ? <p className="text-red-500 text-sm">{error}</p> : null}
+        <p className="text-red-500 text-xs mt-1 mb-1">
+          {error && !disabled ? error : null}
+        </p>
       </div>
     </div>
   );

@@ -121,7 +121,7 @@ const walletPendingConfirmPendingMessage =
   "Please confirm the transaction from your wallet.";
 
 export const depositorAddressToolTip =
-  "Address the depositor used to send funds to the manager.";
+  "The address the depositor used to send funds to the manager.";
 
 export const walletConfirmConstants = {
   walletPendingConfirmPendingTitleText,
@@ -328,3 +328,29 @@ export const confirmPreApproveAddressesText =
   "Confirm the transaction on your wallet if you want to approve new depositors.";
 export const preApproveMoreAddress =
   "You can pre-approve more member addresses at any time whilst the syndicate is open.";
+
+// modify member distributions constants
+const currentDistributionClaimedAmountTooltip =
+  "Current amount of distributions claimed by the member address";
+const newDistributionClaimedAmountTooltip =
+  "New amount of distributions claimed by the member address";
+
+const confirmModifyMemberDistributionsText =
+  "Confirm that you want to modify member claimed distributions.";
+
+export const ModifyMemberDistributionsConstants = {
+  currentDistributionClaimedAmountTooltip,
+  newDistributionClaimedAmountTooltip,
+  confirmModifyMemberDistributionsText,
+};
+
+const currentDepositAmountTooltip =
+  "Current amount of funds contributed by this member to the syndicate";
+const newDepositAmountTooltip =
+  "Amount amount of funds contributed by this member to the syndicate";
+
+// modify syndicate cap table contants
+export const ModifySyndicateCapTableConstants = {
+  currentDepositAmountTooltip,
+  newDepositAmountTooltip,
+};

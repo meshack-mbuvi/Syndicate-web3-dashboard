@@ -18,6 +18,7 @@ import { RootStateOrAny, useDispatch, useSelector } from "react-redux";
 import ErrorBoundary from "../../components/errorBoundary";
 import DistributeToken from "./distributeToken";
 import ManagerAction from "./ManagerAction";
+import ModifyMemberDistributions from "./modifyMemberDistributions";
 import ModifySyndicateCapTable from "./modifySyndicateCapTable";
 import MoreManagerActions from "./MoreManagerActions";
 import PreApproveDepositor from "./preApproveDepositor";
@@ -55,6 +56,11 @@ const ManagerActions = () => {
   const [showSyndicateNotModifiable, setShowSyndicateNotModifiable] = useState(
     false
   );
+  const [
+    showModifyMemberDistribution,
+    setShowModifyMemberDistribution,
+  ] = useState(false);
+
   const [errorMessage, setErrorMessage] = useState("");
 
   const {
@@ -148,11 +154,6 @@ const ManagerActions = () => {
 
   const moreActions = [
     {
-      icon: <img src="/images/invertedInfo.svg" />,
-      text: "Overwrite syndicate cap table",
-      onClickHandler: () => showModifyCapTableModal(),
-    },
-    {
       icon: <img src="/images/exclamation-triangle.svg" />,
       text: "Reject deposit or depositor address",
     },
@@ -239,13 +240,22 @@ const ManagerActions = () => {
           <div className="font-semibold tracking-widest text-sm leading-6 text-gray-matterhorn my-6 mx-4">
             MORE
           </div>
-          {moreActions.map(({ icon, text, onClickHandler }) => (
+          {!syndicate?.syndicateOpen && syndicate?.distributionsEnabled ? (
             <MoreManagerActions
-              key={text}
-              icon={icon}
-              text={text}
-              onClickHandler={onClickHandler}
+              icon={<img src="/images/invertedInfo.svg" />}
+              text={"Modify Member distributions"}
+              onClickHandler={setShowModifyMemberDistribution}
             />
+          ) : (
+            <MoreManagerActions
+              icon={<img src="/images/invertedInfo.svg" />}
+              text={"Overwrite syndicate cap table"}
+              onClickHandler={showModifyCapTableModal}
+            />
+          )}
+
+          {moreActions.map(({ icon, text }) => (
+            <MoreManagerActions key={text} icon={icon} text={text} />
           ))}
         </div>
         {showDistributeToken ? (
@@ -267,6 +277,13 @@ const ManagerActions = () => {
               setShowErrorMessage: setShowSyndicateNotModifiable,
               setErrorMessage,
               errorMessage,
+            }}
+          />
+        ) : showModifyMemberDistribution ? (
+          <ModifyMemberDistributions
+            {...{
+              showModifyMemberDistribution,
+              setShowModifyMemberDistribution,
             }}
           />
         ) : null}

@@ -3,7 +3,7 @@ import React, { ReactNode } from "react";
 interface Props {
   icon: ReactNode;
   text: string;
-  onClickHandler;
+  onClickHandler?;
 }
 
 const MoreManagerActions = ({ icon, text, onClickHandler }: Props) => {

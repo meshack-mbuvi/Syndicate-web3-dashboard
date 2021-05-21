@@ -5,16 +5,16 @@ import ConfirmStateModal from "@/components/shared/transactionStates/confirm";
 import FinalStateModal from "@/components/shared/transactionStates/final";
 import {
   confirmingTransaction,
-  confirmModifySyndicateCapTableText,
   depositorAddressToolTip,
-  ModifySyndicateCapTableConstants,
+  ModifyMemberDistributionsConstants,
   rejectTransactionText,
   waitTransactionTobeConfirmedText,
 } from "@/components/syndicates/shared/Constants";
 import { getMetamaskError } from "@/helpers";
+import { getPastEvents } from "@/helpers/retrieveEvents";
 import { showWalletModal } from "@/redux/actions";
 import { getSyndicateByAddress } from "@/redux/actions/syndicates";
-import { divideIfNotByZero, getWeiAmount, toEther } from "@/utils/conversions";
+import { toEther } from "@/utils/conversions";
 import { TokenMappings } from "@/utils/tokenMappings";
 import { isZeroAddress, Validate } from "@/utils/validators";
 import { useRouter } from "next/router";
@@ -23,8 +23,8 @@ import { RootStateOrAny, useDispatch, useSelector } from "react-redux";
 import Button from "src/components/buttons";
 
 interface Props {
-  showModifyCapTable: boolean;
-  setShowModifyCapTable: Function;
+  showModifyMemberDistribution: boolean;
+  setShowModifyMemberDistribution: Function;
 }
 
 /**
@@ -33,12 +33,16 @@ interface Props {
  * @param props
  * @returns
  */
-const ModifySyndicateCapTable = (props: Props) => {
-  const { showModifyCapTable, setShowModifyCapTable } = props;
+const ModifyMemberDistributions = (props: Props) => {
   const {
-    currentDepositAmountTooltip,
-    newDepositAmountTooltip,
-  } = ModifySyndicateCapTableConstants;
+    currentDistributionClaimedAmountTooltip,
+    newDistributionClaimedAmountTooltip,
+    confirmModifyMemberDistributionsText,
+  } = ModifyMemberDistributionsConstants;
+  const {
+    showModifyMemberDistribution,
+    setShowModifyMemberDistribution,
+  } = props;
 
   const {
     web3: { account, web3 },
@@ -65,33 +69,27 @@ const ModifySyndicateCapTable = (props: Props) => {
 
   const { syndicateAddress } = router.query;
 
-  const [depositorAddress, setDepositorAddress] = useState("");
+  const [memberAddress, setMemberAddress] = useState("");
+  const [
+    currentClaimedDistributions,
+    setCurrentClaimedDistributions,
+  ] = useState("0");
+  const [lpDeposits, setLpDeposits] = useState("");
+
   const [depositorAddressError, setDepositAddressError] = useState("");
 
-  const [amount, setAmount] = useState<string | number>(0);
+  const [newDistributionAmount, setNewDistributionAmount] = useState<
+    string | number
+  >(0);
+
+  const [distributionERC20Address, setDistributionERC20Address] = useState(
+    syndicate?.depositERC20Address
+  );
 
   const [amountError, setAmountError] = useState<string>("");
 
-  const [currentDepositAmount, setcurrentDepositAmount] = useState(0);
-  const [syndicateError] = useState("");
-
   const [submitting, setSubmitting] = useState(false);
   const [currentERC20, setCurrentERC20] = useState<string>("DAI");
-  const [currentOwnership, setCurrentOwnership] = useState(0);
-  const [newOwnership, setNewOwnership] = useState(0);
-  /**
-   * When a depositor address is set, find its current syndicate ownership
-   */
-  useEffect(() => {
-    calculateCurrentOwnership();
-  }, [depositorAddress, currentDepositAmount]);
-
-  // calculate new ownership for the new/existing member
-  useEffect(() => {
-    if (syndicate) {
-      calculateNewOnwershipOfSyndicate();
-    }
-  }, [amount]);
 
   // set token symbol based on deposit token address
   // we'll manually map the token symbol for now.
@@ -106,8 +104,15 @@ const ModifySyndicateCapTable = (props: Props) => {
       if (mappedTokenAddress) {
         setCurrentERC20(TokenMappings[mappedTokenAddress]);
       }
+      getDistributionERC20Address();
     }
   }, [syndicate]);
+
+  useEffect(() => {
+    if (memberAddress && depositorAddressError == "") {
+      getCurrentClaimedAmount();
+    }
+  }, [memberAddress]);
 
   // no syndicate exists without a manager, so if no manager, then syndicate does not exist
   useEffect(() => {
@@ -122,19 +127,8 @@ const ModifySyndicateCapTable = (props: Props) => {
     }
   }, [syndicate]);
 
-  useEffect(() => {
-    if (
-      web3 &&
-      web3.utils.isAddress(depositorAddress) &&
-      !isZeroAddress(depositorAddress)
-    ) {
-      getCurrentDepositAmount(depositorAddress);
-    }
-  }, [depositorAddress]);
-
   let validated = false;
-
-  if (depositorAddressError || amountError || !depositorAddress || !amount) {
+  if (depositorAddressError || !memberAddress) {
     validated = false;
   } else {
     validated = true;
@@ -145,18 +139,54 @@ const ModifySyndicateCapTable = (props: Props) => {
    * @param depositorAddress
    * @returns
    */
-  const getCurrentDepositAmount = async (depositorAddress: string) => {
-    const syndicateLPInfo = await syndicateContractInstance.methods
-      .getSyndicateLPInfo(syndicateAddress, depositorAddress)
-      .call();
+  const getCurrentClaimedAmount = async () => {
+    try {
+      const syndicateLPInfo = await syndicateContractInstance.methods
+        .getSyndicateLPInfo(syndicateAddress, memberAddress)
+        .call();
+      setLpDeposits(syndicateLPInfo[0]);
+      if (syndicateLPInfo[0] === "0") {
+        setDepositAddressError(
+          "Member address has zero deposits in this Syndicate"
+        );
+      }
 
-    const lpDeposits = getWeiAmount(
-      syndicateLPInfo[0],
-      syndicate.tokenDecimals,
-      false
+      setCurrentClaimedDistributions(syndicateLPInfo[1]);
+    } catch (error) {
+      setCurrentClaimedDistributions("0");
+      setDepositAddressError(
+        "Member address has zero deposits in this Syndicate"
+      );
+    }
+  };
+
+  /**
+   * This helper function retrieves all distributionERC20Addresses. The addresses
+   * are obtained from setterDistribution event filtered by
+   * syndicateAddress which is the address of this syndicate.
+   */
+  const getDistributionERC20Address = async () => {
+    const events = await getPastEvents(
+      syndicateContractInstance,
+      "setterDistribution",
+      { syndicateAddress }
     );
-    setcurrentDepositAmount(lpDeposits.toString());
-    return lpDeposits;
+
+    // if no events, take the default depositERC20Address to be the
+    // distribution address
+    // otherwise, get one address from the events
+    if (!events.length) {
+      setDistributionERC20Address(syndicate.depositERC20ContractAddress);
+    } else {
+      const distributionERC20Addresses = [];
+      events.forEach((event) => {
+        const { distributionERC20Address } = event.returnValues;
+        distributionERC20Addresses.push(distributionERC20Address);
+      });
+      // we might have many distributions, and we need to find a way to select
+      // enable the manager select whichever address they want to edit ditributions for.
+      setDistributionERC20Address(distributionERC20Addresses[0]);
+    }
   };
 
   /**
@@ -165,14 +195,15 @@ const ModifySyndicateCapTable = (props: Props) => {
    */
   const handleDepositAddressChange = (event) => {
     const { value } = event.target;
-    setDepositorAddress(value);
+    setDepositAddressError("");
+    setMemberAddress(value);
 
     if (!value.trim()) {
-      setDepositAddressError("Deposit address is required");
+      setDepositAddressError("Member address is required");
     } else if (web3 && !web3.utils.isAddress(value)) {
-      setDepositAddressError("Deposit address should be a valid ERC20 address");
+      setDepositAddressError("Member address should be a valid ERC20 address");
     } else if (isZeroAddress(value)) {
-      setDepositAddressError("Deposit address cannot be zero address");
+      setDepositAddressError("Member address cannot be zero address");
     } else {
       setDepositAddressError("");
     }
@@ -182,15 +213,14 @@ const ModifySyndicateCapTable = (props: Props) => {
    * This method sets the amount of funds the depsitor send to the manager.
    * It also validates the input value and set appropriate error message
    */
-  const handleAmountChange = (event) => {
+  const newDistributionsAmountHandler = (event) => {
     event.preventDefault();
     const { value } = event.target;
-
-    setAmount(value);
+    setNewDistributionAmount(value);
 
     const message = Validate(value);
     if (message) {
-      setAmountError(`New deposit amount ${message}`);
+      setAmountError(`Distribution amount ${message}`);
     } else {
       setAmountError("");
     }
@@ -202,7 +232,7 @@ const ModifySyndicateCapTable = (props: Props) => {
     setSubmitting(false);
 
     const { code } = error;
-    const errorMessage = getMetamaskError(code, "Member deposit modified.");
+    const errorMessage = getMetamaskError(code, "Modify member distributions");
     setFinalButtonText("Dismiss");
     setFinalStateIcon("/images/roundedXicon.svg");
 
@@ -240,10 +270,15 @@ const ModifySyndicateCapTable = (props: Props) => {
 
     try {
       setShowWalletConfirmationModal(true);
-      const amountInWei = toEther(amount);
+      const amountInWei = toEther(newDistributionAmount);
 
       await syndicateContractInstance.methods
-        .setDepositForLP(syndicateAddress, depositorAddress, amountInWei)
+        .setClaimedDistributionForLP(
+          syndicateAddress,
+          memberAddress,
+          distributionERC20Address,
+          amountInWei
+        )
         .send({ from: account, gasLimit: 800000 })
         .on("transactionHash", () => {
           setShowWalletConfirmationModal(false);
@@ -253,7 +288,7 @@ const ModifySyndicateCapTable = (props: Props) => {
           setSubmitting(false);
 
           setShowFinalState(true);
-          setFinalStateHeaderText("Member deposit modified.");
+          setFinalStateHeaderText("Member distributions modified.");
           setFinalStateIcon("/images/checkCircle.svg");
           setFinalButtonText("Done");
           setSubmitting(false);
@@ -267,32 +302,6 @@ const ModifySyndicateCapTable = (props: Props) => {
   };
 
   /**
-   * Get lp deposits
-   * Calculate current onwership
-   */
-  const calculateCurrentOwnership = () => {
-    const currentOwnership =
-      divideIfNotByZero(+currentDepositAmount, +syndicate.totalDeposits) * 100;
-    setCurrentOwnership(+currentOwnership.toFixed(2));
-  };
-
-  // should be called whenever amount changes
-  // Setting deposit for the member will either reduce or increase total deposits
-  const calculateNewOnwershipOfSyndicate = () => {
-    const newSyndicateDeposits =
-      +syndicate.totalDeposits + +amount - +currentDepositAmount;
-
-    // new member deposit will be overriden with amount set
-    const percentOwnership =
-      divideIfNotByZero(+amount, newSyndicateDeposits) * 100;
-
-    setNewOwnership(+percentOwnership.toFixed(2));
-  };
-
-  //calculate ownership change on new deposit
-  const ownershipChange = +(newOwnership - currentOwnership).toFixed(2);
-
-  /**
    * Final state variables
    */
   const [finalStateButtonText, setFinalButtonText] = useState("");
@@ -302,26 +311,28 @@ const ModifySyndicateCapTable = (props: Props) => {
 
   const handleCloseFinalStateModal = async () => {
     setShowFinalState(false);
-    setShowModifyCapTable(false);
+    setShowModifyMemberDistribution(false);
 
     await dispatch(
       getSyndicateByAddress(syndicateAddress, syndicateContractInstance)
     );
   };
 
+  const lpInvested = lpDeposits === "0" && memberAddress ? false : true;
+
   return (
     <>
       <Modal
         {...{
-          title: "Modify Syndicate Cap Table",
-          show: showModifyCapTable,
-          closeModal: () => setShowModifyCapTable(false),
-          customWidth: "md:w-2/3 w-full",
+          title: "Modify Member Distributions",
+          show: showModifyMemberDistribution || true,
+          closeModal: () => setShowModifyMemberDistribution(false),
+          customWidth: "md:w-7/12 w-full",
         }}>
         <div className="mx-2 mb-8">
-          <p className="text-gray-500 text-sm">
-            Manually change the cap table and percentage ownerships for this
-            syndicate by overwriting the deposit amount for a specified member.
+          <p className="text-gray-500 text-sm my-4">
+            Manually change the claimed distribution amount of members from this
+            syndicate.
           </p>
           <p className="my-2 font-bold">
             WARNING: This function is intended to help syndicates fix user
@@ -332,8 +343,8 @@ const ModifySyndicateCapTable = (props: Props) => {
           </p>
 
           <form onSubmit={onSubmit}>
-            <p className="text-blue-light mx-4 my-4 text-xl">
-              Overwrite Member Amount
+            <p className="text-blue-light mx-4 my-4 text-base">
+              Overwrite Claimed Amount
             </p>
             <div className="border w-full border-gray-93 bg-gray-99 rounded-xl p-4 py-8">
               {validSyndicate ? (
@@ -345,32 +356,31 @@ const ModifySyndicateCapTable = (props: Props) => {
                       onChange: handleDepositAddressChange,
                       error: depositorAddressError,
                     }}
-                    value={depositorAddress.toString()}
+                    value={memberAddress.toString()}
                     name="depositorAddress"
                   />
 
                   <InputWithAddon
                     {...{
-                      label: "Current Deposit Amount:",
-                      value: currentDepositAmount,
-                      tooltip: currentDepositAmountTooltip,
+                      label: "Current Claimed Amount:",
+                      value: currentClaimedDistributions,
+                      defaultValue: 0,
+                      tooltip: currentDistributionClaimedAmountTooltip,
+                      type: "number",
                       addOn: currentERC20,
-                      name: "currentDeposit",
-                      disabled: true,
                     }}
+                    disabled
                   />
 
                   <InputWithAddon
                     {...{
-                      label: "New Deposit Amount:",
-                      value: amount,
-                      onChange: handleAmountChange,
-                      defaultValue: 0,
+                      label: "New Claimed Amount:",
+                      value: newDistributionAmount,
+                      onChange: newDistributionsAmountHandler,
                       error: amountError,
-                      tooltip: newDepositAmountTooltip,
+                      tooltip: newDistributionClaimedAmountTooltip,
                       type: "number",
                       addOn: currentERC20,
-                      name: "amount",
                     }}
                   />
                 </div>
@@ -387,77 +397,19 @@ const ModifySyndicateCapTable = (props: Props) => {
               )}
             </div>
 
-            <p className="text-gray-500 mx-4 my-4 mt-10 text-xl">
-              Ownership Change
-            </p>
-            <div className="bg-gray-99 border border-gray-93 mt-4 py-8 rounded-xl p-4">
-              {submitting ? (
-                <div className="space-y-4 text-center loader">Loading</div>
-              ) : syndicateError ? (
-                <div className="space-y-2">
-                  <div className="flex flex-row justify-center">
-                    <p className="text-red-500">{syndicateError}</p>
-                  </div>
-                </div>
-              ) : (
-                <div className="space-y-2">
-                  <div className="flex flex-row justify-center py-1">
-                    <label
-                      htmlFor="syndicateAddress"
-                      className="block text-black text-sm font-medium w-7/12 flex justify-end">
-                      Current Ownership of Syndicate:
-                    </label>
-                    <span
-                      className={`flex flex-grow rounded-md text-gray-500 px-4 text-sm font-ibm`}>
-                      {currentOwnership}%
-                    </span>
-                  </div>
-
-                  <div className="flex flex-row justify-center py-2">
-                    <label
-                      htmlFor="syndicateAddress"
-                      className="block text-black text-sm font-medium w-7/12 flex justify-end">
-                      New Ownership of Syndicate:
-                    </label>
-                    <span
-                      className={`flex flex-grow rounded-md text-gray-500  px-4 text-sm font-ibm w-5/12 flex justify-between`}>
-                      {newOwnership}%{" "}
-                      {`(${ownershipChange > 0 ? "+" : ""}${ownershipChange})%`}
-                    </span>
-                  </div>
-
-                  <div className="flex flex-row justify-center my-4">
-                    <label
-                      htmlFor="syndicateAddress"
-                      className="w-7/12 flex justify-end block text-black text-sm font-medium">
-                      Ownership Change for All Other Depositors:
-                    </label>
-                    <span
-                      className={`flex flex-grow rounded-md px-4 text-sm font-ibm w-5/12 flex justify-between`}>
-                      {`${ownershipChange > 0 ? "-" : "+"}${Math.abs(
-                        ownershipChange
-                      )}%`}
-                    </span>
-                  </div>
-                </div>
-              )}
-            </div>
-
             {/* submit button */}
             {validSyndicate ? (
               <div className="flex my-4 w-full justify-center py-2">
-                {submitting ? (
-                  <div className="loader"></div>
-                ) : (
-                  <Button
-                    type="submit"
-                    customClasses={`rounded-full bg-blue-light w-auto px-10 py-2 text-lg ${
-                      validated && !submitting ? "" : "opacity-50"
-                    }`}
-                    disabled={validated && !submitting ? false : true}>
-                    Confirm
-                  </Button>
-                )}
+                <Button
+                  type="submit"
+                  customClasses={`rounded-full bg-blue-light w-auto px-10 py-2 text-lg ${
+                    validated && !submitting && lpInvested ? "" : "opacity-50"
+                  }`}
+                  disabled={
+                    validated && !submitting && lpInvested ? false : true
+                  }>
+                  Confirm
+                </Button>
               </div>
             ) : null}
           </form>
@@ -468,7 +420,7 @@ const ModifySyndicateCapTable = (props: Props) => {
       <ConfirmStateModal show={showWalletConfirmationModal}>
         <div className="flex flex-col justify-centers m-auto mb-4">
           <p className="text-sm text-center mx-8 opacity-60">
-            {confirmModifySyndicateCapTableText}
+            {confirmModifyMemberDistributionsText}
           </p>
           <p className="text-sm text-center mx-8 mt-2 opacity-60">
             {rejectTransactionText}
@@ -501,4 +453,4 @@ const ModifySyndicateCapTable = (props: Props) => {
   );
 };
 
-export default ModifySyndicateCapTable;
+export default ModifyMemberDistributions;

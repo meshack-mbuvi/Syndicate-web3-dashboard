@@ -55,7 +55,7 @@ export const SyndicateActionLoader = (props: LoaderProp) => {
       ) : success ? (
         <img
           className="mb-4 h-12 w-12"
-          src="/images/successCheckmark.svg"
+          src="/images/checkCircle.svg"
           alt="checkmark"
         />
       ) : (
