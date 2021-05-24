@@ -9,7 +9,7 @@ const navbarLinks = [{ url: "/syndicates", urlText: "Syndicates" }];
 
 const Header = () => {
   return (
-    <nav className="bg-black h-20 fixed top-0 inset-x-0 align-middle border-b border-gray-90 py-4 bg-opacity-95">
+    <nav className="bg-black h-20 fixed top-0 inset-x-0 align-middle border-b border-gray-90 py-4 bg-opacity-95 z-40">
       <div className="max-w-8xl mx-auto px-4 h-full">
         <div className="flex justify-between items-center h-full">
           <div className="flex space-x-4 items-center">
@@ -17,7 +17,8 @@ const Header = () => {
             <div>
               <a
                 href="#"
-                className="flex items-center py-5 md:px-2 text-gray-700 hover:text-gray-900">
+                className="flex items-center py-5 md:px-2 text-gray-700 hover:text-gray-900"
+              >
                 <Link href="/">
                   <a className="flex items-center">
                     <span className="sr-only">Syndicate</span>
