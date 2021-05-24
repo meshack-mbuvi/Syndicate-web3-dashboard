@@ -70,7 +70,7 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
   ] = useState<string>("0.00");
 
   const [depositAmount, setDepositAmount] = useState<number>(0);
-  const [depositAmountError, setDepositAmountError] = useState<string>("");
+  const [amountError, setAmountError] = useState<string>("");
 
   const [currentDistributionTokenDecimals] = useState<number>(18);
   const [currentERC20Decimals, setCurrentERC20Decimals] = useState<number>(18);
@@ -182,6 +182,8 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
     depositsUnavailableMaxLPsZeroText,
     maxMemberDepositsTitleText,
     maxMemberDepositsText,
+    nonMemberWithdrawalTitleText,
+    nonMemberWithdrawalText,
   } = constants;
 
   // get the state of the current syndicate action
@@ -455,9 +457,11 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
 
     const message = Validate(value);
     if (message) {
-      setDepositAmountError(`Deposit amount ${message}`);
+      setAmountError(
+        `${withdraw ? "Withdrawal amount" : "Deposit amount"} ${message}`
+      );
     } else {
-      setDepositAmountError("");
+      setAmountError("");
     }
   };
 
@@ -872,7 +876,7 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
     <div className="mb-2">
       <div className="mb-4">
         <SyndicateActionButton
-          amountError={Boolean(depositAmountError)}
+          amountError={Boolean(amountError)}
           buttonText={`${approvalButtonText} ${
             amountToApprove ? amountToApprove : floatedNumberWithCommas("0")
           } ${currentERC20}`}
@@ -884,7 +888,7 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
       </div>
       <div className="mb-4">
         <SyndicateActionButton
-          amountError={Boolean(depositAmountError)}
+          amountError={Boolean(amountError)}
           buttonText={`Deposit ${depositButtonAmount} ${currentERC20}`}
           disableDepositButton={disableDepositButton}
         />
@@ -897,7 +901,7 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
     actionButton = (
       <div className="mb-4">
         <SyndicateActionButton
-          amountError={Boolean(depositAmountError)}
+          amountError={Boolean(amountError)}
           buttonText="Continue"
         />
       </div>
@@ -923,10 +927,10 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
   }
 
   // show error message depending on what triggered it
-  let errorMessageText = depositAmountError;
-  if (allowanceApprovalError && depositAmountError) {
-    errorMessageText = depositAmountError;
-  } else if (allowanceApprovalError && !depositAmountError) {
+  let errorMessageText = amountError;
+  if (allowanceApprovalError && amountError) {
+    errorMessageText = amountError;
+  } else if (allowanceApprovalError && !amountError) {
     errorMessageText = allowanceApprovalError;
   } else if (conversionError) {
     errorMessageText = conversionError;
@@ -1027,6 +1031,32 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
     walletPendingConfirmPendingMessage,
   } = walletConfirmConstants;
 
+  // conditions for showing validation error message
+  // error messages will be shown based on whether the current page
+  // is the deposit page or the withdrawal page.
+  let showValidationError = false;
+  if (depositModes) {
+    if (
+      amountError ||
+      allowanceApprovalError ||
+      conversionError ||
+      amountLessThanMinDeposit ||
+      amountMoreThanMaxDeposit ||
+      maxTotalDepositsExceeded ||
+      maxTotalLPDepositsExceeded
+    ) {
+      showValidationError = true;
+    } else {
+      showValidationError = false;
+    }
+  } else if (withdraw) {
+    if (amountError) {
+      showValidationError = true;
+    } else {
+      showValidationError = false;
+    }
+  }
+
   return (
     <ErrorBoundary>
       <div className="w-full md:w-1/2 mt-4 sm:mt-0">
@@ -1094,6 +1124,13 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
                   error={true}
                   showRetryButton={false}
                 />
+              ) : withdraw && +myDeposits === 0 ? (
+                <SyndicateActionLoader
+                  headerText={nonMemberWithdrawalTitleText}
+                  subText={nonMemberWithdrawalText}
+                  error={true}
+                  showRetryButton={false}
+                />
               ) : (
                 <>
                   {!syndicate || loadingLPDetails ? (
@@ -1137,12 +1174,10 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
                             name="depositAmount"
                             type="text"
                             placeholder="400"
-                            disabled={!myAddressAllowed}
+                            disabled={depositModes ? !myAddressAllowed : false}
                             defaultValue={depositAmount}
                             onChange={handleSetAmount}
-                            className={`rounded-md bg-gray-9 border border-gray-24 text-white font-whyte focus:outline-none focus:ring-gray-24 focus:border-gray-24 w-7/12 mr-2 ${
-                              withdraw ? "mb-5" : "mb-0"
-                            }`}
+                            className={`rounded-md bg-gray-9 border border-gray-24 text-white font-whyte focus:outline-none focus:ring-gray-24 focus:border-gray-24 w-7/12 mr-2 `}
                           />
                           {withdraw ? (
                             <TokenSelect />
@@ -1151,17 +1186,10 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
                           )}
                         </div>
 
-                        {depositAmountError ||
-                        allowanceApprovalError ||
-                        conversionError ||
-                        amountLessThanMinDeposit ||
-                        amountMoreThanMaxDeposit ||
-                        maxTotalDepositsExceeded ||
-                        maxTotalLPDepositsExceeded ? (
-                          <p className="mr-2 w-full text-red-500 text-xs mt-2 mb-4">
-                            {errorMessageText}
-                          </p>
-                        ) : null}
+                        <p className="mr-2 w-full text-red-500 text-xs mt-2 mb-4">
+                          {showValidationError ? errorMessageText : null}
+                        </p>
+
                         {/* checkbox for user to confirm they are accredited investor if this is a deposit */}
                         {depositModes ? (
                           <p className="text-sm my-5 text-gray-dim">

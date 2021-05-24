@@ -54,6 +54,9 @@ const connectWalletWithdrawMessage =
 const maxMemberDepositsTitleText = "Maximum Deposit Reached.";
 const maxMemberDepositsText =
   "You have reached your maximum allowed deposit for this syndicate.";
+const nonMemberWithdrawalTitleText = "Not a Member.";
+const nonMemberWithdrawalText =
+  "You are not a member of this syndicate since you have not made any deposits yet.";
 
 // deposit success texts
 const depositSuccessTitleText = "You just made a deposit.";
@@ -186,6 +189,8 @@ export const constants = {
   amountExceededText,
   maxMemberDepositsTitleText,
   maxMemberDepositsText,
+  nonMemberWithdrawalTitleText,
+  nonMemberWithdrawalText,
 };
 
 // Tooltips
