@@ -52,12 +52,12 @@ const SyndicateInvestment = () => {
   }, [account]);
 
   useEffect(() => {
-    if (syndicateContractInstance.methods) {
+    if (router.isReady && syndicateContractInstance.methods) {
       dispatch(
         getSyndicateByAddress(syndicateAddress, syndicateContractInstance)
       );
     }
-  }, [syndicateContractInstance, syndicateAddress, account]);
+  }, [router.isReady, syndicateContractInstance, syndicateAddress, account]);
 
   // check whether the current connected wallet account is the manager of the syndicate
   // we'll use this information to load the manager view
