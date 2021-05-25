@@ -1,5 +1,4 @@
 import ErrorBoundary from "@/components/errorBoundary";
-import { getTotalDistributions } from "@/helpers";
 import { getSyndicateByAddress } from "@/redux/actions/syndicates";
 import { showWalletModal } from "@/redux/actions/web3Provider";
 import { Validate } from "@/utils/validators";
@@ -14,7 +13,6 @@ import { setSyndicateDetails } from "src/redux/actions/syndicateDetails";
 import { updateSyndicateLPDetails } from "src/redux/actions/syndicateLPDetails";
 // utils and helpers
 import { toEther } from "src/utils";
-import ERC20ABI from "src/utils/abi/rinkeby-dai";
 import { getWeiAmount } from "src/utils/conversions";
 import { ERC20TokenDetails } from "src/utils/ERC20Methods";
 import { floatedNumberWithCommas } from "src/utils/numberWithCommas";
@@ -34,6 +32,7 @@ import {
 import { SyndicateActionButton } from "../shared/syndicateActionButton";
 import { SyndicateActionLoader } from "../shared/syndicateActionLoader";
 import { TokenSelect } from "../shared/tokenSelect";
+import ERC20ABI from "src/utils/abi/erc20";
 
 const Web3 = require("web3");
 
@@ -59,10 +58,6 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
 
   const dispatch = useDispatch();
 
-  // the block on which the contract was deployed.
-  // we'll start listening to events from here.
-  const startBlock = process.env.NEXT_PUBLIC_FROM_BLOCK;
-
   const [submitting, setSubmitting] = useState<boolean>(false);
   const [
     totalAvailableDistributions,
@@ -72,7 +67,6 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
   const [amount, setAmount] = useState<number>(0);
   const [amountError, setAmountError] = useState<string>("");
 
-  const [currentDistributionTokenDecimals] = useState<number>(18);
   const [currentERC20Decimals, setCurrentERC20Decimals] = useState<number>(18);
   const [currentERC20, setCurrentERC20] = useState<string>("DAI");
   const [currentERC20Contract, setCurrentERC20Contract] = useState<any>({});
@@ -144,11 +138,26 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
     false
   );
 
-  // withdrawal page errors
+  // withdrawal page states
   const [
     amountGreaterThanMemberDistributions,
     setAmountGreaterThanMemberDistributions,
   ] = useState<boolean>(false);
+
+  // distributions states
+  const [
+    currentDistributionTokenSymbol,
+    setCurrentDistributionTokenSymbol,
+  ] = useState<string>("");
+
+  const [
+    currentDistributionTokenDecimals,
+    setCurrentDistributionTokenDecimals,
+  ] = useState<number>(18);
+  const [
+    currentDistributionTokenAddress,
+    setCurrentDistributionTokenAddress,
+  ] = useState<string>("");
 
   const {
     myDeposits,
@@ -221,9 +230,7 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
   const depositSections = [
     {
       header: "My Deposits",
-      subText: `${myDeposits} ${currentERC20} ($${floatedNumberWithCommas(
-        myDeposits
-      )})`,
+      subText: `${myDeposits} ${currentERC20} ($${myDeposits})`,
       tooltip: myDepositsToolTip,
       screen: "deposit",
     },
@@ -409,9 +416,8 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
   ]);
 
   useEffect(() => {
-    // set up syndicate contract to listen to events.
     if (syndicateContractInstance?.methods && syndicate) {
-      // set up current ERC20Contract and
+      // set up current deposit ERC20Contract and
       // and save it to the local state
       const ERC20Contract = new web3.eth.Contract(
         ERC20ABI,
@@ -419,45 +425,33 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
       );
 
       setCurrentERC20Contract(ERC20Contract);
-
-      // subscribe to withdraw events.
-      syndicateContractInstance.events
-        .lpWithdrewDistributionFromSyndicate({
-          filter: { syndicateAddress, lpAddress: account },
-          fromBlock: startBlock,
-        })
-        .on("data", () => {
-          // once event is emitted, dispatch action to save
-          // the latest syndicate LP details to the redux store.
-          storeMemberDetails();
-        })
-        .on("error", (error) => console.log({ error }));
     }
   }, [syndicateContractInstance, syndicate]);
 
   /**
-   * whenever we get syndicate details, we neet to trigger calculation of wallet
-   * syndicate share.
+   * set total available distributions for the token that is currently selected
+   * from the withdrawal page select drop-down.
+   * @param tokenSymbol the symbol of the currently selected distribution token
+   * @param tokenDistributions the total available distributions of the token
    */
-  useEffect(() => {
-    if (syndicate && syndicateContractInstance) {
-      // get total distributions.
-      // this updates the distributions available value on the syndicate page
-      getTotalDistributions(
-        syndicateContractInstance,
-        syndicateAddress,
-        syndicate.depositERC20ContractAddress
-      ).then((totalDistributions: string) => {
-        const totalDistributionsAvailable = getWeiAmount(
-          totalDistributions,
-          currentDistributionTokenDecimals,
-          false
-        );
+  const setTotalTokenDistributions = async (
+    tokenSymbol: string,
+    tokenDistributions: string,
+    tokenAddress: string
+  ) => {
+    // set total distributions available and token symbol for the selected token.
+    // this updates the distributions available value on the syndicate details page.
+    setTotalAvailableDistributions(tokenDistributions);
+    setCurrentDistributionTokenSymbol(tokenSymbol);
+    setCurrentDistributionTokenAddress(tokenAddress);
 
-        setTotalAvailableDistributions(totalDistributionsAvailable);
-      });
+    // set token decimals
+    if (tokenAddress) {
+      const distributionTokenDetails = new ERC20TokenDetails(tokenAddress);
+      const distributionTokenDecimals = await distributionTokenDetails.getTokenDecimals();
+      setCurrentDistributionTokenDecimals(distributionTokenDecimals);
     }
-  }, [syndicate, account, syndicateContractInstance, currentERC20Contract]);
+  };
 
   useEffect(() => {
     /**
@@ -732,7 +726,9 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
   // whether this is a withdrawal or a deposit.
   const totalDistributionsText = `${floatedNumberWithCommas(
     totalAvailableDistributions
-  )} ${currentERC20} ($${floatedNumberWithCommas(
+  )} ${
+    currentDistributionTokenSymbol ? currentDistributionTokenSymbol : ""
+  } ($${floatedNumberWithCommas(
     totalAvailableDistributions
   )}) distributions available.`;
 
@@ -955,18 +951,6 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
     sections = WithdrawalSections;
   }
 
-  // show error message depending on what triggered it on the deposit page
-  let errorMessageText = amountError;
-  if (allowanceApprovalError && amountError) {
-    errorMessageText = amountError;
-  } else if (allowanceApprovalError && !amountError) {
-    errorMessageText = allowanceApprovalError;
-  } else if (amountGreaterThanMemberDistributions) {
-    errorMessageText = amountGreaterThanMemberDistributionsText;
-  } else if (conversionError) {
-    errorMessageText = conversionError;
-  }
-
   // check if minDeposit, maxDeposit, or maxTotalDeposits has been violated
   // show an error message and disable deposit and approval buttons if this is the case
   if (syndicate) {
@@ -982,14 +966,32 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
     amountExceededText,
   } = constants;
 
-  if (amountLessThanMinDeposit) {
-    errorMessageText = `${amountLessThanMinDepositErrorMessage} ${minDeposit} ${currentERC20}`;
-  } else if (amountMoreThanMaxDeposit) {
-    errorMessageText = `${amountMoreThanMaxDepositErrorMessage} ${maxDeposit} ${currentERC20}`;
-  } else if (maxTotalDepositsExceeded) {
-    errorMessageText = `${maxTotalDepositsExceededErrorMessage} ${maxTotalDeposits} ${currentERC20} ${amountExceededText}`;
-  } else if (maxTotalLPDepositsExceeded) {
-    errorMessageText = `${maxTotalLPDepositsExceededErrorMessage} ${maxDeposit} ${currentERC20} ${amountExceededText}`;
+  // show error message depending on what triggered it on the deposit/withdrawal page
+  let errorMessageText = amountError;
+  if (depositModes) {
+    if (allowanceApprovalError && amountError) {
+      errorMessageText = amountError;
+    } else if (allowanceApprovalError && !amountError) {
+      errorMessageText = allowanceApprovalError;
+    } else if (conversionError) {
+      errorMessageText = conversionError;
+    } else if (amountLessThanMinDeposit) {
+      errorMessageText = `${amountLessThanMinDepositErrorMessage} ${minDeposit} ${currentERC20}`;
+    } else if (amountMoreThanMaxDeposit) {
+      errorMessageText = `${amountMoreThanMaxDepositErrorMessage} ${maxDeposit} ${currentERC20}`;
+    } else if (maxTotalDepositsExceeded) {
+      errorMessageText = `${maxTotalDepositsExceededErrorMessage} ${maxTotalDeposits} ${currentERC20} ${amountExceededText}`;
+    } else if (maxTotalLPDepositsExceeded) {
+      errorMessageText = `${maxTotalLPDepositsExceededErrorMessage} ${maxDeposit} ${currentERC20} ${amountExceededText}`;
+    } else {
+      errorMessageText = amountError;
+    }
+  } else if (withdraw) {
+    if (amountGreaterThanMemberDistributions) {
+      errorMessageText = amountGreaterThanMemberDistributionsText;
+    } else {
+      errorMessageText = amountError;
+    }
   }
 
   // set correct text to show when the wallet account is not connected
@@ -1211,7 +1213,11 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
                             className={`rounded-md bg-gray-9 border border-gray-24 text-white font-whyte focus:outline-none focus:ring-gray-24 focus:border-gray-24 w-7/12 mr-2 `}
                           />
                           {withdraw ? (
-                            <TokenSelect />
+                            <TokenSelect
+                              setTotalTokenDistributions={
+                                setTotalTokenDistributions
+                              }
+                            />
                           ) : (
                             <p className="pt-2 w-4/12">{currentERC20}</p>
                           )}

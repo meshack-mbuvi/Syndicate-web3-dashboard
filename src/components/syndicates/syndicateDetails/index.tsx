@@ -210,7 +210,7 @@ const SyndicateDetails = (props: {
       "setterDistribution",
       { syndicateAddress: addressOfSyndicate }
     );
-    
+
     if (distributionEvents.length > 0) {
       // get all distributionERC20 tokens
       let distributionERC20s = [];
