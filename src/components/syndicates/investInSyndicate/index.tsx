@@ -69,7 +69,7 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
     setTotalAvailableDistributions,
   ] = useState<string>("0.00");
 
-  const [depositAmount, setDepositAmount] = useState<number>(0);
+  const [amount, setAmount] = useState<number>(0);
   const [amountError, setAmountError] = useState<string>("");
 
   const [currentDistributionTokenDecimals] = useState<number>(18);
@@ -107,7 +107,7 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
   const [maxLPsZero, setMaxLPsZero] = useState<boolean>(false);
 
   // convert deposit and allowance values to floats for more accurate calculations.
-  const amountToDeposit = parseFloat(depositAmount.toString());
+  const amountToDeposit = parseFloat(amount.toString());
   const allowanceAmountApproved = parseFloat(approvedAllowanceAmount);
 
   // check maximum and minimum deposits to disallow deposits
@@ -143,6 +143,12 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
   const [metamaskConfirmPending, setMetamaskConfirmPending] = useState<boolean>(
     false
   );
+
+  // withdrawal page errors
+  const [
+    amountGreaterThanMemberDistributions,
+    setAmountGreaterThanMemberDistributions,
+  ] = useState<boolean>(false);
 
   const {
     myDeposits,
@@ -184,6 +190,7 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
     maxMemberDepositsText,
     nonMemberWithdrawalTitleText,
     nonMemberWithdrawalText,
+    amountGreaterThanMemberDistributionsText,
   } = constants;
 
   // get the state of the current syndicate action
@@ -293,7 +300,7 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
         totalDeposits,
         maxTotalDeposits,
       } = syndicate;
-      const amountToDeposit = parseFloat(depositAmount.toString());
+      const amountToDeposit = parseFloat(amount.toString());
       const minimumDeposit = parseFloat(minDeposit);
       const maximumDeposit = parseFloat(maxDeposit);
       const totalSyndicateDeposits = parseFloat(totalDeposits);
@@ -330,7 +337,21 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
         setMaxTotalLPDepositsExceeded(false);
       }
     }
-  }, [depositAmount, syndicate]);
+  }, [amount, syndicate]);
+
+  // check for errors on the member withdrawal page.
+  useEffect(() => {
+    if (withdraw && syndicateLPDetails) {
+      // show error when amount is greater than member's available distributions.
+      const amountGreaterThanMemberDistributions =
+        +amount > +myDistributionsToDate;
+      if (amountGreaterThanMemberDistributions) {
+        setAmountGreaterThanMemberDistributions(true);
+      } else {
+        setAmountGreaterThanMemberDistributions(false);
+      }
+    }
+  }, [amount, syndicateLPDetails]);
   // check whether the current syndicate is accepting deposits
   // or withdrawals
   useEffect(() => {
@@ -453,7 +474,7 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
     event.preventDefault();
     const { value } = event.target;
 
-    setDepositAmount(value);
+    setAmount(value);
 
     const message = Validate(value);
     if (message) {
@@ -470,9 +491,9 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
    * The account that is investing is obtained from the connected wallet from
    * which funds will be transferred.
    * The syndicate address is obtained from the page params
-   * @param {object} data contains depositAmount, and accredited
+   * @param {object} data contains amount, and accredited
    */
-  const investInSyndicate = async (depositAmount: number) => {
+  const investInSyndicate = async (amount: number) => {
     /**
      * All addresses are allowed, and investments can be rejected after the
      * fact. This is useful if you want to allow anyone to invest in a syndicate
@@ -486,7 +507,7 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
     /**
      * If deposit amount exceeds the allowed investment deposit, this will fail.
      */
-    const amountToInvest = toEther(depositAmount);
+    const amountToInvest = toEther(amount);
     setMetamaskConfirmPending(true);
     try {
       await syndicateContractInstance.methods
@@ -623,7 +644,7 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
 
     // set correct wei amount to approve
     const amountToApprove = getWeiAmount(
-      depositAmount.toString(),
+      amount.toString(),
       currentERC20Decimals,
       true
     );
@@ -692,11 +713,11 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
       // these values are fetched from the redux store.
       try {
         if (depositModes) {
-          await investInSyndicate(depositAmount);
+          await investInSyndicate(amount);
         }
 
         if (withdraw) {
-          await withdrawFromSyndicate(depositAmount);
+          await withdrawFromSyndicate(amount);
         }
       } catch (error) {
         // show error message for failed investment
@@ -715,7 +736,7 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
     totalAvailableDistributions
   )}) distributions available.`;
 
-  // if the depositAmount changes, new allowance has to be set
+  // if the amount changes, new allowance has to be set
   useEffect(() => {
     const depositAmountGreater = amountToDeposit > allowanceAmountApproved;
     const depositAmountLess = amountToDeposit <= allowanceAmountApproved;
@@ -732,7 +753,7 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
       setLPCanDeposit(true);
       setDepositAmountChanged(false);
     }
-  }, [depositAmount]);
+  }, [amount]);
 
   // when the connected account is changed, we need to check for new allowances.
   // This check also needs to be done after a deposit has been made
@@ -839,6 +860,13 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
     disableDepositButton = true;
   }
 
+  // disable the withdraw button if
+  // the amount is greater than the member's available distributions
+  let disableWithrawButton = false;
+  if (amountGreaterThanMemberDistributions) {
+    disableWithrawButton = true;
+  }
+
   // amount to show on the deposit button
   const depositAmountGreater =
     amountToDeposit > allowanceAmountApproved && approved;
@@ -903,6 +931,7 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
         <SyndicateActionButton
           amountError={Boolean(amountError)}
           buttonText="Continue"
+          disableWithdrawButton={disableWithrawButton}
         />
       </div>
     );
@@ -926,12 +955,14 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
     sections = WithdrawalSections;
   }
 
-  // show error message depending on what triggered it
+  // show error message depending on what triggered it on the deposit page
   let errorMessageText = amountError;
   if (allowanceApprovalError && amountError) {
     errorMessageText = amountError;
   } else if (allowanceApprovalError && !amountError) {
     errorMessageText = allowanceApprovalError;
+  } else if (amountGreaterThanMemberDistributions) {
+    errorMessageText = amountGreaterThanMemberDistributionsText;
   } else if (conversionError) {
     errorMessageText = conversionError;
   }
@@ -1050,7 +1081,7 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
       showValidationError = false;
     }
   } else if (withdraw) {
-    if (amountError) {
+    if (amountError || amountGreaterThanMemberDistributions) {
       showValidationError = true;
     } else {
       showValidationError = false;
@@ -1171,11 +1202,11 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
                       <form onSubmit={onSubmit}>
                         <div className="flex justify-between my-1">
                           <input
-                            name="depositAmount"
+                            name="amount"
                             type="text"
                             placeholder="400"
                             disabled={depositModes ? !myAddressAllowed : false}
-                            defaultValue={depositAmount}
+                            defaultValue={amount}
                             onChange={handleSetAmount}
                             className={`rounded-md bg-gray-9 border border-gray-24 text-white font-whyte focus:outline-none focus:ring-gray-24 focus:border-gray-24 w-7/12 mr-2 `}
                           />

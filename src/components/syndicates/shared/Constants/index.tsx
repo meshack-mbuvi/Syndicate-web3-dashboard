@@ -57,6 +57,8 @@ const maxMemberDepositsText =
 const nonMemberWithdrawalTitleText = "Not a Member.";
 const nonMemberWithdrawalText =
   "You are not a member of this syndicate since you have not made any deposits yet.";
+const amountGreaterThanMemberDistributionsText =
+  "Withdrawal amount cannot be greater than member distributions to date";
 
 // deposit success texts
 const depositSuccessTitleText = "You just made a deposit.";
@@ -191,6 +193,7 @@ export const constants = {
   maxMemberDepositsText,
   nonMemberWithdrawalTitleText,
   nonMemberWithdrawalText,
+  amountGreaterThanMemberDistributionsText,
 };
 
 // Tooltips

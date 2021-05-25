@@ -8,6 +8,7 @@ interface ButtonProps {
   amountError?: boolean;
   disableApprovalButton?: boolean;
   disableDepositButton?: boolean;
+  disableWithdrawButton?: boolean;
   action?: string;
   approved?: boolean;
   depositAmountChanged?: boolean;
@@ -19,6 +20,7 @@ export const SyndicateActionButton = (props: ButtonProps) => {
     amountError = "",
     disableApprovalButton,
     disableDepositButton,
+    disableWithdrawButton,
     action,
     approved,
     depositAmountChanged,
@@ -28,7 +30,12 @@ export const SyndicateActionButton = (props: ButtonProps) => {
   // in the case of a deposit, the allowance has not been approved yet
   // or generally if the amount entered is invalid
   let disableButton = false;
-  if (amountError || disableApprovalButton || disableDepositButton) {
+  if (
+    amountError ||
+    disableApprovalButton ||
+    disableDepositButton ||
+    disableWithdrawButton
+  ) {
     disableButton = true;
   }
 
@@ -47,7 +54,8 @@ export const SyndicateActionButton = (props: ButtonProps) => {
         disableButton ? "opacity-50 cursor-not-allowed" : ""
       }`}
       type="submit"
-      disabled={disableButton}>
+      disabled={disableButton}
+    >
       {showApprovalCheckmark ? (
         <span>
           <img src="/images/checkmark.svg" className="h-4 mr-2" />
