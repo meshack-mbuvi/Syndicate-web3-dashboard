@@ -58,3 +58,8 @@ export const isZeroAddress = (address: string) => {
   // Checking for address 0x0000000; the default value set by solidity
   return /^0x0+$/.test(address);
 };
+
+export const validateEmail = (email: string) => {
+  const regexp = /^[\w.%+-]+@[\w.-]+\.[\w]{2,6}$/;
+  return regexp.test(email);
+};

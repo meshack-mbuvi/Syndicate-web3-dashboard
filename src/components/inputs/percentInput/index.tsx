@@ -25,17 +25,18 @@ export const PercentInput = (props: {
   }
 
   return (
-    <div className="flex flex-row justify-center">
-      <div className="mr-2 w-1/2 flex justify-end">
+    <div className="flex justify-center">
+      <div className="flex mr-2 w-1/2 justify-end">
         <label
           htmlFor="syndicateAddress"
-          className="block pt-2 text-black text-sm font-medium">
+          className="block pt-2 text-black text-sm font-medium"
+        >
           {label}
         </label>
       </div>
-      <div className="w-3/5 flex flex-col justify-between">
+      <div className="w-full flex-grow flex flex-col justify-between">
         {/* input field */}
-        <div className="flex">
+        <div className="flex justify-start">
           <div className="flex percentage-input rounded-md flex-grow border border-gray-85">
             <input
               type="number"
@@ -50,7 +51,7 @@ export const PercentInput = (props: {
             <span className="flex flex-1 py-2 text-gray-500">%</span>
           </div>
           {/* icon */}
-          <div className="w-6 ml-4 mt-1">
+          <div className="w-auto mt-1 flex">
             <InfoIcon tooltip={tooltip} />
           </div>
         </div>

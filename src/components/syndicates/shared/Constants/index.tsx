@@ -197,6 +197,10 @@ export const constants = {
 };
 
 // Tooltips
+export const fullNameToolTip =
+  "Full name of the manager creating this syndicate";
+export const emailAddressToolTip =
+  "Email address of the manager creating this syndicate";
 export const closeDateToolTip =
   "This is the date on which the syndicate will automatically close.";
 export const syndicateAddressToolTip =
