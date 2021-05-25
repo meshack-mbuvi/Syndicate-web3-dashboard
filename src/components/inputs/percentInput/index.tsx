@@ -25,24 +25,25 @@ export const PercentInput = (props: {
   }
 
   return (
-    <div className="flex justify-center">
-      <div className="flex mr-2 w-1/2 justify-end">
+    <div className="flex flex-row justify-end">
+      <div className="mr-2 w-1/2 flex justify-end">
         <label
-          htmlFor="syndicateAddress"
+          htmlFor={label}
           className="block pt-2 text-black text-sm font-medium"
         >
           {label}
         </label>
       </div>
-      <div className="w-full flex-grow flex flex-col justify-between">
-        {/* input field */}
-        <div className="flex justify-start">
+
+      <div className="w-4/5 flex flex-col">
+        <div className="flex-grow flex flex-row justify-between">
+          {/* input field */}
           <div className="flex percentage-input rounded-md flex-grow border border-gray-85">
             <input
               type="number"
               name={name}
               onChange={onChange}
-              className={`flex px-1 ml-1 py-2 rounded-md focus:outline-none outline-none focus:ring-0 focus:border-none border-0`}
+              className={`flex px-1 ml-1 py-2 rounded-md focus:outline-none outline-none focus:ring-0 focus:border-none border-0 font-whyte`}
               style={{ width: `${variableWidth}ch` }}
               {...rest}
               max="100"

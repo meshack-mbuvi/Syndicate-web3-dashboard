@@ -809,20 +809,19 @@ const CreateSyndicate = (props: any) => {
                     Close Date:
                   </label>
                 </div>
-                <div className="w-full flex-grow flex flex-col justify-between">
+                <div className="w-4/5 flex-grow flex flex-col justify-between">
                   {/* input field */}
                   <div className="flex justify-start">
                     <DatePicker
                       selected={selectedDate}
                       onSelect={handleDateSelect}
-                      className={`flex flex-grow focus:ring-indigo-500 focus:border-indigo-500 rounded-md text-black border-gray-85 w-full`}
+                      className={`flex flex-grow focus:ring-indigo-500 focus:border-indigo-500 rounded-md text-black border-gray-85 w-full font-whyte`}
                       minDate={minimumCloseDate}
                       selectsStart
                       name="closeDate"
                       dropdownMode="select"
                     />
                     {/* icon */}
-
                     <div className="w-auto mt-1 flex">
                       <InfoIcon tooltip={closeDateToolTip} />
                     </div>
@@ -860,17 +859,17 @@ const CreateSyndicate = (props: any) => {
 
               {/* Profit Share to Syndicate Protocol: */}
               <div className="h-10 flex flex-row justify-center">
-                <div className="mr-2 w-1/2 flex justify-end">
+                <div className="mr-2 w-1/2 mt-1 flex justify-end">
                   <label
                     htmlFor="profitShareToSyndProtocol"
-                    className="block pt-2 text-black text-base font-medium"
+                    className="block pt-2 text-black text-sm font-medium"
                   >
                     Profit Share to Syndicate Protocol:
                   </label>
                 </div>
 
                 {/* shows 4 equal grids used to get the input for profit share */}
-                <div className="w-3/5 flex justify-between">
+                <div className="w-4/5 flex justify-between">
                   <div
                     className={`grid grid-cols-4 w-4/5 border h-12 gray-85 flex-grow rounded-md`}
                   >
@@ -917,8 +916,8 @@ const CreateSyndicate = (props: any) => {
                     <div className="flex p-0 percentage-input rounded-br-md rounded-tr-md ">
                       <input
                         type="number"
-                        className={`flex pl-1 pr-1 py-1 ml-1 focus:outline-none outline-none focus:ring-0 focus:border-none border-0`}
-                        placeholder="other"
+                        className={`flex pl-1 pr-1 py-1 ml-1 focus:outline-none outline-none focus:ring-0 focus:border-none border-0 font-whyte`}
+                        placeholder="Other"
                         name="profitShareToSyndProtocol"
                         onChange={profitShareToSyndicateOnchangeHandler}
                         value={otherProfitShareToSyndicateProtocol}

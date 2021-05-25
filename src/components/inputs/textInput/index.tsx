@@ -41,19 +41,22 @@ export const TextInput = (props: {
     <div
       className={`flex ${
         column ? `flex-col mr-2 sm:mr-4` : `flex-row`
-      } justify-center`}>
+      } justify-center`}
+    >
       <div
         className={`flex mr-2 ${
           column ? `w-full justify-start mb-2` : `w-1/2 justify-end`
-        }`}>
+        }`}
+      >
         <label
-          htmlFor="syndicateAddress"
-          className="block pt-2 text-black text-sm font-medium">
+          htmlFor={label}
+          className="block pt-2 text-black text-sm font-medium"
+        >
           {label}
         </label>
       </div>
 
-      <div className="w-full flex-grow flex flex-col justify-between">
+      <div className="w-4/5 flex-grow flex flex-col justify-between">
         {/* input field */}
         <div className="flex justify-start">
           <input
