@@ -11,6 +11,7 @@ export interface ifRows {
     maxTotalDeposits: string;
     openToDeposits: boolean;
     totalDeposits: string;
+    distributionsEnabled: boolean;
   };
 }
 
