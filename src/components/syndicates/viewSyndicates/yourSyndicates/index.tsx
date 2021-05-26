@@ -77,11 +77,6 @@ export const YourSyndicates = (props: { syndicates }) => {
       showSort: true,
     },
     {
-      Header: "Activity",
-      accessor: "activities",
-      showSort: true,
-    },
-    {
       Header: "Distributions",
       accessor: function getDistributions(row) {
         return <GetDistributions row={row} />;
