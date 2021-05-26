@@ -102,6 +102,11 @@ const approvedAddressesLabel = "Approve Address";
 const separateWithCommas = "(separate with commas)";
 const buttonText = "Confirm";
 
+// public-facing social profile
+const socialProfileDescription =
+  "Help others understand this syndicate by requesting a public-facing social profile. We’ll help you create it.";
+const socialProfileButtonText = "Request";
+
 // metamask error texts
 const metamaskRejectByUserMessage = "request was rejected.";
 const metamaskInvalidParamsMessage = "Invalid parameters provided.";
@@ -313,6 +318,12 @@ export const managerApproveAddressesConstants = {
   approvedAddressesLabel,
   separateWithCommas,
   buttonText,
+};
+
+// request social profile texts
+export const requestSocialProfileConstats = {
+  socialProfileDescription,
+  socialProfileButtonText,
 };
 
 // contract transaction state constants

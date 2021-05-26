@@ -22,6 +22,7 @@ import ModifyMemberDistributions from "./modifyMemberDistributions";
 import ModifySyndicateCapTable from "./modifySyndicateCapTable";
 import MoreManagerActions from "./MoreManagerActions";
 import PreApproveDepositor from "./preApproveDepositor";
+import RequestSocialProfile from "./requestSocialProfile";
 
 const ManagerActions = () => {
   const {
@@ -52,6 +53,9 @@ const ManagerActions = () => {
 
   const [showDistributeToken, setShowDistributeToken] = useState(false);
   const [showPreApproveDepositor, setShowPreApproveDepositor] = useState(false);
+  const [showRequestSocialProfile, setShowRequestSocialProfile] = useState(
+    false
+  );
   const [showModifyCapTable, setShowModifyCapTable] = useState(false);
   const [showSyndicateNotModifiable, setShowSyndicateNotModifiable] = useState(
     false
@@ -72,7 +76,7 @@ const ManagerActions = () => {
     {
       icon: <img src="/images/socialProfile.svg" />,
       title: "Create a public-facing social profile",
-      onClickHandler: () => console.log("move to create social profile"),
+      onClickHandler: () => setShowRequestSocialProfile(true),
       description:
         "Help others understand this syndicate by requesting a social profile. We’ll help you create it.",
     },
@@ -266,6 +270,10 @@ const ManagerActions = () => {
           <PreApproveDepositor
             {...{ showPreApproveDepositor, setShowPreApproveDepositor }}
           />
+        ) : showRequestSocialProfile ? (
+          <RequestSocialProfile
+            {...{ showRequestSocialProfile, setShowRequestSocialProfile }}
+          />
         ) : showModifyCapTable ? (
           <ModifySyndicateCapTable
             {...{ showModifyCapTable, setShowModifyCapTable }}
@@ -307,7 +315,8 @@ const ManagerActions = () => {
       <PendingStateModal
         {...{
           show: submitting,
-        }}>
+        }}
+      >
         <div className="modal-header mb-4 font-medium text-center leading-8 text-2xl">
           {confirmingTransaction}
         </div>

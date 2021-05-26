@@ -10,6 +10,7 @@ import { InfoIcon } from "src/components/iconWrappers";
 export const TextInput = (props: {
   label: string;
   name?: string;
+  id?: string;
   onChange?;
   disabled?: boolean;
   placeholder?: string;
@@ -19,10 +20,12 @@ export const TextInput = (props: {
   type?: string;
   tooltip?: string;
   column?: boolean;
+  full?: boolean;
 }) => {
   const {
     label,
     name,
+    id,
     onChange,
     error,
     value,
@@ -30,6 +33,7 @@ export const TextInput = (props: {
     disabled = false,
     type = "text",
     column = false,
+    full,
     ...rest
   } = props;
 
@@ -41,7 +45,7 @@ export const TextInput = (props: {
     <div
       className={`flex ${
         column ? `flex-col mr-2 sm:mr-4` : `flex-row`
-      } justify-center`}
+      } justify-center ${full ? `w-full` : ``}`}
     >
       <div
         className={`flex mr-2 ${
@@ -62,6 +66,7 @@ export const TextInput = (props: {
           <input
             type={type}
             name={name}
+            id={id}
             onChange={onChange}
             className={`flex flex-grow text-sm font-whyte focus:ring-indigo-500 focus:border-indigo-500 rounded-md ${disabledClasses} ${
               column ? `w-auto sm:w-56` : ``
