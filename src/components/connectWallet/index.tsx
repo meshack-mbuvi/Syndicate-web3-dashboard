@@ -194,7 +194,6 @@ export const ConnectWallet = (props: { web3; showWalletModal }) => {
 
       // provider is connected, this stops the loader modal
       dispatch(setConnected());
-      setWalletConnecting(false);
 
       // show success modal
       setShowSuccessModal(true);
@@ -217,6 +216,8 @@ export const ConnectWallet = (props: { web3; showWalletModal }) => {
       const customError = getErrorMessage(error);
       dispatch(showErrorModal(customError));
     }
+    // set loader to false after process is complete
+    setWalletConnecting(false);
 
     // close wallet connection modal
     closeWalletModal();
