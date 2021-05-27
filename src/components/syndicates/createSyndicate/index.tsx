@@ -3,6 +3,7 @@ import { PendingStateModal } from "@/components/shared/transactionStates";
 import ConfirmStateModal from "@/components/shared/transactionStates/confirm";
 import { getMetamaskError } from "@/helpers";
 import { addSyndicates } from "@/redux/actions/syndicates";
+import { RootState } from "@/redux/store";
 import {
   isWholeNumber,
   Validate,
@@ -13,7 +14,7 @@ import Link from "next/link";
 import React, { useState } from "react";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import DatePicker from "react-datepicker";
-import { RootStateOrAny, useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 // Other useful components
 import Button from "src/components/buttons";
 import { InfoIcon } from "src/components/iconWrappers";
@@ -64,13 +65,13 @@ const CreateSyndicate = (props: any) => {
 
   const {
     web3: { account, web3 },
-  } = useSelector((state: RootStateOrAny) => state.web3Reducer);
+  } = useSelector((state: RootState) => state.web3Reducer);
 
   const { syndicateContractInstance } = useSelector(
-    (state: RootStateOrAny) => state.syndicateInstanceReducer
+    (state: RootState) => state.syndicateInstanceReducer
   );
   const { submitting } = useSelector(
-    (state: RootStateOrAny) => state.loadingReducer
+    (state: RootState) => state.loadingReducer
   );
 
   const dispatch = useDispatch();

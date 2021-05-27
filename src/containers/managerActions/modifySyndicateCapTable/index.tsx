@@ -14,12 +14,13 @@ import {
 import { getMetamaskError } from "@/helpers";
 import { showWalletModal } from "@/redux/actions";
 import { getSyndicateByAddress } from "@/redux/actions/syndicates";
+import { RootState } from "@/redux/store";
 import { divideIfNotByZero, getWeiAmount, toEther } from "@/utils/conversions";
 import { TokenMappings } from "@/utils/tokenMappings";
 import { isZeroAddress, Validate } from "@/utils/validators";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
-import { RootStateOrAny, useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import Button from "src/components/buttons";
 
 interface Props {
@@ -42,14 +43,14 @@ const ModifySyndicateCapTable = (props: Props) => {
 
   const {
     web3: { account, web3 },
-  } = useSelector((state: RootStateOrAny) => state.web3Reducer);
+  } = useSelector((state: RootState) => state.web3Reducer);
 
   const { syndicateContractInstance } = useSelector(
-    (state: RootStateOrAny) => state.syndicateInstanceReducer
+    (state: RootState) => state.syndicateInstanceReducer
   );
 
   const { syndicate } = useSelector(
-    (state: RootStateOrAny) => state.syndicatesReducer
+    (state: RootState) => state.syndicatesReducer
   );
 
   const dispatch = useDispatch();

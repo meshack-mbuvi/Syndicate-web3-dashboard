@@ -12,9 +12,10 @@ import {
 } from "@/components/syndicates/shared/Constants";
 import { getMetamaskError } from "@/helpers";
 import { getSyndicateByAddress } from "@/redux/actions/syndicates";
+import { RootState } from "@/redux/store";
 import { useRouter } from "next/router";
 import React, { useState } from "react";
-import { RootStateOrAny, useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import ErrorBoundary from "../../components/errorBoundary";
 import DistributeToken from "./distributeToken";
 import ManagerAction from "./ManagerAction";
@@ -27,14 +28,14 @@ import RequestSocialProfile from "./requestSocialProfile";
 const ManagerActions = () => {
   const {
     web3: { account },
-  } = useSelector((state: RootStateOrAny) => state.web3Reducer);
+  } = useSelector((state: RootState) => state.web3Reducer);
 
   const { syndicateContractInstance } = useSelector(
-    (state: RootStateOrAny) => state.syndicateInstanceReducer
+    (state: RootState) => state.syndicateInstanceReducer
   );
 
   const { syndicate } = useSelector(
-    (state: RootStateOrAny) => state.syndicatesReducer
+    (state: RootState) => state.syndicatesReducer
   );
 
   const dispatch = useDispatch();

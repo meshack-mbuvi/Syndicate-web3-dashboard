@@ -1,12 +1,13 @@
 // manager components
 import ManagerActions from "@/containers/managerActions";
 import { getSyndicateByAddress } from "@/redux/actions/syndicates";
+import { RootState } from "@/redux/store";
 import { faExclamationTriangle } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
-import { RootStateOrAny, useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import ErrorBoundary from "src/components/errorBoundary";
 import Layout from "src/components/layout";
 import InvestInSyndicate from "src/components/syndicates/investInSyndicate";
@@ -24,14 +25,14 @@ const SyndicateInvestment = () => {
   // retrieve state
   const {
     web3: { account },
-  } = useSelector((state: RootStateOrAny) => state.web3Reducer);
+  } = useSelector((state: RootState) => state.web3Reducer);
 
   const { syndicateContractInstance } = useSelector(
-    (state: RootStateOrAny) => state.syndicateInstanceReducer
+    (state: RootState) => state.syndicateInstanceReducer
   );
 
   const { syndicate, syndicateFound, syndicateAddressIsValid } = useSelector(
-    (state: RootStateOrAny) => state.syndicatesReducer
+    (state: RootState) => state.syndicatesReducer
   );
 
   const router = useRouter();

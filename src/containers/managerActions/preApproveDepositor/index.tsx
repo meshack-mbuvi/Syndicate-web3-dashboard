@@ -6,10 +6,11 @@ import FinalStateModal from "@/components/shared/transactionStates/final";
 import { getMetamaskError } from "@/helpers";
 import { showWalletModal } from "@/redux/actions";
 import { getSyndicateByAddress } from "@/redux/actions/syndicates";
+import { RootState } from "@/redux/store";
 import { isZeroAddress } from "@/utils/validators";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
-import { RootStateOrAny, useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   confirmingTransaction,
   confirmPreApproveAddressesText,
@@ -35,14 +36,14 @@ const PreApproveDepositor = (props: Props) => {
 
   const {
     web3: { account, web3 },
-  } = useSelector((state: RootStateOrAny) => state.web3Reducer);
+  } = useSelector((state: RootState) => state.web3Reducer);
 
   const { syndicateContractInstance } = useSelector(
-    (state: RootStateOrAny) => state.syndicateInstanceReducer
+    (state: RootState) => state.syndicateInstanceReducer
   );
 
   const { syndicate } = useSelector(
-    (state: RootStateOrAny) => state.syndicatesReducer
+    (state: RootState) => state.syndicatesReducer
   );
 
   const [

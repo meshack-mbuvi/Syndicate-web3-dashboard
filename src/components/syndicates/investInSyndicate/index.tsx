@@ -5,7 +5,7 @@ import { Validate } from "@/utils/validators";
 import { useRouter } from "next/router";
 import PropTypes from "prop-types";
 import React, { useEffect, useState } from "react";
-import { connect, RootStateOrAny, useDispatch, useSelector } from "react-redux";
+import { connect, useDispatch, useSelector } from "react-redux";
 import { ErrorModal } from "src/components/shared/ErrorModal";
 import { SkeletonLoader } from "src/components/skeletonLoader";
 import { getMetamaskError } from "src/helpers/metamaskError";
@@ -33,6 +33,7 @@ import { SyndicateActionButton } from "../shared/syndicateActionButton";
 import { SyndicateActionLoader } from "../shared/syndicateActionLoader";
 import { TokenSelect } from "../shared/tokenSelect";
 import ERC20ABI from "src/utils/abi/erc20";
+import { RootState } from "@/redux/store";
 
 const Web3 = require("web3");
 
@@ -53,7 +54,7 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
   } = props;
   const router = useRouter();
   const { syndicateContractInstance } = useSelector(
-    (state: RootStateOrAny) => state.syndicateInstanceReducer
+    (state: RootState) => state.syndicateInstanceReducer
   );
 
   const dispatch = useDispatch();

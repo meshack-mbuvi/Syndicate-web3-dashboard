@@ -1,8 +1,9 @@
 import { Fragment, useEffect, useState } from "react";
 import { Listbox, Transition } from "@headlessui/react";
 import { CheckIcon, SelectorIcon } from "@heroicons/react/solid";
-import { useSelector, RootStateOrAny } from "react-redux";
+import { useSelector } from "react-redux";
 import { SkeletonLoader } from "@/components/skeletonLoader";
+import { RootState } from "@/redux/store";
 
 const classNames = (...classes) => {
   return classes.filter(Boolean).join(" ");
@@ -14,7 +15,7 @@ interface SelectProps {
 
 export const TokenSelect = (props: SelectProps) => {
   const { distributionTokensAllowanceDetails } = useSelector(
-    (state: RootStateOrAny) => state.tokenDetailsReducer
+    (state: RootState) => state.tokenDetailsReducer
   );
 
   const [selected, setSelected] = useState<any>({});

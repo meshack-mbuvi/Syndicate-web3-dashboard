@@ -1,16 +1,17 @@
 import { getTotalDistributions } from "@/helpers";
+import { RootState } from "@/redux/store";
 import React, { useEffect, useState } from "react";
-import { RootStateOrAny, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { ifRows } from "./interfaces";
 
 const GetDistributions = ({
   row: { syndicateAddress, depositERC20ContractAddress },
 }: ifRows) => {
   const { web3: web3Wrapper } = useSelector(
-    (state: RootStateOrAny) => state.web3Reducer
+    (state: RootState) => state.web3Reducer
   );
   const { syndicateContractInstance } = useSelector(
-    (state: RootStateOrAny) => state.syndicateInstanceReducer
+    (state: RootState) => state.syndicateInstanceReducer
   );
 
   const { account, web3 } = web3Wrapper;

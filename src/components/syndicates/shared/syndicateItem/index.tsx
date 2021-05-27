@@ -1,7 +1,8 @@
 import { getTotalDistributions } from "@/helpers";
+import { RootState } from "@/redux/store";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
-import { connect, RootStateOrAny, useSelector } from "react-redux";
+import { connect, useSelector } from "react-redux";
 
 interface SyndicateItemProps {
   syndicateAddress: string;
@@ -37,7 +38,7 @@ const SyndicateItem = (props: SyndicateItemProps) => {
     web3: { account, web3 },
   } = props;
 
-  const { syndicateContractInstance } = useSelector((state: RootStateOrAny) => {
+  const { syndicateContractInstance } = useSelector((state: RootState) => {
     return state.syndicateInstanceReducer;
   });
 

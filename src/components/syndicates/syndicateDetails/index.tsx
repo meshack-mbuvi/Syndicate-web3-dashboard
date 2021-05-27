@@ -2,11 +2,10 @@ import { floatedNumberWithCommas } from "@/utils/numberWithCommas";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { CopyToClipboard } from "react-copy-to-clipboard";
-import { connect, RootStateOrAny, useDispatch, useSelector } from "react-redux";
+import { connect, useDispatch, useSelector } from "react-redux";
 import { EtherscanLink } from "src/components/syndicates/shared/EtherscanLink";
 import { setSyndicateDetails } from "src/redux/actions/syndicateDetails";
-import { storeDistributionTokensDetails } from "src/redux/actions/tokenAllowances";
-import { storeDepositTokenAllowance } from "src/redux/actions/tokenAllowances";
+import { storeDistributionTokensDetails, storeDepositTokenAllowance } from "src/redux/actions/tokenAllowances";
 // utils
 import { formatAddress } from "src/utils/formatAddress";
 import { TokenMappings } from "src/utils/tokenMappings";
@@ -26,6 +25,7 @@ import { getWeiAmount, onlyUnique } from "@/utils/conversions";
 import { ERC20TokenDetails } from "@/utils/ERC20Methods";
 import ManagerSetAllowance from "@/containers/managerActions/setAllowances";
 import { getPastEvents } from "@/helpers/retrieveEvents";
+import { RootState } from "@/redux/store";
 
 const SyndicateDetails = (props: {
   syndicateDetails: any;
@@ -45,7 +45,7 @@ const SyndicateDetails = (props: {
     distributionTokensAllowanceDetails,
   } = props;
   const { syndicateContractInstance } = useSelector(
-    (state: RootStateOrAny) => state.syndicateInstanceReducer
+    (state: RootState) => state.syndicateInstanceReducer
   );
 
   const dispatch = useDispatch();
