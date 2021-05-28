@@ -34,6 +34,7 @@ import { SyndicateActionLoader } from "../shared/syndicateActionLoader";
 import { TokenSelect } from "../shared/tokenSelect";
 import ERC20ABI from "src/utils/abi/erc20";
 import { RootState } from "@/redux/store";
+import { checkAccountAllowance } from "src/helpers/approveAllowance";
 
 const Web3 = require("web3");
 
@@ -56,6 +57,9 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
   const { syndicateContractInstance } = useSelector(
     (state: RootState) => state.syndicateInstanceReducer
   );
+  const { distributionTokensAllowanceDetails } = useSelector(
+    (state: RootState) => state.tokenDetailsReducer
+  );
 
   const dispatch = useDispatch();
 
@@ -63,7 +67,7 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
   const [
     totalAvailableDistributions,
     setTotalAvailableDistributions,
-  ] = useState<string>("0.00");
+  ] = useState<string>("0");
 
   const [amount, setAmount] = useState<number>(0);
   const [amountError, setAmountError] = useState<string>("");
@@ -131,8 +135,11 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
   );
   const [metamaskDepositError, setMetamaskDepositError] = useState<string>("");
 
-  // deposit success state
+  // deposit/withdrawal success state
   const [successfulDeposit, setSuccessfulDeposit] = useState<boolean>(false);
+  const [successfulWithdrawal, setSuccessfulWithdrawal] = useState<boolean>(
+    false
+  );
 
   // set metamask loading state
   const [metamaskConfirmPending, setMetamaskConfirmPending] = useState<boolean>(
@@ -201,6 +208,9 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
     nonMemberWithdrawalTitleText,
     nonMemberWithdrawalText,
     amountGreaterThanMemberDistributionsText,
+    withdrawalSuccessTitleText,
+    withdrawalSuccessSubtext,
+    withdrawalSuccessButtonText,
   } = constants;
 
   // get the state of the current syndicate action
@@ -293,6 +303,7 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
         web3,
         totalAvailableDistributions,
         currentERC20Decimals,
+        currentDistributionTokenDecimals,
       })
     );
   };
@@ -373,6 +384,8 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
 
       if (closedToDepositsWithNoDistribution) {
         setDepositsAndWithdrawalsAvailable(false);
+      } else {
+        setDepositsAndWithdrawalsAvailable(true);
       }
 
       // if the syndicate is closed, deposits are not available.
@@ -582,48 +595,97 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
    * If withdrawal amount exceeds the amount of unclaimed distribution, this would fail.
    */
   const withdrawFromSyndicate = async (withdrawAmount: number) => {
-    const amountToWithdraw = toEther(withdrawAmount);
+    const amountToWithdraw = getWeiAmount(
+      withdrawAmount.toString(),
+      currentDistributionTokenDecimals,
+      true
+    );
+
     try {
+      const { totalDeposits } = syndicate;
+
+      // get member details
+      const syndicateLPInfo = await syndicateContractInstance.methods
+        .getSyndicateLPInfo(syndicateAddress, account)
+        .call();
+
+      // get total distributions
+      const totalSyndicateDistributions = await syndicateContractInstance.methods
+        .getTotalDistributions(
+          syndicateAddress,
+          web3.utils.toChecksumAddress(currentDistributionTokenAddress)
+        )
+        .call();
+
+      // get eligible withdrawal amount
+      const eligibleWithdrawal = await syndicateContractInstance.methods
+        .calculateEligibleWithdrawal(
+          syndicateLPInfo[0],
+          totalDeposits,
+          syndicateLPInfo[1],
+          totalSyndicateDistributions
+        )
+        .call();
+
+      // check if manager has set an allowance
+      const managerDepositTokenAllowance = await checkAccountAllowance(
+        currentDistributionTokenAddress,
+        syndicateAddress,
+        syndicateContractInstance._address
+      );
+
+      // check if the syndicate has distributions set
+      const { distributionsEnabled } = syndicate;
+
+      setMetamaskConfirmPending(true);
       /** This method is used by an LP to withdraw a deposit or distribution from a Syndicate
        * @param syndicateAddress The Syndicate that an LP wants to withdraw from
-       * @param erc20ContractAddress The ERC 20 address to be transferred from the
-       * manager to the LP.
-       * @param amount The amount to withdraw
+       * @param currentDistributionTokenAddress The ERC 20 address to be transferred from the
+       * manager to the member.
+       * @param amountToWithdraw The amount to withdraw
        */
-
-      await syndicateContractInstance.methods.lpWithdrawFromSyndicate(
-        syndicateAddress,
-        syndicate.depositERC20ContractAddress,
-        amountToWithdraw,
-        { from: account, gasLimit: 800000 }
-      );
-
-      // update redux store with new syndicate details
-      // dispatch action to get details about the syndicate
-      // These values will be used to update syndicate details
-      // under the graph section on the UI.
-      const {
-        depositERC20ContractAddress,
-        profitShareToSyndicateLead,
-        profitShareToSyndicateProtocol,
-      } = syndicate;
-
-      dispatch(
-        setSyndicateDetails(
-          syndicateContractInstance,
-          depositERC20ContractAddress,
-          profitShareToSyndicateLead,
-          profitShareToSyndicateProtocol,
-          syndicate,
-          syndicateAddress
+      await syndicateContractInstance.methods
+        .lpWithdrawFromSyndicate(
+          syndicateAddress,
+          currentDistributionTokenAddress,
+          amountToWithdraw
         )
-      );
+        .send({ from: account, gasLimit: 800000 })
+        .on("transactionHash", () => {
+          // user has confirmed the transaction so we should start loader state.
+          // show loading modal
+          setMetamaskConfirmPending(false);
+          setSubmittingWithdrawal(true);
+        })
+        .on("receipt", () => {
+          // transaction was succesful
+          // get syndicate updated values
+          dispatch(
+            getSyndicateByAddress(syndicateAddress, syndicateContractInstance)
+          );
 
-      // TODO: Add success message on the UI.
+          //store updated member details
+          storeMemberDetails();
+
+          setSubmittingWithdrawal(false);
+          setSuccessfulWithdrawal(true);
+        })
+        .on("error", (error) => {
+          const { code } = error;
+          handleWithdrawalError(code);
+        });
     } catch (error) {
-      console.log({ error });
-      // TODO: Add error message on the UI.
+      const { code } = error;
+      handleWithdrawalError(code);
     }
+  };
+
+  // update states when error is encountered during withdrawals
+  const handleWithdrawalError = (code: number) => {
+    const errorMessage = getMetamaskError(code, "Withdrawal");
+    setMetamaskDepositError(errorMessage);
+    setSubmittingWithdrawal(false);
+    setSuccessfulWithdrawal(false);
   };
 
   // consolidate all deposit modes
@@ -701,7 +763,6 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
       // set LP allowance first before making a deposit.
       handleAllowanceApproval(event);
     } else {
-      setSubmittingWithdrawal(true);
       // Call invest or withdrawal functions based on current state.
       // deposit - page is in deposit mode
       // withdraw - page is in withdraw mode
@@ -1048,6 +1109,7 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
     setMetamaskDepositError("");
     setSubmitting(false);
     setSuccessfulDeposit(false);
+    setSuccessfulWithdrawal(false);
     setMetamaskConfirmPending(false);
   };
 
@@ -1091,6 +1153,12 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
     }
   }
 
+  // conditions under which the skeleton loader should be rendered
+  const showSkeletonLoader =
+    !syndicate ||
+    loadingLPDetails ||
+    (withdraw && !distributionTokensAllowanceDetails.length);
+
   return (
     <ErrorBoundary>
       <div className="w-full md:w-1/2 mt-4 sm:mt-0">
@@ -1112,7 +1180,9 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
             />
           ) : depositsAndWithdrawalsAvailable ? (
             <>
-              {submittingAllowanceApproval || submitting ? (
+              {submittingAllowanceApproval ||
+              submitting ||
+              submittingWithdrawal ? (
                 <SyndicateActionLoader
                   contractAddress={
                     submittingAllowanceApproval
@@ -1141,7 +1211,7 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
                   subText={walletPendingConfirmPendingMessage}
                   pending={true}
                 />
-              ) : successfulDeposit ? (
+              ) : successfulDeposit && depositModes ? (
                 <SyndicateActionLoader
                   contractAddress={syndicateAddress}
                   headerText={depositSuccessTitleText}
@@ -1151,14 +1221,24 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
                   buttonText={depositSuccessButtonText}
                   closeLoader={closeSyndicateActionLoader}
                 />
-              ) : maxDepositReached && maxDepositReached ? (
+              ) : successfulWithdrawal && withdraw ? (
+                <SyndicateActionLoader
+                  contractAddress={syndicateAddress}
+                  headerText={withdrawalSuccessTitleText}
+                  subText={withdrawalSuccessSubtext}
+                  showRetryButton={true}
+                  success={true}
+                  buttonText={withdrawalSuccessButtonText}
+                  closeLoader={closeSyndicateActionLoader}
+                />
+              ) : maxDepositReached && depositModes && !showSkeletonLoader ? (
                 <SyndicateActionLoader
                   headerText={maxMemberDepositsTitleText}
                   subText={maxMemberDepositsText}
                   error={true}
                   showRetryButton={false}
                 />
-              ) : withdraw && +myDeposits === 0 ? (
+              ) : withdraw && +myDeposits === 0 && !showSkeletonLoader ? (
                 <SyndicateActionLoader
                   headerText={nonMemberWithdrawalTitleText}
                   subText={nonMemberWithdrawalText}
@@ -1167,9 +1247,13 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
                 />
               ) : (
                 <>
-                  {!syndicate || loadingLPDetails ? (
+                  {showSkeletonLoader ? (
                     <div className="flex justify-between my-1 px-2">
-                      <SkeletonLoader width="full" height="5" />
+                      <SkeletonLoader
+                        width="full"
+                        height="8"
+                        borderRadius="rounded-md"
+                      />
                     </div>
                   ) : (
                     <p className="font-semibold text-xl p-2">
@@ -1183,9 +1267,13 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
 
                   <div className="px-2">
                     {/* show this text if whitelist is enabled for deposits */}
-                    {!syndicate || loadingLPDetails ? (
+                    {showSkeletonLoader ? (
                       <div className="flex justify-between my-1">
-                        <SkeletonLoader width="full" height="5" />
+                        <SkeletonLoader
+                          width="full"
+                          height="12"
+                          borderRadius="rounded-md"
+                        />
                       </div>
                     ) : (
                       <p className="py-4 pt-2 text-green-screamin font-ibm">
@@ -1197,9 +1285,13 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
                       </p>
                     )}
 
-                    {!syndicate || loadingLPDetails ? (
+                    {showSkeletonLoader ? (
                       <div className="flex justify-between my-1">
-                        <SkeletonLoader width="full" height="10" />
+                        <SkeletonLoader
+                          width="full"
+                          height="14"
+                          borderRadius="rounded-md"
+                        />
                       </div>
                     ) : (
                       <form onSubmit={onSubmit}>
@@ -1223,20 +1315,16 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
                             <p className="pt-2 w-4/12">{currentERC20}</p>
                           )}
                         </div>
-
                         <p className="mr-2 w-full text-red-500 text-xs mt-2 mb-4">
                           {showValidationError ? errorMessageText : null}
                         </p>
-
                         {/* checkbox for user to confirm they are accredited investor if this is a deposit */}
                         {depositModes ? (
                           <p className="text-sm my-5 text-gray-dim">
                             {depositLPAccreditedText}
                           </p>
                         ) : null}
-
                         <div className="mb-2">{actionButton}</div>
-
                         <div className="flex justify-center">
                           <div className="w-2/3 text-sm my-5 text-gray-dim justify-self-center text-center">
                             {depositModes

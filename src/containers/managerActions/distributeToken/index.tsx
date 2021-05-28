@@ -256,10 +256,8 @@ const DistributeToken = (props: Props) => {
     tokenAddress: string,
     tokenDecimals: string
   ) => {
-    //set up token contract and check allowance
-    const tokenContract = new web3.eth.Contract(ERC20ABI, tokenAddress);
     const tokenAllowance = await checkAccountAllowance(
-      tokenContract,
+      tokenAddress,
       account,
       syndicateContractInstance._address
     );

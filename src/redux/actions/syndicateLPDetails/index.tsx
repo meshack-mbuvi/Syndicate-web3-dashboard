@@ -27,6 +27,7 @@ interface SyndicateLPData {
   syndicate: any;
   totalAvailableDistributions: string;
   currentERC20Decimals: number;
+  currentDistributionTokenDecimals?: number;
 }
 
 /** action creator to trigger updates to the redux store whenever
@@ -45,6 +46,7 @@ export const updateSyndicateLPDetails = (data: SyndicateLPData) => async (
     syndicate,
     totalAvailableDistributions,
     currentERC20Decimals,
+    currentDistributionTokenDecimals,
   } = data;
 
   // we cannot query relevant values without the syndicate instance
@@ -58,7 +60,7 @@ export const updateSyndicateLPDetails = (data: SyndicateLPData) => async (
       await syndicateContractInstance.methods
         .getSyndicateLPInfo(syndicateAddress, account)
         .call()
-        .then((result) => {
+        .then(async (result) => {
           // update total LP deposits
           const myDeposits = getWeiAmount(
             result[0],
@@ -98,11 +100,23 @@ export const updateSyndicateLPDetails = (data: SyndicateLPData) => async (
 
           // update LP's total distributions to date
           // totalDistributions * (deposit/totalDeposits)
-          const totalSyndicateDistributions = parseFloat(
-            totalAvailableDistributions
+          // we'll calculate the member's eligible withdrawal value
+          const eligibleWithdrawal = await syndicateContractInstance.methods
+            .calculateEligibleWithdrawal(
+              result[0],
+              totalDeposits,
+              result[1],
+              totalAvailableDistributions
+            )
+            .call()
+            .then((result) => result)
+            .catch(() => "0");
+
+          const myDistributionsToDate = getWeiAmount(
+            eligibleWithdrawal,
+            currentDistributionTokenDecimals,
+            false
           );
-          const myDistributionsToDate =
-            (totalSyndicateDistributions * myPercentageOfThisSyndicate) / 100;
 
           // check whether the member has reached their maximum deposit cap.
           const { maxDeposit } = syndicate;

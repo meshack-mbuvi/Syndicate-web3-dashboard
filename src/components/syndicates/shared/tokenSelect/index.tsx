@@ -2,7 +2,6 @@ import { Fragment, useEffect, useState } from "react";
 import { Listbox, Transition } from "@headlessui/react";
 import { CheckIcon, SelectorIcon } from "@heroicons/react/solid";
 import { useSelector } from "react-redux";
-import { SkeletonLoader } from "@/components/skeletonLoader";
 import { RootState } from "@/redux/store";
 
 const classNames = (...classes) => {
@@ -39,11 +38,6 @@ export const TokenSelect = (props: SelectProps) => {
       setTotalTokenDistributions(tokenSymbol, tokenDistributions, tokenAddress);
     }
   }, [selected]);
-
-  // show skeleton loader as we wait for distribution token details
-  if (distributionTokensAllowanceDetails.length < 1) {
-    return <SkeletonLoader width="28" height="10" borderRadius="rounded-md" />;
-  }
 
   return (
     <Listbox value={selected} onChange={setSelected}>

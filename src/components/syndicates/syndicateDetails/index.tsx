@@ -162,7 +162,7 @@ const SyndicateDetails = (props: {
   // get allowance set on manager's account for the current depositERC20
   const getManagerDepositTokenAllowance = async () => {
     const managerDepositTokenAllowance = await checkAccountAllowance(
-      depositTokenContract,
+      depositERC20ContractAddress,
       account,
       syndicateContractInstance._address
     );
@@ -224,7 +224,6 @@ const SyndicateDetails = (props: {
       // set up token contract to check manager allowance for the ERC20
       for (let i = 0; i < uniqueERC20s.length; i++) {
         const tokenAddress = uniqueERC20s[i];
-        const tokenContract = new web3.eth.Contract(ERC20ABI, tokenAddress);
         const tokenDetails = new ERC20TokenDetails(tokenAddress);
         const tokenDecimals = await tokenDetails.getTokenDecimals();
 
@@ -239,7 +238,7 @@ const SyndicateDetails = (props: {
         // get allowance set for token by the manager
         const managerAddress = syndicate?.currentManager;
         const tokenManagerAllowance = await checkAccountAllowance(
-          tokenContract,
+          tokenAddress,
           managerAddress,
           syndicateContractInstance._address
         );

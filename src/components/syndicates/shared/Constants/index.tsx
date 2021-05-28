@@ -19,13 +19,14 @@ const withdrawalTitleText = "Withdraw My Distributions.";
 const withdrawalDisclaimerText = "Remember, all withdraws are final.";
 const noSyndicateText =
   "No syndicate with given address. Please check the address provided.";
+const depositsAndWithdrawalsUnavailableTitleText = "Deposits & Withdraws";
 const depositsAndWithdrawalsUnavailableText =
   "Deposits and withdraws are not currently available";
 const depositsUnavailableTitleText = "Deposits";
 const depositsUnavailableText = "Syndicate closed. Deposits unavailable.";
 const depositsUnavailableMaxLPsZeroText =
   "Deposits are unavailable at the moment. Please contact the syndicate leads.";
-const depositsAndWithdrawalsUnavailableTitleText = "Deposits & Withdraws";
+
 const loaderWithdrawalHeaderText =
   "Please wait while the withdrawal transaction completes...";
 const loaderDepositHeaderText =
@@ -64,6 +65,11 @@ const amountGreaterThanMemberDistributionsText =
 const depositSuccessTitleText = "You just made a deposit.";
 const depositSuccessSubtext = "Deposit transaction was successful.";
 const depositSuccessButtonText = "Deposit more";
+
+// withdraw success texts
+const withdrawalSuccessTitleText = "You just made a withdrawal.";
+const withdrawalSuccessSubtext = "Withdrawal transaction was successful.";
+const withdrawalSuccessButtonText = "Dismiss";
 
 // approval success texts
 const approvalSuccessTitleText = "Allowance approved.";
@@ -199,6 +205,9 @@ export const constants = {
   nonMemberWithdrawalTitleText,
   nonMemberWithdrawalText,
   amountGreaterThanMemberDistributionsText,
+  withdrawalSuccessTitleText,
+  withdrawalSuccessSubtext,
+  withdrawalSuccessButtonText,
 };
 
 // Tooltips

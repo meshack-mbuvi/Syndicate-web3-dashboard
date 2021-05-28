@@ -1,5 +1,7 @@
 import PropTypes from "prop-types";
 import React from "react";
+import { useSelector } from "react-redux";
+import { RootState } from "src/redux/store";
 import { SectionCard } from "../sectionCard";
 import { SkeletonLoader } from "src/components/skeletonLoader";
 
@@ -29,11 +31,35 @@ export const DetailsCard = (props: {
     loadingLPDetails,
   } = props;
 
+  const { distributionTokensAllowanceDetails } = useSelector(
+    (state: RootState) => state.tokenDetailsReducer
+  );
+
+  const { syndicateAction } = useSelector(
+    (state: RootState) => state.web3Reducer
+  );
+
+  const { withdraw } = syndicateAction;
+
+  //conditions under which the skeleton loader should be rendered.
+  const showSkeletonLoader =
+    !syndicate ||
+    (loadingLPDetails && !syndicateDetails) ||
+    (withdraw &&
+      !distributionTokensAllowanceDetails.length &&
+      !syndicateDetails);
+
   return (
     <div className={`h-fit-content ${customStyles}`}>
-      <div className={`flex ${customInnerWidth} justify-between`}>
-        <p className="fold-bold text-xl">{title}</p>
-      </div>
+      {showSkeletonLoader ? (
+        <div className="pl-4 mb-4">
+          <SkeletonLoader height="9" width="full" borderRadius="rounded-md" />
+        </div>
+      ) : (
+        <div className={`flex ${customInnerWidth} justify-between`}>
+          <p className="fold-bold text-xl">{title}</p>
+        </div>
+      )}
 
       <div className={`pl-4 ${customInnerWidth}`}>
         {sections.map((section, index) => (
@@ -43,8 +69,12 @@ export const DetailsCard = (props: {
                 syndicateDetails ? "w-7/12" : "w-full"
               }`}
             >
-              {!syndicate || (loadingLPDetails && !syndicateDetails )? (
-                <SkeletonLoader height="8" width="full" />
+              {showSkeletonLoader ? (
+                <SkeletonLoader
+                  height="9"
+                  width="full"
+                  borderRadius="rounded-md"
+                />
               ) : (
                 <SectionCard {...{ ...section }} infoIcon={infoIcon} />
               )}

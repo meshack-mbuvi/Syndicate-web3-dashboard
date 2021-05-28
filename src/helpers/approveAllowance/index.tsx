@@ -1,3 +1,6 @@
+import ERC20ABI from "@/utils/abi/erc20";
+const Web3 = require("web3");
+
 // Approve sending the daiBalance from the user to the manager. Note that the
 // approval goes to the contract, since that is what executes the transferFrom
 // call.
@@ -5,8 +8,6 @@
 // and https://forum.openzeppelin.com/t/example-on-how-to-use-erc20-token-in-another-contract/1682
 // This prevents the error "Dai/insufficient-allowance"
 // should not be used once we have the manager screen fully implemented.
-
-import { toEther } from "@/utils/conversions";
 
 // Setting an amount specifies the approval level
 export const approveManager = async (
@@ -39,13 +40,17 @@ export const approveManager = async (
  * @param syndicateContractAddress the address of the syndicate contract
  * @returns the allowance amount(wei) as a string
  */
+type String = string | string[];
 export const checkAccountAllowance = async (
-  currentERC20Contract: any,
-  account: string,
-  syndicateContractAddress: string | string[]
+  ERC20ContractAddress: string,
+  account: String,
+  syndicateContractAddress: String
 ) => {
+  // set up token contract
+  const web3 = new Web3(Web3.givenProvider || "ws://localhost:8545");
+  const tokenContract = new web3.eth.Contract(ERC20ABI, ERC20ContractAddress);
   try {
-    const accountAllowance = await currentERC20Contract.methods
+    const accountAllowance = await tokenContract.methods
       .allowance(account, syndicateContractAddress)
       .call({ from: account });
     return accountAllowance;
