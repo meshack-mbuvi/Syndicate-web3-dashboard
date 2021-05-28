@@ -54,12 +54,12 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
     syndicateLPDetails,
   } = props;
   const router = useRouter();
-  const { syndicateContractInstance } = useSelector(
-    (state: RootState) => state.syndicateInstanceReducer
-  );
-  const { distributionTokensAllowanceDetails } = useSelector(
-    (state: RootState) => state.tokenDetailsReducer
-  );
+
+  const {
+    syndicateInstanceReducer: { syndicateContractInstance },
+    syndicatesReducer: { syndicateAddressIsValid },
+    tokenDetailsReducer: { distributionTokensAllowanceDetails },
+  } = useSelector((state: RootState) => state);
 
   const dispatch = useDispatch();
 
@@ -211,6 +211,8 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
     withdrawalSuccessTitleText,
     withdrawalSuccessSubtext,
     withdrawalSuccessButtonText,
+    readOnlySyndicateText,
+    readOnlySyndicateTitle,
   } = constants;
 
   // get the state of the current syndicate action
@@ -259,7 +261,9 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
    * into the contract is different
    */
   const { syndicateAddress } = router.query;
-  const web3 = new Web3(Web3.givenProvider || "ws://localhost:8545");
+  const web3 = new Web3(
+    Web3.givenProvider || `${process.env.NEXT_PUBLIC_INFURA_ENDPOINT}`
+  );
 
   const getTokenDecimals = async (tokenAddress) => {
     // set token decimals based on the token address
@@ -1167,7 +1171,13 @@ const InvestInSyndicate = (props: InvestInSyndicateProps) => {
             !account ? "rounded-custom" : `border-b-0 rounded-t-custom`
           } border-gray-49`}
         >
-          {!account ? (
+          {/* Show is read only text if no provider */}
+          {Web3.givenProvider === null && syndicateAddressIsValid ? (
+            <UnavailableState
+              title={readOnlySyndicateTitle}
+              message={readOnlySyndicateText}
+            />
+          ) : !account ? (
             <UnavailableState
               title={connectWalletMessageTitle}
               message={noWalletAccountText}

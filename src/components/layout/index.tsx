@@ -4,7 +4,7 @@ import { Contract } from "ethers";
 import { parse } from "flatted";
 import PropTypes from "prop-types";
 import React, { useEffect } from "react";
-import { connect, useDispatch } from "react-redux";
+import { connect, useDispatch, useSelector } from "react-redux";
 import {
   DepositsPageBanner,
   SyndicateInBetaBanner,
@@ -23,9 +23,8 @@ const daiContractAddress = "0x6b175474e89094c44da98b954eedeac495271d0f";
 export const Layout = ({ children, syndicateAction }) => {
   const { activate, library, account } = useWeb3React();
   const dispatch = useDispatch();
-  // check deposit pages to display info banner
-  const { deposit, generalView } = syndicateAction;
 
+  const { deposit, generalView } = syndicateAction;
   const setWeb3 = async () => {
     let syndicateInstance = null;
     if (library) {
@@ -40,7 +39,9 @@ export const Layout = ({ children, syndicateAction }) => {
        * we can use to get access to all events emitted by the contract
        *
        */
-      const web3 = new Web3(Web3.givenProvider || "ws://localhost:8545");
+      const web3 = new Web3(
+        Web3.givenProvider || `${process.env.NEXT_PUBLIC_INFURA_ENDPOINT}`
+      );
       const web3contractInstance = new web3.eth.Contract(
         Syndicate.abi,
         contractAddress
@@ -110,7 +111,9 @@ export const Layout = ({ children, syndicateAction }) => {
       {/* This banner should be shown in V2 */}
       <SyndicateInBetaBanner />
 
-      {deposit || generalView ? <DepositsPageBanner /> : null}
+      <div>
+        {deposit || generalView ? <DepositsPageBanner key={2} /> : null}
+      </div>
       <div className="flex w-full flex-col sm:flex-row md:py-4 px-4 md:px-6 z-0">
         {children}
       </div>

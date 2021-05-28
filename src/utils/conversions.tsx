@@ -48,7 +48,9 @@ export const getWeiAmount = (
   tokenDecimals: number,
   multiplication: boolean
 ) => {
-  const web3 = new Web3(Web3.givenProvider || "ws://localhost:8545");
+  const web3 = new Web3(
+    Web3.givenProvider || `${process.env.NEXT_PUBLIC_INFURA_ENDPOINT}`
+  );
 
   const BN = web3.utils.BN;
   const tokenFactor = new BN(Math.pow(10, tokenDecimals).toString());

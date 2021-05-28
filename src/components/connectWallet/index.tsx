@@ -123,7 +123,10 @@ export const ConnectWallet = (props: { web3; showWalletModal }) => {
      * we can use to get access to all events emitted by the contract
      *
      */
-    const web3 = new Web3(Web3.givenProvider || "ws://localhost:8545");
+    const web3 = new Web3(
+      Web3.givenProvider || `${process.env.NEXT_PUBLIC_INFURA_ENDPOINT}`
+    );
+
     const web3contractInstance = new web3.eth.Contract(
       Syndicate.abi,
       contractAddress

@@ -60,6 +60,9 @@ const nonMemberWithdrawalText =
   "You are not a member of this syndicate since you have not made any deposits yet.";
 const amountGreaterThanMemberDistributionsText =
   "Withdrawal amount cannot be greater than member distributions to date";
+const readOnlySyndicateText =
+  "In order to have full capabilities, please install Metamask or use an Ethereum supported browser";
+const readOnlySyndicateTitle = "This page is Read Only.";
 
 // deposit success texts
 const depositSuccessTitleText = "You just made a deposit.";
@@ -208,6 +211,8 @@ export const constants = {
   withdrawalSuccessTitleText,
   withdrawalSuccessSubtext,
   withdrawalSuccessButtonText,
+  readOnlySyndicateText,
+  readOnlySyndicateTitle,
 };
 
 // Tooltips

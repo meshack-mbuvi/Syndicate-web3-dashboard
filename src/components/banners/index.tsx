@@ -47,7 +47,8 @@ export const SyndicateInBetaBanner = () => {
       className={`pl-4 pr-8 py-3 w-full relative bg-yellow-light text-black text-center ${
         showBanner ? "" : "hidden"
       }`}
-      role="alert">
+      role="alert"
+    >
       <p>
         <span className="block sm:inline">{SyndicateInBetaBannerText}</span>{" "}
         <Link href="#">
