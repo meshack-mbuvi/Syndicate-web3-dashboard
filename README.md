@@ -34,13 +34,11 @@ Use `npm run build` to build your site for production.
 
 ## Deployment
 
-### Netlify
+Every pull request automatically generates a deploy preview on Netlify. All code merged into main is automatically deployed to the live site at [https://app-syndicate-protocol-org.netlify.app/](https://app-syndicate-protocol-org.netlify.app/)
 
-[![Deploy to Netlify](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/taylorbryant/gatsby-starter-tailwind)
+## Smart Contract
 
-### Vercel
-
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/import/git?s=https%3A%2F%2Fgithub.com%2Ftaylorbryant%2Fgatsby-starter-tailwind%2Ftree%2Fmaster)
+The Syndicate smart contract is available on the Rinkeby test network at [0x9a894f95Fd40838B3F69F6494DB1Cc5Af3532Ea5](https://rinkeby.etherscan.io/address/0x9a894f95Fd40838B3F69F6494DB1Cc5Af3532Ea5). Documentation for the contract can be found in [Syndicate.md](https://github.com/SyndicateProtocol/Syndicate-Web3-Dashboard/blob/main/Syndicate.md).
 
 ## Resources
 
