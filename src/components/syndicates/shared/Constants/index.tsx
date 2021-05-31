@@ -87,10 +87,12 @@ const dismissButtonText = "Dismiss";
 const syndicateDetailsFooterText =
   "Syndicate v1 was security audited by Quanstamp March 2021.";
 const syndicateDetailsLinkText = "View the audit report here.";
+const syndicateModifiableText = "This syndicate is modifiable";
 
 export const syndicateDetailsConstants = {
   syndicateDetailsFooterText,
   syndicateDetailsLinkText,
+  syndicateModifiableText,
 };
 
 // texts on the home page

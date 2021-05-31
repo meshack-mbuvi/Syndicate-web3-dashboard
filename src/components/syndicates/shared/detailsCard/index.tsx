@@ -1,12 +1,13 @@
-import PropTypes from "prop-types";
 import React from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "src/redux/store";
 import { SectionCard } from "../sectionCard";
 import { SkeletonLoader } from "src/components/skeletonLoader";
+import { InfoIcon } from "@/components/iconWrappers";
+
+import { syndicateDetailsConstants } from "../Constants";
 
 /**
- * TODO: update propType validation
  * @param {} props
  * @returns
  */
@@ -31,6 +32,8 @@ export const DetailsCard = (props: {
     loadingLPDetails,
   } = props;
 
+  const { syndicateModifiableText } = syndicateDetailsConstants;
+
   const { distributionTokensAllowanceDetails } = useSelector(
     (state: RootState) => state.tokenDetailsReducer
   );
@@ -49,6 +52,16 @@ export const DetailsCard = (props: {
       !distributionTokensAllowanceDetails.length &&
       !syndicateDetails);
 
+  const modifiableTooltip = (
+    <div className="text-left text-sm">
+      <p className="mb-2">
+        This means the syndicate manager can manually change:
+      </p>
+      <li className="ml-2">Deposits while this syndicate is open</li>
+      <li className="ml-2">Distributions while this syndicate is closed</li>
+    </div>
+  );
+
   return (
     <div className={`h-fit-content ${customStyles}`}>
       {showSkeletonLoader ? (
@@ -60,6 +73,22 @@ export const DetailsCard = (props: {
           <p className="fold-bold text-xl">{title}</p>
         </div>
       )}
+
+      {title.toLowerCase() === "details" && syndicate?.modifiable ? (
+        <div className="w-full mt-4 m-2">
+          <div className=" w-7/12 rounded-custom bg-gray-nero border-t-1 border-gray-6 py-2">
+            <div className="flex justify-start items-center pl-4 py-2">
+              <img src="/images/exclamationDiagonal.svg" className="w-5" />
+              <p className="text-sm leading-snug font-whyte-light pr-2 ml-6">
+                {syndicateModifiableText}
+              </p>
+              <div className="ml-auto flex-shrink-0">
+                <InfoIcon tooltip={modifiableTooltip} />
+              </div>
+            </div>
+          </div>
+        </div>
+      ) : null}
 
       <div className={`pl-4 ${customInnerWidth}`}>
         {sections.map((section, index) => (
@@ -84,10 +113,4 @@ export const DetailsCard = (props: {
       </div>
     </div>
   );
-};
-
-DetailsCard.propTypes = {
-  sections: PropTypes.any,
-  title: PropTypes.string,
-  customStyles: PropTypes.string,
 };

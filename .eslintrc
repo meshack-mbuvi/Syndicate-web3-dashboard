@@ -9,7 +9,8 @@
   "rules": {
     // https://eslint.org/docs/2.0.0/rules/strict
     "strict": 0,
-    "import/no-unresolved": "off"
+    "import/no-unresolved": "off",
+    "react/prop-types": "off"
   },
   "settings": {
     "react": {

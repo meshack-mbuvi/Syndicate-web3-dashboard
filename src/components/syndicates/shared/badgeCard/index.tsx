@@ -91,7 +91,7 @@ export const BadgeCard = (props: {
                   ) : !openToDeposits && !distributionsEnabled ? (
                     <div className="flex justify-start items-center px-6 py-4">
                       <img
-                        src="/images/managerNoAllowance.svg"
+                        src="/images/exclamationDiagonal.svg"
                         className="w-5"
                       />
                       <p className="text-sm font-light text-gray-dim pr-2 ml-4">
@@ -102,7 +102,7 @@ export const BadgeCard = (props: {
                     <div className="flex px-6 py-4 ">
                       <div className="flex flex-shrink-0 items-start">
                         <img
-                          src="/images/managerNoAllowance.svg"
+                          src="/images/exclamationDiagonal.svg"
                           className="w-5"
                         />
                       </div>
