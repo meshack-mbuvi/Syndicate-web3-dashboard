@@ -3,6 +3,7 @@ import { divideIfNotByZero, getWeiAmount } from "src/utils/conversions";
 import {
   LOADING_SYNDICATE_LP_DETAILS,
   SET_SYNDICATE_LP_DETAILS,
+  ONE_SYNDICATE_PER_ACCOUNT,
 } from "../types";
 
 export const setSyndicateLPDetails = (data) => {
@@ -15,6 +16,13 @@ export const setSyndicateLPDetails = (data) => {
 export const setSyndicateLPDetailsLoading = (data) => {
   return {
     type: LOADING_SYNDICATE_LP_DETAILS,
+    data,
+  };
+};
+
+export const setOneSyndicatePerAccount = (data) => {
+  return {
+    type: ONE_SYNDICATE_PER_ACCOUNT,
     data,
   };
 };

@@ -41,9 +41,21 @@
     src: url(/fonts/Whyte\ Inktrap/ABCWhyteInktrap-Regular.woff) format("woff");
   }
 
+  @font-face {
+    font-family: ABC Whyte Inktrap Extralight;
+    src: url(/fonts/ABC_Whyte_Inktrap/ABCWhyteInktrap-Extralight-Trial.woff)
+      format("woff");
+  }
+
+  @font-face {
+    font-family: ABC Whyte Inktrap Light;
+    src: url(/fonts/ABC_Whyte_Inktrap/ABCWhyteInktrap-Light-Trial.woff)
+      format("woff");
+  }
+
   body {
     background-color: #000000;
-    font-family: "ABC Whyte Regular";
+    font-family: "ABC Whyte Regular", "Helvetica", "Arial", "sans-serif";
     color: white;
     font-style: normal;
   }
@@ -321,3 +333,8 @@ circle {
 }
 
 /* end of custom spinner */
+
+/* disallow context menu on images */
+img {
+  pointer-events: none;
+}

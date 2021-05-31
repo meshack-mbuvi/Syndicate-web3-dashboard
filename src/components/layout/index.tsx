@@ -102,7 +102,7 @@ export const Layout = ({ children, syndicateAction }) => {
     }
   };
   return (
-    <div className="py-20">
+    <div>
       <SEO
         keywords={[`next`, `tailwind`, `react`, `tailwindcss`]}
         title="Home"

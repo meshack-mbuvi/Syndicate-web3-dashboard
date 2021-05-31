@@ -13,11 +13,35 @@ module.exports = {
       }),
       fontFamily: {
         whyte: ["ABC Whyte Regular", "Helvetica", "Arial", "sans-serif"],
+        "whyte-extralight": [
+          "ABC Whyte Inktrap Extralight",
+          "ABC Whyte Regular",
+          "Helvetica",
+          "Arial",
+          "sans-serif",
+        ],
+        "whyte-light": [
+          "ABC Whyte Inktrap Light",
+          "ABC Whyte Regular",
+          "Helvetica",
+          "Arial",
+          "sans-serif",
+        ],
+        "whyte-medium": [
+          "ABC Whyte Inktrap Light",
+          "ABC Whyte Regular",
+          "Helvetica",
+          "Arial",
+          "sans-serif",
+        ],
       },
       colors: {
         cyan: colors.cyan,
         gray: {
           ...colors.coolGray,
+          3: "#A8AFBD",
+          4: "#1B1D20",
+          5: "#292929",
           6: "#101010",
           7: "#121212",
           9: "#171717",
@@ -55,7 +79,7 @@ module.exports = {
         1: "1px",
       },
       spacing: {
-        '33': '8.5rem',
+        33: "8.5rem",
       },
       fill: (theme) => ({
         gray: theme("colors.gray.light"),

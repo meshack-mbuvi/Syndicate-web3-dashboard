@@ -11,11 +11,13 @@ export const PrimaryButton = (props: {
   onClick?: () => void;
   type?;
   approved?: boolean;
+  createSyndicate?: boolean;
 }) => {
   const {
     children,
     customClasses = "bg-light-green",
     approved = false,
+    createSyndicate = false,
     ...rest
   } = props;
 
@@ -26,6 +28,9 @@ export const PrimaryButton = (props: {
     >
       {approved ? (
         <img className="inline w-4 mr-2" src="/images/checkmark.svg" />
+      ) : null}
+      {createSyndicate ? (
+        <img className="inline w-4 mr-4" src="/images/plus-circle.svg" />
       ) : null}
       {children}
     </button>

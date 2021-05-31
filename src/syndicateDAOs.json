@@ -1,0 +1,382 @@
+[
+  {
+    "name": "Komorebi Collective",
+    "url": "https://www.syndicateprotocol.org/syndicate/komorebi_collective",
+    "image": "/images/syndicateDAOs/komorebi_collective/Komorebi-Collective.svg",
+    "members": [
+      {
+        "avatar": "/images/syndicateDAOs/komorebi_collective/members/Alexis_Gauba.jpg",
+        "name": "Alexis Gauba"
+      },
+      {
+        "avatar": "/images/syndicateDAOs/komorebi_collective/members/Amy_Jung.jpg",
+        "name": "Amy Jung"
+      },
+      {
+        "avatar": "/images/syndicateDAOs/komorebi_collective/members/Andrea_Lo.jpg",
+        "name": "Andrea Lo"
+      },
+      {
+        "avatar": "/images/syndicateDAOs/komorebi_collective/members/Benjamin_Simon.jpg",
+        "name": "Benjamin Simon"
+      },
+      {
+        "avatar": "/images/syndicateDAOs/komorebi_collective/members/Connor_McEwen.jpg",
+        "name": "Connor McEwen"
+      },
+      {
+        "avatar": "/images/syndicateDAOs/komorebi_collective/members/Daryl_Lau.jpg",
+        "name": "Daryl Lau"
+      },
+      {
+        "avatar": "/images/syndicateDAOs/komorebi_collective/members/David_Vorick.jpg",
+        "name": "David Vorick"
+      },
+      {
+        "avatar": "/images/syndicateDAOs/komorebi_collective/members/Dovey_Wan.jpg",
+        "name": "Dovey Wan"
+      },
+      {
+        "avatar": "/images/syndicateDAOs/komorebi_collective/members/Dragonfly_Capital.jpg",
+        "name": "Dragonfly Capital"
+      },
+      {
+        "avatar": "/images/syndicateDAOs/komorebi_collective/members/Eva_Wu.jpg",
+        "name": "Eva Wu"
+      },
+      {
+        "avatar": "/images/syndicateDAOs/komorebi_collective/members/Fuvia_Morales.jpg",
+        "name": "Fuvia Morales"
+      },
+      {
+        "avatar": "/images/syndicateDAOs/komorebi_collective/members/Hamdi_Allam.jpg",
+        "name": "Hamdi Allam"
+      },
+      {
+        "avatar": "/images/syndicateDAOs/komorebi_collective/members/IDEOVC.jpeg",
+        "name": "IDEO CoLab Ventures"
+      },
+      {
+        "avatar": "/images/syndicateDAOs/komorebi_collective/members/Ian_Lee.jpg",
+        "name": "Ian Lee"
+      },
+      {
+        "avatar": "/images/syndicateDAOs/komorebi_collective/members/Isabelle_Wei.jpg",
+        "name": "Isabelle Wei"
+      },
+      {
+        "avatar": "/images/syndicateDAOs/komorebi_collective/members/Jesse_Pollak.jpg",
+        "name": "Jesse Pollak"
+      },
+      {
+        "avatar": "/images/syndicateDAOs/komorebi_collective/members/Jesse_Walden.png",
+        "name": "Jesse Walden"
+      },
+      {
+        "avatar": "/images/syndicateDAOs/komorebi_collective/members/Joyce_Yang.jpg",
+        "name": "Joyce Yang"
+      },
+      {
+        "avatar": "/images/syndicateDAOs/komorebi_collective/members/Justine_Humenansky.jpg",
+        "name": "Justine Humenansky"
+      },
+      {
+        "avatar": "/images/syndicateDAOs/komorebi_collective/members/Kinjal_Shah.jpg",
+        "name": "Kinjal Shah"
+      },
+      {
+        "avatar": "/images/syndicateDAOs/komorebi_collective/members/Kleiner_Perkins.jpg",
+        "name": "Kleiner Perkins"
+      },
+      {
+        "avatar": "/images/syndicateDAOs/komorebi_collective/members/Kristie_Huang.jpg",
+        "name": "Kristie Huang"
+      },
+      {
+        "avatar": "/images/syndicateDAOs/komorebi_collective/members/Leigh_Cuen.jpg",
+        "name": "Leigh Cuen"
+      },
+      {
+        "avatar": "/images/syndicateDAOs/komorebi_collective/members/Maggie_Love.jpg",
+        "name": "Maggie Love"
+      },
+      {
+        "avatar": "/images/syndicateDAOs/komorebi_collective/members/Manasi_Vora.jpg",
+        "name": "Manasi Vora"
+      },
+      {
+        "avatar": "/images/syndicateDAOs/komorebi_collective/members/Marc_Weinstein.jpg",
+        "name": "Marc Weinstein"
+      },
+      {
+        "avatar": "/images/syndicateDAOs/komorebi_collective/members/Maria_Shen.jpg",
+        "name": "Maria Shen"
+      },
+      {
+        "avatar": "/images/syndicateDAOs/komorebi_collective/members/Mechanism_Capital.jpg",
+        "name": "Mechanism Capital"
+      },
+      {
+        "avatar": "/images/syndicateDAOs/komorebi_collective/members/Medha_Kothari.jpg",
+        "name": "Medha Kothari"
+      },
+      {
+        "avatar": "/images/syndicateDAOs/komorebi_collective/members/Mimi_Idada.jpg",
+        "name": "Mimi Idada"
+      },
+      {
+        "avatar": "/images/syndicateDAOs/komorebi_collective/members/Monica_Desai_Weiss.png",
+        "name": "Monica Desai Weiss"
+      },
+      {
+        "avatar": "/images/syndicateDAOs/komorebi_collective/members/Morgan_Beller.jpg",
+        "name": "Morgan Beller"
+      },
+      {
+        "avatar": "/images/syndicateDAOs/komorebi_collective/members/Robert_Leshner.jpg",
+        "name": "Robert Leshner"
+      },
+      {
+        "avatar": "/images/syndicateDAOs/komorebi_collective/members/Stacks_Accelerator.png",
+        "name": "Stacks Accelerator"
+      },
+      {
+        "avatar": "/images/syndicateDAOs/komorebi_collective/members/Stani_Kulechov.jpg",
+        "name": "Stani Kulechov"
+      },
+      {
+        "avatar": "/images/syndicateDAOs/komorebi_collective/members/Tess_Rinearson.jpg",
+        "name": "Tess Rinearson"
+      },
+      {
+        "avatar": "/images/syndicateDAOs/komorebi_collective/members/Vanessa_Slavich.jpg",
+        "name": "Vanessa Slavich"
+      },
+      {
+        "avatar": "/images/syndicateDAOs/komorebi_collective/members/Vivek_Singh.jpg",
+        "name": "Vivek Singh"
+      }
+    ]
+  },
+  {
+    "name": "Delphi INFINFT",
+    "url": "https://www.syndicateprotocol.org/syndicate/delphi_infinft",
+    "image": "/images/syndicateDAOs/delphi_infinft/Delphi-INFINFT.svg",
+    "members": [
+      {
+        "avatar": "/images/syndicateDAOs/delphi_infinft/members/Andrew-Steinwold.jpg",
+        "name": "Andrew Steinwold"
+      },
+      {
+        "avatar": "/images/syndicateDAOs/delphi_infinft/members/Andy.jpg",
+        "name": "Andy"
+      },
+      {
+        "avatar": "/images/syndicateDAOs/delphi_infinft/members/anildelphi.jpg",
+        "name": "Anil Lulla"
+      },
+      {
+        "avatar": "/images/syndicateDAOs/delphi_infinft/members/Calvin-Liu.jpg",
+        "name": "Calvin Liu"
+      },
+      {
+        "avatar": "/images/syndicateDAOs/delphi_infinft/members/BeeCoalie.jpg",
+        "name": "Coalie Bee"
+      },
+      {
+        "avatar": "/images/syndicateDAOs/delphi_infinft/members/delphi_digital.jpeg",
+        "name": "Delphi Digital"
+      },
+      {
+        "avatar": "/images/syndicateDAOs/delphi_infinft/members/Gabby-Dizon.jpg",
+        "name": "Gabby Dizon"
+      },
+      {
+        "avatar": "/images/syndicateDAOs/delphi_infinft/members/gmoney.jpeg",
+        "name": "G-Money"
+      },
+      {
+        "avatar": "/images/syndicateDAOs/delphi_infinft/members/IDEOVC.jpeg",
+        "name": "IDEO CoLab Ventures"
+      },
+      {
+        "avatar": "/images/syndicateDAOs/delphi_infinft/members/Jeffrey-Zirlin.jpg",
+        "name": "Jeffrey Zirlin (Jiho)"
+      },
+      {
+        "avatar": "/images/syndicateDAOs/delphi_infinft/members/jeremystormsky.jpg",
+        "name": "Jeremy Storm Parris"
+      },
+      {
+        "avatar": "/images/syndicateDAOs/delphi_infinft/members/Will-Price.jpg",
+        "name": "Will Price"
+      },
+      {
+        "avatar": "/images/syndicateDAOs/delphi_infinft/members/yanliberman.jpg",
+        "name": "Yan Liberman"
+      }
+    ]
+  },
+  {
+    "name": "Terra Ecosystem Incubator",
+    "url": "https://www.syndicateprotocol.org/syndicate/terra_incubator",
+    "image": "/images/syndicateDAOs/terra_incubator/Terra-Ecosystem-Incubator.svg",
+    "members": [
+      {
+        "avatar": "/images/syndicateDAOs/terra_incubator/members/terra_protocol.jpg",
+        "name": "Terra Protocol"
+      },
+      {
+        "avatar": "/images/syndicateDAOs/terra_incubator/members/do_kwon.jpg",
+        "name": "Do Kwon"
+      },
+      {
+        "avatar": "/images/syndicateDAOs/terra_incubator/members/delphi_labs.jpg",
+        "name": "Delphi Labs"
+      },
+      {
+        "avatar": "/images/syndicateDAOs/terra_incubator/members/IDEOVC.jpeg",
+        "name": "IDEO CoLab Ventures"
+      },
+      {
+        "avatar": "/images/syndicateDAOs/terra_incubator/members/luke_saunders.jpg",
+        "name": "Luke Saunders"
+      },
+      {
+        "avatar": "/images/syndicateDAOs/terra_incubator/members/joe_gerber.jpeg",
+        "name": "Joe Gerber"
+      },
+      {
+        "avatar": "/images/syndicateDAOs/terra_incubator/members/jose_maria_macedo.jpg",
+        "name": "Jose Maria Macedo"
+      },
+      {
+        "avatar": "/images/syndicateDAOs/terra_incubator/members/gavin_mcdermott.jpeg",
+        "name": "Gavin McDermott"
+      }
+    ]
+  },
+  {
+    "name": "IDEO Founder Collective",
+    "url": "https://www.syndicateprotocol.org/syndicate/ideo_fc",
+    "image": "/images/syndicateDAOs/ideo_fc/IDEO-Founder-Collective.svg",
+    "members": [
+      {
+        "avatar": "/images/syndicateDAOs/ideo_fc/members/adam_jackson.jpeg",
+        "name": "Adam Jackson"
+      },
+      {
+        "avatar": "/images/syndicateDAOs/ideo_fc/members/alexander_angel.jpeg",
+        "name": "Alexander Angel"
+      },
+      {
+        "avatar": "/images/syndicateDAOs/ideo_fc/members/ana_andrianova.jpeg",
+        "name": "Ana Andrianova"
+      },
+      {
+        "avatar": "/images/syndicateDAOs/ideo_fc/members/arif_khan.jpeg",
+        "name": "Arif Khan"
+      },
+      {
+        "avatar": "/images/syndicateDAOs/ideo_fc/members/blake_west.png",
+        "name": "Blake West"
+      },
+      {
+        "avatar": "/images/syndicateDAOs/ideo_fc/members/dillon_chen.jpeg",
+        "name": "Dillon Chen"
+      },
+      {
+        "avatar": "/images/syndicateDAOs/ideo_fc/members/gabby_dizon.jpeg",
+        "name": "Gabby Dizon"
+      },
+      {
+        "avatar": "/images/syndicateDAOs/ideo_fc/members/gabe_luna_ostaseki.jpeg",
+        "name": "Gabe Luna Ostaseki"
+      },
+      {
+        "avatar": "/images/syndicateDAOs/ideo_fc/members/gavin_mcdermott.jpeg",
+        "name": "Gavin Mcdermott"
+      },
+      {
+        "avatar": "/images/syndicateDAOs/ideo_fc/members/ian_lee.jpeg",
+        "name": "Ian Lee"
+      },
+      {
+        "avatar": "/images/syndicateDAOs/ideo_fc/members/IDEOVC.jpeg",
+        "name": "IDEOVC"
+      },
+      {
+        "avatar": "/images/syndicateDAOs/ideo_fc/members/jazear_brooks.jpeg",
+        "name": "Jazear Brooks"
+      },
+      {
+        "avatar": "/images/syndicateDAOs/ideo_fc/members/jess_sloss.jpeg",
+        "name": "Jess Sloss"
+      },
+      {
+        "avatar": "/images/syndicateDAOs/ideo_fc/members/joe_gerber.jpeg",
+        "name": "Joe Gerber"
+      },
+      {
+        "avatar": "/images/syndicateDAOs/ideo_fc/members/joris_delanoue.jpeg",
+        "name": "Joris Delanoue"
+      },
+      {
+        "avatar": "/images/syndicateDAOs/ideo_fc/members/",
+        "name": "Kate Kurbanova"
+      },
+      {
+        "avatar": "/images/syndicateDAOs/ideo_fc/members/kenny_white.jpeg",
+        "name": "Kenny White"
+      },
+      {
+        "avatar": "/images/syndicateDAOs/ideo_fc/members/kevin_chou.jpeg",
+        "name": "Kevin Chou"
+      },
+      {
+        "avatar": "/images/syndicateDAOs/ideo_fc/members/kevin_nielsen.jpeg",
+        "name": "Kevin Nielsen"
+      },
+      {
+        "avatar": "/images/syndicateDAOs/ideo_fc/members/leighton_cusack.jpeg",
+        "name": "Leighton Cusack"
+      },
+      {
+        "avatar": "/images/syndicateDAOs/ideo_fc/members/mahesh_vellanki.png",
+        "name": "Mahesh Vellanki"
+      },
+      {
+        "avatar": "/images/syndicateDAOs/ideo_fc/members/matt_galligan.jpeg",
+        "name": "Matt Galligan"
+      },
+      {
+        "avatar": "/images/syndicateDAOs/ideo_fc/members/matt_wisniewski.jpeg",
+        "name": "Matt Wisniewski"
+      },
+      {
+        "avatar": "/images/syndicateDAOs/ideo_fc/members/RAC.jpeg",
+        "name": "RAC"
+      },
+      {
+        "avatar": "/images/syndicateDAOs/ideo_fc/members/reuben_bramanathan.jpeg",
+        "name": "Reuben Bramanathan"
+      },
+      {
+        "avatar": "/images/syndicateDAOs/ideo_fc/members/shane_mac.jpeg",
+        "name": "Shane Mac"
+      },
+      {
+        "avatar": "/images/syndicateDAOs/ideo_fc/members/tara_tan.jpeg",
+        "name": "Tara Tan"
+      },
+      {
+        "avatar": "/images/syndicateDAOs/ideo_fc/members/thibauld_favre.jpeg",
+        "name": "Thibauld Favre"
+      },
+      {
+        "avatar": "/images/syndicateDAOs/ideo_fc/members/will_papper.jpeg",
+        "name": "Will Papper"
+      }
+    ]
+  }
+]

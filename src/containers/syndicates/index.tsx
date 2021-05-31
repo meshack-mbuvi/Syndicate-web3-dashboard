@@ -2,7 +2,7 @@ import React from "react";
 import ErrorBoundary from "src/components/errorBoundary";
 import Layout from "src/components/layout";
 import Head from "src/components/syndicates/shared/HeaderTitle";
-import ViewSyndicates from "src/components/syndicates/viewSyndicates";
+import ViewSyndicates from "@/components/syndicates/porfolioAndDiscover";
 
 /**
  * Diplays all syndicates.

@@ -51,4 +51,5 @@ export const initialState = {
   syndicateContractInstance: {},
   depositTokenAllowanceDetails: [],
   distributionTokensAllowanceDetails: [],
+  oneSyndicatePerAccount: false,
 };

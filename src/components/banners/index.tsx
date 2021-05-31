@@ -49,17 +49,34 @@ export const SyndicateInBetaBanner = () => {
       }`}
       role="alert"
     >
-      <p>
-        <span className="block sm:inline">{SyndicateInBetaBannerText}</span>{" "}
+      <div className="flex justify-center px-10">
+        <span className="block sm:inline font-whyte-light mr-2">
+          {SyndicateInBetaBannerText}
+        </span>{" "}
         <Link href="#">
-          <a>
-            <strong>Learn more {">"}</strong>
+          <a className="flex items-center">
+            <span>Learn more</span>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-5 w-5 inline"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+            >
+              <path
+                fillRule="evenodd"
+                d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                clipRule="evenodd"
+              />
+            </svg>
           </a>
         </Link>
-        <span className="absolute mx-3 py-1 cursor-pointer absolute right-0">
-          <img src="/images/close.svg" alt="" onClick={hideBanner} />
+        <span
+          className="absolute mx-3 py-1 cursor-pointer absolute right-2"
+          onClick={() => hideBanner()}
+        >
+          <img src="/images/close.svg" alt="close-button" />
         </span>
-      </p>
+      </div>
     </div>
   );
 };
@@ -70,8 +87,8 @@ export const DepositsPageBanner = () => {
   return (
     <div className="w-full bg-blue-dark px-4 py-4 text-center">
       <p className="text-sm font-extralight">
-        <span className="font-medium">IMPORTANT: </span>
-        {depositBannerText}
+        <span className="font-medium font-whyte-regular">IMPORTANT: </span>
+        <span className="font-medium font-whyte-light">{depositBannerText}</span>
       </p>
     </div>
   );
