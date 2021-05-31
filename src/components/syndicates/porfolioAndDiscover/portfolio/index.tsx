@@ -73,11 +73,10 @@ export const Portfolio = (props: { syndicates }) => {
     },
     {
       Header: "Deposits",
-      accessor: "totalDeposits",
-      Cell: ({ value }) => {
-        // TODO: DAI is hard-coded here. Should be updated to reflect the token
-        // symbol of the syndicate depositERC20
-        return `${formatToMillion(value)} DAI`
+      accessor: function getTotalDeposits(row) {
+        // get token symbol
+        const { depositERC20TokenSymbol, totalDeposits } = row;
+        return `${formatToMillion(totalDeposits)} ${depositERC20TokenSymbol}`;
       },
       showSort: true,
     },

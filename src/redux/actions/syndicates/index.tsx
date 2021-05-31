@@ -10,6 +10,8 @@ import {
   SET_LOADING,
   SYNDICATE_BY_ADDRESS,
 } from "../types";
+import { TokenMappings } from "src/utils/tokenMappings";
+import { web3 } from "src/utils/web3Utils";
 
 interface SyndicateInfo {
   [address: string]: {
@@ -237,6 +239,19 @@ export const processSyndicateDetails = (syndicateData, tokenDecimals = 18) => {
     new Date(parseInt(syndicateData.closeDate) * 1000)
   );
 
+  // get deposit token symbol
+  let depositERC20TokenSymbol = "";
+  const mappedTokenAddress = Object.keys(TokenMappings).find(
+    (key) =>
+      web3.utils.toChecksumAddress(key) ===
+      web3.utils.toChecksumAddress(depositERC20ContractAddress)
+  );
+  if (mappedTokenAddress) {
+    depositERC20TokenSymbol = TokenMappings[mappedTokenAddress];
+  } else {
+    depositERC20TokenSymbol = "Unknown";
+  }
+
   /**
    * block.timestamp which is the one used to save creationDate is in
    * seconds. We multiply by 1000 to convert to milliseconds and then
@@ -283,6 +298,7 @@ export const processSyndicateDetails = (syndicateData, tokenDecimals = 18) => {
     maxLPs,
     modifiable,
     tokenDecimals,
+    depositERC20TokenSymbol,
     totalLPs,
     totalDepositors: totalLPs,
   };

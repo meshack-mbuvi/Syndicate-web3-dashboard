@@ -98,7 +98,7 @@ export const Wallet = (props) => {
         <button className="focus:outline-none mr-1 text-sm font-whyte-regular">
           {account ? formatAddress(account) : "Not connected"}
         </button>
-        <div className="flex items-center">
+        <div className="flex items-center ml-2">
           <img src="/images/chevron-down.svg" alt="down-arrow" />
         </div>
       </div>
