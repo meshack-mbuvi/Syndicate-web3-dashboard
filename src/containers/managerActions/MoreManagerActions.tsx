@@ -12,7 +12,8 @@ const MoreManagerActions = ({ icon, text, onClickHandler }: Props) => {
       <div className="mr-4">{icon}</div>
       <div
         className="text-md font-semibold cursor-pointer"
-        onClick={onClickHandler}>
+        onClick={onClickHandler}
+      >
         {text}
       </div>
     </div>

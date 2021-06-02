@@ -7,7 +7,6 @@ import {
   confirmCloseSyndicateText,
   confirmingTransaction,
   irreversibleActionText,
-  managerSetFeeAddress,
   rejectTransactionText,
   syndicateActionConstants,
   waitTransactionTobeConfirmedText,
@@ -20,6 +19,7 @@ import { useRouter } from "next/router";
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import ErrorBoundary from "../../components/errorBoundary";
+import ChangeSyndicateSettings from "./changeSyndicateSettings";
 import DistributeToken from "./distributeToken";
 import ManagerAction from "./ManagerAction";
 import ModifyMemberDistributions from "./modifyMemberDistributions";
@@ -60,14 +60,16 @@ const ManagerActions = () => {
   const [showRequestSocialProfile, setShowRequestSocialProfile] = useState(
     false
   );
-  const [showModifyCapTable, setShowModifyCapTable] = useState(false);
-  const [showSyndicateNotModifiable, setShowSyndicateNotModifiable] = useState(
-    false
-  );
   const [
     tellManagerToSetmanagerFeeAddress,
     setTellManagerToSetmanagerFeeAddress,
   ] = useState(false);
+  const [showModifyCapTable, setShowModifyCapTable] = useState(false);
+  const [showSyndicateNotModifiable, setShowSyndicateNotModifiable] = useState(
+    false
+  );
+  const [showChangeSettings, setShowChangeSettings] = useState<boolean>(false);
+
   const [
     showModifyMemberDistribution,
     setShowModifyMemberDistribution,
@@ -168,10 +170,6 @@ const ManagerActions = () => {
     {
       icon: <img src="/images/exclamation-triangle.svg" />,
       text: "Reject deposit or depositor address",
-    },
-    {
-      icon: <img src="/images/settings.svg" />,
-      text: "Change syndicate settings",
     },
   ];
 
@@ -289,6 +287,11 @@ const ManagerActions = () => {
           {moreActions.map(({ icon, text }) => (
             <MoreManagerActions key={text} icon={icon} text={text} />
           ))}
+          <MoreManagerActions
+            icon={<img src="/images/settings.svg" />}
+            text={"Change syndicate settings"}
+            onClickHandler={setShowChangeSettings}
+          />
         </div>
         {showDistributeToken ? (
           <DistributeToken
@@ -305,6 +308,10 @@ const ManagerActions = () => {
         ) : showModifyCapTable ? (
           <ModifySyndicateCapTable
             {...{ showModifyCapTable, setShowModifyCapTable }}
+          />
+        ) : showChangeSettings ? (
+          <ChangeSyndicateSettings
+            {...{ showChangeSettings, setShowChangeSettings }}
           />
         ) : showSyndicateNotModifiable ? (
           <ErrorModal
@@ -373,7 +380,9 @@ const ManagerActions = () => {
         }}>
         <div className="mx-4 mb-8">
           <p className="text-gray-500 text-base leading-5 font-light mb-6">
-            {managerSetFeeAddress}
+            Manager fee recipient Address is not set yet. Please set it in the{" "}
+            <span className="font-bold">Change Syndicate Settings</span>{" "}
+            section.
           </p>
         </div>
       </Modal>
