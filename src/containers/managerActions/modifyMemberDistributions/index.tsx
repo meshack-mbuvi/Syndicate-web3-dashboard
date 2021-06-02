@@ -98,7 +98,7 @@ const ModifyMemberDistributions = (props: Props) => {
   useEffect(() => {
     if (syndicate) {
       // set token symbol based on token address
-      const tokenAddress = syndicate.depositERC20ContractAddress;
+      const tokenAddress = syndicate.depositERC20Address;
       const mappedTokenAddress = Object.keys(TokenMappings).find(
         (key) => key.toLowerCase() == tokenAddress.toLowerCase()
       );
@@ -177,7 +177,7 @@ const ModifyMemberDistributions = (props: Props) => {
     // distribution address
     // otherwise, get one address from the events
     if (!events.length) {
-      setDistributionERC20Address(syndicate.depositERC20ContractAddress);
+      setDistributionERC20Address(syndicate.depositERC20Address);
     } else {
       const distributionERC20Addresses = [];
       events.forEach((event) => {
@@ -274,11 +274,11 @@ const ModifyMemberDistributions = (props: Props) => {
       const amountInWei = toEther(newDistributionAmount);
 
       await syndicateContractInstance.methods
-        .setClaimedDistributionForLP(
+        .managerSetDistributionClaimedForMembers(
           syndicateAddress,
           [memberAddress],
           [distributionERC20Address],
-          amountInWei
+          [amountInWei]
         )
         .send({ from: account, gasLimit: 800000 })
         .on("transactionHash", () => {

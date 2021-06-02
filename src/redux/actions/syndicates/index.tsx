@@ -1,4 +1,4 @@
-import { syndicateInterface } from "@/components/shared/interfaces";
+import { Syndicate } from "@/@types/syndicate";
 import { getSyndicate } from "@/helpers";
 import { getEvents } from "@/helpers/retrieveEvents";
 import { formatDate } from "@/utils";
@@ -241,7 +241,7 @@ export const getTokenDecimals = async (contractAddress: string) => {
 export const processSyndicateDetails = (
   syndicateData,
   tokenDecimals = 18
-): syndicateInterface => {
+): Syndicate => {
   if (!syndicateData) return;
   let {
     allowlistEnabled,
@@ -261,7 +261,6 @@ export const processSyndicateDetails = (
     numMembersCurrent,
     numMembersMax,
     syndicateProfitShareBasisPoints,
-    version,
     open,
   } = syndicateData;
 
@@ -299,13 +298,17 @@ export const processSyndicateDetails = (
     managerManagementFeeBasisPoints
   );
 
-  const depositsEnabled =
-    !pastDate(new Date(parseInt(dateCreation) * 1000)) && open;
+  const depositsEnabled = !pastDate(new Date(parseInt(dateClose) * 1000));
+
+  const status =
+    depositsEnabled && parseInt(depositTotal) < parseInt(depositMaxTotal)
+      ? `Open until ${closeDate}`
+      : "Operating";
 
   return {
+    status,
     open,
     managerFeeAddress,
-    version,
     depositsEnabled,
     depositMinMember: getWeiAmount(depositMinMember, tokenDecimals, false),
     depositMaxMember: getWeiAmount(depositMaxMember, tokenDecimals, false),

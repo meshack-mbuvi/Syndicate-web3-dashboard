@@ -55,7 +55,8 @@ export const ValidatePercent = (value) => {
  * @returns boolean indicating the result of the check
  */
 export const isZeroAddress = (address: string) => {
-  // Checking for address 0x0000000; the default value set by solidity
+  // Checking for address 0x0000000000000000000000000000000000000000;
+  // the default value set by solidity
   return /^0x0+$/.test(address);
 };
 

@@ -1,3 +1,4 @@
+import Modal from "@/components/modal";
 import { ErrorModal } from "@/components/shared";
 import { PendingStateModal } from "@/components/shared/transactionStates";
 import ConfirmStateModal from "@/components/shared/transactionStates/confirm";
@@ -6,6 +7,7 @@ import {
   confirmCloseSyndicateText,
   confirmingTransaction,
   irreversibleActionText,
+  managerSetFeeAddress,
   rejectTransactionText,
   syndicateActionConstants,
   waitTransactionTobeConfirmedText,
@@ -13,6 +15,7 @@ import {
 import { getMetamaskError } from "@/helpers";
 import { getSyndicateByAddress } from "@/redux/actions/syndicates";
 import { RootState } from "@/redux/store";
+import { isZeroAddress } from "@/utils/validators";
 import { useRouter } from "next/router";
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -61,6 +64,10 @@ const ManagerActions = () => {
   const [showSyndicateNotModifiable, setShowSyndicateNotModifiable] = useState(
     false
   );
+  const [
+    tellManagerToSetmanagerFeeAddress,
+    setTellManagerToSetmanagerFeeAddress,
+  ] = useState(false);
   const [
     showModifyMemberDistribution,
     setShowModifyMemberDistribution,
@@ -185,6 +192,23 @@ const ManagerActions = () => {
     }
   };
 
+  /**
+   * checks whether managerFeeAddress is set before showing the set distribution
+   * modal. If managerFeeAddress is not set, an informative modal is shown
+   * requesting the manager to set managerFeeAddress first. Otherwise the
+   * setDistribution component is shown
+   */
+  const showSetDistributionModal = (event) => {
+    event.preventDefault();
+    setTellManagerToSetmanagerFeeAddress(false);
+
+    if (!isZeroAddress(syndicate.managerFeeAddress)) {
+      setShowDistributeToken(true);
+    } else {
+      setTellManagerToSetmanagerFeeAddress(true);
+    }
+  };
+
   return (
     <ErrorBoundary>
       <div className="w-full lg:w-2/5 mt-4 sm:mt-0">
@@ -213,7 +237,7 @@ const ManagerActions = () => {
                 "Distribute tokens back to depositors and make them available for withdraw."
               }
               icon={<img src="/images/server.svg" />}
-              onClickHandler={() => setShowDistributeToken(true)}
+              onClickHandler={showSetDistributionModal}
             />
           )}
 
@@ -337,6 +361,22 @@ const ManagerActions = () => {
         buttonText={finalStateButtonText}
         headerText={finalStateHeaderText}
       />
+
+      <Modal
+        {...{
+          title: "",
+          show: tellManagerToSetmanagerFeeAddress,
+          closeModal: setTellManagerToSetmanagerFeeAddress,
+          customWidth: `${`sm:w-1/3`}`,
+          titleFontSize: "text-3xl",
+          showCloseButton: true,
+        }}>
+        <div className="mx-4 mb-8">
+          <p className="text-gray-500 text-base leading-5 font-light mb-6">
+            {managerSetFeeAddress}
+          </p>
+        </div>
+      </Modal>
     </ErrorBoundary>
   );
 };

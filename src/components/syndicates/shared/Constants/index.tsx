@@ -410,3 +410,6 @@ export const ModifySyndicateCapTableConstants = {
 // indicate that only one syndicate can be created per account
 export const oneSyndicatePerAccountText =
   "Only one syndicate can be created per wallet address. To create another syndicate, please switch to a different wallet address.";
+
+export const managerSetFeeAddress =
+  'Manager fee recipient Address is not set yet. Please set it in the <span className="font-bold">Change Syndicate Settings</span> section.';

@@ -48,21 +48,7 @@ export const Portfolio = (props: { syndicates }) => {
     },
     {
       Header: "Status",
-      accessor: "active",
-      Cell: ({
-        row: { depositsEnabled, depositTotal, depositMaxTotal, closeDate },
-        value,
-      }) => {
-        if (value) {
-          if (depositsEnabled && depositTotal < depositMaxTotal) {
-            return `Open until ${closeDate}`;
-          } else {
-            return "Operating";
-          }
-        } else {
-          return "Inactive";
-        }
-      },
+      accessor: "status",
       showSort: true,
     },
     {

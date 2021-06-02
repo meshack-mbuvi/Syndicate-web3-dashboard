@@ -1,5 +1,5 @@
+import { Syndicate } from "@/@types/syndicate";
 import HorizontalDivider from "@/components/horizontalDivider";
-import { syndicateInterface } from "@/components/shared/interfaces";
 import {
   getTokenDecimals,
   processSyndicateDetails,
@@ -13,7 +13,7 @@ import { getEvents } from "../retrieveEvents";
 export const getSyndicate = async (
   syndicateAddress: string,
   syndicateContractInstance
-): Promise<syndicateInterface> => {
+): Promise<Syndicate> => {
   try {
     const syndicate = await syndicateContractInstance.methods
       .getSyndicateValues(syndicateAddress)
@@ -37,7 +37,6 @@ export const getSyndicate = async (
     return {
       ...syndicateDetails,
       syndicateAddress,
-      active: true,
       distributionsEnabled,
     };
   } catch (error) {

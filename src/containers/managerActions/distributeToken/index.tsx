@@ -12,6 +12,7 @@ import { getTotalDistributions } from "@/helpers/distributions";
 import { getMetamaskError } from "@/helpers/metamaskError";
 import { getSyndicateByAddress } from "@/redux/actions/syndicates";
 import { storeDistributionTokensDetails } from "@/redux/actions/tokenAllowances";
+import { RootState } from "@/redux/store";
 import ERC20ABI from "@/utils/abi/erc20";
 import { getWeiAmount } from "@/utils/conversions";
 import { ERC20TokenDetails } from "@/utils/ERC20Methods";
@@ -21,16 +22,12 @@ import { TokenMappings } from "@/utils/tokenMappings";
 import { Validate } from "@/utils/validators";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
-import { connect } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import Button from "src/components/buttons";
+
 interface Props {
-  dispatch: Function;
   showDistributeToken: boolean;
   setShowDistributeToken: Function;
-  syndicateContractInstance: any;
-  distributionTokensAllowanceDetails: any;
-  syndicate: any;
-  web3: any;
 }
 
 /**
@@ -41,15 +38,18 @@ interface Props {
  * @returns
  */
 const DistributeToken = (props: Props) => {
+  const { showDistributeToken, setShowDistributeToken } = props;
+
   const {
-    showDistributeToken,
-    setShowDistributeToken,
-    web3: { web3, account },
-    syndicateContractInstance,
-    syndicate,
-    distributionTokensAllowanceDetails,
-    dispatch,
-  } = props;
+    syndicateInstanceReducer: { syndicateContractInstance },
+    syndicatesReducer: { syndicate },
+    tokenDetailsReducer: { distributionTokensAllowanceDetails },
+    web3Reducer: {
+      web3: { account, web3 },
+    },
+  } = useSelector((state: RootState) => state);
+
+  const dispatch = useDispatch();
 
   const router = useRouter();
   const { syndicateAddress } = router.query;
@@ -88,6 +88,91 @@ const DistributeToken = (props: Props) => {
     false
   );
 
+  /**
+   * This method process the setDistribution event that is emitted as
+   * distributions are set
+   * @param eventValues
+   */
+  const processSetDistributionEvent = async (eventValues) => {
+    const { distributionERC20Address, syndicateAddress } = eventValues;
+
+    ERC20TokenFields.forEach(async (tokenField, currentIndex) => {
+      const {
+        tokenDecimals,
+        tokenNonFormattedAddress,
+        tokenAllowance,
+        tokenSymbol,
+      } = tokenField;
+
+      if (distributionERC20Address === tokenNonFormattedAddress) {
+        // get current distributions.
+        const totalCurrentDistributions = await getTotalDistributions(
+          syndicateContractInstance,
+          syndicateAddress,
+          tokenNonFormattedAddress
+        );
+        updateERC20TokenValue(
+          "tokenDistribution",
+          currentIndex,
+          totalCurrentDistributions
+        );
+
+        const convertedTokenDistributions = getWeiAmount(
+          totalCurrentDistributions,
+          tokenDecimals,
+          false
+        );
+
+        const distributionTokensAllowanceDetailsCopy = [
+          ...distributionTokensAllowanceDetails,
+        ];
+
+        if (distributionTokensAllowanceDetails.length) {
+          // check if token has a distribution set already
+          for (
+            let i = 0;
+            i < distributionTokensAllowanceDetailsCopy.length;
+            i++
+          ) {
+            const { tokenAddress } = distributionTokensAllowanceDetailsCopy[i];
+            if (tokenAddress === tokenNonFormattedAddress) {
+              distributionTokensAllowanceDetailsCopy[i][
+                "tokenDistributions"
+              ] = convertedTokenDistributions;
+              distributionTokensAllowanceDetailsCopy[i][
+                "tokenAllowance"
+              ] = tokenAllowance;
+              distributionTokensAllowanceDetailsCopy[i][
+                "sufficientAllowanceSet"
+              ] = true;
+
+              // dispatch action to store to update distribution token details
+              dispatch(
+                storeDistributionTokensDetails(
+                  distributionTokensAllowanceDetailsCopy
+                )
+              );
+              return;
+            }
+          }
+        } else {
+          //store new details if the token doesn't have previous allowance
+          const tokenDetails = [
+            {
+              tokenAddress: tokenNonFormattedAddress,
+              tokenDistributions: convertedTokenDistributions,
+              tokenAllowance,
+              sufficientAllowanceSet: true,
+              tokenSymbol,
+            },
+          ];
+          // dispatch action to store to update distribution token details
+          dispatch(storeDistributionTokensDetails(tokenDetails));
+        }
+      }
+    });
+  };
+
   /**Method to handle metamask error states
    * @param error error object received from metamask
    */
@@ -111,33 +196,34 @@ const DistributeToken = (props: Props) => {
   // submit distribution request.
   const onSubmit = async (event) => {
     event.preventDefault();
+    const tokenAddresses = [];
+    const tokenDistributionAmounts = [];
 
-    // TODO: Jillo - update this to make use of looping on the contract side
-    // to set distributions for multiple tokens at once.
+    ERC20TokenFields.forEach((ERC20TokenField) => {
+      const {
+        tokenNonFormattedAddress,
+        tokenAllowance,
+        tokenDecimals,
+      } = ERC20TokenField;
 
-    // set distribution only for the first token for now
-    const currentIndex = 0;
-    const {
-      tokenNonFormattedAddress,
-      tokenAllowance,
-      tokenDecimals,
-      tokenSymbol,
-    } = ERC20TokenFields[currentIndex];
+      // get correct wei amount to send to the contract.
+      const distributionAmount = getWeiAmount(
+        tokenAllowance,
+        tokenDecimals,
+        true
+      );
 
-    // get correct wei amount to send to the contract.
-    const distributionAmount = getWeiAmount(
-      tokenAllowance,
-      tokenDecimals,
-      true
-    );
+      tokenAddresses.push(tokenNonFormattedAddress);
+      tokenDistributionAmounts.push(distributionAmount);
+    });
 
     setMetamaskConfirmationPending(true);
     try {
       await syndicateContractInstance.methods
         .managerSetDistributions(
           syndicateAddress,
-          [tokenNonFormattedAddress],
-          [distributionAmount]
+          tokenAddresses,
+          tokenDistributionAmounts
         )
         .send({ from: account, gasLimit: 800000 })
         .on("transactionHash", () => {
@@ -151,76 +237,22 @@ const DistributeToken = (props: Props) => {
           setSuccessfulDistribution(true);
           setSubmitting(false);
           setMetamaskDistributionError("");
-          const { managerSetterDistributionERC20Address } = receipt.events;
-          const { returnValues } = managerSetterDistributionERC20Address;
-          const { amount } = returnValues;
-          const tokenDistribution = getWeiAmount(amount, tokenDecimals, false);
-          updateERC20TokenValue(
-            "tokenDistribution",
-            currentIndex,
-            tokenDistribution
-          );
-
-          // get current distributions.
-          const totalCurrentDistributions = await getTotalDistributions(
-            syndicateContractInstance,
-            syndicateAddress,
-            tokenNonFormattedAddress
-          );
-
-          const convertedTokenDistributions = getWeiAmount(
-            totalCurrentDistributions,
-            tokenDecimals,
-            false
-          );
-
-          const distributionTokensAllowanceDetailsCopy = [
-            ...distributionTokensAllowanceDetails,
-          ];
-
-          if (distributionTokensAllowanceDetails.length) {
-            // check if token has a distribution set already
-            for (
-              let i = 0;
-              i < distributionTokensAllowanceDetailsCopy.length;
-              i++
-            ) {
-              const { tokenAddress } = distributionTokensAllowanceDetailsCopy[
-                i
-              ];
-              if (tokenAddress === tokenNonFormattedAddress) {
-                distributionTokensAllowanceDetailsCopy[i][
-                  "tokenDistributions"
-                ] = convertedTokenDistributions;
-                distributionTokensAllowanceDetailsCopy[i][
-                  "tokenAllowance"
-                ] = tokenAllowance;
-                distributionTokensAllowanceDetailsCopy[i][
-                  "sufficientAllowanceSet"
-                ] = true;
-
-                // dispatch action to store to update distribution token details
-                dispatch(
-                  storeDistributionTokensDetails(
-                    distributionTokensAllowanceDetailsCopy
-                  )
-                );
-                return;
-              }
+          // process result
+          if (receipt) {
+            // For a single distribution token, an single event in
+            // emitted, and thus managerSetterDistribution will be an
+            // object whereas for multiple distribution tokens, multiple
+            // events are emitted and therefore managerSetterDistribution // will be an array
+            const { managerSetterDistribution } = receipt.events;
+            if (Array.isArray(managerSetterDistribution)) {
+              managerSetterDistribution.forEach((distributionEvent) => {
+                // multiple events will be emitted for distributions set for
+                // new tokenAddresses
+                processSetDistributionEvent(distributionEvent);
+              });
+            } else {
+              processSetDistributionEvent(managerSetterDistribution);
             }
-          } else {
-            //store new details if the token doesn't have previous allowance
-            const tokenDetails = [
-              {
-                tokenAddress: tokenNonFormattedAddress,
-                tokenDistributions: convertedTokenDistributions,
-                tokenAllowance,
-                sufficientAllowanceSet: true,
-                tokenSymbol,
-              },
-            ];
-            // dispatch action to store to update distribution token details
-            dispatch(storeDistributionTokensDetails(tokenDetails));
           }
 
           // dispatch new syndicate details
@@ -1071,20 +1103,4 @@ const DistributeToken = (props: Props) => {
   );
 };
 
-const mapStateToProps = ({
-  web3Reducer,
-  syndicateInstanceReducer: { syndicateContractInstance },
-  syndicatesReducer: { syndicate },
-  tokenDetailsReducer: { distributionTokensAllowanceDetails },
-}) => {
-  const { web3, submitting } = web3Reducer;
-  return {
-    web3,
-    submitting,
-    syndicateContractInstance,
-    syndicate,
-    distributionTokensAllowanceDetails,
-  };
-};
-
-export default connect(mapStateToProps)(DistributeToken);
+export default DistributeToken;
