@@ -1,3 +1,55 @@
+import { Syndicate } from "@/@types/syndicate";
+import Web3 from "web3";
+
+type InitialState = {
+  web3: {
+    library: any;
+    status: string;
+    showConnectionModal: boolean;
+    isErrorModalOpen: boolean;
+    error: any;
+    address: any;
+    web3: Web3;
+    web3contractInstance: any;
+  };
+  syndicates: Syndicate[];
+  syndicate: Syndicate;
+  syndicateFound: boolean;
+  syndicateAddressIsValid: boolean;
+  loading: boolean;
+  submitting: boolean;
+  showWalletModal: boolean;
+  syndicateInvestments: any[];
+  syndicateAction: {
+    withdraw: boolean;
+    deposit: boolean;
+    managerView: boolean;
+    generalView: boolean;
+  };
+  syndicateDetails: {
+    totalDepositors: number;
+    totalDeposits: number;
+    totalWithdrawn: number;
+    profitSharedToSyndicateProtocol: number;
+    profitSharedToSyndicateLead: number;
+    totalOperatingFees: number;
+  };
+  syndicateLPDetails: {
+    myDeposits: number;
+    myPercentageOfThisSyndicate: number;
+    myDistributionsToDate: number;
+    myAddressAllowed: boolean;
+    myWithdrawalsToDate: number;
+    withdrawalsToDepositPercentage: number;
+  };
+  syndicateDetailsLoading: boolean;
+  syndicateLPDetailsLoading: boolean;
+  syndicateContractInstance: { [key: string]: any };
+  depositTokenAllowanceDetails: [];
+  distributionTokensAllowanceDetails: [];
+  oneSyndicatePerAccount: boolean;
+};
+
 /**
  * This holds the application state.
  *
@@ -5,7 +57,7 @@
  * web3contractInstance = new web3.eth.Contract(Syndicate.abi,contractAddress);
  * All the properties of the web3 object are set during wallet connection
  */
-export const initialState = {
+export const initialState: InitialState = {
   web3: {
     library: null,
     status: "disconnected",
