@@ -5,7 +5,6 @@ import {
   DISCONNECTED,
   HIDE_ERROR_MODAL,
   HIDE_WALLET_MODAL,
-  SET_PROVIDER,
   SET_SYNDICATE_ACTION,
   SET_WEB3,
   SHOW_ERROR_MODAL,
@@ -26,13 +25,6 @@ export const setLibrary = (data) => async (dispatch) => {
   return dispatch({
     data,
     type: SET_WEB3,
-  });
-};
-
-export const setProvider = (data) => async (dispatch) => {
-  return dispatch({
-    data,
-    type: SET_PROVIDER,
   });
 };
 

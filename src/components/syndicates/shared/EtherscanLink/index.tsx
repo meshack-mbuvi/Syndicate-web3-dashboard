@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import React from "react";
 import { ExternalLinkIcon } from "src/components/iconWrappers";
 
 interface LinkProp {
@@ -24,8 +24,7 @@ export const EtherscanLink = (props: LinkProp) => {
       href={`${etherscanLink}${contractAddress}`}
       target="_blank"
       className="text-blue-cyan px-2 flex"
-      rel="noreferrer"
-    >
+      rel="noreferrer">
       view on etherscan <ExternalLinkIcon className="ml-2" />
     </a>
   );

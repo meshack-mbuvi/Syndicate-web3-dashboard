@@ -1,8 +1,12 @@
-import { getPastEvents } from "@/helpers/retrieveEvents";
+import { syndicateInterface } from "@/components/shared/interfaces";
+import { getSyndicate } from "@/helpers";
+import { getEvents } from "@/helpers/retrieveEvents";
 import { formatDate } from "@/utils";
 import { basisPointsToPercentage, getWeiAmount } from "@/utils/conversions";
+import { pastDate } from "@/utils/dateUtils";
 import { ERC20TokenDetails } from "@/utils/ERC20Methods";
-import { getSyndicate } from "src/helpers/syndicate";
+import { TokenMappings } from "src/utils/tokenMappings";
+import { web3 } from "src/utils/web3Utils";
 import {
   ADD_NEW_INVESTMENT,
   ALL_SYNDICATES,
@@ -10,8 +14,6 @@ import {
   SET_LOADING,
   SYNDICATE_BY_ADDRESS,
 } from "../types";
-import { TokenMappings } from "src/utils/tokenMappings";
-import { web3 } from "src/utils/web3Utils";
 
 interface SyndicateInfo {
   [address: string]: {
@@ -21,7 +23,9 @@ interface SyndicateInfo {
 }
 
 /**
- * Read all syndicates from all events and add them to the store
+ * This function does the following:
+ * 1. get all managerCreatedSyndicate and memberDeposited filtered by account connected
+ * 2. process all the above events to get all syndicates for this account
  * The syndicates added to store are those the wallet account has invested in
  * or is leading
  * @param {object} data
@@ -30,18 +34,28 @@ interface SyndicateInfo {
 export const addSyndicates = (data) => async (dispatch) => {
   if (!data) return;
 
-  const { account, web3contractInstance } = data;
+  const { account, syndicateContractInstance } = data;
   try {
     dispatch({
       data: true,
       type: SET_LOADING,
     });
-    const events = await getPastEvents(web3contractInstance);
 
     const syndicates = [];
     const syndicateInfo: SyndicateInfo = {};
 
-    await events.forEach(async (event) => {
+    const managerCreatedSyndicateEvents = await getEvents(
+      syndicateContractInstance,
+      "managerCreatedSyndicate",
+      { syndicateAddress: account }
+    );
+
+    const memberDepositedEvents = await getEvents(
+      syndicateContractInstance,
+      "memberDeposited"
+    );
+
+    await managerCreatedSyndicateEvents.forEach(async (event) => {
       const { syndicateAddress } = event.returnValues;
       // check whether event belongs to this wallet owner
       if (syndicateAddress === account) {
@@ -51,33 +65,32 @@ export const addSyndicates = (data) => async (dispatch) => {
           depositors: 0,
         };
       }
+    });
 
-      // get syndicates this wallet has invested in
-      if (event.event === "lpInvestedInSyndicate") {
-        const address = event.returnValues["0"];
-        const lpAddress = event.returnValues["1"];
+    await memberDepositedEvents.forEach(async (event) => {
+      const address = event.returnValues["0"];
+      const memberAddress = event.returnValues["1"];
 
-        // record depositors for each address
-        if (syndicateInfo[address] && syndicateInfo[address]["depositors"]) {
-          syndicateInfo[address]["depositors"] += 1;
-        } else {
-          syndicateInfo[address] = { ...syndicateInfo[address], depositors: 1 };
-        }
+      // record depositors for each address
+      if (syndicateInfo[address] && syndicateInfo[address]["depositors"]) {
+        syndicateInfo[address]["depositors"] += 1;
+      } else {
+        syndicateInfo[address] = { ...syndicateInfo[address], depositors: 1 };
+      }
 
-        // save activities for the syndicate
-        if (syndicateInfo[address] && syndicateInfo[address]["activities"]) {
-          syndicateInfo[address]["activities"] += 1;
-        } else {
-          syndicateInfo[address] = { ...syndicateInfo[address], activities: 1 };
-        }
+      // save activities for the syndicate
+      if (syndicateInfo[address] && syndicateInfo[address]["activities"]) {
+        syndicateInfo[address]["activities"] += 1;
+      } else {
+        syndicateInfo[address] = { ...syndicateInfo[address], activities: 1 };
+      }
 
-        if (lpAddress === account) {
-          // we need to check whether lpAddress matches this wallet account
-          // meaning this account has invested in this wallet
-          // we use default for fields missing in the event
-          // syndicate details will be retrieved during display
-          syndicates.push(address);
-        }
+      if (memberAddress === account) {
+        // we need to check whether lpAddress matches this wallet account
+        // meaning this account has invested in this wallet
+        // we use default for fields missing in the event
+        // syndicate details will be retrieved during display
+        syndicates.push(address);
       }
     });
 
@@ -108,7 +121,7 @@ export const addSyndicates = (data) => async (dispatch) => {
       try {
         const syndicate = await getSyndicate(
           filteredSyndicateAddresses[index],
-          web3contractInstance
+          syndicateContractInstance
         );
         const { syndicateAddress } = syndicate;
         /**
@@ -125,13 +138,15 @@ export const addSyndicates = (data) => async (dispatch) => {
         console.log({ error });
       }
     }
+
     dispatch({
-      data: false,
-      type: SET_LOADING,
-    });
-    return dispatch({
       data: allSyndicates,
       type: ALL_SYNDICATES,
+    });
+
+    return dispatch({
+      data: false,
+      type: SET_LOADING,
     });
   } catch (error) {
     dispatch({
@@ -169,11 +184,20 @@ export const getSyndicateByAddress = (
       .getSyndicateValues(syndicateAddress)
       .call();
 
-    const tokenDecimals = await getTokenDecimals(
-      syndicate.depositERC20ContractAddress
-    );
+    const tokenDecimals = await getTokenDecimals(syndicate.depositERC20Address);
 
     const syndicateDetails = processSyndicateDetails(syndicate, tokenDecimals);
+
+    const managerSetterDistributionERC20Address = await getEvents(
+      syndicateContractInstance,
+      "managerSetterDistributionERC20Address",
+      { syndicateAddress }
+    );
+
+    const distributionsEnabled =
+      managerSetterDistributionERC20Address.length && !syndicate.open
+        ? true
+        : false;
 
     // set these incase they are not reset
     dispatch({
@@ -183,7 +207,7 @@ export const getSyndicateByAddress = (
 
     // set syndicate details
     return dispatch({
-      data: syndicateDetails,
+      data: { ...syndicateDetails, distributionsEnabled },
       type: SYNDICATE_BY_ADDRESS,
     });
   } catch (err) {
@@ -214,37 +238,41 @@ export const getTokenDecimals = async (contractAddress: string) => {
  * @param tokenDecimals
  * @returns {} an object containing formatted syndicate data
  */
-export const processSyndicateDetails = (syndicateData, tokenDecimals = 18) => {
+export const processSyndicateDetails = (
+  syndicateData,
+  tokenDecimals = 18
+): syndicateInterface => {
   if (!syndicateData) return;
   let {
-    modifiable,
-    creationDate,
-    syndicateProfitShareBasisPoints,
-    managerPerformanceFeeBasisPoints,
-    managerManagementFeeBasisPoints,
-    depositERC20ContractAddress,
-    syndicateOpen,
-    currentManager,
-    distributionsEnabled,
-    maxTotalDeposits,
-    totalDeposits,
-    minDeposit,
-    maxDeposit,
-    totalLPs,
-    maxLPs,
     allowlistEnabled,
+    dateClose,
+    dateCreation,
+    depositERC20Address,
+    depositMaxMember,
+    depositMaxTotal,
+    depositMinMember,
+    depositTotal,
+    managerCurrent,
+    managerFeeAddress,
+    managerManagementFeeBasisPoints,
+    managerPending,
+    managerPerformanceFeeBasisPoints,
+    modifiable,
+    numMembersCurrent,
+    numMembersMax,
+    syndicateProfitShareBasisPoints,
+    version,
+    open,
   } = syndicateData;
 
-  const closeDate = formatDate(
-    new Date(parseInt(syndicateData.closeDate) * 1000)
-  );
+  const closeDate = formatDate(new Date(parseInt(dateClose) * 1000));
 
   // get deposit token symbol
   let depositERC20TokenSymbol = "";
   const mappedTokenAddress = Object.keys(TokenMappings).find(
     (key) =>
       web3.utils.toChecksumAddress(key) ===
-      web3.utils.toChecksumAddress(depositERC20ContractAddress)
+      web3.utils.toChecksumAddress(depositERC20Address)
   );
   if (mappedTokenAddress) {
     depositERC20TokenSymbol = TokenMappings[mappedTokenAddress];
@@ -257,7 +285,7 @@ export const processSyndicateDetails = (syndicateData, tokenDecimals = 18) => {
    * seconds. We multiply by 1000 to convert to milliseconds and then
    * convert this to javascript date object
    */
-  const createdDate = formatDate(new Date(parseInt(creationDate) * 1000));
+  const createdDate = formatDate(new Date(parseInt(dateCreation) * 1000));
 
   const profitShareToSyndicateProtocol = basisPointsToPercentage(
     syndicateProfitShareBasisPoints
@@ -271,35 +299,33 @@ export const processSyndicateDetails = (syndicateData, tokenDecimals = 18) => {
     managerManagementFeeBasisPoints
   );
 
-  const openToDeposits = syndicateOpen;
-  maxTotalDeposits = getWeiAmount(maxTotalDeposits, tokenDecimals, false);
-
-  totalDeposits = getWeiAmount(totalDeposits, tokenDecimals, false);
-  minDeposit = getWeiAmount(minDeposit, tokenDecimals, false);
-
-  maxDeposit = getWeiAmount(maxDeposit, tokenDecimals, false);
+  const depositsEnabled =
+    !pastDate(new Date(parseInt(dateCreation) * 1000)) && open;
 
   return {
-    minDeposit,
-    maxDeposit,
-    maxTotalDeposits,
+    open,
+    managerFeeAddress,
+    version,
+    depositsEnabled,
+    depositMinMember: getWeiAmount(depositMinMember, tokenDecimals, false),
+    depositMaxMember: getWeiAmount(depositMaxMember, tokenDecimals, false),
+    depositMaxTotal: getWeiAmount(depositMaxTotal, tokenDecimals, false),
     profitShareToSyndicateProtocol,
     profitShareToSyndicateLead,
-    openToDeposits,
-    totalDeposits,
+    depositTotal: getWeiAmount(depositTotal, tokenDecimals, false),
     closeDate,
     createdDate,
     allowlistEnabled,
-    depositERC20ContractAddress,
-    currentManager,
-    syndicateOpen,
-    distributionsEnabled,
+    depositERC20Address,
+    managerCurrent,
+    managerPending,
     managerManagementFeeBasisPoints,
-    maxLPs,
+    numMembersMax,
     modifiable,
     tokenDecimals,
     depositERC20TokenSymbol,
-    totalLPs,
-    totalDepositors: totalLPs,
+    numMembersCurrent,
+    syndicateProfitShareBasisPoints,
+    managerPerformanceFeeBasisPoints: profitShareToSyndicateLead,
   };
 };

@@ -34,10 +34,10 @@ import {
   allowListEnabledToolTip,
   closeDateToolTip,
   confirmCreateSyndicateSubText,
-  emailAddressToolTip,
-  fullNameToolTip,
   depositTokenToolTip,
+  emailAddressToolTip,
   expectedAnnualOperatingFeesToolTip,
+  fullNameToolTip,
   loaderSubtext,
   maximumDepositToolTip,
   maxLpsToolTip,
@@ -52,6 +52,10 @@ import {
 } from "../shared/Constants";
 import { EtherscanLink } from "../shared/EtherscanLink";
 
+interface Props {
+  showModal: boolean;
+  setShowModal: Function;
+}
 /**
  * Diplays all syndicates.
  * The main groups for syndicates are active and inactive
@@ -59,13 +63,16 @@ import { EtherscanLink } from "../shared/EtherscanLink";
  * At the top-right of the page, there is a create button which opens a modal
  * with a form to create a new syndicate
  */
-const CreateSyndicate = (props: any) => {
-  // retrieve contract details
+const CreateSyndicate = (props: Props) => {
   const { showModal, setShowModal } = props;
 
-  const {
-    web3: { account, web3 },
-  } = useSelector((state: RootState) => state.web3Reducer);
+  const { web3: web3Instance } = useSelector(
+    (state: RootState) => state.web3Reducer
+  );
+
+  if (web3Instance) {
+    var { account, web3 } = web3Instance;
+  }
 
   const { syndicateContractInstance } = useSelector(
     (state: RootState) => state.syndicateInstanceReducer
@@ -91,10 +98,7 @@ const CreateSyndicate = (props: any) => {
     profitShareToSyndProtocolError,
     setProfitShareToSyndProtocolError,
   ] = useState("");
-  const [
-    primaryERC20ContractAddressError,
-    setPrimaryERC20ContractAddressError,
-  ] = useState("");
+  const [depositERC20AddressError, setDepositERC20AddressError] = useState("");
   const [maxDepositsError, setMaxDepositsError] = useState("");
   const [minDepositsError, setMinDepositsError] = useState("");
   const [maxTotalDepositsError, setMaxTotalDepositsError] = useState("");
@@ -115,10 +119,9 @@ const CreateSyndicate = (props: any) => {
   const [emailAddress, setEmailAddress] = useState<string>("");
 
   // set defualt to our test DAI address
-  const [
-    primaryERC20ContractAddress,
-    setPrimaryERC20ContractAddress,
-  ] = useState("0xc3dbf84abb494ce5199d5d4d815b10ec29529ff8");
+  const [depositERC20Address, setDepositERC20Address] = useState(
+    "0xc3dbf84abb494ce5199d5d4d815b10ec29529ff8"
+  );
   const [maxDeposits, setMaxDeposits] = useState("");
   const [minDeposits, setMinDeposits] = useState("");
   const [maxLPs, setMaxLPs] = useState("");
@@ -144,8 +147,8 @@ const CreateSyndicate = (props: any) => {
   const [depositTokenDecimals, setDepositTokenDecimals] = useState<number>(18);
 
   /** get the number of decimal places for the deposit ERC20 */
-  const getTokenDecimals = async (depositERC20ContractAddress) => {
-    const ERC20Details = new ERC20TokenDetails(depositERC20ContractAddress);
+  const getTokenDecimals = async (depositERC20Address) => {
+    const ERC20Details = new ERC20TokenDetails(depositERC20Address);
     const tokenDecimals = await ERC20Details.getTokenDecimals();
     if (tokenDecimals) {
       setDepositTokenDecimals(parseInt(tokenDecimals));
@@ -163,14 +166,14 @@ const CreateSyndicate = (props: any) => {
     fullNameError ||
     emailAddressError ||
     profitShareToSyndProtocolError ||
-    primaryERC20ContractAddressError ||
+    depositERC20AddressError ||
     maxDepositsError ||
     maxTotalDepositsError ||
     maxLPsError ||
     expectedAnnualOperatingFeesError ||
     profitShareToSyndicateLeadError ||
     !profitShareToSyndicateLead ||
-    !primaryERC20ContractAddress ||
+    !depositERC20Address ||
     !expectedAnnualOperatingFees ||
     !profitShareToSyndicateLead ||
     !syndicateProfitSharePercent ||
@@ -205,19 +208,19 @@ const CreateSyndicate = (props: any) => {
     setEmailAddress(value);
   };
 
-  const handlesetPrimaryERC20ContractAddress = (event: any) => {
+  const handlesetDepositERC20Address = (event: any) => {
     event.preventDefault();
     const { value } = event.target;
-    setPrimaryERC20ContractAddress(value);
+    setDepositERC20Address(value);
 
     if (!value.trim()) {
-      setPrimaryERC20ContractAddressError("Deposit token is required");
+      setDepositERC20AddressError("Deposit token is required");
     } else if (!web3.utils.isAddress(value)) {
-      setPrimaryERC20ContractAddressError(
+      setDepositERC20AddressError(
         "Deposit token should be a valid ERC20 address"
       );
     } else {
-      setPrimaryERC20ContractAddressError("");
+      setDepositERC20AddressError("");
       // get number of decimal places for the ERC20.
       getTokenDecimals(value);
     }
@@ -402,78 +405,80 @@ const CreateSyndicate = (props: any) => {
      */
     closeModal();
 
+    /**
+     * Convert maxDeposits, totalMaxDeposits and syndicateProfitSharePercent
+     * to wei since the contract does not take normal javascript numbers
+     */
+    const syndicateProfitShareBasisPoints = `${
+      parseFloat(syndicateProtocolProfitSharePercent) * 100
+    }`;
+
+    /// 2% management fee (200 basis points).
+    /// This is displayed in the UI as "Expected Annual Operating Fees"
+    /// on the Create Syndicate page.
+    // SO to get the correct value from the UI, we take the % passed
+    // and multiply by 100 eg 2% would be (2/100)* 10000=> 2 * 100 = 200 basis points
+
+    // use the user provided values, otherwise use defaults for min and max fields.
+    const depositMinMember = minDeposits
+      ? getWeiAmount(minDeposits, depositTokenDecimals, true)
+      : getWeiAmount("0", depositTokenDecimals, true);
+
+    const depositMaxMember = maxDeposits
+      ? getWeiAmount(maxDeposits, depositTokenDecimals, true)
+      : MAX_INTEGER;
+
+    const numMembersMax = maxLPs ? maxLPs.toString() : MAX_INTEGER;
+    const depositMaxTotal = maxTotalDeposits
+      ? getWeiAmount(maxTotalDeposits, depositTokenDecimals, true)
+      : MAX_INTEGER;
+
+    const managerManagementFeeBasisPoints = `${
+      parseFloat(expectedAnnualOperatingFees) * 100
+    }`;
+
+    const managerPerformanceFeeBasisPoints = `${
+      parseFloat(profitShareToSyndicateLead) * 100
+    }`;
+
+    const dateClose = Math.round(new Date(selectedDate).getTime() / 1000);
+    setShowWalletConfirmationModal(true);
+
+    // submit offchain data
+    const encode = (data) => {
+      return Object.keys(data)
+        .map(
+          (key) => encodeURIComponent(key) + "=" + encodeURIComponent(data[key])
+        )
+        .join("&");
+    };
+
+    await fetch("/", {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: encode({
+        "form-name": "offChainData",
+        fullName,
+        emailAddress,
+        syndicateAddress: account,
+      }),
+    });
+
+    // The name of CreateSyndicate function and order of function parameters
+    // has changed in the recent version so we need to find the correct function
+    // to call based on the contract version
     try {
-      /**
-       * Convert maxDeposits, totalMaxDeposits and syndicateProfitSharePercent
-       * to wei since the contract does not take normal javascript numbers
-       */
-      const syndicateProfitShareBasisPoints = `${
-        parseFloat(syndicateProtocolProfitSharePercent) * 100
-      }`;
-
-      /// 2% management fee (200 basis points).
-      /// This is displayed in the UI as "Expected Annual Operating Fees"
-      /// on the Create Syndicate page.
-      // SO to get the correct value from the UI, we take the % passed
-      // and multiply by 100 eg 2% would be (2/100)* 10000=> 2 * 100 = 200 basis points
-
-      // use the user provided values, otherwise use defaults for mim and max fields.
-      const wMinDeposits = minDeposits
-        ? getWeiAmount(minDeposits, depositTokenDecimals, true)
-        : getWeiAmount("0", depositTokenDecimals, true);
-
-      const wMaxDeposits = maxDeposits
-        ? getWeiAmount(maxDeposits, depositTokenDecimals, true)
-        : MAX_INTEGER;
-
-      const wMaxLPs = maxLPs ? maxLPs.toString() : MAX_INTEGER;
-      const wMaxTotalDeposits = maxTotalDeposits
-        ? getWeiAmount(maxTotalDeposits, depositTokenDecimals, true)
-        : MAX_INTEGER;
-
-      const managerManagementFeeBasisPoints = `${
-        parseFloat(expectedAnnualOperatingFees) * 100
-      }`;
-
-      const managerPerformanceFeeBasisPoints = `${
-        parseFloat(profitShareToSyndicateLead) * 100
-      }`;
-
-      const closeDate = Math.round(new Date(selectedDate).getTime() / 1000);
-      setShowWalletConfirmationModal(true);
-
-      // submit offchain data
-      const encode = (data) => {
-        return Object.keys(data)
-          .map(
-            (key) =>
-              encodeURIComponent(key) + "=" + encodeURIComponent(data[key])
-          )
-          .join("&");
-      };
-
-      await fetch("/", {
-        method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: encode({
-          "form-name": "offChainData",
-          fullName,
-          emailAddress,
-          syndicateAddress: account,
-        }),
-      });
-
       await syndicateContractInstance.methods
-        .createSyndicate(
-          primaryERC20ContractAddress,
-          wMinDeposits,
-          wMaxDeposits,
-          wMaxTotalDeposits,
-          wMaxLPs,
-          closeDate,
-          syndicateProfitShareBasisPoints,
+        .managerCreateSyndicate(
           managerManagementFeeBasisPoints,
           managerPerformanceFeeBasisPoints,
+          syndicateProfitShareBasisPoints,
+          numMembersMax,
+          depositERC20Address,
+          depositMinMember,
+          depositMaxMember,
+          depositMaxTotal,
+          dateClose,
           allowlistEnabled,
           modifiable
         )
@@ -489,9 +494,7 @@ const CreateSyndicate = (props: any) => {
           dispatch(setSubmitting(true));
         })
         .on("receipt", async () => {
-          // we can process the transaction data here together with emitted
-
-          dispatch(addSyndicates(props.web3));
+          dispatch(addSyndicates(web3Instance));
           // createSyndicate event
           dispatch(setSubmitting(false));
 
@@ -665,20 +668,17 @@ const CreateSyndicate = (props: any) => {
           closeModal,
           customWidth: "w-full lg:w-3/5",
         }}
-        title="Create New Syndicate"
-      >
+        title="Create New Syndicate">
         <form
           name="offChainData"
           method="post"
           data-netlify="true"
-          onSubmit={onSubmit}
-        >
+          onSubmit={onSubmit}>
           <input type="hidden" name="form-name" value="offChainData" />
           {/* modal sub title */}
           <div
             className="flex justify-start mb-1 text-blue font-medium 
-          text-center leading-8 text-lg"
-          >
+          text-center leading-8 text-lg">
             <p className="text-blue-light ml-4">Offchain Data</p>
           </div>
 
@@ -714,8 +714,7 @@ const CreateSyndicate = (props: any) => {
           {/* modal sub title */}
           <div
             className="flex justify-start mb-1 text-blue font-medium 
-          text-center leading-8 text-lg"
-          >
+          text-center leading-8 text-lg">
             <p className="text-blue-light ml-4">Onchain Data</p>
           </div>
 
@@ -736,11 +735,11 @@ const CreateSyndicate = (props: any) => {
               <TextInput
                 {...{
                   label: "Deposit Token:",
-                  error: primaryERC20ContractAddressError,
+                  error: depositERC20AddressError,
                   tooltip: depositTokenToolTip,
                 }}
-                value={primaryERC20ContractAddress}
-                onChange={handlesetPrimaryERC20ContractAddress}
+                value={depositERC20Address}
+                onChange={handlesetDepositERC20Address}
                 name="depositToken"
                 placeholder="Please provide an ERC20 token address"
               />
@@ -805,8 +804,7 @@ const CreateSyndicate = (props: any) => {
                 <div className="flex mr-2 w-1/2 justify-end">
                   <label
                     htmlFor="closeDate"
-                    className="block pt-2 text-black text-sm font-medium"
-                  >
+                    className="block pt-2 text-black text-sm font-medium">
                     Close Date:
                   </label>
                 </div>
@@ -863,8 +861,7 @@ const CreateSyndicate = (props: any) => {
                 <div className="mr-2 w-1/2 mt-1 flex justify-end">
                   <label
                     htmlFor="profitShareToSyndProtocol"
-                    className="block pt-2 text-black text-sm font-medium"
-                  >
+                    className="block pt-2 text-black text-sm font-medium">
                     Profit Share to Syndicate Protocol:
                   </label>
                 </div>
@@ -872,8 +869,7 @@ const CreateSyndicate = (props: any) => {
                 {/* shows 4 equal grids used to get the input for profit share */}
                 <div className="w-4/5 flex justify-between">
                   <div
-                    className={`grid grid-cols-4 w-4/5 border h-12 gray-85 flex-grow rounded-md`}
-                  >
+                    className={`grid grid-cols-4 w-4/5 border h-12 gray-85 flex-grow rounded-md`}>
                     <button
                       className={`flex justify-center pt-3 border-r focus:outline-none ${
                         syndicateProfitSharePercent == "0.5"
@@ -881,8 +877,7 @@ const CreateSyndicate = (props: any) => {
                           : "gray-85"
                       }`}
                       onClick={() => updateProfitShareToSyndProtocol(0.5)}
-                      type="button"
-                    >
+                      type="button">
                       0.5%
                     </button>
 
@@ -895,8 +890,7 @@ const CreateSyndicate = (props: any) => {
                       onClick={() => {
                         updateProfitShareToSyndProtocol(1);
                       }}
-                      type="button"
-                    >
+                      type="button">
                       1%
                     </button>
 
@@ -909,8 +903,7 @@ const CreateSyndicate = (props: any) => {
                       type="button"
                       onClick={() => {
                         updateProfitShareToSyndProtocol(3);
-                      }}
-                    >
+                      }}>
                       3%
                     </button>
 
@@ -999,8 +992,7 @@ const CreateSyndicate = (props: any) => {
               customClasses={`rounded-full bg-blue-light w-auto px-10 py-2 text-lg ${
                 validated ? "" : "opacity-50"
               }`}
-              disabled={validated ? false : true}
-            >
+              disabled={validated ? false : true}>
               Launch
             </Button>
           </div>
@@ -1019,8 +1011,7 @@ const CreateSyndicate = (props: any) => {
       <PendingStateModal
         {...{
           show: submitting,
-        }}
-      >
+        }}>
         <div className="modal-header mb-4 font-medium text-center leading-8 text-lg">
           {pendingState}
         </div>
@@ -1039,8 +1030,7 @@ const CreateSyndicate = (props: any) => {
           setShowErrorMessage,
           setErrorMessage,
           errorMessage,
-        }}
-      ></ErrorModal>
+        }}></ErrorModal>
 
       {/* show success modal */}
       <Modal
@@ -1049,8 +1039,7 @@ const CreateSyndicate = (props: any) => {
           closeModal: () => setShowSuccessModal(false),
           type: "success",
           customWidth: "w-5/12",
-        }}
-      >
+        }}>
         <div className="flex flex-col justify-center m-auto mb-4">
           <div className="flex align-center justify-center my-2 mb-6">
             <img src="/images/checkCircle.svg" className="w-16" />
@@ -1060,7 +1049,7 @@ const CreateSyndicate = (props: any) => {
               Syndicate Successfully Launched
             </p>
             <p className="font-whyte leading-8 text-sm text-gray-500 mt-4">
-              Your syndicate's permanent address is:
+              Your syndicate&apos;s permanent address is:
             </p>
 
             <span className="font-whyte leading-8 p-1 my-2 rounded-sm text-sm text-gray-500 bg-gray-93 mb-4">
@@ -1074,8 +1063,7 @@ const CreateSyndicate = (props: any) => {
                 <input
                   disabled
                   className="font-whyte text-sm sm:text-base word-break p-2 overflow-hidden overflow-x-scroll border border-blue-light rounded-full"
-                  value={`${window.location.origin}/syndicates/${account}/deposit`}
-                ></input>
+                  value={`${window.location.origin}/syndicates/${account}/deposit`}></input>
               </div>
               <div className="flex align-center justify-center mx-auto my-2">
                 {copied ? (
@@ -1086,8 +1074,7 @@ const CreateSyndicate = (props: any) => {
                   <>
                     <CopyToClipboard
                       text={`${window.location.origin}/syndicates/${account}/deposit`}
-                      onCopy={handleOnCopy}
-                    >
+                      onCopy={handleOnCopy}>
                       <p className="flex font-whyte text-sm cursor-pointer hover:opacity-80 text-gray-nightrider">
                         <img
                           src="/images/copy.svg"

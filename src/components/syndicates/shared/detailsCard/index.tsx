@@ -1,11 +1,10 @@
+import { InfoIcon } from "@/components/iconWrappers";
 import React from "react";
 import { useSelector } from "react-redux";
-import { RootState } from "src/redux/store";
-import { SectionCard } from "../sectionCard";
 import { SkeletonLoader } from "src/components/skeletonLoader";
-import { InfoIcon } from "@/components/iconWrappers";
-
+import { RootState } from "src/redux/store";
 import { syndicateDetailsConstants } from "../Constants";
+import { SectionCard } from "../sectionCard";
 
 /**
  * @param {} props
@@ -96,8 +95,7 @@ export const DetailsCard = (props: {
             <div
               className={`flex justify-between items-center sm:my-4 ${
                 syndicateDetails ? "w-7/12" : "w-full"
-              }`}
-            >
+              }`}>
               {showSkeletonLoader ? (
                 <SkeletonLoader
                   height="9"

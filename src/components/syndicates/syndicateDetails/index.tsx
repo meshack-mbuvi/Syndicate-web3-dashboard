@@ -1,11 +1,22 @@
+import { syndicateInterface } from "@/components/shared/interfaces";
+import ManagerSetAllowance from "@/containers/managerActions/setAllowances";
+import { getEvents } from "@/helpers/retrieveEvents";
+import { RootState } from "@/redux/store";
+import { getWeiAmount, onlyUnique } from "@/utils/conversions";
+import { ERC20TokenDetails } from "@/utils/ERC20Methods";
 import { floatedNumberWithCommas } from "@/utils/numberWithCommas";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import { connect, useDispatch, useSelector } from "react-redux";
 import { EtherscanLink } from "src/components/syndicates/shared/EtherscanLink";
+import { checkAccountAllowance } from "src/helpers/approveAllowance";
 import { setSyndicateDetails } from "src/redux/actions/syndicateDetails";
-import { storeDistributionTokensDetails, storeDepositTokenAllowance } from "src/redux/actions/tokenAllowances";
+import {
+  storeDepositTokenAllowance,
+  storeDistributionTokensDetails,
+} from "src/redux/actions/tokenAllowances";
+import ERC20ABI from "src/utils/abi/rinkeby-dai";
 // utils
 import { formatAddress } from "src/utils/formatAddress";
 import { TokenMappings } from "src/utils/tokenMappings";
@@ -19,18 +30,11 @@ import {
   profitShareToSyndicateProtocolToolTip,
   syndicateDetailsConstants,
 } from "../shared/Constants";
-import ERC20ABI from "src/utils/abi/rinkeby-dai";
-import { checkAccountAllowance } from "src/helpers/approveAllowance";
-import { getWeiAmount, onlyUnique } from "@/utils/conversions";
-import { ERC20TokenDetails } from "@/utils/ERC20Methods";
-import ManagerSetAllowance from "@/containers/managerActions/setAllowances";
-import { getPastEvents } from "@/helpers/retrieveEvents";
-import { RootState } from "@/redux/store";
 
 const SyndicateDetails = (props: {
   syndicateDetails: any;
-  lpIsManager: boolean;
-  syndicate: any;
+  accountIsManager: boolean;
+  syndicate: syndicateInterface;
   syndicateContractInstance: any;
   web3: any;
   depositTokenAllowanceDetails: any;
@@ -39,7 +43,7 @@ const SyndicateDetails = (props: {
   const {
     syndicateDetails,
     syndicate,
-    lpIsManager,
+    accountIsManager,
     web3: { web3, account },
     depositTokenAllowanceDetails,
     distributionTokensAllowanceDetails,
@@ -131,10 +135,10 @@ const SyndicateDetails = (props: {
 
   if (syndicate) {
     var {
-      openToDeposits,
+      depositsEnabled,
       distributionsEnabled,
-      depositERC20ContractAddress,
-      maxTotalDeposits,
+      depositERC20Address,
+      depositMaxTotal,
     } = syndicate;
   }
 
@@ -145,24 +149,24 @@ const SyndicateDetails = (props: {
 
   // get and set current token details
   useEffect(() => {
-    if (depositERC20ContractAddress && web3) {
+    if (depositERC20Address && web3) {
       // set up token contract
       const tokenContract = new web3.eth.Contract(
         ERC20ABI,
-        depositERC20ContractAddress
+        depositERC20Address
       );
 
       setDepositTokenContract(tokenContract);
 
       // set token symbol
-      getERC20TokenDetails(depositERC20ContractAddress);
+      getERC20TokenDetails(depositERC20Address);
     }
-  }, [depositERC20ContractAddress, web3]);
+  }, [depositERC20Address, web3]);
 
   // get allowance set on manager's account for the current depositERC20
   const getManagerDepositTokenAllowance = async () => {
     const managerDepositTokenAllowance = await checkAccountAllowance(
-      depositERC20ContractAddress,
+      depositERC20Address,
       account,
       syndicateContractInstance._address
     );
@@ -172,6 +176,7 @@ const SyndicateDetails = (props: {
       depositTokenDecimals,
       false
     );
+
     setManagerDepositsAllowance(parseFloat(managerDepositAllowance));
 
     // check if the allowance set by the manager is not enough to cover the total max. deposits.
@@ -179,17 +184,16 @@ const SyndicateDetails = (props: {
     // but is greater than zero, we'll consider this insufficient allowance.
     // The manager needs to fix this by adding more deposit token allowance to enable members
     // to withdraw their deposits.
-    const sufficientAllowanceSet =
-      +managerDepositAllowance >= +maxTotalDeposits;
+    const sufficientAllowanceSet = +managerDepositAllowance >= +depositMaxTotal;
 
     // dispatch action to store deposit token allowance details
     dispatch(
       storeDepositTokenAllowance([
         {
-          tokenAddress: depositERC20ContractAddress,
+          tokenAddress: depositERC20Address,
           tokenAllowance: managerDepositAllowance,
           tokenSymbol: depositTokenSymbol,
-          tokenDeposits: maxTotalDeposits,
+          tokenDeposits: depositMaxTotal,
           sufficientAllowanceSet,
         },
       ])
@@ -204,10 +208,10 @@ const SyndicateDetails = (props: {
   const getManagerDistributionTokensAllowances = async () => {
     const addressOfSyndicate = web3.utils.toChecksumAddress(syndicateAddress);
 
-    // get events where an LP invested in a syndicate.
-    const distributionEvents = await getPastEvents(
+    // get events where member invested in a syndicate.
+    const distributionEvents = await getEvents(
       syndicateContractInstance,
-      "setterDistribution",
+      "managerSetterDistribution",
       { syndicateAddress: addressOfSyndicate }
     );
 
@@ -215,6 +219,7 @@ const SyndicateDetails = (props: {
       // get all distributionERC20 tokens
       let distributionERC20s = [];
       let allowanceAndDistributionDetails = [];
+
       for (let i = 0; i < distributionEvents.length; i++) {
         const { distributionERC20Address } = distributionEvents[i].returnValues;
         distributionERC20s.push(distributionERC20Address);
@@ -236,7 +241,7 @@ const SyndicateDetails = (props: {
         }
 
         // get allowance set for token by the manager
-        const managerAddress = syndicate?.currentManager;
+        const managerAddress = syndicate?.managerCurrent;
         const tokenManagerAllowance = await checkAccountAllowance(
           tokenAddress,
           managerAddress,
@@ -285,8 +290,8 @@ const SyndicateDetails = (props: {
     // update local state to indicate whether all tokens have the correct allowance set
     // check if the deposit token allowances if the syndicate is still open.
     // checks will be done only if the current member is the manager.
-    if (lpIsManager) {
-      if (openToDeposits && depositTokenAllowanceDetails.length > 0) {
+    if (accountIsManager) {
+      if (depositsEnabled && depositTokenAllowanceDetails.length > 0) {
         // indexing from 0 only because there's just one primary depositERC20 token
         if (depositTokenAllowanceDetails[0].sufficientAllowanceSet === true) {
           setCorrectManagerDepositsAllowance(true);
@@ -314,9 +319,9 @@ const SyndicateDetails = (props: {
   }, [
     depositTokenAllowanceDetails,
     distributionTokensAllowanceDetails,
-    openToDeposits,
+    depositsEnabled,
     distributionsEnabled,
-    lpIsManager,
+    accountIsManager,
     account,
     syndicate,
   ]);
@@ -326,9 +331,9 @@ const SyndicateDetails = (props: {
     if (depositTokenContract && web3 && syndicateContractInstance) {
       // if the syndicate is still open to deposits, we'll check the deposit token allowance.
       // otherwise, we'll check the distributions token(s) allowance(s)
-      if (openToDeposits) {
+      if (depositsEnabled) {
         getManagerDepositTokenAllowance();
-      } else if (!openToDeposits && distributionsEnabled) {
+      } else if (!depositsEnabled && distributionsEnabled) {
         getManagerDistributionTokensAllowances();
       }
     }
@@ -337,14 +342,14 @@ const SyndicateDetails = (props: {
   // set syndicate cummulative values
   useEffect(() => {
     if (syndicate) {
-      const { totalDeposits, totalDepositors } = syndicate;
+      const { depositTotal, numMembersCurrent } = syndicate;
       setSyndicateCummulativeDetails([
         {
           header: "Total Deposits",
           subText: `${floatedNumberWithCommas(
-            totalDeposits
-          )} ${depositTokenSymbol} (${totalDepositors} ${
-            parseInt(totalDepositors) === 1 ? "depositor" : "depositors"
+            depositTotal
+          )} ${depositTokenSymbol} (${numMembersCurrent} ${
+            parseInt(numMembersCurrent) === 1 ? "depositor" : "depositors"
           })`,
         },
       ]);
@@ -399,10 +404,10 @@ const SyndicateDetails = (props: {
   /**
    * method used to get details on the current ERC20 token
    */
-  const getERC20TokenDetails = async (depositERC20ContractAddress: string) => {
+  const getERC20TokenDetails = async (depositERC20Address: string) => {
     // getting token symbol doesn't seem to return a valid hex value
     // using this manual mapping for the time being
-    const tokenAddress = depositERC20ContractAddress;
+    const tokenAddress = depositERC20Address;
     const mappedTokenAddress = Object.keys(TokenMappings).find(
       (key) => key.toLowerCase() == tokenAddress.toLowerCase()
     );
@@ -411,7 +416,7 @@ const SyndicateDetails = (props: {
     }
 
     // get token decimals
-    const tokenDetails = new ERC20TokenDetails(depositERC20ContractAddress);
+    const tokenDetails = new ERC20TokenDetails(depositERC20Address);
     const tokenDecimals = await tokenDetails.getTokenDecimals();
     setDepositTokenDecimals(tokenDecimals);
   };
@@ -425,7 +430,7 @@ const SyndicateDetails = (props: {
       // These values will be used in other components that might
       // need them.
       const {
-        depositERC20ContractAddress,
+        depositERC20Address,
         profitShareToSyndicateLead,
         profitShareToSyndicateProtocol,
       } = syndicate;
@@ -433,7 +438,7 @@ const SyndicateDetails = (props: {
       dispatch(
         setSyndicateDetails(
           syndicateContractInstance,
-          depositERC20ContractAddress,
+          depositERC20Address,
           profitShareToSyndicateLead,
           profitShareToSyndicateProtocol,
           syndicate,
@@ -467,7 +472,7 @@ const SyndicateDetails = (props: {
   //manager text to display to indicate withdrawals availability
   let managerWithdrawalText = "Withdrawals available.";
   if (
-    (openToDeposits && !correctManagerDepositsAllowance) ||
+    (depositsEnabled && !correctManagerDepositsAllowance) ||
     (distributionsEnabled && !correctManagerDistributionsAllowance)
   ) {
     managerWithdrawalText = "Limited withdrawals available.";
@@ -480,8 +485,8 @@ const SyndicateDetails = (props: {
         subTitle: "Closed to Deposits",
         text: "Withdrawals not available",
         syndicate,
-        lpIsManager,
-        openToDeposits,
+        accountIsManager,
+        depositsEnabled,
         showManagerSetAllowancesModal,
         correctManagerDepositsAllowance,
         correctManagerDistributionsAllowance,
@@ -493,18 +498,20 @@ const SyndicateDetails = (props: {
     />
   );
 
-  if (openToDeposits && !distributionsEnabled) {
+  if (depositsEnabled && !distributionsEnabled) {
     syndicateBadge = (
       <BadgeCard
         {...{
           title: "Status",
-          subTitle: lpIsManager
+          subTitle: accountIsManager
             ? "Open and accepting deposits"
             : "Open to Deposits.",
-          text: lpIsManager ? managerWithdrawalText : "Depositing available.",
+          text: accountIsManager
+            ? managerWithdrawalText
+            : "Depositing available.",
           syndicate,
-          lpIsManager,
-          openToDeposits,
+          accountIsManager,
+          depositsEnabled,
           correctManagerDepositsAllowance,
           correctManagerDistributionsAllowance,
           distributionsEnabled,
@@ -521,10 +528,12 @@ const SyndicateDetails = (props: {
         {...{
           title: "Status",
           subTitle: "Operating",
-          text: lpIsManager ? managerWithdrawalText : "Withdrawals available.",
+          text: accountIsManager
+            ? managerWithdrawalText
+            : "Withdrawals available.",
           syndicate,
-          lpIsManager,
-          openToDeposits,
+          accountIsManager,
+          depositsEnabled,
           showManagerSetAllowancesModal,
           correctManagerDistributionsAllowance,
           distributionsEnabled,
@@ -601,16 +610,15 @@ const SyndicateDetails = (props: {
             className="font-normal text-blue-cyan"
             href="#"
             target="_blank"
-            rel="noreferrer"
-          >
+            rel="noreferrer">
             {syndicateDetailsLinkText}
           </a>
         </p>
       </div>
       <ManagerSetAllowance
         {...{
-          maxTotalDeposits,
-          openToDeposits,
+          depositMaxTotal,
+          depositsEnabled,
           depositTokenContract,
           showManagerSetAllowances,
           hideManagerSetAllowances,
@@ -618,7 +626,7 @@ const SyndicateDetails = (props: {
           depositTokenSymbol,
           depositTokenDecimals,
           syndicateContractInstance,
-          depositERC20ContractAddress,
+          depositERC20Address,
         }}
       />
     </div>

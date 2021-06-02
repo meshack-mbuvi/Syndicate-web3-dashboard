@@ -3,7 +3,7 @@ import React from "react";
 import { NavBarNavItem } from "./navbarItems";
 import Transaction from "./transaction";
 import { UserProfileWrapper } from "./UserProfileWrapper";
-import Wallet from "./wallet";
+import WalletComponent from "./wallet";
 
 const navbarLinks = [{ url: "/syndicates", urlText: "Syndicates" }];
 
@@ -17,8 +17,7 @@ const Header = () => {
             <div>
               <a
                 href="#"
-                className="flex items-center py-5 md:px-2 text-gray-700 hover:text-gray-900"
-              >
+                className="flex items-center py-5 md:px-2 text-gray-700 hover:text-gray-900">
                 <Link href="/">
                   <a className="flex items-center">
                     <span className="sr-only">Syndicate</span>
@@ -46,7 +45,7 @@ const Header = () => {
               <Transaction />
             </div>
             <UserProfileWrapper>
-              <Wallet />
+              <WalletComponent />
             </UserProfileWrapper>
           </div>
         </div>

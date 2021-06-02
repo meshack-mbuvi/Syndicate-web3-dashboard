@@ -1,28 +1,28 @@
 import { TextInput } from "@/components/inputs";
 import Modal from "@/components/modal";
-import { checkAccountAllowance } from "@/helpers/approveAllowance";
-import { useRouter } from "next/router";
-import React, { useEffect, useState } from "react";
-import { connect } from "react-redux";
-import Button from "src/components/buttons";
-import { ERC20TokenDetails } from "@/utils/ERC20Methods";
-import ERC20ABI from "@/utils/abi/erc20";
-import { getWeiAmount } from "@/utils/conversions";
-import { getMetamaskError } from "@/helpers/metamaskError";
-import { getTotalDistributions } from "@/helpers/distributions";
-import { formatAddress } from "@/utils/formatAddress";
-import { SyndicateActionLoader } from "@/components/syndicates/shared/syndicateActionLoader";
 import {
   constants,
   metamaskConstants,
   walletConfirmConstants,
 } from "@/components/syndicates/shared/Constants";
-import { TokenMappings } from "@/utils/tokenMappings";
-import { floatedNumberWithCommas } from "@/utils/numberWithCommas";
-import { Validate } from "@/utils/validators";
-import { storeDistributionTokensDetails } from "@/redux/actions/tokenAllowances";
 import { managerActionTexts } from "@/components/syndicates/shared/Constants/managerActions";
+import { SyndicateActionLoader } from "@/components/syndicates/shared/syndicateActionLoader";
+import { checkAccountAllowance } from "@/helpers/approveAllowance";
+import { getTotalDistributions } from "@/helpers/distributions";
+import { getMetamaskError } from "@/helpers/metamaskError";
 import { getSyndicateByAddress } from "@/redux/actions/syndicates";
+import { storeDistributionTokensDetails } from "@/redux/actions/tokenAllowances";
+import ERC20ABI from "@/utils/abi/erc20";
+import { getWeiAmount } from "@/utils/conversions";
+import { ERC20TokenDetails } from "@/utils/ERC20Methods";
+import { formatAddress } from "@/utils/formatAddress";
+import { floatedNumberWithCommas } from "@/utils/numberWithCommas";
+import { TokenMappings } from "@/utils/tokenMappings";
+import { Validate } from "@/utils/validators";
+import { useRouter } from "next/router";
+import React, { useEffect, useState } from "react";
+import { connect } from "react-redux";
+import Button from "src/components/buttons";
 interface Props {
   dispatch: Function;
   showDistributeToken: boolean;
@@ -53,7 +53,6 @@ const DistributeToken = (props: Props) => {
 
   const router = useRouter();
   const { syndicateAddress } = router.query;
-  const [loading, setLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
   const ERC20TokenDefaults = {
@@ -131,13 +130,14 @@ const DistributeToken = (props: Props) => {
       tokenDecimals,
       true
     );
+
     setMetamaskConfirmationPending(true);
     try {
       await syndicateContractInstance.methods
-        .setDistribution(
+        .managerSetDistributions(
           syndicateAddress,
-          tokenNonFormattedAddress,
-          distributionAmount
+          [tokenNonFormattedAddress],
+          [distributionAmount]
         )
         .send({ from: account, gasLimit: 800000 })
         .on("transactionHash", () => {
@@ -151,8 +151,8 @@ const DistributeToken = (props: Props) => {
           setSuccessfulDistribution(true);
           setSubmitting(false);
           setMetamaskDistributionError("");
-          const { setterDistribution } = receipt.events;
-          const { returnValues } = setterDistribution;
+          const { managerSetterDistributionERC20Address } = receipt.events;
+          const { returnValues } = managerSetterDistributionERC20Address;
           const { amount } = returnValues;
           const tokenDistribution = getWeiAmount(amount, tokenDecimals, false);
           updateERC20TokenValue(
@@ -471,14 +471,11 @@ const DistributeToken = (props: Props) => {
     }
   };
 
-  /** This method handle allowance approvals for a given token
-   * The allowance has to be set before the manager can set distributions.
-   */
-
   const [
     metamaskConfirmationPending,
     setMetamaskConfirmationPending,
   ] = useState<boolean>(false);
+
   const [metamaskApprovalError, setMetamaskApprovalError] = useState<string>(
     ""
   );
@@ -502,7 +499,9 @@ const DistributeToken = (props: Props) => {
     setMetamaskConfirmationPending(false);
   };
 
-  // set allowance for tokens
+  /** This method handle allowance approvals for a given token
+   * The allowance has to be set before the manager can set distributions.
+   */
   const handleTokenAllowanceApproval = async (event, index) => {
     event.preventDefault();
     const allowanceAmount = ERC20TokenFields[index].tokenAllowance;
@@ -534,72 +533,76 @@ const DistributeToken = (props: Props) => {
           setMetamaskConfirmationPending(false);
         })
         .on("receipt", async (receipt) => {
-          // approval transaction successful
-          const { Approval } = receipt.events;
-          const { returnValues } = Approval;
-          const { wad } = returnValues;
-          const managerApprovedAllowance = getWeiAmount(
-            wad,
-            tokenDecimals,
-            false
-          );
-
-          updateERC20TokenValue("tokenAllowanceApproved", index, true);
-          updateERC20TokenValue(
-            "tokenAllowanceAmount",
-            index,
-            `${managerApprovedAllowance}`
-          );
-
           setSubmittingAllowanceApproval(false);
 
-          // get current distributions.
-          const totalCurrentDistributions = await getTotalDistributions(
-            syndicateContractInstance,
-            syndicateAddress,
-            tokenNonFormattedAddress
-          );
+          // approval transaction successful
+          // sometimes the event is empty
+          const { Approval } = receipt.events;
 
-          const convertedTokenDistributions = getWeiAmount(
-            totalCurrentDistributions,
-            tokenDecimals,
-            false
-          );
-          if (distributionTokensAllowanceDetails.length) {
-            const sufficientAllowanceSet =
-              +managerApprovedAllowance >= +totalCurrentDistributions;
-            // dispatch action to store to update distribution token details
-            const distributionTokensAllowanceDetailsCopy = [
-              ...distributionTokensAllowanceDetails,
-            ];
-
-            // check if token has a distribution set already
-            for (
-              let i = 0;
-              i < distributionTokensAllowanceDetailsCopy.length;
-              i++
-            ) {
-              const { tokenAddress } = distributionTokensAllowanceDetailsCopy[
-                i
-              ];
-              if (tokenAddress === tokenNonFormattedAddress) {
-                distributionTokensAllowanceDetailsCopy[i][
-                  "tokenDistributions"
-                ] = convertedTokenDistributions;
-                distributionTokensAllowanceDetailsCopy[i][
-                  "tokenAllowance"
-                ] = managerApprovedAllowance;
-                distributionTokensAllowanceDetailsCopy[i][
-                  "sufficientAllowanceSet"
-                ] = sufficientAllowanceSet;
-              }
-            }
-
-            dispatch(
-              storeDistributionTokensDetails(
-                distributionTokensAllowanceDetailsCopy
-              )
+          if (Approval) {
+            const { returnValues } = Approval;
+            const { wad } = returnValues;
+            const managerApprovedAllowance = getWeiAmount(
+              wad,
+              tokenDecimals,
+              false
             );
+
+            updateERC20TokenValue("tokenAllowanceApproved", index, true);
+            updateERC20TokenValue(
+              "tokenAllowanceAmount",
+              index,
+              `${managerApprovedAllowance}`
+            );
+
+            // get current distributions.
+            const totalCurrentDistributions = await getTotalDistributions(
+              syndicateContractInstance,
+              syndicateAddress,
+              tokenNonFormattedAddress
+            );
+
+            const convertedTokenDistributions = getWeiAmount(
+              totalCurrentDistributions,
+              tokenDecimals,
+              false
+            );
+            if (distributionTokensAllowanceDetails.length) {
+              const sufficientAllowanceSet =
+                +managerApprovedAllowance >= +totalCurrentDistributions;
+              // dispatch action to store to update distribution token details
+              const distributionTokensAllowanceDetailsCopy = [
+                ...distributionTokensAllowanceDetails,
+              ];
+
+              // check if token has a distribution set already
+              for (
+                let i = 0;
+                i < distributionTokensAllowanceDetailsCopy.length;
+                i++
+              ) {
+                const { tokenAddress } = distributionTokensAllowanceDetailsCopy[
+                  i
+                ];
+                if (tokenAddress === tokenNonFormattedAddress) {
+                  distributionTokensAllowanceDetailsCopy[i][
+                    "tokenDistributions"
+                  ] = convertedTokenDistributions;
+                  distributionTokensAllowanceDetailsCopy[i][
+                    "tokenAllowance"
+                  ] = managerApprovedAllowance;
+                  distributionTokensAllowanceDetailsCopy[i][
+                    "sufficientAllowanceSet"
+                  ] = sufficientAllowanceSet;
+                }
+              }
+
+              dispatch(
+                storeDistributionTokensDetails(
+                  distributionTokensAllowanceDetailsCopy
+                )
+              );
+            }
           }
         })
         .on("error", (error) => {
@@ -768,8 +771,7 @@ const DistributeToken = (props: Props) => {
           titleFontSize: "text-3xl",
           loading: showLoader,
           showCloseButton,
-        }}
-      >
+        }}>
         {showLoader ? (
           <SyndicateActionLoader
             {...{
@@ -799,9 +801,7 @@ const DistributeToken = (props: Props) => {
                 {setDistributionsTitleText}
               </p>
               <div className="bg-gray-99 border border-gray-200 rounded-xl">
-                {loading ? (
-                  <div className="space-y-4 text-center loader">Loading</div>
-                ) : !syndicate?.openToDeposits ? (
+                {!syndicate?.depositsEnabled ? (
                   <div>
                     {/* syndicate address */}
                     <div className="border-b-1 border-gray-200 pt-4 pb-2 px-8">
@@ -842,12 +842,10 @@ const DistributeToken = (props: Props) => {
                           key={index}
                           onSubmit={(event) =>
                             handleTokenAllowanceApproval(event, index)
-                          }
-                        >
+                          }>
                           <div
                             className="flex justify-center flex-col xl:flex-row py-4 px-8 border-b-1 border-gray-200"
-                            key={index}
-                          >
+                            key={index}>
                             <TextInput
                               {...{
                                 label: "Token Address",
@@ -880,8 +878,7 @@ const DistributeToken = (props: Props) => {
                                 disableApprovalButton
                                   ? `items-start`
                                   : `items-end`
-                              }`}
-                            >
+                              }`}>
                               <Button
                                 type="submit"
                                 customClasses={`rounded-md bg-blue-light border-2 border-blue-light w-full mr-4 xl:mr-0 xl:w-33 mt-2 px-6 py-1 h-9 text-sm font-light mb-3 ${
@@ -890,8 +887,7 @@ const DistributeToken = (props: Props) => {
                                     : ``
                                 }`}
                                 disabled={disableApprovalButton}
-                                approved={tokenAllowanceApproved}
-                              >
+                                approved={tokenAllowanceApproved}>
                                 {tokenAllowanceApproved
                                   ? `Approved`
                                   : `Approve`}
@@ -904,8 +900,7 @@ const DistributeToken = (props: Props) => {
                     <div className="flex justify-center items-center py-6">
                       <p
                         className="text-sm text-blue-light font-light cursor-pointer w-fit-content"
-                        onClick={() => addERC20Fields()}
-                      >
+                        onClick={() => addERC20Fields()}>
                         <img
                           className="inline w-6 mr-1"
                           src="/images/plusSign.svg"
@@ -929,135 +924,128 @@ const DistributeToken = (props: Props) => {
                 {distributionDetailsTitleText}
               </p>
               <div className="bg-gray-99 border border-gray-200 mt-4 py-8 rounded-xl p-4">
-                {loading ? (
-                  <div className="space-y-4 text-center loader">Loading</div>
-                ) : (
-                  <div className="space-y-4">
-                    <div className="flex flex-row justify-center">
-                      <div className="mr-2 w-7/12 flex justify-end">
-                        <label
-                          htmlFor="syndicateAddress"
-                          className="block text-black text-sm font-medium"
-                        >
-                          {`Profit Share to Syndicate Lead (${syndicate?.profitShareToSyndicateLead}%):`}
-                        </label>
-                      </div>
-
-                      <div className="w-5/12 flex justify-between">
-                        <ul>
-                          {ERC20TokenFields.map((token) => {
-                            const {
-                              profitShareToSyndicateLead,
-                              tokenSymbol,
-                            } = token;
-                            return (
-                              <>
-                                {+profitShareToSyndicateLead >= 0 &&
-                                tokenSymbol ? (
-                                  <li>
-                                    <p className="text-sm font-normal leading-5 text-black px-4">
-                                      {floatedNumberWithCommas(
-                                        profitShareToSyndicateLead
-                                      )}{" "}
-                                      {tokenSymbol}
-                                    </p>
-                                  </li>
-                                ) : (
-                                  <p className="text-sm font-normal leading-5 text-black px-4">
-                                    0.00
-                                  </p>
-                                )}
-                              </>
-                            );
-                          })}
-                        </ul>
-                      </div>
+                <div className="space-y-4">
+                  <div className="flex flex-row justify-center">
+                    <div className="mr-2 w-7/12 flex justify-end">
+                      <label
+                        htmlFor="syndicateAddress"
+                        className="block text-black text-sm font-medium">
+                        {`Profit Share to Syndicate Lead (${syndicate?.profitShareToSyndicateLead}%):`}
+                      </label>
                     </div>
 
-                    <div className="flex flex-row justify-center">
-                      <div className="mr-2 w-7/12 flex justify-end">
-                        <label
-                          htmlFor="syndicateAddress"
-                          className="block text-black text-sm font-medium"
-                        >
-                          {`Profit Share to Syndicate Protocol (${syndicate?.profitShareToSyndicateProtocol}%):`}
-                        </label>
-                      </div>
-
-                      <div className="w-5/12 flex justify-between">
-                        {" "}
-                        <ul>
-                          {ERC20TokenFields.map((token) => {
-                            const {
-                              profitShareToSyndicateProtocol,
-                              tokenSymbol,
-                            } = token;
-                            return (
-                              <>
-                                {tokenSymbol &&
-                                +profitShareToSyndicateProtocol >= 0 ? (
-                                  <li>
-                                    <p className="text-sm font-normal leading-5 text-black px-4">
-                                      {floatedNumberWithCommas(
-                                        profitShareToSyndicateProtocol
-                                      )}{" "}
-                                      {tokenSymbol}
-                                    </p>
-                                  </li>
-                                ) : (
+                    <div className="w-5/12 flex justify-between">
+                      <ul>
+                        {ERC20TokenFields.map((token) => {
+                          const {
+                            profitShareToSyndicateLead,
+                            tokenSymbol,
+                          } = token;
+                          return (
+                            <>
+                              {+profitShareToSyndicateLead >= 0 &&
+                              tokenSymbol ? (
+                                <li>
                                   <p className="text-sm font-normal leading-5 text-black px-4">
-                                    0.00
+                                    {floatedNumberWithCommas(
+                                      profitShareToSyndicateLead
+                                    )}{" "}
+                                    {tokenSymbol}
                                   </p>
-                                )}
-                              </>
-                            );
-                          })}
-                        </ul>
-                      </div>
-                    </div>
-
-                    <div className="flex flex-row justify-center">
-                      <div className="mr-2 w-7/12 flex justify-end">
-                        <label
-                          htmlFor="syndicateAddress"
-                          className="block text-black text-sm font-medium"
-                        >
-                          Available for Members to Withdraw:
-                        </label>
-                      </div>
-
-                      <div className="w-5/12 flex justify-between">
-                        <ul>
-                          {ERC20TokenFields.map((token) => {
-                            const { availableToWithdraw, tokenSymbol } = token;
-                            return (
-                              <>
-                                {tokenSymbol && +availableToWithdraw >= 0 ? (
-                                  <li>
-                                    <p className="text-sm font-medium leading-5 text-black px-4">
-                                      {floatedNumberWithCommas(
-                                        availableToWithdraw
-                                      )}{" "}
-                                      {tokenSymbol}
-                                    </p>
-                                  </li>
-                                ) : (
-                                  <p className="text-sm font-normal leading-5 text-black px-4">
-                                    0.00
-                                  </p>
-                                )}
-                              </>
-                            );
-                          })}
-                        </ul>
-                      </div>
+                                </li>
+                              ) : (
+                                <p className="text-sm font-normal leading-5 text-black px-4">
+                                  0.00
+                                </p>
+                              )}
+                            </>
+                          );
+                        })}
+                      </ul>
                     </div>
                   </div>
-                )}
+
+                  <div className="flex flex-row justify-center">
+                    <div className="mr-2 w-7/12 flex justify-end">
+                      <label
+                        htmlFor="syndicateAddress"
+                        className="block text-black text-sm font-medium">
+                        {`Profit Share to Syndicate Protocol (${syndicate?.profitShareToSyndicateProtocol}%):`}
+                      </label>
+                    </div>
+
+                    <div className="w-5/12 flex justify-between">
+                      {" "}
+                      <ul>
+                        {ERC20TokenFields.map((token) => {
+                          const {
+                            profitShareToSyndicateProtocol,
+                            tokenSymbol,
+                          } = token;
+                          return (
+                            <>
+                              {tokenSymbol &&
+                              +profitShareToSyndicateProtocol >= 0 ? (
+                                <li>
+                                  <p className="text-sm font-normal leading-5 text-black px-4">
+                                    {floatedNumberWithCommas(
+                                      profitShareToSyndicateProtocol
+                                    )}{" "}
+                                    {tokenSymbol}
+                                  </p>
+                                </li>
+                              ) : (
+                                <p className="text-sm font-normal leading-5 text-black px-4">
+                                  0.00
+                                </p>
+                              )}
+                            </>
+                          );
+                        })}
+                      </ul>
+                    </div>
+                  </div>
+
+                  <div className="flex flex-row justify-center">
+                    <div className="mr-2 w-7/12 flex justify-end">
+                      <label
+                        htmlFor="syndicateAddress"
+                        className="block text-black text-sm font-medium">
+                        Available for Members to Withdraw:
+                      </label>
+                    </div>
+
+                    <div className="w-5/12 flex justify-between">
+                      <ul>
+                        {ERC20TokenFields.map((token) => {
+                          const { availableToWithdraw, tokenSymbol } = token;
+                          return (
+                            <>
+                              {tokenSymbol && +availableToWithdraw >= 0 ? (
+                                <li>
+                                  <p className="text-sm font-medium leading-5 text-black px-4">
+                                    {floatedNumberWithCommas(
+                                      availableToWithdraw
+                                    )}{" "}
+                                    {tokenSymbol}
+                                  </p>
+                                </li>
+                              ) : (
+                                <p className="text-sm font-normal leading-5 text-black px-4">
+                                  0.00
+                                </p>
+                              )}
+                            </>
+                          );
+                        })}
+                      </ul>
+                    </div>
+                  </div>
+                </div>
               </div>
 
               {/* submit button */}
-              {!syndicate?.openToDeposits ? (
+              {!syndicate?.depositsEnabled ? (
                 <div className="flex my-4 w-full justify-center py-2">
                   {submitting ? (
                     <div className="loader"></div>
@@ -1068,8 +1056,7 @@ const DistributeToken = (props: Props) => {
                         customClasses={`rounded-full bg-blue-light w-auto px-10 py-2 text-lg ${
                           enableDistributeButton ? "" : "opacity-50"
                         }`}
-                        disabled={enableDistributeButton ? false : true}
-                      >
+                        disabled={enableDistributeButton ? false : true}>
                         Distribute Tokens
                       </Button>
                     </form>

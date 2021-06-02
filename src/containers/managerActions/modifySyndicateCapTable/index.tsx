@@ -13,9 +13,12 @@ import {
 } from "@/components/syndicates/shared/Constants";
 import { getMetamaskError } from "@/helpers";
 import { showWalletModal } from "@/redux/actions";
-import { getSyndicateByAddress } from "@/redux/actions/syndicates";
+import {
+  getSyndicateByAddress,
+  getTokenDecimals,
+} from "@/redux/actions/syndicates";
 import { RootState } from "@/redux/store";
-import { divideIfNotByZero, getWeiAmount, toEther } from "@/utils/conversions";
+import { divideIfNotByZero, getWeiAmount } from "@/utils/conversions";
 import { TokenMappings } from "@/utils/tokenMappings";
 import { isZeroAddress, Validate } from "@/utils/validators";
 import { useRouter } from "next/router";
@@ -80,6 +83,7 @@ const ModifySyndicateCapTable = (props: Props) => {
   const [currentERC20, setCurrentERC20] = useState<string>("DAI");
   const [currentOwnership, setCurrentOwnership] = useState(0);
   const [newOwnership, setNewOwnership] = useState(0);
+  const [tokenDecimal, setTokenDecimal] = useState(18);
   /**
    * When a depositor address is set, find its current syndicate ownership
    */
@@ -94,13 +98,22 @@ const ModifySyndicateCapTable = (props: Props) => {
     }
   }, [amount]);
 
+  // retrieve tokenDecimals
+  useEffect(() => {
+    if (syndicate) {
+      getTokenDecimals(syndicate.depositERC20Address).then((tokenDecimal) => {
+        setTokenDecimal(tokenDecimal);
+      });
+    }
+  }, [syndicate]);
+
   // set token symbol based on deposit token address
   // we'll manually map the token symbol for now.
   // we'll also set the token decimals of the deposit/Withdrawal ERC20 token here
   useEffect(() => {
     if (syndicate) {
       // set token symbol based on token address
-      const tokenAddress = syndicate.depositERC20ContractAddress;
+      const tokenAddress = syndicate.depositERC20Address;
       const mappedTokenAddress = Object.keys(TokenMappings).find(
         (key) => key.toLowerCase() == tokenAddress.toLowerCase()
       );
@@ -147,12 +160,12 @@ const ModifySyndicateCapTable = (props: Props) => {
    * @returns
    */
   const getCurrentDepositAmount = async (depositorAddress: string) => {
-    const syndicateLPInfo = await syndicateContractInstance.methods
-      .getSyndicateLPInfo(syndicateAddress, depositorAddress)
+    const memberInfo = await syndicateContractInstance.methods
+      .getMemberInfo(syndicateAddress, depositorAddress)
       .call();
 
     const lpDeposits = getWeiAmount(
-      syndicateLPInfo[0],
+      memberInfo[0],
       syndicate.tokenDecimals,
       false
     );
@@ -241,16 +254,24 @@ const ModifySyndicateCapTable = (props: Props) => {
 
     try {
       setShowWalletConfirmationModal(true);
-      const amountInWei = toEther(amount);
+      const amountInWei = getWeiAmount(amount.toString(), tokenDecimal, true);
+      // These values should be passed as arrays
+      const depositorAddresses = [depositorAddress];
+      const depositorAmounts = [amountInWei];
 
       await syndicateContractInstance.methods
-        .setDepositForLP(syndicateAddress, depositorAddress, amountInWei)
+        .managerSetDepositForMembers(
+          syndicateAddress,
+          depositorAddresses,
+          depositorAmounts
+        )
         .send({ from: account, gasLimit: 800000 })
         .on("transactionHash", () => {
           setShowWalletConfirmationModal(false);
           setSubmitting(true);
         })
-        .on("receipt", () => {
+        .on("receipt", (receipt) => {
+          console.log({ receipt });
           setSubmitting(false);
 
           setShowFinalState(true);
@@ -260,9 +281,11 @@ const ModifySyndicateCapTable = (props: Props) => {
           setSubmitting(false);
         })
         .on("error", (error) => {
+          console.log({ error });
           handleError(error);
         });
     } catch (error) {
+      console.log({ error });
       handleError(error);
     }
   };
@@ -273,7 +296,7 @@ const ModifySyndicateCapTable = (props: Props) => {
    */
   const calculateCurrentOwnership = () => {
     const currentOwnership =
-      divideIfNotByZero(+currentDepositAmount, +syndicate.totalDeposits) * 100;
+      divideIfNotByZero(+currentDepositAmount, +syndicate.depositTotal) * 100;
     setCurrentOwnership(+currentOwnership.toFixed(2));
   };
 
@@ -281,7 +304,7 @@ const ModifySyndicateCapTable = (props: Props) => {
   // Setting deposit for the member will either reduce or increase total deposits
   const calculateNewOnwershipOfSyndicate = () => {
     const newSyndicateDeposits =
-      +syndicate.totalDeposits + +amount - +currentDepositAmount;
+      +syndicate.depositTotal + +amount - +currentDepositAmount;
 
     // new member deposit will be overriden with amount set
     const percentOwnership =

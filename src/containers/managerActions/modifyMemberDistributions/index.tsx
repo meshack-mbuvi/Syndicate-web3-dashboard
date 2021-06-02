@@ -11,7 +11,7 @@ import {
   waitTransactionTobeConfirmedText,
 } from "@/components/syndicates/shared/Constants";
 import { getMetamaskError } from "@/helpers";
-import { getPastEvents } from "@/helpers/retrieveEvents";
+import { getEvents } from "@/helpers/retrieveEvents";
 import { showWalletModal } from "@/redux/actions";
 import { getSyndicateByAddress } from "@/redux/actions/syndicates";
 import { RootState } from "@/redux/store";
@@ -75,7 +75,7 @@ const ModifyMemberDistributions = (props: Props) => {
     currentClaimedDistributions,
     setCurrentClaimedDistributions,
   ] = useState("0");
-  const [lpDeposits, setLpDeposits] = useState("");
+  const [memberDeposits, setMemberDeposits] = useState("");
 
   const [depositorAddressError, setDepositAddressError] = useState("");
 
@@ -142,17 +142,17 @@ const ModifyMemberDistributions = (props: Props) => {
    */
   const getCurrentClaimedAmount = async () => {
     try {
-      const syndicateLPInfo = await syndicateContractInstance.methods
-        .getSyndicateLPInfo(syndicateAddress, memberAddress)
+      const memberInfo = await syndicateContractInstance.methods
+        .getMemberInfo(syndicateAddress, memberAddress)
         .call();
-      setLpDeposits(syndicateLPInfo[0]);
-      if (syndicateLPInfo[0] === "0") {
+      setMemberDeposits(memberInfo[0]);
+      if (memberInfo[0] === "0") {
         setDepositAddressError(
           "Member address has zero deposits in this Syndicate"
         );
       }
 
-      setCurrentClaimedDistributions(syndicateLPInfo[1]);
+      setCurrentClaimedDistributions(memberInfo[1]);
     } catch (error) {
       setCurrentClaimedDistributions("0");
       setDepositAddressError(
@@ -167,9 +167,9 @@ const ModifyMemberDistributions = (props: Props) => {
    * syndicateAddress which is the address of this syndicate.
    */
   const getDistributionERC20Address = async () => {
-    const events = await getPastEvents(
+    const events = await getEvents(
       syndicateContractInstance,
-      "setterDistribution",
+      "managerSetterDistribution",
       { syndicateAddress }
     );
 
@@ -276,8 +276,8 @@ const ModifyMemberDistributions = (props: Props) => {
       await syndicateContractInstance.methods
         .setClaimedDistributionForLP(
           syndicateAddress,
-          memberAddress,
-          distributionERC20Address,
+          [memberAddress],
+          [distributionERC20Address],
           amountInWei
         )
         .send({ from: account, gasLimit: 800000 })
@@ -319,7 +319,7 @@ const ModifyMemberDistributions = (props: Props) => {
     );
   };
 
-  const lpInvested = lpDeposits === "0" && memberAddress ? false : true;
+  const lpInvested = memberDeposits === "0" && memberAddress ? false : true;
 
   return (
     <>

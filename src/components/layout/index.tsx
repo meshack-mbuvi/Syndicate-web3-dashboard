@@ -1,10 +1,12 @@
-import { setLibrary } from "@/redux/actions/web3Provider";
+import {
+  setLibrary,
+  storeSyndicateInstance,
+} from "@/redux/actions/web3Provider";
 import { useWeb3React } from "@web3-react/core";
-import { Contract } from "ethers";
 import { parse } from "flatted";
 import PropTypes from "prop-types";
 import React, { useEffect } from "react";
-import { connect, useDispatch, useSelector } from "react-redux";
+import { connect, useDispatch } from "react-redux";
 import {
   DepositsPageBanner,
   SyndicateInBetaBanner,
@@ -26,41 +28,52 @@ export const Layout = ({ children, syndicateAction }) => {
 
   const { deposit, generalView } = syndicateAction;
   const setWeb3 = async () => {
-    let syndicateInstance = null;
+    /**
+     * set up web3 event listener here
+     * we can use to get access to all events emitted by the contract
+     *
+     */
+    const web3 = new Web3(
+      Web3.givenProvider || `${process.env.NEXT_PUBLIC_INFURA_ENDPOINT}`
+    );
+    const syndicateContractInstance = new web3.eth.Contract(
+      // @ts-ignore
+      Syndicate.abi,
+      contractAddress
+    );
+
+    let contractVersion = 0;
+
+    dispatch(storeSyndicateInstance(syndicateContractInstance));
+
+    try {
+      // This function does not exist in the older contract version
+      if (syndicateContractInstance.methods?.getContractVersion) {
+        const version = await syndicateContractInstance.methods
+          .getContractVersion()
+          .call();
+
+        contractVersion = parseInt(version);
+      }
+    } catch (error) {
+      // This section is reached when the function does not exist in the deployed contract.
+      // we set the version to 0
+      contractVersion = 0;
+    }
+
     if (library) {
-      const contract = new Contract(
-        contractAddress,
-        Syndicate.abi,
-        library.getSigner()
-      );
-
-      /**
-       * set up web3 event listener here
-       * we can use to get access to all events emitted by the contract
-       *
-       */
-      const web3 = new Web3(
-        Web3.givenProvider || `${process.env.NEXT_PUBLIC_INFURA_ENDPOINT}`
-      );
-      const web3contractInstance = new web3.eth.Contract(
-        Syndicate.abi,
-        contractAddress
-      );
-
       // set up DAI contract
       const daiContract = new web3.eth.Contract(daiABI, daiContractAddress);
 
       try {
-        syndicateInstance = await contract.deployed();
-
         return dispatch(
           setLibrary({
             library,
             account,
-            syndicateInstance,
-            web3contractInstance,
+            syndicateContractInstance,
             daiContract,
             web3,
+            contractVersion,
           })
         );
       } catch (error) {
@@ -96,7 +109,6 @@ export const Layout = ({ children, syndicateAction }) => {
       // dispatch action to start loader
       await activate(provider, undefined, true);
     } catch (error) {
-      console.log({ error });
       // clear cache if we get here
       localStorage.removeItem("cache");
     }

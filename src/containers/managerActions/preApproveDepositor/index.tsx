@@ -207,7 +207,7 @@ const PreApproveDepositor = (props: Props) => {
       setShowWalletConfirmationModal(true);
 
       await syndicateContractInstance.methods
-        .allowAddresses(syndicateAddress, newSplitArr)
+        .managerAllowAddresses(syndicateAddress, newSplitArr)
         .send({ from: account, gasLimit: 800000 })
         .on("transactionHash", () => {
           // close wallet confirmation modal

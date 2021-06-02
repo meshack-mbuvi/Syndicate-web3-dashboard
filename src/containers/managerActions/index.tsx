@@ -106,7 +106,7 @@ const ManagerActions = () => {
       setShowWalletConfirmationModal(true);
 
       await syndicateContractInstance.methods
-        .closeSyndicate(syndicateAddress)
+        .managerCloseSyndicate(syndicateAddress)
         .send({ from: account, gasLimit: 800000 })
         .on("transactionHash", () => {
           // close wallet confirmation modal
@@ -197,7 +197,7 @@ const ManagerActions = () => {
             </div>
           </div>
           {/* show set distribution option when syndicate is closed */}
-          {syndicate?.syndicateOpen ? (
+          {syndicate?.depositsEnabled ? (
             <ManagerAction
               title={"Close syndicate"}
               description={
@@ -218,7 +218,7 @@ const ManagerActions = () => {
           )}
 
           {/* show pre-approve depositor option when syndicate is open and allowList is enabled */}
-          {syndicate?.syndicateOpen && syndicate?.allowlistEnabled ? (
+          {syndicate?.depositsEnabled && syndicate?.allowlistEnabled ? (
             <ManagerAction
               title={"Pre-approve depositor addresses"}
               description={
@@ -245,19 +245,22 @@ const ManagerActions = () => {
           <div className="font-semibold tracking-widest text-sm leading-6 text-gray-matterhorn my-6 mx-4">
             MORE
           </div>
-          {!syndicate?.syndicateOpen && syndicate?.distributionsEnabled ? (
+          {!syndicate?.open && syndicate?.distributionsEnabled ? (
             <MoreManagerActions
               icon={<img src="/images/invertedInfo.svg" />}
               text={"Modify Member distributions"}
               onClickHandler={setShowModifyMemberDistribution}
             />
-          ) : (
+          ) : null}
+
+          {/* member deposits can be set if syndicate is open and modifiable */}
+          {syndicate?.open && syndicate?.modifiable ? (
             <MoreManagerActions
               icon={<img src="/images/invertedInfo.svg" />}
               text={"Overwrite syndicate cap table"}
               onClickHandler={showModifyCapTableModal}
             />
-          )}
+          ) : null}
 
           {moreActions.map(({ icon, text }) => (
             <MoreManagerActions key={text} icon={icon} text={text} />
@@ -316,8 +319,7 @@ const ManagerActions = () => {
       <PendingStateModal
         {...{
           show: submitting,
-        }}
-      >
+        }}>
         <div className="modal-header mb-4 font-medium text-center leading-8 text-2xl">
           {confirmingTransaction}
         </div>

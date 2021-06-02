@@ -1,12 +1,11 @@
-import PropTypes from "prop-types";
 import React from "react";
 
-const PageHeader = ({ children }) => {
-  return <h1 className="font-whyte-light text-white text-white text-2xl mb-2">{children}</h1>;
-};
+interface Props {
+  children: any;
+}
 
-PageHeader.propTypes = {
-  children: PropTypes.string.isRequired,
+const PageHeader = ({ children }: Props) => {
+  return <h1 className="text-white text-white text-2xl mb-2">{children}</h1>;
 };
 
 export default PageHeader;

@@ -1,4 +1,4 @@
-import { getPastEvents } from "@/helpers/retrieveEvents";
+import { getEvents } from "@/helpers/retrieveEvents";
 import { etherToNumber, toEther } from "src/utils/conversions";
 import { ERC20TokenDetails } from "src/utils/ERC20Methods";
 import { numberWithCommas } from "src/utils/numberWithCommas";
@@ -62,7 +62,7 @@ export const setSyndicateDetails = (
   setLoadingSyndicateDetails(true);
 
   // get events where an LP invested in a syndicate.
-  const lpInvestedInSyndicateEvents = await getPastEvents(
+  const lpInvestedInSyndicateEvents = await getEvents(
     syndicateContractInstance,
     "lpInvestedInSyndicate",
     { syndicateAddress }
@@ -80,7 +80,7 @@ export const setSyndicateDetails = (
   });
 
   // get syndicate event(s) where distribution was withdrawn.
-  const lpWithdrewDistributionEvents = await getPastEvents(
+  const lpWithdrewDistributionEvents = await getEvents(
     syndicateContractInstance,
     "lpWithdrewDistributionFromSyndicate",
     { syndicateAddress }

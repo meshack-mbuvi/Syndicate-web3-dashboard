@@ -1,8 +1,8 @@
+import PortfolioAndDiscover from "@/components/syndicates/portfolioAndDiscover";
 import React from "react";
 import ErrorBoundary from "src/components/errorBoundary";
 import Layout from "src/components/layout";
 import Head from "src/components/syndicates/shared/HeaderTitle";
-import ViewSyndicates from "@/components/syndicates/porfolioAndDiscover";
 
 /**
  * Diplays all syndicates.
@@ -20,8 +20,7 @@ const SyndicatesComponent = () => {
         name="offChainData"
         data-netlify="true"
         netlify-honeypot="bot-field"
-        hidden
-      >
+        hidden>
         <input type="text" name="fullName" />
         <input type="text" name="emailAddress" />
         <input type="text" name="syndicateAddress" />
@@ -29,7 +28,7 @@ const SyndicatesComponent = () => {
       <ErrorBoundary>
         <div className="w-full">
           {/* show my syndicates */}
-          <ViewSyndicates />
+          <PortfolioAndDiscover />
         </div>
       </ErrorBoundary>
     </Layout>

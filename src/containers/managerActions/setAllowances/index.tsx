@@ -1,25 +1,25 @@
-import React, { useState, useEffect } from "react";
-import { connect, useDispatch } from "react-redux";
+import Button from "@/components/buttons";
+import { TextInput } from "@/components/inputs";
+import Modal from "@/components/modal";
+import {
+  constants,
+  metamaskConstants,
+  walletConfirmConstants,
+} from "@/components/syndicates/shared/Constants";
+import { managerActionTexts } from "@/components/syndicates/shared/Constants/managerActions";
+import { SyndicateActionLoader } from "@/components/syndicates/shared/syndicateActionLoader";
+import { getMetamaskError } from "@/helpers/metamaskError";
+import { getWeiAmount } from "@/utils/conversions";
+import { floatedNumberWithCommas } from "@/utils/numberWithCommas";
+import { Validate } from "@/utils/validators";
 import { useRouter } from "next/router";
 import PropTypes from "prop-types";
-import Modal from "@/components/modal";
-import { TextInput } from "@/components/inputs";
-import Button from "@/components/buttons";
-import { Validate } from "@/utils/validators";
-import { floatedNumberWithCommas } from "@/utils/numberWithCommas";
-import { getWeiAmount } from "@/utils/conversions";
-import { getMetamaskError } from "@/helpers/metamaskError";
-import { SyndicateActionLoader } from "@/components/syndicates/shared/syndicateActionLoader";
+import React, { useEffect, useState } from "react";
+import { connect, useDispatch } from "react-redux";
 import {
   storeDepositTokenAllowance,
   storeDistributionTokensDetails,
 } from "src/redux/actions/tokenAllowances";
-import {
-  constants,
-  walletConfirmConstants,
-  metamaskConstants,
-} from "@/components/syndicates/shared/Constants";
-import { managerActionTexts } from "@/components/syndicates/shared/Constants/managerActions";
 
 interface Props {
   hideManagerSetAllowances: Function;
@@ -75,7 +75,7 @@ const ManagerSetAllowance = (props: Props) => {
   const { metamaskErrorMessageTitleText } = metamaskConstants;
 
   if (syndicate) {
-    var { maxTotalDeposits, openToDeposits, distributionsEnabled } = syndicate;
+    var { depositMaxTotal, depositsEnabled, distributionsEnabled } = syndicate;
   }
 
   // handle allowance value from the input field.
@@ -108,11 +108,11 @@ const ManagerSetAllowance = (props: Props) => {
     setMetamaskConfirmPending(true);
     // new allowance amount will be equal to the sum of the currenct allowance
     // and the new allowance amount entered into the input field.
-    if (openToDeposits) {
+    if (depositsEnabled) {
       var currentTokenAllowance =
         depositTokenAllowanceDetails[index]["tokenAllowance"];
     } else if (distributionsEnabled) {
-      var currentTokenAllowance =
+      currentTokenAllowance =
         distributionTokensAllowanceDetails[index]["tokenAllowance"];
     }
 
@@ -159,10 +159,10 @@ const ManagerSetAllowance = (props: Props) => {
 
           // dispatch new allowance details to the store
 
-          if (openToDeposits) {
+          if (depositsEnabled) {
             // check whether new allowance matches total max. deposits
             const sufficientAllowanceSet =
-              +managerApprovedAllowance >= +maxTotalDeposits;
+              +managerApprovedAllowance >= +depositMaxTotal;
 
             const {
               tokenSymbol,
@@ -174,7 +174,7 @@ const ManagerSetAllowance = (props: Props) => {
                 {
                   tokenAddress,
                   tokenAllowance: managerApprovedAllowance,
-                  tokenDeposits: maxTotalDeposits,
+                  tokenDeposits: depositMaxTotal,
                   tokenSymbol,
                   sufficientAllowanceSet,
                 },
@@ -225,7 +225,7 @@ const ManagerSetAllowance = (props: Props) => {
   // distribution/deposits texts based on whether the syndicate is open or not.
   const { distributionAmountLabel, depositAmountLabel } = managerActionTexts;
   let availableAmountLabel = distributionAmountLabel;
-  if (openToDeposits) {
+  if (depositsEnabled) {
     availableAmountLabel = depositAmountLabel;
   }
 
@@ -236,7 +236,7 @@ const ManagerSetAllowance = (props: Props) => {
   } = managerActionTexts;
 
   let informationText;
-  if (openToDeposits) {
+  if (depositsEnabled) {
     informationText = depositAllowanceInsufficientText;
   } else if (distributionsEnabled) {
     informationText = distributionAllowanceInsufficientText;
@@ -286,14 +286,14 @@ const ManagerSetAllowance = (props: Props) => {
   useEffect(() => {
     if (distributionTokensAllowanceDetails.length && distributionsEnabled) {
       setTokenAllowanceDetails(distributionTokensAllowanceDetails);
-    } else if (depositTokenAllowanceDetails.length && openToDeposits) {
+    } else if (depositTokenAllowanceDetails.length && depositsEnabled) {
       setTokenAllowanceDetails(depositTokenAllowanceDetails);
     }
   }, [depositTokenAllowanceDetails, distributionTokensAllowanceDetails]);
 
   // set correct token address
   let etherscanAddress = syndicateAddress;
-  if (openToDeposits && depositTokenAllowanceDetails.length) {
+  if (depositsEnabled && depositTokenAllowanceDetails.length) {
     const { tokenAddress } = depositTokenAllowanceDetails[0];
     etherscanAddress = tokenAddress;
   }
@@ -321,8 +321,7 @@ const ManagerSetAllowance = (props: Props) => {
         customWidth: `${showLoader ? `sm:w-1/3` : `sm:w-2/3`}`,
         loading: showLoader,
         titleFontSize: "text-3xl",
-      }}
-    >
+      }}>
       {submitting ? (
         <SyndicateActionLoader
           contractAddress={etherscanAddress}
@@ -368,7 +367,7 @@ const ManagerSetAllowance = (props: Props) => {
               // this will be assigned to either max. total deposits
               // or total token distribution.
               let totalsValue;
-              if (openToDeposits) {
+              if (depositsEnabled) {
                 const { tokenDeposits } = value;
                 // check if total deposits has been set to unlimited number
                 if (
@@ -403,8 +402,7 @@ const ManagerSetAllowance = (props: Props) => {
               return (
                 <form
                   onSubmit={(event) => handleSubmit(event, index)}
-                  key={index}
-                >
+                  key={index}>
                   {distributionsEnabled ? (
                     <p className="text-black mx-4 my-4 mt-10 text-lg font-medium leading-5">
                       {tokenSymbol} Distribution
@@ -474,8 +472,7 @@ const ManagerSetAllowance = (props: Props) => {
                         !allowanceAmount
                           ? true
                           : false
-                      }
-                    >
+                      }>
                       {distributionsEnabled
                         ? `Approve`
                         : `Approve ${floatedNumberWithCommas(

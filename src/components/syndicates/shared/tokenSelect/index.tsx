@@ -1,8 +1,8 @@
-import { Fragment, useEffect, useState } from "react";
+import { RootState } from "@/redux/store";
 import { Listbox, Transition } from "@headlessui/react";
 import { CheckIcon, SelectorIcon } from "@heroicons/react/solid";
+import React, { Fragment, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { RootState } from "@/redux/store";
 
 const classNames = (...classes) => {
   return classes.filter(Boolean).join(" ");
@@ -63,12 +63,10 @@ export const TokenSelect = (props: SelectProps) => {
               as={Fragment}
               leave="transition ease-in duration-100"
               leaveFrom="opacity-100"
-              leaveTo="opacity-0"
-            >
+              leaveTo="opacity-0">
               <Listbox.Options
                 static
-                className="absolute mt-1 w-full bg-white shadow-lg max-h-56 rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm"
-              >
+                className="absolute mt-1 w-full bg-white shadow-lg max-h-56 rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm">
                 {distributionTokensAllowanceDetails.length &&
                   distributionTokensAllowanceDetails.map((token) => (
                     <Listbox.Option
@@ -79,8 +77,7 @@ export const TokenSelect = (props: SelectProps) => {
                           "cursor-default select-none relative py-2 pl-3 pr-9"
                         )
                       }
-                      value={token}
-                    >
+                      value={token}>
                       {({ selected, active }) => (
                         <>
                           <div className="flex items-center">
@@ -88,8 +85,7 @@ export const TokenSelect = (props: SelectProps) => {
                               className={classNames(
                                 selected ? "font-semibold" : "font-normal",
                                 "ml-3 block truncate"
-                              )}
-                            >
+                              )}>
                               {token.tokenSymbol}
                             </span>
                           </div>
@@ -99,8 +95,7 @@ export const TokenSelect = (props: SelectProps) => {
                               className={classNames(
                                 active ? "text-white" : "text-indigo-600",
                                 "absolute inset-y-0 right-0 flex items-center pr-4"
-                              )}
-                            >
+                              )}>
                               <CheckIcon
                                 className="h-5 w-5"
                                 aria-hidden="true"

@@ -1,19 +1,20 @@
 /** This method gets a Syndicate's total distributions for a given ERC20
  * @param syndicateContractInstance The instance of deployed syndicate
  * @param syndicateAddress The address of the Syndicate
- * @param distributionERC20ContractAddress The address of the ERC20
+ * @param distributionERC20Address The address of the ERC20
  * to return total distributions
  * @return totalDistributions A BN. The caller needs to convert this to Javascript values
  * */
 export const getTotalDistributions = async (
   syndicateContractInstance,
   syndicateAddress,
-  distributionERC20ContractAddress: string | string[],
+  distributionERC20Address: string | string[]
 ) => {
   if (!syndicateContractInstance) return;
+
   try {
     const totalDistributions = await syndicateContractInstance.methods
-      .getTotalDistributions(syndicateAddress, distributionERC20ContractAddress)
+      .getDistributionTotal(syndicateAddress, distributionERC20Address)
       .call();
 
     return totalDistributions.toString();

@@ -1,7 +1,7 @@
 import SyndicateActions from "@/containers/syndicateActions";
-import React, { useEffect } from "react";
-import { connect, useDispatch } from "react-redux";
 import { setSyndicateAction } from "@/redux/actions/web3Provider";
+import React, { useEffect } from "react";
+import { useDispatch } from "react-redux";
 
 const SyndicateDepositView = () => {
   const dispatch = useDispatch();
@@ -26,9 +26,9 @@ const SyndicateDepositView = () => {
         generalView: false,
       };
       dispatch(setSyndicateAction(syndicateActions));
-    }
+    };
   });
   return <SyndicateActions />;
 };
 
-export default connect(null, null)(SyndicateDepositView);
+export default SyndicateDepositView;

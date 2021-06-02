@@ -1,5 +1,5 @@
 import { createWrapper } from "next-redux-wrapper";
-import { applyMiddleware, compose, createStore, Action } from "redux";
+import { Action, applyMiddleware, compose, createStore } from "redux";
 import { composeWithDevTools } from "redux-devtools-extension";
 import thunk, { ThunkAction } from "redux-thunk";
 import RootReducer from "../reducers";

@@ -40,11 +40,13 @@ const SyndicateInvestment = () => {
 
   const { syndicateAddress } = router.query;
 
-  const [lpIsManager, setLpIsManager] = useState<boolean>(false);
+  const [accountIsManager, setAccountIsManager] = useState<boolean>(false);
 
   // A manager should not access deposit page but should be redirected
   // to syndicates page
   useEffect(() => {
+    if (!router.isReady) return;
+
     if (syndicateAddress !== undefined && account !== undefined) {
       if (syndicateAddress == account) {
         router.replace(`/syndicates/${syndicateAddress}/manage`);
@@ -63,10 +65,10 @@ const SyndicateInvestment = () => {
   // check whether the current connected wallet account is the manager of the syndicate
   // we'll use this information to load the manager view
   useEffect(() => {
-    if (syndicate && syndicate.currentManager == account) {
-      setLpIsManager(true);
+    if (syndicate && syndicate.managerCurrent == account) {
+      setAccountIsManager(true);
     } else {
-      setLpIsManager(false);
+      setAccountIsManager(false);
     }
   }, [syndicate, account]);
 
@@ -128,14 +130,10 @@ const SyndicateInvestment = () => {
           ) : (
             <div className="w-full flex flex-col md:flex-row">
               <SyndicateDetails
-                lpIsManager={lpIsManager}
+                accountIsManager={accountIsManager}
                 syndicate={syndicate}
               />
-              {lpIsManager ? (
-                <ManagerActions />
-              ) : (
-                <InvestInSyndicate syndicate={syndicate} />
-              )}
+              {accountIsManager ? <ManagerActions /> : <InvestInSyndicate />}
             </div>
           )}
         </div>

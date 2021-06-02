@@ -1,0 +1,27 @@
+export interface ifRows {
+  row: {
+    active: boolean;
+    syndicateAddress: string;
+    closeDate: string;
+    createdDate: string;
+    managerCurrent: string;
+    depositERC20Address: string;
+    depositors: number;
+    depositMaxTotal: string;
+    depositsEnabled: boolean;
+    depositTotal: string;
+    distributionsEnabled: boolean;
+  };
+}
+
+export interface HeaderColumn {
+  accessor: string | (() => string);
+  Header?: string | (() => JSX.Element | string);
+  Filter?: string | (() => JSX.Element | string);
+  Cell?: string | (() => JSX.Element | string);
+  id?: string | number;
+  minWidth?: string | number;
+  maxWidth?: string | number;
+  width?: string | number;
+  showSort?: boolean | string;
+}

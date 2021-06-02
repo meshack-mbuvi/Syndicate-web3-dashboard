@@ -1,4 +1,3 @@
-import PropTypes from "prop-types";
 import React from "react";
 import { InfoIcon } from "src/components/iconWrappers";
 
@@ -36,8 +35,7 @@ export const SectionCard = (props: SectionCardProps) => {
             greenSubtext
               ? "text-base text-green-screamin leading-5"
               : "text-base leading-5"
-          }
-        >
+          }>
           {subText?.toString()}
         </p>
       </div>
@@ -48,11 +46,4 @@ export const SectionCard = (props: SectionCardProps) => {
       )}
     </>
   );
-};
-
-SectionCard.propTypes = {
-  header: PropTypes.string.isRequired,
-  subText: PropTypes.string.isRequired,
-  infoIcon: PropTypes.bool,
-  key: PropTypes.number,
 };

@@ -1,9 +1,11 @@
 import HorizontalDivider from "@/components/horizontalDivider";
+import { syndicateInterface } from "@/components/shared/interfaces";
 import {
   getTokenDecimals,
   processSyndicateDetails,
 } from "@/redux/actions/syndicates";
 import React from "react";
+import { getEvents } from "../retrieveEvents";
 
 /**
  * retrieves details for a given syndicate
@@ -11,21 +13,32 @@ import React from "react";
 export const getSyndicate = async (
   syndicateAddress: string,
   syndicateContractInstance
-) => {
+): Promise<syndicateInterface> => {
   try {
     const syndicate = await syndicateContractInstance.methods
       .getSyndicateValues(syndicateAddress)
       .call();
 
-    const tokenDecimals = await getTokenDecimals(
-      syndicate.depositERC20ContractAddress
-    );
+    const tokenDecimals = await getTokenDecimals(syndicate.depositERC20Address);
 
     const syndicateDetails = processSyndicateDetails(syndicate, tokenDecimals);
+
+    const managerSetterDistributionERC20Address = await getEvents(
+      syndicateContractInstance,
+      "managerSetterDistributionERC20Address",
+      { syndicateAddress }
+    );
+
+    const distributionsEnabled =
+      managerSetterDistributionERC20Address.length && syndicate.open
+        ? true
+        : false;
+
     return {
       ...syndicateDetails,
       syndicateAddress,
       active: true,
+      distributionsEnabled,
     };
   } catch (error) {
     console.log({ error });

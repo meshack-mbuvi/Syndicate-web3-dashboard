@@ -1,8 +1,8 @@
+import { managerActionTexts } from "@/components/syndicates/shared/Constants/managerActions";
 import PropTypes from "prop-types";
 import React from "react";
-import { SkeletonLoader } from "src/components/skeletonLoader";
 import { InfoIcon } from "src/components/iconWrappers";
-import { managerActionTexts } from "@/components/syndicates/shared/Constants/managerActions";
+import { SkeletonLoader } from "src/components/skeletonLoader";
 
 export const BadgeCard = (props: {
   title;
@@ -10,11 +10,11 @@ export const BadgeCard = (props: {
   text;
   icon?: JSX.Element;
   syndicate?: any;
-  openToDeposits?: boolean;
+  depositsEnabled?: boolean;
   correctManagerDepositsAllowance?: boolean;
   correctManagerDistributionsAllowance?: boolean;
   distributionsEnabled?: boolean;
-  lpIsManager?: boolean;
+  accountIsManager?: boolean;
   showManagerSetAllowancesModal?: () => void;
 }) => {
   const {
@@ -26,9 +26,9 @@ export const BadgeCard = (props: {
     correctManagerDepositsAllowance,
     correctManagerDistributionsAllowance,
     distributionsEnabled,
-    lpIsManager,
+    accountIsManager,
     showManagerSetAllowancesModal,
-    openToDeposits,
+    depositsEnabled,
   } = props;
 
   const {
@@ -42,9 +42,9 @@ export const BadgeCard = (props: {
   let allowanceInfoText = "";
   if (distributionsEnabled && !correctManagerDistributionsAllowance) {
     allowanceInfoText = insufficientDistributionsAllowanceBadgeText;
-  } else if (openToDeposits && !correctManagerDepositsAllowance) {
+  } else if (depositsEnabled && !correctManagerDepositsAllowance) {
     allowanceInfoText = insufficientDepositsAllowanceBadgeText;
-  } else if (!openToDeposits && !distributionsEnabled) {
+  } else if (!depositsEnabled && !distributionsEnabled) {
     allowanceInfoText = syndicateClosedBadgeText;
   }
 
@@ -62,9 +62,8 @@ export const BadgeCard = (props: {
             <div className="w-7/12">
               <div
                 className={`w-full mr-2 px-6 py-4 ${
-                  lpIsManager ? `rounded-t-custom` : `rounded-custom`
-                } bg-gray-nero flex flex-shrink-0 bg-black-eerie`}
-              >
+                  accountIsManager ? `rounded-t-custom` : `rounded-custom`
+                } bg-gray-nero flex flex-shrink-0 bg-black-eerie`}>
                 {icon}
                 <div className="ml-6">
                   <p className="text-lg leading-snug font-light mb-2">
@@ -75,9 +74,9 @@ export const BadgeCard = (props: {
                   </p>
                 </div>
               </div>
-              {lpIsManager ? (
+              {accountIsManager ? (
                 <div className="rounded-b-custom bg-gray-nero border-t-1 border-gray-6 px-0 py-2">
-                  {(openToDeposits && correctManagerDepositsAllowance) ||
+                  {(depositsEnabled && correctManagerDepositsAllowance) ||
                   (distributionsEnabled &&
                     correctManagerDistributionsAllowance) ? (
                     <div className="flex justify-between items-center">
@@ -88,7 +87,7 @@ export const BadgeCard = (props: {
                         <InfoIcon tooltip={tooltipText} />
                       </div>
                     </div>
-                  ) : !openToDeposits && !distributionsEnabled ? (
+                  ) : !depositsEnabled && !distributionsEnabled ? (
                     <div className="flex justify-start items-center px-6 py-4">
                       <img
                         src="/images/exclamationDiagonal.svg"
@@ -116,8 +115,7 @@ export const BadgeCard = (props: {
                         </p>
                         <p
                           className="text-sm text-blue-cyan font-light cursor-pointer w-fit-content"
-                          onClick={showManagerSetAllowancesModal}
-                        >
+                          onClick={showManagerSetAllowancesModal}>
                           Set New Allowance{" "}
                           <img
                             src="/images/right-arrow.svg"
