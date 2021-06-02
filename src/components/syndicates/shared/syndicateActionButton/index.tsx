@@ -58,7 +58,7 @@ export const SyndicateActionButton = (props: ButtonProps) => {
     >
       {showApprovalCheckmark ? (
         <span>
-          <img src="/images/checkmark.svg" className="h-4 mr-2" />
+          <img src="/images/checkmark.svg" className="h-4 w-4 mr-2" alt="approval check"/>
         </span>
       ) : null}
       <span className="text-lg">{buttonText}</span>

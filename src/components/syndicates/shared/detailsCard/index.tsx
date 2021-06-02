@@ -48,6 +48,8 @@ export const DetailsCard = (props: {
     !syndicate ||
     (loadingLPDetails && !syndicateDetails) ||
     (withdraw &&
+      syndicate &&
+      syndicate.distributionsEnabled &&
       !distributionTokensAllowanceDetails.length &&
       !syndicateDetails);
 
@@ -95,7 +97,8 @@ export const DetailsCard = (props: {
             <div
               className={`flex justify-between items-center sm:my-4 ${
                 syndicateDetails ? "w-7/12" : "w-full"
-              }`}>
+              }`}
+            >
               {showSkeletonLoader ? (
                 <SkeletonLoader
                   height="9"

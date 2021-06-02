@@ -165,9 +165,10 @@ const SyndicateDetails = (props: {
 
   // get allowance set on manager's account for the current depositERC20
   const getManagerDepositTokenAllowance = async () => {
+    const managerAddress = syndicate?.managerCurrent;
     const managerDepositTokenAllowance = await checkAccountAllowance(
       depositERC20Address,
-      account,
+      managerAddress,
       syndicateContractInstance._address
     );
 
@@ -255,7 +256,7 @@ const SyndicateDetails = (props: {
 
         // get total distributions for the token
         const totalCurrentDistributions = await syndicateContractInstance.methods
-          .getTotalDistributions(syndicateAddress, tokenAddress)
+          .getDistributionTotal(syndicateAddress, tokenAddress)
           .call()
           .then((data) => data);
 
@@ -610,7 +611,8 @@ const SyndicateDetails = (props: {
             className="font-normal text-blue-cyan"
             href="#"
             target="_blank"
-            rel="noreferrer">
+            rel="noreferrer"
+          >
             {syndicateDetailsLinkText}
           </a>
         </p>

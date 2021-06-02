@@ -20,7 +20,7 @@ export const getTotalDistributions = async (
      * to return total distributions
      * @return totalDistributions for a given distributionERC20ContractAddress
      * */
-    const totalDistributions = await syndicateInstance.getTotalDistributions(
+    const totalDistributions = await syndicateInstance.getDistributionTotal(
       syndicateAddress,
       distributionERC20ContractAddress
     );

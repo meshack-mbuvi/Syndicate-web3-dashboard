@@ -16,6 +16,7 @@ const depositDisclaimerText =
 const depositLPAccreditedText =
   "By depositing tokens, you attest you are accredited to join this syndicate. After depositing, contact the syndicate leads to confirm receipt and withdraw timing.";
 const withdrawalTitleText = "Withdraw My Distributions.";
+const withdrawalDepositTitleText = "Withdraw My Deposit";
 const withdrawalDisclaimerText = "Remember, all withdraws are final.";
 const noSyndicateText =
   "No syndicate with given address. Please check the address provided.";
@@ -26,6 +27,11 @@ const depositsUnavailableTitleText = "Deposits";
 const depositsUnavailableText = "Syndicate closed. Deposits unavailable.";
 const depositsUnavailableMaxLPsZeroText =
   "Deposits are unavailable at the moment. Please contact the syndicate leads.";
+const withdrawalsUnavailableTitleText = "Withdrawal Failed";
+const withdrawalAllowanceInsufficientText =
+  "This syndicate has an insufficient allowance set for withdrawals. We have notified the syndicate manager. Please try again later.";
+const withdrawalAmountLessThanMinDepositErrorText =
+  "You cannot withdraw this amount. Your remaining deposits be less than the set minimum.";
 
 const loaderWithdrawalHeaderText =
   "Please wait while the withdrawal transaction completes...";
@@ -60,6 +66,8 @@ const nonMemberWithdrawalText =
   "You are not a member of this syndicate since you have not made any deposits yet.";
 const amountGreaterThanMemberDistributionsText =
   "Withdrawal amount cannot be greater than member distributions to date";
+const withdrawalAmountGreaterThanMemberDeposits =
+  "Withdrawal amount cannot be greater than member deposit";
 const readOnlySyndicateText =
   "In order to have full capabilities, please install Metamask or use an Ethereum supported browser";
 const readOnlySyndicateTitle = "This page is Read Only.";
@@ -170,6 +178,7 @@ export const constants = {
   depositDisclaimerText,
   depositLPAccreditedText,
   withdrawalTitleText,
+  withdrawalDepositTitleText,
   withdrawalDisclaimerText,
   noSyndicateText,
   depositsAndWithdrawalsUnavailableText,
@@ -215,6 +224,10 @@ export const constants = {
   withdrawalSuccessButtonText,
   readOnlySyndicateText,
   readOnlySyndicateTitle,
+  withdrawalAmountGreaterThanMemberDeposits,
+  withdrawalsUnavailableTitleText,
+  withdrawalAllowanceInsufficientText,
+  withdrawalAmountLessThanMinDepositErrorText
 };
 
 // Tooltips

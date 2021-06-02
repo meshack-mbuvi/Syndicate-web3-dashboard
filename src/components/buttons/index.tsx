@@ -27,7 +27,7 @@ export const PrimaryButton = (props: {
       {...rest}
     >
       {approved ? (
-        <img className="inline w-4 mr-2" src="/images/checkmark.svg" />
+        <img className="inline w-4 mr-2" src="/images/checkmark-approved.svg" />
       ) : null}
       {createSyndicate ? (
         <img className="inline w-4 mr-4" src="/images/plus-circle.svg" />
