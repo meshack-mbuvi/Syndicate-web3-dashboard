@@ -13,7 +13,7 @@ export const formatDate = (dateString) =>
 export const pastDate = (date) => {
   try {
     const currentDate = Date.now();
-    return currentDate < date.getTime();
+    return currentDate > date.getTime();
   } catch (error) {
     return false;
   }

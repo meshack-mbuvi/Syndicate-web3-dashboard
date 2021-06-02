@@ -188,16 +188,14 @@ export const getSyndicateByAddress = (
 
     const syndicateDetails = processSyndicateDetails(syndicate, tokenDecimals);
 
-    const managerSetterDistributionERC20Address = await getEvents(
+    const managerSetterDistribution = await getEvents(
       syndicateContractInstance,
-      "managerSetterDistributionERC20Address",
+      "managerSetterDistribution",
       { syndicateAddress }
     );
 
     const distributionsEnabled =
-      managerSetterDistributionERC20Address.length && !syndicate.open
-        ? true
-        : false;
+      managerSetterDistribution.length && !syndicate.open ? true : false;
 
     // set these incase they are not reset
     dispatch({
@@ -304,6 +302,7 @@ export const processSyndicateDetails = (
     depositsEnabled && parseInt(depositTotal) < parseInt(depositMaxTotal)
       ? `Open until ${closeDate}`
       : "Operating";
+  
 
   return {
     status,

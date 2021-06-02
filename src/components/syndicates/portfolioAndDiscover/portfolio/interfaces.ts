@@ -1,6 +1,6 @@
 export interface ifRows {
   row: {
-    active: boolean;
+    status: string;
     syndicateAddress: string;
     closeDate: string;
     createdDate: string;

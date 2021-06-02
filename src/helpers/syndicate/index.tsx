@@ -23,16 +23,14 @@ export const getSyndicate = async (
 
     const syndicateDetails = processSyndicateDetails(syndicate, tokenDecimals);
 
-    const managerSetterDistributionERC20Address = await getEvents(
+    const managerSetterDistribution = await getEvents(
       syndicateContractInstance,
-      "managerSetterDistributionERC20Address",
+      "managerSetterDistribution",
       { syndicateAddress }
     );
 
     const distributionsEnabled =
-      managerSetterDistributionERC20Address.length && syndicate.open
-        ? true
-        : false;
+      managerSetterDistribution.length && !syndicate.open ? true : false;
 
     return {
       ...syndicateDetails,

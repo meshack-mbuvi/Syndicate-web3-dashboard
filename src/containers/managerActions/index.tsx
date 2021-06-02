@@ -221,7 +221,7 @@ const ManagerActions = () => {
             </div>
           </div>
           {/* show set distribution option when syndicate is closed */}
-          {syndicate?.depositsEnabled ? (
+          {syndicate?.open ? (
             <ManagerAction
               title={"Close syndicate"}
               description={

@@ -5,7 +5,7 @@ import { useSelector } from "react-redux";
 import { ifRows } from "./interfaces";
 
 const SyndicateActionButton = ({
-  row: { syndicateAddress, active, depositsEnabled, distributionsEnabled },
+  row: { syndicateAddress, depositsEnabled, distributionsEnabled },
 }: ifRows) => {
   const {
     web3: { account },
@@ -25,25 +25,23 @@ const SyndicateActionButton = ({
   let link = "details";
 
   // check that wallet owner is not the creater of the syndicate
-  if (active) {
-    if (syndicateAddress !== account) {
-      // monitors whether syndicate is open to deposits
-      if (depositsEnabled) {
-        buttonText = "Deposit more";
-        buttonStyles = "bg-white text-black";
-        link = "deposit";
-      }
-
-      if (distributionsEnabled) {
-        buttonText = "Withdraws available";
-        buttonStyles = "border border-blue-light";
-        link = "withdraw";
-      }
-    } else {
-      buttonText = "Manage";
-      buttonStyles = "bg-blue-light text-black";
-      link = "manage";
+  if (syndicateAddress !== account) {
+    // monitors whether syndicate is open to deposits
+    if (depositsEnabled) {
+      buttonText = "Deposit more";
+      buttonStyles = "bg-white text-black";
+      link = "deposit";
     }
+
+    if (distributionsEnabled) {
+      buttonText = "Withdraws available";
+      buttonStyles = "border border-blue-light";
+      link = "withdraw";
+    }
+  } else {
+    buttonText = "Manage";
+    buttonStyles = "bg-blue-light text-black";
+    link = "manage";
   }
 
   return (
