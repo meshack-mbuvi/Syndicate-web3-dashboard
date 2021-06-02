@@ -41,10 +41,7 @@ const InvestInSyndicate = () => {
   const {
     syndicateInstanceReducer: { syndicateContractInstance },
     syndicatesReducer: { syndicate, syndicateAddressIsValid },
-    tokenDetailsReducer: {
-      distributionTokensAllowanceDetails,
-      depositTokenAllowanceDetails,
-    },
+    tokenDetailsReducer: { distributionTokensAllowanceDetails },
     syndicateLPDetailsReducer: { syndicateLPDetails },
     web3Reducer: {
       web3: { account },
@@ -458,10 +455,18 @@ const InvestInSyndicate = () => {
   // get values for the current LP(connected wallet account)
   // when this component initially renders.
   useEffect(() => {
-    if (account && syndicateContractInstance) {
+    if (account && syndicateContractInstance && syndicate) {
       setLoadingLPDetails(true);
-      // push member details to the redix store
-      storeMemberDetails();
+      // push member details to the redux store
+      if (withdraw) {
+        // storing member details when totalAvailableDistributions is undefined will reset its previous value when withdrawal is in progress.
+        if (totalAvailableDistributions && +myDistributionsToDate === 0) {
+          storeMemberDetails();
+        }
+      } else if (depositModes) {
+        storeMemberDetails();
+      }
+
       setLoadingLPDetails(false);
     }
   }, [

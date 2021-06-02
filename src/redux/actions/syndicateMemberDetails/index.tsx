@@ -52,7 +52,7 @@ export const updateSyndicateMemberDetails = (data: SyndicateLPData) => async (
     account,
     syndicateAddress,
     syndicate,
-    totalAvailableDistributions = "0",
+    totalAvailableDistributions,
     currentERC20Decimals,
     currentDistributionTokenDecimals,
   } = data;
