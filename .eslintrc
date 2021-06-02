@@ -10,7 +10,9 @@
     // https://eslint.org/docs/2.0.0/rules/strict
     "strict": 0,
     "import/no-unresolved": "off",
-    "react/prop-types": "off"
+    "react/prop-types": "off",
+    "react/jsx-uses-react": "off",
+    "react/react-in-jsx-scope": "off"
   },
   "settings": {
     "react": {
