@@ -11,6 +11,9 @@ module.exports = {
       width: () => ({
         "fit-content": "fit-content",
       }),
+      maxWidth: {
+        868: "54rem",
+      },
       fontFamily: {
         whyte: ["ABC Whyte Regular", "Helvetica", "Arial", "sans-serif"],
         "whyte-extralight": [

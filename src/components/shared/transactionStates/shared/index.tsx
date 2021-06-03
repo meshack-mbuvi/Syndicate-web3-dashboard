@@ -21,7 +21,7 @@ export const StateModal = (props: Props) => {
           </div>
           <div className="flex items-end justify-center text-black min-h-screen sm:pt-4 sm:px-4 pb-20 text-center sm:block sm:p-0">
             <div
-              className={`inline-block align-bottom bg-white rounded-lg sm:my-28 sm:p-6 text-left overflow-hidden shadow-xl transform transition-all ${width}`}
+              className={`inline-block align-bottom bg-white rounded-lg sm:my-28 sm:p-6 text-left overflow-hidden shadow-xl transform transition-all max-w-868 ${width}`}
               role="dialog"
               aria-modal="true"
               aria-labelledby="modal-headline">

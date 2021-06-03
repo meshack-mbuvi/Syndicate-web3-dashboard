@@ -52,7 +52,7 @@ export const Modal = (props: ModalProps) => {
             </div>
 
             <div
-              className={`inline-block align-bottom bg-white rounded-lg sm:my-28 sm:p-6 text-left overflow-hidden shadow-xl transform transition-all ${customWidth}`}
+              className={`inline-block align-bottom bg-white rounded-lg sm:my-28 sm:p-6 text-left overflow-hidden shadow-xl transform transition-all max-w-868 ${customWidth}`}
               role="dialog"
               aria-modal="true"
               aria-labelledby="modal-headline">
