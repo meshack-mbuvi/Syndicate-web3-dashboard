@@ -5,11 +5,13 @@ interface DAOProps {
   name: string;
   url: string;
   image: string;
+  order: number;
+  syndicateDAOs: Array<{}>;
   members: { avatar: string; name: string }[];
 }
 
 export const SyndicateDAOItem = (props: DAOProps) => {
-  const { name, url, image, members } = props;
+  const { name, url, image, members, order, syndicateDAOs } = props;
   const [showAllMembers, setShowAllMembers] = useState<boolean>(false);
 
   const showFullMembersList = () => {
@@ -20,14 +22,18 @@ export const SyndicateDAOItem = (props: DAOProps) => {
     setShowAllMembers(false);
   };
   return (
-    <div className="flex flex-col m-2">
+    <div
+      className={`flex flex-col ml-2 ${
+        order === syndicateDAOs.length - 1 ? "" : "mr-2"
+      }`}
+    >
       <div
         style={{
           background: `url(${image}) no-repeat center center`,
           backgroundSize: "cover",
           backgroundColor: "#1B1D20",
         }}
-        className="m-2 flex-shrink rounded-md w-40 h-40 md:w-56 md:h-56 lg:w-72 lg:h-72 xl:w-80 xl:h-80 bg-gray-90"
+        className="flex-shrink rounded-md w-40 h-40 md:w-56 md:h-56 lg:w-72 lg:h-72 xl:w-80 xl:h-80 bg-gray-90"
       ></div>
       <p className="text-sm md:text-lg font-whyte-light mt-2">
         <a href={url} target="_blank" rel="no-referrer">

@@ -210,12 +210,12 @@ const PortfolioAndDiscover = (props: MySyndicateProps) => {
       )}
       {syndicateDAOs.length ? (
         <div className="mt-6">
-          <div className="px-2">
+          <div className="px-2 ml-2">
             <PageHeader>Discover</PageHeader>
           </div>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 mt-6">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 mt-6 ml-2">
             {syndicateDAOs.map((syndicate, index) => {
-              return <SyndicateDAOItem {...syndicate} key={index} />;
+              return <SyndicateDAOItem {...syndicate} key={index} order={index} syndicateDAOs={syndicateDAOs} />;
             })}
           </div>
         </div>
