@@ -1,11 +1,7 @@
 import Link from "next/link";
 import React from "react";
-import { NavBarNavItem } from "./navbarItems";
-import Transaction from "./transaction";
 import { UserProfileWrapper } from "./UserProfileWrapper";
 import WalletComponent from "./wallet";
-
-const navbarLinks = [{ url: "/syndicates", urlText: "Syndicates" }];
 
 const Header = () => {
   return (
@@ -20,7 +16,7 @@ const Header = () => {
                 className="flex items-center py-5 md:px-2 text-gray-700 hover:text-gray-900">
                 <Link href="/">
                   <a className="flex items-center">
-                    <span className="sr-only">Syndicate</span>
+                    <span className="sr-only">Syndicates</span>
                     <img
                       src="/images/logo.svg"
                       className="py-4"
@@ -30,20 +26,10 @@ const Header = () => {
                 </Link>
               </a>
             </div>
-
-            {/* primary nav */}
-            <div className="hidden md:flex items-center space-x-1">
-              {navbarLinks.map(({ url, urlText }) => (
-                <NavBarNavItem {...{ url, urlText }} key={url} />
-              ))}
-            </div>
           </div>
 
           {/* secondary nav */}
           <div className="flex items-center space-x-1">
-            <div className="py-2">
-              <Transaction />
-            </div>
             <UserProfileWrapper>
               <WalletComponent />
             </UserProfileWrapper>
