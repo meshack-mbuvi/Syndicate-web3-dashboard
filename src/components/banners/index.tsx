@@ -85,11 +85,13 @@ export const SyndicateInBetaBanner = () => {
 const { depositBannerText } = constants;
 export const DepositsPageBanner = () => {
   return (
-    <div className="w-full bg-blue-dark px-4 py-4 text-center">
-      <p className="text-sm font-extralight">
-        <span className="font-medium font-whyte-regular">IMPORTANT: </span>
-        <span className="font-medium font-whyte-light">{depositBannerText}</span>
-      </p>
+    <div className="w-full bg-blue-dark py-4 text-center">
+      <div className="container mx-auto">
+        <p className="text-sm font-extralight">
+          <span className="font-medium">IMPORTANT: </span>
+          {depositBannerText}
+        </p>
+      </div>
     </div>
   );
 };

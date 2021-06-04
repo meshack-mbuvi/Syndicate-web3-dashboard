@@ -41,8 +41,8 @@ function IndexPage() {
             </div>
           </div>
         </main>
-        <div className="flex w-full">
-          <Footer />
+        <div className="flex w-1/2 mx-auto">
+          <Footer extraClasses="border-none text-center" />
         </div>
       </div>
     </>

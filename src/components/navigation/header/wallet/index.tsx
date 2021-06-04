@@ -87,12 +87,16 @@ export const Wallet = () => {
     }
   };
 
+  const connectedWalletContainerStyles = "bg-green-500 bg-opacity-10 border border-green-500 border-opacity-20";
+  const disconnectedWalletContainerStyles = "bg-white bg-opacity-5 border border-gray-500 border-opacity-30";
+  const connectedWalletIconStyles = "fill-current text-green-500";
+
   return (
     <div className="wallet-connect flex relative justify-center">
       <div
         onClick={connectWallet}
-        className="flex relative bg-gray-dark rounded-full my-1 px-4 py-2 items-center">
-        <img src={walletIcon} className="w-5 h-4 pr-1 m-2" />
+        className={`${status === "connected" ? connectedWalletContainerStyles : disconnectedWalletContainerStyles} flex relative rounded-full my-1 px-4 py-2 items-center`}>
+        <img src={walletIcon} className={`w-5 h-4 pr-1 m-2 ${connectedWalletIconStyles}`} />
 
         <button className="focus:outline-none mr-1 text-sm font-whyte-regular">
           {account ? formatAddress(account) : "Not connected"}

@@ -1,3 +1,4 @@
+import Footer from "@/components/navigation/footer";
 import { syndicateInterface } from "@/components/shared/interfaces";
 import ManagerSetAllowance from "@/containers/managerActions/setAllowances";
 import { getEvents } from "@/helpers/retrieveEvents";
@@ -450,7 +451,12 @@ const SyndicateDetails = (props: {
   }, [syndicate, syndicateAddress]);
 
   // format an account address in the format 0x3f6q9z52…54h2kjh51h5zfa
-  const formattedSyndicateAddress = formatAddress(syndicateAddress, 10, 14);
+  const formattedSyndicateAddress3XLarge = formatAddress(syndicateAddress, 18, 18);
+  const formattedSyndicateAddressXLarge = formatAddress(syndicateAddress, 14, 11);
+  const formattedSyndicateAddressLarge = formatAddress(syndicateAddress, 9, 9);
+  const formattedSyndicateAddressMedium = formatAddress(syndicateAddress, 8, 10);
+  const formattedSyndicateAddressSmall = formatAddress(syndicateAddress, 14, 14);
+  const formattedSyndicateAddressMobile = formatAddress(syndicateAddress, 12, 12);
 
   // show message to the user when address has been copied.
   const updateAddresCopyState = () => {
@@ -547,34 +553,60 @@ const SyndicateDetails = (props: {
   }
 
   return (
-    <div className="flex flex-col lg:w-3/5 w-full mr-2 lg:mr-6">
-      <div className="h-fit-content p-6 md:p-10 rounded-custom bg-gray-6">
-        <span className="font-bold px-2 text-gray-dim leading-4 text-sm uppercase">
+    <div className="flex flex-col w-full sm:mr-2 lg:mr-6">
+      <div className="h-fit-content rounded-custom">
+        <span className="font-medium text-gray-500 text-sm uppercase tracking-widest pb-3">
           Syndicate
         </span>
 
         <div className="flex justif-start items-center">
-          <p className="flex-shrink text-xl sm:text-2xl md:text-lg lg:text-3xl flex-wrap pl-2 break-all">
-            {formattedSyndicateAddress}
-          </p>
+          <div className="flex-shrink text-xl sm:text-2xl lg:text-3xl flex-wrap break-all my-3">
+              <div className="mr-4">
+                <div className="hidden 3xl:block">
+                  <span className="text-gray-500">0x</span>
+                  {formattedSyndicateAddress3XLarge.slice(2)}
+                </div>
+                <div className="hidden xl:block 3xl:hidden">
+                  <span className="text-gray-500">0x</span>
+                  {formattedSyndicateAddressXLarge.slice(2)}
+                </div>
+                <div className="hidden lg:block xl:hidden">
+                  <span className="text-gray-500">0x</span>
+                  {formattedSyndicateAddressLarge.slice(2)}
+                </div>
+                <div className="hidden md:block lg:hidden">
+                  <span className="text-gray-500">0x</span>
+                  {formattedSyndicateAddressMedium.slice(2)}
+                </div>
+                <div className="hidden sm:block md:hidden">
+                  <span className="text-gray-500">0x</span>
+                  {formattedSyndicateAddressSmall.slice(2)}
+                </div>
+                <div className="sm:hidden">
+                  <span className="text-gray-500">0x</span>
+                  {formattedSyndicateAddressMobile.slice(2)}
+                </div>
+              </div>
+          </div>
           <CopyToClipboard text={syndicateAddress}>
             <div className="flex items-center ml-4 relative w-10">
               {showCopyState ? (
                 <span className="absolute text-xs -top-5">copied</span>
               ) : null}
               <img
-                src="/images/copy-clipboard.png"
+                src="/images/copy-clipboard.svg"
                 className="cursor-pointer h-4"
                 onClick={updateAddresCopyState}
               />
             </div>
           </CopyToClipboard>
-          <p className="flex-shrink-0 h-8 w-8 sm:h-10 sm:w-10 md:h-16 md:w-16 ml-4 rounded-full ideo-liquidity inline"></p>
+          {/* Hide profile circle until we can make colors unique to each syndicate */}
+          {/* <p className="flex-shrink-0 h-8 w-8 sm:h-10 sm:w-10 md:h-16 md:w-16 ml-4 rounded-full ideo-liquidity inline"></p> */}
         </div>
         <div className="w-fit-content">
           <EtherscanLink contractAddress={syndicateAddress} />
         </div>
-        <div className="h-fit-content flex w-full justify-start md:ml-2 mb-12">
+        <div className="h-fit-content flex w-full justify-start mb-8">
           {syndicateBadge}
         </div>
 
@@ -587,10 +619,10 @@ const SyndicateDetails = (props: {
             syndicateDetails: true,
             syndicate,
           }}
-          customStyles={"pl-4 pr-2 w-full py-4 pb-8"}
+          customStyles={"w-full py-4 pb-8"}
           customInnerWidth="w-full"
         />
-        <div className="w-full border-gray-49 border-t pt-4">
+        <div className="w-full border-gray-600 border-t pt-4 mb-12">
           <DetailsCard
             {...{
               title: "Deposits",
@@ -599,24 +631,12 @@ const SyndicateDetails = (props: {
               infoIcon: false,
               syndicate,
             }}
-            customStyles={"pl-4 pr-2 w-full py-4 pb-8"}
+            customStyles={"w-full py-4 pb-8"}
             customInnerWidth="w-full"
           />
         </div>
       </div>
-      <div className="flex w-full block my-8 justify-center m-auto p-auto">
-        <p className="text-center text-sm flex justify-center flex-wrap	font-extralight">
-          <span>{syndicateDetailsFooterText}&nbsp;</span>
-          <a
-            className="font-normal text-blue-cyan"
-            href="#"
-            target="_blank"
-            rel="noreferrer"
-          >
-            {syndicateDetailsLinkText}
-          </a>
-        </p>
-      </div>
+      <Footer />
       <ManagerSetAllowance
         {...{
           depositMaxTotal,

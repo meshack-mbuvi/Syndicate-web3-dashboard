@@ -54,7 +54,7 @@ export const DetailsCard = (props: {
       !syndicateDetails);
 
   const modifiableTooltip = (
-    <div className="text-left text-sm">
+    <div className="relative bg-gray-9 p-4 text-sm">
       <p className="mb-2">
         This means the syndicate manager can manually change:
       </p>
@@ -76,11 +76,11 @@ export const DetailsCard = (props: {
       )}
 
       {title.toLowerCase() === "details" && syndicate?.modifiable ? (
-        <div className="w-full mt-4 m-2">
-          <div className=" w-7/12 rounded-custom bg-gray-nero border-t-1 border-gray-6 py-2">
-            <div className="flex justify-start items-center pl-4 py-2">
+        <div className="w-full mt-4 mb-2">
+          <div className=" w-full rounded-custom bg-gray-6 border-t-1 border-gray-6 py-4">
+            <div className="flex justify-start items-center pl-6 py-2">
               <img src="/images/exclamationDiagonal.svg" className="w-5" />
-              <p className="text-sm leading-snug font-whyte-light pr-2 ml-6">
+              <p className="text-lg leading-snug font-light pr-2 ml-6">
                 {syndicateModifiableText}
               </p>
               <div className="ml-auto flex-shrink-0">
@@ -91,13 +91,12 @@ export const DetailsCard = (props: {
         </div>
       ) : null}
 
-      <div className={`pl-4 ${customInnerWidth}`}>
+      <div className={`${customInnerWidth}`}>
         {sections.map((section, index) => (
-          <div className="flex justify-start" key={index}>
+          <div className="flex justify-start visibility-container target-l-12" key={index}>
             <div
-              className={`flex justify-between items-center sm:my-4 ${
-                syndicateDetails ? "w-7/12" : "w-full"
-              }`}
+              className="flex justify-between items-center sm:my-3 my-3 ${
+                syndicateDetails w-full"
             >
               {showSkeletonLoader ? (
                 <SkeletonLoader

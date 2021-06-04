@@ -120,13 +120,12 @@ export const Layout = ({ children, syndicateAction }) => {
         title="Home"
       />
       <Header />
-      {/* This banner should be shown in V2 */}
-      <SyndicateInBetaBanner />
-
-      <div>
+      <div className="sticky top-20 z-10">
+        {/* This banner should be shown in V2 */}
+        <SyndicateInBetaBanner />
         {deposit || generalView ? <DepositsPageBanner key={2} /> : null}
       </div>
-      <div className="flex w-full flex-col sm:flex-row md:py-4 px-4 md:px-6 z-0">
+      <div className="flex w-full flex-col sm:flex-row md:py-32 px-4 md:px-6 z-0">
         {children}
       </div>
       <ConnectWallet />

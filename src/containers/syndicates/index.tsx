@@ -28,7 +28,9 @@ const SyndicatesComponent = () => {
       <ErrorBoundary>
         <div className="w-full">
           {/* show my syndicates */}
-          <PortfolioAndDiscover />
+          <div className="container mx-auto">
+            <PortfolioAndDiscover />
+          </div>
         </div>
       </ErrorBoundary>
     </Layout>

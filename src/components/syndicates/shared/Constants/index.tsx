@@ -93,12 +93,15 @@ const dismissButtonText = "Dismiss";
 
 // syndicate details section
 const syndicateDetailsFooterText =
-  "Syndicate v1 was security audited by Quanstamp March 2021.";
+  "Syndicate is currently in private beta and is open only to accredited investors. No materials on the Syndicate site should be construed as a soliciatation or advice to buy any security.";
+const syndicateDetailsSecurityFooterText =
+  "We take security seriously. Syndicate was audited by Quanstamp in March 2021.";
 const syndicateDetailsLinkText = "View the audit report here.";
 const syndicateModifiableText = "This syndicate is modifiable";
 
 export const syndicateDetailsConstants = {
   syndicateDetailsFooterText,
+  syndicateDetailsSecurityFooterText,
   syndicateDetailsLinkText,
   syndicateModifiableText,
 };
@@ -307,7 +310,7 @@ const noSyndicateMessageText =
 const syndicateAddressInvalidTitleText = "Invalid syndicate address";
 const syndicateAddressInvalidMessageText =
   "Check to ensure you have the correct address.";
-const backLinkText = "< Back To My Syndicates";
+const backLinkText = "Back To My Syndicates";
 
 export const MAX_INTEGER = BigInt(2 ** 256) - BigInt(1);
 

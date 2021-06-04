@@ -84,6 +84,65 @@
     font-family: "ABC Whyte Medium";
   }
 }
+
+@layer utilities {
+
+  @variants responsive {
+
+    
+    /* Sizes */
+
+    .w-120 {
+      width: 30rem;
+    }
+
+    .w-96 {
+      width: 24rem;
+    }
+
+    .max-w-120 {
+      max-width: 30rem;
+    }
+
+
+    /* Positioning */
+
+    .vertically-center {
+      position: relative;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+
+    .center {
+      @apply mx-auto vertically-center;
+    }
+
+
+    /* Touch targets */
+
+    .target-l-12 {
+      @apply pl-12 -ml-12; 
+    }
+
+    .target-l-6 {
+      @apply pl-6 -ml-6; 
+    }
+
+    .target-l-3 {
+      @apply pl-3 -ml-3;
+    }
+
+    .target-r-3 {
+      @apply pr-3 -mr-3;
+    }
+
+
+    .visibility-container:hover .visibility-hover {
+      visibility: visible
+    }
+  }
+}
+
 .active {
   color: #36cfff;
 }
@@ -239,18 +298,21 @@ input {
 
 .tooltip .tooltiptext {
   visibility: hidden;
-  background-color: #555;
   color: #fff;
-  text-align: center;
+  text-align: left;
   border-radius: 6px;
-  padding: 8px;
   position: absolute;
   z-index: 1;
-  top: 130%;
+  top: calc(130% + 4px);
   margin-left: -260px;
   opacity: 0;
   transition: opacity 0.3s;
   width: 300px;
+  box-shadow: 0px 14px 14px 0px #00000073;
+}
+
+.tooltip .tooltiptext.left {
+  margin-left: -20px;
 }
 
 .tooltip .tooltiptext::after {
@@ -262,7 +324,11 @@ input {
   border-style: solid;
   top: -18px;
   left: 260px;
-  border-color: transparent transparent #555 transparent;
+  border-color: transparent transparent rgb(23, 23, 23) transparent;
+}
+
+.tooltip .tooltiptext.left::after {
+  left: 20px;
 }
 
 .tooltip:hover .tooltiptext {

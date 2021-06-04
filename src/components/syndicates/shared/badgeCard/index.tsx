@@ -54,28 +54,29 @@ export const BadgeCard = (props: {
   }
 
   return (
-    <div className="w-full mt-4 m-2">
+    <div className="w-full mt-6">
       <p className="text-xl leading-normal py-1">{title}</p>
       <div className="w-full flex items-center">
         <div className="flex w-full items-center">
           {syndicate ? (
-            <div className="w-7/12">
+            <div className="w-full">
               <div
-                className={`w-full mr-2 px-6 py-4 ${
-                  accountIsManager ? `rounded-t-custom` : `rounded-custom`
-                } bg-gray-nero flex flex-shrink-0 bg-black-eerie`}>
+                className={`w-full mr-2 px-6 py-4 my-3 ${
+                  accountIsManager ? `rounded-t-2xl` : `rounded-2xl`
+                } bg-gray-6 flex flex-shrink-0 bg-black-eerie`}
+              >
                 {icon}
                 <div className="ml-6">
                   <p className="text-lg leading-snug font-light mb-2">
                     {subTitle}
                   </p>
-                  <p className="text-sm text-gray-dim font-light leading-snug">
+                  <p className="text-sm text-gray-500 font-light leading-snug">
                     {text}
                   </p>
                 </div>
               </div>
               {accountIsManager ? (
-                <div className="rounded-b-custom bg-gray-nero border-t-1 border-gray-6 px-0 py-2">
+                <div className="rounded-b-custom bg-gray-6 border-t-1 border-gray-6 px-0 py-2">
                   {(depositsEnabled && correctManagerDepositsAllowance) ||
                   (distributionsEnabled &&
                     correctManagerDistributionsAllowance) ? (
@@ -107,7 +108,7 @@ export const BadgeCard = (props: {
                       </div>
 
                       <div className="ml-4">
-                        <p className="text-sm leading-snug font-light mb-2">
+                        <p className="text-lg leading-snug font-light mb-2">
                           Insufficient Allowance
                         </p>
                         <p className="text-sm font-light text-gray-dim leading-snug mb-2">

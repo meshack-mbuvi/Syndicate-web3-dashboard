@@ -100,7 +100,7 @@ const PortfolioAndDiscover = (props: MySyndicateProps) => {
   };
 
   return (
-    <div className="mt-10 px-4">
+    <div className="mt-2 px-4">
       {loading && account ? (
         // show some animations during loading process
         // skeleton loader

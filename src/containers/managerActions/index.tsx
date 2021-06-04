@@ -209,8 +209,8 @@ const ManagerActions = () => {
 
   return (
     <ErrorBoundary>
-      <div className="w-full lg:w-2/5 mt-4 sm:mt-0">
-        <div className="h-fit-content rounded-custom p-4 md:mx-2 md:p-6 bg-gray-9 mt-6 md:mt-0">
+      <div className="w-full mt-4 sm:mt-0">
+        <div className="h-fit-content rounded-custom p-4 md:mx-2 md:p-6 bg-gray-9 mt-6 md:mt-0 md:pb-2">
           <div className="text-xl font-inter">Manager Actions</div>
           <div className="flex h-12 rounded-custom items-center">
             <img src="/images/rightPointedHand.svg" className="mr-2" />

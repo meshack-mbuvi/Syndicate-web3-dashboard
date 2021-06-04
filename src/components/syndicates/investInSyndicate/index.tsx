@@ -1131,7 +1131,7 @@ const InvestInSyndicate = () => {
     return (
       <div>
         <p className="font-semibold text-xl p-2">{title}</p>
-        <p className="p-4 pl-6 text-gray-dim text-sm">{message}</p>
+        <p className="p-4 pl-6 text-gray-500 text-sm">{message}</p>
       </div>
     );
   };
@@ -1233,11 +1233,11 @@ const InvestInSyndicate = () => {
 
   return (
     <ErrorBoundary>
-      <div className="w-full md:w-1/2 mt-4 sm:mt-0">
+      <div className="w-full mt-4 sm:mt-0 sticky top-44 mb-10">
         <div
-          className={`h-fit-content  mx-2 p-4 pb-2 md:p-6 bg-gray-7 sm:ml-6 border ${
-            !account ? "rounded-custom" : `border-b-0 rounded-t-custom`
-          } border-gray-49`}
+          className={`h-fit-content px-8 pb-4 pt-5 bg-gray-9 ${
+            !account ? "rounded-2xl" : `border-b-0 rounded-t-2xl`
+          }`}
         >
           {/* Show is read only text if no provider */}
           {Web3.givenProvider === null && syndicateAddressIsValid ? (
@@ -1344,16 +1344,20 @@ const InvestInSyndicate = () => {
                       />
                     </div>
                   ) : (
-                    <p className="font-semibold text-xl p-2">
-                      {depositModes
-                        ? depositTitle
-                        : withdraw
-                        ? withdrawalPageTitleText
-                        : null}
-                    </p>
+                    <div className="flex items-center">
+                      <img className="mr-2 relative -top-1" src={"/images/deposit.svg"} />
+
+                      <p className="font-semibold text-xl p-2">
+                        {depositModes
+                          ? depositTitle
+                          : withdraw
+                          ? withdrawalPageTitleText
+                          : null}
+                      </p>
+                    </div>
                   )}
 
-                  <div className="px-2">
+                  <div className="">
                     {/* show this text if whitelist is enabled for deposits */}
                     {showSkeletonLoader ? (
                       <div className="flex justify-between my-1">
@@ -1364,7 +1368,7 @@ const InvestInSyndicate = () => {
                         />
                       </div>
                     ) : (
-                      <p className="py-4 pt-2 text-green-screamin font-ibm">
+                      <p className="inline-block my-3 px-4 py-2 text-white font-ibm bg-green-500 bg-opacity-20 rounded-3xl">
                         {depositModes
                           ? depositApprovalText
                           : withdraw
@@ -1391,7 +1395,7 @@ const InvestInSyndicate = () => {
                             disabled={depositModes ? disableAmountInput : false}
                             defaultValue={amount}
                             onChange={handleSetAmount}
-                            className={`rounded-md bg-gray-9 border border-gray-24 text-white font-whyte focus:outline-none focus:ring-gray-24 focus:border-gray-24 w-7/12 mr-2 `}
+                            className={`min-w-0 rounded-md bg-gray-9 border border-gray-24 text-white font-whyte focus:outline-none focus:ring-gray-24 focus:border-gray-24 flex-grow mr-6 `}
                           />
                           {withdraw && syndicate?.distributionsEnabled ? (
                             <TokenSelect
@@ -1400,7 +1404,13 @@ const InvestInSyndicate = () => {
                               }
                             />
                           ) : (
-                            <p className="pt-2 w-4/12">{currentERC20}</p>
+                            <p className="flex-shrink-0 flex items-center whitespace-nowrap">
+                              {currentERC20 === "DAI"
+                                ? <img className="mr-2" src={"/images/dai-symbol.svg"} />
+                                : null
+                              }
+                              {currentERC20}
+                            </p>
                           )}
                         </div>
                         <p className="mr-2 w-full text-red-500 text-xs mt-2 mb-4">
@@ -1408,13 +1418,13 @@ const InvestInSyndicate = () => {
                         </p>
                         {/* checkbox for user to confirm they are accredited investor if this is a deposit */}
                         {depositModes ? (
-                          <p className="text-sm my-5 text-gray-dim">
+                          <p className="text-sm my-5 text-gray-500">
                             {depositLPAccreditedText}
                           </p>
                         ) : null}
                         <div className="mb-2">{actionButton}</div>
                         <div className="flex justify-center">
-                          <div className="w-2/3 text-sm my-5 text-gray-dim justify-self-center text-center">
+                          <div className="w-2/3 text-sm my-5 text-gray-500 justify-self-center text-center">
                             {depositModes
                               ? depositDisclaimerText
                               : withdrawalDisclaimerText}
@@ -1439,7 +1449,7 @@ const InvestInSyndicate = () => {
           <DetailsCard
             {...{ title: "My Stats", sections, syndicate, loadingLPDetails }}
             customStyles={
-              "sm:ml-6 p-4 mx-2 sm:px-8 sm:py-4 rounded-b-custom bg-gray-9 border border-gray-49"
+              "p-8 rounded-b-3xl bg-gray-6 border-t border-gray-700 "
             }
             customInnerWidth={"w-full"}
           />

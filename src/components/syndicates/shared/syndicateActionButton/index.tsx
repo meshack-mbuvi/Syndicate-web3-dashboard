@@ -51,7 +51,7 @@ export const SyndicateActionButton = (props: ButtonProps) => {
   return (
     <button
       className={`flex w-full items-center justify-center font-medium rounded-md text-black bg-white focus:outline-none focus:ring py-4 ${
-        disableButton ? "opacity-50 cursor-not-allowed" : ""
+        disableButton ? "bg-gray-600 cursor-not-allowed" : ""
       }`}
       type="submit"
       disabled={disableButton}

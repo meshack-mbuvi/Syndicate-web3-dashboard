@@ -26,8 +26,18 @@ export const SectionCard = (props: SectionCardProps) => {
 
   return (
     <>
+      <div className="invisible visibility-hover absolute">
+        <div className="relative -left-16">
+          {!infoIcon ? null : (
+            <InfoIcon
+              tooltip={tooltip}
+              side="left"
+            />
+          )}
+        </div>
+      </div>
       <div>
-        <p className="text-lg text-gray-dim leading-loose">
+        <p className="text-lg text-gray-500 leading-loose">
           {header?.toString()}
         </p>
         <p
@@ -39,11 +49,6 @@ export const SectionCard = (props: SectionCardProps) => {
           {subText?.toString()}
         </p>
       </div>
-      {!infoIcon ? null : (
-        <div className="flex">
-          <InfoIcon tooltip={tooltip} />
-        </div>
-      )}
     </>
   );
 };
