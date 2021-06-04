@@ -453,10 +453,10 @@ const SyndicateDetails = (props: {
   // format an account address in the format 0x3f6q9z52…54h2kjh51h5zfa
   const formattedSyndicateAddress3XLarge = formatAddress(syndicateAddress, 18, 18);
   const formattedSyndicateAddressXLarge = formatAddress(syndicateAddress, 14, 11);
-  const formattedSyndicateAddressLarge = formatAddress(syndicateAddress, 9, 9);
-  const formattedSyndicateAddressMedium = formatAddress(syndicateAddress, 8, 10);
-  const formattedSyndicateAddressSmall = formatAddress(syndicateAddress, 14, 14);
-  const formattedSyndicateAddressMobile = formatAddress(syndicateAddress, 12, 12);
+  const formattedSyndicateAddressLarge = formatAddress(syndicateAddress, 6, 7);
+  const formattedSyndicateAddressMedium = formatAddress(syndicateAddress, 7, 6);
+  const formattedSyndicateAddressSmall = formatAddress(syndicateAddress, 10, 14);
+  const formattedSyndicateAddressMobile = formatAddress(syndicateAddress, 5, 8);
 
   // show message to the user when address has been copied.
   const updateAddresCopyState = () => {

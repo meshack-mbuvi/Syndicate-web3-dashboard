@@ -702,7 +702,6 @@ const CreateSyndicate = (props: Props) => {
                 onChange={handleFullName}
                 name="fullName"
                 placeholder="Please provide your full name"
-                required
               />
               {/* email address */}
               <TextInput
@@ -715,7 +714,6 @@ const CreateSyndicate = (props: Props) => {
                 onChange={handleEmailAddress}
                 name="emailAddress"
                 placeholder="Please provide your email address"
-                required
               />
               <div className={`flex flex-row justify-center`}>
                 <div className={`flex mr-2 w-1/2 justify-end `}>
