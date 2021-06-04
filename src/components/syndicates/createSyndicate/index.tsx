@@ -368,6 +368,8 @@ const CreateSyndicate = (props: Props) => {
   const toggleAllowlistEnabled = () => setAllowlistEnabled(!allowlistEnabled);
   const toggleModifiable = () => setModifiable(!modifiable);
 
+  const [formLLC, setFormLLC] = useState(false);
+
   const closeModal = () => setShowModal(false);
 
   // set closeDate
@@ -461,6 +463,7 @@ const CreateSyndicate = (props: Props) => {
         fullName,
         emailAddress,
         syndicateAddress: account,
+        attachLLCManually: formLLC,
       }),
     });
 
@@ -645,6 +648,10 @@ const CreateSyndicate = (props: Props) => {
     }
   };
 
+  const handleFormLLC = (event: any) => {
+    setFormLLC(event.target.checked);
+  };
+
   // custom width for syndicate protocol input
   let otherProfitShareWidth;
   if (otherProfitShareToSyndicateProtocol.toString().length == 0) {
@@ -695,6 +702,7 @@ const CreateSyndicate = (props: Props) => {
                 onChange={handleFullName}
                 name="fullName"
                 placeholder="Please provide your full name"
+                required
               />
               {/* email address */}
               <TextInput
@@ -707,7 +715,45 @@ const CreateSyndicate = (props: Props) => {
                 onChange={handleEmailAddress}
                 name="emailAddress"
                 placeholder="Please provide your email address"
+                required
               />
+              <div className={`flex flex-row justify-center`}>
+                <div className={`flex mr-2 w-1/2 justify-end `}>
+                  <label className="block pt-2 text-black text-sm font-medium"></label>
+                </div>
+
+                <div className="w-4/5 flex-grow flex flex-col justify-between">
+                  {/* input field */}
+                  <div className="flex justify-start">
+                    <div className="flex items-center h-5">
+                      <input
+                        name="attachLLCManually"
+                        type="checkbox"
+                        className="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded"
+                        onChange={handleFormLLC}
+                        checked={formLLC ? true : false}
+                      />
+                    </div>
+                    <div>
+                      <p className="font-medium text-gray-700 ml-2 text-black justify-center text-sm font-whyte word-wrap">
+                        I&apos;d like help forming an LLC for this syndicate
+                        (optional)
+                      </p>
+
+                      <p className="ml-2 text-black justify-center text-sm font-whyte text-gray-500 word-wrap">
+                        We&apos;ll reach out within 48 hours to coordinate
+                        further details
+                      </p>
+                    </div>
+
+                    <div className="w-auto mt-1 flex">
+                      <div className="flex-shrink-0 flex items-center justify-center">
+                        <div className="tooltip px-4"></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -978,11 +1024,9 @@ const CreateSyndicate = (props: Props) => {
               />
             </p>
 
-            {termsOfServiceError ? (
-              <p className="flex mt-2 text-red-500 text-sm justify-center">
-                {termsOfServiceError}
-              </p>
-            ) : null}
+            <p className="flex mt-2 text-red-500 text-sm justify-center">
+              {termsOfServiceError}
+            </p>
           </div>
 
           {/* submit button */}

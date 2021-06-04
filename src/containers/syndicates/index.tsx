@@ -24,6 +24,7 @@ const SyndicatesComponent = () => {
         <input type="text" name="fullName" />
         <input type="text" name="emailAddress" />
         <input type="text" name="syndicateAddress" />
+        <input type="checkbox" name="attachLLCManually" />
       </form>
       <ErrorBoundary>
         <div className="w-full">
