@@ -93,10 +93,12 @@ export const DetailsCard = (props: {
 
       <div className={`${customInnerWidth}`}>
         {sections.map((section, index) => (
-          <div className="flex justify-start visibility-container target-l-12" key={index}>
+          <div
+            className="flex justify-start visibility-container target-l-12"
+            key={index}
+          >
             <div
-              className="flex justify-between items-center sm:my-3 my-3 ${
-                syndicateDetails w-full"
+              className="flex justify-between items-center sm:my-3 my-3 w-full"
             >
               {showSkeletonLoader ? (
                 <SkeletonLoader
@@ -105,7 +107,11 @@ export const DetailsCard = (props: {
                   borderRadius="rounded-md"
                 />
               ) : (
-                <SectionCard {...{ ...section }} infoIcon={infoIcon} />
+                <SectionCard
+                  {...{ ...section }}
+                  infoIcon={infoIcon}
+                  title={title}
+                />
               )}
             </div>
           </div>

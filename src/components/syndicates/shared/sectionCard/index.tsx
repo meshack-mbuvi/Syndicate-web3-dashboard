@@ -11,6 +11,7 @@ interface SectionCardProps {
    * render the info icon */
   infoIcon?: boolean;
   tooltip: string;
+  title?: string;
 }
 
 /**
@@ -19,19 +20,28 @@ interface SectionCardProps {
  * @returns
  */
 export const SectionCard = (props: SectionCardProps) => {
-  const { header, subText, tooltip, infoIcon = true } = props;
+  const {
+    header,
+    subText,
+    tooltip,
+    infoIcon = true,
+    title = "My Stats",
+  } = props;
   const greenSubtext =
     header === "Total Withdraws / Deposits" ||
     header === "Total Distributions / Deposits";
 
+  // show tooltip on the right for 'My Stats' section
+  const showingMyStats = title === "My Stats";
+
   return (
     <>
       <div className="invisible visibility-hover absolute">
-        <div className="relative -left-16">
+        <div className={`relative ${showingMyStats ? "left-56" : "-left-16"}`}>
           {!infoIcon ? null : (
             <InfoIcon
               tooltip={tooltip}
-              side="left"
+              side={`${showingMyStats ? "right" : "left"}`}
             />
           )}
         </div>
@@ -45,7 +55,8 @@ export const SectionCard = (props: SectionCardProps) => {
             greenSubtext
               ? "text-base text-green-screamin leading-5"
               : "text-base leading-5"
-          }>
+          }
+        >
           {subText?.toString()}
         </p>
       </div>
