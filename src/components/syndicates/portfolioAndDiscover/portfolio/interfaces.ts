@@ -11,6 +11,8 @@ export interface ifRows {
     depositsEnabled: boolean;
     depositTotal: string;
     distributionsEnabled: boolean;
+    depositERC20TokenSymbol: string;
+    tokenDecimals: number;
   };
 }
 

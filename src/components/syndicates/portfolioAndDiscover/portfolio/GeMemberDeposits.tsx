@@ -1,13 +1,17 @@
 import React, { useEffect, useState } from "react";
 import { RootStateOrAny, useSelector } from "react-redux";
 import { ifRows } from "./interfaces";
+import { RootState } from "src/redux/store";
+import { getWeiAmount } from "@/utils/conversions";
 
-const GetMemberDeposits = ({ row: { syndicateAddress } }: ifRows) => {
+const GetMemberDeposits = ({
+  row: { syndicateAddress, depositERC20TokenSymbol, tokenDecimals },
+}: ifRows) => {
   const { web3: web3Wrapper } = useSelector(
     (state: RootStateOrAny) => state.web3Reducer
   );
 
-  const { syndicateContractInstance, account, web3 } = web3Wrapper;
+  const { syndicateContractInstance, account } = web3Wrapper;
 
   const [memberDeposits, setMemberDeposits] = useState("0");
 
@@ -19,7 +23,12 @@ const GetMemberDeposits = ({ row: { syndicateAddress } }: ifRows) => {
         .getMemberInfo(syndicateAddress, account)
         .call();
 
-      setMemberDeposits(web3.utils.fromWei(syndicateMemberInfo[0].toString()));
+      const depositsMember = getWeiAmount(
+        syndicateMemberInfo[0].toString(),
+        tokenDecimals,
+        false
+      );
+      setMemberDeposits(depositsMember);
     } catch (error) {
       console.log({ error });
     }
@@ -28,7 +37,11 @@ const GetMemberDeposits = ({ row: { syndicateAddress } }: ifRows) => {
   useEffect(() => {
     getMemberDeposits();
   }, [account, syndicateContractInstance]);
-  return <>{memberDeposits}</>;
+  return (
+    <>
+      {memberDeposits} {depositERC20TokenSymbol}
+    </>
+  );
 };
 
 export default GetMemberDeposits;
