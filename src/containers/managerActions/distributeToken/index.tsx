@@ -1,8 +1,17 @@
 import { TextInput } from "@/components/inputs";
 import Modal from "@/components/modal";
 import {
+  FinalStateModal,
+  PendingStateModal,
+} from "@/components/shared/transactionStates";
+import ConfirmStateModal from "@/components/shared/transactionStates/confirm";
+import {
+  confirmingTransaction,
+  confirmSetManagerFeeAddressText,
   constants,
   metamaskConstants,
+  rejectTransactionText,
+  waitTransactionTobeConfirmedText,
   walletConfirmConstants,
 } from "@/components/syndicates/shared/Constants";
 import { managerActionTexts } from "@/components/syndicates/shared/Constants/managerActions";
@@ -10,7 +19,10 @@ import { SyndicateActionLoader } from "@/components/syndicates/shared/syndicateA
 import { checkAccountAllowance } from "@/helpers/approveAllowance";
 import { getTotalDistributions } from "@/helpers/distributions";
 import { getMetamaskError } from "@/helpers/metamaskError";
-import { getSyndicateByAddress } from "@/redux/actions/syndicates";
+import {
+  getSyndicateByAddress,
+  updateSyndicateManagerFeeAddress,
+} from "@/redux/actions/syndicates";
 import { storeDistributionTokensDetails } from "@/redux/actions/tokenAllowances";
 import { RootState } from "@/redux/store";
 import ERC20ABI from "@/utils/abi/erc20";
@@ -19,7 +31,7 @@ import { ERC20TokenDetails } from "@/utils/ERC20Methods";
 import { formatAddress } from "@/utils/formatAddress";
 import { floatedNumberWithCommas } from "@/utils/numberWithCommas";
 import { TokenMappings } from "@/utils/tokenMappings";
-import { Validate } from "@/utils/validators";
+import { isZeroAddress, Validate } from "@/utils/validators";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -54,6 +66,7 @@ const DistributeToken = (props: Props) => {
   const router = useRouter();
   const { syndicateAddress } = router.query;
   const [submitting, setSubmitting] = useState(false);
+  const [savingMemberAddress, setSavingMemberAddress] = useState(false);
 
   const ERC20TokenDefaults = {
     tokenAddress: "",
@@ -193,9 +206,26 @@ const DistributeToken = (props: Props) => {
     setSuccessfulDistribution(false);
   };
 
-  // submit distribution request.
+  /**
+   * Submit all distribution tokens set.
+   * Note: Distributions cannot be set if managerFeeAddress for this syndicate
+   * is not set. So, we check whether the managerFeeAddress is set before
+   * continuing.
+   * @param event
+   */
   const onSubmit = async (event) => {
     event.preventDefault();
+
+    setManagerFeeAddressError("");
+
+    // Do not continue if managerFeeAddress is not set.
+    if (isZeroAddress(syndicate.managerFeeAddress)) {
+      setManagerFeeAddressError(
+        "Manager fee recipient Address is not set yet. Please set it before proceeding."
+      );
+      return;
+    }
+
     const tokenAddresses = [];
     const tokenDistributionAmounts = [];
 
@@ -792,6 +822,138 @@ const DistributeToken = (props: Props) => {
     distributionDetailsTitleText,
   } = managerActionTexts;
 
+  const [managerFeeAddressError, setManagerFeeAddressError] = useState("");
+  const [managerFeeAddress, setManagerFeeAddress] = useState(
+    syndicate?.managerFeeAddress
+  );
+
+  /**
+   * validates manager fee address updating error states and the manager fee
+   * address value
+   * @param event
+   */
+  const handleManagerFeeAddressChange = (event) => {
+    event.preventDefault();
+    setManagerFeeAddressError("");
+
+    const { value } = event.target;
+    setManagerFeeAddress(value);
+
+    if (!value.trim()) {
+      setManagerFeeAddressError(
+        "A manager fee address cannot be an empty value"
+      );
+    } else if (isZeroAddress(value)) {
+      setManagerFeeAddressError(
+        "A manager Fee address must not be a zero address"
+      );
+    } else if (!(web3 && web3.utils.isAddress(value))) {
+      setManagerFeeAddressError(
+        "A manager Fee address must be a valid ethereum address."
+      );
+    }
+  };
+
+  const handleError = (error) => {
+    // capture metamask error
+    setShowWalletConfirmationModal(false);
+    setSavingMemberAddress(false);
+
+    const { code } = error;
+
+    const errorMessage = getMetamaskError(code, "Manager Fee Address");
+    setFinalButtonText("Dismiss");
+    setFinalStateIcon("/images/roundedXicon.svg");
+
+    if (code == 4001) {
+      setFinalStateHeaderText("Transaction Rejected");
+    } else if (code == undefined) {
+      setFinalStateHeaderText(
+        "The manager fee address should be different from the current manager address attached to this syndicate"
+      );
+    } else {
+      setFinalStateHeaderText(errorMessage);
+    }
+    setShowFinalState(true);
+  };
+
+  /**
+   * Final state variables
+   */
+  const [finalStateButtonText, setFinalButtonText] = useState("");
+  const [finalStateHeaderText, setFinalStateHeaderText] = useState("");
+  const [finalStateIcon, setFinalStateIcon] = useState("");
+  const [showFinalState, setShowFinalState] = useState(false);
+
+  // set metamask loading state
+  const [
+    showWalletConfirmationModal,
+    setShowWalletConfirmationModal,
+  ] = useState(false);
+
+  const handleCloseFinalStateModal = async () => {
+    setShowFinalState(false);
+  };
+
+  const handleSubmitManagerFeeAddress = async (event) => {
+    event.preventDefault();
+
+    setManagerFeeAddressError("");
+    setShowWalletConfirmationModal(true);
+
+    try {
+      await syndicateContractInstance.methods
+        .managerSetManagerFeeAddress(syndicateAddress, managerFeeAddress)
+        .send({ from: account, gasLimit: 800000 })
+        .on("transactionHash", () => {
+          setShowWalletConfirmationModal(false);
+          setSavingMemberAddress(true);
+        })
+        .on("receipt", async () => {
+          dispatch(updateSyndicateManagerFeeAddress(managerFeeAddress));
+          setSavingMemberAddress(false);
+          setManagerFeeAddressAlreadySet(true);
+        })
+        .on("error", (error) => {
+          console.log({ error });
+          handleError(error);
+        });
+    } catch (error) {
+      handleError(error);
+    }
+  };
+
+  /**
+   * This variable controls whether to show a form for a manager to set his/her
+   * fee recipient address
+   */
+  const [
+    managerFeeAddressAlreadySet,
+    setManagerFeeAddressAlreadySet,
+  ] = useState(false);
+
+  /**
+   * Checks whether managerFeeAddress is set for a given syndicate.
+   * By default the managerFeeAddress is address(0) which means the manager has
+   * not set his/her fee recipient address. Distributions cannot be enabled
+   * before managerFeeAddress is set.
+   * @returns
+   */
+  const isManagerFeeAddressSet = () => {
+    if (!syndicate) return;
+    if (isZeroAddress(syndicate.managerFeeAddress)) {
+      setManagerFeeAddressAlreadySet(false);
+    } else {
+      setManagerFeeAddressAlreadySet(true);
+    }
+  };
+
+  useEffect(() => {
+    isManagerFeeAddressSet();
+    return () => {
+      setManagerFeeAddressAlreadySet(false);
+    };
+  }, [syndicate]);
   return (
     <>
       <Modal
@@ -955,7 +1117,80 @@ const DistributeToken = (props: Props) => {
               <p className="text-gray-500 mx-4 my-4 mt-10 text-lg font-medium leading-5">
                 {distributionDetailsTitleText}
               </p>
-              <div className="bg-gray-99 border border-gray-200 mt-4 py-8 rounded-xl p-4">
+              <div className="bg-gray-99 border border-gray-200 mt-4 pb-8 rounded-xl">
+                {managerFeeAddressAlreadySet ? (
+                  <div className="border-b-1 mb-6 border-gray-200 pt-4 pb-2 px-4">
+                    <TextInput
+                      {...{
+                        label: "Manager Fee Address:",
+                        tooltip:
+                          "The manager fee address should be different from the current manager address attached to this syndicate.",
+                      }}
+                      value={
+                        managerFeeAddress ||
+                        syndicate.managerFeeAddress.toString()
+                      }
+                      name="managerFeeAddress"
+                      disabled
+                    />
+                  </div>
+                ) : (
+                  <form
+                    className="w-full border-b-1 my-6"
+                    onSubmit={handleSubmitManagerFeeAddress}>
+                    <div className="flex justify-between flex-col px-8 border-gray-200">
+                      {/* Manager fee address */}
+                      <p className="text-sm">Manager Fee Address</p>
+                      <div className="w-full flex-grow flex justify-between my-2">
+                        {/* input field */}
+                        <div className="flex flex-grow flex-col">
+                          <input
+                            type="text"
+                            name="managerFeeAddress"
+                            className={`text-black border-gray-85 text-sm font-whyte focus:ring-indigo-500 focus:border-indigo-500 rounded-md
+                        mr-4 mb-3`}
+                            step="1"
+                            placeholder="0x..."
+                            onChange={handleManagerFeeAddressChange}
+                            value={
+                              isZeroAddress(managerFeeAddress)
+                                ? ""
+                                : managerFeeAddress
+                            }
+                          />
+                        </div>
+                        <Button
+                          type="submit"
+                          customClasses={`rounded-md bg-blue-light border-2 border-blue-light w-full mr-4 xl:mr-0 xl:w-33 px-6 text-sm font-light mb-3 ${
+                            (managerFeeAddressError && !managerFeeAddress) ||
+                            !managerFeeAddress ||
+                            managerFeeAddress === syndicate?.managerFeeAddress
+                              ? "opacity-40"
+                              : ""
+                          }`}
+                          approved={managerFeeAddressAlreadySet}
+                          disabled={
+                            (managerFeeAddressError && !managerFeeAddress) ||
+                            !managerFeeAddress
+                              ? true
+                              : false
+                          }>
+                          {managerFeeAddress === syndicate &&
+                          syndicate?.managerFeeAddress &&
+                          managerFeeAddressAlreadySet
+                            ? `Confirmed`
+                            : "Confirm"}
+                        </Button>
+                      </div>
+                      <p className="text-red-500 text-xs mb-4 -mt-4">
+                        {managerFeeAddressError || !managerFeeAddress
+                          ? managerFeeAddressError
+                          : null}
+                      </p>
+                    </div>
+                  </form>
+                )}
+
                 <div className="space-y-4">
                   <div className="flex flex-row justify-center">
                     <div className="mr-2 w-7/12 flex justify-end">
@@ -1099,6 +1334,42 @@ const DistributeToken = (props: Props) => {
           </div>
         )}
       </Modal>
+
+      {/* Tell user to confirm transaction on their wallet */}
+      <ConfirmStateModal show={showWalletConfirmationModal}>
+        <div className="flex flex-col justify-centers m-auto mb-4">
+          <p className="text-sm text-center mx-8 opacity-60">
+            {confirmSetManagerFeeAddressText}
+          </p>
+          <p className="text-sm text-center mx-8 mt-2 opacity-60">
+            {rejectTransactionText}
+          </p>
+        </div>
+      </ConfirmStateModal>
+
+      {/* Loading modal */}
+      <PendingStateModal
+        {...{
+          show: savingMemberAddress,
+        }}>
+        <div className="modal-header mb-4 font-medium text-center leading-8 text-2xl">
+          {confirmingTransaction}
+        </div>
+        <div className="flex flex-col justify-center m-auto mb-4">
+          <p className="text-sm text-center mx-8 opacity-60">
+            {waitTransactionTobeConfirmedText}
+          </p>
+        </div>
+      </PendingStateModal>
+
+      <FinalStateModal
+        show={showFinalState}
+        handleCloseModal={async () => await handleCloseFinalStateModal()}
+        icon={finalStateIcon}
+        buttonText={finalStateButtonText}
+        headerText={finalStateHeaderText}
+        address={syndicateAddress.toString()}
+      />
     </>
   );
 };

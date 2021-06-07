@@ -78,7 +78,6 @@ const SyndicateInvestment = () => {
     noSyndicateMessageText,
     syndicateAddressInvalidMessageText,
     syndicateAddressInvalidTitleText,
-    backLinkText,
   } = syndicateActionConstants;
 
   // set texts to display on empty state

@@ -4,10 +4,10 @@ import { getSyndicateByAddress } from "@/redux/actions/syndicates";
 import { showWalletModal } from "@/redux/actions/web3Provider";
 import { RootState } from "@/redux/store";
 import { Validate } from "@/utils/validators";
+import Link from "next/link";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import Link from "next/link";
 import { ErrorModal } from "src/components/shared/ErrorModal";
 import { SkeletonLoader } from "src/components/skeletonLoader";
 import { getMetamaskError } from "src/helpers/metamaskError";
@@ -705,9 +705,10 @@ const InvestInSyndicate = () => {
   );
   // update states when error is encountered during withdrawals
   const handleWithdrawalError = (code: number) => {
+    const errorMessage = getMetamaskError(code, "Withdrawal");
+
     switch (code) {
       case 4001 || -32602 || -32603 || "INVALID_ARGUMENT":
-        const errorMessage = getMetamaskError(code, "Withdrawal");
         setMetamaskWithdrawError(errorMessage);
         setSubmittingWithdrawal(false);
         setSuccessfulWithdrawal(false);
@@ -1237,8 +1238,7 @@ const InvestInSyndicate = () => {
         <div
           className={`h-fit-content px-8 pb-4 pt-5 bg-gray-9 ${
             !account ? "rounded-2xl" : `border-b-0 rounded-t-2xl`
-          }`}
-        >
+          }`}>
           {/* Show is read only text if no provider */}
           {Web3.givenProvider === null && syndicateAddressIsValid ? (
             <UnavailableState
@@ -1345,7 +1345,10 @@ const InvestInSyndicate = () => {
                     </div>
                   ) : (
                     <div className="flex items-center">
-                      <img className="mr-2 relative -top-1" src={"/images/deposit.svg"} />
+                      <img
+                        className="mr-2 relative -top-1"
+                        src={"/images/deposit.svg"}
+                      />
 
                       <p className="font-semibold text-xl p-2">
                         {depositModes
@@ -1405,10 +1408,12 @@ const InvestInSyndicate = () => {
                             />
                           ) : (
                             <p className="flex-shrink-0 flex items-center whitespace-nowrap">
-                              {currentERC20 === "DAI"
-                                ? <img className="mr-2" src={"/images/dai-symbol.svg"} />
-                                : null
-                              }
+                              {currentERC20 === "DAI" ? (
+                                <img
+                                  className="mr-2"
+                                  src={"/images/dai-symbol.svg"}
+                                />
+                              ) : null}
                               {currentERC20}
                             </p>
                           )}
@@ -1484,8 +1489,7 @@ const InvestInSyndicate = () => {
           setShowErrorMessage,
           setErrorMessage,
           errorMessage,
-        }}
-      ></ErrorModal>
+        }}></ErrorModal>
     </ErrorBoundary>
   );
 };

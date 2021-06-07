@@ -5,7 +5,7 @@ import React from "react";
  * @param {*} props
  */
 export const PrimaryButton = (props: {
-  children: string;
+  children: any;
   disabled?: boolean;
   customClasses: string;
   onClick?: () => void;
@@ -24,8 +24,7 @@ export const PrimaryButton = (props: {
   return (
     <button
       className={`flex items-center justify-center border border-transparent text-base font-light rounded-md text-white focus:outline-none focus:ring ${customClasses}`}
-      {...rest}
-    >
+      {...rest}>
       {approved ? (
         <img className="inline w-4 mr-2" src="/images/checkmark-approved.svg" />
       ) : null}

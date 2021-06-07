@@ -29,7 +29,6 @@ import {
   expectedAnnualOperatingFeesToolTip,
   profitShareToSyndicateLeadToolTip,
   profitShareToSyndicateProtocolToolTip,
-  syndicateDetailsConstants,
 } from "../shared/Constants";
 
 const SyndicateDetails = (props: {
@@ -142,11 +141,6 @@ const SyndicateDetails = (props: {
       depositMaxTotal,
     } = syndicate;
   }
-
-  const {
-    syndicateDetailsFooterText,
-    syndicateDetailsLinkText,
-  } = syndicateDetailsConstants;
 
   // get and set current token details
   useEffect(() => {
@@ -451,11 +445,23 @@ const SyndicateDetails = (props: {
   }, [syndicate, syndicateAddress]);
 
   // format an account address in the format 0x3f6q9z52…54h2kjh51h5zfa
-  const formattedSyndicateAddress3XLarge = formatAddress(syndicateAddress, 18, 18);
-  const formattedSyndicateAddressXLarge = formatAddress(syndicateAddress, 14, 11);
+  const formattedSyndicateAddress3XLarge = formatAddress(
+    syndicateAddress,
+    18,
+    18
+  );
+  const formattedSyndicateAddressXLarge = formatAddress(
+    syndicateAddress,
+    14,
+    11
+  );
   const formattedSyndicateAddressLarge = formatAddress(syndicateAddress, 6, 7);
   const formattedSyndicateAddressMedium = formatAddress(syndicateAddress, 7, 6);
-  const formattedSyndicateAddressSmall = formatAddress(syndicateAddress, 10, 14);
+  const formattedSyndicateAddressSmall = formatAddress(
+    syndicateAddress,
+    10,
+    14
+  );
   const formattedSyndicateAddressMobile = formatAddress(syndicateAddress, 5, 8);
 
   // show message to the user when address has been copied.
@@ -561,32 +567,32 @@ const SyndicateDetails = (props: {
 
         <div className="flex justif-start items-center">
           <div className="flex-shrink text-xl sm:text-2xl lg:text-3xl flex-wrap break-all my-3">
-              <div className="mr-4">
-                <div className="hidden 3xl:block">
-                  <span className="text-gray-500">0x</span>
-                  {formattedSyndicateAddress3XLarge.slice(2)}
-                </div>
-                <div className="hidden xl:block 3xl:hidden">
-                  <span className="text-gray-500">0x</span>
-                  {formattedSyndicateAddressXLarge.slice(2)}
-                </div>
-                <div className="hidden lg:block xl:hidden">
-                  <span className="text-gray-500">0x</span>
-                  {formattedSyndicateAddressLarge.slice(2)}
-                </div>
-                <div className="hidden md:block lg:hidden">
-                  <span className="text-gray-500">0x</span>
-                  {formattedSyndicateAddressMedium.slice(2)}
-                </div>
-                <div className="hidden sm:block md:hidden">
-                  <span className="text-gray-500">0x</span>
-                  {formattedSyndicateAddressSmall.slice(2)}
-                </div>
-                <div className="sm:hidden">
-                  <span className="text-gray-500">0x</span>
-                  {formattedSyndicateAddressMobile.slice(2)}
-                </div>
+            <div className="mr-4">
+              <div className="hidden 3xl:block">
+                <span className="text-gray-500">0x</span>
+                {formattedSyndicateAddress3XLarge.slice(2)}
               </div>
+              <div className="hidden xl:block 3xl:hidden">
+                <span className="text-gray-500">0x</span>
+                {formattedSyndicateAddressXLarge.slice(2)}
+              </div>
+              <div className="hidden lg:block xl:hidden">
+                <span className="text-gray-500">0x</span>
+                {formattedSyndicateAddressLarge.slice(2)}
+              </div>
+              <div className="hidden md:block lg:hidden">
+                <span className="text-gray-500">0x</span>
+                {formattedSyndicateAddressMedium.slice(2)}
+              </div>
+              <div className="hidden sm:block md:hidden">
+                <span className="text-gray-500">0x</span>
+                {formattedSyndicateAddressSmall.slice(2)}
+              </div>
+              <div className="sm:hidden">
+                <span className="text-gray-500">0x</span>
+                {formattedSyndicateAddressMobile.slice(2)}
+              </div>
+            </div>
           </div>
           <CopyToClipboard text={syndicateAddress}>
             <div className="flex items-center ml-4 relative w-10">

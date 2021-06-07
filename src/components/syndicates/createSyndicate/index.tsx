@@ -50,7 +50,6 @@ import {
   syndicateAddressToolTip,
   totalMaximumDepositToolTip,
 } from "../shared/Constants";
-import { EtherscanLink } from "../shared/EtherscanLink";
 
 interface Props {
   showModal: boolean;
@@ -455,17 +454,20 @@ const CreateSyndicate = (props: Props) => {
         .join("&");
     };
 
-    await fetch("/", {
-      method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body: encode({
-        "form-name": "offChainData",
-        fullName,
-        emailAddress,
-        syndicateAddress: account,
-        attachLLCManually: formLLC,
-      }),
-    });
+    // off-chain data should be submitted if its provided.
+    if (fullName || emailAddress) {
+      await fetch("/", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: encode({
+          "form-name": "offChainData",
+          fullName,
+          emailAddress,
+          syndicateAddress: account,
+          attachLLCManually: formLLC,
+        }),
+      });
+    }
 
     // The name of CreateSyndicate function and order of function parameters
     // has changed in the recent version so we need to find the correct function
@@ -1059,9 +1061,6 @@ const CreateSyndicate = (props: Props) => {
         </div>
         <div className="flex flex-col justify-center m-auto mb-4">
           <p className="text-sm text-center mx-8 opacity-60">{loaderSubtext}</p>
-        </div>
-        <div className="flex justify-center">
-          <EtherscanLink contractAddress={account} />
         </div>
       </PendingStateModal>
 

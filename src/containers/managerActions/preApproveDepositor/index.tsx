@@ -325,6 +325,7 @@ const PreApproveDepositor = (props: Props) => {
         buttonText={finalStateButtonText}
         feedbackText={finalStateFeedback}
         headerText={finalStateHeaderText}
+        address={syndicateAddress.toString()}
       />
     </>
   );

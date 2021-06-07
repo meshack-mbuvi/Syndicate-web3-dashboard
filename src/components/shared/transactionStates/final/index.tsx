@@ -1,3 +1,4 @@
+import { EtherscanLink } from "@/components/syndicates/shared/EtherscanLink";
 import React from "react";
 import Button from "src/components/buttons";
 import TransactionStateModal from "../shared";
@@ -9,6 +10,7 @@ interface Props {
   buttonText: string;
   feedbackText?: string;
   headerText: string;
+  address: string;
 }
 
 /**
@@ -22,6 +24,7 @@ export const FinalStateModal = (props: Props) => {
     buttonText,
     feedbackText,
     headerText,
+    address,
     ...rest
   } = props;
 
@@ -41,6 +44,10 @@ export const FinalStateModal = (props: Props) => {
               {feedbackText}
             </p>
           ) : null}
+
+          <div className="flex justify-center">
+            <EtherscanLink contractAddress={address} />
+          </div>
 
           <div className="flex justify-center my-5">
             <Button

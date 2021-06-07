@@ -12,6 +12,7 @@ import {
   ALL_SYNDICATES,
   INVALID_SYNDICATE_ADDRESS,
   SET_LOADING,
+  SET_MANAGER_FEE_ADDRESS,
   SYNDICATE_BY_ADDRESS,
 } from "../types";
 
@@ -302,7 +303,6 @@ export const processSyndicateDetails = (
     depositsEnabled && parseInt(depositTotal) < parseInt(depositMaxTotal)
       ? `Open until ${closeDate}`
       : "Operating";
-  
 
   return {
     status,
@@ -330,4 +330,15 @@ export const processSyndicateDetails = (
     syndicateProfitShareBasisPoints,
     managerPerformanceFeeBasisPoints: profitShareToSyndicateLead,
   };
+};
+
+export const updateSyndicateManagerFeeAddress = (managerFeeAddress: string) => (
+  dispatch
+) => {
+  if (!managerFeeAddress) return;
+
+  return dispatch({
+    type: SET_MANAGER_FEE_ADDRESS,
+    data: managerFeeAddress,
+  });
 };

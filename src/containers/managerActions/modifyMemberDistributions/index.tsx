@@ -449,6 +449,7 @@ const ModifyMemberDistributions = (props: Props) => {
         icon={finalStateIcon}
         buttonText={finalStateButtonText}
         headerText={finalStateHeaderText}
+        address={syndicateAddress.toString()}
       />
     </>
   );

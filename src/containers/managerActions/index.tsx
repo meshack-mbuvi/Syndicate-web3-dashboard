@@ -1,4 +1,3 @@
-import Modal from "@/components/modal";
 import { ErrorModal } from "@/components/shared";
 import { PendingStateModal } from "@/components/shared/transactionStates";
 import ConfirmStateModal from "@/components/shared/transactionStates/confirm";
@@ -14,12 +13,10 @@ import {
 import { getMetamaskError } from "@/helpers";
 import { getSyndicateByAddress } from "@/redux/actions/syndicates";
 import { RootState } from "@/redux/store";
-import { isZeroAddress } from "@/utils/validators";
 import { useRouter } from "next/router";
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import ErrorBoundary from "../../components/errorBoundary";
-import ChangeSyndicateSettings from "./changeSyndicateSettings";
 import DistributeToken from "./distributeToken";
 import ManagerAction from "./ManagerAction";
 import ModifyMemberDistributions from "./modifyMemberDistributions";
@@ -60,15 +57,11 @@ const ManagerActions = () => {
   const [showRequestSocialProfile, setShowRequestSocialProfile] = useState(
     false
   );
-  const [
-    tellManagerToSetmanagerFeeAddress,
-    setTellManagerToSetmanagerFeeAddress,
-  ] = useState(false);
+
   const [showModifyCapTable, setShowModifyCapTable] = useState(false);
   const [showSyndicateNotModifiable, setShowSyndicateNotModifiable] = useState(
     false
   );
-  const [showChangeSettings, setShowChangeSettings] = useState<boolean>(false);
 
   const [
     showModifyMemberDistribution,
@@ -190,23 +183,6 @@ const ManagerActions = () => {
     }
   };
 
-  /**
-   * checks whether managerFeeAddress is set before showing the set distribution
-   * modal. If managerFeeAddress is not set, an informative modal is shown
-   * requesting the manager to set managerFeeAddress first. Otherwise the
-   * setDistribution component is shown
-   */
-  const showSetDistributionModal = (event) => {
-    event.preventDefault();
-    setTellManagerToSetmanagerFeeAddress(false);
-
-    if (!isZeroAddress(syndicate.managerFeeAddress)) {
-      setShowDistributeToken(true);
-    } else {
-      setTellManagerToSetmanagerFeeAddress(true);
-    }
-  };
-
   return (
     <ErrorBoundary>
       <div className="w-full mt-4 sm:mt-0">
@@ -235,7 +211,7 @@ const ManagerActions = () => {
                 "Distribute tokens back to depositors and make them available for withdraw."
               }
               icon={<img src="/images/server.svg" />}
-              onClickHandler={showSetDistributionModal}
+              onClickHandler={() => setShowDistributeToken(true)}
             />
           )}
 
@@ -290,7 +266,6 @@ const ManagerActions = () => {
           <MoreManagerActions
             icon={<img src="/images/settings.svg" />}
             text={"Change syndicate settings"}
-            onClickHandler={setShowChangeSettings}
           />
         </div>
         {showDistributeToken ? (
@@ -308,10 +283,6 @@ const ManagerActions = () => {
         ) : showModifyCapTable ? (
           <ModifySyndicateCapTable
             {...{ showModifyCapTable, setShowModifyCapTable }}
-          />
-        ) : showChangeSettings ? (
-          <ChangeSyndicateSettings
-            {...{ showChangeSettings, setShowChangeSettings }}
           />
         ) : showSyndicateNotModifiable ? (
           <ErrorModal
@@ -367,25 +338,8 @@ const ManagerActions = () => {
         icon={finalStateIcon}
         buttonText={finalStateButtonText}
         headerText={finalStateHeaderText}
+        address={syndicateAddress.toString()}
       />
-
-      <Modal
-        {...{
-          title: "",
-          show: tellManagerToSetmanagerFeeAddress,
-          closeModal: setTellManagerToSetmanagerFeeAddress,
-          customWidth: `${`sm:w-1/3`}`,
-          titleFontSize: "text-3xl",
-          showCloseButton: true,
-        }}>
-        <div className="mx-4 mb-8">
-          <p className="text-gray-500 text-base leading-5 font-light mb-6">
-            Manager fee recipient Address is not set yet. Please set it in the{" "}
-            <span className="font-bold">Change Syndicate Settings</span>{" "}
-            section.
-          </p>
-        </div>
-      </Modal>
     </ErrorBoundary>
   );
 };
