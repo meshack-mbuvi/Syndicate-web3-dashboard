@@ -80,7 +80,8 @@ const depositSuccessButtonText = "Deposit more";
 // withdraw success texts
 const withdrawalSuccessTitleText = "You just made a withdrawal.";
 const withdrawalSuccessSubtext = "Withdrawal transaction was successful.";
-const withdrawalSuccessButtonText = "Dismiss";
+const withdrawalSuccessButtonText = "Withdraw more";
+const withdrawalSuccessBackButtonText = "Back"
 
 // approval success texts
 const approvalSuccessTitleText = "Allowance approved.";
@@ -225,6 +226,7 @@ export const constants = {
   withdrawalSuccessTitleText,
   withdrawalSuccessSubtext,
   withdrawalSuccessButtonText,
+  withdrawalSuccessBackButtonText,
   readOnlySyndicateText,
   readOnlySyndicateTitle,
   withdrawalAmountGreaterThanMemberDeposits,

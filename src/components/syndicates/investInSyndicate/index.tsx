@@ -211,6 +211,7 @@ const InvestInSyndicate = () => {
     withdrawalSuccessTitleText,
     withdrawalSuccessSubtext,
     withdrawalSuccessButtonText,
+    withdrawalSuccessBackButtonText,
     readOnlySyndicateText,
     readOnlySyndicateTitle,
     withdrawalAmountGreaterThanMemberDeposits,
@@ -312,6 +313,7 @@ const InvestInSyndicate = () => {
         totalAvailableDistributions,
         currentERC20Decimals,
         currentDistributionTokenDecimals,
+        syndicateAction,
       })
     );
   };
@@ -460,7 +462,7 @@ const InvestInSyndicate = () => {
       // push member details to the redux store
       if (withdraw) {
         // storing member details when totalAvailableDistributions is undefined will reset its previous value when withdrawal is in progress.
-        if (totalAvailableDistributions && +myDistributionsToDate === 0) {
+        if (totalAvailableDistributions) {
           storeMemberDetails();
         }
       } else if (depositModes) {
@@ -1232,6 +1234,14 @@ const InvestInSyndicate = () => {
     withdrawalPageTitleText = withdrawalDepositTitleText;
   }
 
+  // set the message to be displayed on the success action button for withdrawals
+  // The button text should read 'Withdraw more' or 'Back' depending on whether
+  // the member can make more withdrawals or not.
+  let withdrawalSuccessButtonMessage = withdrawalSuccessBackButtonText;
+  if (+myDistributionsToDate > 0 || +myDeposits > 0) {
+    withdrawalSuccessButtonMessage = withdrawalSuccessButtonText;
+  }
+
   return (
     <ErrorBoundary>
       <div className="w-full mt-4 sm:mt-0 sticky top-44 mb-10">
@@ -1316,7 +1326,7 @@ const InvestInSyndicate = () => {
                   subText={withdrawalSuccessSubtext}
                   showRetryButton={true}
                   success={true}
-                  buttonText={withdrawalSuccessButtonText}
+                  buttonText={withdrawalSuccessButtonMessage}
                   closeLoader={closeSyndicateActionLoader}
                 />
               ) : maxDepositReached && depositModes && !showSkeletonLoader ? (

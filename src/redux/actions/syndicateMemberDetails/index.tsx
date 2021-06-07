@@ -36,6 +36,7 @@ interface SyndicateLPData {
   totalAvailableDistributions: string;
   currentERC20Decimals: number;
   currentDistributionTokenDecimals?: number;
+  syndicateAction: any;
 }
 
 /** action creator to trigger updates to the redux store whenever
@@ -55,7 +56,11 @@ export const updateSyndicateMemberDetails = (data: SyndicateLPData) => async (
     totalAvailableDistributions,
     currentERC20Decimals,
     currentDistributionTokenDecimals,
+    syndicateAction,
   } = data;
+
+  // get syndicate action state for withdrawals
+  const { withdraw } = syndicateAction;
 
   // we cannot query relevant values without the syndicate instance
   if (!syndicateContractInstance || !account) return;
@@ -106,29 +111,34 @@ export const updateSyndicateMemberDetails = (data: SyndicateLPData) => async (
             totalSyndicateDeposits
           );
 
-          // update Member's total distributions to date
+          // update Member's total distributions to date if on the withdrawal page
           // totalDistributions * (deposit/depositTotal)
           // we'll calculate the member's eligible withdrawal value
-          try {
-            var eligibleWithdrawal = await syndicateContractInstance.methods
-              .calculateEligibleWithdrawal(
-                result[0],
-                depositTotal,
-                result[1],
-                totalAvailableDistributions
-              )
-              .call()
-              .then((result) => result)
-              .catch(() => "0");
-          } catch (error) {
-            eligibleWithdrawal = "0";
+          if (withdraw && +totalAvailableDistributions > 0) {
+            try {
+              var eligibleWithdrawal = await syndicateContractInstance.methods
+                .calculateEligibleWithdrawal(
+                  result[0],
+                  depositTotal,
+                  result[1],
+                  totalAvailableDistributions
+                )
+                .call()
+                .then((result) => result)
+                .catch(() => "0");
+            } catch (error) {
+              eligibleWithdrawal = "0";
+            }
           }
 
-          const myDistributionsToDate = getWeiAmount(
-            eligibleWithdrawal,
-            currentDistributionTokenDecimals,
-            false
-          );
+          let myDistributionsToDate = "0";
+          if (eligibleWithdrawal) {
+            myDistributionsToDate = getWeiAmount(
+              eligibleWithdrawal,
+              currentDistributionTokenDecimals,
+              false
+            );
+          }
 
           // check whether the member has reached their maximum deposit cap.
           const { maxDeposit } = syndicate;
