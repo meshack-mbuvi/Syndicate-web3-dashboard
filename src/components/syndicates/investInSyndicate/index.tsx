@@ -371,15 +371,19 @@ const InvestInSyndicate = () => {
   // check for errors on the member withdrawal page.
   useEffect(() => {
     if (withdraw && syndicateLPDetails) {
-      // show error when amount is greater than member's available distributions.
-      // or when the amount is greater than member deposits(members is withdrawing their deposits)
-      // or when the member's deposits minus the amount exceeds the minimum member deposit.
+      // show validation error messages.
+      // when amount is greater than member's available distributions.
       const amountGreaterThanMemberDistributions =
         +amount > +myDistributionsToDate;
+
+      // when the amount is greater than member deposits(members is withdrawing their deposits)
       const amountGreaterThanMemberDeposits = +amount > +myDeposits;
+
+      // when the member's deposits minus the amount is less than the minimum member deposit
+      // this last scenario only applies if the member is not withdrawing all of their deposits.
       const { depositMinMember } = syndicate;
       const amountLessThanMinDeposits =
-        +myDeposits - +amount < depositMinMember;
+        +myDeposits - +amount < depositMinMember && +amount !== +myDeposits;
 
       if (
         amountGreaterThanMemberDistributions &&
@@ -1108,7 +1112,7 @@ const InvestInSyndicate = () => {
     } else if (withdrawalAmountGreaterThanDeposits) {
       errorMessageText = withdrawalAmountGreaterThanMemberDeposits;
     } else if (withdrawalAmountLessThanMinDeposits) {
-      errorMessageText = withdrawalAmountLessThanMinDepositErrorText;
+      errorMessageText = `${withdrawalAmountLessThanMinDepositErrorText} of ${depositMinMember} ${currentERC20}.`;
     } else {
       errorMessageText = amountError;
     }
@@ -1248,7 +1252,8 @@ const InvestInSyndicate = () => {
         <div
           className={`h-fit-content px-8 pb-4 pt-5 bg-gray-9 ${
             !account ? "rounded-2xl" : `border-b-0 rounded-t-2xl`
-          }`}>
+          }`}
+        >
           {/* Show is read only text if no provider */}
           {Web3.givenProvider === null && syndicateAddressIsValid ? (
             <UnavailableState
@@ -1499,7 +1504,8 @@ const InvestInSyndicate = () => {
           setShowErrorMessage,
           setErrorMessage,
           errorMessage,
-        }}></ErrorModal>
+        }}
+      ></ErrorModal>
     </ErrorBoundary>
   );
 };

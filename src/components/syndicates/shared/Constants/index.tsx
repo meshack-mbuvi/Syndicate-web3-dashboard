@@ -31,7 +31,7 @@ const withdrawalsUnavailableTitleText = "Withdrawal Failed";
 const withdrawalAllowanceInsufficientText =
   "This syndicate has an insufficient allowance set for withdrawals. We have notified the syndicate manager. Please try again later.";
 const withdrawalAmountLessThanMinDepositErrorText =
-  "You cannot withdraw this amount. Your remaining deposits be less than the set minimum.";
+  "You can either withdraw your entire deposits or an amount less than your deposits but such that your remaining deposits will be more than the set minimum";
 
 const loaderWithdrawalHeaderText =
   "Please wait while the withdrawal transaction completes...";
@@ -233,6 +233,7 @@ export const constants = {
   withdrawalsUnavailableTitleText,
   withdrawalAllowanceInsufficientText,
   withdrawalAmountLessThanMinDepositErrorText,
+  
 };
 
 // Tooltips
