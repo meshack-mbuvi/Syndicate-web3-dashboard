@@ -15,7 +15,7 @@ const Header = () => {
           {/* back button */}
           <div className="md:hidden float-left vertically-center">
             <Link href="/syndicates">
-              <img src="/images/back-chevron-large.svg"/>
+              <a><img src="/images/back-chevron-large.svg"/></a>
             </Link>
           </div>
         </div>
