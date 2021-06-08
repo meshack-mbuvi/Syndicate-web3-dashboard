@@ -1,5 +1,6 @@
 import Footer from "@/components/navigation/footer";
 import { syndicateInterface } from "@/components/shared/interfaces";
+import ManagerActions from "@/containers/managerActions";
 import ManagerSetAllowance from "@/containers/managerActions/setAllowances";
 import { getEvents } from "@/helpers/retrieveEvents";
 import { RootState } from "@/redux/store";
@@ -18,6 +19,7 @@ import {
   storeDistributionTokensDetails,
 } from "src/redux/actions/tokenAllowances";
 import ERC20ABI from "src/utils/abi/rinkeby-dai";
+import InvestInSyndicate from "../investInSyndicate";
 // utils
 import { formatAddress } from "src/utils/formatAddress";
 import { TokenMappings } from "src/utils/tokenMappings";
@@ -616,8 +618,16 @@ const SyndicateDetails = (props: {
           {syndicateBadge}
         </div>
 
-        {/* Syndicate details 
-      This component should be shown when we have details about user deposits */}
+        {/* Syndicate details */}
+        <div className="w-full md:hidden">
+          {accountIsManager ? (
+            <ManagerActions />
+          ) : (
+            <InvestInSyndicate />
+          )}
+        </div>
+
+        {/* This component should be shown when we have details about user deposits */}
         <DetailsCard
           {...{
             title: "Details",
