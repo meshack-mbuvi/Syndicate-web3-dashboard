@@ -1475,7 +1475,7 @@ const InvestInSyndicate = () => {
           />
         ) : null}
 
-        {depositModes && syndicate?.depositsEnabled && myDeposits > 0 ? (
+        {depositModes && syndicate?.depositsEnabled && parseInt(myDeposits) > 0 ? (
           <>
             <p className="sm:ml-2 p-4 mx-2 sm:px-8 sm:py-4 text-xs text-gray-dim leading-4">
               MORE
