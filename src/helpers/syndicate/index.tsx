@@ -4,6 +4,7 @@ import {
   getTokenDecimals,
   processSyndicateDetails,
 } from "@/redux/actions/syndicates";
+import { getWeiAmount } from "@/utils/conversions";
 import React from "react";
 import { getEvents } from "../retrieveEvents";
 
@@ -68,4 +69,45 @@ export const showLoader = (count) => {
     );
   }
   return animations;
+};
+
+/**
+ * Retrieves member details for a given syndicate
+ *
+ * @param {object} syndicateContractInstance - web3 contract instance
+ * @param {string} syndicateAddress - address to get member details from.
+ * @param {string} memberAddress - member address to get details from a syndicate
+ * @param {number} currentERC20Decimals - token decimals
+ * @returns {object} - memberDeposits, memberTotalWithdrawals and memberAddressAllowed
+ *
+ */
+export const getSyndicateMemberInfo = async (
+  syndicateContractInstance,
+  syndicateAddress,
+  memberAddress,
+  currentERC20Decimals = 18
+) => {
+  return await syndicateContractInstance.methods
+    .getMemberInfo(syndicateAddress, memberAddress)
+    .call()
+    .then(async (result) => {
+      const memberDeposits = parseInt(
+        getWeiAmount(result[0], currentERC20Decimals, false)
+      );
+
+      const memberTotalWithdrawals = parseInt(
+        getWeiAmount(result[1], currentERC20Decimals, false)
+      );
+
+      const memberAddressAllowed = result[2];
+
+      return { memberDeposits, memberTotalWithdrawals, memberAddressAllowed };
+    })
+    .catch(() => {
+      return {
+        memberDeposits: 0,
+        memberTotalWithdrawals: 0,
+        memberAddressAllowed: false,
+      };
+    });
 };

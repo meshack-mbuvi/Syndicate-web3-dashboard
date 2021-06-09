@@ -64,3 +64,16 @@ export const validateEmail = (email: string) => {
   const regexp = /^[\w.%+-]+@[\w.-]+\.[\w]{2,6}$/;
   return regexp.test(email);
 };
+
+export const isNewLineChar = (value: string) => /^\n+$/.test(value);
+
+export const removeEnter = (value) => value.replace(/^\s+|\s+$/g, "");
+
+export const removeSpace = (value) => value.replace(/\s/g, "");
+
+/**
+ * removes enter character and space character
+ * @param data
+ * @returns
+ */
+export const sanitizeInputString = (data) => removeSpace(removeEnter(data));

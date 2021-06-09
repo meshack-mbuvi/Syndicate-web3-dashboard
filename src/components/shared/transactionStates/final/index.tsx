@@ -9,7 +9,7 @@ interface Props {
   icon: any;
   buttonText: string;
   feedbackText?: string;
-  headerText: string;
+  headerText?: string;
   address: string;
 }
 
@@ -35,19 +35,26 @@ export const FinalStateModal = (props: Props) => {
           <div className="flex justify-center my-5">
             <img src={icon} className="w-14" />
           </div>
-          <p className="modal-header mb-4 font-medium text-center leading-8 text-lg">
-            {headerText}
-          </p>
+
+          {headerText ? (
+            <p className="modal-header mb-4 font-medium text-center leading-8s text-lg">
+              {headerText}
+            </p>
+          ) : null}
 
           {feedbackText ? (
-            <p className="mb-4 text-center font-whyte text-gray-dim text-sm mx-6">
+            <p className="mb-4 text-center font-whyte text-sm mx-6">
               {feedbackText}
             </p>
           ) : null}
 
-          <div className="flex justify-center">
-            <EtherscanLink contractAddress={address} />
-          </div>
+          {address ? (
+            <div className="flex justify-center">
+              <EtherscanLink contractAddress={address} />
+            </div>
+          ) : (
+            ""
+          )}
 
           <div className="flex justify-center my-5">
             <Button

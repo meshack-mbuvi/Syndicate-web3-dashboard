@@ -5,7 +5,6 @@ import ConfirmStateModal from "@/components/shared/transactionStates/confirm";
 import FinalStateModal from "@/components/shared/transactionStates/final";
 import { getMetamaskError } from "@/helpers";
 import { showWalletModal } from "@/redux/actions";
-import { getSyndicateByAddress } from "@/redux/actions/syndicates";
 import { RootState } from "@/redux/store";
 import { isZeroAddress } from "@/utils/validators";
 import { useRouter } from "next/router";
@@ -96,10 +95,6 @@ const PreApproveDepositor = (props: Props) => {
   const handleCloseFinalStateModal = async () => {
     setShowFinalState(false);
     setShowPreApproveDepositor(false);
-
-    await dispatch(
-      getSyndicateByAddress(syndicateAddress, syndicateContractInstance)
-    );
   };
 
   /**
@@ -254,7 +249,7 @@ const PreApproveDepositor = (props: Props) => {
             <div className="text-gray-400 py-6">
               {approveAddressesHeadingText}
             </div>
-            <div className="font-bold	">{approveAddressesWarning}</div>
+            <div className="font-bold">{approveAddressesWarning}</div>
             <div className="text-blue-light font-semibold	pt-10 pl-4">
               {textAreaTitle}
             </div>
@@ -276,18 +271,14 @@ const PreApproveDepositor = (props: Props) => {
               />
             </div>
             <div className="flex items-center	justify-center pt-6">
-              {submitting ? (
-                <div className="loader"></div>
-              ) : (
-                <button
-                  className={`bg-blue-light text-white	py-2 px-10 rounded-full ${
-                    showLPError ? "cursor-not-allowed" : null
-                  }`}
-                  onClick={handleSubmit}
-                  disabled={showLPError}>
-                  {buttonText}
-                </button>
-              )}
+              <button
+                className={`bg-blue-light text-white	py-2 px-10 rounded-full ${
+                  showLPError ? "cursor-not-allowed" : null
+                }`}
+                onClick={handleSubmit}
+                disabled={showLPError}>
+                {buttonText}
+              </button>
             </div>
           </div>
         </div>

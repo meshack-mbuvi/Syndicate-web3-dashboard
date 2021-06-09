@@ -15,25 +15,33 @@ export const TextArea = (props: {
   error?: string;
   required?: boolean;
   value: string | number;
+  rows?: number;
 }) => {
-  const { name, onChange, error, value, disabled = false, ...rest } = props;
+  const {
+    name,
+    onChange,
+    error,
+    value,
+    disabled = false,
+    rows = 4,
+    ...rest
+  } = props;
 
   const disabledClasses = disabled
     ? "text-sm text-gray-500 border-0"
-    : "text-black border-gray-85";
+    : "text-black text-sm border-gray-85";
 
   return (
     <div className="w-full">
       <textarea
         name={name}
         onChange={onChange}
-        className={`border border-gray-french rounded-lg w-full bg-white p-4 h-96 focus:border-indigo-500 ${disabledClasses}`}
+        className={`border border-gray-french rounded-lg w-full bg-white p-4 focus:border-indigo-500 ${disabledClasses}`}
         {...rest}
-        cols={4}
+        rows={rows}
         disabled={disabled}
-        value={value}
-      ></textarea>
-      {error ? <p className="text-red-500 text-xs">{error}</p> : null}
+        value={value}></textarea>
+      {error ? <p className="text-red-500 text-xs break-all">{error}</p> : null}
     </div>
   );
 };

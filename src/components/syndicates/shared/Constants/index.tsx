@@ -124,8 +124,8 @@ const approveAddressesHeadingText =
   "Pre-approve addresses that can deposit to this syndicate. These addresses will be added to this syndicate’s pre-approved list.";
 const textAreaTitle = "Pre-Approve Depositor List";
 const approvedAddressesLabel = "Approve Address";
-const separateWithCommas = "(separate with commas)";
-const buttonText = "Confirm";
+export const separateWithCommas = "(separate with commas)";
+export const buttonText = "Confirm";
 
 // public-facing social profile
 const socialProfileDescription =
@@ -387,7 +387,6 @@ export const confirmPreApproveAddressesText =
   "Confirm the transaction on your wallet if you want to approve new depositors.";
 export const preApproveMoreAddress =
   "You can pre-approve more member addresses at any time whilst the syndicate is open.";
-
 // modify member distributions constants
 const currentDistributionClaimedAmountTooltip =
   "Current amount of distributions claimed by the member address";
@@ -420,3 +419,24 @@ export const oneSyndicatePerAccountText =
 
 export const confirmSetManagerFeeAddressText =
   "Please confirm you want to set the address provided as your fee recipient address";
+
+// constants for reject Deposit or member address component
+const rejectDepositOrMemberAddressAdvice =
+  "To reject and return an individual deposit made to this syndicate, enter the depositor’s address in the field below.";
+
+const rejectMemberDeposit =
+  "You can reject more member deposits at any time whilst the syndicate is open.";
+const rejectMemberAddress =
+  "You can reject more member addresses at any time whilst the syndicate is open.";
+
+const confirmRejectDepositsText =
+  "Confirm the transaction on your wallet if you want to reject deposits.";
+const confirmBlockMemberAddressesText =
+  "Confirm the transaction on your wallet if you want to block member addresses.";
+export const rejectDepositOrMemberAddressConstants = {
+  rejectDepositOrMemberAddressAdvice,
+  rejectMemberDeposit,
+  confirmRejectDepositsText,
+  confirmBlockMemberAddressesText,
+  rejectMemberAddress,
+};

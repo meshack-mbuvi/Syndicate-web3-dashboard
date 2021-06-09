@@ -23,6 +23,7 @@ import ModifyMemberDistributions from "./modifyMemberDistributions";
 import ModifySyndicateCapTable from "./modifySyndicateCapTable";
 import MoreManagerActions from "./moreManagerActions";
 import PreApproveDepositor from "./preApproveDepositor";
+import RejectDepositOrMemberAddress from "./RejectDepositOrMemberAddress";
 import RequestSocialProfile from "./requestSocialProfile";
 
 const ManagerActions = () => {
@@ -159,13 +160,11 @@ const ManagerActions = () => {
     }
   };
 
-  const moreActions = [
-    {
-      icon: <img src="/images/exclamation-triangle.svg" />,
-      text: "Reject deposit or depositor address",
-    },
-  ];
-
+  /**
+   * Shows modal to modify syndicate cap table if the syndicate is modifiable.
+   * Otherwise, the manager is informed that s/he cannot modify syndicate cap
+   * table
+   */
   const showModifyCapTableModal = () => {
     setErrorMessage("");
     if (syndicate?.modifiable) {
@@ -182,6 +181,11 @@ const ManagerActions = () => {
       }
     }
   };
+
+  const [
+    showRejectDepositOrMemberAddress,
+    setShowRejectDepositOrMemberAddress,
+  ] = useState(false);
 
   return (
     <ErrorBoundary>
@@ -260,9 +264,17 @@ const ManagerActions = () => {
             />
           ) : null}
 
-          {moreActions.map(({ icon, text }) => (
-            <MoreManagerActions key={text} icon={icon} text={text} />
-          ))}
+          {/* Member deposit or member address can only be reject/blocked 
+          while the syndicate is open
+          */}
+          {syndicate?.open ? (
+            <MoreManagerActions
+              icon={<img src="/images/exclamation-triangle.svg" />}
+              text={"Reject deposit or depositor address"}
+              onClickHandler={() => setShowRejectDepositOrMemberAddress(true)}
+            />
+          ) : null}
+
           <MoreManagerActions
             icon={<img src="/images/settings.svg" />}
             text={"Change syndicate settings"}
@@ -283,6 +295,13 @@ const ManagerActions = () => {
         ) : showModifyCapTable ? (
           <ModifySyndicateCapTable
             {...{ showModifyCapTable, setShowModifyCapTable }}
+          />
+        ) : showRejectDepositOrMemberAddress ? (
+          <RejectDepositOrMemberAddress
+            {...{
+              showRejectDepositOrMemberAddress,
+              setShowRejectDepositOrMemberAddress,
+            }}
           />
         ) : showSyndicateNotModifiable ? (
           <ErrorModal
