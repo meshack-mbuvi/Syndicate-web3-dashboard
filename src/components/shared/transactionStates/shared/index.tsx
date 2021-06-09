@@ -15,7 +15,7 @@ export const StateModal = (props: Props) => {
   return (
     <>
       {show ? (
-        <div className="fixed z-10 inset-0 overflow-y-auto">
+        <div className="fixed z-50 inset-0 overflow-y-auto">
           <div className="fixed inset-0 transition-opacity" aria-hidden="true">
             <div className="absolute inset-0  bg-gray-9 opacity-95"></div>
           </div>
