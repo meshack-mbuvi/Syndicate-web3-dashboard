@@ -597,13 +597,13 @@ const SyndicateDetails = (props: {
             </div>
           </div>
           <CopyToClipboard text={syndicateAddress}>
-            <div className="flex items-center ml-4 relative w-10">
+            <div className="flex items-center ml-0 relative w-14 h-14 rounded-full cursor-pointer lg:hover:bg-gray-9 lg:active:bg-white lg:active:bg-opacity-20">
               {showCopyState ? (
                 <span className="absolute text-xs -top-5">copied</span>
               ) : null}
               <img
                 src="/images/copy-clipboard.svg"
-                className="cursor-pointer h-4"
+                className="cursor-pointer h-4 mx-auto"
                 onClick={updateAddresCopyState}
               />
             </div>
