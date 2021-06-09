@@ -6,6 +6,8 @@ const depositTitleText = "Deposit Into Syndicate";
 const depositMoreTitleText = "Deposit More Into Syndicate";
 const allowListDisabledApprovedText =
   "Allowlist disabled: You’re pre-approved.";
+export const depositRangeToolTip =
+  "Range between the minimum and maximum deposit allowed per member address.";
 const allowListDisabledNotApprovedText =
   "Allowlist disabled: You will need to be approved.";
 const allowListEnabledNotApprovedText =
@@ -81,7 +83,7 @@ const depositSuccessButtonText = "Deposit more";
 const withdrawalSuccessTitleText = "You just made a withdrawal.";
 const withdrawalSuccessSubtext = "Withdrawal transaction was successful.";
 const withdrawalSuccessButtonText = "Withdraw more";
-const withdrawalSuccessBackButtonText = "Back"
+const withdrawalSuccessBackButtonText = "Back";
 
 // approval success texts
 const approvalSuccessTitleText = "Allowance approved.";
@@ -233,7 +235,6 @@ export const constants = {
   withdrawalsUnavailableTitleText,
   withdrawalAllowanceInsufficientText,
   withdrawalAmountLessThanMinDepositErrorText,
-  
 };
 
 // Tooltips

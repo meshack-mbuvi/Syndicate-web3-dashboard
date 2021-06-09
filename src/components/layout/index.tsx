@@ -121,7 +121,6 @@ export const Layout = ({ children, syndicateAction }) => {
       />
       <Header />
       <div className="sticky top-20 z-10">
-        {/* This banner should be shown in V2 */}
         <SyndicateInBetaBanner />
         {deposit || generalView ? <DepositsPageBanner key={2} /> : null}
       </div>

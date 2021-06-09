@@ -6,7 +6,10 @@ import { getEvents } from "@/helpers/retrieveEvents";
 import { RootState } from "@/redux/store";
 import { getWeiAmount, onlyUnique } from "@/utils/conversions";
 import { ERC20TokenDetails } from "@/utils/ERC20Methods";
-import { floatedNumberWithCommas } from "@/utils/numberWithCommas";
+import {
+  floatedNumberWithCommas,
+  numberWithCommas,
+} from "@/utils/numberWithCommas";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { CopyToClipboard } from "react-copy-to-clipboard";
@@ -19,15 +22,16 @@ import {
   storeDistributionTokensDetails,
 } from "src/redux/actions/tokenAllowances";
 import ERC20ABI from "src/utils/abi/rinkeby-dai";
-import InvestInSyndicate from "../investInSyndicate";
 // utils
 import { formatAddress } from "src/utils/formatAddress";
 import { TokenMappings } from "src/utils/tokenMappings";
+import InvestInSyndicate from "../investInSyndicate";
 import { BadgeCard, DetailsCard } from "../shared";
 import {
   closeDateToolTip,
   createdDateToolTip,
   depositTokenToolTip,
+  depositRangeToolTip,
   expectedAnnualOperatingFeesToolTip,
   profitShareToSyndicateLeadToolTip,
   profitShareToSyndicateProtocolToolTip,
@@ -71,6 +75,12 @@ const SyndicateDetails = (props: {
     },
     {
       header: "Deposit/Distribution Token",
+      subText: "",
+      tooltip: "",
+      isEditable: false,
+    },
+    {
+      header: "Deposit Range",
       subText: "",
       tooltip: "",
       isEditable: false,
@@ -362,6 +372,8 @@ const SyndicateDetails = (props: {
         profitShareToSyndicateProtocol,
         profitShareToSyndicateLead,
         managerManagementFeeBasisPoints,
+        depositMaxMember,
+        depositMinMember,
       } = syndicate;
 
       setDetails([
@@ -379,6 +391,13 @@ const SyndicateDetails = (props: {
           header: "Deposit/Distribution Token",
           subText: `${depositTokenSymbol} / ${depositTokenSymbol}`,
           tooltip: depositTokenToolTip,
+        },
+        {
+          header: "Deposit Range",
+          subText: `${numberWithCommas(depositMinMember)} - ${numberWithCommas(
+            depositMaxMember
+          )} ${depositTokenSymbol}`,
+          tooltip: depositRangeToolTip,
         },
         {
           header: "Expected Annual Operating Fees",
@@ -620,11 +639,7 @@ const SyndicateDetails = (props: {
 
         {/* Syndicate details */}
         <div className="w-full md:hidden">
-          {accountIsManager ? (
-            <ManagerActions />
-          ) : (
-            <InvestInSyndicate />
-          )}
+          {accountIsManager ? <ManagerActions /> : <InvestInSyndicate />}
         </div>
 
         {/* This component should be shown when we have details about user deposits */}

@@ -1,4 +1,3 @@
-import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import { constants } from "src/components/syndicates/shared/Constants";
 import { SyndicateInBetaBannerText } from "../syndicates/shared/Constants";
@@ -47,33 +46,14 @@ export const SyndicateInBetaBanner = () => {
       className={`pl-4 pr-8 py-3 w-full relative bg-yellow-light text-black text-center ${
         showBanner ? "" : "hidden"
       }`}
-      role="alert"
-    >
+      role="alert">
       <div className="flex justify-center px-10">
         <span className="block sm:inline font-whyte-light mr-2">
           {SyndicateInBetaBannerText}
-        </span>{" "}
-        <Link href="#">
-          <a className="flex items-center">
-            <span>Learn more</span>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-5 w-5 inline"
-              viewBox="0 0 20 20"
-              fill="currentColor"
-            >
-              <path
-                fillRule="evenodd"
-                d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                clipRule="evenodd"
-              />
-            </svg>
-          </a>
-        </Link>
+        </span>
         <span
           className="absolute mx-3 py-1 cursor-pointer absolute right-2"
-          onClick={() => hideBanner()}
-        >
+          onClick={() => hideBanner()}>
           <img src="/images/close.svg" alt="close-button" />
         </span>
       </div>

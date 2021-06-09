@@ -18,10 +18,10 @@ import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import ErrorBoundary from "../../components/errorBoundary";
 import DistributeToken from "./distributeToken";
-import ManagerAction from "./ManagerAction";
+import ManagerAction from "./managerAction";
 import ModifyMemberDistributions from "./modifyMemberDistributions";
 import ModifySyndicateCapTable from "./modifySyndicateCapTable";
-import MoreManagerActions from "./MoreManagerActions";
+import MoreManagerActions from "./moreManagerActions";
 import PreApproveDepositor from "./preApproveDepositor";
 import RequestSocialProfile from "./requestSocialProfile";
 
