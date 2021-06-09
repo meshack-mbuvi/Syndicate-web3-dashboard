@@ -21,6 +21,7 @@ export const TextInput = (props: {
   tooltip?: string;
   column?: boolean;
   full?: boolean;
+  customWidth?: string;
 }) => {
   const {
     label,
@@ -34,11 +35,12 @@ export const TextInput = (props: {
     type = "text",
     column = false,
     full,
+    customWidth = "",
     ...rest
   } = props;
 
   const disabledClasses = disabled
-    ? "text-sm text-gray-500 bg-gray-99 border-0"
+    ? "text-sm text-gray-500 bg-gray-99 border-0 px-0 pb-0"
     : "text-black border-gray-85";
 
   return (
@@ -60,7 +62,11 @@ export const TextInput = (props: {
         </label>
       </div>
 
-      <div className="w-4/5 flex-grow flex flex-col justify-between">
+      <div
+        className={`${
+          customWidth ? customWidth : `w-5/6`
+        } flex-grow flex flex-col justify-between`}
+      >
         {/* input field */}
         <div className="flex justify-start">
           <input
@@ -68,9 +74,7 @@ export const TextInput = (props: {
             name={name}
             id={id}
             onChange={onChange}
-            className={`flex flex-grow text-sm font-whyte focus:ring-indigo-500 focus:border-indigo-500 rounded-md ${disabledClasses} ${
-              column ? `w-auto sm:w-56` : ``
-            }`}
+            className={`flex flex-grow text-sm font-whyte focus:ring-indigo-500 w-full focus:border-indigo-500 rounded-md ${disabledClasses}`}
             {...rest}
             disabled={disabled}
             value={value}

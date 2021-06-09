@@ -964,7 +964,8 @@ const DistributeToken = (props: Props) => {
           titleFontSize: "text-3xl",
           loading: showLoader,
           showCloseButton,
-        }}>
+        }}
+      >
         {showLoader ? (
           <SyndicateActionLoader
             {...{
@@ -1035,10 +1036,12 @@ const DistributeToken = (props: Props) => {
                           key={index}
                           onSubmit={(event) =>
                             handleTokenAllowanceApproval(event, index)
-                          }>
+                          }
+                        >
                           <div
                             className="flex justify-center flex-col xl:flex-row py-4 px-8 border-b-1 border-gray-200"
-                            key={index}>
+                            key={index}
+                          >
                             <TextInput
                               {...{
                                 label: "Token Address",
@@ -1047,6 +1050,7 @@ const DistributeToken = (props: Props) => {
                                   handleTokenAddressChange(event, index),
                                 error: tokenAddressError,
                                 column: true,
+                                customWidth: "w-full xl:w-64",
                               }}
                               name="tokenAddress"
                               placeholder="0x..."
@@ -1062,6 +1066,7 @@ const DistributeToken = (props: Props) => {
                                 defaultValue: 0,
                                 error: tokenAllowanceError,
                                 column: true,
+                                customWidth: "w-full xl:w-64",
                               }}
                               name="tokenAllowance"
                               placeholder="0"
@@ -1071,7 +1076,8 @@ const DistributeToken = (props: Props) => {
                                 disableApprovalButton
                                   ? `items-start`
                                   : `items-end`
-                              }`}>
+                              }`}
+                            >
                               <Button
                                 type="submit"
                                 customClasses={`rounded-md bg-blue-light border-2 border-blue-light w-full mr-4 xl:mr-0 xl:w-33 mt-2 px-6 py-1 h-9 text-sm font-light mb-3 ${
@@ -1080,7 +1086,8 @@ const DistributeToken = (props: Props) => {
                                     : ``
                                 }`}
                                 disabled={disableApprovalButton}
-                                approved={tokenAllowanceApproved}>
+                                approved={tokenAllowanceApproved}
+                              >
                                 {tokenAllowanceApproved
                                   ? `Approved`
                                   : `Approve`}
@@ -1093,7 +1100,8 @@ const DistributeToken = (props: Props) => {
                     <div className="flex justify-center items-center py-6">
                       <p
                         className="text-sm text-blue-light font-light cursor-pointer w-fit-content"
-                        onClick={() => addERC20Fields()}>
+                        onClick={() => addERC20Fields()}
+                      >
                         <img
                           className="inline w-6 mr-1"
                           src="/images/plusSign.svg"
@@ -1136,7 +1144,8 @@ const DistributeToken = (props: Props) => {
                 ) : (
                   <form
                     className="w-full border-b-1 my-6"
-                    onSubmit={handleSubmitManagerFeeAddress}>
+                    onSubmit={handleSubmitManagerFeeAddress}
+                  >
                     <div className="flex justify-between flex-col px-8 border-gray-200">
                       {/* Manager fee address */}
                       <p className="text-sm">Manager Fee Address</p>
@@ -1173,7 +1182,8 @@ const DistributeToken = (props: Props) => {
                             !managerFeeAddress
                               ? true
                               : false
-                          }>
+                          }
+                        >
                           {managerFeeAddress === syndicate &&
                           syndicate?.managerFeeAddress &&
                           managerFeeAddressAlreadySet
@@ -1195,7 +1205,8 @@ const DistributeToken = (props: Props) => {
                     <div className="mr-2 w-7/12 flex justify-end">
                       <label
                         htmlFor="syndicateAddress"
-                        className="block text-black text-sm font-medium">
+                        className="block text-black text-sm font-medium"
+                      >
                         {`Profit Share to Syndicate Lead (${syndicate?.profitShareToSyndicateLead}%):`}
                       </label>
                     </div>
@@ -1235,7 +1246,8 @@ const DistributeToken = (props: Props) => {
                     <div className="mr-2 w-7/12 flex justify-end">
                       <label
                         htmlFor="syndicateAddress"
-                        className="block text-black text-sm font-medium">
+                        className="block text-black text-sm font-medium"
+                      >
                         {`Profit Share to Syndicate Protocol (${syndicate?.profitShareToSyndicateProtocol}%):`}
                       </label>
                     </div>
@@ -1276,7 +1288,8 @@ const DistributeToken = (props: Props) => {
                     <div className="mr-2 w-7/12 flex justify-end">
                       <label
                         htmlFor="syndicateAddress"
-                        className="block text-black text-sm font-medium">
+                        className="block text-black text-sm font-medium"
+                      >
                         Available for Members to Withdraw:
                       </label>
                     </div>
@@ -1322,7 +1335,8 @@ const DistributeToken = (props: Props) => {
                         customClasses={`rounded-full bg-blue-light w-auto px-10 py-2 text-lg ${
                           enableDistributeButton ? "" : "opacity-50"
                         }`}
-                        disabled={enableDistributeButton ? false : true}>
+                        disabled={enableDistributeButton ? false : true}
+                      >
                         Distribute Tokens
                       </Button>
                     </form>
@@ -1350,7 +1364,8 @@ const DistributeToken = (props: Props) => {
       <PendingStateModal
         {...{
           show: savingMemberAddress,
-        }}>
+        }}
+      >
         <div className="modal-header mb-4 font-medium text-center leading-8 text-2xl">
           {confirmingTransaction}
         </div>

@@ -35,7 +35,7 @@ export const PercentInput = (props: {
         </label>
       </div>
 
-      <div className="w-4/5 flex flex-col">
+      <div className="w-5/6 flex flex-col">
         <div className="flex-grow flex flex-row justify-between">
           {/* input field */}
           <div className="flex percentage-input rounded-md flex-grow border border-gray-85">
@@ -43,20 +43,20 @@ export const PercentInput = (props: {
               type="number"
               name={name}
               onChange={onChange}
-              className={`flex px-1 ml-1 py-2 rounded-md focus:outline-none outline-none focus:ring-0 focus:border-none border-0 font-whyte`}
+              className={`flex px-1 ml-1 py-2 text-sm rounded-md focus:outline-none outline-none focus:ring-0 focus:border-none border-0 font-whyte w-full`}
               style={{ width: `${variableWidth}ch` }}
               {...rest}
               max="100"
               value={value}
             />
-            <span className="flex flex-1 py-2 text-gray-500">%</span>
+            <span className="flex flex-1 py-2 text-sm text-gray-500">%</span>
           </div>
           {/* icon */}
           <div className="w-auto mt-1 flex">
             <InfoIcon tooltip={tooltip} />
           </div>
         </div>
-        {error ? <p className="text-red-500 text-sm">{error}</p> : null}
+        <p className="text-red-500 text-xs my-1">{error ? error : null}</p>
       </div>
     </div>
   );

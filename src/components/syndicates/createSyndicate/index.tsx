@@ -677,17 +677,20 @@ const CreateSyndicate = (props: Props) => {
           closeModal,
           customWidth: "w-full lg:w-3/5",
         }}
-        title="Create New Syndicate">
+        title="Create New Syndicate"
+      >
         <form
           name="offChainData"
           method="post"
           data-netlify="true"
-          onSubmit={onSubmit}>
+          onSubmit={onSubmit}
+        >
           <input type="hidden" name="form-name" value="offChainData" />
           {/* modal sub title */}
           <div
             className="flex justify-start mb-1 text-blue font-medium 
-          text-center leading-8 text-lg">
+          text-center leading-8 text-lg"
+          >
             <p className="text-blue-light ml-4">Offchain Data</p>
           </div>
 
@@ -722,7 +725,7 @@ const CreateSyndicate = (props: Props) => {
                   <label className="block pt-2 text-black text-sm font-medium"></label>
                 </div>
 
-                <div className="w-4/5 flex-grow flex flex-col justify-between">
+                <div className="w-5/6 flex-grow flex flex-col justify-between">
                   {/* input field */}
                   <div className="flex justify-start">
                     <div className="flex items-center h-5">
@@ -742,7 +745,7 @@ const CreateSyndicate = (props: Props) => {
 
                       <p className="ml-2 text-black justify-center text-sm font-whyte text-gray-500 word-wrap">
                         We&apos;ll reach out within 48 hours to coordinate
-                        further details
+                        further details.
                       </p>
                     </div>
 
@@ -759,13 +762,14 @@ const CreateSyndicate = (props: Props) => {
 
           {/* modal sub title */}
           <div
-            className="flex justify-start mb-1 text-blue font-medium 
-          text-center leading-8 text-lg">
+            className="flex justify-start mt-4 mb-1 text-blue font-medium 
+          text-center leading-8 text-lg"
+          >
             <p className="text-blue-light ml-4">Onchain Data</p>
           </div>
 
           <div className="border border-gray-85 bg-gray-99 rounded-xl p-4">
-            <div className="space-y-4">
+            <div className="space-y-3">
               {/* syndicate address */}
               <TextInput
                 {...{
@@ -850,17 +854,18 @@ const CreateSyndicate = (props: Props) => {
                 <div className="flex mr-2 w-1/2 justify-end">
                   <label
                     htmlFor="closeDate"
-                    className="block pt-2 text-black text-sm font-medium">
+                    className="block pt-2 text-black text-sm font-medium"
+                  >
                     Close Date:
                   </label>
                 </div>
-                <div className="w-4/5 flex-grow flex flex-col justify-between">
+                <div className="w-5/6 flex-grow flex flex-col justify-between">
                   {/* input field */}
                   <div className="flex justify-start">
                     <DatePicker
                       selected={selectedDate}
                       onSelect={handleDateSelect}
-                      className={`flex flex-grow focus:ring-indigo-500 focus:border-indigo-500 rounded-md text-black border-gray-85 w-full font-whyte`}
+                      className={`flex flex-grow focus:ring-indigo-500 text-sm focus:border-indigo-500 rounded-md text-black border-gray-85 w-full font-whyte`}
                       minDate={minimumCloseDate}
                       selectsStart
                       name="closeDate"
@@ -871,7 +876,7 @@ const CreateSyndicate = (props: Props) => {
                       <InfoIcon tooltip={closeDateToolTip} />
                     </div>
                   </div>
-                  <p className="text-red-500 text-xs mt-1 mb-2"></p>
+                  <p className="text-red-500 text-xs mt-1 mb-1"></p>
                 </div>
               </div>
 
@@ -903,32 +908,35 @@ const CreateSyndicate = (props: Props) => {
               />
 
               {/* Profit Share to Syndicate Protocol: */}
-              <div className="h-10 flex flex-row justify-center">
+              <div className="flex flex-row justify-center">
                 <div className="mr-2 w-1/2 mt-1 flex justify-end">
                   <label
                     htmlFor="profitShareToSyndProtocol"
-                    className="block pt-2 text-black text-sm font-medium">
+                    className="block pt-2 text-black text-sm font-medium"
+                  >
                     Profit Share to Syndicate Protocol:
                   </label>
                 </div>
 
                 {/* shows 4 equal grids used to get the input for profit share */}
-                <div className="w-4/5 flex justify-between">
+                <div className="w-5/6 flex justify-between">
                   <div
-                    className={`grid grid-cols-4 w-4/5 border h-12 gray-85 flex-grow rounded-md`}>
+                    className={`grid grid-cols-4 w-4/5 border border-gray-85 overflow-hidden gray-85 flex-grow rounded-md`}
+                  >
                     <button
-                      className={`flex justify-center pt-3 border-r focus:outline-none ${
+                      className={`flex justify-center items-center py-2 text-sm border-r focus:outline-none ${
                         syndicateProfitSharePercent == "0.5"
                           ? "bg-blue-100 text-black"
                           : "gray-85"
                       }`}
                       onClick={() => updateProfitShareToSyndProtocol(0.5)}
-                      type="button">
+                      type="button"
+                    >
                       0.5%
                     </button>
 
                     <button
-                      className={`flex justify-center pt-3 border-r focus:outline-none ${
+                      className={`flex justify-center items-center py-2 text-sm border-r focus:outline-none ${
                         syndicateProfitSharePercent == "1"
                           ? "bg-blue-100 text-black"
                           : "gray-85"
@@ -936,12 +944,13 @@ const CreateSyndicate = (props: Props) => {
                       onClick={() => {
                         updateProfitShareToSyndProtocol(1);
                       }}
-                      type="button">
+                      type="button"
+                    >
                       1%
                     </button>
 
                     <button
-                      className={`flex justify-center pt-3 border-r focus:outline-none ${
+                      className={`flex justify-center items-center py-2 text-sm border-r focus:outline-none ${
                         syndicateProfitSharePercent == "3"
                           ? "bg-blue-100 text-black"
                           : "gray-85"
@@ -949,23 +958,21 @@ const CreateSyndicate = (props: Props) => {
                       type="button"
                       onClick={() => {
                         updateProfitShareToSyndProtocol(3);
-                      }}>
+                      }}
+                    >
                       3%
                     </button>
 
-                    <div className="flex p-0 percentage-input rounded-br-md rounded-tr-md ">
+                    <div className="grid grid-cols-3 p-0 percentage-input rounded-br-md rounded-tr-md">
                       <input
                         type="number"
-                        className={`flex pl-1 pr-1 py-1 ml-1 focus:outline-none outline-none focus:ring-0 focus:border-none border-0 font-whyte`}
+                        className={`col-span-2 flex justify-center items-center w-full px-2 py-2 focus:outline-none w-full text-sm outline-none focus:ring-0 focus:border-none border-0 font-whyte`}
                         placeholder="Other"
                         name="profitShareToSyndProtocol"
                         onChange={profitShareToSyndicateOnchangeHandler}
                         value={otherProfitShareToSyndicateProtocol}
-                        style={{
-                          width: `${otherProfitShareWidth}ch`,
-                        }}
                       />
-                      <span className="flex flex-1 py-2 pt-3 text-gray-500">
+                      <span className="flex flex-1 justify-start items-center py-2 text-gray-500">
                         %
                       </span>
                     </div>
@@ -977,13 +984,14 @@ const CreateSyndicate = (props: Props) => {
                   </div>
                 </div>
               </div>
-              <div className="flex flex-row justify-center">
-                <p className="mr-2 w-1/2 flex"></p>
-                {profitShareToSyndProtocolError ? (
-                  <p className="mr-2 w-1/2 text-red-500 text-sm -mt-1">
-                    {profitShareToSyndProtocolError}
-                  </p>
-                ) : null}
+              <div className="flex flex-row justify-center w-full">
+                <div className="mr-2 w-1/2 justify-end"></div>
+
+                <p className="w-5/6 text-red-500 text-xs -mt-2">
+                  {profitShareToSyndProtocolError
+                    ? profitShareToSyndProtocolError
+                    : null}
+                </p>
               </div>
 
               <Toggle
@@ -1024,7 +1032,7 @@ const CreateSyndicate = (props: Props) => {
               />
             </p>
 
-            <p className="flex mt-2 text-red-500 text-sm justify-center">
+            <p className="flex mt-2 text-red-500 text-xs justify-center">
               {termsOfServiceError}
             </p>
           </div>
@@ -1036,7 +1044,8 @@ const CreateSyndicate = (props: Props) => {
               customClasses={`rounded-full bg-blue-light w-auto px-10 py-2 text-lg ${
                 validated ? "" : "opacity-50"
               }`}
-              disabled={validated ? false : true}>
+              disabled={validated ? false : true}
+            >
               Launch
             </Button>
           </div>
@@ -1055,7 +1064,8 @@ const CreateSyndicate = (props: Props) => {
       <PendingStateModal
         {...{
           show: submitting,
-        }}>
+        }}
+      >
         <div className="modal-header mb-4 font-medium text-center leading-8 text-lg">
           {pendingState}
         </div>
@@ -1071,7 +1081,8 @@ const CreateSyndicate = (props: Props) => {
           setShowErrorMessage,
           setErrorMessage,
           errorMessage,
-        }}></ErrorModal>
+        }}
+      ></ErrorModal>
 
       {/* show success modal */}
       <Modal
@@ -1080,7 +1091,8 @@ const CreateSyndicate = (props: Props) => {
           closeModal: () => setShowSuccessModal(false),
           type: "success",
           customWidth: "w-5/12",
-        }}>
+        }}
+      >
         <div className="flex flex-col justify-center m-auto mb-4">
           <div className="flex align-center justify-center my-2 mb-6">
             <img src="/images/checkCircle.svg" className="w-16" />
@@ -1104,7 +1116,8 @@ const CreateSyndicate = (props: Props) => {
                 <input
                   disabled
                   className="font-whyte text-sm sm:text-base word-break p-2 overflow-hidden overflow-x-scroll border border-blue-light rounded-full"
-                  value={`${window.location.origin}/syndicates/${account}/deposit`}></input>
+                  value={`${window.location.origin}/syndicates/${account}/deposit`}
+                ></input>
               </div>
               <div className="flex align-center justify-center mx-auto my-2">
                 {copied ? (
@@ -1115,7 +1128,8 @@ const CreateSyndicate = (props: Props) => {
                   <>
                     <CopyToClipboard
                       text={`${window.location.origin}/syndicates/${account}/deposit`}
-                      onCopy={handleOnCopy}>
+                      onCopy={handleOnCopy}
+                    >
                       <p className="flex font-whyte text-sm cursor-pointer hover:opacity-80 text-gray-nightrider">
                         <img
                           src="/images/copy.svg"
