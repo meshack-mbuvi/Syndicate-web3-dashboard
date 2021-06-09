@@ -92,7 +92,7 @@ export const Wallet = () => {
   const connectedWalletIconStyles = "fill-current text-green-500";
 
   return (
-    <div className="wallet-connect flex relative justify-center">
+    <div className="wallet-connect flex relative justify-center h-12">
       <div
         onClick={connectWallet}
         className={`${status === "connected" ? connectedWalletContainerStyles : disconnectedWalletContainerStyles} flex relative rounded-full my-1 px-4 py-2 items-center`}>
