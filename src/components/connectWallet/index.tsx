@@ -215,7 +215,6 @@ export const ConnectWallet = (props: { web3; showWalletModal }) => {
        * Ticket reference: SYN-52 Error states for wallet connection screen
        **/
       console.log({ error });
-      dispatch(setConnected());
 
       const customError = getErrorMessage(error);
       dispatch(showErrorModal(customError));
