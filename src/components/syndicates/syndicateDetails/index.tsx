@@ -4,7 +4,7 @@ import ManagerActions from "@/containers/managerActions";
 import ManagerSetAllowance from "@/containers/managerActions/setAllowances";
 import { getEvents } from "@/helpers/retrieveEvents";
 import { RootState } from "@/redux/store";
-import { getWeiAmount, onlyUnique } from "@/utils/conversions";
+import { getWeiAmount, isUnlimited, onlyUnique } from "@/utils/conversions";
 import { ERC20TokenDetails } from "@/utils/ERC20Methods";
 import {
   floatedNumberWithCommas,
@@ -30,8 +30,8 @@ import { BadgeCard, DetailsCard } from "../shared";
 import {
   closeDateToolTip,
   createdDateToolTip,
-  depositTokenToolTip,
   depositRangeToolTip,
+  depositTokenToolTip,
   expectedAnnualOperatingFeesToolTip,
   profitShareToSyndicateLeadToolTip,
   profitShareToSyndicateProtocolToolTip,
@@ -376,6 +376,8 @@ const SyndicateDetails = (props: {
         depositMinMember,
       } = syndicate;
 
+      const valueIsUnlimited = isUnlimited(depositMaxMember);
+
       setDetails([
         {
           header: "Created on",
@@ -394,9 +396,9 @@ const SyndicateDetails = (props: {
         },
         {
           header: "Deposit Range",
-          subText: `${numberWithCommas(depositMinMember)} - ${numberWithCommas(
-            depositMaxMember
-          )} ${depositTokenSymbol}`,
+          subText: `${numberWithCommas(depositMinMember)} - ${
+            valueIsUnlimited ? "Unlimited" : numberWithCommas(depositMaxMember)
+          } ${depositTokenSymbol}`,
           tooltip: depositRangeToolTip,
         },
         {

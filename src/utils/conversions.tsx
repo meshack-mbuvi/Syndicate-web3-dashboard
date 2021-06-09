@@ -91,3 +91,10 @@ export const divideIfNotByZero = (numerator, denominator) => {
 export const onlyUnique = (value, index, self) => {
   return self.indexOf(value) === index;
 };
+
+export const isUnlimited = (value) => {
+  return (
+    value.toString() ===
+    "115792089237316195423570985008687907853269984665640564039457"
+  );
+};

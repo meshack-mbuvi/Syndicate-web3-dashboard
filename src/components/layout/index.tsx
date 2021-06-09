@@ -80,14 +80,12 @@ export const Layout = ({ children }) => {
 
       if (provider.isMetaMask) {
         activateProvider(injected).then(() => {
-          activateProvider(injected).then(() => {
-            setLibrary({
-              library: provider.library,
-              account: provider.selectedAddress,
-              syndicateContractInstance,
-              daiContract,
-              web3,
-            });
+          setLibrary({
+            library: provider.library,
+            account: provider.selectedAddress,
+            syndicateContractInstance,
+            daiContract,
+            web3,
           });
         });
       }

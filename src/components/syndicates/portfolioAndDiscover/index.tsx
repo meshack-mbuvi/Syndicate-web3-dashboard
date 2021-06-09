@@ -65,7 +65,7 @@ const PortfolioAndDiscover = (props: MySyndicateProps) => {
     if (syndicateContractInstance) {
       dispatch(addSyndicates(props.web3));
     }
-  }, [syndicateContractInstance]);
+  }, [syndicateContractInstance, account]);
 
   // controls show/hide new syndicate creation modal
   const [showModal, setShowModal] = useState(false);
@@ -215,7 +215,14 @@ const PortfolioAndDiscover = (props: MySyndicateProps) => {
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 mt-6 ml-2">
             {syndicateDAOs.map((syndicate, index) => {
-              return <SyndicateDAOItem {...syndicate} key={index} order={index} syndicateDAOs={syndicateDAOs} />;
+              return (
+                <SyndicateDAOItem
+                  {...syndicate}
+                  key={index}
+                  order={index}
+                  syndicateDAOs={syndicateDAOs}
+                />
+              );
             })}
           </div>
         </div>
