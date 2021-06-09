@@ -103,6 +103,10 @@ module.exports = {
           "sans-serif",
         ],
       },
+      fontSize: {
+        modalTitle: "2.1875rem",
+        modalSubTitle: "1.5rem",
+      },
       colors: {
         cyan: colors.cyan,
         gray: {
