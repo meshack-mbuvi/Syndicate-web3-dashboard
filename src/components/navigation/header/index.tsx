@@ -3,19 +3,17 @@ import React from "react";
 import { UserProfileWrapper } from "./UserProfileWrapper";
 import WalletComponent from "./wallet";
 
-
-const navbarLinks = [{ url: "/syndicates", urlText: "Syndicates" }];
-
 const Header = () => {
   return (
-    <nav className="bg-black h-20 fixed top-0 inset-x-0 align-middle border-b border-gray-800 py-4 bg-opacity-70 z-40 backdrop-filter backdrop-blur-xl">
+    <nav className="bg-black h-20 fixed top-0 inset-x-0 align-middle border-b border-gray-800 py-4 bg-opacity-70 z-10 backdrop-filter backdrop-blur-xl">
       <div className="container mx-auto flex justify-between h-full">
-
         <div className="md:flex-1 mr-4 md:mr-0">
           {/* back button */}
           <div className="md:hidden float-left vertically-center">
             <Link href="/syndicates">
-              <a><img src="/images/back-chevron-large.svg"/></a>
+              <a>
+                <img src="/images/back-chevron-large.svg" />
+              </a>
             </Link>
           </div>
         </div>
@@ -39,7 +37,6 @@ const Header = () => {
             </UserProfileWrapper>
           </div>
         </div>
-
       </div>
     </nav>
   );

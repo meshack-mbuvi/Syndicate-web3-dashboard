@@ -126,7 +126,13 @@ const SyndicateInvestment = () => {
               <div className="lg:w-24 md:w-12 w-24 flex-shrink-0 lg:static fixed">
                 <div className="w-14 h-14 lg:hover:bg-gray-9 rounded-full py-4 md:mt-6 mt-6 lg:left-auto relative -left-12 hidden md:block lg:fixed lg:active:bg-white lg:active:bg-opacity-20">
                   <Link href="/syndicates">
-                    <a><img className="mx-auto vertically-center relative " style={{left: '-2px'}} src="/images/back-chevron-large.svg"/></a>
+                    <a>
+                      <img
+                        className="mx-auto vertically-center relative "
+                        style={{ left: "-2px" }}
+                        src="/images/back-chevron-large.svg"
+                      />
+                    </a>
                   </Link>
                 </div>
               </div>

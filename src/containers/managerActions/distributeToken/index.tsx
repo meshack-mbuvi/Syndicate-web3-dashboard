@@ -915,7 +915,6 @@ const DistributeToken = (props: Props) => {
           setManagerFeeAddressAlreadySet(true);
         })
         .on("error", (error) => {
-          console.log({ error });
           handleError(error);
         });
     } catch (error) {

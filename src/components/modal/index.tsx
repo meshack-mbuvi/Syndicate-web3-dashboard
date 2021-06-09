@@ -41,32 +41,28 @@ export const Modal = (props: ModalProps) => {
   return (
     <>
       {show ? (
-        <div className="fixed z-50 inset-0 overflow-y-auto z-100">
+        <div className="fixed inset-0 overflow-y-auto z-50">
           <div className="flex items-center justify-center text-black min-h-screen sm:pt-4 sm:px-4 pb-20 text-center sm:block sm:p-0">
             <div
               className="fixed inset-0 transition-opacity"
-              aria-hidden="true"
-            >
+              aria-hidden="true">
               <div
                 className="absolute inset-0  bg-gray-9 opacity-80"
-                onClick={() => closeModal()}
-              ></div>
+                onClick={() => closeModal()}></div>
             </div>
 
             <div
               className={`inline-block align-bottom bg-white rounded-lg my-24 mx-4 sm:mx-0 sm:my-28 sm:p-6 text-left overflow-hidden shadow-xl transform transition-all max-w-868 ${customWidth}`}
               role="dialog"
               aria-modal="true"
-              aria-labelledby="modal-headline"
-            >
+              aria-labelledby="modal-headline">
               <div className="hidden sm:block absolute p-4 top-0 right-0">
                 {/* close button at the right top of the modal */}
                 {showCloseButton ? (
                   <button
                     type="button"
                     className="bg-white rounded-md text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                    onClick={() => closeModal()}
-                  >
+                    onClick={() => closeModal()}>
                     <span className="sr-only">Close</span>
                     <img src="/images/close.svg" className="p-2 opacity-50" />
                   </button>
@@ -77,8 +73,7 @@ export const Modal = (props: ModalProps) => {
                 <div
                   className={`modal-header mb-6 text-black font-medium text-center leading-8  mt-6 ${
                     titleFontSize ? `text-modalTitle` : `text-modalSubTitle`
-                  }`}
-                >
+                  }`}>
                   {title}
                 </div>
               )}

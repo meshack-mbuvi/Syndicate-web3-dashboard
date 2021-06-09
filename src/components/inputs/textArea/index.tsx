@@ -41,7 +41,9 @@ export const TextArea = (props: {
         rows={rows}
         disabled={disabled}
         value={value}></textarea>
-      {error ? <p className="text-red-500 text-xs break-all">{error}</p> : null}
+      {error ? (
+        <p className="text-red-500 text-xs break-word">{error}</p>
+      ) : null}
     </div>
   );
 };

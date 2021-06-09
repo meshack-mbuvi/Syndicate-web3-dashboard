@@ -2,11 +2,11 @@ import {
   setLibrary,
   storeSyndicateInstance,
 } from "@/redux/actions/web3Provider";
+import { RootState } from "@/redux/store";
 import { useWeb3React } from "@web3-react/core";
 import { parse } from "flatted";
-import PropTypes from "prop-types";
 import React, { useEffect } from "react";
-import { connect, useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   DepositsPageBanner,
   SyndicateInBetaBanner,
@@ -17,54 +17,43 @@ import Syndicate from "src/contracts/Syndicate.json";
 import { injected } from "../connectWallet/connectors";
 import SEO from "../seo";
 
+// Global variables
+
 const contractAddress = process.env.NEXT_PUBLIC_SYNDICATE_CONTRACT_ADDRESS;
 const Web3 = require("web3");
 const daiABI = require("src/utils/abi/dai");
 const daiContractAddress = "0x6b175474e89094c44da98b954eedeac495271d0f";
+/**
+ * set up web3 event listener here
+ * we can use to get access to all events emitted by the contract
+ *
+ */
+const web3 = new Web3(
+  Web3.givenProvider || `${process.env.NEXT_PUBLIC_INFURA_ENDPOINT}`
+);
 
-export const Layout = ({ children, syndicateAction }) => {
+// set up DAI contract
+const daiContract = new web3.eth.Contract(daiABI, daiContractAddress);
+
+const syndicateContractInstance = new web3.eth.Contract(
+  // @ts-ignore
+  Syndicate.abi,
+  contractAddress
+);
+
+export const Layout = ({ children }) => {
   const { activate, library, account } = useWeb3React();
   const dispatch = useDispatch();
 
+  const {
+    web3Reducer: { syndicateAction },
+  } = useSelector((state: RootState) => state);
+
   const { deposit, generalView } = syndicateAction;
   const setWeb3 = async () => {
-    /**
-     * set up web3 event listener here
-     * we can use to get access to all events emitted by the contract
-     *
-     */
-    const web3 = new Web3(
-      Web3.givenProvider || `${process.env.NEXT_PUBLIC_INFURA_ENDPOINT}`
-    );
-    const syndicateContractInstance = new web3.eth.Contract(
-      // @ts-ignore
-      Syndicate.abi,
-      contractAddress
-    );
-
-    let contractVersion = 0;
-
     dispatch(storeSyndicateInstance(syndicateContractInstance));
 
-    try {
-      // This function does not exist in the older contract version
-      if (syndicateContractInstance.methods?.getContractVersion) {
-        const version = await syndicateContractInstance.methods
-          .getContractVersion()
-          .call();
-
-        contractVersion = parseInt(version);
-      }
-    } catch (error) {
-      // This section is reached when the function does not exist in the deployed contract.
-      // we set the version to 0
-      contractVersion = 0;
-    }
-
     if (library) {
-      // set up DAI contract
-      const daiContract = new web3.eth.Contract(daiABI, daiContractAddress);
-
       try {
         return dispatch(
           setLibrary({
@@ -73,7 +62,6 @@ export const Layout = ({ children, syndicateAction }) => {
             syndicateContractInstance,
             daiContract,
             web3,
-            contractVersion,
           })
         );
       } catch (error) {
@@ -84,20 +72,31 @@ export const Layout = ({ children, syndicateAction }) => {
   };
 
   useEffect(() => {
-    setWeb3();
-  }, [activate, library, account]);
-
-  useEffect(() => {
     const cacheWallet = localStorage.getItem("cache") || null;
 
     if (cacheWallet) {
       const parseCasheWallet = parse(cacheWallet);
       const provider = parseCasheWallet.library.provider || null;
+
       if (provider.isMetaMask) {
-        activateProvider(injected).then(() => {});
+        activateProvider(injected).then(() => {
+          activateProvider(injected).then(() => {
+            setLibrary({
+              library: provider.library,
+              account: provider.selectedAddress,
+              syndicateContractInstance,
+              daiContract,
+              web3,
+            });
+          });
+        });
       }
     }
   }, []);
+
+  useEffect(() => {
+    setWeb3();
+  }, [activate, library, account]);
 
   /**
    * This activate any provide passed to the function where
@@ -132,18 +131,4 @@ export const Layout = ({ children, syndicateAction }) => {
   );
 };
 
-Layout.propTypes = {
-  children: PropTypes.node.isRequired,
-};
-
-const mapStateToProps = ({ web3Reducer: { syndicateAction } }) => {
-  return {
-    syndicateAction,
-  };
-};
-
-Layout.propTypes = {
-  syndicateAction: PropTypes.object,
-};
-
-export default connect(mapStateToProps)(Layout);
+export default Layout;

@@ -2,71 +2,71 @@ const colors = require("tailwindcss/colors");
 
 module.exports = {
   corePlugins: {
-    container: false
+    container: false,
   },
   variants: {
     extend: {
-      padding: ['last'],
-      backgroundColor: ['active'],
-      backgroundOpacity: ['active'],
+      padding: ["last"],
+      backgroundColor: ["active"],
+      backgroundOpacity: ["active"],
     },
   },
   plugins: [
     require("@tailwindcss/forms"),
     function ({ addComponents }) {
       addComponents({
-        '.container': {
-          maxWidth: '100%',
-          paddingLeft: '2%',
-          paddingRight: '2%',
-          '@screen sm': {
-            maxWidth: '640px',
-            paddingLeft: '2rem',
-            paddingRight: '2rem',
+        ".container": {
+          maxWidth: "100%",
+          paddingLeft: "2%",
+          paddingRight: "2%",
+          "@screen sm": {
+            maxWidth: "640px",
+            paddingLeft: "2rem",
+            paddingRight: "2rem",
           },
-          '@screen md': {
-            maxWidth: '900px',
-            paddingLeft: '2rem',
-            paddingRight: '2rem',
+          "@screen md": {
+            maxWidth: "900px",
+            paddingLeft: "2rem",
+            paddingRight: "2rem",
           },
-          '@screen lg': {
-            maxWidth: '1280px',
-            paddingLeft: '2rem',
-            paddingRight: '2rem',
+          "@screen lg": {
+            maxWidth: "1280px",
+            paddingLeft: "2rem",
+            paddingRight: "2rem",
           },
-          '@screen xl': {
-            maxWidth: '1400px',
-            paddingLeft: '2rem',
-            paddingRight: '2rem',
+          "@screen xl": {
+            maxWidth: "1400px",
+            paddingLeft: "2rem",
+            paddingRight: "2rem",
           },
-          '@screen 3xl': {
-            maxWidth: '1800px',
-            paddingLeft: '2rem',
-            paddingRight: '2rem',
+          "@screen 3xl": {
+            maxWidth: "1800px",
+            paddingLeft: "2rem",
+            paddingRight: "2rem",
           },
-        }
-      })
-    }
+        },
+      });
+    },
   ],
   purge: false,
   theme: {
     screens: {
-      'sm': '640px',
+      sm: "640px",
       // => @media (min-width: 640px) { ... }
 
-      'md': '768px',
+      md: "768px",
       // => @media (min-width: 768px) { ... }
 
-      'lg': '1024px',
+      lg: "1024px",
       // => @media (min-width: 1024px) { ... }
 
-      'xl': '1280px',
+      xl: "1280px",
       // => @media (min-width: 1280px) { ... }
 
-      '2xl': '1536px',
+      "2xl": "1536px",
       // => @media (min-width: 1536px) { ... }
 
-      '3xl': '1900px',
+      "3xl": "1900px",
       // => @media (min-width: 1536px) { ... }
     },
     extend: {

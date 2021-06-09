@@ -115,6 +115,8 @@ const RejectDepositOrMemberAddress = (props: Props) => {
       setMemberAddressesError(
         `Insufficient allowance set. Please set additional allowance of ${
           totalDepositsForMemberAddress - allowanceAmount
+        } ${
+          syndicate.depositERC20TokenSymbol || ""
         } before rejecting member deposits.`
       );
     }

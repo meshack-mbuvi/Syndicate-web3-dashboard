@@ -18,10 +18,10 @@ import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import ErrorBoundary from "../../components/errorBoundary";
 import DistributeToken from "./distributeToken";
-import ManagerAction from "./managerAction";
+import ManagerActionCard from "./managerActionCard";
 import ModifyMemberDistributions from "./modifyMemberDistributions";
 import ModifySyndicateCapTable from "./modifySyndicateCapTable";
-import MoreManagerActions from "./moreManagerActions";
+import MoreManagerActionCard from "./moreManagerActionCard";
 import PreApproveDepositor from "./preApproveDepositor";
 import RejectDepositOrMemberAddress from "./RejectDepositOrMemberAddress";
 import RequestSocialProfile from "./requestSocialProfile";
@@ -200,7 +200,7 @@ const ManagerActions = () => {
           </div>
           {/* show set distribution option when syndicate is closed */}
           {syndicate?.open ? (
-            <ManagerAction
+            <ManagerActionCard
               title={"Close syndicate"}
               description={
                 "Close this syndicate and stop accepting deposits. This action is irreversible."
@@ -209,7 +209,7 @@ const ManagerActions = () => {
               onClickHandler={() => closeSyndicate()}
             />
           ) : (
-            <ManagerAction
+            <ManagerActionCard
               title={"Distribute tokens back to depositors"}
               description={
                 "Distribute tokens back to depositors and make them available for withdraw."
@@ -221,7 +221,7 @@ const ManagerActions = () => {
 
           {/* show pre-approve depositor option when syndicate is open and allowList is enabled */}
           {syndicate?.depositsEnabled && syndicate?.allowlistEnabled ? (
-            <ManagerAction
+            <ManagerActionCard
               title={"Pre-approve depositor addresses"}
               description={
                 "Pre-approve accredited investor addresses that can deposit into this syndicate."
@@ -233,7 +233,7 @@ const ManagerActions = () => {
 
           {actions.map(({ icon, title, description, onClickHandler }) => {
             return (
-              <ManagerAction
+              <ManagerActionCard
                 title={title}
                 description={description}
                 icon={icon}
@@ -248,7 +248,7 @@ const ManagerActions = () => {
             MORE
           </div>
           {!syndicate?.open && syndicate?.distributionsEnabled ? (
-            <MoreManagerActions
+            <MoreManagerActionCard
               icon={<img src="/images/invertedInfo.svg" />}
               text={"Modify Member distributions"}
               onClickHandler={setShowModifyMemberDistribution}
@@ -257,7 +257,7 @@ const ManagerActions = () => {
 
           {/* member deposits can be set if syndicate is open and modifiable */}
           {syndicate?.open && syndicate?.modifiable ? (
-            <MoreManagerActions
+            <MoreManagerActionCard
               icon={<img src="/images/invertedInfo.svg" />}
               text={"Overwrite syndicate cap table"}
               onClickHandler={showModifyCapTableModal}
@@ -268,14 +268,14 @@ const ManagerActions = () => {
           while the syndicate is open
           */}
           {syndicate?.open ? (
-            <MoreManagerActions
+            <MoreManagerActionCard
               icon={<img src="/images/exclamation-triangle.svg" />}
               text={"Reject deposit or depositor address"}
               onClickHandler={() => setShowRejectDepositOrMemberAddress(true)}
             />
           ) : null}
 
-          <MoreManagerActions
+          <MoreManagerActionCard
             icon={<img src="/images/settings.svg" />}
             text={"Change syndicate settings"}
           />
