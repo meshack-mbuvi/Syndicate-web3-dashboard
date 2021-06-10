@@ -15,7 +15,7 @@ const allowListEnabledNotApprovedText =
 const allowListEnabledApprovedText = "Allowlist enabled: You're approved.";
 const depositDisclaimerText =
   "All deposits are final and can only be changed by Syndicate leads.";
-const depositLPAccreditedText =
+const depositMemberAccreditedText =
   "By depositing tokens, you attest you are accredited to join this syndicate. After depositing, contact the syndicate leads to confirm receipt and withdraw timing.";
 const withdrawalTitleText = "Withdraw My Distributions.";
 const withdrawalDepositTitleText = "Withdraw My Deposit";
@@ -27,7 +27,7 @@ const depositsAndWithdrawalsUnavailableText =
   "Deposits and withdraws are not currently available";
 const depositsUnavailableTitleText = "Deposits";
 const depositsUnavailableText = "Syndicate closed. Deposits unavailable.";
-const depositsUnavailableMaxLPsZeroText =
+const depositsUnavailableMaxMembersZeroText =
   "Deposits are unavailable at the moment. Please contact the syndicate leads.";
 const withdrawalsUnavailableTitleText = "Withdrawal Failed";
 const withdrawalAllowanceInsufficientText =
@@ -170,7 +170,7 @@ const amountMoreThanMaxDepositErrorMessage =
   "Amount cannot be more than the maximum allowed deposit of";
 const maxTotalDepositsExceededErrorMessage =
   "You cannot deposit this amount. The maximum syndicate deposit of";
-const maxTotalLPDepositsExceededErrorMessage =
+const maxTotalMemberDepositsExceededErrorMessage =
   "You cannot deposit this amount. Your maximum allowed deposit of";
 const amountExceededText = "will be exceeded";
 
@@ -182,7 +182,7 @@ export const constants = {
   allowListDisabledNotApprovedText,
   allowListEnabledApprovedText,
   depositDisclaimerText,
-  depositLPAccreditedText,
+  depositMemberAccreditedText,
   withdrawalTitleText,
   withdrawalDepositTitleText,
   withdrawalDisclaimerText,
@@ -206,7 +206,7 @@ export const constants = {
   connectWalletMessage,
   connectWalletWithdrawMessage,
   connectWalletDepositMessage,
-  depositsUnavailableMaxLPsZeroText,
+  depositsUnavailableMaxMembersZeroText,
   depositSuccessTitleText,
   depositSuccessSubtext,
   depositSuccessButtonText,
@@ -218,7 +218,7 @@ export const constants = {
   amountLessThanMinDepositErrorMessage,
   amountMoreThanMaxDepositErrorMessage,
   maxTotalDepositsExceededErrorMessage,
-  maxTotalLPDepositsExceededErrorMessage,
+  maxTotalMemberDepositsExceededErrorMessage,
   amountExceededText,
   maxMemberDepositsTitleText,
   maxMemberDepositsText,
@@ -256,8 +256,8 @@ export const maximumDepositToolTip =
   "The maximum amount a user can deposit into the syndicate.";
 export const totalMaximumDepositToolTip =
   "Total funds to be raised for this syndicate.";
-export const maxLpsToolTip =
-  "Maximum number of users(LP) who can deposit into this syndicate.";
+export const maxMembersToolTip =
+  "Maximum number of users(Member) who can deposit into this syndicate.";
 
 export const expectedAnnualOperatingFeesToolTip =
   "This is a flat fee that will be paid to the manager annually. A standard structure would be a 2% management fee.";
@@ -269,7 +269,7 @@ export const profitShareToSyndicateProtocolToolTip =
   "This is the profit share in % that will be sent to Syndicate Treasury. A minimum profit share of 0.5% is required.";
 
 export const allowListEnabledToolTip =
-  "This should be checked if the Syndicate ONLY allows deposits from allowed addresses, or unchecked if any(accredited) LP can deposit";
+  "This should be checked if the Syndicate ONLY allows deposits from allowed addresses, or unchecked if any(accredited) Member can deposit";
 
 export const modifiableToolTip =
   "This should be checked if a manager can modify a Syndicate's deposit and distribution amounts or unchecked if deposit and distribution cannot be modified by the manager. This choice is permanent-- once set here during creation, it cannot be changed.";

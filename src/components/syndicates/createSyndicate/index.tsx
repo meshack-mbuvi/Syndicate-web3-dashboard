@@ -18,19 +18,13 @@ import { useDispatch, useSelector } from "react-redux";
 // Other useful components
 import Button from "src/components/buttons";
 import { InfoIcon } from "src/components/iconWrappers";
-import {
-  CheckBox,
-  PercentInput,
-  TextInput,
-  Toggle,
-} from "src/components/inputs";
+import { PercentInput, TextInput, Toggle } from "src/components/inputs";
 import { Modal } from "src/components/modal";
 // redux actions
 import { setSubmitting, showWalletModal } from "src/redux/actions";
 import { getWeiAmount } from "src/utils/conversions";
 import { ERC20TokenDetails } from "src/utils/ERC20Methods";
 import {
-  AgreeToOurTermsOfServiceText,
   allowListEnabledToolTip,
   closeDateToolTip,
   confirmCreateSyndicateSubText,
@@ -40,7 +34,7 @@ import {
   fullNameToolTip,
   loaderSubtext,
   maximumDepositToolTip,
-  maxLpsToolTip,
+  maxMembersToolTip,
   MAX_INTEGER,
   minimumDepositToolTip,
   modifiableToolTip,
@@ -101,7 +95,7 @@ const CreateSyndicate = (props: Props) => {
   const [maxDepositsError, setMaxDepositsError] = useState("");
   const [minDepositsError, setMinDepositsError] = useState("");
   const [maxTotalDepositsError, setMaxTotalDepositsError] = useState("");
-  const [maxLPsError, setMaxLPsError] = useState("");
+  const [maxMembersError, setMaxMembersError] = useState("");
   const [
     expectedAnnualOperatingFeesError,
     setExpectedAnnualOperatingFeesError,
@@ -123,22 +117,21 @@ const CreateSyndicate = (props: Props) => {
   );
   const [maxDeposits, setMaxDeposits] = useState("");
   const [minDeposits, setMinDeposits] = useState("");
-  const [maxLPs, setMaxLPs] = useState("");
+  const [maxMembers, setMaxMembers] = useState("");
   const [maxTotalDeposits, setMaxTotalDeposits] = useState("");
   const [
     expectedAnnualOperatingFees,
     setExpectedAnnualOperatingFees,
-  ] = useState("0");
-  const [profitShareToSyndicateLead, setProfitShareToSyndicateLead] = useState(
-    "0"
-  );
+  ] = useState<string>("0");
+  const [
+    profitShareToSyndicateLead,
+    setProfitShareToSyndicateLead,
+  ] = useState<string>("0");
   const [allowlistEnabled, setAllowlistEnabled] = useState(false);
   const [modifiable, setModifiable] = useState(false);
   const [syndicateProfitSharePercent, setProfitShareToSyndProtocol] = useState(
     "0.5"
   );
-  const [termsOfServiceError, setTermsOfServiceError] = useState("");
-  const [termsOfService, setTermsOfService] = useState(false);
   const [
     otherProfitShareToSyndicateProtocol,
     setOtherProfitShareToSyndicateProtocol,
@@ -168,15 +161,14 @@ const CreateSyndicate = (props: Props) => {
     depositERC20AddressError ||
     maxDepositsError ||
     maxTotalDepositsError ||
-    maxLPsError ||
+    maxMembersError ||
     expectedAnnualOperatingFeesError ||
     profitShareToSyndicateLeadError ||
     !profitShareToSyndicateLead ||
     !depositERC20Address ||
     !expectedAnnualOperatingFees ||
     !profitShareToSyndicateLead ||
-    !syndicateProfitSharePercent ||
-    !termsOfService
+    !syndicateProfitSharePercent
   ) {
     validated = false;
   } else {
@@ -238,7 +230,7 @@ const CreateSyndicate = (props: Props) => {
       setMaxDepositsError(`Maximum deposits ${message}`);
     } else if (+value < +minDeposits) {
       setMaxDepositsError(
-        "Max Deposits must not be less than minDeposit per LP"
+        "Max Deposits must not be less than minDeposit per Member"
       );
     } else {
       setMaxDepositsError("");
@@ -276,32 +268,34 @@ const CreateSyndicate = (props: Props) => {
 
     if (+value < +maxDeposits) {
       setMaxTotalDepositsError(
-        "Max Total deposits must not be less than maxDeposit per LP"
+        "Max Total deposits must not be less than maxDeposit per Member"
       );
     } else if (+value < +minDeposits) {
       setMaxTotalDepositsError(
-        "Max Total deposits must not be less than minDeposit per LP"
+        "Max Total deposits must not be less than minDeposit per Member"
       );
     } else {
       setMaxTotalDepositsError("");
     }
   };
 
-  // max LPs onChangehandle
-  const maxLPsHandler = (event: any) => {
+  // max Members onChangehandle
+  const maxMembersHandler = (event: any) => {
     event.preventDefault();
     const { value } = event.target;
-    setMaxLPsError("");
+    setMaxMembersError("");
 
-    setMaxLPs(value);
+    setMaxMembers(value);
     const checkIsWholeNumber = isWholeNumber(value);
 
     if (value < 0) {
-      setMaxLPsError("Max Lps must be equal to or greater than 0");
+      setMaxMembersError("Total members cannot be less than 0");
+    } else if (isNaN(value)) {
+      setMaxMembersError("Total members should be a valid number.");
     } else if (!checkIsWholeNumber) {
-      setMaxLPsError(`Max LPs must be a whole number`);
+      setMaxMembersError(`Total members must be a whole number`);
     } else {
-      setMaxLPsError("");
+      setMaxMembersError("");
     }
   };
 
@@ -312,7 +306,6 @@ const CreateSyndicate = (props: Props) => {
     setExpectedAnnualOperatingFees(value);
 
     const message = Validate(value);
-    setExpectedAnnualOperatingFees(value);
 
     let invalidPercent = "";
 
@@ -329,6 +322,13 @@ const CreateSyndicate = (props: Props) => {
     } else {
       setExpectedAnnualOperatingFeesError("");
     }
+
+    if (!(parseInt(expectedAnnualOperatingFees, 10) > 100)) {
+      setExpectedAnnualOperatingFees(value);
+    } else {
+      setExpectedAnnualOperatingFees("100");
+      setExpectedAnnualOperatingFeesError("");
+    }
   };
 
   const profitShareToSyndicateLeadHandler = (event: any) => {
@@ -336,7 +336,6 @@ const CreateSyndicate = (props: Props) => {
     const { value } = event.target;
 
     const message = Validate(value);
-    setProfitShareToSyndicateLead(value);
 
     let invalidPercent = "";
 
@@ -351,6 +350,13 @@ const CreateSyndicate = (props: Props) => {
     } else if (invalidPercent) {
       setprofitShareToSyndicateLeadError(invalidPercent);
     } else {
+      setprofitShareToSyndicateLeadError("");
+    }
+
+    if (!(parseInt(profitShareToSyndicateLead, 10) > 100)) {
+      setProfitShareToSyndicateLead(value);
+    } else {
+      setProfitShareToSyndicateLead("100");
       setprofitShareToSyndicateLeadError("");
     }
   };
@@ -427,7 +433,7 @@ const CreateSyndicate = (props: Props) => {
       ? getWeiAmount(maxDeposits, depositTokenDecimals, true)
       : MAX_INTEGER;
 
-    const numMembersMax = maxLPs ? maxLPs.toString() : MAX_INTEGER;
+    const numMembersMax = maxMembers ? maxMembers.toString() : MAX_INTEGER;
     const depositMaxTotal = maxTotalDeposits
       ? getWeiAmount(maxTotalDeposits, depositTokenDecimals, true)
       : MAX_INTEGER;
@@ -583,10 +589,13 @@ const CreateSyndicate = (props: Props) => {
   const profitShareToSyndicateOnchangeHandler = (event) => {
     event.preventDefault();
     const { value } = event.target;
-    if (value.toString().length > 1) {
-      setIconLeftMargin(value.toString().length + 0.5);
+    if (value.toString().length > 1 && value.toString().length <= 6) {
+      setIconLeftMargin(value.toString().length + 0.8);
+    } else if (value.toString().length <= 1) {
+      setIconLeftMargin(2);
+    } else {
+      setIconLeftMargin(6.8);
     }
-    console.log({ valu: value.toString().length });
 
     const message = Validate(value);
     let invalidPercent = "";
@@ -609,8 +618,15 @@ const CreateSyndicate = (props: Props) => {
       setProfitShareToSyndProtocolError("");
     }
 
-    setOtherProfitShareToSyndicateProtocol(value);
-    setProfitShareToSyndProtocol(value);
+    if (!(parseInt(otherProfitShareToSyndicateProtocol, 10) > 100)) {
+      setOtherProfitShareToSyndicateProtocol(value);
+      setProfitShareToSyndProtocol(value);
+    } else {
+      setOtherProfitShareToSyndicateProtocol("100");
+      setProfitShareToSyndProtocol("100");
+      setProfitShareToSyndProtocolError("");
+      setIconLeftMargin(3.8);
+    }
   };
 
   /**
@@ -639,21 +655,6 @@ const CreateSyndicate = (props: Props) => {
     setProfitShareToSyndProtocolError("");
   };
 
-  /**
-   * Handles agree or disagree with terms of service.
-   * When user unchecks our terms of service, we inform them that this is a
-   * requirement by displaying the appropriate message.
-   * @param event
-   */
-  const handleTermsOfService = (event: any) => {
-    setTermsOfService(event.target.checked);
-    if (!event.target.checked) {
-      setTermsOfServiceError(AgreeToOurTermsOfServiceText);
-    } else {
-      setTermsOfServiceError("");
-    }
-  };
-
   const handleFormLLC = (event: any) => {
     setFormLLC(event.target.checked);
   };
@@ -667,20 +668,17 @@ const CreateSyndicate = (props: Props) => {
           closeModal,
           customWidth: "w-full lg:w-3/5",
         }}
-        title="Create New Syndicate"
-      >
+        title="Create New Syndicate">
         <form
           name="offChainData"
           method="post"
           data-netlify="true"
-          onSubmit={onSubmit}
-        >
+          onSubmit={onSubmit}>
           <input type="hidden" name="form-name" value="offChainData" />
           {/* modal sub title */}
           <div
             className="flex justify-start mb-1 text-blue font-medium 
-          text-center leading-8 text-lg"
-          >
+          text-center leading-8 text-lg">
             <p className="text-blue-light ml-4">Offchain Data</p>
           </div>
 
@@ -753,8 +751,7 @@ const CreateSyndicate = (props: Props) => {
           {/* modal sub title */}
           <div
             className="flex justify-start mt-4 mb-1 text-blue font-medium 
-          text-center leading-8 text-lg"
-          >
+          text-center leading-8 text-lg">
             <p className="text-blue-light ml-4">Onchain Data</p>
           </div>
 
@@ -787,10 +784,9 @@ const CreateSyndicate = (props: Props) => {
               {/* min deposits */}
               <TextInput
                 {...{
-                  label: "Minimum Deposits (Per Depositor):",
+                  label: "Minimum Deposits (Per Member):",
                   error: minDepositsError,
                   tooltip: minimumDepositToolTip,
-                  type: "number",
                 }}
                 onChange={handleSetMinDeposits}
                 name="minDeposits"
@@ -801,10 +797,9 @@ const CreateSyndicate = (props: Props) => {
               {/* max deposits */}
               <TextInput
                 {...{
-                  label: "Maximum Deposits (Per Depositor):",
+                  label: "Maximum Deposits (Per Member):",
                   error: maxDepositsError,
                   tooltip: maximumDepositToolTip,
-                  type: "number",
                 }}
                 onChange={handleSetMaxDeposits}
                 name="maxDeposits"
@@ -818,7 +813,6 @@ const CreateSyndicate = (props: Props) => {
                   label: "Maximum Deposits (Total):",
                   error: maxTotalDepositsError,
                   tooltip: totalMaximumDepositToolTip,
-                  type: "number",
                 }}
                 onChange={maxTotalDepositsHandler}
                 name="maxTotalDeposits"
@@ -826,32 +820,34 @@ const CreateSyndicate = (props: Props) => {
                 placeholder="Unlimited"
               />
 
-              {/* Max LPs deposits */}
+              {/* Max Members allowed to deposit */}
               <TextInput
                 {...{
-                  label: "Maximum LPs (Total Depositors):",
-                  error: maxLPsError,
-                  tooltip: maxLpsToolTip,
-                  type: "number",
+                  label: "Maximum Members (Total Members):",
+                  error: maxMembersError,
+                  tooltip: maxMembersToolTip,
                 }}
-                onChange={maxLPsHandler}
-                name="maxLPs"
-                value={maxLPs}
+                onChange={maxMembersHandler}
+                name="maxMembers"
+                value={maxMembers}
                 placeholder="Unlimited"
               />
+
               {/* close date */}
-              <div className="flex justify-center">
-                <div className="flex mr-2 w-1/2 justify-end">
+              <div
+                className={`flex flex-row
+                justify-center w-full`}>
+                <div className={`flex mr-2 w-1/2 justify-end`}>
                   <label
                     htmlFor="closeDate"
-                    className="block pt-2 text-black text-sm font-medium"
-                  >
+                    className="block pt-2 text-black text-sm font-medium">
                     Close Date:
                   </label>
                 </div>
-                <div className="w-5/6 flex-grow flex flex-col justify-between">
+                <div
+                  className={`w-5/6 flex-grow flex flex-col justify-between`}>
                   {/* input field */}
-                  <div className="flex justify-start">
+                  <div className="flex justify-end">
                     <DatePicker
                       selected={selectedDate}
                       onSelect={handleDateSelect}
@@ -861,12 +857,12 @@ const CreateSyndicate = (props: Props) => {
                       name="closeDate"
                       dropdownMode="select"
                     />
+
                     {/* icon */}
-                    <div className="w-auto mt-1 flex">
+                    <div className="w-12 -mr-0.5 flex">
                       <InfoIcon tooltip={closeDateToolTip} />
                     </div>
                   </div>
-                  <p className="text-red-500 text-xs mt-1 mb-1"></p>
                 </div>
               </div>
 
@@ -902,8 +898,7 @@ const CreateSyndicate = (props: Props) => {
                 <div className="mr-2 w-1/2 mt-1 flex justify-end">
                   <label
                     htmlFor="profitShareToSyndProtocol"
-                    className="block pt-2 text-black text-sm font-medium"
-                  >
+                    className="block pt-2 text-black text-sm font-medium">
                     Profit Share to Syndicate Protocol:
                   </label>
                 </div>
@@ -911,8 +906,7 @@ const CreateSyndicate = (props: Props) => {
                 {/* shows 4 equal grids used to get the input for profit share */}
                 <div className="w-5/6 flex justify-between">
                   <div
-                    className={`grid grid-cols-4 w-2/5  overflow-hidden gray-85 flex-grow`}
-                  >
+                    className={`grid grid-cols-4 w-2/5  overflow-hidden gray-85 flex-grow`}>
                     <button
                       className={`flex justify-center items-center py-2 text-sm rounded-l-md border border-gray-85 border-r-0 focus:outline-none ${
                         syndicateProfitSharePercent == "0.5"
@@ -920,8 +914,7 @@ const CreateSyndicate = (props: Props) => {
                           : "gray-85"
                       }`}
                       onClick={() => updateProfitShareToSyndProtocol(0.5)}
-                      type="button"
-                    >
+                      type="button">
                       0.5%
                     </button>
 
@@ -934,8 +927,7 @@ const CreateSyndicate = (props: Props) => {
                       onClick={() => {
                         updateProfitShareToSyndProtocol(1);
                       }}
-                      type="button"
-                    >
+                      type="button">
                       1%
                     </button>
 
@@ -948,15 +940,14 @@ const CreateSyndicate = (props: Props) => {
                       type="button"
                       onClick={() => {
                         updateProfitShareToSyndProtocol(3);
-                      }}
-                    >
+                      }}>
                       3%
                     </button>
 
                     <div className="flex justify-start rounded-r-md border-l-0 border border-gray-85">
                       <input
                         type="number"
-                        className={`flex text-sm rounded-r-md font-whyte w-full border-0 border-gray-85 border-l-0`}
+                        className={`flex text-sm rounded-r-md font-whyte w-full border-0 border-gray-85 border-l-0 pr-6`}
                         placeholder="Other %"
                         name="profitShareToSyndProtocol"
                         onChange={profitShareToSyndicateOnchangeHandler}
@@ -965,15 +956,14 @@ const CreateSyndicate = (props: Props) => {
                       />
                       <span
                         className="flex flex-1 justify-start items-center absolute py-2 text-gray-500"
-                        style={{ marginLeft: `${iconLeftMargin}ch` }}
-                      >
+                        style={{ marginLeft: `${iconLeftMargin}ch` }}>
                         {otherProfitShareToSyndicateProtocol ? "%" : ""}
                       </span>
                     </div>
                   </div>
 
                   {/* icon */}
-                  <div className="flex content-center">
+                  <div className="flex w-12 content-center">
                     <InfoIcon tooltip={profitShareToSyndicateProtocolToolTip} />
                   </div>
                 </div>
@@ -992,7 +982,7 @@ const CreateSyndicate = (props: Props) => {
                 {...{
                   enabled: allowlistEnabled,
                   toggleEnabled: toggleAllowlistEnabled,
-                  label: "Manually Whitelist Depositors:",
+                  label: "Manually Whitelist Members:",
                   tooltip: allowListEnabledToolTip,
                 }}
               />
@@ -1012,22 +1002,7 @@ const CreateSyndicate = (props: Props) => {
           {/* agree to terms */}
           <div className="flex my-4 w-full flex-col align-center justify-center py-4">
             <p className="flex text-black justify-center">
-              I agree to the
-              <span className="mx-2 text-blue-light"> terms of service</span>
-              (required):
-              <CheckBox
-                {...{
-                  error: termsOfServiceError,
-                }}
-                onChange={handleTermsOfService}
-                name="termsOfService"
-                value={termsOfService}
-                required
-              />
-            </p>
-
-            <p className="flex mt-2 text-red-500 text-xs justify-center">
-              {termsOfServiceError}
+              By creating a syndicate, you agree to the terms of service.
             </p>
           </div>
 
@@ -1038,8 +1013,7 @@ const CreateSyndicate = (props: Props) => {
               customClasses={`rounded-full bg-blue-light w-auto px-10 py-2 text-lg ${
                 validated ? "" : "opacity-50"
               }`}
-              disabled={validated ? false : true}
-            >
+              disabled={validated ? false : true}>
               Launch
             </Button>
           </div>
@@ -1058,8 +1032,7 @@ const CreateSyndicate = (props: Props) => {
       <PendingStateModal
         {...{
           show: submitting,
-        }}
-      >
+        }}>
         <div className="modal-header mb-4 font-medium text-center leading-8 text-lg">
           {pendingState}
         </div>
@@ -1078,8 +1051,7 @@ const CreateSyndicate = (props: Props) => {
             setErrorMessage("");
             setShowModal(true);
           },
-        }}
-      ></ErrorModal>
+        }}></ErrorModal>
 
       {/* show success modal */}
       <Modal
@@ -1088,8 +1060,7 @@ const CreateSyndicate = (props: Props) => {
           closeModal: () => setShowSuccessModal(false),
           type: "success",
           customWidth: "w-5/12",
-        }}
-      >
+        }}>
         <div className="flex flex-col justify-center m-auto mb-4">
           <div className="flex align-center justify-center my-2 mb-6">
             <img src="/images/checkCircle.svg" className="w-16" />
@@ -1113,8 +1084,7 @@ const CreateSyndicate = (props: Props) => {
                 <input
                   disabled
                   className="font-whyte text-sm sm:text-base word-break p-2 overflow-hidden overflow-x-scroll border border-blue-light rounded-full"
-                  value={`${window.location.origin}/syndicates/${account}/deposit`}
-                ></input>
+                  value={`${window.location.origin}/syndicates/${account}/deposit`}></input>
               </div>
               <div className="flex align-center justify-center mx-auto my-2">
                 {copied ? (
@@ -1125,8 +1095,7 @@ const CreateSyndicate = (props: Props) => {
                   <>
                     <CopyToClipboard
                       text={`${window.location.origin}/syndicates/${account}/deposit`}
-                      onCopy={handleOnCopy}
-                    >
+                      onCopy={handleOnCopy}>
                       <p className="flex font-whyte text-sm cursor-pointer hover:opacity-80 text-gray-nightrider">
                         <img
                           src="/images/copy.svg"

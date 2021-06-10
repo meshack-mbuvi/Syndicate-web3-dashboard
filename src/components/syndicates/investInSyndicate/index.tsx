@@ -183,7 +183,7 @@ const InvestInSyndicate = () => {
     allowListEnabledApprovedText,
     allowListEnabledNotApprovedText,
     depositDisclaimerText,
-    depositLPAccreditedText,
+    depositMemberAccreditedText,
     withdrawalTitleText,
     withdrawalDepositTitleText,
     withdrawalDisclaimerText,
@@ -202,7 +202,7 @@ const InvestInSyndicate = () => {
     connectWalletMessage,
     connectWalletWithdrawMessage,
     connectWalletDepositMessage,
-    depositsUnavailableMaxLPsZeroText,
+    depositsUnavailableMaxMembersZeroText,
     maxMemberDepositsTitleText,
     maxMemberDepositsText,
     nonMemberWithdrawalTitleText,
@@ -1079,7 +1079,7 @@ const InvestInSyndicate = () => {
     amountLessThanMinDepositErrorMessage,
     amountMoreThanMaxDepositErrorMessage,
     maxTotalDepositsExceededErrorMessage,
-    maxTotalLPDepositsExceededErrorMessage,
+    maxTotalMemberDepositsExceededErrorMessage,
     amountExceededText,
   } = constants;
 
@@ -1099,7 +1099,7 @@ const InvestInSyndicate = () => {
     } else if (maxTotalDepositsExceeded) {
       errorMessageText = `${maxTotalDepositsExceededErrorMessage} ${depositMaxTotal} ${currentERC20} ${amountExceededText}`;
     } else if (maxTotalLPDepositsExceeded) {
-      errorMessageText = `${maxTotalLPDepositsExceededErrorMessage} ${depositMaxMember} ${currentERC20} ${amountExceededText}`;
+      errorMessageText = `${maxTotalMemberDepositsExceededErrorMessage} ${depositMaxMember} ${currentERC20} ${amountExceededText}`;
     } else {
       errorMessageText = amountError;
     }
@@ -1147,7 +1147,7 @@ const InvestInSyndicate = () => {
   // or one that's open but has maxLPs set to zero
   let unavailableForDepositsText = depositsUnavailableText;
   if (maxLPsZero) {
-    unavailableForDepositsText = depositsUnavailableMaxLPsZeroText;
+    unavailableForDepositsText = depositsUnavailableMaxMembersZeroText;
   }
 
   //set deposit title
@@ -1252,8 +1252,7 @@ const InvestInSyndicate = () => {
         <div
           className={`h-fit-content px-8 pb-4 pt-5 bg-gray-9 ${
             !account ? "rounded-2xl" : `border-b-0 rounded-t-2xl`
-          }`}
-        >
+          }`}>
           {/* Show is read only text if no provider */}
           {Web3.givenProvider === null && syndicateAddressIsValid ? (
             <UnavailableState
@@ -1439,7 +1438,7 @@ const InvestInSyndicate = () => {
                         {/* checkbox for user to confirm they are accredited investor if this is a deposit */}
                         {depositModes ? (
                           <p className="text-sm my-5 text-gray-500">
-                            {depositLPAccreditedText}
+                            {depositMemberAccreditedText}
                           </p>
                         ) : null}
                         <div className="mb-2">{actionButton}</div>
@@ -1508,8 +1507,7 @@ const InvestInSyndicate = () => {
             setErrorMessage("");
           },
           errorMessage,
-        }}
-      ></ErrorModal>
+        }}></ErrorModal>
     </ErrorBoundary>
   );
 };

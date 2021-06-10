@@ -21,7 +21,7 @@ export const PercentInput = (props: {
   const { label, name, onChange, error, value, tooltip, ...rest } = props;
   let variableWidth = 2.5;
   if (value.toString().length > 1) {
-    variableWidth = value.toString().length + 1.2;
+    variableWidth = value.toString().length + 1.4;
   }
 
   return (
@@ -42,7 +42,7 @@ export const PercentInput = (props: {
               type="number"
               name={name}
               onChange={onChange}
-              className={`flex text-sm rounded-md font-whyte w-full border-gray-85`}
+              className={`flex flex-grow text-sm font-whyte focus:ring-indigo-500 w-full focus:border-indigo-500 rounded-md border-gray-85`}
               {...rest}
               max="100"
               value={value}
@@ -55,7 +55,7 @@ export const PercentInput = (props: {
             </span>
           </div>
           {/* icon */}
-          <div className="w-auto mt-1 flex">
+          <div className="w-12 -mr-0.5 flex">
             <InfoIcon tooltip={tooltip} />
           </div>
         </div>
