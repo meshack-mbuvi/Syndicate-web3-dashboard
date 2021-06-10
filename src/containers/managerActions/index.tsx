@@ -307,8 +307,10 @@ const ManagerActions = () => {
           <ErrorModal
             {...{
               show: showSyndicateNotModifiable,
-              setShowErrorMessage: setShowSyndicateNotModifiable,
-              setErrorMessage,
+              handleClose: () => {
+                setShowSyndicateNotModifiable(false);
+                setErrorMessage("");
+              },
               errorMessage,
             }}
           />

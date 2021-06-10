@@ -5,21 +5,17 @@ import React from "react";
 
 interface Props {
   show: boolean;
-  setShowErrorMessage: Function;
-  setErrorMessage: Function;
+  handleClose: () => void;
   errorMessage: string;
 }
 
 export const ErrorModal = (props: Props) => {
-  const { show, setErrorMessage, setShowErrorMessage, errorMessage } = props;
+  const { show, handleClose, errorMessage } = props;
   return (
     <Modal
       {...{
         show,
-        closeModal: () => {
-          setShowErrorMessage(false);
-          setErrorMessage("");
-        },
+        closeModal: () => handleClose(),
       }}
     >
       <div className="flex justify-center m-auto mb-4">
