@@ -47,17 +47,14 @@ export const TextInput = (props: {
     <div
       className={`flex ${
         column ? `flex-col mr-2 sm:mr-4` : `flex-row`
-      } justify-center ${full ? `w-full` : ``}`}
-    >
+      } justify-center ${full ? `w-full` : ``}`}>
       <div
         className={`flex mr-2 ${
           column ? `w-full justify-start mb-2` : `w-1/2 justify-end`
-        }`}
-      >
+        }`}>
         <label
           htmlFor={label}
-          className="block pt-2 text-black text-sm font-medium"
-        >
+          className="block pt-2 text-black text-sm font-medium">
           {label}
         </label>
       </div>
@@ -65,8 +62,7 @@ export const TextInput = (props: {
       <div
         className={`${
           customWidth ? customWidth : `w-5/6`
-        } flex-grow flex flex-col justify-between`}
-      >
+        } flex-grow flex flex-col justify-between`}>
         {/* input field */}
         <div className="flex justify-start">
           <input
@@ -79,6 +75,7 @@ export const TextInput = (props: {
             disabled={disabled}
             value={value}
             step="1"
+            onWheel={(e) => e.currentTarget.blur()}
           />
           {/* icon */}
           {tooltip ? (

@@ -19,9 +19,9 @@ export const PercentInput = (props: {
   tooltip: string;
 }) => {
   const { label, name, onChange, error, value, tooltip, ...rest } = props;
-  let variableWidth = 2;
+  let variableWidth = 2.5;
   if (value.toString().length > 1) {
-    variableWidth = value.toString().length + 1;
+    variableWidth = value.toString().length + 1.2;
   }
 
   return (
@@ -29,8 +29,7 @@ export const PercentInput = (props: {
       <div className="mr-2 w-1/2 flex justify-end">
         <label
           htmlFor={label}
-          className="block pt-2 text-black text-sm font-medium"
-        >
+          className="block pt-2 text-black text-sm font-medium">
           {label}
         </label>
       </div>
@@ -38,18 +37,22 @@ export const PercentInput = (props: {
       <div className="w-5/6 flex flex-col">
         <div className="flex-grow flex flex-row justify-between">
           {/* input field */}
-          <div className="flex percentage-input rounded-md flex-grow border border-gray-85">
+          <div className="flex rounded-md flex-grow border-gray-85">
             <input
               type="number"
               name={name}
               onChange={onChange}
-              className={`flex px-1 ml-1 py-2 text-sm rounded-md focus:outline-none outline-none focus:ring-0 focus:border-none border-0 font-whyte w-full`}
-              style={{ width: `${variableWidth}ch` }}
+              className={`flex text-sm rounded-md font-whyte w-full border-gray-85`}
               {...rest}
               max="100"
               value={value}
+              onWheel={(e) => e.currentTarget.blur()}
             />
-            <span className="flex flex-1 py-2 text-sm text-gray-500">%</span>
+            <span
+              className={`flex flex-1 absolute py-2 text-sm text-gray-500`}
+              style={{ marginLeft: `${variableWidth}ch` }}>
+              %
+            </span>
           </div>
           {/* icon */}
           <div className="w-auto mt-1 flex">

@@ -86,10 +86,7 @@
 }
 
 @layer utilities {
-
   @variants responsive {
-
-    
     /* Sizes */
 
     .w-120 {
@@ -104,7 +101,6 @@
       max-width: 30rem;
     }
 
-
     /* Positioning */
 
     .vertically-center {
@@ -117,15 +113,14 @@
       @apply mx-auto vertically-center;
     }
 
-
     /* Touch targets */
 
     .target-l-12 {
-      @apply pl-12 -ml-12; 
+      @apply pl-12 -ml-12;
     }
 
     .target-l-6 {
-      @apply pl-6 -ml-6; 
+      @apply pl-6 -ml-6;
     }
 
     .target-l-3 {
@@ -136,9 +131,8 @@
       @apply pr-3 -mr-3;
     }
 
-
     .visibility-container:hover .visibility-hover {
-      visibility: visible
+      visibility: visible;
     }
   }
 }
@@ -334,10 +328,6 @@ input {
 .tooltip:hover .tooltiptext {
   visibility: visible;
   opacity: 1;
-}
-
-.percentage-input:focus-within {
-  border: 2px solid #667eea;
 }
 
 /* Chrome, Safari, Edge, Opera */
