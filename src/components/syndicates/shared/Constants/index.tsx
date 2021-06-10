@@ -257,7 +257,7 @@ export const maximumDepositToolTip =
 export const totalMaximumDepositToolTip =
   "Total funds to be raised for this syndicate.";
 export const maxMembersToolTip =
-  "Maximum number of users(Member) who can deposit into this syndicate.";
+  "Maximum number of users(members) who can deposit into this syndicate.";
 
 export const expectedAnnualOperatingFeesToolTip =
   "This is a flat fee that will be paid to the manager annually. A standard structure would be a 2% management fee.";
@@ -269,7 +269,7 @@ export const profitShareToSyndicateProtocolToolTip =
   "This is the profit share in % that will be sent to Syndicate Treasury. A minimum profit share of 0.5% is required.";
 
 export const allowListEnabledToolTip =
-  "This should be checked if the Syndicate ONLY allows deposits from allowed addresses, or unchecked if any(accredited) Member can deposit";
+  "This should be checked if the Syndicate ONLY allows deposits from allowed addresses, or unchecked if any(accredited) member can deposit";
 
 export const modifiableToolTip =
   "This should be checked if a manager can modify a Syndicate's deposit and distribution amounts or unchecked if deposit and distribution cannot be modified by the manager. This choice is permanent-- once set here during creation, it cannot be changed.";

@@ -1110,9 +1110,9 @@ const CreateSyndicate = (props: Props) => {
             </div>
 
             <div className="my-5">
-              <Link href={`/syndicates/${account}/deposit`}>
+              <Link href={`/syndicates/${account}/manage`}>
                 <a className="font-whyte text-center py-3 text-sm font-medium  text-blue-light hover bg-light-green">
-                  Go to Syndicate Deposit Page
+                  Go to Syndicate Management Page
                 </a>
               </Link>
             </div>
