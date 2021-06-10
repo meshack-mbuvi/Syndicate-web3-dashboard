@@ -36,6 +36,7 @@ import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Button from "src/components/buttons";
+import { DeleteIcon } from "src/components/shared/Icons";
 
 interface Props {
   showDistributeToken: boolean;
@@ -284,11 +285,6 @@ const DistributeToken = (props: Props) => {
               processSetDistributionEvent(managerSetterDistribution);
             }
           }
-
-          // dispatch new syndicate details
-          dispatch(
-            getSyndicateByAddress(syndicateAddress, syndicateContractInstance)
-          );
         })
         .on("error", (error) => {
           // transaction was rejected on Metamask.
@@ -307,6 +303,12 @@ const DistributeToken = (props: Props) => {
       ...ERC20TokenFields,
       { ...ERC20TokenDefaults, tokenId },
     ]);
+  };
+
+  // remove input fields for new ERC20 distribution
+  const removeERC20Fields = (index: number) => {
+    ERC20TokenFields.splice(index, 1);
+    setERC20TokenFields([...ERC20TokenFields]);
   };
 
   /** This method checks the allowance that's been already set on a given token
@@ -504,6 +506,19 @@ const DistributeToken = (props: Props) => {
       updateERC20TokenValue("tokenAddress", index, "");
       resetTokenValues(index);
     } else {
+      // check if the token address has already been set
+      for (let i = 0; i < ERC20TokenFields.length; i++) {
+        const { tokenNonFormattedAddress } = ERC20TokenFields[i];
+        if (value === tokenNonFormattedAddress) {
+          updateERC20TokenValue(
+            "tokenAddressError",
+            index,
+            "Token address already used."
+          );
+          return;
+        }
+      }
+
       updateERC20TokenValue("tokenAddressError", index, "");
       // set token decimals and symbol for the distribution token
       const distributionERC20Address = value;
@@ -787,6 +802,10 @@ const DistributeToken = (props: Props) => {
     if (cannotCloseModalStates) {
       return;
     } else {
+      // update syndicate details in the redux store
+      dispatch(
+        getSyndicateByAddress(syndicateAddress, syndicateContractInstance)
+      );
       setShowDistributeToken(false);
     }
   };
@@ -1042,19 +1061,35 @@ const DistributeToken = (props: Props) => {
                             className="flex justify-center flex-col xl:flex-row py-4 px-8 border-b-1 border-gray-200"
                             key={index}
                           >
-                            <TextInput
-                              {...{
-                                label: "Token Address",
-                                value: tokenAddress,
-                                onChange: (event) =>
-                                  handleTokenAddressChange(event, index),
-                                error: tokenAddressError,
-                                column: true,
-                                customWidth: "w-full xl:w-64",
-                              }}
-                              name="tokenAddress"
-                              placeholder="0x..."
-                            />
+                            {index > 0 ? (
+                              <div className="hidden xl:flex items-center mr-3">
+                                <div
+                                  className={`flex items-center justify-center cursor-pointer rounded-full h-6 w-6 ${
+                                    tokenAddressError ? `mt-2` : `mt-6`
+                                  } hover:bg-gray-200 transition-all`}
+                                  onClick={() => removeERC20Fields(index)}
+                                >
+                                  <DeleteIcon />
+                                </div>
+                              </div>
+                            ) : null}
+                            <div
+                              className={`${index === 0 ? `ml-0 xl:ml-7` : ``}`}
+                            >
+                              <TextInput
+                                {...{
+                                  label: "Token Address",
+                                  value: tokenAddress,
+                                  onChange: (event) =>
+                                    handleTokenAddressChange(event, index),
+                                  error: tokenAddressError,
+                                  column: true,
+                                  customWidth: "w-full xl:w-64",
+                                }}
+                                name="tokenAddress"
+                                placeholder="0x..."
+                              />
+                            </div>
 
                             {/* amount */}
                             <TextInput
@@ -1093,6 +1128,16 @@ const DistributeToken = (props: Props) => {
                                   : `Approve`}
                               </Button>
                             </div>
+                            {index > 0 ? (
+                              <div className="flex xl:hidden justify-center mr-3">
+                                <div
+                                  className={`flex items-center justify-center cursor-pointer rounded-full h-6 w-6 hover:bg-gray-200 transition-all`}
+                                  onClick={() => removeERC20Fields(index)}
+                                >
+                                  <DeleteIcon />
+                                </div>
+                              </div>
+                            ) : null}
                           </div>
                         </form>
                       );
@@ -1200,7 +1245,7 @@ const DistributeToken = (props: Props) => {
                   </form>
                 )}
 
-                <div className="space-y-4">
+                <div className="px-4 space-y-4">
                   <div className="flex flex-row justify-center">
                     <div className="mr-2 w-7/12 flex justify-end">
                       <label
