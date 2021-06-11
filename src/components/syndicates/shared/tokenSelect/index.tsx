@@ -73,7 +73,7 @@ export const TokenSelect = (props: SelectProps) => {
                       key={token.tokenAddress}
                       className={({ active }) =>
                         classNames(
-                          active ? "text-white bg-blue-cyan" : "text-gray-900",
+                          active ? "text-white bg-blue" : "text-gray-900",
                           "cursor-default select-none relative py-2 pl-3 pr-9"
                         )
                       }
@@ -93,7 +93,7 @@ export const TokenSelect = (props: SelectProps) => {
                           {selected ? (
                             <span
                               className={classNames(
-                                active ? "text-white" : "text-indigo-600",
+                                active ? "text-white" : "text-blue",
                                 "absolute inset-y-0 right-0 flex items-center pr-4"
                               )}>
                               <CheckIcon

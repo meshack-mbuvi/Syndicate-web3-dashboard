@@ -344,7 +344,7 @@ const ModifyMemberDistributions = (props: Props) => {
           </p>
 
           <form onSubmit={onSubmit}>
-            <p className="text-blue-light mx-4 my-4 text-base">
+            <p className="text-blue mx-4 my-4 text-base">
               Overwrite Claimed Amount
             </p>
             <div className="border w-full border-gray-93 bg-gray-99 rounded-xl p-4 py-8">
@@ -403,7 +403,7 @@ const ModifyMemberDistributions = (props: Props) => {
               <div className="flex my-4 w-full justify-center py-2">
                 <Button
                   type="submit"
-                  customClasses={`rounded-full bg-blue-light w-auto px-10 py-2 text-lg ${
+                  customClasses={`rounded-full bg-blue w-auto px-10 py-2 text-lg ${
                     validated && !submitting && lpInvested ? "" : "opacity-50"
                   }`}
                   disabled={

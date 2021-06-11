@@ -12,7 +12,7 @@ export const CheckBox = (props: {
       type="checkbox"
       name={name}
       onChange={onChange}
-      className="ml-2 focus:ring-indigo-500 cursor-pointer h-5 w-5 text-indigo-500 border-indigo-500 rounded-full"
+      className="ml-2 focus:ring-blue cursor-pointer h-5 w-5 text-blue border-blue rounded-full"
       checked={value ? true : false}
     />
   );

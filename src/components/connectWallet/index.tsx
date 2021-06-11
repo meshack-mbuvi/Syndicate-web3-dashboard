@@ -41,8 +41,8 @@ const daiContractAddress = "0x6b175474e89094c44da98b954eedeac495271d0f";
 const getErrorMessage = (error: Error) => {
   if (error instanceof NoEthereumProviderError) {
     return `No Ethereum browser extension detected, install MetaMask on desktop using this link 
-      <a href='https://metamask.io/' target="_blank" class='text-blue-cyan hover:underline'>https://metamask.io/</a> 
-      then <a class='text-blue-cyan hover:underline' href="javascript:window.location.reload(false);">refresh</a> 
+      <a href='https://metamask.io/' target="_blank" class='text-blue hover:underline'>https://metamask.io/</a> 
+      then <a class='text-blue hover:underline' href="javascript:window.location.reload(false);">refresh</a> 
       the page,  or visit from a dApp browser on mobile.`;
   } else if (error instanceof UnsupportedChainIdError) {
     return "You're connected to an unsupported network. Ensure you are connected to either Mainnet, Ropsten, Kovan, Rinkeby or Goerli";
@@ -259,7 +259,7 @@ export const ConnectWallet = (props: { web3; showWalletModal }) => {
           {/* Show cance button */}
           <div className="mt-5 sm:mt-6 flex justify-center">
             <CancelButton
-              customClasses="bg-blue-light rounded-full px-4 py-2 mb-6 sm:mb-0 focus:outline-none focus:ring focus:border-green-300"
+              customClasses="bg-blue rounded-full px-4 py-2 mb-6 sm:mb-0 focus:outline-none focus:ring focus:border-green-300"
               onClick={closeWalletModal}
             >
               Cancel

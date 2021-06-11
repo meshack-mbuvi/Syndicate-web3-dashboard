@@ -33,7 +33,7 @@ function IndexPage() {
             <div className="flex items-center justify-center mt-10 sm:mt-20 w-full">
               <div className="rounded-md">
                 <Link href="/syndicates">
-                  <a className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-custom text-white hover md:py-4 md:text-lg md:px-10 bg-blue-light">
+                  <a className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-custom text-white hover md:py-4 md:text-lg md:px-10 bg-blue">
                     {homeButtonText}
                   </a>
                 </Link>

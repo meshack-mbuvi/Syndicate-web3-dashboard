@@ -12,7 +12,7 @@ export const Toggle = (props: {
   let backgroundClass = "bg-gray-light";
 
   if (enabled) {
-    backgroundClass = "bg-indigo-600";
+    backgroundClass = "bg-blue";
     translateClass = "translate-x-5";
   }
 
@@ -31,7 +31,7 @@ export const Toggle = (props: {
         {/* <!-- Enabled: "translate-x-5", Not Enabled: "translate-x-0" --> */}
         <button
           type="button"
-          className={`${backgroundClass} relative inline-flex flex-shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 mt-2`}
+          className={`${backgroundClass} relative inline-flex flex-shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue mt-2`}
           aria-pressed={enabled}
           onClick={() => toggleEnabled()}
         >

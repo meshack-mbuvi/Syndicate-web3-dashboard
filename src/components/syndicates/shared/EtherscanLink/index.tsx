@@ -23,10 +23,10 @@ export const EtherscanLink = (props: LinkProp) => {
     <a
       href={`${etherscanLink}${contractAddress}`}
       target="_blank"
-      className="text-blue-cyan flex"
+      className="text-blue flex"
       rel="noreferrer"
     >
-      View on Etherscan <ExternalLinkIcon className="ml-2" />
+      View on Etherscan <ExternalLinkIcon className="ml-2 text-blue" />
     </a>
   );
 };

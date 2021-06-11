@@ -61,8 +61,8 @@ export const BadgeCard = (props: {
           {syndicate ? (
             <div className="w-full">
               <div
-                className={`w-full mr-2 px-6 py-4 my-3 ${
-                  accountIsManager ? `rounded-t-2xl` : `rounded-2xl`
+                className={`w-full mr-2 px-6 py-4 ${
+                  accountIsManager ? `rounded-t-2xl mt-3 border-b border-gray-5` : `my-3 rounded-2xl`
                 } bg-gray-6 flex flex-shrink-0 bg-black-eerie`}
               >
                 {icon}
@@ -111,11 +111,11 @@ export const BadgeCard = (props: {
                         <p className="text-lg leading-snug font-light mb-2">
                           Insufficient Allowance
                         </p>
-                        <p className="text-sm font-light text-gray-dim leading-snug mb-2">
+                        <p className="text-sm font-light text-gray-500 leading-snug mb-2">
                           {allowanceInfoText}
                         </p>
                         <p
-                          className="text-sm text-blue-cyan font-light cursor-pointer w-fit-content"
+                          className="text-sm text-blue font-light cursor-pointer w-fit-content"
                           onClick={showManagerSetAllowancesModal}>
                           Set New Allowance{" "}
                           <img

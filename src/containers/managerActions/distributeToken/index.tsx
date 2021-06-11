@@ -830,7 +830,7 @@ const DistributeToken = (props: Props) => {
 
   // styling for close button
   const retryButtonClasses =
-    "rounded-full bg-blue-light text-white mt-4 w-auto px-10 py-2 text-lg font-light";
+    "rounded-full bg-blue text-white mt-4 w-auto px-10 py-2 text-lg font-light";
 
   const {
     managerSyndicateAddressTooltipText,
@@ -1010,7 +1010,7 @@ const DistributeToken = (props: Props) => {
             </p>
 
             <div>
-              <p className="text-blue-light mx-4 my-4 text-lg font-medium leading-5">
+              <p className="text-blue mx-4 my-4 text-lg font-medium leading-5">
                 {setDistributionsTitleText}
               </p>
               <div className="bg-gray-99 border border-gray-200 rounded-xl">
@@ -1115,7 +1115,7 @@ const DistributeToken = (props: Props) => {
                             >
                               <Button
                                 type="submit"
-                                customClasses={`rounded-md bg-blue-light border-2 border-blue-light w-full mr-4 xl:mr-0 xl:w-33 mt-2 px-6 py-1 h-9 text-sm font-light mb-3 ${
+                                customClasses={`rounded-md bg-blue border-2 border-blue w-full mr-4 xl:mr-0 xl:w-33 mt-2 px-6 py-1 h-9 text-sm font-light mb-3 ${
                                   disableApprovalButton
                                     ? `opacity-50 xl:mt-9 mb-0 `
                                     : ``
@@ -1144,7 +1144,7 @@ const DistributeToken = (props: Props) => {
                     })}
                     <div className="flex justify-center items-center py-6">
                       <p
-                        className="text-sm text-blue-light font-light cursor-pointer w-fit-content"
+                        className="text-sm text-blue font-light cursor-pointer w-fit-content"
                         onClick={() => addERC20Fields()}
                       >
                         <img
@@ -1200,7 +1200,7 @@ const DistributeToken = (props: Props) => {
                           <input
                             type="text"
                             name="managerFeeAddress"
-                            className={`text-black border-gray-85 text-sm font-whyte focus:ring-indigo-500 focus:border-indigo-500 rounded-md
+                            className={`text-black border-gray-85 text-sm font-whyte focus:ring-blue focus:border-blue rounded-md
                         mr-4 mb-3`}
                             step="1"
                             placeholder="0x..."
@@ -1214,7 +1214,7 @@ const DistributeToken = (props: Props) => {
                         </div>
                         <Button
                           type="submit"
-                          customClasses={`rounded-md bg-blue-light border-2 border-blue-light w-full mr-4 xl:mr-0 xl:w-33 px-6 text-sm font-light mb-3 ${
+                          customClasses={`rounded-md bg-blue border-2 border-blue w-full mr-4 xl:mr-0 xl:w-33 px-6 text-sm font-light mb-3 ${
                             (managerFeeAddressError && !managerFeeAddress) ||
                             !managerFeeAddress ||
                             managerFeeAddress === syndicate?.managerFeeAddress
@@ -1377,7 +1377,7 @@ const DistributeToken = (props: Props) => {
                     <form onSubmit={onSubmit}>
                       <Button
                         type="submit"
-                        customClasses={`rounded-full bg-blue-light w-auto px-10 py-2 text-lg ${
+                        customClasses={`rounded-full bg-blue w-auto px-10 py-2 text-lg ${
                           enableDistributeButton ? "" : "opacity-50"
                         }`}
                         disabled={enableDistributeButton ? false : true}

@@ -26,7 +26,7 @@ export const DateInput = (props) => {
         <DatePicker
           selected={startDate}
           onChange={onChangeHandler}
-          className={`flex flex-grow focus:ring-indigo-500 focus:border-indigo-500 rounded-md text-black border-gray-85`}
+          className={`flex flex-grow focus:ring-blue focus:border-blue rounded-md text-black border-gray-85`}
           ref={register}
           name={name}
         />

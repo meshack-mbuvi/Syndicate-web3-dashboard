@@ -679,7 +679,7 @@ const CreateSyndicate = (props: Props) => {
           <div
             className="flex justify-start mb-1 text-blue font-medium 
           text-center leading-8 text-lg">
-            <p className="text-blue-light ml-4">Offchain Data</p>
+            <p className="text-blue ml-4">Offchain Data</p>
           </div>
 
           <div className="border border-gray-85 bg-gray-99 rounded-xl p-4">
@@ -720,7 +720,7 @@ const CreateSyndicate = (props: Props) => {
                       <input
                         name="attachLLCManually"
                         type="checkbox"
-                        className="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded"
+                        className="focus:ring-blue h-4 w-4 text-blue border-gray-300 rounded"
                         onChange={handleFormLLC}
                         checked={formLLC ? true : false}
                       />
@@ -752,7 +752,7 @@ const CreateSyndicate = (props: Props) => {
           <div
             className="flex justify-start mt-4 mb-1 text-blue font-medium 
           text-center leading-8 text-lg">
-            <p className="text-blue-light ml-4">Onchain Data</p>
+            <p className="text-blue ml-4">Onchain Data</p>
           </div>
 
           <div className="border border-gray-85 bg-gray-99 rounded-xl p-4">
@@ -851,7 +851,7 @@ const CreateSyndicate = (props: Props) => {
                     <DatePicker
                       selected={selectedDate}
                       onSelect={handleDateSelect}
-                      className={`flex flex-grow focus:ring-indigo-500 text-sm focus:border-indigo-500 rounded-md text-black border-gray-85 w-full font-whyte`}
+                      className={`flex flex-grow focus:ring-blue text-sm focus:border-blue rounded-md text-black border-gray-85 w-full font-whyte`}
                       minDate={minimumCloseDate}
                       selectsStart
                       name="closeDate"
@@ -1010,7 +1010,7 @@ const CreateSyndicate = (props: Props) => {
           <div className="flex my-4 w-full justify-center py-2">
             <Button
               type="submit"
-              customClasses={`rounded-full bg-blue-light w-auto px-10 py-2 text-lg ${
+              customClasses={`rounded-full bg-blue w-auto px-10 py-2 text-lg ${
                 validated ? "" : "opacity-50"
               }`}
               disabled={validated ? false : true}>
@@ -1099,7 +1099,7 @@ const CreateSyndicate = (props: Props) => {
                       <p className="flex font-whyte text-sm cursor-pointer hover:opacity-80 text-gray-nightrider">
                         <img
                           src="/images/copy.svg"
-                          className="w-4 ml-2 mr-1 font-whyte cursor-pointer border-blue text-blue-light"
+                          className="w-4 ml-2 mr-1 font-whyte cursor-pointer border-blue text-blue"
                         />
                         Copy link
                       </p>
@@ -1111,7 +1111,7 @@ const CreateSyndicate = (props: Props) => {
 
             <div className="my-5">
               <Link href={`/syndicates/${account}/manage`}>
-                <a className="font-whyte text-center py-3 text-sm font-medium  text-blue-light hover bg-light-green">
+                <a className="font-whyte text-center py-3 text-sm font-medium text-blue hover bg-light-green">
                   Go to Syndicate Management Page
                 </a>
               </Link>

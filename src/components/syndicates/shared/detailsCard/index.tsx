@@ -77,7 +77,7 @@ export const DetailsCard = (props: {
 
       {title.toLowerCase() === "details" && syndicate?.modifiable ? (
         <div className="w-full mt-4 mb-2">
-          <div className=" w-full rounded-custom bg-gray-6 border-t-1 border-gray-6 py-4">
+          <div className=" w-full rounded-2xl bg-gray-6 border-t-1 border-gray-6 py-4">
             <div className="flex justify-start items-center pl-6 py-2">
               <img src="/images/exclamationDiagonal.svg" className="w-5" />
               <p className="text-lg leading-snug font-light pr-2 ml-6">

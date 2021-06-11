@@ -206,7 +206,7 @@ const PortfolioAndDiscover = (props: MySyndicateProps) => {
               </p>
               <p className="text-2xl font-whyte-light">
                 Click the button labelled{" "}
-                <span className="text-blue-light mr-1">Not connected</span>
+                <span className="text-blue mr-1">Not connected</span>
                 in the top right corner to get started.
               </p>
             </div>

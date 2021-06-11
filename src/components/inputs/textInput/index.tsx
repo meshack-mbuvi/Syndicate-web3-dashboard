@@ -70,7 +70,7 @@ export const TextInput = (props: {
             name={name}
             id={id}
             onChange={onChange}
-            className={`flex flex-grow text-sm font-whyte focus:ring-indigo-500 w-full focus:border-indigo-500 rounded-md ${disabledClasses}`}
+            className={`flex flex-grow text-sm font-whyte focus:ring-blue w-full focus:border-indigo-500 rounded-md ${disabledClasses}`}
             {...rest}
             disabled={disabled}
             value={value}

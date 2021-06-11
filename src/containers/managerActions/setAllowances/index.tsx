@@ -253,7 +253,7 @@ const ManagerSetAllowance = (props: Props) => {
 
   // styling for close button
   const retryButtonClasses =
-    "rounded-full bg-blue-light text-white mt-4 w-auto px-10 py-2 text-lg font-light";
+    "rounded-full bg-blue text-white mt-4 w-auto px-10 py-2 text-lg font-light";
 
   // close allowances modal
   const closeAllowancesModal = () => {
@@ -457,7 +457,7 @@ const ManagerSetAllowance = (props: Props) => {
                       type="submit"
                       customClasses={`${
                         distributionsEnabled ? "rounded-md" : "rounded-full"
-                      } bg-blue-light w-auto px-10 py-2 text-lg font-light ${
+                      } bg-blue w-auto px-10 py-2 text-lg font-light ${
                         allowanceAmountError ||
                         submitting ||
                         +allowanceAmount === 0 ||

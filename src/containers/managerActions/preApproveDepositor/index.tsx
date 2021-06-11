@@ -250,7 +250,7 @@ const PreApproveDepositor = (props: Props) => {
               {approveAddressesHeadingText}
             </div>
             <div className="font-bold">{approveAddressesWarning}</div>
-            <div className="text-blue-light font-semibold	pt-10 pl-4">
+            <div className="text-blue font-semibold	pt-10 pl-4">
               {textAreaTitle}
             </div>
             <div className="border-2 rounded-lg	bg-gray-99 mt-2 flex px-10 py-6">
@@ -272,7 +272,7 @@ const PreApproveDepositor = (props: Props) => {
             </div>
             <div className="flex items-center	justify-center pt-6">
               <button
-                className={`bg-blue-light text-white	py-2 px-10 rounded-full ${
+                className={`bg-blue text-white	py-2 px-10 rounded-full ${
                   showLPError ? "cursor-not-allowed" : null
                 }`}
                 onClick={handleSubmit}

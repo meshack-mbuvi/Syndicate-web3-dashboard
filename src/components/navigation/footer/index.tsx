@@ -5,7 +5,7 @@ const Footer = ({ extraClasses = "" }) => {
   const { syndicateDetailsFooterText, syndicateDetailsSecurityFooterText  } = syndicateDetailsConstants;
 
   return (
-    <footer className={`${extraClasses} w-full border-t border-gray-600 pt-8 pb-8`}>
+    <footer className={`${extraClasses} w-full border-t border-gray-nightrider pt-8 pb-8`}>
       <p className="text-sm text-gray-600">{syndicateDetailsFooterText}</p>
       <br/>
       <p className="text-sm text-gray-600">{syndicateDetailsSecurityFooterText}</p>

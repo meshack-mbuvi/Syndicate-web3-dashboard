@@ -35,12 +35,12 @@ const SyndicateActionButton = ({
 
     if (distributionsEnabled) {
       buttonText = "Withdraws available";
-      buttonStyles = "border border-blue-light";
+      buttonStyles = "border border-blue";
       link = "withdraw";
     }
   } else {
     buttonText = "Manage";
-    buttonStyles = "bg-blue-light text-black";
+    buttonStyles = "bg-blue text-black";
     link = "manage";
   }
 

@@ -139,7 +139,7 @@ const RequestSocialProfile = (props: Props) => {
                 </div>
                 <div className="flex items-center	justify-center pt-6">
                   <button
-                    className="bg-blue-light text-white	py-2 px-10 rounded-full"
+                    className="bg-blue text-white	py-2 px-10 rounded-full"
                     disabled={loading || showEmailError}
                     type="submit"
                   >

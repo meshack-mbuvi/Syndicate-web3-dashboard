@@ -655,7 +655,7 @@ const SyndicateDetails = (props: {
           customStyles={"w-full py-4 pb-8"}
           customInnerWidth="w-full"
         />
-        <div className="w-full border-gray-600 border-t pt-4 mb-12">
+        <div className="w-full border-gray-nightrider border-t pt-4 mb-12">
           <DetailsCard
             {...{
               title: "Deposits",

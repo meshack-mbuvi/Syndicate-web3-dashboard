@@ -139,8 +139,9 @@ module.exports = {
           ...colors.blue,
           light: "#35cfff",
           cyan: "#2AA3EF",
+          DEFAULT: "#4376FF",
           deepAzure: "#0C1F30",
-          dark: "#11ACDC",
+          dark: "#2F53B3",
         },
         yellow: {
           ...colors.yellow,
