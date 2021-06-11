@@ -152,6 +152,10 @@ module.exports = {
       },
       spacing: {
         33: "8.5rem",
+        50: "12.5rem",
+        66: "16.5rem",
+        68: "17rem",
+        76: "19rem",
       },
       fill: (theme) => ({
         gray: theme("colors.gray.light"),

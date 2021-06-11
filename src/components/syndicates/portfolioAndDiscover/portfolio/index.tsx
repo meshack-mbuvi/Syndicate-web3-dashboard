@@ -67,19 +67,20 @@ export const Portfolio = (props: { syndicates }) => {
       showSort: true,
     },
     {
-      Header: "Distributions",
-      accessor: function getDistributions(row) {
-        return <GetDistributions row={row} />;
-      },
-      showSort: true,
-    },
-    {
       Header: "My Deposits",
       accessor: function getMemberDeposits(row) {
         return <GetMemberDeposits row={row} />;
       },
       showSort: true,
     },
+    {
+      Header: "Distributions",
+      accessor: function getDistributions(row) {
+        return <GetDistributions row={row} />;
+      },
+      showSort: true,
+    },
+    
     {
       Header: "My Withdrawals",
       accessor: function getClaimedDistributions(row) {

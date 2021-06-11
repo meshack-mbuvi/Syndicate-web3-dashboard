@@ -51,12 +51,14 @@ const PortfolioAndDiscover = (props: MySyndicateProps) => {
       );
       if (accountHasSyndicate) {
         setManagerWithOpenSyndicate(true);
+      } else {
+        setManagerWithOpenSyndicate(false);
       }
     } else {
       setManagerWithOpenSyndicate(false);
       dispatch(setOneSyndicatePerAccount(false));
     }
-  }, [syndicates, syndicateContractInstance]);
+  }, [syndicates, syndicateContractInstance, account]);
 
   /**
    * We need to be sure syndicateContractInstance is initialized before retrieving events.
@@ -92,7 +94,8 @@ const PortfolioAndDiscover = (props: MySyndicateProps) => {
           <SkeletonLoader
             width={width}
             height={height}
-            borderRadius={borderRadius}></SkeletonLoader>
+            borderRadius={borderRadius}
+          ></SkeletonLoader>
         </div>
       );
     }
@@ -162,7 +165,8 @@ const PortfolioAndDiscover = (props: MySyndicateProps) => {
                       ? () => dispatch(setOneSyndicatePerAccount(true))
                       : () => showSyndicateForm()
                   }
-                  createSyndicate={true}>
+                  createSyndicate={true}
+                >
                   Create a syndicate
                 </Button>
               ) : null}
@@ -187,7 +191,8 @@ const PortfolioAndDiscover = (props: MySyndicateProps) => {
               <Button
                 customClasses="border border-gray-5 self-center mt-6 font-whyte-light w-56 rounded-full bg-gray-4 h-12 w-48 p-3 pt-3 text-sm"
                 onClick={showSyndicateForm}
-                createSyndicate={true}>
+                createSyndicate={true}
+              >
                 Create a syndicate
               </Button>
             </div>
@@ -213,7 +218,7 @@ const PortfolioAndDiscover = (props: MySyndicateProps) => {
           <div className="px-2 ml-2">
             <PageHeader>Discover</PageHeader>
           </div>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 mt-6 ml-2">
+          <div className="grid gap-4 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 mt-6 ml-2">
             {syndicateDAOs.map((syndicate, index) => {
               return (
                 <SyndicateDAOItem

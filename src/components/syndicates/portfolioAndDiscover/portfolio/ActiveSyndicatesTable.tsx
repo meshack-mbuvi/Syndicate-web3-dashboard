@@ -91,7 +91,7 @@ const ActiveSyndicatesTable = ({ columns, data }: Props) => {
                     <td
                       key={index}
                       {...cell.getCellProps()}
-                      className="m-0 font-whyte-light relative py-4 font-iter text-xs">
+                      className="m-0 font-whyte-light relative py-4 text-xs">
                       {cell.render("Cell")}
                     </td>
                   );
