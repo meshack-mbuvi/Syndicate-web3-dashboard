@@ -898,6 +898,7 @@ const InvestInSyndicate = () => {
       }
     }
   };
+
   useEffect(() => {
     checkLPAllowanceAmount();
   }, [
@@ -915,6 +916,7 @@ const InvestInSyndicate = () => {
   const { myAddressAllowed } = syndicateLPDetails;
   let depositApprovalText;
   let disableAmountInput = false;
+  let showDepositLink = false;
 
   if (syndicate) {
     const { allowlistEnabled } = syndicate;
@@ -927,6 +929,17 @@ const InvestInSyndicate = () => {
       depositApprovalText = allowListDisabledApprovedText;
     } else if (!allowlistEnabled && !myAddressAllowed) {
       depositApprovalText = allowListDisabledApprovedText;
+    }
+
+    // On the withdrawal section, show link to deposit page if
+    // allowListEnabled is set and member
+    // deposit is zero
+    if (syndicate.depositsEnabled) {
+      if (allowlistEnabled && withdraw && +myDeposits === 0) {
+        showDepositLink = myAddressAllowed;
+      } else {
+        showDepositLink = withdraw && +myDeposits === 0;
+      }
     }
   }
 
@@ -1346,6 +1359,7 @@ const InvestInSyndicate = () => {
                   subText={nonMemberWithdrawalText}
                   error={true}
                   showRetryButton={false}
+                  showlinkToDeposit={showDepositLink}
                 />
               ) : (
                 <>
