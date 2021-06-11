@@ -43,9 +43,12 @@ export const Toggle = (props: {
           ></span>
         </button>
 
-        <div className="mt-1 flex mr-auto">
-          <InfoIcon tooltip={tooltip} />
-        </div>
+        {/* <!-- allow optional tooltip --> */}
+        { tooltip !== "" && 
+          <div className="mt-1 flex mr-auto">
+            <InfoIcon tooltip={tooltip} />
+          </div>
+        }
       </div>
     </div>
   );
