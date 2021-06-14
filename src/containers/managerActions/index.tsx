@@ -1,7 +1,9 @@
+import { PrimaryButton } from "@/components/buttons";
 import { ErrorModal } from "@/components/shared";
 import { PendingStateModal } from "@/components/shared/transactionStates";
 import ConfirmStateModal from "@/components/shared/transactionStates/confirm";
 import FinalStateModal from "@/components/shared/transactionStates/final";
+import StateModal from "@/components/shared/transactionStates/shared";
 import {
   confirmCloseSyndicateText,
   confirmingTransaction,
@@ -56,6 +58,9 @@ const ManagerActions = () => {
   const [showDistributeToken, setShowDistributeToken] = useState(false);
   const [showPreApproveDepositor, setShowPreApproveDepositor] = useState(false);
   const [showRequestSocialProfile, setShowRequestSocialProfile] = useState(
+    false
+  );
+  const [showConfirmCloseSyndicate, setShowConfirmCloseSyndicate] = useState(
     false
   );
 
@@ -206,7 +211,7 @@ const ManagerActions = () => {
                 "Close this syndicate and stop accepting deposits. This action is irreversible."
               }
               icon={<img src="/images/closeIcon.svg" />}
-              onClickHandler={() => closeSyndicate()}
+              onClickHandler={() => setShowConfirmCloseSyndicate(true)}
             />
           ) : (
             <ManagerActionCard
@@ -323,6 +328,43 @@ const ManagerActions = () => {
           />
         ) : null}
       </div>
+      {/* Confirm whether manager wants to close syndicate */}
+
+      <StateModal show={showConfirmCloseSyndicate}>
+        <>
+          <div className="flex flex-col justify-centers m-auto mb-4">
+            <p className="text-sm text-center mx-8 my-2 font-medium text-center leading-6 text-lg">
+              Please confirm that you want to close this syndicate.
+            </p>
+            <p className="text-sm text-center mx-8 mt-2 opacity-60">
+              If this was a mistake, please click{" "}
+              <strong className="text-blue-cyan font-medium">cancel</strong>{" "}
+              button below.
+            </p>
+            <p className="flex text-sm text-red-600 justify-center text-center mx-8 mt-4">
+              <img src="/images/danger.svg" className="mx-2" />
+              Closing a syndicate is irreversible.
+            </p>
+            <div className="flex text-sm justify-between text-center mx-8 mt-4">
+              <PrimaryButton
+                customClasses="border border-color-gray px-4 py-1 w-full"
+                textColor="text-black"
+                onClick={() => setShowConfirmCloseSyndicate(false)}>
+                Cancel
+              </PrimaryButton>
+              <PrimaryButton
+                customClasses="ml-8 bg-blue-light px-4 py-1 w-full"
+                onClick={() => {
+                  setShowConfirmCloseSyndicate(false);
+                  closeSyndicate();
+                }}>
+                Confirm
+              </PrimaryButton>
+            </div>
+          </div>
+        </>
+      </StateModal>
+
       {/* Tell user to confirm transaction on their wallet */}
       <ConfirmStateModal show={showWalletConfirmationModal}>
         <div className="flex flex-col justify-centers m-auto mb-4">
@@ -338,12 +380,12 @@ const ManagerActions = () => {
           </p>
         </div>
       </ConfirmStateModal>
+
       {/* Loading modal */}
       <PendingStateModal
         {...{
           show: submitting,
-        }}
-      >
+        }}>
         <div className="modal-header mb-4 font-medium text-center leading-8 text-2xl">
           {confirmingTransaction}
         </div>

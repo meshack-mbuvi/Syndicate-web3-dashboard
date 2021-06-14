@@ -12,18 +12,20 @@ export const PrimaryButton = (props: {
   type?;
   approved?: boolean;
   createSyndicate?: boolean;
+  textColor?: string;
 }) => {
   const {
     children,
     customClasses = "bg-light-green",
     approved = false,
     createSyndicate = false,
+    textColor = "text-white",
     ...rest
   } = props;
 
   return (
     <button
-      className={`flex items-center justify-center border border-transparent text-base font-light rounded-md text-white focus:outline-none focus:ring ${customClasses}`}
+      className={`flex items-center justify-center border text-base font-light rounded-md focus:outline-none focus:ring ${textColor} ${customClasses}`}
       {...rest}>
       {approved ? (
         <img className="inline w-4 mr-2" src="/images/checkmark-approved.svg" />
