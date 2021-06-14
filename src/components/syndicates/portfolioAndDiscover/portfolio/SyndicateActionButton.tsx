@@ -40,7 +40,7 @@ const SyndicateActionButton = ({
     }
   } else {
     buttonText = "Manage";
-    buttonStyles = "bg-blue text-black";
+    buttonStyles = "bg-blue text-white";
     link = "manage";
   }
 
