@@ -1502,9 +1502,31 @@ const InvestInSyndicate = () => {
                     <img
                       className="inline mr-4 h-5"
                       src="/images/withdrawDepositIcon.svg"
-                      alt="share"
+                      alt="withdrawal icon"
                     />
                     Withdraw My Deposit
+                  </a>
+                </Link>
+              </p>
+            </div>
+          </>
+        ) : null}
+
+        {withdraw && syndicate?.depositsEnabled ? (
+          <>
+            <p className="sm:ml-2 p-4 mx-2 sm:px-8 sm:py-4 text-xs text-gray-dim leading-4">
+              MORE
+            </p>
+            <div className="flex justify-start items-center py-4 px-6 sm:ml-6 mx-2 rounded-custom bg-gray-9">
+              <p className="font-medium text-lg">
+                <Link href={`/syndicates/${syndicateAddress}/deposit`}>
+                  <a className="flex items-center">
+                    <img
+                      className="inline mr-4 h-5"
+                      src="/images/deposit.svg"
+                      alt="deposit icon"
+                    />
+                    Deposit into syndicate.
                   </a>
                 </Link>
               </p>
