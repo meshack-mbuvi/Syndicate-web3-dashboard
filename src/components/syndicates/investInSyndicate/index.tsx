@@ -1336,6 +1336,13 @@ const InvestInSyndicate = () => {
                   buttonText={depositSuccessButtonText}
                   closeLoader={closeSyndicateActionLoader}
                 />
+              ) : // deposist are disabled when syndicate is closed.
+              depositModes && !syndicate?.depositEnabled ? (
+                <div className="flex flex-col items-center justify-center my-8 mx-6">
+                  <p className="font-semibold text-2xl text-center">
+                    Deposits are disabled.
+                  </p>
+                </div>
               ) : successfulWithdrawal && withdraw ? (
                 <SyndicateActionLoader
                   contractAddress={syndicateAddress}
