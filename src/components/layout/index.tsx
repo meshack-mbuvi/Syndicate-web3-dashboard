@@ -41,7 +41,7 @@ const syndicateContractInstance = new web3.eth.Contract(
   contractAddress
 );
 
-export const Layout = ({ children }) => {
+export const Layout = ({ children, backLink = null }) => {
   const { activate, library, account } = useWeb3React();
   const dispatch = useDispatch();
 
@@ -116,7 +116,7 @@ export const Layout = ({ children }) => {
         keywords={[`next`, `tailwind`, `react`, `tailwindcss`]}
         title="Home"
       />
-      <Header />
+      <Header backLink={backLink}/>
       <div className="sticky top-20 z-10">
         <SyndicateInBetaBanner />
         {deposit || generalView ? <DepositsPageBanner key={2} /> : null}

@@ -114,7 +114,7 @@ const SyndicateInvestment = () => {
   );
 
   return (
-    <Layout>
+    <Layout backLink="/syndicates">
       <Head title="Syndicate" />
       <ErrorBoundary>
         <div className="w-full">
