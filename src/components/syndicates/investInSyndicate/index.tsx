@@ -1337,7 +1337,7 @@ const InvestInSyndicate = () => {
                   closeLoader={closeSyndicateActionLoader}
                 />
               ) : // deposist are disabled when syndicate is closed.
-              depositModes && !syndicate?.depositEnabled ? (
+              depositModes && !syndicate?.depositsEnabled ? (
                 <div className="flex flex-col items-center justify-center my-8 mx-6">
                   <p className="font-semibold text-2xl text-center">
                     Deposits are disabled.
