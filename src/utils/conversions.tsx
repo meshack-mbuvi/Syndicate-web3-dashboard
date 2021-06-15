@@ -15,12 +15,13 @@ export const toEther = (value) => ethers.utils.parseEther(value.toString());
  * The basic conversion using bigNumber.toNumber() before division fails because
  * of precision issues with Javscript.(The library can handle upto 53 bits when
  * converting).
- * @param {bignumber } value
+ * @param {string} value amount to convert
+ * @param {string} tokenFactor result of 10 raised to the power of token decimals
  * @returns { decimal }
  */
-export const etherToNumber = (value) =>
-  new BigNumber(value.toString())
-    .dividedBy(new BigNumber("1000000000000000000"))
+export const etherToNumber = (value: string, tokenFactor?: string) =>
+  new BigNumber(value)
+    .dividedBy(new BigNumber(tokenFactor ? tokenFactor : "1000000000000000000"))
     .toNumber();
 
 /**
@@ -39,8 +40,8 @@ export const fromNumberToPercent = (number) => number / 1000;
  * @param amount string amount to convert
  * @param web3 we'll use the BN instance from web3.utils
  * @param tokenDecimals number of decimal places for the current token
- * @param multiplication boolean value. can be true(multiply when sending to contract)
- * or false (divide when fetching values from contract)
+ * @param multiplication boolean value. can be true(get Wei amount when sending to the contract)
+ * or false (convert from Wei amount when fetching from the contract)
  * @returns string amount
  */
 export const getWeiAmount = (
@@ -52,12 +53,21 @@ export const getWeiAmount = (
     Web3.givenProvider || `${process.env.NEXT_PUBLIC_INFURA_ENDPOINT}`
   );
 
-  const BN = web3.utils.BN;
-  const tokenFactor = new BN(Math.pow(10, tokenDecimals).toString());
+  // get unit mappings from web3
+  const unitMappings = web3.utils.unitMap;
+
+  // get number of decimal places
+  const tokenFactor = 10 ** tokenDecimals;
+
+  // get unit
+  const tokenUnit = Object.keys(unitMappings).find(
+    (key) => unitMappings[key] === tokenFactor.toString()
+  );
+
   if (multiplication) {
-    return new BN(amount).mul(tokenFactor).toString();
+    return web3.utils.toWei(amount, tokenUnit);
   } else {
-    return new BN(amount).div(tokenFactor).toString();
+    return web3.utils.fromWei(amount, tokenUnit);
   }
 };
 
