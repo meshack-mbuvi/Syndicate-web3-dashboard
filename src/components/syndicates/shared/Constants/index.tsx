@@ -10,8 +10,7 @@ export const depositRangeToolTip =
   "Range between the minimum and maximum deposit allowed per member address.";
 const allowListDisabledNotApprovedText =
   "Allowlist disabled: You will need to be approved.";
-const allowListEnabledNotApprovedText =
-  "Allowlist enabled: You will need to be approved.";
+const allowListEnabledNotApprovedText = "You must be pre-approved to deposit.";
 const allowListEnabledApprovedText = "Allowlist enabled: You're approved.";
 const depositDisclaimerText =
   "All deposits are final and can only be changed by Syndicate leads.";

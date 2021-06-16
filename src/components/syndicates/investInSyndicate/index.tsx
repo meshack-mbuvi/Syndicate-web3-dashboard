@@ -93,7 +93,7 @@ const InvestInSyndicate = () => {
   const [conversionError, setConversionError] = useState<string>("");
   const [showErrorMessage, setShowErrorMessage] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>("");
-  const [maxLPsZero, setMaxmembersZero] = useState<boolean>(false);
+  const [maxMembersZero, setMaxmembersZero] = useState<boolean>(false);
 
   // convert deposit and allowance values to floats for more accurate calculations.
   const amountToDeposit = parseFloat(amount.toString());
@@ -179,8 +179,6 @@ const InvestInSyndicate = () => {
   const {
     depositTitleText,
     depositMoreTitleText,
-    allowListDisabledApprovedText,
-    allowListEnabledApprovedText,
     allowListEnabledNotApprovedText,
     depositDisclaimerText,
     depositMemberAccreditedText,
@@ -905,21 +903,18 @@ const InvestInSyndicate = () => {
   // if allowlist is disabled, any address can deposit.
   // set correct status text to display.
   const { myAddressAllowed } = syndicateLPDetails;
-  let depositApprovalText;
+  let depositApprovalText = "";
   let disableAmountInput = false;
   let showDepositLink = false;
 
   if (syndicate) {
     const { allowlistEnabled } = syndicate;
-    if (allowlistEnabled && myAddressAllowed) {
-      depositApprovalText = allowListEnabledApprovedText;
-    } else if (allowlistEnabled && !myAddressAllowed) {
+
+    // allowlist enabled and memberAddress not allowed, tell member that he/she
+    // must be pre-approved to deposit.
+    if (allowlistEnabled && !myAddressAllowed) {
       depositApprovalText = allowListEnabledNotApprovedText;
       disableAmountInput = true;
-    } else if (!allowlistEnabled && myAddressAllowed) {
-      depositApprovalText = allowListDisabledApprovedText;
-    } else if (!allowlistEnabled && !myAddressAllowed) {
-      depositApprovalText = allowListDisabledApprovedText;
     }
 
     // On the withdrawal section, show link to deposit page if
@@ -1150,7 +1145,7 @@ const InvestInSyndicate = () => {
   // set appropriate text for a syndicate that is closed
   // or one that's open but has maxLPs set to zero
   let unavailableForDepositsText = depositsUnavailableText;
-  if (maxLPsZero) {
+  if (maxMembersZero) {
     unavailableForDepositsText = depositsUnavailableMaxMembersZeroText;
   }
 
@@ -1269,7 +1264,7 @@ const InvestInSyndicate = () => {
               message={noWalletAccountText}
             />
           ) : (!depositsAvailable && depositModes) ||
-            (depositModes && maxLPsZero) ? (
+            (depositModes && maxMembersZero) ? (
             <UnavailableState
               title={depositsUnavailableTitleText}
               message={unavailableForDepositsText}
@@ -1334,6 +1329,14 @@ const InvestInSyndicate = () => {
                     Deposits are disabled.
                   </p>
                 </div>
+              ) : depositModes &&
+                syndicate.allowlistEnabled &&
+                !myAddressAllowed ? (
+                <div className="flex flex-col items-center justify-center my-8 mx-6">
+                  <p className="font-semibold text-2xl text-center">
+                    You must be pre-approved to deposit into this syndicate.
+                  </p>
+                </div>
               ) : successfulWithdrawal && withdraw ? (
                 <SyndicateActionLoader
                   contractAddress={syndicateAddress}
@@ -1396,15 +1399,11 @@ const InvestInSyndicate = () => {
                           borderRadius="rounded-md"
                         />
                       </div>
-                    ) : (
+                    ) : totalDistributionsText && withdraw ? (
                       <p className="inline-block my-3 px-4 py-2 text-white font-ibm bg-green-500 bg-opacity-20 rounded-3xl">
-                        {depositModes
-                          ? depositApprovalText
-                          : withdraw
-                          ? totalDistributionsText
-                          : null}
+                        {withdraw ? totalDistributionsText : null}
                       </p>
-                    )}
+                    ) : null}
 
                     {showSkeletonLoader ? (
                       <div className="flex justify-between my-1">
@@ -1416,7 +1415,7 @@ const InvestInSyndicate = () => {
                       </div>
                     ) : (
                       <form onSubmit={onSubmit}>
-                        <div className="flex justify-between my-1">
+                        <div className="flex justify-between my-4">
                           <input
                             name="amount"
                             type="text"
