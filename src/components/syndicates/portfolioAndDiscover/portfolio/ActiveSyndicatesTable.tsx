@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useSortBy, useTable } from "react-table";
+import Router from 'next/router'
 import { HeaderColumn, ifRows } from "./interfaces";
 
 interface Props {
@@ -91,8 +92,19 @@ const ActiveSyndicatesTable = ({ columns, data }: Props) => {
                     <td
                       key={index}
                       {...cell.getCellProps()}
-                      className="m-0 font-whyte-light relative py-4 text-xs">
-                      {cell.render("Cell")}
+                      className="m-0 font-whyte-light relative py-4 text-xs cursor-pointer"
+                      onClick={() => {
+                          // This handles the case when the button in the far right cell 
+                          // is clicked 
+                          if (index == row.cells.length - 1) return; 
+
+                          // Otherwise make the row cell clickable and link to the syndicate
+                          const { syndicateAddress } = row.values
+                          Router.push(`/syndicates/${syndicateAddress}`)
+                        }
+                      }
+                    >
+                        {cell.render("Cell")}
                     </td>
                   );
                 })}
