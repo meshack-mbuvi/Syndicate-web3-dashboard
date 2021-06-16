@@ -49,6 +49,7 @@ export const getWeiAmount = (
   tokenDecimals: number,
   multiplication: boolean
 ) => {
+  if (!amount) return;
   const web3 = new Web3(
     Web3.givenProvider || `${process.env.NEXT_PUBLIC_INFURA_ENDPOINT}`
   );
@@ -65,9 +66,9 @@ export const getWeiAmount = (
   );
 
   if (multiplication) {
-    return web3.utils.toWei(amount, tokenUnit);
+    return web3.utils.toWei(amount.toString(), tokenUnit);
   } else {
-    return web3.utils.fromWei(amount, tokenUnit);
+    return web3.utils.fromWei(amount.toString(), tokenUnit);
   }
 };
 

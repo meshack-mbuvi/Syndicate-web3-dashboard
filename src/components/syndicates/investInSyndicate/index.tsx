@@ -755,21 +755,12 @@ const InvestInSyndicate = () => {
           setSubmittingAllowanceApproval(true);
           setMetamaskConfirmPending(false);
         })
-        .on("receipt", (receipt) => {
-          // approval transaction successful
-          const { Approval } = receipt.events;
-          const { returnValues } = Approval;
-          const { value } = returnValues;
-          const lpApprovedAllowance = getWeiAmount(
-            value,
-            currentERC20Decimals,
-            false
-          );
-
-          setApprovedAllowanceAmount(`${lpApprovedAllowance}`);
-          setAllowanceApprovalError("");
-          setApproved(true);
-          setLPCanDeposit(true);
+        .on("receipt", async () => {
+          // some times the returned values from the attached event do not have
+          // value key, hence the will be undefined.
+          // call this function does the job of checking whether the allowance
+          // was approved successfully or not.
+          await checkLPAllowanceAmount();
           setSubmittingAllowanceApproval(false);
         })
         .on("error", (error) => {
