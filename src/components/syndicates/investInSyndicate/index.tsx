@@ -1485,9 +1485,7 @@ const InvestInSyndicate = () => {
           />
         ) : null}
 
-        {depositModes &&
-        syndicate?.depositsEnabled &&
-        parseInt(myDeposits) > 0 ? (
+        {depositModes && parseInt(myDeposits) > 0 ? (
           <>
             <p className="sm:ml-2 p-4 mx-2 sm:px-8 sm:py-4 text-xs text-gray-dim leading-4">
               MORE
@@ -1501,7 +1499,9 @@ const InvestInSyndicate = () => {
                       src="/images/withdrawDepositIcon.svg"
                       alt="withdrawal icon"
                     />
-                    Withdraw My Deposit
+                    {syndicate.depositsEnabled
+                      ? "Withdraw My Deposit."
+                      : "Withdraw My Distributions."}
                   </a>
                 </Link>
               </p>

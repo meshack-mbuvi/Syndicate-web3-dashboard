@@ -62,7 +62,8 @@ export const TextInput = (props: {
       <div
         className={`${
           customWidth ? customWidth : `w-5/6`
-        } flex-grow flex flex-col justify-between`}>
+          } flex-grow flex flex-col justify-between`}>
+        
         {/* input field */}
         <div className="flex justify-start">
           <input
@@ -79,7 +80,7 @@ export const TextInput = (props: {
           />
           {/* icon */}
           {tooltip ? (
-            <div className="w-auto mt-1 flex">
+            <div className="w-auto flex">
               <InfoIcon tooltip={tooltip} />
             </div>
           ) : null}

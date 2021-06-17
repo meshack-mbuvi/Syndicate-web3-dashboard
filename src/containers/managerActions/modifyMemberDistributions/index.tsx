@@ -12,8 +12,8 @@ import {
 } from "@/components/syndicates/shared/Constants";
 import { getMetamaskError } from "@/helpers";
 import { getEvents } from "@/helpers/retrieveEvents";
+import { getSyndicateMemberInfo } from "@/helpers/syndicate";
 import { showWalletModal } from "@/redux/actions";
-import { getSyndicateByAddress } from "@/redux/actions/syndicates";
 import { RootState } from "@/redux/store";
 import { toEther } from "@/utils/conversions";
 import { TokenMappings } from "@/utils/tokenMappings";
@@ -142,17 +142,22 @@ const ModifyMemberDistributions = (props: Props) => {
    */
   const getCurrentClaimedAmount = async () => {
     try {
-      const memberInfo = await syndicateContractInstance.methods
-        .getMemberInfo(syndicateAddress, memberAddress)
-        .call();
-      setMemberDeposits(memberInfo[0]);
-      if (memberInfo[0] === "0") {
+      const {
+        memberDeposits,
+        memberTotalWithdrawals,
+      } = await getSyndicateMemberInfo(
+        syndicateContractInstance,
+        syndicateAddress,
+        memberAddress
+      );
+      setMemberDeposits(memberDeposits);
+      if (memberDeposits === "0") {
         setDepositAddressError(
           "Member address has zero deposits in this Syndicate"
         );
       }
 
-      setCurrentClaimedDistributions(memberInfo[1]);
+      setCurrentClaimedDistributions(memberTotalWithdrawals);
     } catch (error) {
       setCurrentClaimedDistributions("0");
       setDepositAddressError(
@@ -179,11 +184,16 @@ const ModifyMemberDistributions = (props: Props) => {
     if (!events.length) {
       setDistributionERC20Address(syndicate.depositERC20Address);
     } else {
-      const distributionERC20Addresses = [];
+      let distributionERC20Addresses = [];
       events.forEach((event) => {
         const { distributionERC20Address } = event.returnValues;
         distributionERC20Addresses.push(distributionERC20Address);
       });
+
+      // Remove address duplicates
+      distributionERC20Addresses = Array.from(
+        new Set(distributionERC20Addresses)
+      );
       // we might have many distributions, and we need to find a way to select
       // enable the manager select whichever address they want to edit ditributions for.
       setDistributionERC20Address(distributionERC20Addresses[0]);
@@ -191,10 +201,10 @@ const ModifyMemberDistributions = (props: Props) => {
   };
 
   /**
-   * This method sets the deposit address which the depositor used to send
+   * This method sets the member address which the depositor used to send
    * funds to the manager.
    */
-  const handleDepositAddressChange = (event) => {
+  const handleMemberAddressChange = (event) => {
     const { value } = event.target;
     setDepositAddressError("");
     setMemberAddress(value);
@@ -313,10 +323,6 @@ const ModifyMemberDistributions = (props: Props) => {
   const handleCloseFinalStateModal = async () => {
     setShowFinalState(false);
     setShowModifyMemberDistribution(false);
-
-    await dispatch(
-      getSyndicateByAddress(syndicateAddress, syndicateContractInstance)
-    );
   };
 
   const lpInvested = memberDeposits === "0" && memberAddress ? false : true;
@@ -328,7 +334,7 @@ const ModifyMemberDistributions = (props: Props) => {
           title: "Modify Member Distributions",
           show: showModifyMemberDistribution || true,
           closeModal: () => setShowModifyMemberDistribution(false),
-          customWidth: "md:w-7/12 w-full",
+          customWidth: "md:w-8/12 w-full",
         }}>
         <div className="mx-2 mb-8">
           <p className="text-gray-500 text-sm my-4">
@@ -354,8 +360,9 @@ const ModifyMemberDistributions = (props: Props) => {
                     {...{
                       label: "Member Address:",
                       tooltip: depositorAddressToolTip,
-                      onChange: handleDepositAddressChange,
+                      onChange: handleMemberAddressChange,
                       error: depositorAddressError,
+                      full: true,
                     }}
                     value={memberAddress.toString()}
                     name="depositorAddress"

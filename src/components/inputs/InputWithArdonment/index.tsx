@@ -19,6 +19,8 @@ export const InputWithAddon = (props: {
   tooltip: string;
   addOn: string;
   column?: boolean;
+  full?: boolean;
+  customWidth?: string;
 }) => {
   const {
     label,
@@ -30,6 +32,8 @@ export const InputWithAddon = (props: {
     tooltip,
     disabled,
     column = false,
+    full,
+    customWidth = "",
     ...rest
   } = props;
   let variableWidth = 6;
@@ -45,21 +49,26 @@ export const InputWithAddon = (props: {
     <div
       className={`flex ${
         column ? `flex-col mr-2 sm:mr-4` : `flex-row`
-      } justify-center`}>
+      } justify-center ${full ? `w-full` : ``}`}>
       <div
         className={`flex mr-2 ${
-          column ? `w-full justify-start mb-2` : `w-1/2 justify-end`
+          column ? `w-full justify-start mb-2` : `flex row w-1/2 justify-end`
         }`}>
         <label
-          htmlFor="syndicateAddress"
+          htmlFor={label}
           className="block pt-2 text-black text-sm font-medium">
           {label}
         </label>
       </div>
-      <div className="w-full flex-grow flex flex-col justify-between">
+
+      <div
+        className={`${
+          customWidth ? customWidth : `w-5/6`
+        } flex-grow flex flex-col justify-between`}>
         {/* input field */}
-        <div className="flex">
-          <div className={`flex rounded-md flex-grow ${disabledClasses}`}>
+        <div className="flex justify-between">
+          <div
+            className={`flex rounded-md flex-grow border ${disabledClasses}`}>
             <input
               type="number"
               name={name}
@@ -75,9 +84,8 @@ export const InputWithAddon = (props: {
             </span>
           </div>
           {/* icon */}
-          {/* icon */}
           {tooltip ? (
-            <div className="w-auto mt-1 flex">
+            <div className="w-12 mt-1 flex">
               <InfoIcon tooltip={tooltip} />
             </div>
           ) : null}
