@@ -1,6 +1,7 @@
 import { Syndicate } from "@/@types/syndicate";
 import { getSyndicate } from "@/helpers";
 import { getEvents } from "@/helpers/retrieveEvents";
+import { AppThunk } from "@/redux/store";
 import { formatDate } from "@/utils";
 import { basisPointsToPercentage, getWeiAmount } from "@/utils/conversions";
 import { pastDate } from "@/utils/dateUtils";
@@ -11,6 +12,7 @@ import {
   ADD_NEW_INVESTMENT,
   ALL_SYNDICATES,
   INVALID_SYNDICATE_ADDRESS,
+  FOUND_SYNDICATE_ADDRESS,
   SET_LOADING,
   SET_MANAGER_FEE_ADDRESS,
   SYNDICATE_BY_ADDRESS,
@@ -179,7 +181,7 @@ export const addSyndicateInvestment = (data) => async (dispatch) => {
 export const getSyndicateByAddress = (
   syndicateAddress: string | string[],
   syndicateContractInstance
-) => async (dispatch) => {
+): AppThunk => async (dispatch) => {
   try {
     const syndicate = await syndicateContractInstance.methods
       .getSyndicateValues(syndicateAddress)
@@ -201,7 +203,7 @@ export const getSyndicateByAddress = (
     // set these incase they are not reset
     dispatch({
       data: { syndicateAddressIsValid: true, syndicateFound: true },
-      type: INVALID_SYNDICATE_ADDRESS,
+      type: FOUND_SYNDICATE_ADDRESS,
     });
 
     // set syndicate details

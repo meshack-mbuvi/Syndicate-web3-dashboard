@@ -6,7 +6,13 @@ import RootReducer from "../reducers";
 
 const middleware = [thunk];
 
-export const store = createStore(
+const composeEnhancers = composeWithDevTools({ trace: true, traceLimit: 25 });
+
+export const store = createStore(RootReducer, composeEnhancers(
+  applyMiddleware(...middleware)
+));
+
+export const store_old = createStore(
   RootReducer,
   composeWithDevTools(compose(applyMiddleware(...middleware)))
 );

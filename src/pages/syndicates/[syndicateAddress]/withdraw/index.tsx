@@ -1,9 +1,11 @@
-import SyndicateActions from "@/containers/syndicateActions";
+import WithdrawSyndicate from "@/components/syndicates/withdrawSyndicate";
+import LayoutWithSyndicateDetails from "@/containers/layoutWithSyndicateDetails";
 import { setSyndicateAction } from "@/redux/actions/web3Provider";
 import React, { useEffect } from "react";
 import { useDispatch } from "react-redux";
 
 const SyndicateWithdrawalView = () => {
+  // TODO: phase out syndicateActions from the store.
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -29,7 +31,11 @@ const SyndicateWithdrawalView = () => {
       dispatch(setSyndicateAction(syndicateActions));
     };
   });
-  return <SyndicateActions />;
+  return (
+    <LayoutWithSyndicateDetails>
+      <WithdrawSyndicate />
+    </LayoutWithSyndicateDetails>
+  )
 };
 
 export default SyndicateWithdrawalView;

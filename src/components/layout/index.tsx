@@ -5,6 +5,7 @@ import {
 import { RootState } from "@/redux/store";
 import { useWeb3React } from "@web3-react/core";
 import { parse } from "flatted";
+import { useRouter } from "next/router";
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -44,12 +45,10 @@ const syndicateContractInstance = new web3.eth.Contract(
 export const Layout = ({ children, backLink = null }) => {
   const { activate, library, account } = useWeb3React();
   const dispatch = useDispatch();
+  const router = useRouter();
 
-  const {
-    web3Reducer: { syndicateAction },
-  } = useSelector((state: RootState) => state);
+  const showDepositsPageBanner = router.pathname.endsWith('deposit') || router.pathname.endsWith('details')
 
-  const { deposit, generalView } = syndicateAction;
   const setWeb3 = async () => {
     dispatch(storeSyndicateInstance(syndicateContractInstance));
 
@@ -119,7 +118,7 @@ export const Layout = ({ children, backLink = null }) => {
       <Header backLink={backLink}/>
       <div className="sticky top-20 z-10">
         <SyndicateInBetaBanner />
-        {deposit || generalView ? <DepositsPageBanner key={2} /> : null}
+        {showDepositsPageBanner && <DepositsPageBanner key={2} />}
       </div>
       <div className="flex w-full flex-col sm:flex-row md:py-32 px-4 md:px-6 z-0">
         {children}

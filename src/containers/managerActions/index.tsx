@@ -1,8 +1,11 @@
+import FadeIn from "@/components/fadeIn/FadeIn";
 import { PrimaryButton } from "@/components/buttons";
 import { ErrorModal } from "@/components/shared";
 import { PendingStateModal } from "@/components/shared/transactionStates";
 import ConfirmStateModal from "@/components/shared/transactionStates/confirm";
 import FinalStateModal from "@/components/shared/transactionStates/final";
+import { SkeletonLoader } from "@/components/skeletonLoader";
+import { useUnavailableState } from "@/components/syndicates/hooks/useUnavailableState";
 import StateModal from "@/components/shared/transactionStates/shared";
 import {
   confirmCloseSyndicateText,
@@ -12,13 +15,14 @@ import {
   syndicateActionConstants,
   waitTransactionTobeConfirmedText,
 } from "@/components/syndicates/shared/Constants";
+import { UnavailableState } from "@/components/syndicates/shared/unavailableState";
 import { getMetamaskError } from "@/helpers";
 import { getSyndicateByAddress } from "@/redux/actions/syndicates";
 import { RootState } from "@/redux/store";
 import { useRouter } from "next/router";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import ErrorBoundary from "../../components/errorBoundary";
+import ErrorBoundary from "@/components/errorBoundary";
 import DistributeToken from "./distributeToken";
 import ManagerActionCard from "./managerActionCard";
 import ModifyMemberDistributions from "./modifyMemberDistributions";
@@ -46,6 +50,14 @@ const ManagerActions = () => {
   const router = useRouter();
 
   const { syndicateAddress } = router.query;
+
+  const [address, setAddress] = useState<string|string[]>('')
+
+  useEffect(() => {
+    if (router.isReady) {
+      setAddress(syndicateAddress)
+    }
+  }, [router.isReady])
 
   const [
     showWalletConfirmationModal,
@@ -76,6 +88,8 @@ const ManagerActions = () => {
 
   const [errorMessage, setErrorMessage] = useState("");
 
+  const { title, message, renderUnavailableState } = useUnavailableState('manage');
+
   const {
     nonModifiableSyndicateErrorText,
     enableDistributionToModifySyndicateText,
@@ -101,7 +115,7 @@ const ManagerActions = () => {
   const handleCloseFinalStateModal = async () => {
     setShowFinalState(false);
     await dispatch(
-      getSyndicateByAddress(syndicateAddress, syndicateContractInstance)
+      getSyndicateByAddress(address, syndicateContractInstance)
     );
   };
 
@@ -114,7 +128,7 @@ const ManagerActions = () => {
       setShowWalletConfirmationModal(true);
 
       await syndicateContractInstance.methods
-        .managerCloseSyndicate(syndicateAddress)
+        .managerCloseSyndicate(address)
         .send({ from: account, gasLimit: 800000 })
         .on("transactionHash", () => {
           // close wallet confirmation modal
@@ -192,17 +206,47 @@ const ManagerActions = () => {
     setShowRejectDepositOrMemberAddress,
   ] = useState(false);
 
+
+  if (renderUnavailableState) {
+    return (
+      <div className="h-fit-content px-8 pb-4 pt-5 bg-gray-9 rounded-2xl">
+        <div className="flex justify-between my-1 px-2">
+          <UnavailableState title={title} message={message} />
+        </div>
+      </div>
+    )
+  }
+
+  // if syndicateAddress !== account is true then it should redirect to deposit page hence the loader
+  // DEV NOTES:
+  //   improvements are welcomed. Its a hacky way while waiting for page to redirect.
+  //   this happens because this component should be rendered after fetching account and syndicate info
+  const isNotManager = syndicateAddress !== account;
+  if (isNotManager) {
+    return (
+      <div className="h-fit-content rounded-custom p-4 md:mx-2 md:p-6 bg-gray-9 mt-6 md:mt-0 md:pb-2">
+        <SkeletonLoader width="full" height="8" />
+        <SkeletonLoader width="full" height="12" />
+        <SkeletonLoader width="full" height="12" />
+        <SkeletonLoader width="full" height="12" />
+      </div>
+    )
+  }
+
   return (
     <ErrorBoundary>
       <div className="w-full mt-4 sm:mt-0">
+        <FadeIn>
         <div className="h-fit-content rounded-custom p-4 md:mx-2 md:p-6 bg-gray-9 mt-6 md:mt-0 md:pb-2">
           <div className="text-xl font-inter">Manager Actions</div>
+
           <div className="flex h-12 rounded-custom items-center">
             <img src="/images/rightPointedHand.svg" className="mr-2" />
             <div className="text-gray-dim leading-snug">
               You manage this syndicate
             </div>
           </div>
+
           {/* show set distribution option when syndicate is closed */}
           {syndicate?.open ? (
             <ManagerActionCard
@@ -226,15 +270,15 @@ const ManagerActions = () => {
 
           {/* show pre-approve depositor option when syndicate is open and allowList is enabled */}
           {syndicate?.depositsEnabled && syndicate?.allowlistEnabled ? (
-            <ManagerActionCard
-              title={"Pre-approve depositor addresses"}
-              description={
-                "Pre-approve accredited investor addresses that can deposit into this syndicate."
-              }
-              icon={<img src="/images/UserPlus.svg" />}
-              onClickHandler={() => setShowPreApproveDepositor(true)}
-            />
-          ) : null}
+              <ManagerActionCard
+                title={"Pre-approve depositor addresses"}
+                description={
+                  "Pre-approve accredited investor addresses that can deposit into this syndicate."
+                }
+                icon={<img src="/images/UserPlus.svg" />}
+                onClickHandler={() => setShowPreApproveDepositor(true)}
+              />
+            ) : null}
 
           {actions.map(({ icon, title, description, onClickHandler }) => {
             return (
@@ -248,6 +292,7 @@ const ManagerActions = () => {
             );
           })}
         </div>
+        </FadeIn>
         <div className="p-0 md:p-2">
           <div className="font-semibold tracking-widest text-sm leading-6 text-gray-matterhorn my-6 mx-4">
             MORE
@@ -402,7 +447,7 @@ const ManagerActions = () => {
         icon={finalStateIcon}
         buttonText={finalStateButtonText}
         headerText={finalStateHeaderText}
-        address={syndicateAddress.toString()}
+        address={address.toString()}
       />
     </ErrorBoundary>
   );

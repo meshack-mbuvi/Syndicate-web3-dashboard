@@ -1,0 +1,882 @@
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useRouter } from "next/router";
+
+import ErrorBoundary from "@/components/errorBoundary";
+import { RootState } from "@/redux/store";
+import { getMemberInfo } from "@/redux/actions/syndicateMemberDetails/getMemberInfo";
+import { showWalletModal } from "@/redux/actions";
+import { Validate } from "@/utils/validators";
+import { getWeiAmount } from "@/utils/conversions";
+import { getSyndicateByAddress } from "@/redux/actions/syndicates";
+import { getMetamaskError } from "@/helpers";
+import { setSyndicateDetails } from "@/redux/actions/syndicateDetails";
+import { floatedNumberWithCommas } from "@/utils/numberWithCommas";
+import { ErrorModal } from "@/components/shared";
+
+import {
+  constants,
+  metamaskConstants,
+  myDepositsToolTip,
+  walletConfirmConstants,
+  myPercentageOfThisSyndicateToolTip,
+} from "../shared/Constants";
+import ERC20ABI from "src/utils/abi/erc20";
+import WithdrawDeposit from "./WithdrawDeposit";
+import { DetailsCard } from "../shared";
+import { useCurrentERC20 } from "../hooks/useCurrentERC20";
+import { UnavailableState } from "../shared/unavailableState";
+import { useUnavailableState } from "../hooks/useUnavailableState";
+import { useDepositChecks } from "../hooks/useDepositChecks";
+import { SyndicateActionLoader } from "../shared/syndicateActionLoader";
+import { SkeletonLoader } from "@/components/skeletonLoader";
+import { SyndicateActionButton } from "../shared/syndicateActionButton";
+import FadeIn from "@/components/fadeIn/FadeIn";
+
+const Web3 = require("web3");
+const web3 = new Web3(
+  Web3.givenProvider || `${process.env.NEXT_PUBLIC_INFURA_ENDPOINT}`
+);
+
+const {
+  actionFailedError,
+  allowListEnabledApprovedText,
+  allowListDisabledApprovedText,
+  allowListEnabledNotApprovedText,
+  amountConversionErrorText,
+  amountExceededText,
+  amountLessThanMinDepositErrorMessage,
+  amountMoreThanMaxDepositErrorMessage,
+  depositDisclaimerText,
+  depositMemberAccreditedText,
+  depositMoreTitleText,
+  depositSuccessTitleText,
+  depositSuccessSubtext,
+  depositSuccessButtonText,
+  depositTitleText,
+  dismissButtonText,
+  increaseDepositAllowanceErrorMessage,
+  loaderApprovalHeaderText,
+  loaderDepositHeaderText,
+  loaderGeneralHeaderText,
+  maxMemberDepositsText,
+  maxMemberDepositsTitleText,
+  maxTotalDepositsExceededErrorMessage,
+  maxTotalMemberDepositsExceededErrorMessage,
+} = constants;
+
+// texts for metamask confirmation pending
+const {
+  walletPendingConfirmPendingTitleText,
+  walletPendingConfirmPendingMessage,
+} = walletConfirmConstants;
+
+const DepositSyndicate = () => {
+
+  // HOOK DECLARATIONS
+  const router = useRouter();
+  const dispatch = useDispatch();
+
+  const {
+    syndicateInstanceReducer: { syndicateContractInstance },
+    syndicateLPDetailsReducer: { syndicateLPDetails },
+    syndicatesReducer: { syndicate },
+    web3Reducer: {
+      web3: { account },
+      syndicateAction,
+    },
+  } = useSelector((state: RootState) => state);
+
+  const { currentERC20, currentERC20Decimals } = useCurrentERC20();
+  const { title, message, renderUnavailableState } = useUnavailableState();
+  const { depositsAvailable } = useDepositChecks();
+
+  const [loadingLPDetails, setLoadingLPDetails] = useState<boolean>(false);
+  const [amount, setAmount] = useState<number>(0);
+  const [amountError, setAmountError] = useState<string>("");
+  const [lpCanDeposit, setLPCanDeposit] = useState<boolean>(false);
+  const [showErrorMessage, setShowErrorMessage] = useState<boolean>(false);
+  const [errorMessage, setErrorMessage] = useState<string>("");
+  const [submitting, setSubmitting] = useState<boolean>(false);
+  const [metamaskConfirmPending, setMetamaskConfirmPending] = useState<boolean>(false);
+  const [approved, setApproved] = useState<boolean>(false);
+  const [allowanceApprovalError, setAllowanceApprovalError] = useState<string>("");
+  const [approvedAllowanceAmount, setApprovedAllowanceAmount] = useState<string>("0");
+  const [successfulDeposit, setSuccessfulDeposit] = useState<boolean>(false);
+  const [metamaskDepositError, setMetamaskDepositError] = useState<string>("");
+  const [currentERC20Contract, setCurrentERC20Contract] = useState<any>({});
+  const [submittingAllowanceApproval, setSubmittingAllowanceApproval] = useState<boolean>(false);
+  const [metamaskApprovalError, setMetamaskApprovalError] = useState<string>("");
+  const [conversionError, setConversionError] = useState<string>("");
+  const [amountLessThanMinDeposit, setAmountLessThanMinDeposit] = useState<boolean>(false);
+  const [amountMoreThanMaxDeposit, setAmountMoreThanMaxDeposit] = useState<boolean>(false);
+  const [maxTotalDepositsExceeded, setMaxTotalDepositsExceeded] = useState<boolean>(true);
+  const [maxTotalLPDepositsExceeded, setMaxTotalLPDepositsExceeded] = useState<boolean>(false);
+  const [depositAmountChanged, setDepositAmountChanged] = useState<boolean>(false);
+
+  // DEFINITIONS
+  let depositApprovalText;
+  let disableAmountInput = false;
+
+  const { syndicateAddress } = router.query;
+
+  const { deposit, generalView } = syndicateAction;
+  const depositModes = deposit || generalView;
+
+  const {
+    maxDepositReached,
+    myDeposits,
+    myPercentageOfThisSyndicate,
+    myAddressAllowed,
+  } = syndicateLPDetails;
+
+  const sections = [
+    {
+      header: "My Deposits",
+      subText: `${myDeposits} ${currentERC20} ($${myDeposits})`,
+      tooltip: myDepositsToolTip,
+      screen: "deposit",
+    },
+    {
+      header: "My % of This Syndicate",
+      subText: `${myPercentageOfThisSyndicate}%`,
+      tooltip: myPercentageOfThisSyndicateToolTip,
+      screen: "deposit",
+    },
+  ];
+
+  const amountToDeposit = +amount.toString();
+  const allowanceAmountApproved = +approvedAllowanceAmount;
+
+  // check if minDeposit, maxDeposit, or maxTotalDeposits has been violated
+  // show an error message and disable deposit and approval buttons if this is the case
+  if (syndicate) {
+    var { depositMinMember, depositMaxMember, depositMaxTotal } = syndicate;
+  }
+
+  // HOOKS
+
+  // get values for the current LP(connected wallet account)
+  // when this component initially renders.
+  useEffect(() => {
+    if (account && syndicateContractInstance && syndicate) {
+      setLoadingLPDetails(true);
+      // push member details to the redux store
+      if (depositModes) {
+        storeMemberDetails();
+      }
+
+      setLoadingLPDetails(false);
+    }
+  }, [
+    account,
+    syndicate,
+    syndicateContractInstance,
+  ]);
+
+  // if the amount changes, new allowance has to be set
+  useEffect(() => {
+    const depositAmountGreater = amountToDeposit > allowanceAmountApproved;
+    const depositAmountLess = amountToDeposit <= allowanceAmountApproved;
+
+    if (depositAmountGreater) {
+      if (approved) {
+        setAllowanceApprovalError(increaseDepositAllowanceErrorMessage);
+        setDepositAmountChanged(true);
+        setLPCanDeposit(false);
+      }
+    } else if (depositAmountChanged && depositAmountLess) {
+      setApproved(true);
+      setAllowanceApprovalError("");
+      setLPCanDeposit(true);
+      setDepositAmountChanged(false);
+    }
+  }, [amount]);
+
+  useEffect(() => {
+    checkLPAllowanceAmount();
+  }, [
+    account,
+    currentERC20Contract,
+    syndicateContractInstance,
+    approvedAllowanceAmount,
+    approved,
+  ]);
+
+  // check whether the current deposit amount exceeds max LP deposit allowed
+  // or if the deposit amount is less than the min LP deposit allowed.
+  // or if the maximum total deposits has been exceeded
+  useEffect(() => {
+    if (syndicate) {
+      const {
+        depositMaxMember,
+        depositMinMember,
+        depositMaxTotal,
+        depositTotal,
+      } = syndicate;
+      const amountToDeposit = parseFloat(amount.toString());
+      const minimumDeposit = parseFloat(depositMinMember);
+      const maximumDeposit = parseFloat(depositMaxMember);
+      const totalSyndicateDeposits = parseFloat(depositTotal);
+      const maxAllowedTotalDeposits = parseFloat(depositMaxTotal);
+      const lpTotalDeposits = parseFloat(myDeposits);
+
+      if (amountToDeposit > 0 && amountToDeposit < minimumDeposit) {
+        setAmountLessThanMinDeposit(true);
+        setMaxTotalDepositsExceeded(false);
+        setAmountMoreThanMaxDeposit(false);
+        setMaxTotalLPDepositsExceeded(false);
+      } else if (amountToDeposit > maximumDeposit) {
+        setAmountMoreThanMaxDeposit(true);
+        setAmountLessThanMinDeposit(false);
+        setMaxTotalDepositsExceeded(false);
+        setMaxTotalLPDepositsExceeded(false);
+      } else if (
+        amountToDeposit + totalSyndicateDeposits >
+        maxAllowedTotalDeposits
+      ) {
+        setMaxTotalDepositsExceeded(true);
+        setAmountMoreThanMaxDeposit(false);
+        setAmountLessThanMinDeposit(false);
+        setMaxTotalLPDepositsExceeded(false);
+      } else if (lpTotalDeposits + amountToDeposit > maximumDeposit) {
+        setMaxTotalLPDepositsExceeded(true);
+        setMaxTotalDepositsExceeded(false);
+        setAmountMoreThanMaxDeposit(false);
+        setAmountLessThanMinDeposit(false);
+      } else {
+        setAmountLessThanMinDeposit(false);
+        setAmountMoreThanMaxDeposit(false);
+        setMaxTotalDepositsExceeded(false);
+        setMaxTotalLPDepositsExceeded(false);
+      }
+    }
+  }, [amount, syndicate]);
+
+  useEffect(() => {
+    if (syndicateContractInstance?.methods && syndicate) {
+      // set up current deposit ERC20Contract and
+      // and save it to the local state
+      const ERC20Contract = new web3.eth.Contract(
+        ERC20ABI,
+        syndicate.depositERC20Address
+      );
+
+      setCurrentERC20Contract(ERC20Contract);
+    }
+  }, [syndicateContractInstance, syndicate]);
+
+  // COMPONENT FUNCTIONS
+
+  /** Method to store updated member details in the redux store
+   * This will be called whenever member details need to be updated
+   * after an action.
+   */
+  const storeMemberDetails = () => {
+    dispatch(
+      getMemberInfo({
+        syndicateAddress,
+        currentERC20Decimals,
+      })
+    );
+  };
+
+  // handle deposit form submit.
+  const onSubmit = async (event: any) => {
+    event.preventDefault();
+    if (!syndicateContractInstance) {
+      // user needs to connect wallet first
+      return dispatch(showWalletModal());
+    }
+
+    if (depositModes && !lpCanDeposit) {
+      // set LP allowance first before making a deposit.
+      handleAllowanceApproval(event);
+    } else {
+      // Call invest functions based on current state.
+      // deposit - page is in deposit mode
+      // these values are fetched from the redux store.
+      try {
+        if (depositModes) {
+          await investInSyndicate(amount);
+        }
+      } catch (error) {
+        // show error message for failed investment
+        setShowErrorMessage(true);
+        setErrorMessage(actionFailedError);
+        setSubmitting(false);
+      }
+    }
+  };
+
+  const handleSetAmount = (event: any) => {
+    event.preventDefault();
+    const { value } = event.target;
+
+    setAmount(value);
+
+    const message = Validate(value);
+    if (message) {
+      setAmountError(
+        `Deposit amount ${message}`
+      );
+    } else {
+      setAmountError("");
+    }
+  };
+
+  /**
+   * This methods is used to invest in LP(syndicate)
+   * The account that is investing is obtained from the connected wallet from
+   * which funds will be transferred.
+   * The syndicate address is obtained from the page params
+   * @param {object} data contains amount, and accredited
+   */
+  const investInSyndicate = async (amount: number) => {
+    /**
+     * All addresses are allowed, and investments can be rejected after the
+     * fact. This is useful if you want to allow anyone to invest in a syndicate
+     *  (for example, for a non-profit might enable this because there is
+     * no expectation of profits and therefore they wouldn't need to be as
+     * concerned about US securities regulations)
+     * Addresses must be pre-approved by the manager and added to the
+     * allowlist before an LP can invest.
+     */
+
+    /**
+     * If deposit amount exceeds the allowed investment deposit, this will fail.
+     */
+    const amountToInvest = getWeiAmount(
+      amount.toString(),
+      currentERC20Decimals,
+      true
+    );
+    setMetamaskConfirmPending(true);
+    try {
+      await syndicateContractInstance.methods
+        .memberDeposit(syndicateAddress, amountToInvest)
+        .send({ from: account, gasLimit: 800000 })
+        .on("transactionHash", () => {
+          // user has confirmed the transaction so we should start loader state.
+          // show loading modal
+          setMetamaskConfirmPending(false);
+          setSubmitting(true);
+        })
+        .on("receipt", () => {
+          // transaction was succesful
+          // get syndicate updated values
+
+          dispatch(
+            getSyndicateByAddress(syndicateAddress, syndicateContractInstance)
+          );
+
+          //store updated member details
+          storeMemberDetails();
+
+          if (approved) {
+            setApproved(false);
+          }
+
+          // reset allowance error
+          if (allowanceApprovalError) {
+            setAllowanceApprovalError("");
+          }
+          // reset approval amount
+          if (approvedAllowanceAmount) {
+            setApprovedAllowanceAmount("0");
+          }
+          // cancel submitting state and show success notification.
+          setSubmitting(false);
+          setSuccessfulDeposit(true);
+          // reset approved allowance states
+          // so the LP can set new allowances before investing again
+          setLPCanDeposit(false);
+        })
+        .on("error", (error) => {
+          const { code } = error;
+          const errorMessage = getMetamaskError(code, "Deposit");
+          setMetamaskDepositError(errorMessage);
+          setSubmitting(false);
+        });
+    } catch (error) {
+      const { code } = error;
+      const errorMessage = getMetamaskError(code, "Deposit");
+      setMetamaskDepositError(errorMessage);
+      setSubmitting(false);
+    }
+
+    // dispatch action to get details about the syndicate
+    // These values will be used to update syndicate details
+    // under the graph section on the UI.
+    const {
+      depositERC20Address,
+      profitShareToSyndicateLead,
+      profitShareToSyndicateProtocol,
+    } = syndicate;
+    dispatch(
+      setSyndicateDetails(
+        syndicateContractInstance,
+        depositERC20Address,
+        profitShareToSyndicateLead,
+        profitShareToSyndicateProtocol,
+        syndicate,
+        syndicateAddress
+      )
+    );
+  };
+
+  // handle approval of allowances by an LP
+  // before a deposit can be made
+  const handleAllowanceApproval = async (event: any) => {
+    event.preventDefault();
+    setMetamaskConfirmPending(true);
+
+    // set correct wei amount to approve
+    const amountToApprove = getWeiAmount(
+      amount.toString(),
+      currentERC20Decimals,
+      true
+    );
+    try {
+      await currentERC20Contract.methods
+        .approve(syndicateContractInstance._address, amountToApprove)
+        .send({ from: account, gasLimit: 800000 })
+        .on("transactionHash", () => {
+          // user clicked on confirm
+          // show loading state
+          setSubmittingAllowanceApproval(true);
+          setMetamaskConfirmPending(false);
+        })
+        .on("receipt", async () => {
+          // some times the returned values from the attached event do not have
+          // value key, hence the will be undefined.
+          // call this function does the job of checking whether the allowance
+          // was approved successfully or not.
+          await checkLPAllowanceAmount();
+          setSubmittingAllowanceApproval(false);
+        })
+        .on("error", (error) => {
+          // user clicked reject.
+          const { code } = error;
+          const errorMessage = getMetamaskError(code, "Allowance approval");
+          setMetamaskApprovalError(errorMessage);
+          setSubmittingAllowanceApproval(false);
+          setMetamaskConfirmPending(false);
+        });
+    } catch (error) {
+      // error occured before wallet prompt.
+      const { code } = error;
+      const errorMessage = getMetamaskError(code, "Allowance approval");
+      setMetamaskConfirmPending(false);
+      setMetamaskApprovalError(errorMessage);
+      setSubmittingAllowanceApproval(false);
+      setMetamaskConfirmPending(false);
+    }
+  };
+
+  // when the connected account is changed, we need to check for new allowances.
+  // This check also needs to be done after a deposit has been made
+  // as the allowance will be reset
+  const checkLPAllowanceAmount = async () => {
+    if (currentERC20Contract.methods && syndicateContractInstance && account) {
+      /**
+       * Check the approval amount
+       *  @returns wei allowance as a string
+       * */
+      try {
+        var lpAllowanceAmount = await currentERC20Contract.methods
+          .allowance(account.toString(), syndicateContractInstance._address)
+          .call({ from: account });
+      } catch (error) {
+        lpAllowanceAmount = 0;
+      }
+
+      try {
+        const currentLPAllowanceAmount = getWeiAmount(
+          lpAllowanceAmount.toString(),
+          currentERC20Decimals,
+          false
+        );
+
+        if (currentLPAllowanceAmount > 0) {
+          setApprovedAllowanceAmount(`${currentLPAllowanceAmount}`);
+          setApproved(true);
+          setAllowanceApprovalError("");
+          setLPCanDeposit(true);
+        } else {
+          setApproved(false);
+          setApprovedAllowanceAmount("0");
+          setAllowanceApprovalError("");
+          setLPCanDeposit(false);
+        }
+      } catch (error) {
+        setConversionError(amountConversionErrorText);
+      }
+    }
+  };
+
+  // CONDITIONS
+  if (syndicate) {
+    const { allowlistEnabled } = syndicate;
+    if (allowlistEnabled && myAddressAllowed) {
+      depositApprovalText = allowListEnabledApprovedText;
+    } else if (allowlistEnabled && !myAddressAllowed) {
+      depositApprovalText = allowListEnabledNotApprovedText;
+      disableAmountInput = true;
+    } else if (!allowlistEnabled && myAddressAllowed) {
+      depositApprovalText = allowListDisabledApprovedText;
+    } else if (!allowlistEnabled && !myAddressAllowed) {
+      depositApprovalText = allowListDisabledApprovedText;
+    }
+  }
+
+  let depositTitle = depositTitleText;
+  if (parseFloat(myDeposits) > 0) {
+    depositTitle = depositMoreTitleText;
+  }
+
+  // conditions under which the skeleton loader should be rendered
+  const showSkeletonLoader = !syndicate || loadingLPDetails;
+  
+  let showValidationError = false;
+  if (
+    amountError ||
+    allowanceApprovalError ||
+    conversionError ||
+    amountLessThanMinDeposit ||
+    amountMoreThanMaxDeposit ||
+    maxTotalDepositsExceeded ||
+    maxTotalLPDepositsExceeded
+  ) {
+    showValidationError = true;
+  } else {
+    showValidationError = false;
+  }
+
+  let errorMessageText = amountError;
+  if (depositModes) {
+    if (allowanceApprovalError && amountError) {
+      errorMessageText = amountError;
+    } else if (allowanceApprovalError && !amountError) {
+      errorMessageText = allowanceApprovalError;
+    } else if (conversionError) {
+      errorMessageText = conversionError;
+    } else if (amountLessThanMinDeposit) {
+      errorMessageText = `${amountLessThanMinDepositErrorMessage} ${depositMinMember} ${currentERC20}`;
+    } else if (amountMoreThanMaxDeposit) {
+      errorMessageText = `${amountMoreThanMaxDepositErrorMessage} ${depositMaxMember} ${currentERC20}`;
+    } else if (maxTotalDepositsExceeded) {
+      errorMessageText = `${maxTotalDepositsExceededErrorMessage} ${depositMaxTotal} ${currentERC20} ${amountExceededText}`;
+    } else if (maxTotalLPDepositsExceeded) {
+      errorMessageText = `${maxTotalMemberDepositsExceededErrorMessage} ${depositMaxMember} ${currentERC20} ${amountExceededText}`;
+    } else {
+      errorMessageText = amountError;
+    }
+  }
+
+  // amount to show on the deposit button
+  const depositAmountGreater =
+    amountToDeposit > allowanceAmountApproved && approved;
+  const depositAmountLess =
+    amountToDeposit <= allowanceAmountApproved && approved;
+  let amountToApprove = 0;
+  if (depositAmountGreater) {
+    amountToApprove = floatedNumberWithCommas(
+      amountToDeposit - allowanceAmountApproved
+    );
+  } else if (depositAmountLess) {
+    amountToApprove = floatedNumberWithCommas(allowanceAmountApproved);
+  } else if (amountToDeposit < 0 || !amountToDeposit) {
+    amountToApprove = floatedNumberWithCommas(allowanceAmountApproved);
+  } else if (!approved) {
+    amountToApprove = floatedNumberWithCommas(amountToDeposit);
+  }
+
+  // text to show on approval button
+  let approvalButtonText = "Approved";
+  if (depositAmountGreater || allowanceAmountApproved === 0) {
+    approvalButtonText = "Approve";
+  }
+
+  // if the current deposit amount exceeds the already approved amount
+  // the approval button should be disabled
+  // if the LP is not allowed to deposit, this button will also be disabled.
+  let disableApprovalButton = false;
+  if (
+    (amountToDeposit <= allowanceAmountApproved && approved) ||
+    disableAmountInput ||
+    (amountToDeposit <= 0 && !approved) ||
+    amountMoreThanMaxDeposit ||
+    maxTotalDepositsExceeded ||
+    amountLessThanMinDeposit ||
+    maxTotalLPDepositsExceeded
+  ) {
+    disableApprovalButton = true;
+  }
+
+  // amount to show on the deposit button
+  let depositButtonAmount = floatedNumberWithCommas(amountToDeposit);
+  if (!amountToDeposit || amountToDeposit <= 0) {
+    depositButtonAmount = "0.00";
+  }
+
+  // if a new deposit amount is entered, it needs to be approved
+  // if no amount has been approved yet, the deposit button should be disabled.
+  // button should also be disabled if the deposit amount is 0 or not set
+  // if the LP is not on the approved list, we'll disable this button as well.
+  let disableDepositButton = false;
+  const increasedDepositAmount =
+    amountToDeposit > allowanceAmountApproved && approved;
+  if (
+    !approved ||
+    increasedDepositAmount ||
+    amountToDeposit <= 0 ||
+    disableAmountInput ||
+    amountMoreThanMaxDeposit ||
+    maxTotalDepositsExceeded ||
+    amountLessThanMinDeposit ||
+    maxTotalLPDepositsExceeded
+  ) {
+    disableDepositButton = true;
+  }
+
+  // set correct loader header text depending on current state
+  let loaderHeaderText;
+  if (submitting) {
+    loaderHeaderText = loaderDepositHeaderText;
+  } else if (submittingAllowanceApproval) {
+    loaderHeaderText = loaderApprovalHeaderText;
+  } else {
+    loaderHeaderText = loaderGeneralHeaderText;
+  }
+
+  // set metamask error message
+  const { metamaskErrorMessageTitleText } = metamaskConstants;
+  let metamaskErrorMessageText = metamaskApprovalError;
+  if (metamaskDepositError) {
+    metamaskErrorMessageText = metamaskDepositError;
+  }
+
+  // close the syndicate action loader
+  const closeSyndicateActionLoader = () => {
+    setAllowanceApprovalError("");
+    setSubmittingAllowanceApproval(false);
+    setMetamaskApprovalError("");
+    setMetamaskDepositError("");
+    setSubmitting(false);
+    setSuccessfulDeposit(false);
+    setMetamaskConfirmPending(false);
+  };
+
+
+  // INNER COMPONENTS
+  // show buttons based on whether the current state is a deposit or approval
+  // we'll default to the approval/deposit state
+  const actionButton = (
+    <div className="mb-2">
+      <div className="mb-4">
+        <SyndicateActionButton
+          amountError={Boolean(amountError)}
+          buttonText={`${approvalButtonText} ${
+            amountToApprove ? amountToApprove : floatedNumberWithCommas("0")
+          } ${currentERC20}`}
+          disableApprovalButton={disableApprovalButton}
+          action="approval"
+          approved={approved}
+          depositAmountChanged={depositAmountChanged}
+        />
+      </div>
+      <div className="mb-4">
+        <SyndicateActionButton
+          amountError={Boolean(amountError)}
+          buttonText={`Deposit ${depositButtonAmount} ${currentERC20}`}
+          disableDepositButton={disableDepositButton}
+          approved={approved}
+          depositAmountChanged={depositAmountChanged}
+        />
+      </div>
+    </div>
+  );
+
+  return (
+    <ErrorBoundary>
+      <div className="w-full mt-4 sm:mt-0 sticky top-44 mb-10">
+        <FadeIn>
+          <div
+            className={`h-fit-content px-8 pb-4 pt-5 bg-gray-9 ${
+              !account ? "rounded-2xl" : `border-b-0 rounded-t-2xl`
+            }`}
+          >
+            {renderUnavailableState ?
+              (<UnavailableState title={title} message={message} />) :
+            depositsAvailable && (
+              <>
+                {(submittingAllowanceApproval || submitting) ? (
+                  <SyndicateActionLoader
+                    contractAddress={
+                      submittingAllowanceApproval
+                        ? syndicate?.depositERC20Address
+                        : syndicateAddress
+                    }
+                    headerText={loaderHeaderText}
+                  />
+                ) : (metamaskApprovalError || metamaskDepositError) ? (
+                  <SyndicateActionLoader
+                    contractAddress={
+                      metamaskApprovalError || metamaskDepositError
+                        ? syndicate?.depositERC20Address
+                        : syndicateAddress
+                    }
+                    headerText={metamaskErrorMessageTitleText}
+                    subText={metamaskErrorMessageText}
+                    error={true}
+                    showRetryButton={true}
+                    buttonText={dismissButtonText}
+                    closeLoader={closeSyndicateActionLoader}
+                  />
+                ) : metamaskConfirmPending ? (
+                  <SyndicateActionLoader
+                    headerText={walletPendingConfirmPendingTitleText}
+                    subText={walletPendingConfirmPendingMessage}
+                    pending={true}
+                  />
+                ) : successfulDeposit && depositModes ? (
+                  <SyndicateActionLoader
+                    contractAddress={syndicateAddress}
+                    headerText={depositSuccessTitleText}
+                    subText={depositSuccessSubtext}
+                    showRetryButton={true}
+                    success={true}
+                    buttonText={depositSuccessButtonText}
+                    closeLoader={closeSyndicateActionLoader}
+                  />
+                ) : // deposist are disabled when syndicate is closed.
+                  depositModes && !syndicate?.depositsEnabled ? (
+                    <div className="flex flex-col items-center justify-center my-8 mx-6">
+                      <p className="font-semibold text-2xl text-center">
+                        Deposits are disabled.
+                      </p>
+                    </div>
+                  ) : maxDepositReached && depositModes && !showSkeletonLoader ? (
+                  <SyndicateActionLoader
+                    headerText={maxMemberDepositsTitleText}
+                    subText={maxMemberDepositsText}
+                    error={true}
+                    showRetryButton={false}
+                  />
+                ) : (
+                  <FadeIn>
+                    {showSkeletonLoader ? (
+                      <div className="flex justify-between my-1 px-2">
+                        <SkeletonLoader
+                          width="full"
+                          height="8"
+                          borderRadius="rounded-md"
+                        />
+                      </div>
+                    ) : (
+                      <div className="flex items-center">
+                        <img className="mr-2 relative -top-1" src={"/images/deposit.svg"} />
+
+                        <p className="font-semibold text-xl p-2">
+                          {depositTitle}
+                        </p>
+                      </div>
+                    )}
+
+                    <div className="">
+                      {/* show this text if whitelist is enabled for deposits */}
+                      {showSkeletonLoader ? (
+                        <div className="flex justify-between my-1">
+                          <SkeletonLoader
+                            width="full"
+                            height="12"
+                            borderRadius="rounded-md"
+                          />
+                        </div>
+                      ) : (
+                        <p className="inline-block my-3 px-4 py-2 text-white font-ibm bg-green-500 bg-opacity-20 rounded-3xl">
+                          {depositApprovalText}
+                        </p>
+                      )}
+
+                      {showSkeletonLoader ? (
+                        <div className="flex justify-between my-1">
+                          <SkeletonLoader
+                            width="full"
+                            height="14"
+                            borderRadius="rounded-md"
+                          />
+                        </div>
+                      ) : (
+                        <form onSubmit={onSubmit}>
+                          <div className="flex justify-between my-1">
+                            <input
+                              name="amount"
+                              type="text"
+                              placeholder="400"
+                              disabled={disableAmountInput}
+                              defaultValue={amount}
+                              onChange={handleSetAmount}
+                              className={`min-w-0 rounded-md bg-gray-9 border border-gray-24 text-white font-whyte focus:outline-none focus:ring-gray-24 focus:border-gray-24 flex-grow mr-6 `}
+                            />
+                            <p className="flex-shrink-0 flex items-center whitespace-nowrap">
+                              {currentERC20 === "DAI" && <img className="mr-2" src={"/images/dai-symbol.svg"} />}
+                              {currentERC20}
+                            </p>
+                          </div>
+                          <p className="mr-2 w-full text-red-500 text-xs mt-2 mb-4">
+                            {showValidationError ? errorMessageText : null}
+                          </p>
+                          {/* checkbox for user to confirm they are accredited investor if this is a deposit */}
+                          {depositModes && (
+                            <p className="text-sm my-5 text-gray-500">
+                              {depositMemberAccreditedText}
+                            </p>
+                          )}
+                          <div className="mb-2">{actionButton}</div>
+                          <div className="flex justify-center">
+                            <div className="w-2/3 text-sm my-5 text-gray-500 justify-self-center text-center">
+                              {depositDisclaimerText}
+                            </div>
+                          </div>
+                        </form>
+                      )}
+                    </div>
+                  </FadeIn>
+                )}
+              </>
+            )}
+          </div>
+        </FadeIn>
+        {/* This component should be shown when we have details about user deposits */}
+        {account && <DetailsCard
+            {...{ sections, syndicate, loadingLPDetails }}
+            title="My Stats"
+            customStyles="p-8 rounded-b-3xl bg-gray-6 border-t border-gray-700 "
+            customInnerWidth="w-full"
+          />
+        }
+
+        {parseInt(myDeposits) > 0 && (
+          <WithdrawDeposit syndicateAddress={syndicateAddress} />
+        )}
+
+      </div>
+
+      {/* Error message modal */}
+      <ErrorModal
+        {...{
+          show: showErrorMessage,
+          handleClose: () => {
+            setShowErrorMessage(false);
+            setErrorMessage("");
+          },
+          errorMessage,
+        }}
+      />
+    </ErrorBoundary>
+  )
+}
+
+export default DepositSyndicate;

@@ -3,6 +3,7 @@ import {
   INVALID_SYNDICATE_ADDRESS,
   SET_MANAGER_FEE_ADDRESS,
   SYNDICATE_BY_ADDRESS,
+  FOUND_SYNDICATE_ADDRESS,
 } from "src/redux/actions/types";
 import { initialState } from "../initialState";
 
@@ -31,6 +32,12 @@ export const syndicatesReducer = (state = initialState, action) => {
       return {
         ...state,
         syndicate: null,
+        ...action.data,
+      };
+
+    case FOUND_SYNDICATE_ADDRESS:
+      return {
+        ...state,
         ...action.data,
       };
 

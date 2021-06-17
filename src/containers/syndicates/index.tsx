@@ -1,7 +1,7 @@
 import PortfolioAndDiscover from "@/components/syndicates/portfolioAndDiscover";
 import React from "react";
-import ErrorBoundary from "src/components/errorBoundary";
-import Layout from "src/components/layout";
+import ErrorBoundary from "@/components/errorBoundary";
+import Layout from "@/components/layout";
 import Head from "src/components/syndicates/shared/HeaderTitle";
 
 /**

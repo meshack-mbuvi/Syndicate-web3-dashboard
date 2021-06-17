@@ -1,6 +1,5 @@
 import Footer from "@/components/navigation/footer";
 import { syndicateInterface } from "@/components/shared/interfaces";
-import ManagerActions from "@/containers/managerActions";
 import ManagerSetAllowance from "@/containers/managerActions/setAllowances";
 import { getEvents } from "@/helpers/retrieveEvents";
 import { RootState } from "@/redux/store";
@@ -25,7 +24,6 @@ import ERC20ABI from "src/utils/abi/rinkeby-dai";
 // utils
 import { formatAddress } from "src/utils/formatAddress";
 import { TokenMappings } from "src/utils/tokenMappings";
-import InvestInSyndicate from "../investInSyndicate";
 import { BadgeCard, DetailsCard } from "../shared";
 import {
   closeDateToolTip,
@@ -45,6 +43,8 @@ const SyndicateDetails = (props: {
   web3: any;
   depositTokenAllowanceDetails: any;
   distributionTokensAllowanceDetails: any;
+  children?: React.ReactChild;
+  isChildVisible?: boolean;
 }) => {
   const {
     syndicateDetails,
@@ -640,9 +640,8 @@ const SyndicateDetails = (props: {
         </div>
 
         {/* Syndicate details */}
-        <div className="w-full md:hidden">
-          {accountIsManager ? <ManagerActions /> : <InvestInSyndicate />}
-        </div>
+        {/* details rendered on small devices only. render right column components on the left column in small devices */}
+        {props.isChildVisible && props.children}
 
         {/* This component should be shown when we have details about user deposits */}
         <DetailsCard
