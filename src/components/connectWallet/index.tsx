@@ -178,7 +178,8 @@ export const ConnectWallet = (props: { web3; showWalletModal }) => {
       }
 
       // dispatch action to start loader
-      await activate(provider, undefined, true);
+      await activate(provider, undefined, true)
+        .catch((err) => console.log({err}))
 
       // provider is connected, this stops the loader modal
       dispatch(setConnected());
