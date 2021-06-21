@@ -2,12 +2,10 @@ import {
   setLibrary,
   storeSyndicateInstance,
 } from "@/redux/actions/web3Provider";
-import { RootState } from "@/redux/store";
-import { useWeb3React } from "@web3-react/core";
 import { parse } from "flatted";
 import { useRouter } from "next/router";
-import React, { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import React, { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
 import {
   DepositsPageBanner,
   SyndicateInBetaBanner,
@@ -15,15 +13,12 @@ import {
 import ConnectWallet from "src/components/connectWallet";
 import Header from "src/components/navigation/header";
 import Syndicate from "src/contracts/Syndicate.json";
-import { injected } from "../connectWallet/connectors";
 import SEO from "../seo";
 
 // Global variables
 
 const contractAddress = process.env.NEXT_PUBLIC_SYNDICATE_CONTRACT_ADDRESS;
 const Web3 = require("web3");
-const daiABI = require("src/utils/abi/dai");
-const daiContractAddress = "0x6b175474e89094c44da98b954eedeac495271d0f";
 /**
  * set up web3 event listener here
  * we can use to get access to all events emitted by the contract
@@ -33,9 +28,6 @@ const web3 = new Web3(
   Web3.givenProvider || `${process.env.NEXT_PUBLIC_INFURA_ENDPOINT}`
 );
 
-// set up DAI contract
-const daiContract = new web3.eth.Contract(daiABI, daiContractAddress);
-
 const syndicateContractInstance = new web3.eth.Contract(
   // @ts-ignore
   Syndicate.abi,
@@ -43,79 +35,64 @@ const syndicateContractInstance = new web3.eth.Contract(
 );
 
 export const Layout = ({ children, backLink = null }) => {
-  const { activate, library, account } = useWeb3React();
+  const [cachedWalletData, setCachedWalletData] = useState("");
+
   const dispatch = useDispatch();
   const router = useRouter();
 
-  const showDepositsPageBanner = router.pathname.endsWith('deposit') || router.pathname.endsWith('details')
+  const showDepositsPageBanner =
+    router.pathname.endsWith("deposit") || router.pathname.endsWith("details");
 
-  const setWeb3 = async () => {
-    dispatch(storeSyndicateInstance(syndicateContractInstance));
-
-    if (library) {
-      try {
-        return dispatch(
-          setLibrary({
-            library,
-            account,
-            syndicateContractInstance,
-            daiContract,
-            web3,
-          })
-        );
-      } catch (error) {
-        // clear cache if we get here
-        localStorage.removeItem("cache");
-      }
+  useEffect(() => {
+    if (cachedWalletData) {
+      activateProvider(cachedWalletData);
     }
-  };
+  }, [cachedWalletData]);
 
   useEffect(() => {
     const cacheWallet = localStorage.getItem("cache") || null;
-
     if (cacheWallet) {
-      const parseCasheWallet = parse(cacheWallet);
-      const provider = parseCasheWallet.library.provider || null;
-
-      if (provider.isMetaMask) {
-        activateProvider(injected).then(() => {
-          setLibrary({
-            library: provider.library,
-            account: provider.selectedAddress,
-            syndicateContractInstance,
-            daiContract,
-            web3,
-          });
-        });
-      }
+      const parseCacheWallet = parse(cacheWallet);
+      setCachedWalletData(parseCacheWallet);
     }
   }, []);
-
-  useEffect(() => {
-    setWeb3();
-  }, [activate, library, account]);
 
   /**
    * This activate any provide passed to the function where
    * provider can be injected provider, walletConnect or gnosis wallet provider
    * @param {*} provider
    */
-  const activateProvider = async (provider) => {
+  const activateProvider = async (cachedWalletData) => {
+    const { providerName, account } = cachedWalletData;
+    dispatch(storeSyndicateInstance(syndicateContractInstance));
+
     try {
-      // dispatch action to start loader
-      await activate(provider, undefined, true);
+      switch (providerName) {
+        // we have several providers with different provider names in
+        // /components/connectWallet/connectors.ts
+        case "Injected":
+          return dispatch(
+            setLibrary({
+              account,
+              syndicateContractInstance,
+              web3,
+              providerName,
+            })
+          );
+      }
     } catch (error) {
       // clear cache if we get here
       localStorage.removeItem("cache");
     }
   };
+
   return (
     <div>
       <SEO
         keywords={[`next`, `tailwind`, `react`, `tailwindcss`]}
         title="Home"
       />
-      <Header backLink={backLink}/>
+      <Header backLink={backLink} />
       <div className="sticky top-20 z-10">
         <SyndicateInBetaBanner />
         {showDepositsPageBanner && <DepositsPageBanner key={2} />}

@@ -2,14 +2,15 @@ import {
   CONNECTED,
   CONNECTING,
   DISCONNECTED,
+  HIDE_ERROR_MODAL,
   HIDE_WALLET_MODAL,
   SET_PROVIDER,
-  SET_WEB3,
-  UNSET_WEB3,
-  SHOW_WALLET_MODAL,
-  SHOW_ERROR_MODAL,
-  HIDE_ERROR_MODAL,
+  SET_PROVIDER_NAME,
   SET_SYNDICATE_ACTION,
+  SET_WEB3,
+  SHOW_ERROR_MODAL,
+  SHOW_WALLET_MODAL,
+  UNSET_WEB3,
 } from "src/redux/actions/types";
 import { initialState } from "../initialState";
 
@@ -20,6 +21,12 @@ export const web3Reducer = (state = initialState, action) => {
       return {
         ...state,
         web3: { ...web3, status: "connected", ...action.data },
+      };
+
+    case SET_PROVIDER_NAME:
+      return {
+        ...state,
+        web3: { ...web3, providerName: action.data },
       };
 
     case UNSET_WEB3:

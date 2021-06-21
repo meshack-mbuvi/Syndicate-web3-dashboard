@@ -1,14 +1,13 @@
 import { getEvents } from "@/helpers/retrieveEvents";
 import { RootState } from "@/redux/store";
+import { formatAddress } from "@/utils/formatAddress";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { ifRows } from "./interfaces";
-import { ERC20TokenDetails } from "src/utils/ERC20Methods";
 import { getWeiAmount, onlyUnique } from "src/utils/conversions";
-import { TokenMappings } from "src/utils/tokenMappings";
-import { formatAddress } from "@/utils/formatAddress";
-import { InfoIcon } from "src/components/iconWrappers";
+import { ERC20TokenDetails } from "src/utils/ERC20Methods";
 import { floatedNumberWithCommas } from "src/utils/numberWithCommas";
+import { TokenMappings } from "src/utils/tokenMappings";
+import { ifRows } from "./interfaces";
 
 const GetClaimedDistributions = ({
   row: { syndicateAddress, depositERC20TokenSymbol, tokenDecimals },
@@ -259,8 +258,7 @@ const GetClaimedDistributions = ({
             <div
               className={`tooltiptext invisible visibility-hover absolute ${
                 count.toString().length === 1 ? `-left-2` : `-left-1`
-              } w-full`}
-            >
+              } w-full`}>
               {withdrawalstooltipText}
             </div>
           ) : null}

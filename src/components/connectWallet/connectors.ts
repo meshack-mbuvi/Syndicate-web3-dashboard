@@ -6,7 +6,7 @@ const RPC_URLS = {
   1: process.env.NEXT_PUBLIC_INFURA_ID,
 };
 
-export const injected = new InjectedConnector({
+export const Injected = new InjectedConnector({
   supportedChainIds: [
     1, // Mainet
     3, // Ropsten

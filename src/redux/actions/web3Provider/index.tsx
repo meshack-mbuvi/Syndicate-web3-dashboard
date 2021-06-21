@@ -5,6 +5,7 @@ import {
   DISCONNECTED,
   HIDE_ERROR_MODAL,
   HIDE_WALLET_MODAL,
+  SET_PROVIDER_NAME,
   SET_SYNDICATE_ACTION,
   SET_WEB3,
   SHOW_ERROR_MODAL,
@@ -19,10 +20,19 @@ export const storeSyndicateInstance = (data) => async (dispatch) => {
   });
 };
 
+export const setConnectedProviderName = (providerName) => async (dispatch) => {
+  return dispatch({
+    data: providerName,
+    type: SET_PROVIDER_NAME,
+  });
+};
+
 export const setLibrary = (data) => async (dispatch) => {
   // flatten json and store in local storage
+  const { account, providerName } = data;
+
   localStorage.removeItem("cache");
-  localStorage.setItem("cache", stringify(data));
+  localStorage.setItem("cache", stringify({ account, providerName }));
   return dispatch({
     data,
     type: SET_WEB3,

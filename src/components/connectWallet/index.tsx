@@ -4,6 +4,7 @@ import {
   hideErrorModal,
   hideWalletModal,
   setConnected,
+  setConnectedProviderName,
   setConnecting,
   setDisConnected,
   setLibrary,
@@ -23,7 +24,7 @@ import CancelButton from "src/components/buttons";
 import { Modal } from "src/components/modal";
 import Syndicate from "src/contracts/Syndicate.json";
 import { web3InstantiationErrorText } from "../syndicates/shared/Constants";
-import { injected, WalletConnect } from "./connectors";
+import { Injected, WalletConnect } from "./connectors";
 
 const Web3 = require("web3");
 
@@ -71,7 +72,7 @@ const getErrorMessage = (error: Error) => {
  */
 export const ConnectWallet = (props: { web3; showWalletModal }) => {
   const {
-    web3: { isErrorModalOpen, error },
+    web3: { isErrorModalOpen, error, providerName },
     showWalletModal,
   } = props;
 
@@ -115,7 +116,7 @@ export const ConnectWallet = (props: { web3; showWalletModal }) => {
    * Instantiates contract, and adds it together with web3 provider details to
    * store
    */
-  const setWeb3 = async () => {
+  const setWeb3 = async (providerName) => {
     /**
      * set up web3 event listener here
      * we can use to get access to all events emitted by the contract
@@ -143,11 +144,11 @@ export const ConnectWallet = (props: { web3; showWalletModal }) => {
         dispatch(hideErrorModal());
         return dispatch(
           setLibrary({
-            library,
             account,
             syndicateContractInstance,
             daiContract,
             web3,
+            providerName,
           })
         );
       } catch (error) {
@@ -158,16 +159,17 @@ export const ConnectWallet = (props: { web3; showWalletModal }) => {
   };
 
   useEffect(() => {
-    setWeb3();
-  }, [activate, library, account]);
+    setWeb3(providerName);
+  }, [activate, account, providerName, library]);
 
   /**
    * This activate any provide passed to the function where
    * provider can be injected provider, walletConnect or gnosis wallet provider
    * @param {*} provider
    */
-  const activateProvider = async (provider) => {
+  const activateProvider = async (provider, providerName) => {
     closeWalletModal();
+    dispatch(setConnectedProviderName(providerName));
 
     setWalletConnecting(true);
     try {
@@ -177,16 +179,16 @@ export const ConnectWallet = (props: { web3; showWalletModal }) => {
         dispatch(setDisConnected());
       }
 
-      // dispatch action to start loader
-      await activate(provider, undefined, true)
-        .catch((err) => console.log({err}))
+      await activate(provider, undefined, true).catch((err) =>
+        console.log({ err })
+      );
 
       // provider is connected, this stops the loader modal
       dispatch(setConnected());
 
       // show success modal
       setShowSuccessModal(true);
-      await setWeb3();
+      await setWeb3(providerName);
     } catch (error) {
       // an error occured during connection process
 
@@ -205,7 +207,7 @@ export const ConnectWallet = (props: { web3; showWalletModal }) => {
    * The provider for metamask is named injected
    */
   const activateInjected = async () => {
-    await activateProvider(injected);
+    await activateProvider(Injected, "Injected");
   };
 
   /**
@@ -213,7 +215,7 @@ export const ConnectWallet = (props: { web3; showWalletModal }) => {
    * It calls activateProvider passing WalletConnect as the parameters.
    */
   const activateWalletConnect = async () => {
-    await activateProvider(WalletConnect);
+    await activateProvider(WalletConnect, "WalletConnect");
   };
 
   /**
@@ -223,7 +225,7 @@ export const ConnectWallet = (props: { web3; showWalletModal }) => {
    * Ticket reference: SYN-49
    */
   // const activateGnosisSafe = async () => {
-  //   await activateProvider(gnosisSafeConnect);
+  //   await activateProvider(gnosisSafeConnect,"gnosisSafeConnect");
   // };
 
   const cancelWalletConnection = async () => {
@@ -241,16 +243,14 @@ export const ConnectWallet = (props: { web3; showWalletModal }) => {
           show: showWalletModal,
           closeModal: closeWalletModal,
           customWidth: "w-96",
-        }}
-      >
+        }}>
         <>
           {/* show wallet providers */}
           {providers.map(({ name, icon, providerToActivate }) => (
             <div className="flex justify-center m-auto mb-4" key={name}>
               <button
                 className="w-full p-2 border border-gray-300 rounded-full sm:py-3 sm:px-6 sm:w-3/4 flex focus:outline-none focus:border-blue-300"
-                onClick={() => providerToActivate()}
-              >
+                onClick={() => providerToActivate()}>
                 <img alt="icon" src={icon} className="inline mr-4 ml-2 h-6" />
                 <span>{name}</span>
               </button>
@@ -261,8 +261,7 @@ export const ConnectWallet = (props: { web3; showWalletModal }) => {
           <div className="mt-5 sm:mt-6 flex justify-center">
             <CancelButton
               customClasses="bg-blue rounded-full px-4 py-2 mb-6 sm:mb-0 focus:outline-none focus:ring focus:border-green-300"
-              onClick={closeWalletModal}
-            >
+              onClick={closeWalletModal}>
               Cancel
             </CancelButton>
           </div>
@@ -271,8 +270,7 @@ export const ConnectWallet = (props: { web3; showWalletModal }) => {
 
       {/* Loading modal */}
       <Modal
-        {...{ show: walletConnecting, closeModal: cancelWalletConnection }}
-      >
+        {...{ show: walletConnecting, closeModal: cancelWalletConnection }}>
         <div className="flex flex-col justify-center m-auto mb-4 w-96">
           <div className="loader">Loading...</div>
           <div className="modal-header mb-4 text-black font-medium text-center leading-8 text-lg">
@@ -286,8 +284,7 @@ export const ConnectWallet = (props: { web3; showWalletModal }) => {
         {...{
           show: showSuccessModal,
           closeModal: () => setShowSuccessModal(false),
-        }}
-      >
+        }}>
         <div className="flex flex-col justify-center m-auto mb-4">
           <div className="flex align-center justify-center">
             <div className="m-8 rounded-full h-24 w-24 flex items-center justify-center">
@@ -309,8 +306,7 @@ export const ConnectWallet = (props: { web3; showWalletModal }) => {
           show: isErrorModalOpen,
           closeModal: () => dispatch(hideErrorModal()),
           type: "error",
-        }}
-      >
+        }}>
         <div className="flex flex-col justify-center m-auto mb-4">
           <div className="flex align-center justify-center">
             <div className="border-4 border-light-blue m-8 rounded-full h-24 w-24 flex items-center justify-center">
@@ -319,8 +315,7 @@ export const ConnectWallet = (props: { web3; showWalletModal }) => {
                 viewBox="0 0 365.71733 365"
                 width="365pt"
                 xmlns="http://www.w3.org/2000/svg"
-                className="h-10"
-              >
+                className="h-10">
                 <g fill="#f44336">
                   <path d="m356.339844 296.347656-286.613282-286.613281c-12.5-12.5-32.765624-12.5-45.246093 0l-15.105469 15.082031c-12.5 12.503906-12.5 32.769532 0 45.25l286.613281 286.613282c12.503907 12.5 32.769531 12.5 45.25 0l15.082031-15.082032c12.523438-12.480468 12.523438-32.75.019532-45.25zm0 0" />
                   <path d="m295.988281 9.734375-286.613281 286.613281c-12.5 12.5-12.5 32.769532 0 45.25l15.082031 15.082032c12.503907 12.5 32.769531 12.5 45.25 0l286.632813-286.59375c12.503906-12.5 12.503906-32.765626 0-45.246094l-15.082032-15.082032c-12.5-12.523437-32.765624-12.523437-45.269531-.023437zm0 0" />
@@ -331,8 +326,7 @@ export const ConnectWallet = (props: { web3; showWalletModal }) => {
           <div className="modal-header mb-4 text-black font-medium text-center ">
             <p
               className="text-lg"
-              dangerouslySetInnerHTML={{ __html: error }}
-            ></p>
+              dangerouslySetInnerHTML={{ __html: error }}></p>
           </div>
         </div>
       </Modal>
