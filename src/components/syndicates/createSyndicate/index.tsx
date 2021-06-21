@@ -224,7 +224,13 @@ const CreateSyndicate = (props: Props) => {
   const handleSetMaxDeposits = (event: any) => {
     event.preventDefault();
     const { value } = event.target;
+    setMaxDepositsError("");
 
+    // value should be set to unlimited once everything is deleted.
+    if (!value.trim()) {
+      setMaxDeposits("");
+      return;
+    }
     setMaxDeposits(value);
 
     const message = Validate(value);
@@ -244,7 +250,13 @@ const CreateSyndicate = (props: Props) => {
   const handleSetMinDeposits = (event: any) => {
     event.preventDefault();
     const { value } = event.target;
+    setMinDepositsError("");
 
+    // value should be set to unlimited once everything is deleted.
+    if (!value.trim()) {
+      setMinDeposits("");
+      return;
+    }
     setMinDeposits(value);
 
     const message = Validate(value);
@@ -259,7 +271,12 @@ const CreateSyndicate = (props: Props) => {
   const maxTotalDepositsHandler = (event: any) => {
     event.preventDefault();
     const { value } = event.target;
-
+    setMaxTotalDepositsError("");
+    // value should be set to unlimited once everything is deleted.
+    if (!value.trim()) {
+      setMaxTotalDeposits("");
+      return;
+    }
     setMaxTotalDeposits(value);
 
     const message = Validate(value);
@@ -287,6 +304,11 @@ const CreateSyndicate = (props: Props) => {
     event.preventDefault();
     const { value } = event.target;
     setMaxMembersError("");
+    // value should be set to unlimited once everything is deleted.
+    if (!value.trim()) {
+      setMaxMembers("");
+      return;
+    }
 
     setMaxMembers(value);
     const checkIsWholeNumber = isWholeNumber(value);
