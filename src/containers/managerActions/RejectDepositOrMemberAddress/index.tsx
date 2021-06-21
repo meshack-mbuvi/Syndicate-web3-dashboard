@@ -10,7 +10,13 @@ import { showWalletModal } from "@/redux/actions";
 import { getSyndicateByAddress } from "@/redux/actions/syndicates";
 import { RootState } from "@/redux/store";
 import { getWeiAmount } from "@/utils/conversions";
-import { isZeroAddress, sanitizeInputString } from "@/utils/validators";
+import countOccurrences from "@/utils/countOccurrence";
+import {
+  isZeroAddress,
+  removeNewLinesAndWhitespace,
+  removeSubstring,
+  sanitizeInputString,
+} from "@/utils/validators";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -110,6 +116,11 @@ const RejectDepositOrMemberAddress = (props: Props) => {
     setTotalDepositsForMemberAddress,
   ] = useState(0);
 
+  const [
+    selectedMemberAddressTextIndexes,
+    setSelectedMemberAddressTextIndexes,
+  ] = useState([]);
+
   useEffect(() => {
     if (allowanceAmount < totalDepositsForMemberAddress) {
       setMemberAddressesError(
@@ -153,21 +164,22 @@ const RejectDepositOrMemberAddress = (props: Props) => {
 
   /**
    * This method sets addresses whose deposits are going to be rejected.
-   * It also validates the input value and set appropriate error message
    */
   const handleMemberAddressesChange = async (event) => {
     const { value } = event.target;
+    setMemberAddresses(value);
+  };
 
-    // convert comma separated string into array
-    const memberAddressesArray = sanitizeInputString(value).split(",");
-
+  /**
+   * This method validates the input value and set appropriate error message
+   * @param memberAddressesArray
+   */
+  const validateMemberAddressArr = (memberAddressesArray: string[]) => {
     // get last element in array
     const lastElement = memberAddressesArray[memberAddressesArray.length - 1];
 
     // create new copy of split array with no duplicates
-    const memberAddressesArrayCopy = Array.from(
-      new Set<string>(memberAddressesArray)
-    );
+    const memberAddressesArrayCopy = [...memberAddressesArray];
 
     // check if empty string
     if (!lastElement) {
@@ -199,21 +211,73 @@ const RejectDepositOrMemberAddress = (props: Props) => {
                 `${value} has not deposited into this syndicate.`
               );
             }
+            // handle duplicates
+            if (countOccurrences(memberAddressesArrayCopy, value) > 1) {
+              setMemberAddressesError(
+                `${value} has already been added(duplicate)`
+              );
+            }
           } else if (!value.trim()) {
             setMemberAddressesError(
-              `Entered value is not a valid etherium wallet address.`
+              `Entered value is not a valid ethereum wallet address.`
             );
           } else {
             setMemberAddressesError(
-              `${value} is not a valid etherium wallet address.`
+              `${value} is not a valid ethereum wallet address.`
             );
           }
         })
       : setMemberAddressesError("");
-
-    // join the array to comma separated string
-    setMemberAddresses(memberAddressesArray.join());
   };
+
+  const handleMemberAddressOnPaste = (
+    event: React.ClipboardEvent<HTMLTextAreaElement>
+  ) => {
+    const pastedAddresses = event.clipboardData.getData("text");
+    const removeInvalidCharacters = removeNewLinesAndWhitespace(
+      pastedAddresses
+    );
+    const newSplitArr = removeInvalidCharacters.split(",");
+    setMemberAddresses((prev) => {
+      const selection = prev.substring(
+        selectedMemberAddressTextIndexes[0],
+        selectedMemberAddressTextIndexes[1]
+      );
+      const remainingStr = removeNewLinesAndWhitespace(
+        removeSubstring(prev, selection)
+      );
+      const newStr = remainingStr + newSplitArr.join();
+      return newStr.split(",").join(",\n");
+    });
+    validateMemberAddressArr(
+      removeNewLinesAndWhitespace(memberAddresses).split(",")
+    );
+    event.preventDefault();
+  };
+
+  const handleMemberAddressOnKeyUp = (
+    event: React.KeyboardEvent<HTMLTextAreaElement>
+  ) => {
+    if (event.code === "Comma") {
+      const removeNewLines = removeNewLinesAndWhitespace(memberAddresses);
+      const lpAddressesArr = removeNewLines.split(",");
+      setMemberAddresses(lpAddressesArr.join(",\n"));
+      event.preventDefault();
+    }
+  };
+
+  const handleMemberAddressesOnSelectText = (
+    event: React.ChangeEvent<HTMLTextAreaElement>
+  ) => {
+    const { selectionStart, selectionEnd } = event.target;
+    setSelectedMemberAddressTextIndexes([selectionStart, selectionEnd]);
+  };
+
+  useEffect(() => {
+    validateMemberAddressArr(
+      removeNewLinesAndWhitespace(memberAddresses).split(",")
+    );
+  }, [memberAddresses]);
 
   const handleError = (error, rejectDepositState = false) => {
     // capture metamask error
@@ -337,19 +401,34 @@ const RejectDepositOrMemberAddress = (props: Props) => {
   const [memberAddressesToblackList, setMemberAddressesToBlackList] = useState(
     ""
   );
+
   const [
     memberAddressesToblackListError,
     setMemberAddressesToBlackListError,
   ] = useState<string>("");
+  const [
+    selectedMemberAddressesToblackListTextIndexes,
+    setSelectedMemberAddressesToblackListTextIndexes,
+  ] = useState([]);
+
+  const handleMemberAddressesToblackListOnSelectText = (
+    event: React.ChangeEvent<HTMLTextAreaElement>
+  ) => {
+    const { selectionStart, selectionEnd } = event.target;
+    setSelectedMemberAddressesToblackListTextIndexes([
+      selectionStart,
+      selectionEnd,
+    ]);
+  };
 
   const handleMemberAddressesToBlacklistChange = async (event) => {
     const { value } = event.target;
+    setMemberAddressesToBlackList(value);
+  };
 
-    // convert comma separated string into array
-    const memberAddressesToBlacklistArray = sanitizeInputString(value).split(
-      ","
-    );
-
+  const validateMemberAddressesToBlacklist = (
+    memberAddressesToBlacklistArray: string[]
+  ) => {
     // get last element in array
     const lastElement =
       memberAddressesToBlacklistArray[
@@ -357,9 +436,9 @@ const RejectDepositOrMemberAddress = (props: Props) => {
       ];
 
     // create new copy of split array with no duplicates
-    const memberAddressesToBlacklistArrayCopy = Array.from(
-      new Set<string>(memberAddressesToBlacklistArray)
-    );
+    const memberAddressesToBlacklistArrayCopy = [
+      ...memberAddressesToBlacklistArray,
+    ];
 
     // check if empty string
     if (!lastElement) {
@@ -388,20 +467,67 @@ const RejectDepositOrMemberAddress = (props: Props) => {
                 `${value} is already blacklisted.`
               );
             }
+            // handle duplicates
+            if (
+              countOccurrences(memberAddressesToBlacklistArrayCopy, value) > 1
+            ) {
+              setMemberAddressesToBlackListError(
+                `${value} has already been added(duplicate)`
+              );
+            }
           } else if (!value.trim()) {
             setMemberAddressesToBlackListError(
-              `Entered value is not a valid etherium wallet address.`
+              `Entered value is not a valid ethereum wallet address.`
             );
           } else {
             setMemberAddressesToBlackListError(
-              `${value} is not a valid etherium wallet address.`
+              `${value} is not a valid ethereum wallet address.`
             );
           }
         })
       : setMemberAddressesToBlackListError("");
+  };
 
-    // join the array to comma separated string
-    setMemberAddressesToBlackList(memberAddressesToBlacklistArray.join());
+  useEffect(() => {
+    validateMemberAddressesToBlacklist(
+      removeNewLinesAndWhitespace(memberAddressesToblackList).split(",")
+    );
+  }, [memberAddressesToblackList]);
+
+  const handleMemberAddressesToBlacklistOnPaste = (
+    event: React.ClipboardEvent<HTMLTextAreaElement>
+  ) => {
+    const pastedAddresses = event.clipboardData.getData("text");
+    const removeInvalidCharacters = removeNewLinesAndWhitespace(
+      pastedAddresses
+    );
+    const newSplitArr = removeInvalidCharacters.split(",");
+    setMemberAddressesToBlackList((prev) => {
+      const selection = prev.substring(
+        selectedMemberAddressesToblackListTextIndexes[0],
+        selectedMemberAddressesToblackListTextIndexes[1]
+      );
+      const remainingStr = removeNewLinesAndWhitespace(
+        removeSubstring(prev, selection)
+      );
+      const newStr = remainingStr + newSplitArr.join();
+      return newStr.split(",").join(",\n");
+    });
+    validateMemberAddressesToBlacklist(memberAddressesToblackList.split(","));
+    event.preventDefault();
+  };
+
+  const handleMemberAddressesToBlacklistOnKeyUp = (
+    event: React.KeyboardEvent<HTMLTextAreaElement>
+  ) => {
+    if (event.code === "Comma") {
+      const removeNewLines = removeNewLinesAndWhitespace(
+        memberAddressesToblackList
+      );
+      const lpAddressesArr = removeNewLines.split(",");
+      setMemberAddressesToBlackList(lpAddressesArr.join(",\n"));
+      event.preventDefault();
+    }
   };
 
   const handleSubmitBlackListMemberAddresses = async () => {
@@ -488,7 +614,8 @@ const RejectDepositOrMemberAddress = (props: Props) => {
           show: showRejectDepositOrMemberAddress,
           closeModal: () => setShowRejectDepositOrMemberAddress(false),
           customWidth: "sm:w-2/3",
-        }}>
+        }}
+      >
         <div className="mt-5 sm:mt-6 flex flex-col justify-center">
           <div>
             <div>
@@ -513,9 +640,11 @@ const RejectDepositOrMemberAddress = (props: Props) => {
                     name: "address(es)",
                     value: memberAddresses,
                     onChange: handleMemberAddressesChange,
+                    onPaste: handleMemberAddressOnPaste,
+                    onSelect: handleMemberAddressesOnSelectText,
+                    onKeyUp: handleMemberAddressOnKeyUp,
                     error: memberAddressesError,
                   }}
-                  defaultValue=""
                   name="approvedAddresses"
                   placeholder=""
                 />
@@ -527,7 +656,8 @@ const RejectDepositOrMemberAddress = (props: Props) => {
                   memberAddressesError ? "cursor-not-allowed opacity-50" : null
                 }`}
                 onClick={handleSubmitRejectDeposits}
-                disabled={memberAddressesError ? true : false}>
+                disabled={memberAddressesError ? true : false}
+              >
                 Reject Deposits
               </button>
             </div>
@@ -558,9 +688,11 @@ const RejectDepositOrMemberAddress = (props: Props) => {
                     name: "address(es)",
                     value: memberAddressesToblackList,
                     onChange: handleMemberAddressesToBlacklistChange,
+                    onPaste: handleMemberAddressesToBlacklistOnPaste,
+                    onSelect: handleMemberAddressesToblackListOnSelectText,
+                    onKeyUp: handleMemberAddressesToBlacklistOnKeyUp,
                     error: memberAddressesToblackListError,
                   }}
-                  defaultValue=""
                   name="approvedAddresses"
                   placeholder=""
                 />
@@ -573,7 +705,8 @@ const RejectDepositOrMemberAddress = (props: Props) => {
                       : null
                   }`}
                   onClick={handleSubmitBlackListMemberAddresses}
-                  disabled={memberAddressesToblackListError ? true : false}>
+                  disabled={memberAddressesToblackListError ? true : false}
+                >
                   Reject Addresses
                 </button>
               </div>
@@ -598,7 +731,8 @@ const RejectDepositOrMemberAddress = (props: Props) => {
       <PendingStateModal
         {...{
           show: submitting,
-        }}>
+        }}
+      >
         <div className="modal-header mb-4 font-medium text-center leading-8 text-2xl">
           {confirmingTransaction}
         </div>

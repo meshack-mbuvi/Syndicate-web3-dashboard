@@ -71,6 +71,16 @@ export const removeEnter = (value) => value.replace(/^\s+|\s+$/g, "");
 
 export const removeSpace = (value) => value.replace(/\s/g, "");
 
+export const removeNewLinesAndWhitespace = (value: string) =>
+  value.replace(/\r?\n|\r|\s/g, "");
+
+export const removeSubstring = (originalString: string, subString: string) => {
+  let start = originalString.indexOf(subString);
+  return (
+    originalString.substr(0, start) +
+    originalString.substr(start + subString.length)
+  );
+};
 /**
  * removes enter character and space character
  * @param data

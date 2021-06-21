@@ -6,7 +6,13 @@ import FinalStateModal from "@/components/shared/transactionStates/final";
 import { getMetamaskError } from "@/helpers";
 import { showWalletModal } from "@/redux/actions";
 import { RootState } from "@/redux/store";
-import { isZeroAddress } from "@/utils/validators";
+import countOccurrences from "@/utils/countOccurrence";
+import {
+  isZeroAddress,
+  removeNewLinesAndWhitespace,
+  removeSubstring,
+  sanitizeInputString,
+} from "@/utils/validators";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -71,10 +77,13 @@ const PreApproveDepositor = (props: Props) => {
   }, [syndicate]);
 
   // array of addresses to be allowed by the Syndicate, of maximum size equal to the maximum number of LPs.",
-  const [lpAddresses, setLpAddresses] = useState("");
+  const [memberAddresses, setMemberAddresses] = useState("");
   const [lpAddressesError, setLpAddressesError] = useState<string>("");
-  const [showLPError, setShowLPError] = useState<boolean>(false);
+  const [showMemberAddressError, setShowMemberAddressError] = useState<boolean>(
+    false
+  );
   const [submitting, setSubmitting] = useState(false);
+  const [selectedTextIndexes, setSelectedTextIndexes] = useState([]);
 
   /**
    * Final state variables
@@ -101,41 +110,11 @@ const PreApproveDepositor = (props: Props) => {
    * This method sets the approved addresses
    * It also validates the input value and set appropriate error message
    */
-  const handleLpAddressesChange = (event) => {
+  const handleLpAddressesChange = (
+    event: React.ChangeEvent<HTMLTextAreaElement>
+  ) => {
     const { value } = event.target;
-
-    const removeEnter = value.replace(/^\s+|\s+$/g, "");
-    const removeSpace = removeEnter.replace(/\s/g, "");
-
-    // convert comma separated string into array
-    const splitArr = removeSpace.split(",");
-
-    // get last element in array
-    const lastElement = splitArr[splitArr.length - 1];
-
-    // create new copy of split array
-    let newSplitArr = [...splitArr];
-
-    // check if empty string
-    if (!lastElement) {
-      newSplitArr.pop();
-    }
-
-    // validate addresses
-    newSplitArr && newSplitArr.length
-      ? newSplitArr.map((value: string) => {
-          if (web3.utils.isAddress(value)) {
-            setLpAddressesError("");
-            setShowLPError(false);
-          } else {
-            setShowLPError(true);
-            setLpAddressesError(`${value} is not a valid ERC20 address`);
-          }
-        })
-      : setLpAddressesError("");
-
-    // join the array to comma separated string
-    setLpAddresses(splitArr.join());
+    setMemberAddresses(value);
   };
 
   const handleError = (error) => {
@@ -167,9 +146,9 @@ const PreApproveDepositor = (props: Props) => {
       throw "This syndicate does not exist and therefore we can't update its details.";
     }
 
-    if (!lpAddresses) {
+    if (!memberAddresses) {
       setLpAddressesError("Approved address is required");
-      setShowLPError(true);
+      setShowMemberAddressError(true);
       return;
     }
 
@@ -186,7 +165,7 @@ const PreApproveDepositor = (props: Props) => {
 
     try {
       // convert comma separated string into array
-      const splitArr = lpAddresses.split(",");
+      const splitArr = sanitizeInputString(memberAddresses).split(",");
 
       // get last element in array
       const lastElement = splitArr[splitArr.length - 1];
@@ -226,6 +205,79 @@ const PreApproveDepositor = (props: Props) => {
     }
   };
 
+  const validateAddressArr = (arr: string[]) => {
+    // get last element in array
+    const lastElement = arr[arr.length - 1];
+
+    // create new copy of split array
+    let newSplitArr = [...arr];
+
+    // check if empty string
+    if (!lastElement) {
+      newSplitArr.pop();
+    }
+
+    newSplitArr && newSplitArr.length
+      ? newSplitArr.map((value: string) => {
+          if (web3.utils.isAddress(value)) {
+            setLpAddressesError("");
+            setShowMemberAddressError(false);
+            // handle duplicates
+            if (countOccurrences(newSplitArr, value) > 1) {
+              setShowMemberAddressError(true);
+              setLpAddressesError(
+                `${value} has already been added(duplicate).`
+              );
+            }
+          } else {
+            setShowMemberAddressError(true);
+            setLpAddressesError(`${value} is not a valid ERC20 address`);
+          }
+        })
+      : setLpAddressesError("");
+  };
+
+  useEffect(() => {
+    validateAddressArr(removeNewLinesAndWhitespace(memberAddresses).split(","));
+  }, [memberAddresses]);
+
+  const handleKeyUp = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (event.code === "Comma") {
+      const removeNewLines = removeNewLinesAndWhitespace(memberAddresses);
+      const lpAddressesArr = removeNewLines.split(",");
+      setMemberAddresses(lpAddressesArr.join(",\n"));
+      event.preventDefault();
+    }
+  };
+  const handleOnPaste = (event: React.ClipboardEvent<HTMLTextAreaElement>) => {
+    const pastedAddresses = event.clipboardData.getData("text");
+    const removeInvalidCharacters = removeNewLinesAndWhitespace(
+      pastedAddresses
+    );
+    const newSplitArr = removeInvalidCharacters.split(",");
+    setMemberAddresses((prev) => {
+      const selection = prev.substring(
+        selectedTextIndexes[0],
+        selectedTextIndexes[1]
+      );
+      const remainingStr = removeNewLinesAndWhitespace(
+        // remove selected text
+        removeSubstring(prev, selection)
+      );
+      const newStr = remainingStr + newSplitArr.join();
+      return newStr.split(",").join(",\n");
+    });
+    validateAddressArr(removeNewLinesAndWhitespace(memberAddresses).split(","));
+    event.preventDefault();
+  };
+
+  const handleOnSelectText = (
+    event: React.ChangeEvent<HTMLTextAreaElement>
+  ) => {
+    const { selectionStart, selectionEnd } = event.target;
+    setSelectedTextIndexes([selectionStart, selectionEnd]);
+  };
+
   const {
     approveAddressesWarning,
     approveAddressesHeadingText,
@@ -243,7 +295,8 @@ const PreApproveDepositor = (props: Props) => {
           show: showPreApproveDepositor,
           closeModal: () => setShowPreApproveDepositor(false),
           customWidth: "sm:w-2/3",
-        }}>
+        }}
+      >
         <div className="mt-5 sm:mt-6 flex justify-center">
           <div>
             <div className="text-gray-400 py-6">
@@ -261,11 +314,13 @@ const PreApproveDepositor = (props: Props) => {
               <TextArea
                 {...{
                   name: "addresses",
-                  value: lpAddresses,
+                  value: memberAddresses,
                   onChange: handleLpAddressesChange,
+                  onPaste: handleOnPaste,
+                  onKeyUp: handleKeyUp,
+                  onSelect: handleOnSelectText,
                   error: lpAddressesError,
                 }}
-                defaultValue=""
                 name="approvedAddresses"
                 placeholder=""
               />
@@ -273,10 +328,11 @@ const PreApproveDepositor = (props: Props) => {
             <div className="flex items-center	justify-center pt-6">
               <button
                 className={`bg-blue text-white	py-2 px-10 rounded-full ${
-                  showLPError ? "cursor-not-allowed" : null
+                  showMemberAddressError ? "cursor-not-allowed" : null
                 }`}
                 onClick={handleSubmit}
-                disabled={showLPError}>
+                disabled={showMemberAddressError}
+              >
                 {buttonText}
               </button>
             </div>
@@ -298,7 +354,8 @@ const PreApproveDepositor = (props: Props) => {
       <PendingStateModal
         {...{
           show: submitting,
-        }}>
+        }}
+      >
         <div className="modal-header mb-4 font-medium text-center leading-8 text-2xl">
           {confirmingTransaction}
         </div>

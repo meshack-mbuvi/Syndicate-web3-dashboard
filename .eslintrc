@@ -12,7 +12,9 @@
     "import/no-unresolved": "off",
     "react/prop-types": "off",
     "react/jsx-uses-react": "off",
-    "react/react-in-jsx-scope": "off"
+    "react/react-in-jsx-scope": "off",
+    "no-unused-vars": "off",
+    "@typescript-eslint/no-unused-vars": ["error"]
   },
   "settings": {
     "react": {
@@ -32,7 +34,8 @@
     "plugin:react/recommended",
     // https://github.com/benmosher/eslint-plugin-import
     "plugin:import/recommended",
-    "plugin:import/typescript"
+    "plugin:import/typescript",
+    "plugin:@typescript-eslint/recommended"
   ],
   "globals": {
     "JSX": "readonly"

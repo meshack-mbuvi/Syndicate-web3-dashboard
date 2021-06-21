@@ -7,16 +7,22 @@ import React from "react";
  *  small text is rendered.
  * @param {*} props
  */
-export const TextArea = (props: {
+
+interface ITextAreaProps {
   name?: string;
-  onChange?;
+  onChange?: (event: React.ChangeEvent<HTMLTextAreaElement>) => void;
   disabled?: boolean;
   placeholder?: string;
   error?: string;
   required?: boolean;
-  value: string | number;
+  value?: string | number;
   rows?: number;
-}) => {
+  onPaste?: (event: React.ClipboardEvent<HTMLTextAreaElement>) => void;
+  onKeyUp?: (event: React.KeyboardEvent<HTMLTextAreaElement>) => void;
+  onSelect?: (event: React.ChangeEvent<HTMLTextAreaElement>) => void;
+}
+
+export const TextArea = (props: ITextAreaProps) => {
   const {
     name,
     onChange,
@@ -24,6 +30,9 @@ export const TextArea = (props: {
     value,
     disabled = false,
     rows = 4,
+    onPaste,
+    onKeyUp,
+    onSelect,
     ...rest
   } = props;
 
@@ -36,21 +45,19 @@ export const TextArea = (props: {
       <textarea
         name={name}
         onChange={onChange}
+        onPaste={onPaste}
+        onKeyUp={onKeyUp}
+        onSelect={onSelect}
+        value={value}
         className={`border border-gray-french rounded-lg w-full bg-white p-4 focus:border-blue ${disabledClasses}`}
         {...rest}
         rows={rows}
+        cols={50}
         disabled={disabled}
-        value={value}></textarea>
+      ></textarea>
       {error ? (
         <p className="text-red-500 text-xs break-word">{error}</p>
       ) : null}
     </div>
   );
-};
-
-TextArea.propTypes = {
-  name: PropTypes.string.isRequired,
-  register: PropTypes.any,
-  disabled: PropTypes.bool,
-  defaultValue: PropTypes.any,
 };
