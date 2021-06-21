@@ -8,7 +8,7 @@ import { ERC20TokenDetails } from "@/utils/ERC20Methods";
 import {
   floatedNumberWithCommas,
   numberWithCommas,
-} from "@/utils/numberWithCommas";
+} from "@/utils/formattedNumbers";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { CopyToClipboard } from "react-copy-to-clipboard";

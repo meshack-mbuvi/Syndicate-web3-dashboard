@@ -11,7 +11,7 @@ import { getWeiAmount } from "@/utils/conversions";
 import { getSyndicateByAddress } from "@/redux/actions/syndicates";
 import { getMetamaskError } from "@/helpers";
 import { setSyndicateDetails } from "@/redux/actions/syndicateDetails";
-import { floatedNumberWithCommas } from "@/utils/numberWithCommas";
+import { floatedNumberWithCommas } from "@/utils/formattedNumbers";
 import { ErrorModal } from "@/components/shared";
 
 import {

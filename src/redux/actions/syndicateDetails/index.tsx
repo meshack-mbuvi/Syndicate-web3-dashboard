@@ -1,7 +1,7 @@
 import { getEvents } from "@/helpers/retrieveEvents";
 import { etherToNumber, toEther } from "src/utils/conversions";
 import { ERC20TokenDetails } from "src/utils/ERC20Methods";
-import { numberWithCommas } from "src/utils/numberWithCommas";
+import { numberWithCommas } from "@/utils/formattedNumbers";
 import { LOADING_SYNDICATE_DETAILS, SET_SYNDICATE_DETAILS } from "../types";
 
 const updateSyndicateDetails = (data) => {

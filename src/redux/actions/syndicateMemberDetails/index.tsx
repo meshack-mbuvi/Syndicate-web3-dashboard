@@ -1,4 +1,4 @@
-import { floatedNumberWithCommas } from "@/utils/numberWithCommas";
+import { floatedNumberWithCommas } from "@/utils/formattedNumbers";
 import { divideIfNotByZero, getWeiAmount } from "src/utils/conversions";
 import {
   LOADING_SYNDICATE_LP_DETAILS,

@@ -10,7 +10,7 @@ import { managerActionTexts } from "@/components/syndicates/shared/Constants/man
 import { SyndicateActionLoader } from "@/components/syndicates/shared/syndicateActionLoader";
 import { getMetamaskError } from "@/helpers/metamaskError";
 import { getWeiAmount } from "@/utils/conversions";
-import { floatedNumberWithCommas } from "@/utils/numberWithCommas";
+import { floatedNumberWithCommas } from "@/utils/formattedNumbers";
 import { Validate } from "@/utils/validators";
 import { useRouter } from "next/router";
 import PropTypes from "prop-types";

@@ -1,8 +1,7 @@
+import { getWeiAmount } from "@/utils/conversions";
 import React, { useEffect, useState } from "react";
 import { RootStateOrAny, useSelector } from "react-redux";
 import { ifRows } from "./interfaces";
-import { RootState } from "src/redux/store";
-import { getWeiAmount } from "@/utils/conversions";
 
 const GetMemberDeposits = ({
   row: { syndicateAddress, depositERC20TokenSymbol, tokenDecimals },
@@ -13,11 +12,15 @@ const GetMemberDeposits = ({
 
   const { syndicateContractInstance, account } = web3Wrapper;
 
-  const [memberDeposits, setMemberDeposits] = useState("0");
+  const [memberDeposits, setMemberDeposits] = useState("-");
 
   const getMemberDeposits = async () => {
     // we need these to be able to access the syndicate contract
     if (!syndicateContractInstance || !account) return;
+
+    // Managers do not deposit into a syndicate they manage.
+    if (syndicateAddress === account) return "-";
+
     try {
       const syndicateMemberInfo = await syndicateContractInstance.methods
         .getMemberInfo(syndicateAddress, account)
@@ -30,6 +33,7 @@ const GetMemberDeposits = ({
       );
       setMemberDeposits(depositsMember);
     } catch (error) {
+      setMemberDeposits("-");
       console.log({ error });
     }
   };
@@ -37,9 +41,11 @@ const GetMemberDeposits = ({
   useEffect(() => {
     getMemberDeposits();
   }, [account, syndicateContractInstance]);
+
   return (
     <>
-      {memberDeposits} {depositERC20TokenSymbol}
+      {memberDeposits}{" "}
+      {memberDeposits.trim() !== "-" && depositERC20TokenSymbol}
     </>
   );
 };

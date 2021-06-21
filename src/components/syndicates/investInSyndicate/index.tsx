@@ -15,7 +15,7 @@ import { setSyndicateDetails } from "src/redux/actions/syndicateDetails";
 import ERC20ABI from "src/utils/abi/erc20";
 import { getWeiAmount } from "src/utils/conversions";
 import { ERC20TokenDetails } from "src/utils/ERC20Methods";
-import { floatedNumberWithCommas } from "src/utils/numberWithCommas";
+import { floatedNumberWithCommas } from "@/utils/formattedNumbers";
 import { TokenMappings } from "src/utils/tokenMappings";
 // shared components
 import { DetailsCard } from "../shared";
@@ -903,7 +903,6 @@ const InvestInSyndicate = () => {
   // if allowlist is disabled, any address can deposit.
   // set correct status text to display.
   const { myAddressAllowed } = syndicateLPDetails;
-  let depositApprovalText = "";
   let disableAmountInput = false;
   let showDepositLink = false;
 
@@ -913,7 +912,6 @@ const InvestInSyndicate = () => {
     // allowlist enabled and memberAddress not allowed, tell member that he/she
     // must be pre-approved to deposit.
     if (allowlistEnabled && !myAddressAllowed) {
-      depositApprovalText = allowListEnabledNotApprovedText;
       disableAmountInput = true;
     }
 

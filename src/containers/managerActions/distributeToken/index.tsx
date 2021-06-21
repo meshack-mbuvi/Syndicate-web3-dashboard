@@ -29,7 +29,7 @@ import ERC20ABI from "@/utils/abi/erc20";
 import { getWeiAmount } from "@/utils/conversions";
 import { ERC20TokenDetails } from "@/utils/ERC20Methods";
 import { formatAddress } from "@/utils/formatAddress";
-import { floatedNumberWithCommas } from "@/utils/numberWithCommas";
+import { floatedNumberWithCommas } from "@/utils/formattedNumbers";
 import { TokenMappings } from "@/utils/tokenMappings";
 import { isZeroAddress, Validate } from "@/utils/validators";
 import { useRouter } from "next/router";

@@ -9,7 +9,7 @@ import { SkeletonLoader } from "@/components/skeletonLoader";
 import { getWeiAmount } from "@/utils/conversions";
 import { getSyndicateByAddress } from "@/redux/actions/syndicates";
 import { RootState } from "@/redux/store";
-import { floatedNumberWithCommas } from "@/utils/numberWithCommas";
+import { floatedNumberWithCommas } from "@/utils/formattedNumbers";
 import { showWalletModal } from "@/redux/actions";
 import { ERC20TokenDetails } from "@/utils/ERC20Methods";
 import { Validate } from "@/utils/validators";

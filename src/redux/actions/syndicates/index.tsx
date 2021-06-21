@@ -11,8 +11,8 @@ import { web3 } from "src/utils/web3Utils";
 import {
   ADD_NEW_INVESTMENT,
   ALL_SYNDICATES,
-  INVALID_SYNDICATE_ADDRESS,
   FOUND_SYNDICATE_ADDRESS,
+  INVALID_SYNDICATE_ADDRESS,
   SET_LOADING,
   SET_MANAGER_FEE_ADDRESS,
   SYNDICATE_BY_ADDRESS,
@@ -89,7 +89,7 @@ export const addSyndicates = (data) => async (dispatch) => {
       }
 
       if (memberAddress === account) {
-        // we need to check whether lpAddress matches this wallet account
+        // we need to check whether memberAddress matches this wallet account
         // meaning this account has invested in this wallet
         // we use default for fields missing in the event
         // syndicate details will be retrieved during display

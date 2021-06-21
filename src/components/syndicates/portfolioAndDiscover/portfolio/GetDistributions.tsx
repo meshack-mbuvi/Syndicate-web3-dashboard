@@ -9,7 +9,7 @@ import { getWeiAmount, onlyUnique } from "src/utils/conversions";
 import { TokenMappings } from "src/utils/tokenMappings";
 import { formatAddress } from "@/utils/formatAddress";
 import { InfoIcon } from "src/components/iconWrappers";
-import { floatedNumberWithCommas } from "src/utils/numberWithCommas";
+import { floatedNumberWithCommas } from "@/utils/formattedNumbers";
 
 const GetDistributions = ({ row: { syndicateAddress } }: ifRows) => {
   const { web3: web3Wrapper } = useSelector(

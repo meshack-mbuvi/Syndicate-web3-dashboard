@@ -5,7 +5,7 @@ import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { getWeiAmount, onlyUnique } from "src/utils/conversions";
 import { ERC20TokenDetails } from "src/utils/ERC20Methods";
-import { floatedNumberWithCommas } from "src/utils/numberWithCommas";
+import { floatedNumberWithCommas } from "@/utils/formattedNumbers";
 import { TokenMappings } from "src/utils/tokenMappings";
 import { ifRows } from "./interfaces";
 
@@ -38,6 +38,8 @@ const GetClaimedDistributions = ({
 
   // get events where member withdrew their deposits
   const getMemberDepositsWithdrawalEvents = async () => {
+    if (syndicateAddress === account) return "-";
+
     const memberDepositsWithdrawalEvents = await getEvents(
       syndicateContractInstance,
       "memberWithdrewDeposit",
@@ -76,13 +78,15 @@ const GetClaimedDistributions = ({
       ];
 
       setDepositWithdrawalsDetails(depositWithdrawalsFinalDetails);
-      // setWithdrawalsToolTip(tooltipText);
     }
   };
 
   // get events where member made a withdrawal from the syndicate
   // this way, we can tell which token was withdrawn
   const getMemberDistributionsWithdrawalEvents = async () => {
+    // Managers do not deposit into a syndicate they manage.
+    if (syndicateAddress === account) return "-";
+
     const memberDistributionsWithdrawalEvents = await getEvents(
       syndicateContractInstance,
       "memberWithdrewDistribution",
@@ -203,6 +207,7 @@ const GetClaimedDistributions = ({
           </table>
         </div>
       ) : null}
+
       {distributionsWithdrawalDetails.length ? (
         <div className="mt-2">
           <p className="text-sm mb-2">Distributions Withdrawals:</p>
@@ -252,7 +257,8 @@ const GetClaimedDistributions = ({
     <div className="flex flex-row items-center w-full visibility-container">
       <div className="w-full visibility-container">
         <div className="relative w-full tooltip">
-          <div>{count}</div>
+          <div>{syndicateAddress === account ? "-" : count}</div>
+
           {depositWithdrawalsDetails.length ||
           distributionsWithdrawalDetails.length ? (
             <div

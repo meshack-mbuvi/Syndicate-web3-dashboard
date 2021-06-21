@@ -1,4 +1,4 @@
-import { formatToMillion, formatToThousands } from "@/utils/numberWithCommas";
+import { formatNumbers } from "@/utils/formattedNumbers";
 import React, { useMemo } from "react";
 import ActiveSyndicatesTable from "./ActiveSyndicatesTable";
 import GetMemberDeposits from "./GeMemberDeposits";
@@ -54,7 +54,7 @@ export const Portfolio = (props: { syndicates }) => {
     {
       Header: "Members",
       accessor: "numMembersCurrent",
-      Cell: ({ value }) => formatToThousands(value),
+      Cell: ({ value }) => formatNumbers(value),
       showSort: true,
     },
     {
@@ -62,7 +62,7 @@ export const Portfolio = (props: { syndicates }) => {
       accessor: function getTotalDeposits(row) {
         // get token symbol
         const { depositERC20TokenSymbol, depositTotal } = row;
-        return `${formatToMillion(depositTotal)} ${depositERC20TokenSymbol}`;
+        return `${formatNumbers(depositTotal)} ${depositERC20TokenSymbol}`;
       },
       showSort: true,
     },
@@ -80,7 +80,7 @@ export const Portfolio = (props: { syndicates }) => {
       },
       showSort: true,
     },
-    
+
     {
       Header: "My Withdrawals",
       accessor: function getClaimedDistributions(row) {
