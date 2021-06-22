@@ -1,15 +1,14 @@
 import { getTotalDistributions } from "@/helpers";
+import { getEvents } from "@/helpers/retrieveEvents";
 import { RootState } from "@/redux/store";
+import { ERC20TokenDetails } from "@/utils/ERC20Methods";
+import { formatAddress } from "@/utils/formatAddress";
+import { floatedNumberWithCommas } from "@/utils/formattedNumbers";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { ifRows } from "./interfaces";
-import { getEvents } from "@/helpers/retrieveEvents";
-import { ERC20TokenDetails } from "src/utils/ERC20Methods";
 import { getWeiAmount, onlyUnique } from "src/utils/conversions";
 import { TokenMappings } from "src/utils/tokenMappings";
-import { formatAddress } from "@/utils/formatAddress";
-import { InfoIcon } from "src/components/iconWrappers";
-import { floatedNumberWithCommas } from "@/utils/formattedNumbers";
+import { ifRows } from "./interfaces";
 
 const GetDistributions = ({ row: { syndicateAddress } }: ifRows) => {
   const { web3: web3Wrapper } = useSelector(
@@ -139,9 +138,10 @@ const GetDistributions = ({ row: { syndicateAddress } }: ifRows) => {
           {distributionDetails.length ? (
             <div
               className={`tooltiptext invisible visibility-hover absolute ${
-                distributionDetails.length.toString().length === 1 ? `-left-2` : `-left-1`
-              } w-full`}
-            >
+                distributionDetails.length.toString().length === 1
+                  ? `-left-2`
+                  : `-left-1`
+              } w-full`}>
               {distributionToolTip}
             </div>
           ) : null}
