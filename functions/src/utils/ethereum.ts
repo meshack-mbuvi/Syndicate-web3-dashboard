@@ -86,15 +86,29 @@ export async function getCoinFromContractAddress(contractAddress) {
    *    "logo":"https://assets.coingecko.com/coins/images/863/large/0x.png?1547034672"
    * }
    */
+  try {
+    const coinInfo = await CoinGeckoClient.coins.fetchCoinContractInfo(
+      contractAddress
+    );
 
-  const coinInfo = await CoinGeckoClient.coins.fetchCoinContractInfo(
-    contractAddress
-  );
-  return {
-    name: coinInfo.data.name,
-    symbol: coinInfo.data.symbol,
-    price: coinInfo.data.market_data.current_price.usd,
-    percentageChange: coinInfo.data.market_data.price_change_percentage_24h,
-    logo: coinInfo.data.image.large,
-  };
+    if (coinInfo.success) {
+      return {
+        name: coinInfo.data.name,
+        symbol: coinInfo.data.symbol,
+        price: coinInfo.data.market_data.current_price.usd,
+        percentageChange: coinInfo.data.market_data.price_change_percentage_24h,
+        logo: coinInfo.data.image.large,
+      };
+    } else {
+      return {
+        name: "",
+        symbol: "",
+        price: "",
+        percentageChange: "",
+        logo: "",
+      };
+    }
+  } catch (error) {
+    console.log(error);
+  }
 }

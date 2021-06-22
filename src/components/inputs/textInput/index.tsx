@@ -22,6 +22,7 @@ export const TextInput = (props: {
   column?: boolean;
   full?: boolean;
   customWidth?: string;
+  logo?: string;
 }) => {
   const {
     label,
@@ -36,6 +37,7 @@ export const TextInput = (props: {
     column = false,
     full,
     customWidth = "",
+    logo = "",
     ...rest
   } = props;
 
@@ -47,14 +49,17 @@ export const TextInput = (props: {
     <div
       className={`flex ${
         column ? `flex-col mr-2 sm:mr-4` : `flex-row`
-      } justify-center ${full ? `w-full` : ``}`}>
+      } justify-center ${full ? `w-full` : ``}`}
+    >
       <div
         className={`flex mr-2 ${
           column ? `w-full justify-start mb-2` : `w-1/2 justify-end`
-        }`}>
+        }`}
+      >
         <label
           htmlFor={label}
-          className="block pt-2 text-black text-sm font-medium">
+          className="block pt-2 text-black text-sm font-medium"
+        >
           {label}
         </label>
       </div>
@@ -62,22 +67,32 @@ export const TextInput = (props: {
       <div
         className={`${
           customWidth ? customWidth : `w-5/6`
-          } flex-grow flex flex-col justify-between`}>
-        
+        } flex-grow flex flex-col justify-between`}
+      >
         {/* input field */}
         <div className="flex justify-start">
-          <input
-            type={type}
-            name={name}
-            id={id}
-            onChange={onChange}
-            className={`flex flex-grow text-sm font-whyte focus:ring-blue w-full focus:border-indigo-500 rounded-md ${disabledClasses}`}
-            {...rest}
-            disabled={disabled}
-            value={value}
-            step="1"
-            onWheel={(e) => e.currentTarget.blur()}
-          />
+          <div className="relative w-full">
+            {logo && (
+              <div className="absolute inset-y-0 right-0 flex items-center px-2">
+                <label className="bg-gray-50 rounded px-2 py-1">
+                  <img src={logo} alt="Logo" className="w-4" />
+                </label>
+              </div>
+            )}
+
+            <input
+              type={type}
+              name={name}
+              id={id}
+              onChange={onChange}
+              className={`flex flex-grow text-sm font-whyte focus:ring-blue w-full focus:border-indigo-500 rounded-md ${disabledClasses}`}
+              {...rest}
+              disabled={disabled}
+              value={value}
+              step="1"
+              onWheel={(e) => e.currentTarget.blur()}
+            />
+          </div>
           {/* icon */}
           {tooltip ? (
             <div className="w-auto flex">
