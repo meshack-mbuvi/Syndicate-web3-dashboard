@@ -6,6 +6,7 @@ import NProgress from "nprogress";
 import "nprogress/nprogress.css"; //styles of nprogress
 import PropTypes from "prop-types";
 import React from "react";
+import dynamic from "next/dynamic";
 /**
  * datepicker component requires these in-built styles, so we import them
  * from here to make them available globally

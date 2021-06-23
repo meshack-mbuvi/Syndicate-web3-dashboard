@@ -61,7 +61,8 @@ export const Wallet = () => {
   const Tooltip = ({ tooltipProps, step }) => (
     <div
       className="bg-gray-dark rounded-custom w-64 px-6 py-4"
-      {...tooltipProps}>
+      {...tooltipProps}
+    >
       <div className="mb-2 w-full flex justify-center">
         <img
           className="h-6 w-6 opacity-50"
@@ -87,16 +88,26 @@ export const Wallet = () => {
     }
   };
 
-  const connectedWalletContainerStyles = "bg-green-500 bg-opacity-10 border border-green-500 border-opacity-20";
-  const disconnectedWalletContainerStyles = "bg-white bg-opacity-5 border border-gray-500 border-opacity-30";
+  const connectedWalletContainerStyles =
+    "bg-green-500 bg-opacity-10 border border-green-500 border-opacity-20";
+  const disconnectedWalletContainerStyles =
+    "bg-white bg-opacity-5 border border-gray-500 border-opacity-30";
   const connectedWalletIconStyles = "fill-current text-green-500";
 
   return (
     <div className="wallet-connect flex relative justify-center h-12">
       <div
         onClick={connectWallet}
-        className={`${status === "connected" ? connectedWalletContainerStyles : disconnectedWalletContainerStyles} flex relative rounded-full my-1 px-4 py-2 items-center`}>
-        <img src={walletIcon} className={`w-5 h-4 pr-1 m-2 ${connectedWalletIconStyles}`} />
+        className={`${
+          status === "connected"
+            ? connectedWalletContainerStyles
+            : disconnectedWalletContainerStyles
+        } flex relative rounded-full my-1 px-4 py-2 items-center`}
+      >
+        <img
+          src={walletIcon}
+          className={`w-5 h-4 pr-1 m-2 ${connectedWalletIconStyles}`}
+        />
 
         <button className="focus:outline-none mr-1 text-sm font-whyte-regular">
           {account ? formatAddress(account) : "Not connected"}

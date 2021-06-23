@@ -1,6 +1,10 @@
 // This page lists all syndicates.
 import React from "react";
-import Syndicates from "src/containers/syndicates";
+import dynamic from "next/dynamic";
+
+const Syndicates = dynamic(() => import("src/containers/syndicates"), {
+  ssr: false,
+});
 
 const SyndicatesPage = () => {
   return <Syndicates />;
