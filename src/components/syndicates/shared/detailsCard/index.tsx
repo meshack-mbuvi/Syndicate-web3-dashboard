@@ -33,25 +33,26 @@ export const DetailsCard = (props: {
 
   const { syndicateModifiableText } = syndicateDetailsConstants;
 
-  const { distributionTokensAllowanceDetails } = useSelector(
-    (state: RootState) => state.tokenDetailsReducer
-  );
-
-  const { syndicateAction } = useSelector(
-    (state: RootState) => state.web3Reducer
-  );
-
-  const { withdraw } = syndicateAction;
+  const {
+    tokenDetailsReducer: { distributionTokensAllowanceDetails },
+    syndicateMemberDetailsReducer: {
+      syndicateMemberDetailsLoading,
+      syndicateDistributionTokens,
+    },
+  } = useSelector((state: RootState) => state);
 
   //conditions under which the skeleton loader should be rendered.
   const showSkeletonLoader =
     !syndicate ||
     (loadingLPDetails && !syndicateDetails) ||
-    (withdraw &&
-      syndicate &&
+    (syndicate &&
       syndicate.distributionsEnabled &&
       !distributionTokensAllowanceDetails.length &&
-      !syndicateDetails);
+      !syndicateDetails) ||
+    (syndicateMemberDetailsLoading && title === "My Stats") ||
+    (!syndicateDistributionTokens &&
+      title === "My Stats" &&
+      syndicate.distributionsEnabled);
 
   const modifiableTooltip = (
     <div className="relative bg-gray-9 p-4 text-sm">
@@ -66,7 +67,7 @@ export const DetailsCard = (props: {
   return (
     <div className={`h-fit-content ${customStyles}`}>
       {showSkeletonLoader ? (
-        <div className="pl-4 mb-4">
+        <div className="mb-4">
           <SkeletonLoader height="9" width="full" borderRadius="rounded-md" />
         </div>
       ) : (
@@ -97,9 +98,7 @@ export const DetailsCard = (props: {
             className="flex justify-start visibility-container target-l-12"
             key={index}
           >
-            <div
-              className="flex justify-between items-center sm:my-3 my-3 w-full"
-            >
+            <div className="flex justify-between items-center sm:my-3 my-3 w-full">
               {showSkeletonLoader ? (
                 <SkeletonLoader
                   height="9"

@@ -270,8 +270,7 @@ const ModifySyndicateCapTable = (props: Props) => {
           setShowWalletConfirmationModal(false);
           setSubmitting(true);
         })
-        .on("receipt", (receipt) => {
-          console.log({ receipt });
+        .on("receipt", () => {
           setSubmitting(false);
 
           setShowFinalState(true);
@@ -341,7 +340,8 @@ const ModifySyndicateCapTable = (props: Props) => {
           show: showModifyCapTable,
           closeModal: () => setShowModifyCapTable(false),
           customWidth: "md:w-2/3 w-full",
-        }}>
+        }}
+      >
         <div className="mx-2 mb-8">
           <p className="text-gray-500 text-sm">
             Manually change the cap table and percentage ownerships for this
@@ -428,11 +428,13 @@ const ModifySyndicateCapTable = (props: Props) => {
                   <div className="flex flex-row justify-center py-1">
                     <label
                       htmlFor="syndicateAddress"
-                      className="block text-black text-sm font-medium w-7/12 flex justify-end">
+                      className="block text-black text-sm font-medium w-7/12 flex justify-end"
+                    >
                       Current Ownership of Syndicate:
                     </label>
                     <span
-                      className={`flex flex-grow rounded-md text-gray-500 px-4 text-sm font-ibm`}>
+                      className={`flex flex-grow rounded-md text-gray-500 px-4 text-sm font-ibm`}
+                    >
                       {currentOwnership}%
                     </span>
                   </div>
@@ -440,11 +442,13 @@ const ModifySyndicateCapTable = (props: Props) => {
                   <div className="flex flex-row justify-center py-2">
                     <label
                       htmlFor="syndicateAddress"
-                      className="block text-black text-sm font-medium w-7/12 flex justify-end">
+                      className="block text-black text-sm font-medium w-7/12 flex justify-end"
+                    >
                       New Ownership of Syndicate:
                     </label>
                     <span
-                      className={`flex flex-grow rounded-md text-gray-500  px-4 text-sm font-ibm w-5/12 flex justify-between`}>
+                      className={`flex flex-grow rounded-md text-gray-500  px-4 text-sm font-ibm w-5/12 flex justify-between`}
+                    >
                       {newOwnership}%{" "}
                       {`(${ownershipChange > 0 ? "+" : ""}${ownershipChange})%`}
                     </span>
@@ -453,11 +457,13 @@ const ModifySyndicateCapTable = (props: Props) => {
                   <div className="flex flex-row justify-center my-4">
                     <label
                       htmlFor="syndicateAddress"
-                      className="w-7/12 flex justify-end block text-black text-sm font-medium">
+                      className="w-7/12 flex justify-end block text-black text-sm font-medium"
+                    >
                       Ownership Change for All Other Depositors:
                     </label>
                     <span
-                      className={`flex flex-grow rounded-md px-4 text-sm font-ibm w-5/12 flex justify-between`}>
+                      className={`flex flex-grow rounded-md px-4 text-sm font-ibm w-5/12 flex justify-between`}
+                    >
                       {`${ownershipChange > 0 ? "-" : "+"}${Math.abs(
                         ownershipChange
                       )}%`}
@@ -478,7 +484,8 @@ const ModifySyndicateCapTable = (props: Props) => {
                     customClasses={`rounded-full bg-blue w-auto px-10 py-2 text-lg ${
                       validated && !submitting ? "" : "opacity-50"
                     }`}
-                    disabled={validated && !submitting ? false : true}>
+                    disabled={validated && !submitting ? false : true}
+                  >
                     Confirm
                   </Button>
                 )}
@@ -503,7 +510,8 @@ const ModifySyndicateCapTable = (props: Props) => {
       <PendingStateModal
         {...{
           show: submitting,
-        }}>
+        }}
+      >
         <div className="modal-header mb-4 font-medium text-center leading-8 text-2xl">
           {confirmingTransaction}
         </div>

@@ -18,7 +18,7 @@ export const Wallet = () => {
   const dispatch = useDispatch();
 
   const { oneSyndicatePerAccount } = useSelector(
-    (state: RootState) => state.syndicateLPDetailsReducer
+    (state: RootState) => state.syndicateMemberDetailsReducer
   );
   const [steps] = useState([
     {

@@ -6,7 +6,6 @@ import {
   HIDE_WALLET_MODAL,
   SET_PROVIDER,
   SET_PROVIDER_NAME,
-  SET_SYNDICATE_ACTION,
   SET_WEB3,
   SHOW_ERROR_MODAL,
   SHOW_WALLET_MODAL,
@@ -15,7 +14,7 @@ import {
 import { initialState } from "../initialState";
 
 export const web3Reducer = (state = initialState, action) => {
-  const { web3, syndicateAction } = state;
+  const { web3 } = state;
   switch (action.type) {
     case SET_WEB3:
       return {
@@ -88,12 +87,6 @@ export const web3Reducer = (state = initialState, action) => {
           isErrorModalOpen: false,
           error: null,
         },
-      };
-
-    case SET_SYNDICATE_ACTION:
-      return {
-        ...state,
-        syndicateAction: { ...syndicateAction, ...action.data },
       };
 
     default:

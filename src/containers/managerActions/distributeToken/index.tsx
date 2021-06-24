@@ -178,6 +178,7 @@ const DistributeToken = (props: Props) => {
               tokenAllowance,
               sufficientAllowanceSet: true,
               tokenSymbol,
+              tokenDecimals,
             },
           ];
           // dispatch action to store to update distribution token details

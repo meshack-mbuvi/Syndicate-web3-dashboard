@@ -91,12 +91,17 @@ export const getSyndicateMemberInfo = async (
     .getMemberInfo(syndicateAddress, memberAddress)
     .call()
     .then(async (result) => {
-      const memberDeposits = parseInt(
-        getWeiAmount(result[0], currentERC20Decimals, false)
+      
+      const memberDeposits = getWeiAmount(
+        result[0],
+        currentERC20Decimals,
+        false
       );
 
-      const memberTotalWithdrawals = parseInt(
-        getWeiAmount(result[1], currentERC20Decimals, false)
+      const memberTotalWithdrawals = getWeiAmount(
+        result[1],
+        currentERC20Decimals,
+        false
       );
 
       const memberAddressAllowed = result[2];

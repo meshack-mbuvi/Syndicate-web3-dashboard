@@ -94,7 +94,8 @@ const PortfolioAndDiscover = (props: MySyndicateProps) => {
           <SkeletonLoader
             width={width}
             height={height}
-            borderRadius={borderRadius}></SkeletonLoader>
+            borderRadius={borderRadius}
+          ></SkeletonLoader>
         </div>
       );
     }
@@ -164,7 +165,8 @@ const PortfolioAndDiscover = (props: MySyndicateProps) => {
                       ? () => dispatch(setOneSyndicatePerAccount(true))
                       : () => showSyndicateForm()
                   }
-                  createSyndicate={true}>
+                  createSyndicate={true}
+                >
                   Create a syndicate
                 </Button>
               ) : null}
@@ -189,7 +191,8 @@ const PortfolioAndDiscover = (props: MySyndicateProps) => {
               <Button
                 customClasses="border border-gray-5 self-center mt-6 font-whyte-light w-56 rounded-full bg-gray-4 h-12 w-48 p-3 pt-3 text-sm"
                 onClick={showSyndicateForm}
-                createSyndicate={true}>
+                createSyndicate={true}
+              >
                 Create a syndicate
               </Button>
             </div>

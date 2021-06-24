@@ -31,6 +31,7 @@ type tokenData = {
   tokenDistributions: string;
   sufficientAllowanceSet: boolean;
   tokenSymbol: string;
+  tokenDecimals: number;
 };
 
 type tokenDetails = tokenData[];

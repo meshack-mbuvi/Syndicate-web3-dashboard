@@ -6,7 +6,6 @@ import {
   HIDE_ERROR_MODAL,
   HIDE_WALLET_MODAL,
   SET_PROVIDER_NAME,
-  SET_SYNDICATE_ACTION,
   SET_WEB3,
   SHOW_ERROR_MODAL,
   SHOW_WALLET_MODAL,
@@ -80,23 +79,4 @@ export const hideErrorModal = () => {
   return {
     type: HIDE_ERROR_MODAL,
   };
-};
-
-export const setSyndicateAction = (data: {
-  withdraw: Boolean;
-  deposit: Boolean;
-  managerView: Boolean;
-  generalView: Boolean;
-}) => async (dispatch) => {
-  return dispatch({
-    type: SET_SYNDICATE_ACTION,
-    data,
-  });
-};
-
-export const getWeb3 = () => (dispatch, getState) => {
-  // grab current state
-  const state = getState();
-
-  return state;
 };

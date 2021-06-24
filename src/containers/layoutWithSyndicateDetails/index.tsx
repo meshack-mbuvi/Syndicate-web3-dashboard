@@ -14,7 +14,6 @@ import { syndicateActionConstants } from "src/components/syndicates/shared/Const
 import { faExclamationTriangle } from "@fortawesome/free-solid-svg-icons";
 import useOnScreen from "@/components/syndicates/hooks/useOnScreen";
 
-
 const LayoutWithSyndicateDetails = ({ children }) => {
   // retrieve state
   const {
@@ -47,17 +46,17 @@ const LayoutWithSyndicateDetails = ({ children }) => {
 
     if (syndicateAddress !== undefined && account !== undefined) {
       switch (router.pathname) {
-        case '/syndicates/[syndicateAddress]/manage':
+        case "/syndicates/[syndicateAddress]/manage":
           if (syndicateAddress !== account) {
             router.replace(`/syndicates/${syndicateAddress}/deposit`);
           }
           break;
-        case '/syndicates/[syndicateAddress]/deposit':
+        case "/syndicates/[syndicateAddress]/deposit":
           if (syndicateAddress === account) {
             router.replace(`/syndicates/${syndicateAddress}/manage`);
           }
           break;
-        case '/syndicates/[syndicateAddress]/withdraw':
+        case "/syndicates/[syndicateAddress]/withdraw":
           if (syndicateAddress === account) {
             router.replace(`/syndicates/${syndicateAddress}/manage`);
           }
@@ -66,7 +65,6 @@ const LayoutWithSyndicateDetails = ({ children }) => {
           break;
       }
     }
-
   }, [account, router.isReady]);
 
   useEffect(() => {
@@ -153,15 +151,14 @@ const LayoutWithSyndicateDetails = ({ children }) => {
               </div>
               {/* Left Column */}
               <div className="md:w-3/5 w-full pb-6 pt-28 md:pt-0 md:pr-24">
-                <div ref={ref} className="w-full md:hidden" /> {/* its used as an identifier for ref in small devices */}
+                <div ref={ref} className="w-full md:hidden" />{" "}
+                {/* its used as an identifier for ref in small devices */}
                 <SyndicateDetails
                   accountIsManager={accountIsManager}
                   syndicate={syndicate}
                   isChildVisible={isChildVisible}
                 >
-                  <div className="w-full md:hidden">
-                    {children}
-                  </div>
+                  <div className="w-full md:hidden">{children}</div>
                 </SyndicateDetails>
               </div>
               {/* Right Column */}
@@ -177,7 +174,7 @@ const LayoutWithSyndicateDetails = ({ children }) => {
         </div>
       </ErrorBoundary>
     </Layout>
-  )
-}
+  );
+};
 
 export default LayoutWithSyndicateDetails;

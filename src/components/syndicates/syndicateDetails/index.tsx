@@ -34,6 +34,7 @@ import {
   profitShareToSyndicateLeadToolTip,
   profitShareToSyndicateProtocolToolTip,
 } from "../shared/Constants";
+import { setSyndicateDistributionTokens } from "src/redux/actions/syndicateMemberDetails";
 
 const SyndicateDetails = (props: {
   syndicateDetails: any;
@@ -57,6 +58,9 @@ const SyndicateDetails = (props: {
   const { syndicateContractInstance } = useSelector(
     (state: RootState) => state.syndicateInstanceReducer
   );
+  const {
+    syndicateMemberDetailsReducer: { syndicateDistributionTokens },
+  } = useSelector((state: RootState) => state);
 
   const dispatch = useDispatch();
 
@@ -227,6 +231,7 @@ const SyndicateDetails = (props: {
       // get all distributionERC20 tokens
       let distributionERC20s = [];
       let allowanceAndDistributionDetails = [];
+      let syndicateDistributionTokensArray = [];
 
       for (let i = 0; i < distributionEvents.length; i++) {
         const { distributionERC20Address } = distributionEvents[i].returnValues;
@@ -282,10 +287,43 @@ const SyndicateDetails = (props: {
           tokenDistributions,
           sufficientAllowanceSet,
           tokenSymbol,
+          tokenDecimals,
+        });
+
+        syndicateDistributionTokensArray.push({
+          tokenAddress,
+          tokenSymbol,
+          tokenDecimals,
+          tokenDistributions,
+          selected: false,
         });
       }
+
       // dispatch token distribution details to the redux store
       dispatch(storeDistributionTokensDetails(allowanceAndDistributionDetails));
+
+      // store distribution token details for the withdrawals page.
+      // checking if we already have the value set in the redux store
+      // this avoids a scenario where token selected states are reset when
+      // the parent component is refreshed.
+      if (syndicateDistributionTokens) {
+        for (let i = 0; i < syndicateDistributionTokensArray.length; i++) {
+          let currentToken = syndicateDistributionTokensArray[i];
+          for (let j = 0; j < syndicateDistributionTokens.length; j++) {
+            let currentStoredToken = syndicateDistributionTokens[j];
+            if (
+              currentToken.tokenAddress === currentStoredToken.tokenAddress &&
+              currentStoredToken.selected
+            ) {
+              syndicateDistributionTokensArray[i].selected = true;
+            }
+          }
+        }
+      }
+
+      dispatch(
+        setSyndicateDistributionTokens(syndicateDistributionTokensArray)
+      );
 
       //reset distribution token fields
       dispatch(storeDepositTokenAllowance([]));
@@ -336,7 +374,7 @@ const SyndicateDetails = (props: {
 
   // assess manager deposit and distributions token allowance
   useEffect(() => {
-    if (depositTokenContract && web3 && syndicateContractInstance) {
+    if (web3 && syndicateContractInstance) {
       // if the syndicate is still open to deposits, we'll check the deposit token allowance.
       // otherwise, we'll check the distributions token(s) allowance(s)
       if (depositsEnabled) {

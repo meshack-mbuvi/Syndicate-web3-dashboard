@@ -20,12 +20,6 @@ type InitialState = {
   submitting: boolean;
   showWalletModal: boolean;
   syndicateInvestments: any[];
-  syndicateAction: {
-    withdraw: boolean;
-    deposit: boolean;
-    managerView: boolean;
-    generalView: boolean;
-  };
   syndicateDetails: {
     totalDepositors: number;
     totalDeposits: number;
@@ -34,20 +28,24 @@ type InitialState = {
     profitSharedToSyndicateLead: number;
     totalOperatingFees: number;
   };
-  syndicateLPDetails: {
-    myDeposits: number;
-    myPercentageOfThisSyndicate: number;
-    myDistributionsToDate: number;
-    myAddressAllowed: boolean;
-    myWithdrawalsToDate: number;
-    withdrawalsToDepositPercentage: number;
+  memberDepositDetails: {
+    memberTotalDeposits: string;
+    memberPercentageOfSyndicate: string;
+    memberAddressAllowed: boolean;
+    memberMaxDepositReached: boolean;
+  };
+  memberWithdrawalDetails: {
+    memberDistributionsToDate: string;
+    memberDistributionsWithdrawalsToDate: string;
+    memberWithdrawalsToDepositPercentage: string;
   };
   syndicateDetailsLoading: boolean;
-  syndicateLPDetailsLoading: boolean;
+  syndicateMemberDetailsLoading: boolean;
   syndicateContractInstance: { [key: string]: any };
   depositTokenAllowanceDetails: [];
   distributionTokensAllowanceDetails: [];
   oneSyndicatePerAccount: boolean;
+  syndicateDistributionTokens: any;
 };
 
 /**
@@ -76,12 +74,6 @@ export const initialState: InitialState = {
   submitting: false,
   showWalletModal: false,
   syndicateInvestments: [],
-  syndicateAction: {
-    withdraw: false,
-    deposit: false,
-    managerView: false,
-    generalView: false,
-  },
   syndicateDetails: {
     totalDepositors: 0,
     totalDeposits: 0,
@@ -90,18 +82,22 @@ export const initialState: InitialState = {
     profitSharedToSyndicateLead: 0,
     totalOperatingFees: 0,
   },
-  syndicateLPDetails: {
-    myDeposits: 0,
-    myPercentageOfThisSyndicate: 0,
-    myDistributionsToDate: 0,
-    myAddressAllowed: false,
-    myWithdrawalsToDate: 0,
-    withdrawalsToDepositPercentage: 0,
+  memberDepositDetails: {
+    memberTotalDeposits: "0",
+    memberPercentageOfSyndicate: "0",
+    memberAddressAllowed: true,
+    memberMaxDepositReached: false,
+  },
+  memberWithdrawalDetails: {
+    memberDistributionsToDate: "0",
+    memberDistributionsWithdrawalsToDate: "0",
+    memberWithdrawalsToDepositPercentage: "0",
   },
   syndicateDetailsLoading: false,
-  syndicateLPDetailsLoading: false,
+  syndicateMemberDetailsLoading: false,
   syndicateContractInstance: {},
   depositTokenAllowanceDetails: [],
   distributionTokensAllowanceDetails: [],
   oneSyndicatePerAccount: false,
+  syndicateDistributionTokens: null,
 };

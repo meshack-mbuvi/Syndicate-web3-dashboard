@@ -2,45 +2,110 @@ import { RootState } from "@/redux/store";
 import { Listbox, Transition } from "@headlessui/react";
 import { CheckIcon, SelectorIcon } from "@heroicons/react/solid";
 import React, { Fragment, useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { setSyndicateDistributionTokens } from "src/redux/actions/syndicateMemberDetails";
+import { updateMemberWithdrawalDetails } from "src/redux/actions/syndicateMemberDetails/memberWithdrawalsInfo";
+import { useRouter } from "next/router";
 
 const classNames = (...classes) => {
   return classes.filter(Boolean).join(" ");
 };
 
-interface SelectProps {
-  setTotalTokenDistributions: Function;
-}
+export const TokenSelect = () => {
+  const dispatch = useDispatch();
+  const router = useRouter();
+  const { syndicateAddress } = router.query;
 
-export const TokenSelect = (props: SelectProps) => {
-  const { distributionTokensAllowanceDetails } = useSelector(
-    (state: RootState) => state.tokenDetailsReducer
-  );
+  const {
+    syndicateMemberDetailsReducer: { syndicateDistributionTokens },
+  } = useSelector((state: RootState) => state);
 
-  const [selected, setSelected] = useState<any>({});
-  const { setTotalTokenDistributions } = props;
+  const [selected, setSelected] = useState<any>("");
 
-  /**
-   * set initial value for token select drop-down.
-   */
+  // set initial value for token select drop-down.
   useEffect(() => {
-    if (distributionTokensAllowanceDetails.length) {
-      setSelected(distributionTokensAllowanceDetails[0]);
+    if (syndicateDistributionTokens) {
+      for (let i = 0; i < syndicateDistributionTokens.length; i++) {
+        // set token to selected token if the token was previously set as selected.
+        // no need to dispatch here since we're already using store values.
+        if (syndicateDistributionTokens[i].selected) {
+          setSelected(syndicateDistributionTokens[i]);
+          return;
+        }
+      }
+      // set selected to the first token if there is no token
+      // that has been selected previously.
+      // new token details object will be dispatched to the redux store.
+      const syndicateDistributionTokensCopy = [...syndicateDistributionTokens];
+      syndicateDistributionTokensCopy[0].selected = true;
+
+      dispatch(setSyndicateDistributionTokens(syndicateDistributionTokensCopy));
+      setSelected(syndicateDistributionTokens[0]);
     }
-  }, [distributionTokensAllowanceDetails]);
+  }, [syndicateDistributionTokens, selected]);
 
   /**
    * set the total available distributions
    */
   useEffect(() => {
     if (selected) {
-      const { tokenSymbol, tokenDistributions, tokenAddress } = selected;
-      setTotalTokenDistributions(tokenSymbol, tokenDistributions, tokenAddress);
+      const { tokenDistributions, tokenAddress, tokenDecimals } = selected;
+
+      // not checking if these values are defined before dispatching
+      // actions will cause the component to reset them when unmounted.
+      if (tokenAddress) {
+        const currentTokenAvailableDistributions = tokenDistributions;
+        const currentDistributionTokenDecimals = tokenDecimals;
+        const currentDistributionTokenAddress = tokenAddress;
+
+        // this updates member distributions to date, withdrawals to date,
+        // and withdrawals/deposits percentage
+        updateMemberDistributionDetails(
+          currentTokenAvailableDistributions,
+          currentDistributionTokenDecimals,
+          currentDistributionTokenAddress
+        );
+      }
     }
   }, [selected]);
 
+  // method to update member withdrawal details.
+  const updateMemberDistributionDetails = (
+    currentTokenAvailableDistributions: string,
+    currentDistributionTokenDecimals: number,
+    currentDistributionTokenAddress: string
+  ) => {
+    dispatch(
+      updateMemberWithdrawalDetails({
+        syndicateAddress,
+        currentTokenAvailableDistributions,
+        currentDistributionTokenDecimals,
+        currentDistributionTokenAddress,
+      })
+    );
+  };
+
+  const handleChange = (selectedDistributionToken) => {
+    // dispatch selected token
+    const selectedTokenAddress = selectedDistributionToken.tokenAddress;
+    const syndicateDistributionTokensCopy = [...syndicateDistributionTokens];
+
+    for (let i = 0; i < syndicateDistributionTokensCopy.length; i++) {
+      if (
+        selectedTokenAddress === syndicateDistributionTokensCopy[i].tokenAddress
+      ) {
+        syndicateDistributionTokensCopy[i].selected = true;
+      } else {
+        syndicateDistributionTokensCopy[i].selected = false;
+      }
+    }
+
+    dispatch(setSyndicateDistributionTokens(syndicateDistributionTokensCopy));
+    setSelected(selectedDistributionToken);
+  };
+
   return (
-    <Listbox value={selected} onChange={setSelected}>
+    <Listbox value={selected} onChange={handleChange}>
       {({ open }) => (
         <>
           <div className="relative w-5/12">
@@ -63,12 +128,14 @@ export const TokenSelect = (props: SelectProps) => {
               as={Fragment}
               leave="transition ease-in duration-100"
               leaveFrom="opacity-100"
-              leaveTo="opacity-0">
+              leaveTo="opacity-0"
+            >
               <Listbox.Options
                 static
-                className="absolute mt-1 w-full bg-white shadow-lg max-h-56 rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm">
-                {distributionTokensAllowanceDetails.length &&
-                  distributionTokensAllowanceDetails.map((token) => (
+                className="absolute mt-1 w-full bg-white shadow-lg max-h-56 rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm"
+              >
+                {syndicateDistributionTokens &&
+                  syndicateDistributionTokens.map((token) => (
                     <Listbox.Option
                       key={token.tokenAddress}
                       className={({ active }) =>
@@ -77,7 +144,8 @@ export const TokenSelect = (props: SelectProps) => {
                           "cursor-default select-none relative py-2 pl-3 pr-9"
                         )
                       }
-                      value={token}>
+                      value={token}
+                    >
                       {({ selected, active }) => (
                         <>
                           <div className="flex items-center">
@@ -85,7 +153,8 @@ export const TokenSelect = (props: SelectProps) => {
                               className={classNames(
                                 selected ? "font-semibold" : "font-normal",
                                 "ml-3 block truncate"
-                              )}>
+                              )}
+                            >
                               {token.tokenSymbol}
                             </span>
                           </div>
@@ -95,7 +164,8 @@ export const TokenSelect = (props: SelectProps) => {
                               className={classNames(
                                 active ? "text-white" : "text-blue",
                                 "absolute inset-y-0 right-0 flex items-center pr-4"
-                              )}>
+                              )}
+                            >
                               <CheckIcon
                                 className="h-5 w-5"
                                 aria-hidden="true"

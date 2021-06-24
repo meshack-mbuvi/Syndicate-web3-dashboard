@@ -3,7 +3,7 @@ import { web3Reducer } from "./connectWallet";
 import { loadingReducer } from "./helpers";
 import { syndicatesReducer } from "./syndicates";
 import { syndicateDetailsReducer } from "./syndicateDetails";
-import { syndicateLPDetailsReducer } from "./syndicateLPDetails";
+import { syndicateMemberDetailsReducer } from "./syndicateMemberDetails";
 import { syndicateInstanceReducer } from "./syndicateInstance";
 import { tokenDetailsReducer } from "./tokenAllowances";
 
@@ -12,7 +12,7 @@ export const rootReducer = combineReducers({
   syndicatesReducer,
   loadingReducer,
   syndicateDetailsReducer,
-  syndicateLPDetailsReducer,
+  syndicateMemberDetailsReducer,
   syndicateInstanceReducer,
   tokenDetailsReducer,
 });

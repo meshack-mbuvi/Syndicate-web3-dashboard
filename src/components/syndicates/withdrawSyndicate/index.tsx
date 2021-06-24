@@ -15,7 +15,8 @@ import { ERC20TokenDetails } from "@/utils/ERC20Methods";
 import { Validate } from "@/utils/validators";
 import { getMetamaskError } from "@/helpers";
 import { TokenMappings } from "@/utils/tokenMappings";
-import { updateSyndicateMemberInfo } from "@/redux/actions/syndicateMemberDetails/updateMemberInfo";
+import { updateMemberWithdrawalDetails } from "@/redux/actions/syndicateMemberDetails/memberWithdrawalsInfo";
+import { updateMemberDepositDetails } from "@/redux/actions/syndicateMemberDetails/memberDepositsInfo";
 
 import {
   constants,
@@ -32,7 +33,6 @@ import { UnavailableState } from "../shared/unavailableState";
 import { SyndicateActionButton } from "../shared/syndicateActionButton";
 import { TokenSelect } from "../shared/tokenSelect";
 import { useUnavailableState } from "../hooks/useUnavailableState";
-
 
 const {
   actionFailedError,
@@ -62,16 +62,18 @@ const {
   walletPendingConfirmPendingMessage,
 } = walletConfirmConstants;
 
-
 const WithdrawSyndicate = () => {
   const {
     tokenDetailsReducer: { distributionTokensAllowanceDetails },
     syndicateInstanceReducer: { syndicateContractInstance },
-    syndicateLPDetailsReducer: { syndicateLPDetails },
+    syndicateMemberDetailsReducer: {
+      memberDepositDetails,
+      memberWithdrawalDetails,
+      syndicateDistributionTokens,
+    },
     syndicatesReducer: { syndicate },
     web3Reducer: {
       web3: { account },
-      syndicateAction,
     },
   } = useSelector((state: RootState) => state);
 
@@ -81,57 +83,93 @@ const WithdrawSyndicate = () => {
   const { title, message, renderUnavailableState } = useUnavailableState();
 
   // STATES
-  const [withdrawalsAvailable, setWithdrawalsAvailable] = useState<Boolean>(true);
-  const [submittingWithdrawal, setSubmittingWithdrawal] = useState<boolean>(false);
-  const [currentDistributionTokenDecimals, setCurrentDistributionTokenDecimals] = useState<number>(18);
-  const [currentDistributionTokenAddress, setCurrentDistributionTokenAddress] = useState<string>("");
-  const [metamaskConfirmPending, setMetamaskConfirmPending] = useState<boolean>(false);
-  const [successfulWithdrawal, setSuccessfulWithdrawal] = useState<boolean>(false);
-  const [metamaskWithdrawError, setMetamaskWithdrawError] = useState<string>("");
+  const [withdrawalsAvailable, setWithdrawalsAvailable] = useState<Boolean>(
+    true
+  );
+  const [submittingWithdrawal, setSubmittingWithdrawal] = useState<boolean>(
+    false
+  );
+  const [metamaskConfirmPending, setMetamaskConfirmPending] = useState<boolean>(
+    false
+  );
+  const [successfulWithdrawal, setSuccessfulWithdrawal] = useState<boolean>(
+    false
+  );
+  const [metamaskWithdrawError, setMetamaskWithdrawError] = useState<string>(
+    ""
+  );
   const [withdrawalFailed, setWithdrawalFailed] = useState<boolean>(false);
   const [loadingLPDetails, setLoadingLPDetails] = useState<boolean>(false);
   const [amount, setAmount] = useState<number>(0);
-  const [currentERC20, setCurrentERC20] = useState<string>("DAI");
+  const [depositERC20Symbol, setDepositERC20Symbol] = useState<string>("DAI");
   const [amountError, setAmountError] = useState<string>("");
   const [showErrorMessage, setShowErrorMessage] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>("");
-  const [totalAvailableDistributions, setTotalAvailableDistributions] = useState<string>("0");
-  const [currentDistributionTokenSymbol, setCurrentDistributionTokenSymbol] = useState<string>("");
-  const [amountGreaterThanMemberDistributions, setAmountGreaterThanMemberDistributions] = useState<boolean>(false);
-  const [withdrawalAmountGreaterThanDeposits, setWithdrawalAmountGreaterThanDeposits] = useState<boolean>(false);
-  const [withdrawalAmountLessThanMinDeposits, setWithdrawalAmountLessThanMinDeposits] = useState<boolean>(false);
-  const [currentERC20Decimals, setCurrentERC20Decimals] = useState<number>(18);
-
+  const [
+    amountGreaterThanMemberDistributions,
+    setAmountGreaterThanMemberDistributions,
+  ] = useState<boolean>(false);
+  const [
+    withdrawalAmountGreaterThanDeposits,
+    setWithdrawalAmountGreaterThanDeposits,
+  ] = useState<boolean>(false);
+  const [
+    withdrawalAmountLessThanMinDeposits,
+    setWithdrawalAmountLessThanMinDeposits,
+  ] = useState<boolean>(false);
+  const [depositTokenDecimals, setDepositTokenDecimals] = useState<number>(18);
 
   // DEFINITIONS
   const { syndicateAddress } = router.query;
-  const { withdraw } = syndicateAction;
   const {
-    myDeposits,
-    withdrawalsToDepositPercentage,
-    myDistributionsToDate,
-    myWithdrawalsToDate,
-    myPercentageOfThisSyndicate,
-  } = syndicateLPDetails;
+    memberTotalDeposits,
+    memberPercentageOfSyndicate,
+  } = memberDepositDetails;
+
+  const {
+    memberWithdrawalsToDepositPercentage,
+    memberDistributionsToDate,
+    memberDistributionsWithdrawalsToDate,
+  } = memberWithdrawalDetails;
+
+  if (syndicateDistributionTokens) {
+    const selectedToken = syndicateDistributionTokens.find(
+      (token) => token.selected
+    );
+
+    if (selectedToken) {
+      var {
+        tokenDistributions,
+        tokenSymbol,
+        tokenAddress,
+        tokenDecimals,
+      } = selectedToken;
+    }
+  }
+
+  const currentTokenAvailableDistributions = tokenDistributions;
+  const currentDistributionTokenSymbol = tokenSymbol;
+  const currentDistributionTokenDecimals = tokenDecimals;
+  const currentDistributionTokenAddress = tokenAddress;
 
   let showDepositLink = false;
 
   const WithdrawalSections = [
     {
       header: "My Distributions to Date",
-      subText: `${myDistributionsToDate} ${currentERC20}`,
+      subText: `${memberDistributionsToDate} ${currentDistributionTokenSymbol}`,
       tooltip: myDistributionsToDateToolTip,
       screen: "withdrawal",
     },
     {
       header: "My Withdraws to Date",
-      subText: `${myWithdrawalsToDate} ${currentERC20}`,
+      subText: `${memberDistributionsWithdrawalsToDate} ${currentDistributionTokenSymbol}`,
       tooltip: myWithDrawalsToDateTooltip,
       screen: "withdrawal",
     },
     {
       header: "Total Withdraws / Deposits",
-      subText: `${withdrawalsToDepositPercentage}%`,
+      subText: `${memberWithdrawalsToDepositPercentage}%`,
       tooltip: withdrawalsToDepositPercentageToolTip,
       screen: "withdrawal",
     },
@@ -140,13 +178,13 @@ const WithdrawSyndicate = () => {
   const depositSections = [
     {
       header: "My Deposits",
-      subText: `${myDeposits} ${currentERC20} ($${myDeposits})`,
+      subText: `${memberTotalDeposits} ${depositERC20Symbol} ($${memberTotalDeposits})`,
       tooltip: myDepositsToolTip,
       screen: "deposit",
     },
     {
       header: "My % of This Syndicate",
-      subText: `${myPercentageOfThisSyndicate}%`,
+      subText: `${memberPercentageOfSyndicate}%`,
       tooltip: myPercentageOfThisSyndicateToolTip,
       screen: "deposit",
     },
@@ -157,10 +195,7 @@ const WithdrawSyndicate = () => {
   // check whether the current syndicate is accepting withdrawals
   useEffect(() => {
     if (syndicate) {
-      const {
-        depositsEnabled,
-        distributionsEnabled,
-      } = syndicate;
+      const { depositsEnabled, distributionsEnabled } = syndicate;
 
       // if a syndicate is closed and distributions have not been enabled
       // the member cannot withdraw from it.
@@ -177,18 +212,23 @@ const WithdrawSyndicate = () => {
   useEffect(() => {
     if (account && syndicateContractInstance && syndicate) {
       setLoadingLPDetails(true);
-      // storing member details when totalAvailableDistributions is undefined will reset its previous value when withdrawal is in progress.
-      if (totalAvailableDistributions && +myDistributionsToDate === 0) {
-        storeMemberDetails();
-      }
+      storeMemberWithdrawalDetails();
+
+      dispatch(
+        updateMemberDepositDetails({
+          syndicateAddress,
+          depositTokenDecimals,
+        })
+      );
 
       setLoadingLPDetails(false);
     }
   }, [
     syndicate,
     syndicateContractInstance,
-    totalAvailableDistributions,
+    currentTokenAvailableDistributions,
     account,
+    depositTokenDecimals,
   ]);
 
   // set token symbol based on deposit token address
@@ -198,30 +238,29 @@ const WithdrawSyndicate = () => {
     if (syndicate) {
       // set token symbol based on token address
       const tokenAddress = syndicate.depositERC20Address;
+      // set token decimal places.
+      getTokenDecimals(tokenAddress);
       const mappedTokenAddress = Object.keys(TokenMappings).find(
         (key) => key.toLowerCase() == tokenAddress.toLowerCase()
       );
       if (mappedTokenAddress) {
-        setCurrentERC20(TokenMappings[mappedTokenAddress]);
+        setDepositERC20Symbol(TokenMappings[mappedTokenAddress]);
       }
-
-      // set token decimal places.
-      getTokenDecimals(tokenAddress);
     }
   }, [syndicate]);
 
   // check for errors on the member withdrawal page.
   useEffect(() => {
-    if (syndicate && syndicateLPDetails) {
+    if (syndicate && memberDepositDetails) {
       // show error when amount is greater than member's available distributions.
       // or when the amount is greater than member deposits(members is withdrawing their deposits)
       // or when the member's deposits minus the amount exceeds the minimum member deposit.
       const amountGreaterThanMemberDistributions =
-        +amount > +myDistributionsToDate;
-      const amountGreaterThanMemberDeposits = +amount > +myDeposits;
+        +amount > +memberDistributionsToDate;
+      const amountGreaterThanMemberDeposits = +amount > +memberTotalDeposits;
       const { depositMinMember } = syndicate;
       const amountLessThanMinDeposits =
-        +myDeposits - +amount < depositMinMember;
+        +memberTotalDeposits - +amount < depositMinMember;
 
       if (
         amountGreaterThanMemberDistributions &&
@@ -250,8 +289,7 @@ const WithdrawSyndicate = () => {
         setWithdrawalAmountLessThanMinDeposits(false);
       }
     }
-  }, [amount, syndicateLPDetails]);
-
+  }, [amount, memberDepositDetails]);
 
   // CONDITIONS
 
@@ -279,24 +317,23 @@ const WithdrawSyndicate = () => {
   const showSkeletonLoader =
     !syndicate ||
     loadingLPDetails ||
-    (withdraw &&
-      syndicate &&
+    (syndicate &&
       syndicate.distributionsEnabled &&
       !distributionTokensAllowanceDetails.length);
 
   // set title and texts of section based on
   // whether this is a withdrawal or a deposit.
   let totalDistributionsText = `${floatedNumberWithCommas(
-    totalAvailableDistributions
+    currentTokenAvailableDistributions
   )} ${
     currentDistributionTokenSymbol ? currentDistributionTokenSymbol : ""
   } ($${floatedNumberWithCommas(
-    totalAvailableDistributions
+    currentTokenAvailableDistributions
   )}) distributions available.`;
   if (syndicate?.depositsEnabled) {
-    totalDistributionsText = `${myDeposits} ${
+    totalDistributionsText = `${memberTotalDeposits} ${
       currentDistributionTokenSymbol ? currentDistributionTokenSymbol : ""
-    } ($${myDeposits}) deposits available.`;
+    } ($${memberTotalDeposits}) deposits available.`;
   }
 
   // conditions for showing validation error message
@@ -316,10 +353,7 @@ const WithdrawSyndicate = () => {
 
   // show error message depending on what triggered it on the deposit/withdrawal page
   let errorMessageText = amountError;
-  if (
-    amountGreaterThanMemberDistributions &&
-    syndicate?.distributionsEnabled
-  ) {
+  if (amountGreaterThanMemberDistributions && syndicate?.distributionsEnabled) {
     errorMessageText = amountGreaterThanMemberDistributionsText;
   } else if (withdrawalAmountGreaterThanDeposits) {
     errorMessageText = withdrawalAmountGreaterThanMemberDeposits;
@@ -335,35 +369,35 @@ const WithdrawSyndicate = () => {
   if (
     amountGreaterThanMemberDistributions ||
     withdrawalAmountGreaterThanDeposits ||
-    withdrawalAmountLessThanMinDeposits
+    withdrawalAmountLessThanMinDeposits ||
+    +amount === 0
   ) {
     disableWithrawButton = true;
   }
 
   // set LP details section based on state
   let sections = depositSections;
-  if (withdraw && syndicate?.distributionsEnabled) {
+  if (syndicate?.distributionsEnabled) {
     sections = WithdrawalSections;
-  } else if (withdraw && !syndicate?.distributionsEnabled) {
+  } else if (!syndicate?.distributionsEnabled) {
     sections = depositSections;
   }
 
   if (syndicate) {
     const { allowlistEnabled } = syndicate;
-    const { myAddressAllowed } = syndicateLPDetails;
+    const { myAddressAllowed } = memberDepositDetails;
 
     // On the withdrawal section, show link to deposit page if
     // allowListEnabled is set and member
     // deposit is zero
     if (syndicate.depositsEnabled) {
-      if (allowlistEnabled && withdraw && +myDeposits === 0) {
+      if (allowlistEnabled && +memberTotalDeposits === 0) {
         showDepositLink = myAddressAllowed;
       } else {
-        showDepositLink = withdraw && +myDeposits === 0;
+        showDepositLink = +memberTotalDeposits === 0;
       }
     }
   }
-
 
   // FUNCTIONS
 
@@ -409,7 +443,7 @@ const WithdrawSyndicate = () => {
           );
 
           //store updated member details
-          storeMemberDetails();
+          storeMemberWithdrawalDetails();
 
           setSubmittingWithdrawal(false);
           setSuccessfulWithdrawal(true);
@@ -435,13 +469,13 @@ const WithdrawSyndicate = () => {
    * This will be called whenever member details need to be updated
    * after an action.
    */
-   const storeMemberDetails = () => {
+  const storeMemberWithdrawalDetails = () => {
     dispatch(
-      updateSyndicateMemberInfo({
+      updateMemberWithdrawalDetails({
         syndicateAddress,
-        totalAvailableDistributions,
-        currentERC20Decimals,
+        currentTokenAvailableDistributions,
         currentDistributionTokenDecimals,
+        currentDistributionTokenAddress,
       })
     );
   };
@@ -454,14 +488,8 @@ const WithdrawSyndicate = () => {
       return dispatch(showWalletModal());
     }
 
-    // Call invest or withdrawal functions based on current state.
-    // deposit - page is in deposit mode
-    // withdraw - page is in withdraw mode
-    // these values are fetched from the redux store.
     try {
-      if (withdraw) {
-        await withdrawFromSyndicate(amount);
-      }
+      await withdrawFromSyndicate(amount);
     } catch (error) {
       // show error message for failed investment
       setShowErrorMessage(true);
@@ -477,36 +505,9 @@ const WithdrawSyndicate = () => {
 
     const message = Validate(value);
     if (message) {
-      setAmountError(
-        `Withdrawal amount ${message}`
-      );
+      setAmountError(`Withdrawal amount ${message}`);
     } else {
       setAmountError("");
-    }
-  };
-
-  /**
-   * set total available distributions for the token that is currently selected
-   * from the withdrawal page select drop-down.
-   * @param tokenSymbol the symbol of the currently selected distribution token
-   * @param tokenDistributions the total available distributions of the token
-   */
-   const setTotalTokenDistributions = async (
-    tokenSymbol: string,
-    tokenDistributions: string,
-    tokenAddress: string
-  ) => {
-    // set total distributions available and token symbol for the selected token.
-    // this updates the distributions available value on the syndicate details page.
-    setTotalAvailableDistributions(tokenDistributions);
-    setCurrentDistributionTokenSymbol(tokenSymbol);
-    setCurrentDistributionTokenAddress(tokenAddress);
-
-    // set token decimals
-    if (tokenAddress) {
-      const distributionTokenDetails = new ERC20TokenDetails(tokenAddress);
-      const distributionTokenDecimals = await distributionTokenDetails.getTokenDecimals();
-      setCurrentDistributionTokenDecimals(distributionTokenDecimals);
     }
   };
 
@@ -533,7 +534,7 @@ const WithdrawSyndicate = () => {
     const ERC20Details = new ERC20TokenDetails(tokenAddress);
     const tokenDecimals = await ERC20Details.getTokenDecimals();
     if (tokenDecimals !== null) {
-      setCurrentERC20Decimals(parseInt(tokenDecimals));
+      setDepositTokenDecimals(parseInt(tokenDecimals));
     }
   };
 
@@ -557,9 +558,9 @@ const WithdrawSyndicate = () => {
           }`}
         >
           {/* Show is read only text if no provider */}
-          {renderUnavailableState ?
-            (<UnavailableState title={title} message={message} />) :
-          withdrawalsAvailable ? (
+          {renderUnavailableState ? (
+            <UnavailableState title={title} message={message} />
+          ) : withdrawalsAvailable ? (
             <>
               {submittingWithdrawal ? (
                 <SyndicateActionLoader
@@ -586,7 +587,7 @@ const WithdrawSyndicate = () => {
                   subText={walletPendingConfirmPendingMessage}
                   pending={true}
                 />
-              ) : successfulWithdrawal && withdraw ? (
+              ) : successfulWithdrawal ? (
                 <SyndicateActionLoader
                   contractAddress={syndicateAddress}
                   headerText={withdrawalSuccessTitleText}
@@ -596,7 +597,7 @@ const WithdrawSyndicate = () => {
                   buttonText={withdrawalSuccessButtonText}
                   closeLoader={closeSyndicateActionLoader}
                 />
-              ) : withdraw && +myDeposits === 0 && !showSkeletonLoader ? (
+              ) : +memberTotalDeposits === 0 && !showSkeletonLoader ? (
                 <SyndicateActionLoader
                   headerText={nonMemberWithdrawalTitleText}
                   subText={nonMemberWithdrawalText}
@@ -616,7 +617,10 @@ const WithdrawSyndicate = () => {
                     </div>
                   ) : (
                     <div className="flex items-center">
-                      <img className="mr-2 relative -top-1" src={"/images/deposit.svg"} />
+                      <img
+                        className="mr-2 relative -top-1"
+                        src={"/images/deposit.svg"}
+                      />
 
                       <p className="font-semibold text-xl p-2">
                         {withdrawalPageTitleText}
@@ -659,16 +663,16 @@ const WithdrawSyndicate = () => {
                             className={`min-w-0 rounded-md bg-gray-9 border border-gray-24 text-white font-whyte focus:outline-none focus:ring-gray-24 focus:border-gray-24 flex-grow mr-6 `}
                           />
                           {syndicate && syndicate.distributionsEnabled ? (
-                            <TokenSelect
-                              setTotalTokenDistributions={
-                                setTotalTokenDistributions
-                              }
-                            />
+                            <TokenSelect />
                           ) : (
                             <p className="flex-shrink-0 flex items-center whitespace-nowrap">
-                              {currentERC20 === "DAI" &&
-                                <img className="mr-2" src={"/images/dai-symbol.svg"} />}
-                              {currentERC20}
+                              {depositERC20Symbol === "DAI" && (
+                                <img
+                                  className="mr-2"
+                                  src={"/images/dai-symbol.svg"}
+                                />
+                              )}
+                              {depositERC20Symbol}
                             </p>
                           )}
                         </div>
@@ -705,16 +709,12 @@ const WithdrawSyndicate = () => {
             customInnerWidth={"w-full"}
           />
         )}
-      </div>
-
-      {withdraw && syndicate?.depositsEnabled ? (
+        {syndicate?.depositsEnabled ? (
           <>
-            <p className="sm:ml-2 p-4 mx-2 sm:px-8 sm:py-4 text-xs text-gray-dim leading-4">
-              MORE
-            </p>
-            <div className="flex justify-start items-center py-4 px-6 sm:ml-6 mx-2 rounded-custom bg-gray-9">
-              <p className="font-medium text-lg">
-                <Link href={`/syndicates/${syndicateAddress}/deposit`}>
+            <p className="py-4 px-2 text-xs text-gray-dim leading-4">MORE</p>
+            <Link href={`/syndicates/${syndicateAddress}/deposit`}>
+              <div className="flex justify-start cursor-pointer items-center py-4 px-6 rounded-custom transition hover:bg-gray-6 bg-gray-9">
+                <p className="font-medium text-lg">
                   <a className="flex items-center">
                     <img
                       className="inline mr-4 h-5"
@@ -723,11 +723,12 @@ const WithdrawSyndicate = () => {
                     />
                     Deposit into syndicate.
                   </a>
-                </Link>
-              </p>
-            </div>
+                </p>
+              </div>
+            </Link>
           </>
         ) : null}
+      </div>
 
       {/* Error message modal */}
       <ErrorModal
@@ -742,6 +743,6 @@ const WithdrawSyndicate = () => {
       />
     </ErrorBoundary>
   );
-}
+};
 
 export default WithdrawSyndicate;

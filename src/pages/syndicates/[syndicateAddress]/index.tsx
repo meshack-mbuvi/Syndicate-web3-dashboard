@@ -2,10 +2,9 @@
 import { useRouter } from "next/router";
 import React, { useEffect } from "react";
 
-const SyndicateDepositOrWithdrawPage = () => {
+const SyndicateDepositView = () => {
   const router = useRouter();
   const { syndicateAddress } = router.query;
-
   useEffect(() => {
     // re-route to the deposit page
     router.replace(`/syndicates/${syndicateAddress}/deposit`);
@@ -13,4 +12,4 @@ const SyndicateDepositOrWithdrawPage = () => {
   return <></>;
 };
 
-export default SyndicateDepositOrWithdrawPage;
+export default SyndicateDepositView;
