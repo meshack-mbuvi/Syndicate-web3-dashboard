@@ -260,7 +260,9 @@ const WithdrawSyndicate = () => {
       const amountGreaterThanMemberDeposits = +amount > +memberTotalDeposits;
       const { depositMinMember } = syndicate;
       const amountLessThanMinDeposits =
-        +memberTotalDeposits - +amount < depositMinMember;
+        (+memberTotalDeposits - +amount) < depositMinMember;
+
+      const amountLessThanMemberDeposit = +amount < +memberTotalDeposits;
 
       if (
         amountGreaterThanMemberDistributions &&
@@ -278,7 +280,8 @@ const WithdrawSyndicate = () => {
         setWithdrawalAmountLessThanMinDeposits(false);
       } else if (
         amountLessThanMinDeposits &&
-        !syndicate?.distributionsEnabled
+        !syndicate?.distributionsEnabled &&
+        amountLessThanMemberDeposit
       ) {
         setWithdrawalAmountLessThanMinDeposits(true);
         setWithdrawalAmountGreaterThanDeposits(false);
