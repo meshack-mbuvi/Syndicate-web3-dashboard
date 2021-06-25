@@ -8,7 +8,7 @@ interface props {
 }
 const Header = ({ backLink }: props) => {
   return (
-    <nav className="bg-black h-20 fixed top-0 inset-x-0 align-middle border-b border-gray-800 py-4 bg-opacity-70 z-10 backdrop-filter backdrop-blur-xl">
+    <nav className="bg-black h-20 fixed top-0 inset-x-0 align-middle py-4 bg-opacity-70 z-10 backdrop-filter backdrop-blur-xl">
       <div className="container mx-auto flex justify-between h-full">
         <div className="md:flex-1 mr-4 md:mr-0">
           {/* This backlink is only displayed on mobile sizes */}
