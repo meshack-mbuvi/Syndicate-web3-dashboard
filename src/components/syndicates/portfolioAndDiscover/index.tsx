@@ -196,21 +196,7 @@ const PortfolioAndDiscover = (props: MySyndicateProps) => {
                 Create a syndicate
               </Button>
             </div>
-          ) : (
-            // Account = undefined means wallet not connected, hence we are
-            // not sure whether the wallet onwer has syndicates or not
-            <div className="flex justify-center text-center flex-col mb-10">
-              <p className="text-2xl font-whyte-light">
-                It seems your wallet account is not connected to this
-                application.
-              </p>
-              <p className="text-2xl font-whyte-light">
-                Click the button labelled{" "}
-                <span className="text-blue mr-1">Not connected</span>
-                in the top right corner to get started.
-              </p>
-            </div>
-          )}
+          ) : null}
         </>
       )}
       {syndicateDAOs.length ? (
