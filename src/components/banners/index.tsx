@@ -46,14 +46,16 @@ export const SyndicateInBetaBanner = () => {
       className={`pl-4 pr-8 py-3 w-full relative bg-yellow-light text-black text-center ${
         showBanner ? "" : "hidden"
       }`}
-      role="alert">
-      <div className="flex justify-center container">
-        <span className="block sm:inline font-whyte-light mr-2">
+      role="alert"
+    >
+      <div className="flex justify-center">
+        <span className="block sm:inline font-whyte-light mr-2 ml-auto">
           {SyndicateInBetaBannerText}
         </span>
         <span
-          className="absolute mx-3 py-1 cursor-pointer absolute right-2"
-          onClick={() => hideBanner()}>
+          className="mx-3 ml-auto py-1 cursor-pointer"
+          onClick={() => hideBanner()}
+        >
           <img src="/images/close.svg" alt="close-button" />
         </span>
       </div>
