@@ -4,17 +4,18 @@ import Head from "next/head";
 import Router from "next/router";
 import NProgress from "nprogress";
 import "nprogress/nprogress.css"; //styles of nprogress
-import PropTypes from "prop-types";
 import React from "react";
-import dynamic from "next/dynamic";
 /**
  * datepicker component requires these in-built styles, so we import them
  * from here to make them available globally
  */
 import "react-datepicker/dist/react-datepicker.css";
+import { IntercomProvider } from "react-use-intercom";
 import { wrapper } from "../redux/store";
 import "../styles/animation.css";
 import "../styles/global.css";
+
+const INTERCOM_APP_ID = process.env.NEXT_PUBLIC_INTERCOM_APP_ID;
 
 /**
  * This function configures web3 integration
@@ -33,7 +34,7 @@ Router.events.on("routeChangeError", () => NProgress.done());
 
 const App = ({ Component, pageProps }) => {
   return (
-    <>
+    <IntercomProvider appId={INTERCOM_APP_ID} autoBoot={true}>
       <Head>
         <title>Home | Syndicate Dashboard</title>
         <link rel="shortcut icon" href="/images/logo.svg" />
@@ -45,13 +46,8 @@ const App = ({ Component, pageProps }) => {
       <Web3ReactProvider getLibrary={getLibrary}>
         <Component {...pageProps} />
       </Web3ReactProvider>
-    </>
+    </IntercomProvider>
   );
-};
-
-App.propTypes = {
-  Component: PropTypes.any.isRequired,
-  pageProps: PropTypes.any,
 };
 
 export default wrapper.withRedux(App);

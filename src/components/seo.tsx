@@ -21,11 +21,6 @@ export default function SEO({
       <meta property="twitter:creator" content={config.social.twitter} />
       <meta property="twitter:title" content={title} />
       <meta property="twitter:description" content={description} />
-
-      {/* Zendesk chat widget */}
-      <script
-        id="ze-snippet"
-        src="https://static.zdassets.com/ekr/snippet.js?key=659c5fc9-db45-469a-aede-0dc4a79fc64d"></script>
     </Head>
   );
 }
