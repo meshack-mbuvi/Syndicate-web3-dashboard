@@ -137,6 +137,38 @@ const PreApproveDepositor = (props: Props) => {
   };
 
   /**
+   * get past events that match current address
+   * @param {string} memberAddress (what is typed or pasted on the pre-approve field)
+   * token address
+   */
+  const checkPreExistingApprovedAddress = async (memberAddress: string) => {
+    try {
+      let options = {
+        filter: {
+          memberAddress,
+          syndicateAddress: account,
+        },
+        fromBlock: 0, //Number || "earliest" || "pending" || "latest"
+        toBlock: "latest",
+      };
+
+      /**
+       * res returns array of all past events matching memberAddress and syndicateAddress
+       * returns empty array if no match found
+       */
+      const res = await syndicateContractInstance.getPastEvents(
+        "managerAllowedAddresses",
+        options
+      );
+
+      if (res && res.length) return true;
+      return false;
+    } catch (err) {
+      return false;
+    }
+  };
+
+  /**
    * send data to set distributions for a syndicate
    * @param {object} data contains amount, syndicateAddress and distribution
    * token address
@@ -218,10 +250,21 @@ const PreApproveDepositor = (props: Props) => {
     }
 
     newSplitArr && newSplitArr.length
-      ? newSplitArr.map((value: string) => {
+      ? newSplitArr.map(async (value: string) => {
           if (web3.utils.isAddress(value)) {
             setLpAddressesError("");
             setShowMemberAddressError(false);
+
+            const isAlreadyPreApproved = await checkPreExistingApprovedAddress(
+              value
+            );
+
+            // handle existing addresses
+            if (isAlreadyPreApproved) {
+              setShowMemberAddressError(true);
+              setLpAddressesError(`${value} has already been pre-approved.`);
+            }
+
             // handle duplicates
             if (countOccurrences(newSplitArr, value) > 1) {
               setShowMemberAddressError(true);
