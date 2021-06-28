@@ -439,3 +439,8 @@ export const rejectDepositOrMemberAddressConstants = {
   confirmBlockMemberAddressesText,
   rejectMemberAddress,
 };
+
+export const welcomeToSydicate = "Welcome to Syndicate";
+export const syndicateBeta = "Syndicate is currently in private beta. Connect an approved wallet or join the waitlist to get access.";
+export const openToInvestors = "Syndicate is only open to accredited investors";
+export const joinWaitlist = "Join waitlist";

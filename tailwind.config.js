@@ -106,6 +106,7 @@ module.exports = {
       fontSize: {
         modalTitle: "2.1875rem",
         modalSubTitle: "1.5rem",
+        "2.5xl": "1.75rem",
       },
       colors: {
         cyan: colors.cyan,

@@ -56,11 +56,13 @@ export const useUnavailableState = (page?: string) => {
     defaultState,
   );
 
+  const [renderJoinWaitList, setRenderJoinWaitList] = useState(false);
+
   switch (page) {
     case "manage":
       useEffect(() => {
         if (Web3.givenProvider === null && syndicateAddressIsValid) {
-          setText(readonlyState);
+          setRenderJoinWaitList(true);
         } else if (!account) {
           setText(noAccountState);
         } else {
@@ -72,7 +74,7 @@ export const useUnavailableState = (page?: string) => {
     default:
       useEffect(() => {
         if (Web3.givenProvider === null && syndicateAddressIsValid) {
-          setText(readonlyState);
+          setRenderJoinWaitList(true);
         } else if (!account) {
           setText({
             ...noAccountState,
@@ -102,5 +104,5 @@ export const useUnavailableState = (page?: string) => {
       break;
   }
 
-  return { title, message, renderUnavailableState };
+  return { title, message, renderUnavailableState, renderJoinWaitList };
 };

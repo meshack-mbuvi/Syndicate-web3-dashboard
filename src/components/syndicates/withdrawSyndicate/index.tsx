@@ -33,6 +33,7 @@ import { UnavailableState } from "../shared/unavailableState";
 import { SyndicateActionButton } from "../shared/syndicateActionButton";
 import { TokenSelect } from "../shared/tokenSelect";
 import { useUnavailableState } from "../hooks/useUnavailableState";
+import JoinWaitlist from "@/components/JoinWaitlist";
 
 const {
   actionFailedError,
@@ -80,7 +81,7 @@ const WithdrawSyndicate = () => {
   const router = useRouter();
   const dispatch = useDispatch();
 
-  const { title, message, renderUnavailableState } = useUnavailableState();
+  const { title, message, renderUnavailableState, renderJoinWaitList } = useUnavailableState();
 
   // STATES
   const [withdrawalsAvailable, setWithdrawalsAvailable] = useState<boolean>(
@@ -561,7 +562,8 @@ const WithdrawSyndicate = () => {
           }`}
         >
           {/* Show is read only text if no provider */}
-          {renderUnavailableState ? (
+          {renderJoinWaitList ? <JoinWaitlist /> :
+          renderUnavailableState ? (
             <UnavailableState title={title} message={message} />
           ) : withdrawalsAvailable ? (
             <>

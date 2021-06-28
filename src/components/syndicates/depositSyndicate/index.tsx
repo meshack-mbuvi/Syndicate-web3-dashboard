@@ -32,6 +32,7 @@ import { SyndicateActionLoader } from "../shared/syndicateActionLoader";
 import { SkeletonLoader } from "@/components/skeletonLoader";
 import { SyndicateActionButton } from "../shared/syndicateActionButton";
 import FadeIn from "@/components/fadeIn/FadeIn";
+import JoinWaitlist from "@/components/JoinWaitlist";
 
 const Web3 = require("web3");
 const web3 = new Web3(
@@ -86,7 +87,7 @@ const DepositSyndicate = () => {
   } = useSelector((state: RootState) => state);
 
   const { depositTokenSymbol, depositTokenDecimals } = useCurrentERC20();
-  const { title, message, renderUnavailableState } = useUnavailableState();
+  const { title, message, renderUnavailableState, renderJoinWaitList } = useUnavailableState();
   const { depositsAvailable } = useDepositChecks();
 
   const [loadingLPDetails, setLoadingLPDetails] = useState<boolean>(false);
@@ -716,7 +717,8 @@ const DepositSyndicate = () => {
               !account ? "rounded-2xl" : `border-b-0 rounded-t-2xl`
             }`}
           >
-            {renderUnavailableState ? (
+            {renderJoinWaitList ? <JoinWaitlist /> :
+            renderUnavailableState ? (
               <UnavailableState title={title} message={message} />
             ) : (
               depositsAvailable && (

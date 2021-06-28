@@ -31,6 +31,7 @@ import MoreManagerActionCard from "./moreManagerActionCard";
 import PreApproveDepositor from "./preApproveDepositor";
 import RejectDepositOrMemberAddress from "./RejectDepositOrMemberAddress";
 import RequestSocialProfile from "./requestSocialProfile";
+import JoinWaitlist from "@/components/JoinWaitlist";
 
 const ManagerActions = () => {
   const {
@@ -88,7 +89,7 @@ const ManagerActions = () => {
 
   const [errorMessage, setErrorMessage] = useState("");
 
-  const { title, message, renderUnavailableState } = useUnavailableState(
+  const { title, message, renderUnavailableState, renderJoinWaitList } = useUnavailableState(
     "manage",
   );
 
@@ -206,11 +207,11 @@ const ManagerActions = () => {
     setShowRejectDepositOrMemberAddress,
   ] = useState(false);
 
-  if (renderUnavailableState) {
+  if (renderUnavailableState || renderJoinWaitList) {
     return (
       <div className="h-fit-content px-8 pb-4 pt-5 bg-gray-9 rounded-2xl">
         <div className="flex justify-between my-1 px-2">
-          <UnavailableState title={title} message={message} />
+        {renderJoinWaitList ? <JoinWaitlist /> : (renderUnavailableState && <UnavailableState title={title} message={message} />)}
         </div>
       </div>
     );
