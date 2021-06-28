@@ -9,6 +9,7 @@ import {
 import { managerActionTexts } from "@/components/syndicates/shared/Constants/managerActions";
 import { SyndicateActionLoader } from "@/components/syndicates/shared/syndicateActionLoader";
 import { getMetamaskError } from "@/helpers/metamaskError";
+import { web3 } from "@/utils";
 import { getWeiAmount } from "@/utils/conversions";
 import { floatedNumberWithCommas } from "@/utils/formattedNumbers";
 import { Validate } from "@/utils/validators";
@@ -20,6 +21,9 @@ import {
   storeDepositTokenAllowance,
   storeDistributionTokensDetails,
 } from "src/redux/actions/tokenAllowances";
+import { isUnlimited } from "src/utils/conversions";
+import ERC20ABI from "src/utils/abi/erc20";
+const BN = web3.utils.BN;
 
 interface Props {
   hideManagerSetAllowances: Function;
@@ -49,8 +53,10 @@ const ManagerSetAllowance = (props: Props) => {
   const router = useRouter();
   const { syndicateAddress } = router.query;
 
-  const [allowanceAmount, setAllowanceAmount] = useState<string>("0");
-  const [allowanceAmountError, setAllowanceAmountError] = useState<string>("");
+  const [allowanceAmounts, setAllowanceAmounts] = useState<string[]>([]);
+  const [allowanceAmountErrors, setAllowanceAmountErrors] = useState<string[]>(
+    []
+  );
   const [submitting, setSubmitting] = useState<boolean>(false);
   const [metamaskError, setMetamaskError] = useState<string>("");
   const [metamaskConfirmPending, setMetamaskConfirmPending] = useState<boolean>(
@@ -79,17 +85,24 @@ const ManagerSetAllowance = (props: Props) => {
   }
 
   // handle allowance value from the input field.
-  const handleAmountChange = (event) => {
+  const handleAmountChange = (event, index) => {
     event.preventDefault();
     const { value } = event.target;
 
-    setAllowanceAmount(value);
+    // add amounts and possible errors to approve to state arrays
+    const amountsToApprove = [...allowanceAmounts];
+    const amountErrors = [...allowanceAmountErrors];
+
+    amountsToApprove[index] = value;
+    setAllowanceAmounts(amountsToApprove);
 
     const message = Validate(value);
     if (message) {
-      setAllowanceAmountError(`Allowance amount ${message}`);
+      amountErrors[index] = `Allowance amount ${message}`;
+      setAllowanceAmountErrors(amountErrors);
     } else {
-      setAllowanceAmountError("");
+      amountErrors[index] = "";
+      setAllowanceAmountErrors(amountErrors);
     }
   };
 
@@ -106,29 +119,56 @@ const ManagerSetAllowance = (props: Props) => {
 
   const handleAllowanceApproval = async (index) => {
     setMetamaskConfirmPending(true);
-    // new allowance amount will be equal to the sum of the currenct allowance
-    // and the new allowance amount entered into the input field.
+
+    // we're setting/updating allowances for a token from the redux store
+    // fetch details of that token using the token address.
+    const inputTokenAddress = tokenAllowanceDetails[index]["tokenAddress"];
+    let currentTokenIndex = 0;
     if (depositsEnabled) {
-      var currentTokenAllowance =
-        depositTokenAllowanceDetails[index]["tokenAllowance"];
+      // there is only one deposit token.
+      var currentToken = depositTokenAllowanceDetails[0];
     } else if (distributionsEnabled) {
-      currentTokenAllowance =
-        distributionTokensAllowanceDetails[index]["tokenAllowance"];
+      var currentToken = distributionTokensAllowanceDetails.find(
+        (token, index) => {
+          // get the index of the current token
+          // we'll use this to update values for this specific token in the redux store
+          currentTokenIndex = index;
+          return token.tokenAddress === inputTokenAddress;
+        }
+      );
     }
 
-    const newAllowanceAmountToApprove =
-      +allowanceAmount + +currentTokenAllowance;
-
-    // set correct wei amount to approve
-    const amountToApprove = getWeiAmount(
-      newAllowanceAmountToApprove.toString(),
-      depositTokenDecimals,
+    // set up token details
+    const currentTokenDecimals = currentToken.tokenDecimals;
+    const currentTokenAddress = currentToken.tokenAddress;
+    const currentTokenAllowance = getWeiAmount(
+      currentToken.tokenAllowance,
+      currentTokenDecimals,
+      true
+    );
+    const additionalAllowanceAmount = getWeiAmount(
+      allowanceAmounts[index],
+      currentTokenDecimals,
       true
     );
 
+    // set up token contract based on distributions or deposits
+    const currentTokenContract = new web3.eth.Contract(
+      ERC20ABI,
+      currentTokenAddress
+    );
+
+    // get new allowance amount to set.
+    const newAllowanceAmountToApprove = new BN(additionalAllowanceAmount).add(
+      new BN(currentTokenAllowance.toString())
+    );
+
     try {
-      await depositTokenContract.methods
-        .approve(syndicateContractInstance._address, amountToApprove)
+      await currentTokenContract.methods
+        .approve(
+          syndicateContractInstance._address,
+          newAllowanceAmountToApprove
+        )
         .send({ from: account, gasLimit: 800000 })
         .on("transactionHash", () => {
           // user clicked on confirm
@@ -140,10 +180,10 @@ const ManagerSetAllowance = (props: Props) => {
           // approval transaction successful
           const { Approval } = receipt.events;
           const { returnValues } = Approval;
-          const { value } = returnValues;
+          const value = returnValues[2];
           const managerApprovedAllowance = getWeiAmount(
             value,
-            depositTokenDecimals,
+            currentTokenDecimals,
             false
           );
 
@@ -155,7 +195,9 @@ const ManagerSetAllowance = (props: Props) => {
           }
 
           // clear the allowance input field.
-          setAllowanceAmount("0");
+          const amountsApproved = [...allowanceAmounts];
+          amountsApproved[index] = "0";
+          setAllowanceAmounts(amountsApproved);
 
           // dispatch new allowance details to the store
 
@@ -167,6 +209,7 @@ const ManagerSetAllowance = (props: Props) => {
             const {
               tokenSymbol,
               tokenAddress,
+              tokenDecimals,
             } = depositTokenAllowanceDetails[0];
 
             dispatch(
@@ -176,6 +219,7 @@ const ManagerSetAllowance = (props: Props) => {
                   tokenAllowance: managerApprovedAllowance,
                   tokenDeposits: depositMaxTotal,
                   tokenSymbol,
+                  tokenDecimals,
                   sufficientAllowanceSet,
                 },
               ])
@@ -193,10 +237,10 @@ const ManagerSetAllowance = (props: Props) => {
             const distributionTokensAllowanceDetailsCopy = [
               ...distributionTokensAllowanceDetails,
             ];
-            distributionTokensAllowanceDetailsCopy[index][
+            distributionTokensAllowanceDetailsCopy[currentTokenIndex][
               "tokenAllowance"
             ] = managerApprovedAllowance;
-            distributionTokensAllowanceDetailsCopy[index][
+            distributionTokensAllowanceDetailsCopy[currentTokenIndex][
               "sufficientAllowanceSet"
             ] = sufficientAllowanceSet;
 
@@ -285,7 +329,11 @@ const ManagerSetAllowance = (props: Props) => {
   const [tokenAllowanceDetails, setTokenAllowanceDetails] = useState<any>([]);
   useEffect(() => {
     if (distributionTokensAllowanceDetails.length && distributionsEnabled) {
-      setTokenAllowanceDetails(distributionTokensAllowanceDetails);
+      // check which distribution token does not have sufficient allowance
+      const insufficientAllowanceTokens = distributionTokensAllowanceDetails.filter(
+        (token) => !token.sufficientAllowanceSet
+      );
+      setTokenAllowanceDetails(insufficientAllowanceTokens);
     } else if (depositTokenAllowanceDetails.length && depositsEnabled) {
       setTokenAllowanceDetails(depositTokenAllowanceDetails);
     }
@@ -321,7 +369,8 @@ const ManagerSetAllowance = (props: Props) => {
         customWidth: `${showLoader ? `sm:w-1/3` : `sm:w-2/3`}`,
         loading: showLoader,
         titleFontSize: "text-3xl",
-      }}>
+      }}
+    >
       {submitting ? (
         <SyndicateActionLoader
           contractAddress={etherscanAddress}
@@ -370,10 +419,7 @@ const ManagerSetAllowance = (props: Props) => {
               if (depositsEnabled) {
                 const { tokenDeposits } = value;
                 // check if total deposits has been set to unlimited number
-                if (
-                  +tokenDeposits >=
-                  115792089237316195423570985008687907853269984665640564039457
-                ) {
+                if (tokenDeposits && isUnlimited(tokenDeposits)) {
                   totalsValue = "Unlimited";
                 } else {
                   totalsValue = tokenDeposits;
@@ -393,7 +439,7 @@ const ManagerSetAllowance = (props: Props) => {
               )} ${tokenSymbol} / ${tokenTotalsValue}`;
 
               const newAllowanceAmountValue =
-                +allowanceAmount + +tokenAllowance;
+                +allowanceAmounts[index] + +tokenAllowance;
 
               const newAllowanceAmount = `${floatedNumberWithCommas(
                 newAllowanceAmountValue
@@ -402,7 +448,8 @@ const ManagerSetAllowance = (props: Props) => {
               return (
                 <form
                   onSubmit={(event) => handleSubmit(event, index)}
-                  key={index}>
+                  key={index}
+                >
                   {distributionsEnabled ? (
                     <p className="text-black mx-4 my-4 mt-10 text-lg font-medium leading-5">
                       {tokenSymbol} Distribution
@@ -433,10 +480,10 @@ const ManagerSetAllowance = (props: Props) => {
                         <TextInput
                           {...{
                             label: "Additional Allowance:",
-                            value: allowanceAmount,
-                            onChange: handleAmountChange,
+                            value: allowanceAmounts[index],
+                            onChange: (e) => handleAmountChange(e, index),
                             defaultValue: 0,
-                            error: allowanceAmountError,
+                            error: allowanceAmountErrors[index],
                           }}
                           name="allowance-amount"
                           placeholder="0"
@@ -458,25 +505,28 @@ const ManagerSetAllowance = (props: Props) => {
                       customClasses={`${
                         distributionsEnabled ? "rounded-md" : "rounded-full"
                       } bg-blue w-auto px-10 py-2 text-lg font-light ${
-                        allowanceAmountError ||
+                        allowanceAmountErrors[index] ||
                         submitting ||
-                        +allowanceAmount === 0 ||
-                        !allowanceAmount
+                        +allowanceAmounts[index] === 0 ||
+                        !allowanceAmounts[index]
                           ? "opacity-50"
                           : ""
                       }`}
                       disabled={
-                        allowanceAmountError ||
+                        allowanceAmountErrors[index] ||
                         submitting ||
-                        +allowanceAmount === 0 ||
-                        !allowanceAmount
+                        +allowanceAmounts[index] === 0 ||
+                        !allowanceAmounts[index]
                           ? true
                           : false
-                      }>
+                      }
+                    >
                       {distributionsEnabled
                         ? `Approve`
                         : `Approve ${floatedNumberWithCommas(
-                            allowanceAmount ? allowanceAmount : 0
+                            allowanceAmounts[index]
+                              ? allowanceAmounts[index]
+                              : 0
                           )} ${tokenSymbol}`}
                     </Button>
                   </div>

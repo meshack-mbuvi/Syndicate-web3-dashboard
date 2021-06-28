@@ -8,6 +8,7 @@ type depositTokenData = {
   tokenAllowance: string;
   tokenDeposits: string;
   tokenSymbol: string;
+  tokenDecimals: number;
   sufficientAllowanceSet: boolean;
 };
 

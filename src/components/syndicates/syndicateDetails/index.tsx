@@ -113,7 +113,7 @@ const SyndicateDetails = (props: {
   const [showCopyState, setShowCopyState] = useState<boolean>(false);
 
   // state to handle details about the current ERC20 token
-  const [depositTokenSymbol, setDepositTokenSymbol] = useState<string>("DAI");
+  const [depositTokenSymbol, setDepositTokenSymbol] = useState<string>("");
   const [depositTokenDecimals, setDepositTokenDecimals] = useState<number>(18);
   const [depositTokenContract, setDepositTokenContract] = useState<any>("");
 
@@ -206,6 +206,7 @@ const SyndicateDetails = (props: {
           tokenAllowance: managerDepositAllowance,
           tokenSymbol: depositTokenSymbol,
           tokenDeposits: depositMaxTotal,
+          tokenDecimals: depositTokenDecimals,
           sufficientAllowanceSet,
         },
       ])
@@ -383,7 +384,8 @@ const SyndicateDetails = (props: {
         getManagerDistributionTokensAllowances();
       }
     }
-  }, [syndicateContractInstance, syndicate]);
+  }, [syndicateContractInstance, syndicate, depositTokenSymbol]);
+  
 
   // set syndicate cummulative values
   useEffect(() => {
@@ -466,8 +468,11 @@ const SyndicateDetails = (props: {
     // using this manual mapping for the time being
     const tokenAddress = depositERC20Address;
     const mappedTokenAddress = Object.keys(TokenMappings).find(
-      (key) => key.toLowerCase() == tokenAddress.toLowerCase()
+      (key) =>
+        web3.utils.toChecksumAddress(key) ===
+        web3.utils.toChecksumAddress(tokenAddress)
     );
+
     if (mappedTokenAddress) {
       setDepositTokenSymbol(TokenMappings[mappedTokenAddress]);
     }
