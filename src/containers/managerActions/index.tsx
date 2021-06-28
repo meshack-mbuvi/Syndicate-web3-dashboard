@@ -38,11 +38,11 @@ const ManagerActions = () => {
   } = useSelector((state: RootState) => state.web3Reducer);
 
   const { syndicateContractInstance } = useSelector(
-    (state: RootState) => state.syndicateInstanceReducer
+    (state: RootState) => state.syndicateInstanceReducer,
   );
 
   const { syndicate } = useSelector(
-    (state: RootState) => state.syndicatesReducer
+    (state: RootState) => state.syndicatesReducer,
   );
 
   const dispatch = useDispatch();
@@ -51,13 +51,13 @@ const ManagerActions = () => {
 
   const { syndicateAddress } = router.query;
 
-  const [address, setAddress] = useState<string|string[]>('')
+  const [address, setAddress] = useState<string | string[]>("");
 
   useEffect(() => {
     if (router.isReady) {
-      setAddress(syndicateAddress)
+      setAddress(syndicateAddress);
     }
-  }, [router.isReady])
+  }, [router.isReady]);
 
   const [
     showWalletConfirmationModal,
@@ -70,15 +70,15 @@ const ManagerActions = () => {
   const [showDistributeToken, setShowDistributeToken] = useState(false);
   const [showPreApproveDepositor, setShowPreApproveDepositor] = useState(false);
   const [showRequestSocialProfile, setShowRequestSocialProfile] = useState(
-    false
+    false,
   );
   const [showConfirmCloseSyndicate, setShowConfirmCloseSyndicate] = useState(
-    false
+    false,
   );
 
   const [showModifyCapTable, setShowModifyCapTable] = useState(false);
   const [showSyndicateNotModifiable, setShowSyndicateNotModifiable] = useState(
-    false
+    false,
   );
 
   const [
@@ -88,7 +88,9 @@ const ManagerActions = () => {
 
   const [errorMessage, setErrorMessage] = useState("");
 
-  const { title, message, renderUnavailableState } = useUnavailableState('manage');
+  const { title, message, renderUnavailableState } = useUnavailableState(
+    "manage",
+  );
 
   const {
     nonModifiableSyndicateErrorText,
@@ -114,9 +116,7 @@ const ManagerActions = () => {
 
   const handleCloseFinalStateModal = async () => {
     setShowFinalState(false);
-    await dispatch(
-      getSyndicateByAddress(address, syndicateContractInstance)
-    );
+    await dispatch(getSyndicateByAddress(address, syndicateContractInstance));
   };
 
   /**
@@ -206,7 +206,6 @@ const ManagerActions = () => {
     setShowRejectDepositOrMemberAddress,
   ] = useState(false);
 
-
   if (renderUnavailableState) {
     return (
       <div className="h-fit-content px-8 pb-4 pt-5 bg-gray-9 rounded-2xl">
@@ -214,7 +213,7 @@ const ManagerActions = () => {
           <UnavailableState title={title} message={message} />
         </div>
       </div>
-    )
+    );
   }
 
   // if syndicateAddress !== account is true then it should redirect to deposit page hence the loader
@@ -230,46 +229,46 @@ const ManagerActions = () => {
         <SkeletonLoader width="full" height="12" />
         <SkeletonLoader width="full" height="12" />
       </div>
-    )
+    );
   }
 
   return (
     <ErrorBoundary>
       <div className="w-full mt-4 sm:mt-0">
         <FadeIn>
-        <div className="h-fit-content rounded-custom p-4 md:mx-2 md:p-6 bg-gray-9 mt-6 md:mt-0 md:pb-2">
-          <div className="text-xl font-inter">Manager Actions</div>
+          <div className="h-fit-content rounded-custom p-4 md:mx-2 md:p-6 bg-gray-9 mt-6 md:mt-0 md:pb-2">
+            <div className="text-xl font-inter">Manager Actions</div>
 
-          <div className="flex h-12 rounded-custom items-center">
-            <img src="/images/rightPointedHand.svg" className="mr-2" />
-            <div className="text-gray-dim leading-snug">
-              You manage this syndicate
+            <div className="flex h-12 rounded-custom items-center">
+              <img src="/images/rightPointedHand.svg" className="mr-2" />
+              <div className="text-gray-dim leading-snug">
+                You manage this syndicate
+              </div>
             </div>
-          </div>
 
-          {/* show set distribution option when syndicate is closed */}
-          {syndicate?.open ? (
-            <ManagerActionCard
-              title={"Close syndicate"}
-              description={
-                "Close this syndicate and stop accepting deposits. This action is irreversible."
-              }
-              icon={<img src="/images/closeIcon.svg" />}
-              onClickHandler={() => setShowConfirmCloseSyndicate(true)}
-            />
-          ) : (
-            <ManagerActionCard
-              title={"Distribute tokens back to depositors"}
-              description={
-                "Distribute tokens back to depositors and make them available for withdraw."
-              }
-              icon={<img src="/images/server.svg" />}
-              onClickHandler={() => setShowDistributeToken(true)}
-            />
-          )}
-
-          {/* show pre-approve depositor option when syndicate is open and allowList is enabled */}
-          {syndicate?.depositsEnabled && syndicate?.allowlistEnabled ? (
+            {/* show set distribution option when syndicate is closed */}
+            {syndicate?.open ? (
+              <ManagerActionCard
+                title={"Close syndicate"}
+                description={
+                  "Close this syndicate and stop accepting deposits. This action is irreversible."
+                }
+                icon={<img src="/images/closeIcon.svg" />}
+                onClickHandler={() => setShowConfirmCloseSyndicate(true)}
+              />
+            ) : (
+              <ManagerActionCard
+                title={"Distribute tokens back to depositors"}
+                description={
+                  "Distribute tokens back to depositors and make them available for withdraw."
+                }
+                icon={<img src="/images/server.svg" />}
+                onClickHandler={() => setShowDistributeToken(true)}
+              />
+            )}
+            {console.log(syndicate, "===")}
+            {/* show pre-approve depositor option when syndicate is open and allowList is enabled */}
+            {syndicate?.depositsEnabled && syndicate?.allowlistEnabled ? (
               <ManagerActionCard
                 title={"Pre-approve depositor addresses"}
                 description={
@@ -280,18 +279,18 @@ const ManagerActions = () => {
               />
             ) : null}
 
-          {actions.map(({ icon, title, description, onClickHandler }) => {
-            return (
-              <ManagerActionCard
-                title={title}
-                description={description}
-                icon={icon}
-                onClickHandler={onClickHandler}
-                key={title}
-              />
-            );
-          })}
-        </div>
+            {actions.map(({ icon, title, description, onClickHandler }) => {
+              return (
+                <ManagerActionCard
+                  title={title}
+                  description={description}
+                  icon={icon}
+                  onClickHandler={onClickHandler}
+                  key={title}
+                />
+              );
+            })}
+          </div>
         </FadeIn>
         <div className="p-0 md:p-2">
           <div className="font-semibold tracking-widest text-sm leading-6 text-gray-matterhorn my-6 mx-4">
@@ -394,7 +393,8 @@ const ManagerActions = () => {
               <PrimaryButton
                 customClasses="border border-color-gray px-4 py-1 w-full"
                 textColor="text-black"
-                onClick={() => setShowConfirmCloseSyndicate(false)}>
+                onClick={() => setShowConfirmCloseSyndicate(false)}
+              >
                 Cancel
               </PrimaryButton>
               <PrimaryButton
@@ -402,7 +402,8 @@ const ManagerActions = () => {
                 onClick={() => {
                   setShowConfirmCloseSyndicate(false);
                   closeSyndicate();
-                }}>
+                }}
+              >
                 Confirm
               </PrimaryButton>
             </div>
@@ -430,7 +431,8 @@ const ManagerActions = () => {
       <PendingStateModal
         {...{
           show: submitting,
-        }}>
+        }}
+      >
         <div className="modal-header mb-4 font-medium text-center leading-8 text-2xl">
           {confirmingTransaction}
         </div>

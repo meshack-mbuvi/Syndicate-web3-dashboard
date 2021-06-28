@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { constants } from "src/components/syndicates/shared/Constants";
-import { SyndicateInBetaBannerText } from "../syndicates/shared/Constants";
+import { constants , SyndicateInBetaBannerText } from "src/components/syndicates/shared/Constants";
+
 
 export const SyndicateInBetaBanner = () => {
   const [showBanner, setShowBanner] = useState(false);
@@ -35,7 +35,7 @@ export const SyndicateInBetaBanner = () => {
       JSON.stringify({
         show: "false",
         timestamp: new Date().getTime() + 60 * 60 * 24 * 1000,
-      })
+      }),
     );
     localStorage.setItem("timeUntilNextbanner", "false");
     setShowBanner(false);
@@ -52,10 +52,7 @@ export const SyndicateInBetaBanner = () => {
         <span className="block sm:inline font-whyte-light mr-2 ml-auto">
           {SyndicateInBetaBannerText}
         </span>
-        <span
-          className="mx-3 ml-auto py-1 cursor-pointer"
-          onClick={() => hideBanner()}
-        >
+        <span className="mx-3 ml-auto py-1 cursor-pointer" onClick={() => hideBanner()}>
           <img src="/images/close.svg" alt="close-button" />
         </span>
       </div>

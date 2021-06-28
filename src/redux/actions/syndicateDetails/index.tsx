@@ -39,7 +39,7 @@ export const setSyndicateDetails = (
   profitShareToSyndicateLead,
   profitShareToSyndicateProtocol,
   syndicate,
-  syndicateAddress
+  syndicateAddress,
 ) => async (dispatch) => {
   if (!syndicateContractInstance) return;
   // initialise syndicate contract
@@ -65,7 +65,7 @@ export const setSyndicateDetails = (
   const lpInvestedInSyndicateEvents = await getEvents(
     syndicateContractInstance,
     "lpInvestedInSyndicate",
-    { syndicateAddress }
+    { syndicateAddress },
   );
 
   // process lpInvestedInSyndicate events
@@ -83,7 +83,7 @@ export const setSyndicateDetails = (
   const lpWithdrewDistributionEvents = await getEvents(
     syndicateContractInstance,
     "lpWithdrewDistributionFromSyndicate",
-    { syndicateAddress }
+    { syndicateAddress },
   );
 
   for (let i = 0; i < lpWithdrewDistributionEvents.length; i++) {
@@ -101,7 +101,7 @@ export const setSyndicateDetails = (
       const profitShareValues = await syndicateContractInstance.methods.calculateProfitShare(
         BNamountWithdrawn,
         profitShareToSyndicateLead,
-        profitShareToSyndicateProtocol
+        profitShareToSyndicateProtocol,
       );
 
       const toSyndicate = etherToNumber(profitShareValues[1]);
@@ -134,7 +134,7 @@ export const setSyndicateDetails = (
   Object.keys(syndicateDetails).map((key) => {
     if (key !== "totalDepositors") {
       syndicateDetails[key] = parseFloat(
-        numberWithCommas(syndicateDetails[key])
+        numberWithCommas(syndicateDetails[key]),
       ).toFixed(2);
     }
     return;

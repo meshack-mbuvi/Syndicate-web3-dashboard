@@ -14,7 +14,7 @@ export const approveManager = async (
   currentERC20Contract,
   account,
   managerAddress,
-  amount
+  amount,
 ) => {
   try {
     await currentERC20Contract.methods
@@ -40,11 +40,11 @@ export const approveManager = async (
  * @param syndicateContractAddress the address of the syndicate contract
  * @returns the allowance amount(wei) as a string
  */
-type String = string | string[];
+type StringOrStringArr = string | string[];
 export const checkAccountAllowance = async (
   ERC20ContractAddress: string,
-  account: String,
-  syndicateContractAddress: String
+  account: StringOrStringArr,
+  syndicateContractAddress: StringOrStringArr,
 ) => {
   // set up token contract
   const web3 = new Web3(Web3.givenProvider || "ws://localhost:8545");

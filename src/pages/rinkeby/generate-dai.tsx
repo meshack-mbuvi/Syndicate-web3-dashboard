@@ -1,6 +1,6 @@
 // This page deals with deposits or withdrawals to a syndicate.
 import { useEffect } from "react";
-import { useRouter } from "next/router";;
+import { useRouter } from "next/router";
 
 const GenerateDai = () => {
   const router = useRouter();

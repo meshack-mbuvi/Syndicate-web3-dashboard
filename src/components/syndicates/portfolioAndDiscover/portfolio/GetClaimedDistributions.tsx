@@ -13,7 +13,7 @@ const GetClaimedDistributions = ({
   row: { syndicateAddress, depositERC20TokenSymbol, tokenDecimals },
 }: ifRows) => {
   const { web3: web3Wrapper } = useSelector(
-    (state: RootState) => state.web3Reducer
+    (state: RootState) => state.web3Reducer,
   );
 
   const { syndicateContractInstance, account, web3 } = web3Wrapper;
@@ -46,7 +46,7 @@ const GetClaimedDistributions = ({
       {
         syndicateAddress: web3.utils.toChecksumAddress(syndicateAddress),
         memberAddress: account,
-      }
+      },
     );
 
     if (memberDepositsWithdrawalEvents.length) {
@@ -63,14 +63,14 @@ const GetClaimedDistributions = ({
       const reducerFunc = (accumulator, currentValue) =>
         +accumulator + +currentValue;
       const totalDepositTokenWithdrawals = depositERC20WithdrawalAmounts.reduce(
-        reducerFunc
+        reducerFunc,
       );
 
       // convert wei amount
       const depositERC20WithdrawalsTotal = getWeiAmount(
         totalDepositTokenWithdrawals.toString(),
         +tokenDecimals,
-        false
+        false,
       );
 
       const depositWithdrawalsFinalDetails = [
@@ -93,7 +93,7 @@ const GetClaimedDistributions = ({
       {
         syndicateAddress: web3.utils.toChecksumAddress(syndicateAddress),
         memberAddress: account,
-      }
+      },
     );
 
     if (memberDistributionsWithdrawalEvents.length) {
@@ -112,7 +112,7 @@ const GetClaimedDistributions = ({
 
       // get unique tokens
       const tokenAddresses = distributionsWithdrawalDetails.map(
-        ({ distributionERC20Address }) => distributionERC20Address
+        ({ distributionERC20Address }) => distributionERC20Address,
       );
 
       const uniqueDistributionERC20s = tokenAddresses.filter(onlyUnique);
@@ -131,13 +131,13 @@ const GetClaimedDistributions = ({
         const mappedTokenAddress = Object.keys(TokenMappings).find(
           (key) =>
             web3.utils.toChecksumAddress(key) ===
-            web3.utils.toChecksumAddress(uniqueDistributionERC20s[i])
+            web3.utils.toChecksumAddress(uniqueDistributionERC20s[i]),
         );
 
         let distributionERC20Symbol = formatAddress(
           uniqueDistributionERC20s[i],
           4,
-          4
+          4,
         );
         if (mappedTokenAddress) {
           distributionERC20Symbol = TokenMappings[mappedTokenAddress];
@@ -151,7 +151,7 @@ const GetClaimedDistributions = ({
             const withdrawnAmount = getWeiAmount(
               amountWithdrawn,
               distributionERC20Decimals,
-              false
+              false,
             );
             totalWithdrawalAmount += +withdrawnAmount;
           }
@@ -201,7 +201,7 @@ const GetClaimedDistributions = ({
                       </td>
                     </tr>
                   );
-                }
+                },
               )}
             </tbody>
           </table>
@@ -240,7 +240,7 @@ const GetClaimedDistributions = ({
                       </td>
                     </tr>
                   );
-                }
+                },
               )}
             </tbody>
           </table>
@@ -264,7 +264,8 @@ const GetClaimedDistributions = ({
             <div
               className={`tooltiptext invisible visibility-hover absolute ${
                 count.toString().length === 1 ? `-left-2` : `-left-1`
-              } w-full`}>
+              } w-full`}
+            >
               {withdrawalstooltipText}
             </div>
           ) : null}

@@ -44,11 +44,11 @@ const PreApproveDepositor = (props: Props) => {
   } = useSelector((state: RootState) => state.web3Reducer);
 
   const { syndicateContractInstance } = useSelector(
-    (state: RootState) => state.syndicateInstanceReducer
+    (state: RootState) => state.syndicateInstanceReducer,
   );
 
   const { syndicate } = useSelector(
-    (state: RootState) => state.syndicatesReducer
+    (state: RootState) => state.syndicatesReducer,
   );
 
   const [
@@ -80,7 +80,7 @@ const PreApproveDepositor = (props: Props) => {
   const [memberAddresses, setMemberAddresses] = useState("");
   const [lpAddressesError, setLpAddressesError] = useState<string>("");
   const [showMemberAddressError, setShowMemberAddressError] = useState<boolean>(
-    false
+    false,
   );
   const [submitting, setSubmitting] = useState(false);
   const [selectedTextIndexes, setSelectedTextIndexes] = useState([]);
@@ -90,14 +90,14 @@ const PreApproveDepositor = (props: Props) => {
    */
   const [finalStateButtonText, setFinalButtonText] = useState("Done");
   const [finalStateFeedback, setFinalStateFeedback] = useState(
-    preApproveMoreAddress
+    preApproveMoreAddress,
   );
   const [finalStateHeaderText, setFinalStateHeaderText] = useState(
-    "Addresses Successfully Pre-Approved"
+    "Addresses Successfully Pre-Approved",
   );
 
   const [finalStateIcon, setFinalStateIcon] = useState(
-    "/images/checkCircle.svg"
+    "/images/checkCircle.svg",
   );
   const [showFinalState, setShowFinalState] = useState(false);
 
@@ -111,7 +111,7 @@ const PreApproveDepositor = (props: Props) => {
    * It also validates the input value and set appropriate error message
    */
   const handleLpAddressesChange = (
-    event: React.ChangeEvent<HTMLTextAreaElement>
+    event: React.ChangeEvent<HTMLTextAreaElement>,
   ) => {
     const { value } = event.target;
     setMemberAddresses(value);
@@ -226,7 +226,7 @@ const PreApproveDepositor = (props: Props) => {
             if (countOccurrences(newSplitArr, value) > 1) {
               setShowMemberAddressError(true);
               setLpAddressesError(
-                `${value} has already been added(duplicate).`
+                `${value} has already been added(duplicate).`,
               );
             }
           } else {
@@ -252,17 +252,17 @@ const PreApproveDepositor = (props: Props) => {
   const handleOnPaste = (event: React.ClipboardEvent<HTMLTextAreaElement>) => {
     const pastedAddresses = event.clipboardData.getData("text");
     const removeInvalidCharacters = removeNewLinesAndWhitespace(
-      pastedAddresses
+      pastedAddresses,
     );
     const newSplitArr = removeInvalidCharacters.split(",");
     setMemberAddresses((prev) => {
       const selection = prev.substring(
         selectedTextIndexes[0],
-        selectedTextIndexes[1]
+        selectedTextIndexes[1],
       );
       const remainingStr = removeNewLinesAndWhitespace(
         // remove selected text
-        removeSubstring(prev, selection)
+        removeSubstring(prev, selection),
       );
       const newStr = remainingStr + newSplitArr.join();
       return newStr.split(",").join(",\n");
@@ -272,7 +272,7 @@ const PreApproveDepositor = (props: Props) => {
   };
 
   const handleOnSelectText = (
-    event: React.ChangeEvent<HTMLTextAreaElement>
+    event: React.ChangeEvent<HTMLTextAreaElement>,
   ) => {
     const { selectionStart, selectionEnd } = event.target;
     setSelectedTextIndexes([selectionStart, selectionEnd]);

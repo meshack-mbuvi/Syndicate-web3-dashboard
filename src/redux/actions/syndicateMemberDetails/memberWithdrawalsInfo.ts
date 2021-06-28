@@ -23,7 +23,7 @@ interface ISyndicateLPData {
  * @returns dispatched syndicate member withdrawal values
  */
 export const updateMemberWithdrawalDetails = (
-  data: ISyndicateLPData
+  data: ISyndicateLPData,
 ): AppThunk => async (dispatch, getState) => {
   const {
     syndicateAddress,
@@ -65,7 +65,7 @@ export const updateMemberWithdrawalDetails = (
         syndicateContractInstance,
         syndicateAddress,
         memberAddress,
-        currentERC20Decimals
+        currentERC20Decimals,
       );
       const { memberDeposits } = memberInfo;
 
@@ -79,7 +79,7 @@ export const updateMemberWithdrawalDetails = (
             syndicateAddress,
             memberAddress: account,
             distributionERC20Address: currentDistributionTokenAddress,
-          }
+          },
         );
 
         if (memberDistributionsWithdrawalEvents.length) {
@@ -92,7 +92,7 @@ export const updateMemberWithdrawalDetails = (
             ].returnValues;
 
             tokenWithdrawalAmounts = tokenWithdrawalAmounts.add(
-              new BN(amountWithdrawn)
+              new BN(amountWithdrawn),
             );
           }
           memberDistributionsWithdrawalsToDate = tokenWithdrawalAmounts.toString();
@@ -104,14 +104,14 @@ export const updateMemberWithdrawalDetails = (
       const memberWithdrawals = getWeiAmount(
         memberDistributionsWithdrawalsToDate,
         currentDistributionTokenDecimals,
-        false
+        false,
       );
       const withdrawalsToDate = parseFloat(memberWithdrawals) * 100;
       const memberTotalDeposits = parseFloat(memberDeposits);
 
       memberWithdrawalsToDepositPercentage = divideIfNotByZero(
         withdrawalsToDate,
-        memberTotalDeposits
+        memberTotalDeposits,
       ).toString();
 
       // update Member's total distributions to date if on the withdrawal page
@@ -121,18 +121,18 @@ export const updateMemberWithdrawalDetails = (
       const totalSyndicateDeposits = getWeiAmount(
         depositTotal,
         depositTokenDecimals,
-        true
+        true,
       );
       const totalTokenDistributions = getWeiAmount(
         currentTokenAvailableDistributions,
         currentDistributionTokenDecimals,
-        true
+        true,
       );
 
       const totalMemberDeposits = getWeiAmount(
         memberDeposits,
         depositTokenDecimals,
-        true
+        true,
       );
 
       try {
@@ -141,7 +141,7 @@ export const updateMemberWithdrawalDetails = (
             totalMemberDeposits,
             totalSyndicateDeposits,
             memberDistributionsWithdrawalsToDate,
-            totalTokenDistributions
+            totalTokenDistributions,
           )
           .call()
           .then((result) => result)
@@ -155,7 +155,7 @@ export const updateMemberWithdrawalDetails = (
         memberDistributionsToDate = getWeiAmount(
           eligibleWithdrawal,
           currentDistributionTokenDecimals,
-          false
+          false,
         );
       }
 
@@ -164,7 +164,7 @@ export const updateMemberWithdrawalDetails = (
         memberDistributionsWithdrawalsToDate: getWeiAmount(
           memberDistributionsWithdrawalsToDate,
           currentDistributionTokenDecimals,
-          false
+          false,
         ),
         memberWithdrawalsToDepositPercentage,
       };
@@ -174,7 +174,7 @@ export const updateMemberWithdrawalDetails = (
       // and be rounded to two decimal places.
       Object.keys(memberWithdrawalDetails).map((key) => {
         memberWithdrawalDetails[key] = floatedNumberWithCommas(
-          memberWithdrawalDetails[key]
+          memberWithdrawalDetails[key],
         );
         return;
       });

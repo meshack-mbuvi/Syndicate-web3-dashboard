@@ -92,14 +92,14 @@ const DistributeToken = (props: Props) => {
   ]);
 
   const [enableDistributeButton, setEnableDistributeButton] = useState<boolean>(
-    false
+    false,
   );
   const [
     metamaskDistributionError,
     setMetamaskDistributionError,
   ] = useState<string>("");
   const [successfulDistribution, setSuccessfulDistribution] = useState<boolean>(
-    false
+    false,
   );
 
   /**
@@ -123,18 +123,18 @@ const DistributeToken = (props: Props) => {
         const totalCurrentDistributions = await getTotalDistributions(
           syndicateContractInstance,
           syndicateAddress,
-          tokenNonFormattedAddress
+          tokenNonFormattedAddress,
         );
         updateERC20TokenValue(
           "tokenDistribution",
           currentIndex,
-          totalCurrentDistributions
+          totalCurrentDistributions,
         );
 
         const convertedTokenDistributions = getWeiAmount(
           totalCurrentDistributions,
           tokenDecimals,
-          false
+          false,
         );
 
         const distributionTokensAllowanceDetailsCopy = [
@@ -163,8 +163,8 @@ const DistributeToken = (props: Props) => {
               // dispatch action to store to update distribution token details
               dispatch(
                 storeDistributionTokensDetails(
-                  distributionTokensAllowanceDetailsCopy
-                )
+                  distributionTokensAllowanceDetailsCopy,
+                ),
               );
               return;
             }
@@ -223,7 +223,7 @@ const DistributeToken = (props: Props) => {
     // Do not continue if managerFeeAddress is not set.
     if (isZeroAddress(syndicate.managerFeeAddress)) {
       setManagerFeeAddressError(
-        "Manager fee recipient Address is not set yet. Please set it before proceeding."
+        "Manager fee recipient Address is not set yet. Please set it before proceeding.",
       );
       return;
     }
@@ -242,7 +242,7 @@ const DistributeToken = (props: Props) => {
       const distributionAmount = getWeiAmount(
         tokenAllowance,
         tokenDecimals,
-        true
+        true,
       );
 
       tokenAddresses.push(tokenNonFormattedAddress);
@@ -255,7 +255,7 @@ const DistributeToken = (props: Props) => {
         .managerSetDistributions(
           syndicateAddress,
           tokenAddresses,
-          tokenDistributionAmounts
+          tokenDistributionAmounts,
         )
         .send({ from: account, gasLimit: 800000 })
         .on("transactionHash", () => {
@@ -319,18 +319,18 @@ const DistributeToken = (props: Props) => {
    */
   const checkCurrentTokenAllowance = async (
     tokenAddress: string,
-    tokenDecimals: string
+    tokenDecimals: string,
   ) => {
     const tokenAllowance = await checkAccountAllowance(
       tokenAddress,
       account,
-      syndicateContractInstance._address
+      syndicateContractInstance._address,
     );
 
     const currentTokenAllowance = getWeiAmount(
       tokenAllowance.toString(),
       +tokenDecimals,
-      false
+      false,
     );
 
     return currentTokenAllowance;
@@ -344,7 +344,7 @@ const DistributeToken = (props: Props) => {
    */
   const getDistributionTokenDecimals = async (
     index: number,
-    distributionERC20Address: string
+    distributionERC20Address: string,
   ) => {
     // get token decimals
     const tokenDetails = new ERC20TokenDetails(distributionERC20Address);
@@ -361,20 +361,20 @@ const DistributeToken = (props: Props) => {
    */
   const getDistributionTokenSymbol = (
     index: number,
-    distributionERC20Address: string
+    distributionERC20Address: string,
   ) => {
     // set token symbol based on token address
     const tokenAddress = distributionERC20Address;
     const mappedTokenAddress = Object.keys(TokenMappings).find(
       (key) =>
         web3.utils.toChecksumAddress(key) ==
-        web3.utils.toChecksumAddress(tokenAddress)
+        web3.utils.toChecksumAddress(tokenAddress),
     );
     if (mappedTokenAddress) {
       updateERC20TokenValue(
         "tokenSymbol",
         index,
-        TokenMappings[mappedTokenAddress]
+        TokenMappings[mappedTokenAddress],
       );
     } else {
       updateERC20TokenValue("tokenSymbol", index, "unknown");
@@ -385,7 +385,7 @@ const DistributeToken = (props: Props) => {
   const updateERC20TokenValue = (
     name: string,
     index: number,
-    value: string | boolean
+    value: string | boolean,
   ) => {
     let tokenFieldsCopy = [...ERC20TokenFields];
     tokenFieldsCopy[index][name] = value;
@@ -420,7 +420,7 @@ const DistributeToken = (props: Props) => {
       updateERC20TokenValue(
         "tokenAllowanceError",
         index,
-        `Distribution amount ${message}`
+        `Distribution amount ${message}`,
       );
       updateERC20TokenValue("profitShareToSyndicateProtocol", index, "0");
       updateERC20TokenValue("profitShareToSyndicateLead", index, "0");
@@ -436,7 +436,7 @@ const DistributeToken = (props: Props) => {
       if (tokenNonFormattedAddress) {
         const currentTokenAllowance = await checkCurrentTokenAllowance(
           tokenNonFormattedAddress,
-          tokenDecimals
+          tokenDecimals,
         );
 
         // check if the value in the input field is the same as the current token allowance
@@ -466,17 +466,17 @@ const DistributeToken = (props: Props) => {
       updateERC20TokenValue(
         "profitShareToSyndicateProtocol",
         index,
-        tokenProfitShareToSyndicateProtocol.toString()
+        tokenProfitShareToSyndicateProtocol.toString(),
       );
       updateERC20TokenValue(
         "profitShareToSyndicateLead",
         index,
-        tokenProfitShareToSyndicateLead.toString()
+        tokenProfitShareToSyndicateLead.toString(),
       );
       updateERC20TokenValue(
         "availableToWithdraw",
         index,
-        tokenWithdrawalAmountAvailable.toString()
+        tokenWithdrawalAmountAvailable.toString(),
       );
     }
   };
@@ -495,14 +495,14 @@ const DistributeToken = (props: Props) => {
       updateERC20TokenValue(
         "tokenAddressError",
         index,
-        "Token address is required"
+        "Token address is required",
       );
       resetTokenValues(index);
     } else if (web3 && !web3.utils.isAddress(value)) {
       updateERC20TokenValue(
         "tokenAddressError",
         index,
-        "Enter a valid address"
+        "Enter a valid address",
       );
       updateERC20TokenValue("tokenAddress", index, "");
       resetTokenValues(index);
@@ -514,7 +514,7 @@ const DistributeToken = (props: Props) => {
           updateERC20TokenValue(
             "tokenAddressError",
             index,
-            "Token address already used."
+            "Token address already used.",
           );
           return;
         }
@@ -536,7 +536,7 @@ const DistributeToken = (props: Props) => {
       if (tokenAllowance) {
         const currentTokenAllowance = await checkCurrentTokenAllowance(
           value,
-          tokenDecimals
+          tokenDecimals,
         );
 
         // check if the value in the input field is the same as the current token allowance
@@ -555,7 +555,7 @@ const DistributeToken = (props: Props) => {
   ] = useState<boolean>(false);
 
   const [metamaskApprovalError, setMetamaskApprovalError] = useState<string>(
-    ""
+    "",
   );
   const [
     submittingAllowanceApproval,
@@ -590,7 +590,7 @@ const DistributeToken = (props: Props) => {
     // set up token contract.
     const tokenContract = new web3.eth.Contract(
       ERC20ABI,
-      tokenNonFormattedAddress
+      tokenNonFormattedAddress,
     );
 
     // set metamask loading state
@@ -623,27 +623,27 @@ const DistributeToken = (props: Props) => {
             const managerApprovedAllowance = getWeiAmount(
               wad,
               tokenDecimals,
-              false
+              false,
             );
 
             updateERC20TokenValue("tokenAllowanceApproved", index, true);
             updateERC20TokenValue(
               "tokenAllowanceAmount",
               index,
-              `${managerApprovedAllowance}`
+              `${managerApprovedAllowance}`,
             );
 
             // get current distributions.
             const totalCurrentDistributions = await getTotalDistributions(
               syndicateContractInstance,
               syndicateAddress,
-              tokenNonFormattedAddress
+              tokenNonFormattedAddress,
             );
 
             const convertedTokenDistributions = getWeiAmount(
               totalCurrentDistributions,
               tokenDecimals,
-              false
+              false,
             );
             if (distributionTokensAllowanceDetails.length) {
               const sufficientAllowanceSet =
@@ -677,8 +677,8 @@ const DistributeToken = (props: Props) => {
 
               dispatch(
                 storeDistributionTokensDetails(
-                  distributionTokensAllowanceDetailsCopy
-                )
+                  distributionTokensAllowanceDetailsCopy,
+                ),
               );
             }
           }
@@ -805,7 +805,7 @@ const DistributeToken = (props: Props) => {
     } else {
       // update syndicate details in the redux store
       dispatch(
-        getSyndicateByAddress(syndicateAddress, syndicateContractInstance)
+        getSyndicateByAddress(syndicateAddress, syndicateContractInstance),
       );
       setShowDistributeToken(false);
     }
@@ -844,7 +844,7 @@ const DistributeToken = (props: Props) => {
 
   const [managerFeeAddressError, setManagerFeeAddressError] = useState("");
   const [managerFeeAddress, setManagerFeeAddress] = useState(
-    syndicate?.managerFeeAddress
+    syndicate?.managerFeeAddress,
   );
 
   /**
@@ -861,15 +861,15 @@ const DistributeToken = (props: Props) => {
 
     if (!value.trim()) {
       setManagerFeeAddressError(
-        "A manager fee address cannot be an empty value"
+        "A manager fee address cannot be an empty value",
       );
     } else if (isZeroAddress(value)) {
       setManagerFeeAddressError(
-        "A manager Fee address must not be a zero address"
+        "A manager Fee address must not be a zero address",
       );
     } else if (!(web3 && web3.utils.isAddress(value))) {
       setManagerFeeAddressError(
-        "A manager Fee address must be a valid ethereum address."
+        "A manager Fee address must be a valid ethereum address.",
       );
     }
   };
@@ -889,7 +889,7 @@ const DistributeToken = (props: Props) => {
       setFinalStateHeaderText("Transaction Rejected");
     } else if (code == undefined) {
       setFinalStateHeaderText(
-        "The manager fee address should be different from the current manager address attached to this syndicate"
+        "The manager fee address should be different from the current manager address attached to this syndicate",
       );
     } else {
       setFinalStateHeaderText(errorMessage);
@@ -1047,7 +1047,7 @@ const DistributeToken = (props: Props) => {
                           tokenAddressError ||
                           !tokenAddress ||
                           !tokenAllowance ||
-                          tokenAllowanceApproved
+                          tokenAllowanceApproved,
                       );
 
                       return (
@@ -1271,7 +1271,7 @@ const DistributeToken = (props: Props) => {
                                 <li>
                                   <p className="text-sm font-normal leading-5 text-black px-4">
                                     {floatedNumberWithCommas(
-                                      profitShareToSyndicateLead
+                                      profitShareToSyndicateLead,
                                     )}{" "}
                                     {tokenSymbol}
                                   </p>
@@ -1313,7 +1313,7 @@ const DistributeToken = (props: Props) => {
                                 <li>
                                   <p className="text-sm font-normal leading-5 text-black px-4">
                                     {floatedNumberWithCommas(
-                                      profitShareToSyndicateProtocol
+                                      profitShareToSyndicateProtocol,
                                     )}{" "}
                                     {tokenSymbol}
                                   </p>
@@ -1350,7 +1350,7 @@ const DistributeToken = (props: Props) => {
                                 <li>
                                   <p className="text-sm font-medium leading-5 text-black px-4">
                                     {floatedNumberWithCommas(
-                                      availableToWithdraw
+                                      availableToWithdraw,
                                     )}{" "}
                                     {tokenSymbol}
                                   </p>

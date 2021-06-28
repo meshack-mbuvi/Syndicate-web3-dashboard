@@ -34,7 +34,7 @@ const PortfolioAndDiscover = (props: MySyndicateProps) => {
 
   // Assume by default this user has an open syndicate
   const [managerWithOpenSyndicate, setManagerWithOpenSyndicate] = useState(
-    true
+    true,
   );
 
   // Find whether there is a syndicate address that matches the connected
@@ -47,7 +47,7 @@ const PortfolioAndDiscover = (props: MySyndicateProps) => {
         syndicateAddresses.push(syndicate.syndicateAddress);
       });
       const accountHasSyndicate = syndicateAddresses.find(
-        (address) => address == account
+        (address) => address == account,
       );
       if (accountHasSyndicate) {
         setManagerWithOpenSyndicate(true);
@@ -85,9 +85,9 @@ const PortfolioAndDiscover = (props: MySyndicateProps) => {
     num: number,
     width: string,
     height: string,
-    borderRadius?: string
+    borderRadius?: string,
   ) => {
-    let skeletonsWrapper = [];
+    const skeletonsWrapper = [];
     for (let i = 0; i < num; i++) {
       skeletonsWrapper.push(
         <div className="px-2 w-full" key={i}>
@@ -96,7 +96,7 @@ const PortfolioAndDiscover = (props: MySyndicateProps) => {
             height={height}
             borderRadius={borderRadius}
           ></SkeletonLoader>
-        </div>
+        </div>,
       );
     }
     return skeletonsWrapper;

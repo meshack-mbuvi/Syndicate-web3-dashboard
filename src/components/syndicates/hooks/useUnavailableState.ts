@@ -50,10 +50,10 @@ export const useUnavailableState = (page?: string) => {
   const router = useRouter();
   const withdraw = router.pathname.endsWith("withdraw");
 
-  const { depositsAvailable, maxLPsZero } = useDepositChecks();
+  const { depositsAvailable, maxMembersZero } = useDepositChecks();
 
   const [{ title, message, renderUnavailableState }, setText] = useState(
-    defaultState
+    defaultState,
   );
 
   switch (page) {
@@ -80,10 +80,10 @@ export const useUnavailableState = (page?: string) => {
               ? connectWalletWithdrawMessage
               : noAccountState.message,
           });
-        } else if (!depositsAvailable || maxLPsZero) {
+        } else if (!depositsAvailable || maxMembersZero) {
           setText({
             title: depositsUnavailableTitleText,
-            message: maxLPsZero
+            message: maxMembersZero
               ? depositsUnavailableMaxMembersZeroText
               : depositsUnavailableText,
             renderUnavailableState: true,
@@ -97,7 +97,7 @@ export const useUnavailableState = (page?: string) => {
         } else {
           setText({ ...defaultState, renderUnavailableState: false });
         }
-      }, [account, syndicateAddressIsValid]);
+      }, [account, syndicateAddressIsValid, depositsAvailable, maxMembersZero]);
 
       break;
   }

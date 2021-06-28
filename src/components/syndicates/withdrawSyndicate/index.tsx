@@ -83,7 +83,7 @@ const WithdrawSyndicate = () => {
   const { title, message, renderUnavailableState } = useUnavailableState();
 
   // STATES
-  const [withdrawalsAvailable, setWithdrawalsAvailable] = useState<Boolean>(
+  const [withdrawalsAvailable, setWithdrawalsAvailable] = useState<boolean>(
     true
   );
   const [submittingWithdrawal, setSubmittingWithdrawal] = useState<boolean>(

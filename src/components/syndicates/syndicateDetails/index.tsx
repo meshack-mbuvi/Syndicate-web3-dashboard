@@ -56,7 +56,7 @@ const SyndicateDetails = (props: {
     distributionTokensAllowanceDetails,
   } = props;
   const { syndicateContractInstance } = useSelector(
-    (state: RootState) => state.syndicateInstanceReducer
+    (state: RootState) => state.syndicateInstanceReducer,
   );
   const {
     syndicateMemberDetailsReducer: { syndicateDistributionTokens },
@@ -164,7 +164,7 @@ const SyndicateDetails = (props: {
       // set up token contract
       const tokenContract = new web3.eth.Contract(
         ERC20ABI,
-        depositERC20Address
+        depositERC20Address,
       );
 
       setDepositTokenContract(tokenContract);
@@ -180,13 +180,13 @@ const SyndicateDetails = (props: {
     const managerDepositTokenAllowance = await checkAccountAllowance(
       depositERC20Address,
       managerAddress,
-      syndicateContractInstance._address
+      syndicateContractInstance._address,
     );
 
     const managerDepositAllowance = getWeiAmount(
       managerDepositTokenAllowance,
       depositTokenDecimals,
-      false
+      false,
     );
 
     setManagerDepositsAllowance(parseFloat(managerDepositAllowance));
@@ -209,7 +209,7 @@ const SyndicateDetails = (props: {
           tokenDecimals: depositTokenDecimals,
           sufficientAllowanceSet,
         },
-      ])
+      ]),
     );
     //reset distribution details
     dispatch(storeDistributionTokensDetails([]));
@@ -225,7 +225,7 @@ const SyndicateDetails = (props: {
     const distributionEvents = await getEvents(
       syndicateContractInstance,
       "managerSetterDistribution",
-      { syndicateAddress: addressOfSyndicate }
+      { syndicateAddress: addressOfSyndicate },
     );
 
     if (distributionEvents.length > 0) {
@@ -248,7 +248,7 @@ const SyndicateDetails = (props: {
 
         // get token symbol
         const mappedTokenAddress = Object.keys(TokenMappings).find(
-          (key) => key.toLowerCase() == tokenAddress.toLowerCase()
+          (key) => key.toLowerCase() == tokenAddress.toLowerCase(),
         );
         if (mappedTokenAddress) {
           var tokenSymbol = TokenMappings[mappedTokenAddress];
@@ -259,12 +259,12 @@ const SyndicateDetails = (props: {
         const tokenManagerAllowance = await checkAccountAllowance(
           tokenAddress,
           managerAddress,
-          syndicateContractInstance._address
+          syndicateContractInstance._address,
         );
         const tokenAllowance = getWeiAmount(
           tokenManagerAllowance,
           tokenDecimals,
-          false
+          false,
         );
 
         // get total distributions for the token
@@ -276,7 +276,7 @@ const SyndicateDetails = (props: {
         const tokenDistributions = getWeiAmount(
           totalCurrentDistributions,
           tokenDecimals,
-          false
+          false,
         );
 
         // check if allowance set is enough to cover distributions.
@@ -323,7 +323,7 @@ const SyndicateDetails = (props: {
       }
 
       dispatch(
-        setSyndicateDistributionTokens(syndicateDistributionTokensArray)
+        setSyndicateDistributionTokens(syndicateDistributionTokensArray),
       );
 
       //reset distribution token fields
@@ -385,7 +385,6 @@ const SyndicateDetails = (props: {
       }
     }
   }, [syndicateContractInstance, syndicate, depositTokenSymbol]);
-  
 
   // set syndicate cummulative values
   useEffect(() => {
@@ -395,7 +394,7 @@ const SyndicateDetails = (props: {
         {
           header: "Total Deposits",
           subText: `${floatedNumberWithCommas(
-            depositTotal
+            depositTotal,
           )} ${depositTokenSymbol} (${numMembersCurrent} ${
             parseInt(numMembersCurrent) === 1 ? "depositor" : "depositors"
           })`,
@@ -470,7 +469,7 @@ const SyndicateDetails = (props: {
     const mappedTokenAddress = Object.keys(TokenMappings).find(
       (key) =>
         web3.utils.toChecksumAddress(key) ===
-        web3.utils.toChecksumAddress(tokenAddress)
+        web3.utils.toChecksumAddress(tokenAddress),
     );
 
     if (mappedTokenAddress) {
@@ -504,8 +503,8 @@ const SyndicateDetails = (props: {
           profitShareToSyndicateLead,
           profitShareToSyndicateProtocol,
           syndicate,
-          syndicateAddress
-        )
+          syndicateAddress,
+        ),
       );
     }
   }, [syndicate, syndicateAddress]);
@@ -514,19 +513,19 @@ const SyndicateDetails = (props: {
   const formattedSyndicateAddress3XLarge = formatAddress(
     syndicateAddress,
     18,
-    18
+    18,
   );
   const formattedSyndicateAddressXLarge = formatAddress(
     syndicateAddress,
     14,
-    11
+    11,
   );
   const formattedSyndicateAddressLarge = formatAddress(syndicateAddress, 6, 7);
   const formattedSyndicateAddressMedium = formatAddress(syndicateAddress, 7, 6);
   const formattedSyndicateAddressSmall = formatAddress(
     syndicateAddress,
     10,
-    14
+    14,
   );
   const formattedSyndicateAddressMobile = formatAddress(syndicateAddress, 5, 8);
 

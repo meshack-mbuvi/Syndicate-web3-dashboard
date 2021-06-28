@@ -8,7 +8,7 @@
 export const getTotalDistributions = async (
   syndicateContractInstance,
   syndicateAddress,
-  distributionERC20Address: string | string[]
+  distributionERC20Address: string | string[],
 ) => {
   if (!syndicateContractInstance) return;
 
@@ -36,14 +36,14 @@ export const getClaimedDistributions = async (
   syndicateInstance: any,
   address: string | string[],
   lpAddress: string,
-  ERC20ContractAddress: string = ""
+  ERC20ContractAddress: string = "",
 ) => {
   try {
     const claimedDistributions = await syndicateInstance.getClaimedDistributions(
       address,
       lpAddress,
       ERC20ContractAddress,
-      { gasLimit: 800000 }
+      { gasLimit: 800000 },
     );
     return claimedDistributions.toString();
   } catch (error) {

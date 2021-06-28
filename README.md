@@ -34,7 +34,7 @@ Use `npm run build` to build your site for production.
 
 ## Deployment
 
-Every pull request automatically generates a deploy preview on Netlify. All code merged into main is automatically deployed to the live site at [https://app-syndicate-protocol-org.netlify.app/](https://app-syndicate-protocol-org.netlify.app/)
+Every pull request automatically generates a deploy preview on Netlify. All code merged into main is automatically deployed to the live site at [https://rinkeby-web3-dev-environment.netlify.app/](https://rinkeby-web3-dev-environment.netlify.app)
 
 ## Smart Contract
 
