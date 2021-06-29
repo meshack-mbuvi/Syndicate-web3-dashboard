@@ -482,7 +482,8 @@ const CreateSyndicate = (props: Props) => {
     const encode = (data) => {
       return Object.keys(data)
         .map(
-          (key) => encodeURIComponent(key) + "=" + encodeURIComponent(data[key])
+          (key) =>
+            encodeURIComponent(key) + "=" + encodeURIComponent(data[key])
         )
         .join("&");
     };
@@ -1121,30 +1122,32 @@ const CreateSyndicate = (props: Props) => {
             <img src="/images/checkCircle.svg" className="w-16" />
           </div>
           <div className="modal-header mb-4 text-black font-medium text-center ">
-            <p className="text-2xl font-whyte ">
+            <p className="text-2xl font-whyte">
               Syndicate Successfully Launched
             </p>
-            <p className="font-whyte leading-8 text-sm text-gray-500 mt-4">
+            <p className="font-whyte-light leading-8 text-sm sm:text-base text-gray-500 mt-4 mb-2">
               Your syndicate&apos;s permanent address is:
             </p>
 
-            <span className="font-whyte leading-8 p-1 my-2 rounded-sm text-sm text-gray-500 bg-gray-93 mb-4">
-              {account}
-            </span>
-            <p className="font-whyte leading-8 text-sm text-gray-500 mt-4">
-              Your syndicate deposit link:
+            <div className="mb-6">
+              <span className="font-whyte leading-8 p-2 my-2 rounded-md text-sm text-gray-500 bg-gray-93">
+                {account}
+              </span>
+            </div>
+            <p className="font-whyte-light leading-8 text-sm sm:text-base text-gray-500 mt-4 mb-2">
+              Your syndicate's deposit link:
             </p>
             <div className="flex justify-between mx-2">
-              <div className="flex flex-grow flex-col w-3/5">
+              <div className="flex flex-grow flex-col w-4/5">
                 <input
                   disabled
-                  className="font-whyte text-sm sm:text-base word-break p-2 overflow-hidden overflow-x-scroll border border-blue-light rounded-full"
-                  value={`${window.location.origin}/syndicates/${account}/deposit`}
+                  className="font-whyte text-center text-sm sm:text-base word-break px-4 p-2 overflow-hidden overflow-x-scroll border border-blue-light rounded-full"
+                  value={`${window.location.origin}/syndicates/${account.slice(0,8)}...`}
                 ></input>
               </div>
-              <div className="flex align-center justify-center mx-auto my-2">
+              <div className="flex align-center justify-center mx-auto my-2 w-1/5">
                 {copied ? (
-                  <span className="text-sm text-gray-nightrider font-whyte ml-2 opacity-80">
+                  <span className="text-sm text-gray-nightrider font-whyte-light ml-2 opacity-80">
                     Link copied
                   </span>
                 ) : (
@@ -1153,10 +1156,10 @@ const CreateSyndicate = (props: Props) => {
                       text={`${window.location.origin}/syndicates/${account}/deposit`}
                       onCopy={handleOnCopy}
                     >
-                      <p className="flex font-whyte text-sm cursor-pointer hover:opacity-80 text-gray-nightrider">
+                      <p className="flex font-whyte-light text-sm cursor-pointer hover:opacity-80 text-gray-nightrider">
                         <img
                           src="/images/copy.svg"
-                          className="w-4 ml-2 mr-1 font-whyte cursor-pointer border-blue text-blue"
+                          className="w-4 ml-2 mr-1 font-whyte-light cursor-pointer border-blue text-blue"
                         />
                         Copy link
                       </p>
@@ -1165,20 +1168,25 @@ const CreateSyndicate = (props: Props) => {
                 )}
               </div>
             </div>
-            <div className="flex my-5 justify-center">
-              <EtherscanLink contractAddress={account} />
+            <div className="flex mt-5 mb-2 justify-center">
+              <EtherscanLink
+                contractAddress={account}
+                customStyles="font-whyte-light"
+              />
             </div>
-            <div className="my-5">
+            <div className="mb-6">
               <Link href={`/syndicates/${account}/manage`}>
-                <a className="font-whyte text-center py-3 text-sm font-medium text-blue hover bg-light-green">
+                <a className="font-whyte-light text-center py-3 text-sm sm:text-base font-medium text-blue hover bg-light-green">
                   Go to Syndicate Management Page
                 </a>
               </Link>
             </div>
             <div>
               {/* font-whytes font-light text-gray-dim */}
-              <p className="font-thin text-gray-dim text-sm opacity-70">
-                <span className="font-thin text-gray-dim">IMPORTANT: </span>
+              <p className="font-whyte-light text-gray-dim text-sm opacity-70">
+                <span className="font-whyte text-gray-dim">
+                  <b>IMPORTANT:</b>{" "}
+                </span>
                 Do not publicly market deposit link. Only share directly with
                 people and organizations you have qualified.
               </p>

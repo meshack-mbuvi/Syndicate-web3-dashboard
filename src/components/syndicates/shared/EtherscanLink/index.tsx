@@ -3,6 +3,7 @@ import { ExternalLinkIcon } from "src/components/iconWrappers";
 
 interface LinkProp {
   contractAddress: string | string[];
+  customStyles?: string;
 }
 
 /** Link used to redirect the user to the Etherscan
@@ -10,7 +11,7 @@ interface LinkProp {
  * or the token contract when token transactions are involved.
  */
 export const EtherscanLink = (props: LinkProp) => {
-  const { contractAddress } = props;
+  const { contractAddress, customStyles } = props;
   // get debug mode from the .env
   // If we're in debug mode, we'll use the rinkeby testnet.
   const debugging = process.env.NEXT_PUBLIC_DEBUG;
@@ -23,10 +24,10 @@ export const EtherscanLink = (props: LinkProp) => {
     <a
       href={`${etherscanLink}${contractAddress}`}
       target="_blank"
-      className="text-blue flex"
+      className={`text-blue flex items-center ${customStyles && customStyles}`}
       rel="noreferrer"
     >
-      View on Etherscan <ExternalLinkIcon className="ml-2 text-blue" />
+      View on Etherscan <ExternalLinkIcon className="ml-2 w-4 text-blue" />
     </a>
   );
 };

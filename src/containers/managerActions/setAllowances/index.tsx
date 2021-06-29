@@ -40,9 +40,7 @@ const ManagerSetAllowance = (props: Props) => {
   const {
     hideManagerSetAllowances,
     showManagerSetAllowances,
-    depositTokenContract,
     syndicateContractInstance,
-    depositTokenDecimals,
     web3: { account },
     depositTokenAllowanceDetails,
     distributionTokensAllowanceDetails,
