@@ -24,13 +24,11 @@ const Header = ({ backLink }: props) => {
         </div>
 
         {/* logo */}
-        <div className="md:flex-1 space-x-1 mx-auto">
+        <div className="md:flex-1 space-x-1 mx-auto w-fit-content flex items-center justify-center">
           <Link href="/">
-            <img
-              src="/images/logo.svg"
-              className="center"
-              alt="Syndicate Logo"
-            />
+            <a>
+              <img src="/images/logo.svg" alt="Syndicate Logo" />
+            </a>
           </Link>
         </div>
 
