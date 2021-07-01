@@ -13,6 +13,7 @@ import dynamic from "next/dynamic";
 import { wrapper } from "../redux/store";
 import "../styles/animation.css";
 import "../styles/global.css";
+import ConnectWalletProvider from "@/context/ConnectWalletProvider";
 
 const INTERCOM_APP_ID = process.env.NEXT_PUBLIC_INTERCOM_APP_ID;
 
@@ -29,16 +30,19 @@ const SyndicateWeb3ReactProvider = dynamic(
 const App = ({ Component, pageProps }) => {
   return (
     <IntercomProvider appId={INTERCOM_APP_ID} autoBoot={true}>
-      <Head>
-        <title>Home | Syndicate Dashboard</title>
-        <link rel="shortcut icon" href="/images/logo.svg" />
-        <meta
-          name="viewport"
-          content="width=device-width, initial-scale=1, shrink-to-fit=no"
-        />
-      </Head>
       <SyndicateWeb3ReactProvider>
-        <Component {...pageProps} />
+        <ConnectWalletProvider>
+          <Head>
+            <title>Home | Syndicate Dashboard</title>
+            <link rel="shortcut icon" href="/images/logo.svg" />
+            <meta
+              name="viewport"
+              content="width=device-width, initial-scale=1, shrink-to-fit=no"
+            />
+          </Head>
+
+          <Component {...pageProps} />
+        </ConnectWalletProvider>
       </SyndicateWeb3ReactProvider>
     </IntercomProvider>
   );
