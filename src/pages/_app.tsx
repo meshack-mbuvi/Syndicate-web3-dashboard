@@ -27,6 +27,12 @@ const SyndicateWeb3ReactProvider = dynamic(
   { ssr: false },
 );
 
+// Initialize Amplitude Services.
+const AmplitudeProvider = dynamic(
+  () => import("@/components/amplitude"),
+  { ssr: false },
+);
+
 const App = ({ Component, pageProps }) => {
   return (
     <IntercomProvider appId={INTERCOM_APP_ID} autoBoot={true}>
@@ -40,7 +46,7 @@ const App = ({ Component, pageProps }) => {
               content="width=device-width, initial-scale=1, shrink-to-fit=no"
             />
           </Head>
-
+          <AmplitudeProvider />
           <Component {...pageProps} />
         </ConnectWalletProvider>
       </SyndicateWeb3ReactProvider>

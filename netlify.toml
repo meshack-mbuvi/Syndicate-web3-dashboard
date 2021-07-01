@@ -3,3 +3,7 @@
   command = "npm run build && npm run lambda-build"
 [functions]
   directory = "functions/build"
+[[plugins]]
+package = 'netlify-plugin-contextual-env'
+  [plugins.inputs]
+  mode = 'prefix'
