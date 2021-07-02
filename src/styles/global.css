@@ -101,6 +101,54 @@
       max-width: 30rem;
     }
 
+    .perfect-square::after {
+      content: "";
+      display: block;
+      padding-bottom: 100%;
+    }
+
+    /*
+      Force content to the left edge of the screen when it's inside a
+      narrow child element, like the .container class
+    */
+    .force-to-left {
+        margin-left: calc((-100vw + 100%) / 2);
+    }
+
+    /*
+      Force content to the left edge of the screen when it's inside a
+      narrow child element, like the .container classs
+    */
+    .force-to-right {
+        margin-right: calc((-100vw + 100%) / 2);
+    }
+
+    /*
+      Use this when using .edge-to-edge on an horizontally scrollable
+      container, but you want the content to begin at the 'initial' left
+      position.
+    */
+    .inset-left {
+        padding-left: calc((100vw - 100%) / 2);
+    }
+
+    /*
+    Edge to edge
+      Use this when you want to make content, inside a narrow container,
+      the width of the screen i.e edge-to-edge. Only use this when it's too
+      complicated to change the page structure to get this behavior.
+    */
+    .edge-to-edge {
+        @apply force-to-left w-screen;
+    }
+
+    /*
+      Like .edge-to-edge but has a left inset for inner content.
+    */
+    .edge-to-edge-with-left-inset {
+        @apply edge-to-edge inset-left;
+    }
+
     /* Positioning */
 
     .vertically-center {
@@ -133,6 +181,17 @@
 
     .visibility-container:hover .visibility-hover {
       visibility: visible;
+    }
+
+    /* Scroll bar */
+
+    .no-scroll-bar::-webkit-scrollbar { 
+      display: none;
+    }
+  
+    .no-scroll-bar {
+        -ms-overflow-style: none;  /* IE 10+ */
+        scrollbar-width: none;  /* Firefox */   
     }
   }
 }

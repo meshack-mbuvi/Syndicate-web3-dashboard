@@ -103,7 +103,7 @@ const PortfolioAndDiscover = (props: MySyndicateProps) => {
   };
 
   return (
-    <div className="mt-2 px-4">
+    <div className="mt-2">
       {loading && account ? (
         // show some animations during loading process
         // skeleton loader
@@ -150,7 +150,7 @@ const PortfolioAndDiscover = (props: MySyndicateProps) => {
           <div className="flex justify-between w-full">
             <div>
               {syndicates.length ? (
-                <div className="px-4">
+                <div>
                   <PageHeader>Portfolio</PageHeader>
                 </div>
               ) : null}
@@ -201,10 +201,11 @@ const PortfolioAndDiscover = (props: MySyndicateProps) => {
       )}
       {syndicateDAOs.length ? (
         <div className="mt-6">
-          <div className="px-2 ml-2">
+          <div className="">
             <PageHeader>Discover</PageHeader>
           </div>
-          <div className="grid gap-4 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 mt-6 ml-2">
+          {/* <div className="flex flex-wrap md:justify-between justify-around"> */}
+          <div className="grid grid-cols-1 xl:grid-cols-4 lg:grid-cols-3 sm:grid-cols-2 gap-6">
             {syndicateDAOs.map((syndicate, index) => {
               return (
                 <SyndicateDAOItem

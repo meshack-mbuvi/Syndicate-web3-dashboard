@@ -22,16 +22,21 @@ export const SyndicateDAOItem = (props: DAOProps) => {
     setShowAllMembers(false);
   };
   return (
-    <div className={`flex flex-col ml-2`}>
+    <div
+      // className="mb-8 w-full sm:w-60 md:w-80 lg:w-72"
+      className="mb-8 w-full"
+    >
       <div
         style={{
           background: `url(${image}) no-repeat center center`,
           backgroundSize: "cover",
           backgroundColor: "#3b3939",
         }}
-        className="flex-shrink rounded-md w-40 h-40 md:w-50 md:h-50 lg:w-64 lg:h-64 xl:w-76 xl:h-76 bg-gray-90"
+        // className="bg-red-400 h-80 w-80 md:h-72 mb-2 rounded-md"
+        // className="bg-red-400 md:w-80 mb-2 rounded-md perfect-square w-100"
+        className="w-full mb-2 rounded-md perfect-square"
       ></div>
-      <p className="text-sm md:text-lg font-whyte-light mt-2">
+      <p className="text-md md:text-lg font-whyte-light mt-2">
         <a href={url} target="_blank" rel="no-referrer">
           {name}
         </a>

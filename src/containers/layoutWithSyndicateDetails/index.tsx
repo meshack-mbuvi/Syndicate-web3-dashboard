@@ -150,7 +150,7 @@ const LayoutWithSyndicateDetails = ({ children }) => {
                 </div>
               </div>
               {/* Left Column */}
-              <div className="md:w-3/5 w-full pb-6 pt-28 md:pt-0 md:pr-24">
+              <div className="md:w-3/5 w-full pb-6 md:pr-24">
                 <div ref={ref} className="w-full md:hidden" />{" "}
                 {/* its used as an identifier for ref in small devices */}
                 <SyndicateDetails

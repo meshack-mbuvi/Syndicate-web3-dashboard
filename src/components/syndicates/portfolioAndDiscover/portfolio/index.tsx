@@ -101,9 +101,11 @@ export const Portfolio = (props: { syndicates }) => {
   const columns = useMemo(() => COLUMNS, []);
 
   return (
-    <div className="mt-4 px-4">
+    <div className="mt-4">
       {syndicates && syndicates.length ? (
-        <ActiveSyndicatesTable columns={columns} data={syndicates} />
+        <div className="overflow-x-scroll edge-to-edge-with-left-inset lg:mr-auto lg:px-auto lg:w-auto no-scroll-bar">
+          <ActiveSyndicatesTable columns={columns} data={syndicates} />
+        </div>
       ) : (
         "No syndicates currently"
       )}
