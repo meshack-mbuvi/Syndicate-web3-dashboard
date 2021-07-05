@@ -16,6 +16,7 @@ function IndexPage() {
         keywords={[`next`, `tailwind`, `react`, `tailwindcss`]}
         title="Home"
       />
+      
       <div className="flex justify-between flex-col full-height relative h-screen">
         <div className="flex justify-center w-full">
           <img src="/images/logo.svg" className="h-12 w-12 mt-8 mx-4" />

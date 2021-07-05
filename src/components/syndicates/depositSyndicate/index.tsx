@@ -1,42 +1,40 @@
+import ErrorBoundary from "@/components/errorBoundary";
+import FadeIn from "@/components/fadeIn/FadeIn";
+import JoinWaitlist from "@/components/JoinWaitlist";
+import { ErrorModal } from "@/components/shared";
+import { SkeletonLoader } from "@/components/skeletonLoader";
+import { getMetamaskError } from "@/helpers";
+import { showWalletModal } from "@/redux/actions";
+import { setSyndicateDetails } from "@/redux/actions/syndicateDetails";
+import { updateMemberDepositDetails } from "@/redux/actions/syndicateMemberDetails/memberDepositsInfo";
+import { getSyndicateByAddress } from "@/redux/actions/syndicates";
+import { RootState } from "@/redux/store";
+import { getWeiAmount } from "@/utils/conversions";
+import { floatedNumberWithCommas } from "@/utils/formattedNumbers";
+import { Validate } from "@/utils/validators";
+import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useRouter } from "next/router";
-
-import ErrorBoundary from "@/components/errorBoundary";
-import { RootState } from "@/redux/store";
-import { updateMemberDepositDetails } from "@/redux/actions/syndicateMemberDetails/memberDepositsInfo";
-import { showWalletModal } from "@/redux/actions";
-import { Validate } from "@/utils/validators";
-import { getWeiAmount } from "@/utils/conversions";
-import { getSyndicateByAddress } from "@/redux/actions/syndicates";
-import { getMetamaskError } from "@/helpers";
-import { setSyndicateDetails } from "@/redux/actions/syndicateDetails";
-import { floatedNumberWithCommas } from "@/utils/formattedNumbers";
-import { ErrorModal } from "@/components/shared";
-
+import ERC20ABI from "src/utils/abi/erc20";
+import { useCurrentERC20 } from "../hooks/useCurrentERC20";
+import { useDepositChecks } from "../hooks/useDepositChecks";
+import { useUnavailableState } from "../hooks/useUnavailableState";
+import { DetailsCard } from "../shared";
 import {
   constants,
   metamaskConstants,
   myDepositsToolTip,
-  walletConfirmConstants,
   myPercentageOfThisSyndicateToolTip,
+  walletConfirmConstants,
 } from "../shared/Constants";
-import ERC20ABI from "src/utils/abi/erc20";
-import WithdrawDeposit from "./WithdrawDeposit";
-import { DetailsCard } from "../shared";
-import { useCurrentERC20 } from "../hooks/useCurrentERC20";
-import { UnavailableState } from "../shared/unavailableState";
-import { useUnavailableState } from "../hooks/useUnavailableState";
-import { useDepositChecks } from "../hooks/useDepositChecks";
-import { SyndicateActionLoader } from "../shared/syndicateActionLoader";
-import { SkeletonLoader } from "@/components/skeletonLoader";
 import { SyndicateActionButton } from "../shared/syndicateActionButton";
-import FadeIn from "@/components/fadeIn/FadeIn";
-import JoinWaitlist from "@/components/JoinWaitlist";
+import { SyndicateActionLoader } from "../shared/syndicateActionLoader";
+import { UnavailableState } from "../shared/unavailableState";
+import WithdrawDeposit from "./WithdrawDeposit";
 
 const Web3 = require("web3");
 const web3 = new Web3(
-  Web3.givenProvider || `${process.env.NEXT_PUBLIC_INFURA_ENDPOINT}`
+  Web3.givenProvider || `${process.env.NEXT_PUBLIC_INFURA_ENDPOINT}`,
 );
 
 const {
@@ -78,7 +76,7 @@ const DepositSyndicate = () => {
   const dispatch = useDispatch();
 
   const {
-    syndicateInstanceReducer: { syndicateContractInstance },
+    initializeContractsReducer: { syndicateContracts },
     syndicateMemberDetailsReducer: { memberDepositDetails },
     syndicatesReducer: { syndicate },
     web3Reducer: {
@@ -87,7 +85,12 @@ const DepositSyndicate = () => {
   } = useSelector((state: RootState) => state);
 
   const { depositTokenSymbol, depositTokenDecimals } = useCurrentERC20();
-  const { title, message, renderUnavailableState, renderJoinWaitList } = useUnavailableState();
+  const {
+    title,
+    message,
+    renderUnavailableState,
+    renderJoinWaitList,
+  } = useUnavailableState();
   const { depositsAvailable } = useDepositChecks();
 
   const [loadingLPDetails, setLoadingLPDetails] = useState<boolean>(false);
@@ -98,11 +101,11 @@ const DepositSyndicate = () => {
   const [errorMessage, setErrorMessage] = useState<string>("");
   const [submitting, setSubmitting] = useState<boolean>(false);
   const [metamaskConfirmPending, setMetamaskConfirmPending] = useState<boolean>(
-    false
+    false,
   );
   const [approved, setApproved] = useState<boolean>(false);
   const [allowanceApprovalError, setAllowanceApprovalError] = useState<string>(
-    ""
+    "",
   );
   const [
     approvedAllowanceAmount,
@@ -116,7 +119,7 @@ const DepositSyndicate = () => {
     setSubmittingAllowanceApproval,
   ] = useState<boolean>(false);
   const [metamaskApprovalError, setMetamaskApprovalError] = useState<string>(
-    ""
+    "",
   );
   const [conversionError, setConversionError] = useState<string>("");
   const [
@@ -136,7 +139,7 @@ const DepositSyndicate = () => {
     setMaxTotalLPDepositsExceeded,
   ] = useState<boolean>(false);
   const [depositAmountChanged, setDepositAmountChanged] = useState<boolean>(
-    false
+    false,
   );
 
   // DEFINITIONS
@@ -181,14 +184,14 @@ const DepositSyndicate = () => {
   // get values for the current LP(connected wallet account)
   // when this component initially renders.
   useEffect(() => {
-    if (account && syndicateContractInstance && syndicate) {
+    if (account && syndicateContracts && syndicate) {
       setLoadingLPDetails(true);
       // push member details to the redux store
       storeMemberDetails();
 
       setLoadingLPDetails(false);
     }
-  }, [account, syndicate, syndicateContractInstance, depositTokenDecimals]);
+  }, [account, syndicate, syndicateContracts, depositTokenDecimals]);
 
   // if the amount changes, new allowance has to be set
   useEffect(() => {
@@ -214,7 +217,7 @@ const DepositSyndicate = () => {
   }, [
     account,
     depositTokenContract,
-    syndicateContractInstance,
+    syndicateContracts,
     approvedAllowanceAmount,
     approved,
   ]);
@@ -270,17 +273,17 @@ const DepositSyndicate = () => {
   }, [amount, syndicate]);
 
   useEffect(() => {
-    if (syndicateContractInstance?.methods && syndicate) {
+    if (syndicateContracts && syndicate) {
       // set up current deposit ERC20Contract and
       // and save it to the local state
       const ERC20Contract = new web3.eth.Contract(
         ERC20ABI,
-        syndicate.depositERC20Address
+        syndicate.depositERC20Address,
       );
 
       setDepositTokenContract(ERC20Contract);
     }
-  }, [syndicateContractInstance, syndicate]);
+  }, [syndicateContracts, syndicate]);
 
   // COMPONENT FUNCTIONS
 
@@ -293,14 +296,14 @@ const DepositSyndicate = () => {
       updateMemberDepositDetails({
         syndicateAddress,
         depositTokenDecimals,
-      })
+      }),
     );
   };
 
   // handle deposit form submit.
   const onSubmit = async (event: any) => {
     event.preventDefault();
-    if (!syndicateContractInstance) {
+    if (!syndicateContracts) {
       // user needs to connect wallet first
       return dispatch(showWalletModal());
     }
@@ -361,56 +364,44 @@ const DepositSyndicate = () => {
     const amountToInvest = getWeiAmount(
       amount.toString(),
       depositTokenDecimals,
-      true
+      true,
     );
 
     setMetamaskConfirmPending(true);
     try {
-      await syndicateContractInstance.methods
-        .memberDeposit(syndicateAddress, amountToInvest)
-        .send({ from: account, gasLimit: 800000 })
-        .on("transactionHash", () => {
-          // user has confirmed the transaction so we should start loader state.
-          // show loading modal
-          setMetamaskConfirmPending(false);
-          setSubmitting(true);
-        })
-        .on("receipt", () => {
-          // transaction was succesful
-          // get syndicate updated values
+      await syndicateContracts.DepositLogicContract.deposit({
+        syndicateAddress,
+        account,
+        amount: amountToInvest,
+        setMetamaskConfirmPending,
+        setSubmitting,
+      });
 
-          dispatch(
-            getSyndicateByAddress(syndicateAddress, syndicateContractInstance)
-          );
+      dispatch(
+        getSyndicateByAddress({ syndicateAddress, ...syndicateContracts }),
+      );
 
-          //store updated member details
-          storeMemberDetails();
+      //store updated member details
+      storeMemberDetails();
 
-          if (approved) {
-            setApproved(false);
-          }
+      if (approved) {
+        setApproved(false);
+      }
 
-          // reset allowance error
-          if (allowanceApprovalError) {
-            setAllowanceApprovalError("");
-          }
-          // reset approval amount
-          if (approvedAllowanceAmount) {
-            setApprovedAllowanceAmount("0");
-          }
-          // cancel submitting state and show success notification.
-          setSubmitting(false);
-          setSuccessfulDeposit(true);
-          // reset approved allowance states
-          // so the LP can set new allowances before investing again
-          setLPCanDeposit(false);
-        })
-        .on("error", (error) => {
-          const { code } = error;
-          const errorMessage = getMetamaskError(code, "Deposit");
-          setMetamaskDepositError(errorMessage);
-          setSubmitting(false);
-        });
+      // reset allowance error
+      if (allowanceApprovalError) {
+        setAllowanceApprovalError("");
+      }
+      // reset approval amount
+      if (approvedAllowanceAmount) {
+        setApprovedAllowanceAmount("0");
+      }
+      // cancel submitting state and show success notification.
+      setSubmitting(false);
+      setSuccessfulDeposit(true);
+      // reset approved allowance states
+      // so the LP can set new allowances before investing again
+      setLPCanDeposit(false);
     } catch (error) {
       const { code } = error;
       const errorMessage = getMetamaskError(code, "Deposit");
@@ -428,13 +419,13 @@ const DepositSyndicate = () => {
     } = syndicate;
     dispatch(
       setSyndicateDetails(
-        syndicateContractInstance,
+        syndicateContracts,
         depositERC20Address,
         profitShareToSyndicateLead,
         profitShareToSyndicateProtocol,
         syndicate,
-        syndicateAddress
-      )
+        syndicateAddress,
+      ),
     );
   };
 
@@ -448,11 +439,14 @@ const DepositSyndicate = () => {
     const amountToApprove = getWeiAmount(
       amount.toString(),
       depositTokenDecimals,
-      true
+      true,
     );
     try {
       await depositTokenContract.methods
-        .approve(syndicateContractInstance._address, amountToApprove)
+        .approve(
+          syndicateContracts.DepositLogicContract._address,
+          amountToApprove,
+        )
         .send({ from: account, gasLimit: 800000 })
         .on("transactionHash", () => {
           // user clicked on confirm
@@ -491,14 +485,17 @@ const DepositSyndicate = () => {
   // This check also needs to be done after a deposit has been made
   // as the allowance will be reset
   const checkLPAllowanceAmount = async () => {
-    if (depositTokenContract.methods && syndicateContractInstance && account) {
+    if (depositTokenContract.methods && syndicateContracts && account) {
       /**
        * Check the approval amount
        *  @returns wei allowance as a string
        * */
       try {
         var lpAllowanceAmount = await depositTokenContract.methods
-          .allowance(account.toString(), syndicateContractInstance._address)
+          .allowance(
+            account.toString(),
+            syndicateContracts.DepositLogicContract._address,
+          )
           .call({ from: account });
       } catch (error) {
         lpAllowanceAmount = 0;
@@ -508,7 +505,7 @@ const DepositSyndicate = () => {
         const currentLPAllowanceAmount = getWeiAmount(
           lpAllowanceAmount.toString(),
           depositTokenDecimals,
-          false
+          false,
         );
 
         if (currentLPAllowanceAmount > 0) {
@@ -593,7 +590,7 @@ const DepositSyndicate = () => {
   let amountToApprove = 0;
   if (depositAmountGreater) {
     amountToApprove = floatedNumberWithCommas(
-      amountToDeposit - allowanceAmountApproved
+      amountToDeposit - allowanceAmountApproved,
     );
   } else if (depositAmountLess) {
     amountToApprove = floatedNumberWithCommas(allowanceAmountApproved);
@@ -717,8 +714,9 @@ const DepositSyndicate = () => {
               !account ? "rounded-2xl" : `border-b-0 rounded-t-2xl`
             }`}
           >
-            {renderJoinWaitList ? <JoinWaitlist /> :
-            renderUnavailableState ? (
+            {renderJoinWaitList ? (
+              <JoinWaitlist />
+            ) : renderUnavailableState ? (
               <UnavailableState title={title} message={message} />
             ) : (
               depositsAvailable && (

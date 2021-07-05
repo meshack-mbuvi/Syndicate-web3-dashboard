@@ -10,7 +10,7 @@ export interface ifRows {
     depositMaxTotal: string;
     depositsEnabled: boolean;
     depositTotal: string;
-    distributionsEnabled: boolean;
+    distributing: boolean;
     depositERC20TokenSymbol: string;
     tokenDecimals: number;
   };

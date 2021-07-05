@@ -6,7 +6,7 @@ import FinalStateModal from "@/components/shared/transactionStates/final";
 import {
   confirmingTransaction,
   confirmModifySyndicateCapTableText,
-  depositorAddressToolTip,
+  memberAddressToolTip,
   ModifySyndicateCapTableConstants,
   rejectTransactionText,
   waitTransactionTobeConfirmedText,
@@ -45,16 +45,12 @@ const ModifySyndicateCapTable = (props: Props) => {
   } = ModifySyndicateCapTableConstants;
 
   const {
-    web3: { account, web3 },
-  } = useSelector((state: RootState) => state.web3Reducer);
-
-  const { syndicateContractInstance } = useSelector(
-    (state: RootState) => state.syndicateInstanceReducer
-  );
-
-  const { syndicate } = useSelector(
-    (state: RootState) => state.syndicatesReducer
-  );
+    syndicatesReducer: { syndicate },
+    initializeContractsReducer: { syndicateContracts },
+    web3Reducer: {
+      web3: { account, web3 },
+    },
+  } = useSelector((state: RootState) => state);
 
   const dispatch = useDispatch();
 
@@ -69,8 +65,8 @@ const ModifySyndicateCapTable = (props: Props) => {
 
   const { syndicateAddress } = router.query;
 
-  const [depositorAddress, setDepositorAddress] = useState("");
-  const [depositorAddressError, setDepositAddressError] = useState("");
+  const [memberAddress, setDepositorAddress] = useState("");
+  const [memberAddressError, setDepositAddressError] = useState("");
 
   const [amount, setAmount] = useState<string | number>(0);
 
@@ -85,11 +81,11 @@ const ModifySyndicateCapTable = (props: Props) => {
   const [newOwnership, setNewOwnership] = useState(0);
   const [tokenDecimal, setTokenDecimal] = useState(18);
   /**
-   * When a depositor address is set, find its current syndicate ownership
+   * When a member address is set, find its current syndicate ownership
    */
   useEffect(() => {
     calculateCurrentOwnership();
-  }, [depositorAddress, currentDepositAmount]);
+  }, [memberAddress, currentDepositAmount]);
 
   // calculate new ownership for the new/existing member
   useEffect(() => {
@@ -115,7 +111,7 @@ const ModifySyndicateCapTable = (props: Props) => {
       // set token symbol based on token address
       const tokenAddress = syndicate.depositERC20Address;
       const mappedTokenAddress = Object.keys(TokenMappings).find(
-        (key) => key.toLowerCase() == tokenAddress.toLowerCase()
+        (key) => key.toLowerCase() == tokenAddress.toLowerCase(),
       );
       if (mappedTokenAddress) {
         setCurrentERC20(TokenMappings[mappedTokenAddress]);
@@ -139,42 +135,51 @@ const ModifySyndicateCapTable = (props: Props) => {
   useEffect(() => {
     if (
       web3 &&
-      web3.utils.isAddress(depositorAddress) &&
-      !isZeroAddress(depositorAddress)
+      web3.utils.isAddress(memberAddress) &&
+      !isZeroAddress(memberAddress)
     ) {
-      getCurrentDepositAmount(depositorAddress);
+      getCurrentDepositAmount(memberAddress);
     }
-  }, [depositorAddress]);
+  }, [memberAddress]);
 
   let validated = false;
 
-  if (depositorAddressError || amountError || !depositorAddress || !amount) {
+  if (memberAddressError || amountError || !memberAddress || !amount) {
     validated = false;
   } else {
     validated = true;
   }
 
   /**
-   * This function retrieves all total deposits for the depositor address
-   * @param depositorAddress
+   * This function retrieves all total deposits for the member address
+   * @param memberAddress
    * @returns
    */
-  const getCurrentDepositAmount = async (depositorAddress: string) => {
-    const memberInfo = await syndicateContractInstance.methods
-      .getMemberInfo(syndicateAddress, depositorAddress)
-      .call();
+  const getCurrentDepositAmount = async (memberAddress: string) => {
+    if (!syndicateContracts?.GetterLogicContract) return;
 
-    const lpDeposits = getWeiAmount(
-      memberInfo[0],
-      syndicate.tokenDecimals,
-      false
-    );
-    setcurrentDepositAmount(lpDeposits.toString());
-    return lpDeposits;
+    try {
+      const {
+        memberDeposit,
+      } = await syndicateContracts.GetterLogicContract.getMemberInfo(
+        syndicateAddress,
+        memberAddress,
+      );
+
+      const memberDeposits = getWeiAmount(
+        memberDeposit,
+        syndicate.tokenDecimals,
+        false,
+      );
+      setcurrentDepositAmount(memberDeposits.toString());
+      return memberDeposits;
+    } catch (error) {
+      return "0";
+    }
   };
 
   /**
-   * This method sets the deposit address which the depositor used to send
+   * This method sets the deposit address which the member used to send
    * funds to the manager.
    */
   const handleDepositAddressChange = (event) => {
@@ -246,9 +251,7 @@ const ModifySyndicateCapTable = (props: Props) => {
      * wallet connection.
      * Note: We need to find a way, like a customized alert to inform user this.
      */
-    if (!syndicateContractInstance) {
-      // Request wallet connect
-
+    if (!syndicateContracts) {
       return dispatch(showWalletModal());
     }
 
@@ -256,33 +259,24 @@ const ModifySyndicateCapTable = (props: Props) => {
       setShowWalletConfirmationModal(true);
       const amountInWei = getWeiAmount(amount.toString(), tokenDecimal, true);
       // These values should be passed as arrays
-      const depositorAddresses = [depositorAddress];
-      const depositorAmounts = [amountInWei];
+      const memberAddresses = [memberAddress];
+      const memberAmounts = [amountInWei];
 
-      await syndicateContractInstance.methods
-        .managerSetDepositForMembers(
-          syndicateAddress,
-          depositorAddresses,
-          depositorAmounts
-        )
-        .send({ from: account, gasLimit: 800000 })
-        .on("transactionHash", () => {
-          setShowWalletConfirmationModal(false);
-          setSubmitting(true);
-        })
-        .on("receipt", () => {
-          setSubmitting(false);
+      await syndicateContracts.DepositLogicContract.managerSetDepositForMembers(
+        syndicateAddress,
+        memberAddresses,
+        memberAmounts,
+        account,
+        setShowWalletConfirmationModal,
+        setSubmitting,
+      );
+      setSubmitting(false);
 
-          setShowFinalState(true);
-          setFinalStateHeaderText("Member deposit modified.");
-          setFinalStateIcon("/images/checkCircle.svg");
-          setFinalButtonText("Done");
-          setSubmitting(false);
-        })
-        .on("error", (error) => {
-          console.log({ error });
-          handleError(error);
-        });
+      setShowFinalState(true);
+      setFinalStateHeaderText("Member deposit modified.");
+      setFinalStateIcon("/images/checkCircle.svg");
+      setFinalButtonText("Done");
+      setSubmitting(false);
     } catch (error) {
       console.log({ error });
       handleError(error);
@@ -328,7 +322,7 @@ const ModifySyndicateCapTable = (props: Props) => {
     setShowModifyCapTable(false);
 
     await dispatch(
-      getSyndicateByAddress(syndicateAddress, syndicateContractInstance)
+      getSyndicateByAddress({ syndicateAddress, ...syndicateContracts }),
     );
   };
 
@@ -365,12 +359,12 @@ const ModifySyndicateCapTable = (props: Props) => {
                   <TextInput
                     {...{
                       label: "Member Address:",
-                      tooltip: depositorAddressToolTip,
+                      tooltip: memberAddressToolTip,
                       onChange: handleDepositAddressChange,
-                      error: depositorAddressError,
+                      error: memberAddressError,
                     }}
-                    value={depositorAddress.toString()}
-                    name="depositorAddress"
+                    value={memberAddress.toString()}
+                    name="memberAddress"
                   />
 
                   <InputWithAddon
@@ -465,7 +459,7 @@ const ModifySyndicateCapTable = (props: Props) => {
                       className={`flex flex-grow rounded-md px-4 text-sm font-ibm w-5/12 flex justify-between`}
                     >
                       {`${ownershipChange > 0 ? "-" : "+"}${Math.abs(
-                        ownershipChange
+                        ownershipChange,
                       )}%`}
                     </span>
                   </div>

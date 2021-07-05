@@ -2,14 +2,16 @@ import { ErrorModal } from "@/components/shared";
 import { PendingStateModal } from "@/components/shared/transactionStates";
 import ConfirmStateModal from "@/components/shared/transactionStates/confirm";
 import { getMetamaskError } from "@/helpers";
-import { addSyndicates } from "@/redux/actions/syndicates";
+import { getSyndicates } from "@/redux/actions/syndicates";
 import { RootState } from "@/redux/store";
+import { getUnixTimeFromDate } from "@/utils/dateUtils";
 import {
   isWholeNumber,
   Validate,
   validateEmail,
   ValidatePercent,
 } from "@/utils/validators";
+import { getCoinFromContractAddress } from "functions/src/utils/ethereum";
 import Link from "next/link";
 import React, { useState } from "react";
 import { CopyToClipboard } from "react-copy-to-clipboard";
@@ -43,16 +45,12 @@ import {
   profitShareToSyndicateProtocolToolTip,
   syndicateAddressToolTip,
   totalMaximumDepositToolTip,
+  transferableToolTip,
 } from "../shared/Constants";
 import { EtherscanLink } from "../shared/EtherscanLink";
-import { getCoinFromContractAddress } from "functions/src/utils/ethereum";
 
 const TERMS_OF_SERVICE_LINK = process.env.NEXT_PUBLIC_TERMS_OF_SERVICE_LINK;
 
-interface Props {
-  showModal: boolean;
-  setShowModal: Function;
-}
 /**
  * Diplays all syndicates.
  * The main groups for syndicates are active and inactive
@@ -60,25 +58,21 @@ interface Props {
  * At the top-right of the page, there is a create button which opens a modal
  * with a form to create a new syndicate
  */
-const CreateSyndicate = (props: Props) => {
+const CreateSyndicate = (props) => {
   const { showModal, setShowModal } = props;
+  const {
+    initializeContractsReducer: {
+      syndicateContracts: { ManagerLogicContract },
+    },
+    initializeContractsReducer: { syndicateContracts },
+    web3Reducer: { web3: web3Instance },
+  } = useSelector((state: RootState) => state);
 
-  const { web3: web3Instance } = useSelector(
-    (state: RootState) => state.web3Reducer
-  );
+  const { web3, account } = web3Instance;
 
-  if (web3Instance) {
-    var { account, web3 } = web3Instance;
-  }
-
-  const { syndicateContractInstance } = useSelector(
-    (state: RootState) => state.syndicateInstanceReducer
-  );
   const { submitting } = useSelector(
-    (state: RootState) => state.loadingReducer
+    (state: RootState) => state.loadingReducer,
   );
-
-  const dispatch = useDispatch();
 
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [showErrorMessage, setShowErrorMessage] = useState(false);
@@ -87,6 +81,7 @@ const CreateSyndicate = (props: Props) => {
     showWalletConfirmationModal,
     setShowWalletConfirmationModal,
   ] = useState(false);
+  const dispatch = useDispatch();
 
   // input field error messages
   const [fullNameError, setFullNameError] = useState("");
@@ -131,8 +126,9 @@ const CreateSyndicate = (props: Props) => {
   ] = useState<string>("0");
   const [allowlistEnabled, setAllowlistEnabled] = useState(false);
   const [modifiable, setModifiable] = useState(false);
+  const [transferable, setTransferable] = useState(false);
   const [syndicateProfitSharePercent, setProfitShareToSyndProtocol] = useState(
-    "0.5"
+    "0.5",
   );
   const [
     otherProfitShareToSyndicateProtocol,
@@ -169,7 +165,6 @@ const CreateSyndicate = (props: Props) => {
     !profitShareToSyndicateLead ||
     !depositERC20Address ||
     !expectedAnnualOperatingFees ||
-    !profitShareToSyndicateLead ||
     !syndicateProfitSharePercent
   ) {
     validated = false;
@@ -206,21 +201,22 @@ const CreateSyndicate = (props: Props) => {
     const { value } = event.target;
     setDepositERC20Address(value);
 
-    // get logo from coingeko api
-    const { logo } = await getCoinFromContractAddress(value);
-
-    setDepositERC20AddressLogo(logo);
-
     if (!value.trim()) {
       setDepositERC20AddressError("Deposit token is required");
     } else if (!web3.utils.isAddress(value)) {
       setDepositERC20AddressError(
-        "Deposit token should be a valid ERC20 address"
+        "Deposit token should be a valid ERC20 address",
       );
     } else {
       setDepositERC20AddressError("");
       // get number of decimal places for the ERC20.
       getTokenDecimals(value);
+
+      // we should get logo for a valid value
+      // get logo from coingeko api
+      const { logo } = await getCoinFromContractAddress(value);
+
+      setDepositERC20AddressLogo(logo);
     }
   };
 
@@ -243,7 +239,7 @@ const CreateSyndicate = (props: Props) => {
       setMaxDepositsError(`Maximum deposits ${message}`);
     } else if (+value < +minDeposits) {
       setMaxDepositsError(
-        "Max Deposits must not be less than minDeposit per Member"
+        "Max Deposits must not be less than minDeposit per Member",
       );
     } else {
       setMaxDepositsError("");
@@ -292,11 +288,11 @@ const CreateSyndicate = (props: Props) => {
 
     if (+value < +maxDeposits) {
       setMaxTotalDepositsError(
-        "Max Total deposits must not be less than maxDeposit per Member"
+        "Max Total deposits must not be less than maxDeposit per Member",
       );
     } else if (+value < +minDeposits) {
       setMaxTotalDepositsError(
-        "Max Total deposits must not be less than minDeposit per Member"
+        "Max Total deposits must not be less than minDeposit per Member",
       );
     } else {
       setMaxTotalDepositsError("");
@@ -344,7 +340,7 @@ const CreateSyndicate = (props: Props) => {
 
     if (message) {
       setExpectedAnnualOperatingFeesError(
-        `Expected Annual operating fee ${message}`
+        `Expected Annual operating fee ${message}`,
       );
     } else if (invalidPercent) {
       setExpectedAnnualOperatingFeesError(invalidPercent);
@@ -374,7 +370,7 @@ const CreateSyndicate = (props: Props) => {
 
     if (message) {
       setprofitShareToSyndicateLeadError(
-        `Profit share to syndicate lead ${message}`
+        `Profit share to syndicate lead ${message}`,
       );
     } else if (invalidPercent) {
       setprofitShareToSyndicateLeadError(invalidPercent);
@@ -394,13 +390,14 @@ const CreateSyndicate = (props: Props) => {
 
   // closeDate should be 2 weeks in the future by default
   const minimumCloseDate = new Date(
-    new Date().setHours(new Date().getHours() + 24 * 14)
+    new Date().setHours(new Date().getHours() + 24 * 14),
   );
   const [selectedDate, setSelectedDate] = useState(minimumCloseDate);
 
   // this controls the toggle button for manually whitelisting depositors
   const toggleAllowlistEnabled = () => setAllowlistEnabled(!allowlistEnabled);
   const toggleModifiable = () => setModifiable(!modifiable);
+  const toggleTransferable = () => setTransferable(!transferable);
 
   const [formLLC, setFormLLC] = useState(false);
 
@@ -418,7 +415,6 @@ const CreateSyndicate = (props: Props) => {
    */
   const onSubmit = async (event) => {
     event.preventDefault();
-    setErrorMessage("");
 
     /**
      * If we are not connected and the form modal is open, user can trigger
@@ -426,7 +422,7 @@ const CreateSyndicate = (props: Props) => {
      * wallet connection.
      * Note: We need to find a way, like a customized alert to inform user this.
      */
-    if (!syndicateContractInstance) {
+    if (!syndicateContracts) {
       // Request wallet connect
       return dispatch(showWalletModal());
     }
@@ -475,15 +471,14 @@ const CreateSyndicate = (props: Props) => {
       parseFloat(profitShareToSyndicateLead) * 100
     }`;
 
-    const dateClose = Math.round(new Date(selectedDate).getTime() / 1000);
-    setShowWalletConfirmationModal(true);
+    const dateCloseUnixTime = getUnixTimeFromDate(selectedDate);
 
     // submit offchain data
     const encode = (data) => {
       return Object.keys(data)
         .map(
           (key) =>
-            encodeURIComponent(key) + "=" + encodeURIComponent(data[key])
+            encodeURIComponent(key) + "=" + encodeURIComponent(data[key]),
         )
         .join("&");
     };
@@ -507,102 +502,48 @@ const CreateSyndicate = (props: Props) => {
     // has changed in the recent version so we need to find the correct function
     // to call based on the contract version
     try {
-      await syndicateContractInstance.methods
-        .managerCreateSyndicate(
-          managerManagementFeeBasisPoints,
-          managerPerformanceFeeBasisPoints,
-          syndicateProfitShareBasisPoints,
-          numMembersMax,
-          depositERC20Address,
-          depositMinMember,
-          depositMaxMember,
-          depositMaxTotal,
-          dateClose,
-          allowlistEnabled,
-          modifiable
-        )
-        .send({ from: account })
-        .on("transactionHash", () => {
-          // close wallet confirmation modal
-          setShowWalletConfirmationModal(false);
+      const syndicateData = {
+        managerManagementFeeBasisPoints,
+        managerPerformanceFeeBasisPoints,
+        syndicateProfitShareBasisPoints,
+        numMembersMax,
+        depositERC20Address,
+        depositMinMember,
+        depositMaxMember,
+        depositMaxTotal,
+        dateCloseUnixTime,
+        allowlistEnabled,
+        modifiable,
+        transferable,
+      };
 
-          setShowModal(false);
-          // use has confirmed the transaction so we should start loader state.
-          // show loading modal
+      await ManagerLogicContract.createSyndicate(
+        syndicateData,
+        account,
+        setShowWalletConfirmationModal,
+        (value) => dispatch(setSubmitting(value)),
+      );
 
-          dispatch(setSubmitting(true));
-        })
-        .on("receipt", async () => {
-          dispatch(addSyndicates(web3Instance));
-          // createSyndicate event
-          dispatch(setSubmitting(false));
+      dispatch(getSyndicates({ ...web3Instance, ...syndicateContracts }));
 
-          // Show the message to the end user
-          setShowErrorMessage(false);
-
-          // show success modal
-          setShowSuccessModal(true);
-        })
-        .on("error", (error) => {
-          // capture metamask error
-          if (error.code) {
-            const { code } = error;
-            const errorMessage = getMetamaskError(code, "Create Syndicate");
-
-            setErrorMessage(errorMessage);
-          }
-        });
       validated = false;
+      dispatch(setSubmitting(false));
+      setShowErrorMessage(false);
+
+      // show success modal
+      setShowSuccessModal(true);
     } catch (error) {
       setShowWalletConfirmationModal(false);
 
+      if (error.code) {
+        const { code } = error;
+        const errorMessage = getMetamaskError(code, "Create Syndicate");
+
+        setErrorMessage(errorMessage);
+      }
       // close loading modal
       dispatch(setSubmitting(false));
       validated = false;
-
-      let errorMessage = "";
-
-      // check whether this text appears in the error message
-      const syndicateExists = error.message.search(
-        "ERR_SYNDICATE_ALREADY_EXISTS"
-      );
-      const profitShareError = error.message.search(
-        "Syndicate profit share must be greater than or equal to 50 (0.5%)"
-      );
-      const closeDateError = error.message.search(
-        "ERR_CLOSE_DATE_MUST_BE_AFTER_BLOCK_TIMESTAMP"
-      );
-      const accountNonceError = error.message.search(
-        "the tx doesn't have the correct nonce"
-      );
-      const managesSyndicate = error.message.search(
-        "ERR_MSG_SENDER_ALREADY_MANAGES_ONE_SYNDICATE"
-      );
-
-      const NOT_FOUND_CODE = -1;
-
-      if (
-        syndicateExists > NOT_FOUND_CODE ||
-        managesSyndicate > NOT_FOUND_CODE
-      ) {
-        errorMessage =
-          "Your wallet address already manages the maximum of one Syndicate";
-      } else if (profitShareError > NOT_FOUND_CODE) {
-        errorMessage =
-          "Syndicate profit share must be greater than or equal to 50 (0.5%)";
-      } else if (closeDateError > NOT_FOUND_CODE) {
-        errorMessage = "Close date must be in future";
-      } else if (accountNonceError > NOT_FOUND_CODE) {
-        errorMessage =
-          "Please reset you account. It appears to have incorrect count of transactions.";
-      } else {
-        errorMessage =
-          "Syndicate not created. Please verify you entered valid inputs.";
-      }
-      setErrorMessage(errorMessage);
-
-      // Show the message to the end user
-      setShowErrorMessage(true);
     }
   };
 
@@ -636,13 +577,13 @@ const CreateSyndicate = (props: Props) => {
 
     if (message) {
       setProfitShareToSyndProtocolError(
-        `Profit share to syndicate protocol ${message}`
+        `Profit share to syndicate protocol ${message}`,
       );
     } else if (invalidPercent) {
       setProfitShareToSyndProtocolError(invalidPercent);
     } else if (+value < 0.5) {
       setProfitShareToSyndProtocolError(
-        "Profit share to syndicate protocol cannot be less than 0.5%"
+        "Profit share to syndicate protocol cannot be less than 0.5%",
       );
     } else {
       setProfitShareToSyndProtocolError("");
@@ -1040,6 +981,15 @@ const CreateSyndicate = (props: Props) => {
                   tooltip: modifiableToolTip,
                 }}
               />
+
+              <Toggle
+                {...{
+                  enabled: transferable,
+                  toggleEnabled: toggleTransferable,
+                  label: "Transferable:",
+                  tooltip: transferableToolTip,
+                }}
+              />
             </div>
           </div>
 
@@ -1141,8 +1091,8 @@ const CreateSyndicate = (props: Props) => {
               <div className="flex flex-grow flex-col w-4/5">
                 <input
                   disabled
-                  className="font-whyte text-center text-sm sm:text-base word-break px-4 p-2 overflow-hidden overflow-x-scroll border border-blue-light rounded-full"
-                  value={`${window.location.origin}/syndicates/${account.slice(0,8)}...`}
+                  className="font-whyte text-sm sm:text-base word-break p-2 overflow-hidden overflow-x-scroll border border-blue-light rounded-full"
+                  value={`${window.location.origin}/syndicates/${account}/deposit`}
                 ></input>
               </div>
               <div className="flex align-center justify-center mx-auto my-2 w-1/5">
@@ -1156,7 +1106,7 @@ const CreateSyndicate = (props: Props) => {
                       text={`${window.location.origin}/syndicates/${account}/deposit`}
                       onCopy={handleOnCopy}
                     >
-                      <p className="flex font-whyte-light text-sm cursor-pointer hover:opacity-80 text-gray-nightrider">
+                      <p className="flex font-whyte text-sm cursor-pointer hover:opacity-80 text-gray-nightrider">
                         <img
                           src="/images/copy.svg"
                           className="w-4 ml-2 mr-1 font-whyte-light cursor-pointer border-blue text-blue"

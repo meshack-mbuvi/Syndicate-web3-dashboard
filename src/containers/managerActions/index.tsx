@@ -1,12 +1,16 @@
-import FadeIn from "@/components/fadeIn/FadeIn";
 import { PrimaryButton } from "@/components/buttons";
+import ErrorBoundary from "@/components/errorBoundary";
+import FadeIn from "@/components/fadeIn/FadeIn";
+import JoinWaitlist from "@/components/JoinWaitlist";
 import { ErrorModal } from "@/components/shared";
-import { PendingStateModal } from "@/components/shared/transactionStates";
-import ConfirmStateModal from "@/components/shared/transactionStates/confirm";
-import FinalStateModal from "@/components/shared/transactionStates/final";
+import {
+  ConfirmStateModal,
+  FinalStateModal,
+  PendingStateModal,
+} from "@/components/shared/transactionStates";
+import StateModal from "@/components/shared/transactionStates/shared";
 import { SkeletonLoader } from "@/components/skeletonLoader";
 import { useUnavailableState } from "@/components/syndicates/hooks/useUnavailableState";
-import StateModal from "@/components/shared/transactionStates/shared";
 import {
   confirmCloseSyndicateText,
   confirmingTransaction,
@@ -22,7 +26,6 @@ import { RootState } from "@/redux/store";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import ErrorBoundary from "@/components/errorBoundary";
 import DistributeToken from "./distributeToken";
 import ManagerActionCard from "./managerActionCard";
 import ModifyMemberDistributions from "./modifyMemberDistributions";
@@ -31,20 +34,15 @@ import MoreManagerActionCard from "./moreManagerActionCard";
 import PreApproveDepositor from "./preApproveDepositor";
 import RejectDepositOrMemberAddress from "./RejectDepositOrMemberAddress";
 import RequestSocialProfile from "./requestSocialProfile";
-import JoinWaitlist from "@/components/JoinWaitlist";
 
 const ManagerActions = () => {
   const {
-    web3: { account },
-  } = useSelector((state: RootState) => state.web3Reducer);
-
-  const { syndicateContractInstance } = useSelector(
-    (state: RootState) => state.syndicateInstanceReducer,
-  );
-
-  const { syndicate } = useSelector(
-    (state: RootState) => state.syndicatesReducer,
-  );
+    syndicatesReducer: { syndicate },
+    initializeContractsReducer: { syndicateContracts },
+    web3Reducer: {
+      web3: { account },
+    },
+  } = useSelector((state: RootState) => state);
 
   const dispatch = useDispatch();
 
@@ -89,9 +87,12 @@ const ManagerActions = () => {
 
   const [errorMessage, setErrorMessage] = useState("");
 
-  const { title, message, renderUnavailableState, renderJoinWaitList } = useUnavailableState(
-    "manage",
-  );
+  const {
+    title,
+    message,
+    renderUnavailableState,
+    renderJoinWaitList,
+  } = useUnavailableState("manage");
 
   const {
     nonModifiableSyndicateErrorText,
@@ -117,7 +118,9 @@ const ManagerActions = () => {
 
   const handleCloseFinalStateModal = async () => {
     setShowFinalState(false);
-    await dispatch(getSyndicateByAddress(address, syndicateContractInstance));
+    await dispatch(
+      getSyndicateByAddress({ syndicateAddress, ...syndicateContracts }),
+    );
   };
 
   /**
@@ -127,41 +130,19 @@ const ManagerActions = () => {
   const closeSyndicate = async () => {
     try {
       setShowWalletConfirmationModal(true);
+      await syndicateContracts.ManagerLogicContract.managerCloseSyndicate(
+        syndicateAddress,
+        account,
+        setShowWalletConfirmationModal,
+        setSubmitting,
+      );
 
-      await syndicateContractInstance.methods
-        .managerCloseSyndicate(address)
-        .send({ from: account, gasLimit: 800000 })
-        .on("transactionHash", () => {
-          // close wallet confirmation modal
-          setShowWalletConfirmationModal(false);
+      setSubmitting(false);
 
-          setSubmitting(true);
-        })
-        .on("receipt", async () => {
-          setSubmitting(false);
-
-          setShowFinalState(true);
-          setFinalStateHeaderText("Closed to Deposits");
-          setFinalStateIcon("/images/checkCircle.svg");
-          setFinalButtonText("Done");
-        })
-        .on("error", (error) => {
-          // capture metamask error
-          setShowWalletConfirmationModal(false);
-          setSubmitting(false);
-
-          const { code } = error;
-          const errorMessage = getMetamaskError(code, "Close Syndicate");
-          setFinalButtonText("Dismiss");
-          setFinalStateIcon("/images/roundedXicon.svg");
-
-          if (code == 4001) {
-            setFinalStateHeaderText("Transaction Rejected");
-          } else {
-            setFinalStateHeaderText(errorMessage);
-          }
-          setShowFinalState(true);
-        });
+      setShowFinalState(true);
+      setFinalStateHeaderText("Closed to Deposits");
+      setFinalStateIcon("/images/checkCircle.svg");
+      setFinalButtonText("Done");
     } catch (error) {
       setShowWalletConfirmationModal(false);
       setSubmitting(false);
@@ -211,7 +192,13 @@ const ManagerActions = () => {
     return (
       <div className="h-fit-content px-8 pb-4 pt-5 bg-gray-9 rounded-2xl">
         <div className="flex justify-between my-1 px-2">
-        {renderJoinWaitList ? <JoinWaitlist /> : (renderUnavailableState && <UnavailableState title={title} message={message} />)}
+          {renderJoinWaitList ? (
+            <JoinWaitlist />
+          ) : (
+            renderUnavailableState && (
+              <UnavailableState title={title} message={message} />
+            )
+          )}
         </div>
       </div>
     );
@@ -267,7 +254,6 @@ const ManagerActions = () => {
                 onClickHandler={() => setShowDistributeToken(true)}
               />
             )}
-            {console.log(syndicate, "===")}
             {/* show pre-approve depositor option when syndicate is open and allowList is enabled */}
             {syndicate?.depositsEnabled && syndicate?.allowlistEnabled ? (
               <ManagerActionCard
@@ -297,7 +283,9 @@ const ManagerActions = () => {
           <div className="font-semibold tracking-widest text-sm leading-6 text-gray-matterhorn my-6 mx-4">
             MORE
           </div>
-          {!syndicate?.open && syndicate?.distributionsEnabled ? (
+          {!syndicate?.open &&
+          syndicate?.distributing &&
+          syndicate?.modifiable ? (
             <MoreManagerActionCard
               icon={<img src="/images/invertedInfo.svg" />}
               text={"Modify Member distributions"}

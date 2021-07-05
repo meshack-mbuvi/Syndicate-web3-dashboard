@@ -4,7 +4,7 @@ import {
   SET_MANAGER_FEE_ADDRESS,
   SYNDICATE_BY_ADDRESS,
   FOUND_SYNDICATE_ADDRESS,
-} from "src/redux/actions/types";
+} from "@/redux/actions/types";
 import { initialState } from "../initialState";
 
 export const syndicatesReducer = (state = initialState, action) => {

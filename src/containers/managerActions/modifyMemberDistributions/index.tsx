@@ -5,17 +5,16 @@ import ConfirmStateModal from "@/components/shared/transactionStates/confirm";
 import FinalStateModal from "@/components/shared/transactionStates/final";
 import {
   confirmingTransaction,
-  depositorAddressToolTip,
+  memberAddressToolTip,
   ModifyMemberDistributionsConstants,
   rejectTransactionText,
   waitTransactionTobeConfirmedText,
 } from "@/components/syndicates/shared/Constants";
 import { getMetamaskError } from "@/helpers";
-import { getEvents } from "@/helpers/retrieveEvents";
 import { getSyndicateMemberInfo } from "@/helpers/syndicate";
 import { showWalletModal } from "@/redux/actions";
 import { RootState } from "@/redux/store";
-import { toEther } from "@/utils/conversions";
+import { getWeiAmount } from "@/utils/conversions";
 import { TokenMappings } from "@/utils/tokenMappings";
 import { isZeroAddress, Validate } from "@/utils/validators";
 import { useRouter } from "next/router";
@@ -46,16 +45,12 @@ const ModifyMemberDistributions = (props: Props) => {
   } = props;
 
   const {
-    web3: { account, web3 },
-  } = useSelector((state: RootState) => state.web3Reducer);
-
-  const { syndicateContractInstance } = useSelector(
-    (state: RootState) => state.syndicateInstanceReducer
-  );
-
-  const { syndicate } = useSelector(
-    (state: RootState) => state.syndicatesReducer
-  );
+    syndicatesReducer: { syndicate },
+    initializeContractsReducer: { syndicateContracts },
+    web3Reducer: {
+      web3: { account, web3 },
+    },
+  } = useSelector((state: RootState) => state);
 
   const dispatch = useDispatch();
 
@@ -146,7 +141,7 @@ const ModifyMemberDistributions = (props: Props) => {
         memberDeposits,
         memberTotalWithdrawals,
       } = await getSyndicateMemberInfo(
-        syndicateContractInstance,
+        syndicateContracts.GetterLogicContract,
         syndicateAddress,
         memberAddress
       );
@@ -172,8 +167,7 @@ const ModifyMemberDistributions = (props: Props) => {
    * syndicateAddress which is the address of this syndicate.
    */
   const getDistributionERC20Address = async () => {
-    const events = await getEvents(
-      syndicateContractInstance,
+    const events = await syndicateContracts.DistributionLogicContract.getDistributionEvents(
       "managerSetterDistribution",
       { syndicateAddress }
     );
@@ -273,7 +267,7 @@ const ModifyMemberDistributions = (props: Props) => {
      * wallet connection.
      * Note: We need to find a way, like a customized alert to inform user this.
      */
-    if (!syndicateContractInstance) {
+    if (!syndicateContracts) {
       // Request wallet connect
 
       return dispatch(showWalletModal());
@@ -281,33 +275,32 @@ const ModifyMemberDistributions = (props: Props) => {
 
     try {
       setShowWalletConfirmationModal(true);
-      const amountInWei = toEther(newDistributionAmount);
+      const amountInWei = getWeiAmount(
+        newDistributionAmount.toString(),
+        18,
+        true
+      );
 
-      await syndicateContractInstance.methods
-        .managerSetDistributionClaimedForMembers(
-          syndicateAddress,
-          [memberAddress],
-          [distributionERC20Address],
-          [amountInWei]
-        )
-        .send({ from: account, gasLimit: 800000 })
-        .on("transactionHash", () => {
-          setShowWalletConfirmationModal(false);
-          setSubmitting(true);
-        })
-        .on("receipt", () => {
-          setSubmitting(false);
+      await syndicateContracts.DistributionLogicContract.managerSetDistributionClaimedForMembers(
+        syndicateAddress,
+        [memberAddress],
+        [distributionERC20Address],
+        [amountInWei],
+        account,
+        setShowWalletConfirmationModal,
+        setSubmitting
+      );
 
-          setShowFinalState(true);
-          setFinalStateHeaderText("Member distributions modified.");
-          setFinalStateIcon("/images/checkCircle.svg");
-          setFinalButtonText("Done");
-          setSubmitting(false);
-        })
-        .on("error", (error) => {
-          handleError(error);
-        });
+      setSubmitting(false);
+
+      setShowFinalState(true);
+      setFinalStateHeaderText("Member distributions modified.");
+      setFinalStateIcon("/images/checkCircle.svg");
+      setFinalButtonText("Done");
+      setSubmitting(false);
     } catch (error) {
+      setSubmitting(false);
+
       handleError(error);
     }
   };
@@ -359,7 +352,7 @@ const ModifyMemberDistributions = (props: Props) => {
                   <TextInput
                     {...{
                       label: "Member Address:",
-                      tooltip: depositorAddressToolTip,
+                      tooltip: memberAddressToolTip,
                       onChange: handleMemberAddressChange,
                       error: depositorAddressError,
                       full: true,

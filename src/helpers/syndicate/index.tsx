@@ -5,42 +5,25 @@ import {
   processSyndicateDetails,
 } from "@/redux/actions/syndicates";
 import { getWeiAmount } from "@/utils/conversions";
-import React from "react";
-import { getEvents } from "../retrieveEvents";
 
 /**
  * retrieves details for a given syndicate
  */
-export const getSyndicate = async (
-  syndicateAddress: string,
-  syndicateContractInstance
-): Promise<Syndicate> => {
+export const getSyndicate = async (syndicateData): Promise<Syndicate> => {
   try {
-    const syndicate = await syndicateContractInstance.methods
-      .getSyndicateValues(syndicateAddress)
-      .call();
+    const { depositERC20Address } = syndicateData;
+    const tokenDecimals = await getTokenDecimals(depositERC20Address);
 
-    const tokenDecimals = await getTokenDecimals(syndicate.depositERC20Address);
-
-    const syndicateDetails = processSyndicateDetails(syndicate, tokenDecimals);
-
-    const managerSetterDistribution = await getEvents(
-      syndicateContractInstance,
-      "managerSetterDistribution",
-      { syndicateAddress }
+    const syndicateDetails = processSyndicateDetails(
+      syndicateData,
+      tokenDecimals
     );
-
-    const distributionsEnabled =
-      managerSetterDistribution.length && !syndicate.open ? true : false;
 
     return {
       ...syndicateDetails,
-      syndicateAddress,
-      distributionsEnabled,
     };
   } catch (error) {
-    console.log({ error });
-    throw error;
+    return null;
   }
 };
 
@@ -74,7 +57,7 @@ export const showLoader = (count) => {
 /**
  * Retrieves member details for a given syndicate
  *
- * @param {object} syndicateContractInstance - web3 contract instance
+ * @param {object} GetterLogicContract - logic contract responsible for fetching member info
  * @param {string} syndicateAddress - address to get member details from.
  * @param {string} memberAddress - member address to get details from a syndicate
  * @param {number} currentERC20Decimals - token decimals
@@ -82,37 +65,39 @@ export const showLoader = (count) => {
  *
  */
 export const getSyndicateMemberInfo = async (
-  syndicateContractInstance,
+  GetterLogicContract,
   syndicateAddress,
   memberAddress,
   currentERC20Decimals = 18
 ) => {
-  return await syndicateContractInstance.methods
-    .getMemberInfo(syndicateAddress, memberAddress)
-    .call()
-    .then(async (result) => {
-      
-      const memberDeposits = getWeiAmount(
-        result[0],
-        currentERC20Decimals,
-        false
-      );
+  try {
+    const {
+      memberDeposit,
+      memberClaimedDistribution,
+      memberAddressAllowed,
+    } = await GetterLogicContract.getMemberInfo(
+      syndicateAddress,
+      memberAddress
+    );
 
-      const memberTotalWithdrawals = getWeiAmount(
-        result[1],
-        currentERC20Decimals,
-        false
-      );
+    const memberDeposits = getWeiAmount(
+      memberDeposit,
+      currentERC20Decimals,
+      false
+    );
 
-      const memberAddressAllowed = result[2];
+    const memberTotalWithdrawals = getWeiAmount(
+      memberClaimedDistribution,
+      currentERC20Decimals,
+      false
+    );
 
-      return { memberDeposits, memberTotalWithdrawals, memberAddressAllowed };
-    })
-    .catch(() => {
-      return {
-        memberDeposits: 0,
-        memberTotalWithdrawals: 0,
-        memberAddressAllowed: false,
-      };
-    });
+    return { memberDeposits, memberTotalWithdrawals, memberAddressAllowed };
+  } catch (error) {
+    return {
+      memberDeposits: 0,
+      memberTotalWithdrawals: 0,
+      memberAddressAllowed: false,
+    };
+  }
 };

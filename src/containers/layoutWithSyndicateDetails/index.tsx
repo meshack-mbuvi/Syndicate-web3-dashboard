@@ -1,28 +1,27 @@
 import ErrorBoundary from "@/components/errorBoundary";
 import Layout from "@/components/layout";
+import useOnScreen from "@/components/syndicates/hooks/useOnScreen";
+import { EtherscanLink } from "@/components/syndicates/shared/EtherscanLink";
+import { getSyndicateByAddress } from "@/redux/actions/syndicates";
 import { RootState } from "@/redux/store";
-import Head from "src/components/syndicates/shared/HeaderTitle";
+import { faExclamationTriangle } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { EtherscanLink } from "@/components/syndicates/shared/EtherscanLink";
-import SyndicateDetails from "src/components/syndicates/syndicateDetails";
-import { getSyndicateByAddress } from "@/redux/actions/syndicates";
 import { syndicateActionConstants } from "src/components/syndicates/shared/Constants";
-import { faExclamationTriangle } from "@fortawesome/free-solid-svg-icons";
-import useOnScreen from "@/components/syndicates/hooks/useOnScreen";
+import Head from "src/components/syndicates/shared/HeaderTitle";
+import SyndicateDetails from "src/components/syndicates/syndicateDetails";
 
 const LayoutWithSyndicateDetails = ({ children }) => {
-  // retrieve state
+  // Retrieve state
   const {
-    web3: { account },
-  } = useSelector((state: RootState) => state.web3Reducer);
-
-  const { syndicateContractInstance } = useSelector(
-    (state: RootState) => state.syndicateInstanceReducer
-  );
+    initializeContractsReducer: { syndicateContracts },
+    web3Reducer: {
+      web3: { account },
+    },
+  } = useSelector((state: RootState) => state);
 
   const { syndicate, syndicateFound, syndicateAddressIsValid } = useSelector(
     (state: RootState) => state.syndicatesReducer
@@ -67,13 +66,28 @@ const LayoutWithSyndicateDetails = ({ children }) => {
     }
   }, [account, router.isReady]);
 
+  // Syndicate data should be fetched when router is full set.
+  // GetterLogicContract is used to retrieve syndicate values while
+  // DistributionLogicContract is used to get distributions details for the
+  // syndicate.
   useEffect(() => {
-    if (router.isReady && syndicateContractInstance.methods) {
+    if (
+      router.isReady &&
+      syndicateContracts?.GetterLogicContract &&
+      syndicateContracts?.DistributionLogicContract
+    ) {
       dispatch(
-        getSyndicateByAddress(syndicateAddress, syndicateContractInstance)
+        getSyndicateByAddress({ syndicateAddress, ...syndicateContracts })
       );
     }
-  }, [router.isReady, syndicateContractInstance, syndicateAddress, account]);
+  }, [
+    router.isReady,
+    syndicateContracts?.GetterLogicContract,
+    syndicateContracts?.DistributionLogicContract,
+    account,
+    syndicateAddress,
+    account,
+  ]);
 
   // check whether the current connected wallet account is the manager of the syndicate
   // we'll use this information to load the manager view
@@ -155,9 +169,7 @@ const LayoutWithSyndicateDetails = ({ children }) => {
                 {/* its used as an identifier for ref in small devices */}
                 <SyndicateDetails
                   accountIsManager={accountIsManager}
-                  syndicate={syndicate}
-                  isChildVisible={isChildVisible}
-                >
+                  isChildVisible={isChildVisible}>
                   <div className="w-full md:hidden">{children}</div>
                 </SyndicateDetails>
               </div>

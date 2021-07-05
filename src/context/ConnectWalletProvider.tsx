@@ -1,16 +1,25 @@
 import { web3InstantiationErrorText } from "@/components/syndicates/shared/Constants";
+import { INITIALIZE_CONTRACTS } from "@/redux/actions/types";
 import {
-  setConnectedProviderName,
-  setDisConnected,
-  setConnected,
-  showErrorModal,
   hideErrorModal,
-  setConnecting,
-  setLibrary,
-  storeSyndicateInstance,
   hideWalletModal,
+  setConnected,
+  setConnectedProviderName,
+  setConnecting,
+  setDisConnected,
+  setLibrary,
+  showErrorModal,
 } from "@/redux/actions/web3Provider";
+import { getSyndicateContracts } from "@/syndicateClosedEndFundLogic";
+import { Injected, WalletConnect } from "@/utils/connectors";
 import { UnsupportedChainIdError, useWeb3React } from "@web3-react/core";
+import { UserRejectedRequestError as UserRejectedRequestErrorFrame } from "@web3-react/frame-connector";
+import {
+  NoEthereumProviderError,
+  UserRejectedRequestError as UserRejectedRequestErrorInjected,
+} from "@web3-react/injected-connector";
+import { UserRejectedRequestError as UserRejectedRequestErrorWalletConnect } from "@web3-react/walletconnect-connector";
+import { parse } from "flatted";
 import React, {
   createContext,
   ReactNode,
@@ -19,16 +28,6 @@ import React, {
   useState,
 } from "react";
 import { useDispatch } from "react-redux";
-import {
-  NoEthereumProviderError,
-  UserRejectedRequestError as UserRejectedRequestErrorInjected,
-} from "@web3-react/injected-connector";
-import { UserRejectedRequestError as UserRejectedRequestErrorWalletConnect } from "@web3-react/walletconnect-connector";
-import { UserRejectedRequestError as UserRejectedRequestErrorFrame } from "@web3-react/frame-connector";
-import { parse } from "flatted";
-
-import Syndicate from "src/contracts/Syndicate.json";
-import { Injected, WalletConnect } from "@/utils/connectors";
 
 const Web3 = require("web3");
 
@@ -100,31 +99,28 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
     Web3.givenProvider || `${process.env.NEXT_PUBLIC_INFURA_ENDPOINT}`,
   );
 
-  const syndicateContractInstance = new web3.eth.Contract(
-    // @ts-ignore
-    Syndicate.abi,
-    contractAddress,
-  );
-
   /**
    * Instantiates contract, and adds it together with web3 provider details to
    * store
    */
   const setWeb3 = async (providerName) => {
-    dispatch(storeSyndicateInstance(syndicateContractInstance));
-
     if (library) {
       dispatch(setConnecting());
 
       // set up DAI contract
       const daiContract = new web3.eth.Contract(daiABI, daiContractAddress);
+      // initialize contract now
+      const contracts = await getSyndicateContracts();
 
+      dispatch({
+        data: contracts,
+        type: INITIALIZE_CONTRACTS,
+      });
       try {
         dispatch(hideErrorModal());
         return dispatch(
           setLibrary({
             account,
-            syndicateContractInstance,
             daiContract,
             web3,
             providerName,
@@ -153,11 +149,19 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
   useEffect(() => {
     if (cachedWalletData) {
       const { providerName, account } = cachedWalletData;
+
+      // initialize contract now
+      getSyndicateContracts().then((contracts) => {
+        dispatch({
+          data: contracts,
+          type: INITIALIZE_CONTRACTS,
+        });
+      });
+
       setProviderName(providerName);
       dispatch(
         setLibrary({
           account,
-          syndicateContractInstance,
           web3,
           providerName,
         }),

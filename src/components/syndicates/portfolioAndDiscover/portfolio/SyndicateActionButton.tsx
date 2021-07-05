@@ -5,7 +5,7 @@ import { useSelector } from "react-redux";
 import { ifRows } from "./interfaces";
 
 const SyndicateActionButton = ({
-  row: { syndicateAddress, depositsEnabled, distributionsEnabled },
+  row: { syndicateAddress, depositsEnabled, distributing },
 }: ifRows) => {
   const {
     web3: { account },
@@ -33,7 +33,7 @@ const SyndicateActionButton = ({
       link = "deposit";
     }
 
-    if (distributionsEnabled) {
+    if (distributing) {
       buttonText = "Withdraws available";
       buttonStyles = "border border-blue";
       link = "withdraw";

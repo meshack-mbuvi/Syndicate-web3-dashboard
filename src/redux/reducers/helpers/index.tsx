@@ -1,4 +1,4 @@
-import { SET_LOADING, SET_SUBMITTING } from "src/redux/actions/types";
+import { SET_LOADING, SET_SUBMITTING } from "@/redux/actions/types";
 import { initialState } from "../initialState";
 
 export const loadingReducer = (state = initialState, action) => {

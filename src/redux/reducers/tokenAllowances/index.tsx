@@ -1,7 +1,7 @@
 import {
   STORE_DEPOSIT_TOKEN_ALLOWANCE,
   STORE_DISTRIBUTION_TOKENS_ALLOWANCES,
-} from "src/redux/actions/types";
+} from "@/redux/actions/types";
 import { initialState } from "../initialState";
 
 // reducer to store allowance and distribution details for the distribution token

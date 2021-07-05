@@ -6,7 +6,6 @@ import {
 } from "@/components/shared/transactionStates";
 import ConfirmStateModal from "@/components/shared/transactionStates/confirm";
 import {
-  confirmingTransaction,
   confirmSetManagerFeeAddressText,
   constants,
   metamaskConstants,
@@ -17,7 +16,6 @@ import {
 import { managerActionTexts } from "@/components/syndicates/shared/Constants/managerActions";
 import { SyndicateActionLoader } from "@/components/syndicates/shared/syndicateActionLoader";
 import { checkAccountAllowance } from "@/helpers/approveAllowance";
-import { getTotalDistributions } from "@/helpers/distributions";
 import { getMetamaskError } from "@/helpers/metamaskError";
 import {
   getSyndicateByAddress,
@@ -54,7 +52,7 @@ const DistributeToken = (props: Props) => {
   const { showDistributeToken, setShowDistributeToken } = props;
 
   const {
-    syndicateInstanceReducer: { syndicateContractInstance },
+    initializeContractsReducer: { syndicateContracts },
     syndicatesReducer: { syndicate },
     tokenDetailsReducer: { distributionTokensAllowanceDetails },
     web3Reducer: {
@@ -120,8 +118,7 @@ const DistributeToken = (props: Props) => {
 
       if (distributionERC20Address === tokenNonFormattedAddress) {
         // get current distributions.
-        const totalCurrentDistributions = await getTotalDistributions(
-          syndicateContractInstance,
+        const totalCurrentDistributions = await syndicateContracts.DistributionLogicContract.getDistributionTotal(
           syndicateAddress,
           tokenNonFormattedAddress,
         );
@@ -228,7 +225,7 @@ const DistributeToken = (props: Props) => {
       return;
     }
 
-    const tokenAddresses = [];
+    const distributionERC20TokenAddresses = [];
     const tokenDistributionAmounts = [];
 
     ERC20TokenFields.forEach((ERC20TokenField) => {
@@ -245,53 +242,25 @@ const DistributeToken = (props: Props) => {
         true,
       );
 
-      tokenAddresses.push(tokenNonFormattedAddress);
+      distributionERC20TokenAddresses.push(tokenNonFormattedAddress);
       tokenDistributionAmounts.push(distributionAmount);
     });
 
     setMetamaskConfirmationPending(true);
     try {
-      await syndicateContractInstance.methods
-        .managerSetDistributions(
-          syndicateAddress,
-          tokenAddresses,
-          tokenDistributionAmounts,
-        )
-        .send({ from: account, gasLimit: 800000 })
-        .on("transactionHash", () => {
-          // user has confirmed the transaction so we should start loader state.
-          // show loading modal
-          setMetamaskConfirmationPending(false);
-          setSubmitting(true);
-        })
-        .on("receipt", async (receipt) => {
-          // transaction was succesful
-          setSuccessfulDistribution(true);
-          setSubmitting(false);
-          setMetamaskDistributionError("");
-          // process result
-          if (receipt) {
-            // For a single distribution token, an single event in
-            // emitted, and thus managerSetterDistribution will be an
-            // object whereas for multiple distribution tokens, multiple
-            // events are emitted and therefore managerSetterDistribution // will be an array
-            const { managerSetterDistribution } = receipt.events;
-            if (Array.isArray(managerSetterDistribution)) {
-              managerSetterDistribution.forEach((distributionEvent) => {
-                // multiple events will be emitted for distributions set for
-                // new tokenAddresses
-                processSetDistributionEvent(distributionEvent);
-              });
-            } else {
-              processSetDistributionEvent(managerSetterDistribution);
-            }
-          }
-        })
-        .on("error", (error) => {
-          // transaction was rejected on Metamask.
-          handleDistributionError(error);
-        });
+      await syndicateContracts.DistributionLogicContract.managerSetDistributions(
+        syndicateAddress,
+        distributionERC20TokenAddresses,
+        tokenDistributionAmounts,
+        account,
+        setMetamaskConfirmationPending,
+        setSubmitting,
+        processSetDistributionEvent,
+      );
+      setSuccessfulDistribution(true);
     } catch (error) {
+      setSuccessfulDistribution(false);
+
       handleDistributionError(error);
     }
   };
@@ -324,7 +293,7 @@ const DistributeToken = (props: Props) => {
     const tokenAllowance = await checkAccountAllowance(
       tokenAddress,
       account,
-      syndicateContractInstance._address,
+      syndicateContracts.DistributionLogicContract._address,
     );
 
     const currentTokenAllowance = getWeiAmount(
@@ -602,7 +571,10 @@ const DistributeToken = (props: Props) => {
     // set up allowance
     try {
       await tokenContract.methods
-        .approve(syndicateContractInstance._address, amountToApprove)
+        .approve(
+          syndicateContracts.DistributionLogicContract._address,
+          amountToApprove,
+        )
         .send({ from: account, gasLimit: 800000 })
         .on("transactionHash", () => {
           // user clicked on confirm
@@ -634,8 +606,7 @@ const DistributeToken = (props: Props) => {
             );
 
             // get current distributions.
-            const totalCurrentDistributions = await getTotalDistributions(
-              syndicateContractInstance,
+            const totalCurrentDistributions = await syndicateContracts.DistributionLogicContract.getDistributionTotal(
               syndicateAddress,
               tokenNonFormattedAddress,
             );
@@ -716,6 +687,7 @@ const DistributeToken = (props: Props) => {
     setSubmittingAllowanceApproval(false);
     setMetamaskDistributionError("");
     setSuccessfulDistribution(false);
+    setShowDistributeToken(false);
   };
 
   // props for the loader component
@@ -805,7 +777,7 @@ const DistributeToken = (props: Props) => {
     } else {
       // update syndicate details in the redux store
       dispatch(
-        getSyndicateByAddress(syndicateAddress, syndicateContractInstance),
+        getSyndicateByAddress({ syndicateAddress, ...syndicateContracts }),
       );
       setShowDistributeToken(false);
     }
@@ -915,6 +887,10 @@ const DistributeToken = (props: Props) => {
     setShowFinalState(false);
   };
 
+  /**
+   * Used by manager to set managerFeeAddress
+   * @param event
+   */
   const handleSubmitManagerFeeAddress = async (event) => {
     event.preventDefault();
 
@@ -922,21 +898,17 @@ const DistributeToken = (props: Props) => {
     setShowWalletConfirmationModal(true);
 
     try {
-      await syndicateContractInstance.methods
-        .managerSetManagerFeeAddress(syndicateAddress, managerFeeAddress)
-        .send({ from: account, gasLimit: 800000 })
-        .on("transactionHash", () => {
-          setShowWalletConfirmationModal(false);
-          setSavingMemberAddress(true);
-        })
-        .on("receipt", async () => {
-          dispatch(updateSyndicateManagerFeeAddress(managerFeeAddress));
-          setSavingMemberAddress(false);
-          setManagerFeeAddressAlreadySet(true);
-        })
-        .on("error", (error) => {
-          handleError(error);
-        });
+      await syndicateContracts.ManagerLogicContract.managerSetManagerFeeAddress(
+        syndicateAddress,
+        managerFeeAddress,
+        account,
+        setShowWalletConfirmationModal,
+        setSavingMemberAddress,
+      );
+
+      dispatch(updateSyndicateManagerFeeAddress(managerFeeAddress));
+      setSavingMemberAddress(false);
+      setManagerFeeAddressAlreadySet(true);
     } catch (error) {
       handleError(error);
     }
@@ -973,6 +945,7 @@ const DistributeToken = (props: Props) => {
       setManagerFeeAddressAlreadySet(false);
     };
   }, [syndicate]);
+
   return (
     <>
       <Modal
@@ -1370,25 +1343,19 @@ const DistributeToken = (props: Props) => {
               </div>
 
               {/* submit button */}
-              {!syndicate?.depositsEnabled ? (
-                <div className="flex my-4 w-full justify-center py-2">
-                  {submitting ? (
-                    <div className="loader"></div>
-                  ) : (
-                    <form onSubmit={onSubmit}>
-                      <Button
-                        type="submit"
-                        customClasses={`rounded-full bg-blue w-auto px-10 py-2 text-lg ${
-                          enableDistributeButton ? "" : "opacity-50"
-                        }`}
-                        disabled={enableDistributeButton ? false : true}
-                      >
-                        Distribute Tokens
-                      </Button>
-                    </form>
-                  )}
-                </div>
-              ) : null}
+              <div className="flex my-4 w-full justify-center py-2">
+                <form onSubmit={onSubmit}>
+                  <Button
+                    type="submit"
+                    customClasses={`rounded-full bg-blue w-auto px-10 py-2 text-lg ${
+                      enableDistributeButton ? "" : "opacity-50"
+                    }`}
+                    disabled={enableDistributeButton ? false : true}
+                  >
+                    Distribute Tokens
+                  </Button>
+                </form>
+              </div>
             </div>
           </div>
         )}
@@ -1413,7 +1380,7 @@ const DistributeToken = (props: Props) => {
         }}
       >
         <div className="modal-header mb-4 font-medium text-center leading-8 text-2xl">
-          {confirmingTransaction}
+          Please wait for manager fee address to be set.
         </div>
         <div className="flex flex-col justify-center m-auto mb-4">
           <p className="text-sm text-center mx-8 opacity-60">

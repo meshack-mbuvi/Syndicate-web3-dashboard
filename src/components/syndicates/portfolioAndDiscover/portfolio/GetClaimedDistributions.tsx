@@ -1,22 +1,24 @@
-import { getEvents } from "@/helpers/retrieveEvents";
 import { RootState } from "@/redux/store";
 import { formatAddress } from "@/utils/formatAddress";
+import { floatedNumberWithCommas } from "@/utils/formattedNumbers";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { getWeiAmount, onlyUnique } from "src/utils/conversions";
 import { ERC20TokenDetails } from "src/utils/ERC20Methods";
-import { floatedNumberWithCommas } from "@/utils/formattedNumbers";
 import { TokenMappings } from "src/utils/tokenMappings";
 import { ifRows } from "./interfaces";
 
 const GetClaimedDistributions = ({
   row: { syndicateAddress, depositERC20TokenSymbol, tokenDecimals },
 }: ifRows) => {
-  const { web3: web3Wrapper } = useSelector(
-    (state: RootState) => state.web3Reducer,
-  );
+  const {
+    web3Reducer: { web3: web3Wrapper },
+    initializeContractsReducer: {
+      syndicateContracts: { DepositLogicContract, DistributionLogicContract },
+    },
+  } = useSelector((state: RootState) => state);
 
-  const { syndicateContractInstance, account, web3 } = web3Wrapper;
+  const { account, web3 } = web3Wrapper;
 
   const [
     depositWithdrawalsDetails,
@@ -28,20 +30,19 @@ const GetClaimedDistributions = ({
   ] = useState<any>([]);
 
   /**
-   * when syndicateContractInstance is initialized fully, retrieve syndicate
+   * when syndicateContracts are initialized fully, retrieve syndicate
    * memberInfo
    */
   useEffect(() => {
     getMemberDistributionsWithdrawalEvents();
     getMemberDepositsWithdrawalEvents();
-  }, [syndicateContractInstance, account]);
+  }, [DepositLogicContract, DistributionLogicContract, account]);
 
   // get events where member withdrew their deposits
   const getMemberDepositsWithdrawalEvents = async () => {
     if (syndicateAddress === account) return "-";
 
-    const memberDepositsWithdrawalEvents = await getEvents(
-      syndicateContractInstance,
+    const memberDepositsWithdrawalEvents = await DepositLogicContract.getMemberDepositEvents(
       "memberWithdrewDeposit",
       {
         syndicateAddress: web3.utils.toChecksumAddress(syndicateAddress),
@@ -87,9 +88,8 @@ const GetClaimedDistributions = ({
     // Managers do not deposit into a syndicate they manage.
     if (syndicateAddress === account) return "-";
 
-    const memberDistributionsWithdrawalEvents = await getEvents(
-      syndicateContractInstance,
-      "memberWithdrewDistribution",
+    const memberDistributionsWithdrawalEvents = await DistributionLogicContract.getDistributionEvents(
+      "memberClaimedDistribution",
       {
         syndicateAddress: web3.utils.toChecksumAddress(syndicateAddress),
         memberAddress: account,

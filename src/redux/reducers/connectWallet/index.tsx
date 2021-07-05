@@ -10,7 +10,7 @@ import {
   SHOW_ERROR_MODAL,
   SHOW_WALLET_MODAL,
   UNSET_WEB3,
-} from "src/redux/actions/types";
+} from "@/redux/actions/types";
 import { initialState } from "../initialState";
 
 export const web3Reducer = (state = initialState, action) => {

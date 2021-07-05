@@ -154,7 +154,7 @@ const walletPendingConfirmPendingTitleText = "Confirmation pending.";
 const walletPendingConfirmPendingMessage =
   "Please confirm the transaction from your wallet.";
 
-export const depositorAddressToolTip =
+export const memberAddressToolTip =
   "The address the depositor used to send funds to the manager.";
 
 export const walletConfirmConstants = {
@@ -272,6 +272,9 @@ export const allowListEnabledToolTip =
 
 export const modifiableToolTip =
   "This should be checked if a manager can modify a Syndicate's deposit and distribution amounts or unchecked if deposit and distribution cannot be modified by the manager. This choice is permanent-- once set here during creation, it cannot be changed.";
+
+export const transferableToolTip =
+  "Check this if a member can transfer a portion of their deposit to another address without a manager approval. Uncheck if transfers can only be initiated by the manager of a modifiable Syndicate.";
 export const myDepositsToolTip =
   "Total deposits this wallet account has already made to the syndicate";
 

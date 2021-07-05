@@ -23,6 +23,6 @@ export type Syndicate = {
   numMembersCurrent: string;
   syndicateProfitShareBasisPoints: string;
   managerPerformanceFeeBasisPoints: number;
-  distributionsEnabled?: boolean;
+  distributing?: boolean;
   syndicateAddress?: string;
 };

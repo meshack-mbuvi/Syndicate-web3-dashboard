@@ -10,7 +10,7 @@ export interface syndicateInterface {
   depositMinMember: string;
   depositTotal: string;
   depositsEnabled: boolean;
-  distributionsEnabled?: boolean;
+  distributing?: boolean;
   managerCurrent: string;
   managerFeeAddress: string;
   managerManagementFeeBasisPoints: string | number;

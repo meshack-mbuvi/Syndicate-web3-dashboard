@@ -1,7 +1,7 @@
 import {
   LOADING_SYNDICATE_DETAILS,
   SET_SYNDICATE_DETAILS,
-} from "src/redux/actions/types";
+} from "@/redux/actions/types";
 import { initialState } from "../initialState";
 
 export const syndicateDetailsReducer = (state = initialState, action) => {

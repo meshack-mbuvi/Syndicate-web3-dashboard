@@ -1,23 +1,24 @@
-import Link from "next/link";
-import { useEffect, useState } from "react";
-import { useRouter } from "next/router";
-import { useDispatch, useSelector } from "react-redux";
-
 import ErrorBoundary from "@/components/errorBoundary";
+import JoinWaitlist from "@/components/JoinWaitlist";
 import { ErrorModal } from "@/components/shared";
 import { SkeletonLoader } from "@/components/skeletonLoader";
-import { getWeiAmount } from "@/utils/conversions";
+import { getMetamaskError } from "@/helpers";
+import { showWalletModal } from "@/redux/actions";
+import { updateMemberDepositDetails } from "@/redux/actions/syndicateMemberDetails/memberDepositsInfo";
+import { updateMemberWithdrawalDetails } from "@/redux/actions/syndicateMemberDetails/memberWithdrawalsInfo";
 import { getSyndicateByAddress } from "@/redux/actions/syndicates";
 import { RootState } from "@/redux/store";
-import { floatedNumberWithCommas } from "@/utils/formattedNumbers";
-import { showWalletModal } from "@/redux/actions";
+import { getWeiAmount } from "@/utils/conversions";
 import { ERC20TokenDetails } from "@/utils/ERC20Methods";
-import { Validate } from "@/utils/validators";
-import { getMetamaskError } from "@/helpers";
+import { floatedNumberWithCommas } from "@/utils/formattedNumbers";
 import { TokenMappings } from "@/utils/tokenMappings";
-import { updateMemberWithdrawalDetails } from "@/redux/actions/syndicateMemberDetails/memberWithdrawalsInfo";
-import { updateMemberDepositDetails } from "@/redux/actions/syndicateMemberDetails/memberDepositsInfo";
-
+import { Validate } from "@/utils/validators";
+import Link from "next/link";
+import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useUnavailableState } from "../hooks/useUnavailableState";
+import { DetailsCard } from "../shared";
 import {
   constants,
   myDepositsToolTip,
@@ -27,13 +28,10 @@ import {
   walletConfirmConstants,
   withdrawalsToDepositPercentageToolTip,
 } from "../shared/Constants";
-import { DetailsCard } from "../shared";
-import { SyndicateActionLoader } from "../shared/syndicateActionLoader";
-import { UnavailableState } from "../shared/unavailableState";
 import { SyndicateActionButton } from "../shared/syndicateActionButton";
+import { SyndicateActionLoader } from "../shared/syndicateActionLoader";
 import { TokenSelect } from "../shared/tokenSelect";
-import { useUnavailableState } from "../hooks/useUnavailableState";
-import JoinWaitlist from "@/components/JoinWaitlist";
+import { UnavailableState } from "../shared/unavailableState";
 
 const {
   actionFailedError,
@@ -66,7 +64,7 @@ const {
 const WithdrawSyndicate = () => {
   const {
     tokenDetailsReducer: { distributionTokensAllowanceDetails },
-    syndicateInstanceReducer: { syndicateContractInstance },
+    initializeContractsReducer: { syndicateContracts },
     syndicateMemberDetailsReducer: {
       memberDepositDetails,
       memberWithdrawalDetails,
@@ -81,23 +79,28 @@ const WithdrawSyndicate = () => {
   const router = useRouter();
   const dispatch = useDispatch();
 
-  const { title, message, renderUnavailableState, renderJoinWaitList } = useUnavailableState();
+  const {
+    title,
+    message,
+    renderUnavailableState,
+    renderJoinWaitList,
+  } = useUnavailableState();
 
   // STATES
   const [withdrawalsAvailable, setWithdrawalsAvailable] = useState<boolean>(
-    true
+    true,
   );
   const [submittingWithdrawal, setSubmittingWithdrawal] = useState<boolean>(
-    false
+    false,
   );
   const [metamaskConfirmPending, setMetamaskConfirmPending] = useState<boolean>(
-    false
+    false,
   );
   const [successfulWithdrawal, setSuccessfulWithdrawal] = useState<boolean>(
-    false
+    false,
   );
   const [metamaskWithdrawError, setMetamaskWithdrawError] = useState<string>(
-    ""
+    "",
   );
   const [withdrawalFailed, setWithdrawalFailed] = useState<boolean>(false);
   const [loadingLPDetails, setLoadingLPDetails] = useState<boolean>(false);
@@ -135,7 +138,7 @@ const WithdrawSyndicate = () => {
 
   if (syndicateDistributionTokens) {
     const selectedToken = syndicateDistributionTokens.find(
-      (token) => token.selected
+      (token) => token.selected,
     );
 
     if (selectedToken) {
@@ -196,11 +199,11 @@ const WithdrawSyndicate = () => {
   // check whether the current syndicate is accepting withdrawals
   useEffect(() => {
     if (syndicate) {
-      const { depositsEnabled, distributionsEnabled } = syndicate;
+      const { depositsEnabled, distributing } = syndicate;
 
       // if a syndicate is closed and distributions have not been enabled
       // the member cannot withdraw from it.
-      if (!depositsEnabled && !distributionsEnabled) {
+      if (!depositsEnabled && !distributing) {
         setWithdrawalsAvailable(false);
       } else {
         setWithdrawalsAvailable(true);
@@ -211,7 +214,7 @@ const WithdrawSyndicate = () => {
   // get values for the current LP(connected wallet account)
   // when this component initially renders.
   useEffect(() => {
-    if (account && syndicateContractInstance && syndicate) {
+    if (account && syndicateContracts && syndicate) {
       setLoadingLPDetails(true);
       storeMemberWithdrawalDetails();
 
@@ -219,14 +222,14 @@ const WithdrawSyndicate = () => {
         updateMemberDepositDetails({
           syndicateAddress,
           depositTokenDecimals,
-        })
+        }),
       );
 
       setLoadingLPDetails(false);
     }
   }, [
     syndicate,
-    syndicateContractInstance,
+    syndicateContracts,
     currentTokenAvailableDistributions,
     account,
     depositTokenDecimals,
@@ -242,7 +245,7 @@ const WithdrawSyndicate = () => {
       // set token decimal places.
       getTokenDecimals(tokenAddress);
       const mappedTokenAddress = Object.keys(TokenMappings).find(
-        (key) => key.toLowerCase() == tokenAddress.toLowerCase()
+        (key) => key.toLowerCase() == tokenAddress.toLowerCase(),
       );
       if (mappedTokenAddress) {
         setDepositERC20Symbol(TokenMappings[mappedTokenAddress]);
@@ -261,27 +264,21 @@ const WithdrawSyndicate = () => {
       const amountGreaterThanMemberDeposits = +amount > +memberTotalDeposits;
       const { depositMinMember } = syndicate;
       const amountLessThanMinDeposits =
-        (+memberTotalDeposits - +amount) < depositMinMember;
+        +memberTotalDeposits - +amount < depositMinMember;
 
       const amountLessThanMemberDeposit = +amount < +memberTotalDeposits;
 
-      if (
-        amountGreaterThanMemberDistributions &&
-        syndicate?.distributionsEnabled
-      ) {
+      if (amountGreaterThanMemberDistributions && syndicate?.distributing) {
         setAmountGreaterThanMemberDistributions(true);
         setWithdrawalAmountGreaterThanDeposits(false);
         setWithdrawalAmountLessThanMinDeposits(false);
-      } else if (
-        amountGreaterThanMemberDeposits &&
-        !syndicate?.distributionsEnabled
-      ) {
+      } else if (amountGreaterThanMemberDeposits && !syndicate?.distributing) {
         setWithdrawalAmountGreaterThanDeposits(true);
         setAmountGreaterThanMemberDistributions(false);
         setWithdrawalAmountLessThanMinDeposits(false);
       } else if (
         amountLessThanMinDeposits &&
-        !syndicate?.distributionsEnabled &&
+        !syndicate?.distributing &&
         amountLessThanMemberDeposit
       ) {
         setWithdrawalAmountLessThanMinDeposits(true);
@@ -322,17 +319,17 @@ const WithdrawSyndicate = () => {
     !syndicate ||
     loadingLPDetails ||
     (syndicate &&
-      syndicate.distributionsEnabled &&
+      syndicate.distributing &&
       !distributionTokensAllowanceDetails.length);
 
   // set title and texts of section based on
   // whether this is a withdrawal or a deposit.
   let totalDistributionsText = `${floatedNumberWithCommas(
-    currentTokenAvailableDistributions
+    currentTokenAvailableDistributions,
   )} ${
     currentDistributionTokenSymbol ? currentDistributionTokenSymbol : ""
   } ($${floatedNumberWithCommas(
-    currentTokenAvailableDistributions
+    currentTokenAvailableDistributions,
   )}) distributions available.`;
   if (syndicate?.depositsEnabled) {
     totalDistributionsText = `${memberTotalDeposits} ${
@@ -357,7 +354,7 @@ const WithdrawSyndicate = () => {
 
   // show error message depending on what triggered it on the deposit/withdrawal page
   let errorMessageText = amountError;
-  if (amountGreaterThanMemberDistributions && syndicate?.distributionsEnabled) {
+  if (amountGreaterThanMemberDistributions && syndicate?.distributing) {
     errorMessageText = amountGreaterThanMemberDistributionsText;
   } else if (withdrawalAmountGreaterThanDeposits) {
     errorMessageText = withdrawalAmountGreaterThanMemberDeposits;
@@ -379,11 +376,11 @@ const WithdrawSyndicate = () => {
     disableWithrawButton = true;
   }
 
-  // set LP details section based on state
+  // set member details section based on state
   let sections = depositSections;
-  if (syndicate?.distributionsEnabled) {
+  if (syndicate?.distributing) {
     sections = WithdrawalSections;
-  } else if (!syndicate?.distributionsEnabled) {
+  } else if (!syndicate?.distributing) {
     sections = depositSections;
   }
 
@@ -413,14 +410,8 @@ const WithdrawSyndicate = () => {
     const amountToWithdraw = getWeiAmount(
       withdrawAmount.toString(),
       currentDistributionTokenDecimals,
-      true
+      true,
     );
-
-    // set tokens to withdraw
-    let withdrawalToken = syndicate?.depositERC20Address;
-    if (syndicate?.distributionsEnabled) {
-      withdrawalToken = currentDistributionTokenAddress;
-    }
 
     try {
       setMetamaskConfirmPending(true);
@@ -430,32 +421,44 @@ const WithdrawSyndicate = () => {
        * manager to the member.
        * @param amountToWithdraw The amount to withdraw
        */
-      await syndicateContractInstance.methods
-        .memberWithdraw(syndicateAddress, withdrawalToken, amountToWithdraw)
-        .send({ from: account, gasLimit: 800000 })
-        .on("transactionHash", () => {
-          // user has confirmed the transaction so we should start loader state.
-          // show loading modal
-          setMetamaskConfirmPending(false);
-          setSubmittingWithdrawal(true);
-        })
-        .on("receipt", () => {
-          // transaction was succesful
-          // get syndicate updated values
-          dispatch(
-            getSyndicateByAddress(syndicateAddress, syndicateContractInstance)
-          );
+      if (syndicate.depositsEnabled) {
+        const depositAmountToWithdraw = getWeiAmount(
+          withdrawAmount.toString(),
+          syndicate.tokenDecimals,
+          true,
+        );
 
-          //store updated member details
-          storeMemberWithdrawalDetails();
+        // withdraw deposits
+        await syndicateContracts?.DepositLogicContract.withdrawMemberDeposit(
+          syndicateAddress,
+          depositAmountToWithdraw,
+          account,
+          setMetamaskConfirmPending,
+          setSubmittingWithdrawal,
+        );
+      } else {
+        // withdraw distributions
+        await syndicateContracts?.DistributionLogicContract.memberClaimDistribution(
+          syndicateAddress,
+          account,
+          currentDistributionTokenAddress,
+          amountToWithdraw,
+          setMetamaskConfirmPending,
+          setSubmittingWithdrawal,
+        );
+      }
 
-          setSubmittingWithdrawal(false);
-          setSuccessfulWithdrawal(true);
-        })
-        .on("error", (error) => {
-          const { code } = error;
-          handleWithdrawalError(code);
-        });
+      // transaction was succesful
+      // get syndicate updated values
+      dispatch(
+        getSyndicateByAddress({ syndicateAddress, ...syndicateContracts }),
+      );
+
+      //store updated member details
+      storeMemberWithdrawalDetails();
+
+      setSubmittingWithdrawal(false);
+      setSuccessfulWithdrawal(true);
     } catch (error) {
       const { code } = error;
       handleWithdrawalError(code);
@@ -480,14 +483,15 @@ const WithdrawSyndicate = () => {
         currentTokenAvailableDistributions,
         currentDistributionTokenDecimals,
         currentDistributionTokenAddress,
-      })
+      }),
     );
   };
 
-  // handle deposit/withdrawal form submit.
+  // handle withdrawal form submit.
   const onSubmit = async (event: any) => {
     event.preventDefault();
-    if (!syndicateContractInstance) {
+
+    if (!syndicateContracts.DepositLogicContract) {
       // user needs to connect wallet first
       return dispatch(showWalletModal());
     }
@@ -562,8 +566,9 @@ const WithdrawSyndicate = () => {
           }`}
         >
           {/* Show is read only text if no provider */}
-          {renderJoinWaitList ? <JoinWaitlist /> :
-          renderUnavailableState ? (
+          {renderJoinWaitList ? (
+            <JoinWaitlist />
+          ) : renderUnavailableState ? (
             <UnavailableState title={title} message={message} />
           ) : withdrawalsAvailable ? (
             <>
@@ -667,7 +672,7 @@ const WithdrawSyndicate = () => {
                             onChange={handleSetAmount}
                             className={`min-w-0 rounded-md bg-gray-9 border border-gray-24 text-white font-whyte focus:outline-none focus:ring-gray-24 focus:border-gray-24 flex-grow mr-6 `}
                           />
-                          {syndicate && syndicate.distributionsEnabled ? (
+                          {syndicate && syndicate?.distributing ? (
                             <TokenSelect />
                           ) : (
                             <p className="flex-shrink-0 flex items-center whitespace-nowrap">

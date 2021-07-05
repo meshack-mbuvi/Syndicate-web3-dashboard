@@ -1,10 +1,9 @@
-import { AppThunk } from "@/redux/store";
-import { floatedNumberWithCommas } from "@/utils/formattedNumbers";
-import { divideIfNotByZero, getWeiAmount } from "@/utils/conversions";
-import { setMemberWithdrawalDetails, setMemberDetailsLoading } from ".";
 import { getSyndicateMemberInfo } from "@/helpers/syndicate";
-import { getEvents } from "@/helpers/retrieveEvents";
+import { AppThunk } from "@/redux/store";
+import { divideIfNotByZero, getWeiAmount } from "@/utils/conversions";
+import { floatedNumberWithCommas } from "@/utils/formattedNumbers";
 import { web3 } from "src/utils/web3Utils";
+import { setMemberDetailsLoading, setMemberWithdrawalDetails } from ".";
 
 interface ISyndicateLPData {
   syndicateAddress: string | string[];
@@ -34,14 +33,16 @@ export const updateMemberWithdrawalDetails = (
 
   const {
     syndicatesReducer: { syndicate },
-    syndicateInstanceReducer: { syndicateContractInstance },
+    initializeContractsReducer: {
+      syndicateContracts: { GetterLogicContract, DistributionLogicContract },
+    },
     web3Reducer: {
       web3: { account },
     },
   } = getState();
 
   // we cannot query relevant values without the syndicate instance
-  if (!syndicateContractInstance || !account) return;
+  if (!GetterLogicContract || !DistributionLogicContract || !account) return;
 
   // we also cannot query member details if there are no distributions available
   if (
@@ -61,8 +62,9 @@ export const updateMemberWithdrawalDetails = (
       // get total member deposits
       const memberAddress = account;
       const currentERC20Decimals = depositTokenDecimals;
+
       const memberInfo = await getSyndicateMemberInfo(
-        syndicateContractInstance,
+        GetterLogicContract,
         syndicateAddress,
         memberAddress,
         currentERC20Decimals,
@@ -71,10 +73,9 @@ export const updateMemberWithdrawalDetails = (
 
       // update member's withdrawals to date based on deposits or distributions
       let memberDistributionsWithdrawalsToDate = "0";
-      if (syndicate.distributionsEnabled) {
-        const memberDistributionsWithdrawalEvents = await getEvents(
-          syndicateContractInstance,
-          "memberWithdrewDistribution",
+      if (syndicate.distributing) {
+        const memberDistributionsWithdrawalEvents = await DistributionLogicContract.getDistributionEvents(
+          "memberClaimedDistribution",
           {
             syndicateAddress,
             memberAddress: account,
@@ -101,6 +102,7 @@ export const updateMemberWithdrawalDetails = (
 
       // update member's withdrawals to deposits percentage
       let memberWithdrawalsToDepositPercentage = "0";
+
       const memberWithdrawals = getWeiAmount(
         memberDistributionsWithdrawalsToDate,
         currentDistributionTokenDecimals,
@@ -134,18 +136,14 @@ export const updateMemberWithdrawalDetails = (
         depositTokenDecimals,
         true,
       );
-
+      let eligibleWithdrawal = "0";
       try {
-        var eligibleWithdrawal = await syndicateContractInstance.methods
-          .calculateEligibleWithdrawal(
-            totalMemberDeposits,
-            totalSyndicateDeposits,
-            memberDistributionsWithdrawalsToDate,
-            totalTokenDistributions,
-          )
-          .call()
-          .then((result) => result)
-          .catch(() => "0");
+        eligibleWithdrawal = await DistributionLogicContract.calculateEligibleDistributions(
+          totalMemberDeposits,
+          totalSyndicateDeposits,
+          memberDistributionsWithdrawalsToDate,
+          totalTokenDistributions,
+        );
       } catch (error) {
         eligibleWithdrawal = "0";
       }

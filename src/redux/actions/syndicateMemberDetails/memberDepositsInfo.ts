@@ -1,8 +1,8 @@
+import { getSyndicateMemberInfo } from "@/helpers/syndicate";
 import { AppThunk } from "@/redux/store";
 import { floatedNumberWithCommas } from "@/utils/formattedNumbers";
 import { divideIfNotByZero } from "src/utils/conversions";
 import { setMemberDepositDetails, setMemberDetailsLoading } from ".";
-import { getSyndicateMemberInfo } from "@/helpers/syndicate";
 
 interface ISyndicateLPData {
   syndicateAddress: string | string[];
@@ -22,14 +22,16 @@ export const updateMemberDepositDetails = (
 
   const {
     syndicatesReducer: { syndicate },
-    syndicateInstanceReducer: { syndicateContractInstance },
+    initializeContractsReducer: {
+      syndicateContracts: { GetterLogicContract },
+    },
     web3Reducer: {
       web3: { account },
     },
   } = getState();
 
   // we cannot query relevant values without the syndicate instance
-  if (!syndicateContractInstance || !account) return;
+  if (!GetterLogicContract || !account) return;
 
   // Retrieves syndicateInfo for the connected wallet. We need to find out
   // how much the wallet account has invested in this syndicate
@@ -45,7 +47,7 @@ export const updateMemberDepositDetails = (
         memberDeposits,
         memberAddressAllowed,
       } = await getSyndicateMemberInfo(
-        syndicateContractInstance,
+        GetterLogicContract,
         syndicateAddress,
         memberAddress,
         currentERC20Decimals

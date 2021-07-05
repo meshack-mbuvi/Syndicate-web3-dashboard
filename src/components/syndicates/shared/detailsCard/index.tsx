@@ -46,13 +46,13 @@ export const DetailsCard = (props: {
     !syndicate ||
     (loadingLPDetails && !syndicateDetails) ||
     (syndicate &&
-      syndicate.distributionsEnabled &&
+      syndicate.distributing &&
       !distributionTokensAllowanceDetails.length &&
       !syndicateDetails) ||
     (syndicateMemberDetailsLoading && title === "My Stats") ||
     (!syndicateDistributionTokens &&
       title === "My Stats" &&
-      syndicate.distributionsEnabled);
+      syndicate?.distributing);
 
   const modifiableTooltip = (
     <div className="relative bg-gray-9 p-4 text-sm">

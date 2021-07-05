@@ -1,5 +1,3 @@
-import { getTotalDistributions } from "@/helpers";
-import { getEvents } from "@/helpers/retrieveEvents";
 import { RootState } from "@/redux/store";
 import { ERC20TokenDetails } from "@/utils/ERC20Methods";
 import { formatAddress } from "@/utils/formatAddress";
@@ -11,14 +9,12 @@ import { TokenMappings } from "src/utils/tokenMappings";
 import { ifRows } from "./interfaces";
 
 const GetDistributions = ({ row: { syndicateAddress } }: ifRows) => {
-  const { web3: web3Wrapper } = useSelector(
-    (state: RootState) => state.web3Reducer
-  );
-  const { syndicateContractInstance } = useSelector(
-    (state: RootState) => state.syndicateInstanceReducer
-  );
-
-  const { account, web3 } = web3Wrapper;
+  const {
+    initializeContractsReducer: { syndicateContracts },
+    web3Reducer: {
+      web3: { account, web3 },
+    },
+  } = useSelector((state: RootState) => state);
 
   const [distributionDetails, setDistributionDetails] = useState<any>([]);
   const [distributionToolTip, setDistributionToolTip] = useState<
@@ -32,12 +28,13 @@ const GetDistributions = ({ row: { syndicateAddress } }: ifRows) => {
    */
   const distributionTokens = [];
   const distributionTokenDetails = [];
+
   const getDistributionEvents = async () => {
-    const distributionEvents = await getEvents(
-      syndicateContractInstance,
+    const distributionEvents = await syndicateContracts.DistributionLogicContract.getDistributionEvents(
       "managerSetterDistribution",
       { syndicateAddress: web3.utils.toChecksumAddress(syndicateAddress) }
     );
+
     if (distributionEvents.length) {
       for (let i = 0; i < distributionEvents.length; i++) {
         const { distributionERC20Address } = distributionEvents[i].returnValues;
@@ -69,8 +66,7 @@ const GetDistributions = ({ row: { syndicateAddress } }: ifRows) => {
       }
 
       // get distribution amount for token
-      const tokenDistributedAmount = await getTotalDistributions(
-        syndicateContractInstance,
+      const tokenDistributedAmount = await syndicateContracts.DistributionLogicContract.getDistributionTotal(
         syndicateAddress,
         uniqueDistributionERC20s[j]
       ).then((distributions) => {

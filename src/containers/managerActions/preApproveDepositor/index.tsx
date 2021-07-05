@@ -40,16 +40,12 @@ const PreApproveDepositor = (props: Props) => {
   const { showPreApproveDepositor, setShowPreApproveDepositor } = props;
 
   const {
-    web3: { account, web3 },
-  } = useSelector((state: RootState) => state.web3Reducer);
-
-  const { syndicateContractInstance } = useSelector(
-    (state: RootState) => state.syndicateInstanceReducer,
-  );
-
-  const { syndicate } = useSelector(
-    (state: RootState) => state.syndicatesReducer,
-  );
+    initializeContractsReducer: { syndicateContracts },
+    syndicatesReducer: { syndicate },
+    web3Reducer: {
+      web3: { account, web3 },
+    },
+  } = useSelector((state: RootState) => state);
 
   const [
     showWalletConfirmationModal,
@@ -143,25 +139,18 @@ const PreApproveDepositor = (props: Props) => {
    */
   const checkPreExistingApprovedAddress = async (memberAddress: string) => {
     try {
-      let options = {
-        filter: {
-          memberAddress,
-          syndicateAddress: account,
-        },
-        fromBlock: 0, //Number || "earliest" || "pending" || "latest"
-        toBlock: "latest",
-      };
-
       /**
-       * res returns array of all past events matching memberAddress and syndicateAddress
-       * returns empty array if no match found
+       * Get all events emitted when setting allowAddress for this syndicate.
        */
-      const res = await syndicateContractInstance.getPastEvents(
+      const managerEvents = await syndicateContracts.ManagerLogicContract.getManagerEvents(
         "managerAllowedAddresses",
-        options
+        {
+          memberAddress,
+          syndicateAddress,
+        },
       );
 
-      if (res && res.length) return true;
+      if (managerEvents && managerEvents.length) return true;
       return false;
     } catch (err) {
       return false;
@@ -190,7 +179,7 @@ const PreApproveDepositor = (props: Props) => {
      * wallet connection.
      * Note: We need to find a way, like a customized alert to inform user this.
      */
-    if (!syndicateContractInstance) {
+    if (!syndicateContracts) {
       // Request wallet connect
       return dispatch(showWalletModal());
     }
@@ -212,26 +201,19 @@ const PreApproveDepositor = (props: Props) => {
 
       setShowWalletConfirmationModal(true);
 
-      await syndicateContractInstance.methods
-        .managerAllowAddresses(syndicateAddress, newSplitArr)
-        .send({ from: account, gasLimit: 800000 })
-        .on("transactionHash", () => {
-          // close wallet confirmation modal
-          setShowWalletConfirmationModal(false);
-          setSubmitting(true);
-        })
-        .on("receipt", async () => {
-          setSubmitting(false);
+      await syndicateContracts.ManagerLogicContract.managerAllowAddresses(
+        syndicateAddress,
+        newSplitArr,
+        account,
+        setShowWalletConfirmationModal,
+        setSubmitting,
+      );
 
-          setShowFinalState(true);
-          setFinalStateHeaderText("Addresses Successfully Pre-Approved");
-          setFinalStateFeedback(preApproveMoreAddress);
-          setFinalStateIcon("/images/checkCircle.svg");
-          setFinalButtonText("Done");
-        })
-        .on("error", (error) => {
-          handleError(error);
-        });
+      setShowFinalState(true);
+      setFinalStateHeaderText("Addresses Successfully Pre-Approved");
+      setFinalStateFeedback(preApproveMoreAddress);
+      setFinalStateIcon("/images/checkCircle.svg");
+      setFinalButtonText("Done");
     } catch (error) {
       handleError(error);
     }
@@ -256,7 +238,7 @@ const PreApproveDepositor = (props: Props) => {
             setShowMemberAddressError(false);
 
             const isAlreadyPreApproved = await checkPreExistingApprovedAddress(
-              value
+              value,
             );
 
             // handle existing addresses

@@ -50,7 +50,7 @@ const RejectDepositOrMemberAddress = (props: Props) => {
     web3Reducer: {
       web3: { account, web3 },
     },
-    syndicateInstanceReducer: { syndicateContractInstance },
+    initializeContractsReducer: { syndicateContracts },
     syndicatesReducer: { syndicate },
   } = useSelector((state: RootState) => state);
 
@@ -104,7 +104,7 @@ const RejectDepositOrMemberAddress = (props: Props) => {
 
   const handleCloseFinalStateModal = async () => {
     await dispatch(
-      getSyndicateByAddress(syndicateAddress, syndicateContractInstance)
+      getSyndicateByAddress({ syndicateAddress, ...syndicateContracts })
     );
     setShowFinalState(false);
   };
@@ -143,7 +143,7 @@ const RejectDepositOrMemberAddress = (props: Props) => {
       checkAccountAllowance(
         syndicate.depositERC20Address,
         syndicate.managerCurrent,
-        syndicateContractInstance._address
+        syndicateContracts.DepositLogicContract._address
       )
         .then((allowance) => {
           const allowanceInWei = getWeiAmount(
@@ -160,7 +160,7 @@ const RejectDepositOrMemberAddress = (props: Props) => {
         })
         .catch((error) => console.log({ error }));
     }
-  }, [syndicate, syndicateContractInstance]);
+  }, [syndicate, syndicateContracts]);
 
   /**
    * This method sets addresses whose deposits are going to be rejected.
@@ -197,7 +197,7 @@ const RejectDepositOrMemberAddress = (props: Props) => {
             );
           } else if (web3.utils.isAddress(value)) {
             const { memberDeposits } = await getSyndicateMemberInfo(
-              syndicateContractInstance,
+              syndicateContracts.GetterLogicContract,
               syndicateAddress,
               value,
               parseInt(syndicate.tokenDecimals || 18)
@@ -328,7 +328,7 @@ const RejectDepositOrMemberAddress = (props: Props) => {
      * creation of Syndicate. We therefore catch this here and request for
      * wallet connection.
      */
-    if (!syndicateContractInstance) {
+    if (!syndicateContracts) {
       // Request wallet connect
       return dispatch(showWalletModal());
     }
@@ -356,29 +356,20 @@ const RejectDepositOrMemberAddress = (props: Props) => {
 
       // helps in determining which text to show on the state modals
       setRejectDepositState(true);
+      await syndicateContracts.DepositLogicContract.managerRejectDepositForMembers(
+        syndicateAddress,
+        memberAddressesArrayCopy,
+        account,
+        setShowWalletConfirmationModal,
+        setSubmitting
+      );
 
-      await syndicateContractInstance.methods
-        .managerRejectDepositForMembers(
-          syndicateAddress,
-          memberAddressesArrayCopy
-        )
-        .send({ from: account, gasLimit: 800000 })
-        .on("transactionHash", () => {
-          // close wallet confirmation modal
-          setShowWalletConfirmationModal(false);
-          setSubmitting(true);
-        })
-        .on("receipt", async () => {
-          setSubmitting(false);
+      setSubmitting(false);
 
-          setShowFinalState(true);
-          setFinalStateFeedback(rejectMemberDeposit);
-          setFinalStateIcon("/images/checkCircle.svg");
-          setFinalButtonText("Done");
-        })
-        .on("error", (error) => {
-          handleError(error, true);
-        });
+      setShowFinalState(true);
+      setFinalStateFeedback(rejectMemberDeposit);
+      setFinalStateIcon("/images/checkCircle.svg");
+      setFinalButtonText("Done");
     } catch (error) {
       handleError(error, true);
     }
@@ -455,7 +446,7 @@ const RejectDepositOrMemberAddress = (props: Props) => {
             );
           } else if (web3.utils.isAddress(value)) {
             const { memberAddressAllowed } = await getSyndicateMemberInfo(
-              syndicateContractInstance,
+              syndicateContracts.GetterLogicContract,
               syndicateAddress,
               value,
               parseInt(syndicate.tokenDecimals || 18)
@@ -547,7 +538,7 @@ const RejectDepositOrMemberAddress = (props: Props) => {
      * creation of Syndicate. We therefore catch this here and request for
      * wallet connection.
      */
-    if (!syndicateContractInstance) {
+    if (!syndicateContracts) {
       // Request wallet connect
       return dispatch(showWalletModal());
     }
@@ -579,28 +570,21 @@ const RejectDepositOrMemberAddress = (props: Props) => {
 
       setShowWalletConfirmationModal(true);
 
-      await syndicateContractInstance.methods
-        .managerBlockAddresses(
-          syndicateAddress,
-          memberAddressesArrayToBlacklistCopy
-        )
-        .send({ from: account, gasLimit: 800000 })
-        .on("transactionHash", () => {
-          // close wallet confirmation modal
-          setShowWalletConfirmationModal(false);
-          setSubmitting(true);
-        })
-        .on("receipt", async () => {
-          setSubmitting(false);
+      // call manager logic contract to blacklist addresses
+      await syndicateContracts.ManagerLogicContract.managerBlockAddresses(
+        syndicateAddress,
+        memberAddressesArrayToBlacklistCopy,
+        account,
+        setShowWalletConfirmationModal,
+        setSubmitting
+      );
 
-          setShowFinalState(true);
-          setFinalStateFeedback(rejectMemberAddress);
-          setFinalStateIcon("/images/checkCircle.svg");
-          setFinalButtonText("Done");
-        })
-        .on("error", (error) => {
-          handleError(error, false);
-        });
+      setSubmitting(false);
+
+      setShowFinalState(true);
+      setFinalStateFeedback(rejectMemberAddress);
+      setFinalStateIcon("/images/checkCircle.svg");
+      setFinalButtonText("Done");
     } catch (error) {
       handleError(error, false);
     }
@@ -614,8 +598,7 @@ const RejectDepositOrMemberAddress = (props: Props) => {
           show: showRejectDepositOrMemberAddress,
           closeModal: () => setShowRejectDepositOrMemberAddress(false),
           customWidth: "sm:w-2/3",
-        }}
-      >
+        }}>
         <div className="mt-5 sm:mt-6 flex flex-col justify-center">
           <div>
             <div>
@@ -656,8 +639,7 @@ const RejectDepositOrMemberAddress = (props: Props) => {
                   memberAddressesError ? "cursor-not-allowed opacity-50" : null
                 }`}
                 onClick={handleSubmitRejectDeposits}
-                disabled={memberAddressesError ? true : false}
-              >
+                disabled={memberAddressesError ? true : false}>
                 Reject Deposits
               </button>
             </div>
@@ -705,8 +687,7 @@ const RejectDepositOrMemberAddress = (props: Props) => {
                       : null
                   }`}
                   onClick={handleSubmitBlackListMemberAddresses}
-                  disabled={memberAddressesToblackListError ? true : false}
-                >
+                  disabled={memberAddressesToblackListError ? true : false}>
                   Reject Addresses
                 </button>
               </div>
@@ -731,8 +712,7 @@ const RejectDepositOrMemberAddress = (props: Props) => {
       <PendingStateModal
         {...{
           show: submitting,
-        }}
-      >
+        }}>
         <div className="modal-header mb-4 font-medium text-center leading-8 text-2xl">
           {confirmingTransaction}
         </div>

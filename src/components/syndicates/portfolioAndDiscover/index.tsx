@@ -1,21 +1,17 @@
 import { SyndicateDAOItem } from "@/components/syndicates/shared/syndicateDAOItem";
 import { showWalletModal } from "@/redux/actions";
 import { setOneSyndicatePerAccount } from "@/redux/actions/syndicateMemberDetails";
-import { addSyndicates } from "@/redux/actions/syndicates";
+import { getSyndicates } from "@/redux/actions/syndicates";
+import { RootState } from "@/redux/store";
 import syndicateDAOs from "@/syndicateDAOs.json";
 import React, { useEffect, useState } from "react";
-import { connect, useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import Button from "src/components/buttons";
 import PageHeader from "src/components/pageHeader";
 import { SkeletonLoader } from "src/components/skeletonLoader";
 import CreateSyndicate from "src/components/syndicates/createSyndicate";
 import { default as Portfolio } from "./portfolio";
 
-interface MySyndicateProps {
-  web3: any;
-  syndicates;
-  loading: boolean;
-}
 /**
  * My Syndicates: IF their wallet (a) is leading a syndicate or
  * (b) has deposited into a syndicate, the syndicates shows up on
@@ -24,13 +20,27 @@ interface MySyndicateProps {
  * Data is pulled from the smart contract and syndicate’s wallet state.
  * @returns
  */
-const PortfolioAndDiscover = (props: MySyndicateProps) => {
-  const {
-    web3: { syndicateContractInstance, account },
-    syndicates,
-    loading,
-  } = props;
+const PortfolioAndDiscover = () => {
   const dispatch = useDispatch();
+
+  const {
+    loadingReducer: { loading },
+    initializeContractsReducer: { syndicateContracts },
+    syndicatesReducer: { syndicates },
+    web3Reducer: { web3 },
+  } = useSelector((state: RootState) => state);
+  const { account } = web3;
+
+  const [showModal, setShowModal] = useState(false);
+
+  /**
+   * We need to be sure syndicateContracts is initialized before retrieving events.
+   */
+  useEffect(() => {
+    if (syndicateContracts?.GetterLogicContract) {
+      dispatch(getSyndicates({ ...web3, ...syndicateContracts }));
+    }
+  }, [syndicateContracts?.GetterLogicContract, account]);
 
   // Assume by default this user has an open syndicate
   const [managerWithOpenSyndicate, setManagerWithOpenSyndicate] = useState(
@@ -58,23 +68,11 @@ const PortfolioAndDiscover = (props: MySyndicateProps) => {
       setManagerWithOpenSyndicate(false);
       dispatch(setOneSyndicatePerAccount(false));
     }
-  }, [syndicates, syndicateContractInstance, account]);
-
-  /**
-   * We need to be sure syndicateContractInstance is initialized before retrieving events.
-   */
-  useEffect(() => {
-    if (syndicateContractInstance) {
-      dispatch(addSyndicates(props.web3));
-    }
-  }, [syndicateContractInstance, account]);
-
-  // controls show/hide new syndicate creation modal
-  const [showModal, setShowModal] = useState(false);
+  }, [syndicates, account]);
 
   const showSyndicateForm = () => {
     // Trigger wallet connection if wallet is not connected
-    if (!syndicateContractInstance) {
+    if (!account) {
       return dispatch(showWalletModal());
     }
     setShowModal(true);
@@ -236,20 +234,9 @@ const PortfolioAndDiscover = (props: MySyndicateProps) => {
       )}
 
       {/* Component to create syndicate  */}
-      {syndicateContractInstance ? (
-        <CreateSyndicate {...{ showModal, setShowModal }} />
-      ) : null}
+      {account ? <CreateSyndicate {...{ showModal, setShowModal }} /> : null}
     </div>
   );
 };
 
-const mapStateToProps = (state) => {
-  const { web3Reducer, syndicatesReducer, loadingReducer } = state;
-  const { web3 } = web3Reducer;
-  const { syndicates } = syndicatesReducer;
-  const { loading } = loadingReducer;
-
-  return { web3, syndicates, loading };
-};
-
-export default connect(mapStateToProps)(PortfolioAndDiscover);
+export default PortfolioAndDiscover;

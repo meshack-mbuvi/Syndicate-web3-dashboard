@@ -1,5 +1,4 @@
 import { managerActionTexts } from "@/components/syndicates/shared/Constants/managerActions";
-import PropTypes from "prop-types";
 import React from "react";
 import { InfoIcon } from "src/components/iconWrappers";
 import { SkeletonLoader } from "src/components/skeletonLoader";
@@ -13,7 +12,6 @@ export const BadgeCard = (props: {
   depositsEnabled?: boolean;
   correctManagerDepositsAllowance?: boolean;
   correctManagerDistributionsAllowance?: boolean;
-  distributionsEnabled?: boolean;
   accountIsManager?: boolean;
   showManagerSetAllowancesModal?: () => void;
 }) => {
@@ -25,7 +23,6 @@ export const BadgeCard = (props: {
     syndicate,
     correctManagerDepositsAllowance,
     correctManagerDistributionsAllowance,
-    distributionsEnabled,
     accountIsManager,
     showManagerSetAllowancesModal,
     depositsEnabled,
@@ -40,16 +37,16 @@ export const BadgeCard = (props: {
   } = managerActionTexts;
 
   let allowanceInfoText = "";
-  if (distributionsEnabled && !correctManagerDistributionsAllowance) {
+  if (syndicate?.distributing && !correctManagerDistributionsAllowance) {
     allowanceInfoText = insufficientDistributionsAllowanceBadgeText;
   } else if (depositsEnabled && !correctManagerDepositsAllowance) {
     allowanceInfoText = insufficientDepositsAllowanceBadgeText;
-  } else if (!depositsEnabled && !distributionsEnabled) {
+  } else if (!depositsEnabled && !syndicate?.distributing) {
     allowanceInfoText = syndicateClosedBadgeText;
   }
 
   let tooltipText = sufficientDepositsAllowanceTooltipText;
-  if (distributionsEnabled) {
+  if (syndicate?.distributing) {
     tooltipText = sufficientDistributionsAllowanceTooltipText;
   }
 
@@ -80,7 +77,7 @@ export const BadgeCard = (props: {
               {accountIsManager ? (
                 <div className="rounded-b-custom bg-gray-6 border-t-1 border-gray-6 px-0 py-2">
                   {(depositsEnabled && correctManagerDepositsAllowance) ||
-                  (distributionsEnabled &&
+                  (syndicate?.distributing &&
                     correctManagerDistributionsAllowance) ? (
                     <div className="flex justify-between items-center">
                       <p className="text-sm font-light ml-14">
@@ -90,7 +87,7 @@ export const BadgeCard = (props: {
                         <InfoIcon tooltip={tooltipText} />
                       </div>
                     </div>
-                  ) : !depositsEnabled && !distributionsEnabled ? (
+                  ) : !depositsEnabled && !syndicate?.distributing ? (
                     <div className="flex justify-start items-center px-6 py-4">
                       <img
                         src="/images/exclamationDiagonal.svg"
@@ -141,11 +138,4 @@ export const BadgeCard = (props: {
       </div>
     </div>
   );
-};
-
-BadgeCard.propTypes = {
-  title: PropTypes.string.isRequired,
-  subTitle: PropTypes.string.isRequired,
-  text: PropTypes.string.isRequired,
-  icon: PropTypes.any.isRequired,
 };
