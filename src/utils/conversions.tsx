@@ -1,6 +1,9 @@
 import { BigNumber } from "bignumber.js";
 import { ethers } from "ethers";
 const Web3 = require("web3");
+const web3 = new Web3(
+  Web3.givenProvider || `${process.env.NEXT_PUBLIC_INFURA_ENDPOINT}`
+);
 
 /**
  * Converts a number to ether
@@ -50,9 +53,6 @@ export const getWeiAmount = (
   multiplication: boolean
 ) => {
   if (!amount) return;
-  const web3 = new Web3(
-    Web3.givenProvider || `${process.env.NEXT_PUBLIC_INFURA_ENDPOINT}`
-  );
 
   // get unit mappings from web3
   const unitMappings = web3.utils.unitMap;
@@ -103,9 +103,13 @@ export const onlyUnique = (value, index, self) => {
   return self.indexOf(value) === index;
 };
 
-export const isUnlimited = (value) => {
-  return (
-    value.toString() ===
+export const isUnlimited = (value) => {  
+  var BN = web3.utils.BN;
+  const BNValue = new BN(value.toString());
+  const BNcompareValue = new BN(
     "115792089237316195423570985008687907853269984665640564039457"
   );
+
+  // check whether value is greater than or equal to comparison value.
+  return BNValue.gte(BNcompareValue);
 };

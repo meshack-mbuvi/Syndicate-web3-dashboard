@@ -48,11 +48,14 @@ export const SyndicateInBetaBanner = () => {
       }`}
       role="alert"
     >
-      <div className="flex justify-center">
-        <span className="block sm:inline font-whyte-light mr-2 ml-auto">
+      <div className="flex justify-center container text-sm">
+        <span className="block sm:inline font-whyte-light mr-2">
           {SyndicateInBetaBannerText}
         </span>
-        <span className="mx-3 ml-auto py-1 cursor-pointer" onClick={() => hideBanner()}>
+        <span
+          className="absolute mx-3 py-1 cursor-pointer absolute right-2"
+          onClick={() => hideBanner()}
+        >
           <img src="/images/close.svg" alt="close-button" />
         </span>
       </div>
@@ -66,9 +69,9 @@ export const DepositsPageBanner = () => {
   return (
     <div className="w-full bg-blue-dark py-4 text-center">
       <div className="container mx-auto">
-        <p className="text-sm font-extralight">
-          <span className="font-medium">IMPORTANT: </span>
-          {depositBannerText}
+        <p className="text-sm">
+          <span className="font-medium font-whyte">IMPORTANT: </span>
+          <span className="font-whyte-light">{depositBannerText}</span>
         </p>
       </div>
     </div>

@@ -71,7 +71,7 @@ const SyndicateDetails = (props: {
       isEditable: false,
     },
     {
-      header: "Deposit/Distribution Token",
+      header: "Deposit Token",
       subText: "",
       tooltip: "",
       isEditable: false,
@@ -379,7 +379,12 @@ const SyndicateDetails = (props: {
         getManagerDistributionTokensAllowances();
       }
     }
-  }, [syndicateContracts, syndicate, depositTokenSymbol]);
+  }, [
+    syndicateContracts,
+    syndicate,
+    depositTokenSymbol,
+    depositTokenDecimals,
+  ]);
 
   // set syndicate cummulative values
   useEffect(() => {
@@ -424,8 +429,8 @@ const SyndicateDetails = (props: {
           tooltip: closeDateToolTip,
         },
         {
-          header: "Deposit/Distribution Token",
-          subText: `${depositTokenSymbol} / ${depositTokenSymbol}`,
+          header: "Deposit Token",
+          subText: `${depositTokenSymbol}`,
           tooltip: depositTokenToolTip,
         },
         {

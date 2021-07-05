@@ -154,7 +154,7 @@ const PortfolioAndDiscover = () => {
               ) : null}
             </div>
 
-            <div className="mb-2 ">
+            <div className="mb-2 mr-5">
               {account && syndicates.length ? (
                 <Button
                   customClasses="border border-gray-5 font-whyte-light w-56 rounded-full bg-gray-4 h-12 w-48 p-3 pt-3 text-sm"
@@ -205,14 +205,7 @@ const PortfolioAndDiscover = () => {
           {/* <div className="flex flex-wrap md:justify-between justify-around"> */}
           <div className="grid grid-cols-1 xl:grid-cols-4 lg:grid-cols-3 sm:grid-cols-2 gap-6">
             {syndicateDAOs.map((syndicate, index) => {
-              return (
-                <SyndicateDAOItem
-                  {...syndicate}
-                  key={index}
-                  order={index}
-                  syndicateDAOs={syndicateDAOs}
-                />
-              );
+              return <SyndicateDAOItem {...syndicate} key={index} />;
             })}
           </div>
         </div>

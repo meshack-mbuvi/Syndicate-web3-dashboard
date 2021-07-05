@@ -63,6 +63,9 @@ module.exports = {
       xl: "1280px",
       // => @media (min-width: 1280px) { ... }
 
+      "1.5xl": "1408px",
+      // => @media (min-width: 1408px) { ... }
+
       "2xl": "1536px",
       // => @media (min-width: 1536px) { ... }
 
@@ -162,6 +165,10 @@ module.exports = {
       fill: (theme) => ({
         gray: theme("colors.gray.light"),
       }),
+      scale: {
+        101: "1.01",
+        102: "1.02",
+      },
     },
   },
 };

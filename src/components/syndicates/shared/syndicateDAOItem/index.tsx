@@ -1,18 +1,18 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { MemberItem } from "./memberItem";
 import { AllMembersModal } from "./allMembersModal";
+import { SkeletonLoader } from "@/components/skeletonLoader";
 interface DAOProps {
   name: string;
   url: string;
   image: string;
-  order: number;
-  syndicateDAOs: Array<{}>;
   members: { avatar: string; name: string }[];
 }
 
 export const SyndicateDAOItem = (props: DAOProps) => {
-  const { name, url, image, members, order, syndicateDAOs } = props;
+  const { name, url, image, members } = props;
   const [showAllMembers, setShowAllMembers] = useState<boolean>(false);
+  const [imageLoaded, setImageLoaded] = useState<boolean>(false);
 
   const showFullMembersList = () => {
     setShowAllMembers(true);
@@ -21,26 +21,24 @@ export const SyndicateDAOItem = (props: DAOProps) => {
   const hideFullMembersList = () => {
     setShowAllMembers(false);
   };
+
+  const handleImageLoaded = () => {
+    setImageLoaded(true);
+  };
+
   return (
-    <div
-      // className="mb-8 w-full sm:w-60 md:w-80 lg:w-72"
-      className="mb-8 w-full"
-    >
-      <div
-        style={{
-          background: `url(${image}) no-repeat center center`,
-          backgroundSize: "cover",
-          backgroundColor: "#3b3939",
-        }}
-        // className="bg-red-400 h-80 w-80 md:h-72 mb-2 rounded-md"
-        // className="bg-red-400 md:w-80 mb-2 rounded-md perfect-square w-100"
-        className="w-full mb-2 rounded-md perfect-square"
-      ></div>
-      <p className="text-md md:text-lg font-whyte-light mt-2">
-        <a href={url} target="_blank" rel="no-referrer">
-          {name}
-        </a>
-      </p>
+    <div className="mb-8 w-full">
+      <a href={url} target="_blank" rel="no-referrer">
+        <div
+          style={{
+            background: `url(${image}) no-repeat center center`,
+            backgroundSize: "cover",
+            backgroundColor: "#3b3939",
+          }}
+          className="w-full mb-2 rounded-md perfect-square"
+        ></div>
+        <p className="text-md md:text-lg font-whyte-light mt-2">{name}</p>
+      </a>
       <div className="flex flex-shrink items-center">
         <div className="flex mt-1">
           {members.length &&

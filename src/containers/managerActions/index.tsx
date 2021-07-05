@@ -101,7 +101,7 @@ const ManagerActions = () => {
 
   const actions = [
     {
-      icon: <img src="/images/socialProfile.svg" />,
+      icon: <img src="/images/managerActions/create_public_profile.svg" />,
       title: "Create a public-facing social profile",
       onClickHandler: () => setShowRequestSocialProfile(true),
       description:
@@ -241,7 +241,7 @@ const ManagerActions = () => {
                 description={
                   "Close this syndicate and stop accepting deposits. This action is irreversible."
                 }
-                icon={<img src="/images/closeIcon.svg" />}
+                icon={<img src="/images/managerActions/close_syndicate.svg" />}
                 onClickHandler={() => setShowConfirmCloseSyndicate(true)}
               />
             ) : (
@@ -261,7 +261,7 @@ const ManagerActions = () => {
                 description={
                   "Pre-approve accredited investor addresses that can deposit into this syndicate."
                 }
-                icon={<img src="/images/UserPlus.svg" />}
+                icon={<img src="/images/managerActions/approve_members.svg" />}
                 onClickHandler={() => setShowPreApproveDepositor(true)}
               />
             ) : null}
@@ -296,7 +296,9 @@ const ManagerActions = () => {
           {/* member deposits can be set if syndicate is open and modifiable */}
           {syndicate?.open && syndicate?.modifiable ? (
             <MoreManagerActionCard
-              icon={<img src="/images/invertedInfo.svg" />}
+              icon={
+                <img src="/images/managerActions/overwrite_cap_table.svg" />
+              }
               text={"Overwrite syndicate cap table"}
               onClickHandler={showModifyCapTableModal}
             />
@@ -307,14 +309,29 @@ const ManagerActions = () => {
           */}
           {syndicate?.open ? (
             <MoreManagerActionCard
-              icon={<img src="/images/exclamation-triangle.svg" />}
+              icon={
+                <img src="/images/managerActions/reject_deposits_members.svg" />
+              }
               text={"Reject deposit or depositor address"}
               onClickHandler={() => setShowRejectDepositOrMemberAddress(true)}
             />
           ) : null}
 
+          {/* TODO: Implement the option to manage members
+          Designs: https://www.figma.com/file/6hdYqk4cmhOdwRd65DohoC/Syndicate-v1-Wireframes?node-id=3777%3A0
+          */}
+          {syndicate?.open ? (
+            <MoreManagerActionCard
+              icon={<img src="/images/managerActions/manage_members.svg" />}
+              text={"Manager members"}
+              onClickHandler={() => {
+                return;
+              }}
+            />
+          ) : null}
+
           <MoreManagerActionCard
-            icon={<img src="/images/settings.svg" />}
+            icon={<img src="/images/managerActions/settings.svg" />}
             text={"Change syndicate settings"}
           />
         </div>

@@ -246,7 +246,7 @@ export const closeDateToolTip =
 export const syndicateAddressToolTip =
   "This is the address of the connected wallet account. It will be the manager of the newly created syndicate";
 export const depositTokenToolTip =
-  "This is the address of the ERC20 to be used for deposits and withdrawals. (eg. DAI or USDC). Stablecoins are strongly recommended, especially for funds that are open for an extended period of time. (Otherwise one contributor might contribute one unit when a token is $100, and another contributor might contribute one unit when a token is $200, and they would have the same percentage ownership because they have both contributed one unit of a token. Stablecoins prevent this because the value is consistent.) ";
+  "This is the address of the ERC20 to be used for deposits (eg. DAI or USDC). Stablecoins are strongly recommended, especially for funds that are open for an extended period of time. (Otherwise one contributor might contribute one unit when a token is $100, and another contributor might contribute one unit when a token is $200, and they would have the same percentage ownership because they have both contributed one unit of a token. Stablecoins prevent this because the value is consistent.) ";
 
 export const minimumDepositToolTip =
   "This is the minimum amount a user can deposit into the syndicate.";
