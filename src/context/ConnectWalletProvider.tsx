@@ -32,11 +32,6 @@ import { useDispatch } from "react-redux";
 
 const Web3 = require("web3");
 
-const contractAddress = process.env.NEXT_PUBLIC_SYNDICATE_CONTRACT_ADDRESS;
-
-const daiABI = require("src/utils/abi/dai");
-const daiContractAddress = "0x6b175474e89094c44da98b954eedeac495271d0f";
-
 type AuthProviderProps = {
   connectWallet: (providerName: string) => void;
   showSuccessModal: boolean;
@@ -114,8 +109,6 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
     if (library) {
       dispatch(setConnecting());
 
-      // set up DAI contract
-      const daiContract = new web3.eth.Contract(daiABI, daiContractAddress);
       // initialize contract now
       const contracts = await getSyndicateContracts();
 
@@ -128,7 +121,6 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
         return dispatch(
           setLibrary({
             account,
-            daiContract,
             web3,
             providerName,
           }),
@@ -154,16 +146,16 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
   }, []);
 
   useEffect(() => {
+    // initialize contract now
+    getSyndicateContracts().then((contracts) => {
+      dispatch({
+        data: contracts,
+        type: INITIALIZE_CONTRACTS,
+      });
+    });
+
     if (cachedWalletData) {
       const { providerName, account } = cachedWalletData;
-
-      // initialize contract now
-      getSyndicateContracts().then((contracts) => {
-        dispatch({
-          data: contracts,
-          type: INITIALIZE_CONTRACTS,
-        });
-      });
 
       setProviderName(providerName);
       dispatch(

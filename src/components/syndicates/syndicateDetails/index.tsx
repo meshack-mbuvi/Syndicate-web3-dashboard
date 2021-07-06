@@ -375,12 +375,7 @@ const SyndicateDetails = (props: {
         getManagerDistributionTokensAllowances();
       }
     }
-  }, [
-    syndicateContracts,
-    syndicate,
-    depositTokenSymbol,
-    depositTokenDecimals,
-  ]);
+  }, [syndicateContracts, syndicate, depositTokenSymbol, depositTokenDecimals]);
 
   // set syndicate cummulative values
   useEffect(() => {

@@ -2,6 +2,7 @@ import { InjectedConnector } from "@web3-react/injected-connector";
 import { WalletConnectConnector } from "@web3-react/walletconnect-connector";
 
 const POLLING_INTERVAL = 12000;
+const NEXT_PUBLIC_INFURA_ID = process.env.NEXT_PUBLIC_INFURA_ID;
 const RPC_URLS = {
   1: process.env.NEXT_PUBLIC_INFURA_ID,
 };
@@ -19,7 +20,9 @@ export const Injected = new InjectedConnector({
 });
 
 export const WalletConnect = new WalletConnectConnector({
-  rpc: { 1: RPC_URLS[1] },
+  rpc: {
+    1: `https://mainnet.infura.io/v3/${NEXT_PUBLIC_INFURA_ID}`,
+  },
   bridge: "https://bridge.walletconnect.org",
   qrcode: true,
   pollingInterval: POLLING_INTERVAL,
