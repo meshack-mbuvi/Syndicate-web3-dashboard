@@ -251,7 +251,6 @@ const SyndicateDetails = (props: {
           managerAddress,
           syndicateContracts.DistributionLogicContract._address,
         );
-        console.log({ tokenManagerAllowance });
 
         const tokenAllowance = getWeiAmount(
           tokenManagerAllowance,

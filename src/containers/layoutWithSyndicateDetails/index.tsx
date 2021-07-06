@@ -17,15 +17,12 @@ import SyndicateDetails from "src/components/syndicates/syndicateDetails";
 const LayoutWithSyndicateDetails = ({ children }) => {
   // Retrieve state
   const {
+    syndicatesReducer: { syndicate, syndicateFound, syndicateAddressIsValid },
     initializeContractsReducer: { syndicateContracts },
     web3Reducer: {
       web3: { account },
     },
   } = useSelector((state: RootState) => state);
-
-  const { syndicate, syndicateFound, syndicateAddressIsValid } = useSelector(
-    (state: RootState) => state.syndicatesReducer
-  );
 
   const router = useRouter();
   const dispatch = useDispatch();
@@ -41,18 +38,28 @@ const LayoutWithSyndicateDetails = ({ children }) => {
   // A manager should not access deposit page but should be redirected
   // to syndicates page
   useEffect(() => {
-    if (!router.isReady) return;
+    // We need to have syndicate loaded so that we know whether it's open to
+    // deposit or not.
+    if (!router.isReady || !syndicate) return;
 
     if (syndicateAddress !== undefined && account !== undefined) {
       switch (router.pathname) {
         case "/syndicates/[syndicateAddress]/manage":
+          // For a closed syndicate, user should be navigated to withdrawal page
           if (syndicateAddress !== account) {
-            router.replace(`/syndicates/${syndicateAddress}/deposit`);
+            if (syndicate?.open) {
+              router.replace(`/syndicates/${syndicateAddress}/deposit`);
+            } else {
+              router.replace(`/syndicates/${syndicateAddress}/withdraw`);
+            }
           }
           break;
         case "/syndicates/[syndicateAddress]/deposit":
           if (syndicateAddress === account) {
             router.replace(`/syndicates/${syndicateAddress}/manage`);
+          } else if (!syndicate?.open) {
+            // when syndicate is closed, go to withdraw page
+            router.replace(`/syndicates/${syndicateAddress}/withdraw`);
           }
           break;
         case "/syndicates/[syndicateAddress]/withdraw":
@@ -64,7 +71,7 @@ const LayoutWithSyndicateDetails = ({ children }) => {
           break;
       }
     }
-  }, [account, router.isReady]);
+  }, [account, router.isReady, syndicate]);
 
   // Syndicate data should be fetched when router is full set.
   // GetterLogicContract is used to retrieve syndicate values while
@@ -77,7 +84,7 @@ const LayoutWithSyndicateDetails = ({ children }) => {
       syndicateContracts?.DistributionLogicContract
     ) {
       dispatch(
-        getSyndicateByAddress({ syndicateAddress, ...syndicateContracts })
+        getSyndicateByAddress({ syndicateAddress, ...syndicateContracts }),
       );
     }
   }, [
@@ -169,7 +176,8 @@ const LayoutWithSyndicateDetails = ({ children }) => {
                 {/* its used as an identifier for ref in small devices */}
                 <SyndicateDetails
                   accountIsManager={accountIsManager}
-                  isChildVisible={isChildVisible}>
+                  isChildVisible={isChildVisible}
+                >
                   <div className="w-full md:hidden">{children}</div>
                 </SyndicateDetails>
               </div>
