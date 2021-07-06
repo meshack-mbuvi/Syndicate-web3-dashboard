@@ -2,6 +2,7 @@ import { getWeiAmount } from "@/utils/conversions";
 import React, { useEffect, useState } from "react";
 import { RootStateOrAny, useSelector } from "react-redux";
 import { ifRows } from "./interfaces";
+import { floatedNumberWithCommas } from "@/utils/formattedNumbers";
 
 const GetMemberDeposits = ({
   row: { syndicateAddress, depositERC20TokenSymbol, tokenDecimals },
@@ -28,7 +29,7 @@ const GetMemberDeposits = ({
     try {
       let { memberDeposit } = await GetterLogicContract.getMemberInfo(
         syndicateAddress,
-        account
+        account,
       );
 
       memberDeposit = getWeiAmount(memberDeposit, tokenDecimals, false);
@@ -45,7 +46,9 @@ const GetMemberDeposits = ({
 
   return (
     <>
-      {memberDeposits}{" "}
+      {memberDeposits.trim() !== "-"
+        ? floatedNumberWithCommas(memberDeposits)
+        : memberDeposits}{" "}
       {memberDeposits.trim() !== "-" && depositERC20TokenSymbol}
     </>
   );

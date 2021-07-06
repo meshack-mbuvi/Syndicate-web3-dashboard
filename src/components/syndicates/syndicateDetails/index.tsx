@@ -3,10 +3,7 @@ import ManagerSetAllowance from "@/containers/managerActions/setAllowances";
 import { RootState } from "@/redux/store";
 import { getWeiAmount, isUnlimited, onlyUnique } from "@/utils/conversions";
 import { ERC20TokenDetails } from "@/utils/ERC20Methods";
-import {
-  floatedNumberWithCommas,
-  numberWithCommas,
-} from "@/utils/formattedNumbers";
+import { floatedNumberWithCommas } from "@/utils/formattedNumbers";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { CopyToClipboard } from "react-copy-to-clipboard";
@@ -435,8 +432,10 @@ const SyndicateDetails = (props: {
         },
         {
           header: "Deposit Range",
-          subText: `${numberWithCommas(depositMinMember)} - ${
-            valueIsUnlimited ? "Unlimited" : numberWithCommas(depositMaxMember)
+          subText: `${floatedNumberWithCommas(depositMinMember)} - ${
+            valueIsUnlimited
+              ? "Unlimited"
+              : floatedNumberWithCommas(depositMaxMember)
           } ${depositTokenSymbol}`,
           tooltip: depositRangeToolTip,
         },
