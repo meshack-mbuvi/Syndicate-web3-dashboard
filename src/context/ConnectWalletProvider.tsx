@@ -1,4 +1,5 @@
 import { web3InstantiationErrorText } from "@/components/syndicates/shared/Constants";
+import { ResourceUnavailable } from "@/components/syndicates/shared/Constants/metamaskErrorCodes";
 import { INITIALIZE_CONTRACTS } from "@/redux/actions/types";
 import {
   hideErrorModal,
@@ -47,15 +48,19 @@ type AuthProviderProps = {
 
 const ConnectWalletContext = createContext<Partial<AuthProviderProps>>({});
 
-export const useConnectWalletContext = () => useContext(ConnectWalletContext);
+export const useConnectWalletContext = (): Partial<AuthProviderProps> =>
+  useContext(ConnectWalletContext);
 
+interface IError extends Error {
+  code?: number;
+}
 /**
  * This method examines a given error to find its type and then returns a
  * custom error message depending on the type of error
  * @param error
- * @returns {string} message indicating the type of error that occured
+ * @returns {string} message indicating the type of error that occurred
  */
-const getErrorMessage = (error: Error) => {
+const getErrorMessage = (error: IError) => {
   if (error instanceof NoEthereumProviderError) {
     return `No Ethereum browser extension detected, install MetaMask on desktop using this link 
         <a href='https://metamask.io/' target="_blank" class='text-blue hover:underline'>https://metamask.io/</a> 
@@ -69,6 +74,8 @@ const getErrorMessage = (error: Error) => {
     error instanceof UserRejectedRequestErrorFrame
   ) {
     return "Please authorize this website to access your Ethereum account.";
+  } else if (error.code === ResourceUnavailable) {
+    return "Please authorize the pending request on your Metamask account";
   } else {
     console.error(error);
     return "An unknown error occurred. Check the console for more details.";

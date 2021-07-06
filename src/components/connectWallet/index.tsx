@@ -6,6 +6,7 @@ import React from "react";
 import { connect, useDispatch } from "react-redux";
 import CancelButton from "src/components/buttons";
 import { Modal } from "src/components/modal";
+import { Spinner } from "../shared/spinner";
 
 /**
  * The component shows a modal with buttons to connect to different
@@ -131,7 +132,7 @@ export const ConnectWallet = (props: { web3; showWalletModal }) => {
         {...{ show: walletConnecting, closeModal: cancelWalletConnection }}
       >
         <div className="flex flex-col justify-center m-auto mb-4 w-96">
-          <div className="loader">Loading...</div>
+          <Spinner />
           <div className="modal-header mb-4 text-black font-medium text-center leading-8 text-lg">
             Connect Crypto Wallet
           </div>
