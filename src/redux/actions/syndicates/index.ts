@@ -296,6 +296,8 @@ export const processSyndicateDetails = (
   const status =
     depositsEnabled && parseInt(depositTotal) < parseInt(depositMaxTotal)
       ? `Open until ${closeDate}`
+      : distributing
+      ? "Distributing"
       : "Operating";
 
   return {

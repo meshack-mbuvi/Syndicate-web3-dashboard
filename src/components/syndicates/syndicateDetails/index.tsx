@@ -537,85 +537,18 @@ const SyndicateDetails = (props: {
     setShowManagerSetAllowances(false);
   };
 
-  // syndicate badges.
-  // display relevant badges based on the current state of the syndicate.
-
-  //manager text to display to indicate withdrawals availability
-  let managerWithdrawalText = "Withdrawals available.";
-  if (
-    (depositsEnabled && !correctManagerDepositsAllowance) ||
-    (distributing && !correctManagerDistributionsAllowance)
-  ) {
-    managerWithdrawalText = "Limited withdrawals available.";
-  }
-
-  // set default syndicate state
+  // syndicate badge.
+  // display relevant badge states based on the current status of the syndicate.
   let syndicateBadge = (
     <BadgeCard
       {...{
-        title: "Status",
-        subTitle: "Closed to Deposits",
-        text: "Withdrawals not available",
-        syndicate,
         accountIsManager,
-        depositsEnabled,
         showManagerSetAllowancesModal,
         correctManagerDepositsAllowance,
         correctManagerDistributionsAllowance,
-        distributing,
-        icon: (
-          <span className="rounded-full bg-yellow-300 flex-shrink-0 mt-2 w-2 h-2 ml-1"></span>
-        ),
       }}
     />
   );
-
-  if (depositsEnabled && !distributing) {
-    syndicateBadge = (
-      <BadgeCard
-        {...{
-          title: "Status",
-          subTitle: accountIsManager
-            ? "Open and accepting deposits"
-            : "Open to Deposits.",
-          text: accountIsManager
-            ? managerWithdrawalText
-            : "Depositing available.",
-          syndicate,
-          accountIsManager,
-          depositsEnabled,
-          correctManagerDepositsAllowance,
-          correctManagerDistributionsAllowance,
-          distributing,
-          showManagerSetAllowancesModal,
-          icon: (
-            <span className="rounded-full bg-yellow-300 flex-shrink-0 mt-2 w-2 h-2 ml-1"></span>
-          ),
-        }}
-      />
-    );
-  } else if (distributing) {
-    syndicateBadge = (
-      <BadgeCard
-        {...{
-          title: "Status",
-          subTitle: "Operating",
-          text: accountIsManager
-            ? managerWithdrawalText
-            : "Withdrawals available.",
-          syndicate,
-          accountIsManager,
-          depositsEnabled,
-          showManagerSetAllowancesModal,
-          correctManagerDistributionsAllowance,
-          distributing,
-          icon: (
-            <span className="rounded-full bg-green-300 flex-shrink-0 mt-2 w-2 h-2 ml-1"></span>
-          ),
-        }}
-      />
-    );
-  }
 
   return (
     <div className="flex flex-col w-full sm:mr-2 lg:mr-6">

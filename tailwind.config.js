@@ -60,6 +60,9 @@ module.exports = {
       lg: "1024px",
       // => @media (min-width: 1024px) { ... }
 
+      "1.5lg": "1152px",
+      // => @media (min-width: 1152px) { ... }
+
       xl: "1280px",
       // => @media (min-width: 1280px) { ... }
 
@@ -138,6 +141,8 @@ module.exports = {
         green: {
           ...colors.green,
           screamin: "#80FF75",
+          dark: "#0E2833",
+          darker: "#0E3425",
         },
         blue: {
           ...colors.blue,
@@ -146,6 +151,7 @@ module.exports = {
           DEFAULT: "#4376FF",
           deepAzure: "#0C1F30",
           dark: "#2F53B3",
+          darker: "#0E1834",
         },
         yellow: {
           ...colors.yellow,
