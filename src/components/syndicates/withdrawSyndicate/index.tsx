@@ -63,7 +63,7 @@ const {
 
 const WithdrawSyndicate = () => {
   const {
-    tokenDetailsReducer: { distributionTokensAllowanceDetails },
+    tokenDetailsReducer: { distributionTokensAllowanceDetails, depositTokenAllowanceDetails },
     initializeContractsReducer: { syndicateContracts },
     syndicateMemberDetailsReducer: {
       memberDepositDetails,
@@ -120,6 +120,10 @@ const WithdrawSyndicate = () => {
   const [
     withdrawalAmountLessThanMinDeposits,
     setWithdrawalAmountLessThanMinDeposits,
+  ] = useState<boolean>(false);
+  const [
+    isSyndicateAllowanceLTWithdrawAmount,
+    setAllowanceLessThanWithdrawAmount,
   ] = useState<boolean>(false);
   const [depositTokenDecimals, setDepositTokenDecimals] = useState<number>(18);
 
@@ -268,14 +272,20 @@ const WithdrawSyndicate = () => {
 
       const amountLessThanMemberDeposit = +amount < +memberTotalDeposits;
 
+      const tokenAllowance =
+        depositTokenAllowanceDetails.length &&
+        depositTokenAllowanceDetails[0].tokenAllowance;
+
       if (amountGreaterThanMemberDistributions && syndicate?.distributing) {
         setAmountGreaterThanMemberDistributions(true);
         setWithdrawalAmountGreaterThanDeposits(false);
         setWithdrawalAmountLessThanMinDeposits(false);
+        setAllowanceLessThanWithdrawAmount(false);
       } else if (amountGreaterThanMemberDeposits && !syndicate?.distributing) {
         setWithdrawalAmountGreaterThanDeposits(true);
         setAmountGreaterThanMemberDistributions(false);
         setWithdrawalAmountLessThanMinDeposits(false);
+        setAllowanceLessThanWithdrawAmount(false);
       } else if (
         amountLessThanMinDeposits &&
         !syndicate?.distributing &&
@@ -284,10 +294,20 @@ const WithdrawSyndicate = () => {
         setWithdrawalAmountLessThanMinDeposits(true);
         setWithdrawalAmountGreaterThanDeposits(false);
         setAmountGreaterThanMemberDistributions(false);
+        setAllowanceLessThanWithdrawAmount(false);
+      } else if (
+          +tokenAllowance < +amount &&
+          !syndicate?.distributing
+      ) {
+        setAllowanceLessThanWithdrawAmount(true);
+        setAmountGreaterThanMemberDistributions(false);
+        setWithdrawalAmountGreaterThanDeposits(false);
+        setWithdrawalAmountLessThanMinDeposits(false);
       } else {
         setAmountGreaterThanMemberDistributions(false);
         setWithdrawalAmountGreaterThanDeposits(false);
         setWithdrawalAmountLessThanMinDeposits(false);
+        setAllowanceLessThanWithdrawAmount(false);
       }
     }
   }, [amount, memberDepositDetails]);
@@ -345,7 +365,8 @@ const WithdrawSyndicate = () => {
     amountError ||
     amountGreaterThanMemberDistributions ||
     withdrawalAmountGreaterThanDeposits ||
-    withdrawalAmountLessThanMinDeposits
+    withdrawalAmountLessThanMinDeposits ||
+    isSyndicateAllowanceLTWithdrawAmount
   ) {
     showValidationError = true;
   } else {
@@ -360,6 +381,8 @@ const WithdrawSyndicate = () => {
     errorMessageText = withdrawalAmountGreaterThanMemberDeposits;
   } else if (withdrawalAmountLessThanMinDeposits) {
     errorMessageText = withdrawalAmountLessThanMinDepositErrorText;
+  } else if (isSyndicateAllowanceLTWithdrawAmount) {
+    errorMessageText = withdrawalAllowanceInsufficientText;
   } else {
     errorMessageText = amountError;
   }
@@ -371,7 +394,8 @@ const WithdrawSyndicate = () => {
     amountGreaterThanMemberDistributions ||
     withdrawalAmountGreaterThanDeposits ||
     withdrawalAmountLessThanMinDeposits ||
-    +amount === 0
+    +amount === 0 ||
+    isSyndicateAllowanceLTWithdrawAmount
   ) {
     disableWithrawButton = true;
   }
@@ -667,7 +691,7 @@ const WithdrawSyndicate = () => {
                           <input
                             name="amount"
                             type="text"
-                            placeholder="400"
+                            placeholder={syndicate?.depositMinMember}
                             defaultValue={amount}
                             onChange={handleSetAmount}
                             className={`min-w-0 rounded-md bg-gray-9 border border-gray-24 text-white font-whyte focus:outline-none focus:ring-gray-24 focus:border-gray-24 flex-grow mr-6 `}

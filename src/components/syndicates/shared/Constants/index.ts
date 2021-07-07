@@ -30,7 +30,7 @@ const depositsUnavailableMaxMembersZeroText =
   "Deposits are unavailable at the moment. Please contact the syndicate leads.";
 const withdrawalsUnavailableTitleText = "Withdrawal Failed";
 const withdrawalAllowanceInsufficientText =
-  "This syndicate has an insufficient allowance set for withdrawals. We have notified the syndicate manager. Please try again later.";
+  "This syndicate has an insufficient allowance set to withdraw this amount. We have notified the syndicate manager. Please try again later.";
 const withdrawalAmountLessThanMinDepositErrorText =
   "You can either withdraw your entire deposits or an amount less than your deposits but such that your remaining deposits will be more than the set minimum";
 
