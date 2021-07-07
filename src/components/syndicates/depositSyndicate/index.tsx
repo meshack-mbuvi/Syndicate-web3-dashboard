@@ -31,6 +31,16 @@ import { SyndicateActionButton } from "../shared/syndicateActionButton";
 import { SyndicateActionLoader } from "../shared/syndicateActionLoader";
 import { UnavailableState } from "../shared/unavailableState";
 import WithdrawDeposit from "./WithdrawDeposit";
+import { amplitudeLogger, Flow } from "@/components/amplitude";
+import {
+  APPROVE_DEPOSIT_ALLOWANCE,
+  DEPOSIT_MORE,
+  DISMISS_TRANSACTION_REJECTED,
+  ERROR_APPROVE_ALLOWANCE,
+  ERROR_DEPOSIT,
+  SUCCESSFUL_DEPOSIT
+} from "@/components/amplitude/eventNames";
+
 
 const Web3 = require("web3");
 const web3 = new Web3(
@@ -402,11 +412,24 @@ const DepositSyndicate = () => {
       // reset approved allowance states
       // so the LP can set new allowances before investing again
       setLPCanDeposit(false);
+
+      // Amplitude logger: Deposit funds
+      amplitudeLogger(SUCCESSFUL_DEPOSIT, {
+        flow: Flow.MBR_DEP,
+        amount,
+      })
     } catch (error) {
       const { code } = error;
       const errorMessage = getMetamaskError(code, "Deposit");
       setMetamaskDepositError(errorMessage);
       setSubmitting(false);
+
+      // Amplitude logger: Deposit funds Error
+      amplitudeLogger(ERROR_DEPOSIT, {
+        flow: Flow.MBR_DEP,
+        amount,
+        error
+      })
     }
 
     // dispatch action to get details about the syndicate
@@ -461,6 +484,12 @@ const DepositSyndicate = () => {
           // was approved successfully or not.
           await checkLPAllowanceAmount();
           setSubmittingAllowanceApproval(false);
+
+          // Amplitude logger: Approve Allowance
+          amplitudeLogger(APPROVE_DEPOSIT_ALLOWANCE, {
+            flow: Flow.MBR_DEP,
+            amount,
+          })
         })
         .on("error", (error) => {
           // user clicked reject.
@@ -469,6 +498,13 @@ const DepositSyndicate = () => {
           setMetamaskApprovalError(errorMessage);
           setSubmittingAllowanceApproval(false);
           setMetamaskConfirmPending(false);
+
+          // Amplitude logger: Error Approve Allowance
+          amplitudeLogger(ERROR_APPROVE_ALLOWANCE, {
+            flow: Flow.MBR_DEP,
+            amount,
+            error
+          })
         });
     } catch (error) {
       // error occured before wallet prompt.
@@ -478,6 +514,13 @@ const DepositSyndicate = () => {
       setMetamaskApprovalError(errorMessage);
       setSubmittingAllowanceApproval(false);
       setMetamaskConfirmPending(false);
+
+      // Amplitude logger: Error Approve Allowance
+      amplitudeLogger(ERROR_APPROVE_ALLOWANCE, {
+        flow: Flow.MBR_DEP,
+        amount,
+        error,
+      })
     }
   };
 
@@ -667,6 +710,7 @@ const DepositSyndicate = () => {
 
   // close the syndicate action loader
   const closeSyndicateActionLoader = () => {
+    logActionLoader();
     setAllowanceApprovalError("");
     setSubmittingAllowanceApproval(false);
     setMetamaskApprovalError("");
@@ -675,6 +719,24 @@ const DepositSyndicate = () => {
     setSuccessfulDeposit(false);
     setMetamaskConfirmPending(false);
   };
+
+  const logActionLoader = () => {
+    // Amplitude logger: Member clicked "Deposit More" on widget.
+    if (successfulDeposit) {
+      amplitudeLogger(DEPOSIT_MORE, {
+        flow: Flow.MBR_DEP,
+        description: 'Member clicked deposit more',
+      })
+    }
+
+    // Amplitude logger: Member clicked "Dismiss" on Transaction Rejected widget.
+    if (metamaskApprovalError || metamaskDepositError) {
+      amplitudeLogger(DISMISS_TRANSACTION_REJECTED, {
+        flow: Flow.MBR_DEP,
+        description: 'Member clicked dismiss after transaction was rejected',
+      })
+    }
+  }
 
   // INNER COMPONENTS
   // show buttons based on whether the current state is a deposit or approval

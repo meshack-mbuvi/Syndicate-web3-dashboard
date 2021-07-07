@@ -31,7 +31,9 @@ export enum Flow {
 type EventProperty = {
   flow: Flow;
   trigger?: string;
-  error?: string;
+  error?: Record<string, unknown>;
+  amount?: string | number;
+  description?: string;
 };
 
 export const amplitudeLogger = (eventName: string, eventProperties: EventProperty): Promise<boolean> => {
