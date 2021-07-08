@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef, useEffect } from "react";
 import { InfoIcon } from "src/components/iconWrappers";
 
 /**
@@ -23,6 +23,7 @@ export const TextInput = (props: {
   full?: boolean;
   customWidth?: string;
   logo?: string;
+  focus?: boolean;
 }) => {
   const {
     label,
@@ -38,8 +39,18 @@ export const TextInput = (props: {
     full,
     customWidth = "",
     logo = "",
+    focus,
     ...rest
   } = props;
+
+  const focusInput = useRef(null);
+
+  useEffect(() => {
+    // change focus to input field if focus value is set
+    if (focus) {
+      focusInput.current.focus();
+    }
+  }, [focus]);
 
   const disabledClasses = disabled
     ? "text-sm text-gray-500 bg-gray-99 border-0 px-0 pb-0"
@@ -91,6 +102,7 @@ export const TextInput = (props: {
               value={value}
               step="1"
               onWheel={(e) => e.currentTarget.blur()}
+              ref={focusInput}
             />
           </div>
           {/* icon */}

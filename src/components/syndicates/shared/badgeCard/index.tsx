@@ -56,7 +56,7 @@ export const BadgeCard = (props: {
     const durationMonths = months
       ? `${months} ${months > 1 ? "months" : "month"}`
       : "";
-    const durationDays = days ? `${days} ${days > 1 ? "days" : "day"}` : null;
+    const durationDays = days ? `${days} ${days > 1 ? "days" : "day"}` : "0 days";
     var remainingDuration = `${durationYears} ${durationMonths} ${durationDays}`.trim();
 
     // checking if depositsMax is unlimited.

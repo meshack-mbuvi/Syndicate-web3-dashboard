@@ -32,12 +32,7 @@ interface Props {
   depositTokenDecimals?: number;
 }
 const ManagerSetAllowance = (props: Props) => {
-  const {
-    hideManagerSetAllowances,
-    showManagerSetAllowances,
-    depositTokenContract,
-    depositTokenDecimals,
-  } = props;
+  const { hideManagerSetAllowances, showManagerSetAllowances } = props;
 
   const {
     initializeContractsReducer: { syndicateContracts },
@@ -436,7 +431,7 @@ const ManagerSetAllowance = (props: Props) => {
               } else if (distributing) {
                 totalsValue = value.tokenDistributions;
               }
-              const { tokenAllowance, tokenSymbol } = value;
+              const { tokenAllowance, tokenSymbol, tokenDecimals } = value;
 
               const tokenTotalsValue =
                 totalsValue === "Unlimited"
@@ -453,6 +448,31 @@ const ManagerSetAllowance = (props: Props) => {
               const newAllowanceAmount = `${floatedNumberWithCommas(
                 newAllowanceAmountValue,
               )} ${tokenSymbol} / ${tokenTotalsValue}`;
+
+              // get correct additional allowance to pre-fill on the allowance input field.
+              // This deals with the issue of users having to calculate allowance values to add.
+              let prefillAllowanceAmountValue = "0";
+              if (totalsValue !== "Unlimited") {
+                const weiTotalsValue = getWeiAmount(
+                  totalsValue,
+                  tokenDecimals,
+                  true,
+                );
+                const currentAllowanceValue = getWeiAmount(
+                  tokenAllowance,
+                  tokenDecimals,
+                  true,
+                );
+                const additionalAllowanceValue = new BN(weiTotalsValue)
+                  .sub(new BN(currentAllowanceValue))
+                  .toString();
+
+                prefillAllowanceAmountValue = getWeiAmount(
+                  additionalAllowanceValue,
+                  tokenDecimals,
+                  false,
+                );
+              }
 
               return (
                 <form
@@ -491,11 +511,11 @@ const ManagerSetAllowance = (props: Props) => {
                             label: "Additional Allowance:",
                             value: allowanceAmounts[index],
                             onChange: (e) => handleAmountChange(e, index),
-                            defaultValue: 0,
                             error: allowanceAmountErrors[index],
+                            focus: true
                           }}
                           name="allowance-amount"
-                          placeholder="0"
+                          placeholder={prefillAllowanceAmountValue}
                         />
                         <TextInput
                           {...{
