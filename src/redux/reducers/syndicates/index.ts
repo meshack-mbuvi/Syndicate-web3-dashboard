@@ -4,6 +4,7 @@ import {
   SET_MANAGER_FEE_ADDRESS,
   SYNDICATE_BY_ADDRESS,
   FOUND_SYNDICATE_ADDRESS,
+  USER_LOGOUT,
 } from "@/redux/actions/types";
 import { initialState } from "../initialState";
 
@@ -39,6 +40,11 @@ export const syndicatesReducer = (state = initialState, action) => {
       return {
         ...state,
         ...action.data,
+      };
+    case USER_LOGOUT:
+      return {
+        ...state,
+        syndicates: initialState.syndicates,
       };
 
     default:

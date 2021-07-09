@@ -38,6 +38,7 @@ export const syndicateMemberDetailsReducer = (state = initialState, action) => {
         ...state,
         syndicateDistributionTokens: data,
       };
+
     default:
       return state;
   }

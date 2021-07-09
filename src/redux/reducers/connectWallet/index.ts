@@ -10,6 +10,7 @@ import {
   SHOW_ERROR_MODAL,
   SHOW_WALLET_MODAL,
   UNSET_WEB3,
+  USER_LOGOUT,
 } from "@/redux/actions/types";
 import { initialState } from "../initialState";
 
@@ -87,6 +88,12 @@ export const web3Reducer = (state = initialState, action) => {
           isErrorModalOpen: false,
           error: null,
         },
+      };
+
+    case USER_LOGOUT:
+      return {
+        ...state,
+        web3: { ...web3, ...initialState.web3 },
       };
 
     default:

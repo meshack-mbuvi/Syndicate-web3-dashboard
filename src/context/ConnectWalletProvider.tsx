@@ -1,5 +1,6 @@
 import { web3InstantiationErrorText } from "@/components/syndicates/shared/Constants";
 import { ResourceUnavailable } from "@/components/syndicates/shared/Constants/metamaskErrorCodes";
+import { logout } from "@/redux/actions/logout";
 import { INITIALIZE_CONTRACTS } from "@/redux/actions/types";
 import {
   hideErrorModal,
@@ -39,6 +40,7 @@ type AuthProviderProps = {
   setWalletConnecting: React.Dispatch<React.SetStateAction<boolean>>;
   setShowSuccessModal: React.Dispatch<React.SetStateAction<boolean>>;
   cancelWalletConnection: () => void;
+  disconnectWallet: () => void;
 };
 
 const ConnectWalletContext = createContext<Partial<AuthProviderProps>>({});
@@ -234,6 +236,15 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
     setWalletConnecting(false);
   };
 
+  // Logout section. Handles disconnecting and deletes cache
+  const disconnectWallet = async () => {
+    if (library?.provider) {
+      await deactivate();
+    }
+    dispatch(logout());
+    localStorage.removeItem("cache");
+  };
+
   return (
     <ConnectWalletContext.Provider
       value={{
@@ -243,6 +254,7 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
         setWalletConnecting,
         setShowSuccessModal,
         cancelWalletConnection,
+        disconnectWallet,
       }}
     >
       {children}

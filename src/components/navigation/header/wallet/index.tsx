@@ -5,8 +5,9 @@ import React, { useState } from "react";
 import Joyride from "react-joyride";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "src/redux/store";
+import AddressMenuDropDown from "./accountMenuDropdown";
 
-export const Wallet = () => {
+export const Wallet: React.FC = () => {
   /**
    * This web3 is coming from the provider that is connected using the
    * hook useWeb3React() from @web3-react library.
@@ -14,11 +15,11 @@ export const Wallet = () => {
    */
   const { web3 } = useSelector((state: RootState) => state.web3Reducer);
 
-  const { status, account } = web3;
+  const { status } = web3;
   const dispatch = useDispatch();
 
   const { oneSyndicatePerAccount } = useSelector(
-    (state: RootState) => state.syndicateMemberDetailsReducer
+    (state: RootState) => state.syndicateMemberDetailsReducer,
   );
   const [steps] = useState([
     {
@@ -31,28 +32,12 @@ export const Wallet = () => {
   ]);
 
   /**
-   * wallet icon for when wallet is connected and when not connected
-   */
-  const walletIcon =
-    status === "connected"
-      ? "/images/walletConnected.svg"
-      : "/images/walletDisconnected.svg";
-
-  /**
    * open variable is used to determine whether to show or hide
    *  the wallet connection modal.
    */
   const connectWallet = () => {
     dispatch(setOneSyndicatePerAccount(false));
     dispatch(showWalletModal());
-  };
-
-  // format the account in the format 0x123...3435
-  const formatAddress = (account: string) => {
-    return `${account.slice(0, 5)}...${account.slice(
-      account.length - 4,
-      account.length
-    )}`;
   };
 
   // custom component used in place of the default tooltip component to
@@ -88,34 +73,34 @@ export const Wallet = () => {
     }
   };
 
-  const connectedWalletContainerStyles =
-    "bg-green-500 bg-opacity-10 border border-green-500 border-opacity-20";
-  const disconnectedWalletContainerStyles =
-    "bg-white bg-opacity-5 border border-gray-500 border-opacity-30";
   const connectedWalletIconStyles = "fill-current text-green-500";
+
+  const NotConnectedButton = () => (
+    <button
+      onClick={connectWallet}
+      className={`bg-white bg-opacity-5 border border-gray-500 border-opacity-30 flex relative rounded-full my-1 px-4 py-2 items-center`}
+    >
+      <img
+        src={"/images/walletDisconnected.svg"}
+        className={`w-5 h-4 pr-1 m-2 ${connectedWalletIconStyles}`}
+        alt="wallet-icon"
+      />
+      <span className="focus:outline-none mr-1 text-sm font-whyte-regular">
+        Not connected
+      </span>
+      <div className="flex items-center ml-2">
+        <img src="/images/chevron-down.svg" alt="down-arrow" />
+      </div>
+    </button>
+  );
 
   return (
     <div className="wallet-connect flex relative justify-center h-12">
-      <div
-        onClick={connectWallet}
-        className={`${
-          status === "connected"
-            ? connectedWalletContainerStyles
-            : disconnectedWalletContainerStyles
-        } flex relative rounded-full my-1 px-4 py-2 items-center`}
-      >
-        <img
-          src={walletIcon}
-          className={`w-5 h-4 pr-1 m-2 ${connectedWalletIconStyles}`}
-        />
-
-        <button className="focus:outline-none mr-1 text-sm font-whyte-regular">
-          {account ? formatAddress(account) : "Not connected"}
-        </button>
-        <div className="flex items-center ml-2">
-          <img src="/images/chevron-down.svg" alt="down-arrow" />
-        </div>
-      </div>
+      {status === "connected" ? (
+        <AddressMenuDropDown web3={web3} />
+      ) : (
+        <NotConnectedButton />
+      )}
       <Joyride
         steps={steps}
         run={oneSyndicatePerAccount}

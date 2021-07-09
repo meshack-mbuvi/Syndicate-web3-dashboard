@@ -10,6 +10,8 @@ type InitialState = {
     address: any;
     web3: Web3;
     web3contractInstance: any;
+    account: string;
+    providerName: string;
   };
   syndicates: Syndicate[];
   syndicate: Syndicate;
@@ -65,6 +67,8 @@ export const initialState: InitialState = {
     address: null,
     web3: null,
     web3contractInstance: null,
+    account: "",
+    providerName: "",
   },
   syndicates: [],
   syndicate: null,
