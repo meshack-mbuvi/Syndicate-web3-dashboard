@@ -151,7 +151,7 @@ const AddressMenuDropDown: FC<IAddressMenuDropDown> = ({ web3 }) => {
               </div>
               <div>
                 <div className="relative">
-                  <div className="absolute bg-gradient-to-r from-gray-7 h-28 w-36" />
+                  <div className="absolute bg-gradient-to-r from-gray-9 h-28 w-36" />
                   <img
                     alt="chrome-dark"
                     src={"/images/chrome-dark.svg"}
