@@ -8,6 +8,8 @@ import Button from "src/components/buttons";
 import { SkeletonLoader } from "src/components/skeletonLoader";
 import CreateSyndicate from "src/components/syndicates/createSyndicate";
 import { default as Portfolio } from "./portfolio";
+import { CLICK_CREATE_A_SYNDICATE } from "@/components/amplitude/eventNames";
+import { amplitudeLogger, Flow } from "@/components/amplitude";
 
 /**
  * My Syndicates: IF their wallet (a) is leading a syndicate or
@@ -73,6 +75,9 @@ const PortfolioAndDiscover = () => {
       return dispatch(showWalletModal());
     }
     setShowModal(true);
+
+    // Amplitude logger: How many users clicked on the "Create a Syndicate" button
+    amplitudeLogger(CLICK_CREATE_A_SYNDICATE, { flow: Flow.MGR_CREATE_SYN });
   };
 
   // generate multiple skeleton loader components

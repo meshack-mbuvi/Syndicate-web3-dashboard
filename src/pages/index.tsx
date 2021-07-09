@@ -3,6 +3,8 @@ import React from "react";
 import Footer from "src/components/navigation/footer";
 import SEO from "src/components/seo";
 import { homePageConstants } from "src/components/syndicates/shared/Constants";
+import { CLICK_USE_SYNDICATE } from "@/components/amplitude/eventNames";
+import { amplitudeLogger, Flow } from "@/components/amplitude";
 
 function IndexPage() {
   const {
@@ -10,6 +12,12 @@ function IndexPage() {
     secondaryHeaderText,
     homeButtonText,
   } = homePageConstants;
+
+  const trackUseSyndicateEvent = () => {
+    // Amplitude logger: How many users who got on out site clicked on the "Use Syndicate Button"
+    amplitudeLogger(CLICK_USE_SYNDICATE, { flow: Flow.MGR_CREATE_SYN });
+  };
+
   return (
     <>
       <SEO
@@ -34,7 +42,9 @@ function IndexPage() {
             <div className="flex items-center justify-center mt-10 sm:mt-20 w-full">
               <div className="rounded-md">
                 <Link href="/syndicates">
-                  <a className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-custom text-white hover md:py-4 md:text-lg md:px-10 bg-blue">
+                  <a
+                    onClick={trackUseSyndicateEvent}
+                    className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-custom text-white hover md:py-4 md:text-lg md:px-10 bg-blue">
                     {homeButtonText}
                   </a>
                 </Link>

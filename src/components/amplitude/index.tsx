@@ -34,6 +34,7 @@ type EventProperty = {
   error?: Record<string, unknown>;
   amount?: string | number;
   description?: string;
+  createSynFormData?: Record<string, unknown>;
 };
 
 export const amplitudeLogger = (eventName: string, eventProperties: EventProperty): Promise<boolean> => {

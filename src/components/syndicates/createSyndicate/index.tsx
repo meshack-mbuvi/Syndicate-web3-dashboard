@@ -1,3 +1,5 @@
+import { amplitudeLogger, Flow } from "@/components/amplitude";
+import { CLICK_COPY_LINK_TO_SHARE, CLOSE_CREATE_SYNDICATE_FORM, CREATE_SYNDICATE, ERROR_CREATING_SYNDICATE } from "@/components/amplitude/eventNames";
 import { ErrorModal } from "@/components/shared";
 import { PendingStateModal } from "@/components/shared/transactionStates";
 import ConfirmStateModal from "@/components/shared/transactionStates/confirm";
@@ -401,7 +403,14 @@ const CreateSyndicate = (props) => {
 
   const [formLLC, setFormLLC] = useState(false);
 
-  const closeModal = () => setShowModal(false);
+  const closeModal = () => {
+    setShowModal(false);
+
+    // Amplitude logger: How many users who fill out the form to create a syndicate do not submit the form
+    amplitudeLogger(CLOSE_CREATE_SYNDICATE_FORM, {
+      flow: Flow.MGR_CREATE_SYN,
+    })
+  }
 
   // set closeDate
   const handleDateSelect = (date) => {
@@ -532,6 +541,17 @@ const CreateSyndicate = (props) => {
 
       // show success modal
       setShowSuccessModal(true);
+
+      // Amplitude logger: How many users started filling out the form to create a Syndicate
+      amplitudeLogger(CREATE_SYNDICATE, {
+        flow: Flow.MGR_CREATE_SYN,
+        createSynFormData: {
+          syndicateData,
+          account,
+          fullName,
+          emailAddress
+        }
+      });
     } catch (error) {
       setShowWalletConfirmationModal(false);
 
@@ -540,6 +560,12 @@ const CreateSyndicate = (props) => {
         const errorMessage = getMetamaskError(code, "Create Syndicate");
 
         setErrorMessage(errorMessage);
+
+        // Amplitude logger: Error creating a Syndicate
+        amplitudeLogger(ERROR_CREATING_SYNDICATE, {
+          flow: Flow.MGR_CREATE_SYN,
+          error,
+        })
       }
       // close loading modal
       dispatch(setSubmitting(false));
@@ -609,6 +635,9 @@ const CreateSyndicate = (props) => {
     setTimeout(() => {
       setCopied(false);
     }, 2000);
+
+    // Amplitude logger: How many users after the success pop up modal click on the "copy link to share"
+    amplitudeLogger(CLICK_COPY_LINK_TO_SHARE, { flow: Flow.MGR_CREATE_SYN });
   };
 
   /**
