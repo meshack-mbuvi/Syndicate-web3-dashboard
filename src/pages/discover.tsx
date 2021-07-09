@@ -1,9 +1,9 @@
 // This is the discover page.
 import React from "react";
-import Discover from "src/containers/discover";
+import { DiscoverContent } from "src/containers/discover";
 
 const DiscoverPage = () => {
-  return <Discover />;
+  return <DiscoverContent />;
 };
 
 export default DiscoverPage;

@@ -101,7 +101,7 @@ export const Portfolio = (props: { syndicates }) => {
   const columns = useMemo(() => COLUMNS, []);
 
   return (
-    <div className="mt-4">
+    <div className="mt-0">
       {syndicates && syndicates.length ? (
         <div className="overflow-x-scroll edge-to-edge-with-left-inset lg:mr-auto lg:px-auto lg:w-auto no-scroll-bar">
           <ActiveSyndicatesTable columns={columns} data={syndicates} />

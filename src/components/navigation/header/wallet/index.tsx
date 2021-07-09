@@ -95,7 +95,7 @@ export const Wallet: React.FC = () => {
   );
 
   return (
-    <div className="wallet-connect flex relative justify-center h-12">
+    <div className="wallet-connect flex relative pl-3 justify-center h-12">
       {status === "connected" ? (
         <AddressMenuDropDown web3={web3} />
       ) : (

@@ -1,15 +1,20 @@
-import React from "react";
+import { Discover } from "@/components/syndicates/portfolioAndDiscover/discover";
+import ErrorBoundary from "@/components/errorBoundary";
+import Layout from "@/components/layout";
 import Head from "src/components/syndicates/shared/HeaderTitle";
 
-import Layout from "src/components/layout";
-
-const Discover = () => {
+export const DiscoverContent = () => {
   return (
     <Layout>
       <Head title="Discover" />
-      <div>Discover page</div>
+      <ErrorBoundary>
+        <div className="w-full">
+          {/* show discover content */}
+          <div className="container mx-auto">
+            <Discover />
+          </div>
+        </div>
+      </ErrorBoundary>
     </Layout>
   );
 };
-
-export default Discover;

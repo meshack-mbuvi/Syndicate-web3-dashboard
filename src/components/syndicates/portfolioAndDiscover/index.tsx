@@ -1,13 +1,10 @@
-import { SyndicateDAOItem } from "@/components/syndicates/shared/syndicateDAOItem";
 import { showWalletModal } from "@/redux/actions";
 import { setOneSyndicatePerAccount } from "@/redux/actions/syndicateMemberDetails";
 import { getSyndicates } from "@/redux/actions/syndicates";
 import { RootState } from "@/redux/store";
-import syndicateDAOs from "@/syndicateDAOs.json";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Button from "src/components/buttons";
-import PageHeader from "src/components/pageHeader";
 import { SkeletonLoader } from "src/components/skeletonLoader";
 import CreateSyndicate from "src/components/syndicates/createSyndicate";
 import { default as Portfolio } from "./portfolio";
@@ -106,8 +103,7 @@ const PortfolioAndDiscover = () => {
         // show some animations during loading process
         // skeleton loader
         <div>
-          <div className="flex w-full justify-between mb-10">
-            <SkeletonLoader width="40" height="10" borderRadius="rounded-md" />
+          <div className="flex w-full justify-end mb-10">
             <SkeletonLoader
               width="40"
               height="10"
@@ -145,16 +141,8 @@ const PortfolioAndDiscover = () => {
       ) : (
         <>
           {/* Show page header and button to create new syndicate */}
-          <div className="flex justify-between w-full">
-            <div>
-              {syndicates.length ? (
-                <div>
-                  <PageHeader>Portfolio</PageHeader>
-                </div>
-              ) : null}
-            </div>
-
-            <div className="mb-2 mr-5">
+          <div className="flex justify-end w-full">
+            <div className="mb-2">
               {account && syndicates.length ? (
                 <Button
                   customClasses="border border-gray-5 font-whyte-light w-56 rounded-full bg-gray-4 h-12 w-48 p-3 pt-3 text-sm"
@@ -194,38 +182,23 @@ const PortfolioAndDiscover = () => {
                 Create a syndicate
               </Button>
             </div>
+          ) : !account ? (
+            <div className="flex justify-center items-center h-full w-full mt-6 sm:mt-10">
+              <div className="flex flex-col items-center justify-center sm:w-7/12 md:w-5/12 rounded-custom bg-gray-6 p-10">
+                <div className="w-full flex justify-center mb-6">
+                  <img src="/images/exclamation.svg" className="h-12 w-12" alt="error"/>
+                </div>
+                <p className="font-semibold text-2xl text-center">
+                  Wallet Not Connected
+                </p>
+                <p className="text-sm my-5 font-normal text-gray-dim text-center">
+                 Connect a wallet account to continue
+                </p>
+              </div>
+            </div>
           ) : null}
         </>
       )}
-      {syndicateDAOs.length ? (
-        <div className="mt-6">
-          <div className="">
-            <PageHeader>Discover</PageHeader>
-          </div>
-          {/* <div className="flex flex-wrap md:justify-between justify-around"> */}
-          <div className="grid grid-cols-1 xl:grid-cols-4 lg:grid-cols-3 sm:grid-cols-2 gap-6">
-            {syndicateDAOs.map((syndicate, index) => {
-              return <SyndicateDAOItem {...syndicate} key={index} />;
-            })}
-          </div>
-        </div>
-      ) : (
-        <div className="mt-24">
-          <div className="mb-10">
-            <SkeletonLoader width="40" height="10" borderRadius="rounded-md" />
-          </div>
-          <div className="grid grid-cols-4">
-            {generateSkeletons(4, "30", "40", "rounded-md")}
-          </div>
-          <div className="grid grid-cols-4">
-            {generateSkeletons(4, "30", "8", "rounded-md")}
-          </div>
-          <div className="grid grid-cols-4">
-            {generateSkeletons(4, "30", "6", "rounded-md")}
-          </div>
-        </div>
-      )}
-
       {/* Component to create syndicate  */}
       {account ? <CreateSyndicate {...{ showModal, setShowModal }} /> : null}
     </div>
