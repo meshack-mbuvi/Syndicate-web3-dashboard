@@ -1,3 +1,18 @@
+import { amplitudeLogger, Flow } from "@/components/amplitude";
+import {
+  CLICK_ADD_MANAGER_FEE_ADDRESS,
+  CLICK_APPROVE_DISTRIBUTION_TOKEN,
+  CLICK_CHOOSE_ANOTHER_DISTRIBUTION_TOKEN_BUTTON,
+  CLICK_DISTRIBUTE_TOKENS_BUTTON,
+  CLICK_REMOVE_DISTRIBUTION_TOKEN_BUTTON,
+  DISTRIBUTION_TOKEN_APPROVED,
+  DISTRIBUTION_TOKEN_NOT_APPROVED,
+  ERROR_ADD_MANAGER_FEE_ADDRESS,
+  ERROR_CREATING_DISTRIBUTION_TOKEN,
+  ERROR_SETTING_DISTRIBUTIONS,
+  SUCCESS_ADD_MANAGER_FEE_ADDRESS,
+  SUCCESS_DISTRIBUTE_TOKENS,
+} from "@/components/amplitude/eventNames";
 import { TextInput } from "@/components/inputs";
 import Modal from "@/components/modal";
 import {
@@ -247,6 +262,17 @@ const DistributeToken = (props: Props) => {
     });
 
     setMetamaskConfirmationPending(true);
+
+    // Amplitude logger: CLICK_DISTRIBUTE_TOKENS_BUTTON
+    amplitudeLogger(CLICK_DISTRIBUTE_TOKENS_BUTTON, {
+      flow: Flow.MGR_SET_DIST,
+      data: {
+        syndicateAddress,
+        distributionERC20TokenAddresses,
+        tokenDistributionAmounts,
+        account,
+      },
+    });
     try {
       await syndicateContracts.DistributionLogicContract.managerSetDistributions(
         syndicateAddress,
@@ -257,11 +283,27 @@ const DistributeToken = (props: Props) => {
         setSubmitting,
         processSetDistributionEvent,
       );
+
+      // Amplitude logger: SUCCESS_DISTRIBUTE_TOKENS
+      amplitudeLogger(SUCCESS_DISTRIBUTE_TOKENS, {
+        flow: Flow.MGR_SET_DIST,
+        data: {
+          syndicateAddress,
+          distributionERC20TokenAddresses,
+          tokenDistributionAmounts,
+          account,
+        },
+      });
       setSuccessfulDistribution(true);
     } catch (error) {
       setSuccessfulDistribution(false);
 
       handleDistributionError(error);
+
+      // Amplitude logger: ERROR_SETTING_DISTRIBUTIONS
+      amplitudeLogger(ERROR_SETTING_DISTRIBUTIONS, {
+        flow: Flow.MGR_SET_DIST,
+      });
     }
   };
 
@@ -273,12 +315,22 @@ const DistributeToken = (props: Props) => {
       ...ERC20TokenFields,
       { ...ERC20TokenDefaults, tokenId },
     ]);
+
+    // Amplitude logger: CLICK_CHOOSE_ANOTHER_DISTRIBUTION_TOKEN_BUTTON
+    amplitudeLogger(CLICK_CHOOSE_ANOTHER_DISTRIBUTION_TOKEN_BUTTON, {
+      flow: Flow.MGR_SET_DIST,
+    });
   };
 
   // remove input fields for new ERC20 distribution
   const removeERC20Fields = (index: number) => {
     ERC20TokenFields.splice(index, 1);
     setERC20TokenFields([...ERC20TokenFields]);
+
+    // Amplitude logger: CLICK_REMOVE_DISTRIBUTION_TOKEN_BUTTON
+    amplitudeLogger(CLICK_REMOVE_DISTRIBUTION_TOKEN_BUTTON, {
+      flow: Flow.MGR_SET_DIST,
+    });
   };
 
   /** This method checks the allowance that's been already set on a given token
@@ -554,6 +606,13 @@ const DistributeToken = (props: Props) => {
     const allowanceAmount = ERC20TokenFields[index].tokenAllowance;
 
     const tokenDetails = ERC20TokenFields[index];
+
+    // Amplitude logger: CLICK_APPROVE_DISTRIBUTION_TOKEN
+    amplitudeLogger(CLICK_APPROVE_DISTRIBUTION_TOKEN, {
+      flow: Flow.MGR_SET_DIST,
+      data: tokenDetails,
+    });
+
     const { tokenNonFormattedAddress, tokenDecimals } = tokenDetails;
 
     // set up token contract.
@@ -590,6 +649,12 @@ const DistributeToken = (props: Props) => {
           const { Approval } = receipt.events;
 
           if (Approval) {
+            // Amplitude logger: DISTRIBUTION_TOKEN_APPROVED
+            amplitudeLogger(DISTRIBUTION_TOKEN_APPROVED, {
+              flow: Flow.MGR_SET_DIST,
+              data: tokenDetails,
+            });
+
             const { returnValues } = Approval;
             const { wad } = returnValues;
             const managerApprovedAllowance = getWeiAmount(
@@ -655,10 +720,28 @@ const DistributeToken = (props: Props) => {
           }
         })
         .on("error", (error) => {
+          // Amplitude logger: DISTRIBUTION_TOKEN_NOT_APPROVED
+          amplitudeLogger(DISTRIBUTION_TOKEN_NOT_APPROVED, {
+            flow: Flow.MGR_SET_DIST,
+            data: {
+              tokenDetails,
+              error,
+            },
+          });
+
           // user clicked reject.
           handleAllowanceError(error, index);
         });
     } catch (error) {
+      // Amplitude logger: ERROR_CREATING_DISTRIBUTION_TOKEN
+      amplitudeLogger(ERROR_CREATING_DISTRIBUTION_TOKEN, {
+        flow: Flow.MGR_SET_DIST,
+        data: {
+          tokenDetails,
+          error,
+        },
+      });
+
       // error occured before wallet prompt.
       handleAllowanceError(error);
     }
@@ -897,6 +980,15 @@ const DistributeToken = (props: Props) => {
     setManagerFeeAddressError("");
     setShowWalletConfirmationModal(true);
 
+    // Amplitude logger: CLICK_ADD_MANAGER_FEE_ADDRESS
+    amplitudeLogger(CLICK_ADD_MANAGER_FEE_ADDRESS, {
+      flow: Flow.MGR_SET_DIST,
+      data: {
+        syndicateAddress,
+        managerFeeAddress,
+      },
+    });
+
     try {
       await syndicateContracts.ManagerLogicContract.managerSetManagerFeeAddress(
         syndicateAddress,
@@ -906,10 +998,24 @@ const DistributeToken = (props: Props) => {
         setSavingMemberAddress,
       );
 
+      // Amplitude logger: SUCCESS_ADD_MANAGER_FEE_ADDRESS
+      amplitudeLogger(SUCCESS_ADD_MANAGER_FEE_ADDRESS, {
+        flow: Flow.MGR_SET_DIST,
+        data: {
+          syndicateAddress,
+          managerFeeAddress,
+        },
+      });
+
       dispatch(updateSyndicateManagerFeeAddress(managerFeeAddress));
       setSavingMemberAddress(false);
       setManagerFeeAddressAlreadySet(true);
     } catch (error) {
+      // Amplitude logger: ERROR_ADD_MANAGER_FEE_ADDRESS
+      amplitudeLogger(ERROR_ADD_MANAGER_FEE_ADDRESS, {
+        flow: Flow.MGR_SET_DIST,
+        error,
+      });
       handleError(error);
     }
   };

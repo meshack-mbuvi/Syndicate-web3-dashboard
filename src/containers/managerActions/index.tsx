@@ -1,3 +1,5 @@
+import { amplitudeLogger, Flow } from "@/components/amplitude";
+import { OPEN_DISTRIBUTE_TOKEN_MODAL } from "@/components/amplitude/eventNames";
 import { PrimaryButton } from "@/components/buttons";
 import ErrorBoundary from "@/components/errorBoundary";
 import FadeIn from "@/components/fadeIn/FadeIn";
@@ -251,7 +253,14 @@ const ManagerActions = () => {
                   "Distribute tokens back to depositors and make them available for withdraw."
                 }
                 icon={<img src="/images/server.svg" />}
-                onClickHandler={() => setShowDistributeToken(true)}
+                onClickHandler={() => {
+                  // Amplitude logger: OPEN_DISTRIBUTE_TOKEN_MODAL
+                  amplitudeLogger(OPEN_DISTRIBUTE_TOKEN_MODAL, {
+                    flow: Flow.MGR_SET_DIST,
+                  });
+                  // Open distribute token modal
+                  setShowDistributeToken(true);
+                }}
               />
             )}
             {/* show pre-approve depositor option when syndicate is open and allowList is enabled */}

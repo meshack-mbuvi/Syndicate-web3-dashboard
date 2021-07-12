@@ -1,5 +1,10 @@
 import { amplitudeLogger, Flow } from "@/components/amplitude";
-import { CLICK_COPY_LINK_TO_SHARE, CLOSE_CREATE_SYNDICATE_FORM, CREATE_SYNDICATE, ERROR_CREATING_SYNDICATE } from "@/components/amplitude/eventNames";
+import {
+  CLICK_COPY_LINK_TO_SHARE,
+  CLOSE_CREATE_SYNDICATE_FORM,
+  CREATE_SYNDICATE,
+  ERROR_CREATING_SYNDICATE,
+} from "@/components/amplitude/eventNames";
 import { ErrorModal } from "@/components/shared";
 import { PendingStateModal } from "@/components/shared/transactionStates";
 import ConfirmStateModal from "@/components/shared/transactionStates/confirm";
@@ -409,8 +414,8 @@ const CreateSyndicate = (props) => {
     // Amplitude logger: How many users who fill out the form to create a syndicate do not submit the form
     amplitudeLogger(CLOSE_CREATE_SYNDICATE_FORM, {
       flow: Flow.MGR_CREATE_SYN,
-    })
-  }
+    });
+  };
 
   // set closeDate
   const handleDateSelect = (date) => {
@@ -545,12 +550,12 @@ const CreateSyndicate = (props) => {
       // Amplitude logger: How many users started filling out the form to create a Syndicate
       amplitudeLogger(CREATE_SYNDICATE, {
         flow: Flow.MGR_CREATE_SYN,
-        createSynFormData: {
+        data: {
           syndicateData,
           account,
           fullName,
-          emailAddress
-        }
+          emailAddress,
+        },
       });
     } catch (error) {
       setShowWalletConfirmationModal(false);
@@ -565,7 +570,7 @@ const CreateSyndicate = (props) => {
         amplitudeLogger(ERROR_CREATING_SYNDICATE, {
           flow: Flow.MGR_CREATE_SYN,
           error,
-        })
+        });
       }
       // close loading modal
       dispatch(setSubmitting(false));
