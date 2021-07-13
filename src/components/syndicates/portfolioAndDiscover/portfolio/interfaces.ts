@@ -7,7 +7,7 @@ export interface ifRows {
     managerCurrent: string;
     depositERC20Address: string;
     depositors: number;
-    depositMaxTotal: string;
+    depositTotalMax: string;
     depositsEnabled: boolean;
     depositTotal: string;
     distributing: boolean;

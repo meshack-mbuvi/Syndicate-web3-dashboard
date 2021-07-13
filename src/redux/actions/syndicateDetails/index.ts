@@ -86,10 +86,10 @@ export const setSyndicateDetails = (
     //set total deposits
     totalDeposits = syndicate.depositTotal;
   });
-  // memberClaimedDistribution
+  // DistributionClaimed
   // get syndicate event(s) where distribution was withdrawn.
   const memberWithdrewDistributionEvents = await DistributionLogicContract.getDistributionEvents(
-    "memberClaimedDistribution",
+    "DistributionClaimed",
     syndicateAddress,
     { syndicateAddress },
   );
@@ -97,9 +97,9 @@ export const setSyndicateDetails = (
   for (let i = 0; i < memberWithdrewDistributionEvents.length; i++) {
     let event = memberWithdrewDistributionEvents[i];
     // get total value withdrawn
-    const { amountWithdrawn } = event.returnValues;
+    const { amount } = event.returnValues;
     const etherAmountWithdrawn = getWeiAmount(
-      amountWithdrawn,
+      amount,
       tokenDecimals,
       false,
     );
@@ -111,7 +111,7 @@ export const setSyndicateDetails = (
       let {
         toSyndicate,
         toManager,
-      } = await DistributionLogicContract.calculateProfitShare(
+      } = await DistributionLogicContract.calculateDistributionShares(
         etherAmountWithdrawn,
         profitShareToSyndicateProtocol,
         profitShareToSyndicateLead,

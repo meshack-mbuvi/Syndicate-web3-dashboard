@@ -31,7 +31,7 @@ export const BadgeCard = (props: {
   if (syndicate) {
     var {
       depositTotal,
-      depositMaxTotal,
+      depositTotalMax,
       depositERC20TokenSymbol,
       numMembersCurrent,
       distributing,
@@ -60,12 +60,12 @@ export const BadgeCard = (props: {
     var remainingDuration = `${durationYears} ${durationMonths} ${durationDays}`.trim();
 
     // checking if depositsMax is unlimited.
-    var depositsMaxIsUnlimited = isUnlimited(depositMaxTotal);
+    var depositsMaxIsUnlimited = isUnlimited(depositTotalMax);
 
     // get percentage of deposits made to the syndicate
     if (!depositsMaxIsUnlimited) {
       var depositsPercentage =
-        divideIfNotByZero(depositTotal, depositMaxTotal) * 100;
+        divideIfNotByZero(depositTotal, depositTotalMax) * 100;
       var currentDepositsPercentage = parseInt(depositsPercentage.toString());
     }
   }
@@ -191,7 +191,7 @@ export const BadgeCard = (props: {
             <span className="text-gray-400">
               {depositsMaxIsUnlimited
                 ? "Unlimited"
-                : floatedNumberWithCommas(depositMaxTotal)}{" "}
+                : floatedNumberWithCommas(depositTotalMax)}{" "}
               {depositERC20TokenSymbol}{" "}
             </span>
             {!depositsMaxIsUnlimited ? (

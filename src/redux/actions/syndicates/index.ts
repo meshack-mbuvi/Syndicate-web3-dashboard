@@ -65,7 +65,7 @@ export const getSyndicates = (data) => async (dispatch) => {
     );
 
     const memberDepositedEvents = await DepositLogicContract.getMemberDepositEvents(
-      "memberDeposited",
+      "DepositAdded",
     );
 
     await accountCreatedSyndicateEvents.forEach(async (event) => {
@@ -238,21 +238,21 @@ export const processSyndicateDetails = (
     syndicateAddress,
     allowlistEnabled,
     dateClose,
-    dateCreation,
+    dateCreated,
     depositERC20Address,
-    depositMaxMember,
-    depositMaxTotal,
-    depositMinMember,
+    depositMemberMax,
+    depositTotalMax,
+    depositMemberMin,
     depositTotal,
     managerCurrent,
     managerFeeAddress,
     managerManagementFeeBasisPoints,
     managerPending,
-    managerPerformanceFeeBasisPoints,
+    managerDistributionShareBasisPoints,
     modifiable,
     numMembersCurrent,
     numMembersMax,
-    syndicateProfitShareBasisPoints,
+    syndicateDistributionShareBasisPoints,
     open,
     distributing,
   } = syndicateData;
@@ -277,14 +277,14 @@ export const processSyndicateDetails = (
    * seconds. We multiply by 1000 to convert to milliseconds and then
    * convert this to javascript date object
    */
-  const createdDate = formatDate(new Date(parseInt(dateCreation) * 1000));
+  const createdDate = formatDate(new Date(parseInt(dateCreated) * 1000));
 
   const profitShareToSyndicateProtocol = basisPointsToPercentage(
-    syndicateProfitShareBasisPoints,
+    syndicateDistributionShareBasisPoints,
   );
 
   const profitShareToSyndicateLead = basisPointsToPercentage(
-    managerPerformanceFeeBasisPoints,
+    managerDistributionShareBasisPoints,
   );
 
   managerManagementFeeBasisPoints = basisPointsToPercentage(
@@ -294,7 +294,7 @@ export const processSyndicateDetails = (
   const depositsEnabled = !pastDate(new Date(parseInt(dateClose) * 1000));
 
   const status =
-    depositsEnabled && parseInt(depositTotal) < parseInt(depositMaxTotal)
+    depositsEnabled && parseInt(depositTotal) < parseInt(depositTotalMax)
       ? `Open until ${closeDate}`
       : distributing
       ? "Distributing"
@@ -306,9 +306,9 @@ export const processSyndicateDetails = (
     open,
     managerFeeAddress,
     depositsEnabled,
-    depositMinMember: getWeiAmount(depositMinMember, tokenDecimals, false),
-    depositMaxMember: getWeiAmount(depositMaxMember, tokenDecimals, false),
-    depositMaxTotal: getWeiAmount(depositMaxTotal, tokenDecimals, false),
+    depositMemberMin: getWeiAmount(depositMemberMin, tokenDecimals, false),
+    depositMemberMax: getWeiAmount(depositMemberMax, tokenDecimals, false),
+    depositTotalMax: getWeiAmount(depositTotalMax, tokenDecimals, false),
     profitShareToSyndicateProtocol,
     profitShareToSyndicateLead,
     depositTotal: getWeiAmount(depositTotal, tokenDecimals, false),
@@ -324,9 +324,9 @@ export const processSyndicateDetails = (
     tokenDecimals,
     depositERC20TokenSymbol,
     numMembersCurrent,
-    syndicateProfitShareBasisPoints,
+    syndicateDistributionShareBasisPoints,
     distributing,
-    managerPerformanceFeeBasisPoints: profitShareToSyndicateLead,
+    managerDistributionShareBasisPoints: profitShareToSyndicateLead,
   };
 };
 

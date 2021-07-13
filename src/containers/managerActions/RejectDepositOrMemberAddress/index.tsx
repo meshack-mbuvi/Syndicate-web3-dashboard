@@ -571,7 +571,7 @@ const RejectDepositOrMemberAddress = (props: Props) => {
       setShowWalletConfirmationModal(true);
 
       // call manager logic contract to blacklist addresses
-      await syndicateContracts.ManagerLogicContract.managerBlockAddresses(
+      await syndicateContracts.AllowlistLogicContract.managerBlockAddresses(
         syndicateAddress,
         memberAddressesArrayToBlacklistCopy,
         account,

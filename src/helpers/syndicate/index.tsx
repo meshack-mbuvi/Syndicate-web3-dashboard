@@ -73,7 +73,7 @@ export const getSyndicateMemberInfo = async (
   try {
     const {
       memberDeposit,
-      memberClaimedDistribution,
+      DistributionClaimed,
       memberAddressAllowed,
     } = await GetterLogicContract.getMemberInfo(
       syndicateAddress,
@@ -87,7 +87,7 @@ export const getSyndicateMemberInfo = async (
     );
 
     const memberTotalWithdrawals = getWeiAmount(
-      memberClaimedDistribution,
+      DistributionClaimed,
       currentERC20Decimals,
       false
     );

@@ -2,8 +2,8 @@ import DistributionLogicABI from "src/contracts/SyndicateClosedEndFundDistributi
 import { BaseLogicContract } from "../baseLogicContract";
 
 export class SyndicateDistributionLogic extends BaseLogicContract {
-  constructor(contractName: any, web3: any) {
-    super(contractName, web3, DistributionLogicABI.abi);
+  constructor(contractName: any, contractAddress: string, web3: any) {
+    super(contractName, contractAddress, web3, DistributionLogicABI.abi);
     this.initializeLogicContract();
   }
 
@@ -36,9 +36,9 @@ export class SyndicateDistributionLogic extends BaseLogicContract {
     }
   }
 
-  async calculateProfitShare(
+  async calculateDistributionShares(
     amount: string,
-    syndicateProfitShareBasisPoints: string | number,
+    syndicateDistributionShareBasisPoints: string | number,
     managerProfitShareBasisPoints: string | number,
   ): Promise<{
     toMembers: string;
@@ -47,7 +47,7 @@ export class SyndicateDistributionLogic extends BaseLogicContract {
   }> {
     if (
       !amount.trim() ||
-      !syndicateProfitShareBasisPoints ||
+      !syndicateDistributionShareBasisPoints ||
       !managerProfitShareBasisPoints
     )
       return {
@@ -58,9 +58,9 @@ export class SyndicateDistributionLogic extends BaseLogicContract {
 
     try {
       const profitShare = await this.logicContractInstance.methods
-        .calculateProfitShare(
+        .calculateDistributionShares(
           amount,
-          syndicateProfitShareBasisPoints,
+          syndicateDistributionShareBasisPoints,
           managerProfitShareBasisPoints,
         )
         .call();
@@ -147,16 +147,16 @@ export class SyndicateDistributionLogic extends BaseLogicContract {
         })
         .on("receipt", (receipt) => {
           // For a single distribution token, a single event is
-          // emitted, and thus managerSetterDistribution will be an
+          // emitted, and thus DistributionAdded will be an
           // object whereas for multiple distribution tokens, multiple
-          // events are emitted and therefore managerSetterDistribution // will be an array
-          const { managerSetterDistribution } = receipt.events;
-          if (Array.isArray(managerSetterDistribution)) {
-            managerSetterDistribution.forEach((distributionEvent) => {
+          // events are emitted and therefore DistributionAdded // will be an array
+          const { DistributionAdded } = receipt.events;
+          if (Array.isArray(DistributionAdded)) {
+            DistributionAdded.forEach((distributionEvent) => {
               processSetDistributionEvent(distributionEvent);
             });
           } else {
-            processSetDistributionEvent(managerSetterDistribution);
+            processSetDistributionEvent(DistributionAdded);
           }
         });
       setSubmitting(false);
@@ -174,7 +174,7 @@ export class SyndicateDistributionLogic extends BaseLogicContract {
    * @param totalTokenDistributions
    * @returns
    */
-  async calculateEligibleDistributions(
+  async calculateEligibleDistribution(
     totalMemberDeposits,
     totalSyndicateDeposits,
     memberDistributionsWithdrawalsToDate,
@@ -183,7 +183,7 @@ export class SyndicateDistributionLogic extends BaseLogicContract {
     if (totalSyndicateDeposits == "0" || totalTokenDistributions == "0") return;
     try {
       const eligibleWithdraw = await this.logicContractInstance.methods
-        .calculateEligibleDistributions(
+        .calculateEligibleDistribution(
           totalMemberDeposits,
           totalSyndicateDeposits,
           memberDistributionsWithdrawalsToDate,
@@ -208,27 +208,25 @@ export class SyndicateDistributionLogic extends BaseLogicContract {
    * @param setSubmittingWithdrawal
    * @returns
    */
-  async memberClaimDistribution(
+  async memberClaimDistributions(
     syndicateAddress: string,
     memberAccount: string,
-    ERC20Address: string,
-    amount: string,
+    ERC20Addresses: string[],
+    amounts: string[],
     setMetamaskConfirmPending: Function,
     setSubmittingWithdrawal: Function,
   ) {
     if (
-      !syndicateAddress.trim() ||
-      !amount.trim() ||
-      !memberAccount.trim() ||
-      amount.toString() == "0" ||
-      !ERC20Address.trim()
+      !ERC20Addresses.length ||
+      !amounts.length ||
+      !memberAccount.trim()
     ) {
       return;
     }
 
     try {
       await this.logicContractInstance.methods
-        .memberClaimDistribution(syndicateAddress, ERC20Address, amount)
+        .memberClaimDistributions(syndicateAddress, ERC20Addresses, amounts)
         .send({ from: memberAccount, gasLimit: 800000 })
         .on("transactionHash", () => {
           setMetamaskConfirmPending(false);
@@ -253,7 +251,7 @@ export class SyndicateDistributionLogic extends BaseLogicContract {
    * @param setSubmitting
    * @returns
    */
-  async managerSetDistributionClaimedForMembers(
+  async managerSetDistributionsClaimedForMembers(
     syndicateAddress: string,
     memberAddresses: string[],
     distributionERC20Addresses: string[],
@@ -271,7 +269,7 @@ export class SyndicateDistributionLogic extends BaseLogicContract {
     }
     try {
       await this.logicContractInstance.methods
-        .managerSetDistributionClaimedForMembers(
+        .managerSetDistributionsClaimedForMembers(
           syndicateAddress,
           memberAddresses,
           distributionERC20Addresses,

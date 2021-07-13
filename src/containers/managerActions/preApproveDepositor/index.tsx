@@ -142,15 +142,15 @@ const PreApproveDepositor = (props: Props) => {
       /**
        * Get all events emitted when setting allowAddress for this syndicate.
        */
-      const managerEvents = await syndicateContracts.ManagerLogicContract.getManagerEvents(
-        "managerAllowedAddresses",
+      const allowlistEvents = await syndicateContracts.AllowlistLogicContract.getAllowlistEvents(
+        "AddressAllowed",
         {
           memberAddress,
           syndicateAddress,
         },
       );
 
-      if (managerEvents && managerEvents.length) return true;
+      if (allowlistEvents && allowlistEvents.length) return true;
       return false;
     } catch (err) {
       return false;
@@ -172,7 +172,7 @@ const PreApproveDepositor = (props: Props) => {
       setShowMemberAddressError(true);
       return;
     }
-
+    
     /**
      * If we are not connected and the form modal is open, user can trigger
      * creation of Syndicate. We therefore catch this here and request for
@@ -201,7 +201,7 @@ const PreApproveDepositor = (props: Props) => {
 
       setShowWalletConfirmationModal(true);
 
-      await syndicateContracts.ManagerLogicContract.managerAllowAddresses(
+      await syndicateContracts.AllowlistLogicContract.managerAllowAddresses(
         syndicateAddress,
         newSplitArr,
         account,

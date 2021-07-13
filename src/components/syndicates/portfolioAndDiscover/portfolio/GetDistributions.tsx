@@ -31,7 +31,7 @@ const GetDistributions = ({ row: { syndicateAddress } }: ifRows) => {
 
   const getDistributionEvents = async () => {
     const distributionEvents = await syndicateContracts.DistributionLogicContract.getDistributionEvents(
-      "managerSetterDistribution",
+      "DistributionAdded",
       { syndicateAddress: web3.utils.toChecksumAddress(syndicateAddress) }
     );
 

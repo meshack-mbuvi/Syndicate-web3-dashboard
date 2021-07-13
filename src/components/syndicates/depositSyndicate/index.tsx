@@ -186,7 +186,7 @@ const DepositSyndicate = () => {
   // check if minDeposit, maxDeposit, or maxTotalDeposits has been violated
   // show an error message and disable deposit and approval buttons if this is the case
   if (syndicate) {
-    var { depositMinMember, depositMaxMember, depositMaxTotal } = syndicate;
+    var { depositMemberMin, depositMemberMax, depositTotalMax } = syndicate;
   }
 
   // HOOKS
@@ -238,16 +238,16 @@ const DepositSyndicate = () => {
   useEffect(() => {
     if (syndicate) {
       const {
-        depositMaxMember,
-        depositMinMember,
-        depositMaxTotal,
+        depositMemberMax,
+        depositMemberMin,
+        depositTotalMax,
         depositTotal,
       } = syndicate;
       const amountToDeposit = parseFloat(amount.toString());
-      const minimumDeposit = parseFloat(depositMinMember);
-      const maximumDeposit = parseFloat(depositMaxMember);
+      const minimumDeposit = parseFloat(depositMemberMin);
+      const maximumDeposit = parseFloat(depositMemberMax);
       const totalSyndicateDeposits = parseFloat(depositTotal);
-      const maxAllowedTotalDeposits = parseFloat(depositMaxTotal);
+      const maxAllowedTotalDeposits = parseFloat(depositTotalMax);
       const lpTotalDeposits = parseFloat(memberTotalDeposits);
 
       if (amountToDeposit > 0 && amountToDeposit < minimumDeposit) {
@@ -614,13 +614,13 @@ const DepositSyndicate = () => {
   } else if (conversionError) {
     errorMessageText = conversionError;
   } else if (amountLessThanMinDeposit) {
-    errorMessageText = `${amountLessThanMinDepositErrorMessage} ${depositMinMember} ${depositTokenSymbol}`;
+    errorMessageText = `${amountLessThanMinDepositErrorMessage} ${depositMemberMin} ${depositTokenSymbol}`;
   } else if (amountMoreThanMaxDeposit) {
-    errorMessageText = `${amountMoreThanMaxDepositErrorMessage} ${depositMaxMember} ${depositTokenSymbol}`;
+    errorMessageText = `${amountMoreThanMaxDepositErrorMessage} ${depositMemberMax} ${depositTokenSymbol}`;
   } else if (maxTotalDepositsExceeded) {
-    errorMessageText = `${maxTotalDepositsExceededErrorMessage} ${depositMaxTotal} ${depositTokenSymbol} ${amountExceededText}`;
+    errorMessageText = `${maxTotalDepositsExceededErrorMessage} ${depositTotalMax} ${depositTokenSymbol} ${amountExceededText}`;
   } else if (maxTotalLPDepositsExceeded) {
-    errorMessageText = `${maxTotalMemberDepositsExceededErrorMessage} ${depositMaxMember} ${depositTokenSymbol} ${amountExceededText}`;
+    errorMessageText = `${maxTotalMemberDepositsExceededErrorMessage} ${depositMemberMax} ${depositTokenSymbol} ${amountExceededText}`;
   } else {
     errorMessageText = amountError;
   }

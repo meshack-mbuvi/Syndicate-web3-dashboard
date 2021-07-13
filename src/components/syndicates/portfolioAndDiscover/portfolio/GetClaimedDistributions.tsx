@@ -43,7 +43,7 @@ const GetClaimedDistributions = ({
     if (syndicateAddress === account) return "-";
 
     const memberDepositsWithdrawalEvents = await DepositLogicContract.getMemberDepositEvents(
-      "memberWithdrewDeposit",
+      "DepositRemoved",
       {
         syndicateAddress: web3.utils.toChecksumAddress(syndicateAddress),
         memberAddress: account,
@@ -53,11 +53,11 @@ const GetClaimedDistributions = ({
     if (memberDepositsWithdrawalEvents.length) {
       const depositERC20WithdrawalAmounts = [];
       for (let i = 0; i < memberDepositsWithdrawalEvents.length; i++) {
-        const { amountWithdrawn } = memberDepositsWithdrawalEvents[
+        const { amount } = memberDepositsWithdrawalEvents[
           i
         ].returnValues;
 
-        depositERC20WithdrawalAmounts.push(amountWithdrawn);
+        depositERC20WithdrawalAmounts.push(amount);
       }
 
       // get total deposits withdrawn.
@@ -89,7 +89,7 @@ const GetClaimedDistributions = ({
     if (syndicateAddress === account) return "-";
 
     const memberDistributionsWithdrawalEvents = await DistributionLogicContract.getDistributionEvents(
-      "memberClaimedDistribution",
+      "DistributionClaimed",
       {
         syndicateAddress: web3.utils.toChecksumAddress(syndicateAddress),
         memberAddress: account,
@@ -101,12 +101,12 @@ const GetClaimedDistributions = ({
       for (let j = 0; j < memberDistributionsWithdrawalEvents.length; j++) {
         const {
           distributionERC20Address,
-          amountWithdrawn,
+          amount,
         } = memberDistributionsWithdrawalEvents[j].returnValues;
 
         distributionsWithdrawalDetails.push({
           distributionERC20Address,
-          amountWithdrawn,
+          amount,
         });
       }
 
@@ -145,11 +145,11 @@ const GetClaimedDistributions = ({
         for (let j = 0; j < distributionsWithdrawalDetails.length; j++) {
           const {
             distributionERC20Address,
-            amountWithdrawn,
+            amount,
           } = distributionsWithdrawalDetails[j];
           if (distributionERC20Address === uniqueDistributionERC20s[i]) {
             const withdrawnAmount = getWeiAmount(
-              amountWithdrawn,
+              amount,
               distributionERC20Decimals,
               false,
             );

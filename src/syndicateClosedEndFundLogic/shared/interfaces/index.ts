@@ -1,18 +1,18 @@
 export interface SyndicateMemberInfo {
   memberDeposit: string;
-  memberClaimedDistribution: string;
+  DistributionClaimed: string;
   memberAddressAllowed: boolean;
 }
 
 export interface CreateSyndicateData {
   managerManagementFeeBasisPoints: string;
-  managerPerformanceFeeBasisPoints: string;
-  syndicateProfitShareBasisPoints: string;
+  managerDistributionShareBasisPoints: string;
+  syndicateDistributionShareBasisPoints: string;
   numMembersMax: string | bigint;
   depositERC20Address: string;
-  depositMinMember: string;
-  depositMaxMember: string;
-  depositMaxTotal: string;
+  depositMemberMin: string;
+  depositMemberMax: string;
+  depositTotalMax: string;
   dateCloseUnixTime: string | number;
   allowlistEnabled: boolean;
   modifiable: boolean;
@@ -23,22 +23,22 @@ export interface SyndicateValues {
   syndicateAddress: string;
   allowlistEnabled: boolean;
   dateClose: string;
-  dateCreation: string;
+  dateCreated: string;
   depositERC20Address: string;
-  depositMaxMember: string;
-  depositMaxTotal: string;
-  depositMinMember: string;
+  depositMemberMax: string;
+  depositTotalMax: string;
+  depositMemberMin: string;
   depositTotal: string;
   distributing: boolean;
   managerCurrent: string;
   managerFeeAddress: string;
   managerManagementFeeBasisPoints: string;
   managerPending: string;
-  managerPerformanceFeeBasisPoints: string;
+  managerDistributionShareBasisPoints: string;
   modifiable: boolean;
   numMembersCurrent: string;
   numMembersMax: string;
   open: boolean;
-  syndicateProfitShareBasisPoints: string;
+  syndicateDistributionShareBasisPoints: string;
   transferable: boolean;
 }

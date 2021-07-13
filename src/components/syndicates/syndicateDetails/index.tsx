@@ -144,7 +144,7 @@ const SyndicateDetails = (props: {
       depositsEnabled,
       distributing,
       depositERC20Address,
-      depositMaxTotal,
+      depositTotalMax,
     } = syndicate;
   }
 
@@ -186,7 +186,7 @@ const SyndicateDetails = (props: {
     // but is greater than zero, we'll consider this insufficient allowance.
     // The manager needs to fix this by adding more deposit token allowance to enable members
     // to withdraw their deposits.
-    const sufficientAllowanceSet = +managerDepositAllowance >= +depositMaxTotal;
+    const sufficientAllowanceSet = +managerDepositAllowance >= +depositTotalMax;
 
     // dispatch action to store deposit token allowance details
     dispatch(
@@ -195,7 +195,7 @@ const SyndicateDetails = (props: {
           tokenAddress: depositERC20Address,
           tokenAllowance: managerDepositAllowance,
           tokenSymbol: depositTokenSymbol,
-          tokenDeposits: depositMaxTotal,
+          tokenDeposits: depositTotalMax,
           tokenDecimals: depositTokenDecimals,
           sufficientAllowanceSet,
         },
@@ -213,7 +213,7 @@ const SyndicateDetails = (props: {
 
     // get events where member invested in a syndicate.
     const distributionEvents = await syndicateContracts.DistributionLogicContract.getDistributionEvents(
-      "managerSetterDistribution",
+      "DistributionAdded",
       { syndicateAddress: addressOfSyndicate },
     );
 
@@ -402,11 +402,11 @@ const SyndicateDetails = (props: {
         profitShareToSyndicateProtocol,
         profitShareToSyndicateLead,
         managerManagementFeeBasisPoints,
-        depositMaxMember,
-        depositMinMember,
+        depositMemberMax,
+        depositMemberMin,
       } = syndicate;
 
-      const valueIsUnlimited = isUnlimited(depositMaxMember);
+      const valueIsUnlimited = isUnlimited(depositMemberMax);
 
       setDetails([
         {
@@ -426,10 +426,10 @@ const SyndicateDetails = (props: {
         },
         {
           header: "Deposit Range",
-          subText: `${floatedNumberWithCommas(depositMinMember)} - ${
+          subText: `${floatedNumberWithCommas(depositMemberMin)} - ${
             valueIsUnlimited
               ? "Unlimited"
-              : floatedNumberWithCommas(depositMaxMember)
+              : floatedNumberWithCommas(depositMemberMax)
           } ${depositTokenSymbol}`,
           tooltip: depositRangeToolTip,
         },
@@ -640,7 +640,7 @@ const SyndicateDetails = (props: {
       <Footer />
       <ManagerSetAllowance
         {...{
-          depositMaxTotal,
+          depositTotalMax,
           depositsEnabled,
           depositTokenContract,
           showManagerSetAllowances,

@@ -5,9 +5,9 @@ export interface syndicateInterface {
   closeDate: string;
   createdDate: string;
   depositERC20Address: string;
-  depositMaxMember: string;
-  depositMaxTotal: string;
-  depositMinMember: string;
+  depositMemberMax: string;
+  depositTotalMax: string;
+  depositMemberMin: string;
   depositTotal: string;
   depositsEnabled: boolean;
   distributing?: boolean;
@@ -15,11 +15,11 @@ export interface syndicateInterface {
   managerFeeAddress: string;
   managerManagementFeeBasisPoints: string | number;
   managerPending: string;
-  managerPerformanceFeeBasisPoints: string | number;
+  managerDistributionShareBasisPoints: string | number;
   modifiable: boolean;
   numMembersCurrent: string;
   numMembersMax: string;
-  syndicateProfitShareBasisPoints: string;
+  syndicateDistributionShareBasisPoints: string;
   version: string;
   tokenDecimals?: number;
   profitShareToSyndicateProtocol?: number;

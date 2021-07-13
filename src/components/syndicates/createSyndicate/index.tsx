@@ -453,7 +453,7 @@ const CreateSyndicate = (props) => {
      * Convert maxDeposits, totalMaxDeposits and syndicateProfitSharePercent
      * to wei since the contract does not take normal javascript numbers
      */
-    const syndicateProfitShareBasisPoints = `${
+    const syndicateDistributionShareBasisPoints = `${
       parseFloat(syndicateProtocolProfitSharePercent) * 100
     }`;
 
@@ -464,16 +464,16 @@ const CreateSyndicate = (props) => {
     // and multiply by 100 eg 2% would be (2/100)* 10000=> 2 * 100 = 200 basis points
 
     // use the user provided values, otherwise use defaults for min and max fields.
-    const depositMinMember = minDeposits
+    const depositMemberMin = minDeposits
       ? getWeiAmount(minDeposits, depositTokenDecimals, true)
       : getWeiAmount("0", depositTokenDecimals, true);
 
-    const depositMaxMember = maxDeposits
+    const depositMemberMax = maxDeposits
       ? getWeiAmount(maxDeposits, depositTokenDecimals, true)
       : MAX_INTEGER;
 
     const numMembersMax = maxMembers ? maxMembers.toString() : MAX_INTEGER;
-    const depositMaxTotal = maxTotalDeposits
+    const depositTotalMax = maxTotalDeposits
       ? getWeiAmount(maxTotalDeposits, depositTokenDecimals, true)
       : MAX_INTEGER;
 
@@ -481,7 +481,7 @@ const CreateSyndicate = (props) => {
       parseFloat(expectedAnnualOperatingFees) * 100
     }`;
 
-    const managerPerformanceFeeBasisPoints = `${
+    const managerDistributionShareBasisPoints = `${
       parseFloat(profitShareToSyndicateLead) * 100
     }`;
 
@@ -518,13 +518,13 @@ const CreateSyndicate = (props) => {
     try {
       const syndicateData = {
         managerManagementFeeBasisPoints,
-        managerPerformanceFeeBasisPoints,
-        syndicateProfitShareBasisPoints,
+        managerDistributionShareBasisPoints,
+        syndicateDistributionShareBasisPoints,
         numMembersMax,
         depositERC20Address,
-        depositMinMember,
-        depositMaxMember,
-        depositMaxTotal,
+        depositMemberMin,
+        depositMemberMax,
+        depositTotalMax,
         dateCloseUnixTime,
         allowlistEnabled,
         modifiable,

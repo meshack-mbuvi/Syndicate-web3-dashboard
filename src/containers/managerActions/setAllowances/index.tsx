@@ -78,7 +78,7 @@ const ManagerSetAllowance = (props: Props) => {
   const { metamaskErrorMessageTitleText } = metamaskConstants;
 
   if (syndicate) {
-    var { depositMaxTotal, depositsEnabled, distributing } = syndicate;
+    var { depositTotalMax, depositsEnabled, distributing } = syndicate;
   }
 
   // handle allowance value from the input field.
@@ -208,7 +208,7 @@ const ManagerSetAllowance = (props: Props) => {
           if (depositsEnabled) {
             // check whether new allowance matches total max. deposits
             const sufficientAllowanceSet =
-              +managerApprovedAllowance >= +depositMaxTotal;
+              +managerApprovedAllowance >= +depositTotalMax;
 
             const {
               tokenSymbol,
@@ -221,7 +221,7 @@ const ManagerSetAllowance = (props: Props) => {
                 {
                   tokenAddress,
                   tokenAllowance: managerApprovedAllowance,
-                  tokenDeposits: depositMaxTotal,
+                  tokenDeposits: depositTotalMax,
                   tokenSymbol,
                   tokenDecimals,
                   sufficientAllowanceSet,

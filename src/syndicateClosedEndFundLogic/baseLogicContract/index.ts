@@ -26,10 +26,11 @@ export class BaseLogicContract {
    * @param web3 
    * @param contractABI 
    */
-  constructor(contractName: string, web3, contractABI) {
+  constructor(contractName: string, contractAddress: string, web3, contractABI) {
     this.web3 = web3;
     this.contractABI = contractABI;
     this.contractName = contractName;
+    this._address = contractAddress;
     this.initializeLogicContract();
   }
 
@@ -41,9 +42,14 @@ export class BaseLogicContract {
     try {
       let contractAddress = this._address;
 
-      if (!this._address) {
-        contractAddress = await this.getContractAddress(this.contractName);
-      }
+      // ----------------
+      // The intergrations coordinator is currently not deployed / not in use, 
+      // this will be used when it's added back
+      // ----------------
+      
+      // if (!this._address) {
+      //   contractAddress = await this.getContractAddress(this.contractName);
+      // }
 
       this.logicContractInstance = new this.web3.eth.Contract(
         this.contractABI,

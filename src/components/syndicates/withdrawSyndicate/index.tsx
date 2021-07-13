@@ -276,9 +276,9 @@ const WithdrawSyndicate = () => {
       const amountGreaterThanMemberDistributions =
         +amount > +memberDistributionsToDate;
       const amountGreaterThanMemberDeposits = +amount > +memberTotalDeposits;
-      const { depositMinMember } = syndicate;
+      const { depositMemberMin } = syndicate;
       const amountLessThanMinDeposits =
-        +memberTotalDeposits - +amount < depositMinMember;
+        +memberTotalDeposits - +amount < depositMemberMin;
 
       const amountLessThanMemberDeposit = +amount < +memberTotalDeposits;
 
@@ -472,11 +472,11 @@ const WithdrawSyndicate = () => {
         );
       } else {
         // withdraw distributions
-        await syndicateContracts?.DistributionLogicContract.memberClaimDistribution(
+        await syndicateContracts?.DistributionLogicContract.memberClaimDistributions(
           syndicateAddress,
           account,
-          currentDistributionTokenAddress,
-          amountToWithdraw,
+          [currentDistributionTokenAddress],
+          [amountToWithdraw],
           setMetamaskConfirmPending,
           setSubmittingWithdrawal,
         );
@@ -728,7 +728,7 @@ const WithdrawSyndicate = () => {
                           <input
                             name="amount"
                             type="text"
-                            placeholder={syndicate?.depositMinMember}
+                            placeholder={syndicate?.depositMemberMin}
                             defaultValue={amount}
                             onChange={handleSetAmount}
                             className={`min-w-0 rounded-md bg-gray-9 border border-gray-24 text-white font-whyte focus:outline-none focus:ring-gray-24 focus:border-gray-24 flex-grow mr-6 `}

@@ -168,7 +168,7 @@ const ModifyMemberDistributions = (props: Props) => {
    */
   const getDistributionERC20Address = async () => {
     const events = await syndicateContracts.DistributionLogicContract.getDistributionEvents(
-      "managerSetterDistribution",
+      "DistributionAdded",
       { syndicateAddress }
     );
 

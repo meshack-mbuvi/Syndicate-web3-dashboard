@@ -55,6 +55,7 @@ typings/
 
 # dotenv environment variable files
 .env-secrets
+.env.local
 
 # Mac files
 .DS_Store

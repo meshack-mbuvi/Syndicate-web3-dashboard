@@ -3,9 +3,9 @@ export type Syndicate = {
   open: boolean;
   managerFeeAddress: string;
   depositsEnabled: boolean;
-  depositMinMember: string;
-  depositMaxMember: string;
-  depositMaxTotal: string;
+  depositMemberMin: string;
+  depositMemberMax: string;
+  depositTotalMax: string;
   profitShareToSyndicateProtocol: number;
   profitShareToSyndicateLead: number;
   depositTotal: string;
@@ -21,8 +21,8 @@ export type Syndicate = {
   tokenDecimals: number;
   depositERC20TokenSymbol: string;
   numMembersCurrent: string;
-  syndicateProfitShareBasisPoints: string;
-  managerPerformanceFeeBasisPoints: number;
+  syndicateDistributionShareBasisPoints: string;
+  managerDistributionShareBasisPoints: number;
   distributing?: boolean;
   syndicateAddress?: string;
 };

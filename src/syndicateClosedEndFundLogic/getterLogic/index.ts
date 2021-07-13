@@ -3,13 +3,13 @@ import { BaseLogicContract } from "../baseLogicContract";
 import { SyndicateMemberInfo, SyndicateValues } from "../shared";
 
 export class SyndicateGetterLogic extends BaseLogicContract {
-  constructor(contractName: string, web3: any) {
-    super(contractName, web3, GetterLogicABI.abi);
+  constructor(contractName: string, contractAddress: string, web3: any) {
+    super(contractName, contractAddress, web3, GetterLogicABI.abi);
     this.initializeLogicContract();
   }
 
   /**
-   * Retrives memberDeposits, memberClaimedDistributions and addressAllowed
+   * Retrives memberDeposits, DistributionClaimed and addressAllowed
    * value for the given member address.
    *
    * @param syndicateAddress
@@ -29,16 +29,16 @@ export class SyndicateGetterLogic extends BaseLogicContract {
 
       const {
         deposit,
-        claimedDistributionPrimary,
-        addressAllowed,
+        distributionClaimedDepositERC20,
+        isAllowlisted,
       } = await this.logicContractInstance.methods
         .getMemberInfo(syndicateAddress, memberAddress)
         .call();
 
       return {
         memberDeposit: deposit,
-        memberClaimedDistribution: claimedDistributionPrimary,
-        memberAddressAllowed: addressAllowed,
+        DistributionClaimed: distributionClaimedDepositERC20,
+        memberAddressAllowed: isAllowlisted,
       };
     } catch {
       return null;
@@ -61,23 +61,23 @@ export class SyndicateGetterLogic extends BaseLogicContract {
       const {
         allowlistEnabled,
         dateClose,
-        dateCreation,
+        dateCreated,
         depositERC20Address,
-        depositMaxMember,
-        depositMaxTotal,
-        depositMinMember,
+        depositMemberMax,
+        depositTotalMax,
+        depositMemberMin,
         depositTotal,
         distributing,
         managerCurrent,
         managerFeeAddress,
         managerManagementFeeBasisPoints,
         managerPending,
-        managerPerformanceFeeBasisPoints,
+        managerDistributionShareBasisPoints,
         modifiable,
         numMembersCurrent,
         numMembersMax,
         open,
-        syndicateProfitShareBasisPoints,
+        syndicateDistributionShareBasisPoints,
         transferable,
       } = await this.logicContractInstance.methods
         .getSyndicateValues(syndicateAddress)
@@ -87,23 +87,23 @@ export class SyndicateGetterLogic extends BaseLogicContract {
         syndicateAddress,
         allowlistEnabled,
         dateClose,
-        dateCreation,
+        dateCreated,
         depositERC20Address,
-        depositMaxMember,
-        depositMaxTotal,
-        depositMinMember,
+        depositMemberMax,
+        depositTotalMax,
+        depositMemberMin,
         depositTotal,
         distributing,
         managerCurrent,
         managerFeeAddress,
         managerManagementFeeBasisPoints,
         managerPending,
-        managerPerformanceFeeBasisPoints,
+        managerDistributionShareBasisPoints,
         modifiable,
         numMembersCurrent,
         numMembersMax,
         open,
-        syndicateProfitShareBasisPoints,
+        syndicateDistributionShareBasisPoints,
         transferable,
       };
     } catch (error) {

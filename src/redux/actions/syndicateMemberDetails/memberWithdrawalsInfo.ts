@@ -75,7 +75,7 @@ export const updateMemberWithdrawalDetails = (
       let memberDistributionsWithdrawalsToDate = "0";
       if (syndicate.distributing) {
         const memberDistributionsWithdrawalEvents = await DistributionLogicContract.getDistributionEvents(
-          "memberClaimedDistribution",
+          "DistributionClaimed",
           {
             syndicateAddress,
             memberAddress: account,
@@ -88,12 +88,12 @@ export const updateMemberWithdrawalDetails = (
           let tokenWithdrawalAmounts = new BN("0");
 
           for (let i = 0; i < memberDistributionsWithdrawalEvents.length; i++) {
-            const { amountWithdrawn } = memberDistributionsWithdrawalEvents[
+            const { amount } = memberDistributionsWithdrawalEvents[
               i
             ].returnValues;
 
             tokenWithdrawalAmounts = tokenWithdrawalAmounts.add(
-              new BN(amountWithdrawn),
+              new BN(amount),
             );
           }
           memberDistributionsWithdrawalsToDate = tokenWithdrawalAmounts.toString();
@@ -138,7 +138,7 @@ export const updateMemberWithdrawalDetails = (
       );
       let eligibleWithdrawal = "0";
       try {
-        eligibleWithdrawal = await DistributionLogicContract.calculateEligibleDistributions(
+        eligibleWithdrawal = await DistributionLogicContract.calculateEligibleDistribution(
           totalMemberDeposits,
           totalSyndicateDeposits,
           memberDistributionsWithdrawalsToDate,
