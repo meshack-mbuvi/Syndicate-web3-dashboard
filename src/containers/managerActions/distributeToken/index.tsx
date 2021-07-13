@@ -769,7 +769,16 @@ const DistributeToken = (props: Props) => {
     setMetamaskApprovalError("");
     setSubmittingAllowanceApproval(false);
     setMetamaskDistributionError("");
-    setSuccessfulDistribution(false);
+
+    // update the redux store with latest syndicate details
+    // once distribution is set successfully.
+    if (successfulDistribution) { 
+      dispatch(
+        getSyndicateByAddress({ syndicateAddress, ...syndicateContracts }),
+      );
+      setSuccessfulDistribution(false);
+    }
+
     setShowDistributeToken(false);
   };
 

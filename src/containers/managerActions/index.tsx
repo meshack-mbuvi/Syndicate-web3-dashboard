@@ -119,7 +119,7 @@ const ManagerActions = () => {
   const [finalStateIcon, setFinalStateIcon] = useState("");
 
   const handleCloseFinalStateModal = async () => {
-    setShowFinalState(false);
+    setShowFinalState(false);  
     await dispatch(
       getSyndicateByAddress({ syndicateAddress, ...syndicateContracts }),
     );
@@ -391,29 +391,29 @@ const ManagerActions = () => {
 
       <StateModal show={showConfirmCloseSyndicate}>
         <>
-          <div className="flex flex-col justify-centers m-auto mb-4">
+          <div className="flex flex-col justify-center m-auto mb-4">
             <p className="text-sm text-center mx-8 my-2 font-medium text-center leading-6 text-lg">
               Please confirm that you want to close this syndicate.
             </p>
             <p className="text-sm text-center mx-8 mt-2 opacity-60">
-              If this was a mistake, please click{" "}
-              <strong className="text-blue-cyan font-medium">cancel</strong>{" "}
+              If this was a mistake, please click the{" "}
+              <strong className="text-blue font-medium">cancel</strong>{" "}
               button below.
             </p>
-            <p className="flex text-sm text-red-600 justify-center text-center mx-8 mt-4">
+            <p className="flex text-sm text-red-600 justify-center items-center text-center mx-8 mt-4">
               <img src="/images/danger.svg" className="mx-2" />
               Closing a syndicate is irreversible.
             </p>
             <div className="flex text-sm justify-between text-center mx-8 mt-4">
               <PrimaryButton
-                customClasses="border border-color-gray px-4 py-1 w-full"
+                customClasses="border border-color-gray px-4 py-2 w-full"
                 textColor="text-black"
                 onClick={() => setShowConfirmCloseSyndicate(false)}
               >
                 Cancel
               </PrimaryButton>
               <PrimaryButton
-                customClasses="ml-8 bg-blue-light px-4 py-1 w-full"
+                customClasses="ml-8 bg-blue px-4 py-2 w-full"
                 onClick={() => {
                   setShowConfirmCloseSyndicate(false);
                   closeSyndicate();
