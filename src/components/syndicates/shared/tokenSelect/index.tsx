@@ -6,6 +6,8 @@ import { useSelector, useDispatch } from "react-redux";
 import { setSyndicateDistributionTokens } from "src/redux/actions/syndicateMemberDetails";
 import { updateMemberWithdrawalDetails } from "src/redux/actions/syndicateMemberDetails/memberWithdrawalsInfo";
 import { useRouter } from "next/router";
+import { amplitudeLogger, Flow } from "@/components/amplitude";
+import { CHANGE_DISTRIBUTION_TOKEN } from "@/components/amplitude/eventNames";
 
 const classNames = (...classes) => {
   return classes.filter(Boolean).join(" ");
@@ -102,6 +104,14 @@ export const TokenSelect = () => {
 
     dispatch(setSyndicateDistributionTokens(syndicateDistributionTokensCopy));
     setSelected(selectedDistributionToken);
+
+    // Amplitude logger: Change Distribution Token
+    amplitudeLogger(CHANGE_DISTRIBUTION_TOKEN, {
+      flow: Flow.MBR_DEP,
+      data: {
+        tokenSymbol: selectedDistributionToken.tokenSymbol
+      }
+    });
   };
 
   return (

@@ -34,6 +34,8 @@ export enum Flow {
   MBR_DEP = "MBR_DEP", // member deposit
   MGR_CREATE_SYN = "MGR_CREATE_SYN", // manager create syndicate
   MGR_SET_DIST = "MGR_SET_DIST", //manager set distributions
+  MBR_WITHDRAW_DIST = 'MBR_WITHDRAW_DIST', // member withdraw distribution
+  MBR_WITHDRAW_DEP = 'MBR_WITHDRAW_DEP',  // member withdraw deposit
 }
 
 type EventProperty = {

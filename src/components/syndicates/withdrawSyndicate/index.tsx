@@ -32,6 +32,12 @@ import { SyndicateActionButton } from "../shared/syndicateActionButton";
 import { SyndicateActionLoader } from "../shared/syndicateActionLoader";
 import { TokenSelect } from "../shared/tokenSelect";
 import { UnavailableState } from "../shared/unavailableState";
+import { amplitudeLogger, Flow } from "@/components/amplitude";
+import {
+  CLICK_WITHDRAW_MORE,
+  ERROR_WITHDRAWING,
+  SUCCESSFUL_WITHDRAWAL
+} from "@/components/amplitude/eventNames";
 
 const {
   actionFailedError,
@@ -126,6 +132,7 @@ const WithdrawSyndicate = () => {
     setAllowanceLessThanWithdrawAmount,
   ] = useState<boolean>(false);
   const [depositTokenDecimals, setDepositTokenDecimals] = useState<number>(18);
+  const [loggerFlow, setLoggerFlow] = useState(Flow.MBR_WITHDRAW_DEP);
 
   // DEFINITIONS
   const { syndicateAddress } = router.query;
@@ -212,6 +219,9 @@ const WithdrawSyndicate = () => {
       } else {
         setWithdrawalsAvailable(true);
       }
+
+      // Amplitude logger: setLoggerFlow
+      setLoggerFlow(depositsEnabled ? Flow.MBR_WITHDRAW_DEP : Flow.MBR_WITHDRAW_DIST);
     }
   }, [syndicate]);
 
@@ -483,9 +493,24 @@ const WithdrawSyndicate = () => {
 
       setSubmittingWithdrawal(false);
       setSuccessfulWithdrawal(true);
+
+      // Amplitude logger: Successful Withdrawal
+      amplitudeLogger(SUCCESSFUL_WITHDRAWAL, {
+        flow: loggerFlow,
+        data: {
+          syndicateAddress,
+          withdrawAmount,
+        }
+      });
     } catch (error) {
       const { code } = error;
       handleWithdrawalError(code);
+
+      // Amplitude logger: Error withdrawing
+      amplitudeLogger(ERROR_WITHDRAWING, {
+        flow: loggerFlow,
+        error,
+      });
     }
   };
 
@@ -494,6 +519,12 @@ const WithdrawSyndicate = () => {
     setMetamaskWithdrawError("");
     setSuccessfulWithdrawal(false);
     setMetamaskConfirmPending(false);
+
+    // Amplitude logger: Click Withdraw more widge
+    amplitudeLogger(CLICK_WITHDRAW_MORE, {
+      flow: loggerFlow,
+      description: 'How many users click on Withdraw more after a successful withdrwal'
+    });
   };
 
   /** Method to store updated member details in the redux store
@@ -526,6 +557,12 @@ const WithdrawSyndicate = () => {
       // show error message for failed investment
       setShowErrorMessage(true);
       setErrorMessage(actionFailedError);
+
+      // Amplitude logger: Error withdrawing
+      amplitudeLogger(ERROR_WITHDRAWING, {
+        flow: loggerFlow,
+        error,
+      });
     }
   };
 
