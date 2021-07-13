@@ -6,6 +6,7 @@ import GetClaimedDistributions from "./GetClaimedDistributions";
 import GetDistributions from "./GetDistributions";
 import GradientAvatar from "./GradientAvatar";
 import SyndicateActionButton from "./SyndicateActionButton";
+import { GetFormattedDepositsAmount } from "./GetFormattedValue";
 
 const styles = [
   "lawn-green",
@@ -60,9 +61,7 @@ export const Portfolio = (props: { syndicates }) => {
     {
       Header: "Deposits",
       accessor: function getTotalDeposits(row) {
-        // get token symbol
-        const { depositERC20TokenSymbol, depositTotal } = row;
-        return `${formatNumbers(depositTotal)} ${depositERC20TokenSymbol}`;
+        return <GetFormattedDepositsAmount row={row} />;
       },
       showSort: true,
     },

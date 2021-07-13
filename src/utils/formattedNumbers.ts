@@ -22,27 +22,27 @@ export const floatedNumberWithCommas = (number) => {
 
 /**
  * This method formats a given value to add symbols for thousand(K),
- * million(M), billion(B) and trillion(T).
+ * million(M), billion(B) and trillion(T) etc.
  * @param number
  * @returns
  */
+var SI_SYMBOL = ["", "k", "M", "B", "T", "P", "E"];
+
 export const formatNumbers = (number) => {
-  if (!number) return;
+  // what tier? (determines SI symbol)
+  var tier = (Math.log10(Math.abs(number)) / 3) | 0;
 
-  let formattedNumber = "";
-  if (number > quadrillion) {
-    formattedNumber = `${Math.round(number / quadrillion)} P`;
-  } else if (number > trillion) {
-    formattedNumber = `${Math.round(number / trillion)} T`;
-  } else if (number > billion) {
-    formattedNumber = `${Math.round(number / billion)} B`;
-  } else if (number > million) {
-    formattedNumber = `${Math.round(number / million)} M`;
-  } else if (number > thousand) {
-    formattedNumber = `${Math.round(number / thousand)} K`;
-  } else {
-    formattedNumber = number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-  }
+  // if zero, we don't need a suffix
+  if (tier == 0) return number;
 
-  return formattedNumber;
+  // get suffix and determine scale
+  var suffix = SI_SYMBOL[tier];
+  var scale = Math.pow(10, tier * 3);
+
+  // scale the number
+  var scaled = number / scale;
+
+  // format number and add suffix
+  return scaled.toFixed(1) + suffix;
 };
+
