@@ -33,7 +33,11 @@ export class SyndicateDepositLogic extends BaseLogicContract {
           setMetamaskConfirmPending(false);
           setSubmitting(true);
         });
-    } catch (error) {}
+    } catch (error) {
+      setSubmitting(false);
+      setMetamaskConfirmPending(false);
+      throw error;
+    }
   }
 
   /**
