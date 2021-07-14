@@ -137,6 +137,9 @@ const WithdrawSyndicate = () => {
   const [depositTokenDecimals, setDepositTokenDecimals] = useState<number>(18);
   const [loggerFlow, setLoggerFlow] = useState(Flow.MBR_WITHDRAW_DEP);
 
+  // check whether the connected account is a member
+  const [accountIsMember, setAccountIsMember] = useState<boolean>(true);
+
   // DEFINITIONS
   const { syndicateAddress } = router.query;
   const {
@@ -211,6 +214,11 @@ const WithdrawSyndicate = () => {
 
   // HOOKS
 
+  // check whether the connected account is a member of the syndicate
+  useEffect(() => {
+    setAccountIsMember(parseInt(memberTotalDeposits) > 0);
+  }, [account, memberDepositDetails]);
+
   // check whether the current syndicate is accepting withdrawals
   useEffect(() => {
     if (syndicate) {
@@ -280,7 +288,8 @@ const WithdrawSyndicate = () => {
       // or when the amount is greater than member deposits(members is withdrawing their deposits)
       // or when the member's deposits minus the amount exceeds the minimum member deposit
       const amountGreaterThanMemberDistributions =
-        parseFloat(amount.toString()) > parseFloat(memberAvailableDistributions);
+        parseFloat(amount.toString()) >
+        parseFloat(memberAvailableDistributions);
       const amountGreaterThanMemberDeposits = +amount > +memberTotalDeposits;
       const { depositMemberMin } = syndicate;
       const amountLessThanMinDeposits =
@@ -522,7 +531,7 @@ const WithdrawSyndicate = () => {
     setMetamaskWithdrawError("");
     setSuccessfulWithdrawal(false);
     setMetamaskConfirmPending(false);
-    setAmount(0)
+    setAmount(0);
 
     // Amplitude logger: Click Withdraw more widge
     amplitudeLogger(CLICK_WITHDRAW_MORE, {
@@ -628,7 +637,9 @@ const WithdrawSyndicate = () => {
       <div className="w-full mt-4 sm:mt-0 sticky top-44 mb-10">
         <div
           className={`h-fit-content px-8 pb-4 pt-5 bg-gray-9 ${
-            !account ? "rounded-2xl" : `border-b-0 rounded-t-2xl`
+            !account || !accountIsMember
+              ? "rounded-2xl"
+              : `border-b-0 rounded-t-2xl`
           }`}
         >
           {/* Show is read only text if no provider */}
@@ -776,7 +787,7 @@ const WithdrawSyndicate = () => {
         </div>
 
         {/* This component should be shown when we have details about user deposits */}
-        {account && (
+        {account && accountIsMember && (
           <DetailsCard
             {...{ title: "My Stats", sections, syndicate, loadingLPDetails }}
             customStyles={

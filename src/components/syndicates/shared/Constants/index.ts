@@ -64,7 +64,7 @@ const maxMemberDepositsText =
   "You have reached your maximum allowed deposit for this syndicate.";
 const nonMemberWithdrawalTitleText = "Not a Member.";
 const nonMemberWithdrawalText =
-  "You are not a member of this syndicate since you have not made any deposits yet.";
+  "The connected account does not own any stakes in this syndicate. Please switch to a different account.";
 const amountGreaterThanMemberDistributionsText =
   "Withdrawal amount cannot be greater than available distributions.";
 const withdrawalAmountGreaterThanMemberDeposits =
