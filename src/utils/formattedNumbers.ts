@@ -17,7 +17,11 @@ export const floatedNumberWithCommas = (number) => {
   if (!number) {
     return numberWithCommas(parseFloat("0".toString()).toFixed(2));
   }
-  return numberWithCommas(parseFloat(number.toString()).toFixed(2));
+  // avoid rounding up the number when converting to 2 decimal places
+  const intNum = parseFloat(number);
+  return numberWithCommas(
+    (parseInt((intNum * 100).toString()) / 100).toFixed(2),
+  );
 };
 
 /**

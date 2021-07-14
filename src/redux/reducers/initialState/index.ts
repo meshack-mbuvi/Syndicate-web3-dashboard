@@ -38,7 +38,8 @@ type InitialState = {
   memberWithdrawalDetails: {
     memberDistributionsToDate: string;
     memberDistributionsWithdrawalsToDate: string;
-    memberWithdrawalsToDepositPercentage: string;
+    memberWithdrawalsToDistributionsPercentage: string;
+    memberAvailableDistributions: string;
   };
   syndicateDetailsLoading: boolean;
   syndicateMemberDetailsLoading: boolean;
@@ -95,7 +96,8 @@ export const initialState: InitialState = {
   memberWithdrawalDetails: {
     memberDistributionsToDate: "0",
     memberDistributionsWithdrawalsToDate: "0",
-    memberWithdrawalsToDepositPercentage: "0",
+    memberWithdrawalsToDistributionsPercentage: "0",
+    memberAvailableDistributions: "0"
   },
   syndicateDetailsLoading: false,
   syndicateMemberDetailsLoading: false,

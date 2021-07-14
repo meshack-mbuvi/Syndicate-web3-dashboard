@@ -66,7 +66,7 @@ const nonMemberWithdrawalTitleText = "Not a Member.";
 const nonMemberWithdrawalText =
   "You are not a member of this syndicate since you have not made any deposits yet.";
 const amountGreaterThanMemberDistributionsText =
-  "Withdrawal amount cannot be greater than member distributions to date";
+  "Withdrawal amount cannot be greater than available distributions.";
 const withdrawalAmountGreaterThanMemberDeposits =
   "Withdrawal amount cannot be greater than member deposit";
 const readOnlySyndicateText =
@@ -279,16 +279,16 @@ export const myDepositsToolTip =
   "Total deposits this wallet account has already made to the syndicate";
 
 export const myPercentageOfThisSyndicateToolTip =
-  "Percentage ownership the connected wallet has in this syndicate";
+  "Percentage ownership the member has in this syndicate";
 
 export const myDistributionsToDateToolTip =
-  "All accumulated distributions this wallet address has been awarded to date.";
+  "All accumulated distributions the member has been awarded to date.";
 
 export const myWithDrawalsToDateTooltip =
-  "All accumulated amounts the connected wallet account has withdrawn from this syndicate.";
+  "All accumulated amounts the member has withdrawn from this syndicate.";
 
 export const withdrawalsToDepositPercentageToolTip =
-  "Ratio of total withdrawals to deposits the connected wallet has made to the syndicate";
+  "Percentage of total withdrawals to total distributions the member has received to date.";
 
 export const createdDateToolTip =
   "This is the date this syndicate was created/launched.";

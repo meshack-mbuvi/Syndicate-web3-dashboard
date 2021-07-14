@@ -4,6 +4,7 @@ import { divideIfNotByZero, getWeiAmount } from "@/utils/conversions";
 import { floatedNumberWithCommas } from "@/utils/formattedNumbers";
 import { web3 } from "src/utils/web3Utils";
 import { setMemberDetailsLoading, setMemberWithdrawalDetails } from ".";
+const BN = web3.utils.BN;
 
 interface ISyndicateLPData {
   syndicateAddress: string | string[];
@@ -84,7 +85,6 @@ export const updateMemberWithdrawalDetails = (
         );
 
         if (memberDistributionsWithdrawalEvents.length) {
-          var BN = web3.utils.BN;
           let tokenWithdrawalAmounts = new BN("0");
 
           for (let i = 0; i < memberDistributionsWithdrawalEvents.length; i++) {
@@ -92,29 +92,11 @@ export const updateMemberWithdrawalDetails = (
               i
             ].returnValues;
 
-            tokenWithdrawalAmounts = tokenWithdrawalAmounts.add(
-              new BN(amount),
-            );
+            tokenWithdrawalAmounts = tokenWithdrawalAmounts.add(new BN(amount));
           }
           memberDistributionsWithdrawalsToDate = tokenWithdrawalAmounts.toString();
         }
       }
-
-      // update member's withdrawals to deposits percentage
-      let memberWithdrawalsToDepositPercentage = "0";
-
-      const memberWithdrawals = getWeiAmount(
-        memberDistributionsWithdrawalsToDate,
-        currentDistributionTokenDecimals,
-        false,
-      );
-      const withdrawalsToDate = parseFloat(memberWithdrawals) * 100;
-      const memberTotalDeposits = parseFloat(memberDeposits);
-
-      memberWithdrawalsToDepositPercentage = divideIfNotByZero(
-        withdrawalsToDate,
-        memberTotalDeposits,
-      ).toString();
 
       // update Member's total distributions to date if on the withdrawal page
       // totalDistributions * (deposit/depositTotal)
@@ -148,34 +130,53 @@ export const updateMemberWithdrawalDetails = (
         eligibleWithdrawal = "0";
       }
 
-      let memberDistributionsToDate = "0";
+      let memberAvailableDistributions = "0";
       if (eligibleWithdrawal) {
-        memberDistributionsToDate = getWeiAmount(
+        memberAvailableDistributions = getWeiAmount(
           eligibleWithdrawal,
           currentDistributionTokenDecimals,
           false,
         );
       }
 
-      const memberWithdrawalDetails = {
-        memberDistributionsToDate,
-        memberDistributionsWithdrawalsToDate: getWeiAmount(
-          memberDistributionsWithdrawalsToDate,
-          currentDistributionTokenDecimals,
-          false,
-        ),
-        memberWithdrawalsToDepositPercentage,
-      };
+      // member distributions to date will be the sum of
+      // member available distributions and member withdrawals to date
+      const memberDistributionsToDate = new BN(eligibleWithdrawal)
+        .add(new BN(memberDistributionsWithdrawalsToDate))
+        .toString();
 
-      // format member number details
-      // values should have commas, if they are longer than 3 characters long
-      // and be rounded to two decimal places.
-      Object.keys(memberWithdrawalDetails).map((key) => {
-        memberWithdrawalDetails[key] = floatedNumberWithCommas(
-          memberWithdrawalDetails[key],
-        );
-        return;
-      });
+      // update member's withdrawals to distributions percentage
+      let memberWithdrawalsToDistributionsPercentage = "0";
+      const withdrawalsToDate = new BN(memberDistributionsWithdrawalsToDate)
+        .mul(new BN("100"))
+        .toString();
+
+      memberWithdrawalsToDistributionsPercentage = divideIfNotByZero(
+        withdrawalsToDate,
+        memberDistributionsToDate,
+      ).toString();
+
+      // consolidate values to push to the redux store
+      const memberWithdrawalDetails = {
+        memberDistributionsToDate: floatedNumberWithCommas(
+          getWeiAmount(
+            memberDistributionsToDate,
+            currentDistributionTokenDecimals,
+            false,
+          ),
+        ),
+        memberDistributionsWithdrawalsToDate: floatedNumberWithCommas(
+          getWeiAmount(
+            memberDistributionsWithdrawalsToDate,
+            currentDistributionTokenDecimals,
+            false,
+          ),
+        ),
+        memberAvailableDistributions,
+        memberWithdrawalsToDistributionsPercentage: floatedNumberWithCommas(
+          memberWithdrawalsToDistributionsPercentage,
+        ),
+      };
 
       // dispatch action to update syndicate member details
       dispatch(setMemberWithdrawalDetails({ ...memberWithdrawalDetails }));

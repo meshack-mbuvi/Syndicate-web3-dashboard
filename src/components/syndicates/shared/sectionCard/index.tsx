@@ -28,7 +28,7 @@ export const SectionCard = (props: SectionCardProps) => {
     title = "My Stats",
   } = props;
   const greenSubtext =
-    header === "Total Withdraws / Deposits" ||
+    header === "Total Withdraws / Distributions To Date" ||
     header === "Total Distributions / Deposits";
 
   // show tooltip on the right for 'My Stats' section
@@ -37,7 +37,7 @@ export const SectionCard = (props: SectionCardProps) => {
   return (
     <>
       <div className="invisible visibility-hover absolute">
-        <div className={`relative ${showingMyStats ? "left-56" : "-left-16"}`}>
+        <div className={`relative ${showingMyStats ? "left-84" : "-left-16"}`}>
           {!infoIcon ? null : (
             <InfoIcon
               tooltip={tooltip}

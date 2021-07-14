@@ -38,9 +38,8 @@ import {
   DISMISS_TRANSACTION_REJECTED,
   ERROR_APPROVE_ALLOWANCE,
   ERROR_DEPOSIT,
-  SUCCESSFUL_DEPOSIT
+  SUCCESSFUL_DEPOSIT,
 } from "@/components/amplitude/eventNames";
-
 
 const Web3 = require("web3");
 const web3 = new Web3(
@@ -417,7 +416,7 @@ const DepositSyndicate = () => {
       amplitudeLogger(SUCCESSFUL_DEPOSIT, {
         flow: Flow.MBR_DEP,
         amount,
-      })
+      });
     } catch (error) {
       const { code } = error;
       const errorMessage = getMetamaskError(code, "Deposit");
@@ -428,8 +427,8 @@ const DepositSyndicate = () => {
       amplitudeLogger(ERROR_DEPOSIT, {
         flow: Flow.MBR_DEP,
         amount,
-        error
-      })
+        error,
+      });
     }
 
     // dispatch action to get details about the syndicate
@@ -489,7 +488,7 @@ const DepositSyndicate = () => {
           amplitudeLogger(APPROVE_DEPOSIT_ALLOWANCE, {
             flow: Flow.MBR_DEP,
             amount,
-          })
+          });
         })
         .on("error", (error) => {
           // user clicked reject.
@@ -503,8 +502,8 @@ const DepositSyndicate = () => {
           amplitudeLogger(ERROR_APPROVE_ALLOWANCE, {
             flow: Flow.MBR_DEP,
             amount,
-            error
-          })
+            error,
+          });
         });
     } catch (error) {
       // error occured before wallet prompt.
@@ -520,7 +519,7 @@ const DepositSyndicate = () => {
         flow: Flow.MBR_DEP,
         amount,
         error,
-      })
+      });
     }
   };
 
@@ -718,6 +717,9 @@ const DepositSyndicate = () => {
     setSubmitting(false);
     setSuccessfulDeposit(false);
     setMetamaskConfirmPending(false);
+    if (successfulDeposit) {
+      setAmount(0);
+    }
   };
 
   const logActionLoader = () => {
@@ -725,18 +727,18 @@ const DepositSyndicate = () => {
     if (successfulDeposit) {
       amplitudeLogger(DEPOSIT_MORE, {
         flow: Flow.MBR_DEP,
-        description: 'Member clicked deposit more',
-      })
+        description: "Member clicked deposit more",
+      });
     }
 
     // Amplitude logger: Member clicked "Dismiss" on Transaction Rejected widget.
     if (metamaskApprovalError || metamaskDepositError) {
       amplitudeLogger(DISMISS_TRANSACTION_REJECTED, {
         flow: Flow.MBR_DEP,
-        description: 'Member clicked dismiss after transaction was rejected',
-      })
+        description: "Member clicked dismiss after transaction was rejected",
+      });
     }
-  }
+  };
 
   // INNER COMPONENTS
   // show buttons based on whether the current state is a deposit or approval

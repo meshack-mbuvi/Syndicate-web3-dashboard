@@ -27,13 +27,15 @@ export const setMemberDepositDetails = (data: MemberDepositDetails) => {
 interface MemberWithdrawalDetails {
   memberDistributionsWithdrawalsToDate: string;
   memberDistributionsToDate: string;
-  memberWithdrawalsToDepositPercentage: string;
+  memberWithdrawalsToDistributionsPercentage: string;
+  memberAvailableDistributions: string
 }
 
 /** update member's withdrawal details in the redux store
  * @param {string} memberDistributionsWithdrawalsToDate total withdrawals of a given distribution token by member
  * @param {string} memberDistributionsToDate total distributions of a given token available to the member
- * @param {string} memberWithdrawalsToDepositPercentage percentage of withdrawals to deposits
+ * @param {string} memberWithdrawalsToDistributionsPercentage percentage of withdrawals to distributions to date
+ * @param {string} memberAvailableDistributions distributions available to the member for withdrawals
  *  */
 export const setMemberWithdrawalDetails = (data: MemberWithdrawalDetails) => {
   return {

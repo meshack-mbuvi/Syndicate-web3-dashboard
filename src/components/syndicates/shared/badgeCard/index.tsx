@@ -195,7 +195,7 @@ export const BadgeCard = (props: {
               {depositERC20TokenSymbol}{" "}
             </span>
             {!depositsMaxIsUnlimited ? (
-              <span className="text-gray-400">{`(${depositsPercentage}%)`}</span>
+              <span className="text-gray-400">{`(${depositsPercentage && depositsPercentage.toFixed(2)}%)`}</span>
             ) : null}
           </p>
         </div>

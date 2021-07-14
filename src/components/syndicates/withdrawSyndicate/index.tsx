@@ -36,7 +36,7 @@ import { amplitudeLogger, Flow } from "@/components/amplitude";
 import {
   CLICK_WITHDRAW_MORE,
   ERROR_WITHDRAWING,
-  SUCCESSFUL_WITHDRAWAL
+  SUCCESSFUL_WITHDRAWAL,
 } from "@/components/amplitude/eventNames";
 
 const {
@@ -69,7 +69,10 @@ const {
 
 const WithdrawSyndicate = () => {
   const {
-    tokenDetailsReducer: { distributionTokensAllowanceDetails, depositTokenAllowanceDetails },
+    tokenDetailsReducer: {
+      distributionTokensAllowanceDetails,
+      depositTokenAllowanceDetails,
+    },
     initializeContractsReducer: { syndicateContracts },
     syndicateMemberDetailsReducer: {
       memberDepositDetails,
@@ -142,9 +145,10 @@ const WithdrawSyndicate = () => {
   } = memberDepositDetails;
 
   const {
-    memberWithdrawalsToDepositPercentage,
+    memberWithdrawalsToDistributionsPercentage,
     memberDistributionsToDate,
     memberDistributionsWithdrawalsToDate,
+    memberAvailableDistributions,
   } = memberWithdrawalDetails;
 
   if (syndicateDistributionTokens) {
@@ -183,8 +187,8 @@ const WithdrawSyndicate = () => {
       screen: "withdrawal",
     },
     {
-      header: "Total Withdraws / Deposits",
-      subText: `${memberWithdrawalsToDepositPercentage}%`,
+      header: "Total Withdraws / Distributions To Date",
+      subText: `${memberWithdrawalsToDistributionsPercentage}%`,
       tooltip: withdrawalsToDepositPercentageToolTip,
       screen: "withdrawal",
     },
@@ -221,7 +225,9 @@ const WithdrawSyndicate = () => {
       }
 
       // Amplitude logger: setLoggerFlow
-      setLoggerFlow(depositsEnabled ? Flow.MBR_WITHDRAW_DEP : Flow.MBR_WITHDRAW_DIST);
+      setLoggerFlow(
+        depositsEnabled ? Flow.MBR_WITHDRAW_DEP : Flow.MBR_WITHDRAW_DIST,
+      );
     }
   }, [syndicate]);
 
@@ -272,9 +278,9 @@ const WithdrawSyndicate = () => {
     if (syndicate && memberDepositDetails) {
       // show error when amount is greater than member's available distributions.
       // or when the amount is greater than member deposits(members is withdrawing their deposits)
-      // or when the member's deposits minus the amount exceeds the minimum member deposit.
+      // or when the member's deposits minus the amount exceeds the minimum member deposit
       const amountGreaterThanMemberDistributions =
-        +amount > +memberDistributionsToDate;
+        parseFloat(amount.toString()) > parseFloat(memberAvailableDistributions);
       const amountGreaterThanMemberDeposits = +amount > +memberTotalDeposits;
       const { depositMemberMin } = syndicate;
       const amountLessThanMinDeposits =
@@ -305,10 +311,7 @@ const WithdrawSyndicate = () => {
         setWithdrawalAmountGreaterThanDeposits(false);
         setAmountGreaterThanMemberDistributions(false);
         setAllowanceLessThanWithdrawAmount(false);
-      } else if (
-          +tokenAllowance < +amount &&
-          !syndicate?.distributing
-      ) {
+      } else if (+tokenAllowance < +amount && !syndicate?.distributing) {
         setAllowanceLessThanWithdrawAmount(true);
         setAmountGreaterThanMemberDistributions(false);
         setWithdrawalAmountGreaterThanDeposits(false);
@@ -354,13 +357,13 @@ const WithdrawSyndicate = () => {
 
   // set title and texts of section based on
   // whether this is a withdrawal or a deposit.
-  let totalDistributionsText = `${floatedNumberWithCommas(
-    currentTokenAvailableDistributions,
-  )} ${
-    currentDistributionTokenSymbol ? currentDistributionTokenSymbol : ""
-  } ($${floatedNumberWithCommas(
-    currentTokenAvailableDistributions,
-  )}) distributions available.`;
+  let totalDistributionsText = `${
+    memberAvailableDistributions &&
+    floatedNumberWithCommas(memberAvailableDistributions)
+  } ${currentDistributionTokenSymbol ? currentDistributionTokenSymbol : ""} ($${
+    memberAvailableDistributions &&
+    floatedNumberWithCommas(memberAvailableDistributions)
+  }) distributions available.`;
   if (syndicate?.depositsEnabled) {
     totalDistributionsText = `${memberTotalDeposits} ${
       currentDistributionTokenSymbol ? currentDistributionTokenSymbol : ""
@@ -500,7 +503,7 @@ const WithdrawSyndicate = () => {
         data: {
           syndicateAddress,
           withdrawAmount,
-        }
+        },
       });
     } catch (error) {
       const { code } = error;
@@ -519,11 +522,13 @@ const WithdrawSyndicate = () => {
     setMetamaskWithdrawError("");
     setSuccessfulWithdrawal(false);
     setMetamaskConfirmPending(false);
+    setAmount(0)
 
     // Amplitude logger: Click Withdraw more widge
     amplitudeLogger(CLICK_WITHDRAW_MORE, {
       flow: loggerFlow,
-      description: 'How many users click on Withdraw more after a successful withdrwal'
+      description:
+        "How many users click on Withdraw more after a successful withdrawal",
     });
   };
 
@@ -679,7 +684,7 @@ const WithdrawSyndicate = () => {
               ) : (
                 <>
                   {showSkeletonLoader ? (
-                    <div className="flex justify-between my-1 px-2">
+                    <div className="flex justify-between my-1">
                       <SkeletonLoader
                         width="full"
                         height="8"
