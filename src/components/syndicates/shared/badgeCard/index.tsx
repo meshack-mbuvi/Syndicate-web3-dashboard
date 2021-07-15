@@ -122,7 +122,7 @@ export const BadgeCard = (props: {
               return (
                 <div>
                   <span>
-                    {/* Adding separators token distributions values 
+                    {/* Adding separators token distributions values
                     We'll add this before all but the first index */}
                     {index !== 0 && (
                       <span className="hidden 1.5lg:inline text-gray-400 w-2 h-2 mx-2">
@@ -292,11 +292,7 @@ export const BadgeCard = (props: {
                 </div>
               ) : null}
             </div>
-          ) : (
-            <div className="w-full mr-2">
-              <SkeletonLoader width="full" height="16" />
-            </div>
-          )}
+          ) : null}
         </div>
       </div>
     </div>

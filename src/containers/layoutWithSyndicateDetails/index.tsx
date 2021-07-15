@@ -73,7 +73,7 @@ const LayoutWithSyndicateDetails = ({ children }) => {
     }
   }, [account, router.isReady, syndicate]);
 
-  // Syndicate data should be fetched when router is full set.
+  // Syndicate data should be fetched when router is fully set.
   // GetterLogicContract is used to retrieve syndicate values while
   // DistributionLogicContract is used to get distributions details for the
   // syndicate.

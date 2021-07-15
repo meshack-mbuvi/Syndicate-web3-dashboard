@@ -30,6 +30,7 @@ import {
   profitShareToSyndicateLeadToolTip,
   profitShareToSyndicateProtocolToolTip,
 } from "../shared/Constants";
+import { SkeletonLoader } from "@/components/skeletonLoader";
 
 const SyndicateDetails = (props: {
   accountIsManager: boolean;
@@ -136,6 +137,9 @@ const SyndicateDetails = (props: {
     setShowManagerSetAllowances,
   ] = useState<boolean>(false);
 
+  // state to determine when to show loader
+  const [allowancesLoading, setAllowanceStatus] = useState<boolean>(true);
+
   // get syndicate address from the url
   const { syndicateAddress } = router.query;
 
@@ -203,6 +207,7 @@ const SyndicateDetails = (props: {
     );
     //reset distribution details
     dispatch(storeDistributionTokensDetails([]));
+    setAllowanceStatus(false);
   };
 
   // get events where distribution was set.
@@ -320,6 +325,7 @@ const SyndicateDetails = (props: {
       //reset distribution token fields
       dispatch(storeDepositTokenAllowance([]));
     }
+    setAllowanceStatus(false);
   };
 
   // check whether current distribution/deposit token allowances are enough to cover
@@ -352,6 +358,7 @@ const SyndicateDetails = (props: {
           }
           setCorrectManagerDistributionsAllowance(true);
         }
+        setAllowanceStatus(false);
       }
     }
   }, [
@@ -605,7 +612,7 @@ const SyndicateDetails = (props: {
           <EtherscanLink contractAddress={syndicateAddress} />
         </div>
         <div className="h-fit-content flex w-full justify-start mb-8">
-          {syndicateBadge}
+          {allowancesLoading? <SkeletonLoader width="full" height="28"/> : syndicateBadge}
         </div>
 
         {/* Syndicate details */}
