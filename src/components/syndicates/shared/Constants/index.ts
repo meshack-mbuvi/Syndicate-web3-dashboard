@@ -261,11 +261,11 @@ export const maxMembersToolTip =
 export const expectedAnnualOperatingFeesToolTip =
   "This is a flat fee that will be paid to the manager annually. A standard structure would be a 2% management fee.";
 
-export const profitShareToSyndicateLeadToolTip =
-  "This is the manager's share of the profits from the syndicate investment. A standard structure would be 20%.";
+export const distributionShareToSyndicateLeadToolTip =
+  "This is the distribution share in % that will be sent to the manager on all distributions. A standard structure would be 20%.";
 
-export const profitShareToSyndicateProtocolToolTip =
-  "This is the profit share in % that will be sent to Syndicate Treasury. A minimum profit share of 0.5% is required.";
+export const distributionShareToSyndicateProtocolToolTip =
+  "This is the distribution share in % that will be sent to Syndicate Treasury on all distributions. A minimum distribution share of 0.5% is required.";
 
 export const allowListEnabledToolTip =
   "This should be checked if the Syndicate ONLY allows deposits from allowed addresses, or unchecked if any(accredited) member can deposit";

@@ -48,8 +48,8 @@ import {
   minimumDepositToolTip,
   modifiableToolTip,
   pendingState,
-  profitShareToSyndicateLeadToolTip,
-  profitShareToSyndicateProtocolToolTip,
+  distributionShareToSyndicateLeadToolTip,
+  distributionShareToSyndicateProtocolToolTip,
   syndicateAddressToolTip,
   totalMaximumDepositToolTip,
   transferableToolTip,
@@ -94,8 +94,8 @@ const CreateSyndicate = (props) => {
   const [fullNameError, setFullNameError] = useState("");
   const [emailAddressError, setEmailAddressError] = useState("");
   const [
-    profitShareToSyndProtocolError,
-    setProfitShareToSyndProtocolError,
+    distributionShareToSyndProtocolError,
+    setDistributionShareToSyndProtocolError,
   ] = useState("");
   const [depositERC20AddressError, setDepositERC20AddressError] = useState("");
   const [maxDepositsError, setMaxDepositsError] = useState("");
@@ -107,8 +107,8 @@ const CreateSyndicate = (props) => {
     setExpectedAnnualOperatingFeesError,
   ] = useState("");
   const [
-    profitShareToSyndicateLeadError,
-    setprofitShareToSyndicateLeadError,
+    distributionShareToSyndicateLeadError,
+    setdistributionShareToSyndicateLeadError,
   ] = useState("");
 
   let validated = false;
@@ -128,18 +128,18 @@ const CreateSyndicate = (props) => {
     setExpectedAnnualOperatingFees,
   ] = useState<string>("0");
   const [
-    profitShareToSyndicateLead,
-    setProfitShareToSyndicateLead,
+    distributionShareToSyndicateLead,
+    setDistributionShareToSyndicateLead,
   ] = useState<string>("0");
   const [allowlistEnabled, setAllowlistEnabled] = useState(false);
   const [modifiable, setModifiable] = useState(false);
   const [transferable, setTransferable] = useState(false);
-  const [syndicateProfitSharePercent, setProfitShareToSyndProtocol] = useState(
+  const [syndicateDistributionSharePercent, setDistributionShareToSyndProtocol] = useState(
     "0.5",
   );
   const [
-    otherProfitShareToSyndicateProtocol,
-    setOtherProfitShareToSyndicateProtocol,
+    otherDistributionShareToSyndicateProtocol,
+    setOtherDistributionShareToSyndicateProtocol,
   ] = useState("");
   const [depositTokenDecimals, setDepositTokenDecimals] = useState<number>(18);
 
@@ -162,17 +162,17 @@ const CreateSyndicate = (props) => {
   if (
     fullNameError ||
     emailAddressError ||
-    profitShareToSyndProtocolError ||
+    distributionShareToSyndProtocolError ||
     depositERC20AddressError ||
     maxDepositsError ||
     maxTotalDepositsError ||
     maxMembersError ||
     expectedAnnualOperatingFeesError ||
-    profitShareToSyndicateLeadError ||
-    !profitShareToSyndicateLead ||
+    distributionShareToSyndicateLeadError ||
+    !distributionShareToSyndicateLead ||
     !depositERC20Address ||
     !expectedAnnualOperatingFees ||
-    !syndicateProfitSharePercent
+    !syndicateDistributionSharePercent
   ) {
     validated = false;
   } else {
@@ -363,7 +363,7 @@ const CreateSyndicate = (props) => {
     }
   };
 
-  const profitShareToSyndicateLeadHandler = (event: any) => {
+  const distributionShareToSyndicateLeadHandler = (event: any) => {
     event.preventDefault();
     const { value } = event.target;
 
@@ -376,20 +376,20 @@ const CreateSyndicate = (props) => {
     }
 
     if (message) {
-      setprofitShareToSyndicateLeadError(
-        `Profit share to syndicate lead ${message}`,
+      setdistributionShareToSyndicateLeadError(
+        `Distribution share to syndicate lead ${message}`,
       );
     } else if (invalidPercent) {
-      setprofitShareToSyndicateLeadError(invalidPercent);
+      setdistributionShareToSyndicateLeadError(invalidPercent);
     } else {
-      setprofitShareToSyndicateLeadError("");
+      setdistributionShareToSyndicateLeadError("");
     }
 
-    if (!(parseInt(profitShareToSyndicateLead, 10) > 100)) {
-      setProfitShareToSyndicateLead(value);
+    if (!(parseInt(distributionShareToSyndicateLead, 10) > 100)) {
+      setDistributionShareToSyndicateLead(value);
     } else {
-      setProfitShareToSyndicateLead("100");
-      setprofitShareToSyndicateLeadError("");
+      setDistributionShareToSyndicateLead("100");
+      setdistributionShareToSyndicateLeadError("");
     }
   };
 
@@ -441,20 +441,20 @@ const CreateSyndicate = (props) => {
       return dispatch(showWalletModal());
     }
 
-    // get closeDate and syndicateProtocolProfitSharePercent
-    const syndicateProtocolProfitSharePercent = syndicateProfitSharePercent;
+    // get closeDate and syndicateProtocolDistributionSharePercent
+    const syndicateProtocolDistributionSharePercent = syndicateDistributionSharePercent;
 
     /**
-     * close modal after validating the minimum requirement for syndicateProfitShare
+     * close modal after validating the minimum requirement for syndicateDistributionShare
      */
     closeModal();
 
     /**
-     * Convert maxDeposits, totalMaxDeposits and syndicateProfitSharePercent
+     * Convert maxDeposits, totalMaxDeposits and syndicateDistributionSharePercent
      * to wei since the contract does not take normal javascript numbers
      */
     const syndicateDistributionShareBasisPoints = `${
-      parseFloat(syndicateProtocolProfitSharePercent) * 100
+      parseFloat(syndicateProtocolDistributionSharePercent) * 100
     }`;
 
     /// 2% management fee (200 basis points).
@@ -482,7 +482,7 @@ const CreateSyndicate = (props) => {
     }`;
 
     const managerDistributionShareBasisPoints = `${
-      parseFloat(profitShareToSyndicateLead) * 100
+      parseFloat(distributionShareToSyndicateLead) * 100
     }`;
 
     const dateCloseUnixTime = getUnixTimeFromDate(selectedDate);
@@ -581,14 +581,14 @@ const CreateSyndicate = (props) => {
   const [iconLeftMargin, setIconLeftMargin] = useState(2);
 
   /**
-   * This method retrieves the value of profitShareToSyndicateProtocol from the
+   * This method retrieves the value of distributionShareToSyndicateProtocol from the
    * input, checks whether value is a valid number character or not and updates
    * the error message approproately. We also check whether the value meets the
    * minimum required value of 0.5, otherwise we show an error about the minimum
    * value
    * @param event
    */
-  const profitShareToSyndicateOnchangeHandler = (event) => {
+  const distributionShareToSyndicateOnchangeHandler = (event) => {
     event.preventDefault();
     const { value } = event.target;
     if (value.toString().length > 1 && value.toString().length <= 6) {
@@ -607,26 +607,26 @@ const CreateSyndicate = (props) => {
     }
 
     if (message) {
-      setProfitShareToSyndProtocolError(
-        `Profit share to syndicate protocol ${message}`,
+      setDistributionShareToSyndProtocolError(
+        `Distribution share to syndicate protocol ${message}`,
       );
     } else if (invalidPercent) {
-      setProfitShareToSyndProtocolError(invalidPercent);
+      setDistributionShareToSyndProtocolError(invalidPercent);
     } else if (+value < 0.5) {
-      setProfitShareToSyndProtocolError(
-        "Profit share to syndicate protocol cannot be less than 0.5%",
+      setDistributionShareToSyndProtocolError(
+        "Distribution share to syndicate protocol cannot be less than 0.5%",
       );
     } else {
-      setProfitShareToSyndProtocolError("");
+      setDistributionShareToSyndProtocolError("");
     }
 
-    if (!(parseInt(otherProfitShareToSyndicateProtocol, 10) > 100)) {
-      setOtherProfitShareToSyndicateProtocol(value);
-      setProfitShareToSyndProtocol(value);
+    if (!(parseInt(otherDistributionShareToSyndicateProtocol, 10) > 100)) {
+      setOtherDistributionShareToSyndicateProtocol(value);
+      setDistributionShareToSyndProtocol(value);
     } else {
-      setOtherProfitShareToSyndicateProtocol("100");
-      setProfitShareToSyndProtocol("100");
-      setProfitShareToSyndProtocolError("");
+      setOtherDistributionShareToSyndicateProtocol("100");
+      setDistributionShareToSyndProtocol("100");
+      setDistributionShareToSyndProtocolError("");
       setIconLeftMargin(3.8);
     }
   };
@@ -646,18 +646,18 @@ const CreateSyndicate = (props) => {
   };
 
   /**
-   * The method updates syndicate syndicateProfitSharePercent based on the
+   * The method updates syndicate syndicateDistributionSharePercent based on the
    * button badge clicked. The options are 0.5, 1, and 3 which are pre-configured
    * on the buttons.
    * Since these values are within the minimum value required, we set the
    * corresponding error message to an empty string.
    * @param value a decimal string eg 0.5
    */
-  const updateProfitShareToSyndProtocol = (value) => {
-    setProfitShareToSyndProtocol(value);
+  const updateDistributionShareToSyndProtocol = (value) => {
+    setDistributionShareToSyndProtocol(value);
     // this resets the input field for other values
-    setOtherProfitShareToSyndicateProtocol("");
-    setProfitShareToSyndProtocolError("");
+    setOtherDistributionShareToSyndicateProtocol("");
+    setDistributionShareToSyndProtocolError("");
   };
 
   const handleFormLLC = (event: any) => {
@@ -895,40 +895,40 @@ const CreateSyndicate = (props) => {
 
               <PercentInput
                 {...{
-                  label: "Profit Share to Syndicate Lead:",
-                  error: profitShareToSyndicateLeadError,
-                  tooltip: profitShareToSyndicateLeadToolTip,
+                  label: "Distribution Share to Syndicate Lead:",
+                  error: distributionShareToSyndicateLeadError,
+                  tooltip: distributionShareToSyndicateLeadToolTip,
                 }}
-                onChange={profitShareToSyndicateLeadHandler}
-                name="profitShareToSyndicateLead"
+                onChange={distributionShareToSyndicateLeadHandler}
+                name="distributionShareToSyndicateLead"
                 placeholder=""
-                value={profitShareToSyndicateLead}
+                value={distributionShareToSyndicateLead}
                 required
               />
 
-              {/* Profit Share to Syndicate Protocol: */}
+              {/* Distribution Share to Syndicate Protocol: */}
               <div className="flex flex-row justify-center">
                 <div className="mr-2 w-1/2 mt-1 flex justify-end">
                   <label
-                    htmlFor="profitShareToSyndProtocol"
+                    htmlFor="distributionShareToSyndProtocol"
                     className="block pt-2 text-black text-sm font-medium"
                   >
-                    Profit Share to Syndicate Protocol:
+                    Distribution Share to Syndicate Protocol:
                   </label>
                 </div>
 
-                {/* shows 4 equal grids used to get the input for profit share */}
+                {/* shows 4 equal grids used to get the input for distribution share */}
                 <div className="w-5/6 flex justify-between">
                   <div
                     className={`grid grid-cols-4 w-2/5  overflow-hidden gray-85 flex-grow`}
                   >
                     <button
                       className={`flex justify-center items-center py-2 text-sm rounded-l-md border border-gray-85 border-r-0 focus:outline-none ${
-                        syndicateProfitSharePercent == "0.5"
+                        syndicateDistributionSharePercent == "0.5"
                           ? "bg-blue-100 text-black"
                           : "gray-85"
                       }`}
-                      onClick={() => updateProfitShareToSyndProtocol(0.5)}
+                      onClick={() => updateDistributionShareToSyndProtocol(0.5)}
                       type="button"
                     >
                       0.5%
@@ -936,12 +936,12 @@ const CreateSyndicate = (props) => {
 
                     <button
                       className={`flex justify-center items-center py-2 text-sm border border-gray-85 focus:outline-none ${
-                        syndicateProfitSharePercent == "1"
+                        syndicateDistributionSharePercent == "1"
                           ? "bg-blue-100 text-black"
                           : "gray-85"
                       }`}
                       onClick={() => {
-                        updateProfitShareToSyndProtocol(1);
+                        updateDistributionShareToSyndProtocol(1);
                       }}
                       type="button"
                     >
@@ -950,13 +950,13 @@ const CreateSyndicate = (props) => {
 
                     <button
                       className={`flex justify-center items-center py-2 text-sm border border-gray-85 border-l-0 focus:outline-none ${
-                        syndicateProfitSharePercent == "3"
+                        syndicateDistributionSharePercent == "3"
                           ? "bg-blue-100 text-black"
                           : "gray-85"
                       }`}
                       type="button"
                       onClick={() => {
-                        updateProfitShareToSyndProtocol(3);
+                        updateDistributionShareToSyndProtocol(3);
                       }}
                     >
                       3%
@@ -967,23 +967,23 @@ const CreateSyndicate = (props) => {
                         type="number"
                         className={`flex text-sm rounded-r-md font-whyte w-full border-0 border-gray-85 border-l-0 pr-6`}
                         placeholder="Other %"
-                        name="profitShareToSyndProtocol"
-                        onChange={profitShareToSyndicateOnchangeHandler}
-                        value={otherProfitShareToSyndicateProtocol}
+                        name="distributionShareToSyndProtocol"
+                        onChange={distributionShareToSyndicateOnchangeHandler}
+                        value={otherDistributionShareToSyndicateProtocol}
                         onWheel={(e) => e.currentTarget.blur()}
                       />
                       <span
                         className="flex flex-1 justify-start items-center absolute py-2 text-gray-500"
                         style={{ marginLeft: `${iconLeftMargin}ch` }}
                       >
-                        {otherProfitShareToSyndicateProtocol ? "%" : ""}
+                        {otherDistributionShareToSyndicateProtocol ? "%" : ""}
                       </span>
                     </div>
                   </div>
 
                   {/* icon */}
                   <div className="flex w-12 content-center">
-                    <InfoIcon tooltip={profitShareToSyndicateProtocolToolTip} />
+                    <InfoIcon tooltip={distributionShareToSyndicateProtocolToolTip} />
                   </div>
                 </div>
               </div>
@@ -991,8 +991,8 @@ const CreateSyndicate = (props) => {
                 <div className="mr-2 w-1/2 justify-end"></div>
 
                 <p className="w-5/6 text-red-500 text-xs -mt-2">
-                  {profitShareToSyndProtocolError
-                    ? profitShareToSyndProtocolError
+                  {distributionShareToSyndProtocolError
+                    ? distributionShareToSyndProtocolError
                     : null}
                 </p>
               </div>

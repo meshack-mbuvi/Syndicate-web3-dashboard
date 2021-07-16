@@ -436,15 +436,15 @@ const DepositSyndicate = () => {
     // under the graph section on the UI.
     const {
       depositERC20Address,
-      profitShareToSyndicateLead,
-      profitShareToSyndicateProtocol,
+      distributionShareToSyndicateLead,
+      distributionShareToSyndicateProtocol,
     } = syndicate;
     dispatch(
       setSyndicateDetails(
         syndicateContracts,
         depositERC20Address,
-        profitShareToSyndicateLead,
-        profitShareToSyndicateProtocol,
+        distributionShareToSyndicateLead,
+        distributionShareToSyndicateProtocol,
         syndicate,
         syndicateAddress,
       ),

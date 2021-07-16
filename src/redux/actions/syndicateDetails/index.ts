@@ -28,16 +28,16 @@ const onlyUnique = (value, index, self) => {
 /** action creator to fetch and update syndicate details
  * @param syndicateContracts object containing all logic contracts
  * @param depositERC20ContractAddress the ERC20 token used to make withdrawals/deposits
- * @param profitShareToSyndicateLead profit share to syndicate lead in basis points
- * @param profitShareToSyndicateProtocol profit share to Syndicate Protocol in basis points
+ * @param distributionShareToSyndicateLead distribution share to syndicate lead in basis points
+ * @param distributionShareToSyndicateProtocol distribution share to Syndicate Protocol in basis points
  * @param syndicate details of the syndicate fetched with getSyndicateValues()
  * @param syndicateAddress the address of the syndicate
  */
 export const setSyndicateDetails = (
   syndicateContracts,
   depositERC20ContractAddress,
-  profitShareToSyndicateLead,
-  profitShareToSyndicateProtocol,
+  distributionShareToSyndicateLead,
+  distributionShareToSyndicateProtocol,
   syndicate,
   syndicateAddress,
 ) => async (dispatch) => {
@@ -58,8 +58,8 @@ export const setSyndicateDetails = (
   let totalDeposits = 0;
   let totalDepositors = [];
   let totalWithdrawn = 0;
-  let profitSharedToSyndicateLead = 0;
-  let profitSharedToSyndicateProtocol = 0;
+  let distributionSharedToSyndicateLead = 0;
+  let distributionSharedToSyndicateProtocol = 0;
   let totalOperatingFees = 0;
 
   // add a loading state
@@ -104,7 +104,7 @@ export const setSyndicateDetails = (
       false,
     );
 
-    // get the profit share from the syndicate instance.
+    // get the distribution share from the syndicate instance.
     // returns a Tuple of the amounts (toUser, toSyndicate, toManager) that will
     // be transferred, together adding up to the passed amount.
     try {
@@ -113,15 +113,15 @@ export const setSyndicateDetails = (
         toManager,
       } = await DistributionLogicContract.calculateDistributionShares(
         etherAmountWithdrawn,
-        profitShareToSyndicateProtocol,
-        profitShareToSyndicateLead,
+        distributionShareToSyndicateProtocol,
+        distributionShareToSyndicateLead,
       );
 
       toSyndicate = etherToNumber(toSyndicate);
       toManager = etherToNumber(toManager);
 
-      profitSharedToSyndicateProtocol += toSyndicate;
-      profitSharedToSyndicateLead += toManager;
+      distributionSharedToSyndicateProtocol += toSyndicate;
+      distributionSharedToSyndicateLead += toManager;
     } catch (err) {
       console.log({ err });
     }
@@ -136,8 +136,8 @@ export const setSyndicateDetails = (
     totalDepositors: totalUniqueDepositors.length,
     totalDeposits,
     totalWithdrawn,
-    profitSharedToSyndicateLead,
-    profitSharedToSyndicateProtocol,
+    distributionSharedToSyndicateLead,
+    distributionSharedToSyndicateProtocol,
     totalOperatingFees,
   };
 

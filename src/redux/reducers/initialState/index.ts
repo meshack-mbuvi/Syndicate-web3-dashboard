@@ -25,8 +25,8 @@ type InitialState = {
     totalDepositors: number;
     totalDeposits: number;
     totalWithdrawn: number;
-    profitSharedToSyndicateProtocol: number;
-    profitSharedToSyndicateLead: number;
+    distributionSharedToSyndicateProtocol: number;
+    distributionSharedToSyndicateLead: number;
     totalOperatingFees: number;
   };
   memberDepositDetails: {
@@ -83,8 +83,8 @@ export const initialState: InitialState = {
     totalDepositors: 0,
     totalDeposits: 0,
     totalWithdrawn: 0.0,
-    profitSharedToSyndicateProtocol: 0,
-    profitSharedToSyndicateLead: 0,
+    distributionSharedToSyndicateProtocol: 0,
+    distributionSharedToSyndicateLead: 0,
     totalOperatingFees: 0,
   },
   memberDepositDetails: {

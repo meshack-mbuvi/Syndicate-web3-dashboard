@@ -93,8 +93,8 @@ const DistributeToken = (props: Props) => {
     tokenAllowanceApproved: false,
     tokenDecimals: "18",
     tokenSymbol: "",
-    profitShareToSyndicateLead: "0",
-    profitShareToSyndicateProtocol: "0",
+    distributionShareToSyndicateLead: "0",
+    distributionShareToSyndicateProtocol: "0",
     availableToWithdraw: "0",
     tokenId: 0,
   };
@@ -418,8 +418,8 @@ const DistributeToken = (props: Props) => {
     updateERC20TokenValue("tokenAllowanceApproved", index, false);
     updateERC20TokenValue("tokenDecimals", index, "18");
     updateERC20TokenValue("tokenAllowance", index, "0");
-    updateERC20TokenValue("profitShareToSyndicateProtocol", index, "0");
-    updateERC20TokenValue("profitShareToSyndicateLead", index, "0");
+    updateERC20TokenValue("distributionShareToSyndicateProtocol", index, "0");
+    updateERC20TokenValue("distributionShareToSyndicateLead", index, "0");
     updateERC20TokenValue("availableToWithdraw", index, "0");
     updateERC20TokenValue("tokenSymbol", index, "");
     updateERC20TokenValue("tokenNonFormattedAddress", index, "");
@@ -443,8 +443,8 @@ const DistributeToken = (props: Props) => {
         index,
         `Distribution amount ${message}`,
       );
-      updateERC20TokenValue("profitShareToSyndicateProtocol", index, "0");
-      updateERC20TokenValue("profitShareToSyndicateLead", index, "0");
+      updateERC20TokenValue("distributionShareToSyndicateProtocol", index, "0");
+      updateERC20TokenValue("distributionShareToSyndicateLead", index, "0");
       updateERC20TokenValue("availableToWithdraw", index, "0");
     } else {
       updateERC20TokenValue("tokenAllowanceError", index, "");
@@ -468,31 +468,31 @@ const DistributeToken = (props: Props) => {
         }
       }
 
-      // get profit share values
+      // get distribution share values
       const {
-        profitShareToSyndicateProtocol,
-        profitShareToSyndicateLead,
+        distributionShareToSyndicateProtocol,
+        distributionShareToSyndicateLead,
       } = syndicate;
-      const tokenProfitShareToSyndicateProtocol =
-        (+value * +profitShareToSyndicateProtocol) / 100;
-      const tokenProfitShareToSyndicateLead =
-        (+value * +profitShareToSyndicateLead) / 100;
+      const tokenDistributionShareToSyndicateProtocol =
+        (+value * +distributionShareToSyndicateProtocol) / 100;
+      const tokenDistributionShareToSyndicateLead =
+        (+value * +distributionShareToSyndicateLead) / 100;
 
       // token amount available for withdrawal is the value entered less
-      // profit share to syndicate and to the lead.
+      // distribution share to syndicate and to the lead.
       const tokenWithdrawalAmountAvailable =
         +value -
-        (tokenProfitShareToSyndicateLead + tokenProfitShareToSyndicateProtocol);
+        (tokenDistributionShareToSyndicateLead + tokenDistributionShareToSyndicateProtocol);
 
       updateERC20TokenValue(
-        "profitShareToSyndicateProtocol",
+        "distributionShareToSyndicateProtocol",
         index,
-        tokenProfitShareToSyndicateProtocol.toString(),
+        tokenDistributionShareToSyndicateProtocol.toString(),
       );
       updateERC20TokenValue(
-        "profitShareToSyndicateLead",
+        "distributionShareToSyndicateLead",
         index,
-        tokenProfitShareToSyndicateLead.toString(),
+        tokenDistributionShareToSyndicateLead.toString(),
       );
       updateERC20TokenValue(
         "availableToWithdraw",
@@ -1341,7 +1341,7 @@ const DistributeToken = (props: Props) => {
                         htmlFor="syndicateAddress"
                         className="block text-black text-sm font-medium"
                       >
-                        {`Profit Share to Syndicate Lead (${syndicate?.profitShareToSyndicateLead}%):`}
+                        {`Distribution Share to Syndicate Lead (${syndicate?.distributionShareToSyndicateLead}%):`}
                       </label>
                     </div>
 
@@ -1349,17 +1349,17 @@ const DistributeToken = (props: Props) => {
                       <ul>
                         {ERC20TokenFields.map((token) => {
                           const {
-                            profitShareToSyndicateLead,
+                            distributionShareToSyndicateLead,
                             tokenSymbol,
                           } = token;
                           return (
                             <>
-                              {+profitShareToSyndicateLead >= 0 &&
+                              {+distributionShareToSyndicateLead >= 0 &&
                               tokenSymbol ? (
                                 <li>
                                   <p className="text-sm font-normal leading-5 text-black px-4">
                                     {floatedNumberWithCommas(
-                                      profitShareToSyndicateLead,
+                                      distributionShareToSyndicateLead,
                                     )}{" "}
                                     {tokenSymbol}
                                   </p>
@@ -1382,7 +1382,7 @@ const DistributeToken = (props: Props) => {
                         htmlFor="syndicateAddress"
                         className="block text-black text-sm font-medium"
                       >
-                        {`Profit Share to Syndicate Protocol (${syndicate?.profitShareToSyndicateProtocol}%):`}
+                        {`Distribution Share to Syndicate Protocol (${syndicate?.distributionShareToSyndicateProtocol}%):`}
                       </label>
                     </div>
 
@@ -1391,17 +1391,17 @@ const DistributeToken = (props: Props) => {
                       <ul>
                         {ERC20TokenFields.map((token) => {
                           const {
-                            profitShareToSyndicateProtocol,
+                            distributionShareToSyndicateProtocol,
                             tokenSymbol,
                           } = token;
                           return (
                             <>
                               {tokenSymbol &&
-                              +profitShareToSyndicateProtocol >= 0 ? (
+                              +distributionShareToSyndicateProtocol >= 0 ? (
                                 <li>
                                   <p className="text-sm font-normal leading-5 text-black px-4">
                                     {floatedNumberWithCommas(
-                                      profitShareToSyndicateProtocol,
+                                      distributionShareToSyndicateProtocol,
                                     )}{" "}
                                     {tokenSymbol}
                                   </p>

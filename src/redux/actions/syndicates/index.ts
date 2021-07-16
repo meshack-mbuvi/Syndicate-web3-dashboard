@@ -279,11 +279,11 @@ export const processSyndicateDetails = (
    */
   const createdDate = formatDate(new Date(parseInt(dateCreated) * 1000));
 
-  const profitShareToSyndicateProtocol = basisPointsToPercentage(
+  const distributionShareToSyndicateProtocol = basisPointsToPercentage(
     syndicateDistributionShareBasisPoints,
   );
 
-  const profitShareToSyndicateLead = basisPointsToPercentage(
+  const distributionShareToSyndicateLead = basisPointsToPercentage(
     managerDistributionShareBasisPoints,
   );
 
@@ -309,8 +309,8 @@ export const processSyndicateDetails = (
     depositMemberMin: getWeiAmount(depositMemberMin, tokenDecimals, false),
     depositMemberMax: getWeiAmount(depositMemberMax, tokenDecimals, false),
     depositTotalMax: getWeiAmount(depositTotalMax, tokenDecimals, false),
-    profitShareToSyndicateProtocol,
-    profitShareToSyndicateLead,
+    distributionShareToSyndicateProtocol,
+    distributionShareToSyndicateLead,
     depositTotal: getWeiAmount(depositTotal, tokenDecimals, false),
     closeDate,
     createdDate,
@@ -326,7 +326,7 @@ export const processSyndicateDetails = (
     numMembersCurrent,
     syndicateDistributionShareBasisPoints,
     distributing,
-    managerDistributionShareBasisPoints: profitShareToSyndicateLead,
+    managerDistributionShareBasisPoints: distributionShareToSyndicateLead,
   };
 };
 

@@ -6,8 +6,8 @@ export type Syndicate = {
   depositMemberMin: string;
   depositMemberMax: string;
   depositTotalMax: string;
-  profitShareToSyndicateProtocol: number;
-  profitShareToSyndicateLead: number;
+  distributionShareToSyndicateProtocol: number;
+  distributionShareToSyndicateLead: number;
   depositTotal: string;
   closeDate: string;
   createdDate: string;

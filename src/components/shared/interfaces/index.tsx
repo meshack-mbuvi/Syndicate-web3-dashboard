@@ -22,8 +22,8 @@ export interface syndicateInterface {
   syndicateDistributionShareBasisPoints: string;
   version: string;
   tokenDecimals?: number;
-  profitShareToSyndicateProtocol?: number;
-  profitShareToSyndicateLead?: string | number;
+  distributionShareToSyndicateProtocol?: number;
+  distributionShareToSyndicateLead?: string | number;
   active?: boolean;
   depositERC20TokenSymbol: string;
 }

@@ -27,8 +27,8 @@ import {
   depositRangeToolTip,
   depositTokenToolTip,
   expectedAnnualOperatingFeesToolTip,
-  profitShareToSyndicateLeadToolTip,
-  profitShareToSyndicateProtocolToolTip,
+  distributionShareToSyndicateLeadToolTip,
+  distributionShareToSyndicateProtocolToolTip,
 } from "../shared/Constants";
 import { SkeletonLoader } from "@/components/skeletonLoader";
 
@@ -87,13 +87,13 @@ const SyndicateDetails = (props: {
       isEditable: false,
     },
     {
-      header: "Profit Share to Syndicate Lead",
+      header: "Distribution Share to Syndicate Lead",
       subText: "",
       tooltip: "",
       isEditable: false,
     },
     {
-      header: "Profit Share to Protocol",
+      header: "Distribution Share to Protocol",
       subText: "",
       tooltip: "",
       isEditable: false,
@@ -406,8 +406,8 @@ const SyndicateDetails = (props: {
       let {
         closeDate,
         createdDate,
-        profitShareToSyndicateProtocol,
-        profitShareToSyndicateLead,
+        distributionShareToSyndicateProtocol,
+        distributionShareToSyndicateLead,
         managerManagementFeeBasisPoints,
         depositMemberMax,
         depositMemberMin,
@@ -446,14 +446,14 @@ const SyndicateDetails = (props: {
           tooltip: expectedAnnualOperatingFeesToolTip,
         },
         {
-          header: "Profit Share to Syndicate Lead",
-          subText: `${profitShareToSyndicateLead}%`,
-          tooltip: profitShareToSyndicateLeadToolTip,
+          header: "Distribution Share to Syndicate Lead",
+          subText: `${distributionShareToSyndicateLead}%`,
+          tooltip: distributionShareToSyndicateLeadToolTip,
         },
         {
-          header: "Profit Share to Protocol",
-          subText: `${profitShareToSyndicateProtocol}%`,
-          tooltip: profitShareToSyndicateProtocolToolTip,
+          header: "Distribution Share to Protocol",
+          subText: `${distributionShareToSyndicateProtocol}%`,
+          tooltip: distributionShareToSyndicateProtocolToolTip,
         },
       ]);
     }
@@ -492,16 +492,16 @@ const SyndicateDetails = (props: {
       // need them.
       const {
         depositERC20Address,
-        profitShareToSyndicateLead,
-        profitShareToSyndicateProtocol,
+        distributionShareToSyndicateLead,
+        distributionShareToSyndicateProtocol,
       } = syndicate;
 
       dispatch(
         setSyndicateDetails(
           syndicateContracts,
           depositERC20Address,
-          profitShareToSyndicateLead,
-          profitShareToSyndicateProtocol,
+          distributionShareToSyndicateLead,
+          distributionShareToSyndicateProtocol,
           syndicate,
           syndicateAddress,
         ),

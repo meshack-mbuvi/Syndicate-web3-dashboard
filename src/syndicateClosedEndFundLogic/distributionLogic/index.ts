@@ -39,7 +39,7 @@ export class SyndicateDistributionLogic extends BaseLogicContract {
   async calculateDistributionShares(
     amount: string,
     syndicateDistributionShareBasisPoints: string | number,
-    managerProfitShareBasisPoints: string | number,
+    managerDistributionShareBasisPoints: string | number,
   ): Promise<{
     toMembers: string;
     toSyndicate: string;
@@ -48,7 +48,7 @@ export class SyndicateDistributionLogic extends BaseLogicContract {
     if (
       !amount.trim() ||
       !syndicateDistributionShareBasisPoints ||
-      !managerProfitShareBasisPoints
+      !managerDistributionShareBasisPoints
     )
       return {
         toMembers: "0",
@@ -57,18 +57,18 @@ export class SyndicateDistributionLogic extends BaseLogicContract {
       };
 
     try {
-      const profitShare = await this.logicContractInstance.methods
+      const distributionShare = await this.logicContractInstance.methods
         .calculateDistributionShares(
           amount,
           syndicateDistributionShareBasisPoints,
-          managerProfitShareBasisPoints,
+          managerDistributionShareBasisPoints,
         )
         .call();
 
       return {
-        toMembers: profitShare[0],
-        toSyndicate: profitShare[1],
-        toManager: profitShare[2],
+        toMembers: distributionShare[0],
+        toSyndicate: distributionShare[1],
+        toManager: distributionShare[2],
       };
     } catch (error) {
       return {
@@ -166,7 +166,7 @@ export class SyndicateDistributionLogic extends BaseLogicContract {
   }
 
   /**
-   * Retrieves profit share for a given syndicate.
+   * Retrieves distribution share for a given syndicate.
    *
    * @param totalMemberDeposits
    * @param totalSyndicateDeposits
