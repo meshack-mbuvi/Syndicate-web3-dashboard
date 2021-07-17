@@ -39,7 +39,7 @@ const PortfolioAndDiscover = () => {
     if (syndicateContracts?.GetterLogicContract) {
       dispatch(getSyndicates({ ...web3, ...syndicateContracts }));
     }
-  }, [syndicateContracts?.GetterLogicContract, account]);
+  }, [account]);
 
   // Assume by default this user has an open syndicate
   const [managerWithOpenSyndicate, setManagerWithOpenSyndicate] = useState(
