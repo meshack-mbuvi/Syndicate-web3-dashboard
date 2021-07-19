@@ -4,12 +4,13 @@ interface ModalProps {
   title?: string;
   children: JSX.Element;
   show: boolean;
-  closeModal: Function;
+  closeModal: () => void;
   type?: string;
   customWidth?: string;
   loading?: boolean | string;
   titleFontSize?: string;
   showCloseButton?: boolean;
+  overflow?: string;
 }
 
 /**
@@ -26,17 +27,22 @@ interface ModalProps {
  *      - NOTE: A success modal has syndicate logos in the background
  * @returns an html node in a form of a modal
  */
-export const Modal = (props: ModalProps) => {
+export const Modal = (props: ModalProps): JSX.Element => {
   const {
     title,
     children,
     show,
     closeModal,
-    customWidth = "w-2/5",
+    customWidth = " w-2/5",
     loading = false,
     titleFontSize,
     showCloseButton = true,
+    overflow = "overflow-hidden",
   } = props;
+
+  const handleCloseModal = () => {
+    closeModal();
+  };
 
   return (
     <>
@@ -45,24 +51,28 @@ export const Modal = (props: ModalProps) => {
           <div className="flex items-center justify-center text-black min-h-screen sm:pt-4 sm:px-4 pb-20 text-center sm:block sm:p-0">
             <div
               className="fixed inset-0 transition-opacity"
-              aria-hidden="true">
+              aria-hidden="true"
+            >
               <div
                 className="absolute inset-0  bg-gray-9 opacity-80"
-                onClick={() => closeModal()}></div>
+                onClick={handleCloseModal}
+              ></div>
             </div>
 
             <div
-              className={`inline-block align-bottom bg-white rounded-lg my-24 mx-4 sm:mx-0 sm:my-28 sm:p-6 text-left overflow-hidden shadow-xl transform transition-all max-w-868 ${customWidth}`}
+              className={`inline-block align-bottom bg-white rounded-lg my-24 mx-4 sm:mx-0 sm:my-28 sm:p-6 text-left shadow-xl transform transition-all max-w-868 ${customWidth} ${overflow}`}
               role="dialog"
               aria-modal="true"
-              aria-labelledby="modal-headline">
+              aria-labelledby="modal-headline"
+            >
               <div className="hidden sm:block absolute p-4 top-0 right-0">
                 {/* close button at the right top of the modal */}
                 {showCloseButton ? (
                   <button
                     type="button"
                     className="bg-white rounded-md text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue"
-                    onClick={() => closeModal()}>
+                    onClick={() => closeModal()}
+                  >
                     <span className="sr-only">Close</span>
                     <img src="/images/close.svg" className="p-2 opacity-50" />
                   </button>
@@ -73,13 +83,14 @@ export const Modal = (props: ModalProps) => {
                 <div
                   className={`modal-header mb-6 text-black font-medium text-center leading-8  mt-6 ${
                     titleFontSize ? `text-modalTitle` : `text-modalSubTitle`
-                  }`}>
+                  }`}
+                >
                   {title}
                 </div>
               )}
               {/* end of modal title */}
 
-              <div className="mx-4">{children}</div>
+              <div className="mx-4 ">{children}</div>
             </div>
           </div>
         </div>

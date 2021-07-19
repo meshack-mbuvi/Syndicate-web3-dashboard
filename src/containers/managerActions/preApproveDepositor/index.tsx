@@ -27,7 +27,7 @@ import {
 
 interface Props {
   showPreApproveDepositor: boolean;
-  setShowPreApproveDepositor: Function;
+  setShowPreApproveDepositor;
 }
 
 /**
@@ -36,7 +36,7 @@ interface Props {
  * @returns
  */
 
-const PreApproveDepositor = (props: Props) => {
+const PreApproveDepositor = (props: Props): JSX.Element => {
   const { showPreApproveDepositor, setShowPreApproveDepositor } = props;
 
   const {
@@ -139,19 +139,13 @@ const PreApproveDepositor = (props: Props) => {
    */
   const checkPreExistingApprovedAddress = async (memberAddress: string) => {
     try {
-      /**
-       * Get all events emitted when setting allowAddress for this syndicate.
-       */
-      const allowlistEvents = await syndicateContracts.AllowlistLogicContract.getAllowlistEvents(
-        "AddressAllowed",
-        {
-          memberAddress,
-          syndicateAddress,
-        },
+      const {
+        memberAddressAllowed,
+      } = await syndicateContracts.GetterLogicContract.getMemberInfo(
+        syndicateAddress,
+        memberAddress,
       );
-
-      if (allowlistEvents && allowlistEvents.length) return true;
-      return false;
+      return memberAddressAllowed;
     } catch (err) {
       return false;
     }
@@ -172,7 +166,7 @@ const PreApproveDepositor = (props: Props) => {
       setShowMemberAddressError(true);
       return;
     }
-    
+
     /**
      * If we are not connected and the form modal is open, user can trigger
      * creation of Syndicate. We therefore catch this here and request for
@@ -192,7 +186,7 @@ const PreApproveDepositor = (props: Props) => {
       const lastElement = splitArr[splitArr.length - 1];
 
       // create new copy of split array
-      let newSplitArr = [...splitArr];
+      const newSplitArr = [...splitArr];
 
       // check if empty string
       if (!lastElement) {
@@ -224,7 +218,7 @@ const PreApproveDepositor = (props: Props) => {
     const lastElement = arr[arr.length - 1];
 
     // create new copy of split array
-    let newSplitArr = [...arr];
+    const newSplitArr = [...arr];
 
     // check if empty string
     if (!lastElement) {

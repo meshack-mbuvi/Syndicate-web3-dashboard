@@ -1,13 +1,13 @@
+import { amplitudeLogger, Flow } from "@/components/amplitude";
+import { CHANGE_DISTRIBUTION_TOKEN } from "@/components/amplitude/eventNames";
 import { RootState } from "@/redux/store";
 import { Listbox, Transition } from "@headlessui/react";
 import { CheckIcon, SelectorIcon } from "@heroicons/react/solid";
+import { useRouter } from "next/router";
 import React, { Fragment, useEffect, useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { setSyndicateDistributionTokens } from "src/redux/actions/syndicateMemberDetails";
 import { updateMemberWithdrawalDetails } from "src/redux/actions/syndicateMemberDetails/memberWithdrawalsInfo";
-import { useRouter } from "next/router";
-import { amplitudeLogger, Flow } from "@/components/amplitude";
-import { CHANGE_DISTRIBUTION_TOKEN } from "@/components/amplitude/eventNames";
 
 const classNames = (...classes) => {
   return classes.filter(Boolean).join(" ");
@@ -51,7 +51,12 @@ export const TokenSelect = () => {
    */
   useEffect(() => {
     if (selected) {
-      const { tokenDistributions, tokenAddress, tokenDecimals } = selected;
+      const {
+        tokenDistributions,
+        tokenAddress,
+        tokenDecimals,
+        tokenSymbol,
+      } = selected;
 
       // not checking if these values are defined before dispatching
       // actions will cause the component to reset them when unmounted.
@@ -65,7 +70,8 @@ export const TokenSelect = () => {
         updateMemberDistributionDetails(
           currentTokenAvailableDistributions,
           currentDistributionTokenDecimals,
-          currentDistributionTokenAddress
+          currentDistributionTokenAddress,
+          tokenSymbol,
         );
       }
     }
@@ -75,15 +81,22 @@ export const TokenSelect = () => {
   const updateMemberDistributionDetails = (
     currentTokenAvailableDistributions: string,
     currentDistributionTokenDecimals: number,
-    currentDistributionTokenAddress: string
+    currentDistributionTokenAddress: string,
+    tokenSymbol: string,
   ) => {
     dispatch(
       updateMemberWithdrawalDetails({
         syndicateAddress,
-        currentTokenAvailableDistributions,
-        currentDistributionTokenDecimals,
-        currentDistributionTokenAddress,
-      })
+        distributionTokens: [
+          {
+            tokenAddress: currentDistributionTokenAddress,
+            tokenDecimals: currentDistributionTokenDecimals.toString(),
+            tokenDistributions: currentTokenAvailableDistributions,
+            tokenSymbol: tokenSymbol,
+          },
+        ],
+        memberAddresses: [],
+      }),
     );
   };
 
@@ -109,8 +122,8 @@ export const TokenSelect = () => {
     amplitudeLogger(CHANGE_DISTRIBUTION_TOKEN, {
       flow: Flow.MBR_DEP,
       data: {
-        tokenSymbol: selectedDistributionToken.tokenSymbol
-      }
+        tokenSymbol: selectedDistributionToken.tokenSymbol,
+      },
     });
   };
 
@@ -151,7 +164,7 @@ export const TokenSelect = () => {
                       className={({ active }) =>
                         classNames(
                           active ? "text-white bg-blue" : "text-gray-900",
-                          "cursor-default select-none relative py-2 pl-3 pr-9"
+                          "cursor-default select-none relative py-2 pl-3 pr-9",
                         )
                       }
                       value={token}
@@ -162,7 +175,7 @@ export const TokenSelect = () => {
                             <span
                               className={classNames(
                                 selected ? "font-semibold" : "font-normal",
-                                "ml-3 block truncate"
+                                "ml-3 block truncate",
                               )}
                             >
                               {token.tokenSymbol}
@@ -173,7 +186,7 @@ export const TokenSelect = () => {
                             <span
                               className={classNames(
                                 active ? "text-white" : "text-blue",
-                                "absolute inset-y-0 right-0 flex items-center pr-4"
+                                "absolute inset-y-0 right-0 flex items-center pr-4",
                               )}
                             >
                               <CheckIcon

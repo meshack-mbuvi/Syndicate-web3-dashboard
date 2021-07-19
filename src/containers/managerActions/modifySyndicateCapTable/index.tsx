@@ -14,6 +14,10 @@ import {
 import { getMetamaskError } from "@/helpers";
 import { showWalletModal } from "@/redux/actions";
 import {
+  setSelectedMemberAddress,
+  setShowModifyCapTable,
+} from "@/redux/actions/manageActions";
+import {
   getSyndicateByAddress,
   getTokenDecimals,
 } from "@/redux/actions/syndicates";
@@ -26,19 +30,13 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Button from "src/components/buttons";
 
-interface Props {
-  showModifyCapTable: boolean;
-  setShowModifyCapTable: Function;
-}
-
 /**
  * This component displays a form with input fields used to modify a syndicate
  * cap table.
  * @param props
  * @returns
  */
-const ModifySyndicateCapTable = (props: Props) => {
-  const { showModifyCapTable, setShowModifyCapTable } = props;
+const ModifySyndicateCapTable = (): JSX.Element => {
   const {
     currentDepositAmountTooltip,
     newDepositAmountTooltip,
@@ -49,6 +47,9 @@ const ModifySyndicateCapTable = (props: Props) => {
     initializeContractsReducer: { syndicateContracts },
     web3Reducer: {
       web3: { account, web3 },
+    },
+    manageActionsReducer: {
+      manageActions: { modifyCapTable, memberAddress },
     },
   } = useSelector((state: RootState) => state);
 
@@ -65,7 +66,6 @@ const ModifySyndicateCapTable = (props: Props) => {
 
   const { syndicateAddress } = router.query;
 
-  const [memberAddress, setDepositorAddress] = useState("");
   const [memberAddressError, setDepositAddressError] = useState("");
 
   const [amount, setAmount] = useState<string | number>(0);
@@ -184,7 +184,7 @@ const ModifySyndicateCapTable = (props: Props) => {
    */
   const handleDepositAddressChange = (event) => {
     const { value } = event.target;
-    setDepositorAddress(value);
+    dispatch(setSelectedMemberAddress(value));
 
     if (!value.trim()) {
       setDepositAddressError("Deposit address is required");
@@ -319,7 +319,7 @@ const ModifySyndicateCapTable = (props: Props) => {
 
   const handleCloseFinalStateModal = async () => {
     setShowFinalState(false);
-    setShowModifyCapTable(false);
+    dispatch(setShowModifyCapTable(false));
 
     await dispatch(
       getSyndicateByAddress({ syndicateAddress, ...syndicateContracts }),
@@ -331,8 +331,8 @@ const ModifySyndicateCapTable = (props: Props) => {
       <Modal
         {...{
           title: "Modify Syndicate Cap Table",
-          show: showModifyCapTable,
-          closeModal: () => setShowModifyCapTable(false),
+          show: modifyCapTable,
+          closeModal: () => dispatch(setShowModifyCapTable(false)),
           customWidth: "md:w-2/3 w-full",
         }}
       >

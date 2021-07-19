@@ -44,7 +44,7 @@ const Header = ({ backLink }: props) => {
         {/* logo */}
         <div className="flex-1 space-x-1 mx-auto w-fit-content flex items-center justify-center">
           <Link href="/">
-            <a>
+            <a href="/">
               <img src="/images/logo.svg" alt="Syndicate Logo" />
             </a>
           </Link>

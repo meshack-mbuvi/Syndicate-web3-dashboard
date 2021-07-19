@@ -9,6 +9,8 @@ module.exports = {
       padding: ["last"],
       backgroundColor: ["active"],
       backgroundOpacity: ["active"],
+      borderRadius: ["first", "last"],
+      borderWidth: ["first", "last"],
     },
   },
   plugins: [

@@ -26,11 +26,10 @@ import {
   createdDateToolTip,
   depositRangeToolTip,
   depositTokenToolTip,
-  expectedAnnualOperatingFeesToolTip,
   distributionShareToSyndicateLeadToolTip,
   distributionShareToSyndicateProtocolToolTip,
+  expectedAnnualOperatingFeesToolTip,
 } from "../shared/Constants";
-import { SkeletonLoader } from "@/components/skeletonLoader";
 
 const SyndicateDetails = (props: {
   accountIsManager: boolean;
@@ -137,9 +136,6 @@ const SyndicateDetails = (props: {
     setShowManagerSetAllowances,
   ] = useState<boolean>(false);
 
-  // state to determine when to show loader
-  const [allowancesLoading, setAllowanceStatus] = useState<boolean>(true);
-
   // get syndicate address from the url
   const { syndicateAddress } = router.query;
 
@@ -207,7 +203,6 @@ const SyndicateDetails = (props: {
     );
     //reset distribution details
     dispatch(storeDistributionTokensDetails([]));
-    setAllowanceStatus(false);
   };
 
   // get events where distribution was set.
@@ -224,9 +219,9 @@ const SyndicateDetails = (props: {
 
     if (distributionEvents.length > 0) {
       // get all distributionERC20 tokens
-      let distributionERC20s = [];
-      let allowanceAndDistributionDetails = [];
-      let syndicateDistributionTokensArray = [];
+      const distributionERC20s = [];
+      const allowanceAndDistributionDetails = [];
+      const syndicateDistributionTokensArray = [];
 
       for (let i = 0; i < distributionEvents.length; i++) {
         const { distributionERC20Address } = distributionEvents[i].returnValues;
@@ -244,8 +239,9 @@ const SyndicateDetails = (props: {
         const mappedTokenAddress = Object.keys(TokenMappings).find(
           (key) => key.toLowerCase() == tokenAddress.toLowerCase(),
         );
+        let tokenSymbol;
         if (mappedTokenAddress) {
-          var tokenSymbol = TokenMappings[mappedTokenAddress];
+          tokenSymbol = TokenMappings[mappedTokenAddress];
         }
 
         // get allowance set for token by the manager
@@ -305,9 +301,9 @@ const SyndicateDetails = (props: {
       // the parent component is refreshed.
       if (syndicateDistributionTokens) {
         for (let i = 0; i < syndicateDistributionTokensArray.length; i++) {
-          let currentToken = syndicateDistributionTokensArray[i];
+          const currentToken = syndicateDistributionTokensArray[i];
           for (let j = 0; j < syndicateDistributionTokens.length; j++) {
-            let currentStoredToken = syndicateDistributionTokens[j];
+            const currentStoredToken = syndicateDistributionTokens[j];
             if (
               currentToken.tokenAddress === currentStoredToken.tokenAddress &&
               currentStoredToken.selected
@@ -325,7 +321,6 @@ const SyndicateDetails = (props: {
       //reset distribution token fields
       dispatch(storeDepositTokenAllowance([]));
     }
-    setAllowanceStatus(false);
   };
 
   // check whether current distribution/deposit token allowances are enough to cover
@@ -358,7 +353,6 @@ const SyndicateDetails = (props: {
           }
           setCorrectManagerDistributionsAllowance(true);
         }
-        setAllowanceStatus(false);
       }
     }
   }, [
@@ -403,7 +397,7 @@ const SyndicateDetails = (props: {
 
   useEffect(() => {
     if (syndicate) {
-      let {
+      const {
         closeDate,
         createdDate,
         distributionShareToSyndicateProtocol,
@@ -546,7 +540,7 @@ const SyndicateDetails = (props: {
 
   // syndicate badge.
   // display relevant badge states based on the current status of the syndicate.
-  let syndicateBadge = (
+  const syndicateBadge = (
     <BadgeCard
       {...{
         accountIsManager,
@@ -598,10 +592,13 @@ const SyndicateDetails = (props: {
               {showCopyState ? (
                 <span className="absolute text-xs -top-5">copied</span>
               ) : null}
-              <img
+              <input
+                type="image"
                 src="/images/copy-clipboard.svg"
                 className="cursor-pointer h-4 mx-auto"
                 onClick={updateAddresCopyState}
+                onKeyDown={updateAddresCopyState}
+                alt=""
               />
             </div>
           </CopyToClipboard>
@@ -612,7 +609,7 @@ const SyndicateDetails = (props: {
           <EtherscanLink contractAddress={syndicateAddress} />
         </div>
         <div className="h-fit-content flex w-full justify-start mb-8">
-          {allowancesLoading? <SkeletonLoader width="full" height="28"/> : syndicateBadge}
+          {syndicateBadge}
         </div>
 
         {/* Syndicate details */}

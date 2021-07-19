@@ -36,10 +36,13 @@ type InitialState = {
     memberMaxDepositReached: boolean;
   };
   memberWithdrawalDetails: {
-    memberDistributionsToDate: string;
-    memberDistributionsWithdrawalsToDate: string;
-    memberWithdrawalsToDistributionsPercentage: string;
-    memberAvailableDistributions: string;
+    [address: string]: {
+      [tokenSymbol: string]: {
+        memberDistributionsToDate: string;
+        memberDistributionsWithdrawalsToDate: string;
+        memberWithdrawalsToDepositPercentage: string;
+      };
+    };
   };
   syndicateDetailsLoading: boolean;
   syndicateMemberDetailsLoading: boolean;
@@ -48,7 +51,19 @@ type InitialState = {
   oneSyndicatePerAccount: boolean;
   syndicateDistributionTokens: any;
   syndicateContracts: {
-    ManagerLogicContract: any;
+    ManagerLogicContract: unknown;
+  };
+  syndicateManageMembers: {
+    syndicateMembers: [];
+    loading: boolean;
+  };
+  manageActions: {
+    modifyMemberDistribution: boolean;
+    modifyCapTable: boolean;
+    rejectMemberAddressOrDeposit: boolean;
+    showDepositOnly: boolean;
+    showAddressOnly: boolean;
+    memberAddress: string;
   };
 };
 
@@ -93,12 +108,7 @@ export const initialState: InitialState = {
     memberAddressAllowed: true,
     memberMaxDepositReached: false,
   },
-  memberWithdrawalDetails: {
-    memberDistributionsToDate: "0",
-    memberDistributionsWithdrawalsToDate: "0",
-    memberWithdrawalsToDistributionsPercentage: "0",
-    memberAvailableDistributions: "0"
-  },
+  memberWithdrawalDetails: {},
   syndicateDetailsLoading: false,
   syndicateMemberDetailsLoading: false,
   depositTokenAllowanceDetails: [],
@@ -107,5 +117,17 @@ export const initialState: InitialState = {
   syndicateDistributionTokens: null,
   syndicateContracts: {
     ManagerLogicContract: null,
+  },
+  syndicateManageMembers: {
+    syndicateMembers: [],
+    loading: false,
+  },
+  manageActions: {
+    modifyMemberDistribution: false,
+    modifyCapTable: false,
+    rejectMemberAddressOrDeposit: false,
+    showDepositOnly: false,
+    showAddressOnly: false,
+    memberAddress: "",
   },
 };

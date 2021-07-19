@@ -1,3 +1,12 @@
+import { amplitudeLogger, Flow } from "@/components/amplitude";
+import {
+  APPROVE_DEPOSIT_ALLOWANCE,
+  DEPOSIT_MORE,
+  DISMISS_TRANSACTION_REJECTED,
+  ERROR_APPROVE_ALLOWANCE,
+  ERROR_DEPOSIT,
+  SUCCESSFUL_DEPOSIT,
+} from "@/components/amplitude/eventNames";
 import ErrorBoundary from "@/components/errorBoundary";
 import FadeIn from "@/components/fadeIn/FadeIn";
 import JoinWaitlist from "@/components/JoinWaitlist";
@@ -31,15 +40,6 @@ import { SyndicateActionButton } from "../shared/syndicateActionButton";
 import { SyndicateActionLoader } from "../shared/syndicateActionLoader";
 import { UnavailableState } from "../shared/unavailableState";
 import WithdrawDeposit from "./WithdrawDeposit";
-import { amplitudeLogger, Flow } from "@/components/amplitude";
-import {
-  APPROVE_DEPOSIT_ALLOWANCE,
-  DEPOSIT_MORE,
-  DISMISS_TRANSACTION_REJECTED,
-  ERROR_APPROVE_ALLOWANCE,
-  ERROR_DEPOSIT,
-  SUCCESSFUL_DEPOSIT,
-} from "@/components/amplitude/eventNames";
 
 const Web3 = require("web3");
 const web3 = new Web3(
@@ -79,7 +79,7 @@ const {
   walletPendingConfirmPendingMessage,
 } = walletConfirmConstants;
 
-const DepositSyndicate = () => {
+const DepositSyndicate: React.FC = () => {
   // HOOK DECLARATIONS
   const router = useRouter();
   const dispatch = useDispatch();
@@ -184,8 +184,13 @@ const DepositSyndicate = () => {
 
   // check if minDeposit, maxDeposit, or maxTotalDeposits has been violated
   // show an error message and disable deposit and approval buttons if this is the case
+  let depositMemberMin;
+  let depositMemberMax;
+  let depositTotalMax;
   if (syndicate) {
-    var { depositMemberMin, depositMemberMax, depositTotalMax } = syndicate;
+    depositMemberMax = syndicate.depositMemberMax;
+    depositMemberMin = syndicate.depositMemberMin;
+    depositTotalMax = syndicate.depositTotalMax;
   }
 
   // HOOKS
@@ -229,6 +234,7 @@ const DepositSyndicate = () => {
     syndicateContracts,
     approvedAllowanceAmount,
     approved,
+    depositTokenDecimals,
   ]);
 
   // check whether the current deposit amount exceeds max LP deposit allowed
@@ -532,8 +538,9 @@ const DepositSyndicate = () => {
        * Check the approval amount
        *  @returns wei allowance as a string
        * */
+      let lpAllowanceAmount;
       try {
-        var lpAllowanceAmount = await depositTokenContract.methods
+        lpAllowanceAmount = await depositTokenContract.methods
           .allowance(
             account.toString(),
             syndicateContracts.DepositLogicContract._address,
@@ -853,6 +860,7 @@ const DepositSyndicate = () => {
                           <img
                             className="mr-2 relative -top-1"
                             src={"/images/deposit.svg"}
+                            alt="deposit icon"
                           />
 
                           <p className="font-semibold text-xl p-2">
@@ -902,6 +910,7 @@ const DepositSyndicate = () => {
                                   <img
                                     className="mr-2"
                                     src={"/images/dai-symbol.svg"}
+                                    alt="DAI symbol"
                                   />
                                 )}
                                 {depositTokenSymbol}
@@ -940,7 +949,7 @@ const DepositSyndicate = () => {
           />
         )}
 
-        {parseInt(memberTotalDeposits) > 0 && (
+        {parseInt(memberTotalDeposits) > 0 && account && (
           <WithdrawDeposit syndicateAddress={syndicateAddress} />
         )}
       </div>

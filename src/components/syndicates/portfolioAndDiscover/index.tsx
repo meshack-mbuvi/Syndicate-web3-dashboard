@@ -1,6 +1,9 @@
+import { amplitudeLogger, Flow } from "@/components/amplitude";
+import { CLICK_CREATE_A_SYNDICATE } from "@/components/amplitude/eventNames";
 import { showWalletModal } from "@/redux/actions";
 import { setOneSyndicatePerAccount } from "@/redux/actions/syndicateMemberDetails";
 import { getSyndicates } from "@/redux/actions/syndicates";
+import { SYNDICATE_BY_ADDRESS } from "@/redux/actions/types";
 import { RootState } from "@/redux/store";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -8,8 +11,6 @@ import Button from "src/components/buttons";
 import { SkeletonLoader } from "src/components/skeletonLoader";
 import CreateSyndicate from "src/components/syndicates/createSyndicate";
 import { default as Portfolio } from "./portfolio";
-import { CLICK_CREATE_A_SYNDICATE } from "@/components/amplitude/eventNames";
-import { amplitudeLogger, Flow } from "@/components/amplitude";
 
 /**
  * My Syndicates: IF their wallet (a) is leading a syndicate or
@@ -36,6 +37,11 @@ const PortfolioAndDiscover = () => {
    * We need to be sure syndicateContracts is initialized before retrieving events.
    */
   useEffect(() => {
+    // This will reset syndicate details when we are on portfolio page.
+    dispatch({
+      data: null,
+      type: SYNDICATE_BY_ADDRESS,
+    });
     if (syndicateContracts?.GetterLogicContract) {
       dispatch(getSyndicates({ ...web3, ...syndicateContracts }));
     }
@@ -191,13 +197,17 @@ const PortfolioAndDiscover = () => {
             <div className="flex justify-center items-center h-full w-full mt-6 sm:mt-10">
               <div className="flex flex-col items-center justify-center sm:w-7/12 md:w-5/12 rounded-custom bg-gray-6 p-10">
                 <div className="w-full flex justify-center mb-6">
-                  <img src="/images/exclamation.svg" className="h-12 w-12" alt="error"/>
+                  <img
+                    src="/images/exclamation.svg"
+                    className="h-12 w-12"
+                    alt="error"
+                  />
                 </div>
                 <p className="font-semibold text-2xl text-center">
                   Wallet Not Connected
                 </p>
                 <p className="text-sm my-5 font-normal text-gray-dim text-center">
-                 Connect a wallet account to continue
+                  Connect a wallet account to continue
                 </p>
               </div>
             </div>

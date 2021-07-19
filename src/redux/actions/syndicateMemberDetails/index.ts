@@ -25,10 +25,13 @@ export const setMemberDepositDetails = (data: MemberDepositDetails) => {
 };
 
 interface MemberWithdrawalDetails {
-  memberDistributionsWithdrawalsToDate: string;
-  memberDistributionsToDate: string;
-  memberWithdrawalsToDistributionsPercentage: string;
-  memberAvailableDistributions: string
+  [address: string]: {
+    [tokenSymbol: string]: {
+      memberDistributionsWithdrawalsToDate: string;
+      memberDistributionsToDate: string;
+      memberWithdrawalsToDepositPercentage: string;
+    };
+  };
 }
 
 /** update member's withdrawal details in the redux store
@@ -81,7 +84,7 @@ interface DistributionTokenDetails {
  * withdrawals page.
  */
 export const setSyndicateDistributionTokens = (
-  data: DistributionTokenDetails[]
+  data: DistributionTokenDetails[],
 ) => {
   return {
     type: SET_SYNDICATE_DISTRIBUTION_TOKENS,

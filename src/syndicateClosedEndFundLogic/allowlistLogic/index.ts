@@ -24,29 +24,24 @@ export class SyndicateAllowlistLogic extends BaseLogicContract {
    * @param {array} memberAddresses - an array of address to be blacklisted.
    */
   async managerBlockAddresses(
-    syndicateAddress,
-    memberAddresses,
-    manager,
-    setShowWalletConfirmationModal,
-    setSubmitting,
-  ) {
+    syndicateAddress: string,
+    memberAddresses: string[],
+    manager: string,
+    setShowWalletConfirmationModal: (arg0: boolean) => void,
+    setSubmitting: (arg0: boolean) => void,
+  ): Promise<void> {
     if (!syndicateAddress.trim() || !memberAddresses.length) return;
+    setShowWalletConfirmationModal(true);
 
-    try {
-      setShowWalletConfirmationModal(true);
-
-      await this.logicContractInstance.methods
-        .managerBlockAddresses(syndicateAddress, memberAddresses)
-        .send({ from: manager, gasLimit: 800000 })
-        .on("transactionHash", () => {
-          // close wallet confirmation modal
-          setShowWalletConfirmationModal(false);
-          setSubmitting(true);
-        });
-      setSubmitting(false);
-    } catch (error) {
-      throw error;
-    }
+    await this.logicContractInstance.methods
+      .managerBlockAddresses(syndicateAddress, memberAddresses)
+      .send({ from: manager, gasLimit: 800000 })
+      .on("transactionHash", () => {
+        // close wallet confirmation modal
+        setShowWalletConfirmationModal(false);
+        setSubmitting(true);
+      });
+    setSubmitting(false);
   }
 
   /**
@@ -71,28 +66,28 @@ export class SyndicateAllowlistLogic extends BaseLogicContract {
    * @returns
    */
   async managerAllowAddresses(
-    syndicateAddress,
-    memberAddresses,
-    manager,
-    setShowWalletConfirmationModal,
-    setSubmitting,
-  ) {
-    if (!syndicateAddress.trim() || !manager.trim() || !memberAddresses.length)
+    syndicateAddress: string,
+    memberAddresses: string[],
+    manager: string,
+    setShowWalletConfirmationModal: (arg0: boolean) => void,
+    setSubmitting: (arg0: boolean) => void,
+  ): Promise<void> {
+    if (
+      !syndicateAddress.trim() ||
+      !manager.trim() ||
+      !memberAddresses.length
+    ) {
       return;
-
-    try {
-      setShowWalletConfirmationModal(true);
-      await this.logicContractInstance.methods
-        .managerAllowAddresses(syndicateAddress, memberAddresses)
-        .send({ from: manager, gasLimit: 800000 })
-        .on("transactionHash", () => {
-          // close wallet confirmation modal
-          setShowWalletConfirmationModal(false);
-          setSubmitting(true);
-        });
-    } catch (error) {
-      throw error;
     }
+
+    await this.logicContractInstance.methods
+      .managerAllowAddresses(syndicateAddress, memberAddresses)
+      .send({ from: manager, gasLimit: 800000 })
+      .on("transactionHash", () => {
+        // close wallet confirmation modal
+        setShowWalletConfirmationModal(false);
+        setSubmitting(true);
+      });
   }
 
   /**
@@ -102,7 +97,10 @@ export class SyndicateAllowlistLogic extends BaseLogicContract {
    * @param filter
    * @returns
    */
-  async getAllowlistEvents(allowlistEventName: string, filter) {
+  async getAllowlistEvents(
+    allowlistEventName: string,
+    filter: any,
+  ): Promise<Array<string>> {
     try {
       await this.initializeLogicContract();
 

@@ -53,26 +53,23 @@ const GetClaimedDistributions = ({
     if (memberDepositsWithdrawalEvents.length) {
       const depositERC20WithdrawalAmounts = [];
       for (let i = 0; i < memberDepositsWithdrawalEvents.length; i++) {
-        const { amount } = memberDepositsWithdrawalEvents[
-          i
-        ].returnValues;
+        const { amount } = memberDepositsWithdrawalEvents[i].returnValues;
 
-        depositERC20WithdrawalAmounts.push(amount);
+        depositERC20WithdrawalAmounts.push(
+          getWeiAmount(amount.toString(), +tokenDecimals, false),
+        );
       }
 
       // get total deposits withdrawn.
       const reducerFunc = (accumulator, currentValue) =>
         +accumulator + +currentValue;
+
       const totalDepositTokenWithdrawals = depositERC20WithdrawalAmounts.reduce(
         reducerFunc,
       );
 
       // convert wei amount
-      const depositERC20WithdrawalsTotal = getWeiAmount(
-        totalDepositTokenWithdrawals.toString(),
-        +tokenDecimals,
-        false,
-      );
+      const depositERC20WithdrawalsTotal = totalDepositTokenWithdrawals;
 
       const depositWithdrawalsFinalDetails = [
         { depositERC20TokenSymbol, depositERC20WithdrawalsTotal },
@@ -117,7 +114,7 @@ const GetClaimedDistributions = ({
 
       const uniqueDistributionERC20s = tokenAddresses.filter(onlyUnique);
       // get total withdrawal amount for each unique token
-      let distributionWithdrawalsFinalDetails = [];
+      const distributionWithdrawalsFinalDetails = [];
       for (let i = 0; i < uniqueDistributionERC20s.length; i++) {
         // track total withdrawals per token
         let totalWithdrawalAmount = 0;

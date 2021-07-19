@@ -5,11 +5,11 @@ import { Modal } from "src/components/modal";
 interface ConfirmDialogProps {
   titleText: string;
   confirmationWarning: string;
-  closeModal: Function;
-  cancelActionButtonhandler: Function;
+  closeModal;
+  cancelActionButtonhandler;
   confirmButtonText: string;
   cancelButtonText: string;
-  confirmActionButtonhandler: Function;
+  confirmActionButtonhandler;
   show: boolean;
 }
 /**
@@ -21,7 +21,7 @@ interface ConfirmDialogProps {
  * @param {} props an object containing properties required by this component
  * @returns
  */
-export const ConfirmDialog = (props: ConfirmDialogProps) => {
+export const ConfirmDialog = (props: ConfirmDialogProps): JSX.Element => {
   const {
     confirmationWarning,
     closeModal,
@@ -61,13 +61,15 @@ export const ConfirmDialog = (props: ConfirmDialogProps) => {
         <div className="flex justify-between mt-8">
           <button
             className={`flex items-center justify-center text-base font-medium rounded-md focus:outline-none focus:ring border px-3 text-gray-500 w-40`}
-            onClick={handleCancelButton}>
+            onClick={handleCancelButton}
+          >
             {cancelButtonText}
           </button>
 
           <button
             className="flex items-center justify-center text-base font-medium rounded-md focus:outline-none focus:ring border px-3 py-3 bg-red-700 text-white w-40"
-            onClick={handleConfirmButton}>
+            onClick={handleConfirmButton}
+          >
             {confirmButtonText}
           </button>
         </div>

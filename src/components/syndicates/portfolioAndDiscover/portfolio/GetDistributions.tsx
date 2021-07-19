@@ -8,7 +8,9 @@ import { getWeiAmount, onlyUnique } from "src/utils/conversions";
 import { TokenMappings } from "src/utils/tokenMappings";
 import { ifRows } from "./interfaces";
 
-const GetDistributions = ({ row: { syndicateAddress } }: ifRows) => {
+const GetDistributions = ({
+  row: { syndicateAddress },
+}: ifRows): JSX.Element => {
   const {
     initializeContractsReducer: { syndicateContracts },
     web3Reducer: {
@@ -53,13 +55,13 @@ const GetDistributions = ({ row: { syndicateAddress } }: ifRows) => {
       const mappedTokenAddress = Object.keys(TokenMappings).find(
         (key) =>
           web3.utils.toChecksumAddress(key) ===
-          web3.utils.toChecksumAddress(uniqueDistributionERC20s[j])
+          web3.utils.toChecksumAddress(uniqueDistributionERC20s[j]),
       );
 
       let distributionERC20Symbol = formatAddress(
         uniqueDistributionERC20s[j],
         4,
-        4
+        4,
       );
       if (mappedTokenAddress) {
         distributionERC20Symbol = TokenMappings[mappedTokenAddress];
@@ -68,7 +70,7 @@ const GetDistributions = ({ row: { syndicateAddress } }: ifRows) => {
       // get distribution amount for token
       const tokenDistributedAmount = await syndicateContracts.DistributionLogicContract.getDistributionTotal(
         syndicateAddress,
-        uniqueDistributionERC20s[j]
+        uniqueDistributionERC20s[j],
       ).then((distributions) => {
         return getWeiAmount(distributions, distributionERC20Decimals, false);
       });
@@ -124,7 +126,6 @@ const GetDistributions = ({ row: { syndicateAddress } }: ifRows) => {
     getDistributionEvents();
   }, [syndicateAddress, account]);
 
-  // count of distributions
 
   return (
     <div className="flex flex-row items-center w-full visibility-container">
@@ -137,7 +138,8 @@ const GetDistributions = ({ row: { syndicateAddress } }: ifRows) => {
                 distributionDetails.length.toString().length === 1
                   ? `-left-2`
                   : `-left-1`
-              } w-full`}>
+              } w-full`}
+            >
               {distributionToolTip}
             </div>
           ) : null}

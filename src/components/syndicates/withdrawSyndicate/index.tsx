@@ -1,3 +1,9 @@
+import { amplitudeLogger, Flow } from "@/components/amplitude";
+import {
+  CLICK_WITHDRAW_MORE,
+  ERROR_WITHDRAWING,
+  SUCCESSFUL_WITHDRAWAL,
+} from "@/components/amplitude/eventNames";
 import ErrorBoundary from "@/components/errorBoundary";
 import JoinWaitlist from "@/components/JoinWaitlist";
 import { ErrorModal } from "@/components/shared";
@@ -13,6 +19,7 @@ import { ERC20TokenDetails } from "@/utils/ERC20Methods";
 import { floatedNumberWithCommas } from "@/utils/formattedNumbers";
 import { TokenMappings } from "@/utils/tokenMappings";
 import { Validate } from "@/utils/validators";
+import _ from "lodash";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
@@ -32,12 +39,6 @@ import { SyndicateActionButton } from "../shared/syndicateActionButton";
 import { SyndicateActionLoader } from "../shared/syndicateActionLoader";
 import { TokenSelect } from "../shared/tokenSelect";
 import { UnavailableState } from "../shared/unavailableState";
-import { amplitudeLogger, Flow } from "@/components/amplitude";
-import {
-  CLICK_WITHDRAW_MORE,
-  ERROR_WITHDRAWING,
-  SUCCESSFUL_WITHDRAWAL,
-} from "@/components/amplitude/eventNames";
 
 const {
   actionFailedError,
@@ -67,7 +68,7 @@ const {
   walletPendingConfirmPendingMessage,
 } = walletConfirmConstants;
 
-const WithdrawSyndicate = () => {
+const WithdrawSyndicate: React.FC = () => {
   const {
     tokenDetailsReducer: {
       distributionTokensAllowanceDetails,
@@ -147,25 +148,20 @@ const WithdrawSyndicate = () => {
     memberPercentageOfSyndicate,
   } = memberDepositDetails;
 
-  const {
-    memberWithdrawalsToDistributionsPercentage,
-    memberDistributionsToDate,
-    memberDistributionsWithdrawalsToDate,
-    memberAvailableDistributions,
-  } = memberWithdrawalDetails;
+  let tokenDistributions = "";
+  let tokenSymbol = "";
+  let tokenAddress = "";
+  let tokenDecimals = "";
 
+  let selectedToken;
   if (syndicateDistributionTokens) {
-    const selectedToken = syndicateDistributionTokens.find(
-      (token) => token.selected,
-    );
+    selectedToken = syndicateDistributionTokens.find((token) => token.selected);
 
     if (selectedToken) {
-      var {
-        tokenDistributions,
-        tokenSymbol,
-        tokenAddress,
-        tokenDecimals,
-      } = selectedToken;
+      tokenDistributions = selectedToken?.tokenDistributions;
+      tokenSymbol = selectedToken?.tokenSymbol;
+      tokenAddress = selectedToken?.tokenAddress;
+      tokenDecimals = selectedToken?.tokenDecimals;
     }
   }
 
@@ -173,6 +169,37 @@ const WithdrawSyndicate = () => {
   const currentDistributionTokenSymbol = tokenSymbol;
   const currentDistributionTokenDecimals = tokenDecimals;
   const currentDistributionTokenAddress = tokenAddress;
+
+  let memberWithdrawalsToDistributionsPercentage = "0.0";
+  let memberDistributionsWithdrawalsToDate = "0.0";
+  let memberDistributionsToDate = "0.0";
+  let memberAvailableDistributions = "0.0";
+  let memberWithdrawalDetailsData;
+  if (
+    account &&
+    !_.isEmpty(memberWithdrawalDetails) &&
+    memberWithdrawalDetails[account] &&
+    !_.isEmpty(selectedToken) &&
+    selectedToken.tokenSymbol
+  ) {
+    try {
+      if (memberWithdrawalDetails[account][selectedToken.tokenSymbol]) {
+        memberWithdrawalDetailsData =
+          memberWithdrawalDetails[account][selectedToken.tokenSymbol];
+
+        memberWithdrawalsToDistributionsPercentage =
+          memberWithdrawalDetailsData.memberWithdrawalsToDistributionsPercentage;
+        memberDistributionsWithdrawalsToDate =
+          memberWithdrawalDetailsData.memberDistributionsWithdrawalsToDate;
+        memberDistributionsToDate =
+          memberWithdrawalDetailsData.memberDistributionsToDate;
+        memberAvailableDistributions =
+          memberWithdrawalDetailsData.memberAvailableDistributions;
+      }
+    } catch (error) {
+      console.log({ error });
+    }
+  }
 
   let showDepositLink = false;
 
@@ -363,7 +390,6 @@ const WithdrawSyndicate = () => {
     (syndicate &&
       syndicate.distributing &&
       !distributionTokensAllowanceDetails.length);
-
   // set title and texts of section based on
   // whether this is a withdrawal or a deposit.
   let totalDistributionsText = `${
@@ -455,7 +481,7 @@ const WithdrawSyndicate = () => {
   const withdrawFromSyndicate = async (withdrawAmount: number) => {
     const amountToWithdraw = getWeiAmount(
       withdrawAmount.toString(),
-      currentDistributionTokenDecimals,
+      parseInt(currentDistributionTokenDecimals),
       true,
     );
 
@@ -515,6 +541,7 @@ const WithdrawSyndicate = () => {
         },
       });
     } catch (error) {
+      console.log({ error });
       const { code } = error;
       handleWithdrawalError(code);
 
@@ -549,9 +576,15 @@ const WithdrawSyndicate = () => {
     dispatch(
       updateMemberWithdrawalDetails({
         syndicateAddress,
-        currentTokenAvailableDistributions,
-        currentDistributionTokenDecimals,
-        currentDistributionTokenAddress,
+        distributionTokens: [
+          {
+            tokenAddress,
+            tokenDecimals,
+            tokenDistributions,
+            tokenSymbol,
+          },
+        ],
+        memberAddresses: [account],
       }),
     );
   };
@@ -596,9 +629,10 @@ const WithdrawSyndicate = () => {
 
   // update states when error is encountered during withdrawals
   const handleWithdrawalError = (code: number) => {
+    const errorMessage = getMetamaskError(code, "Withdrawal");
+
     switch (code) {
       case 4001 || -32602 || -32603 || "INVALID_ARGUMENT":
-        var errorMessage = getMetamaskError(code, "Withdrawal");
         setMetamaskWithdrawError(errorMessage);
         setSubmittingWithdrawal(false);
         setSuccessfulWithdrawal(false);
@@ -613,6 +647,9 @@ const WithdrawSyndicate = () => {
   };
 
   const getTokenDecimals = async (tokenAddress) => {
+    // This guard prevents initialization of contract without address
+    if (!tokenAddress.trim()) return;
+
     // set token decimals based on the token address
     const ERC20Details = new ERC20TokenDetails(tokenAddress);
     const tokenDecimals = await ERC20Details.getTokenDecimals();
@@ -796,13 +833,16 @@ const WithdrawSyndicate = () => {
             customInnerWidth={"w-full"}
           />
         )}
-        {syndicate?.depositsEnabled ? (
+        {syndicate?.depositsEnabled && account ? (
           <>
             <p className="py-4 px-2 text-xs text-gray-dim leading-4">MORE</p>
             <Link href={`/syndicates/${syndicateAddress}/deposit`}>
               <div className="flex justify-start cursor-pointer items-center py-4 px-6 rounded-custom transition hover:bg-gray-6 bg-gray-9">
                 <p className="font-medium text-lg">
-                  <a className="flex items-center">
+                  <a
+                    className="flex items-center"
+                    href={`/syndicates/${syndicateAddress}/deposit`}
+                  >
                     <img
                       className="inline mr-4 h-5"
                       src="/images/deposit.svg"

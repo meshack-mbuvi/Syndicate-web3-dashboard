@@ -13,6 +13,10 @@ import {
 import { getMetamaskError } from "@/helpers";
 import { getSyndicateMemberInfo } from "@/helpers/syndicate";
 import { showWalletModal } from "@/redux/actions";
+import {
+  setSelectedMemberAddress,
+  setShowModifyMemberDistributions,
+} from "@/redux/actions/manageActions";
 import { RootState } from "@/redux/store";
 import { getWeiAmount } from "@/utils/conversions";
 import { TokenMappings } from "@/utils/tokenMappings";
@@ -22,33 +26,27 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Button from "src/components/buttons";
 
-interface Props {
-  showModifyMemberDistribution: boolean;
-  setShowModifyMemberDistribution: Function;
-}
-
 /**
  * This component displays a form with input fields used to modify a syndicate
  * cap table.
  * @param props
  * @returns
  */
-const ModifyMemberDistributions = (props: Props) => {
+const ModifyMemberDistributions = (): JSX.Element => {
   const {
     currentDistributionClaimedAmountTooltip,
     newDistributionClaimedAmountTooltip,
     confirmModifyMemberDistributionsText,
   } = ModifyMemberDistributionsConstants;
-  const {
-    showModifyMemberDistribution,
-    setShowModifyMemberDistribution,
-  } = props;
 
   const {
     syndicatesReducer: { syndicate },
     initializeContractsReducer: { syndicateContracts },
     web3Reducer: {
       web3: { account, web3 },
+    },
+    manageActionsReducer: {
+      manageActions: { modifyMemberDistribution, memberAddress },
     },
   } = useSelector((state: RootState) => state);
 
@@ -65,11 +63,11 @@ const ModifyMemberDistributions = (props: Props) => {
 
   const { syndicateAddress } = router.query;
 
-  const [memberAddress, setMemberAddress] = useState("");
   const [
     currentClaimedDistributions,
     setCurrentClaimedDistributions,
   ] = useState("0");
+
   const [memberDeposits, setMemberDeposits] = useState("");
 
   const [depositorAddressError, setDepositAddressError] = useState("");
@@ -79,7 +77,7 @@ const ModifyMemberDistributions = (props: Props) => {
   >(0);
 
   const [distributionERC20Address, setDistributionERC20Address] = useState(
-    syndicate?.depositERC20Address
+    syndicate?.depositERC20Address,
   );
 
   const [amountError, setAmountError] = useState<string>("");
@@ -95,7 +93,7 @@ const ModifyMemberDistributions = (props: Props) => {
       // set token symbol based on token address
       const tokenAddress = syndicate.depositERC20Address;
       const mappedTokenAddress = Object.keys(TokenMappings).find(
-        (key) => key.toLowerCase() == tokenAddress.toLowerCase()
+        (key) => key.toLowerCase() == tokenAddress.toLowerCase(),
       );
       if (mappedTokenAddress) {
         setCurrentERC20(TokenMappings[mappedTokenAddress]);
@@ -130,6 +128,10 @@ const ModifyMemberDistributions = (props: Props) => {
     validated = true;
   }
 
+  const handleSetShowModifyMemberDistributions = () => {
+    dispatch(setShowModifyMemberDistributions(false));
+  };
+
   /**
    * This function retrieves all total deposits for the depositor address
    * @param depositorAddress
@@ -143,20 +145,21 @@ const ModifyMemberDistributions = (props: Props) => {
       } = await getSyndicateMemberInfo(
         syndicateContracts.GetterLogicContract,
         syndicateAddress,
-        memberAddress
+        memberAddress,
       );
       setMemberDeposits(memberDeposits);
       if (memberDeposits === "0") {
         setDepositAddressError(
-          "Member address has zero deposits in this Syndicate"
+          "Member address has zero deposits in this Syndicate",
         );
       }
 
       setCurrentClaimedDistributions(memberTotalWithdrawals);
+      return memberTotalWithdrawals;
     } catch (error) {
       setCurrentClaimedDistributions("0");
       setDepositAddressError(
-        "Member address has zero deposits in this Syndicate"
+        "Member address has zero deposits in this Syndicate",
       );
     }
   };
@@ -169,7 +172,7 @@ const ModifyMemberDistributions = (props: Props) => {
   const getDistributionERC20Address = async () => {
     const events = await syndicateContracts.DistributionLogicContract.getDistributionEvents(
       "DistributionAdded",
-      { syndicateAddress }
+      { syndicateAddress },
     );
 
     // if no events, take the default depositERC20Address to be the
@@ -186,7 +189,7 @@ const ModifyMemberDistributions = (props: Props) => {
 
       // Remove address duplicates
       distributionERC20Addresses = Array.from(
-        new Set(distributionERC20Addresses)
+        new Set(distributionERC20Addresses),
       );
       // we might have many distributions, and we need to find a way to select
       // enable the manager select whichever address they want to edit ditributions for.
@@ -201,7 +204,7 @@ const ModifyMemberDistributions = (props: Props) => {
   const handleMemberAddressChange = (event) => {
     const { value } = event.target;
     setDepositAddressError("");
-    setMemberAddress(value);
+    dispatch(setSelectedMemberAddress(value));
 
     if (!value.trim()) {
       setDepositAddressError("Member address is required");
@@ -278,17 +281,17 @@ const ModifyMemberDistributions = (props: Props) => {
       const amountInWei = getWeiAmount(
         newDistributionAmount.toString(),
         18,
-        true
+        true,
       );
 
-      await syndicateContracts.DistributionLogicContract.managerSetDistributionClaimedForMembers(
+      await syndicateContracts.DistributionLogicContract.managerSetDistributionsClaimedForMembers(
         syndicateAddress,
         [memberAddress],
         [distributionERC20Address],
         [amountInWei],
         account,
         setShowWalletConfirmationModal,
-        setSubmitting
+        setSubmitting,
       );
 
       setSubmitting(false);
@@ -315,7 +318,7 @@ const ModifyMemberDistributions = (props: Props) => {
 
   const handleCloseFinalStateModal = async () => {
     setShowFinalState(false);
-    setShowModifyMemberDistribution(false);
+    handleSetShowModifyMemberDistributions();
   };
 
   const lpInvested = memberDeposits === "0" && memberAddress ? false : true;
@@ -325,10 +328,11 @@ const ModifyMemberDistributions = (props: Props) => {
       <Modal
         {...{
           title: "Modify Member Distributions",
-          show: showModifyMemberDistribution || true,
-          closeModal: () => setShowModifyMemberDistribution(false),
+          show: modifyMemberDistribution,
+          closeModal: () => handleSetShowModifyMemberDistributions(),
           customWidth: "md:w-8/12 w-full",
-        }}>
+        }}
+      >
         <div className="mx-2 mb-8">
           <p className="text-gray-500 text-sm my-4">
             Manually change the claimed distribution amount of members from this
@@ -408,7 +412,8 @@ const ModifyMemberDistributions = (props: Props) => {
                   }`}
                   disabled={
                     validated && !submitting && lpInvested ? false : true
-                  }>
+                  }
+                >
                   Confirm
                 </Button>
               </div>
@@ -432,7 +437,8 @@ const ModifyMemberDistributions = (props: Props) => {
       <PendingStateModal
         {...{
           show: submitting,
-        }}>
+        }}
+      >
         <div className="modal-header mb-4 font-medium text-center leading-8 text-2xl">
           {confirmingTransaction}
         </div>

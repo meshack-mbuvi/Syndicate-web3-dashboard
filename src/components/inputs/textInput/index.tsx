@@ -85,7 +85,7 @@ export const TextInput = (props: {
           <div className="relative w-full">
             {logo && (
               <div className="absolute inset-y-0 right-0 flex items-center px-2">
-                <label className="bg-gray-50 rounded px-2 py-1">
+                <label className="bg-gray-50 rounded px-2 py-1" htmlFor={id}>
                   <img src={logo} alt="Logo" className="w-4" />
                 </label>
               </div>

@@ -42,7 +42,7 @@ const LayoutWithSyndicateDetails = ({ children }) => {
     // deposit or not.
     if (!router.isReady || !syndicate) return;
 
-    if (syndicateAddress !== undefined && account !== undefined) {
+    if (syndicate && syndicateAddress !== undefined && account !== undefined) {
       switch (router.pathname) {
         case "/syndicates/[syndicateAddress]/manage":
           // For a closed syndicate, user should be navigated to withdrawal page
@@ -57,9 +57,6 @@ const LayoutWithSyndicateDetails = ({ children }) => {
         case "/syndicates/[syndicateAddress]/deposit":
           if (syndicateAddress === account) {
             router.replace(`/syndicates/${syndicateAddress}/manage`);
-          } else if (!syndicate?.open) {
-            // when syndicate is closed, go to withdraw page
-            router.replace(`/syndicates/${syndicateAddress}/withdraw`);
           }
           break;
         case "/syndicates/[syndicateAddress]/withdraw":
@@ -160,11 +157,12 @@ const LayoutWithSyndicateDetails = ({ children }) => {
               <div className="lg:w-24 md:w-12 w-24 flex-shrink-0 lg:static fixed">
                 <div className="w-14 h-14 lg:hover:bg-gray-9 rounded-full py-4 md:mt-6 mt-6 lg:left-auto relative -left-12 hidden md:block lg:fixed lg:active:bg-white lg:active:bg-opacity-20">
                   <Link href="/syndicates">
-                    <a>
+                    <a href="/syndicates">
                       <img
                         className="mx-auto vertically-center relative "
                         style={{ left: "-2px" }}
                         src="/images/back-chevron-large.svg"
+                        alt=""
                       />
                     </a>
                   </Link>

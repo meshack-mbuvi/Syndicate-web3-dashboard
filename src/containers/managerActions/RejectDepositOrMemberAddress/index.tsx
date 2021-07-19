@@ -7,6 +7,7 @@ import { getMetamaskError } from "@/helpers";
 import { checkAccountAllowance } from "@/helpers/approveAllowance";
 import { getSyndicateMemberInfo } from "@/helpers/syndicate";
 import { showWalletModal } from "@/redux/actions";
+import { setShowRejectDepositOrMemberAddress } from "@/redux/actions/manageActions";
 import { getSyndicateByAddress } from "@/redux/actions/syndicates";
 import { RootState } from "@/redux/store";
 import { getWeiAmount } from "@/utils/conversions";
@@ -29,29 +30,27 @@ import {
   waitTransactionTobeConfirmedText,
 } from "src/components/syndicates/shared/Constants";
 
-interface Props {
-  showRejectDepositOrMemberAddress: boolean;
-  setShowRejectDepositOrMemberAddress: Function;
-}
-
 /**
  * This component displays a form with textarea to set approved addresses
  * @param props
  * @returns
  */
 
-const RejectDepositOrMemberAddress = (props: Props) => {
-  const {
-    showRejectDepositOrMemberAddress,
-    setShowRejectDepositOrMemberAddress,
-  } = props;
-
+const RejectDepositOrMemberAddress = (): JSX.Element => {
   const {
     web3Reducer: {
       web3: { account, web3 },
     },
     initializeContractsReducer: { syndicateContracts },
     syndicatesReducer: { syndicate },
+    manageActionsReducer: {
+      manageActions: {
+        rejectMemberAddressOrDeposit,
+        memberAddress,
+        showAddressOnly,
+        showDepositOnly,
+      },
+    },
   } = useSelector((state: RootState) => state);
 
   const [
@@ -80,6 +79,14 @@ const RejectDepositOrMemberAddress = (props: Props) => {
     }
   }, [syndicate]);
 
+  // if we have memberAddress set, then we are coming from manage members
+  // component. We have to add the memberAddress to the memberAddresses array.
+  useEffect(() => {
+    if (memberAddress) {
+      setMemberAddresses(memberAddress);
+    }
+  }, [memberAddress]);
+
   // array of addresses whose deposit is to be rejected,
   // of maximum size equal to the maximum number of syndicate member.",
   const [memberAddresses, setMemberAddresses] = useState("");
@@ -93,19 +100,20 @@ const RejectDepositOrMemberAddress = (props: Props) => {
    */
   const [finalStateButtonText, setFinalButtonText] = useState("Done");
   const [finalStateFeedback, setFinalStateFeedback] = useState(
-    preApproveMoreAddress
+    preApproveMoreAddress,
   );
   const [finalStateHeaderText, setFinalStateHeaderText] = useState("");
 
   const [finalStateIcon, setFinalStateIcon] = useState(
-    "/images/checkCircle.svg"
+    "/images/checkCircle.svg",
   );
   const [showFinalState, setShowFinalState] = useState(false);
 
   const handleCloseFinalStateModal = async () => {
     await dispatch(
-      getSyndicateByAddress({ syndicateAddress, ...syndicateContracts })
+      getSyndicateByAddress({ syndicateAddress, ...syndicateContracts }),
     );
+    dispatch(setShowRejectDepositOrMemberAddress(false));
     setShowFinalState(false);
   };
 
@@ -128,7 +136,7 @@ const RejectDepositOrMemberAddress = (props: Props) => {
           totalDepositsForMemberAddress - allowanceAmount
         } ${
           syndicate.depositERC20TokenSymbol || ""
-        } before rejecting member deposits.`
+        } before rejecting member deposits.`,
       );
     }
     return () => {
@@ -143,18 +151,18 @@ const RejectDepositOrMemberAddress = (props: Props) => {
       checkAccountAllowance(
         syndicate.depositERC20Address,
         syndicate.managerCurrent,
-        syndicateContracts.DepositLogicContract._address
+        syndicateContracts.DepositLogicContract._address,
       )
         .then((allowance) => {
           const allowanceInWei = getWeiAmount(
             allowance,
             syndicate.tokenDecimals,
-            false
+            false,
           );
           setAllowanceAmount(parseInt(allowanceInWei));
           if (allowanceInWei === 0) {
             setMemberAddressesError(
-              "Please set sufficient allowance before rejecting deposits."
+              "Please set sufficient allowance before rejecting deposits.",
             );
           }
         })
@@ -193,14 +201,14 @@ const RejectDepositOrMemberAddress = (props: Props) => {
       ? memberAddressesArrayCopy.map(async (value: string) => {
           if (value === account) {
             setMemberAddressesError(
-              `${value} is a manager account of this syndicate.`
+              `${value} is a manager account of this syndicate.`,
             );
           } else if (web3.utils.isAddress(value)) {
             const { memberDeposits } = await getSyndicateMemberInfo(
               syndicateContracts.GetterLogicContract,
               syndicateAddress,
               value,
-              parseInt(syndicate.tokenDecimals || 18)
+              parseInt(syndicate.tokenDecimals || 18),
             );
             if (memberDeposits > 0) {
               setMemberAddressesError("");
@@ -208,22 +216,22 @@ const RejectDepositOrMemberAddress = (props: Props) => {
               setTotalDepositsForMemberAddress(totalMemberAddressDeposits);
             } else {
               setMemberAddressesError(
-                `${value} has not deposited into this syndicate.`
+                `${value} has not deposited into this syndicate.`,
               );
             }
             // handle duplicates
             if (countOccurrences(memberAddressesArrayCopy, value) > 1) {
               setMemberAddressesError(
-                `${value} has already been added(duplicate)`
+                `${value} has already been added(duplicate)`,
               );
             }
           } else if (!value.trim()) {
             setMemberAddressesError(
-              `Entered value is not a valid ethereum wallet address.`
+              `Entered value is not a valid ethereum wallet address.`,
             );
           } else {
             setMemberAddressesError(
-              `${value} is not a valid ethereum wallet address.`
+              `${value} is not a valid ethereum wallet address.`,
             );
           }
         })
@@ -231,32 +239,32 @@ const RejectDepositOrMemberAddress = (props: Props) => {
   };
 
   const handleMemberAddressOnPaste = (
-    event: React.ClipboardEvent<HTMLTextAreaElement>
+    event: React.ClipboardEvent<HTMLTextAreaElement>,
   ) => {
     const pastedAddresses = event.clipboardData.getData("text");
     const removeInvalidCharacters = removeNewLinesAndWhitespace(
-      pastedAddresses
+      pastedAddresses,
     );
     const newSplitArr = removeInvalidCharacters.split(",");
     setMemberAddresses((prev) => {
       const selection = prev.substring(
         selectedMemberAddressTextIndexes[0],
-        selectedMemberAddressTextIndexes[1]
+        selectedMemberAddressTextIndexes[1],
       );
       const remainingStr = removeNewLinesAndWhitespace(
-        removeSubstring(prev, selection)
+        removeSubstring(prev, selection),
       );
       const newStr = remainingStr + newSplitArr.join();
       return newStr.split(",").join(",\n");
     });
     validateMemberAddressArr(
-      removeNewLinesAndWhitespace(memberAddresses).split(",")
+      removeNewLinesAndWhitespace(memberAddresses).split(","),
     );
     event.preventDefault();
   };
 
   const handleMemberAddressOnKeyUp = (
-    event: React.KeyboardEvent<HTMLTextAreaElement>
+    event: React.KeyboardEvent<HTMLTextAreaElement>,
   ) => {
     if (event.code === "Comma") {
       const removeNewLines = removeNewLinesAndWhitespace(memberAddresses);
@@ -267,7 +275,7 @@ const RejectDepositOrMemberAddress = (props: Props) => {
   };
 
   const handleMemberAddressesOnSelectText = (
-    event: React.ChangeEvent<HTMLTextAreaElement>
+    event: React.ChangeEvent<HTMLTextAreaElement>,
   ) => {
     const { selectionStart, selectionEnd } = event.target;
     setSelectedMemberAddressTextIndexes([selectionStart, selectionEnd]);
@@ -275,7 +283,7 @@ const RejectDepositOrMemberAddress = (props: Props) => {
 
   useEffect(() => {
     validateMemberAddressArr(
-      removeNewLinesAndWhitespace(memberAddresses).split(",")
+      removeNewLinesAndWhitespace(memberAddresses).split(","),
     );
   }, [memberAddresses]);
 
@@ -296,11 +304,11 @@ const RejectDepositOrMemberAddress = (props: Props) => {
     } else if (code == undefined) {
       if (rejectDepositState) {
         setFinalStateFeedback(
-          "An error occurred. Please ensure that you have set sufficient allowance before rejecting deposits."
+          "An error occurred. Please ensure that you have set sufficient allowance before rejecting deposits.",
         );
       } else {
         setFinalStateFeedback(
-          "An error occurred. Click the button below to view logs on etherscan."
+          "An error occurred. Click the button below to view logs on etherscan.",
         );
       }
     } else {
@@ -340,7 +348,7 @@ const RejectDepositOrMemberAddress = (props: Props) => {
 
       // create new copy of split array with no duplicates
       const memberAddressesArrayCopy = Array.from(
-        new Set<string>(memberAddressesArray)
+        new Set<string>(memberAddressesArray),
       );
 
       // get last element in array
@@ -361,7 +369,7 @@ const RejectDepositOrMemberAddress = (props: Props) => {
         memberAddressesArrayCopy,
         account,
         setShowWalletConfirmationModal,
-        setSubmitting
+        setSubmitting,
       );
 
       setSubmitting(false);
@@ -390,8 +398,16 @@ const RejectDepositOrMemberAddress = (props: Props) => {
   // array of addresses whose deposit is to be rejected,
   // of maximum size equal to the maximum number of syndicate member.",
   const [memberAddressesToblackList, setMemberAddressesToBlackList] = useState(
-    ""
+    "",
   );
+
+  // if we have memberAddress set, then we are coming from manage members
+  // component. We have to add the memberAddress to the memberAddresses array.
+  useEffect(() => {
+    if (memberAddress) {
+      setMemberAddressesToBlackList(memberAddress);
+    }
+  }, [memberAddress]);
 
   const [
     memberAddressesToblackListError,
@@ -403,7 +419,7 @@ const RejectDepositOrMemberAddress = (props: Props) => {
   ] = useState([]);
 
   const handleMemberAddressesToblackListOnSelectText = (
-    event: React.ChangeEvent<HTMLTextAreaElement>
+    event: React.ChangeEvent<HTMLTextAreaElement>,
   ) => {
     const { selectionStart, selectionEnd } = event.target;
     setSelectedMemberAddressesToblackListTextIndexes([
@@ -418,7 +434,7 @@ const RejectDepositOrMemberAddress = (props: Props) => {
   };
 
   const validateMemberAddressesToBlacklist = (
-    memberAddressesToBlacklistArray: string[]
+    memberAddressesToBlacklistArray: string[],
   ) => {
     // get last element in array
     const lastElement =
@@ -442,20 +458,20 @@ const RejectDepositOrMemberAddress = (props: Props) => {
       ? memberAddressesToBlacklistArrayCopy.map(async (value: string) => {
           if (value === account) {
             setMemberAddressesToBlackListError(
-              `${value} is a manager account of this syndicate.`
+              `${value} is a manager account of this syndicate.`,
             );
           } else if (web3.utils.isAddress(value)) {
             const { memberAddressAllowed } = await getSyndicateMemberInfo(
               syndicateContracts.GetterLogicContract,
               syndicateAddress,
               value,
-              parseInt(syndicate.tokenDecimals || 18)
+              parseInt(syndicate.tokenDecimals || 18),
             );
             if (memberAddressAllowed) {
               setMemberAddressesToBlackListError("");
             } else {
               setMemberAddressesToBlackListError(
-                `${value} is already blacklisted.`
+                `${value} is already blacklisted.`,
               );
             }
             // handle duplicates
@@ -463,16 +479,16 @@ const RejectDepositOrMemberAddress = (props: Props) => {
               countOccurrences(memberAddressesToBlacklistArrayCopy, value) > 1
             ) {
               setMemberAddressesToBlackListError(
-                `${value} has already been added(duplicate)`
+                `${value} has already been added(duplicate)`,
               );
             }
           } else if (!value.trim()) {
             setMemberAddressesToBlackListError(
-              `Entered value is not a valid ethereum wallet address.`
+              `Entered value is not a valid ethereum wallet address.`,
             );
           } else {
             setMemberAddressesToBlackListError(
-              `${value} is not a valid ethereum wallet address.`
+              `${value} is not a valid ethereum wallet address.`,
             );
           }
         })
@@ -481,25 +497,25 @@ const RejectDepositOrMemberAddress = (props: Props) => {
 
   useEffect(() => {
     validateMemberAddressesToBlacklist(
-      removeNewLinesAndWhitespace(memberAddressesToblackList).split(",")
+      removeNewLinesAndWhitespace(memberAddressesToblackList).split(","),
     );
   }, [memberAddressesToblackList]);
 
   const handleMemberAddressesToBlacklistOnPaste = (
-    event: React.ClipboardEvent<HTMLTextAreaElement>
+    event: React.ClipboardEvent<HTMLTextAreaElement>,
   ) => {
     const pastedAddresses = event.clipboardData.getData("text");
     const removeInvalidCharacters = removeNewLinesAndWhitespace(
-      pastedAddresses
+      pastedAddresses,
     );
     const newSplitArr = removeInvalidCharacters.split(",");
     setMemberAddressesToBlackList((prev) => {
       const selection = prev.substring(
         selectedMemberAddressesToblackListTextIndexes[0],
-        selectedMemberAddressesToblackListTextIndexes[1]
+        selectedMemberAddressesToblackListTextIndexes[1],
       );
       const remainingStr = removeNewLinesAndWhitespace(
-        removeSubstring(prev, selection)
+        removeSubstring(prev, selection),
       );
       const newStr = remainingStr + newSplitArr.join();
       return newStr.split(",").join(",\n");
@@ -509,11 +525,11 @@ const RejectDepositOrMemberAddress = (props: Props) => {
   };
 
   const handleMemberAddressesToBlacklistOnKeyUp = (
-    event: React.KeyboardEvent<HTMLTextAreaElement>
+    event: React.KeyboardEvent<HTMLTextAreaElement>,
   ) => {
     if (event.code === "Comma") {
       const removeNewLines = removeNewLinesAndWhitespace(
-        memberAddressesToblackList
+        memberAddressesToblackList,
       );
       const lpAddressesArr = removeNewLines.split(",");
       setMemberAddressesToBlackList(lpAddressesArr.join(",\n"));
@@ -528,7 +544,7 @@ const RejectDepositOrMemberAddress = (props: Props) => {
 
     if (!memberAddressesToblackList) {
       setMemberAddressesToBlackListError(
-        "Member address to reject is required"
+        "Member address to reject is required",
       );
       return;
     }
@@ -545,16 +561,16 @@ const RejectDepositOrMemberAddress = (props: Props) => {
 
     try {
       const sanitizedMemberAddressToBlacklist = sanitizeInputString(
-        memberAddressesToblackList
+        memberAddressesToblackList,
       );
       // convert comma separated string into array
       const memberAddressesArrayToBlacklist = sanitizedMemberAddressToBlacklist.split(
-        ","
+        ",",
       );
 
       // create new copy of split array with no duplicates
       const memberAddressesArrayToBlacklistCopy = Array.from(
-        new Set<string>(memberAddressesArrayToBlacklist)
+        new Set<string>(memberAddressesArrayToBlacklist),
       );
 
       // get last element in array
@@ -576,7 +592,7 @@ const RejectDepositOrMemberAddress = (props: Props) => {
         memberAddressesArrayToBlacklistCopy,
         account,
         setShowWalletConfirmationModal,
-        setSubmitting
+        setSubmitting,
       );
 
       setSubmitting(false);
@@ -590,63 +606,77 @@ const RejectDepositOrMemberAddress = (props: Props) => {
     }
   };
 
+  // Specific modals for different scenarios
+  let modalTitle = "Reject Deposits or Addresses";
+  if (showDepositOnly) modalTitle = "Reject Deposits";
+  if (showAddressOnly) modalTitle = "Reject Address";
+
   return (
     <>
       <Modal
         {...{
-          title: "Reject Deposits or Addresses",
-          show: showRejectDepositOrMemberAddress,
-          closeModal: () => setShowRejectDepositOrMemberAddress(false),
+          title: modalTitle,
+          show: rejectMemberAddressOrDeposit,
+          closeModal: () =>
+            dispatch(setShowRejectDepositOrMemberAddress(false)),
           customWidth: "sm:w-2/3",
-        }}>
+        }}
+      >
         <div className="mt-5 sm:mt-6 flex flex-col justify-center">
-          <div>
-            <div>
-              <p className="text-blue-light font-whyte">Reject Deposits</p>
-            </div>
+          {!showAddressOnly ? (
+            <>
+              <div>
+                <div>
+                  <p className="text-blue-light font-whyte">Reject Deposits</p>
+                </div>
 
-            <div>
-              <p className="text-gray-400 font-whyte">
-                {rejectDepositOrMemberAddressAdvice}
-              </p>
-            </div>
-            <div className="border-1 rounded-lg	bg-gray-99 mt-2 w-full flex py-6 pr-16">
-              <div className="w-2/5 px-1 mt-6 text-sm">
-                <p className="text-right font-whyte">Addresses:</p>
-                <p className="text-right text-gray-400 font-whyte">
-                  {separateWithCommas}
-                </p>
+                <div>
+                  <p className="text-gray-400 font-whyte">
+                    {rejectDepositOrMemberAddressAdvice}
+                  </p>
+                </div>
+                <div className="border-1 rounded-lg	bg-gray-99 mt-2 w-full flex py-6 pr-16">
+                  <div className="w-2/5 px-1 mt-6 text-sm">
+                    <p className="text-right font-whyte">Addresses:</p>
+                    <p className="text-right text-gray-400 font-whyte">
+                      {separateWithCommas}
+                    </p>
+                  </div>
+                  <div className="w-3/5">
+                    <TextArea
+                      {...{
+                        name: "address(es)",
+                        value: memberAddresses,
+                        onChange: handleMemberAddressesChange,
+                        onPaste: handleMemberAddressOnPaste,
+                        onSelect: handleMemberAddressesOnSelectText,
+                        onKeyUp: handleMemberAddressOnKeyUp,
+                        error: memberAddressesError,
+                      }}
+                      name="approvedAddresses"
+                      placeholder=""
+                    />
+                  </div>
+                </div>
+                <div className="flex items-center	justify-center pt-6">
+                  <button
+                    className={`bg-blue-light text-white py-2 px-10 rounded-full ${
+                      memberAddressesError
+                        ? "cursor-not-allowed opacity-50"
+                        : null
+                    }`}
+                    onClick={handleSubmitRejectDeposits}
+                    disabled={memberAddressesError ? true : false}
+                  >
+                    Reject Deposits
+                  </button>
+                </div>
               </div>
-              <div className="w-3/5">
-                <TextArea
-                  {...{
-                    name: "address(es)",
-                    value: memberAddresses,
-                    onChange: handleMemberAddressesChange,
-                    onPaste: handleMemberAddressOnPaste,
-                    onSelect: handleMemberAddressesOnSelectText,
-                    onKeyUp: handleMemberAddressOnKeyUp,
-                    error: memberAddressesError,
-                  }}
-                  name="approvedAddresses"
-                  placeholder=""
-                />
-              </div>
-            </div>
-            <div className="flex items-center	justify-center pt-6">
-              <button
-                className={`bg-blue-light text-white py-2 px-10 rounded-full ${
-                  memberAddressesError ? "cursor-not-allowed opacity-50" : null
-                }`}
-                onClick={handleSubmitRejectDeposits}
-                disabled={memberAddressesError ? true : false}>
-                Reject Deposits
-              </button>
-            </div>
-          </div>
+            </>
+          ) : null}
 
           {/* component for rejecting member addresses */}
-          {syndicate?.allowlistEnabled ? (
+          {syndicate?.allowlistEnabled && !showDepositOnly ? (
             <div>
               <div>
                 <p className="text-blue-light font-whyte">Reject Addresses</p>
@@ -687,7 +717,8 @@ const RejectDepositOrMemberAddress = (props: Props) => {
                       : null
                   }`}
                   onClick={handleSubmitBlackListMemberAddresses}
-                  disabled={memberAddressesToblackListError ? true : false}>
+                  disabled={memberAddressesToblackListError ? true : false}
+                >
                   Reject Addresses
                 </button>
               </div>
@@ -712,7 +743,8 @@ const RejectDepositOrMemberAddress = (props: Props) => {
       <PendingStateModal
         {...{
           show: submitting,
-        }}>
+        }}
+      >
         <div className="modal-header mb-4 font-medium text-center leading-8 text-2xl">
           {confirmingTransaction}
         </div>

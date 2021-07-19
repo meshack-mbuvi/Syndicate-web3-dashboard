@@ -18,17 +18,28 @@ import {
   confirmingTransaction,
   irreversibleActionText,
   rejectTransactionText,
-  syndicateActionConstants,
   waitTransactionTobeConfirmedText,
 } from "@/components/syndicates/shared/Constants";
 import { UnavailableState } from "@/components/syndicates/shared/unavailableState";
 import { getMetamaskError } from "@/helpers";
+import {
+  setSelectedMemberAddress,
+  setShowModifyCapTable,
+  setShowModifyMemberDistributions,
+  setShowRejectDepositOrMemberAddress,
+} from "@/redux/actions/manageActions";
+import {
+  setLoadingSyndicateDepositorDetails,
+  setShowRejectAddressOnly,
+  setShowRejectDepositOnly,
+} from "@/redux/actions/manageMembers";
 import { getSyndicateByAddress } from "@/redux/actions/syndicates";
 import { RootState } from "@/redux/store";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import DistributeToken from "./distributeToken";
+import ManageMembers from "./manageMembers";
 import ManagerActionCard from "./managerActionCard";
 import ModifyMemberDistributions from "./modifyMemberDistributions";
 import ModifySyndicateCapTable from "./modifySyndicateCapTable";
@@ -37,12 +48,19 @@ import PreApproveDepositor from "./preApproveDepositor";
 import RejectDepositOrMemberAddress from "./RejectDepositOrMemberAddress";
 import RequestSocialProfile from "./requestSocialProfile";
 
-const ManagerActions = () => {
+const ManagerActions = (): JSX.Element => {
   const {
     syndicatesReducer: { syndicate },
     initializeContractsReducer: { syndicateContracts },
     web3Reducer: {
       web3: { account },
+    },
+    manageActionsReducer: {
+      manageActions: {
+        modifyMemberDistribution,
+        modifyCapTable,
+        rejectMemberAddressOrDeposit,
+      },
     },
   } = useSelector((state: RootState) => state);
 
@@ -77,15 +95,12 @@ const ManagerActions = () => {
     false,
   );
 
-  const [showModifyCapTable, setShowModifyCapTable] = useState(false);
   const [showSyndicateNotModifiable, setShowSyndicateNotModifiable] = useState(
     false,
   );
 
-  const [
-    showModifyMemberDistribution,
-    setShowModifyMemberDistribution,
-  ] = useState(false);
+  // show component handling Manage Members
+  const [showManageMembers, setShowManageMembers] = useState(false);
 
   const [errorMessage, setErrorMessage] = useState("");
 
@@ -96,14 +111,14 @@ const ManagerActions = () => {
     renderJoinWaitList,
   } = useUnavailableState("manage");
 
-  const {
-    nonModifiableSyndicateErrorText,
-    enableDistributionToModifySyndicateText,
-  } = syndicateActionConstants;
-
   const actions = [
     {
-      icon: <img src="/images/managerActions/create_public_profile.svg" />,
+      icon: (
+        <img
+          src="/images/managerActions/create_public_profile.svg"
+          alt="Public profile icon"
+        />
+      ),
       title: "Create a public-facing social profile",
       onClickHandler: () => setShowRequestSocialProfile(true),
       description:
@@ -119,7 +134,7 @@ const ManagerActions = () => {
   const [finalStateIcon, setFinalStateIcon] = useState("");
 
   const handleCloseFinalStateModal = async () => {
-    setShowFinalState(false);  
+    setShowFinalState(false);
     await dispatch(
       getSyndicateByAddress({ syndicateAddress, ...syndicateContracts }),
     );
@@ -163,33 +178,6 @@ const ManagerActions = () => {
     }
   };
 
-  /**
-   * Shows modal to modify syndicate cap table if the syndicate is modifiable.
-   * Otherwise, the manager is informed that s/he cannot modify syndicate cap
-   * table
-   */
-  const showModifyCapTableModal = () => {
-    setErrorMessage("");
-    if (syndicate?.modifiable) {
-      setShowModifyCapTable(true);
-    } else {
-      // tell manager this syndicate cannot be modified
-      setShowSyndicateNotModifiable(true);
-
-      // set message based on whether syndicate is modifiable and/or distributions are disabled
-      if (!syndicate.modifable) {
-        setErrorMessage(nonModifiableSyndicateErrorText);
-      } else {
-        setErrorMessage(enableDistributionToModifySyndicateText);
-      }
-    }
-  };
-
-  const [
-    showRejectDepositOrMemberAddress,
-    setShowRejectDepositOrMemberAddress,
-  ] = useState(false);
-
   if (renderUnavailableState || renderJoinWaitList) {
     return (
       <div className="h-fit-content px-8 pb-4 pt-5 bg-gray-9 rounded-2xl">
@@ -222,6 +210,48 @@ const ManagerActions = () => {
     );
   }
 
+  /**
+   * sets member address to empty string. This address might have been set from
+   * the manage members component so we need to clear it here.
+   */
+  const clearMemberSelectedAddress = () => {
+    dispatch(setSelectedMemberAddress(""));
+  };
+
+  const handleSetShowModifyMemberDistributions = () => {
+    clearMemberSelectedAddress();
+    dispatch(setShowModifyMemberDistributions(true));
+  };
+
+  /**
+   * Sets controller variable for modifySyndicateCapTable modal to true and
+   * selected member address to the address of the clicked row.
+   * @param event
+   */
+  const handleSetShoModifySyndicateCapTable = (event) => {
+    event.preventDefault();
+    clearMemberSelectedAddress();
+    dispatch(setShowModifyCapTable(true));
+  };
+
+  const handleSetRejectMemberDepositOrAddress = (event) => {
+    event.preventDefault();
+    // Reset store variables set from manage members component.
+    // These variables make sense only when triggered from manage members section.
+    clearMemberSelectedAddress();
+    dispatch(setShowRejectAddressOnly(false));
+    dispatch(setShowRejectDepositOnly(false));
+
+    dispatch(setShowRejectDepositOrMemberAddress(true));
+  };
+
+  const handleSetShowManageMembers = (event) => {
+    event.preventDefault();
+
+    dispatch(setLoadingSyndicateDepositorDetails(true));
+    setShowManageMembers(true);
+  };
+
   return (
     <ErrorBoundary>
       <div className="w-full mt-4 sm:mt-0">
@@ -230,7 +260,11 @@ const ManagerActions = () => {
             <div className="text-xl font-inter">Manager Actions</div>
 
             <div className="flex h-12 rounded-custom items-center">
-              <img src="/images/rightPointedHand.svg" className="mr-2" />
+              <img
+                src="/images/rightPointedHand.svg"
+                className="mr-2"
+                alt="You manage this syndicate"
+              />
               <div className="text-gray-dim leading-snug">
                 You manage this syndicate
               </div>
@@ -243,7 +277,12 @@ const ManagerActions = () => {
                 description={
                   "Close this syndicate and stop accepting deposits. This action is irreversible."
                 }
-                icon={<img src="/images/managerActions/close_syndicate.svg" />}
+                icon={
+                  <img
+                    src="/images/managerActions/close_syndicate.svg"
+                    alt="close"
+                  />
+                }
                 onClickHandler={() => setShowConfirmCloseSyndicate(true)}
               />
             ) : (
@@ -252,7 +291,7 @@ const ManagerActions = () => {
                 description={
                   "Distribute tokens back to depositors and make them available for withdraw."
                 }
-                icon={<img src="/images/server.svg" />}
+                icon={<img src="/images/server.svg" alt="server" />}
                 onClickHandler={() => {
                   // Amplitude logger: OPEN_DISTRIBUTE_TOKEN_MODAL
                   amplitudeLogger(OPEN_DISTRIBUTE_TOKEN_MODAL, {
@@ -270,7 +309,12 @@ const ManagerActions = () => {
                 description={
                   "Pre-approve accredited investor addresses that can deposit into this syndicate."
                 }
-                icon={<img src="/images/managerActions/approve_members.svg" />}
+                icon={
+                  <img
+                    src="/images/managerActions/approve_members.svg"
+                    alt=""
+                  />
+                }
                 onClickHandler={() => setShowPreApproveDepositor(true)}
               />
             ) : null}
@@ -292,13 +336,11 @@ const ManagerActions = () => {
           <div className="font-semibold tracking-widest text-sm leading-6 text-gray-matterhorn my-6 mx-4">
             MORE
           </div>
-          {!syndicate?.open &&
-          syndicate?.distributing &&
-          syndicate?.modifiable ? (
+          {syndicate?.distributing && syndicate?.modifiable ? (
             <MoreManagerActionCard
-              icon={<img src="/images/invertedInfo.svg" />}
+              icon={<img src="/images/invertedInfo.svg" alt="Info" />}
               text={"Modify Member distributions"}
-              onClickHandler={setShowModifyMemberDistribution}
+              onClickHandler={handleSetShowModifyMemberDistributions}
             />
           ) : null}
 
@@ -306,10 +348,13 @@ const ManagerActions = () => {
           {syndicate?.open && syndicate?.modifiable ? (
             <MoreManagerActionCard
               icon={
-                <img src="/images/managerActions/overwrite_cap_table.svg" />
+                <img
+                  src="/images/managerActions/overwrite_cap_table.svg"
+                  alt="overwrite"
+                />
               }
               text={"Overwrite syndicate cap table"}
-              onClickHandler={showModifyCapTableModal}
+              onClickHandler={handleSetShoModifySyndicateCapTable}
             />
           ) : null}
 
@@ -319,28 +364,31 @@ const ManagerActions = () => {
           {syndicate?.open ? (
             <MoreManagerActionCard
               icon={
-                <img src="/images/managerActions/reject_deposits_members.svg" />
+                <img
+                  src="/images/managerActions/reject_deposits_members.svg"
+                  alt="reject"
+                />
               }
               text={"Reject deposit or depositor address"}
-              onClickHandler={() => setShowRejectDepositOrMemberAddress(true)}
-            />
-          ) : null}
-
-          {/* TODO: Implement the option to manage members
-          Designs: https://www.figma.com/file/6hdYqk4cmhOdwRd65DohoC/Syndicate-v1-Wireframes?node-id=3777%3A0
-          */}
-          {syndicate?.open ? (
-            <MoreManagerActionCard
-              icon={<img src="/images/managerActions/manage_members.svg" />}
-              text={"Manager members"}
-              onClickHandler={() => {
-                return;
-              }}
+              onClickHandler={handleSetRejectMemberDepositOrAddress}
             />
           ) : null}
 
           <MoreManagerActionCard
-            icon={<img src="/images/managerActions/settings.svg" />}
+            icon={
+              <img
+                src="/images/managerActions/manage_members.svg"
+                alt="manage"
+              />
+            }
+            text={"Manage members"}
+            onClickHandler={handleSetShowManageMembers}
+          />
+
+          <MoreManagerActionCard
+            icon={
+              <img src="/images/managerActions/settings.svg" alt="settings" />
+            }
             text={"Change syndicate settings"}
           />
         </div>
@@ -356,17 +404,10 @@ const ManagerActions = () => {
           <RequestSocialProfile
             {...{ showRequestSocialProfile, setShowRequestSocialProfile }}
           />
-        ) : showModifyCapTable ? (
-          <ModifySyndicateCapTable
-            {...{ showModifyCapTable, setShowModifyCapTable }}
-          />
-        ) : showRejectDepositOrMemberAddress ? (
-          <RejectDepositOrMemberAddress
-            {...{
-              showRejectDepositOrMemberAddress,
-              setShowRejectDepositOrMemberAddress,
-            }}
-          />
+        ) : modifyCapTable ? (
+          <ModifySyndicateCapTable />
+        ) : rejectMemberAddressOrDeposit ? (
+          <RejectDepositOrMemberAddress />
         ) : showSyndicateNotModifiable ? (
           <ErrorModal
             {...{
@@ -378,14 +419,13 @@ const ManagerActions = () => {
               errorMessage,
             }}
           />
-        ) : showModifyMemberDistribution ? (
-          <ModifyMemberDistributions
-            {...{
-              showModifyMemberDistribution,
-              setShowModifyMemberDistribution,
-            }}
-          />
-        ) : null}
+        ) : modifyMemberDistribution ? (
+          <ModifyMemberDistributions />
+        ) : (
+          showManageMembers === true && (
+            <ManageMembers {...{ showManageMembers, setShowManageMembers }} />
+          )
+        )}
       </div>
       {/* Confirm whether manager wants to close syndicate */}
 
@@ -397,11 +437,11 @@ const ManagerActions = () => {
             </p>
             <p className="text-sm text-center mx-8 mt-2 opacity-60">
               If this was a mistake, please click the{" "}
-              <strong className="text-blue font-medium">cancel</strong>{" "}
-              button below.
+              <strong className="text-blue font-medium">cancel</strong> button
+              below.
             </p>
             <p className="flex text-sm text-red-600 justify-center items-center text-center mx-8 mt-4">
-              <img src="/images/danger.svg" className="mx-2" />
+              <img src="/images/danger.svg" className="mx-2" alt="danger" />
               Closing a syndicate is irreversible.
             </p>
             <div className="flex text-sm justify-between text-center mx-8 mt-4">
@@ -436,7 +476,7 @@ const ManagerActions = () => {
             {rejectTransactionText}
           </p>
           <p className="flex text-sm text-red-600 justify-center text-center mx-8 mt-8">
-            <img src="/images/danger.svg" className="mx-2" />
+            <img src="/images/danger.svg" className="mx-2" alt="danger" />
             {irreversibleActionText}
           </p>
         </div>

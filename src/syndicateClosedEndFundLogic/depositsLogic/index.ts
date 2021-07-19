@@ -22,22 +22,16 @@ export class SyndicateDepositLogic extends BaseLogicContract {
     account: string;
     setMetamaskConfirmPending: (value: boolean) => void;
     setSubmitting: (value: boolean) => void;
-  }) {
-    try {
-      await this.logicContractInstance.methods
-        .memberDeposit(syndicateAddress, amount)
-        .send({ from: account, gasLimit: 800000 })
-        .on("transactionHash", () => {
-          // user has confirmed the transaction so we should start loader state.
-          // show loading modal
-          setMetamaskConfirmPending(false);
-          setSubmitting(true);
-        });
-    } catch (error) {
-      setSubmitting(false);
-      setMetamaskConfirmPending(false);
-      throw error;
-    }
+  }): Promise<void> {
+    await this.logicContractInstance.methods
+      .memberDeposit(syndicateAddress, amount)
+      .send({ from: account, gasLimit: 800000 })
+      .on("transactionHash", () => {
+        // user has confirmed the transaction so we should start loader state.
+        // show loading modal
+        setMetamaskConfirmPending(false);
+        setSubmitting(true);
+      });
   }
 
   /**
@@ -46,7 +40,10 @@ export class SyndicateDepositLogic extends BaseLogicContract {
    * @param {string} depositEventName name of events to retrieve.
    * @returns {array} all emitted events for the specified event name.
    */
-  async getMemberDepositEvents(depositEventName: string, filter = {}) {
+  async getMemberDepositEvents(
+    depositEventName: string,
+    filter = {},
+  ): Promise<Array<unknown>> {
     if (!depositEventName.trim()) return [];
 
     try {
@@ -77,25 +74,19 @@ export class SyndicateDepositLogic extends BaseLogicContract {
     syndicateAddress: string,
     amount: string,
     account: string,
-    setMetamaskConfirmPending: Function,
-    setSubmittingWithdrawal: Function,
-  ) {
+    setMetamaskConfirmPending: (arg0: boolean) => void,
+    setSubmittingWithdrawal: (arg0: boolean) => void,
+  ): Promise<void> {
     if (!syndicateAddress.trim() || !account || !amount || amount == "0") {
       return;
     }
-
-    try {
-      await this.logicContractInstance.methods
-        .memberWithdraw(syndicateAddress, amount)
-        .send({ from: account, gasLimit: 800000 })
-        .on("transactionHash", () => {
-          setMetamaskConfirmPending(false);
-          setSubmittingWithdrawal(true);
-        })
-        .on("error", (error) => console.log({ error }));
-    } catch (error) {
-      throw error;
-    }
+    await this.logicContractInstance.methods
+      .memberWithdraw(syndicateAddress, amount)
+      .send({ from: account, gasLimit: 800000 })
+      .on("transactionHash", () => {
+        setMetamaskConfirmPending(false);
+        setSubmittingWithdrawal(true);
+      });
   }
 
   /**
@@ -108,29 +99,24 @@ export class SyndicateDepositLogic extends BaseLogicContract {
    * @returns
    */
   async managerRejectDepositForMembers(
-    syndicateAddress,
-    memberAddresses,
-    manager,
-    setShowWalletConfirmationModal,
-    setSubmitting,
-  ) {
+    syndicateAddress: string,
+    memberAddresses: Array<string>,
+    manager: string,
+    setShowWalletConfirmationModal: (arg0: boolean) => void,
+    setSubmitting: (arg0: boolean) => void,
+  ): Promise<void> {
     if (!syndicateAddress.trim() || !memberAddresses.length) return;
-
-    try {
-      await this.logicContractInstance.methods
-        .managerRejectDepositForMembers(syndicateAddress, memberAddresses)
-        .send({ from: manager, gasLimit: 800000 })
-        .on("transactionHash", () => {
-          // close wallet confirmation modal
-          setShowWalletConfirmationModal(false);
-          setSubmitting(true);
-        })
-        .on("receipt", async () => {
-          setSubmitting(false);
-        });
-    } catch (error) {
-      throw error;
-    }
+    await this.logicContractInstance.methods
+      .managerRejectDepositForMembers(syndicateAddress, memberAddresses)
+      .send({ from: manager, gasLimit: 800000 })
+      .on("transactionHash", () => {
+        // close wallet confirmation modal
+        setShowWalletConfirmationModal(false);
+        setSubmitting(true);
+      })
+      .on("receipt", async () => {
+        setSubmitting(false);
+      });
   }
 
   /**
@@ -146,13 +132,13 @@ export class SyndicateDepositLogic extends BaseLogicContract {
    * @returns
    */
   async managerSetDepositForMembers(
-    syndicateAddress,
-    memberAddresses,
-    memberAmounts,
-    manager,
-    setShowWalletConfirmationModal,
-    setSubmitting,
-  ) {
+    syndicateAddress: string,
+    memberAddresses: string[],
+    memberAmounts: string[],
+    manager: string,
+    setShowWalletConfirmationModal: (arg0: boolean) => void,
+    setSubmitting: (arg0: boolean) => void,
+  ): Promise<void> {
     if (
       !syndicateAddress.trim() ||
       !memberAddresses.length ||
@@ -161,21 +147,16 @@ export class SyndicateDepositLogic extends BaseLogicContract {
     ) {
       return;
     }
-
-    try {
-      await this.logicContractInstance.methods
-        .managerSetDepositForMembers(
-          syndicateAddress,
-          memberAddresses,
-          memberAmounts,
-        )
-        .send({ from: manager, gasLimit: 800000 })
-        .on("transactionHash", () => {
-          setShowWalletConfirmationModal(false);
-          setSubmitting(true);
-        });
-    } catch (error) {
-      throw error;
-    }
+    await this.logicContractInstance.methods
+      .managerSetDepositForMembers(
+        syndicateAddress,
+        memberAddresses,
+        memberAmounts,
+      )
+      .send({ from: manager, gasLimit: 800000 })
+      .on("transactionHash", () => {
+        setShowWalletConfirmationModal(false);
+        setSubmitting(true);
+      });
   }
 }

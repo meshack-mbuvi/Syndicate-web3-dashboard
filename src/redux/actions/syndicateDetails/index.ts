@@ -1,9 +1,8 @@
-import { web3 } from "@/utils";
 import { numberWithCommas } from "@/utils/formattedNumbers";
 import { etherToNumber, getWeiAmount } from "src/utils/conversions";
 import { ERC20TokenDetails } from "src/utils/ERC20Methods";
 import { LOADING_SYNDICATE_DETAILS, SET_SYNDICATE_DETAILS } from "../types";
-const BN = web3.utils.BN;
+
 const updateSyndicateDetails = (data) => {
   return {
     type: SET_SYNDICATE_DETAILS,
@@ -56,11 +55,11 @@ export const setSyndicateDetails = (
 
   // instantiate syndicate details variables.
   let totalDeposits = 0;
-  let totalDepositors = [];
+  const totalDepositors = [];
   let totalWithdrawn = 0;
   let distributionSharedToSyndicateLead = 0;
   let distributionSharedToSyndicateProtocol = 0;
-  let totalOperatingFees = 0;
+  const totalOperatingFees = 0;
 
   // add a loading state
   setLoadingSyndicateDetails(true);
@@ -95,14 +94,10 @@ export const setSyndicateDetails = (
   );
 
   for (let i = 0; i < memberWithdrewDistributionEvents.length; i++) {
-    let event = memberWithdrewDistributionEvents[i];
+    const event = memberWithdrewDistributionEvents[i];
     // get total value withdrawn
     const { amount } = event.returnValues;
-    const etherAmountWithdrawn = getWeiAmount(
-      amount,
-      tokenDecimals,
-      false,
-    );
+    const etherAmountWithdrawn = getWeiAmount(amount, tokenDecimals, false);
 
     // get the distribution share from the syndicate instance.
     // returns a Tuple of the amounts (toUser, toSyndicate, toManager) that will

@@ -28,9 +28,9 @@ export class SyndicateManagerLogic extends BaseLogicContract {
   async createSyndicate(
     syndicateData: CreateSyndicateData,
     managerAccount: string,
-    setShowWalletConfirmationModal: Function,
-    setSubmitting: Function,
-  ) {
+    setShowWalletConfirmationModal: (arg0: boolean) => void,
+    setSubmitting: (arg0: boolean) => void,
+  ): Promise<void> {
     await this.initializeLogicContract();
 
     const {
@@ -61,8 +61,8 @@ export class SyndicateManagerLogic extends BaseLogicContract {
           depositMemberMax,
           depositTotalMax,
           dateCloseUnixTime,
-          allowlistEnabled,
           modifiable,
+          allowlistEnabled,
           transferable,
         )
         .send({ from: managerAccount })
@@ -115,24 +115,19 @@ export class SyndicateManagerLogic extends BaseLogicContract {
   async managerCloseSyndicate(
     syndicateAddress: string,
     manager: string,
-    setShowWalletConfirmationModal: Function,
-    setSubmitting: Function,
-  ) {
+    setShowWalletConfirmationModal: (arg0: boolean) => void,
+    setSubmitting: (arg0: boolean) => void,
+  ): Promise<void> {
     if (!syndicateAddress.trim() || !manager.trim()) return;
+    await this.logicContractInstance.methods
+      .managerCloseSyndicate(syndicateAddress)
+      .send({ from: manager, gasLimit: 800000 })
+      .on("transactionHash", () => {
+        // close wallet confirmation modal
+        setShowWalletConfirmationModal(false);
 
-    try {
-      await this.logicContractInstance.methods
-        .managerCloseSyndicate(syndicateAddress)
-        .send({ from: manager, gasLimit: 800000 })
-        .on("transactionHash", () => {
-          // close wallet confirmation modal
-          setShowWalletConfirmationModal(false);
-
-          setSubmitting(true);
-        });
-    } catch (error) {
-      throw error;
-    }
+        setSubmitting(true);
+      });
   }
 
   /**
@@ -148,8 +143,8 @@ export class SyndicateManagerLogic extends BaseLogicContract {
     syndicateAddress: string,
     managerFeeAddress: string,
     manager: string,
-    setShowWalletConfirmationModal: Function,
-    setSavingMemberAddress: Function,
+    setShowWalletConfirmationModal: (arg0: boolean) => void,
+    setSavingMemberAddress: (arg0: boolean) => void,
   ) {
     if (!syndicateAddress.trim() || !managerFeeAddress.trim()) {
       return;
@@ -178,7 +173,7 @@ export class SyndicateManagerLogic extends BaseLogicContract {
    * @param filter
    * @returns
    */
-  async getManagerEvents(managerEventName: string, filter) {
+  async getManagerEvents(managerEventName: string, filter: any) {
     try {
       await this.initializeLogicContract();
 
