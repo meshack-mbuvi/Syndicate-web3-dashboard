@@ -133,7 +133,6 @@ const ManageMembers = (props: ImanageMembers): JSX.Element => {
         // eslint-disable-next-line react/display-name
         accessor: function ({
           memberWithdrawalDetails,
-          memberStake,
           memberAddress,
           distributing,
         }) {

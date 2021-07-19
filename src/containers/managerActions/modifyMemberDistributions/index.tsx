@@ -17,6 +17,7 @@ import {
   setSelectedMemberAddress,
   setShowModifyMemberDistributions,
 } from "@/redux/actions/manageActions";
+import { updateMemberWithdrawalDetails } from "@/redux/actions/syndicateMemberDetails/memberWithdrawalsInfo";
 import { RootState } from "@/redux/store";
 import { getWeiAmount } from "@/utils/conversions";
 import { TokenMappings } from "@/utils/tokenMappings";
@@ -48,6 +49,10 @@ const ModifyMemberDistributions = (): JSX.Element => {
     manageActionsReducer: {
       manageActions: { modifyMemberDistribution, memberAddress },
     },
+    syndicateMemberDetailsReducer: {
+      syndicateDistributionTokens,
+      memberWithdrawalDetails,
+    },
   } = useSelector((state: RootState) => state);
 
   const dispatch = useDispatch();
@@ -76,22 +81,21 @@ const ModifyMemberDistributions = (): JSX.Element => {
     string | number
   >(0);
 
-  const [distributionERC20Address, setDistributionERC20Address] = useState(
-    syndicate?.depositERC20Address,
-  );
+  const [distributionERC20Address, setDistributionERC20Address] = useState("");
 
   const [amountError, setAmountError] = useState<string>("");
 
   const [submitting, setSubmitting] = useState(false);
   const [currentERC20, setCurrentERC20] = useState<string>("DAI");
+  const [currentTokenDecimals, setCurrentTokenDecimals] = useState(18);
 
   // set token symbol based on deposit token address
   // we'll manually map the token symbol for now.
   // we'll also set the token decimals of the deposit/Withdrawal ERC20 token here
   useEffect(() => {
-    if (syndicate) {
-      // set token symbol based on token address
-      const tokenAddress = syndicate.depositERC20Address;
+    if (syndicate && distributionERC20Address) {
+      // set token symbol based on distributionERC20Address token address
+      const tokenAddress = distributionERC20Address;
       const mappedTokenAddress = Object.keys(TokenMappings).find(
         (key) => key.toLowerCase() == tokenAddress.toLowerCase(),
       );
@@ -103,10 +107,30 @@ const ModifyMemberDistributions = (): JSX.Element => {
   }, [syndicate]);
 
   useEffect(() => {
-    if (memberAddress && depositorAddressError == "") {
+    if (syndicateDistributionTokens?.length) {
+      dispatch(
+        updateMemberWithdrawalDetails({
+          syndicateAddress: syndicate.syndicateAddress,
+          distributionTokens: syndicateDistributionTokens,
+          memberAddresses: [memberAddress],
+        }),
+      );
+    }
+  }, [memberAddress, syndicateDistributionTokens, syndicate]);
+
+  useEffect(() => {
+    setDistributionERC20Address(syndicateDistributionTokens[1].tokenAddress);
+  }, [syndicateDistributionTokens]);
+
+  useEffect(() => {
+    if (
+      memberAddress &&
+      distributionERC20Address &&
+      depositorAddressError == ""
+    ) {
       getCurrentClaimedAmount();
     }
-  }, [memberAddress]);
+  }, [memberAddress, distributionERC20Address]);
 
   // no syndicate exists without a manager, so if no manager, then syndicate does not exist
   useEffect(() => {
@@ -128,6 +152,14 @@ const ModifyMemberDistributions = (): JSX.Element => {
     validated = true;
   }
 
+  useEffect(() => {
+    syndicateDistributionTokens.map((syndicateDistributionToken) => {
+      if (syndicateDistributionToken.tokenSymbol === currentERC20) {
+        setCurrentTokenDecimals(syndicateDistributionToken.tokenDecimals);
+      }
+    });
+  }, [syndicateDistributionTokens, currentERC20]);
+
   const handleSetShowModifyMemberDistributions = () => {
     dispatch(setShowModifyMemberDistributions(false));
   };
@@ -139,10 +171,7 @@ const ModifyMemberDistributions = (): JSX.Element => {
    */
   const getCurrentClaimedAmount = async () => {
     try {
-      const {
-        memberDeposits,
-        memberTotalWithdrawals,
-      } = await getSyndicateMemberInfo(
+      const { memberDeposits } = await getSyndicateMemberInfo(
         syndicateContracts.GetterLogicContract,
         syndicateAddress,
         memberAddress,
@@ -153,9 +182,12 @@ const ModifyMemberDistributions = (): JSX.Element => {
           "Member address has zero deposits in this Syndicate",
         );
       }
+      const memberDistributionsWithdrawalsToDate =
+        memberWithdrawalDetails[memberAddress][currentERC20]
+          .memberDistributionsWithdrawalsToDate;
 
-      setCurrentClaimedDistributions(memberTotalWithdrawals);
-      return memberTotalWithdrawals;
+      setCurrentClaimedDistributions(memberDistributionsWithdrawalsToDate);
+      return memberDistributionsWithdrawalsToDate;
     } catch (error) {
       setCurrentClaimedDistributions("0");
       setDepositAddressError(
@@ -280,7 +312,7 @@ const ModifyMemberDistributions = (): JSX.Element => {
       setShowWalletConfirmationModal(true);
       const amountInWei = getWeiAmount(
         newDistributionAmount.toString(),
-        18,
+        currentTokenDecimals,
         true,
       );
 

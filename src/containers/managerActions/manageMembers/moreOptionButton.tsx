@@ -85,7 +85,11 @@ const MoreOptionButton = (props: {
     <>
       {showMoreInfoOptions === true && (
         <div className="relative">
-          <button onClick={toggleShowMore} className="px-2">
+          <button
+            onClick={toggleShowMore}
+            onMouseLeave={() => setShowMore(false)}
+            className="px-2"
+          >
             <img src="/images/more_horiz.svg" alt="Icon to show more options" />
 
             {/* more actions options to member address */}

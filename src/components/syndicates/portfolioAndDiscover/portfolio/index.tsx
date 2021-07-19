@@ -4,9 +4,9 @@ import ActiveSyndicatesTable from "./ActiveSyndicatesTable";
 import GetMemberDeposits from "./GetMemberDeposits";
 import GetClaimedDistributions from "./GetClaimedDistributions";
 import GetDistributions from "./GetDistributions";
+import { GetFormattedDepositsAmount } from "./GetFormattedValue";
 import GradientAvatar from "./GradientAvatar";
 import SyndicateActionButton from "./SyndicateActionButton";
-import { GetFormattedDepositsAmount } from "./GetFormattedValue";
 
 const styles = [
   "lawn-green",
@@ -16,7 +16,7 @@ const styles = [
   "violet-yellow",
 ];
 
-export const Portfolio = (props: { syndicates }) => {
+export const Portfolio = (props: { syndicates }): JSX.Element => {
   const { syndicates } = props;
 
   const COLUMNS = [
@@ -26,9 +26,10 @@ export const Portfolio = (props: { syndicates }) => {
       // eslint-disable-next-line react/display-name
       Cell: ({ value }) => {
         // used useMemo hook to prevent recalculation of style value on every onMouseEnter and onMouseLeave
-        const style = useMemo(() => styles.sort(() => 0.5 - Math.random())[0], [
-          value,
-        ]);
+        const style = useMemo(
+          () => styles.sort(() => 0.5 - Math.random())[0],
+          [],
+        );
         return (
           <div className="flex flex-row items-center">
             <div className="mr-4">

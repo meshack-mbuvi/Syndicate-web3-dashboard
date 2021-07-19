@@ -38,6 +38,8 @@ import {
   closeDateToolTip,
   confirmCreateSyndicateSubText,
   depositTokenToolTip,
+  distributionShareToSyndicateLeadToolTip,
+  distributionShareToSyndicateProtocolToolTip,
   emailAddressToolTip,
   expectedAnnualOperatingFeesToolTip,
   fullNameToolTip,
@@ -48,8 +50,6 @@ import {
   minimumDepositToolTip,
   modifiableToolTip,
   pendingState,
-  distributionShareToSyndicateLeadToolTip,
-  distributionShareToSyndicateProtocolToolTip,
   syndicateAddressToolTip,
   totalMaximumDepositToolTip,
   transferableToolTip,
@@ -134,9 +134,10 @@ const CreateSyndicate = (props) => {
   const [allowlistEnabled, setAllowlistEnabled] = useState(false);
   const [modifiable, setModifiable] = useState(false);
   const [transferable, setTransferable] = useState(false);
-  const [syndicateDistributionSharePercent, setDistributionShareToSyndProtocol] = useState(
-    "0.5",
-  );
+  const [
+    syndicateDistributionSharePercent,
+    setDistributionShareToSyndProtocol,
+  ] = useState("0.5");
   const [
     otherDistributionShareToSyndicateProtocol,
     setOtherDistributionShareToSyndicateProtocol,
@@ -718,7 +719,7 @@ const CreateSyndicate = (props) => {
               />
               <div className={`flex flex-row justify-center`}>
                 <div className={`flex mr-2 w-1/2 justify-end `}>
-                  <label className="block pt-2 text-black text-sm font-medium"></label>
+                  <p className="block pt-2 text-black text-sm font-medium"></p>
                 </div>
 
                 <div className="w-5/6 flex-grow flex flex-col justify-between">
@@ -983,7 +984,9 @@ const CreateSyndicate = (props) => {
 
                   {/* icon */}
                   <div className="flex w-12 content-center">
-                    <InfoIcon tooltip={distributionShareToSyndicateProtocolToolTip} />
+                    <InfoIcon
+                      tooltip={distributionShareToSyndicateProtocolToolTip}
+                    />
                   </div>
                 </div>
               </div>

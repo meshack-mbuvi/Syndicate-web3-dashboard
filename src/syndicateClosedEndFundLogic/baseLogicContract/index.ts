@@ -21,12 +21,17 @@ export class BaseLogicContract {
   contractABI: object;
 
   /**
-   * 
-   * @param contractName 
-   * @param web3 
-   * @param contractABI 
+   *
+   * @param contractName
+   * @param web3
+   * @param contractABI
    */
-  constructor(contractName: string, contractAddress: string, web3, contractABI) {
+  constructor(
+    contractName: string,
+    contractAddress: string,
+    web3,
+    contractABI,
+  ) {
     this.web3 = web3;
     this.contractABI = contractABI;
     this.contractName = contractName;
@@ -40,13 +45,13 @@ export class BaseLogicContract {
    */
   async initializeLogicContract() {
     try {
-      let contractAddress = this._address;
+      const contractAddress = this._address;
 
       // ----------------
-      // The intergrations coordinator is currently not deployed / not in use, 
+      // The intergrations coordinator is currently not deployed / not in use,
       // this will be used when it's added back
       // ----------------
-      
+
       // if (!this._address) {
       //   contractAddress = await this.getContractAddress(this.contractName);
       // }
@@ -70,25 +75,20 @@ export class BaseLogicContract {
    * @param {string} logicContractName
    * @returns {string} contractAddress
    */
-  getContractAddress = async (logicContractName: string) => {
+  getContractAddress = async (logicContractName: string): Promise<string> => {
     const syndicateCoordinatorInstance = new this.web3.eth.Contract(
       SyndicateCoordinatorInstanceABI.abi,
       SyndicateCoordinatorInstanceAddress,
     );
+    const getterContractHash = await syndicateCoordinatorInstance.methods
+      .hash(logicContractName)
+      .call();
+    const contractAddress = await syndicateCoordinatorInstance.methods
+      .getAddress(getterContractHash)
+      .call();
 
-    try {
-      const getterContractHash = await syndicateCoordinatorInstance.methods
-        .hash(logicContractName)
-        .call();
-      const contractAddress = await syndicateCoordinatorInstance.methods
-        .getAddress(getterContractHash)
-        .call();
+    this._address = contractAddress;
 
-      this._address = contractAddress;
-
-      return contractAddress;
-    } catch (error) {
-      throw error;
-    }
+    return contractAddress;
   };
 }

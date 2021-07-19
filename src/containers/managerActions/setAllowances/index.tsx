@@ -23,6 +23,7 @@ import {
 } from "src/redux/actions/tokenAllowances";
 import ERC20ABI from "src/utils/abi/erc20";
 import { isUnlimited } from "src/utils/conversions";
+
 const BN = web3.utils.BN;
 
 interface Props {
@@ -512,7 +513,7 @@ const ManagerSetAllowance = (props: Props) => {
                             value: allowanceAmounts[index],
                             onChange: (e) => handleAmountChange(e, index),
                             error: allowanceAmountErrors[index],
-                            focus: true
+                            focus: true,
                           }}
                           name="allowance-amount"
                           placeholder={prefillAllowanceAmountValue}

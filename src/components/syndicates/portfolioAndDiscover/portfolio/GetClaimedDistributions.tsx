@@ -1,4 +1,5 @@
 import { RootState } from "@/redux/store";
+import { web3 } from "@/utils";
 import { formatAddress } from "@/utils/formatAddress";
 import { floatedNumberWithCommas } from "@/utils/formattedNumbers";
 import React, { useEffect, useState } from "react";
@@ -8,9 +9,11 @@ import { ERC20TokenDetails } from "src/utils/ERC20Methods";
 import { TokenMappings } from "src/utils/tokenMappings";
 import { ifRows } from "./interfaces";
 
+const BN = web3.utils.BN;
+
 const GetClaimedDistributions = ({
   row: { syndicateAddress, depositERC20TokenSymbol, tokenDecimals },
-}: ifRows) => {
+}: ifRows): JSX.Element => {
   const {
     web3Reducer: { web3: web3Wrapper },
     initializeContractsReducer: {
@@ -62,7 +65,7 @@ const GetClaimedDistributions = ({
 
       // get total deposits withdrawn.
       const reducerFunc = (accumulator, currentValue) =>
-        +accumulator + +currentValue;
+        new BN(accumulator).add(new BN(currentValue)).toString();
 
       const totalDepositTokenWithdrawals = depositERC20WithdrawalAmounts.reduce(
         reducerFunc,
