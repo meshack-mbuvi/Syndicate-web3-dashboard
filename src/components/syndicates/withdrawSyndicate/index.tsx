@@ -550,7 +550,6 @@ const WithdrawSyndicate: React.FC = () => {
       amplitudeLogger(SUCCESSFUL_WITHDRAWAL, {
         flow: loggerFlow,
         data: {
-          syndicateAddress,
           withdrawAmount,
         },
       });

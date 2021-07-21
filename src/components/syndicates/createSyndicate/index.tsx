@@ -558,12 +558,6 @@ const CreateSyndicate = (props) => {
       // Amplitude logger: How many users started filling out the form to create a Syndicate
       amplitudeLogger(CREATE_SYNDICATE, {
         flow: Flow.MGR_CREATE_SYN,
-        data: {
-          syndicateData,
-          account,
-          fullName,
-          emailAddress,
-        },
       });
     } catch (error) {
       setShowWalletConfirmationModal(false);

@@ -267,10 +267,7 @@ const DistributeToken = (props: Props) => {
     amplitudeLogger(CLICK_DISTRIBUTE_TOKENS_BUTTON, {
       flow: Flow.MGR_SET_DIST,
       data: {
-        syndicateAddress,
-        distributionERC20TokenAddresses,
         tokenDistributionAmounts,
-        account,
       },
     });
     try {
@@ -288,10 +285,7 @@ const DistributeToken = (props: Props) => {
       amplitudeLogger(SUCCESS_DISTRIBUTE_TOKENS, {
         flow: Flow.MGR_SET_DIST,
         data: {
-          syndicateAddress,
-          distributionERC20TokenAddresses,
           tokenDistributionAmounts,
-          account,
         },
       });
       setSuccessfulDistribution(true);
@@ -986,10 +980,6 @@ const DistributeToken = (props: Props) => {
     // Amplitude logger: CLICK_ADD_MANAGER_FEE_ADDRESS
     amplitudeLogger(CLICK_ADD_MANAGER_FEE_ADDRESS, {
       flow: Flow.MGR_SET_DIST,
-      data: {
-        syndicateAddress,
-        managerFeeAddress,
-      },
     });
 
     try {
@@ -1004,10 +994,6 @@ const DistributeToken = (props: Props) => {
       // Amplitude logger: SUCCESS_ADD_MANAGER_FEE_ADDRESS
       amplitudeLogger(SUCCESS_ADD_MANAGER_FEE_ADDRESS, {
         flow: Flow.MGR_SET_DIST,
-        data: {
-          syndicateAddress,
-          managerFeeAddress,
-        },
       });
 
       dispatch(updateSyndicateManagerFeeAddress(managerFeeAddress));

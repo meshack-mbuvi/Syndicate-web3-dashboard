@@ -119,7 +119,7 @@ const ModifyMemberDistributions = (): JSX.Element => {
   }, [memberAddress, syndicateDistributionTokens, syndicate]);
 
   useEffect(() => {
-    setDistributionERC20Address(syndicateDistributionTokens[1].tokenAddress);
+    setDistributionERC20Address(syndicateDistributionTokens?.[0]?.tokenAddress);
   }, [syndicateDistributionTokens]);
 
   useEffect(() => {
