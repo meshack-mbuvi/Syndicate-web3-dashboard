@@ -68,21 +68,13 @@ export const updateMemberDepositDetails = (
 
       const memberNumDetails = {
         memberTotalDeposits: memberDeposits,
-        memberPercentageOfSyndicate,
+        memberPercentageOfSyndicate: floatedNumberWithCommas(memberPercentageOfSyndicate)
       };
 
       const memberBoolDetails = {
         memberAddressAllowed,
         memberMaxDepositReached,
       };
-
-      // format member number details
-      // values should have commas, if they are longer than 3 characters long
-      // and be rounded to two decimal places.
-      Object.keys(memberNumDetails).map((key) => {
-        memberNumDetails[key] = floatedNumberWithCommas(memberNumDetails[key]);
-        return;
-      });
 
       // dispatch action to update syndicate member details
       dispatch(

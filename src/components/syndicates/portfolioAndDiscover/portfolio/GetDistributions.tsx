@@ -1,11 +1,9 @@
 import { RootState } from "@/redux/store";
-import { ERC20TokenDetails } from "@/utils/ERC20Methods";
-import { formatAddress } from "@/utils/formatAddress";
 import { floatedNumberWithCommas } from "@/utils/formattedNumbers";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { getWeiAmount, onlyUnique } from "src/utils/conversions";
-import { TokenMappings } from "src/utils/tokenMappings";
+import { getCoinFromContractAddress } from "functions/src/utils/ethereum";
 import { ifRows } from "./interfaces";
 
 const GetDistributions = ({
@@ -34,7 +32,7 @@ const GetDistributions = ({
   const getDistributionEvents = async () => {
     const distributionEvents = await syndicateContracts.DistributionLogicContract.getDistributionEvents(
       "DistributionAdded",
-      { syndicateAddress: web3.utils.toChecksumAddress(syndicateAddress) }
+      { syndicateAddress: web3.utils.toChecksumAddress(syndicateAddress) },
     );
 
     if (distributionEvents.length) {
@@ -46,26 +44,12 @@ const GetDistributions = ({
 
     const uniqueDistributionERC20s = distributionTokens.filter(onlyUnique);
     for (let j = 0; j < uniqueDistributionERC20s.length; j++) {
-      // token decimals
-      const ERC20Details = new ERC20TokenDetails(uniqueDistributionERC20s[j]);
-      const tokenDecimals = await ERC20Details.getTokenDecimals();
-      const distributionERC20Decimals = tokenDecimals ? tokenDecimals : "18";
-
-      // token symbol
-      const mappedTokenAddress = Object.keys(TokenMappings).find(
-        (key) =>
-          web3.utils.toChecksumAddress(key) ===
-          web3.utils.toChecksumAddress(uniqueDistributionERC20s[j]),
-      );
-
-      let distributionERC20Symbol = formatAddress(
+      // get token properties
+      const { decimals, symbol } = await getCoinFromContractAddress(
         uniqueDistributionERC20s[j],
-        4,
-        4,
       );
-      if (mappedTokenAddress) {
-        distributionERC20Symbol = TokenMappings[mappedTokenAddress];
-      }
+      const distributionERC20Symbol = symbol;
+      const distributionERC20Decimals = decimals ? decimals : "18";
 
       // get distribution amount for token
       const tokenDistributedAmount = await syndicateContracts.DistributionLogicContract.getDistributionTotal(
@@ -125,7 +109,6 @@ const GetDistributions = ({
   useEffect(() => {
     getDistributionEvents();
   }, [syndicateAddress, account]);
-
 
   return (
     <div className="flex flex-row items-center w-full visibility-container">

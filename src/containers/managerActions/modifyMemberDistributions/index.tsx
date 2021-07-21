@@ -20,12 +20,12 @@ import {
 import { updateMemberWithdrawalDetails } from "@/redux/actions/syndicateMemberDetails/memberWithdrawalsInfo";
 import { RootState } from "@/redux/store";
 import { getWeiAmount } from "@/utils/conversions";
-import { TokenMappings } from "@/utils/tokenMappings";
 import { isZeroAddress, Validate } from "@/utils/validators";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Button from "src/components/buttons";
+import { getCoinFromContractAddress } from "functions/src/utils/ethereum";
 
 /**
  * This component displays a form with input fields used to modify a syndicate
@@ -86,22 +86,22 @@ const ModifyMemberDistributions = (): JSX.Element => {
   const [amountError, setAmountError] = useState<string>("");
 
   const [submitting, setSubmitting] = useState(false);
-  const [currentERC20, setCurrentERC20] = useState<string>("DAI");
   const [currentTokenDecimals, setCurrentTokenDecimals] = useState(18);
+  const [currentERC20, setCurrentERC20] = useState<string>("");
 
   // set token symbol based on deposit token address
+  const getTokenSymbol = async (tokenAddress) => {
+    const { symbol } = await getCoinFromContractAddress(tokenAddress);
+    setCurrentERC20(symbol);
+  };
   // we'll manually map the token symbol for now.
   // we'll also set the token decimals of the deposit/Withdrawal ERC20 token here
   useEffect(() => {
-    if (syndicate && distributionERC20Address) {
-      // set token symbol based on distributionERC20Address token address
-      const tokenAddress = distributionERC20Address;
-      const mappedTokenAddress = Object.keys(TokenMappings).find(
-        (key) => key.toLowerCase() == tokenAddress.toLowerCase(),
-      );
-      if (mappedTokenAddress) {
-        setCurrentERC20(TokenMappings[mappedTokenAddress]);
-      }
+    if (syndicate) {
+      // set token symbol based on token address
+      const tokenAddress = syndicate.depositERC20Address;
+      getTokenSymbol(tokenAddress);
+
       getDistributionERC20Address();
     }
   }, [syndicate]);

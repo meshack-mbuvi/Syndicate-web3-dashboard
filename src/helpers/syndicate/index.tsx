@@ -1,10 +1,10 @@
 import { Syndicate } from "@/@types/syndicate";
 import HorizontalDivider from "@/components/horizontalDivider";
 import {
-  getTokenDecimals,
   processSyndicateDetails,
 } from "@/redux/actions/syndicates";
 import { getWeiAmount } from "@/utils/conversions";
+import { getCoinFromContractAddress } from "functions/src/utils/ethereum";
 
 /**
  * retrieves details for a given syndicate
@@ -12,11 +12,22 @@ import { getWeiAmount } from "@/utils/conversions";
 export const getSyndicate = async (syndicateData): Promise<Syndicate> => {
   try {
     const { depositERC20Address } = syndicateData;
-    const tokenDecimals = await getTokenDecimals(depositERC20Address);
+    
+    // get token details
+    const { symbol, logo, decimals,price } = await getCoinFromContractAddress(
+      depositERC20Address,
+    );
+    const tokenDecimals = decimals;
+    const depositERC20Logo = logo;
+    const depositERC20TokenSymbol = symbol;
+    const depositERC20Price =  price;
 
     const syndicateDetails = processSyndicateDetails(
       syndicateData,
-      tokenDecimals
+      tokenDecimals,
+      depositERC20TokenSymbol,
+      depositERC20Logo,
+      depositERC20Price
     );
 
     return {
@@ -48,7 +59,7 @@ export const showLoader = (count) => {
           <div className="card-placeholder w-16 sm:w-24 mb-2"></div>
         </div>
         <HorizontalDivider />
-      </div>
+      </div>,
     );
   }
   return animations;
@@ -68,7 +79,7 @@ export const getSyndicateMemberInfo = async (
   GetterLogicContract,
   syndicateAddress,
   memberAddress,
-  currentERC20Decimals = 18
+  currentERC20Decimals = 18,
 ) => {
   try {
     const {
@@ -77,19 +88,19 @@ export const getSyndicateMemberInfo = async (
       memberAddressAllowed,
     } = await GetterLogicContract.getMemberInfo(
       syndicateAddress,
-      memberAddress
+      memberAddress,
     );
 
     const memberDeposits = getWeiAmount(
       memberDeposit,
       currentERC20Decimals,
-      false
+      false,
     );
 
     const memberTotalWithdrawals = getWeiAmount(
       DistributionClaimed,
       currentERC20Decimals,
-      false
+      false,
     );
 
     return { memberDeposits, memberTotalWithdrawals, memberAddressAllowed };

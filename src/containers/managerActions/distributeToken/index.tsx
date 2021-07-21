@@ -43,13 +43,13 @@ import { getWeiAmount } from "@/utils/conversions";
 import { ERC20TokenDetails } from "@/utils/ERC20Methods";
 import { formatAddress } from "@/utils/formatAddress";
 import { floatedNumberWithCommas } from "@/utils/formattedNumbers";
-import { TokenMappings } from "@/utils/tokenMappings";
 import { isZeroAddress, Validate } from "@/utils/validators";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Button from "src/components/buttons";
 import { DeleteIcon } from "src/components/shared/Icons";
+import { getCoinFromContractAddress } from "functions/src/utils/ethereum";
 
 interface Props {
   showDistributeToken: boolean;
@@ -380,23 +380,16 @@ const DistributeToken = (props: Props) => {
    * @index the index of the token in the ERC20TokenFields state
    * @returns token symbol from token mappings
    */
-  const getDistributionTokenSymbol = (
+  const getDistributionTokenSymbol = async (
     index: number,
     distributionERC20Address: string,
   ) => {
     // set token symbol based on token address
     const tokenAddress = distributionERC20Address;
-    const mappedTokenAddress = Object.keys(TokenMappings).find(
-      (key) =>
-        web3.utils.toChecksumAddress(key) ==
-        web3.utils.toChecksumAddress(tokenAddress),
-    );
-    if (mappedTokenAddress) {
-      updateERC20TokenValue(
-        "tokenSymbol",
-        index,
-        TokenMappings[mappedTokenAddress],
-      );
+    const { symbol } = await getCoinFromContractAddress(tokenAddress);
+
+    if (symbol) {
+      updateERC20TokenValue("tokenSymbol", index, symbol);
     } else {
       updateERC20TokenValue("tokenSymbol", index, "unknown");
     }
@@ -482,7 +475,8 @@ const DistributeToken = (props: Props) => {
       // distribution share to syndicate and to the lead.
       const tokenWithdrawalAmountAvailable =
         +value -
-        (tokenDistributionShareToSyndicateLead + tokenDistributionShareToSyndicateProtocol);
+        (tokenDistributionShareToSyndicateLead +
+          tokenDistributionShareToSyndicateProtocol);
 
       updateERC20TokenValue(
         "distributionShareToSyndicateProtocol",
@@ -772,7 +766,7 @@ const DistributeToken = (props: Props) => {
 
     // update the redux store with latest syndicate details
     // once distribution is set successfully.
-    if (successfulDistribution) { 
+    if (successfulDistribution) {
       dispatch(
         getSyndicateByAddress({ syndicateAddress, ...syndicateContracts }),
       );
