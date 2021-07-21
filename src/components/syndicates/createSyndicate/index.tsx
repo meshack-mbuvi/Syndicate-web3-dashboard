@@ -426,10 +426,8 @@ const CreateSyndicate = (props) => {
 
   // update minimumCloseDate to a date not earlier than today
   const handleClick = () => {
-    const date = new Date(
-      new Date().setHours(new Date().getHours() + 24),
-    );
-    setMinimumCloseDate(date)
+    const date = new Date(new Date().setHours(new Date().getHours() + 24));
+    setMinimumCloseDate(date);
   };
 
   /**
@@ -872,6 +870,7 @@ const CreateSyndicate = (props) => {
                   {/* input field */}
                   <div className="flex justify-end" onClick={handleClick}>
                     <DatePicker
+                      dateFormat={selectedDate.toLocaleDateString()}
                       selected={selectedDate}
                       onSelect={handleDateSelect}
                       className={`flex flex-grow focus:ring-blue text-sm focus:border-blue rounded-md text-black border-gray-85 w-full font-whyte`}
