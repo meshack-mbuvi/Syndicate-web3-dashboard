@@ -516,6 +516,7 @@ const ManagerSetAllowance = (props: Props) => {
                             focus: true,
                           }}
                           name="allowance-amount"
+                          type="number"
                           placeholder={prefillAllowanceAmountValue}
                         />
                         <TextInput

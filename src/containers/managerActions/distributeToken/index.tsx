@@ -1184,6 +1184,7 @@ const DistributeToken = (props: Props) => {
                                 defaultValue: 0,
                                 error: tokenAllowanceError,
                                 column: true,
+                                type: "number",
                                 customWidth: "w-full xl:w-64",
                               }}
                               name="tokenAllowance"

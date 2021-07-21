@@ -913,7 +913,7 @@ const DepositSyndicate: React.FC = () => {
                             <div className="flex justify-between my-1">
                               <input
                                 name="amount"
-                                type="text"
+                                type="number"
                                 placeholder="400"
                                 disabled={disableAmountInput}
                                 defaultValue={amount}

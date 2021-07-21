@@ -809,6 +809,7 @@ const CreateSyndicate = (props) => {
                 onChange={handleSetMinDeposits}
                 name="minDeposits"
                 value={minDeposits}
+                type="number"
                 placeholder="0"
               />
 
@@ -822,6 +823,7 @@ const CreateSyndicate = (props) => {
                 onChange={handleSetMaxDeposits}
                 name="maxDeposits"
                 value={maxDeposits}
+                type="number"
                 placeholder="Unlimited"
               />
 
@@ -835,6 +837,7 @@ const CreateSyndicate = (props) => {
                 onChange={maxTotalDepositsHandler}
                 name="maxTotalDeposits"
                 value={maxTotalDeposits}
+                type="number"
                 placeholder="Unlimited"
               />
 
@@ -848,6 +851,7 @@ const CreateSyndicate = (props) => {
                 onChange={maxMembersHandler}
                 name="maxMembers"
                 value={maxMembers}
+                type="number"
                 placeholder="Unlimited"
               />
 
