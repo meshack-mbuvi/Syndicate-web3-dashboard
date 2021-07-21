@@ -397,10 +397,11 @@ const CreateSyndicate = (props) => {
   const [copied, setCopied] = useState(false);
 
   // closeDate should be 2 weeks in the future by default
-  const minimumCloseDate = new Date(
+  const defaultCloseDate = new Date(
     new Date().setHours(new Date().getHours() + 24 * 14),
   );
-  const [selectedDate, setSelectedDate] = useState(minimumCloseDate);
+  const [selectedDate, setSelectedDate] = useState(defaultCloseDate);
+  const [minimumCloseDate, setMinimumCloseDate] = useState(defaultCloseDate);
 
   // this controls the toggle button for manually whitelisting depositors
   const toggleAllowlistEnabled = () => setAllowlistEnabled(!allowlistEnabled);
@@ -421,6 +422,14 @@ const CreateSyndicate = (props) => {
   // set closeDate
   const handleDateSelect = (date) => {
     setSelectedDate(date);
+  };
+
+  // update minimumCloseDate to a date not earlier than today
+  const handleClick = () => {
+    const date = new Date(
+      new Date().setHours(new Date().getHours() + 24),
+    );
+    setMinimumCloseDate(date)
   };
 
   /**
@@ -685,7 +694,7 @@ const CreateSyndicate = (props) => {
           <input type="hidden" name="form-name" value="offChainData" />
           {/* modal sub title */}
           <div
-            className="flex justify-start mb-1 text-blue font-medium 
+            className="flex justify-start mb-1 text-blue font-medium
           text-center leading-8 text-lg"
           >
             <p className="text-blue ml-4">Offchain Data</p>
@@ -759,7 +768,7 @@ const CreateSyndicate = (props) => {
 
           {/* modal sub title */}
           <div
-            className="flex justify-start mt-4 mb-1 text-blue font-medium 
+            className="flex justify-start mt-4 mb-1 text-blue font-medium
           text-center leading-8 text-lg"
           >
             <p className="text-blue ml-4">Onchain Data</p>
@@ -861,7 +870,7 @@ const CreateSyndicate = (props) => {
                   className={`w-5/6 flex-grow flex flex-col justify-between`}
                 >
                   {/* input field */}
-                  <div className="flex justify-end">
+                  <div className="flex justify-end" onClick={handleClick}>
                     <DatePicker
                       selected={selectedDate}
                       onSelect={handleDateSelect}
