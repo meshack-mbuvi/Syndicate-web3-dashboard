@@ -126,7 +126,7 @@
       "type": "function"
     }
   ],
-  "metadata": "{\"compiler\":{\"version\":\"0.8.6+commit.11564f7e\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"previousOwner\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"OwnershipTransferred\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"contractFeeAddress\",\"type\":\"address\"}],\"name\":\"SyndicateFeeAddressUpdated\",\"type\":\"event\"},{\"inputs\":[],\"name\":\"BASIS_POINTS_DENOMINATOR\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getSyndicateFeeAddress\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"owner\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"ownerRenounceOwnership\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"feeAddress\",\"type\":\"address\"}],\"name\":\"ownerSetSyndicateFeeAddress\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"ownerTransferOwnership\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"renounceOwnership\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"transferOwnership\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"author\":\"Syndicate Inc.\",\"kind\":\"dev\",\"methods\":{\"constructor\":{\"params\":{\"owner\":\"Address of contract owner upon deployment. Typically should be `syndicateFeeAddress`.\"}},\"getSyndicateFeeAddress()\":{\"details\":\"This function is needed to allow inheriting contracts to only be able to view but not change syndicateFeeAddress without going through ownerSetSyndicateFeeAddress\"},\"owner()\":{\"details\":\"Returns the address of the current owner.\"},\"ownerSetSyndicateFeeAddress(address)\":{\"params\":{\"feeAddress\":\"The owner's new contract fee address\"}},\"ownerTransferOwnership(address)\":{\"params\":{\"newOwner\":\"The new owner's address.\"}},\"renounceOwnership()\":{\"details\":\"Leaves the contract without owner. It will not be possible to call `onlyOwner` functions anymore. Can only be called by the current owner. NOTE: Renouncing ownership will leave the contract without an owner, thereby removing any functionality that is only available to the owner.\"},\"transferOwnership(address)\":{\"details\":\"Transfers ownership of the contract to a new account (`newOwner`). Can only be called by the current owner.\"}},\"version\":1},\"userdoc\":{\"events\":{\"SyndicateFeeAddressUpdated(address)\":{\"notice\":\"The owner updates the contract fee address.\"}},\"kind\":\"user\",\"methods\":{\"constructor\":{\"notice\":\"Used to initialize the SyndicateOwnershipLogic contract.Passing in 0x0 for owner will fail as it is checked by `transferOwnership`.\"},\"getSyndicateFeeAddress()\":{\"notice\":\"getter function for syndicate fee address.\"},\"ownerRenounceOwnership()\":{\"notice\":\"Renounce ownership of the contract\"},\"ownerSetSyndicateFeeAddress(address)\":{\"notice\":\"set a new fee address for the contract function that can only be triggered by the contract owner.\"},\"ownerTransferOwnership(address)\":{\"notice\":\"Transfers ownership to the provided address.\"}},\"notice\":\"Core module for owner functionality\",\"version\":1}},\"settings\":{\"compilationTarget\":{\"/Users/connerswenberg/Code/syndicate/Syndicate/contracts/SyndicateOwnerLogic.sol\":\"SyndicateOwnerLogic\"},\"evmVersion\":\"berlin\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[]},\"sources\":{\"/Users/connerswenberg/Code/syndicate/Syndicate/contracts/SyndicateOwnerLogic.sol\":{\"keccak256\":\"0xe8fddc6a8d97c463fe3f70685d1f2be02b7e09bee7059cc5e4f791a777822529\",\"license\":\"UNLICENSED\",\"urls\":[\"bzz-raw://95e64762babce0034f2feab14e29c3a3c088a494b62fdb0e710bbd18759de6fa\",\"dweb:/ipfs/QmNLmg285J7RJTv98Twy37XQZtxy3NxHuN5zRsjZkQEuKU\"]},\"@openzeppelin/contracts/access/Ownable.sol\":{\"keccak256\":\"0x1cae4f85f114ff17b90414f5da67365b1d00337abb5bce9bf944eb78a2c0673c\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://d5ff16b336ce8f906478d5f2eecc6435e00833bdc0b92f6b209cf9e92cb5b2b7\",\"dweb:/ipfs/QmRD1rAZEqQ73C33cdA3QoUyBDMEWnNKNMc6PNkAZWHeQQ\"]},\"@openzeppelin/contracts/utils/Context.sol\":{\"keccak256\":\"0xf930d2df426bfcfc1f7415be724f04081c96f4fb9ec8d0e3a521c07692dface0\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://fc2bfdea0d2562c76fb3c4cf70a86c6ba25c5a30e8f8515c95aafdf8383f8395\",\"dweb:/ipfs/QmTbFya18786ckJfLYUoWau9jBTKfmWnWm5XSViWvB7PXN\"]}},\"version\":1}",
+  "metadata": "{\"compiler\":{\"version\":\"0.8.6+commit.11564f7e\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"previousOwner\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"OwnershipTransferred\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"contractFeeAddress\",\"type\":\"address\"}],\"name\":\"SyndicateFeeAddressUpdated\",\"type\":\"event\"},{\"inputs\":[],\"name\":\"BASIS_POINTS_DENOMINATOR\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getSyndicateFeeAddress\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"owner\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"ownerRenounceOwnership\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"feeAddress\",\"type\":\"address\"}],\"name\":\"ownerSetSyndicateFeeAddress\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"ownerTransferOwnership\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"renounceOwnership\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"transferOwnership\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"author\":\"Syndicate Inc.\",\"kind\":\"dev\",\"methods\":{\"constructor\":{\"params\":{\"owner\":\"Address of contract owner upon deployment. Typically should be `syndicateFeeAddress`.\"}},\"getSyndicateFeeAddress()\":{\"details\":\"This function is needed to allow inheriting contracts to only be able to view but not change syndicateFeeAddress without going through ownerSetSyndicateFeeAddress\"},\"owner()\":{\"details\":\"Returns the address of the current owner.\"},\"ownerSetSyndicateFeeAddress(address)\":{\"params\":{\"feeAddress\":\"The owner's new contract fee address\"}},\"ownerTransferOwnership(address)\":{\"params\":{\"newOwner\":\"The new owner's address.\"}},\"renounceOwnership()\":{\"details\":\"Leaves the contract without owner. It will not be possible to call `onlyOwner` functions anymore. Can only be called by the current owner. NOTE: Renouncing ownership will leave the contract without an owner, thereby removing any functionality that is only available to the owner.\"},\"transferOwnership(address)\":{\"details\":\"Transfers ownership of the contract to a new account (`newOwner`). Can only be called by the current owner.\"}},\"version\":1},\"userdoc\":{\"events\":{\"SyndicateFeeAddressUpdated(address)\":{\"notice\":\"The owner updates the contract fee address.\"}},\"kind\":\"user\",\"methods\":{\"constructor\":{\"notice\":\"Used to initialize the SyndicateOwnershipLogic contract.Passing in 0x0 for owner will fail as it is checked by `transferOwnership`.\"},\"getSyndicateFeeAddress()\":{\"notice\":\"getter function for syndicate fee address.\"},\"ownerRenounceOwnership()\":{\"notice\":\"Renounce ownership of the contract\"},\"ownerSetSyndicateFeeAddress(address)\":{\"notice\":\"set a new fee address for the contract function that can only be triggered by the contract owner.\"},\"ownerTransferOwnership(address)\":{\"notice\":\"Transfers ownership to the provided address.\"}},\"notice\":\"Core module for owner functionality\",\"version\":1}},\"settings\":{\"compilationTarget\":{\"/Users/mbuvi/syndicates/Syndicate/contracts/SyndicateOwnerLogic.sol\":\"SyndicateOwnerLogic\"},\"evmVersion\":\"berlin\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[]},\"sources\":{\"/Users/mbuvi/syndicates/Syndicate/contracts/SyndicateOwnerLogic.sol\":{\"keccak256\":\"0xe8fddc6a8d97c463fe3f70685d1f2be02b7e09bee7059cc5e4f791a777822529\",\"license\":\"UNLICENSED\",\"urls\":[\"bzz-raw://95e64762babce0034f2feab14e29c3a3c088a494b62fdb0e710bbd18759de6fa\",\"dweb:/ipfs/QmNLmg285J7RJTv98Twy37XQZtxy3NxHuN5zRsjZkQEuKU\"]},\"@openzeppelin/contracts/access/Ownable.sol\":{\"keccak256\":\"0x1cae4f85f114ff17b90414f5da67365b1d00337abb5bce9bf944eb78a2c0673c\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://d5ff16b336ce8f906478d5f2eecc6435e00833bdc0b92f6b209cf9e92cb5b2b7\",\"dweb:/ipfs/QmRD1rAZEqQ73C33cdA3QoUyBDMEWnNKNMc6PNkAZWHeQQ\"]},\"@openzeppelin/contracts/utils/Context.sol\":{\"keccak256\":\"0xf930d2df426bfcfc1f7415be724f04081c96f4fb9ec8d0e3a521c07692dface0\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://fc2bfdea0d2562c76fb3c4cf70a86c6ba25c5a30e8f8515c95aafdf8383f8395\",\"dweb:/ipfs/QmTbFya18786ckJfLYUoWau9jBTKfmWnWm5XSViWvB7PXN\"]}},\"version\":1}",
   "bytecode": "0x",
   "deployedBytecode": "0x",
   "immutableReferences": {},
@@ -135,26 +135,26 @@
   "sourceMap": "",
   "deployedSourceMap": "",
   "source": "// SPDX-License-Identifier: UNLICENSED\n\npragma solidity ^0.8.0;\n\nimport \"@openzeppelin/contracts/access/Ownable.sol\";\n\n/// @author Syndicate Inc.\n/// @notice Core module for owner functionality\nabstract contract SyndicateOwnerLogic is Ownable {\n    // Use a consistent denominator for basis point calculations\n    uint256 public constant BASIS_POINTS_DENOMINATOR = 10000;\n    // Address of the Gnosis Safe where the Syndicate distribution share is collected.\n    // Needs to be private so inheriting contracts cannot change the address.\n    address private syndicateFeeAddress =\n        0x40dB79f7f18C468c6552538b488c58B5E72bf4D9;\n\n    /// @notice Used to initialize the SyndicateOwnershipLogic contract.\n    /// @param owner Address of contract owner upon deployment. Typically should\n    /// be `syndicateFeeAddress`.\n    /// @notice Passing in 0x0 for owner will fail as it is checked by\n    /// `transferOwnership`.\n    constructor(address owner) Ownable() {\n        // Reduces the risk of us forgetting to transfer ownership to Syndcate's\n        // Gnosis safe or having it fail after deployment.\n        // As a side effect, ensures the owner is never unset.\n        transferOwnership(owner);\n    }\n\n    // Events------------------------------------------------------------------\n\n    /// @notice The owner updates the contract fee address.\n    event SyndicateFeeAddressUpdated(address indexed contractFeeAddress);\n\n    /// @notice getter function for syndicate fee address.\n    /// @dev This function is needed to allow inheriting contracts to\n    /// only be able to view but not change syndicateFeeAddress without\n    /// going through ownerSetSyndicateFeeAddress\n    function getSyndicateFeeAddress() public view returns (address) {\n        return syndicateFeeAddress;\n    }\n\n    // Owner functions----------------------------------------------------------\n\n    /// @notice set a new fee address for the contract function that can only\n    /// be triggered by the contract owner.\n    /// @param feeAddress The owner's new contract fee address\n    function ownerSetSyndicateFeeAddress(address feeAddress) public onlyOwner {\n        syndicateFeeAddress = feeAddress;\n\n        emit SyndicateFeeAddressUpdated(feeAddress);\n    }\n\n    /// @notice Transfers ownership to the provided address.\n    /// @param newOwner The new owner's address.\n    function ownerTransferOwnership(address newOwner) public onlyOwner {\n        transferOwnership(newOwner);\n    }\n\n    /// @notice Renounce ownership of the contract\n    function ownerRenounceOwnership() public onlyOwner {\n        super.renounceOwnership();\n    }\n}\n",
-  "sourcePath": "/Users/connerswenberg/Code/syndicate/Syndicate/contracts/SyndicateOwnerLogic.sol",
+  "sourcePath": "/Users/mbuvi/syndicates/Syndicate/contracts/SyndicateOwnerLogic.sol",
   "ast": {
-    "absolutePath": "/Users/connerswenberg/Code/syndicate/Syndicate/contracts/SyndicateOwnerLogic.sol",
+    "absolutePath": "/Users/mbuvi/syndicates/Syndicate/contracts/SyndicateOwnerLogic.sol",
     "exportedSymbols": {
       "Context": [
-        6787
+        7765
       ],
       "Ownable": [
-        6126
+        7104
       ],
       "SyndicateOwnerLogic": [
-        4783
+        4864
       ]
     },
-    "id": 4784,
+    "id": 4865,
     "license": "UNLICENSED",
     "nodeType": "SourceUnit",
     "nodes": [
       {
-        "id": 4703,
+        "id": 4784,
         "literals": [
           "solidity",
           "^",
@@ -167,11 +167,11 @@
       {
         "absolutePath": "@openzeppelin/contracts/access/Ownable.sol",
         "file": "@openzeppelin/contracts/access/Ownable.sol",
-        "id": 4704,
+        "id": 4785,
         "nameLocation": "-1:-1:-1",
         "nodeType": "ImportDirective",
-        "scope": 4784,
-        "sourceUnit": 6127,
+        "scope": 4865,
+        "sourceUnit": 7105,
         "src": "65:52:10",
         "symbolAliases": [],
         "unitAlias": ""
@@ -181,13 +181,13 @@
         "baseContracts": [
           {
             "baseName": {
-              "id": 4706,
+              "id": 4787,
               "name": "Ownable",
               "nodeType": "IdentifierPath",
-              "referencedDeclaration": 6126,
+              "referencedDeclaration": 7104,
               "src": "235:7:10"
             },
-            "id": 4707,
+            "id": 4788,
             "nodeType": "InheritanceSpecifier",
             "src": "235:7:10"
           }
@@ -195,17 +195,17 @@
         "contractDependencies": [],
         "contractKind": "contract",
         "documentation": {
-          "id": 4705,
+          "id": 4786,
           "nodeType": "StructuredDocumentation",
           "src": "119:75:10",
           "text": "@author Syndicate Inc.\n @notice Core module for owner functionality"
         },
         "fullyImplemented": true,
-        "id": 4783,
+        "id": 4864,
         "linearizedBaseContracts": [
-          4783,
-          6126,
-          6787
+          4864,
+          7104,
+          7765
         ],
         "name": "SyndicateOwnerLogic",
         "nameLocation": "212:19:10",
@@ -214,12 +214,12 @@
           {
             "constant": true,
             "functionSelector": "cfa498a3",
-            "id": 4710,
+            "id": 4791,
             "mutability": "constant",
             "name": "BASIS_POINTS_DENOMINATOR",
             "nameLocation": "338:24:10",
             "nodeType": "VariableDeclaration",
-            "scope": 4783,
+            "scope": 4864,
             "src": "314:56:10",
             "stateVariable": true,
             "storageLocation": "default",
@@ -228,7 +228,7 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 4708,
+              "id": 4789,
               "name": "uint256",
               "nodeType": "ElementaryTypeName",
               "src": "314:7:10",
@@ -239,7 +239,7 @@
             },
             "value": {
               "hexValue": "3130303030",
-              "id": 4709,
+              "id": 4790,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
@@ -257,12 +257,12 @@
           },
           {
             "constant": false,
-            "id": 4713,
+            "id": 4794,
             "mutability": "mutable",
             "name": "syndicateFeeAddress",
             "nameLocation": "557:19:10",
             "nodeType": "VariableDeclaration",
-            "scope": 4783,
+            "scope": 4864,
             "src": "541:88:10",
             "stateVariable": true,
             "storageLocation": "default",
@@ -271,7 +271,7 @@
               "typeString": "address"
             },
             "typeName": {
-              "id": 4711,
+              "id": 4792,
               "name": "address",
               "nodeType": "ElementaryTypeName",
               "src": "541:7:10",
@@ -283,7 +283,7 @@
             },
             "value": {
               "hexValue": "307834306442373966376631384334363863363535323533386234383863353842354537326266344439",
-              "id": 4712,
+              "id": 4793,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
@@ -301,7 +301,7 @@
           },
           {
             "body": {
-              "id": 4725,
+              "id": 4806,
               "nodeType": "Block",
               "src": "961:244:10",
               "statements": [
@@ -309,11 +309,11 @@
                   "expression": {
                     "arguments": [
                       {
-                        "id": 4722,
+                        "id": 4803,
                         "name": "owner",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 4716,
+                        "referencedDeclaration": 4797,
                         "src": "1192:5:10",
                         "typeDescriptions": {
                           "typeIdentifier": "t_address",
@@ -328,18 +328,18 @@
                           "typeString": "address"
                         }
                       ],
-                      "id": 4721,
+                      "id": 4802,
                       "name": "transferOwnership",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 6125,
+                      "referencedDeclaration": 7103,
                       "src": "1174:17:10",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_internal_nonpayable$_t_address_$returns$__$",
                         "typeString": "function (address)"
                       }
                     },
-                    "id": 4723,
+                    "id": 4804,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": false,
@@ -354,31 +354,31 @@
                       "typeString": "tuple()"
                     }
                   },
-                  "id": 4724,
+                  "id": 4805,
                   "nodeType": "ExpressionStatement",
                   "src": "1174:24:10"
                 }
               ]
             },
             "documentation": {
-              "id": 4714,
+              "id": 4795,
               "nodeType": "StructuredDocumentation",
               "src": "636:283:10",
               "text": "@notice Used to initialize the SyndicateOwnershipLogic contract.\n @param owner Address of contract owner upon deployment. Typically should\n be `syndicateFeeAddress`.\n @notice Passing in 0x0 for owner will fail as it is checked by\n `transferOwnership`."
             },
-            "id": 4726,
+            "id": 4807,
             "implemented": true,
             "kind": "constructor",
             "modifiers": [
               {
                 "arguments": [],
-                "id": 4719,
+                "id": 4800,
                 "kind": "baseConstructorSpecifier",
                 "modifierName": {
-                  "id": 4718,
+                  "id": 4799,
                   "name": "Ownable",
                   "nodeType": "IdentifierPath",
-                  "referencedDeclaration": 6126,
+                  "referencedDeclaration": 7104,
                   "src": "951:7:10"
                 },
                 "nodeType": "ModifierInvocation",
@@ -389,17 +389,17 @@
             "nameLocation": "-1:-1:-1",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 4717,
+              "id": 4798,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 4716,
+                  "id": 4797,
                   "mutability": "mutable",
                   "name": "owner",
                   "nameLocation": "944:5:10",
                   "nodeType": "VariableDeclaration",
-                  "scope": 4726,
+                  "scope": 4807,
                   "src": "936:13:10",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -408,7 +408,7 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 4715,
+                    "id": 4796,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
                     "src": "936:7:10",
@@ -424,12 +424,12 @@
               "src": "935:15:10"
             },
             "returnParameters": {
-              "id": 4720,
+              "id": 4801,
               "nodeType": "ParameterList",
               "parameters": [],
               "src": "961:0:10"
             },
-            "scope": 4783,
+            "scope": 4864,
             "src": "924:281:10",
             "stateMutability": "nonpayable",
             "virtual": false,
@@ -438,28 +438,28 @@
           {
             "anonymous": false,
             "documentation": {
-              "id": 4727,
+              "id": 4808,
               "nodeType": "StructuredDocumentation",
               "src": "1292:55:10",
               "text": "@notice The owner updates the contract fee address."
             },
-            "id": 4731,
+            "id": 4812,
             "name": "SyndicateFeeAddressUpdated",
             "nameLocation": "1358:26:10",
             "nodeType": "EventDefinition",
             "parameters": {
-              "id": 4730,
+              "id": 4811,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 4729,
+                  "id": 4810,
                   "indexed": true,
                   "mutability": "mutable",
                   "name": "contractFeeAddress",
                   "nameLocation": "1401:18:10",
                   "nodeType": "VariableDeclaration",
-                  "scope": 4731,
+                  "scope": 4812,
                   "src": "1385:34:10",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -468,7 +468,7 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 4728,
+                    "id": 4809,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
                     "src": "1385:7:10",
@@ -487,38 +487,38 @@
           },
           {
             "body": {
-              "id": 4739,
+              "id": 4820,
               "nodeType": "Block",
               "src": "1742:43:10",
               "statements": [
                 {
                   "expression": {
-                    "id": 4737,
+                    "id": 4818,
                     "name": "syndicateFeeAddress",
                     "nodeType": "Identifier",
                     "overloadedDeclarations": [],
-                    "referencedDeclaration": 4713,
+                    "referencedDeclaration": 4794,
                     "src": "1759:19:10",
                     "typeDescriptions": {
                       "typeIdentifier": "t_address",
                       "typeString": "address"
                     }
                   },
-                  "functionReturnParameters": 4736,
-                  "id": 4738,
+                  "functionReturnParameters": 4817,
+                  "id": 4819,
                   "nodeType": "Return",
                   "src": "1752:26:10"
                 }
               ]
             },
             "documentation": {
-              "id": 4732,
+              "id": 4813,
               "nodeType": "StructuredDocumentation",
               "src": "1427:246:10",
               "text": "@notice getter function for syndicate fee address.\n @dev This function is needed to allow inheriting contracts to\n only be able to view but not change syndicateFeeAddress without\n going through ownerSetSyndicateFeeAddress"
             },
             "functionSelector": "cad0a373",
-            "id": 4740,
+            "id": 4821,
             "implemented": true,
             "kind": "function",
             "modifiers": [],
@@ -526,23 +526,23 @@
             "nameLocation": "1687:22:10",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 4733,
+              "id": 4814,
               "nodeType": "ParameterList",
               "parameters": [],
               "src": "1709:2:10"
             },
             "returnParameters": {
-              "id": 4736,
+              "id": 4817,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 4735,
+                  "id": 4816,
                   "mutability": "mutable",
                   "name": "",
                   "nameLocation": "-1:-1:-1",
                   "nodeType": "VariableDeclaration",
-                  "scope": 4740,
+                  "scope": 4821,
                   "src": "1733:7:10",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -551,7 +551,7 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 4734,
+                    "id": 4815,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
                     "src": "1733:7:10",
@@ -566,7 +566,7 @@
               ],
               "src": "1732:9:10"
             },
-            "scope": 4783,
+            "scope": 4864,
             "src": "1678:107:10",
             "stateMutability": "view",
             "virtual": false,
@@ -574,23 +574,23 @@
           },
           {
             "body": {
-              "id": 4756,
+              "id": 4837,
               "nodeType": "Block",
               "src": "2132:103:10",
               "statements": [
                 {
                   "expression": {
-                    "id": 4750,
+                    "id": 4831,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": false,
                     "lValueRequested": false,
                     "leftHandSide": {
-                      "id": 4748,
+                      "id": 4829,
                       "name": "syndicateFeeAddress",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 4713,
+                      "referencedDeclaration": 4794,
                       "src": "2142:19:10",
                       "typeDescriptions": {
                         "typeIdentifier": "t_address",
@@ -600,11 +600,11 @@
                     "nodeType": "Assignment",
                     "operator": "=",
                     "rightHandSide": {
-                      "id": 4749,
+                      "id": 4830,
                       "name": "feeAddress",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 4743,
+                      "referencedDeclaration": 4824,
                       "src": "2164:10:10",
                       "typeDescriptions": {
                         "typeIdentifier": "t_address",
@@ -617,7 +617,7 @@
                       "typeString": "address"
                     }
                   },
-                  "id": 4751,
+                  "id": 4832,
                   "nodeType": "ExpressionStatement",
                   "src": "2142:32:10"
                 },
@@ -625,11 +625,11 @@
                   "eventCall": {
                     "arguments": [
                       {
-                        "id": 4753,
+                        "id": 4834,
                         "name": "feeAddress",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 4743,
+                        "referencedDeclaration": 4824,
                         "src": "2217:10:10",
                         "typeDescriptions": {
                           "typeIdentifier": "t_address",
@@ -644,18 +644,18 @@
                           "typeString": "address"
                         }
                       ],
-                      "id": 4752,
+                      "id": 4833,
                       "name": "SyndicateFeeAddressUpdated",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 4731,
+                      "referencedDeclaration": 4812,
                       "src": "2190:26:10",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_event_nonpayable$_t_address_$returns$__$",
                         "typeString": "function (address)"
                       }
                     },
-                    "id": 4754,
+                    "id": 4835,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": false,
@@ -670,31 +670,31 @@
                       "typeString": "tuple()"
                     }
                   },
-                  "id": 4755,
+                  "id": 4836,
                   "nodeType": "EmitStatement",
                   "src": "2185:43:10"
                 }
               ]
             },
             "documentation": {
-              "id": 4741,
+              "id": 4822,
               "nodeType": "StructuredDocumentation",
               "src": "1873:180:10",
               "text": "@notice set a new fee address for the contract function that can only\n be triggered by the contract owner.\n @param feeAddress The owner's new contract fee address"
             },
             "functionSelector": "bfd9a7e1",
-            "id": 4757,
+            "id": 4838,
             "implemented": true,
             "kind": "function",
             "modifiers": [
               {
-                "id": 4746,
+                "id": 4827,
                 "kind": "modifierInvocation",
                 "modifierName": {
-                  "id": 4745,
+                  "id": 4826,
                   "name": "onlyOwner",
                   "nodeType": "IdentifierPath",
-                  "referencedDeclaration": 6075,
+                  "referencedDeclaration": 7053,
                   "src": "2122:9:10"
                 },
                 "nodeType": "ModifierInvocation",
@@ -705,17 +705,17 @@
             "nameLocation": "2067:27:10",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 4744,
+              "id": 4825,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 4743,
+                  "id": 4824,
                   "mutability": "mutable",
                   "name": "feeAddress",
                   "nameLocation": "2103:10:10",
                   "nodeType": "VariableDeclaration",
-                  "scope": 4757,
+                  "scope": 4838,
                   "src": "2095:18:10",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -724,7 +724,7 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 4742,
+                    "id": 4823,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
                     "src": "2095:7:10",
@@ -740,12 +740,12 @@
               "src": "2094:20:10"
             },
             "returnParameters": {
-              "id": 4747,
+              "id": 4828,
               "nodeType": "ParameterList",
               "parameters": [],
               "src": "2132:0:10"
             },
-            "scope": 4783,
+            "scope": 4864,
             "src": "2058:177:10",
             "stateMutability": "nonpayable",
             "virtual": false,
@@ -753,7 +753,7 @@
           },
           {
             "body": {
-              "id": 4769,
+              "id": 4850,
               "nodeType": "Block",
               "src": "2418:44:10",
               "statements": [
@@ -761,11 +761,11 @@
                   "expression": {
                     "arguments": [
                       {
-                        "id": 4766,
+                        "id": 4847,
                         "name": "newOwner",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 4760,
+                        "referencedDeclaration": 4841,
                         "src": "2446:8:10",
                         "typeDescriptions": {
                           "typeIdentifier": "t_address",
@@ -780,18 +780,18 @@
                           "typeString": "address"
                         }
                       ],
-                      "id": 4765,
+                      "id": 4846,
                       "name": "transferOwnership",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 6125,
+                      "referencedDeclaration": 7103,
                       "src": "2428:17:10",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_internal_nonpayable$_t_address_$returns$__$",
                         "typeString": "function (address)"
                       }
                     },
-                    "id": 4767,
+                    "id": 4848,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": false,
@@ -806,31 +806,31 @@
                       "typeString": "tuple()"
                     }
                   },
-                  "id": 4768,
+                  "id": 4849,
                   "nodeType": "ExpressionStatement",
                   "src": "2428:27:10"
                 }
               ]
             },
             "documentation": {
-              "id": 4758,
+              "id": 4839,
               "nodeType": "StructuredDocumentation",
               "src": "2241:105:10",
               "text": "@notice Transfers ownership to the provided address.\n @param newOwner The new owner's address."
             },
             "functionSelector": "a09cca93",
-            "id": 4770,
+            "id": 4851,
             "implemented": true,
             "kind": "function",
             "modifiers": [
               {
-                "id": 4763,
+                "id": 4844,
                 "kind": "modifierInvocation",
                 "modifierName": {
-                  "id": 4762,
+                  "id": 4843,
                   "name": "onlyOwner",
                   "nodeType": "IdentifierPath",
-                  "referencedDeclaration": 6075,
+                  "referencedDeclaration": 7053,
                   "src": "2408:9:10"
                 },
                 "nodeType": "ModifierInvocation",
@@ -841,17 +841,17 @@
             "nameLocation": "2360:22:10",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 4761,
+              "id": 4842,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 4760,
+                  "id": 4841,
                   "mutability": "mutable",
                   "name": "newOwner",
                   "nameLocation": "2391:8:10",
                   "nodeType": "VariableDeclaration",
-                  "scope": 4770,
+                  "scope": 4851,
                   "src": "2383:16:10",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -860,7 +860,7 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 4759,
+                    "id": 4840,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
                     "src": "2383:7:10",
@@ -876,12 +876,12 @@
               "src": "2382:18:10"
             },
             "returnParameters": {
-              "id": 4764,
+              "id": 4845,
               "nodeType": "ParameterList",
               "parameters": [],
               "src": "2418:0:10"
             },
-            "scope": 4783,
+            "scope": 4864,
             "src": "2351:111:10",
             "stateMutability": "nonpayable",
             "virtual": false,
@@ -889,7 +889,7 @@
           },
           {
             "body": {
-              "id": 4781,
+              "id": 4862,
               "nodeType": "Block",
               "src": "2570:42:10",
               "statements": [
@@ -899,32 +899,32 @@
                     "expression": {
                       "argumentTypes": [],
                       "expression": {
-                        "id": 4776,
+                        "id": 4857,
                         "name": "super",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
                         "referencedDeclaration": 4294967271,
                         "src": "2580:5:10",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_type$_t_super$_SyndicateOwnerLogic_$4783_$",
+                          "typeIdentifier": "t_type$_t_super$_SyndicateOwnerLogic_$4864_$",
                           "typeString": "type(contract super SyndicateOwnerLogic)"
                         }
                       },
-                      "id": 4778,
+                      "id": 4859,
                       "isConstant": false,
                       "isLValue": false,
                       "isPure": false,
                       "lValueRequested": false,
                       "memberName": "renounceOwnership",
                       "nodeType": "MemberAccess",
-                      "referencedDeclaration": 6097,
+                      "referencedDeclaration": 7075,
                       "src": "2580:23:10",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_internal_nonpayable$__$returns$__$",
                         "typeString": "function ()"
                       }
                     },
-                    "id": 4779,
+                    "id": 4860,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": false,
@@ -939,31 +939,31 @@
                       "typeString": "tuple()"
                     }
                   },
-                  "id": 4780,
+                  "id": 4861,
                   "nodeType": "ExpressionStatement",
                   "src": "2580:25:10"
                 }
               ]
             },
             "documentation": {
-              "id": 4771,
+              "id": 4852,
               "nodeType": "StructuredDocumentation",
               "src": "2468:46:10",
               "text": "@notice Renounce ownership of the contract"
             },
             "functionSelector": "81abf408",
-            "id": 4782,
+            "id": 4863,
             "implemented": true,
             "kind": "function",
             "modifiers": [
               {
-                "id": 4774,
+                "id": 4855,
                 "kind": "modifierInvocation",
                 "modifierName": {
-                  "id": 4773,
+                  "id": 4854,
                   "name": "onlyOwner",
                   "nodeType": "IdentifierPath",
-                  "referencedDeclaration": 6075,
+                  "referencedDeclaration": 7053,
                   "src": "2560:9:10"
                 },
                 "nodeType": "ModifierInvocation",
@@ -974,25 +974,25 @@
             "nameLocation": "2528:22:10",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 4772,
+              "id": 4853,
               "nodeType": "ParameterList",
               "parameters": [],
               "src": "2550:2:10"
             },
             "returnParameters": {
-              "id": 4775,
+              "id": 4856,
               "nodeType": "ParameterList",
               "parameters": [],
               "src": "2570:0:10"
             },
-            "scope": 4783,
+            "scope": 4864,
             "src": "2519:93:10",
             "stateMutability": "nonpayable",
             "virtual": false,
             "visibility": "public"
           }
         ],
-        "scope": 4784,
+        "scope": 4865,
         "src": "194:2420:10",
         "usedErrors": []
       }
@@ -1000,24 +1000,24 @@
     "src": "40:2575:10"
   },
   "legacyAST": {
-    "absolutePath": "/Users/connerswenberg/Code/syndicate/Syndicate/contracts/SyndicateOwnerLogic.sol",
+    "absolutePath": "/Users/mbuvi/syndicates/Syndicate/contracts/SyndicateOwnerLogic.sol",
     "exportedSymbols": {
       "Context": [
-        6787
+        7765
       ],
       "Ownable": [
-        6126
+        7104
       ],
       "SyndicateOwnerLogic": [
-        4783
+        4864
       ]
     },
-    "id": 4784,
+    "id": 4865,
     "license": "UNLICENSED",
     "nodeType": "SourceUnit",
     "nodes": [
       {
-        "id": 4703,
+        "id": 4784,
         "literals": [
           "solidity",
           "^",
@@ -1030,11 +1030,11 @@
       {
         "absolutePath": "@openzeppelin/contracts/access/Ownable.sol",
         "file": "@openzeppelin/contracts/access/Ownable.sol",
-        "id": 4704,
+        "id": 4785,
         "nameLocation": "-1:-1:-1",
         "nodeType": "ImportDirective",
-        "scope": 4784,
-        "sourceUnit": 6127,
+        "scope": 4865,
+        "sourceUnit": 7105,
         "src": "65:52:10",
         "symbolAliases": [],
         "unitAlias": ""
@@ -1044,13 +1044,13 @@
         "baseContracts": [
           {
             "baseName": {
-              "id": 4706,
+              "id": 4787,
               "name": "Ownable",
               "nodeType": "IdentifierPath",
-              "referencedDeclaration": 6126,
+              "referencedDeclaration": 7104,
               "src": "235:7:10"
             },
-            "id": 4707,
+            "id": 4788,
             "nodeType": "InheritanceSpecifier",
             "src": "235:7:10"
           }
@@ -1058,17 +1058,17 @@
         "contractDependencies": [],
         "contractKind": "contract",
         "documentation": {
-          "id": 4705,
+          "id": 4786,
           "nodeType": "StructuredDocumentation",
           "src": "119:75:10",
           "text": "@author Syndicate Inc.\n @notice Core module for owner functionality"
         },
         "fullyImplemented": true,
-        "id": 4783,
+        "id": 4864,
         "linearizedBaseContracts": [
-          4783,
-          6126,
-          6787
+          4864,
+          7104,
+          7765
         ],
         "name": "SyndicateOwnerLogic",
         "nameLocation": "212:19:10",
@@ -1077,12 +1077,12 @@
           {
             "constant": true,
             "functionSelector": "cfa498a3",
-            "id": 4710,
+            "id": 4791,
             "mutability": "constant",
             "name": "BASIS_POINTS_DENOMINATOR",
             "nameLocation": "338:24:10",
             "nodeType": "VariableDeclaration",
-            "scope": 4783,
+            "scope": 4864,
             "src": "314:56:10",
             "stateVariable": true,
             "storageLocation": "default",
@@ -1091,7 +1091,7 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 4708,
+              "id": 4789,
               "name": "uint256",
               "nodeType": "ElementaryTypeName",
               "src": "314:7:10",
@@ -1102,7 +1102,7 @@
             },
             "value": {
               "hexValue": "3130303030",
-              "id": 4709,
+              "id": 4790,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
@@ -1120,12 +1120,12 @@
           },
           {
             "constant": false,
-            "id": 4713,
+            "id": 4794,
             "mutability": "mutable",
             "name": "syndicateFeeAddress",
             "nameLocation": "557:19:10",
             "nodeType": "VariableDeclaration",
-            "scope": 4783,
+            "scope": 4864,
             "src": "541:88:10",
             "stateVariable": true,
             "storageLocation": "default",
@@ -1134,7 +1134,7 @@
               "typeString": "address"
             },
             "typeName": {
-              "id": 4711,
+              "id": 4792,
               "name": "address",
               "nodeType": "ElementaryTypeName",
               "src": "541:7:10",
@@ -1146,7 +1146,7 @@
             },
             "value": {
               "hexValue": "307834306442373966376631384334363863363535323533386234383863353842354537326266344439",
-              "id": 4712,
+              "id": 4793,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
@@ -1164,7 +1164,7 @@
           },
           {
             "body": {
-              "id": 4725,
+              "id": 4806,
               "nodeType": "Block",
               "src": "961:244:10",
               "statements": [
@@ -1172,11 +1172,11 @@
                   "expression": {
                     "arguments": [
                       {
-                        "id": 4722,
+                        "id": 4803,
                         "name": "owner",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 4716,
+                        "referencedDeclaration": 4797,
                         "src": "1192:5:10",
                         "typeDescriptions": {
                           "typeIdentifier": "t_address",
@@ -1191,18 +1191,18 @@
                           "typeString": "address"
                         }
                       ],
-                      "id": 4721,
+                      "id": 4802,
                       "name": "transferOwnership",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 6125,
+                      "referencedDeclaration": 7103,
                       "src": "1174:17:10",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_internal_nonpayable$_t_address_$returns$__$",
                         "typeString": "function (address)"
                       }
                     },
-                    "id": 4723,
+                    "id": 4804,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": false,
@@ -1217,31 +1217,31 @@
                       "typeString": "tuple()"
                     }
                   },
-                  "id": 4724,
+                  "id": 4805,
                   "nodeType": "ExpressionStatement",
                   "src": "1174:24:10"
                 }
               ]
             },
             "documentation": {
-              "id": 4714,
+              "id": 4795,
               "nodeType": "StructuredDocumentation",
               "src": "636:283:10",
               "text": "@notice Used to initialize the SyndicateOwnershipLogic contract.\n @param owner Address of contract owner upon deployment. Typically should\n be `syndicateFeeAddress`.\n @notice Passing in 0x0 for owner will fail as it is checked by\n `transferOwnership`."
             },
-            "id": 4726,
+            "id": 4807,
             "implemented": true,
             "kind": "constructor",
             "modifiers": [
               {
                 "arguments": [],
-                "id": 4719,
+                "id": 4800,
                 "kind": "baseConstructorSpecifier",
                 "modifierName": {
-                  "id": 4718,
+                  "id": 4799,
                   "name": "Ownable",
                   "nodeType": "IdentifierPath",
-                  "referencedDeclaration": 6126,
+                  "referencedDeclaration": 7104,
                   "src": "951:7:10"
                 },
                 "nodeType": "ModifierInvocation",
@@ -1252,17 +1252,17 @@
             "nameLocation": "-1:-1:-1",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 4717,
+              "id": 4798,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 4716,
+                  "id": 4797,
                   "mutability": "mutable",
                   "name": "owner",
                   "nameLocation": "944:5:10",
                   "nodeType": "VariableDeclaration",
-                  "scope": 4726,
+                  "scope": 4807,
                   "src": "936:13:10",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -1271,7 +1271,7 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 4715,
+                    "id": 4796,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
                     "src": "936:7:10",
@@ -1287,12 +1287,12 @@
               "src": "935:15:10"
             },
             "returnParameters": {
-              "id": 4720,
+              "id": 4801,
               "nodeType": "ParameterList",
               "parameters": [],
               "src": "961:0:10"
             },
-            "scope": 4783,
+            "scope": 4864,
             "src": "924:281:10",
             "stateMutability": "nonpayable",
             "virtual": false,
@@ -1301,28 +1301,28 @@
           {
             "anonymous": false,
             "documentation": {
-              "id": 4727,
+              "id": 4808,
               "nodeType": "StructuredDocumentation",
               "src": "1292:55:10",
               "text": "@notice The owner updates the contract fee address."
             },
-            "id": 4731,
+            "id": 4812,
             "name": "SyndicateFeeAddressUpdated",
             "nameLocation": "1358:26:10",
             "nodeType": "EventDefinition",
             "parameters": {
-              "id": 4730,
+              "id": 4811,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 4729,
+                  "id": 4810,
                   "indexed": true,
                   "mutability": "mutable",
                   "name": "contractFeeAddress",
                   "nameLocation": "1401:18:10",
                   "nodeType": "VariableDeclaration",
-                  "scope": 4731,
+                  "scope": 4812,
                   "src": "1385:34:10",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -1331,7 +1331,7 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 4728,
+                    "id": 4809,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
                     "src": "1385:7:10",
@@ -1350,38 +1350,38 @@
           },
           {
             "body": {
-              "id": 4739,
+              "id": 4820,
               "nodeType": "Block",
               "src": "1742:43:10",
               "statements": [
                 {
                   "expression": {
-                    "id": 4737,
+                    "id": 4818,
                     "name": "syndicateFeeAddress",
                     "nodeType": "Identifier",
                     "overloadedDeclarations": [],
-                    "referencedDeclaration": 4713,
+                    "referencedDeclaration": 4794,
                     "src": "1759:19:10",
                     "typeDescriptions": {
                       "typeIdentifier": "t_address",
                       "typeString": "address"
                     }
                   },
-                  "functionReturnParameters": 4736,
-                  "id": 4738,
+                  "functionReturnParameters": 4817,
+                  "id": 4819,
                   "nodeType": "Return",
                   "src": "1752:26:10"
                 }
               ]
             },
             "documentation": {
-              "id": 4732,
+              "id": 4813,
               "nodeType": "StructuredDocumentation",
               "src": "1427:246:10",
               "text": "@notice getter function for syndicate fee address.\n @dev This function is needed to allow inheriting contracts to\n only be able to view but not change syndicateFeeAddress without\n going through ownerSetSyndicateFeeAddress"
             },
             "functionSelector": "cad0a373",
-            "id": 4740,
+            "id": 4821,
             "implemented": true,
             "kind": "function",
             "modifiers": [],
@@ -1389,23 +1389,23 @@
             "nameLocation": "1687:22:10",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 4733,
+              "id": 4814,
               "nodeType": "ParameterList",
               "parameters": [],
               "src": "1709:2:10"
             },
             "returnParameters": {
-              "id": 4736,
+              "id": 4817,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 4735,
+                  "id": 4816,
                   "mutability": "mutable",
                   "name": "",
                   "nameLocation": "-1:-1:-1",
                   "nodeType": "VariableDeclaration",
-                  "scope": 4740,
+                  "scope": 4821,
                   "src": "1733:7:10",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -1414,7 +1414,7 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 4734,
+                    "id": 4815,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
                     "src": "1733:7:10",
@@ -1429,7 +1429,7 @@
               ],
               "src": "1732:9:10"
             },
-            "scope": 4783,
+            "scope": 4864,
             "src": "1678:107:10",
             "stateMutability": "view",
             "virtual": false,
@@ -1437,23 +1437,23 @@
           },
           {
             "body": {
-              "id": 4756,
+              "id": 4837,
               "nodeType": "Block",
               "src": "2132:103:10",
               "statements": [
                 {
                   "expression": {
-                    "id": 4750,
+                    "id": 4831,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": false,
                     "lValueRequested": false,
                     "leftHandSide": {
-                      "id": 4748,
+                      "id": 4829,
                       "name": "syndicateFeeAddress",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 4713,
+                      "referencedDeclaration": 4794,
                       "src": "2142:19:10",
                       "typeDescriptions": {
                         "typeIdentifier": "t_address",
@@ -1463,11 +1463,11 @@
                     "nodeType": "Assignment",
                     "operator": "=",
                     "rightHandSide": {
-                      "id": 4749,
+                      "id": 4830,
                       "name": "feeAddress",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 4743,
+                      "referencedDeclaration": 4824,
                       "src": "2164:10:10",
                       "typeDescriptions": {
                         "typeIdentifier": "t_address",
@@ -1480,7 +1480,7 @@
                       "typeString": "address"
                     }
                   },
-                  "id": 4751,
+                  "id": 4832,
                   "nodeType": "ExpressionStatement",
                   "src": "2142:32:10"
                 },
@@ -1488,11 +1488,11 @@
                   "eventCall": {
                     "arguments": [
                       {
-                        "id": 4753,
+                        "id": 4834,
                         "name": "feeAddress",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 4743,
+                        "referencedDeclaration": 4824,
                         "src": "2217:10:10",
                         "typeDescriptions": {
                           "typeIdentifier": "t_address",
@@ -1507,18 +1507,18 @@
                           "typeString": "address"
                         }
                       ],
-                      "id": 4752,
+                      "id": 4833,
                       "name": "SyndicateFeeAddressUpdated",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 4731,
+                      "referencedDeclaration": 4812,
                       "src": "2190:26:10",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_event_nonpayable$_t_address_$returns$__$",
                         "typeString": "function (address)"
                       }
                     },
-                    "id": 4754,
+                    "id": 4835,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": false,
@@ -1533,31 +1533,31 @@
                       "typeString": "tuple()"
                     }
                   },
-                  "id": 4755,
+                  "id": 4836,
                   "nodeType": "EmitStatement",
                   "src": "2185:43:10"
                 }
               ]
             },
             "documentation": {
-              "id": 4741,
+              "id": 4822,
               "nodeType": "StructuredDocumentation",
               "src": "1873:180:10",
               "text": "@notice set a new fee address for the contract function that can only\n be triggered by the contract owner.\n @param feeAddress The owner's new contract fee address"
             },
             "functionSelector": "bfd9a7e1",
-            "id": 4757,
+            "id": 4838,
             "implemented": true,
             "kind": "function",
             "modifiers": [
               {
-                "id": 4746,
+                "id": 4827,
                 "kind": "modifierInvocation",
                 "modifierName": {
-                  "id": 4745,
+                  "id": 4826,
                   "name": "onlyOwner",
                   "nodeType": "IdentifierPath",
-                  "referencedDeclaration": 6075,
+                  "referencedDeclaration": 7053,
                   "src": "2122:9:10"
                 },
                 "nodeType": "ModifierInvocation",
@@ -1568,17 +1568,17 @@
             "nameLocation": "2067:27:10",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 4744,
+              "id": 4825,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 4743,
+                  "id": 4824,
                   "mutability": "mutable",
                   "name": "feeAddress",
                   "nameLocation": "2103:10:10",
                   "nodeType": "VariableDeclaration",
-                  "scope": 4757,
+                  "scope": 4838,
                   "src": "2095:18:10",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -1587,7 +1587,7 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 4742,
+                    "id": 4823,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
                     "src": "2095:7:10",
@@ -1603,12 +1603,12 @@
               "src": "2094:20:10"
             },
             "returnParameters": {
-              "id": 4747,
+              "id": 4828,
               "nodeType": "ParameterList",
               "parameters": [],
               "src": "2132:0:10"
             },
-            "scope": 4783,
+            "scope": 4864,
             "src": "2058:177:10",
             "stateMutability": "nonpayable",
             "virtual": false,
@@ -1616,7 +1616,7 @@
           },
           {
             "body": {
-              "id": 4769,
+              "id": 4850,
               "nodeType": "Block",
               "src": "2418:44:10",
               "statements": [
@@ -1624,11 +1624,11 @@
                   "expression": {
                     "arguments": [
                       {
-                        "id": 4766,
+                        "id": 4847,
                         "name": "newOwner",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 4760,
+                        "referencedDeclaration": 4841,
                         "src": "2446:8:10",
                         "typeDescriptions": {
                           "typeIdentifier": "t_address",
@@ -1643,18 +1643,18 @@
                           "typeString": "address"
                         }
                       ],
-                      "id": 4765,
+                      "id": 4846,
                       "name": "transferOwnership",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 6125,
+                      "referencedDeclaration": 7103,
                       "src": "2428:17:10",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_internal_nonpayable$_t_address_$returns$__$",
                         "typeString": "function (address)"
                       }
                     },
-                    "id": 4767,
+                    "id": 4848,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": false,
@@ -1669,31 +1669,31 @@
                       "typeString": "tuple()"
                     }
                   },
-                  "id": 4768,
+                  "id": 4849,
                   "nodeType": "ExpressionStatement",
                   "src": "2428:27:10"
                 }
               ]
             },
             "documentation": {
-              "id": 4758,
+              "id": 4839,
               "nodeType": "StructuredDocumentation",
               "src": "2241:105:10",
               "text": "@notice Transfers ownership to the provided address.\n @param newOwner The new owner's address."
             },
             "functionSelector": "a09cca93",
-            "id": 4770,
+            "id": 4851,
             "implemented": true,
             "kind": "function",
             "modifiers": [
               {
-                "id": 4763,
+                "id": 4844,
                 "kind": "modifierInvocation",
                 "modifierName": {
-                  "id": 4762,
+                  "id": 4843,
                   "name": "onlyOwner",
                   "nodeType": "IdentifierPath",
-                  "referencedDeclaration": 6075,
+                  "referencedDeclaration": 7053,
                   "src": "2408:9:10"
                 },
                 "nodeType": "ModifierInvocation",
@@ -1704,17 +1704,17 @@
             "nameLocation": "2360:22:10",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 4761,
+              "id": 4842,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 4760,
+                  "id": 4841,
                   "mutability": "mutable",
                   "name": "newOwner",
                   "nameLocation": "2391:8:10",
                   "nodeType": "VariableDeclaration",
-                  "scope": 4770,
+                  "scope": 4851,
                   "src": "2383:16:10",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -1723,7 +1723,7 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 4759,
+                    "id": 4840,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
                     "src": "2383:7:10",
@@ -1739,12 +1739,12 @@
               "src": "2382:18:10"
             },
             "returnParameters": {
-              "id": 4764,
+              "id": 4845,
               "nodeType": "ParameterList",
               "parameters": [],
               "src": "2418:0:10"
             },
-            "scope": 4783,
+            "scope": 4864,
             "src": "2351:111:10",
             "stateMutability": "nonpayable",
             "virtual": false,
@@ -1752,7 +1752,7 @@
           },
           {
             "body": {
-              "id": 4781,
+              "id": 4862,
               "nodeType": "Block",
               "src": "2570:42:10",
               "statements": [
@@ -1762,32 +1762,32 @@
                     "expression": {
                       "argumentTypes": [],
                       "expression": {
-                        "id": 4776,
+                        "id": 4857,
                         "name": "super",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
                         "referencedDeclaration": 4294967271,
                         "src": "2580:5:10",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_type$_t_super$_SyndicateOwnerLogic_$4783_$",
+                          "typeIdentifier": "t_type$_t_super$_SyndicateOwnerLogic_$4864_$",
                           "typeString": "type(contract super SyndicateOwnerLogic)"
                         }
                       },
-                      "id": 4778,
+                      "id": 4859,
                       "isConstant": false,
                       "isLValue": false,
                       "isPure": false,
                       "lValueRequested": false,
                       "memberName": "renounceOwnership",
                       "nodeType": "MemberAccess",
-                      "referencedDeclaration": 6097,
+                      "referencedDeclaration": 7075,
                       "src": "2580:23:10",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_internal_nonpayable$__$returns$__$",
                         "typeString": "function ()"
                       }
                     },
-                    "id": 4779,
+                    "id": 4860,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": false,
@@ -1802,31 +1802,31 @@
                       "typeString": "tuple()"
                     }
                   },
-                  "id": 4780,
+                  "id": 4861,
                   "nodeType": "ExpressionStatement",
                   "src": "2580:25:10"
                 }
               ]
             },
             "documentation": {
-              "id": 4771,
+              "id": 4852,
               "nodeType": "StructuredDocumentation",
               "src": "2468:46:10",
               "text": "@notice Renounce ownership of the contract"
             },
             "functionSelector": "81abf408",
-            "id": 4782,
+            "id": 4863,
             "implemented": true,
             "kind": "function",
             "modifiers": [
               {
-                "id": 4774,
+                "id": 4855,
                 "kind": "modifierInvocation",
                 "modifierName": {
-                  "id": 4773,
+                  "id": 4854,
                   "name": "onlyOwner",
                   "nodeType": "IdentifierPath",
-                  "referencedDeclaration": 6075,
+                  "referencedDeclaration": 7053,
                   "src": "2560:9:10"
                 },
                 "nodeType": "ModifierInvocation",
@@ -1837,25 +1837,25 @@
             "nameLocation": "2528:22:10",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 4772,
+              "id": 4853,
               "nodeType": "ParameterList",
               "parameters": [],
               "src": "2550:2:10"
             },
             "returnParameters": {
-              "id": 4775,
+              "id": 4856,
               "nodeType": "ParameterList",
               "parameters": [],
               "src": "2570:0:10"
             },
-            "scope": 4783,
+            "scope": 4864,
             "src": "2519:93:10",
             "stateMutability": "nonpayable",
             "virtual": false,
             "visibility": "public"
           }
         ],
-        "scope": 4784,
+        "scope": 4865,
         "src": "194:2420:10",
         "usedErrors": []
       }
@@ -1867,8 +1867,8 @@
     "version": "0.8.6+commit.11564f7e.Emscripten.clang"
   },
   "networks": {},
-  "schemaVersion": "3.4.0",
-  "updatedAt": "2021-07-14T18:34:19.151Z",
+  "schemaVersion": "3.3.4",
+  "updatedAt": "2021-07-22T17:37:06.693Z",
   "devdoc": {
     "author": "Syndicate Inc.",
     "kind": "dev",

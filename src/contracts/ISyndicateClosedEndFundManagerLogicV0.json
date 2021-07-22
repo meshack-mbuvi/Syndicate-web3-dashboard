@@ -1,0 +1,3448 @@
+{
+  "contractName": "ISyndicateClosedEndFundManagerLogicV0",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "managerManagementFeeBasisPoints",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "managerDistributionShareBasisPoints",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "syndicateDistributionShareBasisPoints",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "numMembersMax",
+          "type": "uint256"
+        },
+        {
+          "internalType": "address",
+          "name": "depositERC20Address",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "depositMemberMin",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "depositMemberMax",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "depositTotalMax",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "dateClose",
+          "type": "uint256"
+        },
+        {
+          "internalType": "bool",
+          "name": "modifiable",
+          "type": "bool"
+        },
+        {
+          "internalType": "bool",
+          "name": "allowlistEnabled",
+          "type": "bool"
+        },
+        {
+          "internalType": "bool",
+          "name": "transferable",
+          "type": "bool"
+        }
+      ],
+      "name": "createSyndicate",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "syndicateAddress",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "managerPendingAddress",
+          "type": "address"
+        }
+      ],
+      "name": "managerSetManagerPending",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "syndicateAddress",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "managerFeeAddress",
+          "type": "address"
+        }
+      ],
+      "name": "managerPendingConfirmAndSetManagerFeeAddress",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "syndicateAddress",
+          "type": "address"
+        }
+      ],
+      "name": "managerPendingConfirm",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "syndicateAddress",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "managerFeeAddress",
+          "type": "address"
+        }
+      ],
+      "name": "managerSetManagerFeeAddress",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "syndicateAddress",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "managerManagementFeeBasisPoints",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "managerDistributionShareBasisPoints",
+          "type": "uint256"
+        }
+      ],
+      "name": "managerSetManagerFees",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "syndicateAddress",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "syndicateDistributionShareBasisPoints",
+          "type": "uint256"
+        }
+      ],
+      "name": "managerSetSyndicateDistributionShare",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "syndicateAddress",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "feeERC20Address",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        }
+      ],
+      "name": "managerAssessManagementFee",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "syndicateAddress",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "numMembersMax",
+          "type": "uint256"
+        }
+      ],
+      "name": "managerSetNumMembersMax",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "syndicateAddress",
+          "type": "address"
+        }
+      ],
+      "name": "managerSetNumMembersMaxToCurrent",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "syndicateAddress",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "dateClose",
+          "type": "uint256"
+        }
+      ],
+      "name": "managerSetDateClose",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "syndicateAddress",
+          "type": "address"
+        }
+      ],
+      "name": "managerCloseSyndicate",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "syndicateAddress",
+          "type": "address"
+        },
+        {
+          "internalType": "string[]",
+          "name": "metadataKeys",
+          "type": "string[]"
+        },
+        {
+          "internalType": "string[]",
+          "name": "metadataValues",
+          "type": "string[]"
+        }
+      ],
+      "name": "managerSetMetadata",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "syndicateAddress",
+          "type": "address"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "hexadecimalHash",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "uint8",
+          "name": "hashFunction",
+          "type": "uint8"
+        },
+        {
+          "internalType": "uint8",
+          "name": "hashSize",
+          "type": "uint8"
+        }
+      ],
+      "name": "managerEmitMemo",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ],
+  "metadata": "{\"compiler\":{\"version\":\"0.8.6+commit.11564f7e\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"managerManagementFeeBasisPoints\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"managerDistributionShareBasisPoints\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"syndicateDistributionShareBasisPoints\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"numMembersMax\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"depositERC20Address\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"depositMemberMin\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"depositMemberMax\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"depositTotalMax\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"dateClose\",\"type\":\"uint256\"},{\"internalType\":\"bool\",\"name\":\"modifiable\",\"type\":\"bool\"},{\"internalType\":\"bool\",\"name\":\"allowlistEnabled\",\"type\":\"bool\"},{\"internalType\":\"bool\",\"name\":\"transferable\",\"type\":\"bool\"}],\"name\":\"createSyndicate\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"syndicateAddress\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"feeERC20Address\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"managerAssessManagementFee\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"syndicateAddress\",\"type\":\"address\"}],\"name\":\"managerCloseSyndicate\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"syndicateAddress\",\"type\":\"address\"},{\"internalType\":\"bytes32\",\"name\":\"hexadecimalHash\",\"type\":\"bytes32\"},{\"internalType\":\"uint8\",\"name\":\"hashFunction\",\"type\":\"uint8\"},{\"internalType\":\"uint8\",\"name\":\"hashSize\",\"type\":\"uint8\"}],\"name\":\"managerEmitMemo\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"syndicateAddress\",\"type\":\"address\"}],\"name\":\"managerPendingConfirm\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"syndicateAddress\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"managerFeeAddress\",\"type\":\"address\"}],\"name\":\"managerPendingConfirmAndSetManagerFeeAddress\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"syndicateAddress\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"dateClose\",\"type\":\"uint256\"}],\"name\":\"managerSetDateClose\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"syndicateAddress\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"managerFeeAddress\",\"type\":\"address\"}],\"name\":\"managerSetManagerFeeAddress\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"syndicateAddress\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"managerManagementFeeBasisPoints\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"managerDistributionShareBasisPoints\",\"type\":\"uint256\"}],\"name\":\"managerSetManagerFees\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"syndicateAddress\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"managerPendingAddress\",\"type\":\"address\"}],\"name\":\"managerSetManagerPending\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"syndicateAddress\",\"type\":\"address\"},{\"internalType\":\"string[]\",\"name\":\"metadataKeys\",\"type\":\"string[]\"},{\"internalType\":\"string[]\",\"name\":\"metadataValues\",\"type\":\"string[]\"}],\"name\":\"managerSetMetadata\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"syndicateAddress\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"numMembersMax\",\"type\":\"uint256\"}],\"name\":\"managerSetNumMembersMax\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"syndicateAddress\",\"type\":\"address\"}],\"name\":\"managerSetNumMembersMaxToCurrent\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"syndicateAddress\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"syndicateDistributionShareBasisPoints\",\"type\":\"uint256\"}],\"name\":\"managerSetSyndicateDistributionShare\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"/Users/mbuvi/syndicates/Syndicate/contracts/interfaces/ISyndicateClosedEndFundManagerLogicV0.sol\":\"ISyndicateClosedEndFundManagerLogicV0\"},\"evmVersion\":\"berlin\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[]},\"sources\":{\"/Users/mbuvi/syndicates/Syndicate/contracts/interfaces/ISyndicateClosedEndFundManagerLogicV0.sol\":{\"keccak256\":\"0xc9e118ebc84e924c4b8f320bcd754bf8118d39c96d00006cfd11a4bbd09d195a\",\"license\":\"UNLICENSED\",\"urls\":[\"bzz-raw://73bfa481a9728c85c9544a99da39418dcb2fbf262087d7a64c89b9ac52be44fe\",\"dweb:/ipfs/QmSWMhKN3pevPKRjwyd6jf1Ka7rhUm3FsUPMhQxFYgVXqw\"]}},\"version\":1}",
+  "bytecode": "0x",
+  "deployedBytecode": "0x",
+  "immutableReferences": {},
+  "generatedSources": [],
+  "deployedGeneratedSources": [],
+  "sourceMap": "",
+  "deployedSourceMap": "",
+  "source": "// SPDX-License-Identifier: UNLICENSED\n\npragma solidity ^0.8.0;\n\ninterface ISyndicateClosedEndFundManagerLogicV0 {\n    function createSyndicate(\n        uint256 managerManagementFeeBasisPoints,\n        uint256 managerDistributionShareBasisPoints,\n        uint256 syndicateDistributionShareBasisPoints,\n        uint256 numMembersMax,\n        address depositERC20Address,\n        uint256 depositMemberMin,\n        uint256 depositMemberMax,\n        uint256 depositTotalMax,\n        uint256 dateClose,\n        bool modifiable,\n        bool allowlistEnabled,\n        bool transferable\n    ) external;\n\n    function managerSetManagerPending(\n        address syndicateAddress,\n        address managerPendingAddress\n    ) external;\n\n    function managerPendingConfirmAndSetManagerFeeAddress(\n        address syndicateAddress,\n        address managerFeeAddress\n    ) external;\n\n    function managerPendingConfirm(address syndicateAddress) external;\n\n    function managerSetManagerFeeAddress(\n        address syndicateAddress,\n        address managerFeeAddress\n    ) external;\n\n    function managerSetManagerFees(\n        address syndicateAddress,\n        uint256 managerManagementFeeBasisPoints,\n        uint256 managerDistributionShareBasisPoints\n    ) external;\n\n    function managerSetSyndicateDistributionShare(\n        address syndicateAddress,\n        uint256 syndicateDistributionShareBasisPoints\n    ) external;\n\n    function managerAssessManagementFee(\n        address syndicateAddress,\n        address feeERC20Address,\n        uint256 amount\n    ) external;\n\n    function managerSetNumMembersMax(\n        address syndicateAddress,\n        uint256 numMembersMax\n    ) external;\n\n    function managerSetNumMembersMaxToCurrent(address syndicateAddress)\n        external;\n\n    function managerSetDateClose(address syndicateAddress, uint256 dateClose)\n        external;\n\n    function managerCloseSyndicate(address syndicateAddress) external;\n\n    function managerSetMetadata(\n        address syndicateAddress,\n        string[] calldata metadataKeys,\n        string[] calldata metadataValues\n    ) external;\n\n    function managerEmitMemo(\n        address syndicateAddress,\n        bytes32 hexadecimalHash,\n        uint8 hashFunction,\n        uint8 hashSize\n    ) external;\n}\n",
+  "sourcePath": "/Users/mbuvi/syndicates/Syndicate/contracts/interfaces/ISyndicateClosedEndFundManagerLogicV0.sol",
+  "ast": {
+    "absolutePath": "/Users/mbuvi/syndicates/Syndicate/contracts/interfaces/ISyndicateClosedEndFundManagerLogicV0.sol",
+    "exportedSymbols": {
+      "ISyndicateClosedEndFundManagerLogicV0": [
+        5289
+      ]
+    },
+    "id": 5290,
+    "license": "UNLICENSED",
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 5164,
+        "literals": [
+          "solidity",
+          "^",
+          "0.8",
+          ".0"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "40:23:16"
+      },
+      {
+        "abstract": false,
+        "baseContracts": [],
+        "contractDependencies": [],
+        "contractKind": "interface",
+        "fullyImplemented": false,
+        "id": 5289,
+        "linearizedBaseContracts": [
+          5289
+        ],
+        "name": "ISyndicateClosedEndFundManagerLogicV0",
+        "nameLocation": "75:37:16",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "functionSelector": "d8a57ad7",
+            "id": 5191,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "createSyndicate",
+            "nameLocation": "128:15:16",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 5189,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 5166,
+                  "mutability": "mutable",
+                  "name": "managerManagementFeeBasisPoints",
+                  "nameLocation": "161:31:16",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 5191,
+                  "src": "153:39:16",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 5165,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "153:7:16",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 5168,
+                  "mutability": "mutable",
+                  "name": "managerDistributionShareBasisPoints",
+                  "nameLocation": "210:35:16",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 5191,
+                  "src": "202:43:16",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 5167,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "202:7:16",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 5170,
+                  "mutability": "mutable",
+                  "name": "syndicateDistributionShareBasisPoints",
+                  "nameLocation": "263:37:16",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 5191,
+                  "src": "255:45:16",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 5169,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "255:7:16",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 5172,
+                  "mutability": "mutable",
+                  "name": "numMembersMax",
+                  "nameLocation": "318:13:16",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 5191,
+                  "src": "310:21:16",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 5171,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "310:7:16",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 5174,
+                  "mutability": "mutable",
+                  "name": "depositERC20Address",
+                  "nameLocation": "349:19:16",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 5191,
+                  "src": "341:27:16",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 5173,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "341:7:16",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 5176,
+                  "mutability": "mutable",
+                  "name": "depositMemberMin",
+                  "nameLocation": "386:16:16",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 5191,
+                  "src": "378:24:16",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 5175,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "378:7:16",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 5178,
+                  "mutability": "mutable",
+                  "name": "depositMemberMax",
+                  "nameLocation": "420:16:16",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 5191,
+                  "src": "412:24:16",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 5177,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "412:7:16",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 5180,
+                  "mutability": "mutable",
+                  "name": "depositTotalMax",
+                  "nameLocation": "454:15:16",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 5191,
+                  "src": "446:23:16",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 5179,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "446:7:16",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 5182,
+                  "mutability": "mutable",
+                  "name": "dateClose",
+                  "nameLocation": "487:9:16",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 5191,
+                  "src": "479:17:16",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 5181,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "479:7:16",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 5184,
+                  "mutability": "mutable",
+                  "name": "modifiable",
+                  "nameLocation": "511:10:16",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 5191,
+                  "src": "506:15:16",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bool",
+                    "typeString": "bool"
+                  },
+                  "typeName": {
+                    "id": 5183,
+                    "name": "bool",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "506:4:16",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bool",
+                      "typeString": "bool"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 5186,
+                  "mutability": "mutable",
+                  "name": "allowlistEnabled",
+                  "nameLocation": "536:16:16",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 5191,
+                  "src": "531:21:16",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bool",
+                    "typeString": "bool"
+                  },
+                  "typeName": {
+                    "id": 5185,
+                    "name": "bool",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "531:4:16",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bool",
+                      "typeString": "bool"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 5188,
+                  "mutability": "mutable",
+                  "name": "transferable",
+                  "nameLocation": "567:12:16",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 5191,
+                  "src": "562:17:16",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bool",
+                    "typeString": "bool"
+                  },
+                  "typeName": {
+                    "id": 5187,
+                    "name": "bool",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "562:4:16",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bool",
+                      "typeString": "bool"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "143:442:16"
+            },
+            "returnParameters": {
+              "id": 5190,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "594:0:16"
+            },
+            "scope": 5289,
+            "src": "119:476:16",
+            "stateMutability": "nonpayable",
+            "virtual": false,
+            "visibility": "external"
+          },
+          {
+            "functionSelector": "d8162e6d",
+            "id": 5198,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "managerSetManagerPending",
+            "nameLocation": "610:24:16",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 5196,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 5193,
+                  "mutability": "mutable",
+                  "name": "syndicateAddress",
+                  "nameLocation": "652:16:16",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 5198,
+                  "src": "644:24:16",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 5192,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "644:7:16",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 5195,
+                  "mutability": "mutable",
+                  "name": "managerPendingAddress",
+                  "nameLocation": "686:21:16",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 5198,
+                  "src": "678:29:16",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 5194,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "678:7:16",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "634:79:16"
+            },
+            "returnParameters": {
+              "id": 5197,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "722:0:16"
+            },
+            "scope": 5289,
+            "src": "601:122:16",
+            "stateMutability": "nonpayable",
+            "virtual": false,
+            "visibility": "external"
+          },
+          {
+            "functionSelector": "4f7317ab",
+            "id": 5205,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "managerPendingConfirmAndSetManagerFeeAddress",
+            "nameLocation": "738:44:16",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 5203,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 5200,
+                  "mutability": "mutable",
+                  "name": "syndicateAddress",
+                  "nameLocation": "800:16:16",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 5205,
+                  "src": "792:24:16",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 5199,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "792:7:16",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 5202,
+                  "mutability": "mutable",
+                  "name": "managerFeeAddress",
+                  "nameLocation": "834:17:16",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 5205,
+                  "src": "826:25:16",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 5201,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "826:7:16",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "782:75:16"
+            },
+            "returnParameters": {
+              "id": 5204,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "866:0:16"
+            },
+            "scope": 5289,
+            "src": "729:138:16",
+            "stateMutability": "nonpayable",
+            "virtual": false,
+            "visibility": "external"
+          },
+          {
+            "functionSelector": "997842dc",
+            "id": 5210,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "managerPendingConfirm",
+            "nameLocation": "882:21:16",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 5208,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 5207,
+                  "mutability": "mutable",
+                  "name": "syndicateAddress",
+                  "nameLocation": "912:16:16",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 5210,
+                  "src": "904:24:16",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 5206,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "904:7:16",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "903:26:16"
+            },
+            "returnParameters": {
+              "id": 5209,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "938:0:16"
+            },
+            "scope": 5289,
+            "src": "873:66:16",
+            "stateMutability": "nonpayable",
+            "virtual": false,
+            "visibility": "external"
+          },
+          {
+            "functionSelector": "1022d0db",
+            "id": 5217,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "managerSetManagerFeeAddress",
+            "nameLocation": "954:27:16",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 5215,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 5212,
+                  "mutability": "mutable",
+                  "name": "syndicateAddress",
+                  "nameLocation": "999:16:16",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 5217,
+                  "src": "991:24:16",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 5211,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "991:7:16",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 5214,
+                  "mutability": "mutable",
+                  "name": "managerFeeAddress",
+                  "nameLocation": "1033:17:16",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 5217,
+                  "src": "1025:25:16",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 5213,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1025:7:16",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "981:75:16"
+            },
+            "returnParameters": {
+              "id": 5216,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "1065:0:16"
+            },
+            "scope": 5289,
+            "src": "945:121:16",
+            "stateMutability": "nonpayable",
+            "virtual": false,
+            "visibility": "external"
+          },
+          {
+            "functionSelector": "f05a7695",
+            "id": 5226,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "managerSetManagerFees",
+            "nameLocation": "1081:21:16",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 5224,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 5219,
+                  "mutability": "mutable",
+                  "name": "syndicateAddress",
+                  "nameLocation": "1120:16:16",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 5226,
+                  "src": "1112:24:16",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 5218,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1112:7:16",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 5221,
+                  "mutability": "mutable",
+                  "name": "managerManagementFeeBasisPoints",
+                  "nameLocation": "1154:31:16",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 5226,
+                  "src": "1146:39:16",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 5220,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1146:7:16",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 5223,
+                  "mutability": "mutable",
+                  "name": "managerDistributionShareBasisPoints",
+                  "nameLocation": "1203:35:16",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 5226,
+                  "src": "1195:43:16",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 5222,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1195:7:16",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1102:142:16"
+            },
+            "returnParameters": {
+              "id": 5225,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "1253:0:16"
+            },
+            "scope": 5289,
+            "src": "1072:182:16",
+            "stateMutability": "nonpayable",
+            "virtual": false,
+            "visibility": "external"
+          },
+          {
+            "functionSelector": "eb818a6d",
+            "id": 5233,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "managerSetSyndicateDistributionShare",
+            "nameLocation": "1269:36:16",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 5231,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 5228,
+                  "mutability": "mutable",
+                  "name": "syndicateAddress",
+                  "nameLocation": "1323:16:16",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 5233,
+                  "src": "1315:24:16",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 5227,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1315:7:16",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 5230,
+                  "mutability": "mutable",
+                  "name": "syndicateDistributionShareBasisPoints",
+                  "nameLocation": "1357:37:16",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 5233,
+                  "src": "1349:45:16",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 5229,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1349:7:16",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1305:95:16"
+            },
+            "returnParameters": {
+              "id": 5232,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "1409:0:16"
+            },
+            "scope": 5289,
+            "src": "1260:150:16",
+            "stateMutability": "nonpayable",
+            "virtual": false,
+            "visibility": "external"
+          },
+          {
+            "functionSelector": "93eb34e1",
+            "id": 5242,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "managerAssessManagementFee",
+            "nameLocation": "1425:26:16",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 5240,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 5235,
+                  "mutability": "mutable",
+                  "name": "syndicateAddress",
+                  "nameLocation": "1469:16:16",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 5242,
+                  "src": "1461:24:16",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 5234,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1461:7:16",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 5237,
+                  "mutability": "mutable",
+                  "name": "feeERC20Address",
+                  "nameLocation": "1503:15:16",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 5242,
+                  "src": "1495:23:16",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 5236,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1495:7:16",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 5239,
+                  "mutability": "mutable",
+                  "name": "amount",
+                  "nameLocation": "1536:6:16",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 5242,
+                  "src": "1528:14:16",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 5238,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1528:7:16",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1451:97:16"
+            },
+            "returnParameters": {
+              "id": 5241,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "1557:0:16"
+            },
+            "scope": 5289,
+            "src": "1416:142:16",
+            "stateMutability": "nonpayable",
+            "virtual": false,
+            "visibility": "external"
+          },
+          {
+            "functionSelector": "f6eadbf1",
+            "id": 5249,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "managerSetNumMembersMax",
+            "nameLocation": "1573:23:16",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 5247,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 5244,
+                  "mutability": "mutable",
+                  "name": "syndicateAddress",
+                  "nameLocation": "1614:16:16",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 5249,
+                  "src": "1606:24:16",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 5243,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1606:7:16",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 5246,
+                  "mutability": "mutable",
+                  "name": "numMembersMax",
+                  "nameLocation": "1648:13:16",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 5249,
+                  "src": "1640:21:16",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 5245,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1640:7:16",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1596:71:16"
+            },
+            "returnParameters": {
+              "id": 5248,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "1676:0:16"
+            },
+            "scope": 5289,
+            "src": "1564:113:16",
+            "stateMutability": "nonpayable",
+            "virtual": false,
+            "visibility": "external"
+          },
+          {
+            "functionSelector": "430e8fac",
+            "id": 5254,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "managerSetNumMembersMaxToCurrent",
+            "nameLocation": "1692:32:16",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 5252,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 5251,
+                  "mutability": "mutable",
+                  "name": "syndicateAddress",
+                  "nameLocation": "1733:16:16",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 5254,
+                  "src": "1725:24:16",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 5250,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1725:7:16",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1724:26:16"
+            },
+            "returnParameters": {
+              "id": 5253,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "1767:0:16"
+            },
+            "scope": 5289,
+            "src": "1683:85:16",
+            "stateMutability": "nonpayable",
+            "virtual": false,
+            "visibility": "external"
+          },
+          {
+            "functionSelector": "1e9b0ad8",
+            "id": 5261,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "managerSetDateClose",
+            "nameLocation": "1783:19:16",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 5259,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 5256,
+                  "mutability": "mutable",
+                  "name": "syndicateAddress",
+                  "nameLocation": "1811:16:16",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 5261,
+                  "src": "1803:24:16",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 5255,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1803:7:16",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 5258,
+                  "mutability": "mutable",
+                  "name": "dateClose",
+                  "nameLocation": "1837:9:16",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 5261,
+                  "src": "1829:17:16",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 5257,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1829:7:16",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1802:45:16"
+            },
+            "returnParameters": {
+              "id": 5260,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "1864:0:16"
+            },
+            "scope": 5289,
+            "src": "1774:91:16",
+            "stateMutability": "nonpayable",
+            "virtual": false,
+            "visibility": "external"
+          },
+          {
+            "functionSelector": "42fb029a",
+            "id": 5266,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "managerCloseSyndicate",
+            "nameLocation": "1880:21:16",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 5264,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 5263,
+                  "mutability": "mutable",
+                  "name": "syndicateAddress",
+                  "nameLocation": "1910:16:16",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 5266,
+                  "src": "1902:24:16",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 5262,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1902:7:16",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1901:26:16"
+            },
+            "returnParameters": {
+              "id": 5265,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "1936:0:16"
+            },
+            "scope": 5289,
+            "src": "1871:66:16",
+            "stateMutability": "nonpayable",
+            "virtual": false,
+            "visibility": "external"
+          },
+          {
+            "functionSelector": "3dfd91f7",
+            "id": 5277,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "managerSetMetadata",
+            "nameLocation": "1952:18:16",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 5275,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 5268,
+                  "mutability": "mutable",
+                  "name": "syndicateAddress",
+                  "nameLocation": "1988:16:16",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 5277,
+                  "src": "1980:24:16",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 5267,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1980:7:16",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 5271,
+                  "mutability": "mutable",
+                  "name": "metadataKeys",
+                  "nameLocation": "2032:12:16",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 5277,
+                  "src": "2014:30:16",
+                  "stateVariable": false,
+                  "storageLocation": "calldata",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_array$_t_string_calldata_ptr_$dyn_calldata_ptr",
+                    "typeString": "string[]"
+                  },
+                  "typeName": {
+                    "baseType": {
+                      "id": 5269,
+                      "name": "string",
+                      "nodeType": "ElementaryTypeName",
+                      "src": "2014:6:16",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_string_storage_ptr",
+                        "typeString": "string"
+                      }
+                    },
+                    "id": 5270,
+                    "nodeType": "ArrayTypeName",
+                    "src": "2014:8:16",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_array$_t_string_storage_$dyn_storage_ptr",
+                      "typeString": "string[]"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 5274,
+                  "mutability": "mutable",
+                  "name": "metadataValues",
+                  "nameLocation": "2072:14:16",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 5277,
+                  "src": "2054:32:16",
+                  "stateVariable": false,
+                  "storageLocation": "calldata",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_array$_t_string_calldata_ptr_$dyn_calldata_ptr",
+                    "typeString": "string[]"
+                  },
+                  "typeName": {
+                    "baseType": {
+                      "id": 5272,
+                      "name": "string",
+                      "nodeType": "ElementaryTypeName",
+                      "src": "2054:6:16",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_string_storage_ptr",
+                        "typeString": "string"
+                      }
+                    },
+                    "id": 5273,
+                    "nodeType": "ArrayTypeName",
+                    "src": "2054:8:16",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_array$_t_string_storage_$dyn_storage_ptr",
+                      "typeString": "string[]"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1970:122:16"
+            },
+            "returnParameters": {
+              "id": 5276,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "2101:0:16"
+            },
+            "scope": 5289,
+            "src": "1943:159:16",
+            "stateMutability": "nonpayable",
+            "virtual": false,
+            "visibility": "external"
+          },
+          {
+            "functionSelector": "416f5a39",
+            "id": 5288,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "managerEmitMemo",
+            "nameLocation": "2117:15:16",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 5286,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 5279,
+                  "mutability": "mutable",
+                  "name": "syndicateAddress",
+                  "nameLocation": "2150:16:16",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 5288,
+                  "src": "2142:24:16",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 5278,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "2142:7:16",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 5281,
+                  "mutability": "mutable",
+                  "name": "hexadecimalHash",
+                  "nameLocation": "2184:15:16",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 5288,
+                  "src": "2176:23:16",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bytes32",
+                    "typeString": "bytes32"
+                  },
+                  "typeName": {
+                    "id": 5280,
+                    "name": "bytes32",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "2176:7:16",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bytes32",
+                      "typeString": "bytes32"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 5283,
+                  "mutability": "mutable",
+                  "name": "hashFunction",
+                  "nameLocation": "2215:12:16",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 5288,
+                  "src": "2209:18:16",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint8",
+                    "typeString": "uint8"
+                  },
+                  "typeName": {
+                    "id": 5282,
+                    "name": "uint8",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "2209:5:16",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint8",
+                      "typeString": "uint8"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 5285,
+                  "mutability": "mutable",
+                  "name": "hashSize",
+                  "nameLocation": "2243:8:16",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 5288,
+                  "src": "2237:14:16",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint8",
+                    "typeString": "uint8"
+                  },
+                  "typeName": {
+                    "id": 5284,
+                    "name": "uint8",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "2237:5:16",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint8",
+                      "typeString": "uint8"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "2132:125:16"
+            },
+            "returnParameters": {
+              "id": 5287,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "2266:0:16"
+            },
+            "scope": 5289,
+            "src": "2108:159:16",
+            "stateMutability": "nonpayable",
+            "virtual": false,
+            "visibility": "external"
+          }
+        ],
+        "scope": 5290,
+        "src": "65:2204:16",
+        "usedErrors": []
+      }
+    ],
+    "src": "40:2230:16"
+  },
+  "legacyAST": {
+    "absolutePath": "/Users/mbuvi/syndicates/Syndicate/contracts/interfaces/ISyndicateClosedEndFundManagerLogicV0.sol",
+    "exportedSymbols": {
+      "ISyndicateClosedEndFundManagerLogicV0": [
+        5289
+      ]
+    },
+    "id": 5290,
+    "license": "UNLICENSED",
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 5164,
+        "literals": [
+          "solidity",
+          "^",
+          "0.8",
+          ".0"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "40:23:16"
+      },
+      {
+        "abstract": false,
+        "baseContracts": [],
+        "contractDependencies": [],
+        "contractKind": "interface",
+        "fullyImplemented": false,
+        "id": 5289,
+        "linearizedBaseContracts": [
+          5289
+        ],
+        "name": "ISyndicateClosedEndFundManagerLogicV0",
+        "nameLocation": "75:37:16",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "functionSelector": "d8a57ad7",
+            "id": 5191,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "createSyndicate",
+            "nameLocation": "128:15:16",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 5189,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 5166,
+                  "mutability": "mutable",
+                  "name": "managerManagementFeeBasisPoints",
+                  "nameLocation": "161:31:16",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 5191,
+                  "src": "153:39:16",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 5165,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "153:7:16",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 5168,
+                  "mutability": "mutable",
+                  "name": "managerDistributionShareBasisPoints",
+                  "nameLocation": "210:35:16",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 5191,
+                  "src": "202:43:16",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 5167,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "202:7:16",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 5170,
+                  "mutability": "mutable",
+                  "name": "syndicateDistributionShareBasisPoints",
+                  "nameLocation": "263:37:16",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 5191,
+                  "src": "255:45:16",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 5169,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "255:7:16",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 5172,
+                  "mutability": "mutable",
+                  "name": "numMembersMax",
+                  "nameLocation": "318:13:16",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 5191,
+                  "src": "310:21:16",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 5171,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "310:7:16",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 5174,
+                  "mutability": "mutable",
+                  "name": "depositERC20Address",
+                  "nameLocation": "349:19:16",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 5191,
+                  "src": "341:27:16",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 5173,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "341:7:16",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 5176,
+                  "mutability": "mutable",
+                  "name": "depositMemberMin",
+                  "nameLocation": "386:16:16",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 5191,
+                  "src": "378:24:16",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 5175,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "378:7:16",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 5178,
+                  "mutability": "mutable",
+                  "name": "depositMemberMax",
+                  "nameLocation": "420:16:16",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 5191,
+                  "src": "412:24:16",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 5177,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "412:7:16",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 5180,
+                  "mutability": "mutable",
+                  "name": "depositTotalMax",
+                  "nameLocation": "454:15:16",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 5191,
+                  "src": "446:23:16",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 5179,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "446:7:16",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 5182,
+                  "mutability": "mutable",
+                  "name": "dateClose",
+                  "nameLocation": "487:9:16",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 5191,
+                  "src": "479:17:16",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 5181,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "479:7:16",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 5184,
+                  "mutability": "mutable",
+                  "name": "modifiable",
+                  "nameLocation": "511:10:16",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 5191,
+                  "src": "506:15:16",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bool",
+                    "typeString": "bool"
+                  },
+                  "typeName": {
+                    "id": 5183,
+                    "name": "bool",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "506:4:16",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bool",
+                      "typeString": "bool"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 5186,
+                  "mutability": "mutable",
+                  "name": "allowlistEnabled",
+                  "nameLocation": "536:16:16",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 5191,
+                  "src": "531:21:16",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bool",
+                    "typeString": "bool"
+                  },
+                  "typeName": {
+                    "id": 5185,
+                    "name": "bool",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "531:4:16",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bool",
+                      "typeString": "bool"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 5188,
+                  "mutability": "mutable",
+                  "name": "transferable",
+                  "nameLocation": "567:12:16",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 5191,
+                  "src": "562:17:16",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bool",
+                    "typeString": "bool"
+                  },
+                  "typeName": {
+                    "id": 5187,
+                    "name": "bool",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "562:4:16",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bool",
+                      "typeString": "bool"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "143:442:16"
+            },
+            "returnParameters": {
+              "id": 5190,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "594:0:16"
+            },
+            "scope": 5289,
+            "src": "119:476:16",
+            "stateMutability": "nonpayable",
+            "virtual": false,
+            "visibility": "external"
+          },
+          {
+            "functionSelector": "d8162e6d",
+            "id": 5198,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "managerSetManagerPending",
+            "nameLocation": "610:24:16",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 5196,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 5193,
+                  "mutability": "mutable",
+                  "name": "syndicateAddress",
+                  "nameLocation": "652:16:16",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 5198,
+                  "src": "644:24:16",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 5192,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "644:7:16",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 5195,
+                  "mutability": "mutable",
+                  "name": "managerPendingAddress",
+                  "nameLocation": "686:21:16",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 5198,
+                  "src": "678:29:16",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 5194,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "678:7:16",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "634:79:16"
+            },
+            "returnParameters": {
+              "id": 5197,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "722:0:16"
+            },
+            "scope": 5289,
+            "src": "601:122:16",
+            "stateMutability": "nonpayable",
+            "virtual": false,
+            "visibility": "external"
+          },
+          {
+            "functionSelector": "4f7317ab",
+            "id": 5205,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "managerPendingConfirmAndSetManagerFeeAddress",
+            "nameLocation": "738:44:16",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 5203,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 5200,
+                  "mutability": "mutable",
+                  "name": "syndicateAddress",
+                  "nameLocation": "800:16:16",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 5205,
+                  "src": "792:24:16",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 5199,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "792:7:16",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 5202,
+                  "mutability": "mutable",
+                  "name": "managerFeeAddress",
+                  "nameLocation": "834:17:16",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 5205,
+                  "src": "826:25:16",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 5201,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "826:7:16",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "782:75:16"
+            },
+            "returnParameters": {
+              "id": 5204,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "866:0:16"
+            },
+            "scope": 5289,
+            "src": "729:138:16",
+            "stateMutability": "nonpayable",
+            "virtual": false,
+            "visibility": "external"
+          },
+          {
+            "functionSelector": "997842dc",
+            "id": 5210,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "managerPendingConfirm",
+            "nameLocation": "882:21:16",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 5208,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 5207,
+                  "mutability": "mutable",
+                  "name": "syndicateAddress",
+                  "nameLocation": "912:16:16",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 5210,
+                  "src": "904:24:16",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 5206,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "904:7:16",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "903:26:16"
+            },
+            "returnParameters": {
+              "id": 5209,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "938:0:16"
+            },
+            "scope": 5289,
+            "src": "873:66:16",
+            "stateMutability": "nonpayable",
+            "virtual": false,
+            "visibility": "external"
+          },
+          {
+            "functionSelector": "1022d0db",
+            "id": 5217,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "managerSetManagerFeeAddress",
+            "nameLocation": "954:27:16",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 5215,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 5212,
+                  "mutability": "mutable",
+                  "name": "syndicateAddress",
+                  "nameLocation": "999:16:16",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 5217,
+                  "src": "991:24:16",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 5211,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "991:7:16",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 5214,
+                  "mutability": "mutable",
+                  "name": "managerFeeAddress",
+                  "nameLocation": "1033:17:16",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 5217,
+                  "src": "1025:25:16",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 5213,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1025:7:16",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "981:75:16"
+            },
+            "returnParameters": {
+              "id": 5216,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "1065:0:16"
+            },
+            "scope": 5289,
+            "src": "945:121:16",
+            "stateMutability": "nonpayable",
+            "virtual": false,
+            "visibility": "external"
+          },
+          {
+            "functionSelector": "f05a7695",
+            "id": 5226,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "managerSetManagerFees",
+            "nameLocation": "1081:21:16",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 5224,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 5219,
+                  "mutability": "mutable",
+                  "name": "syndicateAddress",
+                  "nameLocation": "1120:16:16",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 5226,
+                  "src": "1112:24:16",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 5218,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1112:7:16",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 5221,
+                  "mutability": "mutable",
+                  "name": "managerManagementFeeBasisPoints",
+                  "nameLocation": "1154:31:16",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 5226,
+                  "src": "1146:39:16",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 5220,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1146:7:16",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 5223,
+                  "mutability": "mutable",
+                  "name": "managerDistributionShareBasisPoints",
+                  "nameLocation": "1203:35:16",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 5226,
+                  "src": "1195:43:16",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 5222,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1195:7:16",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1102:142:16"
+            },
+            "returnParameters": {
+              "id": 5225,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "1253:0:16"
+            },
+            "scope": 5289,
+            "src": "1072:182:16",
+            "stateMutability": "nonpayable",
+            "virtual": false,
+            "visibility": "external"
+          },
+          {
+            "functionSelector": "eb818a6d",
+            "id": 5233,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "managerSetSyndicateDistributionShare",
+            "nameLocation": "1269:36:16",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 5231,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 5228,
+                  "mutability": "mutable",
+                  "name": "syndicateAddress",
+                  "nameLocation": "1323:16:16",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 5233,
+                  "src": "1315:24:16",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 5227,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1315:7:16",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 5230,
+                  "mutability": "mutable",
+                  "name": "syndicateDistributionShareBasisPoints",
+                  "nameLocation": "1357:37:16",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 5233,
+                  "src": "1349:45:16",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 5229,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1349:7:16",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1305:95:16"
+            },
+            "returnParameters": {
+              "id": 5232,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "1409:0:16"
+            },
+            "scope": 5289,
+            "src": "1260:150:16",
+            "stateMutability": "nonpayable",
+            "virtual": false,
+            "visibility": "external"
+          },
+          {
+            "functionSelector": "93eb34e1",
+            "id": 5242,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "managerAssessManagementFee",
+            "nameLocation": "1425:26:16",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 5240,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 5235,
+                  "mutability": "mutable",
+                  "name": "syndicateAddress",
+                  "nameLocation": "1469:16:16",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 5242,
+                  "src": "1461:24:16",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 5234,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1461:7:16",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 5237,
+                  "mutability": "mutable",
+                  "name": "feeERC20Address",
+                  "nameLocation": "1503:15:16",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 5242,
+                  "src": "1495:23:16",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 5236,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1495:7:16",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 5239,
+                  "mutability": "mutable",
+                  "name": "amount",
+                  "nameLocation": "1536:6:16",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 5242,
+                  "src": "1528:14:16",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 5238,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1528:7:16",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1451:97:16"
+            },
+            "returnParameters": {
+              "id": 5241,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "1557:0:16"
+            },
+            "scope": 5289,
+            "src": "1416:142:16",
+            "stateMutability": "nonpayable",
+            "virtual": false,
+            "visibility": "external"
+          },
+          {
+            "functionSelector": "f6eadbf1",
+            "id": 5249,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "managerSetNumMembersMax",
+            "nameLocation": "1573:23:16",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 5247,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 5244,
+                  "mutability": "mutable",
+                  "name": "syndicateAddress",
+                  "nameLocation": "1614:16:16",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 5249,
+                  "src": "1606:24:16",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 5243,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1606:7:16",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 5246,
+                  "mutability": "mutable",
+                  "name": "numMembersMax",
+                  "nameLocation": "1648:13:16",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 5249,
+                  "src": "1640:21:16",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 5245,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1640:7:16",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1596:71:16"
+            },
+            "returnParameters": {
+              "id": 5248,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "1676:0:16"
+            },
+            "scope": 5289,
+            "src": "1564:113:16",
+            "stateMutability": "nonpayable",
+            "virtual": false,
+            "visibility": "external"
+          },
+          {
+            "functionSelector": "430e8fac",
+            "id": 5254,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "managerSetNumMembersMaxToCurrent",
+            "nameLocation": "1692:32:16",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 5252,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 5251,
+                  "mutability": "mutable",
+                  "name": "syndicateAddress",
+                  "nameLocation": "1733:16:16",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 5254,
+                  "src": "1725:24:16",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 5250,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1725:7:16",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1724:26:16"
+            },
+            "returnParameters": {
+              "id": 5253,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "1767:0:16"
+            },
+            "scope": 5289,
+            "src": "1683:85:16",
+            "stateMutability": "nonpayable",
+            "virtual": false,
+            "visibility": "external"
+          },
+          {
+            "functionSelector": "1e9b0ad8",
+            "id": 5261,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "managerSetDateClose",
+            "nameLocation": "1783:19:16",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 5259,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 5256,
+                  "mutability": "mutable",
+                  "name": "syndicateAddress",
+                  "nameLocation": "1811:16:16",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 5261,
+                  "src": "1803:24:16",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 5255,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1803:7:16",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 5258,
+                  "mutability": "mutable",
+                  "name": "dateClose",
+                  "nameLocation": "1837:9:16",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 5261,
+                  "src": "1829:17:16",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 5257,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1829:7:16",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1802:45:16"
+            },
+            "returnParameters": {
+              "id": 5260,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "1864:0:16"
+            },
+            "scope": 5289,
+            "src": "1774:91:16",
+            "stateMutability": "nonpayable",
+            "virtual": false,
+            "visibility": "external"
+          },
+          {
+            "functionSelector": "42fb029a",
+            "id": 5266,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "managerCloseSyndicate",
+            "nameLocation": "1880:21:16",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 5264,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 5263,
+                  "mutability": "mutable",
+                  "name": "syndicateAddress",
+                  "nameLocation": "1910:16:16",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 5266,
+                  "src": "1902:24:16",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 5262,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1902:7:16",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1901:26:16"
+            },
+            "returnParameters": {
+              "id": 5265,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "1936:0:16"
+            },
+            "scope": 5289,
+            "src": "1871:66:16",
+            "stateMutability": "nonpayable",
+            "virtual": false,
+            "visibility": "external"
+          },
+          {
+            "functionSelector": "3dfd91f7",
+            "id": 5277,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "managerSetMetadata",
+            "nameLocation": "1952:18:16",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 5275,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 5268,
+                  "mutability": "mutable",
+                  "name": "syndicateAddress",
+                  "nameLocation": "1988:16:16",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 5277,
+                  "src": "1980:24:16",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 5267,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1980:7:16",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 5271,
+                  "mutability": "mutable",
+                  "name": "metadataKeys",
+                  "nameLocation": "2032:12:16",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 5277,
+                  "src": "2014:30:16",
+                  "stateVariable": false,
+                  "storageLocation": "calldata",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_array$_t_string_calldata_ptr_$dyn_calldata_ptr",
+                    "typeString": "string[]"
+                  },
+                  "typeName": {
+                    "baseType": {
+                      "id": 5269,
+                      "name": "string",
+                      "nodeType": "ElementaryTypeName",
+                      "src": "2014:6:16",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_string_storage_ptr",
+                        "typeString": "string"
+                      }
+                    },
+                    "id": 5270,
+                    "nodeType": "ArrayTypeName",
+                    "src": "2014:8:16",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_array$_t_string_storage_$dyn_storage_ptr",
+                      "typeString": "string[]"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 5274,
+                  "mutability": "mutable",
+                  "name": "metadataValues",
+                  "nameLocation": "2072:14:16",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 5277,
+                  "src": "2054:32:16",
+                  "stateVariable": false,
+                  "storageLocation": "calldata",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_array$_t_string_calldata_ptr_$dyn_calldata_ptr",
+                    "typeString": "string[]"
+                  },
+                  "typeName": {
+                    "baseType": {
+                      "id": 5272,
+                      "name": "string",
+                      "nodeType": "ElementaryTypeName",
+                      "src": "2054:6:16",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_string_storage_ptr",
+                        "typeString": "string"
+                      }
+                    },
+                    "id": 5273,
+                    "nodeType": "ArrayTypeName",
+                    "src": "2054:8:16",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_array$_t_string_storage_$dyn_storage_ptr",
+                      "typeString": "string[]"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1970:122:16"
+            },
+            "returnParameters": {
+              "id": 5276,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "2101:0:16"
+            },
+            "scope": 5289,
+            "src": "1943:159:16",
+            "stateMutability": "nonpayable",
+            "virtual": false,
+            "visibility": "external"
+          },
+          {
+            "functionSelector": "416f5a39",
+            "id": 5288,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "managerEmitMemo",
+            "nameLocation": "2117:15:16",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 5286,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 5279,
+                  "mutability": "mutable",
+                  "name": "syndicateAddress",
+                  "nameLocation": "2150:16:16",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 5288,
+                  "src": "2142:24:16",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 5278,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "2142:7:16",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 5281,
+                  "mutability": "mutable",
+                  "name": "hexadecimalHash",
+                  "nameLocation": "2184:15:16",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 5288,
+                  "src": "2176:23:16",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bytes32",
+                    "typeString": "bytes32"
+                  },
+                  "typeName": {
+                    "id": 5280,
+                    "name": "bytes32",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "2176:7:16",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bytes32",
+                      "typeString": "bytes32"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 5283,
+                  "mutability": "mutable",
+                  "name": "hashFunction",
+                  "nameLocation": "2215:12:16",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 5288,
+                  "src": "2209:18:16",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint8",
+                    "typeString": "uint8"
+                  },
+                  "typeName": {
+                    "id": 5282,
+                    "name": "uint8",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "2209:5:16",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint8",
+                      "typeString": "uint8"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 5285,
+                  "mutability": "mutable",
+                  "name": "hashSize",
+                  "nameLocation": "2243:8:16",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 5288,
+                  "src": "2237:14:16",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint8",
+                    "typeString": "uint8"
+                  },
+                  "typeName": {
+                    "id": 5284,
+                    "name": "uint8",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "2237:5:16",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint8",
+                      "typeString": "uint8"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "2132:125:16"
+            },
+            "returnParameters": {
+              "id": 5287,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "2266:0:16"
+            },
+            "scope": 5289,
+            "src": "2108:159:16",
+            "stateMutability": "nonpayable",
+            "virtual": false,
+            "visibility": "external"
+          }
+        ],
+        "scope": 5290,
+        "src": "65:2204:16",
+        "usedErrors": []
+      }
+    ],
+    "src": "40:2230:16"
+  },
+  "compiler": {
+    "name": "solc",
+    "version": "0.8.6+commit.11564f7e.Emscripten.clang"
+  },
+  "networks": {},
+  "schemaVersion": "3.3.4",
+  "updatedAt": "2021-07-22T17:37:06.698Z",
+  "devdoc": {
+    "kind": "dev",
+    "methods": {},
+    "version": 1
+  },
+  "userdoc": {
+    "kind": "user",
+    "methods": {},
+    "version": 1
+  }
+}

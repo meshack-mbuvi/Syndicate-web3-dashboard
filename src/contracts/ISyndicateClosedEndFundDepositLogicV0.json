@@ -1,0 +1,1525 @@
+{
+  "contractName": "ISyndicateClosedEndFundDepositLogicV0",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "syndicateAddress",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "depositMemberMin",
+          "type": "uint256"
+        }
+      ],
+      "name": "managerSetDepositMemberMin",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "syndicateAddress",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "depositMemberMax",
+          "type": "uint256"
+        }
+      ],
+      "name": "managerSetDepositMemberMax",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "syndicateAddress",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "depositTotalMax",
+          "type": "uint256"
+        }
+      ],
+      "name": "managerSetDepositTotalMax",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "syndicateAddress",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        }
+      ],
+      "name": "memberDeposit",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "syndicateAddress",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        }
+      ],
+      "name": "memberWithdraw",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "syndicateAddress",
+          "type": "address"
+        },
+        {
+          "internalType": "address[]",
+          "name": "memberAddresses",
+          "type": "address[]"
+        }
+      ],
+      "name": "managerRejectDepositForMembers",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "syndicateAddress",
+          "type": "address"
+        },
+        {
+          "internalType": "address[]",
+          "name": "memberAddresses",
+          "type": "address[]"
+        },
+        {
+          "internalType": "uint256[]",
+          "name": "amounts",
+          "type": "uint256[]"
+        }
+      ],
+      "name": "managerSetDepositForMembers",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ],
+  "metadata": "{\"compiler\":{\"version\":\"0.8.6+commit.11564f7e\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"syndicateAddress\",\"type\":\"address\"},{\"internalType\":\"address[]\",\"name\":\"memberAddresses\",\"type\":\"address[]\"}],\"name\":\"managerRejectDepositForMembers\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"syndicateAddress\",\"type\":\"address\"},{\"internalType\":\"address[]\",\"name\":\"memberAddresses\",\"type\":\"address[]\"},{\"internalType\":\"uint256[]\",\"name\":\"amounts\",\"type\":\"uint256[]\"}],\"name\":\"managerSetDepositForMembers\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"syndicateAddress\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"depositMemberMax\",\"type\":\"uint256\"}],\"name\":\"managerSetDepositMemberMax\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"syndicateAddress\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"depositMemberMin\",\"type\":\"uint256\"}],\"name\":\"managerSetDepositMemberMin\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"syndicateAddress\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"depositTotalMax\",\"type\":\"uint256\"}],\"name\":\"managerSetDepositTotalMax\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"syndicateAddress\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"memberDeposit\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"syndicateAddress\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"memberWithdraw\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"/Users/mbuvi/syndicates/Syndicate/contracts/interfaces/ISyndicateClosedEndFundDepositLogicV0.sol\":\"ISyndicateClosedEndFundDepositLogicV0\"},\"evmVersion\":\"berlin\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[]},\"sources\":{\"/Users/mbuvi/syndicates/Syndicate/contracts/interfaces/ISyndicateClosedEndFundDepositLogicV0.sol\":{\"keccak256\":\"0x0ac8b680739255057e40747edb7949c1424bf1ecea023674453f81e464b137d6\",\"license\":\"UNLICENSED\",\"urls\":[\"bzz-raw://d2ce0882020de44955fa0c544c9612f637f5474c762d38ba600c100eff1825bf\",\"dweb:/ipfs/QmNopLBux5tdxUKzXW3QD5tpYvdx7oS1jMoJDvoFkAxWRp\"]}},\"version\":1}",
+  "bytecode": "0x",
+  "deployedBytecode": "0x",
+  "immutableReferences": {},
+  "generatedSources": [],
+  "deployedGeneratedSources": [],
+  "sourceMap": "",
+  "deployedSourceMap": "",
+  "source": "// SPDX-License-Identifier: UNLICENSED\n\npragma solidity ^0.8.0;\n\ninterface ISyndicateClosedEndFundDepositLogicV0 {\n    function managerSetDepositMemberMin(\n        address syndicateAddress,\n        uint256 depositMemberMin\n    ) external;\n\n    function managerSetDepositMemberMax(\n        address syndicateAddress,\n        uint256 depositMemberMax\n    ) external;\n\n    function managerSetDepositTotalMax(\n        address syndicateAddress,\n        uint256 depositTotalMax\n    ) external;\n\n    function memberDeposit(address syndicateAddress, uint256 amount) external;\n\n    function memberWithdraw(address syndicateAddress, uint256 amount) external;\n\n    function managerRejectDepositForMembers(\n        address syndicateAddress,\n        address[] calldata memberAddresses\n    ) external;\n\n    function managerSetDepositForMembers(\n        address syndicateAddress,\n        address[] calldata memberAddresses,\n        uint256[] calldata amounts\n    ) external;\n}\n",
+  "sourcePath": "/Users/mbuvi/syndicates/Syndicate/contracts/interfaces/ISyndicateClosedEndFundDepositLogicV0.sol",
+  "ast": {
+    "absolutePath": "/Users/mbuvi/syndicates/Syndicate/contracts/interfaces/ISyndicateClosedEndFundDepositLogicV0.sol",
+    "exportedSymbols": {
+      "ISyndicateClosedEndFundDepositLogicV0": [
+        4947
+      ]
+    },
+    "id": 4948,
+    "license": "UNLICENSED",
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 4892,
+        "literals": [
+          "solidity",
+          "^",
+          "0.8",
+          ".0"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "40:23:12"
+      },
+      {
+        "abstract": false,
+        "baseContracts": [],
+        "contractDependencies": [],
+        "contractKind": "interface",
+        "fullyImplemented": false,
+        "id": 4947,
+        "linearizedBaseContracts": [
+          4947
+        ],
+        "name": "ISyndicateClosedEndFundDepositLogicV0",
+        "nameLocation": "75:37:12",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "functionSelector": "dfd1fe11",
+            "id": 4899,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "managerSetDepositMemberMin",
+            "nameLocation": "128:26:12",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 4897,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 4894,
+                  "mutability": "mutable",
+                  "name": "syndicateAddress",
+                  "nameLocation": "172:16:12",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 4899,
+                  "src": "164:24:12",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 4893,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "164:7:12",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 4896,
+                  "mutability": "mutable",
+                  "name": "depositMemberMin",
+                  "nameLocation": "206:16:12",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 4899,
+                  "src": "198:24:12",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 4895,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "198:7:12",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "154:74:12"
+            },
+            "returnParameters": {
+              "id": 4898,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "237:0:12"
+            },
+            "scope": 4947,
+            "src": "119:119:12",
+            "stateMutability": "nonpayable",
+            "virtual": false,
+            "visibility": "external"
+          },
+          {
+            "functionSelector": "a325f601",
+            "id": 4906,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "managerSetDepositMemberMax",
+            "nameLocation": "253:26:12",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 4904,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 4901,
+                  "mutability": "mutable",
+                  "name": "syndicateAddress",
+                  "nameLocation": "297:16:12",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 4906,
+                  "src": "289:24:12",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 4900,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "289:7:12",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 4903,
+                  "mutability": "mutable",
+                  "name": "depositMemberMax",
+                  "nameLocation": "331:16:12",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 4906,
+                  "src": "323:24:12",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 4902,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "323:7:12",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "279:74:12"
+            },
+            "returnParameters": {
+              "id": 4905,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "362:0:12"
+            },
+            "scope": 4947,
+            "src": "244:119:12",
+            "stateMutability": "nonpayable",
+            "virtual": false,
+            "visibility": "external"
+          },
+          {
+            "functionSelector": "93b920e4",
+            "id": 4913,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "managerSetDepositTotalMax",
+            "nameLocation": "378:25:12",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 4911,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 4908,
+                  "mutability": "mutable",
+                  "name": "syndicateAddress",
+                  "nameLocation": "421:16:12",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 4913,
+                  "src": "413:24:12",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 4907,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "413:7:12",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 4910,
+                  "mutability": "mutable",
+                  "name": "depositTotalMax",
+                  "nameLocation": "455:15:12",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 4913,
+                  "src": "447:23:12",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 4909,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "447:7:12",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "403:73:12"
+            },
+            "returnParameters": {
+              "id": 4912,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "485:0:12"
+            },
+            "scope": 4947,
+            "src": "369:117:12",
+            "stateMutability": "nonpayable",
+            "virtual": false,
+            "visibility": "external"
+          },
+          {
+            "functionSelector": "c7bc2a63",
+            "id": 4920,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "memberDeposit",
+            "nameLocation": "501:13:12",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 4918,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 4915,
+                  "mutability": "mutable",
+                  "name": "syndicateAddress",
+                  "nameLocation": "523:16:12",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 4920,
+                  "src": "515:24:12",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 4914,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "515:7:12",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 4917,
+                  "mutability": "mutable",
+                  "name": "amount",
+                  "nameLocation": "549:6:12",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 4920,
+                  "src": "541:14:12",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 4916,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "541:7:12",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "514:42:12"
+            },
+            "returnParameters": {
+              "id": 4919,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "565:0:12"
+            },
+            "scope": 4947,
+            "src": "492:74:12",
+            "stateMutability": "nonpayable",
+            "virtual": false,
+            "visibility": "external"
+          },
+          {
+            "functionSelector": "4d2f73d9",
+            "id": 4927,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "memberWithdraw",
+            "nameLocation": "581:14:12",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 4925,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 4922,
+                  "mutability": "mutable",
+                  "name": "syndicateAddress",
+                  "nameLocation": "604:16:12",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 4927,
+                  "src": "596:24:12",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 4921,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "596:7:12",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 4924,
+                  "mutability": "mutable",
+                  "name": "amount",
+                  "nameLocation": "630:6:12",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 4927,
+                  "src": "622:14:12",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 4923,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "622:7:12",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "595:42:12"
+            },
+            "returnParameters": {
+              "id": 4926,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "646:0:12"
+            },
+            "scope": 4947,
+            "src": "572:75:12",
+            "stateMutability": "nonpayable",
+            "virtual": false,
+            "visibility": "external"
+          },
+          {
+            "functionSelector": "7aae909f",
+            "id": 4935,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "managerRejectDepositForMembers",
+            "nameLocation": "662:30:12",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 4933,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 4929,
+                  "mutability": "mutable",
+                  "name": "syndicateAddress",
+                  "nameLocation": "710:16:12",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 4935,
+                  "src": "702:24:12",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 4928,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "702:7:12",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 4932,
+                  "mutability": "mutable",
+                  "name": "memberAddresses",
+                  "nameLocation": "755:15:12",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 4935,
+                  "src": "736:34:12",
+                  "stateVariable": false,
+                  "storageLocation": "calldata",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_array$_t_address_$dyn_calldata_ptr",
+                    "typeString": "address[]"
+                  },
+                  "typeName": {
+                    "baseType": {
+                      "id": 4930,
+                      "name": "address",
+                      "nodeType": "ElementaryTypeName",
+                      "src": "736:7:12",
+                      "stateMutability": "nonpayable",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_address",
+                        "typeString": "address"
+                      }
+                    },
+                    "id": 4931,
+                    "nodeType": "ArrayTypeName",
+                    "src": "736:9:12",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_array$_t_address_$dyn_storage_ptr",
+                      "typeString": "address[]"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "692:84:12"
+            },
+            "returnParameters": {
+              "id": 4934,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "785:0:12"
+            },
+            "scope": 4947,
+            "src": "653:133:12",
+            "stateMutability": "nonpayable",
+            "virtual": false,
+            "visibility": "external"
+          },
+          {
+            "functionSelector": "bbea6ddb",
+            "id": 4946,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "managerSetDepositForMembers",
+            "nameLocation": "801:27:12",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 4944,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 4937,
+                  "mutability": "mutable",
+                  "name": "syndicateAddress",
+                  "nameLocation": "846:16:12",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 4946,
+                  "src": "838:24:12",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 4936,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "838:7:12",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 4940,
+                  "mutability": "mutable",
+                  "name": "memberAddresses",
+                  "nameLocation": "891:15:12",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 4946,
+                  "src": "872:34:12",
+                  "stateVariable": false,
+                  "storageLocation": "calldata",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_array$_t_address_$dyn_calldata_ptr",
+                    "typeString": "address[]"
+                  },
+                  "typeName": {
+                    "baseType": {
+                      "id": 4938,
+                      "name": "address",
+                      "nodeType": "ElementaryTypeName",
+                      "src": "872:7:12",
+                      "stateMutability": "nonpayable",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_address",
+                        "typeString": "address"
+                      }
+                    },
+                    "id": 4939,
+                    "nodeType": "ArrayTypeName",
+                    "src": "872:9:12",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_array$_t_address_$dyn_storage_ptr",
+                      "typeString": "address[]"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 4943,
+                  "mutability": "mutable",
+                  "name": "amounts",
+                  "nameLocation": "935:7:12",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 4946,
+                  "src": "916:26:12",
+                  "stateVariable": false,
+                  "storageLocation": "calldata",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_array$_t_uint256_$dyn_calldata_ptr",
+                    "typeString": "uint256[]"
+                  },
+                  "typeName": {
+                    "baseType": {
+                      "id": 4941,
+                      "name": "uint256",
+                      "nodeType": "ElementaryTypeName",
+                      "src": "916:7:12",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "id": 4942,
+                    "nodeType": "ArrayTypeName",
+                    "src": "916:9:12",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_array$_t_uint256_$dyn_storage_ptr",
+                      "typeString": "uint256[]"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "828:120:12"
+            },
+            "returnParameters": {
+              "id": 4945,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "957:0:12"
+            },
+            "scope": 4947,
+            "src": "792:166:12",
+            "stateMutability": "nonpayable",
+            "virtual": false,
+            "visibility": "external"
+          }
+        ],
+        "scope": 4948,
+        "src": "65:895:12",
+        "usedErrors": []
+      }
+    ],
+    "src": "40:921:12"
+  },
+  "legacyAST": {
+    "absolutePath": "/Users/mbuvi/syndicates/Syndicate/contracts/interfaces/ISyndicateClosedEndFundDepositLogicV0.sol",
+    "exportedSymbols": {
+      "ISyndicateClosedEndFundDepositLogicV0": [
+        4947
+      ]
+    },
+    "id": 4948,
+    "license": "UNLICENSED",
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 4892,
+        "literals": [
+          "solidity",
+          "^",
+          "0.8",
+          ".0"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "40:23:12"
+      },
+      {
+        "abstract": false,
+        "baseContracts": [],
+        "contractDependencies": [],
+        "contractKind": "interface",
+        "fullyImplemented": false,
+        "id": 4947,
+        "linearizedBaseContracts": [
+          4947
+        ],
+        "name": "ISyndicateClosedEndFundDepositLogicV0",
+        "nameLocation": "75:37:12",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "functionSelector": "dfd1fe11",
+            "id": 4899,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "managerSetDepositMemberMin",
+            "nameLocation": "128:26:12",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 4897,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 4894,
+                  "mutability": "mutable",
+                  "name": "syndicateAddress",
+                  "nameLocation": "172:16:12",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 4899,
+                  "src": "164:24:12",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 4893,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "164:7:12",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 4896,
+                  "mutability": "mutable",
+                  "name": "depositMemberMin",
+                  "nameLocation": "206:16:12",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 4899,
+                  "src": "198:24:12",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 4895,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "198:7:12",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "154:74:12"
+            },
+            "returnParameters": {
+              "id": 4898,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "237:0:12"
+            },
+            "scope": 4947,
+            "src": "119:119:12",
+            "stateMutability": "nonpayable",
+            "virtual": false,
+            "visibility": "external"
+          },
+          {
+            "functionSelector": "a325f601",
+            "id": 4906,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "managerSetDepositMemberMax",
+            "nameLocation": "253:26:12",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 4904,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 4901,
+                  "mutability": "mutable",
+                  "name": "syndicateAddress",
+                  "nameLocation": "297:16:12",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 4906,
+                  "src": "289:24:12",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 4900,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "289:7:12",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 4903,
+                  "mutability": "mutable",
+                  "name": "depositMemberMax",
+                  "nameLocation": "331:16:12",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 4906,
+                  "src": "323:24:12",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 4902,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "323:7:12",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "279:74:12"
+            },
+            "returnParameters": {
+              "id": 4905,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "362:0:12"
+            },
+            "scope": 4947,
+            "src": "244:119:12",
+            "stateMutability": "nonpayable",
+            "virtual": false,
+            "visibility": "external"
+          },
+          {
+            "functionSelector": "93b920e4",
+            "id": 4913,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "managerSetDepositTotalMax",
+            "nameLocation": "378:25:12",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 4911,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 4908,
+                  "mutability": "mutable",
+                  "name": "syndicateAddress",
+                  "nameLocation": "421:16:12",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 4913,
+                  "src": "413:24:12",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 4907,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "413:7:12",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 4910,
+                  "mutability": "mutable",
+                  "name": "depositTotalMax",
+                  "nameLocation": "455:15:12",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 4913,
+                  "src": "447:23:12",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 4909,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "447:7:12",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "403:73:12"
+            },
+            "returnParameters": {
+              "id": 4912,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "485:0:12"
+            },
+            "scope": 4947,
+            "src": "369:117:12",
+            "stateMutability": "nonpayable",
+            "virtual": false,
+            "visibility": "external"
+          },
+          {
+            "functionSelector": "c7bc2a63",
+            "id": 4920,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "memberDeposit",
+            "nameLocation": "501:13:12",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 4918,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 4915,
+                  "mutability": "mutable",
+                  "name": "syndicateAddress",
+                  "nameLocation": "523:16:12",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 4920,
+                  "src": "515:24:12",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 4914,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "515:7:12",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 4917,
+                  "mutability": "mutable",
+                  "name": "amount",
+                  "nameLocation": "549:6:12",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 4920,
+                  "src": "541:14:12",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 4916,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "541:7:12",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "514:42:12"
+            },
+            "returnParameters": {
+              "id": 4919,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "565:0:12"
+            },
+            "scope": 4947,
+            "src": "492:74:12",
+            "stateMutability": "nonpayable",
+            "virtual": false,
+            "visibility": "external"
+          },
+          {
+            "functionSelector": "4d2f73d9",
+            "id": 4927,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "memberWithdraw",
+            "nameLocation": "581:14:12",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 4925,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 4922,
+                  "mutability": "mutable",
+                  "name": "syndicateAddress",
+                  "nameLocation": "604:16:12",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 4927,
+                  "src": "596:24:12",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 4921,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "596:7:12",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 4924,
+                  "mutability": "mutable",
+                  "name": "amount",
+                  "nameLocation": "630:6:12",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 4927,
+                  "src": "622:14:12",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 4923,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "622:7:12",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "595:42:12"
+            },
+            "returnParameters": {
+              "id": 4926,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "646:0:12"
+            },
+            "scope": 4947,
+            "src": "572:75:12",
+            "stateMutability": "nonpayable",
+            "virtual": false,
+            "visibility": "external"
+          },
+          {
+            "functionSelector": "7aae909f",
+            "id": 4935,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "managerRejectDepositForMembers",
+            "nameLocation": "662:30:12",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 4933,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 4929,
+                  "mutability": "mutable",
+                  "name": "syndicateAddress",
+                  "nameLocation": "710:16:12",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 4935,
+                  "src": "702:24:12",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 4928,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "702:7:12",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 4932,
+                  "mutability": "mutable",
+                  "name": "memberAddresses",
+                  "nameLocation": "755:15:12",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 4935,
+                  "src": "736:34:12",
+                  "stateVariable": false,
+                  "storageLocation": "calldata",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_array$_t_address_$dyn_calldata_ptr",
+                    "typeString": "address[]"
+                  },
+                  "typeName": {
+                    "baseType": {
+                      "id": 4930,
+                      "name": "address",
+                      "nodeType": "ElementaryTypeName",
+                      "src": "736:7:12",
+                      "stateMutability": "nonpayable",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_address",
+                        "typeString": "address"
+                      }
+                    },
+                    "id": 4931,
+                    "nodeType": "ArrayTypeName",
+                    "src": "736:9:12",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_array$_t_address_$dyn_storage_ptr",
+                      "typeString": "address[]"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "692:84:12"
+            },
+            "returnParameters": {
+              "id": 4934,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "785:0:12"
+            },
+            "scope": 4947,
+            "src": "653:133:12",
+            "stateMutability": "nonpayable",
+            "virtual": false,
+            "visibility": "external"
+          },
+          {
+            "functionSelector": "bbea6ddb",
+            "id": 4946,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "managerSetDepositForMembers",
+            "nameLocation": "801:27:12",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 4944,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 4937,
+                  "mutability": "mutable",
+                  "name": "syndicateAddress",
+                  "nameLocation": "846:16:12",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 4946,
+                  "src": "838:24:12",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 4936,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "838:7:12",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 4940,
+                  "mutability": "mutable",
+                  "name": "memberAddresses",
+                  "nameLocation": "891:15:12",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 4946,
+                  "src": "872:34:12",
+                  "stateVariable": false,
+                  "storageLocation": "calldata",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_array$_t_address_$dyn_calldata_ptr",
+                    "typeString": "address[]"
+                  },
+                  "typeName": {
+                    "baseType": {
+                      "id": 4938,
+                      "name": "address",
+                      "nodeType": "ElementaryTypeName",
+                      "src": "872:7:12",
+                      "stateMutability": "nonpayable",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_address",
+                        "typeString": "address"
+                      }
+                    },
+                    "id": 4939,
+                    "nodeType": "ArrayTypeName",
+                    "src": "872:9:12",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_array$_t_address_$dyn_storage_ptr",
+                      "typeString": "address[]"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 4943,
+                  "mutability": "mutable",
+                  "name": "amounts",
+                  "nameLocation": "935:7:12",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 4946,
+                  "src": "916:26:12",
+                  "stateVariable": false,
+                  "storageLocation": "calldata",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_array$_t_uint256_$dyn_calldata_ptr",
+                    "typeString": "uint256[]"
+                  },
+                  "typeName": {
+                    "baseType": {
+                      "id": 4941,
+                      "name": "uint256",
+                      "nodeType": "ElementaryTypeName",
+                      "src": "916:7:12",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "id": 4942,
+                    "nodeType": "ArrayTypeName",
+                    "src": "916:9:12",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_array$_t_uint256_$dyn_storage_ptr",
+                      "typeString": "uint256[]"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "828:120:12"
+            },
+            "returnParameters": {
+              "id": 4945,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "957:0:12"
+            },
+            "scope": 4947,
+            "src": "792:166:12",
+            "stateMutability": "nonpayable",
+            "virtual": false,
+            "visibility": "external"
+          }
+        ],
+        "scope": 4948,
+        "src": "65:895:12",
+        "usedErrors": []
+      }
+    ],
+    "src": "40:921:12"
+  },
+  "compiler": {
+    "name": "solc",
+    "version": "0.8.6+commit.11564f7e.Emscripten.clang"
+  },
+  "networks": {},
+  "schemaVersion": "3.3.4",
+  "updatedAt": "2021-07-22T17:37:06.695Z",
+  "devdoc": {
+    "kind": "dev",
+    "methods": {},
+    "version": 1
+  },
+  "userdoc": {
+    "kind": "user",
+    "methods": {},
+    "version": 1
+  }
+}
