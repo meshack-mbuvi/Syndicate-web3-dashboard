@@ -1,3 +1,6 @@
+# Remove .env file
+.env
+
 # Remove gatsby-related content after migrating to NextJS.
 
 # Logs
@@ -55,7 +58,7 @@ typings/
 
 # dotenv environment variable files
 .env-secrets
-.env.local
+# .env.local
 
 # Mac files
 .DS_Store

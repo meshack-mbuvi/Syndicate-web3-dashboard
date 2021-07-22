@@ -34,7 +34,13 @@ Use `npm run build` to build your site for production.
 
 ## Deployment
 
-Every pull request automatically generates a deploy preview on Netlify. All code merged into main is automatically deployed to the live site at [https://rinkeby-web3-dev-environment.netlify.app/](https://rinkeby-web3-dev-environment.netlify.app)
+Every pull request automatically generates a deploy preview on Netlify. All code merged into main is automatically deployed to the live site at:
+
+Production: [https://rinkeby-web3-dev-environment.netlify.app/](https://rinkeby-web3-dev-environment.netlify.app) (to be updated to the new domain)
+
+Staging: [https://staging--rinkeby-web3-dev-environment.netlify.app/](https://staging--rinkeby-web3-dev-environment.netlify.app)
+
+The development workflow includes merging most changes into staging, completing thorough testing on Rinkeby, and then finalizing the merge into mainnet on a regular cadence (e.g. continuous Rinkeby merges, mainnet merges weekly or in case of an emergency).
 
 ## Smart Contract
 
