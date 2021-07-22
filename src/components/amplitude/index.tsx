@@ -3,6 +3,9 @@
  */
 
 import { useEffect } from "react";
+import { getCookie } from "@/utils/cookies";
+
+const INTERCOM_ID = "intercom-id-qis66b83";
 
 export const initializeAmplitudeJS = (): void => {
   const isDeployPreview =
@@ -55,6 +58,8 @@ export const amplitudeLogger = (
   const isDeployPreview =
     window?.location?.hostname.indexOf("deploy-preview") > -1;
 
+  const intercomUserId = getCookie(INTERCOM_ID);
+
   return new Promise((resolve) => {
     if (
       window !== undefined &&
@@ -63,9 +68,9 @@ export const amplitudeLogger = (
     ) {
       require("amplitude-js")
         .getInstance()
-        .logEvent(eventName, eventProperties, () => resolve(true));
+        .logEvent(eventName, { ...eventProperties, intercomUserId }, () => resolve(true));
     } else {
-      console.log("[Amplitude]", eventName, eventProperties);
+      console.log("[Amplitude]", eventName, { ...eventProperties, intercomUserId });
     }
   });
 };

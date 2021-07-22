@@ -598,7 +598,6 @@ const DistributeToken = (props: Props) => {
     // Amplitude logger: CLICK_APPROVE_DISTRIBUTION_TOKEN
     amplitudeLogger(CLICK_APPROVE_DISTRIBUTION_TOKEN, {
       flow: Flow.MGR_SET_DIST,
-      data: tokenDetails,
     });
 
     const { tokenNonFormattedAddress, tokenDecimals } = tokenDetails;
@@ -640,7 +639,6 @@ const DistributeToken = (props: Props) => {
             // Amplitude logger: DISTRIBUTION_TOKEN_APPROVED
             amplitudeLogger(DISTRIBUTION_TOKEN_APPROVED, {
               flow: Flow.MGR_SET_DIST,
-              data: tokenDetails,
             });
 
             const { returnValues } = Approval;
@@ -711,10 +709,7 @@ const DistributeToken = (props: Props) => {
           // Amplitude logger: DISTRIBUTION_TOKEN_NOT_APPROVED
           amplitudeLogger(DISTRIBUTION_TOKEN_NOT_APPROVED, {
             flow: Flow.MGR_SET_DIST,
-            data: {
-              tokenDetails,
-              error,
-            },
+            error,
           });
 
           // user clicked reject.
@@ -724,10 +719,7 @@ const DistributeToken = (props: Props) => {
       // Amplitude logger: ERROR_CREATING_DISTRIBUTION_TOKEN
       amplitudeLogger(ERROR_CREATING_DISTRIBUTION_TOKEN, {
         flow: Flow.MGR_SET_DIST,
-        data: {
-          tokenDetails,
-          error,
-        },
+        error,
       });
 
       // error occured before wallet prompt.
