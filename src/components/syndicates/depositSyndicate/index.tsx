@@ -25,7 +25,6 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import ERC20ABI from "src/utils/abi/erc20";
-import { useCurrentERC20 } from "../hooks/useCurrentERC20";
 import { useDepositChecks } from "../hooks/useDepositChecks";
 import { useUnavailableState } from "../hooks/useUnavailableState";
 import { DetailsCard } from "../shared";
@@ -40,6 +39,7 @@ import { SyndicateActionButton } from "../shared/syndicateActionButton";
 import { SyndicateActionLoader } from "../shared/syndicateActionLoader";
 import { UnavailableState } from "../shared/unavailableState";
 import WithdrawDeposit from "./WithdrawDeposit";
+import ManageSyndicate from "./ManageSyndicate";
 
 const Web3 = require("web3");
 const web3 = new Web3(
@@ -93,7 +93,19 @@ const DepositSyndicate: React.FC = () => {
     },
   } = useSelector((state: RootState) => state);
 
-  const { depositTokenSymbol, depositTokenDecimals } = useCurrentERC20();
+  let depositTokenSymbol, depositTokenDecimals, depositTokenLogo;
+  if (syndicate) {
+    var {
+      tokenDecimals,
+      depositERC20Logo,
+      depositERC20TokenSymbol,
+      depositERC20Price,
+    } = syndicate;
+
+    depositTokenDecimals = tokenDecimals;
+    depositTokenLogo = depositERC20Logo;
+    depositTokenSymbol = depositERC20TokenSymbol;
+  }
   const {
     title,
     message,
@@ -167,7 +179,11 @@ const DepositSyndicate: React.FC = () => {
   const sections = [
     {
       header: "My Deposits",
-      subText: `${memberTotalDeposits} ${depositTokenSymbol} ($${memberTotalDeposits})`,
+      subText: `${floatedNumberWithCommas(
+        memberTotalDeposits,
+      )} ${depositTokenSymbol} ($${floatedNumberWithCommas(
+        parseFloat(depositERC20Price) * parseFloat(memberTotalDeposits),
+      )})`,
       tooltip: myDepositsToolTip,
       screen: "deposit",
     },
@@ -227,7 +243,7 @@ const DepositSyndicate: React.FC = () => {
   }, [amount]);
 
   useEffect(() => {
-    checkLPAllowanceAmount();
+    checkMemberAllowanceAmount();
   }, [
     account,
     depositTokenContract,
@@ -487,7 +503,7 @@ const DepositSyndicate: React.FC = () => {
           // value key, hence the will be undefined.
           // call this function does the job of checking whether the allowance
           // was approved successfully or not.
-          await checkLPAllowanceAmount();
+          await checkMemberAllowanceAmount();
           setSubmittingAllowanceApproval(false);
 
           // Amplitude logger: Approve Allowance
@@ -532,7 +548,7 @@ const DepositSyndicate: React.FC = () => {
   // when the connected account is changed, we need to check for new allowances.
   // This check also needs to be done after a deposit has been made
   // as the allowance will be reset
-  const checkLPAllowanceAmount = async () => {
+  const checkMemberAllowanceAmount = async () => {
     if (depositTokenContract.methods && syndicateContracts && account) {
       /**
        * Check the approval amount
@@ -831,8 +847,9 @@ const DepositSyndicate: React.FC = () => {
                       buttonText={depositSuccessButtonText}
                       closeLoader={closeSyndicateActionLoader}
                     />
-                  ) : // deposist are disabled when syndicate is closed.
-                  !syndicate?.depositsEnabled ? (
+                  ) : // deposits are disabled when syndicate is closed.
+                  !syndicate?.depositsEnabled ||
+                    router.pathname.endsWith("details") ? (
                     <div className="flex flex-col items-center justify-center my-8 mx-6">
                       <p className="font-semibold text-2xl text-center">
                         Deposits are disabled.
@@ -869,7 +886,7 @@ const DepositSyndicate: React.FC = () => {
                         </div>
                       )}
 
-                      <div className="">
+                      <div>
                         {/* show this text if whitelist is enabled for deposits */}
                         {showSkeletonLoader ? (
                           <div className="flex justify-between my-1">
@@ -898,7 +915,7 @@ const DepositSyndicate: React.FC = () => {
                             <div className="flex justify-between my-1">
                               <input
                                 name="amount"
-                                type="text"
+                                type="number"
                                 placeholder="400"
                                 disabled={disableAmountInput}
                                 defaultValue={amount}
@@ -906,11 +923,10 @@ const DepositSyndicate: React.FC = () => {
                                 className={`min-w-0 rounded-md bg-gray-9 border border-gray-24 text-white font-whyte focus:outline-none focus:ring-gray-24 focus:border-gray-24 flex-grow mr-6 `}
                               />
                               <p className="flex-shrink-0 flex items-center whitespace-nowrap">
-                                {depositTokenSymbol === "DAI" && (
+                                {depositTokenLogo && (
                                   <img
-                                    className="mr-2"
-                                    src={"/images/dai-symbol.svg"}
-                                    alt="DAI symbol"
+                                    className="mr-2 w-5"
+                                    src={depositTokenLogo}
                                   />
                                 )}
                                 {depositTokenSymbol}
@@ -952,6 +968,11 @@ const DepositSyndicate: React.FC = () => {
         {parseInt(memberTotalDeposits) > 0 && account && (
           <WithdrawDeposit syndicateAddress={syndicateAddress} />
         )}
+
+        {/* show this components if we are in details page*/}
+        {router.pathname.endsWith("details") ? (
+          <ManageSyndicate syndicateAddress={syndicateAddress} />
+        ) : null}
       </div>
 
       {/* Error message modal */}

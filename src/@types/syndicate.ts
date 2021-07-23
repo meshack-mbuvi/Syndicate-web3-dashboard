@@ -20,6 +20,8 @@ export type Syndicate = {
   modifiable: boolean;
   tokenDecimals: number;
   depositERC20TokenSymbol: string;
+  depositERC20Logo: string;
+  depositERC20Price: string;
   numMembersCurrent: string;
   syndicateDistributionShareBasisPoints: string;
   managerDistributionShareBasisPoints: number;

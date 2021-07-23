@@ -5,8 +5,7 @@ import { floatedNumberWithCommas } from "@/utils/formattedNumbers";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { getWeiAmount, onlyUnique } from "src/utils/conversions";
-import { ERC20TokenDetails } from "src/utils/ERC20Methods";
-import { TokenMappings } from "src/utils/tokenMappings";
+import { getCoinFromContractAddress } from "functions/src/utils/ethereum";
 import { ifRows } from "./interfaces";
 
 const BN = web3.utils.BN;
@@ -122,26 +121,16 @@ const GetClaimedDistributions = ({
         // track total withdrawals per token
         let totalWithdrawalAmount = 0;
 
-        // token decimals
-        const ERC20Details = new ERC20TokenDetails(uniqueDistributionERC20s[i]);
-        const tokenDecimals = await ERC20Details.getTokenDecimals();
-        const distributionERC20Decimals = tokenDecimals ? tokenDecimals : "18";
-
-        // token symbol
-        const mappedTokenAddress = Object.keys(TokenMappings).find(
-          (key) =>
-            web3.utils.toChecksumAddress(key) ===
-            web3.utils.toChecksumAddress(uniqueDistributionERC20s[i]),
-        );
-
-        let distributionERC20Symbol = formatAddress(
+        const { decimals, symbol } = await getCoinFromContractAddress(
           uniqueDistributionERC20s[i],
-          4,
-          4,
         );
-        if (mappedTokenAddress) {
-          distributionERC20Symbol = TokenMappings[mappedTokenAddress];
-        }
+
+        // token properties
+        const distributionERC20Symbol = symbol
+          ? symbol
+          : formatAddress(uniqueDistributionERC20s[i], 3, 3);
+        const distributionERC20Decimals = decimals ? decimals : "18";
+
         for (let j = 0; j < distributionsWithdrawalDetails.length; j++) {
           const {
             distributionERC20Address,

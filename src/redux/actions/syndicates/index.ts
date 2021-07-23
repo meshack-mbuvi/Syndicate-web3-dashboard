@@ -5,8 +5,8 @@ import { formatDate } from "@/utils";
 import { basisPointsToPercentage, getWeiAmount } from "@/utils/conversions";
 import { pastDate } from "@/utils/dateUtils";
 import { ERC20TokenDetails } from "@/utils/ERC20Methods";
-import { TokenMappings } from "src/utils/tokenMappings";
-import { web3 } from "src/utils/web3Utils";
+
+import { getCoinFromContractAddress } from "functions/src/utils/ethereum";
 import {
   ADD_NEW_INVESTMENT,
   ALL_SYNDICATES,
@@ -186,9 +186,21 @@ export const getSyndicateByAddress = ({
       syndicateAddress,
     );
 
-    const tokenDecimals = await getTokenDecimals(syndicate.depositERC20Address);
+    // get token details
+    const {
+      depositERC20TokenSymbol,
+      depositERC20Logo,
+      tokenDecimals,
+      depositERC20Price,
+    } = await getTokenDetails(syndicate.depositERC20Address);
 
-    const syndicateDetails = processSyndicateDetails(syndicate, tokenDecimals);
+    const syndicateDetails = processSyndicateDetails(
+      syndicate,
+      tokenDecimals,
+      depositERC20TokenSymbol,
+      depositERC20Logo,
+      depositERC20Price
+    );
     // set these incase they are not reset
     dispatch({
       data: { syndicateAddressIsValid: true, syndicateFound: true },
@@ -222,6 +234,19 @@ export const getTokenDecimals = async (contractAddress: string) => {
   }
 };
 
+// get token details for the deposit ERC20
+const getTokenDetails = async (contractAddress: string) => {
+  const { symbol, logo, decimals, price } = await getCoinFromContractAddress(
+    contractAddress,
+  );
+  return {
+    depositERC20TokenSymbol: symbol,
+    depositERC20Logo: logo,
+    tokenDecimals: decimals,
+    depositERC20Price: price,
+  };
+};
+
 /**
  * This method formats syndicate data to be displayed in frontend
  * @param syndicateData an object containing syndicate data
@@ -231,6 +256,9 @@ export const getTokenDecimals = async (contractAddress: string) => {
 export const processSyndicateDetails = (
   syndicateData,
   tokenDecimals = 18,
+  depositERC20TokenSymbol,
+  depositERC20Logo,
+  depositERC20Price,
 ): Syndicate => {
   if (!syndicateData) return;
   let {
@@ -257,19 +285,6 @@ export const processSyndicateDetails = (
   } = syndicateData;
 
   const closeDate = formatDate(new Date(parseInt(dateClose) * 1000));
-
-  // get deposit token symbol
-  let depositERC20TokenSymbol = "";
-  const mappedTokenAddress = Object.keys(TokenMappings).find(
-    (key) =>
-      web3.utils.toChecksumAddress(key) ===
-      web3.utils.toChecksumAddress(depositERC20Address),
-  );
-  if (mappedTokenAddress) {
-    depositERC20TokenSymbol = TokenMappings[mappedTokenAddress];
-  } else {
-    depositERC20TokenSymbol = "Unknown";
-  }
 
   /**
    * block.timestamp which is the one used to save creationDate is in
@@ -322,6 +337,8 @@ export const processSyndicateDetails = (
     modifiable,
     tokenDecimals,
     depositERC20TokenSymbol,
+    depositERC20Logo,
+    depositERC20Price,
     numMembersCurrent,
     syndicateDistributionShareBasisPoints,
     distributing,

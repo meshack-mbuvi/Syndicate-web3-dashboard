@@ -43,13 +43,13 @@ import { getWeiAmount } from "@/utils/conversions";
 import { ERC20TokenDetails } from "@/utils/ERC20Methods";
 import { formatAddress } from "@/utils/formatAddress";
 import { floatedNumberWithCommas } from "@/utils/formattedNumbers";
-import { TokenMappings } from "@/utils/tokenMappings";
 import { isZeroAddress, Validate } from "@/utils/validators";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Button from "src/components/buttons";
 import { DeleteIcon } from "src/components/shared/Icons";
+import { getCoinFromContractAddress } from "functions/src/utils/ethereum";
 
 interface Props {
   showDistributeToken: boolean;
@@ -267,10 +267,7 @@ const DistributeToken = (props: Props) => {
     amplitudeLogger(CLICK_DISTRIBUTE_TOKENS_BUTTON, {
       flow: Flow.MGR_SET_DIST,
       data: {
-        syndicateAddress,
-        distributionERC20TokenAddresses,
         tokenDistributionAmounts,
-        account,
       },
     });
     try {
@@ -288,10 +285,7 @@ const DistributeToken = (props: Props) => {
       amplitudeLogger(SUCCESS_DISTRIBUTE_TOKENS, {
         flow: Flow.MGR_SET_DIST,
         data: {
-          syndicateAddress,
-          distributionERC20TokenAddresses,
           tokenDistributionAmounts,
-          account,
         },
       });
       setSuccessfulDistribution(true);
@@ -380,23 +374,16 @@ const DistributeToken = (props: Props) => {
    * @index the index of the token in the ERC20TokenFields state
    * @returns token symbol from token mappings
    */
-  const getDistributionTokenSymbol = (
+  const getDistributionTokenSymbol = async (
     index: number,
     distributionERC20Address: string,
   ) => {
     // set token symbol based on token address
     const tokenAddress = distributionERC20Address;
-    const mappedTokenAddress = Object.keys(TokenMappings).find(
-      (key) =>
-        web3.utils.toChecksumAddress(key) ==
-        web3.utils.toChecksumAddress(tokenAddress),
-    );
-    if (mappedTokenAddress) {
-      updateERC20TokenValue(
-        "tokenSymbol",
-        index,
-        TokenMappings[mappedTokenAddress],
-      );
+    const { symbol } = await getCoinFromContractAddress(tokenAddress);
+
+    if (symbol) {
+      updateERC20TokenValue("tokenSymbol", index, symbol);
     } else {
       updateERC20TokenValue("tokenSymbol", index, "unknown");
     }
@@ -482,7 +469,8 @@ const DistributeToken = (props: Props) => {
       // distribution share to syndicate and to the lead.
       const tokenWithdrawalAmountAvailable =
         +value -
-        (tokenDistributionShareToSyndicateLead + tokenDistributionShareToSyndicateProtocol);
+        (tokenDistributionShareToSyndicateLead +
+          tokenDistributionShareToSyndicateProtocol);
 
       updateERC20TokenValue(
         "distributionShareToSyndicateProtocol",
@@ -610,7 +598,6 @@ const DistributeToken = (props: Props) => {
     // Amplitude logger: CLICK_APPROVE_DISTRIBUTION_TOKEN
     amplitudeLogger(CLICK_APPROVE_DISTRIBUTION_TOKEN, {
       flow: Flow.MGR_SET_DIST,
-      data: tokenDetails,
     });
 
     const { tokenNonFormattedAddress, tokenDecimals } = tokenDetails;
@@ -652,7 +639,6 @@ const DistributeToken = (props: Props) => {
             // Amplitude logger: DISTRIBUTION_TOKEN_APPROVED
             amplitudeLogger(DISTRIBUTION_TOKEN_APPROVED, {
               flow: Flow.MGR_SET_DIST,
-              data: tokenDetails,
             });
 
             const { returnValues } = Approval;
@@ -723,10 +709,7 @@ const DistributeToken = (props: Props) => {
           // Amplitude logger: DISTRIBUTION_TOKEN_NOT_APPROVED
           amplitudeLogger(DISTRIBUTION_TOKEN_NOT_APPROVED, {
             flow: Flow.MGR_SET_DIST,
-            data: {
-              tokenDetails,
-              error,
-            },
+            error,
           });
 
           // user clicked reject.
@@ -736,10 +719,7 @@ const DistributeToken = (props: Props) => {
       // Amplitude logger: ERROR_CREATING_DISTRIBUTION_TOKEN
       amplitudeLogger(ERROR_CREATING_DISTRIBUTION_TOKEN, {
         flow: Flow.MGR_SET_DIST,
-        data: {
-          tokenDetails,
-          error,
-        },
+        error,
       });
 
       // error occured before wallet prompt.
@@ -772,7 +752,7 @@ const DistributeToken = (props: Props) => {
 
     // update the redux store with latest syndicate details
     // once distribution is set successfully.
-    if (successfulDistribution) { 
+    if (successfulDistribution) {
       dispatch(
         getSyndicateByAddress({ syndicateAddress, ...syndicateContracts }),
       );
@@ -992,10 +972,6 @@ const DistributeToken = (props: Props) => {
     // Amplitude logger: CLICK_ADD_MANAGER_FEE_ADDRESS
     amplitudeLogger(CLICK_ADD_MANAGER_FEE_ADDRESS, {
       flow: Flow.MGR_SET_DIST,
-      data: {
-        syndicateAddress,
-        managerFeeAddress,
-      },
     });
 
     try {
@@ -1010,10 +986,6 @@ const DistributeToken = (props: Props) => {
       // Amplitude logger: SUCCESS_ADD_MANAGER_FEE_ADDRESS
       amplitudeLogger(SUCCESS_ADD_MANAGER_FEE_ADDRESS, {
         flow: Flow.MGR_SET_DIST,
-        data: {
-          syndicateAddress,
-          managerFeeAddress,
-        },
       });
 
       dispatch(updateSyndicateManagerFeeAddress(managerFeeAddress));
@@ -1190,6 +1162,7 @@ const DistributeToken = (props: Props) => {
                                 defaultValue: 0,
                                 error: tokenAllowanceError,
                                 column: true,
+                                type: "number",
                                 customWidth: "w-full xl:w-64",
                               }}
                               name="tokenAllowance"

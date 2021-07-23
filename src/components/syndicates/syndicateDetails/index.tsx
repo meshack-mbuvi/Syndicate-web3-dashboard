@@ -2,7 +2,6 @@ import Footer from "@/components/navigation/footer";
 import ManagerSetAllowance from "@/containers/managerActions/setAllowances";
 import { RootState } from "@/redux/store";
 import { getWeiAmount, isUnlimited, onlyUnique } from "@/utils/conversions";
-import { ERC20TokenDetails } from "@/utils/ERC20Methods";
 import { floatedNumberWithCommas } from "@/utils/formattedNumbers";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
@@ -16,10 +15,9 @@ import {
   storeDepositTokenAllowance,
   storeDistributionTokensDetails,
 } from "src/redux/actions/tokenAllowances";
-import ERC20ABI from "src/utils/abi/rinkeby-dai";
 // utils
 import { formatAddress } from "src/utils/formatAddress";
-import { TokenMappings } from "src/utils/tokenMappings";
+import { getCoinFromContractAddress } from "functions/src/utils/ethereum";
 import { BadgeCard, DetailsCard } from "../shared";
 import {
   closeDateToolTip,
@@ -30,6 +28,7 @@ import {
   distributionShareToSyndicateProtocolToolTip,
   expectedAnnualOperatingFeesToolTip,
 } from "../shared/Constants";
+const abi = require("human-standard-token-abi");
 
 const SyndicateDetails = (props: {
   accountIsManager: boolean;
@@ -102,9 +101,7 @@ const SyndicateDetails = (props: {
   // state to handle copying of the syndicate address to clipboard.
   const [showCopyState, setShowCopyState] = useState<boolean>(false);
 
-  // state to handle details about the current ERC20 token
-  const [depositTokenSymbol, setDepositTokenSymbol] = useState<string>("");
-  const [depositTokenDecimals, setDepositTokenDecimals] = useState<number>(18);
+  // state to handle details about the current deposit ERC20 token
   const [depositTokenContract, setDepositTokenContract] = useState<any>("");
 
   // states to show general syndicate details
@@ -145,6 +142,8 @@ const SyndicateDetails = (props: {
       distributing,
       depositERC20Address,
       depositTotalMax,
+      tokenDecimals,
+      depositERC20TokenSymbol,
     } = syndicate;
   }
 
@@ -152,15 +151,9 @@ const SyndicateDetails = (props: {
   useEffect(() => {
     if (depositERC20Address && web3) {
       // set up token contract
-      const tokenContract = new web3.eth.Contract(
-        ERC20ABI,
-        depositERC20Address,
-      );
+      const tokenContract = new web3.eth.Contract(abi, depositERC20Address);
 
       setDepositTokenContract(tokenContract);
-
-      // set token symbol
-      getERC20TokenDetails(depositERC20Address);
     }
   }, [depositERC20Address, web3]);
 
@@ -175,7 +168,7 @@ const SyndicateDetails = (props: {
 
     const managerDepositAllowance = getWeiAmount(
       managerDepositTokenAllowance,
-      depositTokenDecimals,
+      tokenDecimals,
       false,
     );
 
@@ -194,9 +187,9 @@ const SyndicateDetails = (props: {
         {
           tokenAddress: depositERC20Address,
           tokenAllowance: managerDepositAllowance,
-          tokenSymbol: depositTokenSymbol,
+          tokenSymbol: depositERC20TokenSymbol,
           tokenDeposits: depositTotalMax,
-          tokenDecimals: depositTokenDecimals,
+          tokenDecimals,
           sufficientAllowanceSet,
         },
       ]),
@@ -232,17 +225,14 @@ const SyndicateDetails = (props: {
       // set up token contract to check manager allowance for the ERC20
       for (let i = 0; i < uniqueERC20s.length; i++) {
         const tokenAddress = uniqueERC20s[i];
-        const tokenDetails = new ERC20TokenDetails(tokenAddress);
-        const tokenDecimals = await tokenDetails.getTokenDecimals();
 
-        // get token symbol
-        const mappedTokenAddress = Object.keys(TokenMappings).find(
-          (key) => key.toLowerCase() == tokenAddress.toLowerCase(),
+        const { decimals, symbol } = await getCoinFromContractAddress(
+          tokenAddress,
         );
-        let tokenSymbol;
-        if (mappedTokenAddress) {
-          tokenSymbol = TokenMappings[mappedTokenAddress];
-        }
+
+        // get token properties
+        const tokenSymbol = symbol;
+        const tokenDecimals = decimals ? decimals : "18";
 
         // get allowance set for token by the manager
         const managerAddress = syndicate?.managerCurrent;
@@ -376,7 +366,7 @@ const SyndicateDetails = (props: {
         getManagerDistributionTokensAllowances();
       }
     }
-  }, [syndicateContracts, syndicate, depositTokenSymbol, depositTokenDecimals]);
+  }, [syndicateContracts, syndicate, depositERC20TokenSymbol, tokenDecimals]);
 
   // set syndicate cummulative values
   useEffect(() => {
@@ -387,7 +377,7 @@ const SyndicateDetails = (props: {
           header: "Total Deposits",
           subText: `${floatedNumberWithCommas(
             depositTotal,
-          )} ${depositTokenSymbol} (${numMembersCurrent} ${
+          )} ${depositERC20TokenSymbol} (${numMembersCurrent} ${
             parseInt(numMembersCurrent) === 1 ? "depositor" : "depositors"
           })`,
         },
@@ -422,7 +412,7 @@ const SyndicateDetails = (props: {
         },
         {
           header: "Deposit Token",
-          subText: `${depositTokenSymbol}`,
+          subText: `${depositERC20TokenSymbol}`,
           tooltip: depositTokenToolTip,
         },
         {
@@ -431,7 +421,7 @@ const SyndicateDetails = (props: {
             valueIsUnlimited
               ? "Unlimited"
               : floatedNumberWithCommas(depositMemberMax)
-          } ${depositTokenSymbol}`,
+          } ${depositERC20TokenSymbol}`,
           tooltip: depositRangeToolTip,
         },
         {
@@ -452,29 +442,6 @@ const SyndicateDetails = (props: {
       ]);
     }
   }, [syndicate, syndicateDetails]);
-
-  /**
-   * method used to get details on the current ERC20 token
-   */
-  const getERC20TokenDetails = async (depositERC20Address: string) => {
-    // getting token symbol doesn't seem to return a valid hex value
-    // using this manual mapping for the time being
-    const tokenAddress = depositERC20Address;
-    const mappedTokenAddress = Object.keys(TokenMappings).find(
-      (key) =>
-        web3.utils.toChecksumAddress(key) ===
-        web3.utils.toChecksumAddress(tokenAddress),
-    );
-
-    if (mappedTokenAddress) {
-      setDepositTokenSymbol(TokenMappings[mappedTokenAddress]);
-    }
-
-    // get token decimals
-    const tokenDetails = new ERC20TokenDetails(depositERC20Address);
-    const tokenDecimals = await tokenDetails.getTokenDecimals();
-    setDepositTokenDecimals(tokenDecimals);
-  };
 
   /**
    * Extracts some syndicate data and dispatches an action to set the details
@@ -501,7 +468,7 @@ const SyndicateDetails = (props: {
         ),
       );
     }
-  }, [syndicate, syndicateAddress]);
+  }, [syndicate, syndicateAddress, depositERC20TokenSymbol, tokenDecimals]);
 
   // format an account address in the format 0x3f6q9z52…54h2kjh51h5zfa
   const formattedSyndicateAddress3XLarge = formatAddress(
@@ -650,8 +617,8 @@ const SyndicateDetails = (props: {
           showManagerSetAllowances,
           hideManagerSetAllowances,
           managerDepositsAllowance,
-          depositTokenSymbol,
-          depositTokenDecimals,
+          depositERC20TokenSymbol,
+          tokenDecimals,
           syndicateContracts,
           depositERC20Address,
         }}

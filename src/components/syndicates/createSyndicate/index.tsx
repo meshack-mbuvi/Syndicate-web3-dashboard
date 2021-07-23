@@ -397,10 +397,11 @@ const CreateSyndicate = (props) => {
   const [copied, setCopied] = useState(false);
 
   // closeDate should be 2 weeks in the future by default
-  const minimumCloseDate = new Date(
+  const defaultCloseDate = new Date(
     new Date().setHours(new Date().getHours() + 24 * 14),
   );
-  const [selectedDate, setSelectedDate] = useState(minimumCloseDate);
+  const [selectedDate, setSelectedDate] = useState(defaultCloseDate);
+  const [minimumCloseDate, setMinimumCloseDate] = useState(defaultCloseDate);
 
   // this controls the toggle button for manually whitelisting depositors
   const toggleAllowlistEnabled = () => setAllowlistEnabled(!allowlistEnabled);
@@ -421,6 +422,12 @@ const CreateSyndicate = (props) => {
   // set closeDate
   const handleDateSelect = (date) => {
     setSelectedDate(date);
+  };
+
+  // update minimumCloseDate to a date not earlier than today
+  const handleClick = () => {
+    const date = new Date(new Date().setHours(new Date().getHours() + 24));
+    setMinimumCloseDate(date);
   };
 
   /**
@@ -551,12 +558,6 @@ const CreateSyndicate = (props) => {
       // Amplitude logger: How many users started filling out the form to create a Syndicate
       amplitudeLogger(CREATE_SYNDICATE, {
         flow: Flow.MGR_CREATE_SYN,
-        data: {
-          syndicateData,
-          account,
-          fullName,
-          emailAddress,
-        },
       });
     } catch (error) {
       setShowWalletConfirmationModal(false);
@@ -685,7 +686,7 @@ const CreateSyndicate = (props) => {
           <input type="hidden" name="form-name" value="offChainData" />
           {/* modal sub title */}
           <div
-            className="flex justify-start mb-1 text-blue font-medium 
+            className="flex justify-start mb-1 text-blue font-medium
           text-center leading-8 text-lg"
           >
             <p className="text-blue ml-4">Offchain Data</p>
@@ -759,7 +760,7 @@ const CreateSyndicate = (props) => {
 
           {/* modal sub title */}
           <div
-            className="flex justify-start mt-4 mb-1 text-blue font-medium 
+            className="flex justify-start mt-4 mb-1 text-blue font-medium
           text-center leading-8 text-lg"
           >
             <p className="text-blue ml-4">Onchain Data</p>
@@ -802,6 +803,7 @@ const CreateSyndicate = (props) => {
                 onChange={handleSetMinDeposits}
                 name="minDeposits"
                 value={minDeposits}
+                type="number"
                 placeholder="0"
               />
 
@@ -815,6 +817,7 @@ const CreateSyndicate = (props) => {
                 onChange={handleSetMaxDeposits}
                 name="maxDeposits"
                 value={maxDeposits}
+                type="number"
                 placeholder="Unlimited"
               />
 
@@ -828,6 +831,7 @@ const CreateSyndicate = (props) => {
                 onChange={maxTotalDepositsHandler}
                 name="maxTotalDeposits"
                 value={maxTotalDeposits}
+                type="number"
                 placeholder="Unlimited"
               />
 
@@ -841,6 +845,7 @@ const CreateSyndicate = (props) => {
                 onChange={maxMembersHandler}
                 name="maxMembers"
                 value={maxMembers}
+                type="number"
                 placeholder="Unlimited"
               />
 
@@ -861,8 +866,9 @@ const CreateSyndicate = (props) => {
                   className={`w-5/6 flex-grow flex flex-col justify-between`}
                 >
                   {/* input field */}
-                  <div className="flex justify-end">
+                  <div className="flex justify-end" onClick={handleClick}>
                     <DatePicker
+                      dateFormat={selectedDate.toLocaleDateString()}
                       selected={selectedDate}
                       onSelect={handleDateSelect}
                       className={`flex flex-grow focus:ring-blue text-sm focus:border-blue rounded-md text-black border-gray-85 w-full font-whyte`}

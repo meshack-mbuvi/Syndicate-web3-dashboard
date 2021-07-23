@@ -15,9 +15,7 @@ import { updateMemberWithdrawalDetails } from "@/redux/actions/syndicateMemberDe
 import { getSyndicateByAddress } from "@/redux/actions/syndicates";
 import { RootState } from "@/redux/store";
 import { getWeiAmount } from "@/utils/conversions";
-import { ERC20TokenDetails } from "@/utils/ERC20Methods";
 import { floatedNumberWithCommas } from "@/utils/formattedNumbers";
-import { TokenMappings } from "@/utils/tokenMappings";
 import { Validate } from "@/utils/validators";
 import _ from "lodash";
 import Link from "next/link";
@@ -39,6 +37,7 @@ import { SyndicateActionButton } from "../shared/syndicateActionButton";
 import { SyndicateActionLoader } from "../shared/syndicateActionLoader";
 import { TokenSelect } from "../shared/tokenSelect";
 import { UnavailableState } from "../shared/unavailableState";
+import { getCoinFromContractAddress } from "functions/src/utils/ethereum";
 
 const {
   actionFailedError,
@@ -115,7 +114,6 @@ const WithdrawSyndicate: React.FC = () => {
   const [withdrawalFailed, setWithdrawalFailed] = useState<boolean>(false);
   const [loadingLPDetails, setLoadingLPDetails] = useState<boolean>(false);
   const [amount, setAmount] = useState<number>(0);
-  const [depositERC20Symbol, setDepositERC20Symbol] = useState<string>("DAI");
   const [amountError, setAmountError] = useState<string>("");
   const [showErrorMessage, setShowErrorMessage] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>("");
@@ -135,7 +133,7 @@ const WithdrawSyndicate: React.FC = () => {
     isSyndicateAllowanceLTWithdrawAmount,
     setAllowanceLessThanWithdrawAmount,
   ] = useState<boolean>(false);
-  const [depositTokenDecimals, setDepositTokenDecimals] = useState<number>(18);
+
   const [loggerFlow, setLoggerFlow] = useState(Flow.MBR_WITHDRAW_DEP);
 
   // check whether the connected account is a member
@@ -154,6 +152,17 @@ const WithdrawSyndicate: React.FC = () => {
   let tokenDecimals = "";
 
   let selectedToken;
+  const [
+    currentDistributionTokenPrice,
+    setCurrentDistributionTokenPrice,
+  ] = useState<string>("1");
+
+  // get current token price
+  const getTokenPrice = async (tokenAddress) => {
+    const { price } = await getCoinFromContractAddress(tokenAddress);
+    setCurrentDistributionTokenPrice(price);
+  };
+
   if (syndicateDistributionTokens) {
     selectedToken = syndicateDistributionTokens.find((token) => token.selected);
 
@@ -162,6 +171,10 @@ const WithdrawSyndicate: React.FC = () => {
       tokenSymbol = selectedToken?.tokenSymbol;
       tokenAddress = selectedToken?.tokenAddress;
       tokenDecimals = selectedToken?.tokenDecimals;
+
+      // we need to get the correct token price
+      // since some ERC20s have a value of slightly less or more than 1 USD
+      getTokenPrice(tokenAddress);
     }
   }
 
@@ -201,6 +214,17 @@ const WithdrawSyndicate: React.FC = () => {
     }
   }
 
+  if (syndicate) {
+    var {
+      depositERC20Price,
+      depositERC20TokenSymbol,
+      depositERC20Logo,
+    } = syndicate;
+    const { tokenDecimals } = syndicate;
+    var depositTokenDecimals = tokenDecimals;
+    var depositERC20Symbol = depositERC20TokenSymbol;
+  }
+
   let showDepositLink = false;
 
   const WithdrawalSections = [
@@ -227,7 +251,11 @@ const WithdrawSyndicate: React.FC = () => {
   const depositSections = [
     {
       header: "My Deposits",
-      subText: `${memberTotalDeposits} ${depositERC20Symbol} ($${memberTotalDeposits})`,
+      subText: `${floatedNumberWithCommas(
+        memberTotalDeposits,
+      )} ${depositERC20Symbol} ($${floatedNumberWithCommas(
+        parseFloat(depositERC20Price) * parseFloat(memberTotalDeposits),
+      )})`,
       tooltip: myDepositsToolTip,
       screen: "deposit",
     },
@@ -244,7 +272,7 @@ const WithdrawSyndicate: React.FC = () => {
   // check whether the connected account is a member of the syndicate
   useEffect(() => {
     setAccountIsMember(parseInt(memberTotalDeposits) > 0);
-  }, [account, memberDepositDetails]);
+  }, [account, memberDepositDetails, syndicate]);
 
   // check whether the current syndicate is accepting withdrawals
   useEffect(() => {
@@ -289,24 +317,6 @@ const WithdrawSyndicate: React.FC = () => {
     account,
     depositTokenDecimals,
   ]);
-
-  // set token symbol based on deposit token address
-  // we'll manually map the token symbol for now.
-  // we'll also set the token decimals of the deposit/Withdrawal ERC20 token here
-  useEffect(() => {
-    if (syndicate) {
-      // set token symbol based on token address
-      const tokenAddress = syndicate.depositERC20Address;
-      // set token decimal places.
-      getTokenDecimals(tokenAddress);
-      const mappedTokenAddress = Object.keys(TokenMappings).find(
-        (key) => key.toLowerCase() == tokenAddress.toLowerCase(),
-      );
-      if (mappedTokenAddress) {
-        setDepositERC20Symbol(TokenMappings[mappedTokenAddress]);
-      }
-    }
-  }, [syndicate]);
 
   // check for errors on the member withdrawal page.
   useEffect(() => {
@@ -392,17 +402,21 @@ const WithdrawSyndicate: React.FC = () => {
       !distributionTokensAllowanceDetails.length);
   // set title and texts of section based on
   // whether this is a withdrawal or a deposit.
+  let tokenPriceInUSD =
+    parseFloat(currentDistributionTokenPrice) *
+    parseFloat(memberAvailableDistributions);
   let totalDistributionsText = `${
     memberAvailableDistributions &&
     floatedNumberWithCommas(memberAvailableDistributions)
   } ${currentDistributionTokenSymbol ? currentDistributionTokenSymbol : ""} ($${
-    memberAvailableDistributions &&
-    floatedNumberWithCommas(memberAvailableDistributions)
+    memberAvailableDistributions && floatedNumberWithCommas(tokenPriceInUSD)
   }) distributions available.`;
   if (syndicate?.depositsEnabled) {
-    totalDistributionsText = `${memberTotalDeposits} ${
+    tokenPriceInUSD =
+      parseFloat(depositERC20Price) * parseFloat(memberTotalDeposits);
+    totalDistributionsText = `${floatedNumberWithCommas(memberTotalDeposits)} ${
       currentDistributionTokenSymbol ? currentDistributionTokenSymbol : ""
-    } ($${memberTotalDeposits}) deposits available.`;
+    } ($${floatedNumberWithCommas(tokenPriceInUSD)}) deposits available.`;
   }
 
   // conditions for showing validation error message
@@ -536,7 +550,6 @@ const WithdrawSyndicate: React.FC = () => {
       amplitudeLogger(SUCCESSFUL_WITHDRAWAL, {
         flow: loggerFlow,
         data: {
-          syndicateAddress,
           withdrawAmount,
         },
       });
@@ -643,18 +656,6 @@ const WithdrawSyndicate: React.FC = () => {
         setSuccessfulWithdrawal(false);
         setWithdrawalFailed(true);
         return;
-    }
-  };
-
-  const getTokenDecimals = async (tokenAddress) => {
-    // This guard prevents initialization of contract without address
-    if (!tokenAddress.trim()) return;
-
-    // set token decimals based on the token address
-    const ERC20Details = new ERC20TokenDetails(tokenAddress);
-    const tokenDecimals = await ERC20Details.getTokenDecimals();
-    if (tokenDecimals !== null) {
-      setDepositTokenDecimals(parseInt(tokenDecimals));
     }
   };
 
@@ -790,10 +791,10 @@ const WithdrawSyndicate: React.FC = () => {
                             <TokenSelect />
                           ) : (
                             <p className="flex-shrink-0 flex items-center whitespace-nowrap">
-                              {depositERC20Symbol === "DAI" && (
+                              {depositERC20Logo && (
                                 <img
-                                  className="mr-2"
-                                  src={"/images/dai-symbol.svg"}
+                                  className="mr-2 w-5"
+                                  src={depositERC20Logo}
                                 />
                               )}
                               {depositERC20Symbol}

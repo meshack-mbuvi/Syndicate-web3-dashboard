@@ -1,7 +1,5 @@
-import moment from "moment";
-
-export const formatDate = (dateString) =>
-  moment(dateString).format("DD/MM/YYYY");
+const dateString = new Date();
+export const formatDate = (dateString) => dateString.toLocaleDateString();
 
 /**
  * This method checks whether the provided date is in the past or not.

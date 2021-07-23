@@ -1,0 +1,712 @@
+{
+  "contractName": "ISyndicateClosedEndFundAllowlistLogicV0",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "syndicateAddress",
+          "type": "address"
+        },
+        {
+          "internalType": "bool",
+          "name": "allowlistEnabled",
+          "type": "bool"
+        }
+      ],
+      "name": "managerSetAllowlistEnabled",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "syndicateAddress",
+          "type": "address"
+        },
+        {
+          "internalType": "address[]",
+          "name": "memberAddresses",
+          "type": "address[]"
+        }
+      ],
+      "name": "managerAllowAddresses",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "syndicateAddress",
+          "type": "address"
+        },
+        {
+          "internalType": "address[]",
+          "name": "memberAddresses",
+          "type": "address[]"
+        }
+      ],
+      "name": "managerBlockAddresses",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ],
+  "metadata": "{\"compiler\":{\"version\":\"0.8.6+commit.11564f7e\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"syndicateAddress\",\"type\":\"address\"},{\"internalType\":\"address[]\",\"name\":\"memberAddresses\",\"type\":\"address[]\"}],\"name\":\"managerAllowAddresses\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"syndicateAddress\",\"type\":\"address\"},{\"internalType\":\"address[]\",\"name\":\"memberAddresses\",\"type\":\"address[]\"}],\"name\":\"managerBlockAddresses\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"syndicateAddress\",\"type\":\"address\"},{\"internalType\":\"bool\",\"name\":\"allowlistEnabled\",\"type\":\"bool\"}],\"name\":\"managerSetAllowlistEnabled\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"/Users/mbuvi/syndicates/Syndicate/contracts/interfaces/ISyndicateClosedEndFundAllowlistLogicV0.sol\":\"ISyndicateClosedEndFundAllowlistLogicV0\"},\"evmVersion\":\"berlin\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[]},\"sources\":{\"/Users/mbuvi/syndicates/Syndicate/contracts/interfaces/ISyndicateClosedEndFundAllowlistLogicV0.sol\":{\"keccak256\":\"0x2b2e7680f858227357c66837b757aab3cc7be25195e1b542330039657695ac34\",\"license\":\"UNLICENSED\",\"urls\":[\"bzz-raw://50ce11113de3ece862852eaab2afb61c381cee7b1edb2095276f28e15ca481e5\",\"dweb:/ipfs/QmWTrgt9jRUbqQaPLNGevMz1DDnN1kwPFfDwZVae5oAu8G\"]}},\"version\":1}",
+  "bytecode": "0x",
+  "deployedBytecode": "0x",
+  "immutableReferences": {},
+  "generatedSources": [],
+  "deployedGeneratedSources": [],
+  "sourceMap": "",
+  "deployedSourceMap": "",
+  "source": "// SPDX-License-Identifier: UNLICENSED\n\npragma solidity ^0.8.0;\n\ninterface ISyndicateClosedEndFundAllowlistLogicV0 {\n    function managerSetAllowlistEnabled(\n        address syndicateAddress,\n        bool allowlistEnabled\n    ) external;\n\n    function managerAllowAddresses(\n        address syndicateAddress,\n        address[] calldata memberAddresses\n    ) external;\n\n    function managerBlockAddresses(\n        address syndicateAddress,\n        address[] calldata memberAddresses\n    ) external;\n}\n",
+  "sourcePath": "/Users/mbuvi/syndicates/Syndicate/contracts/interfaces/ISyndicateClosedEndFundAllowlistLogicV0.sol",
+  "ast": {
+    "absolutePath": "/Users/mbuvi/syndicates/Syndicate/contracts/interfaces/ISyndicateClosedEndFundAllowlistLogicV0.sol",
+    "exportedSymbols": {
+      "ISyndicateClosedEndFundAllowlistLogicV0": [
+        4890
+      ]
+    },
+    "id": 4891,
+    "license": "UNLICENSED",
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 4866,
+        "literals": [
+          "solidity",
+          "^",
+          "0.8",
+          ".0"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "40:23:11"
+      },
+      {
+        "abstract": false,
+        "baseContracts": [],
+        "contractDependencies": [],
+        "contractKind": "interface",
+        "fullyImplemented": false,
+        "id": 4890,
+        "linearizedBaseContracts": [
+          4890
+        ],
+        "name": "ISyndicateClosedEndFundAllowlistLogicV0",
+        "nameLocation": "75:39:11",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "functionSelector": "86afa44e",
+            "id": 4873,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "managerSetAllowlistEnabled",
+            "nameLocation": "130:26:11",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 4871,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 4868,
+                  "mutability": "mutable",
+                  "name": "syndicateAddress",
+                  "nameLocation": "174:16:11",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 4873,
+                  "src": "166:24:11",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 4867,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "166:7:11",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 4870,
+                  "mutability": "mutable",
+                  "name": "allowlistEnabled",
+                  "nameLocation": "205:16:11",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 4873,
+                  "src": "200:21:11",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bool",
+                    "typeString": "bool"
+                  },
+                  "typeName": {
+                    "id": 4869,
+                    "name": "bool",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "200:4:11",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bool",
+                      "typeString": "bool"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "156:71:11"
+            },
+            "returnParameters": {
+              "id": 4872,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "236:0:11"
+            },
+            "scope": 4890,
+            "src": "121:116:11",
+            "stateMutability": "nonpayable",
+            "virtual": false,
+            "visibility": "external"
+          },
+          {
+            "functionSelector": "15b1a646",
+            "id": 4881,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "managerAllowAddresses",
+            "nameLocation": "252:21:11",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 4879,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 4875,
+                  "mutability": "mutable",
+                  "name": "syndicateAddress",
+                  "nameLocation": "291:16:11",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 4881,
+                  "src": "283:24:11",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 4874,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "283:7:11",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 4878,
+                  "mutability": "mutable",
+                  "name": "memberAddresses",
+                  "nameLocation": "336:15:11",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 4881,
+                  "src": "317:34:11",
+                  "stateVariable": false,
+                  "storageLocation": "calldata",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_array$_t_address_$dyn_calldata_ptr",
+                    "typeString": "address[]"
+                  },
+                  "typeName": {
+                    "baseType": {
+                      "id": 4876,
+                      "name": "address",
+                      "nodeType": "ElementaryTypeName",
+                      "src": "317:7:11",
+                      "stateMutability": "nonpayable",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_address",
+                        "typeString": "address"
+                      }
+                    },
+                    "id": 4877,
+                    "nodeType": "ArrayTypeName",
+                    "src": "317:9:11",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_array$_t_address_$dyn_storage_ptr",
+                      "typeString": "address[]"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "273:84:11"
+            },
+            "returnParameters": {
+              "id": 4880,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "366:0:11"
+            },
+            "scope": 4890,
+            "src": "243:124:11",
+            "stateMutability": "nonpayable",
+            "virtual": false,
+            "visibility": "external"
+          },
+          {
+            "functionSelector": "bd4edf0e",
+            "id": 4889,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "managerBlockAddresses",
+            "nameLocation": "382:21:11",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 4887,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 4883,
+                  "mutability": "mutable",
+                  "name": "syndicateAddress",
+                  "nameLocation": "421:16:11",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 4889,
+                  "src": "413:24:11",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 4882,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "413:7:11",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 4886,
+                  "mutability": "mutable",
+                  "name": "memberAddresses",
+                  "nameLocation": "466:15:11",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 4889,
+                  "src": "447:34:11",
+                  "stateVariable": false,
+                  "storageLocation": "calldata",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_array$_t_address_$dyn_calldata_ptr",
+                    "typeString": "address[]"
+                  },
+                  "typeName": {
+                    "baseType": {
+                      "id": 4884,
+                      "name": "address",
+                      "nodeType": "ElementaryTypeName",
+                      "src": "447:7:11",
+                      "stateMutability": "nonpayable",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_address",
+                        "typeString": "address"
+                      }
+                    },
+                    "id": 4885,
+                    "nodeType": "ArrayTypeName",
+                    "src": "447:9:11",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_array$_t_address_$dyn_storage_ptr",
+                      "typeString": "address[]"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "403:84:11"
+            },
+            "returnParameters": {
+              "id": 4888,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "496:0:11"
+            },
+            "scope": 4890,
+            "src": "373:124:11",
+            "stateMutability": "nonpayable",
+            "virtual": false,
+            "visibility": "external"
+          }
+        ],
+        "scope": 4891,
+        "src": "65:434:11",
+        "usedErrors": []
+      }
+    ],
+    "src": "40:460:11"
+  },
+  "legacyAST": {
+    "absolutePath": "/Users/mbuvi/syndicates/Syndicate/contracts/interfaces/ISyndicateClosedEndFundAllowlistLogicV0.sol",
+    "exportedSymbols": {
+      "ISyndicateClosedEndFundAllowlistLogicV0": [
+        4890
+      ]
+    },
+    "id": 4891,
+    "license": "UNLICENSED",
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 4866,
+        "literals": [
+          "solidity",
+          "^",
+          "0.8",
+          ".0"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "40:23:11"
+      },
+      {
+        "abstract": false,
+        "baseContracts": [],
+        "contractDependencies": [],
+        "contractKind": "interface",
+        "fullyImplemented": false,
+        "id": 4890,
+        "linearizedBaseContracts": [
+          4890
+        ],
+        "name": "ISyndicateClosedEndFundAllowlistLogicV0",
+        "nameLocation": "75:39:11",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "functionSelector": "86afa44e",
+            "id": 4873,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "managerSetAllowlistEnabled",
+            "nameLocation": "130:26:11",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 4871,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 4868,
+                  "mutability": "mutable",
+                  "name": "syndicateAddress",
+                  "nameLocation": "174:16:11",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 4873,
+                  "src": "166:24:11",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 4867,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "166:7:11",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 4870,
+                  "mutability": "mutable",
+                  "name": "allowlistEnabled",
+                  "nameLocation": "205:16:11",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 4873,
+                  "src": "200:21:11",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bool",
+                    "typeString": "bool"
+                  },
+                  "typeName": {
+                    "id": 4869,
+                    "name": "bool",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "200:4:11",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bool",
+                      "typeString": "bool"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "156:71:11"
+            },
+            "returnParameters": {
+              "id": 4872,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "236:0:11"
+            },
+            "scope": 4890,
+            "src": "121:116:11",
+            "stateMutability": "nonpayable",
+            "virtual": false,
+            "visibility": "external"
+          },
+          {
+            "functionSelector": "15b1a646",
+            "id": 4881,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "managerAllowAddresses",
+            "nameLocation": "252:21:11",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 4879,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 4875,
+                  "mutability": "mutable",
+                  "name": "syndicateAddress",
+                  "nameLocation": "291:16:11",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 4881,
+                  "src": "283:24:11",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 4874,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "283:7:11",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 4878,
+                  "mutability": "mutable",
+                  "name": "memberAddresses",
+                  "nameLocation": "336:15:11",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 4881,
+                  "src": "317:34:11",
+                  "stateVariable": false,
+                  "storageLocation": "calldata",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_array$_t_address_$dyn_calldata_ptr",
+                    "typeString": "address[]"
+                  },
+                  "typeName": {
+                    "baseType": {
+                      "id": 4876,
+                      "name": "address",
+                      "nodeType": "ElementaryTypeName",
+                      "src": "317:7:11",
+                      "stateMutability": "nonpayable",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_address",
+                        "typeString": "address"
+                      }
+                    },
+                    "id": 4877,
+                    "nodeType": "ArrayTypeName",
+                    "src": "317:9:11",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_array$_t_address_$dyn_storage_ptr",
+                      "typeString": "address[]"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "273:84:11"
+            },
+            "returnParameters": {
+              "id": 4880,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "366:0:11"
+            },
+            "scope": 4890,
+            "src": "243:124:11",
+            "stateMutability": "nonpayable",
+            "virtual": false,
+            "visibility": "external"
+          },
+          {
+            "functionSelector": "bd4edf0e",
+            "id": 4889,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "managerBlockAddresses",
+            "nameLocation": "382:21:11",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 4887,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 4883,
+                  "mutability": "mutable",
+                  "name": "syndicateAddress",
+                  "nameLocation": "421:16:11",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 4889,
+                  "src": "413:24:11",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 4882,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "413:7:11",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 4886,
+                  "mutability": "mutable",
+                  "name": "memberAddresses",
+                  "nameLocation": "466:15:11",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 4889,
+                  "src": "447:34:11",
+                  "stateVariable": false,
+                  "storageLocation": "calldata",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_array$_t_address_$dyn_calldata_ptr",
+                    "typeString": "address[]"
+                  },
+                  "typeName": {
+                    "baseType": {
+                      "id": 4884,
+                      "name": "address",
+                      "nodeType": "ElementaryTypeName",
+                      "src": "447:7:11",
+                      "stateMutability": "nonpayable",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_address",
+                        "typeString": "address"
+                      }
+                    },
+                    "id": 4885,
+                    "nodeType": "ArrayTypeName",
+                    "src": "447:9:11",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_array$_t_address_$dyn_storage_ptr",
+                      "typeString": "address[]"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "403:84:11"
+            },
+            "returnParameters": {
+              "id": 4888,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "496:0:11"
+            },
+            "scope": 4890,
+            "src": "373:124:11",
+            "stateMutability": "nonpayable",
+            "virtual": false,
+            "visibility": "external"
+          }
+        ],
+        "scope": 4891,
+        "src": "65:434:11",
+        "usedErrors": []
+      }
+    ],
+    "src": "40:460:11"
+  },
+  "compiler": {
+    "name": "solc",
+    "version": "0.8.6+commit.11564f7e.Emscripten.clang"
+  },
+  "networks": {},
+  "schemaVersion": "3.3.4",
+  "updatedAt": "2021-07-22T17:37:06.694Z",
+  "devdoc": {
+    "kind": "dev",
+    "methods": {},
+    "version": 1
+  },
+  "userdoc": {
+    "kind": "user",
+    "methods": {},
+    "version": 1
+  }
+}

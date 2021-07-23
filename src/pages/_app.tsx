@@ -28,10 +28,9 @@ const SyndicateWeb3ReactProvider = dynamic(
 );
 
 // Initialize Amplitude Services.
-const AmplitudeProvider = dynamic(
-  () => import("@/components/amplitude"),
-  { ssr: false },
-);
+const AmplitudeProvider = dynamic(() => import("@/components/amplitude"), {
+  ssr: false,
+});
 
 const App = ({ Component, pageProps }) => {
   return (
