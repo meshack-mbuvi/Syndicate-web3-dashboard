@@ -30,10 +30,10 @@ import {
 } from "../shared/Constants";
 const abi = require("human-standard-token-abi");
 
+// we should have an isChildVisible prop here of type boolean
 const SyndicateDetails = (props: {
   accountIsManager: boolean;
   children?: React.ReactChild;
-  isChildVisible?: boolean;
 }) => {
   const { accountIsManager } = props;
 
@@ -581,7 +581,7 @@ const SyndicateDetails = (props: {
 
         {/* Syndicate details */}
         {/* details rendered on small devices only. render right column components on the left column in small devices */}
-        {props.isChildVisible && props.children}
+        {props.children}
 
         {/* This component should be shown when we have details about user deposits */}
         <DetailsCard
