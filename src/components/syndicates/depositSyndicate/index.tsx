@@ -39,6 +39,7 @@ import { SyndicateActionButton } from "../shared/syndicateActionButton";
 import { SyndicateActionLoader } from "../shared/syndicateActionLoader";
 import { UnavailableState } from "../shared/unavailableState";
 import WithdrawDeposit from "./WithdrawDeposit";
+import ManageSyndicate from "./ManageSyndicate";
 
 const Web3 = require("web3");
 const web3 = new Web3(
@@ -98,7 +99,7 @@ const DepositSyndicate: React.FC = () => {
       tokenDecimals,
       depositERC20Logo,
       depositERC20TokenSymbol,
-      depositERC20Price
+      depositERC20Price,
     } = syndicate;
 
     depositTokenDecimals = tokenDecimals;
@@ -846,8 +847,9 @@ const DepositSyndicate: React.FC = () => {
                       buttonText={depositSuccessButtonText}
                       closeLoader={closeSyndicateActionLoader}
                     />
-                  ) : // deposist are disabled when syndicate is closed.
-                  !syndicate?.depositsEnabled ? (
+                  ) : // deposits are disabled when syndicate is closed.
+                  !syndicate?.depositsEnabled ||
+                    router.pathname.endsWith("details") ? (
                     <div className="flex flex-col items-center justify-center my-8 mx-6">
                       <p className="font-semibold text-2xl text-center">
                         Deposits are disabled.
@@ -966,6 +968,11 @@ const DepositSyndicate: React.FC = () => {
         {parseInt(memberTotalDeposits) > 0 && account && (
           <WithdrawDeposit syndicateAddress={syndicateAddress} />
         )}
+
+        {/* show this components if we are in details page*/}
+        {router.pathname.endsWith("details") ? (
+          <ManageSyndicate syndicateAddress={syndicateAddress} />
+        ) : null}
       </div>
 
       {/* Error message modal */}
