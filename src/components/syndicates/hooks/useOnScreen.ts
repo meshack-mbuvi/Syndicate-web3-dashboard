@@ -6,7 +6,7 @@ const useOnScreen = (ref: RefObject<HTMLElement>) => {
 
   useEffect(() => {
     const observer = new IntersectionObserver(
-      ([entry]) => setIntersecting(entry.isIntersecting)
+      ([entry]) => setIntersecting(entry.isIntersecting ? entry.isIntersecting : true)
     )
 
     observer.observe(ref.current)
