@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { InfoIcon } from "src/components/iconWrappers";
 
 /**
@@ -69,7 +69,7 @@ export const TextInput = (props: {
       >
         <label
           htmlFor={label}
-          className="block pt-2 text-black text-sm font-medium"
+          className="block pt-2 text-black text-base font-whyte"
         >
           {label}
         </label>
@@ -96,7 +96,7 @@ export const TextInput = (props: {
               name={name}
               id={id}
               onChange={onChange}
-              className={`flex flex-grow text-sm font-whyte focus:ring-blue w-full focus:border-indigo-500 rounded-md ${disabledClasses}`}
+              className={`flex flex-grow text-base font-whyte focus:ring-blue w-full focus:border-indigo-500 rounded-md ${disabledClasses}`}
               {...rest}
               disabled={disabled}
               value={value}

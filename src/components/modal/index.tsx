@@ -11,6 +11,7 @@ interface ModalProps {
   titleFontSize?: string;
   showCloseButton?: boolean;
   overflow?: string;
+  showBackButton?: boolean;
 }
 
 /**
@@ -38,6 +39,7 @@ export const Modal = (props: ModalProps): JSX.Element => {
     titleFontSize,
     showCloseButton = true,
     overflow = "overflow-hidden",
+    showBackButton = false,
   } = props;
 
   const handleCloseModal = () => {
@@ -65,23 +67,46 @@ export const Modal = (props: ModalProps): JSX.Element => {
               aria-modal="true"
               aria-labelledby="modal-headline"
             >
+              <div className="hidden sm:block absolute p-4 top-0 left-0">
+                {/* close button at the right top of the modal */}
+                {showBackButton ? (
+                  <button
+                    type="button"
+                    className="bg-white m-4 mt-2 rounded-md text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue"
+                    onClick={() => closeModal()}
+                  >
+                    <span className="sr-only">Back</span>
+                    <img
+                      src="/images/back-chevron-large.svg"
+                      className="p-2 opacity-50"
+                      alt="back"
+                    />
+                  </button>
+                ) : null}
+              </div>
+
+              {/* close button */}
               <div className="hidden sm:block absolute p-4 top-0 right-0">
                 {/* close button at the right top of the modal */}
                 {showCloseButton ? (
                   <button
                     type="button"
-                    className="bg-white rounded-md text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue"
+                    className="bg-white m-2 rounded-md text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue"
                     onClick={() => closeModal()}
                   >
                     <span className="sr-only">Close</span>
-                    <img src="/images/close.svg" className="p-2 opacity-50" />
+                    <img
+                      src="/images/close.svg"
+                      className="p-2 opacity-50"
+                      alt="close"
+                    />
                   </button>
                 ) : null}
               </div>
               {/* modal title */}
               {loading ? null : (
                 <div
-                  className={`modal-header mb-6 text-black font-medium text-center leading-8  mt-6 ${
+                  className={`modal-header mb-6 text-black font-whyte text-center leading-8  mt-4 ${
                     titleFontSize ? `text-modalTitle` : `text-modalSubTitle`
                   }`}
                 >
@@ -90,7 +115,7 @@ export const Modal = (props: ModalProps): JSX.Element => {
               )}
               {/* end of modal title */}
 
-              <div className="mx-4 ">{children}</div>
+              <div className="mx-4">{children}</div>
             </div>
           </div>
         </div>

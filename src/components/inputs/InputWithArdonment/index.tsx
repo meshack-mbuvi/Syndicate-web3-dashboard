@@ -49,14 +49,17 @@ export const InputWithAddon = (props: {
     <div
       className={`flex ${
         column ? `flex-col mr-2 sm:mr-4` : `flex-row`
-      } justify-center ${full ? `w-full` : ``}`}>
+      } justify-center ${full ? `w-full` : ``}`}
+    >
       <div
         className={`flex mr-2 ${
           column ? `w-full justify-start mb-2` : `flex row w-1/2 justify-end`
-        }`}>
+        }`}
+      >
         <label
           htmlFor={label}
-          className="block pt-2 text-black text-sm font-medium">
+          className="block pt-2 text-black text-base font-whyte"
+        >
           {label}
         </label>
       </div>
@@ -64,16 +67,18 @@ export const InputWithAddon = (props: {
       <div
         className={`${
           customWidth ? customWidth : `w-5/6`
-        } flex-grow flex flex-col justify-between`}>
+        } flex-grow flex flex-col justify-between`}
+      >
         {/* input field */}
         <div className="flex justify-between">
           <div
-            className={`flex rounded-md flex-grow border ${disabledClasses}`}>
+            className={`flex rounded-md flex-grow border ${disabledClasses}`}
+          >
             <input
               type="number"
               name={name}
               onChange={onChange}
-              className={`flex px-1 ml-1 py-2 text-sm rounded-md focus:outline-none outline-none focus:ring-0 focus:border-none border-0 font-whyte`}
+              className={`flex px-1 ml-1 py-2 text-base rounded-md focus:outline-none outline-none focus:ring-0 focus:border-none border-0 font-whyte`}
               style={{ width: `${variableWidth}ch` }}
               {...rest}
               value={value}

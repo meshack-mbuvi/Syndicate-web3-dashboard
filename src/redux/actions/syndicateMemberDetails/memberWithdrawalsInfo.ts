@@ -182,6 +182,8 @@ export const updateMemberWithdrawalDetails = (
           ).toString();
 
           const memberWithdrawalDetails = {
+            tokenAddress,
+            tokenDecimals,
             memberTotalDeposits: floatedNumberWithCommas(memberDeposits),
             memberAvailableDistributions,
             memberDistributionsToDate: floatedNumberWithCommas(
@@ -231,7 +233,6 @@ export const updateMemberWithdrawalDetails = (
           );
         });
       });
-
       // adding a one-second timeout here to prevent glitching.
       setTimeout(() => dispatch(setMemberDetailsLoading(false)), 1000);
       dispatch(setLoadingSyndicateDepositorDetails(false));

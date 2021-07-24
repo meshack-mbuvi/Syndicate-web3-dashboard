@@ -17,6 +17,7 @@ import { RootState } from "@/redux/store";
 import { getWeiAmount } from "@/utils/conversions";
 import { floatedNumberWithCommas } from "@/utils/formattedNumbers";
 import { Validate } from "@/utils/validators";
+import { getCoinFromContractAddress } from "functions/src/utils/ethereum";
 import _ from "lodash";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -37,7 +38,6 @@ import { SyndicateActionButton } from "../shared/syndicateActionButton";
 import { SyndicateActionLoader } from "../shared/syndicateActionLoader";
 import { TokenSelect } from "../shared/tokenSelect";
 import { UnavailableState } from "../shared/unavailableState";
-import { getCoinFromContractAddress } from "functions/src/utils/ethereum";
 
 const {
   actionFailedError,

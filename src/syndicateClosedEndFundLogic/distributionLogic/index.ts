@@ -14,9 +14,11 @@ export class SyndicateDistributionLogic extends BaseLogicContract {
    * @param syndicateAddress - address on which to filter distribution events
    * @returns {array} all emitted events for the specified event name
    */
-  async getDistributionEvents(distributionEvent: string, filter = {}) {
+  async getDistributionEvents(
+    distributionEvent: string,
+    filter = {},
+  ): Promise<[]> {
     if (!distributionEvent.trim()) return;
-
     try {
       await this.initializeLogicContract();
 
@@ -25,7 +27,6 @@ export class SyndicateDistributionLogic extends BaseLogicContract {
         {
           filter,
           fromBlock: "earliest",
-
           toBlock: "latest",
         },
       );
@@ -262,8 +263,8 @@ export class SyndicateDistributionLogic extends BaseLogicContract {
       await this.logicContractInstance.methods
         .managerSetDistributionsClaimedForMembers(
           syndicateAddress,
-          memberAddresses,
           distributionERC20Addresses,
+          memberAddresses,
           amounts,
         )
         .send({ from: manager, gasLimit: 800000 })
