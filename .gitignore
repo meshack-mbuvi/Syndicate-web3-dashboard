@@ -76,3 +76,6 @@ build
 
 # Next compiled output folder.
 .next
+
+# .idea/ files when using JetBrains IDES
+.idea/

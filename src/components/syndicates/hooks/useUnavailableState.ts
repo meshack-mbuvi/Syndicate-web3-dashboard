@@ -50,7 +50,11 @@ export const useUnavailableState = (page?: string) => {
   const router = useRouter();
   const withdraw = router.pathname.endsWith("withdraw");
 
-  const { depositsAvailable, maxMembersZero } = useDepositChecks();
+  const {
+    depositsAvailable,
+    maxMembersZero,
+    maxDepositReached,
+  } = useDepositChecks();
 
   const [{ title, message, renderUnavailableState }, setText] = useState(
     defaultState,

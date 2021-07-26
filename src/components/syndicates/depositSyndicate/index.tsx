@@ -61,6 +61,7 @@ const {
   depositSuccessTitleText,
   depositSuccessSubtext,
   depositSuccessButtonText,
+  depositSuccessBackButtonText,
   depositTitleText,
   dismissButtonText,
   increaseDepositAllowanceErrorMessage,
@@ -112,7 +113,7 @@ const DepositSyndicate: React.FC = () => {
     renderUnavailableState,
     renderJoinWaitList,
   } = useUnavailableState();
-  const { depositsAvailable } = useDepositChecks();
+  const { depositsAvailable, maxDepositReached } = useDepositChecks();
 
   const [loadingLPDetails, setLoadingLPDetails] = useState<boolean>(false);
   const [amount, setAmount] = useState<number>(0);
@@ -175,6 +176,9 @@ const DepositSyndicate: React.FC = () => {
     memberPercentageOfSyndicate,
     memberAddressAllowed,
   } = memberDepositDetails;
+
+  // either member has hit member deposit limits or syndicate has reached deposit limits
+  const depositLimits = maxDepositReached || memberMaxDepositReached
 
   const sections = [
     {
@@ -844,11 +848,15 @@ const DepositSyndicate: React.FC = () => {
                       subText={depositSuccessSubtext}
                       showRetryButton={true}
                       success={true}
-                      buttonText={depositSuccessButtonText}
+                      buttonText={depositLimits ?  depositSuccessBackButtonText : depositSuccessButtonText}
                       closeLoader={closeSyndicateActionLoader}
                     />
-                  ) : // deposits are disabled when syndicate is closed.
+                  ) : /* deposits are disabled either when syndicate is closed,
+                  or member has made the maximum deposits allowed per member,
+                  or the maximum deposits allowed for syndicate have been made
+                  */
                   !syndicate?.depositsEnabled ||
+                    depositLimits ||
                     router.pathname.endsWith("details") ? (
                     <div className="flex flex-col items-center justify-center my-8 mx-6">
                       <p className="font-semibold text-2xl text-center">

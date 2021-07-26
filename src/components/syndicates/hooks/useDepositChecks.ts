@@ -5,6 +5,7 @@ import { useSelector } from "react-redux";
 export const useDepositChecks = () => {
   const [depositsAvailable, setDepositsAvailable] = useState<boolean>(true);
   const [maxMembersZero, setMaxMembersZero] = useState<boolean>(false);
+  const [maxDepositReached, setMaxDepositReached] = useState<boolean>(false);
 
   const { syndicate } = useSelector(
     (state: RootState) => state.syndicatesReducer,
@@ -12,7 +13,12 @@ export const useDepositChecks = () => {
 
   useEffect(() => {
     if (syndicate) {
-      const { depositsEnabled, numMembersMax } = syndicate;
+      const {
+        depositsEnabled,
+        numMembersMax,
+        depositMaxTotal,
+        depositTotal,
+      } = syndicate;
       if (!depositsEnabled) {
         setDepositsAvailable(false);
         setMaxMembersZero(false);
@@ -30,8 +36,13 @@ export const useDepositChecks = () => {
         setMaxMembersZero(false);
         setDepositsAvailable(true);
       }
+
+      // syndicate max deposit reached
+      if (depositMaxTotal === depositTotal) {
+        setMaxDepositReached(true);
+      }
     }
   }, [syndicate]);
 
-  return { depositsAvailable, maxMembersZero };
+  return { depositsAvailable, maxMembersZero, maxDepositReached };
 };
