@@ -11,11 +11,14 @@ import {
   SHOW_WALLET_MODAL,
   UNSET_WEB3,
   USER_LOGOUT,
+  STORE_ETHEREUM_NETWORK,
+  STORE_CURRENT_ETH_NETWORK,
 } from "@/redux/actions/types";
 import { initialState } from "../initialState";
 
 export const web3Reducer = (state = initialState, action) => {
   const { web3 } = state;
+
   switch (action.type) {
     case SET_WEB3:
       return {
@@ -94,6 +97,23 @@ export const web3Reducer = (state = initialState, action) => {
       return {
         ...state,
         web3: { ...web3, ...initialState.web3 },
+      };
+
+    case STORE_ETHEREUM_NETWORK:
+      return {
+        ...state,
+        web3: {
+          ...web3,
+          ethereumNetwork: action.data,
+        },
+      };
+    case STORE_CURRENT_ETH_NETWORK:
+      return {
+        ...state,
+        web3: {
+          ...web3,
+          currentEthereumNetwork: action.data,
+        },
       };
 
     default:

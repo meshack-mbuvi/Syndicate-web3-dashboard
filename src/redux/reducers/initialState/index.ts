@@ -12,6 +12,11 @@ type InitialState = {
     web3contractInstance: any;
     account: string;
     providerName: string;
+    currentEthereumNetwork: string;
+    ethereumNetwork: {
+      correctEthereumNetwork: string;
+      invalidEthereumNetwork: boolean;
+    };
   };
   syndicates: Syndicate[];
   syndicate: Syndicate;
@@ -85,6 +90,11 @@ export const initialState: InitialState = {
     web3contractInstance: null,
     account: "",
     providerName: "",
+    currentEthereumNetwork: "",
+    ethereumNetwork: {
+      correctEthereumNetwork: "",
+      invalidEthereumNetwork: false,
+    },
   },
   syndicates: [],
   syndicate: null,
