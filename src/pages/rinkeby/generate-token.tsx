@@ -1,14 +1,13 @@
 import { showWalletModal } from "@/redux/actions";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 import Layout from "src/components/layout";
 import SEO from "src/components/seo";
 import Head from "src/components/syndicates/shared/HeaderTitle";
-import {
-  Toggle,
-} from "src/components/inputs";
+import { Toggle } from "src/components/inputs";
 import { getWeiAmount } from "src/utils/conversions";
+import { useRouter } from "next/router";
 
 interface Props {
   web3: any;
@@ -17,47 +16,56 @@ interface Props {
 const GenerateDai = (props: Props) => {
   const daiABI = require("src/utils/abi/rinkeby-dai");
   const erc20ABI = require("src/utils/abi/erc20");
-  const daiContractAddress =  "0xc3dbf84Abb494ce5199D5d4D815b10EC29529ff8"
-  const usdcContractAddress = "0xeb8f08a975ab53e34d8a0330e0d34de942c95926"
+  const daiContractAddress = "0xc3dbf84Abb494ce5199D5d4D815b10EC29529ff8";
+  const usdcContractAddress = "0xeb8f08a975ab53e34d8a0330e0d34de942c95926";
 
   const [amount, setAmount] = useState("");
-  const [tokenContractAddress, setTokenContractAddress] = useState("")
-  const [tokenContractAddressError, setTokenContractAddressError] = useState("")
+  const [tokenContractAddress, setTokenContractAddress] = useState("");
+  const [tokenContractAddressError, setTokenContractAddressError] = useState(
+    "",
+  );
   const [daiSelected, setDaiSelected] = useState(false);
   const [usdcSelected, setUSDCSelected] = useState(false);
   const [otherSelected, setOtherSelected] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
+  const router = useRouter();
+
+  useEffect(() => {
+    if (process.env.CONTEXT === "production") {
+      router.replace("/");
+    }
+  }, []);
 
   const {
     web3Reducer: {
       web3: { account, web3 },
-    }
+    },
   } = useSelector((state: RootState) => state);
 
   const dispatch = useDispatch();
 
   const toggleOff = () => {
-    setDaiSelected(false)
-    setUSDCSelected(false)
-    setOtherSelected(false)
+    setDaiSelected(false);
+    setUSDCSelected(false);
+    setOtherSelected(false);
   };
 
   const toggleDAISelected = () => {
-    toggleOff()
-    setDaiSelected(true)
-    setTokenContractAddress(daiContractAddress)
+    toggleOff();
+    setDaiSelected(true);
+    setTokenContractAddress(daiContractAddress);
   };
   const toggleUSDCSelected = () => {
-    toggleOff()
-    setUSDCSelected(true)
-    setTokenContractAddress(usdcContractAddress)
+    toggleOff();
+    setUSDCSelected(true);
+    setTokenContractAddress(usdcContractAddress);
   };
 
   const toggleOTHERSelected = () => {
-    toggleOff()
-    setOtherSelected(true)
-    setTokenContractAddress("")
+    toggleOff();
+    setOtherSelected(true);
+    setTokenContractAddress("");
   };
 
   const handleCustomERC20TokenAddress = (event: any) => {
@@ -69,7 +77,7 @@ const GenerateDai = (props: Props) => {
       setTokenContractAddressError("Token contract Address is required");
     } else if (!web3.utils.isAddress(value)) {
       setTokenContractAddressError(
-        "Token Contract Address should be a valid ERC20 address"
+        "Token Contract Address should be a valid ERC20 address",
       );
     } else {
       setTokenContractAddressError("");
@@ -78,50 +86,48 @@ const GenerateDai = (props: Props) => {
 
   const validateAndSubmit = (event: any) => {
     event.preventDefault();
-    if (tokenContractAddress !== "" && tokenContractAddressError === "" && Number(amount) > 0){
-      mintToken()
+    if (
+      tokenContractAddress !== "" &&
+      tokenContractAddressError === "" &&
+      Number(amount) > 0
+    ) {
+      mintToken();
     } else {
-      alert(
-        "Enter valid inputs"
-      );
+      alert("Enter valid inputs");
     }
-  }
+  };
 
   const mintToken = async () => {
-    setIsLoading(true)
+    setIsLoading(true);
 
     /**
      * If the wallet is not connected, the account will be undefined
      */
     if (!account) {
-      setIsLoading(false)
+      setIsLoading(false);
       // Request wallet connect
       return dispatch(showWalletModal());
     }
 
-    let tokenABI = erc20ABI
+    let tokenABI = erc20ABI;
 
-    if (tokenContractAddress === daiContractAddress){
-      tokenABI = daiABI
+    if (tokenContractAddress === daiContractAddress) {
+      tokenABI = daiABI;
     }
 
-
-    const tokenContract = new web3.eth.Contract(
-      tokenABI,
-      tokenContractAddress
-    );
+    const tokenContract = new web3.eth.Contract(tokenABI, tokenContractAddress);
     const balance = await tokenContract.methods
       .balanceOf(account)
       .call({ from: account });
 
-    let tokenDecimals
-    try{
-      tokenDecimals = await tokenContract.methods.decimals().call()
+    let tokenDecimals;
+    try {
+      tokenDecimals = await tokenContract.methods.decimals().call();
     } catch {
-      tokenDecimals = 18
+      tokenDecimals = 18;
     }
 
-    const amountInWei = getWeiAmount(amount, tokenDecimals, true)
+    const amountInWei = getWeiAmount(amount, tokenDecimals, true);
 
     try {
       await tokenContract.methods
@@ -132,19 +138,19 @@ const GenerateDai = (props: Props) => {
         .balanceOf(account)
         .call({ from: account });
 
-      setIsLoading(false)
+      setIsLoading(false);
       alert(
         "Minted " +
           amount +
           " Token. Account balance is now " +
           getWeiAmount(balance.toString(), tokenDecimals, false) +
-          "!"
+          "!",
       );
     } catch (error) {
-      setIsLoading(false)
+      setIsLoading(false);
       console.log({ error });
       alert(
-        "An error occurred while sending request to mint Token. Please check the console to see the details"
+        "An error occurred while sending request to mint Token. Please check the console to see the details",
       );
     }
   };
@@ -164,43 +170,76 @@ const GenerateDai = (props: Props) => {
             you found this somehow, you should check out our{" "}
             <a
               href="https://www.notion.so/Syndicate-Protocol-Job-Postings-ad09c123121445339d6dfe0da4e3495e"
-              className="text-gray-85 underline">
+              className="text-gray-85 underline"
+            >
               job postings
             </a>
-            .<br></br><br></br>
+            .<br></br>
+            <br></br>
             The contract addresses for the Rinkeby DAI and USDC are:
             <br />
             <div>
               DAI &nbsp;
               <a
                 href={`https://rinkeby.etherscan.io/address/${daiContractAddress}`}
-                className="text-gray-85 underline">
+                className="text-gray-85 underline"
+              >
                 {daiContractAddress}
               </a>
-              
               &nbsp;&nbsp;&nbsp;&nbsp;
-              <button className="self-center" onClick={() => navigator.clipboard.writeText(daiContractAddress)}>
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 29 15" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                  </svg>
+              <button
+                className="self-center"
+                onClick={() =>
+                  navigator.clipboard.writeText(daiContractAddress)
+                }
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-6 w-6"
+                  fill="none"
+                  viewBox="0 0 29 15"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+                  />
+                </svg>
               </button>
             </div>
             <div>
               USDC &nbsp;
               <a
                 href={`https://rinkeby.etherscan.io/address/${usdcContractAddress}`}
-                className="text-gray-85 underline">
+                className="text-gray-85 underline"
+              >
                 {usdcContractAddress}
               </a>
-              
               &nbsp;&nbsp;&nbsp;&nbsp;
-              <button className="self-center" onClick={() => navigator.clipboard.writeText(usdcContractAddress)}>
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 29 15" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                  </svg>
+              <button
+                className="self-center"
+                onClick={() =>
+                  navigator.clipboard.writeText(usdcContractAddress)
+                }
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-6 w-6"
+                  fill="none"
+                  viewBox="0 0 29 15"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+                  />
+                </svg>
               </button>
             </div>
-            
           </div>
           <div className="bg-white shadow sm:rounded-lg">
             <div className="px-4 py-5 sm:p-6">
@@ -209,8 +248,8 @@ const GenerateDai = (props: Props) => {
               </h3>
               <div className="mt-2 max-w-xl text-sm text-gray-500">
                 <p>
-                  Enter the amount of selelected token you would like to generate and send to
-                  yourself
+                  Enter the amount of selected token you would like to generate
+                  and send to yourself
                 </p>
               </div>
               <form className="mt-5 sm:flex sm:items-center flex-wrap">
@@ -240,7 +279,7 @@ const GenerateDai = (props: Props) => {
                     }}
                   />
                 </div>
-                { otherSelected &&
+                {otherSelected && (
                   <div className="w-full sm:max-w-xs mb-2">
                     <label htmlFor="email" className="sr-only">
                       Token
@@ -256,16 +295,17 @@ const GenerateDai = (props: Props) => {
                       required
                     />
                     <p className="text-red-500 text-xs mt-1 mb-1">
-                      {tokenContractAddressError !== ""  && tokenContractAddressError}
+                      {tokenContractAddressError !== "" &&
+                        tokenContractAddressError}
                     </p>
                   </div>
-                }
+                )}
                 <div className="w-full sm:max-w-xs">
                   <label htmlFor="email" className="sr-only">
                     Amount
                   </label>
                   <input
-                    type="number" 
+                    type="number"
                     min="0"
                     name="amount"
                     id="amount"
@@ -276,22 +316,23 @@ const GenerateDai = (props: Props) => {
                     required
                   />
                 </div>
-                { !isLoading ?
+                {!isLoading ? (
                   <button
                     type="submit"
                     className="mt-3 w-full inline-flex items-center justify-center px-4 py-2 border border-transparent shadow-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
-                    onClick={validateAndSubmit}>
+                    onClick={validateAndSubmit}
+                  >
                     Mint!
                   </button>
-                  :
+                ) : (
                   <button
                     type="button"
                     className="mt-3 w-full inline-flex items-center justify-center px-4 py-2 border border-transparent shadow-sm font-medium rounded-md text-white bg-gray-600 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
-                    disabled >
+                    disabled
+                  >
                     Minting!
                   </button>
-                }
-                
+                )}
               </form>
             </div>
           </div>
