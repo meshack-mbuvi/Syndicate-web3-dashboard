@@ -48,7 +48,7 @@ export const SyndicateInBetaBanner = () => {
       }`}
       role="alert"
     >
-      <div className="flex justify-center text-sm">
+      <div className="flex justify-center container mx-auto text-sm">
         <span className="block sm:inline font-whyte-light mr-2">
           {SyndicateInBetaBannerText}
         </span>
