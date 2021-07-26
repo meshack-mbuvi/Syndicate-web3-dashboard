@@ -2,8 +2,8 @@ import DistributionLogicABI from "src/contracts/SyndicateClosedEndFundDistributi
 import { BaseLogicContract } from "../baseLogicContract";
 
 export class SyndicateDistributionLogic extends BaseLogicContract {
-  constructor(contractName: any, contractAddress: string, web3: any) {
-    super(contractName, contractAddress, web3, DistributionLogicABI.abi);
+  constructor(contractName: any, web3: any) {
+    super(contractName, web3, DistributionLogicABI.abi);
     this.initializeLogicContract();
   }
 

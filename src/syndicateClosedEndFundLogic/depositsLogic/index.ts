@@ -2,8 +2,8 @@ import DepositLogicABI from "src/contracts/SyndicateClosedEndFundDepositLogicV0.
 import { BaseLogicContract } from "../baseLogicContract";
 
 export class SyndicateDepositLogic extends BaseLogicContract {
-  constructor(contractName: any, contractAddress: string, web3: any) {
-    super(contractName, contractAddress, web3, DepositLogicABI.abi);
+  constructor(contractName: any, web3: any) {
+    super(contractName, web3, DepositLogicABI.abi);
     this.initializeLogicContract();
   }
 

@@ -12,8 +12,8 @@ export class SyndicateAllowlistLogic extends BaseLogicContract {
    * @param web3 - an instance of web3
    * Initialize a contract instance using the provided name.
    */
-  constructor(contractName: string, contractAddress: string, web3: any) {
-    super(contractName, contractAddress, web3, allowlistLogicABI.abi);
+  constructor(contractName: string, web3: any) {
+    super(contractName, web3, allowlistLogicABI.abi);
     this.initializeLogicContract();
   }
 

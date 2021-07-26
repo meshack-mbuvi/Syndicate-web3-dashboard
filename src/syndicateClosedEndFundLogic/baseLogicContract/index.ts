@@ -28,14 +28,12 @@ export class BaseLogicContract {
    */
   constructor(
     contractName: string,
-    contractAddress: string,
     web3,
     contractABI,
   ) {
     this.web3 = web3;
     this.contractABI = contractABI;
     this.contractName = contractName;
-    this._address = contractAddress;
     this.initializeLogicContract();
   }
 
@@ -45,22 +43,18 @@ export class BaseLogicContract {
    */
   async initializeLogicContract() {
     try {
-      const contractAddress = this._address;
 
-      // ----------------
-      // The intergrations coordinator is currently not deployed / not in use,
-      // this will be used when it's added back
-      // ----------------
+      let contractAddress = this._address;
 
-      // if (!this._address) {
-      //   contractAddress = await this.getContractAddress(this.contractName);
-      // }
+      if (!this._address) {
+        contractAddress = await this.getContractAddress(this.contractName);
+      }
 
       this.logicContractInstance = new this.web3.eth.Contract(
         this.contractABI,
         contractAddress,
       );
-    } catch {
+    } catch (error) {
       this.logicContractInstance = null;
     }
   }
@@ -80,11 +74,8 @@ export class BaseLogicContract {
       SyndicateCoordinatorInstanceABI.abi,
       SyndicateCoordinatorInstanceAddress,
     );
-    const getterContractHash = await syndicateCoordinatorInstance.methods
-      .hash(logicContractName)
-      .call();
-    const contractAddress = await syndicateCoordinatorInstance.methods
-      .getAddress(getterContractHash)
+    const [contractAddress] = await syndicateCoordinatorInstance.methods
+      .getAddresses([logicContractName])
       .call();
 
     this._address = contractAddress;

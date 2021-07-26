@@ -3,8 +3,8 @@ import { BaseLogicContract } from "../baseLogicContract";
 import { SyndicateMemberInfo, SyndicateValues } from "../shared";
 
 export class SyndicateGetterLogic extends BaseLogicContract {
-  constructor(contractName: string, contractAddress: string, web3: any) {
-    super(contractName, contractAddress, web3, GetterLogicABI.abi);
+  constructor(contractName: string, web3: any) {
+    super(contractName, web3, GetterLogicABI.abi);
     this.initializeLogicContract();
   }
 
