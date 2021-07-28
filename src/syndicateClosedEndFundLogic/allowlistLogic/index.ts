@@ -119,4 +119,39 @@ export class SyndicateAllowlistLogic extends BaseLogicContract {
       return [];
     }
   }
+
+  /**
+   * Allow Syndicate to accept or not accept deposits from allowed addresses
+   *
+   * @param {string} syndicateAddress
+   * @param {bool} allowlistEnabled
+   * @param manager
+   * @param setShowWalletConfirmationModal
+   * @param setSubmitting
+   */
+  async managerSetAllowlistEnabled(
+    syndicateAddress,
+    allowListEnabled,
+    manager: string,
+    setShowWalletConfirmationModal,
+    setSubmitting,
+  ) {
+    if (!syndicateAddress.trim()) return;
+
+    try {
+      setShowWalletConfirmationModal(true);
+
+      await this.logicContractInstance.methods
+        .managerSetAllowlistEnabled(syndicateAddress, allowListEnabled)
+        .send({ from: manager, gasLimit: 800000 })
+        .on("transactionHash", () => {
+          // close wallet confirmation modal
+          setShowWalletConfirmationModal(false);
+          setSubmitting(true);
+        });
+      setSubmitting(false);
+    } catch (error) {
+      throw error;
+    }
+  }
 }

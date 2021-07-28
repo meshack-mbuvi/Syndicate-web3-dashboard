@@ -391,7 +391,7 @@ const SyndicateDetails = (props: {
         closeDate,
         createdDate,
         distributionShareToSyndicateProtocol,
-        distributionShareToSyndicateLead,
+        managerDistributionShareBasisPoints,
         managerManagementFeeBasisPoints,
         depositMemberMax,
         depositMemberMin,
@@ -431,7 +431,7 @@ const SyndicateDetails = (props: {
         },
         {
           header: "Distribution Share to Syndicate Lead",
-          subText: `${distributionShareToSyndicateLead}%`,
+          subText: `${managerDistributionShareBasisPoints}%`,
           tooltip: distributionShareToSyndicateLeadToolTip,
         },
         {
@@ -453,7 +453,7 @@ const SyndicateDetails = (props: {
       // need them.
       const {
         depositERC20Address,
-        distributionShareToSyndicateLead,
+        managerDistributionShareBasisPoints,
         distributionShareToSyndicateProtocol,
       } = syndicate;
 
@@ -461,7 +461,7 @@ const SyndicateDetails = (props: {
         setSyndicateDetails(
           syndicateContracts,
           depositERC20Address,
-          distributionShareToSyndicateLead,
+          managerDistributionShareBasisPoints,
           distributionShareToSyndicateProtocol,
           syndicate,
           syndicateAddress,

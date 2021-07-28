@@ -151,6 +151,8 @@ export class SyndicateManagerLogic extends BaseLogicContract {
     }
 
     try {
+      setShowWalletConfirmationModal(true);
+
       await this.logicContractInstance.methods
         .managerSetManagerFeeAddress(syndicateAddress, managerFeeAddress)
         .send({ from: manager, gasLimit: 800000 })
@@ -190,6 +192,151 @@ export class SyndicateManagerLogic extends BaseLogicContract {
       return managerEvents;
     } catch (error) {
       return [];
+    }
+  }
+
+  /**
+   * Set the maximum members that can contribute to the Syndicate
+   *
+   * @param {string} syndicateAddress
+   * @param {number} numMembersMax
+   * @param manager
+   * @param setShowWalletConfirmationModal
+   * @param setSubmitting
+   */
+  async managerSetNumMembersMax(
+    syndicateAddress,
+    numMembersMax,
+    manager: string,
+    setShowWalletConfirmationModal,
+    setSubmitting,
+  ) {
+    if (!syndicateAddress.trim()) return;
+
+    try {
+      setShowWalletConfirmationModal(true);
+
+      await this.logicContractInstance.methods
+        .managerSetNumMembersMax(syndicateAddress, numMembersMax)
+        .send({ from: manager, gasLimit: 800000 })
+        .on("transactionHash", () => {
+          setShowWalletConfirmationModal(false);
+          setSubmitting(true);
+        });
+      setSubmitting(false);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  /**
+   * Manager update the distribution share that goes to Syndicate
+   *
+   * @param {string} syndicateAddress
+   * @param {number} syndicateDistributionShareBasisPoints
+   * @param manager
+   * @param setShowWalletConfirmationModal
+   * @param setSubmitting
+   */
+  async managerSetSyndicateDistributionShare(
+    syndicateAddress,
+    syndicateDistributionShareBasisPoints,
+    manager: string,
+    setShowWalletConfirmationModal,
+    setSubmitting,
+  ) {
+    if (!syndicateAddress.trim()) return;
+
+    try {
+      setShowWalletConfirmationModal(true);
+
+      await this.logicContractInstance.methods
+        .managerSetSyndicateDistributionShare(
+          syndicateAddress,
+          syndicateDistributionShareBasisPoints,
+        )
+        .send({ from: manager, gasLimit: 800000 })
+        .on("transactionHash", () => {
+          setShowWalletConfirmationModal(false);
+          setSubmitting(true);
+        });
+      setSubmitting(false);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  /**
+   * Manager update fee basis points
+   *
+   * @param {string} syndicateAddress
+   * @param {number} managerManagementFeeBasisPoints
+   * @param {number} managerDistributionShareBasisPoints
+   * @param manager
+   * @param setShowWalletConfirmationModal
+   * @param setSubmitting
+   */
+  async managerSetManagerFees(
+    syndicateAddress,
+    managerManagementFeeBasisPoints,
+    managerDistributionShareBasisPoints,
+    manager: string,
+    setShowWalletConfirmationModal,
+    setSubmitting,
+  ) {
+    if (!syndicateAddress.trim()) return;
+
+    try {
+      setShowWalletConfirmationModal(true);
+
+      await this.logicContractInstance.methods
+        .managerSetManagerFees(
+          syndicateAddress,
+          managerManagementFeeBasisPoints,
+          managerDistributionShareBasisPoints,
+        )
+        .send({ from: manager, gasLimit: 800000 })
+        .on("transactionHash", () => {
+          setShowWalletConfirmationModal(false);
+          setSubmitting(true);
+        });
+      setSubmitting(false);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  /**
+   * Manager to nominate a new manager
+   *
+   * @param {string} syndicateAddress
+   * @param {number} managerPendingAddress
+   * @param manager
+   * @param setShowWalletConfirmationModal
+   * @param setSubmitting
+   */
+  async managerSetManagerPending(
+    syndicateAddress,
+    managerPendingAddress,
+    manager: string,
+    setShowWalletConfirmationModal,
+    setSubmitting,
+  ) {
+    if (!syndicateAddress.trim()) return;
+
+    try {
+      setShowWalletConfirmationModal(true);
+
+      await this.logicContractInstance.methods
+        .managerSetManagerPending(syndicateAddress, managerPendingAddress)
+        .send({ from: manager, gasLimit: 800000 })
+        .on("transactionHash", () => {
+          setShowWalletConfirmationModal(false);
+          setSubmitting(true);
+        });
+      setSubmitting(false);
+    } catch (error) {
+      throw error;
     }
   }
 }

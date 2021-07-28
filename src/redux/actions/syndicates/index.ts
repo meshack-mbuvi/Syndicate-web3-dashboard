@@ -15,6 +15,7 @@ import {
   SET_LOADING,
   SET_MANAGER_FEE_ADDRESS,
   SYNDICATE_BY_ADDRESS,
+  UPDATE_SYNDICATE_DETAILS,
 } from "../types";
 
 interface SyndicateInfo {
@@ -199,7 +200,7 @@ export const getSyndicateByAddress = ({
       tokenDecimals,
       depositERC20TokenSymbol,
       depositERC20Logo,
-      depositERC20Price
+      depositERC20Price,
     );
     // set these incase they are not reset
     dispatch({
@@ -354,5 +355,17 @@ export const updateSyndicateManagerFeeAddress = (managerFeeAddress: string) => (
   return dispatch({
     type: SET_MANAGER_FEE_ADDRESS,
     data: managerFeeAddress,
+  });
+};
+
+/**
+ * updates syndicate details upon syndicate settings update
+ * @param {*} data
+ * @returns
+ */
+export const updateSyndicateSettingsDetails = (data) => (dispatch) => {
+  return dispatch({
+    data,
+    type: UPDATE_SYNDICATE_DETAILS,
   });
 };

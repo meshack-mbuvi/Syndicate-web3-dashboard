@@ -10,7 +10,7 @@ interface Props {
   buttonText: string;
   feedbackText?: string;
   headerText?: string;
-  address: string;
+  address?: string;
 }
 
 /**
@@ -59,7 +59,8 @@ export const FinalStateModal = (props: Props) => {
           <div className="flex justify-center my-5">
             <Button
               customClasses="bg-blue w-40 p-2 rounded-full"
-              onClick={() => handleCloseModal()}>
+              onClick={() => handleCloseModal()}
+            >
               {buttonText}
             </Button>
           </div>
