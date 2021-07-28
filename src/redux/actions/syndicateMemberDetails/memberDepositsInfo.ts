@@ -63,8 +63,8 @@ export const updateMemberDepositDetails = (
       );
 
       // check whether the member has reached their maximum deposit cap.
-      const { maxDeposit } = syndicate;
-      const memberMaxDepositReached = +memberDeposits >= +maxDeposit;
+      const { depositMemberMax } = syndicate;
+      const memberMaxDepositReached = +memberDeposits >= +depositMemberMax;
 
       const memberNumDetails = {
         memberTotalDeposits: memberDeposits,

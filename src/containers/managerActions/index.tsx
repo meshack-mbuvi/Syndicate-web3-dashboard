@@ -41,6 +41,7 @@ import { useDispatch, useSelector } from "react-redux";
 import DistributeToken from "./distributeToken";
 import ManageMembers from "./manageMembers";
 import ManagerActionCard from "./managerActionCard";
+import ChangeSyndicateSettings from "./changeSyndicateSettings";
 import ModifyMemberDistributions from "./modifyMemberDistributions";
 import ModifySyndicateCapTable from "./modifySyndicateCapTable";
 import MoreManagerActionCard from "./moreManagerActionCard";
@@ -91,6 +92,7 @@ const ManagerActions = (): JSX.Element => {
   const [showRequestSocialProfile, setShowRequestSocialProfile] = useState(
     false,
   );
+  const [showChangeSettings, setShowChangeSettings] = useState<boolean>(false);
   const [showConfirmCloseSyndicate, setShowConfirmCloseSyndicate] = useState(
     false,
   );
@@ -384,12 +386,12 @@ const ManagerActions = (): JSX.Element => {
             text={"Manage members"}
             onClickHandler={handleSetShowManageMembers}
           />
-
           <MoreManagerActionCard
             icon={
               <img src="/images/managerActions/settings.svg" alt="settings" />
             }
             text={"Change syndicate settings"}
+            onClickHandler={setShowChangeSettings}
           />
         </div>
         {showDistributeToken ? (
@@ -408,6 +410,10 @@ const ManagerActions = (): JSX.Element => {
           <ModifySyndicateCapTable />
         ) : rejectMemberAddressOrDeposit ? (
           <RejectDepositOrMemberAddress />
+        ) : showChangeSettings ? (
+          <ChangeSyndicateSettings
+            {...{ showChangeSettings, setShowChangeSettings }}
+          />
         ) : showSyndicateNotModifiable ? (
           <ErrorModal
             {...{

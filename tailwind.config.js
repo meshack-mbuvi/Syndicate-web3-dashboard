@@ -104,7 +104,7 @@ module.exports = {
           "sans-serif",
         ],
         "whyte-medium": [
-          "ABC Whyte Inktrap Light",
+          "ABC Whyte Inktrap Medium",
           "ABC Whyte Regular",
           "Helvetica",
           "Arial",
@@ -120,6 +120,7 @@ module.exports = {
         cyan: colors.cyan,
         gray: {
           ...colors.coolGray,
+          2: "#2C2C2F",
           3: "#A8AFBD",
           4: "#1B1D20",
           5: "#292929",
@@ -132,6 +133,7 @@ module.exports = {
           90: "#5F5F5F",
           93: "#EDEDED",
           99: "#fcfcfc",
+          102: "#141518",
           dark: "#272727",
           light: "#E5E5E5",
           dim: "#717171",
@@ -143,8 +145,11 @@ module.exports = {
         green: {
           ...colors.green,
           screamin: "#80FF75",
+          light: "#2FE696",
           dark: "#0E2833",
           darker: "#0E3425",
+          "light-dark": "#01A979",
+          "light-darker": "#02504B",
         },
         blue: {
           ...colors.blue,
@@ -154,10 +159,18 @@ module.exports = {
           deepAzure: "#0C1F30",
           dark: "#2F53B3",
           darker: "#0E1834",
+          "light-dark": "#237EFF",
+          "light-darker": "#000AFF",
         },
         yellow: {
           ...colors.yellow,
           light: "#FFD02B",
+          dark: "#FFC83C",
+        },
+        orange: {
+          ...colors.orange,
+          light: "#E7AC3A",
+          dark: "#E78B3A",
         },
       },
       borderWidth: {
@@ -178,7 +191,7 @@ module.exports = {
         102: "1.02",
       },
       inset: {
-        "84": "22rem",
+        84: "22rem",
       },
     },
   },

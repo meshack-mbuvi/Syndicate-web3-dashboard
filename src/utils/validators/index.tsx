@@ -1,6 +1,9 @@
 import { web3 } from "../web3Utils";
 
-export const AddressValidator = (value, helpers) => {
+export const AddressValidator = (
+  value: any,
+  helpers: { error: (arg0: string) => any },
+) => {
   if (!web3.utils.isAddress(value)) {
     return helpers.error("any.invalid");
   }
@@ -16,15 +19,15 @@ export const AddressValidator = (value, helpers) => {
  * @param value a string number value
  * @returns
  */
-export const Validate = (value) => {
+export const Validate = (value: string): string => {
   const regex = new RegExp(/^\d+(\.\d{0,2})?$/);
 
   let message = "";
-  if (!value.trim()) {
+  if (!value.toString().trim()) {
     message = "is required";
-  } else if (isNaN(value)) {
+  } else if (isNaN(+value)) {
     message = "should be a valid decimal/number";
-  } else if (value < 0) {
+  } else if (+value < 0) {
     message = "cannot be a negative number";
   } else if (!regex.test(value)) {
     message = "can only include at most two decimal places.";
@@ -39,11 +42,11 @@ export const Validate = (value) => {
  * @param num number to check
  * @returns boolean indicating whether the number is a whole number or not
  */
-export const isWholeNumber = (num) => {
+export const isWholeNumber = (num: number): boolean => {
   return +num === Math.round(num);
 };
 
-export const ValidatePercent = (value) => {
+export const ValidatePercent = (value: number): string => {
   if (value > 100) return "The percentage value should not exceed 100%";
   if (value < 0) return "The percentage value should not be below than 0%";
 };
@@ -54,28 +57,32 @@ export const ValidatePercent = (value) => {
  * @param address
  * @returns boolean indicating the result of the check
  */
-export const isZeroAddress = (address: string) => {
+export const isZeroAddress = (address: string): boolean => {
   // Checking for address 0x0000000000000000000000000000000000000000;
   // the default value set by solidity
   return /^0x0+$/.test(address);
 };
 
-export const validateEmail = (email: string) => {
+export const validateEmail = (email: string): boolean => {
   const regexp = /^[\w.%+-]+@[\w.-]+\.[\w]{2,6}$/;
   return regexp.test(email);
 };
 
-export const isNewLineChar = (value: string) => /^\n+$/.test(value);
+export const isNewLineChar = (value: string): boolean => /^\n+$/.test(value);
 
-export const removeEnter = (value) => value.replace(/^\s+|\s+$/g, "");
+export const removeEnter = (value: string): string =>
+  value.replace(/^\s+|\s+$/g, "");
 
-export const removeSpace = (value) => value.replace(/\s/g, "");
+export const removeSpace = (value: string): string => value.replace(/\s/g, "");
 
-export const removeNewLinesAndWhitespace = (value: string) =>
+export const removeNewLinesAndWhitespace = (value: string): string =>
   value.replace(/\r?\n|\r|\s/g, "");
 
-export const removeSubstring = (originalString: string, subString: string) => {
-  let start = originalString.indexOf(subString);
+export const removeSubstring = (
+  originalString: string,
+  subString: string,
+): string => {
+  const start = originalString.indexOf(subString);
   return (
     originalString.substr(0, start) +
     originalString.substr(start + subString.length)
@@ -86,4 +93,5 @@ export const removeSubstring = (originalString: string, subString: string) => {
  * @param data
  * @returns
  */
-export const sanitizeInputString = (data) => removeSpace(removeEnter(data));
+export const sanitizeInputString = (data: string): string =>
+  removeSpace(removeEnter(data));

@@ -10,6 +10,8 @@ import {
   SHOW_ERROR_MODAL,
   SHOW_WALLET_MODAL,
   STORE_SYNDICATE_INSTANCE,
+  STORE_ETHEREUM_NETWORK,
+  STORE_CURRENT_ETH_NETWORK,
 } from "../types";
 
 export const storeSyndicateInstance = (data) => async (dispatch) => {
@@ -68,7 +70,12 @@ export const setDisConnected = () => async (dispatch) => {
   });
 };
 
-export const showErrorModal = (error: string) => {
+interface IError {
+  title?: string;
+  message: string;
+  type: string;
+}
+export const showErrorModal = (error: IError) => {
   return {
     type: SHOW_ERROR_MODAL,
     data: error,
@@ -78,5 +85,28 @@ export const showErrorModal = (error: string) => {
 export const hideErrorModal = () => {
   return {
     type: HIDE_ERROR_MODAL,
+  };
+};
+
+// store ethereum network properties
+interface NetworkProps {
+  invalidEthereumNetwork: boolean;
+  correctEthereumNetwork: string;
+}
+/** store ethereum network properties
+ * @param {boolean} invalidEthereumNetwork checks whether the user is connected to the correct network.
+ * @param {string} correctEthereumNetwork the correct network to connect to.
+ *  */
+export const storeEthereumNetwork = (data: NetworkProps) => {
+  return {
+    type: STORE_ETHEREUM_NETWORK,
+    data,
+  };
+};
+
+export const storeCurrentEthNetwork = (networkName: string) => {
+  return {
+    type: STORE_CURRENT_ETH_NETWORK,
+    data: networkName,
   };
 };

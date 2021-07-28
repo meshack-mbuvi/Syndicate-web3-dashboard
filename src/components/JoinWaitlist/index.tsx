@@ -16,7 +16,7 @@ const subscribedState = {
   statusIcon: (
     <span>
       <svg className="h-4 w-4 mr-2" width="22" height="17" viewBox="0 0 22 17" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M1 8.79032L7.14955 15L21 1" stroke="white" stroke-width="2" />
+        <path d="M1 8.79032L7.14955 15L21 1" stroke="white" strokeWidth="2" />
       </svg>
     </span>
   ),

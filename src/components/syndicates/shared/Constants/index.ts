@@ -77,6 +77,7 @@ const readOnlySyndicateTitle = "This page is Read Only.";
 const depositSuccessTitleText = "You just made a deposit.";
 const depositSuccessSubtext = "Deposit transaction was successful.";
 const depositSuccessButtonText = "Deposit more";
+const depositSuccessBackButtonText = "Back";
 
 // withdraw success texts
 const withdrawalSuccessTitleText = "You just made a withdrawal.";
@@ -209,6 +210,7 @@ export const constants = {
   depositSuccessTitleText,
   depositSuccessSubtext,
   depositSuccessButtonText,
+  depositSuccessBackButtonText,
   approvalSuccessTitleText,
   approvalSuccessSubtext,
   approvalSuccessButtonText,
@@ -444,6 +446,7 @@ export const rejectDepositOrMemberAddressConstants = {
 };
 
 export const welcomeToSydicate = "Welcome to Syndicate";
-export const syndicateBeta = "Syndicate is currently in private beta. Connect an approved wallet or join the waitlist to get access.";
+export const syndicateBeta =
+  "Syndicate is currently in private beta. Connect an approved wallet or join the waitlist to get access.";
 export const openToInvestors = "Syndicate is only open to accredited investors";
 export const joinWaitlist = "Join waitlist";

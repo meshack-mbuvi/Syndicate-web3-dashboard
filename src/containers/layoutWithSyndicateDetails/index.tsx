@@ -1,6 +1,5 @@
 import ErrorBoundary from "@/components/errorBoundary";
 import Layout from "@/components/layout";
-import useOnScreen from "@/components/syndicates/hooks/useOnScreen";
 import { EtherscanLink } from "@/components/syndicates/shared/EtherscanLink";
 import { getSyndicateByAddress } from "@/redux/actions/syndicates";
 import { RootState } from "@/redux/store";
@@ -29,7 +28,6 @@ const LayoutWithSyndicateDetails = ({ children }) => {
 
   // used to render right column components on the left column in small devices
   const ref = useRef();
-  const isChildVisible = useOnScreen(ref);
 
   const { syndicateAddress } = router.query;
 
@@ -172,9 +170,13 @@ const LayoutWithSyndicateDetails = ({ children }) => {
               <div className="md:w-3/5 w-full pb-6 md:pr-24">
                 <div ref={ref} className="w-full md:hidden" />{" "}
                 {/* its used as an identifier for ref in small devices */}
+
+                {/*
+                we should have an isChildVisible child here,
+                but it's not working as expected
+                */}
                 <SyndicateDetails
                   accountIsManager={accountIsManager}
-                  isChildVisible={isChildVisible}
                 >
                   <div className="w-full md:hidden">{children}</div>
                 </SyndicateDetails>

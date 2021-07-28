@@ -29,7 +29,11 @@ const PortfolioAndDiscover = () => {
     syndicatesReducer: { syndicates },
     web3Reducer: { web3 },
   } = useSelector((state: RootState) => state);
-  const { account } = web3;
+  const {
+    account,
+    currentEthereumNetwork,
+    ethereumNetwork: { invalidEthereumNetwork },
+  } = web3;
 
   const [showModal, setShowModal] = useState(false);
 
@@ -38,6 +42,8 @@ const PortfolioAndDiscover = () => {
    */
   useEffect(() => {
     // This will reset syndicate details when we are on portfolio page.
+    // The currentEthereumNetwork has been added as a dependency to trigger a re-fetch
+    // whenever the Ethereum network is changed.
     dispatch({
       data: null,
       type: SYNDICATE_BY_ADDRESS,
@@ -45,7 +51,7 @@ const PortfolioAndDiscover = () => {
     if (syndicateContracts?.GetterLogicContract) {
       dispatch(getSyndicates({ ...web3, ...syndicateContracts }));
     }
-  }, [account]);
+  }, [account, currentEthereumNetwork]);
 
   // Assume by default this user has an open syndicate
   const [managerWithOpenSyndicate, setManagerWithOpenSyndicate] = useState(
@@ -178,7 +184,7 @@ const PortfolioAndDiscover = () => {
                 </div>
               ) : null}
             </>
-          ) : account && !syndicates.length ? (
+          ) : account && !syndicates.length && !invalidEthereumNetwork ? (
             // if connected, then it means no syndicates for this wallet
             <div className="flex justify-center text-center flex-col">
               <p className="text-2xl font-whyte-light">
@@ -195,7 +201,7 @@ const PortfolioAndDiscover = () => {
             </div>
           ) : !account ? (
             <div className="flex justify-center items-center h-full w-full mt-6 sm:mt-10">
-              <div className="flex flex-col items-center justify-center sm:w-7/12 md:w-5/12 rounded-custom bg-gray-6 p-10">
+              <div className="flex flex-col items-center justify-center sm:w-7/12 md:w-5/12 rounded-custom p-10">
                 <div className="w-full flex justify-center mb-6">
                   <img
                     src="/images/exclamation.svg"

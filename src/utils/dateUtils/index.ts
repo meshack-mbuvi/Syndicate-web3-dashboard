@@ -1,5 +1,5 @@
-const dateString = new Date();
-export const formatDate = (dateString) => dateString.toLocaleDateString();
+export const formatDate = (dateString: Date): string =>
+  dateString.toLocaleDateString();
 
 /**
  * This method checks whether the provided date is in the past or not.
@@ -8,7 +8,7 @@ export const formatDate = (dateString) => dateString.toLocaleDateString();
  * @param {*} date close date
  * @returns {boolean}
  */
-export const pastDate = (date) => {
+export const pastDate = (date: Date): boolean => {
   try {
     const currentDate = Date.now();
     return currentDate > date.getTime();
@@ -17,5 +17,5 @@ export const pastDate = (date) => {
   }
 };
 
-export const getUnixTimeFromDate = (date) =>
+export const getUnixTimeFromDate = (date: Date): number =>
   Math.round(new Date(date).getTime() / 1000);

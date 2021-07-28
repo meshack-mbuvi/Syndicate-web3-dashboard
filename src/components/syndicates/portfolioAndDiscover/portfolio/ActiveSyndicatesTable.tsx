@@ -96,20 +96,25 @@ const ActiveSyndicatesTable = ({ columns, data }: Props): JSX.Element => {
                       key={index}
                       {...cell.getCellProps()}
                       className="m-0 font-whyte-light relative py-4 text-xs cursor-pointer"
-                    >
-                      <button
-                        onClick={() => {
-                          // This handles the case when the button in the far right cell
-                          // is clicked
-                          if (index == row.cells.length - 1) return;
+                      onClick={() => {
+                        // This handles the case when the button in the far right cell
+                        // is clicked
+                        if (index == row.cells.length - 1) return;
 
-                          // Otherwise make the row cell clickable and link to the syndicate
-                          const { syndicateAddress } = row.values;
-                          Router.push(`/syndicates/${syndicateAddress}`);
-                        }}
-                      >
-                        {cell.render("Cell")}
-                      </button>
+                        // Otherwise make the row cell clickable and link to the syndicate
+                        let link = "manage"
+                        const { syndicateAddress } = row.values;
+                        const { row: syndicateDetails } = row.values.Deposits.props
+                        if (syndicateDetails.depositsEnabled) {
+                          link = "deposit"
+                        }
+                        if (syndicateDetails.distributing) {
+                          link = "withdraw"
+                        }
+                        Router.push(`/syndicates/${syndicateAddress}/${link}`);
+                      }}
+                    >
+                    {cell.render("Cell")}
                     </td>
                   );
                 })}

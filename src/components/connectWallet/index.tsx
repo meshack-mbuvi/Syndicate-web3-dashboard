@@ -2,11 +2,12 @@
 // actions
 import { useConnectWalletContext } from "@/context/ConnectWalletProvider";
 import { hideErrorModal, hideWalletModal } from "@/redux/actions/web3Provider";
-import React from "react";
-import { connect, useDispatch } from "react-redux";
-import CancelButton from "src/components/buttons";
-import { Modal } from "src/components/modal";
-import { Spinner } from "../shared/spinner";
+import React, { useState, useEffect } from "react";
+import { connect, useDispatch, useSelector } from "react-redux";
+import { SpinnerWithImage } from "../shared/spinner/spinnerWithImage";
+import { ConnectModal } from "./connectModal";
+import { BanIcon, CancelIcon } from "@/components/shared/Icons";
+import { RootState } from "@/redux/store";
 
 /**
  * The component shows a modal with buttons to connect to different
@@ -21,19 +22,54 @@ import { Spinner } from "../shared/spinner";
  */
 export const ConnectWallet = (props: { web3; showWalletModal }) => {
   const {
-    web3: { isErrorModalOpen, error },
+    web3: { isErrorModalOpen, error, account },
     showWalletModal,
   } = props;
 
   const dispatch = useDispatch();
 
   const {
+    web3Reducer: {
+      web3: {
+        ethereumNetwork: { correctEthereumNetwork, invalidEthereumNetwork },
+      },
+    },
+  } = useSelector((state: RootState) => state);
+
+  const {
     connectWallet,
     showSuccessModal,
     walletConnecting,
     setShowSuccessModal,
+    providerName,
     cancelWalletConnection,
   } = useConnectWalletContext();
+
+  //loader text
+  const [walletConnectingText, setWalletConnectingText] = useState<string>("");
+  const [showHelpLink, setShowHelpLink] = useState<boolean>(false);
+  const [helpLink, setHelpLink] = useState<string>("#");
+
+  // set the correct text for the loading modal
+  // After 10 seconds, we switch the wallet connect message, showing a help link.
+  useEffect(() => {
+    if (providerName) {
+      const name = providerName === "Injected" ? "Metamask" : providerName;
+      setWalletConnectingText(`Sign in using the ${name} pop-up to continue.`);
+      setTimeout(() => {
+        setWalletConnectingText(`Waiting for ${name}...`);
+
+        // set help link based on provider
+        // These links should be updated once we have our own help center
+        if (providerName === "Injected") {
+          setHelpLink("https://metamask.zendesk.com/hc/en-us");
+        } else if (providerName === "WalletConnect") {
+          setHelpLink("https://walletconnect.org/support");
+        }
+        setShowHelpLink(true);
+      }, 10000);
+    }
+  }, [providerName]);
 
   // This handles closing the modal after user selects a provider to activate
   const closeWalletModal = () => {
@@ -91,109 +127,252 @@ export const ConnectWallet = (props: { web3; showWalletModal }) => {
   // };
 
   // showConnectWalletModal
+
+  // button for each provider
+  let ProviderButton = ({ name, icon, providerToActivate }) => {
+    let gradientColor;
+    switch (name) {
+      case "Gnosis Safe":
+        gradientColor = "to-green-light-darker from-green-light-dark ";
+        break;
+
+      case "Wallet Connect":
+        gradientColor = "from-blue-light-dark to-blue-light-darker";
+        break;
+
+      default:
+        gradientColor = "from-orange-dark to-orange-light";
+    }
+    return (
+      <button
+        className={`w-full p-4 rounded-lg flex items-center justify-between border border-gray-102 hover:border-gray-3 focus:outline-none focus:border-gray-3 focus:border-1 bg-gradient-to-r ${gradientColor} `}
+        onClick={() => providerToActivate()}
+      >
+        <span className="text-white text-sm sm:text-base">{name}</span>
+        <img alt="icon" src={icon} className="inline w-6 sm:w-10" />
+      </button>
+    );
+  };
+
+  let errorButtonText, errorIcon;
+  const metamaskNotInstalledError =
+    error && error.type === "NoEthereumProviderError";
+  if (metamaskNotInstalledError) {
+    errorButtonText = "Go to Metamask’s website";
+    errorIcon = (
+      <img
+        src="/images/metamaskIcon.svg"
+        alt="metamaskIcon"
+        className="inline w-8 sm:w-16"
+      ></img>
+    );
+  } else {
+    errorButtonText = "Close";
+    errorIcon = <CancelIcon height="h-12" width="w-12" />;
+  }
+
+  // function to handle error CTA button being clicked
+  const handleErrorButtonAction = () => {
+    if (metamaskNotInstalledError) {
+      window.open("https://metamask.io/");
+    } else {
+      dispatch(hideErrorModal());
+    }
+  };
+
+  // provider icon to display on loading state modals
+  let providerIcon;
+  if (providerName === "Injected") {
+    providerIcon = "images/metamaskIcon.svg";
+  } else if (providerName === "WalletConnect") {
+    providerIcon = "/images/walletConnect.svg";
+  }
+
+  // open external help links
+  const openExternalLink = (link: string) => {
+    window.open(link, "_blank", "noopener");
+  };
+
   return (
     <div>
-      <Modal
-        title="Connect Crypto Wallet"
+      <ConnectModal
         {...{
           show: showWalletModal,
           closeModal: closeWalletModal,
-          customWidth: "w-96",
+          title: "Connect crypto wallet",
+          subtext:
+            "By connecting your wallet, you agree to our Terms of Service and Privacy Policy",
         }}
       >
         <>
           {/* show wallet providers */}
           {providers.map(({ name, icon, providerToActivate }) => (
-            <div className="flex justify-center m-auto mb-4" key={name}>
-              <button
-                className="w-full p-2 border border-gray-300 rounded-full sm:py-3 sm:px-6 sm:w-3/4 flex focus:outline-none focus:border-blue-300"
-                onClick={() => providerToActivate()}
-              >
-                <img alt="icon" src={icon} className="inline mr-4 ml-2 h-6" />
-                <span>{name}</span>
-              </button>
+            <div
+              className="flex justify-center items-center m-auto mb-3"
+              key={name}
+            >
+              <ProviderButton {...{ name, icon, providerToActivate }} />
             </div>
           ))}
 
-          {/* Show cancel button */}
-          <div className="mt-5 sm:mt-6 flex justify-center">
-            <CancelButton
-              customClasses="bg-blue rounded-full px-4 py-2 mb-6 sm:mb-0 focus:outline-none focus:ring focus:border-green-300"
-              onClick={closeWalletModal}
+          <p className="mt-5 text-sm text-center">New to Ethereum?</p>
+          <div className="w-full flex justify-center">
+            <p
+              className="mt-2 mb-4 text-sm text-blue hover:underline text-center w-fit-content cursor-pointer"
+              onClick={() =>
+                openExternalLink(
+                  "https://en.wikipedia.org/wiki/Cryptocurrency_wallet",
+                )
+              }
             >
-              Cancel
-            </CancelButton>
+              Learn more about crypto wallets
+            </p>
           </div>
         </>
-      </Modal>
+      </ConnectModal>
 
       {/* Loading modal */}
-      <Modal
-        {...{ show: walletConnecting, closeModal: cancelWalletConnection }}
+      <ConnectModal
+        {...{
+          show: walletConnecting,
+          closeModal: cancelWalletConnection,
+          height: "h-80",
+        }}
       >
-        <div className="flex flex-col justify-center m-auto mb-4 w-96">
-          <Spinner />
-          <div className="modal-header mb-4 text-black font-medium text-center leading-8 text-lg">
-            Connect Crypto Wallet
+        <div>
+          <div className="mb-4">
+            <SpinnerWithImage icon={providerIcon} />
           </div>
+
+          <p className="mx-5 text-lg font-whyte-light text-center" tabIndex={0}>
+            {walletConnectingText}
+          </p>
+          {showHelpLink ? (
+            <div className="w-full flex justify-center">
+              <p
+                className="mt-4 mb-4 text-base text-blue hover:underline text-center w-fit-content cursor-pointer"
+                onClick={() => openExternalLink(helpLink)}
+              >
+                Help
+              </p>
+            </div>
+          ) : null}
         </div>
-      </Modal>
+      </ConnectModal>
 
       {/* success modal */}
-      <Modal
+      <ConnectModal
         {...{
           show: showSuccessModal,
+          showCloseButton: false,
+          height: "h-80",
           closeModal: () => setShowSuccessModal(false),
         }}
       >
-        <div className="flex flex-col justify-center m-auto mb-4">
-          <div className="flex align-center justify-center">
-            <div className="m-8 rounded-full h-24 w-24 flex items-center justify-center">
-              <img src="/images/checkCircle.svg" />
+        <div className="flex flex-col items-center justify-center h-full">
+          <div className="rounded-full h-28 w-28 border-4 border-green-light flex items-center justify-center">
+            <img
+              src="/images/metamaskIcon.svg"
+              className="inline w-6 sm:w-10"
+            />
+          </div>
+
+          <p
+            className="mx-5 mt-4 text-sm sm:text-lg font-whyte-light text-center"
+            tabIndex={0}
+          >
+            Connected
+          </p>
+        </div>
+      </ConnectModal>
+
+      {/* wrong network modal */}
+      {invalidEthereumNetwork && !walletConnecting && account ? (
+        <ConnectModal
+          {...{
+            show: invalidEthereumNetwork,
+            closeModal: closeWalletModal,
+            showCloseButton: false,
+            type: "error",
+          }}
+        >
+          <div className="flex flex-col justify-center m-auto">
+            <div className="flex align-center justify-center">
+              <div className="h-20 w-20 pb-8 pt-10 flex items-center justify-center">
+                <BanIcon />
+              </div>
+            </div>
+            <div className="modal-header mb-4 font-medium text-center">
+              <div className="mx-6">
+                <p className="text-lg mb-2">
+                  Not connected to {correctEthereumNetwork}
+                </p>
+                <p className="text-sm font-whyte-light">
+                  Your wallet is connected to a different network. Please switch
+                  to the Ethereum {correctEthereumNetwork} to continue.
+                </p>
+                <div className="w-full flex justify-center">
+                  <p
+                    className="my-6 text-base text-blue font-whyte-light hover:underline text-center w-fit-content cursor-pointer"
+                    onClick={() =>
+                      openExternalLink("https://metamask.zendesk.com/hc/en-us")
+                    }
+                  >
+                    Show me how
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                className="flex justify-center items-center px-6 py-3 text-base font-medium rounded-lg bg-gray-2 w-full"
+              >
+                <SpinnerWithImage
+                  {...{
+                    icon: null,
+                    height: "h-8",
+                    width: "w-8",
+                    strokeWidth: "10",
+                  }}
+                />
+              </button>
             </div>
           </div>
-          <div className="modal-header mb-4 text-black font-medium text-center ">
-            <p className="text-3xl">Wallet Connected</p>
-            <p className="leading-8 text-sm text-gray-500 m-4">
-              Welcome to the Revolution
-            </p>
-          </div>
-        </div>
-      </Modal>
+        </ConnectModal>
+      ) : null}
 
-      {/* error modal */}
-      <Modal
+      {/* Error modal  */}
+      <ConnectModal
         {...{
           show: isErrorModalOpen,
+          showCloseButton: metamaskNotInstalledError ? true : false,
+          height: error?.type === "web3InstantionError" ? "h-auto" : "h-72",
           closeModal: () => dispatch(hideErrorModal()),
           type: "error",
         }}
       >
-        <div className="flex flex-col justify-center m-auto mb-4">
+        <div className="flex flex-col justify-between m-auto">
           <div className="flex align-center justify-center">
-            <div className="border-4 border-light-blue m-8 rounded-full h-24 w-24 flex items-center justify-center">
-              <svg
-                height="365pt"
-                viewBox="0 0 365.71733 365"
-                width="365pt"
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-10"
-              >
-                <g fill="#f44336">
-                  <path d="m356.339844 296.347656-286.613282-286.613281c-12.5-12.5-32.765624-12.5-45.246093 0l-15.105469 15.082031c-12.5 12.503906-12.5 32.769532 0 45.25l286.613281 286.613282c12.503907 12.5 32.769531 12.5 45.25 0l15.082031-15.082032c12.523438-12.480468 12.523438-32.75.019532-45.25zm0 0" />
-                  <path d="m295.988281 9.734375-286.613281 286.613281c-12.5 12.5-12.5 32.769532 0 45.25l15.082031 15.082032c12.503907 12.5 32.769531 12.5 45.25 0l286.632813-286.59375c12.503906-12.5 12.503906-32.765626 0-45.246094l-15.082032-15.082032c-12.5-12.523437-32.765624-12.523437-45.269531-.023437zm0 0" />
-                </g>
-              </svg>
+            <div className="h-20 w-20 pb-4 flex items-center justify-center">
+              {errorIcon}
             </div>
           </div>
-          <div className="modal-header mb-4 text-black font-medium text-center ">
-            <p
-              className="text-lg"
-              dangerouslySetInnerHTML={{ __html: error }}
-            ></p>
+          <div className="mx-6 text-center">
+            {error?.title ? (
+              <p className="text-lg mb-2">{error.title}</p>
+            ) : null}
+            <p className="text-base font-whyte-light mx-4 sm:mx-6 mb-6">
+              {error?.message}
+            </p>
           </div>
+          <button
+            type="button"
+            className="flex cursor-pointer justify-center font-whyte-light items-center px-6 py-3 text-sm text-black font-medium rounded-lg bg-white hover:bg-gray-3 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue w-full"
+            onClick={handleErrorButtonAction}
+          >
+            {errorButtonText}
+          </button>
         </div>
-      </Modal>
+      </ConnectModal>
     </div>
   );
 };

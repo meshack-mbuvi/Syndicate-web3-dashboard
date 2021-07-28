@@ -1,5 +1,6 @@
 import { InputWithAddon, TextInput } from "@/components/inputs";
 import Modal from "@/components/modal";
+import { Spinner } from "@/components/shared/spinner";
 import { PendingStateModal } from "@/components/shared/transactionStates";
 import ConfirmStateModal from "@/components/shared/transactionStates/confirm";
 import FinalStateModal from "@/components/shared/transactionStates/final";
@@ -19,13 +20,14 @@ import {
 } from "@/redux/actions/manageActions";
 import { updateMemberWithdrawalDetails } from "@/redux/actions/syndicateMemberDetails/memberWithdrawalsInfo";
 import { RootState } from "@/redux/store";
-import { getWeiAmount } from "@/utils/conversions";
+import { divideIfNotByZero, getWeiAmount } from "@/utils/conversions";
 import { isZeroAddress, Validate } from "@/utils/validators";
+import { isEmpty } from "lodash";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Button from "src/components/buttons";
-import { getCoinFromContractAddress } from "functions/src/utils/ethereum";
+import { MemberDistributionItem } from "./memberDistributionItem";
 
 /**
  * This component displays a form with input fields used to modify a syndicate
@@ -35,7 +37,6 @@ import { getCoinFromContractAddress } from "functions/src/utils/ethereum";
  */
 const ModifyMemberDistributions = (): JSX.Element => {
   const {
-    currentDistributionClaimedAmountTooltip,
     newDistributionClaimedAmountTooltip,
     confirmModifyMemberDistributionsText,
   } = ModifyMemberDistributionsConstants;
@@ -53,6 +54,9 @@ const ModifyMemberDistributions = (): JSX.Element => {
       syndicateDistributionTokens,
       memberWithdrawalDetails,
     },
+    manageMembersDetailsReducer: {
+      syndicateManageMembers: { loading },
+    },
   } = useSelector((state: RootState) => state);
 
   const dispatch = useDispatch();
@@ -68,11 +72,6 @@ const ModifyMemberDistributions = (): JSX.Element => {
 
   const { syndicateAddress } = router.query;
 
-  const [
-    currentClaimedDistributions,
-    setCurrentClaimedDistributions,
-  ] = useState("0");
-
   const [memberDeposits, setMemberDeposits] = useState("");
 
   const [depositorAddressError, setDepositAddressError] = useState("");
@@ -81,33 +80,52 @@ const ModifyMemberDistributions = (): JSX.Element => {
     string | number
   >(0);
 
-  const [distributionERC20Address, setDistributionERC20Address] = useState("");
-
   const [amountError, setAmountError] = useState<string>("");
 
   const [submitting, setSubmitting] = useState(false);
-  const [currentTokenDecimals, setCurrentTokenDecimals] = useState(18);
-  const [currentERC20, setCurrentERC20] = useState<string>("");
+  const [memberClaimedDistributions, setMemberClaimedDistributions] = useState(
+    null,
+  );
 
-  // set token symbol based on deposit token address
-  const getTokenSymbol = async (tokenAddress) => {
-    const { symbol } = await getCoinFromContractAddress(tokenAddress);
-    setCurrentERC20(symbol);
-  };
-  // we'll manually map the token symbol for now.
-  // we'll also set the token decimals of the deposit/Withdrawal ERC20 token here
+  // state variables for modifyDistribution modal
+  const [
+    showModifydistributionModal,
+    setShowModifydistributionModal,
+  ] = useState(false);
+  const [distributionSymbol, setDistributionSymbol] = useState("");
+  const [
+    {
+      tokenAddress,
+      tokenDecimals,
+      memberDistributionsToDate,
+      memberDistributionsWithdrawalsToDate,
+      memberWithdrawalsToDistributionsPercentage,
+    },
+    setMemberClaimedDistribution,
+  ] = useState({
+    tokenAddress: "",
+    tokenDecimals: "",
+    memberDistributionsToDate: "",
+    memberDistributionsWithdrawalsToDate: "",
+    memberWithdrawalsToDistributionsPercentage: "",
+  });
+
   useEffect(() => {
-    if (syndicate) {
-      // set token symbol based on token address
-      const tokenAddress = syndicate.depositERC20Address;
-      getTokenSymbol(tokenAddress);
-
-      getDistributionERC20Address();
+    if (
+      memberAddress.trim() &&
+      memberWithdrawalDetails &&
+      web3.utils.isAddress(memberAddress)
+    ) {
+      setMemberClaimedDistributions(memberWithdrawalDetails[memberAddress]);
     }
-  }, [syndicate]);
+  }, [memberWithdrawalDetails, memberAddress]);
 
   useEffect(() => {
-    if (syndicateDistributionTokens?.length) {
+    if (
+      syndicateDistributionTokens?.length &&
+      memberAddress.trim() &&
+      web3.utils.isAddress(memberAddress)
+    ) {
       dispatch(
         updateMemberWithdrawalDetails({
           syndicateAddress: syndicate.syndicateAddress,
@@ -119,18 +137,10 @@ const ModifyMemberDistributions = (): JSX.Element => {
   }, [memberAddress, syndicateDistributionTokens, syndicate]);
 
   useEffect(() => {
-    setDistributionERC20Address(syndicateDistributionTokens?.[0]?.tokenAddress);
-  }, [syndicateDistributionTokens]);
-
-  useEffect(() => {
-    if (
-      memberAddress &&
-      distributionERC20Address &&
-      depositorAddressError == ""
-    ) {
-      getCurrentClaimedAmount();
+    if (memberAddress && depositorAddressError == "") {
+      getMemberDepositAmount();
     }
-  }, [memberAddress, distributionERC20Address]);
+  }, [memberAddress]);
 
   // no syndicate exists without a manager, so if no manager, then syndicate does not exist
   useEffect(() => {
@@ -145,21 +155,6 @@ const ModifyMemberDistributions = (): JSX.Element => {
     }
   }, [syndicate]);
 
-  let validated = false;
-  if (depositorAddressError || !memberAddress) {
-    validated = false;
-  } else {
-    validated = true;
-  }
-
-  useEffect(() => {
-    syndicateDistributionTokens.map((syndicateDistributionToken) => {
-      if (syndicateDistributionToken.tokenSymbol === currentERC20) {
-        setCurrentTokenDecimals(syndicateDistributionToken.tokenDecimals);
-      }
-    });
-  }, [syndicateDistributionTokens, currentERC20]);
-
   const handleSetShowModifyMemberDistributions = () => {
     dispatch(setShowModifyMemberDistributions(false));
   };
@@ -169,7 +164,7 @@ const ModifyMemberDistributions = (): JSX.Element => {
    * @param depositorAddress
    * @returns
    */
-  const getCurrentClaimedAmount = async () => {
+  const getMemberDepositAmount = async () => {
     try {
       const { memberDeposits } = await getSyndicateMemberInfo(
         syndicateContracts.GetterLogicContract,
@@ -182,50 +177,10 @@ const ModifyMemberDistributions = (): JSX.Element => {
           "Member address has zero deposits in this Syndicate",
         );
       }
-      const memberDistributionsWithdrawalsToDate =
-        memberWithdrawalDetails[memberAddress][currentERC20]
-          .memberDistributionsWithdrawalsToDate;
-
-      setCurrentClaimedDistributions(memberDistributionsWithdrawalsToDate);
-      return memberDistributionsWithdrawalsToDate;
     } catch (error) {
-      setCurrentClaimedDistributions("0");
       setDepositAddressError(
         "Member address has zero deposits in this Syndicate",
       );
-    }
-  };
-
-  /**
-   * This helper function retrieves all distributionERC20Addresses. The addresses
-   * are obtained from setterDistribution event filtered by
-   * syndicateAddress which is the address of this syndicate.
-   */
-  const getDistributionERC20Address = async () => {
-    const events = await syndicateContracts.DistributionLogicContract.getDistributionEvents(
-      "DistributionAdded",
-      { syndicateAddress },
-    );
-
-    // if no events, take the default depositERC20Address to be the
-    // distribution address
-    // otherwise, get one address from the events
-    if (!events.length) {
-      setDistributionERC20Address(syndicate.depositERC20Address);
-    } else {
-      let distributionERC20Addresses = [];
-      events.forEach((event) => {
-        const { distributionERC20Address } = event.returnValues;
-        distributionERC20Addresses.push(distributionERC20Address);
-      });
-
-      // Remove address duplicates
-      distributionERC20Addresses = Array.from(
-        new Set(distributionERC20Addresses),
-      );
-      // we might have many distributions, and we need to find a way to select
-      // enable the manager select whichever address they want to edit ditributions for.
-      setDistributionERC20Address(distributionERC20Addresses[0]);
     }
   };
 
@@ -241,7 +196,9 @@ const ModifyMemberDistributions = (): JSX.Element => {
     if (!value.trim()) {
       setDepositAddressError("Member address is required");
     } else if (web3 && !web3.utils.isAddress(value)) {
-      setDepositAddressError("Member address should be a valid ERC20 address");
+      setDepositAddressError(
+        "Member address should be a valid Ethereum address",
+      );
     } else if (isZeroAddress(value)) {
       setDepositAddressError("Member address cannot be zero address");
     } else {
@@ -261,6 +218,10 @@ const ModifyMemberDistributions = (): JSX.Element => {
     const message = Validate(value);
     if (message) {
       setAmountError(`Distribution amount ${message}`);
+    } else if (+value > +memberDistributionsToDate) {
+      setAmountError(
+        `Distribution amount cannot exceed total member distributions.`,
+      );
     } else {
       setAmountError("");
     }
@@ -312,14 +273,14 @@ const ModifyMemberDistributions = (): JSX.Element => {
       setShowWalletConfirmationModal(true);
       const amountInWei = getWeiAmount(
         newDistributionAmount.toString(),
-        currentTokenDecimals,
+        parseInt(tokenDecimals, 10),
         true,
       );
 
       await syndicateContracts.DistributionLogicContract.managerSetDistributionsClaimedForMembers(
         syndicateAddress,
         [memberAddress],
-        [distributionERC20Address],
+        [tokenAddress],
         [amountInWei],
         account,
         setShowWalletConfirmationModal,
@@ -350,17 +311,68 @@ const ModifyMemberDistributions = (): JSX.Element => {
 
   const handleCloseFinalStateModal = async () => {
     setShowFinalState(false);
-    handleSetShowModifyMemberDistributions();
+
+    // close the modify distribution modal
+    setShowModifydistributionModal(false);
+
+    // trigger refetching of member distribution details
+    dispatch(
+      updateMemberWithdrawalDetails({
+        syndicateAddress: syndicate.syndicateAddress,
+        distributionTokens: syndicateDistributionTokens,
+        memberAddresses: [memberAddress],
+      }),
+    );
+  };
+  /**
+   * When `Modify` button is clicked, the following happens:
+   *   - set symbol of the distribution item and save it to local variable.
+   *   - activate the next modal from where we can modify member distributions.
+   * @param tokenSymbol
+   */
+  const handleModifyButtonClick = (distributionSymbol: string): void => {
+    setNewDistributionAmount(0);
+    setShowModifydistributionModal(true);
+    setDistributionSymbol(distributionSymbol);
+    setMemberClaimedDistribution(
+      memberClaimedDistributions[distributionSymbol],
+    );
   };
 
-  const lpInvested = memberDeposits === "0" && memberAddress ? false : true;
+  /**
+   * This function:
+   *  - closes the modal used to modify distributions claimed by member.
+   *  - Re-enables the modal with member distribution details
+   */
+  const handleCloseModifyDistributionModal = () => {
+    setShowModifydistributionModal(false);
+
+    // Re-open member distribution details modal
+    dispatch(setShowModifyMemberDistributions(true));
+  };
+
+  const newClaimedAmount =
+    +memberDistributionsWithdrawalsToDate + +newDistributionAmount;
+  const newMemberWithdrawalsToDistributionsPercentage = divideIfNotByZero(
+    newClaimedAmount * 100,
+    memberDistributionsToDate,
+  ).toFixed(2);
+
+  // disable/enable submit button
+  const buttonDisabled =
+    !(newDistributionAmount > 0) ||
+    !newDistributionAmount ||
+    amountError ||
+    submitting
+      ? true
+      : false;
 
   return (
     <>
       <Modal
         {...{
           title: "Modify Member Distributions",
-          show: modifyMemberDistribution,
+          show: modifyMemberDistribution && !showModifydistributionModal,
           closeModal: () => handleSetShowModifyMemberDistributions(),
           customWidth: "md:w-8/12 w-full",
         }}
@@ -370,7 +382,7 @@ const ModifyMemberDistributions = (): JSX.Element => {
             Manually change the claimed distribution amount of members from this
             syndicate.
           </p>
-          <p className="my-2 font-bold">
+          <p className="mt-2 mb-8 font-bold">
             WARNING: This function is intended to help syndicates fix user
             errors or make one-off exceptions. This should NOT be used
             frequently, and when changes are made, we recommend messaging your
@@ -378,48 +390,151 @@ const ModifyMemberDistributions = (): JSX.Element => {
             to prevent any confusion.
           </p>
 
-          <form onSubmit={onSubmit}>
-            <p className="text-blue mx-4 my-4 text-base">
-              Overwrite Claimed Amount
+          <div>
+            <p className="mx-4 my-4 text-lg font-bold">
+              Modify Claimed Amounts
             </p>
-            <div className="border w-full border-gray-93 bg-gray-99 rounded-xl p-4 py-8">
+
+            {validSyndicate ? (
+              <div className="">
+                <div className="border w-full border-gray-93 bg-gray-99 rounded-xl rounded-b-none last:rounded-b-xl py-8">
+                  <div className="space-y-2">
+                    <TextInput
+                      {...{
+                        label: "Member Address:",
+                        tooltip: memberAddressToolTip,
+                        onChange: handleMemberAddressChange,
+                        error: depositorAddressError,
+                        full: true,
+                      }}
+                      value={memberAddress.toString()}
+                      name="depositorAddress"
+                    />
+                  </div>
+                </div>
+                {!loading ? (
+                  !isEmpty(memberClaimedDistributions) &&
+                  !depositorAddressError && (
+                    <div className="border w-full border-gray-93 bg-gray-99 space-y-2 border-t-0 rounded-b-xl px-4 py-4">
+                      {Object.keys(memberClaimedDistributions).map(
+                        (key, index) => (
+                          <MemberDistributionItem
+                            key={index}
+                            {...{
+                              ...memberClaimedDistributions[key],
+                              symbol: key,
+                              handleModifyButtonClick,
+                            }}
+                          />
+                        ),
+                      )}
+                    </div>
+                  )
+                ) : (
+                  <Spinner />
+                )}
+              </div>
+            ) : (
+              <div className="space-y-4">
+                <div className="flex flex-row justify-center">
+                  <p className="text-green-500">
+                    {
+                      "There is no syndicate with given address. Make sure the syndicate address you are using is valid."
+                    }
+                  </p>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </Modal>
+
+      <Modal
+        {...{
+          show: showModifydistributionModal,
+          closeModal: () => handleCloseModifyDistributionModal(),
+          showBackButton: true,
+          showCloseButton: false,
+          customWidth: "md:w-8/12 w-full",
+        }}
+      >
+        <div className="mx-2 mb-8">
+          <form onSubmit={onSubmit}>
+            <div>
+              <p className="mx-8 -mt-4 mb-4 text-lg font-whyte">
+                {`Modify ${distributionSymbol} Claimed Amounts`}
+              </p>
+
               {validSyndicate ? (
-                <div className="space-y-2">
-                  <TextInput
-                    {...{
-                      label: "Member Address:",
-                      tooltip: memberAddressToolTip,
-                      onChange: handleMemberAddressChange,
-                      error: depositorAddressError,
-                      full: true,
-                    }}
-                    value={memberAddress.toString()}
-                    name="depositorAddress"
-                  />
+                <div className="">
+                  <div className="border w-full border-gray-93 bg-gray-99 rounded-xl rounded-b-none last:rounded-b-xl px-4 py-8">
+                    <div className="space-y-2">
+                      <TextInput
+                        {...{
+                          label: "Member Address:",
+                          tooltip: memberAddressToolTip,
+                          full: true,
+                        }}
+                        value={memberAddress.toString()}
+                        name="depositorAddress"
+                        disabled={true}
+                      />
+                    </div>
+                  </div>
 
-                  <InputWithAddon
-                    {...{
-                      label: "Current Claimed Amount:",
-                      value: currentClaimedDistributions,
-                      defaultValue: 0,
-                      tooltip: currentDistributionClaimedAmountTooltip,
-                      type: "number",
-                      addOn: currentERC20,
-                    }}
-                    disabled
-                  />
+                  <div className="border w-full border-gray-93 bg-gray-99 space-y-2 border-t-0 rounded-b-xl px-4 py-4">
+                    {/* current member claimed distribution */}
+                    <div className="flex flex-row justify-between">
+                      <div className={`flex w-2/5  pr-4 justify-end`}>
+                        <span className="block py-2 text-black text-base font-whyte">
+                          {`Current Claimed Amount:`}
+                        </span>
+                      </div>
+                      <div
+                        className={`flex justify-between w-3/5 pr-12s justify-ends font-whyte`}
+                      >
+                        <p className="py-2 text-gray-400 text-base font-whyte">
+                          <span className="pr-1 text-black font-whyte">
+                            {`${memberDistributionsWithdrawalsToDate} ${distributionSymbol} /`}
+                          </span>
+                          {`${memberDistributionsToDate} ${distributionSymbol} (${memberWithdrawalsToDistributionsPercentage}%)`}
+                        </p>
+                      </div>
+                    </div>
 
-                  <InputWithAddon
-                    {...{
-                      label: "New Claimed Amount:",
-                      value: newDistributionAmount,
-                      onChange: newDistributionsAmountHandler,
-                      error: amountError,
-                      tooltip: newDistributionClaimedAmountTooltip,
-                      type: "number",
-                      addOn: currentERC20,
-                    }}
-                  />
+                    <InputWithAddon
+                      {...{
+                        label: "Additional Claimed Amount:",
+                        value: newDistributionAmount,
+                        onChange: newDistributionsAmountHandler,
+                        error: amountError,
+                        tooltip: newDistributionClaimedAmountTooltip,
+                        type: "number",
+                        addOn: distributionSymbol,
+                      }}
+                    />
+
+                    {/* New member claimed amount */}
+                    <div className="flex flex-row justify-between">
+                      <div className={`flex w-2/5  pr-4 justify-end`}>
+                        <span className="block py-2 text-black text-base font-whyte">
+                          {`New Claimed Amount:`}
+                        </span>
+                      </div>
+                      <div
+                        className={`flex justify-between w-3/5 pr-12s justify-ends font-whyte`}
+                      >
+                        <p className="py-2 text-gray-400 text-base font-whyte">
+                          <span className="pr-1 text-black font-whyte">
+                            {`${newClaimedAmount.toFixed(
+                              2,
+                            )} ${distributionSymbol} /`}
+                          </span>
+                          {`${memberDistributionsToDate} ${distributionSymbol} (${newMemberWithdrawalsToDistributionsPercentage}%)`}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               ) : (
                 <div className="space-y-4">
@@ -432,28 +547,25 @@ const ModifyMemberDistributions = (): JSX.Element => {
                   </div>
                 </div>
               )}
-            </div>
 
-            {/* submit button */}
-            {validSyndicate ? (
-              <div className="flex my-4 w-full justify-center py-2">
-                <Button
-                  type="submit"
-                  customClasses={`rounded-full bg-blue w-auto px-10 py-2 text-lg ${
-                    validated && !submitting && lpInvested ? "" : "opacity-50"
-                  }`}
-                  disabled={
-                    validated && !submitting && lpInvested ? false : true
-                  }
-                >
-                  Confirm
-                </Button>
-              </div>
-            ) : null}
+              {/* submit button */}
+              {validSyndicate ? (
+                <div className="flex my-4 w-full justify-center py-2">
+                  <Button
+                    type="submit"
+                    customClasses={`rounded-full bg-blue w-auto px-10 py-2 text-lg ${
+                      buttonDisabled ? "opacity-50" : ""
+                    }`}
+                    disabled={buttonDisabled}
+                  >
+                    Confirm
+                  </Button>
+                </div>
+              ) : null}
+            </div>
           </form>
         </div>
       </Modal>
-
       {/* Tell user to confirm transaction on their wallet */}
       <ConfirmStateModal show={showWalletConfirmationModal}>
         <div className="flex flex-col justify-centers m-auto mb-4">

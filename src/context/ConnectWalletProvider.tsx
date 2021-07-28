@@ -11,6 +11,8 @@ import {
   setDisConnected,
   setLibrary,
   showErrorModal,
+  storeEthereumNetwork,
+  storeCurrentEthNetwork,
 } from "@/redux/actions/web3Provider";
 import { getSyndicateContracts } from "@/syndicateClosedEndFundLogic";
 import { Injected, WalletConnect } from "@/utils/connectors";
@@ -29,14 +31,18 @@ import React, {
   useEffect,
   useState,
 } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "@/redux/store";
 
 const Web3 = require("web3");
+const debugging = process.env.NEXT_PUBLIC_DEBUG;
+declare const window: any;
 
 type AuthProviderProps = {
   connectWallet: (providerName: string) => void;
   showSuccessModal: boolean;
   walletConnecting: boolean;
+  providerName: string;
   setWalletConnecting: React.Dispatch<React.SetStateAction<boolean>>;
   setShowSuccessModal: React.Dispatch<React.SetStateAction<boolean>>;
   cancelWalletConnection: () => void;
@@ -59,29 +65,56 @@ interface IError extends Error {
  */
 const getErrorMessage = (error: IError) => {
   if (error instanceof NoEthereumProviderError) {
-    return `No Ethereum browser extension detected, install MetaMask on desktop using this link 
-        <a href='https://metamask.io/' target="_blank" class='text-blue hover:underline'>https://metamask.io/</a> 
-        then <a class='text-blue hover:underline' href="javascript:window.location.reload(false);">refresh</a> 
-        the page,  or visit from a dApp browser on mobile.`;
+    return {
+      message: "Install Metamask, then return here to continue",
+      type: "NoEthereumProviderError",
+    };
   } else if (error instanceof UnsupportedChainIdError) {
-    return "You're connected to an unsupported network. Ensure you are connected to either Mainnet, Ropsten, Kovan, Rinkeby or Goerli";
+    return {
+      title: "Unsupported network",
+      message:
+        "Ensure you are connected to either Mainnet, Ropsten, Kovan, Rinkeby or Goerli",
+      type: "UnsupportedChainIdError",
+    };
   } else if (
     error instanceof UserRejectedRequestErrorInjected ||
     error instanceof UserRejectedRequestErrorWalletConnect ||
     error instanceof UserRejectedRequestErrorFrame
   ) {
-    return "Please authorize this website to access your Ethereum account.";
+    return {
+      title: "Connection unsuccessful",
+      message: "Please authorize this website to access your Ethereum account.",
+      type: "userRejectedError",
+    };
   } else if (error.code === ResourceUnavailable) {
-    return "Please authorize the pending request on your Metamask account";
+    return {
+      title: "Connection unsuccessful",
+      message: "Please authorize the pending request on your Metamask account",
+      type: "resourceUnavailableError",
+    };
   } else {
     console.error(error);
-    return "An unknown error occurred. Check the console for more details.";
+    return {
+      title: "Connection unsuccessful",
+      message:
+        "Metamask refused the connection. Try again or contact us if the problem persists.",
+      type: "generalError",
+    };
   }
 };
 
 const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
+  const {
+    web3Reducer: {
+      web3: {
+        currentEthereumNetwork,
+        ethereumNetwork: { invalidEthereumNetwork },
+      },
+    },
+  } = useSelector((state: RootState) => state);
+
   // control whether to show success connection modal or not
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [walletConnecting, setWalletConnecting] = useState(false);
@@ -129,7 +162,12 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
         );
       } catch (error) {
         dispatch(setDisConnected());
-        dispatch(showErrorModal(web3InstantiationErrorText));
+        dispatch(
+          showErrorModal({
+            message: web3InstantiationErrorText,
+            type: "web3InstantionError",
+          }),
+        );
       }
     }
   };
@@ -206,19 +244,92 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
     dispatch(hideWalletModal());
   };
 
+  // check the network the user is connected to
+  // if the application is still on staging (DEBUG = true), it should
+  // be connected to the 'rinkeby' network.
+  // otherwise it should be connected to mainnet
+  const getCurrentEthNetwork = async () => {
+    const currentNetwork = await web3.eth.net.getNetworkType();
+    dispatch(storeCurrentEthNetwork(currentNetwork));
+  };
+
+  useEffect(() => {
+    // check current network type
+    getCurrentEthNetwork();
+  }, [currentEthereumNetwork]);
+
+  useEffect(() => {
+    // set up listener to detect network change
+    window.ethereum?.on("chainChanged", () => {
+      // Handle the new chain.
+      setShowSuccessModal(false);
+      getCurrentEthNetwork();
+    });
+  });
+
+  // always show the success modal for only 1 second
+  useEffect(() => {
+    if (showSuccessModal) {
+      setTimeout(() => setShowSuccessModal(false), 1000);
+    }
+  }, [showSuccessModal]);
+
+  useEffect(() => {
+    // we'll check for the correct network using the debug setting from the .env file
+    // if debug is set to true, the application has to be on the rinkeby network.
+    // otherwise it has to be connected to mainnet.
+    if (currentEthereumNetwork && providerName === "Injected") {
+      if (debugging === "true" && currentEthereumNetwork !== "rinkeby") {
+        dispatch(
+          storeEthereumNetwork({
+            invalidEthereumNetwork: true,
+            correctEthereumNetwork: "rinkeby network",
+          }),
+        );
+      } else if (debugging === "false" && currentEthereumNetwork !== "main") {
+        dispatch(
+          storeEthereumNetwork({
+            invalidEthereumNetwork: true,
+            correctEthereumNetwork: "mainnet",
+          }),
+        );
+      } else if (
+        (debugging === "true" && currentEthereumNetwork === "rinkeby") ||
+        (debugging === "false" && currentEthereumNetwork === "main")
+      ) {
+        dispatch(
+          storeEthereumNetwork({
+            invalidEthereumNetwork: false,
+            correctEthereumNetwork: "",
+          }),
+        );
+        // show success modal when the user switches to the correct network
+        if (account) {
+          setShowSuccessModal(true);
+        }
+      }
+    }
+  }, [providerName, currentEthereumNetwork]);
+
   // This handles the connect for a wallet
   const connectWallet = async (providerName) => {
     closeWalletModal();
     setWalletConnecting(true);
+
     try {
       if (providerName === "Injected") {
         await activateProvider(Injected, providerName);
+        if (!invalidEthereumNetwork) {
+          setShowSuccessModal(true);
+        } else {
+          setShowSuccessModal(false);
+          setWalletConnecting(true);
+        }
       } else if (providerName === "WalletConnect") {
         await activateProvider(WalletConnect, providerName);
+        setShowSuccessModal(true);
       }
-      setShowSuccessModal(true);
     } catch (error) {
-      console.log({ error });
       const customError = getErrorMessage(error);
       dispatch(showErrorModal(customError));
     }
@@ -251,6 +362,7 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
         connectWallet,
         walletConnecting,
         showSuccessModal,
+        providerName,
         setWalletConnecting,
         setShowSuccessModal,
         cancelWalletConnection,

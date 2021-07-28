@@ -6,10 +6,14 @@ const GenerateDai = () => {
   const router = useRouter();
 
   useEffect(() => {
-    // re-route to the generate-token
-    router.replace(`/rinkeby/generate-token`);
+    if (process.env.NEXT_PUBLIC_CONTEXT === "production") {
+      router.replace("/");
+    } else {
+      // re-route to the generate-token
+      router.replace(`/rinkeby/generate-token`);
+    }
   }, []);
-  return(<div> </div>);
+  return <div> </div>;
 };
 
 export default GenerateDai;

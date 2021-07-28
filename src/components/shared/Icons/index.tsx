@@ -22,3 +22,50 @@ export const DeleteIcon = (props: Idelete) => {
     </svg>
   );
 };
+
+interface IBan {
+  color?: string;
+}
+export const BanIcon = (props: IBan) => {
+  const { color } = props;
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      className={`h-10 w-10 ${color ? color : "text-yellow-dark"}`}
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={2}
+        d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"
+      />
+    </svg>
+  );
+};
+
+interface ICancelIcon {
+  height?: string;
+  width?: string;
+}
+export const CancelIcon = (props: ICancelIcon) => {
+  const { height = "h-10", width = "w-10" } = props;
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      className={`${height} ${width} text-red-500`}
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={2}
+        d="M6 18L18 6M6 6l12 12"
+      />
+    </svg>
+  );
+};

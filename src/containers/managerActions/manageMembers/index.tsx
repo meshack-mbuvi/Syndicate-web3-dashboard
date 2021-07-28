@@ -217,7 +217,7 @@ const ManageMembers = (props: ImanageMembers): JSX.Element => {
               />
             </>
           ) : (
-            <div className="flex justify-center">
+            <div className="flex justify-center text-gray-500">
               {filteredAddress.trim()
                 ? "Member address not found."
                 : "Syndicate does not have investors."}

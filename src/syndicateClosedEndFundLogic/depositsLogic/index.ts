@@ -2,8 +2,8 @@ import DepositLogicABI from "src/contracts/SyndicateClosedEndFundDepositLogicV0.
 import { BaseLogicContract } from "../baseLogicContract";
 
 export class SyndicateDepositLogic extends BaseLogicContract {
-  constructor(contractName: any, contractAddress: string, web3: any) {
-    super(contractName, contractAddress, web3, DepositLogicABI.abi);
+  constructor(contractName: any, web3: any) {
+    super(contractName, web3, DepositLogicABI.abi);
     this.initializeLogicContract();
   }
 
@@ -158,5 +158,107 @@ export class SyndicateDepositLogic extends BaseLogicContract {
         setShowWalletConfirmationModal(false);
         setSubmitting(true);
       });
+  }
+
+  /**
+   * Set the maximum deposit per wallet address
+   *
+   * @param {string} syndicateAddress
+   * @param {number} depositMemberMax
+   * @param manager
+   * @param setShowWalletConfirmationModal
+   * @param setSubmitting
+   */
+  async managerSetDepositMemberMax(
+    syndicateAddress,
+    depositMemberMax,
+    manager: string,
+    setShowWalletConfirmationModal,
+    setSubmitting,
+  ) {
+    if (!syndicateAddress.trim()) return;
+
+    try {
+      setShowWalletConfirmationModal(true);
+
+      await this.logicContractInstance.methods
+        .managerSetDepositMemberMax(syndicateAddress, depositMemberMax)
+        .send({ from: manager, gasLimit: 800000 })
+        .on("transactionHash", () => {
+          setShowWalletConfirmationModal(false);
+          setSubmitting(true);
+        });
+      setSubmitting(false);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  /**
+   * Set the maximum total deposit amount.
+   *
+   * @param {string} syndicateAddress
+   * @param {number} depositTotalMax
+   * @param manager
+   * @param setShowWalletConfirmationModal
+   * @param setSubmitting
+   */
+  async managerSetDepositTotalMax(
+    syndicateAddress,
+    depositTotalMax,
+    manager: string,
+    setShowWalletConfirmationModal,
+    setSubmitting,
+  ) {
+    if (!syndicateAddress.trim()) return;
+
+    try {
+      setShowWalletConfirmationModal(true);
+
+      await this.logicContractInstance.methods
+        .managerSetDepositTotalMax(syndicateAddress, depositTotalMax)
+        .send({ from: manager, gasLimit: 800000 })
+        .on("transactionHash", () => {
+          setShowWalletConfirmationModal(false);
+          setSubmitting(true);
+        });
+      setSubmitting(false);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  /**
+   * Set the minimum total deposit amount.
+   *
+   * @param {string} syndicateAddress
+   * @param {number} depositMemberMin
+   * @param manager
+   * @param setShowWalletConfirmationModal
+   * @param setSubmitting
+   */
+  async managerSetDepositMemberMin(
+    syndicateAddress,
+    depositMemberMin,
+    manager: string,
+    setShowWalletConfirmationModal,
+    setSubmitting,
+  ) {
+    if (!syndicateAddress.trim()) return;
+
+    try {
+      setShowWalletConfirmationModal(true);
+
+      await this.logicContractInstance.methods
+        .managerSetDepositMemberMin(syndicateAddress, depositMemberMin)
+        .send({ from: manager, gasLimit: 800000 })
+        .on("transactionHash", () => {
+          setShowWalletConfirmationModal(false);
+          setSubmitting(true);
+        });
+      setSubmitting(false);
+    } catch (error) {
+      throw error;
+    }
   }
 }

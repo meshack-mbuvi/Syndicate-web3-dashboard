@@ -5,7 +5,7 @@ export const Toggle = (props: {
   enabled: boolean;
   toggleEnabled: () => void;
   label: string;
-  tooltip: string;
+  tooltip?: string;
 }) => {
   const { toggleEnabled, label, tooltip, enabled = false } = props;
   let translateClass = "translate-x-0";
@@ -44,11 +44,11 @@ export const Toggle = (props: {
         </button>
 
         {/* <!-- allow optional tooltip --> */}
-        { tooltip !== "" && 
+        {tooltip !== "" && (
           <div className="mt-1 flex mr-auto">
             <InfoIcon tooltip={tooltip} />
           </div>
-        }
+        )}
       </div>
     </div>
   );
