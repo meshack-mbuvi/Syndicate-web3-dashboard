@@ -32,7 +32,7 @@ const GenerateDai = (props: Props) => {
   const router = useRouter();
 
   useEffect(() => {
-    if (process.env.CONTEXT === "production") {
+    if (process.env.NEXT_PUBLIC_CONTEXT === "production") {
       router.replace("/");
     }
   }, []);

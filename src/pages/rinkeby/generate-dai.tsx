@@ -6,7 +6,7 @@ const GenerateDai = () => {
   const router = useRouter();
 
   useEffect(() => {
-    if (process.env.CONTEXT === "production") {
+    if (process.env.NEXT_PUBLIC_CONTEXT === "production") {
       router.replace("/");
     } else {
       // re-route to the generate-token
