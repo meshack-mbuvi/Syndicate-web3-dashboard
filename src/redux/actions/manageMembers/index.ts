@@ -35,10 +35,22 @@ const getSyndicateDepositors = async (syndicateContracts, syndicateAddress) => {
       "DepositAdded",
       { syndicateAddress },
     );
+    // This event is emitted when syndicate cap table is overriden
+    const depositOverriddenEvents = await syndicateContracts.DepositLogicContract.getMemberDepositEvents(
+      "DepositOverridden",
+      { syndicateAddress },
+    );
 
     const memberAddresses = [];
     // process events
     depositEvents.forEach((event) => {
+      const {
+        returnValues: { memberAddress },
+      } = event;
+      memberAddresses.push(memberAddress);
+    });
+
+    depositOverriddenEvents.forEach((event) => {
       const {
         returnValues: { memberAddress },
       } = event;
