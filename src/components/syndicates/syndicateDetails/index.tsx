@@ -3,6 +3,7 @@ import ManagerSetAllowance from "@/containers/managerActions/setAllowances";
 import { RootState } from "@/redux/store";
 import { getWeiAmount, isUnlimited, onlyUnique } from "@/utils/conversions";
 import { floatedNumberWithCommas } from "@/utils/formattedNumbers";
+import { getCoinFromContractAddress } from "functions/src/utils/ethereum";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { CopyToClipboard } from "react-copy-to-clipboard";
@@ -17,7 +18,6 @@ import {
 } from "src/redux/actions/tokenAllowances";
 // utils
 import { formatAddress } from "src/utils/formatAddress";
-import { getCoinFromContractAddress } from "functions/src/utils/ethereum";
 import { BadgeCard, DetailsCard } from "../shared";
 import {
   closeDateToolTip,
@@ -28,7 +28,7 @@ import {
   distributionShareToSyndicateProtocolToolTip,
   expectedAnnualOperatingFeesToolTip,
 } from "../shared/Constants";
-const abi = require("human-standard-token-abi");
+import abi from "human-standard-token-abi";
 
 // we should have an isChildVisible prop here of type boolean
 const SyndicateDetails = (props: {
@@ -136,16 +136,12 @@ const SyndicateDetails = (props: {
   // get syndicate address from the url
   const { syndicateAddress } = router.query;
 
-  if (syndicate) {
-    var {
-      depositsEnabled,
-      distributing,
-      depositERC20Address,
-      depositTotalMax,
-      tokenDecimals,
-      depositERC20TokenSymbol,
-    } = syndicate;
-  }
+  const tokenDecimals = syndicate?.tokenDecimals;
+  const depositTotalMax = syndicate?.depositTotalMax;
+  const depositERC20TokenSymbol = syndicate?.depositERC20TokenSymbol;
+  const depositERC20Address = syndicate?.depositERC20Address;
+  const distributing = syndicate?.distributing;
+  const depositsEnabled = syndicate?.depositsEnabled;
 
   // get and set current token details
   useEffect(() => {

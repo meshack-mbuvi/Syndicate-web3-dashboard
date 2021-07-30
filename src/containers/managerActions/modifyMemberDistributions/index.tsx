@@ -72,8 +72,6 @@ const ModifyMemberDistributions = (): JSX.Element => {
 
   const { syndicateAddress } = router.query;
 
-  const [memberDeposits, setMemberDeposits] = useState("");
-
   const [depositorAddressError, setDepositAddressError] = useState("");
 
   const [newDistributionAmount, setNewDistributionAmount] = useState<
@@ -171,7 +169,6 @@ const ModifyMemberDistributions = (): JSX.Element => {
         syndicateAddress,
         memberAddress,
       );
-      setMemberDeposits(memberDeposits);
       if (memberDeposits === "0") {
         setDepositAddressError(
           "Member address has zero deposits in this Syndicate",

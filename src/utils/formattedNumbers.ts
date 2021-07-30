@@ -1,27 +1,21 @@
-const thousand = 1000;
-const million = 1000000;
-const billion = 1000000000;
-const trillion = 1000000000000;
-const quadrillion = trillion * 1000;
-
 /** helper function to insert commas into amounts.
  * @param number number to be formatted
  * @returns formatted number as a string
  * */
-export const numberWithCommas = (number) => {
+export const numberWithCommas = (number: string): string => {
   return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 };
 
 // add two decimal places
-export const floatedNumberWithCommas = (number) => {
+export const floatedNumberWithCommas = (number): string => {
   if (!number) {
     return numberWithCommas(parseFloat("0".toString()).toFixed(2));
   }
   // avoid rounding up the number when converting to 2 decimal places
-  const intNum = parseFloat(number);
-  return numberWithCommas(
-    (parseInt((intNum * 100).toString()) / 100).toFixed(2),
-  );
+  const numberTo2decimalsWithoutRoundingUp = number
+    .toString()
+    .match(/^-?\d+(?:\.\d{0,2})?/)[0];
+  return numberWithCommas(numberTo2decimalsWithoutRoundingUp);
 };
 
 /**
@@ -30,23 +24,22 @@ export const floatedNumberWithCommas = (number) => {
  * @param number
  * @returns
  */
-var SI_SYMBOL = ["", "k", "M", "B", "T", "P", "E"];
+const SI_SYMBOL = ["", "k", "M", "B", "T", "P", "E"];
 
 export const formatNumbers = (number) => {
   // what tier? (determines SI symbol)
-  var tier = (Math.log10(Math.abs(number)) / 3) | 0;
+  const tier = (Math.log10(Math.abs(number)) / 3) | 0;
 
   // if zero, we don't need a suffix
-  if (tier == 0) return number;
+  if (tier == 0) return number.toString();
 
   // get suffix and determine scale
-  var suffix = SI_SYMBOL[tier];
-  var scale = Math.pow(10, tier * 3);
+  const suffix = SI_SYMBOL[tier];
+  const scale = Math.pow(10, tier * 3);
 
   // scale the number
-  var scaled = number / scale;
+  const scaled = number / scale;
 
   // format number and add suffix
   return scaled.toFixed(1) + suffix;
 };
-

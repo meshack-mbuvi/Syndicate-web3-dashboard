@@ -1,5 +1,6 @@
 import { BigNumber } from "bignumber.js";
 import { ethers } from "ethers";
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const Web3 = require("web3");
 const web3 = new Web3(
   Web3.givenProvider || `${process.env.NEXT_PUBLIC_INFURA_ENDPOINT}`,
@@ -105,7 +106,7 @@ export const onlyUnique = (value, index, self) => {
 
 export const isUnlimited = (value) => {
   if (!value) return;
-  var BN = web3.utils.BN;
+  const BN = web3.utils.BN;
   const BNValue = new BN(value.toString());
   const BNcompareValue = new BN(
     "115792089237316195423570985008687907853269984665640564039457",
