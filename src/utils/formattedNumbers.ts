@@ -8,14 +8,19 @@ export const numberWithCommas = (number: string): string => {
 
 // add two decimal places
 export const floatedNumberWithCommas = (number): string => {
-  if (!number) {
+  if (!number || number === "NaN") {
     return numberWithCommas(parseFloat("0".toString()).toFixed(2));
   }
-  // avoid rounding up the number when converting to 2 decimal places
-  const numberTo2decimalsWithoutRoundingUp = number
-    .toString()
-    .match(/^-?\d+(?:\.\d{0,2})?/)[0];
-  return numberWithCommas(numberTo2decimalsWithoutRoundingUp);
+
+  try {
+    // avoid rounding up the number when converting to 2 decimal places
+    const numberTo2decimalsWithoutRoundingUp = number
+      .toString()
+      .match(/^-?\d+(?:\.\d{0,2})?/)[0];
+    return numberWithCommas(numberTo2decimalsWithoutRoundingUp);
+  } catch (error) {
+    return numberWithCommas(parseFloat("0".toString()).toFixed(2));
+  }
 };
 
 /**

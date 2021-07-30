@@ -28,10 +28,10 @@ export const PrimaryButton = (props: {
       className={`flex items-center justify-center border text-base font-light rounded-md focus:outline-none focus:ring ${textColor} ${customClasses}`}
       {...rest}>
       {approved ? (
-        <img className="inline w-4 mr-2" src="/images/checkmark-approved.svg" />
+        <img className="inline w-4 mr-2" src="/images/checkmark-approved.svg" alt="Approved"/>
       ) : null}
       {createSyndicate ? (
-        <img className="inline w-4 mr-4" src="/images/plus-circle.svg" />
+        <img className="inline w-4 mr-4" src="/images/plus-circle.svg" alt=""/>
       ) : null}
       {children}
     </button>

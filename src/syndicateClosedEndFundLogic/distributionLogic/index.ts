@@ -89,7 +89,7 @@ export class SyndicateDistributionLogic extends BaseLogicContract {
   async getDistributionTotal(
     syndicateAddress: string,
     distributionERC20Address: string,
-  ) {
+  ): Promise<string> {
     try {
       const totalDistributions = await this.logicContractInstance.methods
         .getDistributionTotal(syndicateAddress, distributionERC20Address)
@@ -114,13 +114,13 @@ export class SyndicateDistributionLogic extends BaseLogicContract {
    */
   async managerSetDistributions(
     syndicateAddress: string,
-    distributionERC20TokenAddresses: string | any[],
-    tokenDistributionAmounts: any,
+    distributionERC20TokenAddresses: string | string[],
+    tokenDistributionAmounts: string[],
     manager: string,
     setMetamaskConfirmationPending: (arg0: boolean) => void,
     setSubmitting: (arg0: boolean) => void,
     processSetDistributionEvent: (arg0: any) => void,
-  ) {
+  ): Promise<void> {
     if (
       !syndicateAddress.trim() ||
       !Array.isArray(distributionERC20TokenAddresses) ||
@@ -295,16 +295,34 @@ export class SyndicateDistributionLogic extends BaseLogicContract {
     this.initializeLogicContract();
 
     try {
-      const claimedDistributions = await this.logicContractInstance?.methods
+      const memberClaimedDistributions = await this.logicContractInstance?.methods
         .getDistributionClaimedMember(
           syndicateAddress,
           memberAddress,
           distributionERC20Address,
         )
         .call();
-      return claimedDistributions;
+      return memberClaimedDistributions;
     } catch (error) {
       return;
+    }
+  }
+
+  async getDistributionClaimedTotal(
+    syndicateAddress: string,
+    distributionERC20Address: string,
+  ): Promise<string> {
+    if (!syndicateAddress.trim() || !distributionERC20Address.trim())
+      return "0";
+
+    try {
+      this.initializeLogicContract();
+      const totalClaimedDistributions = await this.logicContractInstance.methods
+        .getDistributionClaimedTotal(syndicateAddress, distributionERC20Address)
+        .call();
+      return totalClaimedDistributions;
+    } catch (error) {
+      return "0";
     }
   }
 }
