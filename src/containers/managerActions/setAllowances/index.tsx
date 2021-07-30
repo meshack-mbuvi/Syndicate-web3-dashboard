@@ -124,18 +124,17 @@ const ManagerSetAllowance = (props: Props) => {
     // fetch details of that token using the token address.
     const inputTokenAddress = tokenAllowanceDetails[index]["tokenAddress"];
     let currentTokenIndex = 0;
+    let currentToken;
     if (depositsEnabled) {
       // there is only one deposit token.
-      var currentToken = depositTokenAllowanceDetails[0];
+      currentToken = depositTokenAllowanceDetails[0];
     } else if (distributing) {
-      var currentToken = distributionTokensAllowanceDetails.find(
-        (token, index) => {
-          // get the index of the current token
-          // we'll use this to update values for this specific token in the redux store
-          currentTokenIndex = index;
-          return token.tokenAddress === inputTokenAddress;
-        },
-      );
+      currentToken = distributionTokensAllowanceDetails.find((token, index) => {
+        // get the index of the current token
+        // we'll use this to update values for this specific token in the redux store
+        currentTokenIndex = index;
+        return token.tokenAddress === inputTokenAddress;
+      });
     }
     // set up token details
     const currentTokenDecimals = currentToken.tokenDecimals;

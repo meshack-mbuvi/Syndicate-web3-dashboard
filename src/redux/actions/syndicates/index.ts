@@ -5,7 +5,6 @@ import { formatDate } from "@/utils";
 import { basisPointsToPercentage, getWeiAmount } from "@/utils/conversions";
 import { pastDate } from "@/utils/dateUtils";
 import { ERC20TokenDetails } from "@/utils/ERC20Methods";
-
 import { getCoinFromContractAddress } from "functions/src/utils/ethereum";
 import {
   ADD_NEW_INVESTMENT,
@@ -34,7 +33,13 @@ interface SyndicateInfo {
  * @param {object} data
  * @returns
  */
-export const getSyndicates = (data) => async (dispatch) => {
+export const getSyndicates = (data: {
+  account;
+  GetterLogicContract;
+  ManagerLogicContract;
+  DistributionLogicContract;
+  DepositLogicContract;
+}) => async (dispatch) => {
   if (!data) return;
 
   const {
@@ -262,7 +267,7 @@ export const processSyndicateDetails = (
   depositERC20Price,
 ): Syndicate => {
   if (!syndicateData) return;
-  let {
+  const {
     syndicateAddress,
     allowlistEnabled,
     dateClose,
@@ -274,7 +279,7 @@ export const processSyndicateDetails = (
     depositTotal,
     managerCurrent,
     managerFeeAddress,
-    managerManagementFeeBasisPoints,
+
     managerPending,
     managerDistributionShareBasisPoints,
     modifiable,
@@ -284,6 +289,7 @@ export const processSyndicateDetails = (
     open,
     distributing,
   } = syndicateData;
+  let { managerManagementFeeBasisPoints } = syndicateData;
 
   const closeDate = formatDate(new Date(parseInt(dateClose) * 1000));
 

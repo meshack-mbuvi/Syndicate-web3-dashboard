@@ -38,10 +38,12 @@ import {
 import { SyndicateActionButton } from "../shared/syndicateActionButton";
 import { SyndicateActionLoader } from "../shared/syndicateActionLoader";
 import { UnavailableState } from "../shared/unavailableState";
-import WithdrawDeposit from "./WithdrawDeposit";
 import ManageSyndicate from "./ManageSyndicate";
+import WithdrawDeposit from "./WithdrawDeposit";
 
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const Web3 = require("web3");
+
 const web3 = new Web3(
   Web3.givenProvider || `${process.env.NEXT_PUBLIC_INFURA_ENDPOINT}`,
 );
@@ -94,19 +96,11 @@ const DepositSyndicate: React.FC = () => {
     },
   } = useSelector((state: RootState) => state);
 
-  let depositTokenSymbol, depositTokenDecimals, depositTokenLogo;
-  if (syndicate) {
-    var {
-      tokenDecimals,
-      depositERC20Logo,
-      depositERC20TokenSymbol,
-      depositERC20Price,
-    } = syndicate;
+  const depositTokenSymbol = syndicate?.depositERC20TokenSymbol;
+  const depositTokenDecimals = syndicate?.tokenDecimals;
+  const depositTokenLogo = syndicate?.depositERC20Logo;
+  const depositERC20Price = syndicate?.depositERC20Price;
 
-    depositTokenDecimals = tokenDecimals;
-    depositTokenLogo = depositERC20Logo;
-    depositTokenSymbol = depositERC20TokenSymbol;
-  }
   const {
     title,
     message,
@@ -178,7 +172,7 @@ const DepositSyndicate: React.FC = () => {
   } = memberDepositDetails;
 
   // either member has hit member deposit limits or syndicate has reached deposit limits
-  const depositLimits = maxDepositReached || memberMaxDepositReached
+  const depositLimits = maxDepositReached || memberMaxDepositReached;
 
   const sections = [
     {
@@ -656,7 +650,7 @@ const DepositSyndicate: React.FC = () => {
     amountToDeposit > allowanceAmountApproved && approved;
   const depositAmountLess =
     amountToDeposit <= allowanceAmountApproved && approved;
-  let amountToApprove = 0;
+  let amountToApprove = "0";
   if (depositAmountGreater) {
     amountToApprove = floatedNumberWithCommas(
       amountToDeposit - allowanceAmountApproved,
@@ -848,7 +842,11 @@ const DepositSyndicate: React.FC = () => {
                       subText={depositSuccessSubtext}
                       showRetryButton={true}
                       success={true}
-                      buttonText={depositLimits ?  depositSuccessBackButtonText : depositSuccessButtonText}
+                      buttonText={
+                        depositLimits
+                          ? depositSuccessBackButtonText
+                          : depositSuccessButtonText
+                      }
                       closeLoader={closeSyndicateActionLoader}
                     />
                   ) : /* deposits are disabled either when syndicate is closed,
@@ -935,6 +933,7 @@ const DepositSyndicate: React.FC = () => {
                                   <img
                                     className="mr-2 w-5"
                                     src={depositTokenLogo}
+                                    alt="deposit logo"
                                   />
                                 )}
                                 {depositTokenSymbol}

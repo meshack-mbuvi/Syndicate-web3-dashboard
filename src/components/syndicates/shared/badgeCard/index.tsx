@@ -1,20 +1,20 @@
-import { useSelector } from "react-redux";
 import { managerActionTexts } from "@/components/syndicates/shared/Constants/managerActions";
-import React from "react";
-import { SkeletonLoader } from "src/components/skeletonLoader";
-import { ProgressIndicator } from "src/components/syndicates/shared/progressIndicator";
 import { RootState } from "@/redux/store";
-import { floatedNumberWithCommas } from "@/utils/formattedNumbers";
 import { divideIfNotByZero, isUnlimited } from "@/utils/conversions";
-const moment = require("moment");
+import { floatedNumberWithCommas } from "@/utils/formattedNumbers";
 import "moment-precise-range-plugin";
+import React from "react";
+import { useSelector } from "react-redux";
+import { ProgressIndicator } from "src/components/syndicates/shared/progressIndicator";
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const moment = require("moment");
 
 export const BadgeCard = (props: {
   correctManagerDepositsAllowance?: boolean;
   correctManagerDistributionsAllowance?: boolean;
   accountIsManager?: boolean;
   showManagerSetAllowancesModal?: () => void;
-}) => {
+}): JSX.Element => {
   const {
     correctManagerDepositsAllowance,
     correctManagerDistributionsAllowance,
@@ -28,18 +28,19 @@ export const BadgeCard = (props: {
   } = useSelector((state: RootState) => state);
 
   // DEFINITIONS
-  if (syndicate) {
-    var {
-      depositTotal,
-      depositTotalMax,
-      depositERC20TokenSymbol,
-      numMembersCurrent,
-      distributing,
-      depositERC20TokenSymbol,
-      closeDate,
-      depositsEnabled,
-    } = syndicate;
+  const depositTotal = syndicate?.depositTotal;
+  const depositTotalMax = syndicate?.depositTotalMax;
+  const depositERC20TokenSymbol = syndicate?.depositERC20TokenSymbol;
+  const numMembersCurrent = syndicate?.numMembersCurrent;
+  const distributing = syndicate?.distributing;
+  const closeDate = syndicate?.closeDate;
+  const depositsEnabled = syndicate?.depositsEnabled;
 
+  let remainingDuration = "";
+  let depositsMaxIsUnlimited = false;
+  let currentDepositsPercentage = 0;
+  let depositsPercentage = 0;
+  if (syndicate) {
     // get syndicate duration to closure
     const now = moment();
     const closeDateCountdown = moment(closeDate, "DD/MM/YYYY");
@@ -56,17 +57,19 @@ export const BadgeCard = (props: {
     const durationMonths = months
       ? `${months} ${months > 1 ? "months" : "month"}`
       : "";
-    const durationDays = days ? `${days} ${days > 1 ? "days" : "day"}` : "0 days";
-    var remainingDuration = `${durationYears} ${durationMonths} ${durationDays}`.trim();
+    const durationDays = days
+      ? `${days} ${days > 1 ? "days" : "day"}`
+      : "0 days";
+    remainingDuration = `${durationYears} ${durationMonths} ${durationDays}`.trim();
 
     // checking if depositsMax is unlimited.
-    var depositsMaxIsUnlimited = isUnlimited(depositTotalMax);
+    depositsMaxIsUnlimited = isUnlimited(depositTotalMax);
 
     // get percentage of deposits made to the syndicate
     if (!depositsMaxIsUnlimited) {
-      var depositsPercentage =
+      depositsPercentage =
         divideIfNotByZero(depositTotal, depositTotalMax) * 100;
-      var currentDepositsPercentage = parseInt(depositsPercentage.toString());
+      currentDepositsPercentage = parseInt(depositsPercentage.toString());
     }
   }
 
@@ -120,7 +123,7 @@ export const BadgeCard = (props: {
               const { tokenDistributions, tokenSymbol } = token;
 
               return (
-                <div>
+                <div key={index}>
                   <span>
                     {/* Adding separators token distributions values
                     We'll add this before all but the first index */}
@@ -142,7 +145,7 @@ export const BadgeCard = (props: {
   );
 
   // bottom card to show details when the syndicate is in "Operating" state i.e. closed with no distributions
-  let operatingDetailsCard = (
+  const operatingDetailsCard = (
     <div
       className={`flex justify-start items-start rounded-b-xl border-t border-black ${badgeBackgroundColor} px-6 py-4`}
     >
@@ -167,7 +170,7 @@ export const BadgeCard = (props: {
   );
 
   // bottom card to show the status of the syndicate when it is open to deposits
-  let openToDepositsCard = (
+  const openToDepositsCard = (
     <div
       className={`rounded-b-xl border-t border-black ${badgeBackgroundColor} px-6 py-4`}
     >
@@ -195,7 +198,9 @@ export const BadgeCard = (props: {
               {depositERC20TokenSymbol}{" "}
             </span>
             {!depositsMaxIsUnlimited ? (
-              <span className="text-gray-400">{`(${depositsPercentage && depositsPercentage.toFixed(2)}%)`}</span>
+              <span className="text-gray-400">{`(${
+                depositsPercentage && depositsPercentage.toFixed(2)
+              }%)`}</span>
             ) : null}
           </p>
         </div>
@@ -267,6 +272,7 @@ export const BadgeCard = (props: {
                       <img
                         src="/images/exclamationDiagonal.svg"
                         className="w-5"
+                        alt=""
                       />
                     </div>
 
@@ -277,7 +283,7 @@ export const BadgeCard = (props: {
                       <p className="text-sm font-light text-gray-500 leading-snug mb-2">
                         {allowanceInfoText}
                       </p>
-                      <p
+                      <button
                         className="text-sm text-blue font-light cursor-pointer w-fit-content"
                         onClick={showManagerSetAllowancesModal}
                       >
@@ -285,8 +291,9 @@ export const BadgeCard = (props: {
                         <img
                           src="/images/right-arrow.svg"
                           className="inline w-5 h-5"
+                          alt=""
                         />
-                      </p>
+                      </button>
                     </div>
                   </div>
                 </div>
