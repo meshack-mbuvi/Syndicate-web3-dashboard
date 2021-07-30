@@ -24,7 +24,7 @@ const SyndicateMembersTable = ({
   });
   return (
     <table {...getTableProps()} className="w-full">
-      <thead>
+      <thead className="table w-full">
         {
           // Loop over the header rows
           headerGroups.map((headerGroup, index) => (
@@ -51,7 +51,7 @@ const SyndicateMembersTable = ({
         }
       </thead>
 
-      <tbody className="divide-y" {...getTableBodyProps()}>
+      <tbody className="divide-y lg:h-64 h-96 overflow-y-auto block" {...getTableBodyProps()}>
         {
           // Loop over the table rows
           rows.map((row, index) => {
@@ -59,7 +59,7 @@ const SyndicateMembersTable = ({
             prepareRow(row);
             return (
               // Apply the row props
-              <tr {...row.getRowProps()} key={index} className="py-3">
+              <tr {...row.getRowProps()} key={index} className="py-3 w-full">
                 {
                   // Loop over the rows cells
                   row.cells.map((cell, cellIndex) => {
@@ -68,7 +68,7 @@ const SyndicateMembersTable = ({
                       <td
                         {...cell.getCellProps()}
                         key={cellIndex}
-                        className="m-0 font-whyte-light text-xs table-fixed py-3"
+                        className="m-0 font-whyte-light text-xs table-fixed py-3 w-1/3"
                       >
                         {
                           // Render the cell contents
