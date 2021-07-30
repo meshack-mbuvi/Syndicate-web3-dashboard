@@ -44,12 +44,12 @@ import { ERC20TokenDetails } from "@/utils/ERC20Methods";
 import { formatAddress } from "@/utils/formatAddress";
 import { floatedNumberWithCommas } from "@/utils/formattedNumbers";
 import { isZeroAddress, Validate } from "@/utils/validators";
+import { getCoinFromContractAddress } from "functions/src/utils/ethereum";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Button from "src/components/buttons";
 import { DeleteIcon } from "src/components/shared/Icons";
-import { getCoinFromContractAddress } from "functions/src/utils/ethereum";
 
 interface Props {
   showDistributeToken: boolean;
@@ -395,7 +395,7 @@ const DistributeToken = (props: Props) => {
     index: number,
     value: string | boolean,
   ) => {
-    let tokenFieldsCopy = [...ERC20TokenFields];
+    const tokenFieldsCopy = [...ERC20TokenFields];
     tokenFieldsCopy[index][name] = value;
     setERC20TokenFields(tokenFieldsCopy);
   };
@@ -446,9 +446,9 @@ const DistributeToken = (props: Props) => {
           tokenNonFormattedAddress,
           tokenDecimals,
         );
-
-        // check if the value in the input field is the same as the current token allowance
-        if (+currentTokenAllowance === +value) {
+        // check if the value in the input field is the same as the current
+        // token allowance or less
+        if (+currentTokenAllowance >= +value) {
           updateERC20TokenValue("tokenAllowanceApproved", index, true);
         } else {
           updateERC20TokenValue("tokenAllowanceApproved", index, false);
@@ -767,7 +767,7 @@ const DistributeToken = (props: Props) => {
   let error = false;
   let showRetryButton = false;
   let pending = true;
-  let buttonText = dismissButtonText;
+  const buttonText = dismissButtonText;
   let headerText = walletPendingConfirmPendingTitleText;
   let subText = walletPendingConfirmPendingMessage;
 
@@ -837,7 +837,7 @@ const DistributeToken = (props: Props) => {
 
   // close button will not be shown if the modal is in a loading state
   let showCloseButton = true;
-  let cannotCloseModalStates =
+  const cannotCloseModalStates =
     metamaskConfirmationPending || submittingAllowanceApproval || submitting;
   if (cannotCloseModalStates) {
     showCloseButton = false;
@@ -1124,14 +1124,14 @@ const DistributeToken = (props: Props) => {
                           >
                             {index > 0 ? (
                               <div className="hidden xl:flex items-center mr-3">
-                                <div
+                                <button
                                   className={`flex items-center justify-center cursor-pointer rounded-full h-6 w-6 ${
                                     tokenAddressError ? `mt-2` : `mt-6`
                                   } hover:bg-gray-200 transition-all`}
                                   onClick={() => removeERC20Fields(index)}
                                 >
                                   <DeleteIcon />
-                                </div>
+                                </button>
                               </div>
                             ) : null}
                             <div
@@ -1179,7 +1179,7 @@ const DistributeToken = (props: Props) => {
                                 type="submit"
                                 customClasses={`rounded-md bg-blue border-2 border-blue w-full mr-4 xl:mr-0 xl:w-33 mt-2 px-6 py-1 h-9 text-sm font-light mb-3 ${
                                   disableApprovalButton
-                                    ? `opacity-50 xl:mt-9 mb-0 `
+                                    ? `opacity-50 xl:mt-11 mb-0 `
                                     : ``
                                 }`}
                                 disabled={disableApprovalButton}
@@ -1192,12 +1192,12 @@ const DistributeToken = (props: Props) => {
                             </div>
                             {index > 0 ? (
                               <div className="flex xl:hidden justify-center mr-3">
-                                <div
+                                <button
                                   className={`flex items-center justify-center cursor-pointer rounded-full h-6 w-6 hover:bg-gray-200 transition-all`}
                                   onClick={() => removeERC20Fields(index)}
                                 >
                                   <DeleteIcon />
-                                </div>
+                                </button>
                               </div>
                             ) : null}
                           </div>
@@ -1205,16 +1205,17 @@ const DistributeToken = (props: Props) => {
                       );
                     })}
                     <div className="flex justify-center items-center py-6">
-                      <p
+                      <button
                         className="text-sm text-blue font-light cursor-pointer w-fit-content"
                         onClick={() => addERC20Fields()}
                       >
                         <img
                           className="inline w-6 mr-1"
-                          src="/images/plusSign.svg"
+                            src="/images/plusSign.svg"
+                            alt=""
                         />
                         Choose another token
-                      </p>
+                      </button>
                     </div>
                   </div>
                 ) : (

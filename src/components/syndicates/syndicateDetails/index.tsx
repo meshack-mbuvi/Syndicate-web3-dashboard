@@ -4,6 +4,7 @@ import { RootState } from "@/redux/store";
 import { getWeiAmount, isUnlimited, onlyUnique } from "@/utils/conversions";
 import { floatedNumberWithCommas } from "@/utils/formattedNumbers";
 import { getCoinFromContractAddress } from "functions/src/utils/ethereum";
+import abi from "human-standard-token-abi";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { CopyToClipboard } from "react-copy-to-clipboard";
@@ -28,13 +29,12 @@ import {
   distributionShareToSyndicateProtocolToolTip,
   expectedAnnualOperatingFeesToolTip,
 } from "../shared/Constants";
-import abi from "human-standard-token-abi";
 
 // we should have an isChildVisible prop here of type boolean
 const SyndicateDetails = (props: {
   accountIsManager: boolean;
   children?: React.ReactChild;
-}) => {
+}): JSX.Element => {
   const { accountIsManager } = props;
 
   const {
@@ -239,6 +239,14 @@ const SyndicateDetails = (props: {
           syndicateContracts.DistributionLogicContract._address,
         );
 
+        /**
+         * To find whether sufficient allowance is set, we need to compare total
+         * unclaimed distributions against current allowance for a given token
+         * address.
+         *
+         * Note: To get unclaimed distributions, we get the difference between
+         * total current distributions and total claimed distributions.
+         */
         const tokenAllowance = getWeiAmount(
           tokenManagerAllowance,
           tokenDecimals,
@@ -251,14 +259,31 @@ const SyndicateDetails = (props: {
           tokenAddress,
         );
 
+        // We should get also get total claimed distributions
+        const totalClaimedDistributions = await syndicateContracts.DistributionLogicContract.getDistributionClaimedTotal(
+          syndicateAddress,
+          tokenAddress,
+        );
+
         const tokenDistributions = getWeiAmount(
           totalCurrentDistributions,
           tokenDecimals,
           false,
         );
 
+        const claimedDistributions = getWeiAmount(
+          totalClaimedDistributions,
+          tokenDecimals,
+          false,
+        );
+
+        // Find the difference between total current and claimed distributions
+        const totalUnclaimedDistributions =
+          +tokenDistributions - +claimedDistributions;
+
         // check if allowance set is enough to cover distributions.
-        const sufficientAllowanceSet = +tokenAllowance >= +tokenDistributions;
+        const sufficientAllowanceSet =
+          +tokenAllowance >= +totalUnclaimedDistributions;
 
         allowanceAndDistributionDetails.push({
           tokenAddress,

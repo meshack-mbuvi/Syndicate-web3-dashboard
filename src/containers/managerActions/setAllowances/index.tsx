@@ -77,10 +77,9 @@ const ManagerSetAllowance = (props: Props) => {
     walletPendingConfirmPendingMessage,
   } = walletConfirmConstants;
   const { metamaskErrorMessageTitleText } = metamaskConstants;
-
-  if (syndicate) {
-    var { depositTotalMax, depositsEnabled, distributing } = syndicate;
-  }
+  const depositTotalMax = syndicate?.depositTotalMax;
+  const depositsEnabled = syndicate?.depositsEnabled;
+  const distributing = syndicate?.distributing;
 
   // handle allowance value from the input field.
   const handleAmountChange = (event, index) => {
