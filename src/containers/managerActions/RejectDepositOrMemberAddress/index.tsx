@@ -58,7 +58,7 @@ const RejectDepositOrMemberAddress = (): JSX.Element => {
     setShowWalletConfirmationModal,
   ] = useState(false);
 
-  const [validSyndicate, setValideSyndicate] = useState(false);
+  const [validSyndicate, setValidSyndicate] = useState(false);
 
   const router = useRouter();
   const { syndicateAddress } = router.query;
@@ -72,9 +72,9 @@ const RejectDepositOrMemberAddress = (): JSX.Element => {
       // Checking for address 0x0000000; the default value set by solidity
       if (isZeroAddress(syndicate.currentManager)) {
         // address is empty
-        setValideSyndicate(false);
+        setValidSyndicate(false);
       } else {
-        setValideSyndicate(true);
+        setValidSyndicate(true);
       }
     }
   }, [syndicate]);
@@ -122,7 +122,7 @@ const RejectDepositOrMemberAddress = (): JSX.Element => {
   const [
     totalDepositsForMemberAddress,
     setTotalDepositsForMemberAddress,
-  ] = useState(0);
+  ] = useState<number>(0);
 
   const [
     selectedMemberAddressTextIndexes,
@@ -138,12 +138,14 @@ const RejectDepositOrMemberAddress = (): JSX.Element => {
           syndicate.depositERC20TokenSymbol || ""
         } before rejecting member deposits.`,
       );
+    } else {
+      setMemberAddressesError("");
     }
     return () => {
       setTotalDepositsForMemberAddress(0);
       setAllowanceAmount(0);
     };
-  }, [totalDepositsForMemberAddress]);
+  }, [allowanceAmount, totalDepositsForMemberAddress]);
 
   // Retrieve current allowance set on the managerAddress
   useEffect(() => {
@@ -210,9 +212,11 @@ const RejectDepositOrMemberAddress = (): JSX.Element => {
               value,
               parseInt(syndicate.tokenDecimals || 18),
             );
-            if (memberDeposits > 0) {
+
+            // we could use parseInt instead of Number but that will fail for large deposits
+            if (Number(memberDeposits) > 0) {
               setMemberAddressesError("");
-              totalMemberAddressDeposits += memberDeposits;
+              totalMemberAddressDeposits += Number(memberDeposits);
               setTotalDepositsForMemberAddress(totalMemberAddressDeposits);
             } else {
               setMemberAddressesError(

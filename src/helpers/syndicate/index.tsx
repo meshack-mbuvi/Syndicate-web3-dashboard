@@ -12,7 +12,7 @@ import { getCoinFromContractAddress } from "functions/src/utils/ethereum";
 export const getSyndicate = async (syndicateData): Promise<Syndicate> => {
   try {
     const { depositERC20Address } = syndicateData;
-    
+
     // get token details
     const { symbol, logo, decimals,price } = await getCoinFromContractAddress(
       depositERC20Address,
