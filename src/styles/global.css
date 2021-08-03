@@ -112,7 +112,7 @@
       narrow child element, like the .container class
     */
     .force-to-left {
-        margin-left: calc((-100vw + 100%) / 2);
+      margin-left: calc((-100vw + 100%) / 2);
     }
 
     /*
@@ -120,7 +120,7 @@
       narrow child element, like the .container classs
     */
     .force-to-right {
-        margin-right: calc((-100vw + 100%) / 2);
+      margin-right: calc((-100vw + 100%) / 2);
     }
 
     /*
@@ -129,7 +129,7 @@
       position.
     */
     .inset-left {
-        padding-left: calc((100vw - 100%) / 2);
+      padding-left: calc((100vw - 100%) / 2);
     }
 
     /*
@@ -139,14 +139,14 @@
       complicated to change the page structure to get this behavior.
     */
     .edge-to-edge {
-        @apply force-to-left w-screen;
+      @apply force-to-left w-screen;
     }
 
     /*
       Like .edge-to-edge but has a left inset for inner content.
     */
     .edge-to-edge-with-left-inset {
-        @apply edge-to-edge inset-left;
+      @apply edge-to-edge inset-left;
     }
 
     /* Positioning */
@@ -185,19 +185,19 @@
 
     /* Scroll bar */
 
-    .no-scroll-bar::-webkit-scrollbar { 
+    .no-scroll-bar::-webkit-scrollbar {
       display: none;
     }
-  
+
     .no-scroll-bar {
-        -ms-overflow-style: none;  /* IE 10+ */
-        scrollbar-width: none;  /* Firefox */   
+      -ms-overflow-style: none; /* IE 10+ */
+      scrollbar-width: none; /* Firefox */
     }
   }
 }
 
 .active {
-  color: #4376FF;
+  color: #4376ff;
 }
 .main {
   height: 100vh;

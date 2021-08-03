@@ -7,6 +7,8 @@ import { useSelector } from "react-redux";
 import { getWeiAmount, onlyUnique } from "src/utils/conversions";
 import { getCoinFromContractAddress } from "functions/src/utils/ethereum";
 import { ifRows } from "./interfaces";
+import { usePopper } from "react-popper";
+import Portal from "@/components/shared/Portal";
 
 const BN = web3.utils.BN;
 
@@ -30,6 +32,24 @@ const GetClaimedDistributions = ({
     distributionsWithdrawalDetails,
     setDistributionsWithdrawalDetails,
   ] = useState<any>([]);
+
+  const [showToolTip, setShowToolTip] = useState(false);
+  const [referenceElement, setReferenceElement] = useState(null);
+  const [popperElement, setPopperElement] = useState(null);
+  const [arrowElement, setArrowElement] = useState(null);
+
+  const { styles, attributes } = usePopper(referenceElement, popperElement, {
+    modifiers: [
+      { name: "arrow", options: { element: arrowElement, padding: 5 } },
+      {
+        name: "offset",
+        options: {
+          offset: [-40, 8],
+        },
+      },
+    ],
+    placement: "bottom-start",
+  });
 
   /**
    * when syndicateContracts are initialized fully, retrieve syndicate
@@ -157,13 +177,19 @@ const GetClaimedDistributions = ({
 
   // set tooltip text to show deposit details
   const withdrawalstooltipText = (
-    <div className="relative bg-gray-9 p-4 rounded-custom">
+    <div
+      className={`bg-gray-9 p-4 rounded-custom w-fit-content ${
+        !showToolTip && `hidden`
+      }`}
+      ref={setArrowElement}
+      style={styles.arrow}
+    >
       {depositWithdrawalsDetails.length ? (
         <div>
-          <p className="text-sm mb-2">Deposit Withdrawals:</p>
+          <p className="text-sm mb-2 whitespace-nowrap">Deposit Withdrawals:</p>
           <table className="table-fixed w-full">
             <thead className="mb-2">
-              <tr className="mb-4 text-sm">
+              <tr className="mb-4 text-sm text-left">
                 <th className="font-bold text-gray-dim">
                   <b>Token</b>
                 </th>
@@ -199,10 +225,12 @@ const GetClaimedDistributions = ({
 
       {distributionsWithdrawalDetails.length ? (
         <div className="mt-2">
-          <p className="text-sm mb-2">Distributions Withdrawals:</p>
+          <p className="text-sm mb-2 whitespace-nowrap">
+            Distributions Withdrawals:
+          </p>
           <table className="table-fixed w-full">
             <thead className="mb-2">
-              <tr className="mb-4 text-sm">
+              <tr className="mb-4 text-sm text-left">
                 <th className="font-bold text-gray-dim">
                   <b>Token</b>
                 </th>
@@ -243,23 +271,30 @@ const GetClaimedDistributions = ({
     depositWithdrawalsDetails.length + distributionsWithdrawalDetails.length;
 
   return (
-    <div className="flex flex-row items-center w-full visibility-container">
-      <div className="w-full visibility-container">
-        <div className="relative w-full tooltip">
+    <div className="flex flex-row items-center w-full">
+      <div className="w-full">
+        <div
+          className="relative w-full"
+          ref={setReferenceElement}
+          onMouseEnter={() => setShowToolTip(true)}
+          onMouseLeave={() => setShowToolTip(false)}
+        >
           <div>{syndicateAddress === account ? "-" : count}</div>
-
-          {depositWithdrawalsDetails.length ||
-          distributionsWithdrawalDetails.length ? (
-            <div
-              className={`tooltiptext invisible visibility-hover absolute ${
-                count.toString().length === 1 ? `-left-2` : `-left-1`
-              } w-full`}
-            >
-              {withdrawalstooltipText}
-            </div>
-          ) : null}
         </div>
       </div>
+      <Portal>
+        {depositWithdrawalsDetails.length ||
+        distributionsWithdrawalDetails.length ? (
+          <div
+            className={"absolute z-20"}
+            ref={setPopperElement}
+            style={styles.popper}
+            {...attributes.popper}
+          >
+            {withdrawalstooltipText}
+          </div>
+        ) : null}
+      </Portal>
     </div>
   );
 };
