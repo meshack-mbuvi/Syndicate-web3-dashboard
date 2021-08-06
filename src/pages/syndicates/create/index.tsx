@@ -166,7 +166,7 @@ const CreateSyndicate: React.FC = () => {
                         lastStep ? "bg-green-400" : "bg-white"
                       } text-black px-12 py-3.5 rounded-lg focus:outline-none hover:opacity-80 ${
                         buttonsDisabled || continueDisabled
-                          ? "cursor-not-allowed"
+                          ? "cursor-not-allowed opacity-70"
                           : ""
                       }`}
                       onClick={lastStep ? handleFinish : handleNext}
