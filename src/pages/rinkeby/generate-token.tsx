@@ -1,13 +1,13 @@
 import { showWalletModal } from "@/redux/actions";
-import React, { useState, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
+import { useRouter } from "next/router";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { Toggle } from "src/components/inputs";
 import Layout from "src/components/layout";
 import SEO from "src/components/seo";
 import Head from "src/components/syndicates/shared/HeaderTitle";
-import { Toggle } from "src/components/inputs";
 import { getWeiAmount } from "src/utils/conversions";
-import { useRouter } from "next/router";
 
 interface Props {
   web3: any;

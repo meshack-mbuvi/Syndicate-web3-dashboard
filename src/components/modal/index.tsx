@@ -4,12 +4,14 @@ interface ModalProps {
   title?: string;
   children: JSX.Element;
   show: boolean;
-  closeModal: () => void;
+  closeModal?: () => void;
   type?: string;
   customWidth?: string;
   loading?: boolean | string;
   titleFontSize?: string;
   showCloseButton?: boolean;
+  customClassName?: string;
+  outsideOnClick?: boolean;
   overflow?: string;
   showBackButton?: boolean;
 }
@@ -38,6 +40,8 @@ export const Modal = (props: ModalProps): JSX.Element => {
     loading = false,
     titleFontSize,
     showCloseButton = true,
+    customClassName,
+    outsideOnClick,
     overflow = "overflow-hidden",
     showBackButton = false,
   } = props;
@@ -57,12 +61,17 @@ export const Modal = (props: ModalProps): JSX.Element => {
             >
               <div
                 className="absolute inset-0  bg-gray-9 opacity-80"
-                onClick={handleCloseModal}
+                onClick={() => {
+                  if (outsideOnClick) {
+                    handleCloseModal();
+                  }
+                  return null;
+                }}
               ></div>
             </div>
 
             <div
-              className={`inline-block align-bottom bg-white rounded-lg my-24 mx-4 sm:mx-0 sm:my-28 sm:p-6 text-left shadow-xl transform transition-all max-w-868 ${customWidth} ${overflow}`}
+              className={`inline-block align-bottom bg-white rounded-lg my-24 mx-4 sm:mx-0 sm:my-28 sm:p-6 text-left shadow-xl transform transition-all max-w-868 ${customWidth} ${overflow} ${customClassName}`}
               role="dialog"
               aria-modal="true"
               aria-labelledby="modal-headline"

@@ -21,7 +21,7 @@ export const InputWithAddon = (props: {
   column?: boolean;
   full?: boolean;
   customWidth?: string;
-}) => {
+}): JSX.Element => {
   const {
     label,
     name,

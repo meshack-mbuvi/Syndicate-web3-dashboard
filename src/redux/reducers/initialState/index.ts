@@ -1,5 +1,12 @@
 import { Syndicate } from "@/@types/syndicate";
+import { TWO_WEEKS_IN_MS } from "@/utils/constants";
 import Web3 from "web3";
+import ct from "countries-and-timezones";
+
+export enum SYNDICATE_CHAIN_TYPE {
+  onChain = "onChain",
+  offChain = "offChain",
+}
 
 type InitialState = {
   web3: {
@@ -70,7 +77,50 @@ type InitialState = {
     showAddressOnly: boolean;
     memberAddress: string;
   };
+  createSyndicate: {
+    syndicateOffChainData: {
+      type: string;
+      email: string;
+      syndicateName: string;
+      organization: string;
+      country: string;
+    };
+    tokenAndDepositsLimits: {
+      numMembersMax: number | string;
+      depositMemberMin: string;
+      depositMemberMax: string;
+      depositTotalMax: string;
+      depositTokenDetails: {
+        depositTokenAddress: string;
+        depositTokenSymbol: string;
+        depositTokenLogo: string;
+        depositTokenName: string;
+        depositTokenDecimals: number;
+      };
+    };
+    feesAndDistribution: {
+      expectedAnnualOperatingFees: number;
+      profitShareToSyndicateLead: number;
+      syndicateProfitSharePercent: number;
+    };
+    modifiable: boolean;
+    transferable: boolean;
+    allowlist: {
+      isAllowlistEnabled: boolean;
+      memberAddresses: string[];
+      allowRequestToAllowlist: boolean;
+    };
+    closeDateAndTime: {
+      selectedDate?: Date;
+      selectedTimeValue?: string;
+      selectedTimezone?: Record<"label" | "value" | "timezone", string>;
+    };
+  };
 };
+
+// Get timezone default values on create syndicate
+const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+const timezones = ct.getAllTimezones();
 
 /**
  * This holds the application state.
@@ -139,5 +189,54 @@ export const initialState: InitialState = {
     showDepositOnly: false,
     showAddressOnly: false,
     memberAddress: "",
+  },
+  createSyndicate: {
+    syndicateOffChainData: {
+      type: SYNDICATE_CHAIN_TYPE.onChain,
+      email: "",
+      syndicateName: "",
+      organization: "",
+      country: "United States",
+    },
+    tokenAndDepositsLimits: {
+      numMembersMax: "",
+
+      depositMemberMin: "",
+      depositMemberMax: "",
+      depositTotalMax: "",
+
+      depositTokenDetails: {
+        depositTokenAddress: "",
+        depositTokenSymbol: "",
+        depositTokenLogo: "",
+        depositTokenName: "",
+        depositTokenDecimals: 18,
+      },
+    },
+    feesAndDistribution: {
+      // WARN: The values/percentages below need to be converted to basis points
+      // before passing them to create syndicate method.
+      // basis points => (2/100)* 10000=> 2 * 100 = 200 basis points
+      expectedAnnualOperatingFees: 0,
+      profitShareToSyndicateLead: 0,
+      syndicateProfitSharePercent: 0.5,
+    },
+    modifiable: false,
+    transferable: false,
+    allowlist: {
+      isAllowlistEnabled: true,
+      memberAddresses: [],
+      allowRequestToAllowlist: true,
+    },
+    closeDateAndTime: {
+      selectedDate: new Date(Date.now() + TWO_WEEKS_IN_MS),
+      selectedTimeValue: "12:00 AM",
+      // Set timezone based on client's region
+      selectedTimezone: {
+        label: timezones[tz]?.name,
+        value: timezones[tz]?.name,
+        timezone: timezones[tz]?.utcOffsetStr,
+      },
+    },
   },
 };

@@ -1,10 +1,10 @@
 import { formatNumbers } from "@/utils/formattedNumbers";
 import React, { useMemo } from "react";
 import ActiveSyndicatesTable from "./ActiveSyndicatesTable";
-import GetMemberDeposits from "./GetMemberDeposits";
 import GetClaimedDistributions from "./GetClaimedDistributions";
 import GetDistributions from "./GetDistributions";
 import { GetFormattedDepositsAmount } from "./GetFormattedValue";
+import GetMemberDeposits from "./GetMemberDeposits";
 import GradientAvatar from "./GradientAvatar";
 import SyndicateActionButton from "./SyndicateActionButton";
 

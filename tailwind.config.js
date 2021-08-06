@@ -1,3 +1,4 @@
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const colors = require("tailwindcss/colors");
 
 module.exports = {
@@ -11,6 +12,8 @@ module.exports = {
       backgroundOpacity: ["active"],
       borderRadius: ["first", "last"],
       borderWidth: ["first", "last"],
+      ringWidth: ['hover', 'active'],
+      ringWidth: ["hover", "active"],
     },
   },
   plugins: [
@@ -52,6 +55,11 @@ module.exports = {
   ],
   purge: false,
   theme: {
+    rotate: {
+      135: "135deg",
+      45: "45deg",
+      "-45": "-45deg",
+    },
     screens: {
       sm: "640px",
       // => @media (min-width: 640px) { ... }
@@ -87,6 +95,9 @@ module.exports = {
       maxWidth: {
         868: "54rem",
       },
+      backgroundOpacity: {
+        15: "0.15",
+      },
       fontFamily: {
         whyte: ["ABC Whyte Regular", "Helvetica", "Arial", "sans-serif"],
         "whyte-extralight": [
@@ -114,6 +125,7 @@ module.exports = {
       fontSize: {
         modalTitle: "2.1875rem",
         modalSubTitle: "1.5rem",
+        "1.5xl": "1.375rem",
         "2.5xl": "1.75rem",
       },
       colors: {
@@ -141,6 +153,12 @@ module.exports = {
           manatee: "#8F97AB",
           matterhorn: "#515151",
           nightrider: "#353535",
+          inactive: "#30363A",
+          inactiveText: "#505050",
+          erieBlack: "#1B1B1B",
+          blackRussian: "#141518",
+          darkBackground: "#151618",
+          darkInput: "#2C2C2F",
         },
         green: {
           ...colors.green,
@@ -161,6 +179,8 @@ module.exports = {
           darker: "#0E1834",
           "light-dark": "#237EFF",
           "light-darker": "#000AFF",
+          navy: "#4376FF",
+          rockBlue: "#8F9CAB",
         },
         yellow: {
           ...colors.yellow,
@@ -175,6 +195,9 @@ module.exports = {
       },
       borderWidth: {
         1: "1px",
+      },
+      borderColor: {
+        inactive: "#30363A",
       },
       spacing: {
         33: "8.5rem",

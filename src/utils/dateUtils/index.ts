@@ -19,3 +19,19 @@ export const pastDate = (date: Date): boolean => {
 
 export const getUnixTimeFromDate = (date: Date): number =>
   Math.round(new Date(date).getTime() / 1000);
+
+export const convertTime12to24 = (time12h: string): string => {
+  const [time, modifier] = time12h.split(" ");
+
+  let [hours, minutes] = time.split(":");
+
+  if (hours === "12") {
+    hours = "00";
+  }
+
+  if (modifier === "PM") {
+    hours = String(parseInt(hours, 10) + 12);
+  }
+
+  return `${hours}:${minutes}`;
+};

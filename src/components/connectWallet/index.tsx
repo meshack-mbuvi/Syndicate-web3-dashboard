@@ -129,7 +129,7 @@ export const ConnectWallet = (props: { web3; showWalletModal }) => {
   // showConnectWalletModal
 
   // button for each provider
-  let ProviderButton = ({ name, icon, providerToActivate }) => {
+  const ProviderButton = ({ name, icon, providerToActivate }) => {
     let gradientColor;
     switch (name) {
       case "Gnosis Safe":

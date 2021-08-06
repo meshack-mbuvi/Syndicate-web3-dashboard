@@ -1,4 +1,3 @@
-import PropTypes from "prop-types";
 import React from "react";
 
 /**
@@ -9,6 +8,8 @@ import React from "react";
  */
 
 interface ITextAreaProps {
+  id?: string;
+  classoverride?: string;
   name?: string;
   onChange?: (event: React.ChangeEvent<HTMLTextAreaElement>) => void;
   disabled?: boolean;
@@ -22,8 +23,9 @@ interface ITextAreaProps {
   onSelect?: (event: React.ChangeEvent<HTMLTextAreaElement>) => void;
 }
 
-export const TextArea = (props: ITextAreaProps) => {
+export const TextArea: React.FC<ITextAreaProps> = (props) => {
   const {
+    id,
     name,
     onChange,
     error,
@@ -33,6 +35,7 @@ export const TextArea = (props: ITextAreaProps) => {
     onPaste,
     onKeyUp,
     onSelect,
+    classoverride="bg-white",
     ...rest
   } = props;
 
@@ -43,13 +46,14 @@ export const TextArea = (props: ITextAreaProps) => {
   return (
     <div className="w-full">
       <textarea
+        id={id}
         name={name}
         onChange={onChange}
         onPaste={onPaste}
         onKeyUp={onKeyUp}
         onSelect={onSelect}
         value={value}
-        className={`border border-gray-french rounded-lg w-full bg-white p-4 focus:border-blue ${disabledClasses}`}
+        className={`border border-gray-french rounded-lg w-full p-4 focus:border-blue hover:border-blue-50 ${disabledClasses} ${classoverride}`}
         {...rest}
         rows={rows}
         cols={50}
