@@ -12,7 +12,7 @@ module.exports = {
       backgroundOpacity: ["active"],
       borderRadius: ["first", "last"],
       borderWidth: ["first", "last"],
-      ringWidth: ['hover', 'active'],
+      ringWidth: ["hover", "active"],
       ringWidth: ["hover", "active"],
     },
   },
@@ -83,7 +83,10 @@ module.exports = {
       // => @media (min-width: 1536px) { ... }
 
       "3xl": "1900px",
-      // => @media (min-width: 1536px) { ... }
+      // => @media (min-width: 1900px) { ... }
+
+      "4xl": "2500px",
+      // => @media (min-width: 2500px) { ... }
     },
     extend: {
       height: () => ({
