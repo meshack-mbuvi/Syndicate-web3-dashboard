@@ -12,6 +12,7 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { ContentTitle } from "../../shared";
 import { TokenSelectInput } from "./tokenSelectInput";
+import { numberWithCommas } from "@/utils/formattedNumbers";
 
 const DepositTokenAndLimit: React.FC = () => {
   const {
@@ -135,7 +136,9 @@ const DepositTokenAndLimit: React.FC = () => {
 
   const handleDepositsNumMax = (event) => {
     event.preventDefault();
-    const { value } = event.target;
+    let { value } = event.target;
+    // remove commas from big numbers
+    value = value.replace(/,/g, "");
 
     setDepositsNumbMaxError("");
     // value should be set to unlimited once everything is deleted.
@@ -218,14 +221,14 @@ const DepositTokenAndLimit: React.FC = () => {
 
           <InputField
             {...{
-              value: numMembersMax,
+              value: numberWithCommas(numMembersMax as string),
               label:
                 "Maximum number of people who can deposit into this syndicate",
               addOn: "People",
               onChange: handleDepositsNumMax,
               error: depositsNumbMaxError,
               placeholder: "Unlimited",
-              type: "number",
+              type: "text",
             }}
           />
 
