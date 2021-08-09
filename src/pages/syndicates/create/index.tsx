@@ -164,10 +164,10 @@ const CreateSyndicate: React.FC = () => {
                     <button
                       className={`${
                         lastStep ? "bg-green-400" : "bg-white"
-                      } text-black px-12 py-3.5 rounded-lg focus:outline-none hover:opacity-80 ${
+                      } text-black px-12 py-3.5 rounded-lg focus:outline-none ${
                         buttonsDisabled || continueDisabled
                           ? "cursor-not-allowed opacity-70"
-                          : ""
+                          : "hover:opacity-80"
                       }`}
                       onClick={lastStep ? handleFinish : handleNext}
                       disabled={buttonsDisabled || continueDisabled}
