@@ -12,7 +12,10 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { ContentTitle } from "../../shared";
 import { TokenSelectInput } from "./tokenSelectInput";
-import { numberWithCommas } from "@/utils/formattedNumbers";
+import {
+  numberWithCommas,
+   numberInputRemoveCommas,
+} from "@/utils/formattedNumbers";
 
 const DepositTokenAndLimit: React.FC = () => {
   const {
@@ -115,7 +118,7 @@ const DepositTokenAndLimit: React.FC = () => {
 
   const handleDepositMaxTotal = (event) => {
     event.preventDefault();
-    const { value } = event.target;
+    const value =  numberInputRemoveCommas(event);
 
     setMaxTotalDepositsError("");
     // value should be set to unlimited once everything is deleted.
@@ -136,9 +139,7 @@ const DepositTokenAndLimit: React.FC = () => {
 
   const handleDepositsNumMax = (event) => {
     event.preventDefault();
-    let { value } = event.target;
-    // remove commas from big numbers before we set state
-    value = value.replace(/,/g, "");
+    const value =  numberInputRemoveCommas(event);
 
     setDepositsNumbMaxError("");
     // value should be set to unlimited once everything is deleted.
@@ -163,7 +164,7 @@ const DepositTokenAndLimit: React.FC = () => {
 
   const handleDepositMemberMin = (event) => {
     event.preventDefault();
-    const { value } = event.target;
+    const value =  numberInputRemoveCommas(event);
 
     setDepositMemberMinError("");
 
@@ -182,7 +183,7 @@ const DepositTokenAndLimit: React.FC = () => {
 
   const handleDepositMemberMax = (event) => {
     event.preventDefault();
-    const { value } = event.target;
+    const value =  numberInputRemoveCommas(event);
     setDepositMemberMaxError("");
 
     // value should be set to unlimited once everything is deleted.
@@ -209,13 +210,14 @@ const DepositTokenAndLimit: React.FC = () => {
 
           <InputField
             {...{
-              value: depositTotalMax,
+              value: numberWithCommas(depositTotalMax),
               label: "Max total that can be deposited into this syndicate",
               addOn: depositTokenSymbol.toUpperCase(),
               onChange: handleDepositMaxTotal,
               error: maxTotalDepositsError,
               placeholder: "Unlimited",
-              type: "number",
+              type: "text",
+              isNumber: true,
             }}
           />
 
@@ -229,7 +231,7 @@ const DepositTokenAndLimit: React.FC = () => {
               error: depositsNumbMaxError,
               placeholder: "Unlimited",
               type: "text",
-              isNumber: true
+              isNumber: true,
             }}
           />
 
@@ -248,13 +250,14 @@ const DepositTokenAndLimit: React.FC = () => {
             <div className="mr-4">
               <InputField
                 {...{
-                  value: depositMemberMin,
+                  value: numberWithCommas(depositMemberMin),
                   label: "Minimum deposit per depositor",
                   addOn: depositTokenSymbol.toUpperCase(), //This value should be obtained from selected token
                   onChange: handleDepositMemberMin,
                   error: depositMemberMinError,
                   placeholder: "0",
-                  type: "number",
+                  type: "text",
+                  isNumber: true,
                 }}
               />
             </div>
@@ -262,13 +265,14 @@ const DepositTokenAndLimit: React.FC = () => {
             <div className="ml-4">
               <InputField
                 {...{
-                  value: depositMemberMax,
+                  value: numberWithCommas(depositMemberMax),
                   label: "Maximum deposit per depositor",
                   addOn: depositTokenSymbol.toUpperCase(),
                   onChange: handleDepositMemberMax,
                   error: depositMemberMaxError,
                   placeholder: "Unlimited",
-                  type: "number",
+                  type: "text",
+                  isNumber: true,
                 }}
               />
             </div>
