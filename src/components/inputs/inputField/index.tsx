@@ -25,6 +25,7 @@ export const InputField = (props: {
   focus?: boolean;
   addOn?: string;
   subTitle?: string;
+  isNumber?: boolean;
 }): JSX.Element => {
   const {
     label,
@@ -38,6 +39,7 @@ export const InputField = (props: {
     focus,
     addOn,
     subTitle,
+    isNumber,
     ...rest
   } = props;
 
@@ -72,7 +74,12 @@ export const InputField = (props: {
           type={type}
           name={name}
           id={id}
-          onChange={onChange}
+          onChange={(e) => {
+            if (isNumber && isNaN(e.target.value.replace(/,/g,"") as any)) {
+              return
+            }
+            onChange(e);
+          }}
           className={`flex w-full min-w-0 py-3 mt-1 font-whyte text-sm rounded-md bg-black border focus:border-blue text-white focus:outline-none focus:ring-gray-24 flex-grow border hover:border-blue-50 ${
             addOn ? "pr-14" : ""
           }`}

@@ -81,7 +81,7 @@ const Confirmation: React.FC = () => {
           <p>
             {numMembersMax
               ? numMembersMax > 1
-                ? `${numMembersMax} people`
+                ? `${numberWithCommas(numMembersMax as string)} people`
                 : `${numMembersMax} person`
               : "Unlimited"}
           </p>
