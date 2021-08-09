@@ -3,6 +3,7 @@ import React from "react";
 import { UserProfileWrapper } from "./UserProfileWrapper";
 import WalletComponent from "./wallet";
 import { NavBarNavItem } from "./navbarItems";
+import { useRouter } from "next/router";
 
 interface props {
   backLink: string;
@@ -16,7 +17,9 @@ const navbarItems = [
     urlText: "Discover",
   },
 ];
-const Header = ({ backLink }: props) => {
+const Header: React.FC<props> = ({ backLink }) => {
+  const router = useRouter();
+
   return (
     <nav className="bg-black h-20 fixed top-0 inset-x-0 align-middle py-4 bg-opacity-70 z-20 backdrop-filter backdrop-blur-xl">
       <div className="container mx-auto flex justify-between h-full">
@@ -26,20 +29,27 @@ const Header = ({ backLink }: props) => {
             <div className="md:hidden float-left vertically-center">
               <Link href="/syndicates">
                 <a>
-                  <img src="/images/back-chevron-large.svg" />
+                  <img src="/images/back-chevron-large.svg" alt="back-chevron-large" />
                 </a>
               </Link>
             </div>
           </div>
         ) : null}
 
-        {/* Navbar links  */}
-        <div className="md:flex-1 flex items-center">
-          {navbarItems.map((item) => {
-            const { url, urlText } = item;
-            return <NavBarNavItem url={url} urlText={urlText} />;
-          })}
-        </div>
+        {router.pathname === "/syndicates/create" ?
+          <div className="md:flex-1 flex items-center">
+            <p className="text-sm sm:text-base text-white leading-7 font-light">
+              Create a syndicate
+            </p>
+          </div>
+        :
+          <div className="md:flex-1 flex items-center">{/* Navbar links  */}
+            {navbarItems.map((item, index) => {
+              const { url, urlText } = item;
+              return <NavBarNavItem key={index} url={url} urlText={urlText} />;
+            })}
+          </div>
+        }
 
         {/* logo */}
         <div className="flex-1 space-x-1 mx-auto w-fit-content flex items-center justify-center">

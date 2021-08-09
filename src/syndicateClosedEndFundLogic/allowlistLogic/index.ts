@@ -60,17 +60,14 @@ export class SyndicateAllowlistLogic extends BaseLogicContract {
    * addresses and (b) having two different allowAddress functions poses a
    * security risk if we forget to reconcile changes between them
    * @param manager
-   * @param setShowWalletConfirmationModal A function to be triggered when
-   * to disable modal
-   * @param setSubmitting
+   * @param cb A callback function that is called once the method succeeds
    * @returns
    */
   async managerAllowAddresses(
     syndicateAddress: string,
     memberAddresses: string[],
     manager: string,
-    setShowWalletConfirmationModal: (arg0: boolean) => void,
-    setSubmitting: (arg0: boolean) => void,
+    onTxConfirm: () => void,
   ): Promise<void> {
     if (
       !syndicateAddress.trim() ||
@@ -79,14 +76,12 @@ export class SyndicateAllowlistLogic extends BaseLogicContract {
     ) {
       return;
     }
-
     await this.logicContractInstance.methods
       .managerAllowAddresses(syndicateAddress, memberAddresses)
       .send({ from: manager, gasLimit: 800000 })
       .on("transactionHash", () => {
         // close wallet confirmation modal
-        setShowWalletConfirmationModal(false);
-        setSubmitting(true);
+        onTxConfirm();
       });
   }
 
@@ -148,8 +143,10 @@ export class SyndicateAllowlistLogic extends BaseLogicContract {
           // close wallet confirmation modal
           setShowWalletConfirmationModal(false);
           setSubmitting(true);
+        }).on("receipt", () => {
+          setSubmitting(false);
         });
-      setSubmitting(false);
+      await setSubmitting(false);
     } catch (error) {
       throw error;
     }

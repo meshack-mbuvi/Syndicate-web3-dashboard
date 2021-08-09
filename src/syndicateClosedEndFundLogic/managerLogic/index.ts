@@ -23,13 +23,12 @@ export class SyndicateManagerLogic extends BaseLogicContract {
    *
    * @param syndicateData
    * @param managerAccount
-   * @param dispatch
+   * @param onSuccess
    */
   async createSyndicate(
     syndicateData: CreateSyndicateData,
     managerAccount: string,
-    setShowWalletConfirmationModal: (arg0: boolean) => void,
-    setSubmitting: (arg0: boolean) => void,
+    onTxConfirm: () => void,
   ): Promise<void> {
     await this.initializeLogicContract();
 
@@ -47,34 +46,27 @@ export class SyndicateManagerLogic extends BaseLogicContract {
       modifiable,
       transferable,
     } = syndicateData;
-    try {
-      setShowWalletConfirmationModal(true);
 
-      await this.logicContractInstance.methods
-        .createSyndicate(
-          managerManagementFeeBasisPoints,
-          managerDistributionShareBasisPoints,
-          syndicateDistributionShareBasisPoints,
-          numMembersMax,
-          depositERC20Address,
-          depositMemberMin,
-          depositMemberMax,
-          depositTotalMax,
-          dateCloseUnixTime,
-          modifiable,
-          allowlistEnabled,
-          transferable,
-        )
-        .send({ from: managerAccount })
-        .on("transactionHash", () => {
-          // close wallet confirmation modal
-          setShowWalletConfirmationModal(false);
-          setSubmitting(true);
-        });
-    } catch (error) {
-      setShowWalletConfirmationModal(false);
-      throw error;
-    }
+    await this.logicContractInstance.methods
+      .createSyndicate(
+        managerManagementFeeBasisPoints,
+        managerDistributionShareBasisPoints,
+        syndicateDistributionShareBasisPoints,
+        numMembersMax,
+        depositERC20Address,
+        depositMemberMin,
+        depositMemberMax,
+        depositTotalMax,
+        dateCloseUnixTime,
+        modifiable,
+        allowlistEnabled,
+        transferable,
+      )
+      .send({ from: managerAccount })
+      .on("transactionHash", () => {
+        // wallet confirmation modal
+        onTxConfirm();
+      });
   }
 
   /**

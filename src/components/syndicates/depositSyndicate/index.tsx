@@ -41,13 +41,6 @@ import { UnavailableState } from "../shared/unavailableState";
 import ManageSyndicate from "./ManageSyndicate";
 import WithdrawDeposit from "./WithdrawDeposit";
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const Web3 = require("web3");
-
-const web3 = new Web3(
-  Web3.givenProvider || `${process.env.NEXT_PUBLIC_INFURA_ENDPOINT}`,
-);
-
 const {
   actionFailedError,
   allowListEnabledApprovedText,
@@ -92,7 +85,7 @@ const DepositSyndicate: React.FC = () => {
     syndicateMemberDetailsReducer: { memberDepositDetails },
     syndicatesReducer: { syndicate },
     web3Reducer: {
-      web3: { account },
+      web3: { account, web3 },
     },
   } = useSelector((state: RootState) => state);
 

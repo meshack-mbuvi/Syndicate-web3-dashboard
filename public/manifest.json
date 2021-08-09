@@ -1,0 +1,10 @@
+{
+  "short_name": "SYN",
+  "name": "Syndicate Protocol",
+  "description": "Investing protocol and social network.",
+  "iconPath": "images/logo-dark.svg",
+  "providedBy": {
+    "name": "Syndicate Inc.",
+    "url": "https://www.syndicateprotocol.org/"
+  }
+}

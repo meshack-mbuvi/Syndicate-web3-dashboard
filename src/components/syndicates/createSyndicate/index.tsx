@@ -539,12 +539,12 @@ const CreateSyndicate = (props) => {
         transferable,
       };
 
-      await ManagerLogicContract.createSyndicate(
-        syndicateData,
-        account,
-        setShowWalletConfirmationModal,
-        (value) => dispatch(setSubmitting(value)),
-      );
+      // await ManagerLogicContract.createSyndicate(
+      //   syndicateData,
+      //   account,
+      //   setShowWalletConfirmationModal,
+      //   (value) => dispatch(setSubmitting(value)),
+      // );
 
       dispatch(getSyndicates({ ...web3Instance, ...syndicateContracts }));
 

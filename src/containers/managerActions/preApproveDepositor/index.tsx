@@ -193,14 +193,25 @@ const PreApproveDepositor = (props: Props): JSX.Element => {
         newSplitArr.pop();
       }
 
-      setShowWalletConfirmationModal(true);
+      // perform validations outside the class functions
+      if (
+        !(syndicateAddress as string).trim() ||
+        !account.trim() ||
+        !newSplitArr.length
+      ) {
+        return;
+      }
 
+      setShowWalletConfirmationModal(true);
       await syndicateContracts.AllowlistLogicContract.managerAllowAddresses(
         syndicateAddress,
         newSplitArr,
         account,
-        setShowWalletConfirmationModal,
-        setSubmitting,
+        () => {
+          // Call back passed after transaction goes through
+          setShowWalletConfirmationModal(false);
+          setSubmitting(true);
+        },
       );
 
       setShowFinalState(true);

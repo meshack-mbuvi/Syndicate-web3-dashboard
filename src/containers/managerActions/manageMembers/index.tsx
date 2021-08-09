@@ -197,7 +197,7 @@ const ManageMembers = (props: ImanageMembers): JSX.Element => {
           overflow: "overflow-x-visible ",
         }}
       >
-        <div className="w-full rounded-md p-6 border border-gray-93">
+        <div className="w-full rounded-md p-6 border border-gray-93 overflow-y-hidden h-full lg:h-96">
           <form className="py-3">
             <SearchForm
               {...{

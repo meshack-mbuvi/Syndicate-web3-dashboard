@@ -25,7 +25,7 @@ export const Layout = ({ children, backLink = null }) => {
         <SyndicateInBetaBanner />
         {showDepositsPageBanner && <DepositsPageBanner key={2} />}
       </div>
-      <div className="flex w-full flex-col sm:flex-row md:py-32 py-28 px-4 md:px-6 z-0">
+      <div className="flex w-full flex-col sm:flex-row md:py-32 py-28 px-4 md:px-6 z-0 justify-center">
         {children}
       </div>
       <ConnectWallet />

@@ -13,7 +13,10 @@ import dynamic from "next/dynamic";
 import { wrapper } from "../redux/store";
 import "../styles/animation.css";
 import "../styles/global.css";
+import "../styles/custom-datepicker.css";
 import ConnectWalletProvider from "@/context/ConnectWalletProvider";
+import CreateSyndicateProvider from "@/context/CreateSyndicateContext";
+import SyndicateInBetaBannerProvider from "@/context/SyndicateInBetaBannerContext";
 
 const INTERCOM_APP_ID = process.env.NEXT_PUBLIC_INTERCOM_APP_ID;
 
@@ -21,11 +24,6 @@ const INTERCOM_APP_ID = process.env.NEXT_PUBLIC_INTERCOM_APP_ID;
 Router.events.on("routeChangeStart", () => NProgress.start());
 Router.events.on("routeChangeComplete", () => NProgress.done());
 Router.events.on("routeChangeError", () => NProgress.done());
-
-const SyndicateWeb3ReactProvider = dynamic(
-  () => import("src/providers/web3Provider"),
-  { ssr: false },
-);
 
 // Initialize Amplitude Services.
 const AmplitudeProvider = dynamic(() => import("@/components/amplitude"), {
@@ -35,20 +33,22 @@ const AmplitudeProvider = dynamic(() => import("@/components/amplitude"), {
 const App = ({ Component, pageProps }) => {
   return (
     <IntercomProvider appId={INTERCOM_APP_ID} autoBoot={true}>
-      <SyndicateWeb3ReactProvider>
-        <ConnectWalletProvider>
-          <Head>
-            <title>Home | Syndicate Dashboard</title>
-            <link rel="shortcut icon" href="/images/logo.svg" />
-            <meta
-              name="viewport"
-              content="width=device-width, initial-scale=1, shrink-to-fit=no"
-            />
-          </Head>
-          <AmplitudeProvider />
-          <Component {...pageProps} />
-        </ConnectWalletProvider>
-      </SyndicateWeb3ReactProvider>
+      <SyndicateInBetaBannerProvider>
+          <ConnectWalletProvider>
+            <CreateSyndicateProvider>
+              <Head>
+                <title>Home | Syndicate Dashboard</title>
+                <link rel="shortcut icon" href="/images/logo.svg" />
+                <meta
+                  name="viewport"
+                  content="width=device-width, initial-scale=1, shrink-to-fit=no"
+                />
+              </Head>
+              <AmplitudeProvider />
+              <Component {...pageProps} />
+            </CreateSyndicateProvider>
+          </ConnectWalletProvider>
+      </SyndicateInBetaBannerProvider>
     </IntercomProvider>
   );
 };

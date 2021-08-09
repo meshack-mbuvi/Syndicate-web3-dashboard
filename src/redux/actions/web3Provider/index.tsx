@@ -1,4 +1,3 @@
-import { stringify } from "flatted";
 import {
   CONNECTED,
   CONNECTING,
@@ -29,11 +28,6 @@ export const setConnectedProviderName = (providerName) => async (dispatch) => {
 };
 
 export const setLibrary = (data) => async (dispatch) => {
-  // flatten json and store in local storage
-  const { account, providerName } = data;
-
-  localStorage.removeItem("cache");
-  localStorage.setItem("cache", stringify({ account, providerName }));
   return dispatch({
     data,
     type: SET_WEB3,

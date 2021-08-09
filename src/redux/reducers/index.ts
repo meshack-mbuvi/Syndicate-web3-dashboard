@@ -1,5 +1,14 @@
 import { combineReducers } from "redux";
 import { web3Reducer } from "./connectWallet";
+import {
+  syndicateOffChainDataReducer,
+  tokenAndDepositLimitReducer,
+  feesAndDistributionReducer,
+  modifiableReducer,
+  allowlistReducer,
+  closeDateAndTimeReducer,
+  transferableReducer,
+} from "./createSyndicate";
 import { loadingReducer } from "./helpers";
 import { initializeContractsReducer } from "./initializeContracts";
 import { manageActionsReducer } from "./manageActions";
@@ -19,6 +28,13 @@ export const rootReducer = combineReducers({
   initializeContractsReducer,
   manageMembersDetailsReducer,
   manageActionsReducer,
+  tokenAndDepositLimitReducer,
+  syndicateOffChainDataReducer,
+  feesAndDistributionReducer,
+  modifiableReducer,
+  allowlistReducer,
+  closeDateAndTimeReducer,
+  transferableReducer,
 });
 
 export default rootReducer;

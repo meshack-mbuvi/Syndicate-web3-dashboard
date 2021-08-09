@@ -23,7 +23,7 @@ export const web3Reducer = (state = initialState, action) => {
     case SET_WEB3:
       return {
         ...state,
-        web3: { ...web3, status: "connected", ...action.data },
+        web3: { ...web3, ...action.data },
       };
 
     case SET_PROVIDER_NAME:

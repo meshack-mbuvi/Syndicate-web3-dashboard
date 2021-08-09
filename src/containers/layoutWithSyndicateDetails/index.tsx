@@ -13,7 +13,7 @@ import { syndicateActionConstants } from "src/components/syndicates/shared/Const
 import Head from "src/components/syndicates/shared/HeaderTitle";
 import SyndicateDetails from "src/components/syndicates/syndicateDetails";
 
-const LayoutWithSyndicateDetails = ({ children }) => {
+const LayoutWithSyndicateDetails = ({ children }): JSX.Element => {
   // Retrieve state
   const {
     syndicatesReducer: { syndicate, syndicateFound, syndicateAddressIsValid },
