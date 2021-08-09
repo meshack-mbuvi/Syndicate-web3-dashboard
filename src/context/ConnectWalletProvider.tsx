@@ -140,8 +140,10 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
     });
     try {
       dispatch(hideErrorModal());
-      localStorage.removeItem("cache");
-      localStorage.setItem("cache", stringify({ account, providerName }));
+      if (account && activeProvider) {
+        localStorage.removeItem("cache");
+        localStorage.setItem("cache", stringify({ account, providerName }));
+      }
       return dispatch(
         setLibrary({
           account,
@@ -182,7 +184,7 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
     if (!isEmpty(cachedWalletData)) {
       const { providerName } = cachedWalletData;
       if (providerName === "Injected" || providerName === "WalletConnect") {
-        activateProvider(providerName.toLowerCase());
+        activateProvider(providerName);
       }
     } else {
       setWeb3();
