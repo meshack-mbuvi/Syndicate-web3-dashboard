@@ -137,7 +137,7 @@ const DepositTokenAndLimit: React.FC = () => {
   const handleDepositsNumMax = (event) => {
     event.preventDefault();
     let { value } = event.target;
-    // remove commas from big numbers
+    // remove commas from big numbers before we set state
     value = value.replace(/,/g, "");
 
     setDepositsNumbMaxError("");
@@ -229,6 +229,7 @@ const DepositTokenAndLimit: React.FC = () => {
               error: depositsNumbMaxError,
               placeholder: "Unlimited",
               type: "text",
+              isNumber: true
             }}
           />
 
