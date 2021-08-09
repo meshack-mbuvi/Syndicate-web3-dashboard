@@ -7,7 +7,7 @@ import ct from "countries-and-timezones";
 import React, { forwardRef, useEffect, useMemo, useState } from "react";
 import DatePicker from "react-datepicker";
 import { useDispatch, useSelector } from "react-redux";
-import ReactSelect, { components } from "react-select";
+import ReactSelect, { components, SingleValueProps } from "react-select";
 
 const TimeAndDatePicker: React.FC = () => {
   const {
@@ -49,31 +49,26 @@ const TimeAndDatePicker: React.FC = () => {
         selectedTimezone,
       }),
     );
-  }, [selectedDate, selectedTimeValue, selectedTimezone]);
+  }, [selectedDate, selectedTimeValue, selectedTimezone, dispatch]);
 
   const InputWithCalendar = forwardRef<
-      HTMLInputElement,
-      {
-        value?: string;
-        onClick?: (val: unknown) => void;
-      }
-      >(
-      (
-          { value, onClick },
-          ref,
-      ) => (
-          <div className="relative flex px-1">
-            <input
-                type="text"
-                className="block text-lg text-white bg-black border border-gray-24 rounded-md shadow-sm font-whyte h-14 px-4 py-5 relative w-full focus:outline-none  focus:border-gray-24 flex-grow hover:border-blue-50"
-                defaultValue={value}
-                onClick={onClick}
-                readOnly={true}
-                ref={ref}
-            />
-          </div>
-      ),
-  );
+    HTMLInputElement,
+    {
+      value?: string;
+      onClick?: (val: unknown) => void;
+    }
+  >(({ value, onClick }, ref) => (
+    <div className="relative flex px-1">
+      <input
+        type="text"
+        className="block text-lg text-white bg-black border border-gray-24 rounded-md shadow-sm font-whyte h-14 px-4 py-5 relative w-full focus:outline-none  focus:border-gray-24 flex-grow hover:border-blue-50"
+        defaultValue={value}
+        onClick={onClick}
+        readOnly={true}
+        ref={ref}
+      />
+    </div>
+  ));
 
   InputWithCalendar.displayName = "InputWithCalendar";
 
@@ -86,7 +81,7 @@ const TimeAndDatePicker: React.FC = () => {
         value: timezones[timezone]?.name,
         timezone: timezones[timezone]?.utcOffsetStr,
       })),
-    [],
+    [timezones],
   );
 
   const IndicatorSeparator = (props) => {
@@ -95,7 +90,9 @@ const TimeAndDatePicker: React.FC = () => {
 
   const SingleValue = ({ children, ...props }) => {
     return (
-      <components.SingleValue {...props}>
+      <components.SingleValue
+        {...(props as SingleValueProps<{ [key: string]: string }>)}
+      >
         <div className="flex justify-between">
           <span>{children.replaceAll("_", " ")}</span>
           <span className="text-gray-49">UTC {props?.data?.timezone}</span>
@@ -135,6 +132,7 @@ const TimeAndDatePicker: React.FC = () => {
       background: "#000000",
       borderRadius: "5px",
       height: "56px",
+      border: "1px solid #3D3D3D",
     }),
     singleValue: (base) => ({
       ...base,
@@ -181,21 +179,21 @@ const TimeAndDatePicker: React.FC = () => {
         <div className="flex mt-2 space-x-6 justify-between items-center w-full">
           <div>
             <DatePicker
-                selected={selectedDate}
-                onChange={(date) => setSelectedDate(date)}
-                startDate={new Date(Date.now() + TWO_WEEKS_IN_MS)}
-                // Add date two weeks from now
-                minDate={new Date()}
-                nextMonthButtonLabel=">"
-                previousMonthButtonLabel="<"
-                todayButton="Go to Today"
-                formatWeekDay={(nameOfDay) => nameOfDay.substr(0, 1)}
-                dateFormat={selectedDate.toLocaleDateString()}
-                showMonthDropdown
-                showYearDropdown
-                dropdownMode="select"
-                shouldCloseOnSelect={false}
-                customInput={<InputWithCalendar />}
+              selected={selectedDate}
+              onChange={(date) => setSelectedDate(date)}
+              startDate={new Date(Date.now() + TWO_WEEKS_IN_MS)}
+              // Add date two weeks from now
+              minDate={new Date()}
+              nextMonthButtonLabel=">"
+              previousMonthButtonLabel="<"
+              todayButton="Go to Today"
+              formatWeekDay={(nameOfDay) => nameOfDay.substr(0, 1)}
+              dateFormat={selectedDate.toLocaleDateString()}
+              showMonthDropdown
+              showYearDropdown
+              dropdownMode="select"
+              shouldCloseOnSelect={false}
+              customInput={<InputWithCalendar />}
             />
           </div>
 
