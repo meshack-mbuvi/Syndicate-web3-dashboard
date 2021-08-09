@@ -184,6 +184,7 @@ module.exports = {
           "light-darker": "#000AFF",
           navy: "#4376FF",
           rockBlue: "#8F9CAB",
+          melanie: "#BDCFE3",
         },
         yellow: {
           ...colors.yellow,
