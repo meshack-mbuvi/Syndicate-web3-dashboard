@@ -48,3 +48,9 @@ export const formatNumbers = (number) => {
   // format number and add suffix
   return scaled.toFixed(1) + suffix;
 };
+
+export const  numberInputRemoveCommas = (event:React.ChangeEvent<HTMLInputElement>):any => {
+  let { value } = event.target;
+  // remove commas from big numbers before we set state
+  return value.replace(/,/g, "");
+}
