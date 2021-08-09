@@ -1,5 +1,5 @@
 import { RootState } from "@/redux/store";
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import { NonEditableSetting } from "../../shared";
 import { DepositTokenSelect } from "./DepositTokenSelect";
@@ -26,6 +26,24 @@ export const TokenSelectInput: React.FC<ITokenSelectInput> = (props) => {
     setShowDepositTokens(!showDepositTokens);
   };
 
+  const dropdownRef = useRef(null);
+
+  useEffect(() => {
+    const onPageClickEvent = (e) => {
+      if (dropdownRef.current !== null && !dropdownRef.current.contains(e.target)) {
+        setShowDepositTokens(!showDepositTokens);
+      }
+    };
+
+    if (showDepositTokens) {
+      window.addEventListener('click', onPageClickEvent);
+    }
+
+    return () => {
+      window.removeEventListener('click', onPageClickEvent);
+    }
+  }, [showDepositTokens, setShowDepositTokens]);
+
   return (
     <div>
       <div className="flex justify-between">
@@ -40,7 +58,7 @@ export const TokenSelectInput: React.FC<ITokenSelectInput> = (props) => {
         )}
       </div>
 
-      <div className="mt-1 relative rounded-md shadow-sm">
+      <div className="mt-1 relative rounded-md shadow-sm" ref={dropdownRef}>
         {depositTokenLogo ? (
           <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
             <img
