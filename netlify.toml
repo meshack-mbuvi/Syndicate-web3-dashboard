@@ -1,9 +1,35 @@
 [build]
   functions = "functions/build"
   command = "npm run build && npm run lambda-build"
+
 [functions]
   directory = "functions/build"
+
 [[plugins]]
-package = 'netlify-plugin-contextual-env'
+  package = 'netlify-plugin-contextual-env'
   [plugins.inputs]
-  mode = 'prefix'
+    mode = 'prefix'
+
+[[headers]]
+    for = "/*"
+    [headers.values]
+      Access-Control-Allow-Origin = "https://rinkeby.gnosis-safe.io"
+
+[context.production]
+  [[context.production.headers]]
+      for = "/*"
+      [context.production.headers.values]
+          Access-Control-Allow-Origin = "https://gnosis-safe.io"
+
+[context.deploy-preview]
+  [[context.deploy-preview.headers]]
+    for = "/*"
+    [context.deploy-preview.headers.values]
+      Access-Control-Allow-Origin = "https://rinkeby.gnosis-safe.io"
+
+[context.staging]
+  [[context.staging.headers]]
+    for = "/*"
+    [context.staging.headers.values]
+      Access-Control-Allow-Origin = "https://rinkeby.gnosis-safe.io"
+

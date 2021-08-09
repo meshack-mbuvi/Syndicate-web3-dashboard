@@ -21,6 +21,7 @@ export default function SEO({
       <meta property="twitter:creator" content={config.social.twitter} />
       <meta property="twitter:title" content={title} />
       <meta property="twitter:description" content={description} />
+      <link rel="manifest" href="/manifest.json"></link>
     </Head>
   );
 }

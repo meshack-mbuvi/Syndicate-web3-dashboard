@@ -143,8 +143,10 @@ export class SyndicateAllowlistLogic extends BaseLogicContract {
           // close wallet confirmation modal
           setShowWalletConfirmationModal(false);
           setSubmitting(true);
+        }).on("receipt", () => {
+          setSubmitting(false);
         });
-      setSubmitting(false);
+      await setSubmitting(false);
     } catch (error) {
       throw error;
     }

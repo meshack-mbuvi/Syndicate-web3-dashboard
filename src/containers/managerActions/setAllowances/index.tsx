@@ -10,7 +10,6 @@ import { managerActionTexts } from "@/components/syndicates/shared/Constants/man
 import { SyndicateActionLoader } from "@/components/syndicates/shared/syndicateActionLoader";
 import { getMetamaskError } from "@/helpers/metamaskError";
 import { RootState } from "@/redux/store";
-import { web3 } from "@/utils";
 import { getWeiAmount } from "@/utils/conversions";
 import { floatedNumberWithCommas } from "@/utils/formattedNumbers";
 import { Validate } from "@/utils/validators";
@@ -23,8 +22,6 @@ import {
 } from "src/redux/actions/tokenAllowances";
 import ERC20ABI from "src/utils/abi/erc20";
 import { isUnlimited } from "src/utils/conversions";
-
-const BN = web3.utils.BN;
 
 interface Props {
   hideManagerSetAllowances: Function;
@@ -46,6 +43,8 @@ const ManagerSetAllowance = (props: Props) => {
       web3: { account, web3 },
     },
   } = useSelector((state: RootState) => state);
+
+  const BN = web3.utils.BN;
 
   const dispatch = useDispatch();
   const router = useRouter();
@@ -209,11 +208,8 @@ const ManagerSetAllowance = (props: Props) => {
             const sufficientAllowanceSet =
               +managerApprovedAllowance >= +depositTotalMax;
 
-            const {
-              tokenSymbol,
-              tokenAddress,
-              tokenDecimals,
-            } = depositTokenAllowanceDetails[0];
+            const { tokenSymbol, tokenAddress, tokenDecimals } =
+              depositTokenAllowanceDetails[0];
 
             dispatch(
               storeDepositTokenAllowance([
@@ -229,9 +225,8 @@ const ManagerSetAllowance = (props: Props) => {
             );
           } else if (distributing) {
             // dispatch new distribution token allowance details
-            const { tokenDistributions } = distributionTokensAllowanceDetails[
-              index
-            ];
+            const { tokenDistributions } =
+              distributionTokensAllowanceDetails[index];
             // check if new allowance set is sufficient.
             const sufficientAllowanceSet =
               +managerApprovedAllowance >= +tokenDistributions;

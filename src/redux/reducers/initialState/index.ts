@@ -7,6 +7,7 @@ export enum SYNDICATE_CHAIN_TYPE {
   onChain = "onChain",
   offChain = "offChain",
 }
+const initialWeb3 = new Web3(process.env.NEXT_PUBLIC_INFURA_ENDPOINT);
 
 type InitialState = {
   web3: {
@@ -136,7 +137,7 @@ export const initialState: InitialState = {
     isErrorModalOpen: false,
     error: null,
     address: null,
-    web3: null,
+    web3: initialWeb3,
     web3contractInstance: null,
     account: "",
     providerName: "",

@@ -10,7 +10,7 @@ import AddressMenuDropDown from "./accountMenuDropdown";
 export const Wallet: React.FC = () => {
   /**
    * This web3 is coming from the provider that is connected using the
-   * hook useWeb3React() from @web3-react library.
+   * hook web3modal.
    * The instance is in the application's store and is passed here as props
    */
   const { web3 } = useSelector((state: RootState) => state.web3Reducer);
