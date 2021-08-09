@@ -34,6 +34,8 @@ const CreateSyndicate: React.FC = () => {
   // Improve this instead of hardcoding
   const lastStep = currentStep === 2;
 
+  const firstStep = currentStep === 0;
+
   const hideContinueButton = currentStep > 2;
 
   const dispatch = useDispatch();
@@ -88,6 +90,11 @@ const CreateSyndicate: React.FC = () => {
   }, [managerWithOpenSyndicate, showSuccessView]);
 
   const TERMS_OF_SERVICE_LINK = process.env.NEXT_PUBLIC_TERMS_OF_SERVICE_LINK;
+
+  const handleCancel = () => {
+    // Go to the syndicates page
+    router.replace("/syndicates");
+  };
 
   return (
     <Layout>
@@ -154,11 +161,13 @@ const CreateSyndicate: React.FC = () => {
                     className={`flex items-center px-12 py-3.5 text-gray-dim hover:text-white focus:outline-none ${
                       buttonsDisabled ? "cursor-not-allowed" : ""
                     }`}
-                    onClick={handleBack}
+                    onClick={firstStep ? handleCancel : handleBack}
                     disabled={buttonsDisabled}
                   >
                     <ArrowNarrowLeftIcon className="w-4" />
-                    <span className="ml-2">Back</span>
+                    <span className="ml-2">
+                      {firstStep ? " Cancel" : "Back"}
+                    </span>
                   </button>
                   {!hideContinueButton ? (
                     <button
