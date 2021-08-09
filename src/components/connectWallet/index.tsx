@@ -43,6 +43,7 @@ export const ConnectWallet = (props: { web3; showWalletModal }) => {
     setShowSuccessModal,
     providerName,
     cancelWalletConnection,
+    loadedAsSafeApp,
   } = useConnectWalletContext();
 
   //loader text
@@ -85,18 +86,19 @@ export const ConnectWallet = (props: { web3; showWalletModal }) => {
       name: "Metamask",
       icon: "/images/metamaskIcon.svg",
       providerToActivate: () => activateInjected(),
+      hidden: loadedAsSafeApp,
     },
-    // NOTE: Gnosis safe has been disabled but will be enabled in future when needed.
-    // Reference ticket: SYN-49 Gnosis Wallet Integration
-    // {
-    //   name: "Gnosis Safe",
-    //   icon: gnosisSafeIcon,
-    //   providerToActivate: () => activateGnosisSafe(),
-    // },
+    {
+      name: "Gnosis Safe",
+      icon: "/images/gnosisSafe.png",
+      providerToActivate: () => activateGnosisSafe(),
+      hidden: !loadedAsSafeApp,
+    },
     {
       name: "Wallet Connect",
       icon: "/images/walletConnect.svg",
       providerToActivate: () => activateWalletConnect(),
+      hidden: loadedAsSafeApp,
     },
   ];
 
@@ -122,14 +124,14 @@ export const ConnectWallet = (props: { web3; showWalletModal }) => {
    *
    * Ticket reference: SYN-49
    */
-  // const activateGnosisSafe = async () => {
-  //   await activateProvider(gnosisSafeConnect,"gnosisSafeConnect");
-  // };
+  const activateGnosisSafe = async () => {
+    await connectWallet("GnosisSafe");
+  };
 
   // showConnectWalletModal
 
   // button for each provider
-  const ProviderButton = ({ name, icon, providerToActivate }) => {
+  let ProviderButton = ({ name, icon, providerToActivate, hidden }) => {
     let gradientColor;
     switch (name) {
       case "Gnosis Safe":
@@ -143,15 +145,23 @@ export const ConnectWallet = (props: { web3; showWalletModal }) => {
       default:
         gradientColor = "from-orange-dark to-orange-light";
     }
-    return (
-      <button
-        className={`w-full p-4 rounded-lg flex items-center justify-between border border-gray-102 hover:border-gray-3 focus:outline-none focus:border-gray-3 focus:border-1 bg-gradient-to-r ${gradientColor} `}
-        onClick={() => providerToActivate()}
-      >
-        <span className="text-white text-sm sm:text-base">{name}</span>
-        <img alt="icon" src={icon} className="inline w-6 sm:w-10" />
-      </button>
-    );
+    if (!hidden) {
+      return (
+        <div
+          className="flex justify-center items-center m-auto mb-3"
+          key={name}
+        >
+          <button
+            className={`w-full p-4 rounded-lg flex items-center justify-between border border-gray-102 hover:border-gray-3 focus:outline-none focus:border-gray-3 focus:border-1 bg-gradient-to-r ${gradientColor} `}
+            onClick={() => providerToActivate()}
+          >
+            <span className="text-white text-sm sm:text-base">{name}</span>
+            <img alt="icon" src={icon} className="inline mw-6 sm:w-10" />
+          </button>
+        </div>
+      );
+    }
+    return null;
   };
 
   let errorButtonText, errorIcon;
@@ -183,9 +193,11 @@ export const ConnectWallet = (props: { web3; showWalletModal }) => {
   // provider icon to display on loading state modals
   let providerIcon;
   if (providerName === "Injected") {
-    providerIcon = "images/metamaskIcon.svg";
+    providerIcon = "/images/metamaskIcon.svg";
   } else if (providerName === "WalletConnect") {
     providerIcon = "/images/walletConnect.svg";
+  } else if (providerName === "GnosisSafe") {
+    providerIcon = "/images/gnosisSafe.png";
   }
 
   // open external help links
@@ -206,13 +218,8 @@ export const ConnectWallet = (props: { web3; showWalletModal }) => {
       >
         <>
           {/* show wallet providers */}
-          {providers.map(({ name, icon, providerToActivate }) => (
-            <div
-              className="flex justify-center items-center m-auto mb-3"
-              key={name}
-            >
-              <ProviderButton {...{ name, icon, providerToActivate }} />
-            </div>
+          {providers.map((provider) => (
+            <ProviderButton {...provider} />
           ))}
 
           <p className="mt-5 text-sm text-center">New to Ethereum?</p>
@@ -263,7 +270,7 @@ export const ConnectWallet = (props: { web3; showWalletModal }) => {
       {/* success modal */}
       <ConnectModal
         {...{
-          show: showSuccessModal,
+          show: showSuccessModal && !walletConnecting,
           showCloseButton: false,
           height: "h-80",
           closeModal: () => setShowSuccessModal(false),
@@ -271,10 +278,7 @@ export const ConnectWallet = (props: { web3; showWalletModal }) => {
       >
         <div className="flex flex-col items-center justify-center h-full">
           <div className="rounded-full h-28 w-28 border-4 border-green-light flex items-center justify-center">
-            <img
-              src="/images/metamaskIcon.svg"
-              className="inline w-6 sm:w-10"
-            />
+            <img src={providerIcon} className="inline w-6 sm:w-10" />
           </div>
 
           <p

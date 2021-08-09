@@ -25,11 +25,6 @@ Router.events.on("routeChangeStart", () => NProgress.start());
 Router.events.on("routeChangeComplete", () => NProgress.done());
 Router.events.on("routeChangeError", () => NProgress.done());
 
-const SyndicateWeb3ReactProvider = dynamic(
-  () => import("src/providers/web3Provider"),
-  { ssr: false },
-);
-
 // Initialize Amplitude Services.
 const AmplitudeProvider = dynamic(() => import("@/components/amplitude"), {
   ssr: false,
@@ -39,7 +34,6 @@ const App = ({ Component, pageProps }) => {
   return (
     <IntercomProvider appId={INTERCOM_APP_ID} autoBoot={true}>
       <SyndicateInBetaBannerProvider>
-        <SyndicateWeb3ReactProvider>
           <ConnectWalletProvider>
             <CreateSyndicateProvider>
               <Head>
@@ -54,7 +48,6 @@ const App = ({ Component, pageProps }) => {
               <Component {...pageProps} />
             </CreateSyndicateProvider>
           </ConnectWalletProvider>
-        </SyndicateWeb3ReactProvider>
       </SyndicateInBetaBannerProvider>
     </IntercomProvider>
   );

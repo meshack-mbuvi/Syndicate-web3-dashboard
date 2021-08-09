@@ -57,6 +57,10 @@ const AddressMenuDropDown: FC<IAddressMenuDropDown> = ({ web3 }) => {
         currentProvider = "WalletConnect";
         imageLink = "/images/walletConnect.svg";
         break;
+      case "GnosisSafe":
+        currentProvider = "Gnosis Safe";
+        imageLink = "/images/gnosisSafe.png";
+        break;
       default:
         currentProvider = "Metamask";
         imageLink = "/images/metamaskIcon.svg";

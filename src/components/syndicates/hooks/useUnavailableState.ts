@@ -2,7 +2,6 @@ import { RootState } from "@/redux/store";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import Web3 from "web3";
 
 import { constants } from "../shared/Constants";
 import { useDepositChecks } from "./useDepositChecks";
@@ -42,7 +41,7 @@ export const useUnavailableState = (page?: string) => {
   const {
     syndicatesReducer: { syndicateAddressIsValid },
     web3Reducer: {
-      web3: { account },
+      web3: { account, web3 },
     },
   } = useSelector((state: RootState) => state);
 
@@ -65,7 +64,7 @@ export const useUnavailableState = (page?: string) => {
   switch (page) {
     case "manage":
       useEffect(() => {
-        if (Web3.givenProvider === null && syndicateAddressIsValid) {
+        if (web3 === null && syndicateAddressIsValid) {
           setRenderJoinWaitList(true);
         } else if (!account) {
           setText(noAccountState);
@@ -77,7 +76,7 @@ export const useUnavailableState = (page?: string) => {
 
     default:
       useEffect(() => {
-        if (Web3.givenProvider === null && syndicateAddressIsValid) {
+        if (web3 === null && syndicateAddressIsValid) {
           setRenderJoinWaitList(true);
         } else if (!account) {
           setText({

@@ -1,6 +1,6 @@
 const Web3 = require("web3");
 const web3 = new Web3(
-  Web3.givenProvider || `${process.env.NEXT_PUBLIC_INFURA_ENDPOINT}`,
+  `${process.env.NEXT_PUBLIC_INFURA_ENDPOINT}`,
 );
 const CoinGecko = require("coingecko-api");
 const abi = require("human-standard-token-abi");

@@ -1,4 +1,2 @@
 const Web3 = require("web3");
-export const web3 = new Web3(
-  Web3.givenProvider || `${process.env.NEXT_PUBLIC_INFURA_ENDPOINT}`,
-);
+export const web3 = new Web3(`${process.env.NEXT_PUBLIC_INFURA_ENDPOINT}`);

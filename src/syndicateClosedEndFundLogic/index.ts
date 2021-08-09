@@ -4,8 +4,6 @@ import { SyndicateGetterLogic } from "./getterLogic";
 import { SyndicateManagerLogic } from "./managerLogic";
 import { SyndicateAllowlistLogic } from "./allowlistLogic";
 
-const Web3 = require("web3");
-
 // contract names
 const getterLogicContractName =
   process.env.NEXT_PUBLIC_GETTER_LOGIC_CONTRACT_NAME;
@@ -21,12 +19,7 @@ const depositLogicContractName =
 const allowlistLogicContractName =
   process.env.NEXT_PUBLIC_ALLOWLIST_LOGIC_CONTRACT_NAME;
 
-// Initialize Web3
-const web3 = new Web3(
-  Web3.givenProvider || `${process.env.NEXT_PUBLIC_INFURA_ENDPOINT}`,
-);
-
-export const getSyndicateContracts = async () => {
+export const getSyndicateContracts = async (web3) => {
   // Retrieve contract from cache.
   // if not contracts from cache or cache expired then continue
   // with initialization.
