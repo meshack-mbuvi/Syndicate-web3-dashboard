@@ -141,6 +141,13 @@ const TimeAndDatePicker: React.FC = () => {
     }),
     input: (base) => ({
       ...base,
+      "& input": {
+        fontFamily: "ABC Whyte Regular",
+        "&:focus": {
+          boxShadow: "none",
+          border: "none !important",
+        },
+      },
     }),
     menu: (base) => ({
       ...base,

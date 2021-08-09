@@ -62,7 +62,7 @@ const TokenItem = (props: TokenProps) => {
   };
   return (
     <button
-      className="flex justify-between items-center w-full py-2 px-4 rounded-md cursor-pointer hover:bg-gray-darkInput focus:bg-gray-darkInput transition-all"
+      className="flex justify-between items-center w-full py-2 px-4 rounded-md cursor-pointer hover:bg-gray-darkInput focus:bg-gray-darkInput transition-all mb-1"
       onClick={() => storeDepositTokenDetails({ ...props })}
     >
       <div className="flex justify-start items-center">
