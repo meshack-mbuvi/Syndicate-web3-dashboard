@@ -118,7 +118,7 @@ const SyndicateType: React.FC = () => {
               <div className="flex-shrink-0">
                 <img
                   className="inline mr-4 h-5"
-                  src="/images/checkCircle.svg"
+                  src="/images/logo.svg"
                   alt="syndicate-protocal"
                 />
               </div>
