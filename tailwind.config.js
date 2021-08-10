@@ -152,6 +152,7 @@ module.exports = {
           dark: "#272727",
           light: "#E5E5E5",
           dim: "#717171",
+          dimmer: "#777777",
           nero: "#252525",
           manatee: "#8F97AB",
           matterhorn: "#515151",
