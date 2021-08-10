@@ -43,7 +43,7 @@ const Confirmation: React.FC = () => {
     },
     closeDateAndTimeReducer: {
       createSyndicate: {
-        closeDateAndTime: { selectedDate, selectedTimeValue },
+        closeDateAndTime: { selectedDate, selectedTimeValue, selectedTimezone },
       },
     },
   } = useSelector((state: RootState) => state);
@@ -100,7 +100,8 @@ const Confirmation: React.FC = () => {
         <li className="pl-0 p-2">
           <p className="text-gray-dimmer mb-1">Close time</p>
           <p>
-            {selectedTimeValue} on {new Date(selectedDate).toLocaleDateString()}
+            {selectedTimeValue} UTC {selectedTimezone.timezone} on{" "}
+            {new Date(selectedDate).toLocaleDateString()}
           </p>
         </li>
         <li className="pl-0 p-2">
