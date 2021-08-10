@@ -76,7 +76,7 @@ const InputWithPercent: React.FC<IProps> = ({
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const _value = parseFloat(e.target.value);
-    setInputValue(_value);
+    setInputValue(_value ? _value : min ? min : 0);
     setValue(_value);
 
     // Handles syndicateProfitSharePercent value
