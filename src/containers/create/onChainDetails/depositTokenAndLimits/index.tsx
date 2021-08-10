@@ -7,15 +7,15 @@ import {
   setDepositTotalMax,
 } from "@/redux/actions/createSyndicate/syndicateOnChainData/tokenAndDepositsLimits";
 import { RootState } from "@/redux/store";
+import {
+  numberInputRemoveCommas,
+  numberWithCommas,
+} from "@/utils/formattedNumbers";
 import { isWholeNumber, Validate } from "@/utils/validators";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { ContentTitle } from "../../shared";
 import { TokenSelectInput } from "./tokenSelectInput";
-import {
-  numberWithCommas,
-   numberInputRemoveCommas,
-} from "@/utils/formattedNumbers";
 
 const DepositTokenAndLimit: React.FC = () => {
   const {
@@ -118,7 +118,7 @@ const DepositTokenAndLimit: React.FC = () => {
 
   const handleDepositMaxTotal = (event) => {
     event.preventDefault();
-    const value =  numberInputRemoveCommas(event);
+    const value = numberInputRemoveCommas(event);
 
     setMaxTotalDepositsError("");
     // value should be set to unlimited once everything is deleted.
@@ -139,7 +139,7 @@ const DepositTokenAndLimit: React.FC = () => {
 
   const handleDepositsNumMax = (event) => {
     event.preventDefault();
-    const value =  numberInputRemoveCommas(event);
+    const value = numberInputRemoveCommas(event);
 
     setDepositsNumbMaxError("");
     // value should be set to unlimited once everything is deleted.
@@ -164,7 +164,7 @@ const DepositTokenAndLimit: React.FC = () => {
 
   const handleDepositMemberMin = (event) => {
     event.preventDefault();
-    const value =  numberInputRemoveCommas(event);
+    const value = numberInputRemoveCommas(event);
 
     setDepositMemberMinError("");
 
@@ -183,7 +183,7 @@ const DepositTokenAndLimit: React.FC = () => {
 
   const handleDepositMemberMax = (event) => {
     event.preventDefault();
-    const value =  numberInputRemoveCommas(event);
+    const value = numberInputRemoveCommas(event);
     setDepositMemberMaxError("");
 
     // value should be set to unlimited once everything is deleted.
@@ -235,12 +235,12 @@ const DepositTokenAndLimit: React.FC = () => {
             }}
           />
 
-          {+numMembersMax > 99 ? (
-            <div className="rounded-md p-4 bg-blue-navy bg-opacity-15">
+          {+numMembersMax > 2000 ? (
+            <div className="rounded-md p-4 space-y-2 font-whyte text-sm text-blue-melanie bg-blue-navy bg-opacity-15">
               <p>
-                In the US, if this number is greater than 99, you’re no longer
-                506(b) exempt and may be subject to additional laws and
-                regulations.
+                US-based companies with 2,000 or more shareholders are
+                considered public companies by the SEC. Public companies must
+                register and follow certain reporting standards and regulations.
               </p>
             </div>
           ) : null}
