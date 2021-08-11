@@ -223,7 +223,7 @@ const DepositTokenAndLimit: React.FC = () => {
             />
 
             {+numMembersMax > 2000 || !numMembersMax ? (
-              <div className="rounded-md p-4 -mt-3 font-whyte text-sm text-blue-melanie bg-blue-navy bg-opacity-15">
+              <div className="rounded-md p-4 mt-3 font-whyte text-sm text-blue-melanie bg-blue-navy bg-opacity-15">
                 <p>
                   US-based companies with 2,000 or more shareholders are
                   considered public companies by the SEC. Public companies must

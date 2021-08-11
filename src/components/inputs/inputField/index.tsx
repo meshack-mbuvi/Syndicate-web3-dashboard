@@ -90,7 +90,9 @@ export const InputField = (props: {
         {addOn && (
           <div className="absolute inset-y-0 right-0 pr-3 mt-1 flex items-center pointer-events-none">
             {logo ? (
-              <img className="h-5 w-5 mr-1" src={logo} alt="logo" />
+              <span className="bg-black px-1">
+                <img className="h-5 w-5" src={logo} alt="logo" />
+              </span>
             ) : null}
             <span className="text-white sm:text-sm" id="price-currency">
               {addOn}
