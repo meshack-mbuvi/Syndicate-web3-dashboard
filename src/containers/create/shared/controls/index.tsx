@@ -33,7 +33,7 @@ const Controls = () => {
     >
       <div className="relative flex mx-4 justify-between items-center border-t-1 border-gray-erieBlack h-20">
         <button
-          className={`flex items-center px-12 py-3.5 text-gray-dim hover:text-white focus:outline-none ${
+          className={`flex items-center py-3.5 text-gray-dim hover:text-white focus:outline-none ${
             buttonsDisabled ? "cursor-not-allowed" : ""
           }`}
           onClick={firstStep ? handleCancel : handleBack}
