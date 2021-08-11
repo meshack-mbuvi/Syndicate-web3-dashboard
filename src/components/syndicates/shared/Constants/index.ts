@@ -96,7 +96,7 @@ const dismissButtonText = "Dismiss";
 
 // syndicate details section
 const syndicateDetailsFooterText =
-  "Syndicate is currently in private beta and is open only to accredited investors. No materials on the Syndicate site should be construed as a soliciatation or advice to buy any security.";
+  "Syndicate is currently in private beta and is open only to accredited investors. No materials on the Syndicate site should be construed as a solicitation or advice to buy any security.";
 const syndicateDetailsSecurityFooterText =
   "We take security seriously. Syndicate was audited by Quanstamp in March 2021.";
 const syndicateDetailsLinkText = "View the audit report here.";

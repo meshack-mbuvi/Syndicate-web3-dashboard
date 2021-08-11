@@ -45,7 +45,7 @@ const Transferable: React.FC = () => {
             key={option.title}
             className={classNames(
               transferable === option.state ? "border-blue" : "border-inactive",
-              `relative rounded-lg border px-6 py-8 shadow-sm flex items-center space-x-3 ${
+              `relative rounded-lg border px-6 h-24 shadow-sm flex items-center space-x-3 ${
               transferable !== option.state && "hover:border-blue-50"
               } mb-4 cursor-pointer`,
             )}
@@ -67,9 +67,9 @@ const Transferable: React.FC = () => {
               <p
                 className={classNames(
                   transferable === option.state
-                    ? "text-gray-white"
-                    : "text-gray-inactive",
-                  "text-base leading-6",
+                    ? "opacity-100"
+                    : "opacity-50",
+                  "text-base leading-6", "text-white"
                 )}
               >
                 {option.title}
