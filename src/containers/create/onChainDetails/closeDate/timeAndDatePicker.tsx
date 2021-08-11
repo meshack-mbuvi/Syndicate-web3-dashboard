@@ -172,7 +172,7 @@ const TimeAndDatePicker: React.FC = () => {
     }),
     dropdownIndicator: (base) => ({
       ...base,
-      color: "#ffff",
+      color: "#6b7280",
     }),
   };
 
