@@ -7,7 +7,6 @@ import WalletNotConnected from "@/components/walletNotConnected";
 import { ContentInfo, MainContent } from "@/containers/create/shared";
 import Controls from "@/containers/create/shared/controls";
 import { useCreateSyndicateContext } from "@/context/CreateSyndicateContext";
-import { useSyndicateInBetaBannerContext } from "@/context/SyndicateInBetaBannerContext";
 import { getSyndicates } from "@/redux/actions/syndicates";
 import { RootState } from "@/redux/store";
 import { useRouter } from "next/router";
@@ -22,8 +21,6 @@ const CreateSyndicate: React.FC = () => {
     showSuccessView,
     currentStep,
   } = useCreateSyndicateContext();
-
-  const { showBanner } = useSyndicateInBetaBannerContext();
 
   const dispatch = useDispatch();
 
