@@ -52,10 +52,6 @@ export const InputField = (props: {
     }
   }, [focus]);
 
-  const disabledClasses = disabled
-    ? "text-sm text-gray-500 bg-gray-99 border-0 px-0 pb-0"
-    : "text-black border-gray-85";
-
   return (
     <div className={`flex flex-col justify-center w-full`}>
       <div className="flex justify-between">
@@ -75,12 +71,12 @@ export const InputField = (props: {
           name={name}
           id={id}
           onChange={(e) => {
-            if (isNumber && isNaN(e.target.value.replace(/,/g,"") as any)) {
-              return
+            if (isNumber && isNaN(e.target.value.replace(/,/g, "") as any)) {
+              return;
             }
             onChange(e);
           }}
-          className={`flex w-full min-w-0 py-3 mt-1 font-whyte text-sm rounded-md bg-black border focus:border-blue text-white focus:outline-none focus:ring-gray-24 flex-grow border hover:border-blue-50 ${
+          className={`flex w-full min-w-0 py-3 mt-1 font-whyte text-sm rounded-md bg-black  focus:border-blue text-white focus:outline-none focus:ring-gray-24 flex-grow border hover:border-blue-50 ${
             addOn ? "pr-14" : ""
           }`}
           {...rest}
@@ -98,11 +94,10 @@ export const InputField = (props: {
           </div>
         )}
       </div>
-      {error && !disabled &&
-        <p className="text-red-500 text-xs h-1 mt-1 mb-1">
-          {error}
-        </p>
-      }
+
+      <p className="text-red-500 text-xs h-4 borders mt-1 mb-1">
+        {error && !disabled && error}
+      </p>
     </div>
   );
 };
