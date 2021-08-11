@@ -1,4 +1,5 @@
 import InputWithPercent from "@/components/inputs/inputWithPercent";
+import { useCreateSyndicateContext } from "@/context/CreateSyndicateContext";
 import {
   setExpectedAnnualOperatingFees,
   setProfitShareToSyndicateLead,
@@ -18,8 +19,10 @@ const optionStyles = {
   [PERCENTAGES.THREE]: "border-r-0 rounded-tr-md rounded-br-md",
 };
 
-const FeesAndDistribution: React.FC = () => {
+const DistributionShare: React.FC = () => {
   const dispatch = useDispatch();
+
+  const { setButtonsDisabled } = useCreateSyndicateContext();
 
   const [resetToDefault, setResetToDefault] = useState(false);
 
@@ -35,6 +38,36 @@ const FeesAndDistribution: React.FC = () => {
     },
   } = useSelector((state: RootState) => state);
 
+  const [annualFeesCustomError, setAnnualFeesCustomError] = useState("");
+  const [profitShareToLeadCustomError, setProfitShareToLeadCustomError] =
+    useState("");
+  const [
+    profitShareToSyndicateCustomError,
+    setProfitShareToSyndicateCustomError,
+  ] = useState("");
+  const [buttonOptionError, setButtonOptionError] = useState("");
+
+  useEffect(() => {
+    if (
+      annualFeesCustomError ||
+      profitShareToLeadCustomError ||
+      profitShareToSyndicateCustomError ||
+      buttonOptionError
+    ) {
+      setButtonsDisabled(true);
+    } else {
+      setButtonsDisabled(false);
+    }
+    return () => {
+      setButtonsDisabled(false);
+    };
+  }, [
+    annualFeesCustomError,
+    profitShareToLeadCustomError,
+    profitShareToSyndicateCustomError,
+    buttonOptionError,
+  ]);
+
   useEffect(() => {
     if (isNaN(syndicateProfitSharePercent)) {
       dispatch(setProfitShareToSyndProtocol(PERCENTAGES.HALF));
@@ -43,26 +76,90 @@ const FeesAndDistribution: React.FC = () => {
 
   const handleSetExpectedAnnualOperatingFees = (value: number) => {
     dispatch(setExpectedAnnualOperatingFees(value));
+
+    setProfitShareToLeadCustomError("");
+    setProfitShareToSyndicateCustomError("");
+    setButtonOptionError("");
+
+    // check whether total percentage exceeds 100%
+    const allowedPercent =
+      100 - (syndicateProfitSharePercent + +profitShareToSyndicateLead);
+    if (+value > allowedPercent) {
+      setAnnualFeesCustomError(
+        `Expected annual operating fees cannot exceed ${allowedPercent.toFixed(
+          2,
+        )}%. The sum of all distribution share values must not exceed 100%`,
+      );
+    } else {
+      setAnnualFeesCustomError("");
+    }
   };
 
   const handleSetProfitShareToSyndicateLead = (value: number) => {
     dispatch(setProfitShareToSyndicateLead(value));
+    // Clear errors on other input fields
+    setAnnualFeesCustomError("");
+    setProfitShareToSyndicateCustomError("");
+    setButtonOptionError("");
+
+    const allowedPercent =
+      100 - (syndicateProfitSharePercent + +expectedAnnualOperatingFees);
+    if (+value > allowedPercent) {
+      setProfitShareToLeadCustomError(
+        `Share of distributions to Syndicate Lead cannot exceed ${allowedPercent.toFixed(
+          2,
+        )}%. The sum of all distribution share values must not exceed 100%`,
+      );
+    } else {
+      setProfitShareToLeadCustomError("");
+    }
   };
 
   const handleSetProfitShareToSyndProtocol = (value: number) => {
     dispatch(setProfitShareToSyndProtocol(value));
+    setProfitShareToLeadCustomError("");
+    setAnnualFeesCustomError("");
+    setButtonOptionError("");
+
+    const allowedPercent =
+      100 - (profitShareToSyndicateLead + +expectedAnnualOperatingFees);
+
+    if (+value > allowedPercent) {
+      setProfitShareToSyndicateCustomError(
+        `Share of distributions to Syndicate Protocol cannot exceed ${allowedPercent.toFixed(
+          2,
+        )}%. The sum of all distribution share values must not exceed 100%`,
+      );
+    } else {
+      setProfitShareToSyndicateCustomError("");
+    }
   };
 
   const handleTogglePercentages = (option: number) => {
     dispatch(setProfitShareToSyndProtocol(option));
+
+    setProfitShareToLeadCustomError("");
+    setAnnualFeesCustomError("");
+    setProfitShareToSyndicateCustomError("");
+
+    const allowedPercent =
+      100 - (profitShareToSyndicateLead + +expectedAnnualOperatingFees);
+
+    if (+option > allowedPercent) {
+      setButtonOptionError(
+        `Share of distributions to Syndicate Protocol cannot exceed ${allowedPercent.toFixed(
+          2,
+        )}%. The sum of all distribution share values must not exceed 100%`,
+      );
+    } else {
+      setButtonOptionError("");
+    }
     setResetToDefault(true);
   };
 
   return (
     <div className="flex flex-col w-full">
-      <div className="mb-10 text-2xl leading-8">
-        Fees and distribution share
-      </div>
+      <div className="mb-10 text-2xl leading-8">Distribution share</div>
 
       <div className="w-full">
         <InputWithPercent
@@ -71,6 +168,7 @@ const FeesAndDistribution: React.FC = () => {
           setInputValue={handleSetExpectedAnnualOperatingFees}
           placeholder="0%"
           storedValue={expectedAnnualOperatingFees}
+          customError={annualFeesCustomError}
         />
 
         <InputWithPercent
@@ -79,6 +177,7 @@ const FeesAndDistribution: React.FC = () => {
           setInputValue={handleSetProfitShareToSyndicateLead}
           placeholder="0%"
           storedValue={profitShareToSyndicateLead}
+          customError={profitShareToLeadCustomError}
         />
 
         <div className="mb-7">
@@ -86,7 +185,7 @@ const FeesAndDistribution: React.FC = () => {
             Share of distributions to Syndicate Protocol
           </label>
           <div className="grid grid-cols-3 gap-4 mt-2">
-            <div className="grid grid-cols-3 flex-grow col-span-2 rounded-md bg-black border border-gray-24 text-lg first:rounded-tl-md first:rounded-bl-md">
+            <div className="grid grid-cols-3 mb-5  flex-grow col-span-2 rounded-md bg-black border border-gray-24 text-lg first:rounded-tl-md first:rounded-bl-md">
               {options.map((option, i) => (
                 <button
                   key={i}
@@ -112,6 +211,7 @@ const FeesAndDistribution: React.FC = () => {
                 resetToDefault={resetToDefault}
                 setResetToDefault={setResetToDefault}
                 setInputValue={handleSetProfitShareToSyndProtocol}
+                customError={profitShareToSyndicateCustomError}
                 storedValue={
                   !options.some(
                     (option) => option === syndicateProfitSharePercent,
@@ -122,10 +222,15 @@ const FeesAndDistribution: React.FC = () => {
               />
             </div>
           </div>
+          <div className="w-full">
+            <p className="text-red-500 text-xs h-4 -mt-4">
+              {buttonOptionError}
+            </p>
+          </div>
         </div>
       </div>
     </div>
   );
 };
 
-export default FeesAndDistribution;
+export default DistributionShare;

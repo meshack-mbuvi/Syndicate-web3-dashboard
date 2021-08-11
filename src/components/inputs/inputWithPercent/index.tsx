@@ -1,9 +1,9 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
-import React, { useEffect, useRef, useState } from "react";
+import { useCreateSyndicateContext } from "@/context/CreateSyndicateContext";
 import { classNames } from "@/utils/classNames";
 import { ValidatePercent } from "@/utils/validators";
-import { useCreateSyndicateContext } from "@/context/CreateSyndicateContext";
+import React, { useEffect, useRef, useState } from "react";
 
 interface IProps {
   name: string;
@@ -18,6 +18,7 @@ interface IProps {
   setInputValue?: (value: number) => void;
   setResetToDefault?: (value: boolean) => void;
   storedValue?: number;
+  customError?: string;
 }
 
 const InputWithPercent: React.FC<IProps> = ({
@@ -33,6 +34,7 @@ const InputWithPercent: React.FC<IProps> = ({
   max = 100,
   step = 0.1,
   storedValue,
+  customError,
 }) => {
   const [value, setValue] = useState<number>(
     storedValue ? storedValue : placeholder ? NaN : 0,
@@ -134,7 +136,7 @@ const InputWithPercent: React.FC<IProps> = ({
           )}
         </div>
 
-        {error && <p className="text-red-500 text-xs h-1 mt-1">{error}</p>}
+        <p className="text-red-500 text-xs h-4 mt-1">{error || customError}</p>
       </div>
     </div>
   );

@@ -207,30 +207,32 @@ const DepositTokenAndLimit: React.FC = () => {
 
         <div className="w-full space-y-3">
           <TokenSelectInput label="Deposit Token" required />
+          <div>
+            <InputField
+              {...{
+                value: numberWithCommas(numMembersMax as string),
+                label:
+                  "Maximum number of people who can deposit into this syndicate",
+                addOn: "People",
+                onChange: handleDepositsNumMax,
+                error: depositsNumbMaxError,
+                placeholder: "Unlimited",
+                type: "text",
+                isNumber: true,
+              }}
+            />
 
-          <InputField
-            {...{
-              value: numberWithCommas(numMembersMax as string),
-              label:
-                "Maximum number of people who can deposit into this syndicate",
-              addOn: "People",
-              onChange: handleDepositsNumMax,
-              error: depositsNumbMaxError,
-              placeholder: "Unlimited",
-              type: "text",
-              isNumber: true,
-            }}
-          />
-
-          {+numMembersMax > 2000 ? (
-            <div className="rounded-md p-4 space-y-2 font-whyte text-sm text-blue-melanie bg-blue-navy bg-opacity-15">
-              <p>
-                US-based companies with 2,000 or more shareholders are
-                considered public companies by the SEC. Public companies must
-                register and follow certain reporting standards and regulations.
-              </p>
-            </div>
-          ) : null}
+            {+numMembersMax > 2000 || !numMembersMax ? (
+              <div className="rounded-md p-4 -mt-3 font-whyte text-sm text-blue-melanie bg-blue-navy bg-opacity-15">
+                <p>
+                  US-based companies with 2,000 or more shareholders are
+                  considered public companies by the SEC. Public companies must
+                  register and follow certain reporting standards and
+                  regulations.
+                </p>
+              </div>
+            ) : null}
+          </div>
 
           {/* Minimum and Maximum per depositor */}
           <div className="grid grid-cols-2">
