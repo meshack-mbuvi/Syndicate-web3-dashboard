@@ -87,21 +87,17 @@ const DepositTokenAndLimit: React.FC = () => {
       setMaxTotalDepositsError("");
     }
     if (+depositMemberMax && +depositMemberMax < +depositMemberMin) {
-      setDepositMemberMinError(
-        "Minimum deposits must be less than maximum deposit per member",
-      );
+      setDepositMemberMinError("Value cannot exceed member max deposit");
     } else {
       setDepositMemberMinError("");
     }
 
     if (
       depositMemberMax &&
-      +depositMemberMax < +depositMemberMin &&
+      +depositMemberMax <= +depositMemberMin &&
       depositMemberMin
     ) {
-      setDepositMemberMaxError(
-        "Maximum deposits must greater than minimum deposit per member",
-      );
+      setDepositMemberMaxError("Value should exceed member min deposit");
     } else {
       setDepositMemberMaxError("");
     }
@@ -205,21 +201,8 @@ const DepositTokenAndLimit: React.FC = () => {
       <div className="">
         <ContentTitle>Deposit token and limits</ContentTitle>
 
-        <div className="w-full space-y-4">
+        <div className="w-full space-y-3">
           <TokenSelectInput label="Deposit Token" required />
-
-          <InputField
-            {...{
-              value: numberWithCommas(depositTotalMax),
-              label: "Max total that can be deposited into this syndicate",
-              addOn: depositTokenSymbol.toUpperCase(),
-              onChange: handleDepositMaxTotal,
-              error: maxTotalDepositsError,
-              placeholder: "Unlimited",
-              type: "text",
-              isNumber: true,
-            }}
-          />
 
           <InputField
             {...{
@@ -277,6 +260,19 @@ const DepositTokenAndLimit: React.FC = () => {
               />
             </div>
           </div>
+
+          <InputField
+            {...{
+              value: numberWithCommas(depositTotalMax),
+              label: "Max total that can be deposited into this syndicate",
+              addOn: depositTokenSymbol.toUpperCase(),
+              onChange: handleDepositMaxTotal,
+              error: maxTotalDepositsError,
+              placeholder: "Unlimited",
+              type: "text",
+              isNumber: true,
+            }}
+          />
         </div>
       </div>
     </div>
