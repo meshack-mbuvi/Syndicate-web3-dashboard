@@ -16,7 +16,7 @@ import {
   TransferableInfo,
 } from "@/containers/create/onChainDetails/componentInfo";
 import DepositTokenAndLimit from "@/containers/create/onChainDetails/depositTokenAndLimits";
-import FeesAndDistribution from "@/containers/create/onChainDetails/feesAndDistribution";
+import FeesAndDistribution from "@/containers/create/onChainDetails/distributionShare";
 import Modifiable from "@/containers/create/onChainDetails/modifiable";
 import Transferable from "@/containers/create/onChainDetails/transferable";
 import PlaceHolder from "@/containers/create/placeHolder";

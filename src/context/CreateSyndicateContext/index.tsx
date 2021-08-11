@@ -58,8 +58,9 @@ const CreateSyndicateContext = createContext<
   Partial<CreateSyndicateProviderProps>
 >({});
 
-export const useCreateSyndicateContext = (): Partial<CreateSyndicateProviderProps> =>
-  useContext(CreateSyndicateContext);
+export const useCreateSyndicateContext =
+  (): Partial<CreateSyndicateProviderProps> =>
+    useContext(CreateSyndicateContext);
 
 const CreateSyndicateProvider: React.FC<{ children: ReactNode }> = ({
   children,
@@ -68,9 +69,8 @@ const CreateSyndicateProvider: React.FC<{ children: ReactNode }> = ({
   const [currentSubStep, setCurrentSubStep] = useState(0);
   const [buttonsDisabled, setButtonsDisabled] = useState(false);
   const [continueDisabled, setContinueDisabled] = useState(false);
-  const [showWalletConfirmationText, setShowWalletConfirmationText] = useState(
-    false,
-  );
+  const [showWalletConfirmationText, setShowWalletConfirmationText] =
+    useState(false);
   const [showErrorMessage, setShowErrorMessage] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
@@ -265,8 +265,10 @@ const CreateSyndicateProvider: React.FC<{ children: ReactNode }> = ({
       setButtonsDisabled(true);
 
       const syndicateData = {
-        managerManagementFeeBasisPoints: formattedManagerManagementFeeBasisPoints,
-        managerDistributionShareBasisPoints: formattedManagerDistributionShareBasisPoints,
+        managerManagementFeeBasisPoints:
+          formattedManagerManagementFeeBasisPoints,
+        managerDistributionShareBasisPoints:
+          formattedManagerDistributionShareBasisPoints,
         syndicateDistributionShareBasisPoints,
         numMembersMax: formattedNumMembersMax,
         depositERC20Address: depositTokenAddress,
@@ -287,13 +289,32 @@ const CreateSyndicateProvider: React.FC<{ children: ReactNode }> = ({
 
       // if there are multiple transaction, handle the
       if (transactionsCount === 2) {
+        // create new copy of split array
+        // convert comma separated string into array
+        const splitArr = memberAddresses;
+
+        // get last element in array
+        const lastElement = splitArr[splitArr.length - 1];
+
+        // create new copy of split array
+        const newSplitArr = [...splitArr];
+
+        // check if empty string
+        if (!lastElement) {
+          newSplitArr.pop();
+        }
+
+        // perform validations outside the class functions
+        if (!account.trim() || !newSplitArr.length) {
+          return;
+        }
         setCurrentTransaction(2);
         setProcessingModalMessage(
           "Please confirm the second transaction in your wallet. This adds members to your allowlist.",
         );
         await syndicateContracts.AllowlistLogicContract.managerAllowAddresses(
           account,
-          memberAddresses,
+          newSplitArr,
           account,
           () => {
             setProcessingModalMessage(

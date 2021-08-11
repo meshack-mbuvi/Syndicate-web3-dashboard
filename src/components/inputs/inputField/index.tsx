@@ -40,6 +40,7 @@ export const InputField = (props: {
     addOn,
     subTitle,
     isNumber,
+    logo,
     ...rest
   } = props;
 
@@ -88,16 +89,20 @@ export const InputField = (props: {
         />
         {addOn && (
           <div className="absolute inset-y-0 right-0 pr-3 mt-1 flex items-center pointer-events-none">
+            {logo ? (
+              <span className="bg-black px-1">
+                <img className="h-5 w-5" src={logo} alt="logo" />
+              </span>
+            ) : null}
             <span className="text-white sm:text-sm" id="price-currency">
               {addOn}
             </span>
           </div>
         )}
       </div>
-
-      <p className="text-red-500 text-xs h-4 borders mt-1 mb-1">
-        {error && !disabled && error}
-      </p>
+      {error && !disabled && (
+        <p className="text-red-500 text-xs h-1 mt-1 mb-1">{error}</p>
+      )}
     </div>
   );
 };

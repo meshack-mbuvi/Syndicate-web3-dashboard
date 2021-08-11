@@ -1,6 +1,4 @@
 import { web3 } from "../web3Utils";
-import { formatDate } from "@/utils";
-import moment from "moment";
 
 export const AddressValidator = (
   value: any,
@@ -49,8 +47,8 @@ export const isWholeNumber = (num: number): boolean => {
 };
 
 export const ValidatePercent = (value: number, min = 0, max = 100): string => {
-  if (value > max) return `The percentage value should not exceed ${max}%`;
-  if (value < min) return `The percentage value should not be below ${min}%`;
+  if (value > max) return `Value should not exceed ${max}%`;
+  if (value < min) return `Value should not be below ${min}%`;
 };
 
 /**

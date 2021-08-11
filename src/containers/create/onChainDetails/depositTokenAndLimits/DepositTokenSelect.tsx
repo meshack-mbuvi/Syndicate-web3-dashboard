@@ -1,26 +1,31 @@
+import { SkeletonLoader } from "@/components/skeletonLoader";
 import { setDepositTokenDetails } from "@/redux/actions/createSyndicate/syndicateOnChainData/tokenAndDepositsLimits";
+import { RootState } from "@/redux/store";
 // list of prod tokens
 import { coinsList } from "@/TokensList/coinsList";
 // test coins list
 // to be used only for testing purposes
 import { testCoinsList } from "@/TokensList/testCoinsList";
 import { ExclamationCircleIcon } from "@heroicons/react/solid";
+import { getCoinFromContractAddress } from "functions/src/utils/ethereum";
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
-import Web3 from "web3";
+import { useDispatch, useSelector } from "react-redux";
 import { TokenSearchInput } from "./TokenSearchInput";
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const abi = require("human-standard-token-abi");
 const debugging = process.env.NEXT_PUBLIC_DEBUG;
 
-interface TokenProps {
+interface ICoinProps {
   symbol: string;
   name: string;
   contractAddress: string;
   icon: string;
-  toggleTokenSelect;
+  decimal: number;
+  default?: boolean;
+}
+
+interface TokenProps extends ICoinProps {
+  toggleTokenSelect: () => void;
 }
 
 // render each token item inside the token select drop-down
@@ -30,22 +35,8 @@ const TokenItem = (props: TokenProps) => {
   const dispatch = useDispatch();
 
   // push deposit token details to the redux store
-  const storeDepositTokenDetails = async (tokenDetails) => {
-    const { symbol, name, contractAddress, icon } = tokenDetails;
-
-    // Our test web3 instances uses the Rinkeby network which won't work
-    // for mainnet tokens.
-    // this web3 instantiation should be updated once we switch to production.
-    let PROVIDER_URL =
-      "https://mainnet.infura.io/v3/9d91aad0f1bf44dbba8339d64faf2e2b";
-    if (debugging === "true") {
-      PROVIDER_URL = process.env.NEXT_PUBLIC_INFURA_ENDPOINT;
-    }
-
-    const web3 = new Web3(PROVIDER_URL);
-    // get deposit token decimals
-    const tokenContractInstance = new web3.eth.Contract(abi, contractAddress);
-    const tokenDecimals = await tokenContractInstance.methods.decimals().call();
+  const storeDepositTokenDetails = async (tokenDetails: TokenProps) => {
+    const { symbol, name, contractAddress, icon, decimal } = tokenDetails;
 
     dispatch(
       setDepositTokenDetails({
@@ -53,7 +44,7 @@ const TokenItem = (props: TokenProps) => {
         depositTokenSymbol: symbol,
         depositTokenLogo: icon,
         depositTokenName: name,
-        depositTokenDecimals: +tokenDecimals,
+        depositTokenDecimals: decimal,
       }),
     );
 
@@ -66,7 +57,11 @@ const TokenItem = (props: TokenProps) => {
       onClick={() => storeDepositTokenDetails({ ...props })}
     >
       <div className="flex justify-start items-center">
-        <Image src={icon} width={20} height={20} />
+        {icon.startsWith("http") ? (
+          <img src={icon} alt={icon} width={20} height={20} />
+        ) : (
+          <Image src={icon} width={20} height={20} />
+        )}
         <p className="text-white text-sm sm:text-base ml-3">{name}</p>
       </div>
       <p className="text-gray-3 text-sm sm:text-base uppercase">{symbol}</p>
@@ -74,13 +69,20 @@ const TokenItem = (props: TokenProps) => {
   );
 };
 
-export const DepositTokenSelect = (props: { toggleTokenSelect: Function }) => {
-  const [tokensList, setTokensList] = useState([]);
+export const DepositTokenSelect: React.FC<{ toggleTokenSelect: () => void }> = (
+  props,
+) => {
+  const [tokensList, setTokensList] = useState<ICoinProps[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [noTokenFound, setNoTokenFound] = useState(false);
+  const [showLoader, setShowLoader] = useState(false);
+
+  const {
+    web3: { web3 },
+  } = useSelector((state: RootState) => state.web3Reducer);
 
   // set correct tokens list to use
-  let tokensListToUse;
+  let tokensListToUse: ICoinProps[];
   if (debugging === "true") {
     tokensListToUse = testCoinsList;
   } else {
@@ -100,16 +102,43 @@ export const DepositTokenSelect = (props: { toggleTokenSelect: Function }) => {
       if (searchResults.length) {
         setTokensList(searchResults);
         setNoTokenFound(false);
+      } else if (web3.utils.isAddress(searchTerm)) {
+        const contractAddressSearchResults = tokensListToUse.filter((token) =>
+          token.contractAddress.toLowerCase().includes(searchKeyword),
+        );
+
+        if (contractAddressSearchResults) {
+          setTokensList(contractAddressSearchResults);
+          setNoTokenFound(false);
+        } else {
+          setShowLoader(true);
+          setNoTokenFound(false);
+
+          getCoinFromContractAddress(searchTerm).then((coinInfo) => {
+            setShowLoader(false);
+            setTokensList([
+              {
+                symbol: coinInfo.symbol,
+                name: coinInfo.name,
+                contractAddress: searchTerm,
+                icon: coinInfo.logo,
+                decimal: coinInfo.decimals,
+              },
+            ]);
+          });
+        }
       } else {
         setTokensList([]);
         setNoTokenFound(true);
       }
     } else {
       // populate the list with default tokens if there's no search term
-      const defaultTokens = tokensListToUse.filter((token) => token.default);
+      const defaultTokens = tokensListToUse.filter(
+        (token: ICoinProps) => token.default,
+      );
       setTokensList(defaultTokens);
     }
-  }, [searchTerm, tokensListToUse]);
+  }, [searchTerm, tokensListToUse, web3.utils]);
   return (
     <div
       className="flex flex-col p-4 rounded-md bg-gray-darkBackground border-6 border-gray-darkBackground focus:outline-none"
@@ -122,12 +151,14 @@ export const DepositTokenSelect = (props: { toggleTokenSelect: Function }) => {
         </p>
       )}
       <div className="my-2 overflow-y-auto">
-        {tokensList.length ? (
+        {showLoader ? (
+          <SkeletonLoader width="full" height="8" />
+        ) : tokensList.length ? (
           tokensList.map((coin, index) => {
-            const { symbol, name, contractAddress, icon } = coin;
+            const { symbol, name, contractAddress, icon, decimal } = coin;
             return (
               <TokenItem
-                {...{ symbol, name, contractAddress, icon }}
+                {...{ symbol, name, contractAddress, icon, decimal }}
                 key={index}
                 toggleTokenSelect={props.toggleTokenSelect}
               />

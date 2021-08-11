@@ -131,7 +131,7 @@ export const ConnectWallet = (props: { web3; showWalletModal }) => {
   // showConnectWalletModal
 
   // button for each provider
-  let ProviderButton = ({ name, icon, providerToActivate, hidden }) => {
+  const ProviderButton = ({ name, icon, providerToActivate, hidden }) => {
     let gradientColor;
     switch (name) {
       case "Gnosis Safe":
@@ -147,10 +147,7 @@ export const ConnectWallet = (props: { web3; showWalletModal }) => {
     }
     if (!hidden) {
       return (
-        <div
-          className="flex justify-center items-center m-auto mb-3"
-          key={name}
-        >
+        <div className="flex justify-center items-center m-auto mb-3">
           <button
             className={`w-full p-4 rounded-lg flex items-center justify-between border border-gray-102 hover:border-gray-3 focus:outline-none focus:border-gray-3 focus:border-1 bg-gradient-to-r ${gradientColor} `}
             onClick={() => providerToActivate()}
@@ -218,8 +215,8 @@ export const ConnectWallet = (props: { web3; showWalletModal }) => {
       >
         <>
           {/* show wallet providers */}
-          {providers.map((provider) => (
-            <ProviderButton {...provider} />
+          {providers.map((provider, i) => (
+            <ProviderButton {...provider} key={i} />
           ))}
 
           <p className="mt-5 text-sm text-center">New to Ethereum?</p>

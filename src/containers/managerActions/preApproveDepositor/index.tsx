@@ -47,10 +47,8 @@ const PreApproveDepositor = (props: Props): JSX.Element => {
     },
   } = useSelector((state: RootState) => state);
 
-  const [
-    showWalletConfirmationModal,
-    setShowWalletConfirmationModal,
-  ] = useState(false);
+  const [showWalletConfirmationModal, setShowWalletConfirmationModal] =
+    useState(false);
 
   const [validSyndicate, setValideSyndicate] = useState(false);
 
@@ -75,9 +73,8 @@ const PreApproveDepositor = (props: Props): JSX.Element => {
   // array of addresses to be allowed by the Syndicate, of maximum size equal to the maximum number of LPs.",
   const [memberAddresses, setMemberAddresses] = useState("");
   const [lpAddressesError, setLpAddressesError] = useState<string>("");
-  const [showMemberAddressError, setShowMemberAddressError] = useState<boolean>(
-    false,
-  );
+  const [showMemberAddressError, setShowMemberAddressError] =
+    useState<boolean>(false);
   const [submitting, setSubmitting] = useState(false);
   const [selectedTextIndexes, setSelectedTextIndexes] = useState([]);
 
@@ -139,12 +136,11 @@ const PreApproveDepositor = (props: Props): JSX.Element => {
    */
   const checkPreExistingApprovedAddress = async (memberAddress: string) => {
     try {
-      const {
-        memberAddressAllowed,
-      } = await syndicateContracts.GetterLogicContract.getMemberInfo(
-        syndicateAddress,
-        memberAddress,
-      );
+      const { memberAddressAllowed } =
+        await syndicateContracts.GetterLogicContract.getMemberInfo(
+          syndicateAddress,
+          memberAddress,
+        );
       return memberAddressAllowed;
     } catch (err) {
       return false;
@@ -256,7 +252,7 @@ const PreApproveDepositor = (props: Props): JSX.Element => {
             if (countOccurrences(newSplitArr, value) > 1) {
               setShowMemberAddressError(true);
               setLpAddressesError(
-                `${value} has already been added(duplicate).`,
+                `${value} has already been added (duplicate).`,
               );
             }
           } else {
@@ -281,9 +277,8 @@ const PreApproveDepositor = (props: Props): JSX.Element => {
   };
   const handleOnPaste = (event: React.ClipboardEvent<HTMLTextAreaElement>) => {
     const pastedAddresses = event.clipboardData.getData("text");
-    const removeInvalidCharacters = removeNewLinesAndWhitespace(
-      pastedAddresses,
-    );
+    const removeInvalidCharacters =
+      removeNewLinesAndWhitespace(pastedAddresses);
     const newSplitArr = removeInvalidCharacters.split(",");
     setMemberAddresses((prev) => {
       const selection = prev.substring(

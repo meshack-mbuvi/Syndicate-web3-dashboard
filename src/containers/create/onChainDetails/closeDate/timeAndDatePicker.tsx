@@ -184,7 +184,7 @@ const TimeAndDatePicker: React.FC = () => {
       <div className="mt-10 flex flex-col">
         <p>Close time</p>
         <div className="flex mt-2 space-x-6 justify-between items-center w-full">
-          <div>
+          <div className="-ml-1">
             <DatePicker
               selected={selectedDate}
               onChange={(date) => setSelectedDate(date)}
@@ -219,7 +219,7 @@ const TimeAndDatePicker: React.FC = () => {
           </div>
         </div>
         <p className="mt-7">Time zone</p>
-        <div className="w-full px-1 mt-2">
+        <div className="w-full mt-2">
           <ReactSelect
             options={formattedTimezones}
             isSearchable

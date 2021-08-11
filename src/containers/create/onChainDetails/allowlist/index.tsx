@@ -20,10 +20,8 @@ import { useDispatch, useSelector } from "react-redux";
 
 const Allowlist: React.FC = () => {
   const [selectedTextIndexes, setSelectedTextIndexes] = useState([]);
-  const [
-    allowListAddressesError,
-    setAllowListAddressesError,
-  ] = useState<string>("");
+  const [allowListAddressesError, setAllowListAddressesError] =
+    useState<string>("");
 
   const { setContinueDisabled, continueDisabled } = useCreateSyndicateContext();
 
@@ -53,38 +51,26 @@ const Allowlist: React.FC = () => {
     }
   }, [allowListAddressesError, continueDisabled, isAllowlistEnabled]);
 
-  const [allowListAddresses, setAllowListAddresses] = useState(
-    memberAddresses.join(",\n"),
-  );
+  const [allowListAddresses, setAllowListAddresses] = useState("");
+
+  useEffect(() => {
+    // Add address from store on mount
+    if (memberAddresses) {
+      setAllowListAddresses(memberAddresses.join(",\n"));
+    }
+  }, []);
 
   useEffect(() => {
     // handle addresses validation
     validateAddressArr(
       removeNewLinesAndWhitespace(allowListAddresses).split(","),
     );
+    dispatch(
+      setMemberAddresses(
+        removeNewLinesAndWhitespace(allowListAddresses).split(","),
+      ),
+    );
   }, [allowListAddresses]);
-
-  useEffect(() => {
-    // Dispatch valid member addresses to the store
-    const membersStored = memberAddresses?.join(",\n");
-
-    if (
-      allowListAddresses &&
-      !allowListAddressesError &&
-      membersStored !== allowListAddresses
-    ) {
-      dispatch(
-        setMemberAddresses(
-          removeNewLinesAndWhitespace(allowListAddresses).split(","),
-        ),
-      );
-    } else if (
-      (allowListAddresses && allowListAddressesError && membersStored) ||
-      (!allowListAddresses && membersStored)
-    ) {
-      dispatch(setMemberAddresses([]));
-    }
-  }, [allowListAddresses, memberAddresses]);
 
   const validateAddressArr = (arr: string[]) => {
     // get last element in array
@@ -98,33 +84,38 @@ const Allowlist: React.FC = () => {
       newSplitArr.pop();
     }
 
-    newSplitArr && newSplitArr.length
-      ? newSplitArr.map(async (value: string) => {
-          if (web3.utils.isAddress(value)) {
-            setAllowListAddressesError("");
+    const errors = newSplitArr?.reduce((accumulator, value) => {
+      if (web3.utils.isAddress(value)) {
+        // check if address added is the connected account (manager)
+        if (
+          web3.utils.toChecksumAddress(value) ===
+          web3.utils.toChecksumAddress(account)
+        ) {
+          setContinueDisabled(true);
+          accumulator.push(
+            `You cannot add your own address (manager) to the Allowlist`,
+          );
+        }
 
-            // check if address added is the connected account (manager)
-            if (
-              web3.utils.toChecksumAddress(value) ===
-              web3.utils.toChecksumAddress(account)
-            ) {
-              setAllowListAddressesError(
-                `You cannot add your own address (manager) to the Allowlist`,
-              );
-            }
+        // handle duplicates
+        if (countOccurrences(newSplitArr, value) > 1) {
+          setContinueDisabled(true);
+          accumulator.push(`${value} has already been added (duplicate).`);
+        }
+      } else {
+        setContinueDisabled(true);
+        accumulator.push(`${value} is not a valid ERC20 address`);
+      }
+      return accumulator;
+    }, []);
 
-            // handle duplicates
-            if (countOccurrences(newSplitArr, value) > 1) {
-              setAllowListAddressesError(
-                `${value} has already been added(duplicate).`,
-              );
-            }
-          } else {
-            setContinueDisabled(true);
-            setAllowListAddressesError(`${value} is not a valid ERC20 address`);
-          }
-        })
-      : setAllowListAddressesError("");
+    if (errors.length > 0) {
+      errors.map((error) => {
+        setAllowListAddressesError(error);
+      });
+    } else {
+      setAllowListAddressesError("");
+    }
   };
 
   /**
@@ -136,6 +127,7 @@ const Allowlist: React.FC = () => {
   ) => {
     const { value } = event.target;
     setAllowListAddresses(value);
+    dispatch(setMemberAddresses(removeNewLinesAndWhitespace(value).split(",")));
   };
 
   const handleKeyUp = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -149,9 +141,8 @@ const Allowlist: React.FC = () => {
 
   const handleOnPaste = (event: React.ClipboardEvent<HTMLTextAreaElement>) => {
     const pastedAddresses = event.clipboardData.getData("text");
-    const removeInvalidCharacters = removeNewLinesAndWhitespace(
-      pastedAddresses,
-    );
+    const removeInvalidCharacters =
+      removeNewLinesAndWhitespace(pastedAddresses);
     const newSplitArr = removeInvalidCharacters.split(",");
     setAllowListAddresses((prev) => {
       const selection = prev.substring(
@@ -177,8 +168,6 @@ const Allowlist: React.FC = () => {
     const { selectionStart, selectionEnd } = event.target;
     setSelectedTextIndexes([selectionStart, selectionEnd]);
   };
-
-  // setMemberAddresses([]); TODO: use this action to set member addresses to redux store
 
   return (
     <div className="flex flex-col w-full">
@@ -279,7 +268,6 @@ const Allowlist: React.FC = () => {
                 onKeyUp: handleKeyUp,
                 onSelect: handleOnSelectText,
                 error: allowListAddressesError,
-                // defaultValue: memberAddresses?.join(",\n"),
               }}
               placeholder="Enter investor wallet addresses here, separated by commas"
               classoverride="bg-black text-white border-inactive mt-1"
