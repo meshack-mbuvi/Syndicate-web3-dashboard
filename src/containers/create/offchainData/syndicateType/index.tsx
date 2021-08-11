@@ -45,6 +45,10 @@ const SyndicateType: React.FC = () => {
     if (type === SYNDICATE_CHAIN_TYPE.offChain && !email) {
       setContinueDisabled(true);
     }
+    else if ((type === SYNDICATE_CHAIN_TYPE.onChain && !email)) {
+      setEmailError("")
+      setContinueDisabled(false)
+    }
   }, [email, setContinueDisabled, type]);
 
   const handleCountryChange = (event) => {
