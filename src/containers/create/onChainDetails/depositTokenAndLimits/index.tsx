@@ -240,6 +240,7 @@ const DepositTokenAndLimit: React.FC = () => {
                   value: numberWithCommas(depositMemberMin),
                   label: "Minimum deposit per depositor",
                   addOn: depositTokenSymbol.toUpperCase(), //This value should be obtained from selected token
+                  logo: depositTokenLogo,
                   onChange: handleDepositMemberMin,
                   error: depositMemberMinError,
                   placeholder: "0",
@@ -271,6 +272,7 @@ const DepositTokenAndLimit: React.FC = () => {
               value: numberWithCommas(depositTotalMax),
               label: "Max total that can be deposited into this syndicate",
               addOn: depositTokenSymbol.toUpperCase(),
+              logo: depositTokenLogo,
               onChange: handleDepositMaxTotal,
               error: maxTotalDepositsError,
               placeholder: "Unlimited",
