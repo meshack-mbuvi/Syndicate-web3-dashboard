@@ -190,7 +190,7 @@ const Allowlist: React.FC = () => {
         <div
           className={classNames(
             isAllowlistEnabled ? "border-inactive" : "border-blue",
-            `relative rounded-lg border px-6 py-8 shadow-sm flex items-center space-x-3 ${
+            `relative rounded-lg border h-24 px-6 shadow-sm flex items-center space-x-3 ${
               isAllowlistEnabled && "hover:border-blue-50"
             } mb-4 cursor-pointer`,
           )}
@@ -198,7 +198,7 @@ const Allowlist: React.FC = () => {
         >
           <div
             className={classNames(
-              isAllowlistEnabled && "opacity-60",
+              isAllowlistEnabled && "opacity-50",
               "lex-shrink-0",
             )}
           >
@@ -211,7 +211,7 @@ const Allowlist: React.FC = () => {
           <div className="flex-1 min-w-0">
             <p
               className={classNames(
-                isAllowlistEnabled ? "text-gray-inactive" : "text-gray-white",
+                isAllowlistEnabled ? "text-white opacity-50" : "text-gray-white",
                 "text-base leading-6",
               )}
             >
@@ -225,7 +225,7 @@ const Allowlist: React.FC = () => {
         <div
           className={classNames(
             !isAllowlistEnabled ? "border-inactive" : "border-blue",
-            `relative rounded-lg border px-6 py-5 shadow-sm flex items-center space-x-3 ${
+            `relative rounded-lg border h-24 px-6 shadow-sm flex items-center space-x-3 ${
               !isAllowlistEnabled && "hover:border-blue-50"
             } mb-4 cursor-pointer`,
           )}
@@ -233,7 +233,7 @@ const Allowlist: React.FC = () => {
         >
           <div
             className={classNames(
-              !isAllowlistEnabled && "opacity-60",
+              !isAllowlistEnabled && "opacity-50",
               "flex-shrink-0",
             )}
           >
@@ -246,8 +246,8 @@ const Allowlist: React.FC = () => {
           <div className="flex-1 min-w-0">
             <p
               className={classNames(
-                "text-base leading-6",
-                !isAllowlistEnabled ? "text-gray-inactive" : "text-white",
+                "text-base", "leading-6", "text-white",
+                !isAllowlistEnabled ? "opacity-50" : "opacity-100",
               )}
             >
               Use an allowlist to pre-approve each depositor
@@ -255,7 +255,7 @@ const Allowlist: React.FC = () => {
             <p
               className={classNames(
                 "text-sm leading-6 uppercase tracking-wider",
-                !isAllowlistEnabled ? "text-blue-200" : "text-blue",
+                !isAllowlistEnabled ? "text-blue opacity-50" : "text-blue",
               )}
             >
               Recommended

@@ -98,9 +98,11 @@ export const InputField = (props: {
           </div>
         )}
       </div>
-      <p className="text-red-500 text-xs h-1 mt-1 mb-1">
-        {error && !disabled ? error : ""}
-      </p>
+      {error && !disabled &&
+        <p className="text-red-500 text-xs h-1 mt-1 mb-1">
+          {error}
+        </p>
+      }
     </div>
   );
 };

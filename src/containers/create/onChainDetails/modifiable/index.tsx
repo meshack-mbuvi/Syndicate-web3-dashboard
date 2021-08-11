@@ -27,7 +27,7 @@ const Modifiable: React.FC = () => {
         <div
           className={classNames(
             modifiable ? "border-inactive" : "border-blue",
-            `relative rounded-lg border px-6 py-5 shadow-sm flex items-center space-x-3 ${
+            `relative rounded-lg border px-6 h-24 shadow-sm flex items-center space-x-3 ${
               modifiable && "hover:border-blue-50"
             } mb-4 cursor-pointer`,
           )}
@@ -42,15 +42,15 @@ const Modifiable: React.FC = () => {
           </div>
           <div className="flex-1 min-w-0">
             <p
-              className={`text-base leading-6 ${
-                modifiable ? "text-gray-inactive" : "text-white"
+              className={`text-base leading-6 text-white ${
+                modifiable ? "opacity-50" : "opacity-100"
               }`}
             >
               Not modifiable
             </p>
             <p
-              className={`text-sm leading-6 uppercase tracking-wider ${
-                modifiable ? "text-blue-200" : "text-blue"
+              className={`text-sm leading-6 uppercase tracking-wider text-blue ${
+                modifiable ? "opacity-50" : "opacity-100"
               }`}
             >
               recommended for most syndicates
@@ -61,13 +61,13 @@ const Modifiable: React.FC = () => {
         <div
           className={classNames(
             modifiable ? "border-blue" : "border-inactive",
-            `relative rounded-lg border px-6 py-8 shadow-sm flex items-center space-x-3 ${
+            `relative rounded-lg border px-6 h-24 shadow-sm flex items-center space-x-3 ${
               !modifiable && "hover:border-blue-50"
             } mb-4 cursor-pointer`,
           )}
           onClick={() => dispatch(setModifiable(true))}
         >
-          <div className={`flex-shrink-0 ${!modifiable && "opacity-60"}`}>
+          <div className={`flex-shrink-0 ${!modifiable && "opacity-50"}`}>
             <img
               className="inline mr-4 h-5"
               src="/images/lockOpen.svg"
@@ -77,7 +77,7 @@ const Modifiable: React.FC = () => {
           <div className="flex-1 min-w-0">
             <p
               className={classNames(
-                modifiable ? "text-gray-white" : "text-gray-inactive",
+                modifiable ? "text-gray-white" : "text-white opacity-50",
                 "text-base leading-6",
               )}
             >
