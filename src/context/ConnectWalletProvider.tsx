@@ -208,8 +208,9 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
   // allows us to listed for account and chain changes
   useEffect(() => {
     if (activeProvider?.on) {
-      const handleAccountsChanged = (accounts: string[]) => {
-        setAcccount(accounts[0]);
+      const handleAccountsChanged = async (accounts: string[]) => {
+        const address = await getProviderAccount(activeProvider);
+        setAcccount(address);
       };
 
       const handleChainChanged = (accounts: string[]) => {
@@ -238,6 +239,18 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
     }
   }, [activeProvider]);
 
+  /*
+ * We plug the initial `provider` into ethers.js and get back
+ * a Web3Provider. This will add on methods from ethers.js and
+ * event listeners such as `.on()` will be different.
+ * It also makes it easier to immediately get the connected account.
+ */
+  const getProviderAccount = async (provider) => {
+    const web3Provider = new providers.Web3Provider(provider);
+    const signer = web3Provider.getSigner();
+    return await signer.getAddress();
+  }
+
   /**
    * This activate any provide passed to the function where
    * provider can be injected provider, walletConnect or gnosis wallet provider
@@ -261,16 +274,7 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
       provider.hasOwnProperty("request") && delete provider.request;
     }
 
-    /*
-     * We plug the initial `provider` into ethers.js and get back
-     * a Web3Provider. This will add on methods from ethers.js and
-     * event listeners such as `.on()` will be different.
-     * It also makes it easier to immediately get the connected account.
-     */
-    const web3Provider = new providers.Web3Provider(provider);
-    const signer = web3Provider.getSigner();
-    const address = await signer.getAddress();
-
+    const address = await getProviderAccount(provider);
     setAcccount(address);
 
     const newWeb3 = new Web3(provider);
