@@ -91,8 +91,8 @@ export const InputField = (props: {
           ref={focusInput}
         />
         {addOn && (
-          <div className="absolute inset-y-0 right-0 pr-3 mt-2 flex items-center pointer-events-none">
-            <span className="text-gray-500 sm:text-sm" id="price-currency">
+          <div className="absolute inset-y-0 right-0 pr-3 mt-1 flex items-center pointer-events-none">
+            <span className="text-white sm:text-sm" id="price-currency">
               {addOn}
             </span>
           </div>
