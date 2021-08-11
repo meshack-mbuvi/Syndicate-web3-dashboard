@@ -37,7 +37,7 @@ export default [
     name: "On-chain details",
     subSteps: [
       {
-        name: "Token & deposit limits",
+        name: "Deposit token & limits",
         component: <DepositTokenAndLimit />,
         contentInfo: <DepositAndLimitInfo />,
       },
@@ -47,7 +47,7 @@ export default [
         contentInfo: <CloseDateInfo />,
       },
       {
-        name: "Fees & profit share",
+        name: "Distribution share",
         component: <FeesAndDistribution />,
         contentInfo: <FeesAndDistributionInfo />,
       },
