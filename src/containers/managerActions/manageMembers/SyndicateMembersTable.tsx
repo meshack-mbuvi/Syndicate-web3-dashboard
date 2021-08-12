@@ -9,22 +9,17 @@ const SyndicateMembersTable = ({
   // hide Distribution/claimed when syndicate is not distributing
   const hiddenColumns = !distributing ? ["Distribution/claimed"] : [];
 
-  const {
-    getTableProps,
-    getTableBodyProps,
-    headerGroups,
-    rows,
-    prepareRow,
-  } = useTable({
-    columns,
-    data,
-    initialState: {
-      hiddenColumns,
-    },
-  });
+  const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
+    useTable({
+      columns,
+      data,
+      initialState: {
+        hiddenColumns,
+      },
+    });
   return (
     <table {...getTableProps()} className="w-full">
-      <thead className="table w-full">
+      <thead className="w-full">
         {
           // Loop over the header rows
           headerGroups.map((headerGroup, index) => (
@@ -32,7 +27,7 @@ const SyndicateMembersTable = ({
             <tr
               {...headerGroup.getHeaderGroupProps()}
               key={index}
-              className="uppercase text-gray-dim text-xs py-4 table-fixed"
+              className="uppercase text-gray-dim text-xs py-4"
             >
               {
                 // Loop over the headers in each row
@@ -51,7 +46,7 @@ const SyndicateMembersTable = ({
         }
       </thead>
 
-      <tbody className="divide-y lg:h-64 h-96 overflow-y-auto block" {...getTableBodyProps()}>
+      <tbody className="divide-y overflow-y-auto" {...getTableBodyProps()}>
         {
           // Loop over the table rows
           rows.map((row, index) => {
@@ -59,16 +54,17 @@ const SyndicateMembersTable = ({
             prepareRow(row);
             return (
               // Apply the row props
-              <tr {...row.getRowProps()} key={index} className="py-3 w-full">
+              <tr {...row.getRowProps()} key={index} className="py-3">
                 {
                   // Loop over the rows cells
                   row.cells.map((cell, cellIndex) => {
+                    console.log({ cellIndex });
                     // Apply the cell props
                     return (
                       <td
                         {...cell.getCellProps()}
                         key={cellIndex}
-                        className="m-0 font-whyte-light text-xs table-fixed py-3 w-1/3"
+                        className={`m-0 font-whyte-light text-xs py-3`}
                       >
                         {
                           // Render the cell contents
