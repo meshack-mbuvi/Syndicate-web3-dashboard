@@ -111,7 +111,7 @@ const ManageMembers = (props: ImanageMembers): JSX.Element => {
         },
       },
       {
-        Header: "Deposit/stake",
+        Header: "Distribution share",
         // eslint-disable-next-line react/display-name
         accessor: function ({
           memberDeposit,
