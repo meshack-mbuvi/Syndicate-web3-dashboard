@@ -84,10 +84,8 @@ const CreateSyndicate = (props) => {
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [showErrorMessage, setShowErrorMessage] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
-  const [
-    showWalletConfirmationModal,
-    setShowWalletConfirmationModal,
-  ] = useState(false);
+  const [showWalletConfirmationModal, setShowWalletConfirmationModal] =
+    useState(false);
   const dispatch = useDispatch();
 
   // input field error messages
@@ -123,10 +121,8 @@ const CreateSyndicate = (props) => {
   const [minDeposits, setMinDeposits] = useState("");
   const [maxMembers, setMaxMembers] = useState("");
   const [maxTotalDeposits, setMaxTotalDeposits] = useState("");
-  const [
-    expectedAnnualOperatingFees,
-    setExpectedAnnualOperatingFees,
-  ] = useState<string>("0");
+  const [expectedAnnualOperatingFees, setExpectedAnnualOperatingFees] =
+    useState<string>("0");
   const [
     distributionShareToSyndicateLead,
     setDistributionShareToSyndicateLead,
@@ -450,7 +446,8 @@ const CreateSyndicate = (props) => {
     }
 
     // get closeDate and syndicateProtocolDistributionSharePercent
-    const syndicateProtocolDistributionSharePercent = syndicateDistributionSharePercent;
+    const syndicateProtocolDistributionSharePercent =
+      syndicateDistributionSharePercent;
 
     /**
      * close modal after validating the minimum requirement for syndicateDistributionShare
@@ -1163,7 +1160,7 @@ const CreateSyndicate = (props) => {
             </div>
             <div className="flex mt-5 mb-2 justify-center">
               <EtherscanLink
-                contractAddress={account}
+                etherscanInfo={account}
                 customStyles="font-whyte-light"
               />
             </div>

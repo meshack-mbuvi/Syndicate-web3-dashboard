@@ -5,6 +5,7 @@ import { Spinner } from "@/components/shared/spinner";
 import { CheckCircleIcon } from "@heroicons/react/outline";
 import { faExclamationTriangle } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { EtherscanLink } from "../EtherscanLink";
 
 const ProcessingModal: React.FC = () => {
   const { modalInfo } = useCreateSyndicateContext();
@@ -17,6 +18,8 @@ const ProcessingModal: React.FC = () => {
     processingModalMessage,
     showErrorMessage,
     errorMessage,
+    currentTxHash,
+    processingModalTitle,
   } = modalInfo;
 
   return (
@@ -52,14 +55,17 @@ const ProcessingModal: React.FC = () => {
         ) : (
           <>
             <div className="modal-header font-medium text-center leading-8 text-lg">
-              <span>Waiting for confirmation &nbsp;</span>
+              <span>{processingModalTitle} &nbsp;</span>
               <span>
                 {currentTransaction}/{transactionsCount}
               </span>
             </div>
-            <div className="mt-4 text-blue-rockBlue text-center text-sm">
+            <div className="my-4 text-blue-rockBlue text-center text-sm">
               {processingModalMessage}
             </div>
+            {currentTxHash ? (
+              <EtherscanLink etherscanInfo={currentTxHash} type="transaction" />
+            ) : null}
           </>
         )}
       </div>

@@ -50,7 +50,7 @@ export const FinalStateModal = (props: Props) => {
 
           {address ? (
             <div className="flex justify-center">
-              <EtherscanLink contractAddress={address} />
+              <EtherscanLink etherscanInfo={address} />
             </div>
           ) : (
             ""

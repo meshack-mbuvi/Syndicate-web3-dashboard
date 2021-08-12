@@ -594,7 +594,7 @@ const SyndicateDetails = (props: {
           {/* <p className="flex-shrink-0 h-8 w-8 sm:h-10 sm:w-10 md:h-16 md:w-16 ml-4 rounded-full ideo-liquidity inline"></p> */}
         </div>
         <div className="w-fit-content">
-          <EtherscanLink contractAddress={syndicateAddress} />
+          <EtherscanLink etherscanInfo={syndicateAddress} />
         </div>
         <div className="h-fit-content flex w-full justify-start mb-8">
           {syndicateBadge}

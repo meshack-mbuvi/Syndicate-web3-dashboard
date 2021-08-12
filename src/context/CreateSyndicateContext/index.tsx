@@ -30,6 +30,8 @@ interface ModalInfo {
   processingModalMessage: string;
   showErrorMessage: boolean;
   errorMessage: string;
+  processingModalTitle: string;
+  currentTxHash: string;
 }
 
 type CreateSyndicateProviderProps = {
@@ -79,6 +81,8 @@ const CreateSyndicateProvider: React.FC<{ children: ReactNode }> = ({
   const [transactionsCount, setTransactionsCount] = useState(1);
   const [currentTransaction, setCurrentTransaction] = useState(1);
   const [processingModalMessage, setProcessingModalMessage] = useState("");
+  const [processingModalTitle, setProcessingModalTitle] = useState("");
+  const [currentTxHash, setCurrentTxHash] = useState("");
 
   const dispatch = useDispatch();
 
@@ -178,6 +182,7 @@ const CreateSyndicateProvider: React.FC<{ children: ReactNode }> = ({
     event.preventDefault();
     // Go to processing
 
+    setProcessingModalTitle("Waiting for confirmation");
     setShowProcessingModal(true);
     setProcessingModalMessage(
       "Please confirm the first transaction in your wallet. This creates your syndicate",
@@ -280,12 +285,18 @@ const CreateSyndicateProvider: React.FC<{ children: ReactNode }> = ({
         modifiable,
         transferable,
       };
-      await ManagerLogicContract.createSyndicate(syndicateData, account, () => {
-        setProcessingModalMessage(
-          "Creating your syndicate, please wait for the transaction to complete",
-        );
-        setSubmitting(true);
-      });
+      await ManagerLogicContract.createSyndicate(
+        syndicateData,
+        account,
+        (transactionHash: string) => {
+          setCurrentTxHash(transactionHash);
+          setProcessingModalTitle("Processing");
+          setProcessingModalMessage(
+            "Creating your syndicate, please wait for the transaction to complete",
+          );
+          setSubmitting(true);
+        },
+      );
 
       // if there are multiple transaction, handle the
       if (transactionsCount === 2) {
@@ -309,6 +320,8 @@ const CreateSyndicateProvider: React.FC<{ children: ReactNode }> = ({
           return;
         }
         setCurrentTransaction(2);
+        setCurrentTxHash("");
+        setProcessingModalTitle("Waiting for confirmation");
         setProcessingModalMessage(
           "Please confirm the second transaction in your wallet. This adds members to your allowlist.",
         );
@@ -316,7 +329,9 @@ const CreateSyndicateProvider: React.FC<{ children: ReactNode }> = ({
           account,
           newSplitArr,
           account,
-          () => {
+          (transactionHash: string) => {
+            setCurrentTxHash(transactionHash);
+            setProcessingModalTitle("Processing");
             setProcessingModalMessage(
               "Adding addresses to allowlist, please wait for the transaction to complete",
             );
@@ -339,6 +354,7 @@ const CreateSyndicateProvider: React.FC<{ children: ReactNode }> = ({
         flow: Flow.MGR_CREATE_SYN,
       });
     } catch (error) {
+      setCurrentTxHash("");
       setButtonsDisabled(false);
       setShowWalletConfirmationText(false);
       if (error.code) {
@@ -432,6 +448,8 @@ const CreateSyndicateProvider: React.FC<{ children: ReactNode }> = ({
           processingModalMessage,
           showErrorMessage,
           errorMessage,
+          currentTxHash,
+          processingModalTitle,
         },
         continueDisabled,
         setContinueDisabled,

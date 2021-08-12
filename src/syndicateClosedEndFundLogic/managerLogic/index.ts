@@ -28,7 +28,7 @@ export class SyndicateManagerLogic extends BaseLogicContract {
   async createSyndicate(
     syndicateData: CreateSyndicateData,
     managerAccount: string,
-    onTxConfirm: () => void,
+    onTxConfirm: (txHash: string) => void,
   ): Promise<void> {
     await this.initializeLogicContract();
 
@@ -63,9 +63,9 @@ export class SyndicateManagerLogic extends BaseLogicContract {
         transferable,
       )
       .send({ from: managerAccount })
-      .on("transactionHash", () => {
+      .on("transactionHash", (transactionHash: string) => {
         // wallet confirmation modal
-        onTxConfirm();
+        onTxConfirm(transactionHash);
       });
   }
 

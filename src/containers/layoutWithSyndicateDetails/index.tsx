@@ -136,7 +136,7 @@ const LayoutWithSyndicateDetails = ({ children }): JSX.Element => {
           {emptyStateMessage}
         </p>
         {!syndicateAddressIsValid ? null : (
-          <EtherscanLink contractAddress={syndicateAddress} />
+          <EtherscanLink etherscanInfo={syndicateAddress} />
         )}
       </div>
     </div>
@@ -170,14 +170,11 @@ const LayoutWithSyndicateDetails = ({ children }): JSX.Element => {
               <div className="md:w-3/5 w-full pb-6 md:pr-24">
                 <div ref={ref} className="w-full md:hidden" />{" "}
                 {/* its used as an identifier for ref in small devices */}
-
                 {/*
                 we should have an isChildVisible child here,
                 but it's not working as expected
                 */}
-                <SyndicateDetails
-                  accountIsManager={accountIsManager}
-                >
+                <SyndicateDetails accountIsManager={accountIsManager}>
                   <div className="w-full md:hidden">{children}</div>
                 </SyndicateDetails>
               </div>

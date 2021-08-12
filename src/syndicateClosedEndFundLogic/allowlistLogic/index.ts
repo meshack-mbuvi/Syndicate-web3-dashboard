@@ -67,7 +67,7 @@ export class SyndicateAllowlistLogic extends BaseLogicContract {
     syndicateAddress: string,
     memberAddresses: string[],
     manager: string,
-    onTxConfirm: () => void,
+    onTxConfirm: (transactionHash: string) => void,
   ): Promise<void> {
     if (
       !syndicateAddress.trim() ||
@@ -79,9 +79,9 @@ export class SyndicateAllowlistLogic extends BaseLogicContract {
     await this.logicContractInstance.methods
       .managerAllowAddresses(syndicateAddress, memberAddresses)
       .send({ from: manager, gasLimit: 800000 })
-      .on("transactionHash", () => {
+      .on("transactionHash", (transactionHash: string) => {
         // close wallet confirmation modal
-        onTxConfirm();
+        onTxConfirm(transactionHash);
       });
   }
 
@@ -143,7 +143,8 @@ export class SyndicateAllowlistLogic extends BaseLogicContract {
           // close wallet confirmation modal
           setShowWalletConfirmationModal(false);
           setSubmitting(true);
-        }).on("receipt", () => {
+        })
+        .on("receipt", () => {
           setSubmitting(false);
         });
       await setSubmitting(false);

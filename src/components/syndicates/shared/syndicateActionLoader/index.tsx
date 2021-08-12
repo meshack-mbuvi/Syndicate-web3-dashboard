@@ -74,7 +74,7 @@ export const SyndicateActionLoader = (props: LoaderProp) => {
         {subText ? subText : loaderSubtext}
       </p>
       {error || pending ? null : (
-        <EtherscanLink contractAddress={contractAddress} />
+        <EtherscanLink etherscanInfo={contractAddress} />
       )}
       {showRetryButton ? (
         <button className={retryButtonStyles} onClick={() => closeLoader()}>
