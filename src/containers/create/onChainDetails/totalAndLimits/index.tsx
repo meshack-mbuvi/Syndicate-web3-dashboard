@@ -15,9 +15,8 @@ import { isWholeNumber, Validate } from "@/utils/validators";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { ContentTitle } from "../../shared";
-import { TokenSelectInput } from "./tokenSelectInput";
 
-const DepositTokenAndLimit: React.FC = () => {
+const TotalAndLimits: React.FC = () => {
   const {
     tokenAndDepositLimitReducer: {
       createSyndicate: {
@@ -203,10 +202,9 @@ const DepositTokenAndLimit: React.FC = () => {
   return (
     <div className="flex">
       <div className="">
-        <ContentTitle>Deposit token and limits</ContentTitle>
+        <ContentTitle>Total and limits</ContentTitle>
 
-        <div className="w-full space-y-7">
-          <TokenSelectInput label="Deposit Token" required />
+        <div className="w-full space-y-3">
           <div>
             <InputField
               {...{
@@ -288,4 +286,4 @@ const DepositTokenAndLimit: React.FC = () => {
   );
 };
 
-export default DepositTokenAndLimit;
+export default TotalAndLimits;
