@@ -12,6 +12,7 @@ interface IProps {
   step?: number;
   type?: string;
   placeholder?: string;
+  maxLength?: number;
   label?: string;
   classnames?: string;
   resetToDefault?: boolean;
@@ -26,37 +27,57 @@ const InputWithPercent: React.FC<IProps> = ({
   label,
   placeholder,
   setInputValue,
-  type = "number",
+  type = "text",
   classnames = "mb-7",
   resetToDefault,
   setResetToDefault,
   min = 0,
   max = 100,
+  maxLength = 5,
   step = 0.1,
   storedValue,
   customError,
 }) => {
-  const [value, setValue] = useState<number>(
-    storedValue ? storedValue : placeholder ? NaN : 0,
+  const [value, setValue] = useState<string>(
+    storedValue ? storedValue.toString() : placeholder ? "" : "0",
   );
-  const [variableWidth, setVariableWidth] = useState(2.2);
+  const [variableWidth, setVariableWidth] = useState(24);
   const [error, setError] = useState("");
   const ref = useRef(null);
 
   const { setButtonsDisabled } = useCreateSyndicateContext();
 
+  // Use canvas to determine text width
+  const getTextWidth = (text, font) => {
+    const canvas = document.createElement("canvas");
+    const context = canvas.getContext("2d");
+    context.font = font || getComputedStyle(document.body).font;
+    return context.measureText(text).width;
+  };
+
   useEffect(() => {
+    let offset;
+    let textWidth;
     // Handles % position based on inputs
+    if (value.toString().length >= 1) {
+      offset = 12;
+      textWidth = getTextWidth(
+        value,
+        "16px 'ABC Whyte Regular', Helvetica, Arial, sans-serif",
+      );
+    }
+
     if (value.toString().length > 1) {
-      setVariableWidth(value.toString().length + 0.9);
-    } else if (value.toString().length === 1) {
-      setVariableWidth(2.2);
+      setVariableWidth(textWidth + offset);
+    } else if (value.toString().length == 1) {
+      offset = 14;
+      setVariableWidth(textWidth + offset);
     }
   }, [value, placeholder]);
 
   useEffect(() => {
     // Validators
-    const errorMessage = ValidatePercent(value, min);
+    const errorMessage = ValidatePercent(parseFloat(value), min);
     if (errorMessage) {
       setError(errorMessage);
       setButtonsDisabled(true);
@@ -68,18 +89,34 @@ const InputWithPercent: React.FC<IProps> = ({
 
   useEffect(() => {
     // Handles setting the default value when user deletes everything in input field
-    if (isNaN(value) && !placeholder) {
-      setValue(0);
+    if (value === "0" && !placeholder) {
+      setValue("0");
       setInputValue(0);
     } else if (resetToDefault) {
-      setValue(NaN); // Handles syndicateProfitSharePercent value
+      setValue(""); // Handles syndicateProfitSharePercent value
     }
   }, [value, placeholder, setInputValue, resetToDefault]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const _value = parseFloat(e.target.value);
+    // regex to validate float, without having to remove decimal
+    var regexp = /^[0-9]*(\.[0-9]{0,2})?$/;
+
+    let rawValue = String(e.target.value);
+    let _value = parseFloat(e.target.value);
+    if (_value.toString().length > 2 && _value > 100) {
+      _value = max;
+      rawValue = max.toString();
+    } else if (_value.toString().length <= 5 && !regexp.test(rawValue)) {
+      rawValue = value;
+    } else if (_value.toString().length > 5) {
+      _value = parseFloat(value);
+      rawValue = value;
+    }
+
+    // Save to state and remove any extra preceding zeroes
+    // Only allows one preceding Zero, useful for values < 1.
+    setValue(rawValue.replace(/^00+/, "0"));
     setInputValue(_value ? _value : min ? min : 0);
-    setValue(_value);
 
     // Handles syndicateProfitSharePercent value
     if (setResetToDefault !== undefined) {
@@ -112,21 +149,25 @@ const InputWithPercent: React.FC<IProps> = ({
             ref={ref}
             onWheel={(e) => e.currentTarget.blur()}
             placeholder={placeholder}
+            maxLength={maxLength}
             className={classNames(
               label && "mt-2",
               error
                 ? "border-red-500 focus:border-red-500 focus:ring-0"
                 : "border-gray-24 focus:border-blue",
-              "flex flex-grow w-full min-w-0 py-4 font-whyte text-lg rounded-md bg-black border text-white focus:outline-none hover:border-blue-50",
+              "flex flex-grow w-full min-w-0 py-4 font-whyte text-sm rounded-md bg-black border text-white focus:outline-none hover:border-blue-50",
             )}
           />
-          {!placeholder || (placeholder && !isNaN(value)) ? (
+          {!placeholder || (placeholder && value !== "") ? (
             <span
               className={classNames(
                 label && "mt-2",
-                "flex flex-1 absolute py-4 text-lg",
+                "flex flex-1 absolute py-4 text-sm",
               )}
-              style={{ marginLeft: `${variableWidth}ch` }}
+              style={{
+                marginLeft: `${variableWidth}px`,
+                marginTop: `${label ? "0.563rem" : "0.063rem"}`,
+              }}
               onClick={handlePercentSignClick}
             >
               %
