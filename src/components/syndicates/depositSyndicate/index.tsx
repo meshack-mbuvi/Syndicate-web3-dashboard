@@ -358,7 +358,7 @@ const DepositSyndicate: React.FC = () => {
     const balance = await checkTokenBalance();
     if (+balance < +amount) {
       setMetamaskDepositError(
-        `You wallet must have at least ${amount} ${depositTokenSymbol} in order to deposit into this syndicate.`,
+        `Your wallet account must have at least ${amount} ${depositTokenSymbol} in order to deposit into this syndicate.`,
       );
       return;
     }
@@ -539,8 +539,8 @@ const DepositSyndicate: React.FC = () => {
         .balanceOf(account.toString())
         .call({ from: account });
       return getWeiAmount(balance, depositTokenDecimals, false);
-    } catch (error) {
-      return getWeiAmount("0", depositTokenDecimals, false);
+    } catch {
+      return 0;
     }
   };
 
