@@ -3,7 +3,7 @@ import React from "react";
 
 export const FeesAndDistributionInfo: React.FC = () => (
   <RightPlaceHolder
-    title="Learn more about fees"
+    title="Learn more about distributions share"
     body={[
       "Annual operating fees are the expenses incurred as a result of running the Syndicate DAO, not for investment advisory services unless the syndicate lead is registered as an investment advisor. Operating fees are assessed manually by the syndicate lead via the protocol.",
       "Share of distributions to the syndicate lead are automatically assessed when distributions are executed manually by the syndicate lead back to the depositors of the Syndicate DAO via the protocol.",

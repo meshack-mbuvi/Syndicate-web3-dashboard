@@ -13,7 +13,6 @@ module.exports = {
       borderRadius: ["first", "last"],
       borderWidth: ["first", "last"],
       ringWidth: ["hover", "active"],
-      ringWidth: ["hover", "active"],
     },
   },
   plugins: [

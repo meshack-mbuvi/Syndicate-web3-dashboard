@@ -77,7 +77,7 @@ export const InputField = (props: {
             }
             onChange(e);
           }}
-          className={`flex w-full min-w-0 py-3 mt-1 font-whyte text-sm rounded-md bg-black  focus:border-blue text-white focus:outline-none focus:ring-gray-24 flex-grow border hover:border-blue-50 ${
+          className={`flex w-full min-w-0 py-3 mt-1 font-whyte text-sm rounded-md bg-black focus:border-blue text-white focus:outline-none focus:ring-gray-24 flex-grow border hover:border-blue-50 ${
             addOn ? "pr-14" : ""
           }`}
           {...rest}

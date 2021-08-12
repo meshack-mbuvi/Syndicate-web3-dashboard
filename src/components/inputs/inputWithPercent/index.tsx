@@ -20,6 +20,7 @@ interface IProps {
   setResetToDefault?: (value: boolean) => void;
   storedValue?: number;
   customError?: string;
+  centerText?: boolean;
 }
 
 const InputWithPercent: React.FC<IProps> = ({
@@ -28,7 +29,7 @@ const InputWithPercent: React.FC<IProps> = ({
   placeholder,
   setInputValue,
   type = "text",
-  classnames = "mb-7",
+  classnames = "",
   resetToDefault,
   setResetToDefault,
   min = 0,
@@ -37,6 +38,7 @@ const InputWithPercent: React.FC<IProps> = ({
   step = 0.1,
   storedValue,
   customError,
+  centerText = false,
 }) => {
   const [value, setValue] = useState<string>(
     storedValue ? storedValue.toString() : placeholder ? "" : "0",
@@ -58,6 +60,7 @@ const InputWithPercent: React.FC<IProps> = ({
   useEffect(() => {
     let offset;
     let textWidth;
+
     // Handles % position based on inputs
     if (value.toString().length >= 1) {
       offset = 12;
@@ -68,10 +71,18 @@ const InputWithPercent: React.FC<IProps> = ({
     }
 
     if (value.toString().length > 1) {
-      setVariableWidth(textWidth + offset);
+      const additionalOffset = centerText
+        ? value.toString().length === 2
+          ? 60
+          : value.toString().length > 3
+          ? 50
+          : 58
+        : 0;
+      setVariableWidth(textWidth + offset + additionalOffset);
     } else if (value.toString().length == 1) {
       offset = 14;
-      setVariableWidth(textWidth + offset);
+      const additionalOffset = centerText ? 60 : 0;
+      setVariableWidth(textWidth + offset + additionalOffset);
     }
   }, [value, placeholder]);
 
@@ -99,7 +110,7 @@ const InputWithPercent: React.FC<IProps> = ({
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     // regex to validate float, without having to remove decimal
-    var regexp = /^[0-9]*(\.[0-9]{0,2})?$/;
+    const regexp = /^[0-9]*(\.[0-9]{0,2})?$/;
 
     let rawValue = String(e.target.value);
     let _value = parseFloat(e.target.value);
@@ -136,7 +147,7 @@ const InputWithPercent: React.FC<IProps> = ({
         </label>
       )}
       <div className="flex flex-col w-full">
-        <div className="flex relative">
+        <div className="flex relative ">
           <input
             id={name}
             name={name}
@@ -151,18 +162,20 @@ const InputWithPercent: React.FC<IProps> = ({
             placeholder={placeholder}
             maxLength={maxLength}
             className={classNames(
-              label && "mt-2",
+              label && "mt-1 py-4",
               error
                 ? "border-red-500 focus:border-red-500 focus:ring-0"
                 : "border-gray-24 focus:border-blue",
-              "flex flex-grow w-full min-w-0 py-4 font-whyte text-sm rounded-md bg-black border text-white focus:outline-none hover:border-blue-50",
+              `${
+                centerText ? "text-center" : ""
+              } flex flex-grow w-full min-w-0 py-4 font-whyte text-sm rounded-md bg-black border text-white focus:outline-none hover:border-blue-50`,
             )}
           />
           {!placeholder || (placeholder && value !== "") ? (
             <span
               className={classNames(
-                label && "mt-2",
-                "flex flex-1 absolute py-4 text-sm",
+                label ? "mt-1 py-3" : "py-4",
+                "flex flex-1 absolute text-sm",
               )}
               style={{
                 marginLeft: `${variableWidth}px`,
@@ -177,7 +190,7 @@ const InputWithPercent: React.FC<IProps> = ({
           )}
         </div>
 
-        <p className="text-red-500 text-xs h-4 mt-1">{error || customError}</p>
+        <p className="text-red-500 text-xs h-8 mt-1">{error || customError}</p>
       </div>
     </div>
   );

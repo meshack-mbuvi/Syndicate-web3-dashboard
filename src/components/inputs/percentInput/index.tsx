@@ -17,7 +17,7 @@ export const PercentInput = (props: {
   required?: boolean;
   value: string | number;
   tooltip: string;
-}) => {
+}): JSX.Element => {
   const { label, name, onChange, error, value, tooltip, ...rest } = props;
   let variableWidth = 2.5;
   if (value.toString().length > 1) {
@@ -29,7 +29,8 @@ export const PercentInput = (props: {
       <div className="mr-2 w-1/2 flex justify-end">
         <label
           htmlFor={label}
-          className="block pt-2 text-black text-sm font-medium">
+          className="block pt-2 text-black text-sm font-medium"
+        >
           {label}
         </label>
       </div>
@@ -50,7 +51,8 @@ export const PercentInput = (props: {
             />
             <span
               className={`flex flex-1 absolute py-2 text-sm text-gray-500`}
-              style={{ marginLeft: `${variableWidth}ch` }}>
+              style={{ marginLeft: `${variableWidth}ch` }}
+            >
               %
             </span>
           </div>
