@@ -94,7 +94,7 @@ const MoreOptionButton = (props: {
 
             {/* more actions options to member address */}
             {showMore === true && (
-              <div className="flex flex-col absolute shadow shadow-lg border border-gray-93 bg-white rounded-lg w-max z-50">
+              <div className="flex flex-col absolute shadow-lg border border-gray-93 bg-white rounded-lg w-max z-50">
                 {open === true && (
                   <>
                     {modifiable === true && (
