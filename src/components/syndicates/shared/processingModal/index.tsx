@@ -3,8 +3,6 @@ import Modal from "@/components/modal";
 import { useCreateSyndicateContext } from "@/context/CreateSyndicateContext";
 import { Spinner } from "@/components/shared/spinner";
 import { CheckCircleIcon } from "@heroicons/react/outline";
-import { faExclamationTriangle } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { EtherscanLink } from "../EtherscanLink";
 
 const ProcessingModal: React.FC = () => {
@@ -20,19 +18,29 @@ const ProcessingModal: React.FC = () => {
     errorMessage,
     currentTxHash,
     processingModalTitle,
+    setShowErrorMessage,
   } = modalInfo;
+
+  // when the close button is clicked on the modal,
+  // the error state needs to be reset as well.
+  const closeProcessingModal = () => {
+    // dismiss error first
+    setShowErrorMessage(false);
+    setShowProcessingModal(false);
+  };
 
   return (
     <Modal
       {...{
         show: showProcessingModal,
-        closeModal: () => setShowProcessingModal(false),
+        closeModal: () => closeProcessingModal(),
         customClassName: "bg-gray-blackRussian text-white",
         showCloseButton: showErrorMessage,
         outsideOnClick: showErrorMessage,
+        closeButtonClassName: "text-white",
       }}
     >
-      <div className="flex flex-col justify-center items-center m-auto w-96 mb-12">
+      <div className="flex flex-col justify-center items-center m-auto mb-12">
         {currentTransaction > 1 && transactionsCount > 0 ? (
           <div className="mb-4 flex-shrink-0 h-6 relative flex items-center justify-center text-blue-rockBlue text-center text-sm">
             <CheckCircleIcon className="h-full" />
@@ -40,27 +48,32 @@ const ProcessingModal: React.FC = () => {
           </div>
         ) : null}
         {/* Show loading icon */}
-        {!showErrorMessage ? <Spinner /> : null}
+        {!showErrorMessage ? <Spinner height="h-16" width="w-16" /> : null}
         {/* Show error icon */}
         {showErrorMessage ? (
-          <FontAwesomeIcon
-            icon={faExclamationTriangle}
-            size="10x"
-            className="cursor-pointer h-4 text-red-500 text-7xl"
-          />
-        ) : null}
-        {/* Show Error Message */}
-        {showErrorMessage ? (
-          <p className="text-red-500 text-lg">{errorMessage}</p>
+          <div className="flex flex-col items-center justify-center mt-7">
+            <img
+              className="mb-4 h-12 w-12"
+              src="/images/errorClose.svg"
+              alt="error"
+            />
+            <p className="font-semibold text-2xl text-center">
+              Transaction rejected.
+            </p>
+
+            <p className="text-base my-5 font-normal text-gray-dim text-center">
+              {errorMessage}
+            </p>
+          </div>
         ) : (
           <>
-            <div className="modal-header font-medium text-center leading-8 text-lg">
+            <div className="modal-header font-medium text-center leading-8 text:lg sm:text-xl">
               <span>{processingModalTitle} &nbsp;</span>
               <span>
                 {currentTransaction}/{transactionsCount}
               </span>
             </div>
-            <div className="my-4 text-blue-rockBlue text-center text-sm">
+            <div className="mt-4 mb-2 text-blue-rockBlue text-center text-sm sm:text-base">
               {processingModalMessage}
             </div>
             {currentTxHash ? (

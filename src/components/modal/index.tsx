@@ -1,4 +1,5 @@
 import React from "react";
+import { XIcon } from "@heroicons/react/solid";
 
 interface ModalProps {
   title?: string;
@@ -14,6 +15,7 @@ interface ModalProps {
   outsideOnClick?: boolean;
   overflow?: string;
   showBackButton?: boolean;
+  closeButtonClassName?: string;
 }
 
 /**
@@ -27,7 +29,9 @@ interface ModalProps {
  *   - titleFontSize: a string value used to set the font size of the modal title
  *   - showCloseButton: a boolean used to show/hide the modal close button
  *   - type: can be either success or normal. Default is normal
+ *   - closeButtonClassName: custom styling for the close button.
  *      - NOTE: A success modal has syndicate logos in the background
+ *
  * @returns an html node in a form of a modal
  */
 export const Modal = (props: ModalProps): JSX.Element => {
@@ -41,6 +45,7 @@ export const Modal = (props: ModalProps): JSX.Element => {
     titleFontSize,
     showCloseButton = true,
     customClassName,
+    closeButtonClassName,
     outsideOnClick,
     overflow = "overflow-hidden",
     showBackButton = false,
@@ -71,7 +76,7 @@ export const Modal = (props: ModalProps): JSX.Element => {
             </div>
 
             <div
-              className={`inline-block align-bottom bg-white rounded-lg my-24 mx-4 sm:mx-0 sm:my-28 sm:p-6 text-left shadow-xl transform transition-all max-w-868 ${customWidth} ${overflow} ${customClassName}`}
+              className={`inline-block align-bottom bg-white rounded-2xl my-24 mx-4 sm:mx-0 sm:my-28 sm:p-6 text-left shadow-xl transform transition-all max-w-868 ${customWidth} ${overflow} ${customClassName}`}
               role="dialog"
               aria-modal="true"
               aria-labelledby="modal-headline"
@@ -81,7 +86,7 @@ export const Modal = (props: ModalProps): JSX.Element => {
                 {showBackButton ? (
                   <button
                     type="button"
-                    className="bg-white m-4 mt-2 rounded-md text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue"
+                    className="bg-white m-4 rounded-md text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue"
                     onClick={() => closeModal()}
                   >
                     <span className="sr-only">Back</span>
@@ -100,15 +105,13 @@ export const Modal = (props: ModalProps): JSX.Element => {
                 {showCloseButton ? (
                   <button
                     type="button"
-                    className="bg-white m-2 rounded-md text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue"
+                    className={` ${
+                      closeButtonClassName && closeButtonClassName
+                    } rounded-md hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue`}
                     onClick={() => closeModal()}
                   >
                     <span className="sr-only">Close</span>
-                    <img
-                      src="/images/close.svg"
-                      className="p-2 opacity-50"
-                      alt="close"
-                    />
+                    <XIcon className="w-10 h-10 p-2 opacity-50 hover:opacity-75" />
                   </button>
                 ) : null}
               </div>
