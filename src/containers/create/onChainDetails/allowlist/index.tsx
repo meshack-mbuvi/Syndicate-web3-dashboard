@@ -178,7 +178,7 @@ const Allowlist: React.FC = () => {
       <div className="w-full">
         <div
           className={classNames(
-            isAllowlistEnabled ? "border-inactive" : "border-blue",
+            isAllowlistEnabled ? "border-inactive" : "border-blue bg-blue bg-opacity-5",
             `relative rounded-lg border h-24 px-6 shadow-sm flex items-center space-x-3 ${
               isAllowlistEnabled && "hover:border-blue-50"
             } mb-4 cursor-pointer`,
@@ -213,7 +213,7 @@ const Allowlist: React.FC = () => {
       <div className="w-full">
         <div
           className={classNames(
-            !isAllowlistEnabled ? "border-inactive" : "border-blue",
+            !isAllowlistEnabled ? "border-inactive" : "border-blue bg-blue bg-opacity-5",
             `relative rounded-lg border h-24 px-6 shadow-sm flex items-center space-x-3 ${
               !isAllowlistEnabled && "hover:border-blue-50"
             } mb-4 cursor-pointer`,

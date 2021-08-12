@@ -108,7 +108,7 @@ const SyndicateType: React.FC = () => {
           <div
             className={classNames(
               type === SYNDICATE_CHAIN_TYPE.onChain
-                ? "border-blue"
+                ? "border-blue bg-blue bg-opacity-5"
                 : "border-inactive hover:border-blue-50",
               "relative rounded-lg border p-6 shadow-sm items-center mb-4 cursor-pointer",
             )}
@@ -149,7 +149,7 @@ const SyndicateType: React.FC = () => {
           <div
             className={classNames(
               type === SYNDICATE_CHAIN_TYPE.offChain
-                ? "border-blue"
+                ? "border-blue bg-blue bg-opacity-5"
                 : "border-inactive hover:border-blue-50",
               "relative rounded-lg border p-6 shadow-sm cursor-pointer",
             )}
