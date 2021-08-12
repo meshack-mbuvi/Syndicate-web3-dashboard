@@ -157,6 +157,8 @@ const ChangeSyndicateSettings: FC<Props> = (props: Props) => {
 
       handleSuccess({ allowlistEnabled: toggle }, "Allow list updated");
     } catch (error) {
+      // reset toggle
+      setToggle(allowlistEnabled);
       handleError(error);
     }
   };
