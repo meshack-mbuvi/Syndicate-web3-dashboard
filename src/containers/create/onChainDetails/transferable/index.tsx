@@ -44,7 +44,7 @@ const Transferable: React.FC = () => {
           <div
             key={option.title}
             className={classNames(
-              transferable === option.state ? "border-blue" : "border-inactive",
+              transferable === option.state ? "border-blue bg-blue bg-opacity-5" : "border-inactive",
               `relative rounded-lg border px-6 h-24 shadow-sm flex items-center space-x-3 ${
               transferable !== option.state && "hover:border-blue-50"
               } mb-4 cursor-pointer`,
