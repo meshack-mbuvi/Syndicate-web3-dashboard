@@ -61,8 +61,9 @@ const CreateSyndicateContext = createContext<
   Partial<CreateSyndicateProviderProps>
 >({});
 
-export const useCreateSyndicateContext = (): Partial<CreateSyndicateProviderProps> =>
-  useContext(CreateSyndicateContext);
+export const useCreateSyndicateContext =
+  (): Partial<CreateSyndicateProviderProps> =>
+    useContext(CreateSyndicateContext);
 
 const CreateSyndicateProvider: React.FC<{ children: ReactNode }> = ({
   children,
@@ -71,9 +72,8 @@ const CreateSyndicateProvider: React.FC<{ children: ReactNode }> = ({
   const [currentSubStep, setCurrentSubStep] = useState(0);
   const [buttonsDisabled, setButtonsDisabled] = useState(false);
   const [continueDisabled, setContinueDisabled] = useState(false);
-  const [showWalletConfirmationText, setShowWalletConfirmationText] = useState(
-    false,
-  );
+  const [showWalletConfirmationText, setShowWalletConfirmationText] =
+    useState(false);
   const [showErrorMessage, setShowErrorMessage] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
@@ -165,12 +165,13 @@ const CreateSyndicateProvider: React.FC<{ children: ReactNode }> = ({
 
   useEffect(() => {
     // checks if the allowlist is enabled to allow two transactions
-    if (isAllowlistEnabled && memberAddresses.length > 0) {
-      setTransactionsCount(2);
-    } else if (
-      (!isAllowlistEnabled && transactionsCount === 2) ||
-      (isAllowlistEnabled && memberAddresses.length === 0)
+    if (
+      isAllowlistEnabled &&
+      memberAddresses.length > 0 &&
+      memberAddresses?.some((val) => Boolean(val))
     ) {
+      setTransactionsCount(2);
+    } else {
       setTransactionsCount(1);
     }
   }, [isAllowlistEnabled, memberAddresses, transactionsCount]);
@@ -271,8 +272,10 @@ const CreateSyndicateProvider: React.FC<{ children: ReactNode }> = ({
       setButtonsDisabled(true);
 
       const syndicateData = {
-        managerManagementFeeBasisPoints: formattedManagerManagementFeeBasisPoints,
-        managerDistributionShareBasisPoints: formattedManagerDistributionShareBasisPoints,
+        managerManagementFeeBasisPoints:
+          formattedManagerManagementFeeBasisPoints,
+        managerDistributionShareBasisPoints:
+          formattedManagerDistributionShareBasisPoints,
         syndicateDistributionShareBasisPoints,
         numMembersMax: formattedNumMembersMax,
         depositERC20Address: depositTokenAddress,
