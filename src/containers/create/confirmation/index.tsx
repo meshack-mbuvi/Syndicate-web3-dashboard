@@ -55,7 +55,7 @@ const Confirmation: React.FC = () => {
       <div className="fixed mb-10 text-xl leading-8 pb-2 bg-black">
         Confirm everything looks right
       </div>
-      <ul className="text-base font-whyte mt-12">
+      <ul className="text-base font-whyte mt-12 pb-8">
         <li className="pl-0 p-2">
           <p className="text-gray-dimmer mb-1">Deposit Token</p>
           <div className="flex items-center">
