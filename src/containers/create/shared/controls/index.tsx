@@ -29,7 +29,7 @@ const Controls = () => {
   };
   return (
     <div
-      className={`bg-black fixed bottom-0 w-2/5 3xl:w-1/3 4xl:px-20 flex flex-col`}
+      className={`bg-black fixed bottom-0 w-2/5 3xl:w-1/3 4xl:px-20 flex flex-col px-1 pr-2`}
     >
       <div className="relative flex mx-4 justify-between items-center border-t-1 border-gray-erieBlack h-20">
         <button

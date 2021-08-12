@@ -12,7 +12,7 @@ export const MainContent: React.FC = (props) => {
       }`}
     >
       <div
-        className={`relative px-4 pb-4 no-scroll-bar overflow-y-scroll h-full`}
+        className={`relative px-4 pb-4 no-scroll-bar overflow-y-scroll h-full pl-2`}
       >
         {props.children}
       </div>
