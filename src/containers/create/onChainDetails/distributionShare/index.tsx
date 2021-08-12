@@ -161,9 +161,9 @@ const DistributionShare: React.FC = () => {
 
   return (
     <div className="flex flex-col w-full">
-      <div className="mb-7 text-2xl leading-8">Distribution share</div>
+      <div className="mb-10 text-2xl leading-8">Distribution share</div>
 
-      <div className="w-full space-y-3">
+      <div className="w-full space-y-7">
         <InputWithPercent
           name="expectedAnnualOperatingFees"
           label="Expected annual operating fees"
@@ -187,14 +187,14 @@ const DistributionShare: React.FC = () => {
             Share of distributions to Syndicate Protocol
           </label>
           <div className="grid grid-cols-3 gap-4 mt-1">
-            <div className="grid grid-cols-3 mb-5 h-14  flex-grow col-span-2 rounded-md bg-black border border-gray-24 text-sm first:rounded-tl-md first:rounded-bl-md">
+            <div className="grid grid-cols-3 col-span-2 rounded-md bg-black border border-gray-24 first:rounded-tl-md first:rounded-bl-md">
               {options.map((option, i) => (
                 <button
                   key={i}
                   onClick={() => handleTogglePercentages(option)}
                   className={classNames(
                     syndicateProfitSharePercent === option
-                      ? "bg-blue-navy"
+                      ? "bg-blue"
                       : "",
                     optionStyles[option],
                     "relative borderLeft bg-clip-padding bg-origin-padding w-full justify-center focus:outline-none",

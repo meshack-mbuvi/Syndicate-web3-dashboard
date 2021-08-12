@@ -52,7 +52,7 @@ const Select = (props: {
         <select
           id={label}
           name={label}
-          className={`inline-flex align-end w-full text-right min-w-0 p-3 font-whyte text-lg rounded-md bg-black border border-gray-24 text-white focus:outline-none  focus:border-gray-24 flex-grow hover:border-blue-50 ${
+          className={`inline-flex align-end w-full text-right min-w-0 font-whyte flex-grow dark-input-field ${
             icon ? "pl-12" : ""
           } 
           ${rightPlaceholder && !showBgIcon ? "bg-none" : ""}`}

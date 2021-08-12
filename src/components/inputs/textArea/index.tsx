@@ -40,8 +40,8 @@ export const TextArea: React.FC<ITextAreaProps> = (props) => {
   } = props;
 
   const disabledClasses = disabled
-    ? "text-sm text-gray-500 border-0"
-    : "text-black text-sm border-gray-85";
+    ? "text-gray-500 border-0"
+    : "text-black border-gray-85";
 
   return (
     <div className="w-full">
@@ -53,7 +53,7 @@ export const TextArea: React.FC<ITextAreaProps> = (props) => {
         onKeyUp={onKeyUp}
         onSelect={onSelect}
         value={value}
-        className={`border border-gray-french rounded-lg w-full p-4 focus:border-blue hover:border-blue-50 ${disabledClasses} ${classoverride}`}
+        className={`border border-gray-french rounded-lg w-full p-3 focus:border-blue hover:border-blue-50 ${disabledClasses} ${classoverride}`}
         {...rest}
         rows={rows}
         cols={50}

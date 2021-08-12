@@ -61,7 +61,7 @@ const TimeAndDatePicker: React.FC = () => {
     <div className="relative flex px-1">
       <input
         type="text"
-        className="block text-lg text-white bg-black border border-gray-24 rounded-md shadow-sm font-whyte h-14 px-4 py-5 relative w-full focus:outline-none  focus:border-gray-24 flex-grow hover:border-blue-50"
+        className="block shadow-sm font-whyte relative w-full flex-grow dark-input-field"
         defaultValue={value}
         onClick={onClick}
         readOnly={true}
@@ -131,7 +131,9 @@ const TimeAndDatePicker: React.FC = () => {
       ...base,
       background: "#000000",
       borderRadius: "5px",
-      height: "56px",
+      paddingTop: "0.34375rem",
+      paddingBottom: "0.34375rem",
+      paddingLeft: "0.125rem",
       border: "1px solid #3D3D3D",
     }),
     singleValue: (base) => ({
@@ -151,23 +153,28 @@ const TimeAndDatePicker: React.FC = () => {
     }),
     menu: (base) => ({
       ...base,
-      borderRadius: 0,
+      borderRadius: "0.375rem",
       color: "#fffff",
-      background: "#000000",
-      border: "1px solid #3D3D3D",
-      marginTop: 0,
+      background: "#151618",
+      marginTop: "8px",
     }),
     menuList: (base) => ({
       ...base,
-      padding: 0,
+      padding: "16px",
+      borderRadius: "0.375rem"
     }),
     option: (base, state) => ({
       ...base,
-      background: state.isFocused ? "bg-gray-99" : "#000000",
-      color: state.isFocused ? "rgba(0, 0, 0, 1)" : "#ffffff",
+      paddingTop: "8px",
+      paddingBottom: "8px",
+      paddingLeft: "16px",
+      paddingRight: "16px",
+      background: state.isFocused ? "#2C2C2F" : "#151618",
+      color: state.isFocused ? "white" : "white",
+      borderRadius: "0.375rem",
       "&:hover": {
-        color: "#000000",
-        background: "#ffffff",
+        color: "white",
+        background: "#2C2C2F",
       },
     }),
     dropdownIndicator: (base) => ({
@@ -196,8 +203,6 @@ const TimeAndDatePicker: React.FC = () => {
               todayButton="Go to Today"
               formatWeekDay={(nameOfDay) => nameOfDay.substr(0, 1)}
               dateFormat={selectedDate.toLocaleDateString()}
-              showMonthDropdown
-              showYearDropdown
               dropdownMode="select"
               shouldCloseOnSelect={false}
               customInput={<InputWithCalendar />}

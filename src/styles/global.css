@@ -85,6 +85,12 @@
   }
 }
 
+@layer components {
+  .dark-input-field {
+    @apply py-3 rounded-md bg-black text-white border border-gray-24 focus:border-blue hover:border-white hover:border-opacity-70 transition-all;
+  }
+}
+
 @layer utilities {
   @variants responsive {
     /* Sizes */

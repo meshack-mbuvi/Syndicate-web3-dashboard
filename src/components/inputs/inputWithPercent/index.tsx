@@ -162,13 +162,13 @@ const InputWithPercent: React.FC<IProps> = ({
             placeholder={placeholder}
             maxLength={maxLength}
             className={classNames(
-              label && "mt-1 py-4",
+              label && "mt-1",
               error
                 ? "border-red-500 focus:border-red-500 focus:ring-0"
                 : "border-gray-24 focus:border-blue",
               `${
                 centerText ? "text-center" : ""
-              } flex flex-grow w-full min-w-0 py-4 font-whyte text-sm rounded-md bg-black border text-white focus:outline-none hover:border-blue-50`,
+              } flex flex-grow w-full min-w-0 font-whyte dark-input-field`,
             )}
           />
           {!placeholder || (placeholder && value !== "") ? (
@@ -189,8 +189,9 @@ const InputWithPercent: React.FC<IProps> = ({
             ""
           )}
         </div>
-
-        <p className="text-red-500 text-xs h-8 mt-1">{error || customError}</p>
+        {error || customError &&
+           <p className="text-red-500 text-xs h-8 mt-1 ">{error || customError}</p>
+        }
       </div>
     </div>
   );

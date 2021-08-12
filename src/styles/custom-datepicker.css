@@ -1,10 +1,10 @@
 /* React date picker */
 .react-datepicker {
-  @apply bg-gray-7 text-white border-none rounded-lg;
+  @apply bg-gray-7 text-white border-none rounded-lg ml-1 -mt-1;
 }
 
 .react-datepicker__triangle {
-  @apply border-none !important;
+  @apply hidden;
 }
 
 .react-datepicker__month-container {
@@ -12,7 +12,7 @@
 }
 
 .react-datepicker__month {
-  @apply flex flex-col mt-0;
+  @apply flex flex-col mt-0 mx-3;
 }
 
 .react-datepicker__header {
@@ -20,7 +20,7 @@
 }
 
 .react-datepicker__current-month {
-  @apply ml-2.5 text-sm text-white font-whyte;
+  @apply ml-2.5 text-sm text-white font-whyte mb-1;
 }
 
 .react-datepicker__week {
@@ -28,7 +28,7 @@
 }
 
 .react-datepicker__day-names {
-  @apply flex justify-around text-center;
+  @apply flex justify-around text-center mx-3;
 }
 
 .react-datepicker__day-name {
@@ -36,11 +36,11 @@
 }
 
 .react-datepicker__navigation--previous {
-  @apply text-white border border-white p-1 border-t-0 border-r-2 border-b-2 border-l-0 transform rotate-135 top-4;
+  @apply text-white border border-white p-1 border-t-0 border-r-2 border-b-2 border-l-0 transform rotate-135 top-4 ml-2;
 }
 
 .react-datepicker__navigation--next {
-  @apply text-white border border-white p-1 border-t-0 border-r-2 border-b-2 border-l-0 transform -rotate-45 top-4;
+  @apply text-white border border-white p-1 border-t-0 border-r-2 border-b-2 border-l-0 transform -rotate-45 top-4 mr-2;
 }
 
 .react-datepicker__day {
@@ -52,11 +52,11 @@
 }
 
 .react-datepicker__day--disabled {
-  @apply cursor-not-allowed text-gray-inactiveText hover:bg-transparent;
+  @apply cursor-not-allowed text-gray-600 hover:bg-transparent;
 }
 
 .react-datepicker__day--outside-month {
-  @apply text-gray-400;
+  @apply text-gray-600;
 }
 
 .react-datepicker__day--selected {
@@ -68,7 +68,7 @@
 }
 
 .react-datepicker__today-button {
-  @apply mt-4 mx-4 mb-2 p-2 text-blue bg-gray-5 hover:bg-gray-6 border-none rounded-md;
+  @apply mt-4 mx-4 mb-4 p-2 text-blue bg-gray-5 hover:bg-gray-6 border-none rounded-md;
 }
 
 .react-datepicker__month-select {
