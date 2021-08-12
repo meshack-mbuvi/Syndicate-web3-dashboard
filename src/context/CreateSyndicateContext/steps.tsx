@@ -10,14 +10,16 @@ import CloseDateAndTime from "@/containers/create/onChainDetails/closeDate";
 import {
   AllowListInfo,
   CloseDateInfo,
-  DepositAndLimitInfo,
+  DepositTokenInfo,
   FeesAndDistributionInfo,
   ModifiableInfo,
+  TotalAndLimitsInfo,
   TransferableInfo,
 } from "@/containers/create/onChainDetails/componentInfo";
-import DepositTokenAndLimit from "@/containers/create/onChainDetails/depositTokenAndLimits";
+import DepositToken from "@/containers/create/onChainDetails/depositToken";
 import FeesAndDistribution from "@/containers/create/onChainDetails/distributionShare";
 import Modifiable from "@/containers/create/onChainDetails/modifiable";
+import TotalAndLimits from "@/containers/create/onChainDetails/totalAndLimits";
 import Transferable from "@/containers/create/onChainDetails/transferable";
 import PlaceHolder from "@/containers/create/placeHolder";
 import React from "react";
@@ -37,9 +39,14 @@ export default [
     name: "On-chain details",
     subSteps: [
       {
-        name: "Deposit token & limits",
-        component: <DepositTokenAndLimit />,
-        contentInfo: <DepositAndLimitInfo />,
+        name: "Deposit token",
+        component: <DepositToken />,
+        contentInfo: <DepositTokenInfo />,
+      },
+      {
+        name: "Total & limits",
+        component: <TotalAndLimits />,
+        contentInfo: <TotalAndLimitsInfo />,
       },
       {
         name: "Close date & time",
