@@ -199,14 +199,12 @@ export const BadgeCard = (props: {
           </p>
         </div>
       </div>
-
-      {/* Only showing progress indicator when percentage is at least 1 */}
-      {/* Showing it otherwise will only present a black bar since percentage will be too small */}
-      {currentDepositsPercentage > 0 ? (
+      {/* Show progress bar when the syndicate max total deposit is not unlimited */}
+      {!depositsMaxIsUnlimited && (
         <div className="w-full">
           <ProgressIndicator currentProgress={currentDepositsPercentage} />
         </div>
-      ) : null}
+      )}
     </div>
   );
 
