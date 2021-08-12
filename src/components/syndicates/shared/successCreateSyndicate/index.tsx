@@ -1,4 +1,3 @@
-import { TextInput } from "@/components/inputs/textInput";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import Confetti from "react-confetti";
@@ -29,7 +28,7 @@ const SuccessCreateSyndicate: React.FC<{ account: string }> = ({ account }) => {
   return (
     <div className="flex justify-center items-center w-full z-10">
       <Confetti
-        style={{ pointerEvents: "none" }}
+        style={{ pointerEvents: "none", position: "fixed" }}
         numberOfPieces={showConfetti ? 1000 : 0}
         recycle={false}
         onConfettiComplete={(confetti) => {
