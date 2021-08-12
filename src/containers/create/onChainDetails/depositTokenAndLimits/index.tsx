@@ -205,7 +205,7 @@ const DepositTokenAndLimit: React.FC = () => {
       <div className="">
         <ContentTitle>Deposit token and limits</ContentTitle>
 
-        <div className="w-full space-y-3">
+        <div className="w-full space-y-7">
           <TokenSelectInput label="Deposit Token" required />
           <div>
             <InputField
