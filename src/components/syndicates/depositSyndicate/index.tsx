@@ -94,12 +94,8 @@ const DepositSyndicate: React.FC = () => {
   const depositTokenLogo = syndicate?.depositERC20Logo;
   const depositERC20Price = syndicate?.depositERC20Price;
 
-  const {
-    title,
-    message,
-    renderUnavailableState,
-    renderJoinWaitList,
-  } = useUnavailableState();
+  const { title, message, renderUnavailableState, renderJoinWaitList } =
+    useUnavailableState();
   const { depositsAvailable, maxDepositReached } = useDepositChecks();
 
   const [loadingLPDetails, setLoadingLPDetails] = useState<boolean>(false);
@@ -109,47 +105,31 @@ const DepositSyndicate: React.FC = () => {
   const [showErrorMessage, setShowErrorMessage] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>("");
   const [submitting, setSubmitting] = useState<boolean>(false);
-  const [metamaskConfirmPending, setMetamaskConfirmPending] = useState<boolean>(
-    false,
-  );
+  const [metamaskConfirmPending, setMetamaskConfirmPending] =
+    useState<boolean>(false);
   const [approved, setApproved] = useState<boolean>(false);
-  const [allowanceApprovalError, setAllowanceApprovalError] = useState<string>(
-    "",
-  );
-  const [
-    approvedAllowanceAmount,
-    setApprovedAllowanceAmount,
-  ] = useState<string>("0");
+  const [allowanceApprovalError, setAllowanceApprovalError] =
+    useState<string>("");
+  const [approvedAllowanceAmount, setApprovedAllowanceAmount] =
+    useState<string>("0");
   const [successfulDeposit, setSuccessfulDeposit] = useState<boolean>(false);
   const [metamaskDepositError, setMetamaskDepositError] = useState<string>("");
   const [depositTokenContract, setDepositTokenContract] = useState<any>({});
-  const [
-    submittingAllowanceApproval,
-    setSubmittingAllowanceApproval,
-  ] = useState<boolean>(false);
-  const [metamaskApprovalError, setMetamaskApprovalError] = useState<string>(
-    "",
-  );
+  const [submittingAllowanceApproval, setSubmittingAllowanceApproval] =
+    useState<boolean>(false);
+  const [metamaskApprovalError, setMetamaskApprovalError] =
+    useState<string>("");
   const [conversionError, setConversionError] = useState<string>("");
-  const [
-    amountLessThanMinDeposit,
-    setAmountLessThanMinDeposit,
-  ] = useState<boolean>(false);
-  const [
-    amountMoreThanMaxDeposit,
-    setAmountMoreThanMaxDeposit,
-  ] = useState<boolean>(false);
-  const [
-    maxTotalDepositsExceeded,
-    setMaxTotalDepositsExceeded,
-  ] = useState<boolean>(true);
-  const [
-    maxTotalLPDepositsExceeded,
-    setMaxTotalLPDepositsExceeded,
-  ] = useState<boolean>(false);
-  const [depositAmountChanged, setDepositAmountChanged] = useState<boolean>(
-    false,
-  );
+  const [amountLessThanMinDeposit, setAmountLessThanMinDeposit] =
+    useState<boolean>(false);
+  const [amountMoreThanMaxDeposit, setAmountMoreThanMaxDeposit] =
+    useState<boolean>(false);
+  const [maxTotalDepositsExceeded, setMaxTotalDepositsExceeded] =
+    useState<boolean>(true);
+  const [maxTotalLPDepositsExceeded, setMaxTotalLPDepositsExceeded] =
+    useState<boolean>(false);
+  const [depositAmountChanged, setDepositAmountChanged] =
+    useState<boolean>(false);
 
   // DEFINITIONS
   let depositApprovalText;
@@ -371,6 +351,19 @@ const DepositSyndicate: React.FC = () => {
    */
   const investInSyndicate = async (amount: number) => {
     /**
+     * Check that wallet has enough ERC20 token to cater for deposit.
+     * Continue deposit if there is enough funds. Otherwise, abort and inform
+     * user that they don't have enough funds
+     */
+    const balance = await checkTokenBalance();
+    if (+balance < +amount) {
+      setMetamaskDepositError(
+        `Your wallet account must have at least ${amount} ${depositTokenSymbol} in order to deposit into this syndicate.`,
+      );
+      return;
+    }
+
+    /**
      * All addresses are allowed, and investments can be rejected after the
      * fact. This is useful if you want to allow anyone to invest in a syndicate
      *  (for example, for a non-profit might enable this because there is
@@ -519,7 +512,7 @@ const DepositSyndicate: React.FC = () => {
           });
         });
     } catch (error) {
-      // error occured before wallet prompt.
+      // error occurred before wallet prompt.
       const { code } = error;
       const errorMessage = getMetamaskError(code, "Allowance approval");
       setMetamaskConfirmPending(false);
@@ -533,6 +526,21 @@ const DepositSyndicate: React.FC = () => {
         amount,
         error,
       });
+    }
+  };
+
+  /**
+   *
+   * @returns {string} balance of the user for the deposit ERC20 token
+   */
+  const checkTokenBalance = async () => {
+    try {
+      const balance = await depositTokenContract.methods
+        .balanceOf(account.toString())
+        .call({ from: account });
+      return getWeiAmount(balance, depositTokenDecimals, false);
+    } catch {
+      return 0;
     }
   };
 
