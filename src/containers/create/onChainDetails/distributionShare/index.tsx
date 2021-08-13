@@ -164,7 +164,7 @@ const DistributionShare: React.FC = () => {
     <div className="flex flex-col w-full">
       <ContentTitle>Distribution share</ContentTitle>
 
-      <div className="w-full space-y-4 px-1">
+      <div className="w-full space-y-7 px-1">
         <InputWithPercent
           name="expectedAnnualOperatingFees"
           label="Expected annual operating fees"
