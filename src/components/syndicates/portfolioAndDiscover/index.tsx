@@ -67,7 +67,7 @@ const PortfolioAndDiscover = () => {
     if (syndicates.length) {
       const syndicateAddresses = [];
       syndicates.forEach((syndicate) => {
-        syndicateAddresses.push(syndicate.syndicateAddress);
+        syndicateAddresses.push(syndicate.managerCurrent);
       });
       const accountHasSyndicate = syndicateAddresses.find(
         (address) => address == account,

@@ -33,138 +33,141 @@ interface SyndicateInfo {
  * @param {object} data
  * @returns
  */
-export const getSyndicates = (data: {
-  account;
-  GetterLogicContract;
-  ManagerLogicContract;
-  DistributionLogicContract;
-  DepositLogicContract;
-}) => async (dispatch) => {
-  if (!data) return;
+export const getSyndicates =
+  (data: {
+    account;
+    GetterLogicContract;
+    ManagerLogicContract;
+    DistributionLogicContract;
+    DepositLogicContract;
+  }) =>
+  async (dispatch) => {
+    if (!data) return;
 
-  const {
-    account,
-    GetterLogicContract,
-    ManagerLogicContract,
-    DistributionLogicContract,
-    DepositLogicContract,
-  } = data;
-
-  if (
-    !GetterLogicContract ||
-    !ManagerLogicContract ||
-    !DistributionLogicContract
-  )
-    return;
-
-  try {
-    dispatch({
-      data: true,
-      type: SET_LOADING,
-    });
-
-    const syndicates = [];
-    const syndicateInfo: SyndicateInfo = {};
-
-    const accountCreatedSyndicateEvents = await ManagerLogicContract.getSyndicatesForManager(
+    const {
       account,
-    );
+      GetterLogicContract,
+      ManagerLogicContract,
+      DistributionLogicContract,
+      DepositLogicContract,
+    } = data;
 
-    const memberDepositedEvents = await DepositLogicContract.getMemberDepositEvents(
-      "DepositAdded",
-    );
+    if (
+      !GetterLogicContract ||
+      !ManagerLogicContract ||
+      !DistributionLogicContract
+    )
+      return;
 
-    await accountCreatedSyndicateEvents.forEach(async (event) => {
-      const { syndicateAddress } = event.returnValues;
-      // check whether event belongs to this wallet owner
-      if (syndicateAddress === account) {
-        syndicates.push(syndicateAddress);
-        syndicateInfo[syndicateAddress] = {
-          activities: 0,
-          depositors: 0,
-        };
-      }
-    });
+    try {
+      dispatch({
+        data: true,
+        type: SET_LOADING,
+      });
 
-    await memberDepositedEvents.forEach(async (event) => {
-      const { memberAddress, syndicateAddress: address } = event.returnValues;
+      const syndicates = [];
+      const syndicateInfo: SyndicateInfo = {};
 
-      // save activities for the syndicate
-      if (syndicateInfo[address] && syndicateInfo[address]["activities"]) {
-        syndicateInfo[address]["activities"] += 1;
-      } else {
-        syndicateInfo[address] = { ...syndicateInfo[address], activities: 1 };
-      }
+      const accountCreatedSyndicateEvents =
+        await ManagerLogicContract.getSyndicatesForManager(account);
 
-      if (memberAddress === account) {
-        // we need to check whether memberAddress matches this wallet account
-        // meaning this account has invested in this wallet
-        // we use default for fields missing in the event
-        // syndicate details will be retrieved during display
-        syndicates.push(address);
-      }
-    });
+      const memberDepositedEvents =
+        await DepositLogicContract.getMemberDepositEvents("DepositAdded");
 
-    /**
-     * wallet might have send several investments and thus many events
-     * for the same use are emitted. We process all the events and the get
-     * a single syndicate, hence the filtering below.
-     */
-    const filteredSyndicateAddresses = syndicates.reduce((acc, current) => {
-      const x = acc.find((item) => item === current);
-      if (!x) {
-        return acc.concat([current]);
-      } else {
-        return acc;
-      }
-    }, []);
-
-    /**
-     * Get syndicate details for all address of obtained from events
-     * NOTE: we are using for loop instead of build in map/forEach function.
-     * This is because the built in functions above do not update the length of
-     * const allSyndicates = []; after array.push method
-     *
-     */
-    const allSyndicates = [];
-
-    for (let index = 0; index < filteredSyndicateAddresses.length; index++) {
-      try {
-        const syndicate = await GetterLogicContract.getSyndicateValues(
-          filteredSyndicateAddresses[index],
-        );
-        const syndicateDetails = await getSyndicate(syndicate);
-        const { syndicateAddress } = syndicate;
-
-        /**
-         * We check whether we have data returned; for the case of an error,
-         * the returned value is undefined
-         */
-        if (syndicateDetails) {
-          allSyndicates.push({
-            ...syndicateDetails,
-            ...syndicateInfo[syndicateAddress],
-          });
+      await accountCreatedSyndicateEvents.forEach(async (event) => {
+        const { syndicateAddress } = event.returnValues;
+        // check whether event belongs to this wallet owner
+        if (syndicateAddress === account) {
+          syndicates.push(syndicateAddress);
+          syndicateInfo[syndicateAddress] = {
+            activities: 0,
+            depositors: 0,
+          };
         }
-      } catch (error) {}
+      });
+
+      await memberDepositedEvents.forEach(async (event) => {
+        const { memberAddress, syndicateAddress: address } = event.returnValues;
+
+        // save activities for the syndicate
+        if (syndicateInfo[address] && syndicateInfo[address]["activities"]) {
+          syndicateInfo[address]["activities"] += 1;
+        } else {
+          syndicateInfo[address] = { ...syndicateInfo[address], activities: 1 };
+        }
+
+        if (memberAddress === account) {
+          // we need to check whether memberAddress matches this wallet account
+          // meaning this account has invested in this wallet
+          // we use default for fields missing in the event
+          // syndicate details will be retrieved during display
+          syndicates.push(address);
+        }
+      });
+
+      /**
+       * wallet might have sent several investments and thus many events
+       * for the same user are emitted. We process all the events and the get
+       * a single syndicate, hence the filtering below.
+       */
+      const filteredSyndicateAddresses = syndicates.reduce((acc, current) => {
+        const x = acc.find((item) => item === current);
+        if (!x) {
+          return acc.concat([current]);
+        } else {
+          return acc;
+        }
+      }, []);
+
+      /**
+       * Get syndicate details for all address of obtained from events
+       * NOTE: we are using for loop instead of build in map/forEach function.
+       * This is because the built in functions above do not update the length of
+       * const allSyndicates = []; after array.push method
+       *
+       */
+      const allSyndicates = [];
+
+      for (let index = 0; index < filteredSyndicateAddresses.length; index++) {
+        try {
+          const syndicate = await GetterLogicContract.getSyndicateValues(
+            filteredSyndicateAddresses[index],
+          );
+          const syndicateDetails = await getSyndicate(syndicate);
+          const { syndicateAddress } = syndicate;
+
+          /**
+           * We check whether we have data returned; for the case of an error,
+           * the returned value is undefined
+           */
+          if (syndicateDetails) {
+            dispatch({
+              data: true,
+              type: SET_LOADING,
+            });
+            allSyndicates.push({
+              ...syndicateDetails,
+              ...syndicateInfo[syndicateAddress],
+            });
+          }
+        } catch (error) {}
+      }
+
+      dispatch({
+        data: allSyndicates,
+        type: ALL_SYNDICATES,
+      });
+      return dispatch({
+        data: false,
+        type: SET_LOADING,
+      });
+    } catch (error) {
+      dispatch({
+        data: false,
+        type: SET_LOADING,
+      });
     }
-
-    dispatch({
-      data: allSyndicates,
-      type: ALL_SYNDICATES,
-    });
-
-    return dispatch({
-      data: false,
-      type: SET_LOADING,
-    });
-  } catch (error) {
-    dispatch({
-      data: false,
-      type: SET_LOADING,
-    });
-  }
-};
+  };
 
 /**
  * adds syndicates to application store
@@ -181,52 +184,51 @@ export const addSyndicateInvestment = (data) => async (dispatch) => {
 /**
  * Retrieve single syndicate from the contract by syndicateAddress
  */
-export const getSyndicateByAddress = ({
-  syndicateAddress,
-  GetterLogicContract,
-}): AppThunk => async (dispatch) => {
-  try {
-    if (!syndicateAddress.trim() || !GetterLogicContract) return;
+export const getSyndicateByAddress =
+  ({ syndicateAddress, GetterLogicContract }): AppThunk =>
+  async (dispatch) => {
+    try {
+      if (!syndicateAddress.trim() || !GetterLogicContract) return;
 
-    const syndicate = await GetterLogicContract.getSyndicateValues(
-      syndicateAddress,
-    );
+      const syndicate = await GetterLogicContract.getSyndicateValues(
+        syndicateAddress,
+      );
 
-    // get token details
-    const {
-      depositERC20TokenSymbol,
-      depositERC20Logo,
-      tokenDecimals,
-      depositERC20Price,
-    } = await getTokenDetails(syndicate.depositERC20Address);
+      // get token details
+      const {
+        depositERC20TokenSymbol,
+        depositERC20Logo,
+        tokenDecimals,
+        depositERC20Price,
+      } = await getTokenDetails(syndicate.depositERC20Address);
 
-    const syndicateDetails = processSyndicateDetails(
-      syndicate,
-      tokenDecimals,
-      depositERC20TokenSymbol,
-      depositERC20Logo,
-      depositERC20Price,
-    );
-    // set these incase they are not reset
-    dispatch({
-      data: { syndicateAddressIsValid: true, syndicateFound: true },
-      type: FOUND_SYNDICATE_ADDRESS,
-    });
+      const syndicateDetails = processSyndicateDetails(
+        syndicate,
+        tokenDecimals,
+        depositERC20TokenSymbol,
+        depositERC20Logo,
+        depositERC20Price,
+      );
+      // set these incase they are not reset
+      dispatch({
+        data: { syndicateAddressIsValid: true, syndicateFound: true },
+        type: FOUND_SYNDICATE_ADDRESS,
+      });
 
-    // set syndicate details
-    return dispatch({
-      data: { ...syndicateDetails },
-      type: SYNDICATE_BY_ADDRESS,
-    });
-  } catch (err) {
-    // syndicate not found
-    // syndicateAddress is not valid
-    dispatch({
-      data: { syndicateAddressIsValid: false, syndicateFound: false },
-      type: INVALID_SYNDICATE_ADDRESS,
-    });
-  }
-};
+      // set syndicate details
+      return dispatch({
+        data: { ...syndicateDetails },
+        type: SYNDICATE_BY_ADDRESS,
+      });
+    } catch (err) {
+      // syndicate not found
+      // syndicateAddress is not valid
+      dispatch({
+        data: { syndicateAddressIsValid: false, syndicateFound: false },
+        type: INVALID_SYNDICATE_ADDRESS,
+      });
+    }
+  };
 
 // get number of decimal places for any ERC20 contract address
 export const getTokenDecimals = async (contractAddress: string) => {
@@ -353,16 +355,15 @@ export const processSyndicateDetails = (
   };
 };
 
-export const updateSyndicateManagerFeeAddress = (managerFeeAddress: string) => (
-  dispatch,
-) => {
-  if (!managerFeeAddress) return;
+export const updateSyndicateManagerFeeAddress =
+  (managerFeeAddress: string) => (dispatch) => {
+    if (!managerFeeAddress) return;
 
-  return dispatch({
-    type: SET_MANAGER_FEE_ADDRESS,
-    data: managerFeeAddress,
-  });
-};
+    return dispatch({
+      type: SET_MANAGER_FEE_ADDRESS,
+      data: managerFeeAddress,
+    });
+  };
 
 /**
  * updates syndicate details upon syndicate settings update

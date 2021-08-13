@@ -13,22 +13,22 @@ import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Head from "src/components/syndicates/shared/HeaderTitle";
+import { ConnectModal } from "@/components/connectWallet/connectModal";
+import { Spinner } from "@/components/shared/spinner";
+import { useFirstRender } from "@/components/syndicates/hooks/useFirstRender";
 
 const CreateSyndicate: React.FC = () => {
-  const {
-    steps,
-    currentSubStep,
-    showSuccessView,
-    currentStep,
-  } = useCreateSyndicateContext();
+  const { steps, currentSubStep, showSuccessView, currentStep } =
+    useCreateSyndicateContext();
 
   const dispatch = useDispatch();
-
+  const firstRender = useFirstRender();
   const router = useRouter();
 
   const {
     initializeContractsReducer: { syndicateContracts },
     syndicatesReducer: { syndicates = [] },
+    loadingReducer: { loading },
     web3Reducer: { web3 },
     tokenAndDepositLimitReducer: {
       createSyndicate: {
@@ -44,22 +44,22 @@ const CreateSyndicate: React.FC = () => {
   /**
    * We need to be sure syndicateContracts is initialized before retrieving events.
    */
+
   useEffect(() => {
-    if (syndicateContracts?.GetterLogicContract) {
+    if (syndicateContracts?.GetterLogicContract && !firstRender) {
       dispatch(getSyndicates({ ...web3, ...syndicateContracts }));
     }
   }, [syndicateContracts?.GetterLogicContract, account]);
 
   // Assume by default this user has an open syndicate
-  const [managerWithOpenSyndicate, setManagerWithOpenSyndicate] = useState(
-    false,
-  );
+  const [managerWithOpenSyndicate, setManagerWithOpenSyndicate] =
+    useState(false);
 
   useEffect(() => {
-    if (syndicates) {
+    if (syndicates.length) {
       // Check is there is a syndicate with the same address
       const hasSyndicate = syndicates.some(
-        (syndicate: Syndicate) => syndicate.syndicateAddress == account,
+        (syndicate: Syndicate) => syndicate.managerCurrent == account,
       );
       setManagerWithOpenSyndicate(hasSyndicate);
     }
@@ -73,8 +73,25 @@ const CreateSyndicate: React.FC = () => {
     }
   }, [managerWithOpenSyndicate, showSuccessView]);
 
+  const closeLoader = () => {
+    return;
+  };
+
   return (
     <Layout>
+      <ConnectModal
+        {...{
+          show: loading,
+          showCloseButton: false,
+          closeModal: closeLoader,
+          height: "h-80",
+        }}
+      >
+        <div className="h-3/4 flex flex-col items-center justify-center text-base">
+          <Spinner height="h-16" width="w-16" />
+          <p className="mt-1">Fetching syndicates, please wait...</p>
+        </div>
+      </ConnectModal>
       <Head title="Create - Syndicate" />
       <>
         {!account ? (
