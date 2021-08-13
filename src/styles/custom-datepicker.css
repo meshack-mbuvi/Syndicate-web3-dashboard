@@ -71,9 +71,8 @@
   @apply mt-4 mx-4 mb-4 p-2 text-blue bg-gray-5 hover:bg-gray-6 border-none rounded-md;
 }
 
-.react-datepicker__month-select {
-  @apply bg-black font-whyte rounded-md
-}
-.react-datepicker__year-select {
-  @apply bg-black font-whyte rounded-md
+.react-datepicker__input-container > input {
+  @apply block text-lg text-white bg-black border
+  border-gray-24 rounded-md shadow-sm font-whyte h-14 px-4 py-5 relative w-full focus:outline-none
+  focus:border-gray-24 flex-grow hover:border-blue-50;
 }

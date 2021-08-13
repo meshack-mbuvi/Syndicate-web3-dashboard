@@ -8,6 +8,12 @@ import React, { forwardRef, useEffect, useMemo, useState } from "react";
 import DatePicker from "react-datepicker";
 import { useDispatch, useSelector } from "react-redux";
 import ReactSelect, { components, SingleValueProps } from "react-select";
+import { getLocaleObject } from "@/utils/dateUtils";
+
+// we get user's locale
+const localeString = (new Intl.NumberFormat()).resolvedOptions().locale
+// pass the locale string dateUtils to get locale object
+const locale = getLocaleObject(localeString)
 
 const TimeAndDatePicker: React.FC = () => {
   const {
@@ -35,6 +41,10 @@ const TimeAndDatePicker: React.FC = () => {
 
   const dispatch = useDispatch();
 
+  // used as the default date for a syndicates closure
+  // close date is set to +2 weeks from current date
+  const startDate = new Date(Date.now() + TWO_WEEKS_IN_MS)
+
   useEffect(() => {
     // TO BE USED IN THE CONTRACT
     // const isoDateString = `${
@@ -50,27 +60,6 @@ const TimeAndDatePicker: React.FC = () => {
       }),
     );
   }, [selectedDate, selectedTimeValue, selectedTimezone, dispatch]);
-
-  const InputWithCalendar = forwardRef<
-    HTMLInputElement,
-    {
-      value?: string;
-      onClick?: (val: unknown) => void;
-    }
-  >(({ value, onClick }, ref) => (
-    <div className="relative flex px-1">
-      <input
-        type="text"
-        className="block shadow-sm font-whyte relative w-full flex-grow dark-input-field"
-        defaultValue={value}
-        onClick={onClick}
-        readOnly={true}
-        ref={ref}
-      />
-    </div>
-  ));
-
-  InputWithCalendar.displayName = "InputWithCalendar";
 
   const timezones = ct.getAllTimezones();
 
@@ -191,21 +180,19 @@ const TimeAndDatePicker: React.FC = () => {
       <div className="mt-10 flex flex-col">
         <p>Close time</p>
         <div className="flex mt-2 space-x-6 justify-between items-center w-full">
-          <div className="-ml-1">
+          <div className="w-5/12 flex flex-1">
             <DatePicker
               selected={selectedDate}
               onChange={(date) => setSelectedDate(date)}
-              startDate={new Date(Date.now() + TWO_WEEKS_IN_MS)}
-              // Add date two weeks from now
+              startDate={startDate}
+              placeholderText={startDate?.toLocaleDateString()}
               minDate={new Date()}
-              nextMonthButtonLabel=">"
-              previousMonthButtonLabel="<"
               todayButton="Go to Today"
+              locale={locale}
+              dateFormat="P"
               formatWeekDay={(nameOfDay) => nameOfDay.substr(0, 1)}
-              dateFormat={selectedDate.toLocaleDateString()}
+              showPopperArrow={false}
               dropdownMode="select"
-              shouldCloseOnSelect={false}
-              customInput={<InputWithCalendar />}
             />
           </div>
 
