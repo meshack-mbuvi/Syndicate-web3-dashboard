@@ -4,6 +4,7 @@ import {
   ERROR_CREATING_SYNDICATE,
 } from "@/components/amplitude/eventNames";
 import { MAX_INTEGER } from "@/components/syndicates/shared/Constants";
+import { metamaskConstants } from "src/components/syndicates/shared/Constants";
 import { getMetamaskError } from "@/helpers";
 import { setSubmitting } from "@/redux/actions";
 import { getSyndicates } from "@/redux/actions/syndicates";
@@ -376,6 +377,11 @@ const CreateSyndicateProvider: React.FC<{ children: ReactNode }> = ({
           flow: Flow.MGR_CREATE_SYN,
           error,
         });
+      } else {
+        // alert any other contract error
+        setErrorMessage(metamaskConstants.metamaskUnknownErrorMessage);
+        setShowErrorMessage(true);
+        dispatch(setSubmitting(false));
       }
     }
   };
