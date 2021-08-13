@@ -26,11 +26,8 @@ const Steps: FC<ISteps> = ({
   currentSubStep,
   disableConfirmClick,
 }) => {
-  const {
-    setCurrentSubStep,
-    setCurrentStep,
-    buttonsDisabled,
-  } = useCreateSyndicateContext();
+  const { setCurrentSubStep, setCurrentStep, buttonsDisabled } =
+    useCreateSyndicateContext();
 
   const router = useRouter();
 
@@ -56,7 +53,9 @@ const Steps: FC<ISteps> = ({
             key={step.name}
             className={`${
               stepIdx !== steps?.length - 1 ? "pb-10" : ""
-            }group relative cursor-pointer`}
+            }group relative ${
+              stepIdx < 3 ? "cursor-pointer" : "cursor-default"
+            }`}
             onClick={(e) => {
               // prevent clicks if the buttons are disabled and processing and done pages
               if (!buttonsDisabled && stepIdx <= 2 && !disableConfirmClick) {
@@ -87,7 +86,10 @@ const Steps: FC<ISteps> = ({
             <div className="relative flex items-start group">
               <span className=" h-6 flex items-center" aria-hidden="true">
                 <span
-                  className={`relative z-5 w-4 h-4 flex items-center justify-center border-2 rounded-full group-hover:border-green-light 
+                  className={`relative z-5 w-4 h-4 flex items-center justify-center border-2 rounded-full ${
+                    // hide hover status for processing and done
+                    stepIdx < 3 ? "group-hover:border-green-light" : ""
+                  }
                   ${activeStep ? "border-green-light " : "border-gray-inactive"}
                   ${completedStep ? "bg-green-light border-green-light" : ""}
                    `}
@@ -99,7 +101,10 @@ const Steps: FC<ISteps> = ({
               </span>
               <span className="ml-4 min-w-0 flex flex-col">
                 <span
-                  className={`text-lg hover:text-white sm:text-base ${
+                  className={`text-lg ${
+                    // hide hover status for processing and done
+                    stepIdx < 3 ? "hover:text-white" : ""
+                  } sm:text-base ${
                     completedStep || activeStep
                       ? "text-white"
                       : "text-gray-inactiveText"
