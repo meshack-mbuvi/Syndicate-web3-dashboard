@@ -77,7 +77,7 @@ export const InputField = (props: {
             }
             onChange(e);
           }}
-          className={`flex w-full min-w-0 mt-1 font-whyte flex-grow dark-input-field ${
+          className={`flex w-full min-w-0 mt-1 text-sm font-whyte flex-grow dark-input-field ${
             addOn ? "pr-14" : ""
           }`}
           {...rest}
@@ -91,18 +91,18 @@ export const InputField = (props: {
           <div className="absolute inset-y-0 right-0 pr-3 mt-1 flex items-center pointer-events-none">
             {logo ? (
               <span className="bg-black px-1">
-                <img className="h-5 w-5" src={logo} alt="logo" />
+                <img className="h-4 w-4" src={logo} alt="logo" />
               </span>
             ) : null}
-            <span className="text-white sm:text-sm" id="price-currency">
+            <span className="font-whyte text-white text-sm" id="price-currency">
               {addOn}
             </span>
           </div>
         )}
       </div>
-      {error && !disabled && (
-        <p className="text-red-500 text-xs h-1 mt-1 mb-1">{error}</p>
-      )}
+      <p className="text-red-500 text-xs h-1 mt-1 mb-1">
+        {error && !disabled ? error : ""}
+      </p>
     </div>
   );
 };

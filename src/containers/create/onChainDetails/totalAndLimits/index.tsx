@@ -200,87 +200,82 @@ const TotalAndLimits: React.FC = () => {
   };
 
   return (
-    <div className="flex">
-      <div className="">
-        <ContentTitle>Total and limits</ContentTitle>
+    <div className="flex flex-col">
+      <ContentTitle>Total and limits</ContentTitle>
 
-        <div className="w-full space-y-3">
-          <div>
-            <InputField
-              {...{
-                value: numberWithCommas(numMembersMax as string),
-                label:
-                  "Maximum number of people who can deposit into this syndicate",
-                addOn: "People",
-                onChange: handleDepositsNumMax,
-                error: depositsNumbMaxError,
-                placeholder: "Unlimited",
-                type: "text",
-                isNumber: true,
-              }}
-            />
-
-            {+numMembersMax > 2000 || !numMembersMax ? (
-              <div className="rounded-md p-4 mt-3 font-whyte text-sm text-blue-melanie bg-blue-navy bg-opacity-15">
-                <p>
-                  US-based companies with 2,000 or more shareholders are
-                  considered public companies by the SEC. Public companies must
-                  register and follow certain reporting standards and
-                  regulations.
-                </p>
-              </div>
-            ) : null}
-          </div>
-
-          {/* Minimum and Maximum per depositor */}
-          <div className="grid grid-cols-2">
-            <div className="mr-4">
-              <InputField
-                {...{
-                  value: numberWithCommas(depositMemberMin),
-                  label: "Minimum deposit per depositor",
-                  addOn: depositTokenSymbol.toUpperCase(), //This value should be obtained from selected token
-                  logo: depositTokenLogo,
-                  onChange: handleDepositMemberMin,
-                  error: depositMemberMinError,
-                  placeholder: "0",
-                  type: "text",
-                  isNumber: true,
-                }}
-              />
-            </div>
-
-            <div className="ml-4">
-              <InputField
-                {...{
-                  value: numberWithCommas(depositMemberMax),
-                  label: "Maximum deposit per depositor",
-                  addOn: depositTokenSymbol.toUpperCase(),
-                  logo: depositTokenLogo,
-                  onChange: handleDepositMemberMax,
-                  error: depositMemberMaxError,
-                  placeholder: "Unlimited",
-                  type: "text",
-                  isNumber: true,
-                }}
-              />
-            </div>
-          </div>
-
+      <div className="w-full space-y-3 px-1">
+        <div className="">
           <InputField
             {...{
-              value: numberWithCommas(depositTotalMax),
-              label: "Max total that can be deposited into this syndicate",
-              addOn: depositTokenSymbol.toUpperCase(),
-              logo: depositTokenLogo,
-              onChange: handleDepositMaxTotal,
-              error: maxTotalDepositsError,
+              value: numberWithCommas(numMembersMax as string),
+              label:
+                "Maximum number of people who can deposit into this syndicate",
+              addOn: "People",
+              onChange: handleDepositsNumMax,
+              error: depositsNumbMaxError,
               placeholder: "Unlimited",
               type: "text",
               isNumber: true,
             }}
           />
+
+          <div className="rounded-md p-4 mt-3 font-whyte text-sm text-blue-melanie bg-blue-navy bg-opacity-15">
+            <p>
+              US-based companies with 2,000 or more shareholders are considered
+              public companies by the SEC. Public companies must register and
+              follow certain reporting standards and regulations.
+            </p>
+          </div>
         </div>
+
+        {/* Minimum and Maximum per depositor */}
+        <div className="grid grid-cols-2">
+          <div className="mr-4">
+            <InputField
+              {...{
+                value: numberWithCommas(depositMemberMin),
+                label: "Minimum deposit per depositor",
+                addOn: depositTokenSymbol.toUpperCase(), //This value should be obtained from selected token
+                logo: depositTokenLogo,
+                onChange: handleDepositMemberMin,
+                error: depositMemberMinError,
+                placeholder: "0",
+                type: "text",
+                isNumber: true,
+              }}
+            />
+          </div>
+
+          <div className="ml-4">
+            <InputField
+              {...{
+                value: numberWithCommas(depositMemberMax),
+                label: "Maximum deposit per depositor",
+                addOn: depositTokenSymbol.toUpperCase(),
+                logo: depositTokenLogo,
+                onChange: handleDepositMemberMax,
+                error: depositMemberMaxError,
+                placeholder: "Unlimited",
+                type: "text",
+                isNumber: true,
+              }}
+            />
+          </div>
+        </div>
+
+        <InputField
+          {...{
+            value: numberWithCommas(depositTotalMax),
+            label: "Max total that can be deposited into this syndicate",
+            addOn: depositTokenSymbol.toUpperCase(),
+            logo: depositTokenLogo,
+            onChange: handleDepositMaxTotal,
+            error: maxTotalDepositsError,
+            placeholder: "Unlimited",
+            type: "text",
+            isNumber: true,
+          }}
+        />
       </div>
     </div>
   );
