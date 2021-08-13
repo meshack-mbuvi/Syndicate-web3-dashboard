@@ -177,8 +177,10 @@ const InputWithPercent: React.FC<IProps> = ({
             ""
           )}
         </div>
-
-        <p className="text-red-500 text-xs h-8 mt-1 ">{error || customError}</p>
+        
+        {error || customError &&
+          <p className="text-red-500 text-xs h-8 mt-1 ">{error || customError}</p>
+        }
       </div>
     </div>
   );
