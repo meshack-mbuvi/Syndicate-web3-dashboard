@@ -3,9 +3,9 @@
 import { setModifiable } from "@/redux/actions/createSyndicate/syndicateOnChainData/modifiable";
 import { RootState } from "@/redux/store";
 import { classNames } from "@/utils/classNames";
-import React from 'react';
+import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { NonEditableSetting } from '../../shared';
+import { ContentTitle, NonEditableSetting } from "../../shared";
 
 const Modifiable: React.FC = () => {
   const dispatch = useDispatch();
@@ -17,9 +17,9 @@ const Modifiable: React.FC = () => {
   } = useSelector((state: RootState) => state);
 
   return (
-    <div className="flex flex-col w-full">
-      <div className="mb-10 text-2xl leading-8 space-y-4">
-        <p>Should this syndicate be modifiable?</p>
+    <div className="flex flex-col w-full space-y-4">
+      <div className="flex flex-col">
+        <ContentTitle>Should this syndicate be modifiable?</ContentTitle>
         <NonEditableSetting />
       </div>
 

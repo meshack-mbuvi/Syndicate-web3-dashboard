@@ -10,6 +10,7 @@ import { classNames } from "@/utils/classNames";
 import { PERCENTAGES } from "@/utils/constants";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { ContentTitle } from "../../shared";
 
 const options = [PERCENTAGES.HALF, PERCENTAGES.ONE, PERCENTAGES.THREE];
 
@@ -161,7 +162,7 @@ const DistributionShare: React.FC = () => {
 
   return (
     <div className="flex flex-col w-full">
-      <div className="mb-10 text-2xl leading-8">Distribution share</div>
+      <ContentTitle>Distribution share</ContentTitle>
 
       <div className="w-full space-y-4 px-1">
         <InputWithPercent

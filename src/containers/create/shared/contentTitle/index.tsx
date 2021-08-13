@@ -1,3 +1,3 @@
 export const ContentTitle: React.FC = (props) => (
-  <p className="text-2xl leading-8 mb-4">{props.children}</p>
+  <p className="text-2xl leading-8 mb-8">{props.children}</p>
 );

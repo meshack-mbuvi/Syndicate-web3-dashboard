@@ -4,6 +4,7 @@ import { setTransferable } from "@/redux/actions/createSyndicate/syndicateOnChai
 import { RootState } from "@/redux/store";
 import { classNames } from "@/utils/classNames";
 import { useDispatch, useSelector } from "react-redux";
+import { ContentTitle } from "../../shared";
 
 interface ITransferOptions {
   title: string;
@@ -35,18 +36,20 @@ const Transferable: React.FC = () => {
 
   return (
     <div className="flex flex-col w-full">
-      <div className="mb-10 text-2xl leading-8">
+      <ContentTitle>
         Should members be able to transfer their ownership in this syndicate?
-      </div>
+      </ContentTitle>
 
       <div className="w-full">
         {transferOptions.map((option: ITransferOptions) => (
           <div
             key={option.title}
             className={classNames(
-              transferable === option.state ? "border-blue bg-blue bg-opacity-5" : "border-inactive",
+              transferable === option.state
+                ? "border-blue bg-blue bg-opacity-5"
+                : "border-inactive",
               `relative rounded-lg border px-6 h-24 shadow-sm flex items-center space-x-3 ${
-              transferable !== option.state && "hover:border-blue-50"
+                transferable !== option.state && "hover:border-blue-50"
               } mb-4 cursor-pointer`,
             )}
             onClick={() => dispatch(setTransferable(option.state))}
@@ -66,10 +69,9 @@ const Transferable: React.FC = () => {
             <div className="flex-1 min-w-0">
               <p
                 className={classNames(
-                  transferable === option.state
-                    ? "opacity-100"
-                    : "opacity-50",
-                  "text-base leading-6", "text-white"
+                  transferable === option.state ? "opacity-100" : "opacity-50",
+                  "text-base leading-6",
+                  "text-white",
                 )}
               >
                 {option.title}
