@@ -270,7 +270,7 @@ const Allowlist: React.FC = () => {
                 error: allowListAddressesError,
               }}
               placeholder="Enter investor wallet addresses here, separated by commas"
-              classoverride="bg-black text-white border-inactive mt-1"
+              classoverride="bg-black text-white border-inactive mt-2"
               rows={7}
             />
           </div>

@@ -46,19 +46,19 @@ export const TokenSelectInput: React.FC<ITokenSelectInput> = (props) => {
 
   return (
     <div>
-      <div className="flex justify-between">
+      <div className="flex justify-between items-center">
         <label
           htmlFor="email"
-          className="block py-2 text-white text-sm font-medium"
+          className="block text-white"
         >
           {label}
         </label>
         {required && (
-          <p className="block py-2 text-gray-3 text-sm font-normal">Required</p>
+          <p className="block text-gray-3 text-sm font-normal">Required</p>
         )}
       </div>
 
-      <div className="mt-1 relative rounded-md shadow-sm" ref={dropdownRef}>
+      <div className="mt-2 relative rounded-md shadow-sm" ref={dropdownRef}>
         {depositTokenLogo ? (
           <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
             <img

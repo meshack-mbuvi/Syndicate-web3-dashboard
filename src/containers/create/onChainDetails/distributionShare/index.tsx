@@ -187,8 +187,8 @@ const DistributionShare: React.FC = () => {
           <label className="text-base" htmlFor="syndicateProfitSharePercent">
             Share of distributions to Syndicate Protocol
           </label>
-          <div className="grid grid-cols-3 gap-4 mt-1">
-            <div className="grid grid-cols-3 col-span-2 h-12 rounded-md bg-black border border-gray-24 first:rounded-tl-md first:rounded-bl-md">
+          <div className="grid grid-cols-3 gap-4 mt-2">
+            <div className="grid grid-cols-3 col-span-2 rounded-md bg-black border border-gray-24 first:rounded-tl-md first:rounded-bl-md">
               {options.map((option, i) => (
                 <button
                   key={i}

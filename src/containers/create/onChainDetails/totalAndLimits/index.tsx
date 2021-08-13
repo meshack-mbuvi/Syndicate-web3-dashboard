@@ -203,7 +203,8 @@ const TotalAndLimits: React.FC = () => {
     <div className="flex flex-col">
       <ContentTitle>Total and limits</ContentTitle>
 
-      <div className="w-full space-y-3 px-1">
+
+      <div className="w-full space-y-7 px-1">
         <div className="">
           <InputField
             {...{

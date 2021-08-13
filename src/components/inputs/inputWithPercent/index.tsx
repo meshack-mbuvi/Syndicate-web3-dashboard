@@ -152,7 +152,7 @@ const InputWithPercent: React.FC<IProps> = ({
             placeholder={placeholder}
             maxLength={maxLength}
             className={classNames(
-              label && "mt-1",
+              label && "mt-2",
               error
                 ? "border-red-500 focus:border-red-500 focus:ring-0"
                 : "border-gray-24 focus:border-blue",

@@ -58,7 +58,7 @@ export const InputField = (props: {
       <div className="flex justify-between">
         <label
           htmlFor={label}
-          className="block py-2 text-white text-sm font-medium"
+          className="block text-white"
         >
           {label}
         </label>
@@ -77,7 +77,7 @@ export const InputField = (props: {
             }
             onChange(e);
           }}
-          className={`flex w-full min-w-0 mt-1 text-sm font-whyte flex-grow dark-input-field ${
+          className={`flex w-full min-w-0 mt-2 font-whyte flex-grow dark-input-field ${
             addOn ? "pr-14" : ""
           }`}
           {...rest}
