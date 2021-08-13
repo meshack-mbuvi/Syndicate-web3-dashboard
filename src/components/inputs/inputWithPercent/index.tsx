@@ -20,7 +20,6 @@ interface IProps {
   setResetToDefault?: (value: boolean) => void;
   storedValue?: number;
   customError?: string;
-  centerText?: boolean;
 }
 
 const InputWithPercent: React.FC<IProps> = ({
@@ -38,7 +37,6 @@ const InputWithPercent: React.FC<IProps> = ({
   step = 0.1,
   storedValue,
   customError,
-  centerText = false,
 }) => {
   const [value, setValue] = useState<string>(
     storedValue ? storedValue.toString() : placeholder ? "" : "0",
@@ -63,7 +61,7 @@ const InputWithPercent: React.FC<IProps> = ({
 
     // Handles % position based on inputs
     if (value.toString().length >= 1) {
-      offset = 12;
+      offset = 14;
       textWidth = getTextWidth(
         value,
         "16px 'ABC Whyte Regular', Helvetica, Arial, sans-serif",
@@ -71,18 +69,10 @@ const InputWithPercent: React.FC<IProps> = ({
     }
 
     if (value.toString().length > 1) {
-      const additionalOffset = centerText
-        ? value.toString().length === 2
-          ? 60
-          : value.toString().length > 3
-          ? 50
-          : 58
-        : 0;
-      setVariableWidth(textWidth + offset + additionalOffset);
+      setVariableWidth(textWidth + offset);
     } else if (value.toString().length == 1) {
-      offset = 14;
-      const additionalOffset = centerText ? 60 : 0;
-      setVariableWidth(textWidth + offset + additionalOffset);
+      offset = 16;
+      setVariableWidth(textWidth + offset);
     }
   }, [value, placeholder]);
 
@@ -166,20 +156,18 @@ const InputWithPercent: React.FC<IProps> = ({
               error
                 ? "border-red-500 focus:border-red-500 focus:ring-0"
                 : "border-gray-24 focus:border-blue",
-              `${
-                centerText ? "text-center" : ""
-              } flex flex-grow w-full min-w-0 font-whyte dark-input-field`,
+              `flex flex-grow text-sm w-full min-w-0 font-whyte dark-input-field`,
             )}
           />
           {!placeholder || (placeholder && value !== "") ? (
             <span
               className={classNames(
-                label ? "mt-1 py-3" : "py-4",
-                "flex flex-1 absolute text-sm",
+                label && "mt-1",
+                "flex flex-1 absolute text-sm py-3",
               )}
               style={{
                 marginLeft: `${variableWidth}px`,
-                marginTop: `${label ? "0.563rem" : "0.063rem"}`,
+                marginTop: `${label ? "0.33em" : "0.063rem"}`,
               }}
               onClick={handlePercentSignClick}
             >
@@ -189,9 +177,8 @@ const InputWithPercent: React.FC<IProps> = ({
             ""
           )}
         </div>
-        {error || customError &&
-           <p className="text-red-500 text-xs h-8 mt-1 ">{error || customError}</p>
-        }
+
+        <p className="text-red-500 text-xs h-8 mt-1 ">{error || customError}</p>
       </div>
     </div>
   );

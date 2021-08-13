@@ -3,6 +3,7 @@ import { RootState } from "@/redux/store";
 import { numberWithCommas } from "@/utils/formattedNumbers";
 import React from "react";
 import { useSelector } from "react-redux";
+import { ContentTitle } from "../shared";
 
 const Confirmation: React.FC = () => {
   const {
@@ -51,13 +52,12 @@ const Confirmation: React.FC = () => {
   const allowList = isAllowlistEnabled ? "enabled" : "disabled";
 
   return (
-    <div className="flex flex-col">
-      <div className="fixed mb-10 text-xl leading-8 pb-2 bg-black">
-        Confirm everything looks right
-      </div>
-      <ul className="text-base font-whyte mt-12 pb-8">
+    <div className="flex flex-col font-whyte">
+      <ContentTitle>Confirm everything looks right</ContentTitle>
+
+      <ul className="text-base font-whyte">
         <li className="pl-0 p-2">
-          <p className="text-gray-dimmer mb-1">Deposit Token</p>
+          <p className="text-gray-dimmer mb-1 font-whyte">Deposit Token</p>
           <div className="flex items-center">
             <img
               src={depositTokenLogo}

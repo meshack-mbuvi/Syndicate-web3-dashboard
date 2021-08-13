@@ -10,6 +10,7 @@ import { classNames } from "@/utils/classNames";
 import { PERCENTAGES } from "@/utils/constants";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { ContentTitle } from "../../shared";
 
 const options = [PERCENTAGES.HALF, PERCENTAGES.ONE, PERCENTAGES.THREE];
 
@@ -44,7 +45,7 @@ const DistributionShare: React.FC = () => {
 
     const allowedPercent = 100 - +syndicateProfitSharePercent;
 
-    if (totalDistributions >= 100) {
+    if (totalDistributions > 100) {
       const errorMessage = `Share of distributions to syndicate lead cannot exceed ${allowedPercent.toFixed(
         2,
       )}%. The sum of all distribution share values must not exceed 100%.`;
@@ -161,9 +162,9 @@ const DistributionShare: React.FC = () => {
 
   return (
     <div className="flex flex-col w-full">
-      <div className="mb-10 text-2xl leading-8">Distribution share</div>
+      <ContentTitle>Distribution share</ContentTitle>
 
-      <div className="w-full space-y-7">
+      <div className="w-full space-y-4 px-1">
         <InputWithPercent
           name="expectedAnnualOperatingFees"
           label="Expected annual operating fees"
@@ -187,24 +188,23 @@ const DistributionShare: React.FC = () => {
             Share of distributions to Syndicate Protocol
           </label>
           <div className="grid grid-cols-3 gap-4 mt-1">
-            <div className="grid grid-cols-3 col-span-2 rounded-md bg-black border border-gray-24 first:rounded-tl-md first:rounded-bl-md">
+            <div className="grid grid-cols-3 col-span-2 h-12 rounded-md bg-black border border-gray-24 first:rounded-tl-md first:rounded-bl-md">
               {options.map((option, i) => (
                 <button
                   key={i}
                   onClick={() => handleTogglePercentages(option)}
                   className={classNames(
-                    syndicateProfitSharePercent === option
-                      ? "bg-blue"
-                      : "",
+                    syndicateProfitSharePercent === option ? "bg-blue" : "",
                     optionStyles[option],
-                    "relative borderLeft bg-clip-padding bg-origin-padding w-full justify-center focus:outline-none",
+                    "relative borderLeft bg-clip-padding py-2 bg-origin-padding w-full justify-center focus:outline-none",
                   )}
                 >
-                  {option}%
+                  {option}
+                  {" %"}
                 </button>
               ))}
             </div>
-            <div className="col-span-1">
+            <div className="col-span-1 h-12">
               <InputWithPercent
                 name="profitShareToSyndProtocol"
                 placeholder="Other"
@@ -213,7 +213,6 @@ const DistributionShare: React.FC = () => {
                 setResetToDefault={setResetToDefault}
                 setInputValue={handleSetProfitShareToSyndProtocol}
                 customError={profitShareToSyndicateCustomError}
-                centerText={true}
                 storedValue={
                   !options.some(
                     (option) => option === syndicateProfitSharePercent,
@@ -225,9 +224,7 @@ const DistributionShare: React.FC = () => {
             </div>
           </div>
           <div className="w-full">
-            <p className="text-red-500 text-xs h-4 -mt-8">
-              {buttonOptionError}
-            </p>
+            <p className="text-red-500 text-xs h-4">{buttonOptionError}</p>
           </div>
         </div>
       </div>

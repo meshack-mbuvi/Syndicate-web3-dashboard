@@ -2,18 +2,19 @@ import Select from "@/components/inputs/select";
 import { setCloseDateAndTime } from "@/redux/actions/createSyndicate/syndicateOnChainData/closeDateAndTime";
 import { RootState } from "@/redux/store";
 import { TWO_WEEKS_IN_MS } from "@/utils/constants";
+import { getLocaleObject } from "@/utils/dateUtils";
 import generateTimeIntervals from "@/utils/generateTimeIntervals";
 import ct from "countries-and-timezones";
-import React, { forwardRef, useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import DatePicker from "react-datepicker";
 import { useDispatch, useSelector } from "react-redux";
 import ReactSelect, { components, SingleValueProps } from "react-select";
-import { getLocaleObject } from "@/utils/dateUtils";
+import { ContentTitle } from "../../shared";
 
 // we get user's locale
-const localeString = (new Intl.NumberFormat()).resolvedOptions().locale
+const localeString = new Intl.NumberFormat().resolvedOptions().locale;
 // pass the locale string dateUtils to get locale object
-const locale = getLocaleObject(localeString)
+const locale = getLocaleObject(localeString);
 
 const TimeAndDatePicker: React.FC = () => {
   const {
@@ -43,7 +44,7 @@ const TimeAndDatePicker: React.FC = () => {
 
   // used as the default date for a syndicates closure
   // close date is set to +2 weeks from current date
-  const startDate = new Date(Date.now() + TWO_WEEKS_IN_MS)
+  const startDate = new Date(Date.now() + TWO_WEEKS_IN_MS);
 
   useEffect(() => {
     // TO BE USED IN THE CONTRACT
@@ -97,7 +98,7 @@ const TimeAndDatePicker: React.FC = () => {
     return (
       <div>
         <components.Input
-          className="text-white text-lg font-whyte border-none"
+          className="text-white text-sm font-whyte border-none"
           {...props}
         />
       </div>
@@ -108,8 +109,10 @@ const TimeAndDatePicker: React.FC = () => {
     return (
       <components.Option {...props}>
         <div className="flex justify-between">
-          <span>{props.children.replaceAll("_", " ")}</span>
-          <span className="text-gray-49">UTC {props.data.timezone}</span>
+          <span className="text-sm">{props.children.replaceAll("_", " ")}</span>
+          <span className="text-gray-49 text-sm">
+            UTC {props.data.timezone}
+          </span>
         </div>
       </components.Option>
     );
@@ -120,8 +123,8 @@ const TimeAndDatePicker: React.FC = () => {
       ...base,
       background: "#000000",
       borderRadius: "5px",
-      paddingTop: "0.34375rem",
-      paddingBottom: "0.34375rem",
+      paddingTop: "0.25rem",
+      paddingBottom: "0.3rem",
       paddingLeft: "0.125rem",
       border: "1px solid #3D3D3D",
     }),
@@ -150,7 +153,7 @@ const TimeAndDatePicker: React.FC = () => {
     menuList: (base) => ({
       ...base,
       padding: "16px",
-      borderRadius: "0.375rem"
+      borderRadius: "0.375rem",
     }),
     option: (base, state) => ({
       ...base,
@@ -174,13 +177,12 @@ const TimeAndDatePicker: React.FC = () => {
 
   return (
     <div className="flex flex-col">
-      <div className="text-2xl leading-8">
-        <p>When should this syndicate close to deposits?</p>
-      </div>
-      <div className="mt-10 flex flex-col">
+      <ContentTitle>When should this syndicate close to deposits?</ContentTitle>
+
+      <div className="flex flex-col">
         <p>Close time</p>
         <div className="flex mt-2 space-x-6 justify-between items-center w-full">
-          <div className="w-5/12 flex flex-1">
+          <div className="w-5/12 flex flex-1 px-1">
             <DatePicker
               selected={selectedDate}
               onChange={(date) => setSelectedDate(date)}
@@ -199,7 +201,7 @@ const TimeAndDatePicker: React.FC = () => {
           <div className="flex justify-center">
             <p>at</p>
           </div>
-          <div className="w-2/5">
+          <div className="w-2/5 px-1">
             <Select
               data={timeIntervals}
               value={selectedTimeValue.replaceAll("_", " ")}
@@ -211,13 +213,13 @@ const TimeAndDatePicker: React.FC = () => {
           </div>
         </div>
         <p className="mt-7">Time zone</p>
-        <div className="w-full mt-2">
+        <div className="w-full mt-2 px-1">
           <ReactSelect
             options={formattedTimezones}
             isSearchable
             name="timezone"
             placeholder="Choose your timezone"
-            className="bg-black"
+            className="bg-black text-sm"
             styles={customStyles}
             components={{ IndicatorSeparator, Input, Option, SingleValue }}
             onChange={(selectedValue) => setSelectedTimezone(selectedValue)}
