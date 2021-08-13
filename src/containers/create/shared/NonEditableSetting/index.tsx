@@ -2,7 +2,7 @@ import React from "react";
 
 export const NonEditableSetting = (): JSX.Element => {
   return (
-    <p className="flex text-sm text-gray-49">
+    <p className="flex text-sm text-gray-3">
       <img
         src="/images/tokenWarning.svg"
         alt="token warning"

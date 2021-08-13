@@ -33,7 +33,7 @@ const Controls = () => {
     >
       <div className="relative flex mx-4 justify-between items-center border-t-1 border-gray-erieBlack h-20">
         <button
-          className={`flex items-center py-3.5 text-gray-dim hover:text-white focus:outline-none ${
+          className={`flex items-center py-3.5 text-gray-3 hover:text-white focus:outline-none ${
             buttonsDisabled ? "cursor-not-allowed" : ""
           }`}
           onClick={firstStep ? handleCancel : handleBack}
@@ -60,7 +60,7 @@ const Controls = () => {
       </div>
       {lastStep ? (
         <div className="self-center pb-4">
-          <p className="flex text-gray-400 justify-center text-sm">
+          <p className="flex text-gray-49 justify-center text-sm">
             By creating a syndicate, you agree to the{" "}
             <a
               className="font-whyte text-center ml-1 font-medium  underline hover bg-light-green"

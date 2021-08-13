@@ -96,7 +96,7 @@ export const TokenSelectInput: React.FC<ITokenSelectInput> = (props) => {
         ) : null}
       </div>
 
-      <p className="mt-5 text-sm text-gray-49">
+      <p className="mt-5 text-sm text-gray-3">
         Choose any ERC-20 token. For most syndicates, a stablecoin like USDC or
         DAI is recommended to avoid token volatility impacting your syndicate.
       </p>

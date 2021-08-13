@@ -227,7 +227,7 @@ const TimeAndDatePicker: React.FC = () => {
           />
         </div>
         <div className="mt-5">
-          <p className="text-sm text-gray-49">
+          <p className="text-sm text-gray-3">
             By default, this value is set by your computer’s local timezone. The
             specified close time is stored as UTC in the smart contract so it’ll
             close at the same moment everywhere in the world, regardless of
