@@ -44,7 +44,7 @@ const DistributionShare: React.FC = () => {
 
     const allowedPercent = 100 - +syndicateProfitSharePercent;
 
-    if (totalDistributions >= 100) {
+    if (totalDistributions > 100) {
       const errorMessage = `Share of distributions to syndicate lead cannot exceed ${allowedPercent.toFixed(
         2,
       )}%. The sum of all distribution share values must not exceed 100%.`;
@@ -163,7 +163,7 @@ const DistributionShare: React.FC = () => {
     <div className="flex flex-col w-full">
       <div className="mb-10 text-2xl leading-8">Distribution share</div>
 
-      <div className="w-full space-y-7 px-1">
+      <div className="w-full space-y-4 px-1">
         <InputWithPercent
           name="expectedAnnualOperatingFees"
           label="Expected annual operating fees"
