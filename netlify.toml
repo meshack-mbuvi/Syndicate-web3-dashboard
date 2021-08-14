@@ -11,25 +11,8 @@
     mode = 'prefix'
 
 [[headers]]
-    for = "/*"
+    for = "/manifest.json"
     [headers.values]
-      Access-Control-Allow-Origin = "https://rinkeby.gnosis-safe.io"
+      Access-Control-Allow-Origin = "*"
 
-[context.production]
-  [[context.production.headers]]
-      for = "/*"
-      [context.production.headers.values]
-          Access-Control-Allow-Origin = "https://gnosis-safe.io"
-
-[context.deploy-preview]
-  [[context.deploy-preview.headers]]
-    for = "/*"
-    [context.deploy-preview.headers.values]
-      Access-Control-Allow-Origin = "https://rinkeby.gnosis-safe.io"
-
-[context.staging]
-  [[context.staging.headers]]
-    for = "/*"
-    [context.staging.headers.values]
-      Access-Control-Allow-Origin = "https://rinkeby.gnosis-safe.io"
 
