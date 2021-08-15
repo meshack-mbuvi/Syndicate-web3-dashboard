@@ -98,7 +98,7 @@ const dismissButtonText = "Dismiss";
 const syndicateDetailsFooterText =
   "Syndicate is currently in private beta and is open only to accredited investors. No materials on the Syndicate site should be construed as a solicitation or advice to buy any security.";
 const syndicateDetailsSecurityFooterText =
-  "We take security seriously. Syndicate was audited by Quanstamp in March 2021.";
+  "We take security seriously. Syndicate has received multiple security audits and is formally verified but bugs may still exist.";
 const syndicateDetailsLinkText = "View the audit report here.";
 const syndicateModifiableText = "This syndicate is modifiable";
 
@@ -113,7 +113,7 @@ export const syndicateDetailsConstants = {
 const primaryHeaderText = "Join the Revolution.";
 const secondaryHeaderText = "Crypto investing protocol and social network";
 const homeFooterText =
-  "Syndicate received a spot check from Consensys Diligence but has not been fully audited. Please use at your own risk while our full audit proceeds in May.";
+  "Syndicate has received multiple security audits and is formally verified.";
 const homeButtonText = "Use Syndicate";
 
 // texts on the manager view screen
