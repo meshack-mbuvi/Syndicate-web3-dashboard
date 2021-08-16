@@ -60,7 +60,8 @@ export const BadgeCard = (props: {
     const durationDays = days
       ? `${days} ${days > 1 ? "days" : "day"}`
       : "0 days";
-    remainingDuration = `${durationYears} ${durationMonths} ${durationDays}`.trim();
+    remainingDuration =
+      `${durationYears} ${durationMonths} ${durationDays}`.trim();
 
     // checking if depositsMax is unlimited.
     depositsMaxIsUnlimited = isUnlimited(depositTotalMax);
@@ -176,19 +177,12 @@ export const BadgeCard = (props: {
     >
       <div className={`flex justify-between items-start `}>
         <div className="flex-shrink-0 flex flex-col mr-8">
-          <p className="text-xs leading-snug text-gray-400 mb-2 font-whyte-light">
-            Total Deposits
-          </p>
-          <p className="text-xs sm:text-sm">
-            {floatedNumberWithCommas(depositTotal)} {depositERC20TokenSymbol}
+          <p className="text-base sm:text-lg leading-snug text-white mb-2 font-whyte-light">
+            Amount deposited
           </p>
         </div>
         <div className="flex flex-col">
-          <p className="text-xs leading-snug text-gray-400 mb-2 font-whyte-light">
-            Amount deposited
-          </p>
-
-          <p className="flex flex-wrap flex-col 1.5lg:flex-row text-xs sm:text-sm">
+          <p className="flex flex-wrap flex-col 1.5lg:flex-row text-base sm:text-lg font-whyte-light">
             <span>{floatedNumberWithCommas(depositTotal)}</span>
             <span className="text-gray-400">&nbsp;/&nbsp;</span>
             <span className="text-gray-400">
@@ -205,14 +199,12 @@ export const BadgeCard = (props: {
           </p>
         </div>
       </div>
-
-      {/* Only showing progress indicator when percentage is at least 1 */}
-      {/* Showing it otherwise will only present a black bar since percentage will be too small */}
-      {currentDepositsPercentage > 0 ? (
+      {/* Show progress bar when the syndicate max total deposit is not unlimited */}
+      {!depositsMaxIsUnlimited && (
         <div className="w-full">
           <ProgressIndicator currentProgress={currentDepositsPercentage} />
         </div>
-      ) : null}
+      )}
     </div>
   );
 
