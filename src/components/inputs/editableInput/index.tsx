@@ -58,7 +58,7 @@ export const EditableInput: FC<Props> = (props: Props) => {
   };
 
   const formatCurrency = (value) => {
-    if (isUnlimited(value)) {
+    if (isUnlimited(value) || value.toLowerCase() === "unlimited") {
       return "Unlimited";
     } else {
       return floatedNumberWithCommas(value);
