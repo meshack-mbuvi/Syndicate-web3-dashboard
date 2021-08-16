@@ -114,8 +114,11 @@ const SyndicateDetails = (props: {
     ]);
 
   // states to handle manager allowances
+  // states to handle manager allowances
   const [managerDepositsAllowance, setManagerDepositsAllowance] =
     useState<number>(0);
+  const [correctManagerDepositsAllowance, setCorrectManagerDepositsAllowance] =
+    useState<boolean>(false);
   const [
     correctManagerDistributionsAllowance,
     setCorrectManagerDistributionsAllowance,
@@ -334,14 +337,14 @@ const SyndicateDetails = (props: {
     // check if the deposit token allowances if the syndicate is still open.
     // checks will be done only if the current member is the manager.
     if (accountIsManager) {
-      // if (depositsEnabled && depositTokenAllowanceDetails.length > 0) {
-      //   // indexing from 0 only because there's just one primary depositERC20 token
-      //   if (depositTokenAllowanceDetails[0].sufficientAllowanceSet === true) {
-      //     setCorrectManagerDepositsAllowance(true);
-      //   } else {
-      //     setCorrectManagerDepositsAllowance(false);
-      //   }
-      // }
+      if (depositsEnabled && depositTokenAllowanceDetails.length > 0) {
+        // indexing from 0 only because there's just one primary depositERC20 token
+        if (depositTokenAllowanceDetails[0].sufficientAllowanceSet === true) {
+          setCorrectManagerDepositsAllowance(true);
+        } else {
+          setCorrectManagerDepositsAllowance(false);
+        }
+      }
 
       // check distribution allowances if distribution has been set.
       if (distributionTokensAllowanceDetails.length) {
@@ -526,6 +529,7 @@ const SyndicateDetails = (props: {
         accountIsManager,
         showManagerSetAllowancesModal,
         correctManagerDistributionsAllowance,
+        correctManagerDepositsAllowance,
       }}
     />
   );

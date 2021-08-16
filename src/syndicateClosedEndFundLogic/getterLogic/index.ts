@@ -59,7 +59,7 @@ export class SyndicateGetterLogic extends BaseLogicContract {
   ): Promise<{ isManager: boolean; syndicateAddress: string }> {
     if (!managerAddress.trim()) throw "Manager address is required.";
 
-    this.initializeLogicContract();
+    await this.initializeLogicContract();
 
     const syndicateAddress = await this.logicContractInstance.methods
       .getManagerInfo(managerAddress)
@@ -130,6 +130,7 @@ export class SyndicateGetterLogic extends BaseLogicContract {
         transferable,
       };
     } catch (error) {
+      console.log({ error });
       return null;
     }
   }

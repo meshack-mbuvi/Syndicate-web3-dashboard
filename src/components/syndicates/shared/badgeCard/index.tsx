@@ -10,11 +10,13 @@ import { ProgressIndicator } from "src/components/syndicates/shared/progressIndi
 const moment = require("moment");
 
 export const BadgeCard = (props: {
+  correctManagerDepositsAllowance?: boolean;
   correctManagerDistributionsAllowance?: boolean;
   accountIsManager?: boolean;
   showManagerSetAllowancesModal?: () => void;
 }): JSX.Element => {
   const {
+    correctManagerDepositsAllowance,
     correctManagerDistributionsAllowance,
     accountIsManager,
     showManagerSetAllowancesModal,
@@ -72,11 +74,16 @@ export const BadgeCard = (props: {
     }
   }
 
-  const { insufficientDistributionsAllowanceBadgeText } = managerActionTexts;
+  const {
+    insufficientDistributionsAllowanceBadgeText,
+    insufficientDepositsAllowanceBadgeText,
+  } = managerActionTexts;
 
   let allowanceInfoText = "";
   if (syndicate?.distributing && !correctManagerDistributionsAllowance) {
     allowanceInfoText = insufficientDistributionsAllowanceBadgeText;
+  } else if (depositsEnabled && !correctManagerDepositsAllowance) {
+    allowanceInfoText = insufficientDepositsAllowanceBadgeText;
   }
 
   // set badge background color, title text, and icon based on status of syndicate
@@ -245,9 +252,12 @@ export const BadgeCard = (props: {
               {bottomDetailsCard}
 
               {/* Manager view: show state of allowances. Card will only be rendered if allowances need adjustments */}
-              {accountIsManager &&
-              distributing &&
-              !correctManagerDistributionsAllowance ? (
+              {(accountIsManager &&
+                depositsEnabled &&
+                !correctManagerDepositsAllowance) ||
+              (accountIsManager &&
+                distributing &&
+                !correctManagerDistributionsAllowance) ? (
                 <div className="rounded-2xl bg-gray-6 border-t-1 border-gray-6 px-0 py-2 mt-4">
                   <div className="flex px-6 py-4 ">
                     <div className="flex flex-shrink-0 items-start">
