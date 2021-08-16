@@ -8,6 +8,7 @@ import { metamaskConstants } from "src/components/syndicates/shared/Constants";
 import { getMetamaskError } from "@/helpers";
 import { setSubmitting } from "@/redux/actions";
 import { getSyndicates } from "@/redux/actions/syndicates";
+import { resetCreateSyndicateReduxStore } from "@/redux/actions/createSyndicate";
 import { RootState } from "@/redux/store";
 import { getWeiAmount } from "@/utils/conversions";
 import { convertTime12to24, getUnixTimeFromDate } from "@/utils/dateUtils";
@@ -56,6 +57,7 @@ type CreateSyndicateProviderProps = {
   modalInfo: ModalInfo;
   continueDisabled: boolean;
   setContinueDisabled: Dispatch<SetStateAction<boolean>>;
+  resetCreateSyndicateStore: () => void;
 };
 
 const CreateSyndicateContext = createContext<
@@ -148,21 +150,19 @@ const CreateSyndicateProvider: React.FC<{ children: ReactNode }> = ({
 
   const { account } = web3Instance;
 
-  useEffect(() => {
-    // Cleanup on unmounting
-    return () => {
-      setCurrentStep(0);
-      setCurrentSubStep(0);
-      setButtonsDisabled(false);
-      setShowWalletConfirmationText(false);
-      setShowErrorMessage(false);
-      setErrorMessage("");
-      setShowSuccessView(false);
-      setTransactionsCount(1);
-      setCurrentTransaction(1);
-      setProcessingModalMessage("");
-    };
-  }, []);
+  const resetCreateSyndicateStore = () => {
+    dispatch(resetCreateSyndicateReduxStore());
+    setCurrentStep(0);
+    setCurrentSubStep(0);
+    setButtonsDisabled(false);
+    setShowWalletConfirmationText(false);
+    setShowErrorMessage(false);
+    setErrorMessage("");
+    setShowSuccessView(false);
+    setTransactionsCount(1);
+    setCurrentTransaction(1);
+    setProcessingModalMessage("");
+  }
 
   useEffect(() => {
     // checks if the allowlist is enabled to allow two transactions
@@ -343,7 +343,6 @@ const CreateSyndicateProvider: React.FC<{ children: ReactNode }> = ({
         );
       }
 
-      dispatch(getSyndicates({ ...web3Instance, ...syndicateContracts }));
       setShowProcessingModal(false);
 
       setShowErrorMessage(false);
@@ -462,6 +461,7 @@ const CreateSyndicateProvider: React.FC<{ children: ReactNode }> = ({
         },
         continueDisabled,
         setContinueDisabled,
+        resetCreateSyndicateStore,
       }}
     >
       {children}

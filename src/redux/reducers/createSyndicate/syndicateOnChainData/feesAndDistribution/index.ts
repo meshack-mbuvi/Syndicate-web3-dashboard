@@ -1,4 +1,7 @@
-import { FEES_AND_DISTRIBUTION_TYPES } from "@/redux/actions/types";
+import {
+  FEES_AND_DISTRIBUTION_TYPES,
+  RESET_CREATE_SYNDICATE_STORE,
+} from "@/redux/actions/types";
 import { initialState } from "../../../initialState";
 
 type STATE = typeof initialState;
@@ -48,6 +51,15 @@ export const feesAndDistributionReducer = (
             ...createSyndicate.feesAndDistribution,
             syndicateProfitSharePercent: action.data,
           },
+        },
+      };
+
+    case RESET_CREATE_SYNDICATE_STORE:
+      return {
+        ...state,
+        createSyndicate: {
+          ...createSyndicate,
+          feesAndDistribution: initialState.createSyndicate.feesAndDistribution,
         },
       };
 

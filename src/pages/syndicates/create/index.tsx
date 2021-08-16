@@ -18,8 +18,13 @@ import { Spinner } from "@/components/shared/spinner";
 import { useFirstRender } from "@/components/syndicates/hooks/useFirstRender";
 
 const CreateSyndicate: React.FC = () => {
-  const { steps, currentSubStep, showSuccessView, currentStep } =
-    useCreateSyndicateContext();
+  const {
+    steps,
+    currentSubStep,
+    showSuccessView,
+    currentStep,
+    resetCreateSyndicateStore,
+  } = useCreateSyndicateContext();
 
   const dispatch = useDispatch();
   const firstRender = useFirstRender();
@@ -61,17 +66,24 @@ const CreateSyndicate: React.FC = () => {
       const hasSyndicate = syndicates.some(
         (syndicate: Syndicate) => syndicate.managerCurrent == account,
       );
-      setManagerWithOpenSyndicate(hasSyndicate);
+      setManagerWithOpenSyndicate(hasSyndicate); 
     }
   }, [account, syndicates]);
 
   // TODO: Fix this to redirect
   useEffect(() => {
     // Redirect to the syndicates page
-    if (managerWithOpenSyndicate && !showSuccessView) {
+    if (managerWithOpenSyndicate) {
       router.replace("/syndicates");
     }
-  }, [managerWithOpenSyndicate, showSuccessView]);
+  }, [managerWithOpenSyndicate, router]);
+
+  useEffect(() => {
+    // Cleanup on unmounting
+    return () => {
+      resetCreateSyndicateStore();
+    };
+  }, []);
 
   const closeLoader = () => {
     return;

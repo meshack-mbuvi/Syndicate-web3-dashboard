@@ -1,4 +1,7 @@
-import { SET_TRANSFERABLE } from "@/redux/actions/types";
+import {
+  RESET_CREATE_SYNDICATE_STORE,
+  SET_TRANSFERABLE,
+} from "@/redux/actions/types";
 import { initialState } from "../../../initialState";
 
 type STATE = typeof initialState;
@@ -15,6 +18,15 @@ export const transferableReducer = (
         createSyndicate: {
           ...createSyndicate,
           transferable: action.data,
+        },
+      };
+
+    case RESET_CREATE_SYNDICATE_STORE:
+      return {
+        ...state,
+        createSyndicate: {
+          ...createSyndicate,
+          transferable: initialState.createSyndicate.transferable,
         },
       };
 

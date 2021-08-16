@@ -8,6 +8,11 @@ import { EtherscanLink } from "../EtherscanLink";
 const SuccessCreateSyndicate: React.FC<{ account: string }> = ({ account }) => {
   const [showConfetti, setShowConfetti] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [syndicateDepositLink, setSyndicateDepositLink] = useState("");
+
+  useEffect(() => {
+    setSyndicateDepositLink(`${window.location.origin}/syndicates/${account}/deposit`);
+  }, [account]);
 
   useEffect(() => {
     // Show confetti when the success page is displayed
@@ -66,7 +71,7 @@ const SuccessCreateSyndicate: React.FC<{ account: string }> = ({ account }) => {
               ) : (
                 <>
                   <CopyToClipboard
-                    text={`${window.location.origin}/syndicates/${account}/deposit`}
+                    text={syndicateDepositLink}
                     onCopy={handleOnCopy}
                   >
                     <p className="flex font-whyte text-sm cursor-pointer hover:opacity-80 text-white">

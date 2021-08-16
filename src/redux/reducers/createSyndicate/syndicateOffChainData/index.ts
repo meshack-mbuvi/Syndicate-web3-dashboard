@@ -1,4 +1,7 @@
-import { SYNDICATE_OFF_CHAIN_TYPES } from "@/redux/actions/types";
+import {
+  RESET_CREATE_SYNDICATE_STORE,
+  SYNDICATE_OFF_CHAIN_TYPES,
+} from "@/redux/actions/types";
 import { initialState } from "../../initialState";
 
 const {
@@ -74,6 +77,16 @@ export const syndicateOffChainDataReducer = (
             ...createSyndicate.syndicateOffChainData,
             organization: action.data,
           },
+        },
+      };
+
+    case RESET_CREATE_SYNDICATE_STORE:
+      return {
+        ...state,
+        createSyndicate: {
+          ...createSyndicate,
+          syndicateOffChainData:
+            initialState.createSyndicate.syndicateOffChainData,
         },
       };
 

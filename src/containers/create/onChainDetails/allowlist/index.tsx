@@ -7,7 +7,7 @@ import {
   setAllowRequestToAllowlist,
   setIsAllowlistEnabled,
   setMemberAddresses,
-} from "@/redux/actions/createSyndicate/allowlist";
+} from "@/redux/actions/createSyndicate/syndicateOnChainData/allowlist";
 import { RootState } from "@/redux/store";
 import { classNames } from "@/utils/classNames";
 import countOccurrences from "@/utils/countOccurrence";

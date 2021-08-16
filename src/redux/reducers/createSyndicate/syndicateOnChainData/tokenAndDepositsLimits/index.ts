@@ -1,4 +1,8 @@
-import { STATE, TOKEN_AND_DEPOSITS_TYPES } from "src/redux/actions/types";
+import {
+  RESET_CREATE_SYNDICATE_STORE,
+  STATE,
+  TOKEN_AND_DEPOSITS_TYPES,
+} from "src/redux/actions/types";
 import { initialState } from "../../../initialState";
 
 /**
@@ -81,6 +85,16 @@ export const tokenAndDepositLimitReducer = (
             ...createSyndicate.tokenAndDepositsLimits,
             depositTokenDetails: action.data,
           },
+        },
+      };
+
+    case RESET_CREATE_SYNDICATE_STORE:
+      return {
+        ...state,
+        createSyndicate: {
+          ...createSyndicate,
+          tokenAndDepositsLimits:
+            initialState.createSyndicate.tokenAndDepositsLimits,
         },
       };
 

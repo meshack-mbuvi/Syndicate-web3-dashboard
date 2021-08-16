@@ -1,4 +1,7 @@
-import { ALLOWLIST_TYPES  } from "@/redux/actions/types";
+import {
+  ALLOWLIST_TYPES,
+  RESET_CREATE_SYNDICATE_STORE,
+} from "@/redux/actions/types";
 import { initialState } from "@/redux/reducers/initialState";
 
 type STATE = typeof initialState;
@@ -11,7 +14,7 @@ const {
 
 export const allowlistReducer = (
   state = initialState,
-  action: { type: string, data: boolean | string[] },
+  action: { type: string; data: boolean | string[] },
 ): STATE => {
   const { createSyndicate } = state;
   switch (action.type) {
@@ -48,6 +51,15 @@ export const allowlistReducer = (
             ...createSyndicate.allowlist,
             allowRequestToAllowlist: action.data as boolean,
           },
+        },
+      };
+
+    case RESET_CREATE_SYNDICATE_STORE:
+      return {
+        ...state,
+        createSyndicate: {
+          ...createSyndicate,
+          allowlist: initialState.createSyndicate.allowlist,
         },
       };
 

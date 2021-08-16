@@ -1,4 +1,7 @@
-import { SET_MODIFIABLE } from "@/redux/actions/types";
+import {
+  RESET_CREATE_SYNDICATE_STORE,
+  SET_MODIFIABLE,
+} from "@/redux/actions/types";
 import { initialState } from "../../../initialState";
 
 type STATE = typeof initialState;
@@ -15,6 +18,15 @@ export const modifiableReducer = (
         createSyndicate: {
           ...createSyndicate,
           modifiable: action.data,
+        },
+      };
+
+    case RESET_CREATE_SYNDICATE_STORE:
+      return {
+        ...state,
+        createSyndicate: {
+          ...createSyndicate,
+          modifiable: initialState.createSyndicate.modifiable,
         },
       };
 
