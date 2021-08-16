@@ -8,7 +8,7 @@ const Controls = () => {
     handleNext,
     buttonsDisabled,
     currentStep,
-    handleFinish,
+    handleCreateSyndicate,
     continueDisabled,
   } = useCreateSyndicateContext();
 
@@ -51,7 +51,7 @@ const Controls = () => {
                 ? "cursor-not-allowed opacity-70"
                 : "hover:opacity-80"
             }`}
-            onClick={lastStep ? handleFinish : handleNext}
+            onClick={lastStep ? handleCreateSyndicate : handleNext}
             disabled={buttonsDisabled || continueDisabled}
           >
             {lastStep ? "Finish" : "Continue"}

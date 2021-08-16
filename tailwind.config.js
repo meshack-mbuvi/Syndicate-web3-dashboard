@@ -162,6 +162,7 @@ module.exports = {
           blackRussian: "#141518",
           darkBackground: "#151618",
           darkInput: "#2C2C2F",
+          steelGrey: "#3F4147",
         },
         green: {
           ...colors.green,

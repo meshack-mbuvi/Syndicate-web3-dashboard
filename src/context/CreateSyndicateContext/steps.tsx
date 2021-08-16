@@ -22,6 +22,7 @@ import Modifiable from "@/containers/create/onChainDetails/modifiable";
 import TotalAndLimits from "@/containers/create/onChainDetails/totalAndLimits";
 import Transferable from "@/containers/create/onChainDetails/transferable";
 import PlaceHolder from "@/containers/create/placeHolder";
+import Processing from "@/containers/create/processing";
 import React from "react";
 
 export default [
@@ -82,7 +83,7 @@ export default [
   },
   {
     name: "Processing",
-    component: <PlaceHolder />,
+    component: <Processing />,
   },
   {
     name: "Done",

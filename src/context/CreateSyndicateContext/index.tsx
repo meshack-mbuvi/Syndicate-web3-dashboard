@@ -7,7 +7,6 @@ import { MAX_INTEGER } from "@/components/syndicates/shared/Constants";
 import { metamaskConstants } from "src/components/syndicates/shared/Constants";
 import { getMetamaskError } from "@/helpers";
 import { setSubmitting } from "@/redux/actions";
-import { getSyndicates } from "@/redux/actions/syndicates";
 import { resetCreateSyndicateReduxStore } from "@/redux/actions/createSyndicate";
 import { RootState } from "@/redux/store";
 import { getWeiAmount } from "@/utils/conversions";
@@ -24,15 +23,13 @@ import React, {
 import { useSelector, useDispatch } from "react-redux";
 import steps from "./steps";
 
-interface ModalInfo {
-  showProcessingModal: boolean;
-  setShowProcessingModal: Dispatch<SetStateAction<boolean>>;
+interface ProcessingInfo {
   transactionsCount: number;
   currentTransaction: number;
-  processingModalMessage: string;
+  processingMessage: string;
   showErrorMessage: boolean;
   errorMessage: string;
-  processingModalTitle: string;
+  processingTitle: string;
   currentTxHash: string;
   setShowErrorMessage: Dispatch<SetStateAction<boolean>>;
 }
@@ -44,7 +41,8 @@ type CreateSyndicateProviderProps = {
   handleBack: () => void;
   steps: any[];
   buttonsDisabled: boolean;
-  handleFinish: (event: any) => void;
+  handleCreateSyndicate: (event: any) => void;
+  handleAddToAllowlist: (event: any) => void;
   showWalletConfirmationText: boolean;
   showErrorMessage: boolean;
   errorMessage: string;
@@ -52,9 +50,7 @@ type CreateSyndicateProviderProps = {
   setButtonsDisabled: Dispatch<SetStateAction<boolean>>;
   setCurrentSubStep: Dispatch<SetStateAction<number>>;
   setCurrentStep: Dispatch<SetStateAction<number>>;
-  showProcessingModal: boolean;
-  setShowProcessingModal: Dispatch<SetStateAction<boolean>>;
-  modalInfo: ModalInfo;
+  processingInfo: ProcessingInfo;
   continueDisabled: boolean;
   setContinueDisabled: Dispatch<SetStateAction<boolean>>;
   resetCreateSyndicateStore: () => void;
@@ -81,11 +77,10 @@ const CreateSyndicateProvider: React.FC<{ children: ReactNode }> = ({
   const [errorMessage, setErrorMessage] = useState("");
 
   const [showSuccessView, setShowSuccessView] = useState(false);
-  const [showProcessingModal, setShowProcessingModal] = useState(false);
   const [transactionsCount, setTransactionsCount] = useState(1);
   const [currentTransaction, setCurrentTransaction] = useState(1);
-  const [processingModalMessage, setProcessingModalMessage] = useState("");
-  const [processingModalTitle, setProcessingModalTitle] = useState("");
+  const [processingMessage, setProcessingMessage] = useState("");
+  const [processingTitle, setProcessingTitle] = useState("");
   const [currentTxHash, setCurrentTxHash] = useState("");
 
   const dispatch = useDispatch();
@@ -161,8 +156,8 @@ const CreateSyndicateProvider: React.FC<{ children: ReactNode }> = ({
     setShowSuccessView(false);
     setTransactionsCount(1);
     setCurrentTransaction(1);
-    setProcessingModalMessage("");
-  }
+    setProcessingMessage("");
+  };
 
   useEffect(() => {
     // checks if the allowlist is enabled to allow two transactions
@@ -177,19 +172,74 @@ const CreateSyndicateProvider: React.FC<{ children: ReactNode }> = ({
     }
   }, [isAllowlistEnabled, memberAddresses, transactionsCount]);
 
+  const handleAddToAllowlist = async (event) => {
+    event.preventDefault();
+    dispatch(setSubmitting(true));
+    try {
+      // create new copy of split array
+      // convert comma separated string into array
+      const splitArr = memberAddresses;
+      // get last element in array
+      const lastElement = splitArr[splitArr.length - 1];
+      // create new copy of split array
+      const newSplitArr = [...splitArr];
+      // check if empty string
+      if (!lastElement) {
+        newSplitArr.pop();
+      }
+      // perform validations outside the class functions
+      if (!account.trim() || !newSplitArr.length) {
+        return;
+      }
+      setCurrentTransaction(2);
+      setCurrentTxHash("");
+      setProcessingTitle("Waiting for confirmation");
+      setProcessingMessage(
+        "Please confirm the second transaction in your wallet. This adds members to your allowlist.",
+      );
+      await syndicateContracts.AllowlistLogicContract.managerAllowAddresses(
+        account,
+        newSplitArr,
+        account,
+        (transactionHash: string) => {
+          setCurrentTxHash(transactionHash);
+          setProcessingTitle("Processing");
+          setProcessingMessage(
+            "Adding addresses to allowlist, please wait for the transaction to complete",
+          );
+          setSubmitting(true);
+        },
+      );
+      setShowErrorMessage(false);
+      setShowSuccessView(true);
+      dispatch(setSubmitting(false));
+    } catch (error) {
+      const { code } = error;
+      if (code) {
+        const errorMessage = getMetamaskError(code, "Member deposit modified.");
+        setErrorMessage(errorMessage);
+        setShowErrorMessage(true);
+        dispatch(setSubmitting(false));
+      } else {
+        // alert any other contract error
+        setErrorMessage(metamaskConstants.metamaskUnknownErrorMessage);
+        setShowErrorMessage(true);
+        dispatch(setSubmitting(false));
+      }
+    }
+  };
+
   /**
    * This method implements the manager steps to create a syndicate
    * @param event
    */
-  const handleFinish = async (event) => {
+  const handleCreateSyndicate = async (event) => {
     event.preventDefault();
     // Go to processing
 
-    setProcessingModalTitle("Waiting for confirmation");
-    setShowProcessingModal(true);
-    setProcessingModalMessage(
-      "Please confirm the first transaction in your wallet. This creates your syndicate",
-    );
+    setProcessingTitle("Waiting for confirmation");
+    setProcessingMessage("Authorize allocation with wallet extension");
+    handleNext();
 
     // get syndicateProtocolProfitSharePercent
     const syndicateProtocolProfitSharePercent = syndicateProfitSharePercent;
@@ -271,7 +321,6 @@ const CreateSyndicateProvider: React.FC<{ children: ReactNode }> = ({
 
     try {
       setButtonsDisabled(true);
-
       const syndicateData = {
         managerManagementFeeBasisPoints:
           formattedManagerManagementFeeBasisPoints,
@@ -293,84 +342,36 @@ const CreateSyndicateProvider: React.FC<{ children: ReactNode }> = ({
         account,
         (transactionHash: string) => {
           setCurrentTxHash(transactionHash);
-          setProcessingModalTitle("Processing");
-          setProcessingModalMessage(
+          setProcessingTitle("Processing");
+          setProcessingMessage(
             "Creating your syndicate, please wait for the transaction to complete",
           );
           setSubmitting(true);
         },
       );
-
       // if there are multiple transaction, handle the
-      if (transactionsCount === 2) {
-        // create new copy of split array
-        // convert comma separated string into array
-        const splitArr = memberAddresses;
-
-        // get last element in array
-        const lastElement = splitArr[splitArr.length - 1];
-
-        // create new copy of split array
-        const newSplitArr = [...splitArr];
-
-        // check if empty string
-        if (!lastElement) {
-          newSplitArr.pop();
-        }
-
-        // perform validations outside the class functions
-        if (!account.trim() || !newSplitArr.length) {
-          return;
-        }
+      if (transactionsCount === 1) {
+        setShowErrorMessage(false);
+        setShowSuccessView(true);
+        dispatch(setSubmitting(false));
+        // Amplitude logger: How many users started filling out the form to create a Syndicate
+        amplitudeLogger(CREATE_SYNDICATE, {
+          flow: Flow.MGR_CREATE_SYN,
+        });
+      } else if (transactionsCount === 2) {
+        setProcessingTitle("Transaction 1 completed");
         setCurrentTransaction(2);
-        setCurrentTxHash("");
-        setProcessingModalTitle("Waiting for confirmation");
-        setProcessingModalMessage(
-          "Please confirm the second transaction in your wallet. This adds members to your allowlist.",
-        );
-        await syndicateContracts.AllowlistLogicContract.managerAllowAddresses(
-          account,
-          newSplitArr,
-          account,
-          (transactionHash: string) => {
-            setCurrentTxHash(transactionHash);
-            setProcessingModalTitle("Processing");
-            setProcessingModalMessage(
-              "Adding addresses to allowlist, please wait for the transaction to complete",
-            );
-            setSubmitting(true);
-          },
-        );
       }
-
-      setShowProcessingModal(false);
-
-      setShowErrorMessage(false);
-
-      setShowSuccessView(true);
-
-      dispatch(setSubmitting(false));
-
-      // Amplitude logger: How many users started filling out the form to create a Syndicate
-      amplitudeLogger(CREATE_SYNDICATE, {
-        flow: Flow.MGR_CREATE_SYN,
-      });
     } catch (error) {
       setCurrentTxHash("");
       setButtonsDisabled(false);
       setShowWalletConfirmationText(false);
       if (error.code) {
         const { code } = error;
-        let errorMessage;
-        if (currentTransaction === 1) {
-          errorMessage = getMetamaskError(code, "Create Syndicate");
-        } else if (currentTransaction === 2) {
-          errorMessage = getMetamaskError(code, "Member deposit modified.");
-        }
+        const errorMessage = getMetamaskError(code, "Create Syndicate");
         setErrorMessage(errorMessage);
         setShowErrorMessage(true);
         dispatch(setSubmitting(false));
-
         // Amplitude logger: Error creating a Syndicate
         amplitudeLogger(ERROR_CREATING_SYNDICATE, {
           flow: Flow.MGR_CREATE_SYN,
@@ -439,7 +440,8 @@ const CreateSyndicateProvider: React.FC<{ children: ReactNode }> = ({
         currentSubStep,
         steps,
         buttonsDisabled,
-        handleFinish,
+        handleCreateSyndicate,
+        handleAddToAllowlist,
         showWalletConfirmationText,
         showErrorMessage,
         errorMessage,
@@ -447,16 +449,14 @@ const CreateSyndicateProvider: React.FC<{ children: ReactNode }> = ({
         setButtonsDisabled,
         setCurrentSubStep,
         setCurrentStep,
-        modalInfo: {
-          showProcessingModal,
-          setShowProcessingModal,
+        processingInfo: {
           transactionsCount,
           currentTransaction,
-          processingModalMessage,
+          processingMessage,
           showErrorMessage,
           errorMessage,
           currentTxHash,
-          processingModalTitle,
+          processingTitle,
           setShowErrorMessage,
         },
         continueDisabled,

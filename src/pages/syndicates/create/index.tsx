@@ -1,7 +1,6 @@
 import { Syndicate } from "@/@types/syndicate";
 import { Layout } from "@/components/layout";
 import Steps from "@/components/syndicates/create/Steps";
-import ProcessingModal from "@/components/syndicates/shared/processingModal";
 import SuccessCreateSyndicate from "@/components/syndicates/shared/successCreateSyndicate";
 import WalletNotConnected from "@/components/walletNotConnected";
 import { ContentInfo, MainContent } from "@/containers/create/shared";
@@ -110,7 +109,6 @@ const CreateSyndicate: React.FC = () => {
           <WalletNotConnected />
         ) : (
           <>
-            <ProcessingModal />
             <div
               id="container"
               className={
