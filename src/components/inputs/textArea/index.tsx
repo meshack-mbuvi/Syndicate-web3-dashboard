@@ -53,7 +53,7 @@ export const TextArea: React.FC<ITextAreaProps> = (props) => {
         onKeyUp={onKeyUp}
         onSelect={onSelect}
         value={value}
-        className={`border border-gray-french rounded-lg w-full p-3 focus:border-blue hover:border-blue-50 ${disabledClasses} ${classoverride}`}
+        className={`text-input-placeholder border border-gray-french rounded-lg w-full py-3 px-4 focus:border-blue hover:border-blue-50 ${disabledClasses} ${classoverride}`}
         {...rest}
         rows={rows}
         cols={50}

@@ -74,8 +74,8 @@ export const TokenSelectInput: React.FC<ITokenSelectInput> = (props) => {
           name="deposit-token"
           id="deposit-token"
           className={`block cursor-pointer w-full pr-10 ${
-            depositTokenLogo ? "pl-12" : "pl-3"
-          } py-3 font-whyte rounded-md bg-black border focus:border-blue text-white focus:outline-none focus:ring-gray-24`}
+            depositTokenLogo ? "pl-12" : "pl-4"
+          } font-whyte dark-input-field`}
           placeholder="Select deposit token"
           value={depositTokenName}
           readOnly

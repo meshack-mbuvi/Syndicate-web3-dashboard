@@ -123,9 +123,9 @@ const TimeAndDatePicker: React.FC = () => {
       ...base,
       background: "#000000",
       borderRadius: "5px",
-      paddingTop: "0.25rem",
-      paddingBottom: "0.3rem",
-      paddingLeft: "0.125rem",
+      paddingTop: "0.375rem",
+      paddingBottom: "0.375rem",
+      paddingLeft: "0.2rem",
       border: "1px solid #3D3D3D",
     }),
     singleValue: (base) => ({
@@ -182,7 +182,7 @@ const TimeAndDatePicker: React.FC = () => {
       <div className="flex flex-col">
         <p>Close time</p>
         <div className="flex mt-2 space-x-6 justify-between items-center w-full">
-          <div className="w-5/12 flex flex-1 px-1">
+          <div className="w-5/12 flex flex-1">
             <DatePicker
               selected={selectedDate}
               onChange={(date) => setSelectedDate(date)}
@@ -201,7 +201,7 @@ const TimeAndDatePicker: React.FC = () => {
           <div className="flex justify-center">
             <p>at</p>
           </div>
-          <div className="w-2/5 px-1">
+          <div className="w-2/5">
             <Select
               data={timeIntervals}
               value={selectedTimeValue.replaceAll("_", " ")}
@@ -213,13 +213,13 @@ const TimeAndDatePicker: React.FC = () => {
           </div>
         </div>
         <p className="mt-7">Time zone</p>
-        <div className="w-full mt-2 px-1">
+        <div className="w-full mt-2">
           <ReactSelect
             options={formattedTimezones}
             isSearchable
             name="timezone"
             placeholder="Choose your timezone"
-            className="bg-black text-sm"
+            className="bg-black"
             styles={customStyles}
             components={{ IndicatorSeparator, Input, Option, SingleValue }}
             onChange={(selectedValue) => setSelectedTimezone(selectedValue)}
@@ -227,7 +227,7 @@ const TimeAndDatePicker: React.FC = () => {
           />
         </div>
         <div className="mt-5">
-          <p className="text-sm text-gray-3">
+          <p className="text-gray-3">
             By default, this value is set by your computer’s local timezone. The
             specified close time is stored as UTC in the smart contract so it’ll
             close at the same moment everywhere in the world, regardless of

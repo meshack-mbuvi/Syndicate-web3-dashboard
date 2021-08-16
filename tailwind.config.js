@@ -158,6 +158,7 @@ module.exports = {
           nightrider: "#353535",
           inactive: "#30363A",
           inactiveText: "#505050",
+          placeholder: "#666666",
           erieBlack: "#1B1B1B",
           blackRussian: "#141518",
           darkBackground: "#151618",

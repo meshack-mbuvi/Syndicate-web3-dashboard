@@ -156,7 +156,7 @@ const InputWithPercent: React.FC<IProps> = ({
               error
                 ? "border-red-500 focus:border-red-500 focus:ring-0"
                 : "border-gray-24 focus:border-blue",
-              `flex flex-grow text-sm w-full min-w-0 font-whyte dark-input-field`,
+              `flex flex-grow w-full min-w-0 font-whyte dark-input-field`,
             )}
           />
           {!placeholder || (placeholder && value !== "") ? (

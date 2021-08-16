@@ -52,7 +52,7 @@ const Select = (props: {
         <select
           id={label}
           name={label}
-          className={`inline-flex py-3 align-end text-sm w-full text-right min-w-0 font-whyte flex-grow dark-input-field ${
+          className={`inline-flex py-3 align-end w-full text-right min-w-0 font-whyte flex-grow dark-input-field ${
             icon ? "pl-12" : ""
           } 
           ${rightPlaceholder && !showBgIcon ? "bg-none" : ""}`}

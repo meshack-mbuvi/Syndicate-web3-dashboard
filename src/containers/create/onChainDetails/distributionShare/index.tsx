@@ -196,7 +196,7 @@ const DistributionShare: React.FC = () => {
                   className={classNames(
                     syndicateProfitSharePercent === option ? "bg-blue" : "",
                     optionStyles[option],
-                    "relative borderLeft bg-clip-padding py-2 bg-origin-padding w-full justify-center focus:outline-none",
+                    "relative borderLeft bg-clip-padding py-3 bg-origin-padding w-full justify-center focus:outline-none",
                   )}
                 >
                   {option}
