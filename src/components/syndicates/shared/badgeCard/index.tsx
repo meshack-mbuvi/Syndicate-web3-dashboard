@@ -177,12 +177,12 @@ export const BadgeCard = (props: {
     >
       <div className={`flex justify-between items-start `}>
         <div className="flex-shrink-0 flex flex-col mr-8">
-          <p className="text-base sm:text-xl leading-snug text-white mb-2 font-whyte-light">
+          <p className="text-base sm:text-lg leading-snug text-white mb-2 font-whyte-light">
             Amount deposited
           </p>
         </div>
         <div className="flex flex-col">
-          <p className="flex flex-wrap flex-col 1.5lg:flex-row text-base sm:text-xl font-whyte-light">
+          <p className="flex flex-wrap flex-col 1.5lg:flex-row text-base sm:text-lg font-whyte-light">
             <span>{floatedNumberWithCommas(depositTotal)}</span>
             <span className="text-gray-400">&nbsp;/&nbsp;</span>
             <span className="text-gray-400">
