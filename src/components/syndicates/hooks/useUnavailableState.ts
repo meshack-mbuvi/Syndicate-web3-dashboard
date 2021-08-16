@@ -2,7 +2,6 @@ import { RootState } from "@/redux/store";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-
 import { constants } from "../shared/Constants";
 import { useDepositChecks } from "./useDepositChecks";
 
@@ -25,12 +24,6 @@ const defaultState = {
   renderUnavailableState: true,
 };
 
-const readonlyState = {
-  title: readOnlySyndicateText,
-  message: readOnlySyndicateTitle,
-  renderUnavailableState: true,
-};
-
 const noAccountState = {
   title: connectWalletMessageTitle,
   message: connectWalletDepositMessage,
@@ -49,15 +42,11 @@ export const useUnavailableState = (page?: string) => {
   const router = useRouter();
   const withdraw = router.pathname.endsWith("withdraw");
 
-  const {
-    depositsAvailable,
-    maxMembersZero,
-    maxDepositReached,
-  } = useDepositChecks();
+  const { depositsAvailable, maxMembersZero, maxDepositReached } =
+    useDepositChecks();
 
-  const [{ title, message, renderUnavailableState }, setText] = useState(
-    defaultState,
-  );
+  const [{ title, message, renderUnavailableState }, setText] =
+    useState(defaultState);
 
   const [renderJoinWaitList, setRenderJoinWaitList] = useState(false);
 
