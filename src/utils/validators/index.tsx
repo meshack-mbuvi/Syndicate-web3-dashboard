@@ -19,18 +19,29 @@ export const AddressValidator = (
  * @param value a string number value
  * @returns
  */
-export const Validate = (value: string): string => {
-  const regex = new RegExp(/^\d+(\.\d{0,2})?$/);
+export const Validate = (value: string, canBeUnlimited = false): string => {
+  const regex = canBeUnlimited
+    ? new RegExp(/(^\d+(\.\d{0,2})?$)|^unlimited$/)
+    : new RegExp(/^\d+(\.\d{0,2})?$/);
+
+  const isUnlimitedValue =
+    canBeUnlimited && value.toLowerCase() === "unlimited";
+
+  // Extra error message for values which can be unlimited
+  const extraErrorMessage =
+    canBeUnlimited && value.toLowerCase() !== "unlimited"
+      ? 'Or "unlimited" text'
+      : "";
 
   let message = "";
-  if (!value.toString().trim()) {
+  if (!value.toString().toLowerCase().trim()) {
     message = "is required";
-  } else if (isNaN(+value)) {
-    message = "should be a valid decimal/number";
+  } else if (isNaN(+value) && !isUnlimitedValue) {
+    message = `should be a valid decimal/number ${extraErrorMessage}`;
   } else if (+value < 0) {
     message = "cannot be a negative number";
-  } else if (!regex.test(value)) {
-    message = "can only include at most two decimal places.";
+  } else if (!regex.test(value) && !isUnlimitedValue) {
+    message = `can only include at most two decimal places if it's a number`;
   } else {
     message = "";
   }

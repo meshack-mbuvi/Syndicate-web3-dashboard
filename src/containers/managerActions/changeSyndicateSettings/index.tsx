@@ -18,14 +18,15 @@ import { useRouter } from "next/router";
 import React, { FC, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { updateSyndicateSettingsDetails } from "@/redux/actions/syndicates";
-import { getWeiAmount } from "src/utils/conversions";
+import { getWeiAmount, isUnlimited } from "src/utils/conversions";
+import { UNLIMITED_THRESHOLD } from "@/utils/constants";
 
 interface Props {
   showChangeSettings: boolean;
   setShowChangeSettings: Function;
 }
 
-const ChangeSyndicateSettings: FC<Props> = (props: Props) => {
+const ChangeSyndicateSettings: FC<Props> = (props) => {
   const { showChangeSettings, setShowChangeSettings } = props;
   const [submitting, setSubmitting] = useState(false);
 
@@ -40,10 +41,8 @@ const ChangeSyndicateSettings: FC<Props> = (props: Props) => {
   const [finalStateIcon, setFinalStateIcon] = useState("");
   const [showFinalState, setShowFinalState] = useState(false);
 
-  const [
-    showWalletConfirmationModal,
-    setShowWalletConfirmationModal,
-  ] = useState(false);
+  const [showWalletConfirmationModal, setShowWalletConfirmationModal] =
+    useState(false);
 
   const { syndicateAddress } = router.query;
 
@@ -97,7 +96,10 @@ const ChangeSyndicateSettings: FC<Props> = (props: Props) => {
   };
 
   // enforces 2 decimal places
-  const handleDecimalPlaces = (value) => {
+  const handleDecimalPlaces = (value: string) => {
+    if (isUnlimited(value)) {
+      return "Unlimited ";
+    }
     return value.indexOf(".") >= 0
       ? value.substr(0, value.indexOf(".")) +
           value.substr(value.indexOf("."), 3)
@@ -105,8 +107,8 @@ const ChangeSyndicateSettings: FC<Props> = (props: Props) => {
   };
 
   // prevent symbols including dot
-  const handleNoSymbols = (value) => {
-    return value.replace(/[^0-9]/g, "");
+  const handleChange = (value: string | number) => {
+    return value;
   };
 
   const handleCloseFinalStateModal = async () => {
@@ -165,9 +167,13 @@ const ChangeSyndicateSettings: FC<Props> = (props: Props) => {
 
   // Min. Deposit Amount per Member
   const handleManagerSetDepositMemberMin = async (depositMemberMin: string) => {
+    let value: string = depositMemberMin;
+    if (depositMemberMin.toLowerCase() === "unlimited") {
+      value = UNLIMITED_THRESHOLD;
+    }
     try {
-      const depositMemberMinimum = depositMemberMin
-        ? getWeiAmount(depositMemberMin, tokenDecimals, true)
+      const depositMemberMinimum = value
+        ? getWeiAmount(value, tokenDecimals, true)
         : getWeiAmount("0", tokenDecimals, true);
 
       await DepositLogicContract.managerSetDepositMemberMin(
@@ -190,9 +196,13 @@ const ChangeSyndicateSettings: FC<Props> = (props: Props) => {
 
   // Max. Deposit Amount per Member
   const handleManagerSetDepositMemberMax = async (depositMemberMax: string) => {
+    let value: string = depositMemberMax;
+    if (depositMemberMax.toLowerCase() === "unlimited") {
+      value = UNLIMITED_THRESHOLD;
+    }
     try {
-      const depositMemberMaximum = depositMemberMax
-        ? getWeiAmount(depositMemberMax, tokenDecimals, true)
+      const depositMemberMaximum = value
+        ? getWeiAmount(value, tokenDecimals, true)
         : MAX_INTEGER;
 
       await DepositLogicContract.managerSetDepositMemberMax(
@@ -215,9 +225,13 @@ const ChangeSyndicateSettings: FC<Props> = (props: Props) => {
 
   // Max. Total Deposit Amount
   const handleManagerSetDepositTotalMax = async (depositTotalMax: string) => {
+    let value: string = depositTotalMax;
+    if (depositTotalMax.toLowerCase() === "unlimited") {
+      value = UNLIMITED_THRESHOLD;
+    }
     try {
-      const depositTotalMaximum = depositTotalMax
-        ? getWeiAmount(depositTotalMax, tokenDecimals, true)
+      const depositTotalMaximum = value
+        ? getWeiAmount(value, tokenDecimals, true)
         : MAX_INTEGER;
 
       await DepositLogicContract.managerSetDepositTotalMax(
@@ -229,18 +243,25 @@ const ChangeSyndicateSettings: FC<Props> = (props: Props) => {
         (value) => dispatch(setSubmitting(value)),
       );
 
-      handleSuccess({ depositTotalMax }, "Max. Total Deposit Amount updated");
+      handleSuccess(
+        { depositTotalMax: value },
+        "Max. Total Deposit Amount updated",
+      );
     } catch (error) {
       handleError(error);
     }
   };
 
   // Max. Total Members
-  const handleManagerSetNumMembersMax = async (numMembersMax: number) => {
+  const handleManagerSetNumMembersMax = async (numMembersMax: string) => {
+    let value: string | bigint = numMembersMax;
+    if (numMembersMax.toString().toLowerCase() === "unlimited") {
+      value = MAX_INTEGER;
+    }
     try {
       await ManagerLogicContract.managerSetNumMembersMax(
         syndicateAddress,
-        numMembersMax,
+        value,
         account,
         setShowWalletConfirmationModal,
         setSubmitting,
@@ -341,17 +362,21 @@ const ChangeSyndicateSettings: FC<Props> = (props: Props) => {
   const changeSettingsOptions = [
     {
       label: "Min. Deposit Amount per Member:",
-      defaults: { depositMemberMin },
+      defaults: {
+        depositMemberMin: isUnlimited(depositMemberMin)
+          ? "Unlimited"
+          : depositMemberMin,
+      },
       currency: true,
       display: syndicate.open,
-      type: "number",
+      type: "text",
       step: "0.01",
       handleChange: handleDecimalPlaces,
       handler: handleManagerSetDepositMemberMin,
       validations: {
         required: "Min. Deposit Amount per Member is required",
         validate: (value) => {
-          const message = Validate(value);
+          const message = Validate(value, true);
           if (message) {
             return message;
           }
@@ -363,10 +388,14 @@ const ChangeSyndicateSettings: FC<Props> = (props: Props) => {
     },
     {
       label: "Max. Deposit Amount per Member:",
-      defaults: { depositMemberMax },
+      defaults: {
+        depositMemberMax: isUnlimited(depositMemberMax)
+          ? "Unlimited"
+          : depositMemberMax,
+      },
       currency: true,
       display: syndicate.open,
-      type: "number",
+      type: "text",
       step: "0.01",
       handleChange: handleDecimalPlaces,
       handler: handleManagerSetDepositMemberMax,
@@ -377,7 +406,7 @@ const ChangeSyndicateSettings: FC<Props> = (props: Props) => {
           message: "Max Deposit has to be at least one",
         },
         validate: (value) => {
-          const message = Validate(value);
+          const message = Validate(value, true);
           if (message) {
             return message;
           } else if (parseFloat(value) < parseFloat(depositMemberMin)) {
@@ -390,9 +419,13 @@ const ChangeSyndicateSettings: FC<Props> = (props: Props) => {
     },
     {
       label: "Max. Total Deposit Amount:",
-      defaults: { depositTotalMax },
+      defaults: {
+        depositTotalMax: isUnlimited(depositTotalMax)
+          ? "Unlimited"
+          : depositTotalMax,
+      },
       currency: true,
-      type: "number",
+      type: "text",
       step: "0.01",
       display: syndicate.open,
       handleChange: handleDecimalPlaces,
@@ -405,7 +438,7 @@ const ChangeSyndicateSettings: FC<Props> = (props: Props) => {
             "Max. Total Deposit Amount must be equal to or greater than 0",
         },
         validate: (value) => {
-          const message = Validate(value);
+          const message = Validate(value, true);
 
           if (message) {
             return message;
@@ -419,11 +452,13 @@ const ChangeSyndicateSettings: FC<Props> = (props: Props) => {
     },
     {
       label: "Max. Total Members:",
-      defaults: { numMembersMax },
+      defaults: {
+        numMembersMax: isUnlimited(numMembersMax) ? "Unlimited" : numMembersMax,
+      },
       handler: handleManagerSetNumMembersMax,
-      type: "number",
+      type: "text",
       display: syndicate.open,
-      handleChange: handleNoSymbols,
+      handleChange: handleChange,
       validations: {
         required: "Max. Total Members is required",
         minLength: {
@@ -431,7 +466,7 @@ const ChangeSyndicateSettings: FC<Props> = (props: Props) => {
           message: "Max. Total Members should be at lease 1",
         },
         validate: (value) => {
-          if (!isWholeNumber(value)) {
+          if (!isWholeNumber(value) && value.toLowerCase() !== "unlimited") {
             return "Max. Total Members must be a whole number";
           }
         },
