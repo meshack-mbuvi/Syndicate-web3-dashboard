@@ -162,8 +162,8 @@ const InputWithPercent: React.FC<IProps> = ({
           {!placeholder || (placeholder && value !== "") ? (
             <span
               className={classNames(
-                label && "mt-1",
-                "flex flex-1 absolute text-sm py-3",
+                label ? "mt-1 py-4" : "py-3",
+                "flex flex-1 absolute text-sm",
               )}
               style={{
                 marginLeft: `${variableWidth}px`,
@@ -177,10 +177,13 @@ const InputWithPercent: React.FC<IProps> = ({
             ""
           )}
         </div>
-        
-        {error || customError &&
-          <p className="text-red-500 text-xs h-8 mt-1 ">{error || customError}</p>
-        }
+
+        {error ||
+          (customError && (
+            <p className="text-red-500 text-xs h-8 mt-1 ">
+              {error || customError}
+            </p>
+          ))}
       </div>
     </div>
   );
