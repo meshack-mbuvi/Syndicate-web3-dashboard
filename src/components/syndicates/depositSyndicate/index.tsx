@@ -857,11 +857,23 @@ const DepositSyndicate: React.FC = () => {
                   !syndicate?.depositsEnabled ||
                     depositLimits ||
                     router.pathname.endsWith("details") ? (
-                    <div className="flex flex-col items-center justify-center my-8 mx-6">
-                      <p className="font-semibold text-2xl text-center">
-                        Deposits are disabled.
-                      </p>
-                    </div>
+                    <>
+                      {showSkeletonLoader ? (
+                        <div className="flex justify-between my-1">
+                          <SkeletonLoader
+                            width="full"
+                            height="8"
+                            borderRadius="rounded-md"
+                          />
+                        </div>
+                      ) : (
+                        <div className="flex flex-col items-center justify-center my-8 mx-6">
+                          <p className="font-semibold text-2xl text-center">
+                            Deposits are disabled.
+                          </p>
+                        </div>
+                      )}
+                    </>
                   ) : memberMaxDepositReached && !showSkeletonLoader ? (
                     <SyndicateActionLoader
                       headerText={maxMemberDepositsTitleText}
