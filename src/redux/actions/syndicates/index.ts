@@ -191,33 +191,39 @@ export const getSyndicateByAddress =
       const syndicate = await GetterLogicContract.getSyndicateValues(
         syndicateAddress,
       );
+      if (syndicate){
+        // get token details
+        const {
+          depositERC20TokenSymbol,
+          depositERC20Logo,
+          tokenDecimals,
+          depositERC20Price,
+        } = await getTokenDetails(syndicate.depositERC20Address);
 
-      // get token details
-      const {
-        depositERC20TokenSymbol,
-        depositERC20Logo,
-        tokenDecimals,
-        depositERC20Price,
-      } = await getTokenDetails(syndicate.depositERC20Address);
+        const syndicateDetails = processSyndicateDetails(
+          syndicate,
+          tokenDecimals,
+          depositERC20TokenSymbol,
+          depositERC20Logo,
+          depositERC20Price,
+        );
+        // set these incase they are not reset
+        dispatch({
+          data: { syndicateAddressIsValid: true, syndicateFound: true },
+          type: FOUND_SYNDICATE_ADDRESS,
+        });
 
-      const syndicateDetails = processSyndicateDetails(
-        syndicate,
-        tokenDecimals,
-        depositERC20TokenSymbol,
-        depositERC20Logo,
-        depositERC20Price,
-      );
-      // set these incase they are not reset
-      dispatch({
-        data: { syndicateAddressIsValid: true, syndicateFound: true },
-        type: FOUND_SYNDICATE_ADDRESS,
-      });
-
-      // set syndicate details
-      return dispatch({
-        data: { ...syndicateDetails },
-        type: SYNDICATE_BY_ADDRESS,
-      });
+        // set syndicate details
+        return dispatch({
+          data: { ...syndicateDetails },
+          type: SYNDICATE_BY_ADDRESS,
+        });
+      } else {
+        return dispatch({
+                data: { syndicateAddressIsValid: false, syndicateFound: false },
+                type: INVALID_SYNDICATE_ADDRESS,
+              });
+      }
     } catch (err) {
       // syndicate not found
       // syndicateAddress is not valid
