@@ -39,6 +39,71 @@ const App = ({ Component, pageProps }) => {
               <Head>
                 <title>Home | Syndicate Dashboard</title>
                 <link rel="shortcut icon" href="/images/logo.svg" />
+
+                <link
+                  rel="preload"
+                  href="/fonts/ABC_Whyte_Inktrap_Variable/ABCWhyteInktrapVariable-Trial.woff"
+                  as="font"
+                  crossOrigin=""
+                  type="font/woff2"
+                />
+                <link
+                  rel="preload"
+                  href="/fonts/ABC_Whyte_Variable/ABCWhyteVariable-Trial.woff"
+                  as="font"
+                  crossOrigin=""
+                  type="font/woff2"
+                />
+                <link
+                  rel="preload"
+                  href="/fonts/Whyte/ABCWhyte-Medium.woff"
+                  as="font"
+                  crossOrigin=""
+                  type="font/woff2"
+                />
+                <link
+                  rel="preload"
+                  href="/fonts/Whyte/ABCWhyte-Regular.woff"
+                  as="font"
+                  crossOrigin=""
+                  type="font/woff2"
+                />
+                <link
+                  rel="preload"
+                  href="/fonts/Whyte/ABCWhyte-Light-Trial.woff"
+                  as="font"
+                  crossOrigin=""
+                  type="font/woff2"
+                />
+                <link
+                  rel="preload"
+                  href="/fonts/Whyte\ Inktrap/ABCWhyteInktrap-Medium.woff"
+                  as="font"
+                  crossOrigin=""
+                  type="font/woff2"
+                />
+                <link
+                  rel="preload"
+                  href="/fonts/Whyte\ Inktrap/ABCWhyteInktrap-Regular.woff"
+                  as="font"
+                  crossOrigin=""
+                  type="font/woff2"
+                />
+                <link
+                  rel="preload"
+                  href="/fonts/ABC_Whyte_Inktrap/ABCWhyteInktrap-Extralight-Trial.woff"
+                  as="font"
+                  crossOrigin=""
+                  type="font/woff2"
+                />
+                <link
+                  rel="preload"
+                  href="/fonts/ABC_Whyte_Inktrap/ABCWhyteInktrap-Light-Trial.woff"
+                  as="font"
+                  crossOrigin=""
+                  type="font/woff2"
+                />
+
                 <meta
                   name="viewport"
                   content="width=device-width, initial-scale=1, shrink-to-fit=no"
