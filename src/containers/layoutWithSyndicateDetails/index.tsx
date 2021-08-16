@@ -44,22 +44,32 @@ const LayoutWithSyndicateDetails = ({ children }): JSX.Element => {
       switch (router.pathname) {
         case "/syndicates/[syndicateAddress]/manage":
           // For a closed syndicate, user should be navigated to withdrawal page
-          if (syndicateAddress !== account) {
+          if (syndicate.managerCurrent !== account) {
             if (syndicate?.open) {
-              router.replace(`/syndicates/${syndicateAddress}/deposit`);
+              router.replace(
+                `/syndicates/${syndicate.syndicateAddress}/deposit`,
+              );
             } else {
-              router.replace(`/syndicates/${syndicateAddress}/withdraw`);
+              router.replace(
+                `/syndicates/${syndicate.syndicateAddress}/withdraw`,
+              );
             }
           }
           break;
         case "/syndicates/[syndicateAddress]/deposit":
-          if (syndicateAddress === account) {
-            router.replace(`/syndicates/${syndicateAddress}/manage`);
+          if (syndicate.managerCurrent === account) {
+            router.replace(`/syndicates/${syndicate.syndicateAddress}/manage`);
+          } else if (syndicate.distributing) {
+            router.replace(
+              `/syndicates/${syndicate.syndicateAddress}/withdraw`,
+            );
           }
           break;
         case "/syndicates/[syndicateAddress]/withdraw":
-          if (syndicateAddress === account) {
-            router.replace(`/syndicates/${syndicateAddress}/manage`);
+          if (syndicate.managerCurrent === account) {
+            router.replace(`/syndicates/${syndicate.syndicateAddress}/manage`);
+          } else if (syndicate.depositsEnabled || syndicate.open) {
+            router.replace(`/syndicates/${syndicate.syndicateAddress}/deposit`);
           }
           break;
         default:
@@ -136,7 +146,7 @@ const LayoutWithSyndicateDetails = ({ children }): JSX.Element => {
           {emptyStateMessage}
         </p>
         {!syndicateAddressIsValid ? null : (
-          <EtherscanLink etherscanInfo={syndicateAddress} />
+          <EtherscanLink etherscanInfo={syndicate?.syndicateAddress} />
         )}
       </div>
     </div>

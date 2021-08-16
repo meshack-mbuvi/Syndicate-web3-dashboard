@@ -39,7 +39,6 @@ import { SyndicateActionButton } from "../shared/syndicateActionButton";
 import { SyndicateActionLoader } from "../shared/syndicateActionLoader";
 import { UnavailableState } from "../shared/unavailableState";
 import ManageSyndicate from "./ManageSyndicate";
-import WithdrawDeposit from "./WithdrawDeposit";
 
 const {
   actionFailedError,
@@ -385,7 +384,7 @@ const DepositSyndicate: React.FC = () => {
     setMetamaskConfirmPending(true);
     try {
       await syndicateContracts.DepositLogicContract.deposit({
-        syndicateAddress,
+        syndicateAddress: syndicate.syndicateAddress,
         account,
         amount: amountToInvest,
         setMetamaskConfirmPending,
@@ -393,7 +392,10 @@ const DepositSyndicate: React.FC = () => {
       });
 
       dispatch(
-        getSyndicateByAddress({ syndicateAddress, ...syndicateContracts }),
+        getSyndicateByAddress({
+          syndicateAddress: syndicate.syndicateAddress,
+          ...syndicateContracts,
+        }),
       );
 
       //store updated member details
@@ -983,10 +985,6 @@ const DepositSyndicate: React.FC = () => {
             customStyles="p-8 rounded-b-3xl bg-gray-6 border-t border-gray-700 "
             customInnerWidth="w-full"
           />
-        )}
-
-        {parseInt(memberTotalDeposits) > 0 && account && (
-          <WithdrawDeposit syndicateAddress={syndicateAddress} />
         )}
 
         {/* show this components if we are in details page*/}
