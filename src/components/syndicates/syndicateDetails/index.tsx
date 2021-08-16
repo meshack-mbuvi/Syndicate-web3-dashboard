@@ -105,33 +105,26 @@ const SyndicateDetails = (props: {
   const [depositTokenContract, setDepositTokenContract] = useState<any>("");
 
   // states to show general syndicate details
-  const [
-    syndicateCummulativeDetails,
-    setSyndicateCummulativeDetails,
-  ] = useState([
-    {
-      header: "Total Deposits",
-      subText: "",
-    },
-  ]);
+  const [syndicateCummulativeDetails, setSyndicateCummulativeDetails] =
+    useState([
+      {
+        header: "Total Deposits",
+        subText: "",
+      },
+    ]);
 
   // states to handle manager allowances
-  const [
-    managerDepositsAllowance,
-    setManagerDepositsAllowance,
-  ] = useState<number>(0);
-  const [
-    correctManagerDepositsAllowance,
-    setCorrectManagerDepositsAllowance,
-  ] = useState<boolean>(false);
+  // states to handle manager allowances
+  const [managerDepositsAllowance, setManagerDepositsAllowance] =
+    useState<number>(0);
+  const [correctManagerDepositsAllowance, setCorrectManagerDepositsAllowance] =
+    useState<boolean>(false);
   const [
     correctManagerDistributionsAllowance,
     setCorrectManagerDistributionsAllowance,
   ] = useState<boolean>(false);
-  const [
-    showManagerSetAllowances,
-    setShowManagerSetAllowances,
-  ] = useState<boolean>(false);
+  const [showManagerSetAllowances, setShowManagerSetAllowances] =
+    useState<boolean>(false);
 
   // get syndicate address from the url
   const { syndicateAddress } = router.query;
@@ -201,10 +194,11 @@ const SyndicateDetails = (props: {
     const addressOfSyndicate = web3.utils.toChecksumAddress(syndicateAddress);
 
     // get events where member invested in a syndicate.
-    const distributionEvents = await syndicateContracts.DistributionLogicContract.getDistributionEvents(
-      "DistributionAdded",
-      { syndicateAddress: addressOfSyndicate },
-    );
+    const distributionEvents =
+      await syndicateContracts.DistributionLogicContract.getDistributionEvents(
+        "DistributionAdded",
+        { syndicateAddress: addressOfSyndicate },
+      );
 
     if (distributionEvents.length > 0) {
       // get all distributionERC20 tokens
@@ -254,16 +248,18 @@ const SyndicateDetails = (props: {
         );
 
         // get total distributions for the token
-        const totalCurrentDistributions = await syndicateContracts.DistributionLogicContract.getDistributionTotal(
-          syndicateAddress,
-          tokenAddress,
-        );
+        const totalCurrentDistributions =
+          await syndicateContracts.DistributionLogicContract.getDistributionTotal(
+            syndicateAddress,
+            tokenAddress,
+          );
 
         // We should get also get total claimed distributions
-        const totalClaimedDistributions = await syndicateContracts.DistributionLogicContract.getDistributionClaimedTotal(
-          syndicateAddress,
-          tokenAddress,
-        );
+        const totalClaimedDistributions =
+          await syndicateContracts.DistributionLogicContract.getDistributionClaimedTotal(
+            syndicateAddress,
+            tokenAddress,
+          );
 
         const tokenDistributions = getWeiAmount(
           totalCurrentDistributions,
@@ -355,9 +351,8 @@ const SyndicateDetails = (props: {
         // we need to loop over all values and check if there's any distribution token.
         // a syndicate can have infinite distribution tokens.
         for (let i = 0; i < distributionTokensAllowanceDetails.length; i++) {
-          const { sufficientAllowanceSet } = distributionTokensAllowanceDetails[
-            i
-          ];
+          const { sufficientAllowanceSet } =
+            distributionTokensAllowanceDetails[i];
           if (!sufficientAllowanceSet) {
             setCorrectManagerDistributionsAllowance(false);
             return;
@@ -533,8 +528,8 @@ const SyndicateDetails = (props: {
       {...{
         accountIsManager,
         showManagerSetAllowancesModal,
-        correctManagerDepositsAllowance,
         correctManagerDistributionsAllowance,
+        correctManagerDepositsAllowance,
       }}
     />
   );

@@ -88,29 +88,20 @@ const WithdrawSyndicate: React.FC = () => {
   const router = useRouter();
   const dispatch = useDispatch();
 
-  const {
-    title,
-    message,
-    renderUnavailableState,
-    renderJoinWaitList,
-  } = useUnavailableState();
+  const { title, message, renderUnavailableState, renderJoinWaitList } =
+    useUnavailableState();
 
   // STATES
-  const [withdrawalsAvailable, setWithdrawalsAvailable] = useState<boolean>(
-    true,
-  );
-  const [submittingWithdrawal, setSubmittingWithdrawal] = useState<boolean>(
-    false,
-  );
-  const [metamaskConfirmPending, setMetamaskConfirmPending] = useState<boolean>(
-    false,
-  );
-  const [successfulWithdrawal, setSuccessfulWithdrawal] = useState<boolean>(
-    false,
-  );
-  const [metamaskWithdrawError, setMetamaskWithdrawError] = useState<string>(
-    "",
-  );
+  const [withdrawalsAvailable, setWithdrawalsAvailable] =
+    useState<boolean>(true);
+  const [submittingWithdrawal, setSubmittingWithdrawal] =
+    useState<boolean>(false);
+  const [metamaskConfirmPending, setMetamaskConfirmPending] =
+    useState<boolean>(false);
+  const [successfulWithdrawal, setSuccessfulWithdrawal] =
+    useState<boolean>(false);
+  const [metamaskWithdrawError, setMetamaskWithdrawError] =
+    useState<string>("");
   const [withdrawalFailed, setWithdrawalFailed] = useState<boolean>(false);
   const [loadingLPDetails, setLoadingLPDetails] = useState<boolean>(false);
   const [amount, setAmount] = useState<number>(0);
@@ -141,10 +132,8 @@ const WithdrawSyndicate: React.FC = () => {
 
   // DEFINITIONS
   const { syndicateAddress } = router.query;
-  const {
-    memberTotalDeposits,
-    memberPercentageOfSyndicate,
-  } = memberDepositDetails;
+  const { memberTotalDeposits, memberPercentageOfSyndicate } =
+    memberDepositDetails;
 
   let tokenDistributions = "";
   let tokenSymbol = "";
@@ -152,10 +141,8 @@ const WithdrawSyndicate: React.FC = () => {
   let tokenDecimals = "";
 
   let selectedToken;
-  const [
-    currentDistributionTokenPrice,
-    setCurrentDistributionTokenPrice,
-  ] = useState<string>("1");
+  const [currentDistributionTokenPrice, setCurrentDistributionTokenPrice] =
+    useState<string>("1");
 
   // get current token price
   const getTokenPrice = async (tokenAddress) => {
@@ -215,11 +202,8 @@ const WithdrawSyndicate: React.FC = () => {
   }
 
   if (syndicate) {
-    var {
-      depositERC20Price,
-      depositERC20TokenSymbol,
-      depositERC20Logo,
-    } = syndicate;
+    var { depositERC20Price, depositERC20TokenSymbol, depositERC20Logo } =
+      syndicate;
     const { tokenDecimals } = syndicate;
     var depositTokenDecimals = tokenDecimals;
     var depositERC20Symbol = depositERC20TokenSymbol;
@@ -288,9 +272,7 @@ const WithdrawSyndicate: React.FC = () => {
       }
 
       // Amplitude logger: setLoggerFlow
-      setLoggerFlow(
-        depositsEnabled ? Flow.MBR_WITHDRAW_DEP : Flow.MBR_WITHDRAW_DIST,
-      );
+      setLoggerFlow(Flow.MBR_WITHDRAW_DIST);
     }
   }, [syndicate]);
 
@@ -388,10 +370,7 @@ const WithdrawSyndicate: React.FC = () => {
   }
 
   // set correct title text to show on the withdrawal page
-  let withdrawalPageTitleText = withdrawalTitleText;
-  if (syndicate && syndicate.depositsEnabled) {
-    withdrawalPageTitleText = withdrawalDepositTitleText;
-  }
+  const withdrawalPageTitleText = withdrawalTitleText;
 
   // conditions under which the skeleton loader should be rendered
   const showSkeletonLoader =
@@ -501,40 +480,27 @@ const WithdrawSyndicate: React.FC = () => {
 
     try {
       setMetamaskConfirmPending(true);
-      /** This method is used by an LP to withdraw a deposit or distribution from a Syndicate
+      /** This method is used by an LP to withdraw distribution from a Syndicate
        * @param syndicateAddress The Syndicate that an LP wants to withdraw from
        * @param withdrawalToken The ERC 20 address to be transferred from the
        * manager to the member.
        * @param amountToWithdraw The amount to withdraw
        */
-      if (syndicate.depositsEnabled) {
-        const depositAmountToWithdraw = getWeiAmount(
-          withdrawAmount.toString(),
-          syndicate.tokenDecimals,
-          true,
-        );
-
-        // withdraw deposits
-        await syndicateContracts?.DepositLogicContract.withdrawMemberDeposit(
-          syndicateAddress,
-          depositAmountToWithdraw,
-          account,
-          setMetamaskConfirmPending,
-          setSubmittingWithdrawal,
-        );
-      } else {
-        // withdraw distributions
-        await syndicateContracts?.DistributionLogicContract.memberClaimDistributions(
-          syndicateAddress,
-          account,
-          [currentDistributionTokenAddress],
-          [amountToWithdraw],
-          setMetamaskConfirmPending,
-          setSubmittingWithdrawal,
-        );
+      if (!syndicate.distributing) {
+        return;
       }
 
-      // transaction was succesful
+      // withdraw distributions
+      await syndicateContracts?.DistributionLogicContract.memberClaimDistributions(
+        syndicateAddress,
+        account,
+        [currentDistributionTokenAddress],
+        [amountToWithdraw],
+        setMetamaskConfirmPending,
+        setSubmittingWithdrawal,
+      );
+
+      // transaction was successful
       // get syndicate updated values
       dispatch(
         getSyndicateByAddress({ syndicateAddress, ...syndicateContracts }),
@@ -606,7 +572,7 @@ const WithdrawSyndicate: React.FC = () => {
   const onSubmit = async (event: any) => {
     event.preventDefault();
 
-    if (!syndicateContracts.DepositLogicContract) {
+    if (!syndicateContracts.DistributionLogicContract) {
       // user needs to connect wallet first
       return dispatch(showWalletModal());
     }
@@ -745,6 +711,7 @@ const WithdrawSyndicate: React.FC = () => {
                       <img
                         className="mr-2 relative -top-1"
                         src={"/images/deposit.svg"}
+                        alt=""
                       />
 
                       <p className="font-semibold text-xl p-2">
@@ -795,6 +762,7 @@ const WithdrawSyndicate: React.FC = () => {
                                 <img
                                   className="mr-2 w-5"
                                   src={depositERC20Logo}
+                                  alt=""
                                 />
                               )}
                               {depositERC20Symbol}
@@ -834,7 +802,9 @@ const WithdrawSyndicate: React.FC = () => {
             customInnerWidth={"w-full"}
           />
         )}
-        {syndicate?.depositsEnabled && account ? (
+        {syndicate?.depositsEnabled &&
+        account &&
+        syndicate.managerCurrent !== account ? (
           <>
             <p className="py-4 px-2 text-xs text-gray-dim leading-4">MORE</p>
             <Link href={`/syndicates/${syndicateAddress}/deposit`}>

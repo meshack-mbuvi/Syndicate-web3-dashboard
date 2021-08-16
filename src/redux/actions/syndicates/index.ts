@@ -68,23 +68,20 @@ export const getSyndicates =
       const syndicates = [];
       const syndicateInfo: SyndicateInfo = {};
 
-      const accountCreatedSyndicateEvents =
-        await ManagerLogicContract.getSyndicatesForManager(account);
+      // Get syndicate managed by connected account
+      const { isManager = false, syndicateAddress } =
+        await GetterLogicContract.getManagerInfo(account);
+
+      if (isManager) {
+        syndicates.push(syndicateAddress);
+        syndicateInfo[syndicateAddress] = {
+          activities: 0,
+          depositors: 0,
+        };
+      }
 
       const memberDepositedEvents =
         await DepositLogicContract.getMemberDepositEvents("DepositAdded");
-
-      await accountCreatedSyndicateEvents.forEach(async (event) => {
-        const { syndicateAddress } = event.returnValues;
-        // check whether event belongs to this wallet owner
-        if (syndicateAddress === account) {
-          syndicates.push(syndicateAddress);
-          syndicateInfo[syndicateAddress] = {
-            activities: 0,
-            depositors: 0,
-          };
-        }
-      });
 
       await memberDepositedEvents.forEach(async (event) => {
         const { memberAddress, syndicateAddress: address } = event.returnValues;
@@ -162,6 +159,7 @@ export const getSyndicates =
         type: SET_LOADING,
       });
     } catch (error) {
+      console.log({ error });
       dispatch({
         data: false,
         type: SET_LOADING,

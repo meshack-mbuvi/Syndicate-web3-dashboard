@@ -63,18 +63,9 @@ const DistributionShare: React.FC = () => {
 
   const [profitShareToLeadCustomError, setProfitShareToLeadCustomError] =
     useState("");
-  const [
-    profitShareToSyndicateCustomError,
-    setProfitShareToSyndicateCustomError,
-  ] = useState("");
-  const [buttonOptionError, setButtonOptionError] = useState("");
 
   useEffect(() => {
-    if (
-      profitShareToLeadCustomError ||
-      profitShareToSyndicateCustomError ||
-      buttonOptionError
-    ) {
+    if (profitShareToLeadCustomError) {
       setButtonsDisabled(true);
     } else {
       setButtonsDisabled(false);
@@ -82,11 +73,7 @@ const DistributionShare: React.FC = () => {
     return () => {
       setButtonsDisabled(false);
     };
-  }, [
-    profitShareToLeadCustomError,
-    profitShareToSyndicateCustomError,
-    buttonOptionError,
-  ]);
+  }, [profitShareToLeadCustomError]);
 
   useEffect(() => {
     if (isNaN(syndicateProfitSharePercent)) {
@@ -100,9 +87,6 @@ const DistributionShare: React.FC = () => {
 
   const handleSetProfitShareToSyndicateLead = (value: number) => {
     dispatch(setProfitShareToSyndicateLead(value));
-    // Clear errors on other input fields
-    setProfitShareToSyndicateCustomError("");
-    setButtonOptionError("");
 
     const allowedPercent = 100 - +syndicateProfitSharePercent;
     if (+value > allowedPercent) {
@@ -121,19 +105,19 @@ const DistributionShare: React.FC = () => {
   const handleSetProfitShareToSyndProtocol = (value: number) => {
     dispatch(setProfitShareToSyndProtocol(value));
     setProfitShareToLeadCustomError("");
-    setButtonOptionError("");
 
     const allowedPercent = 100 - +profitShareToSyndicateLead;
 
-    if (+value > allowedPercent) {
-      setProfitShareToSyndicateCustomError(
-        `Share of distributions to Syndicate Protocol cannot exceed ${allowedPercent.toFixed(
+    if (+value + +profitShareToSyndicateLead > 100) {
+      const setValueTo = +profitShareToSyndicateLead - +value + allowedPercent;
+      setProfitShareToLeadCustomError(
+        `Set share of distributions to syndicate lead to ${setValueTo.toFixed(
           2,
         )}%. The sum of all distribution share values must not exceed 100%.`,
       );
       setButtonsDisabled(true);
     } else {
-      setProfitShareToSyndicateCustomError("");
+      setProfitShareToLeadCustomError("");
       setButtonsDisabled(false);
     }
   };
@@ -142,20 +126,19 @@ const DistributionShare: React.FC = () => {
     dispatch(setProfitShareToSyndProtocol(option));
 
     setProfitShareToLeadCustomError("");
-    setProfitShareToSyndicateCustomError("");
 
     const allowedPercent = 100 - +profitShareToSyndicateLead;
 
     if (+option + +profitShareToSyndicateLead > 100) {
       const setValueTo = +profitShareToSyndicateLead - +option + allowedPercent;
 
-      setButtonOptionError(
+      setProfitShareToLeadCustomError(
         `Set share of distributions to syndicate lead to ${setValueTo.toFixed(
           2,
         )}%. The sum of all distribution share values must not exceed 100%.`,
       );
     } else {
-      setButtonOptionError("");
+      setProfitShareToLeadCustomError("");
     }
     setResetToDefault(true);
   };
@@ -212,7 +195,6 @@ const DistributionShare: React.FC = () => {
                 resetToDefault={resetToDefault}
                 setResetToDefault={setResetToDefault}
                 setInputValue={handleSetProfitShareToSyndProtocol}
-                customError={profitShareToSyndicateCustomError}
                 storedValue={
                   !options.some(
                     (option) => option === syndicateProfitSharePercent,
@@ -222,9 +204,6 @@ const DistributionShare: React.FC = () => {
                 }
               />
             </div>
-          </div>
-          <div className="w-full">
-            <p className="text-red-500 text-xs h-4">{buttonOptionError}</p>
           </div>
         </div>
       </div>
