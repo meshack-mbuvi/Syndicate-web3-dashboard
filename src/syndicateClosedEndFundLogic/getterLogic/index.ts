@@ -18,7 +18,7 @@ export class SyndicateGetterLogic extends BaseLogicContract {
    */
   public async getMemberInfo(
     syndicateAddress: string,
-    memberAddress: string
+    memberAddress: string,
   ): Promise<SyndicateMemberInfo> {
     if (!syndicateAddress.trim() || !memberAddress.trim()) {
       return;
@@ -27,13 +27,10 @@ export class SyndicateGetterLogic extends BaseLogicContract {
     try {
       await this.initializeLogicContract();
 
-      const {
-        deposit,
-        distributionClaimedDepositERC20,
-        isAllowlisted,
-      } = await this.logicContractInstance.methods
-        .getMemberInfo(syndicateAddress, memberAddress)
-        .call();
+      const { deposit, distributionClaimedDepositERC20, isAllowlisted } =
+        await this.logicContractInstance.methods
+          .getMemberInfo(syndicateAddress, memberAddress)
+          .call();
 
       return {
         memberDeposit: deposit,
@@ -51,7 +48,7 @@ export class SyndicateGetterLogic extends BaseLogicContract {
    * @returns
    */
   public async getSyndicateValues(
-    syndicateAddress: string
+    syndicateAddress: string,
   ): Promise<SyndicateValues> {
     if (!syndicateAddress.trim()) return;
 

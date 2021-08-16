@@ -18,7 +18,7 @@ export class BaseLogicContract {
   _address: string;
   contractName: string;
   web3: any;
-  contractABI: object;
+  contractABI;
 
   /**
    *
@@ -26,11 +26,7 @@ export class BaseLogicContract {
    * @param web3
    * @param contractABI
    */
-  constructor(
-    contractName: string,
-    web3,
-    contractABI,
-  ) {
+  constructor(contractName: string, web3, contractABI) {
     this.web3 = web3;
     this.contractABI = contractABI;
     this.contractName = contractName;
@@ -43,7 +39,6 @@ export class BaseLogicContract {
    */
   async initializeLogicContract() {
     try {
-
       let contractAddress = this._address;
 
       if (!this._address) {
