@@ -35,13 +35,14 @@ import {
 } from "@/redux/actions/manageMembers";
 import { getSyndicateByAddress } from "@/redux/actions/syndicates";
 import { RootState } from "@/redux/store";
+import { web3 } from "@/utils";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import ChangeSyndicateSettings from "./changeSyndicateSettings";
 import DistributeToken from "./distributeToken";
 import ManageMembers from "./manageMembers";
 import ManagerActionCard from "./managerActionCard";
-import ChangeSyndicateSettings from "./changeSyndicateSettings";
 import ModifyMemberDistributions from "./modifyMemberDistributions";
 import ModifySyndicateCapTable from "./modifySyndicateCapTable";
 import MoreManagerActionCard from "./moreManagerActionCard";
@@ -64,7 +65,6 @@ const ManagerActions = (): JSX.Element => {
       },
     },
   } = useSelector((state: RootState) => state);
-
   const dispatch = useDispatch();
 
   const router = useRouter();
@@ -75,43 +75,34 @@ const ManagerActions = (): JSX.Element => {
 
   useEffect(() => {
     if (router.isReady) {
-      setAddress(syndicateAddress);
+      setAddress(web3.utils.toChecksumAddress(syndicateAddress));
     }
   }, [router.isReady]);
 
-  const [
-    showWalletConfirmationModal,
-    setShowWalletConfirmationModal,
-  ] = useState(false);
+  const [showWalletConfirmationModal, setShowWalletConfirmationModal] =
+    useState(false);
 
   const [showFinalState, setShowFinalState] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
   const [showDistributeToken, setShowDistributeToken] = useState(false);
   const [showPreApproveDepositor, setShowPreApproveDepositor] = useState(false);
-  const [showRequestSocialProfile, setShowRequestSocialProfile] = useState(
-    false,
-  );
+  const [showRequestSocialProfile, setShowRequestSocialProfile] =
+    useState(false);
   const [showChangeSettings, setShowChangeSettings] = useState<boolean>(false);
-  const [showConfirmCloseSyndicate, setShowConfirmCloseSyndicate] = useState(
-    false,
-  );
+  const [showConfirmCloseSyndicate, setShowConfirmCloseSyndicate] =
+    useState(false);
 
-  const [showSyndicateNotModifiable, setShowSyndicateNotModifiable] = useState(
-    false,
-  );
+  const [showSyndicateNotModifiable, setShowSyndicateNotModifiable] =
+    useState(false);
 
   // show component handling Manage Members
   const [showManageMembers, setShowManageMembers] = useState(false);
 
   const [errorMessage, setErrorMessage] = useState("");
 
-  const {
-    title,
-    message,
-    renderUnavailableState,
-    renderJoinWaitList,
-  } = useUnavailableState("manage");
+  const { title, message, renderUnavailableState, renderJoinWaitList } =
+    useUnavailableState("manage");
 
   const actions = [
     {
@@ -138,7 +129,10 @@ const ManagerActions = (): JSX.Element => {
   const handleCloseFinalStateModal = async () => {
     setShowFinalState(false);
     await dispatch(
-      getSyndicateByAddress({ syndicateAddress, ...syndicateContracts }),
+      getSyndicateByAddress({
+        syndicateAddress: web3.utils.toChecksumAddress(syndicateAddress),
+        ...syndicateContracts,
+      }),
     );
   };
 
@@ -150,7 +144,7 @@ const ManagerActions = (): JSX.Element => {
     try {
       setShowWalletConfirmationModal(true);
       await syndicateContracts.ManagerLogicContract.managerCloseSyndicate(
-        syndicateAddress,
+        web3.utils.toChecksumAddress(syndicateAddress),
         account,
         setShowWalletConfirmationModal,
         setSubmitting,
@@ -179,7 +173,6 @@ const ManagerActions = (): JSX.Element => {
       setShowFinalState(true);
     }
   };
-
   if (renderUnavailableState || renderJoinWaitList) {
     return (
       <div className="h-fit-content px-8 pb-4 pt-5 bg-gray-9 rounded-2xl">
@@ -196,11 +189,12 @@ const ManagerActions = (): JSX.Element => {
     );
   }
 
-  // if syndicateAddress !== account is true then it should redirect to deposit page hence the loader
+  // if syndicate?.managerCurrent !== account is true then it should redirect to deposit page hence the loader
   // DEV NOTES:
   //   improvements are welcomed. Its a hacky way while waiting for page to redirect.
   //   this happens because this component should be rendered after fetching account and syndicate info
-  const isNotManager = syndicateAddress !== account;
+  const isNotManager =
+    web3.utils.toChecksumAddress(syndicate?.managerCurrent) !== account;
   if (isNotManager) {
     return (
       <div className="h-fit-content rounded-custom p-4 md:mx-2 md:p-6 bg-gray-9 mt-6 md:mt-0 md:pb-2">
@@ -360,7 +354,7 @@ const ManagerActions = (): JSX.Element => {
             />
           ) : null}
 
-          {/* Member deposit or member address can only be reject/blocked 
+          {/* Member deposit or member address can only be reject/blocked
           while the syndicate is open
           */}
           {syndicate?.open ? (
