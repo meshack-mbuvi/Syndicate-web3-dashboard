@@ -104,6 +104,7 @@ export class SyndicateGetterLogic extends BaseLogicContract {
       } = await this.logicContractInstance.methods
         .getSyndicateValues(syndicateAddress)
           .call();
+
         return {
           syndicateAddress,
           allowlistEnabled,

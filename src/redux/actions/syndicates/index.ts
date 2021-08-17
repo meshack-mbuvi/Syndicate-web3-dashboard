@@ -5,6 +5,8 @@ import { formatDate } from "@/utils";
 import { basisPointsToPercentage, getWeiAmount } from "@/utils/conversions";
 import { pastDate } from "@/utils/dateUtils";
 import { ERC20TokenDetails } from "@/utils/ERC20Methods";
+import { web3 } from "@/utils/web3Utils"
+import { isZeroAddress } from "@/utils/validators";
 import { getCoinFromContractAddress } from "functions/src/utils/ethereum";
 import {
   ADD_NEW_INVESTMENT,
@@ -187,11 +189,18 @@ export const getSyndicateByAddress =
   async (dispatch) => {
     try {
       if (!syndicateAddress.trim() || !GetterLogicContract) return;
+      const isAddress = web3.utils.isAddress(syndicateAddress);
 
       const syndicate = await GetterLogicContract.getSyndicateValues(
         syndicateAddress,
       );
       
+      // a valid syndicate needs to have a manager set
+      if(isZeroAddress(syndicate.managerCurrent) || !isAddress) return dispatch({
+                data: { syndicateAddressIsValid: false, syndicateFound: false },
+                type: INVALID_SYNDICATE_ADDRESS,
+              });
+
       // get token details
       const {
         depositERC20TokenSymbol,
@@ -199,7 +208,6 @@ export const getSyndicateByAddress =
         tokenDecimals,
         depositERC20Price,
       } = await getTokenDetails(syndicate.depositERC20Address);
-      if (depositERC20TokenSymbol){
         const syndicateDetails = processSyndicateDetails(
           syndicate,
           tokenDecimals,
@@ -218,12 +226,6 @@ export const getSyndicateByAddress =
           data: { ...syndicateDetails },
           type: SYNDICATE_BY_ADDRESS,
         });
-      } else {
-        return dispatch({
-                data: { syndicateAddressIsValid: false, syndicateFound: false },
-                type: INVALID_SYNDICATE_ADDRESS,
-              });
-      }
     } catch (err) {
       // syndicate not found
       // syndicateAddress is not valid
