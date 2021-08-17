@@ -298,6 +298,7 @@ const WithdrawSyndicate: React.FC = () => {
     currentTokenAvailableDistributions,
     account,
     depositTokenDecimals,
+    selectedToken,
   ]);
 
   // check for errors on the member withdrawal page.

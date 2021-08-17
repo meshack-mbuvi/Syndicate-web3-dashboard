@@ -44,14 +44,15 @@ const CreateSyndicate: React.FC = () => {
   } = useSelector((state: RootState) => state);
 
   const { account } = web3;
+  const [checkedForSyndicates, setCheckedForSyndicates] = useState(false);
 
   /**
    * We need to be sure syndicateContracts is initialized before retrieving events.
    */
-
   useEffect(() => {
     if (syndicateContracts?.GetterLogicContract && !firstRender) {
       dispatch(getSyndicates({ ...web3, ...syndicateContracts }));
+      setCheckedForSyndicates(true);
     }
   }, [syndicateContracts?.GetterLogicContract, account]);
 
@@ -65,7 +66,20 @@ const CreateSyndicate: React.FC = () => {
       const hasSyndicate = syndicates.some(
         (syndicate: Syndicate) => syndicate.managerCurrent == account,
       );
-      setManagerWithOpenSyndicate(hasSyndicate); 
+
+      if (hasSyndicate) {
+        setManagerWithOpenSyndicate(hasSyndicate);
+      } else if (!hasSyndicate) {
+        // account has syndicates but isn't managing any
+        // redirect to the first step of the create flow.
+        resetCreateSyndicateStore();
+        setCheckedForSyndicates(false);
+      }
+    } else if (!syndicates.length && checkedForSyndicates && !loading) {
+      // account doesn't have syndicates,
+      // redirect to the first step in the create flow.
+      resetCreateSyndicateStore();
+      setCheckedForSyndicates(false);
     }
   }, [account, syndicates]);
 
