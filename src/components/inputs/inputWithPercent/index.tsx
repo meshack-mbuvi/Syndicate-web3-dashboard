@@ -61,7 +61,7 @@ const InputWithPercent: React.FC<IProps> = ({
 
     // Handles % position based on inputs
     if (value.toString().length >= 1) {
-      offset = 14;
+      offset = 18;
       textWidth = getTextWidth(
         value,
         "16px 'ABC Whyte Regular', Helvetica, Arial, sans-serif",
@@ -71,7 +71,7 @@ const InputWithPercent: React.FC<IProps> = ({
     if (value.toString().length > 1) {
       setVariableWidth(textWidth + offset);
     } else if (value.toString().length == 1) {
-      offset = 16;
+      offset = 18;
       setVariableWidth(textWidth + offset);
     }
   }, [value, placeholder]);
@@ -163,7 +163,7 @@ const InputWithPercent: React.FC<IProps> = ({
             <span
               className={classNames(
                 label ? "mt-1 py-4" : "py-3",
-                "flex flex-1 absolute text-sm",
+                "flex flex-1 absolute text-base",
               )}
               style={{
                 marginLeft: `${variableWidth}px`,
