@@ -29,7 +29,7 @@ const Modifiable: React.FC = () => {
             modifiable ? "border-inactive" : "border-blue bg-blue bg-opacity-5",
             `relative rounded-lg border px-6 h-24 shadow-sm flex items-center space-x-3 ${
               modifiable && "hover:border-blue-50"
-            } mb-4 cursor-pointer`,
+            } mb-4 cursor-pointer`, "transition-all"
           )}
           onClick={() => dispatch(setModifiable(false))}
         >
@@ -63,7 +63,7 @@ const Modifiable: React.FC = () => {
             modifiable ? "border-blue bg-blue bg-opacity-5" : "border-inactive",
             `relative rounded-lg border px-6 h-24 shadow-sm flex items-center space-x-3 ${
               !modifiable && "hover:border-blue-50"
-            } mb-4 cursor-pointer`,
+            } mb-4 cursor-pointer`, "transition-all"
           )}
           onClick={() => dispatch(setModifiable(true))}
         >
