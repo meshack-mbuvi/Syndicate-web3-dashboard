@@ -91,7 +91,7 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
   const [cachedWalletData, setCachedWalletData] = useState(null);
   const [providerName, setProviderName] = useState("");
   const [activeProvider, setActiveProvider] = useState(null);
-  const [account, setAcccount] = useState("");
+  const [account, setAccount] = useState("");
   const [loadedAsSafeApp, setLoadedAsSafeApp] = useState(false);
   const [web3, initializeWeb3] = useState(initialWeb3);
 
@@ -210,7 +210,7 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
     if (activeProvider?.on) {
       const handleAccountsChanged = async (accounts: string[]) => {
         const address = await getProviderAccount(activeProvider);
-        setAcccount(address);
+        setAccount(address);
       };
 
       const handleChainChanged = (accounts: string[]) => {
@@ -275,7 +275,7 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
     }
 
     const address = await getProviderAccount(provider);
-    setAcccount(address);
+    setAccount(address);
 
     const newWeb3 = new Web3(provider);
     await initializeWeb3(newWeb3);
@@ -396,7 +396,7 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
     dispatch(setDisConnected());
     setWalletConnecting(false);
     setShowSuccessModal(false);
-    setAcccount("");
+    setAccount("");
   };
 
   return (
