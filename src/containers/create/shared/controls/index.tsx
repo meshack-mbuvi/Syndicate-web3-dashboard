@@ -49,7 +49,7 @@ const Controls = () => {
             } text-black px-12 py-3.5 rounded-lg focus:outline-none ${
               buttonsDisabled || continueDisabled
                 ? "cursor-not-allowed bg-gray-steelGrey text-gray-manatee"
-                : "hover:opacity-80"
+                : "hover:opacity-90 transition-all"
             }`}
             onClick={lastStep ? handleCreateSyndicate : handleNext}
             disabled={buttonsDisabled || continueDisabled}
