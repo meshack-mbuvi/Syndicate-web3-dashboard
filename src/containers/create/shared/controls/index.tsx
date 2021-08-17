@@ -48,7 +48,7 @@ const Controls = () => {
               lastStep ? "bg-green-400" : "bg-white"
             } text-black px-12 py-3.5 rounded-lg focus:outline-none ${
               buttonsDisabled || continueDisabled
-                ? "cursor-not-allowed opacity-70"
+                ? "cursor-not-allowed bg-gray-steelGrey text-gray-manatee"
                 : "hover:opacity-80"
             }`}
             onClick={lastStep ? handleCreateSyndicate : handleNext}
