@@ -202,6 +202,8 @@ const ManagerActions = (): JSX.Element => {
   // DEV NOTES:
   //   improvements are welcomed. Its a hacky way while waiting for page to redirect.
   //   this happens because this component should be rendered after fetching account and syndicate info
+
+  // TODO: somewhere in the application we are passing an unchecksummed address, we need to find and set it.
   const syndicateAddressCheckSum = Web3.utils.toChecksumAddress(syndicateAddress)
   const accountAddressCheckSum =  Web3.utils.toChecksumAddress(account)
 
