@@ -80,9 +80,32 @@ export class SyndicateGetterLogic extends BaseLogicContract {
 
     try {
       await this.initializeLogicContract();
-      const syndicate = this.logicContractInstance.methods.getSyndicate(syndicateAddress).call()
-      if(syndicate){
-        const {
+      const {
+        allowlistEnabled,
+        dateClose,
+        dateCreated,
+        depositERC20Address,
+        depositMemberMax,
+        depositTotalMax,
+        depositMemberMin,
+        depositTotal,
+        distributing,
+        managerCurrent,
+        managerFeeAddress,
+        managerManagementFeeBasisPoints,
+        managerPending,
+        managerDistributionShareBasisPoints,
+        modifiable,
+        numMembersCurrent,
+        numMembersMax,
+        open,
+        syndicateDistributionShareBasisPoints,
+        transferable,
+      } = await this.logicContractInstance.methods
+        .getSyndicateValues(syndicateAddress)
+          .call();
+        return {
+          syndicateAddress,
           allowlistEnabled,
           dateClose,
           dateCreated,
@@ -103,33 +126,7 @@ export class SyndicateGetterLogic extends BaseLogicContract {
           open,
           syndicateDistributionShareBasisPoints,
           transferable,
-        } = await this.logicContractInstance.methods
-          .getSyndicateValues(syndicateAddress)
-            .call();
-          return {
-            syndicateAddress,
-            allowlistEnabled,
-            dateClose,
-            dateCreated,
-            depositERC20Address,
-            depositMemberMax,
-            depositTotalMax,
-            depositMemberMin,
-            depositTotal,
-            distributing,
-            managerCurrent,
-            managerFeeAddress,
-            managerManagementFeeBasisPoints,
-            managerPending,
-            managerDistributionShareBasisPoints,
-            modifiable,
-            numMembersCurrent,
-            numMembersMax,
-            open,
-            syndicateDistributionShareBasisPoints,
-            transferable,
-          };
-      }
+        };
     } catch (error) {
       console.log({ error });
       return null;

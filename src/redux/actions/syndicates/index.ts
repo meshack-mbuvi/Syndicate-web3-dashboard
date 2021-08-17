@@ -191,15 +191,15 @@ export const getSyndicateByAddress =
       const syndicate = await GetterLogicContract.getSyndicateValues(
         syndicateAddress,
       );
-      if (syndicate){
-        // get token details
-        const {
-          depositERC20TokenSymbol,
-          depositERC20Logo,
-          tokenDecimals,
-          depositERC20Price,
-        } = await getTokenDetails(syndicate.depositERC20Address);
-
+      
+      // get token details
+      const {
+        depositERC20TokenSymbol,
+        depositERC20Logo,
+        tokenDecimals,
+        depositERC20Price,
+      } = await getTokenDetails(syndicate.depositERC20Address);
+      if (depositERC20TokenSymbol){
         const syndicateDetails = processSyndicateDetails(
           syndicate,
           tokenDecimals,
