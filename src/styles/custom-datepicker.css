@@ -68,7 +68,7 @@
 }
 
 .react-datepicker__today-button {
-  @apply mt-4 mx-4 mb-4 p-2 text-blue bg-gray-5 hover:bg-gray-6 border-none rounded-md;
+  @apply mt-4 mx-4 mb-4 p-2 text-blue bg-white bg-opacity-10 hover:bg-opacity-15 border-none rounded-md transition-all;
 }
 
 .react-datepicker__input-container > input {
