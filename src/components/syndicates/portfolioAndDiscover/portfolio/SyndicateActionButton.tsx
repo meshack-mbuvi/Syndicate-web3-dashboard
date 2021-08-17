@@ -1,4 +1,5 @@
 import { RootState } from "@/redux/store";
+import { web3 } from "@/utils";
 import Link from "next/link";
 import React from "react";
 import { useSelector } from "react-redux";
@@ -27,7 +28,7 @@ const SyndicateActionButton = ({
   // check that wallet owner is not the creater of the syndicate
   if (syndicateAddress !== account) {
     // monitors whether syndicate is open to deposits
-    if (depositsEnabled && status !== "Operating" ) {
+    if (depositsEnabled && status !== "Operating") {
       buttonText = "Deposit more";
       buttonStyles = "bg-white text-black";
       link = "deposit";
@@ -43,9 +44,12 @@ const SyndicateActionButton = ({
     buttonStyles = "bg-blue text-white";
     link = "manage";
   }
-
   return (
-    <Link href={`/syndicates/${syndicateAddress}/${link}`}>
+    <Link
+      href={`/syndicates/${web3.utils.toChecksumAddress(
+        syndicateAddress,
+      )}/${link}`}
+    >
       <div className="flex justify-end cursor-pointer">
         <a className={`text-xs rounded-full py-3 my-1  ${buttonStyles}`}>
           <button className="w-40 focus:outline-none">{buttonText}</button>
