@@ -74,7 +74,7 @@
 .react-datepicker__input-container > input {
   @apply block text-white bg-black border
   border-gray-24 rounded-md shadow-sm font-whyte p-3 relative w-full focus:outline-none
-  focus:border-gray-24 flex-grow hover:border-blue-50;
+  focus:border-gray-24 flex-grow hover:border-white hover:border-opacity-70 transition-all;
 }
 
 .react-datepicker__input-container > input::placeholder {
