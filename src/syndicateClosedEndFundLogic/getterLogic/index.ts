@@ -80,7 +80,6 @@ export class SyndicateGetterLogic extends BaseLogicContract {
 
     try {
       await this.initializeLogicContract();
-
       const {
         allowlistEnabled,
         dateClose,
@@ -104,31 +103,31 @@ export class SyndicateGetterLogic extends BaseLogicContract {
         transferable,
       } = await this.logicContractInstance.methods
         .getSyndicateValues(syndicateAddress)
-        .call();
+          .call();
 
-      return {
-        syndicateAddress,
-        allowlistEnabled,
-        dateClose,
-        dateCreated,
-        depositERC20Address,
-        depositMemberMax,
-        depositTotalMax,
-        depositMemberMin,
-        depositTotal,
-        distributing,
-        managerCurrent,
-        managerFeeAddress,
-        managerManagementFeeBasisPoints,
-        managerPending,
-        managerDistributionShareBasisPoints,
-        modifiable,
-        numMembersCurrent,
-        numMembersMax,
-        open,
-        syndicateDistributionShareBasisPoints,
-        transferable,
-      };
+        return {
+          syndicateAddress,
+          allowlistEnabled,
+          dateClose,
+          dateCreated,
+          depositERC20Address,
+          depositMemberMax,
+          depositTotalMax,
+          depositMemberMin,
+          depositTotal,
+          distributing,
+          managerCurrent,
+          managerFeeAddress,
+          managerManagementFeeBasisPoints,
+          managerPending,
+          managerDistributionShareBasisPoints,
+          modifiable,
+          numMembersCurrent,
+          numMembersMax,
+          open,
+          syndicateDistributionShareBasisPoints,
+          transferable,
+        };
     } catch (error) {
       console.log({ error });
       return null;
