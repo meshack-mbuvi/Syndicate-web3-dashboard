@@ -181,7 +181,7 @@ const Allowlist: React.FC = () => {
             isAllowlistEnabled ? "border-inactive" : "border-blue bg-blue bg-opacity-5",
             `relative rounded-lg border h-24 px-6 shadow-sm flex items-center space-x-3 ${
               isAllowlistEnabled && "hover:border-blue-50"
-            } mb-4 cursor-pointer`,
+            } mb-4 cursor-pointer`, "transition-all"
           )}
           onClick={() => dispatch(setIsAllowlistEnabled(false))}
         >
@@ -216,7 +216,7 @@ const Allowlist: React.FC = () => {
             !isAllowlistEnabled ? "border-inactive" : "border-blue bg-blue bg-opacity-5",
             `relative rounded-lg border h-24 px-6 shadow-sm flex items-center space-x-3 ${
               !isAllowlistEnabled && "hover:border-blue-50"
-            } mb-4 cursor-pointer`,
+            } mb-4 cursor-pointer`, "transition-all"
           )}
           onClick={() => dispatch(setIsAllowlistEnabled(true))}
         >

@@ -68,13 +68,13 @@
 }
 
 .react-datepicker__today-button {
-  @apply mt-4 mx-4 mb-4 p-2 text-blue bg-gray-5 hover:bg-gray-6 border-none rounded-md;
+  @apply mt-4 mx-4 mb-4 p-2 text-blue bg-white bg-opacity-10 hover:bg-opacity-15 border-none rounded-md transition-all;
 }
 
 .react-datepicker__input-container > input {
   @apply block text-white bg-black border
   border-gray-24 rounded-md shadow-sm font-whyte p-3 relative w-full focus:outline-none
-  focus:border-gray-24 flex-grow hover:border-blue-50;
+  focus:border-gray-24 flex-grow hover:border-white hover:border-opacity-70 transition-all;
 }
 
 .react-datepicker__input-container > input::placeholder {

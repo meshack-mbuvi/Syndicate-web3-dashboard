@@ -114,7 +114,7 @@ const SyndicateType: React.FC = () => {
               type === SYNDICATE_CHAIN_TYPE.onChain
                 ? "border-blue bg-blue bg-opacity-5"
                 : "border-inactive hover:border-blue-50",
-              "relative rounded-lg border p-6 shadow-sm items-center mb-4 cursor-pointer",
+              "relative rounded-lg border p-6 shadow-sm items-center mb-4 cursor-pointer transition-all",
             )}
             onClick={() => handleChangeType(SYNDICATE_CHAIN_TYPE.onChain)}
           >
@@ -155,7 +155,7 @@ const SyndicateType: React.FC = () => {
               type === SYNDICATE_CHAIN_TYPE.offChain
                 ? "border-blue bg-blue bg-opacity-5"
                 : "border-inactive hover:border-blue-50",
-              "relative rounded-lg border p-6 shadow-sm cursor-pointer",
+              "relative rounded-lg border p-6 shadow-sm cursor-pointer transition-all",
             )}
             onClick={() => handleChangeType(SYNDICATE_CHAIN_TYPE.offChain)}
           >
