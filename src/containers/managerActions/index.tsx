@@ -67,7 +67,6 @@ const ManagerActions = (): JSX.Element => {
       },
     },
   } = useSelector((state: RootState) => state);
-  console.log({ syndicate });
   const dispatch = useDispatch();
 
   const router = useRouter();
