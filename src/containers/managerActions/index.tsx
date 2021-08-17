@@ -50,8 +50,6 @@ import PreApproveDepositor from "./preApproveDepositor";
 import RejectDepositOrMemberAddress from "./RejectDepositOrMemberAddress";
 import RequestSocialProfile from "./requestSocialProfile";
 
-const Web3 = require("web3");
-
 const ManagerActions = (): JSX.Element => {
   const {
     syndicatesReducer: { syndicate },
@@ -191,12 +189,12 @@ const ManagerActions = (): JSX.Element => {
     );
   }
 
-  // if accountAddressCheckSum !== syndicateAddressCheckSum is true then it should redirect to deposit page hence the loader
+  // if syndicate?.managerCurrent !== account is true then it should redirect to deposit page hence the loader
   // DEV NOTES:
   //   improvements are welcomed. Its a hacky way while waiting for page to redirect.
   //   this happens because this component should be rendered after fetching account and syndicate info
   const isNotManager =
-    Web3.utils.toChecksumAddress(syndicate.managerCurrent) !== account;
+    web3.utils.toChecksumAddress(syndicate?.managerCurrent) !== account;
   if (isNotManager) {
     return (
       <div className="h-fit-content rounded-custom p-4 md:mx-2 md:p-6 bg-gray-9 mt-6 md:mt-0 md:pb-2">
