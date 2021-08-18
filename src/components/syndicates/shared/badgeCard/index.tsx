@@ -43,7 +43,7 @@ export const BadgeCard = (props: {
   if (syndicate) {
     // get syndicate duration to closure
     const now = moment();
-    const closeDateCountdown = moment(closeDate, "DD/MM/YYYY");
+    const closeDateCountdown = moment(closeDate, "M/DD/YYYY");
     // get precise duration difference using moment's precise range plugin
     // https://momentjs.com/docs/#/plugins/preciserange/
     const durationRemaining = moment.preciseDiff(now, closeDateCountdown, true);
