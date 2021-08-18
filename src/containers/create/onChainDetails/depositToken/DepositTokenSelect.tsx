@@ -8,7 +8,6 @@ import { coinsList } from "@/TokensList/coinsList";
 import { testCoinsList } from "@/TokensList/testCoinsList";
 import { ExclamationCircleIcon } from "@heroicons/react/solid";
 import { getCoinFromContractAddress } from "functions/src/utils/ethereum";
-import Image from "next/image";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { TokenSearchInput } from "./TokenSearchInput";
@@ -57,11 +56,7 @@ const TokenItem = (props: TokenProps) => {
       onClick={() => storeDepositTokenDetails({ ...props })}
     >
       <div className="flex justify-start items-center">
-        {icon.startsWith("http") ? (
-          <img src={icon} alt={icon} width={20} height={20} />
-        ) : (
-          <Image src={icon} width={20} height={20} />
-        )}
+        <img src={icon} alt={icon} width={20} height={20} />
         <p className="text-white text-sm sm:text-base ml-3">{name}</p>
       </div>
       <p className="text-gray-3 text-sm sm:text-base uppercase">{symbol}</p>
@@ -107,7 +102,7 @@ export const DepositTokenSelect: React.FC<{ toggleTokenSelect: () => void }> = (
           token.contractAddress.toLowerCase().includes(searchKeyword),
         );
 
-        if (contractAddressSearchResults) {
+        if (contractAddressSearchResults.length) {
           setTokensList(contractAddressSearchResults);
           setNoTokenFound(false);
         } else {
@@ -115,17 +110,24 @@ export const DepositTokenSelect: React.FC<{ toggleTokenSelect: () => void }> = (
           setNoTokenFound(false);
 
           getCoinFromContractAddress(searchTerm).then((coinInfo) => {
-            setShowLoader(false);
-            setTokensList([
-              {
-                symbol: coinInfo.symbol,
-                name: coinInfo.name,
-                contractAddress: searchTerm,
-                icon: coinInfo.logo,
-                decimal: coinInfo.decimals,
-              },
-            ]);
-          });
+            if (coinInfo.symbol) {
+              setShowLoader(false);
+              setTokensList([
+                {
+                  symbol: coinInfo.symbol,
+                  name: coinInfo.name,
+                  contractAddress: searchTerm,
+                  icon: coinInfo.logo,
+                  decimal: coinInfo.decimals,
+                },
+              ]);
+            } else {
+              // fail gracefully when there is an error fetching coin info from coingecko
+              setShowLoader(false);
+              setTokensList([]);
+              setNoTokenFound(true);
+            }
+          })
         }
       } else {
         setTokensList([]);
@@ -142,7 +144,6 @@ export const DepositTokenSelect: React.FC<{ toggleTokenSelect: () => void }> = (
   return (
     <div
       className="flex flex-col p-4 rounded-md bg-gray-darkBackground border-6 border-gray-darkBackground focus:outline-none"
-      onMouseLeave={() => props.toggleTokenSelect()}
     >
       <TokenSearchInput setSearchTerm={setSearchTerm} />
       {searchTerm ? null : (

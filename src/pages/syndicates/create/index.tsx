@@ -149,7 +149,7 @@ const CreateSyndicate: React.FC = () => {
                   <MainContent>
                     <div
                       id="main-content"
-                      className="flex-1 flex overflow-y-auto justify-between h-full no-scroll-bar"
+                      className="flex-1 flex overflow-y-auto justify-between h-full no-scroll-bar px-1"
                     >
                       {/* Displays component in step or substep */}
                       {steps?.[currentStep]?.component

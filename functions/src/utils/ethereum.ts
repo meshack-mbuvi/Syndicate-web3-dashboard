@@ -7,6 +7,7 @@ const abi = require("human-standard-token-abi");
 import { TokenMappings } from "./tokenMappings";
 
 const CoinGeckoClient = new CoinGecko();
+const debugging = process.env.NEXT_PUBLIC_DEBUG;
 
 const signatureObjectSchema = {
   messageHash: (value) => /0x[a-z|0-9]+/.test(value),
@@ -91,9 +92,6 @@ export async function getCoinFromContractAddress(contractAddress) {
    * }
    */
 
-  // check current network type
-  const currentNetwork = await web3.eth.net.getNetworkType();
-
   const emptyTokenDetails = {
     name: "",
     symbol: "",
@@ -104,7 +102,7 @@ export async function getCoinFromContractAddress(contractAddress) {
 
   try {
     // CoinGecko can only return token details on the main network.
-    if (currentNetwork === "main") {
+    if (debugging !== "true") {
       const coinInfo = await CoinGeckoClient.coins.fetchCoinContractInfo(
         contractAddress,
       );
