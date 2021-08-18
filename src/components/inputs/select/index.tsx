@@ -32,7 +32,7 @@ const Select = (props: {
         <div className="flex justify-between">
           <label
             htmlFor={label}
-            className="block py-2 text-white text-sm font-medium"
+            className="block py-2 text-white"
           >
             {label}
           </label>
