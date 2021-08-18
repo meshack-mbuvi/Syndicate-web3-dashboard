@@ -1,5 +1,10 @@
 {
   "baseUrl": "http://localhost:3000",
   "video": false,
-  "chromeWebSecurity": true
+  "chromeWebSecurity": true,
+  "env": {
+    "ETH_PRIVATE_KEY": "0x1009f7b98bac14eb905845f488ce12b98812eb11f78f3037599271a0e500fa22",
+    "providerOrUrl": "https://rinkeby.infura.io/v3/63d17294955d4dc1ab4a6eac34dd17d8",
+    "mnemonicPhrase": "twelve push galaxy castle lonely student split cave million scare raise apology"
+  }
 }
