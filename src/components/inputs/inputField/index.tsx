@@ -62,7 +62,7 @@ export const InputField = (props: {
         >
           {label}
         </label>
-        <span className="block py-2 text-gray-3 text-sm font-normal">
+        <span className="block text-gray-3 text-sm font-normal">
           {subTitle}
         </span>
       </div>
