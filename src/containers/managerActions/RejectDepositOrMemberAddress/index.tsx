@@ -53,10 +53,8 @@ const RejectDepositOrMemberAddress = (): JSX.Element => {
     },
   } = useSelector((state: RootState) => state);
 
-  const [
-    showWalletConfirmationModal,
-    setShowWalletConfirmationModal,
-  ] = useState(false);
+  const [showWalletConfirmationModal, setShowWalletConfirmationModal] =
+    useState(false);
 
   const [validSyndicate, setValidSyndicate] = useState(false);
 
@@ -119,10 +117,8 @@ const RejectDepositOrMemberAddress = (): JSX.Element => {
 
   const [allowanceAmount, setAllowanceAmount] = useState<number>(0);
 
-  const [
-    totalDepositsForMemberAddress,
-    setTotalDepositsForMemberAddress,
-  ] = useState<number>(0);
+  const [totalDepositsForMemberAddress, setTotalDepositsForMemberAddress] =
+    useState<number>(0);
 
   const [
     selectedMemberAddressTextIndexes,
@@ -246,9 +242,8 @@ const RejectDepositOrMemberAddress = (): JSX.Element => {
     event: React.ClipboardEvent<HTMLTextAreaElement>,
   ) => {
     const pastedAddresses = event.clipboardData.getData("text");
-    const removeInvalidCharacters = removeNewLinesAndWhitespace(
-      pastedAddresses,
-    );
+    const removeInvalidCharacters =
+      removeNewLinesAndWhitespace(pastedAddresses);
     const newSplitArr = removeInvalidCharacters.split(",");
     setMemberAddresses((prev) => {
       const selection = prev.substring(
@@ -401,9 +396,8 @@ const RejectDepositOrMemberAddress = (): JSX.Element => {
 
   // array of addresses whose deposit is to be rejected,
   // of maximum size equal to the maximum number of syndicate member.",
-  const [memberAddressesToblackList, setMemberAddressesToBlackList] = useState(
-    "",
-  );
+  const [memberAddressesToblackList, setMemberAddressesToBlackList] =
+    useState("");
 
   // if we have memberAddress set, then we are coming from manage members
   // component. We have to add the memberAddress to the memberAddresses array.
@@ -413,10 +407,8 @@ const RejectDepositOrMemberAddress = (): JSX.Element => {
     }
   }, [memberAddress]);
 
-  const [
-    memberAddressesToblackListError,
-    setMemberAddressesToBlackListError,
-  ] = useState<string>("");
+  const [memberAddressesToblackListError, setMemberAddressesToBlackListError] =
+    useState<string>("");
   const [
     selectedMemberAddressesToblackListTextIndexes,
     setSelectedMemberAddressesToblackListTextIndexes,
@@ -509,9 +501,8 @@ const RejectDepositOrMemberAddress = (): JSX.Element => {
     event: React.ClipboardEvent<HTMLTextAreaElement>,
   ) => {
     const pastedAddresses = event.clipboardData.getData("text");
-    const removeInvalidCharacters = removeNewLinesAndWhitespace(
-      pastedAddresses,
-    );
+    const removeInvalidCharacters =
+      removeNewLinesAndWhitespace(pastedAddresses);
     const newSplitArr = removeInvalidCharacters.split(",");
     setMemberAddressesToBlackList((prev) => {
       const selection = prev.substring(
@@ -568,9 +559,8 @@ const RejectDepositOrMemberAddress = (): JSX.Element => {
         memberAddressesToblackList,
       );
       // convert comma separated string into array
-      const memberAddressesArrayToBlacklist = sanitizedMemberAddressToBlacklist.split(
-        ",",
-      );
+      const memberAddressesArrayToBlacklist =
+        sanitizedMemberAddressToBlacklist.split(",");
 
       // create new copy of split array with no duplicates
       const memberAddressesArrayToBlacklistCopy = Array.from(
@@ -631,7 +621,7 @@ const RejectDepositOrMemberAddress = (): JSX.Element => {
             <>
               <div>
                 <div>
-                  <p className="text-blue-light font-whyte">Reject Deposits</p>
+                  <p className="text-blue font-whyte">Reject Deposits</p>
                 </div>
 
                 <div>
@@ -656,6 +646,7 @@ const RejectDepositOrMemberAddress = (): JSX.Element => {
                         onSelect: handleMemberAddressesOnSelectText,
                         onKeyUp: handleMemberAddressOnKeyUp,
                         error: memberAddressesError,
+                        customHoverBorder: "hover:border-gray-french",
                       }}
                       name="approvedAddresses"
                       placeholder=""
@@ -664,7 +655,7 @@ const RejectDepositOrMemberAddress = (): JSX.Element => {
                 </div>
                 <div className="flex items-center	justify-center pt-6">
                   <button
-                    className={`bg-blue-light text-white py-2 px-10 rounded-full ${
+                    className={`bg-blue text-white py-2 px-10 rounded-md ${
                       memberAddressesError
                         ? "cursor-not-allowed opacity-50"
                         : null
@@ -683,7 +674,7 @@ const RejectDepositOrMemberAddress = (): JSX.Element => {
           {syndicate?.allowlistEnabled && !showDepositOnly ? (
             <div>
               <div>
-                <p className="text-blue-light font-whyte">Reject Addresses</p>
+                <p className="text-blue font-whyte">Reject Addresses</p>
               </div>
 
               <div>
@@ -708,6 +699,7 @@ const RejectDepositOrMemberAddress = (): JSX.Element => {
                     onSelect: handleMemberAddressesToblackListOnSelectText,
                     onKeyUp: handleMemberAddressesToBlacklistOnKeyUp,
                     error: memberAddressesToblackListError,
+                    customHoverBorder: "hover:border-gray-french",
                   }}
                   name="approvedAddresses"
                   placeholder=""
@@ -715,7 +707,7 @@ const RejectDepositOrMemberAddress = (): JSX.Element => {
               </div>
               <div className="flex items-center	justify-center pt-6">
                 <button
-                  className={`bg-blue-light text-white	py-2 px-10 rounded-full ${
+                  className={`bg-blue text-white	py-2 px-10 rounded-md ${
                     memberAddressesToblackListError
                       ? "cursor-not-allowed opacity-50"
                       : null

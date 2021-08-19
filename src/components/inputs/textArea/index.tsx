@@ -18,6 +18,7 @@ interface ITextAreaProps {
   required?: boolean;
   value?: string | number;
   rows?: number;
+  customHoverBorder?: string;
   onPaste?: (event: React.ClipboardEvent<HTMLTextAreaElement>) => void;
   onKeyUp?: (event: React.KeyboardEvent<HTMLTextAreaElement>) => void;
   onSelect?: (event: React.ChangeEvent<HTMLTextAreaElement>) => void;
@@ -35,7 +36,8 @@ export const TextArea: React.FC<ITextAreaProps> = (props) => {
     onPaste,
     onKeyUp,
     onSelect,
-    classoverride="bg-white",
+    classoverride = "bg-white",
+    customHoverBorder,
     ...rest
   } = props;
 
@@ -53,7 +55,11 @@ export const TextArea: React.FC<ITextAreaProps> = (props) => {
         onKeyUp={onKeyUp}
         onSelect={onSelect}
         value={value}
-        className={`text-input-placeholder border border-gray-french rounded-lg w-full py-3 px-4 focus:border-blue hover:border-white hover:border-opacity-70 transition-all ${disabledClasses} ${classoverride}`}
+        className={`text-input-placeholder border border-gray-french rounded-lg w-full py-3 px-4 focus:border-blue ${
+          customHoverBorder
+            ? customHoverBorder
+            : "hover:border-white hover:border-opacity-70"
+        } ${disabledClasses} ${classoverride}`}
         {...rest}
         rows={rows}
         cols={50}
