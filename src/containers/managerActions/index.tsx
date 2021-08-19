@@ -197,12 +197,31 @@ const ManagerActions = (): JSX.Element => {
     web3.utils.toChecksumAddress(syndicate?.managerCurrent) !== account;
   if (isNotManager) {
     return (
-      <div className="h-fit-content rounded-custom p-4 md:mx-2 md:p-6 bg-gray-9 mt-6 md:mt-0 md:pb-2">
-        <SkeletonLoader width="full" height="8" />
-        <SkeletonLoader width="full" height="12" />
-        <SkeletonLoader width="full" height="12" />
-        <SkeletonLoader width="full" height="12" />
-      </div>
+      <>
+        <div className="h-fit-content rounded-2xl p-4 md:mx-2 md:p-6 bg-gray-9 mt-6 md:mt-0">
+          <div className="mb-6">
+            <SkeletonLoader width="full" height="10" />
+          </div>
+          <div className="mb-4">
+            <SkeletonLoader width="full" height="12" />
+          </div>
+          <div className="mb-4">
+            <SkeletonLoader width="full" height="12" />
+          </div>
+          <div className="mb-4">
+            <SkeletonLoader width="full" height="12" />
+          </div>
+        </div>
+        <div className="my-6 mx-4">
+          <SkeletonLoader width="24" height="10" />
+          <div className="my-6">
+            <SkeletonLoader width="full" height="12" />
+          </div>
+          <div className="mb-6">
+            <SkeletonLoader width="full" height="12" />
+          </div>
+        </div>
+      </>
     );
   }
 
@@ -252,7 +271,7 @@ const ManagerActions = (): JSX.Element => {
     <ErrorBoundary>
       <div className="w-full mt-4 sm:mt-0">
         <FadeIn>
-          <div className="h-fit-content rounded-custom p-4 md:mx-2 md:p-6 bg-gray-9 mt-6 md:mt-0 md:pb-2">
+          <div className="h-fit-content rounded-2xl p-4 md:mx-2 md:p-6 bg-gray-9 mt-6 md:mt-0 md:pb-2">
             <div className="text-xl font-inter">Manager Actions</div>
 
             <div className="flex h-12 rounded-custom items-center">
