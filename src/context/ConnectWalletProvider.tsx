@@ -14,7 +14,7 @@ import {
   storeCurrentEthNetwork,
 } from "@/redux/actions/web3Provider";
 import { getSyndicateContracts } from "@/syndicateClosedEndFundLogic";
-import { parse } from "flatted";
+import { parse, stringify } from "flatted";
 import React, {
   createContext,
   ReactNode,
@@ -25,7 +25,6 @@ import React, {
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 import { isEmpty } from "lodash";
-import { stringify } from "flatted";
 import WalletConnectProvider from "@walletconnect/web3-provider";
 import { providers } from "ethers";
 import { SafeAppWeb3Modal } from "@gnosis.pm/safe-apps-web3modal";
@@ -77,6 +76,7 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
   const {
     web3Reducer: {
       web3: {
+        connect,
         currentEthereumNetwork,
         ethereumNetwork: { invalidEthereumNetwork },
       },
@@ -184,12 +184,12 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
     if (!isEmpty(cachedWalletData)) {
       const { providerName } = cachedWalletData;
       if (providerName === "Injected" || providerName === "WalletConnect") {
-        activateProvider(providerName);
+        if (connect) activateProvider(providerName);
       }
     } else {
-      setWeb3();
+      if (connect) setWeb3();
     }
-  }, [cachedWalletData]);
+  }, [cachedWalletData, connect]);
 
   // provider is connected, this stops the loader modal
   // and sets up connected state
@@ -240,16 +240,16 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
   }, [activeProvider]);
 
   /*
- * We plug the initial `provider` into ethers.js and get back
- * a Web3Provider. This will add on methods from ethers.js and
- * event listeners such as `.on()` will be different.
- * It also makes it easier to immediately get the connected account.
- */
+   * We plug the initial `provider` into ethers.js and get back
+   * a Web3Provider. This will add on methods from ethers.js and
+   * event listeners such as `.on()` will be different.
+   * It also makes it easier to immediately get the connected account.
+   */
   const getProviderAccount = async (provider) => {
     const web3Provider = new providers.Web3Provider(provider);
     const signer = web3Provider.getSigner();
     return await signer.getAddress();
-  }
+  };
 
   /**
    * This activate any provide passed to the function where

@@ -1,3 +1,4 @@
+import { Dispatch, Action, AnyAction } from "redux";
 import {
   CONNECTED,
   CONNECTING,
@@ -11,58 +12,83 @@ import {
   STORE_SYNDICATE_INSTANCE,
   STORE_ETHEREUM_NETWORK,
   STORE_CURRENT_ETH_NETWORK,
+  CONNECT,
 } from "../types";
 
-export const storeSyndicateInstance = (data) => async (dispatch) => {
-  return dispatch({
-    data,
-    type: STORE_SYNDICATE_INSTANCE,
-  });
-};
+export const storeSyndicateInstance =
+  (data: any) =>
+  (dispatch: Dispatch): AnyAction => {
+    return dispatch({
+      data,
+      type: STORE_SYNDICATE_INSTANCE,
+    });
+  };
 
-export const setConnectedProviderName = (providerName) => async (dispatch) => {
-  return dispatch({
-    data: providerName,
-    type: SET_PROVIDER_NAME,
-  });
-};
+export const setConnectedProviderName =
+  (providerName: any) =>
+  (dispatch: Dispatch): AnyAction => {
+    return dispatch({
+      data: providerName,
+      type: SET_PROVIDER_NAME,
+    });
+  };
 
-export const setLibrary = (data) => async (dispatch) => {
-  return dispatch({
-    data,
-    type: SET_WEB3,
-  });
-};
+export const initWalletConnection =
+  () =>
+  (dispatch: Dispatch): Action => {
+    return dispatch({
+      type: CONNECT,
+    });
+  };
 
-export const showWalletModal = () => async (dispatch) => {
-  return dispatch({
-    type: SHOW_WALLET_MODAL,
-  });
-};
+export const setLibrary =
+  (data: any) =>
+  (dispatch: Dispatch): AnyAction => {
+    return dispatch({
+      data,
+      type: SET_WEB3,
+    });
+  };
 
-export const hideWalletModal = () => async (dispatch) => {
-  return dispatch({
-    type: HIDE_WALLET_MODAL,
-  });
-};
+export const showWalletModal =
+  () =>
+  (dispatch: Dispatch): Action => {
+    return dispatch({
+      type: SHOW_WALLET_MODAL,
+    });
+  };
 
-export const setConnecting = () => async (dispatch) => {
-  return dispatch({
-    type: CONNECTING,
-  });
-};
+export const hideWalletModal =
+  () =>
+  (dispatch: Dispatch): Action => {
+    return dispatch({
+      type: HIDE_WALLET_MODAL,
+    });
+  };
 
-export const setConnected = () => async (dispatch) => {
-  return dispatch({
-    type: CONNECTED,
-  });
-};
+export const setConnecting =
+  () =>
+  (dispatch: Dispatch): Action => {
+    return dispatch({
+      type: CONNECTING,
+    });
+  };
 
-export const setDisConnected = () => async (dispatch) => {
-  return dispatch({
-    type: DISCONNECTED,
-  });
-};
+export const setConnected =
+  () =>
+  (dispatch: Dispatch): Action => {
+    return dispatch({
+      type: CONNECTED,
+    });
+  };
+
+export const setDisConnected =
+  () =>
+  (dispatch: Dispatch): Action => {
+    return dispatch({
+      type: DISCONNECTED,
+    });
+  };
 
 interface IError {
   title?: string;
