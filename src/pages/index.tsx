@@ -13,7 +13,7 @@ const IndexPage: FC = () => {
   const { primaryHeaderText, secondaryHeaderText, homeButtonText } =
     homePageConstants;
 
-  const trackUseSyndicateEvent = () => {
+  const handleOnClickUseSyndicate = () => {
     // Amplitude logger: How many users who got on out site clicked on the "Use Syndicate Button"
     amplitudeLogger(CLICK_USE_SYNDICATE, { flow: Flow.MGR_CREATE_SYN });
     dispatch(initWalletConnection());
@@ -48,7 +48,7 @@ const IndexPage: FC = () => {
               <div className="rounded-md">
                 <Link href="/syndicates">
                   <button
-                    onClick={trackUseSyndicateEvent}
+                    onClick={handleOnClickUseSyndicate}
                     className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-custom text-white hover md:py-4 md:text-lg md:px-10 bg-blue"
                   >
                     {homeButtonText}
