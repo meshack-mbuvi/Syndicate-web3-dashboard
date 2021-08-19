@@ -23,7 +23,7 @@ const ManageSyndicate = ({ syndicateAddress }: IProps): JSX.Element => {
     if (syndicate?.depositsEnabled) {
       url = "deposit";
       urlText = "Go To Deposit Page";
-    } else {
+    } else if(syndicate?.distributing){
       url = "withdraw";
       urlText = "Go To Withdrawal Page";
     }
