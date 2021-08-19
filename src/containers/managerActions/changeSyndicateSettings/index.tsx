@@ -52,6 +52,7 @@ const ChangeSyndicateSettings: FC<Props> = (props) => {
         ManagerLogicContract,
         DepositLogicContract,
         AllowlistLogicContract,
+        GetterLogicContract,
       },
     },
     web3Reducer: { web3: web3Instance },
@@ -71,7 +72,7 @@ const ChangeSyndicateSettings: FC<Props> = (props) => {
     numMembersMax,
     managerManagementFeeBasisPoints,
     managerDistributionShareBasisPoints,
-    // managerCurrent,
+    managerCurrent,
     depositERC20TokenSymbol,
     managerFeeAddress,
     tokenDecimals,
@@ -114,6 +115,7 @@ const ChangeSyndicateSettings: FC<Props> = (props) => {
   const handleCloseFinalStateModal = async () => {
     setShowFinalState(false);
     setShowInputIndex(null);
+    setSubmitting(false);
   };
 
   const handleError = (error) => {
@@ -131,7 +133,9 @@ const ChangeSyndicateSettings: FC<Props> = (props) => {
     } else {
       setFinalStateHeaderText(errorMessage);
     }
+
     setShowFinalState(true);
+    setSubmitting(false);
   };
 
   const handleSuccess = (data, message) => {
@@ -337,27 +341,27 @@ const ChangeSyndicateSettings: FC<Props> = (props) => {
   };
 
   // Syndicate manager
-  // const handleManagerSetManagerSetManagerPending = async (
-  //   managerPendingAddress: number,
-  // ) => {
-  //   try {
-  //     await ManagerLogicContract.managerSetManagerPending(
-  //       syndicateAddress,
-  //       managerPendingAddress,
-  //       account,
-  //       setShowWalletConfirmationModal,
-  //       setSubmitting,
-  //       (value) => dispatch(setSubmitting(value)),
-  //     );
+  const handleManagerSetManagerSetManagerPending = async (
+    managerPendingAddress: number,
+  ) => {
+    try {
+      await ManagerLogicContract.managerSetManagerPending(
+        syndicateAddress,
+        managerPendingAddress,
+        account,
+        setShowWalletConfirmationModal,
+        setSubmitting,
+        (value) => dispatch(setSubmitting(value)),
+      );
 
-  //     handleSuccess(
-  //       { managerPendingAddress: syndicateAddress },
-  //       "Syndicate Manager updated, awaiting confirmation",
-  //     );
-  //   } catch (error) {
-  //     handleError(error);
-  //   }
-  // };
+      handleSuccess(
+        { managerPendingAddress: syndicateAddress },
+        "Syndicate Manager updated, awaiting confirmation",
+      );
+    } catch (error) {
+      handleError(error);
+    }
+  };
 
   const changeSettingsOptions = [
     {
@@ -530,20 +534,41 @@ const ChangeSyndicateSettings: FC<Props> = (props) => {
         },
       },
     },
-    // {
-    //   label: "Syndicate Manager:",
-    //   defaults: { managerCurrent },
-    //   handler: handleManagerSetManagerSetManagerPending,
-    //   address: true,
-    //   validations: {
-    //     required: "this is a required",
-    //     validate: (value: string) => {
-    //       if (!web3.utils.isAddress(value)) {
-    //         return "Manager should be a valid ERC20 address";
-    //       }
-    //     },
-    //   },
-    // },
+    {
+      label: "Syndicate Manager:",
+      defaults: { managerCurrent },
+      handler: handleManagerSetManagerSetManagerPending,
+      address: true,
+      validations: {
+        required: "Syndicate Manager Ethereum address is required",
+        validate: async (value: string) => {
+          if (!web3.utils.isAddress(value)) {
+            return "Syndicate Manager should be a valid Ethereum address";
+          } else if (value === managerFeeAddress) {
+            return "Manager address can not be similar to Fee Recipient Address";
+          } else {
+            const { isManager } = await GetterLogicContract.getManagerInfo(
+              value,
+            );
+
+            const hasDeposited =
+              await DepositLogicContract.getMemberDepositEvents(
+                "DepositAdded",
+                {
+                  syndicateAddress:
+                    web3.utils.toChecksumAddress(syndicateAddress),
+                  memberAddress: value,
+                },
+              );
+
+            if (isManager)
+              return "The provided address already manages a syndicate";
+            if (hasDeposited && hasDeposited.length)
+              return "The provided address has made a deposit to this Syndicate";
+          }
+        },
+      },
+    },
   ];
 
   return (

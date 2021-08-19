@@ -31,6 +31,7 @@ const PortfolioAndDiscover = () => {
     syndicatesReducer: { syndicates },
     web3Reducer: { web3 },
   } = useSelector((state: RootState) => state);
+
   const {
     account,
     currentEthereumNetwork,
@@ -56,9 +57,8 @@ const PortfolioAndDiscover = () => {
   }, [account, currentEthereumNetwork]);
 
   // Assume by default this user has an open syndicate
-  const [managerWithOpenSyndicate, setManagerWithOpenSyndicate] = useState(
-    true,
-  );
+  const [managerWithOpenSyndicate, setManagerWithOpenSyndicate] =
+    useState(true);
 
   // Find whether there is a syndicate address that matches the connected
   // wallet account. If so, the account has an open syndicate, else the account

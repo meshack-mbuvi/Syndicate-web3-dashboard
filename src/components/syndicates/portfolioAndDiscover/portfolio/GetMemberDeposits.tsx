@@ -14,6 +14,7 @@ const GetMemberDeposits = ({
     initializeContractsReducer: {
       syndicateContracts: { GetterLogicContract },
     },
+    syndicatesReducer: { syndicate },
   } = useSelector((state: RootStateOrAny) => state);
 
   const [memberDeposits, setMemberDeposits] = useState("-");
@@ -24,7 +25,7 @@ const GetMemberDeposits = ({
     if (!GetterLogicContract || !account) return;
 
     // Managers do not deposit into a syndicate they manage.
-    if (syndicateAddress === account) return "-";
+    if (syndicate?.managerCurrent === account) return "-";
 
     try {
       let { memberDeposit } = await GetterLogicContract.getMemberInfo(

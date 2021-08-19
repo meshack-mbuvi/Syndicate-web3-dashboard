@@ -47,10 +47,12 @@ export class SyndicateDepositLogic extends BaseLogicContract {
     if (!depositEventName.trim()) return [];
 
     try {
-      const memberDepositEvents = await this.logicContractInstance.getPastEvents(
-        depositEventName,
-        { filter, fromBlock: "earliest", toBlock: "latest" },
-      );
+      const memberDepositEvents =
+        await this.logicContractInstance.getPastEvents(depositEventName, {
+          filter,
+          fromBlock: "earliest",
+          toBlock: "latest",
+        });
       return [...memberDepositEvents];
     } catch (error) {
       return [];

@@ -292,6 +292,7 @@ export class SyndicateManagerLogic extends BaseLogicContract {
           setShowWalletConfirmationModal(false);
           setSubmitting(true);
         });
+      setShowWalletConfirmationModal(false);
       setSubmitting(false);
     } catch (error) {
       throw error;
@@ -321,6 +322,38 @@ export class SyndicateManagerLogic extends BaseLogicContract {
 
       await this.logicContractInstance.methods
         .managerSetManagerPending(syndicateAddress, managerPendingAddress)
+        .send({ from: manager, gasLimit: 800000 })
+        .on("transactionHash", () => {
+          setShowWalletConfirmationModal(false);
+          setSubmitting(true);
+        });
+      setSubmitting(false);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  /**
+   * Accept pending managerial status
+   *
+   * @param {string} syndicateAddress
+   * @param manager
+   * @param setShowWalletConfirmationModal
+   * @param setSubmitting
+   */
+  async managerPendingConfirm(
+    syndicateAddress,
+    manager: string,
+    setShowWalletConfirmationModal,
+    setSubmitting,
+  ) {
+    if (!syndicateAddress.trim()) return;
+
+    try {
+      setShowWalletConfirmationModal(true);
+
+      await this.logicContractInstance.methods
+        .managerPendingConfirm(syndicateAddress)
         .send({ from: manager, gasLimit: 800000 })
         .on("transactionHash", () => {
           setShowWalletConfirmationModal(false);

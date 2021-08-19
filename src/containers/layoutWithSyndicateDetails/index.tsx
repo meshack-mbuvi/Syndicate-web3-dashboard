@@ -40,6 +40,8 @@ const LayoutWithSyndicateDetails = ({ children }): JSX.Element => {
     // deposit or not.
     if (!router.isReady || !syndicate) return;
 
+    console.log("Current owner: ", syndicate?.managerCurrent === account);
+
     if (syndicate && syndicateAddress !== undefined && account !== undefined) {
       switch (router.pathname) {
         case "/syndicates/[syndicateAddress]/manage":
@@ -57,7 +59,9 @@ const LayoutWithSyndicateDetails = ({ children }): JSX.Element => {
           }
           break;
         case "/syndicates/[syndicateAddress]/deposit":
-          if (syndicate.managerCurrent === account) {
+          if (syndicate?.managerPending === account) {
+            router.replace(`/syndicates/${syndicateAddress}/manager_pending`);
+          } else if (syndicate.managerCurrent === account) {
             router.replace(`/syndicates/${syndicate.syndicateAddress}/manage`);
           } else if (syndicate.distributing) {
             router.replace(
@@ -66,12 +70,20 @@ const LayoutWithSyndicateDetails = ({ children }): JSX.Element => {
           }
           break;
         case "/syndicates/[syndicateAddress]/withdraw":
-          if (syndicate.managerCurrent === account) {
+          if (syndicate?.managerPending === account) {
+            router.replace(`/syndicates/${syndicateAddress}/manager_pending`);
+          } else if (syndicate.managerCurrent === account) {
             router.replace(`/syndicates/${syndicate.syndicateAddress}/manage`);
           } else if (syndicate.depositsEnabled || syndicate.open) {
             router.replace(`/syndicates/${syndicate.syndicateAddress}/deposit`);
           }
           break;
+        case "/syndicates/[syndicateAddress]/manager_pending":
+          if (syndicate?.managerPending !== account) {
+            router.replace(`/syndicates/${syndicateAddress}/manage`);
+          }
+          break;
+
         default:
           break;
       }

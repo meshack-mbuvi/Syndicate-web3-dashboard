@@ -17,6 +17,7 @@ const GetClaimedDistributions = ({
 }: ifRows): JSX.Element => {
   const {
     web3Reducer: { web3: web3Wrapper },
+    syndicatesReducer: { syndicate },
     initializeContractsReducer: {
       syndicateContracts: { DepositLogicContract, DistributionLogicContract },
     },
@@ -24,14 +25,10 @@ const GetClaimedDistributions = ({
 
   const { account, web3 } = web3Wrapper;
 
-  const [
-    depositWithdrawalsDetails,
-    setDepositWithdrawalsDetails,
-  ] = useState<any>([]);
-  const [
-    distributionsWithdrawalDetails,
-    setDistributionsWithdrawalDetails,
-  ] = useState<any>([]);
+  const [depositWithdrawalsDetails, setDepositWithdrawalsDetails] =
+    useState<any>([]);
+  const [distributionsWithdrawalDetails, setDistributionsWithdrawalDetails] =
+    useState<any>([]);
 
   const [showToolTip, setShowToolTip] = useState(false);
   const [referenceElement, setReferenceElement] = useState(null);
@@ -62,15 +59,13 @@ const GetClaimedDistributions = ({
 
   // get events where member withdrew their deposits
   const getMemberDepositsWithdrawalEvents = async () => {
-    if (syndicateAddress === account) return "-";
+    if (syndicate?.managerCurrent === account) return "-";
 
-    const memberDepositsWithdrawalEvents = await DepositLogicContract.getMemberDepositEvents(
-      "DepositRemoved",
-      {
+    const memberDepositsWithdrawalEvents =
+      await DepositLogicContract.getMemberDepositEvents("DepositRemoved", {
         syndicateAddress: web3.utils.toChecksumAddress(syndicateAddress),
         memberAddress: account,
-      },
-    );
+      });
 
     if (memberDepositsWithdrawalEvents.length) {
       const depositERC20WithdrawalAmounts = [];
@@ -86,9 +81,8 @@ const GetClaimedDistributions = ({
       const reducerFunc = (accumulator, currentValue) =>
         new BN(accumulator).add(new BN(currentValue)).toString();
 
-      const totalDepositTokenWithdrawals = depositERC20WithdrawalAmounts.reduce(
-        reducerFunc,
-      );
+      const totalDepositTokenWithdrawals =
+        depositERC20WithdrawalAmounts.reduce(reducerFunc);
 
       // convert wei amount
       const depositERC20WithdrawalsTotal = totalDepositTokenWithdrawals;
@@ -105,23 +99,22 @@ const GetClaimedDistributions = ({
   // this way, we can tell which token was withdrawn
   const getMemberDistributionsWithdrawalEvents = async () => {
     // Managers do not deposit into a syndicate they manage.
-    if (syndicateAddress === account) return "-";
+    if (syndicate?.managerCurrent === account) return "-";
 
-    const memberDistributionsWithdrawalEvents = await DistributionLogicContract.getDistributionEvents(
-      "DistributionClaimed",
-      {
-        syndicateAddress: web3.utils.toChecksumAddress(syndicateAddress),
-        memberAddress: account,
-      },
-    );
+    const memberDistributionsWithdrawalEvents =
+      await DistributionLogicContract.getDistributionEvents(
+        "DistributionClaimed",
+        {
+          syndicateAddress: web3.utils.toChecksumAddress(syndicateAddress),
+          memberAddress: account,
+        },
+      );
 
     if (memberDistributionsWithdrawalEvents.length) {
       const distributionsWithdrawalDetails = [];
       for (let j = 0; j < memberDistributionsWithdrawalEvents.length; j++) {
-        const {
-          distributionERC20Address,
-          amount,
-        } = memberDistributionsWithdrawalEvents[j].returnValues;
+        const { distributionERC20Address, amount } =
+          memberDistributionsWithdrawalEvents[j].returnValues;
 
         distributionsWithdrawalDetails.push({
           distributionERC20Address,
@@ -152,10 +145,8 @@ const GetClaimedDistributions = ({
         const distributionERC20Decimals = decimals ? decimals : "18";
 
         for (let j = 0; j < distributionsWithdrawalDetails.length; j++) {
-          const {
-            distributionERC20Address,
-            amount,
-          } = distributionsWithdrawalDetails[j];
+          const { distributionERC20Address, amount } =
+            distributionsWithdrawalDetails[j];
           if (distributionERC20Address === uniqueDistributionERC20s[i]) {
             const withdrawnAmount = getWeiAmount(
               amount,
@@ -242,10 +233,8 @@ const GetClaimedDistributions = ({
             <tbody className="divide-y divide-gray-90">
               {distributionsWithdrawalDetails.map(
                 (distributionWithdrawalDetail, index) => {
-                  const {
-                    distributionERC20Symbol,
-                    totalWithdrawalAmount,
-                  } = distributionWithdrawalDetail;
+                  const { distributionERC20Symbol, totalWithdrawalAmount } =
+                    distributionWithdrawalDetail;
 
                   return (
                     <tr className="font-whyte-light" key={index}>
@@ -279,7 +268,7 @@ const GetClaimedDistributions = ({
           onMouseEnter={() => setShowToolTip(true)}
           onMouseLeave={() => setShowToolTip(false)}
         >
-          <div>{syndicateAddress === account ? "-" : count}</div>
+          <div>{syndicate?.managerCurrent === account ? "-" : count}</div>
         </div>
       </div>
       <Portal>
