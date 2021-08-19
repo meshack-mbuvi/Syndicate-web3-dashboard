@@ -17,7 +17,7 @@ const options = [PERCENTAGES.HALF, PERCENTAGES.ONE, PERCENTAGES.THREE];
 const optionStyles = {
   [PERCENTAGES.HALF]: "rounded-tl-md rounded-bl-md",
   [PERCENTAGES.ONE]: "",
-  [PERCENTAGES.THREE]: "border-r-0 rounded-tr-md rounded-br-md",
+  [PERCENTAGES.THREE]: "",
 };
 
 const DistributionShare: React.FC = () => {
@@ -38,6 +38,12 @@ const DistributionShare: React.FC = () => {
       },
     },
   } = useSelector((state: RootState) => state);
+
+  var isStoredValueATogglePreset = options.some(
+    (option) => option === syndicateProfitSharePercent,
+  )
+  var shouldShowOtherPercentageInput = !isStoredValueATogglePreset && syndicateProfitSharePercent !== undefined
+  const [isOtherPercentageInputVisible, setOtherPercentageInputVisibility] = useState(shouldShowOtherPercentageInput);
 
   useEffect(() => {
     const totalDistributions =
@@ -170,14 +176,17 @@ const DistributionShare: React.FC = () => {
           <label className="text-base" htmlFor="syndicateProfitSharePercent">
             Share of distributions to Syndicate Protocol
           </label>
-          <div className="grid grid-cols-3 gap-4 mt-2">
-            <div className="grid grid-cols-3 col-span-2 rounded-md bg-black border border-gray-24 first:rounded-tl-md first:rounded-bl-md">
+          <div className="mt-2">
+            <div className="grid grid-cols-4 rounded-md bg-black border border-gray-24 first:rounded-tl-md first:rounded-bl-md">
               {options.map((option, i) => (
                 <button
                   key={i}
-                  onClick={() => handleTogglePercentages(option)}
+                  onClick={() => {
+                    if (isOtherPercentageInputVisible) {setOtherPercentageInputVisibility(false)}
+                    handleTogglePercentages(option)
+                  }}
                   className={classNames(
-                    syndicateProfitSharePercent === option ? "bg-blue" : "",
+                    syndicateProfitSharePercent === option && !isOtherPercentageInputVisible ? "bg-blue" : "",
                     optionStyles[option],
                     "relative borderLeft bg-clip-padding py-3 bg-origin-padding w-full justify-center focus:outline-none",
                   )}
@@ -186,19 +195,23 @@ const DistributionShare: React.FC = () => {
                   {" %"}
                 </button>
               ))}
+              <button
+                onClick={() => setOtherPercentageInputVisibility(true)}
+                className={`${isOtherPercentageInputVisible && "bg-blue bottom-triangle-blue"} borderLeft py-3 bg-origin-padding bg-clip-padding relative rounded-tr-md rounded-br-md`}
+              >
+                Other
+              </button>
             </div>
-            <div className="col-span-1 h-12">
+            <div className={`h-12 mt-3 ${isOtherPercentageInputVisible ? "opacity-100" : "opacity-0"} transition-all`}>
               <InputWithPercent
                 name="profitShareToSyndProtocol"
-                placeholder="Other"
+                placeholder={String(syndicateProfitSharePercent) + "%"}
                 min={0.5}
                 resetToDefault={resetToDefault}
                 setResetToDefault={setResetToDefault}
                 setInputValue={handleSetProfitShareToSyndProtocol}
                 storedValue={
-                  !options.some(
-                    (option) => option === syndicateProfitSharePercent,
-                  )
+                  !isStoredValueATogglePreset
                     ? syndicateProfitSharePercent
                     : undefined
                 }

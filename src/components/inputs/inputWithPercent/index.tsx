@@ -153,7 +153,7 @@ const InputWithPercent: React.FC<IProps> = ({
             maxLength={maxLength}
             className={classNames(
               label && "mt-2",
-              error
+              error || customError
                 ? "border-red-500 focus:border-red-500 focus:ring-0"
                 : "border-gray-24 focus:border-blue",
               `flex flex-grow w-full min-w-0 font-whyte dark-input-field`,
@@ -178,12 +178,11 @@ const InputWithPercent: React.FC<IProps> = ({
           )}
         </div>
 
-        {error ||
-          (customError && (
-            <p className="text-red-500 text-xs h-8 mt-1 ">
-              {error || customError}
-            </p>
-          ))}
+        {(error || customError) && 
+          <p className="text-red-500 text-xs h-8 mt-1 ">
+            {error || customError} 
+          </p>
+        }
       </div>
     </div>
   );
