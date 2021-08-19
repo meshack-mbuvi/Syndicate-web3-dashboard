@@ -8,8 +8,8 @@ describe("Landing page", () => {
         privateKeys: Cypress.env("ETH_PRIVATE_KEY"),
         mnemonic: Cypress.env("mnemonicPhrase"),
         providerOrUrl: Cypress.env("providerOrUrl"),
-        numberOfAddresses: 1,
-        derivationPath: "m/44'/60'/0'/0/0",
+        numberOfAddresses: Cypress.env("numberOfAddresses"),
+        derivationPath: Cypress.env("derivationPath"),
       });
       win.web3 = new Web3(provider);
     });

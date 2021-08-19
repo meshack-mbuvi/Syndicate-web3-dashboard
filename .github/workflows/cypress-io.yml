@@ -1,0 +1,47 @@
+name: Cypress End-to-end tests
+
+# Controls when the action will run.
+on:
+  # Triggers the workflow on push or pull request events but only for the staging branch
+  push:
+    branches: [staging]
+  pull_request:
+    branches: [staging]
+
+jobs:
+  cypress-run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v2.1.5
+        with:
+          # Set always-auth in npmrc
+          always-auth: false # optional, default is false
+          # Version Spec of the version to use.  Examples: 12.x, 10.15.1, >=10.15.0
+          node-version: ">=16.6.1"
+          # Target architecture for Node to use. Examples: x86, x64. Will use system architecture by default.
+          architecture: # optional
+          # Set this option if you want the action to check for the latest available version that satisfies the version spec
+          check-latest: true # optional
+          # Optional registry to set up for auth. Will set the registry in a project level .npmrc and .yarnrc file, and set up auth to read in from env.NODE_AUTH_TOKEN
+          registry-url: # optional
+          # Optional scope for authenticating against scoped registries
+          scope: # optional
+          # Used to pull node distributions from node-versions.  Since there's a default, this is typically not supplied by the user.
+          token: # optional, default is ${{ github.token }}
+
+      # We use this GitHub Action to properly handle all edge cases in caching node_modules: https://github.com/marketplace/actions/npm-install-cache
+      - name: NPM install cache
+        uses: c-hive/gha-npm-cache@v1
+
+      # Runs a set of commands using the runners shell
+      - name: Install packages
+        run: |
+          npm install
+
+      - name: Cypress run
+        uses: cypress-io/github-action@v2
+        with:
+          start: npm run dev
+          spec: cypress/integration/**.js
