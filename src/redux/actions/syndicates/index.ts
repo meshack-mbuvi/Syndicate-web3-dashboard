@@ -19,6 +19,8 @@ import {
   UPDATE_SYNDICATE_DETAILS,
 } from "../types";
 
+import Web3 from "web3";
+
 interface SyndicateInfo {
   [address: string]: {
     depositors: number;
@@ -332,7 +334,7 @@ export const processSyndicateDetails = (
       : "Operating";
 
   return {
-    syndicateAddress,
+    syndicateAddress: Web3.utils.toChecksumAddress(syndicateAddress),
     status,
     open,
     managerFeeAddress,

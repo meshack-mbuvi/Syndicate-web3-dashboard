@@ -12,6 +12,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { syndicateActionConstants } from "src/components/syndicates/shared/Constants";
 import Head from "src/components/syndicates/shared/HeaderTitle";
 import SyndicateDetails from "src/components/syndicates/syndicateDetails";
+import { isEmpty } from "lodash"
 
 const LayoutWithSyndicateDetails = ({ children }): JSX.Element => {
   // Retrieve state
@@ -19,7 +20,7 @@ const LayoutWithSyndicateDetails = ({ children }): JSX.Element => {
     syndicatesReducer: { syndicate, syndicateFound, syndicateAddressIsValid },
     initializeContractsReducer: { syndicateContracts },
     web3Reducer: {
-      web3: { account },
+      web3: { account, web3},
     },
   } = useSelector((state: RootState) => state);
 
@@ -40,9 +41,7 @@ const LayoutWithSyndicateDetails = ({ children }): JSX.Element => {
     // deposit or not.
     if (!router.isReady || !syndicate) return;
 
-    console.log("Current owner: ", syndicate?.managerCurrent === account);
-
-    if (syndicate && syndicateAddress !== undefined && account !== undefined) {
+    if (!isEmpty(syndicate) && syndicateAddress !== undefined && account !== undefined && web3.utils.isAddress(syndicate.syndicateAddress)) {
       switch (router.pathname) {
         case "/syndicates/[syndicateAddress]/manage":
           // For a closed syndicate, user should be navigated to withdrawal page
@@ -78,12 +77,16 @@ const LayoutWithSyndicateDetails = ({ children }): JSX.Element => {
             router.replace(`/syndicates/${syndicate.syndicateAddress}/deposit`);
           }
           break;
-        case "/syndicates/[syndicateAddress]/manager_pending":
-          if (syndicate?.managerPending !== account) {
-            router.replace(`/syndicates/${syndicateAddress}/manage`);
+        // case when address lacks action
+        case "/syndicates/[syndicateAddress]/":
+          if (syndicate.managerCurrent === account) {
+            router.replace(`/syndicates/${syndicate.syndicateAddress}/manage`);
+          } else if (syndicate.depositsEnabled || syndicate.open) {
+            router.replace(`/syndicates/${syndicate.syndicateAddress}/deposit`);
+          } else if (syndicate.distributing) {
+            router.replace(`/syndicates/${syndicate.syndicateAddress}/withdraw`);
           }
           break;
-
         default:
           break;
       }

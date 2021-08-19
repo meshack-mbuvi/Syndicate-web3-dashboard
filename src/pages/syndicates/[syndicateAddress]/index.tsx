@@ -7,8 +7,10 @@ const SyndicateDepositView = () => {
   const { syndicateAddress } = router.query;
   useEffect(() => {
     // re-route to the deposit page
-    router.replace(`/syndicates/${syndicateAddress}/deposit`);
-  });
+    if (syndicateAddress) {
+      router.replace(`/syndicates/${syndicateAddress}/deposit`);
+    }
+  }, [syndicateAddress]);
   return <></>;
 };
 
