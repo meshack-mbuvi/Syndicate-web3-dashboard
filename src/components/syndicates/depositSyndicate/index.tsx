@@ -990,7 +990,7 @@ const DepositSyndicate: React.FC = () => {
         )}
 
         {/* show this components if we are in details page*/}
-        {router.pathname.endsWith("details") ? (
+        {router.pathname.endsWith("details") && syndicate && !(account !== syndicate.managerCurrent && syndicate.status === "Operating") ? (
           <ManageSyndicate syndicateAddress={syndicateAddress} />
         ) : null}
       </div>
