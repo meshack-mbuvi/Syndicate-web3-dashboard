@@ -201,7 +201,7 @@ const TimeAndDatePicker: React.FC = () => {
           <div className="flex justify-center">
             <p>at</p>
           </div>
-          <div className="w-2/5">
+          <div className="flex-1">
             <Select
               data={timeIntervals}
               value={selectedTimeValue.replaceAll("_", " ")}
