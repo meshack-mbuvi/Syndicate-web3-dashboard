@@ -942,6 +942,7 @@ const DepositSyndicate: React.FC = () => {
                                 placeholder="400"
                                 disabled={disableAmountInput}
                                 defaultValue={amount}
+                                step=".01"
                                 onChange={handleSetAmount}
                                 className={`min-w-0 rounded-md bg-gray-9 border border-gray-24 text-white font-whyte focus:outline-none focus:ring-gray-24 focus:border-gray-24 flex-grow mr-6 `}
                               />
