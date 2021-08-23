@@ -12,6 +12,7 @@ const initialWeb3 = new Web3(process.env.NEXT_PUBLIC_INFURA_ENDPOINT);
 type InitialState = {
   web3: {
     status: string;
+    connect: boolean;
     showConnectionModal: boolean;
     isErrorModalOpen: boolean;
     error: any;
@@ -133,6 +134,7 @@ const timezones = ct.getAllTimezones();
 export const initialState: InitialState = {
   web3: {
     status: "disconnected",
+    connect: false,
     showConnectionModal: false,
     isErrorModalOpen: false,
     error: null,

@@ -13,6 +13,7 @@ import {
   USER_LOGOUT,
   STORE_ETHEREUM_NETWORK,
   STORE_CURRENT_ETH_NETWORK,
+  CONNECT,
 } from "@/redux/actions/types";
 import { initialState } from "../initialState";
 
@@ -24,6 +25,12 @@ export const web3Reducer = (state = initialState, action) => {
       return {
         ...state,
         web3: { ...web3, ...action.data },
+      };
+
+    case CONNECT:
+      return {
+        ...state,
+        web3: { ...web3, connect: true },
       };
 
     case SET_PROVIDER_NAME:
