@@ -534,6 +534,14 @@ const SyndicateDetails = (props: {
     />
   );
 
+  // set syndicate deposit link
+  const [syndicateDepositLink, setSyndicateDepositLink] = useState<string>("");
+  useEffect(() => {
+    setSyndicateDepositLink(
+      `${window.location.origin}/syndicates/${syndicateAddress}/deposit`,
+    );
+  }, [syndicateAddress]);
+
   return (
     <div className="flex flex-col w-full sm:mr-2 lg:mr-6">
       <div className="h-fit-content rounded-custom">
@@ -570,7 +578,9 @@ const SyndicateDetails = (props: {
               </div>
             </div>
           </div>
-          <CopyToClipboard text={syndicateAddress}>
+          <CopyToClipboard
+            text={syndicateDepositLink}
+          >
             <div className="flex items-center ml-0 relative w-14 h-14 rounded-full cursor-pointer lg:hover:bg-gray-9 lg:active:bg-white lg:active:bg-opacity-20">
               {showCopyState ? (
                 <span className="absolute text-xs -top-5">copied</span>
