@@ -621,7 +621,7 @@ const DistributeToken = (props: Props) => {
           syndicateContracts.DistributionLogicContract._address,
           amountToApprove,
         )
-        .send({ from: account, gasLimit: 800000 })
+        .send({ from: account })
         .on("transactionHash", () => {
           // user clicked on confirm
           // show loading state

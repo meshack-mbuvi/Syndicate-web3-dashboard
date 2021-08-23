@@ -138,7 +138,7 @@ export class SyndicateDistributionLogic extends BaseLogicContract {
         distributionERC20TokenAddresses,
         tokenDistributionAmounts,
       )
-      .send({ from: manager, gasLimit: 800000 })
+      .send({ from: manager })
       .on("transactionHash", () => {
         // user has confirmed the transaction so we should start loader state.
         // show loading modal
@@ -219,7 +219,7 @@ export class SyndicateDistributionLogic extends BaseLogicContract {
     try {
       await this.logicContractInstance.methods
         .memberClaimDistributions(syndicateAddress, ERC20Addresses, amounts)
-        .send({ from: memberAccount, gasLimit: 800000 })
+        .send({ from: memberAccount })
         .on("transactionHash", () => {
           setMetamaskConfirmPending(false);
           setSubmittingWithdrawal(true);
@@ -267,7 +267,7 @@ export class SyndicateDistributionLogic extends BaseLogicContract {
           memberAddresses,
           amounts,
         )
-        .send({ from: manager, gasLimit: 800000 })
+        .send({ from: manager })
         .on("transactionHash", () => {
           setShowWalletConfirmationModal(false);
           setSubmitting(true);

@@ -132,7 +132,7 @@ const GenerateDai = (props: Props) => {
     try {
       await tokenContract.methods
         .mint(account, amountInWei)
-        .send({ from: account, gasLimit: 800000 });
+        .send({ from: account });
 
       const balance = await tokenContract.methods
         .balanceOf(account)

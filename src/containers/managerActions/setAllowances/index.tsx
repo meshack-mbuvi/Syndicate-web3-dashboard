@@ -171,7 +171,7 @@ const ManagerSetAllowance = (props: Props) => {
 
       await currentTokenContract.methods
         .approve(tokenContractAddress, newAllowanceAmountToApprove)
-        .send({ from: account, gasLimit: 800000 })
+        .send({ from: account })
         .on("transactionHash", () => {
           // user clicked on confirm
           // show loading state

@@ -25,7 +25,7 @@ export class SyndicateDepositLogic extends BaseLogicContract {
   }): Promise<void> {
     await this.logicContractInstance.methods
       .memberDeposit(syndicateAddress, amount)
-      .send({ from: account, gasLimit: 800000 })
+      .send({ from: account })
       .on("transactionHash", () => {
         // user has confirmed the transaction so we should start loader state.
         // show loading modal
@@ -84,7 +84,7 @@ export class SyndicateDepositLogic extends BaseLogicContract {
     }
     await this.logicContractInstance.methods
       .memberWithdraw(syndicateAddress, amount)
-      .send({ from: account, gasLimit: 800000 })
+      .send({ from: account })
       .on("transactionHash", () => {
         setMetamaskConfirmPending(false);
         setSubmittingWithdrawal(true);
@@ -110,7 +110,7 @@ export class SyndicateDepositLogic extends BaseLogicContract {
     if (!syndicateAddress.trim() || !memberAddresses.length) return;
     await this.logicContractInstance.methods
       .managerRejectDepositForMembers(syndicateAddress, memberAddresses)
-      .send({ from: manager, gasLimit: 800000 })
+      .send({ from: manager })
       .on("transactionHash", () => {
         // close wallet confirmation modal
         setShowWalletConfirmationModal(false);
@@ -155,7 +155,7 @@ export class SyndicateDepositLogic extends BaseLogicContract {
         memberAddresses,
         memberAmounts,
       )
-      .send({ from: manager, gasLimit: 800000 })
+      .send({ from: manager })
       .on("transactionHash", () => {
         setShowWalletConfirmationModal(false);
         setSubmitting(true);
@@ -185,7 +185,7 @@ export class SyndicateDepositLogic extends BaseLogicContract {
 
       await this.logicContractInstance.methods
         .managerSetDepositMemberMax(syndicateAddress, depositMemberMax)
-        .send({ from: manager, gasLimit: 800000 })
+        .send({ from: manager })
         .on("transactionHash", () => {
           setShowWalletConfirmationModal(false);
           setSubmitting(true);
@@ -219,7 +219,7 @@ export class SyndicateDepositLogic extends BaseLogicContract {
 
       await this.logicContractInstance.methods
         .managerSetDepositTotalMax(syndicateAddress, depositTotalMax)
-        .send({ from: manager, gasLimit: 800000 })
+        .send({ from: manager })
         .on("transactionHash", () => {
           setShowWalletConfirmationModal(false);
           setSubmitting(true);
@@ -253,7 +253,7 @@ export class SyndicateDepositLogic extends BaseLogicContract {
 
       await this.logicContractInstance.methods
         .managerSetDepositMemberMin(syndicateAddress, depositMemberMin)
-        .send({ from: manager, gasLimit: 800000 })
+        .send({ from: manager })
         .on("transactionHash", () => {
           setShowWalletConfirmationModal(false);
           setSubmitting(true);

@@ -113,7 +113,7 @@ export class SyndicateManagerLogic extends BaseLogicContract {
     if (!syndicateAddress.trim() || !manager.trim()) return;
     await this.logicContractInstance.methods
       .managerCloseSyndicate(syndicateAddress)
-      .send({ from: manager, gasLimit: 800000 })
+      .send({ from: manager })
       .on("transactionHash", () => {
         // close wallet confirmation modal
         setShowWalletConfirmationModal(false);
@@ -147,7 +147,7 @@ export class SyndicateManagerLogic extends BaseLogicContract {
 
       await this.logicContractInstance.methods
         .managerSetManagerFeeAddress(syndicateAddress, managerFeeAddress)
-        .send({ from: manager, gasLimit: 800000 })
+        .send({ from: manager })
         .on("transactionHash", () => {
           setShowWalletConfirmationModal(false);
           setSavingMemberAddress(true);
@@ -210,7 +210,7 @@ export class SyndicateManagerLogic extends BaseLogicContract {
 
       await this.logicContractInstance.methods
         .managerSetNumMembersMax(syndicateAddress, numMembersMax)
-        .send({ from: manager, gasLimit: 800000 })
+        .send({ from: manager })
         .on("transactionHash", () => {
           setShowWalletConfirmationModal(false);
           setSubmitting(true);
@@ -247,7 +247,7 @@ export class SyndicateManagerLogic extends BaseLogicContract {
           syndicateAddress,
           syndicateDistributionShareBasisPoints,
         )
-        .send({ from: manager, gasLimit: 800000 })
+        .send({ from: manager })
         .on("transactionHash", () => {
           setShowWalletConfirmationModal(false);
           setSubmitting(true);
@@ -287,7 +287,7 @@ export class SyndicateManagerLogic extends BaseLogicContract {
           managerManagementFeeBasisPoints,
           managerDistributionShareBasisPoints,
         )
-        .send({ from: manager, gasLimit: 800000 })
+        .send({ from: manager })
         .on("transactionHash", () => {
           setShowWalletConfirmationModal(false);
           setSubmitting(true);
@@ -322,7 +322,7 @@ export class SyndicateManagerLogic extends BaseLogicContract {
 
       await this.logicContractInstance.methods
         .managerSetManagerPending(syndicateAddress, managerPendingAddress)
-        .send({ from: manager, gasLimit: 800000 })
+        .send({ from: manager })
         .on("transactionHash", () => {
           setShowWalletConfirmationModal(false);
           setSubmitting(true);
@@ -354,7 +354,7 @@ export class SyndicateManagerLogic extends BaseLogicContract {
 
       await this.logicContractInstance.methods
         .managerPendingConfirm(syndicateAddress)
-        .send({ from: manager, gasLimit: 800000 })
+        .send({ from: manager })
         .on("transactionHash", () => {
           setShowWalletConfirmationModal(false);
           setSubmitting(true);

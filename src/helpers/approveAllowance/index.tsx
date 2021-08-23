@@ -19,7 +19,7 @@ export const approveManager = async (
   try {
     await currentERC20Contract.methods
       .approve(managerAddress, amount)
-      .send({ from: account, gasLimit: 800000 });
+      .send({ from: account });
 
     // Check the approval amount
     /** @returns wei allowance as a string */

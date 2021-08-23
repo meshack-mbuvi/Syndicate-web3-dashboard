@@ -16,8 +16,7 @@ export const getClaimedDistributions = async (
     const claimedDistributions = await syndicateInstance.getClaimedDistributions(
       address,
       lpAddress,
-      ERC20ContractAddress,
-      { gasLimit: 800000 },
+      ERC20ContractAddress
     );
     return claimedDistributions.toString();
   } catch (error) {
