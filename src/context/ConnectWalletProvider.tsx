@@ -76,7 +76,6 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
   const {
     web3Reducer: {
       web3: {
-        connect,
         currentEthereumNetwork,
         ethereumNetwork: { invalidEthereumNetwork },
       },
@@ -184,12 +183,12 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
     if (!isEmpty(cachedWalletData)) {
       const { providerName } = cachedWalletData;
       if (providerName === "Injected" || providerName === "WalletConnect") {
-        if (connect) activateProvider(providerName);
+        activateProvider(providerName);
       }
     } else {
-      if (connect) setWeb3();
+      setWeb3();
     }
-  }, [cachedWalletData, connect]);
+  }, [cachedWalletData]);
 
   // provider is connected, this stops the loader modal
   // and sets up connected state
