@@ -113,7 +113,7 @@ export async function getCoinFromContractAddress(contractAddress) {
         const decimals = await tokenContract.methods.decimals().call();
         return {
           name: coinInfo.data.name,
-          symbol: coinInfo.data.symbol,
+          symbol: coinInfo.data.symbol?.toUpperCase(),
           price: coinInfo.data.market_data.current_price.usd,
           percentageChange:
             coinInfo.data.market_data.price_change_percentage_24h,
