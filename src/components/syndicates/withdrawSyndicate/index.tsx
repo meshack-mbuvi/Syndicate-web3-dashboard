@@ -686,7 +686,7 @@ const WithdrawSyndicate: React.FC = () => {
                   subText={withdrawalSuccessSubtext}
                   showRetryButton={true}
                   success={true}
-                  buttonText={withdrawalSuccessButtonText}
+                  buttonText={+memberDistributionsToDate === +memberDistributionsWithdrawalsToDate ? dismissButtonText : withdrawalSuccessButtonText}
                   closeLoader={closeSyndicateActionLoader}
                 />
               ) : +memberTotalDeposits === 0 && !showSkeletonLoader ? (
