@@ -17,6 +17,7 @@ import "../styles/custom-datepicker.css";
 import ConnectWalletProvider from "@/context/ConnectWalletProvider";
 import CreateSyndicateProvider from "@/context/CreateSyndicateContext";
 import SyndicateInBetaBannerProvider from "@/context/SyndicateInBetaBannerContext";
+import FontsPreloader from "@/components/fonts";
 
 const INTERCOM_APP_ID = process.env.NEXT_PUBLIC_INTERCOM_APP_ID;
 
@@ -40,69 +41,7 @@ const App = ({ Component, pageProps }) => {
                 <title>Home | Syndicate Dashboard</title>
                 <link rel="shortcut icon" href="/images/logo.svg" />
 
-                <link
-                  rel="preload"
-                  href="/fonts/ABC_Whyte_Inktrap_Variable/ABCWhyteInktrapVariable-Trial.woff"
-                  as="font"
-                  crossOrigin=""
-                  type="font/woff2"
-                />
-                <link
-                  rel="preload"
-                  href="/fonts/ABC_Whyte_Variable/ABCWhyteVariable-Trial.woff"
-                  as="font"
-                  crossOrigin=""
-                  type="font/woff2"
-                />
-                <link
-                  rel="preload"
-                  href="/fonts/Whyte/ABCWhyte-Medium.woff"
-                  as="font"
-                  crossOrigin=""
-                  type="font/woff2"
-                />
-                <link
-                  rel="preload"
-                  href="/fonts/Whyte/ABCWhyte-Regular.woff"
-                  as="font"
-                  crossOrigin=""
-                  type="font/woff2"
-                />
-                <link
-                  rel="preload"
-                  href="/fonts/Whyte/ABCWhyte-Light-Trial.woff"
-                  as="font"
-                  crossOrigin=""
-                  type="font/woff2"
-                />
-                <link
-                  rel="preload"
-                  href="/fonts/Whyte\ Inktrap/ABCWhyteInktrap-Medium.woff"
-                  as="font"
-                  crossOrigin=""
-                  type="font/woff2"
-                />
-                <link
-                  rel="preload"
-                  href="/fonts/Whyte\ Inktrap/ABCWhyteInktrap-Regular.woff"
-                  as="font"
-                  crossOrigin=""
-                  type="font/woff2"
-                />
-                <link
-                  rel="preload"
-                  href="/fonts/ABC_Whyte_Inktrap/ABCWhyteInktrap-Extralight-Trial.woff"
-                  as="font"
-                  crossOrigin=""
-                  type="font/woff2"
-                />
-                <link
-                  rel="preload"
-                  href="/fonts/ABC_Whyte_Inktrap/ABCWhyteInktrap-Light-Trial.woff"
-                  as="font"
-                  crossOrigin=""
-                  type="font/woff2"
-                />
+                <FontsPreloader />
 
                 <meta
                   name="viewport"
