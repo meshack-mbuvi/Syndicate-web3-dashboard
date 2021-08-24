@@ -16,7 +16,7 @@ export const setSyndicateName = (syndicateName: string) => (
 ): React.Dispatch<{ type: string; data: string }> => {
   return dispatch({
     type: SYNDICATE_NAME,
-    data: syndicateName.trim(),
+    data: syndicateName,
   });
 };
 
