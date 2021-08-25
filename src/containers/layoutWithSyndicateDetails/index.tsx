@@ -88,6 +88,17 @@ const LayoutWithSyndicateDetails = ({ children }): JSX.Element => {
           }
           break;
         default:
+          if (syndicateAddress && syndicate) {
+            if (syndicate.managerCurrent === account) {
+              router.replace(`/syndicates/${syndicate.syndicateAddress}/manage`);
+            } else if (syndicate.depositsEnabled || syndicate.open) {
+              router.replace(`/syndicates/${syndicate.syndicateAddress}/deposit`);
+            } else if (syndicate.distributing) {
+              router.replace(`/syndicates/${syndicate.syndicateAddress}/withdraw`);
+            } else if (syndicate.managerCurrent !== account && !syndicate.open) {
+              router.replace(`/syndicates/${syndicate.syndicateAddress}/details`);
+            }
+          }
           break;
       }
     }
