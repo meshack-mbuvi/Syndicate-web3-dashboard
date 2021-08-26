@@ -59,7 +59,10 @@ const IndexPage: FC = () => {
           </div>
         </main>
         <div className="flex w-1/2 mx-auto">
-          <Footer extraClasses="border-none text-center" />
+          <Footer
+            disclaimerWidth="w-4/5"
+            extraClasses="sm:text-center pb-12 border-t"
+          />
         </div>
       </div>
     </>

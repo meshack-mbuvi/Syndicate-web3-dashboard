@@ -27,7 +27,7 @@ export const SyndicateDAOItem = (props: DAOProps) => {
   };
 
   return (
-    <div className="mb-8 w-full">
+    <div className="mb-8 w-full overflow-hidden">
       <a href={url} target="_blank" rel="no-referrer">
         <div
           style={{
@@ -37,9 +37,9 @@ export const SyndicateDAOItem = (props: DAOProps) => {
           }}
           className="w-full mb-2 rounded-md perfect-square"
         ></div>
-        <p className="text-md md:text-lg font-whyte-light mt-2">{name}</p>
+        <p className="text-md md:text-lg font-whyte-light mt-2 whitespace-nowrap fade-r-black">{name}</p>
       </a>
-      <div className="flex flex-shrink items-center">
+      <div className="flex flex-shrink items-center fade-r-black">
         <div className="flex mt-1">
           {members.length &&
             members.length > 2 &&
@@ -56,7 +56,7 @@ export const SyndicateDAOItem = (props: DAOProps) => {
           <div className="mt-2">
             <p
               onClick={() => showFullMembersList()}
-              className="transition font-whyte-light text-xs text-gray-3 cursor-pointer w-fit-content hover:text-white"
+              className="truncate transition font-whyte-light text-xs text-gray-3 cursor-pointer w-fit-content hover:text-white"
             >{`+ ${members.slice(2).length} more`}</p>
           </div>
         ) : null}

@@ -132,6 +132,15 @@ const socialProfileDescription =
   "Help others understand this syndicate by requesting a public-facing social profile. We’ll help you create it.";
 const socialProfileButtonText = "Request";
 
+// social profile badge text
+const genesisBadgeTitle = "Genesis"
+const genesisBadgeDescription = "Among the first"
+
+export const genesisBadgeConstants = {
+  genesisBadgeTitle,
+  genesisBadgeDescription
+};
+
 // metamask error texts
 const metamaskRejectByUserMessage = "request was rejected.";
 const metamaskInvalidParamsMessage = "Invalid parameters provided.";

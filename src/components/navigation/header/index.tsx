@@ -17,11 +17,11 @@ const navbarItems = [
     urlText: "Discover",
   },
 ];
-const Header: React.FC<props> = ({ backLink }) => {
+const Header: React.FC<props> = ({ backLink = null }) => {
   const router = useRouter();
 
   return (
-    <nav className="bg-black h-20 fixed top-0 inset-x-0 align-middle py-4 bg-opacity-70 z-20 backdrop-filter backdrop-blur-xl">
+    <nav className="bg-black h-16 fixed top-0 inset-x-0 align-middle py-4 bg-opacity-50 z-20 backdrop-filter backdrop-blur-xl">
       <div className="container mx-auto flex justify-between h-full">
         {/* This backlink is only displayed on mobile sizes */}
         {backLink ? (
@@ -43,7 +43,7 @@ const Header: React.FC<props> = ({ backLink }) => {
             </p>
           </div>
         :
-          <div className="md:flex-1 flex items-center">{/* Navbar links  */}
+          <div className="md:flex-1 flex items-center" style={{maxWidth: `${1/3*100}%`}}> {/* Navbar links  */}
             {navbarItems.map((item, index) => {
               const { url, urlText } = item;
               return <NavBarNavItem key={index} url={url} urlText={urlText} />;
@@ -62,7 +62,7 @@ const Header: React.FC<props> = ({ backLink }) => {
 
         {/* secondary nav */}
         <div className="flex-1">
-          <div className="float-right flex items-center space-x-1 vertically-center">
+          <div className="float-right flex items-center space-x-1 vertically-center hidden sm:block">
             <UserProfileWrapper>
               <WalletComponent />
             </UserProfileWrapper>

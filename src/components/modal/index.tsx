@@ -16,6 +16,12 @@ interface ModalProps {
   overflow?: string;
   showBackButton?: boolean;
   closeButtonClassName?: string;
+  modalStyle?: ModalStyle;
+}
+
+export enum ModalStyle {
+  DARK = "dark",
+  LIGHT = "light",
 }
 
 /**
@@ -40,7 +46,7 @@ export const Modal = (props: ModalProps): JSX.Element => {
     children,
     show,
     closeModal,
-    customWidth = " w-2/5",
+    customWidth = "w-11/12 md:w-7/12 lg:w-2/5",
     loading = false,
     titleFontSize,
     showCloseButton = true,
@@ -49,17 +55,21 @@ export const Modal = (props: ModalProps): JSX.Element => {
     outsideOnClick,
     overflow = "overflow-hidden",
     showBackButton = false,
+    modalStyle = ModalStyle.LIGHT
   } = props;
 
   const handleCloseModal = () => {
     closeModal();
   };
 
+  const bgColor = `${modalStyle === ModalStyle.LIGHT && "bg-white"} ${modalStyle === ModalStyle.DARK && "bg-gray-4"}`
+  const textColor =  `${modalStyle === ModalStyle.LIGHT && "text-black"} ${modalStyle === ModalStyle.DARK && "text-white"}`
+
   return (
     <>
       {show ? (
         <div className="fixed inset-0 overflow-y-auto z-50">
-          <div className="flex items-center justify-center text-black min-h-screen sm:pt-4 sm:px-4 pb-20 text-center sm:block sm:p-0">
+          <div className={`flex items-center justify-center ${textColor} min-h-screen sm:pt-4 sm:px-4 pb-20 text-center sm:block sm:p-0`}>
             <div
               className="fixed inset-0 transition-opacity"
               aria-hidden="true"
@@ -76,7 +86,7 @@ export const Modal = (props: ModalProps): JSX.Element => {
             </div>
 
             <div
-              className={`inline-block align-bottom bg-white rounded-2xl my-24 mx-4 sm:mx-0 sm:my-28 sm:p-6 text-left shadow-xl transform transition-all max-w-868 ${customWidth} ${overflow} ${customClassName}`}
+              className={`inline-block align-bottom ${bgColor} rounded-2xl my-24 mx-4 sm:mx-0 sm:my-28 p-2 sm:p-6 text-left shadow-xl transform transition-all max-w-868 ${customWidth} ${overflow} ${customClassName}`}
               role="dialog"
               aria-modal="true"
               aria-labelledby="modal-headline"
@@ -100,25 +110,25 @@ export const Modal = (props: ModalProps): JSX.Element => {
               </div>
 
               {/* close button */}
-              <div className="hidden sm:block absolute p-4 top-0 right-0">
+              <div className="absolute p-4 top-0 right-0">
                 {/* close button at the right top of the modal */}
                 {showCloseButton ? (
                   <button
                     type="button"
                     className={` ${
                       closeButtonClassName && closeButtonClassName
-                    } rounded-md hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue`}
+                    } rounded-md hover:text-gray-500 focus:outline-none p-2 w-12 h-12 focus:ring-2 focus:ring-offset-2 focus:ring-blue`}
                     onClick={() => closeModal()}
                   >
                     <span className="sr-only">Close</span>
-                    <XIcon className="w-10 h-10 p-2 opacity-50 hover:opacity-75" />
+                    <XIcon className="w-10/12 h-10/12 sm:w-10/12 sm:h-10/12 md:w-11/12 md:h-11/12 mx-auto opacity-50 hover:opacity-75" />
                   </button>
                 ) : null}
               </div>
               {/* modal title */}
               {loading ? null : (
                 <div
-                  className={`modal-header mb-6 text-black font-whyte text-center leading-8  mt-4 ${
+                  className={`modal-header mb-6 ${textColor} font-whyte sm:text-center leading-8 mt-4 pl-4 pr-12 sm:pr-0 ${
                     titleFontSize ? `text-modalTitle` : `text-modalSubTitle`
                   }`}
                 >

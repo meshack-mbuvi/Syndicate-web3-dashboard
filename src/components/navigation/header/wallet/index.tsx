@@ -78,7 +78,7 @@ export const Wallet: React.FC = () => {
   const NotConnectedButton = () => (
     <button
       onClick={connectWallet}
-      className={`bg-white bg-opacity-5 border border-gray-500 border-opacity-30 flex relative rounded-full my-1 px-4 py-2 items-center`}
+      className={`bg-white bg-opacity-5 border border-gray-500 border-opacity-30 flex relative rounded-full px-4 py-1 items-center`}
     >
       <img
         src={"/images/walletDisconnected.svg"}
@@ -86,7 +86,7 @@ export const Wallet: React.FC = () => {
         alt="wallet-icon"
       />
       <span className="focus:outline-none mr-1 text-sm font-whyte-regular">
-        Not connected
+        Sign in
       </span>
       <div className="flex items-center ml-2">
         <img src="/images/chevron-down.svg" alt="down-arrow" />
@@ -95,7 +95,7 @@ export const Wallet: React.FC = () => {
   );
 
   return (
-    <div className="wallet-connect flex relative pl-3 justify-center h-12">
+    <div className="wallet-connect flex relative justify-center">
       {status === "connected" ? (
         <AddressMenuDropDown web3={web3} />
       ) : (

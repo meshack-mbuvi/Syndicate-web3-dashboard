@@ -634,7 +634,6 @@ const SyndicateDetails = (props: {
           />
         </div>
       </div>
-      <Footer />
       <ManagerSetAllowance
         {...{
           depositTotalMax,

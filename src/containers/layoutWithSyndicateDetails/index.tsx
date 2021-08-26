@@ -13,6 +13,8 @@ import { syndicateActionConstants } from "src/components/syndicates/shared/Const
 import Head from "src/components/syndicates/shared/HeaderTitle";
 import SyndicateDetails from "src/components/syndicates/syndicateDetails";
 import { isEmpty } from "lodash"
+import Footer from "@/components/navigation/footer";
+import BackButton from "@/components/socialProfiles/backButton";
 
 const LayoutWithSyndicateDetails = ({ children }): JSX.Element => {
   // Retrieve state
@@ -186,42 +188,34 @@ const LayoutWithSyndicateDetails = ({ children }): JSX.Element => {
           {!syndicateFound || !syndicateAddressIsValid ? (
             syndicateEmptyState
           ) : (
-            <div className="container mx-auto flex flex-col md:flex-row">
-              {/* Left Gutter */}
-              <div className="lg:w-24 md:w-12 w-24 flex-shrink-0 lg:static fixed">
-                <div className="w-14 h-14 lg:hover:bg-gray-9 rounded-full py-4 md:mt-6 mt-6 lg:left-auto relative -left-12 hidden md:block lg:fixed lg:active:bg-white lg:active:bg-opacity-20">
-                  <Link href="/syndicates">
-                    <a href="/syndicates">
-                      <img
-                        className="mx-auto vertically-center relative "
-                        style={{ left: "-2px" }}
-                        src="/images/back-chevron-large.svg"
-                        alt=""
-                      />
-                    </a>
-                  </Link>
+            <div className="container mx-auto">
+
+              {/* Two Columns (Syndicate Details + Widget Cards) */}
+              <div className="flex flex-col md:flex-row">
+                <BackButton topOffset="-1.2rem" />
+                {/* Left Column */}
+                <div className="md:w-3/5 w-full pb-6 md:pr-24">
+                  <div ref={ref} className="w-full md:hidden" />{" "}
+                  {/* its used as an identifier for ref in small devices */}
+                  {/*
+                  we should have an isChildVisible child here,
+                  but it's not working as expected
+                  */}
+                  <SyndicateDetails accountIsManager={accountIsManager}>
+                    <div className="w-full md:hidden">{children}</div>
+                  </SyndicateDetails>
                 </div>
-              </div>
-              {/* Left Column */}
-              <div className="md:w-3/5 w-full pb-6 md:pr-24">
-                <div ref={ref} className="w-full md:hidden" />{" "}
-                {/* its used as an identifier for ref in small devices */}
-                {/*
-                we should have an isChildVisible child here,
-                but it's not working as expected
-                */}
-                <SyndicateDetails accountIsManager={accountIsManager}>
-                  <div className="w-full md:hidden">{children}</div>
-                </SyndicateDetails>
-              </div>
-              {/* Right Column */}
-              <div className="lg:w-2/5 w-96 hidden md:block pt-0">
-                <div className="lg:max-w-120 lg:w-full w-96 mx-auto sticky relative top-33">
-                  {children}
+                {/* Right Column */}
+                <div className="lg:w-2/5 w-96 hidden md:block pt-0">
+                  <div className="lg:max-w-120 lg:w-full w-96 mx-auto sticky relative top-33">
+                    {children}
+                  </div>
                 </div>
+                {/* Right Gutter */}
+                {/* <div className="lg:w-24 w-24 md:w-12 lg:block hidden flex-shrink-0"></div> */}
               </div>
-              {/* Right Gutter */}
-              {/* <div className="lg:w-24 w-24 md:w-12 lg:block hidden flex-shrink-0"></div> */}
+              
+              <Footer extraClasses="mt-24 sm:mt-24 md:mt-40 mb-12" />
             </div>
           )}
         </div>

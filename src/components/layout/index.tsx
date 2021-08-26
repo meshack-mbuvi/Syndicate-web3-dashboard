@@ -26,13 +26,13 @@ export const Layout = ({ children, backLink = null }) => {
         title="Home"
       />
       <Header backLink={backLink} />
-      <div className="sticky top-20 z-10">
+      <div className="sticky top-16 z-10">
         <SyndicateInBetaBanner />
         {showDepositsPageBanner &&
           syndicateAddressIsValid &&
           syndicateFound && <DepositsPageBanner key={2} />}
       </div>
-      <div className="flex w-full flex-col sm:flex-row py-24 px-4 md:px-6 z-0 justify-center">
+      <div className="flex w-full flex-col sm:flex-row py-24 z-0 justify-center">
         {children}
       </div>
       <ConnectWallet />

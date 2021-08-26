@@ -81,7 +81,7 @@ const AddressMenuDropDown: FC<IAddressMenuDropDown> = ({ web3 }) => {
     <Menu as="div" className="relative">
       {({ open }) => (
         <>
-          <Menu.Button className="flex rounded-full my-1 px-4 py-1 items-center bg-green-500 bg-opacity-10 border border-green-500 border-opacity-20">
+          <Menu.Button className="flex rounded-full px-4 py-1 items-center bg-green-500 bg-opacity-10 border border-green-500 border-opacity-20">
             <img
               src="/images/walletConnected.svg"
               className={`w-5 h-4 pr-1 m-2 ${connectedWalletIconStyles}`}

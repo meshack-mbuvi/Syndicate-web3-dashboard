@@ -17,36 +17,42 @@ module.exports = {
   },
   plugins: [
     require("@tailwindcss/forms"),
+    require('@tailwindcss/line-clamp'),
     function ({ addComponents }) {
       addComponents({
         ".container": {
           maxWidth: "100%",
-          paddingLeft: "2%",
-          paddingRight: "2%",
+          paddingLeft: "5%",
+          paddingRight: "5%",
           "@screen sm": {
             maxWidth: "640px",
-            paddingLeft: "2rem",
-            paddingRight: "2rem",
+            paddingLeft: "3rem",
+            paddingRight: "3rem",
           },
           "@screen md": {
             maxWidth: "900px",
-            paddingLeft: "2rem",
-            paddingRight: "2rem",
+            paddingLeft: "3rem",
+            paddingRight: "3rem",
           },
           "@screen lg": {
             maxWidth: "1280px",
-            paddingLeft: "2rem",
-            paddingRight: "2rem",
+            paddingLeft: "4rem",
+            paddingRight: "4rem",
           },
           "@screen xl": {
-            maxWidth: "1400px",
-            paddingLeft: "2rem",
-            paddingRight: "2rem",
+            maxWidth: "1800px",
+            paddingLeft: "8rem",
+            paddingRight: "8rem",
+          },
+          "@screen 2xl": {
+            maxWidth: "100%",
+            paddingLeft: "8rem",
+            paddingRight: "8rem",
           },
           "@screen 3xl": {
-            maxWidth: "1800px",
-            paddingLeft: "2rem",
-            paddingRight: "2rem",
+            maxWidth: "2100px",
+            paddingLeft: "12rem",
+            paddingRight: "12rem",
           },
         },
       });
@@ -61,31 +67,14 @@ module.exports = {
     },
     screens: {
       sm: "640px",
-      // => @media (min-width: 640px) { ... }
-
-      md: "768px",
-      // => @media (min-width: 768px) { ... }
-
+      md: "868px",
       lg: "1024px",
-      // => @media (min-width: 1024px) { ... }
-
       "1.5lg": "1152px",
-      // => @media (min-width: 1152px) { ... }
-
       xl: "1280px",
-      // => @media (min-width: 1280px) { ... }
-
       "1.5xl": "1408px",
-      // => @media (min-width: 1408px) { ... }
-
       "2xl": "1536px",
-      // => @media (min-width: 1536px) { ... }
-
       "3xl": "1900px",
-      // => @media (min-width: 1900px) { ... }
-
       "4xl": "2500px",
-      // => @media (min-width: 2500px) { ... }
     },
     extend: {
       height: () => ({
@@ -131,6 +120,9 @@ module.exports = {
         "2.5xl": "1.75rem",
       },
       colors: {
+        'twitter-blue': '#1DA1F2',
+        'discord-purple': '#7289DA',
+        'telegram-blue': '#37AEE2',
         cyan: colors.cyan,
         gray: {
           ...colors.coolGray,
@@ -182,6 +174,7 @@ module.exports = {
           deepAzure: "#0C1F30",
           dark: "#2F53B3",
           darker: "#0E1834",
+          neon: "#0029FF",
           "light-dark": "#237EFF",
           "light-darker": "#000AFF",
           navy: "#4376FF",
@@ -218,6 +211,28 @@ module.exports = {
       scale: {
         101: "1.01",
         102: "1.02",
+      },
+      animation: {
+        fade_in: 'fade_in 0.5s ease-out 1',
+        fade_in_bg: 'fade_in_bg 6s ease-out 1'
+      },
+      keyframes: {
+        fade_in: {
+          '0%': {
+            opacity: '0'
+          },
+          '100%': {
+            opacity: '1'
+          },
+        },
+        fade_in_bg: {
+          '0%': {
+            backgroundOpacity: '0.3'
+          },
+          '100%': {
+            opacity: '1'
+          },
+        }
       },
       inset: {
         84: "22rem",

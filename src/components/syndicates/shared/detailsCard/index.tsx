@@ -98,7 +98,7 @@ export const DetailsCard = (props: {
             className="flex justify-start visibility-container target-l-12"
             key={index}
           >
-            <div className="flex justify-between items-center sm:my-3 my-3 w-full">
+            <div className="flex justify-between items-center sm:my-3 my-3 w-full relative">
               {showSkeletonLoader ? (
                 <SkeletonLoader
                   height="9"

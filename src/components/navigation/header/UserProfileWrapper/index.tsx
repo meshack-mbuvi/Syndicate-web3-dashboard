@@ -7,7 +7,7 @@ interface Props {
 export const UserProfileWrapper = ({ children }: Props) => {
   return (
     <div
-      className="flex mx-1 flex-col md:flex-row md:px-2 bg-gray-9
+      className="flex mx-1 flex-col md:flex-row md:px-1 md:py-1 bg-gray-9
      bg-opacity-20 rounded-full cursor-pointer"
     >
       {children}

@@ -36,15 +36,13 @@ export const SectionCard = (props: SectionCardProps) => {
 
   return (
     <>
-      <div className="invisible visibility-hover absolute">
-        <div className={`relative ${showingMyStats ? "left-84" : "-left-16"}`}>
-          {!infoIcon ? null : (
-            <InfoIcon
-              tooltip={tooltip}
-              side={`${showingMyStats ? "right" : "left"}`}
-            />
-          )}
-        </div>
+      <div className={`invisible visibility-hover absolute ${showingMyStats ? "-right-6" : "-left-16"}`}>
+        {!infoIcon ? null : (
+          <InfoIcon
+            tooltip={tooltip}
+            side={`${showingMyStats ? "right" : "left"}`}
+          />
+        )}
       </div>
       <div>
         <p className="text-lg text-gray-500 leading-loose">
