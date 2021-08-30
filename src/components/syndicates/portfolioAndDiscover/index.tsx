@@ -191,7 +191,7 @@ const PortfolioAndDiscover = () => {
             </>
           ) : account && !syndicates.length && !invalidEthereumNetwork ? (
             // if connected, then it means no syndicates for this wallet
-            <div className="flex justify-center text-center flex-col">
+            <div className="flex justify-center text-center flex-col" style={{height: "calc(100vh - 300px)"}}>
               <p className="text-2xl font-whyte-light">
                 There are no syndicates you are leading or have invested in at
                 the moment.
