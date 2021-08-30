@@ -1,20 +1,19 @@
 import ErrorBoundary from "@/components/errorBoundary";
 import Layout from "@/components/layout";
+import Footer from "@/components/navigation/footer";
+import BackButton from "@/components/socialProfiles/backButton";
 import { EtherscanLink } from "@/components/syndicates/shared/EtherscanLink";
 import { getSyndicateByAddress } from "@/redux/actions/syndicates";
 import { RootState } from "@/redux/store";
 import { faExclamationTriangle } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import Link from "next/link";
+import { isEmpty } from "lodash";
 import { useRouter } from "next/router";
 import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { syndicateActionConstants } from "src/components/syndicates/shared/Constants";
 import Head from "src/components/syndicates/shared/HeaderTitle";
 import SyndicateDetails from "src/components/syndicates/syndicateDetails";
-import { isEmpty } from "lodash"
-import Footer from "@/components/navigation/footer";
-import BackButton from "@/components/socialProfiles/backButton";
 
 const LayoutWithSyndicateDetails = ({ children }): JSX.Element => {
   // Retrieve state
@@ -22,7 +21,7 @@ const LayoutWithSyndicateDetails = ({ children }): JSX.Element => {
     syndicatesReducer: { syndicate, syndicateFound, syndicateAddressIsValid },
     initializeContractsReducer: { syndicateContracts },
     web3Reducer: {
-      web3: { account, web3},
+      web3: { account, web3 },
     },
   } = useSelector((state: RootState) => state);
 
@@ -43,7 +42,12 @@ const LayoutWithSyndicateDetails = ({ children }): JSX.Element => {
     // deposit or not.
     if (!router.isReady || !syndicate) return;
 
-    if (!isEmpty(syndicate) && syndicateAddress !== undefined && account !== undefined && web3.utils.isAddress(syndicate.syndicateAddress)) {
+    if (
+      !isEmpty(syndicate) &&
+      syndicateAddress !== undefined &&
+      account !== undefined &&
+      web3.utils.isAddress(syndicate.syndicateAddress)
+    ) {
       switch (router.pathname) {
         case "/syndicates/[syndicateAddress]/manage":
           // For a closed syndicate, user should be navigated to withdrawal page
@@ -86,19 +90,32 @@ const LayoutWithSyndicateDetails = ({ children }): JSX.Element => {
           } else if (syndicate.depositsEnabled || syndicate.open) {
             router.replace(`/syndicates/${syndicate.syndicateAddress}/deposit`);
           } else if (syndicate.distributing) {
-            router.replace(`/syndicates/${syndicate.syndicateAddress}/withdraw`);
+            router.replace(
+              `/syndicates/${syndicate.syndicateAddress}/withdraw`,
+            );
           }
           break;
         default:
           if (syndicateAddress && syndicate) {
             if (syndicate.managerCurrent === account) {
-              router.replace(`/syndicates/${syndicate.syndicateAddress}/manage`);
+              router.replace(
+                `/syndicates/${syndicate.syndicateAddress}/manage`,
+              );
             } else if (syndicate.depositsEnabled || syndicate.open) {
-              router.replace(`/syndicates/${syndicate.syndicateAddress}/deposit`);
+              router.replace(
+                `/syndicates/${syndicate.syndicateAddress}/deposit`,
+              );
             } else if (syndicate.distributing) {
-              router.replace(`/syndicates/${syndicate.syndicateAddress}/withdraw`);
-            } else if (syndicate.managerCurrent !== account && !syndicate.open) {
-              router.replace(`/syndicates/${syndicate.syndicateAddress}/details`);
+              router.replace(
+                `/syndicates/${syndicate.syndicateAddress}/withdraw`,
+              );
+            } else if (
+              syndicate.managerCurrent !== account &&
+              !syndicate.open
+            ) {
+              router.replace(
+                `/syndicates/${syndicate.syndicateAddress}/details`,
+              );
             }
           }
           break;
@@ -132,7 +149,7 @@ const LayoutWithSyndicateDetails = ({ children }): JSX.Element => {
   // check whether the current connected wallet account is the manager of the syndicate
   // we'll use this information to load the manager view
   useEffect(() => {
-    if (syndicate && syndicate.managerCurrent == account) {
+    if (syndicate && syndicate?.managerCurrent == account) {
       setAccountIsManager(true);
     } else {
       setAccountIsManager(false);
@@ -189,7 +206,6 @@ const LayoutWithSyndicateDetails = ({ children }): JSX.Element => {
             syndicateEmptyState
           ) : (
             <div className="container mx-auto">
-
               {/* Two Columns (Syndicate Details + Widget Cards) */}
               <div className="flex flex-col md:flex-row">
                 <BackButton topOffset="-1.2rem" />
@@ -214,7 +230,7 @@ const LayoutWithSyndicateDetails = ({ children }): JSX.Element => {
                 {/* Right Gutter */}
                 {/* <div className="lg:w-24 w-24 md:w-12 lg:block hidden flex-shrink-0"></div> */}
               </div>
-              
+
               <Footer extraClasses="mt-24 sm:mt-24 md:mt-40 mb-12" />
             </div>
           )}

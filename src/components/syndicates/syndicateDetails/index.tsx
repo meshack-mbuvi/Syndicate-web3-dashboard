@@ -1,4 +1,3 @@
-import Footer from "@/components/navigation/footer";
 import ManagerSetAllowance from "@/containers/managerActions/setAllowances";
 import { RootState } from "@/redux/store";
 import { getWeiAmount, isUnlimited, onlyUnique } from "@/utils/conversions";
@@ -99,19 +98,21 @@ const SyndicateDetails = (props: {
   ]);
 
   // state to handle copying of the syndicate address to clipboard.
-  const [showCopyState, setShowCopyState] = useState<boolean>(false);
+  const [showAddressCopyState, setShowAddressCopyState] =
+    useState<boolean>(false);
+  const [showDepositLinkCopyState, setShowDepositLinkCopyState] =
+    useState<boolean>(false);
 
   // state to handle details about the current deposit ERC20 token
   const [depositTokenContract, setDepositTokenContract] = useState<any>("");
 
   // states to show general syndicate details
-  const [syndicateCummulativeDetails, setSyndicateCummulativeDetails] =
-    useState([
-      {
-        header: "Total Deposits",
-        subText: "",
-      },
-    ]);
+  const [syndicateCumulativeDetails, setSyndicateCumulativeDetails] = useState([
+    {
+      header: "Total Deposits",
+      subText: "",
+    },
+  ]);
 
   // states to handle manager allowances
   // states to handle manager allowances
@@ -384,11 +385,11 @@ const SyndicateDetails = (props: {
     }
   }, [syndicateContracts, syndicate, depositERC20TokenSymbol, tokenDecimals]);
 
-  // set syndicate cummulative values
+  // set syndicate cumulative values
   useEffect(() => {
     if (syndicate) {
       const { depositTotal, numMembersCurrent } = syndicate;
-      setSyndicateCummulativeDetails([
+      setSyndicateCumulativeDetails([
         {
           header: "Total Deposits",
           subText: `${floatedNumberWithCommas(
@@ -507,9 +508,14 @@ const SyndicateDetails = (props: {
   const formattedSyndicateAddressMobile = formatAddress(syndicateAddress, 5, 8);
 
   // show message to the user when address has been copied.
-  const updateAddresCopyState = () => {
-    setShowCopyState(true);
-    setTimeout(() => setShowCopyState(false), 1000);
+  const updateAddressCopyState = () => {
+    setShowAddressCopyState(true);
+    setTimeout(() => setShowAddressCopyState(false), 1000);
+  };
+
+  const updateDepositLinkCopyState = () => {
+    setShowDepositLinkCopyState(true);
+    setTimeout(() => setShowDepositLinkCopyState(false), 1000);
   };
 
   // show modal for manager to set allowances for deposits/distributions
@@ -549,8 +555,8 @@ const SyndicateDetails = (props: {
           Syndicate
         </span>
 
-        <div className="flex justif-start items-center">
-          <div className="flex-shrink text-xl sm:text-2xl lg:text-3xl flex-wrap break-all my-3">
+        <div className="flex justify-start items-center">
+          <div className="flex-shrink text-base sm:text-2xl lg:text-3xl flex-wrap break-all my-3">
             <div className="mr-4">
               <div className="hidden 3xl:block">
                 <span className="text-gray-500">0x</span>
@@ -578,22 +584,39 @@ const SyndicateDetails = (props: {
               </div>
             </div>
           </div>
-          <CopyToClipboard
-            text={syndicateDepositLink}
-          >
-            <div className="flex items-center ml-0 relative w-14 h-14 rounded-full cursor-pointer lg:hover:bg-gray-9 lg:active:bg-white lg:active:bg-opacity-20">
-              {showCopyState ? (
+          <CopyToClipboard text={syndicateAddress}>
+            <button
+              className="flex items-center ml-0 relative w-8 h-8 rounded-full cursor-pointer lg:hover:bg-gray-9 lg:active:bg-white lg:active:bg-opacity-20"
+              onClick={updateAddressCopyState}
+              onKeyDown={updateAddressCopyState}
+            >
+              {showAddressCopyState ? (
                 <span className="absolute text-xs -top-5">copied</span>
               ) : null}
               <input
                 type="image"
                 src="/images/copy-clipboard.svg"
                 className="cursor-pointer h-4 mx-auto"
-                onClick={updateAddresCopyState}
-                onKeyDown={updateAddresCopyState}
                 alt=""
               />
-            </div>
+            </button>
+          </CopyToClipboard>
+          <CopyToClipboard text={syndicateDepositLink}>
+            <button
+              className="flex items-center ml-0 relative w-8 h-8 rounded-full cursor-pointer lg:hover:bg-gray-9 lg:active:bg-white lg:active:bg-opacity-20"
+              onClick={updateDepositLinkCopyState}
+              onKeyDown={updateDepositLinkCopyState}
+            >
+              {showDepositLinkCopyState ? (
+                <span className="absolute text-xs -top-5">copied</span>
+              ) : null}
+              <input
+                type="image"
+                src="/images/copy-link.svg"
+                className="cursor-pointer h-4 mx-auto"
+                alt=""
+              />
+            </button>
           </CopyToClipboard>
           {/* Hide profile circle until we can make colors unique to each syndicate */}
           {/* <p className="flex-shrink-0 h-8 w-8 sm:h-10 sm:w-10 md:h-16 md:w-16 ml-4 rounded-full ideo-liquidity inline"></p> */}
@@ -624,7 +647,7 @@ const SyndicateDetails = (props: {
           <DetailsCard
             {...{
               title: "Deposits",
-              sections: syndicateCummulativeDetails,
+              sections: syndicateCumulativeDetails,
               syndicateDetails: true,
               infoIcon: false,
               syndicate,
