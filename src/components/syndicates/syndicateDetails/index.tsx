@@ -557,8 +557,8 @@ const SyndicateDetails = (props: {
           Syndicate
         </span>
 
-        <div className="flex justify-start items-center">
-          <div className="flex-shrink text-base sm:text-2xl lg:text-3xl flex-wrap break-all my-3">
+        <div className="flex justif-start items-center">
+          <div className="flex-shrink main-title flex-wrap break-all">
             <div className="mr-4">
               <div className="hidden 3xl:block">
                 <span className="text-gray-500">0x</span>

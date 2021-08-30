@@ -83,6 +83,10 @@
   .font-medium {
     font-family: "ABC Whyte Medium";
   }
+
+  .main-title {
+    @apply text-xl sm:text-2xl lg:text-3xl my-3;
+  }
 }
 
 @layer components {

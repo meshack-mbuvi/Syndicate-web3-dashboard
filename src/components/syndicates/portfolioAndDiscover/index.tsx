@@ -161,22 +161,24 @@ const PortfolioAndDiscover = () => {
       ) : (
         <>
           {/* Show page header and button to create new syndicate */}
-          <div className="flex justify-end w-full">
-            <div className="mb-2">
+          <div className="flex justify-between items-center w-full mb-10">
               {account && syndicates.length ? (
-                <Button
-                  customClasses="border border-gray-5 font-whyte-light w-56 rounded-full bg-gray-4 h-12 w-48 p-3 pt-3 text-sm"
-                  onClick={
-                    managerWithOpenSyndicate
-                      ? () => dispatch(setOneSyndicatePerAccount(true))
-                      : () => showSyndicateForm()
-                  }
-                  createSyndicate={true}
-                >
-                  Create a syndicate
-                </Button>
+                <>
+                  <h1 className="main-title">Portfolio</h1>
+                  <Button
+                    customClasses="border border-gray-5 font-whyte-light rounded-full bg-gray-4 h-12 px-5 py-3 text-sm relative"
+                    onClick={
+                      managerWithOpenSyndicate
+                        ? () => dispatch(setOneSyndicatePerAccount(true))
+                        : () => showSyndicateForm()
+                    }
+                    createSyndicate={true}
+                  >
+                    <div className="hidden sm:block">Create a syndicate</div>
+                    <div className="block sm:hidden">Create</div>
+                  </Button>
+                </>
               ) : null}
-            </div>
           </div>
           {syndicates.length ? (
             <>
