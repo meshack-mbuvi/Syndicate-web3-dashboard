@@ -1,27 +1,12 @@
 import { SkeletonLoader } from "@/components/skeletonLoader";
 import { setDepositTokenDetails } from "@/redux/actions/createSyndicate/syndicateOnChainData/tokenAndDepositsLimits";
 import { RootState } from "@/redux/store";
-// list of prod tokens
-import { coinsList } from "@/TokensList/coinsList";
-// test coins list
-// to be used only for testing purposes
-import { testCoinsList } from "@/TokensList/testCoinsList";
+import { getCoinsList, ICoinProps } from "@/TokensList";
 import { ExclamationCircleIcon } from "@heroicons/react/solid";
 import { getCoinFromContractAddress } from "functions/src/utils/ethereum";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { TokenSearchInput } from "./TokenSearchInput";
-
-const debugging = process.env.NEXT_PUBLIC_DEBUG;
-
-interface ICoinProps {
-  symbol: string;
-  name: string;
-  contractAddress: string;
-  icon: string;
-  decimal: number;
-  default?: boolean;
-}
 
 interface TokenProps extends ICoinProps {
   toggleTokenSelect: () => void;
@@ -77,12 +62,7 @@ export const DepositTokenSelect: React.FC<{ toggleTokenSelect: () => void }> = (
   } = useSelector((state: RootState) => state.web3Reducer);
 
   // set correct tokens list to use
-  let tokensListToUse: ICoinProps[];
-  if (debugging === "true") {
-    tokensListToUse = testCoinsList;
-  } else {
-    tokensListToUse = coinsList;
-  }
+  const tokensListToUse: ICoinProps[] = getCoinsList();
 
   // handle token search
   useEffect(() => {

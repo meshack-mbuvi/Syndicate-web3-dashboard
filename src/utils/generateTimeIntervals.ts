@@ -1,4 +1,4 @@
-export default (): string[] => {
+const generateTimeIntervals = (): string[] => {
   const times = [],
     periods = ["AM", "PM"],
     hours = [12, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
@@ -21,3 +21,5 @@ export default (): string[] => {
   }
   return times;
 };
+
+export default generateTimeIntervals;

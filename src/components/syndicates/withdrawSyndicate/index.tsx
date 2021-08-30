@@ -252,6 +252,10 @@ const WithdrawSyndicate: React.FC = () => {
   ];
 
   // HOOKS
+  // set withdrawal amount to 0 when we switch between tokens
+  useEffect(() => {
+    setAmount(0);
+  }, [selectedToken]);
 
   // check whether the connected account is a member of the syndicate
   useEffect(() => {
@@ -626,6 +630,17 @@ const WithdrawSyndicate: React.FC = () => {
     }
   };
 
+  // set max distributions to withdraw
+  const handleSetMaxAmount = (event: any) => {
+    event.preventDefault();
+    setAmount(+memberAvailableDistributions);
+
+    // Reset Error message
+    if (amountError) {
+      setAmountError("");
+    }
+  }
+
   // INNER COMPONENTS
   const actionButton = (
     <div className="mb-4">
@@ -747,27 +762,48 @@ const WithdrawSyndicate: React.FC = () => {
                     ) : (
                       <form onSubmit={onSubmit}>
                         <div className="flex justify-between my-1">
-                          <input
-                            name="amount"
-                            type="text"
-                            placeholder={syndicate?.depositMemberMin}
-                            defaultValue={amount}
-                            onChange={handleSetAmount}
-                            className={`min-w-0 rounded-md bg-gray-9 border border-gray-24 text-white font-whyte focus:outline-none focus:ring-gray-24 focus:border-gray-24 flex-grow mr-6 `}
-                          />
                           {syndicate && syndicate?.distributing ? (
-                            <TokenSelect />
-                          ) : (
-                            <p className="flex-shrink-0 flex items-center whitespace-nowrap">
-                              {depositERC20Logo && (
-                                <img
-                                  className="mr-2 w-5"
-                                  src={depositERC20Logo}
-                                  alt=""
+                            <div className="flex w-full">
+                              <TokenSelect />
+                              <div className="flex relative w-2/3">
+                                <input
+                                  name="amount"
+                                  type="text"
+                                  placeholder={memberAvailableDistributions}
+                                  defaultValue={amount}
+                                  value={amount}
+                                  onChange={handleSetAmount}
+                                  className="rounded-r-md bg-gray-9 border border-gray-24 border-l-0 text-white font-whyte focus:outline-none focus:ring-gray-24 focus:border-gray-24 flex-grow"
                                 />
-                              )}
-                              {depositERC20Symbol}
-                            </p>
+                                <button
+                                  className="flex flex-1 absolute text-base py-3 pr-3 right-0 text-blue-navy"
+                                  type="button"
+                                  onClick={handleSetMaxAmount}>
+                                  Max
+                                </button>
+                              </div>
+                            </div>
+                          ) : (
+                            <>
+                              <input
+                                name="amount"
+                                type="text"
+                                placeholder={syndicate?.depositMemberMin}
+                                defaultValue={amount}
+                                onChange={handleSetAmount}
+                                className={`min-w-0 rounded-md bg-gray-9 border border-gray-24 text-white font-whyte focus:outline-none focus:ring-gray-24 focus:border-gray-24 flex-grow mr-6 `}
+                              />
+                              <p className="flex-shrink-0 flex items-center whitespace-nowrap">
+                                {depositERC20Logo && (
+                                  <img
+                                    className="mr-2 w-5"
+                                    src={depositERC20Logo}
+                                    alt=""
+                                  />
+                                )}
+                                {depositERC20Symbol}
+                              </p>
+                            </>
                           )}
                         </div>
                         <p className="mr-2 w-full text-red-500 text-xs mt-2 mb-4">

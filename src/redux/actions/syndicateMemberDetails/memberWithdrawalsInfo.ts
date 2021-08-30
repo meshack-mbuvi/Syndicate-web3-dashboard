@@ -185,7 +185,9 @@ export const updateMemberWithdrawalDetails = (
             tokenAddress,
             tokenDecimals,
             memberTotalDeposits: floatedNumberWithCommas(memberDeposits),
-            memberAvailableDistributions,
+            memberAvailableDistributions: memberAvailableDistributions
+              .toString()
+              .match(/^-?\d+(?:\.\d{0,7})?/)[0],
             memberDistributionsToDate: floatedNumberWithCommas(
               getWeiAmount(
                 memberDistributionsToDate,

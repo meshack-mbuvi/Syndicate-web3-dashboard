@@ -13,7 +13,7 @@ const classNames = (...classes) => {
   return classes.filter(Boolean).join(" ");
 };
 
-export const TokenSelect = () => {
+export const TokenSelect: React.FC = () => {
   const dispatch = useDispatch();
   const router = useRouter();
   const { syndicateAddress } = router.query;
@@ -131,19 +131,21 @@ export const TokenSelect = () => {
     <Listbox value={selected} onChange={handleChange}>
       {({ open }) => (
         <>
-          <div className="relative w-5/12">
-            <Listbox.Button className="relative w-full bg-gray-9 border border-gray-24 rounded-md shadow-sm pl-3 pr-10 py-3 text-left cursor-pointer focus:outline-none focus:ring-1 focus:ring-gray-24 focus:border-gray-24 sm:text-sm">
-              <span className="flex items-center">
-                <span className="ml-3 block truncate">
+          <div className="w-1/3">
+            <Listbox.Button className="relative w-full bg-gray-9 border border-gray-24 rounded-l-md shadow-sm pl-3 pr-10 py-3 text-left cursor-pointer sm:text-sm">
+              <div className="flex flex-row">
+                <img src={selected.tokenIcon} alt={selected.tokenIcon} width={20} height={20} />
+                <div className="truncate text-center pl-2">
                   {selected ? selected.tokenSymbol : null}
-                </span>
-              </span>
-              <span className="ml-3 absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
+                </div>
+              </div>
+              <div className="absolute inset-y-0 right-0 flex items-center pointer-events-none">
                 <SelectorIcon
-                  className="h-5 w-5 text-gray-400"
+                  className="h-5 w-7 text-gray-400"
                   aria-hidden="true"
                 />
-              </span>
+              </div>
+
             </Listbox.Button>
 
             <Transition
@@ -155,7 +157,7 @@ export const TokenSelect = () => {
             >
               <Listbox.Options
                 static
-                className="absolute mt-1 w-full bg-white shadow-lg max-h-56 rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm"
+                className="absolute mt-1 w-fit-content bg-white shadow-lg max-h-56 rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm"
               >
                 {syndicateDistributionTokens &&
                   syndicateDistributionTokens.map((token) => (

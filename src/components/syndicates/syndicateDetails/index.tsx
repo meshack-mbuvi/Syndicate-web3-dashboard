@@ -1,5 +1,6 @@
 import ManagerSetAllowance from "@/containers/managerActions/setAllowances";
 import { RootState } from "@/redux/store";
+import { getTokenIcon } from "@/TokensList";
 import { getWeiAmount, isUnlimited, onlyUnique } from "@/utils/conversions";
 import { floatedNumberWithCommas } from "@/utils/formattedNumbers";
 import { getCoinFromContractAddress } from "functions/src/utils/ethereum";
@@ -297,6 +298,7 @@ const SyndicateDetails = (props: {
           tokenDecimals,
           tokenDistributions,
           selected: false,
+          tokenIcon: getTokenIcon(tokenSymbol),  // set Token Icon
         });
       }
 
