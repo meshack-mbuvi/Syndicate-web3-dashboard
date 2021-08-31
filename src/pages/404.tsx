@@ -17,7 +17,8 @@ function NotFoundPage() {
           <div className="w-full sm:w-8/12 lg:w-5/12">
             <h2 className="tagline mb-4">404 / Not Found</h2>
             <h1 className="font-whyte text-3xl mb-3">There's nothing here yet</h1>
-            <p className="mb-8 text-gray-3">Double check the address or wait a minute and then try refreshing this page. Syndicate works on the blockchain, so things can sometimes take an extra moment to process.</p>
+            <p className="mb-3 text-gray-3">Make sure you’re connected with a wallet that has permission to view this. If you typed the URL directly, double check for any typos.</p>
+            <p className="mb-8 text-gray-3">You can also try refreshing after a minute or two. Syndicate works on the blockchain, so things can sometimes take an extra moment to process.</p>
             <PrimaryButton 
               customClasses="px-12 py-3.5 rounded-lg focus:outline-none border-none bg-gray-manatee bg-opacity-30 text-white" 
               onClick={() => {Router.push("/syndicates")}}
