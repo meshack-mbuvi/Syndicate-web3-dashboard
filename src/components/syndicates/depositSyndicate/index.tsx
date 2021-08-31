@@ -870,11 +870,24 @@ const DepositSyndicate: React.FC = () => {
                         </div>
                       ) : (
                         <div className="flex flex-col items-center justify-center my-8 mx-6">
-                          <p className="font-semibold text-2xl text-center">
-                            {memberMaxDepositReached
-                              ? "Attained maximum member deposit."
-                              : "Deposits are disabled."}
-                          </p>
+                          {memberMaxDepositReached ? (
+                            <div className="flex items-center flex-col">
+                              <img
+                                className="w-10 h-10 mb-6"
+                                src="/images/syndicateStatusIcons/maxDepositIcon.svg"
+                              />
+                              <p className="font-semibold text-xl text-center mb-2">
+                                You’ve hit the deposit limit
+                              </p>
+                              <p className="text-sm text-gray-lightManatee text-center">
+                                {`You’ve hit this syndicate’s deposit limit of ${floatedNumberWithCommas(syndicate?.depositMemberMax)} ${depositTokenSymbol} per member.`}
+                              </p>
+                            </div>
+                          ) : (
+                            <p className="font-semibold text-2xl text-center">
+                              Deposits are disabled
+                            </p>
+                          )}
                         </div>
                       )}
                     </>
@@ -991,7 +1004,12 @@ const DepositSyndicate: React.FC = () => {
         )}
 
         {/* show this components if we are in details page*/}
-        {router.pathname.endsWith("details") && syndicate && !(account !== syndicate.managerCurrent && syndicate.status === "Operating") ? (
+        {router.pathname.endsWith("details") &&
+        syndicate &&
+        !(
+          account !== syndicate.managerCurrent &&
+          syndicate.status === "Operating"
+        ) ? (
           <ManageSyndicate syndicateAddress={syndicateAddress} />
         ) : null}
       </div>

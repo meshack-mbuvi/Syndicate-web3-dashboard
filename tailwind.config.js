@@ -17,7 +17,7 @@ module.exports = {
   },
   plugins: [
     require("@tailwindcss/forms"),
-    require('@tailwindcss/line-clamp'),
+    require("@tailwindcss/line-clamp"),
     function ({ addComponents }) {
       addComponents({
         ".container": {
@@ -120,9 +120,9 @@ module.exports = {
         "2.5xl": "1.75rem",
       },
       colors: {
-        'twitter-blue': '#1DA1F2',
-        'discord-purple': '#7289DA',
-        'telegram-blue': '#37AEE2',
+        "twitter-blue": "#1DA1F2",
+        "discord-purple": "#7289DA",
+        "telegram-blue": "#37AEE2",
         cyan: colors.cyan,
         gray: {
           ...colors.coolGray,
@@ -146,6 +146,7 @@ module.exports = {
           dimmer: "#777777",
           nero: "#252525",
           manatee: "#8F97AB",
+          lightManatee: "#90949E",
           matterhorn: "#515151",
           nightrider: "#353535",
           inactive: "#30363A",
@@ -213,26 +214,26 @@ module.exports = {
         102: "1.02",
       },
       animation: {
-        fade_in: 'fade_in 0.5s ease-out 1',
-        fade_in_bg: 'fade_in_bg 6s ease-out 1'
+        fade_in: "fade_in 0.5s ease-out 1",
+        fade_in_bg: "fade_in_bg 6s ease-out 1",
       },
       keyframes: {
         fade_in: {
-          '0%': {
-            opacity: '0'
+          "0%": {
+            opacity: "0",
           },
-          '100%': {
-            opacity: '1'
+          "100%": {
+            opacity: "1",
           },
         },
         fade_in_bg: {
-          '0%': {
-            backgroundOpacity: '0.3'
+          "0%": {
+            backgroundOpacity: "0.3",
           },
-          '100%': {
-            opacity: '1'
+          "100%": {
+            opacity: "1",
           },
-        }
+        },
       },
       inset: {
         84: "22rem",
