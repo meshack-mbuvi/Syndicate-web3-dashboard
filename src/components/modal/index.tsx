@@ -1,5 +1,5 @@
-import React from "react";
 import { XIcon } from "@heroicons/react/solid";
+import React from "react";
 
 interface ModalProps {
   title?: string;
@@ -55,30 +55,32 @@ export const Modal = (props: ModalProps): JSX.Element => {
     outsideOnClick,
     overflow = "overflow-hidden",
     showBackButton = false,
-    modalStyle = ModalStyle.LIGHT
+    modalStyle = ModalStyle.LIGHT,
   } = props;
 
-  const handleCloseModal = () => {
-    closeModal();
-  };
-
-  const bgColor = `${modalStyle === ModalStyle.LIGHT && "bg-white"} ${modalStyle === ModalStyle.DARK && "bg-gray-4"}`
-  const textColor =  `${modalStyle === ModalStyle.LIGHT && "text-black"} ${modalStyle === ModalStyle.DARK && "text-white"}`
+  const bgColor = `${modalStyle === ModalStyle.LIGHT && "bg-white"} ${
+    modalStyle === ModalStyle.DARK && "bg-gray-4"
+  }`;
+  const textColor = `${modalStyle === ModalStyle.LIGHT && "text-black"} ${
+    modalStyle === ModalStyle.DARK && "text-white"
+  }`;
 
   return (
     <>
       {show ? (
         <div className="fixed inset-0 overflow-y-auto z-50">
-          <div className={`flex items-center justify-center ${textColor} min-h-screen sm:pt-4 sm:px-4 pb-20 text-center sm:block sm:p-0`}>
+          <div
+            className={`flex items-center justify-center ${textColor} min-h-screen sm:pt-4 sm:px-4 pb-20 text-center sm:block sm:p-0`}
+          >
             <div
               className="fixed inset-0 transition-opacity"
               aria-hidden="true"
             >
               <div
-                className="absolute inset-0  bg-gray-9 opacity-80"
+                className="absolute inset-0 bg-gray-9 opacity-80"
                 onClick={() => {
                   if (outsideOnClick) {
-                    handleCloseModal();
+                    closeModal();
                   }
                   return null;
                 }}
