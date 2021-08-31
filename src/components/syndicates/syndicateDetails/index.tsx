@@ -19,6 +19,7 @@ import {
 } from "src/redux/actions/tokenAllowances";
 // utils
 import { formatAddress } from "src/utils/formatAddress";
+import GradientAvatar from "../portfolioAndDiscover/portfolio/GradientAvatar";
 import { BadgeCard, DetailsCard } from "../shared";
 import {
   closeDateToolTip,
@@ -497,11 +498,11 @@ const SyndicateDetails = (props: {
   );
   const formattedSyndicateAddressXLarge = formatAddress(
     syndicateAddress,
-    14,
-    11,
+    10,
+    10,
   );
-  const formattedSyndicateAddressLarge = formatAddress(syndicateAddress, 6, 7);
-  const formattedSyndicateAddressMedium = formatAddress(syndicateAddress, 7, 6);
+  const formattedSyndicateAddressLarge = formatAddress(syndicateAddress, 8, 8);
+  const formattedSyndicateAddressMedium = formatAddress(syndicateAddress, 6, 4);
   const formattedSyndicateAddressSmall = formatAddress(
     syndicateAddress,
     10,
@@ -553,79 +554,91 @@ const SyndicateDetails = (props: {
   return (
     <div className="flex flex-col w-full sm:mr-2 lg:mr-6">
       <div className="h-fit-content rounded-custom">
-        <span className="font-medium text-gray-500 text-sm uppercase tracking-widest pb-3">
-          Syndicate
-        </span>
 
-        <div className="flex justif-start items-center">
-          <div className="flex-shrink main-title flex-wrap break-all">
-            <div className="mr-4">
-              <div className="hidden 3xl:block">
-                <span className="text-gray-500">0x</span>
-                {formattedSyndicateAddress3XLarge.slice(2)}
+        <div className="flex items-center justify-between">
+          <div>
+            <span className="font-medium text-gray-500 text-sm uppercase tracking-widest pb-3">
+              Syndicate
+            </span>
+            <div className="flex justify-start items-center">
+              <div className="flex-shrink main-title flex-wrap break-all">
+                <div className="mr-4">
+                  <div className="hidden 3xl:block">
+                    <span className="text-gray-500">0x</span>
+                    {formattedSyndicateAddress3XLarge.slice(2)}
+                  </div>
+                  <div className="hidden xl:block 3xl:hidden">
+                    <span className="text-gray-500">0x</span>
+                    {formattedSyndicateAddressXLarge.slice(2)}
+                  </div>
+                  <div className="hidden lg:block xl:hidden">
+                    <span className="text-gray-500">0x</span>
+                    {formattedSyndicateAddressLarge.slice(2)}
+                  </div>
+                  <div className="hidden md:block lg:hidden">
+                    <span className="text-gray-500">0x</span>
+                    {formattedSyndicateAddressMedium.slice(2)}
+                  </div>
+                  <div className="hidden sm:block md:hidden">
+                    <span className="text-gray-500">0x</span>
+                    {formattedSyndicateAddressSmall.slice(2)}
+                  </div>
+                  <div className="sm:hidden">
+                    <span className="text-gray-500">0x</span>
+                    {formattedSyndicateAddressMobile.slice(2)}
+                  </div>
+                </div>
               </div>
-              <div className="hidden xl:block 3xl:hidden">
-                <span className="text-gray-500">0x</span>
-                {formattedSyndicateAddressXLarge.slice(2)}
-              </div>
-              <div className="hidden lg:block xl:hidden">
-                <span className="text-gray-500">0x</span>
-                {formattedSyndicateAddressLarge.slice(2)}
-              </div>
-              <div className="hidden md:block lg:hidden">
-                <span className="text-gray-500">0x</span>
-                {formattedSyndicateAddressMedium.slice(2)}
-              </div>
-              <div className="hidden sm:block md:hidden">
-                <span className="text-gray-500">0x</span>
-                {formattedSyndicateAddressSmall.slice(2)}
-              </div>
-              <div className="sm:hidden">
-                <span className="text-gray-500">0x</span>
-                {formattedSyndicateAddressMobile.slice(2)}
-              </div>
+              <CopyToClipboard text={syndicateAddress}>
+                <button
+                  className="flex items-center ml-0 relative w-8 h-8 rounded-full cursor-pointer lg:hover:bg-gray-9 lg:active:bg-white lg:active:bg-opacity-20"
+                  onClick={updateAddressCopyState}
+                  onKeyDown={updateAddressCopyState}
+                >
+                  {showAddressCopyState ? (
+                    <span className="absolute text-xs -top-5">copied</span>
+                  ) : null}
+                  <input
+                    type="image"
+                    src="/images/copy-clipboard.svg"
+                    className="cursor-pointer h-4 mx-auto"
+                    alt=""
+                  />
+                </button>
+              </CopyToClipboard>
+              <CopyToClipboard text={syndicateDepositLink}>
+                <button
+                  className="flex items-center ml-0 relative w-8 h-8 rounded-full cursor-pointer lg:hover:bg-gray-9 lg:active:bg-white lg:active:bg-opacity-20"
+                  onClick={updateDepositLinkCopyState}
+                  onKeyDown={updateDepositLinkCopyState}
+                >
+                  {showDepositLinkCopyState ? (
+                    <span className="absolute text-xs -top-5">copied</span>
+                  ) : null}
+                  <input
+                    type="image"
+                    src="/images/copy-link.svg"
+                    className="cursor-pointer h-4 mx-auto"
+                    alt=""
+                  />
+                </button>
+              </CopyToClipboard>
+              {/* Hide profile circle until we can make colors unique to each syndicate */}
+              {/* <p className="flex-shrink-0 h-8 w-8 sm:h-10 sm:w-10 md:h-16 md:w-16 ml-4 rounded-full ideo-liquidity inline"></p> */}
+            </div>
+            <div className="w-fit-content">
+              <EtherscanLink etherscanInfo={syndicateAddress} />
             </div>
           </div>
-          <CopyToClipboard text={syndicateAddress}>
-            <button
-              className="flex items-center ml-0 relative w-8 h-8 rounded-full cursor-pointer lg:hover:bg-gray-9 lg:active:bg-white lg:active:bg-opacity-20"
-              onClick={updateAddressCopyState}
-              onKeyDown={updateAddressCopyState}
-            >
-              {showAddressCopyState ? (
-                <span className="absolute text-xs -top-5">copied</span>
-              ) : null}
-              <input
-                type="image"
-                src="/images/copy-clipboard.svg"
-                className="cursor-pointer h-4 mx-auto"
-                alt=""
-              />
-            </button>
-          </CopyToClipboard>
-          <CopyToClipboard text={syndicateDepositLink}>
-            <button
-              className="flex items-center ml-0 relative w-8 h-8 rounded-full cursor-pointer lg:hover:bg-gray-9 lg:active:bg-white lg:active:bg-opacity-20"
-              onClick={updateDepositLinkCopyState}
-              onKeyDown={updateDepositLinkCopyState}
-            >
-              {showDepositLinkCopyState ? (
-                <span className="absolute text-xs -top-5">copied</span>
-              ) : null}
-              <input
-                type="image"
-                src="/images/copy-link.svg"
-                className="cursor-pointer h-4 mx-auto"
-                alt=""
-              />
-            </button>
-          </CopyToClipboard>
-          {/* Hide profile circle until we can make colors unique to each syndicate */}
-          {/* <p className="flex-shrink-0 h-8 w-8 sm:h-10 sm:w-10 md:h-16 md:w-16 ml-4 rounded-full ideo-liquidity inline"></p> */}
+          <div>
+            {syndicateAddress && 
+              <GradientAvatar
+              syndicateAddress={syndicateAddress}
+              size="w-16 h-16"/>
+            }
+          </div>
         </div>
-        <div className="w-fit-content">
-          <EtherscanLink etherscanInfo={syndicateAddress} />
-        </div>
+        
         <div className="h-fit-content flex w-full justify-start mb-8">
           {syndicateBadge}
         </div>

@@ -8,13 +8,6 @@ import GetMemberDeposits from "./GetMemberDeposits";
 import GradientAvatar from "./GradientAvatar";
 import SyndicateActionButton from "./SyndicateActionButton";
 
-const styles = [
-  "lawn-green",
-  "pinky-blue",
-  "yellowish-light-blue",
-  "violet-red",
-  "violet-yellow",
-];
 
 export const Portfolio = (props: { syndicates }): JSX.Element => {
   const { syndicates } = props;
@@ -25,15 +18,10 @@ export const Portfolio = (props: { syndicates }): JSX.Element => {
       accessor: "syndicateAddress",
       // eslint-disable-next-line react/display-name
       Cell: ({ value }) => {
-        // used useMemo hook to prevent recalculation of style value on every onMouseEnter and onMouseLeave
-        const style = useMemo(
-          () => styles.sort(() => 0.5 - Math.random())[0],
-          [],
-        );
         return (
           <div className="flex flex-row items-center">
             <div className="mr-4">
-              <GradientAvatar styles={style} />
+              <GradientAvatar syndicateAddress={value} />
             </div>
             <p className="font-whyte-light text-xs">
               {value.slice(0, 5)}...
