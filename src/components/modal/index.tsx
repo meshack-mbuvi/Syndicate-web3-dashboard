@@ -139,7 +139,7 @@ export const Modal = (props: ModalProps): JSX.Element => {
               )}
               {/* end of modal title */}
 
-              <div className="mx-4">{children}</div>
+              <div className="mx-4 flex">{children}</div>
             </div>
           </div>
         </div>

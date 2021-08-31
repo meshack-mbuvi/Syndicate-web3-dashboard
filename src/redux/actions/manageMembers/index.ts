@@ -13,14 +13,14 @@ import {
  * @param loading
  * @returns
  */
-export const setLoadingSyndicateDepositorDetails = (loading: boolean) => (
-  dispatch,
-): void => {
-  return dispatch({
-    type: SET_LOADING_SYNDICATE_DEPOSITOR_DETAILS,
-    data: loading,
-  });
-};
+export const setLoadingSyndicateDepositorDetails =
+  (loading: boolean) =>
+  (dispatch): void => {
+    return dispatch({
+      type: SET_LOADING_SYNDICATE_DEPOSITOR_DETAILS,
+      data: loading,
+    });
+  };
 
 /**
  * Retrieve member depositors per given syndicate.
@@ -31,15 +31,17 @@ export const setLoadingSyndicateDepositorDetails = (loading: boolean) => (
  */
 const getSyndicateDepositors = async (syndicateContracts, syndicateAddress) => {
   try {
-    const depositEvents = await syndicateContracts.DepositLogicContract.getMemberDepositEvents(
-      "DepositAdded",
-      { syndicateAddress },
-    );
+    const depositEvents =
+      await syndicateContracts.DepositLogicContract.getMemberDepositEvents(
+        "DepositAdded",
+        { syndicateAddress },
+      );
     // This event is emitted when syndicate cap table is overriden
-    const depositOverriddenEvents = await syndicateContracts.DepositLogicContract.getMemberDepositEvents(
-      "DepositOverridden",
-      { syndicateAddress },
-    );
+    const depositOverriddenEvents =
+      await syndicateContracts.DepositLogicContract.getMemberDepositEvents(
+        "DepositOverridden",
+        { syndicateAddress },
+      );
 
     const memberAddresses = [];
     // process events
@@ -133,12 +135,11 @@ export const isAddressAllowed = async (
   syndicateAddress: any,
   memberAddress: any,
 ): Promise<boolean> => {
-  const {
-    memberAddressAllowed,
-  } = await syndicateContracts.GetterLogicContract.getMemberInfo(
-    syndicateAddress,
-    memberAddress,
-  );
+  const { memberAddressAllowed } =
+    await syndicateContracts.GetterLogicContract.getMemberInfo(
+      syndicateAddress,
+      memberAddress,
+    );
   return memberAddressAllowed;
 };
 
@@ -155,10 +156,11 @@ const getMembersInAllowlist = async (
   if (!syndicateAddress.trim()) return [];
 
   try {
-    const memberAllowedEvents = await syndicateContracts?.AllowlistLogicContract.getAllowlistEvents(
-      "AddressAllowed",
-      { syndicateAddress },
-    );
+    const memberAllowedEvents =
+      await syndicateContracts?.AllowlistLogicContract.getAllowlistEvents(
+        "AddressAllowed",
+        { syndicateAddress },
+      );
 
     // get member address from each event and return the addresses
     const memberAddresses = await memberAllowedEvents.map(
@@ -190,65 +192,67 @@ const getMembersInAllowlist = async (
  * all members in the allowlist are retrieved as well.
  * @returns
  */
-export const getSyndicateDepostorData = () => async (
-  dispatch: (arg0: { type: string; data: any }) => any,
-  getState: () => {
-    syndicatesReducer: { syndicate: any };
-    initializeContractsReducer: { syndicateContracts: any };
-  },
-): Promise<void> => {
-  const {
-    syndicatesReducer: { syndicate },
-    initializeContractsReducer: { syndicateContracts },
-  } = getState();
+export const getSyndicateDepostorData =
+  () =>
+  async (
+    dispatch: (arg0: { type: string; data: any }) => any,
+    getState: () => {
+      syndicatesReducer: { syndicate: any };
+      initializeContractsReducer: { syndicateContracts: any };
+    },
+  ): Promise<void> => {
+    const {
+      syndicatesReducer: { syndicate },
+      initializeContractsReducer: { syndicateContracts },
+    } = getState();
 
-  const memberAddresses = await getSyndicateDepositors(
-    syndicateContracts,
-    syndicate.syndicateAddress,
-  );
-
-  // when allowlist is enabled, retrieve all allowed addresses
-  let allowedMembers = [];
-  if (syndicate.allowlistEnabled) {
-    allowedMembers = await getMembersInAllowlist(
+    const memberAddresses = await getSyndicateDepositors(
       syndicateContracts,
       syndicate.syndicateAddress,
     );
-  }
-  const allMemberAddress = [...memberAddresses, ...allowedMembers];
 
-  // Note: A member may have made several deposits during the lifetime of a
-  // given syndicate. So we need to get unique member addresses.
-  const uniqueMemberAddressese = await Array.from(new Set(allMemberAddress));
-  if (!uniqueMemberAddressese.length)
-    // Syndicate does not have investors at the moment or no members in
-    // the allowlist
+    // when allowlist is enabled, retrieve all allowed addresses
+    let allowedMembers = [];
+    if (syndicate.allowlistEnabled) {
+      allowedMembers = await getMembersInAllowlist(
+        syndicateContracts,
+        syndicate.syndicateAddress,
+      );
+    }
+    const allMemberAddress = [...memberAddresses, ...allowedMembers];
 
-    return dispatch({
+    // Note: A member may have made several deposits during the lifetime of a
+    // given syndicate. So we need to get unique member addresses.
+    const uniqueMemberAddressese = await Array.from(new Set(allMemberAddress));
+    if (!uniqueMemberAddressese.length)
+      // Syndicate does not have investors at the moment or no members in
+      // the allowlist
+
+      return dispatch({
+        type: SET_LOADING_SYNDICATE_DEPOSITOR_DETAILS,
+        data: false,
+      });
+
+    const syndicateMemberData = [];
+
+    for (let index = 0; index < uniqueMemberAddressese.length; index++) {
+      const memberInfo = await getMemberDetails(
+        syndicateContracts,
+        uniqueMemberAddressese[index],
+        syndicate,
+      );
+      if (memberInfo) syndicateMemberData.push(memberInfo);
+    }
+    dispatch({
       type: SET_LOADING_SYNDICATE_DEPOSITOR_DETAILS,
       data: false,
     });
 
-  const syndicateMemberData = [];
-
-  for (let index = 0; index < uniqueMemberAddressese.length; index++) {
-    const memberInfo = await getMemberDetails(
-      syndicateContracts,
-      uniqueMemberAddressese[index],
-      syndicate,
-    );
-    if (memberInfo) syndicateMemberData.push(memberInfo);
-  }
-  dispatch({
-    type: SET_LOADING_SYNDICATE_DEPOSITOR_DETAILS,
-    data: false,
-  });
-
-  return dispatch({
-    type: SET_SYNDICATE_MANAGE_MEMBERS,
-    data: syndicateMemberData,
-  });
-};
+    return dispatch({
+      type: SET_SYNDICATE_MANAGE_MEMBERS,
+      data: syndicateMemberData,
+    });
+  };
 
 export const setShowRejectDepositOnly = (value: boolean) => (dispatch) => {
   return dispatch({

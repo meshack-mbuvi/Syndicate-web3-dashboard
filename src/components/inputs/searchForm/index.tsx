@@ -35,7 +35,7 @@ export const SearchForm = (props: {
         {/* input field */}
         <div className="flex justify-start">
           <div className="relative w-full">
-            <div className="relative flex items-stretch flex-grow focus-within:z-10">
+            <div className="relative bg-gray-4 flex items-stretch flex-grow focus-within:z-10">
               <div
                 className={`absolute inset-y-0 cursor-pointer left-0 pl-3 flex items-center`}
               >
@@ -49,10 +49,10 @@ export const SearchForm = (props: {
                 type="text"
                 name="search"
                 id="search"
-                className={`focus:ring-indigo-500 font-whyte focus:border-indigo-500 block w-full rounded-none rounded-md pl-10 sm:text-sm border-gray-300 ${
+                className={`focus:ring-indigo-500 bg-gray-4 border-0 text-white font-whyte focus:border-indigo-500 block w-full rounded-md pl-10 sm:text-sm ${
                   disabled ? "opacity-40" : ""
                 }`}
-                placeholder="Search member address"
+                placeholder="Search members"
                 onChange={onChangeHandler}
                 value={searchValue}
                 disabled={disabled ? true : false}

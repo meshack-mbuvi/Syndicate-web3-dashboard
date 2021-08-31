@@ -1,3 +1,4 @@
+import { SearchForm } from "@/components/inputs/searchForm";
 import Modal, { ModalStyle } from "@/components/modal";
 import { Spinner } from "@/components/shared/spinner";
 import { getSyndicateDepostorData } from "@/redux/actions/manageMembers";
@@ -11,6 +12,7 @@ import _ from "lodash";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import MoreOptionButton from "./moreOptionButton";
+import SyndicateMembersTable from "./SyndicateMembersTable";
 
 interface ImanageMembers {
   showManageMembers: boolean;
@@ -115,8 +117,8 @@ const ManageMembers = (props: ImanageMembers): JSX.Element => {
         // eslint-disable-next-line react/display-name
         accessor: function ({
           memberDeposit,
-          depositERC20TokenSymbol,
           memberStake,
+          depositERC20TokenSymbol,
         }) {
           return (
             <p className="">
@@ -190,16 +192,15 @@ const ManageMembers = (props: ImanageMembers): JSX.Element => {
     <>
       <Modal
         {...{
-          show: showManageMembers || true,
+          show: showManageMembers,
           closeModal: handleCloseModal,
           customWidth: "md:w-1/2 w-full",
-          overflow: "overflow-x-visible ",
           modalStyle: ModalStyle.DARK,
           showCloseButton: false,
           outsideOnClick: true,
         }}
       >
-        <div className="w-full rounded-md h-full lg:h-96">
+        <div className="w-full rounded-md h-full lg:h-96  my-4">
           <div>
             <p className="font-whyte mb-4 text-xl">Manage members</p>
           </div>
@@ -209,31 +210,74 @@ const ManageMembers = (props: ImanageMembers): JSX.Element => {
               your allowlist, and reject or allow approval requests.
             </p>
           </div>
-          <div className="w-full px-2 py-4 sm:px-0">
+          <div className="w-full h-10 px-2 py-4 sm:px-0">
             <Tab.Group defaultIndex={0}>
               <Tab.List className="flex space-x-6 border-gray-nightrider border-b-1">
-                {tabCategories.map((tabCategory) => (
-                  <Tab
-                    key={tabCategory}
-                    className={({ selected }) =>
-                      `-mb-0.5 ${
-                        selected
-                          ? "text-white border-b-1"
-                          : "text-blue-rockBlue"
-                      }`
-                    }
-                  >
-                    {tabCategory}
-                    {` (0)`}
-                  </Tab>
-                ))}
+                <Tab
+                  className={({ selected }) =>
+                    `-mb-0.5 pb-1 ${
+                      selected ? "text-white border-b-1" : "text-blue-rockBlue"
+                    }`
+                  }
+                >
+                  Allowlist
+                  {` (${syndicateMembersToshow.length})`}
+                </Tab>
+                <Tab
+                  className={({ selected }) =>
+                    `-mb-0.5 pb-1 ${
+                      selected ? "text-white border-b-1" : "text-blue-rockBlue"
+                    }`
+                  }
+                >
+                  Requests
+                  {` (0)`}
+                </Tab>
               </Tab.List>
-              <Tab.Panels className="font-whyte text-blue-rockBlue">
-                <Tab.Panel>
+              <Tab.Panels className="font-whyte text-blue-rockBlue mb-4">
+                <Tab.Panel as="div">
                   {loading ? (
                     <Spinner />
-                  ) : !syndicateMembersToshow.length ? (
-                    <>Show members here</>
+                  ) : syndicateMembersToshow.length ? (
+                    <div className="rounded-md overflow-y-hidden">
+                      {loading ? (
+                        <Spinner />
+                      ) : syndicateMembersToshow.length ? (
+                        <div className="flex flex-col overflow-y-hidden">
+                          <div className="flex my-3 px-1 border-gray-nightrider border-b-1 space-x-8 justify-between">
+                            <form className=" flex-1">
+                              <SearchForm
+                                {...{
+                                  onChangeHandler: filterAddressOnChangeHandler,
+                                  searchValue: filteredAddress,
+                                }}
+                              />
+                            </form>
+                            <button className="flex flex-shrink text-blue-600 justify-center py-1">
+                              <img
+                                src={"/images/plus-circle-blue.svg"}
+                                alt="icon"
+                                className="mr-3 mt-0.5"
+                              />
+                              <span>Add members</span>
+                            </button>
+                          </div>
+
+                          <SyndicateMembersTable
+                            columns={columns}
+                            data={tableData}
+                            distributing={syndicate.distributing}
+                          />
+                          <div>tests</div>
+                        </div>
+                      ) : (
+                        <div className="flex justify-center text-gray-500">
+                          {filteredAddress.trim()
+                            ? "Member address not found."
+                            : "Syndicate does not have investors."}
+                        </div>
+                      )}
+                    </div>
                   ) : (
                     <div className="flex justify-center">
                       <div className="my-10">
@@ -269,32 +313,6 @@ const ManageMembers = (props: ImanageMembers): JSX.Element => {
               </Tab.Panels>
             </Tab.Group>
           </div>
-
-          {/* <form className="py-3">
-            <SearchForm
-              {...{
-                onChangeHandler: filterAddressOnChangeHandler,
-                searchValue: filteredAddress,
-              }}
-            />
-          </form> */}
-          {/* {loading ? (
-            <Spinner />
-          ) : syndicateMembersToshow.length ? (
-            <>
-              <SyndicateMembersTable
-                columns={columns}
-                data={tableData}
-                distributing={syndicate.distributing}
-              />
-            </>
-          ) : (
-            <div className="flex justify-center text-gray-500">
-              {filteredAddress.trim()
-                ? "Member address not found."
-                : "Syndicate does not have investors."}
-            </div>
-          )} */}
         </div>
       </Modal>
     </>

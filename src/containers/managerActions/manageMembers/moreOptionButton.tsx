@@ -1,3 +1,4 @@
+import Modal, { ModalStyle } from "@/components/modal";
 import {
   setSelectedMemberAddress,
   setShowModifyCapTable,
@@ -40,6 +41,7 @@ const MoreOptionButton = (props: {
   const dispatch = useDispatch();
 
   const [showMore, setShowMore] = useState(false);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
 
   const showMoreInfoOptions = open || (distributing && modifiable);
 
@@ -81,65 +83,46 @@ const MoreOptionButton = (props: {
     dispatch(setShowRejectDepositOrMemberAddress(true));
   };
 
+  const confirmReturnMemberDeposit = () => {
+    setShowConfirmModal(true);
+  };
+
   return (
     <>
-      {showMoreInfoOptions === true && (
-        <div className="relative">
+      {showMoreInfoOptions !== true && (
+        <div className="flex space-x-4">
+          <button className="cursor-pointer hover:opacity-70">
+            <img src="/images/edit-deposit.svg" alt="edit member deposit" />
+          </button>
           <button
-            onClick={toggleShowMore}
-            onMouseLeave={() => setShowMore(false)}
-            className="px-2"
+            className="cursor-pointer hover:opacity-70"
+            onClick={() => confirmReturnMemberDeposit()}
           >
-            <img src="/images/more_horiz.svg" alt="Icon to show more options" />
-
-            {/* more actions options to member address */}
-            {showMore === true && (
-              <div className="flex flex-col absolute shadow-lg border border-gray-93 bg-white rounded-lg w-max z-50">
-                {open === true && (
-                  <>
-                    {modifiable === true && (
-                      <button
-                        className={`block text-left px-4 py-2 hover:bg-gray-200 first:rounded-t-md last:rounded-b-md`}
-                        onClick={handleSetShoModifySyndicateCapTable}
-                      >
-                        Modify Deposit Amount
-                      </button>
-                    )}
-
-                    {memberDeposit.trim() !== "0" && (
-                      <button
-                        className={`block text-left px-4 py-2 hover:bg-gray-200 first:rounded-t-md last:rounded-b-md`}
-                        onClick={handleSetRejectMemberDeposit}
-                      >
-                        Reject Deposits
-                      </button>
-                    )}
-
-                    {memberAddressAllowed === true && (
-                      <button
-                        className={`block flex-1 flex-grow text-left px-4 py-2 hover:bg-gray-200 first:rounded-t-md last:rounded-b-md`}
-                        onClick={handleSetRejectMemberAddress}
-                      >
-                        Reject Address
-                      </button>
-                    )}
-                  </>
-                )}
-
-                {/* case for when syndicate is distributing and is modifiable */}
-                {distributing === true && modifiable === true && (
-                  <button
-                    className={`block flex-1 flex-grow text-left px-4 py-2 hover:bg-gray-200 first:rounded-t-md last:rounded-b-md`}
-                    onClick={() => handleSetShowModifyMemberDistributions(true)}
-                  >
-                    Modify Distribution Amounts
-                  </button>
-                )}
-              </div>
-            )}
+            <img
+              src="/images/return-deposits.svg"
+              alt="Return member deposit"
+            />
+          </button>
+          <button className="cursor-pointer hover:opacity-70">
+            <img src="/images/block-address.svg" alt="Block address" />
+          </button>
+          <button className="cursor-pointer hover:opacity-70">
+            <img src="/images/chevron-down.svg" alt="Expand" />
           </button>
         </div>
       )}
+
+      <Modal
+        {...{
+          show: showConfirmModal,
+          closeModal: () => setShowConfirmModal(false),
+          modalStyle: ModalStyle.DARK,
+          title: "Are you sure?",
+          showCloseButton: false,
+        }}
+      >
+        <div>test</div>
+      </Modal>
     </>
   );
 };
