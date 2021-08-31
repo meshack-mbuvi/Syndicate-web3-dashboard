@@ -157,6 +157,24 @@
     }
   }
 
+  /* Button CTAs */
+
+  .CTA-base {
+    @apply px-8 py-3.5 rounded-lg focus:outline-none border-none;
+  }
+
+  .primary-CTA {
+    @apply CTA-base bg-white text-black;
+  }
+
+  .primary-CTA-disabled {
+    @apply CTA-base cursor-not-allowed bg-gray-steelGrey text-gray-manatee;
+  }
+
+  .secondary-CTA {
+    @apply CTA-base bg-gray-manatee bg-opacity-30 text-white;
+  }
+
   /* The tagline above the syndicate name on the social profile */
   .tagline {
     @apply text-gray-600 text-sm uppercase tracking-widest;

@@ -166,7 +166,8 @@ const PortfolioAndDiscover = () => {
                 <>
                   <h1 className="main-title">Portfolio</h1>
                   <Button
-                    customClasses="border border-gray-5 font-whyte-light rounded-full bg-gray-4 h-12 px-5 py-3 text-sm relative"
+                    customClasses="secondary-CTA relative"
+                    textColor="text-white"
                     onClick={
                       managerWithOpenSyndicate
                         ? () => dispatch(setOneSyndicatePerAccount(true))
@@ -191,18 +192,21 @@ const PortfolioAndDiscover = () => {
             </>
           ) : account && !syndicates.length && !invalidEthereumNetwork ? (
             // if connected, then it means no syndicates for this wallet
-            <div className="flex justify-center text-center flex-col" style={{height: "calc(100vh - 300px)"}}>
-              <p className="text-2xl font-whyte-light">
-                There are no syndicates you are leading or have invested in at
-                the moment.
-              </p>
-              <Button
-                customClasses="border border-gray-5 self-center mt-6 font-whyte-light w-56 rounded-full bg-gray-4 h-12 w-48 p-3 pt-3 text-sm"
-                onClick={showSyndicateForm}
-                createSyndicate={true}
-              >
-                Create a syndicate
-              </Button>
+            <div className="text-center flex-col" style={{height: "calc(100vh - 300px)"}}>
+              <div className="vertically-center">
+                <p className="text-2xl font-whyte-light">
+                  There are no syndicates you are leading or have invested in at
+                  the moment.
+                </p>
+                <Button
+                  customClasses="my-4 primary-CTA mx-auto"
+                  textColor="text-black"
+                  onClick={showSyndicateForm}
+                  createSyndicate={true}
+                >
+                  Create a syndicate
+                </Button>
+              </div>
             </div>
           ) : !account ? (
             <WalletNotConnected />

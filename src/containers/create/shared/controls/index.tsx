@@ -45,10 +45,10 @@ const Controls = () => {
         {!hideContinueButton ? (
           <button
             className={`${
-              lastStep ? "bg-green-400" : "bg-white"
-            } text-black px-12 py-3.5 rounded-lg focus:outline-none ${
+              lastStep && "bg-green-400"
+            } primary-CTA ${
               buttonsDisabled || continueDisabled
-                ? "cursor-not-allowed bg-gray-steelGrey text-gray-manatee"
+                ? "primary-CTA-disabled"
                 : "hover:opacity-90 transition-all"
             }`}
             onClick={lastStep ? handleCreateSyndicate : handleNext}

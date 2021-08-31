@@ -20,7 +20,7 @@ function NotFoundPage() {
             <p className="mb-3 text-gray-3">Make sure you’re connected with a wallet that has permission to view this. If you typed the URL directly, double check for any typos.</p>
             <p className="mb-8 text-gray-3">You can also try refreshing after a minute or two. Syndicate works on the blockchain, so things can sometimes take an extra moment to process.</p>
             <PrimaryButton 
-              customClasses="px-12 py-3.5 rounded-lg focus:outline-none border-none bg-gray-manatee bg-opacity-30 text-white" 
+              customClasses="secondary-CTA" 
               onClick={() => {Router.push("/syndicates")}}
             >
                 <img className="inline w-4 mr-3 -ml-1" src="/images/leftArrow.svg" alt="Back Arrow"/>
