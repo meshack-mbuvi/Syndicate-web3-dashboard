@@ -62,16 +62,16 @@ const ActiveSyndicatesTable = ({ columns, data }: Props): JSX.Element => {
                           {activeHeader === column.render("Header") &&
                           !column.isSorted &&
                           showSort ? (
-                            <img src="/images/sortIcon.svg" alt="Sort icon" />
+                            <img src="/images/sortIcon.svg" className="vertically-center" alt="Sort icon" />
                           ) : null}
 
                           {/* Add a sort direction indicator */}
 
                           {column.isSorted ? (
                             column.isSortedDesc ? (
-                              <img src="/images/sortIcon.svg" alt="Sort icon" />
+                              <img src="/images/sort-ascending.svg" className="vertically-center" alt="Sort icon" />
                             ) : (
-                              <img src="/images/sortIcon.svg" alt="Sort icon" />
+                              <img src="/images/sort-descending.svg" className="vertically-center" alt="Sort icon" />
                             )
                           ) : (
                             ""
