@@ -1,5 +1,4 @@
 import { SearchForm } from "@/components/inputs/searchForm";
-import Modal, { ModalStyle } from "@/components/modal";
 import { Spinner } from "@/components/shared/spinner";
 import { getSyndicateDepostorData } from "@/redux/actions/manageMembers";
 import { updateMemberWithdrawalDetails } from "@/redux/actions/syndicateMemberDetails/memberWithdrawalsInfo";
@@ -14,11 +13,6 @@ import { useDispatch, useSelector } from "react-redux";
 import MoreOptionButton from "./moreOptionButton";
 import SyndicateMembersTable from "./SyndicateMembersTable";
 
-interface ImanageMembers {
-  showManageMembers: boolean;
-  setShowManageMembers: (boolean) => void;
-}
-
 /**
  * Shows a modal with members who have deposited into a syndicate.
  * The modal has options based on whether syndicate is open to deposits or is
@@ -30,10 +24,7 @@ interface ImanageMembers {
  * The component also shows a search field where manager can search a member address.
  * @returns
  */
-const ManageMembers = (props: ImanageMembers): JSX.Element => {
-  const { showManageMembers, setShowManageMembers } = props;
-  const tabCategories = ["Allowlist", "Requests"];
-
+const ManageMembers = (): JSX.Element => {
   // retrieve state variables
   const {
     syndicatesReducer: { syndicate },
@@ -45,7 +36,6 @@ const ManageMembers = (props: ImanageMembers): JSX.Element => {
       syndicateDistributionTokens,
     },
   } = useSelector((state: RootState) => state);
-
   const dispatch = useDispatch();
 
   const handleCloseModal = () => {
@@ -106,23 +96,29 @@ const ManageMembers = (props: ImanageMembers): JSX.Element => {
   const columns = React.useMemo(
     () => [
       {
-        Header: "Member Address",
+        Header: "Member",
         accessor: function (row) {
           const { memberAddress } = row;
           return formatAddress(memberAddress, 4, 4);
         },
       },
       {
-        Header: "Distribution share",
+        Header: `Deposit Amount (${syndicate?.depositERC20TokenSymbol})`,
         // eslint-disable-next-line react/display-name
-        accessor: function ({
-          memberDeposit,
-          memberStake,
-          depositERC20TokenSymbol,
-        }) {
+        accessor: function ({ memberDeposit, depositERC20TokenSymbol }) {
           return (
             <p className="">
               {floatedNumberWithCommas(memberDeposit)} {depositERC20TokenSymbol}
+            </p>
+          );
+        },
+      },
+      {
+        Header: `Distribution Share`,
+        // eslint-disable-next-line react/display-name
+        accessor: function ({ memberStake }) {
+          return (
+            <p className="">
               <span className="ml-1 font-whyte-light text-gray-400">
                 {memberStake}%
               </span>
@@ -190,33 +186,18 @@ const ManageMembers = (props: ImanageMembers): JSX.Element => {
 
   return (
     <>
-      <Modal
-        {...{
-          show: showManageMembers,
-          closeModal: handleCloseModal,
-          customWidth: "md:w-1/2 w-full",
-          modalStyle: ModalStyle.DARK,
-          showCloseButton: false,
-          outsideOnClick: true,
-        }}
-      >
-        <div className="w-full rounded-md h-full lg:h-96  my-4">
-          <div>
-            <p className="font-whyte mb-4 text-xl">Manage members</p>
-          </div>
-          <div>
-            <p className="font-whyte text-blue-rockBlue">
-              From this modal, you can manage existing members, add new ones to
-              your allowlist, and reject or allow approval requests.
-            </p>
-          </div>
-          <div className="w-full h-10 px-2 py-4 sm:px-0">
-            <Tab.Group defaultIndex={0}>
-              <Tab.List className="flex space-x-6 border-gray-nightrider border-b-1">
+      <div className="w-full rounded-md h-full lg:h-96  my-4">
+        <div className="w-full h-10 px-2 py-4 sm:px-0">
+          <Tab.Group defaultIndex={0}>
+            <Tab.List className="flex space-x-10">
+              <div className="uppercase py-1 text-lg">Members</div>
+              <div className="w-fit-content rounded-full border border-gray-nightrider">
                 <Tab
                   className={({ selected }) =>
-                    `-mb-0.5 pb-1 ${
-                      selected ? "text-white border-b-1" : "text-blue-rockBlue"
+                    `px-6 py-1 ${
+                      selected
+                        ? "text-white border-1 border-white rounded-full"
+                        : "text-blue-rockBlue"
                     }`
                   }
                 >
@@ -225,68 +206,39 @@ const ManageMembers = (props: ImanageMembers): JSX.Element => {
                 </Tab>
                 <Tab
                   className={({ selected }) =>
-                    `-mb-0.5 pb-1 ${
-                      selected ? "text-white border-b-1" : "text-blue-rockBlue"
+                    `px-4 py-1 ${
+                      selected
+                        ? "text-white border-1 border-white rounded-full"
+                        : "text-blue-rockBlue"
                     }`
                   }
                 >
                   Requests
                   {` (0)`}
                 </Tab>
-              </Tab.List>
-              <Tab.Panels className="font-whyte text-blue-rockBlue mb-4">
-                <Tab.Panel as="div">
-                  {loading ? (
-                    <Spinner />
-                  ) : syndicateMembersToshow.length ? (
-                    <div className="rounded-md overflow-y-hidden">
-                      {loading ? (
-                        <Spinner />
-                      ) : syndicateMembersToshow.length ? (
-                        <div className="flex flex-col overflow-y-hidden">
-                          <div className="flex my-3 px-1 border-gray-nightrider border-b-1 space-x-8 justify-between">
-                            <form className=" flex-1">
-                              <SearchForm
-                                {...{
-                                  onChangeHandler: filterAddressOnChangeHandler,
-                                  searchValue: filteredAddress,
-                                }}
-                              />
-                            </form>
-                            <button className="flex flex-shrink text-blue-600 justify-center py-1">
-                              <img
-                                src={"/images/plus-circle-blue.svg"}
-                                alt="icon"
-                                className="mr-3 mt-0.5"
-                              />
-                              <span>Add members</span>
-                            </button>
-                          </div>
-
-                          <SyndicateMembersTable
-                            columns={columns}
-                            data={tableData}
-                            distributing={syndicate.distributing}
-                          />
-                          <div>tests</div>
-                        </div>
-                      ) : (
-                        <div className="flex justify-center text-gray-500">
-                          {filteredAddress.trim()
-                            ? "Member address not found."
-                            : "Syndicate does not have investors."}
-                        </div>
-                      )}
-                    </div>
-                  ) : (
-                    <div className="flex justify-center">
-                      <div className="my-10">
-                        <div className="flex flex-col space-y-4">
-                          <p>
-                            No members have been added to this syndicate’s
-                            allowlist yet.
-                          </p>
-                          <button className="flex text-blue-600 justify-center py-1">
+              </div>
+            </Tab.List>
+            <Tab.Panels className="font-whyte text-blue-rockBlue w-full">
+              <Tab.Panel as="div">
+                {loading ? (
+                  <Spinner />
+                ) : syndicateMembersToshow.length ? (
+                  <div className="rounded-md overflow-y-hidden">
+                    {loading ? (
+                      <Spinner />
+                    ) : syndicateMembersToshow.length ? (
+                      <div className="flex flex-col overflow-y-hidden">
+                        <div className="flex my-6 px-1 space-x-8 justify-between">
+                          <form>
+                            <SearchForm
+                              {...{
+                                onChangeHandler: filterAddressOnChangeHandler,
+                                searchValue: filteredAddress,
+                                memberCount: syndicateMembersToshow.length,
+                              }}
+                            />
+                          </form>
+                          <button className="flex flex-shrink text-blue-600 justify-center py-1">
                             <img
                               src={"/images/plus-circle-blue.svg"}
                               alt="icon"
@@ -295,26 +247,55 @@ const ManageMembers = (props: ImanageMembers): JSX.Element => {
                             <span>Add members</span>
                           </button>
                         </div>
+
+                        <SyndicateMembersTable
+                          columns={columns}
+                          data={tableData}
+                          distributing={syndicate.distributing}
+                        />
                       </div>
-                    </div>
-                  )}
-                </Tab.Panel>
-                <Tab.Panel>
+                    ) : (
+                      <div className="flex justify-center text-gray-500">
+                        {filteredAddress.trim()
+                          ? "Member address not found."
+                          : "Syndicate does not have investors."}
+                      </div>
+                    )}
+                  </div>
+                ) : (
                   <div className="flex justify-center">
                     <div className="my-10">
-                      <div>
+                      <div className="flex flex-col space-y-4">
                         <p>
-                          Members who have requested to be added to allowlist
+                          No members have been added to this syndicate’s
+                          allowlist yet.
                         </p>
+                        <button className="flex text-blue-600 justify-center py-1">
+                          <img
+                            src={"/images/plus-circle-blue.svg"}
+                            alt="icon"
+                            className="mr-3 mt-0.5"
+                          />
+                          <span>Add members</span>
+                        </button>
                       </div>
                     </div>
                   </div>
-                </Tab.Panel>
-              </Tab.Panels>
-            </Tab.Group>
-          </div>
+                )}
+              </Tab.Panel>
+              <Tab.Panel>
+                <div className="flex justify-center">
+                  <div className="my-10">
+                    <div>
+                      <p>Members who have requested to be added to allowlist</p>
+                    </div>
+                  </div>
+                </div>
+              </Tab.Panel>
+            </Tab.Panels>
+          </Tab.Group>
         </div>
-      </Modal>
+      </div>
     </>
   );
 };

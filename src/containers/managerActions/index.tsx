@@ -440,18 +440,15 @@ const ManagerActions = (): JSX.Element => {
           />
         ) : modifyMemberDistribution ? (
           <ModifyMemberDistributions />
-        ) : (
-          showManageMembers === true && (
-            <ManageMembers {...{ showManageMembers, setShowManageMembers }} />
-          )
-        )}
+        ) : null
+        }
       </div>
       {/* Confirm whether manager wants to close syndicate */}
 
       <StateModal show={showConfirmCloseSyndicate}>
         <>
           <div className="flex flex-col justify-center m-auto mb-4">
-            <p className="text-sm text-center mx-8 my-2 font-medium text-center leading-6 text-lg">
+            <p className="text-sm mx-8 my-2 font-medium text-center leading-6 text-lg">
               Please confirm that you want to close this syndicate.
             </p>
             <p className="text-sm text-center mx-8 mt-2 opacity-60">

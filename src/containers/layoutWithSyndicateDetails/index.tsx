@@ -10,11 +10,12 @@ import { faExclamationTriangle } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { isEmpty } from "lodash";
 import { useRouter } from "next/router";
-import { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { syndicateActionConstants } from "src/components/syndicates/shared/Constants";
 import Head from "src/components/syndicates/shared/HeaderTitle";
 import SyndicateDetails from "src/components/syndicates/syndicateDetails";
+import ManageMembers from "../managerActions/manageMembers";
 
 const LayoutWithSyndicateDetails = ({ children }): JSX.Element => {
   // Retrieve state
@@ -25,6 +26,8 @@ const LayoutWithSyndicateDetails = ({ children }): JSX.Element => {
       web3: { account, web3 },
     },
   } = useSelector((state: RootState) => state);
+
+  const [showMembers, setShowMembers] = useState(false);
 
   const router = useRouter();
   const dispatch = useDispatch();
@@ -64,6 +67,7 @@ const LayoutWithSyndicateDetails = ({ children }): JSX.Element => {
               );
             }
           }
+          setShowMembers(true);
           break;
         case "/syndicates/[syndicateAddress]/deposit":
           if (syndicate?.managerPending === account) {
@@ -75,6 +79,7 @@ const LayoutWithSyndicateDetails = ({ children }): JSX.Element => {
               `/syndicates/${syndicate.syndicateAddress}/withdraw`,
             );
           }
+          setShowMembers(false);
           break;
         case "/syndicates/[syndicateAddress]/withdraw":
           if (syndicate?.managerPending === account) {
@@ -84,6 +89,7 @@ const LayoutWithSyndicateDetails = ({ children }): JSX.Element => {
           } else if (syndicate.depositsEnabled || syndicate.open) {
             router.replace(`/syndicates/${syndicate.syndicateAddress}/deposit`);
           }
+          setShowMembers(false);
           break;
         // case when address lacks action
         case "/syndicates/[syndicateAddress]/":
@@ -96,6 +102,7 @@ const LayoutWithSyndicateDetails = ({ children }): JSX.Element => {
               `/syndicates/${syndicate.syndicateAddress}/withdraw`,
             );
           }
+          setShowMembers(false);
           break;
         default:
           if (syndicateAddress && syndicate) {
@@ -233,6 +240,7 @@ const LayoutWithSyndicateDetails = ({ children }): JSX.Element => {
                 {/* Right Gutter */}
                 {/* <div className="lg:w-24 w-24 md:w-12 lg:block hidden flex-shrink-0"></div> */}
               </div>
+              {!isEmpty(syndicate) && <ManageMembers />}
 
               <Footer extraClasses="mt-24 sm:mt-24 md:mt-40 mb-12" />
             </div>

@@ -40,6 +40,8 @@ const MoreOptionButton = (props: {
   } = props.row;
   const dispatch = useDispatch();
 
+  const [hoveredRow, setHoveredRow] = useState(null);
+
   const [showMore, setShowMore] = useState(false);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
 
@@ -89,7 +91,7 @@ const MoreOptionButton = (props: {
 
   return (
     <>
-      {showMoreInfoOptions !== true && (
+      {showMoreInfoOptions === true && (
         <div className="flex space-x-4">
           <button className="cursor-pointer hover:opacity-70">
             <img src="/images/edit-deposit.svg" alt="edit member deposit" />
@@ -105,9 +107,6 @@ const MoreOptionButton = (props: {
           </button>
           <button className="cursor-pointer hover:opacity-70">
             <img src="/images/block-address.svg" alt="Block address" />
-          </button>
-          <button className="cursor-pointer hover:opacity-70">
-            <img src="/images/chevron-down.svg" alt="Expand" />
           </button>
         </div>
       )}

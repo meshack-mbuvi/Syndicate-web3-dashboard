@@ -19,7 +19,7 @@ const SyndicateMembersTable = ({
       <>
         <input
           type="checkbox"
-          className="rounded bg-gray-102 mr-2 ml-1"
+          className="rounded bg-gray-102"
           ref={resolvedRef}
           {...rest}
         />
@@ -60,20 +60,16 @@ const SyndicateMembersTable = ({
           // to the render a checkbox
           // eslint-disable-next-line react/display-name
           Cell: function ({ row }) {
-            return (
-              <div>
-                <Checkbox {...row.getToggleRowSelectedProps()} />
-              </div>
-            );
+            console.log({ row });
+            return <Checkbox {...row.getToggleRowSelectedProps()} />;
           },
         },
         ...columns,
       ]);
     },
   );
-  console.log({ selectedRowIds });
   return (
-    <table {...getTableProps()} className="w-full h-50">
+    <table {...getTableProps()} className="w-full">
       <thead className="w-full">
         {
           // Loop over the header rows
@@ -82,13 +78,17 @@ const SyndicateMembersTable = ({
             <tr
               {...headerGroup.getHeaderGroupProps()}
               key={index}
-              className="text-blue-rockBlue text-xs py-4"
+              className="text-blue-rockBlue text-sm py-10"
             >
               {
                 // Loop over the headers in each row
                 headerGroup.headers.map((column, index) => (
                   // Apply the header cell props
-                  <th {...column.getHeaderProps()} key={index}>
+                  <th
+                    {...column.getHeaderProps()}
+                    key={index}
+                    className="rounded-md py-2 text-left"
+                  >
                     {
                       // Render the header
                       column.render("Header")
@@ -110,13 +110,13 @@ const SyndicateMembersTable = ({
           rows.map((row, index) => {
             // Prepare the row for display
             prepareRow(row);
-
+            console.log({ row });
             return (
               // Apply the row props
               <tr
                 {...row.getRowProps()}
                 key={index}
-                className="py-2 hover:opacity-80"
+                className="space-y-4 hover:opacity-80 border-b-1 border-gray-nightrider"
               >
                 {
                   // Loop over the rows cells
@@ -126,7 +126,7 @@ const SyndicateMembersTable = ({
                       <td
                         {...cell.getCellProps()}
                         key={cellIndex}
-                        className={`m-0 font-whyte-light text-white text-xs py-3`}
+                        className={`m-0 font-whyte-light text-white text-xs py-4`}
                       >
                         {
                           // Render the cell contents
