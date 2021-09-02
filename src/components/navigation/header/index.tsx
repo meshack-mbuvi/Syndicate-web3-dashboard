@@ -11,7 +11,10 @@ interface props {
 
 // links to show on the navbar
 const navbarItems = [
-  { url: "/syndicates", urlText: "Portfolio" },
+  {
+    url: "/syndicates",
+    urlText: "Portfolio"
+  },
   {
     url: "/discover",
     urlText: "Discover",
