@@ -325,7 +325,7 @@ export const ConnectWallet = (props: { web3; showWalletModal }) => {
               </div>
               <button
                 type="button"
-                className="flex justify-center items-center px-6 py-3 text-base font-medium rounded-lg bg-gray-2 w-full"
+                className="flex justify-center items-center px-6 py-3 text-base font-medium rounded-lg bg-gray-dark w-full"
               >
                 <SpinnerWithImage
                   {...{

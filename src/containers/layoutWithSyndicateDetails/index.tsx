@@ -1,6 +1,7 @@
 import ErrorBoundary from "@/components/errorBoundary";
 import Layout from "@/components/layout";
 import Footer from "@/components/navigation/footer";
+import OnboardingModal from "@/components/onboarding";
 import BackButton from "@/components/socialProfiles/backButton";
 import { EtherscanLink } from "@/components/syndicates/shared/EtherscanLink";
 import { getSyndicateByAddress } from "@/redux/actions/syndicates";
@@ -34,6 +35,7 @@ const LayoutWithSyndicateDetails = ({ children }): JSX.Element => {
   const { syndicateAddress } = router.query;
 
   const [accountIsManager, setAccountIsManager] = useState<boolean>(false);
+  const showOnboardingIfNeeded = router.pathname.endsWith("deposit")
 
   // A manager should not access deposit page but should be redirected
   // to syndicates page
@@ -201,6 +203,7 @@ const LayoutWithSyndicateDetails = ({ children }): JSX.Element => {
     <Layout>
       <Head title="Syndicate" />
       <ErrorBoundary>
+        {showOnboardingIfNeeded && <OnboardingModal/>}
         <div className="w-full">
           {!syndicateFound || !syndicateAddressIsValid ? (
             syndicateEmptyState

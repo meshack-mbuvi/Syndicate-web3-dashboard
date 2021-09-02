@@ -126,7 +126,7 @@ module.exports = {
         cyan: colors.cyan,
         gray: {
           ...colors.coolGray,
-          2: "#2C2C2F",
+          2: "#D9DDE5",
           3: "#A8AFBD",
           4: "#1B1D20",
           5: "#292929",

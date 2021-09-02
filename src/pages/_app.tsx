@@ -18,6 +18,7 @@ import ConnectWalletProvider from "@/context/ConnectWalletProvider";
 import CreateSyndicateProvider from "@/context/CreateSyndicateContext";
 import SyndicateInBetaBannerProvider from "@/context/SyndicateInBetaBannerContext";
 import FontsPreloader from "@/components/fonts";
+import OnboardingProvider from "@/context/OnboardingContext";
 
 const INTERCOM_APP_ID = process.env.NEXT_PUBLIC_INTERCOM_APP_ID;
 
@@ -35,6 +36,7 @@ const App = ({ Component, pageProps }) => {
   return (
     <IntercomProvider appId={INTERCOM_APP_ID} autoBoot={true}>
       <SyndicateInBetaBannerProvider>
+        <OnboardingProvider>
           <ConnectWalletProvider>
             <CreateSyndicateProvider>
               <Head>
@@ -52,6 +54,7 @@ const App = ({ Component, pageProps }) => {
               <Component {...pageProps} />
             </CreateSyndicateProvider>
           </ConnectWalletProvider>
+        </OnboardingProvider>
       </SyndicateInBetaBannerProvider>
     </IntercomProvider>
   );
