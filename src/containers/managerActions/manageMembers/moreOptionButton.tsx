@@ -40,6 +40,8 @@ const MoreOptionButton = (props: {
   } = props.row;
   const dispatch = useDispatch();
 
+  const [hoveredRow, setHoveredRow] = useState(null);
+
   const [showMore, setShowMore] = useState(false);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
 
@@ -90,12 +92,8 @@ const MoreOptionButton = (props: {
   return (
     <>
       {showMoreInfoOptions === true && (
-        <div className="flex space-x-4 justify-end p-1">
-          <button
-            className="cursor-pointer hover:opacity-70"
-            data-tip
-            data-for="edit-member-deposit"
-          >
+        <div className="flex space-x-4">
+          <button className="cursor-pointer hover:opacity-70">
             <img src="/images/edit-deposit.svg" alt="edit member deposit" />
             <ReactTooltip id="edit-member-deposit" place="top" effect="solid">
               Modify on-chain deposit amount

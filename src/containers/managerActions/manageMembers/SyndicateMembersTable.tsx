@@ -50,14 +50,14 @@ const SyndicateMembersTable = ({
       }
     }, [combinedRef, indeterminate]);
     return (
-      <input
-        type="checkbox"
-        className={`rounded checkbox bg-gray-102 ${
-          rest?.checked ? "block" : `${customClass}`
-        }`}
-        ref={combinedRef}
-        {...rest}
-      />
+      <>
+        <input
+          type="checkbox"
+          className="rounded bg-gray-102"
+          ref={resolvedRef}
+          {...rest}
+        />
+      </>
     );
   });
   // hide Distribution/claimed when syndicate is not distributing
@@ -92,14 +92,8 @@ const SyndicateMembersTable = ({
           // to the render a checkbox
           // eslint-disable-next-line react/display-name
           Cell: function ({ row }) {
-            return (
-              <IndeterminateCheckbox
-                {...{
-                  ...row.getToggleRowSelectedProps(),
-                  customClass: "hidden",
-                }}
-              />
-            );
+            console.log({ row });
+            return <Checkbox {...row.getToggleRowSelectedProps()} />;
           },
         },
         ...columns,
@@ -107,10 +101,7 @@ const SyndicateMembersTable = ({
     },
   );
   return (
-    <table
-      {...getTableProps()}
-      className="w-full border-b-1 mx-1 border-gray-nightrider"
-    >
+    <table {...getTableProps()} className="w-full">
       <thead className="w-full">
         {
           // Loop over the header rows
@@ -150,16 +141,14 @@ const SyndicateMembersTable = ({
           // Loop over the table rows
           rows.map((row, index) => {
             // Prepare the row for display
-
             prepareRow(row);
+            console.log({ row });
             return (
               // Apply the row props
               <tr
                 {...row.getRowProps()}
                 key={index}
-                className="space-y-4 hover:opacity-80 hover:bg-gray-102 border-b-1 border-gray-nightrider"
-                onMouseEnter={() => setShowMoreOptions(index)}
-                onMouseLeave={() => setShowMoreOptions(-1)}
+                className="space-y-4 hover:opacity-80 border-b-1 border-gray-nightrider"
               >
                 {
                   // Loop over the rows cells
@@ -170,13 +159,7 @@ const SyndicateMembersTable = ({
                       <td
                         {...cell.getCellProps()}
                         key={cellIndex}
-                        className={`m-0 font-whyte-light text-white text-xs py-3 ${
-                          showMoreOptions == row.index
-                            ? "opacity-100"
-                            : cellIndex === row.cells.length - 1
-                            ? "opacity-0"
-                            : "opacity-100"
-                        }`}
+                        className={`m-0 font-whyte-light text-white text-xs py-4`}
                       >
                         {
                           // Render the cell contents

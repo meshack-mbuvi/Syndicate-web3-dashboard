@@ -96,8 +96,12 @@ const ManageMembers = (): JSX.Element => {
       {
         Header: `Deposit Amount (${syndicate?.depositERC20TokenSymbol})`,
         // eslint-disable-next-line react/display-name
-        accessor: function ({ memberDeposit }) {
-          return <p className="">{floatedNumberWithCommas(memberDeposit)}</p>;
+        accessor: function ({ memberDeposit, depositERC20TokenSymbol }) {
+          return (
+            <p className="">
+              {floatedNumberWithCommas(memberDeposit)} {depositERC20TokenSymbol}
+            </p>
+          );
         },
       },
       {
@@ -172,112 +176,118 @@ const ManageMembers = (): JSX.Element => {
   );
 
   return (
-    <div className="w-full rounded-md h-full my-4">
-      <div className="w-full px-2 py-4 sm:px-0">
-        <Tab.Group defaultIndex={0}>
-          <Tab.List className="flex space-x-10">
-            <div className="uppercase py-1 text-lg">Members</div>
-            <div className="w-fit-content rounded-full border border-gray-nightrider">
-              <Tab
-                className={({ selected }) =>
-                  `px-6 py-1 ${
-                    selected
-                      ? "text-white border-1 border-white rounded-full"
-                      : "text-blue-rockBlue"
-                  }`
-                }
-              >
-                Allowlist
-                {` (${syndicateMembers.length})`}
-              </Tab>
-              <Tab
-                className={({ selected }) =>
-                  `px-4 py-1 ${
-                    selected
-                      ? "text-white border-1 border-white rounded-full"
-                      : "text-blue-rockBlue"
-                  }`
-                }
-              >
-                Requests
-                {` (0)`}
-              </Tab>
-            </div>
-          </Tab.List>
-          <Tab.Panels className="font-whyte text-blue-rockBlue w-full">
-            <Tab.Panel as="div">
-              {loading ? (
-                <Spinner />
-              ) : syndicateMembers.length ? (
-                <div className="flex flex-col overflow-y-hidden">
-                  <div className="flex mt-4 space-x-8 justify-between">
-                    <form className="w-2/5">
-                      <SearchForm
-                        {...{
-                          onChangeHandler: filterAddressOnChangeHandler,
-                          searchValue: filteredAddress,
-                          memberCount: syndicateMembersToshow.length,
-                        }}
-                      />
-                    </form>
-                    <button className="flex flex-shrink text-blue-600 justify-center py-1 hover:opacity-80">
-                      <img
-                        src={"/images/plus-circle-blue.svg"}
-                        alt="icon"
-                        className="mr-3 mt-0.5"
-                      />
-                      <span>Add members</span>
-                    </button>
-                  </div>
+    <>
+      <div className="w-full rounded-md h-full lg:h-96  my-4">
+        <div className="w-full h-10 px-2 py-4 sm:px-0">
+          <Tab.Group defaultIndex={0}>
+            <Tab.List className="flex space-x-10">
+              <div className="uppercase py-1 text-lg">Members</div>
+              <div className="w-fit-content rounded-full border border-gray-nightrider">
+                <Tab
+                  className={({ selected }) =>
+                    `px-6 py-1 ${
+                      selected
+                        ? "text-white border-1 border-white rounded-full"
+                        : "text-blue-rockBlue"
+                    }`
+                  }
+                >
+                  Allowlist
+                  {` (${syndicateMembersToshow.length})`}
+                </Tab>
+                <Tab
+                  className={({ selected }) =>
+                    `px-4 py-1 ${
+                      selected
+                        ? "text-white border-1 border-white rounded-full"
+                        : "text-blue-rockBlue"
+                    }`
+                  }
+                >
+                  Requests
+                  {` (0)`}
+                </Tab>
+              </div>
+            </Tab.List>
+            <Tab.Panels className="font-whyte text-blue-rockBlue w-full">
+              <Tab.Panel as="div">
+                {loading ? (
+                  <Spinner />
+                ) : syndicateMembersToshow.length ? (
+                  <div className="rounded-md overflow-y-hidden">
+                    {loading ? (
+                      <Spinner />
+                    ) : syndicateMembersToshow.length ? (
+                      <div className="flex flex-col overflow-y-hidden">
+                        <div className="flex my-6 px-1 space-x-8 justify-between">
+                          <form>
+                            <SearchForm
+                              {...{
+                                onChangeHandler: filterAddressOnChangeHandler,
+                                searchValue: filteredAddress,
+                                memberCount: syndicateMembersToshow.length,
+                              }}
+                            />
+                          </form>
+                          <button className="flex flex-shrink text-blue-600 justify-center py-1">
+                            <img
+                              src={"/images/plus-circle-blue.svg"}
+                              alt="icon"
+                              className="mr-3 mt-0.5"
+                            />
+                            <span>Add members</span>
+                          </button>
+                        </div>
 
-                  {syndicateMembersToshow.length ? (
-                    <SyndicateMembersTable
-                      columns={columns}
-                      data={tableData}
-                      distributing={syndicate.distributing}
-                    />
-                  ) : (
-                    <div className="flex justify-center text-gray-500">
-                      {filteredAddress.trim()
-                        ? "Member address not found."
-                        : "Syndicate does not have investors."}
+                        <SyndicateMembersTable
+                          columns={columns}
+                          data={tableData}
+                          distributing={syndicate.distributing}
+                        />
+                      </div>
+                    ) : (
+                      <div className="flex justify-center text-gray-500">
+                        {filteredAddress.trim()
+                          ? "Member address not found."
+                          : "Syndicate does not have investors."}
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <div className="flex justify-center">
+                    <div className="my-10">
+                      <div className="flex flex-col space-y-4">
+                        <p>
+                          No members have been added to this syndicate’s
+                          allowlist yet.
+                        </p>
+                        <button className="flex text-blue-600 justify-center py-1">
+                          <img
+                            src={"/images/plus-circle-blue.svg"}
+                            alt="icon"
+                            className="mr-3 mt-0.5"
+                          />
+                          <span>Add members</span>
+                        </button>
+                      </div>
                     </div>
-                  )}
-                </div>
-              ) : (
+                  </div>
+                )}
+              </Tab.Panel>
+              <Tab.Panel>
                 <div className="flex justify-center">
                   <div className="my-10">
-                    <div className="flex flex-col space-y-4">
-                      <p>
-                        No members have been added to this syndicate’s allowlist
-                        yet.
-                      </p>
-                      <button className="flex text-blue-600 justify-center py-1">
-                        <img
-                          src={"/images/plus-circle-blue.svg"}
-                          alt="icon"
-                          className="mr-3 mt-0.5"
-                        />
-                        <span>Add members</span>
-                      </button>
+                    <div>
+                      <p>Members who have requested to be added to allowlist</p>
                     </div>
                   </div>
                 </div>
-              )}
-            </Tab.Panel>
-            <Tab.Panel>
-              <div className="flex justify-center">
-                <div className="my-10">
-                  <div>
-                    <p>Members who have requested to be added to allowlist</p>
-                  </div>
-                </div>
-              </div>
-            </Tab.Panel>
-          </Tab.Panels>
-        </Tab.Group>
+              </Tab.Panel>
+            </Tab.Panels>
+          </Tab.Group>
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 
