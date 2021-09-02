@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useRowSelect, useTable } from "react-table";
 
 const SyndicateMembersTable = ({
@@ -6,6 +6,8 @@ const SyndicateMembersTable = ({
   data,
   distributing,
 }): JSX.Element => {
+  const [showMoreOptions, setShowMoreOptions] = useState(-1);
+
   // eslint-disable-next-line react/display-name
   const Checkbox = React.forwardRef(({ indeterminate, ...rest }, ref) => {
     const defaultRef = React.useRef();
@@ -13,17 +15,15 @@ const SyndicateMembersTable = ({
 
     React.useEffect(() => {
       resolvedRef.current.indeterminate = indeterminate;
-    }, [resolvedRef, indeterminate]);
+    }, [resolvedRef, indeterminate, showMoreOptions]);
 
     return (
-      <>
-        <input
-          type="checkbox"
-          className="rounded bg-gray-102"
-          ref={resolvedRef}
-          {...rest}
-        />
-      </>
+      <input
+        type="checkbox"
+        className="rounded bg-gray-102"
+        ref={resolvedRef}
+        {...rest}
+      />
     );
   });
   // hide Distribution/claimed when syndicate is not distributing
@@ -35,7 +35,7 @@ const SyndicateMembersTable = ({
     headerGroups,
     rows,
     prepareRow,
-    state: { selectedRowIds },
+    state,
   } = useTable(
     {
       columns,
@@ -52,15 +52,12 @@ const SyndicateMembersTable = ({
           id: "selection",
           // eslint-disable-next-line react/display-name
           Header: ({ getToggleAllRowsSelectedProps }) => (
-            <div>
-              <Checkbox {...getToggleAllRowsSelectedProps()} />
-            </div>
+            <Checkbox {...getToggleAllRowsSelectedProps()} />
           ),
           // The cell can use the individual row's getToggleRowSelectedProps method
           // to the render a checkbox
           // eslint-disable-next-line react/display-name
           Cell: function ({ row }) {
-            console.log({ row });
             return <Checkbox {...row.getToggleRowSelectedProps()} />;
           },
         },
@@ -69,7 +66,10 @@ const SyndicateMembersTable = ({
     },
   );
   return (
-    <table {...getTableProps()} className="w-full">
+    <table
+      {...getTableProps()}
+      className="w-full border-b-1 border-gray-nightrider"
+    >
       <thead className="w-full">
         {
           // Loop over the header rows
@@ -109,24 +109,33 @@ const SyndicateMembersTable = ({
           // Loop over the table rows
           rows.map((row, index) => {
             // Prepare the row for display
+
             prepareRow(row);
-            console.log({ row });
             return (
               // Apply the row props
               <tr
                 {...row.getRowProps()}
                 key={index}
                 className="space-y-4 hover:opacity-80 border-b-1 border-gray-nightrider"
+                onMouseEnter={() => setShowMoreOptions(index)}
+                onMouseLeave={() => setShowMoreOptions(-1)}
               >
                 {
                   // Loop over the rows cells
                   row.cells.map((cell, cellIndex) => {
                     // Apply the cell props
+                    // Show more options when row is hovered, otherwise hide them
                     return (
                       <td
                         {...cell.getCellProps()}
                         key={cellIndex}
-                        className={`m-0 font-whyte-light text-white text-xs py-4`}
+                        className={`m-0 font-whyte-light text-white text-xs py-3 ${
+                          showMoreOptions == row.index
+                            ? "opacity-100"
+                            : cellIndex === row.cells.length - 1
+                            ? "opacity-0"
+                            : "opacity-100"
+                        }`}
                       >
                         {
                           // Render the cell contents

@@ -1,4 +1,3 @@
-import Modal, { ModalStyle } from "@/components/modal";
 import {
   setSelectedMemberAddress,
   setShowModifyCapTable,
@@ -40,7 +39,6 @@ const MoreOptionButton = (props: {
   } = props.row;
   const dispatch = useDispatch();
 
-  const [hoveredRow, setHoveredRow] = useState(null);
 
   const [showMore, setShowMore] = useState(false);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
@@ -92,7 +90,7 @@ const MoreOptionButton = (props: {
   return (
     <>
       {showMoreInfoOptions === true && (
-        <div className="flex space-x-4">
+        <div className="flex space-x-4 justify-end p-1">
           <button className="cursor-pointer hover:opacity-70">
             <img src="/images/edit-deposit.svg" alt="edit member deposit" />
           </button>
@@ -110,18 +108,6 @@ const MoreOptionButton = (props: {
           </button>
         </div>
       )}
-
-      <Modal
-        {...{
-          show: showConfirmModal,
-          closeModal: () => setShowConfirmModal(false),
-          modalStyle: ModalStyle.DARK,
-          title: "Are you sure?",
-          showCloseButton: false,
-        }}
-      >
-        <div>test</div>
-      </Modal>
     </>
   );
 };

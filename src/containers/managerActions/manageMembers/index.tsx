@@ -99,18 +99,14 @@ const ManageMembers = (): JSX.Element => {
         Header: "Member",
         accessor: function (row) {
           const { memberAddress } = row;
-          return formatAddress(memberAddress, 4, 4);
+          return formatAddress(memberAddress, 6, 6);
         },
       },
       {
         Header: `Deposit Amount (${syndicate?.depositERC20TokenSymbol})`,
         // eslint-disable-next-line react/display-name
-        accessor: function ({ memberDeposit, depositERC20TokenSymbol }) {
-          return (
-            <p className="">
-              {floatedNumberWithCommas(memberDeposit)} {depositERC20TokenSymbol}
-            </p>
-          );
+        accessor: function ({ memberDeposit }) {
+          return <p className="">{floatedNumberWithCommas(memberDeposit)}</p>;
         },
       },
       {
@@ -229,7 +225,7 @@ const ManageMembers = (): JSX.Element => {
                     ) : syndicateMembersToshow.length ? (
                       <div className="flex flex-col overflow-y-hidden">
                         <div className="flex my-6 px-1 space-x-8 justify-between">
-                          <form>
+                          <form className="w-2/5">
                             <SearchForm
                               {...{
                                 onChangeHandler: filterAddressOnChangeHandler,
@@ -238,7 +234,7 @@ const ManageMembers = (): JSX.Element => {
                               }}
                             />
                           </form>
-                          <button className="flex flex-shrink text-blue-600 justify-center py-1">
+                          <button className="flex flex-shrink text-blue-600 justify-center py-1 hover:opacity-70">
                             <img
                               src={"/images/plus-circle-blue.svg"}
                               alt="icon"
