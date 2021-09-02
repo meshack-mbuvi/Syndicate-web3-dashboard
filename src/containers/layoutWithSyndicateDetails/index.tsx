@@ -37,7 +37,7 @@ const LayoutWithSyndicateDetails = ({ children }): JSX.Element => {
   const { syndicateAddress } = router.query;
 
   const [accountIsManager, setAccountIsManager] = useState<boolean>(false);
-  const showOnboardingIfNeeded = router.pathname.endsWith("deposit");
+  const showOnboardingIfNeeded = router.pathname.endsWith("deposit")
 
   // A manager should not access deposit page but should be redirected
   // to syndicates page
@@ -209,7 +209,7 @@ const LayoutWithSyndicateDetails = ({ children }): JSX.Element => {
     <Layout>
       <Head title="Syndicate" />
       <ErrorBoundary>
-        {showOnboardingIfNeeded && <OnboardingModal />}
+        {showOnboardingIfNeeded && <OnboardingModal/>}
         <div className="w-full">
           {!syndicateFound || !syndicateAddressIsValid ? (
             syndicateEmptyState
