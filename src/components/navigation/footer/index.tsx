@@ -15,7 +15,7 @@ const Footer = ({ extraClasses = "", disclaimerWidth = "w-1/2" }) => {
 
       {/* Title + Links */}
       <div className="flex flex-col md:flex-row md:items-center items-start justify-between md:mb-16">
-      <img className="hidden md:block w-44" src="/images/wordmark.svg"/>
+      <img className="hidden md:block w-44" src="/images/wordmark.svg" alt=""/>
 
         <ul className="font-whyte-light mt-8 md:mt-0">
             <li className="md:inline mb-3 mr-10"><a href="https://www.notion.so/syndicateprotocol/Syndicate-411691f0a88b4e909b46796965ee11c1">About</a></li>

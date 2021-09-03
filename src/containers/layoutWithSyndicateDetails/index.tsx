@@ -247,6 +247,7 @@ const LayoutWithSyndicateDetails = ({ children }): JSX.Element => {
                   <span>Show more details</span>
                 </button>
               </div>
+
               {!isEmpty(syndicate) && <ManageMembers />}
 
               <Footer extraClasses="mt-24 sm:mt-24 md:mt-40 mb-12" />

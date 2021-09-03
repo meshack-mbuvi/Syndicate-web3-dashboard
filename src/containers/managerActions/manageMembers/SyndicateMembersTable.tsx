@@ -4,6 +4,7 @@ import { useRowSelect, useTable } from "react-table";
 interface IIndeterminateInputProps {
   indeterminate?: boolean;
   customClass?: string;
+  checked?: boolean;
 }
 
 const useCombinedRefs = (
