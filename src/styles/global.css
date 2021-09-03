@@ -94,10 +94,9 @@
     div:hover > .label,
     div:hover > .hover-card,
     a:hover > .label,
-    a:hover > .hover-card
-    {
-        visibility: visible;
-        opacity: 1;
+    a:hover > .hover-card {
+      visibility: visible;
+      opacity: 1;
     }
 
     .label {
@@ -195,10 +194,10 @@
   .bottom-triangle-blue::after {
     border-left: 1rem solid transparent;
     border-right: 1rem solid transparent;
-    border-top: 1rem solid #4376FF;
+    border-top: 1rem solid #4376ff;
     left: calc(50% - 1rem);
     top: calc(100% - 0.5rem);
-    content: '';
+    content: "";
     width: 0;
     height: 0;
     position: absolute;
@@ -247,19 +246,16 @@
       padding-bottom: 100%;
     }
 
-
     /* Padding */
 
     .pb-1px {
       padding-bottom: 1px;
     }
 
-
     /* Add a white underline to a div without increasing it's height */
     .b-bottom-1px-shadow {
       box-shadow: 0px 1px 0px 0px #ffffff;
     }
-
 
     /*
       Force content to the left edge of the screen when it's inside a
@@ -303,7 +299,6 @@
       @apply edge-to-edge inset-left;
     }
 
-
     /* Positioning */
 
     .vertically-center {
@@ -324,7 +319,6 @@
     .center {
       @apply mx-auto vertically-center;
     }
-
 
     /* Touch targets */
 
@@ -347,7 +341,6 @@
     .visibility-container:hover .visibility-hover {
       visibility: visible;
     }
-
 
     /* Scrolling */
 
@@ -372,19 +365,23 @@
     }
 
     .fade-r-black {
-      position: relative
+      position: relative;
     }
 
     .fade-r-black:after {
-      content  : "";
-      position : absolute;
-      z-index  : 1;
-      bottom   : 0;
-      right     : 0;
-      pointer-events   : none;
-      background-image : linear-gradient(90deg, rgba(0,0,0,0.00) 0%, #000000 100%);
-      width    : 10%;
-      height   : 100%;
+      content: "";
+      position: absolute;
+      z-index: 1;
+      bottom: 0;
+      right: 0;
+      pointer-events: none;
+      background-image: linear-gradient(
+        90deg,
+        rgba(0, 0, 0, 0) 0%,
+        #000000 100%
+      );
+      width: 10%;
+      height: 100%;
     }
 
     .fade-b-dark-modal {
@@ -688,4 +685,8 @@ select:-webkit-autofill:focus {
 
 .react-datepicker__navigation--previous {
   --tw-rotate: 135deg !important;
+}
+
+tr:hover .checkbox {
+  display: block !important;
 }

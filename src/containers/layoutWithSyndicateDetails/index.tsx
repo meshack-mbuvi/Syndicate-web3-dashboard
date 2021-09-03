@@ -16,7 +16,6 @@ import { syndicateActionConstants } from "src/components/syndicates/shared/Const
 import Head from "src/components/syndicates/shared/HeaderTitle";
 import SyndicateDetails from "src/components/syndicates/syndicateDetails";
 import ManageMembers from "../managerActions/manageMembers";
-
 const LayoutWithSyndicateDetails = ({ children }): JSX.Element => {
   // Retrieve state
   const {
@@ -237,8 +236,16 @@ const LayoutWithSyndicateDetails = ({ children }): JSX.Element => {
                     {children}
                   </div>
                 </div>
-                {/* Right Gutter */}
-                {/* <div className="lg:w-24 w-24 md:w-12 lg:block hidden flex-shrink-0"></div> */}
+              </div>
+              <div className="my-10">
+                <button className="flex text-blue">
+                  <img
+                    src={"/images/eye-open.svg"}
+                    alt="Eye open"
+                    className="flex-inline py-1.5 pr-2"
+                  />
+                  <span>Show more details</span>
+                </button>
               </div>
               {!isEmpty(syndicate) && <ManageMembers />}
 

@@ -9,23 +9,26 @@ const SyndicateMembersTable = ({
   const [showMoreOptions, setShowMoreOptions] = useState(-1);
 
   // eslint-disable-next-line react/display-name
-  const Checkbox = React.forwardRef(({ indeterminate, ...rest }, ref) => {
-    const defaultRef = React.useRef();
-    const resolvedRef = ref || defaultRef;
+  const Checkbox = React.forwardRef(
+    ({ indeterminate, customClass, ...rest }, ref) => {
+      const defaultRef = React.useRef();
+      const resolvedRef = ref || defaultRef;
+      React.useEffect(() => {
+        resolvedRef.current.indeterminate = indeterminate;
+      }, [resolvedRef, indeterminate, showMoreOptions]);
 
-    React.useEffect(() => {
-      resolvedRef.current.indeterminate = indeterminate;
-    }, [resolvedRef, indeterminate, showMoreOptions]);
-
-    return (
-      <input
-        type="checkbox"
-        className="rounded bg-gray-102"
-        ref={resolvedRef}
-        {...rest}
-      />
-    );
-  });
+      return (
+        <input
+          type="checkbox"
+          className={`rounded checkbox bg-gray-102 ${
+            rest?.checked ? "block" : `${customClass}`
+          }`}
+          ref={resolvedRef}
+          {...rest}
+        />
+      );
+    },
+  );
   // hide Distribution/claimed when syndicate is not distributing
   const hiddenColumns = !distributing ? ["Distribution/claimed"] : [];
 
@@ -58,7 +61,14 @@ const SyndicateMembersTable = ({
           // to the render a checkbox
           // eslint-disable-next-line react/display-name
           Cell: function ({ row }) {
-            return <Checkbox {...row.getToggleRowSelectedProps()} />;
+            return (
+              <Checkbox
+                {...{
+                  ...row.getToggleRowSelectedProps(),
+                  customClass: "hidden",
+                }}
+              />
+            );
           },
         },
         ...columns,
@@ -68,7 +78,7 @@ const SyndicateMembersTable = ({
   return (
     <table
       {...getTableProps()}
-      className="w-full border-b-1 border-gray-nightrider"
+      className="w-full border-b-1 mx-1 border-gray-nightrider"
     >
       <thead className="w-full">
         {
