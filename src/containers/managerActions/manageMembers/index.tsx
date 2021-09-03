@@ -11,6 +11,7 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import MoreOptionButton from "./moreOptionButton";
 import SyndicateMembersTable from "./SyndicateMembersTable";
+import PreApproveDepositor from "../preApproveDepositor/new";
 
 /**
  * Shows a modal with members who have deposited into a syndicate.
@@ -35,6 +36,8 @@ const ManageMembers = (): JSX.Element => {
       syndicateDistributionTokens,
     },
   } = useSelector((state: RootState) => state);
+  const [showPreApproveDepositor, setShowPreApproveDepositor] = useState(false);
+
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -83,6 +86,12 @@ const ManageMembers = (): JSX.Element => {
       memberWithdrawalDetails,
     },
   }));
+
+  const showApproveModal = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setShowPreApproveDepositor(true); 
+  }
 
   const columns = React.useMemo(
     () => [
@@ -174,6 +183,7 @@ const ManageMembers = (): JSX.Element => {
     ],
     [],
   );
+  console.log("show approve", showPreApproveDepositor)
 
   return (
     <>
@@ -209,6 +219,10 @@ const ManageMembers = (): JSX.Element => {
                 </Tab>
               </div>
             </Tab.List>
+            {showPreApproveDepositor && 
+                        <PreApproveDepositor
+                          {...{ showPreApproveDepositor, setShowPreApproveDepositor }}
+              />}
             <Tab.Panels className="font-whyte text-blue-rockBlue w-full">
               <Tab.Panel as="div">
                 {loading ? (
@@ -229,16 +243,16 @@ const ManageMembers = (): JSX.Element => {
                               }}
                             />
                           </form>
-                          <button className="flex flex-shrink text-blue-600 justify-center py-1">
+                          <button className="flex flex-shrink text-blue-600 justify-center py-1 hover:opacity-70" onClick={showApproveModal}>
                             <img
                               src={"/images/plus-circle-blue.svg"}
                               alt="icon"
                               className="mr-3 mt-0.5"
                             />
-                            <span>Add members</span>
+                            <span>Add memnnbers</span>
                           </button>
                         </div>
-
+                        
                         <SyndicateMembersTable
                           columns={columns}
                           data={tableData}
@@ -261,7 +275,7 @@ const ManageMembers = (): JSX.Element => {
                           No members have been added to this syndicate’s
                           allowlist yet.
                         </p>
-                        <button className="flex text-blue-600 justify-center py-1">
+                        <button className="flex text-blue-600 justify-center py-1" onClick={showApproveModal}>
                           <img
                             src={"/images/plus-circle-blue.svg"}
                             alt="icon"

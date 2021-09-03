@@ -46,7 +46,7 @@ import ManagerActionCard from "./managerActionCard";
 import ModifyMemberDistributions from "./modifyMemberDistributions";
 import ModifySyndicateCapTable from "./modifySyndicateCapTable";
 import MoreManagerActionCard from "./moreManagerActionCard";
-import PreApproveDepositor from "./preApproveDepositor";
+import PreApproveDepositor from "./preApproveDepositor/new";
 import RejectDepositOrMemberAddress from "./RejectDepositOrMemberAddress";
 import RequestSocialProfile from "./requestSocialProfile";
 

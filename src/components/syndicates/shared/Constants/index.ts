@@ -123,6 +123,8 @@ const approveAddressesWarning =
 const approveAddressesHeadingText =
   "Pre-approve addresses that can deposit to this syndicate. These addresses will be added to this syndicate’s pre-approved list.";
 const textAreaTitle = "Pre-Approve Depositor List";
+const allowlistTextAreaLabel = "Wallet addresses to be added to the allowlist"
+const allowlistBulktext = "We recommend bulk adding wallet addresses to avoid repeated blockchain transactions and gas costs."
 const approvedAddressesLabel = "Approve Address";
 export const separateWithCommas = "(separate with commas)";
 export const buttonText = "Confirm";
@@ -364,6 +366,8 @@ export const managerApproveAddressesConstants = {
   approveAddressesWarning,
   approveAddressesHeadingText,
   textAreaTitle,
+  allowlistTextAreaLabel,
+  allowlistBulktext,
   approvedAddressesLabel,
   separateWithCommas,
   buttonText,
