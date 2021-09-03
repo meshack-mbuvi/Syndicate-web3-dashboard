@@ -23,7 +23,7 @@ export const Portfolio = (props: { syndicates }): JSX.Element => {
             <div className="mr-4">
               <GradientAvatar syndicateAddress={value} />
             </div>
-            <p className="font-whyte-light text-xs">
+            <p>
               {value.slice(0, 5)}...
               {value.slice(value.length - 4, value.length)}
             </p>

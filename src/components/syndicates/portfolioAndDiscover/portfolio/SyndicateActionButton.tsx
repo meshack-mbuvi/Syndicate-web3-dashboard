@@ -36,18 +36,18 @@ const SyndicateActionButton = ({
     // monitors whether syndicate is open to deposits
     if (depositsEnabled && status !== "Operating") {
       buttonText = "Deposit more";
-      buttonStyles = "bg-white text-black";
+      buttonStyles = "primary-CTA";
       link = "deposit";
     }
 
     if (distributing) {
       buttonText = "Withdraws available";
-      buttonStyles = "border border-blue";
+      buttonStyles = "primary-CTA";
       link = "withdraw";
     }
   } else {
     buttonText = "Manage";
-    buttonStyles = "bg-blue text-white";
+    buttonStyles = "secondary-CTA";
     link = "manage";
   }
   return (
@@ -57,8 +57,8 @@ const SyndicateActionButton = ({
       )}/${link}`}
     >
       <div className="flex justify-end cursor-pointer">
-        <a className={`text-xs rounded-full py-3 my-1  ${buttonStyles}`}>
-          <button className="w-40 focus:outline-none">{buttonText}</button>
+        <a className={`my-1 ${buttonStyles}`}>
+          <button className="w-36 focus:outline-none">{buttonText}</button>
         </a>
       </div>
     </Link>

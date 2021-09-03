@@ -47,7 +47,7 @@ const ActiveSyndicatesTable = ({ columns, data }: Props): JSX.Element => {
                   <th
                     key={index}
                     {...column.getHeaderProps(column.getSortByToggleProps())}
-                    className="uppercase text-gray-dim text-xs py-4 table-fixed"
+                    className="text-gray-dim text-sm py-4 table-fixed"
                   >
                     <div className="flex items-center font-normal w-full">
                       <div
@@ -85,7 +85,7 @@ const ActiveSyndicatesTable = ({ columns, data }: Props): JSX.Element => {
             </tr>
           ))}
         </thead>
-        <tbody className="divide-y divide-gray-90" {...getTableBodyProps()}>
+        <tbody className="divide-y divide-gray-steelGrey" {...getTableBodyProps()}>
           {firstPageRows.map((row, index) => {
             prepareRow(row);
             return (
@@ -95,7 +95,7 @@ const ActiveSyndicatesTable = ({ columns, data }: Props): JSX.Element => {
                     <td
                       key={index}
                       {...cell.getCellProps()}
-                      className="m-0 font-whyte-light relative py-4 text-xs cursor-pointer"
+                      className="m-0 pr-4 last:pr-0 relative py-2 cursor-pointer"
                       onClick={() => {
                         // This handles the case when the button in the far right cell
                         // is clicked

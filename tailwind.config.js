@@ -160,6 +160,7 @@ module.exports = {
         },
         green: {
           ...colors.green,
+          DEFAULT: "#30E696",
           screamin: "#80FF75",
           light: "#2FE696",
           dark: "#0E2833",
