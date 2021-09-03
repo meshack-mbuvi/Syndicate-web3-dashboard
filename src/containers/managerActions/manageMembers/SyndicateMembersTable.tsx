@@ -1,6 +1,10 @@
 import React, { useState } from "react";
 import { useRowSelect, useTable } from "react-table";
 
+interface IIndeterminateInputProps {
+  indeterminate?: boolean;
+  customClass?: string;
+}
 const SyndicateMembersTable = ({
   columns,
   data,
@@ -9,26 +13,27 @@ const SyndicateMembersTable = ({
   const [showMoreOptions, setShowMoreOptions] = useState(-1);
 
   // eslint-disable-next-line react/display-name
-  const Checkbox = React.forwardRef(
-    ({ indeterminate, customClass, ...rest }, ref) => {
-      const defaultRef = React.useRef();
-      const resolvedRef = ref || defaultRef;
-      React.useEffect(() => {
-        resolvedRef.current.indeterminate = indeterminate;
-      }, [resolvedRef, indeterminate, showMoreOptions]);
+  const IndeterminateCheckbox = React.forwardRef<
+    HTMLInputElement,
+    IIndeterminateInputProps
+  >(({ indeterminate, customClass, ...rest }, ref) => {
+    const defaultRef = React.useRef();
+    const resolvedRef = ref || defaultRef;
+    React.useEffect(() => {
+      resolvedRef.current.indeterminate = indeterminate;
+    }, [resolvedRef, indeterminate, showMoreOptions]);
 
-      return (
-        <input
-          type="checkbox"
-          className={`rounded checkbox bg-gray-102 ${
-            rest?.checked ? "block" : `${customClass}`
-          }`}
-          ref={resolvedRef}
-          {...rest}
-        />
-      );
-    },
-  );
+    return (
+      <input
+        type="checkbox"
+        className={`rounded checkbox bg-gray-102 ${
+          rest?.checked ? "block" : `${customClass}`
+        }`}
+        ref={resolvedRef}
+        {...rest}
+      />
+    );
+  });
   // hide Distribution/claimed when syndicate is not distributing
   const hiddenColumns = !distributing ? ["Distribution/claimed"] : [];
 
@@ -55,14 +60,14 @@ const SyndicateMembersTable = ({
           id: "selection",
           // eslint-disable-next-line react/display-name
           Header: ({ getToggleAllRowsSelectedProps }) => (
-            <Checkbox {...getToggleAllRowsSelectedProps()} />
+            <IndeterminateCheckbox {...getToggleAllRowsSelectedProps()} />
           ),
           // The cell can use the individual row's getToggleRowSelectedProps method
           // to the render a checkbox
           // eslint-disable-next-line react/display-name
           Cell: function ({ row }) {
             return (
-              <Checkbox
+              <IndeterminateCheckbox
                 {...{
                   ...row.getToggleRowSelectedProps(),
                   customClass: "hidden",
