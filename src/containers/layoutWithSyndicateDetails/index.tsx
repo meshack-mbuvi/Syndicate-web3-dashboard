@@ -238,11 +238,11 @@ const LayoutWithSyndicateDetails = ({ children }): JSX.Element => {
                 </div>
               </div>
               <div className="my-10">
-                <button className="flex text-blue">
+                <button className="flex flex-shrink text-blue-600 justify-center py-1 hover:opacity-80">
                   <img
                     src={"/images/eye-open.svg"}
-                    alt="Eye open"
-                    className="flex-inline py-1.5 pr-2"
+                    alt="icon"
+                    className="mr-3 mt-1.5"
                   />
                   <span>Show more details</span>
                 </button>

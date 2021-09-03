@@ -234,7 +234,7 @@ const ManageMembers = (): JSX.Element => {
                               }}
                             />
                           </form>
-                          <button className="flex flex-shrink text-blue-600 justify-center py-1 hover:opacity-70">
+                          <button className="flex flex-shrink text-blue-600 justify-center py-1 hover:opacity-80">
                             <img
                               src={"/images/plus-circle-blue.svg"}
                               alt="icon"
