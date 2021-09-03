@@ -37,7 +37,7 @@ const LayoutWithSyndicateDetails = ({ children }): JSX.Element => {
   const { syndicateAddress } = router.query;
 
   const [accountIsManager, setAccountIsManager] = useState<boolean>(false);
-  const showOnboardingIfNeeded = router.pathname.endsWith("deposit")
+  const showOnboardingIfNeeded = router.pathname.endsWith("deposit");
 
   // A manager should not access deposit page but should be redirected
   // to syndicates page
@@ -209,7 +209,7 @@ const LayoutWithSyndicateDetails = ({ children }): JSX.Element => {
     <Layout>
       <Head title="Syndicate" />
       <ErrorBoundary>
-        {showOnboardingIfNeeded && <OnboardingModal/>}
+        {showOnboardingIfNeeded && <OnboardingModal />}
         <div className="w-full">
           {!syndicateFound || !syndicateAddressIsValid ? (
             syndicateEmptyState
@@ -237,18 +237,22 @@ const LayoutWithSyndicateDetails = ({ children }): JSX.Element => {
                   </div>
                 </div>
               </div>
-              <div className="my-10">
-                <button className="flex flex-shrink text-blue-600 justify-center py-1 hover:opacity-80">
-                  <img
-                    src={"/images/eye-open.svg"}
-                    alt="icon"
-                    className="mr-3 mt-1.5"
-                  />
-                  <span>Show more details</span>
-                </button>
-              </div>
 
-              {!isEmpty(syndicate) && <ManageMembers />}
+              {showMembers === true && (
+                <div className="my-10">
+                  <button className="flex flex-shrink text-blue-600 justify-center py-1 hover:opacity-80">
+                    <img
+                      src={"/images/eye-open.svg"}
+                      alt="icon"
+                      className="mr-3 mt-1.5"
+                    />
+                    <span>Show more details</span>
+                  </button>
+                </div>
+              )}
+
+              {/* show members only on manage page */}
+              {!isEmpty(syndicate) && showMembers === true && <ManageMembers />}
 
               <Footer extraClasses="mt-24 sm:mt-24 md:mt-40 mb-12" />
             </div>
