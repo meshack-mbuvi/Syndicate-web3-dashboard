@@ -157,7 +157,7 @@ const SyndicateMembersTable = ({
               <tr
                 {...row.getRowProps()}
                 key={index}
-                className="space-y-4 hover:opacity-80 border-b-1 border-gray-nightrider"
+                className="space-y-4 hover:opacity-80 hover:bg-gray-102 border-b-1 border-gray-nightrider"
                 onMouseEnter={() => setShowMoreOptions(index)}
                 onMouseLeave={() => setShowMoreOptions(-1)}
               >
