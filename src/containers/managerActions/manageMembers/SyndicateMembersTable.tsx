@@ -1,10 +1,33 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useRowSelect, useTable } from "react-table";
 
 interface IIndeterminateInputProps {
   indeterminate?: boolean;
   customClass?: string;
 }
+
+const useCombinedRefs = (
+  ...refs: Array<React.Ref<HTMLInputElement> | React.MutableRefObject<null>>
+): React.MutableRefObject<HTMLInputElement | null> => {
+  const targetRef = useRef(null);
+
+  useEffect(() => {
+    refs.forEach(
+      (ref: React.Ref<HTMLInputElement> | React.MutableRefObject<null>) => {
+        if (!ref) return;
+
+        if (typeof ref === "function") {
+          ref(targetRef.current);
+        } else {
+          ref.current = targetRef.current;
+        }
+      },
+    );
+  }, [refs]);
+
+  return targetRef;
+};
+
 const SyndicateMembersTable = ({
   columns,
   data,
@@ -17,19 +40,21 @@ const SyndicateMembersTable = ({
     HTMLInputElement,
     IIndeterminateInputProps
   >(({ indeterminate, customClass, ...rest }, ref) => {
-    const defaultRef = React.useRef();
-    const resolvedRef = ref || defaultRef;
-    React.useEffect(() => {
-      resolvedRef.current.indeterminate = indeterminate;
-    }, [resolvedRef, indeterminate, showMoreOptions]);
+    const defaultRef = useRef(null);
+    const combinedRef = useCombinedRefs(ref, defaultRef);
 
+    useEffect(() => {
+      if (combinedRef?.current) {
+        combinedRef.current.indeterminate = indeterminate ?? false;
+      }
+    }, [combinedRef, indeterminate]);
     return (
       <input
         type="checkbox"
         className={`rounded checkbox bg-gray-102 ${
           rest?.checked ? "block" : `${customClass}`
         }`}
-        ref={resolvedRef}
+        ref={combinedRef}
         {...rest}
       />
     );
