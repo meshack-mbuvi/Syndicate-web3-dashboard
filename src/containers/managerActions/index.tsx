@@ -373,32 +373,7 @@ const ManagerActions = (): JSX.Element => {
             />
           ) : null}
 
-          {/* Member deposit or member address can only be reject/blocked
-          while the syndicate is open
-          */}
-          {syndicate?.open ? (
-            <MoreManagerActionCard
-              icon={
-                <img
-                  src="/images/managerActions/reject_deposits_members.svg"
-                  alt="reject"
-                />
-              }
-              text={"Reject deposit or depositor address"}
-              onClickHandler={handleSetRejectMemberDepositOrAddress}
-            />
-          ) : null}
 
-          <MoreManagerActionCard
-            icon={
-              <img
-                src="/images/managerActions/manage_members.svg"
-                alt="manage"
-              />
-            }
-            text={"Manage members"}
-            onClickHandler={handleSetShowManageMembers}
-          />
           <MoreManagerActionCard
             icon={
               <img src="/images/managerActions/settings.svg" alt="settings" />
@@ -421,8 +396,6 @@ const ManagerActions = (): JSX.Element => {
           />
         ) : modifyCapTable ? (
           <ModifySyndicateCapTable />
-        ) : rejectMemberAddressOrDeposit ? (
-          <RejectDepositOrMemberAddress />
         ) : showChangeSettings ? (
           <ChangeSyndicateSettings
             {...{ showChangeSettings, setShowChangeSettings }}
