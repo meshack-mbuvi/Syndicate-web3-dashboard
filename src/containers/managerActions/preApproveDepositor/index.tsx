@@ -23,6 +23,7 @@ import {
   rejectTransactionText,
   waitTransactionTobeConfirmedText,
 } from "src/components/syndicates/shared/Constants";
+import { Spinner } from "@/components/shared/spinner";
 
 interface Props {
   showPreApproveDepositor: boolean;
@@ -92,7 +93,8 @@ const PreApproveDepositor = (props: Props): JSX.Element => {
     "/images/checkCircle.svg",
   );
   const [showFinalState, setShowFinalState] = useState(false);
-  const [membersArray, setMembers] = useState([])
+  const [membersArray, setMembers] = useState([]);
+  const [addressFile, setAddressFile] = useState(null);
 
   const handleCloseFinalStateModal = async () => {
     setShowFinalState(false);
@@ -304,6 +306,12 @@ const PreApproveDepositor = (props: Props): JSX.Element => {
     separateWithCommas,
   } = managerApproveAddressesConstants;
 
+  const hiddenFileInput = React.useRef(null);
+  const handleUpload = (event) => {
+    const fileUploaded = event.target.files[0];
+    setAddressFile(fileUploaded)
+  };
+
 //   to add lg and md w
   return (
     <>
@@ -340,10 +348,19 @@ const PreApproveDepositor = (props: Props): JSX.Element => {
                 name="approvedAddresses"
                 placeholder="Separate them with either a comma, space, or line break"
               />
-              <div className="rounded border-dashed border border-gray-700 text-gray-400 py-4 px-5 my-8 flex align-center justify-center">
-                <button className="cursor-pointer hover:opacity-70 flex">
+              <div className={`rounded border-dashed border border-gray-700 text-gray-400 py-4 px-5 my-8 flex align-center ${addressFile? "justify-between":"justify-center"}`}>
+                {addressFile? 
+                <>
+                <div><img src="/images/file-icon-white.svg" alt="File icon"/><span className="ml-2.5 text-white">{addressFile.name}</span></div>
+                <span className="cursor-pointer hover:opacity-70"><img src="/images/close-circle.svg" alt="Close Icon" /></span>
+                </>:
+                <>
+                <input type="file" className="hidden" onChange={handleUpload} ref={hiddenFileInput}/>
+                <button className="cursor-pointer hover:opacity-70 flex" onClick={() => hiddenFileInput.current.click()} >
                     <img src="/images/file-upload.svg" alt="Import CSV File" /> <span className="leading-4 ml-2.5">Import CSV file</span>
                 </button>
+                </>
+                }
               </div>
               <div className="rounded-lg bg-blue-navy bg-opacity-10 text-blue-navy py-4 px-5 my-8 leading-4 text-sm">
                   {allowlistBulktext}
