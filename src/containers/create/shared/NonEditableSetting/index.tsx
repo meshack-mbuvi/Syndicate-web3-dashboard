@@ -1,6 +1,13 @@
 import React from "react";
 
-export const NonEditableSetting = (): JSX.Element => {
+interface INonEditableSetting {
+  text?: string;
+}
+
+export const NonEditableSetting = (props: INonEditableSetting): JSX.Element => {
+  const {
+    text = "This setting can’t be changed once the syndicate is created",
+  } = props;
   return (
     <p className="flex text-sm text-gray-3">
       <img
@@ -8,7 +15,7 @@ export const NonEditableSetting = (): JSX.Element => {
         alt="token warning"
         className="mr-2"
       />
-      This setting can’t be changed once the syndicate is created
+      {text}
     </p>
   );
 };

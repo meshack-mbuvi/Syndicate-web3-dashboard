@@ -20,6 +20,7 @@ interface IProps {
   setResetToDefault?: (value: boolean) => void;
   storedValue?: number;
   customError?: string;
+  addOn?: string;
 }
 
 const InputWithPercent: React.FC<IProps> = ({
@@ -37,6 +38,7 @@ const InputWithPercent: React.FC<IProps> = ({
   step = 0.1,
   storedValue,
   customError,
+  addOn,
 }) => {
   const [value, setValue] = useState<string>(
     storedValue ? storedValue.toString() : placeholder ? "" : "0",
@@ -176,13 +178,23 @@ const InputWithPercent: React.FC<IProps> = ({
           ) : (
             ""
           )}
+          {addOn && (
+            <div className="absolute inset-y-0 right-0 pr-3 mt-1 flex items-center pointer-events-none">
+              <span
+                className="font-whyte text-gray-placeholder text-base"
+                id="percentage-addon"
+              >
+                {addOn}
+              </span>
+            </div>
+          )}
         </div>
 
-        {(error || customError) && 
+        {(error || customError) && (
           <p className="text-red-500 text-xs h-8 mt-1 ">
-            {error || customError} 
+            {error || customError}
           </p>
-        }
+        )}
       </div>
     </div>
   );

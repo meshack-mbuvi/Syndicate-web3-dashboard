@@ -56,10 +56,7 @@ export const InputField = (props: {
   return (
     <div className={`flex flex-col justify-center w-full`}>
       <div className="flex justify-between">
-        <label
-          htmlFor={label}
-          className="block text-white"
-        >
+        <label htmlFor={label} className="block text-white">
           {label}
         </label>
         <span className="block text-gray-3 text-sm font-normal">
@@ -79,7 +76,7 @@ export const InputField = (props: {
           }}
           className={`flex w-full min-w-0 mt-2 font-whyte flex-grow dark-input-field ${
             addOn ? "pr-14" : ""
-          }`}
+          } ${disabled ? "cursor-not-allowed" : ""}`}
           {...rest}
           disabled={disabled}
           value={value}

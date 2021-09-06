@@ -86,6 +86,8 @@ type InitialState = {
       syndicateName: string;
       organization: string;
       country: string;
+      syndicateTemplateTitle?: string;
+      setupLegalEntity?: string;
     };
     tokenAndDepositsLimits: {
       numMembersMax: number | string;
@@ -200,6 +202,8 @@ export const initialState: InitialState = {
       syndicateName: "",
       organization: "",
       country: "United States",
+      syndicateTemplateTitle: "",
+      setupLegalEntity: "",
     },
     tokenAndDepositsLimits: {
       numMembersMax: "",

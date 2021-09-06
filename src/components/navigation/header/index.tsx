@@ -39,7 +39,7 @@ const Header: React.FC<props> = ({ backLink = null }) => {
           </div>
         ) : null}
 
-        {router.pathname === "/syndicates/create" ?
+        {router.pathname.includes("/syndicates/create") ?
           <div className="md:flex-1 flex items-center">
             <p className="text-sm sm:text-base text-white leading-7 font-light">
               Create a syndicate

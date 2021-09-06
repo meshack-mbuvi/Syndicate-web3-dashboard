@@ -1,3 +1,4 @@
+import React from "react";
 import Confirmation, {
   ConfirmationInfo,
 } from "@/containers/create/confirmation";
@@ -23,7 +24,9 @@ import TotalAndLimits from "@/containers/create/onChainDetails/totalAndLimits";
 import Transferable from "@/containers/create/onChainDetails/transferable";
 import PlaceHolder from "@/containers/create/placeHolder";
 import Processing from "@/containers/create/processing";
-import React from "react";
+
+// template components
+import TemplateValues from "@/containers/create/syndicateTemplates/templateValues";
 
 export default [
   {
@@ -75,6 +78,27 @@ export default [
         contentInfo: <TransferableInfo />,
       },
     ],
+  },
+  {
+    name: "Confirm details",
+    component: <Confirmation />,
+    contentInfo: <ConfirmationInfo />,
+  },
+  {
+    name: "Processing",
+    component: <Processing />,
+  },
+  {
+    name: "Done",
+    component: <PlaceHolder />,
+  },
+];
+
+// steps to use when a template is used to set up the syndicate
+export const templateSteps = [
+  {
+    name: "Choose a type",
+    component: <TemplateValues />,
   },
   {
     name: "Confirm details",

@@ -157,6 +157,8 @@ module.exports = {
           darkBackground: "#151618",
           darkInput: "#2C2C2F",
           steelGrey: "#3F4147",
+          lightSlate: "#808F9C",
+          spindle: "#B8BDC7"
         },
         green: {
           ...colors.green,

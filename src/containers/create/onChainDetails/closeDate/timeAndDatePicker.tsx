@@ -6,15 +6,143 @@ import { getLocaleObject } from "@/utils/dateUtils";
 import generateTimeIntervals from "@/utils/generateTimeIntervals";
 import ct from "countries-and-timezones";
 import React, { useEffect, useMemo, useState } from "react";
+import { useRouter } from "next/router";
 import DatePicker from "react-datepicker";
 import { useDispatch, useSelector } from "react-redux";
 import ReactSelect, { components, SingleValueProps } from "react-select";
 import { ContentTitle } from "../../shared";
+import { useCreateSyndicateContext } from "@/context/CreateSyndicateContext";
 
 // we get user's locale
 const localeString = new Intl.NumberFormat().resolvedOptions().locale;
 // pass the locale string dateUtils to get locale object
 const locale = getLocaleObject(localeString);
+
+const IndicatorSeparator = (props) => {
+  return <span {...props.innerProps} />;
+};
+
+const SingleValue = ({ children, ...props }) => {
+  const { currentTemplateSubstep } =
+    useCreateSyndicateContext();
+  const router = useRouter();
+  const templateInUse = router.pathname.includes("template") && !currentTemplateSubstep.length;
+  
+  return (
+    <components.SingleValue
+      {...(props as SingleValueProps<{ [key: string]: string }>)}
+    >
+      <div
+        className={`flex ${
+          templateInUse ? "justify-start" : "justify-between"
+        } items-center`}
+      >
+        {templateInUse ? (
+          <span>{children.replaceAll("_", " ").split("/")[1]}</span>
+        ) : (
+          <span>{children.replaceAll("_", " ")}</span>
+        )}
+        {templateInUse ? (
+          <span className="pr-1 text-sm">(UTC {props?.data?.timezone})</span>
+        ) : (
+          <span className="text-gray-49">UTC {props?.data?.timezone}</span>
+        )}
+      </div>
+    </components.SingleValue>
+  );
+};
+
+const Input = (props) => {
+  if (props.isHidden) {
+    return <components.Input {...props} />;
+  }
+  return (
+    <div>
+      <components.Input
+        className="text-white text-sm font-whyte border-none"
+        {...props}
+      />
+    </div>
+  );
+};
+
+const Option = (props) => {
+  // hide UTC data when using templates because the content will be too squeezed.
+  const { currentTemplateSubstep } =
+    useCreateSyndicateContext();
+  const router = useRouter();
+  const templateInUse = router.pathname.includes("template") && !currentTemplateSubstep.length;
+
+  return (
+    <components.Option {...props}>
+      <div className="flex justify-between">
+        <span className="text-sm">{props.children.replaceAll("_", " ")}</span>
+        {!templateInUse && (
+          <span className="text-gray-49 text-sm">
+            UTC {props.data.timezone}
+          </span>
+        )}
+      </div>
+    </components.Option>
+  );
+};
+
+const customStyles = {
+  control: (base) => ({
+    ...base,
+    background: "#000000",
+    borderRadius: "5px",
+    paddingTop: "0.375rem",
+    paddingBottom: "0.375rem",
+    paddingLeft: "0.2rem",
+    border: "1px solid #3D3D3D",
+  }),
+  singleValue: (base) => ({
+    ...base,
+    color: "#ffffff",
+    width: "98%",
+  }),
+  input: (base) => ({
+    ...base,
+    "& input": {
+      fontFamily: "ABC Whyte Regular",
+      "&:focus": {
+        boxShadow: "none",
+        border: "none !important",
+      },
+    },
+  }),
+  menu: (base) => ({
+    ...base,
+    borderRadius: "0.375rem",
+    color: "#fffff",
+    background: "#151618",
+    marginTop: "8px",
+  }),
+  menuList: (base) => ({
+    ...base,
+    padding: "16px",
+    borderRadius: "0.375rem",
+  }),
+  option: (base, state) => ({
+    ...base,
+    paddingTop: "8px",
+    paddingBottom: "8px",
+    paddingLeft: "16px",
+    paddingRight: "16px",
+    background: state.isFocused ? "#2C2C2F" : "#151618",
+    color: state.isFocused ? "white" : "white",
+    borderRadius: "0.375rem",
+    "&:hover": {
+      color: "white",
+      background: "#2C2C2F",
+    },
+  }),
+  dropdownIndicator: (base) => ({
+    ...base,
+    color: "#6b7280",
+  }),
+};
 
 const TimeAndDatePicker: React.FC = () => {
   const {
@@ -73,107 +201,6 @@ const TimeAndDatePicker: React.FC = () => {
       })),
     [timezones],
   );
-
-  const IndicatorSeparator = (props) => {
-    return <span {...props.innerProps} />;
-  };
-
-  const SingleValue = ({ children, ...props }) => {
-    return (
-      <components.SingleValue
-        {...(props as SingleValueProps<{ [key: string]: string }>)}
-      >
-        <div className="flex justify-between">
-          <span>{children.replaceAll("_", " ")}</span>
-          <span className="text-gray-49">UTC {props?.data?.timezone}</span>
-        </div>
-      </components.SingleValue>
-    );
-  };
-
-  const Input = (props) => {
-    if (props.isHidden) {
-      return <components.Input {...props} />;
-    }
-    return (
-      <div>
-        <components.Input
-          className="text-white text-sm font-whyte border-none"
-          {...props}
-        />
-      </div>
-    );
-  };
-
-  const Option = (props) => {
-    return (
-      <components.Option {...props}>
-        <div className="flex justify-between">
-          <span className="text-sm">{props.children.replaceAll("_", " ")}</span>
-          <span className="text-gray-49 text-sm">
-            UTC {props.data.timezone}
-          </span>
-        </div>
-      </components.Option>
-    );
-  };
-
-  const customStyles = {
-    control: (base) => ({
-      ...base,
-      background: "#000000",
-      borderRadius: "5px",
-      paddingTop: "0.375rem",
-      paddingBottom: "0.375rem",
-      paddingLeft: "0.2rem",
-      border: "1px solid #3D3D3D",
-    }),
-    singleValue: (base) => ({
-      ...base,
-      color: "#ffffff",
-      width: "98%",
-    }),
-    input: (base) => ({
-      ...base,
-      "& input": {
-        fontFamily: "ABC Whyte Regular",
-        "&:focus": {
-          boxShadow: "none",
-          border: "none !important",
-        },
-      },
-    }),
-    menu: (base) => ({
-      ...base,
-      borderRadius: "0.375rem",
-      color: "#fffff",
-      background: "#151618",
-      marginTop: "8px",
-    }),
-    menuList: (base) => ({
-      ...base,
-      padding: "16px",
-      borderRadius: "0.375rem",
-    }),
-    option: (base, state) => ({
-      ...base,
-      paddingTop: "8px",
-      paddingBottom: "8px",
-      paddingLeft: "16px",
-      paddingRight: "16px",
-      background: state.isFocused ? "#2C2C2F" : "#151618",
-      color: state.isFocused ? "white" : "white",
-      borderRadius: "0.375rem",
-      "&:hover": {
-        color: "white",
-        background: "#2C2C2F",
-      },
-    }),
-    dropdownIndicator: (base) => ({
-      ...base,
-      color: "#6b7280",
-    }),
-  };
 
   return (
     <div className="flex flex-col">
@@ -239,4 +266,11 @@ const TimeAndDatePicker: React.FC = () => {
   );
 };
 
-export default TimeAndDatePicker;
+export {
+  TimeAndDatePicker,
+  IndicatorSeparator,
+  Input,
+  Option,
+  SingleValue,
+  customStyles,
+};

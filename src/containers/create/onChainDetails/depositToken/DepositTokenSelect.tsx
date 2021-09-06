@@ -42,9 +42,9 @@ const TokenItem = (props: TokenProps) => {
     >
       <div className="flex justify-start items-center">
         <img src={icon} alt={icon} width={20} height={20} />
-        <p className="text-white text-sm sm:text-base ml-3">{name}</p>
+        <p className="text-white text-sm ml-3">{name}</p>
       </div>
-      <p className="text-gray-3 text-sm sm:text-base uppercase">{symbol}</p>
+      <p className="text-gray-3 text-sm uppercase">{symbol}</p>
     </button>
   );
 };
@@ -107,7 +107,7 @@ export const DepositTokenSelect: React.FC<{ toggleTokenSelect: () => void }> = (
               setTokensList([]);
               setNoTokenFound(true);
             }
-          })
+          });
         }
       } else {
         setTokensList([]);
@@ -122,9 +122,7 @@ export const DepositTokenSelect: React.FC<{ toggleTokenSelect: () => void }> = (
     }
   }, [searchTerm, tokensListToUse, web3.utils]);
   return (
-    <div
-      className="flex flex-col p-4 rounded-md bg-gray-darkBackground border-6 border-gray-darkBackground focus:outline-none"
-    >
+    <div className="flex flex-col p-4 rounded-md bg-gray-darkBackground border-6 border-gray-darkBackground focus:outline-none">
       <TokenSearchInput setSearchTerm={setSearchTerm} />
       {searchTerm ? null : (
         <p className="text-xs sm:text-sm text-gray-3 uppercase pl-4 mb-2 tracking-wider">

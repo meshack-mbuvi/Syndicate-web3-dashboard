@@ -21,7 +21,7 @@ import React, {
   useEffect,
 } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import steps from "./steps";
+import steps, { templateSteps } from "./steps";
 
 interface ProcessingInfo {
   transactionsCount: number;
@@ -54,6 +54,21 @@ type CreateSyndicateProviderProps = {
   continueDisabled: boolean;
   setContinueDisabled: Dispatch<SetStateAction<boolean>>;
   resetCreateSyndicateStore: () => void;
+
+  // template stuff
+  templateSteps: any[];
+  currentTemplateStep: number;
+  currentTemplateSubstep: number[];
+  legalEntity: boolean;
+  templateMaxTotalError: string;
+  handleTemplateNext: () => void;
+  handleTemplateBack: () => void;
+  handleTemplateSubstepNext: (step: number, substep: number) => void;
+  resetTemplateSubsteps: () => void;
+  setCurrentTemplateStep: Dispatch<SetStateAction<number>>;
+  setCurrentTemplateSubstep: Dispatch<SetStateAction<number[]>>;
+  setLegalEntity: Dispatch<SetStateAction<boolean>>;
+  setTemplateMaxTotalError: Dispatch<SetStateAction<string>>;
 };
 
 const CreateSyndicateContext = createContext<
@@ -84,6 +99,14 @@ const CreateSyndicateProvider: React.FC<{ children: ReactNode }> = ({
   const [currentTxHash, setCurrentTxHash] = useState("");
 
   const dispatch = useDispatch();
+
+  // syndicate template states
+  const [currentTemplateStep, setCurrentTemplateStep] = useState<number>(0);
+  const [currentTemplateSubstep, setCurrentTemplateSubstep] = useState<
+    number[]
+  >([]);
+  const [legalEntity, setLegalEntity] = useState<boolean>(false);
+  const [templateMaxTotalError, setTemplateMaxTotalError] = useState<string>("")
 
   /**
    * Get create syndicate data from the store
@@ -157,6 +180,10 @@ const CreateSyndicateProvider: React.FC<{ children: ReactNode }> = ({
     setTransactionsCount(1);
     setCurrentTransaction(1);
     setProcessingMessage("");
+
+    // template resets
+    setCurrentTemplateStep(0);
+    resetTemplateSubsteps();
   };
 
   useEffect(() => {
@@ -240,6 +267,11 @@ const CreateSyndicateProvider: React.FC<{ children: ReactNode }> = ({
     setProcessingTitle("Waiting for confirmation");
     setProcessingMessage("Authorize allocation with wallet extension");
     handleNext();
+
+    // template next page
+    handleTemplateNext();
+    // template reset substeps
+    resetTemplateSubsteps();
 
     // get syndicateProtocolProfitSharePercent
     const syndicateProtocolProfitSharePercent = syndicateProfitSharePercent;
@@ -431,6 +463,36 @@ const CreateSyndicateProvider: React.FC<{ children: ReactNode }> = ({
       setContinueDisabled(false);
     }
   };
+
+  // handle next when templates are in use
+  const handleTemplateNext = () => {
+    setCurrentTemplateStep((prev) => prev + 1);
+  };
+
+  // handle template substep next
+  const handleTemplateSubstepNext = (step: number, substep: number) => {
+    setCurrentTemplateSubstep([step, substep]);
+  };
+
+  // handle back when templates are in use
+  const handleTemplateBack = () => {
+    if (currentTemplateStep === 0) {
+      resetCreateSyndicateStore();
+    } else if (currentTemplateStep > 0) {
+      // clear error if one exists
+      if (showErrorMessage) {
+        setShowErrorMessage(false);
+        setErrorMessage("");
+      }
+      setCurrentTemplateStep((prev) => prev - 1);
+      resetTemplateSubsteps();
+    }
+  };
+
+  // handle resetting template substeps
+  const resetTemplateSubsteps = () => {
+    setCurrentTemplateSubstep([]);
+  };
   return (
     <CreateSyndicateContext.Provider
       value={{
@@ -462,6 +524,22 @@ const CreateSyndicateProvider: React.FC<{ children: ReactNode }> = ({
         continueDisabled,
         setContinueDisabled,
         resetCreateSyndicateStore,
+
+        //template stuff
+        templateSteps,
+        currentTemplateStep,
+        currentTemplateSubstep,
+        legalEntity,
+        templateMaxTotalError,
+        handleTemplateNext,
+        handleTemplateBack,
+        handleTemplateSubstepNext,
+        resetTemplateSubsteps,
+        setCurrentTemplateStep,
+        setLegalEntity,
+        setCurrentTemplateSubstep,
+        setTemplateMaxTotalError,
+        
       }}
     >
       {children}

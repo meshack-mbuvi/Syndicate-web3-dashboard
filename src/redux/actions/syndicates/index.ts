@@ -163,7 +163,6 @@ export const getSyndicates =
         type: SET_LOADING,
       });
     } catch (error) {
-      console.log({ error });
       dispatch({
         data: false,
         type: SET_LOADING,

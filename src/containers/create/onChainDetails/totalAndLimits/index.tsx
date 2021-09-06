@@ -35,7 +35,8 @@ const TotalAndLimits: React.FC = () => {
     },
   } = useSelector((state: RootState) => state);
 
-  const { buttonsDisabled, setContinueDisabled } = useCreateSyndicateContext();
+  const { buttonsDisabled, setContinueDisabled, setTemplateMaxTotalError } =
+    useCreateSyndicateContext();
 
   // error messages
   const [maxTotalDepositsError, setMaxTotalDepositsError] = useState("");
@@ -110,6 +111,8 @@ const TotalAndLimits: React.FC = () => {
       setMaxTotalDepositsError(
         "Maximum total deposits must be greater than maximum deposit per member",
       );
+    } else {
+      setTemplateMaxTotalError("");
     }
   }, [depositMemberMin, depositMemberMax, depositTotalMax]);
 
@@ -202,7 +205,6 @@ const TotalAndLimits: React.FC = () => {
   return (
     <div className="flex flex-col">
       <ContentTitle>Total and limits</ContentTitle>
-
 
       <div className="w-full space-y-7 px-1">
         <div className="">

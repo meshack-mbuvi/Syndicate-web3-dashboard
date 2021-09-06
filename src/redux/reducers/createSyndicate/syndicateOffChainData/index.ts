@@ -1,16 +1,12 @@
 import {
   RESET_CREATE_SYNDICATE_STORE,
   SYNDICATE_OFF_CHAIN_TYPES,
+  SYNDICATE_TEMPLATE_TITLE,
 } from "@/redux/actions/types";
 import { initialState } from "../../initialState";
 
-const {
-  SYNDICATE_NAME,
-  COUNTRY,
-  ORGANIZATION,
-  EMAIL,
-  SYNDICATE_TYPE,
-} = SYNDICATE_OFF_CHAIN_TYPES;
+const { SYNDICATE_NAME, COUNTRY, ORGANIZATION, EMAIL, SYNDICATE_TYPE } =
+  SYNDICATE_OFF_CHAIN_TYPES;
 
 type STATE = typeof initialState;
 
@@ -87,6 +83,18 @@ export const syndicateOffChainDataReducer = (
           ...createSyndicate,
           syndicateOffChainData:
             initialState.createSyndicate.syndicateOffChainData,
+        },
+      };
+
+    case SYNDICATE_TEMPLATE_TITLE:
+      return {
+        ...state,
+        createSyndicate: {
+          ...createSyndicate,
+          syndicateOffChainData: {
+            ...createSyndicate.syndicateOffChainData,
+            syndicateTemplateTitle: action.data,
+          },
         },
       };
 

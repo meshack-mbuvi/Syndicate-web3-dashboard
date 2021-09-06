@@ -69,3 +69,27 @@ export const CancelIcon = (props: ICancelIcon) => {
     </svg>
   );
 };
+
+interface IChevronDown {
+  height?: string;
+  width?: string;
+}
+export const ChevronDown = (props: IChevronDown) => {
+  const { height = "h-10", width = "w-10" } = props;
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      className={`${height} ${width} text-gray-placeholder`}
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={2}
+        d="M19 9l-7 7-7-7"
+      />
+    </svg>
+  );
+};

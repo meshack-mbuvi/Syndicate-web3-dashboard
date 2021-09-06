@@ -1,9 +1,12 @@
+import { useRouter } from "next/router";
 import RightPlaceHolder from "@/components/rightPlaceholder";
 import { RootState } from "@/redux/store";
 import { numberWithCommas } from "@/utils/formattedNumbers";
-import React from "react";
+import React, { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { ContentTitle } from "../shared";
+import { NonEditableSetting } from "@/containers/create/shared/NonEditableSetting";
+import { useCreateSyndicateContext } from "@/context/CreateSyndicateContext";
 
 const Confirmation: React.FC = () => {
   const {
@@ -51,13 +54,54 @@ const Confirmation: React.FC = () => {
 
   const allowList = isAllowlistEnabled ? "enabled" : "disabled";
 
+  const {
+    handleTemplateSubstepNext,
+    templateMaxTotalError,
+    setContinueDisabled,
+  } = useCreateSyndicateContext();
+
+  // check if a template is in use
+  const router = useRouter();
+  const { pathname } = router;
+  const templateInUse = pathname.includes("template");
+
+  // hover styles when template is in use
+  // This is to make it more apparent that the fields can be clicked and edited
+  // remove this if it's not desirable.
+  const hoverStyles = templateInUse
+    ? "cursor-pointer hover:bg-gray-9 rounded-lg"
+    : "";
+
+  // disable the continue button if there is a max. total deposits error.
+  // The user overrode the template default for the above value which means
+  // that the max. member deposit needs to be lowered (it's set to unlimited by default)
+  useEffect(() => {
+    if (templateMaxTotalError) {
+      setContinueDisabled(true);
+    }
+  }, [templateInUse, templateMaxTotalError]);
+
   return (
     <div className="flex flex-col font-whyte">
-      <ContentTitle>Confirm everything looks right</ContentTitle>
+      <ContentTitle>
+        <>
+          <span>Confirm everything looks right</span>
+          {templateInUse ? (
+            <span className="block mt-2 text-sm text-gray-spindle">
+              Click any of the details below to edit
+            </span>
+          ) : null}
+        </>
+      </ContentTitle>
 
       <ul className="text-base font-whyte">
-        <li className="pl-0 p-2">
-          <p className="text-gray-dimmer mb-1 font-whyte">Deposit Token</p>
+        <li
+          className={`p-2 ${hoverStyles}`}
+          onClick={() => handleTemplateSubstepNext(1, 0)}
+        >
+          <p className="text-gray-dimmer mb-1 font-whyte">
+            Deposit Token{templateInUse ? "*" : null}
+          </p>
           <div className="flex items-center">
             <img
               src={depositTokenLogo}
@@ -68,7 +112,10 @@ const Confirmation: React.FC = () => {
             <p className="ml-1">{depositTokenName}</p>
           </div>
         </li>
-        <li className="pl-0 p-2">
+        <li
+          className={`p-2 ${hoverStyles}`}
+          onClick={() => handleTemplateSubstepNext(1, 1)}
+        >
           <p className="text-gray-dimmer mb-1">Max total deposits</p>
           <p>
             {depositTotalMax ? numberWithCommas(depositTotalMax) : "Unlimited"}
@@ -76,7 +123,10 @@ const Confirmation: React.FC = () => {
             <span className="uppercase">{depositTokenSymbol}</span>
           </p>
         </li>
-        <li className="pl-0 p-2">
+        <li
+          className={`p-2 ${hoverStyles}`}
+          onClick={() => handleTemplateSubstepNext(1, 1)}
+        >
           <p className="text-gray-dimmer mb-1">Max number of people</p>
           <p>
             {numMembersMax
@@ -86,8 +136,18 @@ const Confirmation: React.FC = () => {
               : "Unlimited"}
           </p>
         </li>
-        <li className="pl-0 p-2">
-          <p className="text-gray-dimmer mb-1">Allowed deposits per person</p>
+        <li
+          className={`p-2 ${hoverStyles}`}
+          onClick={() => handleTemplateSubstepNext(1, 1)}
+        >
+          <p className="text-gray-dimmer mb-1">
+            Allowed deposits per person{" "}
+            {templateInUse && templateMaxTotalError && (
+              <span className="text-red-500 text-sm">
+                ({templateMaxTotalError})
+              </span>
+            )}
+          </p>
           <p>
             {depositMemberMin ? `${numberWithCommas(depositMemberMin)}` : "0"}
             <span> - </span>
@@ -97,29 +157,44 @@ const Confirmation: React.FC = () => {
             <span className="uppercase"> {depositTokenSymbol}</span>
           </p>
         </li>
-        <li className="pl-0 p-2">
+        <li
+          className={`p-2 ${hoverStyles}`}
+          onClick={() => handleTemplateSubstepNext(1, 2)}
+        >
           <p className="text-gray-dimmer mb-1">Close time</p>
           <p>
             {selectedTimeValue} UTC {selectedTimezone.timezone} on{" "}
             {new Date(selectedDate).toLocaleDateString()}
           </p>
         </li>
-        <li className="pl-0 p-2">
+        <li
+          className={`p-2 ${hoverStyles}`}
+          onClick={() => handleTemplateSubstepNext(1, 3)}
+        >
           <p className="text-gray-dimmer mb-1">Expected annual operating fee</p>
           <p>{expectedAnnualOperatingFees}%</p>
         </li>
-        <li className="pl-0 p-2">
+        <li
+          className={`p-2 ${hoverStyles}`}
+          onClick={() => handleTemplateSubstepNext(1, 3)}
+        >
           <p className="text-gray-dimmer mb-1">
             Share of distributions to syndicate lead
           </p>
           <p>{profitShareToSyndicateLead}%</p>
         </li>
-        <li className="pl-0 p-2">
+        <li
+          className={`p-2 ${hoverStyles}`}
+          onClick={() => handleTemplateSubstepNext(1, 3)}
+        >
           <p className="text-gray-dimmer mb-1">Share to Syndicate Protocol</p>
           <p>{syndicateProfitSharePercent}%</p>
         </li>
 
-        <li className="pl-0 p-2 flex flex-row">
+        <li
+          className={`p-2 flex flex-row ${hoverStyles}`}
+          onClick={() => handleTemplateSubstepNext(1, 4)}
+        >
           <div className="mr-4">
             <img
               className="inline h-4"
@@ -129,7 +204,10 @@ const Confirmation: React.FC = () => {
           </div>
           <p>Allowlist {allowList}</p>
         </li>
-        <li className="pl-0 p-2 flex flex-row">
+        <li
+          className={`p-2 flex flex-row ${hoverStyles}`}
+          onClick={() => handleTemplateSubstepNext(1, 5)}
+        >
           <div className="flex self-center opacity-60 mr-4">
             <img
               className="inline h-4"
@@ -139,7 +217,10 @@ const Confirmation: React.FC = () => {
           </div>
           <p>{!modifiable ? "Not modifiable" : "Modifiable"}</p>
         </li>
-        <li className="pl-0 p-2 flex flex-row">
+        <li
+          className={`p-2 flex flex-row ${hoverStyles}`}
+          onClick={() => handleTemplateSubstepNext(1, 6)}
+        >
           <div className="flex self-center opacity-60 mr-4">
             <img
               className="inline h-4"
@@ -154,6 +235,12 @@ const Confirmation: React.FC = () => {
           </p>
         </li>
       </ul>
+
+      {templateInUse ? (
+        <div className="mt-6">
+          <NonEditableSetting text="Note that settings marked with an asterisk (*) can’t be changed once the syndicate is created." />
+        </div>
+      ) : null}
     </div>
   );
 };

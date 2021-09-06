@@ -3,12 +3,22 @@ import React, { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import { NonEditableSetting } from "../../shared";
 import { DepositTokenSelect } from "./DepositTokenSelect";
+import { ChevronDown } from "@/components/shared/Icons";
 interface ITokenSelectInput {
   label: string;
   required?: boolean;
+  showInfoText?: boolean;
+  showNonEditableText?: boolean;
+  templateInUse?: boolean;
 }
 export const TokenSelectInput: React.FC<ITokenSelectInput> = (props) => {
-  const { label, required } = props;
+  const {
+    label,
+    required,
+    showInfoText = true,
+    showNonEditableText = true,
+    templateInUse = false,
+  } = props;
 
   const [showDepositTokens, setShowDepositTokens] = useState(false);
 
@@ -30,28 +40,29 @@ export const TokenSelectInput: React.FC<ITokenSelectInput> = (props) => {
 
   useEffect(() => {
     const onPageClickEvent = (e) => {
-      if (dropdownRef.current !== null && !dropdownRef.current.contains(e.target)) {
+      if (
+        dropdownRef.current !== null &&
+        !dropdownRef.current.contains(e.target)
+      ) {
         setShowDepositTokens(!showDepositTokens);
       }
     };
 
     if (showDepositTokens) {
-      window.addEventListener('click', onPageClickEvent);
+      window.addEventListener("click", onPageClickEvent);
     }
 
     return () => {
-      window.removeEventListener('click', onPageClickEvent);
-    }
+      window.removeEventListener("click", onPageClickEvent);
+    };
   }, [showDepositTokens, setShowDepositTokens]);
 
   return (
     <div>
       <div className="flex justify-between items-center">
-        <label
-          htmlFor="email"
-          className="block text-white"
-        >
+        <label htmlFor="email" className="block text-white">
           {label}
+          {templateInUse ? "*" : null}
         </label>
         {required && (
           <p className="block text-gray-3 text-sm font-normal">Required</p>
@@ -82,12 +93,7 @@ export const TokenSelectInput: React.FC<ITokenSelectInput> = (props) => {
           onClick={toggleTokenSelect}
         />
         <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-          <img
-            src="/images/chevron-down.svg"
-            className="h-5 w-5 text-gray-400"
-            alt="down-arrow"
-            aria-hidden="true"
-          />
+          <ChevronDown width="w-5" height="h-5" />
         </div>
         {showDepositTokens ? (
           <div className="mt-2 w-full absolute z-50">
@@ -96,14 +102,19 @@ export const TokenSelectInput: React.FC<ITokenSelectInput> = (props) => {
         ) : null}
       </div>
 
-      <p className="mt-5 text-sm text-gray-3">
-        Choose any ERC-20 token. For most syndicates, a stablecoin like USDC or
-        DAI is recommended to avoid token volatility impacting your syndicate.
-      </p>
+      {showInfoText ? (
+        <p className="mt-5 text-sm text-gray-3">
+          Choose any ERC-20 token. For most syndicates, a stablecoin like USDC
+          or DAI is recommended to avoid token volatility impacting your
+          syndicate.
+        </p>
+      ) : null}
 
-      <div className="mt-4">
-        <NonEditableSetting />
-      </div>
+      {showNonEditableText ? (
+        <div className="mt-4">
+          <NonEditableSetting />
+        </div>
+      ) : null}
     </div>
   );
 };

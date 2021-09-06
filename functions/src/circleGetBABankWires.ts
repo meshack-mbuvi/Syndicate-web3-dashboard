@@ -7,7 +7,6 @@ const handler = async (event, _) => {
   const { authorization } = event.headers;
   let response;
   const headers = { Authorization: authorization };
-  console.log({ headers });
   if (event.httpMethod !== "GET") {
     return {
       statusCode: 405,

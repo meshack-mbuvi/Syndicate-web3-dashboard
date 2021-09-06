@@ -107,7 +107,7 @@ const Processing: React.FC = () => {
                 </button>
               </div>
             ) : (
-              <div className="mt-6 bg-blue bg-opacity-10 rounded-lg text-center flex flex-col items-center py-6">
+              <div className="mt-6 bg-blue bg-opacity-10 rounded-lg text-center flex flex-col items-center px-4 py-6">
                 <SpinnerWithImage
                   icon={null}
                   height="h-10"
