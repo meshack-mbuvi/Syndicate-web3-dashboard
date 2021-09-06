@@ -299,7 +299,7 @@ const SyndicateDetails = (props: {
           tokenDecimals,
           tokenDistributions,
           selected: false,
-          tokenIcon: getTokenIcon(tokenSymbol),  // set Token Icon
+          tokenIcon: getTokenIcon(tokenSymbol), // set Token Icon
         });
       }
 
@@ -554,7 +554,6 @@ const SyndicateDetails = (props: {
   return (
     <div className="flex flex-col w-full sm:mr-2 lg:mr-6">
       <div className="h-fit-content rounded-custom">
-
         <div className="flex items-center justify-between">
           <div>
             <span className="font-medium text-gray-500 text-sm uppercase tracking-widest pb-3">
@@ -631,14 +630,15 @@ const SyndicateDetails = (props: {
             </div>
           </div>
           <div>
-            {syndicateAddress && 
+            {syndicateAddress && (
               <GradientAvatar
-              syndicateAddress={syndicateAddress}
-              size="w-16 h-16"/>
-            }
+                syndicateAddress={syndicateAddress}
+                size="w-16 h-16"
+              />
+            )}
           </div>
         </div>
-        
+
         <div className="h-fit-content flex w-full justify-start mb-8">
           {syndicateBadge}
         </div>

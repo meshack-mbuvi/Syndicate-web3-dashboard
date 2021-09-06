@@ -39,11 +39,13 @@ const DistributionShare: React.FC = () => {
     },
   } = useSelector((state: RootState) => state);
 
-  var isStoredValueATogglePreset = options.some(
+  const isStoredValueATogglePreset = options.some(
     (option) => option === syndicateProfitSharePercent,
-  )
-  var shouldShowOtherPercentageInput = !isStoredValueATogglePreset && syndicateProfitSharePercent !== undefined
-  const [isOtherPercentageInputVisible, setOtherPercentageInputVisibility] = useState(shouldShowOtherPercentageInput);
+  );
+  const shouldShowOtherPercentageInput =
+    !isStoredValueATogglePreset && syndicateProfitSharePercent !== undefined;
+  const [isOtherPercentageInputVisible, setOtherPercentageInputVisibility] =
+    useState(shouldShowOtherPercentageInput);
 
   useEffect(() => {
     const totalDistributions =
@@ -182,11 +184,16 @@ const DistributionShare: React.FC = () => {
                 <button
                   key={i}
                   onClick={() => {
-                    if (isOtherPercentageInputVisible) {setOtherPercentageInputVisibility(false)}
-                    handleTogglePercentages(option)
+                    if (isOtherPercentageInputVisible) {
+                      setOtherPercentageInputVisibility(false);
+                    }
+                    handleTogglePercentages(option);
                   }}
                   className={classNames(
-                    syndicateProfitSharePercent === option && !isOtherPercentageInputVisible ? "bg-blue" : "",
+                    syndicateProfitSharePercent === option &&
+                      !isOtherPercentageInputVisible
+                      ? "bg-blue"
+                      : "",
                     optionStyles[option],
                     "relative borderLeft bg-clip-padding py-3 bg-origin-padding w-full justify-center focus:outline-none",
                   )}
@@ -197,12 +204,19 @@ const DistributionShare: React.FC = () => {
               ))}
               <button
                 onClick={() => setOtherPercentageInputVisibility(true)}
-                className={`${isOtherPercentageInputVisible && "bg-blue bottom-triangle-blue"} borderLeft py-3 bg-origin-padding bg-clip-padding relative rounded-tr-md rounded-br-md`}
+                className={`${
+                  isOtherPercentageInputVisible &&
+                  "bg-blue bottom-triangle-blue"
+                } borderLeft py-3 bg-origin-padding bg-clip-padding relative rounded-tr-md rounded-br-md`}
               >
                 Other
               </button>
             </div>
-            <div className={`h-12 mt-3 ${isOtherPercentageInputVisible ? "opacity-100" : "opacity-0"} transition-all`}>
+            <div
+              className={`h-12 mt-3 ${
+                isOtherPercentageInputVisible ? "opacity-100" : "opacity-0"
+              } transition-all`}
+            >
               <InputWithPercent
                 name="profitShareToSyndProtocol"
                 placeholder={String(syndicateProfitSharePercent) + "%"}

@@ -15,14 +15,16 @@ export const SearchForm = (props: {
   column?: boolean;
   full?: boolean;
   searchValue: string;
+  memberCount;
 }): JSX.Element => {
   const {
     error,
     onChangeHandler,
     searchValue,
+    memberCount,
+    full,
     disabled = false,
     column = false,
-    full,
   } = props;
 
   return (
@@ -35,24 +37,22 @@ export const SearchForm = (props: {
         {/* input field */}
         <div className="flex justify-start">
           <div className="relative w-full">
-            <div className="relative flex items-stretch flex-grow focus-within:z-10">
-              <div
-                className={`absolute inset-y-0 cursor-pointer left-0 pl-3 flex items-center`}
-              >
-                <img
-                  src="/images/search.svg"
-                  alt="Search icon"
-                  className={`${disabled ? "opacity-40" : ""}`}
-                />
-              </div>
+            <div className="relative bg-gray-8 flex items-stretch pl-0.5 flex-grow focus-within:z-10">
+              <img
+                src="/images/search.svg"
+                alt="Search icon"
+                className={`absolute inset-y-0 cursor-pointer pt-2.5 left-1 flex items-center ${
+                  disabled ? "opacity-40" : ""
+                }`}
+              />
               <input
                 type="text"
                 name="search"
                 id="search"
-                className={`focus:ring-indigo-500 font-whyte focus:border-indigo-500 block w-full rounded-none rounded-md pl-10 sm:text-sm border-gray-300 ${
+                className={`focus:ring-indigo-500 bg-black border-0 text-white font-whyte focus:border-indigo-500 block w-full rounded-md pl-6 sm:text-sm ${
                   disabled ? "opacity-40" : ""
                 }`}
-                placeholder="Search member address"
+                placeholder={`Search ${memberCount} members`}
                 onChange={onChangeHandler}
                 value={searchValue}
                 disabled={disabled ? true : false}

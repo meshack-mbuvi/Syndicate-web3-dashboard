@@ -373,32 +373,7 @@ const ManagerActions = (): JSX.Element => {
             />
           ) : null}
 
-          {/* Member deposit or member address can only be reject/blocked
-          while the syndicate is open
-          */}
-          {syndicate?.open ? (
-            <MoreManagerActionCard
-              icon={
-                <img
-                  src="/images/managerActions/reject_deposits_members.svg"
-                  alt="reject"
-                />
-              }
-              text={"Reject deposit or depositor address"}
-              onClickHandler={handleSetRejectMemberDepositOrAddress}
-            />
-          ) : null}
 
-          <MoreManagerActionCard
-            icon={
-              <img
-                src="/images/managerActions/manage_members.svg"
-                alt="manage"
-              />
-            }
-            text={"Manage members"}
-            onClickHandler={handleSetShowManageMembers}
-          />
           <MoreManagerActionCard
             icon={
               <img src="/images/managerActions/settings.svg" alt="settings" />
@@ -421,8 +396,6 @@ const ManagerActions = (): JSX.Element => {
           />
         ) : modifyCapTable ? (
           <ModifySyndicateCapTable />
-        ) : rejectMemberAddressOrDeposit ? (
-          <RejectDepositOrMemberAddress />
         ) : showChangeSettings ? (
           <ChangeSyndicateSettings
             {...{ showChangeSettings, setShowChangeSettings }}
@@ -440,18 +413,15 @@ const ManagerActions = (): JSX.Element => {
           />
         ) : modifyMemberDistribution ? (
           <ModifyMemberDistributions />
-        ) : (
-          showManageMembers === true && (
-            <ManageMembers {...{ showManageMembers, setShowManageMembers }} />
-          )
-        )}
+        ) : null
+        }
       </div>
       {/* Confirm whether manager wants to close syndicate */}
 
       <StateModal show={showConfirmCloseSyndicate}>
         <>
           <div className="flex flex-col justify-center m-auto mb-4">
-            <p className="text-sm text-center mx-8 my-2 font-medium text-center leading-6 text-lg">
+            <p className="text-sm mx-8 my-2 font-medium text-center leading-6 text-lg">
               Please confirm that you want to close this syndicate.
             </p>
             <p className="text-sm text-center mx-8 mt-2 opacity-60">
