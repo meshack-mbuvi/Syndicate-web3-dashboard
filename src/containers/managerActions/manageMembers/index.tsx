@@ -37,14 +37,6 @@ const ManageMembers = (): JSX.Element => {
   } = useSelector((state: RootState) => state);
   const dispatch = useDispatch();
 
-  // const handleCloseModal = () => {
-  //   setShowManageMembers(false);
-  //   dispatch({
-  //     type: SET_SYNDICATE_MANAGE_MEMBERS,
-  //     data: [],
-  //   });
-  // };
-
   useEffect(() => {
     if (syndicateMembers?.length && syndicateDistributionTokens?.length) {
       const memberAddresses = syndicateMembers.map(
@@ -196,7 +188,7 @@ const ManageMembers = (): JSX.Element => {
                 }
               >
                 Allowlist
-                {` (${syndicateMembersToshow.length})`}
+                {` (${syndicateMembers.length})`}
               </Tab>
               <Tab
                 className={({ selected }) =>
@@ -216,38 +208,34 @@ const ManageMembers = (): JSX.Element => {
             <Tab.Panel as="div">
               {loading ? (
                 <Spinner />
-              ) : syndicateMembersToshow.length ? (
-                <div className="rounded-md overflow-y-hidden">
-                  {loading ? (
-                    <Spinner />
-                  ) : syndicateMembersToshow.length ? (
-                    <div className="flex flex-col overflow-y-hidden">
-                      <div className="flex my-8 px-1 space-x-8 justify-between">
-                        <form className="w-2/5 py-6">
-                          <SearchForm
-                            {...{
-                              onChangeHandler: filterAddressOnChangeHandler,
-                              searchValue: filteredAddress,
-                              memberCount: syndicateMembersToshow.length,
-                            }}
-                          />
-                        </form>
-                        <button className="flex flex-shrink text-blue-600 justify-center py-1 hover:opacity-80">
-                          <img
-                            src={"/images/plus-circle-blue.svg"}
-                            alt="icon"
-                            className="mr-3 mt-0.5"
-                          />
-                          <span>Add members</span>
-                        </button>
-                      </div>
-
-                      <SyndicateMembersTable
-                        columns={columns}
-                        data={tableData}
-                        distributing={syndicate.distributing}
+              ) : syndicateMembers.length ? (
+                <div className="flex flex-col overflow-y-hidden">
+                  <div className="flex mt-4 space-x-8 justify-between">
+                    <form className="w-2/5">
+                      <SearchForm
+                        {...{
+                          onChangeHandler: filterAddressOnChangeHandler,
+                          searchValue: filteredAddress,
+                          memberCount: syndicateMembersToshow.length,
+                        }}
                       />
-                    </div>
+                    </form>
+                    <button className="flex flex-shrink text-blue-600 justify-center py-1 hover:opacity-80">
+                      <img
+                        src={"/images/plus-circle-blue.svg"}
+                        alt="icon"
+                        className="mr-3 mt-0.5"
+                      />
+                      <span>Add members</span>
+                    </button>
+                  </div>
+
+                  {syndicateMembersToshow.length ? (
+                    <SyndicateMembersTable
+                      columns={columns}
+                      data={tableData}
+                      distributing={syndicate.distributing}
+                    />
                   ) : (
                     <div className="flex justify-center text-gray-500">
                       {filteredAddress.trim()
