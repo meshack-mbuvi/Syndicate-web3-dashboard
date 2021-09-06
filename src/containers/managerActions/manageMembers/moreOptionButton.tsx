@@ -10,6 +10,7 @@ import {
 } from "@/redux/actions/manageMembers";
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
+import ReactTooltip from "react-tooltip";
 
 /**
  * Shows the following member details:
@@ -38,7 +39,6 @@ const MoreOptionButton = (props: {
     memberAddressAllowed,
   } = props.row;
   const dispatch = useDispatch();
-
 
   const [showMore, setShowMore] = useState(false);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
@@ -91,21 +91,42 @@ const MoreOptionButton = (props: {
     <>
       {showMoreInfoOptions === true && (
         <div className="flex space-x-4 justify-end p-1">
-          <button className="cursor-pointer hover:opacity-70">
+          <button
+            className="cursor-pointer hover:opacity-70"
+            data-tip
+            data-for="edit-member-deposit"
+          >
             <img src="/images/edit-deposit.svg" alt="edit member deposit" />
+            <ReactTooltip id="edit-member-deposit" place="top" effect="solid">
+              Modify on-chain deposit amount
+            </ReactTooltip>
           </button>
+
           <button
             className="cursor-pointer hover:opacity-70"
             onClick={() => confirmReturnMemberDeposit()}
+            data-tip
+            data-for="return-member-deposit"
           >
             <img
               src="/images/return-deposits.svg"
               alt="Return member deposit"
             />
+            <ReactTooltip id="return-member-deposit" place="top" effect="solid">
+              Return all deposits
+            </ReactTooltip>
           </button>
-          <button className="cursor-pointer hover:opacity-70">
+
+          <button
+            className="cursor-pointer hover:opacity-70"
+            data-tip
+            data-for="block-address"
+          >
             <img src="/images/block-address.svg" alt="Block address" />
           </button>
+          <ReactTooltip id="block-address" place="top" effect="solid">
+            Block address
+          </ReactTooltip>
         </div>
       )}
     </>
