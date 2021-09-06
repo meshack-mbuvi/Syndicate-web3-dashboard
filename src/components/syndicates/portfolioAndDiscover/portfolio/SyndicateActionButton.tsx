@@ -28,7 +28,7 @@ const SyndicateActionButton = ({
    * “View” in any other case.
    */
   let buttonText = "View";
-  let buttonStyles = "border";
+  let buttonStyles = "primary-CTA";
   let link = "details";
 
   // check that wallet owner is not the creater of the syndicate
