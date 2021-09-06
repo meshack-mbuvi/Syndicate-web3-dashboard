@@ -1,5 +1,5 @@
 import { TextArea } from "@/components/inputs";
-import Modal from "@/components/modal";
+import Modal , { ModalStyle } from "@/components/modal";
 import { PendingStateModal } from "@/components/shared/transactionStates";
 import ConfirmStateModal from "@/components/shared/transactionStates/confirm";
 import FinalStateModal from "@/components/shared/transactionStates/final";
@@ -11,7 +11,6 @@ import {
   isZeroAddress,
   removeNewLinesAndWhitespace,
   removeSubstring,
-  sanitizeInputString,
 } from "@/utils/validators";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
@@ -93,6 +92,7 @@ const PreApproveDepositor = (props: Props): JSX.Element => {
     "/images/checkCircle.svg",
   );
   const [showFinalState, setShowFinalState] = useState(false);
+  const [membersArray, setMembers] = useState([])
 
   const handleCloseFinalStateModal = async () => {
     setShowFinalState(false);
@@ -175,25 +175,13 @@ const PreApproveDepositor = (props: Props): JSX.Element => {
     }
 
     try {
-      // convert comma separated string into array
-      const splitArr = sanitizeInputString(memberAddresses).split(",");
 
-      // get last element in array
-      const lastElement = splitArr[splitArr.length - 1];
-
-      // create new copy of split array
-      const newSplitArr = [...splitArr];
-
-      // check if empty string
-      if (!lastElement) {
-        newSplitArr.pop();
-      }
 
       // perform validations outside the class functions
       if (
         !(syndicateAddress as string).trim() ||
         !account.trim() ||
-        !newSplitArr.length
+        !membersArray.length
       ) {
         return;
       }
@@ -201,7 +189,7 @@ const PreApproveDepositor = (props: Props): JSX.Element => {
       setShowWalletConfirmationModal(true);
       await syndicateContracts.AllowlistLogicContract.managerAllowAddresses(
         syndicateAddress,
-        newSplitArr,
+        membersArray,
         account,
         () => {
           // Call back passed after transaction goes through
@@ -220,20 +208,11 @@ const PreApproveDepositor = (props: Props): JSX.Element => {
     }
   };
 
-  const validateAddressArr = (arr: string[]) => {
-    // get last element in array
-    const lastElement = arr[arr.length - 1];
+  const validateAddressArr = (arr:string[]) => {
+    // // get last element in array
 
-    // create new copy of split array
-    const newSplitArr = [...arr];
-
-    // check if empty string
-    if (!lastElement) {
-      newSplitArr.pop();
-    }
-
-    newSplitArr && newSplitArr.length
-      ? newSplitArr.map(async (value: string) => {
+    arr && arr.length
+      ? arr.map(async (value: string) => {
           if (web3.utils.isAddress(value)) {
             setLpAddressesError("");
             setShowMemberAddressError(false);
@@ -249,7 +228,7 @@ const PreApproveDepositor = (props: Props): JSX.Element => {
             }
 
             // handle duplicates
-            if (countOccurrences(newSplitArr, value) > 1) {
+            if (countOccurrences(arr, value) > 1) {
               setShowMemberAddressError(true);
               setLpAddressesError(
                 `${value} has already been added (duplicate).`,
@@ -262,10 +241,6 @@ const PreApproveDepositor = (props: Props): JSX.Element => {
         })
       : setLpAddressesError("");
   };
-
-  useEffect(() => {
-    validateAddressArr(removeNewLinesAndWhitespace(memberAddresses).split(","));
-  }, [memberAddresses]);
 
   const handleKeyUp = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (event.code === "Comma") {
@@ -292,7 +267,7 @@ const PreApproveDepositor = (props: Props): JSX.Element => {
       const newStr = remainingStr + newSplitArr.join();
       return newStr.split(",").join(",\n");
     });
-    validateAddressArr(removeNewLinesAndWhitespace(memberAddresses).split(","));
+    validateAddressArr(membersArray);
     event.preventDefault();
   };
 
@@ -303,38 +278,53 @@ const PreApproveDepositor = (props: Props): JSX.Element => {
     setSelectedTextIndexes([selectionStart, selectionEnd]);
   };
 
+  useEffect(() => {
+    const arr = removeNewLinesAndWhitespace(memberAddresses).split(",")
+    // get last element in array
+    const lastElement = arr[arr.length - 1];
+
+    // create new copy of split array
+    const newSplitArr = [...arr];
+
+    // check if empty string
+    if (!lastElement) {
+    newSplitArr.pop();
+    }
+    setMembers(newSplitArr)
+    validateAddressArr(newSplitArr);
+}, [memberAddresses])
+
   const {
     approveAddressesWarning,
     approveAddressesHeadingText,
     textAreaTitle,
+    allowlistTextAreaLabel,
+    allowlistBulktext,
     approvedAddressesLabel,
     separateWithCommas,
-    buttonText,
   } = managerApproveAddressesConstants;
 
+//   to add lg and md w
   return (
     <>
       <Modal
         {...{
-          title: "Pre-Approve Depositors",
+          title: "Add Members",
           show: showPreApproveDepositor,
-          closeModal: () => setShowPreApproveDepositor(false),
-          customWidth: "sm:w-2/3",
+          customWidth: "w-2/5",
+          modalStyle: ModalStyle.DARK,
+          titleMarginClassName: "mb-4 mt-2",
+          showCloseButton: false,
         }}
       >
-        <div className="mt-5 sm:mt-6 flex justify-center">
+        <div className="flex justify-center">
           <div>
-            <div className="text-gray-400 py-6">
+            <div className="text-gray-400 mb-6">
               {approveAddressesHeadingText}
             </div>
-            <div className="font-bold">{approveAddressesWarning}</div>
-            <div className="text-blue font-semibold	pt-10 pl-4">
-              {textAreaTitle}
-            </div>
-            <div className="border-2 rounded-lg	bg-gray-99 mt-2 flex px-10 py-6">
-              <div className="w-2/5 mt-6">
-                <p>{approvedAddressesLabel}:</p>
-                <p>{separateWithCommas}</p>
+            <div className="border-t border-gray-24 w-full">
+              <div className="mt-6 mb-2">
+                {allowlistTextAreaLabel}
               </div>
               <TextArea
                 {...{
@@ -345,20 +335,38 @@ const PreApproveDepositor = (props: Props): JSX.Element => {
                   onKeyUp: handleKeyUp,
                   onSelect: handleOnSelectText,
                   error: lpAddressesError,
+                  classoverride: "bg-gray-4 text-white border-inactive",
                 }}
                 name="approvedAddresses"
-                placeholder=""
+                placeholder="Separate them with either a comma, space, or line break"
               />
+              <div className="rounded border-dashed border border-gray-700 text-gray-400 py-4 px-5 my-8 flex align-center justify-center">
+                <button className="cursor-pointer hover:opacity-70 flex">
+                    <img src="/images/file-upload.svg" alt="Import CSV File" /> <span className="leading-4 ml-2.5">Import CSV file</span>
+                </button>
+              </div>
+              <div className="rounded-lg bg-blue-navy bg-opacity-10 text-blue-navy py-4 px-5 my-8 leading-4 text-sm">
+                  {allowlistBulktext}
+              </div>
             </div>
-            <div className="flex items-center	justify-center pt-6">
+            <div className="flex items-center justify-end gap-4">
+            <button
+                className={`text-gray-400 h-14 ${
+                  showMemberAddressError ? "cursor-not-allowed" : null
+                }`}
+                onClick={() => setShowPreApproveDepositor(false)}
+                disabled={showMemberAddressError}
+              >
+                Cancel
+              </button>
               <button
-                className={`bg-blue text-white	py-2 px-10 rounded-full ${
+                className={`${membersArray.length? "bg-white text-black":"bg-gray-700 text-gray-400"} h-14 py-2 px-10 rounded-lg ${
                   showMemberAddressError ? "cursor-not-allowed" : null
                 }`}
                 onClick={handleSubmit}
                 disabled={showMemberAddressError}
               >
-                {buttonText}
+                {membersArray.length? `Add ${membersArray.length} Addresses`: "Add Addresses"}
               </button>
             </div>
           </div>

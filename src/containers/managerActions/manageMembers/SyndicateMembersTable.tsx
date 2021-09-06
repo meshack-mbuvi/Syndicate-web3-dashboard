@@ -53,8 +53,10 @@ const SyndicateMembersTable = ({
       <>
         <input
           type="checkbox"
-          className="rounded bg-gray-102"
-          ref={resolvedRef}
+          className={`rounded checkbox bg-gray-102 ${
+            rest?.checked ? "block" : `${customClass}`
+          }`}
+          ref={combinedRef}
           {...rest}
         />
       </>
@@ -92,8 +94,14 @@ const SyndicateMembersTable = ({
           // to the render a checkbox
           // eslint-disable-next-line react/display-name
           Cell: function ({ row }) {
-            console.log({ row });
-            return <Checkbox {...row.getToggleRowSelectedProps()} />;
+            return (
+              <IndeterminateCheckbox
+                {...{
+                  ...row.getToggleRowSelectedProps(),
+                  customClass: "hidden",
+                }}
+              />
+            );
           },
         },
         ...columns,

@@ -11,7 +11,7 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import MoreOptionButton from "./moreOptionButton";
 import SyndicateMembersTable from "./SyndicateMembersTable";
-import PreApproveDepositor from "../preApproveDepositor/new";
+import PreApproveDepositor from "../preApproveDepositor";
 
 /**
  * Shows a modal with members who have deposited into a syndicate.

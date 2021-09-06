@@ -41,12 +41,11 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import ChangeSyndicateSettings from "./changeSyndicateSettings";
 import DistributeToken from "./distributeToken";
-import ManageMembers from "./manageMembers";
 import ManagerActionCard from "./managerActionCard";
 import ModifyMemberDistributions from "./modifyMemberDistributions";
 import ModifySyndicateCapTable from "./modifySyndicateCapTable";
 import MoreManagerActionCard from "./moreManagerActionCard";
-import PreApproveDepositor from "./preApproveDepositor/new";
+import PreApproveDepositor from "./preApproveDepositor";
 import RejectDepositOrMemberAddress from "./RejectDepositOrMemberAddress";
 import RequestSocialProfile from "./requestSocialProfile";
 
