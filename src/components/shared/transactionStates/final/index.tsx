@@ -11,6 +11,8 @@ interface Props {
   feedbackText?: string;
   headerText?: string;
   address?: string;
+  modalStyle?: string;
+  buttonClasses?: string;
 }
 
 /**
@@ -25,11 +27,13 @@ export const FinalStateModal = (props: Props) => {
     feedbackText,
     headerText,
     address,
+    modalStyle,
+    buttonClasses,
     ...rest
   } = props;
 
   return (
-    <TransactionStateModal {...rest}>
+    <TransactionStateModal {...rest} modalStyle={modalStyle} >
       <>
         <div className="flex flex-col justify-center m-auto mb-4">
           <div className="flex justify-center my-5">
@@ -58,7 +62,8 @@ export const FinalStateModal = (props: Props) => {
 
           <div className="flex justify-center my-5">
             <Button
-              customClasses="bg-blue w-40 p-2 rounded-full"
+              customClasses={buttonClasses? buttonClasses: "bg-blue w-40 p-2 rounded-full"}
+              textColor={buttonClasses}
               onClick={() => handleCloseModal()}
             >
               {buttonText}

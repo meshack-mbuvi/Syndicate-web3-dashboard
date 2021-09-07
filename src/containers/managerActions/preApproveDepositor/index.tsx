@@ -5,6 +5,7 @@ import ConfirmStateModal from "@/components/shared/transactionStates/confirm";
 import FinalStateModal from "@/components/shared/transactionStates/final";
 import { getMetamaskError } from "@/helpers";
 import { showWalletModal } from "@/redux/actions";
+import { setNewMemberAddresses } from "@/redux/actions/manageMembers"
 import { RootState } from "@/redux/store";
 import countOccurrences from "@/utils/countOccurrence";
 import {
@@ -16,14 +17,10 @@ import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  confirmingTransaction,
   confirmPreApproveAddressesText,
   managerApproveAddressesConstants,
   preApproveMoreAddress,
-  rejectTransactionText,
-  waitTransactionTobeConfirmedText,
 } from "src/components/syndicates/shared/Constants";
-import { Spinner } from "@/components/shared/spinner";
 
 interface Props {
   showPreApproveDepositor: boolean;
@@ -93,7 +90,7 @@ const PreApproveDepositor = (props: Props): JSX.Element => {
     "/images/checkCircle.svg",
   );
   const [showFinalState, setShowFinalState] = useState(false);
-  const [membersArray, setMembers] = useState([]);
+  const [membersArray, setMembersArray] = useState([]);
   const [addressFile, setAddressFile] = useState(null);
 
   const handleCloseFinalStateModal = async () => {
@@ -150,6 +147,25 @@ const PreApproveDepositor = (props: Props): JSX.Element => {
   };
 
   /**
+   *  @param {string[]} members 
+   * @param {boolean memberAllowed}
+   * @returns 
+   */
+  const addNewMemberAddress = (members:string[], memberAllowed?: boolean) => {
+    const newMembers = members.map((address: string) => {
+      return {
+        memberAddress: address,
+        memberDeposit: "0",
+        memberClaimedDistribution: "0",
+        allowlistEnabled: true,
+        memberAddressAllowed: memberAllowed,
+        memberStake: "0.0"
+      }
+    })
+    dispatch(setNewMemberAddresses(newMembers))
+  }
+
+  /**
    * send data to set distributions for a syndicate
    * @param {object} data contains amount, syndicateAddress and distribution
    * token address
@@ -187,8 +203,9 @@ const PreApproveDepositor = (props: Props): JSX.Element => {
       ) {
         return;
       }
-
+    
       setShowWalletConfirmationModal(true);
+      addNewMemberAddress(membersArray, false)
       await syndicateContracts.AllowlistLogicContract.managerAllowAddresses(
         syndicateAddress,
         membersArray,
@@ -196,16 +213,14 @@ const PreApproveDepositor = (props: Props): JSX.Element => {
         () => {
           // Call back passed after transaction goes through
           setShowWalletConfirmationModal(false);
+          setShowPreApproveDepositor(false)
           setSubmitting(true);
         },
       );
 
-      setShowFinalState(true);
-      setFinalStateHeaderText("Addresses Successfully Pre-Approved");
-      setFinalStateFeedback(preApproveMoreAddress);
-      setFinalStateIcon("/images/checkCircle.svg");
-      setFinalButtonText("Done");
+      addNewMemberAddress(membersArray, true)
     } catch (error) {
+      addNewMemberAddress([],false)
       handleError(error);
     }
   };
@@ -280,6 +295,11 @@ const PreApproveDepositor = (props: Props): JSX.Element => {
     setSelectedTextIndexes([selectionStart, selectionEnd]);
   };
 
+  const closeModal = () =>{
+    setShowPreApproveDepositor(false)
+    addNewMemberAddress([])
+  }
+
   useEffect(() => {
     const arr = removeNewLinesAndWhitespace(memberAddresses).split(",")
     // get last element in array
@@ -292,18 +312,14 @@ const PreApproveDepositor = (props: Props): JSX.Element => {
     if (!lastElement) {
     newSplitArr.pop();
     }
-    setMembers(newSplitArr)
+    setMembersArray(newSplitArr)
     validateAddressArr(newSplitArr);
 }, [memberAddresses])
 
   const {
-    approveAddressesWarning,
     approveAddressesHeadingText,
-    textAreaTitle,
     allowlistTextAreaLabel,
     allowlistBulktext,
-    approvedAddressesLabel,
-    separateWithCommas,
   } = managerApproveAddressesConstants;
 
   const hiddenFileInput = React.useRef(null);
@@ -351,7 +367,7 @@ const PreApproveDepositor = (props: Props): JSX.Element => {
               <div className={`rounded border-dashed border border-gray-700 text-gray-400 py-4 px-5 my-8 flex align-center ${addressFile? "justify-between":"justify-center"}`}>
                 {addressFile? 
                 <>
-                <div><img src="/images/file-icon-white.svg" alt="File icon"/><span className="ml-2.5 text-white">{addressFile.name}</span></div>
+                <div className="flex"><img src="/images/file-icon-white.svg" alt="File icon"/><span className="ml-2.5 text-white">{addressFile.name}</span></div>
                 <span className="cursor-pointer hover:opacity-70"><img src="/images/close-circle.svg" alt="Close Icon" /></span>
                 </>:
                 <>
@@ -371,7 +387,7 @@ const PreApproveDepositor = (props: Props): JSX.Element => {
                 className={`text-gray-400 h-14 ${
                   showMemberAddressError ? "cursor-not-allowed" : null
                 }`}
-                onClick={() => setShowPreApproveDepositor(false)}
+                onClick={closeModal}
                 disabled={showMemberAddressError}
               >
                 Cancel
@@ -390,32 +406,20 @@ const PreApproveDepositor = (props: Props): JSX.Element => {
         </div>
       </Modal>
       {/* Tell user to confirm transaction on their wallet */}
-      <ConfirmStateModal show={showWalletConfirmationModal}>
-        <div className="flex flex-col justify-centers m-auto mb-4">
+      <ConfirmStateModal
+        show={showWalletConfirmationModal}
+        spinnerHeight="h-16" spinnerWidth="w-16"
+        modalStyle={ModalStyle.DARK}
+        width="w-2/5"
+      >
+        <div className="flex justify-centers m-auto mb-4">
           <p className="text-sm text-center mx-8 opacity-60">
             {confirmPreApproveAddressesText}
           </p>
-          <p className="text-sm text-center mx-8 mt-2 opacity-60">
-            {rejectTransactionText}
-          </p>
         </div>
       </ConfirmStateModal>
-      {/* Loading modal */}
-      <PendingStateModal
-        {...{
-          show: submitting,
-        }}
-      >
-        <div className="modal-header mb-4 font-medium text-center leading-8 text-2xl">
-          {confirmingTransaction}
-        </div>
-        <div className="flex flex-col justify-center m-auto mb-4">
-          <p className="text-sm text-center mx-8 opacity-60">
-            {waitTransactionTobeConfirmedText}
-          </p>
-        </div>
-      </PendingStateModal>
-      <FinalStateModal
+  
+      {/* <FinalStateModal
         show={showFinalState}
         handleCloseModal={async () => await handleCloseFinalStateModal()}
         icon={finalStateIcon}
@@ -423,7 +427,9 @@ const PreApproveDepositor = (props: Props): JSX.Element => {
         feedbackText={finalStateFeedback}
         headerText={finalStateHeaderText}
         address={syndicateAddress.toString()}
-      />
+        modalStyle={ModalStyle.DARK}
+        buttonClasses="w-40 p-2 bg-white text-black"
+      /> */}
     </>
   );
 };

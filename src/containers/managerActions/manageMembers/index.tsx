@@ -29,7 +29,8 @@ const ManageMembers = (): JSX.Element => {
   const {
     syndicatesReducer: { syndicate },
     manageMembersDetailsReducer: {
-      syndicateManageMembers: { syndicateMembers, loading },
+      syndicateManageMembers: { syndicateMembers, loading},
+      syndicateNewMembers: { newSyndicateMembers },
     },
     syndicateMemberDetailsReducer: {
       memberWithdrawalDetails,
@@ -63,7 +64,6 @@ const ManageMembers = (): JSX.Element => {
     }
   }, [syndicate]);
 
-  let syndicateMembersToshow = syndicateMembers;
   const [filteredAddress, setFilteredAddress] = useState("");
   const filterAddressOnChangeHandler = (event) => {
     event.preventDefault();
@@ -71,21 +71,50 @@ const ManageMembers = (): JSX.Element => {
     setFilteredAddress(value.trim());
   };
 
-  if (filteredAddress.trim()) {
-    // search any text
-    const regex = new RegExp(`${filteredAddress}`);
-    syndicateMembersToshow = syndicateMembers.filter((member) =>
-      regex.test(member.memberAddress),
-    );
+  const getTableData = () => {
+    const res = syndicateMembersToshow.map((memberData) => ({
+      ...{
+        ...memberData,
+        ...syndicate,
+        memberWithdrawalDetails,
+      },
+    }));
+    return res
   }
 
-  const tableData = syndicateMembersToshow.map((memberData) => ({
-    ...{
-      ...memberData,
-      ...syndicate,
-      memberWithdrawalDetails,
-    },
-  }));
+  const [syndicateMembersToshow, setSynMembersToShow] = useState(syndicateMembers)
+  const [tableData, setTableData] = useState(getTableData())
+ 
+  const generateTableData = () => {
+    const allMembers = syndicateMembers.concat(newSyndicateMembers)
+ 
+    if (filteredAddress.trim()) {
+      // search any text
+      const regex = new RegExp(`${filteredAddress}`);
+      const  filteredMembers = allMembers.filter((member) =>
+        regex.test(member.memberAddress),
+      );
+      setSynMembersToShow(filteredMembers)
+    } else {
+      setSynMembersToShow(allMembers)
+    }
+  }
+
+  useEffect(() => {
+    generateTableData()
+  }, [newSyndicateMembers])
+
+  useEffect(() => {
+    const tableDetails = getTableData()
+    setTableData(tableDetails)
+   
+  }, [syndicateMembersToshow])
+  // console.log("to SHOW**")
+  // console.table(syndicateMembersToshow)
+  // console.log("T data**")
+  // console.table(tableData)
+  
+  
 
   const showApproveModal = (e) => {
     e.preventDefault();
@@ -177,16 +206,24 @@ const ManageMembers = (): JSX.Element => {
       {
         Header: " ",
         accessor: function moreOptions(row) {
-          return <MoreOptionButton {...{ row }} />;
+          const {memberAddressAllowed, allowlistEnabled} = row
+          if((memberAddressAllowed && allowlistEnabled) || !allowlistEnabled){
+            return <MoreOptionButton {...{ row }} />;
+          }
+          return (
+          <span className="flex align-center">
+            <Spinner height="h-4" width="w-4" margin="my-0" /> 
+            <span className="ml-2 text-gray-400 leading-6">Adding Member</span>
+          </span>
+          )
         },
       },
     ],
     [],
   );
-  console.log("show approve", showPreApproveDepositor)
+  
 
   return (
-    <>
       <div className="w-full rounded-md h-full lg:h-96  my-4">
         <div className="w-full h-10 px-2 py-4 sm:px-0">
           <Tab.Group defaultIndex={0}>
@@ -243,14 +280,20 @@ const ManageMembers = (): JSX.Element => {
                               }}
                             />
                           </form>
+                          {
+                          syndicate?.depositsEnabled && syndicate?.allowlistEnabled ?
+                          (
                           <button className="flex flex-shrink text-blue-600 justify-center py-1 hover:opacity-70" onClick={showApproveModal}>
                             <img
                               src={"/images/plus-circle-blue.svg"}
                               alt="icon"
                               className="mr-3 mt-0.5"
                             />
-                            <span>Add memnnbers</span>
+                            <span>Add members</span>
                           </button>
+                          )
+                          : null
+                          }
                         </div>
                         
                         <SyndicateMembersTable
@@ -275,14 +318,20 @@ const ManageMembers = (): JSX.Element => {
                           No members have been added to this syndicate’s
                           allowlist yet.
                         </p>
-                        <button className="flex text-blue-600 justify-center py-1" onClick={showApproveModal}>
-                          <img
-                            src={"/images/plus-circle-blue.svg"}
-                            alt="icon"
-                            className="mr-3 mt-0.5"
-                          />
-                          <span>Add members</span>
-                        </button>
+                        {
+                          syndicate?.depositsEnabled && syndicate?.allowlistEnabled ?
+                          (
+                          <button className="flex text-blue-600 justify-center py-1" onClick={showApproveModal}>
+                            <img
+                              src={"/images/plus-circle-blue.svg"}
+                              alt="icon"
+                              className="mr-3 mt-0.5"
+                            />
+                            <span>Add members</span>
+                          </button>
+                          )
+                          : null
+                        }
                       </div>
                     </div>
                   </div>
@@ -301,7 +350,6 @@ const ManageMembers = (): JSX.Element => {
           </Tab.Group>
         </div>
       </div>
-    </>
   );
 };
 

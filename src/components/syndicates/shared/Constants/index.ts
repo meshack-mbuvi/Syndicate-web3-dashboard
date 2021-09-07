@@ -401,7 +401,7 @@ export const web3InstantiationErrorText =
 export const confirmModifySyndicateCapTableText =
   "Confirm you want to alter deposits for the member address.";
 export const confirmPreApproveAddressesText =
-  "Confirm the transaction on your wallet if you want to approve new depositors.";
+  "Please confirm the transaction in your wallet.";
 export const preApproveMoreAddress =
   "You can pre-approve more member addresses at any time whilst the syndicate is open.";
 // modify member distributions constants

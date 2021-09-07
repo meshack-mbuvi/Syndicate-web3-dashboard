@@ -50,7 +50,6 @@ const SyndicateMembersTable = ({
       }
     }, [combinedRef, indeterminate]);
     return (
-      <>
         <input
           type="checkbox"
           className={`rounded checkbox bg-gray-102 ${
@@ -59,7 +58,6 @@ const SyndicateMembersTable = ({
           ref={combinedRef}
           {...rest}
         />
-      </>
     );
   });
   // hide Distribution/claimed when syndicate is not distributing
@@ -150,7 +148,6 @@ const SyndicateMembersTable = ({
           rows.map((row, index) => {
             // Prepare the row for display
             prepareRow(row);
-            console.log({ row });
             return (
               // Apply the row props
               <tr

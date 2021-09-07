@@ -120,6 +120,9 @@ type InitialState = {
       selectedTimezone?: Record<"label" | "value" | "timezone", string>;
     };
   };
+  syndicateNewMembers: {
+    newSyndicateMembers: []
+  },
 };
 
 // Get timezone default values on create syndicate
@@ -186,6 +189,9 @@ export const initialState: InitialState = {
   syndicateManageMembers: {
     syndicateMembers: [],
     loading: false,
+  },
+  syndicateNewMembers: {
+    newSyndicateMembers: []
   },
   manageActions: {
     modifyMemberDistribution: false,

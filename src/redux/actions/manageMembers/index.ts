@@ -4,6 +4,7 @@ import {
   SET_SYNDICATE_MANAGE_MEMBERS,
   SHOW_REJECT_MEMBER_ADDRESS_ONLY,
   SHOW_REJECT_MEMBER_DEPOSIT_ONLY,
+  SET_NEW_MEMBER_ADDRESSES,
 } from "../types";
 
 /**
@@ -19,6 +20,25 @@ export const setLoadingSyndicateDepositorDetails =
     return dispatch({
       type: SET_LOADING_SYNDICATE_DEPOSITOR_DETAILS,
       data: loading,
+    });
+  };
+
+/** Set new member addresses efore allowlist action completes 
+ * 
+ * @param memberAdresses
+ * @returns
+*/
+export const setNewMemberAddresses =
+  (newMemberAddresses: Array<{memberAddress: string,
+    memberDeposit: string
+    memberClaimedDistribution: string,
+    memberStake: string,
+    allowlistEnabled: boolean,
+    memberAddressAllowed: boolean}>) =>
+  (dispatch): void => {
+    return dispatch({
+      type: SET_NEW_MEMBER_ADDRESSES,
+      data: newMemberAddresses,
     });
   };
 
