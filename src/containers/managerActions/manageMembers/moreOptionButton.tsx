@@ -49,10 +49,13 @@ const MoreOptionButton = (props: {
           </button>
 
           <button
-            className="cursor-pointer hover:opacity-70"
+            className={`cursor-pointer ${
+              memberDeposit == "0" ? "opacity-40" : "hover:opacity-70"
+            }`}
             onClick={() => confirmReturnMemberDeposit()}
             data-tip
             data-for="return-member-deposit"
+            disabled={memberDeposit == "0" ? true : false}
           >
             <img
               src="/images/return-deposits.svg"
