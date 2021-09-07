@@ -104,7 +104,7 @@ export class SyndicateDepositLogic extends BaseLogicContract {
     syndicateAddress: string,
     memberAddresses: Array<string>,
     manager: string,
-    setShowWalletConfirmationModal: (arg0: boolean) => void,
+    setShowWalletConfirmationModal: (status: boolean) => void,
     setSubmitting: (arg0: boolean) => void,
   ): Promise<void> {
     if (!syndicateAddress.trim() || !memberAddresses.length) return;
@@ -116,7 +116,8 @@ export class SyndicateDepositLogic extends BaseLogicContract {
         setShowWalletConfirmationModal(false);
         setSubmitting(true);
       })
-      .on("receipt", async () => {
+      .on("receipt", async (receipt) => {
+        console.log({ receipt });
         setSubmitting(false);
       });
   }

@@ -1,14 +1,6 @@
-import {
-  setSelectedMemberAddress,
-  setShowModifyCapTable,
-  setShowModifyMemberDistributions,
-  setShowRejectDepositOrMemberAddress,
-} from "@/redux/actions/manageActions";
-import {
-  setShowRejectAddressOnly,
-  setShowRejectDepositOnly,
-} from "@/redux/actions/manageMembers";
-import React, { useState } from "react";
+import { setSelectedMemberAddress } from "@/redux/actions/manageActions";
+import { showConfirmReturnDeposit } from "@/redux/actions/manageMembers";
+import React from "react";
 import { useDispatch } from "react-redux";
 import ReactTooltip from "react-tooltip";
 
@@ -30,62 +22,15 @@ const MoreOptionButton = (props: {
     memberAddressAllowed;
   };
 }): JSX.Element => {
-  const {
-    distributing,
-    memberAddress,
-    memberDeposit,
-    modifiable,
-    open,
-    memberAddressAllowed,
-  } = props.row;
+  const { distributing, memberAddress, memberDeposit, modifiable, open } =
+    props.row;
   const dispatch = useDispatch();
-
-
-  const [showMore, setShowMore] = useState(false);
-  const [showConfirmModal, setShowConfirmModal] = useState(false);
 
   const showMoreInfoOptions = open || (distributing && modifiable);
 
-  const toggleShowMore = () => setShowMore(!showMore);
-
-  const handleSetShowModifyMemberDistributions = (show: boolean) => {
-    dispatch(setSelectedMemberAddress(memberAddress));
-    dispatch(setShowModifyMemberDistributions(show));
-  };
-
-  /**
-   * Sets controller variable for modifySyndicateCapTable modal to true and
-   * selected member address to the address of the clicked row.
-   * @param event
-   */
-  const handleSetShoModifySyndicateCapTable = (event) => {
-    event.preventDefault();
-    dispatch(setSelectedMemberAddress(memberAddress));
-    dispatch(setShowModifyCapTable(true));
-  };
-
-  const handleSetRejectMemberDeposit = (event) => {
-    event.preventDefault();
-    // show only reject address option on the modal
-    dispatch(setShowRejectDepositOnly(true));
-    dispatch(setShowRejectAddressOnly(false));
-
-    dispatch(setSelectedMemberAddress(memberAddress));
-    dispatch(setShowRejectDepositOrMemberAddress(true));
-  };
-
-  const handleSetRejectMemberAddress = (event) => {
-    event.preventDefault();
-    // show only reject address option on the modal
-    dispatch(setShowRejectAddressOnly(true));
-    dispatch(setShowRejectDepositOnly(false));
-
-    dispatch(setSelectedMemberAddress(memberAddress));
-    dispatch(setShowRejectDepositOrMemberAddress(true));
-  };
-
   const confirmReturnMemberDeposit = () => {
-    setShowConfirmModal(true);
+    dispatch(showConfirmReturnDeposit(true));
+    dispatch(setSelectedMemberAddress([memberAddress]));
   };
 
   return (

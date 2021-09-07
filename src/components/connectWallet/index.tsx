@@ -149,7 +149,7 @@ export const ConnectWallet = (props: { web3; showWalletModal }) => {
       return (
         <div className="flex justify-center items-center m-auto mb-3">
           <button
-            className={`w-full p-4 rounded-lg flex items-center justify-between border border-gray-102 hover:border-gray-3 focus:outline-none focus:border-gray-3 focus:border-1 bg-gradient-to-r ${gradientColor} `}
+            className={`w-full p-4 rounded-lg flex items-center justify-between border border-gray-blackRussian hover:border-gray-3 focus:outline-none focus:border-gray-3 focus:border-1 bg-gradient-to-r ${gradientColor} `}
             onClick={() => providerToActivate()}
           >
             <span className="text-white text-sm sm:text-base">{name}</span>

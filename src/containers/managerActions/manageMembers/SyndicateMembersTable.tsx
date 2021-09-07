@@ -52,14 +52,14 @@ const SyndicateMembersTable = ({
       }
     }, [combinedRef, indeterminate]);
     return (
-        <input
-          type="checkbox"
-          className={`rounded checkbox bg-gray-102 ${
-            rest?.checked ? "block" : `${customClass}`
-          }`}
-          ref={combinedRef}
-          {...rest}
-        />
+      <input
+        type="checkbox"
+        className={`rounded checkbox bg-gray-blackRussian border flex ${
+          rest?.checked ? "block" : `${customClass ? customClass : ""}`
+        }`}
+        ref={combinedRef}
+        {...rest}
+      />
     );
   });
   // hide Distribution/claimed when syndicate is not distributing
@@ -111,7 +111,8 @@ const SyndicateMembersTable = ({
   return (
     <table 
       {...getTableProps()}
-      className="w-full border-b-1 mx-1 border-gray-nightrider">
+      className="w-full border-b-1 px-1 border-gray-nightrider"
+    >
       <thead className="w-full">
         {
           // Loop over the header rows
@@ -129,7 +130,7 @@ const SyndicateMembersTable = ({
                   <th
                     {...column.getHeaderProps()}
                     key={index}
-                    className="rounded-md py-2 text-left"
+                    className="rounded-md pl-0.5 py-2 text-left"
                   >
                     {
                       // Render the header
@@ -158,10 +159,8 @@ const SyndicateMembersTable = ({
               <tr
                 {...row.getRowProps()}
                 key={index}
-                className="space-y-4 hover:opacity-80 hover:bg-gray-102 border-b-1 border-gray-nightrider"
-                onMouseEnter={() => {
-                  setShowMoreOptions(index)}
-                }
+                className="space-y-4 hover:opacity-80 hover:bg-gray-blackRussian border-b-1 border-gray-nightrider"
+                onMouseEnter={() => setShowMoreOptions(index)}
                 onMouseLeave={() => setShowMoreOptions(-1)}
               >
                 {
@@ -174,7 +173,7 @@ const SyndicateMembersTable = ({
                       <td
                         {...cell.getCellProps()}
                         key={cellIndex}
-                        className={`m-0 font-whyte-light text-white text-xs py-3 ${
+                        className={`m-0 font-whyte-light text-white text-xs pl-0.5 py-2 ${
                           showMoreOptions == row.index
                             ? "opacity-100"
                             : cellIndex === row.cells.length - 1 && !showAddingMember

@@ -1,17 +1,28 @@
 import { SearchForm } from "@/components/inputs/searchForm";
+import Modal, { ModalStyle } from "@/components/modal";
 import { Spinner } from "@/components/shared/spinner";
-import { getSyndicateDepostorData } from "@/redux/actions/manageMembers";
+import { getMetamaskError } from "@/helpers";
+import { checkAccountAllowance } from "@/helpers/approveAllowance";
+import {
+  getSyndicateDepostorData,
+  setReturningMemberDeposit,
+  showConfirmReturnDeposit,
+} from "@/redux/actions/manageMembers";
 import { updateMemberWithdrawalDetails } from "@/redux/actions/syndicateMemberDetails/memberWithdrawalsInfo";
 import { RootState } from "@/redux/store";
+import { getWeiAmount } from "@/utils/conversions";
 import { formatAddress } from "@/utils/formatAddress";
 import { floatedNumberWithCommas } from "@/utils/formattedNumbers";
 import { Tab } from "@headlessui/react";
 import _ from "lodash";
+import Image from "next/image";
+import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import MoreOptionButton from "./moreOptionButton";
-import SyndicateMembersTable from "./SyndicateMembersTable";
 import PreApproveDepositor from "../preApproveDepositor";
+import MoreOptionButton from "./moreOptionButton";
+import { handleSubmitReturnDeposits } from "./sharedLogicFunctions";
+import SyndicateMembersTable from "./SyndicateMembersTable";
 
 /**
  * Shows a modal with members who have deposited into a syndicate.
@@ -28,19 +39,34 @@ const ManageMembers = (): JSX.Element => {
   // retrieve state variables
   const {
     syndicatesReducer: { syndicate },
+    web3Reducer: {
+      web3: { account },
+    },
     manageMembersDetailsReducer: {
-      syndicateManageMembers: { syndicateMembers, loading},
-      syndicateNewMembers: { newSyndicateMembers },
+      syndicateManageMembers: {
+        syndicateMembers,
+        confirmReturnDeposit,
+        memberAddresses,
+        totalAmountToReturn,
+      },
     },
     syndicateMemberDetailsReducer: {
       memberWithdrawalDetails,
       syndicateDistributionTokens,
     },
+    initializeContractsReducer: { syndicateContracts },
   } = useSelector((state: RootState) => state);
   const [showPreApproveDepositor, setShowPreApproveDepositor] = useState(false);
-  const [addingMember, setAddingMember] = useState(false)
+  const [addingMember, setAddingMember] = useState(false);
 
   const dispatch = useDispatch();
+  const [showConfirmationModal, setShowConfirmationModal] = useState(false);
+  const [showErrorModal, setShowErrorModal] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [errorTitleMessage, setErrorTitleMessage] = useState("");
+
+  const router = useRouter();
+  const { syndicateAddress } = router.query;
 
   useEffect(() => {
     if (syndicateMembers?.length && syndicateDistributionTokens?.length) {
@@ -66,6 +92,7 @@ const ManageMembers = (): JSX.Element => {
   }, [syndicate]);
 
   const [filteredAddress, setFilteredAddress] = useState("");
+
   const filterAddressOnChangeHandler = (event) => {
     event.preventDefault();
     const { value } = event.target;
@@ -80,42 +107,42 @@ const ManageMembers = (): JSX.Element => {
         memberWithdrawalDetails,
       },
     }));
-    return res
-  }
+    return res;
+  };
 
-  const [syndicateMembersToshow, setSynMembersToShow] = useState(syndicateMembers)
-  const [tableData, setTableData] = useState(getTableData())
- 
+  const [syndicateMembersToshow, setSynMembersToShow] =
+    useState(syndicateMembers);
+  const [tableData, setTableData] = useState(getTableData());
+
   const generateTableData = () => {
-    const allMembers = syndicateMembers.concat(newSyndicateMembers)
- 
+    const allMembers = syndicateMembers.concat(newSyndicateMembers);
+
     if (filteredAddress.trim()) {
       // search any text
       const regex = new RegExp(`${filteredAddress}`);
-      const  filteredMembers = allMembers.filter((member) =>
+      const filteredMembers = allMembers.filter((member) =>
         regex.test(member.memberAddress),
       );
-      setSynMembersToShow(filteredMembers)
+      setSynMembersToShow(filteredMembers);
     } else {
-      setSynMembersToShow(allMembers)
+      setSynMembersToShow(allMembers);
     }
-  }
+  };
 
   useEffect(() => {
-    generateTableData()
-  }, [newSyndicateMembers])
+    generateTableData();
+  }, [newSyndicateMembers]);
 
   useEffect(() => {
-    const tableDetails = getTableData()
-    setTableData(tableDetails)
-   
-  }, [syndicateMembersToshow])
+    const tableDetails = getTableData();
+    setTableData(tableDetails);
+  }, [syndicateMembersToshow]);
 
   const showApproveModal = (e) => {
     e.preventDefault();
     e.stopPropagation();
-    setShowPreApproveDepositor(true); 
-  }
+    setShowPreApproveDepositor(true);
+  };
 
   const columns = React.useMemo(
     () => [
@@ -129,12 +156,15 @@ const ManageMembers = (): JSX.Element => {
       {
         Header: `Deposit Amount (${syndicate?.depositERC20TokenSymbol})`,
         // eslint-disable-next-line react/display-name
-        accessor: function ({ memberDeposit, depositERC20TokenSymbol }) {
-          return (
-            <p className="">
-              {floatedNumberWithCommas(memberDeposit)} {depositERC20TokenSymbol}
-            </p>
-          );
+        accessor: function ({ memberDeposit, returningDeposit }) {
+          if (returningDeposit)
+            return (
+              <p className="flex opacity-70">
+                <Spinner height="h-4" width="w-4" />
+                <span className="ml-2 text-gray-gray4">Returning deposit</span>
+              </p>
+            );
+          return <p className="">{floatedNumberWithCommas(memberDeposit)}</p>;
         },
       },
       {
@@ -201,14 +231,16 @@ const ManageMembers = (): JSX.Element => {
       {
         Header: " ",
         accessor: function moreOptions(row) {
-          const {memberAddressAllowed, allowlistEnabled} = row
-          if(!memberAddressAllowed && allowlistEnabled && addingMember) {
+          const { memberAddressAllowed, allowlistEnabled } = row;
+          if (!memberAddressAllowed && allowlistEnabled && addingMember) {
             return (
               <span className="flex items-center">
-                <Spinner height="h-4" width="w-4" margin="my-0" /> 
-                <span className="ml-2 text-gray-400 leading-6">Adding Member</span>
+                <Spinner height="h-4" width="w-4" margin="my-0" />
+                <span className="ml-2 text-gray-400 leading-6">
+                  Adding Member
+                </span>
               </span>
-              )
+            );
           }
           return <MoreOptionButton {...{ row }} />;
         },
@@ -217,8 +249,84 @@ const ManageMembers = (): JSX.Element => {
     [],
   );
 
+  const showWalletConfirmationModal = (status: boolean) => {
+    setShowConfirmationModal(status);
+  };
 
-return (
+  const handleReturnDeposits = async () => {
+    // check whether there is sufficient allowance before continuing
+    const allowance = await checkAccountAllowance(
+      syndicate.depositERC20Address,
+      syndicate.managerCurrent,
+      syndicateContracts.DepositLogicContract._address,
+    );
+    const allowanceInWei = parseInt(
+      getWeiAmount(allowance, syndicate.tokenDecimals, false),
+      10,
+    );
+
+    if (allowanceInWei === 0 || allowanceInWei < totalAmountToReturn) {
+      // hide confirm modal
+      dispatch(showConfirmReturnDeposit(false));
+
+      // show error message here
+      setErrorMessage(
+        `Please set an allowance equal to or greater than ${totalAmountToReturn} and try again.`,
+      );
+      setErrorTitleMessage("Insufficient allowance set.");
+      setShowErrorModal(true);
+      return;
+    }
+
+    setShowConfirmationModal(true);
+    dispatch(showConfirmReturnDeposit(false));
+    try {
+      await handleSubmitReturnDeposits(
+        syndicateContracts,
+        syndicateAddress.toString(),
+        memberAddresses,
+        account,
+        showWalletConfirmationModal,
+        (status: boolean) =>
+          dispatch(
+            setReturningMemberDeposit({
+              memberAddresses,
+              returningDeposit: status,
+            }),
+          ),
+      );
+    } catch ({ code }) {
+      dispatch(
+        setReturningMemberDeposit({
+          memberAddresses,
+          returningDeposit: false,
+        }),
+      );
+      setShowConfirmationModal(false);
+      // show error message here
+      const errorMessage = getMetamaskError(code, "Deposit refund");
+      if (code == 4001) {
+        setErrorMessage("You have cancelled the transaction.");
+      } else {
+        setErrorMessage(errorMessage);
+      }
+
+      setShowErrorModal(true);
+    }
+  };
+
+  const handleCancelReturnDeposit = () => {
+    dispatch(showConfirmReturnDeposit(false));
+    dispatch(setSelectedMemberAddress([], 0));
+  };
+
+  const closeErrorModal = () => {
+    setErrorMessage("");
+    setErrorTitleMessage("");
+    setShowErrorModal(false);
+  };
+
+  return (
     <div className="w-full rounded-md h-full my-4">
       <div className="w-full px-2 py-4 sm:px-0">
         <Tab.Group defaultIndex={0}>
@@ -251,17 +359,18 @@ return (
               </Tab>
             </div>
           </Tab.List>
-          {
-            showPreApproveDepositor?
+          {showPreApproveDepositor ? (
             <PreApproveDepositor
-              {...{ showPreApproveDepositor, setShowPreApproveDepositor, setAddingMember}}
-          />: null
-          }
+              {...{
+                showPreApproveDepositor,
+                setShowPreApproveDepositor,
+                setAddingMember,
+              }}
+            />
+          ) : null}
           <Tab.Panels className="font-whyte text-blue-rockBlue w-full">
             <Tab.Panel as="div">
-              {loading ? (
-                <Spinner />
-              ) : syndicateMembers.length ? (
+              {syndicateMembers.length ? (
                 <div className="flex flex-col overflow-y-hidden">
                   <div className="flex mt-4 space-x-8 justify-between">
                     <form className="w-2/5">
@@ -273,20 +382,20 @@ return (
                         }}
                       />
                     </form>
-                    {
-                      syndicate?.depositsEnabled && syndicate?.allowlistEnabled ?
-                      (
-                      <button className="flex flex-shrink text-blue-600 justify-center py-1 hover:opacity-70" onClick={showApproveModal}>
-                      <img
+                    {syndicate?.depositsEnabled &&
+                    syndicate?.allowlistEnabled ? (
+                      <button
+                        className="flex flex-shrink text-blue-600 justify-center py-1 hover:opacity-70"
+                        onClick={showApproveModal}
+                      >
+                        <img
                           src={"/images/plus-circle-blue.svg"}
                           alt="icon"
                           className="mr-3 mt-0.5"
-                      />
-                      <span>Add members</span>
+                        />
+                        <span>Add members</span>
                       </button>
-                      )
-                      : null
-                    }
+                    ) : null}
                   </div>
 
                   {syndicateMembersToshow.length ? (
@@ -295,7 +404,6 @@ return (
                       data={tableData}
                       distributing={syndicate.distributing}
                       addingMember={addingMember}
-
                     />
                   ) : (
                     <div className="flex justify-center text-gray-500">
@@ -313,10 +421,12 @@ return (
                         No members have been added to this syndicate’s allowlist
                         yet.
                       </p>
-                      {
-                        syndicate?.depositsEnabled && syndicate?.allowlistEnabled ?
-                        (
-                        <button className="flex text-blue-600 justify-center py-1" onClick={showApproveModal}>
+                      {syndicate?.depositsEnabled &&
+                      syndicate?.allowlistEnabled ? (
+                        <button
+                          className="flex text-blue-600 justify-center py-1"
+                          onClick={showApproveModal}
+                        >
                           <img
                             src={"/images/plus-circle-blue.svg"}
                             alt="icon"
@@ -324,13 +434,90 @@ return (
                           />
                           <span>Add members</span>
                         </button>
-                        )
-                        : null
-                      }
+                      ) : null}
                     </div>
                   </div>
                 </div>
               )}
+
+              <Modal
+                {...{
+                  show: confirmReturnDeposit,
+                  modalStyle: ModalStyle.DARK,
+                  showCloseButton: false,
+                  customWidth: "w-2/5",
+                }}
+              >
+                <div>
+                  <p className="text-2xl text-center mb-6">Are you sure?</p>
+                  <p className="text-base text-center text-gray-gray4">
+                    This will return 100% of the deposited funds to the selected
+                    members.
+                  </p>
+                  <div className="flex justify-between mt-10">
+                    <button
+                      className="flex text-center py-3 text-blue hover:opacity-80"
+                      onClick={() => handleCancelReturnDeposit()}
+                    >
+                      <img
+                        src={"/images/leftArrowBlue.svg"}
+                        className="mt-1.5 mx-2"
+                        alt="Back arrow"
+                      />
+                      Back
+                    </button>
+
+                    <button
+                      className="primary-CTA hover:opacity-80"
+                      onClick={() => handleReturnDeposits()}
+                    >
+                      Return Deposits
+                    </button>
+                  </div>
+                </div>
+              </Modal>
+
+              {/* Tell user to confirm transaction on their wallet */}
+              <Modal
+                show={showConfirmationModal}
+                modalStyle={ModalStyle.DARK}
+                showCloseButton={false}
+                customWidth="w-1/3"
+              >
+                <div className="flex flex-col justify-center m-auto mb-4">
+                  <Spinner />
+                  <p className="text-lg text-center mt-8 mb-1">
+                    Waiting for confirmation
+                  </p>
+                  <div className="modal-header font-medium text-center leading-8 text-sm text-blue-rockBlue">
+                    Please confirm the transaction in your wallet.
+                  </div>
+                </div>
+              </Modal>
+
+              {/* Error modal */}
+              <Modal
+                show={showErrorModal}
+                modalStyle={ModalStyle.DARK}
+                closeModal={closeErrorModal}
+                outsideOnClick={true}
+                customWidth="w-1/3"
+              >
+                <div className="flex flex-col justify-center m-auto mb-4">
+                  <Image
+                    src={"/images/errorClose.svg"}
+                    alt="Error image"
+                    height="50"
+                    width="50"
+                  />
+                  <p className="text-lg text-center mt-8 mb-1">
+                    {errorTitleMessage}
+                  </p>
+                  <div className="modal-header font-medium text-center leading-8 text-sm text-blue-rockBlue">
+                    {errorMessage}
+                  </div>
+                </div>
+              </Modal>
             </Tab.Panel>
             <Tab.Panel>
               <div className="flex justify-center">

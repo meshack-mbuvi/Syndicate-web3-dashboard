@@ -24,7 +24,7 @@ const {
  * */
 export const getMetamaskError = (
   errorCode: number | string,
-  action: string
+  action?: string
 ) => {
   switch (errorCode) {
     case 4001:

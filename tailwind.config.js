@@ -140,6 +140,7 @@ module.exports = {
           93: "#EDEDED",
           99: "#fcfcfc",
           102: "#141518",
+          gray4: "#90949E",
           dark: "#272727",
           light: "#E5E5E5",
           dim: "#717171",
@@ -158,7 +159,7 @@ module.exports = {
           darkInput: "#2C2C2F",
           steelGrey: "#3F4147",
           lightSlate: "#808F9C",
-          spindle: "#B8BDC7"
+          spindle: "#B8BDC7",
         },
         green: {
           ...colors.green,

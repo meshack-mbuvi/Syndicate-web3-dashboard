@@ -1,6 +1,5 @@
 // import { SHOW_MODIFY_MEMBER_DISTRIBUTIONS } from "@/redux/actions/types";
 import {
-  SET_SELCETED_MEMBER_ADDRESS,
   SET_SHOW_REJECT_MEMBER_DEPOSIT_OR_ADDRESS,
   SHOW_MODIFY_CAP_TABLE,
   SHOW_MODIFY_MEMBER_DISTRIBUTIONS,
@@ -38,15 +37,6 @@ export const manageActionsReducer = (
         manageActions: {
           ...manageActions,
           modifyCapTable: action.data,
-        },
-      };
-
-    case SET_SELCETED_MEMBER_ADDRESS:
-      return {
-        ...state,
-        manageActions: {
-          ...manageActions,
-          memberAddress: action.data,
         },
       };
 

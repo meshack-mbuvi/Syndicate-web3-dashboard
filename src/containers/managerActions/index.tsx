@@ -29,7 +29,6 @@ import {
   setShowRejectDepositOrMemberAddress,
 } from "@/redux/actions/manageActions";
 import {
-  setLoadingSyndicateDepositorDetails,
   setShowRejectAddressOnly,
   setShowRejectDepositOnly,
 } from "@/redux/actions/manageMembers";
@@ -46,7 +45,6 @@ import ModifyMemberDistributions from "./modifyMemberDistributions";
 import ModifySyndicateCapTable from "./modifySyndicateCapTable";
 import MoreManagerActionCard from "./moreManagerActionCard";
 import PreApproveDepositor from "./preApproveDepositor";
-import RejectDepositOrMemberAddress from "./RejectDepositOrMemberAddress";
 import RequestSocialProfile from "./requestSocialProfile";
 
 const ManagerActions = (): JSX.Element => {
@@ -60,7 +58,6 @@ const ManagerActions = (): JSX.Element => {
       manageActions: {
         modifyMemberDistribution,
         modifyCapTable,
-        rejectMemberAddressOrDeposit,
       },
     },
   } = useSelector((state: RootState) => state);
@@ -94,9 +91,6 @@ const ManagerActions = (): JSX.Element => {
 
   const [showSyndicateNotModifiable, setShowSyndicateNotModifiable] =
     useState(false);
-
-  // show component handling Manage Members
-  const [showManageMembers, setShowManageMembers] = useState(false);
 
   const [errorMessage, setErrorMessage] = useState("");
 
@@ -248,23 +242,6 @@ const ManagerActions = (): JSX.Element => {
     dispatch(setShowModifyCapTable(true));
   };
 
-  const handleSetRejectMemberDepositOrAddress = (event) => {
-    event.preventDefault();
-    // Reset store variables set from manage members component.
-    // These variables make sense only when triggered from manage members section.
-    clearMemberSelectedAddress();
-    dispatch(setShowRejectAddressOnly(false));
-    dispatch(setShowRejectDepositOnly(false));
-
-    dispatch(setShowRejectDepositOrMemberAddress(true));
-  };
-
-  const handleSetShowManageMembers = (event) => {
-    event.preventDefault();
-
-    dispatch(setLoadingSyndicateDepositorDetails(true));
-    setShowManageMembers(true);
-  };
 
   return (
     <ErrorBoundary>
@@ -356,7 +333,6 @@ const ManagerActions = (): JSX.Element => {
             />
           ) : null}
 
-
           <MoreManagerActionCard
             icon={
               <img src="/images/managerActions/settings.svg" alt="settings" />
@@ -392,8 +368,7 @@ const ManagerActions = (): JSX.Element => {
           />
         ) : modifyMemberDistribution ? (
           <ModifyMemberDistributions />
-        ) : null
-        }
+        ) : null}
       </div>
       {/* Confirm whether manager wants to close syndicate */}
 

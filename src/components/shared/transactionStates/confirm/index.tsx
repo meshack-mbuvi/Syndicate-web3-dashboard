@@ -6,17 +6,18 @@ import TransactionStateModal from "../shared";
 interface Props {
   show: boolean;
   children;
-  spinnerHeight?: string,
-  spinnerWidth?: string,
-  modalStyle?: string,
-  width?: string,
+  spinnerHeight?: string;
+  spinnerWidth?: string;
+  modalStyle?: string;
+  width?: string;
 }
 /**
  * This is a modal that shows different transaction states
  * @returns an html node in a form of a modal
  */
 export const ConfirmStateModal = (props: Props) => {
-  const { children, spinnerHeight, spinnerWidth, modalStyle, width, ...rest } = props;
+  const { children, spinnerHeight, spinnerWidth, modalStyle, width, ...rest } =
+    props;
   return (
     <TransactionStateModal {...rest} modalStyle={modalStyle} width={width}>
       <>
