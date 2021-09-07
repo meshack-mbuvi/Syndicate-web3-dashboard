@@ -211,7 +211,7 @@ const ManageMembers = (): JSX.Element => {
             return <MoreOptionButton {...{ row }} />;
           }
           return (
-          <span className="flex align-center">
+          <span className="flex items-center">
             <Spinner height="h-4" width="w-4" margin="my-0" /> 
             <span className="ml-2 text-gray-400 leading-6">Adding Member</span>
           </span>

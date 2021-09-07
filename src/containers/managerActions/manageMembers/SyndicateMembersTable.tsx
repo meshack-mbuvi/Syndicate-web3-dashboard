@@ -107,7 +107,9 @@ const SyndicateMembersTable = ({
     },
   );
   return (
-    <table {...getTableProps()} className="w-full">
+    <table 
+      {...getTableProps()}
+      className="w-full border-b-1 mx-1 border-gray-nightrider">
       <thead className="w-full">
         {
           // Loop over the header rows
@@ -153,7 +155,9 @@ const SyndicateMembersTable = ({
               <tr
                 {...row.getRowProps()}
                 key={index}
-                className="space-y-4 hover:opacity-80 border-b-1 border-gray-nightrider"
+                className="space-y-4 hover:opacity-80 hover:bg-gray-102 border-b-1 border-gray-nightrider"
+                onMouseEnter={() => setShowMoreOptions(index)}
+                onMouseLeave={() => setShowMoreOptions(-1)}
               >
                 {
                   // Loop over the rows cells
@@ -164,7 +168,13 @@ const SyndicateMembersTable = ({
                       <td
                         {...cell.getCellProps()}
                         key={cellIndex}
-                        className={`m-0 font-whyte-light text-white text-xs py-4`}
+                        className={`m-0 font-whyte-light text-white text-xs py-3 ${
+                          showMoreOptions == row.index
+                            ? "opacity-100"
+                            : cellIndex === row.cells.length - 1
+                            ? "opacity-0"
+                            : "opacity-100"
+                        }`}
                       >
                         {
                           // Render the cell contents
