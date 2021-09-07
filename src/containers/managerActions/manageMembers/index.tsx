@@ -4,7 +4,7 @@ import { Spinner } from "@/components/shared/spinner";
 import { getMetamaskError } from "@/helpers";
 import { checkAccountAllowance } from "@/helpers/approveAllowance";
 import {
-  getSyndicateDepostorData,
+  getSyndicateDepositorData,
   setReturningMemberDeposit,
   showConfirmReturnDeposit,
 } from "@/redux/actions/manageMembers";
@@ -87,13 +87,16 @@ const ManageMembers = (): JSX.Element => {
   // Retrieve syndicate depositors
   useEffect(() => {
     if (syndicate) {
-      dispatch(getSyndicateDepostorData());
+      dispatch(getSyndicateDepositorData());
     }
   }, [syndicate]);
 
   const [filteredAddress, setFilteredAddress] = useState("");
 
-  const filterAddressOnChangeHandler = (event) => {
+  const filterAddressOnChangeHandler = (event: {
+    preventDefault: () => void;
+    target: { value: any };
+  }) => {
     event.preventDefault();
     const { value } = event.target;
     setFilteredAddress(value.trim());
@@ -148,9 +151,22 @@ const ManageMembers = (): JSX.Element => {
     () => [
       {
         Header: "Member",
-        accessor: function (row) {
+        accessor: function (row: { memberAddress: any }) {
           const { memberAddress } = row;
-          return formatAddress(memberAddress, 6, 6);
+          return (
+            <p className="flex space-x-2">
+              <Image
+                width="20"
+                height="20"
+                src={"/images/user.svg"}
+                alt="user"
+                className="border"
+              />
+              <span className="align-middle mt-0.5">
+                {formatAddress(memberAddress, 6, 6)}
+              </span>
+            </p>
+          );
         },
       },
       {
@@ -161,7 +177,9 @@ const ManageMembers = (): JSX.Element => {
             return (
               <p className="flex opacity-70">
                 <Spinner height="h-4" width="w-4" />
-                <span className="ml-2 text-gray-gray4">Returning deposit</span>
+                <span className="ml-2 text-gray-lightManatee">
+                  Returning deposit
+                </span>
               </p>
             );
           return <p className="">{floatedNumberWithCommas(memberDeposit)}</p>;
@@ -253,6 +271,11 @@ const ManageMembers = (): JSX.Element => {
     setShowConfirmationModal(status);
   };
 
+  const handleResetMemberBalances = async () => {
+    // reset member address balances
+    dispatch(getSyndicateDepositorData());
+  };
+
   const handleReturnDeposits = async () => {
     // check whether there is sufficient allowance before continuing
     const allowance = await checkAccountAllowance(
@@ -294,8 +317,10 @@ const ManageMembers = (): JSX.Element => {
               returningDeposit: status,
             }),
           ),
+        async () => await handleResetMemberBalances(),
       );
-    } catch ({ code }) {
+    } catch (error) {
+      const { code } = error;
       dispatch(
         setReturningMemberDeposit({
           memberAddresses,
@@ -328,34 +353,32 @@ const ManageMembers = (): JSX.Element => {
 
   return (
     <div className="w-full rounded-md h-full my-4">
-      <div className="w-full px-2 py-4 sm:px-0">
+      <div className="w-full px-2 py-2 sm:px-0">
         <Tab.Group defaultIndex={0}>
           <Tab.List className="flex space-x-10">
-            <div className="uppercase py-1 text-lg">Members</div>
-            <div className="w-fit-content rounded-full border border-gray-nightrider">
+            <div className="uppercase text-sm p-1">Members</div>
+            <div className="w-fit-content rounded-full border h-fit-content border-gray-nightrider">
               <Tab
                 className={({ selected }) =>
-                  `px-6 py-1 ${
+                  `px-3 p-1 text-xs font-whyte ${
                     selected
                       ? "text-white border-1 border-white rounded-full"
-                      : "text-blue-rockBlue"
+                      : "text-gray-lightManatee"
                   }`
                 }
               >
                 Allowlist
-                {` (${syndicateMembersToshow.length})`}
               </Tab>
               <Tab
                 className={({ selected }) =>
-                  `px-4 py-1 ${
+                  `px-3 py-1 text-xs ${
                     selected
                       ? "text-white border-1 border-white rounded-full"
-                      : "text-blue-rockBlue"
+                      : "text-gray-lightManatee"
                   }`
                 }
               >
                 Requests
-                {` (0)`}
               </Tab>
             </div>
           </Tab.List>
@@ -450,7 +473,7 @@ const ManageMembers = (): JSX.Element => {
               >
                 <div>
                   <p className="text-2xl text-center mb-6">Are you sure?</p>
-                  <p className="text-base text-center text-gray-gray4">
+                  <p className="text-base text-center text-gray-lightManatee">
                     This will return 100% of the deposited funds to the selected
                     members.
                   </p>

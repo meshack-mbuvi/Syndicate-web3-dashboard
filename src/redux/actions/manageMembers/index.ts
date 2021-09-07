@@ -1,6 +1,7 @@
 import { divideIfNotByZero, getWeiAmount } from "@/utils/conversions";
 import {
   CONFIRM_RETURN_DEPOSIT,
+  RESET_MEMBER_DEPOSITS,
   RETURNING_DEPOSIT,
   SET_LOADING_SYNDICATE_DEPOSITOR_DETAILS,
   SET_SYNDICATE_MANAGE_MEMBERS,
@@ -100,7 +101,7 @@ const getSyndicateDepositors = async (syndicateContracts, syndicateAddress) => {
  *    - memberStake
  *    - memberClaimedDistribution
  */
-const getMemberDetails = async (
+export const getMemberDetails = async (
   syndicateContracts,
   memberAddress,
   syndicate,
@@ -216,7 +217,7 @@ const getMembersInAllowlist = async (
  * all members in the allowlist are retrieved as well.
  * @returns
  */
-export const getSyndicateDepostorData =
+export const getSyndicateDepositorData =
   () =>
   async (
     dispatch: (arg0: { type: string; data: any }) => any,
@@ -304,3 +305,16 @@ export const setReturningMemberDeposit =
 export const showConfirmReturnDeposit = (confirm: boolean) => (dispatch) => {
   return dispatch({ type: CONFIRM_RETURN_DEPOSIT, data: confirm });
 };
+
+export const resetMemberBalances =
+  ({ memberAddress, memberDeposit, memberStake }) =>
+  async (dispatch) => {
+    return dispatch({
+      type: RESET_MEMBER_DEPOSITS,
+      data: {
+        memberAddress,
+        memberDeposit,
+        memberStake,
+      },
+    });
+  };

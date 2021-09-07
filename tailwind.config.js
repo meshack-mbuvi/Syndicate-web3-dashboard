@@ -140,7 +140,7 @@ module.exports = {
           93: "#EDEDED",
           99: "#fcfcfc",
           102: "#141518",
-          gray4: "#90949E",
+          cod: "#131313",
           dark: "#272727",
           light: "#E5E5E5",
           dim: "#717171",

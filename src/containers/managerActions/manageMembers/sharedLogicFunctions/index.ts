@@ -5,6 +5,7 @@ export const handleSubmitReturnDeposits = async (
   account: string,
   handleShowWalletConfirmationModal: (status: boolean) => void,
   handleSubmitting: (status: boolean) => void,
+  handleReceipt: () => void,
 ): Promise<void> => {
   await syndicateContracts.DepositLogicContract.managerRejectDepositForMembers(
     syndicateAddress,
@@ -12,5 +13,6 @@ export const handleSubmitReturnDeposits = async (
     account,
     handleShowWalletConfirmationModal,
     handleSubmitting,
+    handleReceipt,
   );
 };

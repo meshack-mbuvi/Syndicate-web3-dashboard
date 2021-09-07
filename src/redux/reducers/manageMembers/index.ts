@@ -1,6 +1,7 @@
 /* eslint-disable no-case-declarations */
 import {
   CONFIRM_RETURN_DEPOSIT,
+  RESET_MEMBER_DEPOSITS,
   RETURNING_DEPOSIT,
   SET_LOADING_SYNDICATE_DEPOSITOR_DETAILS,
   SET_SELECTED_MEMBER_ADDRESS,
@@ -21,6 +22,11 @@ const findMemberAddressIndex = (members, memberAddress) => {
 };
 export const manageMembersDetailsReducer = (state = initialState, action) => {
   const { syndicateManageMembers } = state;
+  const memberAddresses = action?.data?.memberAddresses;
+  const returningDeposit = action?.data?.returningDeposit;
+  let totalAmountToReturn = 0;
+  let syndicateMembers = syndicateManageMembers.syndicateMembers;
+
   switch (action.type) {
     case SET_SYNDICATE_MANAGE_MEMBERS:
       return {
@@ -52,12 +58,6 @@ export const manageMembersDetailsReducer = (state = initialState, action) => {
       };
 
     case RETURNING_DEPOSIT:
-      const memberAddresses = action?.data?.memberAddresses;
-      const { returningDeposit } = action.data;
-      let totalAmountToReturn = 0;
-
-      let syndicateMembers = syndicateManageMembers.syndicateMembers;
-
       memberAddresses.forEach((memberAddress) => {
         let memberIndex = -1;
         if (memberAddress) {
@@ -82,6 +82,30 @@ export const manageMembersDetailsReducer = (state = initialState, action) => {
           ...syndicateManageMembers,
           syndicateMembers,
           totalAmountToReturn,
+        },
+      };
+
+    case RESET_MEMBER_DEPOSITS:
+      const { memberAddress, memberDeposit, memberStake } = action.data;
+      let memberIndex = -1;
+      if (memberAddress) {
+        memberIndex = findMemberAddressIndex(
+          syndicateManageMembers?.syndicateMembers,
+          memberAddress,
+        );
+        const memberCopy = syndicateManageMembers.syndicateMembers;
+
+        memberCopy[memberIndex].memberDeposit = memberDeposit;
+        memberCopy[memberIndex].memberStake = memberStake;
+
+        syndicateMembers = memberCopy;
+      }
+
+      return {
+        ...state,
+        syndicateManageMembers: {
+          ...syndicateManageMembers,
+          syndicateMembers,
         },
       };
 

@@ -121,7 +121,7 @@ const SyndicateMembersTable = ({
             <tr
               {...headerGroup.getHeaderGroupProps()}
               key={index}
-              className="text-blue-rockBlue text-sm py-10"
+              className="text-gray-lightManatee text-sm py-10"
             >
               {
                 // Loop over the headers in each row
@@ -130,7 +130,7 @@ const SyndicateMembersTable = ({
                   <th
                     {...column.getHeaderProps()}
                     key={index}
-                    className="rounded-md pl-0.5 py-2 text-left"
+                    className="rounded-md pl-0.5 py-2 text-left text-xs text-gray-lightManatee"
                   >
                     {
                       // Render the header
@@ -159,7 +159,7 @@ const SyndicateMembersTable = ({
               <tr
                 {...row.getRowProps()}
                 key={index}
-                className="space-y-4 hover:opacity-80 hover:bg-gray-blackRussian border-b-1 border-gray-nightrider"
+                className="space-y-6 hover:opacity-90 border-b-1 border-gray-nightrider"
                 onMouseEnter={() => setShowMoreOptions(index)}
                 onMouseLeave={() => setShowMoreOptions(-1)}
               >
@@ -173,7 +173,7 @@ const SyndicateMembersTable = ({
                       <td
                         {...cell.getCellProps()}
                         key={cellIndex}
-                        className={`m-0 font-whyte-light text-white text-xs pl-0.5 py-2 ${
+                        className={`m-0 font-whyte-light text-white text-sm pl-0.5 py-2 ${
                           showMoreOptions == row.index
                             ? "opacity-100"
                             : cellIndex === row.cells.length - 1 && !showAddingMember
