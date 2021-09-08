@@ -1,9 +1,9 @@
 import { divideIfNotByZero, getWeiAmount } from "@/utils/conversions";
 import {
   CONFIRM_RETURN_DEPOSIT,
-  RESET_MEMBER_DEPOSITS,
   RETURNING_DEPOSIT,
   SET_LOADING_SYNDICATE_DEPOSITOR_DETAILS,
+  SET_SELECTED_MEMBER_ADDRESS,
   SET_SYNDICATE_MANAGE_MEMBERS,
   SHOW_REJECT_MEMBER_ADDRESS_ONLY,
 } from "../types";
@@ -230,7 +230,6 @@ export const getSyndicateDepositorData =
       syndicatesReducer: { syndicate },
       initializeContractsReducer: { syndicateContracts },
     } = getState();
-
     const memberAddresses = await getSyndicateDepositors(
       syndicateContracts,
       syndicate.syndicateAddress,
@@ -295,9 +294,33 @@ export const setReturningMemberDeposit =
     memberAddresses: string[];
     returningDeposit: boolean;
   }) =>
-  (dispatch) => {
+  (
+    dispatch: (arg0: { data: any; type: string }) => any,
+    getState: () => {
+      syndicatesReducer: { syndicate: any };
+      initializeContractsReducer: { syndicateContracts: any };
+      manageMembersDetailsReducer;
+    },
+  ) => {
+    let syndicateMembersCopy = null;
+    const {
+      manageMembersDetailsReducer: {
+        syndicateManageMembers: { syndicateMembers },
+      },
+    } = getState();
+    memberAddresses.forEach((memberAddress) => {
+      let memberIndex = -1;
+      if (memberAddress) {
+        memberIndex = findMemberAddressIndex(syndicateMembers, memberAddress);
+        const memberCopy = syndicateMembers;
+
+        memberCopy[memberIndex].returningDeposit = returningDeposit;
+        syndicateMembersCopy = memberCopy;
+      }
+    });
+
     return dispatch({
-      data: { memberAddresses, returningDeposit },
+      data: syndicateMembersCopy,
       type: RETURNING_DEPOSIT,
     });
   };
@@ -306,15 +329,30 @@ export const showConfirmReturnDeposit = (confirm: boolean) => (dispatch) => {
   return dispatch({ type: CONFIRM_RETURN_DEPOSIT, data: confirm });
 };
 
-export const resetMemberBalances =
-  ({ memberAddress, memberDeposit, memberStake }) =>
-  async (dispatch) => {
-    return dispatch({
-      type: RESET_MEMBER_DEPOSITS,
+export const setSelectedMemberAddress =
+  (selectedMemberAddress: string[], totalAmountToReturn: number | string) =>
+  (
+    dispatch: (arg0: {
+      type: string;
       data: {
-        memberAddress,
-        memberDeposit,
-        memberStake,
-      },
+        selectedMemberAddress: string[];
+        totalAmountToReturn: string | number;
+      };
+    }) => React.Dispatch<{ type: string; data: boolean }>,
+  ): React.Dispatch<{ type: string; data: boolean }> => {
+    return dispatch({
+      type: SET_SELECTED_MEMBER_ADDRESS,
+      data: { selectedMemberAddress, totalAmountToReturn },
     });
   };
+
+export const findMemberAddressIndex = (members, memberAddress) => {
+  if (!members.length) {
+    return -1;
+  }
+  const memberIndex = members.findIndex(
+    (member) => member.memberAddress == memberAddress,
+  );
+
+  return memberIndex;
+};

@@ -1,6 +1,5 @@
 import React from "react";
 import {
-  SET_SELECTED_MEMBER_ADDRESS,
   SET_SHOW_REJECT_MEMBER_DEPOSIT_OR_ADDRESS,
   SHOW_MODIFY_CAP_TABLE,
   SHOW_MODIFY_MEMBER_DISTRIBUTIONS,
@@ -45,26 +44,6 @@ export const setShowModifyCapTable =
     return dispatch({
       type: SHOW_MODIFY_CAP_TABLE,
       data: show,
-    });
-  };
-
-/**
- * Action to set selected member address from manage members component.
- *
- * @param selectedMemberAddress
- * @returns
- */
-export const setSelectedMemberAddress =
-  (selectedMemberAddress: string[]) =>
-  (
-    dispatch: (arg0: {
-      type: string;
-      data: string[];
-    }) => React.Dispatch<{ type: string; data: boolean }>,
-  ): React.Dispatch<{ type: string; data: boolean }> => {
-    return dispatch({
-      type: SET_SELECTED_MEMBER_ADDRESS,
-      data: selectedMemberAddress,
     });
   };
 

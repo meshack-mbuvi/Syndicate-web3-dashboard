@@ -6,10 +6,13 @@ import { checkAccountAllowance } from "@/helpers/approveAllowance";
 import {
   getSyndicateDepositorData,
   setReturningMemberDeposit,
+  setSelectedMemberAddress,
   showConfirmReturnDeposit,
 } from "@/redux/actions/manageMembers";
 import { updateMemberWithdrawalDetails } from "@/redux/actions/syndicateMemberDetails/memberWithdrawalsInfo";
+import { getSyndicateByAddress } from "@/redux/actions/syndicates";
 import { RootState } from "@/redux/store";
+import { web3 } from "@/utils";
 import { getWeiAmount } from "@/utils/conversions";
 import { formatAddress } from "@/utils/formatAddress";
 import { floatedNumberWithCommas } from "@/utils/formattedNumbers";
@@ -151,7 +154,7 @@ const ManageMembers = (): JSX.Element => {
     () => [
       {
         Header: "Member",
-        accessor: function (row: { memberAddress: any }) {
+        accessor: function memberAddress(row: { memberAddress: string }) {
           const { memberAddress } = row;
           return (
             <p className="flex space-x-2">
@@ -171,8 +174,7 @@ const ManageMembers = (): JSX.Element => {
       },
       {
         Header: `Deposit Amount (${syndicate?.depositERC20TokenSymbol})`,
-        // eslint-disable-next-line react/display-name
-        accessor: function ({ memberDeposit, returningDeposit }) {
+        accessor: function depositAmount({ memberDeposit, returningDeposit }) {
           if (returningDeposit)
             return (
               <p className="flex opacity-70">
@@ -187,8 +189,7 @@ const ManageMembers = (): JSX.Element => {
       },
       {
         Header: `Distribution Share`,
-        // eslint-disable-next-line react/display-name
-        accessor: function ({ memberStake }) {
+        accessor: function distributionShare({ memberStake }) {
           return (
             <p className="">
               <span className="ml-1 font-whyte-light text-gray-400">
@@ -200,8 +201,7 @@ const ManageMembers = (): JSX.Element => {
       },
       {
         Header: "Distribution/claimed",
-        // eslint-disable-next-line react/display-name
-        accessor: function ({
+        accessor: function distributionClaimed({
           memberWithdrawalDetails,
           memberAddress,
           distributing,
@@ -272,8 +272,12 @@ const ManageMembers = (): JSX.Element => {
   };
 
   const handleResetMemberBalances = async () => {
-    // reset member address balances
-    dispatch(getSyndicateDepositorData());
+    await dispatch(
+      getSyndicateByAddress({
+        syndicateAddress: web3.utils.toChecksumAddress(syndicateAddress),
+        ...syndicateContracts,
+      }),
+    );
   };
 
   const handleReturnDeposits = async () => {
@@ -287,6 +291,18 @@ const ManageMembers = (): JSX.Element => {
       getWeiAmount(allowance, syndicate.tokenDecimals, false),
       10,
     );
+
+    if (!memberAddresses) {
+      dispatch(showConfirmReturnDeposit(false));
+
+      return;
+    }
+    if (totalAmountToReturn === 0) {
+      // show error message here
+      setErrorMessage(`Ensure members have stake in this syndicate.`);
+      setShowErrorModal(true);
+      return;
+    }
 
     if (allowanceInWei === 0 || allowanceInWei < totalAmountToReturn) {
       // hide confirm modal
@@ -317,7 +333,7 @@ const ManageMembers = (): JSX.Element => {
               returningDeposit: status,
             }),
           ),
-        async () => await handleResetMemberBalances(),
+        () => handleResetMemberBalances(),
       );
     } catch (error) {
       const { code } = error;

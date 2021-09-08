@@ -1,5 +1,7 @@
-import { setSelectedMemberAddress } from "@/redux/actions/manageActions";
-import { showConfirmReturnDeposit } from "@/redux/actions/manageMembers";
+import {
+  setSelectedMemberAddress,
+  showConfirmReturnDeposit,
+} from "@/redux/actions/manageMembers";
 import React from "react";
 import { useDispatch } from "react-redux";
 import ReactTooltip from "react-tooltip";
@@ -30,7 +32,9 @@ const MoreOptionButton = (props: {
 
   const confirmReturnMemberDeposit = () => {
     dispatch(showConfirmReturnDeposit(true));
-    dispatch(setSelectedMemberAddress([memberAddress]));
+    dispatch(
+      setSelectedMemberAddress([memberAddress], parseInt(memberDeposit, 10)),
+    );
   };
 
   return (
