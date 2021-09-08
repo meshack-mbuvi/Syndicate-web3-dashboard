@@ -2,7 +2,6 @@ import React, { useState, useMemo, useEffect } from "react";
 import DatePicker from "react-datepicker";
 import { TWO_WEEKS_IN_MS } from "@/utils/constants";
 import { getLocaleObject } from "@/utils/dateUtils";
-import Select from "@/components/inputs/select";
 import generateTimeIntervals from "@/utils/generateTimeIntervals";
 import { RootState } from "@/redux/store";
 import { useDispatch, useSelector } from "react-redux";
@@ -21,30 +20,20 @@ import { setEmail } from "@/redux/actions/createSyndicate/syndicateOffChainData"
 import { TokenSelectInput } from "@/containers/create/onChainDetails/depositToken/tokenSelectInput";
 import { setModifiable } from "@/redux/actions/createSyndicate/syndicateOnChainData/modifiable";
 import InputWithPercent from "@/components/inputs/inputWithPercent";
-import ReactSelect from "react-select";
 import ct from "countries-and-timezones";
-import {
-  IndicatorSeparator,
-  Input,
-  Option,
-  SingleValue,
-  customStyles,
-} from "@/containers/create/onChainDetails/closeDate/timeAndDatePicker";
 import { validateEmail } from "@/utils/validators";
 import { NonEditableSetting } from "@/containers/create/shared/NonEditableSetting";
 import { useCreateSyndicateContext } from "@/context/CreateSyndicateContext";
 import { useRouter } from "next/router";
 import { setCloseDateAndTime } from "@/redux/actions/createSyndicate/syndicateOnChainData/closeDateAndTime";
 import { SkeletonLoader } from "@/components/skeletonLoader";
+import { CustomSelectInput } from "@/containers/create/shared/customSelectInput";
 
 const TemplateValues: React.FC = () => {
   const {
     tokenAndDepositLimitReducer: {
       createSyndicate: {
-        tokenAndDepositsLimits: {
-          depositTotalMax,
-          depositMemberMax,
-        },
+        tokenAndDepositsLimits: { depositTotalMax, depositMemberMax },
       },
     },
     feesAndDistributionReducer: {
@@ -75,8 +64,12 @@ const TemplateValues: React.FC = () => {
     },
   } = useSelector((state: RootState) => state);
 
-  const { setContinueDisabled, legalEntity, setLegalEntity, setTemplateMaxTotalError } =
-    useCreateSyndicateContext();
+  const {
+    setContinueDisabled,
+    legalEntity,
+    setLegalEntity,
+    setTemplateMaxTotalError,
+  } = useCreateSyndicateContext();
 
   const dispatch = useDispatch();
   const timeIntervals = useMemo(() => generateTimeIntervals(), []);
@@ -149,7 +142,9 @@ const TemplateValues: React.FC = () => {
       setMaxTotalDepositsError(
         "Max. total deposits must be greater than max. deposit per member. Please adjust max. deposit per member on the next page.",
       );
-      setTemplateMaxTotalError("Max. member deposit exceeds max. total deposits. Please adjust it.")
+      setTemplateMaxTotalError(
+        "Max. member deposit exceeds max. total deposits. Please adjust it.",
+      );
     } else {
       setMaxTotalDepositsError("");
     }
@@ -257,6 +252,15 @@ const TemplateValues: React.FC = () => {
       <div className="w-full space-y-7 px-1">{generateSkeletons(5)}</div>
     </div>
   );
+
+  const storeSelectedTimezone = (timezone: any) => {
+    setSelectedTimezone(timezone);
+  };
+
+  const storeSelectedTimeValue = (timeValue: any) => {
+    setSelectedTimeValue(timeValue.replaceAll("_", " "));
+  };
+
   return (
     <>
       {/* Form controls  */}
@@ -347,38 +351,26 @@ const TemplateValues: React.FC = () => {
                       <p>at</p>
                     </div>
                     <div className="flex-1">
-                      <Select
-                        data={timeIntervals}
-                        value={selectedTimeValue.replaceAll("_", " ")}
-                        onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
-                          setSelectedTimeValue(
-                            e.target.value.replaceAll("_", " "),
-                          )
-                        }
-                        name="time"
+                      <CustomSelectInput
+                        selectOptions={timeIntervals}
+                        isSearchable={false}
+                        placeholder="Choose time"
+                        selectedValue={selectedTimeValue.replaceAll("_", " ")}
+                        storeSelectedOption={storeSelectedTimeValue}
                       />
                     </div>
                   </div>
                 </div>
                 <div className="ml-1 col-span-3">
                   <div className="w-full mt-2">
-                    <ReactSelect
-                      options={formattedTimezones}
-                      isSearchable
-                      name="timezone"
+                    <CustomSelectInput
+                      selectOptions={formattedTimezones}
+                      isSearchable={true}
                       placeholder="Choose your timezone"
-                      className="bg-black"
-                      styles={customStyles}
-                      components={{
-                        IndicatorSeparator,
-                        Input,
-                        Option,
-                        SingleValue,
-                      }}
-                      onChange={(selectedValue) =>
-                        setSelectedTimezone(selectedValue)
-                      }
-                      value={selectedTimezone}
+                      selectedValue={selectedTimezone}
+                      storeSelectedOption={storeSelectedTimezone}
+                      showMoreInfo={true}
+                      usingTimezone={true}
                     />
                   </div>
                 </div>

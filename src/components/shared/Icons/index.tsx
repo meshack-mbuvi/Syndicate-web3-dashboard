@@ -79,7 +79,7 @@ export const ChevronDown = (props: IChevronDown) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      className={`${height} ${width} text-gray-placeholder`}
+      className={`${height} ${width} text-gray-3`}
       fill="none"
       viewBox="0 0 24 24"
       stroke="currentColor"

@@ -1,5 +1,5 @@
 import React from "react";
-import { TimeAndDatePicker } from "./timeAndDatePicker";
+import TimeAndDatePicker from "./timeAndDatePicker";
 
 const CloseDateAndTime: React.FC = () => {
   return (
