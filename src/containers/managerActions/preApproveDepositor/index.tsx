@@ -1,3 +1,4 @@
+import Papa from 'papaparse';
 import { TextArea } from "@/components/inputs";
 import Modal , { ModalStyle } from "@/components/modal";
 import { PendingStateModal } from "@/components/shared/transactionStates";
@@ -21,6 +22,7 @@ import {
   managerApproveAddressesConstants,
   preApproveMoreAddress,
 } from "src/components/syndicates/shared/Constants";
+import { Spinner } from "@/components/shared/spinner";
 
 interface Props {
   showPreApproveDepositor: boolean;
@@ -323,10 +325,42 @@ const PreApproveDepositor = (props: Props): JSX.Element => {
   } = managerApproveAddressesConstants;
 
   const hiddenFileInput = React.useRef(null);
+  const [importing, setImporting] = useState(false)
   const handleUpload = (event) => {
+    setImporting(true)
     const fileUploaded = event.target.files[0];
     setAddressFile(fileUploaded)
+    importCSV(fileUploaded)
   };
+
+  const importCSV = (file) => {
+    if(file){
+    Papa.parse(file, {
+      complete: (result:any) => {
+        const addresses: string[]= []
+        for(const item of result.data){
+          if(item.adress ===  "" || item.Address === "") continue
+          if(!item.address && !item.Address){
+            setLpAddressesError("Adress column is required");
+            setShowMemberAddressError(true)
+            return
+          }
+          addresses.push(item.address || item.Address)
+        }
+        validateAddressArr(addresses)
+        setMembersArray(addresses)
+        setImporting(false)
+      },
+      header: true
+    });
+  }
+  }
+
+  const deleteFile = () => {
+    setAddressFile(null)
+    setMembersArray([])
+    setLpAddressesError("")
+  }
 
 //   to add lg and md w
   return (
@@ -365,13 +399,19 @@ const PreApproveDepositor = (props: Props): JSX.Element => {
                 placeholder="Separate them with either a comma, space, or line break"
               />
               <div className={`rounded border-dashed border border-gray-700 text-gray-400 py-4 px-5 my-8 flex align-center ${addressFile? "justify-between":"justify-center"}`}>
-                {addressFile? 
+                {addressFile?
+                importing?
+                <>
+                <div className="flex"><img src="/images/file-icon.svg" alt="File icon"/><span className="ml-2.5">{addressFile.name}</span></div>
+                <Spinner height="h-4" width="w-4" margin="my-0" /> 
+                </>
+                :
                 <>
                 <div className="flex"><img src="/images/file-icon-white.svg" alt="File icon"/><span className="ml-2.5 text-white">{addressFile.name}</span></div>
-                <span className="cursor-pointer hover:opacity-70"><img src="/images/close-circle.svg" alt="Close Icon" /></span>
+                <span className="cursor-pointer hover:opacity-70" onClick={deleteFile}><img src="/images/close-circle.svg" alt="Close Icon" /></span>
                 </>:
                 <>
-                <input type="file" className="hidden" onChange={handleUpload} ref={hiddenFileInput}/>
+                <input type="file" className="hidden" onChange={handleUpload} ref={hiddenFileInput} accept=".csv"/>
                 <button className="cursor-pointer hover:opacity-70 flex" onClick={() => hiddenFileInput.current.click()} >
                     <img src="/images/file-upload.svg" alt="Import CSV File" /> <span className="leading-4 ml-2.5">Import CSV file</span>
                 </button>
@@ -384,11 +424,8 @@ const PreApproveDepositor = (props: Props): JSX.Element => {
             </div>
             <div className="flex items-center justify-end gap-4">
             <button
-                className={`text-gray-400 h-14 ${
-                  showMemberAddressError ? "cursor-not-allowed" : null
-                }`}
+                className="text-gray-400 h-14"
                 onClick={closeModal}
-                disabled={showMemberAddressError}
               >
                 Cancel
               </button>
