@@ -41,7 +41,7 @@ export const SearchForm = (props: {
               <img
                 src="/images/search.svg"
                 alt="Search icon"
-                className={`absolute inset-y-0 cursor-pointer pt-2.5 left-1 flex items-center ${
+                className={`absolute inset-y-0 cursor-pointer pt-2.5 left-2 flex items-center ${
                   disabled ? "opacity-40" : ""
                 }`}
               />

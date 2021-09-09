@@ -57,7 +57,7 @@ const SyndicateMembersTable = ({
     return (
       <input
         type="checkbox"
-        className={`rounded checkbox bg-gray-blackRussian -mr-1 flex ${
+        className={`rounded checkbox bg-gray-blackRussian -mr-2 flex ${
           rest?.checked ? "block" : `${customClass ? customClass : ""}`
         }`}
         ref={combinedRef}
@@ -112,6 +112,8 @@ const SyndicateMembersTable = ({
     },
   );
 
+  const disabled = selectedFlatRows.length > 0 ?? true;
+
   return (
     <div className="flex flex-col overflow-y-hidden -mx-m6">
       <div className="flex my-10 space-x-8 justify-between ml-6">
@@ -129,7 +131,11 @@ const SyndicateMembersTable = ({
             <p className="">
               {selectedFlatRows.length} of {data.length} selected:
             </p>
-            <button className="flex flex-shrink font-whyte text-right text-blue text-sm justify-center hover:opacity-80">
+            <button
+              className={`flex flex-shrink font-whyte text-right text-blue text-sm justify-center ${
+                !disabled ? "opacity-50 cursor-not-allowed" : "hover:opacity-80"
+              }`}
+            >
               <img
                 src={"/images/edit-deposits-blue.svg"}
                 alt="icon"
@@ -137,7 +143,11 @@ const SyndicateMembersTable = ({
               />
               <span>Modify deposit amounts</span>
             </button>
-            <button className="flex flex-shrink font-whyte text-right text-blue text-sm justify-center hover:opacity-80">
+            <button
+              className={`flex flex-shrink font-whyte text-right text-blue text-sm justify-center ${
+                !disabled ? "opacity-50 cursor-not-allowed" : "hover:opacity-80"
+              }`}
+            >
               <img
                 src={"/images/return-deposit-blue.svg"}
                 alt="icon"
@@ -145,7 +155,11 @@ const SyndicateMembersTable = ({
               />
               <span>Return deposits</span>
             </button>
-            <button className="flex flex-shrink font-whyte text-right text-blue text-sm justify-center hover:opacity-80">
+            <button
+              className={`flex flex-shrink font-whyte text-right text-blue text-sm justify-center ${
+                !disabled ? "opacity-50 cursor-not-allowed" : "hover:opacity-80"
+              }`}
+            >
               <img
                 src={"/images/block.svg"}
                 alt="icon"
