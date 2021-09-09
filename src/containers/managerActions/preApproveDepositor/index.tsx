@@ -1,9 +1,7 @@
 import Papa from 'papaparse';
 import { TextArea } from "@/components/inputs";
 import Modal , { ModalStyle } from "@/components/modal";
-import { PendingStateModal } from "@/components/shared/transactionStates";
 import ConfirmStateModal from "@/components/shared/transactionStates/confirm";
-import FinalStateModal from "@/components/shared/transactionStates/final";
 import { getMetamaskError } from "@/helpers";
 import { showWalletModal } from "@/redux/actions";
 import { setNewMemberAddresses } from "@/redux/actions/manageMembers"
@@ -22,11 +20,12 @@ import {
   managerApproveAddressesConstants,
   preApproveMoreAddress,
 } from "src/components/syndicates/shared/Constants";
-import { Spinner } from "@/components/shared/spinner";
+import FileUpload from "@/components/shared/fileUploader";
 
 interface Props {
   showPreApproveDepositor: boolean;
   setShowPreApproveDepositor;
+  setAddingMember,
 }
 
 /**
@@ -36,7 +35,7 @@ interface Props {
  */
 
 const PreApproveDepositor = (props: Props): JSX.Element => {
-  const { showPreApproveDepositor, setShowPreApproveDepositor } = props;
+  const { showPreApproveDepositor, setShowPreApproveDepositor, setAddingMember } = props;
 
   const {
     initializeContractsReducer: { syndicateContracts },
@@ -74,7 +73,6 @@ const PreApproveDepositor = (props: Props): JSX.Element => {
   const [lpAddressesError, setLpAddressesError] = useState<string>("");
   const [showMemberAddressError, setShowMemberAddressError] =
     useState<boolean>(false);
-  const [submitting, setSubmitting] = useState(false);
   const [selectedTextIndexes, setSelectedTextIndexes] = useState([]);
 
   /**
@@ -114,7 +112,7 @@ const PreApproveDepositor = (props: Props): JSX.Element => {
   const handleError = (error) => {
     // capture metamask error
     setShowWalletConfirmationModal(false);
-    setSubmitting(false);
+    setAddingMember(false);
 
     const { code } = error;
     const errorMessage = getMetamaskError(code, "Member deposit modified.");
@@ -162,9 +160,9 @@ const PreApproveDepositor = (props: Props): JSX.Element => {
         allowlistEnabled: true,
         memberAddressAllowed: memberAllowed,
         memberStake: "0.0"
-      }
-    })
-    dispatch(setNewMemberAddresses(newMembers))
+      };
+    });
+    dispatch(setNewMemberAddresses(newMembers));
   }
 
   /**
@@ -176,8 +174,8 @@ const PreApproveDepositor = (props: Props): JSX.Element => {
     if (!validSyndicate) {
       throw "This syndicate does not exist and therefore we can't update its details.";
     }
-
-    if (!memberAddresses) {
+  
+    if (!membersArray) {
       setLpAddressesError("Approved address is required");
       setShowMemberAddressError(true);
       return;
@@ -207,7 +205,7 @@ const PreApproveDepositor = (props: Props): JSX.Element => {
       }
     
       setShowWalletConfirmationModal(true);
-      addNewMemberAddress(membersArray, false)
+      addNewMemberAddress(membersArray, false);
       await syndicateContracts.AllowlistLogicContract.managerAllowAddresses(
         syndicateAddress,
         membersArray,
@@ -216,17 +214,19 @@ const PreApproveDepositor = (props: Props): JSX.Element => {
           // Call back passed after transaction goes through
           setShowWalletConfirmationModal(false);
           setShowPreApproveDepositor(false)
-          setSubmitting(true);
+          setAddingMember(true)
         },
       );
 
-      addNewMemberAddress(membersArray, true)
+      addNewMemberAddress(membersArray, true);
+      setAddingMember(false);
     } catch (error) {
-      addNewMemberAddress([],false)
+      addNewMemberAddress([],false);
       handleError(error);
+      setAddingMember(false);
     }
   };
-
+  
   const validateAddressArr = (arr:string[]) => {
     // // get last element in array
 
@@ -298,8 +298,8 @@ const PreApproveDepositor = (props: Props): JSX.Element => {
   };
 
   const closeModal = () =>{
-    setShowPreApproveDepositor(false)
-    addNewMemberAddress([])
+    setShowPreApproveDepositor(false);
+    addNewMemberAddress([]);
   }
 
   useEffect(() => {
@@ -314,7 +314,7 @@ const PreApproveDepositor = (props: Props): JSX.Element => {
     if (!lastElement) {
     newSplitArr.pop();
     }
-    setMembersArray(newSplitArr)
+    setMembersArray(newSplitArr);
     validateAddressArr(newSplitArr);
 }, [memberAddresses])
 
@@ -324,13 +324,12 @@ const PreApproveDepositor = (props: Props): JSX.Element => {
     allowlistBulktext,
   } = managerApproveAddressesConstants;
 
-  const hiddenFileInput = React.useRef(null);
   const [importing, setImporting] = useState(false)
   const handleUpload = (event) => {
-    setImporting(true)
+    setImporting(true);
     const fileUploaded = event.target.files[0];
-    setAddressFile(fileUploaded)
-    importCSV(fileUploaded)
+    setAddressFile(fileUploaded);
+    importCSV(fileUploaded);
   };
 
   const importCSV = (file) => {
@@ -339,17 +338,18 @@ const PreApproveDepositor = (props: Props): JSX.Element => {
       complete: (result:any) => {
         const addresses: string[]= []
         for(const item of result.data){
-          if(item.adress ===  "" || item.Address === "") continue
+          if(item.address ===  "" || item.Address === "") continue;
           if(!item.address && !item.Address){
-            setLpAddressesError("Adress column is required");
-            setShowMemberAddressError(true)
+            setLpAddressesError("Address column is required");
+            setShowMemberAddressError(true);
+            setImporting(false);
             return
           }
-          addresses.push(item.address || item.Address)
+          addresses.push(item.address || item.Address);
         }
-        validateAddressArr(addresses)
-        setMembersArray(addresses)
-        setImporting(false)
+        validateAddressArr(addresses);
+        setMembersArray(addresses);
+        setImporting(false);
       },
       header: true
     });
@@ -373,6 +373,7 @@ const PreApproveDepositor = (props: Props): JSX.Element => {
           modalStyle: ModalStyle.DARK,
           titleMarginClassName: "mb-4 mt-2",
           showCloseButton: false,
+          titleAlignment: "left"
         }}
       >
         <div className="flex justify-center">
@@ -399,24 +400,14 @@ const PreApproveDepositor = (props: Props): JSX.Element => {
                 placeholder="Separate them with either a comma, space, or line break"
               />
               <div className={`rounded border-dashed border border-gray-700 text-gray-400 py-4 px-5 my-8 flex align-center ${addressFile? "justify-between":"justify-center"}`}>
-                {addressFile?
-                importing?
-                <>
-                <div className="flex"><img src="/images/file-icon.svg" alt="File icon"/><span className="ml-2.5">{addressFile.name}</span></div>
-                <Spinner height="h-4" width="w-4" margin="my-0" /> 
-                </>
-                :
-                <>
-                <div className="flex"><img src="/images/file-icon-white.svg" alt="File icon"/><span className="ml-2.5 text-white">{addressFile.name}</span></div>
-                <span className="cursor-pointer hover:opacity-70" onClick={deleteFile}><img src="/images/close-circle.svg" alt="Close Icon" /></span>
-                </>:
-                <>
-                <input type="file" className="hidden" onChange={handleUpload} ref={hiddenFileInput} accept=".csv"/>
-                <button className="cursor-pointer hover:opacity-70 flex" onClick={() => hiddenFileInput.current.click()} >
-                    <img src="/images/file-upload.svg" alt="Import CSV File" /> <span className="leading-4 ml-2.5">Import CSV file</span>
-                </button>
-                </>
-                }
+                <FileUpload 
+                  file={addressFile}
+                  importing={importing}
+                  deleteFile={deleteFile}
+                  handleUpload={handleUpload}
+                  title="Import CSV file"
+                  fileType=".csv"
+                />
               </div>
               <div className="rounded-lg bg-blue-navy bg-opacity-10 text-blue-navy py-4 px-5 my-8 leading-4 text-sm">
                   {allowlistBulktext}
@@ -436,7 +427,7 @@ const PreApproveDepositor = (props: Props): JSX.Element => {
                 onClick={handleSubmit}
                 disabled={showMemberAddressError}
               >
-                {membersArray.length? `Add ${membersArray.length} Addresses`: "Add Addresses"}
+                {!membersArray.length || importing ? "Add Addresses": addressFile? "Import CSV File": `Add ${membersArray.length} Addresses`}
               </button>
             </div>
           </div>
@@ -455,18 +446,6 @@ const PreApproveDepositor = (props: Props): JSX.Element => {
           </p>
         </div>
       </ConfirmStateModal>
-  
-      {/* <FinalStateModal
-        show={showFinalState}
-        handleCloseModal={async () => await handleCloseFinalStateModal()}
-        icon={finalStateIcon}
-        buttonText={finalStateButtonText}
-        feedbackText={finalStateFeedback}
-        headerText={finalStateHeaderText}
-        address={syndicateAddress.toString()}
-        modalStyle={ModalStyle.DARK}
-        buttonClasses="w-40 p-2 bg-white text-black"
-      /> */}
     </>
   );
 };

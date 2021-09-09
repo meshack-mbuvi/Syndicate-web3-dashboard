@@ -38,6 +38,7 @@ const ManageMembers = (): JSX.Element => {
     },
   } = useSelector((state: RootState) => state);
   const [showPreApproveDepositor, setShowPreApproveDepositor] = useState(false);
+  const [addingMember, setAddingMember] = useState(false)
 
   const dispatch = useDispatch();
 
@@ -109,12 +110,6 @@ const ManageMembers = (): JSX.Element => {
     setTableData(tableDetails)
    
   }, [syndicateMembersToshow])
-  // console.log("to SHOW**")
-  // console.table(syndicateMembersToshow)
-  // console.log("T data**")
-  // console.table(tableData)
-  
-  
 
   const showApproveModal = (e) => {
     e.preventDefault();
@@ -221,135 +216,135 @@ const ManageMembers = (): JSX.Element => {
     ],
     [],
   );
-  
 
-  return (
-      <div className="w-full rounded-md h-full lg:h-96  my-4">
-        <div className="w-full h-10 px-2 py-4 sm:px-0">
-          <Tab.Group defaultIndex={0}>
-            <Tab.List className="flex space-x-10">
-              <div className="uppercase py-1 text-lg">Members</div>
-              <div className="w-fit-content rounded-full border border-gray-nightrider">
-                <Tab
-                  className={({ selected }) =>
-                    `px-6 py-1 ${
-                      selected
-                        ? "text-white border-1 border-white rounded-full"
-                        : "text-blue-rockBlue"
-                    }`
-                  }
-                >
-                  Allowlist
-                  {` (${syndicateMembersToshow.length})`}
-                </Tab>
-                <Tab
-                  className={({ selected }) =>
-                    `px-4 py-1 ${
-                      selected
-                        ? "text-white border-1 border-white rounded-full"
-                        : "text-blue-rockBlue"
-                    }`
-                  }
-                >
-                  Requests
-                  {` (0)`}
-                </Tab>
-              </div>
-            </Tab.List>
-            {showPreApproveDepositor && 
-                        <PreApproveDepositor
-                          {...{ showPreApproveDepositor, setShowPreApproveDepositor }}
-              />}
-            <Tab.Panels className="font-whyte text-blue-rockBlue w-full">
-              <Tab.Panel as="div">
-                {loading ? (
-                  <Spinner />
-                ) : syndicateMembersToshow.length ? (
-                  <div className="rounded-md overflow-y-hidden">
-                    {loading ? (
-                      <Spinner />
-                    ) : syndicateMembersToshow.length ? (
-                      <div className="flex flex-col overflow-y-hidden">
-                        <div className="flex my-6 px-1 space-x-8 justify-between">
-                          <form>
-                            <SearchForm
-                              {...{
-                                onChangeHandler: filterAddressOnChangeHandler,
-                                searchValue: filteredAddress,
-                                memberCount: syndicateMembersToshow.length,
-                              }}
-                            />
-                          </form>
-                          {
-                          syndicate?.depositsEnabled && syndicate?.allowlistEnabled ?
-                          (
-                          <button className="flex flex-shrink text-blue-600 justify-center py-1 hover:opacity-70" onClick={showApproveModal}>
-                            <img
-                              src={"/images/plus-circle-blue.svg"}
-                              alt="icon"
-                              className="mr-3 mt-0.5"
-                            />
-                            <span>Add members</span>
-                          </button>
-                          )
-                          : null
-                          }
-                        </div>
-                        
-                        <SyndicateMembersTable
-                          columns={columns}
-                          data={tableData}
-                          distributing={syndicate.distributing}
-                        />
-                      </div>
-                    ) : (
-                      <div className="flex justify-center text-gray-500">
-                        {filteredAddress.trim()
-                          ? "Member address not found."
-                          : "Syndicate does not have investors."}
-                      </div>
-                    )}
+
+return (
+    <div className="w-full rounded-md h-full my-4">
+      <div className="w-full px-2 py-4 sm:px-0">
+        <Tab.Group defaultIndex={0}>
+          <Tab.List className="flex space-x-10">
+            <div className="uppercase py-1 text-lg">Members</div>
+            <div className="w-fit-content rounded-full border border-gray-nightrider">
+              <Tab
+                className={({ selected }) =>
+                  `px-6 py-1 ${
+                    selected
+                      ? "text-white border-1 border-white rounded-full"
+                      : "text-blue-rockBlue"
+                  }`
+                }
+              >
+                Allowlist
+                {` (${syndicateMembers.length})`}
+              </Tab>
+              <Tab
+                className={({ selected }) =>
+                  `px-4 py-1 ${
+                    selected
+                      ? "text-white border-1 border-white rounded-full"
+                      : "text-blue-rockBlue"
+                  }`
+                }
+              >
+                Requests
+                {` (0)`}
+              </Tab>
+            </div>
+          </Tab.List>
+          {
+            showPreApproveDepositor?
+            <PreApproveDepositor
+              {...{ showPreApproveDepositor, setShowPreApproveDepositor, setAddingMember}}
+          />: null
+          }
+          <Tab.Panels className="font-whyte text-blue-rockBlue w-full">
+            <Tab.Panel as="div">
+              {loading ? (
+                <Spinner />
+              ) : syndicateMembers.length ? (
+                <div className="flex flex-col overflow-y-hidden">
+                  <div className="flex mt-4 space-x-8 justify-between">
+                    <form className="w-2/5">
+                      <SearchForm
+                        {...{
+                          onChangeHandler: filterAddressOnChangeHandler,
+                          searchValue: filteredAddress,
+                          memberCount: syndicateMembersToshow.length,
+                        }}
+                      />
+                    </form>
+                    {
+                      syndicate?.depositsEnabled && syndicate?.allowlistEnabled ?
+                      (
+                      <button className="flex flex-shrink text-blue-600 justify-center py-1 hover:opacity-70" onClick={showApproveModal}>
+                      <img
+                          src={"/images/plus-circle-blue.svg"}
+                          alt="icon"
+                          className="mr-3 mt-0.5"
+                      />
+                      <span>Add members</span>
+                      </button>
+                      )
+                      : null
+                    }
                   </div>
-                ) : (
-                  <div className="flex justify-center">
-                    <div className="my-10">
-                      <div className="flex flex-col space-y-4">
-                        <p>
-                          No members have been added to this syndicate’s
-                          allowlist yet.
-                        </p>
-                        {
-                          syndicate?.depositsEnabled && syndicate?.allowlistEnabled ?
-                          (
-                          <button className="flex text-blue-600 justify-center py-1" onClick={showApproveModal}>
-                            <img
-                              src={"/images/plus-circle-blue.svg"}
-                              alt="icon"
-                              className="mr-3 mt-0.5"
-                            />
-                            <span>Add members</span>
-                          </button>
-                          )
-                          : null
-                        }
-                      </div>
+
+                  {syndicateMembersToshow.length ? (
+                    <SyndicateMembersTable
+                      columns={columns}
+                      data={tableData}
+                      distributing={syndicate.distributing}
+                      addingMember={addingMember}
+
+                    />
+                  ) : (
+                    <div className="flex justify-center text-gray-500">
+                      {filteredAddress.trim()
+                        ? "Member address not found."
+                        : "Syndicate does not have investors."}
                     </div>
-                  </div>
-                )}
-              </Tab.Panel>
-              <Tab.Panel>
+                  )}
+                </div>
+              ) : (
                 <div className="flex justify-center">
                   <div className="my-10">
-                    <div>
-                      <p>Members who have requested to be added to allowlist</p>
+                    <div className="flex flex-col space-y-4">
+                      <p>
+                        No members have been added to this syndicate’s allowlist
+                        yet.
+                      </p>
+                      {
+                        syndicate?.depositsEnabled && syndicate?.allowlistEnabled ?
+                        (
+                        <button className="flex text-blue-600 justify-center py-1" onClick={showApproveModal}>
+                          <img
+                            src={"/images/plus-circle-blue.svg"}
+                            alt="icon"
+                            className="mr-3 mt-0.5"
+                          />
+                          <span>Add members</span>
+                        </button>
+                        )
+                        : null
+                      }
                     </div>
                   </div>
                 </div>
-              </Tab.Panel>
-            </Tab.Panels>
-          </Tab.Group>
-        </div>
+              )}
+            </Tab.Panel>
+            <Tab.Panel>
+              <div className="flex justify-center">
+                <div className="my-10">
+                  <div>
+                    <p>Members who have requested to be added to allowlist</p>
+                  </div>
+                </div>
+              </div>
+            </Tab.Panel>
+          </Tab.Panels>
+        </Tab.Group>
       </div>
+    </div>
   );
 };
 

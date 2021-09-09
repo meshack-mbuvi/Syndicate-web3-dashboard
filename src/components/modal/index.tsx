@@ -18,6 +18,7 @@ interface ModalProps {
   closeButtonClassName?: string;
   modalStyle?: ModalStyle;
   titleMarginClassName?: string
+  titleAlignment?: string;
 }
 
 export enum ModalStyle {
@@ -55,6 +56,7 @@ export const Modal = (props: ModalProps): JSX.Element => {
     closeButtonClassName,
     outsideOnClick,
     titleMarginClassName,
+    titleAlignment,
     overflow = "overflow-hidden",
     showBackButton = false,
     modalStyle = ModalStyle.LIGHT,
@@ -132,7 +134,8 @@ export const Modal = (props: ModalProps): JSX.Element => {
               {/* modal title */}
               {loading ? null : (
                 <div
-                  className={`modal-header ${titleMarginClassName? titleMarginClassName: "mb-6 mt-4"} ${textColor} font-whyte sm:text-center leading-8 pl-4 pr-12 sm:pr-0 ${
+                  className={`modal-header ${titleMarginClassName ? titleMarginClassName: "mb-6 mt-4"}
+                  ${textColor} font-whyte ${titleAlignment ? titleAlignment: "sm:text-center"} leading-8 pl-4 pr-12 sm:pr-0 ${
                     titleFontSize ? `text-modalTitle` : `text-modalSubTitle`
                   }`}
                 >

@@ -62,7 +62,7 @@ export const FinalStateModal = (props: Props) => {
 
           <div className="flex justify-center my-5">
             <Button
-              customClasses={buttonClasses? buttonClasses: "bg-blue w-40 p-2 rounded-full"}
+              customClasses={buttonClasses ? buttonClasses: "bg-blue w-40 p-2 rounded-full"}
               textColor={buttonClasses}
               onClick={() => handleCloseModal()}
             >

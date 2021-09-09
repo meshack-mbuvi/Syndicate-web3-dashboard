@@ -316,22 +316,6 @@ const ManagerActions = (): JSX.Element => {
                 }}
               />
             )}
-            {/* show pre-approve depositor option when syndicate is open and allowList is enabled */}
-            {syndicate?.depositsEnabled && syndicate?.allowlistEnabled ? (
-              <ManagerActionCard
-                title={"Pre-approve depositor addresses"}
-                description={
-                  "Pre-approve accredited investor addresses that can deposit into this syndicate."
-                }
-                icon={
-                  <img
-                    src="/images/managerActions/approve_members.svg"
-                    alt=""
-                  />
-                }
-                onClickHandler={() => setShowPreApproveDepositor(true)}
-              />
-            ) : null}
 
             {actions.map(({ icon, title, description, onClickHandler }) => {
               return (
@@ -384,10 +368,6 @@ const ManagerActions = (): JSX.Element => {
         {showDistributeToken ? (
           <DistributeToken
             {...{ showDistributeToken, setShowDistributeToken }}
-          />
-        ) : showPreApproveDepositor ? (
-          <PreApproveDepositor
-            {...{ showPreApproveDepositor, setShowPreApproveDepositor }}
           />
         ) : showRequestSocialProfile ? (
           <RequestSocialProfile
