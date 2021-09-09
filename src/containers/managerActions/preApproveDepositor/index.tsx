@@ -175,7 +175,7 @@ const PreApproveDepositor = (props: Props): JSX.Element => {
       throw "This syndicate does not exist and therefore we can't update its details.";
     }
   
-    if (!membersArray) {
+    if (!membersArray.length) {
       setLpAddressesError("Approved address is required");
       setShowMemberAddressError(true);
       return;
@@ -221,6 +221,7 @@ const PreApproveDepositor = (props: Props): JSX.Element => {
       addNewMemberAddress(membersArray, true);
       setAddingMember(false);
     } catch (error) {
+      setMembersArray([])
       addNewMemberAddress([],false);
       handleError(error);
       setAddingMember(false);
@@ -232,6 +233,7 @@ const PreApproveDepositor = (props: Props): JSX.Element => {
 
     arr && arr.length
       ? arr.map(async (value: string) => {
+          setValidating(true)
           if (web3.utils.isAddress(value)) {
             setLpAddressesError("");
             setShowMemberAddressError(false);
@@ -243,20 +245,24 @@ const PreApproveDepositor = (props: Props): JSX.Element => {
             // handle existing addresses
             if (isAlreadyPreApproved) {
               setShowMemberAddressError(true);
+              setMembersArray([]);
               setLpAddressesError(`${value} has already been pre-approved.`);
             }
 
             // handle duplicates
             if (countOccurrences(arr, value) > 1) {
               setShowMemberAddressError(true);
+              setMembersArray([]);
               setLpAddressesError(
                 `${value} has already been added (duplicate).`,
               );
             }
           } else {
             setShowMemberAddressError(true);
+            setMembersArray([]);
             setLpAddressesError(`${value} is not a valid ERC20 address`);
           }
+          setValidating(false)
         })
       : setLpAddressesError("");
   };
@@ -325,6 +331,7 @@ const PreApproveDepositor = (props: Props): JSX.Element => {
   } = managerApproveAddressesConstants;
 
   const [importing, setImporting] = useState(false)
+  const [validating, setValidating] = useState(false)
   const handleUpload = (event) => {
     setImporting(true);
     const fileUploaded = event.target.files[0];
@@ -342,14 +349,15 @@ const PreApproveDepositor = (props: Props): JSX.Element => {
           if(!item.address && !item.Address){
             setLpAddressesError("Address column is required");
             setShowMemberAddressError(true);
+            setMembersArray([]);
             setImporting(false);
             return
           }
           addresses.push(item.address || item.Address);
         }
+        setImporting(false);
         validateAddressArr(addresses);
         setMembersArray(addresses);
-        setImporting(false);
       },
       header: true
     });
@@ -362,6 +370,7 @@ const PreApproveDepositor = (props: Props): JSX.Element => {
     setLpAddressesError("")
   }
 
+  const isSubmittable = membersArray.length && !importing && !validating && !showMemberAddressError;
 //   to add lg and md w
   return (
     <>
@@ -399,7 +408,7 @@ const PreApproveDepositor = (props: Props): JSX.Element => {
                 name="approvedAddresses"
                 placeholder="Separate them with either a comma, space, or line break"
               />
-              <div className={`rounded border-dashed border border-gray-700 text-gray-400 py-4 px-5 my-8 flex align-center ${addressFile? "justify-between":"justify-center"}`}>
+              <div className={`rounded border-dashed border border-gray-700 text-gray-400 py-4 px-5 my-8 flex align-center ${addressFile ? "justify-between":"justify-center"}`}>
                 <FileUpload 
                   file={addressFile}
                   importing={importing}
@@ -421,13 +430,14 @@ const PreApproveDepositor = (props: Props): JSX.Element => {
                 Cancel
               </button>
               <button
-                className={`${membersArray.length? "bg-white text-black":"bg-gray-700 text-gray-400"} h-14 py-2 px-10 rounded-lg ${
+                className={`${isSubmittable ?
+                  "bg-white text-black" : "bg-gray-700 text-gray-400"} h-14 py-2 px-10 rounded-lg ${
                   showMemberAddressError ? "cursor-not-allowed" : null
                 }`}
                 onClick={handleSubmit}
-                disabled={showMemberAddressError}
+                disabled={showMemberAddressError || importing || validating}
               >
-                {!membersArray.length || importing ? "Add Addresses": addressFile? "Import CSV File": `Add ${membersArray.length} Addresses`}
+                {addressFile ? "Import CSV File" :isSubmittable? `Add ${membersArray.length} Addresses`: "Add Addresses"} 
               </button>
             </div>
           </div>
