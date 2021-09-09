@@ -3,7 +3,6 @@ import {
   CONFIRM_RETURN_DEPOSIT,
   RETURNING_DEPOSIT,
   SET_LOADING_SYNDICATE_DEPOSITOR_DETAILS,
-  SET_SELECTED_MEMBERS,
   SET_SELECTED_MEMBER_ADDRESS,
   SET_SYNDICATE_MANAGE_MEMBERS,
   SHOW_REJECT_MEMBER_ADDRESS_ONLY,
@@ -231,6 +230,13 @@ export const getSyndicateDepositorData =
       syndicatesReducer: { syndicate },
       initializeContractsReducer: { syndicateContracts },
     } = getState();
+
+    // show loader
+    dispatch({
+      type: SET_LOADING_SYNDICATE_DEPOSITOR_DETAILS,
+      data: true,
+    });
+
     const memberAddresses = await getSyndicateDepositors(
       syndicateContracts,
       syndicate.syndicateAddress,

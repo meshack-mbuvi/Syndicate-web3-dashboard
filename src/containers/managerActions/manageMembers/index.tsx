@@ -50,6 +50,7 @@ const ManageMembers = (): JSX.Element => {
         confirmReturnDeposit,
         memberAddresses,
         totalAmountToReturn,
+        loading,
       },
     },
     syndicateMemberDetailsReducer: {
@@ -406,7 +407,11 @@ const ManageMembers = (): JSX.Element => {
           ) : null}
           <Tab.Panels className="font-whyte text-blue-rockBlue w-full">
             <Tab.Panel as="div">
-              {syndicateMembers.length ? (
+              {loading ? (
+                <div className="flex justify-center ">
+                  <Spinner />
+                </div>
+              ) : syndicateMembers.length ? (
                 <div className="flex flex-col overflow-y-hidden -mx-6">
                   {syndicateMembersToshow.length ? (
                     <SyndicateMembersTable
