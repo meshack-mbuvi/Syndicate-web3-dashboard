@@ -83,8 +83,8 @@ const SelectInputItem: React.FC<{
       <div className="flex justify-start items-center">
         <p className="text-white ml-3">
           {value.length > numberOfCharacters
-            ? `${value.slice(0, numberOfCharacters)}...`
-            : value}
+            ? `${value.replace(/\_/g, " ").slice(0, numberOfCharacters)}...`
+            : value.replace(/\_/g, " ")}
         </p>
       </div>
       {usingTimezone && !usingTemplate ? (
@@ -134,7 +134,7 @@ const SelectDropdown: React.FC<{
     }
   }, [searchTerm, selectOptions]);
   return (
-    <div className="flex flex-col p-4 rounded-md bg-gray-darkBackground border-6 border-gray-darkBackground focus:outline-none h-56">
+    <div className="flex flex-col p-4 pb-0 rounded-md bg-gray-darkBackground border-6 border-gray-darkBackground focus:outline-none h-96">
       {isSearchable ? (
         <SearchInput
           setSearchTerm={setSearchTerm}
@@ -232,9 +232,9 @@ export const CustomSelectInput: React.FC<ICustomSelectInput> = (props) => {
   // check value to display based on the above.
   const selectedValueToShow =
     usingTimezone && !usingTemplate
-      ? selectedValue.label
+      ? selectedValue.label.replace(/\_/g, " ")
       : usingTimezone && usingTemplate
-      ? selectedValue.label.split("/")[1]
+      ? selectedValue.label.replace(/\_/g, " ").split("/")[1]
       : selectedValue;
 
   // some timezone labels are too long and will overflow the input field/options
