@@ -13,10 +13,8 @@ import {
 } from "@/components/syndicates/shared/Constants";
 import { getMetamaskError } from "@/helpers";
 import { showWalletModal } from "@/redux/actions";
-import {
-  setSelectedMemberAddress,
-  setShowModifyCapTable,
-} from "@/redux/actions/manageActions";
+import { setShowModifyCapTable } from "@/redux/actions/manageActions";
+import { setSelectedMemberAddress } from "@/redux/actions/manageMembers";
 import {
   getSyndicateByAddress,
   getTokenDecimals,
@@ -24,11 +22,11 @@ import {
 import { RootState } from "@/redux/store";
 import { divideIfNotByZero, getWeiAmount } from "@/utils/conversions";
 import { isZeroAddress, Validate } from "@/utils/validators";
+import { getCoinFromContractAddress } from "functions/src/utils/ethereum";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Button from "src/components/buttons";
-import { getCoinFromContractAddress } from "functions/src/utils/ethereum";
 
 /**
  * This component displays a form with input fields used to modify a syndicate
@@ -37,10 +35,8 @@ import { getCoinFromContractAddress } from "functions/src/utils/ethereum";
  * @returns
  */
 const ModifySyndicateCapTable = (): JSX.Element => {
-  const {
-    currentDepositAmountTooltip,
-    newDepositAmountTooltip,
-  } = ModifySyndicateCapTableConstants;
+  const { currentDepositAmountTooltip, newDepositAmountTooltip } =
+    ModifySyndicateCapTableConstants;
 
   const {
     syndicatesReducer: { syndicate },
@@ -55,10 +51,8 @@ const ModifySyndicateCapTable = (): JSX.Element => {
 
   const dispatch = useDispatch();
 
-  const [
-    showWalletConfirmationModal,
-    setShowWalletConfirmationModal,
-  ] = useState(false);
+  const [showWalletConfirmationModal, setShowWalletConfirmationModal] =
+    useState(false);
 
   const [validSyndicate, setValidSyndicate] = useState(false);
 
@@ -158,12 +152,11 @@ const ModifySyndicateCapTable = (): JSX.Element => {
     if (!syndicateContracts?.GetterLogicContract) return;
 
     try {
-      const {
-        memberDeposit,
-      } = await syndicateContracts.GetterLogicContract.getMemberInfo(
-        syndicateAddress,
-        memberAddress,
-      );
+      const { memberDeposit } =
+        await syndicateContracts.GetterLogicContract.getMemberInfo(
+          syndicateAddress,
+          memberAddress,
+        );
 
       const memberDeposits = getWeiAmount(
         memberDeposit,
@@ -183,7 +176,7 @@ const ModifySyndicateCapTable = (): JSX.Element => {
    */
   const handleDepositAddressChange = (event) => {
     const { value } = event.target;
-    dispatch(setSelectedMemberAddress(value));
+    dispatch(setSelectedMemberAddress(value, 0));
 
     if (!value.trim()) {
       setDepositAddressError("Deposit address is required");
