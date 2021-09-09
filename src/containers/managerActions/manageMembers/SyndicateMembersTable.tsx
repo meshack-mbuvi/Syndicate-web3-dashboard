@@ -1,6 +1,7 @@
 import { SearchForm } from "@/components/inputs/searchForm";
+import Image from "next/image";
 import React, { useEffect, useRef, useState } from "react";
-import { useRowSelect, useTable } from "react-table";
+import { usePagination, useRowSelect, useTable } from "react-table";
 
 interface IIndeterminateInputProps {
   indeterminate?: boolean;
@@ -72,17 +73,25 @@ const SyndicateMembersTable = ({
     getTableProps,
     getTableBodyProps,
     headerGroups,
-    rows,
+    page,
     prepareRow,
     selectedFlatRows,
+    canPreviousPage,
+    canNextPage,
+    pageCount,
+    nextPage,
+    previousPage,
+    state: { pageSize },
   } = useTable(
     {
       columns,
       data,
       initialState: {
         hiddenColumns,
+        pageSize: 10,
       },
     },
+    usePagination,
     useRowSelect,
     (hooks) => {
       hooks.visibleColumns.push((columns) => [
@@ -222,7 +231,7 @@ const SyndicateMembersTable = ({
         >
           {
             // Loop over the table rows
-            rows.map((row, index) => {
+            page.map((row, index) => {
               // Prepare the row for display
 
               prepareRow(row);
@@ -267,6 +276,36 @@ const SyndicateMembersTable = ({
           }
         </tbody>
       </table>
+      <div className="flex w-full text-white space-x-4 justify-center my-8 py-1 leading-6">
+        <button
+          className="pt-1"
+          onClick={() => previousPage()}
+          disabled={!canPreviousPage}
+        >
+          <Image
+            src={"/images/arrowBack.svg"}
+            height="16"
+            width="16"
+            alt="Previous"
+          />
+        </button>
+        <p className="">
+          1 - {pageSize} of {pageCount}
+        </p>
+
+        <button
+          className="pt-1"
+          onClick={() => nextPage()}
+          disabled={!canNextPage}
+        >
+          <Image
+            src={"/images/arrowNext.svg"}
+            height="16"
+            width="16"
+            alt="Next"
+          />
+        </button>
+      </div>
     </div>
   );
 };
