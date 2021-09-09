@@ -4,6 +4,7 @@ import { getMetamaskError } from "@/helpers";
 import { checkAccountAllowance } from "@/helpers/approveAllowance";
 import {
   getSyndicateDepositorData,
+  setLoadingSyndicateDepositorDetails,
   setReturningMemberDeposit,
   setSelectedMemberAddress,
   showConfirmReturnDeposit,
@@ -362,6 +363,7 @@ const ManageMembers = (): JSX.Element => {
     setErrorMessage("");
     setErrorTitleMessage("");
     setShowErrorModal(false);
+    dispatch(setLoadingSyndicateDepositorDetails(false));
   };
 
   return (
@@ -488,6 +490,7 @@ const ManageMembers = (): JSX.Element => {
                     <button
                       className="primary-CTA hover:opacity-80"
                       onClick={() => handleReturnDeposits()}
+                      disabled={showConfirmationModal}
                     >
                       Return Deposits
                     </button>

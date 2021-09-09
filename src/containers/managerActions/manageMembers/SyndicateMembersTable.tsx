@@ -1,6 +1,8 @@
 import { SearchForm } from "@/components/inputs/searchForm";
+import { RootState } from "@/redux/store";
 import Image from "next/image";
 import React, { useEffect, useRef, useState } from "react";
+import { useSelector } from "react-redux";
 import { usePagination, useRowSelect, useTable } from "react-table";
 
 interface IIndeterminateInputProps {
@@ -40,6 +42,9 @@ const SyndicateMembersTable = ({
   filterAddressOnChangeHandler,
   searchAddress,
 }): JSX.Element => {
+  const {
+    syndicatesReducer: { syndicate },
+  } = useSelector((state: RootState) => state);
   const [showMoreOptions, setShowMoreOptions] = useState(-1);
 
   // eslint-disable-next-line react/display-name
@@ -142,7 +147,9 @@ const SyndicateMembersTable = ({
             </p>
             <button
               className={`flex flex-shrink font-whyte text-right text-blue text-sm justify-center ${
-                !disabled ? "opacity-50 cursor-not-allowed" : "hover:opacity-80"
+                !disabled || !syndicate.modifiable
+                  ? "opacity-50 cursor-not-allowed"
+                  : "hover:opacity-80"
               }`}
             >
               <img
@@ -154,7 +161,9 @@ const SyndicateMembersTable = ({
             </button>
             <button
               className={`flex flex-shrink font-whyte text-right text-blue text-sm justify-center ${
-                !disabled ? "opacity-50 cursor-not-allowed" : "hover:opacity-80"
+                !disabled || !syndicate.open
+                  ? "opacity-50 cursor-not-allowed"
+                  : "hover:opacity-80"
               }`}
             >
               <img
@@ -278,7 +287,11 @@ const SyndicateMembersTable = ({
       </table>
       <div className="flex w-full text-white space-x-4 justify-center my-8 py-1 leading-6">
         <button
-          className="pt-1"
+          className={`pt-1 ${
+            !canPreviousPage
+              ? "opacity-50 cursor-not-allowed"
+              : "hover:opacity-90"
+          }`}
           onClick={() => previousPage()}
           disabled={!canPreviousPage}
         >
@@ -294,7 +307,9 @@ const SyndicateMembersTable = ({
         </p>
 
         <button
-          className="pt-1"
+          className={`pt-1 ${
+            !canNextPage ? "opacity-50 cursor-not-allowed" : "hover:opacity-90"
+          }`}
           onClick={() => nextPage()}
           disabled={!canNextPage}
         >

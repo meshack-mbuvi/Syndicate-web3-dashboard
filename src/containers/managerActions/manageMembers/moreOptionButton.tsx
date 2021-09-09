@@ -76,10 +76,10 @@ const MoreOptionButton = (props: {
             data-for="block-address"
           >
             <img src="/images/block-address.svg" alt="Block address" />
+            <ReactTooltip id="block-address" place="top" effect="solid">
+              Block address
+            </ReactTooltip>
           </button>
-          <ReactTooltip id="block-address" place="top" effect="solid">
-            Block address
-          </ReactTooltip>
         </div>
       )}
     </>
