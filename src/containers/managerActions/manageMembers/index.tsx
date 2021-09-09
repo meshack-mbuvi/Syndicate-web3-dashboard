@@ -235,7 +235,7 @@ return (
                 }
               >
                 Allowlist
-                {` (${syndicateMembers.length})`}
+                {` (${syndicateMembersToshow.length})`}
               </Tab>
               <Tab
                 className={({ selected }) =>
