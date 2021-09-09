@@ -2,6 +2,8 @@ import Router from "next/router";
 import React, { useState } from "react";
 import { useSortBy, useTable } from "react-table";
 import { HeaderColumn, ifRows } from "./interfaces";
+import {useSelector} from "react-redux";
+import {RootState} from "@/redux/store";
 
 interface Props {
   columns: Array<HeaderColumn> | any;
@@ -24,6 +26,12 @@ const ActiveSyndicatesTable = ({ columns, data }: Props): JSX.Element => {
     },
     useSortBy,
   );
+
+  const {
+    web3Reducer: {
+        web3: { account }
+    },
+  } = useSelector((state: RootState) => state);
 
   const firstPageRows = rows.slice(0, 20);
 
@@ -105,10 +113,11 @@ const ActiveSyndicatesTable = ({ columns, data }: Props): JSX.Element => {
                         let link = "manage"
                         const { syndicateAddress } = row.values;
                         const { row: syndicateDetails } = row.values.Deposits.props
-                        if (syndicateDetails.depositsEnabled) {
+                        const isManager = syndicateDetails.managerCurrent  === account
+                        if (syndicateDetails.depositsEnabled && !isManager) {
                           link = "deposit"
                         }
-                        if (syndicateDetails.distributing) {
+                        if (syndicateDetails.distributing && !isManager) {
                           link = "withdraw"
                         }
                         Router.push(`/syndicates/${syndicateAddress}/${link}`);
