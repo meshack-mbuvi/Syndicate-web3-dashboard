@@ -14,10 +14,8 @@ import {
 import { getMetamaskError } from "@/helpers";
 import { getSyndicateMemberInfo } from "@/helpers/syndicate";
 import { showWalletModal } from "@/redux/actions";
-import {
-  setSelectedMemberAddress,
-  setShowModifyMemberDistributions,
-} from "@/redux/actions/manageActions";
+import { setShowModifyMemberDistributions } from "@/redux/actions/manageActions";
+import { setSelectedMemberAddress } from "@/redux/actions/manageMembers";
 import { updateMemberWithdrawalDetails } from "@/redux/actions/syndicateMemberDetails/memberWithdrawalsInfo";
 import { RootState } from "@/redux/store";
 import { divideIfNotByZero, getWeiAmount } from "@/utils/conversions";
@@ -61,10 +59,8 @@ const ModifyMemberDistributions = (): JSX.Element => {
 
   const dispatch = useDispatch();
 
-  const [
-    showWalletConfirmationModal,
-    setShowWalletConfirmationModal,
-  ] = useState(false);
+  const [showWalletConfirmationModal, setShowWalletConfirmationModal] =
+    useState(false);
 
   const [validSyndicate, setValidSyndicate] = useState(false);
 
@@ -81,15 +77,12 @@ const ModifyMemberDistributions = (): JSX.Element => {
   const [amountError, setAmountError] = useState<string>("");
 
   const [submitting, setSubmitting] = useState(false);
-  const [memberClaimedDistributions, setMemberClaimedDistributions] = useState(
-    null,
-  );
+  const [memberClaimedDistributions, setMemberClaimedDistributions] =
+    useState(null);
 
   // state variables for modifyDistribution modal
-  const [
-    showModifydistributionModal,
-    setShowModifydistributionModal,
-  ] = useState(false);
+  const [showModifydistributionModal, setShowModifydistributionModal] =
+    useState(false);
   const [distributionSymbol, setDistributionSymbol] = useState("");
   const [
     {
@@ -188,7 +181,7 @@ const ModifyMemberDistributions = (): JSX.Element => {
   const handleMemberAddressChange = (event) => {
     const { value } = event.target;
     setDepositAddressError("");
-    dispatch(setSelectedMemberAddress(value));
+    dispatch(setSelectedMemberAddress(value, 0));
 
     if (!value.trim()) {
       setDepositAddressError("Member address is required");

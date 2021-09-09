@@ -86,6 +86,7 @@ type InitialState = {
     rejectMemberAddressOrDeposit: boolean;
     showDepositOnly: boolean;
     showAddressOnly: boolean;
+    memberAddress:string;
   };
   createSyndicate: {
     syndicateOffChainData: {
@@ -210,6 +211,7 @@ export const initialState: InitialState = {
     rejectMemberAddressOrDeposit: false,
     showDepositOnly: false,
     showAddressOnly: false,
+    memberAddress:'',
   },
   createSyndicate: {
     syndicateOffChainData: {
