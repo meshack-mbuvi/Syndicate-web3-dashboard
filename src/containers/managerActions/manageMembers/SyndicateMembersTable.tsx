@@ -232,7 +232,7 @@ const SyndicateMembersTable = ({
                 <tr
                   {...row.getRowProps()}
                   key={index}
-                  className="space-y-6 hover:opacity-90 border-b-1 border-gray-nightrider"
+                  className="space-y-6 hover:opacity-90 border-b-1 text-base border-gray-nightrider"
                   onMouseEnter={() => setShowMoreOptions(index)}
                   onMouseLeave={() => setShowMoreOptions(-1)}
                 >
@@ -245,7 +245,7 @@ const SyndicateMembersTable = ({
                         <td
                           {...cell.getCellProps()}
                           key={cellIndex}
-                          className={`m-0 font-whyte-light text-white text-sm pl-0.5 py-2 ${
+                          className={`m-0 font-whyte-light text-white pl-0.5 py-2 ${
                             showMoreOptions == row.index
                             ? "opacity-100"
                             : cellIndex === row.cells.length - 1 && !showAddingMember

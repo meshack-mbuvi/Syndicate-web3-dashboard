@@ -157,15 +157,14 @@ const ManageMembers = (): JSX.Element => {
         accessor: function memberAddress(row: { memberAddress: string }) {
           const { memberAddress } = row;
           return (
-            <div className="flex space-x-2 align-center my-1 leading-6">
+            <div className="flex space-x-3 align-center text-base my-1 leading-6">
               <Image
                 width="32"
                 height="32"
                 src={"/images/user.svg"}
                 alt="user"
-                className="border"
               />
-              <p className=" mt-1">{formatAddress(memberAddress, 6, 6)}</p>
+              <p className="mt-1">{formatAddress(memberAddress, 6, 6)}</p>
             </div>
           );
         },
