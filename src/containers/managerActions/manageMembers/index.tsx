@@ -1,4 +1,3 @@
-import { SearchForm } from "@/components/inputs/searchForm";
 import Modal, { ModalStyle } from "@/components/modal";
 import { Spinner } from "@/components/shared/spinner";
 import { getMetamaskError } from "@/helpers";
@@ -157,18 +156,16 @@ const ManageMembers = (): JSX.Element => {
         accessor: function memberAddress(row: { memberAddress: string }) {
           const { memberAddress } = row;
           return (
-            <p className="flex space-x-2">
+            <div className="flex space-x-2 align-center my-1 leading-6">
               <Image
-                width="20"
-                height="20"
+                width="32"
+                height="32"
                 src={"/images/user.svg"}
                 alt="user"
                 className="border"
               />
-              <span className="align-middle mt-0.5">
-                {formatAddress(memberAddress, 6, 6)}
-              </span>
-            </p>
+              <p className=" mt-1">{formatAddress(memberAddress, 6, 6)}</p>
+            </div>
           );
         },
       },
@@ -410,39 +407,17 @@ const ManageMembers = (): JSX.Element => {
           <Tab.Panels className="font-whyte text-blue-rockBlue w-full">
             <Tab.Panel as="div">
               {syndicateMembers.length ? (
-                <div className="flex flex-col overflow-y-hidden">
-                  <div className="flex mt-4 space-x-8 justify-between">
-                    <form className="w-2/5">
-                      <SearchForm
-                        {...{
-                          onChangeHandler: filterAddressOnChangeHandler,
-                          searchValue: filteredAddress,
-                          memberCount: syndicateMembersToshow.length,
-                        }}
-                      />
-                    </form>
-                    {syndicate?.depositsEnabled &&
-                    syndicate?.allowlistEnabled ? (
-                      <button
-                        className="flex flex-shrink text-blue-600 justify-center py-1 hover:opacity-70"
-                        onClick={showApproveModal}
-                      >
-                        <img
-                          src={"/images/plus-circle-blue.svg"}
-                          alt="icon"
-                          className="mr-3 mt-0.5"
-                        />
-                        <span>Add members</span>
-                      </button>
-                    ) : null}
-                  </div>
-
+                <div className="flex flex-col overflow-y-hidden -mx-6">
                   {syndicateMembersToshow.length ? (
                     <SyndicateMembersTable
                       columns={columns}
                       data={tableData}
                       distributing={syndicate.distributing}
                       addingMember={addingMember}
+                      filterAddressOnChangeHandler={
+                        filterAddressOnChangeHandler
+                      }
+                      searchAddress={filteredAddress}
                     />
                   ) : (
                     <div className="flex justify-center text-gray-500">

@@ -49,7 +49,7 @@ export const SearchForm = (props: {
                 type="text"
                 name="search"
                 id="search"
-                className={`focus:ring-indigo-500 bg-black border-0 text-white font-whyte focus:border-indigo-500 block w-full rounded-md pl-6 sm:text-sm ${
+                className={`focus:ring-indigo-500 bg-black border-0 text-white font-whyte leading-6 text-lg focus:border-indigo-500 block w-full rounded-md pl-6 sm:text-sm ${
                   disabled ? "opacity-40" : ""
                 }`}
                 placeholder={`Search ${memberCount} members`}
