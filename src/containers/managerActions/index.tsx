@@ -23,15 +23,9 @@ import {
 import { UnavailableState } from "@/components/syndicates/shared/unavailableState";
 import { getMetamaskError } from "@/helpers";
 import {
-  setSelectedMemberAddress,
   setShowModifyCapTable,
   setShowModifyMemberDistributions,
-  setShowRejectDepositOrMemberAddress,
 } from "@/redux/actions/manageActions";
-import {
-  setShowRejectAddressOnly,
-  setShowRejectDepositOnly,
-} from "@/redux/actions/manageMembers";
 import { getSyndicateByAddress } from "@/redux/actions/syndicates";
 import { RootState } from "@/redux/store";
 import { web3 } from "@/utils";
@@ -55,10 +49,7 @@ const ManagerActions = (): JSX.Element => {
       web3: { account },
     },
     manageActionsReducer: {
-      manageActions: {
-        modifyMemberDistribution,
-        modifyCapTable,
-      },
+      manageActions: { modifyMemberDistribution, modifyCapTable },
     },
   } = useSelector((state: RootState) => state);
   const dispatch = useDispatch();
@@ -218,16 +209,7 @@ const ManagerActions = (): JSX.Element => {
     );
   }
 
-  /**
-   * sets member address to empty string. This address might have been set from
-   * the manage members component so we need to clear it here.
-   */
-  const clearMemberSelectedAddress = () => {
-    dispatch(setSelectedMemberAddress(""));
-  };
-
   const handleSetShowModifyMemberDistributions = () => {
-    clearMemberSelectedAddress();
     dispatch(setShowModifyMemberDistributions(true));
   };
 
@@ -238,10 +220,8 @@ const ManagerActions = (): JSX.Element => {
    */
   const handleSetShoModifySyndicateCapTable = (event) => {
     event.preventDefault();
-    clearMemberSelectedAddress();
     dispatch(setShowModifyCapTable(true));
   };
-
 
   return (
     <ErrorBoundary>
