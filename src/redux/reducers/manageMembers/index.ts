@@ -38,7 +38,6 @@ export const manageMembersDetailsReducer = (state = initialState, action) => {
         syndicateManageMembers: {
           ...syndicateManageMembers,
           totalAmountToReturn: action.data.totalAmountToReturn,
-          loading: action.data,
           memberAddresses: action.data.selectedMemberAddress,
         },
       };

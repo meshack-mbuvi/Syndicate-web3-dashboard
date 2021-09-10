@@ -355,8 +355,10 @@ const ManageMembers = (): JSX.Element => {
   };
 
   const handleCancelReturnDeposit = () => {
+    // dispatch(setLoadingSyndicateDepositorDetails(false));
+
     dispatch(showConfirmReturnDeposit(false));
-    dispatch(setSelectedMemberAddress([], 0));
+    // dispatch(setSelectedMemberAddress([], 0));
   };
 
   const closeErrorModal = () => {

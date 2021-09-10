@@ -118,7 +118,7 @@ export class SyndicateDepositLogic extends BaseLogicContract {
         setSubmitting(true);
       })
       .on("receipt", async () => {
-        await handleReceipt();
+        handleReceipt();
         setSubmitting(false);
       });
   }

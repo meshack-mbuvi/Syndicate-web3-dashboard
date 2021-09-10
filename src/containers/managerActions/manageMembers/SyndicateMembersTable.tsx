@@ -174,9 +174,7 @@ const SyndicateMembersTable = ({
               <span>Return deposits</span>
             </button>
             <button
-              className={`flex flex-shrink font-whyte text-right text-blue text-sm justify-center ${
-                !disabled ? "opacity-50 cursor-not-allowed" : "hover:opacity-80"
-              }`}
+              className={`flex flex-shrink font-whyte text-right text-blue text-sm justify-center hover:opacity-80`}
             >
               <img
                 src={"/images/block.svg"}
