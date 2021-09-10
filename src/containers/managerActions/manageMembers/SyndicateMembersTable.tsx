@@ -38,9 +38,10 @@ const SyndicateMembersTable = ({
   columns,
   data,
   distributing,
-  addingMember
+  addingMember,
   filterAddressOnChangeHandler,
   searchAddress,
+  showApproveModal,
 }): JSX.Element => {
   const {
     syndicatesReducer: { syndicate },
@@ -185,7 +186,10 @@ const SyndicateMembersTable = ({
             </button>
           </div>
           <div className="pl-4">
-            <button className="flex flex-shrink font-whyte text-right text-blue text-sm justify-center  hover:opacity-80">
+            <button
+              className="flex flex-shrink font-whyte text-right text-blue text-sm justify-center  hover:opacity-80"
+              onClick={showApproveModal}
+            >
               <img
                 src={"/images/plus-circle-blue.svg"}
                 alt="icon"
@@ -238,11 +242,15 @@ const SyndicateMembersTable = ({
         >
           {
             // Loop over the table rows
-            page.map((row, index) => {
+            page.map((row: any, index) => {
               // Prepare the row for display
 
               prepareRow(row);
-              const showAddingMember = (allowlistEnabled && !memberAddressAllowed && addingMember)
+              const {
+                original: { allowlistEnabled, memberAddressAllowed },
+              } = row;
+              const showAddingMember =
+                allowlistEnabled && !memberAddressAllowed && addingMember;
               return (
                 // Apply the row props
                 <tr
@@ -263,10 +271,11 @@ const SyndicateMembersTable = ({
                           key={cellIndex}
                           className={`m-0 font-whyte-light text-white pl-0.5 py-2 ${
                             showMoreOptions == row.index
-                            ? "opacity-100"
-                            : cellIndex === row.cells.length - 1 && !showAddingMember
-                            ? "opacity-0"
-                            : "opacity-100"
+                              ? "opacity-100"
+                              : cellIndex === row.cells.length - 1 &&
+                                !showAddingMember
+                              ? "opacity-0"
+                              : "opacity-100"
                           }`}
                         >
                           {

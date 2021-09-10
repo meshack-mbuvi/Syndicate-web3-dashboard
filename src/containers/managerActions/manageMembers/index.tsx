@@ -6,7 +6,6 @@ import {
   getSyndicateDepositorData,
   setLoadingSyndicateDepositorDetails,
   setReturningMemberDeposit,
-  setSelectedMemberAddress,
   showConfirmReturnDeposit,
 } from "@/redux/actions/manageMembers";
 import { updateMemberWithdrawalDetails } from "@/redux/actions/syndicateMemberDetails/memberWithdrawalsInfo";
@@ -53,6 +52,7 @@ const ManageMembers = (): JSX.Element => {
         totalAmountToReturn,
         loading,
       },
+      syndicateNewMembers: { newSyndicateMembers },
     },
     syndicateMemberDetailsReducer: {
       memberWithdrawalDetails,
@@ -119,6 +119,7 @@ const ManageMembers = (): JSX.Element => {
 
   const [syndicateMembersToshow, setSynMembersToShow] =
     useState(syndicateMembers);
+
   const [tableData, setTableData] = useState(getTableData());
 
   const generateTableData = () => {
@@ -138,7 +139,7 @@ const ManageMembers = (): JSX.Element => {
 
   useEffect(() => {
     generateTableData();
-  }, [newSyndicateMembers]);
+  }, [newSyndicateMembers, syndicateMembers]);
 
   useEffect(() => {
     const tableDetails = getTableData();
@@ -426,6 +427,7 @@ const ManageMembers = (): JSX.Element => {
                         filterAddressOnChangeHandler
                       }
                       searchAddress={filteredAddress}
+                      showApproveModal={showApproveModal}
                     />
                   ) : (
                     <div className="flex justify-center text-gray-500">
