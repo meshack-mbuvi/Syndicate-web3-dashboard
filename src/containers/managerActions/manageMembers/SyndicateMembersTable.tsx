@@ -152,6 +152,7 @@ const SyndicateMembersTable = ({
                   ? "opacity-50 cursor-not-allowed"
                   : "hover:opacity-80"
               }`}
+              disabled={!disabled}
             >
               <img
                 src={"/images/edit-deposits-blue.svg"}
@@ -166,6 +167,7 @@ const SyndicateMembersTable = ({
                   ? "opacity-50 cursor-not-allowed"
                   : "hover:opacity-80"
               }`}
+              disabled={!disabled}
             >
               <img
                 src={"/images/return-deposit-blue.svg"}
@@ -175,7 +177,11 @@ const SyndicateMembersTable = ({
               <span>Return deposits</span>
             </button>
             <button
-              className={`flex flex-shrink font-whyte text-right text-blue text-sm justify-center hover:opacity-80`}
+              className={`flex flex-shrink font-whyte text-right text-blue text-sm justify-center ${
+                !disabled || !syndicate.open
+                  ? "opacity-50 cursor-not-allowed"
+                  : "hover:opacity-80"
+              }`}
             >
               <img
                 src={"/images/block.svg"}
@@ -187,8 +193,13 @@ const SyndicateMembersTable = ({
           </div>
           <div className="pl-4">
             <button
-              className="flex flex-shrink font-whyte text-right text-blue text-sm justify-center  hover:opacity-80"
+              className={`flex flex-shrink font-whyte text-right text-blue text-sm justify-center ${
+                !syndicate.modifiable && syndicate.depositsEnabled
+                  ? "opacity-50 cursor-not-allowed"
+                  : "hover:opacity-80"
+              }`}
               onClick={showApproveModal}
+              disabled={!syndicate.modifiable && !syndicate.depositsEnabled}
             >
               <img
                 src={"/images/plus-circle-blue.svg"}
