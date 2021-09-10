@@ -202,15 +202,15 @@ const ManageMembers = (): JSX.Element => {
         Header: " ",
         accessor: function moreOptions(row) {
           const {memberAddressAllowed, allowlistEnabled} = row
-          if((memberAddressAllowed && allowlistEnabled) || !allowlistEnabled){
-            return <MoreOptionButton {...{ row }} />;
+          if(!memberAddressAllowed && allowlistEnabled && addingMember) {
+            return (
+              <span className="flex items-center">
+                <Spinner height="h-4" width="w-4" margin="my-0" /> 
+                <span className="ml-2 text-gray-400 leading-6">Adding Member</span>
+              </span>
+              )
           }
-          return (
-          <span className="flex items-center">
-            <Spinner height="h-4" width="w-4" margin="my-0" /> 
-            <span className="ml-2 text-gray-400 leading-6">Adding Member</span>
-          </span>
-          )
+          return <MoreOptionButton {...{ row }} />;
         },
       },
     ],
