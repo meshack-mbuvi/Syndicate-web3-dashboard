@@ -62,6 +62,7 @@ const templates = [
         selectedDate: new Date(now.setMonth(now.getMonth() + 1)),
       },
     },
+    disabled: false,
   },
   {
     title: "Investment Fund",
@@ -87,6 +88,7 @@ const templates = [
         selectedDate: new Date(now.setMonth(now.getMonth() + 6)),
       },
     },
+    disabled: false,
   },
   {
     title: "Investment Club",
@@ -105,6 +107,7 @@ const templates = [
         isAllowlistEnabled: false,
       },
     },
+    disabled: false,
   },
   {
     title: "Crowdfund/Grant DAO",
@@ -122,6 +125,7 @@ const templates = [
         isAllowlistEnabled: true,
       },
     },
+    disabled: true,
   },
 ];
 
@@ -185,10 +189,17 @@ const SyndicateTemplates: React.FC = () => {
   return (
     <div className="grid grid-cols-1 xl:grid-cols-4 lg:grid-cols-3 sm:grid-cols-2 gap-6 py-4">
       {templates.map((template, index) => {
-        const { title, subTitle, summary, defaults } = template;
+        const { title, subTitle, summary, defaults, disabled } = template;
         return (
-          <div onClick={() => handleTemplateSelect(title, defaults)}>
-            <TemplateItem {...{ title, subTitle, summary }} key={index} />
+          <div
+            onClick={() =>
+              !disabled ? handleTemplateSelect(title, defaults) : null
+            }
+          >
+            <TemplateItem
+              {...{ title, subTitle, summary, disabled }}
+              key={index}
+            />
           </div>
         );
       })}

@@ -6,37 +6,62 @@ interface ItemplateItem {
   title: string;
   subTitle: string;
   summary: string[];
+  disabled?: boolean;
 }
 
 const TemplateItem: React.FC<ItemplateItem> = ({
   title,
   subTitle,
   summary,
+  disabled = false,
 }) => {
   const [templateType, setTemplateType] = useState("");
   useEffect(() => {
-    setTemplateType(slugify(title,{lower: true}));
+    setTemplateType(slugify(title, { lower: true }));
   }, [title]);
 
-  return (
-    <Link href={`/syndicates/create/template?step=confirm-${templateType}-values`}>
-      <a className="flex flex-col items-start justify-start font-whyte border border-gray-inactive rounded-md hover:border-blue h-80 p-6">
-        <p className="text-1.5xl mb-2">{title}</p>
-        <p className="text-sm text-gray-3 mb-4 font-whyte-light font-bold">
-          {subTitle}
-        </p>
-        <ul className="list-disc text-sm list-inside py-1">
-          {summary.map((setting, index) => {
-            return (
-              <li className="pb-1" key={index}>
-                {setting}
-              </li>
-            );
-          })}
-        </ul>
-      </a>
-    </Link>
+  const templateContent = (
+    <a
+      className={`flex flex-col items-start justify-start font-whyte border border-gray-inactive rounded-md ${
+        !disabled && "hover:border-blue"
+      } h-80 p-6 ${disabled && "opacity-50 cursor-default"}`}
+    >
+      <p className="text-1.5xl mb-2">{title}</p>
+      <p className="text-sm text-gray-3 mb-4 font-whyte-light font-bold">
+        {subTitle}
+      </p>
+      <ul className="list-disc text-sm list-inside py-1">
+        {summary.map((setting, index) => {
+          return (
+            <li className="pb-1" key={index}>
+              {setting}
+            </li>
+          );
+        })}
+      </ul>
+    </a>
   );
+  let templateBox;
+  if (!disabled) {
+    templateBox = (
+      <Link
+        href={`/syndicates/create/template?step=confirm-${templateType}-values`}
+      >
+        {templateContent}
+      </Link>
+    );
+  } else if (disabled) {
+    templateBox = (
+      <>
+        {templateContent}
+        <p className="mt-2 text-xs text-center text-gray-spindle w-full">
+          Coming soon
+        </p>
+      </>
+    );
+  }
+
+  return templateBox;
 };
 
 export default TemplateItem;
