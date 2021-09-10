@@ -5,6 +5,7 @@ interface IIndeterminateInputProps {
   indeterminate?: boolean;
   customClass?: string;
   checked?: boolean;
+  addingMember?: boolean;
 }
 
 const useCombinedRefs = (
@@ -33,6 +34,7 @@ const SyndicateMembersTable = ({
   columns,
   data,
   distributing,
+  addingMember
 }): JSX.Element => {
   const [showMoreOptions, setShowMoreOptions] = useState(-1);
 
@@ -50,14 +52,14 @@ const SyndicateMembersTable = ({
       }
     }, [combinedRef, indeterminate]);
     return (
-      <input
-        type="checkbox"
-        className={`rounded checkbox bg-gray-102 ${
-          rest?.checked ? "block" : `${customClass}`
-        }`}
-        ref={combinedRef}
-        {...rest}
-      />
+        <input
+          type="checkbox"
+          className={`rounded checkbox bg-gray-102 ${
+            rest?.checked ? "block" : `${customClass}`
+          }`}
+          ref={combinedRef}
+          {...rest}
+        />
     );
   });
   // hide Distribution/claimed when syndicate is not distributing
@@ -107,10 +109,9 @@ const SyndicateMembersTable = ({
     },
   );
   return (
-    <table
+    <table 
       {...getTableProps()}
-      className="w-full border-b-1 mx-1 border-gray-nightrider"
-    >
+      className="w-full border-b-1 mx-1 border-gray-nightrider">
       <thead className="w-full">
         {
           // Loop over the header rows
@@ -148,9 +149,9 @@ const SyndicateMembersTable = ({
       >
         {
           // Loop over the table rows
-          rows.map((row, index) => {
+          rows.map((row:any, index) => {
             // Prepare the row for display
-
+            const { original:{ allowlistEnabled, memberAddressAllowed }} = row
             prepareRow(row);
             return (
               // Apply the row props
@@ -158,7 +159,9 @@ const SyndicateMembersTable = ({
                 {...row.getRowProps()}
                 key={index}
                 className="space-y-4 hover:opacity-80 hover:bg-gray-102 border-b-1 border-gray-nightrider"
-                onMouseEnter={() => setShowMoreOptions(index)}
+                onMouseEnter={() => {
+                  setShowMoreOptions(index)}
+                }
                 onMouseLeave={() => setShowMoreOptions(-1)}
               >
                 {
@@ -166,6 +169,7 @@ const SyndicateMembersTable = ({
                   row.cells.map((cell, cellIndex) => {
                     // Apply the cell props
                     // Show more options when row is hovered, otherwise hide them
+                    const showAddingMember = (allowlistEnabled && !memberAddressAllowed && addingMember)
                     return (
                       <td
                         {...cell.getCellProps()}
@@ -173,7 +177,7 @@ const SyndicateMembersTable = ({
                         className={`m-0 font-whyte-light text-white text-xs py-3 ${
                           showMoreOptions == row.index
                             ? "opacity-100"
-                            : cellIndex === row.cells.length - 1
+                            : cellIndex === row.cells.length - 1 && !showAddingMember
                             ? "opacity-0"
                             : "opacity-100"
                         }`}

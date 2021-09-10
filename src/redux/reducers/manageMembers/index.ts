@@ -1,11 +1,12 @@
 import {
   SET_LOADING_SYNDICATE_DEPOSITOR_DETAILS,
   SET_SYNDICATE_MANAGE_MEMBERS,
+  SET_NEW_MEMBER_ADDRESSES,
 } from "@/redux/actions/types";
 import { initialState } from "../initialState";
 
 export const manageMembersDetailsReducer = (state = initialState, action) => {
-  const { syndicateManageMembers } = state;
+  const { syndicateManageMembers, syndicateNewMembers } = state;
 
   switch (action.type) {
     case SET_SYNDICATE_MANAGE_MEMBERS:
@@ -25,6 +26,15 @@ export const manageMembersDetailsReducer = (state = initialState, action) => {
           loading: action.data,
         },
       };
+    
+    case SET_NEW_MEMBER_ADDRESSES:
+      return {
+        ...state,
+        syndicateNewMembers: {
+          ...syndicateNewMembers,
+          newSyndicateMembers: action.data
+        }
+      }
 
     default:
       return state;
