@@ -232,12 +232,6 @@ export const getSyndicateDepositorData =
       initializeContractsReducer: { syndicateContracts },
     } = getState();
 
-    // show loader
-    dispatch({
-      type: SET_LOADING_SYNDICATE_DEPOSITOR_DETAILS,
-      data: true,
-    });
-
     const memberAddresses = await getSyndicateDepositors(
       syndicateContracts,
       syndicate.syndicateAddress,

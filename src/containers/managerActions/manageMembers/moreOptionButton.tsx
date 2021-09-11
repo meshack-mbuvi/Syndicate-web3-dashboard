@@ -26,6 +26,7 @@ const MoreOptionButton = (props: {
 }): JSX.Element => {
   const { distributing, memberAddress, memberDeposit, modifiable, open } =
     props.row;
+
   const dispatch = useDispatch();
 
   const showMoreInfoOptions = open || (distributing && modifiable);

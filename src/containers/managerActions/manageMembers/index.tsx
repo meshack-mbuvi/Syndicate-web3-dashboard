@@ -6,6 +6,7 @@ import {
   getSyndicateDepositorData,
   setLoadingSyndicateDepositorDetails,
   setReturningMemberDeposit,
+  setSelectedMemberAddress,
   showConfirmReturnDeposit,
 } from "@/redux/actions/manageMembers";
 import { updateMemberWithdrawalDetails } from "@/redux/actions/syndicateMemberDetails/memberWithdrawalsInfo";
@@ -60,6 +61,7 @@ const ManageMembers = (): JSX.Element => {
     },
     initializeContractsReducer: { syndicateContracts },
   } = useSelector((state: RootState) => state);
+
   const [showPreApproveDepositor, setShowPreApproveDepositor] = useState(false);
   const [addingMember, setAddingMember] = useState(false);
 
@@ -123,7 +125,7 @@ const ManageMembers = (): JSX.Element => {
   const [tableData, setTableData] = useState(getTableData());
 
   const generateTableData = () => {
-    const allMembers = syndicateMembers.concat(newSyndicateMembers);
+    const allMembers = [...syndicateMembers, ...newSyndicateMembers];
 
     if (filteredAddress.trim()) {
       // search any text
@@ -139,7 +141,7 @@ const ManageMembers = (): JSX.Element => {
 
   useEffect(() => {
     generateTableData();
-  }, [newSyndicateMembers, syndicateMembers]);
+  }, [newSyndicateMembers, JSON.stringify(syndicateMembers)]);
 
   useEffect(() => {
     const tableDetails = getTableData();
@@ -177,7 +179,7 @@ const ManageMembers = (): JSX.Element => {
           if (returningDeposit)
             return (
               <p className="flex opacity-70">
-                <Spinner height="h-4" width="w-4" />
+                <Spinner height="h-4" width="w-4" margin="my-1" />
                 <span className="ml-2 text-gray-lightManatee">
                   Returning deposit
                 </span>
@@ -356,10 +358,8 @@ const ManageMembers = (): JSX.Element => {
   };
 
   const handleCancelReturnDeposit = () => {
-    // dispatch(setLoadingSyndicateDepositorDetails(false));
-
     dispatch(showConfirmReturnDeposit(false));
-    // dispatch(setSelectedMemberAddress([], 0));
+    dispatch(setSelectedMemberAddress([], 0));
   };
 
   const closeErrorModal = () => {

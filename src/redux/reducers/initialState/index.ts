@@ -203,7 +203,7 @@ export const initialState: InitialState = {
     totalAmountToReturn: 0,
   },
   syndicateNewMembers: {
-    newSyndicateMembers: []
+    newSyndicateMembers: [],
   },
   manageActions: {
     modifyMemberDistribution: false,
@@ -211,7 +211,7 @@ export const initialState: InitialState = {
     rejectMemberAddressOrDeposit: false,
     showDepositOnly: false,
     showAddressOnly: false,
-    memberAddress:'',
+    memberAddress: "",
   },
   createSyndicate: {
     syndicateOffChainData: {
