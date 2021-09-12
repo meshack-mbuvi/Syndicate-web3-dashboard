@@ -119,7 +119,6 @@ export class SyndicateDepositLogic extends BaseLogicContract {
       })
       .on("receipt", async () => {
         handleReceipt();
-        setSubmitting(false);
       });
   }
 
@@ -182,20 +181,16 @@ export class SyndicateDepositLogic extends BaseLogicContract {
   ) {
     if (!syndicateAddress.trim()) return;
 
-    try {
-      setShowWalletConfirmationModal(true);
+    setShowWalletConfirmationModal(true);
 
-      await this.logicContractInstance.methods
-        .managerSetDepositMemberMax(syndicateAddress, depositMemberMax)
-        .send({ from: manager })
-        .on("transactionHash", () => {
-          setShowWalletConfirmationModal(false);
-          setSubmitting(true);
-        });
-      setSubmitting(false);
-    } catch (error) {
-      throw error;
-    }
+    await this.logicContractInstance.methods
+      .managerSetDepositMemberMax(syndicateAddress, depositMemberMax)
+      .send({ from: manager })
+      .on("transactionHash", () => {
+        setShowWalletConfirmationModal(false);
+        setSubmitting(true);
+      });
+    setSubmitting(false);
   }
 
   /**
@@ -216,20 +211,16 @@ export class SyndicateDepositLogic extends BaseLogicContract {
   ) {
     if (!syndicateAddress.trim()) return;
 
-    try {
-      setShowWalletConfirmationModal(true);
+    setShowWalletConfirmationModal(true);
 
-      await this.logicContractInstance.methods
-        .managerSetDepositTotalMax(syndicateAddress, depositTotalMax)
-        .send({ from: manager })
-        .on("transactionHash", () => {
-          setShowWalletConfirmationModal(false);
-          setSubmitting(true);
-        });
-      setSubmitting(false);
-    } catch (error) {
-      throw error;
-    }
+    await this.logicContractInstance.methods
+      .managerSetDepositTotalMax(syndicateAddress, depositTotalMax)
+      .send({ from: manager })
+      .on("transactionHash", () => {
+        setShowWalletConfirmationModal(false);
+        setSubmitting(true);
+      });
+    setSubmitting(false);
   }
 
   /**
@@ -250,19 +241,15 @@ export class SyndicateDepositLogic extends BaseLogicContract {
   ) {
     if (!syndicateAddress.trim()) return;
 
-    try {
-      setShowWalletConfirmationModal(true);
+    setShowWalletConfirmationModal(true);
 
-      await this.logicContractInstance.methods
-        .managerSetDepositMemberMin(syndicateAddress, depositMemberMin)
-        .send({ from: manager })
-        .on("transactionHash", () => {
-          setShowWalletConfirmationModal(false);
-          setSubmitting(true);
-        });
-      setSubmitting(false);
-    } catch (error) {
-      throw error;
-    }
+    await this.logicContractInstance.methods
+      .managerSetDepositMemberMin(syndicateAddress, depositMemberMin)
+      .send({ from: manager })
+      .on("transactionHash", () => {
+        setShowWalletConfirmationModal(false);
+        setSubmitting(true);
+      });
+    setSubmitting(false);
   }
 }
