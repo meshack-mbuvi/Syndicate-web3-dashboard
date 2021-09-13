@@ -234,7 +234,7 @@ const CreateSyndicateProvider: React.FC<{ children: ReactNode }> = ({
           setProcessingMessage(
             "Adding addresses to allowlist, please wait for the transaction to complete",
           );
-          setSubmitting(true);
+          dispatch(setSubmitting(true));
         },
       );
       setShowErrorMessage(false);
@@ -378,7 +378,7 @@ const CreateSyndicateProvider: React.FC<{ children: ReactNode }> = ({
           setProcessingMessage(
             "Creating your syndicate, please wait for the transaction to complete",
           );
-          setSubmitting(true);
+          dispatch(setSubmitting(true));
         },
       );
       // if there are multiple transaction, handle the
@@ -539,7 +539,7 @@ const CreateSyndicateProvider: React.FC<{ children: ReactNode }> = ({
         setLegalEntity,
         setCurrentTemplateSubstep,
         setTemplateMaxTotalError,
-        
+
       }}
     >
       {children}

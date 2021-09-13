@@ -16,6 +16,7 @@ import {
   SET_LOADING,
   SET_MANAGER_FEE_ADDRESS,
   SYNDICATE_BY_ADDRESS,
+  SYNDICATE_NOT_FOUND,
   UPDATE_SYNDICATE_DETAILS,
 } from "../types";
 
@@ -197,6 +198,16 @@ export const getSyndicateByAddress =
       const syndicate = await GetterLogicContract.getSyndicateValues(
         web3.utils.toChecksumAddress(syndicateAddress),
       );
+
+      // we could have a valid Ethereum address but no associated syndicate yet
+      if (isZeroAddress(syndicate.managerCurrent) && isAddress) {
+        // TODO: handle add logic to show new card
+        return dispatch({
+          data: { syndicateAddressIsValid: true, syndicateFound: false },
+          type: SYNDICATE_NOT_FOUND,
+        });
+      }
+
       // a valid syndicate needs to have a manager set
       if (isZeroAddress(syndicate.managerCurrent) || !isAddress)
         return dispatch({

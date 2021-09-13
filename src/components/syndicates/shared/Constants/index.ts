@@ -330,7 +330,15 @@ const syndicateAddressInvalidTitleText = "Invalid syndicate address";
 const syndicateAddressInvalidMessageText =
   "Check to ensure you have the correct address.";
 const backLinkText = "Back To My Syndicates";
-
+const notSyndicateYetTitleText = "isn't a syndicate yet";
+const notSyndicateYetMessageText =
+  "This URL isn't currently associated with a syndicate. Invite someone to create a syndicate by copying the link below."
+const notSyndicateForManagerYetMessageText =
+    "This URL and the address you are connected with aren't associated with a syndicate yet."
+const creatingSyndicateForManagerTitle =
+    "Your syndicate is being created, it will be ready soon"
+const creatingSyndicateTitle =
+    "This syndicate is being created, it will be ready soon"
 export const MAX_INTEGER = BigInt(2 ** 256) - BigInt(1);
 
 const nonModifiableSyndicateErrorText =
@@ -344,6 +352,11 @@ export const syndicateActionConstants = {
   syndicateAddressInvalidMessageText,
   syndicateAddressInvalidTitleText,
   backLinkText,
+  notSyndicateYetTitleText,
+  notSyndicateYetMessageText,
+  creatingSyndicateForManagerTitle,
+  creatingSyndicateTitle,
+  notSyndicateForManagerYetMessageText,
   nonModifiableSyndicateErrorText,
   enableDistributionToModifySyndicateText,
 };

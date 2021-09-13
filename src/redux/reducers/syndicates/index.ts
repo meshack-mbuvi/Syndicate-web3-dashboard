@@ -5,6 +5,7 @@ import {
   SYNDICATE_BY_ADDRESS,
   FOUND_SYNDICATE_ADDRESS,
   UPDATE_SYNDICATE_DETAILS,
+  SYNDICATE_NOT_FOUND,
   USER_LOGOUT,
 } from "@/redux/actions/types";
 import { initialState } from "../initialState";
@@ -31,6 +32,13 @@ export const syndicatesReducer = (state = initialState, action) => {
       };
 
     case INVALID_SYNDICATE_ADDRESS:
+      return {
+        ...state,
+        syndicate: null,
+        ...action.data,
+      };
+
+    case SYNDICATE_NOT_FOUND:
       return {
         ...state,
         syndicate: null,

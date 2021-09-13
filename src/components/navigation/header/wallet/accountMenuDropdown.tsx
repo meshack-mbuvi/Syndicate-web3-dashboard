@@ -138,7 +138,7 @@ const AddressMenuDropDown: FC<IAddressMenuDropDown> = ({ web3 }) => {
 
                 <EtherscanLink
                   etherscanInfo={account}
-                  customStyles="mt-4 text-sm"
+                  customStyles="mt-4 text-base"
                 />
                 <div className="flex justify-between mt-4">
                   {renderConnectedWith(providerName)}
