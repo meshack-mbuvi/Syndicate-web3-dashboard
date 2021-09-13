@@ -1,7 +1,7 @@
 import { Syndicate } from "@/@types/syndicate";
 import { TWO_WEEKS_IN_MS } from "@/utils/constants";
-import Web3 from "web3";
 import ct from "countries-and-timezones";
+import Web3 from "web3";
 
 export enum SYNDICATE_CHAIN_TYPE {
   onChain = "onChain",
@@ -68,8 +68,17 @@ type InitialState = {
     ManagerLogicContract: unknown;
   };
   syndicateManageMembers: {
-    syndicateMembers: [];
+    syndicateMembers: {
+      memberAddress: string;
+      returningDeposit: boolean;
+      memberDeposit: string;
+      memberStake: string;
+      memberAddressAllowed: boolean;
+    }[];
     loading: boolean;
+    confirmReturnDeposit: boolean;
+    memberAddresses: string[];
+    totalAmountToReturn: number;
   };
   manageActions: {
     modifyMemberDistribution: boolean;
@@ -77,7 +86,7 @@ type InitialState = {
     rejectMemberAddressOrDeposit: boolean;
     showDepositOnly: boolean;
     showAddressOnly: boolean;
-    memberAddress: string;
+    memberAddress:string;
   };
   createSyndicate: {
     syndicateOffChainData: {
@@ -189,9 +198,12 @@ export const initialState: InitialState = {
   syndicateManageMembers: {
     syndicateMembers: [],
     loading: false,
+    confirmReturnDeposit: false,
+    memberAddresses: [],
+    totalAmountToReturn: 0,
   },
   syndicateNewMembers: {
-    newSyndicateMembers: []
+    newSyndicateMembers: [],
   },
   manageActions: {
     modifyMemberDistribution: false,

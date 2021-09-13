@@ -41,7 +41,7 @@ export const SearchForm = (props: {
               <img
                 src="/images/search.svg"
                 alt="Search icon"
-                className={`absolute inset-y-0 cursor-pointer pt-2.5 left-1 flex items-center ${
+                className={`absolute inset-y-0 cursor-pointer pt-2.5 left-2 flex items-center ${
                   disabled ? "opacity-40" : ""
                 }`}
               />
@@ -49,7 +49,7 @@ export const SearchForm = (props: {
                 type="text"
                 name="search"
                 id="search"
-                className={`focus:ring-indigo-500 bg-black border-0 text-white font-whyte focus:border-indigo-500 block w-full rounded-md pl-6 sm:text-sm ${
+                className={`focus:ring-indigo-500 bg-black border-0 text-white font-whyte leading-6 text-lg focus:border-indigo-500 block w-full rounded-md pl-6 sm:text-sm ${
                   disabled ? "opacity-40" : ""
                 }`}
                 placeholder={`Search ${memberCount} members`}

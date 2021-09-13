@@ -37,7 +37,7 @@ export const FinalStateModal = (props: Props) => {
       <>
         <div className="flex flex-col justify-center m-auto mb-4">
           <div className="flex justify-center my-5">
-            <img src={icon} className="w-14" />
+            <img src={icon} className="w-14" alt="error " />
           </div>
 
           {headerText ? (

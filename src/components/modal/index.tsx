@@ -63,7 +63,7 @@ export const Modal = (props: ModalProps): JSX.Element => {
   } = props;
 
   const bgColor = `${modalStyle === ModalStyle.LIGHT && "bg-white"} ${
-    modalStyle === ModalStyle.DARK && "bg-gray-4"
+    modalStyle === ModalStyle.DARK && "bg-gray-blackRussian"
   }`;
   const textColor = `${modalStyle === ModalStyle.LIGHT && "text-black"} ${
     modalStyle === ModalStyle.DARK && "text-white"

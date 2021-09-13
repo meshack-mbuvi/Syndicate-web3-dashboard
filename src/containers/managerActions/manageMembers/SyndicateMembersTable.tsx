@@ -1,5 +1,9 @@
+import { SearchForm } from "@/components/inputs/searchForm";
+import { RootState } from "@/redux/store";
+import Image from "next/image";
 import React, { useEffect, useRef, useState } from "react";
-import { useRowSelect, useTable } from "react-table";
+import { useSelector } from "react-redux";
+import { usePagination, useRowSelect, useTable } from "react-table";
 
 interface IIndeterminateInputProps {
   indeterminate?: boolean;
@@ -34,8 +38,14 @@ const SyndicateMembersTable = ({
   columns,
   data,
   distributing,
-  addingMember
+  addingMember,
+  filterAddressOnChangeHandler,
+  searchAddress,
+  showApproveModal,
 }): JSX.Element => {
+  const {
+    syndicatesReducer: { syndicate },
+  } = useSelector((state: RootState) => state);
   const [showMoreOptions, setShowMoreOptions] = useState(-1);
 
   // eslint-disable-next-line react/display-name
@@ -52,14 +62,14 @@ const SyndicateMembersTable = ({
       }
     }, [combinedRef, indeterminate]);
     return (
-        <input
-          type="checkbox"
-          className={`rounded checkbox bg-gray-102 ${
-            rest?.checked ? "block" : `${customClass}`
-          }`}
-          ref={combinedRef}
-          {...rest}
-        />
+      <input
+        type="checkbox"
+        className={`rounded checkbox bg-gray-blackRussian -mr-2 flex ${
+          rest?.checked ? "block" : `${customClass ? customClass : ""}`
+        }`}
+        ref={combinedRef}
+        {...rest}
+      />
     );
   });
   // hide Distribution/claimed when syndicate is not distributing
@@ -69,17 +79,25 @@ const SyndicateMembersTable = ({
     getTableProps,
     getTableBodyProps,
     headerGroups,
-    rows,
+    page,
     prepareRow,
-    state,
+    selectedFlatRows,
+    canPreviousPage,
+    canNextPage,
+    pageCount,
+    nextPage,
+    previousPage,
+    state: { pageSize },
   } = useTable(
     {
       columns,
       data,
       initialState: {
         hiddenColumns,
+        pageSize: 10,
       },
     },
+    usePagination,
     useRowSelect,
     (hooks) => {
       hooks.visibleColumns.push((columns) => [
@@ -108,94 +126,220 @@ const SyndicateMembersTable = ({
       ]);
     },
   );
-  return (
-    <table 
-      {...getTableProps()}
-      className="w-full border-b-1 mx-1 border-gray-nightrider">
-      <thead className="w-full">
-        {
-          // Loop over the header rows
-          headerGroups.map((headerGroup, index) => (
-            // Apply the header row props
-            <tr
-              {...headerGroup.getHeaderGroupProps()}
-              key={index}
-              className="text-blue-rockBlue text-sm py-10"
-            >
-              {
-                // Loop over the headers in each row
-                headerGroup.headers.map((column, index) => (
-                  // Apply the header cell props
-                  <th
-                    {...column.getHeaderProps()}
-                    key={index}
-                    className="rounded-md py-2 text-left"
-                  >
-                    {
-                      // Render the header
-                      column.render("Header")
-                    }
-                  </th>
-                ))
-              }
-            </tr>
-          ))
-        }
-      </thead>
 
-      <tbody
-        className="divide-y divide-gray-nightrider overflow-y-scroll"
-        {...getTableBodyProps()}
+  const disabled = selectedFlatRows.length > 0 ?? true;
+
+  return (
+    <div className="flex flex-col overflow-y-hidden -mx-m6">
+      <div className="flex my-10 space-x-8 justify-between ml-6">
+        <form className="w-3/12 ">
+          <SearchForm
+            {...{
+              onChangeHandler: filterAddressOnChangeHandler,
+              searchValue: searchAddress,
+              memberCount: data.length,
+            }}
+          />
+        </form>{" "}
+        <div className="flex divide-x divide-gray-steelGrey space-x-4 py-2">
+          <div className="flex space-x-6">
+            <p className="">
+              {selectedFlatRows.length} of {data.length} selected:
+            </p>
+            <button
+              className={`flex flex-shrink font-whyte text-right text-blue text-sm justify-center ${
+                !disabled || !syndicate.modifiable
+                  ? "opacity-50 cursor-not-allowed"
+                  : "hover:opacity-80"
+              }`}
+              disabled={!disabled}
+            >
+              <img
+                src={"/images/edit-deposits-blue.svg"}
+                alt="icon"
+                className="mr-2 mt-0.5"
+              />
+              <span>Modify deposit amounts</span>
+            </button>
+            <button
+              className={`flex flex-shrink font-whyte text-right text-blue text-sm justify-center ${
+                !disabled || !syndicate.open
+                  ? "opacity-50 cursor-not-allowed"
+                  : "hover:opacity-80"
+              }`}
+              disabled={!disabled}
+            >
+              <img
+                src={"/images/return-deposit-blue.svg"}
+                alt="icon"
+                className="mr-2 mt-0.5"
+              />
+              <span>Return deposits</span>
+            </button>
+            <button
+              className={`flex flex-shrink font-whyte text-right text-blue text-sm justify-center ${
+                !disabled || !syndicate.open
+                  ? "opacity-50 cursor-not-allowed"
+                  : "hover:opacity-80"
+              }`}
+            >
+              <img
+                src={"/images/block.svg"}
+                alt="icon"
+                className="mr-2 mt-0.5"
+              />
+              <span>Block</span>
+            </button>
+          </div>
+          <div className="pl-4">
+            <button
+              className={`flex flex-shrink font-whyte text-right text-blue text-sm justify-center ${
+                !syndicate.modifiable && syndicate.depositsEnabled
+                  ? "opacity-50 cursor-not-allowed"
+                  : "hover:opacity-80"
+              }`}
+              onClick={showApproveModal}
+              disabled={!syndicate.modifiable && !syndicate.depositsEnabled}
+            >
+              <img
+                src={"/images/plus-circle-blue.svg"}
+                alt="icon"
+                className="mr-2 mt-0.5"
+              />
+              <span>Add members</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <table
+        {...getTableProps()}
+        className="w-full border-b-1 px-1 border-gray-nightrider"
       >
-        {
-          // Loop over the table rows
-          rows.map((row:any, index) => {
-            // Prepare the row for display
-            const { original:{ allowlistEnabled, memberAddressAllowed }} = row
-            prepareRow(row);
-            return (
-              // Apply the row props
+        <thead className="w-full">
+          {
+            // Loop over the header rows
+            headerGroups.map((headerGroup, index) => (
+              // Apply the header row props
               <tr
-                {...row.getRowProps()}
+                {...headerGroup.getHeaderGroupProps()}
                 key={index}
-                className="space-y-4 hover:opacity-80 hover:bg-gray-102 border-b-1 border-gray-nightrider"
-                onMouseEnter={() => {
-                  setShowMoreOptions(index)}
-                }
-                onMouseLeave={() => setShowMoreOptions(-1)}
+                className="text-gray-lightManatee text-sm py-10 leading-6"
               >
                 {
-                  // Loop over the rows cells
-                  row.cells.map((cell, cellIndex) => {
-                    // Apply the cell props
-                    // Show more options when row is hovered, otherwise hide them
-                    const showAddingMember = (allowlistEnabled && !memberAddressAllowed && addingMember)
-                    return (
-                      <td
-                        {...cell.getCellProps()}
-                        key={cellIndex}
-                        className={`m-0 font-whyte-light text-white text-xs py-3 ${
-                          showMoreOptions == row.index
-                            ? "opacity-100"
-                            : cellIndex === row.cells.length - 1 && !showAddingMember
-                            ? "opacity-0"
-                            : "opacity-100"
-                        }`}
-                      >
-                        {
-                          // Render the cell contents
-                          cell.render("Cell")
-                        }
-                      </td>
-                    );
-                  })
+                  // Loop over the headers in each row
+                  headerGroup.headers.map((column, index) => (
+                    // Apply the header cell props
+                    <th
+                      {...column.getHeaderProps()}
+                      key={index}
+                      className="rounded-md pl-0.5 pt-2 text-left text-xs text-gray-lightManatee"
+                    >
+                      {
+                        // Render the header
+                        column.render("Header")
+                      }
+                    </th>
+                  ))
                 }
               </tr>
-            );
-          })
-        }
-      </tbody>
-    </table>
+            ))
+          }
+        </thead>
+
+        <tbody
+          className="divide-y divide-gray-nightrider overflow-y-scroll"
+          {...getTableBodyProps()}
+        >
+          {
+            // Loop over the table rows
+            page.map((row: any, index) => {
+              // Prepare the row for display
+
+              prepareRow(row);
+              const {
+                original: { allowlistEnabled, memberAddressAllowed },
+              } = row;
+              const showAddingMember =
+                allowlistEnabled && !memberAddressAllowed && addingMember;
+              return (
+                // Apply the row props
+                <tr
+                  {...row.getRowProps()}
+                  key={index}
+                  className="space-y-6 hover:opacity-90 border-b-1 text-base border-gray-nightrider"
+                  onMouseEnter={() => setShowMoreOptions(index)}
+                  onMouseLeave={() => setShowMoreOptions(-1)}
+                >
+                  {
+                    // Loop over the rows cells
+                    row.cells.map((cell, cellIndex) => {
+                      // Apply the cell props
+                      // Show more options when row is hovered, otherwise hide them
+                      return (
+                        <td
+                          {...cell.getCellProps()}
+                          key={cellIndex}
+                          className={`m-0 font-whyte-light text-white pl-0.5 py-2 ${
+                            showMoreOptions == row.index
+                              ? "opacity-100"
+                              : cellIndex === row.cells.length - 1 &&
+                                !showAddingMember
+                              ? "opacity-0"
+                              : "opacity-100"
+                          }`}
+                        >
+                          {
+                            // Render the cell contents
+                            cell.render("Cell")
+                          }
+                        </td>
+                      );
+                    })
+                  }
+                </tr>
+              );
+            })
+          }
+        </tbody>
+      </table>
+      <div className="flex w-full text-white space-x-4 justify-center my-8 py-1 leading-6">
+        <button
+          className={`pt-1 ${
+            !canPreviousPage
+              ? "opacity-50 cursor-not-allowed"
+              : "hover:opacity-90"
+          }`}
+          onClick={() => previousPage()}
+          disabled={!canPreviousPage}
+        >
+          <Image
+            src={"/images/arrowBack.svg"}
+            height="16"
+            width="16"
+            alt="Previous"
+          />
+        </button>
+        <p className="">
+          1 - {pageSize} of {pageCount}
+        </p>
+
+        <button
+          className={`pt-1 ${
+            !canNextPage ? "opacity-50 cursor-not-allowed" : "hover:opacity-90"
+          }`}
+          onClick={() => nextPage()}
+          disabled={!canNextPage}
+        >
+          <Image
+            src={"/images/arrowNext.svg"}
+            height="16"
+            width="16"
+            alt="Next"
+          />
+        </button>
+      </div>
+    </div>
   );
 };
 
