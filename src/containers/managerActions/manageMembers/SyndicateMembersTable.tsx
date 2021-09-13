@@ -302,42 +302,50 @@ const SyndicateMembersTable = ({
           }
         </tbody>
       </table>
-      <div className="flex w-full text-white space-x-4 justify-center my-8 py-1 leading-6">
-        <button
-          className={`pt-1 ${
-            !canPreviousPage
-              ? "opacity-50 cursor-not-allowed"
-              : "hover:opacity-90"
-          }`}
-          onClick={() => previousPage()}
-          disabled={!canPreviousPage}
-        >
-          <Image
-            src={"/images/arrowBack.svg"}
-            height="16"
-            width="16"
-            alt="Previous"
-          />
-        </button>
-        <p className="">
-          1 - {pageSize} of {pageCount}
-        </p>
 
-        <button
-          className={`pt-1 ${
-            !canNextPage ? "opacity-50 cursor-not-allowed" : "hover:opacity-90"
-          }`}
-          onClick={() => nextPage()}
-          disabled={!canNextPage}
-        >
-          <Image
-            src={"/images/arrowNext.svg"}
-            height="16"
-            width="16"
-            alt="Next"
-          />
-        </button>
-      </div>
+      {/* show pagination only when we have more than 10 members */}
+      {data.length > 10 ? (
+        <div className="flex w-full text-white space-x-4 justify-center my-8 py-1 leading-6">
+          <button
+            className={`pt-1 ${
+              !canPreviousPage
+                ? "opacity-50 cursor-not-allowed"
+                : "hover:opacity-90"
+            }`}
+            onClick={() => previousPage()}
+            disabled={!canPreviousPage}
+          >
+            <Image
+              src={"/images/arrowBack.svg"}
+              height="16"
+              width="16"
+              alt="Previous"
+            />
+          </button>
+          <p className="">
+            1 - {pageSize} of {pageCount}
+          </p>
+
+          <button
+            className={`pt-1 ${
+              !canNextPage
+                ? "opacity-50 cursor-not-allowed"
+                : "hover:opacity-90"
+            }`}
+            onClick={() => nextPage()}
+            disabled={!canNextPage}
+          >
+            <Image
+              src={"/images/arrowNext.svg"}
+              height="16"
+              width="16"
+              alt="Next"
+            />
+          </button>
+        </div>
+      ) : (
+        ""
+      )}
     </div>
   );
 };
