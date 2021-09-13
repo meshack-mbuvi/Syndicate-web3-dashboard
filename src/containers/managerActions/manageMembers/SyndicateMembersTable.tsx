@@ -127,7 +127,10 @@ const SyndicateMembersTable = ({
     },
   );
 
-  const disabled = selectedFlatRows.length > 0 ?? true;
+  let selectedFlatRowsAmount = 0;
+  selectedFlatRows.forEach(
+    (row: any) => (selectedFlatRowsAmount += +row.original.memberDeposit),
+  );
 
   return (
     <div className="flex flex-col overflow-y-hidden -mx-m6">
@@ -142,73 +145,69 @@ const SyndicateMembersTable = ({
           />
         </form>{" "}
         <div className="flex divide-x divide-gray-steelGrey space-x-4 py-2">
-          <div className="flex space-x-6">
-            <p className="">
-              {selectedFlatRows.length} of {data.length} selected:
-            </p>
-            <button
-              className={`flex flex-shrink font-whyte text-right text-blue text-sm justify-center ${
-                !disabled || !syndicate.modifiable
-                  ? "opacity-50 cursor-not-allowed"
-                  : "hover:opacity-80"
-              }`}
-              disabled={!disabled}
-            >
-              <img
-                src={"/images/edit-deposits-blue.svg"}
-                alt="icon"
-                className="mr-2 mt-0.5"
-              />
-              <span>Modify deposit amounts</span>
-            </button>
-            <button
-              className={`flex flex-shrink font-whyte text-right text-blue text-sm justify-center ${
-                !disabled || !syndicate.open
-                  ? "opacity-50 cursor-not-allowed"
-                  : "hover:opacity-80"
-              }`}
-              disabled={!disabled}
-            >
-              <img
-                src={"/images/return-deposit-blue.svg"}
-                alt="icon"
-                className="mr-2 mt-0.5"
-              />
-              <span>Return deposits</span>
-            </button>
-            <button
-              className={`flex flex-shrink font-whyte text-right text-blue text-sm justify-center ${
-                !disabled || !syndicate.open
-                  ? "opacity-50 cursor-not-allowed"
-                  : "hover:opacity-80"
-              }`}
-            >
-              <img
-                src={"/images/block.svg"}
-                alt="icon"
-                className="mr-2 mt-0.5"
-              />
-              <span>Block</span>
-            </button>
-          </div>
-          <div className="pl-4">
-            <button
-              className={`flex flex-shrink font-whyte text-right text-blue text-sm justify-center ${
-                !syndicate.modifiable && syndicate.depositsEnabled
-                  ? "opacity-50 cursor-not-allowed"
-                  : "hover:opacity-80"
-              }`}
-              onClick={showApproveModal}
-              disabled={!syndicate.modifiable && !syndicate.depositsEnabled}
-            >
-              <img
-                src={"/images/plus-circle-blue.svg"}
-                alt="icon"
-                className="mr-2 mt-0.5"
-              />
-              <span>Add members</span>
-            </button>
-          </div>
+          {selectedFlatRows.length > 0 && (
+            <div className="flex space-x-6">
+              <p className="">
+                {selectedFlatRows.length} of {data.length} selected:
+              </p>
+              {syndicate.modifiable == true && (
+                <button
+                  className={`flex flex-shrink font-whyte text-right text-blue text-sm justify-center hover:opacity-80`}
+                >
+                  <img
+                    src={"/images/edit-deposits-blue.svg"}
+                    alt="icon"
+                    className="mr-2 mt-0.5"
+                  />
+                  <span>Modify deposit amounts</span>
+                </button>
+              )}
+
+              {syndicate.open && selectedFlatRowsAmount > 0 ? (
+                <button
+                  className={`flex flex-shrink font-whyte text-right text-blue text-sm justify-center`}
+                >
+                  <img
+                    src={"/images/return-deposit-blue.svg"}
+                    alt="icon"
+                    className="mr-2 mt-0.5"
+                  />
+                  <span>Return deposits</span>
+                </button>
+              ) : (
+                ""
+              )}
+
+              {syndicate.allowlistEnabled && (
+                <button
+                  className={`flex flex-shrink font-whyte text-right text-blue text-sm justify-center hover:opacity-80`}
+                >
+                  <img
+                    src={"/images/block.svg"}
+                    alt="icon"
+                    className="mr-2 mt-0.5"
+                  />
+                  <span>Block</span>
+                </button>
+              )}
+            </div>
+          )}
+
+          {syndicate.allowlistEnabled && (
+            <div className="pl-4">
+              <button
+                className={`flex flex-shrink font-whyte text-right text-blue text-sm justify-center hover:opacity-80`}
+                onClick={showApproveModal}
+              >
+                <img
+                  src={"/images/plus-circle-blue.svg"}
+                  alt="icon"
+                  className="mr-2 mt-0.5"
+                />
+                <span>Add members</span>
+              </button>
+            </div>
+          )}
         </div>
       </div>
 

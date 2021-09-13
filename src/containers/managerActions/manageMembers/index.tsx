@@ -181,7 +181,7 @@ const ManageMembers = (): JSX.Element => {
               <p className="flex opacity-70">
                 <Spinner height="h-4" width="w-4" margin="my-1" />
                 <span className="ml-2 text-gray-lightManatee">
-                  Returning deposit
+                  Returning deposits
                 </span>
               </p>
             );
@@ -469,14 +469,17 @@ const ManageMembers = (): JSX.Element => {
                   show: confirmReturnDeposit,
                   modalStyle: ModalStyle.DARK,
                   showCloseButton: false,
-                  customWidth: "w-2/5",
+                  customWidth: "w-2/5 max-w-564 justify-center",
                 }}
               >
                 <div>
                   <p className="text-2xl text-center mb-6">Are you sure?</p>
                   <p className="text-base text-center text-gray-lightManatee">
-                    This will return 100% of the deposited funds to the selected
-                    members.
+                    {`${
+                      memberAddresses.length > 1
+                        ? "This will return 100% of the deposited funds to the selected members."
+                        : "This will return 100% of the deposited funds to the member."
+                    }`}
                   </p>
                   <div className="flex justify-between mt-10">
                     <button

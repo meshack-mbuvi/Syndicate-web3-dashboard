@@ -17,7 +17,7 @@ interface ModalProps {
   showBackButton?: boolean;
   closeButtonClassName?: string;
   modalStyle?: ModalStyle;
-  titleMarginClassName?: string
+  titleMarginClassName?: string;
   titleAlignment?: string;
 }
 
@@ -74,14 +74,14 @@ export const Modal = (props: ModalProps): JSX.Element => {
       {show ? (
         <div className="fixed inset-0 overflow-y-auto z-50">
           <div
-            className={`flex items-center justify-center ${textColor} min-h-screen sm:pt-4 sm:px-4 pb-20 text-center sm:block sm:p-0`}
+            className={`flex items-center justify-center text-center ${textColor} min-h-screen sm:pt-4 sm:px-4 pb-20 text-center sm:block sm:p-0`}
           >
             <div
               className="fixed inset-0 transition-opacity"
               aria-hidden="true"
             >
               <div
-                className="absolute inset-0 bg-gray-9 opacity-80"
+                className="absolute inset-0 bg-black opacity-60"
                 onClick={() => {
                   if (outsideOnClick) {
                     closeModal();
@@ -92,7 +92,13 @@ export const Modal = (props: ModalProps): JSX.Element => {
             </div>
 
             <div
-              className={`inline-block align-bottom ${bgColor} rounded-2xl my-24 mx-4 sm:mx-0 sm:my-28 p-2 sm:p-6 text-left shadow-xl transform transition-all max-w-868 ${customWidth} ${overflow} ${customClassName}`}
+              className={`inline-block align-bottom my-auto ${
+                bgColor ? bgColor : ""
+              } rounded-2xl  sm:mx-0 sm:my-40 p-2 sm:p-6 text-left shadow-xl transform transition-all ${
+                customWidth ? customWidth : ""
+              } ${overflow ? overflow : ""} ${
+                customClassName ? customClassName : ""
+              }`}
               role="dialog"
               aria-modal="true"
               aria-labelledby="modal-headline"
@@ -134,8 +140,12 @@ export const Modal = (props: ModalProps): JSX.Element => {
               {/* modal title */}
               {loading ? null : (
                 <div
-                  className={`modal-header ${titleMarginClassName ? titleMarginClassName: "mb-6 mt-4"}
-                  ${textColor} font-whyte ${titleAlignment ? titleAlignment: "sm:text-center"} leading-8 pl-4 pr-12 sm:pr-0 ${
+                  className={`modal-header ${
+                    titleMarginClassName ? titleMarginClassName : "mb-6 mt-4"
+                  }
+                  ${textColor} font-whyte ${
+                    titleAlignment ? titleAlignment : "sm:text-center"
+                  } leading-8 pl-4 pr-12 sm:pr-0 ${
                     titleFontSize ? `text-modalTitle` : `text-modalSubTitle`
                   }`}
                 >
@@ -144,7 +154,7 @@ export const Modal = (props: ModalProps): JSX.Element => {
               )}
               {/* end of modal title */}
 
-              <div className="mx-4">{children}</div>
+              <div className="mx-4 align-middle">{children}</div>
             </div>
           </div>
         </div>
