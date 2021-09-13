@@ -84,6 +84,7 @@ module.exports = {
         "fit-content": "fit-content",
       }),
       maxWidth: {
+        564: "35.25rem",
         868: "54rem",
       },
       backgroundOpacity: {

@@ -22,10 +22,18 @@ const MoreOptionButton = (props: {
     modifiable: boolean;
     open: boolean;
     memberAddressAllowed;
+    allowlistEnabled;
   };
 }): JSX.Element => {
-  const { distributing, memberAddress, memberDeposit, modifiable, open } =
-    props.row;
+  const {
+    distributing,
+    memberAddress,
+    memberDeposit,
+    modifiable,
+    open,
+    memberAddressAllowed,
+    allowlistEnabled,
+  } = props.row;
 
   const dispatch = useDispatch();
 
@@ -52,35 +60,42 @@ const MoreOptionButton = (props: {
               Modify on-chain deposit amount
             </ReactTooltip>
           </button>
+          {memberDeposit !== "0" && (
+            <button
+              className={`cursor-pointer ${
+                memberDeposit == "0" ? "opacity-40" : "hover:opacity-70"
+              }`}
+              onClick={() => confirmReturnMemberDeposit()}
+              data-tip
+              data-for="return-member-deposit"
+              disabled={memberDeposit == "0" ? true : false}
+            >
+              <img
+                src="/images/return-deposits.svg"
+                alt="Return member deposit"
+              />
+              <ReactTooltip
+                id="return-member-deposit"
+                place="top"
+                effect="solid"
+              >
+                Return all deposits
+              </ReactTooltip>
+            </button>
+          )}
 
-          <button
-            className={`cursor-pointer ${
-              memberDeposit == "0" ? "opacity-40" : "hover:opacity-70"
-            }`}
-            onClick={() => confirmReturnMemberDeposit()}
-            data-tip
-            data-for="return-member-deposit"
-            disabled={memberDeposit == "0" ? true : false}
-          >
-            <img
-              src="/images/return-deposits.svg"
-              alt="Return member deposit"
-            />
-            <ReactTooltip id="return-member-deposit" place="top" effect="solid">
-              Return all deposits
-            </ReactTooltip>
-          </button>
-
-          <button
-            className="cursor-pointer hover:opacity-70"
-            data-tip
-            data-for="block-address"
-          >
-            <img src="/images/block-address.svg" alt="Block address" />
-            <ReactTooltip id="block-address" place="top" effect="solid">
-              Block address
-            </ReactTooltip>
-          </button>
+          {(allowlistEnabled && memberAddressAllowed) === true && (
+            <button
+              className="cursor-pointer hover:opacity-70"
+              data-tip
+              data-for="block-address"
+            >
+              <img src="/images/block-address.svg" alt="Block address" />
+              <ReactTooltip id="block-address" place="top" effect="solid">
+                Block address
+              </ReactTooltip>
+            </button>
+          )}
         </div>
       )}
     </>
