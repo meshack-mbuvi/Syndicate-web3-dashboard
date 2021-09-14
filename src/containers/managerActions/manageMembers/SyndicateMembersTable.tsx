@@ -1,8 +1,12 @@
 import { SearchForm } from "@/components/inputs/searchForm";
+import {
+  setSelectedMemberAddress,
+  showConfirmReturnDeposit,
+} from "@/redux/actions/manageMembers";
 import { RootState } from "@/redux/store";
 import Image from "next/image";
 import React, { useEffect, useRef, useState } from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { usePagination, useRowSelect, useTable } from "react-table";
 
 interface IIndeterminateInputProps {
@@ -132,6 +136,18 @@ const SyndicateMembersTable = ({
     (row: any) => (selectedFlatRowsAmount += +row.original.memberDeposit),
   );
 
+  const dispatch = useDispatch();
+  const confirmReturnMemberDeposit = () => {
+    dispatch(showConfirmReturnDeposit(true));
+    let totalDeposit = 0;
+    const selectedMemberAddress = [];
+    selectedFlatRows.forEach((member: any) => {
+      totalDeposit += parseInt(member.original.memberDeposit, 10);
+      selectedMemberAddress.push(member.original.memberAddress);
+    });
+    dispatch(setSelectedMemberAddress(selectedMemberAddress, totalDeposit));
+  };
+
   return (
     <div className="flex flex-col overflow-y-hidden -mx-m6">
       <div className="flex my-10 space-x-8 justify-between ml-6">
@@ -166,6 +182,7 @@ const SyndicateMembersTable = ({
               {syndicate.open && selectedFlatRowsAmount > 0 ? (
                 <button
                   className={`flex flex-shrink font-whyte text-right text-blue text-sm justify-center`}
+                  onClick={() => confirmReturnMemberDeposit()}
                 >
                   <img
                     src={"/images/return-deposit-blue.svg"}
