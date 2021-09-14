@@ -14,6 +14,7 @@ import {
 import { setCloseDateAndTime } from "@/redux/actions/createSyndicate/syndicateOnChainData/closeDateAndTime";
 import { setModifiable } from "@/redux/actions/createSyndicate/syndicateOnChainData/modifiable";
 import { isDev } from "@/utils/environment";
+import { useCreateSyndicateContext } from "@/context/CreateSyndicateContext";
 
 // set default deposit token for each template to USDC
 // depending on environment
@@ -63,6 +64,7 @@ const templates = [
       },
     },
     disabled: false,
+    depositTokenEditable: false,
   },
   {
     title: "Investment Fund",
@@ -89,6 +91,7 @@ const templates = [
       },
     },
     disabled: false,
+    depositTokenEditable: false,
   },
   {
     title: "Investment Club",
@@ -108,6 +111,7 @@ const templates = [
       },
     },
     disabled: false,
+    depositTokenEditable: false,
   },
   {
     title: "Crowdfund/Grant DAO",
@@ -126,13 +130,21 @@ const templates = [
       },
     },
     disabled: true,
+    depositTokenEditable: false,
   },
 ];
 
 const SyndicateTemplates: React.FC = () => {
   const dispatch = useDispatch();
 
-  const handleTemplateSelect = (title: string, defaults: any) => {
+  const { setCurrentTemplate } = useCreateSyndicateContext();
+
+  const handleTemplateSelect = (template: any) => {
+    const { title, defaults } = template;
+
+    // store current template in context
+    setCurrentTemplate(template);
+
     // store syndicate template title
     dispatch(setSyndicateTemplateTitle(title));
 
@@ -189,15 +201,19 @@ const SyndicateTemplates: React.FC = () => {
   return (
     <div className="grid grid-cols-1 xl:grid-cols-4 lg:grid-cols-3 sm:grid-cols-2 gap-6 py-4">
       {templates.map((template, index) => {
-        const { title, subTitle, summary, defaults, disabled } = template;
+        const {
+          title,
+          subTitle,
+          summary,
+          disabled,
+          depositTokenEditable,
+        } = template;
         return (
           <div
-            onClick={() =>
-              !disabled ? handleTemplateSelect(title, defaults) : null
-            }
+            onClick={() => (!disabled ? handleTemplateSelect(template) : null)}
           >
             <TemplateItem
-              {...{ title, subTitle, summary, disabled }}
+              {...{ title, subTitle, summary, disabled, depositTokenEditable }}
               key={index}
             />
           </div>

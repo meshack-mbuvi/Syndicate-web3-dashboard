@@ -1,9 +1,12 @@
 import { RootState } from "@/redux/store";
+import ReactTooltip from "react-tooltip";
 import React, { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import { NonEditableSetting } from "../../shared";
 import { DepositTokenSelect } from "./DepositTokenSelect";
 import { ChevronDown } from "@/components/shared/Icons";
+import { useCreateSyndicateContext } from "@/context/CreateSyndicateContext";
+
 interface ITokenSelectInput {
   label: string;
   required?: boolean;
@@ -19,6 +22,10 @@ export const TokenSelectInput: React.FC<ITokenSelectInput> = (props) => {
     showNonEditableText = true,
     templateInUse = false,
   } = props;
+
+  const {
+    currentTemplate: { depositTokenEditable },
+  } = useCreateSyndicateContext();
 
   const [showDepositTokens, setShowDepositTokens] = useState(false);
 
@@ -57,6 +64,15 @@ export const TokenSelectInput: React.FC<ITokenSelectInput> = (props) => {
     };
   }, [showDepositTokens, setShowDepositTokens]);
 
+  // the token select dropdown needs to be disabled
+  // for all syndicate templates.
+  let showDepositTokenDropdown = true;
+  if (templateInUse && !depositTokenEditable) {
+    showDepositTokenDropdown = false;
+  } else if (templateInUse && depositTokenEditable) {
+    showDepositTokenDropdown = true;
+  }
+
   return (
     <div>
       <div className="flex justify-between items-center">
@@ -80,26 +96,37 @@ export const TokenSelectInput: React.FC<ITokenSelectInput> = (props) => {
             />
           </div>
         ) : null}
-        <input
-          type="text"
-          name="deposit-token"
-          id="deposit-token"
-          className={`block cursor-pointer w-full pr-10 ${
-            depositTokenLogo ? "pl-12" : "pl-4"
-          } font-whyte dark-input-field`}
-          placeholder="Select deposit token"
-          value={depositTokenName}
-          readOnly
-          onClick={toggleTokenSelect}
-        />
-        <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-          <ChevronDown width="w-5" height="h-5" />
+        <div data-for="edit-deposit-token" data-tip >
+          <input
+            type="text"
+            name="deposit-token"
+            id="deposit-token"
+            className={`block cursor-pointer w-full pr-10 ${
+              depositTokenLogo ? "pl-12" : "pl-4"
+            } font-whyte dark-input-field`}
+            placeholder="Select deposit token"
+            value={depositTokenName}
+            readOnly
+            onClick={toggleTokenSelect}
+            disabled={!showDepositTokenDropdown}
+          />
+          {showDepositTokenDropdown ? null : (
+            <ReactTooltip id="edit-deposit-token" place="bottom" effect="solid">
+              Deposit token can't be modified when using a template.
+            </ReactTooltip>
+          )}
+
+          {showDepositTokenDropdown ? (
+            <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+              <ChevronDown width="w-5" height="h-5" />
+            </div>
+          ) : null}
+          {showDepositTokens && showDepositTokenDropdown ? (
+            <div className="mt-2 w-full absolute z-50">
+              <DepositTokenSelect toggleTokenSelect={toggleTokenSelect} />
+            </div>
+          ) : null}
         </div>
-        {showDepositTokens ? (
-          <div className="mt-2 w-full absolute z-50">
-            <DepositTokenSelect toggleTokenSelect={toggleTokenSelect} />
-          </div>
-        ) : null}
       </div>
 
       {showInfoText ? (

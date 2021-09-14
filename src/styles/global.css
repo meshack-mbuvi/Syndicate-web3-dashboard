@@ -187,6 +187,10 @@
     @apply text-gray-placeholder;
   }
 
+  .dark-input-field:disabled {
+    @apply text-gray-spindle opacity-50 border-gray-spindle hover:border-gray-spindle cursor-not-allowed;
+  }
+
   .text-input-placeholder::placeholder {
     @apply text-gray-placeholder;
   }

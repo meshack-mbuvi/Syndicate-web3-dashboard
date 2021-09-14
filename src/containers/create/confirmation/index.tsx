@@ -1,4 +1,5 @@
 import { useRouter } from "next/router";
+import ReactTooltip from "react-tooltip";
 import RightPlaceHolder from "@/components/rightPlaceholder";
 import { RootState } from "@/redux/store";
 import { numberWithCommas } from "@/utils/formattedNumbers";
@@ -58,6 +59,7 @@ const Confirmation: React.FC = () => {
     handleTemplateSubstepNext,
     templateMaxTotalError,
     setContinueDisabled,
+    currentTemplate: { depositTokenEditable },
   } = useCreateSyndicateContext();
 
   // check if a template is in use
@@ -69,7 +71,7 @@ const Confirmation: React.FC = () => {
   // This is to make it more apparent that the fields can be clicked and edited
   // remove this if it's not desirable.
   const hoverStyles = templateInUse
-    ? "cursor-pointer hover:bg-gray-9 rounded-lg"
+    ? "rounded-lg cursor-pointer hover:bg-gray-9"
     : "";
 
   // disable the continue button if there is a max. total deposits error.
@@ -80,6 +82,15 @@ const Confirmation: React.FC = () => {
       setContinueDisabled(true);
     }
   }, [templateInUse, templateMaxTotalError]);
+
+  // disable editing deposit token setting for syndicate templates.
+  const handleDepositTokenEdit = () => {
+    if (depositTokenEditable) {
+      handleTemplateSubstepNext(1, 0);
+    } else {
+      return;
+    }
+  };
 
   return (
     <div className="flex flex-col font-whyte">
@@ -96,19 +107,31 @@ const Confirmation: React.FC = () => {
 
       <ul className="text-base font-whyte">
         <li
-          className={`p-2 ${hoverStyles}`}
-          onClick={() => handleTemplateSubstepNext(1, 0)}
+          className={`p-2 ${
+            depositTokenEditable
+              ? hoverStyles
+              : "cursor-default w-fit-content"
+          }`}
+          data-for="edit-deposit-token"
+          data-tip
+          onClick={() => handleDepositTokenEdit()}
         >
+          {templateInUse && !depositTokenEditable ? (
+            <ReactTooltip id="edit-deposit-token" place="right" effect="solid">
+              Deposit token can't be modified when using a template.
+            </ReactTooltip>
+          ) : null}
           <p className="text-gray-dimmer mb-1 font-whyte">
             Deposit Token{templateInUse ? "*" : null}
           </p>
-          <div className="flex items-center">
+          <div className="flex items-center w-fit-content">
             <img
               src={depositTokenLogo}
               className="h-5 w-5"
               alt="logo"
               aria-hidden="true"
             />
+
             <p className="ml-1">{depositTokenName}</p>
           </div>
         </li>

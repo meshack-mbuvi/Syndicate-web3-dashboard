@@ -61,6 +61,7 @@ type CreateSyndicateProviderProps = {
   currentTemplateSubstep: number[];
   legalEntity: boolean;
   templateMaxTotalError: string;
+  currentTemplate: any;
   handleTemplateNext: () => void;
   handleTemplateBack: () => void;
   handleTemplateSubstepNext: (step: number, substep: number) => void;
@@ -69,6 +70,7 @@ type CreateSyndicateProviderProps = {
   setCurrentTemplateSubstep: Dispatch<SetStateAction<number[]>>;
   setLegalEntity: Dispatch<SetStateAction<boolean>>;
   setTemplateMaxTotalError: Dispatch<SetStateAction<string>>;
+  setCurrentTemplate: Dispatch<SetStateAction<any>>;
 };
 
 const CreateSyndicateContext = createContext<
@@ -106,7 +108,9 @@ const CreateSyndicateProvider: React.FC<{ children: ReactNode }> = ({
     number[]
   >([]);
   const [legalEntity, setLegalEntity] = useState<boolean>(false);
-  const [templateMaxTotalError, setTemplateMaxTotalError] = useState<string>("")
+  const [templateMaxTotalError, setTemplateMaxTotalError] =
+    useState<string>("");
+  const [currentTemplate, setCurrentTemplate] = useState([]);
 
   /**
    * Get create syndicate data from the store
@@ -531,6 +535,7 @@ const CreateSyndicateProvider: React.FC<{ children: ReactNode }> = ({
         currentTemplateSubstep,
         legalEntity,
         templateMaxTotalError,
+        currentTemplate,
         handleTemplateNext,
         handleTemplateBack,
         handleTemplateSubstepNext,
@@ -539,7 +544,7 @@ const CreateSyndicateProvider: React.FC<{ children: ReactNode }> = ({
         setLegalEntity,
         setCurrentTemplateSubstep,
         setTemplateMaxTotalError,
-
+        setCurrentTemplate,
       }}
     >
       {children}
