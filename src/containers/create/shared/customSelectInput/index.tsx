@@ -81,11 +81,7 @@ const SelectInputItem: React.FC<{
       onClick={() => storeInputSelectedOption(option)}
     >
       <div className="flex justify-start items-center">
-        <p className="text-white ml-3">
-          {value.length > numberOfCharacters
-            ? `${value.replace(/\_/g, " ").slice(0, numberOfCharacters)}...`
-            : value.replace(/\_/g, " ")}
-        </p>
+        <p className="text-white ml-3">{value.replace(/\_/g, " ")}</p>
       </div>
       {usingTimezone && !usingTemplate ? (
         <p className="text-gray-3 uppercase">UTC {timezone}</p>
@@ -230,12 +226,9 @@ export const CustomSelectInput: React.FC<ICustomSelectInput> = (props) => {
 
   // custom select currently used only for the timezone and time fields
   // check value to display based on the above.
-  const selectedValueToShow =
-    usingTimezone && !usingTemplate
-      ? selectedValue.label.replace(/\_/g, " ")
-      : usingTimezone && usingTemplate
-      ? selectedValue.label.replace(/\_/g, " ").split("/")[1]
-      : selectedValue;
+  const selectedValueToShow = usingTimezone
+    ? selectedValue.label.replace(/\_/g, " ")
+    : selectedValue;
 
   // some timezone labels are too long and will overflow the input field/options
   // we'll limit the number of characters to display
@@ -272,11 +265,7 @@ export const CustomSelectInput: React.FC<ICustomSelectInput> = (props) => {
             icon ? "pl-12" : "pl-4"
           } font-whyte dark-input-field`}
           placeholder={placeholder}
-          value={
-            selectedValueToShow.length > charactersToShow
-              ? `${selectedValueToShow.slice(0, charactersToShow)}...`
-              : selectedValueToShow
-          }
+          value={selectedValueToShow}
           readOnly
           onClick={toggleSelect}
         />

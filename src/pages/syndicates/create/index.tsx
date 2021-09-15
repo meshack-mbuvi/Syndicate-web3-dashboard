@@ -65,7 +65,6 @@ const Create: React.FC = () => {
       >
         <div className="h-3/4 flex flex-col items-center justify-center text-base">
           <Spinner height="h-16" width="w-16" />
-          <p className="mt-1">Fetching syndicates, please wait...</p>
         </div>
       </ConnectModal>
       <Head title="Choose a template" />
@@ -76,9 +75,9 @@ const Create: React.FC = () => {
           <>
             <div
               id="main-container"
-              className="container mx-auto flex flex-col justify-between w-full"
+              className="container mx-auto flex flex-col justify-between w-full mt-10 overflow-y-scroll"
             >
-              <div className="mb-6 leading-8 w-full text-center">
+              <div className="mb-20 leading-8 w-full text-center">
                 <span className="text-1.5xl">
                   Choose your type of syndicate
                 </span>
@@ -86,7 +85,7 @@ const Create: React.FC = () => {
               <div id="syndicate-templates" className="flex justify-center">
                 <SyndicateTemplates />
               </div>
-              <div id="or-option" className="py-6 w-full text-center">
+              <div id="or-option" className="pt-6 pb-6 w-full text-center">
                 <span className="text-gray-lightSlate font-bold">OR</span>
               </div>
               <div

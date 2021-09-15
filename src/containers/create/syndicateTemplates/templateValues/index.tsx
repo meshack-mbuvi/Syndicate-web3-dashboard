@@ -11,7 +11,10 @@ import {
   numberWithCommas,
 } from "@/utils/formattedNumbers";
 import { Validate } from "@/utils/validators";
-import { setDepositTotalMax } from "@/redux/actions/createSyndicate/syndicateOnChainData/tokenAndDepositsLimits";
+import {
+  setDepositTotalMax,
+  setDepositMemberMax,
+} from "@/redux/actions/createSyndicate/syndicateOnChainData/tokenAndDepositsLimits";
 import {
   setExpectedAnnualOperatingFees,
   setProfitShareToSyndicateLead,
@@ -120,10 +123,12 @@ const TemplateValues: React.FC = () => {
     setMaxTotalDepositsError("");
     // value should be set to unlimited once everything is deleted.
     if (!value.trim()) {
+      dispatch(setDepositMemberMax(""));
       dispatch(setDepositTotalMax(""));
 
       return;
     }
+    dispatch(setDepositMemberMax(value));
     dispatch(setDepositTotalMax(value));
 
     const message = Validate(value);
@@ -134,21 +139,21 @@ const TemplateValues: React.FC = () => {
     }
   };
 
-  // check for errors in value differences
-  useEffect(() => {
-    if (+depositMemberMax === 0 && +depositTotalMax > 0) {
-      // we have a user defined deposit total max but deposit member max is unlimited
+  // // check for errors in value differences
+  // useEffect(() => {
+  //   if (+depositMemberMax === 0 && +depositTotalMax > 0) {
+  //     // we have a user defined deposit total max but deposit member max is unlimited
 
-      setMaxTotalDepositsError(
-        "Max. total deposits must be greater than max. deposit per member. Please adjust max. deposit per member on the next page.",
-      );
-      setTemplateMaxTotalError(
-        "Max. member deposit exceeds max. total deposits. Please adjust it.",
-      );
-    } else {
-      setMaxTotalDepositsError("");
-    }
-  }, [depositTotalMax]);
+  //     setMaxTotalDepositsError(
+  //       "Max. total deposits must be greater than max. deposit per member. Please adjust max. deposit per member on the next page.",
+  //     );
+  //     setTemplateMaxTotalError(
+  //       "Max. member deposit exceeds max. total deposits. Please adjust it.",
+  //     );
+  //   } else {
+  //     setMaxTotalDepositsError("");
+  //   }
+  // }, [depositTotalMax]);
 
   const handleSetExpectedAnnualOperatingFees = (value: number) => {
     dispatch(setExpectedAnnualOperatingFees(value));
@@ -265,7 +270,7 @@ const TemplateValues: React.FC = () => {
     <>
       {/* Form controls  */}
       {syndicateTemplateTitle ? (
-        <div>
+        <div className="w-full">
           <div className="mb-6 leading-8 w-full text-center">
             <span className="text-1.5xl">{`Confirm values for your ${syndicateTemplateTitle}`}</span>
           </div>
@@ -291,7 +296,7 @@ const TemplateValues: React.FC = () => {
               </div>
               <div className="ml-1">
                 <TokenSelectInput
-                  label="Deposit Token"
+                  label="Deposit token"
                   showInfoText={false}
                   showNonEditableText={false}
                   templateInUse={true}
@@ -314,7 +319,7 @@ const TemplateValues: React.FC = () => {
               <div className="ml-1">
                 <InputWithPercent
                   name="profitShareToSyndicateLead"
-                  label="Carried Interest"
+                  label="Carried interest"
                   setInputValue={handleSetProfitShareToSyndicateLead}
                   placeholder="0%"
                   max={99.5}
@@ -328,8 +333,8 @@ const TemplateValues: React.FC = () => {
             {/* Close date and time zone  */}
             <div>
               <p>Close date and time</p>
-              <div className="grid grid-cols-7">
-                <div className="mr-1 col-span-4">
+              <div className="flex flex-wrap justify-between">
+                <div className="w-full">
                   <div className="flex mt-2 space-x-2 justify-between items-center w-full">
                     <div className="w-5/12 flex flex-1">
                       <DatePicker
@@ -361,7 +366,7 @@ const TemplateValues: React.FC = () => {
                     </div>
                   </div>
                 </div>
-                <div className="ml-1 col-span-3">
+                <div className="w-full">
                   <div className="w-full mt-2">
                     <CustomSelectInput
                       selectOptions={formattedTimezones}
@@ -415,18 +420,20 @@ const TemplateValues: React.FC = () => {
                   </p>
                 </div>
               </div>
-              <div className="pl-7">
-                <InputField
-                  label="What email should we contact to set up your entity?"
-                  name="email"
-                  type="email"
-                  placeholder="Email address"
-                  onChange={handleSetEmail}
-                  value={email}
-                  error={emailError}
-                  disabled={!legalEntity}
-                />
-              </div>
+              {chooseLegalEntity && (
+                <div className="pl-7">
+                  <InputField
+                    label="What email should we contact to set up your entity?"
+                    name="email"
+                    type="email"
+                    placeholder="Email address"
+                    onChange={handleSetEmail}
+                    value={email}
+                    error={emailError}
+                    disabled={!legalEntity}
+                  />
+                </div>
+              )}
             </div>
 
             {/* Non editable disclaimer  */}

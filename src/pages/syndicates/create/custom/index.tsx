@@ -15,15 +15,19 @@ import Head from "src/components/syndicates/shared/HeaderTitle";
 import { ConnectModal } from "@/components/connectWallet/connectModal";
 import { Spinner } from "@/components/shared/spinner";
 import { useFirstRender } from "@/components/syndicates/hooks/useFirstRender";
+import { useSyndicateInBetaBannerContext } from "@/context/SyndicateInBetaBannerContext";
 
 const CreateSyndicate: React.FC = () => {
   const {
     steps,
     currentSubStep,
     showSuccessView,
+    hideControls,
     currentStep,
     resetCreateSyndicateStore,
   } = useCreateSyndicateContext();
+
+  const { showBanner } = useSyndicateInBetaBannerContext();
 
   const dispatch = useDispatch();
   const firstRender = useFirstRender();
@@ -126,18 +130,17 @@ const CreateSyndicate: React.FC = () => {
             <div
               id="container"
               className={
-                "container mx-auto flex fixed h-screen justify-between w-full" +
-                `${showSuccessView ? " md:-mt-32 -mt-28" : ""}`
+                "container mx-auto flex fixed top-0 h-screen justify-between w-full" +
+                `${showSuccessView ? " md:-mt-32 -mt-28" : ""}  ${
+                  showBanner ? "pt-36" : "pt-24"
+                }`
               }
             >
               {showSuccessView ? (
                 <SuccessCreateSyndicate account={account} />
               ) : (
                 <>
-                  <div
-                    id="left-columnm"
-                    className="flex-1 w-1/6m flex p-1 pr-1 mr-8"
-                  >
+                  <div id="left-columnm" className="flex-1 w-1/6m flex p-1">
                     <Steps
                       steps={steps}
                       currentStep={currentStep}
@@ -149,7 +152,7 @@ const CreateSyndicate: React.FC = () => {
                   <MainContent>
                     <div
                       id="main-content"
-                      className="flex-1 flex overflow-y-auto justify-between h-full no-scroll-bar px-1"
+                      className="flex-grow flex overflow-y-auto justify-between h-full no-scroll-bar px-1 pb-1"
                     >
                       {/* Displays component in step or substep */}
                       {steps?.[currentStep]?.component
@@ -157,6 +160,11 @@ const CreateSyndicate: React.FC = () => {
                         : steps?.[currentStep]?.subSteps?.[currentSubStep]
                             ?.component}
                     </div>
+                    {!showSuccessView ? (
+                      !hideControls ? (
+                        <Controls />
+                      ) : null
+                    ) : null}
                   </MainContent>
 
                   {/* Content info */}
@@ -169,7 +177,6 @@ const CreateSyndicate: React.FC = () => {
                 </>
               )}
             </div>
-            {!showSuccessView ? <Controls /> : null}
           </>
         )}
       </>

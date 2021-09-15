@@ -42,11 +42,7 @@ const TemplateControls = (props: ITemplageControls) => {
   }
 
   return (
-    <div
-      className={`bg-black fixed bottom-0 ${hideBackButton? "w-3/5": "w-2/5"} 3xl:w-1/3 4xl:px-20 flex flex-col ${
-        hideBackButton ? "px-48" : ""
-      }`}
-    >
+    <div className={`bg-black w-full flex-none flex flex-col`}>
       <div className="relative flex justify-between items-center border-t-1 border-gray-erieBlack h-20">
         {!hideBackButton ? (
           <button

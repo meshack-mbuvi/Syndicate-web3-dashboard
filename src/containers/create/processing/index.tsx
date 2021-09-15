@@ -1,18 +1,30 @@
 import { CheckIcon } from "@heroicons/react/solid";
 import { SpinnerWithImage } from "@/components/shared/spinner/spinnerWithImage";
 import { EtherscanLink } from "@/components/syndicates/shared/EtherscanLink";
-import React from "react";
+import React, { useEffect } from "react";
 import { useCreateSyndicateContext } from "@/context/CreateSyndicateContext";
 import { RootState } from "@/redux/store";
 import { useSelector } from "react-redux";
+import { useRouter } from "next/router";
+import { ArrowNarrowLeftIcon } from "@heroicons/react/solid";
+import { useSyndicateInBetaBannerContext } from "@/context/SyndicateInBetaBannerContext";
 
 interface ProcessingStep {
   title: string;
   info?: string;
 }
 
-const Processing: React.FC = () => {
-  const { processingInfo, handleAddToAllowlist } = useCreateSyndicateContext();
+const Processing: React.FC = (template) => {
+  const {
+    processingInfo,
+    handleAddToAllowlist,
+    handleBack,
+    handleTemplateBack,
+    setHideControls,
+  } = useCreateSyndicateContext();
+
+  const { showBanner } = useSyndicateInBetaBannerContext();
+
   const {
     processingTitle,
     processingMessage,
@@ -21,11 +33,23 @@ const Processing: React.FC = () => {
     currentTxHash,
     showErrorMessage,
     errorMessage,
+    setShowErrorMessage,
   } = processingInfo;
+
+  const router = useRouter();
+  const templateView = router.pathname.endsWith("template");
 
   const { submitting } = useSelector(
     (state: RootState) => state.loadingReducer,
   );
+
+  useEffect(() => {
+    // Cleanup on unmounting
+    return () => {
+      setHideControls(false);
+      setShowErrorMessage(false);
+    };
+  }, []);
 
   // Ordered steps
   const allSteps: ProcessingStep[] = [
@@ -37,8 +61,13 @@ const Processing: React.FC = () => {
   ];
 
   return (
-    <div className="flex w-full items-center justify-center">
-      <div className="border-1 border-gray-steelGrey rounded-lg p-6 w-5/6">
+    <div
+      className={
+        "flex w-full items-center justify-center " +
+        `${showBanner ? "-mt-36" : "-mt-24"}`
+      }
+    >
+      <div className="border-1 border-gray-steelGrey rounded-lg p-6 w-full">
         {showErrorMessage ? (
           <div className="flex flex-col items-center justify-center mt-7">
             <img
@@ -52,6 +81,15 @@ const Processing: React.FC = () => {
 
             <p className="text-base my-5 font-normal text-gray-dim text-center">
               {errorMessage}
+            </p>
+
+            <p className="text-base font-normal text-gray-dim text-center">
+              <a
+                className="text-blue flex items-center cursor-pointer py-3.5 px-2"
+                onClick={templateView ? handleTemplateBack : handleBack}
+              >
+                <ArrowNarrowLeftIcon className="w-4 mr-1.5" /> Back
+              </a>
             </p>
           </div>
         ) : (

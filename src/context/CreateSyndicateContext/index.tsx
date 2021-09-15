@@ -61,11 +61,13 @@ type CreateSyndicateProviderProps = {
   currentTemplateSubstep: number[];
   legalEntity: boolean;
   templateMaxTotalError: string;
+  hideControls: boolean;
   currentTemplate: any;
   handleTemplateNext: () => void;
   handleTemplateBack: () => void;
   handleTemplateSubstepNext: (step: number, substep: number) => void;
   resetTemplateSubsteps: () => void;
+  setHideControls: Dispatch<SetStateAction<boolean>>;
   setCurrentTemplateStep: Dispatch<SetStateAction<number>>;
   setCurrentTemplateSubstep: Dispatch<SetStateAction<number[]>>;
   setLegalEntity: Dispatch<SetStateAction<boolean>>;
@@ -94,6 +96,7 @@ const CreateSyndicateProvider: React.FC<{ children: ReactNode }> = ({
   const [errorMessage, setErrorMessage] = useState("");
 
   const [showSuccessView, setShowSuccessView] = useState(false);
+  const [hideControls, setHideControls] = useState(false);
   const [transactionsCount, setTransactionsCount] = useState(1);
   const [currentTransaction, setCurrentTransaction] = useState(1);
   const [processingMessage, setProcessingMessage] = useState("");
@@ -181,6 +184,7 @@ const CreateSyndicateProvider: React.FC<{ children: ReactNode }> = ({
     setShowErrorMessage(false);
     setErrorMessage("");
     setShowSuccessView(false);
+    setHideControls(false);
     setTransactionsCount(1);
     setCurrentTransaction(1);
     setProcessingMessage("");
@@ -270,6 +274,7 @@ const CreateSyndicateProvider: React.FC<{ children: ReactNode }> = ({
 
     setProcessingTitle("Waiting for confirmation");
     setProcessingMessage("Authorize allocation with wallet extension");
+    setHideControls(true);
     handleNext();
 
     // template next page
@@ -531,6 +536,7 @@ const CreateSyndicateProvider: React.FC<{ children: ReactNode }> = ({
 
         //template stuff
         templateSteps,
+        hideControls,
         currentTemplateStep,
         currentTemplateSubstep,
         legalEntity,
@@ -540,6 +546,7 @@ const CreateSyndicateProvider: React.FC<{ children: ReactNode }> = ({
         handleTemplateBack,
         handleTemplateSubstepNext,
         resetTemplateSubsteps,
+        setHideControls,
         setCurrentTemplateStep,
         setLegalEntity,
         setCurrentTemplateSubstep,

@@ -25,12 +25,10 @@ const Controls = () => {
 
   const handleCancel = () => {
     // Go to the syndicates page
-    router.replace("/syndicates");
+    router.replace("/syndicates/create");
   };
   return (
-    <div
-      className={`bg-black fixed bottom-0 w-2/5 3xl:w-1/3 4xl:px-20 flex flex-col px-1 pr-2`}
-    >
+    <div className={`bg-black w-full flex-none flex flex-col`}>
       <div className="relative flex mx-4 justify-between items-center border-t-1 border-gray-erieBlack h-20">
         <button
           className={`flex items-center py-3.5 text-gray-3 hover:text-white focus:outline-none ${
@@ -44,9 +42,7 @@ const Controls = () => {
         </button>
         {!hideContinueButton ? (
           <button
-            className={`${
-              lastStep && "bg-green-400"
-            } primary-CTA ${
+            className={`${lastStep && "bg-green-400"} primary-CTA ${
               buttonsDisabled || continueDisabled
                 ? "primary-CTA-disabled"
                 : "hover:opacity-90 transition-all"

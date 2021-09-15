@@ -42,7 +42,7 @@ const timezones = ct.getAllTimezones();
 const templates = [
   {
     title: "SPV",
-    subTitle: "Coinvest in a specific asset with a Special Purpose Vehicle",
+    subTitle: "Co-invest in a specific asset with a Special Purpose Vehicle",
     summary: [
       "USDC deposit token",
       "Up to 99 members",
@@ -69,7 +69,7 @@ const templates = [
   {
     title: "Investment Fund",
     subTitle:
-      "Coinvest in a series of investments across a range of types and categories",
+      "Co-invest in a series of investments across a range of types and categories",
     summary: [
       "USDC deposit token",
       "Up to 99 members",
@@ -95,7 +95,8 @@ const templates = [
   },
   {
     title: "Investment Club",
-    subTitle: "Short and concise description of this syndicate template",
+    subTitle:
+      "Co-invest in a series of investments with a group of colleagues, partners, and friends",
     summary: [
       "USDC deposit token",
       "Up to 99 members",
@@ -115,7 +116,7 @@ const templates = [
   },
   {
     title: "Crowdfund/Grant DAO",
-    subTitle: "Coinvest with the entire community",
+    subTitle: "Co-invest with the entire community",
     summary: [
       "Any deposit token",
       "Unlimited members",
@@ -199,7 +200,7 @@ const SyndicateTemplates: React.FC = () => {
     }
   };
   return (
-    <div className="grid grid-cols-1 xl:grid-cols-4 lg:grid-cols-3 sm:grid-cols-2 gap-6 py-4">
+    <div className="grid grid-cols-1 xl:grid-cols-4 lg:grid-cols-3 sm:grid-cols-2 gap-6">
       {templates.map((template, index) => {
         const {
           title,
@@ -210,6 +211,7 @@ const SyndicateTemplates: React.FC = () => {
         } = template;
         return (
           <div
+            className="h-full flex flex-col"
             onClick={() => (!disabled ? handleTemplateSelect(template) : null)}
           >
             <TemplateItem

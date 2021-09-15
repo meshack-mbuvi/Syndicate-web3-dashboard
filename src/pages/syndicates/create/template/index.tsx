@@ -14,6 +14,7 @@ import TemplateControls from "@/containers/create/syndicateTemplates/templateCon
 import { TemplateMainContent } from "@/containers/create/shared/mainContent";
 import TemplateNavSteps from "@/containers/create/syndicateTemplates/templateNavSteps";
 import { useCreateSyndicateContext } from "@/context/CreateSyndicateContext";
+import { useSyndicateInBetaBannerContext } from "@/context/SyndicateInBetaBannerContext";
 
 const CreateSyndicate: React.FC = () => {
   const {
@@ -21,10 +22,14 @@ const CreateSyndicate: React.FC = () => {
     templateSteps,
     currentTemplateStep,
     showSuccessView,
+    hideControls,
     currentTemplateSubstep,
-    resetCreateSyndicateStore
+    resetCreateSyndicateStore,
   } = useCreateSyndicateContext();
   const firstRender = useFirstRender();
+
+  const { showBanner } = useSyndicateInBetaBannerContext();
+
   const router = useRouter();
 
   const {
@@ -61,8 +66,6 @@ const CreateSyndicate: React.FC = () => {
       getSyndicates(syndicateContracts.GetterLogicContract);
     }
   }, [syndicateContracts?.GetterLogicContract, account]);
-
-  
 
   useEffect(() => {
     // Redirect to the syndicates page
@@ -108,33 +111,33 @@ const CreateSyndicate: React.FC = () => {
             <div
               id="container"
               className={
-                "container mx-auto flex fixed h-screen justify-between w-full" +
-                `${showSuccessView ? " md:-mt-32 -mt-28" : ""}`
+                "container mx-auto flex fixed top-0 h-screen justify-between w-full" +
+                `${showSuccessView ? " md:-mt-32 -mt-28" : ""} ${
+                  showBanner ? "pt-36" : "pt-24"
+                }`
               }
             >
               {showSuccessView ? (
                 <SuccessCreateSyndicate account={account} />
               ) : (
                 <>
-                  <div
-                    id="left-column"
-                    className="flex-1 w-1/6m flex p-1 pr-1 mr-8"
-                  >
+                  <div id="left-column" className="flex-1 w-1/6m flex p-1">
                     {/* Nav steps are not rendered on the value confirmation page or when
                     settings are being modified from the summary page, hence this check. */}
-                    {currentTemplateStep > 0 &&
+
+                    {/* {currentTemplateStep > 0 &&
                     !currentTemplateSubstep.length ? (
                       <TemplateNavSteps
                         templateSteps={templateSteps}
                         currentTemplateStep={currentTemplateStep}
                       />
-                    ) : null}
+                    ) : null} */}
                   </div>
 
                   <TemplateMainContent>
                     <div
                       id="main-content"
-                      className="flex-1 flex overflow-y-auto justify-between h-full no-scroll-bar px-1"
+                      className="flex-grow flex overflow-y-auto justify-between h-full no-scroll-bar px-1"
                     >
                       {/* Displays component based on template step or substep*/}
                       {currentTemplateSubstep.length
@@ -145,6 +148,11 @@ const CreateSyndicate: React.FC = () => {
                         ? templateSteps?.[currentTemplateStep]?.component
                         : null}
                     </div>
+                    {!showSuccessView && syndicateTemplateTitle ? (
+                      !hideControls ? (
+                        <TemplateControls />
+                      ) : null
+                    ) : null}
                   </TemplateMainContent>
 
                   {/* Content info */}
@@ -160,9 +168,6 @@ const CreateSyndicate: React.FC = () => {
                 </>
               )}
             </div>
-            {!showSuccessView && syndicateTemplateTitle ? (
-              <TemplateControls />
-            ) : null}
           </>
         )}
       </>

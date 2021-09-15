@@ -93,7 +93,7 @@ const Confirmation: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col font-whyte">
+    <div className="flex flex-col font-whyte w-full">
       <ContentTitle>
         <>
           <span>Confirm everything looks right</span>
@@ -122,7 +122,7 @@ const Confirmation: React.FC = () => {
             </ReactTooltip>
           ) : null}
           <p className="text-gray-dimmer mb-1 font-whyte">
-            Deposit Token{templateInUse ? "*" : null}
+            Deposit token{templateInUse ? "*" : null}
           </p>
           <div className="flex items-center w-fit-content">
             <img

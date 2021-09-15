@@ -9,7 +9,7 @@ export const NonEditableSetting = (props: INonEditableSetting): JSX.Element => {
     text = "This setting can’t be changed once the syndicate is created",
   } = props;
   return (
-    <p className="flex text-sm text-gray-3">
+    <p className="flex text-sm text-gray-3 pb-4">
       <img
         src="/images/tokenWarning.svg"
         alt="token warning"

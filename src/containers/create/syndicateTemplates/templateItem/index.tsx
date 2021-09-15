@@ -23,14 +23,14 @@ const TemplateItem: React.FC<ItemplateItem> = ({
   const templateContent = (
     <a
       className={`flex flex-col items-start justify-start font-whyte border border-gray-inactive rounded-md ${
-        !disabled && "hover:border-blue"
-      } h-80 p-6 ${disabled && "opacity-50 cursor-default"}`}
+        !disabled && "hover:border-blue mb-6"
+      } h-full p-6 ${disabled && "opacity-50 cursor-default"}`}
     >
       <p className="text-1.5xl mb-2">{title}</p>
       <p className="text-sm text-gray-3 mb-4 font-whyte-light font-bold">
         {subTitle}
       </p>
-      <ul className="list-disc text-sm list-inside py-1">
+      <ul className="flex flex-col list-disc text-sm list-inside pt-1 h-full justify-end">
         {summary.map((setting, index) => {
           return (
             <li className="pb-1" key={index}>
