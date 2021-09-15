@@ -75,7 +75,7 @@ export const isZeroAddress = (address: string): boolean => {
 };
 
 export const validateEmail = (email: string): boolean => {
-  const regexp = /^[\w.%+-]+@[\w.-]+\.[\w]{2,6}$/;
+  const regexp = /^[\w.%+-]+@[\w.-]+\.[\w]{2,}$/;
   return regexp.test(email);
 };
 
