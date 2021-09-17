@@ -310,6 +310,7 @@ export const processSyndicateDetails = (
     syndicateDistributionShareBasisPoints,
     open,
     distributing,
+    transferable,
   } = syndicateData;
   let { managerManagementFeeBasisPoints } = syndicateData;
 
@@ -372,6 +373,11 @@ export const processSyndicateDetails = (
     syndicateDistributionShareBasisPoints,
     distributing,
     managerDistributionShareBasisPoints: distributionShareToSyndicateLead,
+    transferable,
+    epochTime: {
+      closeDate: dateClose,
+      createdDate: dateCreated,
+    },
   };
 };
 

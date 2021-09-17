@@ -1,12 +1,12 @@
-import React from "react";
-import { InfoIcon } from "src/components/iconWrappers";
+import React, { useState } from "react";
+import Portal from "@/components/shared/Portal";
 
 // Description of SectionCard props
 interface SectionCardProps {
   /** Header text for the section card */
   header: string;
   /** Subtext to render on this component */
-  subText: any;
+  content: any;
   /** Optional property used to determine whether to
    * render the info icon */
   infoIcon?: boolean;
@@ -22,7 +22,7 @@ interface SectionCardProps {
 export const SectionCard = (props: SectionCardProps) => {
   const {
     header,
-    subText,
+    content,
     tooltip,
     infoIcon = true,
     title = "My Stats",
@@ -31,21 +31,36 @@ export const SectionCard = (props: SectionCardProps) => {
     header === "Total Withdraws / Distributions To Date" ||
     header === "Total Distributions / Deposits";
 
-  // show tooltip on the right for 'My Stats' section
-  const showingMyStats = title === "My Stats";
+  const [coord, setCoords] = useState({});
+  const [isOn, setOn] = useState(false);
 
   return (
-    <>
-      <div className={`invisible visibility-hover absolute ${showingMyStats ? "-right-6" : "-left-16"}`}>
-        {!infoIcon ? null : (
-          <InfoIcon
-            tooltip={tooltip}
-            side={`${showingMyStats ? "right" : "left"}`}
-          />
-        )}
-      </div>
-      <div>
-        <p className="text-lg text-gray-500 leading-loose">
+    <div>
+      {isOn ? (
+        <Portal>
+          <div className={`absolute z-10`} style={{ ...coord }}>
+            {!infoIcon ? null : (
+              <div className="text-sm font-light tooltiptext w-fit-content bg-gray-9 p-4 rounded-lg text-gray-lightManatee max-w-xs">
+                {tooltip}
+              </div>
+            )}
+          </div>
+        </Portal>
+      ) : null}
+      <div
+        onMouseEnter={(e) => {
+          setOn(true);
+          const rect = (e.target as HTMLElement).getBoundingClientRect();
+          setCoords({
+            left: rect.x + rect.width / 2, // add half the width of the button for centering
+            top: rect.y + window.scrollY - 50, // add scrollY offset, as soon as getBountingClientRect takes on screen coords
+          });
+        }}
+        onMouseLeave={() => {
+          setOn(false);
+        }}
+      >
+        <p className="text-base text-gray-500 leading-loose">
           {header?.toString()}
         </p>
         <p
@@ -55,9 +70,9 @@ export const SectionCard = (props: SectionCardProps) => {
               : "text-base leading-5"
           }
         >
-          {subText?.toString()}
+          {content}
         </p>
       </div>
-    </>
+    </div>
   );
 };

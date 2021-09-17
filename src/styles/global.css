@@ -698,3 +698,16 @@ select:-webkit-autofill:focus {
 tr:hover .checkbox {
   display: block !important;
 }
+
+/* styles for linear gradients in syndicate details page */
+
+.show-more-overlay {
+  background: linear-gradient(180deg, #000000 0%, rgba(0, 0, 0, 0) 100%);
+  transform: rotate(-180deg);
+}
+
+.manager-actions-bg {
+  background: #131416;
+  box-shadow: 0px 14px 15px rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(64px);
+}

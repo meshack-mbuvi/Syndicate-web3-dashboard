@@ -6,14 +6,15 @@ interface LinkProp {
   etherscanInfo: string | string[];
   customStyles?: string;
   type?: string;
+  iconOnly?: boolean;
 }
 
 /** Link used to redirect the user to the Etherscan
  * This could point to either the syndicate contract
  * or the token contract when token transactions are involved.
  */
-export const EtherscanLink: React.FC<LinkProp> = props => {
-  const { etherscanInfo, customStyles, type = "address" } = props;
+export const EtherscanLink: React.FC<LinkProp> = (props) => {
+  const { etherscanInfo, customStyles, type = "address", iconOnly } = props;
   // get debug mode from the .env
   // If we're in debug mode, we'll use the rinkeby testnet.
   let etherscanLink = `https://etherscan.io/${
@@ -32,7 +33,13 @@ export const EtherscanLink: React.FC<LinkProp> = props => {
       className={`text-blue flex items-center ${customStyles && customStyles}`}
       rel="noreferrer"
     >
-      View on Etherscan <ExternalLinkIcon className="ml-2 w-4 text-blue" />
+      {!iconOnly ? (
+        <p className="flex items-center">
+          View on Etherscan <ExternalLinkIcon className="ml-2 w-4 text-blue" />
+        </p>
+      ) : (
+        <ExternalLinkIcon grayIcon className="ml-2 w-4 text-blue" />
+      )}
     </a>
   );
 };

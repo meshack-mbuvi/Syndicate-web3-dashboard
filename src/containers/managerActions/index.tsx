@@ -12,6 +12,8 @@ import {
 } from "@/components/shared/transactionStates";
 import StateModal from "@/components/shared/transactionStates/shared";
 import { SkeletonLoader } from "@/components/skeletonLoader";
+import DistributionTokenCard from "@/components/syndicateDetails/distributionTokenCard";
+import StatusBadge from "@/components/syndicateDetails/statusBadge";
 import { useUnavailableState } from "@/components/syndicates/hooks/useUnavailableState";
 import {
   confirmCloseSyndicateText,
@@ -29,6 +31,7 @@ import {
 import { getSyndicateByAddress } from "@/redux/actions/syndicates";
 import { RootState } from "@/redux/store";
 import { web3 } from "@/utils";
+import { floatedNumberWithCommas } from "@/utils/formattedNumbers";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -50,6 +53,11 @@ const ManagerActions = (): JSX.Element => {
     },
     manageActionsReducer: {
       manageActions: { modifyMemberDistribution, modifyCapTable },
+    },
+    syndicateMemberDetailsReducer: {
+      syndicateDistributionTokens,
+      memberDepositDetails,
+      memberWithdrawalDetails,
     },
   } = useSelector((state: RootState) => state);
   const dispatch = useDispatch();
@@ -223,74 +231,101 @@ const ManagerActions = (): JSX.Element => {
     dispatch(setShowModifyCapTable(true));
   };
 
+  const distributing = syndicate?.distributing;
+  const closeDate = syndicate?.closeDate;
+  const depositsEnabled = syndicate?.depositsEnabled;
+
+  let badgeBackgroundColor = "bg-blue-darker";
+  let badgeIcon = "depositIcon.svg";
+  let titleText = "Open to deposits";
+  if (distributing) {
+    badgeBackgroundColor = "bg-green-darker";
+    badgeIcon = "distributeIcon.svg";
+    titleText = "Distributing";
+  } else if (!depositsEnabled && !distributing) {
+    badgeBackgroundColor = "bg-green-dark";
+    badgeIcon = "operatingIcon.svg";
+    titleText = "Operating";
+  }
+
   return (
     <ErrorBoundary>
       <div className="w-full mt-4 sm:mt-0">
         <FadeIn>
-          <div className="h-fit-content rounded-2xl p-4 md:mx-2 md:p-6 bg-gray-9 mt-6 md:mt-0 md:pb-2">
-            <div className="text-xl font-inter">Manager Actions</div>
-
-            <div className="flex h-12 rounded-custom items-center">
-              <img
-                src="/images/rightPointedHand.svg"
-                className="mr-2"
-                alt="You manage this syndicate"
-              />
-              <div className="text-gray-dim leading-snug">
-                You manage this syndicate
+          <div className="h-fit-content rounded-3xl bg-gray-9">
+            <StatusBadge
+              badgeBackgroundColor={badgeBackgroundColor}
+              badgeIcon={badgeIcon}
+              titleText={titleText}
+            />
+            <div className="h-fit-content rounded-3xl bg-gray-9 mt-6 mb-2 md:mt-0 md:pb-2">
+              {syndicateDistributionTokens && syndicate?.distributing ? (
+                <div className="px-6 border-b-1 border-gray-700 pb-6 font-light w-full tracking-wide">
+                  {syndicateDistributionTokens?.map((token, index) => (
+                    <DistributionTokenCard
+                      key={index}
+                      token={token}
+                      memberWithdrawalDetails={memberWithdrawalDetails}
+                    />
+                  ))}
+                </div>
+              ) : null}
+              <div
+                className={`text-sm font-inter uppercase tracking-wider m-4 mr-4 md:m-3 md:mr-5 pl-3 md:mt-6`}
+              >
+                Manager Actions
               </div>
-            </div>
-
-            {/* show set distribution option when syndicate is closed */}
-            {syndicate?.open ? (
-              <ManagerActionCard
-                title={"Close syndicate"}
-                description={
-                  "Close this syndicate and stop accepting deposits. This action is irreversible."
-                }
-                icon={
-                  <img
-                    src="/images/managerActions/close_syndicate.svg"
-                    alt="close"
-                  />
-                }
-                onClickHandler={() => setShowConfirmCloseSyndicate(true)}
-              />
-            ) : (
-              <ManagerActionCard
-                title={"Distribute tokens back to depositors"}
-                description={
-                  "Distribute tokens back to depositors and make them available for withdraw."
-                }
-                icon={<img src="/images/server.svg" alt="server" />}
-                onClickHandler={() => {
-                  // Amplitude logger: OPEN_DISTRIBUTE_TOKEN_MODAL
-                  amplitudeLogger(OPEN_DISTRIBUTE_TOKEN_MODAL, {
-                    flow: Flow.MGR_SET_DIST,
-                  });
-                  // Open distribute token modal
-                  setShowDistributeToken(true);
-                }}
-              />
-            )}
-
-            {actions.map(({ icon, title, description, onClickHandler }) => {
-              return (
+              {/* show set distribution option when syndicate is closed */}
+              {syndicate?.open ? (
                 <ManagerActionCard
-                  title={title}
-                  description={description}
-                  icon={icon}
-                  onClickHandler={onClickHandler}
-                  key={title}
+                  title={"Close to deposits"}
+                  description={
+                    "Close this syndicate and stop accepting deposits. This action is irreversible."
+                  }
+                  icon={
+                    <img
+                      src="/images/managerActions/close_syndicate.svg"
+                      alt="close"
+                    />
+                  }
+                  onClickHandler={() => setShowConfirmCloseSyndicate(true)}
                 />
-              );
-            })}
+              ) : (
+                <ManagerActionCard
+                  title={`${
+                    !syndicateDistributionTokens
+                      ? "Distribute funds back to members"
+                      : "Distribute more funds to members"
+                  }`}
+                  description={
+                    "Distribute tokens to members, making them available to withdraw."
+                  }
+                  icon={<img src="/images/server.svg" alt="server" />}
+                  onClickHandler={() => {
+                    // Amplitude logger: OPEN_DISTRIBUTE_TOKEN_MODAL
+                    amplitudeLogger(OPEN_DISTRIBUTE_TOKEN_MODAL, {
+                      flow: Flow.MGR_SET_DIST,
+                    });
+                    // Open distribute token modal
+                    setShowDistributeToken(true);
+                  }}
+                />
+              )}
+              {actions.map(({ icon, title, description, onClickHandler }) => {
+                return (
+                  <ManagerActionCard
+                    title={title}
+                    description={description}
+                    icon={icon}
+                    onClickHandler={onClickHandler}
+                    key={title}
+                  />
+                );
+              })}
+            </div>
           </div>
         </FadeIn>
         <div className="p-0 md:p-2">
-          <div className="font-semibold tracking-widest text-sm leading-6 text-gray-matterhorn my-6 mx-4">
-            MORE
-          </div>
           {syndicate?.distributing && syndicate?.modifiable ? (
             <MoreManagerActionCard
               icon={<img src="/images/invertedInfo.svg" alt="Info" />}
@@ -317,7 +352,7 @@ const ManagerActions = (): JSX.Element => {
             icon={
               <img src="/images/managerActions/settings.svg" alt="settings" />
             }
-            text={"Change syndicate settings"}
+            text={"Syndicate settings"}
             onClickHandler={setShowChangeSettings}
           />
         </div>

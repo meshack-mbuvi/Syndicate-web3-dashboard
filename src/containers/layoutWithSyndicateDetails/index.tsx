@@ -19,9 +19,9 @@ import { syndicateActionConstants } from "src/components/syndicates/shared/Const
 import Head from "src/components/syndicates/shared/HeaderTitle";
 import SyndicateDetails from "src/components/syndicates/syndicateDetails";
 import { formatAddress } from "@/utils/formatAddress";
-import {showWalletModal} from "@/redux/actions";
-import {amplitudeLogger, Flow} from "@/components/amplitude";
-import {CLICK_CREATE_A_SYNDICATE} from "@/components/amplitude/eventNames";
+import { showWalletModal } from "@/redux/actions";
+import { amplitudeLogger, Flow } from "@/components/amplitude";
+import { CLICK_CREATE_A_SYNDICATE } from "@/components/amplitude/eventNames";
 
 import ManageMembers from "../managerActions/manageMembers";
 const LayoutWithSyndicateDetails = ({ children }): JSX.Element => {
@@ -36,7 +36,7 @@ const LayoutWithSyndicateDetails = ({ children }): JSX.Element => {
   } = useSelector((state: RootState) => state);
 
   const [showCopyState, setShowCopyState] = useState(false);
-  const [currentUrl, setCurrentUrl] = useState("")
+  const [currentUrl, setCurrentUrl] = useState("");
 
   const updateAddressCopyState = () => {
     setShowCopyState(true);
@@ -71,28 +71,28 @@ const LayoutWithSyndicateDetails = ({ children }): JSX.Element => {
 
   // format an account address in the format 0x3f6q9z52…54h2kjh51h5zfa
   const formattedSyndicateAddress3XLarge = formatAddress(
-      syndicateAddress,
-      18,
-      18,
+    syndicateAddress,
+    18,
+    18,
   );
   const formattedSyndicateAddressXLarge = formatAddress(
-      syndicateAddress,
-      10,
-      10,
+    syndicateAddress,
+    10,
+    10,
   );
   const formattedSyndicateAddressLarge = formatAddress(syndicateAddress, 8, 8);
   const formattedSyndicateAddressMedium = formatAddress(syndicateAddress, 6, 4);
   const formattedSyndicateAddressSmall = formatAddress(
-      syndicateAddress,
-      10,
-      14,
+    syndicateAddress,
+    10,
+    14,
   );
   const formattedSyndicateAddressMobile = formatAddress(syndicateAddress, 5, 8);
 
   const [accountIsManager, setAccountIsManager] = useState<boolean>(false);
   const showOnboardingIfNeeded = router.pathname.endsWith("deposit");
 
-  let noSyndicate
+  let noSyndicate;
   // A manager should not access deposit page but should be redirected
   // to syndicates page
   useEffect(() => {
@@ -216,7 +216,7 @@ const LayoutWithSyndicateDetails = ({ children }): JSX.Element => {
     } else {
       setAccountIsManager(false);
     }
-    setCurrentUrl(window.location.href)
+    setCurrentUrl(window.location.href);
   }, [syndicate, account]);
 
   // get static text from constants
@@ -236,28 +236,46 @@ const LayoutWithSyndicateDetails = ({ children }): JSX.Element => {
   // we'll initialize this to instances where address is not a syndicate.
   // if the address is invalid, this texts will be updated accordingly.
   let emptyStateTitle = noSyndicateTitleText;
-  let creatingSyndicateStateTitle = ""
+  let creatingSyndicateStateTitle = "";
   let emptyStateMessage = noSyndicateMessageText;
   if (!syndicateAddressIsValid) {
     emptyStateTitle = syndicateAddressInvalidTitleText;
     emptyStateMessage = syndicateAddressInvalidMessageText;
   }
 
-  if (syndicateAddressIsValid && !syndicateFound && account !== syndicateAddress) {
+  if (
+    syndicateAddressIsValid &&
+    !syndicateFound &&
+    account !== syndicateAddress
+  ) {
     emptyStateTitle = notSyndicateYetTitleText;
     emptyStateMessage = notSyndicateYetMessageText;
   }
 
-  if (syndicateAddressIsValid && !syndicateFound && account === syndicateAddress) {
+  if (
+    syndicateAddressIsValid &&
+    !syndicateFound &&
+    account === syndicateAddress
+  ) {
     emptyStateTitle = notSyndicateYetTitleText;
     emptyStateMessage = notSyndicateForManagerYetMessageText;
   }
-  if (submitting && syndicateAddressIsValid && !syndicateFound && account === syndicateAddress) {
-    creatingSyndicateStateTitle = creatingSyndicateForManagerTitle
+  if (
+    submitting &&
+    syndicateAddressIsValid &&
+    !syndicateFound &&
+    account === syndicateAddress
+  ) {
+    creatingSyndicateStateTitle = creatingSyndicateForManagerTitle;
   }
 
-  if (submitting && syndicateAddressIsValid && !syndicateFound && account !== syndicateAddress) {
-    creatingSyndicateStateTitle = creatingSyndicateTitle
+  if (
+    submitting &&
+    syndicateAddressIsValid &&
+    !syndicateFound &&
+    account !== syndicateAddress
+  ) {
+    creatingSyndicateStateTitle = creatingSyndicateTitle;
   }
 
   // set syndicate empty state.
@@ -284,124 +302,123 @@ const LayoutWithSyndicateDetails = ({ children }): JSX.Element => {
   );
 
   const nonManagerCta = (
-      <div className="flex items-center mt-2">
-        <CopyToClipboard
-            text={currentUrl}
-            onCopy={updateAddressCopyState}
-        >
-          <div className="flex">
-            <div className="ml-4 flex items-center ml-0 relative w-7 h-7 cursor-pointer rounded-full lg:hover:bg-gray-700 lg:active:bg-white lg:active:bg-opacity-20">
-              {showCopyState ? (
-                  <span className="absolute text-xs -top-5 -left-1 text-blue">
-                          copied
-                        </span>
-              ) : null}
-              <img
-                  alt="copy"
-                  src="/images/copy-clipboard-blue.svg"
-                  className="cursor-pointer h-4 mx-auto transform rotate-180  fill-current text-blue"
-              />
-            </div>
-            <p className="text-base text-blue">
-              Copy link to create a syndicate
-            </p>
+    <div className="flex items-center mt-2">
+      <CopyToClipboard text={currentUrl} onCopy={updateAddressCopyState}>
+        <div className="flex">
+          <div className="ml-4 flex items-center ml-0 relative w-7 h-7 cursor-pointer rounded-full lg:hover:bg-gray-700 lg:active:bg-white lg:active:bg-opacity-20">
+            {showCopyState ? (
+              <span className="absolute text-xs -top-5 -left-1 text-blue">
+                copied
+              </span>
+            ) : null}
+            <img
+              alt="copy"
+              src="/images/copy-clipboard-blue.svg"
+              className="cursor-pointer h-4 mx-auto transform rotate-180  fill-current text-blue"
+            />
           </div>
-        </CopyToClipboard>
-      </div>
-  )
+          <p className="text-base text-blue">Copy link to create a syndicate</p>
+        </div>
+      </CopyToClipboard>
+    </div>
+  );
 
   const managerCta = (
-      <div className="flex items-center mt-2">
-        <Button
-            customClasses="primary-CTA relative"
-            textColor="text-black"
-            onClick={() => showSyndicateForm()}
-            createSyndicate={false}
-        >
-          <div className="hidden sm:block">Create a syndicate</div>
-          <div className="block sm:hidden">Create</div>
-        </Button>
-      </div>
-  )
+    <div className="flex items-center mt-2">
+      <Button
+        customClasses="primary-CTA relative"
+        textColor="text-black"
+        onClick={() => showSyndicateForm()}
+        createSyndicate={false}
+      >
+        <div className="hidden sm:block">Create a syndicate</div>
+        <div className="block sm:hidden">Create</div>
+      </Button>
+    </div>
+  );
 
   const syndicateNotFoundState = (
-      <div className="flex justify-center items-center h-full w-full mt-6 sm:mt-10">
-        <div className="flex flex-col items-center justify-center sm:w-7/12 md:w-5/12 rounded-custom p-10">
-          <p className="font-semibold text-2xl text-center">{formatAddress(syndicateAddress, 9, 6)} {emptyStateTitle}</p>
-          <p className="text-base my-5 font-normal text-gray-dim text-center">
-            {emptyStateMessage}
-          </p>
-          {account === syndicateAddress ? managerCta : nonManagerCta}
-        </div>
+    <div className="flex justify-center items-center h-full w-full mt-6 sm:mt-10">
+      <div className="flex flex-col items-center justify-center sm:w-7/12 md:w-5/12 rounded-custom p-10">
+        <p className="font-semibold text-2xl text-center">
+          {formatAddress(syndicateAddress, 9, 6)} {emptyStateTitle}
+        </p>
+        <p className="text-base my-5 font-normal text-gray-dim text-center">
+          {emptyStateMessage}
+        </p>
+        {account === syndicateAddress ? managerCta : nonManagerCta}
       </div>
-  )
+    </div>
+  );
 
   const syndicateNotReadyLoaderState = (
-      <div className="flex justify-center items-center h-full w-full mt-6 sm:mt-10">
-        <div className="flex flex-col items-center justify-center sm:w-7/12 md:w-5/12 rounded-custom p-10">
-          <Spinner/>
-          <p className="font-semibold text-xl text-center">{creatingSyndicateStateTitle}</p>
-          {<EtherscanLink etherscanInfo={syndicateAddress} />}
-        </div>
+    <div className="flex justify-center items-center h-full w-full mt-6 sm:mt-10">
+      <div className="flex flex-col items-center justify-center sm:w-7/12 md:w-5/12 rounded-custom p-10">
+        <Spinner />
+        <p className="font-semibold text-xl text-center">
+          {creatingSyndicateStateTitle}
+        </p>
+        {<EtherscanLink etherscanInfo={syndicateAddress} />}
       </div>
-  )
+    </div>
+  );
 
   const creatingSyndicate = (
-      <div className="w-full">
-        <div className="container mx-auto">
-          <div className="flex flex-col md:flex-row sm:mr-2 lg:mr-6 h-fit-content rounded-custom items-center justify-between">
-            <div>
-              <span className="font-medium text-gray-500 text-sm uppercase tracking-widest pb-3">
-                Syndicate
-              </span>
-              <div className="justify-start">
-                <div className="flex-shrink main-title flex-wrap break-all">
-                  <div className="mr-4">
-                    <div className="hidden 3xl:block">
-                      <span className="text-gray-500">0x</span>
-                      {formattedSyndicateAddress3XLarge.slice(2)}
-                    </div>
-                    <div className="hidden xl:block 3xl:hidden">
-                      <span className="text-gray-500">0x</span>
-                      {formattedSyndicateAddressXLarge.slice(2)}
-                    </div>
-                    <div className="hidden lg:block xl:hidden">
-                      <span className="text-gray-500">0x</span>
-                      {formattedSyndicateAddressLarge.slice(2)}
-                    </div>
-                    <div className="hidden md:block lg:hidden">
-                      <span className="text-gray-500">0x</span>
-                      {formattedSyndicateAddressMedium.slice(2)}
-                    </div>
-                    <div className="hidden sm:block md:hidden">
-                      <span className="text-gray-500">0x</span>
-                      {formattedSyndicateAddressSmall.slice(2)}
-                    </div>
-                    <div className="sm:hidden">
-                      <span className="text-gray-500">0x</span>
-                      {formattedSyndicateAddressMobile.slice(2)}
-                    </div>
+    <div className="w-full">
+      <div className="container mx-auto">
+        <div className="flex flex-col md:flex-row sm:mr-2 lg:mr-6 h-fit-content rounded-custom items-center justify-between">
+          <div>
+            <span className="font-medium text-gray-500 text-sm uppercase tracking-widest pb-3">
+              Syndicate
+            </span>
+            <div className="justify-start">
+              <div className="flex-shrink main-title flex-wrap break-all">
+                <div className="mr-4">
+                  <div className="hidden 3xl:block">
+                    <span className="text-gray-500">0x</span>
+                    {formattedSyndicateAddress3XLarge.slice(2)}
+                  </div>
+                  <div className="hidden xl:block 3xl:hidden">
+                    <span className="text-gray-500">0x</span>
+                    {formattedSyndicateAddressXLarge.slice(2)}
+                  </div>
+                  <div className="hidden lg:block xl:hidden">
+                    <span className="text-gray-500">0x</span>
+                    {formattedSyndicateAddressLarge.slice(2)}
+                  </div>
+                  <div className="hidden md:block lg:hidden">
+                    <span className="text-gray-500">0x</span>
+                    {formattedSyndicateAddressMedium.slice(2)}
+                  </div>
+                  <div className="hidden sm:block md:hidden">
+                    <span className="text-gray-500">0x</span>
+                    {formattedSyndicateAddressSmall.slice(2)}
+                  </div>
+                  <div className="sm:hidden">
+                    <span className="text-gray-500">0x</span>
+                    {formattedSyndicateAddressMobile.slice(2)}
                   </div>
                 </div>
               </div>
             </div>
           </div>
-          {syndicateNotReadyLoaderState}
         </div>
+        {syndicateNotReadyLoaderState}
       </div>
-  )
+    </div>
+  );
 
   if (!syndicateFound || !syndicateAddressIsValid) {
-    noSyndicate = syndicateEmptyState
+    noSyndicate = syndicateEmptyState;
   }
 
   if (!syndicateFound && syndicateAddressIsValid) {
-    noSyndicate = syndicateNotFoundState
+    noSyndicate = syndicateNotFoundState;
     // noSyndicate = creatingSyndicate
   }
 
   if (submitting && !syndicateFound && syndicateAddressIsValid) {
-    noSyndicate = creatingSyndicate
+    noSyndicate = creatingSyndicate;
   }
 
   return (
@@ -416,7 +433,7 @@ const LayoutWithSyndicateDetails = ({ children }): JSX.Element => {
             <div className="container mx-auto">
               {/* Two Columns (Syndicate Details + Widget Cards) */}
               <div className="flex flex-col md:flex-row">
-                <BackButton topOffset="-1.2rem" />
+                <BackButton />
                 {/* Left Column */}
                 <div className="md:w-3/5 w-full pb-6 md:pr-24">
                   <div ref={ref} className="w-full md:hidden" />{" "}
@@ -430,7 +447,7 @@ const LayoutWithSyndicateDetails = ({ children }): JSX.Element => {
                   </SyndicateDetails>
                 </div>
                 {/* Right Column */}
-                <div className="lg:w-2/5 w-96 hidden md:block pt-0">
+                <div className="lg:w-2/5 w-96 hidden md:block pt-0 h-full">
                   <div className="lg:max-w-120 lg:w-full w-96 mx-auto sticky relative top-33">
                     {children}
                   </div>

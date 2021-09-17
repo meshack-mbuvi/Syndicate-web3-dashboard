@@ -150,10 +150,7 @@ const SyndicateMembersTable = ({
 
   return (
     <div className="flex flex-col overflow-y-hidden -mx-m6">
-      <div
-        className="flex my-10 space-x-8 justify-between ml-6"
-        style={{ zIndex: -1 }}
-      >
+      <div className="flex my-10 space-x-8 justify-between ml-6">
         <form className="w-3/12 ">
           <SearchForm
             {...{

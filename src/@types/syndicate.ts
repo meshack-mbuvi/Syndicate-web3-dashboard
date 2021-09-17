@@ -27,4 +27,9 @@ export type Syndicate = {
   managerDistributionShareBasisPoints: number;
   distributing?: boolean;
   syndicateAddress?: string;
+  transferable: boolean;
+  epochTime: {
+    closeDate: string;
+    createdDate: string;
+  };
 };

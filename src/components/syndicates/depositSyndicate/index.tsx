@@ -149,7 +149,7 @@ const DepositSyndicate: React.FC = () => {
   const sections = [
     {
       header: "My Deposits",
-      subText: `${floatedNumberWithCommas(
+      content: `${floatedNumberWithCommas(
         memberTotalDeposits,
       )} ${depositTokenSymbol} ($${floatedNumberWithCommas(
         parseFloat(depositERC20Price) * parseFloat(memberTotalDeposits),
@@ -159,7 +159,7 @@ const DepositSyndicate: React.FC = () => {
     },
     {
       header: "My % of This Syndicate",
-      subText: `${memberPercentageOfSyndicate}%`,
+      content: `${memberPercentageOfSyndicate}%`,
       tooltip: myPercentageOfThisSyndicateToolTip,
       screen: "deposit",
     },
@@ -880,7 +880,9 @@ const DepositSyndicate: React.FC = () => {
                                 You’ve hit the deposit limit
                               </p>
                               <p className="text-sm text-gray-lightManatee text-center">
-                                {`You’ve hit this syndicate’s deposit limit of ${floatedNumberWithCommas(syndicate?.depositMemberMax)} ${depositTokenSymbol} per member.`}
+                                {`You’ve hit this syndicate’s deposit limit of ${floatedNumberWithCommas(
+                                  syndicate?.depositMemberMax,
+                                )} ${depositTokenSymbol} per member.`}
                               </p>
                             </div>
                           ) : (

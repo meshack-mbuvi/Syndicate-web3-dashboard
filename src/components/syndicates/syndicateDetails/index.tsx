@@ -1,7 +1,9 @@
+import { SkeletonLoader } from "@/components/skeletonLoader";
 import ManagerSetAllowance from "@/containers/managerActions/setAllowances";
 import { RootState } from "@/redux/store";
 import { getTokenIcon } from "@/TokensList";
 import { getWeiAmount, isUnlimited, onlyUnique } from "@/utils/conversions";
+import { epochTimeToDateFormat } from "@/utils/dateUtils";
 import { floatedNumberWithCommas } from "@/utils/formattedNumbers";
 import { getCoinFromContractAddress } from "functions/src/utils/ethereum";
 import abi from "human-standard-token-abi";
@@ -20,7 +22,7 @@ import {
 // utils
 import { formatAddress } from "src/utils/formatAddress";
 import GradientAvatar from "../portfolioAndDiscover/portfolio/GradientAvatar";
-import { BadgeCard, DetailsCard } from "../shared";
+import { DetailsCard } from "../shared";
 import {
   closeDateToolTip,
   createdDateToolTip,
@@ -29,7 +31,10 @@ import {
   distributionShareToSyndicateLeadToolTip,
   distributionShareToSyndicateProtocolToolTip,
   expectedAnnualOperatingFeesToolTip,
+  totalDepositsToolTip,
 } from "../shared/Constants";
+import PermissionCard from "../shared/PermissionsCard";
+import { ProgressIndicator } from "../shared/progressIndicator";
 
 // we should have an isChildVisible prop here of type boolean
 const SyndicateDetails = (props: {
@@ -55,49 +60,16 @@ const SyndicateDetails = (props: {
   const dispatch = useDispatch();
 
   const router = useRouter();
-  const [details, setDetails] = useState([
-    {
-      header: "Created on",
-      subText: "",
-      tooltip: "",
-    },
-    {
-      header: "Close Date",
-      subText: "",
-      tooltip: "",
-      isEditable: false,
-    },
-    {
-      header: "Deposit Token",
-      subText: "",
-      tooltip: "",
-      isEditable: false,
-    },
-    {
-      header: "Deposit Range",
-      subText: "",
-      tooltip: "",
-      isEditable: false,
-    },
-    {
-      header: "Expected Annual Operating Fees",
-      subText: "",
-      tooltip: "",
-      isEditable: false,
-    },
-    {
-      header: "Distribution Share to Syndicate Lead",
-      subText: "",
-      tooltip: "",
-      isEditable: false,
-    },
-    {
-      header: "Distribution Share to Protocol",
-      subText: "",
-      tooltip: "",
-      isEditable: false,
-    },
-  ]);
+  const [details, setDetails] = useState<
+    Array<{
+      header: string;
+      content: any;
+      tooltip: string;
+      isEditable?: boolean;
+    }>
+  >([]);
+
+  const [showMore, setShowMore] = useState(false);
 
   // state to handle copying of the syndicate address to clipboard.
   const [showAddressCopyState, setShowAddressCopyState] =
@@ -408,56 +380,96 @@ const SyndicateDetails = (props: {
   useEffect(() => {
     if (syndicate) {
       const {
-        closeDate,
-        createdDate,
         distributionShareToSyndicateProtocol,
         managerDistributionShareBasisPoints,
         managerManagementFeeBasisPoints,
         depositMemberMax,
         depositMemberMin,
+        depositTotal,
+        depositTotalMax,
+        numMembersCurrent,
+        numMembersMax,
+        epochTime,
+        depositERC20TokenSymbol,
       } = syndicate;
+
+      const { closeDate, createdDate } = epochTime;
 
       const valueIsUnlimited = isUnlimited(depositMemberMax);
 
       setDetails([
         {
-          header: "Created on",
-          subText: createdDate,
-          tooltip: createdDateToolTip,
-        },
-        {
-          header: "Close Date",
-          subText: closeDate,
-          tooltip: closeDateToolTip,
-        },
-        {
-          header: "Deposit Token",
-          subText: `${depositERC20TokenSymbol}`,
-          tooltip: depositTokenToolTip,
+          header: "Total Deposits (Max)",
+          content: (
+            <div>
+              {floatedNumberWithCommas(depositTotal)}&nbsp;
+              {depositERC20TokenSymbol}&nbsp;
+              <span className="text-gray-500">
+                (
+                {isUnlimited(depositTotalMax)
+                  ? "Unlimited"
+                  : floatedNumberWithCommas(depositTotalMax)}
+                )
+              </span>
+            </div>
+          ),
+          tooltip: totalDepositsToolTip,
         },
         {
           header: "Deposit Range",
-          subText: `${floatedNumberWithCommas(depositMemberMin)} - ${
-            valueIsUnlimited
+          content: `${floatedNumberWithCommas(depositMemberMin)} - ${
+            isUnlimited(depositMemberMax)
               ? "Unlimited"
               : floatedNumberWithCommas(depositMemberMax)
           } ${depositERC20TokenSymbol}`,
           tooltip: depositRangeToolTip,
         },
         {
-          header: "Expected Annual Operating Fees",
-          subText: `${managerManagementFeeBasisPoints}%`,
+          header: "Total Members (Max)",
+          content: (
+            <div>
+              {floatedNumberWithCommas(numMembersCurrent)}&nbsp;
+              <span className="text-gray-500">
+                (
+                {isUnlimited(numMembersMax)
+                  ? "Unlimited"
+                  : floatedNumberWithCommas(numMembersMax)}
+                )
+              </span>
+            </div>
+          ),
+          tooltip: depositTokenToolTip,
+        },
+        {
+          header: "Annual Operating Fees",
+          content: `${managerManagementFeeBasisPoints}%`,
           tooltip: expectedAnnualOperatingFeesToolTip,
         },
         {
-          header: "Distribution Share to Syndicate Lead",
-          subText: `${managerDistributionShareBasisPoints}%`,
+          header: "Lead Distribution Share",
+          content: `${managerDistributionShareBasisPoints}%`,
           tooltip: distributionShareToSyndicateLeadToolTip,
         },
         {
-          header: "Distribution Share to Protocol",
-          subText: `${distributionShareToSyndicateProtocol}%`,
+          header: "Protocol Distribution Share",
+          content: `${distributionShareToSyndicateProtocol}%`,
           tooltip: distributionShareToSyndicateProtocolToolTip,
+        },
+        {
+          header: "Creation Date",
+          content: `${epochTimeToDateFormat(
+            new Date(parseInt(createdDate) * 1000),
+            "LLL dd yyyy, p zzz",
+          )}`,
+          tooltip: createdDateToolTip,
+        },
+        {
+          header: "Close Date",
+          content: `${epochTimeToDateFormat(
+            new Date(parseInt(closeDate) * 1000),
+            "LLL dd yyyy, p zzz",
+          )}`,
+          tooltip: closeDateToolTip,
         },
       ]);
     }
@@ -491,24 +503,8 @@ const SyndicateDetails = (props: {
   }, [syndicate, syndicateAddress, depositERC20TokenSymbol, tokenDecimals]);
 
   // format an account address in the format 0x3f6q9z52…54h2kjh51h5zfa
-  const formattedSyndicateAddress3XLarge = formatAddress(
-    syndicateAddress,
-    18,
-    18,
-  );
-  const formattedSyndicateAddressXLarge = formatAddress(
-    syndicateAddress,
-    10,
-    10,
-  );
-  const formattedSyndicateAddressLarge = formatAddress(syndicateAddress, 8, 8);
-  const formattedSyndicateAddressMedium = formatAddress(syndicateAddress, 6, 4);
-  const formattedSyndicateAddressSmall = formatAddress(
-    syndicateAddress,
-    10,
-    14,
-  );
-  const formattedSyndicateAddressMobile = formatAddress(syndicateAddress, 5, 8);
+
+  const formattedSyndicateAddress = formatAddress(syndicateAddress, 6, 4);
 
   // show message to the user when address has been copied.
   const updateAddressCopyState = () => {
@@ -530,18 +526,12 @@ const SyndicateDetails = (props: {
     setShowManagerSetAllowances(false);
   };
 
-  // syndicate badge.
-  // display relevant badge states based on the current status of the syndicate.
-  const syndicateBadge = (
-    <BadgeCard
-      {...{
-        accountIsManager,
-        showManagerSetAllowancesModal,
-        correctManagerDistributionsAllowance,
-        correctManagerDepositsAllowance,
-      }}
-    />
-  );
+  // Handle syndicate progress bar
+  const depositTotal = syndicate?.depositTotal;
+  let depositsMaxIsUnlimited = false;
+
+  // checking if depositsMax is unlimited.
+  depositsMaxIsUnlimited = isUnlimited(depositTotalMax);
 
   // set syndicate deposit link
   const [syndicateDepositLink, setSyndicateDepositLink] = useState<string>("");
@@ -551,40 +541,27 @@ const SyndicateDetails = (props: {
     );
   }, [syndicateAddress]);
 
+  const showSkeletonLoader = !syndicate;
+
   return (
-    <div className="flex flex-col w-full sm:mr-2 lg:mr-6">
+    <div className="flex flex-col w-full sm:mr-2 lg:mr-6 relative">
       <div className="h-fit-content rounded-custom">
         <div className="flex items-center justify-between">
           <div>
-            <span className="font-medium text-gray-500 text-sm uppercase tracking-widest pb-3">
-              Syndicate
-            </span>
             <div className="flex justify-start items-center">
+              <div className="mr-6">
+                {syndicateAddress && (
+                  <GradientAvatar
+                    syndicateAddress={syndicateAddress}
+                    size="w-16 h-16"
+                  />
+                )}
+              </div>
               <div className="flex-shrink main-title flex-wrap break-all">
                 <div className="mr-4">
-                  <div className="hidden 3xl:block">
+                  <div className="">
                     <span className="text-gray-500">0x</span>
-                    {formattedSyndicateAddress3XLarge.slice(2)}
-                  </div>
-                  <div className="hidden xl:block 3xl:hidden">
-                    <span className="text-gray-500">0x</span>
-                    {formattedSyndicateAddressXLarge.slice(2)}
-                  </div>
-                  <div className="hidden lg:block xl:hidden">
-                    <span className="text-gray-500">0x</span>
-                    {formattedSyndicateAddressLarge.slice(2)}
-                  </div>
-                  <div className="hidden md:block lg:hidden">
-                    <span className="text-gray-500">0x</span>
-                    {formattedSyndicateAddressMedium.slice(2)}
-                  </div>
-                  <div className="hidden sm:block md:hidden">
-                    <span className="text-gray-500">0x</span>
-                    {formattedSyndicateAddressSmall.slice(2)}
-                  </div>
-                  <div className="sm:hidden">
-                    <span className="text-gray-500">0x</span>
-                    {formattedSyndicateAddressMobile.slice(2)}
+                    {formattedSyndicateAddress.slice(2)}
                   </div>
                 </div>
               </div>
@@ -622,55 +599,79 @@ const SyndicateDetails = (props: {
                   />
                 </button>
               </CopyToClipboard>
+              <EtherscanLink
+                customStyles="w-8 h-8 rounded-full lg:hover:bg-gray-9 lg:active:bg-white lg:active:bg-opacity-20"
+                iconOnly
+                etherscanInfo={syndicateAddress}
+              />
               {/* Hide profile circle until we can make colors unique to each syndicate */}
               {/* <p className="flex-shrink-0 h-8 w-8 sm:h-10 sm:w-10 md:h-16 md:w-16 ml-4 rounded-full ideo-liquidity inline"></p> */}
             </div>
-            <div className="w-fit-content">
-              <EtherscanLink etherscanInfo={syndicateAddress} />
-            </div>
-          </div>
-          <div>
-            {syndicateAddress && (
-              <GradientAvatar
-                syndicateAddress={syndicateAddress}
-                size="w-16 h-16"
-              />
-            )}
           </div>
         </div>
 
-        <div className="h-fit-content flex w-full justify-start mb-8">
-          {syndicateBadge}
-        </div>
+        {!depositsMaxIsUnlimited ? (
+          <div className="h-fit-content flex w-full justify-start mt-16">
+            <ProgressIndicator
+              depositTotal={depositTotal}
+              depositTotalMax={depositTotalMax}
+              depositERC20TokenSymbol={depositERC20TokenSymbol}
+            />
+          </div>
+        ) : null}
 
         {/* Syndicate details */}
         {/* details rendered on small devices only. render right column components on the left column in small devices */}
         {props.children}
 
         {/* This component should be shown when we have details about user deposits */}
-        <DetailsCard
-          {...{
-            title: "Details",
-            sections: details,
-            syndicateDetails: true,
-            syndicate,
-          }}
-          customStyles={"w-full py-4 pb-8"}
-          customInnerWidth="w-full"
-        />
-        <div className="w-full border-gray-nightrider border-t pt-4 mb-12">
+        <div
+          className="overflow-hidden mt-8"
+          style={!showMore ? { height: "200px" } : null}
+        >
           <DetailsCard
             {...{
-              title: "Deposits",
-              sections: syndicateCumulativeDetails,
+              title: "Details",
+              sections: details,
               syndicateDetails: true,
-              infoIcon: false,
               syndicate,
             }}
-            customStyles={"w-full py-4 pb-8"}
-            customInnerWidth="w-full"
+            customStyles={"w-full py-4 pb-4"}
+            customInnerWidth="w-full grid grid-cols-3 gap-4"
+          />
+          <PermissionCard
+            allowlistEnabled={syndicate?.allowlistEnabled}
+            modifiable={syndicate?.modifiable}
+            tranferable={syndicate?.tranferable}
+            className="pb-8"
+            showSkeletonLoader={showSkeletonLoader}
           />
         </div>
+        {/* Gradient overlay */}
+        {!showMore ? (
+          <div
+            className="show-more-overlay w-full bottom-6 absolute"
+            style={{ height: "100px" }}
+          />
+        ) : null}
+        <button onClick={() => setShowMore(!showMore)} className="mt-5">
+          {showSkeletonLoader ? (
+            <SkeletonLoader height="4" width="full" borderRadius="rounded-md" />
+          ) : (
+            <div className="flex h-4 items-center text-base">
+              <img
+                src={
+                  !showMore ? "/images/show-eye.svg" : "/images/hide-eye.svg"
+                }
+                alt="transferable"
+                className="h-4 w-4"
+              />
+              <p className="ml-2 text-blue">
+                {!showMore ? "Show more details" : "Show less details"}
+              </p>
+            </div>
+          )}
+        </button>
       </div>
       <ManagerSetAllowance
         {...{

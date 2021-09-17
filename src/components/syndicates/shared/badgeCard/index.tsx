@@ -5,7 +5,6 @@ import { floatedNumberWithCommas } from "@/utils/formattedNumbers";
 import "moment-precise-range-plugin";
 import React from "react";
 import { useSelector } from "react-redux";
-import { ProgressIndicator } from "src/components/syndicates/shared/progressIndicator";
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const moment = require("moment");
 
@@ -199,12 +198,6 @@ export const BadgeCard = (props: {
           </p>
         </div>
       </div>
-      {/* Show progress bar when the syndicate max total deposit is not unlimited */}
-      {!depositsMaxIsUnlimited && (
-        <div className="w-full">
-          <ProgressIndicator currentProgress={currentDepositsPercentage} />
-        </div>
-      )}
     </div>
   );
 

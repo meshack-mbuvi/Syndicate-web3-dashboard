@@ -1,4 +1,5 @@
 import React from "react";
+import { omit } from "lodash";
 
 /**
  * This icon wrapper contains an inverted exclamation mark sourced from the
@@ -39,6 +40,12 @@ export const InfoIcon = (props: {
 };
 
 /**Shows an icon for external links */
-export const ExternalLinkIcon = (props) => (
-  <img src="/images/externalLink.svg" {...props} />
-);
+export const ExternalLinkIcon = (props) => {
+  const { grayIcon } = props;
+  omit(props, "grayIcon");
+  return !grayIcon ? (
+    <img src="/images/externalLink.svg" {...props} alt="extenal-link" />
+  ) : (
+    <img src="/images/externalLinkGray.svg" {...props} alt="extenal-link" />
+  );
+};

@@ -201,32 +201,27 @@ const WithdrawSyndicate: React.FC = () => {
     }
   }
 
-  if (syndicate) {
-    var { depositERC20Price, depositERC20TokenSymbol, depositERC20Logo } =
-      syndicate;
-    const { tokenDecimals } = syndicate;
-    var depositTokenDecimals = tokenDecimals;
-    var depositERC20Symbol = depositERC20TokenSymbol;
-  }
+  const depositTokenDecimals = syndicate?.syndicateTokenDecimals;
+  const depositERC20Symbol = syndicate?.depositERC20TokenSymbol;
 
   let showDepositLink = false;
 
   const WithdrawalSections = [
     {
       header: "My Distributions to Date",
-      subText: `${memberDistributionsToDate} ${currentDistributionTokenSymbol}`,
+      content: `${memberDistributionsToDate} ${currentDistributionTokenSymbol}`,
       tooltip: myDistributionsToDateToolTip,
       screen: "withdrawal",
     },
     {
       header: "My Withdraws to Date",
-      subText: `${memberDistributionsWithdrawalsToDate} ${currentDistributionTokenSymbol}`,
+      content: `${memberDistributionsWithdrawalsToDate} ${currentDistributionTokenSymbol}`,
       tooltip: myWithDrawalsToDateTooltip,
       screen: "withdrawal",
     },
     {
       header: "Total Withdraws / Distributions To Date",
-      subText: `${memberWithdrawalsToDistributionsPercentage}%`,
+      content: `${memberWithdrawalsToDistributionsPercentage}%`,
       tooltip: withdrawalsToDepositPercentageToolTip,
       screen: "withdrawal",
     },
@@ -235,17 +230,18 @@ const WithdrawSyndicate: React.FC = () => {
   const depositSections = [
     {
       header: "My Deposits",
-      subText: `${floatedNumberWithCommas(
+      content: `${floatedNumberWithCommas(
         memberTotalDeposits,
       )} ${depositERC20Symbol} ($${floatedNumberWithCommas(
-        parseFloat(depositERC20Price) * parseFloat(memberTotalDeposits),
+        parseFloat(syndicate?.depositERC20Price) *
+          parseFloat(memberTotalDeposits),
       )})`,
       tooltip: myDepositsToolTip,
       screen: "deposit",
     },
     {
       header: "My % of This Syndicate",
-      subText: `${memberPercentageOfSyndicate}%`,
+      content: `${memberPercentageOfSyndicate}%`,
       tooltip: myPercentageOfThisSyndicateToolTip,
       screen: "deposit",
     },
@@ -397,7 +393,8 @@ const WithdrawSyndicate: React.FC = () => {
   }) distributions available.`;
   if (syndicate?.depositsEnabled) {
     tokenPriceInUSD =
-      parseFloat(depositERC20Price) * parseFloat(memberTotalDeposits);
+      parseFloat(syndicate?.depositERC20Price) *
+      parseFloat(memberTotalDeposits);
     totalDistributionsText = `${floatedNumberWithCommas(memberTotalDeposits)} ${
       currentDistributionTokenSymbol ? currentDistributionTokenSymbol : ""
     } ($${floatedNumberWithCommas(tokenPriceInUSD)}) deposits available.`;
@@ -639,7 +636,7 @@ const WithdrawSyndicate: React.FC = () => {
     if (amountError) {
       setAmountError("");
     }
-  }
+  };
 
   // INNER COMPONENTS
   const actionButton = (
@@ -701,7 +698,12 @@ const WithdrawSyndicate: React.FC = () => {
                   subText={withdrawalSuccessSubtext}
                   showRetryButton={true}
                   success={true}
-                  buttonText={+memberDistributionsToDate === +memberDistributionsWithdrawalsToDate ? dismissButtonText : withdrawalSuccessButtonText}
+                  buttonText={
+                    +memberDistributionsToDate ===
+                    +memberDistributionsWithdrawalsToDate
+                      ? dismissButtonText
+                      : withdrawalSuccessButtonText
+                  }
                   closeLoader={closeSyndicateActionLoader}
                 />
               ) : +memberTotalDeposits === 0 && !showSkeletonLoader ? (
@@ -778,7 +780,8 @@ const WithdrawSyndicate: React.FC = () => {
                                 <button
                                   className="flex flex-1 absolute text-base py-3 pr-3 right-0 text-blue-navy"
                                   type="button"
-                                  onClick={handleSetMaxAmount}>
+                                  onClick={handleSetMaxAmount}
+                                >
                                   Max
                                 </button>
                               </div>
@@ -794,10 +797,10 @@ const WithdrawSyndicate: React.FC = () => {
                                 className={`min-w-0 rounded-md bg-gray-9 border border-gray-24 text-white font-whyte focus:outline-none focus:ring-gray-24 focus:border-gray-24 flex-grow mr-6 `}
                               />
                               <p className="flex-shrink-0 flex items-center whitespace-nowrap">
-                                {depositERC20Logo && (
+                                {syndicate?.depositERC20Logo && (
                                   <img
                                     className="mr-2 w-5"
-                                    src={depositERC20Logo}
+                                    src={syndicate?.depositERC20Logo}
                                     alt=""
                                   />
                                 )}

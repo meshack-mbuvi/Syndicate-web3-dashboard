@@ -15,74 +15,77 @@ interface ISyndicateLPData {
  * @param {number} depositTokenDecimals the number of decimals for the deposit token
  * @returns dispatched syndicate member deposit values
  */
-export const updateMemberDepositDetails = (
-  data: ISyndicateLPData
-): AppThunk => async (dispatch, getState) => {
-  const { syndicateAddress, depositTokenDecimals } = data;
+export const updateMemberDepositDetails =
+  (data: ISyndicateLPData): AppThunk =>
+  async (dispatch, getState) => {
+    const { syndicateAddress, depositTokenDecimals } = data;
 
-  const {
-    syndicatesReducer: { syndicate },
-    initializeContractsReducer: {
-      syndicateContracts: { GetterLogicContract },
-    },
-    web3Reducer: {
-      web3: { account },
-    },
-  } = getState();
+    const {
+      syndicatesReducer: { syndicate },
+      initializeContractsReducer: {
+        syndicateContracts: { GetterLogicContract },
+      },
+      web3Reducer: {
+        web3: { account },
+      },
+    } = getState();
 
-  // we cannot query relevant values without the syndicate instance
-  if (!GetterLogicContract || !account) return;
+    // we cannot query relevant values without the syndicate instance
+    if (!GetterLogicContract || !account) return;
 
-  // Retrieves syndicateInfo for the connected wallet. We need to find out
-  // how much the wallet account has invested in this syndicate
-  try {
-    if (account && syndicateAddress && syndicate) {
-      dispatch(setMemberDetailsLoading(true));
+    // Retrieves syndicateInfo for the connected wallet. We need to find out
+    // how much the wallet account has invested in this syndicate
+    try {
+      if (account && syndicateAddress && syndicate) {
+        dispatch(setMemberDetailsLoading(true));
 
-      // get total member deposits and address allowed values
-      const memberAddress = account;
-      const currentERC20Decimals = depositTokenDecimals;
+        // get total member deposits and address allowed values
+        const memberAddress = account;
+        const currentERC20Decimals = depositTokenDecimals;
 
-      const {
-        memberDeposits,
-        memberAddressAllowed,
-      } = await getSyndicateMemberInfo(
-        GetterLogicContract,
-        syndicateAddress,
-        memberAddress,
-        currentERC20Decimals
-      );
+        const { memberDeposits, memberAddressAllowed } =
+          await getSyndicateMemberInfo(
+            GetterLogicContract,
+            syndicateAddress,
+            memberAddress,
+            currentERC20Decimals,
+          );
 
-      // get the current members's percentage share in the syndicate
-      const { depositTotal } = syndicate;
-      const memberDepositsByHundred = parseFloat(memberDeposits) * 100;
-      const totalSyndicateDeposits = parseFloat(depositTotal.toString());
-      const memberPercentageOfSyndicate = divideIfNotByZero(
-        memberDepositsByHundred,
-        totalSyndicateDeposits
-      );
+        // get the current members's percentage share in the syndicate
+        const { depositTotal } = syndicate;
+        const memberDepositsByHundred = parseFloat(memberDeposits) * 100;
+        const totalSyndicateDeposits = parseFloat(depositTotal.toString());
+        const memberPercentageOfSyndicate = divideIfNotByZero(
+          memberDepositsByHundred,
+          totalSyndicateDeposits,
+        );
 
-      // check whether the member has reached their maximum deposit cap.
-      const { depositMemberMax } = syndicate;
-      const memberMaxDepositReached = +memberDeposits >= +depositMemberMax;
+        // check whether the member has reached their maximum deposit cap.
+        const { depositMemberMax } = syndicate;
+        const memberMaxDepositReached = +memberDeposits >= +depositMemberMax;
 
-      const memberNumDetails = {
-        memberTotalDeposits: memberDeposits,
-        memberPercentageOfSyndicate: floatedNumberWithCommas(memberPercentageOfSyndicate)
-      };
+        const memberNumDetails = {
+          memberTotalDeposits: memberDeposits,
+          memberPercentageOfSyndicate: floatedNumberWithCommas(
+            memberPercentageOfSyndicate,
+          ),
+        };
 
-      const memberBoolDetails = {
-        memberAddressAllowed,
-        memberMaxDepositReached,
-      };
+        const memberBoolDetails = {
+          memberAddressAllowed,
+          memberMaxDepositReached,
+        };
 
-      // dispatch action to update syndicate member details
-      dispatch(
-        setMemberDepositDetails({ ...memberNumDetails, ...memberBoolDetails })
-      );
-      dispatch(setMemberDetailsLoading(false));
+        // dispatch action to update syndicate member details
+        dispatch(
+          setMemberDepositDetails({
+            ...memberNumDetails,
+            ...memberBoolDetails,
+          }),
+        );
+        dispatch(setMemberDetailsLoading(false));
+      }
+    } catch (error) {
+      console.log({ error });
     }
-  } catch (error) {
-    console.log({ error });
-  }
-};
+  };
