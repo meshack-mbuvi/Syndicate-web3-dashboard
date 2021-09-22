@@ -1,5 +1,7 @@
 import React from "react";
 import {
+  CONFIRM_BLOCK_MEMBER_ADDRESS,
+  BLOCKING_MEMBER_ADDRESS,
   SET_SHOW_REJECT_MEMBER_DEPOSIT_OR_ADDRESS,
   SHOW_MODIFY_CAP_TABLE,
   SHOW_MODIFY_MEMBER_DISTRIBUTIONS,
@@ -53,6 +55,7 @@ export const setShowModifyCapTable =
  * @param { boolean } show
  * @returns
  */
+
 export const setShowRejectDepositOrMemberAddress =
   (show: boolean) =>
   (
@@ -66,3 +69,57 @@ export const setShowRejectDepositOrMemberAddress =
       data: show,
     });
   };
+
+export const showConfirmBlockMemberAddress =
+  (confirm: boolean) => (dispatch) => {
+    return dispatch({ type: CONFIRM_BLOCK_MEMBER_ADDRESS, data: confirm });
+  };
+
+export const setBlockingMemberAddress =
+  ({
+    memberAddresses,
+    blockingAddress,
+  }: {
+    memberAddresses: string[];
+    blockingAddress: boolean;
+  }) =>
+  (
+    dispatch: (arg0: { data: any; type: string }) => any,
+    getState: () => {
+      syndicatesReducer: { syndicate: any };
+      initializeContractsReducer: { syndicateContracts: any };
+      manageMembersDetailsReducer;
+    },
+  ) => {
+    let syndicateMembersCopy = null;
+    const {
+      manageMembersDetailsReducer: {
+        syndicateManageMembers: { syndicateMembers },
+      },
+    } = getState();
+    memberAddresses.forEach((memberAddress) => {
+      let memberIndex = -1;
+      if (memberAddress) {
+        memberIndex = findMemberAddressIndex(syndicateMembers, memberAddress);
+        const memberCopy = syndicateMembers;
+        memberCopy[memberIndex].blockingAddress = blockingAddress;
+        syndicateMembersCopy = memberCopy;
+      }
+    });
+
+    return dispatch({
+      data: syndicateMembersCopy,
+      type: BLOCKING_MEMBER_ADDRESS,
+    });
+  };
+
+export const findMemberAddressIndex = (members, memberAddress) => {
+  if (!members.length) {
+    return -1;
+  }
+  const memberIndex = members.findIndex(
+    (member) => member.memberAddress == memberAddress,
+  );
+
+  return memberIndex;
+};

@@ -2,6 +2,7 @@ import {
   setSelectedMemberAddress,
   showConfirmReturnDeposit,
 } from "@/redux/actions/manageMembers";
+import { showConfirmBlockMemberAddress } from "@/redux/actions/manageActions";
 import React from "react";
 import { useDispatch } from "react-redux";
 import ReactTooltip from "react-tooltip";
@@ -46,6 +47,13 @@ const MoreOptionButton = (props: {
     );
   };
 
+  const confirmBlockMemberAddress = () => {
+    dispatch(showConfirmBlockMemberAddress(true));
+    dispatch(
+      setSelectedMemberAddress([memberAddress], parseInt(memberDeposit, 10)),
+    );
+  };
+
   return (
     <>
       {showMoreInfoOptions === true && (
@@ -83,12 +91,12 @@ const MoreOptionButton = (props: {
               </ReactTooltip>
             </button>
           )}
-
-          {(allowlistEnabled && memberAddressAllowed) === true && (
+          {memberAddressAllowed == true && (
             <button
               className="cursor-pointer hover:opacity-70"
               data-tip
               data-for="block-address"
+              onClick={() => confirmBlockMemberAddress()}
             >
               <img src="/images/block-address.svg" alt="Block address" />
               <ReactTooltip id="block-address" place="top" effect="solid">

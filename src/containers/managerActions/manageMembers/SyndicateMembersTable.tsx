@@ -3,6 +3,7 @@ import {
   setSelectedMemberAddress,
   showConfirmReturnDeposit,
 } from "@/redux/actions/manageMembers";
+import { showConfirmBlockMemberAddress } from "@/redux/actions/manageActions";
 import { RootState } from "@/redux/store";
 import Image from "next/image";
 import React, { useEffect, useRef, useState } from "react";
@@ -136,9 +137,26 @@ const SyndicateMembersTable = ({
     (row: any) => (selectedFlatRowsAmount += +row.original.memberDeposit),
   );
 
+  let selectedFlatRowsBlocked = false;
+  selectedFlatRows.forEach(
+    (row: any) =>
+      (selectedFlatRowsBlocked ||= row.original.memberAddressAllowed == true),
+  );
+
   const dispatch = useDispatch();
   const confirmReturnMemberDeposit = () => {
     dispatch(showConfirmReturnDeposit(true));
+    let totalDeposit = 0;
+    const selectedMemberAddress = [];
+    selectedFlatRows.forEach((member: any) => {
+      totalDeposit += parseInt(member.original.memberDeposit, 10);
+      selectedMemberAddress.push(member.original.memberAddress);
+    });
+    dispatch(setSelectedMemberAddress(selectedMemberAddress, totalDeposit));
+  };
+
+  const confirmBlockMemberAddress = () => {
+    dispatch(showConfirmBlockMemberAddress(true));
     let totalDeposit = 0;
     const selectedMemberAddress = [];
     selectedFlatRows.forEach((member: any) => {
@@ -195,9 +213,10 @@ const SyndicateMembersTable = ({
                 ""
               )}
 
-              {syndicate.allowlistEnabled && (
+              {syndicate.allowlistEnabled && selectedFlatRowsBlocked ? (
                 <button
                   className={`flex flex-shrink font-whyte text-right text-blue text-sm justify-center hover:opacity-80`}
+                  onClick={() => confirmBlockMemberAddress()}
                 >
                   <img
                     src={"/images/block.svg"}
@@ -206,7 +225,7 @@ const SyndicateMembersTable = ({
                   />
                   <span>Block</span>
                 </button>
-              )}
+              ) : null}
             </div>
           )}
 

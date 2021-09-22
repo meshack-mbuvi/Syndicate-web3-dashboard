@@ -187,7 +187,13 @@ export const addSyndicateInvestment = (data) => async (dispatch) => {
  * Retrieve single syndicate from the contract by syndicateAddress
  */
 export const getSyndicateByAddress =
-  ({ syndicateAddress, GetterLogicContract }): AppThunk =>
+  ({
+    syndicateAddress,
+    GetterLogicContract,
+  }: {
+    syndicateAddress: string;
+    GetterLogicContract: any;
+  }): AppThunk =>
   async (dispatch) => {
     try {
       if (!syndicateAddress.trim() || !GetterLogicContract) return;

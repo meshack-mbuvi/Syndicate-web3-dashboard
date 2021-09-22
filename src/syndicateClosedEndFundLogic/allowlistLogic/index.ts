@@ -29,6 +29,7 @@ export class SyndicateAllowlistLogic extends BaseLogicContract {
     manager: string,
     setShowWalletConfirmationModal: (arg0: boolean) => void,
     setSubmitting: (arg0: boolean) => void,
+    handleReceipt: () => void,
   ): Promise<void> {
     if (!syndicateAddress.trim() || !memberAddresses.length) return;
     setShowWalletConfirmationModal(true);
@@ -40,6 +41,9 @@ export class SyndicateAllowlistLogic extends BaseLogicContract {
         // close wallet confirmation modal
         setShowWalletConfirmationModal(false);
         setSubmitting(true);
+      })
+      .on("receipt", () => {
+        handleReceipt();
       });
     setSubmitting(false);
   }
@@ -68,6 +72,7 @@ export class SyndicateAllowlistLogic extends BaseLogicContract {
     memberAddresses: string[],
     manager: string,
     onTxConfirm: (transactionHash: string) => void,
+    handleReceipt: () => void,
   ): Promise<void> {
     if (
       !syndicateAddress.trim() ||
@@ -82,6 +87,9 @@ export class SyndicateAllowlistLogic extends BaseLogicContract {
       .on("transactionHash", (transactionHash: string) => {
         // close wallet confirmation modal
         onTxConfirm(transactionHash);
+      })
+      .on("receipt", () => {
+        handleReceipt();
       });
   }
 

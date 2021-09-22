@@ -268,7 +268,11 @@ export const getSyndicateDepositorData =
         syndicate,
       );
       if (memberInfo)
-        syndicateMemberData.push({ ...memberInfo, returningDeposit: false });
+        syndicateMemberData.push({
+          ...memberInfo,
+          returningDeposit: false,
+          blockingAddress: false,
+        });
     }
     dispatch({
       type: SET_LOADING_SYNDICATE_DEPOSITOR_DETAILS,

@@ -81,12 +81,21 @@ type InitialState = {
     totalAmountToReturn: number;
   };
   manageActions: {
+    syndicateMembers: {
+      memberAddress: string;
+      returningDeposit: boolean;
+      blockingAddress: boolean;
+      memberDeposit: string;
+      memberStake: string;
+      memberAddressAllowed: boolean;
+    }[];
+    confirmBlockAddress: boolean;
     modifyMemberDistribution: boolean;
     modifyCapTable: boolean;
     rejectMemberAddressOrDeposit: boolean;
     showDepositOnly: boolean;
     showAddressOnly: boolean;
-    memberAddress:string;
+    memberAddress: string;
   };
   createSyndicate: {
     syndicateOffChainData: {
@@ -130,8 +139,8 @@ type InitialState = {
     };
   };
   syndicateNewMembers: {
-    newSyndicateMembers: []
-  },
+    newSyndicateMembers: [];
+  };
 };
 
 // Get timezone default values on create syndicate
@@ -206,6 +215,8 @@ export const initialState: InitialState = {
     newSyndicateMembers: [],
   },
   manageActions: {
+    syndicateMembers: [],
+    confirmBlockAddress: false,
     modifyMemberDistribution: false,
     modifyCapTable: false,
     rejectMemberAddressOrDeposit: false,

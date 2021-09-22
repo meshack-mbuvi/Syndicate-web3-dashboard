@@ -1,5 +1,7 @@
 // import { SHOW_MODIFY_MEMBER_DISTRIBUTIONS } from "@/redux/actions/types";
 import {
+  BLOCKING_MEMBER_ADDRESS,
+  CONFIRM_BLOCK_MEMBER_ADDRESS,
   SET_SHOW_REJECT_MEMBER_DEPOSIT_OR_ADDRESS,
   SHOW_MODIFY_CAP_TABLE,
   SHOW_MODIFY_MEMBER_DISTRIBUTIONS,
@@ -64,6 +66,24 @@ export const manageActionsReducer = (
         manageActions: {
           ...manageActions,
           showDepositOnly: action.data,
+        },
+      };
+
+    case CONFIRM_BLOCK_MEMBER_ADDRESS:
+      return {
+        ...state,
+        manageActions: {
+          ...manageActions,
+          confirmBlockAddress: action.data,
+        },
+      };
+
+    case BLOCKING_MEMBER_ADDRESS:
+      return {
+        ...state,
+        manageActions: {
+          ...manageActions,
+          syndicateMembers: action.data,
         },
       };
 

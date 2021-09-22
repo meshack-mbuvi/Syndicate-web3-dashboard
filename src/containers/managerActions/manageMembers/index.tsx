@@ -3,6 +3,10 @@ import { Spinner } from "@/components/shared/spinner";
 import { getMetamaskError } from "@/helpers";
 import { checkAccountAllowance } from "@/helpers/approveAllowance";
 import {
+  setBlockingMemberAddress,
+  showConfirmBlockMemberAddress,
+} from "@/redux/actions/manageActions";
+import {
   getSyndicateDepositorData,
   setLoadingSyndicateDepositorDetails,
   setReturningMemberDeposit,
@@ -24,7 +28,10 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import PreApproveDepositor from "../preApproveDepositor";
 import MoreOptionButton from "./moreOptionButton";
-import { handleSubmitReturnDeposits } from "./sharedLogicFunctions";
+import {
+  handleSubmitBlockMemberAddress,
+  handleSubmitReturnDeposits,
+} from "./sharedLogicFunctions";
 import SyndicateMembersTable from "./SyndicateMembersTable";
 
 /**
@@ -58,6 +65,9 @@ const ManageMembers = (): JSX.Element => {
     syndicateMemberDetailsReducer: {
       memberWithdrawalDetails,
       syndicateDistributionTokens,
+    },
+    manageActionsReducer: {
+      manageActions: { confirmBlockAddress },
     },
     initializeContractsReducer: { syndicateContracts },
   } = useSelector((state: RootState) => state);
@@ -109,17 +119,23 @@ const ManageMembers = (): JSX.Element => {
   };
 
   const getTableData = () => {
-    const res = syndicateMembersToshow.map((memberData) => ({
+    const res = syndicateMembersToShow.map((memberData) => ({
       ...{
         ...memberData,
         ...syndicate,
         memberWithdrawalDetails,
       },
     }));
-    return res;
+    return res.filter((value) => {
+      return (
+        (parseInt(value.memberDeposit) === 0 && value.memberAddressAllowed) ||
+        (parseInt(value.memberDeposit) !== 0 && !value.memberAddressAllowed) ||
+        (parseInt(value.memberDeposit) > 0 && value.memberAddressAllowed)
+      );
+    });
   };
 
-  const [syndicateMembersToshow, setSynMembersToShow] =
+  const [syndicateMembersToShow, setSynMembersToShow] =
     useState(syndicateMembers);
 
   const [tableData, setTableData] = useState(getTableData());
@@ -146,7 +162,7 @@ const ManageMembers = (): JSX.Element => {
   useEffect(() => {
     const tableDetails = getTableData();
     setTableData(tableDetails);
-  }, [syndicateMembersToshow]);
+  }, [syndicateMembersToShow]);
 
   const showApproveModal = (e) => {
     e.preventDefault();
@@ -158,25 +174,50 @@ const ManageMembers = (): JSX.Element => {
     () => [
       {
         Header: "Member",
-        accessor: function memberAddress(row: { memberAddress: string }) {
-          const { memberAddress } = row;
-          return (
-            <div className="flex space-x-3 align-center text-base my-1 leading-6">
-              <Image
-                width="32"
-                height="32"
-                src={"/images/user.svg"}
-                alt="user"
-              />
-              <p className="mt-1">{formatAddress(memberAddress, 6, 6)}</p>
-            </div>
-          );
+        accessor: function memberAddress(row: {
+          memberAddress: string;
+          memberAddressAllowed: boolean;
+        }) {
+          const { memberAddress, memberAddressAllowed } = row;
+          if (memberAddressAllowed === false) {
+            return (
+              <div className="flex space-x-3 align-center text-base my-1 leading-6">
+                <Image
+                  width="32"
+                  height="32"
+                  src={"/images/user.svg"}
+                  alt="user"
+                />
+                {}
+                <p className="mt-1">
+                  {formatAddress(memberAddress, 6, 6)} (Blocked)
+                </p>
+              </div>
+            );
+          } else {
+            return (
+              <div className="flex space-x-3 align-center text-base my-1 leading-6">
+                <Image
+                  width="32"
+                  height="32"
+                  src={"/images/user.svg"}
+                  alt="user"
+                />
+                {}
+                <p className="mt-1">{formatAddress(memberAddress, 6, 6)}</p>
+              </div>
+            );
+          }
         },
       },
       {
         Header: `Deposit Amount (${syndicate?.depositERC20TokenSymbol})`,
-        accessor: function depositAmount({ memberDeposit, returningDeposit }) {
-          if (returningDeposit)
+        accessor: function depositAmount({
+          memberDeposit,
+          returningDeposit,
+          blockingAddress,
+        }) {
+          if (returningDeposit) {
             return (
               <p className="flex opacity-70">
                 <Spinner height="h-4" width="w-4" margin="my-1" />
@@ -185,6 +226,16 @@ const ManageMembers = (): JSX.Element => {
                 </span>
               </p>
             );
+          } else if (blockingAddress) {
+            return (
+              <p className="flex opacity-70">
+                <Spinner height="h-4" width="w-4" margin="my-1" />
+                <span className="ml-2 text-gray-lightManatee">
+                  Blocking Address
+                </span>
+              </p>
+            );
+          }
           return <p className="">{floatedNumberWithCommas(memberDeposit)}</p>;
         },
       },
@@ -272,13 +323,56 @@ const ManageMembers = (): JSX.Element => {
     setShowConfirmationModal(status);
   };
 
-  const handleResetMemberBalances = async () => {
+  const handleFetchSyndicate = async () => {
     await dispatch(
       getSyndicateByAddress({
         syndicateAddress: web3.utils.toChecksumAddress(syndicateAddress),
         ...syndicateContracts,
       }),
     );
+  };
+
+  const handleBlockAddresses = async () => {
+    if (!memberAddresses) {
+      dispatch(showConfirmBlockMemberAddress(false));
+      return;
+    }
+    setShowConfirmationModal(true);
+    dispatch(showConfirmBlockMemberAddress(false));
+    try {
+      await handleSubmitBlockMemberAddress(
+        syndicateContracts,
+        syndicateAddress.toString(),
+        memberAddresses,
+        account,
+        showWalletConfirmationModal,
+        (status: boolean) =>
+          dispatch(
+            setBlockingMemberAddress({
+              memberAddresses,
+              blockingAddress: status,
+            }),
+          ),
+        () => handleFetchSyndicate(),
+      );
+    } catch (error) {
+      const { code } = error;
+      dispatch(
+        setBlockingMemberAddress({
+          memberAddresses,
+          blockingAddress: false,
+        }),
+      );
+      setShowConfirmationModal(false);
+      const errorMessage = getMetamaskError(code, "Deposit refund");
+      if (code == 4001) {
+        setErrorMessage("You have cancelled the transaction.");
+      } else {
+        setErrorMessage(errorMessage);
+      }
+
+      setShowErrorModal(true);
+    }
   };
 
   const handleReturnDeposits = async () => {
@@ -334,7 +428,7 @@ const ManageMembers = (): JSX.Element => {
               returningDeposit: status,
             }),
           ),
-        () => handleResetMemberBalances(),
+        () => handleFetchSyndicate(),
       );
     } catch (error) {
       const { code } = error;
@@ -359,6 +453,11 @@ const ManageMembers = (): JSX.Element => {
 
   const handleCancelReturnDeposit = () => {
     dispatch(showConfirmReturnDeposit(false));
+    dispatch(setSelectedMemberAddress([], 0));
+  };
+
+  const handleCancelBlockAddress = () => {
+    dispatch(showConfirmBlockMemberAddress(false));
     dispatch(setSelectedMemberAddress([], 0));
   };
 
@@ -415,27 +514,17 @@ const ManageMembers = (): JSX.Element => {
                 <div className="flex justify-center ">
                   <Spinner />
                 </div>
-              ) : syndicateMembers.length ? (
+              ) : tableData.length ? (
                 <div className="flex flex-col overflow-y-hidden -mx-6">
-                  {syndicateMembersToshow.length ? (
-                    <SyndicateMembersTable
-                      columns={columns}
-                      data={tableData}
-                      distributing={syndicate.distributing}
-                      addingMember={addingMember}
-                      filterAddressOnChangeHandler={
-                        filterAddressOnChangeHandler
-                      }
-                      searchAddress={filteredAddress}
-                      showApproveModal={showApproveModal}
-                    />
-                  ) : (
-                    <div className="flex justify-center text-gray-500">
-                      {filteredAddress.trim()
-                        ? "Member address not found."
-                        : "Syndicate does not have investors."}
-                    </div>
-                  )}
+                  <SyndicateMembersTable
+                    columns={columns}
+                    data={tableData}
+                    distributing={syndicate.distributing}
+                    addingMember={addingMember}
+                    filterAddressOnChangeHandler={filterAddressOnChangeHandler}
+                    searchAddress={filteredAddress}
+                    showApproveModal={showApproveModal}
+                  />
                 </div>
               ) : (
                 <div className="flex justify-center">
@@ -500,6 +589,48 @@ const ManageMembers = (): JSX.Element => {
                       disabled={showConfirmationModal}
                     >
                       Return Deposits
+                    </button>
+                  </div>
+                </div>
+              </Modal>
+
+              {/**Block Address and return deposits Modal */}
+              <Modal
+                {...{
+                  show: confirmBlockAddress,
+                  modalStyle: ModalStyle.DARK,
+                  showCloseButton: false,
+                  customWidth: "w-2/5 max-w-564 justify-center",
+                }}
+              >
+                <div>
+                  <p className="text-2xl text-center mb-6">Are you sure?</p>
+                  <p className="text-base text-center text-gray-lightManatee">
+                    {`${
+                      memberAddresses.length > 1
+                        ? "This will block the selected members from depositing more funds into this syndicate.They will remain members until their deposits are returned."
+                        : "This will block the member from depositing more funds into this syndicate.They will remain a member until their deposits are returned."
+                    }`}
+                  </p>
+                  <div className="flex justify-between mt-10">
+                    <button
+                      className="flex text-center py-3 text-blue hover:opacity-80"
+                      onClick={() => handleCancelBlockAddress()}
+                    >
+                      <img
+                        src={"/images/leftArrowBlue.svg"}
+                        className="mt-1.5 mx-2"
+                        alt="Back arrow"
+                      />
+                      Back
+                    </button>
+
+                    <button
+                      className="primary-CTA hover:opacity-80"
+                      onClick={() => handleBlockAddresses()}
+                      disabled={showConfirmationModal}
+                    >
+                      Block Address
                     </button>
                   </div>
                 </div>

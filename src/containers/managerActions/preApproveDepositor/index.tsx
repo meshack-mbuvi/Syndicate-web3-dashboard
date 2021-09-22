@@ -1,10 +1,10 @@
-import Papa from 'papaparse';
+import Papa from "papaparse";
 import { TextArea } from "@/components/inputs";
-import Modal , { ModalStyle } from "@/components/modal";
+import Modal, { ModalStyle } from "@/components/modal";
 import ConfirmStateModal from "@/components/shared/transactionStates/confirm";
 import { getMetamaskError } from "@/helpers";
 import { showWalletModal } from "@/redux/actions";
-import { setNewMemberAddresses } from "@/redux/actions/manageMembers"
+import { setNewMemberAddresses } from "@/redux/actions/manageMembers";
 import { RootState } from "@/redux/store";
 import countOccurrences from "@/utils/countOccurrence";
 import {
@@ -21,11 +21,12 @@ import {
   preApproveMoreAddress,
 } from "src/components/syndicates/shared/Constants";
 import FileUpload from "@/components/shared/fileUploader";
+import { getSyndicateByAddress } from "@/redux/actions/syndicates";
 
 interface Props {
   showPreApproveDepositor: boolean;
   setShowPreApproveDepositor;
-  setAddingMember,
+  setAddingMember;
 }
 
 /**
@@ -35,7 +36,11 @@ interface Props {
  */
 
 const PreApproveDepositor = (props: Props): JSX.Element => {
-  const { showPreApproveDepositor, setShowPreApproveDepositor, setAddingMember } = props;
+  const {
+    showPreApproveDepositor,
+    setShowPreApproveDepositor,
+    setAddingMember,
+  } = props;
 
   const {
     initializeContractsReducer: { syndicateContracts },
@@ -48,7 +53,7 @@ const PreApproveDepositor = (props: Props): JSX.Element => {
   const [showWalletConfirmationModal, setShowWalletConfirmationModal] =
     useState(false);
 
-  const [validSyndicate, setValideSyndicate] = useState(false);
+  const [validSyndicate, setValidSyndicate] = useState(false);
 
   const router = useRouter();
   const { syndicateAddress } = router.query;
@@ -61,9 +66,9 @@ const PreApproveDepositor = (props: Props): JSX.Element => {
       // Checking for address 0x0000000; the default value set by solidity
       if (isZeroAddress(syndicate.currentManager)) {
         // address is empty
-        setValideSyndicate(false);
+        setValidSyndicate(false);
       } else {
-        setValideSyndicate(true);
+        setValidSyndicate(true);
       }
     }
   }, [syndicate]);
@@ -147,11 +152,11 @@ const PreApproveDepositor = (props: Props): JSX.Element => {
   };
 
   /**
-   *  @param {string[]} members 
+   *  @param {string[]} members
    * @param {boolean memberAllowed}
-   * @returns 
+   * @returns
    */
-  const addNewMemberAddress = (members:string[], memberAllowed?: boolean) => {
+  const addNewMemberAddress = (members: string[], memberAllowed?: boolean) => {
     const newMembers = members.map((address: string) => {
       return {
         memberAddress: address,
@@ -159,11 +164,11 @@ const PreApproveDepositor = (props: Props): JSX.Element => {
         memberClaimedDistribution: "0",
         allowlistEnabled: true,
         memberAddressAllowed: memberAllowed,
-        memberStake: "0.0"
+        memberStake: "0.00",
       };
     });
     dispatch(setNewMemberAddresses(newMembers));
-  }
+  };
 
   /**
    * send data to set distributions for a syndicate
@@ -174,7 +179,7 @@ const PreApproveDepositor = (props: Props): JSX.Element => {
     if (!validSyndicate) {
       throw "This syndicate does not exist and therefore we can't update its details.";
     }
-  
+
     if (!membersArray.length) {
       setLpAddressesError("Approved address is required");
       setShowMemberAddressError(true);
@@ -193,8 +198,6 @@ const PreApproveDepositor = (props: Props): JSX.Element => {
     }
 
     try {
-
-
       // perform validations outside the class functions
       if (
         !(syndicateAddress as string).trim() ||
@@ -203,9 +206,8 @@ const PreApproveDepositor = (props: Props): JSX.Element => {
       ) {
         return;
       }
-    
+
       setShowWalletConfirmationModal(true);
-      addNewMemberAddress(membersArray, false);
       await syndicateContracts.AllowlistLogicContract.managerAllowAddresses(
         syndicateAddress,
         membersArray,
@@ -213,27 +215,34 @@ const PreApproveDepositor = (props: Props): JSX.Element => {
         () => {
           // Call back passed after transaction goes through
           setShowWalletConfirmationModal(false);
-          setShowPreApproveDepositor(false)
-          setAddingMember(true)
+          setShowPreApproveDepositor(false);
+          setAddingMember(true);
+        },
+        () => {
+          dispatch(
+            getSyndicateByAddress({
+              syndicateAddress: syndicateAddress.toString(),
+              GetterLogicContract: syndicateContracts.GetterLogicContract,
+            }),
+          );
         },
       );
 
-      addNewMemberAddress(membersArray, true);
       setAddingMember(false);
     } catch (error) {
-      setMembersArray([])
-      addNewMemberAddress([],false);
+      setMembersArray([]);
+      addNewMemberAddress([], false);
       handleError(error);
       setAddingMember(false);
     }
   };
-  
-  const validateAddressArr = (arr:string[]) => {
+
+  const validateAddressArr = (arr: string[]) => {
     // // get last element in array
 
     arr && arr.length
       ? arr.map(async (value: string) => {
-          setValidating(true)
+          setValidating(true);
           if (web3.utils.isAddress(value)) {
             setLpAddressesError("");
             setShowMemberAddressError(false);
@@ -262,7 +271,7 @@ const PreApproveDepositor = (props: Props): JSX.Element => {
             setMembersArray([]);
             setLpAddressesError(`${value} is not a valid ERC20 address`);
           }
-          setValidating(false)
+          setValidating(false);
         })
       : setLpAddressesError("");
   };
@@ -303,13 +312,13 @@ const PreApproveDepositor = (props: Props): JSX.Element => {
     setSelectedTextIndexes([selectionStart, selectionEnd]);
   };
 
-  const closeModal = () =>{
+  const closeModal = () => {
     setShowPreApproveDepositor(false);
     addNewMemberAddress([]);
-  }
+  };
 
   useEffect(() => {
-    const arr = removeNewLinesAndWhitespace(memberAddresses).split(",")
+    const arr = removeNewLinesAndWhitespace(memberAddresses).split(",");
     // get last element in array
     const lastElement = arr[arr.length - 1];
 
@@ -318,11 +327,11 @@ const PreApproveDepositor = (props: Props): JSX.Element => {
 
     // check if empty string
     if (!lastElement) {
-    newSplitArr.pop();
+      newSplitArr.pop();
     }
     setMembersArray(newSplitArr);
     validateAddressArr(newSplitArr);
-}, [memberAddresses])
+  }, [memberAddresses]);
 
   const {
     approveAddressesHeadingText,
@@ -330,8 +339,8 @@ const PreApproveDepositor = (props: Props): JSX.Element => {
     allowlistBulktext,
   } = managerApproveAddressesConstants;
 
-  const [importing, setImporting] = useState(false)
-  const [validating, setValidating] = useState(false)
+  const [importing, setImporting] = useState(false);
+  const [validating, setValidating] = useState(false);
   const handleUpload = (event) => {
     setImporting(true);
     const fileUploaded = event.target.files[0];
@@ -340,38 +349,39 @@ const PreApproveDepositor = (props: Props): JSX.Element => {
   };
 
   const importCSV = (file) => {
-    if(file){
-    Papa.parse(file, {
-      complete: (result:any) => {
-        const addresses: string[]= []
-        for(const item of result.data){
-          if(item.address ===  "" || item.Address === "") continue;
-          if(!item.address && !item.Address){
-            setLpAddressesError("Address column is required");
-            setShowMemberAddressError(true);
-            setMembersArray([]);
-            setImporting(false);
-            return
+    if (file) {
+      Papa.parse(file, {
+        complete: (result: any) => {
+          const addresses: string[] = [];
+          for (const item of result.data) {
+            if (item.address === "" || item.Address === "") continue;
+            if (!item.address && !item.Address) {
+              setLpAddressesError("Address column is required");
+              setShowMemberAddressError(true);
+              setMembersArray([]);
+              setImporting(false);
+              return;
+            }
+            addresses.push(item.address || item.Address);
           }
-          addresses.push(item.address || item.Address);
-        }
-        setImporting(false);
-        validateAddressArr(addresses);
-        setMembersArray(addresses);
-      },
-      header: true
-    });
-  }
-  }
+          setImporting(false);
+          validateAddressArr(addresses);
+          setMembersArray(addresses);
+        },
+        header: true,
+      });
+    }
+  };
 
   const deleteFile = () => {
-    setAddressFile(null)
-    setMembersArray([])
-    setLpAddressesError("")
-  }
+    setAddressFile(null);
+    setMembersArray([]);
+    setLpAddressesError("");
+  };
 
-  const isSubmittable = membersArray.length && !importing && !validating && !showMemberAddressError;
-//   to add lg and md w
+  const isSubmittable =
+    membersArray.length && !importing && !validating && !showMemberAddressError;
+  //   to add lg and md w
   return (
     <>
       <Modal
@@ -382,7 +392,7 @@ const PreApproveDepositor = (props: Props): JSX.Element => {
           modalStyle: ModalStyle.DARK,
           titleMarginClassName: "mb-4 mt-2",
           showCloseButton: false,
-          titleAlignment: "left"
+          titleAlignment: "left",
         }}
       >
         <div className="flex justify-center">
@@ -391,9 +401,7 @@ const PreApproveDepositor = (props: Props): JSX.Element => {
               {approveAddressesHeadingText}
             </div>
             <div className="border-t border-gray-24 w-full">
-              <div className="mt-6 mb-2">
-                {allowlistTextAreaLabel}
-              </div>
+              <div className="mt-6 mb-2">{allowlistTextAreaLabel}</div>
               <TextArea
                 {...{
                   name: "addresses",
@@ -408,8 +416,12 @@ const PreApproveDepositor = (props: Props): JSX.Element => {
                 name="approvedAddresses"
                 placeholder="Separate them with either a comma, space, or line break"
               />
-              <div className={`rounded border-dashed border border-gray-700 text-gray-400 py-4 px-5 my-8 flex align-center ${addressFile ? "justify-between":"justify-center"}`}>
-                <FileUpload 
+              <div
+                className={`rounded border-dashed border border-gray-700 text-gray-400 py-4 px-5 my-8 flex align-center ${
+                  addressFile ? "justify-between" : "justify-center"
+                }`}
+              >
+                <FileUpload
                   file={addressFile}
                   importing={importing}
                   deleteFile={deleteFile}
@@ -419,25 +431,29 @@ const PreApproveDepositor = (props: Props): JSX.Element => {
                 />
               </div>
               <div className="rounded-lg bg-blue-navy bg-opacity-10 text-blue-navy py-4 px-5 my-8 leading-4 text-sm">
-                  {allowlistBulktext}
+                {allowlistBulktext}
               </div>
             </div>
             <div className="flex items-center justify-end gap-4">
-            <button
-                className="text-gray-400 h-14"
-                onClick={closeModal}
-              >
+              <button className="text-gray-400 h-14" onClick={closeModal}>
                 Cancel
               </button>
               <button
-                className={`${isSubmittable ?
-                  "bg-white text-black" : "bg-gray-700 text-gray-400"} h-14 py-2 px-10 rounded-lg ${
+                className={`${
+                  isSubmittable
+                    ? "bg-white text-black"
+                    : "bg-gray-700 text-gray-400"
+                } h-14 py-2 px-10 rounded-lg ${
                   showMemberAddressError ? "cursor-not-allowed" : null
                 }`}
                 onClick={handleSubmit}
                 disabled={showMemberAddressError || importing || validating}
               >
-                {addressFile ? "Import CSV File" :isSubmittable? `Add ${membersArray.length} Addresses`: "Add Addresses"} 
+                {addressFile
+                  ? "Import CSV File"
+                  : isSubmittable
+                  ? `Add ${membersArray.length} Addresses`
+                  : "Add Addresses"}
               </button>
             </div>
           </div>
@@ -446,7 +462,8 @@ const PreApproveDepositor = (props: Props): JSX.Element => {
       {/* Tell user to confirm transaction on their wallet */}
       <ConfirmStateModal
         show={showWalletConfirmationModal}
-        spinnerHeight="h-16" spinnerWidth="w-16"
+        spinnerHeight="h-16"
+        spinnerWidth="w-16"
         modalStyle={ModalStyle.DARK}
         width="w-2/5"
       >
