@@ -47,6 +47,7 @@ const SyndicateMembersTable = ({
   filterAddressOnChangeHandler,
   searchAddress,
   showApproveModal,
+  showMemberDetails,
 }): JSX.Element => {
   const {
     syndicatesReducer: { syndicate },
@@ -322,7 +323,19 @@ const SyndicateMembersTable = ({
                                 !showAddingMember
                               ? "opacity-0"
                               : "opacity-100"
+                          } ${
+                            cellIndex > 0 && cellIndex < row.cells.length - 1
+                              ? "cursor-pointer"
+                              : ""
+                          }
                           }`}
+                          onClick={
+                            cellIndex > 0 && cellIndex < row.cells.length - 1
+                              ? (e) => {
+                                  showMemberDetails(e, row.original);
+                                }
+                              : null
+                          }
                         >
                           {
                             // Render the cell contents

@@ -58,6 +58,17 @@ type InitialState = {
       };
     };
   };
+  memberActivity: {
+    [address: string]: [
+      {
+      action: string;
+      amountChanged: number;
+      tokenSymbol: string;
+      elapsedTime: string;
+      epochDate: number;
+     }
+   ]
+  };
   syndicateDetailsLoading: boolean;
   syndicateMemberDetailsLoading: boolean;
   depositTokenAllowanceDetails: [];
@@ -195,6 +206,7 @@ export const initialState: InitialState = {
     memberMaxDepositReached: false,
   },
   memberWithdrawalDetails: {},
+  memberActivity: {},
   syndicateDetailsLoading: false,
   syndicateMemberDetailsLoading: false,
   depositTokenAllowanceDetails: [],

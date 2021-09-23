@@ -4,6 +4,8 @@ import {
   SET_MEMBER_DEPOSIT_DETAILS,
   SET_MEMBER_WITHDRAWAL_DETAILS,
   SET_SYNDICATE_DISTRIBUTION_TOKENS,
+  SET_MEMBER_ACTIVITY,
+  LOADING_SYNDICATE_ACTIVITY
 } from "../types";
 
 interface MemberDepositDetails {
@@ -53,6 +55,31 @@ export const setMemberWithdrawalDetails = (data: MemberWithdrawalDetails) => {
 export const setMemberDetailsLoading = (data: boolean) => {
   return {
     type: LOADING_SYNDICATE_MEMBER_DETAILS,
+    data,
+  };
+};
+
+
+interface MemberActivity {
+  [address: string]: [{
+    action: string;
+    amountChanged: number;
+    tokenSymbol: string;
+    elapsedTime: string;
+    epochDate: number;
+}];
+}
+
+export const setMemberActivity = (data: MemberActivity) => {
+return {
+  type: SET_MEMBER_ACTIVITY,
+  data,
+};
+};
+
+export const setMemberActivityLoading = (data: boolean) => {
+  return {
+    type: LOADING_SYNDICATE_ACTIVITY,
     data,
   };
 };

@@ -14,14 +14,15 @@ import {
   showConfirmReturnDeposit,
 } from "@/redux/actions/manageMembers";
 import { updateMemberWithdrawalDetails } from "@/redux/actions/syndicateMemberDetails/memberWithdrawalsInfo";
+import { updateMemberActivityDetails } from "@/redux/actions/syndicateMemberDetails/memberActivityInfo";
 import { getSyndicateByAddress } from "@/redux/actions/syndicates";
 import { RootState } from "@/redux/store";
 import { web3 } from "@/utils";
-import { getWeiAmount } from "@/utils/conversions";
+import { divideIfNotByZero, getWeiAmount } from "@/utils/conversions";
 import { formatAddress } from "@/utils/formatAddress";
 import { floatedNumberWithCommas } from "@/utils/formattedNumbers";
 import { Tab } from "@headlessui/react";
-import _ from "lodash";
+import _, { sortBy } from "lodash";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
@@ -65,6 +66,7 @@ const ManageMembers = (): JSX.Element => {
     syndicateMemberDetailsReducer: {
       memberWithdrawalDetails,
       syndicateDistributionTokens,
+      memberActivity,
     },
     manageActionsReducer: {
       manageActions: { confirmBlockAddress },
@@ -73,6 +75,7 @@ const ManageMembers = (): JSX.Element => {
   } = useSelector((state: RootState) => state);
 
   const [showPreApproveDepositor, setShowPreApproveDepositor] = useState(false);
+  const [showMemberDetailsModal, setShowMemberDetailsModal] = useState(false);
   const [addingMember, setAddingMember] = useState(false);
 
   const dispatch = useDispatch();
@@ -80,6 +83,11 @@ const ManageMembers = (): JSX.Element => {
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [errorTitleMessage, setErrorTitleMessage] = useState("");
+  const [activeMemberDetailsTab, setActiveMemberDetailsTab] =
+    useState("details");
+
+  const [memberInfo, setMemberInfo] = useState<any>({});
+  const [memberDetails, setMemberDetails] = useState([]);
 
   const router = useRouter();
   const { syndicateAddress } = router.query;
@@ -94,6 +102,25 @@ const ManageMembers = (): JSX.Element => {
         updateMemberWithdrawalDetails({
           syndicateAddress: syndicate.syndicateAddress,
           distributionTokens: syndicateDistributionTokens,
+          memberAddresses,
+        }),
+      );
+    }
+    if (syndicate && syndicateMembers?.length) {
+      const memberAddresses = syndicateMembers.map(
+        ({ memberAddress }) => memberAddress,
+      );
+      dispatch(
+        updateMemberActivityDetails({
+          syndicateAddress: syndicate.syndicateAddress,
+          distributionTokens: syndicateDistributionTokens
+            ? syndicateDistributionTokens
+            : [],
+          depositToken: {
+            tokenAddress: syndicate.depositERC20Address,
+            tokenDecimals: syndicate.tokenDecimals,
+            tokenSymbol: syndicate.depositERC20TokenSymbol,
+          },
           memberAddresses,
         }),
       );
@@ -124,6 +151,9 @@ const ManageMembers = (): JSX.Element => {
         ...memberData,
         ...syndicate,
         memberWithdrawalDetails,
+        activity: [
+          ...sortBy(memberActivity[memberData.memberAddress], "timestamp"),
+        ],
       },
     }));
     return res.filter((value) => {
@@ -157,7 +187,12 @@ const ManageMembers = (): JSX.Element => {
 
   useEffect(() => {
     generateTableData();
-  }, [newSyndicateMembers, JSON.stringify(syndicateMembers)]);
+  }, [
+    newSyndicateMembers,
+    JSON.stringify(syndicateMembers),
+    memberActivity,
+    memberWithdrawalDetails,
+  ]);
 
   useEffect(() => {
     const tableDetails = getTableData();
@@ -168,6 +203,26 @@ const ManageMembers = (): JSX.Element => {
     e.preventDefault();
     e.stopPropagation();
     setShowPreApproveDepositor(true);
+  };
+
+  const showMemberDetails = (e, memberInfo) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setShowMemberDetailsModal(true);
+    setMemberInfo(memberInfo);
+
+    let _memberDetails = [
+      {
+        walletAddress: memberInfo.memberAddress,
+      },
+      {
+        depositAmount: `${floatedNumberWithCommas(memberInfo.memberDeposit)} ${
+          memberInfo.depositERC20TokenSymbol
+        }`,
+      },
+      { distributionShare: `${memberInfo.memberStake}%` },
+    ];
+    setMemberDetails(_memberDetails);
   };
 
   const columns = React.useMemo(
@@ -468,6 +523,10 @@ const ManageMembers = (): JSX.Element => {
     dispatch(setLoadingSyndicateDepositorDetails(false));
   };
 
+  const closeMemberDetailsModal = () => {
+    setShowMemberDetailsModal(false);
+  };
+
   return (
     <div className="w-full rounded-md h-full my-4">
       <div className="w-full px-2 py-2 sm:px-0">
@@ -524,6 +583,7 @@ const ManageMembers = (): JSX.Element => {
                     filterAddressOnChangeHandler={filterAddressOnChangeHandler}
                     searchAddress={filteredAddress}
                     showApproveModal={showApproveModal}
+                    showMemberDetails={showMemberDetails}
                   />
                 </div>
               ) : (
@@ -590,6 +650,115 @@ const ManageMembers = (): JSX.Element => {
                     >
                       Return Deposits
                     </button>
+                  </div>
+                </div>
+              </Modal>
+
+              <Modal
+                {...{
+                  show: showMemberDetailsModal,
+                  modalStyle: ModalStyle.DARK,
+                  showCloseButton: false,
+                  customWidth: "w-2/5",
+                  outsideOnClick: true,
+                  closeModal: closeMemberDetailsModal,
+                  customClassName: "py-8 px-10",
+                  showHeader: false,
+                }}
+              >
+                <div>
+                  <div className="flex space-x-3 align-center w-full mb-4">
+                    <Image
+                      width="64"
+                      height="64"
+                      src={"/images/user.svg"}
+                      alt="user"
+                    />
+                    <div className="flex-grow flex flex-col justify-center">
+                      <div className="text-2xl">
+                        {formatAddress(memberInfo.memberAddress, 6, 6)}
+                      </div>
+                    </div>
+                  </div>
+                  <div>
+                    <div className="hidden sm:block">
+                      <div className="">
+                        <nav className="flex" aria-label="Tabs">
+                          <a
+                            key="details"
+                            onClick={() => setActiveMemberDetailsTab("details")}
+                            className={`whitespace-nowrap py-4 px-1 border-b-1 font-whyte text-sm cursor-pointer ${
+                              activeMemberDetailsTab == "details"
+                                ? "border-white text-white"
+                                : "border-transparent text-gray-500 hover:text-gray-400 hover:border-gray-400"
+                            }`}
+                          >
+                            DETAILS
+                          </a>
+
+                          <a
+                            key="activity"
+                            onClick={() =>
+                              setActiveMemberDetailsTab("activity")
+                            }
+                            className={`whitespace-nowrap py-4 px-1 border-b-1 font-whyte text-sm ml-10 cursor-pointer ${
+                              activeMemberDetailsTab == "activity"
+                                ? "border-white text-white"
+                                : "border-transparent text-gray-500 hover:text-gray-400 hover:border-gray-400"
+                            }`}
+                          >
+                            ACTIVITY
+                          </a>
+                        </nav>
+                      </div>
+                      <div className="border-b-1 border-gray-24 absolute w-full -ml-10"></div>
+                      <div className="mt-4 text-base">
+                        {activeMemberDetailsTab == "details" ? (
+                          memberDetails.map((detail) =>
+                            Object.entries(detail).map(([key, value]) => (
+                              <div className="py-4 flex justify-between border-b-1 border-gray-24">
+                                <div className="text-gray-500 pr-4">{key}</div>
+                                <div className="overflow-y-scroll  no-scroll-bar">
+                                  {value}
+                                </div>
+                              </div>
+                            )),
+                          )
+                        ) : memberInfo.activity.length ? (
+                          memberInfo.activity.map((activity) => (
+                            <div className="py-4 flex justify-between border-b-1 border-gray-24">
+                              <div className="text-gray-500 pr-4 flex">
+                                <img
+                                  src={
+                                    activity.action === "withdrew"
+                                      ? "/images/withdrewDeposit.svg"
+                                      : "/images/memberDeposited.svg"
+                                  }
+                                  alt="icon"
+                                  className="h-6 w-6"
+                                />
+                                <div className="ml-4 capitalize">
+                                  {activity.action}{" "}
+                                  <span className="text-white">
+                                    {floatedNumberWithCommas(
+                                      activity.amountChanged,
+                                    )}{" "}
+                                    {activity.tokenSymbol}
+                                  </span>
+                                </div>
+                              </div>
+                              <div className="text-gray-500">
+                                {activity.elapsedTime}
+                              </div>
+                            </div>
+                          ))
+                        ) : (
+                          <div className="py-4 text-center text-gray-500 w-full border-b-1 border-gray-24">
+                            No activity
+                          </div>
+                        )}
+                      </div>
+                    </div>
                   </div>
                 </div>
               </Modal>

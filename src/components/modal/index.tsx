@@ -19,6 +19,7 @@ interface ModalProps {
   modalStyle?: ModalStyle;
   titleMarginClassName?: string;
   titleAlignment?: string;
+  showHeader?: boolean;
 }
 
 export enum ModalStyle {
@@ -52,7 +53,7 @@ export const Modal = (props: ModalProps): JSX.Element => {
     loading = false,
     titleFontSize,
     showCloseButton = true,
-    customClassName,
+    customClassName = "p-2 sm:p-6",
     closeButtonClassName,
     outsideOnClick,
     titleMarginClassName,
@@ -60,6 +61,7 @@ export const Modal = (props: ModalProps): JSX.Element => {
     overflow = "overflow-hidden",
     showBackButton = false,
     modalStyle = ModalStyle.LIGHT,
+    showHeader = true,
   } = props;
 
   const bgColor = `${modalStyle === ModalStyle.LIGHT && "bg-white"} ${
@@ -94,7 +96,7 @@ export const Modal = (props: ModalProps): JSX.Element => {
             <div
               className={`inline-block align-bottom my-auto ${
                 bgColor ? bgColor : ""
-              } rounded-2xl  sm:mx-0 sm:my-40 p-2 sm:p-6 text-left shadow-xl transform transition-all ${
+              } rounded-2xl  sm:mx-0 sm:my-40 text-left shadow-xl transform transition-all ${
                 customWidth ? customWidth : ""
               } ${overflow ? overflow : ""} ${
                 customClassName ? customClassName : ""
@@ -138,7 +140,7 @@ export const Modal = (props: ModalProps): JSX.Element => {
                 ) : null}
               </div>
               {/* modal title */}
-              {loading ? null : (
+              {loading || !showHeader ? null : (
                 <div
                   className={`modal-header ${
                     titleMarginClassName ? titleMarginClassName : "mb-6 mt-4"
@@ -154,7 +156,7 @@ export const Modal = (props: ModalProps): JSX.Element => {
               )}
               {/* end of modal title */}
 
-              <div className="mx-4 align-middle">{children}</div>
+              <div className={showHeader ? "mx-4 align-middle" : null}>{children}</div>
             </div>
           </div>
         </div>
