@@ -1,11 +1,11 @@
-import Papa from "papaparse";
 import { TextArea } from "@/components/inputs";
 import Modal, { ModalStyle } from "@/components/modal";
+import FileUpload from "@/components/shared/fileUploader";
 import ConfirmStateModal from "@/components/shared/transactionStates/confirm";
-import { getMetamaskError } from "@/helpers";
 import { showWalletModal } from "@/redux/actions";
 import { setNewMemberAddresses } from "@/redux/actions/manageMembers";
 import { RootState } from "@/redux/store";
+import { onlyUnique } from "@/utils/conversions";
 import countOccurrences from "@/utils/countOccurrence";
 import {
   isZeroAddress,
@@ -13,20 +13,17 @@ import {
   removeSubstring,
 } from "@/utils/validators";
 import { useRouter } from "next/router";
+import Papa from "papaparse";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   confirmPreApproveAddressesText,
   managerApproveAddressesConstants,
-  preApproveMoreAddress,
 } from "src/components/syndicates/shared/Constants";
-import FileUpload from "@/components/shared/fileUploader";
-import { getSyndicateByAddress } from "@/redux/actions/syndicates";
 
 interface Props {
   showPreApproveDepositor: boolean;
   setShowPreApproveDepositor;
-  setAddingMember;
 }
 
 /**
@@ -36,11 +33,7 @@ interface Props {
  */
 
 const PreApproveDepositor = (props: Props): JSX.Element => {
-  const {
-    showPreApproveDepositor,
-    setShowPreApproveDepositor,
-    setAddingMember,
-  } = props;
+  const { showPreApproveDepositor, setShowPreApproveDepositor } = props;
 
   const {
     initializeContractsReducer: { syndicateContracts },
@@ -80,28 +73,8 @@ const PreApproveDepositor = (props: Props): JSX.Element => {
     useState<boolean>(false);
   const [selectedTextIndexes, setSelectedTextIndexes] = useState([]);
 
-  /**
-   * Final state variables
-   */
-  const [finalStateButtonText, setFinalButtonText] = useState("Done");
-  const [finalStateFeedback, setFinalStateFeedback] = useState(
-    preApproveMoreAddress,
-  );
-  const [finalStateHeaderText, setFinalStateHeaderText] = useState(
-    "Addresses Successfully Pre-Approved",
-  );
-
-  const [finalStateIcon, setFinalStateIcon] = useState(
-    "/images/checkCircle.svg",
-  );
-  const [showFinalState, setShowFinalState] = useState(false);
   const [membersArray, setMembersArray] = useState([]);
   const [addressFile, setAddressFile] = useState(null);
-
-  const handleCloseFinalStateModal = async () => {
-    setShowFinalState(false);
-    setShowPreApproveDepositor(false);
-  };
 
   /**
    * This method sets the approved addresses
@@ -110,27 +83,14 @@ const PreApproveDepositor = (props: Props): JSX.Element => {
   const handleLpAddressesChange = (
     event: React.ChangeEvent<HTMLTextAreaElement>,
   ) => {
+    setUseCSV(false);
     const { value } = event.target;
     setMemberAddresses(value);
   };
 
-  const handleError = (error) => {
+  const handleError = () => {
     // capture metamask error
     setShowWalletConfirmationModal(false);
-    setAddingMember(false);
-
-    const { code } = error;
-    const errorMessage = getMetamaskError(code, "Member deposit modified.");
-    setFinalButtonText("Dismiss");
-    setFinalStateIcon("/images/roundedXicon.svg");
-    setFinalStateFeedback("");
-
-    if (code == 4001) {
-      setFinalStateHeaderText("Transaction Rejected");
-    } else {
-      setFinalStateHeaderText(errorMessage);
-    }
-    setShowFinalState(true);
   };
 
   /**
@@ -149,25 +109,6 @@ const PreApproveDepositor = (props: Props): JSX.Element => {
     } catch (err) {
       return false;
     }
-  };
-
-  /**
-   *  @param {string[]} members
-   * @param {boolean memberAllowed}
-   * @returns
-   */
-  const addNewMemberAddress = (members: string[], memberAllowed?: boolean) => {
-    const newMembers = members.map((address: string) => {
-      return {
-        memberAddress: address,
-        memberDeposit: "0",
-        memberClaimedDistribution: "0",
-        allowlistEnabled: true,
-        memberAddressAllowed: memberAllowed,
-        memberStake: "0.00",
-      };
-    });
-    dispatch(setNewMemberAddresses(newMembers));
   };
 
   /**
@@ -206,8 +147,8 @@ const PreApproveDepositor = (props: Props): JSX.Element => {
       ) {
         return;
       }
-
       setShowWalletConfirmationModal(true);
+
       await syndicateContracts.AllowlistLogicContract.managerAllowAddresses(
         syndicateAddress,
         membersArray,
@@ -216,32 +157,24 @@ const PreApproveDepositor = (props: Props): JSX.Element => {
           // Call back passed after transaction goes through
           setShowWalletConfirmationModal(false);
           setShowPreApproveDepositor(false);
-          setAddingMember(true);
+          dispatch(setNewMemberAddresses(membersArray, true));
         },
         () => {
-          dispatch(
-            getSyndicateByAddress({
-              syndicateAddress: syndicateAddress.toString(),
-              GetterLogicContract: syndicateContracts.GetterLogicContract,
-            }),
-          );
+          dispatch(setNewMemberAddresses(membersArray, false));
         },
       );
-
-      setAddingMember(false);
     } catch (error) {
       setMembersArray([]);
-      addNewMemberAddress([], false);
-      handleError(error);
-      setAddingMember(false);
+      dispatch(setNewMemberAddresses(membersArray, false));
+      handleError();
     }
   };
 
+  const [indexOfAddress, setIndexOfAddress] = useState(-1);
   const validateAddressArr = (arr: string[]) => {
     // // get last element in array
-
     arr && arr.length
-      ? arr.map(async (value: string) => {
+      ? arr.map(async (value: string, index) => {
           setValidating(true);
           if (web3.utils.isAddress(value)) {
             setLpAddressesError("");
@@ -265,26 +198,62 @@ const PreApproveDepositor = (props: Props): JSX.Element => {
               setLpAddressesError(
                 `${value} has already been added (duplicate).`,
               );
+              setIndexOfAddress(index);
+            }
+            if (
+              web3.utils.toChecksumAddress(value) === syndicate.managerCurrent
+            ) {
+              setShowMemberAddressError(true);
+              setMembersArray([]);
+              setLpAddressesError(
+                `${value} must not be a manager of this Syndicate.`,
+              );
+              setIndexOfAddress(index);
             }
           } else {
             setShowMemberAddressError(true);
             setMembersArray([]);
             setLpAddressesError(`${value} is not a valid ERC20 address`);
+            setIndexOfAddress(index);
           }
           setValidating(false);
         })
-      : setLpAddressesError("");
+      : () => {
+          setLpAddressesError("");
+          setIndexOfAddress(-1);
+        };
   };
 
   const handleKeyUp = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    setUseCSV(false);
+
+    let removeNewLines = memberAddresses;
     if (event.code === "Comma") {
-      const removeNewLines = removeNewLinesAndWhitespace(memberAddresses);
-      const lpAddressesArr = removeNewLines.split(",");
+      removeNewLines = removeNewLinesAndWhitespace(memberAddresses);
+      const lpAddressesArr = removeNewLines.replace(",,", ",").split(",");
+      setMemberAddresses(lpAddressesArr.join(",\n"));
+      event.preventDefault();
+    }
+
+    // remove white spaces and newlines and append a comma to the end before
+    // processing the addresses
+    if (event.code === "Enter") {
+      const removeNewLines = removeNewLinesAndWhitespace(memberAddresses) + ",";
+      const lpAddressesArr = removeNewLines.replace(",,", ",").split(",");
+      setMemberAddresses(lpAddressesArr.join(",\n"));
+      event.preventDefault();
+    }
+
+    // we want to separate by , instead of space
+    if (event.code === "Space") {
+      const lpAddressesArr = memberAddresses.replace(",,", ",").split(" ");
       setMemberAddresses(lpAddressesArr.join(",\n"));
       event.preventDefault();
     }
   };
+
   const handleOnPaste = (event: React.ClipboardEvent<HTMLTextAreaElement>) => {
+    setUseCSV(false);
     const pastedAddresses = event.clipboardData.getData("text");
     const removeInvalidCharacters =
       removeNewLinesAndWhitespace(pastedAddresses);
@@ -308,17 +277,19 @@ const PreApproveDepositor = (props: Props): JSX.Element => {
   const handleOnSelectText = (
     event: React.ChangeEvent<HTMLTextAreaElement>,
   ) => {
+    setUseCSV(false);
+
     const { selectionStart, selectionEnd } = event.target;
     setSelectedTextIndexes([selectionStart, selectionEnd]);
   };
 
   const closeModal = () => {
     setShowPreApproveDepositor(false);
-    addNewMemberAddress([]);
   };
 
   useEffect(() => {
     const arr = removeNewLinesAndWhitespace(memberAddresses).split(",");
+
     // get last element in array
     const lastElement = arr[arr.length - 1];
 
@@ -348,27 +319,47 @@ const PreApproveDepositor = (props: Props): JSX.Element => {
     importCSV(fileUploaded);
   };
 
+  const [useCSV, setUseCSV] = useState(false);
+  const [CSVIsEmpty, setCSVIsEmpty] = useState("");
+  const [xAddressNotAdded, setXAddressNotAdded] = useState(0);
+
   const importCSV = (file) => {
+    setUseCSV(true);
     if (file) {
       Papa.parse(file, {
-        complete: (result: any) => {
-          const addresses: string[] = [];
+        complete: async (result: any) => {
+          let addresses: string[] = [];
+          let addressesNotAdded = 0;
           for (const item of result.data) {
-            if (item.address === "" || item.Address === "") continue;
-            if (!item.address && !item.Address) {
-              setLpAddressesError("Address column is required");
-              setShowMemberAddressError(true);
-              setMembersArray([]);
-              setImporting(false);
-              return;
+            if (item[0] === "") continue;
+            const isAlreadyPreApproved = await checkPreExistingApprovedAddress(
+              item[0],
+            );
+
+            if (!isAlreadyPreApproved && web3.utils.isAddress(item[0])) {
+              addresses.push(item[0]);
+            } else {
+              addressesNotAdded += 1;
             }
-            addresses.push(item.address || item.Address);
+          }
+
+          setXAddressNotAdded(addressesNotAdded);
+
+          addresses = addresses.filter(onlyUnique);
+          if (result.data.length == 0 || addresses.length == 0) {
+            setCSVIsEmpty("This file doesn't contain any addresses.");
+          } else if (result.data.length && !addresses.length) {
+            setCSVIsEmpty(
+              "Addresses contained in the file are already pre-approved.",
+            );
+          } else {
+            setCSVIsEmpty("");
           }
           setImporting(false);
+
           validateAddressArr(addresses);
           setMembersArray(addresses);
         },
-        header: true,
       });
     }
   };
@@ -377,11 +368,13 @@ const PreApproveDepositor = (props: Props): JSX.Element => {
     setAddressFile(null);
     setMembersArray([]);
     setLpAddressesError("");
+    setCSVIsEmpty("");
+    setUseCSV(false);
+    setXAddressNotAdded(0);
   };
 
   const isSubmittable =
     membersArray.length && !importing && !validating && !showMemberAddressError;
-  //   to add lg and md w
   return (
     <>
       <Modal
@@ -393,6 +386,8 @@ const PreApproveDepositor = (props: Props): JSX.Element => {
           titleMarginClassName: "mb-4 mt-2",
           showCloseButton: false,
           titleAlignment: "left",
+          outsideOnClick: true,
+          closeModal: () => setShowPreApproveDepositor(false),
         }}
       >
         <div className="flex justify-center">
@@ -400,7 +395,7 @@ const PreApproveDepositor = (props: Props): JSX.Element => {
             <div className="text-gray-400 mb-6">
               {approveAddressesHeadingText}
             </div>
-            <div className="border-t border-gray-24 w-full">
+            <div className=" flex flex-col border-t border-gray-24 w-full">
               <div className="mt-6 mb-2">{allowlistTextAreaLabel}</div>
               <TextArea
                 {...{
@@ -410,14 +405,15 @@ const PreApproveDepositor = (props: Props): JSX.Element => {
                   onPaste: handleOnPaste,
                   onKeyUp: handleKeyUp,
                   onSelect: handleOnSelectText,
-                  error: lpAddressesError,
-                  classoverride: "bg-gray-4 text-white border-inactive",
+                  error: useCSV ? "" : lpAddressesError,
+                  classoverride:
+                    "bg-gray-4 text-white border-inactive resize-none",
                 }}
                 name="approvedAddresses"
                 placeholder="Separate them with either a comma, space, or line break"
               />
               <div
-                className={`rounded border-dashed border border-gray-700 text-gray-400 py-4 px-5 my-8 flex align-center ${
+                className={`rounded border-dashed border border-gray-700 text-gray-400 py-4 px-5 mt-8 mb-4 flex align-center ${
                   addressFile ? "justify-between" : "justify-center"
                 }`}
               >
@@ -430,6 +426,21 @@ const PreApproveDepositor = (props: Props): JSX.Element => {
                   fileType=".csv"
                 />
               </div>
+              {(lpAddressesError || CSVIsEmpty || xAddressNotAdded > 0) &&
+              useCSV ? (
+                <p className="text-red-500 text-xs break-word -mt-3">
+                  {xAddressNotAdded > 0
+                    ? `${xAddressNotAdded} ${
+                        xAddressNotAdded == 1 ? "address" : "addresses"
+                      } cannot be added because they are either duplicates, invalid address(es) or are already in the allowlist.`
+                    : "" || CSVIsEmpty || lpAddressesError}{" "}
+                  {indexOfAddress > -1 && lpAddressesError
+                    ? `(Row ${indexOfAddress + 1}) on the CSV file. ` +
+                      xAddressNotAdded
+                    : ""}
+                </p>
+              ) : null}
+              {/* xAddressNotAdded */}
               <div className="rounded-lg bg-blue-navy bg-opacity-10 text-blue-navy py-4 px-5 my-8 leading-4 text-sm">
                 {allowlistBulktext}
               </div>
@@ -452,7 +463,9 @@ const PreApproveDepositor = (props: Props): JSX.Element => {
                 {addressFile
                   ? "Import CSV File"
                   : isSubmittable
-                  ? `Add ${membersArray.length} Addresses`
+                  ? `Add ${membersArray.length} ${
+                      membersArray.length > 1 ? "Addresses" : "Address"
+                    }`
                   : "Add Addresses"}
               </button>
             </div>

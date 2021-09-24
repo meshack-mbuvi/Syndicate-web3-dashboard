@@ -1,29 +1,30 @@
+import { amplitudeLogger, Flow } from "@/components/amplitude";
+import { CLICK_CREATE_A_SYNDICATE } from "@/components/amplitude/eventNames";
 import ErrorBoundary from "@/components/errorBoundary";
 import Layout from "@/components/layout";
 import Footer from "@/components/navigation/footer";
 import OnboardingModal from "@/components/onboarding";
-import BackButton from "@/components/socialProfiles/backButton";
-import Button from "src/components/buttons";
-import { EtherscanLink } from "@/components/syndicates/shared/EtherscanLink";
 import { Spinner } from "@/components/shared/spinner";
+import BackButton from "@/components/socialProfiles/backButton";
+import { EtherscanLink } from "@/components/syndicates/shared/EtherscanLink";
+import { showWalletModal } from "@/redux/actions";
 import { getSyndicateByAddress } from "@/redux/actions/syndicates";
 import { RootState } from "@/redux/store";
+import { formatAddress } from "@/utils/formatAddress";
 import { faExclamationTriangle } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Tab } from "@headlessui/react";
 import { isEmpty } from "lodash";
-import router, { useRouter } from "next/router";
+import { useRouter } from "next/router";
 import React, { useEffect, useRef, useState } from "react";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import { useDispatch, useSelector } from "react-redux";
+import Button from "src/components/buttons";
 import { syndicateActionConstants } from "src/components/syndicates/shared/Constants";
 import Head from "src/components/syndicates/shared/HeaderTitle";
 import SyndicateDetails from "src/components/syndicates/syndicateDetails";
-import { formatAddress } from "@/utils/formatAddress";
-import { showWalletModal } from "@/redux/actions";
-import { amplitudeLogger, Flow } from "@/components/amplitude";
-import { CLICK_CREATE_A_SYNDICATE } from "@/components/amplitude/eventNames";
-
 import ManageMembers from "../managerActions/manageMembers";
+
 const LayoutWithSyndicateDetails = ({ children }): JSX.Element => {
   // Retrieve state
   const {
@@ -39,11 +40,6 @@ const LayoutWithSyndicateDetails = ({ children }): JSX.Element => {
   const [currentUrl, setCurrentUrl] = useState("");
 
   const updateAddressCopyState = () => {
-    setShowCopyState(true);
-    setTimeout(() => setShowCopyState(false), 1000);
-  };
-
-  const copyFromLink = () => {
     setShowCopyState(true);
     setTimeout(() => setShowCopyState(false), 1000);
   };
@@ -433,7 +429,7 @@ const LayoutWithSyndicateDetails = ({ children }): JSX.Element => {
             <div className="container mx-auto">
               {/* Two Columns (Syndicate Details + Widget Cards) */}
               <div className="flex flex-col md:flex-row">
-                <BackButton />
+                <BackButton topOffset="-1.2rem" />
                 {/* Left Column */}
                 <div className="md:w-3/5 w-full pb-6 md:pr-24">
                   <div ref={ref} className="w-full md:hidden" />{" "}
@@ -447,15 +443,43 @@ const LayoutWithSyndicateDetails = ({ children }): JSX.Element => {
                   </SyndicateDetails>
                 </div>
                 {/* Right Column */}
-                <div className="lg:w-2/5 w-96 hidden md:block pt-0 h-full">
+                <div className="lg:w-2/5 w-96 hidden md:block pt-0">
                   <div className="lg:max-w-120 lg:w-full w-96 mx-auto sticky relative top-33">
                     {children}
                   </div>
                 </div>
               </div>
 
-              {/* show members only on manage page */}
-              {!isEmpty(syndicate) && showMembers === true && <ManageMembers />}
+              {/* Tabbed components; only visible on manage pages */}
+              {!isEmpty(syndicate) && showMembers === true && (
+                <div className="w-full rounded-md h-full my-4">
+                  <div className="w-full sm:px-0">
+                    <Tab.Group defaultIndex={0}>
+                      <Tab.List className="flex space-x-10 w-full">
+                        <div className="w-full h-fit-content space-x-4 border-b-1 border-gray-nightrider">
+                          <Tab
+                            className={({ selected }) =>
+                              `pr-3 pb-6 text-xs font-whyte uppercase ${
+                                selected
+                                  ? "text-white border-b-1 border-white"
+                                  : "text-gray-lightManatee"
+                              }`
+                            }
+                          >
+                            Members
+                          </Tab>
+                        </div>
+                      </Tab.List>
+
+                      <Tab.Panels className="font-whyte text-blue-rockBlue w-full">
+                        <Tab.Panel as="div">
+                          <ManageMembers />
+                        </Tab.Panel>
+                      </Tab.Panels>
+                    </Tab.Group>
+                  </div>
+                </div>
+              )}
 
               <Footer extraClasses="mt-24 sm:mt-24 md:mt-40 mb-12" />
             </div>

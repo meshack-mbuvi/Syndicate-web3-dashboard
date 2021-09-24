@@ -1,13 +1,13 @@
 import { SearchForm } from "@/components/inputs/searchForm";
+import { showConfirmBlockMemberAddress } from "@/redux/actions/manageActions";
 import {
   setSelectedMemberAddress,
   showConfirmReturnDeposit,
 } from "@/redux/actions/manageMembers";
-import { showConfirmBlockMemberAddress } from "@/redux/actions/manageActions";
 import { RootState } from "@/redux/store";
 import Image from "next/image";
 import React, { useEffect, useRef, useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { usePagination, useRowSelect, useTable } from "react-table";
 
 interface IIndeterminateInputProps {
@@ -43,7 +43,6 @@ const SyndicateMembersTable = ({
   columns,
   data,
   distributing,
-  addingMember,
   filterAddressOnChangeHandler,
   searchAddress,
   showApproveModal,
@@ -168,8 +167,8 @@ const SyndicateMembersTable = ({
   };
 
   return (
-    <div className="flex flex-col overflow-y-hidden -mx-m6">
-      <div className="flex my-10 space-x-8 justify-between ml-6">
+    <div className="flex flex-col overflow-y-hidden -ml-6">
+      <div className="flex my-10 space-x-8 justify-between ml-8">
         <form className="w-3/12 ">
           <SearchForm
             {...{
@@ -185,7 +184,7 @@ const SyndicateMembersTable = ({
               <p className="">
                 {selectedFlatRows.length} of {data.length} selected:
               </p>
-              {syndicate.modifiable == true && (
+              {syndicate.modifiable == true && syndicate.open && (
                 <button
                   className={`flex flex-shrink font-whyte text-right text-blue text-sm justify-center hover:opacity-80`}
                 >
@@ -214,7 +213,9 @@ const SyndicateMembersTable = ({
                 ""
               )}
 
-              {syndicate.allowlistEnabled && selectedFlatRowsBlocked ? (
+              {syndicate.allowlistEnabled &&
+              selectedFlatRowsBlocked &&
+              syndicate.open ? (
                 <button
                   className={`flex flex-shrink font-whyte text-right text-blue text-sm justify-center hover:opacity-80`}
                   onClick={() => confirmBlockMemberAddress()}
@@ -230,7 +231,7 @@ const SyndicateMembersTable = ({
             </div>
           )}
 
-          {syndicate.allowlistEnabled && (
+          {syndicate.allowlistEnabled && syndicate.open && (
             <div className="pl-4">
               <button
                 className={`flex flex-shrink font-whyte text-right text-blue text-sm justify-center hover:opacity-80`}
@@ -294,10 +295,9 @@ const SyndicateMembersTable = ({
 
               prepareRow(row);
               const {
-                original: { allowlistEnabled, memberAddressAllowed },
+                original: { allowlistEnabled, addingMember },
               } = row;
-              const showAddingMember =
-                allowlistEnabled && !memberAddressAllowed && addingMember;
+              const showAddingMember = allowlistEnabled && addingMember;
               return (
                 // Apply the row props
                 <tr

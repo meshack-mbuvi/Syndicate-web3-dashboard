@@ -3,7 +3,6 @@ import {
   CONFIRM_RETURN_DEPOSIT,
   RETURNING_DEPOSIT,
   SET_LOADING_SYNDICATE_DEPOSITOR_DETAILS,
-  SET_NEW_MEMBER_ADDRESSES,
   SET_SELECTED_MEMBER_ADDRESS,
   SET_SYNDICATE_MANAGE_MEMBERS,
   SHOW_REJECT_MEMBER_ADDRESS_ONLY,
@@ -31,20 +30,50 @@ export const setLoadingSyndicateDepositorDetails =
  * @returns
  */
 export const setNewMemberAddresses =
+  (memberAddresses: string[], addingMember) =>
   (
-    newMemberAddresses: Array<{
-      memberAddress: string;
-      memberDeposit: string;
-      memberClaimedDistribution: string;
-      memberStake: string;
-      allowlistEnabled: boolean;
-      memberAddressAllowed: boolean;
-    }>,
-  ) =>
-  (dispatch): void => {
+    dispatch,
+    getState: () => {
+      manageMembersDetailsReducer: {
+        syndicateManageMembers: {
+          syndicateMembers;
+        };
+      };
+    },
+  ): void => {
+    const {
+      manageMembersDetailsReducer: {
+        syndicateManageMembers: { syndicateMembers },
+      },
+    } = getState();
+    const members = [];
+    memberAddresses.forEach((memberAddress) => {
+      // find whether memberAddress exists in current members, if exists, set addingMember to true
+      const indexOfMember = findMemberAddressIndex(
+        syndicateMembers,
+        memberAddress,
+      );
+
+      // member exists in current list
+      if (indexOfMember >= 0) {
+        syndicateMembers[indexOfMember].addingMember = addingMember;
+      } else {
+        // If address does not exist, add a new member object on top of the list.
+        members.push({
+          memberAddress,
+          memberDeposit: "0",
+          memberClaimedDistribution: "0",
+          allowlistEnabled: true,
+          memberAddressAllowed: true,
+          memberStake: "0.00",
+          addingMember: addingMember,
+        });
+      }
+    });
+
     return dispatch({
-      type: SET_NEW_MEMBER_ADDRESSES,
-      data: newMemberAddresses,
+      type: SET_SYNDICATE_MANAGE_MEMBERS,
+      data: [...members, ...syndicateMembers],
     });
   };
 
@@ -272,6 +301,7 @@ export const getSyndicateDepositorData =
           ...memberInfo,
           returningDeposit: false,
           blockingAddress: false,
+          addingMember: false,
         });
     }
     dispatch({

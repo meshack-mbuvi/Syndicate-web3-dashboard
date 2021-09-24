@@ -55,7 +55,7 @@ export const TextArea: React.FC<ITextAreaProps> = (props) => {
         onKeyUp={onKeyUp}
         onSelect={onSelect}
         value={value}
-        className={`text-input-placeholder border border-gray-french rounded-lg w-full py-3 px-4 focus:border-blue ${
+        className={`text-input-placeholder break-all border border-gray-french rounded-lg w-full py-3 px-4 focus:border-blue ${
           customHoverBorder
             ? customHoverBorder
             : "hover:border-white hover:border-opacity-70"
@@ -65,9 +65,7 @@ export const TextArea: React.FC<ITextAreaProps> = (props) => {
         cols={50}
         disabled={disabled}
       ></textarea>
-      {error ? (
-        <p className="text-red-500 text-xs break-word">{error}</p>
-      ) : null}
+      {error ? <p className="text-red-500 text-xs break-all -mt-1">{error}</p> : null}
     </div>
   );
 };

@@ -13,15 +13,14 @@ import {
   setSelectedMemberAddress,
   showConfirmReturnDeposit,
 } from "@/redux/actions/manageMembers";
-import { updateMemberWithdrawalDetails } from "@/redux/actions/syndicateMemberDetails/memberWithdrawalsInfo";
 import { updateMemberActivityDetails } from "@/redux/actions/syndicateMemberDetails/memberActivityInfo";
+import { updateMemberWithdrawalDetails } from "@/redux/actions/syndicateMemberDetails/memberWithdrawalsInfo";
 import { getSyndicateByAddress } from "@/redux/actions/syndicates";
 import { RootState } from "@/redux/store";
 import { web3 } from "@/utils";
-import { divideIfNotByZero, getWeiAmount } from "@/utils/conversions";
+import { getWeiAmount } from "@/utils/conversions";
 import { formatAddress } from "@/utils/formatAddress";
 import { floatedNumberWithCommas } from "@/utils/formattedNumbers";
-import { Tab } from "@headlessui/react";
 import _, { sortBy } from "lodash";
 import Image from "next/image";
 import { useRouter } from "next/router";
@@ -76,7 +75,6 @@ const ManageMembers = (): JSX.Element => {
 
   const [showPreApproveDepositor, setShowPreApproveDepositor] = useState(false);
   const [showMemberDetailsModal, setShowMemberDetailsModal] = useState(false);
-  const [addingMember, setAddingMember] = useState(false);
 
   const dispatch = useDispatch();
   const [showConfirmationModal, setShowConfirmationModal] = useState(false);
@@ -211,16 +209,16 @@ const ManageMembers = (): JSX.Element => {
     setShowMemberDetailsModal(true);
     setMemberInfo(memberInfo);
 
-    let _memberDetails = [
+    const _memberDetails = [
       {
-        walletAddress: memberInfo.memberAddress,
+        "Wallet Address": memberInfo.memberAddress,
       },
       {
-        depositAmount: `${floatedNumberWithCommas(memberInfo.memberDeposit)} ${
-          memberInfo.depositERC20TokenSymbol
-        }`,
+        "Deposit Amount": `${floatedNumberWithCommas(
+          memberInfo.memberDeposit,
+        )} ${memberInfo.depositERC20TokenSymbol}`,
       },
-      { distributionShare: `${memberInfo.memberStake}%` },
+      { "Distribution Share": `${memberInfo.memberStake}%` },
     ];
     setMemberDetails(_memberDetails);
   };
@@ -356,12 +354,12 @@ const ManageMembers = (): JSX.Element => {
       {
         Header: " ",
         accessor: function moreOptions(row) {
-          const { memberAddressAllowed, allowlistEnabled } = row;
-          if (!memberAddressAllowed && allowlistEnabled && addingMember) {
+          const { addingMember } = row;
+          if (addingMember) {
             return (
-              <span className="flex items-center">
+              <span className="flex text-sm items-center justify-end">
                 <Spinner height="h-4" width="w-4" margin="my-0" />
-                <span className="ml-2 text-gray-400 leading-6">
+                <span className="ml-2 text-gray-lightManatee leading-6 font-whyte">
                   Adding Member
                 </span>
               </span>
@@ -530,334 +528,288 @@ const ManageMembers = (): JSX.Element => {
   return (
     <div className="w-full rounded-md h-full my-4">
       <div className="w-full px-2 py-2 sm:px-0">
-        <Tab.Group defaultIndex={0}>
-          <Tab.List className="flex space-x-10">
-            <div className="uppercase text-sm p-1">Members</div>
-            <div className="w-fit-content rounded-full border h-fit-content border-gray-nightrider">
-              <Tab
-                className={({ selected }) =>
-                  `px-3 p-1 text-xs font-whyte ${
-                    selected
-                      ? "text-white border-1 border-white rounded-full"
-                      : "text-gray-lightManatee"
-                  }`
-                }
-              >
-                Allowlist
-              </Tab>
-              <Tab
-                className={({ selected }) =>
-                  `px-3 py-1 text-xs ${
-                    selected
-                      ? "text-white border-1 border-white rounded-full"
-                      : "text-gray-lightManatee"
-                  }`
-                }
-              >
-                Requests
-              </Tab>
-            </div>
-          </Tab.List>
-          {showPreApproveDepositor ? (
-            <PreApproveDepositor
-              {...{
-                showPreApproveDepositor,
-                setShowPreApproveDepositor,
-                setAddingMember,
-              }}
+        {showPreApproveDepositor ? (
+          <PreApproveDepositor
+            {...{
+              showPreApproveDepositor,
+              setShowPreApproveDepositor,
+            }}
+          />
+        ) : null}
+        {loading ? (
+          <div className="flex justify-center ">
+            <Spinner />
+          </div>
+        ) : tableData.length ? (
+          <div className="flex flex-col overflow-y-hidden -mx-6">
+            <SyndicateMembersTable
+              columns={columns}
+              data={tableData}
+              distributing={syndicate.distributing}
+              filterAddressOnChangeHandler={filterAddressOnChangeHandler}
+              searchAddress={filteredAddress}
+              showApproveModal={showApproveModal}
+              showMemberDetails={showMemberDetails}
             />
-          ) : null}
-          <Tab.Panels className="font-whyte text-blue-rockBlue w-full">
-            <Tab.Panel as="div">
-              {loading ? (
-                <div className="flex justify-center ">
-                  <Spinner />
-                </div>
-              ) : tableData.length ? (
-                <div className="flex flex-col overflow-y-hidden -mx-6">
-                  <SyndicateMembersTable
-                    columns={columns}
-                    data={tableData}
-                    distributing={syndicate.distributing}
-                    addingMember={addingMember}
-                    filterAddressOnChangeHandler={filterAddressOnChangeHandler}
-                    searchAddress={filteredAddress}
-                    showApproveModal={showApproveModal}
-                    showMemberDetails={showMemberDetails}
-                  />
-                </div>
-              ) : (
-                <div className="flex justify-center">
-                  <div className="my-10">
-                    <div className="flex flex-col space-y-4">
-                      <p>
-                        No members have been added to this syndicate’s allowlist
-                        yet.
-                      </p>
-                      {syndicate?.depositsEnabled &&
-                      syndicate?.allowlistEnabled ? (
-                        <button
-                          className="flex text-blue-600 justify-center py-1"
-                          onClick={showApproveModal}
-                        >
-                          <img
-                            src={"/images/plus-circle-blue.svg"}
-                            alt="icon"
-                            className="mr-3 mt-0.5"
-                          />
-                          <span>Add members</span>
-                        </button>
-                      ) : null}
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              <Modal
-                {...{
-                  show: confirmReturnDeposit,
-                  modalStyle: ModalStyle.DARK,
-                  showCloseButton: false,
-                  customWidth: "w-2/5 max-w-564 justify-center",
-                }}
-              >
-                <div>
-                  <p className="text-2xl text-center mb-6">Are you sure?</p>
-                  <p className="text-base text-center text-gray-lightManatee">
-                    {`${
-                      memberAddresses.length > 1
-                        ? "This will return 100% of the deposited funds to the selected members."
-                        : "This will return 100% of the deposited funds to the member."
-                    }`}
-                  </p>
-                  <div className="flex justify-between mt-10">
-                    <button
-                      className="flex text-center py-3 text-blue hover:opacity-80"
-                      onClick={() => handleCancelReturnDeposit()}
-                    >
-                      <img
-                        src={"/images/leftArrowBlue.svg"}
-                        className="mt-1.5 mx-2"
-                        alt="Back arrow"
-                      />
-                      Back
-                    </button>
-
-                    <button
-                      className="primary-CTA hover:opacity-80"
-                      onClick={() => handleReturnDeposits()}
-                      disabled={showConfirmationModal}
-                    >
-                      Return Deposits
-                    </button>
-                  </div>
-                </div>
-              </Modal>
-
-              <Modal
-                {...{
-                  show: showMemberDetailsModal,
-                  modalStyle: ModalStyle.DARK,
-                  showCloseButton: false,
-                  customWidth: "w-2/5",
-                  outsideOnClick: true,
-                  closeModal: closeMemberDetailsModal,
-                  customClassName: "py-8 px-10",
-                  showHeader: false,
-                }}
-              >
-                <div>
-                  <div className="flex space-x-3 align-center w-full mb-4">
-                    <Image
-                      width="64"
-                      height="64"
-                      src={"/images/user.svg"}
-                      alt="user"
+          </div>
+        ) : (
+          <div className="flex justify-center">
+            <div className="my-10">
+              <div className="flex flex-col space-y-4">
+                <p>
+                  No members have been added to this syndicate’s allowlist yet.
+                </p>
+                {syndicate?.depositsEnabled && syndicate?.allowlistEnabled ? (
+                  <button
+                    className="flex text-blue-600 justify-center py-1"
+                    onClick={showApproveModal}
+                  >
+                    <img
+                      src={"/images/plus-circle-blue.svg"}
+                      alt="icon"
+                      className="mr-3 mt-0.5"
                     />
-                    <div className="flex-grow flex flex-col justify-center">
-                      <div className="text-2xl">
-                        {formatAddress(memberInfo.memberAddress, 6, 6)}
-                      </div>
-                    </div>
-                  </div>
-                  <div>
-                    <div className="hidden sm:block">
-                      <div className="">
-                        <nav className="flex" aria-label="Tabs">
-                          <a
-                            key="details"
-                            onClick={() => setActiveMemberDetailsTab("details")}
-                            className={`whitespace-nowrap py-4 px-1 border-b-1 font-whyte text-sm cursor-pointer ${
-                              activeMemberDetailsTab == "details"
-                                ? "border-white text-white"
-                                : "border-transparent text-gray-500 hover:text-gray-400 hover:border-gray-400"
-                            }`}
-                          >
-                            DETAILS
-                          </a>
+                    <span>Add members</span>
+                  </button>
+                ) : null}
+              </div>
+            </div>
+          </div>
+        )}
 
-                          <a
-                            key="activity"
-                            onClick={() =>
-                              setActiveMemberDetailsTab("activity")
-                            }
-                            className={`whitespace-nowrap py-4 px-1 border-b-1 font-whyte text-sm ml-10 cursor-pointer ${
-                              activeMemberDetailsTab == "activity"
-                                ? "border-white text-white"
-                                : "border-transparent text-gray-500 hover:text-gray-400 hover:border-gray-400"
-                            }`}
-                          >
-                            ACTIVITY
-                          </a>
-                        </nav>
-                      </div>
-                      <div className="border-b-1 border-gray-24 absolute w-full -ml-10"></div>
-                      <div className="mt-4 text-base">
-                        {activeMemberDetailsTab == "details" ? (
-                          memberDetails.map((detail) =>
-                            Object.entries(detail).map(([key, value]) => (
-                              <div className="py-4 flex justify-between border-b-1 border-gray-24">
-                                <div className="text-gray-500 pr-4">{key}</div>
-                                <div className="overflow-y-scroll  no-scroll-bar">
-                                  {value}
-                                </div>
-                              </div>
-                            )),
-                          )
-                        ) : memberInfo.activity.length ? (
-                          memberInfo.activity.map((activity) => (
-                            <div className="py-4 flex justify-between border-b-1 border-gray-24">
-                              <div className="text-gray-500 pr-4 flex">
-                                <img
-                                  src={
-                                    activity.action === "withdrew"
-                                      ? "/images/withdrewDeposit.svg"
-                                      : "/images/memberDeposited.svg"
-                                  }
-                                  alt="icon"
-                                  className="h-6 w-6"
-                                />
-                                <div className="ml-4 capitalize">
-                                  {activity.action}{" "}
-                                  <span className="text-white">
-                                    {floatedNumberWithCommas(
-                                      activity.amountChanged,
-                                    )}{" "}
-                                    {activity.tokenSymbol}
-                                  </span>
-                                </div>
-                              </div>
-                              <div className="text-gray-500">
-                                {activity.elapsedTime}
-                              </div>
-                            </div>
-                          ))
-                        ) : (
-                          <div className="py-4 text-center text-gray-500 w-full border-b-1 border-gray-24">
-                            No activity
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </Modal>
-
-              {/**Block Address and return deposits Modal */}
-              <Modal
-                {...{
-                  show: confirmBlockAddress,
-                  modalStyle: ModalStyle.DARK,
-                  showCloseButton: false,
-                  customWidth: "w-2/5 max-w-564 justify-center",
-                }}
-              >
-                <div>
-                  <p className="text-2xl text-center mb-6">Are you sure?</p>
-                  <p className="text-base text-center text-gray-lightManatee">
-                    {`${
-                      memberAddresses.length > 1
-                        ? "This will block the selected members from depositing more funds into this syndicate.They will remain members until their deposits are returned."
-                        : "This will block the member from depositing more funds into this syndicate.They will remain a member until their deposits are returned."
-                    }`}
-                  </p>
-                  <div className="flex justify-between mt-10">
-                    <button
-                      className="flex text-center py-3 text-blue hover:opacity-80"
-                      onClick={() => handleCancelBlockAddress()}
-                    >
-                      <img
-                        src={"/images/leftArrowBlue.svg"}
-                        className="mt-1.5 mx-2"
-                        alt="Back arrow"
-                      />
-                      Back
-                    </button>
-
-                    <button
-                      className="primary-CTA hover:opacity-80"
-                      onClick={() => handleBlockAddresses()}
-                      disabled={showConfirmationModal}
-                    >
-                      Block Address
-                    </button>
-                  </div>
-                </div>
-              </Modal>
-
-              {/* Tell user to confirm transaction on their wallet */}
-              <Modal
-                show={showConfirmationModal}
-                modalStyle={ModalStyle.DARK}
-                showCloseButton={false}
-                customWidth="w-1/3"
-              >
-                <div className="flex flex-col justify-center m-auto mb-4">
-                  <Spinner />
-                  <p className="text-lg text-center mt-8 mb-1">
-                    Waiting for confirmation
-                  </p>
-                  <div className="modal-header font-medium text-center leading-8 text-sm text-blue-rockBlue">
-                    Please confirm the transaction in your wallet.
-                  </div>
-                </div>
-              </Modal>
-
-              {/* Error modal */}
-              <Modal
-                show={showErrorModal}
-                modalStyle={ModalStyle.DARK}
-                closeModal={closeErrorModal}
-                outsideOnClick={true}
-                customWidth="w-1/3"
-              >
-                <div className="flex flex-col justify-center m-auto mb-4">
-                  <Image
-                    src={"/images/errorClose.svg"}
-                    alt="Error image"
-                    height="50"
-                    width="50"
-                  />
-                  <p className="text-lg text-center mt-8 mb-1">
-                    {errorTitleMessage}
-                  </p>
-                  <div className="modal-header font-medium text-center leading-8 text-sm text-blue-rockBlue">
-                    {errorMessage}
-                  </div>
-                </div>
-              </Modal>
-            </Tab.Panel>
-            <Tab.Panel>
-              <div className="flex justify-center">
-                <div className="my-10">
-                  <div>
-                    <p>Members who have requested to be added to allowlist</p>
-                  </div>
+        <Modal
+          {...{
+            show: showMemberDetailsModal,
+            modalStyle: ModalStyle.DARK,
+            showCloseButton: false,
+            customWidth: "w-2/5",
+            outsideOnClick: true,
+            closeModal: closeMemberDetailsModal,
+            customClassName: "py-8 px-10",
+            showHeader: false,
+          }}
+        >
+          <div>
+            <div className="flex space-x-3 align-center w-full mb-4">
+              <Image
+                width="64"
+                height="64"
+                src={"/images/user.svg"}
+                alt="user"
+              />
+              <div className="flex-grow flex flex-col justify-center">
+                <div className="text-2xl">
+                  {formatAddress(memberInfo.memberAddress, 6, 6)}
                 </div>
               </div>
-            </Tab.Panel>
-          </Tab.Panels>
-        </Tab.Group>
+            </div>
+            <div>
+              <div className="hidden sm:block">
+                <div className="">
+                  <nav className="flex" aria-label="Tabs">
+                    <a
+                      key="details"
+                      onClick={() => setActiveMemberDetailsTab("details")}
+                      className={`whitespace-nowrap py-4 px-1 border-b-1 font-whyte text-sm cursor-pointer ${
+                        activeMemberDetailsTab == "details"
+                          ? "border-white text-white"
+                          : "border-transparent text-gray-500 hover:text-gray-400 hover:border-gray-400"
+                      }`}
+                    >
+                      DETAILS
+                    </a>
+
+                    <a
+                      key="activity"
+                      onClick={() => setActiveMemberDetailsTab("activity")}
+                      className={`whitespace-nowrap py-4 px-1 border-b-1 font-whyte text-sm ml-10 cursor-pointer ${
+                        activeMemberDetailsTab == "activity"
+                          ? "border-white text-white"
+                          : "border-transparent text-gray-500 hover:text-gray-400 hover:border-gray-400"
+                      }`}
+                    >
+                      ACTIVITY
+                    </a>
+                  </nav>
+                </div>
+                <div className="border-b-1 border-gray-24 absolute w-full -ml-10"></div>
+                <div className="mt-4 text-base">
+                  {activeMemberDetailsTab == "details" ? (
+                    memberDetails.map((detail) =>
+                      Object.entries(detail).map(([key, value]) => (
+                        <div
+                          className="py-4 flex justify-between border-b-1 border-gray-24"
+                          key={key}
+                        >
+                          <div className="text-gray-500 pr-4">{key}</div>
+                          <div className="overflow-y-scroll  no-scroll-bar">
+                            {value}
+                          </div>
+                        </div>
+                      )),
+                    )
+                  ) : memberInfo.activity.length ? (
+                    memberInfo.activity.map((activity, index) => (
+                      <div
+                        key={index}
+                        className="py-4 flex justify-between border-b-1 border-gray-24"
+                      >
+                        <div className="text-gray-500 pr-4 flex">
+                          <img
+                            src={
+                              activity.action === "withdrew"
+                                ? "/images/withdrewDeposit.svg"
+                                : "/images/memberDeposited.svg"
+                            }
+                            alt="icon"
+                            className="h-6 w-6"
+                          />
+                          <div className="ml-4 capitalize">
+                            {activity.action}{" "}
+                            <span className="text-white">
+                              {floatedNumberWithCommas(activity.amountChanged)}{" "}
+                              {activity.tokenSymbol}
+                            </span>
+                          </div>
+                        </div>
+                        <div className="text-gray-500">
+                          {activity.elapsedTime}
+                        </div>
+                      </div>
+                    ))
+                  ) : (
+                    <div className="py-4 text-center text-gray-500 w-full border-b-1 border-gray-24">
+                      No activity
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        </Modal>
+
+        <Modal
+          {...{
+            show: confirmReturnDeposit,
+            modalStyle: ModalStyle.DARK,
+            showCloseButton: false,
+            customWidth: "w-2/5 max-w-564 justify-center",
+          }}
+        >
+          <div>
+            <p className="text-2xl text-center mb-6">Are you sure?</p>
+            <p className="text-base text-center text-gray-lightManatee">
+              {`${
+                memberAddresses.length > 1
+                  ? "This will return 100% of the deposited funds to the selected members."
+                  : "This will return 100% of the deposited funds to the member."
+              }`}
+            </p>
+            <div className="flex justify-between mt-10">
+              <button
+                className="flex text-center py-3 text-blue hover:opacity-80"
+                onClick={() => handleCancelReturnDeposit()}
+              >
+                <img
+                  src={"/images/leftArrowBlue.svg"}
+                  className="mt-1.5 mx-2"
+                  alt="Back arrow"
+                />
+                Back
+              </button>
+
+              <button
+                className="primary-CTA hover:opacity-80"
+                onClick={() => handleReturnDeposits()}
+                disabled={showConfirmationModal}
+              >
+                Return Deposits
+              </button>
+            </div>
+          </div>
+        </Modal>
+
+        {/**Block Address and return deposits Modal */}
+        <Modal
+          {...{
+            show: confirmBlockAddress,
+            modalStyle: ModalStyle.DARK,
+            showCloseButton: false,
+            customWidth: "w-2/5 max-w-564 justify-center",
+          }}
+        >
+          <div>
+            <p className="text-2xl text-center mb-6">Are you sure?</p>
+            <p className="text-base text-center text-gray-lightManatee">
+              {`${
+                memberAddresses.length > 1
+                  ? "This will block the selected members from depositing more funds into this syndicate.They will remain members until their deposits are returned."
+                  : "This will block the member from depositing more funds into this syndicate.They will remain a member until their deposits are returned."
+              }`}
+            </p>
+            <div className="flex justify-between mt-10">
+              <button
+                className="flex text-center py-3 text-blue hover:opacity-80"
+                onClick={() => handleCancelBlockAddress()}
+              >
+                <img
+                  src={"/images/leftArrowBlue.svg"}
+                  className="mt-1.5 mx-2"
+                  alt="Back arrow"
+                />
+                Back
+              </button>
+
+              <button
+                className="primary-CTA hover:opacity-80"
+                onClick={() => handleBlockAddresses()}
+                disabled={showConfirmationModal}
+              >
+                Block Address
+              </button>
+            </div>
+          </div>
+        </Modal>
+
+        {/* Tell user to confirm transaction on their wallet */}
+        <Modal
+          show={showConfirmationModal}
+          modalStyle={ModalStyle.DARK}
+          showCloseButton={false}
+          customWidth="w-1/3"
+        >
+          <div className="flex flex-col justify-center m-auto mb-4">
+            <Spinner />
+            <p className="text-lg text-center mt-8 mb-1">
+              Waiting for confirmation
+            </p>
+            <div className="modal-header font-medium text-center leading-8 text-sm text-blue-rockBlue">
+              Please confirm the transaction in your wallet.
+            </div>
+          </div>
+        </Modal>
+
+        {/* Error modal */}
+        <Modal
+          show={showErrorModal}
+          modalStyle={ModalStyle.DARK}
+          closeModal={closeErrorModal}
+          outsideOnClick={true}
+          customWidth="w-1/3"
+        >
+          <div className="flex flex-col justify-center m-auto mb-4">
+            <Image
+              src={"/images/errorClose.svg"}
+              alt="Error image"
+              height="50"
+              width="50"
+            />
+            <p className="text-lg text-center mt-8 mb-1">{errorTitleMessage}</p>
+            <div className="modal-header font-medium text-center leading-8 text-sm text-blue-rockBlue">
+              {errorMessage}
+            </div>
+          </div>
+        </Modal>
       </div>
     </div>
   );

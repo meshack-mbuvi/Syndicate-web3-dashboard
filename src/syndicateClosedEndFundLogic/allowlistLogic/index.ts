@@ -72,7 +72,7 @@ export class SyndicateAllowlistLogic extends BaseLogicContract {
     memberAddresses: string[],
     manager: string,
     onTxConfirm: (transactionHash: string) => void,
-    handleReceipt: () => void,
+    onTxReceipt: () => void,
   ): Promise<void> {
     if (
       !syndicateAddress.trim() ||
@@ -88,9 +88,7 @@ export class SyndicateAllowlistLogic extends BaseLogicContract {
         // close wallet confirmation modal
         onTxConfirm(transactionHash);
       })
-      .on("receipt", () => {
-        handleReceipt();
-      });
+      .on("receipt", () => onTxReceipt());
   }
 
   /**
@@ -141,23 +139,19 @@ export class SyndicateAllowlistLogic extends BaseLogicContract {
   ) {
     if (!syndicateAddress.trim()) return;
 
-    try {
-      setShowWalletConfirmationModal(true);
+    setShowWalletConfirmationModal(true);
 
-      await this.logicContractInstance.methods
-        .managerSetAllowlistEnabled(syndicateAddress, allowListEnabled)
-        .send({ from: manager })
-        .on("transactionHash", () => {
-          // close wallet confirmation modal
-          setShowWalletConfirmationModal(false);
-          setSubmitting(true);
-        })
-        .on("receipt", () => {
-          setSubmitting(false);
-        });
-      await setSubmitting(false);
-    } catch (error) {
-      throw error;
-    }
+    await this.logicContractInstance.methods
+      .managerSetAllowlistEnabled(syndicateAddress, allowListEnabled)
+      .send({ from: manager })
+      .on("transactionHash", () => {
+        // close wallet confirmation modal
+        setShowWalletConfirmationModal(false);
+        setSubmitting(true);
+      })
+      .on("receipt", () => {
+        setSubmitting(false);
+      });
+    await setSubmitting(false);
   }
 }
