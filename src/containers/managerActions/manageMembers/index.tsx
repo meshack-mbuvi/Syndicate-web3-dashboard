@@ -559,7 +559,7 @@ const ManageMembers = (): JSX.Element => {
                 <p>
                   No members have been added to this syndicate’s allowlist yet.
                 </p>
-                {syndicate?.depositsEnabled && syndicate?.allowlistEnabled ? (
+                {syndicate?.allowlistEnabled && syndicate?.open ? (
                   <button
                     className="flex text-blue-600 justify-center py-1"
                     onClick={showApproveModal}
