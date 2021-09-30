@@ -40,7 +40,7 @@ const WaitlistForm = (props: IWaitlistForm) => {
   const maxLength = 480;
 
   const options = [
-    // "Founder",
+    "Founder",
     "Angel Investor",
     "Fund Manager",
     "DAO Contributor",
