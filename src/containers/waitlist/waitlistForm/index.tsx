@@ -39,7 +39,15 @@ const WaitlistForm = (props: IWaitlistForm) => {
   const [activeIndex, setActiveIndex] = useState(0);
   const maxLength = 480;
 
-  const options = ["Startup", "Investor", "Entrepreneur", "Other"];
+  const options = [
+    // "Founder",
+    "Angel Investor",
+    "Fund Manager",
+    "DAO Contributor",
+    "Community Leader",
+    "Developer",
+    "Other",
+  ];
   const { setSuccess } = props;
 
   const setSelectedOption = (option: string) => {
