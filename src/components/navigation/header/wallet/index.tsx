@@ -1,10 +1,14 @@
 import { oneSyndicatePerAccountText } from "@/components/syndicates/shared/Constants";
 import { setOneSyndicatePerAccount } from "@/redux/actions/syndicateMemberDetails";
 import { showWalletModal } from "@/redux/actions/web3Provider";
+import { Menu, Transition } from "@headlessui/react";
+import { useAuthUser } from "next-firebase-auth";
+
 import React, { useState } from "react";
 import Joyride from "react-joyride";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "src/redux/store";
+
 import AddressMenuDropDown from "./accountMenuDropdown";
 
 export const Wallet: React.FC = () => {
@@ -21,6 +25,7 @@ export const Wallet: React.FC = () => {
   const { oneSyndicatePerAccount } = useSelector(
     (state: RootState) => state.syndicateMemberDetailsReducer,
   );
+
   const [steps] = useState([
     {
       target: ".wallet-connect",
@@ -31,6 +36,10 @@ export const Wallet: React.FC = () => {
     },
   ]);
 
+  const handleSignOut = () => {
+    AuthUser.signOut();
+  };
+
   /**
    * open variable is used to determine whether to show or hide
    *  the wallet connection modal.
@@ -39,6 +48,8 @@ export const Wallet: React.FC = () => {
     dispatch(setOneSyndicatePerAccount(false));
     dispatch(showWalletModal());
   };
+
+  const AuthUser = useAuthUser();
 
   // custom component used in place of the default tooltip component to
   // indicate that the user cannot create another syndicate with the same address.
@@ -86,7 +97,7 @@ export const Wallet: React.FC = () => {
         alt="wallet-icon"
       />
       <span className="focus:outline-none mr-1 text-sm font-whyte-regular">
-        Sign in
+        Connect Wallet
       </span>
       <div className="flex items-center ml-2">
         <img src="/images/chevron-down.svg" alt="down-arrow" />
@@ -95,19 +106,67 @@ export const Wallet: React.FC = () => {
   );
 
   return (
-    <div className="wallet-connect flex relative justify-center">
-      {status === "connected" ? (
-        <AddressMenuDropDown web3={web3} />
-      ) : (
-        <NotConnectedButton />
+    <div className="flex justify-between rounded-full bg-gray-shark bg-opacity-50 items-center">
+      {AuthUser.firebaseUser && (
+        <>
+          <div className="flex items-center">
+            <Menu as="div">
+              {({ open }) => (
+                <>
+                  <Menu.Button className="flex items-center">
+                    <img
+                      className="h-10 w-10 rounded-full mx-1"
+                      src={AuthUser.photoURL}
+                      alt="profile"
+                    />
+                    <div className="px-2">{AuthUser.displayName}</div>
+                  </Menu.Button>
+                  <Transition
+                    show={open}
+                    enter="transition ease-out duration-100"
+                    enterFrom="transform opacity-0 scale-95"
+                    enterTo="transform opacity-100 scale-100"
+                    leave="transition ease-in duration-75"
+                    leaveFrom="transform opacity-100 scale-100"
+                    leaveTo="transform opacity-0 scale-95"
+                    className="relative"
+                  >
+                    <Menu.Items
+                      as="div"
+                      className="absolute right-0 w-80 mt-2 origin-top-right bg-gray-9 divide-y divide-gray-9 rounded-lg shadow-lg outline-none px-5 py-5"
+                    >
+                      <div className="flex justify-center px-2 mb-4 text-gray-2">
+                        Your identity is never associated with your wallet
+                        address.
+                      </div>
+                      <button
+                        className="h-12 w-full bg-white text-black rounded-md"
+                        onClick={handleSignOut}
+                      >
+                        Sign Out
+                      </button>
+                    </Menu.Items>
+                  </Transition>
+                </>
+              )}
+            </Menu>
+          </div>
+          <div className="wallet-connect flex relative justify-center my-1 mr-1">
+            {status === "connected" ? (
+              <AddressMenuDropDown web3={web3} />
+            ) : (
+              <NotConnectedButton />
+            )}
+            <Joyride
+              steps={steps}
+              run={oneSyndicatePerAccount}
+              tooltipComponent={Tooltip}
+              floaterProps={{ hideArrow: true, disableAnimation: true }}
+              callback={handleClose}
+            />
+          </div>
+        </>
       )}
-      <Joyride
-        steps={steps}
-        run={oneSyndicatePerAccount}
-        tooltipComponent={Tooltip}
-        floaterProps={{ hideArrow: true, disableAnimation: true }}
-        callback={handleClose}
-      />
     </div>
   );
 };

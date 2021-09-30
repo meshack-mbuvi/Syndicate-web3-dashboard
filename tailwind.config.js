@@ -120,6 +120,10 @@ module.exports = {
         "1.5xl": "1.375rem",
         "2.5xl": "1.75rem",
       },
+      lineHeight: {
+        '17': '4.25rem'
+      }
+      ,
       colors: {
         "twitter-blue": "#1DA1F2",
         "discord-purple": "#7289DA",
@@ -159,8 +163,10 @@ module.exports = {
           darkBackground: "#151618",
           darkInput: "#2C2C2F",
           steelGrey: "#3F4147",
+          shark: "#272829",
           lightSlate: "#808F9C",
           spindle: "#B8BDC7",
+          shuttle: "#646871",
         },
         green: {
           ...colors.green,
@@ -242,6 +248,9 @@ module.exports = {
       },
       inset: {
         84: "22rem",
+      },
+      margin: {
+        0.5: "0.15rem",
       },
     },
   },

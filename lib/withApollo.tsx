@@ -1,15 +1,20 @@
+import "@/utils/firebase/initAuth";
+
+import { isDev, isSSR } from "@/utils/environment";
 import {
   ApolloClient,
   ApolloProvider,
   HttpLink,
   InMemoryCache,
 } from "@apollo/client";
-import { useRouter } from "next/router";
+import { setContext } from "@apollo/client/link/context";
+import { User, getAuth } from "firebase/auth";
 import nextWithApollo from "next-with-apollo";
-import { isDev } from "@/utils/environment";
+import { useRouter } from "next/router";
 
-const GetWithApollo = ({ Page, props }) => {
+const ApolloProviderPage = ({ Page, props }) => {
   const router = useRouter();
+
   return (
     <ApolloProvider client={props.apollo}>
       <Page {...props} {...router} />
@@ -17,24 +22,37 @@ const GetWithApollo = ({ Page, props }) => {
   );
 };
 
-const withApollo = nextWithApollo(
-  ({ initialState, headers }) => {
+const withApollo: any = nextWithApollo(
+  ({ initialState, ctx = {} }) => {
+    const authLink = setContext(async (_, { headers }) => {
+      const ssrMode = isSSR();
+      const currentUser =
+        ssrMode && "AuthUser" in ctx
+          ? ((ctx as any).AuthUser as User)
+          : getAuth().currentUser;
+      const token = await currentUser?.getIdToken();
+
+      return {
+        headers: {
+          ...headers,
+          "X-Social-Token": token,
+        },
+      };
+    });
+
+    const httpLink = new HttpLink({
+      uri: isDev
+        ? "http://localhost:4000"
+        : process.env.NEXT_PUBLIC_GRAPHQL_ENDPOINT,
+    });
+
     return new ApolloClient({
-      ssrMode: typeof window === "undefined",
-      link: new HttpLink({
-        uri: isDev
-          ? "http://localhost:4000"
-          : process.env.NEXT_PUBLIC_GRAPHQL_ENDPOINT,
-      }),
-      headers: {
-        ...(headers as Record<string, string>),
-      },
+      ssrMode: isSSR(),
+      link: authLink.concat(httpLink),
       cache: new InMemoryCache().restore(initialState || {}),
     });
   },
-  {
-    render: GetWithApollo,
-  },
+  { render: ApolloProviderPage },
 );
 
 export default withApollo;

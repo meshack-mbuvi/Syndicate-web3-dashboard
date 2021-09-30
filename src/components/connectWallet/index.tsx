@@ -1,13 +1,14 @@
+import { BanIcon, CancelIcon } from "@/components/shared/Icons";
 // set up smart contract and pass it as context
 // actions
 import { useConnectWalletContext } from "@/context/ConnectWalletProvider";
 import { hideErrorModal, hideWalletModal } from "@/redux/actions/web3Provider";
-import React, { useState, useEffect } from "react";
+import { RootState } from "@/redux/store";
+import React, { useEffect, useState } from "react";
 import { connect, useDispatch, useSelector } from "react-redux";
+
 import { SpinnerWithImage } from "../shared/spinner/spinnerWithImage";
 import { ConnectModal } from "./connectModal";
-import { BanIcon, CancelIcon } from "@/components/shared/Icons";
-import { RootState } from "@/redux/store";
 
 /**
  * The component shows a modal with buttons to connect to different
@@ -20,7 +21,7 @@ import { RootState } from "@/redux/store";
  * Once wallet is connected, an action to update library is emitted.
  * @param {*} props
  */
-export const ConnectWallet = (props: { web3; showWalletModal }) => {
+const ConnectWallet = (props: { web3; showWalletModal }) => {
   const {
     web3: { isErrorModalOpen, error, account },
     showWalletModal,

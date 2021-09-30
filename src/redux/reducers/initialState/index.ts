@@ -10,6 +10,15 @@ export enum SYNDICATE_CHAIN_TYPE {
 const initialWeb3 = new Web3(process.env.NEXT_PUBLIC_INFURA_ENDPOINT);
 
 type InitialState = {
+  auth: {
+    id: string;
+    twitterUsername: string;
+    twitterUserId: string;
+    createdAt: string;
+    profileImageURL: string;
+    updatedAt: string;
+    isApproved: boolean;
+  };
   web3: {
     status: string;
     connect: boolean;
@@ -166,6 +175,15 @@ const timezones = ct.getAllTimezones();
  * All the properties of the web3 object are set during wallet connection
  */
 export const initialState: InitialState = {
+  auth: {
+    id: "",
+    twitterUsername: "",
+    twitterUserId: "",
+    createdAt: "",
+    profileImageURL: "",
+    updatedAt: "",
+    isApproved: false,
+  },
   web3: {
     status: "disconnected",
     connect: false,

@@ -1,6 +1,10 @@
 # Remove .env file
 .env
 
+.DS_Store
+
+.serviceaccount.json
+
 # Remove gatsby-related content after migrating to NextJS.
 
 # Logs

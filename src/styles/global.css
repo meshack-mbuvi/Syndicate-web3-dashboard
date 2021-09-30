@@ -187,6 +187,10 @@
     @apply text-gray-placeholder;
   }
 
+  .twitter-input-field::placeholder {
+    @apply pl-0;
+  }
+
   .dark-input-field:disabled {
     @apply text-gray-spindle opacity-50 border-gray-spindle hover:border-gray-spindle cursor-not-allowed;
   }
@@ -311,7 +315,7 @@
       transform: translateY(-50%);
     }
 
-    /* 
+    /*
       For when you dont want to use margins, and can position a
       div relatively.
       */
@@ -615,7 +619,7 @@ input[type="number"] {
   -moz-appearance: textfield;
 }
 
-/* 
+/*
 * Custom spinner
 */
 @keyframes circle--animation {

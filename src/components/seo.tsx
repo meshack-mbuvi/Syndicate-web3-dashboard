@@ -1,19 +1,32 @@
 import Head from "next/head";
-import config from "../next-config";
+
+const config = {
+  title: "Syndicate Protocol Dashboard",
+  author: {
+    name: "Syndicate Inc.",
+    summary: "Syndicate Protocol's web3 dashboard",
+  },
+  description: "Official dashboard for Syndicate Protocol",
+  social: {
+    twitter: "SyndicateDAO",
+  },
+};
 
 export default function SEO({
   keywords,
   description = "Official dashboard for Syndicate Protocol",
   title,
   customSecondaryTitle = null,
-  image = "/images/social/logoBanner.png"
+  image = "/images/social/logoBanner.png",
 }) {
   const siteTitle = config.title;
-  const imageAbsolutePath = process.env.NEXT_BASE_URL + image
+  const imageAbsolutePath = process.env.NEXT_BASE_URL + image;
 
   return (
     <Head>
-      <title>{`${title} | ${customSecondaryTitle ? customSecondaryTitle : siteTitle}`}</title>
+      <title>{`${title} | ${
+        customSecondaryTitle ? customSecondaryTitle : siteTitle
+      }`}</title>
       <meta name="description" content={description} />
       <meta name="keywords" content={keywords} />
       <meta property="og:type" content="website" />

@@ -49,13 +49,14 @@ export const BanIcon = (props: IBan) => {
 interface ICancelIcon {
   height?: string;
   width?: string;
+  color?: string;
 }
 export const CancelIcon = (props: ICancelIcon) => {
-  const { height = "h-10", width = "w-10" } = props;
+  const { height = "h-10", width = "w-10", color = "text-red-500" } = props;
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      className={`${height} ${width} text-red-500`}
+      className={`${height} ${width} ${color}`}
       fill="none"
       viewBox="0 0 24 24"
       stroke="currentColor"

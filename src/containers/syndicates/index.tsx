@@ -1,7 +1,7 @@
-import PortfolioAndDiscover from "@/components/syndicates/portfolioAndDiscover";
-import React from "react";
 import ErrorBoundary from "@/components/errorBoundary";
 import Layout from "@/components/layout";
+import PortfolioAndDiscover from "@/components/syndicates/portfolioAndDiscover";
+import React, { FC } from "react";
 import Head from "src/components/syndicates/shared/HeaderTitle";
 
 /**
@@ -11,7 +11,7 @@ import Head from "src/components/syndicates/shared/HeaderTitle";
  * At the top-right of the page, there is a create button which opens a modal
  * with a form to create a new syndicate
  */
-const SyndicatesComponent = () => {
+const SyndicatesComponent: FC = () => {
   return (
     <Layout>
       <Head title="My Syndicates" />
@@ -20,7 +20,8 @@ const SyndicatesComponent = () => {
         name="offChainData"
         data-netlify="true"
         netlify-honeypot="bot-field"
-        hidden>
+        hidden
+      >
         <input type="text" name="fullName" />
         <input type="text" name="emailAddress" />
         <input type="text" name="syndicateAddress" />

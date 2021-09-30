@@ -1,21 +1,22 @@
 import { Syndicate } from "@/@types/syndicate";
-import { Layout } from "@/components/layout";
+import { ConnectModal } from "@/components/connectWallet/connectModal";
+import Layout from "@/components/layout";
+import { Spinner } from "@/components/shared/spinner";
 import Steps from "@/components/syndicates/create/Steps";
+import { useFirstRender } from "@/components/syndicates/hooks/useFirstRender";
 import SuccessCreateSyndicate from "@/components/syndicates/shared/successCreateSyndicate";
 import WalletNotConnected from "@/components/walletNotConnected";
 import { ContentInfo, MainContent } from "@/containers/create/shared";
 import Controls from "@/containers/create/shared/controls";
 import { useCreateSyndicateContext } from "@/context/CreateSyndicateContext";
+import { useSyndicateInBetaBannerContext } from "@/context/SyndicateInBetaBannerContext";
+import withAuth from "@/lib/withAuth";
 import { getSyndicates } from "@/redux/actions/syndicates";
 import { RootState } from "@/redux/store";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Head from "src/components/syndicates/shared/HeaderTitle";
-import { ConnectModal } from "@/components/connectWallet/connectModal";
-import { Spinner } from "@/components/shared/spinner";
-import { useFirstRender } from "@/components/syndicates/hooks/useFirstRender";
-import { useSyndicateInBetaBannerContext } from "@/context/SyndicateInBetaBannerContext";
 
 const CreateSyndicate: React.FC = () => {
   const {
@@ -184,4 +185,4 @@ const CreateSyndicate: React.FC = () => {
   );
 };
 
-export default CreateSyndicate;
+export default withAuth(CreateSyndicate);

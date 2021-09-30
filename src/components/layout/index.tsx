@@ -1,16 +1,17 @@
+import { RootState } from "@/redux/store";
 import { useRouter } from "next/router";
 import React from "react";
 import { useSelector } from "react-redux";
-import { RootState } from "@/redux/store";
 import {
   DepositsPageBanner,
   SyndicateInBetaBanner,
 } from "src/components/banners";
 import ConnectWallet from "src/components/connectWallet";
 import Header from "src/components/navigation/header";
+
 import SEO from "../seo";
 
-export const Layout = ({ children, backLink = null }) => {
+const Layout = ({ children, backLink = null }) => {
   const router = useRouter();
   const {
     syndicatesReducer: { syndicateFound, syndicateAddressIsValid },

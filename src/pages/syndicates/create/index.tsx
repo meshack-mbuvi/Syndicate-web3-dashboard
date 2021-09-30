@@ -1,15 +1,16 @@
-import React, { useEffect, useState } from "react";
-import Link from "next/link";
-import { useRouter } from "next/router";
-import { Layout } from "@/components/layout";
-import Head from "src/components/syndicates/shared/HeaderTitle";
-import { RootState } from "@/redux/store";
-import { useSelector } from "react-redux";
-import WalletNotConnected from "@/components/walletNotConnected";
-import SyndicateTemplates from "@/containers/create/syndicateTemplates";
 import { ConnectModal } from "@/components/connectWallet/connectModal";
+import Layout from "@/components/layout";
 import { Spinner } from "@/components/shared/spinner";
 import { useFirstRender } from "@/components/syndicates/hooks/useFirstRender";
+import WalletNotConnected from "@/components/walletNotConnected";
+import SyndicateTemplates from "@/containers/create/syndicateTemplates";
+import withAuth from "@/lib/withAuth";
+import { RootState } from "@/redux/store";
+import Link from "next/link";
+import { useRouter } from "next/router";
+import React, { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+import Head from "src/components/syndicates/shared/HeaderTitle";
 
 const Create: React.FC = () => {
   const {
@@ -112,4 +113,4 @@ const Create: React.FC = () => {
   );
 };
 
-export default Create;
+export default withAuth(Create);

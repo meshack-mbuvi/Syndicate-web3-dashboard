@@ -1,5 +1,6 @@
 import ManagerPending from "@/components/syndicates/managerPending";
 import LayoutWithSyndicateDetails from "@/containers/layoutWithSyndicateDetails";
+import withAuth from "@/lib/withAuth";
 import { FC } from "react";
 
 const SyndicateManagerPendingView: FC = () => {
@@ -10,4 +11,4 @@ const SyndicateManagerPendingView: FC = () => {
   );
 };
 
-export default SyndicateManagerPendingView;
+export default withAuth(SyndicateManagerPendingView);
