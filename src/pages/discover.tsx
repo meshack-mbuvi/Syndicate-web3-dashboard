@@ -1,10 +1,9 @@
 // This is the discover page.
-import withAuth from "@/lib/withAuth";
-import React from "react";
+import { FC } from "react";
 import { DiscoverContent } from "src/containers/discover";
 
-const DiscoverPage = () => {
+const DiscoverPage: FC = () => {
   return <DiscoverContent />;
 };
 
-export default withAuth(DiscoverPage);
+export default DiscoverPage;

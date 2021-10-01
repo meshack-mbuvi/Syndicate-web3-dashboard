@@ -1,10 +1,6 @@
 // feeds page.
 
-import withAuth from "@/lib/withAuth";
+import { withLoggedInUser } from "@/lib/withAuth";
 import Feed from "src/containers/feed";
 
-const FeedPage = () => {
-  return <Feed />;
-};
-
-export default withAuth(FeedPage);
+export default withLoggedInUser(Feed);

@@ -1,8 +1,62 @@
+import { gql, useQuery } from "@apollo/client";
 import React, { FC, useState } from "react";
 import Head from "src/components/syndicates/shared/HeaderTitle";
 
 import TwitterProfile from "./twitterProfile";
 import WaitlistForm from "./waitlistForm";
+
+const LOAD_REGISTRATION = gql`
+  query registration {
+    Social_Waitlist_getRegistration {
+      createdAt
+    }
+  }
+`;
+
+const Waitlist: FC = () => {
+  const [isSubmitted, setSubmitted] = useState(false);
+
+  const { data, loading } = useQuery(LOAD_REGISTRATION);
+
+  return loading ? null : (
+    <div
+      className="flex h-screen overflow-scroll"
+      style={{
+        backgroundImage: "url(/images/social/waitlist-bg.svg)",
+        backgroundSize: "cover",
+        backgroundRepeat: "no-repeat",
+      }}
+    >
+      <Head title={`${isSubmitted ? "Waitlist confirmation" : "Waitlist"}`} />
+      {isSubmitted || data?.Social_Waitlist_getRegistration?.createdAt ? (
+        successContent
+      ) : (
+        <>
+          <div
+            className="container h-screen hidden md:flex flex-col justify-center items-start flex-1 w-4/6 font-whyte-light"
+            id="left-column"
+          >
+            {mainCopy}
+          </div>
+          <div
+            id="right-column"
+            className="flex flex-col items-center justify-center w-full md:w-2/6 bg-black bg-opacity-60 px-6 md:px-10 lg:px-16 transition-all overflow-scroll"
+          >
+            <div className="w-full px-6 sm:px-24 md:px-0 md:w-auto transition-all overflow-y-auto py-12">
+              <div className="block md:hidden mb-16">{mainCopy}</div>
+              <div id="twitter-profile" className="mb-10">
+                <TwitterProfile />
+              </div>
+              <div id="waitlist-form" className="w-full">
+                <WaitlistForm setSuccess={setSubmitted} />
+              </div>
+            </div>
+          </div>
+        </>
+      )}
+    </div>
+  );
+};
 
 const mainCopy = (
   <>
@@ -62,47 +116,5 @@ const successContent = (
     </div>
   </>
 );
-
-const Waitlist: FC = () => {
-  const [success, setSuccess] = useState(false);
-  return (
-    <div
-      className="flex h-screen overflow-scroll"
-      style={{
-        backgroundImage: "url(/images/social/waitlist-bg.svg)",
-        backgroundSize: "cover",
-        backgroundRepeat: "no-repeat",
-      }}
-    >
-      <Head title={`${success ? "Waitlist confirmation" : "Waitlist"}`} />
-      {success ? (
-        successContent
-      ) : (
-        <>
-          <div
-            className="container h-screen hidden md:flex flex-col justify-center items-start flex-1 w-4/6 font-whyte-light"
-            id="left-column"
-          >
-            {mainCopy}
-          </div>
-          <div
-            id="right-column"
-            className="flex flex-col items-center justify-center w-full md:w-2/6 bg-black bg-opacity-60 px-6 md:px-10 lg:px-16 transition-all overflow-scroll"
-          >
-            <div className="w-full px-6 sm:px-24 md:px-0 md:w-auto transition-all overflow-y-auto py-12">
-              <div className="block md:hidden mb-16">{mainCopy}</div>
-              <div id="twitter-profile" className="mb-10">
-                <TwitterProfile />
-              </div>
-              <div id="waitlist-form" className="w-full">
-                <WaitlistForm setSuccess={setSuccess} />
-              </div>
-            </div>
-          </div>
-        </>
-      )}
-    </div>
-  );
-};
 
 export default Waitlist;

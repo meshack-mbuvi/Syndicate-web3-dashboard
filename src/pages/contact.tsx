@@ -1,5 +1,3 @@
-import withAuth from "@/lib/withAuth";
-import { AuthAction, withAuthUser } from "next-firebase-auth";
 import React from "react";
 import Layout from "src/components/layout";
 import Head from "src/components/syndicates/shared/HeaderTitle";
@@ -75,4 +73,4 @@ function ContactPage() {
   );
 }
 
-export default withAuth(ContactPage);
+export default ContactPage;

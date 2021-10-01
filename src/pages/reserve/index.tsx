@@ -1,5 +1,5 @@
 import Waitlist from "@/containers/waitlist";
-import { AuthAction, withAuthUser } from "next-firebase-auth";
+import { withLoggedInUser } from "@/lib/withAuth";
 import SEO from "src/components/seo";
 
 const WaitlistPage = () => (
@@ -12,8 +12,4 @@ const WaitlistPage = () => (
   </>
 );
 
-export default withAuthUser({
-  whenUnauthedAfterInit: AuthAction.REDIRECT_TO_LOGIN,
-  whenUnauthedBeforeInit: AuthAction.SHOW_LOADER,
-  authPageURL: "/sign-in",
-})(WaitlistPage);
+export default withLoggedInUser(WaitlistPage);

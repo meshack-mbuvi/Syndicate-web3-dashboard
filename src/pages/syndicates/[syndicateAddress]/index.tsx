@@ -2,7 +2,6 @@
 
 import { SkeletonLoader } from "@/components/skeletonLoader";
 import LayoutWithSyndicateDetails from "@/containers/layoutWithSyndicateDetails";
-import withAuth from "@/lib/withAuth";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 
@@ -50,4 +49,4 @@ const SyndicateDepositView = () => {
   );
 };
 
-export default withAuth(SyndicateDepositView);
+export default SyndicateDepositView;

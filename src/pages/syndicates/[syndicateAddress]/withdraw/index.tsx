@@ -1,6 +1,5 @@
 import WithdrawSyndicate from "@/components/syndicates/withdrawSyndicate";
 import LayoutWithSyndicateDetails from "@/containers/layoutWithSyndicateDetails";
-import withAuth from "@/lib/withAuth";
 import React from "react";
 
 const SyndicateWithdrawalView: React.FC = () => {
@@ -11,4 +10,4 @@ const SyndicateWithdrawalView: React.FC = () => {
   );
 };
 
-export default withAuth(SyndicateWithdrawalView);
+export default SyndicateWithdrawalView;

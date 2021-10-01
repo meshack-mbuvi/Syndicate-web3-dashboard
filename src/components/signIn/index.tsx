@@ -46,11 +46,23 @@ const SignInComponent: FC = () => {
     router.push("/reserve/");
   }, [router]);
 
+  const goToSyndicates = useCallback(() => {
+    router.push("/syndicates/");
+  }, [router]);
+
   useEffect(() => {
-    if (currentUser.id) {
+    if (!currentUser.id) return;
+    if (currentUser.claims.isApproved) {
+      goToSyndicates();
+    } else {
       goToWaitlist();
     }
-  }, [currentUser.id, goToWaitlist]);
+  }, [
+    currentUser.claims.isApproved,
+    currentUser.id,
+    goToSyndicates,
+    goToWaitlist,
+  ]);
 
   const [isSigningIn, setSigningIn] = useState(false);
 
