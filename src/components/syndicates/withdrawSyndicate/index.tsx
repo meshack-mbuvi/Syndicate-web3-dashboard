@@ -374,12 +374,8 @@ const WithdrawSyndicate: React.FC = () => {
   const withdrawalPageTitleText = withdrawalTitleText;
 
   // conditions under which the skeleton loader should be rendered
-  const showSkeletonLoader =
-    !syndicate ||
-    loadingLPDetails ||
-    (syndicate &&
-      syndicate.distributing &&
-      !distributionTokensAllowanceDetails.length);
+  const showSkeletonLoader = !syndicate || loadingLPDetails;
+
   // set title and texts of section based on
   // whether this is a withdrawal or a deposit.
   let tokenPriceInUSD =

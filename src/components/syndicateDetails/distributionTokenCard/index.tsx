@@ -14,7 +14,8 @@ const DistributionTokenCard = (props: Props): JSX.Element => {
     return sum(
       flatMap(memberWithdrawalDetails, (item) => {
         return parseFloat(
-          item[tokenSymbol]?.memberDistributionsWithdrawalsToDate,
+          // return 0 if value is undefined
+          item[tokenSymbol]?.memberDistributionsWithdrawalsToDate ?? "0",
         );
       }),
     );
@@ -49,9 +50,9 @@ const DistributionTokenCard = (props: Props): JSX.Element => {
       <div className="text-gray-lightManatee">
         {/* Get total of the member distributions */}
         {getPercentageWithdrawn(
-          token?.tokenSymbol,
-          token?.tokenDistributions,
-        )?.toFixed(2)}
+          token.tokenSymbol,
+          token.tokenDistributions,
+        ).toFixed(2)}
         % withdrawn
       </div>
     </div>

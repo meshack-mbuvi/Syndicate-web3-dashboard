@@ -222,7 +222,7 @@ export const BadgeCard = (props: {
               >
                 <div className="flex items-center">
                   <div
-                    className="w-6 h-6 mr-3"
+                    className="w-6 h-6 mr-4"
                     style={{
                       backgroundImage: `url(/images/syndicateStatusIcons/${badgeIcon})`,
                       backgroundPosition: "center center",
@@ -230,7 +230,7 @@ export const BadgeCard = (props: {
                       backgroundSize: "cover",
                     }}
                   ></div>
-                  <p className="text-sm sm:text-lg leading-snug">{titleText}</p>
+                  <p className="text-xl sm:text-lg leading-snug">{titleText}</p>
                 </div>
                 {depositsEnabled ? (
                   <div>

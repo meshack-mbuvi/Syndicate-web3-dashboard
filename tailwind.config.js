@@ -21,9 +21,9 @@ module.exports = {
     function ({ addComponents }) {
       addComponents({
         ".container": {
-          maxWidth: "100%",
-          paddingLeft: "5%",
-          paddingRight: "5%",
+          maxWidth: "1680px",
+          paddingLeft: "100px",
+          paddingRight: "100px",
           "@screen sm": {
             maxWidth: "640px",
             paddingLeft: "3rem",
@@ -35,24 +35,14 @@ module.exports = {
             paddingRight: "3rem",
           },
           "@screen lg": {
-            maxWidth: "1280px",
+            maxWidth: "1480px",
             paddingLeft: "4rem",
             paddingRight: "4rem",
           },
           "@screen xl": {
-            maxWidth: "1800px",
-            paddingLeft: "8rem",
-            paddingRight: "8rem",
-          },
-          "@screen 2xl": {
-            maxWidth: "100%",
-            paddingLeft: "8rem",
-            paddingRight: "8rem",
-          },
-          "@screen 3xl": {
-            maxWidth: "2100px",
-            paddingLeft: "12rem",
-            paddingRight: "12rem",
+            maxWidth: "1680px",
+            paddingLeft: "100px",
+            paddingRight: "100px",
           },
         },
       });
@@ -71,7 +61,7 @@ module.exports = {
       lg: "1024px",
       "1.5lg": "1152px",
       xl: "1280px",
-      "1.5xl": "1408px",
+      "1.5xl": "1480px",
       "2xl": "1536px",
       "3xl": "1900px",
       "4xl": "2500px",
@@ -119,6 +109,7 @@ module.exports = {
         modalSubTitle: "1.5rem",
         "1.5xl": "1.375rem",
         "2.5xl": "1.75rem",
+        "4.5xl": "2.5rem",
       },
       lineHeight: {
         '17': '4.25rem'
@@ -131,6 +122,15 @@ module.exports = {
         cyan: colors.cyan,
         gray: {
           ...colors.coolGray,
+          syn1: "#F1F3F7",
+          syn2: "#D9DDE5",
+          syn3: "#B8BDC7",
+          syn4: "#90949E",
+          syn5: "#646871",
+          syn6: "#3F4147",
+          syn7: "#232529",
+          syn8: "#131416",
+          syn9: "#0B0C0D",
           2: "#D9DDE5",
           3: "#A8AFBD",
           4: "#1B1D20",
@@ -168,6 +168,9 @@ module.exports = {
           spindle: "#B8BDC7",
           shuttle: "#646871",
         },
+        red: {
+          sematicRed: "#F14D4D",
+        },
         green: {
           ...colors.green,
           DEFAULT: "#30E696",
@@ -197,6 +200,7 @@ module.exports = {
           ...colors.yellow,
           light: "#FFD02B",
           dark: "#FFC83C",
+          sematicYellow: "#F9D252",
         },
         orange: {
           ...colors.orange,
@@ -216,6 +220,7 @@ module.exports = {
         66: "16.5rem",
         68: "17rem",
         76: "19rem",
+        102: "30rem",
       },
       fill: (theme) => ({
         gray: theme("colors.gray.light"),

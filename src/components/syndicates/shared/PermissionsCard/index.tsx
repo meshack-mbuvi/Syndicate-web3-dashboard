@@ -4,7 +4,7 @@ import React from "react";
 interface Props {
   allowlistEnabled: boolean;
   modifiable: boolean;
-  tranferable: boolean;
+  transferable: boolean;
   className?: string;
   showSkeletonLoader: boolean;
 }
@@ -12,7 +12,7 @@ const PermissionCard = (props: Props): JSX.Element => {
   const {
     allowlistEnabled,
     modifiable,
-    tranferable,
+    transferable,
     className,
     showSkeletonLoader,
   } = props;
@@ -24,7 +24,7 @@ const PermissionCard = (props: Props): JSX.Element => {
       ) : (
         <>
           <p className="text-base text-gray-500 leading-loose">Permissions</p>
-          <div className="flex text-base leading-5">
+          <div className="flex md:flex-row flex-col text-base leading-5 mt-2">
             <div className="flex">
               <img src="/images/User_Check.svg" alt="allowlist" />
               <p className="ml-2">
@@ -33,18 +33,18 @@ const PermissionCard = (props: Props): JSX.Element => {
                   : "Allowlist not enabled"}
               </p>
             </div>
-            <div className="flex ml-7">
+            <div className="flex md:ml-8">
               <img src="/images/Locked.svg" alt="modifiable" />
               <p className="ml-2">
                 {modifiable ? "Modifiable" : "Not modifiable"}
               </p>
             </div>
-            <div className="flex ml-7">
+            <div className="flex md:ml-8">
               <img src="/images/Locked.svg" alt="transferable" />
               <p className="ml-2">
-                {tranferable
-                  ? "Tranferable by members"
-                  : "Not tranferable by members"}
+                {transferable
+                  ? "Transferable by members"
+                  : "Not transferable by members"}
               </p>
             </div>
           </div>

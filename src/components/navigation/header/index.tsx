@@ -13,7 +13,7 @@ interface props {
 const navbarItems = [
   {
     url: "/syndicates",
-    urlText: "Portfolio"
+    urlText: "Portfolio",
   },
   {
     url: "/discover",
@@ -24,7 +24,7 @@ const Header: React.FC<props> = ({ backLink = null }) => {
   const router = useRouter();
 
   return (
-    <nav className="bg-black h-16 fixed top-0 inset-x-0 align-middle py-4 bg-opacity-50 z-20 backdrop-filter backdrop-blur-xl">
+    <nav className="bg-black h-16 fixed top-0 inset-x-0 align-middle py-6 bg-opacity-50 z-20 backdrop-filter backdrop-blur-xl">
       <div className="container mx-auto flex justify-between h-full">
         {/* This backlink is only displayed on mobile sizes */}
         {backLink ? (

@@ -3,7 +3,7 @@ import ManagerSetAllowance from "@/containers/managerActions/setAllowances";
 import { RootState } from "@/redux/store";
 import { getTokenIcon } from "@/TokensList";
 import { getWeiAmount, isUnlimited, onlyUnique } from "@/utils/conversions";
-import { epochTimeToDateFormat } from "@/utils/dateUtils";
+import { epochTimeToDateFormat, getCountDownDays } from "@/utils/dateUtils";
 import { floatedNumberWithCommas } from "@/utils/formattedNumbers";
 import { getCoinFromContractAddress } from "functions/src/utils/ethereum";
 import abi from "human-standard-token-abi";
@@ -12,7 +12,6 @@ import React, { useEffect, useState } from "react";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import { useDispatch, useSelector } from "react-redux";
 import { EtherscanLink } from "src/components/syndicates/shared/EtherscanLink";
-import { checkAccountAllowance } from "src/helpers/approveAllowance";
 import { setSyndicateDetails } from "src/redux/actions/syndicateDetails";
 import { setSyndicateDistributionTokens } from "src/redux/actions/syndicateMemberDetails";
 import {
@@ -35,6 +34,7 @@ import {
 } from "../shared/Constants";
 import PermissionCard from "../shared/PermissionsCard";
 import { ProgressIndicator } from "../shared/progressIndicator";
+const moment = require("moment");
 
 // we should have an isChildVisible prop here of type boolean
 const SyndicateDetails = (props: {
@@ -111,6 +111,13 @@ const SyndicateDetails = (props: {
   const distributing = syndicate?.distributing;
   const depositsEnabled = syndicate?.depositsEnabled;
 
+  // Handle syndicate progress bar
+  const depositTotal = syndicate?.depositTotal;
+  let depositsMaxIsUnlimited = false;
+
+  // checking if depositsMax is unlimited.
+  depositsMaxIsUnlimited = isUnlimited(depositTotalMax);
+
   // get and set current token details
   useEffect(() => {
     if (depositERC20Address && web3) {
@@ -120,245 +127,6 @@ const SyndicateDetails = (props: {
       setDepositTokenContract(tokenContract);
     }
   }, [depositERC20Address, web3]);
-
-  // get allowance set on manager's account for the current depositERC20
-  const getManagerDepositTokenAllowance = async () => {
-    const managerAddress = syndicate?.managerCurrent;
-    const managerDepositTokenAllowance = await checkAccountAllowance(
-      depositERC20Address,
-      managerAddress,
-      syndicateContracts.DepositLogicContract._address,
-    );
-
-    const managerDepositAllowance = getWeiAmount(
-      managerDepositTokenAllowance,
-      tokenDecimals,
-      false,
-    );
-
-    setManagerDepositsAllowance(parseFloat(managerDepositAllowance));
-
-    // check if the allowance set by the manager is not enough to cover the total max. deposits.
-    // if the current token allowance is less than the syndicate total max. deposits
-    // but is greater than zero, we'll consider this insufficient allowance.
-    // The manager needs to fix this by adding more deposit token allowance to enable members
-    // to withdraw their deposits.
-    const sufficientAllowanceSet = +managerDepositAllowance >= +depositTotalMax;
-
-    // dispatch action to store deposit token allowance details
-    dispatch(
-      storeDepositTokenAllowance([
-        {
-          tokenAddress: depositERC20Address,
-          tokenAllowance: managerDepositAllowance,
-          tokenSymbol: depositERC20TokenSymbol,
-          tokenDeposits: depositTotalMax,
-          tokenDecimals,
-          sufficientAllowanceSet,
-        },
-      ]),
-    );
-    //reset distribution details
-    dispatch(storeDistributionTokensDetails([]));
-  };
-
-  // get events where distribution was set.
-  // we'll fetch distributionERC20s from here and check if the manager has set the correct
-  // allowance for all of them.
-  const getManagerDistributionTokensAllowances = async () => {
-    const addressOfSyndicate = web3.utils.toChecksumAddress(syndicateAddress);
-
-    // get events where member invested in a syndicate.
-    const distributionEvents =
-      await syndicateContracts.DistributionLogicContract.getDistributionEvents(
-        "DistributionAdded",
-        { syndicateAddress: addressOfSyndicate },
-      );
-
-    if (distributionEvents.length > 0) {
-      // get all distributionERC20 tokens
-      const distributionERC20s = [];
-      const allowanceAndDistributionDetails = [];
-      const syndicateDistributionTokensArray = [];
-
-      for (let i = 0; i < distributionEvents.length; i++) {
-        const { distributionERC20Address } = distributionEvents[i].returnValues;
-        distributionERC20s.push(distributionERC20Address);
-      }
-      const uniqueERC20s = distributionERC20s.filter(onlyUnique);
-
-      // set up token contract to check manager allowance for the ERC20
-      for (let i = 0; i < uniqueERC20s.length; i++) {
-        const tokenAddress = uniqueERC20s[i];
-
-        const { decimals, symbol } = await getCoinFromContractAddress(
-          tokenAddress,
-        );
-
-        // get token properties
-        const tokenSymbol = symbol;
-        const tokenDecimals = decimals ? decimals : "18";
-
-        // get allowance set for token by the manager
-        const managerAddress = syndicate?.managerCurrent;
-
-        const tokenManagerAllowance = await checkAccountAllowance(
-          tokenAddress,
-          managerAddress,
-          syndicateContracts.DistributionLogicContract._address,
-        );
-
-        /**
-         * To find whether sufficient allowance is set, we need to compare total
-         * unclaimed distributions against current allowance for a given token
-         * address.
-         *
-         * Note: To get unclaimed distributions, we get the difference between
-         * total current distributions and total claimed distributions.
-         */
-        const tokenAllowance = getWeiAmount(
-          tokenManagerAllowance,
-          tokenDecimals,
-          false,
-        );
-
-        // get total distributions for the token
-        const totalCurrentDistributions =
-          await syndicateContracts.DistributionLogicContract.getDistributionTotal(
-            syndicateAddress,
-            tokenAddress,
-          );
-
-        // We should get also get total claimed distributions
-        const totalClaimedDistributions =
-          await syndicateContracts.DistributionLogicContract.getDistributionClaimedTotal(
-            syndicateAddress,
-            tokenAddress,
-          );
-
-        const tokenDistributions = getWeiAmount(
-          totalCurrentDistributions,
-          tokenDecimals,
-          false,
-        );
-
-        const claimedDistributions = getWeiAmount(
-          totalClaimedDistributions,
-          tokenDecimals,
-          false,
-        );
-
-        // Find the difference between total current and claimed distributions
-        const totalUnclaimedDistributions =
-          +tokenDistributions - +claimedDistributions;
-
-        // check if allowance set is enough to cover distributions.
-        const sufficientAllowanceSet =
-          +tokenAllowance >= +totalUnclaimedDistributions;
-
-        allowanceAndDistributionDetails.push({
-          tokenAddress,
-          tokenAllowance,
-          tokenDistributions,
-          sufficientAllowanceSet,
-          tokenSymbol,
-          tokenDecimals,
-        });
-
-        syndicateDistributionTokensArray.push({
-          tokenAddress,
-          tokenSymbol,
-          tokenDecimals,
-          tokenDistributions,
-          selected: false,
-          tokenIcon: getTokenIcon(tokenSymbol), // set Token Icon
-        });
-      }
-
-      // dispatch token distribution details to the redux store
-      dispatch(storeDistributionTokensDetails(allowanceAndDistributionDetails));
-
-      // store distribution token details for the withdrawals page.
-      // checking if we already have the value set in the redux store
-      // this avoids a scenario where token selected states are reset when
-      // the parent component is refreshed.
-      if (syndicateDistributionTokens) {
-        for (let i = 0; i < syndicateDistributionTokensArray.length; i++) {
-          const currentToken = syndicateDistributionTokensArray[i];
-          for (let j = 0; j < syndicateDistributionTokens.length; j++) {
-            const currentStoredToken = syndicateDistributionTokens[j];
-            if (
-              currentToken.tokenAddress === currentStoredToken.tokenAddress &&
-              currentStoredToken.selected
-            ) {
-              syndicateDistributionTokensArray[i].selected = true;
-            }
-          }
-        }
-      }
-
-      dispatch(
-        setSyndicateDistributionTokens(syndicateDistributionTokensArray),
-      );
-
-      //reset distribution token fields
-      dispatch(storeDepositTokenAllowance([]));
-    }
-  };
-
-  // check whether current distribution/deposit token allowances are enough to cover
-  // withdrawal of distributions/deposits
-  useEffect(() => {
-    // update local state to indicate whether all tokens have the correct allowance set
-    // check if the deposit token allowances if the syndicate is still open.
-    // checks will be done only if the current member is the manager.
-    if (accountIsManager) {
-      if (depositsEnabled && depositTokenAllowanceDetails.length > 0) {
-        // indexing from 0 only because there's just one primary depositERC20 token
-        if (depositTokenAllowanceDetails[0].sufficientAllowanceSet === true) {
-          setCorrectManagerDepositsAllowance(true);
-        } else {
-          setCorrectManagerDepositsAllowance(false);
-        }
-      }
-
-      // check distribution allowances if distribution has been set.
-      if (distributionTokensAllowanceDetails.length) {
-        // we need to loop over all values and check if there's any distribution token.
-        // a syndicate can have infinite distribution tokens.
-        for (let i = 0; i < distributionTokensAllowanceDetails.length; i++) {
-          const { sufficientAllowanceSet } =
-            distributionTokensAllowanceDetails[i];
-          if (!sufficientAllowanceSet) {
-            setCorrectManagerDistributionsAllowance(false);
-            return;
-          }
-          setCorrectManagerDistributionsAllowance(true);
-        }
-      }
-    }
-  }, [
-    depositTokenAllowanceDetails,
-    distributionTokensAllowanceDetails,
-    depositsEnabled,
-    distributing,
-    accountIsManager,
-    account,
-    syndicate,
-  ]);
-
-  // assess manager deposit and distributions token allowance
-  useEffect(() => {
-    if (web3 && syndicateContracts) {
-      // if the syndicate is still open to deposits, we'll check the deposit token allowance.
-      // otherwise, we'll check the distributions token(s) allowance(s)
-      if (depositsEnabled) {
-        getManagerDepositTokenAllowance();
-      } else if (!depositsEnabled && syndicate?.distributing) {
-        getManagerDistributionTokensAllowances();
-      }
-    }
-  }, [syndicateContracts, syndicate, depositERC20TokenSymbol, tokenDecimals]);
 
   // set syndicate cumulative values
   useEffect(() => {
@@ -396,50 +164,110 @@ const SyndicateDetails = (props: {
       const { closeDate, createdDate } = epochTime;
 
       const valueIsUnlimited = isUnlimited(depositMemberMax);
-
       setDetails([
-        {
-          header: "Total Deposits (Max)",
-          content: (
-            <div>
-              {floatedNumberWithCommas(depositTotal)}&nbsp;
-              {depositERC20TokenSymbol}&nbsp;
-              <span className="text-gray-500">
-                (
-                {isUnlimited(depositTotalMax)
-                  ? "Unlimited"
-                  : floatedNumberWithCommas(depositTotalMax)}
-                )
-              </span>
-            </div>
-          ),
-          tooltip: totalDepositsToolTip,
-        },
-        {
-          header: "Deposit Range",
-          content: `${floatedNumberWithCommas(depositMemberMin)} - ${
-            isUnlimited(depositMemberMax)
-              ? "Unlimited"
-              : floatedNumberWithCommas(depositMemberMax)
-          } ${depositERC20TokenSymbol}`,
-          tooltip: depositRangeToolTip,
-        },
-        {
-          header: "Total Members (Max)",
-          content: (
-            <div>
-              {floatedNumberWithCommas(numMembersCurrent)}&nbsp;
-              <span className="text-gray-500">
-                (
-                {isUnlimited(numMembersMax)
-                  ? "Unlimited"
-                  : floatedNumberWithCommas(numMembersMax)}
-                )
-              </span>
-            </div>
-          ),
-          tooltip: depositTokenToolTip,
-        },
+        ...(syndicate?.open
+          ? depositsMaxIsUnlimited
+            ? [
+                {
+                  header: "Created on",
+                  content: `${epochTimeToDateFormat(
+                    new Date(parseInt(createdDate) * 1000),
+                    "LLL dd yyyy, p zzz",
+                  )}`,
+                  tooltip: createdDateToolTip,
+                },
+              ]
+            : [
+                {
+                  header: "Deposit Range",
+                  content: `${floatedNumberWithCommas(depositMemberMin)} - ${
+                    isUnlimited(depositMemberMax)
+                      ? "Unlimited"
+                      : floatedNumberWithCommas(depositMemberMax)
+                  } ${depositERC20TokenSymbol}`,
+                  tooltip: depositRangeToolTip,
+                },
+              ]
+          : [
+              {
+                header: "Created on",
+                content: `${epochTimeToDateFormat(
+                  new Date(parseInt(createdDate) * 1000),
+                  "LLL dd yyyy, p zzz",
+                )}`,
+                tooltip: createdDateToolTip,
+              },
+            ]),
+        ...(syndicate?.open
+          ? depositsMaxIsUnlimited
+            ? [
+                {
+                  header: "Deposit Range",
+                  content: `${floatedNumberWithCommas(depositMemberMin)} - ${
+                    isUnlimited(depositMemberMax)
+                      ? "Unlimited"
+                      : floatedNumberWithCommas(depositMemberMax)
+                  } ${depositERC20TokenSymbol}`,
+                  tooltip: depositRangeToolTip,
+                },
+              ]
+            : [
+                {
+                  header: `Members ${
+                    !isUnlimited(numMembersMax) ? "(Max)" : ""
+                  }`,
+                  content: (
+                    <div>
+                      {floatedNumberWithCommas(numMembersCurrent)}&nbsp;
+                      <span className="text-gray-500">
+                        (
+                        {isUnlimited(numMembersMax)
+                          ? ""
+                          : floatedNumberWithCommas(numMembersMax)}
+                        )
+                      </span>
+                    </div>
+                  ),
+                  tooltip: depositTokenToolTip,
+                },
+              ]
+          : [
+              {
+                header: "Closed on",
+                content: `${epochTimeToDateFormat(
+                  new Date(parseInt(closeDate) * 1000),
+                  "LLL dd yyyy, p zzz",
+                )}`,
+                tooltip: closeDateToolTip,
+              },
+            ]),
+        ...(syndicate?.open
+          ? depositsMaxIsUnlimited
+            ? [
+                {
+                  header: "",
+                  content: null,
+                  tooltip: null,
+                },
+              ]
+            : [
+                {
+                  header: "",
+                  content: null,
+                  tooltip: null,
+                },
+              ]
+          : [
+              {
+                header: "Deposit Range",
+                content: `${floatedNumberWithCommas(depositMemberMin)} - ${
+                  isUnlimited(depositMemberMax)
+                    ? "Unlimited"
+                    : floatedNumberWithCommas(depositMemberMax)
+                } ${depositERC20TokenSymbol}`,
+                tooltip: depositRangeToolTip,
+              },
+            ]),
         {
           header: "Annual Operating Fees",
           content: `${managerManagementFeeBasisPoints}%`,
@@ -454,22 +282,6 @@ const SyndicateDetails = (props: {
           header: "Protocol Distribution Share",
           content: `${distributionShareToSyndicateProtocol}%`,
           tooltip: distributionShareToSyndicateProtocolToolTip,
-        },
-        {
-          header: "Creation Date",
-          content: `${epochTimeToDateFormat(
-            new Date(parseInt(createdDate) * 1000),
-            "LLL dd yyyy, p zzz",
-          )}`,
-          tooltip: createdDateToolTip,
-        },
-        {
-          header: "Close Date",
-          content: `${epochTimeToDateFormat(
-            new Date(parseInt(closeDate) * 1000),
-            "LLL dd yyyy, p zzz",
-          )}`,
-          tooltip: closeDateToolTip,
         },
       ]);
     }
@@ -526,13 +338,6 @@ const SyndicateDetails = (props: {
     setShowManagerSetAllowances(false);
   };
 
-  // Handle syndicate progress bar
-  const depositTotal = syndicate?.depositTotal;
-  let depositsMaxIsUnlimited = false;
-
-  // checking if depositsMax is unlimited.
-  depositsMaxIsUnlimited = isUnlimited(depositTotalMax);
-
   // set syndicate deposit link
   const [syndicateDepositLink, setSyndicateDepositLink] = useState<string>("");
   useEffect(() => {
@@ -544,7 +349,7 @@ const SyndicateDetails = (props: {
   const showSkeletonLoader = !syndicate;
 
   return (
-    <div className="flex flex-col w-full sm:mr-2 lg:mr-6 relative">
+    <div className="flex flex-col relative">
       <div className="h-fit-content rounded-custom">
         <div className="flex items-center justify-between">
           <div>
@@ -553,13 +358,13 @@ const SyndicateDetails = (props: {
                 {syndicateAddress && (
                   <GradientAvatar
                     syndicateAddress={syndicateAddress}
-                    size="w-16 h-16"
+                    size="xl:w-20 lg:w-16 xl:h-20 lg:h-16 w-10 h-10"
                   />
                 )}
               </div>
-              <div className="flex-shrink main-title flex-wrap break-all">
-                <div className="mr-4">
-                  <div className="">
+              <div className="flex-shrink main-title flex-wrap break-all xl:mr-10 lg:mr-6 mr-3">
+                <div>
+                  <div className="1.5xl:text-4.5xl lg:text-2xl md:text-xl text-lg font-normal">
                     <span className="text-gray-500">0x</span>
                     {formattedSyndicateAddress.slice(2)}
                   </div>
@@ -567,7 +372,7 @@ const SyndicateDetails = (props: {
               </div>
               <CopyToClipboard text={syndicateAddress}>
                 <button
-                  className="flex items-center ml-0 relative w-8 h-8 rounded-full cursor-pointer lg:hover:bg-gray-9 lg:active:bg-white lg:active:bg-opacity-20"
+                  className="flex items-center relative w-8 h-8 xl:mr-6 mr-4 rounded-full cursor-pointer lg:hover:bg-gray-9 lg:active:bg-white lg:active:bg-opacity-20"
                   onClick={updateAddressCopyState}
                   onKeyDown={updateAddressCopyState}
                 >
@@ -584,7 +389,7 @@ const SyndicateDetails = (props: {
               </CopyToClipboard>
               <CopyToClipboard text={syndicateDepositLink}>
                 <button
-                  className="flex items-center ml-0 relative w-8 h-8 rounded-full cursor-pointer lg:hover:bg-gray-9 lg:active:bg-white lg:active:bg-opacity-20"
+                  className="flex items-center relative w-8 h-8 xl:mr-6 mr-4 rounded-full cursor-pointer lg:hover:bg-gray-9 lg:active:bg-white lg:active:bg-opacity-20"
                   onClick={updateDepositLinkCopyState}
                   onKeyDown={updateDepositLinkCopyState}
                 >
@@ -610,23 +415,63 @@ const SyndicateDetails = (props: {
           </div>
         </div>
 
-        {!depositsMaxIsUnlimited ? (
+        {!depositsMaxIsUnlimited && syndicate?.open ? (
           <div className="h-fit-content flex w-full justify-start mt-16">
             <ProgressIndicator
               depositTotal={depositTotal}
               depositTotalMax={depositTotalMax}
               depositERC20TokenSymbol={depositERC20TokenSymbol}
+              openDate={syndicate?.epochTime.createdDate}
+              closeDate={syndicate?.epochTime.closeDate}
             />
           </div>
-        ) : null}
-
-        {/* Syndicate details */}
-        {/* details rendered on small devices only. render right column components on the left column in small devices */}
-        {props.children}
+        ) : (
+          <div className="pt-20 w-full pb-8 border-b-2 border-gray-9">
+            <div
+              className={`grid xl:grid-cols-3 lg:grid-cols-2 grid-cols-2 xl:gap-4 gap-2 gap-y-8 justify-between`}
+            >
+              <div className={`text-left ${syndicate?.open ? "" : "mr-24"} `}>
+                <p className="text-base text-gray-500 leading-loose font-light">
+                  Total Deposits
+                </p>
+                <div className="flex">
+                  <p className="text-white leading-loose xl:text-2xl lg:text-xl text-base">
+                    {floatedNumberWithCommas(depositTotal)}&nbsp;
+                    {depositERC20TokenSymbol}
+                  </p>
+                </div>
+              </div>
+              <div className="text-left">
+                <p className="text-base text-gray-500 leading-loose font-light">
+                  Members{" "}
+                  {!isUnlimited(syndicate?.numMembersMax) ? "(max)" : ""}
+                </p>
+                <div className="text-2xl">
+                  {floatedNumberWithCommas(syndicate?.numMembersCurrent)}&nbsp;
+                  {syndicate?.open && !isUnlimited(syndicate?.numMembersMax) ? (
+                    <span className="text-gray-500">
+                      ({floatedNumberWithCommas(syndicate?.numMembersMax)})
+                    </span>
+                  ) : null}
+                </div>
+              </div>
+              {syndicate?.open ? (
+                <div className="text-left">
+                  <p className="text-base text-gray-500 leading-loose font-light">
+                    Closing in
+                  </p>
+                  <p className="xl:text-2xl text-xl text-white leading-loose">
+                    {getCountDownDays(syndicate?.epochTime?.closeDate)}
+                  </p>
+                </div>
+              ) : null}
+            </div>
+          </div>
+        )}
 
         {/* This component should be shown when we have details about user deposits */}
         <div
-          className="overflow-hidden mt-8"
+          className="overflow-hidden mt-6 relative"
           style={!showMore ? { height: "200px" } : null}
         >
           <DetailsCard
@@ -636,14 +481,14 @@ const SyndicateDetails = (props: {
               syndicateDetails: true,
               syndicate,
             }}
-            customStyles={"w-full py-4 pb-4"}
-            customInnerWidth="w-full grid grid-cols-3 gap-4"
+            customStyles={"w-full pt-4"}
+            customInnerWidth="w-full grid xl:grid-cols-3 lg:grid-cols-2 grid-cols-2 xl:gap-4 gap-2 gap-y-8"
           />
           <PermissionCard
             allowlistEnabled={syndicate?.allowlistEnabled}
             modifiable={syndicate?.modifiable}
-            tranferable={syndicate?.tranferable}
-            className="pb-8"
+            transferable={syndicate?.tranferable}
+            className="pb-8 mt-6"
             showSkeletonLoader={showSkeletonLoader}
           />
         </div>
@@ -651,7 +496,7 @@ const SyndicateDetails = (props: {
         {!showMore ? (
           <div
             className="show-more-overlay w-full bottom-6 absolute"
-            style={{ height: "100px" }}
+            style={{ height: "140px" }}
           />
         ) : null}
         <button onClick={() => setShowMore(!showMore)} className="mt-5">
@@ -673,20 +518,9 @@ const SyndicateDetails = (props: {
           )}
         </button>
       </div>
-      <ManagerSetAllowance
-        {...{
-          depositTotalMax,
-          depositsEnabled,
-          depositTokenContract,
-          showManagerSetAllowances,
-          hideManagerSetAllowances,
-          managerDepositsAllowance,
-          depositERC20TokenSymbol,
-          tokenDecimals,
-          syndicateContracts,
-          depositERC20Address,
-        }}
-      />
+      {/* Syndicate details */}
+      {/* details rendered on small devices only. render right column components on the left column in small devices */}
+      {props.children}
     </div>
   );
 };

@@ -23,7 +23,6 @@ export const TokenSelect: React.FC = () => {
   } = useSelector((state: RootState) => state);
 
   const [selected, setSelected] = useState<any>("");
-
   // set initial value for token select drop-down.
   useEffect(() => {
     if (syndicateDistributionTokens) {
@@ -51,12 +50,8 @@ export const TokenSelect: React.FC = () => {
    */
   useEffect(() => {
     if (selected) {
-      const {
-        tokenDistributions,
-        tokenAddress,
-        tokenDecimals,
-        tokenSymbol,
-      } = selected;
+      const { tokenDistributions, tokenAddress, tokenDecimals, tokenSymbol } =
+        selected;
 
       // not checking if these values are defined before dispatching
       // actions will cause the component to reset them when unmounted.
@@ -134,7 +129,12 @@ export const TokenSelect: React.FC = () => {
           <div className="w-1/3">
             <Listbox.Button className="relative w-full bg-gray-9 border border-gray-24 rounded-l-md shadow-sm pl-3 pr-10 py-3 text-left cursor-pointer sm:text-sm">
               <div className="flex flex-row">
-                <img src={selected.tokenIcon} alt={selected.tokenIcon} width={20} height={20} />
+                <img
+                  src={selected.tokenIcon}
+                  alt={selected.tokenIcon}
+                  width={20}
+                  height={20}
+                />
                 <div className="truncate text-center pl-2">
                   {selected ? selected.tokenSymbol : null}
                 </div>
@@ -145,7 +145,6 @@ export const TokenSelect: React.FC = () => {
                   aria-hidden="true"
                 />
               </div>
-
             </Listbox.Button>
 
             <Transition

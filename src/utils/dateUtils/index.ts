@@ -84,6 +84,8 @@ import {
 import { registerLocale } from "react-datepicker";
 import { format, utcToZonedTime } from "date-fns-tz";
 
+const moment = require("moment");
+
 export const formatDate = (dateString: Date): string =>
   dateString.toLocaleDateString();
 
@@ -227,4 +229,37 @@ export const epochTimeToDateFormat = (
   return format(formattedDate, dateFormat, {
     timeZone: timezone,
   });
+};
+
+/**
+ *
+ * @param date epoch date string
+ * @returns
+ */
+export const getCountDownDays = (date: string): string => {
+  const now = moment();
+  const closeDateCountdown = moment(
+    new Date(parseInt(date) * 1000),
+    "M/DD/YYYY",
+  );
+  const { years, months, days, hours } = moment.preciseDiff(
+    now,
+    closeDateCountdown,
+    true,
+  );
+  let timeRemaining = "";
+
+  if (years) {
+    timeRemaining += `${years} ${years > 1 ? "years" : "year"} `;
+  }
+  if (months) {
+    timeRemaining += `${months} ${months > 1 ? "months" : "month"} `;
+  }
+  if (days) {
+    timeRemaining += `${days} ${days > 1 ? "days" : "days"} `;
+  }
+  if (hours && days < 1) {
+    timeRemaining += `${hours} ${hours === 1 ? "hour" : "hours"} `;
+  }
+  return timeRemaining;
 };

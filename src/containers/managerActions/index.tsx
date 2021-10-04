@@ -43,13 +43,24 @@ import ModifySyndicateCapTable from "./modifySyndicateCapTable";
 import MoreManagerActionCard from "./moreManagerActionCard";
 import PreApproveDepositor from "./preApproveDepositor";
 import RequestSocialProfile from "./requestSocialProfile";
+import ManagerSetAllowance from "./setAllowances";
+import abi from "human-standard-token-abi";
+import { checkAccountAllowance } from "src/helpers/approveAllowance";
+import { getWeiAmount, onlyUnique } from "@/utils/conversions";
+import {
+  storeDepositTokenAllowance,
+  storeDistributionTokensDetails,
+} from "@/redux/actions/tokenAllowances";
+import { getCoinFromContractAddress } from "functions/src/utils/ethereum";
+import { getTokenIcon } from "@/TokensList";
+import { setSyndicateDistributionTokens } from "@/redux/actions/syndicateMemberDetails";
 
 const ManagerActions = (): JSX.Element => {
   const {
     syndicatesReducer: { syndicate },
     initializeContractsReducer: { syndicateContracts },
     web3Reducer: {
-      web3: { account },
+      web3: { account, web3 },
     },
     manageActionsReducer: {
       manageActions: { modifyMemberDistribution, modifyCapTable },
@@ -58,6 +69,10 @@ const ManagerActions = (): JSX.Element => {
       syndicateDistributionTokens,
       memberDepositDetails,
       memberWithdrawalDetails,
+    },
+    tokenDetailsReducer: {
+      depositTokenAllowanceDetails,
+      distributionTokensAllowanceDetails,
     },
   } = useSelector((state: RootState) => state);
   const dispatch = useDispatch();
@@ -73,6 +88,17 @@ const ManagerActions = (): JSX.Element => {
       setAddress(web3.utils.toChecksumAddress(syndicateAddress));
     }
   }, [router.isReady]);
+  const [accountIsManager, setAccountIsManager] = useState<boolean>(false);
+
+  // check whether the current connected wallet account is the manager of the syndicate
+  // we'll use this information to load the manager view
+  useEffect(() => {
+    if (syndicate && syndicate?.managerCurrent == account) {
+      setAccountIsManager(true);
+    } else {
+      setAccountIsManager(false);
+    }
+  }, [syndicate, account]);
 
   const [showWalletConfirmationModal, setShowWalletConfirmationModal] =
     useState(false);
@@ -81,6 +107,7 @@ const ManagerActions = (): JSX.Element => {
   const [submitting, setSubmitting] = useState(false);
 
   const [showDistributeToken, setShowDistributeToken] = useState(false);
+
   const [showPreApproveDepositor, setShowPreApproveDepositor] = useState(false);
   const [showRequestSocialProfile, setShowRequestSocialProfile] =
     useState(false);
@@ -98,10 +125,18 @@ const ManagerActions = (): JSX.Element => {
 
   const actions = [
     {
-      icon: (
+      grayIcon: (
         <img
           src="/images/managerActions/create_public_profile.svg"
           alt="Public profile icon"
+          className="h-full w-full"
+        />
+      ),
+      whiteIcon: (
+        <img
+          src="/images/managerActions/create_public_profile_white.svg"
+          alt="Public profile icon"
+          className="h-full w-full"
         />
       ),
       title: "Create a public-facing social profile",
@@ -117,6 +152,83 @@ const ManagerActions = (): JSX.Element => {
   const [finalStateButtonText, setFinalButtonText] = useState("");
   const [finalStateHeaderText, setFinalStateHeaderText] = useState("");
   const [finalStateIcon, setFinalStateIcon] = useState("");
+
+  // Allowance
+  const depositTotalMax = syndicate?.depositTotalMax;
+  const depositERC20Address = syndicate?.depositERC20Address;
+  const tokenDecimals = syndicate?.tokenDecimals;
+  const depositERC20TokenSymbol = syndicate?.depositERC20TokenSymbol;
+  const distributing = syndicate?.distributing;
+  const depositsEnabled = syndicate?.depositsEnabled;
+  const [depositTokenContract, setDepositTokenContract] = useState("");
+  const [showManagerSetAllowances, setShowManagerSetAllowances] =
+    useState<boolean>(false);
+  // show modal for manager to set allowances for deposits/distributions
+  const showManagerSetAllowancesModal = () => {
+    setShowManagerSetAllowances(true);
+  };
+  //hide modal for setting allowances by the manager
+  const hideManagerSetAllowances = () => {
+    setShowManagerSetAllowances(false);
+  };
+  useEffect(() => {
+    if (depositERC20Address && web3) {
+      // set up token contract
+      const tokenContract = new web3.eth.Contract(abi, depositERC20Address);
+
+      setDepositTokenContract(tokenContract);
+    }
+  }, [depositERC20Address, web3]);
+  // states to handle manager allowances
+  const [managerDepositsAllowance, setManagerDepositsAllowance] =
+    useState<number>(0);
+  const [correctManagerDepositsAllowance, setCorrectManagerDepositsAllowance] =
+    useState<boolean>(false);
+  const [
+    correctManagerDistributionsAllowance,
+    setCorrectManagerDistributionsAllowance,
+  ] = useState<boolean>(false);
+
+  // check whether current distribution/deposit token allowances are enough to cover
+  // withdrawal of distributions/deposits
+  useEffect(() => {
+    // update local state to indicate whether all tokens have the correct allowance set
+    // check if the deposit token allowances if the syndicate is still open.
+    // checks will be done only if the current member is the manager.
+    if (accountIsManager) {
+      if (depositsEnabled && depositTokenAllowanceDetails.length > 0) {
+        // indexing from 0 only because there's just one primary depositERC20 token
+        if (depositTokenAllowanceDetails[0].sufficientAllowanceSet === true) {
+          setCorrectManagerDepositsAllowance(true);
+        } else {
+          setCorrectManagerDepositsAllowance(false);
+        }
+      }
+
+      // check distribution allowances if distribution has been set.
+      if (distributionTokensAllowanceDetails.length) {
+        // we need to loop over all values and check if there's any distribution token.
+        // a syndicate can have infinite distribution tokens.
+        for (let i = 0; i < distributionTokensAllowanceDetails.length; i++) {
+          const { sufficientAllowanceSet } =
+            distributionTokensAllowanceDetails[i];
+          if (!sufficientAllowanceSet) {
+            setCorrectManagerDistributionsAllowance(false);
+            return;
+          }
+          setCorrectManagerDistributionsAllowance(true);
+        }
+      }
+    }
+  }, [
+    depositTokenAllowanceDetails,
+    distributionTokensAllowanceDetails,
+    depositsEnabled,
+    distributing,
+    accountIsManager,
+    account,
+    syndicate,
+  ]);
 
   const handleCloseFinalStateModal = async () => {
     setShowFinalState(false);
@@ -190,7 +302,7 @@ const ManagerActions = (): JSX.Element => {
   if (isNotManager) {
     return (
       <>
-        <div className="h-fit-content rounded-2xl p-4 md:mx-2 md:p-6 bg-gray-9 mt-6 md:mt-0">
+        <div className="h-fit-content rounded-2xl p-4 md:mx-2 md:p-6 bg-gray-9 mt-6 md:mt-0 w-full">
           <div className="mb-6">
             <SkeletonLoader width="full" height="10" />
           </div>
@@ -204,8 +316,9 @@ const ManagerActions = (): JSX.Element => {
             <SkeletonLoader width="full" height="12" />
           </div>
         </div>
+        <div className="w-40" />
         <div className="my-6 mx-4">
-          <SkeletonLoader width="24" height="10" />
+          <SkeletonLoader width="72" height="10" />
           <div className="my-6">
             <SkeletonLoader width="full" height="12" />
           </div>
@@ -231,10 +344,6 @@ const ManagerActions = (): JSX.Element => {
     dispatch(setShowModifyCapTable(true));
   };
 
-  const distributing = syndicate?.distributing;
-  const closeDate = syndicate?.closeDate;
-  const depositsEnabled = syndicate?.depositsEnabled;
-
   let badgeBackgroundColor = "bg-blue-darker";
   let badgeIcon = "depositIcon.svg";
   let titleText = "Open to deposits";
@@ -244,21 +353,21 @@ const ManagerActions = (): JSX.Element => {
     titleText = "Distributing";
   } else if (!depositsEnabled && !distributing) {
     badgeBackgroundColor = "bg-green-dark";
-    badgeIcon = "operatingIcon.svg";
-    titleText = "Operating";
+    badgeIcon = "active.svg";
+    titleText = "Active";
   }
 
   return (
     <ErrorBoundary>
       <div className="w-full mt-4 sm:mt-0">
         <FadeIn>
-          <div className="h-fit-content rounded-3xl bg-gray-9">
+          <div className="h-fit-content rounded-2-half bg-gray-syn8">
             <StatusBadge
               badgeBackgroundColor={badgeBackgroundColor}
               badgeIcon={badgeIcon}
               titleText={titleText}
             />
-            <div className="h-fit-content rounded-3xl bg-gray-9 mt-6 mb-2 md:mt-0 md:pb-2">
+            <div className="h-fit-content rounded-2-half mt-6 mb-2 md:mt-0 pb-8">
               {syndicateDistributionTokens && syndicate?.distributing ? (
                 <div className="px-6 border-b-1 border-gray-700 pb-6 font-light w-full tracking-wide">
                   {syndicateDistributionTokens?.map((token, index) => (
@@ -270,81 +379,116 @@ const ManagerActions = (): JSX.Element => {
                   ))}
                 </div>
               ) : null}
-              <div
-                className={`text-sm font-inter uppercase tracking-wider m-4 mr-4 md:m-3 md:mr-5 pl-3 md:mt-6`}
-              >
-                Manager Actions
-              </div>
-              {/* show set distribution option when syndicate is closed */}
-              {syndicate?.open ? (
-                <ManagerActionCard
-                  title={"Close to deposits"}
-                  description={
-                    "Close this syndicate and stop accepting deposits. This action is irreversible."
-                  }
-                  icon={
-                    <img
-                      src="/images/managerActions/close_syndicate.svg"
-                      alt="close"
+              <div className="pl-8 md:pl-6 pr-4">
+                <div
+                  className={`text-sm font-bold uppercase tracking-wider m-4 mr-4 ml-0 md:ml-0 md:m-3 md:mr-5 md:mt-5`}
+                >
+                  Manager Actions
+                </div>
+                {/* show set distribution option when syndicate is closed */}
+                {syndicate?.open ? (
+                  <>
+                    <ManagerActionCard
+                      title={"Set allowance"}
+                      description={
+                        "In order for USDC to flow in and out of this syndicate, you must first set an appropriate allowance amount."
+                      }
+                      grayIcon={
+                        <img
+                          src="/images/managerActions/allow.svg"
+                          alt="close"
+                          style={{ height: "100%", width: "100%" }}
+                        />
+                      }
+                      whiteIcon={
+                        <img
+                          src="/images/managerActions/allow-white.svg"
+                          alt="close"
+                          style={{ height: "100%", width: "100%" }}
+                        />
+                      }
+                      onClickHandler={() => showManagerSetAllowancesModal()}
                     />
-                  }
-                  onClickHandler={() => setShowConfirmCloseSyndicate(true)}
-                />
-              ) : (
-                <ManagerActionCard
-                  title={`${
-                    !syndicateDistributionTokens
-                      ? "Distribute funds back to members"
-                      : "Distribute more funds to members"
-                  }`}
-                  description={
-                    "Distribute tokens to members, making them available to withdraw."
-                  }
-                  icon={<img src="/images/server.svg" alt="server" />}
-                  onClickHandler={() => {
-                    // Amplitude logger: OPEN_DISTRIBUTE_TOKEN_MODAL
-                    amplitudeLogger(OPEN_DISTRIBUTE_TOKEN_MODAL, {
-                      flow: Flow.MGR_SET_DIST,
-                    });
-                    // Open distribute token modal
-                    setShowDistributeToken(true);
-                  }}
-                />
-              )}
-              {actions.map(({ icon, title, description, onClickHandler }) => {
-                return (
-                  <ManagerActionCard
-                    title={title}
-                    description={description}
-                    icon={icon}
-                    onClickHandler={onClickHandler}
-                    key={title}
-                  />
-                );
-              })}
+                    <ManagerActionCard
+                      title={"Close to deposits"}
+                      description={
+                        "Close this syndicate and stop accepting deposits. This action is irreversible."
+                      }
+                      grayIcon={
+                        <img
+                          src="/images/managerActions/close_syndicate.svg"
+                          alt="close"
+                          style={{ height: "100%", width: "100%" }}
+                        />
+                      }
+                      whiteIcon={
+                        <img
+                          src="/images/managerActions/close_syndicate_white.svg"
+                          alt="close"
+                          style={{ height: "100%", width: "100%" }}
+                        />
+                      }
+                      onClickHandler={() => setShowConfirmCloseSyndicate(true)}
+                    />
+                  </>
+                ) : (
+                  <>
+                    <ManagerActionCard
+                      title={`${
+                        !syndicateDistributionTokens
+                          ? "Distribute funds back to members"
+                          : "Distribute more funds to members"
+                      }`}
+                      description={
+                        "Distribute tokens to members, making them available to withdraw."
+                      }
+                      grayIcon={
+                        <img src="/images/distribute-gray.svg" alt="server" />
+                      }
+                      whiteIcon={
+                        <img src="/images/distribute-white.svg" alt="server" />
+                      }
+                      onClickHandler={() => {
+                        // Amplitude logger: OPEN_DISTRIBUTE_TOKEN_MODAL
+                        amplitudeLogger(OPEN_DISTRIBUTE_TOKEN_MODAL, {
+                          flow: Flow.MGR_SET_DIST,
+                        });
+                        // Open distribute token modal
+                        setShowDistributeToken(true);
+                      }}
+                    />
+                  </>
+                )}
+                {actions.map(
+                  ({
+                    whiteIcon,
+                    grayIcon,
+                    title,
+                    description,
+                    onClickHandler,
+                  }) => {
+                    return (
+                      <ManagerActionCard
+                        title={title}
+                        description={description}
+                        whiteIcon={whiteIcon}
+                        grayIcon={grayIcon}
+                        onClickHandler={onClickHandler}
+                        key={title}
+                      />
+                    );
+                  },
+                )}
+              </div>
             </div>
           </div>
         </FadeIn>
-        <div className="p-0 md:p-2">
+        <div className="p-0 pt-4">
           {syndicate?.distributing && syndicate?.modifiable ? (
             <MoreManagerActionCard
               icon={<img src="/images/invertedInfo.svg" alt="Info" />}
               text={"Modify Member distributions"}
               onClickHandler={handleSetShowModifyMemberDistributions}
-            />
-          ) : null}
-
-          {/* member deposits can be set if syndicate is open and modifiable */}
-          {syndicate?.open && syndicate?.modifiable ? (
-            <MoreManagerActionCard
-              icon={
-                <img
-                  src="/images/managerActions/overwrite_cap_table.svg"
-                  alt="overwrite"
-                />
-              }
-              text={"Overwrite syndicate cap table"}
-              onClickHandler={handleSetShoModifySyndicateCapTable}
             />
           ) : null}
 
@@ -463,6 +607,20 @@ const ManagerActions = (): JSX.Element => {
         buttonText={finalStateButtonText}
         headerText={finalStateHeaderText}
         address={address.toString()}
+      />
+      <ManagerSetAllowance
+        {...{
+          depositTotalMax,
+          depositsEnabled,
+          depositTokenContract,
+          showManagerSetAllowances,
+          hideManagerSetAllowances,
+          managerDepositsAllowance,
+          depositERC20TokenSymbol,
+          tokenDecimals,
+          syndicateContracts,
+          depositERC20Address,
+        }}
       />
     </ErrorBoundary>
   );

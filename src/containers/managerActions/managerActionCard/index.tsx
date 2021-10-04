@@ -1,23 +1,43 @@
-import React, { ReactNode } from "react";
+import React, { ReactNode, useState } from "react";
 
 interface Props {
   title: string;
-  icon: ReactNode;
+  grayIcon: ReactNode;
+  whiteIcon: ReactNode;
   description: string;
   onClickHandler: () => void;
 }
 
-const ManagerAction = ({ title, icon, description, onClickHandler }: Props) => {
+const ManagerAction = ({
+  title,
+  grayIcon,
+  whiteIcon,
+  description,
+  onClickHandler,
+}: Props) => {
+  const [hovering, setHovering] = useState(false);
   return (
     <div
-      className={`flex m-4 mr-4 md:m-3 md:mr-5 mb-3 p-2 pl-0 rounded-custom cursor-pointer hover:bg-white hover:bg-opacity-5 target-l-3 target-r-3 disabled:opacity-50 items-start manager-actions-bg `}
+      className={`flex pl-0 mt-5 rounded-custom cursor-pointer disabled:opacity-50 items-start`}
       onClick={onClickHandler}
+      onMouseEnter={() => {
+        setHovering(true);
+      }}
+      onMouseLeave={() => {
+        setHovering(false);
+      }}
     >
-      <div className="w-5 pt-2">{icon}</div>
-      <div className="px-3 w-full">
-        <div className="leading-6 my-1">{title}</div>
-        <div className="text-sm text-gray-manatee font-extralight">
-          {description}
+      <div className="w-full flex justify-start">
+        <div className="mr-3 mt-1">
+          <div className="w-4 h-4">{hovering ? whiteIcon : grayIcon}</div>
+        </div>
+        <div>
+          <div>
+            <p className="leading-6">{title}</p>
+          </div>
+          <div className="text-sm text-gray-manatee font-extralight">
+            {description}
+          </div>
         </div>
       </div>
     </div>

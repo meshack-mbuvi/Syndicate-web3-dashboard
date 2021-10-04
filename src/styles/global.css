@@ -438,6 +438,10 @@ input {
   border-radius: 0.625rem;
 }
 
+.rounded-2-half {
+  border-radius: 1.25rem;
+}
+
 .rounded-t-custom {
   border-top-right-radius: 0.625rem;
   border-top-left-radius: 0.625rem;

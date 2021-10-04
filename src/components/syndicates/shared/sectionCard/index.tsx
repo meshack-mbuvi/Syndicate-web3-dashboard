@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import Portal from "@/components/shared/Portal";
 
 // Description of SectionCard props
@@ -32,35 +32,52 @@ export const SectionCard = (props: SectionCardProps) => {
     header === "Total Distributions / Deposits";
 
   const [coord, setCoords] = useState({});
-  const [isOn, setOn] = useState(false);
+  const [anchorEl, setAnchorEl] = React.useState(null);
 
+  const handlePopoverOpen = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handlePopoverClose = () => {
+    setAnchorEl(null);
+  };
+
+  const tooltipRef = useRef(null);
+
+  const open = Boolean(anchorEl);
   return (
-    <div>
-      {isOn ? (
-        <Portal>
-          <div className={`absolute z-10`} style={{ ...coord }}>
-            {!infoIcon ? null : (
-              <div className="text-sm font-light tooltiptext w-fit-content bg-gray-9 p-4 rounded-lg text-gray-lightManatee max-w-xs">
-                {tooltip}
-              </div>
-            )}
-          </div>
-        </Portal>
-      ) : null}
+    <div className="relative">
+      <Portal>
+        <div
+          className={`absolute z-10 pointer-events-none ${
+            open ? "visible" : "invisible"
+          } w-56`}
+          style={{ ...coord }}
+        >
+          {!infoIcon ? null : (
+            <div
+              ref={tooltipRef}
+              className="text-sm font-light tooltiptext w-fit-content bg-gray-9 p-4 rounded-lg text-gray-lightManatee max-w-xs"
+            >
+              {tooltip}
+            </div>
+          )}
+        </div>
+      </Portal>
       <div
         onMouseEnter={(e) => {
-          setOn(true);
-          const rect = (e.target as HTMLElement).getBoundingClientRect();
+          handlePopoverOpen(e);
+          const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
           setCoords({
-            left: rect.x + rect.width / 2, // add half the width of the button for centering
-            top: rect.y + window.scrollY - 50, // add scrollY offset, as soon as getBountingClientRect takes on screen coords
+            left: rect.left, // add half the width of the button for centering
+            top: `${rect.y + 60}px`, // add scrollY offset, as soon as getBountingClientRect takes on screen coords
           });
         }}
         onMouseLeave={() => {
-          setOn(false);
+          handlePopoverClose();
         }}
       >
-        <p className="text-base text-gray-500 leading-loose">
+        <p className="text-base text-gray-500 leading-loose mb-2">
           {header?.toString()}
         </p>
         <p

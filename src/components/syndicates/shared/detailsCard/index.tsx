@@ -67,10 +67,10 @@ export const DetailsCard = (props: {
       <div className={`${customInnerWidth}`}>
         {sections.map((section, index) => (
           <div
-            className={`flex justify-start visibility-container target-l-12`}
+            className={`flex justify-start visibility-container target-l-12 relative`}
             key={index}
           >
-            <div className="flex justify-between items-start sm:my-3 my-3 w-full relative">
+            <div className="flex justify-between items-start sm:my-3 my-3 w-full">
               {showSkeletonLoader ? (
                 <SkeletonLoader
                   height="9"

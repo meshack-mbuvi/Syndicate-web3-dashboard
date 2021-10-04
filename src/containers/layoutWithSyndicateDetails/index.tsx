@@ -7,13 +7,22 @@ import OnboardingModal from "@/components/onboarding";
 import { Spinner } from "@/components/shared/spinner";
 import BackButton from "@/components/socialProfiles/backButton";
 import { EtherscanLink } from "@/components/syndicates/shared/EtherscanLink";
+import { checkAccountAllowance } from "@/helpers/approveAllowance";
 import { showWalletModal } from "@/redux/actions";
+import { setSyndicateDistributionTokens } from "@/redux/actions/syndicateMemberDetails";
 import { getSyndicateByAddress } from "@/redux/actions/syndicates";
+import {
+  storeDistributionTokensDetails,
+  storeDepositTokenAllowance,
+} from "@/redux/actions/tokenAllowances";
 import { RootState } from "@/redux/store";
+import { getTokenIcon } from "@/TokensList";
+import { onlyUnique, getWeiAmount } from "@/utils/conversions";
 import { formatAddress } from "@/utils/formatAddress";
 import { faExclamationTriangle } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Tab } from "@headlessui/react";
+import { getCoinFromContractAddress } from "functions/src/utils/ethereum";
 import { isEmpty } from "lodash";
 import { useRouter } from "next/router";
 import React, { useEffect, useRef, useState } from "react";
@@ -33,6 +42,7 @@ const LayoutWithSyndicateDetails = ({ children }): JSX.Element => {
     web3Reducer: {
       web3: { account, web3 },
     },
+    syndicateMemberDetailsReducer: { syndicateDistributionTokens },
     loadingReducer: { submitting },
   } = useSelector((state: RootState) => state);
 
@@ -87,6 +97,213 @@ const LayoutWithSyndicateDetails = ({ children }): JSX.Element => {
 
   const [accountIsManager, setAccountIsManager] = useState<boolean>(false);
   const showOnboardingIfNeeded = router.pathname.endsWith("deposit");
+
+  const [managerDepositsAllowance, setManagerDepositsAllowance] =
+    useState<number>(0);
+
+  // get events where distribution was set.
+  // we'll fetch distributionERC20s from here and check if the manager has set the correct
+  // allowance for all of them.
+  const getManagerDistributionTokensAllowances = async () => {
+    const addressOfSyndicate = web3.utils.toChecksumAddress(syndicateAddress);
+
+    // get events where member invested in a syndicate.
+    const distributionEvents =
+      await syndicateContracts.DistributionLogicContract.getDistributionEvents(
+        "DistributionAdded",
+        { syndicateAddress: addressOfSyndicate },
+      );
+
+    if (distributionEvents.length > 0) {
+      // get all distributionERC20 tokens
+      const distributionERC20s = [];
+      const allowanceAndDistributionDetails = [];
+      const syndicateDistributionTokensArray = [];
+
+      for (let i = 0; i < distributionEvents.length; i++) {
+        const { distributionERC20Address } = distributionEvents[i].returnValues;
+        distributionERC20s.push(distributionERC20Address);
+      }
+      const uniqueERC20s = distributionERC20s.filter(onlyUnique);
+
+      // set up token contract to check manager allowance for the ERC20
+      for (let i = 0; i < uniqueERC20s.length; i++) {
+        const tokenAddress = uniqueERC20s[i];
+
+        const { decimals, symbol } = await getCoinFromContractAddress(
+          tokenAddress,
+        );
+
+        // get token properties
+        const tokenSymbol = symbol;
+        const tokenDecimals = decimals ? decimals : "18";
+
+        // get allowance set for token by the manager
+        const managerAddress = syndicate?.managerCurrent;
+
+        const tokenManagerAllowance = await checkAccountAllowance(
+          tokenAddress,
+          managerAddress,
+          syndicateContracts.DistributionLogicContract._address,
+        );
+
+        /**
+         * To find whether sufficient allowance is set, we need to compare total
+         * unclaimed distributions against current allowance for a given token
+         * address.
+         *
+         * Note: To get unclaimed distributions, we get the difference between
+         * total current distributions and total claimed distributions.
+         */
+        const tokenAllowance = getWeiAmount(
+          tokenManagerAllowance,
+          tokenDecimals,
+          false,
+        );
+
+        // get total distributions for the token
+        const totalCurrentDistributions =
+          await syndicateContracts.DistributionLogicContract.getDistributionTotal(
+            syndicateAddress,
+            tokenAddress,
+          );
+
+        // We should get also get total claimed distributions
+        const totalClaimedDistributions =
+          await syndicateContracts.DistributionLogicContract.getDistributionClaimedTotal(
+            syndicateAddress,
+            tokenAddress,
+          );
+
+        const tokenDistributions = getWeiAmount(
+          totalCurrentDistributions,
+          tokenDecimals,
+          false,
+        );
+
+        const claimedDistributions = getWeiAmount(
+          totalClaimedDistributions,
+          tokenDecimals,
+          false,
+        );
+
+        // Find the difference between total current and claimed distributions
+        const totalUnclaimedDistributions =
+          +tokenDistributions - +claimedDistributions;
+
+        // check if allowance set is enough to cover distributions.
+        const sufficientAllowanceSet =
+          +tokenAllowance >= +totalUnclaimedDistributions;
+
+        allowanceAndDistributionDetails.push({
+          tokenAddress,
+          tokenAllowance,
+          tokenDistributions,
+          sufficientAllowanceSet,
+          tokenSymbol,
+          tokenDecimals,
+        });
+
+        syndicateDistributionTokensArray.push({
+          tokenAddress,
+          tokenSymbol,
+          tokenDecimals,
+          tokenDistributions,
+          selected: false,
+          tokenIcon: getTokenIcon(tokenSymbol), // set Token Icon
+        });
+      }
+
+      // dispatch token distribution details to the redux store
+      dispatch(storeDistributionTokensDetails(allowanceAndDistributionDetails));
+
+      // store distribution token details for the withdrawals page.
+      // checking if we already have the value set in the redux store
+      // this avoids a scenario where token selected states are reset when
+      // the parent component is refreshed.
+      if (syndicateDistributionTokens) {
+        for (let i = 0; i < syndicateDistributionTokensArray.length; i++) {
+          const currentToken = syndicateDistributionTokensArray[i];
+          for (let j = 0; j < syndicateDistributionTokens.length; j++) {
+            const currentStoredToken = syndicateDistributionTokens[j];
+            if (
+              currentToken.tokenAddress === currentStoredToken.tokenAddress &&
+              currentStoredToken.selected
+            ) {
+              syndicateDistributionTokensArray[i].selected = true;
+            }
+          }
+        }
+      }
+
+      dispatch(
+        setSyndicateDistributionTokens(syndicateDistributionTokensArray),
+      );
+
+      //reset distribution token fields
+      dispatch(storeDepositTokenAllowance([]));
+    }
+  };
+
+  // get allowance set on manager's account for the current depositERC20
+  const getManagerDepositTokenAllowance = async () => {
+    const managerAddress = syndicate?.managerCurrent;
+    const managerDepositTokenAllowance = await checkAccountAllowance(
+      syndicate?.depositERC20Address,
+      managerAddress,
+      syndicateContracts.DepositLogicContract._address,
+    );
+
+    const managerDepositAllowance = getWeiAmount(
+      managerDepositTokenAllowance,
+      syndicate?.tokenDecimals,
+      false,
+    );
+
+    setManagerDepositsAllowance(parseFloat(managerDepositAllowance));
+
+    // check if the allowance set by the manager is not enough to cover the total max. deposits.
+    // if the current token allowance is less than the syndicate total max. deposits
+    // but is greater than zero, we'll consider this insufficient allowance.
+    // The manager needs to fix this by adding more deposit token allowance to enable members
+    // to withdraw their deposits.
+    const sufficientAllowanceSet =
+      +managerDepositAllowance >= +syndicate?.depositTotalMax;
+
+    // dispatch action to store deposit token allowance details
+    dispatch(
+      storeDepositTokenAllowance([
+        {
+          tokenAddress: syndicate?.depositERC20Address,
+          tokenAllowance: managerDepositAllowance,
+          tokenSymbol: syndicate?.depositERC20TokenSymbol,
+          tokenDeposits: syndicate?.depositTotalMax,
+          tokenDecimals: syndicate?.tokenDecimals,
+          sufficientAllowanceSet,
+        },
+      ]),
+    );
+    //reset distribution details
+    dispatch(storeDistributionTokensDetails([]));
+  };
+
+  // assess manager deposit and distributions token allowance
+  useEffect(() => {
+    if (web3 && syndicateContracts) {
+      // if the syndicate is still open to deposits, we'll check the deposit token allowance.
+      // otherwise, we'll check the distributions token(s) allowance(s)
+      if (syndicate?.depositsEnabled) {
+        getManagerDepositTokenAllowance();
+      } else if (!syndicate?.depositsEnabled && syndicate?.distributing) {
+        getManagerDistributionTokensAllowances();
+      }
+    }
+  }, [
+    syndicateContracts,
+    syndicate,
+    syndicate?.depositERC20TokenSymbol,
+    syndicate?.tokenDecimals,
+  ]);
 
   let noSyndicate;
   // A manager should not access deposit page but should be redirected
@@ -428,31 +645,29 @@ const LayoutWithSyndicateDetails = ({ children }): JSX.Element => {
           ) : (
             <div className="container mx-auto">
               {/* Two Columns (Syndicate Details + Widget Cards) */}
-              <div className="flex flex-col md:flex-row">
-                <BackButton topOffset="-1.2rem" />
+              <BackButton />
+              <div className="grid grid-cols-12 gap-5">
                 {/* Left Column */}
-                <div className="md:w-3/5 w-full pb-6 md:pr-24">
-                  <div ref={ref} className="w-full md:hidden" />{" "}
+                <div className="md:col-start-1 md:col-end-7 col-span-12">
+                  {/* <div ref={ref} className="w-full md:hidden" />{" "} */}
                   {/* its used as an identifier for ref in small devices */}
                   {/*
                   we should have an isChildVisible child here,
                   but it's not working as expected
                   */}
                   <SyndicateDetails accountIsManager={accountIsManager}>
-                    <div className="w-full md:hidden">{children}</div>
+                    <div className="w-full md:hidden mt-5">{children}</div>
                   </SyndicateDetails>
                 </div>
                 {/* Right Column */}
-                <div className="lg:w-2/5 w-96 hidden md:block pt-0">
-                  <div className="lg:max-w-120 lg:w-full w-96 mx-auto sticky relative top-33">
-                    {children}
-                  </div>
+                <div className="md:col-end-13 md:col-span-4 col-span-12 hidden md:block pt-0 h-full">
+                  <div className="sticky relative top-33">{children}</div>
                 </div>
               </div>
 
               {/* Tabbed components; only visible on manage pages */}
               {!isEmpty(syndicate) && showMembers === true && (
-                <div className="w-full rounded-md h-full my-4">
+                <div className="w-full rounded-md h-full my-4 mt-20">
                   <div className="w-full sm:px-0">
                     <Tab.Group defaultIndex={0}>
                       <Tab.List className="flex space-x-10 w-full">

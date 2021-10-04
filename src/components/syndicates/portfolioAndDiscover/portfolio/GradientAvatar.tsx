@@ -25,7 +25,7 @@ const GradientAvatar = (props: Props) => {
 
   return (
     <div
-      className={`${size} rounded-full ${customClasses}`}
+      className={`${size} rounded-full ${customClasses ?? ""}`}
       style={{
         background: `linear-gradient(hsl(${hue1}deg, 100%, 50%), hsl(${hue2}deg, 30%, 70%)`,
       }}
