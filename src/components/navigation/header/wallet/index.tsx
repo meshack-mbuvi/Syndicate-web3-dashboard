@@ -3,12 +3,12 @@ import { setOneSyndicatePerAccount } from "@/redux/actions/syndicateMemberDetail
 import { showWalletModal } from "@/redux/actions/web3Provider";
 import { Menu, Transition } from "@headlessui/react";
 import { useAuthUser } from "next-firebase-auth";
+import { useRouter } from "next/router";
 
 import React, { useState } from "react";
 import Joyride from "react-joyride";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "src/redux/store";
-
 import AddressMenuDropDown from "./accountMenuDropdown";
 
 export const Wallet: React.FC = () => {
@@ -25,6 +25,8 @@ export const Wallet: React.FC = () => {
   const { oneSyndicatePerAccount } = useSelector(
     (state: RootState) => state.syndicateMemberDetailsReducer,
   );
+
+  const router = useRouter();
 
   const [steps] = useState([
     {
@@ -107,9 +109,9 @@ export const Wallet: React.FC = () => {
 
   return (
     <div className="flex justify-between rounded-full bg-gray-shark bg-opacity-50 items-center">
-      {AuthUser.firebaseUser && (
-        <>
-          <div className="flex items-center">
+      <>
+        <div className="flex items-center">
+          {AuthUser.firebaseUser ? (
             <Menu as="div">
               {({ open }) => (
                 <>
@@ -150,7 +152,21 @@ export const Wallet: React.FC = () => {
                 </>
               )}
             </Menu>
-          </div>
+          ) : !router.pathname.includes("/sign-in") ? (
+            <>
+              <img
+                className="h-6 w-6 rounded-full mx-1"
+                src="/images/social/twitter-blue.svg"
+                alt="profile"
+              />
+              <div className="px-2" onClick={() => router.push("/sign-in")}>
+                Sign in with Twitter
+              </div>
+            </>
+          ) : null}
+        </div>
+        {/* hide wallet on signin page */}
+        {!router.pathname.includes("/sign-in") && (
           <div className="wallet-connect flex relative justify-center my-1 mr-1">
             {status === "connected" ? (
               <AddressMenuDropDown web3={web3} />
@@ -165,8 +181,8 @@ export const Wallet: React.FC = () => {
               callback={handleClose}
             />
           </div>
-        </>
-      )}
+        )}
+      </>
     </div>
   );
 };

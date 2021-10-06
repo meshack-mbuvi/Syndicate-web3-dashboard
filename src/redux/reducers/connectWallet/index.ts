@@ -4,6 +4,8 @@ import {
   DISCONNECTED,
   HIDE_ERROR_MODAL,
   HIDE_WALLET_MODAL,
+  SHOW_TWITTER_MODAL,
+  HIDE_TWITTER_MODAL,
   SET_PROVIDER,
   SET_PROVIDER_NAME,
   SET_WEB3,
@@ -60,6 +62,18 @@ export const web3Reducer = (state = initialState, action) => {
       return {
         ...state,
         showWalletModal: false,
+      };
+
+    case SHOW_TWITTER_MODAL:
+      return {
+        ...state,
+        showTwitterModal: true,
+      };
+
+    case HIDE_TWITTER_MODAL:
+      return {
+        ...state,
+        showTwitterModal: false,
       };
 
     case CONNECTING:

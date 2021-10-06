@@ -1,5 +1,5 @@
 // This page lists all syndicates.
-import { withLoggedInUser } from "@/lib/withAuth";
+import { withLoggedOutUser } from "@/lib/withAuth";
 import Syndicates from "src/containers/syndicates";
 
-export default withLoggedInUser(Syndicates);
+export default withLoggedOutUser(Syndicates);

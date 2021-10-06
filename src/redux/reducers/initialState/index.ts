@@ -10,15 +10,6 @@ export enum SYNDICATE_CHAIN_TYPE {
 const initialWeb3 = new Web3(process.env.NEXT_PUBLIC_INFURA_ENDPOINT);
 
 type InitialState = {
-  auth: {
-    id: string;
-    twitterUsername: string;
-    twitterUserId: string;
-    createdAt: string;
-    profileImageURL: string;
-    updatedAt: string;
-    isApproved: boolean;
-  };
   web3: {
     status: string;
     connect: boolean;
@@ -43,6 +34,7 @@ type InitialState = {
   loading: boolean;
   submitting: boolean;
   showWalletModal: boolean;
+  showTwitterModal: boolean;
   syndicateInvestments: any[];
   syndicateDetails: {
     totalDepositors: number;
@@ -70,13 +62,13 @@ type InitialState = {
   memberActivity: {
     [address: string]: [
       {
-      action: string;
-      amountChanged: number;
-      tokenSymbol: string;
-      elapsedTime: string;
-      epochDate: number;
-     }
-   ]
+        action: string;
+        amountChanged: number;
+        tokenSymbol: string;
+        elapsedTime: string;
+        epochDate: number;
+      },
+    ];
   };
   syndicateDetailsLoading: boolean;
   syndicateMemberDetailsLoading: boolean;
@@ -175,15 +167,6 @@ const timezones = ct.getAllTimezones();
  * All the properties of the web3 object are set during wallet connection
  */
 export const initialState: InitialState = {
-  auth: {
-    id: "",
-    twitterUsername: "",
-    twitterUserId: "",
-    createdAt: "",
-    profileImageURL: "",
-    updatedAt: "",
-    isApproved: false,
-  },
   web3: {
     status: "disconnected",
     connect: false,
@@ -208,6 +191,7 @@ export const initialState: InitialState = {
   loading: false,
   submitting: false,
   showWalletModal: false,
+  showTwitterModal: false,
   syndicateInvestments: [],
   syndicateDetails: {
     totalDepositors: 0,

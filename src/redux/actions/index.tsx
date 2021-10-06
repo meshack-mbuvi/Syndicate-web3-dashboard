@@ -1,2 +1,6 @@
 export { setLoading, setSubmitting } from "./helpers";
-export { showWalletModal } from "./web3Provider";
+export {
+  showWalletModal,
+  showTwitterModal,
+  hideTwitterModal,
+} from "./web3Provider";

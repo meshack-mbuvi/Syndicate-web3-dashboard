@@ -1,7 +1,7 @@
 import { amplitudeLogger, Flow } from "@/components/amplitude";
 import { CLICK_CREATE_A_SYNDICATE } from "@/components/amplitude/eventNames";
 import WalletNotConnected from "@/components/walletNotConnected";
-import { showWalletModal } from "@/redux/actions";
+import { showWalletModal, showTwitterModal } from "@/redux/actions";
 import { setOneSyndicatePerAccount } from "@/redux/actions/syndicateMemberDetails";
 import { getSyndicates } from "@/redux/actions/syndicates";
 import { SYNDICATE_BY_ADDRESS } from "@/redux/actions/types";
@@ -13,6 +13,7 @@ import Button from "src/components/buttons";
 import { SkeletonLoader } from "src/components/skeletonLoader";
 import CreateSyndicate from "src/components/syndicates/createSyndicate";
 import { default as Portfolio } from "./portfolio";
+import { useAuthUser } from "next-firebase-auth";
 
 /**
  * My Syndicates: IF their wallet (a) is leading a syndicate or
@@ -24,6 +25,8 @@ import { default as Portfolio } from "./portfolio";
  */
 const PortfolioAndDiscover = () => {
   const dispatch = useDispatch();
+
+  const AuthUser = useAuthUser();
 
   const {
     loadingReducer: { loading },
@@ -84,6 +87,10 @@ const PortfolioAndDiscover = () => {
   }, [syndicates, account]);
 
   const showSyndicateForm = () => {
+    // Trigger twitter connection wallet if not authed
+    if (!AuthUser.firebaseUser) {
+      return dispatch(showTwitterModal());
+    }
     // Trigger wallet connection if wallet is not connected
     if (!account) {
       return dispatch(showWalletModal());
@@ -162,24 +169,24 @@ const PortfolioAndDiscover = () => {
         <>
           {/* Show page header and button to create new syndicate */}
           <div className="flex justify-between items-center w-full mb-10">
-              {account && syndicates.length ? (
-                <>
-                  <h1 className="main-title">Portfolio</h1>
-                  <Button
-                    customClasses="secondary-CTA relative"
-                    textColor="text-white"
-                    onClick={
-                      managerWithOpenSyndicate
-                        ? () => dispatch(setOneSyndicatePerAccount(true))
-                        : () => showSyndicateForm()
-                    }
-                    createSyndicate={true}
-                  >
-                    <div className="hidden sm:block">Create a syndicate</div>
-                    <div className="block sm:hidden">Create</div>
-                  </Button>
-                </>
-              ) : null}
+            {account && syndicates.length ? (
+              <>
+                <h1 className="main-title">Portfolio</h1>
+                <Button
+                  customClasses="secondary-CTA relative"
+                  textColor="text-white"
+                  onClick={
+                    managerWithOpenSyndicate
+                      ? () => dispatch(setOneSyndicatePerAccount(true))
+                      : () => showSyndicateForm()
+                  }
+                  createSyndicate={true}
+                >
+                  <div className="hidden sm:block">Create a syndicate</div>
+                  <div className="block sm:hidden">Create</div>
+                </Button>
+              </>
+            ) : null}
           </div>
           {syndicates.length ? (
             <>
@@ -192,7 +199,10 @@ const PortfolioAndDiscover = () => {
             </>
           ) : account && !syndicates.length && !invalidEthereumNetwork ? (
             // if connected, then it means no syndicates for this wallet
-            <div className="text-center flex-col" style={{height: "calc(100vh - 300px)"}}>
+            <div
+              className="text-center flex-col"
+              style={{ height: "calc(100vh - 300px)" }}
+            >
               <div className="vertically-center">
                 <p className="text-2xl font-whyte-light">
                   There are no syndicates you are leading or have invested in at

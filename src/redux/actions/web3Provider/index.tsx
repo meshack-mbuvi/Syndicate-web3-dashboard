@@ -13,6 +13,8 @@ import {
   STORE_ETHEREUM_NETWORK,
   STORE_CURRENT_ETH_NETWORK,
   CONNECT,
+  SHOW_TWITTER_MODAL,
+  HIDE_TWITTER_MODAL,
 } from "../types";
 
 export const storeSyndicateInstance =
@@ -63,6 +65,22 @@ export const hideWalletModal =
   (dispatch: Dispatch): Action => {
     return dispatch({
       type: HIDE_WALLET_MODAL,
+    });
+  };
+
+export const showTwitterModal =
+  () =>
+  (dispatch: Dispatch): Action => {
+    return dispatch({
+      type: SHOW_TWITTER_MODAL,
+    });
+  };
+
+export const hideTwitterModal =
+  () =>
+  (dispatch: Dispatch): Action => {
+    return dispatch({
+      type: HIDE_TWITTER_MODAL,
     });
   };
 
