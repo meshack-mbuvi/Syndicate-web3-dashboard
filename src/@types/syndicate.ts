@@ -28,6 +28,7 @@ export type Syndicate = {
   distributing?: boolean;
   syndicateAddress?: string;
   transferable: boolean;
+  isCloseDatePast: boolean;
   epochTime: {
     closeDate: string;
     createdDate: string;

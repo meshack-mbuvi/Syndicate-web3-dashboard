@@ -350,6 +350,8 @@ export const processSyndicateDetails = (
       ? "Distributing"
       : "Operating";
 
+  const isCloseDatePast = pastDate(new Date(parseInt(dateClose) * 1000));
+
   return {
     syndicateAddress: Web3.utils.toChecksumAddress(syndicateAddress),
     status,
@@ -380,6 +382,7 @@ export const processSyndicateDetails = (
     distributing,
     managerDistributionShareBasisPoints: distributionShareToSyndicateLead,
     transferable,
+    isCloseDatePast,
     epochTime: {
       closeDate: dateClose,
       createdDate: dateCreated,

@@ -242,7 +242,7 @@ export const getCountDownDays = (date: string): string => {
     new Date(parseInt(date) * 1000),
     "M/DD/YYYY",
   );
-  const { years, months, days, hours } = moment.preciseDiff(
+  const { years, months, days, hours, minutes, seconds } = moment.preciseDiff(
     now,
     closeDateCountdown,
     true,
@@ -260,6 +260,12 @@ export const getCountDownDays = (date: string): string => {
   }
   if (hours && days < 1) {
     timeRemaining += `${hours} ${hours === 1 ? "hour" : "hours"} `;
+  }
+  if (minutes && hours < 1 && days < 1) {
+    timeRemaining += `${minutes} ${minutes === 1 ? "minute" : "minutes"} `;
+  }
+  if (seconds && minutes < 1) {
+    timeRemaining += `${seconds} ${seconds === 1 ? "second" : "seconds"} `;
   }
   return timeRemaining;
 };

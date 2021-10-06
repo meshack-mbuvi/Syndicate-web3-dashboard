@@ -175,6 +175,9 @@ module.exports = {
         red: {
           sematicRed: "#F14D4D",
         },
+        red: {
+          sematicRed: "#F14D4D",
+        },
         green: {
           ...colors.green,
           DEFAULT: "#30E696",

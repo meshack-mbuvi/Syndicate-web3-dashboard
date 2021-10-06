@@ -1,7 +1,5 @@
 import { SkeletonLoader } from "@/components/skeletonLoader";
-import ManagerSetAllowance from "@/containers/managerActions/setAllowances";
 import { RootState } from "@/redux/store";
-import { getTokenIcon } from "@/TokensList";
 import { getWeiAmount, isUnlimited, onlyUnique } from "@/utils/conversions";
 import { epochTimeToDateFormat, getCountDownDays } from "@/utils/dateUtils";
 import { floatedNumberWithCommas } from "@/utils/formattedNumbers";
@@ -14,10 +12,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { EtherscanLink } from "src/components/syndicates/shared/EtherscanLink";
 import { setSyndicateDetails } from "src/redux/actions/syndicateDetails";
 import { setSyndicateDistributionTokens } from "src/redux/actions/syndicateMemberDetails";
-import {
-  storeDepositTokenAllowance,
-  storeDistributionTokensDetails,
-} from "src/redux/actions/tokenAllowances";
+
 // utils
 import { formatAddress } from "src/utils/formatAddress";
 import GradientAvatar from "../portfolioAndDiscover/portfolio/GradientAvatar";
@@ -30,7 +25,6 @@ import {
   distributionShareToSyndicateLeadToolTip,
   distributionShareToSyndicateProtocolToolTip,
   expectedAnnualOperatingFeesToolTip,
-  totalDepositsToolTip,
 } from "../shared/Constants";
 import PermissionCard from "../shared/PermissionsCard";
 import { ProgressIndicator } from "../shared/progressIndicator";
@@ -44,15 +38,11 @@ const SyndicateDetails = (props: {
   const { accountIsManager } = props;
 
   const {
-    syndicateMemberDetailsReducer: { syndicateDistributionTokens },
     initializeContractsReducer: { syndicateContracts },
     syndicateDetailsReducer: { syndicateDetails },
-    tokenDetailsReducer: {
-      depositTokenAllowanceDetails,
-      distributionTokensAllowanceDetails,
-    },
+
     web3Reducer: {
-      web3: { account, web3 },
+      web3: { web3 },
     },
     syndicatesReducer: { syndicate },
   } = useSelector((state: RootState) => state);
@@ -165,7 +155,7 @@ const SyndicateDetails = (props: {
 
       const valueIsUnlimited = isUnlimited(depositMemberMax);
       setDetails([
-        ...(syndicate?.open
+        ...(syndicate?.open && !syndicate?.isCloseDatePast
           ? depositsMaxIsUnlimited
             ? [
                 {
@@ -179,7 +169,7 @@ const SyndicateDetails = (props: {
               ]
             : [
                 {
-                  header: "Deposit Range",
+                  header: "Deposit range",
                   content: `${floatedNumberWithCommas(depositMemberMin)} - ${
                     isUnlimited(depositMemberMax)
                       ? "Unlimited"
@@ -198,11 +188,11 @@ const SyndicateDetails = (props: {
                 tooltip: createdDateToolTip,
               },
             ]),
-        ...(syndicate?.open
+        ...(syndicate?.open && !syndicate?.isCloseDatePast
           ? depositsMaxIsUnlimited
             ? [
                 {
-                  header: "Deposit Range",
+                  header: "Deposit range",
                   content: `${floatedNumberWithCommas(depositMemberMin)} - ${
                     isUnlimited(depositMemberMax)
                       ? "Unlimited"
@@ -214,21 +204,25 @@ const SyndicateDetails = (props: {
             : [
                 {
                   header: `Members ${
-                    !isUnlimited(numMembersMax) ? "(Max)" : ""
+                    !isUnlimited(numMembersMax) ? "(max)" : ""
                   }`,
                   content: (
                     <div>
                       {floatedNumberWithCommas(numMembersCurrent)}&nbsp;
-                      <span className="text-gray-500">
-                        (
-                        {isUnlimited(numMembersMax)
-                          ? ""
-                          : floatedNumberWithCommas(numMembersMax)}
-                        )
-                      </span>
+                      {!isUnlimited(numMembersMax) ? (
+                        <span className="text-gray-500">
+                          ({floatedNumberWithCommas(numMembersMax)})
+                        </span>
+                      ) : null}
                     </div>
                   ),
-                  tooltip: depositTokenToolTip,
+                  tooltip: `This is the amount of unique member addresses who have deposited funds into this syndicate. ${
+                    !isUnlimited(numMembersMax)
+                      ? `A maximum of ${floatedNumberWithCommas(
+                          numMembersMax,
+                        )} members are allowed for this syndicate.`
+                      : ""
+                  }`,
                 },
               ]
           : [
@@ -241,7 +235,7 @@ const SyndicateDetails = (props: {
                 tooltip: closeDateToolTip,
               },
             ]),
-        ...(syndicate?.open
+        ...(syndicate?.open && !syndicate?.isCloseDatePast
           ? depositsMaxIsUnlimited
             ? [
                 {
@@ -259,7 +253,7 @@ const SyndicateDetails = (props: {
               ]
           : [
               {
-                header: "Deposit Range",
+                header: "Deposit range",
                 content: `${floatedNumberWithCommas(depositMemberMin)} - ${
                   isUnlimited(depositMemberMax)
                     ? "Unlimited"
@@ -269,17 +263,17 @@ const SyndicateDetails = (props: {
               },
             ]),
         {
-          header: "Annual Operating Fees",
+          header: "Annual operating fees",
           content: `${managerManagementFeeBasisPoints}%`,
           tooltip: expectedAnnualOperatingFeesToolTip,
         },
         {
-          header: "Lead Distribution Share",
+          header: "Lead distribution share",
           content: `${managerDistributionShareBasisPoints}%`,
           tooltip: distributionShareToSyndicateLeadToolTip,
         },
         {
-          header: "Protocol Distribution Share",
+          header: "Protocol distribution share",
           content: `${distributionShareToSyndicateProtocol}%`,
           tooltip: distributionShareToSyndicateProtocolToolTip,
         },
@@ -415,7 +409,9 @@ const SyndicateDetails = (props: {
           </div>
         </div>
 
-        {!depositsMaxIsUnlimited && syndicate?.open ? (
+        {!depositsMaxIsUnlimited &&
+        syndicate?.open &&
+        !syndicate?.isCloseDatePast ? (
           <div className="h-fit-content flex w-full justify-start mt-16">
             <ProgressIndicator
               depositTotal={depositTotal}
@@ -430,9 +426,13 @@ const SyndicateDetails = (props: {
             <div
               className={`grid xl:grid-cols-3 lg:grid-cols-2 grid-cols-2 xl:gap-4 gap-2 gap-y-8 justify-between`}
             >
-              <div className={`text-left ${syndicate?.open ? "" : "mr-24"} `}>
+              <div
+                className={`text-left ${
+                  syndicate?.open && !syndicate?.isCloseDatePast ? "" : "mr-24"
+                } `}
+              >
                 <p className="text-base text-gray-500 leading-loose font-light">
-                  Total Deposits
+                  Total deposits
                 </p>
                 <div className="flex">
                   <p className="text-white leading-loose xl:text-2xl lg:text-xl text-base">
@@ -444,18 +444,24 @@ const SyndicateDetails = (props: {
               <div className="text-left">
                 <p className="text-base text-gray-500 leading-loose font-light">
                   Members{" "}
-                  {!isUnlimited(syndicate?.numMembersMax) ? "(max)" : ""}
+                  {syndicate?.open &&
+                  !syndicate?.isCloseDatePast &&
+                  !isUnlimited(syndicate?.numMembersMax)
+                    ? "(max)"
+                    : ""}
                 </p>
                 <div className="text-2xl">
                   {floatedNumberWithCommas(syndicate?.numMembersCurrent)}&nbsp;
-                  {syndicate?.open && !isUnlimited(syndicate?.numMembersMax) ? (
+                  {syndicate?.open &&
+                  !syndicate?.isCloseDatePast &&
+                  !isUnlimited(syndicate?.numMembersMax) ? (
                     <span className="text-gray-500">
                       ({floatedNumberWithCommas(syndicate?.numMembersMax)})
                     </span>
                   ) : null}
                 </div>
               </div>
-              {syndicate?.open ? (
+              {syndicate?.open && !syndicate?.isCloseDatePast ? (
                 <div className="text-left">
                   <p className="text-base text-gray-500 leading-loose font-light">
                     Closing in

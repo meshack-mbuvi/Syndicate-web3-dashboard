@@ -47,14 +47,14 @@ export const ProgressIndicator = (props: IProgressIndicator): JSX.Element => {
           <div className="flex justify-between mt-6">
             <div className="text-left">
               <p className="text-base text-gray-500 leading-loose font-light">
-                Total Deposits
+                Deposits
               </p>
               <div className="flex">
                 <p className="text-white leading-loose xl:text-2xl lg:text-xl text-base">
                   {floatedNumberWithCommas(depositTotal)}&nbsp;
                   {depositERC20TokenSymbol}
                 </p>
-                <p className="xl:text-2xl lg:text-xl text-base text-gray-500 leading-loose ml-4 font-light">
+                <p className="xl:text-2xl lg:text-xl text-base text-gray-500 leading-loose ml-4 font-extralight">
                   {currentDepositsPercentage}%
                 </p>
               </div>
@@ -64,7 +64,7 @@ export const ProgressIndicator = (props: IProgressIndicator): JSX.Element => {
             </div>
             <div className="text-right">
               <p className="text-base text-gray-500 leading-loose font-light">
-                Max Remaining
+                Remaining
               </p>
               <p className="xl:text-2xl lg:text-xl text-base text-white leading-loose">
                 {floatedNumberWithCommas(depositTotalMax)}&nbsp;
