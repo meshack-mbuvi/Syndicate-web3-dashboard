@@ -34,6 +34,7 @@ const PortfolioAndDiscover = () => {
     syndicatesReducer: { syndicates },
     web3Reducer: { web3 },
   } = useSelector((state: RootState) => state);
+  const currentUser = useAuthUser();
 
   const {
     account,
@@ -96,7 +97,13 @@ const PortfolioAndDiscover = () => {
       return dispatch(showWalletModal());
     }
 
-    router.replace("/syndicates/create");
+    // if user is not approved, let's take them back to the waitlist page
+    if (currentUser && currentUser.claims.isApproved) {
+      router.replace("/syndicates/create");
+    } else {
+      router.push("/reserve")
+    }
+
 
     // Amplitude logger: How many users clicked on the "Create a Syndicate" button
     amplitudeLogger(CLICK_CREATE_A_SYNDICATE, { flow: Flow.MGR_CREATE_SYN });
