@@ -31,7 +31,7 @@ const SignInComponent: FC = () => {
 
   return (
     <>
-      <div className="mx-auto w-1/3 mt-32">
+      <div className="mx-auto w-1/3" style={{marginTop: "6vh"}}>
         <h2 className="font-white text-2xl leading-10">Sign in to Syndicate</h2>
         <p className="leading-6 py-4">
           Follow syndicates, manage your profile, and more by signing in with

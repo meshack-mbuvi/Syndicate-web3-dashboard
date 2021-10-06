@@ -56,7 +56,7 @@ const WaitlistForm = (props: IWaitlistForm) => {
 
   const handleTwitterRefs = (username: string, index: number) => {
     const currentUsernames = [...twitterUsernames];
-    currentUsernames[index] = username.trim();
+    currentUsernames[index] = username.trim().replace("@", "");
     // check if we have an error before setting active index
     if (!duplicateUserName) {
       setActiveIndex(index);
@@ -128,7 +128,7 @@ const WaitlistForm = (props: IWaitlistForm) => {
   };
 
   return (
-    <form onSubmit={(e) => handleRegister(e)} className="space-y-4 w-full">
+    <form onSubmit={(e) => handleRegister(e)} className="w-full">
       <div id="ima-inputs">
         <SelectField
           placeholder="I'm a..."
@@ -149,7 +149,7 @@ const WaitlistForm = (props: IWaitlistForm) => {
       <div>
         <textarea
           id="syndicateFor"
-          className="bg-gray-darkInput border-gray-darkInput rounded-custom text-white w-full p-4"
+          className="bg-gray-darkInput border-gray-darkInput rounded-custom text-white w-full p-4 mt-4"
           rows={4}
           placeholder="I’d like to use Syndicate for..."
           style={{
@@ -170,7 +170,7 @@ const WaitlistForm = (props: IWaitlistForm) => {
         )}
       </div>
 
-      <div id="twitter-refs">
+      <div id="twitter-refs" className="mt-8">
         <p className="2xl:text-xl mb-2">
           Know someone interested in Syndicate?
         </p>
@@ -179,14 +179,14 @@ const WaitlistForm = (props: IWaitlistForm) => {
             return (
               <div className="mb-2" key={index}>
                 <InputField
-                  placeholder="username"
+                  placeholder="@username"
                   icon="/images/social/smallTwitterGray.svg"
                   handleChange={(e) => handleTwitterRefs(e.target.value, index)}
                   index={index}
                   removeInputField={removeUsernameField}
                   value={username}
                   error={duplicateUserName}
-                  symbol="@"
+                  prefix="@"
                   placeHolderPadding="twitter-input-field"
                   autoComplete="off"
                   activeIndex={activeIndex}
@@ -211,7 +211,7 @@ const WaitlistForm = (props: IWaitlistForm) => {
 
       <button
         disabled={loading || hasErrors}
-        className="w-full primary-CTA mx-auto"
+        className="w-full primary-CTA mx-auto mt-8"
       >
         {loading ? "Securing your spot..." : "Get early access"}
       </button>

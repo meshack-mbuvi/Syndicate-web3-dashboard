@@ -109,7 +109,11 @@ module.exports = {
         modalSubTitle: "1.5rem",
         "1.5xl": "1.375rem",
         "2.5xl": "1.75rem",
+        "4xl": ["2.25rem", "2.75rem"],
         "4.5xl": "2.5rem",
+        "5xl": ["3rem", "3.5rem"],
+        "6xl": ["3.75rem", "4.25rem"],
+        "7xl": ["4.5rem", "5.4rem"],
       },
       lineHeight: {
         '17': '4.25rem'
@@ -215,6 +219,7 @@ module.exports = {
         inactive: "#30363A",
       },
       spacing: {
+        "1px": "1px",
         33: "8.5rem",
         50: "12.5rem",
         66: "16.5rem",

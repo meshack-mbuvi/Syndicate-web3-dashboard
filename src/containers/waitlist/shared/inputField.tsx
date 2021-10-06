@@ -11,7 +11,7 @@ interface InputFieldProps {
   removeInputField?: (index: number) => void;
   value?: string;
   error?: boolean;
-  symbol?: string;
+  prefix?: string;
   placeHolderPadding?: string;
   autoComplete?: string;
   activeIndex?: number;
@@ -27,13 +27,12 @@ const InputField = (props: InputFieldProps) => {
     removeInputField,
     value,
     error,
-    symbol,
+    prefix,
     placeHolderPadding,
     autoComplete,
     activeIndex,
   } = props;
   const [showRemoveIcon, setShowRemoveIcon] = useState<boolean>(false);
-  const inputPadding = placeHolderPadding ? "6" : "4";
 
   const errorStyles = error && activeIndex === index
     ? "border focus: none focus:outline-none rounded-lg border-red-500"
@@ -50,21 +49,14 @@ const InputField = (props: InputFieldProps) => {
           type="text"
           name="selected-option"
           id="selected-option"
-          className={`${errorStyles} ${placeHolderPadding} block w-full pr-10 pl-${inputPadding} py-3 font-whyte bg-gray-darkInput text-white border-gray-darkInput ${
-            asAdditionalInput ? "rounded-b-custom mt-0.5" : "rounded-custom"
+          className={`${errorStyles} ${placeHolderPadding} block w-full pr-10 py-3 font-whyte bg-gray-darkInput text-white border-gray-darkInput ${
+            asAdditionalInput ? "rounded-b-custom mt-1px" : "rounded-custom"
           }`}
           placeholder={placeholder}
           onChange={handleChange}
-          value={value}
+          value={value !== "" && prefix ? "@" + value : value}
           autoComplete={autoComplete}
         />
-
-        {symbol && (
-          <span className="absolute inset-y-0 left-2 pr-3 pt-1 flex items-center text-base">
-            {" "}
-            {symbol}
-          </span>
-        )}
 
         {error && activeIndex === index && (
           <div className="relative">

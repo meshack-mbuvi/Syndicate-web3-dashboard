@@ -40,7 +40,7 @@ const Waitlist: FC = () => {
           </div>
           <div
             id="right-column"
-            className="flex flex-col items-center justify-center w-full md:w-2/6 bg-black bg-opacity-60 px-6 md:px-10 lg:px-16 transition-all overflow-scroll"
+            className={`flex flex-col items-center justify-center w-full md:w-2/6 bg-black bg-opacity-30 md:bg-opacity-60 transition-all overflow-scroll`}
           >
             <div className="w-full px-6 sm:px-24 md:px-0 md:w-auto transition-all overflow-y-auto py-12">
               <div className="block md:hidden mb-16">{mainCopy}</div>
@@ -62,12 +62,12 @@ const mainCopy = (
   <>
     <div className="md:text-left">
       <img
-        className="w-28 md:w-36 mx-auto md:mx-0 mb-5"
+        className="w-28 md:w-36 mx-auto md:mx-0 md:-mb-1"
         src="/images/wordmark.svg"
         alt=""
       />
     </div>
-    <div id="landing-title" className="mb-5">
+    <div id="landing-title" className="md:my-7 3xl:my-8 my-5">
       <p className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl 2xl:text-7xl text-center md:text-left font-whyte-light">
         Create an investing <br className="hidden md:block" /> syndicate for
         1000x less <br className="hidden md:block" /> time and money.
@@ -78,7 +78,7 @@ const mainCopy = (
       className="text-base text-opacity-80 text-center md:text-center opacity-80 font-normal"
     >
       <p>
-        Syndicate is still in private beta. Join the waitlist for early access.
+        Join the waitlist for early access.
       </p>
     </div>
   </>
@@ -87,7 +87,7 @@ const mainCopy = (
 const successContent = (
   <>
     <div
-      className="container h-screen flex flex-col justify-center items-start flex-1 w-4/6 font-whyte"
+      className="h-screen flex flex-col justify-center items-start flex-1 w-4/6 font-whyte px-6 md:px-10 lg:px-16"
       id="left-column"
       style={{
         backgroundImage: "url(/images/social/waitlist-bg.svg)",
@@ -97,17 +97,20 @@ const successContent = (
     >
       <div
         id="syndicate-logo"
-        className="uppercase flex justify-start items-center mb-5"
+        className="uppercase flex justify-start items-center"
       >
-        <img alt="logo" src="/images/logo.svg" className="w-5 h-5 mr-1" />
-        <span className="text-xl font-whyte">syndicate</span>
+        <img
+          className="w-28 md:w-36 mx-auto md:mx-0 mb-6"
+          src="/images/wordmark.svg"
+          alt=""
+        />
       </div>
       <div id="landing-title" className="mb-5">
-        <p className="text-lg md:text-3xl lg:text-5xl xl:text-6xl 2xl:text-7xl">
+        <p className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl 2xl:text-7xl font-whyte-light">
           You’re on the waitlist.
         </p>
       </div>
-      <div id="welcome text" className="text-base text-opacity-80">
+      <div id="welcome text" className="text-base opacity-80">
         <p>
           We’re excited for you to join Syndicate. <br />
           We’ll let you know when you’re in.
