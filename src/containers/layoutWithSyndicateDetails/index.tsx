@@ -24,7 +24,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { getCoinFromContractAddress } from "functions/src/utils/ethereum";
 import { isEmpty } from "lodash";
 import { useRouter } from "next/router";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import { useDispatch, useSelector } from "react-redux";
 import Button from "src/components/buttons";
@@ -64,13 +64,13 @@ const LayoutWithSyndicateDetails = ({ children }): JSX.Element => {
     // Amplitude logger: How many users clicked on the "Create a Syndicate" button
     amplitudeLogger(CLICK_CREATE_A_SYNDICATE, { flow: Flow.MGR_CREATE_SYN });
   };
+
   const [showMembers, setShowMembers] = useState(false);
 
   const router = useRouter();
   const dispatch = useDispatch();
 
   // used to render right column components on the left column in small devices
-  const ref = useRef();
 
   const { syndicateAddress } = router.query;
 
@@ -96,9 +96,6 @@ const LayoutWithSyndicateDetails = ({ children }): JSX.Element => {
 
   const [accountIsManager, setAccountIsManager] = useState<boolean>(false);
   const showOnboardingIfNeeded = router.pathname.endsWith("deposit");
-
-  const [managerDepositsAllowance, setManagerDepositsAllowance] =
-    useState<number>(0);
 
   // get events where distribution was set.
   // we'll fetch distributionERC20s from here and check if the manager has set the correct
@@ -258,8 +255,6 @@ const LayoutWithSyndicateDetails = ({ children }): JSX.Element => {
       syndicate?.tokenDecimals,
       false,
     );
-
-    setManagerDepositsAllowance(parseFloat(managerDepositAllowance));
 
     // check if the allowance set by the manager is not enough to cover the total max. deposits.
     // if the current token allowance is less than the syndicate total max. deposits
@@ -666,31 +661,32 @@ const LayoutWithSyndicateDetails = ({ children }): JSX.Element => {
                 </div>
               </div>
 
-              {/* Tabbed components; only visible on manage pages */}
-              <div className="mt-14">
-                <div>
-                  <nav className="flex" aria-label="Tabs">
-                    <button
-                      key="members"
-                      onClick={() => setActiveTab("members")}
-                      className={`whitespace-nowrap py-6 px-1 border-b-1 focus:outline-none focus:ring-0 font-whyte text-sm cursor-pointer ${
-                        activeTab == "members"
-                          ? "border-white text-white"
-                          : "border-transparent text-gray-500 hover:text-gray-400 hover:border-gray-400"
-                      }`}
-                    >
-                      Members
-                    </button>
-                    {/* add more tabs here */}
-                  </nav>
-                </div>
-                <div className="border-b-1 border-gray-24 absolute w-2/1 -ml-96 -mr-96"></div>
-                <div className="mt-4 text-base grid grid-cols-12 gap-5">
-                  <div className="col-span-12">
-                    {activeTab == "members" && <ManageMembers />}
+              {showMembers && (
+                <div className="mt-14">
+                  <div>
+                    <nav className="flex" aria-label="Tabs">
+                      <button
+                        key="members"
+                        onClick={() => setActiveTab("members")}
+                        className={`whitespace-nowrap h4 py-6 px-1 border-b-1 focus:outline-none focus:ring-0 font-whyte text-sm cursor-pointer ${
+                          activeTab == "members"
+                            ? "border-white text-white"
+                            : "border-transparent text-gray-500 hover:text-gray-400 hover:border-gray-400"
+                        }`}
+                      >
+                        Members
+                      </button>
+                      {/* add more tabs here */}
+                    </nav>
+                  </div>
+                  <div className="border-b-1 border-gray-24 absolute w-screen right-0"></div>
+                  <div className="text-base grid grid-cols-12 gap-y-5">
+                    <div className="col-span-12">
+                      {activeTab == "members" && <ManageMembers />}
+                    </div>
                   </div>
                 </div>
-              </div>
+              )}
 
               <Footer extraClasses="mt-24 sm:mt-24 md:mt-40 mb-12" />
             </div>

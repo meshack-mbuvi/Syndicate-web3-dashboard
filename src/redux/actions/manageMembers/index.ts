@@ -2,10 +2,13 @@ import { divideIfNotByZero, getWeiAmount } from "@/utils/conversions";
 import {
   CONFIRM_RETURN_DEPOSIT,
   RETURNING_DEPOSIT,
+  SELECTED_MEMBER,
   SET_LOADING_SYNDICATE_DEPOSITOR_DETAILS,
   SET_SELECTED_MEMBER_ADDRESS,
   SET_SYNDICATE_MANAGE_MEMBERS,
   SHOW_REJECT_MEMBER_ADDRESS_ONLY,
+  SHOW_TRANSFER_DEPOSIT_MODAL,
+  TRANSFERRING_DEPOSIT,
 } from "../types";
 
 /**
@@ -98,6 +101,13 @@ const getSyndicateDepositors = async (syndicateContracts, syndicateAddress) => {
         { syndicateAddress },
       );
 
+    // get DepositTransferred events
+    const depositTransferredEvents =
+      await syndicateContracts.DepositTransferLogicContract.getDepositTransferredEvents(
+        "DepositTransferred",
+        { syndicateAddress },
+      );
+
     const memberAddresses = [];
     // process events
     depositEvents.forEach((event) => {
@@ -112,6 +122,13 @@ const getSyndicateDepositors = async (syndicateContracts, syndicateAddress) => {
         returnValues: { memberAddress },
       } = event;
       memberAddresses.push(memberAddress);
+    });
+
+    depositTransferredEvents.forEach((event) => {
+      const {
+        returnValues: { targetAddress },
+      } = event;
+      memberAddresses.push(targetAddress);
     });
 
     return memberAddresses;
@@ -302,6 +319,7 @@ export const getSyndicateDepositorData =
           returningDeposit: false,
           blockingAddress: false,
           addingMember: false,
+          transferringDeposit: false,
         });
     }
     dispatch({
@@ -392,3 +410,64 @@ export const findMemberAddressIndex = (members, memberAddress) => {
 
   return memberIndex;
 };
+
+export const setSelectedMember =
+  (member: {
+    distributing: boolean;
+    memberAddress: string;
+    memberDeposit: string;
+    modifiable: boolean;
+    open: boolean;
+    memberAddressAllowed: boolean;
+    allowlistEnabled: boolean;
+  }) =>
+  (dispatch) => {
+    return dispatch({
+      type: SELECTED_MEMBER,
+      data: member,
+    });
+  };
+
+export const setShowTransferDepositModal = (status: boolean) => (dispatch) => {
+  return dispatch({
+    type: SHOW_TRANSFER_DEPOSIT_MODAL,
+    data: status,
+  });
+};
+
+export const setTransferringMemberDeposit =
+  ({
+    memberAddress,
+    transferringDeposit,
+  }: {
+    memberAddress: string;
+    transferringDeposit: boolean;
+  }) =>
+  (
+    dispatch: (arg0: { data: any; type: string }) => any,
+    getState: () => {
+      syndicatesReducer: { syndicate: any };
+      initializeContractsReducer: { syndicateContracts: any };
+      manageMembersDetailsReducer;
+    },
+  ) => {
+    let syndicateMembersCopy = null;
+    const {
+      manageMembersDetailsReducer: {
+        syndicateManageMembers: { syndicateMembers },
+      },
+    } = getState();
+    let memberIndex = -1;
+    if (memberAddress) {
+      memberIndex = findMemberAddressIndex(syndicateMembers, memberAddress);
+      const memberCopy = syndicateMembers;
+
+      memberCopy[memberIndex].transferringDeposit = transferringDeposit;
+      syndicateMembersCopy = memberCopy;
+    }
+
+    return dispatch({
+      data: syndicateMembersCopy,
+      type: TRANSFERRING_DEPOSIT,
+    });
+  };

@@ -12,6 +12,8 @@ const Select = (props: {
   rightPlaceholder?: string;
   showBgIcon?: boolean;
   subTitle?: string;
+  alignment?: string;
+  customIcon?: string;
 }): JSX.Element => {
   const {
     label,
@@ -24,16 +26,15 @@ const Select = (props: {
     rightPlaceholder,
     showBgIcon,
     subTitle,
+    customIcon,
+    alignment = "right",
     ...rest
   } = props;
   return (
     <div {...rest} className={`${rest.className} relative`}>
       {label ? (
         <div className="flex justify-between">
-          <label
-            htmlFor={label}
-            className="block py-2 text-white"
-          >
+          <label htmlFor={label} className="block py-2 text-white">
             {label}
           </label>
           <span className="block py-2 text-gray-3 text-sm font-normal">
@@ -52,8 +53,10 @@ const Select = (props: {
         <select
           id={label}
           name={label}
-          className={`inline-flex py-3 align-end w-full text-right min-w-0 font-whyte flex-grow dark-input-field ${
-            icon ? "pl-12" : ""
+          className={`inline-flex py-3 lg:py-4 align-${alignment} ${
+            customIcon ? customIcon : ""
+          } w-full text-${alignment} min-w-0 font-whyte flex-grow bg-gray-cod dark-input-field ${
+            icon ? "pl-12" : "pl-5"
           } 
           ${rightPlaceholder && !showBgIcon ? "bg-none" : ""}`}
           defaultValue={defaultValue}

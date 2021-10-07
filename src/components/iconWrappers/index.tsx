@@ -1,5 +1,5 @@
-import React from "react";
 import { omit } from "lodash";
+import React from "react";
 
 /**
  * This icon wrapper contains an inverted exclamation mark sourced from the
@@ -11,15 +11,17 @@ export const InfoIcon = (props: {
   tooltip?: string | React.ReactNode;
   side?: string;
   iconSize?: string;
-}) => {
-  const { tooltip, side, iconSize } = props;
+  src?: string;
+}): JSX.Element => {
+  const { tooltip, side, iconSize, src = "/images/info.svg" } = props;
   return (
     <div className="flex-shrink-0 flex items-center justify-center">
-      <div className="tooltip px-4">
+      <div className="tooltip pl-2">
         <img
-          src="/images/info.svg"
+          src={src}
           {...props}
           className={`image-tooltip ${iconSize ? iconSize : ``}`}
+          alt=""
         />
         {tooltip ? (
           typeof tooltip === "string" ? (

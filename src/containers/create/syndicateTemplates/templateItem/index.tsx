@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
 import Link from "next/link";
+import React, { useEffect, useState } from "react";
 import slugify from "slugify";
 
 interface ItemplateItem {
@@ -21,7 +21,7 @@ const TemplateItem: React.FC<ItemplateItem> = ({
   }, [title]);
 
   const templateContent = (
-    <a
+    <div
       className={`flex flex-col items-start justify-start font-whyte border border-gray-inactive rounded-md ${
         !disabled && "hover:border-blue mb-6"
       } h-full p-6 ${disabled && "opacity-50 cursor-default"}`}
@@ -39,7 +39,7 @@ const TemplateItem: React.FC<ItemplateItem> = ({
           );
         })}
       </ul>
-    </a>
+    </div>
   );
   let templateBox;
   if (!disabled) {

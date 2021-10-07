@@ -1,4 +1,4 @@
-import { Syndicate } from "@/@types/syndicate";
+import { Member, Syndicate } from "@/@types";
 import { TWO_WEEKS_IN_MS } from "@/utils/constants";
 import ct from "countries-and-timezones";
 import Web3 from "web3";
@@ -91,6 +91,8 @@ type InitialState = {
     confirmReturnDeposit: boolean;
     memberAddresses: string[];
     totalAmountToReturn: number;
+    selectedMember: Member;
+    showTransferDepositModal: boolean;
   };
   manageActions: {
     syndicateMembers: {
@@ -224,6 +226,8 @@ export const initialState: InitialState = {
     confirmReturnDeposit: false,
     memberAddresses: [],
     totalAmountToReturn: 0,
+    selectedMember: null,
+    showTransferDepositModal: false,
   },
   syndicateNewMembers: {
     newSyndicateMembers: [],

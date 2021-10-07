@@ -1,8 +1,9 @@
+import { SyndicateAllowlistLogic } from "./allowlistLogic";
 import { SyndicateDepositLogic } from "./depositsLogic";
+import { SyndicateDepositTransferLogic } from "./depositTransferLogic";
 import { SyndicateDistributionLogic } from "./distributionLogic";
 import { SyndicateGetterLogic } from "./getterLogic";
 import { SyndicateManagerLogic } from "./managerLogic";
-import { SyndicateAllowlistLogic } from "./allowlistLogic";
 
 // contract names
 const getterLogicContractName =
@@ -19,7 +20,10 @@ const depositLogicContractName =
 const allowlistLogicContractName =
   process.env.NEXT_PUBLIC_ALLOWLIST_LOGIC_CONTRACT_NAME;
 
-export const getSyndicateContracts = async (web3) => {
+const depositTransferLogicContractName =
+  process.env.NEXT_PUBLIC_DEPOSIT_TRANSFER_LOGIC_CONTRACT_NAME;
+
+export const getSyndicateContracts = async (web3: any) => {
   // Retrieve contract from cache.
   // if not contracts from cache or cache expired then continue
   // with initialization.
@@ -49,6 +53,11 @@ export const getSyndicateContracts = async (web3) => {
     web3,
   );
 
+  const DepositTransferLogicContract = new SyndicateDepositTransferLogic(
+    depositTransferLogicContractName,
+    web3,
+  );
+
   // return all initialized contracts
   return {
     // add more contracts here
@@ -57,5 +66,6 @@ export const getSyndicateContracts = async (web3) => {
     DistributionLogicContract,
     DepositLogicContract,
     AllowlistLogicContract,
+    DepositTransferLogicContract,
   };
 };

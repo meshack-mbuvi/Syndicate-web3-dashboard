@@ -1,20 +1,20 @@
-import React from "react";
-import { useDispatch } from "react-redux";
-import ct from "countries-and-timezones";
-import TemplateItem from "./templateItem";
+import { useCreateSyndicateContext } from "@/context/CreateSyndicateContext";
 import { setSyndicateTemplateTitle } from "@/redux/actions/createSyndicate/syndicateOffChainData";
-import {
-  setDepositTokenDetails,
-  setDepositMembersMax,
-} from "@/redux/actions/createSyndicate/syndicateOnChainData/tokenAndDepositsLimits";
+import { setCloseDateAndTime } from "@/redux/actions/createSyndicate/syndicateOnChainData/closeDateAndTime";
 import {
   setExpectedAnnualOperatingFees,
   setProfitShareToSyndicateLead,
 } from "@/redux/actions/createSyndicate/syndicateOnChainData/feesAndDistribution";
-import { setCloseDateAndTime } from "@/redux/actions/createSyndicate/syndicateOnChainData/closeDateAndTime";
 import { setModifiable } from "@/redux/actions/createSyndicate/syndicateOnChainData/modifiable";
+import {
+  setDepositMembersMax,
+  setDepositTokenDetails,
+} from "@/redux/actions/createSyndicate/syndicateOnChainData/tokenAndDepositsLimits";
 import { isDev } from "@/utils/environment";
-import { useCreateSyndicateContext } from "@/context/CreateSyndicateContext";
+import ct from "countries-and-timezones";
+import React from "react";
+import { useDispatch } from "react-redux";
+import TemplateItem from "./templateItem";
 
 // set default deposit token for each template to USDC
 // depending on environment
@@ -202,23 +202,19 @@ const SyndicateTemplates: React.FC = () => {
   return (
     <div className="grid grid-cols-1 xl:grid-cols-4 lg:grid-cols-3 sm:grid-cols-2 gap-6">
       {templates.map((template, index) => {
-        const {
-          title,
-          subTitle,
-          summary,
-          disabled,
-          depositTokenEditable,
-        } = template;
+        const { title, subTitle, summary, disabled, depositTokenEditable } =
+          template;
         return (
-          <div
-            className="h-full flex flex-col"
+          <button
+            className="h-full flex flex-col text-left"
             onClick={() => (!disabled ? handleTemplateSelect(template) : null)}
+            key={index}
           >
             <TemplateItem
               {...{ title, subTitle, summary, disabled, depositTokenEditable }}
               key={index}
             />
-          </div>
+          </button>
         );
       })}
     </div>

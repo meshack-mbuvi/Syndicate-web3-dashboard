@@ -2,15 +2,17 @@
 import {
   CONFIRM_RETURN_DEPOSIT,
   RETURNING_DEPOSIT,
+  SELECTED_MEMBER,
   SET_LOADING_SYNDICATE_DEPOSITOR_DETAILS,
-  SET_NEW_MEMBER_ADDRESSES,
   SET_SELECTED_MEMBER_ADDRESS,
   SET_SYNDICATE_MANAGE_MEMBERS,
+  SHOW_TRANSFER_DEPOSIT_MODAL,
+  TRANSFERRING_DEPOSIT,
 } from "@/redux/actions/types";
 import { initialState } from "../initialState";
 
 export const manageMembersDetailsReducer = (state = initialState, action) => {
-  const { syndicateManageMembers, syndicateNewMembers } = state;
+  const { syndicateManageMembers } = state;
 
   switch (action.type) {
     case SET_SYNDICATE_MANAGE_MEMBERS:
@@ -60,15 +62,32 @@ export const manageMembersDetailsReducer = (state = initialState, action) => {
         },
       };
 
-    case SET_NEW_MEMBER_ADDRESSES:
+    case SELECTED_MEMBER:
       return {
         ...state,
-        syndicateNewMembers: {
-          ...syndicateNewMembers,
-          newSyndicateMembers: action.data,
+        syndicateManageMembers: {
+          ...syndicateManageMembers,
+          selectedMember: action.data,
         },
       };
 
+    case SHOW_TRANSFER_DEPOSIT_MODAL:
+      return {
+        ...state,
+        syndicateManageMembers: {
+          ...syndicateManageMembers,
+          showTransferDepositModal: action.data,
+        },
+      };
+
+    case TRANSFERRING_DEPOSIT:
+      return {
+        ...state,
+        syndicateManageMembers: {
+          ...syndicateManageMembers,
+          syndicateMembers: action.data,
+        },
+      };
     default:
       return state;
   }

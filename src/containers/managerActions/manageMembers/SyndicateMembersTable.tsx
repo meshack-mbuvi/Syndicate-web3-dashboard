@@ -70,7 +70,7 @@ const SyndicateMembersTable = ({
     return (
       <input
         type="checkbox"
-        className={`rounded checkbox bg-gray-blackRussian -mr-2 flex focus:outline-none border-1 border-gray-shuttle ${
+        className={`rounded checkbox bg-gray-blackRussian flex focus:outline-none border-1 border-gray-shuttle ${
           rest?.checked ? "block" : `${customClass ? customClass : ""}`
         }`}
         ref={combinedRef}
@@ -111,26 +111,22 @@ const SyndicateMembersTable = ({
           id: "selection",
           // eslint-disable-next-line react/display-name
           Header: ({ getToggleAllRowsSelectedProps }) => (
-            <div className="w-1 mr-3 pl-1">
-              <IndeterminateCheckbox
-                {...{
-                  ...getToggleAllRowsSelectedProps(),
-                }}
-              />
-            </div>
+            <IndeterminateCheckbox
+              {...{
+                ...getToggleAllRowsSelectedProps(),
+              }}
+            />
           ),
           // The cell can use the individual row's getToggleRowSelectedProps method
           // to the render a checkbox
           // eslint-disable-next-line react/display-name
           Cell: function ({ row }) {
             return (
-              <div className="w-1 mr-3 pl-1">
-                <IndeterminateCheckbox
-                  {...{
-                    ...row.getToggleRowSelectedProps(),
-                  }}
-                />
-              </div>
+              <IndeterminateCheckbox
+                {...{
+                  ...row.getToggleRowSelectedProps(),
+                }}
+              />
             );
           },
         },
@@ -190,7 +186,7 @@ const SyndicateMembersTable = ({
 
   return (
     <div className="flex flex-col overflow-y-hidden">
-      <div className="flex my-14 space-x-8 justify-between items-center">
+      <div className="flex my-11 space-x-8 justify-between items-center">
         {
           // no point showing the search form if there is just one member.
           page.length > 1 || searchAddress ? (
@@ -215,7 +211,7 @@ const SyndicateMembersTable = ({
               </p>
               {syndicate.modifiable == true && syndicate.open && (
                 <button
-                  className={`flex flex-shrink font-whyte text-right text-blue justify-center items-center hover:opacity-80`}
+                  className={`flex flex-shrink font-whyte text-right text-blue text-base justify-center items-center hover:opacity-80`}
                 >
                   <img
                     src={"/images/edit-deposits-blue.svg"}
@@ -228,7 +224,7 @@ const SyndicateMembersTable = ({
 
               {syndicate.open && selectedFlatRowsAmount > 0 ? (
                 <button
-                  className={`flex flex-shrink font-whyte text-right text-blue justify-center items-center hover:opacity-80`}
+                  className={`flex flex-shrink font-whyte text-right text-blue justify-center text-base items-center hover:opacity-80`}
                   onClick={() => confirmReturnMemberDeposit()}
                 >
                   <img
@@ -246,7 +242,7 @@ const SyndicateMembersTable = ({
               selectedFlatRowsBlocked &&
               syndicate.open ? (
                 <button
-                  className={`flex flex-shrink font-whyte text-right text-blue justify-center items-center  hover:opacity-80`}
+                  className={`flex flex-shrink font-whyte text-right text-blue justify-center text-base items-center  hover:opacity-80`}
                   onClick={() => confirmBlockMemberAddress()}
                 >
                   <img src={"/images/block.svg"} alt="icon" className="mr-2" />
@@ -259,7 +255,7 @@ const SyndicateMembersTable = ({
           {syndicate.allowlistEnabled && syndicate.open && (
             <div className="pl-4">
               <button
-                className={`flex flex-shrink font-whyte text-right text-blue justify-center items-center hover:opacity-80`}
+                className={`flex flex-shrink font-whyte text-right text-blue text-base justify-center items-center hover:opacity-80`}
                 onClick={showApproveModal}
               >
                 <img
@@ -278,7 +274,7 @@ const SyndicateMembersTable = ({
         {...getTableProps()}
         className={`w-full ${
           page.length ? "border-b-1" : "border-b-0"
-        } px-1 border-gray-steelGrey`}
+        } border-gray-steelGrey`}
       >
         <thead className="w-full">
           {
@@ -354,7 +350,7 @@ const SyndicateMembersTable = ({
                 <tr
                   {...row.getRowProps()}
                   key={index}
-                  className="space-y-6 border-b-1 text-base border-gray-steelGrey h-16"
+                  className="space-y-6 border-b-1 text-base border-gray-steelGrey h-16 text-left"
                   onMouseEnter={() => setShowMoreOptions(index)}
                   onMouseLeave={() => setShowMoreOptions(-1)}
                 >

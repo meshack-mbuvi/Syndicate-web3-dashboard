@@ -1,12 +1,11 @@
 import { AppThunk } from "@/redux/store";
 import { getWeiAmount } from "@/utils/conversions";
 import { web3 } from "src/utils/web3Utils";
-import { setMemberActivityLoading, setMemberActivity } from ".";
+import { setMemberActivity, setMemberActivityLoading } from ".";
 import { setLoadingSyndicateDepositorDetails } from "../manageMembers";
-import { SET_LOADING_SYNDICATE_DEPOSITOR_DETAILS } from "../types";
 
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const moment = require("moment");
-const BN = web3.utils.BN;
 
 interface ISyndicateLPData {
   syndicateAddress: string | string[];
@@ -25,11 +24,11 @@ interface ISyndicateLPData {
 }
 
 interface MemberActivity {
-    action: string;
-    amountChanged: number;
-    tokenSymbol: string;
-    elapsedTime: string;
-    epochDate: number;
+  action: string;
+  amountChanged: number;
+  tokenSymbol: string;
+  elapsedTime: string;
+  epochDate: number;
 }
 
 /** action creator to trigger updates to the redux for
@@ -41,104 +40,120 @@ interface MemberActivity {
  * @param {} depositToken
  * @returns dispatched syndicate member activity
  */
-export const updateMemberActivityDetails = (
-  data: ISyndicateLPData,
-): AppThunk => async (dispatch, getState) => {
-  const { syndicateAddress, distributionTokens, memberAddresses, depositToken } = data;
+export const updateMemberActivityDetails =
+  (data: ISyndicateLPData): AppThunk =>
+  async (dispatch, getState) => {
+    const {
+      syndicateAddress,
+      distributionTokens,
+      memberAddresses,
+      depositToken,
+    } = data;
 
-  const {
-    syndicatesReducer: { syndicate },
-    initializeContractsReducer: {
-      syndicateContracts: { GetterLogicContract, DistributionLogicContract, DepositLogicContract },
-    },
-  } = getState();
+    const {
+      syndicatesReducer: { syndicate },
+      initializeContractsReducer: {
+        syndicateContracts: {
+          GetterLogicContract,
+          DistributionLogicContract,
+          DepositLogicContract,
+        },
+      },
+    } = getState();
 
-  // we cannot query relevant values without the syndicate instance
-  if (
-    !GetterLogicContract ||
-    !DistributionLogicContract || !DepositLogicContract ||
-    (memberAddresses && !memberAddresses.length)
-  )
-    return;
+    // we cannot query relevant values without the syndicate instance
+    if (
+      !GetterLogicContract ||
+      !DistributionLogicContract ||
+      !DepositLogicContract ||
+      (memberAddresses && !memberAddresses.length)
+    )
+      return;
 
-  // retrieve member activity for each member address
-  try {
-    if (syndicateAddress && syndicate) {
-      dispatch(setMemberActivityLoading(true));
-      dispatch(setLoadingSyndicateDepositorDetails(true));
+    // retrieve member activity for each member address
+    try {
+      if (syndicateAddress && syndicate) {
+        dispatch(setMemberActivityLoading(true));
+        dispatch(setLoadingSyndicateDepositorDetails(true));
 
-      await memberAddresses.forEach(async (memberAddress) => {
+        await memberAddresses.forEach(async (memberAddress) => {
+          const memberActivityData = <any>[];
+          const memberActivityDetails = [];
+          let memberActivity = (<any>{}) as MemberActivity;
 
-        const memberActivityData = <any>[];
-        let memberActivityDetails = []
-        let memberActivity = <any>{} as MemberActivity
+          if (distributionTokens.length) {
+            const memberDistributionsWithdrawalEvents =
+              await DistributionLogicContract.getDistributionEvents(
+                "DistributionClaimed",
+                {
+                  syndicateAddress,
+                  memberAddress,
+                },
+              );
 
-        if (distributionTokens.length) {
-          const memberDistributionsWithdrawalEvents = await DistributionLogicContract.getDistributionEvents(
-            "DistributionClaimed",
-            {
+            for (
+              let index = 0;
+              index < memberDistributionsWithdrawalEvents.length;
+              index++
+            ) {
+              const withdrawalEvent =
+                memberDistributionsWithdrawalEvents[index];
+              const { amount, distributionERC20Address } =
+                withdrawalEvent.returnValues;
+
+              const block = await web3.eth.getBlock(
+                withdrawalEvent.blockNumber,
+              );
+
+              const token = distributionTokens.filter((_token) => {
+                return _token.tokenAddress === distributionERC20Address;
+              });
+              const { tokenSymbol, tokenDecimals } = token[0];
+
+              const amountChanged = await getWeiAmount(
+                amount,
+                parseInt(tokenDecimals, 10),
+                false,
+              );
+
+              memberActivity = {
+                action: "withdrew",
+                amountChanged,
+                tokenSymbol,
+                elapsedTime: moment(block.timestamp * 1000).fromNow(),
+                epochDate: block.timestamp,
+              };
+
+              memberActivityDetails.push(memberActivity);
+            }
+          }
+          const memberDepositEvents =
+            await DepositLogicContract.getMemberDepositEvents("DepositAdded", {
               syndicateAddress,
               memberAddress,
-            },
-          );
-  
-          memberDistributionsWithdrawalEvents.forEach(async (withrawalEvent) => {
-            const {amount, distributionERC20Address} = withrawalEvent.returnValues
+            });
 
-            const block = await web3.eth.getBlock(withrawalEvent.blockNumber)
-  
-            const token = distributionTokens.filter(_token => {
-              return _token.tokenAddress === distributionERC20Address
-            })
-            const {tokenSymbol, tokenDecimals} = token[0]
-  
+          for (let index = 0; index < memberDepositEvents.length; index++) {
+            const depositEvent = memberDepositEvents[index];
+            const { amount } = depositEvent.returnValues;
+
+            const block = await web3.eth.getBlock(depositEvent.blockNumber);
+
             const amountChanged = await getWeiAmount(
               amount,
-              parseInt(tokenDecimals, 10),
+              parseInt(depositToken.tokenDecimals, 10),
               false,
             );
-            
+
             memberActivity = {
-              action: "withdrew",
+              action: "deposited",
               amountChanged,
-              tokenSymbol,
-              elapsedTime: moment(block.timestamp*1000).fromNow(),
+              tokenSymbol: depositToken.tokenSymbol,
+              elapsedTime: moment(block.timestamp * 1000).fromNow(),
               epochDate: block.timestamp,
             };
-  
-            memberActivityDetails.push(memberActivity)
-          })
-  
-        }
-
-        const memberDepositEvents = await DepositLogicContract.getMemberDepositEvents(
-          "DepositAdded",
-          {
-            syndicateAddress,
-            memberAddress,
-          },
-        );
-
-        memberDepositEvents.forEach(async (depositEvent) => {
-          const {amount} = depositEvent.returnValues
-
-          const block = await web3.eth.getBlock(depositEvent.blockNumber)
-
-          const amountChanged = await getWeiAmount(
-            amount,
-            parseInt(depositToken.tokenDecimals, 10),
-            false,
-          );
-
-          memberActivity = {
-            action: "deposited",
-            amountChanged,
-            tokenSymbol: depositToken.tokenSymbol,
-            elapsedTime: moment(block.timestamp*1000).fromNow(),
-            epochDate: block.timestamp,
-          };
-          memberActivityDetails.push(memberActivity)
-        })
+            memberActivityDetails.push(memberActivity);
+          }
 
           memberActivityData[memberAddress] = memberActivityDetails;
           // dispatch action to update syndicate member activity
@@ -147,12 +162,12 @@ export const updateMemberActivityDetails = (
               ...memberActivityData,
             }),
           );
-      });
-      // adding a one-second timeout here to prevent glitching.
-      setTimeout(() => dispatch(setMemberActivityLoading(false)), 1000);
-      dispatch(setLoadingSyndicateDepositorDetails(false));
+        });
+        // adding a one-second timeout here to prevent glitching.
+        setTimeout(() => dispatch(setMemberActivityLoading(false)), 1000);
+        dispatch(setLoadingSyndicateDepositorDetails(false));
+      }
+    } catch (error) {
+      console.log({ error });
     }
-  } catch (error) {
-    console.log({ error });
-  }
-};
+  };

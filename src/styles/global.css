@@ -741,3 +741,13 @@ tr:hover .checkbox {
 .__react_component_tooltip.type-custom {
   opacity: 1 !important;
 }
+
+.h4 {
+  font-family: ABC Whyte Trial;
+  font-style: normal;
+  font-weight: bold;
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}

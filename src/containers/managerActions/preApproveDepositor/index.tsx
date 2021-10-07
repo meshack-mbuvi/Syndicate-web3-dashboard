@@ -407,7 +407,7 @@ const PreApproveDepositor = (props: Props): JSX.Element => {
                   onSelect: handleOnSelectText,
                   error: useCSV ? "" : lpAddressesError,
                   classoverride:
-                    "bg-gray-4 text-white border-inactive resize-none",
+                    "bg-transparent text-white border-inactive resize-none",
                 }}
                 name="approvedAddresses"
                 placeholder="Separate them with either a comma, space, or line break"

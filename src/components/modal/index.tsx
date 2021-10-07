@@ -50,7 +50,6 @@ export const Modal = (props: ModalProps): JSX.Element => {
     show,
     closeModal,
     customWidth = "w-11/12 md:w-7/12 lg:w-2/5",
-    loading = false,
     titleFontSize,
     showCloseButton = true,
     customClassName = "p-2 sm:p-6",
@@ -74,9 +73,9 @@ export const Modal = (props: ModalProps): JSX.Element => {
   return (
     <>
       {show ? (
-        <div className="fixed inset-0 overflow-y-auto z-50">
+        <div className="fixed inset-0 z-50">
           <div
-            className={`flex items-center justify-center text-center ${textColor} min-h-screen sm:pt-4 sm:px-4 pb-20 text-center sm:block sm:p-0`}
+            className={`flex items-center justify-center text-center ${textColor} min-h-screen sm:px-4 text-center sm:block sm:p-0`}
           >
             <div
               className="fixed inset-0 transition-opacity"
@@ -99,7 +98,7 @@ export const Modal = (props: ModalProps): JSX.Element => {
               } rounded-2xl  sm:mx-0 sm:my-40 text-left shadow-xl transform transition-all ${
                 customWidth ? customWidth : ""
               } ${overflow ? overflow : ""} ${
-                customClassName ? customClassName : ""
+                customClassName !== undefined ? customClassName : ""
               }`}
               role="dialog"
               aria-modal="true"
@@ -140,7 +139,7 @@ export const Modal = (props: ModalProps): JSX.Element => {
                 ) : null}
               </div>
               {/* modal title */}
-              {loading || !showHeader ? null : (
+              {title ? (
                 <div
                   className={`modal-header ${
                     titleMarginClassName ? titleMarginClassName : "mb-6 mt-4"
@@ -153,10 +152,12 @@ export const Modal = (props: ModalProps): JSX.Element => {
                 >
                   {title}
                 </div>
-              )}
+              ) : null}
               {/* end of modal title */}
 
-              <div className={showHeader ? "mx-4 align-middle" : null}>{children}</div>
+              <div className={showHeader ? "mx-4 align-middle" : null}>
+                {children}
+              </div>
             </div>
           </div>
         </div>

@@ -101,7 +101,7 @@ interface ISearchIcon {
   color?: string;
 }
 export const SearchIcon = (props: ISearchIcon) => {
-  const { height = "h-10", width = "w-10", color = "text-gray-3" } = props;
+  const { height = "h-4", width = "w-4", color = "text-gray-3" } = props;
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -117,5 +117,6 @@ export const SearchIcon = (props: ISearchIcon) => {
         d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
       />
     </svg>
+    // <Image src="/images/search.svg" height={height} width={width} alt="" />
   );
 };

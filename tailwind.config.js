@@ -201,17 +201,22 @@ module.exports = {
           navy: "#4376FF",
           rockBlue: "#8F9CAB",
           melanie: "#BDCFE3",
+          darkGunMetal: "#232529",
         },
         yellow: {
           ...colors.yellow,
           light: "#FFD02B",
           dark: "#FFC83C",
-          sematicYellow: "#F9D252",
+          semantic: "#F9D252",
         },
         orange: {
           ...colors.orange,
           light: "#E7AC3A",
           dark: "#E78B3A",
+        },
+        red: {
+          ...colors.red,
+          semantic: "#F14D4D",
         },
       },
       borderWidth: {

@@ -26,6 +26,7 @@ import Image from "next/image";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import DepositTransfer from "../depositTransfer";
 import PreApproveDepositor from "../preApproveDepositor";
 import MoreOptionButton from "./moreOptionButton";
 import {
@@ -91,6 +92,8 @@ const ManageMembers = (): JSX.Element => {
   const { syndicateAddress } = router.query;
 
   useEffect(() => {
+    if (!router.isReady) return;
+
     if (syndicateMembers?.length && syndicateDistributionTokens?.length) {
       const memberAddresses = syndicateMembers.map(
         ({ memberAddress }) => memberAddress,
@@ -123,7 +126,12 @@ const ManageMembers = (): JSX.Element => {
         }),
       );
     }
-  }, [syndicateMembers, syndicateDistributionTokens, syndicate]);
+  }, [
+    JSON.stringify(syndicateMembers),
+    syndicateDistributionTokens,
+    syndicate,
+    router.isReady,
+  ]);
 
   // Retrieve syndicate depositors
   useEffect(() => {
@@ -154,6 +162,9 @@ const ManageMembers = (): JSX.Element => {
         ],
       },
     }));
+    if (syndicate?.open)
+      return res.filter((value) => value.memberAddressAllowed);
+
     return res.filter((value) => {
       return (
         (parseInt(value.memberDeposit) === 0 && value.memberAddressAllowed) ||
@@ -234,28 +245,28 @@ const ManageMembers = (): JSX.Element => {
           const { memberAddress, memberAddressAllowed } = row;
           if (memberAddressAllowed === false) {
             return (
-              <div className="flex space-x-4 align-center text-base my-1 leading-6">
+              <div className="flex align-center border text-base my-1 leading-6">
                 <Image
                   width="32"
                   height="32"
                   src={"/images/user.svg"}
                   alt="user"
                 />
-                <p className="mt-1">
+                <p className="mt-1 border">
                   {formatAddress(memberAddress, 6, 6)} (Blocked)
                 </p>
               </div>
             );
           } else {
             return (
-              <div className="flex space-x-4 align-center text-base my-1 leading-6">
+              <div className="flex space-x-3 align-center text-base my-1 leading-6">
                 <Image
                   width="32"
                   height="32"
                   src={"/images/user.svg"}
                   alt="user"
                 />
-                <p className="mt-1">{formatAddress(memberAddress, 6, 6)}</p>
+                <p className="my-auto">{formatAddress(memberAddress, 6, 6)}</p>
               </div>
             );
           }
@@ -267,27 +278,27 @@ const ManageMembers = (): JSX.Element => {
           memberDeposit,
           returningDeposit,
           blockingAddress,
+          transferringDeposit,
         }) {
-          if (returningDeposit) {
+          if (returningDeposit || transferringDeposit || blockingAddress) {
             return (
-              <p className="flex opacity-70">
+              <p className="flex opacity-70s">
                 <Spinner height="h-4" width="w-4" margin="my-1" />
-                <span className="ml-2 text-gray-lightManatee">
-                  Returning deposits
-                </span>
-              </p>
-            );
-          } else if (blockingAddress) {
-            return (
-              <p className="flex opacity-70">
-                <Spinner height="h-4" width="w-4" margin="my-1" />
-                <span className="ml-2 text-gray-lightManatee">
-                  Blocking Address
+                <span className="ml-2 text-gray-lightManatee text-base leading-6	">
+                  {returningDeposit
+                    ? "Returning deposits"
+                    : transferringDeposit
+                    ? "Transferring"
+                    : "Blocking Address"}
                 </span>
               </p>
             );
           }
-          return <p className="">{floatedNumberWithCommas(memberDeposit)}</p>;
+          return (
+            <p className="text-white text-base">
+              {floatedNumberWithCommas(memberDeposit)}
+            </p>
+          );
         },
       },
       {
@@ -295,7 +306,9 @@ const ManageMembers = (): JSX.Element => {
         accessor: function distributionShare({ memberStake }) {
           return (
             <p className="">
-              <span className="ml-1 font-whyte-light">{memberStake}%</span>
+              <span className="ml-1 font-whyte-light text-white">
+                {memberStake}%
+              </span>
             </p>
           );
         },
@@ -573,6 +586,9 @@ const ManageMembers = (): JSX.Element => {
           </div>
         )}
 
+        {/* component handling deposit Transfer */}
+        <DepositTransfer />
+
         <Modal
           {...{
             show: showMemberDetailsModal,
@@ -775,13 +791,17 @@ const ManageMembers = (): JSX.Element => {
           modalStyle={ModalStyle.DARK}
           showCloseButton={false}
           customWidth="w-1/3"
+          // passing empty string to remove default classes
+          customClassName=""
         >
-          <div className="flex flex-col justify-center m-auto mb-4">
-            <Spinner />
-            <p className="text-lg text-center mt-8 mb-1">
+          {/* -mx-4 is used to revert the mx-4 set on parent div on the modal */}
+          <div className="flex flex-col justify-center py-10 -mx-4 px-8">
+            {/* passing empty margin to remove the default margin set on spinner */}
+            <Spinner margin="" />
+            <p className="text-xl text-center mt-10 mb-4 leading-6 text-white font-whyte">
               Waiting for confirmation
             </p>
-            <div className="modal-header font-medium text-center leading-8 text-sm text-blue-rockBlue">
+            <div className="font-whyte text-center leading-5 text-base text-gray-lightManatee">
               Please confirm the transaction in your wallet.
             </div>
           </div>
