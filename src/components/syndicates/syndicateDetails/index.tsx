@@ -1,9 +1,8 @@
 import { SkeletonLoader } from "@/components/skeletonLoader";
 import { RootState } from "@/redux/store";
-import { getWeiAmount, isUnlimited, onlyUnique } from "@/utils/conversions";
+import { isUnlimited } from "@/utils/conversions";
 import { epochTimeToDateFormat, getCountDownDays } from "@/utils/dateUtils";
 import { floatedNumberWithCommas } from "@/utils/formattedNumbers";
-import { getCoinFromContractAddress } from "functions/src/utils/ethereum";
 import abi from "human-standard-token-abi";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
@@ -11,8 +10,6 @@ import { CopyToClipboard } from "react-copy-to-clipboard";
 import { useDispatch, useSelector } from "react-redux";
 import { EtherscanLink } from "src/components/syndicates/shared/EtherscanLink";
 import { setSyndicateDetails } from "src/redux/actions/syndicateDetails";
-import { setSyndicateDistributionTokens } from "src/redux/actions/syndicateMemberDetails";
-
 // utils
 import { formatAddress } from "src/utils/formatAddress";
 import GradientAvatar from "../portfolioAndDiscover/portfolio/GradientAvatar";
@@ -21,26 +18,21 @@ import {
   closeDateToolTip,
   createdDateToolTip,
   depositRangeToolTip,
-  depositTokenToolTip,
   distributionShareToSyndicateLeadToolTip,
   distributionShareToSyndicateProtocolToolTip,
   expectedAnnualOperatingFeesToolTip,
 } from "../shared/Constants";
 import PermissionCard from "../shared/PermissionsCard";
 import { ProgressIndicator } from "../shared/progressIndicator";
-const moment = require("moment");
 
 // we should have an isChildVisible prop here of type boolean
 const SyndicateDetails = (props: {
   accountIsManager: boolean;
   children?: React.ReactChild;
 }): JSX.Element => {
-  const { accountIsManager } = props;
-
   const {
     initializeContractsReducer: { syndicateContracts },
     syndicateDetailsReducer: { syndicateDetails },
-
     web3Reducer: {
       web3: { web3 },
     },
@@ -68,28 +60,15 @@ const SyndicateDetails = (props: {
     useState<boolean>(false);
 
   // state to handle details about the current deposit ERC20 token
-  const [depositTokenContract, setDepositTokenContract] = useState<any>("");
+  const [, setDepositTokenContract] = useState<any>("");
 
   // states to show general syndicate details
-  const [syndicateCumulativeDetails, setSyndicateCumulativeDetails] = useState([
+  const [, setSyndicateCumulativeDetails] = useState([
     {
       header: "Total Deposits",
       subText: "",
     },
   ]);
-
-  // states to handle manager allowances
-  // states to handle manager allowances
-  const [managerDepositsAllowance, setManagerDepositsAllowance] =
-    useState<number>(0);
-  const [correctManagerDepositsAllowance, setCorrectManagerDepositsAllowance] =
-    useState<boolean>(false);
-  const [
-    correctManagerDistributionsAllowance,
-    setCorrectManagerDistributionsAllowance,
-  ] = useState<boolean>(false);
-  const [showManagerSetAllowances, setShowManagerSetAllowances] =
-    useState<boolean>(false);
 
   // get syndicate address from the url
   const { syndicateAddress } = router.query;
@@ -98,8 +77,6 @@ const SyndicateDetails = (props: {
   const depositTotalMax = syndicate?.depositTotalMax;
   const depositERC20TokenSymbol = syndicate?.depositERC20TokenSymbol;
   const depositERC20Address = syndicate?.depositERC20Address;
-  const distributing = syndicate?.distributing;
-  const depositsEnabled = syndicate?.depositsEnabled;
 
   // Handle syndicate progress bar
   const depositTotal = syndicate?.depositTotal;
@@ -143,8 +120,6 @@ const SyndicateDetails = (props: {
         managerManagementFeeBasisPoints,
         depositMemberMax,
         depositMemberMin,
-        depositTotal,
-        depositTotalMax,
         numMembersCurrent,
         numMembersMax,
         epochTime,
@@ -153,7 +128,6 @@ const SyndicateDetails = (props: {
 
       const { closeDate, createdDate } = epochTime;
 
-      const valueIsUnlimited = isUnlimited(depositMemberMax);
       setDetails([
         ...(syndicate?.open && !syndicate?.isCloseDatePast
           ? depositsMaxIsUnlimited
@@ -324,13 +298,7 @@ const SyndicateDetails = (props: {
   };
 
   // show modal for manager to set allowances for deposits/distributions
-  const showManagerSetAllowancesModal = () => {
-    setShowManagerSetAllowances(true);
-  };
   //hide modal for setting allowances by the manager
-  const hideManagerSetAllowances = () => {
-    setShowManagerSetAllowances(false);
-  };
 
   // set syndicate deposit link
   const [syndicateDepositLink, setSyndicateDepositLink] = useState<string>("");

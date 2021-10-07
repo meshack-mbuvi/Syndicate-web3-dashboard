@@ -72,10 +72,12 @@ module.exports = {
       }),
       width: () => ({
         "fit-content": "fit-content",
+        "2/1": "200%",
       }),
       maxWidth: {
         564: "35.25rem",
         868: "54rem",
+        1480: "92.5rem",
       },
       backgroundOpacity: {
         15: "0.15",
@@ -116,9 +118,8 @@ module.exports = {
         "7xl": ["4.5rem", "5.4rem"],
       },
       lineHeight: {
-        '17': '4.25rem'
-      }
-      ,
+        17: "4.25rem",
+      },
       colors: {
         "twitter-blue": "#1DA1F2",
         "discord-purple": "#7289DA",
@@ -173,10 +174,8 @@ module.exports = {
           shuttle: "#646871",
         },
         red: {
-          sematicRed: "#F14D4D",
-        },
-        red: {
-          sematicRed: "#F14D4D",
+          ...colors.red,
+          sematic: "#F14D4D",
         },
         green: {
           ...colors.green,

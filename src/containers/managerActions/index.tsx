@@ -24,14 +24,10 @@ import {
 } from "@/components/syndicates/shared/Constants";
 import { UnavailableState } from "@/components/syndicates/shared/unavailableState";
 import { getMetamaskError } from "@/helpers";
-import {
-  setShowModifyCapTable,
-  setShowModifyMemberDistributions,
-} from "@/redux/actions/manageActions";
+import { setShowModifyMemberDistributions } from "@/redux/actions/manageActions";
 import { getSyndicateByAddress } from "@/redux/actions/syndicates";
 import { RootState } from "@/redux/store";
-import { web3 } from "@/utils";
-import { floatedNumberWithCommas } from "@/utils/formattedNumbers";
+import abi from "human-standard-token-abi";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -41,19 +37,8 @@ import ManagerActionCard from "./managerActionCard";
 import ModifyMemberDistributions from "./modifyMemberDistributions";
 import ModifySyndicateCapTable from "./modifySyndicateCapTable";
 import MoreManagerActionCard from "./moreManagerActionCard";
-import PreApproveDepositor from "./preApproveDepositor";
 import RequestSocialProfile from "./requestSocialProfile";
 import ManagerSetAllowance from "./setAllowances";
-import abi from "human-standard-token-abi";
-import { checkAccountAllowance } from "src/helpers/approveAllowance";
-import { getWeiAmount, onlyUnique } from "@/utils/conversions";
-import {
-  storeDepositTokenAllowance,
-  storeDistributionTokensDetails,
-} from "@/redux/actions/tokenAllowances";
-import { getCoinFromContractAddress } from "functions/src/utils/ethereum";
-import { getTokenIcon } from "@/TokensList";
-import { setSyndicateDistributionTokens } from "@/redux/actions/syndicateMemberDetails";
 
 const ManagerActions = (): JSX.Element => {
   const {
@@ -67,12 +52,7 @@ const ManagerActions = (): JSX.Element => {
     },
     syndicateMemberDetailsReducer: {
       syndicateDistributionTokens,
-      memberDepositDetails,
       memberWithdrawalDetails,
-    },
-    tokenDetailsReducer: {
-      depositTokenAllowanceDetails,
-      distributionTokensAllowanceDetails,
     },
   } = useSelector((state: RootState) => state);
   const dispatch = useDispatch();
@@ -88,17 +68,6 @@ const ManagerActions = (): JSX.Element => {
       setAddress(web3.utils.toChecksumAddress(syndicateAddress));
     }
   }, [router.isReady]);
-  const [accountIsManager, setAccountIsManager] = useState<boolean>(false);
-
-  // check whether the current connected wallet account is the manager of the syndicate
-  // we'll use this information to load the manager view
-  useEffect(() => {
-    if (syndicate && syndicate?.managerCurrent == account) {
-      setAccountIsManager(true);
-    } else {
-      setAccountIsManager(false);
-    }
-  }, [syndicate, account]);
 
   const [showWalletConfirmationModal, setShowWalletConfirmationModal] =
     useState(false);
@@ -108,7 +77,6 @@ const ManagerActions = (): JSX.Element => {
 
   const [showDistributeToken, setShowDistributeToken] = useState(false);
 
-  const [showPreApproveDepositor, setShowPreApproveDepositor] = useState(false);
   const [showRequestSocialProfile, setShowRequestSocialProfile] =
     useState(false);
   const [showChangeSettings, setShowChangeSettings] = useState<boolean>(false);
@@ -179,56 +147,6 @@ const ManagerActions = (): JSX.Element => {
       setDepositTokenContract(tokenContract);
     }
   }, [depositERC20Address, web3]);
-  // states to handle manager allowances
-  const [managerDepositsAllowance, setManagerDepositsAllowance] =
-    useState<number>(0);
-  const [correctManagerDepositsAllowance, setCorrectManagerDepositsAllowance] =
-    useState<boolean>(false);
-  const [
-    correctManagerDistributionsAllowance,
-    setCorrectManagerDistributionsAllowance,
-  ] = useState<boolean>(false);
-
-  // check whether current distribution/deposit token allowances are enough to cover
-  // withdrawal of distributions/deposits
-  useEffect(() => {
-    // update local state to indicate whether all tokens have the correct allowance set
-    // check if the deposit token allowances if the syndicate is still open.
-    // checks will be done only if the current member is the manager.
-    if (accountIsManager) {
-      if (depositsEnabled && depositTokenAllowanceDetails.length > 0) {
-        // indexing from 0 only because there's just one primary depositERC20 token
-        if (depositTokenAllowanceDetails[0].sufficientAllowanceSet === true) {
-          setCorrectManagerDepositsAllowance(true);
-        } else {
-          setCorrectManagerDepositsAllowance(false);
-        }
-      }
-
-      // check distribution allowances if distribution has been set.
-      if (distributionTokensAllowanceDetails.length) {
-        // we need to loop over all values and check if there's any distribution token.
-        // a syndicate can have infinite distribution tokens.
-        for (let i = 0; i < distributionTokensAllowanceDetails.length; i++) {
-          const { sufficientAllowanceSet } =
-            distributionTokensAllowanceDetails[i];
-          if (!sufficientAllowanceSet) {
-            setCorrectManagerDistributionsAllowance(false);
-            return;
-          }
-          setCorrectManagerDistributionsAllowance(true);
-        }
-      }
-    }
-  }, [
-    depositTokenAllowanceDetails,
-    distributionTokensAllowanceDetails,
-    depositsEnabled,
-    distributing,
-    accountIsManager,
-    account,
-    syndicate,
-  ]);
 
   const handleCloseFinalStateModal = async () => {
     setShowFinalState(false);
@@ -332,16 +250,6 @@ const ManagerActions = (): JSX.Element => {
 
   const handleSetShowModifyMemberDistributions = () => {
     dispatch(setShowModifyMemberDistributions(true));
-  };
-
-  /**
-   * Sets controller variable for modifySyndicateCapTable modal to true and
-   * selected member address to the address of the clicked row.
-   * @param event
-   */
-  const handleSetShoModifySyndicateCapTable = (event) => {
-    event.preventDefault();
-    dispatch(setShowModifyCapTable(true));
   };
 
   let badgeBackgroundColor = "bg-blue-darker";
@@ -483,7 +391,7 @@ const ManagerActions = (): JSX.Element => {
             </div>
           </div>
         </FadeIn>
-        <div className="p-0 pt-4">
+        <div className="p-0 md:py-2">
           {syndicate?.distributing && syndicate?.modifiable ? (
             <MoreManagerActionCard
               icon={<img src="/images/invertedInfo.svg" alt="Info" />}
@@ -615,7 +523,6 @@ const ManagerActions = (): JSX.Element => {
           depositTokenContract,
           showManagerSetAllowances,
           hideManagerSetAllowances,
-          managerDepositsAllowance,
           depositERC20TokenSymbol,
           tokenDecimals,
           syndicateContracts,

@@ -34,7 +34,7 @@ const Layout = ({ children, backLink = null }) => {
           syndicateAddressIsValid &&
           syndicateFound && <DepositsPageBanner key={2} />}
       </div>
-      <div className="flex w-full flex-col sm:flex-row py-32 z-0 justify-center">
+      <div className="flex w-full flex-col sm:flex-row py-24 z-0 justify-center items-center my-0 mx-auto">
         {children}
       </div>
       <ConnectWallet />

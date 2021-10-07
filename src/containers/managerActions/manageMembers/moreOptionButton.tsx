@@ -1,8 +1,8 @@
+import { showConfirmBlockMemberAddress } from "@/redux/actions/manageActions";
 import {
   setSelectedMemberAddress,
   showConfirmReturnDeposit,
 } from "@/redux/actions/manageMembers";
-import { showConfirmBlockMemberAddress } from "@/redux/actions/manageActions";
 import React from "react";
 import { useDispatch } from "react-redux";
 import ReactTooltip from "react-tooltip";
@@ -57,52 +57,82 @@ const MoreOptionButton = (props: {
   return (
     <>
       {showMoreInfoOptions === true && (
-        <div className="flex space-x-4 justify-end p-1">
-          <button
-            className="cursor-pointer hover:opacity-70"
-            data-tip
-            data-for="edit-member-deposit"
-          >
-            <img src="/images/edit-deposit.svg" alt="edit member deposit" />
-            <ReactTooltip id="edit-member-deposit" place="top" effect="solid">
-              Modify on-chain deposit amount
-            </ReactTooltip>
-          </button>
+        <div className="flex space-x-6 justify-end items-center">
+          {!distributing && (
+            <div>
+              <button
+                className="cursor-pointer hover:opacity-70 pt-2"
+                data-tip
+                data-for="edit-member-deposit"
+              >
+                <img src="/images/edit-deposit.svg" alt="edit member deposit" />
+              </button>
+              <div className="opacity-100">
+                <ReactTooltip
+                  id="edit-member-deposit"
+                  place="top"
+                  effect="solid"
+                  className="actionsTooltip"
+                  arrowColor="transparent"
+                  backgroundColor="#222529"
+                >
+                  Modify on-chain deposit amount
+                </ReactTooltip>
+              </div>
+            </div>
+          )}
           {memberDeposit !== "0" && (
-            <button
-              className={`cursor-pointer ${
-                memberDeposit == "0" ? "opacity-40" : "hover:opacity-70"
-              }`}
-              onClick={() => confirmReturnMemberDeposit()}
-              data-tip
-              data-for="return-member-deposit"
-              disabled={memberDeposit == "0" ? true : false}
-            >
-              <img
-                src="/images/return-deposits.svg"
-                alt="Return member deposit"
-              />
+            <div>
+              <button
+                className={`cursor-pointer pt-2 ${
+                  memberDeposit == "0" ? "opacity-40" : "hover:opacity-70"
+                }`}
+                onClick={() => confirmReturnMemberDeposit()}
+                data-tip
+                data-for="return-member-deposit"
+                disabled={memberDeposit == "0" ? true : false}
+              >
+                <img
+                  src="/images/return-deposits.svg"
+                  alt="Return member deposit"
+                />
+              </button>
               <ReactTooltip
                 id="return-member-deposit"
                 place="top"
                 effect="solid"
+                className="actionsTooltip"
+                arrowColor="transparent"
+                backgroundColor="#222529"
               >
                 Return all deposits
               </ReactTooltip>
-            </button>
+            </div>
           )}
-          {memberAddressAllowed == true && (
-            <button
-              className="cursor-pointer hover:opacity-70"
-              data-tip
-              data-for="block-address"
-              onClick={() => confirmBlockMemberAddress()}
-            >
-              <img src="/images/block-address.svg" alt="Block address" />
-              <ReactTooltip id="block-address" place="top" effect="solid">
+
+          {(distributing == false &&
+            allowlistEnabled &&
+            memberAddressAllowed) === true && (
+            <div>
+              <button
+                className="cursor-pointer hover:opacity-70 pt-2"
+                data-tip
+                data-for="block-address"
+                onClick={() => confirmBlockMemberAddress()}
+              >
+                <img src="/images/block-address.svg" alt="Block address" />
+              </button>
+              <ReactTooltip
+                id="block-address"
+                place="top"
+                effect="solid"
+                className="actionsTooltip"
+                arrowColor="transparent"
+                backgroundColor="#222529"
+              >
                 Block address
               </ReactTooltip>
-            </button>
+            </div>
           )}
         </div>
       )}

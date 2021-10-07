@@ -173,9 +173,8 @@ const ManageMembers = (): JSX.Element => {
 
     if (filteredAddress.trim()) {
       // search any text
-      const regex = new RegExp(`${filteredAddress}`);
       const filteredMembers = allMembers.filter((member) =>
-        regex.test(member.memberAddress),
+        member.memberAddress.toLowerCase().includes(filteredAddress),
       );
       setSynMembersToShow(filteredMembers);
     } else {
@@ -190,6 +189,7 @@ const ManageMembers = (): JSX.Element => {
     JSON.stringify(syndicateMembers),
     memberActivity,
     memberWithdrawalDetails,
+    filteredAddress,
   ]);
 
   useEffect(() => {
@@ -234,14 +234,13 @@ const ManageMembers = (): JSX.Element => {
           const { memberAddress, memberAddressAllowed } = row;
           if (memberAddressAllowed === false) {
             return (
-              <div className="flex space-x-3 align-center text-base my-1 leading-6">
+              <div className="flex space-x-4 align-center text-base my-1 leading-6">
                 <Image
                   width="32"
                   height="32"
                   src={"/images/user.svg"}
                   alt="user"
                 />
-                {}
                 <p className="mt-1">
                   {formatAddress(memberAddress, 6, 6)} (Blocked)
                 </p>
@@ -249,14 +248,13 @@ const ManageMembers = (): JSX.Element => {
             );
           } else {
             return (
-              <div className="flex space-x-3 align-center text-base my-1 leading-6">
+              <div className="flex space-x-4 align-center text-base my-1 leading-6">
                 <Image
                   width="32"
                   height="32"
                   src={"/images/user.svg"}
                   alt="user"
                 />
-                {}
                 <p className="mt-1">{formatAddress(memberAddress, 6, 6)}</p>
               </div>
             );
@@ -297,9 +295,7 @@ const ManageMembers = (): JSX.Element => {
         accessor: function distributionShare({ memberStake }) {
           return (
             <p className="">
-              <span className="ml-1 font-whyte-light text-gray-400">
-                {memberStake}%
-              </span>
+              <span className="ml-1 font-whyte-light">{memberStake}%</span>
             </p>
           );
         },
@@ -369,7 +365,7 @@ const ManageMembers = (): JSX.Element => {
         },
       },
     ],
-    [],
+    [syndicate],
   );
 
   const showWalletConfirmationModal = (status: boolean) => {
@@ -526,8 +522,8 @@ const ManageMembers = (): JSX.Element => {
   };
 
   return (
-    <div className="w-full rounded-md h-full my-4">
-      <div className="w-full px-2 py-2 sm:px-0">
+    <div className="w-full rounded-md h-full max-w-1480">
+      <div className="w-full px-2 sm:px-0">
         {showPreApproveDepositor ? (
           <PreApproveDepositor
             {...{
@@ -540,8 +536,8 @@ const ManageMembers = (): JSX.Element => {
           <div className="flex justify-center ">
             <Spinner />
           </div>
-        ) : tableData.length ? (
-          <div className="flex flex-col overflow-y-hidden -mx-6">
+        ) : tableData.length || filteredAddress ? (
+          <div className="flex flex-col overflow-y-hidden">
             <SyndicateMembersTable
               columns={columns}
               data={tableData}
@@ -607,7 +603,7 @@ const ManageMembers = (): JSX.Element => {
               <div className="hidden sm:block">
                 <div className="">
                   <nav className="flex" aria-label="Tabs">
-                    <a
+                    <button
                       key="details"
                       onClick={() => setActiveMemberDetailsTab("details")}
                       className={`whitespace-nowrap py-4 px-1 border-b-1 font-whyte text-sm cursor-pointer ${
@@ -617,9 +613,9 @@ const ManageMembers = (): JSX.Element => {
                       }`}
                     >
                       DETAILS
-                    </a>
+                    </button>
 
-                    <a
+                    <button
                       key="activity"
                       onClick={() => setActiveMemberDetailsTab("activity")}
                       className={`whitespace-nowrap py-4 px-1 border-b-1 font-whyte text-sm ml-10 cursor-pointer ${
@@ -629,7 +625,7 @@ const ManageMembers = (): JSX.Element => {
                       }`}
                     >
                       ACTIVITY
-                    </a>
+                    </button>
                   </nav>
                 </div>
                 <div className="border-b-1 border-gray-24 absolute w-full -ml-10"></div>
@@ -743,8 +739,8 @@ const ManageMembers = (): JSX.Element => {
             <p className="text-base text-center text-gray-lightManatee">
               {`${
                 memberAddresses.length > 1
-                  ? "This will block the selected members from depositing more funds into this syndicate.They will remain members until their deposits are returned."
-                  : "This will block the member from depositing more funds into this syndicate.They will remain a member until their deposits are returned."
+                  ? "This will block the selected members from depositing more funds into this syndicate. They will remain members until their deposits are returned."
+                  : "This will block the member from depositing more funds into this syndicate. They will remain a member until their deposits are returned."
               }`}
             </p>
             <div className="flex justify-between mt-10">
@@ -765,7 +761,9 @@ const ManageMembers = (): JSX.Element => {
                 onClick={() => handleBlockAddresses()}
                 disabled={showConfirmationModal}
               >
-                Block Address
+                {memberAddresses.length > 1
+                  ? "Block Addresses"
+                  : "Block Address"}
               </button>
             </div>
           </div>

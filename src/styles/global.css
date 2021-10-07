@@ -719,3 +719,25 @@ tr:hover .checkbox {
   box-shadow: 0px 14px 15px rgba(0, 0, 0, 0.45);
   backdrop-filter: blur(64px);
 }
+
+/* tooltip hover  */
+.actionsTooltip {
+  font-size: 14px !important;
+  line-height: 16px;
+  border-radius: 10px !important;
+  color: #90949e !important;
+  padding: 12px 16px !important;
+  opacity: 1 !important;
+  box-shadow: 0px 8px 16px 0px #00000033;
+  background: #232529;
+}
+.__react_component_tooltip.show {
+  opacity: 1 !important;
+}
+.__react_component_tooltip.place-top {
+  opacity: 1 !important;
+}
+
+.__react_component_tooltip.type-custom {
+  opacity: 1 !important;
+}

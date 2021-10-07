@@ -12,16 +12,15 @@ import { showWalletModal } from "@/redux/actions";
 import { setSyndicateDistributionTokens } from "@/redux/actions/syndicateMemberDetails";
 import { getSyndicateByAddress } from "@/redux/actions/syndicates";
 import {
-  storeDistributionTokensDetails,
   storeDepositTokenAllowance,
+  storeDistributionTokensDetails,
 } from "@/redux/actions/tokenAllowances";
 import { RootState } from "@/redux/store";
 import { getTokenIcon } from "@/TokensList";
-import { onlyUnique, getWeiAmount } from "@/utils/conversions";
+import { getWeiAmount, onlyUnique } from "@/utils/conversions";
 import { formatAddress } from "@/utils/formatAddress";
 import { faExclamationTriangle } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Tab } from "@headlessui/react";
 import { getCoinFromContractAddress } from "functions/src/utils/ethereum";
 import { isEmpty } from "lodash";
 import { useRouter } from "next/router";
@@ -634,6 +633,8 @@ const LayoutWithSyndicateDetails = ({ children }): JSX.Element => {
     noSyndicate = creatingSyndicate;
   }
 
+  const [activeTab, setActiveTab] = useState("members");
+
   return (
     <Layout>
       <Head title="Syndicate" />
@@ -643,7 +644,7 @@ const LayoutWithSyndicateDetails = ({ children }): JSX.Element => {
           {noSyndicate ? (
             noSyndicate
           ) : (
-            <div className="container mx-auto">
+            <div className="container mx-auto ">
               {/* Two Columns (Syndicate Details + Widget Cards) */}
               <BackButton />
               <div className="grid grid-cols-12 gap-5">
@@ -666,35 +667,30 @@ const LayoutWithSyndicateDetails = ({ children }): JSX.Element => {
               </div>
 
               {/* Tabbed components; only visible on manage pages */}
-              {!isEmpty(syndicate) && showMembers === true && (
-                <div className="w-full rounded-md h-full my-4 mt-20">
-                  <div className="w-full sm:px-0">
-                    <Tab.Group defaultIndex={0}>
-                      <Tab.List className="flex space-x-10 w-full">
-                        <div className="w-full h-fit-content space-x-4 border-b-1 border-gray-nightrider">
-                          <Tab
-                            className={({ selected }) =>
-                              `pr-3 pb-6 text-xs font-whyte uppercase ${
-                                selected
-                                  ? "text-white border-b-1 border-white"
-                                  : "text-gray-lightManatee"
-                              }`
-                            }
-                          >
-                            Members
-                          </Tab>
-                        </div>
-                      </Tab.List>
-
-                      <Tab.Panels className="font-whyte text-blue-rockBlue w-full">
-                        <Tab.Panel as="div">
-                          <ManageMembers />
-                        </Tab.Panel>
-                      </Tab.Panels>
-                    </Tab.Group>
+              <div className="mt-14">
+                <div>
+                  <nav className="flex" aria-label="Tabs">
+                    <button
+                      key="members"
+                      onClick={() => setActiveTab("members")}
+                      className={`whitespace-nowrap py-6 px-1 border-b-1 focus:outline-none focus:ring-0 font-whyte text-sm cursor-pointer ${
+                        activeTab == "members"
+                          ? "border-white text-white"
+                          : "border-transparent text-gray-500 hover:text-gray-400 hover:border-gray-400"
+                      }`}
+                    >
+                      Members
+                    </button>
+                    {/* add more tabs here */}
+                  </nav>
+                </div>
+                <div className="border-b-1 border-gray-24 absolute w-2/1 -ml-96 -mr-96"></div>
+                <div className="mt-4 text-base grid grid-cols-12 gap-5">
+                  <div className="col-span-12">
+                    {activeTab == "members" && <ManageMembers />}
                   </div>
                 </div>
-              )}
+              </div>
 
               <Footer extraClasses="mt-24 sm:mt-24 md:mt-40 mb-12" />
             </div>

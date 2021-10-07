@@ -5,6 +5,7 @@ import {
   showConfirmReturnDeposit,
 } from "@/redux/actions/manageMembers";
 import { RootState } from "@/redux/store";
+import { ExclamationCircleIcon } from "@heroicons/react/solid";
 import Image from "next/image";
 import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -69,7 +70,7 @@ const SyndicateMembersTable = ({
     return (
       <input
         type="checkbox"
-        className={`rounded checkbox bg-gray-blackRussian -mr-2 flex ${
+        className={`rounded checkbox bg-gray-blackRussian -mr-2 flex focus:outline-none border-1 border-gray-shuttle ${
           rest?.checked ? "block" : `${customClass ? customClass : ""}`
         }`}
         ref={combinedRef}
@@ -89,10 +90,9 @@ const SyndicateMembersTable = ({
     selectedFlatRows,
     canPreviousPage,
     canNextPage,
-    pageCount,
     nextPage,
     previousPage,
-    state: { pageSize },
+    state: { pageSize, pageIndex },
   } = useTable(
     {
       columns,
@@ -111,19 +111,26 @@ const SyndicateMembersTable = ({
           id: "selection",
           // eslint-disable-next-line react/display-name
           Header: ({ getToggleAllRowsSelectedProps }) => (
-            <IndeterminateCheckbox {...getToggleAllRowsSelectedProps()} />
+            <div className="w-1 mr-3 pl-1">
+              <IndeterminateCheckbox
+                {...{
+                  ...getToggleAllRowsSelectedProps(),
+                }}
+              />
+            </div>
           ),
           // The cell can use the individual row's getToggleRowSelectedProps method
           // to the render a checkbox
           // eslint-disable-next-line react/display-name
           Cell: function ({ row }) {
             return (
-              <IndeterminateCheckbox
-                {...{
-                  ...row.getToggleRowSelectedProps(),
-                  customClass: "hidden",
-                }}
-              />
+              <div className="w-1 mr-3 pl-1">
+                <IndeterminateCheckbox
+                  {...{
+                    ...row.getToggleRowSelectedProps(),
+                  }}
+                />
+              </div>
             );
           },
         },
@@ -166,32 +173,54 @@ const SyndicateMembersTable = ({
     dispatch(setSelectedMemberAddress(selectedMemberAddress, totalDeposit));
   };
 
+  // show first and last page for pagination
+  const firstPage = pageIndex === 0 ? "1" : pageIndex * pageSize;
+  let lastPage;
+  if (pageIndex > 0) {
+    lastPage =
+      page.length < pageSize
+        ? pageIndex * pageSize + page.length
+        : (pageIndex + 1) * pageSize;
+  } else if (pageIndex === 0) {
+    lastPage =
+      page.length < pageSize
+        ? (pageIndex + 1) * pageSize + page.length
+        : (pageIndex + 1) * pageSize;
+  }
+
   return (
-    <div className="flex flex-col overflow-y-hidden -ml-6">
-      <div className="flex my-10 space-x-8 justify-between ml-8">
-        <form className="w-3/12 ">
-          <SearchForm
-            {...{
-              onChangeHandler: filterAddressOnChangeHandler,
-              searchValue: searchAddress,
-              memberCount: data.length,
-            }}
-          />
-        </form>{" "}
-        <div className="flex divide-x divide-gray-steelGrey space-x-4 py-2">
+    <div className="flex flex-col overflow-y-hidden">
+      <div className="flex my-14 space-x-8 justify-between items-center">
+        {
+          // no point showing the search form if there is just one member.
+          page.length > 1 || searchAddress ? (
+            <SearchForm
+              {...{
+                onChangeHandler: filterAddressOnChangeHandler,
+                searchValue: searchAddress,
+                memberCount: data.length,
+              }}
+            />
+          ) : (
+            // adding this empty div to maintain button placements to the right
+            <div></div>
+          )
+        }
+
+        <div className="flex divide-x divide-gray-steelGrey space-x-4">
           {selectedFlatRows.length > 0 && (
-            <div className="flex space-x-6">
-              <p className="">
+            <div className="flex space-x-8">
+              <p className="text-gray-syn4">
                 {selectedFlatRows.length} of {data.length} selected:
               </p>
               {syndicate.modifiable == true && syndicate.open && (
                 <button
-                  className={`flex flex-shrink font-whyte text-right text-blue text-sm justify-center hover:opacity-80`}
+                  className={`flex flex-shrink font-whyte text-right text-blue justify-center items-center hover:opacity-80`}
                 >
                   <img
                     src={"/images/edit-deposits-blue.svg"}
                     alt="icon"
-                    className="mr-2 mt-0.5"
+                    className="mr-2"
                   />
                   <span>Modify deposit amounts</span>
                 </button>
@@ -199,13 +228,13 @@ const SyndicateMembersTable = ({
 
               {syndicate.open && selectedFlatRowsAmount > 0 ? (
                 <button
-                  className={`flex flex-shrink font-whyte text-right text-blue text-sm justify-center`}
+                  className={`flex flex-shrink font-whyte text-right text-blue justify-center items-center hover:opacity-80`}
                   onClick={() => confirmReturnMemberDeposit()}
                 >
                   <img
                     src={"/images/return-deposit-blue.svg"}
                     alt="icon"
-                    className="mr-2 mt-0.5"
+                    className="mr-2"
                   />
                   <span>Return deposits</span>
                 </button>
@@ -217,14 +246,10 @@ const SyndicateMembersTable = ({
               selectedFlatRowsBlocked &&
               syndicate.open ? (
                 <button
-                  className={`flex flex-shrink font-whyte text-right text-blue text-sm justify-center hover:opacity-80`}
+                  className={`flex flex-shrink font-whyte text-right text-blue justify-center items-center  hover:opacity-80`}
                   onClick={() => confirmBlockMemberAddress()}
                 >
-                  <img
-                    src={"/images/block.svg"}
-                    alt="icon"
-                    className="mr-2 mt-0.5"
-                  />
+                  <img src={"/images/block.svg"} alt="icon" className="mr-2" />
                   <span>Block</span>
                 </button>
               ) : null}
@@ -234,13 +259,13 @@ const SyndicateMembersTable = ({
           {syndicate.allowlistEnabled && syndicate.open && (
             <div className="pl-4">
               <button
-                className={`flex flex-shrink font-whyte text-right text-blue text-sm justify-center hover:opacity-80`}
+                className={`flex flex-shrink font-whyte text-right text-blue justify-center items-center hover:opacity-80`}
                 onClick={showApproveModal}
               >
                 <img
                   src={"/images/plus-circle-blue.svg"}
                   alt="icon"
-                  className="mr-2 mt-0.5"
+                  className="mr-2"
                 />
                 <span>Add members</span>
               </button>
@@ -251,41 +276,67 @@ const SyndicateMembersTable = ({
 
       <table
         {...getTableProps()}
-        className="w-full border-b-1 px-1 border-gray-nightrider"
+        className={`w-full ${
+          page.length ? "border-b-1" : "border-b-0"
+        } px-1 border-gray-steelGrey`}
       >
         <thead className="w-full">
           {
-            // Loop over the header rows
-            headerGroups.map((headerGroup, index) => (
-              // Apply the header row props
-              <tr
-                {...headerGroup.getHeaderGroupProps()}
-                key={index}
-                className="text-gray-lightManatee text-sm py-10 leading-6"
-              >
-                {
-                  // Loop over the headers in each row
-                  headerGroup.headers.map((column, index) => (
-                    // Apply the header cell props
-                    <th
-                      {...column.getHeaderProps()}
-                      key={index}
-                      className="rounded-md pl-0.5 pt-2 text-left text-xs text-gray-lightManatee"
-                    >
-                      {
-                        // Render the header
-                        column.render("Header")
-                      }
-                    </th>
-                  ))
-                }
-              </tr>
-            ))
+            // Loop over the header rows if table data exists.
+            page.length
+              ? headerGroups.map((headerGroup, index) => (
+                  // Apply the header row props
+                  <tr
+                    {...headerGroup.getHeaderGroupProps()}
+                    key={index}
+                    className="text-gray-lightManatee text-sm leading-6"
+                  >
+                    {
+                      // Loop over the headers in each row
+                      headerGroup.headers.map((column, index) => {
+                        // Apply the header cell props
+                        if (
+                          column?.id == "selection" ||
+                          column?.Header.toString().trim() == " "
+                        ) {
+                          return (
+                            <th
+                              {...column.getHeaderProps()}
+                              key={index}
+                              className={`rounded-md pb-2 ${
+                                column?.id == "selection" ? "pr-4" : ""
+                              } text-left text-sm font-whyte-light text-gray-lightManatee`}
+                            >
+                              {
+                                // Render the header
+                                column.render("Header")
+                              }
+                            </th>
+                          );
+                        } else {
+                          return (
+                            <th
+                              {...column.getHeaderProps()}
+                              key={index}
+                              className="rounded-md pb-2 w-1/4 text-left text-sm font-whyte-light text-gray-lightManatee"
+                            >
+                              {
+                                // Render the header
+                                column.render("Header")
+                              }
+                            </th>
+                          );
+                        }
+                      })
+                    }
+                  </tr>
+                ))
+              : null
           }
         </thead>
 
         <tbody
-          className="divide-y divide-gray-nightrider overflow-y-scroll"
+          className="divide-y divide-gray-steelGrey overflow-y-scroll"
           {...getTableBodyProps()}
         >
           {
@@ -303,7 +354,7 @@ const SyndicateMembersTable = ({
                 <tr
                   {...row.getRowProps()}
                   key={index}
-                  className="space-y-6 hover:opacity-90 border-b-1 text-base border-gray-nightrider"
+                  className="space-y-6 border-b-1 text-base border-gray-steelGrey h-16"
                   onMouseEnter={() => setShowMoreOptions(index)}
                   onMouseLeave={() => setShowMoreOptions(-1)}
                 >
@@ -313,10 +364,11 @@ const SyndicateMembersTable = ({
                       // Apply the cell props
                       // Show more options when row is hovered, otherwise hide them
                       return (
+                        // eslint-disable-next-line jsx-a11y/click-events-have-key-events
                         <td
                           {...cell.getCellProps()}
                           key={cellIndex}
-                          className={`m-0 font-whyte-light text-white pl-0.5 py-2 ${
+                          className={`m-0 font-whyte-light text-white py-2 ${
                             showMoreOptions == row.index
                               ? "opacity-100"
                               : cellIndex === row.cells.length - 1 &&
@@ -328,7 +380,7 @@ const SyndicateMembersTable = ({
                               ? "cursor-pointer"
                               : ""
                           }
-                          }`}
+                          `}
                           onClick={
                             cellIndex > 0 && cellIndex < row.cells.length - 1
                               ? (e) => {
@@ -349,12 +401,18 @@ const SyndicateMembersTable = ({
               );
             })
           }
+          {searchAddress && !page.length && (
+            <div className="flex flex-col justify-center w-full h-full items-center">
+              <ExclamationCircleIcon className="h-10 w-10 mb-2 text-gray-lightManatee" />
+              <p className="text-gray-lightManatee">No member found.</p>
+            </div>
+          )}
         </tbody>
       </table>
 
       {/* show pagination only when we have more than 10 members */}
       {data.length > 10 ? (
-        <div className="flex w-full text-white space-x-4 justify-center my-8 py-1 leading-6">
+        <div className="flex w-full text-white space-x-4 justify-center my-8 leading-6">
           <button
             className={`pt-1 ${
               !canPreviousPage
@@ -372,7 +430,8 @@ const SyndicateMembersTable = ({
             />
           </button>
           <p className="">
-            1 - {pageSize} of {pageCount}
+            {firstPage} - {lastPage}
+            {` of `} {data.length}
           </p>
 
           <button
