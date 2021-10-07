@@ -315,6 +315,10 @@
       transform: translateY(-50%);
     }
 
+    .fixed.vertically-center {
+      position: fixed;
+    }
+
     /*
       For when you dont want to use margins, and can position a
       div relatively.

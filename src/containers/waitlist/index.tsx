@@ -19,44 +19,55 @@ const Waitlist: FC = () => {
   const { data, loading } = useQuery(LOAD_REGISTRATION);
 
   return loading ? null : (
-    <div
-      className="flex h-screen overflow-scroll"
-      style={{
-        backgroundImage: "url(/images/social/waitlist-bg.svg)",
-        backgroundSize: "cover",
-        backgroundRepeat: "no-repeat",
-      }}
-    >
-      <Head title={`${isSubmitted ? "Waitlist confirmation" : "Waitlist"}`} />
-      {isSubmitted || data?.Social_Waitlist_getRegistration?.createdAt ? (
-        successContent
-      ) : (
-        <>
-          <div
-            className="container h-screen hidden md:flex flex-col justify-center items-start flex-1 w-4/6 font-whyte-light"
-            id="left-column"
-          >
-            {mainCopy}
-          </div>
-          <div
-            id="right-column"
-            className={`flex flex-col items-center justify-center w-full md:w-2/6 bg-black bg-opacity-30 md:bg-opacity-60 transition-all overflow-scroll`}
-          >
-            <div className="w-full px-6 sm:px-24 md:px-0 md:w-auto transition-all overflow-y-auto py-12">
-              <div className="block md:hidden mb-16">{mainCopy}</div>
-              <div id="twitter-profile" className="mb-10">
-                <TwitterProfile />
-              </div>
-              <div id="waitlist-form" className="w-full">
-                <WaitlistForm setSuccess={setSubmitted} />
+    <>
+      {video}
+      <div
+        className="flex h-screen overflow-scroll"
+        style={{
+          backgroundImage: "url(/images/social/waitlist-bg.svg)",
+          backgroundSize: "cover",
+          backgroundRepeat: "no-repeat",
+        }}
+      >
+        <Head title={`${isSubmitted ? "Waitlist confirmation" : "Waitlist"}`} />
+        {isSubmitted || data?.Social_Waitlist_getRegistration?.createdAt ? (
+          successContent
+        ) : (
+          <>
+            <div
+              className="container h-screen hidden md:flex flex-col justify-center items-start flex-1 w-4/6 font-whyte-light z-10"
+              id="left-column"
+            >
+              {mainCopy}
+            </div>
+            <div
+              id="right-column"
+              className="flex flex-col items-center justify-center w-full md:w-2/6 bg-black bg-opacity-60 px-6 md:px-10 lg:px-16 transition-all overflow-scroll z-10"
+            >
+              <div className="w-full px-6 sm:px-24 md:px-0 md:w-auto transition-all overflow-y-auto py-12">
+                <div className="block md:hidden mb-16">{mainCopy}</div>
+                <div id="twitter-profile" className="mb-10">
+                  <TwitterProfile />
+                </div>
+                <div id="waitlist-form" className="w-full">
+                  <WaitlistForm setSuccess={setSubmitted} />
+                </div>
               </div>
             </div>
-          </div>
-        </>
-      )}
-    </div>
+          </>
+        )}
+      </div>
+    </>
   );
 };
+
+const video = <>
+  <div className="fixed z-0 h-screen w-screen overflow-hidden bg-black">
+    <video autoPlay={true} loop={true} className="mx-auto vertically-center min-h-full min-w-full opacity-30 relative md:left-56 filter blur-sm" style={{height: "130vh"}}>
+      <source src="/videos/waitlist/background.mp4" type="video/mp4" />
+    </video>
+  </div>
+</>
 
 const mainCopy = (
   <>
@@ -97,7 +108,7 @@ const successContent = (
     >
       <div
         id="syndicate-logo"
-        className="uppercase flex justify-start items-center"
+        className="uppercase flex justify-start items-center z-10"
       >
         <img
           className="w-28 md:w-36 mx-auto md:mx-0 mb-6"
@@ -105,12 +116,12 @@ const successContent = (
           alt=""
         />
       </div>
-      <div id="landing-title" className="mb-5">
+      <div id="landing-title" className="mb-5 z-10">
         <p className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl 2xl:text-7xl font-whyte-light">
           You’re on the waitlist.
         </p>
       </div>
-      <div id="welcome text" className="text-base opacity-80">
+      <div id="welcome text" className="text-base opacity-80 z-10">
         <p>
           We’re excited for you to join Syndicate. <br />
           We’ll let you know when you’re in.
