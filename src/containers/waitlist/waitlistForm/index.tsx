@@ -211,9 +211,14 @@ const WaitlistForm = (props: IWaitlistForm) => {
 
       <button
         disabled={loading || hasErrors}
-        className="w-full primary-CTA mx-auto mt-8"
+        className={`w-full mx-auto mt-8 ${loading ? "primary-CTA-disabled flex items-center justify-center text-gray-syn4" : "primary-CTA"}`}
       >
-        {loading ? "Securing your spot..." : "Get early access"}
+        <img
+          alt="loading"
+          className={`${loading ? "block" : "hidden"} mr-3 animate-spin`}
+          src="/images/loading-small-disabled.svg"
+        />
+        <span>{loading ? "Securing your spot..." : "Get early access"}</span>
       </button>
     </form>
   );
