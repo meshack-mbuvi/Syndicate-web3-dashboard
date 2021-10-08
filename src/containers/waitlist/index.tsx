@@ -35,7 +35,7 @@ const Waitlist: FC = () => {
         ) : (
           <>
             <div
-              className="container h-screen hidden md:flex flex-col justify-center items-start flex-1 w-4/6 font-whyte-light z-10"
+              className="container h-screen hidden md:flex flex-col justify-center items-start flex-1 w-4/6 font-whyte-light z-10 3xl:pl-52 transition-all"
               id="left-column"
             >
               {mainCopy}
@@ -98,7 +98,7 @@ const mainCopy = (
 const successContent = (
   <>
     <div
-      className="h-screen flex flex-col justify-center items-start flex-1 w-4/6 font-whyte px-6 md:px-10 lg:px-16"
+      className="h-screen flex flex-col justify-center items-start flex-1 w-4/6 font-whyte px-6 md:px-10 lg:px-16 3xl:pl-52 transition-all"
       id="left-column"
       style={{
         backgroundImage: "url(/images/social/waitlist-bg.svg)",
