@@ -73,95 +73,137 @@ const MoreOptionButton = (props: {
   return (
     <div className="flex space-x-4 justify-end p-1">
       {modifiable && open && !distributing ? (
-        <button
-          className="cursor-pointer"
-          data-tip
-          data-for="edit-member-deposit"
-          onClick={() => handleShowModifyOnChainDepositAmounts(props.row)}
-        >
-          <Image
-            src="/images/edit-deposit.svg"
-            alt="edit member deposit"
-            width={14}
-            height={14}
-          />
-          <ReactTooltip id="edit-member-deposit" place="top" effect="solid">
-            Modify on-chain deposit amount
-          </ReactTooltip>
-        </button>
+        <>
+          <button
+            className="cursor-pointer hover:opacity-70"
+            data-tip
+            data-for="edit-member-deposit"
+            onClick={() => handleShowModifyOnChainDepositAmounts(props.row)}
+          >
+            <Image
+              src="/images/edit-deposit.svg"
+              alt="edit member deposit"
+              width={14}
+              height={14}
+            />
+          </button>
+          <div className="opacity-100">
+            <ReactTooltip
+              id="edit-member-deposit"
+              place="top"
+              effect="solid"
+              className="actionsTooltip"
+              arrowColor="transparent"
+              backgroundColor="#222529"
+            >
+              Modify on-chain deposit amount
+            </ReactTooltip>
+          </div>
+        </>
       ) : null}
 
       {!distributing &&
         modifiable &&
         allowlistEnabled &&
         memberDeposit !== "0" && (
+          <>
+            <button
+              className={`${
+                transferringDeposit
+                  ? "cursor-not-allowed opacity-60"
+                  : "cursor-pointer hover:opacity-70"
+              }`}
+              data-tip
+              data-for="transfer-member-deposit"
+              onClick={setSelectedFromMember}
+              disabled={transferringDeposit ? true : false}
+            >
+              <Image
+                src="/images/managerActions/transfer_deposit.svg"
+                alt="transfer-member-deposit"
+                height={16}
+                width={13}
+              />
+            </button>
+            <div className="opacity-100">
+              <ReactTooltip
+                id="transfer-member-deposit"
+                place="top"
+                effect="solid"
+                className="actionsTooltip"
+                arrowColor="transparent"
+                backgroundColor="#222529"
+              >
+                Transfer member deposit
+              </ReactTooltip>
+            </div>
+          </>
+        )}
+
+      {open && memberDeposit !== "0" && (
+        <>
           <button
             className={`${
               transferringDeposit
                 ? "cursor-not-allowed opacity-60"
-                : "cursor-pointer"
+                : "cursor-pointer hover:opacity-70"
             }`}
+            onClick={() => confirmReturnMemberDeposit()}
             data-tip
-            data-for="transfer-member-deposit"
-            onClick={setSelectedFromMember}
-            disabled={transferringDeposit ? true : false}
+            data-for="return-member-deposit"
+            disabled={memberDeposit == "0" ? true : false}
           >
             <Image
-              src="/images/managerActions/transfer_deposit.svg"
-              alt="transfer-member-deposit"
+              src="/images/return-deposits.svg"
+              alt="Return member deposit"
               height={16}
-              width={13}
+              width={16}
             />
+          </button>
+          <div className="opacity-100">
             <ReactTooltip
-              id="transfer-member-deposit"
+              id="return-member-deposit"
               place="top"
               effect="solid"
+              className="actionsTooltip"
+              arrowColor="transparent"
+              backgroundColor="#222529"
             >
-              Transfer member deposit
+              Return all deposits
             </ReactTooltip>
-          </button>
-        )}
-
-      {open && memberDeposit !== "0" && (
-        <button
-          className={`cursor-pointer ${
-            memberDeposit == "0" ? "opacity-40" : ""
-          }`}
-          onClick={() => confirmReturnMemberDeposit()}
-          data-tip
-          data-for="return-member-deposit"
-          disabled={memberDeposit == "0" ? true : false}
-        >
-          <Image
-            src="/images/return-deposits.svg"
-            alt="Return member deposit"
-            height={16}
-            width={16}
-          />
-          <ReactTooltip id="return-member-deposit" place="top" effect="solid">
-            Return all deposits
-          </ReactTooltip>
-        </button>
+          </div>
+        </>
       )}
 
       {(distributing == false && allowlistEnabled && memberAddressAllowed) ===
         true && (
-        <button
-          className="cursor-pointer"
-          data-tip
-          data-for="block-address"
-          onClick={() => confirmBlockMemberAddress()}
-        >
-          <Image
-            src="/images/block-address.svg"
-            alt="Block address"
-            height={16}
-            width={16}
-          />
-          <ReactTooltip id="block-address" place="top" effect="solid">
-            Block address
-          </ReactTooltip>
-        </button>
+        <>
+          <button
+            className="cursor-pointer hover:opacity-70"
+            data-tip
+            data-for="block-address"
+            onClick={() => confirmBlockMemberAddress()}
+          >
+            <Image
+              src="/images/block-address.svg"
+              alt="Block address"
+              height={16}
+              width={16}
+            />
+          </button>
+          <div className="opacity-100">
+            <ReactTooltip
+              id="block-address"
+              place="top"
+              effect="solid"
+              className="actionsTooltip"
+              arrowColor="transparent"
+              backgroundColor="#222529"
+            >
+              Block address
+            </ReactTooltip>
+          </div>
+        </>
       )}
     </div>
   );
