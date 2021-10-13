@@ -35,7 +35,7 @@ const ManagerAction = ({
           <div>
             <p className="leading-6">{title}</p>
           </div>
-          <div className="text-sm text-gray-manatee font-extralight">
+          <div className="text-sm text-gray-syn4 font-extralight">
             {description}
           </div>
         </div>

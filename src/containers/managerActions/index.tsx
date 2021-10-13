@@ -29,6 +29,7 @@ import { getSyndicateByAddress } from "@/redux/actions/syndicates";
 import { RootState } from "@/redux/store";
 import abi from "human-standard-token-abi";
 import { useRouter } from "next/router";
+import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import ChangeSyndicateSettings from "./changeSyndicateSettings";
@@ -37,6 +38,7 @@ import ManagerActionCard from "./managerActionCard";
 import ModifyMemberDistributions from "./modifyMemberDistributions";
 import ModifySyndicateCapTable from "./modifySyndicateCapTable";
 import MoreManagerActionCard from "./moreManagerActionCard";
+import PreApproveDepositor from "./preApproveDepositor";
 import RequestSocialProfile from "./requestSocialProfile";
 import ManagerSetAllowance from "./setAllowances";
 
@@ -49,6 +51,9 @@ const ManagerActions = (): JSX.Element => {
     },
     manageActionsReducer: {
       manageActions: { modifyMemberDistribution, modifyCapTable },
+    },
+    manageMembersDetailsReducer: {
+      syndicateManageMembers: { syndicateMembers },
     },
     syndicateMemberDetailsReducer: {
       syndicateDistributionTokens,
@@ -74,6 +79,7 @@ const ManagerActions = (): JSX.Element => {
 
   const [showFinalState, setShowFinalState] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [showPreApproveDepositor, setShowPreApproveDepositor] = useState(false);
 
   const [showDistributeToken, setShowDistributeToken] = useState(false);
 
@@ -94,17 +100,19 @@ const ManagerActions = (): JSX.Element => {
   const actions = [
     {
       grayIcon: (
-        <img
+        <Image
           src="/images/managerActions/create_public_profile.svg"
           alt="Public profile icon"
-          className="h-full w-full"
+          width={16}
+          height={16}
         />
       ),
       whiteIcon: (
-        <img
+        <Image
           src="/images/managerActions/create_public_profile_white.svg"
           alt="Public profile icon"
-          className="h-full w-full"
+          width={16}
+          height={16}
         />
       ),
       title: "Create a public-facing social profile",
@@ -252,6 +260,10 @@ const ManagerActions = (): JSX.Element => {
     dispatch(setShowModifyMemberDistributions(true));
   };
 
+  const showApproveModal = () => {
+    setShowPreApproveDepositor(true);
+  };
+
   let badgeBackgroundColor = "bg-blue-darker";
   let badgeIcon = "depositIcon.svg";
   let titleText = "Open to deposits";
@@ -302,38 +314,69 @@ const ManagerActions = (): JSX.Element => {
                         "In order for USDC to flow in and out of this syndicate, you must first set an appropriate allowance amount."
                       }
                       grayIcon={
-                        <img
+                        <Image
                           src="/images/managerActions/allow.svg"
                           alt="close"
-                          style={{ height: "100%", width: "100%" }}
+                          width={16}
+                          height={16}
                         />
                       }
                       whiteIcon={
-                        <img
+                        <Image
                           src="/images/managerActions/allow-white.svg"
                           alt="close"
-                          style={{ height: "100%", width: "100%" }}
+                          width={16}
+                          height={16}
                         />
                       }
                       onClickHandler={() => showManagerSetAllowancesModal()}
                     />
+                    {syndicate?.allowlistEnabled &&
+                    !syndicate?.isCloseDatePast &&
+                    syndicateMembers?.length === 0 ? (
+                      <ManagerActionCard
+                        title={"Add members to your allowlist"}
+                        description={
+                          "Before this syndicate’s members can deposit, their wallet addresses need to be added to your allowlist."
+                        }
+                        grayIcon={
+                          <Image
+                            src="/images/managerActions/userAdd.svg"
+                            alt="close"
+                            width={16}
+                            height={16}
+                          />
+                        }
+                        whiteIcon={
+                          <Image
+                            src="/images/managerActions/userAdd-white.svg"
+                            alt="close"
+                            width={16}
+                            height={16}
+                          />
+                        }
+                        onClickHandler={() => showApproveModal()}
+                      />
+                    ) : null}
                     <ManagerActionCard
                       title={"Close to deposits"}
                       description={
                         "Close this syndicate and stop accepting deposits. This action is irreversible."
                       }
                       grayIcon={
-                        <img
+                        <Image
                           src="/images/managerActions/close_syndicate.svg"
                           alt="close"
-                          style={{ height: "100%", width: "100%" }}
+                          width={16}
+                          height={16}
                         />
                       }
                       whiteIcon={
-                        <img
+                        <Image
                           src="/images/managerActions/close_syndicate_white.svg"
                           alt="close"
-                          style={{ height: "100%", width: "100%" }}
+                          width={16}
+                          height={16}
                         />
                       }
                       onClickHandler={() => setShowConfirmCloseSyndicate(true)}
@@ -351,10 +394,20 @@ const ManagerActions = (): JSX.Element => {
                         "Distribute tokens to members, making them available to withdraw."
                       }
                       grayIcon={
-                        <img src="/images/distribute-gray.svg" alt="server" />
+                        <Image
+                          src="/images/distribute-gray.svg"
+                          alt="server"
+                          width={16}
+                          height={16}
+                        />
                       }
                       whiteIcon={
-                        <img src="/images/distribute-white.svg" alt="server" />
+                        <Image
+                          src="/images/distribute-white.svg"
+                          alt="server"
+                          width={16}
+                          height={16}
+                        />
                       }
                       onClickHandler={() => {
                         // Amplitude logger: OPEN_DISTRIBUTE_TOKEN_MODAL
@@ -394,15 +447,43 @@ const ManagerActions = (): JSX.Element => {
         <div className="p-0 md:py-2">
           {syndicate?.distributing && syndicate?.modifiable ? (
             <MoreManagerActionCard
-              icon={<img src="/images/invertedInfo.svg" alt="Info" />}
+              grayIcon={
+                <Image
+                  src="/images/invertedInfo.svg"
+                  alt="Info"
+                  width={16}
+                  height={16}
+                />
+              }
+              whiteIcon={
+                <Image
+                  src="/images/invertedInfo-white.svg"
+                  alt="Info"
+                  width={16}
+                  height={16}
+                />
+              }
               text={"Modify Member distributions"}
               onClickHandler={handleSetShowModifyMemberDistributions}
             />
           ) : null}
 
           <MoreManagerActionCard
-            icon={
-              <img src="/images/managerActions/settings.svg" alt="settings" />
+            grayIcon={
+              <Image
+                src="/images/managerActions/settings.svg"
+                alt="settings"
+                width={16}
+                height={16}
+              />
+            }
+            whiteIcon={
+              <Image
+                src="/images/managerActions/settings-white.svg"
+                alt="settings"
+                width={16}
+                height={16}
+              />
             }
             text={"Syndicate settings"}
             onClickHandler={() => setShowChangeSettings(true)}
@@ -438,6 +519,17 @@ const ManagerActions = (): JSX.Element => {
           <ModifyMemberDistributions />
         ) : null}
       </div>
+
+      {/* Approve addresses to allowlist */}
+      {showPreApproveDepositor ? (
+        <PreApproveDepositor
+          {...{
+            showPreApproveDepositor,
+            setShowPreApproveDepositor,
+          }}
+        />
+      ) : null}
+
       {/* Confirm whether manager wants to close syndicate */}
 
       <StateModal show={showConfirmCloseSyndicate}>

@@ -280,6 +280,10 @@ export const getSyndicateDepositorData =
       initializeContractsReducer: { syndicateContracts: any };
     },
   ): Promise<void> => {
+    dispatch({
+      type: SET_LOADING_SYNDICATE_DEPOSITOR_DETAILS,
+      data: true,
+    });
     const {
       syndicatesReducer: { syndicate },
       initializeContractsReducer: { syndicateContracts },
@@ -303,14 +307,6 @@ export const getSyndicateDepositorData =
     // Note: A member may have made several deposits during the lifetime of a
     // given syndicate. So we need to get unique member addresses.
     const uniqueMemberAddressese = await Array.from(new Set(allMemberAddress));
-    if (!uniqueMemberAddressese.length)
-      // Syndicate does not have investors at the moment or no members in
-      // the allowlist
-
-      return dispatch({
-        type: SET_LOADING_SYNDICATE_DEPOSITOR_DETAILS,
-        data: false,
-      });
 
     const syndicateMemberData = [];
 
@@ -330,14 +326,14 @@ export const getSyndicateDepositorData =
           modifyingDeposits: false,
         });
     }
+
+    dispatch({
+      type: SET_SYNDICATE_MANAGE_MEMBERS,
+      data: syndicateMemberData,
+    });
     dispatch({
       type: SET_LOADING_SYNDICATE_DEPOSITOR_DETAILS,
       data: false,
-    });
-
-    return dispatch({
-      type: SET_SYNDICATE_MANAGE_MEMBERS,
-      data: syndicateMemberData,
     });
   };
 

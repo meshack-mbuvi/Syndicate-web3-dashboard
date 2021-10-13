@@ -44,6 +44,9 @@ const LayoutWithSyndicateDetails = ({ children }): JSX.Element => {
     },
     syndicateMemberDetailsReducer: { syndicateDistributionTokens },
     loadingReducer: { submitting },
+    manageMembersDetailsReducer: {
+      syndicateManageMembers: { syndicateMembers },
+    },
   } = useSelector((state: RootState) => state);
 
   const [showCopyState, setShowCopyState] = useState(false);
@@ -335,7 +338,11 @@ const LayoutWithSyndicateDetails = ({ children }): JSX.Element => {
               );
             }
           }
-          setShowMembers(true);
+          // Don't display members section when there's 0 members/allowlisted addresses
+          if (syndicateMembers?.length > 0) {
+            setShowMembers(true);
+          }
+
           break;
         case "/syndicates/[syndicateAddress]/deposit":
           if (syndicate?.managerPending === account) {
@@ -398,7 +405,7 @@ const LayoutWithSyndicateDetails = ({ children }): JSX.Element => {
           break;
       }
     }
-  }, [account, router.isReady, syndicate]);
+  }, [account, router.isReady, syndicate, JSON.stringify(syndicateMembers)]);
 
   // Syndicate data should be fetched when router is fully set.
   // GetterLogicContract is used to retrieve syndicate values while
@@ -433,6 +440,13 @@ const LayoutWithSyndicateDetails = ({ children }): JSX.Element => {
     }
     setCurrentUrl(window.location.href);
   }, [syndicate, account]);
+
+  // Retrieve syndicate depositors
+  useEffect(() => {
+    if (syndicate) {
+      dispatch(getSyndicateDepositorData());
+    }
+  }, [syndicate]);
 
   // get static text from constants
   const {

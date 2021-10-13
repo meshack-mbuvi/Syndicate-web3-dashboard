@@ -1,5 +1,6 @@
 import Modal, { ModalStyle } from "@/components/modal";
 import { Spinner } from "@/components/shared/spinner";
+import { SkeletonLoader } from "@/components/skeletonLoader";
 import { getMetamaskError } from "@/helpers";
 import { checkAccountAllowance } from "@/helpers/approveAllowance";
 import {
@@ -143,6 +144,9 @@ const ManageMembers = (): JSX.Element => {
     setFilteredAddress(value.trim());
   };
 
+  const [syndicateMembersToShow, setSynMembersToShow] =
+    useState(syndicateMembers);
+
   const getTableData = () => {
     const res = syndicateMembersToShow.map((memberData) => ({
       ...{
@@ -170,9 +174,6 @@ const ManageMembers = (): JSX.Element => {
       );
     });
   };
-
-  const [syndicateMembersToShow, setSynMembersToShow] =
-    useState(syndicateMembers);
 
   const [tableData, setTableData] = useState(getTableData());
 
@@ -240,7 +241,7 @@ const ManageMembers = (): JSX.Element => {
           memberAddressAllowed: boolean;
         }) {
           const { memberAddress, memberAddressAllowed } = row;
-          if (!memberAddressAllowed) {
+          if (!memberAddressAllowed && syndicate?.allowlistEnabled) {
             return (
               <div className="flex space-x-3 align-center text-base my-1 leading-6">
                 <Image
@@ -551,8 +552,61 @@ const ManageMembers = (): JSX.Element => {
           />
         ) : null}
         {loading ? (
-          <div className="flex justify-center ">
-            <Spinner />
+          <div className="space-y-6 my-11">
+            <div className="flex space-x-3">
+              <SkeletonLoader
+                width="full"
+                height="8"
+                borderRadius="rounded-md"
+              />
+              <SkeletonLoader
+                width="full"
+                height="8"
+                borderRadius="rounded-md"
+              />
+              <SkeletonLoader
+                width="full"
+                height="8"
+                borderRadius="rounded-md"
+              />
+              <SkeletonLoader
+                width="full"
+                height="8"
+                borderRadius="rounded-md"
+              />
+              <SkeletonLoader
+                width="full"
+                height="8"
+                borderRadius="rounded-md"
+              />
+            </div>
+            <div className="flex space-x-3">
+              <SkeletonLoader
+                width="full"
+                height="8"
+                borderRadius="rounded-md"
+              />
+              <SkeletonLoader
+                width="full"
+                height="8"
+                borderRadius="rounded-md"
+              />
+              <SkeletonLoader
+                width="full"
+                height="8"
+                borderRadius="rounded-md"
+              />
+              <SkeletonLoader
+                width="full"
+                height="8"
+                borderRadius="rounded-md"
+              />
+              <SkeletonLoader
+                width="full"
+                height="8"
+                borderRadius="rounded-md"
+              />
+            </div>
           </div>
         ) : tableData.length || filteredAddress ? (
           <div className="flex flex-col overflow-y-hidden">
