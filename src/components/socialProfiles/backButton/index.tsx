@@ -9,7 +9,7 @@ const BackButton = ({
     <div
       className={`${
         isSticky ? "sticky" : "fixed"
-      } ${customClasses} w-0 h-0 z-30 transition-all`}
+      } ${customClasses} w-0 h-0 z-10 transition-all`}
       style={{ top: topOffset }}
     >
       <div
@@ -23,6 +23,7 @@ const BackButton = ({
               className="mx-auto relative "
               style={{ left: "-2px" }}
               src="/images/back-chevron-large.svg"
+              alt=""
             />
           </a>
         </Link>

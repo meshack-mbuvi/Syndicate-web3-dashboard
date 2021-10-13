@@ -1,5 +1,6 @@
 /* eslint-disable no-case-declarations */
 import {
+  ADD_TO_SYNDICATE_MEMBERS,
   CONFIRM_RETURN_DEPOSIT,
   RETURNING_DEPOSIT,
   SELECTED_MEMBER,
@@ -23,6 +24,19 @@ export const manageMembersDetailsReducer = (state = initialState, action) => {
           syndicateMembers: action.data,
         },
       };
+
+    case ADD_TO_SYNDICATE_MEMBERS: {
+      return {
+        ...state,
+        syndicateManageMembers: {
+          ...syndicateManageMembers,
+          syndicateMembers: [
+            ...syndicateManageMembers.syndicateMembers,
+            ...action.data,
+          ],
+        },
+      };
+    }
 
     case SET_LOADING_SYNDICATE_DEPOSITOR_DETAILS:
       return {

@@ -1,5 +1,6 @@
-import { XIcon } from "@heroicons/react/solid";
-import React from "react";
+import { Dialog, Transition } from "@headlessui/react";
+import Image from "next/image";
+import React, { Fragment } from "react";
 
 interface ModalProps {
   title?: string;
@@ -49,7 +50,7 @@ export const Modal = (props: ModalProps): JSX.Element => {
     children,
     show,
     closeModal,
-    customWidth = "w-11/12 md:w-7/12 lg:w-2/5",
+    customWidth = "w-11/12 md:w-1/2 lg:w-2/5",
     titleFontSize,
     showCloseButton = true,
     customClassName = "p-2 sm:p-6",
@@ -70,32 +71,57 @@ export const Modal = (props: ModalProps): JSX.Element => {
     modalStyle === ModalStyle.DARK && "text-white"
   }`;
 
+  const handleClose = () => {
+    if (closeModal) {
+      closeModal();
+    }
+  };
+
   return (
-    <>
-      {show ? (
-        <div className="fixed inset-0 z-50">
-          <div
-            className={`flex items-center justify-center text-center ${textColor} min-h-screen sm:px-4 text-center sm:block sm:p-0`}
+    <Transition.Root show={show} as={Fragment}>
+      <Dialog
+        className={`fixed z-50 w-screen h-screen justify-center align-middle py-auto inset-0 text-center`}
+        onClose={() => {
+          if (outsideOnClick) {
+            handleClose();
+          }
+        }}
+        open={show}
+      >
+        <div
+          className={`flex items-center my-auto justify-center text-center ${textColor} sm:px-4 text-center sm:block sm:p-0`}
+        >
+          <Transition.Child
+            as={Fragment}
+            enter="ease-out duration-300"
+            enterFrom="opacity-0"
+            enterTo="opacity-100"
+            leave="ease-in duration-200"
+            leaveFrom="opacity-100"
+            leaveTo="opacity-0"
+          >
+            <Dialog.Overlay className="fixed inset-0 bg-black opacity-60 transition-opacity" />
+          </Transition.Child>
+          {/* This element is to trick the browser into centering the modal contents. */}
+          <span
+            className="hidden sm:inline-block sm:align-middle sm:h-screen"
+            aria-hidden="true"
+          >
+            &#8203;
+          </span>
+          <Transition.Child
+            as={Fragment}
+            enter="ease-out duration-300"
+            enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+            enterTo="opacity-100 translate-y-0 sm:scale-100"
+            leave="ease-in duration-200"
+            leaveFrom="opacity-100 translate-y-0 sm:scale-100"
+            leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
           >
             <div
-              className="fixed inset-0 transition-opacity"
-              aria-hidden="true"
-            >
-              <div
-                className="absolute inset-0 bg-black opacity-60"
-                onClick={() => {
-                  if (outsideOnClick) {
-                    closeModal();
-                  }
-                  return null;
-                }}
-              ></div>
-            </div>
-
-            <div
-              className={`inline-block align-bottom my-auto ${
+              className={`overflow-y-scroll md:my-14 align-middle mx-auto inline-block max-h-screen ${
                 bgColor ? bgColor : ""
-              } rounded-2xl  sm:mx-0 sm:my-40 text-left shadow-xl transform transition-all ${
+              } rounded-2xl text-left shadow-xl transform transition-all ${
                 customWidth ? customWidth : ""
               } ${overflow ? overflow : ""} ${
                 customClassName !== undefined ? customClassName : ""
@@ -109,7 +135,7 @@ export const Modal = (props: ModalProps): JSX.Element => {
                 {showBackButton ? (
                   <button
                     type="button"
-                    className="bg-white m-4 rounded-md text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue"
+                    className="bg-white m-4 rounded-md text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-0"
                     onClick={() => closeModal()}
                   >
                     <span className="sr-only">Back</span>
@@ -128,13 +154,18 @@ export const Modal = (props: ModalProps): JSX.Element => {
                 {showCloseButton ? (
                   <button
                     type="button"
-                    className={` ${
+                    className={`text-gray-syn7 ${
                       closeButtonClassName && closeButtonClassName
-                    } rounded-md hover:text-gray-500 focus:outline-none p-2 w-12 h-12 focus:ring-2 focus:ring-offset-2 focus:ring-blue`}
+                    } rounded-md hover:text-gray-syn7 focus:outline-none p-2 w-12 h-12 focus:ring-0`}
                     onClick={() => closeModal()}
                   >
                     <span className="sr-only">Close</span>
-                    <XIcon className="w-10/12 h-10/12 sm:w-10/12 sm:h-10/12 md:w-11/12 md:h-11/12 mx-auto opacity-50 hover:opacity-75" />
+                    <Image
+                      src="/images/close-gray-5.svg"
+                      width="20"
+                      height="20"
+                      alt="close"
+                    />
                   </button>
                 ) : null}
               </div>
@@ -155,14 +186,14 @@ export const Modal = (props: ModalProps): JSX.Element => {
               ) : null}
               {/* end of modal title */}
 
-              <div className={showHeader ? "mx-4 align-middle" : null}>
+              <div className={`${showHeader ? "mx-4 align-middle" : ""}`}>
                 {children}
               </div>
             </div>
-          </div>
+          </Transition.Child>
         </div>
-      ) : null}
-    </>
+      </Dialog>
+    </Transition.Root>
   );
 };
 

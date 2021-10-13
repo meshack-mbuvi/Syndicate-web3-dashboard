@@ -7,7 +7,7 @@ import React, { useEffect, useRef } from "react";
  * @param {*} props
  */
 export const InputField = (props: {
-  label: string;
+  label?: string;
   name?: string;
   id?: string;
   onChange?;
@@ -26,6 +26,8 @@ export const InputField = (props: {
   addOn?: string;
   subTitle?: string;
   isNumber?: boolean;
+  hasError?: boolean;
+  customClass?: { addon?: string; input?: string };
 }): JSX.Element => {
   const {
     label,
@@ -41,9 +43,10 @@ export const InputField = (props: {
     subTitle,
     isNumber,
     logo,
+    customClass,
+    hasError = "false",
     ...rest
   } = props;
-
   const focusInput = useRef(null);
 
   useEffect(() => {
@@ -74,9 +77,11 @@ export const InputField = (props: {
             }
             onChange(e);
           }}
-          className={`flex w-full min-w-0 mt-2 font-whyte flex-grow dark-input-field ${
-            addOn ? "pr-14" : ""
-          } ${disabled ? "cursor-not-allowed" : ""}`}
+          className={`flex w-full min-w-0 align-middle text-base font-whyte ${
+            hasError ? "border border-red-semantic" : ""
+          } flex-grow dark-input-field ${addOn ? "pr-14" : ""} ${
+            disabled ? "cursor-not-allowed" : ""
+          }`}
           {...rest}
           disabled={disabled}
           value={value}
@@ -85,21 +90,28 @@ export const InputField = (props: {
           ref={focusInput}
         />
         {addOn && (
-          <div className="absolute inset-y-0 right-0 pr-3 mt-1 flex items-center pointer-events-none">
+          <div
+            className={`absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none `}
+          >
             {logo ? (
               <span className="bg-black px-1">
                 <img className="h-4 w-4" src={logo} alt="logo" />
               </span>
             ) : null}
-            <span className="font-whyte text-white text-sm" id="price-currency">
+            <span
+              className={`font-whyte text-white text-sm ${customClass?.addon}`}
+              id="price-currency"
+            >
               {addOn}
             </span>
           </div>
         )}
       </div>
-      <p className="text-red-500 text-xs h-1 mt-1 mb-1">
-        {error && !disabled ? error : ""}
-      </p>
+      {error && (
+        <p className="text-red-500 text-xs mt-1 mb-1">
+          {error && !disabled ? error : ""}
+        </p>
+      )}
     </div>
   );
 };

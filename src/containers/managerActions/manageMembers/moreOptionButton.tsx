@@ -1,4 +1,8 @@
-import { showConfirmBlockMemberAddress } from "@/redux/actions/manageActions";
+import {
+  setSelectedMembers,
+  showConfirmBlockMemberAddress,
+  showModifyOnChainDepositAmounts,
+} from "@/redux/actions/manageActions";
 import {
   setSelectedMember,
   setSelectedMemberAddress,
@@ -9,7 +13,6 @@ import Image from "next/dist/client/image";
 import React from "react";
 import { useDispatch } from "react-redux";
 import ReactTooltip from "react-tooltip";
-
 /**
  * Shows the following member details:
  *  - member address - formatted with elipses
@@ -57,6 +60,11 @@ const MoreOptionButton = (props: {
     );
   };
 
+  const handleShowModifyOnChainDepositAmounts = (member) => {
+    dispatch(setSelectedMembers([member]));
+    dispatch(showModifyOnChainDepositAmounts(true));
+  };
+
   const setSelectedFromMember = () => {
     dispatch(setSelectedMember(props.row));
     dispatch(setShowTransferDepositModal(true));
@@ -66,9 +74,10 @@ const MoreOptionButton = (props: {
     <div className="flex space-x-4 justify-end p-1">
       {modifiable && open && !distributing ? (
         <button
-          className="cursor-pointer hover:opacity-70"
+          className="cursor-pointer"
           data-tip
           data-for="edit-member-deposit"
+          onClick={() => handleShowModifyOnChainDepositAmounts(props.row)}
         >
           <Image
             src="/images/edit-deposit.svg"
@@ -90,7 +99,7 @@ const MoreOptionButton = (props: {
             className={`${
               transferringDeposit
                 ? "cursor-not-allowed opacity-60"
-                : "cursor-pointer hover:opacity-70"
+                : "cursor-pointer"
             }`}
             data-tip
             data-for="transfer-member-deposit"
@@ -116,7 +125,7 @@ const MoreOptionButton = (props: {
       {open && memberDeposit !== "0" && (
         <button
           className={`cursor-pointer ${
-            memberDeposit == "0" ? "opacity-40" : "hover:opacity-70"
+            memberDeposit == "0" ? "opacity-40" : ""
           }`}
           onClick={() => confirmReturnMemberDeposit()}
           data-tip
@@ -138,7 +147,7 @@ const MoreOptionButton = (props: {
       {(distributing == false && allowlistEnabled && memberAddressAllowed) ===
         true && (
         <button
-          className="cursor-pointer hover:opacity-70"
+          className="cursor-pointer"
           data-tip
           data-for="block-address"
           onClick={() => confirmBlockMemberAddress()}

@@ -9,6 +9,7 @@ import BackButton from "@/components/socialProfiles/backButton";
 import { EtherscanLink } from "@/components/syndicates/shared/EtherscanLink";
 import { checkAccountAllowance } from "@/helpers/approveAllowance";
 import { showWalletModal } from "@/redux/actions";
+import { getSyndicateDepositorData } from "@/redux/actions/manageMembers";
 import { setSyndicateDistributionTokens } from "@/redux/actions/syndicateMemberDetails";
 import { getSyndicateByAddress } from "@/redux/actions/syndicates";
 import {
@@ -298,6 +299,13 @@ const LayoutWithSyndicateDetails = ({ children }): JSX.Element => {
     syndicate?.depositERC20TokenSymbol,
     syndicate?.tokenDecimals,
   ]);
+
+  // Retrieve syndicate depositors
+  useEffect(() => {
+    if (syndicate) {
+      dispatch(getSyndicateDepositorData());
+    }
+  }, [syndicate]);
 
   let noSyndicate;
   // A manager should not access deposit page but should be redirected

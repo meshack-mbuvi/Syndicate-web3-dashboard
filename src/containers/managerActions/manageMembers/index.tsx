@@ -7,7 +7,6 @@ import {
   showConfirmBlockMemberAddress,
 } from "@/redux/actions/manageActions";
 import {
-  getSyndicateDepositorData,
   setLoadingSyndicateDepositorDetails,
   setReturningMemberDeposit,
   setSelectedMemberAddress,
@@ -27,6 +26,7 @@ import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import DepositTransfer from "../depositTransfer";
+import ModifyMemberDeposit from "../modifyMemberDeposits";
 import PreApproveDepositor from "../preApproveDepositor";
 import MoreOptionButton from "./moreOptionButton";
 import {
@@ -87,7 +87,6 @@ const ManageMembers = (): JSX.Element => {
 
   const [memberInfo, setMemberInfo] = useState<any>({});
   const [memberDetails, setMemberDetails] = useState([]);
-
   const router = useRouter();
   const { syndicateAddress } = router.query;
 
@@ -133,13 +132,6 @@ const ManageMembers = (): JSX.Element => {
     router.isReady,
   ]);
 
-  // Retrieve syndicate depositors
-  useEffect(() => {
-    if (syndicate) {
-      dispatch(getSyndicateDepositorData());
-    }
-  }, [syndicate]);
-
   const [filteredAddress, setFilteredAddress] = useState("");
 
   const filterAddressOnChangeHandler = (event: {
@@ -163,7 +155,12 @@ const ManageMembers = (): JSX.Element => {
       },
     }));
     if (syndicate?.open)
-      return res.filter((value) => value.memberAddressAllowed);
+      return res.filter(
+        (value) =>
+          (parseInt(value.memberDeposit) > 0 && value.memberAddressAllowed) ||
+          parseInt(value.memberDeposit) > 0 ||
+          value.newMember,
+      );
 
     return res.filter((value) => {
       return (
@@ -243,16 +240,16 @@ const ManageMembers = (): JSX.Element => {
           memberAddressAllowed: boolean;
         }) {
           const { memberAddress, memberAddressAllowed } = row;
-          if (memberAddressAllowed === false) {
+          if (!memberAddressAllowed) {
             return (
-              <div className="flex align-center border text-base my-1 leading-6">
+              <div className="flex space-x-3 align-center text-base my-1 leading-6">
                 <Image
                   width="32"
                   height="32"
                   src={"/images/user.svg"}
                   alt="user"
                 />
-                <p className="mt-1 border">
+                <p className="my-auto">
                   {formatAddress(memberAddress, 6, 6)} (Blocked)
                 </p>
               </div>
@@ -279,8 +276,14 @@ const ManageMembers = (): JSX.Element => {
           returningDeposit,
           blockingAddress,
           transferringDeposit,
+          modifyingDeposits,
         }) {
-          if (returningDeposit || transferringDeposit || blockingAddress) {
+          if (
+            returningDeposit ||
+            transferringDeposit ||
+            blockingAddress ||
+            modifyingDeposits
+          ) {
             return (
               <p className="flex opacity-70s">
                 <Spinner height="h-4" width="w-4" margin="my-1" />
@@ -289,7 +292,9 @@ const ManageMembers = (): JSX.Element => {
                     ? "Returning deposits"
                     : transferringDeposit
                     ? "Transferring"
-                    : "Blocking Address"}
+                    : blockingAddress
+                    ? "Blocking Address"
+                    : "Modifying"}
                 </span>
               </p>
             );
@@ -588,6 +593,9 @@ const ManageMembers = (): JSX.Element => {
 
         {/* component handling deposit Transfer */}
         <DepositTransfer />
+
+        {/* Component to modify member deposits */}
+        <ModifyMemberDeposit />
 
         <Modal
           {...{

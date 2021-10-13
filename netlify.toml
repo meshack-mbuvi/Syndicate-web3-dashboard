@@ -1,6 +1,6 @@
 [build]
   functions = "functions/build"
-  command = "npm run build && npm run lambda-build"
+  command = "CI='' npm run build && npm run lambda-build"
 
 [functions]
   directory = "functions/build"

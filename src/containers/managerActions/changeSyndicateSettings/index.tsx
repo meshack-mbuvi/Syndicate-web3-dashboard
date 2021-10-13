@@ -1,34 +1,35 @@
-import { Toggle, EditableInput } from "@/components/inputs";
+import { EditableInput, Toggle } from "@/components/inputs";
 import Modal from "@/components/modal";
 import {
+  ConfirmStateModal,
   FinalStateModal,
   PendingStateModal,
-  ConfirmStateModal,
 } from "@/components/shared/transactionStates";
 import {
-  confirmingTransaction,
-  waitTransactionTobeConfirmedText,
   confirmCreateSyndicateSubText,
+  confirmingTransaction,
   MAX_INTEGER,
+  waitTransactionTobeConfirmedText,
 } from "@/components/syndicates/shared/Constants";
 import { getMetamaskError } from "@/helpers";
+import { updateSyndicateSettingsDetails } from "@/redux/actions/syndicates";
 import { RootState } from "@/redux/store";
+import { UNLIMITED_THRESHOLD } from "@/utils/constants";
 import { isWholeNumber, Validate, ValidatePercent } from "@/utils/validators";
 import { useRouter } from "next/router";
 import React, { FC, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { updateSyndicateSettingsDetails } from "@/redux/actions/syndicates";
 import { getWeiAmount, isUnlimited } from "src/utils/conversions";
-import { UNLIMITED_THRESHOLD } from "@/utils/constants";
 
 interface Props {
   showChangeSettings: boolean;
-  setShowChangeSettings: Function;
+  setShowChangeSettings: (status: boolean) => void;
 }
 
 const ChangeSyndicateSettings: FC<Props> = (props) => {
   const { showChangeSettings, setShowChangeSettings } = props;
   const [submitting, setSubmitting] = useState(false);
+  console.log({ showChangeSettings });
 
   const router = useRouter();
   const dispatch = useDispatch();
@@ -576,7 +577,87 @@ const ChangeSyndicateSettings: FC<Props> = (props) => {
       <Modal
         {...{
           title: "Change Syndicate Settings",
-          show: showChangeSettings,
+          closeModal: () => setShowChangeSettings(false),
+          customWidth: "md:w-3/5 w-full",
+        }}
+        show={showChangeSettings}
+      >
+        <div className="mx-2 mb-8">
+          <div className="text-gray-400 py-6 text-center mb-6">
+            Because each individual piece of data is stored on-chain, you are
+            only able to edit one field at a time. Each triggering a separate
+            wallet transaction.
+          </div>
+
+          <div className="border w-full border-gray-93 bg-gray-99 rounded-xl p-4 py-8">
+            {/* enable allowlist toggle */}
+            {syndicate.open && (
+              <div className="my-6">
+                <Toggle
+                  {...{
+                    enabled: toggle,
+                    toggleEnabled: () => {
+                      setToggle(!toggle);
+                      handleAllowlistSubmission(!toggle);
+                    },
+                    tooltip: "",
+                    label: "Enable Allowlist:",
+                  }}
+                />
+              </div>
+            )}
+
+            {changeSettingsOptions.map(
+              (
+                {
+                  label,
+                  defaults,
+                  currency,
+                  percent,
+                  validations,
+                  handler,
+                  address,
+                  type,
+                  step,
+                  placeholder,
+                  handleChange,
+                  display,
+                },
+                index,
+              ) => {
+                return (
+                  <div key={index}>
+                    <EditableInput
+                      handleShowInputIndex={async () =>
+                        setShowInputIndex(index)
+                      }
+                      address={address}
+                      type={type}
+                      handler={handler}
+                      index={index}
+                      showInputIndex={showInputIndex}
+                      label={label}
+                      defaults={defaults}
+                      currency={currency}
+                      percent={percent}
+                      validations={validations}
+                      depositERC20TokenSymbol={depositERC20TokenSymbol}
+                      step={step}
+                      placeholder={placeholder}
+                      handleChange={handleChange}
+                      display={display}
+                    />
+                  </div>
+                );
+              },
+            )}
+          </div>
+        </div>
+      </Modal>
+      <Modal
+        {...{
+          title: "Change Syndicate Settings",
+          show: false,
           closeModal: () => setShowChangeSettings(false),
           customWidth: "md:w-3/5 w-full",
         }}

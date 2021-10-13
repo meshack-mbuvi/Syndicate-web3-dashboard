@@ -140,7 +140,8 @@ export class SyndicateDepositLogic extends BaseLogicContract {
     memberAmounts: string[],
     manager: string,
     setShowWalletConfirmationModal: (arg0: boolean) => void,
-    setSubmitting: (arg0: boolean) => void,
+    onTxConfirm: (arg0: boolean) => void,
+    onTxReceipt: () => void,
   ): Promise<void> {
     if (
       !syndicateAddress.trim() ||
@@ -159,8 +160,9 @@ export class SyndicateDepositLogic extends BaseLogicContract {
       .send({ from: manager })
       .on("transactionHash", () => {
         setShowWalletConfirmationModal(false);
-        setSubmitting(true);
-      });
+        onTxConfirm(true);
+      })
+      .on("receipt", () => onTxReceipt());
   }
 
   /**

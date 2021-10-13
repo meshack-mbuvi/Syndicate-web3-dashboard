@@ -35,3 +35,24 @@ export const handleSubmitBlockMemberAddress = async (
     handleReceipt,
   );
 };
+
+export const handleSubmitModifyingMemberDeposits = async (
+  syndicateContracts,
+  syndicateAddress: string,
+  memberAddresses: string[],
+  memberAmounts: string[],
+  account: string,
+  handleShowWalletConfirmationModal: (status: boolean) => void,
+  handleSubmitting: (status: boolean) => void,
+  handleReceipt: () => void,
+): Promise<void> => {
+  await syndicateContracts.DepositLogicContract.managerSetDepositForMembers(
+    syndicateAddress,
+    memberAddresses,
+    memberAmounts,
+    account,
+    handleShowWalletConfirmationModal,
+    handleSubmitting,
+    handleReceipt,
+  );
+};

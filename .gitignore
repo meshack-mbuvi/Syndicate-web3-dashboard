@@ -83,3 +83,6 @@ build
 
 # .idea/ files when using JetBrains IDES
 .idea/
+
+# Local Netlify folder
+.netlify

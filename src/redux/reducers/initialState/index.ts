@@ -95,21 +95,16 @@ type InitialState = {
     showTransferDepositModal: boolean;
   };
   manageActions: {
-    syndicateMembers: {
-      memberAddress: string;
-      returningDeposit: boolean;
-      blockingAddress: boolean;
-      memberDeposit: string;
-      memberStake: string;
-      memberAddressAllowed: boolean;
-    }[];
+    syndicateMembers: Member[];
     confirmBlockAddress: boolean;
     modifyMemberDistribution: boolean;
+    modifyOnChainDeposits: boolean;
     modifyCapTable: boolean;
     rejectMemberAddressOrDeposit: boolean;
     showDepositOnly: boolean;
     showAddressOnly: boolean;
     memberAddress: string;
+    selectedMembers: Member[];
   };
   createSyndicate: {
     syndicateOffChainData: {
@@ -241,6 +236,8 @@ export const initialState: InitialState = {
     showDepositOnly: false,
     showAddressOnly: false,
     memberAddress: "",
+    modifyOnChainDeposits: false,
+    selectedMembers: [],
   },
   createSyndicate: {
     syndicateOffChainData: {

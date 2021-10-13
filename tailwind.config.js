@@ -69,6 +69,10 @@ module.exports = {
     extend: {
       height: () => ({
         "fit-content": "fit-content",
+        17.5: "4.375rem",
+        18: "4.5rem",
+        104: "26rem",
+        202: "50.5rem",
       }),
       width: () => ({
         "fit-content": "fit-content",
@@ -78,6 +82,10 @@ module.exports = {
         564: "35.25rem",
         868: "54rem",
         1480: "92.5rem",
+      },
+      maxHeight: {
+        104: "26rem",
+        816: "50.5rem",
       },
       backgroundOpacity: {
         15: "0.15",
@@ -175,7 +183,7 @@ module.exports = {
         },
         red: {
           ...colors.red,
-          sematic: "#F14D4D",
+          semantic: "#F14D4D",
         },
         green: {
           ...colors.green,
@@ -213,10 +221,6 @@ module.exports = {
           ...colors.orange,
           light: "#E7AC3A",
           dark: "#E78B3A",
-        },
-        red: {
-          ...colors.red,
-          semantic: "#F14D4D",
         },
       },
       borderWidth: {

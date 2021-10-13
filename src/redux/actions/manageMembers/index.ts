@@ -1,5 +1,6 @@
 import { divideIfNotByZero, getWeiAmount } from "@/utils/conversions";
 import {
+  ADD_TO_SYNDICATE_MEMBERS,
   CONFIRM_RETURN_DEPOSIT,
   RETURNING_DEPOSIT,
   SELECTED_MEMBER,
@@ -50,6 +51,7 @@ export const setNewMemberAddresses =
       },
     } = getState();
     const members = [];
+
     memberAddresses.forEach((memberAddress) => {
       // find whether memberAddress exists in current members, if exists, set addingMember to true
       const indexOfMember = findMemberAddressIndex(
@@ -60,6 +62,11 @@ export const setNewMemberAddresses =
       // member exists in current list
       if (indexOfMember >= 0) {
         syndicateMembers[indexOfMember].addingMember = addingMember;
+
+        // addingMember is set to false when adding member to allowlist is successful.
+        if (!addingMember) {
+          syndicateMembers[indexOfMember].memberAddressAllowed = true;
+        }
       } else {
         // If address does not exist, add a new member object on top of the list.
         members.push({
@@ -320,6 +327,7 @@ export const getSyndicateDepositorData =
           blockingAddress: false,
           addingMember: false,
           transferringDeposit: false,
+          modifyingDeposits: false,
         });
     }
     dispatch({
@@ -471,3 +479,10 @@ export const setTransferringMemberDeposit =
       type: TRANSFERRING_DEPOSIT,
     });
   };
+
+export const addToSyndicateMembers = (members) => (dispatch) => {
+  return dispatch({
+    data: members,
+    type: ADD_TO_SYNDICATE_MEMBERS,
+  });
+};

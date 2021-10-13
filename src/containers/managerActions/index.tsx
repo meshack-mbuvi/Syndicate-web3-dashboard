@@ -8,7 +8,7 @@ import { ErrorModal } from "@/components/shared";
 import {
   ConfirmStateModal,
   FinalStateModal,
-  PendingStateModal,
+  PendingStateModal
 } from "@/components/shared/transactionStates";
 import StateModal from "@/components/shared/transactionStates/shared";
 import { SkeletonLoader } from "@/components/skeletonLoader";
@@ -20,7 +20,7 @@ import {
   confirmingTransaction,
   irreversibleActionText,
   rejectTransactionText,
-  waitTransactionTobeConfirmedText,
+  waitTransactionTobeConfirmedText
 } from "@/components/syndicates/shared/Constants";
 import { UnavailableState } from "@/components/syndicates/shared/unavailableState";
 import { getMetamaskError } from "@/helpers";
@@ -405,9 +405,10 @@ const ManagerActions = (): JSX.Element => {
               <img src="/images/managerActions/settings.svg" alt="settings" />
             }
             text={"Syndicate settings"}
-            onClickHandler={setShowChangeSettings}
+            onClickHandler={() => setShowChangeSettings(true)}
           />
         </div>
+        
         {showDistributeToken ? (
           <DistributeToken
             {...{ showDistributeToken, setShowDistributeToken }}

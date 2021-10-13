@@ -9,7 +9,6 @@ import {
 import ConnectWallet from "src/components/connectWallet";
 import Header from "src/components/navigation/header";
 import ConnectTwitter from "../connectTwitter";
-
 import SEO from "../seo";
 
 const Layout = ({ children, backLink = null }) => {
@@ -28,13 +27,13 @@ const Layout = ({ children, backLink = null }) => {
         title="Home"
       />
       <Header backLink={backLink} />
-      <div className="sticky top-16 z-10">
+      <div className="sticky top-16 z-20">
         <SyndicateInBetaBanner />
         {showDepositsPageBanner &&
           syndicateAddressIsValid &&
           syndicateFound && <DepositsPageBanner key={2} />}
       </div>
-      <div className="flex w-full flex-col sm:flex-row py-24 z-0 justify-center items-center my-0 mx-auto">
+      <div className="flex w-full flex-col sm:flex-row py-24 z-20 justify-center items-center my-0 mx-auto">
         {children}
       </div>
       <ConnectWallet />

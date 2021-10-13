@@ -1,5 +1,9 @@
 import { SearchForm } from "@/components/inputs/searchForm";
-import { showConfirmBlockMemberAddress } from "@/redux/actions/manageActions";
+import {
+  setSelectedMembers,
+  showConfirmBlockMemberAddress,
+  showModifyOnChainDepositAmounts,
+} from "@/redux/actions/manageActions";
 import {
   setSelectedMemberAddress,
   showConfirmReturnDeposit,
@@ -169,6 +173,14 @@ const SyndicateMembersTable = ({
     dispatch(setSelectedMemberAddress(selectedMemberAddress, totalDeposit));
   };
 
+  const handleShowModifyOnChainDepositAmounts = () => {
+    const selectedMembers = selectedFlatRows.map((member: any) => {
+      return { ...member.original };
+    });
+    dispatch(setSelectedMembers(selectedMembers));
+    dispatch(showModifyOnChainDepositAmounts(true));
+  };
+
   // show first and last page for pagination
   const firstPage = pageIndex === 0 ? "1" : pageIndex * pageSize;
   let lastPage;
@@ -212,6 +224,7 @@ const SyndicateMembersTable = ({
               {syndicate.modifiable == true && syndicate.open && (
                 <button
                   className={`flex flex-shrink font-whyte text-right text-blue text-base justify-center items-center hover:opacity-80`}
+                  onClick={() => handleShowModifyOnChainDepositAmounts()}
                 >
                   <img
                     src={"/images/edit-deposits-blue.svg"}
