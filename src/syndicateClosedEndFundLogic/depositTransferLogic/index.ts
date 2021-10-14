@@ -1,5 +1,6 @@
 import DepositTransferLogicABI from "src/contracts/SyndicateClosedEndFundDepositTransferLogicV0.json";
 import { BaseLogicContract } from "../baseLogicContract";
+import { getGnosisTxnInfo } from "../shared/gnosisTransactionInfo";
 
 export class SyndicateDepositTransferLogic extends BaseLogicContract {
   constructor(contractName: string, web3: any) {
@@ -34,25 +35,45 @@ export class SyndicateDepositTransferLogic extends BaseLogicContract {
       !amount
     )
       return;
-    const response = await this.logicContractInstance.methods
-      .managerTransferDepositForMembers(
-        syndicateAddress,
-        memberAddress,
-        targetAddress,
-        amount,
-      )
-      .send({
-        from: manager,
-      })
-      .on("transactionHash", () => {
-        // user has confirmed the transaction so we should start loader state.
-        // show loading modal
-        onTxConfirm();
-      })
-      .on("receipt", () => {
-        onTxReceipt();
-      });
-    return response;
+    let gnosisTxHash;
+    await new Promise((resolve, reject) => {
+      this.logicContractInstance.methods
+        .managerTransferDepositForMembers(
+          syndicateAddress,
+          memberAddress,
+          targetAddress,
+          amount,
+        )
+        .send({
+          from: manager,
+        })
+        .on("transactionHash", (transactionHash) => {
+          // user has confirmed the transaction so we should start loader state.
+          // show loading modal
+          onTxConfirm();
+
+          // Stop waiting if we are connected to gnosis safe via walletConnect
+          if (
+            this.web3._provider.wc?._peerMeta.name === "Gnosis Safe Multisig"
+          ) {
+            gnosisTxHash = transactionHash;
+            resolve(transactionHash);
+          }
+        })
+        .on("receipt", (receipt) => {
+          onTxReceipt();
+          resolve(receipt);
+        })
+        .on("error", (error) => {
+          reject(error);
+        });
+    });
+
+    // fallback for gnosisSafe <> walletConnect
+    if (gnosisTxHash) {
+      await getGnosisTxnInfo(gnosisTxHash);
+      onTxReceipt();
+    }
   }
 
   async getDepositTransferredEvents(

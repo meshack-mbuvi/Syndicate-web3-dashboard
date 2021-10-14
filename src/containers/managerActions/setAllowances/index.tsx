@@ -22,6 +22,7 @@ import {
 } from "src/redux/actions/tokenAllowances";
 import ERC20ABI from "src/utils/abi/erc20";
 import { isUnlimited } from "src/utils/conversions";
+import { getGnosisTxnInfo } from "src/syndicateClosedEndFundLogic/shared/gnosisTransactionInfo";
 
 interface Props {
   hideManagerSetAllowances: Function;
@@ -56,13 +57,10 @@ const ManagerSetAllowance = (props: Props) => {
   );
   const [submitting, setSubmitting] = useState<boolean>(false);
   const [metamaskError, setMetamaskError] = useState<string>("");
-  const [metamaskConfirmPending, setMetamaskConfirmPending] = useState<boolean>(
-    false,
-  );
-  const [
-    allowanceApprovalSuccess,
-    setAllowanceApprovalSuccess,
-  ] = useState<boolean>(false);
+  const [metamaskConfirmPending, setMetamaskConfirmPending] =
+    useState<boolean>(false);
+  const [allowanceApprovalSuccess, setAllowanceApprovalSuccess] =
+    useState<boolean>(false);
 
   // get static texts to render on loader and error components
   const {
@@ -169,90 +167,177 @@ const ManagerSetAllowance = (props: Props) => {
           syndicateContracts.DistributionLogicContract._address;
       }
 
-      await currentTokenContract.methods
-        .approve(tokenContractAddress, newAllowanceAmountToApprove)
-        .send({ from: account })
-        .on("transactionHash", () => {
-          // user clicked on confirm
-          // show loading state
-          setSubmitting(true);
-          setMetamaskConfirmPending(false);
-        })
-        .on("receipt", async (receipt) => {
-          // approval transaction successful
-          const { Approval } = receipt.events;
-          const { returnValues } = Approval;
-          const value = returnValues[2];
-          const managerApprovedAllowance = getWeiAmount(
-            value,
-            currentTokenDecimals,
-            false,
+      let gnosisTxHash;
+      await new Promise((resolve, reject) => {
+        currentTokenContract.methods
+          .approve(tokenContractAddress, newAllowanceAmountToApprove)
+          .send({ from: account })
+          .on("transactionHash", (transactionHash) => {
+            // user clicked on confirm
+            // show loading state
+            setSubmitting(true);
+            setMetamaskConfirmPending(false);
+
+            // Stop waiting if we are connected to gnosis safe via walletConnect
+            if (
+              web3._provider.wc?._peerMeta.name === "Gnosis Safe Multisig"
+            ) {
+              gnosisTxHash = transactionHash;
+              resolve(transactionHash);
+            }
+          })
+          .on("receipt", async (receipt) => {
+            // approval transaction successful
+            const { Approval } = receipt.events;
+            const { returnValues } = Approval;
+            const value = returnValues[2];
+            const managerApprovedAllowance = getWeiAmount(
+              value,
+              currentTokenDecimals,
+              false,
+            );
+
+            setSubmitting(false);
+            if (allowanceApprovalSuccess) {
+              setAllowanceApprovalSuccess(false);
+            } else {
+              setAllowanceApprovalSuccess(true);
+            }
+
+            // clear the allowance input field.
+            const amountsApproved = [...allowanceAmounts];
+            amountsApproved[index] = "0";
+            setAllowanceAmounts(amountsApproved);
+
+            // dispatch new allowance details to the store
+
+            if (depositsEnabled) {
+              // check whether new allowance matches total max. deposits
+              const sufficientAllowanceSet =
+                +managerApprovedAllowance >= +depositTotalMax;
+
+              const { tokenSymbol, tokenAddress, tokenDecimals } =
+                depositTokenAllowanceDetails[0];
+
+              dispatch(
+                storeDepositTokenAllowance([
+                  {
+                    tokenAddress,
+                    tokenAllowance: managerApprovedAllowance,
+                    tokenDeposits: depositTotalMax,
+                    tokenSymbol,
+                    tokenDecimals,
+                    sufficientAllowanceSet,
+                  },
+                ]),
+              );
+            } else if (distributing) {
+              // dispatch new distribution token allowance details
+              const { tokenDistributions } =
+                distributionTokensAllowanceDetails[index];
+              // check if new allowance set is sufficient.
+              const sufficientAllowanceSet =
+                +managerApprovedAllowance >= +tokenDistributions;
+
+              // update token details
+              const distributionTokensAllowanceDetailsCopy = [
+                ...distributionTokensAllowanceDetails,
+              ];
+              distributionTokensAllowanceDetailsCopy[currentTokenIndex][
+                "tokenAllowance"
+              ] = managerApprovedAllowance;
+              distributionTokensAllowanceDetailsCopy[currentTokenIndex][
+                "sufficientAllowanceSet"
+              ] = sufficientAllowanceSet;
+
+              dispatch(
+                storeDistributionTokensDetails(
+                  distributionTokensAllowanceDetailsCopy,
+                ),
+              );
+            }
+            resolve(receipt);
+          })
+          .on("error", (error) => {
+            // user clicked reject.
+            handleApprovalError(error);
+            reject(error);
+          });
+      });
+
+      // fallback for gnosisSafe <> walletConnect
+      if (gnosisTxHash) {
+        await getGnosisTxnInfo(gnosisTxHash);
+
+        const value = await currentTokenContract.methods
+          .allowance(account, tokenContractAddress)
+          .call();
+        const managerApprovedAllowance = getWeiAmount(
+          value,
+          currentTokenDecimals,
+          false,
+        );
+
+        setSubmitting(false);
+        if (allowanceApprovalSuccess) {
+          setAllowanceApprovalSuccess(false);
+        } else {
+          setAllowanceApprovalSuccess(true);
+        }
+
+        // clear the allowance input field.
+        const amountsApproved = [...allowanceAmounts];
+        amountsApproved[index] = "0";
+        setAllowanceAmounts(amountsApproved);
+
+        // dispatch new allowance details to the store
+
+        if (depositsEnabled) {
+          // check whether new allowance matches total max. deposits
+          const sufficientAllowanceSet =
+            +managerApprovedAllowance >= +depositTotalMax;
+
+          const { tokenSymbol, tokenAddress, tokenDecimals } =
+            depositTokenAllowanceDetails[0];
+
+          dispatch(
+            storeDepositTokenAllowance([
+              {
+                tokenAddress,
+                tokenAllowance: managerApprovedAllowance,
+                tokenDeposits: depositTotalMax,
+                tokenSymbol,
+                tokenDecimals,
+                sufficientAllowanceSet,
+              },
+            ]),
           );
+        } else if (distributing) {
+          // dispatch new distribution token allowance details
+          const { tokenDistributions } =
+            distributionTokensAllowanceDetails[index];
+          // check if new allowance set is sufficient.
+          const sufficientAllowanceSet =
+            +managerApprovedAllowance >= +tokenDistributions;
 
-          setSubmitting(false);
-          if (allowanceApprovalSuccess) {
-            setAllowanceApprovalSuccess(false);
-          } else {
-            setAllowanceApprovalSuccess(true);
-          }
+          // update token details
+          const distributionTokensAllowanceDetailsCopy = [
+            ...distributionTokensAllowanceDetails,
+          ];
+          distributionTokensAllowanceDetailsCopy[currentTokenIndex][
+            "tokenAllowance"
+          ] = managerApprovedAllowance;
+          distributionTokensAllowanceDetailsCopy[currentTokenIndex][
+            "sufficientAllowanceSet"
+          ] = sufficientAllowanceSet;
 
-          // clear the allowance input field.
-          const amountsApproved = [...allowanceAmounts];
-          amountsApproved[index] = "0";
-          setAllowanceAmounts(amountsApproved);
-
-          // dispatch new allowance details to the store
-
-          if (depositsEnabled) {
-            // check whether new allowance matches total max. deposits
-            const sufficientAllowanceSet =
-              +managerApprovedAllowance >= +depositTotalMax;
-
-            const { tokenSymbol, tokenAddress, tokenDecimals } =
-              depositTokenAllowanceDetails[0];
-
-            dispatch(
-              storeDepositTokenAllowance([
-                {
-                  tokenAddress,
-                  tokenAllowance: managerApprovedAllowance,
-                  tokenDeposits: depositTotalMax,
-                  tokenSymbol,
-                  tokenDecimals,
-                  sufficientAllowanceSet,
-                },
-              ]),
-            );
-          } else if (distributing) {
-            // dispatch new distribution token allowance details
-            const { tokenDistributions } =
-              distributionTokensAllowanceDetails[index];
-            // check if new allowance set is sufficient.
-            const sufficientAllowanceSet =
-              +managerApprovedAllowance >= +tokenDistributions;
-
-            // update token details
-            const distributionTokensAllowanceDetailsCopy = [
-              ...distributionTokensAllowanceDetails,
-            ];
-            distributionTokensAllowanceDetailsCopy[currentTokenIndex][
-              "tokenAllowance"
-            ] = managerApprovedAllowance;
-            distributionTokensAllowanceDetailsCopy[currentTokenIndex][
-              "sufficientAllowanceSet"
-            ] = sufficientAllowanceSet;
-
-            dispatch(
-              storeDistributionTokensDetails(
-                distributionTokensAllowanceDetailsCopy,
-              ),
-            );
-          }
-        })
-        .on("error", (error) => {
-          // user clicked reject.
-          handleApprovalError(error);
-        });
+          dispatch(
+            storeDistributionTokensDetails(
+              distributionTokensAllowanceDetailsCopy,
+            ),
+          );
+        }
+      }
     } catch (error) {
       // error occured before wallet prompt.
       handleApprovalError(error);
@@ -328,9 +413,10 @@ const ManagerSetAllowance = (props: Props) => {
   useEffect(() => {
     if (distributionTokensAllowanceDetails.length && distributing) {
       // check which distribution token does not have sufficient allowance
-      const insufficientAllowanceTokens = distributionTokensAllowanceDetails.filter(
-        (token) => !token.sufficientAllowanceSet,
-      );
+      const insufficientAllowanceTokens =
+        distributionTokensAllowanceDetails.filter(
+          (token) => !token.sufficientAllowanceSet,
+        );
       setTokenAllowanceDetails(insufficientAllowanceTokens);
     } else if (depositTokenAllowanceDetails.length && depositsEnabled) {
       setTokenAllowanceDetails(depositTokenAllowanceDetails);

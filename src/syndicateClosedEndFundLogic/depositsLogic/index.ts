@@ -1,5 +1,6 @@
 import DepositLogicABI from "src/contracts/SyndicateClosedEndFundDepositLogicV0.json";
 import { BaseLogicContract } from "../baseLogicContract";
+import { getGnosisTxnInfo } from "../shared/gnosisTransactionInfo";
 
 export class SyndicateDepositLogic extends BaseLogicContract {
   constructor(contractName: string, web3: any) {
@@ -23,15 +24,37 @@ export class SyndicateDepositLogic extends BaseLogicContract {
     setMetamaskConfirmPending: (value: boolean) => void;
     setSubmitting: (value: boolean) => void;
   }): Promise<void> {
-    await this.logicContractInstance.methods
-      .memberDeposit(syndicateAddress, amount)
-      .send({ from: account })
-      .on("transactionHash", () => {
-        // user has confirmed the transaction so we should start loader state.
-        // show loading modal
-        setMetamaskConfirmPending(false);
-        setSubmitting(true);
-      });
+    let gnosisTxHash;
+    await new Promise((resolve, reject) => {
+      this.logicContractInstance.methods
+        .memberDeposit(syndicateAddress, amount)
+        .send({ from: account })
+        .on("transactionHash", (transactionHash) => {
+          // user has confirmed the transaction so we should start loader state.
+          // show loading modal
+          setMetamaskConfirmPending(false);
+          setSubmitting(true);
+
+          // Stop waiting if we are connected to gnosis safe via walletConnect
+          if (
+            this.web3._provider.wc?._peerMeta.name === "Gnosis Safe Multisig"
+          ) {
+            gnosisTxHash = transactionHash;
+            resolve(transactionHash);
+          }
+        })
+        .on("receipt", (receipt) => {
+          resolve(receipt);
+        })
+        .on("error", (error) => {
+          reject(error);
+        });
+    });
+
+    // fallback for gnosisSafe <> walletConnect
+    if (gnosisTxHash) {
+      await getGnosisTxnInfo(gnosisTxHash);
+    }
   }
 
   /**
@@ -109,17 +132,38 @@ export class SyndicateDepositLogic extends BaseLogicContract {
     handleReceipt: () => void,
   ): Promise<void> {
     if (!syndicateAddress.trim() || !memberAddresses.length) return;
-    await this.logicContractInstance.methods
-      .managerRejectDepositForMembers(syndicateAddress, memberAddresses)
-      .send({ from: manager })
-      .on("transactionHash", () => {
-        // close wallet confirmation modal
-        setShowWalletConfirmationModal(false);
-        setSubmitting(true);
-      })
-      .on("receipt", async () => {
-        handleReceipt();
-      });
+
+    let gnosisTxHash;
+    await new Promise((resolve, reject) => {
+      this.logicContractInstance.methods
+        .managerRejectDepositForMembers(syndicateAddress, memberAddresses)
+        .send({ from: manager })
+        .on("transactionHash", (transactionHash) => {
+          // close wallet confirmation modal
+          setShowWalletConfirmationModal(false);
+          setSubmitting(true);
+
+          // Stop waiting if we are connected to gnosis safe via walletConnect
+          if (
+            this.web3._provider.wc?._peerMeta.name === "Gnosis Safe Multisig"
+          ) {
+            gnosisTxHash = transactionHash;
+            resolve(transactionHash);
+          }
+        })
+        .on("receipt", (receipt) => {
+          resolve(receipt);
+        })
+        .on("error", (error) => {
+          reject(error);
+        });
+    });
+
+    // fallback for gnosisSafe <> walletConnect
+    if (gnosisTxHash) {
+      await getGnosisTxnInfo(gnosisTxHash);
+    }
+    setSubmitting(false);
   }
 
   /**
@@ -151,18 +195,42 @@ export class SyndicateDepositLogic extends BaseLogicContract {
     ) {
       return;
     }
-    await this.logicContractInstance.methods
-      .managerSetDepositForMembers(
-        syndicateAddress,
-        memberAddresses,
-        memberAmounts,
-      )
-      .send({ from: manager })
-      .on("transactionHash", () => {
-        setShowWalletConfirmationModal(false);
-        onTxConfirm(true);
-      })
-      .on("receipt", () => onTxReceipt());
+
+    let gnosisTxHash;
+    await new Promise((resolve, reject) => {
+      this.logicContractInstance.methods
+        .managerSetDepositForMembers(
+          syndicateAddress,
+          memberAddresses,
+          memberAmounts,
+        )
+        .send({ from: manager })
+        .on("transactionHash", (transactionHash) => {
+          setShowWalletConfirmationModal(false);
+          onTxConfirm(true);
+
+          // Stop waiting if we are connected to gnosis safe via walletConnect
+          if (
+            this.web3._provider.wc?._peerMeta.name === "Gnosis Safe Multisig"
+          ) {
+            gnosisTxHash = transactionHash;
+            resolve(transactionHash);
+          }
+        })
+        .on("receipt", (receipt) => {
+          onTxReceipt()
+          resolve(receipt);
+        })
+        .on("error", (error) => {
+          reject(error);
+        });
+    });
+
+    // fallback for gnosisSafe <> walletConnect
+    if (gnosisTxHash) {
+      await getGnosisTxnInfo(gnosisTxHash);
+      onTxReceipt()
+    }
   }
 
   /**
@@ -185,13 +253,35 @@ export class SyndicateDepositLogic extends BaseLogicContract {
 
     setShowWalletConfirmationModal(true);
 
-    await this.logicContractInstance.methods
-      .managerSetDepositMemberMax(syndicateAddress, depositMemberMax)
-      .send({ from: manager })
-      .on("transactionHash", () => {
-        setShowWalletConfirmationModal(false);
-        setSubmitting(true);
-      });
+    let gnosisTxHash;
+    await new Promise((resolve, reject) => {
+      this.logicContractInstance.methods
+        .managerSetDepositMemberMax(syndicateAddress, depositMemberMax)
+        .send({ from: manager })
+        .on("transactionHash", (transactionHash) => {
+          setShowWalletConfirmationModal(false);
+          setSubmitting(true);
+
+          // Stop waiting if we are connected to gnosis safe via walletConnect
+          if (
+            this.web3._provider.wc?._peerMeta.name === "Gnosis Safe Multisig"
+          ) {
+            gnosisTxHash = transactionHash;
+            resolve(transactionHash);
+          }
+        })
+        .on("receipt", (receipt) => {
+          resolve(receipt);
+        })
+        .on("error", (error) => {
+          reject(error);
+        });
+    });
+
+    // fallback for gnosisSafe <> walletConnect
+    if (gnosisTxHash) {
+      await getGnosisTxnInfo(gnosisTxHash);
+    }
     setSubmitting(false);
   }
 
@@ -215,13 +305,35 @@ export class SyndicateDepositLogic extends BaseLogicContract {
 
     setShowWalletConfirmationModal(true);
 
-    await this.logicContractInstance.methods
-      .managerSetDepositTotalMax(syndicateAddress, depositTotalMax)
-      .send({ from: manager })
-      .on("transactionHash", () => {
-        setShowWalletConfirmationModal(false);
-        setSubmitting(true);
-      });
+    let gnosisTxHash;
+    await new Promise((resolve, reject) => {
+      this.logicContractInstance.methods
+        .managerSetDepositTotalMax(syndicateAddress, depositTotalMax)
+        .send({ from: manager })
+        .on("transactionHash", (transactionHash) => {
+          setShowWalletConfirmationModal(false);
+          setSubmitting(true);
+
+          // Stop waiting if we are connected to gnosis safe via walletConnect
+          if (
+            this.web3._provider.wc?._peerMeta.name === "Gnosis Safe Multisig"
+          ) {
+            gnosisTxHash = transactionHash;
+            resolve(transactionHash);
+          }
+        })
+        .on("receipt", (receipt) => {
+          resolve(receipt);
+        })
+        .on("error", (error) => {
+          reject(error);
+        });
+    });
+
+    // fallback for gnosisSafe <> walletConnect
+    if (gnosisTxHash) {
+      await getGnosisTxnInfo(gnosisTxHash);
+    }
     setSubmitting(false);
   }
 
@@ -245,13 +357,35 @@ export class SyndicateDepositLogic extends BaseLogicContract {
 
     setShowWalletConfirmationModal(true);
 
-    await this.logicContractInstance.methods
-      .managerSetDepositMemberMin(syndicateAddress, depositMemberMin)
-      .send({ from: manager })
-      .on("transactionHash", () => {
-        setShowWalletConfirmationModal(false);
-        setSubmitting(true);
-      });
+    let gnosisTxHash;
+    await new Promise((resolve, reject) => {
+      this.logicContractInstance.methods
+        .managerSetDepositMemberMin(syndicateAddress, depositMemberMin)
+        .send({ from: manager })
+        .on("transactionHash", (transactionHash) => {
+          setShowWalletConfirmationModal(false);
+          setSubmitting(true);
+
+          // Stop waiting if we are connected to gnosis safe via walletConnect
+          if (
+            this.web3._provider.wc?._peerMeta.name === "Gnosis Safe Multisig"
+          ) {
+            gnosisTxHash = transactionHash;
+            resolve(transactionHash);
+          }
+        })
+        .on("receipt", (receipt) => {
+          resolve(receipt);
+        })
+        .on("error", (error) => {
+          reject(error);
+        });
+    });
+
+    // fallback for gnosisSafe <> walletConnect
+    if (gnosisTxHash) {
+      await getGnosisTxnInfo(gnosisTxHash);
+    }
     setSubmitting(false);
   }
 }

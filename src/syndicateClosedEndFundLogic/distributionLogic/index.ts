@@ -1,5 +1,6 @@
 import DistributionLogicABI from "src/contracts/SyndicateClosedEndFundDistributionLogicV0.json";
 import { BaseLogicContract } from "../baseLogicContract";
+import { getGnosisTxnInfo } from "../shared/gnosisTransactionInfo";
 
 export class SyndicateDistributionLogic extends BaseLogicContract {
   constructor(contractName: any, web3: any) {
@@ -22,14 +23,12 @@ export class SyndicateDistributionLogic extends BaseLogicContract {
     try {
       await this.initializeLogicContract();
 
-      const managerDistributionEvents = await this.logicContractInstance.getPastEvents(
-        distributionEvent,
-        {
+      const managerDistributionEvents =
+        await this.logicContractInstance.getPastEvents(distributionEvent, {
           filter,
           fromBlock: "earliest",
           toBlock: "latest",
-        },
-      );
+        });
 
       return managerDistributionEvents;
     } catch (error) {
@@ -131,34 +130,52 @@ export class SyndicateDistributionLogic extends BaseLogicContract {
     ) {
       return;
     }
+    let gnosisTxHash;
+    await new Promise((resolve, reject) => {
+      this.logicContractInstance.methods
+        .managerSetDistributions(
+          syndicateAddress,
+          distributionERC20TokenAddresses,
+          tokenDistributionAmounts,
+        )
+        .send({ from: manager })
+        .on("transactionHash", (transactionHash) => {
+          // user has confirmed the transaction so we should start loader state.
+          // show loading modal
+          setMetamaskConfirmationPending(false);
+          setSubmitting(true);
+          // Stop waiting if we are connected to gnosis safe via walletConnect
+          if (
+            this.web3._provider.wc?._peerMeta.name === "Gnosis Safe Multisig"
+          ) {
+            gnosisTxHash = transactionHash;
+            resolve(transactionHash);
+          }
+        })
+        .on("receipt", (receipt: { events }) => {
+          // For a single distribution token, a single event is
+          // emitted, and thus DistributionAdded will be an
+          // object whereas for multiple distribution tokens, multiple
+          // events are emitted and therefore DistributionAdded // will be an array
+          const { DistributionAdded } = receipt.events;
+          if (Array.isArray(DistributionAdded)) {
+            DistributionAdded.forEach((distributionEvent) => {
+              processSetDistributionEvent(distributionEvent);
+            });
+          } else {
+            processSetDistributionEvent(DistributionAdded);
+          }
+          resolve(receipt);
+        })
+        .on("error", (error) => {
+          reject(error);
+        });
+    });
 
-    await this.logicContractInstance.methods
-      .managerSetDistributions(
-        syndicateAddress,
-        distributionERC20TokenAddresses,
-        tokenDistributionAmounts,
-      )
-      .send({ from: manager })
-      .on("transactionHash", () => {
-        // user has confirmed the transaction so we should start loader state.
-        // show loading modal
-        setMetamaskConfirmationPending(false);
-        setSubmitting(true);
-      })
-      .on("receipt", (receipt: { events }) => {
-        // For a single distribution token, a single event is
-        // emitted, and thus DistributionAdded will be an
-        // object whereas for multiple distribution tokens, multiple
-        // events are emitted and therefore DistributionAdded // will be an array
-        const { DistributionAdded } = receipt.events;
-        if (Array.isArray(DistributionAdded)) {
-          DistributionAdded.forEach((distributionEvent) => {
-            processSetDistributionEvent(distributionEvent);
-          });
-        } else {
-          processSetDistributionEvent(DistributionAdded);
-        }
-      });
+    // fallback for gnosisSafe <> walletConnect
+    if (gnosisTxHash) {
+      await getGnosisTxnInfo(gnosisTxHash);
+    }
     setSubmitting(false);
   }
 
@@ -217,13 +234,35 @@ export class SyndicateDistributionLogic extends BaseLogicContract {
     }
 
     try {
-      await this.logicContractInstance.methods
-        .memberClaimDistributions(syndicateAddress, ERC20Addresses, amounts)
-        .send({ from: memberAccount })
-        .on("transactionHash", () => {
-          setMetamaskConfirmPending(false);
-          setSubmittingWithdrawal(true);
-        });
+      let gnosisTxHash;
+      await new Promise((resolve, reject) => {
+        this.logicContractInstance.methods
+          .memberClaimDistributions(syndicateAddress, ERC20Addresses, amounts)
+          .send({ from: memberAccount })
+          .on("transactionHash", (transactionHash) => {
+            setMetamaskConfirmPending(false);
+            setSubmittingWithdrawal(true);
+
+            // Stop waiting if we are connected to gnosis safe via walletConnect
+            if (
+              this.web3._provider.wc?._peerMeta.name === "Gnosis Safe Multisig"
+            ) {
+              gnosisTxHash = transactionHash;
+              resolve(transactionHash);
+            }
+          })
+          .on("receipt", (receipt) => {
+            resolve(receipt);
+          })
+          .on("error", (error) => {
+            reject(error);
+          });
+      });
+
+      // fallback for gnosisSafe <> walletConnect
+      if (gnosisTxHash) {
+        await getGnosisTxnInfo(gnosisTxHash);
+      }
       setSubmittingWithdrawal(false);
     } catch (error) {
       setSubmittingWithdrawal(false);
@@ -260,18 +299,40 @@ export class SyndicateDistributionLogic extends BaseLogicContract {
       return;
     }
     try {
-      await this.logicContractInstance.methods
-        .managerSetDistributionsClaimedForMembers(
-          syndicateAddress,
-          distributionERC20Addresses,
-          memberAddresses,
-          amounts,
-        )
-        .send({ from: manager })
-        .on("transactionHash", () => {
-          setShowWalletConfirmationModal(false);
-          setSubmitting(true);
-        });
+      let gnosisTxHash;
+      await new Promise((resolve, reject) => {
+        this.logicContractInstance.methods
+          .managerSetDistributionsClaimedForMembers(
+            syndicateAddress,
+            distributionERC20Addresses,
+            memberAddresses,
+            amounts,
+          )
+          .send({ from: manager })
+          .on("transactionHash", (transactionHash) => {
+            setShowWalletConfirmationModal(false);
+            setSubmitting(true);
+            // Stop waiting if we are connected to gnosis safe via walletConnect
+            if (
+              this.web3._provider.wc?._peerMeta.name === "Gnosis Safe Multisig"
+            ) {
+              gnosisTxHash = transactionHash;
+              resolve(transactionHash);
+            }
+          })
+          .on("receipt", (receipt) => {
+            setSubmitting(false);
+            resolve(receipt);
+          })
+          .on("error", (error) => {
+            reject(error);
+          });
+      });
+
+      // fallback for gnosisSafe <> walletConnect
+      if (gnosisTxHash) {
+        await getGnosisTxnInfo(gnosisTxHash);
+      }
     } catch (error) {
       setSubmitting(false);
       throw error;
@@ -295,13 +356,14 @@ export class SyndicateDistributionLogic extends BaseLogicContract {
     this.initializeLogicContract();
 
     try {
-      const memberClaimedDistributions = await this.logicContractInstance?.methods
-        .getDistributionClaimedMember(
-          syndicateAddress,
-          memberAddress,
-          distributionERC20Address,
-        )
-        .call();
+      const memberClaimedDistributions =
+        await this.logicContractInstance?.methods
+          .getDistributionClaimedMember(
+            syndicateAddress,
+            memberAddress,
+            distributionERC20Address,
+          )
+          .call();
       return memberClaimedDistributions;
     } catch (error) {
       return;

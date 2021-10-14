@@ -39,6 +39,7 @@ import { SyndicateActionButton } from "../shared/syndicateActionButton";
 import { SyndicateActionLoader } from "../shared/syndicateActionLoader";
 import { UnavailableState } from "../shared/unavailableState";
 import ManageSyndicate from "./ManageSyndicate";
+import { getGnosisTxnInfo } from "src/syndicateClosedEndFundLogic/shared/gnosisTransactionInfo";
 
 const {
   actionFailedError,
@@ -472,47 +473,71 @@ const DepositSyndicate: React.FC = () => {
       true,
     );
     try {
-      await depositTokenContract.methods
-        .approve(
-          syndicateContracts.DepositLogicContract._address,
-          amountToApprove,
-        )
-        .send({ from: account })
-        .on("transactionHash", () => {
-          // user clicked on confirm
-          // show loading state
-          setSubmittingAllowanceApproval(true);
-          setMetamaskConfirmPending(false);
-        })
-        .on("receipt", async () => {
-          // some times the returned values from the attached event do not have
-          // value key, hence the will be undefined.
-          // call this function does the job of checking whether the allowance
-          // was approved successfully or not.
-          await checkMemberAllowanceAmount();
-          setSubmittingAllowanceApproval(false);
+      let gnosisTxHash;
+      await new Promise((resolve, reject) => {
+        depositTokenContract.methods
+          .approve(
+            syndicateContracts.DepositLogicContract._address,
+            amountToApprove,
+          )
+          .send({ from: account })
+          .on("transactionHash", (transactionHash) => {
+            // user clicked on confirm
+            // show loading state
+            setSubmittingAllowanceApproval(true);
+            setMetamaskConfirmPending(false);
 
-          // Amplitude logger: Approve Allowance
-          amplitudeLogger(APPROVE_DEPOSIT_ALLOWANCE, {
-            flow: Flow.MBR_DEP,
-            amount,
-          });
-        })
-        .on("error", (error) => {
-          // user clicked reject.
-          const { code } = error;
-          const errorMessage = getMetamaskError(code, "Allowance approval");
-          setMetamaskApprovalError(errorMessage);
-          setSubmittingAllowanceApproval(false);
-          setMetamaskConfirmPending(false);
+            // Stop waiting if we are connected to gnosis safe via walletConnect
+            if (web3._provider.wc?._peerMeta.name === "Gnosis Safe Multisig") {
+              gnosisTxHash = transactionHash;
+              resolve(transactionHash);
+            }
+          })
+          .on("receipt", async (receipt) => {
+            // some times the returned values from the attached event do not have
+            // value key, hence the will be undefined.
+            // call this function does the job of checking whether the allowance
+            // was approved successfully or not.
+            await checkMemberAllowanceAmount();
+            setSubmittingAllowanceApproval(false);
 
-          // Amplitude logger: Error Approve Allowance
-          amplitudeLogger(ERROR_APPROVE_ALLOWANCE, {
-            flow: Flow.MBR_DEP,
-            amount,
-            error,
+            // Amplitude logger: Approve Allowance
+            amplitudeLogger(APPROVE_DEPOSIT_ALLOWANCE, {
+              flow: Flow.MBR_DEP,
+              amount,
+            });
+            resolve(receipt);
+          })
+          .on("error", (error) => {
+            // user clicked reject.
+            const { code } = error;
+            const errorMessage = getMetamaskError(code, "Allowance approval");
+            setMetamaskApprovalError(errorMessage);
+            setSubmittingAllowanceApproval(false);
+            setMetamaskConfirmPending(false);
+
+            // Amplitude logger: Error Approve Allowance
+            amplitudeLogger(ERROR_APPROVE_ALLOWANCE, {
+              flow: Flow.MBR_DEP,
+              amount,
+              error,
+            });
+            reject(error);
           });
+      });
+
+      // fallback for gnosisSafe <> walletConnect
+      if (gnosisTxHash) {
+        await getGnosisTxnInfo(gnosisTxHash);
+        await checkMemberAllowanceAmount();
+        setSubmittingAllowanceApproval(false);
+
+        // Amplitude logger: Approve Allowance
+        amplitudeLogger(APPROVE_DEPOSIT_ALLOWANCE, {
+          flow: Flow.MBR_DEP,
+          amount,
         });
+      }
     } catch (error) {
       // error occurred before wallet prompt.
       const { code } = error;

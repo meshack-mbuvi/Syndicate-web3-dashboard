@@ -1,5 +1,6 @@
 import allowlistLogicABI from "src/contracts/SyndicateClosedEndFundAllowlistLogicV0.json";
 import { BaseLogicContract } from "../baseLogicContract";
+import { getGnosisTxnInfo } from "../shared/gnosisTransactionInfo";
 
 /**
  * Handles syndicate allowlist logic
@@ -34,17 +35,38 @@ export class SyndicateAllowlistLogic extends BaseLogicContract {
     if (!syndicateAddress.trim() || !memberAddresses.length) return;
     setShowWalletConfirmationModal(true);
 
-    await this.logicContractInstance.methods
-      .managerBlockAddresses(syndicateAddress, memberAddresses)
-      .send({ from: manager })
-      .on("transactionHash", () => {
-        // close wallet confirmation modal
-        setShowWalletConfirmationModal(false);
-        setSubmitting(true);
-      })
-      .on("receipt", () => {
-        handleReceipt();
-      });
+    let gnosisTxHash;
+    await new Promise((resolve, reject) => {
+      this.logicContractInstance.methods
+        .managerBlockAddresses(syndicateAddress, memberAddresses)
+        .send({ from: manager })
+        .on("transactionHash", (transactionHash) => {
+          // close wallet confirmation modal
+          setShowWalletConfirmationModal(false);
+          setSubmitting(true);
+
+          // Stop waiting if we are connected to gnosis safe via walletConnect
+          if (
+            this.web3._provider.wc?._peerMeta.name === "Gnosis Safe Multisig"
+          ) {
+            gnosisTxHash = transactionHash;
+            resolve(transactionHash);
+          }
+        })
+        .on("receipt", (receipt) => {
+          handleReceipt()
+          resolve(receipt);
+        })
+        .on("error", (error) => {
+          reject(error);
+        });
+    });
+
+    // fallback for gnosisSafe <> walletConnect
+    if (gnosisTxHash) {
+      await getGnosisTxnInfo(gnosisTxHash);
+      handleReceipt()
+    }
     setSubmitting(false);
   }
 
@@ -81,14 +103,37 @@ export class SyndicateAllowlistLogic extends BaseLogicContract {
     ) {
       return;
     }
-    await this.logicContractInstance.methods
-      .managerAllowAddresses(syndicateAddress, memberAddresses)
-      .send({ from: manager })
-      .on("transactionHash", (transactionHash: string) => {
-        // close wallet confirmation modal
-        onTxConfirm(transactionHash);
-      })
-      .on("receipt", () => onTxReceipt());
+
+    let gnosisTxHash;
+    await new Promise((resolve, reject) => {
+      this.logicContractInstance.methods
+        .managerAllowAddresses(syndicateAddress, memberAddresses)
+        .send({ from: manager })
+        .on("transactionHash", (transactionHash: string) => {
+          onTxConfirm(transactionHash);
+
+          // Stop waiting if we are connected to gnosis safe via walletConnect
+          if (
+            this.web3._provider.wc?._peerMeta.name === "Gnosis Safe Multisig"
+          ) {
+            gnosisTxHash = transactionHash;
+            resolve(transactionHash);
+          }
+        })
+        .on("receipt", (receipt) => {
+          onTxReceipt();
+          resolve(receipt);
+        })
+        .on("error", (error) => {
+          reject(error);
+        });
+    });
+
+    // fallback for gnosisSafe <> walletConnect
+    if (gnosisTxHash) {
+      await getGnosisTxnInfo(gnosisTxHash);
+      onTxReceipt();
+    }
   }
 
   /**
@@ -141,17 +186,38 @@ export class SyndicateAllowlistLogic extends BaseLogicContract {
 
     setShowWalletConfirmationModal(true);
 
-    await this.logicContractInstance.methods
-      .managerSetAllowlistEnabled(syndicateAddress, allowListEnabled)
-      .send({ from: manager })
-      .on("transactionHash", () => {
-        // close wallet confirmation modal
-        setShowWalletConfirmationModal(false);
-        setSubmitting(true);
-      })
-      .on("receipt", () => {
-        setSubmitting(false);
-      });
+    let gnosisTxHash;
+    await new Promise((resolve, reject) => {
+      this.logicContractInstance.methods
+        .managerSetAllowlistEnabled(syndicateAddress, allowListEnabled)
+        .send({ from: manager })
+        .on("transactionHash", (transactionHash) => {
+          // close wallet confirmation modal
+          setShowWalletConfirmationModal(false);
+          setSubmitting(true);
+
+          // Stop waiting if we are connected to gnosis safe via walletConnect
+          if (
+            this.web3._provider.wc?._peerMeta.name === "Gnosis Safe Multisig"
+          ) {
+            gnosisTxHash = transactionHash;
+            resolve(transactionHash);
+          }
+        })
+        .on("receipt", (receipt) => {
+          setSubmitting(false);
+          resolve(receipt);
+        })
+        .on("error", (error) => {
+          reject(error);
+        });
+    });
+
+    // fallback for gnosisSafe <> walletConnect
+    if (gnosisTxHash) {
+      await getGnosisTxnInfo(gnosisTxHash);
+    }
+
     await setSubmitting(false);
   }
 }

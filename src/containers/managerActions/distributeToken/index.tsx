@@ -50,6 +50,7 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Button from "src/components/buttons";
 import { DeleteIcon } from "src/components/shared/Icons";
+import { getGnosisTxnInfo } from "src/syndicateClosedEndFundLogic/shared/gnosisTransactionInfo"
 
 interface Props {
   showDistributeToken: boolean;
@@ -104,16 +105,12 @@ const DistributeToken = (props: Props) => {
     ERC20TokenDefaults,
   ]);
 
-  const [enableDistributeButton, setEnableDistributeButton] = useState<boolean>(
-    false,
-  );
-  const [
-    metamaskDistributionError,
-    setMetamaskDistributionError,
-  ] = useState<string>("");
-  const [successfulDistribution, setSuccessfulDistribution] = useState<boolean>(
-    false,
-  );
+  const [enableDistributeButton, setEnableDistributeButton] =
+    useState<boolean>(false);
+  const [metamaskDistributionError, setMetamaskDistributionError] =
+    useState<string>("");
+  const [successfulDistribution, setSuccessfulDistribution] =
+    useState<boolean>(false);
 
   /**
    * This method process the setDistribution event that is emitted as
@@ -133,10 +130,11 @@ const DistributeToken = (props: Props) => {
 
       if (distributionERC20Address === tokenNonFormattedAddress) {
         // get current distributions.
-        const totalCurrentDistributions = await syndicateContracts.DistributionLogicContract.getDistributionTotal(
-          syndicateAddress,
-          tokenNonFormattedAddress,
-        );
+        const totalCurrentDistributions =
+          await syndicateContracts.DistributionLogicContract.getDistributionTotal(
+            syndicateAddress,
+            tokenNonFormattedAddress,
+          );
         updateERC20TokenValue(
           "tokenDistribution",
           currentIndex,
@@ -162,12 +160,10 @@ const DistributeToken = (props: Props) => {
           ) {
             const { tokenAddress } = distributionTokensAllowanceDetailsCopy[i];
             if (tokenAddress === tokenNonFormattedAddress) {
-              distributionTokensAllowanceDetailsCopy[i][
-                "tokenDistributions"
-              ] = convertedTokenDistributions;
-              distributionTokensAllowanceDetailsCopy[i][
-                "tokenAllowance"
-              ] = tokenAllowance;
+              distributionTokensAllowanceDetailsCopy[i]["tokenDistributions"] =
+                convertedTokenDistributions;
+              distributionTokensAllowanceDetailsCopy[i]["tokenAllowance"] =
+                tokenAllowance;
               distributionTokensAllowanceDetailsCopy[i][
                 "sufficientAllowanceSet"
               ] = true;
@@ -244,11 +240,8 @@ const DistributeToken = (props: Props) => {
     const tokenDistributionAmounts = [];
 
     ERC20TokenFields.forEach((ERC20TokenField) => {
-      const {
-        tokenNonFormattedAddress,
-        tokenAllowance,
-        tokenDecimals,
-      } = ERC20TokenField;
+      const { tokenNonFormattedAddress, tokenAllowance, tokenDecimals } =
+        ERC20TokenField;
 
       // get correct wei amount to send to the contract.
       const distributionAmount = getWeiAmount(
@@ -438,9 +431,8 @@ const DistributeToken = (props: Props) => {
       // get previous allowance set for token.
       // if the amount entered matches this, indicate that the allowance
       // has already been approved.
-      const { tokenNonFormattedAddress, tokenDecimals } = ERC20TokenFields[
-        index
-      ];
+      const { tokenNonFormattedAddress, tokenDecimals } =
+        ERC20TokenFields[index];
       if (tokenNonFormattedAddress) {
         const currentTokenAllowance = await checkCurrentTokenAllowance(
           tokenNonFormattedAddress,
@@ -558,18 +550,13 @@ const DistributeToken = (props: Props) => {
     }
   };
 
-  const [
-    metamaskConfirmationPending,
-    setMetamaskConfirmationPending,
-  ] = useState<boolean>(false);
+  const [metamaskConfirmationPending, setMetamaskConfirmationPending] =
+    useState<boolean>(false);
 
-  const [metamaskApprovalError, setMetamaskApprovalError] = useState<string>(
-    "",
-  );
-  const [
-    submittingAllowanceApproval,
-    setSubmittingAllowanceApproval,
-  ] = useState<boolean>(false);
+  const [metamaskApprovalError, setMetamaskApprovalError] =
+    useState<string>("");
+  const [submittingAllowanceApproval, setSubmittingAllowanceApproval] =
+    useState<boolean>(false);
 
   /** Method to handle allowance approval error
    * @param error object containing error details
@@ -616,105 +603,196 @@ const DistributeToken = (props: Props) => {
 
     // set up allowance
     try {
-      await tokenContract.methods
-        .approve(
-          syndicateContracts.DistributionLogicContract._address,
-          amountToApprove,
-        )
-        .send({ from: account })
-        .on("transactionHash", () => {
-          // user clicked on confirm
-          // show loading state
-          setSubmittingAllowanceApproval(true);
-          setMetamaskConfirmationPending(false);
-        })
-        .on("receipt", async (receipt) => {
-          setSubmittingAllowanceApproval(false);
+      let gnosisTxHash;
+      await new Promise((resolve, reject) => {
+        tokenContract.methods
+          .approve(
+            syndicateContracts.DistributionLogicContract._address,
+            amountToApprove,
+          )
+          .send({ from: account })
+          .on("transactionHash", (transactionHash) => {
+            // user clicked on confirm
+            // show loading state
+            setSubmittingAllowanceApproval(true);
+            setMetamaskConfirmationPending(false);
 
-          // approval transaction successful
-          // sometimes the event is empty
-          const { Approval } = receipt.events;
+            // Stop waiting if we are connected to gnosis safe via walletConnect
+            if (web3._provider.wc?._peerMeta.name === "Gnosis Safe Multisig") {
+              gnosisTxHash = transactionHash;
+              resolve(transactionHash);
+            }
+          })
+          .on("receipt", async (receipt) => {
+            setSubmittingAllowanceApproval(false);
 
-          if (Approval) {
-            // Amplitude logger: DISTRIBUTION_TOKEN_APPROVED
-            amplitudeLogger(DISTRIBUTION_TOKEN_APPROVED, {
+            // approval transaction successful
+            // sometimes the event is empty
+            const { Approval } = receipt.events;
+
+            if (Approval) {
+              // Amplitude logger: DISTRIBUTION_TOKEN_APPROVED
+              amplitudeLogger(DISTRIBUTION_TOKEN_APPROVED, {
+                flow: Flow.MGR_SET_DIST,
+              });
+
+              const { returnValues } = Approval;
+              const { wad } = returnValues;
+              const managerApprovedAllowance = getWeiAmount(
+                wad,
+                tokenDecimals,
+                false,
+              );
+
+              updateERC20TokenValue("tokenAllowanceApproved", index, true);
+              updateERC20TokenValue(
+                "tokenAllowanceAmount",
+                index,
+                `${managerApprovedAllowance}`,
+              );
+
+              // get current distributions.
+              const totalCurrentDistributions =
+                await syndicateContracts.DistributionLogicContract.getDistributionTotal(
+                  syndicateAddress,
+                  tokenNonFormattedAddress,
+                );
+
+              const convertedTokenDistributions = getWeiAmount(
+                totalCurrentDistributions,
+                tokenDecimals,
+                false,
+              );
+              if (distributionTokensAllowanceDetails.length) {
+                const sufficientAllowanceSet =
+                  +managerApprovedAllowance >= +totalCurrentDistributions;
+                // dispatch action to store to update distribution token details
+                const distributionTokensAllowanceDetailsCopy = [
+                  ...distributionTokensAllowanceDetails,
+                ];
+
+                // check if token has a distribution set already
+                for (
+                  let i = 0;
+                  i < distributionTokensAllowanceDetailsCopy.length;
+                  i++
+                ) {
+                  const { tokenAddress } =
+                    distributionTokensAllowanceDetailsCopy[i];
+                  if (tokenAddress === tokenNonFormattedAddress) {
+                    distributionTokensAllowanceDetailsCopy[i][
+                      "tokenDistributions"
+                    ] = convertedTokenDistributions;
+                    distributionTokensAllowanceDetailsCopy[i][
+                      "tokenAllowance"
+                    ] = managerApprovedAllowance;
+                    distributionTokensAllowanceDetailsCopy[i][
+                      "sufficientAllowanceSet"
+                    ] = sufficientAllowanceSet;
+                  }
+                }
+
+                dispatch(
+                  storeDistributionTokensDetails(
+                    distributionTokensAllowanceDetailsCopy,
+                  ),
+                );
+              }
+            }
+            resolve(receipt);
+          })
+          .on("error", (error) => {
+            // Amplitude logger: DISTRIBUTION_TOKEN_NOT_APPROVED
+            amplitudeLogger(DISTRIBUTION_TOKEN_NOT_APPROVED, {
               flow: Flow.MGR_SET_DIST,
+              error,
             });
 
-            const { returnValues } = Approval;
-            const { wad } = returnValues;
-            const managerApprovedAllowance = getWeiAmount(
-              wad,
-              tokenDecimals,
-              false,
-            );
+            // user clicked reject.
+            handleAllowanceError(error, index);
 
-            updateERC20TokenValue("tokenAllowanceApproved", index, true);
-            updateERC20TokenValue(
-              "tokenAllowanceAmount",
-              index,
-              `${managerApprovedAllowance}`,
-            );
+            reject(error);
+          });
+      });
 
-            // get current distributions.
-            const totalCurrentDistributions = await syndicateContracts.DistributionLogicContract.getDistributionTotal(
+      // fallback for gnosisSafe <> walletConnect
+      if (gnosisTxHash) {
+        const txn_info: any = await getGnosisTxnInfo(gnosisTxHash);
+        setSubmittingAllowanceApproval(false);
+
+        if (txn_info) {
+          // Amplitude logger: DISTRIBUTION_TOKEN_APPROVED
+          amplitudeLogger(DISTRIBUTION_TOKEN_APPROVED, {
+            flow: Flow.MGR_SET_DIST,
+          });
+
+          const wad = await tokenContract.methods
+            .allowance(
+              account,
+              syndicateContracts.DistributionLogicContract._address,
+            )
+            .call();
+          const managerApprovedAllowance = getWeiAmount(
+            wad,
+            tokenDecimals,
+            false,
+          );
+
+          updateERC20TokenValue("tokenAllowanceApproved", index, true);
+          updateERC20TokenValue(
+            "tokenAllowanceAmount",
+            index,
+            `${managerApprovedAllowance}`,
+          );
+
+          // get current distributions.
+          const totalCurrentDistributions =
+            await syndicateContracts.DistributionLogicContract.getDistributionTotal(
               syndicateAddress,
               tokenNonFormattedAddress,
             );
 
-            const convertedTokenDistributions = getWeiAmount(
-              totalCurrentDistributions,
-              tokenDecimals,
-              false,
-            );
-            if (distributionTokensAllowanceDetails.length) {
-              const sufficientAllowanceSet =
-                +managerApprovedAllowance >= +totalCurrentDistributions;
-              // dispatch action to store to update distribution token details
-              const distributionTokensAllowanceDetailsCopy = [
-                ...distributionTokensAllowanceDetails,
-              ];
+          const convertedTokenDistributions = getWeiAmount(
+            totalCurrentDistributions,
+            tokenDecimals,
+            false,
+          );
+          if (distributionTokensAllowanceDetails.length) {
+            const sufficientAllowanceSet =
+              +managerApprovedAllowance >= +totalCurrentDistributions;
+            // dispatch action to store to update distribution token details
+            const distributionTokensAllowanceDetailsCopy = [
+              ...distributionTokensAllowanceDetails,
+            ];
 
-              // check if token has a distribution set already
-              for (
-                let i = 0;
-                i < distributionTokensAllowanceDetailsCopy.length;
-                i++
-              ) {
-                const { tokenAddress } = distributionTokensAllowanceDetailsCopy[
-                  i
-                ];
-                if (tokenAddress === tokenNonFormattedAddress) {
-                  distributionTokensAllowanceDetailsCopy[i][
-                    "tokenDistributions"
-                  ] = convertedTokenDistributions;
-                  distributionTokensAllowanceDetailsCopy[i][
-                    "tokenAllowance"
-                  ] = managerApprovedAllowance;
-                  distributionTokensAllowanceDetailsCopy[i][
-                    "sufficientAllowanceSet"
-                  ] = sufficientAllowanceSet;
-                }
+            // check if token has a distribution set already
+            for (
+              let i = 0;
+              i < distributionTokensAllowanceDetailsCopy.length;
+              i++
+            ) {
+              const { tokenAddress } =
+                distributionTokensAllowanceDetailsCopy[i];
+              if (tokenAddress === tokenNonFormattedAddress) {
+                distributionTokensAllowanceDetailsCopy[i][
+                  "tokenDistributions"
+                ] = convertedTokenDistributions;
+                distributionTokensAllowanceDetailsCopy[i]["tokenAllowance"] =
+                  managerApprovedAllowance;
+                distributionTokensAllowanceDetailsCopy[i][
+                  "sufficientAllowanceSet"
+                ] = sufficientAllowanceSet;
               }
-
-              dispatch(
-                storeDistributionTokensDetails(
-                  distributionTokensAllowanceDetailsCopy,
-                ),
-              );
             }
-          }
-        })
-        .on("error", (error) => {
-          // Amplitude logger: DISTRIBUTION_TOKEN_NOT_APPROVED
-          amplitudeLogger(DISTRIBUTION_TOKEN_NOT_APPROVED, {
-            flow: Flow.MGR_SET_DIST,
-            error,
-          });
 
-          // user clicked reject.
-          handleAllowanceError(error, index);
-        });
+            dispatch(
+              storeDistributionTokensDetails(
+                distributionTokensAllowanceDetailsCopy,
+              ),
+            );
+          }
+        }
+      }
     } catch (error) {
       // Amplitude logger: ERROR_CREATING_DISTRIBUTION_TOKEN
       amplitudeLogger(ERROR_CREATING_DISTRIBUTION_TOKEN, {
@@ -808,10 +886,8 @@ const DistributeToken = (props: Props) => {
   }
 
   let success = false;
-  const {
-    successfulDistributionTitleText,
-    successfulDistributionText,
-  } = managerActionTexts;
+  const { successfulDistributionTitleText, successfulDistributionText } =
+    managerActionTexts;
 
   if (successfulDistribution) {
     headerText = successfulDistributionTitleText;
@@ -860,11 +936,8 @@ const DistributeToken = (props: Props) => {
   // as well as error status.
   useEffect(() => {
     for (let i = 0; i < ERC20TokenFields.length; i++) {
-      const {
-        tokenAllowanceApproved,
-        tokenAddressError,
-        tokenAllowanceError,
-      } = ERC20TokenFields[i];
+      const { tokenAllowanceApproved, tokenAddressError, tokenAllowanceError } =
+        ERC20TokenFields[i];
       if (!tokenAllowanceApproved || tokenAddressError || tokenAllowanceError) {
         setEnableDistributeButton(false);
         return;
@@ -950,10 +1023,8 @@ const DistributeToken = (props: Props) => {
   const [showFinalState, setShowFinalState] = useState(false);
 
   // set metamask loading state
-  const [
-    showWalletConfirmationModal,
-    setShowWalletConfirmationModal,
-  ] = useState(false);
+  const [showWalletConfirmationModal, setShowWalletConfirmationModal] =
+    useState(false);
 
   const handleCloseFinalStateModal = async () => {
     setShowFinalState(false);
@@ -1005,10 +1076,8 @@ const DistributeToken = (props: Props) => {
    * This variable controls whether to show a form for a manager to set his/her
    * fee recipient address
    */
-  const [
-    managerFeeAddressAlreadySet,
-    setManagerFeeAddressAlreadySet,
-  ] = useState(false);
+  const [managerFeeAddressAlreadySet, setManagerFeeAddressAlreadySet] =
+    useState(false);
 
   /**
    * Checks whether managerFeeAddress is set for a given syndicate.
@@ -1211,8 +1280,8 @@ const DistributeToken = (props: Props) => {
                       >
                         <img
                           className="inline w-6 mr-1"
-                            src="/images/plusSign.svg"
-                            alt=""
+                          src="/images/plusSign.svg"
+                          alt=""
                         />
                         Choose another token
                       </button>
