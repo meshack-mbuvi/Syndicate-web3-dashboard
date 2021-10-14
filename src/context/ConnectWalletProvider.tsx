@@ -31,7 +31,6 @@ import { SafeAppWeb3Modal } from "@gnosis.pm/safe-apps-web3modal";
 
 const Web3 = require("web3");
 const debugging = process.env.NEXT_PUBLIC_DEBUG;
-const NEXT_PUBLIC_INFURA_ID = process.env.NEXT_PUBLIC_INFURA_ID;
 const WALLETCONNECT_BRIDGE_URL =
   process.env.NEXT_PUBLIC_WALLETCONNECT_BRIDGE_URL;
 declare const window: any;
@@ -82,7 +81,7 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
     },
   } = useSelector((state: RootState) => state);
 
-  const initialWeb3 = new Web3(`${process.env.NEXT_PUBLIC_INFURA_ENDPOINT}`);
+  const initialWeb3 = new Web3(`${process.env.NEXT_PUBLIC_ALCHEMY}`);
 
   // control whether to show success connection modal or not
   const [showSuccessModal, setShowSuccessModal] = useState(false);
@@ -101,7 +100,10 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
     walletconnect: {
       package: WalletConnectProvider, // required
       options: {
-        infuraId: NEXT_PUBLIC_INFURA_ID, // required
+        rpc: {
+          1: process.env.NEXT_PUBLIC_ALCHEMY,
+          4: process.env.NEXT_PUBLIC_ALCHEMY_ENDPOINT_RINKEBY,
+        },
       },
     },
   };

@@ -47,7 +47,7 @@ export const checkAccountAllowance = async (
   syndicateContractAddress: StringOrStringArr,
 ) => {
   // set up token contract
-  const web3 = new Web3(process.env.NEXT_PUBLIC_INFURA_ENDPOINT);
+  const web3 = new Web3(process.env.NEXT_PUBLIC_ALCHEMY);
   const tokenContract = new web3.eth.Contract(ERC20ABI, ERC20ContractAddress);
   try {
     const accountAllowance = await tokenContract.methods

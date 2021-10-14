@@ -7,7 +7,7 @@ export enum SYNDICATE_CHAIN_TYPE {
   onChain = "onChain",
   offChain = "offChain",
 }
-const initialWeb3 = new Web3(process.env.NEXT_PUBLIC_INFURA_ENDPOINT);
+const initialWeb3 = new Web3(process.env.NEXT_PUBLIC_ALCHEMY);
 
 type InitialState = {
   web3: {
@@ -159,7 +159,7 @@ const timezones = ct.getAllTimezones();
 /**
  * This holds the application state.
  *
- * web3 = new Web3(Web3.givenProvider || `${process.env.NEXT_PUBLIC_INFURA_ENDPOINT}`)
+ * web3 = new Web3(Web3.givenProvider || `${process.env.NEXT_PUBLIC_ALCHEMY}`)
  * web3contractInstance = new web3.eth.Contract(Syndicate.abi,contractAddress);
  * All the properties of the web3 object are set during wallet connection
  */
