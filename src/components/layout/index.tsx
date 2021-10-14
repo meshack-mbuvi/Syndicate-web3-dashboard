@@ -27,7 +27,7 @@ const Layout = ({ children, backLink = null }) => {
         title="Home"
       />
       <Header backLink={backLink} />
-      <div className="sticky top-16 z-20">
+      <div className="sticky top-16 z-10">
         <SyndicateInBetaBanner />
         {showDepositsPageBanner &&
           syndicateAddressIsValid &&

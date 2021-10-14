@@ -9,7 +9,7 @@ const BackButton = ({
     <div
       className={`${
         isSticky ? "sticky" : "fixed"
-      } ${customClasses} w-0 h-0 z-10 transition-all`}
+      } ${customClasses} w-0 h-0 z-0 transition-all`}
       style={{ top: topOffset }}
     >
       <div
