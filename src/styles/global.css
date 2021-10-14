@@ -710,6 +710,9 @@ select:-webkit-autofill:focus {
 tr:hover .checkbox {
   display: block !important;
 }
+input[type="checkbox"] {
+  box-shadow: none;
+}
 
 /* styles for linear gradients in syndicate details page */
 

@@ -74,7 +74,7 @@ const SyndicateMembersTable = ({
     return (
       <input
         type="checkbox"
-        className={`rounded checkbox bg-gray-blackRussian flex focus:outline-none border-1 border-gray-shuttle ${
+        className={`rounded checkbox bg-gray-blackRussian flex border-1 focus:ring-offset-0 focus:ring-0 shadow-none focus:shadow-none border-gray-shuttle ${
           rest?.checked ? "block" : `${customClass ? customClass : ""}`
         }`}
         ref={combinedRef}
