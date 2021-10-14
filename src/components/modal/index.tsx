@@ -80,7 +80,7 @@ export const Modal = (props: ModalProps): JSX.Element => {
   return (
     <Transition.Root show={show} as={Fragment}>
       <Dialog
-        className={`fixed z-50 w-screen h-screen justify-center align-middle py-auto inset-0 text-center`}
+        className={`fixed z-50 w-screen h-screen overflow-y-scroll no-scroll-bar justify-center align-middle py-auto inset-0 text-center`}
         onClose={() => {
           if (outsideOnClick) {
             handleClose();
@@ -100,7 +100,7 @@ export const Modal = (props: ModalProps): JSX.Element => {
             leaveFrom="opacity-100"
             leaveTo="opacity-0"
           >
-            <Dialog.Overlay className="fixed inset-0 bg-black opacity-60 transition-opacity" />
+            <Dialog.Overlay className="fixed inset-0 bg-black bg-opacity-60 transition-opacity" />
           </Transition.Child>
           {/* This element is to trick the browser into centering the modal contents. */}
           <span
@@ -119,7 +119,7 @@ export const Modal = (props: ModalProps): JSX.Element => {
             leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
           >
             <div
-              className={`overflow-y-scroll md:my-14 align-middle mx-auto inline-block max-h-screen ${
+              className={`overflow-y-scroll no-scroll-bar md:my-14 align-middle mx-auto inline-block max-h-screen ${
                 bgColor ? bgColor : ""
               } rounded-2xl text-left shadow-xl transform transition-all ${
                 customWidth ? customWidth : ""
