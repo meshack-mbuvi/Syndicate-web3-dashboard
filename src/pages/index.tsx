@@ -26,42 +26,51 @@ const IndexPage: FC = () => {
         title="Home"
       />
 
-      <div className="flex justify-between flex-col full-height relative h-screen">
-        <div className="flex justify-center w-full">
-          <img
-            alt="Syndicate logo"
-            src="/images/logo.svg"
-            className="h-12 w-12 mt-8 mx-4"
-          />
-        </div>
+      <div className="flex justify-between flex-col relative">
 
-        <main className="flex flex-col justify-center px-4">
-          <div className="flex flex-col items-center justify-center text-center">
-            <p className="text-4xl tracking-tight font-bold text-white sm:text-5xl md:text-7xl leading-10 mb-8">
-              {primaryHeaderText}
-            </p>
-            <p className="text-white font-normal text-xl sm:text-2xl">
-              {secondaryHeaderText}
-            </p>
+        <main className="px-4" style={{height: "80vh"}}>
 
-            <div className="flex items-center justify-center mt-10 sm:mt-20 w-full">
-              <div className="rounded-md">
-                <Link href="/syndicates">
-                  <button
-                    onClick={handleOnClickUseSyndicate}
-                    className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-custom text-white hover md:py-4 md:text-lg md:px-10 bg-blue"
-                  >
-                    {homeButtonText}
-                  </button>
-                </Link>
+          <div className="vertically-center">
+
+            {/* Logo */}
+            <img
+              alt="Syndicate logo"
+              src="/images/logo.svg"
+              className="h-12 w-12 mb-8 mx-auto"
+            />
+
+            <div className="flex flex-col items-center justify-center text-center">
+              {/* Text */}
+              <p className="text-4xl tracking-tight font-bold text-white sm:text-5xl md:text-7xl leading-10 mb-8">
+                {primaryHeaderText}
+              </p>
+              <p className="text-white font-normal text-xl sm:text-2xl">
+                {secondaryHeaderText}
+              </p>
+
+              {/* Button */}
+              <div className="flex items-center justify-center mt-10 sm:mt-20 w-full">
+                <div className="rounded-md">
+                  <Link href="/syndicates">
+                    <button
+                      onClick={handleOnClickUseSyndicate}
+                      className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-custom text-white hover md:py-4 md:text-lg md:px-10 bg-blue"
+                    >
+                      {homeButtonText}
+                    </button>
+                  </Link>
+                </div>
               </div>
             </div>
+
           </div>
+
         </main>
-        <div className="flex w-1/2 mx-auto">
+
+        <div className="container mx-auto">
           <Footer
             disclaimerWidth="w-4/5"
-            extraClasses="sm:text-center pb-12 border-t"
+            extraClasses="sm:text-center pb-12 border-t w-full"
           />
         </div>
       </div>
