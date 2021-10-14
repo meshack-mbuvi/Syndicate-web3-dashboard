@@ -56,7 +56,7 @@ export const SearchForm = (props: {
                 type="text"
                 name="search"
                 id="search"
-                className={`focus:ring-indigo-500 ${customClass} relative border-0 text-white font-whyte leading-6 text-base focus:border-indigo-500 block w-full rounded-md pl-5 pr-8 sm:text-sm ${
+                className={`focus:ring-0 ${customClass} relative border-0 text-white font-whyte leading-6 text-base block w-full rounded-md pl-5 pr-8 sm:text-sm ${
                   disabled ? "opacity-40" : ""
                 }`}
                 placeholder={`Search ${memberCount ? memberCount : ""} members`}
