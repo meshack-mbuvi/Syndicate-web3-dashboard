@@ -4,14 +4,12 @@ import { Spinner } from "@/components/shared/spinner";
 import { useFirstRender } from "@/components/syndicates/hooks/useFirstRender";
 import WalletNotConnected from "@/components/walletNotConnected";
 import SyndicateTemplates from "@/containers/create/syndicateTemplates";
-import { withApprovedUser } from "@/lib/withAuth";
 import { RootState } from "@/redux/store";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import Head from "src/components/syndicates/shared/HeaderTitle";
-import { useAuthUser } from "next-firebase-auth";
 
 const Create: React.FC = () => {
   const {
@@ -20,8 +18,6 @@ const Create: React.FC = () => {
     },
     initializeContractsReducer: { syndicateContracts },
   } = useSelector((state: RootState) => state);
-
-  const currentUser = useAuthUser()
 
   const router = useRouter();
   const firstRender = useFirstRender();
@@ -118,4 +114,4 @@ const Create: React.FC = () => {
   );
 };
 
-export default withApprovedUser(Create);
+export default Create;

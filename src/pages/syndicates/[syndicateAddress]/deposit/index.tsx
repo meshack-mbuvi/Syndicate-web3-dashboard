@@ -1,6 +1,5 @@
 import DepositSyndicate from "@/components/syndicates/depositSyndicate";
 import LayoutWithSyndicateDetails from "@/containers/layoutWithSyndicateDetails";
-import { withAuth } from "@/lib/withAuth";
 import React from "react";
 
 const SyndicateDepositView = () => {
@@ -11,4 +10,4 @@ const SyndicateDepositView = () => {
   );
 };
 
-export default withAuth(SyndicateDepositView);
+export default SyndicateDepositView;

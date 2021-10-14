@@ -13,7 +13,6 @@ import Button from "src/components/buttons";
 import { SkeletonLoader } from "src/components/skeletonLoader";
 import CreateSyndicate from "src/components/syndicates/createSyndicate";
 import { default as Portfolio } from "./portfolio";
-import { useAuthUser } from "next-firebase-auth";
 
 /**
  * My Syndicates: IF their wallet (a) is leading a syndicate or
@@ -26,15 +25,12 @@ import { useAuthUser } from "next-firebase-auth";
 const PortfolioAndDiscover = () => {
   const dispatch = useDispatch();
 
-  const AuthUser = useAuthUser();
-
   const {
     loadingReducer: { loading },
     initializeContractsReducer: { syndicateContracts },
     syndicatesReducer: { syndicates },
     web3Reducer: { web3 },
   } = useSelector((state: RootState) => state);
-  const currentUser = useAuthUser();
 
   const {
     account,
@@ -88,21 +84,12 @@ const PortfolioAndDiscover = () => {
   }, [syndicates, account]);
 
   const showSyndicateForm = () => {
-    // Trigger twitter connection wallet if not authed
-    if (!AuthUser.firebaseUser) {
-      return dispatch(showTwitterModal());
-    }
     // Trigger wallet connection if wallet is not connected
     if (!account) {
       return dispatch(showWalletModal());
     }
 
-    // if user is not approved, let's take them back to the waitlist page
-    if (currentUser && currentUser.claims.isApproved) {
-      router.replace("/syndicates/create");
-    } else {
-      router.push("/reserve")
-    }
+    router.replace("/syndicates/create");
 
 
     // Amplitude logger: How many users clicked on the "Create a Syndicate" button

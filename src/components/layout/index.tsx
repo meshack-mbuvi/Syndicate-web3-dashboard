@@ -8,7 +8,6 @@ import {
 } from "src/components/banners";
 import ConnectWallet from "src/components/connectWallet";
 import Header from "src/components/navigation/header";
-import ConnectTwitter from "../connectTwitter";
 import SEO from "../seo";
 
 const Layout = ({ children, backLink = null }) => {
@@ -37,7 +36,6 @@ const Layout = ({ children, backLink = null }) => {
         {children}
       </div>
       <ConnectWallet />
-      <ConnectTwitter />
     </div>
   );
 };

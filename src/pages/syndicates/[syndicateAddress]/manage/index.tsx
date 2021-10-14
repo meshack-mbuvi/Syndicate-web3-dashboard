@@ -1,6 +1,5 @@
 import LayoutWithSyndicateDetails from "@/containers/layoutWithSyndicateDetails";
 import ManagerActions from "@/containers/managerActions";
-import { withLoggedInUser } from "@/lib/withAuth";
 
 /**
  * This page shows the manager component for a given syndicate address
@@ -13,4 +12,4 @@ const ManageSyndicatePage = () => {
   );
 };
 
-export default withLoggedInUser(ManageSyndicatePage);
+export default ManageSyndicatePage;

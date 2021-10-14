@@ -10,7 +10,6 @@ import { ContentInfo, MainContent } from "@/containers/create/shared";
 import Controls from "@/containers/create/shared/controls";
 import { useCreateSyndicateContext } from "@/context/CreateSyndicateContext";
 import { useSyndicateInBetaBannerContext } from "@/context/SyndicateInBetaBannerContext";
-import { withLoggedInUser } from "@/lib/withAuth";
 import { getSyndicates } from "@/redux/actions/syndicates";
 import { RootState } from "@/redux/store";
 import { useRouter } from "next/router";
@@ -185,4 +184,4 @@ const CreateSyndicate: React.FC = () => {
   );
 };
 
-export default withLoggedInUser(CreateSyndicate);
+export default CreateSyndicate;
