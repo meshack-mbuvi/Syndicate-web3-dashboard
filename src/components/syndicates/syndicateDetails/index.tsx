@@ -394,11 +394,7 @@ const SyndicateDetails = (props: {
             <div
               className={`grid xl:grid-cols-3 lg:grid-cols-2 grid-cols-2 xl:gap-4 gap-2 gap-y-8 justify-between`}
             >
-              <div
-                className={`text-left ${
-                  syndicate?.open && !syndicate?.isCloseDatePast ? "" : "mr-24"
-                } `}
-              >
+              <div className="text-left">
                 <p className="text-base text-gray-500 leading-loose font-light">
                   Total deposits
                 </p>
