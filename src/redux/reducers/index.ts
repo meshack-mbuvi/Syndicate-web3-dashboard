@@ -18,6 +18,9 @@ import { syndicateMemberDetailsReducer } from "./syndicateMemberDetails";
 import { syndicatesReducer } from "./syndicates";
 import { tokenDetailsReducer } from "./tokenAllowances";
 
+// @redux/toolkit migration
+import SPVReducer from "@/state/spv/reducer";
+
 export const rootReducer = combineReducers({
   web3Reducer,
   syndicatesReducer,
@@ -35,6 +38,7 @@ export const rootReducer = combineReducers({
   allowlistReducer,
   closeDateAndTimeReducer,
   transferableReducer,
+  SPVReducer,
 });
 
 export default rootReducer;
