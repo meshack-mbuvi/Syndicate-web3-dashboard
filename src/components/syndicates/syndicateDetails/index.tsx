@@ -1,3 +1,4 @@
+import React, { useEffect, useState, FC } from "react";
 import { SkeletonLoader } from "@/components/skeletonLoader";
 import { RootState } from "@/redux/store";
 import { isUnlimited } from "@/utils/conversions";
@@ -5,7 +6,6 @@ import { epochTimeToDateFormat, getCountDownDays } from "@/utils/dateUtils";
 import { floatedNumberWithCommas } from "@/utils/formattedNumbers";
 import abi from "human-standard-token-abi";
 import { useRouter } from "next/router";
-import React, { useEffect, useState } from "react";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import { useDispatch, useSelector } from "react-redux";
 import { EtherscanLink } from "src/components/syndicates/shared/EtherscanLink";
@@ -17,19 +17,14 @@ import { DetailsCard } from "../shared";
 import {
   closeDateToolTip,
   createdDateToolTip,
-  depositRangeToolTip,
   distributionShareToSyndicateLeadToolTip,
   distributionShareToSyndicateProtocolToolTip,
-  expectedAnnualOperatingFeesToolTip,
 } from "../shared/Constants";
 import PermissionCard from "../shared/PermissionsCard";
 import { ProgressIndicator } from "../shared/progressIndicator";
 
 // we should have an isChildVisible prop here of type boolean
-const SyndicateDetails = (props: {
-  accountIsManager: boolean;
-  children?: React.ReactChild;
-}): JSX.Element => {
+const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
   const {
     initializeContractsReducer: { syndicateContracts },
     syndicateDetailsReducer: { syndicateDetails },
@@ -117,41 +112,25 @@ const SyndicateDetails = (props: {
       const {
         distributionShareToSyndicateProtocol,
         managerDistributionShareBasisPoints,
-        managerManagementFeeBasisPoints,
-        depositMemberMax,
-        depositMemberMin,
         numMembersCurrent,
         numMembersMax,
         epochTime,
-        depositERC20TokenSymbol,
       } = syndicate;
 
       const { closeDate, createdDate } = epochTime;
 
       setDetails([
         ...(syndicate?.open && !syndicate?.isCloseDatePast
-          ? depositsMaxIsUnlimited
-            ? [
-                {
-                  header: "Created on",
-                  content: `${epochTimeToDateFormat(
-                    new Date(parseInt(createdDate) * 1000),
-                    "LLL dd yyyy, p zzz",
-                  )}`,
-                  tooltip: createdDateToolTip,
-                },
-              ]
-            : [
-                {
-                  header: "Deposit range",
-                  content: `${floatedNumberWithCommas(depositMemberMin)} - ${
-                    isUnlimited(depositMemberMax)
-                      ? "Unlimited"
-                      : floatedNumberWithCommas(depositMemberMax)
-                  } ${depositERC20TokenSymbol}`,
-                  tooltip: depositRangeToolTip,
-                },
-              ]
+          ? [
+              {
+                header: "Created on",
+                content: `${epochTimeToDateFormat(
+                  new Date(parseInt(createdDate) * 1000),
+                  "LLL dd yyyy, p zzz",
+                )}`,
+                tooltip: createdDateToolTip,
+              },
+            ]
           : [
               {
                 header: "Created on",
@@ -163,42 +142,28 @@ const SyndicateDetails = (props: {
               },
             ]),
         ...(syndicate?.open && !syndicate?.isCloseDatePast
-          ? depositsMaxIsUnlimited
-            ? [
-                {
-                  header: "Deposit range",
-                  content: `${floatedNumberWithCommas(depositMemberMin)} - ${
-                    isUnlimited(depositMemberMax)
-                      ? "Unlimited"
-                      : floatedNumberWithCommas(depositMemberMax)
-                  } ${depositERC20TokenSymbol}`,
-                  tooltip: depositRangeToolTip,
-                },
-              ]
-            : [
-                {
-                  header: `Members ${
-                    !isUnlimited(numMembersMax) ? "(max)" : ""
-                  }`,
-                  content: (
-                    <div>
-                      {floatedNumberWithCommas(numMembersCurrent)}&nbsp;
-                      {!isUnlimited(numMembersMax) ? (
-                        <span className="text-gray-500">
-                          ({floatedNumberWithCommas(numMembersMax)})
-                        </span>
-                      ) : null}
-                    </div>
-                  ),
-                  tooltip: `This is the amount of unique member addresses who have deposited funds into this syndicate. ${
-                    !isUnlimited(numMembersMax)
-                      ? `A maximum of ${floatedNumberWithCommas(
-                          numMembersMax,
-                        )} members are allowed for this syndicate.`
-                      : ""
-                  }`,
-                },
-              ]
+          ? [
+              {
+                header: `Members ${!isUnlimited(numMembersMax) ? "(max)" : ""}`,
+                content: (
+                  <div>
+                    {floatedNumberWithCommas(numMembersCurrent)}&nbsp;
+                    {!isUnlimited(numMembersMax) ? (
+                      <span className="text-gray-500">
+                        ({floatedNumberWithCommas(numMembersMax)})
+                      </span>
+                    ) : null}
+                  </div>
+                ),
+                tooltip: `This is the amount of unique member addresses who have deposited funds into this syndicate. ${
+                  !isUnlimited(numMembersMax)
+                    ? `A maximum of ${floatedNumberWithCommas(
+                        numMembersMax,
+                      )} members are allowed for this syndicate.`
+                    : ""
+                }`,
+              },
+            ]
           : [
               {
                 header: "Closed on",
@@ -209,38 +174,6 @@ const SyndicateDetails = (props: {
                 tooltip: closeDateToolTip,
               },
             ]),
-        ...(syndicate?.open && !syndicate?.isCloseDatePast
-          ? depositsMaxIsUnlimited
-            ? [
-                {
-                  header: "",
-                  content: null,
-                  tooltip: null,
-                },
-              ]
-            : [
-                {
-                  header: "",
-                  content: null,
-                  tooltip: null,
-                },
-              ]
-          : [
-              {
-                header: "Deposit range",
-                content: `${floatedNumberWithCommas(depositMemberMin)} - ${
-                  isUnlimited(depositMemberMax)
-                    ? "Unlimited"
-                    : floatedNumberWithCommas(depositMemberMax)
-                } ${depositERC20TokenSymbol}`,
-                tooltip: depositRangeToolTip,
-              },
-            ]),
-        {
-          header: "Annual operating fees",
-          content: `${managerManagementFeeBasisPoints}%`,
-          tooltip: expectedAnnualOperatingFeesToolTip,
-        },
         {
           header: "Lead distribution share",
           content: `${managerDistributionShareBasisPoints}%`,
@@ -452,7 +385,7 @@ const SyndicateDetails = (props: {
               syndicate,
             }}
             customStyles={"w-full pt-4"}
-            customInnerWidth="w-full grid xl:grid-cols-3 lg:grid-cols-2 grid-cols-2 xl:gap-4 gap-2 gap-y-8"
+            customInnerWidth="w-full grid xl:grid-cols-2 lg:grid-cols-2 grid-cols-2 xl:gap-4 gap-2 gap-y-8"
           />
           <PermissionCard
             allowlistEnabled={syndicate?.allowlistEnabled}

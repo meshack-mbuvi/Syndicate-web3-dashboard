@@ -1,4 +1,4 @@
-import React from "react";
+import { FC } from "react";
 import { useSelector } from "react-redux";
 import { SkeletonLoader } from "src/components/skeletonLoader";
 import { RootState } from "src/redux/store";
@@ -8,7 +8,8 @@ import { SectionCard } from "../sectionCard";
  * @param {} props
  * @returns
  */
-export const DetailsCard = (props: {
+
+interface Props {
   sections;
   title?: string;
   customStyles: string;
@@ -17,7 +18,9 @@ export const DetailsCard = (props: {
   syndicateDetails?: boolean;
   syndicate?: any;
   loadingLPDetails?: boolean;
-}): JSX.Element => {
+}
+
+export const DetailsCard: FC<Props> = (props) => {
   const {
     sections = [],
     title = "My Stats",
