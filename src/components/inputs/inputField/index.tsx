@@ -44,7 +44,7 @@ export const InputField = (props: {
     isNumber,
     logo,
     customClass,
-    hasError = "false",
+    hasError = false,
     ...rest
   } = props;
   const focusInput = useRef(null);
