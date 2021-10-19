@@ -10,7 +10,7 @@ import ConnectWallet from "src/components/connectWallet";
 import Header from "src/components/navigation/header";
 import SEO from "../seo";
 
-const Layout = ({ children, backLink = null }) => {
+const Layout = ({ children, backLink = null, showNav = true }) => {
   const router = useRouter();
   const {
     syndicatesReducer: { syndicateFound, syndicateAddressIsValid },
@@ -25,7 +25,7 @@ const Layout = ({ children, backLink = null }) => {
         keywords={[`next`, `tailwind`, `react`, `tailwindcss`]}
         title="Home"
       />
-      <Header backLink={backLink} />
+      <Header backLink={backLink} show={showNav} />
       <div className="sticky top-16 z-10">
         <SyndicateInBetaBanner />
         {showDepositsPageBanner &&

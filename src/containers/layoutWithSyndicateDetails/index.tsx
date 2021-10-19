@@ -25,7 +25,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { getCoinFromContractAddress } from "functions/src/utils/ethereum";
 import { isEmpty } from "lodash";
 import { useRouter } from "next/router";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import { useDispatch, useSelector } from "react-redux";
 import Button from "src/components/buttons";
@@ -51,11 +51,37 @@ const LayoutWithSyndicateDetails = ({ children }): JSX.Element => {
 
   const [showCopyState, setShowCopyState] = useState(false);
   const [currentUrl, setCurrentUrl] = useState("");
+  const [scrollTop, setScrollTop] = useState(0)
+  const [showNav, setShowNav] = useState(true)
+  const [isSubNavStuck, setIsSubNavStuck] = useState(true)
+  const subNav = useRef(null)
 
   const updateAddressCopyState = () => {
     setShowCopyState(true);
     setTimeout(() => setShowCopyState(false), 1000);
   };
+
+  // Listen to page scrolling
+  useEffect(() => {
+    const onScroll = e => {
+        setScrollTop(e.target.documentElement.scrollTop);
+    };
+    window.addEventListener("scroll", onScroll);
+
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  // Change sub-nav and nav styles when stuck
+  useEffect(() => {
+    if (subNav.current && subNav.current.getBoundingClientRect().top === 0) {
+      setIsSubNavStuck(true)
+      setShowNav(false)
+    }
+    else {
+      setIsSubNavStuck(false)
+      setShowNav(true)
+    }
+  }, [scrollTop]);
 
   const showSyndicateForm = () => {
     // Trigger wallet connection if wallet is not connected
@@ -653,7 +679,7 @@ const LayoutWithSyndicateDetails = ({ children }): JSX.Element => {
   const [activeTab, setActiveTab] = useState("members");
 
   return (
-    <Layout>
+    <Layout showNav={showNav}>
       <Head title="Syndicate" />
       <ErrorBoundary>
         {showOnboardingIfNeeded && <OnboardingModal />}
@@ -685,12 +711,12 @@ const LayoutWithSyndicateDetails = ({ children }): JSX.Element => {
 
               {showMembers && (
                 <div className="mt-14">
-                  <div>
+                  <div ref={subNav} className={`sticky top-0 ${isSubNavStuck ? "bg-gray-syn8" : "bg-black"} transition-all edge-to-edge-with-left-inset z-20`}>
                     <nav className="flex" aria-label="Tabs">
                       <button
                         key="members"
                         onClick={() => setActiveTab("members")}
-                        className={`whitespace-nowrap h4 py-6 px-1 border-b-1 focus:outline-none focus:ring-0 font-whyte text-sm cursor-pointer ${
+                        className={`whitespace-nowrap h4 ${isSubNavStuck ? "py-6" : "h-16"} transition-all h-16 px-1 border-b-1 focus:outline-none focus:ring-0 font-whyte text-sm cursor-pointer ${
                           activeTab == "members"
                             ? "border-white text-white"
                             : "border-transparent text-gray-500 hover:text-gray-400 hover:border-gray-400"
@@ -700,8 +726,9 @@ const LayoutWithSyndicateDetails = ({ children }): JSX.Element => {
                       </button>
                       {/* add more tabs here */}
                     </nav>
+                    <div className={`${isSubNavStuck ? "hidden" : "block"} border-b-1 border-gray-24 absolute w-screen right-0`}></div>
                   </div>
-                  <div className="border-b-1 border-gray-24 absolute w-screen right-0"></div>
+
                   <div className="text-base grid grid-cols-12 gap-y-5">
                     <div className="col-span-12">
                       {activeTab == "members" && <ManageMembers />}

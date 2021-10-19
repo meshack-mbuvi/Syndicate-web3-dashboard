@@ -7,6 +7,7 @@ import { useRouter } from "next/router";
 
 interface props {
   backLink: string;
+  show?: boolean;
 }
 
 // links to show on the navbar
@@ -20,11 +21,11 @@ const navbarItems = [
     urlText: "Discover",
   },
 ];
-const Header: React.FC<props> = ({ backLink = null }) => {
+const Header: React.FC<props> = ({ backLink = null, show = true }) => {
   const router = useRouter();
 
   return (
-    <nav className="bg-black h-16 fixed top-0 inset-x-0 align-middle py-6 bg-opacity-50 z-20 backdrop-filter backdrop-blur-xl">
+    <nav className={`${show ? "block" : "hidden"} bg-black h-16 fixed top-0 inset-x-0 align-middle bg-opacity-50 z-20 backdrop-filter backdrop-blur-xl`}>
       <div className="container mx-auto flex justify-between h-full">
         {/* This backlink is only displayed on mobile sizes */}
         {backLink ? (

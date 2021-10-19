@@ -68,10 +68,7 @@ const IndexPage: FC = () => {
         </main>
 
         <div className="container mx-auto">
-          <Footer
-            disclaimerWidth="w-4/5"
-            extraClasses="sm:text-center pb-12 border-t w-full"
-          />
+          <Footer extraClasses="sm:text-center pb-12 border-t w-full"/>
         </div>
       </div>
     </>

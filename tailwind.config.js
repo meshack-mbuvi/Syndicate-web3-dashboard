@@ -11,7 +11,7 @@ module.exports = {
       backgroundColor: ["active"],
       backgroundOpacity: ["active"],
       borderRadius: ["first", "last"],
-      borderWidth: ["first", "last"],
+      borderWidth: ["first", "last", "hover"],
       ringWidth: ["hover", "active"],
     },
   },
@@ -22,8 +22,8 @@ module.exports = {
       addComponents({
         ".container": {
           maxWidth: "1680px",
-          paddingLeft: "100px",
-          paddingRight: "100px",
+          paddingLeft: "6%",
+          paddingRight: "6%",
           "@screen sm": {
             maxWidth: "640px",
             paddingLeft: "3rem",
@@ -91,24 +91,24 @@ module.exports = {
         15: "0.15",
       },
       fontFamily: {
-        whyte: ["ABC Whyte Regular", "Helvetica", "Arial", "sans-serif"],
+        whyte: ["Whyte Regular", "Helvetica", "Arial", "sans-serif"],
         "whyte-extralight": [
-          "ABC Whyte Inktrap Extralight",
-          "ABC Whyte Regular",
+          "Whyte Thin Trial",
+          "Whyte Regular",
           "Helvetica",
           "Arial",
           "sans-serif",
         ],
         "whyte-light": [
-          "ABC Whyte Inktrap Light",
-          "ABC Whyte Regular",
+          "Whyte Light Trial",
+          "Whyte Regular",
           "Helvetica",
           "Arial",
           "sans-serif",
         ],
         "whyte-medium": [
-          "ABC Whyte Inktrap Medium",
-          "ABC Whyte Regular",
+          "Whyte Medium",
+          "Whyte Regular",
           "Helvetica",
           "Arial",
           "sans-serif",

@@ -59,7 +59,7 @@ const ProfileCollection = (props: {
                 ?   <button
                         className="relative -top-2 h-12 w-12 bg-white bg-opacity-10 rounded-full focus:outline-none"
                         onClick={() => {setVisibilityForAllProfiles(true)}}>
-                            <p><span className="font-whyte-light">+</span>{hiddenProfiles}</p>
+                            <p className="font-medium"><span>+</span>{hiddenProfiles}</p>
                     </button>
                 :   null}
             

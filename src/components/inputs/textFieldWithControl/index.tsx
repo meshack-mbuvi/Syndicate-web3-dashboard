@@ -62,7 +62,7 @@ export const TextInputWithControl: React.FC<IProps> = ({
       offset = 24;
       textWidth = getTextWidth(
         value,
-        "16px 'ABC Whyte Regular', Helvetica, Arial, sans-serif",
+        "16px 'Whyte Regular', Helvetica, Arial, sans-serif",
       );
     }
 

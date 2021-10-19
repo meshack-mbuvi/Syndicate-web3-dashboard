@@ -3,43 +3,8 @@
 @tailwind utilities;
 
 @layer base {
-  html,
-  @font-face {
-    font-family: ABC Whyte Inktrap Variable;
-    src: url(/fonts/ABC_Whyte_Inktrap_Variable/ABCWhyteInktrapVariable-Trial.woff)
-      format("woff");
-  }
 
-  @font-face {
-    font-family: ABC Whyte Variable;
-    src: url(/fonts/ABC_Whyte_Variable/ABCWhyteVariable-Trial.woff)
-      format("woff");
-  }
-
-  @font-face {
-    font-family: ABC Whyte Medium;
-    src: url(/fonts/Whyte/ABCWhyte-Medium.woff) format("woff");
-  }
-
-  @font-face {
-    font-family: ABC Whyte Regular;
-    src: url(/fonts/Whyte/ABCWhyte-Regular.woff) format("woff");
-  }
-
-  @font-face {
-    font-family: ABC Whyte Light;
-    src: url(/fonts/Whyte/ABCWhyte-Light-Trial.woff) format("woff");
-  }
-
-  @font-face {
-    font-family: ABC Whyte Inktrap Medium;
-    src: url(/fonts/Whyte\ Inktrap/ABCWhyteInktrap-Medium.woff) format("woff");
-  }
-
-  @font-face {
-    font-family: ABC Whyte Inktrap Regular;
-    src: url(/fonts/Whyte\ Inktrap/ABCWhyteInktrap-Regular.woff) format("woff");
-  }
+  /* Inktrap */
 
   @font-face {
     font-family: ABC Whyte Inktrap Extralight;
@@ -53,11 +18,57 @@
       format("woff");
   }
 
+  @font-face {
+    font-family: ABC Whyte Inktrap Regular;
+    src: url(/fonts/Whyte\ Inktrap/ABCWhyteInktrap-Regular.woff) format("woff");
+  }
+
+  @font-face {
+    font-family: ABC Whyte Inktrap Medium;
+    src: url(/fonts/Whyte\ Inktrap/ABCWhyteInktrap-Medium.woff) format("woff");
+  }
+
+  @font-face {
+    font-family: ABC Whyte Inktrap Thin;
+    src: url(/fonts/ABC_Whyte_Inktrap/ABCWhyteInktrap-Thin-Trial.woff)
+      format("woff");
+  }
+
+
+  /* Whyte */
+
+  @font-face {
+    font-family: Whyte Thin Trial;
+    src: url(/fonts/ABC_Whyte/ABCWhyte-Thin-Trial.woff) format("woff");
+  }
+
+  @font-face {
+    font-family: Whyte Light Trial;
+    src: url(/fonts/ABC_Whyte/ABCWhyte-Light-Trial.woff) format("woff");
+  }
+
+  @font-face {
+    font-family: Whyte Regular;
+    src: url(/fonts/Whyte/ABCWhyte-Regular.woff) format("woff");
+  }
+
+  @font-face {
+    font-family: Whyte Medium;
+    src: url(/fonts/Whyte/ABCWhyte-Medium.woff) format("woff");
+  }
+
+  @font-face {
+    font-family: Whyte Bold;
+    src: url(/fonts/Whyte/ABCWhyte-Bold.woff) format("woff");
+  }
+
+
   body {
     background-color: #000000;
-    font-family: "ABC Whyte Regular", "Helvetica", "Arial", "sans-serif";
+    font-family: "Whyte Regular", "Helvetica", "Arial", "sans-serif";
     color: white;
     font-style: normal;
+    @apply antialiased;
   }
 
   h1 {
@@ -65,23 +76,35 @@
   }
 
   h2 {
-    font-family: "ABC Whyte Regular";
+    font-family: "Whyte Regular";
   }
 
   h3 {
-    font-family: "ABC Whyte Medium";
+    font-family: "Whyte Medium";
   }
 
   h4 {
-    font-family: "ABC Whyte Medium";
+    font-family: "Whyte Medium";
+  }
+
+  .font-thin {
+    font-family: "Whyte Thin Trial"
+  }
+
+  .font-light {
+    font-family: "Whyte Light Trial";
   }
 
   .font-normal {
-    font-family: "ABC Whyte Regular";
+    font-family: "Whyte Regular";
   }
 
   .font-medium {
-    font-family: "ABC Whyte Medium";
+    font-family: "Whyte Medium";
+  }
+
+  .font-bold {
+    font-family: "Whyte Bold";
   }
 
   .main-title {
@@ -159,7 +182,7 @@
   /* Button CTAs */
 
   .CTA-base {
-    @apply px-8 py-3.5 rounded-lg focus:outline-none border-none whitespace-nowrap;
+    @apply px-8 py-3.5 rounded-lg focus:outline-none border-none whitespace-nowrap font-medium;
   }
 
   .primary-CTA {
@@ -745,7 +768,7 @@ input[type="checkbox"] {
 }
 
 .h4 {
-  font-family: ABC Whyte Regular;
+  font-family: Whyte Regular;
   font-style: normal;
   font-weight: bold;
   font-size: 14px;

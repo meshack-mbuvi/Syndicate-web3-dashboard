@@ -257,9 +257,9 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
                   />
                 )}
               </div>
-              <div className="flex-shrink main-title flex-wrap break-all xl:mr-10 lg:mr-6 mr-3">
+              <div className="flex-shrink main-title flex-wrap break-all lg:mr-6 sm:mr-3 mr-4">
                 <div>
-                  <div className="1.5xl:text-4.5xl lg:text-2xl md:text-xl text-lg font-normal">
+                  <div className="xl:text-4.5xl lg:text-2xl md:text-xl sm:text-4xl text-lg font-normal">
                     <span className="text-gray-500">0x</span>
                     {formattedSyndicateAddress.slice(2)}
                   </div>
@@ -267,7 +267,7 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
               </div>
               <CopyToClipboard text={syndicateAddress}>
                 <button
-                  className="flex items-center relative w-8 h-8 xl:mr-6 mr-4 rounded-full cursor-pointer lg:hover:bg-gray-9 lg:active:bg-white lg:active:bg-opacity-20"
+                  className="flex items-center relative w-8 h-8 mr-2 sm:mr-4 rounded-full cursor-pointer lg:hover:bg-gray-9 lg:active:bg-white lg:active:bg-opacity-20"
                   onClick={updateAddressCopyState}
                   onKeyDown={updateAddressCopyState}
                 >
@@ -284,7 +284,7 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
               </CopyToClipboard>
               <CopyToClipboard text={syndicateDepositLink}>
                 <button
-                  className="flex items-center relative w-8 h-8 xl:mr-6 mr-4 rounded-full cursor-pointer lg:hover:bg-gray-9 lg:active:bg-white lg:active:bg-opacity-20"
+                  className="flex items-center relative w-8 h-8 mr-2 sm:mr-4 rounded-full cursor-pointer lg:hover:bg-gray-9 lg:active:bg-white lg:active:bg-opacity-20"
                   onClick={updateDepositLinkCopyState}
                   onKeyDown={updateDepositLinkCopyState}
                 >
@@ -347,7 +347,7 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
                     ? "(max)"
                     : ""}
                 </p>
-                <div className="text-2xl">
+                <div className="xl:text-2xl lg:text-xl text-base">
                   {floatedNumberWithCommas(syndicate?.numMembersCurrent)}&nbsp;
                   {syndicate?.open &&
                   !syndicate?.isCloseDatePast &&

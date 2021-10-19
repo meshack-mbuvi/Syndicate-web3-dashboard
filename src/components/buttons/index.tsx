@@ -183,7 +183,7 @@ export const SocialButton = (props: {
     <p
       className={`${
         isLabelVisibleOnMobile ? "" : "hidden sm:block"
-      } font-whyte`}
+      } font-medium`}
     >
       {label}
     </p>
