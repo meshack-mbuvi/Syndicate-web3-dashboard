@@ -557,7 +557,7 @@ const ChangeSyndicateSettings: FC<Props> = (props) => {
                 "DepositAdded",
                 {
                   syndicateAddress:
-                    web3.utils.toChecksumAddress(syndicateAddress),
+                    web3.utils.toChecksumAddress(syndicateAddress as string),
                   memberAddress: value,
                 },
               );

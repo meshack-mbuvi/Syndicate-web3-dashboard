@@ -70,7 +70,7 @@ const ManagerActions = (): JSX.Element => {
 
   useEffect(() => {
     if (router.isReady) {
-      setAddress(web3.utils.toChecksumAddress(syndicateAddress));
+      setAddress(web3.utils.toChecksumAddress(syndicateAddress as string));
     }
   }, [router.isReady]);
 
@@ -136,7 +136,7 @@ const ManagerActions = (): JSX.Element => {
   const depositERC20TokenSymbol = syndicate?.depositERC20TokenSymbol;
   const distributing = syndicate?.distributing;
   const depositsEnabled = syndicate?.depositsEnabled;
-  const [depositTokenContract, setDepositTokenContract] = useState("");
+  const [depositTokenContract, setDepositTokenContract] = useState<any>(null);
   const [showManagerSetAllowances, setShowManagerSetAllowances] =
     useState<boolean>(false);
   // show modal for manager to set allowances for deposits/distributions
@@ -160,7 +160,7 @@ const ManagerActions = (): JSX.Element => {
     setShowFinalState(false);
     await dispatch(
       getSyndicateByAddress({
-        syndicateAddress: web3.utils.toChecksumAddress(syndicateAddress),
+        syndicateAddress: web3.utils.toChecksumAddress(syndicateAddress as string),
         ...syndicateContracts,
       }),
     );
@@ -174,7 +174,7 @@ const ManagerActions = (): JSX.Element => {
     try {
       setShowWalletConfirmationModal(true);
       await syndicateContracts.ManagerLogicContract.managerCloseSyndicate(
-        web3.utils.toChecksumAddress(syndicateAddress),
+        web3.utils.toChecksumAddress(syndicateAddress as string),
         account,
         setShowWalletConfirmationModal,
         setSubmitting,

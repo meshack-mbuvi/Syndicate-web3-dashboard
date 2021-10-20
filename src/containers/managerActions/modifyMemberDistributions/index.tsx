@@ -13,7 +13,7 @@ import {
 } from "@/components/syndicates/shared/Constants";
 import { getMetamaskError } from "@/helpers";
 import { getSyndicateMemberInfo } from "@/helpers/syndicate";
-import { showWalletModal } from "@/redux/actions";
+import { showWalletModal } from "@/state/wallet/actions";
 import { setShowModifyMemberDistributions } from "@/redux/actions/manageActions";
 import { setSelectedMemberAddress } from "@/redux/actions/manageMembers";
 import { updateMemberWithdrawalDetails } from "@/redux/actions/syndicateMemberDetails/memberWithdrawalsInfo";

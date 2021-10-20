@@ -23,14 +23,15 @@ import {
 import ERC20ABI from "src/utils/abi/erc20";
 import { isUnlimited } from "src/utils/conversions";
 import { getGnosisTxnInfo } from "src/syndicateClosedEndFundLogic/shared/gnosisTransactionInfo";
+import { AbiItem } from "web3-utils";
 
 interface Props {
-  hideManagerSetAllowances: Function;
+  hideManagerSetAllowances: () => void;
   showManagerSetAllowances: boolean;
   depositTokenContract?: any;
   depositTokenDecimals?: number;
 }
-const ManagerSetAllowance = (props: Props) => {
+const ManagerSetAllowance: React.FC<Props> = (props) => {
   const { hideManagerSetAllowances, showManagerSetAllowances } = props;
 
   const {
@@ -148,7 +149,7 @@ const ManagerSetAllowance = (props: Props) => {
 
     // set up token contract based on distributions or deposits
     const currentTokenContract = new web3.eth.Contract(
-      ERC20ABI,
+      ERC20ABI as AbiItem[],
       currentTokenAddress,
     );
 

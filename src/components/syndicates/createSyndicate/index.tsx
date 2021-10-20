@@ -30,7 +30,8 @@ import { InfoIcon } from "src/components/iconWrappers";
 import { PercentInput, TextInput, Toggle } from "src/components/inputs";
 import { Modal } from "src/components/modal";
 // redux actions
-import { setSubmitting, showWalletModal } from "src/redux/actions";
+import { setSubmitting } from "src/redux/actions";
+import { showWalletModal } from "@/state/wallet/actions";
 import { getWeiAmount } from "src/utils/conversions";
 import { ERC20TokenDetails } from "src/utils/ERC20Methods";
 import {
@@ -58,6 +59,10 @@ import { EtherscanLink } from "../shared/EtherscanLink";
 
 const TERMS_OF_SERVICE_LINK = process.env.NEXT_PUBLIC_TERMS_OF_SERVICE_LINK;
 
+interface IProps {
+  showModal: boolean;
+  setShowModal: (arg0: boolean) => void;
+}
 /**
  * Diplays all syndicates.
  * The main groups for syndicates are active and inactive
@@ -65,7 +70,7 @@ const TERMS_OF_SERVICE_LINK = process.env.NEXT_PUBLIC_TERMS_OF_SERVICE_LINK;
  * At the top-right of the page, there is a create button which opens a modal
  * with a form to create a new syndicate
  */
-const CreateSyndicate = (props) => {
+const CreateSyndicate: React.FC<IProps> = (props) => {
   const { showModal, setShowModal } = props;
   const {
     initializeContractsReducer: {

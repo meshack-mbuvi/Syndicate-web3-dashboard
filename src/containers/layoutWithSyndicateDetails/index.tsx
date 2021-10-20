@@ -8,7 +8,7 @@ import { Spinner } from "@/components/shared/spinner";
 import BackButton from "@/components/socialProfiles/backButton";
 import { EtherscanLink } from "@/components/syndicates/shared/EtherscanLink";
 import { checkAccountAllowance } from "@/helpers/approveAllowance";
-import { showWalletModal } from "@/redux/actions";
+import { showWalletModal } from "@/state/wallet/actions";
 import { getSyndicateDepositorData } from "@/redux/actions/manageMembers";
 import { setSyndicateDistributionTokens } from "@/redux/actions/syndicateMemberDetails";
 import { getSyndicateByAddress } from "@/redux/actions/syndicates";
@@ -131,7 +131,7 @@ const LayoutWithSyndicateDetails = ({ children }): JSX.Element => {
   // we'll fetch distributionERC20s from here and check if the manager has set the correct
   // allowance for all of them.
   const getManagerDistributionTokensAllowances = async () => {
-    const addressOfSyndicate = web3.utils.toChecksumAddress(syndicateAddress);
+    const addressOfSyndicate = web3.utils.toChecksumAddress(syndicateAddress as string);
 
     // get events where member invested in a syndicate.
     const distributionEvents =

@@ -2,10 +2,10 @@ import { BanIcon, CancelIcon } from "@/components/shared/Icons";
 // set up smart contract and pass it as context
 // actions
 import { useConnectWalletContext } from "@/context/ConnectWalletProvider";
-import { hideErrorModal, hideWalletModal } from "@/redux/actions/web3Provider";
+import { hideErrorModal, hideWalletModal } from "@/state/wallet/actions";
 import { RootState } from "@/redux/store";
 import React, { useEffect, useState } from "react";
-import { connect, useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 import { SpinnerWithImage } from "../shared/spinner/spinnerWithImage";
 import { ConnectModal } from "./connectModal";
@@ -19,21 +19,19 @@ import { ConnectModal } from "./connectModal";
  *
  * The component also connects to the provider selected by the user.
  * Once wallet is connected, an action to update library is emitted.
- * @param {*} props
  */
-const ConnectWallet = (props: { web3; showWalletModal }) => {
-  const {
-    web3: { isErrorModalOpen, error, account },
-    showWalletModal,
-  } = props;
-
+const ConnectWallet: React.FC = () => {
   const dispatch = useDispatch();
 
   const {
     web3Reducer: {
       web3: {
+        isErrorModalOpen,
+        error,
+        account,
         ethereumNetwork: { correctEthereumNetwork, invalidEthereumNetwork },
       },
+      showWalletModal,
     },
   } = useSelector((state: RootState) => state);
 
@@ -379,9 +377,4 @@ const ConnectWallet = (props: { web3; showWalletModal }) => {
   );
 };
 
-const mapStateToProps = ({ web3Reducer }) => {
-  const { web3, showWalletModal, isErrorModalOpen } = web3Reducer;
-  return { web3, showWalletModal, isErrorModalOpen };
-};
-
-export default connect(mapStateToProps)(ConnectWallet);
+export default ConnectWallet;

@@ -29,7 +29,7 @@ const ActiveSyndicatesTable = ({ columns, data }: Props): JSX.Element => {
 
   const {
     web3Reducer: {
-        web3: { account }
+      web3: { account }
     },
   } = useSelector((state: RootState) => state);
 

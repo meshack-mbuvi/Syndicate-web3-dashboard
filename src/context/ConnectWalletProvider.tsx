@@ -1,7 +1,8 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { web3InstantiationErrorText } from "@/components/syndicates/shared/Constants";
-import { logout } from "@/redux/actions/logout";
 import { INITIALIZE_CONTRACTS } from "@/redux/actions/types";
 import {
+  logout,
   hideErrorModal,
   hideWalletModal,
   setConnected,
@@ -12,7 +13,7 @@ import {
   showErrorModal,
   storeEthereumNetwork,
   storeCurrentEthNetwork,
-} from "@/redux/actions/web3Provider";
+} from "@/state/wallet/actions";
 import { getSyndicateContracts } from "@/syndicateClosedEndFundLogic";
 import { parse, stringify } from "flatted";
 import React, {
@@ -31,8 +32,7 @@ import { SafeAppWeb3Modal } from "@gnosis.pm/safe-apps-web3modal";
 
 const Web3 = require("web3");
 const debugging = process.env.NEXT_PUBLIC_DEBUG;
-const WALLETCONNECT_BRIDGE_URL =
-  process.env.NEXT_PUBLIC_WALLETCONNECT_BRIDGE_URL;
+
 declare const window: any;
 
 type AuthProviderProps = {
@@ -52,16 +52,13 @@ const ConnectWalletContext = createContext<Partial<AuthProviderProps>>({});
 export const useConnectWalletContext = (): Partial<AuthProviderProps> =>
   useContext(ConnectWalletContext);
 
-interface IError extends Error {
-  code?: number;
-}
 /**
  * This method examines a given error to find its type and then returns a
  * custom error message depending on the type of error
  * @param error
  * @returns {string} message indicating the type of error that occurred
  */
-const getErrorMessage = (error: IError) => {
+const getErrorMessage = () => {
   return {
     title: "Connection unsuccessful",
     message: "Please authorize this website to access your Ethereum account.",
@@ -76,7 +73,6 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
     web3Reducer: {
       web3: {
         currentEthereumNetwork,
-        ethereumNetwork: { invalidEthereumNetwork },
       },
     },
   } = useSelector((state: RootState) => state);
@@ -209,16 +205,16 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
   // allows us to listed for account and chain changes
   useEffect(() => {
     if (activeProvider?.on) {
-      const handleAccountsChanged = async (accounts: string[]) => {
+      const handleAccountsChanged = async () => {
         const address = await getProviderAccount(activeProvider);
         setAccount(address);
       };
 
-      const handleChainChanged = (accounts: string[]) => {
+      const handleChainChanged = () => {
         getCurrentEthNetwork();
       };
 
-      const handleDisconnect = (error: { code: number; message: string }) => {
+      const handleDisconnect = () => {
         dispatch(setDisConnected());
       };
 
@@ -365,7 +361,7 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
       setWalletConnecting(false);
       setShowSuccessModal(true);
     } catch (error) {
-      const customError = getErrorMessage(error);
+      const customError = getErrorMessage();
       setWalletConnecting(false);
       setShowSuccessModal(false);
       dispatch(showErrorModal(customError));

@@ -1,5 +1,4 @@
 import { combineReducers } from "redux";
-import { web3Reducer } from "./connectWallet";
 import {
   syndicateOffChainDataReducer,
   tokenAndDepositLimitReducer,
@@ -20,6 +19,7 @@ import { tokenDetailsReducer } from "./tokenAllowances";
 
 // @redux/toolkit migration
 import SPVReducer from "@/state/spv/reducer";
+import web3Reducer from "@/state/wallet/reducer";
 
 export const rootReducer = combineReducers({
   web3Reducer,

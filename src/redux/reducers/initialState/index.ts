@@ -1,39 +1,19 @@
 import { Member, Syndicate } from "@/@types";
 import { TWO_WEEKS_IN_MS } from "@/utils/constants";
 import ct from "countries-and-timezones";
-import Web3 from "web3";
 
 export enum SYNDICATE_CHAIN_TYPE {
   onChain = "onChain",
   offChain = "offChain",
 }
-const initialWeb3 = new Web3(process.env.NEXT_PUBLIC_ALCHEMY);
 
 type InitialState = {
-  web3: {
-    status: string;
-    connect: boolean;
-    showConnectionModal: boolean;
-    isErrorModalOpen: boolean;
-    error: any;
-    address: any;
-    web3: Web3;
-    web3contractInstance: any;
-    account: string;
-    providerName: string;
-    currentEthereumNetwork: string;
-    ethereumNetwork: {
-      correctEthereumNetwork: string;
-      invalidEthereumNetwork: boolean;
-    };
-  };
   syndicates: Syndicate[];
   syndicate: Syndicate;
   syndicateFound: boolean;
   syndicateAddressIsValid: boolean;
   loading: boolean;
   submitting: boolean;
-  showWalletModal: boolean;
   showTwitterModal: boolean;
   syndicateInvestments: any[];
   syndicateDetails: {
@@ -164,30 +144,12 @@ const timezones = ct.getAllTimezones();
  * All the properties of the web3 object are set during wallet connection
  */
 export const initialState: InitialState = {
-  web3: {
-    status: "disconnected",
-    connect: false,
-    showConnectionModal: false,
-    isErrorModalOpen: false,
-    error: null,
-    address: null,
-    web3: initialWeb3,
-    web3contractInstance: null,
-    account: "",
-    providerName: "",
-    currentEthereumNetwork: "",
-    ethereumNetwork: {
-      correctEthereumNetwork: "",
-      invalidEthereumNetwork: false,
-    },
-  },
   syndicates: [],
   syndicate: null,
   syndicateFound: true,
   syndicateAddressIsValid: true,
   loading: false,
   submitting: false,
-  showWalletModal: false,
   showTwitterModal: false,
   syndicateInvestments: [],
   syndicateDetails: {

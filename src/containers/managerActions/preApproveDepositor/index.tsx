@@ -2,7 +2,7 @@ import { TextArea } from "@/components/inputs";
 import Modal, { ModalStyle } from "@/components/modal";
 import FileUpload from "@/components/shared/fileUploader";
 import ConfirmStateModal from "@/components/shared/transactionStates/confirm";
-import { showWalletModal } from "@/redux/actions";
+import { showWalletModal } from "@/state/wallet/actions";
 import { setNewMemberAddresses } from "@/redux/actions/manageMembers";
 import { RootState } from "@/redux/store";
 import { onlyUnique } from "@/utils/conversions";

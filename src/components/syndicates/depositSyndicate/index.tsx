@@ -13,7 +13,7 @@ import JoinWaitlist from "@/components/JoinWaitlist";
 import { ErrorModal } from "@/components/shared";
 import { SkeletonLoader } from "@/components/skeletonLoader";
 import { getMetamaskError } from "@/helpers";
-import { showWalletModal } from "@/redux/actions";
+import { showWalletModal } from "@/state/wallet/actions";
 import { setSyndicateDetails } from "@/redux/actions/syndicateDetails";
 import { updateMemberDepositDetails } from "@/redux/actions/syndicateMemberDetails/memberDepositsInfo";
 import { getSyndicateByAddress } from "@/redux/actions/syndicates";
@@ -40,6 +40,7 @@ import { SyndicateActionLoader } from "../shared/syndicateActionLoader";
 import { UnavailableState } from "../shared/unavailableState";
 import ManageSyndicate from "./ManageSyndicate";
 import { getGnosisTxnInfo } from "src/syndicateClosedEndFundLogic/shared/gnosisTransactionInfo";
+import { AbiItem } from "web3-utils";
 
 const {
   actionFailedError,
@@ -279,7 +280,7 @@ const DepositSyndicate: React.FC = () => {
       // set up current deposit ERC20Contract and
       // and save it to the local state
       const ERC20Contract = new web3.eth.Contract(
-        ERC20ABI,
+        ERC20ABI as AbiItem[],
         syndicate.depositERC20Address,
       );
 

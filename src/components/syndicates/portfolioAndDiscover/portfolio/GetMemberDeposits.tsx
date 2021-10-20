@@ -1,12 +1,13 @@
 import { getWeiAmount } from "@/utils/conversions";
 import React, { useEffect, useState } from "react";
-import { RootStateOrAny, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { ifRows } from "./interfaces";
 import { floatedNumberWithCommas } from "@/utils/formattedNumbers";
+import { RootState } from "@/redux/store";
 
-const GetMemberDeposits = ({
+const GetMemberDeposits: React.FC<ifRows> = ({
   row: { syndicateAddress, depositERC20TokenSymbol, tokenDecimals },
-}: ifRows) => {
+}) => {
   const {
     web3Reducer: {
       web3: { account },
@@ -15,7 +16,7 @@ const GetMemberDeposits = ({
       syndicateContracts: { GetterLogicContract },
     },
     syndicatesReducer: { syndicate },
-  } = useSelector((state: RootStateOrAny) => state);
+  } = useSelector((state: RootState) => state);
 
   const [memberDeposits, setMemberDeposits] = useState("-");
 

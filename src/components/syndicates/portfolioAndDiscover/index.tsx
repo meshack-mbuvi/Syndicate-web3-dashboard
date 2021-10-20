@@ -1,7 +1,7 @@
 import { amplitudeLogger, Flow } from "@/components/amplitude";
 import { CLICK_CREATE_A_SYNDICATE } from "@/components/amplitude/eventNames";
 import WalletNotConnected from "@/components/walletNotConnected";
-import { showWalletModal, showTwitterModal } from "@/redux/actions";
+import { showWalletModal } from "@/state/wallet/actions";
 import { setOneSyndicatePerAccount } from "@/redux/actions/syndicateMemberDetails";
 import { getSyndicates } from "@/redux/actions/syndicates";
 import { SYNDICATE_BY_ADDRESS } from "@/redux/actions/types";
@@ -218,6 +218,7 @@ const PortfolioAndDiscover = () => {
         </>
       )}
       {/* Component to create syndicate  */}
+      {/* TODO: CreateSyndicate should be deleted */}
       {account ? <CreateSyndicate {...{ showModal, setShowModal }} /> : null}
     </div>
   );

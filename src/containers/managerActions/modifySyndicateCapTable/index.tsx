@@ -12,7 +12,7 @@ import {
   waitTransactionTobeConfirmedText,
 } from "@/components/syndicates/shared/Constants";
 import { getMetamaskError } from "@/helpers";
-import { showWalletModal } from "@/redux/actions";
+import { showWalletModal } from "@/state/wallet/actions";
 import { setShowModifyCapTable } from "@/redux/actions/manageActions";
 import { setSelectedMemberAddress } from "@/redux/actions/manageMembers";
 import {

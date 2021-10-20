@@ -5,7 +5,7 @@ import React from "react";
 import { useSelector } from "react-redux";
 import { ifRows } from "./interfaces";
 
-const SyndicateActionButton = ({
+const SyndicateActionButton: React.FC<ifRows> = ({
   row: {
     syndicateAddress,
     status,
@@ -13,7 +13,7 @@ const SyndicateActionButton = ({
     distributing,
     managerCurrent,
   },
-}: ifRows) => {
+}) => {
   const {
     web3: { account },
   } = useSelector((state: RootState) => state.web3Reducer);

@@ -1,6 +1,7 @@
 import { oneSyndicatePerAccountText } from "@/components/syndicates/shared/Constants";
 import { setOneSyndicatePerAccount } from "@/redux/actions/syndicateMemberDetails";
-import { showWalletModal } from "@/redux/actions/web3Provider";
+import { showWalletModal } from "@/state/wallet/actions";
+import { Status } from "@/state/wallet/types";
 import { Menu, Transition } from "@headlessui/react";
 import { useRouter } from "next/router";
 
@@ -105,7 +106,7 @@ export const Wallet: React.FC = () => {
       <>
         {/* hide wallet on signin page */}
           <div className="wallet-connect flex relative justify-center my-1 mr-1">
-            {status === "connected" ? (
+            {status === Status.CONNECTED ? (
               <AddressMenuDropDown web3={web3} />
             ) : (
               <NotConnectedButton />

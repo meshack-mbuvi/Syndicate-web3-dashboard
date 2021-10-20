@@ -6,7 +6,7 @@ import SEO from "src/components/seo";
 import { homePageConstants } from "src/components/syndicates/shared/Constants";
 import { CLICK_USE_SYNDICATE } from "@/components/amplitude/eventNames";
 import { amplitudeLogger, Flow } from "@/components/amplitude";
-import { initWalletConnection } from "@/redux/actions/web3Provider";
+import { initWalletConnection } from "@/state/wallet/actions";
 
 const IndexPage: FC = () => {
   const dispatch = useDispatch();

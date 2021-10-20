@@ -51,10 +51,11 @@ import { useDispatch, useSelector } from "react-redux";
 import Button from "src/components/buttons";
 import { DeleteIcon } from "src/components/shared/Icons";
 import { getGnosisTxnInfo } from "src/syndicateClosedEndFundLogic/shared/gnosisTransactionInfo"
+import { AbiItem } from "web3-utils";
 
 interface Props {
   showDistributeToken: boolean;
-  setShowDistributeToken: Function;
+  setShowDistributeToken: (arg0: boolean) => void;
 }
 
 /**
@@ -64,7 +65,7 @@ interface Props {
  * @param props
  * @returns
  */
-const DistributeToken = (props: Props) => {
+const DistributeToken: React.FC<Props> = (props) => {
   const { showDistributeToken, setShowDistributeToken } = props;
 
   const {
@@ -591,7 +592,7 @@ const DistributeToken = (props: Props) => {
 
     // set up token contract.
     const tokenContract = new web3.eth.Contract(
-      ERC20ABI,
+      ERC20ABI as AbiItem[],
       tokenNonFormattedAddress,
     );
 

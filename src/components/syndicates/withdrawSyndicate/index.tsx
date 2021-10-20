@@ -9,7 +9,7 @@ import JoinWaitlist from "@/components/JoinWaitlist";
 import { ErrorModal } from "@/components/shared";
 import { SkeletonLoader } from "@/components/skeletonLoader";
 import { getMetamaskError } from "@/helpers";
-import { showWalletModal } from "@/redux/actions";
+import { showWalletModal } from "@/state/wallet/actions";
 import { updateMemberDepositDetails } from "@/redux/actions/syndicateMemberDetails/memberDepositsInfo";
 import { updateMemberWithdrawalDetails } from "@/redux/actions/syndicateMemberDetails/memberWithdrawalsInfo";
 import { getSyndicateByAddress } from "@/redux/actions/syndicates";
