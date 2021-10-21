@@ -183,7 +183,9 @@ const ManageMembers = (): JSX.Element => {
     if (filteredAddress.trim()) {
       // search any text
       const filteredMembers = allMembers.filter((member) =>
-        member.memberAddress.toLowerCase().includes(filteredAddress),
+        member.memberAddress
+          .toLowerCase()
+          .includes(filteredAddress.toLowerCase()),
       );
       setSynMembersToShow(filteredMembers);
     } else {

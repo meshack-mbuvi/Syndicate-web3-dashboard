@@ -49,7 +49,11 @@ export const SearchForm = (props: {
                   disabled ? "opacity-40" : ""
                 }`}
               >
-                <SearchIcon color="text-gray-syn4" width="w-4" height="h-4" />
+                <SearchIcon
+                  color={searchValue ? "text-white" : "text-gray-syn4"}
+                  width="w-4"
+                  height="h-4"
+                />
               </div>
 
               <input
