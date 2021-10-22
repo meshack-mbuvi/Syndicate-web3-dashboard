@@ -320,21 +320,9 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
               <div className="text-left">
                 <p className="text-base text-gray-500 leading-loose font-light">
                   Club tokens minted
-                  {syndicate?.open &&
-                  !syndicate?.isCloseDatePast &&
-                  !isUnlimited(syndicate?.numMembersMax)
-                    ? "(max)"
-                    : ""}
                 </p>
                 <div className="xl:text-2xl lg:text-xl text-base">
-                  {floatedNumberWithCommas(syndicate?.numMembersCurrent)}&nbsp;
-                  {syndicate?.open &&
-                  !syndicate?.isCloseDatePast &&
-                  !isUnlimited(syndicate?.numMembersMax) ? (
-                    <span className="text-gray-500">
-                      ({floatedNumberWithCommas(syndicate?.numMembersMax)})
-                    </span>
-                  ) : null}
+                  {/* use zero since we don't have minted tokens value */}0
                 </div>
               </div>
               <div className="text-left">
