@@ -5,8 +5,12 @@
 import BN from "bn.js";
 import { EventData, PastEventOptions } from "web3-eth-contract";
 
-export interface IERC20Contract extends Truffle.Contract<IERC20Instance> {
-  "new"(meta?: Truffle.TransactionDetails): Promise<IERC20Instance>;
+export interface ERC20Contract extends Truffle.Contract<ERC20Instance> {
+  "new"(
+    name_: string,
+    symbol_: string,
+    meta?: Truffle.TransactionDetails
+  ): Promise<ERC20Instance>;
 }
 
 export interface Approval {
@@ -35,7 +39,7 @@ export interface Transfer {
 
 type AllEvents = Approval | Transfer;
 
-export interface IERC20Instance extends Truffle.ContractInstance {
+export interface ERC20Instance extends Truffle.ContractInstance {
   allowance(
     owner: string,
     spender: string,
@@ -69,6 +73,58 @@ export interface IERC20Instance extends Truffle.ContractInstance {
     account: string,
     txDetails?: Truffle.TransactionDetails
   ): Promise<BN>;
+
+  decimals(txDetails?: Truffle.TransactionDetails): Promise<BN>;
+
+  decreaseAllowance: {
+    (
+      spender: string,
+      subtractedValue: number | BN | string,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<Truffle.TransactionResponse<AllEvents>>;
+    call(
+      spender: string,
+      subtractedValue: number | BN | string,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<boolean>;
+    sendTransaction(
+      spender: string,
+      subtractedValue: number | BN | string,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<string>;
+    estimateGas(
+      spender: string,
+      subtractedValue: number | BN | string,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<number>;
+  };
+
+  increaseAllowance: {
+    (
+      spender: string,
+      addedValue: number | BN | string,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<Truffle.TransactionResponse<AllEvents>>;
+    call(
+      spender: string,
+      addedValue: number | BN | string,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<boolean>;
+    sendTransaction(
+      spender: string,
+      addedValue: number | BN | string,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<string>;
+    estimateGas(
+      spender: string,
+      addedValue: number | BN | string,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<number>;
+  };
+
+  name(txDetails?: Truffle.TransactionDetails): Promise<string>;
+
+  symbol(txDetails?: Truffle.TransactionDetails): Promise<string>;
 
   totalSupply(txDetails?: Truffle.TransactionDetails): Promise<BN>;
 
@@ -156,6 +212,58 @@ export interface IERC20Instance extends Truffle.ContractInstance {
       account: string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<BN>;
+
+    decimals(txDetails?: Truffle.TransactionDetails): Promise<BN>;
+
+    decreaseAllowance: {
+      (
+        spender: string,
+        subtractedValue: number | BN | string,
+        txDetails?: Truffle.TransactionDetails
+      ): Promise<Truffle.TransactionResponse<AllEvents>>;
+      call(
+        spender: string,
+        subtractedValue: number | BN | string,
+        txDetails?: Truffle.TransactionDetails
+      ): Promise<boolean>;
+      sendTransaction(
+        spender: string,
+        subtractedValue: number | BN | string,
+        txDetails?: Truffle.TransactionDetails
+      ): Promise<string>;
+      estimateGas(
+        spender: string,
+        subtractedValue: number | BN | string,
+        txDetails?: Truffle.TransactionDetails
+      ): Promise<number>;
+    };
+
+    increaseAllowance: {
+      (
+        spender: string,
+        addedValue: number | BN | string,
+        txDetails?: Truffle.TransactionDetails
+      ): Promise<Truffle.TransactionResponse<AllEvents>>;
+      call(
+        spender: string,
+        addedValue: number | BN | string,
+        txDetails?: Truffle.TransactionDetails
+      ): Promise<boolean>;
+      sendTransaction(
+        spender: string,
+        addedValue: number | BN | string,
+        txDetails?: Truffle.TransactionDetails
+      ): Promise<string>;
+      estimateGas(
+        spender: string,
+        addedValue: number | BN | string,
+        txDetails?: Truffle.TransactionDetails
+      ): Promise<number>;
+    };
+
+    name(txDetails?: Truffle.TransactionDetails): Promise<string>;
+
+    symbol(txDetails?: Truffle.TransactionDetails): Promise<string>;
 
     totalSupply(txDetails?: Truffle.TransactionDetails): Promise<BN>;
 

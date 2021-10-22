@@ -5,8 +5,9 @@
 import BN from "bn.js";
 import { EventData, PastEventOptions } from "web3-eth-contract";
 
-export interface IERC20Contract extends Truffle.Contract<IERC20Instance> {
-  "new"(meta?: Truffle.TransactionDetails): Promise<IERC20Instance>;
+export interface IERC20MetadataContract
+  extends Truffle.Contract<IERC20MetadataInstance> {
+  "new"(meta?: Truffle.TransactionDetails): Promise<IERC20MetadataInstance>;
 }
 
 export interface Approval {
@@ -35,7 +36,7 @@ export interface Transfer {
 
 type AllEvents = Approval | Transfer;
 
-export interface IERC20Instance extends Truffle.ContractInstance {
+export interface IERC20MetadataInstance extends Truffle.ContractInstance {
   allowance(
     owner: string,
     spender: string,
@@ -69,6 +70,12 @@ export interface IERC20Instance extends Truffle.ContractInstance {
     account: string,
     txDetails?: Truffle.TransactionDetails
   ): Promise<BN>;
+
+  decimals(txDetails?: Truffle.TransactionDetails): Promise<BN>;
+
+  name(txDetails?: Truffle.TransactionDetails): Promise<string>;
+
+  symbol(txDetails?: Truffle.TransactionDetails): Promise<string>;
 
   totalSupply(txDetails?: Truffle.TransactionDetails): Promise<BN>;
 
@@ -156,6 +163,12 @@ export interface IERC20Instance extends Truffle.ContractInstance {
       account: string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<BN>;
+
+    decimals(txDetails?: Truffle.TransactionDetails): Promise<BN>;
+
+    name(txDetails?: Truffle.TransactionDetails): Promise<string>;
+
+    symbol(txDetails?: Truffle.TransactionDetails): Promise<string>;
 
     totalSupply(txDetails?: Truffle.TransactionDetails): Promise<BN>;
 

@@ -22,14 +22,8 @@ export interface OwnershipTransferred {
 type AllEvents = OwnershipTransferred;
 
 export interface OwnableInstance extends Truffle.ContractInstance {
-  /**
-   * Returns the address of the current owner.
-   */
   owner(txDetails?: Truffle.TransactionDetails): Promise<string>;
 
-  /**
-   * Leaves the contract without owner. It will not be possible to call `onlyOwner` functions anymore. Can only be called by the current owner. NOTE: Renouncing ownership will leave the contract without an owner, thereby removing any functionality that is only available to the owner.
-   */
   renounceOwnership: {
     (txDetails?: Truffle.TransactionDetails): Promise<
       Truffle.TransactionResponse<AllEvents>
@@ -39,9 +33,6 @@ export interface OwnableInstance extends Truffle.ContractInstance {
     estimateGas(txDetails?: Truffle.TransactionDetails): Promise<number>;
   };
 
-  /**
-   * Transfers ownership of the contract to a new account (`newOwner`). Can only be called by the current owner.
-   */
   transferOwnership: {
     (newOwner: string, txDetails?: Truffle.TransactionDetails): Promise<
       Truffle.TransactionResponse<AllEvents>
@@ -61,14 +52,8 @@ export interface OwnableInstance extends Truffle.ContractInstance {
   };
 
   methods: {
-    /**
-     * Returns the address of the current owner.
-     */
     owner(txDetails?: Truffle.TransactionDetails): Promise<string>;
 
-    /**
-     * Leaves the contract without owner. It will not be possible to call `onlyOwner` functions anymore. Can only be called by the current owner. NOTE: Renouncing ownership will leave the contract without an owner, thereby removing any functionality that is only available to the owner.
-     */
     renounceOwnership: {
       (txDetails?: Truffle.TransactionDetails): Promise<
         Truffle.TransactionResponse<AllEvents>
@@ -78,9 +63,6 @@ export interface OwnableInstance extends Truffle.ContractInstance {
       estimateGas(txDetails?: Truffle.TransactionDetails): Promise<number>;
     };
 
-    /**
-     * Transfers ownership of the contract to a new account (`newOwner`). Can only be called by the current owner.
-     */
     transferOwnership: {
       (newOwner: string, txDetails?: Truffle.TransactionDetails): Promise<
         Truffle.TransactionResponse<AllEvents>
