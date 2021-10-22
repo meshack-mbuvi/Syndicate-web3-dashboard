@@ -49,6 +49,7 @@ const DepositSyndicate: React.FC = () => {
     web3Reducer: {
       web3: { account, web3 },
     },
+    syndicateMemberDetailsReducer: { memberDepositDetails },
   } = useSelector((state: RootState) => state);
 
   const {
@@ -57,6 +58,8 @@ const DepositSyndicate: React.FC = () => {
     depositTokenLogo,
     depositTokenDecimals,
   } = useUSDCDetails();
+
+  const { memberTotalDeposits } = memberDepositDetails;
 
   const [amount, setAmount] = useState<number>(0);
   const [submitting, setSubmitting] = useState<boolean>(false);
@@ -513,7 +516,11 @@ const DepositSyndicate: React.FC = () => {
               {((!submitting && !successfulDeposit) ||
                 showDepositProcessingModal) && (
                 <div className="h-fit-content rounded-2-half pt-6 px-8 pb-8">
-                  <p className="h4 uppercase text-sm">join this syndicate</p>
+                  <p className="h4 uppercase text-sm">
+                    {parseInt(memberTotalDeposits) > 0
+                      ? "deposit more"
+                      : "join this syndicate"}
+                  </p>
                   <div className="flex justify-between items-center mt-5 h-20">
                     <div className="flex items-center">
                       <AutoGrowInputField
@@ -571,7 +578,8 @@ const DepositSyndicate: React.FC = () => {
                       disabled={
                         submittingAllowanceApproval ||
                         insufficientBalance ||
-                        depositAmount === "0.00"
+                        depositAmount === "0.00" ||
+                        !depositAmount
                       }
                     >
                       {depositButtonText}
