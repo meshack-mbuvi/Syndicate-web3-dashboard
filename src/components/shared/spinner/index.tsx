@@ -4,10 +4,16 @@ interface ISpinner {
   height?: string;
   width?: string;
   margin?: string;
+  color?: string;
 }
 
 export const Spinner = (props: ISpinner) => {
-  const { margin, height = "h-10", width = "w-10" } = props;
+  const {
+    margin,
+    height = "h-10",
+    width = "w-10",
+    color = "text-blue",
+  } = props;
   return (
     <div
       className={`flex justify-center ${
@@ -18,7 +24,7 @@ export const Spinner = (props: ISpinner) => {
         <svg
           viewBox="0 0 100 100"
           xmlns="http://www.w3.org/2000/svg"
-          className="spinner stroke-current text-blue"
+          className={`spinner stroke-current ${color}`}
         >
           <circle cx="50" cy="50" r="45" strokeWidth="7" />
         </svg>

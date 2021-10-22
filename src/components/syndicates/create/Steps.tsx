@@ -77,7 +77,7 @@ const Steps: FC<ISteps> = ({
           >
             {stepIdx !== steps?.length - 1 ? (
               <div
-                className={`-ml-px absolute mt-0.5 top-2 left-2 w-0.5 h-12  ${
+                className={`-ml-px absolute mt-0.5 top-2 left-4 w-0.5 h-12  ${
                   completedStep ? "bg-green-light" : ""
                 }`}
                 aria-hidden="true"

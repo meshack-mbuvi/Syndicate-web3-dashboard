@@ -17,12 +17,14 @@ export class SyndicateDepositLogic extends BaseLogicContract {
     account,
     setMetamaskConfirmPending,
     setSubmitting,
+    setTransactionHash,
   }: {
     syndicateAddress: string;
     amount: string;
     account: string;
     setMetamaskConfirmPending: (value: boolean) => void;
     setSubmitting: (value: boolean) => void;
+    setTransactionHash: (value: string) => void;
   }): Promise<void> {
     let gnosisTxHash;
     await new Promise((resolve, reject) => {
@@ -39,21 +41,29 @@ export class SyndicateDepositLogic extends BaseLogicContract {
           if (
             this.web3._provider.wc?._peerMeta.name === "Gnosis Safe Multisig"
           ) {
+            setTransactionHash("");
             gnosisTxHash = transactionHash;
             resolve(transactionHash);
           }
+          
+          setTransactionHash(transactionHash);
         })
         .on("receipt", (receipt) => {
+          setMetamaskConfirmPending(false);
+          setSubmitting(false);
           resolve(receipt);
         })
         .on("error", (error) => {
+          setMetamaskConfirmPending(false);
+          setSubmitting(false);
           reject(error);
         });
     });
 
     // fallback for gnosisSafe <> walletConnect
     if (gnosisTxHash) {
-      await getGnosisTxnInfo(gnosisTxHash);
+      const receipt: any = await getGnosisTxnInfo(gnosisTxHash);
+      setTransactionHash(receipt.transactionHash);
     }
   }
 
@@ -218,7 +228,7 @@ export class SyndicateDepositLogic extends BaseLogicContract {
           }
         })
         .on("receipt", (receipt) => {
-          onTxReceipt()
+          onTxReceipt();
           resolve(receipt);
         })
         .on("error", (error) => {
@@ -229,7 +239,7 @@ export class SyndicateDepositLogic extends BaseLogicContract {
     // fallback for gnosisSafe <> walletConnect
     if (gnosisTxHash) {
       await getGnosisTxnInfo(gnosisTxHash);
-      onTxReceipt()
+      onTxReceipt();
     }
   }
 

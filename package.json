@@ -70,6 +70,7 @@
     "react-helmet": "^6.0.0",
     "react-hook-form": "^7.1.1",
     "react-joyride": "^2.3.0",
+    "react-number-format": "^4.7.3",
     "react-popper": "^2.2.5",
     "react-redux": "^7.2.3",
     "react-refresh": "^0.10.0",

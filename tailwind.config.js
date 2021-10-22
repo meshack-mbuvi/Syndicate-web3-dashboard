@@ -77,6 +77,7 @@ module.exports = {
       width: () => ({
         "fit-content": "fit-content",
         "2/1": "200%",
+        100: "30rem",
       }),
       maxWidth: {
         564: "35.25rem",
@@ -192,6 +193,7 @@ module.exports = {
           light: "#2FE696",
           dark: "#0E2833",
           darker: "#0E3425",
+          success: "#0D3325",
           "light-dark": "#01A979",
           "light-darker": "#02504B",
         },
@@ -210,6 +212,7 @@ module.exports = {
           rockBlue: "#8F9CAB",
           melanie: "#BDCFE3",
           darkGunMetal: "#232529",
+          midnightExpress: "#0D1833",
         },
         yellow: {
           ...colors.yellow,
