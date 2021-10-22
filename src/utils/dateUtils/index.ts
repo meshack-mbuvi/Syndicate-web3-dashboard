@@ -264,7 +264,14 @@ export const getCountDownDays = (date: string): string => {
   if (minutes && hours < 1 && days < 1) {
     timeRemaining += `${minutes} ${minutes === 1 ? "minute" : "minutes"} `;
   }
-  if (seconds && minutes < 1) {
+  if (
+    seconds &&
+    minutes < 1 &&
+    years <= 0 &&
+    months <= 0 &&
+    days <= 0 &&
+    hours <= 0
+  ) {
     timeRemaining += `${seconds} ${seconds === 1 ? "second" : "seconds"} `;
   }
   return timeRemaining;
