@@ -6,13 +6,13 @@ interface AutoGrowInputField extends NumberFormatProps {
   value: string;
   onChangeHandler: (value: string) => void;
   placeholder: string;
-  errorTextRed?: boolean;
+  hasError?: boolean;
 }
 const AutoGrowInputField: React.FC<AutoGrowInputField> = ({
   value,
   onChangeHandler,
   placeholder,
-  errorTextRed = false,
+  hasError = false,
   ...rest
 }) => {
   const [width, setWidth] = useState(50);
@@ -54,7 +54,7 @@ const AutoGrowInputField: React.FC<AutoGrowInputField> = ({
         value={value}
         thousandSeparator={true}
         className={`bg-transparent border-none outline-none h-full p-0 px-1 text-5xl font-whyte focus:outline-none focus:border-none focus:ring-0 ${
-          errorTextRed ? "text-red-semantic" : ""
+          hasError ? "text-red-semantic" : ""
         } ${value ? "text-white" : "text-gray-syn4"}`}
         style={{
           width,

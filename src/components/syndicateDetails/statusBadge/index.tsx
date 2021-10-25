@@ -3,10 +3,11 @@ import React from "react";
 interface Props {
   distributing: boolean;
   depositsEnabled: boolean;
+  depositExceedTotal?: boolean;
 }
 
 const StatusBadge = (props: Props): JSX.Element => {
-  const { distributing, depositsEnabled } = props;
+  const { distributing, depositsEnabled, depositExceedTotal } = props;
 
   let badgeBackgroundColor = "bg-blue-darker";
   let badgeIcon = "depositIcon.svg";
@@ -19,8 +20,11 @@ const StatusBadge = (props: Props): JSX.Element => {
     badgeBackgroundColor = "bg-green-dark";
     badgeIcon = "active.svg";
     titleText = "Active";
+  } else if (depositExceedTotal) {
+    badgeBackgroundColor = "bg-blue-darker";
+    badgeIcon = "depositReachedIcon.svg";
+    titleText = "Fully deposited";
   }
-
   return (
     <div className="h-fit-content rounded-3xl bg-gray-syn8">
       <div

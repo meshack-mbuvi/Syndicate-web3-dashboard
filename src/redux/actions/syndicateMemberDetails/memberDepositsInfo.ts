@@ -18,6 +18,7 @@ interface ISyndicateLPData {
 export const updateMemberDepositDetails =
   (data: ISyndicateLPData): AppThunk =>
   async (dispatch, getState) => {
+    dispatch(setMemberDetailsLoading(true));
     const { syndicateAddress, depositTokenDecimals } = data;
 
     const {
@@ -37,8 +38,6 @@ export const updateMemberDepositDetails =
     // how much the wallet account has invested in this syndicate
     try {
       if (account && syndicateAddress && syndicate) {
-        dispatch(setMemberDetailsLoading(true));
-
         // get total member deposits and address allowed values
         const memberAddress = account;
         const currentERC20Decimals = depositTokenDecimals;
@@ -83,9 +82,9 @@ export const updateMemberDepositDetails =
             ...memberBoolDetails,
           }),
         );
-        dispatch(setMemberDetailsLoading(false));
       }
     } catch (error) {
       console.log({ error });
     }
+    dispatch(setMemberDetailsLoading(false));
   };
