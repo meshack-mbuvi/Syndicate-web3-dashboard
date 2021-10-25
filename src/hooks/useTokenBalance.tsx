@@ -1,5 +1,4 @@
 import { getWeiAmount } from "@/utils/conversions";
-import { Contract } from "ethers";
 import { useEffect, useMemo, useState } from "react";
 
 export const useERC20TokenBalance = (

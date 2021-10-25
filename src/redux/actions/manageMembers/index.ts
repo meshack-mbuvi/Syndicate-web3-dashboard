@@ -7,7 +7,6 @@ import {
   SET_LOADING_SYNDICATE_DEPOSITOR_DETAILS,
   SET_SELECTED_MEMBER_ADDRESS,
   SET_SYNDICATE_MANAGE_MEMBERS,
-  SHOW_REJECT_MEMBER_ADDRESS_ONLY,
   SHOW_TRANSFER_DEPOSIT_MODAL,
   TRANSFERRING_DEPOSIT,
 } from "../types";
@@ -336,13 +335,6 @@ export const getSyndicateDepositorData =
       data: false,
     });
   };
-
-export const setShowRejectAddressOnly = (value: boolean) => (dispatch) => {
-  return dispatch({
-    type: SHOW_REJECT_MEMBER_ADDRESS_ONLY,
-    data: value,
-  });
-};
 
 export const setReturningMemberDeposit =
   ({

@@ -2,7 +2,7 @@ const AccordionSection = (props: {
     title: string,
     children
 }) => {
-    const {title, children} = props;
+    const { children } = props;
 
     return children;
   };

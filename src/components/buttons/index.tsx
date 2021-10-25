@@ -1,5 +1,4 @@
 import Link from "next/link";
-import React, { useState } from "react";
 
 /**
  * Primary button has a green background and white text

@@ -1,6 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react'
 import { SocialLinkSource } from "@/components/buttons";
-import ProfilePicture from "../profilePicture";
 
 const HoverCard = (props: {
     title: string,

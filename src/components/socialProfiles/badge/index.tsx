@@ -7,7 +7,7 @@ export enum NFTBadge {
 const { genesisBadgeTitle, genesisBadgeDescription } = genesisBadgeConstants
 
 const Badge = (props: {NFT: NFTBadge, customClasses?: string}) => {
-    const {NFT, customClasses = ""} = props;
+    const { customClasses = "" } = props;
 
     var title = genesisBadgeTitle
     var subtitle = genesisBadgeDescription

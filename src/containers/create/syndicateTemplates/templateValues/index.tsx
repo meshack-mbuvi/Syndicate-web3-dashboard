@@ -10,7 +10,7 @@ import {
   numberInputRemoveCommas,
   numberWithCommas,
 } from "@/utils/formattedNumbers";
-import { Validate } from "@/utils/validators";
+import { Validate, validateEmail } from "@/utils/validators";
 import {
   setDepositTotalMax,
   setDepositMemberMax,
@@ -24,7 +24,6 @@ import { TokenSelectInput } from "@/containers/create/onChainDetails/depositToke
 import { setModifiable } from "@/redux/actions/createSyndicate/syndicateOnChainData/modifiable";
 import InputWithPercent from "@/components/inputs/inputWithPercent";
 import ct from "countries-and-timezones";
-import { validateEmail } from "@/utils/validators";
 import { NonEditableSetting } from "@/containers/create/shared/NonEditableSetting";
 import { useCreateSyndicateContext } from "@/context/CreateSyndicateContext";
 import { useRouter } from "next/router";
@@ -36,7 +35,7 @@ const TemplateValues: React.FC = () => {
   const {
     tokenAndDepositLimitReducer: {
       createSyndicate: {
-        tokenAndDepositsLimits: { depositTotalMax, depositMemberMax },
+        tokenAndDepositsLimits: { depositTotalMax },
       },
     },
     feesAndDistributionReducer: {
@@ -71,7 +70,6 @@ const TemplateValues: React.FC = () => {
     setContinueDisabled,
     legalEntity,
     setLegalEntity,
-    setTemplateMaxTotalError,
   } = useCreateSyndicateContext();
 
   const dispatch = useDispatch();

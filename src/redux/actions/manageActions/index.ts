@@ -6,7 +6,6 @@ import {
   CONFIRM_MODIFY_MEMBER_DEPOSIT,
   MODIFYING_MEMBER_DEPOSIT,
   SET_SELECTED_MEMBERS,
-  SET_SHOW_REJECT_MEMBER_DEPOSIT_OR_ADDRESS,
   SHOW_MODIFY_CAP_TABLE,
   SHOW_MODIFY_MEMBER_DISTRIBUTIONS,
 } from "../types";
@@ -49,27 +48,6 @@ export const setShowModifyCapTable =
   ): React.Dispatch<{ type: string; data: boolean }> => {
     return dispatch({
       type: SHOW_MODIFY_CAP_TABLE,
-      data: show,
-    });
-  };
-
-/**
- * Action to trigger show/hide nodal to reject member address or deposits.
- *
- * @param { boolean } show
- * @returns
- */
-
-export const setShowRejectDepositOrMemberAddress =
-  (show: boolean) =>
-  (
-    dispatch: (arg0: {
-      type: string;
-      data: boolean;
-    }) => React.Dispatch<{ type: string; data: boolean }>,
-  ): React.Dispatch<{ type: string; data: boolean }> => {
-    return dispatch({
-      type: SET_SHOW_REJECT_MEMBER_DEPOSIT_OR_ADDRESS,
       data: show,
     });
   };

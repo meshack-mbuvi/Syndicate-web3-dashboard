@@ -1,5 +1,5 @@
 import { createWrapper } from "next-redux-wrapper";
-import { Action, applyMiddleware, compose, createStore } from "redux";
+import { Action, applyMiddleware, createStore } from "redux";
 import { composeWithDevTools } from "redux-devtools-extension";
 import thunk, { ThunkAction } from "redux-thunk";
 import RootReducer from "../reducers";
@@ -11,11 +11,6 @@ const composeEnhancers = composeWithDevTools({ trace: true, traceLimit: 25 });
 export const store = createStore(RootReducer, composeEnhancers(
   applyMiddleware(...middleware)
 ));
-
-export const store_old = createStore(
-  RootReducer,
-  composeWithDevTools(compose(applyMiddleware(...middleware)))
-);
 
 const makeStore = () => store;
 

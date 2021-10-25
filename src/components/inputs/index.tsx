@@ -1,10 +1,7 @@
-export { CheckBox } from "./checkbox";
-export { DateInput } from "./dateInput";
 export { EditableInput } from "./editableInput";
 export { InputWithAddon } from "./InputWithArdonment";
 export { InputWithTrailingIcon } from "./inputWithTrailingIcon";
 export { PercentInput } from "./percentInput";
 export { TextArea } from "./textArea";
 export { TextInput } from "./textInput";
-export { TextInputWithTopLabel } from "./textInputWithTopLabel";
 export { Toggle } from "./toggle";
