@@ -776,7 +776,7 @@ const DepositSyndicate: React.FC = () => {
                     Receiving club tokens
                   </p>
                   <div
-                    className="flex justify-center items-center"
+                    className="flex justify-center items-center h-fit-content"
                     data-for="club-token-tooltip"
                     data-tip
                   >
