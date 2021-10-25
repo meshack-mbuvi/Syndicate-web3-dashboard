@@ -8,7 +8,6 @@ import { Spinner } from "@/components/shared/spinner";
 import BackButton from "@/components/socialProfiles/backButton";
 import { EtherscanLink } from "@/components/syndicates/shared/EtherscanLink";
 import { checkAccountAllowance } from "@/helpers/approveAllowance";
-import { showWalletModal } from "@/state/wallet/actions";
 import { getSyndicateDepositorData } from "@/redux/actions/manageMembers";
 import { setSyndicateDistributionTokens } from "@/redux/actions/syndicateMemberDetails";
 import { getSyndicateByAddress } from "@/redux/actions/syndicates";
@@ -17,6 +16,7 @@ import {
   storeDistributionTokensDetails,
 } from "@/redux/actions/tokenAllowances";
 import { RootState } from "@/redux/store";
+import { showWalletModal } from "@/state/wallet/actions";
 import { getTokenIcon } from "@/TokensList";
 import { getWeiAmount, onlyUnique } from "@/utils/conversions";
 import { formatAddress } from "@/utils/formatAddress";
@@ -51,10 +51,10 @@ const LayoutWithSyndicateDetails = ({ children }): JSX.Element => {
 
   const [showCopyState, setShowCopyState] = useState(false);
   const [currentUrl, setCurrentUrl] = useState("");
-  const [scrollTop, setScrollTop] = useState(0)
-  const [showNav, setShowNav] = useState(true)
-  const [isSubNavStuck, setIsSubNavStuck] = useState(true)
-  const subNav = useRef(null)
+  const [scrollTop, setScrollTop] = useState(0);
+  const [showNav, setShowNav] = useState(true);
+  const [isSubNavStuck, setIsSubNavStuck] = useState(true);
+  const subNav = useRef(null);
 
   const updateAddressCopyState = () => {
     setShowCopyState(true);
@@ -63,8 +63,8 @@ const LayoutWithSyndicateDetails = ({ children }): JSX.Element => {
 
   // Listen to page scrolling
   useEffect(() => {
-    const onScroll = e => {
-        setScrollTop(e.target.documentElement.scrollTop);
+    const onScroll = (e) => {
+      setScrollTop(e.target.documentElement.scrollTop);
     };
     window.addEventListener("scroll", onScroll);
 
@@ -74,12 +74,11 @@ const LayoutWithSyndicateDetails = ({ children }): JSX.Element => {
   // Change sub-nav and nav styles when stuck
   useEffect(() => {
     if (subNav.current && subNav.current.getBoundingClientRect().top === 0) {
-      setIsSubNavStuck(true)
-      setShowNav(false)
-    }
-    else {
-      setIsSubNavStuck(false)
-      setShowNav(true)
+      setIsSubNavStuck(true);
+      setShowNav(false);
+    } else {
+      setIsSubNavStuck(false);
+      setShowNav(true);
     }
   }, [scrollTop]);
 
@@ -131,7 +130,9 @@ const LayoutWithSyndicateDetails = ({ children }): JSX.Element => {
   // we'll fetch distributionERC20s from here and check if the manager has set the correct
   // allowance for all of them.
   const getManagerDistributionTokensAllowances = async () => {
-    const addressOfSyndicate = web3.utils.toChecksumAddress(syndicateAddress as string);
+    const addressOfSyndicate = web3.utils.toChecksumAddress(
+      syndicateAddress as string,
+    );
 
     // get events where member invested in a syndicate.
     const distributionEvents =
@@ -711,26 +712,55 @@ const LayoutWithSyndicateDetails = ({ children }): JSX.Element => {
 
               {showMembers && (
                 <div className="mt-14">
-                  <div ref={subNav} className={`sticky top-0 ${isSubNavStuck ? "bg-gray-syn8" : "bg-black"} transition-all edge-to-edge-with-left-inset z-20`}>
-                    <nav className="flex" aria-label="Tabs">
+                  <div
+                    ref={subNav}
+                    className={`sticky top-0 ${
+                      isSubNavStuck ? "bg-gray-syn8" : "bg-black"
+                    } transition-all edge-to-edge-with-left-inset z-20`}
+                  >
+                    <nav className="flex space-x-10" aria-label="Tabs">
+                      <button
+                        key="members"
+                        onClick={() => setActiveTab("assets")}
+                        className={`whitespace-nowrap h4 w-fit-content ${
+                          isSubNavStuck ? "py-6" : "h-16"
+                        } transition-all h-16 border-b-1 focus:outline-none focus:ring-0 font-whyte text-sm cursor-pointer ${
+                          activeTab == "assets"
+                            ? "border-white text-white"
+                            : "border-transparent text-gray-500 hover:text-gray-40"
+                        }`}
+                      >
+                        Assets
+                      </button>
                       <button
                         key="members"
                         onClick={() => setActiveTab("members")}
-                        className={`whitespace-nowrap h4 ${isSubNavStuck ? "py-6" : "h-16"} transition-all h-16 px-1 border-b-1 focus:outline-none focus:ring-0 font-whyte text-sm cursor-pointer ${
+                        className={`whitespace-nowrap h4 ${
+                          isSubNavStuck ? "py-6" : "h-16"
+                        } transition-all h-16 border-b-1 focus:outline-none focus:ring-0 font-whyte text-sm cursor-pointer ${
                           activeTab == "members"
                             ? "border-white text-white"
-                            : "border-transparent text-gray-500 hover:text-gray-400 hover:border-gray-400"
+                            : "border-transparent text-gray-500 hover:text-gray-400 "
                         }`}
                       >
                         Members
                       </button>
                       {/* add more tabs here */}
                     </nav>
-                    <div className={`${isSubNavStuck ? "hidden" : "block"} border-b-1 border-gray-24 absolute w-screen right-0`}></div>
+                    <div
+                      className={`${
+                        isSubNavStuck ? "hidden" : "block"
+                      } border-b-1 border-gray-24 absolute w-screen right-0`}
+                    ></div>
                   </div>
 
                   <div className="text-base grid grid-cols-12 gap-y-5">
                     <div className="col-span-12">
+                      {activeTab == "assets" && (
+                        <div className="my-10">
+                          Assets component rendered here
+                        </div>
+                      )}
                       {activeTab == "members" && <ManageMembers />}
                     </div>
                   </div>
