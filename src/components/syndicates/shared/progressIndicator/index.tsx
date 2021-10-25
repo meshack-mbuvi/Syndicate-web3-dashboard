@@ -33,7 +33,7 @@ export const ProgressIndicator = (props: IProgressIndicator): JSX.Element => {
   const currentDepositsPercentage = parseInt(depositsPercentage.toString());
 
   return (
-    <div className="pt-14 w-full pb-14 mb-14 border-b-1 border-gray-steelGrey">
+    <div className="pt-1 w-full pb-14 mb-14 border-b-1 border-gray-steelGrey">
       {showSkeletonLoader ? (
         <SkeletonLoader height="9" width="full" borderRadius="rounded-md" />
       ) : (
