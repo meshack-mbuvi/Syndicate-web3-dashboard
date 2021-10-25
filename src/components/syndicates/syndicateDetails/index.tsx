@@ -13,7 +13,11 @@ import { setSyndicateDetails } from "src/redux/actions/syndicateDetails";
 import { formatAddress } from "src/utils/formatAddress";
 import GradientAvatar from "../portfolioAndDiscover/portfolio/GradientAvatar";
 import { DetailsCard } from "../shared";
-import { closeDateToolTip, createdDateToolTip } from "../shared/Constants";
+import {
+  closeDateToolTip,
+  createdDateToolTip,
+  closingInTooltip,
+} from "../shared/Constants";
 import { ProgressIndicator } from "../shared/progressIndicator";
 
 // we should have an isChildVisible prop here of type boolean
@@ -107,10 +111,10 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
       const memberDetails = {
         header: `Members ${!isUnlimited(numMembersMax) ? "(max)" : ""}`,
         content: (
-          <div>
+          <div className="text-base">
             {floatedNumberWithCommas(numMembersCurrent)}&nbsp;
             {!isUnlimited(numMembersMax) ? (
-              <span className="text-gray-500">
+              <span className="text-base text-gray-lightManatee">
                 ({floatedNumberWithCommas(numMembersMax)})
               </span>
             ) : null}
@@ -131,16 +135,20 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
               memberDetails,
               {
                 header: "Created",
-                content: `${epochTimeToDateFormat(
-                  new Date(parseInt(createdDate) * 1000),
-                  "LLL dd yyyy",
-                )}`,
+                content: (
+                  <div className="text-base">
+                    {epochTimeToDateFormat(
+                      new Date(parseInt(createdDate) * 1000),
+                      "LLL dd yyyy",
+                    )}
+                  </div>
+                ),
                 tooltip: createdDateToolTip,
               },
               {
                 header: "Closing in",
                 content: getCountDownDays(closeDate),
-                tooltip: createdDateToolTip,
+                tooltip: closingInTooltip,
               },
             ]
           : [
@@ -239,7 +247,7 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
               <div className="flex-shrink main-title flex-wrap break-all lg:mr-6 sm:mr-3 mr-4">
                 <div>
                   <div className="xl:text-4.5xl lg:text-2xl md:text-xl sm:text-4xl text-lg font-normal">
-                    <span className="text-gray-500">0x</span>
+                    <span className="text-gray-lightManatee">0x</span>
                     {formattedSyndicateAddress.slice(2)}
                   </div>
                 </div>
@@ -302,23 +310,23 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
             />
           </div>
         ) : (
-          <div className="pt-16 w-full pb-10">
+          <div className="pt-14 w-full pb-14">
             <div
               className={`grid xl:grid-cols-3 lg:grid-cols-2 grid-cols-2 xl:gap-4 gap-2 gap-y-8 justify-between`}
             >
               <div className="text-left">
-                <p className="text-base text-gray-500 leading-loose font-light">
+                <p className="text-base text-gray-lightManatee font-light">
                   Total deposits
                 </p>
                 <div className="flex">
-                  <p className="text-white leading-loose xl:text-2xl lg:text-xl text-base">
+                  <p className="text-white xl:text-2xl lg:text-xl text-base">
                     {floatedNumberWithCommas(depositTotal)}&nbsp;
                     {depositERC20TokenSymbol}
                   </p>
                 </div>
               </div>
               <div className="text-left">
-                <p className="text-base text-gray-500 leading-loose font-light">
+                <p className="text-base text-gray-lightManatee font-light">
                   Club tokens minted
                 </p>
                 <div className="xl:text-2xl lg:text-xl text-base">
@@ -326,7 +334,7 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
                 </div>
               </div>
               <div className="text-left">
-                <p className="text-base text-gray-500 leading-loose font-light">
+                <p className="text-base text-gray-lightManatee font-light">
                   Members{" "}
                   {syndicate?.open &&
                   !syndicate?.isCloseDatePast &&
@@ -339,22 +347,12 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
                   {syndicate?.open &&
                   !syndicate?.isCloseDatePast &&
                   !isUnlimited(syndicate?.numMembersMax) ? (
-                    <span className="text-gray-500">
+                    <span className="text-gray-lightManatee">
                       ({floatedNumberWithCommas(syndicate?.numMembersMax)})
                     </span>
                   ) : null}
                 </div>
               </div>
-              {syndicate?.open && !syndicate?.isCloseDatePast ? (
-                <div className="text-left">
-                  <p className="text-base text-gray-500 leading-loose font-light">
-                    Closing in
-                  </p>
-                  <p className="xl:text-2xl text-xl text-white leading-loose">
-                    {getCountDownDays(syndicate?.epochTime?.closeDate)}
-                  </p>
-                </div>
-              ) : null}
             </div>
           </div>
         )}
@@ -369,7 +367,7 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
               syndicate,
             }}
             customStyles={"w-full pt-4"}
-            customInnerWidth={`w-full grid xl:grid-cols-${details.length} lg:grid-cols-2 grid-cols-2 xl:gap-4 gap-2 gap-y-8`}
+            customInnerWidth={`w-full grid xl:grid-cols-3 lg:grid-cols-2 grid-cols-2 xl:gap-4 gap-2 gap-y-8`}
           />
         </div>
       </div>

@@ -123,8 +123,9 @@ const approveAddressesWarning =
 const approveAddressesHeadingText =
   "Pre-approve addresses that can deposit to this syndicate. These addresses will be added to this syndicate’s pre-approved list.";
 const textAreaTitle = "Pre-Approve Depositor List";
-const allowlistTextAreaLabel = "Wallet addresses to be added to the allowlist"
-const allowlistBulktext = "We recommend bulk adding wallet addresses to avoid repeated blockchain transactions and gas costs."
+const allowlistTextAreaLabel = "Wallet addresses to be added to the allowlist";
+const allowlistBulktext =
+  "We recommend bulk adding wallet addresses to avoid repeated blockchain transactions and gas costs.";
 const approvedAddressesLabel = "Approve Address";
 export const separateWithCommas = "(separate with commas)";
 export const buttonText = "Confirm";
@@ -135,12 +136,12 @@ const socialProfileDescription =
 const socialProfileButtonText = "Request";
 
 // social profile badge text
-const genesisBadgeTitle = "Genesis"
-const genesisBadgeDescription = "Among the first"
+const genesisBadgeTitle = "Genesis";
+const genesisBadgeDescription = "Among the first";
 
 export const genesisBadgeConstants = {
   genesisBadgeTitle,
-  genesisBadgeDescription
+  genesisBadgeDescription,
 };
 
 // metamask error texts
@@ -256,6 +257,8 @@ export const emailAddressToolTip =
   "Email address of the manager creating this syndicate";
 export const closeDateToolTip =
   "This is the date on which the syndicate will automatically close.";
+export const closingInTooltip =
+  "This is the time that is left for the syndicate to close automatically.";
 export const syndicateAddressToolTip =
   "This is the address of the connected wallet account. It will be the manager of the newly created syndicate";
 export const depositTokenToolTip =
@@ -332,13 +335,13 @@ const syndicateAddressInvalidMessageText =
 const backLinkText = "Back To My Syndicates";
 const notSyndicateYetTitleText = "isn't a syndicate yet";
 const notSyndicateYetMessageText =
-  "This URL isn't currently associated with a syndicate. Invite someone to create a syndicate by copying the link below."
+  "This URL isn't currently associated with a syndicate. Invite someone to create a syndicate by copying the link below.";
 const notSyndicateForManagerYetMessageText =
-    "This URL and the address you are connected with aren't associated with a syndicate yet."
+  "This URL and the address you are connected with aren't associated with a syndicate yet.";
 const creatingSyndicateForManagerTitle =
-    "Your syndicate is being created, it will be ready soon"
+  "Your syndicate is being created, it will be ready soon";
 const creatingSyndicateTitle =
-    "This syndicate is being created, it will be ready soon"
+  "This syndicate is being created, it will be ready soon";
 export const MAX_INTEGER = BigInt(2 ** 256) - BigInt(1);
 
 const nonModifiableSyndicateErrorText =

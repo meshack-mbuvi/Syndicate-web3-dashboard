@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, FC } from "react";
 import Portal from "@/components/shared/Portal";
 
 // Description of SectionCard props
@@ -77,14 +77,12 @@ export const SectionCard = (props: SectionCardProps) => {
           handlePopoverClose();
         }}
       >
-        <p className="text-base text-gray-500 leading-loose mb-2">
+        <p className="text-base text-gray-lightManatee mb-2 font-light">
           {header?.toString()}
         </p>
         <p
           className={
-            greenSubtext
-              ? "text-base text-green-screamin leading-5"
-              : "text-base leading-5"
+            greenSubtext ? "text-base text-green-screamin" : "text-base"
           }
         >
           {content}
