@@ -568,6 +568,10 @@ const DepositSyndicate: React.FC = () => {
                           : "bg-white text-black"
                       } `}
                       onClick={(e) => {
+                        if (submittingAllowanceApproval) {
+                          toggleDepositProcessingModal();
+                          return;
+                        }
                         if (!unlimitedAllowanceSet) {
                           handleAllowanceApproval(e);
                         } else {
@@ -576,7 +580,6 @@ const DepositSyndicate: React.FC = () => {
                         toggleDepositProcessingModal();
                       }}
                       disabled={
-                        submittingAllowanceApproval ||
                         insufficientBalance ||
                         depositAmount === "0.00" ||
                         !depositAmount
