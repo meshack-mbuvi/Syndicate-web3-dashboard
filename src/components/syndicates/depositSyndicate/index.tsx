@@ -556,6 +556,20 @@ const DepositSyndicate: React.FC = () => {
                     </span>
                   )}
 
+                  {/* Show token approval text  */}
+                  {+currentMemberAllowance >= +depositAmount && (
+                    <div className="flex items-center w-full justify-center mt-6">
+                      <Image
+                        src="/images/checkCircleGreen.svg"
+                        height={16}
+                        width={16}
+                      />
+                      <p className="ml-2 text-sm text-green">
+                        {depositTokenSymbol} approved
+                      </p>
+                    </div>
+                  )}
+
                   <div className="mt-6 flex justify-center">
                     <button
                       className={`w-full rounded-lg text-base px-8 py-4 ${
