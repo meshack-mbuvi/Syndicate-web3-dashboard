@@ -18,7 +18,6 @@ import { syndicatesReducer } from "./syndicates";
 import { tokenDetailsReducer } from "./tokenAllowances";
 
 // @redux/toolkit migration
-import SPVReducer from "@/state/spv/reducer";
 import web3Reducer from "@/state/wallet/reducer";
 
 export const rootReducer = combineReducers({
@@ -38,7 +37,6 @@ export const rootReducer = combineReducers({
   allowlistReducer,
   closeDateAndTimeReducer,
   transferableReducer,
-  SPVReducer,
 });
 
 export default rootReducer;

@@ -26,6 +26,7 @@ interface ModalProps {
 export enum ModalStyle {
   DARK = "dark",
   LIGHT = "light",
+  SUCCESS = "success",
 }
 
 /**
@@ -65,8 +66,9 @@ export const Modal = (props: ModalProps): JSX.Element => {
   } = props;
 
   const bgColor = `${modalStyle === ModalStyle.LIGHT && "bg-white"} ${
-    modalStyle === ModalStyle.DARK && "bg-gray-blackRussian"
-  }`;
+    modalStyle === ModalStyle.DARK && "bg-gray-syn8"
+  } ${modalStyle === ModalStyle.SUCCESS && "bg-green-success"}`;
+
   const textColor = `${modalStyle === ModalStyle.LIGHT && "text-black"} ${
     modalStyle === ModalStyle.DARK && "text-white"
   }`;

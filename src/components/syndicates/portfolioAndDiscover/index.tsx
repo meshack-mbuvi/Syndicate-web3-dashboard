@@ -11,7 +11,6 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Button from "src/components/buttons";
 import { SkeletonLoader } from "src/components/skeletonLoader";
-import CreateSyndicate from "src/components/syndicates/createSyndicate";
 import { default as Portfolio } from "./portfolio";
 
 /**
@@ -22,7 +21,7 @@ import { default as Portfolio } from "./portfolio";
  * Data is pulled from the smart contract and syndicate’s wallet state.
  * @returns
  */
-const PortfolioAndDiscover = () => {
+const PortfolioAndDiscover: React.FC = () => {
   const dispatch = useDispatch();
 
   const {
@@ -37,8 +36,6 @@ const PortfolioAndDiscover = () => {
     currentEthereumNetwork,
     ethereumNetwork: { invalidEthereumNetwork },
   } = web3;
-
-  const [showModal, setShowModal] = useState(false);
 
   /**
    * We need to be sure syndicateContracts is initialized before retrieving events.
@@ -90,7 +87,6 @@ const PortfolioAndDiscover = () => {
     }
 
     router.replace("/syndicates/create");
-
 
     // Amplitude logger: How many users clicked on the "Create a Syndicate" button
     amplitudeLogger(CLICK_CREATE_A_SYNDICATE, { flow: Flow.MGR_CREATE_SYN });
@@ -217,9 +213,6 @@ const PortfolioAndDiscover = () => {
           ) : null}
         </>
       )}
-      {/* Component to create syndicate  */}
-      {/* TODO: CreateSyndicate should be deleted */}
-      {account ? <CreateSyndicate {...{ showModal, setShowModal }} /> : null}
     </div>
   );
 };

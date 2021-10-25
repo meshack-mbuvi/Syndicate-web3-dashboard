@@ -6,8 +6,6 @@ const depositTitleText = "Deposit Into Syndicate";
 const depositMoreTitleText = "Deposit More Into Syndicate";
 const allowListDisabledApprovedText =
   "Allowlist disabled: You’re pre-approved.";
-export const depositRangeToolTip =
-  "Range between the minimum and maximum deposit allowed per member address.";
 const allowListDisabledNotApprovedText =
   "Allowlist disabled: You will need to be approved.";
 const allowListEnabledNotApprovedText = "You must be pre-approved to deposit.";
@@ -126,7 +124,6 @@ const textAreaTitle = "Pre-Approve Depositor List";
 const allowlistTextAreaLabel = "Wallet addresses to be added to the allowlist"
 const allowlistBulktext = "We recommend bulk adding wallet addresses to avoid repeated blockchain transactions and gas costs."
 const approvedAddressesLabel = "Approve Address";
-export const separateWithCommas = "(separate with commas)";
 export const buttonText = "Confirm";
 
 // public-facing social profile
@@ -250,29 +247,8 @@ export const constants = {
 };
 
 // Tooltips
-export const fullNameToolTip =
-  "Full name of the manager creating this syndicate";
-export const emailAddressToolTip =
-  "Email address of the manager creating this syndicate";
 export const closeDateToolTip =
   "This is the date on which the syndicate will automatically close.";
-export const syndicateAddressToolTip =
-  "This is the address of the connected wallet account. It will be the manager of the newly created syndicate";
-export const depositTokenToolTip =
-  "This is the address of the ERC20 to be used for deposits (eg. DAI or USDC). Stablecoins are strongly recommended, especially for funds that are open for an extended period of time. (Otherwise one contributor might contribute one unit when a token is $100, and another contributor might contribute one unit when a token is $200, and they would have the same percentage ownership because they have both contributed one unit of a token. Stablecoins prevent this because the value is consistent.) ";
-
-export const minimumDepositToolTip =
-  "This is the minimum amount a user can deposit into the syndicate.";
-
-export const maximumDepositToolTip =
-  "The maximum amount a user can deposit into the syndicate.";
-export const totalMaximumDepositToolTip =
-  "Total funds to be raised for this syndicate.";
-export const maxMembersToolTip =
-  "Maximum number of users(members) who can deposit into this syndicate.";
-
-export const expectedAnnualOperatingFeesToolTip =
-  "This is a flat fee that will be paid to the manager annually. A standard structure would be a 2% management fee.";
 
 export const distributionShareToSyndicateLeadToolTip =
   "This is the distribution share in % that will be sent to the manager on all distributions. A standard structure would be 20%.";
@@ -280,14 +256,6 @@ export const distributionShareToSyndicateLeadToolTip =
 export const distributionShareToSyndicateProtocolToolTip =
   "This is the distribution share in % that will be sent to Syndicate Treasury on all distributions. A minimum distribution share of 0.5% is required.";
 
-export const allowListEnabledToolTip =
-  "This should be checked if the Syndicate ONLY allows deposits from allowed addresses, or unchecked if any(accredited) member can deposit";
-
-export const modifiableToolTip =
-  "This should be checked if a manager can modify a Syndicate's deposit and distribution amounts or unchecked if deposit and distribution cannot be modified by the manager. This choice is permanent-- once set here during creation, it cannot be changed.";
-
-export const transferableToolTip =
-  "Check this if a member can transfer a portion of their deposit to another address without a manager approval. Uncheck if transfers can only be initiated by the manager of a modifiable Syndicate.";
 export const myDepositsToolTip =
   "Total deposits this wallet account has already made to the syndicate";
 
@@ -305,22 +273,9 @@ export const withdrawalsToDepositPercentageToolTip =
 
 export const createdDateToolTip =
   "This is the date this syndicate was created/launched.";
-export const totalDepositsToolTip = "Total deposits made to this syndicate";
-export const totalDistributionsToolTip =
-  "Total distributions set on this syndicate.";
-export const totalClaimedDistributions =
-  "Total distributions withdrawn from this syndicate.";
-export const distributionTokenToolTip =
-  "This is the address which can fund depositors accounts. Withdrawals will be made from this address so ensure this account has enough funds to cater for the distributions set.";
-
-export const distributionAmountToolTip =
-  "This is the amount of token to be distributed back to depositors.";
 
 export const SyndicateInBetaBannerText =
   "Syndicate is currently in private beta. We take security seriously, but bugs may still exist.";
-
-export const AgreeToOurTermsOfServiceText =
-  "Please agree to our terms of service to continue.";
 
 // syndicate actions page
 const noSyndicateTitleText = "No Syndicate DAO found at that address.";
@@ -361,9 +316,6 @@ export const syndicateActionConstants = {
   enableDistributionToModifySyndicateText,
 };
 
-export const SyndicateCannotBeReopenedOnceClosedText =
-  "Once a syndicate is closed, it cannot be re-opened.";
-
 // home page
 export const homePageConstants = {
   primaryHeaderText,
@@ -382,8 +334,6 @@ export const managerApproveAddressesConstants = {
   allowlistTextAreaLabel,
   allowlistBulktext,
   approvedAddressesLabel,
-  separateWithCommas,
-  buttonText,
 };
 
 // request social profile texts
@@ -393,9 +343,6 @@ export const requestSocialProfileConstats = {
 };
 
 // contract transaction state constants
-export const pendingState =
-  "Creating your syndicate, please wait for the transaction to complete";
-
 export const confirmWalletText = "Waiting for confirmation";
 export const confirmCreateSyndicateSubText =
   " Please confirm this transaction on your wallet.";
@@ -415,8 +362,6 @@ export const confirmModifySyndicateCapTableText =
   "Confirm you want to alter deposits for the member address.";
 export const confirmPreApproveAddressesText =
   "Please confirm the transaction in your wallet.";
-export const preApproveMoreAddress =
-  "You can pre-approve more member addresses at any time whilst the syndicate is open.";
 // modify member distributions constants
 const currentDistributionClaimedAmountTooltip =
   "Current amount of distributions claimed by the member address";
@@ -449,27 +394,6 @@ export const oneSyndicatePerAccountText =
 
 export const confirmSetManagerFeeAddressText =
   "Please confirm you want to set the address provided as your fee recipient address";
-
-// constants for reject Deposit or member address component
-const rejectDepositOrMemberAddressAdvice =
-  "To reject and return an individual deposit made to this syndicate, enter the depositor’s address in the field below.";
-
-const rejectMemberDeposit =
-  "You can reject more member deposits at any time whilst the syndicate is open.";
-const rejectMemberAddress =
-  "You can reject more member addresses at any time whilst the syndicate is open.";
-
-const confirmRejectDepositsText =
-  "Confirm the transaction on your wallet if you want to reject deposits.";
-const confirmBlockMemberAddressesText =
-  "Confirm the transaction on your wallet if you want to block member addresses.";
-export const rejectDepositOrMemberAddressConstants = {
-  rejectDepositOrMemberAddressAdvice,
-  rejectMemberDeposit,
-  confirmRejectDepositsText,
-  confirmBlockMemberAddressesText,
-  rejectMemberAddress,
-};
 
 export const welcomeToSydicate = "Welcome to Syndicate";
 export const syndicateBeta =

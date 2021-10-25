@@ -9,7 +9,6 @@ import { isZeroAddress } from "@/utils/validators";
 import { web3 } from "@/utils/web3Utils";
 import { getCoinFromContractAddress } from "functions/src/utils/ethereum";
 import {
-  ADD_NEW_INVESTMENT,
   ALL_SYNDICATES,
   FOUND_SYNDICATE_ADDRESS,
   INVALID_SYNDICATE_ADDRESS,
@@ -170,18 +169,6 @@ export const getSyndicates =
       });
     }
   };
-
-/**
- * adds syndicates to application store
- * @param {*} data
- * @returns
- */
-export const addSyndicateInvestment = (data) => async (dispatch) => {
-  return dispatch({
-    data,
-    type: ADD_NEW_INVESTMENT,
-  });
-};
 
 /**
  * Retrieve single syndicate from the contract by syndicateAddress

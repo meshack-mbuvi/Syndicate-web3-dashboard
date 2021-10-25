@@ -8,7 +8,7 @@ import { ErrorModal } from "@/components/shared";
 import {
   ConfirmStateModal,
   FinalStateModal,
-  PendingStateModal
+  PendingStateModal,
 } from "@/components/shared/transactionStates";
 import StateModal from "@/components/shared/transactionStates/shared";
 import { SkeletonLoader } from "@/components/skeletonLoader";
@@ -20,7 +20,7 @@ import {
   confirmingTransaction,
   irreversibleActionText,
   rejectTransactionText,
-  waitTransactionTobeConfirmedText
+  waitTransactionTobeConfirmedText,
 } from "@/components/syndicates/shared/Constants";
 import { UnavailableState } from "@/components/syndicates/shared/unavailableState";
 import { getMetamaskError } from "@/helpers";
@@ -264,28 +264,14 @@ const ManagerActions = (): JSX.Element => {
     setShowPreApproveDepositor(true);
   };
 
-  let badgeBackgroundColor = "bg-blue-darker";
-  let badgeIcon = "depositIcon.svg";
-  let titleText = "Open to deposits";
-  if (distributing) {
-    badgeBackgroundColor = "bg-green-darker";
-    badgeIcon = "distributeIcon.svg";
-    titleText = "Distributing";
-  } else if (!depositsEnabled && !distributing) {
-    badgeBackgroundColor = "bg-green-dark";
-    badgeIcon = "active.svg";
-    titleText = "Active";
-  }
-
   return (
     <ErrorBoundary>
       <div className="w-full mt-4 sm:mt-0">
         <FadeIn>
           <div className="h-fit-content rounded-2-half bg-gray-syn8">
             <StatusBadge
-              badgeBackgroundColor={badgeBackgroundColor}
-              badgeIcon={badgeIcon}
-              titleText={titleText}
+              distributing={distributing}
+              depositsEnabled={depositsEnabled}
             />
             <div className="h-fit-content rounded-2-half mt-6 mb-2 md:mt-0 pb-8">
               {syndicateDistributionTokens && syndicate?.distributing ? (
@@ -489,7 +475,7 @@ const ManagerActions = (): JSX.Element => {
             onClickHandler={() => setShowChangeSettings(true)}
           />
         </div>
-        
+
         {showDistributeToken ? (
           <DistributeToken
             {...{ showDistributeToken, setShowDistributeToken }}

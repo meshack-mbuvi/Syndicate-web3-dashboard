@@ -6,8 +6,6 @@ import { constants } from "../shared/Constants";
 import { useDepositChecks } from "./useDepositChecks";
 
 const {
-  readOnlySyndicateText,
-  readOnlySyndicateTitle,
   connectWalletMessageTitle,
   connectWalletDepositMessage,
   depositsUnavailableTitleText,

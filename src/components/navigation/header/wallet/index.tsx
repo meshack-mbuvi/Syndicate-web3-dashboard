@@ -2,8 +2,6 @@ import { oneSyndicatePerAccountText } from "@/components/syndicates/shared/Const
 import { setOneSyndicatePerAccount } from "@/redux/actions/syndicateMemberDetails";
 import { showWalletModal } from "@/state/wallet/actions";
 import { Status } from "@/state/wallet/types";
-import { Menu, Transition } from "@headlessui/react";
-import { useRouter } from "next/router";
 
 import React, { useState } from "react";
 import Joyride from "react-joyride";
@@ -25,8 +23,6 @@ export const Wallet: React.FC = () => {
   const { oneSyndicatePerAccount } = useSelector(
     (state: RootState) => state.syndicateMemberDetailsReducer,
   );
-
-  const router = useRouter();
 
   const [steps] = useState([
     {

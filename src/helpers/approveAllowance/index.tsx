@@ -9,31 +9,6 @@ const Web3 = require("web3");
 // This prevents the error "Dai/insufficient-allowance"
 // should not be used once we have the manager screen fully implemented.
 
-// Setting an amount specifies the approval level
-export const approveManager = async (
-  currentERC20Contract,
-  account,
-  managerAddress,
-  amount,
-) => {
-  try {
-    await currentERC20Contract.methods
-      .approve(managerAddress, amount)
-      .send({ from: account });
-
-    // Check the approval amount
-    /** @returns wei allowance as a string */
-    const daiAllowance = await currentERC20Contract.methods
-      .allowance(account.toString(), managerAddress)
-      .call({ from: account });
-
-    return parseInt(daiAllowance);
-  } catch (approveError) {
-    console.log({ approveError });
-    return approveError;
-  }
-};
-
 /** Method to check the allowance amount set on an account
  * @param currentERC20Contract the contract of the deposit/distribution token
  * @param account the account whose allowance we need to check

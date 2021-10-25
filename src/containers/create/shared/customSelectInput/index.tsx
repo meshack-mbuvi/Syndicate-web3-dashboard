@@ -1,8 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/router";
-import { SearchIcon } from "@heroicons/react/solid";
+import { SearchIcon, ExclamationCircleIcon } from "@heroicons/react/solid";
 import { ChevronDown } from "@/components/shared/Icons";
-import { ExclamationCircleIcon } from "@heroicons/react/solid";
 import { useCreateSyndicateContext } from "@/context/CreateSyndicateContext";
 
 // search input field
@@ -71,8 +70,6 @@ const SelectInputItem: React.FC<{
     toggleSelect();
   };
 
-  // number of characters to show for each option to stop values from overflowing
-  const numberOfCharacters = usingTemplate ? 14 : 24;
   return (
     <button
       className={`flex justify-between items-center ${
@@ -229,10 +226,6 @@ export const CustomSelectInput: React.FC<ICustomSelectInput> = (props) => {
   const selectedValueToShow = usingTimezone
     ? selectedValue.label.replace(/\_/g, " ")
     : selectedValue;
-
-  // some timezone labels are too long and will overflow the input field/options
-  // we'll limit the number of characters to display
-  const charactersToShow = usingTemplate ? 6 : 24;
 
   return (
     <div>

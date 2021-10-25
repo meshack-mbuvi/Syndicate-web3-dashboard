@@ -23,6 +23,7 @@
     "@reduxjs/toolkit": "^1.6.2",
     "@tailwindcss/line-clamp": "^0.2.1",
     "@truffle/hdwallet-provider": "^1.4.3",
+    "@typechain/truffle-v5": "^5.1.0",
     "@walletconnect/web3-provider": "^1.5.2",
     "alpinejs": "^2.8.2",
     "amplitude-js": "^8.3.1",
@@ -69,6 +70,7 @@
     "react-helmet": "^6.0.0",
     "react-hook-form": "^7.1.1",
     "react-joyride": "^2.3.0",
+    "react-number-format": "^4.7.3",
     "react-popper": "^2.2.5",
     "react-redux": "^7.2.3",
     "react-refresh": "^0.10.0",
@@ -84,6 +86,7 @@
     "slugify": "^1.6.0",
     "stream-browserify": "^2.0.2",
     "stream-http": "^2.8.3",
+    "typechain": "^5.2.0",
     "util": "^0.12.3",
     "vm-browserify": "^1.1.2",
     "web3": "^1.4.0",
@@ -114,7 +117,8 @@
     "start": "next start",
     "test": "echo \"Error: no test specified\" && exit 1",
     "lambda-serve": "netlify-lambda serve functions/src",
-    "lambda-build": "netlify-lambda build functions/src"
+    "lambda-build": "netlify-lambda build functions/src",
+    "generate-types": "typechain --target=truffle-v5 'src/contracts/*.abi' --out-dir='src/@types/contracts'"
   },
   "devDependencies": {
     "@next/eslint-plugin-next": "^11.1.2",

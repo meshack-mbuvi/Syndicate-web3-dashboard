@@ -1,4 +1,3 @@
-import { useRouter } from "next/router";
 import { createContext, ReactNode, useContext, useEffect, useState } from "react";
 
 type OnboardingProps = {
@@ -15,7 +14,6 @@ const OnboardingProvider: React.FC<{ children: ReactNode }> = ({
 }) => {
 
     const [showInvestorOnboarding, setShowInvestorOnboarding] = useState(false);
-    const router = useRouter();
 
     useEffect(() => {
         const showInvestorOnboarding = localStorage.getItem("showInvestorOnboarding")

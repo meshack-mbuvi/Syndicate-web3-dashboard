@@ -9,11 +9,7 @@ import SEO from "src/components/seo";
 import Head from "src/components/syndicates/shared/HeaderTitle";
 import { getWeiAmount } from "src/utils/conversions";
 
-interface Props {
-  web3: any;
-}
-
-const GenerateDai = (props: Props) => {
+const GenerateDai = () => {
   const daiABI = require("src/utils/abi/rinkeby-dai");
   const erc20ABI = require("src/utils/abi/erc20");
   const daiContractAddress = "0xc3dbf84Abb494ce5199D5d4D815b10EC29529ff8";
@@ -116,9 +112,6 @@ const GenerateDai = (props: Props) => {
     }
 
     const tokenContract = new web3.eth.Contract(tokenABI, tokenContractAddress);
-    const balance = await tokenContract.methods
-      .balanceOf(account)
-      .call({ from: account });
 
     let tokenDecimals;
     try {

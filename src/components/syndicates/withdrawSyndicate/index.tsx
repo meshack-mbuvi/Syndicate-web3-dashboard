@@ -52,7 +52,6 @@ const {
   withdrawalAllowanceInsufficientText,
   withdrawalAmountGreaterThanMemberDeposits,
   withdrawalAmountLessThanMinDepositErrorText,
-  withdrawalDepositTitleText,
   withdrawalDisclaimerText,
   withdrawalSuccessButtonText,
   withdrawalSuccessSubtext,
@@ -70,7 +69,6 @@ const {
 const WithdrawSyndicate: React.FC = () => {
   const {
     tokenDetailsReducer: {
-      distributionTokensAllowanceDetails,
       depositTokenAllowanceDetails,
     },
     initializeContractsReducer: { syndicateContracts },
