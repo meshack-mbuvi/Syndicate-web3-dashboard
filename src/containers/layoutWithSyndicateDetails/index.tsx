@@ -714,9 +714,9 @@ const LayoutWithSyndicateDetails = ({ children }): JSX.Element => {
                 <div className="mt-14">
                   <div
                     ref={subNav}
-                    className={`sticky top-0 ${
+                    className={`${
                       isSubNavStuck ? "bg-gray-syn8" : "bg-black"
-                    } transition-all edge-to-edge-with-left-inset z-20`}
+                    } transition-all edge-to-edge-with-left-inset`}
                   >
                     <nav className="flex space-x-10" aria-label="Tabs">
                       <button

@@ -67,6 +67,9 @@ module.exports = {
       "4xl": "2500px",
     },
     extend: {
+      zIndex: {
+        8: "8",
+      },
       height: () => ({
         "fit-content": "fit-content",
         17.5: "4.375rem",
