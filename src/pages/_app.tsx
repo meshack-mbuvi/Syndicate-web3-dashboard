@@ -20,6 +20,7 @@ import SyndicateInBetaBannerProvider from "@/context/SyndicateInBetaBannerContex
 import FontsPreloader from "@/components/fonts";
 import OnboardingProvider from "@/context/OnboardingContext";
 import ReactTooltip from "react-tooltip";
+import CreateInvestmentClubProvider from "@/context/CreateInvestmentClubContext";
 
 const INTERCOM_APP_ID = process.env.NEXT_PUBLIC_INTERCOM_APP_ID;
 
@@ -40,19 +41,21 @@ const App = ({ Component, pageProps }) => {
         <OnboardingProvider>
           <ConnectWalletProvider>
             <CreateSyndicateProvider>
-              <Head>
-                <title>Home | Syndicate Dashboard</title>
-                <link rel="shortcut icon" href="/images/logo.svg" />
+              <CreateInvestmentClubProvider>
+                <Head>
+                  <title>Home | Syndicate Dashboard</title>
+                  <link rel="shortcut icon" href="/images/logo.svg" />
 
-                <FontsPreloader />
+                  <FontsPreloader />
 
-                <meta
-                  name="viewport"
-                  content="width=device-width, initial-scale=1, shrink-to-fit=no"
-                />
-              </Head>
-              <AmplitudeProvider />
-              <Component {...pageProps} />
+                  <meta
+                    name="viewport"
+                    content="width=device-width, initial-scale=1, shrink-to-fit=no"
+                  />
+                </Head>
+                <AmplitudeProvider />
+                <Component {...pageProps} />
+              </CreateInvestmentClubProvider>
             </CreateSyndicateProvider>
           </ConnectWalletProvider>
         </OnboardingProvider>
