@@ -21,7 +21,9 @@ const AutoGrowInputField: React.FC<AutoGrowInputField> = ({
 
   useEffect(() => {
     // add 16 for 1rem spacing
-    setWidth(span.current.offsetWidth + 4);
+    const size = 48 - span.current.offsetWidth * 0.1;
+    const spaceToAdd = size > 12 ? 16 : 12;
+    setWidth(span.current.offsetWidth + spaceToAdd);
     // reset font size if no value
     if (!value) {
       setDynamicFontSize(48);
@@ -33,7 +35,7 @@ const AutoGrowInputField: React.FC<AutoGrowInputField> = ({
       setDynamicFontSize(() => {
         const tempSize = 48 - span.current.offsetWidth * 0.1;
         // set the minimum font to 16
-        return tempSize > 16 ? tempSize : 16;
+        return tempSize > 12 ? tempSize : 12;
       });
     }
   }, [dynamicFontSize, width, value]);
@@ -57,7 +59,7 @@ const AutoGrowInputField: React.FC<AutoGrowInputField> = ({
         } ${value ? "text-white" : "text-gray-syn4"}`}
         style={{
           width,
-          maxWidth: windowWidth < 1200 && windowWidth < 860 ? 100 : 110,
+          maxWidth: windowWidth < 1200 && windowWidth < 860 ? 120 : 140,
           fontSize: dynamicFontSize,
         }}
         placeholder={placeholder}
