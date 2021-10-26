@@ -1,19 +1,10 @@
 import { SearchForm } from "@/components/inputs/searchForm";
-import {
-  setSelectedMembers,
-  showConfirmBlockMemberAddress,
-  showModifyOnChainDepositAmounts,
-} from "@/redux/actions/manageActions";
-import {
-  setSelectedMemberAddress,
-  showConfirmReturnDeposit,
-} from "@/redux/actions/manageMembers";
 import { RootState } from "@/redux/store";
 import { ExclamationCircleIcon } from "@heroicons/react/solid";
 import Image from "next/image";
 import React, { useEffect, useRef, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { usePagination, useRowSelect, useTable } from "react-table";
+import { useSelector } from "react-redux";
+import { usePagination, useTable } from "react-table";
 
 interface IIndeterminateInputProps {
   indeterminate?: boolean;
@@ -55,6 +46,9 @@ const SyndicateMembersTable = ({
 }): JSX.Element => {
   const {
     syndicatesReducer: { syndicate },
+    web3Reducer: {
+      web3: { account },
+    },
   } = useSelector((state: RootState) => state);
   const [showMoreOptions, setShowMoreOptions] = useState(-1);
 
@@ -91,7 +85,6 @@ const SyndicateMembersTable = ({
     headerGroups,
     page,
     prepareRow,
-    selectedFlatRows,
     canPreviousPage,
     canNextPage,
     nextPage,
@@ -107,79 +100,7 @@ const SyndicateMembersTable = ({
       },
     },
     usePagination,
-    useRowSelect,
-    (hooks) => {
-      hooks.visibleColumns.push((columns) => [
-        // Let's make a column for selection
-        {
-          id: "selection",
-          // eslint-disable-next-line react/display-name
-          Header: ({ getToggleAllRowsSelectedProps }) => (
-            <IndeterminateCheckbox
-              {...{
-                ...getToggleAllRowsSelectedProps(),
-              }}
-            />
-          ),
-          // The cell can use the individual row's getToggleRowSelectedProps method
-          // to the render a checkbox
-          // eslint-disable-next-line react/display-name
-          Cell: function ({ row }) {
-            return (
-              <IndeterminateCheckbox
-                {...{
-                  ...row.getToggleRowSelectedProps(),
-                }}
-              />
-            );
-          },
-        },
-        ...columns,
-      ]);
-    },
   );
-
-  let selectedFlatRowsAmount = 0;
-  selectedFlatRows.forEach(
-    (row: any) => (selectedFlatRowsAmount += +row.original.memberDeposit),
-  );
-
-  let selectedFlatRowsBlocked = false;
-  selectedFlatRows.forEach(
-    (row: any) =>
-      (selectedFlatRowsBlocked ||= row.original.memberAddressAllowed == true),
-  );
-
-  const dispatch = useDispatch();
-  const confirmReturnMemberDeposit = () => {
-    dispatch(showConfirmReturnDeposit(true));
-    let totalDeposit = 0;
-    const selectedMemberAddress = [];
-    selectedFlatRows.forEach((member: any) => {
-      totalDeposit += parseInt(member.original.memberDeposit, 10);
-      selectedMemberAddress.push(member.original.memberAddress);
-    });
-    dispatch(setSelectedMemberAddress(selectedMemberAddress, totalDeposit));
-  };
-
-  const confirmBlockMemberAddress = () => {
-    dispatch(showConfirmBlockMemberAddress(true));
-    let totalDeposit = 0;
-    const selectedMemberAddress = [];
-    selectedFlatRows.forEach((member: any) => {
-      totalDeposit += parseInt(member.original.memberDeposit, 10);
-      selectedMemberAddress.push(member.original.memberAddress);
-    });
-    dispatch(setSelectedMemberAddress(selectedMemberAddress, totalDeposit));
-  };
-
-  const handleShowModifyOnChainDepositAmounts = () => {
-    const selectedMembers = selectedFlatRows.map((member: any) => {
-      return { ...member.original };
-    });
-    dispatch(setSelectedMembers(selectedMembers));
-    dispatch(showModifyOnChainDepositAmounts(true));
-  };
 
   // show first and last page for pagination
   const firstPage = pageIndex === 0 ? "1" : pageIndex * pageSize;
@@ -216,55 +137,6 @@ const SyndicateMembersTable = ({
         }
 
         <div className="flex divide-x divide-gray-steelGrey space-x-4">
-          {selectedFlatRows.length > 0 && (
-            <div className="flex space-x-8">
-              <p className="text-gray-syn4">
-                {selectedFlatRows.length} of {data.length} selected:
-              </p>
-              {syndicate.modifiable == true && syndicate.open && (
-                <button
-                  className={`flex flex-shrink font-whyte text-right text-blue text-base justify-center items-center hover:opacity-80`}
-                  onClick={() => handleShowModifyOnChainDepositAmounts()}
-                >
-                  <img
-                    src={"/images/edit-deposits-blue.svg"}
-                    alt="icon"
-                    className="mr-2"
-                  />
-                  <span>Modify deposit amounts</span>
-                </button>
-              )}
-
-              {syndicate.open && selectedFlatRowsAmount > 0 ? (
-                <button
-                  className={`flex flex-shrink font-whyte text-right text-blue justify-center text-base items-center hover:opacity-80`}
-                  onClick={() => confirmReturnMemberDeposit()}
-                >
-                  <img
-                    src={"/images/return-deposit-blue.svg"}
-                    alt="icon"
-                    className="mr-2"
-                  />
-                  <span>Return deposits</span>
-                </button>
-              ) : (
-                ""
-              )}
-
-              {syndicate.allowlistEnabled &&
-              selectedFlatRowsBlocked &&
-              syndicate.open ? (
-                <button
-                  className={`flex flex-shrink font-whyte text-right text-blue justify-center text-base items-center  hover:opacity-80`}
-                  onClick={() => confirmBlockMemberAddress()}
-                >
-                  <img src={"/images/block.svg"} alt="icon" className="mr-2" />
-                  <span>Block</span>
-                </button>
-              ) : null}
-            </div>
-          )}
-
           {syndicate.allowlistEnabled && syndicate.open && (
             <div className="pl-4">
               <button

@@ -382,7 +382,11 @@ const ManageMembers = (): JSX.Element => {
               </span>
             );
           }
-          return <MoreOptionButton {...{ row }} />;
+          if (syndicate?.managerCurrent !== account) {
+            return null;
+          } else {
+            return <MoreOptionButton {...{ row }} />;
+          }
         },
       },
     ],

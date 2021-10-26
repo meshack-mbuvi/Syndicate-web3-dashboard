@@ -94,8 +94,6 @@ const LayoutWithSyndicateDetails = ({ children }): JSX.Element => {
     amplitudeLogger(CLICK_CREATE_A_SYNDICATE, { flow: Flow.MGR_CREATE_SYN });
   };
 
-  const [showMembers, setShowMembers] = useState(false);
-
   const router = useRouter();
   const dispatch = useDispatch();
 
@@ -365,10 +363,6 @@ const LayoutWithSyndicateDetails = ({ children }): JSX.Element => {
               );
             }
           }
-          // Don't display members section when there's 0 members/allowlisted addresses
-          if (syndicateMembers?.length > 0) {
-            setShowMembers(true);
-          }
 
           break;
         case "/syndicates/[syndicateAddress]/deposit":
@@ -381,7 +375,6 @@ const LayoutWithSyndicateDetails = ({ children }): JSX.Element => {
               `/syndicates/${syndicate.syndicateAddress}/withdraw`,
             );
           }
-          setShowMembers(false);
           break;
         case "/syndicates/[syndicateAddress]/withdraw":
           if (syndicate?.managerPending === account) {
@@ -391,7 +384,6 @@ const LayoutWithSyndicateDetails = ({ children }): JSX.Element => {
           } else if (syndicate.depositsEnabled || syndicate.open) {
             router.replace(`/syndicates/${syndicate.syndicateAddress}/deposit`);
           }
-          setShowMembers(false);
           break;
         // case when address lacks action
         case "/syndicates/[syndicateAddress]/":
@@ -404,7 +396,6 @@ const LayoutWithSyndicateDetails = ({ children }): JSX.Element => {
               `/syndicates/${syndicate.syndicateAddress}/withdraw`,
             );
           }
-          setShowMembers(false);
           break;
         default:
           if (syndicateAddress && syndicate) {
@@ -709,64 +700,62 @@ const LayoutWithSyndicateDetails = ({ children }): JSX.Element => {
                   <div className="sticky relative top-33">{children}</div>
                 </div>
               </div>
-
-              {showMembers && (
-                <div className="mt-14">
+              <div className="mt-14">
+                <div
+                  ref={subNav}
+                  className={`${
+                    isSubNavStuck ? "bg-gray-syn8" : "bg-black"
+                  } transition-all edge-to-edge-with-left-inset`}
+                >
+                  <nav className="flex space-x-10" aria-label="Tabs">
+                    <button
+                      key="members"
+                      onClick={() => setActiveTab("assets")}
+                      className={`whitespace-nowrap h4 w-fit-content ${
+                        isSubNavStuck ? "py-6" : "h-16"
+                      } transition-all h-16 border-b-1 focus:outline-none focus:ring-0 font-whyte text-sm cursor-pointer ${
+                        activeTab == "assets"
+                          ? "border-white text-white"
+                          : "border-transparent text-gray-500 hover:text-gray-40"
+                      }`}
+                    >
+                      Assets
+                    </button>
+                    <button
+                      key="members"
+                      onClick={() => setActiveTab("members")}
+                      className={`whitespace-nowrap h4 ${
+                        isSubNavStuck ? "py-6" : "h-16"
+                      } transition-all h-16 border-b-1 focus:outline-none focus:ring-0 font-whyte text-sm cursor-pointer ${
+                        activeTab == "members"
+                          ? "border-white text-white"
+                          : "border-transparent text-gray-500 hover:text-gray-400 "
+                      }`}
+                    >
+                      Members
+                    </button>
+                    {/* add more tabs here */}
+                  </nav>
                   <div
-                    ref={subNav}
                     className={`${
-                      isSubNavStuck ? "bg-gray-syn8" : "bg-black"
-                    } transition-all edge-to-edge-with-left-inset`}
-                  >
-                    <nav className="flex space-x-10" aria-label="Tabs">
-                      <button
-                        key="members"
-                        onClick={() => setActiveTab("assets")}
-                        className={`whitespace-nowrap h4 w-fit-content ${
-                          isSubNavStuck ? "py-6" : "h-16"
-                        } transition-all h-16 border-b-1 focus:outline-none focus:ring-0 font-whyte text-sm cursor-pointer ${
-                          activeTab == "assets"
-                            ? "border-white text-white"
-                            : "border-transparent text-gray-500 hover:text-gray-40"
-                        }`}
-                      >
-                        Assets
-                      </button>
-                      <button
-                        key="members"
-                        onClick={() => setActiveTab("members")}
-                        className={`whitespace-nowrap h4 ${
-                          isSubNavStuck ? "py-6" : "h-16"
-                        } transition-all h-16 border-b-1 focus:outline-none focus:ring-0 font-whyte text-sm cursor-pointer ${
-                          activeTab == "members"
-                            ? "border-white text-white"
-                            : "border-transparent text-gray-500 hover:text-gray-400 "
-                        }`}
-                      >
-                        Members
-                      </button>
-                      {/* add more tabs here */}
-                    </nav>
-                    <div
-                      className={`${
-                        isSubNavStuck ? "hidden" : "block"
-                      } border-b-1 border-gray-24 absolute w-screen right-0`}
-                    ></div>
-                  </div>
+                      isSubNavStuck ? "hidden" : "block"
+                    } border-b-1 border-gray-24 absolute w-screen right-0`}
+                  ></div>
+                </div>
 
-                  <div className="text-base grid grid-cols-12 gap-y-5">
-                    <div className="col-span-12">
-                      {activeTab == "assets" && (
-                        <div className="my-10">
-                          Assets component rendered here
-                        </div>
-                      )}
-                      {activeTab == "members" && <ManageMembers />}
-                    </div>
+                <div className="text-base grid grid-cols-12 gap-y-5">
+                  <div className="col-span-12">
+                    {activeTab == "assets" && (
+                      <div className="my-10">
+                        Assets component rendered here
+                      </div>
+                    )}
+                    {activeTab == "members" && syndicateMembers?.length > 0 && (
+                      <ManageMembers />
+                    )}
                   </div>
                 </div>
-              )}
-
+              </div>
               <Footer extraClasses="mt-24 sm:mt-24 md:mt-40 mb-12" />
             </div>
           )}
