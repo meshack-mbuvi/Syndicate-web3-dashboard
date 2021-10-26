@@ -38,7 +38,7 @@ export const ProgressIndicator = (props: IProgressIndicator): JSX.Element => {
         <SkeletonLoader height="9" width="full" borderRadius="rounded-md" />
       ) : (
         <div>
-          <div className="h-5 overflow-hidden mb-4 text-xs flex rounded-full bg-gray-9">
+          <div className="h-5 overflow-hidden mb-4 text-sm flex rounded-full bg-gray-9">
             <div
               style={{ width: `${currentDepositsPercentage}%` }}
               className="shadow-none flex flex-col transition-all text-center whitespace-nowrap text-white justify-center bg-blue"

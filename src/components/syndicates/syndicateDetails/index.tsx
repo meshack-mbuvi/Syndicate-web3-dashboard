@@ -13,11 +13,7 @@ import { setSyndicateDetails } from "src/redux/actions/syndicateDetails";
 import { formatAddress } from "src/utils/formatAddress";
 import GradientAvatar from "../portfolioAndDiscover/portfolio/GradientAvatar";
 import { DetailsCard } from "../shared";
-import {
-  closeDateToolTip,
-  createdDateToolTip,
-  closingInTooltip,
-} from "../shared/Constants";
+import { createdDateToolTip, closeDateToolTip } from "../shared/Constants";
 import { ProgressIndicator } from "../shared/progressIndicator";
 
 // we should have an isChildVisible prop here of type boolean
@@ -148,7 +144,7 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
               {
                 header: "Closing in",
                 content: getCountDownDays(closeDate),
-                tooltip: closingInTooltip,
+                tooltip: closeDateToolTip,
               },
             ]
           : [

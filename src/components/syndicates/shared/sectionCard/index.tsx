@@ -1,4 +1,4 @@
-import React, { useState, useRef, FC } from "react";
+import React, { useState, useRef } from "react";
 import Portal from "@/components/shared/Portal";
 
 // Description of SectionCard props

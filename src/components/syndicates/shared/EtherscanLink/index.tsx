@@ -35,7 +35,7 @@ export const EtherscanLink: React.FC<LinkProp> = (props) => {
     >
       {!iconOnly ? (
         <p className="flex items-center">
-          View on Etherscan <ExternalLinkIcon className="ml-2 w-4 text-blue" />
+         Etherscan <ExternalLinkIcon className="ml-2 w-4 text-blue" />
         </p>
       ) : (
         <ExternalLinkIcon grayIcon className="ml-2 w-4 text-blue" />

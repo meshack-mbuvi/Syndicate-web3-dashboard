@@ -2,194 +2,196 @@
 /* tslint:disable */
 /* eslint-disable */
 
+import { CreateSynERC20Contract } from "./CreateSynERC20";
+import { CreateSynERC721Contract } from "./CreateSynERC721";
+import { CreationFeeSynERC20Contract } from "./CreationFeeSynERC20";
+import { CreationFeeSynERC721Contract } from "./CreationFeeSynERC721";
+import { DAOMultiMintAndTransferSynERC721Contract } from "./DAOMultiMintAndTransferSynERC721";
+import { DAOMultiMintSynERC721Contract } from "./DAOMultiMintSynERC721";
+import { DSTestContract } from "./DSTest";
+import { ERC165Contract } from "./ERC165";
+import { ERC20Contract } from "./ERC20";
+import { ERC20MockContract } from "./ERC20Mock";
+import { ERC721Contract } from "./ERC721";
+import { ERC721EnumerableContract } from "./ERC721Enumerable";
+import { ERC721HolderContract } from "./ERC721Holder";
+import { HevmContract } from "./Hevm";
+import { IERC165Contract } from "./IERC165";
 import { IERC20Contract } from "./IERC20";
-import { ISyndicateClosedEndFundAllowlistLogicV0Contract } from "./ISyndicateClosedEndFundAllowlistLogicV0";
-import { ISyndicateClosedEndFundDepositLogicV0Contract } from "./ISyndicateClosedEndFundDepositLogicV0";
-import { ISyndicateClosedEndFundDepositTransferLogicV0Contract } from "./ISyndicateClosedEndFundDepositTransferLogicV0";
-import { ISyndicateClosedEndFundDistributionLogicV0Contract } from "./ISyndicateClosedEndFundDistributionLogicV0";
-import { ISyndicateClosedEndFundGetterLogicV0Contract } from "./ISyndicateClosedEndFundGetterLogicV0";
-import { ISyndicateClosedEndFundManagerLogicV0Contract } from "./ISyndicateClosedEndFundManagerLogicV0";
-import { ISyndicateClosedEndFundProxyV0Contract } from "./ISyndicateClosedEndFundProxyV0";
-import { ISyndicateClosedEndFundStoreGettersV0Contract } from "./ISyndicateClosedEndFundStoreGettersV0";
-import { ISyndicateClosedEndFundStoreSettersV0Contract } from "./ISyndicateClosedEndFundStoreSettersV0";
-import { ISyndicateClosedEndFundStoreV0Contract } from "./ISyndicateClosedEndFundStoreV0";
-import { ISyndicateIntegrationsCoordinatorLogicV0Contract } from "./ISyndicateIntegrationsCoordinatorLogicV0";
-import { MigrationsContract } from "./Migrations";
+import { IERC20MetadataContract } from "./IERC20Metadata";
+import { IERC721Contract } from "./IERC721";
+import { IERC721EnumerableContract } from "./IERC721Enumerable";
+import { IERC721MetadataContract } from "./IERC721Metadata";
+import { IERC721ReceiverContract } from "./IERC721Receiver";
+import { MetadataERC20Contract } from "./MetadataERC20";
+import { MetadataERC721Contract } from "./MetadataERC721";
+import { MintSynERC20Contract } from "./MintSynERC20";
+import { MintSynERC721Contract } from "./MintSynERC721";
+import { MultiMintSynERC721Contract } from "./MultiMintSynERC721";
 import { OwnableContract } from "./Ownable";
-import { SyndicateClosedEndFundAllowlistLogicV0Contract } from "./SyndicateClosedEndFundAllowlistLogicV0";
-import { SyndicateClosedEndFundDepositLogicV0Contract } from "./SyndicateClosedEndFundDepositLogicV0";
-import { SyndicateClosedEndFundDepositTransferLogicV0Contract } from "./SyndicateClosedEndFundDepositTransferLogicV0";
-import { SyndicateClosedEndFundDistributionLogicV0Contract } from "./SyndicateClosedEndFundDistributionLogicV0";
-import { SyndicateClosedEndFundGetterLogicV0Contract } from "./SyndicateClosedEndFundGetterLogicV0";
-import { SyndicateClosedEndFundLogicContract } from "./SyndicateClosedEndFundLogic";
-import { SyndicateClosedEndFundManagerLogicV0Contract } from "./SyndicateClosedEndFundManagerLogicV0";
-import { SyndicateClosedEndFundProxyV0Contract } from "./SyndicateClosedEndFundProxyV0";
-import { SyndicateClosedEndFundStoreV0Contract } from "./SyndicateClosedEndFundStoreV0";
-import { SyndicateIntegrationsCoordinatorLogicV0Contract } from "./SyndicateIntegrationsCoordinatorLogicV0";
-import { SyndicateOwnerLogicContract } from "./SyndicateOwnerLogic";
+import { PausableContract } from "./Pausable";
+import { SynERC20Contract } from "./SynERC20";
+import { SynERC20FactoryContract } from "./SynERC20Factory";
+import { SynERC20FactoryTestContract } from "./SynERC20FactoryTest";
+import { SynERC20MembersContract } from "./SynERC20Members";
+import { SynERC20TestContract } from "./SynERC20Test";
+import { SynERC721Contract } from "./SynERC721";
+import { SynERC721FactoryContract } from "./SynERC721Factory";
+import { SynERC721FactoryTestContract } from "./SynERC721FactoryTest";
+import { SynERC721MembersContract } from "./SynERC721Members";
+import { SynERC721TestContract } from "./SynERC721Test";
+import { SynTokenContract } from "./SynToken";
+import { SynTokenFactoryContract } from "./SynTokenFactory";
+import { UserContract } from "./User";
 
 declare global {
   namespace Truffle {
     interface Artifacts {
+      require(name: "CreateSynERC20"): CreateSynERC20Contract;
+      require(name: "CreateSynERC721"): CreateSynERC721Contract;
+      require(name: "CreationFeeSynERC20"): CreationFeeSynERC20Contract;
+      require(name: "CreationFeeSynERC721"): CreationFeeSynERC721Contract;
+      require(
+        name: "DAOMultiMintAndTransferSynERC721"
+      ): DAOMultiMintAndTransferSynERC721Contract;
+      require(name: "DAOMultiMintSynERC721"): DAOMultiMintSynERC721Contract;
+      require(name: "DSTest"): DSTestContract;
+      require(name: "ERC165"): ERC165Contract;
+      require(name: "ERC20"): ERC20Contract;
+      require(name: "ERC20Mock"): ERC20MockContract;
+      require(name: "ERC721"): ERC721Contract;
+      require(name: "ERC721Enumerable"): ERC721EnumerableContract;
+      require(name: "ERC721Holder"): ERC721HolderContract;
+      require(name: "Hevm"): HevmContract;
+      require(name: "IERC165"): IERC165Contract;
       require(name: "IERC20"): IERC20Contract;
-      require(
-        name: "ISyndicateClosedEndFundAllowlistLogicV0"
-      ): ISyndicateClosedEndFundAllowlistLogicV0Contract;
-      require(
-        name: "ISyndicateClosedEndFundDepositLogicV0"
-      ): ISyndicateClosedEndFundDepositLogicV0Contract;
-      require(
-        name: "ISyndicateClosedEndFundDepositTransferLogicV0"
-      ): ISyndicateClosedEndFundDepositTransferLogicV0Contract;
-      require(
-        name: "ISyndicateClosedEndFundDistributionLogicV0"
-      ): ISyndicateClosedEndFundDistributionLogicV0Contract;
-      require(
-        name: "ISyndicateClosedEndFundGetterLogicV0"
-      ): ISyndicateClosedEndFundGetterLogicV0Contract;
-      require(
-        name: "ISyndicateClosedEndFundManagerLogicV0"
-      ): ISyndicateClosedEndFundManagerLogicV0Contract;
-      require(
-        name: "ISyndicateClosedEndFundProxyV0"
-      ): ISyndicateClosedEndFundProxyV0Contract;
-      require(
-        name: "ISyndicateClosedEndFundStoreGettersV0"
-      ): ISyndicateClosedEndFundStoreGettersV0Contract;
-      require(
-        name: "ISyndicateClosedEndFundStoreSettersV0"
-      ): ISyndicateClosedEndFundStoreSettersV0Contract;
-      require(
-        name: "ISyndicateClosedEndFundStoreV0"
-      ): ISyndicateClosedEndFundStoreV0Contract;
-      require(
-        name: "ISyndicateIntegrationsCoordinatorLogicV0"
-      ): ISyndicateIntegrationsCoordinatorLogicV0Contract;
-      require(name: "Migrations"): MigrationsContract;
+      require(name: "IERC20Metadata"): IERC20MetadataContract;
+      require(name: "IERC721"): IERC721Contract;
+      require(name: "IERC721Enumerable"): IERC721EnumerableContract;
+      require(name: "IERC721Metadata"): IERC721MetadataContract;
+      require(name: "IERC721Receiver"): IERC721ReceiverContract;
+      require(name: "MetadataERC20"): MetadataERC20Contract;
+      require(name: "MetadataERC721"): MetadataERC721Contract;
+      require(name: "MintSynERC20"): MintSynERC20Contract;
+      require(name: "MintSynERC721"): MintSynERC721Contract;
+      require(name: "MultiMintSynERC721"): MultiMintSynERC721Contract;
       require(name: "Ownable"): OwnableContract;
-      require(
-        name: "SyndicateClosedEndFundAllowlistLogicV0"
-      ): SyndicateClosedEndFundAllowlistLogicV0Contract;
-      require(
-        name: "SyndicateClosedEndFundDepositLogicV0"
-      ): SyndicateClosedEndFundDepositLogicV0Contract;
-      require(
-        name: "SyndicateClosedEndFundDepositTransferLogicV0"
-      ): SyndicateClosedEndFundDepositTransferLogicV0Contract;
-      require(
-        name: "SyndicateClosedEndFundDistributionLogicV0"
-      ): SyndicateClosedEndFundDistributionLogicV0Contract;
-      require(
-        name: "SyndicateClosedEndFundGetterLogicV0"
-      ): SyndicateClosedEndFundGetterLogicV0Contract;
-      require(
-        name: "SyndicateClosedEndFundLogic"
-      ): SyndicateClosedEndFundLogicContract;
-      require(
-        name: "SyndicateClosedEndFundManagerLogicV0"
-      ): SyndicateClosedEndFundManagerLogicV0Contract;
-      require(
-        name: "SyndicateClosedEndFundProxyV0"
-      ): SyndicateClosedEndFundProxyV0Contract;
-      require(
-        name: "SyndicateClosedEndFundStoreV0"
-      ): SyndicateClosedEndFundStoreV0Contract;
-      require(
-        name: "SyndicateIntegrationsCoordinatorLogicV0"
-      ): SyndicateIntegrationsCoordinatorLogicV0Contract;
-      require(name: "SyndicateOwnerLogic"): SyndicateOwnerLogicContract;
+      require(name: "Pausable"): PausableContract;
+      require(name: "SynERC20"): SynERC20Contract;
+      require(name: "SynERC20Factory"): SynERC20FactoryContract;
+      require(name: "SynERC20FactoryTest"): SynERC20FactoryTestContract;
+      require(name: "SynERC20Members"): SynERC20MembersContract;
+      require(name: "SynERC20Test"): SynERC20TestContract;
+      require(name: "SynERC721"): SynERC721Contract;
+      require(name: "SynERC721Factory"): SynERC721FactoryContract;
+      require(name: "SynERC721FactoryTest"): SynERC721FactoryTestContract;
+      require(name: "SynERC721Members"): SynERC721MembersContract;
+      require(name: "SynERC721Test"): SynERC721TestContract;
+      require(name: "SynToken"): SynTokenContract;
+      require(name: "SynTokenFactory"): SynTokenFactoryContract;
+      require(name: "User"): UserContract;
     }
   }
 }
 
+export {
+  CreateSynERC20Contract,
+  CreateSynERC20Instance,
+} from "./CreateSynERC20";
+export {
+  CreateSynERC721Contract,
+  CreateSynERC721Instance,
+} from "./CreateSynERC721";
+export {
+  CreationFeeSynERC20Contract,
+  CreationFeeSynERC20Instance,
+} from "./CreationFeeSynERC20";
+export {
+  CreationFeeSynERC721Contract,
+  CreationFeeSynERC721Instance,
+} from "./CreationFeeSynERC721";
+export {
+  DAOMultiMintAndTransferSynERC721Contract,
+  DAOMultiMintAndTransferSynERC721Instance,
+} from "./DAOMultiMintAndTransferSynERC721";
+export {
+  DAOMultiMintSynERC721Contract,
+  DAOMultiMintSynERC721Instance,
+} from "./DAOMultiMintSynERC721";
+export { DSTestContract, DSTestInstance } from "./DSTest";
+export { ERC165Contract, ERC165Instance } from "./ERC165";
+export { ERC20Contract, ERC20Instance } from "./ERC20";
+export { ERC20MockContract, ERC20MockInstance } from "./ERC20Mock";
+export { ERC721Contract, ERC721Instance } from "./ERC721";
+export {
+  ERC721EnumerableContract,
+  ERC721EnumerableInstance,
+} from "./ERC721Enumerable";
+export { ERC721HolderContract, ERC721HolderInstance } from "./ERC721Holder";
+export { HevmContract, HevmInstance } from "./Hevm";
+export { IERC165Contract, IERC165Instance } from "./IERC165";
 export { IERC20Contract, IERC20Instance } from "./IERC20";
 export {
-  ISyndicateClosedEndFundAllowlistLogicV0Contract,
-  ISyndicateClosedEndFundAllowlistLogicV0Instance,
-} from "./ISyndicateClosedEndFundAllowlistLogicV0";
+  IERC20MetadataContract,
+  IERC20MetadataInstance,
+} from "./IERC20Metadata";
+export { IERC721Contract, IERC721Instance } from "./IERC721";
 export {
-  ISyndicateClosedEndFundDepositLogicV0Contract,
-  ISyndicateClosedEndFundDepositLogicV0Instance,
-} from "./ISyndicateClosedEndFundDepositLogicV0";
+  IERC721EnumerableContract,
+  IERC721EnumerableInstance,
+} from "./IERC721Enumerable";
 export {
-  ISyndicateClosedEndFundDepositTransferLogicV0Contract,
-  ISyndicateClosedEndFundDepositTransferLogicV0Instance,
-} from "./ISyndicateClosedEndFundDepositTransferLogicV0";
+  IERC721MetadataContract,
+  IERC721MetadataInstance,
+} from "./IERC721Metadata";
 export {
-  ISyndicateClosedEndFundDistributionLogicV0Contract,
-  ISyndicateClosedEndFundDistributionLogicV0Instance,
-} from "./ISyndicateClosedEndFundDistributionLogicV0";
+  IERC721ReceiverContract,
+  IERC721ReceiverInstance,
+} from "./IERC721Receiver";
+export { MetadataERC20Contract, MetadataERC20Instance } from "./MetadataERC20";
 export {
-  ISyndicateClosedEndFundGetterLogicV0Contract,
-  ISyndicateClosedEndFundGetterLogicV0Instance,
-} from "./ISyndicateClosedEndFundGetterLogicV0";
+  MetadataERC721Contract,
+  MetadataERC721Instance,
+} from "./MetadataERC721";
+export { MintSynERC20Contract, MintSynERC20Instance } from "./MintSynERC20";
+export { MintSynERC721Contract, MintSynERC721Instance } from "./MintSynERC721";
 export {
-  ISyndicateClosedEndFundManagerLogicV0Contract,
-  ISyndicateClosedEndFundManagerLogicV0Instance,
-} from "./ISyndicateClosedEndFundManagerLogicV0";
-export {
-  ISyndicateClosedEndFundProxyV0Contract,
-  ISyndicateClosedEndFundProxyV0Instance,
-} from "./ISyndicateClosedEndFundProxyV0";
-export {
-  ISyndicateClosedEndFundStoreGettersV0Contract,
-  ISyndicateClosedEndFundStoreGettersV0Instance,
-} from "./ISyndicateClosedEndFundStoreGettersV0";
-export {
-  ISyndicateClosedEndFundStoreSettersV0Contract,
-  ISyndicateClosedEndFundStoreSettersV0Instance,
-} from "./ISyndicateClosedEndFundStoreSettersV0";
-export {
-  ISyndicateClosedEndFundStoreV0Contract,
-  ISyndicateClosedEndFundStoreV0Instance,
-} from "./ISyndicateClosedEndFundStoreV0";
-export {
-  ISyndicateIntegrationsCoordinatorLogicV0Contract,
-  ISyndicateIntegrationsCoordinatorLogicV0Instance,
-} from "./ISyndicateIntegrationsCoordinatorLogicV0";
-export { MigrationsContract, MigrationsInstance } from "./Migrations";
+  MultiMintSynERC721Contract,
+  MultiMintSynERC721Instance,
+} from "./MultiMintSynERC721";
 export { OwnableContract, OwnableInstance } from "./Ownable";
+export { PausableContract, PausableInstance } from "./Pausable";
+export { SynERC20Contract, SynERC20Instance } from "./SynERC20";
 export {
-  SyndicateClosedEndFundAllowlistLogicV0Contract,
-  SyndicateClosedEndFundAllowlistLogicV0Instance,
-} from "./SyndicateClosedEndFundAllowlistLogicV0";
+  SynERC20FactoryContract,
+  SynERC20FactoryInstance,
+} from "./SynERC20Factory";
 export {
-  SyndicateClosedEndFundDepositLogicV0Contract,
-  SyndicateClosedEndFundDepositLogicV0Instance,
-} from "./SyndicateClosedEndFundDepositLogicV0";
+  SynERC20FactoryTestContract,
+  SynERC20FactoryTestInstance,
+} from "./SynERC20FactoryTest";
 export {
-  SyndicateClosedEndFundDepositTransferLogicV0Contract,
-  SyndicateClosedEndFundDepositTransferLogicV0Instance,
-} from "./SyndicateClosedEndFundDepositTransferLogicV0";
+  SynERC20MembersContract,
+  SynERC20MembersInstance,
+} from "./SynERC20Members";
+export { SynERC20TestContract, SynERC20TestInstance } from "./SynERC20Test";
+export { SynERC721Contract, SynERC721Instance } from "./SynERC721";
 export {
-  SyndicateClosedEndFundDistributionLogicV0Contract,
-  SyndicateClosedEndFundDistributionLogicV0Instance,
-} from "./SyndicateClosedEndFundDistributionLogicV0";
+  SynERC721FactoryContract,
+  SynERC721FactoryInstance,
+} from "./SynERC721Factory";
 export {
-  SyndicateClosedEndFundGetterLogicV0Contract,
-  SyndicateClosedEndFundGetterLogicV0Instance,
-} from "./SyndicateClosedEndFundGetterLogicV0";
+  SynERC721FactoryTestContract,
+  SynERC721FactoryTestInstance,
+} from "./SynERC721FactoryTest";
 export {
-  SyndicateClosedEndFundLogicContract,
-  SyndicateClosedEndFundLogicInstance,
-} from "./SyndicateClosedEndFundLogic";
+  SynERC721MembersContract,
+  SynERC721MembersInstance,
+} from "./SynERC721Members";
+export { SynERC721TestContract, SynERC721TestInstance } from "./SynERC721Test";
+export { SynTokenContract, SynTokenInstance } from "./SynToken";
 export {
-  SyndicateClosedEndFundManagerLogicV0Contract,
-  SyndicateClosedEndFundManagerLogicV0Instance,
-} from "./SyndicateClosedEndFundManagerLogicV0";
-export {
-  SyndicateClosedEndFundProxyV0Contract,
-  SyndicateClosedEndFundProxyV0Instance,
-} from "./SyndicateClosedEndFundProxyV0";
-export {
-  SyndicateClosedEndFundStoreV0Contract,
-  SyndicateClosedEndFundStoreV0Instance,
-} from "./SyndicateClosedEndFundStoreV0";
-export {
-  SyndicateIntegrationsCoordinatorLogicV0Contract,
-  SyndicateIntegrationsCoordinatorLogicV0Instance,
-} from "./SyndicateIntegrationsCoordinatorLogicV0";
-export {
-  SyndicateOwnerLogicContract,
-  SyndicateOwnerLogicInstance,
-} from "./SyndicateOwnerLogic";
+  SynTokenFactoryContract,
+  SynTokenFactoryInstance,
+} from "./SynTokenFactory";
+export { UserContract, UserInstance } from "./User";

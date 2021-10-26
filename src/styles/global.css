@@ -752,7 +752,7 @@ input[type="checkbox"] {
 
 /* tooltip styles for the member section  */
 .actionsTooltip {
-  height: 44px;
+  height: auto;
   font-size: 14px !important;
   line-height: 16px;
   border-radius: 10px !important;
@@ -762,6 +762,7 @@ input[type="checkbox"] {
   visibility: visible;
   background: #232529;
   box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+  z-index: 100;
 }
 .__react_component_tooltip.show {
   opacity: 1 !important;

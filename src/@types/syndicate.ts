@@ -3,6 +3,7 @@ export type Syndicate = {
   open: boolean;
   managerFeeAddress: string;
   depositsEnabled: boolean;
+  depositExceedTotal: boolean;
   depositMemberMin: string;
   depositMemberMax: string;
   depositTotalMax: string;

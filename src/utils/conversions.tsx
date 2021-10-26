@@ -1,16 +1,7 @@
 import { BigNumber } from "bignumber.js";
-import { ethers } from "ethers";
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const Web3 = require("web3");
 const web3 = new Web3(`${process.env.NEXT_PUBLIC_ALCHEMY}`);
-
-/**
- * Converts a number to ether
- * value can be an valid string or number.
- * @param {string} value
- * @return {bigNumber} a bigNumber representation of the passed value.
- */
-export const toEther = (value) => ethers.utils.parseEther(value.toString());
 
 /**
  * Takes an ether and converts it to a javascript number.
@@ -33,8 +24,6 @@ export const etherToNumber = (value: string, tokenFactor?: string) =>
  * @param { number } number to be converted
  * @returns {double|float}
  */
-
-export const fromNumberToPercent = (number) => number / 1000;
 
 /** Every user token amount input or syndicate token value needs to be converted
  * to and from wei amounts depending on the number of

@@ -4,7 +4,6 @@ const SectionTab = (props: {
     children?
 }) => {
     const {
-      title, 
       assignedRef, 
       children
     } = props;

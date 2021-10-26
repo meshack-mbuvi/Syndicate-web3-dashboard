@@ -9,7 +9,6 @@ import { isZeroAddress } from "@/utils/validators";
 import { web3 } from "@/utils/web3Utils";
 import { getCoinFromContractAddress } from "functions/src/utils/ethereum";
 import {
-  ADD_NEW_INVESTMENT,
   ALL_SYNDICATES,
   FOUND_SYNDICATE_ADDRESS,
   INVALID_SYNDICATE_ADDRESS,
@@ -172,18 +171,6 @@ export const getSyndicates =
   };
 
 /**
- * adds syndicates to application store
- * @param {*} data
- * @returns
- */
-export const addSyndicateInvestment = (data) => async (dispatch) => {
-  return dispatch({
-    data,
-    type: ADD_NEW_INVESTMENT,
-  });
-};
-
-/**
  * Retrieve single syndicate from the contract by syndicateAddress
  */
 export const getSyndicateByAddress =
@@ -343,6 +330,9 @@ export const processSyndicateDetails = (
 
   const depositsEnabled = !pastDate(new Date(parseInt(dateClose) * 1000));
 
+  const depositExceedTotal =
+    parseInt(depositTotal) === parseInt(depositTotalMax);
+
   const status =
     depositsEnabled && parseInt(depositTotal) < parseInt(depositTotalMax)
       ? `Open until ${closeDate}`
@@ -358,6 +348,7 @@ export const processSyndicateDetails = (
     open,
     managerFeeAddress,
     depositsEnabled,
+    depositExceedTotal,
     depositMemberMin: getWeiAmount(depositMemberMin, tokenDecimals, false),
     depositMemberMax: getWeiAmount(depositMemberMax, tokenDecimals, false),
     depositTotalMax: getWeiAmount(depositTotalMax, tokenDecimals, false),

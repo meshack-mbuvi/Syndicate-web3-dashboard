@@ -1,4 +1,4 @@
-import { CheckIcon } from "@heroicons/react/solid";
+import { CheckIcon, ArrowNarrowLeftIcon } from "@heroicons/react/solid";
 import { SpinnerWithImage } from "@/components/shared/spinner/spinnerWithImage";
 import { EtherscanLink } from "@/components/syndicates/shared/EtherscanLink";
 import React, { useEffect } from "react";
@@ -6,7 +6,6 @@ import { useCreateSyndicateContext } from "@/context/CreateSyndicateContext";
 import { RootState } from "@/redux/store";
 import { useSelector } from "react-redux";
 import { useRouter } from "next/router";
-import { ArrowNarrowLeftIcon } from "@heroicons/react/solid";
 import { useSyndicateInBetaBannerContext } from "@/context/SyndicateInBetaBannerContext";
 
 interface ProcessingStep {
@@ -14,7 +13,7 @@ interface ProcessingStep {
   info?: string;
 }
 
-const Processing: React.FC = (template) => {
+const Processing: React.FC = () => {
   const {
     processingInfo,
     handleAddToAllowlist,

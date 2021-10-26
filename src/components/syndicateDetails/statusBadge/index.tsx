@@ -1,13 +1,30 @@
 import React from "react";
 
 interface Props {
-  badgeBackgroundColor: string;
-  badgeIcon: string;
-  titleText: string;
+  distributing: boolean;
+  depositsEnabled: boolean;
+  depositExceedTotal?: boolean;
 }
 
 const StatusBadge = (props: Props): JSX.Element => {
-  const { badgeBackgroundColor, badgeIcon, titleText } = props;
+  const { distributing, depositsEnabled, depositExceedTotal } = props;
+
+  let badgeBackgroundColor = "bg-blue-darker";
+  let badgeIcon = "depositIcon.svg";
+  let titleText = "Open to deposits";
+  if (distributing) {
+    badgeBackgroundColor = "bg-green-darker";
+    badgeIcon = "distributeIcon.svg";
+    titleText = "Distributing";
+  } else if (!depositsEnabled && !distributing) {
+    badgeBackgroundColor = "bg-green-dark";
+    badgeIcon = "active.svg";
+    titleText = "Active";
+  } else if (depositExceedTotal) {
+    badgeBackgroundColor = "bg-blue-darker";
+    badgeIcon = "depositReachedIcon.svg";
+    titleText = "Fully deposited";
+  }
   return (
     <div className="h-fit-content rounded-3xl bg-gray-syn8">
       <div

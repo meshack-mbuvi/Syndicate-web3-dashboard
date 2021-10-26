@@ -45,7 +45,7 @@ export const SearchForm = (props: {
           <div className="relative w-full">
             <div className="relative bg-gray-8 pl-1 flex items-stretch flex-grow focus-within:z-10">
               <div
-                className={`absolute my-auto align-middle inset-y-0 pt-0.5 h-full z-10 flex items-center justify-center ${
+                className={`absolute my-auto align-middle inset-y-0 pt-0.5 h-full z-8 flex items-center justify-center ${
                   disabled ? "opacity-40" : ""
                 }`}
               >

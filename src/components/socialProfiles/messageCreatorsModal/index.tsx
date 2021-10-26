@@ -1,6 +1,6 @@
 import Modal, { ModalStyle } from '@/components/modal';
 import { validateEmail } from '@/utils/validators';
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import SuccessMessage from '../successMessage';
 
 

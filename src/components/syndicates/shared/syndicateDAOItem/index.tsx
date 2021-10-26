@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { MemberItem } from "./memberItem";
 import { AllMembersModal } from "./allMembersModal";
-import { SkeletonLoader } from "@/components/skeletonLoader";
+
 interface DAOProps {
   name: string;
   url: string;
@@ -12,7 +12,6 @@ interface DAOProps {
 export const SyndicateDAOItem = (props: DAOProps) => {
   const { name, url, image, members } = props;
   const [showAllMembers, setShowAllMembers] = useState<boolean>(false);
-  const [imageLoaded, setImageLoaded] = useState<boolean>(false);
 
   const showFullMembersList = () => {
     setShowAllMembers(true);
@@ -20,10 +19,6 @@ export const SyndicateDAOItem = (props: DAOProps) => {
 
   const hideFullMembersList = () => {
     setShowAllMembers(false);
-  };
-
-  const handleImageLoaded = () => {
-    setImageLoaded(true);
   };
 
   return (

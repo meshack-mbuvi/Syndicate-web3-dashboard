@@ -1,11 +1,7 @@
 import { useCreateSyndicateContext } from "@/context/CreateSyndicateContext";
 import { ArrowNarrowLeftIcon } from "@heroicons/react/solid";
 
-interface ITemplageControls {
-  continueDisabled?: boolean;
-}
-
-const TemplateControls = (props: ITemplageControls) => {
+const TemplateControls: React.FC = () => {
   const {
     continueDisabled,
     buttonsDisabled,

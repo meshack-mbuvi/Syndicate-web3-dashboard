@@ -29,7 +29,6 @@ interface Props {
 const ChangeSyndicateSettings: FC<Props> = (props) => {
   const { showChangeSettings, setShowChangeSettings } = props;
   const [submitting, setSubmitting] = useState(false);
-  console.log({ showChangeSettings });
 
   const router = useRouter();
   const dispatch = useDispatch();
@@ -556,8 +555,9 @@ const ChangeSyndicateSettings: FC<Props> = (props) => {
               await DepositLogicContract.getMemberDepositEvents(
                 "DepositAdded",
                 {
-                  syndicateAddress:
-                    web3.utils.toChecksumAddress(syndicateAddress as string),
+                  syndicateAddress: web3.utils.toChecksumAddress(
+                    syndicateAddress as string,
+                  ),
                   memberAddress: value,
                 },
               );

@@ -1,15 +1,3 @@
-import { web3 } from "../web3Utils";
-
-export const AddressValidator = (
-  value: any,
-  helpers: { error: (arg0: string) => any },
-) => {
-  if (!web3.utils.isAddress(value)) {
-    return helpers.error("any.invalid");
-  }
-  return value;
-};
-
 /**
  * This methods checks whether the provided value is a valid number.
  * To be a valid number, the value should:
@@ -79,13 +67,6 @@ export const validateEmail = (email: string): boolean => {
   return regexp.test(email);
 };
 
-export const isNewLineChar = (value: string): boolean => /^\n+$/.test(value);
-
-export const removeEnter = (value: string): string =>
-  value.replace(/^\s+|\s+$/g, "");
-
-export const removeSpace = (value: string): string => value.replace(/\s/g, "");
-
 export const removeNewLinesAndWhitespace = (value: string): string =>
   value.replace(/\r?\n|\r|\s/g, "");
 
@@ -99,10 +80,3 @@ export const removeSubstring = (
     originalString.substr(start + subString.length)
   );
 };
-/**
- * removes enter character and space character
- * @param data
- * @returns
- */
-export const sanitizeInputString = (data: string): string =>
-  removeSpace(removeEnter(data));

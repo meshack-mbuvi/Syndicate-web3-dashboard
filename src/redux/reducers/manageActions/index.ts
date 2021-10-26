@@ -6,10 +6,8 @@ import {
   CONFIRM_MODIFY_MEMBER_DEPOSIT,
   MODIFYING_MEMBER_DEPOSIT,
   SET_SELECTED_MEMBERS,
-  SET_SHOW_REJECT_MEMBER_DEPOSIT_OR_ADDRESS,
   SHOW_MODIFY_CAP_TABLE,
   SHOW_MODIFY_MEMBER_DISTRIBUTIONS,
-  SHOW_REJECT_MEMBER_ADDRESS_ONLY,
   SHOW_REJECT_MEMBER_DEPOSIT_ONLY,
   State,
 } from "@/redux/actions/types";
@@ -43,24 +41,6 @@ export const manageActionsReducer = (
         manageActions: {
           ...manageActions,
           modifyCapTable: action.data,
-        },
-      };
-
-    case SET_SHOW_REJECT_MEMBER_DEPOSIT_OR_ADDRESS:
-      return {
-        ...state,
-        manageActions: {
-          ...manageActions,
-          rejectMemberAddressOrDeposit: action.data,
-        },
-      };
-
-    case SHOW_REJECT_MEMBER_ADDRESS_ONLY:
-      return {
-        ...state,
-        manageActions: {
-          ...manageActions,
-          showAddressOnly: action.data,
         },
       };
 
