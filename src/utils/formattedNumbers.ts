@@ -12,6 +12,10 @@ export const floatedNumberWithCommas = (number): string => {
     return numberWithCommas(parseFloat("0".toString()).toFixed(2));
   }
 
+  if (number.toString().indexOf(".") !== 1) {
+    return numberWithCommas(parseFloat(number.toString()).toFixed(2));
+  }
+
   try {
     // avoid rounding up the number when converting to 2 decimal places
     const numberTo2decimalsWithoutRoundingUp = number
@@ -49,8 +53,10 @@ export const formatNumbers = (number) => {
   return scaled.toFixed(1) + suffix;
 };
 
-export const  numberInputRemoveCommas = (event:React.ChangeEvent<HTMLInputElement>):any => {
+export const numberInputRemoveCommas = (
+  event: React.ChangeEvent<HTMLInputElement>,
+): any => {
   let { value } = event.target;
   // remove commas from big numbers before we set state
   return value.replace(/,/g, "");
-}
+};

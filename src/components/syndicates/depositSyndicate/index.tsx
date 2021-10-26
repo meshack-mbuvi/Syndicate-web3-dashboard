@@ -14,7 +14,7 @@ import { RootState } from "@/redux/store";
 import { getWeiAmount, isUnlimited } from "@/utils/conversions";
 import { floatedNumberWithCommas } from "@/utils/formattedNumbers";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import ERC20ABI from "src/utils/abi/erc20";
 import { getGnosisTxnInfo } from "src/syndicateClosedEndFundLogic/shared/gnosisTransactionInfo";
@@ -36,6 +36,7 @@ import { CopyToClipboard } from "react-copy-to-clipboard";
 import { isDev } from "@/utils/environment";
 import { SkeletonLoader } from "src/components/skeletonLoader";
 import ReactTooltip from "react-tooltip";
+import HoldingsInfo from "@/components/syndicates/depositSyndicate/HoldingsInfo";
 
 const DepositSyndicate: React.FC = () => {
   // HOOK DECLARATIONS
@@ -53,6 +54,8 @@ const DepositSyndicate: React.FC = () => {
       syndicateMemberDetailsLoading,
     },
   } = useSelector((state: RootState) => state);
+
+  const depositERC20Symbol = syndicate?.depositERC20TokenSymbol;
 
   const {
     depositTokenAddress,
@@ -556,7 +559,7 @@ const DepositSyndicate: React.FC = () => {
 
   return (
     <ErrorBoundary>
-      <div className="w-full mt-4 sm:mt-0 sticky top-44 mb-10">
+      <div className="w-full mt-4 sm:mt-0 top-44 mb-10">
         <FadeIn>
           {!syndicate && syndicateMemberDetailsLoading ? (
             <div className="h-fit-content rounded-2xl p-4 md:mx-2 md:p-6 bg-gray-9 mt-6 md:mt-0 w-full">
@@ -814,6 +817,27 @@ const DepositSyndicate: React.FC = () => {
             </div>
           )}
         </FadeIn>
+      </div>
+
+      <div className="bg-gray-syn8 rounded-2xl my-8 px-8 py-6">
+        <div className="pb-5 text-sm font-bold uppercase tracking-widest">
+          Your Holdings
+        </div>
+        <div className="flex">
+          <div className="mr-8">
+            <HoldingsInfo
+              title="Amount deposited"
+              amount={floatedNumberWithCommas(memberTotalDeposits)}
+              tokenName={depositERC20Symbol}
+            />
+          </div>
+          <HoldingsInfo
+            title="Club Tokens (ownership share)"
+            amount="1000.00"
+            tokenName="sFWB"
+            percentValue={2.34}
+          />
+        </div>
       </div>
 
       <Modal
