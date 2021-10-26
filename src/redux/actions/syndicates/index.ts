@@ -330,6 +330,9 @@ export const processSyndicateDetails = (
 
   const depositsEnabled = !pastDate(new Date(parseInt(dateClose) * 1000));
 
+  const depositExceedTotal =
+    parseInt(depositTotal) === parseInt(depositTotalMax);
+
   const status =
     depositsEnabled && parseInt(depositTotal) < parseInt(depositTotalMax)
       ? `Open until ${closeDate}`
@@ -345,6 +348,7 @@ export const processSyndicateDetails = (
     open,
     managerFeeAddress,
     depositsEnabled,
+    depositExceedTotal,
     depositMemberMin: getWeiAmount(depositMemberMin, tokenDecimals, false),
     depositMemberMax: getWeiAmount(depositMemberMax, tokenDecimals, false),
     depositTotalMax: getWeiAmount(depositTotalMax, tokenDecimals, false),

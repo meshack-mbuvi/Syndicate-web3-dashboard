@@ -1,3 +1,4 @@
+import { format, utcToZonedTime } from "date-fns-tz";
 import {
   af,
   arDZ,
@@ -81,8 +82,8 @@ import {
   zhCN,
   zhTW,
 } from "date-fns/locale";
+import "moment-precise-range-plugin";
 import { registerLocale } from "react-datepicker";
-import { format, utcToZonedTime } from "date-fns-tz";
 
 const moment = require("moment");
 

@@ -11,14 +11,13 @@ import { setSyndicateDetails } from "@/redux/actions/syndicateDetails";
 import { updateMemberDepositDetails } from "@/redux/actions/syndicateMemberDetails/memberDepositsInfo";
 import { getSyndicateByAddress } from "@/redux/actions/syndicates";
 import { RootState } from "@/redux/store";
-import { getWeiAmount } from "@/utils/conversions";
+import { getWeiAmount, isUnlimited } from "@/utils/conversions";
 import { floatedNumberWithCommas } from "@/utils/formattedNumbers";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import ERC20ABI from "src/utils/abi/erc20";
 import { getGnosisTxnInfo } from "src/syndicateClosedEndFundLogic/shared/gnosisTransactionInfo";
-
 import Modal, { ModalStyle } from "@/components/modal";
 import ArrowDown from "@/components/icons/arrowDown";
 import useModal from "@/hooks/useModal";
@@ -49,7 +48,10 @@ const DepositSyndicate: React.FC = () => {
     web3Reducer: {
       web3: { account, web3 },
     },
-    syndicateMemberDetailsReducer: { memberDepositDetails },
+    syndicateMemberDetailsReducer: {
+      memberDepositDetails,
+      syndicateMemberDetailsLoading,
+    },
   } = useSelector((state: RootState) => state);
 
   const {
@@ -83,6 +85,10 @@ const DepositSyndicate: React.FC = () => {
     useState<boolean>(false);
   const [copied, setCopied] = useState(false);
   const [transactionHash, setTransactionHash] = useState<string>("");
+  const [depositError, setDepositError] = useState("");
+  const [clubWideErrors, setClubWideErrors] = useState("");
+  const [imageSRC, setImageSRC] = useState("");
+  const [isTextRed, setIsTextRed] = useState(false);
 
   // DEFINITIONS
   const { syndicateAddress } = router.query;
@@ -106,6 +112,7 @@ const DepositSyndicate: React.FC = () => {
       );
 
       setDepositTokenContract(ERC20Contract);
+      checkClubWideErrors();
     }
   }, [syndicateContracts, syndicate]);
 
@@ -219,23 +226,6 @@ const DepositSyndicate: React.FC = () => {
    *
    * @returns {string} balance of the user for the deposit ERC20 token
    */
-  const checkTokenBalance = async () => {
-    try {
-      const balance = await depositTokenContract.methods
-        .balanceOf(account.toString())
-        .call({ from: account });
-
-      const weiBalance = getWeiAmount(balance, depositTokenDecimals, false);
-      if (+weiBalance < +depositAmount) {
-        setInsufficientBalance(true);
-      } else {
-        setInsufficientBalance(false);
-      }
-      return weiBalance;
-    } catch {
-      return 0;
-    }
-  };
 
   const erc20Balance = useERC20TokenBalance(
     account,
@@ -275,13 +265,6 @@ const DepositSyndicate: React.FC = () => {
     },
     { title: "Complete deposit" },
   ];
-
-  // check member account balance for deposit token.
-  // we'll disable the continue button and style the input field accordingly
-  // if the deposit amount is less than the account balance
-  useEffect(() => {
-    checkTokenBalance();
-  }, [depositAmount]);
 
   // clear the input field on successful deposit or account switch
   useEffect(() => {
@@ -485,11 +468,97 @@ const DepositSyndicate: React.FC = () => {
     ReactTooltip.rebuild();
   });
 
+  // check member account balance for deposit token.
+  // we'll disable the continue button and style the input field accordingly
+  // if the deposit amount is less than the account balance
+  useEffect(() => {
+    checkTokenBalance();
+  }, [depositAmount]);
+  const checkTokenBalance = async () => {
+    try {
+      const balance = await depositTokenContract.methods
+        .balanceOf(account.toString())
+        .call({ from: account });
+
+      const weiBalance = getWeiAmount(balance, depositTokenDecimals, false);
+      if (+weiBalance < +depositAmount) {
+        setInsufficientBalance(true);
+        setDepositError("");
+      } else {
+        setInsufficientBalance(false);
+      }
+      return weiBalance;
+    } catch {
+      return 0;
+    }
+  };
+
+  useEffect(() => {
+    if (syndicate) {
+      checkClubWideErrors();
+    }
+  }, [
+    syndicate?.depositTotal,
+    syndicate?.depositTotalMax,
+    syndicate?.numMembersCurrent,
+    syndicate?.numMembersMax,
+    account,
+    syndicate,
+  ]);
+
+  const checkClubWideErrors = () => {
+    let message;
+    if (syndicate.depositTotal === syndicate.depositTotalMax) {
+      message = "The maximum deposit amount for this club has been reached.";
+      setClubWideErrors(message);
+      setDepositError("");
+      setImageSRC("/images/deposit/depositReached.svg");
+    } else if (
+      !isUnlimited(syndicate?.numMembersMax) &&
+      !(parseInt(memberTotalDeposits) > 0) &&
+      syndicate.numMembersCurrent === syndicate.numMembersMax
+    ) {
+      message = `The maximum amount of members (${syndicate.numMembersMax}) for this club has been reached.`;
+      setClubWideErrors(message);
+      setDepositError("");
+      setImageSRC("/images/deposit/userAttention.svg");
+    } else {
+      setDepositError("");
+      setClubWideErrors("");
+    }
+  };
+
+  const handleSetDeposit = (value) => {
+    setDepositAmount(value);
+    let remainingErc20Balance =
+      syndicate.depositTotalMax - syndicate.depositTotal;
+    setIsTextRed(false);
+
+    let message;
+    if (+value > remainingErc20Balance) {
+      message = (
+        <>
+          <span>The amount you entered is too high. This syndicate is </span>
+          <span className="underline">
+            {remainingErc20Balance} {depositTokenSymbol}
+          </span>
+          <span> away from reaching its maximum deposit.</span>
+        </>
+      );
+      setDepositError(message);
+      setClubWideErrors("");
+      setIsTextRed(true);
+    } else {
+      setDepositError("");
+      setClubWideErrors("");
+    }
+  };
+
   return (
     <ErrorBoundary>
       <div className="w-full mt-4 sm:mt-0 sticky top-44 mb-10">
         <FadeIn>
-          {!syndicate ? (
+          {!syndicate && syndicateMemberDetailsLoading ? (
             <div className="h-fit-content rounded-2xl p-4 md:mx-2 md:p-6 bg-gray-9 mt-6 md:mt-0 w-full">
               <div className="h-fit-content rounded-3xl">
                 <SkeletonLoader width="full" height="20" />
@@ -512,6 +581,9 @@ const DepositSyndicate: React.FC = () => {
               <StatusBadge
                 distributing={syndicate?.distributing}
                 depositsEnabled={syndicate?.depositsEnabled}
+                depositExceedTotal={
+                  +syndicate?.depositTotal === +syndicate?.depositTotalMax
+                }
               />
               {((!submitting && !successfulDeposit) ||
                 showDepositProcessingModal) && (
@@ -525,28 +597,60 @@ const DepositSyndicate: React.FC = () => {
                     <div className="flex items-center">
                       <AutoGrowInputField
                         value={depositAmount}
-                        onChangeHandler={(value) => setDepositAmount(value)}
+                        onChangeHandler={(value) => handleSetDeposit(value)}
                         placeholder={"0"}
                         decimalSeparator="."
                         decimalScale={2}
                         fixedDecimalScale
-                        errorTextRed={insufficientBalance}
+                        hasError={isTextRed || insufficientBalance}
+                        disabled={Boolean(clubWideErrors)}
                       />
-                      <div>
-                        <button
-                          className="ml-4 px-4 py-1.5 text-gray-syn4 bg-gray-syn7 rounded-full"
-                          onClick={handleSetMax}
-                        >
-                          Max
-                        </button>
-                      </div>
+                      {clubWideErrors ? (
+                        <div className="h-4">
+                          <Image
+                            src="/images/deposit/lockedIcon.svg"
+                            height={16}
+                            width={16}
+                          />
+                        </div>
+                      ) : null}
+                      {!clubWideErrors && !depositError ? (
+                        <div>
+                          <button
+                            className="ml-4 px-4 py-1.5 text-gray-syn4 bg-gray-syn7 rounded-full"
+                            onClick={handleSetMax}
+                          >
+                            Max
+                          </button>
+                        </div>
+                      ) : null}
                     </div>
-                    <div className="flex flex-col items-end">
-                      <div className="flex items-center p-0 h-6">
-                        <Image src={depositTokenLogo} height={24} width={24} />
-                        <p className="ml-2 text-base">{depositTokenSymbol}</p>
+                    {!clubWideErrors ? (
+                      <div className="flex flex-col items-end">
+                        <div className="flex items-center p-0 h-6">
+                          <Image
+                            src={depositTokenLogo}
+                            height={24}
+                            width={24}
+                          />
+                          <p className="ml-2 text-base">{depositTokenSymbol}</p>
+                        </div>
                       </div>
-                    </div>
+                    ) : (
+                      <div className="flex flex-col items-end">
+                        <div className="flex items-center p-0 h-6 ">
+                          <Image
+                            src={depositTokenLogo}
+                            height={24}
+                            width={24}
+                            className="filter grayscale opacity-40"
+                          />
+                          <p className="ml-2 text-base text-gray-syn5">
+                            {depositTokenSymbol}
+                          </p>
+                        </div>
+                      </div>
+                    )}
                   </div>
 
                   {/* Error state for insufficientBalance */}
@@ -570,45 +674,66 @@ const DepositSyndicate: React.FC = () => {
                     </div>
                   )}
 
-                  <div className="mt-6 flex justify-center">
-                    <button
-                      className={`w-full rounded-lg text-base px-8 py-4 ${
-                        !depositAmount ||
-                        submittingAllowanceApproval ||
-                        submitting ||
-                        insufficientBalance ||
-                        depositAmount === "0.00"
-                          ? "bg-gray-syn6 text-gray-syn4"
-                          : "bg-white text-black"
-                      } `}
-                      onClick={(e) => {
-                        if (submittingAllowanceApproval) {
+                  {depositError ? (
+                    <div className="font-whyte text-sm text-red-semantic mt-4">
+                      {depositError}
+                    </div>
+                  ) : null}
+
+                  {!clubWideErrors ? (
+                    <div className="mt-6 flex justify-center">
+                      <button
+                        className={`w-full rounded-lg text-base px-8 py-4 ${
+                          Boolean(depositError) ||
+                          !depositAmount ||
+                          submittingAllowanceApproval ||
+                          submitting ||
+                          insufficientBalance ||
+                          depositAmount === "0.00"
+                            ? "bg-gray-syn6 text-gray-syn4"
+                            : "bg-white text-black"
+                        } `}
+                        onClick={(e) => {
+                          if (submittingAllowanceApproval) {
+                            toggleDepositProcessingModal();
+                            return;
+                          }
+                          if (!unlimitedAllowanceSet) {
+                            handleAllowanceApproval(e);
+                          } else {
+                            investInSyndicate(depositAmount);
+                          }
                           toggleDepositProcessingModal();
-                          return;
+                        }}
+                        disabled={
+                          submittingAllowanceApproval ||
+                          insufficientBalance ||
+                          depositAmount === "0.00" ||
+                          !depositAmount ||
+                          Boolean(depositError)
                         }
-                        if (!unlimitedAllowanceSet) {
-                          handleAllowanceApproval(e);
-                        } else {
-                          investInSyndicate(depositAmount);
-                        }
-                        toggleDepositProcessingModal();
-                      }}
-                      disabled={
-                        insufficientBalance ||
-                        depositAmount === "0.00" ||
-                        !depositAmount
-                      }
-                    >
-                      {depositButtonText}
-                    </button>
-                  </div>
-                  <div className="mt-4 flex w-full justify-center">
-                    <p className="text-sm text-gray-syn5">
-                      Your wallet balance:{" "}
-                      {floatedNumberWithCommas(erc20Balance)}{" "}
-                      {depositTokenSymbol}
-                    </p>
-                  </div>
+                      >
+                        {depositButtonText}
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="font-whyte text-sm text-red-semantic flex mt-4 items-center">
+                      <div className="h-4">
+                        <Image src={imageSRC} height={24} width={24} />
+                      </div>
+                      <div className="ml-4">{clubWideErrors}</div>
+                    </div>
+                  )}
+
+                  {!clubWideErrors ? (
+                    <div className="mt-4 flex w-full justify-center">
+                      <p className="text-sm text-gray-syn5">
+                        Your wallet balance:{" "}
+                        {floatedNumberWithCommas(erc20Balance)}{" "}
+                        {depositTokenSymbol}
+                      </p>
+                    </div>
+                  ) : null}
                 </div>
               )}
               {submitting && !showDepositProcessingModal && (
