@@ -92,6 +92,8 @@ const DepositSyndicate: React.FC = () => {
   const [clubWideErrors, setClubWideErrors] = useState("");
   const [imageSRC, setImageSRC] = useState("");
   const [isTextRed, setIsTextRed] = useState(false);
+  const [depositFailed, setDepositFailed] = useState<boolean>(false);
+  const [showDepositProcessingModal, toggleDepositProcessingModal] = useModal();
 
   // DEFINITIONS
   const { syndicateAddress } = router.query;
@@ -195,7 +197,15 @@ const DepositSyndicate: React.FC = () => {
         amount,
       });
     } catch (error) {
+      const { code } = error;
       setSubmitting(false);
+      setSuccessfulDeposit(false);
+
+      // we don't want to dismiss the modal when the user rejects
+      // the transaction.
+      if (code !== 4001) {
+        setDepositFailed(true);
+      }
 
       // Amplitude logger: Deposit funds Error
       amplitudeLogger(ERROR_DEPOSIT, {
@@ -239,7 +249,6 @@ const DepositSyndicate: React.FC = () => {
   const { syndicateClubLogo, syndicateClubSymbol } = useSyndicateClubInfo();
 
   const [depositAmount, setDepositAmount] = useState("");
-  const [showDepositProcessingModal, toggleDepositProcessingModal] = useModal();
 
   const handleSetMax = () => {
     if (erc20Balance) {
@@ -422,6 +431,7 @@ const DepositSyndicate: React.FC = () => {
     setSuccessfulDeposit(false);
     setSubmitting(false);
     setMetamaskConfirmPending(false);
+    setDepositFailed(false);
     if (showDepositProcessingModal) {
       toggleDepositProcessingModal();
     }
@@ -588,8 +598,8 @@ const DepositSyndicate: React.FC = () => {
                   +syndicate?.depositTotal === +syndicate?.depositTotalMax
                 }
               />
-              {((!submitting && !successfulDeposit) ||
-                showDepositProcessingModal) && (
+              {((!submitting && !successfulDeposit && !depositFailed) ||
+                (showDepositProcessingModal && !depositFailed)) && (
                 <div className="h-fit-content rounded-2-half pt-6 px-8 pb-8">
                   <p className="h4 uppercase text-sm">
                     {parseInt(memberTotalDeposits) > 0
@@ -757,63 +767,89 @@ const DepositSyndicate: React.FC = () => {
                   )}
                 </div>
               )}
-              {successfulDeposit && !showDepositProcessingModal && (
-                <div className="h-fit-content text-center relative">
-                  <div className="absolute right-0 top-0">
-                    <button
-                      type="button"
-                      className={`text-gray-syn7 rounded-md hover:text-gray-syn7 focus:outline-none p-2 w-12 h-12 focus:ring-0`}
-                      onClick={() => closeSuccessModal()}
-                    >
-                      <span className="sr-only">Close</span>
-                      <Image
-                        src="/images/close-gray-5.svg"
-                        width="12"
-                        height="12"
-                        alt="close"
-                      />
-                    </button>
-                  </div>
-                  <div className="pt-10 pb-8 flex justify-center items-center w-full">
-                    <img
-                      className="h-16 w-16"
-                      src="/images/syndicateStatusIcons/checkCircleGreen.svg"
-                      alt="checkmark"
-                    />
-                  </div>
-                  <div className="pb-6 px-8">
-                    <span className="text-base text-gray-syn4 text-center">{`You now have 1,000.00 synFWB, which represents a 2.34% ownership share of this syndicate.`}</span>
-                  </div>
-                  <CopyToClipboard
-                    text={`${
-                      isDev
-                        ? "https://rinkeby.etherscan.io"
-                        : "https://etherscan.io"
-                    }/tx/${transactionHash}`}
-                    onCopy={handleOnCopy}
-                  >
-                    <div className="relative pb-8  w-full">
-                      <div className="flex justify-center items-center cursor-pointer hover:opacity-80">
-                        <span className="text-base mr-2 text-blue">
-                          Copy transaction link
-                        </span>
+              {((successfulDeposit || depositFailed) &&
+                !showDepositProcessingModal) ||
+                (showDepositProcessingModal && depositFailed && (
+                  <div className="h-fit-content text-center relative">
+                    <div className="absolute right-0 top-0">
+                      <button
+                        type="button"
+                        className={`text-gray-syn7 rounded-md hover:text-gray-syn7 focus:outline-none p-2 w-12 h-12 focus:ring-0`}
+                        onClick={() => closeSuccessModal()}
+                      >
+                        <span className="sr-only">Close</span>
                         <Image
-                          src="/images/actionIcons/copy-clipboard-blue.svg"
-                          height={12}
-                          width={12}
+                          src="/images/close-gray-5.svg"
+                          width="12"
+                          height="12"
+                          alt="close"
+                        />
+                      </button>
+                    </div>
+                    <div className="pt-10 flex justify-center items-center w-full">
+                      <img
+                        className="h-16 w-16"
+                        src={
+                          successfulDeposit
+                            ? "/images/syndicateStatusIcons/checkCircleGreen.svg"
+                            : "/images/syndicateStatusIcons/transactionFailed.svg"
+                        }
+                        alt="checkmark"
+                      />
+                    </div>
+                    <div
+                      className={`pt-8 ${successfulDeposit ? "pb-4" : "pb-6"}`}
+                    >
+                      <span className="text-2xl">
+                        {successfulDeposit
+                          ? `Deposited ${depositAmount} USDC`
+                          : `Deposit failed`}
+                      </span>
+                    </div>
+                    {successfulDeposit ? (
+                      <>
+                        <div className="pb-6 px-8">
+                          <span className="text-base text-gray-syn4 text-center">{`You now have 1,000.00 synFWB, which represents a 2.34% ownership share of this syndicate.`}</span>
+                        </div>
+                        <CopyToClipboard
+                          text={`${
+                            isDev
+                              ? "https://rinkeby.etherscan.io"
+                              : "https://etherscan.io"
+                          }/tx/${transactionHash}`}
+                          onCopy={handleOnCopy}
+                        >
+                          <div className="relative pb-8  w-full">
+                            <div className="flex justify-center items-center cursor-pointer hover:opacity-80">
+                              <span className="text-base mr-2 text-blue">
+                                Copy transaction link
+                              </span>
+                              <Image
+                                src="/images/actionIcons/copy-clipboard-blue.svg"
+                                height={12}
+                                width={12}
+                              />
+                            </div>
+                            {copied && (
+                              <div className="absolute w-full flex justify-center items-center">
+                                <span className="text-xs text-gray-syn4 font-whyte-light">
+                                  Link copied
+                                </span>
+                              </div>
+                            )}
+                          </div>
+                        </CopyToClipboard>
+                      </>
+                    ) : (
+                      <div className="pb-8 text-base flex justify-center items-center hover:opacity-80">
+                        <EtherscanLink
+                          etherscanInfo={transactionHash}
+                          type="transaction"
                         />
                       </div>
-                      {copied && (
-                        <div className="absolute w-full flex justify-center items-center">
-                          <span className="text-xs text-gray-syn4 font-whyte-light">
-                            Link copied
-                          </span>
-                        </div>
-                      )}
-                    </div>
-                  </CopyToClipboard>
-                </div>
-              )}
+                    )}
+                  </div>
+                ))}
             </div>
           )}
         </FadeIn>
@@ -843,7 +879,7 @@ const DepositSyndicate: React.FC = () => {
       <Modal
         {...{
           modalStyle: successfulDeposit ? ModalStyle.SUCCESS : ModalStyle.DARK,
-          show: showDepositProcessingModal,
+          show: showDepositProcessingModal && !depositFailed,
           closeModal: () => {
             toggleDepositProcessingModal();
           },
