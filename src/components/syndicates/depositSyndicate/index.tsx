@@ -606,7 +606,7 @@ const DepositSyndicate: React.FC = () => {
                       ? "deposit more"
                       : "join this syndicate"}
                   </p>
-                  <div className="flex justify-between items-center mt-5 h-20">
+                  <div className="flex justify-between items-center mt-5 h-20 flex-wrap">
                     <div className="flex items-center">
                       <AutoGrowInputField
                         value={depositAmount}
@@ -665,14 +665,12 @@ const DepositSyndicate: React.FC = () => {
                       </div>
                     )}
                   </div>
-
                   {/* Error state for insufficientBalance */}
                   {insufficientBalance && (
                     <span className="text-red-semantic text-sm">
                       Insufficient balance.
                     </span>
                   )}
-
                   {/* Show token approval text  */}
                   {+currentMemberAllowance >= +depositAmount && (
                     <div className="flex items-center w-full justify-center mt-6">
