@@ -20,14 +20,9 @@ import { useRouter } from "next/router";
 import React, { FC, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getWeiAmount, isUnlimited } from "src/utils/conversions";
+import { closeModals } from "@/state/modals";
 
-interface Props {
-  showChangeSettings: boolean;
-  setShowChangeSettings: (status: boolean) => void;
-}
-
-const ChangeSyndicateSettings: FC<Props> = (props) => {
-  const { showChangeSettings, setShowChangeSettings } = props;
+const ChangeSyndicateSettings: FC = () => {
   const [submitting, setSubmitting] = useState(false);
 
   const router = useRouter();
@@ -63,6 +58,10 @@ const ChangeSyndicateSettings: FC<Props> = (props) => {
   const { syndicate } = useSelector(
     (state: RootState) => state.syndicatesReducer,
   );
+
+  const {
+    modalsReducer: { isChangeSyndicateSettinsModalOpen },
+  } = useSelector((state: RootState) => state);
 
   const {
     allowlistEnabled,
@@ -577,90 +576,10 @@ const ChangeSyndicateSettings: FC<Props> = (props) => {
       <Modal
         {...{
           title: "Change Syndicate Settings",
-          closeModal: () => setShowChangeSettings(false),
+          closeModal: () => dispatch(closeModals()),
           customWidth: "md:w-3/5 w-full",
         }}
-        show={showChangeSettings}
-      >
-        <div className="mx-2 mb-8">
-          <div className="text-gray-400 py-6 text-center mb-6">
-            Because each individual piece of data is stored on-chain, you are
-            only able to edit one field at a time. Each triggering a separate
-            wallet transaction.
-          </div>
-
-          <div className="border w-full border-gray-93 bg-gray-99 rounded-xl p-4 py-8">
-            {/* enable allowlist toggle */}
-            {syndicate.open && (
-              <div className="my-6">
-                <Toggle
-                  {...{
-                    enabled: toggle,
-                    toggleEnabled: () => {
-                      setToggle(!toggle);
-                      handleAllowlistSubmission(!toggle);
-                    },
-                    tooltip: "",
-                    label: "Enable Allowlist:",
-                  }}
-                />
-              </div>
-            )}
-
-            {changeSettingsOptions.map(
-              (
-                {
-                  label,
-                  defaults,
-                  currency,
-                  percent,
-                  validations,
-                  handler,
-                  address,
-                  type,
-                  step,
-                  placeholder,
-                  handleChange,
-                  display,
-                },
-                index,
-              ) => {
-                return (
-                  <div key={index}>
-                    <EditableInput
-                      handleShowInputIndex={async () =>
-                        setShowInputIndex(index)
-                      }
-                      address={address}
-                      type={type}
-                      handler={handler}
-                      index={index}
-                      showInputIndex={showInputIndex}
-                      label={label}
-                      defaults={defaults}
-                      currency={currency}
-                      percent={percent}
-                      validations={validations}
-                      depositERC20TokenSymbol={depositERC20TokenSymbol}
-                      step={step}
-                      placeholder={placeholder}
-                      handleChange={handleChange}
-                      display={display}
-                    />
-                  </div>
-                );
-              },
-            )}
-          </div>
-        </div>
-      </Modal>
-      <Modal
-        {...{
-          title: "Change Syndicate Settings",
-          show: false,
-          closeModal: () => setShowChangeSettings(false),
-          customWidth: "md:w-3/5 w-full",
-        }}
+        show={isChangeSyndicateSettinsModalOpen}
       >
         <div className="mx-2 mb-8">
           <div className="text-gray-400 py-6 text-center mb-6">

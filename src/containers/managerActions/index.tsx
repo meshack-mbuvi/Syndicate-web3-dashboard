@@ -41,6 +41,7 @@ import MoreManagerActionCard from "./moreManagerActionCard";
 import PreApproveDepositor from "./preApproveDepositor";
 import RequestSocialProfile from "./requestSocialProfile";
 import ManagerSetAllowance from "./setAllowances";
+import { openChangeSyndicateSettingsModal } from "@/state/modals";
 
 const ManagerActions = (): JSX.Element => {
   const {
@@ -160,7 +161,9 @@ const ManagerActions = (): JSX.Element => {
     setShowFinalState(false);
     await dispatch(
       getSyndicateByAddress({
-        syndicateAddress: web3.utils.toChecksumAddress(syndicateAddress as string),
+        syndicateAddress: web3.utils.toChecksumAddress(
+          syndicateAddress as string,
+        ),
         ...syndicateContracts,
       }),
     );
@@ -472,7 +475,7 @@ const ManagerActions = (): JSX.Element => {
               />
             }
             text={"Syndicate settings"}
-            onClickHandler={() => setShowChangeSettings(true)}
+            onClickHandler={() => dispatch(openChangeSyndicateSettingsModal())}
           />
         </div>
 
@@ -486,10 +489,6 @@ const ManagerActions = (): JSX.Element => {
           />
         ) : modifyCapTable ? (
           <ModifySyndicateCapTable />
-        ) : showChangeSettings ? (
-          <ChangeSyndicateSettings
-            {...{ showChangeSettings, setShowChangeSettings }}
-          />
         ) : showSyndicateNotModifiable ? (
           <ErrorModal
             {...{
@@ -504,6 +503,7 @@ const ManagerActions = (): JSX.Element => {
         ) : modifyMemberDistribution ? (
           <ModifyMemberDistributions />
         ) : null}
+        <ChangeSyndicateSettings />
       </div>
 
       {/* Approve addresses to allowlist */}

@@ -19,6 +19,7 @@ import { tokenDetailsReducer } from "./tokenAllowances";
 
 // @redux/toolkit migration
 import web3Reducer from "@/state/wallet/reducer";
+import Modals from "@/state/modals";
 import createInvestmentClubSliceReducer from "@/state/createInvestmentClub/slice";
 
 export const rootReducer = combineReducers({
@@ -38,6 +39,7 @@ export const rootReducer = combineReducers({
   allowlistReducer,
   closeDateAndTimeReducer,
   transferableReducer,
+  modalsReducer: Modals,
   createInvestmentClubSliceReducer,
 });
 
