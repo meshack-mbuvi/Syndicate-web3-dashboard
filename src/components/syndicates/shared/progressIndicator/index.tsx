@@ -33,7 +33,7 @@ export const ProgressIndicator = (props: IProgressIndicator): JSX.Element => {
   const currentDepositsPercentage = parseInt(depositsPercentage.toString());
 
   return (
-    <div className="pt-4 w-full xl:pb-14 pb-10 border-b-2 border-gray-9">
+    <div className="pt-1 w-full pb-14 mb-14 border-b-1 border-gray-steelGrey">
       {showSkeletonLoader ? (
         <SkeletonLoader height="9" width="full" borderRadius="rounded-md" />
       ) : (
@@ -46,7 +46,7 @@ export const ProgressIndicator = (props: IProgressIndicator): JSX.Element => {
           </div>
           <div className="flex justify-between mt-6">
             <div className="text-left">
-              <p className="text-sm text-gray-500 leading-loose">
+              <p className="text-base text-gray-lightManatee font-light pb-2">
                 Deposits
               </p>
               <div className="flex">
@@ -54,23 +54,23 @@ export const ProgressIndicator = (props: IProgressIndicator): JSX.Element => {
                   {floatedNumberWithCommas(depositTotal)}&nbsp;
                   {depositERC20TokenSymbol}
                 </p>
-                <p className="xl:text-2xl lg:text-xl text-sm text-gray-500 leading-loose ml-4">
+                <p className="xl:text-2xl lg:text-xl text-gray-lightManatee leading-loose ml-4 font-extralight">
                   {currentDepositsPercentage}%
                 </p>
               </div>
-              <p className="text-sm text-gray-500 leading-loose">
+              <p className="text-sm leading-4 text-gray-lightManatee font-light pt-1">
                 Opened {format(new Date(parseInt(openDate) * 1000), "MMM dd")}
               </p>
             </div>
             <div className="text-right">
-              <p className="text-sm text-gray-500 leading-loose">
+              <p className="text-base text-gray-lightManatee font-light pb-2">
                 Remaining
               </p>
-              <p className="xl:text-2xl lg:text-xl text-sm text-white leading-loose">
+              <p className="xl:text-2xl lg:text-xl text-base text-white">
                 {floatedNumberWithCommas(depositTotalMax)}&nbsp;
                 {depositERC20TokenSymbol}
               </p>
-              <p className="text-sm text-gray-500 leading-loose">
+              <p className="text-sm leading-4 text-gray-lightManatee font-light pt-1">
                 {closeDatePassed ? "Closed " : "Closing in "}
                 {getCountDownDays(closeDate)}
                 {closeDatePassed ? " ago" : ""}

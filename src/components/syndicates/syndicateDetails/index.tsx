@@ -1,5 +1,4 @@
 import React, { useEffect, useState, FC } from "react";
-import { SkeletonLoader } from "@/components/skeletonLoader";
 import { RootState } from "@/redux/store";
 import { isUnlimited } from "@/utils/conversions";
 import { epochTimeToDateFormat, getCountDownDays } from "@/utils/dateUtils";
@@ -14,13 +13,7 @@ import { setSyndicateDetails } from "src/redux/actions/syndicateDetails";
 import { formatAddress } from "src/utils/formatAddress";
 import GradientAvatar from "../portfolioAndDiscover/portfolio/GradientAvatar";
 import { DetailsCard } from "../shared";
-import {
-  closeDateToolTip,
-  createdDateToolTip,
-  distributionShareToSyndicateLeadToolTip,
-  distributionShareToSyndicateProtocolToolTip,
-} from "../shared/Constants";
-import PermissionCard from "../shared/PermissionsCard";
+import { createdDateToolTip, closeDateToolTip } from "../shared/Constants";
 import { ProgressIndicator } from "../shared/progressIndicator";
 
 // we should have an isChildVisible prop here of type boolean
@@ -45,8 +38,6 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
       isEditable?: boolean;
     }>
   >([]);
-
-  const [showMore, setShowMore] = useState(false);
 
   // state to handle copying of the syndicate address to clipboard.
   const [showAddressCopyState, setShowAddressCopyState] =
@@ -109,31 +100,56 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
 
   useEffect(() => {
     if (syndicate) {
-      const {
-        distributionShareToSyndicateProtocol,
-        managerDistributionShareBasisPoints,
-        numMembersCurrent,
-        numMembersMax,
-        epochTime,
-      } = syndicate;
+      const { numMembersCurrent, numMembersMax, epochTime } = syndicate;
 
       const { closeDate, createdDate } = epochTime;
+
+      const memberDetails = {
+        header: `Members ${!isUnlimited(numMembersMax) ? "(max)" : ""}`,
+        content: (
+          <div className="text-base">
+            {floatedNumberWithCommas(numMembersCurrent)}&nbsp;
+            {!isUnlimited(numMembersMax) ? (
+              <span className="text-base text-gray-lightManatee">
+                ({floatedNumberWithCommas(numMembersMax)})
+              </span>
+            ) : null}
+          </div>
+        ),
+        tooltip: `This is the amount of unique member addresses who have deposited funds into this syndicate. ${
+          !isUnlimited(numMembersMax)
+            ? `A maximum of ${floatedNumberWithCommas(
+                numMembersMax,
+              )} members are allowed for this syndicate.`
+            : ""
+        }`,
+      };
 
       setDetails([
         ...(syndicate?.open && !syndicate?.isCloseDatePast
           ? [
+              memberDetails,
               {
-                header: "Created on",
-                content: `${epochTimeToDateFormat(
-                  new Date(parseInt(createdDate) * 1000),
-                  "LLL dd yyyy, p zzz",
-                )}`,
+                header: "Created",
+                content: (
+                  <div className="text-base">
+                    {epochTimeToDateFormat(
+                      new Date(parseInt(createdDate) * 1000),
+                      "LLL dd yyyy",
+                    )}
+                  </div>
+                ),
                 tooltip: createdDateToolTip,
+              },
+              {
+                header: "Closing in",
+                content: getCountDownDays(closeDate),
+                tooltip: closeDateToolTip,
               },
             ]
           : [
               {
-                header: "Created on",
+                header: "Date created",
                 content: `${epochTimeToDateFormat(
                   new Date(parseInt(createdDate) * 1000),
                   "LLL dd yyyy, p zzz",
@@ -141,49 +157,18 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
                 tooltip: createdDateToolTip,
               },
             ]),
-        ...(syndicate?.open && !syndicate?.isCloseDatePast
+        ...(!syndicate?.open || syndicate?.isCloseDatePast
           ? [
               {
-                header: `Members ${!isUnlimited(numMembersMax) ? "(max)" : ""}`,
-                content: (
-                  <div>
-                    {floatedNumberWithCommas(numMembersCurrent)}&nbsp;
-                    {!isUnlimited(numMembersMax) ? (
-                      <span className="text-gray-500">
-                        ({floatedNumberWithCommas(numMembersMax)})
-                      </span>
-                    ) : null}
-                  </div>
-                ),
-                tooltip: `This is the amount of unique member addresses who have deposited funds into this syndicate. ${
-                  !isUnlimited(numMembersMax)
-                    ? `A maximum of ${floatedNumberWithCommas(
-                        numMembersMax,
-                      )} members are allowed for this syndicate.`
-                    : ""
-                }`,
-              },
-            ]
-          : [
-              {
-                header: "Closed on",
+                header: "Date closed",
                 content: `${epochTimeToDateFormat(
                   new Date(parseInt(closeDate) * 1000),
                   "LLL dd yyyy, p zzz",
                 )}`,
                 tooltip: closeDateToolTip,
               },
-            ]),
-        {
-          header: "Lead distribution share",
-          content: `${managerDistributionShareBasisPoints}%`,
-          tooltip: distributionShareToSyndicateLeadToolTip,
-        },
-        {
-          header: "Protocol distribution share",
-          content: `${distributionShareToSyndicateProtocol}%`,
-          tooltip: distributionShareToSyndicateProtocolToolTip,
-        },
+            ]
+          : []),
       ]);
     }
   }, [syndicate, syndicateDetails]);
@@ -241,8 +226,6 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
     );
   }, [syndicateAddress]);
 
-  const showSkeletonLoader = !syndicate;
-
   return (
     <div className="flex flex-col relative">
       <div className="h-fit-content rounded-custom">
@@ -260,7 +243,7 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
               <div className="flex-shrink main-title flex-wrap break-all lg:mr-6 sm:mr-3 mr-4">
                 <div>
                   <div className="xl:text-4.5xl lg:text-2xl md:text-xl sm:text-4xl text-lg font-normal">
-                    <span className="text-gray-500">0x</span>
+                    <span className="text-gray-lightManatee">0x</span>
                     {formattedSyndicateAddress.slice(2)}
                   </div>
                 </div>
@@ -323,23 +306,31 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
             />
           </div>
         ) : (
-          <div className="pt-20 w-full pb-8 border-b-2 border-gray-9">
+          <div className="pt-14 w-full pb-14">
             <div
               className={`grid xl:grid-cols-3 lg:grid-cols-2 grid-cols-2 xl:gap-4 gap-2 gap-y-8 justify-between`}
             >
               <div className="text-left">
-                <p className="text-base text-gray-500 leading-loose font-light">
+                <p className="text-base text-gray-lightManatee font-light">
                   Total deposits
                 </p>
                 <div className="flex">
-                  <p className="text-white leading-loose xl:text-2xl lg:text-xl text-base">
+                  <p className="text-white xl:text-2xl lg:text-xl text-base">
                     {floatedNumberWithCommas(depositTotal)}&nbsp;
                     {depositERC20TokenSymbol}
                   </p>
                 </div>
               </div>
               <div className="text-left">
-                <p className="text-base text-gray-500 leading-loose font-light">
+                <p className="text-base text-gray-lightManatee font-light">
+                  Club tokens minted
+                </p>
+                <div className="xl:text-2xl lg:text-xl text-base">
+                  {/* use zero since we don't have minted tokens value */}0
+                </div>
+              </div>
+              <div className="text-left">
+                <p className="text-base text-gray-lightManatee font-light">
                   Members{" "}
                   {syndicate?.open &&
                   !syndicate?.isCloseDatePast &&
@@ -352,31 +343,18 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
                   {syndicate?.open &&
                   !syndicate?.isCloseDatePast &&
                   !isUnlimited(syndicate?.numMembersMax) ? (
-                    <span className="text-gray-500">
+                    <span className="text-gray-lightManatee">
                       ({floatedNumberWithCommas(syndicate?.numMembersMax)})
                     </span>
                   ) : null}
                 </div>
               </div>
-              {syndicate?.open && !syndicate?.isCloseDatePast ? (
-                <div className="text-left">
-                  <p className="text-base text-gray-500 leading-loose font-light">
-                    Closing in
-                  </p>
-                  <p className="xl:text-2xl text-xl text-white leading-loose">
-                    {getCountDownDays(syndicate?.epochTime?.closeDate)}
-                  </p>
-                </div>
-              ) : null}
             </div>
           </div>
         )}
 
         {/* This component should be shown when we have details about user deposits */}
-        <div
-          className="overflow-hidden mt-6 relative"
-          style={!showMore ? { height: "200px" } : null}
-        >
+        <div className="overflow-hidden relative">
           <DetailsCard
             {...{
               title: "Details",
@@ -385,41 +363,9 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
               syndicate,
             }}
             customStyles={"w-full pt-4"}
-            customInnerWidth="w-full grid xl:grid-cols-2 lg:grid-cols-2 grid-cols-2 xl:gap-4 gap-2 gap-y-8"
-          />
-          <PermissionCard
-            allowlistEnabled={syndicate?.allowlistEnabled}
-            modifiable={syndicate?.modifiable}
-            transferable={syndicate?.tranferable}
-            className="pb-8 mt-6"
-            showSkeletonLoader={showSkeletonLoader}
+            customInnerWidth={`w-full grid xl:grid-cols-3 lg:grid-cols-2 grid-cols-2 xl:gap-4 gap-2 gap-y-8`}
           />
         </div>
-        {/* Gradient overlay */}
-        {!showMore ? (
-          <div
-            className="show-more-overlay w-full bottom-6 absolute"
-            style={{ height: "140px" }}
-          />
-        ) : null}
-        <button onClick={() => setShowMore(!showMore)} className="mt-5">
-          {showSkeletonLoader ? (
-            <SkeletonLoader height="4" width="full" borderRadius="rounded-md" />
-          ) : (
-            <div className="flex h-4 items-center text-base">
-              <img
-                src={
-                  !showMore ? "/images/show-eye.svg" : "/images/hide-eye.svg"
-                }
-                alt="transferable"
-                className="h-4 w-4"
-              />
-              <p className="ml-2 text-blue">
-                {!showMore ? "Show more details" : "Show less details"}
-              </p>
-            </div>
-          )}
-        </button>
       </div>
       {/* Syndicate details */}
       {/* details rendered on small devices only. render right column components on the left column in small devices */}
