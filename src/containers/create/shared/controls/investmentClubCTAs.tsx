@@ -13,7 +13,7 @@ const InvestmentClubCTAs: React.FC = () => {
   } = useCreateInvestmentClubContext();
 
   return (
-    <div className={`bg-black w-full flex-none flex flex-col`}>
+    <div className={`bg-black flex-none flex flex-col`}>
       <div
         className={`relative flex items-center h-20 ${
           firstStep ? "justify-end" : "justify-between"

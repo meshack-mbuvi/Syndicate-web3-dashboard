@@ -1,4 +1,10 @@
-import React, { createContext, useContext, useState } from "react";
+import React, {
+  createContext,
+  useContext,
+  useState,
+  Dispatch,
+  SetStateAction,
+} from "react";
 import steps from "./steps";
 
 type CreateInvestmentClubProviderProps = {
@@ -12,6 +18,7 @@ type CreateInvestmentClubProviderProps = {
   backBtnDisabled: boolean;
   nextBtnDisabled: boolean;
   handleCreateInvestmentClub: () => void;
+  setNextBtnDisabled: Dispatch<SetStateAction<boolean>>;
 };
 
 const CreateInvestmentClubContext = createContext<
@@ -36,6 +43,7 @@ const CreateInvestmentClubProvider: React.FC = ({ children }) => {
   };
 
   const handleBack = () => {
+    setNextBtnDisabled(false);
     setCurrentStep((prev) => prev - 1);
   };
 
@@ -46,17 +54,18 @@ const CreateInvestmentClubProvider: React.FC = ({ children }) => {
   return (
     <CreateInvestmentClubContext.Provider
       value={{
-          handleNext,
-          handleBack,
-          currentStep,
-          steps,
-          reviewStep,
-          lastStep,
-          firstStep,
-          backBtnDisabled,
-          nextBtnDisabled,
-          handleCreateInvestmentClub
-        }}
+        handleNext,
+        handleBack,
+        currentStep,
+        steps,
+        reviewStep,
+        lastStep,
+        firstStep,
+        backBtnDisabled,
+        nextBtnDisabled,
+        handleCreateInvestmentClub,
+        setNextBtnDisabled,
+      }}
     >
       {children}
     </CreateInvestmentClubContext.Provider>

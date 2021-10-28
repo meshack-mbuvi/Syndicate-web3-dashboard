@@ -2,7 +2,7 @@ import React from "react";
 
 export const MainContent: React.FC = (props) => {
   return (
-    <div id="center-column" className={`px-12 pt-3 w-1/2 h-full flex flex-col`}>
+    <div id="center-column" className={`pt-3 h-full flex flex-col`}>
       <div
         className={`flex flex-col relative px-4 pb-4 no-scroll-bar overflow-y-scroll h-full pl-2`}
       >

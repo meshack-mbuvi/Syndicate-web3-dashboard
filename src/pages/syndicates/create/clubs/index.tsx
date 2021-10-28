@@ -26,32 +26,30 @@ const CreateInvestmentClub: React.FC = () => {
         {!account ? (
           <WalletNotConnected />
         ) : (
-          <>
-            <div
-              className={
-                "container mx-auto flex fixed top-0 h-screen justify-between w-full " +
-                `${showBanner ? "pt-36" : "pt-24"}`
-              }
-            >
-              <div className="flex-1 w-1/6m" />
-
-              <MainContent>
-                <div className="h4 text-center pb-16">Create an investment club</div>
-                <div className="flex-grow flex overflow-y-auto justify-between h-full no-scroll-bar">
-                  <div className="flex flex-col w-full">
-                    {steps[currentStep].component}
-                    <InvestmentClubCTAs />
-                  </div>
-                </div>
-                <div className="flex flex-row items-center space-x-4 border-t-1 border-gray-steelGrey h-20 text-gray-lightManatee">
-                  <div className="w-5 h-5" ><img className="w-5 h-5" src="/images/lightbulb.svg" alt="" /></div>
-                  <div>Changing these settings in the future will require a signed transaction with gas.</div>
-                </div>
-              </MainContent>
-
-              <div className="flex-1 w-1/6m" />
+          <div className="container mx-auto w-full">
+            <div className="h4 text-center pb-16">
+              Create an investment club
             </div>
-          </>
+            <div
+              className=
+                "flex justify-center w-full "
+              
+            >
+              <div className="flex-1 w-1/4" />
+              <div className="w-3/4">
+                <MainContent>
+                  <div className="flex-grow flex overflow-y-auto justify-between h-full no-scroll-bar">
+                    <div className="flex flex-col w-full">
+                      {steps[currentStep].component}
+                      <div className="w-2/3">
+                        <InvestmentClubCTAs />
+                      </div>
+                    </div>
+                  </div>
+                </MainContent>
+              </div>
+            </div>
+          </div>
         )}
       </>
     </Layout>

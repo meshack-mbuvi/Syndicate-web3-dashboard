@@ -4,6 +4,7 @@ export interface InitialState {
   tokenCap: string;
   mintEndTime: string;
   membersCount: number;
+  
 }
 
 export const initialState: InitialState = {
@@ -12,4 +13,5 @@ export const initialState: InitialState = {
   tokenCap: "", // How much are you raising?
   mintEndTime: "", // How long will deposits be accepted?
   membersCount: 0, // How many members can join?
+  
 }

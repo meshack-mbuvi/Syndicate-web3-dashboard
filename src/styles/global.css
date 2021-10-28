@@ -3,7 +3,6 @@
 @tailwind utilities;
 
 @layer base {
-
   /* Inktrap */
 
   @font-face {
@@ -34,7 +33,6 @@
       format("woff");
   }
 
-
   /* Whyte */
 
   @font-face {
@@ -62,7 +60,6 @@
     src: url(/fonts/Whyte/ABCWhyte-Bold.woff) format("woff");
   }
 
-
   body {
     background-color: #000000;
     font-family: "Whyte Regular", "Helvetica", "Arial", "sans-serif";
@@ -88,7 +85,7 @@
   }
 
   .font-thin {
-    font-family: "Whyte Thin Trial"
+    font-family: "Whyte Thin Trial";
   }
 
   .font-light {
@@ -204,6 +201,10 @@
 
   .dark-input-field {
     @apply py-3 px-4 rounded-md bg-black text-white border border-gray-24 focus:border-blue hover:border-white hover:border-opacity-70;
+  }
+
+  .dark-input-field-advanced {
+    @apply p-4 rounded-l-md bg-black text-white border border-gray-24 focus:border-blue hover:border-white hover:border-opacity-70;
   }
 
   .dark-input-field::placeholder {
