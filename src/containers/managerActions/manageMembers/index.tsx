@@ -101,7 +101,7 @@ const ManageMembers = (): JSX.Element => {
 
       dispatch(
         updateMemberWithdrawalDetails({
-          syndicateAddress: syndicate.syndicateAddress,
+          syndicateAddress: syndicate?.syndicateAddress,
           distributionTokens: syndicateDistributionTokens,
           memberAddresses,
         }),
@@ -113,7 +113,7 @@ const ManageMembers = (): JSX.Element => {
       );
       dispatch(
         updateMemberActivityDetails({
-          syndicateAddress: syndicate.syndicateAddress,
+          syndicateAddress: syndicate?.syndicateAddress,
           distributionTokens: syndicateDistributionTokens
             ? syndicateDistributionTokens
             : [],
@@ -619,7 +619,7 @@ const ManageMembers = (): JSX.Element => {
             <SyndicateMembersTable
               columns={columns}
               data={tableData}
-              distributing={syndicate.distributing}
+              distributing={syndicate?.distributing}
               filterAddressOnChangeHandler={filterAddressOnChangeHandler}
               searchAddress={filteredAddress}
               showApproveModal={showApproveModal}

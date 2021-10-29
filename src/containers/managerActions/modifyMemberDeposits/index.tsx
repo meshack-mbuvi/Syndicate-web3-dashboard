@@ -77,7 +77,7 @@ const ModifyMemberDeposit = (): JSX.Element => {
 
       dispatch(
         updateMemberWithdrawalDetails({
-          syndicateAddress: syndicate.syndicateAddress,
+          syndicateAddress: syndicate?.syndicateAddress,
           distributionTokens: syndicateDistributionTokens,
           memberAddresses,
         }),
@@ -89,7 +89,7 @@ const ModifyMemberDeposit = (): JSX.Element => {
       );
       dispatch(
         updateMemberActivityDetails({
-          syndicateAddress: syndicate.syndicateAddress,
+          syndicateAddress: syndicate?.syndicateAddress,
           distributionTokens: syndicateDistributionTokens
             ? syndicateDistributionTokens
             : [],

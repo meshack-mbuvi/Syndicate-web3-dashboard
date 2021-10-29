@@ -137,7 +137,7 @@ const SyndicateMembersTable = ({
         }
 
         <div className="flex divide-x divide-gray-steelGrey space-x-4">
-          {syndicate.allowlistEnabled && syndicate.open && (
+          {syndicate?.allowlistEnabled && syndicate?.open && (
             <div className="pl-4">
               <button
                 className={`flex flex-shrink font-whyte text-right text-blue text-base justify-center items-center hover:opacity-80`}
