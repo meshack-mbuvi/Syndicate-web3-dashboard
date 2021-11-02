@@ -248,7 +248,7 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
                   </div>
                 </div>
               </div>
-              <CopyToClipboard text={syndicateAddress}>
+              <CopyToClipboard text={syndicateAddress as string}>
                 <button
                   className="flex items-center relative w-8 h-8 mr-2 sm:mr-4 rounded-full cursor-pointer lg:hover:bg-gray-9 lg:active:bg-white lg:active:bg-opacity-20"
                   onClick={updateAddressCopyState}

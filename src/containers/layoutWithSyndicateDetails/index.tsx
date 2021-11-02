@@ -1,3 +1,11 @@
+import React, { useEffect, useRef, useState, FC } from "react";
+import { faExclamationTriangle } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { isEmpty } from "lodash";
+import { useRouter } from "next/router";
+import { CopyToClipboard } from "react-copy-to-clipboard";
+import { useDispatch, useSelector } from "react-redux";
+
 import { amplitudeLogger, Flow } from "@/components/amplitude";
 import { CLICK_CREATE_A_SYNDICATE } from "@/components/amplitude/eventNames";
 import ErrorBoundary from "@/components/errorBoundary";
@@ -20,21 +28,16 @@ import { showWalletModal } from "@/state/wallet/actions";
 import { getTokenIcon } from "@/TokensList";
 import { getWeiAmount, onlyUnique } from "@/utils/conversions";
 import { formatAddress } from "@/utils/formatAddress";
-import { faExclamationTriangle } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { getCoinFromContractAddress } from "functions/src/utils/ethereum";
-import { isEmpty } from "lodash";
-import { useRouter } from "next/router";
-import React, { useEffect, useRef, useState } from "react";
-import { CopyToClipboard } from "react-copy-to-clipboard";
-import { useDispatch, useSelector } from "react-redux";
-import Button from "src/components/buttons";
+import Button from "@/components/buttons";
 import { syndicateActionConstants } from "src/components/syndicates/shared/Constants";
-import Head from "src/components/syndicates/shared/HeaderTitle";
-import SyndicateDetails from "src/components/syndicates/syndicateDetails";
+import Head from "@/components/syndicates/shared/HeaderTitle";
+import SyndicateDetails from "@/components/syndicates/syndicateDetails";
+import TabsButton from "@/components/TabsButton";
 import ManageMembers from "../managerActions/manageMembers";
+import { assetsFilterOptions } from "./constants";
 
-const LayoutWithSyndicateDetails = ({ children }): JSX.Element => {
+const LayoutWithSyndicateDetails: FC = ({ children }) => {
   // Retrieve state
   const {
     syndicatesReducer: { syndicate, syndicateFound, syndicateAddressIsValid },
@@ -747,7 +750,7 @@ const LayoutWithSyndicateDetails = ({ children }): JSX.Element => {
                   <div className="col-span-12">
                     {activeTab == "assets" && (
                       <div className="my-10">
-                        Assets component rendered here
+                        <TabsButton options={assetsFilterOptions} value="all" />
                       </div>
                     )}
                     {activeTab == "members" && syndicateMembers?.length > 0 && (
