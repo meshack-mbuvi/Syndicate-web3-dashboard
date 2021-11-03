@@ -60,3 +60,8 @@ export const numberInputRemoveCommas = (
   // remove commas from big numbers before we set state
   return value.replace(/,/g, "");
 };
+
+export const truncateDecimals = (inputNumber: number, digits: number): number => {
+  const fact = 10 ** digits;
+  return Math.floor(inputNumber * fact) / fact;
+};

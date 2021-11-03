@@ -28,7 +28,7 @@ import {
 } from "@/state/erc20token/slice";
 import { getWeiAmount } from "@/utils/conversions";
 import { isDev } from "@/utils/environment";
-import { floatedNumberWithCommas } from "@/utils/formattedNumbers";
+import { floatedNumberWithCommas, truncateDecimals } from "@/utils/formattedNumbers";
 import { CheckIcon } from "@heroicons/react/solid";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
@@ -245,8 +245,20 @@ const DepositSyndicate: React.FC = () => {
 
   const { syndicateClubLogo } = useSyndicateClubInfo();
 
+  const [disableMax, setDisableMax] = useState(false);
+
+  const _erc20Balance = truncateDecimals(+erc20Balance?.toString(), 2);
+
+  useEffect(() => {
+    if (+depositAmount === _erc20Balance) {
+      setDisableMax(true);
+    } else {
+      setDisableMax(false);
+    }
+  }, [_erc20Balance, depositAmount, erc20Balance])
+
   const handleSetMax = () => {
-    if (erc20Balance) {
+    if (erc20Balance && +depositAmount !== _erc20Balance) {
       setDepositAmount(erc20Balance.toString());
     }
   };
@@ -652,12 +664,14 @@ const DepositSyndicate: React.FC = () => {
                         </div>
                       ) : null}
                       {!clubWideErrors && !depositError ? (
-                        <button
-                          className="ml-4 px-4 py-1.5 text-gray-syn4 bg-gray-syn7 rounded-full"
-                          onClick={handleSetMax}
-                        >
-                          Max
-                        </button>
+                        <div>
+                          <button
+                            className={`px-4 py-1.5 text-gray-syn4 bg-gray-syn7 rounded-full ${disableMax ? "cursor-not-allowed" : ""}`}
+                            onClick={handleSetMax}
+                          >
+                            Max
+                          </button>
+                        </div>
                       ) : null}
                     </div>
                     {!clubWideErrors ? (

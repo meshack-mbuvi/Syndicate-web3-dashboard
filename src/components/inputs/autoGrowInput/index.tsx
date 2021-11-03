@@ -1,4 +1,3 @@
-import useWindowSize from "@/hooks/useWindowSize";
 import { useEffect, useRef, useState } from "react";
 import NumberFormat, { NumberFormatProps } from "react-number-format";
 
@@ -16,8 +15,28 @@ const AutoGrowInputField: React.FC<AutoGrowInputField> = ({
   ...rest
 }) => {
   const [width, setWidth] = useState(50);
+  const [extraWidth, setExtraWidth] = useState(0);
   const [dynamicFontSize, setDynamicFontSize] = useState(48);
   const span = useRef<HTMLSpanElement>(null);
+
+  // Use canvas to determine text width
+  const getTextWidth = (text, font) => {
+    const canvas = document.createElement("canvas");
+    const context = canvas.getContext("2d");
+    context.font = font || getComputedStyle(document.body).font;
+    return context.measureText(text).width;
+  };
+
+  useEffect(() => {
+    const textWidth = getTextWidth(
+      value || placeholder,
+      `${dynamicFontSize}px 'ABC Whyte Regular', Helvetica, Arial, sans-serif`,
+    );
+
+    const diff = dynamicFontSize < 37 ? 5 : 12;
+    setExtraWidth((span.current.offsetWidth - (textWidth - diff)) - 16); // Only God knows whats happening here
+
+  }, [dynamicFontSize, placeholder, setWidth, value, width])
 
   useEffect(() => {
     // add 16 for 1rem spacing
@@ -39,7 +58,6 @@ const AutoGrowInputField: React.FC<AutoGrowInputField> = ({
     });
   }, [dynamicFontSize, width, value]);
 
-  const { width: windowWidth } = useWindowSize();
   return (
     <div className="h-full text-5xl">
       <span
@@ -57,8 +75,7 @@ const AutoGrowInputField: React.FC<AutoGrowInputField> = ({
           hasError ? "text-red-semantic" : ""
         } ${value ? "text-white" : "text-gray-syn4"}`}
         style={{
-          width,
-          maxWidth: windowWidth < 1200 && windowWidth < 860 ? 120 : 140,
+          width: width - extraWidth,
           fontSize: dynamicFontSize,
         }}
         placeholder={placeholder}
