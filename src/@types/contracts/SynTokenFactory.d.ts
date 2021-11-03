@@ -51,7 +51,18 @@ type AllEvents =
   | Unpaused;
 
 export interface SynTokenFactoryInstance extends Truffle.ContractInstance {
+  createdBy(
+    arg0: string,
+    arg1: number | BN | string,
+    txDetails?: Truffle.TransactionDetails
+  ): Promise<string>;
+
   createdCount(txDetails?: Truffle.TransactionDetails): Promise<BN>;
+
+  creatorOf(
+    arg0: string,
+    txDetails?: Truffle.TransactionDetails
+  ): Promise<string>;
 
   getSyndicateTreasuryAddress(
     txDetails?: Truffle.TransactionDetails
@@ -117,6 +128,11 @@ export interface SynTokenFactoryInstance extends Truffle.ContractInstance {
     ): Promise<number>;
   };
 
+  tokenAddresses(
+    arg0: number | BN | string,
+    txDetails?: Truffle.TransactionDetails
+  ): Promise<string>;
+
   tokenCreationFee(txDetails?: Truffle.TransactionDetails): Promise<BN>;
 
   transferOwnership: {
@@ -147,7 +163,18 @@ export interface SynTokenFactoryInstance extends Truffle.ContractInstance {
   };
 
   methods: {
+    createdBy(
+      arg0: string,
+      arg1: number | BN | string,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<string>;
+
     createdCount(txDetails?: Truffle.TransactionDetails): Promise<BN>;
+
+    creatorOf(
+      arg0: string,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<string>;
 
     getSyndicateTreasuryAddress(
       txDetails?: Truffle.TransactionDetails
@@ -212,6 +239,11 @@ export interface SynTokenFactoryInstance extends Truffle.ContractInstance {
         txDetails?: Truffle.TransactionDetails
       ): Promise<number>;
     };
+
+    tokenAddresses(
+      arg0: number | BN | string,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<string>;
 
     tokenCreationFee(txDetails?: Truffle.TransactionDetails): Promise<BN>;
 

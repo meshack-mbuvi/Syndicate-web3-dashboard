@@ -1,22 +1,17 @@
 import React from "react";
 
 interface Props {
-  distributing: boolean;
   depositsEnabled: boolean;
   depositExceedTotal?: boolean;
 }
 
 const StatusBadge = (props: Props): JSX.Element => {
-  const { distributing, depositsEnabled, depositExceedTotal } = props;
+  const { depositsEnabled, depositExceedTotal } = props;
 
   let badgeBackgroundColor = "bg-blue-darker";
   let badgeIcon = "depositIcon.svg";
   let titleText = "Open to deposits";
-  if (distributing) {
-    badgeBackgroundColor = "bg-green-darker";
-    badgeIcon = "distributeIcon.svg";
-    titleText = "Distributing";
-  } else if (!depositsEnabled && !distributing) {
+  if (!depositsEnabled) {
     badgeBackgroundColor = "bg-green-dark";
     badgeIcon = "active.svg";
     titleText = "Active";
@@ -28,9 +23,9 @@ const StatusBadge = (props: Props): JSX.Element => {
   return (
     <div className="h-fit-content rounded-3xl bg-gray-syn8">
       <div
-        className={`h-20 border-b-2 border-black w-full px-6 py-4 rounded-2xl ${badgeBackgroundColor} flex flex-shrink-0 justify-between items-center`}
+        className={`h-20 ring ring-black w-full px-8 py-4 rounded-2xl ${badgeBackgroundColor} flex flex-shrink-0 justify-between items-center`}
       >
-        <div className="flex items-center">
+        <div className="flex items-center space-x-4">
           <div className="w-6 h-6">
             <img
               src={`/images/syndicateStatusIcons/${badgeIcon}`}
@@ -38,7 +33,7 @@ const StatusBadge = (props: Props): JSX.Element => {
               style={{ height: "100%", width: "100%" }}
             />
           </div>
-          <p className="text-sm sm:text-lg leading-snug ml-3">{titleText}</p>
+          <p className="text-xl leading-snug">{titleText}</p>
         </div>
       </div>
     </div>

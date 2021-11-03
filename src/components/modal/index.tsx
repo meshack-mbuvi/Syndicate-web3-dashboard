@@ -151,21 +151,21 @@ export const Modal = (props: ModalProps): JSX.Element => {
               </div>
 
               {/* close button */}
-              <div className="absolute p-4 top-0 right-0">
+              <div className="absolute top-8 right-10">
                 {/* close button at the right top of the modal */}
                 {showCloseButton ? (
                   <button
                     type="button"
                     className={`text-gray-syn7 ${
                       closeButtonClassName && closeButtonClassName
-                    } rounded-md hover:text-gray-syn7 focus:outline-none p-2 w-12 h-12 focus:ring-0`}
+                    } rounded-md hover:text-gray-syn7 focus:outline-none focus:ring-0`}
                     onClick={() => closeModal()}
                   >
                     <span className="sr-only">Close</span>
                     <Image
                       src="/images/close-gray-5.svg"
-                      width="20"
-                      height="20"
+                      width="16"
+                      height="16"
                       alt="close"
                     />
                   </button>

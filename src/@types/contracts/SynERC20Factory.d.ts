@@ -10,44 +10,6 @@ export interface SynERC20FactoryContract
   "new"(meta?: Truffle.TransactionDetails): Promise<SynERC20FactoryInstance>;
 }
 
-export interface ERC20TokenCreatedDefault {
-  name: "ERC20TokenCreatedDefault";
-  args: {
-    tokenAddress: string;
-    name: string;
-    symbol: string;
-    0: string;
-    1: string;
-    2: string;
-  };
-}
-
-export interface ERC20TokenCreatedWithParams {
-  name: "ERC20TokenCreatedWithParams";
-  args: {
-    tokenAddress: string;
-    name: string;
-    symbol: string;
-    mintCurrencyAddress: string;
-    mintPrice: BN;
-    mintProceedsRecipient: string;
-    tokenCap: BN;
-    mintStartTime: BN;
-    mintEndTime: BN;
-    mintEnabled: boolean;
-    0: string;
-    1: string;
-    2: string;
-    3: string;
-    4: BN;
-    5: string;
-    6: BN;
-    7: BN;
-    8: BN;
-    9: boolean;
-  };
-}
-
 export interface OwnershipTransferred {
   name: "OwnershipTransferred";
   args: {
@@ -63,6 +25,20 @@ export interface Paused {
   args: {
     account: string;
     0: string;
+  };
+}
+
+export interface SynERC20Created {
+  name: "SynERC20Created";
+  args: {
+    owner: string;
+    tokenAddress: string;
+    name: string;
+    symbol: string;
+    0: string;
+    1: string;
+    2: string;
+    3: string;
   };
 }
 
@@ -83,15 +59,80 @@ export interface Unpaused {
 }
 
 type AllEvents =
-  | ERC20TokenCreatedDefault
-  | ERC20TokenCreatedWithParams
   | OwnershipTransferred
   | Paused
+  | SynERC20Created
   | SyndicateTreasuryAddressUpdated
   | Unpaused;
 
 export interface SynERC20FactoryInstance extends Truffle.ContractInstance {
+  createERC20: {
+    (
+      owner_: string,
+      name_: string,
+      symbol_: string,
+      mintCurrencyAddress_: string,
+      mintPrice_: number | BN | string,
+      mintProceedsRecipient_: string,
+      tokenCap_: number | BN | string,
+      mintStartTime_: number | BN | string,
+      mintEndTime_: number | BN | string,
+      mintEnabled_: boolean,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<Truffle.TransactionResponse<AllEvents>>;
+    call(
+      owner_: string,
+      name_: string,
+      symbol_: string,
+      mintCurrencyAddress_: string,
+      mintPrice_: number | BN | string,
+      mintProceedsRecipient_: string,
+      tokenCap_: number | BN | string,
+      mintStartTime_: number | BN | string,
+      mintEndTime_: number | BN | string,
+      mintEnabled_: boolean,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<string>;
+    sendTransaction(
+      owner_: string,
+      name_: string,
+      symbol_: string,
+      mintCurrencyAddress_: string,
+      mintPrice_: number | BN | string,
+      mintProceedsRecipient_: string,
+      tokenCap_: number | BN | string,
+      mintStartTime_: number | BN | string,
+      mintEndTime_: number | BN | string,
+      mintEnabled_: boolean,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<string>;
+    estimateGas(
+      owner_: string,
+      name_: string,
+      symbol_: string,
+      mintCurrencyAddress_: string,
+      mintPrice_: number | BN | string,
+      mintProceedsRecipient_: string,
+      tokenCap_: number | BN | string,
+      mintStartTime_: number | BN | string,
+      mintEndTime_: number | BN | string,
+      mintEnabled_: boolean,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<number>;
+  };
+
+  createdBy(
+    arg0: string,
+    arg1: number | BN | string,
+    txDetails?: Truffle.TransactionDetails
+  ): Promise<string>;
+
   createdCount(txDetails?: Truffle.TransactionDetails): Promise<BN>;
+
+  creatorOf(
+    arg0: string,
+    txDetails?: Truffle.TransactionDetails
+  ): Promise<string>;
 
   getSyndicateTreasuryAddress(
     txDetails?: Truffle.TransactionDetails
@@ -192,7 +233,73 @@ export interface SynERC20FactoryInstance extends Truffle.ContractInstance {
   };
 
   methods: {
+    createERC20: {
+      (
+        owner_: string,
+        name_: string,
+        symbol_: string,
+        mintCurrencyAddress_: string,
+        mintPrice_: number | BN | string,
+        mintProceedsRecipient_: string,
+        tokenCap_: number | BN | string,
+        mintStartTime_: number | BN | string,
+        mintEndTime_: number | BN | string,
+        mintEnabled_: boolean,
+        txDetails?: Truffle.TransactionDetails
+      ): Promise<Truffle.TransactionResponse<AllEvents>>;
+      call(
+        owner_: string,
+        name_: string,
+        symbol_: string,
+        mintCurrencyAddress_: string,
+        mintPrice_: number | BN | string,
+        mintProceedsRecipient_: string,
+        tokenCap_: number | BN | string,
+        mintStartTime_: number | BN | string,
+        mintEndTime_: number | BN | string,
+        mintEnabled_: boolean,
+        txDetails?: Truffle.TransactionDetails
+      ): Promise<string>;
+      sendTransaction(
+        owner_: string,
+        name_: string,
+        symbol_: string,
+        mintCurrencyAddress_: string,
+        mintPrice_: number | BN | string,
+        mintProceedsRecipient_: string,
+        tokenCap_: number | BN | string,
+        mintStartTime_: number | BN | string,
+        mintEndTime_: number | BN | string,
+        mintEnabled_: boolean,
+        txDetails?: Truffle.TransactionDetails
+      ): Promise<string>;
+      estimateGas(
+        owner_: string,
+        name_: string,
+        symbol_: string,
+        mintCurrencyAddress_: string,
+        mintPrice_: number | BN | string,
+        mintProceedsRecipient_: string,
+        tokenCap_: number | BN | string,
+        mintStartTime_: number | BN | string,
+        mintEndTime_: number | BN | string,
+        mintEnabled_: boolean,
+        txDetails?: Truffle.TransactionDetails
+      ): Promise<number>;
+    };
+
+    createdBy(
+      arg0: string,
+      arg1: number | BN | string,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<string>;
+
     createdCount(txDetails?: Truffle.TransactionDetails): Promise<BN>;
+
+    creatorOf(
+      arg0: string,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<string>;
 
     getSyndicateTreasuryAddress(
       txDetails?: Truffle.TransactionDetails
@@ -290,80 +397,6 @@ export interface SynERC20FactoryInstance extends Truffle.ContractInstance {
       call(txDetails?: Truffle.TransactionDetails): Promise<void>;
       sendTransaction(txDetails?: Truffle.TransactionDetails): Promise<string>;
       estimateGas(txDetails?: Truffle.TransactionDetails): Promise<number>;
-    };
-
-    "createERC20(string,string)": {
-      (
-        name_: string,
-        symbol_: string,
-        txDetails?: Truffle.TransactionDetails
-      ): Promise<Truffle.TransactionResponse<AllEvents>>;
-      call(
-        name_: string,
-        symbol_: string,
-        txDetails?: Truffle.TransactionDetails
-      ): Promise<string>;
-      sendTransaction(
-        name_: string,
-        symbol_: string,
-        txDetails?: Truffle.TransactionDetails
-      ): Promise<string>;
-      estimateGas(
-        name_: string,
-        symbol_: string,
-        txDetails?: Truffle.TransactionDetails
-      ): Promise<number>;
-    };
-
-    "createERC20(string,string,address,uint256,address,uint256,uint256,uint256,bool)": {
-      (
-        name_: string,
-        symbol_: string,
-        mintCurrencyAddress_: string,
-        mintPrice_: number | BN | string,
-        mintProceedsRecipient_: string,
-        tokenCap_: number | BN | string,
-        mintStartTime_: number | BN | string,
-        mintEndTime_: number | BN | string,
-        mintEnabled_: boolean,
-        txDetails?: Truffle.TransactionDetails
-      ): Promise<Truffle.TransactionResponse<AllEvents>>;
-      call(
-        name_: string,
-        symbol_: string,
-        mintCurrencyAddress_: string,
-        mintPrice_: number | BN | string,
-        mintProceedsRecipient_: string,
-        tokenCap_: number | BN | string,
-        mintStartTime_: number | BN | string,
-        mintEndTime_: number | BN | string,
-        mintEnabled_: boolean,
-        txDetails?: Truffle.TransactionDetails
-      ): Promise<string>;
-      sendTransaction(
-        name_: string,
-        symbol_: string,
-        mintCurrencyAddress_: string,
-        mintPrice_: number | BN | string,
-        mintProceedsRecipient_: string,
-        tokenCap_: number | BN | string,
-        mintStartTime_: number | BN | string,
-        mintEndTime_: number | BN | string,
-        mintEnabled_: boolean,
-        txDetails?: Truffle.TransactionDetails
-      ): Promise<string>;
-      estimateGas(
-        name_: string,
-        symbol_: string,
-        mintCurrencyAddress_: string,
-        mintPrice_: number | BN | string,
-        mintProceedsRecipient_: string,
-        tokenCap_: number | BN | string,
-        mintStartTime_: number | BN | string,
-        mintEndTime_: number | BN | string,
-        mintEnabled_: boolean,
-        txDetails?: Truffle.TransactionDetails
-      ): Promise<number>;
     };
   };
 

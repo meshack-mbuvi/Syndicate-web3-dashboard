@@ -28,8 +28,8 @@ import { setShowModifyMemberDistributions } from "@/redux/actions/manageActions"
 import { getSyndicateByAddress } from "@/redux/actions/syndicates";
 import { RootState } from "@/redux/store";
 import abi from "human-standard-token-abi";
-import { useRouter } from "next/router";
 import Image from "next/image";
+import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import ChangeSyndicateSettings from "./changeSyndicateSettings";
@@ -135,7 +135,6 @@ const ManagerActions = (): JSX.Element => {
   const depositERC20Address = syndicate?.depositERC20Address;
   const tokenDecimals = syndicate?.tokenDecimals;
   const depositERC20TokenSymbol = syndicate?.depositERC20TokenSymbol;
-  const distributing = syndicate?.distributing;
   const depositsEnabled = syndicate?.depositsEnabled;
   const [depositTokenContract, setDepositTokenContract] = useState<any>(null);
   const [showManagerSetAllowances, setShowManagerSetAllowances] =
@@ -272,10 +271,7 @@ const ManagerActions = (): JSX.Element => {
       <div className="w-full mt-4 sm:mt-0">
         <FadeIn>
           <div className="h-fit-content rounded-2-half bg-gray-syn8">
-            <StatusBadge
-              distributing={distributing}
-              depositsEnabled={depositsEnabled}
-            />
+            <StatusBadge depositsEnabled={depositsEnabled} />
             <div className="h-fit-content rounded-2-half mt-6 mb-2 md:mt-0 pb-8">
               {syndicateDistributionTokens && syndicate?.distributing ? (
                 <div className="px-6 border-b-1 border-gray-700 pb-6 font-light w-full tracking-wide">

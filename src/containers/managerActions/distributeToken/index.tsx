@@ -50,7 +50,7 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Button from "src/components/buttons";
 import { DeleteIcon } from "src/components/shared/Icons";
-import { getGnosisTxnInfo } from "src/syndicateClosedEndFundLogic/shared/gnosisTransactionInfo"
+import { getGnosisTxnInfo } from "@/ClubERC20Factory/shared/gnosisTransactionInfo"
 import { AbiItem } from "web3-utils";
 
 interface Props {

@@ -14,7 +14,7 @@ import {
   storeEthereumNetwork,
   storeCurrentEthNetwork,
 } from "@/state/wallet/actions";
-import { getSyndicateContracts } from "@/syndicateClosedEndFundLogic";
+import { getSyndicateContracts } from "@/ClubERC20Factory";
 import { parse, stringify } from "flatted";
 import React, {
   createContext,

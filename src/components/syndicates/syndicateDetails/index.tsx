@@ -1,10 +1,11 @@
-import React, { useEffect, useState, FC } from "react";
+import { SkeletonLoader } from "@/components/skeletonLoader";
 import { RootState } from "@/redux/store";
 import { isUnlimited } from "@/utils/conversions";
 import { epochTimeToDateFormat, getCountDownDays } from "@/utils/dateUtils";
 import { floatedNumberWithCommas } from "@/utils/formattedNumbers";
 import abi from "human-standard-token-abi";
 import { useRouter } from "next/router";
+import React, { FC, useEffect, useState } from "react";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import { useDispatch, useSelector } from "react-redux";
 import { EtherscanLink } from "src/components/syndicates/shared/EtherscanLink";
@@ -13,19 +14,32 @@ import { setSyndicateDetails } from "src/redux/actions/syndicateDetails";
 import { formatAddress } from "src/utils/formatAddress";
 import GradientAvatar from "../portfolioAndDiscover/portfolio/GradientAvatar";
 import { DetailsCard } from "../shared";
-import { createdDateToolTip, closeDateToolTip } from "../shared/Constants";
+import { closeDateToolTip, createdDateToolTip } from "../shared/Constants";
 import { ProgressIndicator } from "../shared/progressIndicator";
 
 // we should have an isChildVisible prop here of type boolean
 const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
   const {
     initializeContractsReducer: { syndicateContracts },
-    syndicateDetailsReducer: { syndicateDetails },
+    erc20TokenSliceReducer: { erc20Token },
     web3Reducer: {
       web3: { web3 },
     },
     syndicatesReducer: { syndicate },
   } = useSelector((state: RootState) => state);
+
+  const {
+    loading,
+    tokenDecimals: decimals,
+    maxTotalDeposits,
+    depositToken,
+    totalDeposits,
+    memberCount,
+    depositsEnabled,
+    startTime,
+    endTime,
+    maxMemberCount,
+  } = erc20Token;
 
   const dispatch = useDispatch();
 
@@ -44,6 +58,7 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
     useState<boolean>(false);
   const [showDepositLinkCopyState, setShowDepositLinkCopyState] =
     useState<boolean>(false);
+  const [showMore, setShowMore] = useState(false);
 
   // state to handle details about the current deposit ERC20 token
   const [, setDepositTokenContract] = useState<any>("");
@@ -51,7 +66,7 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
   // states to show general syndicate details
   const [, setSyndicateCumulativeDetails] = useState([
     {
-      header: "Total Deposits",
+      header: "Deposits",
       subText: "",
     },
   ]);
@@ -59,17 +74,9 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
   // get syndicate address from the url
   const { syndicateAddress } = router.query;
 
-  const tokenDecimals = syndicate?.tokenDecimals;
-  const depositTotalMax = syndicate?.depositTotalMax;
-  const depositERC20TokenSymbol = syndicate?.depositERC20TokenSymbol;
-  const depositERC20Address = syndicate?.depositERC20Address;
-
-  // Handle syndicate progress bar
-  const depositTotal = syndicate?.depositTotal;
-  let depositsMaxIsUnlimited = false;
-
-  // checking if depositsMax is unlimited.
-  depositsMaxIsUnlimited = isUnlimited(depositTotalMax);
+  const tokenDecimals = decimals;
+  const depositERC20TokenSymbol = "USDC"; // TOD: Update to support multiple tokens
+  const depositERC20Address = depositToken;
 
   // get and set current token details
   useEffect(() => {
@@ -83,95 +90,75 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
 
   // set syndicate cumulative values
   useEffect(() => {
-    if (syndicate) {
-      const { depositTotal, numMembersCurrent } = syndicate;
+    if (erc20Token) {
+      const { totalDeposits, memberCount } = erc20Token;
       setSyndicateCumulativeDetails([
         {
-          header: "Total Deposits",
+          header: "Deposits",
           subText: `${floatedNumberWithCommas(
-            depositTotal,
-          )} ${depositERC20TokenSymbol} (${numMembersCurrent} ${
-            parseInt(numMembersCurrent) === 1 ? "depositor" : "depositors"
+            totalDeposits,
+          )} ${depositERC20TokenSymbol} (${memberCount} ${
+            memberCount === 1 ? "depositor" : "depositors"
           })`,
         },
       ]);
     }
-  }, [syndicate, syndicateDetails]);
+  }, [erc20Token]);
 
   useEffect(() => {
-    if (syndicate) {
-      const { numMembersCurrent, numMembersMax, epochTime } = syndicate;
-
-      const { closeDate, createdDate } = epochTime;
-
-      const memberDetails = {
-        header: `Members ${!isUnlimited(numMembersMax) ? "(max)" : ""}`,
-        content: (
-          <div className="text-base">
-            {floatedNumberWithCommas(numMembersCurrent)}&nbsp;
-            {!isUnlimited(numMembersMax) ? (
-              <span className="text-base text-gray-lightManatee">
-                ({floatedNumberWithCommas(numMembersMax)})
-              </span>
-            ) : null}
-          </div>
-        ),
-        tooltip: `This is the amount of unique member addresses who have deposited funds into this syndicate. ${
-          !isUnlimited(numMembersMax)
-            ? `A maximum of ${floatedNumberWithCommas(
-                numMembersMax,
-              )} members are allowed for this syndicate.`
-            : ""
-        }`,
-      };
-
+    if (erc20Token) {
       setDetails([
-        ...(syndicate?.open && !syndicate?.isCloseDatePast
+        ...(depositsEnabled
           ? [
-              memberDetails,
               {
-                header: "Created",
-                content: (
-                  <div className="text-base">
-                    {epochTimeToDateFormat(
-                      new Date(parseInt(createdDate) * 1000),
-                      "LLL dd yyyy",
-                    )}
-                  </div>
-                ),
+                header: "Created on",
+                content: `${epochTimeToDateFormat(
+                  new Date(startTime * 1000),
+                  "LLL dd yyyy, p zzz",
+                )}`,
                 tooltip: createdDateToolTip,
-              },
-              {
-                header: "Closing in",
-                content: getCountDownDays(closeDate),
-                tooltip: closeDateToolTip,
               },
             ]
           : [
               {
-                header: "Date created",
+                header: "Closed on",
                 content: `${epochTimeToDateFormat(
-                  new Date(parseInt(createdDate) * 1000),
+                  new Date(endTime * 1000),
                   "LLL dd yyyy, p zzz",
                 )}`,
                 tooltip: createdDateToolTip,
               },
             ]),
-        ...(!syndicate?.open || syndicate?.isCloseDatePast
+        ...(depositsEnabled
           ? [
               {
-                header: "Date closed",
+                header: `Members`,
+                content: <div>{memberCount}</div>,
+                tooltip: `This is the amount of unique member addresses who have deposited funds into this syndicate. ${
+                  !isUnlimited(maxMemberCount)
+                    ? `A maximum of ${maxMemberCount} members are allowed for this syndicate.`
+                    : ""
+                }`,
+              },
+              {
+                header: "Closing in",
+                content: getCountDownDays(endTime.toString()),
+                tooltip: closeDateToolTip,
+              },
+            ]
+          : [
+              {
+                header: "Closed on",
                 content: `${epochTimeToDateFormat(
-                  new Date(parseInt(closeDate) * 1000),
+                  new Date(startTime * 1000),
                   "LLL dd yyyy, p zzz",
                 )}`,
                 tooltip: closeDateToolTip,
               },
-            ]
-          : []),
+            ]),
       ]);
     }
-  }, [syndicate, syndicateDetails]);
+  }, [JSON.stringify(erc20Token)]);
 
   /**
    * Extracts some syndicate data and dispatches an action to set the details
@@ -293,79 +280,115 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
           </div>
         </div>
 
-        {!depositsMaxIsUnlimited &&
-        syndicate?.open &&
-        !syndicate?.isCloseDatePast ? (
+        {depositsEnabled ? (
           <div className="h-fit-content flex w-full justify-start mt-16">
             <ProgressIndicator
-              depositTotal={depositTotal}
-              depositTotalMax={depositTotalMax}
+              totalDeposits={totalDeposits}
+              depositTotalMax={maxTotalDeposits.toString()}
               depositERC20TokenSymbol={depositERC20TokenSymbol}
-              openDate={syndicate?.epochTime.createdDate}
-              closeDate={syndicate?.epochTime.closeDate}
+              openDate={startTime.toString()}
+              closeDate={endTime.toString()}
+              loading={loading}
             />
           </div>
         ) : (
-          <div className="pt-14 w-full pb-14">
-            <div
-              className={`grid xl:grid-cols-3 lg:grid-cols-2 grid-cols-2 xl:gap-4 gap-2 gap-y-8 justify-between`}
-            >
-              <div className="text-left">
-                <p className="text-base text-gray-lightManatee font-light">
-                  Total deposits
-                </p>
-                <div className="flex">
-                  <p className="text-white xl:text-2xl lg:text-xl text-base">
-                    {floatedNumberWithCommas(depositTotal)}&nbsp;
-                    {depositERC20TokenSymbol}
+          <div className="pt-20 w-full pb-8 border-b-2 border-gray-9">
+            {loading ? (
+              <SkeletonLoader
+                height="9"
+                width="full"
+                borderRadius="rounded-md"
+              />
+            ) : (
+              <div
+                className={`grid xl:grid-cols-3 lg:grid-cols-2 grid-cols-2 
+              xl:gap-4 gap-2 gap-y-8 justify-between`}
+              >
+                <div className="text-left">
+                  <p className="text-base text-gray-500 leading-loose font-light">
+                    Deposits
                   </p>
+                  <div className="flex">
+                    <p
+                      className="text-white leading-loose xl:text-2xl 
+                  lg:text-xl text-base"
+                    >
+                      {totalDeposits}&nbsp;
+                      {depositERC20TokenSymbol}
+                    </p>
+                  </div>
+                </div>
+                <div className="text-left">
+                  <p className="text-base text-gray-500 leading-loose font-light">
+                    Members
+                  </p>
+                  <div className="xl:text-2xl lg:text-xl text-base">
+                    {memberCount}&nbsp;
+                    {erc20Token.depositsEnabled &&
+                    !(erc20Token.memberCount === maxMemberCount) ? (
+                      <span className="text-gray-500">({maxMemberCount})</span>
+                    ) : null}
+                  </div>
                 </div>
               </div>
-              <div className="text-left">
-                <p className="text-base text-gray-lightManatee font-light">
-                  Club tokens minted
-                </p>
-                <div className="xl:text-2xl lg:text-xl text-base">
-                  {/* use zero since we don't have minted tokens value */}0
-                </div>
-              </div>
-              <div className="text-left">
-                <p className="text-base text-gray-lightManatee font-light">
-                  Members{" "}
-                  {syndicate?.open &&
-                  !syndicate?.isCloseDatePast &&
-                  !isUnlimited(syndicate?.numMembersMax)
-                    ? "(max)"
-                    : ""}
-                </p>
-                <div className="xl:text-2xl lg:text-xl text-base">
-                  {floatedNumberWithCommas(syndicate?.numMembersCurrent)}&nbsp;
-                  {syndicate?.open &&
-                  !syndicate?.isCloseDatePast &&
-                  !isUnlimited(syndicate?.numMembersMax) ? (
-                    <span className="text-gray-lightManatee">
-                      ({floatedNumberWithCommas(syndicate?.numMembersMax)})
-                    </span>
-                  ) : null}
-                </div>
-              </div>
-            </div>
+            )}
           </div>
         )}
 
         {/* This component should be shown when we have details about user deposits */}
-        <div className="overflow-hidden relative">
-          <DetailsCard
-            {...{
-              title: "Details",
-              sections: details,
-              syndicateDetails: true,
-              syndicate,
-            }}
-            customStyles={"w-full pt-4"}
-            customInnerWidth={`w-full grid xl:grid-cols-3 lg:grid-cols-2 grid-cols-2 xl:gap-4 gap-2 gap-y-8`}
-          />
+        <div
+          className="overflow-hidden mt-6 relative"
+          style={!showMore ? { height: "200px" } : null}
+        >
+          {loading ? (
+            <SkeletonLoader height="9" width="full" borderRadius="rounded-md" />
+          ) : (
+            <DetailsCard
+              {...{
+                title: "Details",
+                sections: details,
+                syndicateDetails: true,
+                syndicate,
+              }}
+              customStyles={"w-full pt-4"}
+              customInnerWidth="w-full grid xl:grid-cols-3 lg:grid-cols-3 
+            grid-cols-3 xl:gap-8 gap-6s gap-y-8"
+            />
+          )}
+
+          {/* <PermissionCard
+            allowlistEnabled={syndicate?.allowlistEnabled}
+            modifiable={syndicate?.modifiable}
+            transferable={syndicate?.tranferable}
+            className="pb-8 mt-6"
+            showSkeletonLoader={loading}
+          /> */}
         </div>
+        {/* Gradient overlay */}
+        {!showMore ? (
+          <div
+            className="show-more-overlay w-full bottom-6 absolute"
+            style={{ height: "140px" }}
+          />
+        ) : null}
+        <button onClick={() => setShowMore(!showMore)} className="mt-5">
+          {loading ? (
+            <SkeletonLoader height="4" width="full" borderRadius="rounded-md" />
+          ) : (
+            <div className="flex h-4 items-center text-base">
+              <img
+                src={
+                  !showMore ? "/images/show-eye.svg" : "/images/hide-eye.svg"
+                }
+                alt="transferable"
+                className="h-4 w-4"
+              />
+              <p className="ml-2 text-blue">
+                {!showMore ? "Show more details" : "Show less details"}
+              </p>
+            </div>
+          )}
+        </button>
       </div>
       {/* Syndicate details */}
       {/* details rendered on small devices only. render right column components on the left column in small devices */}

@@ -1,11 +1,16 @@
+import createInvestmentClubSliceReducer from "@/state/createInvestmentClub/slice";
+import erc20TokenSliceReducer from "@/state/erc20token/slice";
+import modalsReducer from "@/state/modals";
+// @redux/toolkit migration
+import web3Reducer from "@/state/wallet/reducer";
 import { combineReducers } from "redux";
 import {
-  syndicateOffChainDataReducer,
-  tokenAndDepositLimitReducer,
-  feesAndDistributionReducer,
-  modifiableReducer,
   allowlistReducer,
   closeDateAndTimeReducer,
+  feesAndDistributionReducer,
+  modifiableReducer,
+  syndicateOffChainDataReducer,
+  tokenAndDepositLimitReducer,
   transferableReducer,
 } from "./createSyndicate";
 import { loadingReducer } from "./helpers";
@@ -16,11 +21,6 @@ import { syndicateDetailsReducer } from "./syndicateDetails";
 import { syndicateMemberDetailsReducer } from "./syndicateMemberDetails";
 import { syndicatesReducer } from "./syndicates";
 import { tokenDetailsReducer } from "./tokenAllowances";
-
-// @redux/toolkit migration
-import web3Reducer from "@/state/wallet/reducer";
-import Modals from "@/state/modals";
-import createInvestmentClubSliceReducer from "@/state/createInvestmentClub/slice";
 
 export const rootReducer = combineReducers({
   web3Reducer,
@@ -39,8 +39,9 @@ export const rootReducer = combineReducers({
   allowlistReducer,
   closeDateAndTimeReducer,
   transferableReducer,
-  modalsReducer: Modals,
+  modalsReducer,
   createInvestmentClubSliceReducer,
+  erc20TokenSliceReducer,
 });
 
 export default rootReducer;

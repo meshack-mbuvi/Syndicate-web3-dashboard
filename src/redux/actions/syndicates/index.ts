@@ -8,6 +8,7 @@ import { ERC20TokenDetails } from "@/utils/ERC20Methods";
 import { isZeroAddress } from "@/utils/validators";
 import { web3 } from "@/utils/web3Utils";
 import { getCoinFromContractAddress } from "functions/src/utils/ethereum";
+import Web3 from "web3";
 import {
   ALL_SYNDICATES,
   FOUND_SYNDICATE_ADDRESS,
@@ -18,8 +19,6 @@ import {
   SYNDICATE_NOT_FOUND,
   UPDATE_SYNDICATE_DETAILS,
 } from "../types";
-
-import Web3 from "web3";
 
 interface SyndicateInfo {
   [address: string]: {
@@ -194,7 +193,6 @@ export const getSyndicateByAddress =
 
       // we could have a valid Ethereum address but no associated syndicate yet
       if (isZeroAddress(syndicate.managerCurrent) && isAddress) {
-        // TODO: handle add logic to show new card
         return dispatch({
           data: { syndicateAddressIsValid: true, syndicateFound: false },
           type: SYNDICATE_NOT_FOUND,

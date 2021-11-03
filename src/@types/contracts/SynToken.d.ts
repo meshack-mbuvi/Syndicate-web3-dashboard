@@ -33,6 +33,14 @@ export interface MemberLeft {
   };
 }
 
+export interface MemberTransferPermissionSet {
+  name: "MemberTransferPermissionSet";
+  args: {
+    memberTransferPermission: BN;
+    0: BN;
+  };
+}
+
 export interface MetadataUpdated {
   name: "MetadataUpdated";
   args: {
@@ -113,6 +121,7 @@ type AllEvents =
   | MaxMembersSet
   | MemberJoined
   | MemberLeft
+  | MemberTransferPermissionSet
   | MetadataUpdated
   | MintCurrencySet
   | MintDurationSet
@@ -331,10 +340,6 @@ export interface SynTokenInstance extends Truffle.ContractInstance {
 
   getMetadata(
     metadataKey: string,
-    txDetails?: Truffle.TransactionDetails
-  ): Promise<string>;
-
-  getSyndicateTreasuryAddress(
     txDetails?: Truffle.TransactionDetails
   ): Promise<string>;
 
@@ -645,10 +650,6 @@ export interface SynTokenInstance extends Truffle.ContractInstance {
 
     getMetadata(
       metadataKey: string,
-      txDetails?: Truffle.TransactionDetails
-    ): Promise<string>;
-
-    getSyndicateTreasuryAddress(
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
 

@@ -9,7 +9,7 @@ export const useERC20TokenBalance = (
   const [erc20Balance, setErc20Balance] = useState(0);
 
   useEffect(() => {
-    if (account) {
+    if (account && depositTokenContract._address) {
       depositTokenContract.methods
         .balanceOf(account.toString())
         .call({ from: account })

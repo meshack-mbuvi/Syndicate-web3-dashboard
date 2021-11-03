@@ -1,5 +1,5 @@
-import React, { useState, useRef } from "react";
 import Portal from "@/components/shared/Portal";
+import React, { useRef, useState } from "react";
 
 // Description of SectionCard props
 interface SectionCardProps {
@@ -20,13 +20,7 @@ interface SectionCardProps {
  * @returns
  */
 export const SectionCard = (props: SectionCardProps) => {
-  const {
-    header,
-    content,
-    tooltip,
-    infoIcon = true,
-    title = "My Stats",
-  } = props;
+  const { header, content, tooltip, infoIcon = true } = props;
   const greenSubtext =
     header === "Total Withdraws / Distributions To Date" ||
     header === "Total Distributions / Deposits";

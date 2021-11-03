@@ -1,55 +1,42 @@
-import React, { useEffect, useRef, useState, FC } from "react";
-import { faExclamationTriangle } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { isEmpty } from "lodash";
-import { useRouter } from "next/router";
-import { CopyToClipboard } from "react-copy-to-clipboard";
-import { useDispatch, useSelector } from "react-redux";
-
+import { ClubERC20Contract } from "@/ClubERC20Factory/clubERC20";
 import { amplitudeLogger, Flow } from "@/components/amplitude";
 import { CLICK_CREATE_A_SYNDICATE } from "@/components/amplitude/eventNames";
+import Button from "@/components/buttons";
 import ErrorBoundary from "@/components/errorBoundary";
 import Layout from "@/components/layout";
 import Footer from "@/components/navigation/footer";
 import OnboardingModal from "@/components/onboarding";
-import { Spinner } from "@/components/shared/spinner";
 import BackButton from "@/components/socialProfiles/backButton";
 import { EtherscanLink } from "@/components/syndicates/shared/EtherscanLink";
-import { checkAccountAllowance } from "@/helpers/approveAllowance";
-import { getSyndicateDepositorData } from "@/redux/actions/manageMembers";
-import { setSyndicateDistributionTokens } from "@/redux/actions/syndicateMemberDetails";
-import { getSyndicateByAddress } from "@/redux/actions/syndicates";
-import {
-  storeDepositTokenAllowance,
-  storeDistributionTokensDetails,
-} from "@/redux/actions/tokenAllowances";
-import { RootState } from "@/redux/store";
-import { showWalletModal } from "@/state/wallet/actions";
-import { getTokenIcon } from "@/TokensList";
-import { getWeiAmount, onlyUnique } from "@/utils/conversions";
-import { formatAddress } from "@/utils/formatAddress";
-import { getCoinFromContractAddress } from "functions/src/utils/ethereum";
-import Button from "@/components/buttons";
-import { syndicateActionConstants } from "src/components/syndicates/shared/Constants";
 import Head from "@/components/syndicates/shared/HeaderTitle";
 import SyndicateDetails from "@/components/syndicates/syndicateDetails";
 import TabsButton from "@/components/TabsButton";
+import { setERC20Token } from "@/helpers/erc20TokenDetails";
+import { RootState } from "@/redux/store";
+import { showWalletModal } from "@/state/wallet/actions";
+import { formatAddress } from "@/utils/formatAddress";
+import { faExclamationTriangle } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { isEmpty } from "lodash";
+import { useRouter } from "next/router";
+import React, { FC, useEffect, useRef, useState } from "react";
+import { CopyToClipboard } from "react-copy-to-clipboard";
+import { useDispatch, useSelector } from "react-redux";
+import { syndicateActionConstants } from "src/components/syndicates/shared/Constants";
 import ManageMembers from "../managerActions/manageMembers";
 import { assetsFilterOptions } from "./constants";
 
 const LayoutWithSyndicateDetails: FC = ({ children }) => {
   // Retrieve state
   const {
-    syndicatesReducer: { syndicate, syndicateFound, syndicateAddressIsValid },
-    initializeContractsReducer: { syndicateContracts },
+    syndicatesReducer: { syndicate, syndicateAddressIsValid },
     web3Reducer: {
       web3: { account, web3 },
     },
-    syndicateMemberDetailsReducer: { syndicateDistributionTokens },
-    loadingReducer: { submitting },
     manageMembersDetailsReducer: {
       syndicateManageMembers: { syndicateMembers },
     },
+    erc20TokenSliceReducer: { erc20Token },
   } = useSelector((state: RootState) => state);
 
   const [showCopyState, setShowCopyState] = useState(false);
@@ -104,241 +91,63 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
 
   const { syndicateAddress } = router.query;
 
+  const [clubERC20tokenContract, setClubERC20tokenContract] = useState(null);
+
+  useEffect(() => {
+    if (router.isReady && web3.utils.isAddress(syndicateAddress)) {
+      const clubERC20tokenContract = new ClubERC20Contract(
+        syndicateAddress as string,
+        web3,
+      );
+      setClubERC20tokenContract(clubERC20tokenContract);
+    }
+    return () => {
+      setClubERC20tokenContract(null);
+    };
+  }, [syndicateAddress, router.isReady, web3]);
+
+  useEffect(() => {
+    if (clubERC20tokenContract && account && router.isReady) {
+      dispatch(setERC20Token(clubERC20tokenContract, account));
+    }
+  }, [clubERC20tokenContract, account, router.isReady]);
+
   // format an account address in the format 0x3f6q9z52…54h2kjh51h5zfa
   const formattedSyndicateAddress3XLarge = formatAddress(
-    syndicateAddress,
+    erc20Token?.address,
     18,
     18,
   );
   const formattedSyndicateAddressXLarge = formatAddress(
-    syndicateAddress,
+    erc20Token?.address,
     10,
     10,
   );
-  const formattedSyndicateAddressLarge = formatAddress(syndicateAddress, 8, 8);
-  const formattedSyndicateAddressMedium = formatAddress(syndicateAddress, 6, 4);
+  const formattedSyndicateAddressLarge = formatAddress(
+    erc20Token?.address,
+    8,
+    8,
+  );
+  const formattedSyndicateAddressMedium = formatAddress(
+    erc20Token?.address,
+    6,
+    4,
+  );
   const formattedSyndicateAddressSmall = formatAddress(
-    syndicateAddress,
+    erc20Token?.address,
     10,
     14,
   );
-  const formattedSyndicateAddressMobile = formatAddress(syndicateAddress, 5, 8);
+  const formattedSyndicateAddressMobile = formatAddress(
+    erc20Token?.address,
+    5,
+    8,
+  );
 
   const [accountIsManager, setAccountIsManager] = useState<boolean>(false);
   const showOnboardingIfNeeded = router.pathname.endsWith("deposit");
 
-  // get events where distribution was set.
-  // we'll fetch distributionERC20s from here and check if the manager has set the correct
-  // allowance for all of them.
-  const getManagerDistributionTokensAllowances = async () => {
-    const addressOfSyndicate = web3.utils.toChecksumAddress(
-      syndicateAddress as string,
-    );
-
-    // get events where member invested in a syndicate.
-    const distributionEvents =
-      await syndicateContracts.DistributionLogicContract.getDistributionEvents(
-        "DistributionAdded",
-        { syndicateAddress: addressOfSyndicate },
-      );
-
-    if (distributionEvents.length > 0) {
-      // get all distributionERC20 tokens
-      const distributionERC20s = [];
-      const allowanceAndDistributionDetails = [];
-      const syndicateDistributionTokensArray = [];
-
-      for (let i = 0; i < distributionEvents.length; i++) {
-        const { distributionERC20Address } = distributionEvents[i].returnValues;
-        distributionERC20s.push(distributionERC20Address);
-      }
-      const uniqueERC20s = distributionERC20s.filter(onlyUnique);
-
-      // set up token contract to check manager allowance for the ERC20
-      for (let i = 0; i < uniqueERC20s.length; i++) {
-        const tokenAddress = uniqueERC20s[i];
-
-        const { decimals, symbol } = await getCoinFromContractAddress(
-          tokenAddress,
-        );
-
-        // get token properties
-        const tokenSymbol = symbol;
-        const tokenDecimals = decimals ? decimals : "18";
-
-        // get allowance set for token by the manager
-        const managerAddress = syndicate?.managerCurrent;
-
-        const tokenManagerAllowance = await checkAccountAllowance(
-          tokenAddress,
-          managerAddress,
-          syndicateContracts.DistributionLogicContract._address,
-        );
-
-        /**
-         * To find whether sufficient allowance is set, we need to compare total
-         * unclaimed distributions against current allowance for a given token
-         * address.
-         *
-         * Note: To get unclaimed distributions, we get the difference between
-         * total current distributions and total claimed distributions.
-         */
-        const tokenAllowance = getWeiAmount(
-          tokenManagerAllowance,
-          tokenDecimals,
-          false,
-        );
-
-        // get total distributions for the token
-        const totalCurrentDistributions =
-          await syndicateContracts.DistributionLogicContract.getDistributionTotal(
-            syndicateAddress,
-            tokenAddress,
-          );
-
-        // We should get also get total claimed distributions
-        const totalClaimedDistributions =
-          await syndicateContracts.DistributionLogicContract.getDistributionClaimedTotal(
-            syndicateAddress,
-            tokenAddress,
-          );
-
-        const tokenDistributions = getWeiAmount(
-          totalCurrentDistributions,
-          tokenDecimals,
-          false,
-        );
-
-        const claimedDistributions = getWeiAmount(
-          totalClaimedDistributions,
-          tokenDecimals,
-          false,
-        );
-
-        // Find the difference between total current and claimed distributions
-        const totalUnclaimedDistributions =
-          +tokenDistributions - +claimedDistributions;
-
-        // check if allowance set is enough to cover distributions.
-        const sufficientAllowanceSet =
-          +tokenAllowance >= +totalUnclaimedDistributions;
-
-        allowanceAndDistributionDetails.push({
-          tokenAddress,
-          tokenAllowance,
-          tokenDistributions,
-          sufficientAllowanceSet,
-          tokenSymbol,
-          tokenDecimals,
-        });
-
-        syndicateDistributionTokensArray.push({
-          tokenAddress,
-          tokenSymbol,
-          tokenDecimals,
-          tokenDistributions,
-          selected: false,
-          tokenIcon: getTokenIcon(tokenSymbol), // set Token Icon
-        });
-      }
-
-      // dispatch token distribution details to the redux store
-      dispatch(storeDistributionTokensDetails(allowanceAndDistributionDetails));
-
-      // store distribution token details for the withdrawals page.
-      // checking if we already have the value set in the redux store
-      // this avoids a scenario where token selected states are reset when
-      // the parent component is refreshed.
-      if (syndicateDistributionTokens) {
-        for (let i = 0; i < syndicateDistributionTokensArray.length; i++) {
-          const currentToken = syndicateDistributionTokensArray[i];
-          for (let j = 0; j < syndicateDistributionTokens.length; j++) {
-            const currentStoredToken = syndicateDistributionTokens[j];
-            if (
-              currentToken.tokenAddress === currentStoredToken.tokenAddress &&
-              currentStoredToken.selected
-            ) {
-              syndicateDistributionTokensArray[i].selected = true;
-            }
-          }
-        }
-      }
-
-      dispatch(
-        setSyndicateDistributionTokens(syndicateDistributionTokensArray),
-      );
-
-      //reset distribution token fields
-      dispatch(storeDepositTokenAllowance([]));
-    }
-  };
-
-  // get allowance set on manager's account for the current depositERC20
-  const getManagerDepositTokenAllowance = async () => {
-    const managerAddress = syndicate?.managerCurrent;
-    const managerDepositTokenAllowance = await checkAccountAllowance(
-      syndicate?.depositERC20Address,
-      managerAddress,
-      syndicateContracts.DepositLogicContract._address,
-    );
-
-    const managerDepositAllowance = getWeiAmount(
-      managerDepositTokenAllowance,
-      syndicate?.tokenDecimals,
-      false,
-    );
-
-    // check if the allowance set by the manager is not enough to cover the total max. deposits.
-    // if the current token allowance is less than the syndicate total max. deposits
-    // but is greater than zero, we'll consider this insufficient allowance.
-    // The manager needs to fix this by adding more deposit token allowance to enable members
-    // to withdraw their deposits.
-    const sufficientAllowanceSet =
-      +managerDepositAllowance >= +syndicate?.depositTotalMax;
-
-    // dispatch action to store deposit token allowance details
-    dispatch(
-      storeDepositTokenAllowance([
-        {
-          tokenAddress: syndicate?.depositERC20Address,
-          tokenAllowance: managerDepositAllowance,
-          tokenSymbol: syndicate?.depositERC20TokenSymbol,
-          tokenDeposits: syndicate?.depositTotalMax,
-          tokenDecimals: syndicate?.tokenDecimals,
-          sufficientAllowanceSet,
-        },
-      ]),
-    );
-    //reset distribution details
-    dispatch(storeDistributionTokensDetails([]));
-  };
-
-  // assess manager deposit and distributions token allowance
-  useEffect(() => {
-    if (web3 && syndicateContracts) {
-      // if the syndicate is still open to deposits, we'll check the deposit token allowance.
-      // otherwise, we'll check the distributions token(s) allowance(s)
-      if (syndicate?.depositsEnabled) {
-        getManagerDepositTokenAllowance();
-      } else if (!syndicate?.depositsEnabled && syndicate?.distributing) {
-        getManagerDistributionTokensAllowances();
-      }
-    }
-  }, [
-    syndicateContracts,
-    syndicate,
-    syndicate?.depositERC20TokenSymbol,
-    syndicate?.tokenDecimals,
-  ]);
-
-  // Retrieve syndicate depositors
-  useEffect(() => {
-    if (syndicate) {
-      dispatch(getSyndicateDepositorData());
-    }
-  }, [syndicate]);
-
-  let noSyndicate;
+  let noToken;
   // A manager should not access deposit page but should be redirected
   // to syndicates page
   useEffect(() => {
@@ -347,80 +156,54 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
     if (!router.isReady || !syndicate) return;
 
     if (
-      !isEmpty(syndicate) &&
+      !isEmpty(erc20Token) &&
       syndicateAddress !== undefined &&
       account !== undefined &&
-      web3.utils.isAddress(syndicate.syndicateAddress)
+      web3.utils.isAddress(erc20Token?.address)
     ) {
       switch (router.pathname) {
         case "/syndicates/[syndicateAddress]/manage":
           // For a closed syndicate, user should be navigated to withdrawal page
-          if (syndicate.managerCurrent !== account) {
-            if (syndicate?.open) {
-              router.replace(
-                `/syndicates/${syndicate.syndicateAddress}/deposit`,
-              );
+          if (!erc20Token?.isOwner) {
+            if (erc20Token?.depositsEnabled) {
+              router.replace(`/syndicates/${erc20Token?.address}/deposit`);
             } else {
-              router.replace(
-                `/syndicates/${syndicate.syndicateAddress}/withdraw`,
-              );
+              router.replace(`/syndicates/${erc20Token?.address}/withdraw`);
             }
           }
 
           break;
+
         case "/syndicates/[syndicateAddress]/deposit":
-          if (syndicate?.managerPending === account) {
-            router.replace(`/syndicates/${syndicateAddress}/manager_pending`);
-          } else if (syndicate.managerCurrent === account) {
-            router.replace(`/syndicates/${syndicate.syndicateAddress}/manage`);
-          } else if (syndicate.distributing) {
-            router.replace(
-              `/syndicates/${syndicate.syndicateAddress}/withdraw`,
-            );
+          if (erc20Token?.isOwner) {
+            router.replace(`/syndicates/${erc20Token?.address}/manage`);
           }
           break;
         case "/syndicates/[syndicateAddress]/withdraw":
-          if (syndicate?.managerPending === account) {
-            router.replace(`/syndicates/${syndicateAddress}/manager_pending`);
-          } else if (syndicate.managerCurrent === account) {
-            router.replace(`/syndicates/${syndicate.syndicateAddress}/manage`);
-          } else if (syndicate.depositsEnabled || syndicate.open) {
-            router.replace(`/syndicates/${syndicate.syndicateAddress}/deposit`);
+          if (erc20Token?.isOwner) {
+            router.replace(`/syndicates/${erc20Token?.address}/manage`);
+          } else if (erc20Token?.depositsEnabled) {
+            router.replace(`/syndicates/${erc20Token?.address}/deposit`);
           }
           break;
         // case when address lacks action
         case "/syndicates/[syndicateAddress]/":
-          if (syndicate.managerCurrent === account) {
-            router.replace(`/syndicates/${syndicate.syndicateAddress}/manage`);
-          } else if (syndicate.depositsEnabled || syndicate.open) {
-            router.replace(`/syndicates/${syndicate.syndicateAddress}/deposit`);
-          } else if (syndicate.distributing) {
-            router.replace(
-              `/syndicates/${syndicate.syndicateAddress}/withdraw`,
-            );
+          if (erc20Token?.isOwner) {
+            router.replace(`/syndicates/${erc20Token?.address}/manage`);
+          } else if (erc20Token?.depositsEnabled) {
+            router.replace(`/syndicates/${erc20Token?.address}/deposit`);
           }
           break;
         default:
           if (syndicateAddress && syndicate) {
-            if (syndicate.managerCurrent === account) {
-              router.replace(
-                `/syndicates/${syndicate.syndicateAddress}/manage`,
-              );
-            } else if (syndicate.depositsEnabled || syndicate.open) {
-              router.replace(
-                `/syndicates/${syndicate.syndicateAddress}/deposit`,
-              );
+            if (erc20Token?.isOwner) {
+              router.replace(`/syndicates/${erc20Token?.address}/manage`);
+            } else if (erc20Token?.depositsEnabled) {
+              router.replace(`/syndicates/${erc20Token?.address}/deposit`);
             } else if (syndicate.distributing) {
-              router.replace(
-                `/syndicates/${syndicate.syndicateAddress}/withdraw`,
-              );
-            } else if (
-              syndicate.managerCurrent !== account &&
-              !syndicate.open
-            ) {
-              router.replace(
-                `/syndicates/${syndicate.syndicateAddress}/details`,
-              );
+              router.replace(`/syndicates/${erc20Token?.address}/withdraw`);
+            } else if (!erc20Token?.isOwner && !erc20Token?.depositsEnabled) {
+              router.replace(`/syndicates/${erc20Token?.address}/details`);
             }
           }
           break;
@@ -428,66 +211,33 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
     }
   }, [account, router.isReady, syndicate, JSON.stringify(syndicateMembers)]);
 
-  // Syndicate data should be fetched when router is fully set.
-  // GetterLogicContract is used to retrieve syndicate values while
-  // DistributionLogicContract is used to get distributions details for the
-  // syndicate.
-  useEffect(() => {
-    if (
-      router.isReady &&
-      syndicateContracts?.GetterLogicContract &&
-      syndicateContracts?.DistributionLogicContract
-    ) {
-      dispatch(
-        getSyndicateByAddress({ syndicateAddress, ...syndicateContracts }),
-      );
-    }
-  }, [
-    router.isReady,
-    syndicateContracts?.GetterLogicContract,
-    syndicateContracts?.DistributionLogicContract,
-    account,
-    syndicateAddress,
-    account,
-  ]);
-
   // check whether the current connected wallet account is the manager of the syndicate
   // we'll use this information to load the manager view
   useEffect(() => {
-    if (syndicate && syndicate?.managerCurrent == account) {
+    if (erc20Token?.isOwner) {
       setAccountIsManager(true);
     } else {
       setAccountIsManager(false);
     }
     setCurrentUrl(window.location.href);
-  }, [syndicate, account]);
-
-  // Retrieve syndicate depositors
-  useEffect(() => {
-    if (syndicate) {
-      dispatch(getSyndicateDepositorData());
-    }
-  }, [syndicate]);
+  }, [erc20Token?.isOwner, account]);
 
   // get static text from constants
   const {
-    noSyndicateTitleText,
-    noSyndicateMessageText,
+    noTokenTitleText,
+    noTokenMessageText,
     syndicateAddressInvalidMessageText,
     syndicateAddressInvalidTitleText,
     notSyndicateYetTitleText,
     notSyndicateYetMessageText,
     notSyndicateForManagerYetMessageText,
-    creatingSyndicateForManagerTitle,
-    creatingSyndicateTitle,
   } = syndicateActionConstants;
 
   // set texts to display on empty state
   // we'll initialize this to instances where address is not a syndicate.
   // if the address is invalid, this texts will be updated accordingly.
-  let emptyStateTitle = noSyndicateTitleText;
-  let creatingSyndicateStateTitle = "";
-  let emptyStateMessage = noSyndicateMessageText;
+  let emptyStateTitle = noTokenTitleText;
+  let emptyStateMessage = noTokenMessageText;
   if (!syndicateAddressIsValid) {
     emptyStateTitle = syndicateAddressInvalidTitleText;
     emptyStateMessage = syndicateAddressInvalidMessageText;
@@ -495,7 +245,8 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
 
   if (
     syndicateAddressIsValid &&
-    !syndicateFound &&
+    !erc20Token.name &&
+    !erc20Token?.loading &&
     account !== syndicateAddress
   ) {
     emptyStateTitle = notSyndicateYetTitleText;
@@ -504,28 +255,12 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
 
   if (
     syndicateAddressIsValid &&
-    !syndicateFound &&
-    account === syndicateAddress
+    !erc20Token?.name &&
+    !erc20Token?.loading &&
+    erc20Token?.isOwner
   ) {
     emptyStateTitle = notSyndicateYetTitleText;
     emptyStateMessage = notSyndicateForManagerYetMessageText;
-  }
-  if (
-    submitting &&
-    syndicateAddressIsValid &&
-    !syndicateFound &&
-    account === syndicateAddress
-  ) {
-    creatingSyndicateStateTitle = creatingSyndicateForManagerTitle;
-  }
-
-  if (
-    submitting &&
-    syndicateAddressIsValid &&
-    !syndicateFound &&
-    account !== syndicateAddress
-  ) {
-    creatingSyndicateStateTitle = creatingSyndicateTitle;
   }
 
   // set syndicate empty state.
@@ -545,7 +280,7 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
           {emptyStateMessage}
         </p>
         {!syndicateAddressIsValid ? null : (
-          <EtherscanLink etherscanInfo={syndicate?.syndicateAddress} />
+          <EtherscanLink etherscanInfo={erc20Token?.address} />
         )}
       </div>
     </div>
@@ -555,7 +290,7 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
     <div className="flex items-center mt-2">
       <CopyToClipboard text={currentUrl} onCopy={updateAddressCopyState}>
         <div className="flex">
-          <div className="ml-4 flex items-center ml-0 relative w-7 h-7 cursor-pointer rounded-full lg:hover:bg-gray-700 lg:active:bg-white lg:active:bg-opacity-20">
+          <div className="flex items-center ml-0 relative w-7 h-7 cursor-pointer rounded-full lg:hover:bg-gray-700 lg:active:bg-white lg:active:bg-opacity-20">
             {showCopyState ? (
               <span className="absolute text-xs -top-5 -left-1 text-blue">
                 copied
@@ -567,7 +302,9 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
               className="cursor-pointer h-4 mx-auto transform rotate-180  fill-current text-blue"
             />
           </div>
-          <p className="text-base text-blue">Copy link to create a syndicate</p>
+          <p className="text-base text-blue cursor-pointer">
+            Copy link to create a syndicate
+          </p>
         </div>
       </CopyToClipboard>
     </div>
@@ -591,24 +328,12 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
     <div className="flex justify-center items-center h-full w-full mt-6 sm:mt-10">
       <div className="flex flex-col items-center justify-center sm:w-7/12 md:w-5/12 rounded-custom p-10">
         <p className="font-semibold text-2xl text-center">
-          {formatAddress(syndicateAddress, 9, 6)} {emptyStateTitle}
+          {formatAddress(erc20Token?.address, 9, 6)} {emptyStateTitle}
         </p>
         <p className="text-base my-5 font-normal text-gray-dim text-center">
           {emptyStateMessage}
         </p>
-        {account === syndicateAddress ? managerCta : nonManagerCta}
-      </div>
-    </div>
-  );
-
-  const syndicateNotReadyLoaderState = (
-    <div className="flex justify-center items-center h-full w-full mt-6 sm:mt-10">
-      <div className="flex flex-col items-center justify-center sm:w-7/12 md:w-5/12 rounded-custom p-10">
-        <Spinner />
-        <p className="font-semibold text-xl text-center">
-          {creatingSyndicateStateTitle}
-        </p>
-        {<EtherscanLink etherscanInfo={syndicateAddress} />}
+        {account === erc20Token?.owner ? managerCta : nonManagerCta}
       </div>
     </div>
   );
@@ -653,22 +378,21 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
             </div>
           </div>
         </div>
-        {syndicateNotReadyLoaderState}
       </div>
     </div>
   );
 
-  if (!syndicateFound || !syndicateAddressIsValid) {
-    noSyndicate = syndicateEmptyState;
+  if ((!erc20Token?.name && !erc20Token?.loading) || !syndicateAddressIsValid) {
+    noToken = syndicateEmptyState;
   }
 
-  if (!syndicateFound && syndicateAddressIsValid) {
-    noSyndicate = syndicateNotFoundState;
-    // noSyndicate = creatingSyndicate
+  if (!erc20Token?.name && !erc20Token?.loading && syndicateAddressIsValid) {
+    noToken = syndicateNotFoundState;
+    // noToken = creatingSyndicate
   }
 
-  if (submitting && !syndicateFound && syndicateAddressIsValid) {
-    noSyndicate = creatingSyndicate;
+  if (!erc20Token?.name && erc20Token?.loading && syndicateAddressIsValid) {
+    noToken = creatingSyndicate;
   }
 
   const [activeTab, setActiveTab] = useState("members");
@@ -679,8 +403,8 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
       <ErrorBoundary>
         {showOnboardingIfNeeded && <OnboardingModal />}
         <div className="w-full">
-          {noSyndicate ? (
-            noSyndicate
+          {noToken ? (
+            noToken
           ) : (
             <div className="container mx-auto ">
               {/* Two Columns (Syndicate Details + Widget Cards) */}
@@ -703,6 +427,7 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
                   <div className="sticky relative top-33">{children}</div>
                 </div>
               </div>
+
               <div className="mt-14">
                 <div
                   ref={subNav}

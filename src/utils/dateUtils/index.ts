@@ -82,10 +82,9 @@ import {
   zhCN,
   zhTW,
 } from "date-fns/locale";
+import moment from "moment";
 import "moment-precise-range-plugin";
 import { registerLocale } from "react-datepicker";
-
-const moment = require("moment");
 
 export const formatDate = (dateString: Date): string =>
   dateString.toLocaleDateString();
@@ -112,7 +111,8 @@ export const getUnixTimeFromDate = (date: Date): number =>
 export const convertTime12to24 = (time12h: string): string => {
   const [time, modifier] = time12h.split(" ");
 
-  let [hours, minutes] = time.split(":");
+  const [, minutes] = time.split(":");
+  let [hours] = time.split(":");
 
   if (hours === "12") {
     hours = "00";
@@ -243,6 +243,8 @@ export const getCountDownDays = (date: string): string => {
     new Date(parseInt(date) * 1000),
     "M/DD/YYYY",
   );
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  //@ts-ignore
   const { years, months, days, hours, minutes, seconds } = moment.preciseDiff(
     now,
     closeDateCountdown,

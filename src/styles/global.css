@@ -765,6 +765,10 @@ input[type="checkbox"] {
   box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
   z-index: 100;
 }
+.actionsTooltip span {
+  width: auto;
+  border-radius: 10px;
+}
 .__react_component_tooltip.show {
   opacity: 1 !important;
 }

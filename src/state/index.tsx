@@ -1,14 +1,15 @@
-import { configureStore, Action, ThunkAction } from "@reduxjs/toolkit";
-import { composeWithDevTools } from "redux-devtools-extension";
-import { createWrapper } from "next-redux-wrapper";
-
 import { isDev } from "@/utils/environment";
+import { Action, configureStore, ThunkAction } from "@reduxjs/toolkit";
+import { createWrapper } from "next-redux-wrapper";
+import { composeWithDevTools } from "redux-devtools-extension";
 
 const devToolsEnhancer = composeWithDevTools({ trace: true, traceLimit: 25 });
 
 const store = configureStore({
   reducer: {
     // web3Reducer,
+    // createInvestmentClubSliceReducer,
+    // erc20TokenSliceReducer,
   },
   middleware: (getDefaultMiddleware) => getDefaultMiddleware({ thunk: true }),
   devTools: isDev,

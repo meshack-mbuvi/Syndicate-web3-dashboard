@@ -1,8 +1,9 @@
-import React from "react";
-import Image from "next/image";
-import { CopyToClipboard } from "react-copy-to-clipboard";
-import { isDev } from "@/utils/environment";
 import { EtherscanLink } from "@/components/syndicates/shared/EtherscanLink";
+import { isDev } from "@/utils/environment";
+import { floatedNumberWithCommas } from "@/utils/formattedNumbers";
+import Image from "next/image";
+import React from "react";
+import { CopyToClipboard } from "react-copy-to-clipboard";
 
 export const SuccessOrFailureContent: React.FC<{
   closeCard: () => void;
@@ -11,6 +12,9 @@ export const SuccessOrFailureContent: React.FC<{
   transactionHash: string;
   handleOnCopy: () => void;
   copied: boolean;
+  accountClubTokens: string;
+  clubTokenSymbol: string;
+  memberPercentShare: number;
 }> = ({
   closeCard,
   successfulDeposit,
@@ -18,6 +22,9 @@ export const SuccessOrFailureContent: React.FC<{
   transactionHash,
   handleOnCopy,
   copied,
+  clubTokenSymbol,
+  accountClubTokens,
+  memberPercentShare,
 }) => {
   return (
     <div className="h-fit-content text-center relative">
@@ -30,8 +37,8 @@ export const SuccessOrFailureContent: React.FC<{
           <span className="sr-only">Close</span>
           <Image
             src="/images/close-gray-5.svg"
-            width="12"
-            height="12"
+            width="16"
+            height="16"
             alt="close"
           />
         </button>
@@ -50,14 +57,20 @@ export const SuccessOrFailureContent: React.FC<{
       <div className={`pt-8 ${successfulDeposit ? "pb-4" : "pb-6"}`}>
         <span className="text-2xl">
           {successfulDeposit
-            ? `Deposited ${depositAmount} USDC`
+            ? `Deposited ${floatedNumberWithCommas(depositAmount)} USDC`
             : `Deposit failed`}
         </span>
       </div>
+      
       {successfulDeposit ? (
         <>
           <div className="pb-6 px-8">
-            <span className="text-base text-gray-syn4 text-center">{`You now have 1,000.00 synFWB, which represents a 2.34% ownership share of this syndicate.`}</span>
+            {`You now have ${floatedNumberWithCommas(
+              accountClubTokens,
+            )} ${clubTokenSymbol}, which represents a ${memberPercentShare.toFixed(
+              2,
+            )}% ownership
+                share of this syndicate.`}
           </div>
           <CopyToClipboard
             text={`${
@@ -67,14 +80,14 @@ export const SuccessOrFailureContent: React.FC<{
           >
             <div className="relative pb-8  w-full">
               <div className="flex justify-center items-center cursor-pointer hover:opacity-80">
-                <span className="text-base mr-2 text-blue">
-                  Copy transaction link
-                </span>
                 <Image
                   src="/images/actionIcons/copy-clipboard-blue.svg"
                   height={12}
                   width={12}
                 />
+                <span className="text-base ml-2 text-blue">
+                  Copy transaction link
+                </span>
               </div>
               {copied && (
                 <div className="absolute w-full flex justify-center items-center">
@@ -87,7 +100,7 @@ export const SuccessOrFailureContent: React.FC<{
           </CopyToClipboard>
         </>
       ) : (
-        <div className="pb-8 text-base flex justify-center items-center hover:opacity-80">
+        <div className="pb-6 text-base flex justify-center items-center hover:opacity-80">
           <EtherscanLink etherscanInfo={transactionHash} type="transaction" />
         </div>
       )}

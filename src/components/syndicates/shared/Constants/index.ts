@@ -17,7 +17,7 @@ const depositMemberAccreditedText =
 const withdrawalTitleText = "Withdraw My Distributions.";
 const withdrawalDepositTitleText = "Withdraw My Deposit";
 const withdrawalDisclaimerText = "Remember, all withdraws are final.";
-const noSyndicateText =
+const noTokenText =
   "No syndicate with given address. Please check the address provided.";
 const depositsAndWithdrawalsUnavailableTitleText = "Deposits & Withdraws";
 const depositsAndWithdrawalsUnavailableText =
@@ -195,7 +195,7 @@ export const constants = {
   withdrawalTitleText,
   withdrawalDepositTitleText,
   withdrawalDisclaimerText,
-  noSyndicateText,
+  noTokenText,
   depositsAndWithdrawalsUnavailableText,
   depositsAndWithdrawalsUnavailableTitleText,
   loaderWithdrawalHeaderText,
@@ -279,8 +279,8 @@ export const SyndicateInBetaBannerText =
   "Syndicate is currently in private beta. We take security seriously, but bugs may still exist.";
 
 // syndicate actions page
-const noSyndicateTitleText = "No Syndicate DAO found at that address.";
-const noSyndicateMessageText =
+const noTokenTitleText = "No Syndicate DAO found at that address.";
+const noTokenMessageText =
   "Check for more details on Etherscan to see if your transaction is pending or failed.";
 const syndicateAddressInvalidTitleText = "Invalid syndicate address";
 const syndicateAddressInvalidMessageText =
@@ -303,8 +303,8 @@ const enableDistributionToModifySyndicateText =
   "Distributions must be set before modifying syndicate details.";
 
 export const syndicateActionConstants = {
-  noSyndicateTitleText,
-  noSyndicateMessageText,
+  noTokenTitleText,
+  noTokenMessageText,
   syndicateAddressInvalidMessageText,
   syndicateAddressInvalidTitleText,
   backLinkText,

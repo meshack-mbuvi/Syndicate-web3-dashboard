@@ -1,5 +1,5 @@
 import useWindowSize from "@/hooks/useWindowSize";
-import { useState, useRef, useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import NumberFormat, { NumberFormatProps } from "react-number-format";
 
 interface AutoGrowInputField extends NumberFormatProps {
@@ -31,13 +31,12 @@ const AutoGrowInputField: React.FC<AutoGrowInputField> = ({
   }, [value]);
 
   useEffect(() => {
-    if (span.current.offsetWidth > width) {
-      setDynamicFontSize(() => {
-        const tempSize = 48 - span.current.offsetWidth * 0.1;
-        // set the minimum font to 16
-        return tempSize > 12 ? tempSize : 12;
-      });
-    }
+    // Make text grow or shrink based on the current width
+    setDynamicFontSize(() => {
+      const tempSize = 48 - span.current.offsetWidth * 0.1;
+      // set the minimum font to 16
+      return tempSize > 12 ? tempSize : 12;
+    });
   }, [dynamicFontSize, width, value]);
 
   const { width: windowWidth } = useWindowSize();
@@ -54,7 +53,7 @@ const AutoGrowInputField: React.FC<AutoGrowInputField> = ({
         {...rest}
         value={value}
         thousandSeparator={true}
-        className={`bg-transparent border-none outline-none h-full p-0 text-5xl font-whyte focus:outline-none focus:border-none focus:ring-0 ${
+        className={`bg-transparent border-none outline-none h-full p-0 text-5xl font-whyte-light focus:outline-none focus:border-none focus:ring-0 ${
           hasError ? "text-red-semantic" : ""
         } ${value ? "text-white" : "text-gray-syn4"}`}
         style={{

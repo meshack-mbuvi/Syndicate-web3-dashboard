@@ -63,20 +63,6 @@ const App = ({ Component, pageProps }) => {
       {/* Placing tooltips rendered within modals in this high level component 
       "I suggest always putting <ReactTooltip /> in the Highest level or smart component of Redux, so you might need these static method to control tooltip's behaviour in some situations"
       Source: Troubleshooting section of https://www.npmjs.com/package/react-tooltip */}
-      <ReactTooltip
-        id="club-token-tooltip"
-        place="top"
-        effect="solid"
-        className="actionsTooltip"
-        arrowColor="transparent"
-        backgroundColor="#222529"
-        multiline
-      >
-        When you deposit into this syndicate, you <br />
-        receive a club token in return that
-        <br /> represents your ownership share of the
-        <br /> syndicate.
-      </ReactTooltip>
     </IntercomProvider>
   );
 };

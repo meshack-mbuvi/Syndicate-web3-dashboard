@@ -1,11 +1,12 @@
-import { FC } from "react";
 import { numberWithCommas } from "@/utils/formattedNumbers";
+import { FC } from "react";
 
 interface IHoldingsInfoProps {
   title: string;
   amount: string;
   tokenName: string;
   percentValue?: number;
+  loading?: boolean;
 }
 
 const HoldingsInfo: FC<IHoldingsInfoProps> = ({
@@ -29,9 +30,9 @@ const HoldingsInfo: FC<IHoldingsInfoProps> = ({
           </div>
           &nbsp;
         </div>
-        <div>{tokenName}</div>
+        <div className="mr-2 w-min-44">{tokenName}</div>
         {percentValue && (
-          <div className="text-gray-syn4 ml-2">({percentValue}%)</div>
+          <div className="text-gray-syn4">{`(${percentValue} %)`}</div>
         )}
       </div>
     </div>

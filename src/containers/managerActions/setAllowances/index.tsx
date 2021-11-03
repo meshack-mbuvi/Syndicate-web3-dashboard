@@ -22,7 +22,7 @@ import {
 } from "src/redux/actions/tokenAllowances";
 import ERC20ABI from "src/utils/abi/erc20";
 import { isUnlimited } from "src/utils/conversions";
-import { getGnosisTxnInfo } from "src/syndicateClosedEndFundLogic/shared/gnosisTransactionInfo";
+import { getGnosisTxnInfo } from "@/ClubERC20Factory/shared/gnosisTransactionInfo";
 import { AbiItem } from "web3-utils";
 
 interface Props {
