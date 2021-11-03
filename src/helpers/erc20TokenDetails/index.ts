@@ -70,7 +70,6 @@ export const getERC20TokenDetails = async (
       );
 
       const totalSupply = getWeiAmount(totalSupplyInWei, tokenDecimals, false);
-
       const totalDeposits = parseFloat(totalSupply);
 
       const accountClubTokens = getWeiAmount(
@@ -79,9 +78,13 @@ export const getERC20TokenDetails = async (
         false,
       );
       const memberPercentShare = (+accountClubTokens * 100) / +totalSupply;
+
+      const endDateInFuture = +endTime * 1000 > new Date().getTime();
+
       const depositsEnabled =
-        +getWeiAmount(totalSupply, tokenDecimals, false) <
-        +getWeiAmount(maxTotalSupply, tokenDecimals, false);
+        +totalSupply < +getWeiAmount(maxTotalSupply, tokenDecimals, false) &&
+        endDateInFuture &&
+        memberCount < maxMemberCount;
 
       return {
         address,
@@ -98,7 +101,7 @@ export const getERC20TokenDetails = async (
         memberPercentShare,
         loading: false,
         maxMemberCount,
-        maxTotalSupply,
+        maxTotalSupply: getWeiAmount(maxTotalSupply, tokenDecimals, false),
         requiredToken,
         depositsEnabled,
         requiredTokenMinBalance,
