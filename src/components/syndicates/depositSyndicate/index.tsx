@@ -28,7 +28,10 @@ import {
 } from "@/state/erc20token/slice";
 import { getWeiAmount } from "@/utils/conversions";
 import { isDev } from "@/utils/environment";
-import { floatedNumberWithCommas, truncateDecimals } from "@/utils/formattedNumbers";
+import {
+  floatedNumberWithCommas,
+  truncateDecimals,
+} from "@/utils/formattedNumbers";
 import { CheckIcon } from "@heroicons/react/solid";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
@@ -102,7 +105,6 @@ const DepositSyndicate: React.FC = () => {
   const [showDepositProcessingModal, toggleDepositProcessingModal] = useModal();
   const [ownershipShare, setOwnershipShare] = useState<number>(0);
   const [memberTokens, setMemberTokens] = useState(0);
-
   const [depositAmount, setDepositAmount] = useState<string>("");
 
   useEffect(() => {
@@ -255,7 +257,7 @@ const DepositSyndicate: React.FC = () => {
     } else {
       setDisableMax(false);
     }
-  }, [_erc20Balance, depositAmount, erc20Balance])
+  }, [_erc20Balance, depositAmount, erc20Balance]);
 
   const handleSetMax = () => {
     if (erc20Balance && +depositAmount !== _erc20Balance) {
@@ -493,7 +495,7 @@ const DepositSyndicate: React.FC = () => {
     if (!erc20TokenContract.address) return;
 
     try {
-      if (+erc20Balance < +depositAmount || +erc20Balance === 0) {
+      if (+erc20Balance < +depositAmount || erc20Balance === 0) {
         setInsufficientBalance(true);
         setDepositError("");
       } else {
@@ -666,7 +668,9 @@ const DepositSyndicate: React.FC = () => {
                       {!clubWideErrors && !depositError ? (
                         <div>
                           <button
-                            className={`px-4 py-1.5 text-gray-syn4 bg-gray-syn7 rounded-full ${disableMax ? "cursor-not-allowed" : ""}`}
+                            className={`px-4 py-1.5 text-gray-syn4 bg-gray-syn7 rounded-full ${
+                              disableMax ? "cursor-not-allowed" : ""
+                            }`}
                             onClick={handleSetMax}
                           >
                             Max
