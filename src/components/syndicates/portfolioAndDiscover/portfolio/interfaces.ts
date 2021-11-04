@@ -4,15 +4,16 @@ export interface ifRows {
     syndicateAddress: string;
     closeDate: string;
     createdDate: string;
-    managerCurrent: string;
+    isOwner: boolean;
     depositERC20Address: string;
     depositors: number;
     depositTotalMax: string;
     depositsEnabled: boolean;
-    depositTotal: string;
+    totalDeposits: string;
     distributing: boolean;
     depositERC20TokenSymbol: string;
     tokenDecimals: number;
+    depositAmount: string;
   };
 }
 

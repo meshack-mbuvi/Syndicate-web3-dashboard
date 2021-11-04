@@ -1,9 +1,9 @@
+import { RootState } from "@/redux/store";
 import Router from "next/router";
 import React, { useState } from "react";
+import { useSelector } from "react-redux";
 import { useSortBy, useTable } from "react-table";
 import { HeaderColumn, ifRows } from "./interfaces";
-import {useSelector} from "react-redux";
-import {RootState} from "@/redux/store";
 
 interface Props {
   columns: Array<HeaderColumn> | any;
@@ -13,23 +13,18 @@ interface Props {
 const ActiveSyndicatesTable = ({ columns, data }: Props): JSX.Element => {
   const [activeHeader, setActiveHeader] = useState<unknown>("");
 
-  const {
-    getTableProps,
-    getTableBodyProps,
-    headerGroups,
-    rows,
-    prepareRow,
-  } = useTable(
-    {
-      columns,
-      data,
-    },
-    useSortBy,
-  );
+  const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
+    useTable(
+      {
+        columns,
+        data,
+      },
+      useSortBy,
+    );
 
   const {
     web3Reducer: {
-      web3: { account }
+      web3: { account },
     },
   } = useSelector((state: RootState) => state);
 
@@ -46,9 +41,8 @@ const ActiveSyndicatesTable = ({ columns, data }: Props): JSX.Element => {
               className="ml-4"
             >
               {headerGroup.headers.map((column, index) => {
-                const {
-                  showSort,
-                }: string | boolean | any = headerGroup.headers[index];
+                const { showSort }: string | boolean | any =
+                  headerGroup.headers[index];
                 return (
                   // Add the sorting props to control sorting. For this example
                   // we can add them into the header props
@@ -70,16 +64,28 @@ const ActiveSyndicatesTable = ({ columns, data }: Props): JSX.Element => {
                           {activeHeader === column.render("Header") &&
                           !column.isSorted &&
                           showSort ? (
-                            <img src="/images/sortIcon.svg" className="vertically-center" alt="Sort icon" />
+                            <img
+                              src="/images/sortIcon.svg"
+                              className="vertically-center"
+                              alt="Sort icon"
+                            />
                           ) : null}
 
                           {/* Add a sort direction indicator */}
 
                           {column.isSorted ? (
                             column.isSortedDesc ? (
-                              <img src="/images/sort-ascending.svg" className="vertically-center" alt="Sort icon" />
+                              <img
+                                src="/images/sort-ascending.svg"
+                                className="vertically-center"
+                                alt="Sort icon"
+                              />
                             ) : (
-                              <img src="/images/sort-descending.svg" className="vertically-center" alt="Sort icon" />
+                              <img
+                                src="/images/sort-descending.svg"
+                                className="vertically-center"
+                                alt="Sort icon"
+                              />
                             )
                           ) : (
                             ""
@@ -93,7 +99,10 @@ const ActiveSyndicatesTable = ({ columns, data }: Props): JSX.Element => {
             </tr>
           ))}
         </thead>
-        <tbody className="divide-y divide-gray-steelGrey" {...getTableBodyProps()}>
+        <tbody
+          className="divide-y divide-gray-steelGrey"
+          {...getTableBodyProps()}
+        >
           {firstPageRows.map((row, index) => {
             prepareRow(row);
             return (
@@ -110,20 +119,20 @@ const ActiveSyndicatesTable = ({ columns, data }: Props): JSX.Element => {
                         if (index == row.cells.length - 1) return;
 
                         // Otherwise make the row cell clickable and link to the syndicate
-                        let link = "manage"
-                        const { syndicateAddress } = row.values;
-                        const { row: syndicateDetails } = row.values.Deposits.props
-                        const isManager = syndicateDetails.managerCurrent  === account
-                        if (syndicateDetails.depositsEnabled && !isManager) {
-                          link = "deposit"
+                        let link = "manage";
+                        const { syndicateAddress, isOwner, depositsEnabled } =
+                          row.values;
+                        if (depositsEnabled && !isOwner) {
+                          link = "deposit";
                         }
-                        if (syndicateDetails.distributing && !isManager) {
-                          link = "withdraw"
+                        if (!depositsEnabled && !isOwner) {
+                          link = "withdraw";
                         }
+
                         Router.push(`/syndicates/${syndicateAddress}/${link}`);
                       }}
                     >
-                    {cell.render("Cell")}
+                      {cell.render("Cell")}
                     </td>
                   );
                 })}

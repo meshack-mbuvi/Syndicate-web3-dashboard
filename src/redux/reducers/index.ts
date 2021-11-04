@@ -1,3 +1,4 @@
+import clubERC20sReducer from "@/state/clubERC20";
 import createInvestmentClubSliceReducer from "@/state/createInvestmentClub/slice";
 import erc20TokenSliceReducer from "@/state/erc20token/slice";
 import modalsReducer from "@/state/modals";
@@ -42,6 +43,7 @@ export const rootReducer = combineReducers({
   modalsReducer,
   createInvestmentClubSliceReducer,
   erc20TokenSliceReducer,
+  clubERC20sReducer,
 });
 
 export default rootReducer;

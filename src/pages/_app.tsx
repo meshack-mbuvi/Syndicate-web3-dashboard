@@ -1,3 +1,18 @@
+import FontsPreloader from "@/components/fonts";
+import ConnectWalletProvider from "@/context/ConnectWalletProvider";
+import CreateInvestmentClubProvider from "@/context/CreateInvestmentClubContext";
+import CreateSyndicateProvider from "@/context/CreateSyndicateContext";
+import OnboardingProvider from "@/context/OnboardingContext";
+import SyndicateInBetaBannerProvider from "@/context/SyndicateInBetaBannerContext";
+import { isDev, isSSR } from "@/utils/environment";
+import {
+  ApolloClient,
+  ApolloProvider,
+  HttpLink,
+  InMemoryCache,
+} from "@apollo/client";
+import withApollo from "next-with-apollo";
+import dynamic from "next/dynamic";
 import Head from "next/head";
 import Router from "next/router";
 import NProgress from "nprogress";
@@ -9,18 +24,10 @@ import React from "react";
  */
 import "react-datepicker/dist/react-datepicker.css";
 import { IntercomProvider } from "react-use-intercom";
-import dynamic from "next/dynamic";
 import { wrapper } from "../redux/store";
 import "../styles/animation.css";
-import "../styles/global.css";
 import "../styles/custom-datepicker.css";
-import ConnectWalletProvider from "@/context/ConnectWalletProvider";
-import CreateSyndicateProvider from "@/context/CreateSyndicateContext";
-import SyndicateInBetaBannerProvider from "@/context/SyndicateInBetaBannerContext";
-import FontsPreloader from "@/components/fonts";
-import OnboardingProvider from "@/context/OnboardingContext";
-import ReactTooltip from "react-tooltip";
-import CreateInvestmentClubProvider from "@/context/CreateInvestmentClubContext";
+import "../styles/global.css";
 
 const INTERCOM_APP_ID = process.env.NEXT_PUBLIC_INTERCOM_APP_ID;
 
@@ -34,32 +41,34 @@ const AmplitudeProvider = dynamic(() => import("@/components/amplitude"), {
   ssr: false,
 });
 
-const App = ({ Component, pageProps }) => {
+const App = ({ Component, pageProps, apollo }) => {
   return (
     <IntercomProvider appId={INTERCOM_APP_ID} autoBoot={true}>
-      <SyndicateInBetaBannerProvider>
-        <OnboardingProvider>
-          <ConnectWalletProvider>
-            <CreateSyndicateProvider>
-              <CreateInvestmentClubProvider>
-                <Head>
-                  <title>Home | Syndicate Dashboard</title>
-                  <link rel="shortcut icon" href="/images/logo.svg" />
+      <ApolloProvider client={apollo}>
+        <SyndicateInBetaBannerProvider>
+          <OnboardingProvider>
+            <ConnectWalletProvider>
+              <CreateSyndicateProvider>
+                <CreateInvestmentClubProvider>
+                  <Head>
+                    <title>Home | Syndicate Dashboard</title>
+                    <link rel="shortcut icon" href="/images/logo.svg" />
 
-                  <FontsPreloader />
+                    <FontsPreloader />
 
-                  <meta
-                    name="viewport"
-                    content="width=device-width, initial-scale=1, shrink-to-fit=no"
-                  />
-                </Head>
-                <AmplitudeProvider />
-                <Component {...pageProps} />
-              </CreateInvestmentClubProvider>
-            </CreateSyndicateProvider>
-          </ConnectWalletProvider>
-        </OnboardingProvider>
-      </SyndicateInBetaBannerProvider>
+                    <meta
+                      name="viewport"
+                      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+                    />
+                  </Head>
+                  <AmplitudeProvider />
+                  <Component {...pageProps} />
+                </CreateInvestmentClubProvider>
+              </CreateSyndicateProvider>
+            </ConnectWalletProvider>
+          </OnboardingProvider>
+        </SyndicateInBetaBannerProvider>
+      </ApolloProvider>
       {/* Placing tooltips rendered within modals in this high level component 
       "I suggest always putting <ReactTooltip /> in the Highest level or smart component of Redux, so you might need these static method to control tooltip's behaviour in some situations"
       Source: Troubleshooting section of https://www.npmjs.com/package/react-tooltip */}
@@ -67,4 +76,17 @@ const App = ({ Component, pageProps }) => {
   );
 };
 
-export default wrapper.withRedux(App);
+export default withApollo(({ initialState }) => {
+  const httpLink = new HttpLink({
+    uri: isDev
+      ? process.env.NEXT_PUBLIC_GRAPHQL_ENDPOINT
+      : process.env.NEXT_PUBLIC_GRAPHQL_MAINNET_ENDPOINT,
+  });
+
+  return new ApolloClient({
+    ssrMode: isSSR(),
+    link: httpLink,
+    cache: new InMemoryCache().restore(initialState || {}),
+    connectToDevTools: isDev,
+  });
+})(wrapper.withRedux(App));

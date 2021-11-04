@@ -8,9 +8,8 @@ import GetMemberDeposits from "./GetMemberDeposits";
 import GradientAvatar from "./GradientAvatar";
 import SyndicateActionButton from "./SyndicateActionButton";
 
-
-export const Portfolio = (props: { syndicates }): JSX.Element => {
-  const { syndicates } = props;
+export const Portfolio = (props: { clubsERC20s }): JSX.Element => {
+  const { clubsERC20s } = props;
 
   const COLUMNS = [
     {
@@ -33,7 +32,7 @@ export const Portfolio = (props: { syndicates }): JSX.Element => {
     },
     {
       Header: "Created",
-      accessor: "createdDate",
+      accessor: "startTime",
       showSort: true,
     },
     {
@@ -43,7 +42,7 @@ export const Portfolio = (props: { syndicates }): JSX.Element => {
     },
     {
       Header: "Members",
-      accessor: "numMembersCurrent",
+      accessor: "membersCount",
       Cell: ({ value }) => formatNumbers(value),
       showSort: true,
     },
@@ -90,9 +89,9 @@ export const Portfolio = (props: { syndicates }): JSX.Element => {
 
   return (
     <div className="mt-0">
-      {syndicates && syndicates.length ? (
+      {clubsERC20s && clubsERC20s.length ? (
         <div className="overflow-x-scroll edge-to-edge-with-left-inset lg:mr-auto lg:px-auto lg:w-auto no-scroll-bar">
-          <ActiveSyndicatesTable columns={columns} data={syndicates} />
+          <ActiveSyndicatesTable columns={columns} data={clubsERC20s} />
         </div>
       ) : (
         "No syndicates currently"

@@ -1,13 +1,11 @@
 import { amplitudeLogger, Flow } from "@/components/amplitude";
 import { CLICK_CREATE_A_SYNDICATE } from "@/components/amplitude/eventNames";
 import WalletNotConnected from "@/components/walletNotConnected";
-import { showWalletModal } from "@/state/wallet/actions";
-import { setOneSyndicatePerAccount } from "@/redux/actions/syndicateMemberDetails";
-import { getSyndicates } from "@/redux/actions/syndicates";
-import { SYNDICATE_BY_ADDRESS } from "@/redux/actions/types";
+import useClubERC20s from "@/hooks/useClubERC20s";
 import { RootState } from "@/redux/store";
-import router from "next/router";
-import React, { useEffect, useState } from "react";
+import { showWalletModal } from "@/state/wallet/actions";
+import { useRouter } from "next/router";
+import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Button from "src/components/buttons";
 import { SkeletonLoader } from "src/components/skeletonLoader";
@@ -23,62 +21,20 @@ import { default as Portfolio } from "./portfolio";
  */
 const PortfolioAndDiscover: React.FC = () => {
   const dispatch = useDispatch();
-
   const {
-    loadingReducer: { loading },
-    initializeContractsReducer: { syndicateContracts },
     syndicatesReducer: { syndicates },
     web3Reducer: { web3 },
+    clubERC20sReducer: { clubERC20s },
   } = useSelector((state: RootState) => state);
+
+  const router = useRouter();
 
   const {
     account,
-    currentEthereumNetwork,
     ethereumNetwork: { invalidEthereumNetwork },
   } = web3;
 
-  /**
-   * We need to be sure syndicateContracts is initialized before retrieving events.
-   */
-  useEffect(() => {
-    // This will reset syndicate details when we are on portfolio page.
-    // The currentEthereumNetwork has been added as a dependency to trigger a re-fetch
-    // whenever the Ethereum network is changed.
-    dispatch({
-      data: null,
-      type: SYNDICATE_BY_ADDRESS,
-    });
-    if (syndicateContracts?.GetterLogicContract) {
-      dispatch(getSyndicates({ ...web3, ...syndicateContracts }));
-    }
-  }, [account, currentEthereumNetwork]);
-
-  // Assume by default this user has an open syndicate
-  const [managerWithOpenSyndicate, setManagerWithOpenSyndicate] =
-    useState(true);
-
-  // Find whether there is a syndicate address that matches the connected
-  // wallet account. If so, the account has an open syndicate, else the account
-  // does not have an open syndicate.
-  useEffect(() => {
-    if (syndicates.length) {
-      const syndicateAddresses = [];
-      syndicates.forEach((syndicate) => {
-        syndicateAddresses.push(syndicate.managerCurrent);
-      });
-      const accountHasSyndicate = syndicateAddresses.find(
-        (address) => address == account,
-      );
-      if (accountHasSyndicate) {
-        setManagerWithOpenSyndicate(true);
-      } else {
-        setManagerWithOpenSyndicate(false);
-      }
-    } else {
-      setManagerWithOpenSyndicate(false);
-      dispatch(setOneSyndicatePerAccount(false));
-    }
-  }, [syndicates, account]);
+  const { loading, memberClubLoading } = useClubERC20s();
 
   const showSyndicateForm = () => {
     // Trigger wallet connection if wallet is not connected
@@ -116,7 +72,7 @@ const PortfolioAndDiscover: React.FC = () => {
 
   return (
     <div className="mt-2">
-      {loading && account ? (
+      {(loading || memberClubLoading) && account ? (
         // show some animations during loading process
         // skeleton loader
         <div>
@@ -165,11 +121,7 @@ const PortfolioAndDiscover: React.FC = () => {
                 <Button
                   customClasses="secondary-CTA relative"
                   textColor="text-white"
-                  onClick={
-                    managerWithOpenSyndicate
-                      ? () => dispatch(setOneSyndicatePerAccount(true))
-                      : () => showSyndicateForm()
-                  }
+                  onClick={() => showSyndicateForm()}
                   createSyndicate={true}
                 >
                   <div className="hidden sm:block">Create a syndicate</div>
@@ -178,16 +130,16 @@ const PortfolioAndDiscover: React.FC = () => {
               </>
             ) : null}
           </div>
-          {syndicates.length ? (
+          {clubERC20s.length ? (
             <>
-              {/* show active syndicates here */}
-              {syndicates.length ? (
+              {/* show active clubsERC20s here */}
+              {clubERC20s.length ? (
                 <div>
-                  <Portfolio syndicates={syndicates} />
+                  <Portfolio clubsERC20s={clubERC20s} />
                 </div>
               ) : null}
             </>
-          ) : account && !syndicates.length && !invalidEthereumNetwork ? (
+          ) : account && !clubERC20s.length && !invalidEthereumNetwork ? (
             // if connected, then it means no syndicates for this wallet
             <div
               className="text-center flex-col"
