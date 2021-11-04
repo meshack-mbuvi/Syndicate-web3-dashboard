@@ -7,6 +7,7 @@ interface IHoldingsInfoProps {
   tokenName: string;
   percentValue?: number;
   loading?: boolean;
+  wrap?: string;
 }
 
 const HoldingsInfo: FC<IHoldingsInfoProps> = ({
@@ -14,13 +15,14 @@ const HoldingsInfo: FC<IHoldingsInfoProps> = ({
   amount,
   tokenName,
   percentValue,
+  wrap,
 }: IHoldingsInfoProps) => {
   const [wholeNumberPart, decimalPart] = amount.toString().split(".");
 
   return (
     <div>
       <div className="pb-1 text-gray-syn4 text-base">{title}</div>
-      <div className="flex">
+      <div className={`flex ${wrap}`}>
         <div>
           <div className="inline">
             {numberWithCommas(wholeNumberPart as string)}

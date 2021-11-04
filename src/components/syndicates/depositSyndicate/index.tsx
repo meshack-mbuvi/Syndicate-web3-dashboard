@@ -28,7 +28,10 @@ import {
 } from "@/state/erc20token/slice";
 import { getWeiAmount } from "@/utils/conversions";
 import { isDev } from "@/utils/environment";
-import { floatedNumberWithCommas, truncateDecimals } from "@/utils/formattedNumbers";
+import {
+  floatedNumberWithCommas,
+  truncateDecimals,
+} from "@/utils/formattedNumbers";
 import { CheckIcon } from "@heroicons/react/solid";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
@@ -39,6 +42,7 @@ import { InfoIcon } from "src/components/iconWrappers";
 import { SkeletonLoader } from "src/components/skeletonLoader";
 import ERC20ABI from "src/utils/abi/erc20";
 import { AbiItem } from "web3-utils";
+import useWindowSize from "@/hooks/useWindowSize";
 
 const DepositSyndicate: React.FC = () => {
   // HOOK DECLARATIONS
@@ -255,7 +259,7 @@ const DepositSyndicate: React.FC = () => {
     } else {
       setDisableMax(false);
     }
-  }, [_erc20Balance, depositAmount, erc20Balance])
+  }, [_erc20Balance, depositAmount, erc20Balance]);
 
   const handleSetMax = () => {
     if (erc20Balance && +depositAmount !== _erc20Balance) {
@@ -558,6 +562,11 @@ const DepositSyndicate: React.FC = () => {
     }
   };
 
+  const { width } = useWindowSize();
+  const isHoldingsCardColumn =
+    +connectedMemberDeposits >= 10000 &&
+    ((width > 868 && width < 1536) || width < 500);
+
   return (
     <ErrorBoundary>
       <div className="w-full mt-4 sm:mt-0 top-44 mb-10">
@@ -666,7 +675,9 @@ const DepositSyndicate: React.FC = () => {
                       {!clubWideErrors && !depositError ? (
                         <div>
                           <button
-                            className={`px-4 py-1.5 text-gray-syn4 bg-gray-syn7 rounded-full ${disableMax ? "cursor-not-allowed" : ""}`}
+                            className={`px-4 py-1.5 text-gray-syn4 bg-gray-syn7 rounded-full ${
+                              disableMax ? "cursor-not-allowed" : ""
+                            }`}
                             onClick={handleSetMax}
                           >
                             Max
@@ -798,26 +809,43 @@ const DepositSyndicate: React.FC = () => {
           {loading ? (
             <SkeletonLoader height="9" width="full" borderRadius="rounded-md" />
           ) : (
-            <div className="flex">
-              <div className="mr-8">
+            <div className={`flex ${isHoldingsCardColumn ? "flex-col" : ""}`}>
+              <div
+                className={
+                  isHoldingsCardColumn
+                    ? ""
+                    : (width < 1380 || width < 868) &&
+                      +connectedMemberDeposits >= 1000 &&
+                      +connectedMemberDeposits < 10000
+                    ? "mr-6"
+                    : "mr-8"
+                }
+              >
                 <HoldingsInfo
                   title="Amount deposited"
                   amount={floatedNumberWithCommas(connectedMemberDeposits)}
                   tokenName={"USDC"}
                 />
               </div>
-              <HoldingsInfo
-                title="Club tokens (ownership share)"
-                amount={
-                  accountClubTokens
-                    ? `${parseInt(accountClubTokens.toString(), 10).toFixed(2)}`
-                    : "0.00"
-                }
-                tokenName={symbol}
-                percentValue={
-                  isNaN(memberPercentShare) ? 0 : +memberPercentShare.toFixed(2)
-                }
-              />
+              <div className={isHoldingsCardColumn ? "pt-5" : ""}>
+                <HoldingsInfo
+                  title="Club tokens (ownership share)"
+                  amount={
+                    accountClubTokens
+                      ? `${parseInt(accountClubTokens.toString(), 10).toFixed(
+                          2,
+                        )}`
+                      : "0.00"
+                  }
+                  tokenName={symbol}
+                  percentValue={
+                    isNaN(memberPercentShare)
+                      ? 0
+                      : +memberPercentShare.toFixed(2)
+                  }
+                  wrap="flex-wrap"
+                />
+              </div>
             </div>
           )}
         </div>
