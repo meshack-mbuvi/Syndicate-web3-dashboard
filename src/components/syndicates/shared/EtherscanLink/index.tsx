@@ -7,6 +7,7 @@ interface LinkProp {
   customStyles?: string;
   type?: string;
   iconOnly?: boolean;
+  text?: string;
 }
 
 /** Link used to redirect the user to the Etherscan
@@ -14,7 +15,7 @@ interface LinkProp {
  * or the token contract when token transactions are involved.
  */
 export const EtherscanLink: React.FC<LinkProp> = (props) => {
-  const { etherscanInfo, customStyles, type = "address", iconOnly } = props;
+  const { etherscanInfo, customStyles, type = "address", iconOnly, text="Etherscan" } = props;
   // get debug mode from the .env
   // If we're in debug mode, we'll use the rinkeby testnet.
   let etherscanLink = `https://etherscan.io/${
@@ -30,12 +31,12 @@ export const EtherscanLink: React.FC<LinkProp> = (props) => {
     <a
       href={`${etherscanLink}${etherscanInfo}`}
       target="_blank"
-      className={`text-blue flex items-center ${customStyles && customStyles}`}
+      className={`text-blue hover:opacity-90 flex items-center ${customStyles && customStyles}`}
       rel="noreferrer"
     >
       {!iconOnly ? (
         <p className="flex items-center">
-         Etherscan <ExternalLinkIcon className="ml-2 w-4 text-blue" />
+         {text} <ExternalLinkIcon className="ml-2 w-4 text-blue" />
         </p>
       ) : (
         <ExternalLinkIcon grayIcon className="ml-2 w-4 text-blue" />

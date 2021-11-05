@@ -1,7 +1,4 @@
 import { ClubERC20Contract } from "@/ClubERC20Factory/clubERC20";
-import { amplitudeLogger, Flow } from "@/components/amplitude";
-import { CLICK_CREATE_A_SYNDICATE } from "@/components/amplitude/eventNames";
-import Button from "@/components/buttons";
 import ErrorBoundary from "@/components/errorBoundary";
 import Layout from "@/components/layout";
 import Footer from "@/components/navigation/footer";
@@ -13,14 +10,12 @@ import SyndicateDetails from "@/components/syndicates/syndicateDetails";
 import TabsButton from "@/components/TabsButton";
 import { setERC20Token } from "@/helpers/erc20TokenDetails";
 import { RootState } from "@/redux/store";
-import { showWalletModal } from "@/state/wallet/actions";
 import { formatAddress } from "@/utils/formatAddress";
 import { faExclamationTriangle } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { isEmpty } from "lodash";
 import { useRouter } from "next/router";
 import React, { FC, useEffect, useRef, useState } from "react";
-import { CopyToClipboard } from "react-copy-to-clipboard";
 import { useDispatch, useSelector } from "react-redux";
 import { syndicateActionConstants } from "src/components/syndicates/shared/Constants";
 import ClubTokenMembers from "../managerActions/clubTokenMembers";
@@ -39,17 +34,10 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
     erc20TokenSliceReducer: { erc20Token },
   } = useSelector((state: RootState) => state);
 
-  const [showCopyState, setShowCopyState] = useState(false);
-  const [currentUrl, setCurrentUrl] = useState("");
   const [scrollTop, setScrollTop] = useState(0);
   const [showNav, setShowNav] = useState(true);
   const [isSubNavStuck, setIsSubNavStuck] = useState(true);
   const subNav = useRef(null);
-
-  const updateAddressCopyState = () => {
-    setShowCopyState(true);
-    setTimeout(() => setShowCopyState(false), 1000);
-  };
 
   // Listen to page scrolling
   useEffect(() => {
@@ -71,18 +59,6 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
       setShowNav(true);
     }
   }, [scrollTop]);
-
-  const showSyndicateForm = () => {
-    // Trigger wallet connection if wallet is not connected
-    if (!account) {
-      return dispatch(showWalletModal());
-    }
-
-    router.replace("/syndicates/create");
-
-    // Amplitude logger: How many users clicked on the "Create a Syndicate" button
-    amplitudeLogger(CLICK_CREATE_A_SYNDICATE, { flow: Flow.MGR_CREATE_SYN });
-  };
 
   const router = useRouter();
   const dispatch = useDispatch();
@@ -144,7 +120,6 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
     8,
   );
 
-  const [accountIsManager, setAccountIsManager] = useState<boolean>(false);
   const showOnboardingIfNeeded = router.pathname.endsWith("deposit");
 
   let noToken;
@@ -210,17 +185,6 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
       }
     }
   }, [account, router.isReady, syndicate, JSON.stringify(syndicateMembers)]);
-
-  // check whether the current connected wallet account is the manager of the syndicate
-  // we'll use this information to load the manager view
-  useEffect(() => {
-    if (erc20Token?.isOwner) {
-      setAccountIsManager(true);
-    } else {
-      setAccountIsManager(false);
-    }
-    setCurrentUrl(window.location.href);
-  }, [erc20Token?.isOwner, account]);
 
   // get static text from constants
   const {
@@ -379,13 +343,13 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
                   we should have an isChildVisible child here,
                   but it's not working as expected
                   */}
-                  <SyndicateDetails accountIsManager={accountIsManager}>
+                  <SyndicateDetails accountIsManager={erc20Token?.isOwner}>
                     <div className="w-full md:hidden mt-5">{children}</div>
                   </SyndicateDetails>
                 </div>
                 {/* Right Column */}
-                <div className="md:col-end-13 md:col-span-4 col-span-12 hidden md:block pt-0 h-full">
-                  <div className="sticky relative top-33">{children}</div>
+                <div className="md:col-end-13 md:col-span-5 col-span-12 hidden md:block pt-0 h-full">
+                  <div className="sticky top-33 w-100">{children}</div>
                 </div>
               </div>
 

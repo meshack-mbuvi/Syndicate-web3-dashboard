@@ -25,7 +25,11 @@ const Header: React.FC<props> = ({ backLink = null, show = true }) => {
   const router = useRouter();
 
   return (
-    <nav className={`${show ? "block" : "hidden"} bg-black h-16 fixed top-0 inset-x-0 align-middle bg-opacity-50 z-20 backdrop-filter backdrop-blur-xl`}>
+    <nav
+      className={`${
+        show ? "block" : "hidden"
+      } bg-black h-16 fixed top-0 inset-x-0 align-middle bg-opacity-50 z-20 backdrop-filter backdrop-blur-xl`}
+    >
       <div className="container mx-auto flex justify-between h-full">
         {/* This backlink is only displayed on mobile sizes */}
         {backLink ? (
@@ -43,7 +47,8 @@ const Header: React.FC<props> = ({ backLink = null, show = true }) => {
           </div>
         ) : null}
 
-        {router.pathname.includes("/syndicates/create") ? (
+        {router.pathname.includes("/syndicates/create") &&
+        !router.pathname.includes("/syndicates/create/clubs") ? (
           <div className="md:flex-1 flex items-center">
             <p className="text-sm sm:text-base text-white leading-7 font-light">
               Create a syndicate

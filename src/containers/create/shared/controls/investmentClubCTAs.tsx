@@ -10,6 +10,7 @@ const InvestmentClubCTAs: React.FC = () => {
     backBtnDisabled,
     nextBtnDisabled,
     handleCreateInvestmentClub,
+    showNextButton,
   } = useCreateInvestmentClubContext();
 
   return (
@@ -31,17 +32,23 @@ const InvestmentClubCTAs: React.FC = () => {
             <span className="ml-2">Back</span>
           </button>
         )}
-        <button
-          className={`${reviewStep && "bg-green-400"} primary-CTA ${
-            nextBtnDisabled
-              ? "primary-CTA-disabled text-gray-lightManatee"
-              : "hover:opacity-90 transition-all"
-          }`}
-          onClick={reviewStep ? handleCreateInvestmentClub : handleNext}
-          disabled={nextBtnDisabled}
-        >
-          {reviewStep ? "Create investment club" : lastStep ? "Review" : "Next"}
-        </button>
+        {showNextButton && (
+          <button
+            className={`${reviewStep && "bg-green-400"} primary-CTA ${
+              nextBtnDisabled
+                ? "primary-CTA-disabled text-gray-lightManatee"
+                : "hover:opacity-90 transition-all"
+            }`}
+            onClick={reviewStep ? handleCreateInvestmentClub : handleNext}
+            disabled={nextBtnDisabled}
+          >
+            {reviewStep
+              ? "Create investment club"
+              : lastStep
+              ? "Review"
+              : "Next"}
+          </button>
+        )}
       </div>
     </div>
   );

@@ -62,7 +62,7 @@ const CopyLink: FC<Props> = ({
           </div>
 
           <span
-            className={`overflow-hidden flex-grow-1 text-sm ${
+            className={`line-clamp-1 overflow-hidden flex-grow-1 text-sm ${
               syndicateSuccessfullyCreated && showConfettiSuccess
                 ? "text-green"
                 : "text-transparent bg-clip-text bg-gradient-to-r from-green"
