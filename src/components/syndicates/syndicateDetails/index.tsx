@@ -39,6 +39,8 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
     startTime,
     endTime,
     maxMemberCount,
+    name,
+    symbol,
   } = erc20Token;
 
   const dispatch = useDispatch();
@@ -113,7 +115,7 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
               {
                 header: "Created on",
                 content: `${epochTimeToDateFormat(
-                  new Date(startTime * 1000),
+                  new Date(startTime),
                   "LLL dd, yyyy",
                 )}`,
                 tooltip: createdDateToolTip,
@@ -123,7 +125,7 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
               {
                 header: "Closed on",
                 content: `${epochTimeToDateFormat(
-                  new Date(endTime * 1000),
+                  new Date(endTime),
                   "LLL dd, yyyy",
                 )}`,
                 tooltip: createdDateToolTip,
@@ -142,7 +144,7 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
               },
               {
                 header: "Closing in",
-                content: getCountDownDays((endTime * 1000).toString()),
+                content: getCountDownDays(endTime.toString()),
                 tooltip: closeDateToolTip,
               },
             ]
@@ -150,7 +152,7 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
               {
                 header: "Closed on",
                 content: `${epochTimeToDateFormat(
-                  new Date(startTime * 1000),
+                  new Date(startTime),
                   "LLL dd, yyyy",
                 )}`,
                 tooltip: closeDateToolTip,
@@ -227,53 +229,68 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
                   />
                 )}
               </div>
-              <div className="flex-shrink main-title flex-wrap break-all lg:mr-6 sm:mr-3 mr-4">
-                <div>
-                  <div className="xl:text-4.5xl lg:text-2xl md:text-xl sm:text-4xl text-lg font-normal">
+
+              <div className="flex-shrink main-title flex-wrap break-normal lg:mr-6 sm:mr-3 mr-4 space-y-1">
+                <div className="flex flex-wrap space-y-1">
+                  <div className="mr-4 xl:text-4.5xl lg:text-4xl md:text-xl sm:text-4xl text-lg font-normal line-clamp-2">
+                    {name}
+                  </div>
+                  <div className="flex flex-wrap">
+                    <div className="rounded-full py-1 px-3 text-sm border border-gray-24 flex items-center justify-center">
+                      {symbol}
+                    </div>
+                  </div>
+                </div>
+                <div className="flex flex-row relative">
+                  <div className="text-sm mr-4">
                     <span className="text-gray-lightManatee">0x</span>
                     {formattedSyndicateAddress.slice(2)}
                   </div>
+                  <CopyToClipboard text={syndicateAddress as string}>
+                    <button
+                      className="flex items-center relative w-4 h-4 mr-2 sm:mr-4 rounded-full cursor-pointer lg:hover:bg-gray-9 lg:active:bg-white lg:active:bg-opacity-20"
+                      onClick={updateAddressCopyState}
+                      onKeyDown={updateAddressCopyState}
+                    >
+                      {showAddressCopyState ? (
+                        <span className="absolute text-xs -bottom-5">
+                          copied
+                        </span>
+                      ) : null}
+                      <input
+                        type="image"
+                        src="/images/copy-clipboard.svg"
+                        className="cursor-pointer h-4 mx-auto"
+                        alt=""
+                      />
+                    </button>
+                  </CopyToClipboard>
+                  <CopyToClipboard text={syndicateDepositLink}>
+                    <button
+                      className="flex items-center relative w-4 h-4 mr-2 sm:mr-2 rounded-full cursor-pointer lg:hover:bg-gray-9 lg:active:bg-white lg:active:bg-opacity-20"
+                      onClick={updateDepositLinkCopyState}
+                      onKeyDown={updateDepositLinkCopyState}
+                    >
+                      {showDepositLinkCopyState ? (
+                        <span className="absolute text-xs -bottom-5">
+                          copied
+                        </span>
+                      ) : null}
+                      <input
+                        type="image"
+                        src="/images/copy-link.svg"
+                        className="cursor-pointer h-4 mx-auto"
+                        alt=""
+                      />
+                    </button>
+                  </CopyToClipboard>
+                  <EtherscanLink
+                    customStyles="w-4 h-4 rounded-full lg:hover:bg-gray-9 lg:active:bg-white lg:active:bg-opacity-20"
+                    iconOnly
+                    etherscanInfo={syndicateAddress}
+                  />
                 </div>
               </div>
-              <CopyToClipboard text={syndicateAddress as string}>
-                <button
-                  className="flex items-center relative w-8 h-8 mr-2 sm:mr-4 rounded-full cursor-pointer lg:hover:bg-gray-9 lg:active:bg-white lg:active:bg-opacity-20"
-                  onClick={updateAddressCopyState}
-                  onKeyDown={updateAddressCopyState}
-                >
-                  {showAddressCopyState ? (
-                    <span className="absolute text-xs -top-5">copied</span>
-                  ) : null}
-                  <input
-                    type="image"
-                    src="/images/copy-clipboard.svg"
-                    className="cursor-pointer h-4 mx-auto"
-                    alt=""
-                  />
-                </button>
-              </CopyToClipboard>
-              <CopyToClipboard text={syndicateDepositLink}>
-                <button
-                  className="flex items-center relative w-8 h-8 mr-2 sm:mr-4 rounded-full cursor-pointer lg:hover:bg-gray-9 lg:active:bg-white lg:active:bg-opacity-20"
-                  onClick={updateDepositLinkCopyState}
-                  onKeyDown={updateDepositLinkCopyState}
-                >
-                  {showDepositLinkCopyState ? (
-                    <span className="absolute text-xs -top-5">copied</span>
-                  ) : null}
-                  <input
-                    type="image"
-                    src="/images/copy-link.svg"
-                    className="cursor-pointer h-4 mx-auto"
-                    alt=""
-                  />
-                </button>
-              </CopyToClipboard>
-              <EtherscanLink
-                customStyles="w-8 h-8 rounded-full lg:hover:bg-gray-9 lg:active:bg-white lg:active:bg-opacity-20"
-                iconOnly
-                etherscanInfo={syndicateAddress}
-              />
               {/* Hide profile circle until we can make colors unique to each syndicate */}
               {/* <p className="flex-shrink-0 h-8 w-8 sm:h-10 sm:w-10 md:h-16 md:w-16 ml-4 rounded-full ideo-liquidity inline"></p> */}
             </div>
@@ -301,7 +318,7 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
               />
             ) : (
               <div
-                className={`grid xl:grid-cols-3 lg:grid-cols-2 grid-cols-2 
+                className={`grid xl:grid-cols-3 lg:grid-cols-2 grid-cols-2
               xl:gap-4 gap-2 gap-y-8 justify-between`}
               >
                 <div className="text-left">
@@ -310,7 +327,7 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
                   </p>
                   <div className="flex">
                     <p
-                      className="text-white leading-loose xl:text-2xl 
+                      className="text-white leading-loose xl:text-2xl
                   lg:text-xl text-base"
                     >
                       {totalDeposits}&nbsp;
@@ -351,7 +368,7 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
                 syndicate,
               }}
               customStyles={"w-full pt-4"}
-              customInnerWidth="w-full grid xl:grid-cols-3 lg:grid-cols-3 
+              customInnerWidth="w-full grid xl:grid-cols-3 lg:grid-cols-3
             grid-cols-3 xl:gap-8 gap-6s gap-y-8"
             />
           )}

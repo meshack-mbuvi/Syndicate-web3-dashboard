@@ -72,6 +72,7 @@ module.exports = {
       },
       height: () => ({
         "fit-content": "fit-content",
+        4.5: "1.125rem",
         17.5: "4.375rem",
         18: "4.5rem",
         104: "26rem",
@@ -81,6 +82,7 @@ module.exports = {
         "fit-content": "fit-content",
         "2/1": "200%",
         100: "30rem",
+        "slightly-over-100": "30.25rem",
       }),
       maxWidth: {
         564: "35.25rem",
@@ -222,6 +224,7 @@ module.exports = {
           light: "#FFD02B",
           dark: "#FFC83C",
           semantic: "#F9D252",
+          saffron: "#FFA439",
         },
         orange: {
           ...colors.orange,
@@ -279,6 +282,9 @@ module.exports = {
       margin: {
         0.5: "0.15rem",
         24.5: "6.5rem",
+      },
+      padding: {
+        4.5: "1.125rem",
       },
     },
   },

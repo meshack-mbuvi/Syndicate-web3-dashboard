@@ -1,17 +1,20 @@
 import React from "react";
-import Image from "next/image";
+import ReactTooltip from "react-tooltip";
 
-const SettingDisclaimer: React.FC = () => (
-  <div className="flex items-center justify-center">
-    <div className="mr-2 flex-none">
-      <Image src="/images/lightbulb.svg" width={20} height={20} />
-    </div>
-
-    <div className="text-sm text-gray-lightManatee break-words">
-      Changing this setting in the future will require a signed transaction with
-      gas.
-    </div>
-  </div>
-);
-
-export default SettingDisclaimer;
+export const SettingsDisclaimerTooltip: React.FC<{
+  id: string;
+  tip: string | React.ReactNode;
+}> = ({ id, tip }) => {
+  return (
+    <ReactTooltip
+      id={id}
+      place="right"
+      effect="solid"
+      className="actionsTooltip"
+      arrowColor="transparent"
+      backgroundColor="#222529"
+    >
+      {tip}
+    </ReactTooltip>
+  );
+};

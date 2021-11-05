@@ -384,8 +384,8 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
                   </SyndicateDetails>
                 </div>
                 {/* Right Column */}
-                <div className="md:col-end-13 md:col-span-4 col-span-12 hidden md:block pt-0 h-full">
-                  <div className="sticky relative top-33">{children}</div>
+                <div className="md:col-end-13 md:col-span-5 col-span-12 hidden md:block pt-0 h-full">
+                  <div className="sticky top-33 w-100">{children}</div>
                 </div>
               </div>
 

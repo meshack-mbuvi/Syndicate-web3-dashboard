@@ -1,11 +1,10 @@
-import { useState } from "react";
 import { SettingsDisclaimerTooltip } from "@/containers/createInvestmentClub/shared/SettingDisclaimer";
 
 /**
  * An input component with label, component to the right, and an icon to the furthest right.
  * @param {*} props
  */
-export const AdvancedInputField = (props: {
+export const InputFieldWithMax = (props: {
   label?: string;
   name?: string;
   id?: string;
@@ -17,7 +16,7 @@ export const AdvancedInputField = (props: {
   value: string | number;
   type?: string;
   addOn?: any;
-  extraAddon: any;
+  extraAddon?: any;
   isNumber?: boolean;
   hasError?: boolean;
   moreInfo?: string;
@@ -32,18 +31,12 @@ export const AdvancedInputField = (props: {
     error,
     value,
     disabled = false,
-    type = "text",
+    type = "number",
     addOn,
-    isNumber,
     customClass,
-    hasError = false,
-    extraAddon,
     moreInfo,
     addSettingDisclaimer,
   } = props;
-
-  const [focused, setFocused] = useState(false)
-  const [hover, setHover] = useState(false)
 
   return (
     <div className="w-full">
@@ -63,34 +56,18 @@ export const AdvancedInputField = (props: {
         >
           <div className="relative flex items-stretch flex-grow focus-within:z-10">
             <input
+              className={`block font-whyte text-base bg-transparent p-4 rounded-md border w-full outline-none text-white ${
+                error
+                  ? "border-red-500 focus:border-red-500 focus:ring-0"
+                  : "border-gray-24 focus:border-blue-navy hover:border-gray-syn3"
+              }`}
               type={type}
               name={name}
               id={id}
-              onFocus={() => setFocused(true)}
-              onBlur={() => setFocused(false)}
-              onMouseEnter={() => setHover(true)}
-              onMouseLeave={() => setHover(false)}
-              onChange={(e) => {
-                if (
-                  isNumber &&
-                  isNaN(e.target.value.replace(/,/g, "") as any)
-                ) {
-                  return;
-                }
-                onChange(e);
+              onChange={(event) => {
+                onChange(event);
               }}
-              className={`flex w-full min-w-0 align-middle text-base font-whyte focus:ring-0 ${
-                hasError
-                  ? "border border-red-500 focus:border-red-500"
-                  : ""
-              } flex-grow rounded-l-md dark-input-field-advanced ${
-                addOn ? "pr-4" : ""
-              } ${disabled ? "cursor-not-allowed" : ""}
-            `}
-              disabled={disabled}
               value={value}
-              step="1"
-              onWheel={(e) => e.currentTarget.blur()}
             />
             {addOn && (
               <div
@@ -98,21 +75,14 @@ export const AdvancedInputField = (props: {
               >
                 <span
                   className={`font-whyte text-white text-sm ${customClass?.addon}`}
-                  id="price-currency"
                 >
                   {addOn}
                 </span>
               </div>
             )}
           </div>
-          <div
-            className={`-ml-px relative inline-flex items-center bg-black space-x-2 pl-5 pr-7 py-2 border ${
-              error ? "border-red-500" : focused ? "border-blue-navy ring-0" : hover ? "border-gray-syn3" : "border-gray-24"
-            } rounded-r-md text-white focus:outline-none focus:ring-0`}
-          >
-            {extraAddon}
-          </div>
         </div>
+
         {addSettingDisclaimer && (
           <div className="hidden lg:flex pl-4 justify-center items-center w-1/3">
             <SettingsDisclaimerTooltip
@@ -129,9 +99,9 @@ export const AdvancedInputField = (props: {
 
       <div className="w-full lg:w-2/3">
         {error && (
-          <p className="text-red-500 text-sm mb-1">
+          <span className="text-sm text-red-500 pt-2">
             {error && !disabled ? error : ""}
-          </p>
+          </span>
         )}
         {moreInfo && !error && (
           <span className="text-sm text-gray-3 pt-2">{moreInfo}</span>

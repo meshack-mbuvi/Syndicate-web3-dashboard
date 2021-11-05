@@ -1,3 +1,5 @@
+import { NON_WORD_CHAR_REGEX } from "../constants";
+
 /**
  * This methods checks whether the provided value is a valid number.
  * To be a valid number, the value should:
@@ -79,4 +81,32 @@ export const removeSubstring = (
     originalString.substr(0, start) +
     originalString.substr(start + subString.length)
   );
+};
+
+export const symbolValidation = (sym: string): Record<string, string> => {
+  const errorText = {
+    invalidChar: "Only letters and numbers allowed",
+    maxChar: "Up to 4 characters allowed",
+  };
+
+  let res = {
+    validSym: sym,
+    errorMsg: "",
+  };
+
+  if (NON_WORD_CHAR_REGEX.test(sym)) {
+    res = {
+      validSym: sym.replaceAll(NON_WORD_CHAR_REGEX, ""),
+      errorMsg: errorText.invalidChar,
+    };
+  }
+
+  if (res.validSym.length > 4) {
+    res = {
+      validSym: res.validSym.slice(0, 4),
+      errorMsg: errorText.maxChar,
+    };
+  }
+
+  return res;
 };

@@ -8,3 +8,5 @@ export enum PERCENTAGES {
   ONE = 1,
   THREE = 3,
 }
+
+export const NON_WORD_CHAR_REGEX = /[^A-Za-z0-9_]/g;
