@@ -1,3 +1,4 @@
+import { useRouter } from "next/router";
 import { getGnosisTxnInfo } from "@/ClubERC20Factory/shared/gnosisTransactionInfo";
 import { amplitudeLogger, Flow } from "@/components/amplitude";
 import {
@@ -59,6 +60,7 @@ const DepositSyndicate: React.FC = () => {
   } = useSelector((state: RootState) => state);
 
   const {
+    address,
     maxTotalDeposits,
     depositToken,
     totalDeposits,
@@ -71,6 +73,7 @@ const DepositSyndicate: React.FC = () => {
     loading,
     memberPercentShare,
     maxMemberCount,
+    isOwner,
   } = erc20Token;
 
   const { depositTokenSymbol, depositTokenLogo, depositTokenDecimals } =
@@ -109,6 +112,8 @@ const DepositSyndicate: React.FC = () => {
 
   const [depositAmount, setDepositAmount] = useState<string>("");
 
+  const router = useRouter();
+
   useEffect(() => {
     // calculate member ownership for the intended deposits
 
@@ -139,6 +144,13 @@ const DepositSyndicate: React.FC = () => {
       checkClubWideErrors();
     }
   }, [depositToken, JSON.stringify(erc20Token), syndicateContracts]);
+
+  useEffect(() => {
+    // Redirect the owner to the manage page
+    if (isOwner) {
+      router.push(`/syndicates/${address}/manage`);
+    }
+  }, [isOwner, address, router]);
 
   const onTxConfirm = () => {
     setMetamaskConfirmPending(false);
