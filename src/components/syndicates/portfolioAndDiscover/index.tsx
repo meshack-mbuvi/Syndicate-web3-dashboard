@@ -76,13 +76,6 @@ const PortfolioAndDiscover: React.FC = () => {
         // show some animations during loading process
         // skeleton loader
         <div>
-          <div className="flex w-full justify-end mb-10">
-            <SkeletonLoader
-              width="40"
-              height="10"
-              borderRadius="rounded-full"
-            />
-          </div>
           <div className="mt-8">
             <div className="grid grid-cols-6">
               {generateSkeletons(6, "30", "8", "rounded-md")}
@@ -118,15 +111,6 @@ const PortfolioAndDiscover: React.FC = () => {
             {account && syndicates.length ? (
               <>
                 <h1 className="main-title">Portfolio</h1>
-                <Button
-                  customClasses="secondary-CTA relative"
-                  textColor="text-white"
-                  onClick={() => showSyndicateForm()}
-                  createSyndicate={true}
-                >
-                  <div className="hidden sm:block">Create a syndicate</div>
-                  <div className="block sm:hidden">Create</div>
-                </Button>
               </>
             ) : null}
           </div>
@@ -150,14 +134,6 @@ const PortfolioAndDiscover: React.FC = () => {
                   There are no syndicates you are leading or have invested in at
                   the moment.
                 </p>
-                <Button
-                  customClasses="my-4 primary-CTA mx-auto"
-                  textColor="text-black"
-                  onClick={showSyndicateForm}
-                  createSyndicate={true}
-                >
-                  Create a syndicate
-                </Button>
               </div>
             </div>
           ) : !account ? (

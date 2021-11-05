@@ -286,44 +286,6 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
     </div>
   );
 
-  const nonManagerCta = (
-    <div className="flex items-center mt-2">
-      <CopyToClipboard text={currentUrl} onCopy={updateAddressCopyState}>
-        <div className="flex">
-          <div className="flex items-center ml-0 relative w-7 h-7 cursor-pointer rounded-full lg:hover:bg-gray-700 lg:active:bg-white lg:active:bg-opacity-20">
-            {showCopyState ? (
-              <span className="absolute text-xs -top-5 -left-1 text-blue">
-                copied
-              </span>
-            ) : null}
-            <img
-              alt="copy"
-              src="/images/copy-clipboard-blue.svg"
-              className="cursor-pointer h-4 mx-auto transform rotate-180  fill-current text-blue"
-            />
-          </div>
-          <p className="text-base text-blue cursor-pointer">
-            Copy link to create a syndicate
-          </p>
-        </div>
-      </CopyToClipboard>
-    </div>
-  );
-
-  const managerCta = (
-    <div className="flex items-center mt-2">
-      <Button
-        customClasses="primary-CTA relative"
-        textColor="text-black"
-        onClick={() => showSyndicateForm()}
-        createSyndicate={false}
-      >
-        <div className="hidden sm:block">Create a syndicate</div>
-        <div className="block sm:hidden">Create</div>
-      </Button>
-    </div>
-  );
-
   const syndicateNotFoundState = (
     <div className="flex justify-center items-center h-full w-full mt-6 sm:mt-10">
       <div className="flex flex-col items-center justify-center sm:w-7/12 md:w-5/12 rounded-custom p-10">
@@ -333,7 +295,6 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
         <p className="text-base my-5 font-normal text-gray-dim text-center">
           {emptyStateMessage}
         </p>
-        {account === erc20Token?.owner ? managerCta : nonManagerCta}
       </div>
     </div>
   );
