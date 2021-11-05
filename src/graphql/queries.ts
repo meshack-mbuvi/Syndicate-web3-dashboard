@@ -35,3 +35,18 @@ export const CLUBS_HAVE_INVESTED = gql`
     }
   }
 `;
+
+export const CLUB_TOKEN_MEMBERS = gql`
+  query getClubMembers($where: SyndicateDAO_filter) {
+    syndicateDAOs(where: $where) {
+      members {
+        depositAmount
+        member {
+          memberAddress
+        }
+      }
+      totalSupply
+      contractAddress
+    }
+  }
+`;

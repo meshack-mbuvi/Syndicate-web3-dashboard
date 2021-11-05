@@ -10,6 +10,11 @@ const store = configureStore({
     // web3Reducer,
     // createInvestmentClubSliceReducer,
     // erc20TokenSliceReducer,
+    // clubMembersSlice
+    // modalsReducer,
+    // createInvestmentClubSliceReducer,
+    // clubERC20sReducer,
+    // clubMembersSliceReducer,
   },
   middleware: (getDefaultMiddleware) => getDefaultMiddleware({ thunk: true }),
   devTools: isDev,

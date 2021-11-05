@@ -23,7 +23,7 @@ import React, { FC, useEffect, useRef, useState } from "react";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import { useDispatch, useSelector } from "react-redux";
 import { syndicateActionConstants } from "src/components/syndicates/shared/Constants";
-import ManageMembers from "../managerActions/manageMembers";
+import ClubTokenMembers from "../managerActions/clubTokenMembers";
 import { assetsFilterOptions } from "./constants";
 
 const LayoutWithSyndicateDetails: FC = ({ children }) => {
@@ -395,7 +395,7 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
     noToken = creatingSyndicate;
   }
 
-  const [activeTab, setActiveTab] = useState("members");
+  const [activeTab, setActiveTab] = useState("assets");
 
   return (
     <Layout showNav={showNav}>
@@ -478,9 +478,7 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
                         <TabsButton options={assetsFilterOptions} value="all" />
                       </div>
                     )}
-                    {activeTab == "members" && syndicateMembers?.length > 0 && (
-                      <ManageMembers />
-                    )}
+                    {activeTab == "members" && <ClubTokenMembers />}
                   </div>
                 </div>
               </div>

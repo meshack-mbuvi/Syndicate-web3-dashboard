@@ -114,7 +114,7 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
                 header: "Created on",
                 content: `${epochTimeToDateFormat(
                   new Date(startTime * 1000),
-                  "LLL dd yyyy, p zzz",
+                  "LLL dd, yyyy",
                 )}`,
                 tooltip: createdDateToolTip,
               },
@@ -124,7 +124,7 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
                 header: "Closed on",
                 content: `${epochTimeToDateFormat(
                   new Date(endTime * 1000),
-                  "LLL dd yyyy, p zzz",
+                  "LLL dd, yyyy",
                 )}`,
                 tooltip: createdDateToolTip,
               },
@@ -142,7 +142,7 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
               },
               {
                 header: "Closing in",
-                content: getCountDownDays(endTime.toString()),
+                content: getCountDownDays((endTime * 1000).toString()),
                 tooltip: closeDateToolTip,
               },
             ]
@@ -151,7 +151,7 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
                 header: "Closed on",
                 content: `${epochTimeToDateFormat(
                   new Date(startTime * 1000),
-                  "LLL dd yyyy, p zzz",
+                  "LLL dd, yyyy",
                 )}`,
                 tooltip: closeDateToolTip,
               },
