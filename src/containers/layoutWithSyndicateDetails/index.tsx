@@ -1,7 +1,6 @@
 import { ClubERC20Contract } from "@/ClubERC20Factory/clubERC20";
 import { amplitudeLogger, Flow } from "@/components/amplitude";
 import { CLICK_CREATE_A_SYNDICATE } from "@/components/amplitude/eventNames";
-import Button from "@/components/buttons";
 import ErrorBoundary from "@/components/errorBoundary";
 import Layout from "@/components/layout";
 import Footer from "@/components/navigation/footer";
@@ -10,7 +9,6 @@ import BackButton from "@/components/socialProfiles/backButton";
 import { EtherscanLink } from "@/components/syndicates/shared/EtherscanLink";
 import Head from "@/components/syndicates/shared/HeaderTitle";
 import SyndicateDetails from "@/components/syndicates/syndicateDetails";
-import TabsButton from "@/components/TabsButton";
 import { setERC20Token } from "@/helpers/erc20TokenDetails";
 import { RootState } from "@/redux/store";
 import { showWalletModal } from "@/state/wallet/actions";
@@ -20,11 +18,10 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { isEmpty } from "lodash";
 import { useRouter } from "next/router";
 import React, { FC, useEffect, useRef, useState } from "react";
-import { CopyToClipboard } from "react-copy-to-clipboard";
 import { useDispatch, useSelector } from "react-redux";
 import { syndicateActionConstants } from "src/components/syndicates/shared/Constants";
 import ClubTokenMembers from "../managerActions/clubTokenMembers";
-import { assetsFilterOptions } from "./constants";
+import Assets from "./assets";
 
 const LayoutWithSyndicateDetails: FC = ({ children }) => {
   // Retrieve state
@@ -39,17 +36,10 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
     erc20TokenSliceReducer: { erc20Token },
   } = useSelector((state: RootState) => state);
 
-  const [showCopyState, setShowCopyState] = useState(false);
-  const [currentUrl, setCurrentUrl] = useState("");
   const [scrollTop, setScrollTop] = useState(0);
   const [showNav, setShowNav] = useState(true);
   const [isSubNavStuck, setIsSubNavStuck] = useState(true);
   const subNav = useRef(null);
-
-  const updateAddressCopyState = () => {
-    setShowCopyState(true);
-    setTimeout(() => setShowCopyState(false), 1000);
-  };
 
   // Listen to page scrolling
   useEffect(() => {
@@ -219,7 +209,6 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
     } else {
       setAccountIsManager(false);
     }
-    setCurrentUrl(window.location.href);
   }, [erc20Token?.isOwner, account]);
 
   // get static text from constants
@@ -373,7 +362,6 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
               <div className="grid grid-cols-12 gap-5">
                 {/* Left Column */}
                 <div className="md:col-start-1 md:col-end-7 col-span-12">
-                  {/* <div ref={ref} className="w-full md:hidden" />{" "} */}
                   {/* its used as an identifier for ref in small devices */}
                   {/*
                   we should have an isChildVisible child here,
@@ -402,7 +390,7 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
                       onClick={() => setActiveTab("assets")}
                       className={`whitespace-nowrap h4 w-fit-content ${
                         isSubNavStuck ? "py-6" : "h-16"
-                      } transition-all h-16 border-b-1 focus:outline-none focus:ring-0 font-whyte text-sm cursor-pointer ${
+                      } transition-all h-16 border-b-1 focus:ring-0 font-whyte text-sm cursor-pointer ${
                         activeTab == "assets"
                           ? "border-white text-white"
                           : "border-transparent text-gray-500 hover:text-gray-40"
@@ -415,7 +403,7 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
                       onClick={() => setActiveTab("members")}
                       className={`whitespace-nowrap h4 ${
                         isSubNavStuck ? "py-6" : "h-16"
-                      } transition-all h-16 border-b-1 focus:outline-none focus:ring-0 font-whyte text-sm cursor-pointer ${
+                      } transition-all h-16 border-b-1 focus:ring-0 font-whyte text-sm cursor-pointer ${
                         activeTab == "members"
                           ? "border-white text-white"
                           : "border-transparent text-gray-500 hover:text-gray-400 "
@@ -434,15 +422,12 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
 
                 <div className="text-base grid grid-cols-12 gap-y-5">
                   <div className="col-span-12">
-                    {activeTab == "assets" && (
-                      <div className="my-10">
-                        <TabsButton options={assetsFilterOptions} value="all" />
-                      </div>
-                    )}
+                    {activeTab == "assets" && <Assets />}
                     {activeTab == "members" && <ClubTokenMembers />}
                   </div>
                 </div>
               </div>
+
               <Footer extraClasses="mt-24 sm:mt-24 md:mt-40 mb-12" />
             </div>
           )}

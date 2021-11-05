@@ -28,7 +28,7 @@
     "alpinejs": "^2.8.2",
     "amplitude-js": "^8.3.1",
     "assert": "^2.0.0",
-    "axios": "^0.21.1",
+    "axios": "^0.21.4",
     "bignumber.js": "^7.2.1",
     "btoa": "^1.2.1",
     "buffer": "^6.0.3",
