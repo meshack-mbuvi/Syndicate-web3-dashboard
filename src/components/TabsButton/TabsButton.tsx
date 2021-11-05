@@ -1,27 +1,23 @@
-import { useEffect, useState, FC } from "react";
+import { FC } from "react";
 
 interface Option {
   label: string;
-  value: string | number;
+  value: string;
 }
 
 interface Props {
   options?: Option[];
-  value?: string | number;
-  onChange?: (val: string | number) => void;
+  value?: string;
+  onChange?: (val: string) => void;
+  activeAssetTab: string;
 }
 
 const TabsButton: FC<Props> = ({
   options = [],
-  value,
   onChange = () => false,
+  activeAssetTab,
 }) => {
-  const [selectedValue, setSelectedValue] = useState<string | number>("");
-
-  useEffect(() => setSelectedValue(value), [value]);
-
-  const handleChange = (val: string | number) => {
-    setSelectedValue(val);
+  const handleChange = (val: string) => {
     onChange(val);
   };
 
@@ -35,9 +31,9 @@ const TabsButton: FC<Props> = ({
           role="button"
           tabIndex={0}
           className={`border-1 px-3 py-1.5 rounded-3xl cursor-pointer box-border ${
-            val === selectedValue
+            val === activeAssetTab
               ? "border-gray-white text-white"
-              : "border-transparent text-gray-lightManatee"
+              : "border-transparent text-gray-lightManatee hover:text-white"
           }`}
         >
           {label}

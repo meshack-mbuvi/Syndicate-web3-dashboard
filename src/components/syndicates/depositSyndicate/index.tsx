@@ -1,3 +1,4 @@
+import { useRouter } from "next/router";
 import { getGnosisTxnInfo } from "@/ClubERC20Factory/shared/gnosisTransactionInfo";
 import { amplitudeLogger, Flow } from "@/components/amplitude";
 import {
@@ -42,6 +43,7 @@ import { InfoIcon } from "src/components/iconWrappers";
 import { SkeletonLoader } from "src/components/skeletonLoader";
 import ERC20ABI from "src/utils/abi/erc20";
 import { AbiItem } from "web3-utils";
+import useWindowSize from "@/hooks/useWindowSize";
 
 const DepositSyndicate: React.FC = () => {
   // HOOK DECLARATIONS
@@ -58,6 +60,7 @@ const DepositSyndicate: React.FC = () => {
   } = useSelector((state: RootState) => state);
 
   const {
+    address,
     maxTotalDeposits,
     depositToken,
     totalDeposits,
@@ -70,6 +73,7 @@ const DepositSyndicate: React.FC = () => {
     loading,
     memberPercentShare,
     maxMemberCount,
+    isOwner,
   } = erc20Token;
 
   const { depositTokenSymbol, depositTokenLogo, depositTokenDecimals } =
@@ -108,6 +112,8 @@ const DepositSyndicate: React.FC = () => {
 
   const [depositAmount, setDepositAmount] = useState<string>("");
 
+  const router = useRouter();
+
   useEffect(() => {
     // calculate member ownership for the intended deposits
 
@@ -138,6 +144,13 @@ const DepositSyndicate: React.FC = () => {
       checkClubWideErrors();
     }
   }, [depositToken, JSON.stringify(erc20Token), syndicateContracts]);
+
+  useEffect(() => {
+    // Redirect the owner to the manage page
+    if (isOwner) {
+      router.push(`/syndicates/${address}/manage`);
+    }
+  }, [isOwner, address, router]);
 
   const onTxConfirm = () => {
     setMetamaskConfirmPending(false);
@@ -561,6 +574,11 @@ const DepositSyndicate: React.FC = () => {
     }
   };
 
+  const { width } = useWindowSize();
+  const isHoldingsCardColumn =
+    +connectedMemberDeposits >= 10000 &&
+    ((width > 868 && width < 1536) || width < 500);
+
   return (
     <ErrorBoundary>
       <div className="w-full mt-4 sm:mt-0 top-44 mb-10">
@@ -803,26 +821,43 @@ const DepositSyndicate: React.FC = () => {
           {loading ? (
             <SkeletonLoader height="9" width="full" borderRadius="rounded-md" />
           ) : (
-            <div className="flex">
-              <div className="mr-8">
+            <div className={`flex ${isHoldingsCardColumn ? "flex-col" : ""}`}>
+              <div
+                className={
+                  isHoldingsCardColumn
+                    ? ""
+                    : (width < 1380 || width < 868) &&
+                      +connectedMemberDeposits >= 1000 &&
+                      +connectedMemberDeposits < 10000
+                    ? "mr-6"
+                    : "mr-8"
+                }
+              >
                 <HoldingsInfo
                   title="Amount deposited"
                   amount={floatedNumberWithCommas(connectedMemberDeposits)}
                   tokenName={"USDC"}
                 />
               </div>
-              <HoldingsInfo
-                title="Club tokens (ownership share)"
-                amount={
-                  accountClubTokens
-                    ? `${parseInt(accountClubTokens.toString(), 10).toFixed(2)}`
-                    : "0.00"
-                }
-                tokenName={symbol}
-                percentValue={
-                  isNaN(memberPercentShare) ? 0 : +memberPercentShare.toFixed(2)
-                }
-              />
+              <div className={isHoldingsCardColumn ? "pt-5" : ""}>
+                <HoldingsInfo
+                  title="Club tokens (ownership share)"
+                  amount={
+                    accountClubTokens
+                      ? `${parseInt(accountClubTokens.toString(), 10).toFixed(
+                          2,
+                        )}`
+                      : "0.00"
+                  }
+                  tokenName={symbol}
+                  percentValue={
+                    isNaN(memberPercentShare)
+                      ? 0
+                      : +memberPercentShare.toFixed(2)
+                  }
+                  wrap="flex-wrap"
+                />
+              </div>
             </div>
           )}
         </div>

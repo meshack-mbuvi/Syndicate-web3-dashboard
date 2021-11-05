@@ -9,12 +9,22 @@ interface SkeletonProps {
   width: string;
   height: string;
   borderRadius?: string;
+  margin?: string;
+  customClass?: string;
 }
 
 export const SkeletonLoader = (props: SkeletonProps) => {
-  const { width, height, borderRadius = "rounded-custom" } = props;
+  const {
+    width,
+    height,
+    borderRadius = "rounded-custom",
+    margin = "my-2",
+    customClass,
+  } = props;
   return (
     <div
-      className={`${borderRadius} custom-animation w-${width} my-2 h-${height}`}></div>
+      className={`${borderRadius} custom-animation w-${width} ${margin} h-${height}
+      ${customClass ? customClass : ""}`}
+    ></div>
   );
 };
