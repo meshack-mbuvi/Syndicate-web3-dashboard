@@ -41,7 +41,6 @@ const TokenTable: FC<Props> = ({ columns, tableData, activeAssetTab }) => {
   };
 
   useEffect(() => {
-    tokensTableRef.current.focus();
     getPaginatedData();
     if (currentPage === 1) {
       setCanPreviousPage(false);
@@ -105,7 +104,7 @@ const TokenTable: FC<Props> = ({ columns, tableData, activeAssetTab }) => {
 
   // return empty state if on active tab and there are no collectibles
   if (activeAssetTab === "tokens" && !loading && !tokensResult.length) {
-    return <AssetEmptyState activeAssetTab={activeAssetTab}/>;
+    return <AssetEmptyState activeAssetTab={activeAssetTab} />;
   }
 
   return (

@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import NetAssets from "@/containers/layoutWithSyndicateDetails/assets/NetAssets";
 import TabsButton from "@/components/TabsButton";
 import TokenTable from "@/containers/layoutWithSyndicateDetails/assets/TokenTable";
 import Collectibles from "@/containers/layoutWithSyndicateDetails/assets/Collectibles";
@@ -8,15 +7,10 @@ import {
   tokenTableColumns,
 } from "@/containers/layoutWithSyndicateDetails/assets/constants";
 import AssetEmptyState from "@/containers/layoutWithSyndicateDetails/assets/AssetEmptyState";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
-import {
-  fetchTokenTransactions,
-  fetchCollectiblesTransactions,
-} from "@/state/assets/slice";
 
 const Assets: React.FC = () => {
-  const dispatch = useDispatch();
   const {
     assetsSliceReducer: { tokensResult, collectiblesResult },
     web3Reducer: {
@@ -26,11 +20,6 @@ const Assets: React.FC = () => {
   const [activeAssetTab, setActiveAssetTab] = useState<string>("all");
 
   useEffect(() => {
-    // fetch token transactions for the connected account.
-    dispatch(fetchTokenTransactions(account));
-
-    // test nft account: 0xf4c2c3e12b61d44e6b228c43987158ac510426fb
-    dispatch(fetchCollectiblesTransactions(account));
     setActiveAssetTab("all");
   }, [account]);
 

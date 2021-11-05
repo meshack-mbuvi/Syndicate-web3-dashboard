@@ -22,6 +22,10 @@ import { useDispatch, useSelector } from "react-redux";
 import { syndicateActionConstants } from "src/components/syndicates/shared/Constants";
 import ClubTokenMembers from "../managerActions/clubTokenMembers";
 import Assets from "./assets";
+import {
+  fetchTokenTransactions,
+  fetchCollectiblesTransactions,
+} from "@/state/assets/slice";
 
 const LayoutWithSyndicateDetails: FC = ({ children }) => {
   // Retrieve state
@@ -61,6 +65,14 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
       setShowNav(true);
     }
   }, [scrollTop]);
+
+  useEffect(() => {
+    // fetch token transactions for the connected account.
+    dispatch(fetchTokenTransactions(account));
+
+    // test nft account: 0xf4c2c3e12b61d44e6b228c43987158ac510426fb
+    dispatch(fetchCollectiblesTransactions(account));
+  }, [account]);
 
   const showSyndicateForm = () => {
     // Trigger wallet connection if wallet is not connected
