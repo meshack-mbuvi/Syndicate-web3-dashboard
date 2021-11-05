@@ -1,19 +1,15 @@
 import ErrorBoundary from "@/components/errorBoundary";
 import FadeIn from "@/components/fadeIn/FadeIn";
-import JoinWaitlist from "@/components/JoinWaitlist";
+import CopyLink from "@/components/shared/CopyLink";
+import CreateEntityCard from "@/components/shared/createEntityCard";
 import { SkeletonLoader } from "@/components/skeletonLoader";
 import StatusBadge from "@/components/syndicateDetails/statusBadge";
-import { useUnavailableState } from "@/components/syndicates/hooks/useUnavailableState";
-import { UnavailableState } from "@/components/syndicates/shared/unavailableState";
+import { EtherscanLink } from "@/components/syndicates/shared/EtherscanLink";
+import { SuccessCard } from "@/containers/managerActions/successCard";
 import { RootState } from "@/redux/store";
-
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import CopyLink from "@/components/shared/CopyLink";
-import CreateEntityCard from "@/components/shared/createEntityCard";
-import { EtherscanLink } from "@/components/syndicates/shared/EtherscanLink";
-import { SuccessCard } from "@/containers/managerActions/successCard";
 
 const ManagerActions = (): JSX.Element => {
   const {
@@ -24,28 +20,28 @@ const ManagerActions = (): JSX.Element => {
       },
     },
   } = useSelector((state: RootState) => state);
-
-  const {
-    maxTotalDeposits,
-    depositToken,
-    totalDeposits,
-    memberCount,
-    depositsEnabled,
-    symbol,
-    totalSupply,
-    accountClubTokens,
-    connectedMemberDeposits,
-    loading,
-    memberPercentShare,
-    maxMemberCount,
-    isOwner,
-  } = erc20Token;
-
   const router = useRouter();
+
+  const { loading, depositsEnabled, address, isOwner } = erc20Token;
+
   const { syndicateAddress } = router.query;
 
-  const { title, message, renderUnavailableState, renderJoinWaitList } =
-    useUnavailableState("manage");
+  // we show loading state until content processing has been completed
+  // meaning we are sure what to show the user depending on whether it's member
+  // or manager content
+  const [readyToDisplay, setReadyToDisplay] = useState(false);
+
+  useEffect(() => {
+    //  Content processing not yet completed
+    if (!address) return;
+
+    // Redirect the owner to the manage page
+    if (!isOwner) {
+      router.push(`/syndicates/${syndicateAddress}/deposit`);
+    } else {
+      setReadyToDisplay(true);
+    }
+  }, [isOwner, address, router, syndicateAddress]);
 
   const [showDepositLinkCopyState, setShowDepositLinkCopyState] =
     useState(false);
@@ -83,23 +79,7 @@ const ManagerActions = (): JSX.Element => {
     }
   }, [syndicateSuccessfullyCreated]);
 
-  if (renderUnavailableState || renderJoinWaitList) {
-    return (
-      <div className="h-fit-content px-8 pb-4 pt-5 bg-gray-9 rounded-2xl">
-        <div className="flex justify-between my-1 px-2">
-          {renderJoinWaitList ? (
-            <JoinWaitlist />
-          ) : (
-            renderUnavailableState && (
-              <UnavailableState title={title} message={message} />
-            )
-          )}
-        </div>
-      </div>
-    );
-  }
-
-  if (loading) {
+  if (loading || !readyToDisplay) {
     return (
       <>
         <div className="h-fit-content rounded-2xl p-4 md:mx-2 md:p-6 bg-gray-9 mt-6 md:mt-0 w-full">

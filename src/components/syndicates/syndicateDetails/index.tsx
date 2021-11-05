@@ -7,9 +7,8 @@ import abi from "human-standard-token-abi";
 import { useRouter } from "next/router";
 import React, { FC, useEffect, useState } from "react";
 import { CopyToClipboard } from "react-copy-to-clipboard";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { EtherscanLink } from "src/components/syndicates/shared/EtherscanLink";
-import { setSyndicateDetails } from "src/redux/actions/syndicateDetails";
 // utils
 import { formatAddress } from "src/utils/formatAddress";
 import GradientAvatar from "../portfolioAndDiscover/portfolio/GradientAvatar";
@@ -20,7 +19,6 @@ import { ProgressIndicator } from "../shared/progressIndicator";
 // we should have an isChildVisible prop here of type boolean
 const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
   const {
-    initializeContractsReducer: { syndicateContracts },
     erc20TokenSliceReducer: { erc20Token },
     web3Reducer: {
       web3: { web3 },
@@ -30,7 +28,6 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
 
   const {
     loading,
-    tokenDecimals: decimals,
     maxTotalDeposits,
     depositToken,
     totalDeposits,
@@ -42,8 +39,6 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
     name,
     symbol,
   } = erc20Token;
-
-  const dispatch = useDispatch();
 
   const router = useRouter();
   const [details, setDetails] = useState<
@@ -76,7 +71,6 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
   // get syndicate address from the url
   const { syndicateAddress } = router.query;
 
-  const tokenDecimals = decimals;
   const depositERC20TokenSymbol = "USDC"; // TOD: Update to support multiple tokens
   const depositERC20Address = depositToken;
 
@@ -162,33 +156,6 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
     }
   }, [JSON.stringify(erc20Token)]);
 
-  /**
-   * Extracts some syndicate data and dispatches an action to set the details
-   */
-  useEffect(() => {
-    if (syndicateContracts && syndicate) {
-      // dispatch action to get details about the syndicate
-      // These values will be used in other components that might
-      // need them.
-      const {
-        depositERC20Address,
-        managerDistributionShareBasisPoints,
-        distributionShareToSyndicateProtocol,
-      } = syndicate;
-
-      dispatch(
-        setSyndicateDetails(
-          syndicateContracts,
-          depositERC20Address,
-          managerDistributionShareBasisPoints,
-          distributionShareToSyndicateProtocol,
-          syndicate,
-          syndicateAddress,
-        ),
-      );
-    }
-  }, [syndicate, syndicateAddress, depositERC20TokenSymbol, tokenDecimals]);
-
   // format an account address in the format 0x3f6q9z52…54h2kjh51h5zfa
 
   const formattedSyndicateAddress = formatAddress(syndicateAddress, 6, 4);
@@ -222,7 +189,7 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
           <div>
             <div className="flex justify-start items-center">
               <div className="mr-6">
-                {syndicateAddress && (
+                {syndicateAddress && !loading && (
                   <GradientAvatar
                     syndicateAddress={syndicateAddress}
                     size="xl:w-20 lg:w-16 xl:h-20 lg:h-16 w-10 h-10"
@@ -230,65 +197,85 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
                 )}
               </div>
 
-              <div className="flex-shrink main-title flex-wrap break-normal lg:mr-6 sm:mr-3 mr-4 space-y-1">
+              <div className="flex-shrink main-title flex-wrap break-normal lg:mr-6 sm:mr-3 mr-4 space-y-1 py-1">
                 <div className="flex flex-wrap space-y-1">
-                  <div className="mr-4 xl:text-4.5xl lg:text-4xl md:text-xl sm:text-4xl text-lg font-normal line-clamp-2">
-                    {name}
-                  </div>
-                  <div className="flex flex-wrap">
-                    <div className="rounded-full py-1 px-3 text-sm border border-gray-24 flex items-center justify-center">
-                      {symbol}
-                    </div>
-                  </div>
+                  {loading ? (
+                    <SkeletonLoader
+                      height="9"
+                      width="full"
+                      borderRadius="rounded-md"
+                    />
+                  ) : (
+                    <>
+                      <div className="mr-4 xl:text-4.5xl leading-10 lg:text-4xl md:text-xl sm:text-4xl text-lg font-normal line-clamp-2">
+                        {name}
+                      </div>
+                      <div className="flex flex-wrap">
+                        <div className="rounded-full py-1 px-3 font-whyte text-base border border-gray-24 flex items-center justify-center">
+                          {symbol}
+                        </div>
+                      </div>
+                    </>
+                  )}
                 </div>
                 <div className="flex flex-row relative">
-                  <div className="text-sm mr-4">
-                    <span className="text-gray-lightManatee">0x</span>
-                    {formattedSyndicateAddress.slice(2)}
-                  </div>
-                  <CopyToClipboard text={syndicateAddress as string}>
-                    <button
-                      className="flex items-center relative w-4 h-4 mr-2 sm:mr-4 rounded-full cursor-pointer lg:hover:bg-gray-9 lg:active:bg-white lg:active:bg-opacity-20"
-                      onClick={updateAddressCopyState}
-                      onKeyDown={updateAddressCopyState}
-                    >
-                      {showAddressCopyState ? (
-                        <span className="absolute text-xs -bottom-5">
-                          copied
-                        </span>
-                      ) : null}
-                      <input
-                        type="image"
-                        src="/images/copy-clipboard.svg"
-                        className="cursor-pointer h-4 mx-auto"
-                        alt=""
+                  {loading ? (
+                    <SkeletonLoader
+                      height="9"
+                      width="full"
+                      borderRadius="rounded-md"
+                    />
+                  ) : (
+                    <>
+                      <div className="text-sm mr-4">
+                        <span className="text-gray-lightManatee">0x</span>
+                        {formattedSyndicateAddress.slice(2)}
+                      </div>
+                      <CopyToClipboard text={syndicateAddress as string}>
+                        <button
+                          className="flex items-center relative w-4 h-4 mr-2 sm:mr-4 rounded-full cursor-pointer lg:hover:bg-gray-9 lg:active:bg-white lg:active:bg-opacity-20"
+                          onClick={updateAddressCopyState}
+                          onKeyDown={updateAddressCopyState}
+                        >
+                          {showAddressCopyState ? (
+                            <span className="absolute text-xs -bottom-5">
+                              copied
+                            </span>
+                          ) : null}
+                          <input
+                            type="image"
+                            src="/images/copy-clipboard.svg"
+                            className="cursor-pointer h-4 mx-auto"
+                            alt=""
+                          />
+                        </button>
+                      </CopyToClipboard>
+                      <CopyToClipboard text={syndicateDepositLink}>
+                        <button
+                          className="flex items-center relative w-4 h-4 mr-2 sm:mr-2 rounded-full cursor-pointer lg:hover:bg-gray-9 lg:active:bg-white lg:active:bg-opacity-20"
+                          onClick={updateDepositLinkCopyState}
+                          onKeyDown={updateDepositLinkCopyState}
+                        >
+                          {showDepositLinkCopyState ? (
+                            <span className="absolute text-xs -bottom-5">
+                              copied
+                            </span>
+                          ) : null}
+                          <input
+                            type="image"
+                            src="/images/copy-link.svg"
+                            className="cursor-pointer h-4 mx-auto"
+                            alt=""
+                          />
+                        </button>
+                      </CopyToClipboard>
+                      <EtherscanLink
+                        customStyles="w-4 h-4 rounded-full lg:hover:bg-gray-9 lg:active:bg-white lg:active:bg-opacity-20"
+                        iconOnly
+                        etherscanInfo={syndicateAddress}
                       />
-                    </button>
-                  </CopyToClipboard>
-                  <CopyToClipboard text={syndicateDepositLink}>
-                    <button
-                      className="flex items-center relative w-4 h-4 mr-2 sm:mr-2 rounded-full cursor-pointer lg:hover:bg-gray-9 lg:active:bg-white lg:active:bg-opacity-20"
-                      onClick={updateDepositLinkCopyState}
-                      onKeyDown={updateDepositLinkCopyState}
-                    >
-                      {showDepositLinkCopyState ? (
-                        <span className="absolute text-xs -bottom-5">
-                          copied
-                        </span>
-                      ) : null}
-                      <input
-                        type="image"
-                        src="/images/copy-link.svg"
-                        className="cursor-pointer h-4 mx-auto"
-                        alt=""
-                      />
-                    </button>
-                  </CopyToClipboard>
-                  <EtherscanLink
-                    customStyles="w-4 h-4 rounded-full lg:hover:bg-gray-9 lg:active:bg-white lg:active:bg-opacity-20"
-                    iconOnly
-                    etherscanInfo={syndicateAddress}
-                  />
+                    </>
+                  )}
                 </div>
               </div>
               {/* Hide profile circle until we can make colors unique to each syndicate */}
@@ -372,14 +359,6 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
             grid-cols-3 xl:gap-8 gap-6s gap-y-8"
             />
           )}
-
-          {/* <PermissionCard
-            allowlistEnabled={syndicate?.allowlistEnabled}
-            modifiable={syndicate?.modifiable}
-            transferable={syndicate?.tranferable}
-            className="pb-8 mt-6"
-            showSkeletonLoader={loading}
-          /> */}
         </div>
         {/* Gradient overlay */}
         {!showMore ? (
