@@ -107,8 +107,8 @@ export const getERC20TokenDetails = async (
         requiredTokenMinBalance,
         maxTotalDeposits: getWeiAmount(maxTotalSupply, tokenDecimals, false), //should be updated if token prices is not 1:1
         connectedMemberDeposits: accountClubTokens,
-        startTime: parseInt(startTime, 10),
-        endTime: parseInt(endTime, 10),
+        startTime: parseInt(startTime, 10) * 1000, // time is in seconds. need to change to milliseconds
+        endTime: parseInt(endTime, 10) * 1000, // time is in seconds. need to change to milliseconds
       };
     } catch (error) {
       return ERC20TokenDefaultState;

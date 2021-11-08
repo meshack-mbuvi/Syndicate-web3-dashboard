@@ -63,7 +63,7 @@ const CreateInvestmentClubProvider: React.FC = ({ children }) => {
       investmentClubName,
       investmentClubSymbol,
       tokenCap,
-      mintEndTime: { value: startTime },
+      mintEndTime: { value: endMintTime },
       membersCount,
     },
   } = useSelector((state: RootState) => state);
@@ -150,13 +150,14 @@ const CreateInvestmentClubProvider: React.FC = ({ children }) => {
         errorModal: false,
       }));
       const _tokenCap = getWeiAmount(tokenCap, 18, true);
+      const startTime = parseInt((new Date().getTime() / 1000).toString()); // convert to seconds
       await clubERC20Factory.createERC20(
         account,
         investmentClubName,
         investmentClubSymbol,
         depositTokenAddress,
-        new Date().getTime(),
         startTime,
+        endMintTime,
         _tokenCap,
         membersCount,
         onTxConfirm,
