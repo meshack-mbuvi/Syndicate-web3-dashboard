@@ -1,3 +1,5 @@
+import clubERC20sReducer from "@/state/clubERC20";
+import clubMembersSliceReducer from "@/state/clubMembers";
 import createInvestmentClubSliceReducer from "@/state/createInvestmentClub/slice";
 import erc20TokenSliceReducer from "@/state/erc20token/slice";
 import modalsReducer from "@/state/modals";
@@ -21,6 +23,7 @@ import { syndicateDetailsReducer } from "./syndicateDetails";
 import { syndicateMemberDetailsReducer } from "./syndicateMemberDetails";
 import { syndicatesReducer } from "./syndicates";
 import { tokenDetailsReducer } from "./tokenAllowances";
+import assetsSliceReducer from "@/state/assets/slice";
 
 export const rootReducer = combineReducers({
   web3Reducer,
@@ -42,6 +45,9 @@ export const rootReducer = combineReducers({
   modalsReducer,
   createInvestmentClubSliceReducer,
   erc20TokenSliceReducer,
+  clubERC20sReducer,
+  clubMembersSliceReducer,
+  assetsSliceReducer
 });
 
 export default rootReducer;

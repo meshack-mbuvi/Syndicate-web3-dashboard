@@ -1,5 +1,5 @@
-import React, { useEffect, useRef } from "react";
-import SettingDisclaimer from "@/containers/createInvestmentClub/shared/SettingDisclaimer";
+import { useState } from "react";
+import { SettingsDisclaimerTooltip } from "@/containers/createInvestmentClub/shared/SettingDisclaimer";
 
 /**
  * An input component with label, component to the right, and an icon to the furthest right.
@@ -41,32 +41,35 @@ export const AdvancedInputField = (props: {
     moreInfo,
     addSettingDisclaimer,
   } = props;
-  const focusInput = useRef(null);
 
-  useEffect(() => {
-    // change focus to input field if focus value is set
-    if (focus) {
-      focusInput.current.focus();
-    }
-  }, [focus]);
+  const [focused, setFocused] = useState(false)
+  const [hover, setHover] = useState(false)
 
   return (
-    <div className="px-1 w-full">
+    <div className="w-full">
       <div className="flex justify-between">
         <label
           htmlFor={label}
-          className="block text-white text-lg md:text-xl pb-6"
+          className="h3 pb-6"
         >
           {label}
         </label>
       </div>
       <div className="flex">
-        <div className="mt-1 mb-2 flex rounded-md shadow-sm w-2/3">
+        <div
+          className="mt-1 mb-2 flex rounded-md shadow-sm w-full lg:w-2/3"
+          data-tip
+          data-for="disclaimer-tip"
+        >
           <div className="relative flex items-stretch flex-grow focus-within:z-10">
             <input
               type={type}
               name={name}
               id={id}
+              onFocus={() => setFocused(true)}
+              onBlur={() => setFocused(false)}
+              onMouseEnter={() => setHover(true)}
+              onMouseLeave={() => setHover(false)}
               onChange={(e) => {
                 if (
                   isNumber &&
@@ -76,9 +79,9 @@ export const AdvancedInputField = (props: {
                 }
                 onChange(e);
               }}
-              className={`flex w-full min-w-0 align-middle text-base font-whyte ${
+              className={`flex w-full min-w-0 align-middle text-base font-whyte focus:ring-0 ${
                 hasError
-                  ? "border border-red-500 focus:border-red-500 focus:ring-0"
+                  ? "border border-red-500 focus:border-red-500"
                   : ""
               } flex-grow rounded-l-md dark-input-field-advanced ${
                 addOn ? "pr-4" : ""
@@ -88,7 +91,6 @@ export const AdvancedInputField = (props: {
               value={value}
               step="1"
               onWheel={(e) => e.currentTarget.blur()}
-              ref={focusInput}
             />
             {addOn && (
               <div
@@ -105,20 +107,27 @@ export const AdvancedInputField = (props: {
           </div>
           <div
             className={`-ml-px relative inline-flex items-center bg-black space-x-2 pl-5 pr-7 py-2 border ${
-              error ? "border-red-500" : "border-gray-24"
+              error ? "border-red-500" : focused ? "border-blue-navy ring-0" : hover ? "border-gray-syn3" : "border-gray-24"
             } rounded-r-md text-white focus:outline-none focus:ring-0`}
           >
             {extraAddon}
           </div>
         </div>
         {addSettingDisclaimer && (
-          <div className="pl-4 flex justify-center items-center w-1/3">
-            <SettingDisclaimer />
+          <div className="hidden lg:flex pl-4 justify-center items-center w-1/3">
+            <SettingsDisclaimerTooltip
+              id="disclaimer-tip"
+              tip={
+                <span>
+                  Can be modified later via a signed <br /> transaction with gas
+                </span>
+              }
+            />
           </div>
         )}
       </div>
 
-      <div className="w-2/3">
+      <div className="w-full lg:w-2/3">
         {error && (
           <p className="text-red-500 text-sm mb-1">
             {error && !disabled ? error : ""}

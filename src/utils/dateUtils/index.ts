@@ -240,7 +240,7 @@ export const epochTimeToDateFormat = (
 export const getCountDownDays = (date: string): string => {
   const now = moment();
   const closeDateCountdown = moment(
-    new Date(parseInt(date) * 1000),
+    new Date(parseInt(date)),
     "M/DD/YYYY",
   );
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment

@@ -86,7 +86,7 @@ const TimeAndDatePicker: React.FC = () => {
           <div className="w-5/12 flex flex-1">
             <DatePicker
               selected={selectedDate}
-              onChange={(date) => setSelectedDate(date)}
+              onChange={(date) => setSelectedDate(date as any)}
               startDate={startDate}
               placeholderText={startDate?.toLocaleDateString()}
               minDate={new Date()}

@@ -1,18 +1,22 @@
-import PlaceHolder from "@/containers/createInvestmentClub/placeHolder";
+import ClubNameSelector from "@/containers/createInvestmentClub/clubNameSelector";
 import AmountToRaise from "@/containers/createInvestmentClub/amountToRaise";
+import MintMaxDate from "@/containers/createInvestmentClub/mintMaxDate";
+import MembersCount from "@/containers/createInvestmentClub/membersCount";
 
 export default [
   {
-    component: <PlaceHolder title="step 1" />, // TODO: replace PlaceHolder component with your component
+    component: <ClubNameSelector />,
   },
   {
     component: <AmountToRaise />,
   },
   {
-    component: <PlaceHolder title="step 3" />, // TODO: replace PlaceHolder component with your component
+    component: <MintMaxDate />,
   },
-
   {
-    component: <PlaceHolder title="Review Page" />, // TODO: replace PlaceHolder component with your component
+    component: <MembersCount />,
+  },
+  {
+    component: <div></div>,
   },
 ];

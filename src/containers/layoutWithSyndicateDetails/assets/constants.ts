@@ -1,3 +1,5 @@
+export const tokenTableColumns = ["Token", "Balance", "Value"];
+
 export const assetsFilterOptions = [
   {
     label: "All Assets",
@@ -12,3 +14,4 @@ export const assetsFilterOptions = [
     value: "collectibles",
   },
 ];
+

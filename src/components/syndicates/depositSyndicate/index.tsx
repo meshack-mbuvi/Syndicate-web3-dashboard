@@ -21,6 +21,7 @@ import useSyndicateClubInfo from "@/hooks/deposit/useSyndicateClubInfo";
 import useModal from "@/hooks/useModal";
 import { useERC20TokenBalance } from "@/hooks/useTokenBalance";
 import useUSDCDetails from "@/hooks/useUSDCDetails";
+import useWindowSize from "@/hooks/useWindowSize";
 import { RootState } from "@/redux/store";
 import {
   setAccountClubTokens,
@@ -34,6 +35,7 @@ import {
 } from "@/utils/formattedNumbers";
 import { CheckIcon } from "@heroicons/react/solid";
 import Image from "next/image";
+import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import { useDispatch, useSelector } from "react-redux";
@@ -57,7 +59,10 @@ const DepositSyndicate: React.FC = () => {
     erc20TokenSliceReducer: { erc20Token, erc20TokenContract },
   } = useSelector((state: RootState) => state);
 
+  const [readyToDisplay, setReadyToDisplay] = useState(false);
+
   const {
+    address,
     maxTotalDeposits,
     depositToken,
     totalDeposits,
@@ -70,6 +75,7 @@ const DepositSyndicate: React.FC = () => {
     loading,
     memberPercentShare,
     maxMemberCount,
+    isOwner,
   } = erc20Token;
 
   const { depositTokenSymbol, depositTokenLogo, depositTokenDecimals } =
@@ -107,6 +113,8 @@ const DepositSyndicate: React.FC = () => {
   const [memberTokens, setMemberTokens] = useState(0);
   const [depositAmount, setDepositAmount] = useState<string>("");
 
+  const router = useRouter();
+
   useEffect(() => {
     // calculate member ownership for the intended deposits
 
@@ -137,6 +145,18 @@ const DepositSyndicate: React.FC = () => {
       checkClubWideErrors();
     }
   }, [depositToken, JSON.stringify(erc20Token), syndicateContracts]);
+
+  useEffect(() => {
+    //  Content processing not yet completed
+    if (!address) return;
+
+    // Redirect the owner to the manage page
+    if (isOwner) {
+      router.push(`/syndicates/${address}/manage`);
+    } else {
+      setReadyToDisplay(true);
+    }
+  }, [isOwner, address, router]);
 
   const onTxConfirm = () => {
     setMetamaskConfirmPending(false);
@@ -560,11 +580,16 @@ const DepositSyndicate: React.FC = () => {
     }
   };
 
+  const { width } = useWindowSize();
+  const isHoldingsCardColumn =
+    +connectedMemberDeposits >= 10000 &&
+    ((width > 868 && width < 1536) || width < 500);
+
   return (
     <ErrorBoundary>
       <div className="w-full mt-4 sm:mt-0 top-44 mb-10">
         <FadeIn>
-          {!erc20Token?.name && loading ? (
+          {loading || !readyToDisplay ? (
             <div className="h-fit-content rounded-2xl p-4 md:mx-2 md:p-6 bg-gray-9 mt-6 md:mt-0 w-full">
               <div className="h-fit-content rounded-3xl">
                 <SkeletonLoader width="full" height="20" />
@@ -802,26 +827,43 @@ const DepositSyndicate: React.FC = () => {
           {loading ? (
             <SkeletonLoader height="9" width="full" borderRadius="rounded-md" />
           ) : (
-            <div className="flex">
-              <div className="mr-8">
+            <div className={`flex ${isHoldingsCardColumn ? "flex-col" : ""}`}>
+              <div
+                className={
+                  isHoldingsCardColumn
+                    ? ""
+                    : (width < 1380 || width < 868) &&
+                      +connectedMemberDeposits >= 1000 &&
+                      +connectedMemberDeposits < 10000
+                    ? "mr-6"
+                    : "mr-8"
+                }
+              >
                 <HoldingsInfo
                   title="Amount deposited"
                   amount={floatedNumberWithCommas(connectedMemberDeposits)}
                   tokenName={"USDC"}
                 />
               </div>
-              <HoldingsInfo
-                title="Club tokens (ownership share)"
-                amount={
-                  accountClubTokens
-                    ? `${parseInt(accountClubTokens.toString(), 10).toFixed(2)}`
-                    : "0.00"
-                }
-                tokenName={symbol}
-                percentValue={
-                  isNaN(memberPercentShare) ? 0 : +memberPercentShare.toFixed(2)
-                }
-              />
+              <div className={isHoldingsCardColumn ? "pt-5" : ""}>
+                <HoldingsInfo
+                  title="Club tokens (ownership share)"
+                  amount={
+                    accountClubTokens
+                      ? `${parseInt(accountClubTokens.toString(), 10).toFixed(
+                          2,
+                        )}`
+                      : "0.00"
+                  }
+                  tokenName={symbol}
+                  percentValue={
+                    isNaN(memberPercentShare)
+                      ? 0
+                      : +memberPercentShare.toFixed(2)
+                  }
+                  wrap="flex-wrap"
+                />
+              </div>
             </div>
           )}
         </div>

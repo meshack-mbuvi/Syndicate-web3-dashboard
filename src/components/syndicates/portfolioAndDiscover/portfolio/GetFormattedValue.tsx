@@ -1,20 +1,18 @@
+import {
+  floatedNumberWithCommas,
+  formatNumbers,
+} from "@/utils/formattedNumbers";
 import React, { useEffect, useState } from "react";
 import { ifRows } from "./interfaces";
-import {
-  formatNumbers,
-  floatedNumberWithCommas,
-} from "@/utils/formattedNumbers";
 
 export const GetFormattedDepositsAmount = ({
-  row: { depositTotal, depositERC20TokenSymbol },
+  row: { totalDeposits, depositERC20TokenSymbol },
 }: ifRows) => {
   const [formattedNumber, setFormattedNumber] = useState(0);
 
   useEffect(() => {
-    // format deposits amount and add the correct suffix
-    // depending on whether the amount exceeds 999.
-    setFormattedNumber(formatNumbers(parseFloat(depositTotal)));
-  }, [depositTotal, depositERC20TokenSymbol]);
+    setFormattedNumber(formatNumbers(parseFloat(totalDeposits)));
+  }, [totalDeposits, depositERC20TokenSymbol]);
 
   return (
     <div className="flex flex-row items-center w-full visibility-container">
@@ -24,10 +22,10 @@ export const GetFormattedDepositsAmount = ({
             {formattedNumber} {depositERC20TokenSymbol}
           </div>
           {/* Tooltip to show actual deposit amount for formatted values  */}
-          {+depositTotal > 999 ? (
+          {+totalDeposits > 999 ? (
             <div
               className={`tooltiptext invisible visibility-hover absolute ${
-                depositTotal && depositTotal.toString().length === 1
+                totalDeposits && totalDeposits.toString().length === 1
                   ? `-left-2`
                   : `-left-1`
               } w-full`}
@@ -51,7 +49,7 @@ export const GetFormattedDepositsAmount = ({
                           {depositERC20TokenSymbol}
                         </td>
                         <td className="font-whyte-light relative py-2 text-xs">
-                          {floatedNumberWithCommas(depositTotal)}
+                          {floatedNumberWithCommas(totalDeposits)}
                         </td>
                       </tr>
                     </tbody>

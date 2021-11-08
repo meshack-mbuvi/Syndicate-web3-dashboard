@@ -1,29 +1,16 @@
-import { RootState } from "@/redux/store";
 import { web3 } from "@/utils";
 import Link from "next/link";
 import React from "react";
-import { useSelector } from "react-redux";
 import { ifRows } from "./interfaces";
 
 const SyndicateActionButton: React.FC<ifRows> = ({
-  row: {
-    syndicateAddress,
-    status,
-    depositsEnabled,
-    distributing,
-    managerCurrent,
-  },
+  row: { syndicateAddress, depositsEnabled, isOwner },
 }) => {
-  const {
-    web3: { account },
-  } = useSelector((state: RootState) => state.web3Reducer);
-
   /**
    *
    * Button Options:
    * “Deposit More” if the syndicate is not closed to new deposits and hasn’t
    * hit the maximum amount of deposits. And it must be active.
-   * “Withdraws Available” if the user can withdraw distributions greater than
    * zero from the syndicate.
    * “View” in any other case.
    */
@@ -32,18 +19,12 @@ const SyndicateActionButton: React.FC<ifRows> = ({
   let link = "details";
 
   // check that wallet owner is not the creater of the syndicate
-  if (managerCurrent !== account) {
+  if (!isOwner) {
     // monitors whether syndicate is open to deposits
-    if (depositsEnabled && status !== "Operating") {
+    if (depositsEnabled) {
       buttonText = "Deposit more";
       buttonStyles = "primary-CTA";
       link = "deposit";
-    }
-
-    if (distributing) {
-      buttonText = "Withdraws available";
-      buttonStyles = "primary-CTA";
-      link = "withdraw";
     }
   } else {
     buttonText = "Manage";

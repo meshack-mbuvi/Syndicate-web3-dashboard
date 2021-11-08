@@ -29,28 +29,26 @@ export class ClubERC20Factory {
    * The assumption made here is that all validation has been taken care of
    * prior to calling this function.
    *
-   * @param ownerAddress
+   * @param account
    * @param clubTokenName
    * @param tokenSymbol
    * @param usdcAddress
-   * @param mintPrice
+   * @param startTime
+   * @param endTime
    * @param tokenCap
-   * @param mintStart
-   * @param mintEnd
-   * @param mintEnabled
+   * @param maxMembers
    * @param onTxConfirm
    * @param onTxReceipt
    */
   public async createERC20(
-    ownerAddress: string,
+    account: string,
     clubTokenName: string,
     tokenSymbol: string,
     usdcAddress: string,
-    mintPrice = 1,
+    startTime: number,
+    endTime: number,
     tokenCap: string,
-    mintStart: number,
-    mintEnd: number,
-    mintEnabled: boolean,
+    maxMembers: number,
     onTxConfirm: (transactionHash?) => void,
     onTxReceipt: (receipt?) => void,
   ): Promise<void> {
@@ -63,18 +61,17 @@ export class ClubERC20Factory {
     await new Promise((resolve, reject) => {
       this.clubERC20Factory.methods
         .createERC20(
-          ownerAddress, // owner
           clubTokenName, // name of club token
           tokenSymbol, // symbol
           usdcAddress, // USDC
-          mintPrice, // mint price
-          "0x81B384B2883a2ee25F8AE02eED5b3e879b20a0b4", // recepient
-          tokenCap, //BigInt(5000 * 10 ** 18), // token CAP
-          mintStart, //1635156220, // mint start
-          mintEnd, //1637834620, // mint end - close date
-          mintEnabled, // mint enabled
+          startTime, // 1635156220, // mint start
+          endTime, // 1637834620, // mint end - close date
+          tokenCap, // BigInt(5000 * 10 ** 18), // token CAP
+          maxMembers,
+          '0x0000000000000000000000000000000000000000',
+          0
         )
-        .send({ from: ownerAddress })
+        .send({ from: account })
         .on("transactionHash", (transactionHash) => {
           onTxConfirm(transactionHash);
           if (

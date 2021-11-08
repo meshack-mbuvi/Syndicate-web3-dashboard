@@ -204,7 +204,7 @@
   }
 
   .dark-input-field-advanced {
-    @apply p-4 rounded-l-md bg-black text-white border border-gray-24 focus:border-blue hover:border-white hover:border-opacity-70;
+    @apply p-4 rounded-l-md bg-black text-white border border-gray-24 focus:border-blue-navy hover:border-gray-syn3;
   }
 
   .dark-input-field::placeholder {
@@ -221,6 +221,10 @@
 
   .text-input-placeholder::placeholder {
     @apply text-gray-placeholder;
+  }
+
+  .h3 {
+    @apply block text-white text-lg lg:text-xl
   }
 
   .bottom-triangle-blue::after {
@@ -781,4 +785,12 @@ input[type="checkbox"] {
   line-height: 20px;
   letter-spacing: 1px;
   text-transform: uppercase;
+}
+
+.symbol-prefix {
+  padding-top: 17px;
+  padding-left: 17px;
+}
+.overflowFade {
+  box-shadow: -30px 0px 20px -7px #000;
 }

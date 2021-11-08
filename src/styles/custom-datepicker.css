@@ -1,6 +1,6 @@
 /* React date picker */
 .react-datepicker {
-  @apply bg-gray-7 text-white border-none rounded-lg ml-1 -mt-1;
+  @apply bg-gray-7 text-white border-none rounded-lg;
 }
 
 .react-datepicker__triangle {
@@ -73,10 +73,5 @@
 
 .react-datepicker__input-container > input {
   @apply block text-white bg-black border
-  border-gray-24 rounded-md shadow-sm font-whyte p-3 relative w-full focus:outline-none
-  focus:border-gray-24 flex-grow hover:border-white hover:border-opacity-70 transition-all;
-}
-
-.react-datepicker__input-container > input::placeholder {
-  @apply text-gray-placeholder
+  border-gray-24 rounded-md shadow-sm font-whyte h-14 relative w-full focus:outline-none focus:ring-0;
 }
