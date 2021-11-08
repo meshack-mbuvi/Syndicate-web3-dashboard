@@ -9,6 +9,10 @@ import Head from "@/components/syndicates/shared/HeaderTitle";
 import SyndicateDetails from "@/components/syndicates/syndicateDetails";
 import { setERC20Token } from "@/helpers/erc20TokenDetails";
 import { RootState } from "@/redux/store";
+import {
+  fetchCollectiblesTransactions,
+  fetchTokenTransactions,
+} from "@/state/assets/slice";
 import { formatAddress } from "@/utils/formatAddress";
 import { faExclamationTriangle } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -23,12 +27,8 @@ import Assets from "./assets";
 const LayoutWithSyndicateDetails: FC = ({ children }) => {
   // Retrieve state
   const {
-    syndicatesReducer: { syndicate, syndicateAddressIsValid },
     web3Reducer: {
       web3: { account, web3 },
-    },
-    manageMembersDetailsReducer: {
-      syndicateManageMembers: { syndicateMembers },
     },
     erc20TokenSliceReducer: { erc20Token },
   } = useSelector((state: RootState) => state);
@@ -59,6 +59,14 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
     }
   }, [scrollTop]);
 
+  useEffect(() => {
+    // fetch token transactions for the connected account.
+    dispatch(fetchTokenTransactions(account));
+
+    // test nft account: 0xf4c2c3e12b61d44e6b228c43987158ac510426fb
+    dispatch(fetchCollectiblesTransactions(account));
+  }, [account]);
+
   const router = useRouter();
   const dispatch = useDispatch();
 
@@ -87,38 +95,6 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
     }
   }, [clubERC20tokenContract, account, router.isReady]);
 
-  // format an account address in the format 0x3f6q9z52…54h2kjh51h5zfa
-  const formattedSyndicateAddress3XLarge = formatAddress(
-    erc20Token?.address,
-    18,
-    18,
-  );
-  const formattedSyndicateAddressXLarge = formatAddress(
-    erc20Token?.address,
-    10,
-    10,
-  );
-  const formattedSyndicateAddressLarge = formatAddress(
-    erc20Token?.address,
-    8,
-    8,
-  );
-  const formattedSyndicateAddressMedium = formatAddress(
-    erc20Token?.address,
-    6,
-    4,
-  );
-  const formattedSyndicateAddressSmall = formatAddress(
-    erc20Token?.address,
-    10,
-    14,
-  );
-  const formattedSyndicateAddressMobile = formatAddress(
-    erc20Token?.address,
-    5,
-    8,
-  );
-
   const showOnboardingIfNeeded = router.pathname.endsWith("deposit");
 
   let noToken;
@@ -127,70 +103,54 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
   useEffect(() => {
     // We need to have syndicate loaded so that we know whether it's open to
     // deposit or not.
-    if (!router.isReady || !syndicate) return;
+    if (!router.isReady || !erc20Token) return;
 
     if (
       !isEmpty(erc20Token) &&
+      erc20Token.name &&
       syndicateAddress !== undefined &&
       account !== undefined &&
-      web3.utils.isAddress(erc20Token?.address)
+      router.isReady
     ) {
       switch (router.pathname) {
         case "/syndicates/[syndicateAddress]/manage":
-          // For a closed syndicate, user should be navigated to withdrawal page
           if (!erc20Token?.isOwner) {
-            if (erc20Token?.depositsEnabled) {
-              router.replace(`/syndicates/${erc20Token?.address}/deposit`);
-            } else {
-              router.replace(`/syndicates/${erc20Token?.address}/withdraw`);
-            }
+            router.replace(`/syndicates/${syndicateAddress}/deposit`);
           }
 
           break;
 
         case "/syndicates/[syndicateAddress]/deposit":
           if (erc20Token?.isOwner) {
-            router.replace(`/syndicates/${erc20Token?.address}/manage`);
+            router.replace(`/syndicates/${syndicateAddress}/manage`);
           }
           break;
-        case "/syndicates/[syndicateAddress]/withdraw":
-          if (erc20Token?.isOwner) {
-            router.replace(`/syndicates/${erc20Token?.address}/manage`);
-          } else if (erc20Token?.depositsEnabled) {
-            router.replace(`/syndicates/${erc20Token?.address}/deposit`);
-          }
-          break;
+
         // case when address lacks action
         case "/syndicates/[syndicateAddress]/":
           if (erc20Token?.isOwner) {
-            router.replace(`/syndicates/${erc20Token?.address}/manage`);
+            router.replace(`/syndicates/${syndicateAddress}/manage`);
           } else if (erc20Token?.depositsEnabled) {
-            router.replace(`/syndicates/${erc20Token?.address}/deposit`);
+            router.replace(`/syndicates/${syndicateAddress}/deposit`);
           }
           break;
         default:
-          if (syndicateAddress && syndicate) {
+          if (syndicateAddress && erc20Token?.name) {
             if (erc20Token?.isOwner) {
-              router.replace(`/syndicates/${erc20Token?.address}/manage`);
+              router.replace(`/syndicates/${syndicateAddress}/manage`);
             } else if (erc20Token?.depositsEnabled) {
-              router.replace(`/syndicates/${erc20Token?.address}/deposit`);
-            } else if (syndicate.distributing) {
-              router.replace(`/syndicates/${erc20Token?.address}/withdraw`);
-            } else if (!erc20Token?.isOwner && !erc20Token?.depositsEnabled) {
-              router.replace(`/syndicates/${erc20Token?.address}/details`);
+              router.replace(`/syndicates/${syndicateAddress}/deposit`);
             }
           }
           break;
       }
     }
-  }, [account, router.isReady, syndicate, JSON.stringify(syndicateMembers)]);
+  }, [account, router.isReady, JSON.stringify(erc20Token)]);
 
   // get static text from constants
   const {
     noTokenTitleText,
     noTokenMessageText,
-    syndicateAddressInvalidMessageText,
-    syndicateAddressInvalidTitleText,
     notSyndicateYetTitleText,
     notSyndicateYetMessageText,
     notSyndicateForManagerYetMessageText,
@@ -201,13 +161,8 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
   // if the address is invalid, this texts will be updated accordingly.
   let emptyStateTitle = noTokenTitleText;
   let emptyStateMessage = noTokenMessageText;
-  if (!syndicateAddressIsValid) {
-    emptyStateTitle = syndicateAddressInvalidTitleText;
-    emptyStateMessage = syndicateAddressInvalidMessageText;
-  }
 
   if (
-    syndicateAddressIsValid &&
     !erc20Token.name &&
     !erc20Token?.loading &&
     account !== syndicateAddress
@@ -216,12 +171,7 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
     emptyStateMessage = notSyndicateYetMessageText;
   }
 
-  if (
-    syndicateAddressIsValid &&
-    !erc20Token?.name &&
-    !erc20Token?.loading &&
-    erc20Token?.isOwner
-  ) {
+  if (!erc20Token?.name && !erc20Token?.loading && erc20Token?.isOwner) {
     emptyStateTitle = notSyndicateYetTitleText;
     emptyStateMessage = notSyndicateForManagerYetMessageText;
   }
@@ -242,9 +192,7 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
         <p className="text-base my-5 font-normal text-gray-dim text-center">
           {emptyStateMessage}
         </p>
-        {!syndicateAddressIsValid ? null : (
-          <EtherscanLink etherscanInfo={erc20Token?.address} />
-        )}
+        <EtherscanLink etherscanInfo={syndicateAddress} />
       </div>
     </div>
   );
@@ -253,7 +201,7 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
     <div className="flex justify-center items-center h-full w-full mt-6 sm:mt-10">
       <div className="flex flex-col items-center justify-center sm:w-7/12 md:w-5/12 rounded-custom p-10">
         <p className="font-semibold text-2xl text-center">
-          {formatAddress(erc20Token?.address, 9, 6)} {emptyStateTitle}
+          {formatAddress(syndicateAddress, 9, 6)} {emptyStateTitle}
         </p>
         <p className="text-base my-5 font-normal text-gray-dim text-center">
           {emptyStateMessage}
@@ -262,61 +210,12 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
     </div>
   );
 
-  const creatingSyndicate = (
-    <div className="w-full">
-      <div className="container mx-auto">
-        <div className="flex flex-col md:flex-row sm:mr-2 lg:mr-6 h-fit-content rounded-custom items-center justify-between">
-          <div>
-            <span className="font-medium text-gray-500 text-sm uppercase tracking-widest pb-3">
-              Syndicate
-            </span>
-            <div className="justify-start">
-              <div className="flex-shrink main-title flex-wrap break-all">
-                <div className="mr-4">
-                  <div className="hidden 3xl:block">
-                    <span className="text-gray-500">0x</span>
-                    {formattedSyndicateAddress3XLarge.slice(2)}
-                  </div>
-                  <div className="hidden xl:block 3xl:hidden">
-                    <span className="text-gray-500">0x</span>
-                    {formattedSyndicateAddressXLarge.slice(2)}
-                  </div>
-                  <div className="hidden lg:block xl:hidden">
-                    <span className="text-gray-500">0x</span>
-                    {formattedSyndicateAddressLarge.slice(2)}
-                  </div>
-                  <div className="hidden md:block lg:hidden">
-                    <span className="text-gray-500">0x</span>
-                    {formattedSyndicateAddressMedium.slice(2)}
-                  </div>
-                  <div className="hidden sm:block md:hidden">
-                    <span className="text-gray-500">0x</span>
-                    {formattedSyndicateAddressSmall.slice(2)}
-                  </div>
-                  <div className="sm:hidden">
-                    <span className="text-gray-500">0x</span>
-                    {formattedSyndicateAddressMobile.slice(2)}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-
-  if ((!erc20Token?.name && !erc20Token?.loading) || !syndicateAddressIsValid) {
+  if (!erc20Token?.name && !erc20Token?.loading) {
     noToken = syndicateEmptyState;
   }
 
-  if (!erc20Token?.name && !erc20Token?.loading && syndicateAddressIsValid) {
+  if (!erc20Token?.name && !erc20Token?.loading) {
     noToken = syndicateNotFoundState;
-    // noToken = creatingSyndicate
-  }
-
-  if (!erc20Token?.name && erc20Token?.loading && syndicateAddressIsValid) {
-    noToken = creatingSyndicate;
   }
 
   const [activeTab, setActiveTab] = useState("assets");

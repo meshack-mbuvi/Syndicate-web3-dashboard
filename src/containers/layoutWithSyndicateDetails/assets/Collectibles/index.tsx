@@ -9,26 +9,36 @@ const Collectibles: FC<{ activeAssetTab: string }> = ({ activeAssetTab }) => {
     assetsSliceReducer: { loadingCollectibles, collectiblesResult },
   } = useSelector((state: RootState) => state);
 
+  const collectiblesTitle = (
+    <div className="flex items-center space-x-4 pb-8">
+      <img src="/images/collectibles.svg" alt="Collectibles" />
+      <div className="text-xl">Collectibles</div>
+    </div>
+  );
+
   // loading state
   if (loadingCollectibles) {
     return (
-      <div className="w-fit-content">
-        <SkeletonLoader
-          borderRadius="rounded-t-lg"
-          width="80"
-          height="80"
-          customClass="border-r-1 border-l-1 border-t-1 border-gray-syn6"
-          margin="m-0"
-        />
-        <div className="rounded-b-lg w-80 p-7 border-b-1 border-r-1 border-l-1 border-gray-syn6">
+      <>
+        {collectiblesTitle}
+        <div className="w-fit-content">
           <SkeletonLoader
-            width="44"
-            height="7"
+            borderRadius="rounded-t-lg"
+            width="80"
+            height="80"
+            customClass="border-r-1 border-l-1 border-t-1 border-gray-syn6"
             margin="m-0"
-            borderRadius="rounded-lg"
           />
+          <div className="rounded-b-lg w-80 p-7 border-b-1 border-r-1 border-l-1 border-gray-syn6">
+            <SkeletonLoader
+              width="44"
+              height="7"
+              margin="m-0"
+              borderRadius="rounded-lg"
+            />
+          </div>
         </div>
-      </div>
+      </>
     );
   }
 
@@ -38,17 +48,14 @@ const Collectibles: FC<{ activeAssetTab: string }> = ({ activeAssetTab }) => {
     !loadingCollectibles &&
     !collectiblesResult.length
   ) {
-    return <AssetEmptyState activeAssetTab={activeAssetTab}/>;
+    return <AssetEmptyState activeAssetTab={activeAssetTab} />;
   }
 
   return (
     <div>
       {collectiblesResult.length ? (
         <>
-          <div className="flex items-center space-x-4 pb-8">
-            <img src="/images/collectibles.svg" alt="Collectibles" />
-            <div className="text-xl">Collectibles</div>
-          </div>
+          {collectiblesTitle}
           <div className="grid grid-cols-1 xl:grid-cols-3 lg:grid-cols-3 sm:grid-cols-2 gap-6">
             {collectiblesResult.map((collectible, index) => {
               const { image, name } = collectible;

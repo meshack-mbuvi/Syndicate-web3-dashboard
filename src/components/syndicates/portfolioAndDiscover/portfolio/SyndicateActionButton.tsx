@@ -4,14 +4,13 @@ import React from "react";
 import { ifRows } from "./interfaces";
 
 const SyndicateActionButton: React.FC<ifRows> = ({
-  row: { syndicateAddress, depositsEnabled, distributing, isOwner },
+  row: { syndicateAddress, depositsEnabled, isOwner },
 }) => {
   /**
    *
    * Button Options:
    * “Deposit More” if the syndicate is not closed to new deposits and hasn’t
    * hit the maximum amount of deposits. And it must be active.
-   * “Withdraws Available” if the user can withdraw distributions greater than
    * zero from the syndicate.
    * “View” in any other case.
    */
@@ -26,12 +25,6 @@ const SyndicateActionButton: React.FC<ifRows> = ({
       buttonText = "Deposit more";
       buttonStyles = "primary-CTA";
       link = "deposit";
-    }
-
-    if (distributing) {
-      buttonText = "Withdraws available";
-      buttonStyles = "primary-CTA";
-      link = "withdraw";
     }
   } else {
     buttonText = "Manage";

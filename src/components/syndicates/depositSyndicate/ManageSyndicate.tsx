@@ -19,7 +19,7 @@ const ManageSyndicate = ({ syndicateAddress }: IProps): JSX.Element => {
   let icon = "/images/syndicate-icon.png";
 
   if (syndicate?.managerCurrent !== account) {
-    icon = "/images/withdrawDepositIcon.svg";
+    icon = "";
     if (syndicate?.depositsEnabled) {
       url = "deposit";
       urlText = "Go To Deposit Page";

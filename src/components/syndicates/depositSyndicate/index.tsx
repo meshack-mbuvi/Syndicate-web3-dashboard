@@ -1,4 +1,3 @@
-import { useRouter } from "next/router";
 import { getGnosisTxnInfo } from "@/ClubERC20Factory/shared/gnosisTransactionInfo";
 import { amplitudeLogger, Flow } from "@/components/amplitude";
 import {
@@ -22,6 +21,7 @@ import useSyndicateClubInfo from "@/hooks/deposit/useSyndicateClubInfo";
 import useModal from "@/hooks/useModal";
 import { useERC20TokenBalance } from "@/hooks/useTokenBalance";
 import useUSDCDetails from "@/hooks/useUSDCDetails";
+import useWindowSize from "@/hooks/useWindowSize";
 import { RootState } from "@/redux/store";
 import {
   setAccountClubTokens,
@@ -35,6 +35,7 @@ import {
 } from "@/utils/formattedNumbers";
 import { CheckIcon } from "@heroicons/react/solid";
 import Image from "next/image";
+import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import { useDispatch, useSelector } from "react-redux";
@@ -43,7 +44,6 @@ import { InfoIcon } from "src/components/iconWrappers";
 import { SkeletonLoader } from "src/components/skeletonLoader";
 import ERC20ABI from "src/utils/abi/erc20";
 import { AbiItem } from "web3-utils";
-import useWindowSize from "@/hooks/useWindowSize";
 
 const DepositSyndicate: React.FC = () => {
   // HOOK DECLARATIONS
@@ -58,6 +58,8 @@ const DepositSyndicate: React.FC = () => {
     syndicateMemberDetailsReducer: { memberDepositDetails },
     erc20TokenSliceReducer: { erc20Token, erc20TokenContract },
   } = useSelector((state: RootState) => state);
+
+  const [readyToDisplay, setReadyToDisplay] = useState(false);
 
   const {
     address,
@@ -146,9 +148,14 @@ const DepositSyndicate: React.FC = () => {
   }, [depositToken, JSON.stringify(erc20Token), syndicateContracts]);
 
   useEffect(() => {
+    //  Content processing not yet completed
+    if (!address) return;
+
     // Redirect the owner to the manage page
     if (isOwner) {
       router.push(`/syndicates/${address}/manage`);
+    } else {
+      setReadyToDisplay(true);
     }
   }, [isOwner, address, router]);
 
@@ -583,7 +590,7 @@ const DepositSyndicate: React.FC = () => {
     <ErrorBoundary>
       <div className="w-full mt-4 sm:mt-0 top-44 mb-10">
         <FadeIn>
-          {!erc20Token?.name && loading ? (
+          {loading || !readyToDisplay ? (
             <div className="h-fit-content rounded-2xl p-4 md:mx-2 md:p-6 bg-gray-9 mt-6 md:mt-0 w-full">
               <div className="h-fit-content rounded-3xl">
                 <SkeletonLoader width="full" height="20" />
