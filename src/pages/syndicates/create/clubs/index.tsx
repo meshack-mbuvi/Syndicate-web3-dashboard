@@ -9,33 +9,33 @@ import { RootState } from "@/redux/store";
 import { useSelector } from "react-redux";
 import Head from "@/components/syndicates/shared/HeaderTitle";
 import ReviewDetails from "@/containers/createInvestmentClub/reviewDetails";
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
 import Modal, { ModalStyle } from "@/components/modal";
 import { Spinner } from "@/components/shared/spinner";
+import { EtherscanLink } from "@/components/syndicates/shared/EtherscanLink";
 
 const CreateInvestmentClub: React.FC = () => {
   const {
     steps,
     currentStep,
-    animationsRefs: { setParentRef },
     waitingConfirmationModal,
     transactionModal,
+    processingModalTitle,
+    processingModalDescription,
     errorModal,
     setShowModal,
+    errorModalMessage,
   } = useCreateInvestmentClubContext();
 
   const parentRef = useRef(null);
 
-  useEffect(() => {
-    if (parentRef) {
-      setParentRef(parentRef);
-    }
-  }, [parentRef]);
-
   const {
     web3Reducer: { web3 },
     createInvestmentClubSliceReducer: {
-      clubCreationStatus: { creationReceipt: { token } },
+      clubCreationStatus: {
+        creationReceipt: { token },
+        transactionHash,
+      },
     },
   } = useSelector((state: RootState) => state);
 
@@ -86,10 +86,21 @@ const CreateInvestmentClub: React.FC = () => {
           {/* passing empty margin to remove the default margin set on spinner */}
           <Spinner height="h-16" width="w-16" margin="" />
           <p className="text-xl text-center mt-10 mb-4 leading-4 text-white font-whyte">
-            Waiting for confirmation
+            {processingModalTitle}
           </p>
           <div className="font-whyte text-center leading-5 text-base text-gray-lightManatee">
-            Please confirm the creation of this investment club in your wallet
+            {processingModalDescription}
+          </div>
+          <div>
+            {transactionHash &&
+            processingModalTitle === "Pending confirmation" &&
+            transactionModal ? (
+              <EtherscanLink
+                etherscanInfo={transactionHash}
+                text="View on Etherscan"
+                type="transaction"
+              />
+            ) : null}
           </div>
         </div>
       </Modal>
@@ -150,9 +161,10 @@ const CreateInvestmentClub: React.FC = () => {
             width="64"
             className="m-auto"
           />
-          <p className="text-lg text-center mt-8 mb-1">Error</p>
+          <p className="text-lg text-center mt-8 mb-1">An error occurred</p>
           <div className="modal-header font-medium text-center leading-8 text-sm text-blue-rockBlue">
             {/* TODO: no designs for this */}
+            {errorModalMessage}
           </div>
         </div>
       </Modal>

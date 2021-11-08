@@ -9,9 +9,14 @@ import React, {
   useEffect,
 } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { setClubCreationReceipt, setTransactionHash } from "@/state/createInvestmentClub/slice";
+import {
+  setClubCreationReceipt,
+  setTransactionHash,
+} from "@/state/createInvestmentClub/slice";
 import steps from "./steps";
 import { getWeiAmount } from "@/utils/conversions";
+import { getMetamaskError } from "@/helpers";
+import { metamaskConstants } from "@/components/syndicates/shared/Constants";
 
 type CreateInvestmentClubProviderProps = {
   handleNext: () => void;
@@ -33,6 +38,9 @@ type CreateInvestmentClubProviderProps = {
   transactionModal: boolean;
   errorModal: boolean;
   setShowModal: Dispatch<SetStateAction<Record<string, boolean>>>;
+  processingModalTitle: string;
+  processingModalDescription: string;
+  errorModalMessage: string;
 };
 
 const CreateInvestmentClubContext = createContext<
@@ -45,15 +53,19 @@ export const useCreateInvestmentClubContext =
 
 const CreateInvestmentClubProvider: React.FC = ({ children }) => {
   const {
-    web3Reducer: { web3: { account } },
-    initializeContractsReducer: { syndicateContracts: { clubERC20Factory } },
-    createInvestmentClubSliceReducer: { 
+    web3Reducer: {
+      web3: { account },
+    },
+    initializeContractsReducer: {
+      syndicateContracts: { clubERC20Factory },
+    },
+    createInvestmentClubSliceReducer: {
       investmentClubName,
       investmentClubSymbol,
       tokenCap,
       mintEndTime: { value: startTime },
       membersCount,
-     }
+    },
   } = useSelector((state: RootState) => state);
 
   const { depositTokenAddress } = useUSDCDetails();
@@ -64,13 +76,18 @@ const CreateInvestmentClubProvider: React.FC = ({ children }) => {
   const [nextBtnDisabled, setNextBtnDisabled] = useState(false);
   const [showNextButton, setShowNextButton] = useState(true);
 
-  const [{
-    waitingConfirmationModal, transactionModal, errorModal
-  }, setShowModal] = useState({
+  const [processingModalTitle, setProcessingTitle] = useState("");
+  const [processingModalDescription, setProcessingDescription] = useState("");
+  const [errorModalMessage, setErrorModalMessage] = useState("");
+
+  const [
+    { waitingConfirmationModal, transactionModal, errorModal },
+    setShowModal,
+  ] = useState({
     waitingConfirmationModal: false,
     transactionModal: false,
     errorModal: false,
-  })
+  });
 
   const [usdcRef, setUsdcRef] = useState(null);
   const [monthRef, setMonthRef] = useState(null);
@@ -101,11 +118,19 @@ const CreateInvestmentClubProvider: React.FC = ({ children }) => {
   };
 
   const onTxConfirm = (transactionHash: string) => {
+    // Change modal title and description after confirming tx
+    setProcessingTitle("Pending confirmation");
+    setProcessingDescription(
+      "This could take up to a few minutes depending on network congestion and the gas fees you set.",
+    );
     dispatch(setTransactionHash(transactionHash));
   };
 
   const onTxReceipt = (receipt) => {
-    dispatch(setClubCreationReceipt(receipt.events.ClubERC20Created.returnValues));
+    dispatch(
+      setClubCreationReceipt(receipt.events.ClubERC20Created.returnValues),
+    );
+    dispatch(setTransactionHash(""));
     setShowModal(() => ({
       waitingConfirmationModal: false,
       transactionModal: true,
@@ -115,6 +140,10 @@ const CreateInvestmentClubProvider: React.FC = ({ children }) => {
 
   const handleCreateInvestmentClub = async () => {
     try {
+      setProcessingTitle("Confirm in wallet");
+      setProcessingDescription(
+        "Confirm the creation of this investment club in your wallet",
+      );
       setShowModal(() => ({
         waitingConfirmationModal: true,
         transactionModal: false,
@@ -134,6 +163,14 @@ const CreateInvestmentClubProvider: React.FC = ({ children }) => {
         onTxReceipt,
       );
     } catch (error) {
+      const { code } = error;
+      if (code) {
+        const errorMessage = getMetamaskError(code, "Create Syndicate");
+        setErrorModalMessage(errorMessage);
+      } else {
+        // alert any other contract error
+        setErrorModalMessage(metamaskConstants.metamaskUnknownErrorMessage);
+      }
       setShowModal(() => ({
         waitingConfirmationModal: false,
         transactionModal: false,
@@ -169,18 +206,13 @@ const CreateInvestmentClubProvider: React.FC = ({ children }) => {
         setNextBtnDisabled,
         showNextButton,
         setShowNextButton,
-        animationsRefs: {
-          parentRef,
-          setParentRef,
-          usdcRef,
-          setUsdcRef,
-          monthRef,
-          setMonthRef,
-        },
         waitingConfirmationModal,
         transactionModal,
         errorModal,
         setShowModal,
+        processingModalTitle,
+        processingModalDescription,
+        errorModalMessage,
       }}
     >
       {children}

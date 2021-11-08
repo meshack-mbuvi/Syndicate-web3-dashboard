@@ -13,11 +13,7 @@ import moment from "moment";
 const MintMaxDate: FC = () => {
   const dispatch = useDispatch();
 
-  const {
-    setShowNextButton,
-    handleNext,
-    animationsRefs: { setMonthRef },
-  } = useCreateInvestmentClubContext();
+  const { setShowNextButton, handleNext } = useCreateInvestmentClubContext();
 
   const [warning, setWarning] = useState("");
   const [disableButtons, setDisableButtons] = useState(false);
@@ -33,7 +29,10 @@ const MintMaxDate: FC = () => {
   }, [setShowNextButton]);
 
   useEffect(() => {
-    const threeMonthsAfterToday = +moment(moment(), "MM-DD-YYYY").add(3, 'months');
+    const threeMonthsAfterToday = +moment(moment(), "MM-DD-YYYY").add(
+      3,
+      "months",
+    );
 
     if (+threeMonthsAfterToday < +mintEndTime.value) {
       setWarning(
@@ -49,9 +48,9 @@ const MintMaxDate: FC = () => {
   }, [mintEndTime]);
 
   const startDate = moment();
-  const futureWeek = +moment(startDate, "MM-DD-YYYY").add(7, 'days');
-  const futureMonth = +moment(startDate, "MM-DD-YYYY").add(1, 'months');
-  const futureThreeMonths = +moment(startDate, "MM-DD-YYYY").add(3, 'months');
+  const futureWeek = +moment(startDate, "MM-DD-YYYY").add(7, "days");
+  const futureMonth = +moment(startDate, "MM-DD-YYYY").add(1, "months");
+  const futureThreeMonths = +moment(startDate, "MM-DD-YYYY").add(3, "months");
 
   const mintTimes: mintEndTime[] = [
     {
@@ -101,15 +100,13 @@ const MintMaxDate: FC = () => {
   const handleDateChange = (date) => {
     // this check prevents using null date which creates date as 01/01/1970
     const dateToSet = date ? date : new Date().getTime();
-    dispatch(setMintEndTime({mintTime: "Custom", value: dateToSet}));
+    dispatch(setMintEndTime({ mintTime: "Custom", value: dateToSet }));
   };
 
   return (
     <Fade>
       <div className="w-full lg:w-2/3">
-        <div className="h3 pb-6">
-          How long will deposits be accepted?
-        </div>
+        <div className="h3 pb-6">How long will deposits be accepted?</div>
         <div>
           <div
             className="flex justify-between items-center border content-center border-gray-24 rounded-md w-full h-14 "
@@ -121,7 +118,6 @@ const MintMaxDate: FC = () => {
                 className="flex items-center w-full h-full"
                 key={index}
                 onClick={(e) => {
-                  setMonthRef(e.target);
                   handleSetMintTime(index, { mintTime, value });
                 }}
                 disabled={disableButtons}
