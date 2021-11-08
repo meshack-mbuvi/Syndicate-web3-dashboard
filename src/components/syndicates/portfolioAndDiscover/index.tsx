@@ -1,15 +1,14 @@
-import { amplitudeLogger, Flow } from "@/components/amplitude";
-import { CLICK_CREATE_A_SYNDICATE } from "@/components/amplitude/eventNames";
 import WalletNotConnected from "@/components/walletNotConnected";
 import useClubERC20s from "@/hooks/useClubERC20s";
 import { RootState } from "@/redux/store";
-import { showWalletModal } from "@/state/wallet/actions";
-import { useRouter } from "next/router";
 import React from "react";
-import { useDispatch, useSelector } from "react-redux";
-import Button from "src/components/buttons";
+import { useSelector } from "react-redux";
 import { SkeletonLoader } from "src/components/skeletonLoader";
-import { default as Portfolio } from "./portfolio";
+import ClubERC20Table from "./portfolio/clubERC20Table";
+import {
+  clubERCTableColumns,
+  MyClubERC20TableColumns,
+} from "./portfolio/clubERC20Table/constants";
 
 /**
  * My Syndicates: IF their wallet (a) is leading a syndicate or
@@ -20,33 +19,17 @@ import { default as Portfolio } from "./portfolio";
  * @returns
  */
 const PortfolioAndDiscover: React.FC = () => {
-  const dispatch = useDispatch();
   const {
-    syndicatesReducer: { syndicates },
     web3Reducer: { web3 },
-    clubERC20sReducer: { clubERC20s },
+    clubERC20sReducer: { myClubERC20s, otherClubERC20s, loading },
   } = useSelector((state: RootState) => state);
-
-  const router = useRouter();
 
   const {
     account,
     ethereumNetwork: { invalidEthereumNetwork },
   } = web3;
 
-  const { loading, memberClubLoading } = useClubERC20s();
-
-  const showSyndicateForm = () => {
-    // Trigger wallet connection if wallet is not connected
-    if (!account) {
-      return dispatch(showWalletModal());
-    }
-
-    router.replace("/syndicates/create");
-
-    // Amplitude logger: How many users clicked on the "Create a Syndicate" button
-    amplitudeLogger(CLICK_CREATE_A_SYNDICATE, { flow: Flow.MGR_CREATE_SYN });
-  };
+  useClubERC20s();
 
   // generate multiple skeleton loader components
   const generateSkeletons = (
@@ -71,12 +54,12 @@ const PortfolioAndDiscover: React.FC = () => {
   };
 
   return (
-    <div className="mt-2">
-      {(loading || memberClubLoading) && account ? (
+    <div>
+      {loading && account ? (
         // show some animations during loading process
         // skeleton loader
         <div>
-          <div className="mt-8">
+          <div className="mt-16">
             <div className="grid grid-cols-6">
               {generateSkeletons(6, "30", "8", "rounded-md")}
             </div>
@@ -106,24 +89,35 @@ const PortfolioAndDiscover: React.FC = () => {
         </div>
       ) : (
         <>
-          {/* Show page header and button to create new syndicate */}
-          <div className="flex justify-between items-center w-full mb-10">
-            {account && syndicates.length ? (
-              <>
-                <h1 className="main-title">Portfolio</h1>
-              </>
-            ) : null}
-          </div>
-          {clubERC20s.length ? (
-            <>
+          {myClubERC20s.length || otherClubERC20s.length ? (
+            <div>
+              <div className="flex justify-between items-center w-full mt-14 mb-16">
+                <p className="text-3xl ">Portfolio</p>
+              </div>
               {/* show active clubsERC20s here */}
-              {clubERC20s.length ? (
-                <div>
-                  <Portfolio clubsERC20s={clubERC20s} />
+              {myClubERC20s.length ? (
+                <div className="">
+                  <p className="text-xl font-whyte mb-8">Admin</p>
+                  {/* show active clubsERC20s here */}
+                  <ClubERC20Table
+                    tableData={myClubERC20s}
+                    columns={MyClubERC20TableColumns}
+                  />
                 </div>
               ) : null}
-            </>
-          ) : account && !clubERC20s.length && !invalidEthereumNetwork ? (
+
+              {otherClubERC20s.length && (
+                <div className="mt-16">
+                  <p className="text-xl font-whyte mb-8">Member</p>
+                  {/* show active clubsERC20s here */}
+                  <ClubERC20Table
+                    tableData={otherClubERC20s}
+                    columns={clubERCTableColumns}
+                  />
+                </div>
+              )}
+            </div>
+          ) : account && !myClubERC20s.length && !invalidEthereumNetwork ? (
             // if connected, then it means no syndicates for this wallet
             <div
               className="text-center flex-col"

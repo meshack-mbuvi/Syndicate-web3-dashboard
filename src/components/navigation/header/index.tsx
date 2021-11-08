@@ -1,9 +1,9 @@
 import Link from "next/link";
+import { useRouter } from "next/router";
 import React from "react";
+import { NavBarNavItem } from "./navbarItems";
 import { UserProfileWrapper } from "./UserProfileWrapper";
 import WalletComponent from "./wallet";
-import { NavBarNavItem } from "./navbarItems";
-import { useRouter } from "next/router";
 
 interface props {
   backLink: string;
