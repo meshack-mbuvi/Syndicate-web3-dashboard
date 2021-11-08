@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { SettingsDisclaimerTooltip } from "@/containers/createInvestmentClub/shared/SettingDisclaimer";
+import cn from "classnames";
 
 /**
  * An input component with label, component to the right, and an icon to the furthest right.
@@ -46,7 +47,7 @@ export const AdvancedInputField = (props: {
   const [hover, setHover] = useState(false)
 
   return (
-    <div className="w-full">
+    <div className="w-full lg:w-2/3">
       <div className="flex justify-between">
         <label
           htmlFor={label}
@@ -55,13 +56,20 @@ export const AdvancedInputField = (props: {
           {label}
         </label>
       </div>
-      <div className="flex">
+      <div className={cn("mt-1 mb-2 flex border rounded-md overflow-hidden",
+          {
+            "border-blue-navy ring-0": focused && !error,
+            "border-gray-24": !focused,
+            "border-red-semantic": error,
+            "border-gray-syn3": hover
+          }
+        )}>
         <div
-          className="mt-1 mb-2 flex rounded-md shadow-sm w-full lg:w-2/3"
+          className="flex rounded-md shadow-sm w-full"
           data-tip
           data-for="disclaimer-tip"
         >
-          <div className="relative flex items-stretch flex-grow focus-within:z-10">
+          <div className="relative flex flex-1 items-stretch flex-grow focus-within:z-10">
             <input
               type={type}
               name={name}
@@ -79,7 +87,7 @@ export const AdvancedInputField = (props: {
                 }
                 onChange(e);
               }}
-              className={`flex w-full min-w-0 align-middle text-base font-whyte focus:ring-0 ${
+              className={`flex w-full border-none min-w-0 align-middle text-base font-whyte focus:ring-0 ${
                 hasError
                   ? "border border-red-500 focus:border-red-500"
                   : ""
@@ -105,16 +113,19 @@ export const AdvancedInputField = (props: {
               </div>
             )}
           </div>
-          <div
-            className={`-ml-px relative inline-flex items-center bg-black space-x-2 pl-5 pr-7 py-2 border ${
-              error ? "border-red-500" : focused ? "border-blue-navy ring-0" : hover ? "border-gray-syn3" : "border-gray-24"
-            } rounded-r-md text-white focus:outline-none focus:ring-0`}
-          >
+          <div className={cn("relative border-l-1 inline-flex items-center bg-black space-x-2 pl-5 pr-7 py-2",
+            {
+              "border-blue-navy ring-0": focused && !error,
+              "border-gray-24": !focused,
+              "border-red-semantic": error,
+              "border-gray-syn3": hover
+            }
+          )}>
             {extraAddon}
           </div>
         </div>
         {addSettingDisclaimer && (
-          <div className="hidden lg:flex pl-4 justify-center items-center w-1/3">
+          <div className="hidden lg:flex pl-4 justify-center items-center w-1/3 absolute">
             <SettingsDisclaimerTooltip
               id="disclaimer-tip"
               tip={
@@ -127,7 +138,7 @@ export const AdvancedInputField = (props: {
         )}
       </div>
 
-      <div className="w-full lg:w-2/3">
+      <div className="w-full">
         {error && (
           <p className="text-red-500 text-sm mb-1">
             {error && !disabled ? error : ""}
