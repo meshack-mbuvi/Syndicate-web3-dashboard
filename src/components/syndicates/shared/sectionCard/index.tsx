@@ -1,8 +1,8 @@
 import Portal from "@/components/shared/Portal";
-import React, { useRef, useState } from "react";
+import React, { FC, useRef, useState } from "react";
 
 // Description of SectionCard props
-interface SectionCardProps {
+export interface SectionCardProps {
   /** Header text for the section card */
   header: string;
   /** Subtext to render on this component */
@@ -10,7 +10,7 @@ interface SectionCardProps {
   /** Optional property used to determine whether to
    * render the info icon */
   infoIcon?: boolean;
-  tooltip: string;
+  tooltip?: string;
   title?: string;
 }
 
@@ -19,7 +19,8 @@ interface SectionCardProps {
  * @param {object} props
  * @returns
  */
-export const SectionCard = (props: SectionCardProps) => {
+
+export const SectionCard: FC<SectionCardProps> = (props) => {
   const { header, content, tooltip, infoIcon = true } = props;
   const greenSubtext =
     header === "Total Withdraws / Distributions To Date" ||
@@ -49,12 +50,16 @@ export const SectionCard = (props: SectionCardProps) => {
           style={{ ...coord }}
         >
           {!infoIcon ? null : (
-            <div
-              ref={tooltipRef}
-              className="text-sm font-light tooltiptext w-fit-content bg-gray-9 p-4 rounded-lg text-gray-lightManatee max-w-xs"
-            >
-              {tooltip}
-            </div>
+            <>
+              {tooltip && (
+                <div
+                  ref={tooltipRef}
+                  className="text-sm font-light tooltiptext w-fit-content bg-gray-9 p-4 rounded-lg text-gray-lightManatee max-w-xs"
+                >
+                  {tooltip}
+                </div>
+              )}
+            </>
           )}
         </div>
       </Portal>

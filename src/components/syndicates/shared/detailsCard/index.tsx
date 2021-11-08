@@ -1,5 +1,5 @@
 import { FC } from "react";
-import { SectionCard } from "../sectionCard";
+import { SectionCard, SectionCardProps } from "../sectionCard";
 
 /**
  * @param {} props
@@ -7,7 +7,7 @@ import { SectionCard } from "../sectionCard";
  */
 
 interface Props {
-  sections;
+  sections: SectionCardProps[];
   title?: string;
   customStyles: string;
   infoIcon?: boolean;
