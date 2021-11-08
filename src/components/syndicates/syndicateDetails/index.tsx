@@ -57,7 +57,6 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
     useState<boolean>(false);
   const [showDepositLinkCopyState, setShowDepositLinkCopyState] =
     useState<boolean>(false);
-  const [showMore, setShowMore] = useState(false);
 
   // state to handle details about the current deposit ERC20 token
   const [, setDepositTokenContract] = useState<any>("");
@@ -338,10 +337,7 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
         )}
 
         {/* This component should be shown when we have details about user deposits */}
-        <div
-          className="overflow-hidden mt-6 relative"
-          style={!showMore ? { height: "200px" } : null}
-        >
+        <div className="overflow-hidden mt-6 relative">
           {loading ? (
             <SkeletonLoader height="9" width="full" borderRadius="rounded-md" />
           ) : (
@@ -358,31 +354,6 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
             />
           )}
         </div>
-        {/* Gradient overlay */}
-        {!showMore ? (
-          <div
-            className="show-more-overlay w-full bottom-6 absolute"
-            style={{ height: "140px" }}
-          />
-        ) : null}
-        <button onClick={() => setShowMore(!showMore)} className="mt-5">
-          {loading ? (
-            <SkeletonLoader height="4" width="full" borderRadius="rounded-md" />
-          ) : (
-            <div className="flex h-4 items-center text-base">
-              <img
-                src={
-                  !showMore ? "/images/show-eye.svg" : "/images/hide-eye.svg"
-                }
-                alt="transferable"
-                className="h-4 w-4"
-              />
-              <p className="ml-2 text-blue">
-                {!showMore ? "Show more details" : "Show less details"}
-              </p>
-            </div>
-          )}
-        </button>
       </div>
       {/* Syndicate details */}
       {/* details rendered on small devices only. render right column components on the left column in small devices */}
