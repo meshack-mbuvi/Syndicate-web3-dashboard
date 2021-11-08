@@ -1,18 +1,20 @@
-import Link from "next/link";
-import Image from "next/image";
 import Layout from "@/components/layout";
-import WalletNotConnected from "@/components/walletNotConnected";
-import { MainContent } from "@/containers/create/shared";
-import InvestmentClubCTAs from "@/containers/create/shared/controls/investmentClubCTAs";
-import { useCreateInvestmentClubContext } from "@/context/CreateInvestmentClubContext";
-import { RootState } from "@/redux/store";
-import { useSelector } from "react-redux";
-import Head from "@/components/syndicates/shared/HeaderTitle";
-import ReviewDetails from "@/containers/createInvestmentClub/reviewDetails";
-import { useRef } from "react";
 import Modal, { ModalStyle } from "@/components/modal";
 import { Spinner } from "@/components/shared/spinner";
 import { EtherscanLink } from "@/components/syndicates/shared/EtherscanLink";
+import Head from "@/components/syndicates/shared/HeaderTitle";
+import WalletNotConnected from "@/components/walletNotConnected";
+import { MainContent } from "@/containers/create/shared";
+import InvestmentClubCTAs from "@/containers/create/shared/controls/investmentClubCTAs";
+import ReviewDetails from "@/containers/createInvestmentClub/reviewDetails";
+import { useCreateInvestmentClubContext } from "@/context/CreateInvestmentClubContext";
+import useClubERC20s from "@/hooks/useClubERC20s";
+import { RootState } from "@/redux/store";
+import Image from "next/image";
+import Link from "next/link";
+import router from "next/router";
+import { useEffect, useRef } from "react";
+import { useSelector } from "react-redux";
 
 const CreateInvestmentClub: React.FC = () => {
   const {
@@ -26,6 +28,15 @@ const CreateInvestmentClub: React.FC = () => {
     setShowModal,
     errorModalMessage,
   } = useCreateInvestmentClubContext();
+
+  const { accountHasClubs } = useClubERC20s();
+
+  // Redirect to portfolio if user has clubs
+  useEffect(() => {
+    if (accountHasClubs) {
+      router.replace("/syndicates");
+    }
+  }, [accountHasClubs]);
 
   const parentRef = useRef(null);
 
