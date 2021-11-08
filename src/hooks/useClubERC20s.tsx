@@ -7,7 +7,7 @@ import { formatDate, pastDate } from "@/utils";
 import { getWeiAmount } from "@/utils/conversions";
 import { useQuery } from "@apollo/client";
 import { useRouter } from "next/router";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 const useClubERC20s = () => {
@@ -17,6 +17,8 @@ const useClubERC20s = () => {
     initializeContractsReducer: { syndicateContracts },
     web3Reducer: { web3 },
   } = useSelector((state: RootState) => state);
+
+  const [accountHasClubs, setAccountHasClubs] = useState(false);
 
   const router = useRouter();
 
@@ -177,6 +179,14 @@ const useClubERC20s = () => {
           }
         }
       }
+
+      // check whether connected account has clubs
+      if (data.syndicateDAOs.length) {
+        setAccountHasClubs(true);
+      } else {
+        setAccountHasClubs(false);
+      }
+
       processClubERC20Tokens([...data.syndicateDAOs, ...clubTokens]);
     } else {
       dispatch(setClubERC20s([]));
@@ -191,7 +201,7 @@ const useClubERC20s = () => {
     currentEthereumNetwork,
   ]);
 
-  return { loading, memberClubLoading };
+  return { loading, memberClubLoading, accountHasClubs };
 };
 
 export default useClubERC20s;
