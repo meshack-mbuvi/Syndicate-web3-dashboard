@@ -88,7 +88,7 @@ const CreateInvestmentClub: React.FC = () => {
         show={waitingConfirmationModal}
         modalStyle={ModalStyle.DARK}
         showCloseButton={false}
-        customWidth="w-1/3"
+        customWidth="w-11/12 md:w-1/2 lg:w-1/3"
         // passing empty string to remove default classes
         customClassName=""
       >
@@ -121,7 +121,7 @@ const CreateInvestmentClub: React.FC = () => {
         show={transactionModal}
         modalStyle={ModalStyle.DARK}
         showCloseButton={false}
-        customWidth="w-1/3"
+        customWidth="w-11/12 md:w-1/2 lg:w-1/3"
         // passing empty string to remove default classes
         customClassName=""
       >
@@ -162,7 +162,7 @@ const CreateInvestmentClub: React.FC = () => {
           }))
         }
         outsideOnClick={true}
-        customWidth="w-1/3"
+        customWidth="w-11/12 md:w-1/2 lg:w-1/3"
       >
         <div className="flex flex-col justify-center py-10 -mx-4 px-8">
           <Image
