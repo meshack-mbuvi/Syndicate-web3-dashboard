@@ -26,18 +26,9 @@ const AmountToRaise: React.FC = () => {
 
   const { depositTokenSymbol, depositTokenLogo } = useUSDCDetails();
 
-  const {
-    setNextBtnDisabled,
-    animationsRefs: { setUsdcRef },
-  } = useCreateInvestmentClubContext();
+  const { setNextBtnDisabled } = useCreateInvestmentClubContext();
 
   const usdcRef = useRef(null);
-
-  useEffect(() => {
-    if (usdcRef) {
-      setUsdcRef(usdcRef);
-    }
-  }, [usdcRef]);
 
   const extraAddonContent = (
     <div className="flex justify-center items-center" ref={usdcRef}>

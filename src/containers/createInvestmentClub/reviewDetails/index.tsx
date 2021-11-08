@@ -3,7 +3,6 @@ import { useSelector } from "react-redux";
 import Image from "next/image";
 import { useTransition, animated } from "react-spring";
 import { format } from "date-fns";
-
 import { RootState } from "@/redux/store";
 import useUSDCDetails from "@/hooks/useUSDCDetails";
 import { floatedNumberWithCommas } from "@/utils/formattedNumbers";
@@ -19,13 +18,7 @@ const ReviewDetails: React.FC = () => {
   } = useSelector((state: RootState) => state.createInvestmentClubSliceReducer);
 
   const { depositTokenSymbol, depositTokenLogo } = useUSDCDetails();
-  const {
-    currentStep,
-    animationsRefs: { parentRef, usdcRef, monthRef },
-  } = useCreateInvestmentClubContext();
-
-  const parent = parentRef?.current?.getBoundingClientRect();
-  const rect = usdcRef?.current?.getBoundingClientRect();
+  const { currentStep } = useCreateInvestmentClubContext();
 
   const showInvestmentName = investmentClubName && currentStep >= 1;
   const showTokenCap = tokenCap && currentStep >= 2;
@@ -77,7 +70,7 @@ const ReviewDetails: React.FC = () => {
   });
 
   const usdcTransition = useTransition(showTokenCap, {
-    from: { x: rect ? rect?.left - parent?.left : 150 },
+    from: { x: 150 },
     enter: { x: 0 },
     config: { duration: 400 },
     delay: 100,

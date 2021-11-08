@@ -55,13 +55,22 @@ export const formatNumbers = (number) => {
 
 export const numberInputRemoveCommas = (
   event: React.ChangeEvent<HTMLInputElement>,
-): any => {
-  let { value } = event.target;
+) => {
+  let newVal;
+  const { value } = event.target;
+  newVal = value;
+  const [beforeDecimal, afterDecimal] = value.split(".");
+  if (afterDecimal && afterDecimal.length > 2) {
+    newVal = beforeDecimal + "." + afterDecimal.slice(0, 2);
+  }
   // remove commas from big numbers before we set state
-  return value.replace(/,/g, "");
+  return newVal.replace(/,/g, "");
 };
 
-export const truncateDecimals = (inputNumber: number, digits: number): number => {
+export const truncateDecimals = (
+  inputNumber: number,
+  digits: number,
+): number => {
   const fact = 10 ** digits;
   return Math.floor(inputNumber * fact) / fact;
 };
