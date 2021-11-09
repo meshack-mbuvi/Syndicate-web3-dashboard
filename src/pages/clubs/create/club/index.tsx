@@ -141,7 +141,7 @@ const CreateInvestmentClub: React.FC = () => {
             </p>
           </div>
           <div className="self-center pt-6 pb-3">
-            <Link href={`/clubs/${token}/manage`}>
+            <Link href={`/syndicates/${token}/manage?source=create`}>
               <span className="px-8 py-4 bg-white rounded-md text-black text-center text-base cursor-pointer self-center w-1/2">
                 View club dashboard
               </span>

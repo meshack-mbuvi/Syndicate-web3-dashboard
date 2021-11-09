@@ -43,7 +43,7 @@ const ManagerActions = (): JSX.Element => {
 
   const { loading, depositsEnabled, address, isOwner } = erc20Token;
 
-  const { clubAddress } = router.query;
+  const { clubAddress, source } = router.query;
 
   // we show loading state until content processing has been completed
   // meaning we are sure what to show the user depending on whether it's member
@@ -72,7 +72,8 @@ const ManagerActions = (): JSX.Element => {
   // TODO: actual values should be fetched from the redux store.
   // to update this once the contract calls have been updated
   const creatingSyndicate = false;
-  const syndicateSuccessfullyCreated = false;
+  const [syndicateSuccessfullyCreated, setSyndicateSuccessfullyCreated] =
+    useState<boolean>(false);
   const syndicateCreationFailed = false;
 
   // club deposit link
@@ -81,6 +82,15 @@ const ManagerActions = (): JSX.Element => {
       `${window.location.origin}/clubs/${clubAddress}/deposit`,
     );
   }, [clubAddress]);
+
+  // trigger confetti if we are coming from syndicateCreate page
+  useEffect( () => {
+    if (source && source === 'create') {
+      setSyndicateSuccessfullyCreated(true)
+      // truncates the query part to prevent reshowing confetti
+      router.push(`/syndicates/${clubAddress}/manage`)
+    }
+  }, [source])
 
   // check for success state to show success + confetti component
   // TODO: Add localstorage state from create syndicate function to track these conditions:
@@ -94,9 +104,6 @@ const ManagerActions = (): JSX.Element => {
   useEffect(() => {
     if (syndicateSuccessfullyCreated) {
       setShowConfettiSuccess(true);
-      setTimeout(() => {
-        setShowConfettiSuccess(false);
-      }, 5000);
     }
   }, [syndicateSuccessfullyCreated]);
 
@@ -142,7 +149,7 @@ const ManagerActions = (): JSX.Element => {
 
   return (
     <ErrorBoundary>
-      <div className="w-full mt-4 sm:mt-0">
+      <div className="w-full mt-4 sm:mt-0 relative overflow-hidden">
         <FadeIn>
           <div className="rounded-2-half bg-gray-syn8">
             <StatusBadge
@@ -218,6 +225,8 @@ const ManagerActions = (): JSX.Element => {
                       updateDepositLinkCopyState,
                       showDepositLinkCopyState,
                       clubDepositLink,
+                      showConfettiSuccess,
+                      setShowConfettiSuccess
                     }}
                   />
                 </div>

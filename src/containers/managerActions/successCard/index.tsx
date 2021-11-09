@@ -7,18 +7,14 @@ export const SuccessCard: React.FC<{
   clubDepositLink: string;
   updateDepositLinkCopyState: () => void;
   showDepositLinkCopyState: boolean;
+  showConfettiSuccess: any, setShowConfettiSuccess: any
 }> = ({
   syndicateSuccessfullyCreated,
   clubDepositLink,
   updateDepositLinkCopyState,
   showDepositLinkCopyState,
+  showConfettiSuccess, setShowConfettiSuccess
 }) => {
-  const [showConfetti, setShowConfetti] = useState<boolean>(false);
-
-  useEffect(() => {
-    setShowConfetti(true);
-  }, []);
-
   return (
     <div className="w-full -mt-15">
       <Confetti
@@ -32,10 +28,10 @@ export const SuccessCard: React.FC<{
           borderBottomRightRadius: "20px",
           margin: "0 auto",
         }}
-        numberOfPieces={showConfetti ? 300 : 0}
-        recycle={true}
+        numberOfPieces={showConfettiSuccess ? 1000 : 0}
+        recycle={false}
         onConfettiComplete={(confetti) => {
-          setShowConfetti(false);
+          setShowConfettiSuccess(false);
           confetti.reset();
         }}
       />
