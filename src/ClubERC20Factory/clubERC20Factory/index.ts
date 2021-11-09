@@ -60,7 +60,7 @@ export class ClubERC20Factory {
 
     await new Promise((resolve, reject) => {
       this.clubERC20Factory.methods
-        .createERC20(
+        .createWithMintPolicy(
           clubTokenName, // name of club token
           tokenSymbol, // symbol
           usdcAddress, // USDC
@@ -68,8 +68,8 @@ export class ClubERC20Factory {
           endTime, // 1637834620, // mint end - close date
           tokenCap, // BigInt(5000 * 10 ** 18), // token CAP
           maxMembers,
-          '0x0000000000000000000000000000000000000000',
-          0
+          "0x0000000000000000000000000000000000000000",
+          0,
         )
         .send({ from: account })
         .on("transactionHash", (transactionHash) => {

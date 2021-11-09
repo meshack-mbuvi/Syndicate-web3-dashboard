@@ -44,7 +44,7 @@ const useClubERC20s = () => {
   } = useQuery(CLUBS_HAVE_INVESTED, {
     variables: {
       where: {
-        member: account.toLocaleLowerCase(),
+        memberAddress: account.toLocaleLowerCase(),
       },
     },
   });
@@ -105,7 +105,7 @@ const useClubERC20s = () => {
         members.length < maxMemberCount;
 
       //  calculate ownership share
-      const memberDeposits = getWeiAmount(depositAmount, +decimals, false);
+      const memberDeposits = getWeiAmount(depositAmount, 6, false);
       const totalDeposits = getWeiAmount(totalSupply, +decimals, false);
 
       const ownershipShare = (+memberDeposits * 100) / +totalDeposits;

@@ -88,7 +88,7 @@ const ManagerActions = (): JSX.Element => {
     if (source && source === 'create') {
       setSyndicateSuccessfullyCreated(true)
       // truncates the query part to prevent reshowing confetti
-      router.push(`/syndicates/${clubAddress}/manage`)
+      router.push(`/clubs/${clubAddress}/manage`)
     }
   }, [source])
 
@@ -249,7 +249,7 @@ const ManagerActions = (): JSX.Element => {
                   showConfettiSuccess={showConfettiSuccess}
                 />
               ) : null}
-              {showShareWarning && (
+              {showShareWarning && !showConfettiSuccess && (
                 <div className="flex flex-row mt-4 text-yellow-saffron bg-brown-dark rounded-1.5lg py-3 px-4">
                   <p className="text-sm">
                     Do not publicly share this deposit link. Only share with
