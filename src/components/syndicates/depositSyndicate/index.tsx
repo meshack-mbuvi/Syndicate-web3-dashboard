@@ -587,7 +587,7 @@ const DepositSyndicate: React.FC = () => {
 
   return (
     <ErrorBoundary>
-      <div className="w-full mt-4 sm:mt-0 top-44 mb-10">
+      <div className="w-full mt-4 sm:mt-0 top-44">
         <FadeIn>
           {loading || !readyToDisplay ? (
             <div className="h-fit-content rounded-2xl p-4 md:mx-2 md:p-6 bg-gray-9 mt-6 md:mt-0 w-full">
@@ -820,7 +820,7 @@ const DepositSyndicate: React.FC = () => {
 
       {/* We show holding component when user has made initial deposit */}
       {+connectedMemberDeposits > 0 && !loading ? (
-        <div className="bg-gray-syn8 rounded-2xl my-8 px-8 py-6">
+        <div className="bg-gray-syn8 rounded-2xl mt-6 px-8 py-6">
           <div className="pb-5 text-sm font-bold uppercase tracking-widest">
             Your Holdings
           </div>
@@ -850,10 +850,8 @@ const DepositSyndicate: React.FC = () => {
                   title="Club tokens (ownership share)"
                   amount={
                     accountClubTokens
-                      ? `${parseInt(accountClubTokens.toString(), 10).toFixed(
-                          2,
-                        )}`
-                      : "0.00"
+                      ? floatedNumberWithCommas(accountClubTokens)
+                      : "0"
                   }
                   tokenName={symbol}
                   percentValue={

@@ -245,19 +245,19 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
                   </SyndicateDetails>
                 </div>
                 {/* Right Column */}
-                <div className="md:col-end-13 md:col-span-5 col-span-12 hidden md:block pt-0 h-full">
+                <div className="md:col-end-13 md:col-span-5 col-span-12 hidden md:flex justify-end items-start pt-0 h-full">
                   <div className="sticky top-33 w-100">{children}</div>
                 </div>
               </div>
 
-              <div className="mt-14">
+              <div className="mt-16">
                 <div
                   ref={subNav}
                   className={`${
                     isSubNavStuck ? "bg-gray-syn8" : "bg-black"
                   } transition-all edge-to-edge-with-left-inset`}
                 >
-                  <nav className="flex space-x-10" aria-label="Tabs">
+                  <nav className="flex space-x-10 h-20" aria-label="Tabs">
                     <button
                       key="members"
                       onClick={() => setActiveTab("assets")}

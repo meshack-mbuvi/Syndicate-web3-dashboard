@@ -33,7 +33,7 @@ const Layout: FC<Props> = ({ children, backLink = null, showNav = true }) => {
         title="Home"
       />
       <Header backLink={backLink} show={showNav} />
-      <div className="sticky top-16 z-20">
+      <div className="sticky top-20 z-20">
         <SyndicateInBetaBanner />
         {showCreateProgressBar && account ? (
           <ProgressBar

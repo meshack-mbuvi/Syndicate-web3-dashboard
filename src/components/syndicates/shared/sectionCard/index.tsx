@@ -49,18 +49,14 @@ export const SectionCard: FC<SectionCardProps> = (props) => {
           } w-56`}
           style={{ ...coord }}
         >
-          {!infoIcon ? null : (
-            <>
-              {tooltip && (
-                <div
-                  ref={tooltipRef}
-                  className="text-sm font-light tooltiptext w-fit-content bg-gray-9 p-4 rounded-lg text-gray-lightManatee max-w-xs"
-                >
-                  {tooltip}
-                </div>
-              )}
-            </>
-          )}
+          {!infoIcon ? null : tooltip ? (
+            <div
+              ref={tooltipRef}
+              className="text-sm font-light tooltiptext w-fit-content bg-gray-9 p-4 rounded-lg text-gray-lightManatee max-w-xs"
+            >
+              {tooltip}
+            </div>
+          ) : null}
         </div>
       </Portal>
       <div
@@ -76,9 +72,7 @@ export const SectionCard: FC<SectionCardProps> = (props) => {
           handlePopoverClose();
         }}
       >
-        <p className="text-base text-gray-lightManatee mb-2 font-light">
-          {header?.toString()}
-        </p>
+        <p className="text-gray-syn4 leading-6 pb-2">{header?.toString()}</p>
         <p
           className={
             greenSubtext ? "text-base text-green-screamin" : "text-base"

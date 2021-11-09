@@ -9,11 +9,13 @@ export const numberWithCommas = (number: string): string => {
 // add two decimal places
 export const floatedNumberWithCommas = (number): string => {
   if (!number || number === "NaN") {
-    return numberWithCommas(parseFloat("0".toString()).toFixed(2));
+    return "0";
   }
 
-  if (number.toString().indexOf(".") !== 1) {
-    return numberWithCommas(parseFloat(number.toString()).toFixed(2));
+  // do not show decimal points if there are only zeros after the decimal point.
+  // applying this across the app following this ticket: https://linear.app/syndicate/issue/ENG-2288/implement-header-section-updates
+  if (number.toString().indexOf(".") < 1) {
+    return numberWithCommas(number.toString());
   }
 
   try {
@@ -23,7 +25,7 @@ export const floatedNumberWithCommas = (number): string => {
       .match(/^-?\d+(?:\.\d{0,2})?/)[0];
     return numberWithCommas(numberTo2decimalsWithoutRoundingUp);
   } catch (error) {
-    return numberWithCommas(parseFloat("0".toString()).toFixed(2));
+    return "0";
   }
 };
 

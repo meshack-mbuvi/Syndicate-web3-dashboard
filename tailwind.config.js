@@ -278,6 +278,7 @@ module.exports = {
       },
       inset: {
         84: "22rem",
+        31: "7.5rem"
       },
       margin: {
         0.5: "0.15rem",
