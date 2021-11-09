@@ -102,17 +102,16 @@ const CreateInvestmentClub: React.FC = () => {
           <div className="font-whyte text-center leading-5 text-base text-gray-lightManatee">
             {processingModalDescription}
           </div>
-          <div>
-            {transactionHash &&
-            processingModalTitle === "Pending confirmation" &&
-            transactionModal ? (
+
+          {transactionHash ? (
+            <div className="flex justify-center mt-4">
               <EtherscanLink
                 etherscanInfo={transactionHash}
                 text="View on Etherscan"
                 type="transaction"
               />
-            ) : null}
-          </div>
+            </div>
+          ) : null}
         </div>
       </Modal>
 
@@ -137,7 +136,7 @@ const CreateInvestmentClub: React.FC = () => {
               alt=""
             />
             <p className="text-xl text-center mt-10 mb-6 leading-4 text-white font-whyte">
-              Transaction submitted
+              Club Successfully Created
             </p>
           </div>
           <div className="self-center pt-6 pb-3">
