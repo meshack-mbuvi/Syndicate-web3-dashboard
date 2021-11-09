@@ -56,8 +56,6 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
   // state to handle copying of the syndicate address to clipboard.
   const [showAddressCopyState, setShowAddressCopyState] =
     useState<boolean>(false);
-  const [showDepositLinkCopyState, setShowDepositLinkCopyState] =
-    useState<boolean>(false);
 
   // state to handle details about the current deposit ERC20 token
   const [, setDepositTokenContract] = useState<any>("");
@@ -216,21 +214,8 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
     setTimeout(() => setShowAddressCopyState(false), 1000);
   };
 
-  const updateDepositLinkCopyState = () => {
-    setShowDepositLinkCopyState(true);
-    setTimeout(() => setShowDepositLinkCopyState(false), 1000);
-  };
-
   // show modal for manager to set allowances for deposits/distributions
   //hide modal for setting allowances by the manager
-
-  // set syndicate deposit link
-  const [syndicateDepositLink, setSyndicateDepositLink] = useState<string>("");
-  useEffect(() => {
-    setSyndicateDepositLink(
-      `${window.location.origin}/syndicates/${syndicateAddress}/deposit`,
-    );
-  }, [syndicateAddress]);
 
   return (
     <div className="flex flex-col relative mt-9">
@@ -349,7 +334,7 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
           </div>
         </div>
 
-        {depositsEnabled ? (
+        {depositsEnabled && (
           <div className="h-fit-content flex w-full justify-start mt-16">
             <ProgressIndicator
               totalDeposits={totalDeposits}
@@ -360,7 +345,7 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
               loading={loading}
             />
           </div>
-        ) : null}
+        )}
 
         {/* This component should be shown when we have details about user deposits */}
         <div className="overflow-hidden mt-6 relative">
