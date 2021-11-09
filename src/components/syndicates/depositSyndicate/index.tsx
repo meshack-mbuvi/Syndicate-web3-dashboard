@@ -111,7 +111,6 @@ const DepositSyndicate: React.FC = () => {
   const [showDepositProcessingModal, toggleDepositProcessingModal] = useModal();
   const [ownershipShare, setOwnershipShare] = useState<number>(0);
   const [memberTokens, setMemberTokens] = useState(0);
-
   const [depositAmount, setDepositAmount] = useState<string>("");
 
   const router = useRouter();
@@ -516,7 +515,7 @@ const DepositSyndicate: React.FC = () => {
     if (!erc20TokenContract.address) return;
 
     try {
-      if (+erc20Balance < +depositAmount || +erc20Balance === 0) {
+      if (+erc20Balance < +depositAmount || erc20Balance === 0) {
         setInsufficientBalance(true);
         setDepositError("");
       } else {
