@@ -275,8 +275,7 @@ export const withdrawalsToDepositPercentageToolTip =
 export const createdDateToolTip =
   "This is the date this syndicate was created/launched.";
 
-export const SyndicateInBetaBannerText =
-  "Syndicate is currently in private beta. We take security seriously, but bugs may still exist.";
+export const SyndicateInBetaBannerText = "BETA";
 
 // syndicate actions page
 const noTokenTitleText = "No Syndicate DAO found at that address.";

@@ -3,10 +3,7 @@ import { RootState } from "@/redux/store";
 import { useRouter } from "next/router";
 import React from "react";
 import { useSelector } from "react-redux";
-import {
-  DepositsPageBanner,
-  SyndicateInBetaBanner,
-} from "src/components/banners";
+import { SyndicateInBetaBanner } from "src/components/banners";
 import ConnectWallet from "src/components/connectWallet";
 import Header from "src/components/navigation/header";
 import ProgressBar from "../ProgressBar";
@@ -21,9 +18,6 @@ const Layout = ({ children, backLink = null, showNav = true }) => {
     },
   } = useSelector((state: RootState) => state);
 
-  const showDepositsPageBanner =
-    router.pathname.endsWith("deposit") || router.pathname.endsWith("details");
-
   const showCreateProgressBar = router.pathname === "/syndicates/create/clubs";
 
   const { currentStep, steps } = useCreateInvestmentClubContext();
@@ -34,11 +28,8 @@ const Layout = ({ children, backLink = null, showNav = true }) => {
         title="Home"
       />
       <Header backLink={backLink} show={showNav} />
-      <div className="sticky top-16 z-10">
+      <div className="sticky top-16 z-20">
         <SyndicateInBetaBanner />
-        {showDepositsPageBanner &&
-          syndicateAddressIsValid &&
-          syndicateFound && <DepositsPageBanner key={2} />}
         {showCreateProgressBar && account ? (
           <ProgressBar
             percentageWidth={((currentStep + 1) / steps.length) * 100}
