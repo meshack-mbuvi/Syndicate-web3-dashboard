@@ -41,10 +41,7 @@ export const InputFieldWithMax = (props: {
   return (
     <div className="w-full">
       <div className="flex justify-between">
-        <label
-          htmlFor={label}
-          className="h3 pb-6"
-        >
+        <label htmlFor={label} className="h3 pb-6">
           {label}
         </label>
       </div>
@@ -89,14 +86,14 @@ export const InputFieldWithMax = (props: {
               id="disclaimer-tip"
               tip={
                 <span>
-                  Can be modified later via a signed <br /> transaction with gas
+                  Can be modified later via an on-chain <br /> transaction with
+                  gas
                 </span>
               }
             />
           </div>
         )}
       </div>
-
       <div className="w-full lg:w-2/3">
         {error && (
           <span className="text-sm text-red-500 pt-2">

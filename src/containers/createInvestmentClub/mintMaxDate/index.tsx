@@ -104,7 +104,7 @@ const MintMaxDate: FC = () => {
   };
 
   const handleDateChange = (date) => {
-    // this check prevents using null date which creates date as 01/01/1970 
+    // this check prevents using null date which creates date as 01/01/1970
     const dateToSet = date
       ? parseInt((date / 1000).toString())
       : parseInt((new Date().getTime() / 1000).toString());
@@ -145,7 +145,8 @@ const MintMaxDate: FC = () => {
             id="disclaimer-tip"
             tip={
               <span>
-                Can be modified later via a signed <br /> transaction with gas
+                Can be modified later via an on-chain <br /> transaction with
+                gas
               </span>
             }
           />

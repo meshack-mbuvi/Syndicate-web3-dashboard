@@ -43,27 +43,24 @@ export const AdvancedInputField = (props: {
     addSettingDisclaimer,
   } = props;
 
-  const [focused, setFocused] = useState(false)
-  const [hover, setHover] = useState(false)
+  const [focused, setFocused] = useState(false);
+  const [hover, setHover] = useState(false);
 
   return (
     <div className="w-full lg:w-2/3">
       <div className="flex justify-between">
-        <label
-          htmlFor={label}
-          className="h3 pb-6"
-        >
+        <label htmlFor={label} className="h3 pb-6">
           {label}
         </label>
       </div>
-      <div className={cn("mt-1 mb-2 flex border rounded-md overflow-hidden",
-          {
-            "border-blue-navy ring-0": focused && !error,
-            "border-gray-24": !focused,
-            "border-red-semantic": error,
-            "border-gray-syn3": hover
-          }
-        )}>
+      <div
+        className={cn("mt-1 mb-2 flex border rounded-md overflow-hidden", {
+          "border-blue-navy ring-0": focused && !error,
+          "border-gray-24": !focused,
+          "border-red-semantic": error,
+          "border-gray-syn3": hover,
+        })}
+      >
         <div
           className="flex rounded-md shadow-sm w-full"
           data-tip
@@ -88,9 +85,7 @@ export const AdvancedInputField = (props: {
                 onChange(e);
               }}
               className={`flex w-full border-none min-w-0 align-middle text-base font-whyte focus:ring-0 ${
-                hasError
-                  ? "border border-red-500 focus:border-red-500"
-                  : ""
+                hasError ? "border border-red-500 focus:border-red-500" : ""
               } flex-grow rounded-l-md dark-input-field-advanced ${
                 addOn ? "pr-4" : ""
               } ${disabled ? "cursor-not-allowed" : ""}
@@ -113,14 +108,17 @@ export const AdvancedInputField = (props: {
               </div>
             )}
           </div>
-          <div className={cn("relative border-l-1 inline-flex items-center bg-black space-x-2 pl-5 pr-7 py-2",
-            {
-              "border-blue-navy ring-0": focused && !error,
-              "border-gray-24": !focused,
-              "border-red-semantic": error,
-              "border-gray-syn3": hover
-            }
-          )}>
+          <div
+            className={cn(
+              "relative border-l-1 inline-flex items-center bg-black space-x-2 pl-5 pr-7 py-2",
+              {
+                "border-blue-navy ring-0": focused && !error,
+                "border-gray-24": !focused,
+                "border-red-semantic": error,
+                "border-gray-syn3": hover,
+              },
+            )}
+          >
             {extraAddon}
           </div>
         </div>
@@ -130,7 +128,8 @@ export const AdvancedInputField = (props: {
               id="disclaimer-tip"
               tip={
                 <span>
-                  Can be modified later via a signed <br /> transaction with gas
+                  Can be modified later via an on-chain <br /> transaction with
+                  gas
                 </span>
               }
             />
