@@ -614,7 +614,7 @@ const DepositSyndicate: React.FC = () => {
                 depositExceedTotal={+totalDeposits === +maxTotalDeposits}
               />
 
-              {submitting && showDepositProcessingModal ? (
+              {submitting ? (
                 <div className="h-fit-content rounded-2-half text-center">
                   <div className="pt-10 pb-8">
                     <Spinner width="w-16" height="h-16" margin="m-0" />

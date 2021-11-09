@@ -61,7 +61,7 @@ export const ProgressIndicator = (props: IProgressIndicator): JSX.Element => {
                 </p>
                 <p className="xl:text-2xl lg:text-xl text-gray-lightManatee leading-loose ml-4 font-whyte-light">
                   {currentDepositsPercentage}
-                  <span className="font-light">%</span>
+                  <span className="font-whyte-light">%</span>
                 </p>
               </div>
             </div>

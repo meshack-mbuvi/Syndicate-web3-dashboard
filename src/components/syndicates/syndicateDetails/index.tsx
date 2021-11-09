@@ -70,7 +70,7 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
   // get syndicate address from the url
   const { clubAddress } = router.query;
 
-  const depositERC20TokenSymbol = "USDC"; // TOD: Update to support multiple tokens
+  const depositERC20TokenSymbol = "USDC"; // TODO: Update to support multiple tokens
   const depositERC20Address = depositToken;
   const [showActionIcons, setShowActionIcons] = useState<boolean>(false);
 
@@ -131,11 +131,7 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
                     {memberCount} <span className="text-gray-syn4">(99)</span>
                   </div>
                 ),
-                tooltip: `This is the amount of unique member addresses who have deposited funds into this syndicate. ${
-                  !isUnlimited(maxMemberCount)
-                    ? `A maximum of ${maxMemberCount} members are allowed for this syndicate.`
-                    : ""
-                }`,
+                tooltip: "",
               },
               {
                 header: "Created",
