@@ -34,7 +34,7 @@ const CreateInvestmentClub: React.FC = () => {
   // Redirect to portfolio if user has clubs
   useEffect(() => {
     if (accountHasClubs) {
-      router.replace("/syndicates");
+      router.replace("/clubs");
     }
   }, [accountHasClubs]);
 
@@ -54,7 +54,7 @@ const CreateInvestmentClub: React.FC = () => {
 
   return (
     <Layout>
-      <Head title="Create Investment Club - Syndicate" />
+      <Head title="Create Investment Club" />
       <>
         {!account ? (
           <WalletNotConnected />
@@ -141,7 +141,7 @@ const CreateInvestmentClub: React.FC = () => {
             </p>
           </div>
           <div className="self-center pt-6 pb-3">
-            <Link href={`/syndicates/${token}/manage`}>
+            <Link href={`/clubs/${token}/manage`}>
               <span className="px-8 py-4 bg-white rounded-md text-black text-center text-base cursor-pointer self-center w-1/2">
                 View club dashboard
               </span>

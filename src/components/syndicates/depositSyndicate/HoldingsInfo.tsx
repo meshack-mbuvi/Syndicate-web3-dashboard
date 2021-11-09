@@ -21,7 +21,7 @@ const HoldingsInfo: FC<IHoldingsInfoProps> = ({
 
   return (
     <div>
-      <div className="pb-1 text-gray-syn4 text-base">{title}</div>
+      <div className="pb-2 leading-6 text-gray-syn4">{title}</div>
       <div className={`flex ${wrap}`}>
         <div>
           <div className="inline">

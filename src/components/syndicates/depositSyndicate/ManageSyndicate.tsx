@@ -3,10 +3,10 @@ import Link from "next/link";
 import { useSelector } from "react-redux";
 
 interface IProps {
-  syndicateAddress: string | string[];
+  clubAddress: string | string[];
 }
 
-const ManageSyndicate = ({ syndicateAddress }: IProps): JSX.Element => {
+const ManageSyndicate = ({ clubAddress }: IProps): JSX.Element => {
   const { syndicate } = useSelector(
     (state: RootState) => state.syndicatesReducer,
   );
@@ -32,12 +32,12 @@ const ManageSyndicate = ({ syndicateAddress }: IProps): JSX.Element => {
   return (
     <>
       <p className="py-4 px-2 text-xs text-gray-dim leading-4">MORE</p>
-      <Link href={`/syndicates/${syndicateAddress}/${url}`}>
+      <Link href={`/clubs/${clubAddress}/${url}`}>
         <div className="flex justify-start cursor-pointer items-center py-4 px-6 rounded-custom bg-gray-9 transition hover:bg-gray-6">
           <p className="font-medium text-lg">
             <a
               className="flex items-center"
-              href={`/syndicates/${syndicateAddress}/${url}`}
+              href={`/clubs/${clubAddress}/${url}`}
             >
               <img
                 className="inline mr-4 h-5"

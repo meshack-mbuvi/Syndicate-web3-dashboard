@@ -1,3 +1,7 @@
+import React, { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+import { useRouter } from "next/router";
+import { ArrowNarrowRightIcon, XIcon } from "@heroicons/react/solid";
 import ErrorBoundary from "@/components/errorBoundary";
 import FadeIn from "@/components/fadeIn/FadeIn";
 import CopyLink from "@/components/shared/CopyLink";
@@ -7,9 +11,24 @@ import StatusBadge from "@/components/syndicateDetails/statusBadge";
 import { EtherscanLink } from "@/components/syndicates/shared/EtherscanLink";
 import { SuccessCard } from "@/containers/managerActions/successCard";
 import { RootState } from "@/redux/store";
-import { useRouter } from "next/router";
-import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+
+const useShowShareWarning = () => {
+  const initialChoice = () => {
+    const previousChoice = window.localStorage.getItem("ShareWarning") || null;
+    return previousChoice === "true" || previousChoice === null;
+  }; // TODO: Use Redux persist to save user preferences
+
+  const [showShareWarning, setshowShareWarning] = useState(initialChoice);
+  const handleShowShareWarning = (val: boolean) => {
+    localStorage.setItem("showShareWarning", val.toString());
+    setshowShareWarning(val);
+  };
+  return {
+    showShareWarning,
+    setshowShareWarning,
+    handleShowShareWarning,
+  };
+};
 
 const ManagerActions = (): JSX.Element => {
   const {
@@ -24,12 +43,14 @@ const ManagerActions = (): JSX.Element => {
 
   const { loading, depositsEnabled, address, isOwner } = erc20Token;
 
-  const { syndicateAddress } = router.query;
+  const { clubAddress } = router.query;
 
   // we show loading state until content processing has been completed
   // meaning we are sure what to show the user depending on whether it's member
   // or manager content
   const [readyToDisplay, setReadyToDisplay] = useState(false);
+
+  const { showShareWarning, handleShowShareWarning } = useShowShareWarning();
 
   useEffect(() => {
     //  Content processing not yet completed
@@ -37,11 +58,11 @@ const ManagerActions = (): JSX.Element => {
 
     // Redirect the owner to the manage page
     if (!isOwner) {
-      router.push(`/syndicates/${syndicateAddress}/deposit`);
+      router.push(`/clubs/${clubAddress}/deposit`);
     } else {
       setReadyToDisplay(true);
     }
-  }, [isOwner, address, router, syndicateAddress]);
+  }, [isOwner, address, router, clubAddress]);
 
   const [showDepositLinkCopyState, setShowDepositLinkCopyState] =
     useState(false);
@@ -57,9 +78,9 @@ const ManagerActions = (): JSX.Element => {
   // club deposit link
   useEffect(() => {
     setClubDepositLink(
-      `${window.location.origin}/syndicates/${syndicateAddress}/deposit`,
+      `${window.location.origin}/clubs/${clubAddress}/deposit`,
     );
-  }, [syndicateAddress]);
+  }, [clubAddress]);
 
   // check for success state to show success + confetti component
   // TODO: Add localstorage state from create syndicate function to track these conditions:
@@ -135,7 +156,9 @@ const ManagerActions = (): JSX.Element => {
             />
             <div
               className={`h-fit-content relative ${
-                showConfettiSuccess ? "p-0" : "py-10 px-8"
+                showConfettiSuccess
+                  ? "p-0"
+                  : `pt-6 ${showShareWarning ? "pb-6" : "pb-10"} px-8`
               } flex justify-center items-start flex-col w-full`}
             >
               {!syndicateCreationFailed &&
@@ -217,6 +240,32 @@ const ManagerActions = (): JSX.Element => {
                   showConfettiSuccess={showConfettiSuccess}
                 />
               ) : null}
+              {showShareWarning && (
+                <div className="flex flex-row mt-4 text-yellow-saffron bg-brown-dark rounded-1.5lg py-3 px-4">
+                  <p className="text-sm">
+                    Do not publicly share this deposit link. Only share with
+                    trusted and qualified people.&nbsp;
+                    <a
+                      className="underline"
+                      rel="noreferrer"
+                      href="https://www.sec.gov/reportspubs/investor-publications/investorpubsinvclubhtm.html"
+                      target="_blank"
+                    >
+                      Learn more from the SEC
+                      <ArrowNarrowRightIcon className="h-4 w-4 inline-block no-underline ml-1" />
+                    </a>
+                  </p>
+                  <div className="flex items-center pl-2.5">
+                    <XIcon
+                      className="h-7 w-7 cursor-pointer"
+                      onClick={() => handleShowShareWarning(false)}
+                      onKeyPress={() => handleShowShareWarning(false)}
+                      role="button"
+                      tabIndex={0}
+                    />
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </FadeIn>

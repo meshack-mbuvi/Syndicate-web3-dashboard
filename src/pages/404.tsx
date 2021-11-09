@@ -38,7 +38,7 @@ function NotFoundPage() {
             <PrimaryButton
               customClasses="secondary-CTA"
               onClick={() => {
-                Router.push("/syndicates");
+                Router.push("/clubs");
               }}
             >
               <img

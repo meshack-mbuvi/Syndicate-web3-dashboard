@@ -14,10 +14,10 @@ const BackButton = ({
     >
       <div
         className={`relative hidden sm:block -left-9 sm:-left-14 xl:-left-20 -bottom-6 cursor-pointer w-14 h-14 rounded-full py-4 lg:hover:bg-gray-9 lg:active:bg-white lg:active:bg-opacity-20 ${
-          isSticky ? "top-2" : ""
+          isSticky ? "top-14" : ""
         }`}
       >
-        <Link href="/syndicates">
+        <Link href="/clubs">
           <a>
             <img
               className="mx-auto relative "

@@ -13,7 +13,7 @@ interface props {
 // links to show on the navbar
 const navbarItems = [
   {
-    url: "/syndicates",
+    url: "/clubs",
     urlText: "Portfolio",
   },
   {
@@ -28,14 +28,14 @@ const Header: React.FC<props> = ({ backLink = null, show = true }) => {
     <nav
       className={`${
         show ? "block" : "hidden"
-      } bg-black h-16 fixed top-0 inset-x-0 align-middle bg-opacity-50 z-20 backdrop-filter backdrop-blur-xl`}
+      } bg-black h-20 fixed top-0 inset-x-0 align-middle bg-opacity-50 z-20 backdrop-filter backdrop-blur-xl`}
     >
       <div className="container mx-auto flex justify-between h-full">
         {/* This backlink is only displayed on mobile sizes */}
         {backLink ? (
           <div className="md:flex-1 mr-4 md:mr-0">
             <div className="md:hidden float-left vertically-center">
-              <Link href="/syndicates">
+              <Link href="/clubs">
                 <a>
                   <img
                     src="/images/back-chevron-large.svg"
@@ -47,11 +47,11 @@ const Header: React.FC<props> = ({ backLink = null, show = true }) => {
           </div>
         ) : null}
 
-        {router.pathname.includes("/syndicates/create") &&
-        !router.pathname.includes("/syndicates/create/clubs") ? (
+        {router.pathname.includes("/clubs/create") &&
+        !router.pathname.includes("/clubs/create/club") ? (
           <div className="md:flex-1 flex items-center">
             <p className="text-sm sm:text-base text-white leading-7 font-light">
-              Create a syndicate
+              Create an Investment Club
             </p>
           </div>
         ) : (

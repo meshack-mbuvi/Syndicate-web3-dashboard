@@ -12,10 +12,12 @@ export interface InitialState {
   membersCount: string;
   clubCreationStatus: {
     transactionHash: string;
-    creationReceipt: {
-      token: string;
-    } | any;
-  }
+    creationReceipt:
+      | {
+          token: string;
+        }
+      | any;
+  };
 }
 
 export const initialState: InitialState = {
@@ -25,7 +27,7 @@ export const initialState: InitialState = {
   tokenCap: "", // How much are you raising?
   mintEndTime: {
     mintTime: "",
-    value: new Date().getTime(),
+    value: parseInt((new Date().getTime() / 1000).toString()),
   }, // How long will deposits be accepted?
   membersCount: "", // How many members can join?
   clubCreationStatus: {
@@ -33,5 +35,5 @@ export const initialState: InitialState = {
     creationReceipt: {
       token: "",
     },
-  }
+  },
 };

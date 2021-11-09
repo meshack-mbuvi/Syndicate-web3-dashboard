@@ -54,7 +54,7 @@ const PortfolioAndDiscover: React.FC = () => {
   };
 
   return (
-    <div>
+    <div className="-mt-8">
       {loading && account ? (
         // show some animations during loading process
         // skeleton loader
@@ -125,8 +125,8 @@ const PortfolioAndDiscover: React.FC = () => {
             >
               <div className="vertically-center">
                 <p className="text-2xl font-whyte-light">
-                  There are no syndicates you are leading or have invested in at
-                  the moment.
+                  There are no investment clubs you are leading or have invested
+                  in at the moment.
                 </p>
               </div>
             </div>

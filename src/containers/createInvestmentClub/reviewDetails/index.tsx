@@ -145,7 +145,7 @@ const ReviewDetails: React.FC = () => {
               <p className="text-gray-syn4">
                 {format(
                   new Date(
-                    mintEndTime?.value ? mintEndTime?.value : new Date(),
+                    mintEndTime?.value ? mintEndTime?.value * 1000 : new Date(),
                   ),
                   "MMM dd, yyyy, hh:mm b",
                 )}

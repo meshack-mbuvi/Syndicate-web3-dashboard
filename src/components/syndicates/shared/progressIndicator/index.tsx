@@ -1,8 +1,8 @@
 // component to show syndicate deposits progress
-
 import { divideIfNotByZero } from "@/utils/conversions";
 import { floatedNumberWithCommas } from "@/utils/formattedNumbers";
 import { SkeletonLoader } from "src/components/skeletonLoader";
+import { useGrayDecimalNumber } from "@/hooks/useGrayDecimalNumber";
 
 interface IProgressIndicator {
   totalDeposits: number;
@@ -21,12 +21,26 @@ export const ProgressIndicator = (props: IProgressIndicator): JSX.Element => {
   } = props;
 
   // get percentage of deposits made to the syndicate
+
   const depositsPercentage =
     divideIfNotByZero(totalDeposits, depositTotalMax) * 100;
-  const currentDepositsPercentage = parseInt(depositsPercentage.toString());
+  const currentDepositsPercentage =
+    depositsPercentage < 0.01
+      ? 0
+      : parseFloat(depositsPercentage.toString()).toFixed(2);
+
+  const remainingDeposits =
+    parseFloat(depositTotalMax) - parseFloat(totalDeposits.toString());
+
+  const formattedTotalDeposits = useGrayDecimalNumber(
+    floatedNumberWithCommas(totalDeposits),
+  );
+  const formattedRemainingDeposits = useGrayDecimalNumber(
+    floatedNumberWithCommas(remainingDeposits),
+  );
 
   return (
-    <div className="pt-4 w-full xl:pb-14 pb-10 border-b-2 border-gray-9">
+    <div className="w-full xl:pb-14 pb-10 border-b-2 border-gray-9">
       {loading ? (
         <SkeletonLoader height="9" width="full" borderRadius="rounded-md" />
       ) : (
@@ -39,21 +53,22 @@ export const ProgressIndicator = (props: IProgressIndicator): JSX.Element => {
           </div>
           <div className="flex justify-between mt-6">
             <div className="text-left">
-              <p className="text-sm text-gray-500 leading-loose">Deposits</p>
+              <p className="text-gray-syn4 leading-6 pb-2">Deposits</p>
               <div className="flex">
                 <p className="text-white leading-loose xl:text-2xl lg:text-xl text-base">
-                  {floatedNumberWithCommas(totalDeposits)}&nbsp;
+                  {formattedTotalDeposits}&nbsp;
                   {depositERC20TokenSymbol}
                 </p>
-                <p className="xl:text-2xl lg:text-xl text-gray-lightManatee leading-loose ml-4 font-extralight">
-                  {currentDepositsPercentage}%
+                <p className="xl:text-2xl lg:text-xl text-gray-lightManatee leading-loose ml-4 font-whyte-light">
+                  {currentDepositsPercentage}
+                  <span className="font-whyte-light">%</span>
                 </p>
               </div>
             </div>
             <div className="text-right">
-              <p className="text-sm text-gray-500 leading-loose">Remaining</p>
+              <p className="text-gray-syn4 leading-6 pb-2">Remaining</p>
               <p className="xl:text-2xl lg:text-xl text-sm text-white leading-loose">
-                {floatedNumberWithCommas(depositTotalMax)}&nbsp;
+                {remainingDeposits > 0 ? formattedRemainingDeposits : 0}&nbsp;
                 {depositERC20TokenSymbol}
               </p>
             </div>

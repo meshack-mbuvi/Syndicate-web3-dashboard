@@ -38,7 +38,7 @@ const MintMaxDate: FC = () => {
       setWarning(
         "Keeping a syndicate open for longer than 3 months could create administrative complexities in managing members and deploying funds.",
       );
-    } else if (new Date().getTime() > +mintEndTime.value) {
+    } else if (new Date().getTime() > +mintEndTime.value * 1000) {
       setWarning(
         "Closing a Syndicate within 24 hours restricts the window to deposit for members.",
       );
@@ -104,8 +104,10 @@ const MintMaxDate: FC = () => {
   };
 
   const handleDateChange = (date) => {
-    // this check prevents using null date which creates date as 01/01/1970
-    const dateToSet = date ? date : new Date().getTime();
+    // this check prevents using null date which creates date as 01/01/1970 
+    const dateToSet = date
+      ? parseInt((date / 1000).toString())
+      : parseInt((new Date().getTime() / 1000).toString());
     dispatch(setMintEndTime({ mintTime: "Custom", value: dateToSet }));
   };
 
@@ -158,7 +160,7 @@ const MintMaxDate: FC = () => {
                   positionFixed: true, // use this to make the popper position: fixed
                 }}
                 closeOnScroll={(e) => e.target === document}
-                selected={new Date(mintEndTime?.value) || new Date()}
+                selected={new Date(mintEndTime?.value * 1000) || new Date()}
                 onChange={(date: Date | null) => handleDateChange(+date as any)}
                 todayButton="Go to Today"
                 dateFormat="P"

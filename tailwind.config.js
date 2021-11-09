@@ -231,6 +231,9 @@ module.exports = {
           light: "#E7AC3A",
           dark: "#E78B3A",
         },
+        brown: {
+          dark: "#261909",
+        },
       },
       borderWidth: {
         1: "1px",
@@ -278,6 +281,7 @@ module.exports = {
       },
       inset: {
         84: "22rem",
+        31: "7.5rem"
       },
       margin: {
         0.5: "0.15rem",
@@ -285,6 +289,9 @@ module.exports = {
       },
       padding: {
         4.5: "1.125rem",
+      },
+      borderRadius: {
+        "1.5lg": "0.625rem",
       },
     },
   },
