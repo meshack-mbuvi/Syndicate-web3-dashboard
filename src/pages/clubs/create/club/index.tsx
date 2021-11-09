@@ -44,7 +44,7 @@ const CreateInvestmentClub: React.FC = () => {
     web3Reducer: { web3 },
     createInvestmentClubSliceReducer: {
       clubCreationStatus: {
-        creationReceipt: { token },
+        creationReceipt: { tokenAddress },
         transactionHash,
       },
     },
@@ -140,7 +140,7 @@ const CreateInvestmentClub: React.FC = () => {
             </p>
           </div>
           <div className="self-center pt-6 pb-3">
-            <Link href={`/clubs/${token}/manage?source=create`}>
+            <Link href={`/clubs/${tokenAddress}/manage?source=create`}>
               <span className="px-8 py-4 bg-white rounded-md text-black text-center text-base cursor-pointer self-center w-1/2">
                 View club dashboard
               </span>

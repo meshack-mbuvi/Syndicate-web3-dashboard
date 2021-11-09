@@ -40,15 +40,15 @@ const useClubTokenMembers = () => {
       } = members[index];
 
       const ownershipShare =
-        (+getWeiAmount(depositAmount, 18, false) * 100) / +totalSupply;
+        (+getWeiAmount(depositAmount, 6, false) * 100) / +totalSupply;
 
       clubMembers.push({
         memberAddress,
         ownershipShare,
         symbol,
-        clubTokens: getWeiAmount(depositAmount, 18, false),
+        clubTokens: getWeiAmount(depositAmount, 6, false),
         totalSupply: erc20Token.totalSupply,
-        depositAmount: getWeiAmount(depositAmount, 18, false),
+        depositAmount: getWeiAmount(depositAmount, 6, false),
       });
     }
 

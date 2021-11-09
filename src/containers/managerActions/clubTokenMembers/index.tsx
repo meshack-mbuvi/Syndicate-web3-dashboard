@@ -116,7 +116,7 @@ const ClubTokenMembers = (): JSX.Element => {
             <p className="">
               {`${floatedNumberWithCommas(clubTokens)} ${symbol}`}
               <span className="ml-1 font-whyte-light text-gray-syn4">
-                {`(${ownershipShare.toFixed(2)} %)`}
+                {`(${floatedNumberWithCommas(ownershipShare)} %)`}
               </span>
             </p>
           );
