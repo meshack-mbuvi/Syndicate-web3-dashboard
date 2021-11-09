@@ -131,7 +131,7 @@ export class ClubERC20Contract {
 
     await new Promise((resolve, reject) => {
       this.clubERC20Contract.methods
-        .deposit(amount)
+        .mint(amount)
         .send({ from: ownerAddress })
         .on("transactionHash", (transactionHash) => {
           onTxConfirm(transactionHash);

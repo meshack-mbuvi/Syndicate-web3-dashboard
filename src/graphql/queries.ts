@@ -15,21 +15,21 @@ export const MY_CLUBS_QUERY = gql`
 `;
 
 export const CLUBS_HAVE_INVESTED = gql`
-  query getClubsHaveInvestedIn($where: Membership_filter) {
-    members {
-      syndicateDAOs(where: $where) {
+  query getClubsHaveInvestedIn($where: Member_filter) {
+    members(where: $where) {
+      memberAddress
+      syndicateDAOs {
+        ownershipShare
         depositAmount
         syndicateDAO {
-          contractAddress
           ownerAddress
-          totalSupply
-          createdAt
           members {
+            ownershipShare
             depositAmount
           }
-        }
-        member {
-          memberAddress
+          totalSupply
+          createdAt
+          contractAddress
         }
       }
     }
