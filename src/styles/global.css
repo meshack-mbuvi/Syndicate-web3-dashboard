@@ -224,7 +224,7 @@
   }
 
   .h3 {
-    @apply block text-white text-lg lg:text-xl
+    @apply block text-white text-lg lg:text-xl;
   }
 
   .bottom-triangle-blue::after {
@@ -783,6 +783,16 @@ input[type="checkbox"] {
   font-weight: bold;
   font-size: 14px;
   line-height: 20px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.beta {
+  font-family: Whyte Regular;
+  font-style: normal;
+  font-weight: bold;
+  font-size: 14px;
+  line-height: 16px;
   letter-spacing: 1px;
   text-transform: uppercase;
 }
