@@ -17,7 +17,7 @@ const OnboardingModal = () => {
                 <p className="mb-6 text-gray-2 font-whyte-light">Syndicate gives you more than any other investing tool, as Syndicate's smart contracts automate a wide range of functions, including:</p>
                 
                 <div className="border-t border-b border-gray-24 fade-b-dark-modal">
-                    <div className="overflow-scroll py-6 max-h-60 sm:max-h-72">
+                    <div className="overflow-scroll no-scroll-bar py-6 max-h-60 sm:max-h-72">
                         <div className="grid sm:grid-rows-4 sm:grid-cols-2 sm:gap-6 h-full">  
                             <div className="mb-6 sm:mb-0">
                                 <h3 className="font-medium">Crypto-native bank account</h3>
