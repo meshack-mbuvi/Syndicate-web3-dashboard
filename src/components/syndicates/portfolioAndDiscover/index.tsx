@@ -54,7 +54,7 @@ const PortfolioAndDiscover: React.FC = () => {
   };
 
   return (
-    <div>
+    <div className="-mt-8">
       {loading && account ? (
         // show some animations during loading process
         // skeleton loader
