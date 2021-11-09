@@ -1,6 +1,8 @@
+import { RootState } from "@/redux/store";
 import { getWeiAmount } from "@/utils/conversions";
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/router";
+import { useSelector } from "react-redux";
 
 export const useERC20TokenBalance = (
   account: string | number,
@@ -9,10 +11,16 @@ export const useERC20TokenBalance = (
 ): number => {
   const [erc20Balance, setErc20Balance] = useState(null);
 
+  const {
+    web3Reducer: {
+      web3: { web3 },
+    },
+  } = useSelector((state: RootState) => state);
+
   const router = useRouter();
 
-  useEffect(() => {
-    if (account && depositTokenContract._address && router.isReady) {
+  const fetchBalance = () => {
+    if (router.isReady && account && depositTokenContract._address) {
       depositTokenContract.methods
         .balanceOf(account.toString())
         .call({ from: account })
@@ -23,11 +31,21 @@ export const useERC20TokenBalance = (
           setErc20Balance(0);
         });
     }
-  }, [
-    account,
-    depositTokenContract.methods,
-    depositTokenDecimals,
-    router.isReady,
-  ]);
+  };
+
+  useEffect(() => {
+    const subscription = web3.eth.subscribe("newBlockHeaders");
+    subscription
+      .on("connected", () => {
+        fetchBalance(); // Hack for first time the page renders
+      })
+      .on("data", () => {
+        fetchBalance();
+      });
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, [account, depositTokenContract._address]);
   return useMemo(() => erc20Balance, [erc20Balance]);
 };
