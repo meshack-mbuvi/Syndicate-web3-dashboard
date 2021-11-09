@@ -23,13 +23,10 @@ import React from "react";
  * from here to make them available globally
  */
 import "react-datepicker/dist/react-datepicker.css";
-import { IntercomProvider } from "react-use-intercom";
 import { wrapper } from "../redux/store";
 import "../styles/animation.css";
 import "../styles/custom-datepicker.css";
 import "../styles/global.css";
-
-const INTERCOM_APP_ID = process.env.NEXT_PUBLIC_INTERCOM_APP_ID;
 
 //Binding events.
 Router.events.on("routeChangeStart", () => NProgress.start());
@@ -43,36 +40,34 @@ const AmplitudeProvider = dynamic(() => import("@/components/amplitude"), {
 
 const App = ({ Component, pageProps, apollo }) => {
   return (
-    <IntercomProvider appId={INTERCOM_APP_ID} autoBoot={true}>
-      <ApolloProvider client={apollo}>
-        <SyndicateInBetaBannerProvider>
-          <OnboardingProvider>
-            <ConnectWalletProvider>
-              <CreateSyndicateProvider>
-                <CreateInvestmentClubProvider>
-                  <Head>
-                    <title>Home | Syndicate Dashboard</title>
-                    <link rel="shortcut icon" href="/images/logo.svg" />
+    <ApolloProvider client={apollo}>
+      <SyndicateInBetaBannerProvider>
+        <OnboardingProvider>
+          <ConnectWalletProvider>
+            <CreateSyndicateProvider>
+              <CreateInvestmentClubProvider>
+                <Head>
+                  <title>Home | Syndicate Dashboard</title>
+                  <link rel="shortcut icon" href="/images/logo.svg" />
 
-                    <FontsPreloader />
+                  <FontsPreloader />
 
-                    <meta
-                      name="viewport"
-                      content="width=device-width, initial-scale=1, shrink-to-fit=no"
-                    />
-                  </Head>
-                  <AmplitudeProvider />
-                  <Component {...pageProps} />
-                </CreateInvestmentClubProvider>
-              </CreateSyndicateProvider>
-            </ConnectWalletProvider>
-          </OnboardingProvider>
-        </SyndicateInBetaBannerProvider>
-      </ApolloProvider>
+                  <meta
+                    name="viewport"
+                    content="width=device-width, initial-scale=1, shrink-to-fit=no"
+                  />
+                </Head>
+                <AmplitudeProvider />
+                <Component {...pageProps} />
+              </CreateInvestmentClubProvider>
+            </CreateSyndicateProvider>
+          </ConnectWalletProvider>
+        </OnboardingProvider>
+      </SyndicateInBetaBannerProvider>
       {/* Placing tooltips rendered within modals in this high level component 
       "I suggest always putting <ReactTooltip /> in the Highest level or smart component of Redux, so you might need these static method to control tooltip's behaviour in some situations"
       Source: Troubleshooting section of https://www.npmjs.com/package/react-tooltip */}
-    </IntercomProvider>
+    </ApolloProvider>
   );
 };
 

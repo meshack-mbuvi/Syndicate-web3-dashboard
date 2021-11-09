@@ -1,15 +1,18 @@
 import { getWeiAmount } from "@/utils/conversions";
 import { useEffect, useMemo, useState } from "react";
+import { useRouter } from "next/router";
 
 export const useERC20TokenBalance = (
   account: string | number,
   depositTokenContract: any,
   depositTokenDecimals: number,
 ): number => {
-  const [erc20Balance, setErc20Balance] = useState(0);
+  const [erc20Balance, setErc20Balance] = useState(null);
+
+  const router = useRouter();
 
   useEffect(() => {
-    if (account && depositTokenContract._address) {
+    if (account && depositTokenContract._address && router.isReady) {
       depositTokenContract.methods
         .balanceOf(account.toString())
         .call({ from: account })
@@ -20,6 +23,11 @@ export const useERC20TokenBalance = (
           setErc20Balance(0);
         });
     }
-  }, [account, depositTokenContract.methods, depositTokenDecimals]);
+  }, [
+    account,
+    depositTokenContract.methods,
+    depositTokenDecimals,
+    router.isReady,
+  ]);
   return useMemo(() => erc20Balance, [erc20Balance]);
 };

@@ -80,12 +80,18 @@ const MintMaxDate: FC = () => {
 
   const handleSetMintTime = (index: number, mintTime: mintEndTime) => {
     const { value } = mintTime;
+
     setActiveDateCard(index);
     if (value) {
       setShowCustomDatePicker(false);
       setShowNextButton(false);
       // push amount to the redux store.
-      dispatch(setMintEndTime(mintTime));
+      dispatch(
+        setMintEndTime({
+          ...mintTime,
+          value: parseInt((value / 1000).toString()), // convert to seconds.
+        }),
+      );
       setDisableButtons(true);
       setTimeout(() => {
         handleNext();

@@ -16,6 +16,13 @@ import { DetailsCard } from "../shared";
 import { closeDateToolTip, createdDateToolTip } from "../shared/Constants";
 import { ProgressIndicator } from "../shared/progressIndicator";
 
+interface ClubDetails {
+  header: string;
+  content: React.ReactNode;
+  tooltip?: string;
+  isEditable?: boolean;
+}
+
 // we should have an isChildVisible prop here of type boolean
 const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
   const {
@@ -38,24 +45,18 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
     maxMemberCount,
     name,
     symbol,
+    maxTotalSupply,
+    accountClubTokens,
   } = erc20Token;
 
   const router = useRouter();
-  const [details, setDetails] = useState<
-    Array<{
-      header: string;
-      content: any;
-      tooltip: string;
-      isEditable?: boolean;
-    }>
-  >([]);
+  const [details, setDetails] = useState<ClubDetails[]>([]);
 
   // state to handle copying of the syndicate address to clipboard.
   const [showAddressCopyState, setShowAddressCopyState] =
     useState<boolean>(false);
   const [showDepositLinkCopyState, setShowDepositLinkCopyState] =
     useState<boolean>(false);
-  const [showMore, setShowMore] = useState(false);
 
   // state to handle details about the current deposit ERC20 token
   const [, setDepositTokenContract] = useState<any>("");
@@ -107,26 +108,14 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
         ...(depositsEnabled
           ? [
               {
-                header: "Created on",
-                content: `${epochTimeToDateFormat(
-                  new Date(startTime),
-                  "LLL dd, yyyy",
-                )}`,
-                tooltip: createdDateToolTip,
+                header: "Club token supply",
+                content: `${maxTotalSupply} ${symbol}`,
+                tooltip: "",
               },
-            ]
-          : [
               {
-                header: "Closed on",
-                content: `${epochTimeToDateFormat(
-                  new Date(endTime),
-                  "LLL dd, yyyy",
-                )}`,
-                tooltip: createdDateToolTip,
+                header: "Club tokens minted",
+                content: `${accountClubTokens} ${symbol}`,
               },
-            ]),
-        ...(depositsEnabled
-          ? [
               {
                 header: `Members`,
                 content: <div>{memberCount}</div>,
@@ -135,6 +124,14 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
                     ? `A maximum of ${maxMemberCount} members are allowed for this syndicate.`
                     : ""
                 }`,
+              },
+              {
+                header: "Created",
+                content: `${epochTimeToDateFormat(
+                  new Date(startTime),
+                  "LLL dd, yyyy",
+                )}`,
+                tooltip: createdDateToolTip,
               },
               {
                 header: "Closing in",
@@ -340,10 +337,7 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
         )}
 
         {/* This component should be shown when we have details about user deposits */}
-        <div
-          className="overflow-hidden mt-6 relative"
-          style={!showMore ? { height: "200px" } : null}
-        >
+        <div className="overflow-hidden mt-6 relative">
           {loading ? (
             <SkeletonLoader height="9" width="full" borderRadius="rounded-md" />
           ) : (
