@@ -16,7 +16,7 @@ const useClubTokenMembers = () => {
   } = useSelector((state: RootState) => state);
 
   const router = useRouter();
-  const { syndicateAddress } = router.query;
+  const { clubAddress } = router.query;
 
   const { account, currentEthereumNetwork } = web3;
 
@@ -24,11 +24,11 @@ const useClubTokenMembers = () => {
   const { loading, refetch, data } = useQuery(CLUB_TOKEN_MEMBERS, {
     variables: {
       where: {
-        contractAddress: syndicateAddress?.toString().toLocaleLowerCase(),
+        contractAddress: clubAddress?.toString().toLocaleLowerCase(),
       },
     },
   });
-  
+
   const processMembers = (members) => {
     const { symbol, totalSupply } = erc20Token;
     const clubMembers = [];

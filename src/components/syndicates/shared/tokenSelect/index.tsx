@@ -16,7 +16,7 @@ const classNames = (...classes) => {
 export const TokenSelect: React.FC = () => {
   const dispatch = useDispatch();
   const router = useRouter();
-  const { syndicateAddress } = router.query;
+  const { clubAddress } = router.query;
 
   const {
     syndicateMemberDetailsReducer: { syndicateDistributionTokens },
@@ -81,7 +81,7 @@ export const TokenSelect: React.FC = () => {
   ) => {
     dispatch(
       updateMemberWithdrawalDetails({
-        syndicateAddress,
+        syndicateAddress: clubAddress,
         distributionTokens: [
           {
             tokenAddress: currentDistributionTokenAddress,

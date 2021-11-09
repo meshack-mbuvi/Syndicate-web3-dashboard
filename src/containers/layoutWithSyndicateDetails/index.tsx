@@ -72,14 +72,14 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
 
   // used to render right column components on the left column in small devices
 
-  const { syndicateAddress } = router.query;
+  const { clubAddress } = router.query;
 
   const [clubERC20tokenContract, setClubERC20tokenContract] = useState(null);
 
   useEffect(() => {
-    if (router.isReady && web3.utils.isAddress(syndicateAddress)) {
+    if (router.isReady && web3.utils.isAddress(clubAddress)) {
       const clubERC20tokenContract = new ClubERC20Contract(
-        syndicateAddress as string,
+        clubAddress as string,
         web3,
       );
       setClubERC20tokenContract(clubERC20tokenContract);
@@ -87,7 +87,7 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
     return () => {
       setClubERC20tokenContract(null);
     };
-  }, [syndicateAddress, router.isReady, web3]);
+  }, [clubAddress, router.isReady, web3]);
 
   useEffect(() => {
     if (clubERC20tokenContract && account && router.isReady) {
@@ -108,38 +108,38 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
     if (
       !isEmpty(erc20Token) &&
       erc20Token.name &&
-      syndicateAddress !== undefined &&
+      clubAddress !== undefined &&
       account !== undefined &&
       router.isReady
     ) {
       switch (router.pathname) {
-        case "/syndicates/[syndicateAddress]/manage":
+        case "/clubs/[syndicateAddress]/manage":
           if (!erc20Token?.isOwner) {
-            router.replace(`/syndicates/${syndicateAddress}/deposit`);
+            router.replace(`/syndicates/${clubAddress}/deposit`);
           }
 
           break;
 
-        case "/syndicates/[syndicateAddress]/deposit":
+        case "/clubs/[syndicateAddress]/deposit":
           if (erc20Token?.isOwner) {
-            router.replace(`/syndicates/${syndicateAddress}/manage`);
+            router.replace(`/clubs/${clubAddress}/manage`);
           }
           break;
 
         // case when address lacks action
-        case "/syndicates/[syndicateAddress]/":
+        case "/clubs/[syndicateAddress]/":
           if (erc20Token?.isOwner) {
-            router.replace(`/syndicates/${syndicateAddress}/manage`);
+            router.replace(`/clubs/${clubAddress}/manage`);
           } else if (erc20Token?.depositsEnabled) {
-            router.replace(`/syndicates/${syndicateAddress}/deposit`);
+            router.replace(`/clubs/${clubAddress}/deposit`);
           }
           break;
         default:
-          if (syndicateAddress && erc20Token?.name) {
+          if (clubAddress && erc20Token?.name) {
             if (erc20Token?.isOwner) {
-              router.replace(`/syndicates/${syndicateAddress}/manage`);
+              router.replace(`/clubs/${clubAddress}/manage`);
             } else if (erc20Token?.depositsEnabled) {
-              router.replace(`/syndicates/${syndicateAddress}/deposit`);
+              router.replace(`/clubs/${clubAddress}/deposit`);
             }
           }
           break;
@@ -162,11 +162,7 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
   let emptyStateTitle = noTokenTitleText;
   let emptyStateMessage = noTokenMessageText;
 
-  if (
-    !erc20Token.name &&
-    !erc20Token?.loading &&
-    account !== syndicateAddress
-  ) {
+  if (!erc20Token.name && !erc20Token?.loading && account !== clubAddress) {
     emptyStateTitle = notSyndicateYetTitleText;
     emptyStateMessage = notSyndicateYetMessageText;
   }
@@ -192,7 +188,7 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
         <p className="text-base my-5 font-normal text-gray-dim text-center">
           {emptyStateMessage}
         </p>
-        <EtherscanLink etherscanInfo={syndicateAddress} />
+        <EtherscanLink etherscanInfo={clubAddress} />
       </div>
     </div>
   );
@@ -201,7 +197,7 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
     <div className="flex justify-center items-center h-full w-full mt-6 sm:mt-10">
       <div className="flex flex-col items-center justify-center sm:w-7/12 md:w-5/12 rounded-custom p-10">
         <p className="font-semibold text-2xl text-center">
-          {formatAddress(syndicateAddress, 9, 6)} {emptyStateTitle}
+          {formatAddress(clubAddress, 9, 6)} {emptyStateTitle}
         </p>
         <p className="text-base my-5 font-normal text-gray-dim text-center">
           {emptyStateMessage}

@@ -14,7 +14,7 @@ const IndexPage: FC = () => {
     homePageConstants;
 
   const handleOnClickUseSyndicate = () => {
-    // Amplitude logger: How many users who got on out site clicked on the "Use Syndicate Button"
+    // Amplitude logger: How many users who got on out site clicked on the "Use Club Button"
     amplitudeLogger(CLICK_USE_SYNDICATE, { flow: Flow.MGR_CREATE_SYN });
     dispatch(initWalletConnection());
   };
@@ -27,14 +27,11 @@ const IndexPage: FC = () => {
       />
 
       <div className="flex justify-between flex-col relative">
-
-        <main className="px-4" style={{height: "80vh"}}>
-
+        <main className="px-4" style={{ height: "80vh" }}>
           <div className="vertically-center">
-
             {/* Logo */}
             <img
-              alt="Syndicate logo"
+              alt="Club logo"
               src="/images/logo.svg"
               className="h-12 w-12 mb-8 mx-auto"
             />
@@ -51,7 +48,7 @@ const IndexPage: FC = () => {
               {/* Button */}
               <div className="flex items-center justify-center mt-10 sm:mt-20 w-full">
                 <div className="rounded-md">
-                  <Link href="/syndicates">
+                  <Link href="/clubs">
                     <button
                       onClick={handleOnClickUseSyndicate}
                       className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-custom text-white hover md:py-4 md:text-lg md:px-10 bg-blue"
@@ -62,13 +59,11 @@ const IndexPage: FC = () => {
                 </div>
               </div>
             </div>
-
           </div>
-
         </main>
 
         <div className="container mx-auto">
-          <Footer extraClasses="sm:text-center pb-12 border-t w-full"/>
+          <Footer extraClasses="sm:text-center pb-12 border-t w-full" />
         </div>
       </div>
     </>

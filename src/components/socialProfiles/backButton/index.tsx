@@ -17,7 +17,7 @@ const BackButton = ({
           isSticky ? "top-14" : ""
         }`}
       >
-        <Link href="/syndicates">
+        <Link href="/clubs">
           <a>
             <img
               className="mx-auto relative "

@@ -40,7 +40,6 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
     depositToken,
     totalDeposits,
     memberCount,
-    // depositsEnabled,
     startTime,
     endTime,
     maxMemberCount,
@@ -69,7 +68,7 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
   ]);
 
   // get syndicate address from the url
-  const { syndicateAddress } = router.query;
+  const { clubAddress } = router.query;
 
   const depositERC20TokenSymbol = "USDC"; // TOD: Update to support multiple tokens
   const depositERC20Address = depositToken;
@@ -206,7 +205,7 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
 
   // format an account address in the format 0x3f6q9z52…54h2kjh51h5zfa
 
-  const formattedSyndicateAddress = formatAddress(syndicateAddress, 6, 4);
+  const formattedSyndicateAddress = formatAddress(clubAddress, 6, 4);
 
   // show message to the user when address has been copied.
   const updateAddressCopyState = () => {
@@ -224,9 +223,9 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
           <div>
             <div className="flex justify-center items-center">
               <div className="mr-8">
-                {syndicateAddress && !loading && (
+                {clubAddress && !loading && (
                   <GradientAvatar
-                    syndicateAddress={syndicateAddress}
+                    syndicateAddress={clubAddress}
                     size="xl:w-20 lg:w-16 xl:h-20 lg:h-16 w-10 h-10"
                   />
                 )}
@@ -255,7 +254,7 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
 
                       {showActionIcons ? (
                         <div className="flex space-x-6">
-                          <CopyToClipboard text={syndicateAddress as string}>
+                          <CopyToClipboard text={clubAddress as string}>
                             <button
                               className="flex items-center relative w-4 h-4 cursor-pointer"
                               onClick={updateAddressCopyState}
@@ -286,7 +285,7 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
                           <div data-for="view-on-etherscan" data-tip>
                             <EtherscanLink
                               customStyles="w-4 h-4"
-                              etherscanInfo={syndicateAddress}
+                              etherscanInfo={clubAddress}
                               grouped
                               iconOnly
                             />

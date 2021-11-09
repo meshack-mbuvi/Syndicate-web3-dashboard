@@ -7,15 +7,15 @@ import React, { useEffect, useState } from "react";
 
 const SyndicateDepositView = () => {
   const router = useRouter();
-  const { syndicateAddress } = router.query;
-  const [syndicateMainAddress, setSyndicateAddress] =
-    useState(syndicateAddress);
+  const { clubAddress } = router.query;
+  const [clubMainAddress, setClubMainAddress] = useState(clubAddress);
   useEffect(() => {
-    if (syndicateAddress) {
-      setSyndicateAddress(syndicateAddress);
+    if (clubAddress) {
+      setClubMainAddress(clubAddress);
     }
-  }, [syndicateAddress]);
-  return syndicateMainAddress ? (
+  }, [clubAddress]);
+
+  return clubMainAddress ? (
     // use the component below to determine which page to load
     <LayoutWithSyndicateDetails>
       <>

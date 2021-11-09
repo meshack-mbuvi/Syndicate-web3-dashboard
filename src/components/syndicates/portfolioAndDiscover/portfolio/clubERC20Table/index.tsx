@@ -89,9 +89,9 @@ const ClubERC20Table: FC<Props> = ({ columns, tableData }) => {
                 className="grid grid-cols-6 border-b-1 w-full border-gray-steelGrey py-5 cursor-pointer"
                 onClick={() => {
                   if (isOwner) {
-                    router.replace(`/syndicates/${address}/manage`);
+                    router.replace(`/clubs/${address}/manage`);
                   } else {
-                    router.replace(`/syndicates/${address}/deposit`);
+                    router.replace(`/clubs/${address}/deposit`);
                   }
                 }}
               >

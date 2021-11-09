@@ -152,7 +152,7 @@ const DepositSyndicate: React.FC = () => {
 
     // Redirect the owner to the manage page
     if (isOwner) {
-      router.push(`/syndicates/${address}/manage`);
+      router.push(`/clubs/${address}/manage`);
     } else {
       setReadyToDisplay(true);
     }
@@ -303,7 +303,7 @@ const DepositSyndicate: React.FC = () => {
   }[] = [
     {
       title: "Approve USDC",
-      info: "Before depositing, you need to allow the protocol to use your USDC. You only need to do this once per syndicate.",
+      info: "Before depositing, you need to allow the protocol to use your USDC. You need to do this once per club.",
     },
     { title: "Complete deposit" },
   ];
@@ -564,7 +564,7 @@ const DepositSyndicate: React.FC = () => {
     if (+value > remainingErc20Balance) {
       message = (
         <>
-          <span>The amount you entered is too high. This syndicate is </span>
+          <span>The amount you entered is too high. This club is </span>
           <span className="underline">
             {remainingErc20Balance} {depositTokenSymbol}
           </span>
@@ -668,7 +668,7 @@ const DepositSyndicate: React.FC = () => {
                   <p className="h4 uppercase text-sm">
                     {+connectedMemberDeposits > 0
                       ? "deposit more"
-                      : "join this syndicate"}
+                      : "join this club"}
                   </p>
                   <div className="flex justify-between items-center mt-5 h-20 flex-wrap">
                     <div className="flex items-center">
@@ -900,7 +900,7 @@ const DepositSyndicate: React.FC = () => {
                 )} ${symbol}, which represents a ${+memberPercentShare.toFixed(
                   2,
                 )}% ownership
-                share of this syndicate.`}
+                share of this club.`}
               </span>
             </div>
             <CopyToClipboard
@@ -980,10 +980,10 @@ const DepositSyndicate: React.FC = () => {
                   <Tooltip
                     content={
                       <div>
-                        When you deposit into this syndicate, you <br />
+                        When you deposit into this club, you <br />
                         receive a club token in return that
                         <br /> represents your ownership share of the
-                        <br /> syndicate.
+                        <br /> club.
                       </div>
                     }
                     arrow={false}

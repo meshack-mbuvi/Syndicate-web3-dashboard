@@ -24,7 +24,7 @@ const ManagerActions = (): JSX.Element => {
 
   const { loading, depositsEnabled, address, isOwner } = erc20Token;
 
-  const { syndicateAddress } = router.query;
+  const { clubAddress } = router.query;
 
   // we show loading state until content processing has been completed
   // meaning we are sure what to show the user depending on whether it's member
@@ -37,11 +37,11 @@ const ManagerActions = (): JSX.Element => {
 
     // Redirect the owner to the manage page
     if (!isOwner) {
-      router.push(`/syndicates/${syndicateAddress}/deposit`);
+      router.push(`/clubs/${clubAddress}/deposit`);
     } else {
       setReadyToDisplay(true);
     }
-  }, [isOwner, address, router, syndicateAddress]);
+  }, [isOwner, address, router, clubAddress]);
 
   const [showDepositLinkCopyState, setShowDepositLinkCopyState] =
     useState(false);
@@ -57,9 +57,9 @@ const ManagerActions = (): JSX.Element => {
   // club deposit link
   useEffect(() => {
     setClubDepositLink(
-      `${window.location.origin}/syndicates/${syndicateAddress}/deposit`,
+      `${window.location.origin}/clubs/${clubAddress}/deposit`,
     );
-  }, [syndicateAddress]);
+  }, [clubAddress]);
 
   // check for success state to show success + confetti component
   // TODO: Add localstorage state from create syndicate function to track these conditions:

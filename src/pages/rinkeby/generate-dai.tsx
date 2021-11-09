@@ -1,4 +1,4 @@
-// This page deals with deposits or withdrawals to a syndicate.
+// This page deals with deposits or withdrawals to a club.
 import { useEffect } from "react";
 import { useRouter } from "next/router";
 

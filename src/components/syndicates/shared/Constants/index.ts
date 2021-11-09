@@ -284,7 +284,7 @@ const noTokenMessageText =
 const syndicateAddressInvalidTitleText = "Invalid syndicate address";
 const syndicateAddressInvalidMessageText =
   "Check to ensure you have the correct address.";
-const backLinkText = "Back To My Syndicates";
+const backLinkText = "Back To My Investments Clubs";
 const notSyndicateYetTitleText = "isn't a syndicate yet";
 const notSyndicateYetMessageText =
   "This URL isn't currently associated with a syndicate. Invite someone to create a syndicate by copying the link below.";

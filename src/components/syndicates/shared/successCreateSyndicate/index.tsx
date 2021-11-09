@@ -11,7 +11,9 @@ const SuccessCreateSyndicate: React.FC<{ account: string }> = ({ account }) => {
   const [syndicateDepositLink, setSyndicateDepositLink] = useState("");
 
   useEffect(() => {
-    setSyndicateDepositLink(`${window.location.origin}/syndicates/${account}/deposit`);
+    setSyndicateDepositLink(
+      `${window.location.origin}/clubs/${account}/deposit`,
+    );
   }, [account]);
 
   useEffect(() => {
@@ -89,7 +91,7 @@ const SuccessCreateSyndicate: React.FC<{ account: string }> = ({ account }) => {
 
           <EtherscanLink etherscanInfo={account} />
         </div>
-        <Link href={`/syndicates/${account}/manage`}>
+        <Link href={`/clubs/${account}/manage`}>
           <span className="my-8 py-4 text-lg text-center cursor-pointer bg-blue hover:bg-blue-600 border border-transparent rounded w-4/5">
             Go to your syndicate’s profile
           </span>

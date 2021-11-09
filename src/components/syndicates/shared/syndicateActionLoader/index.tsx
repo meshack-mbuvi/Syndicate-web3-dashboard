@@ -44,7 +44,7 @@ export const SyndicateActionLoader = (props: LoaderProp) => {
 
   const router = useRouter();
 
-  const { syndicateAddress } = router.query;
+  const { clubAddress } = router.query;
 
   let retryButtonStyles =
     "flex w-full items-center justify-center font-medium rounded-md text-black bg-white focus:outline-none focus:ring py-4 mt-4";
@@ -84,7 +84,7 @@ export const SyndicateActionLoader = (props: LoaderProp) => {
 
       {showlinkToDeposit ? (
         <div>
-          <Link href={`/syndicates/${syndicateAddress}/deposit`}>
+          <Link href={`/clubs/${clubAddress}/deposit`}>
             <a className="font-whyte text-center text-base font-medium text-blue-light hover">
               Go to deposit page.
             </a>

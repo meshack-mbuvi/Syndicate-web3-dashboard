@@ -32,7 +32,7 @@ const ManagerPending: FC = () => {
   const router = useRouter();
   const dispatch = useDispatch();
 
-  const { syndicateAddress } = router.query;
+  const { clubAddress } = router.query;
 
   const {
     initializeContractsReducer: {
@@ -71,13 +71,13 @@ const ManagerPending: FC = () => {
     setFinalStateIcon("/images/checkCircle.svg");
     setFinalStateHeaderText(message);
     setShowFinalState(true);
-    router.replace(`/syndicates/${syndicateAddress}/manage`);
+    router.replace(`/clubs/${clubAddress}/manage`);
   };
 
   const handleManagerPendingConfirm = async () => {
     try {
       await ManagerLogicContract.managerPendingConfirm(
-        syndicateAddress,
+        clubAddress,
         account,
         setShowWalletConfirmationModal,
         setSubmitting,
@@ -158,7 +158,7 @@ const ManagerPending: FC = () => {
         icon={finalStateIcon}
         buttonText={finalStateButtonText}
         headerText={finalStateHeaderText}
-        address={syndicateAddress ? syndicateAddress.toString() : ""} // first render is empty object
+        address={clubAddress ? clubAddress.toString() : ""} // first render is empty object
       />
     </>
   );

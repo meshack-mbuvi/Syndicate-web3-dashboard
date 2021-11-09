@@ -70,7 +70,7 @@ export const SuccessOrFailureContent: React.FC<{
             )} ${clubTokenSymbol}, which represents a ${memberPercentShare.toFixed(
               2,
             )}% ownership
-                share of this syndicate.`}
+                share of this club.`}
           </div>
           <CopyToClipboard
             text={`${

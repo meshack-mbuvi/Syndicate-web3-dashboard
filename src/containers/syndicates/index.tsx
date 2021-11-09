@@ -14,7 +14,7 @@ import Head from "src/components/syndicates/shared/HeaderTitle";
 const SyndicatesComponent: FC = () => {
   return (
     <Layout>
-      <Head title="My Syndicates" />
+      <Head title="My Investment Clubs" />
       {/* help for the Netlify post-processing bots */}
       <form
         name="offChainData"
