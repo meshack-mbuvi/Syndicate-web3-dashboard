@@ -103,9 +103,7 @@ const CreateInvestmentClub: React.FC = () => {
             {processingModalDescription}
           </div>
           <div>
-            {transactionHash &&
-            processingModalTitle === "Pending confirmation" &&
-            transactionModal ? (
+            {transactionHash && transactionModal ? (
               <EtherscanLink
                 etherscanInfo={transactionHash}
                 text="View on Etherscan"
