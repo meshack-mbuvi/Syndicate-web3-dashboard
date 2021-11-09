@@ -51,7 +51,7 @@ const Layout: FC<Props> = ({ children, backLink = null, showNav = true }) => {
           />
         ) : null}
       </div>
-      <div className="flex w-full flex-col sm:flex-row pt-16 pb-24 z-20 justify-center items-center my-0 mx-auto -mt-8">
+      <div className="flex w-full flex-col sm:flex-row py-24 z-20 justify-center items-center my-0 mx-auto">
         {children}
       </div>
       <ConnectWallet />
