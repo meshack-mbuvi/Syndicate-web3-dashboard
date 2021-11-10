@@ -512,7 +512,7 @@ const DepositSyndicate: React.FC = () => {
   }, [depositAmount, erc20Token, erc20TokenContract, erc20Balance]);
 
   const checkTokenBalance = async () => {
-    if (!erc20TokenContract.address) return;
+    if (!erc20TokenContract?.address) return;
 
     try {
       if (+erc20Balance < +depositAmount || erc20Balance === 0) {
