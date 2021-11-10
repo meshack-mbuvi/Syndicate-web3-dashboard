@@ -1,5 +1,5 @@
-import syndicateDAOs from "@/syndicateDAOs.json";
 import { SyndicateDAOItem } from "@/components/syndicates/shared/syndicateDAOItem";
+import syndicateDAOs from "@/syndicateDAOs.json";
 import { faExclamationCircle } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 

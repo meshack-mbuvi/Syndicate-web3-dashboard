@@ -49,6 +49,7 @@ const useClubERC20s = () => {
     },
   });
 
+
   useEffect(() => {
     if (router.isReady) {
       refetch();

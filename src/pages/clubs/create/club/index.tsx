@@ -1,3 +1,4 @@
+import { MagicLinkClaimHandler } from "@/components/claimComponent/MagicLinkClaim";
 import Layout from "@/components/layout";
 import Modal, { ModalStyle } from "@/components/modal";
 import { Spinner } from "@/components/shared/spinner";
@@ -12,8 +13,8 @@ import useClubERC20s from "@/hooks/useClubERC20s";
 import { RootState } from "@/redux/store";
 import Image from "next/image";
 import Link from "next/link";
-import router from "next/router";
-import { useEffect, useRef } from "react";
+import { useRouter } from "next/router";
+import { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 
 const CreateInvestmentClub: React.FC = () => {
@@ -28,6 +29,8 @@ const CreateInvestmentClub: React.FC = () => {
     setShowModal,
     errorModalMessage,
   } = useCreateInvestmentClubContext();
+  const router = useRouter();
+  const [status, setStatus] = useState(0);
 
   const { accountHasClubs } = useClubERC20s();
 
@@ -37,6 +40,33 @@ const CreateInvestmentClub: React.FC = () => {
       router.replace("/clubs");
     }
   }, [accountHasClubs]);
+
+  // check whether UUID is valid
+  const handleClaimVerification = async () => {
+    const uuid = localStorage.getItem("claim-uuid");
+    if (uuid) {
+      const status = await MagicLinkClaimHandler.get(uuid.toString());
+      setStatus(status);
+    } else {
+      setStatus(404);
+    }
+  };
+
+  useEffect(() => {
+    if (router.isReady) {
+      handleClaimVerification();
+    }
+  }, [router.isReady]);
+
+  useEffect(() => {
+    if (!router.isReady) return;
+
+    if (status === 404) {
+      router?.push(process.env.NEXT_PUBLIC_WAITLIST_LINK);
+    } else if (status === 200) {
+      router?.push("/clubs/create");
+    }
+  }, [status, router.isReady]);
 
   const parentRef = useRef(null);
 
