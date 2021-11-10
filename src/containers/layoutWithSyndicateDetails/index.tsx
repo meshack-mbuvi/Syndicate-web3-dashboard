@@ -206,11 +206,23 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
     </div>
   );
 
-  if (!erc20Token?.name && !erc20Token?.loading) {
+  if (
+    !erc20Token?.name &&
+    !erc20Token?.loading &&
+    router.isReady &&
+    !clubAddress &&
+    account
+  ) {
     noToken = syndicateEmptyState;
   }
 
-  if (!erc20Token?.name && !erc20Token?.loading) {
+  if (
+    !erc20Token?.name &&
+    !erc20Token?.loading &&
+    router.isReady &&
+    clubAddress &&
+    account
+  ) {
     noToken = syndicateNotFoundState;
   }
 

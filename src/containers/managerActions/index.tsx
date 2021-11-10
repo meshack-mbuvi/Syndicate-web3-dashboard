@@ -13,8 +13,12 @@ import { SuccessCard } from "@/containers/managerActions/successCard";
 import { RootState } from "@/redux/store";
 
 const useShowShareWarning = () => {
+  const router = useRouter();
   const initialChoice = () => {
-    const previousChoice = window.localStorage.getItem("ShareWarning") || null;
+    let previousChoice;
+    if (router.isReady) {
+      previousChoice = window.localStorage.getItem("ShareWarning") || null;
+    }
     return previousChoice === "true" || previousChoice === null;
   }; // TODO: Use Redux persist to save user preferences
 
@@ -84,13 +88,13 @@ const ManagerActions = (): JSX.Element => {
   }, [clubAddress]);
 
   // trigger confetti if we are coming from syndicateCreate page
-  useEffect( () => {
-    if (source && source === 'create') {
-      setSyndicateSuccessfullyCreated(true)
+  useEffect(() => {
+    if (source && source === "create") {
+      setSyndicateSuccessfullyCreated(true);
       // truncates the query part to prevent reshowing confetti
-      router.push(`/clubs/${clubAddress}/manage`)
+      router.push(`/clubs/${clubAddress}/manage`);
     }
-  }, [source])
+  }, [source]);
 
   // check for success state to show success + confetti component
   // TODO: Add localstorage state from create syndicate function to track these conditions:
@@ -226,7 +230,7 @@ const ManagerActions = (): JSX.Element => {
                       showDepositLinkCopyState,
                       clubDepositLink,
                       showConfettiSuccess,
-                      setShowConfettiSuccess
+                      setShowConfettiSuccess,
                     }}
                   />
                 </div>
