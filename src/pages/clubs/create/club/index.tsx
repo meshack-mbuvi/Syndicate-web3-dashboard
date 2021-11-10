@@ -72,7 +72,7 @@ const CreateInvestmentClub: React.FC = () => {
                       <ReviewDetails />
                       {steps[currentStep].component}
                       <div className="w-full lg:w-2/3">
-                        <InvestmentClubCTAs />
+                        <InvestmentClubCTAs key={currentStep} />
                       </div>
                     </div>
                   </div>

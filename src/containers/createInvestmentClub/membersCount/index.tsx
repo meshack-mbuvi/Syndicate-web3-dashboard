@@ -5,8 +5,6 @@ import { setMembersCount } from "@/state/createInvestmentClub/slice";
 import MaxButton from "../shared/MaxButton";
 import { useCreateInvestmentClubContext } from "@/context/CreateInvestmentClubContext";
 import { RootState } from "@/redux/store";
-
-import { useSpring, animated } from "react-spring";
 import Fade from "@/components/Fade";
 
 const ERROR_MESSAGE = "Between 1 and 99 accepted";
@@ -59,21 +57,23 @@ const MembersCount: React.FC = () => {
   };
 
   return (
-    <div className="flex w-full pb-6">
-      <InputFieldWithMax
-        {...{
-          value: parseInt(membersNumCount),
-          label: "How many members can join?",
-          addOn: <MaxButton handleClick={() => handleSetMax()} />,
-          onChange: handleSetMembersCount,
-          error: memberCountError,
-          hasError: Boolean(isInputError),
-          type: "number",
-          addSettingDisclaimer: true,
-          moreInfo: "You can invite up to 99 members",
-        }}
-      />
-    </div>
+    <Fade>
+      <div className="flex w-full pb-6">
+        <InputFieldWithMax
+          {...{
+            value: parseInt(membersNumCount),
+            label: "How many members can join?",
+            addOn: <MaxButton handleClick={() => handleSetMax()} />,
+            onChange: handleSetMembersCount,
+            error: memberCountError,
+            hasError: Boolean(isInputError),
+            type: "number",
+            addSettingDisclaimer: true,
+            moreInfo: "You can invite up to 99 members",
+          }}
+        />
+      </div>
+    </Fade>
   );
 };
 

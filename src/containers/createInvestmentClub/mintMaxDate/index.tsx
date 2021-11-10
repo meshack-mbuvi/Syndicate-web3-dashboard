@@ -9,6 +9,7 @@ import { RootState } from "@/redux/store";
 import Fade from "@/components/Fade";
 import { mintEndTime } from "@/state/createInvestmentClub/types";
 import moment from "moment";
+import { useSpring, animated } from "react-spring";
 
 const MintMaxDate: FC = () => {
   const dispatch = useDispatch();
@@ -111,8 +112,14 @@ const MintMaxDate: FC = () => {
     dispatch(setMintEndTime({ mintTime: "Custom", value: dateToSet }));
   };
 
+  const styles = useSpring({
+    to: { y: showCustomDatePicker && 0, opacity: 1 },
+    from: { y: showCustomDatePicker && -10, opacity: 0.5 },
+    duration: 100,
+  });
+
   return (
-    <Fade>
+    <Fade delay={500}>
       <div className="w-full lg:w-2/3">
         <div className="h3 pb-6">How long will deposits be accepted?</div>
         <div>
@@ -152,7 +159,7 @@ const MintMaxDate: FC = () => {
           />
         </div>
         {showCustomDatePicker && (
-          <div className="py-6 ">
+          <animated.div style={styles} className="py-6">
             <div className="pb-2">Close date</div>
             <div className="">
               <DatePicker
@@ -174,7 +181,7 @@ const MintMaxDate: FC = () => {
             {warning && (
               <div className="text-yellow-saffron pt-2 text-sm">{warning}</div>
             )}
-          </div>
+          </animated.div>
         )}
       </div>
     </Fade>
