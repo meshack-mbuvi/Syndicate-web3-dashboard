@@ -31,26 +31,22 @@ const useClubTokenMembers = () => {
 
   const processMembers = (members) => {
     const { symbol, totalSupply } = erc20Token;
-    const clubMembers = [];
 
-    for (let index = 0; index < members.length; index++) {
-      const {
-        depositAmount,
-        member: { memberAddress },
-      } = members[index];
+    const clubMembers = members.map(
+      ({ depositAmount, member: { memberAddress } }) => {
+        const ownershipShare =
+          (+getWeiAmount(depositAmount, 6, false) * 100) / +totalSupply;
 
-      const ownershipShare =
-        (+getWeiAmount(depositAmount, 6, false) * 100) / +totalSupply;
-
-      clubMembers.push({
-        memberAddress,
-        ownershipShare,
-        symbol,
-        clubTokens: getWeiAmount(depositAmount, 6, false),
-        totalSupply: erc20Token.totalSupply,
-        depositAmount: getWeiAmount(depositAmount, 6, false),
-      });
-    }
+        return {
+          memberAddress,
+          ownershipShare,
+          symbol,
+          clubTokens: getWeiAmount(depositAmount, 6, false),
+          totalSupply: erc20Token.totalSupply,
+          depositAmount: getWeiAmount(depositAmount, 6, false),
+        };
+      },
+    );
 
     dispatch(setClubMembers(clubMembers));
   };
