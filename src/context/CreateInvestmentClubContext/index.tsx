@@ -194,7 +194,7 @@ const CreateInvestmentClubProvider: React.FC = ({ children }) => {
     } catch (error) {
       const { code } = error;
       if (code) {
-        const errorMessage = getMetamaskError(code, "Create Syndicate");
+        const errorMessage = getMetamaskError(code, "Club creation");
         setErrorModalMessage(errorMessage);
       } else {
         // alert any other contract error
