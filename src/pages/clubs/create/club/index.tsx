@@ -60,7 +60,7 @@ const CreateInvestmentClub: React.FC = () => {
           <WalletNotConnected />
         ) : (
           <div className="container mx-auto w-full">
-            <div className="h4 text-center pb-16">
+            <div className="h4 text-center pb-16 pt-11">
               Create an investment club
             </div>
             <div className="flex justify-center w-full ">

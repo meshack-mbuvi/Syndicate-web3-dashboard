@@ -3,7 +3,6 @@ import { useRouter } from "next/router";
 import { useSelector } from "react-redux";
 import { useCreateInvestmentClubContext } from "@/context/CreateInvestmentClubContext";
 import { RootState } from "@/redux/store";
-import { SyndicateInBetaBanner } from "src/components/banners";
 import ConnectWallet from "src/components/connectWallet";
 import Header from "src/components/navigation/header";
 import ProgressBar from "../ProgressBar";
@@ -23,7 +22,7 @@ const Layout: FC<Props> = ({ children, backLink = null, showNav = true }) => {
     },
   } = useSelector((state: RootState) => state);
 
-  const showCreateProgressBar = router.pathname === "/syndicates/create/clubs";
+  const showCreateProgressBar = router.pathname === "/clubs/create";
 
   const { currentStep, steps } = useCreateInvestmentClubContext();
   return (
@@ -33,8 +32,7 @@ const Layout: FC<Props> = ({ children, backLink = null, showNav = true }) => {
         title="Home"
       />
       <Header backLink={backLink} show={showNav} />
-      <div className="sticky top-20 z-20">
-        <SyndicateInBetaBanner />
+      <div className="sticky top-36 z-20">
         {showCreateProgressBar && account ? (
           <ProgressBar
             percentageWidth={((currentStep + 1) / steps.length) * 100}
@@ -42,7 +40,7 @@ const Layout: FC<Props> = ({ children, backLink = null, showNav = true }) => {
           />
         ) : null}
       </div>
-      <div className="flex w-full flex-col sm:flex-row py-24 z-20 justify-center items-center my-0 mx-auto">
+      <div className="flex w-full flex-col sm:flex-row py-36 z-20 justify-center items-center my-0 mx-auto">
         {children}
       </div>
       <ConnectWallet />

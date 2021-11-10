@@ -33,7 +33,7 @@ const useClubTokenMembers = () => {
     const { symbol, totalSupply } = erc20Token;
     const clubMembers = [];
 
-    for (let index = 0; index < members?.length; index++) {
+    for (let index = 0; index < members.length; index++) {
       const {
         depositAmount,
         member: { memberAddress },
@@ -68,7 +68,7 @@ const useClubTokenMembers = () => {
 
   useEffect(() => {
     if (!loading) {
-      processMembers(data?.syndicateDAOs?.[0]?.members);
+      processMembers(data?.syndicateDAOs?.[0].members);
     }
   }, [JSON.stringify(data?.syndicateDAOs?.[0]?.members), loading]);
 
