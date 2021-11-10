@@ -230,7 +230,7 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
 
   return (
     <Layout showNav={showNav}>
-      <Head title="Syndicate" />
+      <Head title={erc20Token?.name || "Club"} />
       <ErrorBoundary>
         {showOnboardingIfNeeded && <OnboardingModal />}
         <div className="w-full">

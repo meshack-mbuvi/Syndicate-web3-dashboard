@@ -16,7 +16,6 @@ interface Props {
 const Layout: FC<Props> = ({ children, backLink = null, showNav = true }) => {
   const router = useRouter();
   const {
-    syndicatesReducer: { syndicateFound, syndicateAddressIsValid },
     web3Reducer: {
       web3: { account },
     },
@@ -28,7 +27,7 @@ const Layout: FC<Props> = ({ children, backLink = null, showNav = true }) => {
   return (
     <div>
       <SEO
-        keywords={[`next`, `tailwind`, `react`, `tailwindcss`]}
+        keywords={[`syndicate`, `crypto`, `invest`, `fund`, `social`, `ethereum`]}
         title="Home"
       />
       <Header backLink={backLink} show={showNav} />
