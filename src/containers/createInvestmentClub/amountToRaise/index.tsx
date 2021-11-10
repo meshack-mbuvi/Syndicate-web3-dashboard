@@ -20,6 +20,8 @@ const AmountToRaise: React.FC = () => {
     createInvestmentClubSliceReducer: { tokenCap },
   } = useSelector((state: RootState) => state);
 
+  const { setShowNextButton, handleNext } = useCreateInvestmentClubContext();
+
   const [error, setError] = useState<string>("");
   const [amount, setAmount] = useState<string>(tokenCap);
   const dispatch = useDispatch();
@@ -44,6 +46,10 @@ const AmountToRaise: React.FC = () => {
   // Maximum amount that can be raised for an investment club is 25,000,000
   const setMaxAmount = () => {
     setAmount(MAX_AMOUNT_TO_RAISE);
+    setTimeout(() => {
+      handleNext();
+      setShowNextButton(true);
+    }, 400);
   };
 
   // get input value

@@ -23,6 +23,8 @@ const MembersCount: React.FC = () => {
   const { setNextBtnDisabled } = useCreateInvestmentClubContext();
   const dispatch = useDispatch();
 
+  const { setShowNextButton, handleNext } = useCreateInvestmentClubContext();
+
   useEffect(() => {
     if (!membersNumCount) {
       setNextBtnDisabled(true);
@@ -46,6 +48,10 @@ const MembersCount: React.FC = () => {
 
   const handleSetMax = () => {
     setMembersNumCount(MAX_MEMBERS_ALLOWED);
+    setTimeout(() => {
+      handleNext();
+      setShowNextButton(true);
+    }, 400);
   };
 
   const handleSetMembersCount = (event) => {
