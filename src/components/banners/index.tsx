@@ -4,7 +4,7 @@ import { SyndicateInBetaBannerText } from "src/components/syndicates/shared/Cons
 
 export const SyndicateInBetaBanner = () => {
   const router = useRouter();
-  const showCreateProgressBar = router.pathname === "/clubs/create";
+  const showCreateProgressBar = router.pathname === "/clubs/clubprivatebetainvite";
   return (
     <div
       className={`flex flex-wrap items-center justify-center flex-1 space-x-1 mx-auto ${
