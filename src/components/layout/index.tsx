@@ -7,6 +7,7 @@ import ConnectWallet from "src/components/connectWallet";
 import Header from "src/components/navigation/header";
 import ProgressBar from "../ProgressBar";
 import SEO from "../seo";
+import { SyndicateInBetaBanner } from "src/components/banners";
 
 interface Props {
   backLink?: string;
@@ -27,16 +28,32 @@ const Layout: FC<Props> = ({ children, backLink = null, showNav = true }) => {
   return (
     <div>
       <SEO
-        keywords={[`syndicate`, `crypto`, `invest`, `fund`, `social`, `ethereum`]}
+        keywords={[
+          `syndicate`,
+          `crypto`,
+          `invest`,
+          `fund`,
+          `social`,
+          `ethereum`,
+        ]}
         title="Home"
       />
       <Header backLink={backLink} show={showNav} />
-      <div className="sticky top-36 z-20">
+      <div
+        className={`sticky top-20 z-20 ${
+          showCreateProgressBar
+            ? "bg-black bg-opacity-50 z-20 backdrop-filter"
+            : ""
+        }`}
+      >
+        <SyndicateInBetaBanner />
         {showCreateProgressBar && account ? (
-          <ProgressBar
-            percentageWidth={((currentStep + 1) / steps.length) * 100}
-            tailwindColor="bg-green"
-          />
+          <div className="mt-2">
+            <ProgressBar
+              percentageWidth={((currentStep + 1) / steps.length) * 100}
+              tailwindColor="bg-green"
+            />
+          </div>
         ) : null}
       </div>
       <div className="flex w-full flex-col sm:flex-row pt-36 z-20 justify-center items-center my-0 mx-auto">

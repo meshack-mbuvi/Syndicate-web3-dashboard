@@ -4,7 +4,6 @@ import React from "react";
 import { NavBarNavItem } from "./navbarItems";
 import { UserProfileWrapper } from "./UserProfileWrapper";
 import WalletComponent from "./wallet";
-import { SyndicateInBetaBanner } from "src/components/banners";
 
 interface props {
   backLink: string;
@@ -29,9 +28,9 @@ const Header: React.FC<props> = ({ backLink = null, show = true }) => {
     <nav
       className={`${
         show ? "block" : "hidden"
-      } bg-black h-36 fixed top-0 inset-x-0 align-middle bg-opacity-50 z-20 backdrop-filter backdrop-blur-xl`}
+      } bg-black h-20 fixed top-0 inset-x-0 align-middle bg-opacity-50 z-20 backdrop-filter backdrop-blur-xl`}
     >
-      <div className="container mx-auto flex justify-between mt-6">
+      <div className="container mx-auto flex justify-between h-full">
         {/* This backlink is only displayed on mobile sizes */}
         {backLink ? (
           <div className="md:flex-1 mr-4 md:mr-0">
@@ -76,9 +75,6 @@ const Header: React.FC<props> = ({ backLink = null, show = true }) => {
             </UserProfileWrapper>
           </div>
         </div>
-      </div>
-      <div className="my-3 container mx-auto">
-        <SyndicateInBetaBanner />
       </div>
     </nav>
   );
