@@ -128,7 +128,7 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
                 header: `Members (max)`,
                 content: (
                   <div>
-                    {memberCount} <span className="text-gray-syn4">(99)</span>
+                    {memberCount} <span className="text-gray-syn4">({maxMemberCount})</span>
                   </div>
                 ),
                 tooltip: "",
@@ -219,12 +219,18 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
           <div>
             <div className="flex justify-center items-center">
               <div className="mr-8">
-                {clubAddress && !loading && (
+                {loading ? (
+                  <SkeletonLoader
+                    height="20"
+                    width="20"
+                    borderRadius="rounded-full"
+                  />
+                ) : clubAddress ? (
                   <GradientAvatar
                     syndicateAddress={clubAddress}
                     size="xl:w-20 lg:w-16 xl:h-20 lg:h-16 w-10 h-10"
                   />
-                )}
+                ) : null}
               </div>
 
               <div className="flex-shrink main-title flex-wrap break-normal m-0">
@@ -236,9 +242,9 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
                 >
                   {loading ? (
                     <SkeletonLoader
-                      height="9"
-                      width="full"
-                      borderRadius="rounded-md"
+                      height="6"
+                      width="1/3"
+                      borderRadius="rounded-full"
                     />
                   ) : (
                     <div className="flex items-center mb-2 space-x-8">
@@ -304,11 +310,13 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
                 {/* Syndicate name and symbol  */}
                 <div className="flex justify-start items-center">
                   {loading ? (
-                    <SkeletonLoader
-                      height="9"
-                      width="full"
-                      borderRadius="rounded-md"
-                    />
+                    <div className="md:w-96 w-50">
+                      <SkeletonLoader
+                        height="9"
+                        width="full"
+                        borderRadius="rounded-lg"
+                      />
+                    </div>
                   ) : (
                     <div className="flex items-center w-fit-content">
                       <div className="mr-6 2xl:text-4.5xl leading-10 lg:text-4xl md:text-xl sm:text-4xl text-lg font-normal line-clamp-2">
@@ -344,21 +352,17 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
 
         {/* This component should be shown when we have details about user deposits */}
         <div className="overflow-hidden mt-6 relative">
-          {loading ? (
-            <SkeletonLoader height="9" width="full" borderRadius="rounded-md" />
-          ) : (
-            <DetailsCard
-              {...{
-                title: "Details",
-                sections: details,
-                syndicateDetails: true,
-                syndicate,
-              }}
-              customStyles={"w-full pt-4"}
-              customInnerWidth="w-full grid xl:grid-cols-3 lg:grid-cols-3
-            grid-cols-3 xl:gap-8 gap-6s gap-y-8"
-            />
-          )}
+          <DetailsCard
+            {...{
+              title: "Details",
+              sections: details,
+              syndicateDetails: true,
+              syndicate,
+            }}
+            customStyles={"w-full pt-4"}
+            customInnerWidth="w-full grid xl:grid-cols-3 lg:grid-cols-3
+          grid-cols-3 xl:gap-8 gap-6s gap-y-8"
+          />
         </div>
       </div>
       {/* Syndicate details */}

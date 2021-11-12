@@ -14,7 +14,7 @@ export const floatedNumberWithCommas = (number): string => {
 
   // do not show decimal points if there are only zeros after the decimal point.
   // applying this across the app following this ticket: https://linear.app/syndicate/issue/ENG-2288/implement-header-section-updates
-  if (number.toString().indexOf(".") < 1) {
+  if (number.toString().indexOf(".") < 0) {
     return numberWithCommas(number.toString());
   }
 

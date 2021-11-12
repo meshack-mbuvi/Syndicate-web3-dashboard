@@ -9,6 +9,8 @@ import { RootState } from "@/redux/store";
 import Fade from "@/components/Fade";
 import { mintEndTime } from "@/state/createInvestmentClub/types";
 import moment from "moment";
+import { useSpring, animated } from "react-spring";
+import {DAY_IN_SECONDS} from "@/utils/constants";
 
 const MintMaxDate: FC = () => {
   const dispatch = useDispatch();
@@ -107,12 +109,18 @@ const MintMaxDate: FC = () => {
     // this check prevents using null date which creates date as 01/01/1970
     const dateToSet = date
       ? parseInt((date / 1000).toString())
-      : parseInt((new Date().getTime() / 1000).toString());
+      : parseInt(((new Date().getTime() / 1000) + DAY_IN_SECONDS).toString());
     dispatch(setMintEndTime({ mintTime: "Custom", value: dateToSet }));
   };
 
+  const styles = useSpring({
+    to: { y: showCustomDatePicker && 0, opacity: 1 },
+    from: { y: showCustomDatePicker && -10, opacity: 0.5 },
+    duration: 100,
+  });
+
   return (
-    <Fade>
+    <Fade delay={500}>
       <div className="w-full lg:w-2/3">
         <div className="h3 pb-6">How long will deposits be accepted?</div>
         <div>
@@ -152,7 +160,7 @@ const MintMaxDate: FC = () => {
           />
         </div>
         {showCustomDatePicker && (
-          <div className="py-6 ">
+          <animated.div style={styles} className="py-6">
             <div className="pb-2">Close date</div>
             <div className="">
               <DatePicker
@@ -161,7 +169,7 @@ const MintMaxDate: FC = () => {
                   positionFixed: true, // use this to make the popper position: fixed
                 }}
                 closeOnScroll={(e) => e.target === document}
-                selected={new Date(mintEndTime?.value * 1000) || new Date()}
+                selected={new Date(mintEndTime?.value * 1000)}
                 onChange={(date: Date | null) => handleDateChange(+date as any)}
                 todayButton="Go to Today"
                 dateFormat="P"
@@ -174,7 +182,7 @@ const MintMaxDate: FC = () => {
             {warning && (
               <div className="text-yellow-saffron pt-2 text-sm">{warning}</div>
             )}
-          </div>
+          </animated.div>
         )}
       </div>
     </Fade>

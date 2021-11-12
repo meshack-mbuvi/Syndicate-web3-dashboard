@@ -8,8 +8,8 @@ interface FadeProps {
 
 const Fade: React.FC<FadeProps> = ({ delay = 400, children }) => {
   const styles = useSpring({
-    to: { opacity: 1 },
-    from: { opacity: 0 },
+    to: { opacity: 1, y: 0 },
+    from: { opacity: 0, y: 10 },
     delay: delay,
   });
   return <animated.div style={styles}>{children}</animated.div>;

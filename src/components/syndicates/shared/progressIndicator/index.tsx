@@ -42,7 +42,21 @@ export const ProgressIndicator = (props: IProgressIndicator): JSX.Element => {
   return (
     <div className="w-full xl:pb-14 pb-10 border-b-2 border-gray-9">
       {loading ? (
-        <SkeletonLoader height="9" width="full" borderRadius="rounded-md" />
+        <div>
+          <div className="mb-4">
+            <SkeletonLoader height="5" width="full" borderRadius="rounded-full" />
+          </div>
+          <div className="flex justify-between mt-6">
+            <div className="w-1/4">
+              <SkeletonLoader height="3" width="full" borderRadius="rounded-full" />
+              <SkeletonLoader height="6" width="full" borderRadius="rounded-lg" />
+            </div>
+            <div className="w-1/4 items-end place-content-end">
+              <SkeletonLoader height="3" width="full" borderRadius="rounded-full" />
+              <SkeletonLoader height="6" width="full" borderRadius="rounded-lg" />
+            </div>
+          </div>
+        </div>
       ) : (
         <div>
           <div className="h-5 overflow-hidden mb-4 text-sm flex rounded-full bg-gray-9">

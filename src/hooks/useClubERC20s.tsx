@@ -60,90 +60,82 @@ const useClubERC20s = () => {
     dispatch(setLoadingClubERC20s(false));
 
     if (!tokens || !tokens?.length) return [];
-
     dispatch(setLoadingClubERC20s(true));
-    const clubsERC20s = [];
-    const myClubs = [];
 
-    for (let index = 0; index < tokens.length; index++) {
-      const {
-        contractAddress,
-        members,
-        ownerAddress,
-        totalSupply,
-        depositAmount,
-      } = tokens[index];
-      // get clubERC20 configs
-      const {
-        endTime,
-        maxMemberCount,
-        maxTotalSupply,
-        requiredToken,
-        requiredTokenMinBalance,
-        startTime,
-      } = await syndicateContracts?.mintPolicyManager?.getSyndicateValues(
-        contractAddress,
-      );
+    const processedTokens = await Promise.all([
+      ...tokens.map(
+        async ({
+          contractAddress,
+          members,
+          ownerAddress,
+          totalSupply,
+          depositAmount,
+        }) => {
+          // get clubERC20 configs
+          const {
+            endTime,
+            maxMemberCount,
+            maxTotalSupply,
+            requiredToken,
+            requiredTokenMinBalance,
+            startTime,
+          } = await syndicateContracts?.mintPolicyManager?.getSyndicateValues(
+            contractAddress,
+          );
 
-      const clubERC20Contract = new ClubERC20Contract(
-        contractAddress,
-        web3.web3,
-      );
-      const depositToken = await clubERC20Contract.depositToken();
+          const clubERC20Contract = new ClubERC20Contract(
+            contractAddress,
+            web3.web3,
+          );
+          const depositToken = await clubERC20Contract.depositToken();
 
-      const decimals = await clubERC20Contract.decimals();
-      const clubName = await clubERC20Contract.name();
-      const depositERC20TokenSymbol = await new ClubERC20Contract(
-        depositToken,
-        web3.web3,
-      ).symbol();
+          const decimals = await clubERC20Contract.decimals();
+          const clubName = await clubERC20Contract.name();
+          const depositERC20TokenSymbol = await new ClubERC20Contract(
+            depositToken,
+            web3.web3,
+          ).symbol();
 
-      const depositsEnabled =
-        +getWeiAmount(totalSupply, +decimals, false) <
-          +getWeiAmount(maxTotalSupply, +decimals, false) &&
-        !pastDate(new Date(+endTime * 1000)) &&
-        members.length < maxMemberCount;
+          const depositsEnabled =
+            +getWeiAmount(totalSupply, +decimals, false) <
+              +getWeiAmount(maxTotalSupply, +decimals, false) &&
+            !pastDate(new Date(+endTime * 1000)) &&
+            members.length < maxMemberCount;
 
-      //  calculate ownership share
-      const memberDeposits = getWeiAmount(depositAmount, 6, false);
-      const totalDeposits = getWeiAmount(totalSupply, +decimals, false);
+          //  calculate ownership share
+          const memberDeposits = getWeiAmount(depositAmount, 6, false);
+          const totalDeposits = getWeiAmount(totalSupply, +decimals, false);
 
-      const ownershipShare = (+memberDeposits * 100) / +totalDeposits;
-      const isOwner =
-        ownerAddress.toLocaleLowerCase() == account.toLocaleLowerCase();
+          const ownershipShare = (+memberDeposits * 100) / +totalDeposits;
+          return {
+            clubName,
+            ownershipShare,
+            depositsEnabled,
+            endTime,
+            depositERC20TokenSymbol,
+            maxMemberCount,
+            maxTotalSupply: getWeiAmount(maxTotalSupply, +decimals, false),
+            requiredToken,
+            requiredTokenMinBalance,
+            address: contractAddress,
+            ownerAddress,
+            totalDeposits: getWeiAmount(totalSupply, +decimals, false),
+            membersCount: members.length,
+            // TODO: Update this when we have exact status
+            status: depositsEnabled ? `Open to deposits` : "Active",
+            startTime: formatDate(new Date(+startTime * 1000)),
+            isOwner:
+              ownerAddress.toLocaleLowerCase() == account.toLocaleLowerCase(),
+          };
+        },
+      ),
+    ]);
 
-      const club = {
-        clubName,
-        ownershipShare,
-        depositsEnabled,
-        endTime,
-        depositERC20TokenSymbol,
-        maxMemberCount,
-        maxTotalSupply: getWeiAmount(maxTotalSupply, +decimals, false),
-        requiredToken,
-        requiredTokenMinBalance,
-        address: contractAddress,
-        ownerAddress,
-        totalDeposits: getWeiAmount(totalSupply, +decimals, false),
-        membersCount: members.length,
-        // TODO: Update this when we have exact status
-        status: depositsEnabled ? `Open to deposits` : "Active",
-        startTime: formatDate(new Date(+startTime * 1000)),
-        isOwner:
-          ownerAddress.toLocaleLowerCase() == account.toLocaleLowerCase(),
-      };
+    const clubsERC20s = processedTokens.filter(
+      ({ isOwner }) => isOwner !== true,
+    );
+    const myClubs = processedTokens.filter(({ isOwner }) => isOwner === true);
 
-      // clubs I manage
-      if (isOwner) {
-        myClubs.push(club);
-      } else {
-        clubsERC20s.push({
-          ...club,
-          ownershipShare,
-          depositAmount: memberDeposits,
-        });
-      }
-    }
     dispatch(setMyClubERC20s(myClubs));
     dispatch(setOtherClubERC20s(clubsERC20s));
     dispatch(setLoadingClubERC20s(false));
@@ -156,6 +148,7 @@ const useClubERC20s = () => {
     // This will reset syndicate details when we are on portfolio page.
     // The currentEthereumNetwork has been added as a dependency to trigger a re-fetch
     // whenever the Ethereum network is changed.
+    dispatch(setLoadingClubERC20s(true));
     dispatch({
       data: null,
       type: SYNDICATE_BY_ADDRESS,

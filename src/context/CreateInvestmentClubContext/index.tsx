@@ -1,22 +1,24 @@
+import { MagicLinkClaimHandler } from "@/components/claimComponent/MagicLinkClaim";
+import { metamaskConstants } from "@/components/syndicates/shared/Constants";
+import { getMetamaskError } from "@/helpers";
 import useUSDCDetails from "@/hooks/useUSDCDetails";
 import { RootState } from "@/redux/store";
-import React, {
-  createContext,
-  useContext,
-  useState,
-  Dispatch,
-  SetStateAction,
-  useEffect,
-} from "react";
-import { useDispatch, useSelector } from "react-redux";
 import {
   setClubCreationReceipt,
   setTransactionHash,
 } from "@/state/createInvestmentClub/slice";
-import steps from "./steps";
 import { getWeiAmount } from "@/utils/conversions";
-import { getMetamaskError } from "@/helpers";
-import { metamaskConstants } from "@/components/syndicates/shared/Constants";
+import router from "next/router";
+import React, {
+  createContext,
+  Dispatch,
+  SetStateAction,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
+import { useDispatch, useSelector } from "react-redux";
+import steps from "./steps";
 
 type CreateInvestmentClubProviderProps = {
   handleNext: () => void;
@@ -89,10 +91,6 @@ const CreateInvestmentClubProvider: React.FC = ({ children }) => {
     errorModal: false,
   });
 
-  const [usdcRef, setUsdcRef] = useState(null);
-  const [monthRef, setMonthRef] = useState(null);
-  const [parentRef, setParentRef] = useState(null);
-
   const reviewStep = currentStep === steps.length - 1;
   const lastStep = currentStep === steps.length - 2;
   const firstStep = currentStep === 0;
@@ -139,6 +137,36 @@ const CreateInvestmentClubProvider: React.FC = ({ children }) => {
   };
 
   const handleCreateInvestmentClub = async () => {
+    // check whether claim is set and is valid
+    const uuid = localStorage.getItem("claim-uuid");
+    if (!uuid) {
+      router.push("/clubs");
+    }
+
+    setProcessingTitle("Wait for uuid verification.");
+    setProcessingDescription("Verifying your UUID");
+
+    setShowModal(() => ({
+      waitingConfirmationModal: true,
+      transactionModal: false,
+      errorModal: false,
+    }));
+
+    const status = await MagicLinkClaimHandler.patch(uuid.toString());
+
+    // Means UUID is invalid
+    if (status !== 200) {
+      router.push(process.env.NEXT_PUBLIC_WAITLIST_LINK);
+
+      return;
+    }
+    // hide the verification modal
+    setShowModal(() => ({
+      waitingConfirmationModal: false,
+      transactionModal: false,
+      errorModal: false,
+    }));
+
     try {
       setProcessingTitle("Confirm in wallet");
       setProcessingDescription(
@@ -166,7 +194,7 @@ const CreateInvestmentClubProvider: React.FC = ({ children }) => {
     } catch (error) {
       const { code } = error;
       if (code) {
-        const errorMessage = getMetamaskError(code, "Create Syndicate");
+        const errorMessage = getMetamaskError(code, "Club creation");
         setErrorModalMessage(errorMessage);
       } else {
         // alert any other contract error

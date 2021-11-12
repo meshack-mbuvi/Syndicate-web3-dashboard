@@ -79,7 +79,7 @@ const AmountToRaise: React.FC = () => {
   }, [amount]);
 
   return (
-    <Fade>
+    <Fade delay={500}>
       <div className="flex w-full pb-6">
         <AdvancedInputField
           {...{

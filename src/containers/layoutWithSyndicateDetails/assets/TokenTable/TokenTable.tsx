@@ -6,7 +6,6 @@ import { floatedNumberWithCommas } from "@/utils/formattedNumbers";
 import GradientAvatar from "@/components/syndicates/portfolioAndDiscover/portfolio/GradientAvatar";
 import { SkeletonLoader } from "@/components/skeletonLoader";
 import AssetEmptyState from "@/containers/layoutWithSyndicateDetails/assets/AssetEmptyState";
-
 interface Props {
   columns: string[];
   tableData: any[];
@@ -113,14 +112,14 @@ const TokenTable: FC<Props> = ({ columns, tableData, activeAssetTab }) => {
         <div className="mt-16">
           <div className="flex text-base items-center">
             <img alt="token" src="/images/token.svg" />
-            <div className="pl-3 text-xl">Token</div>
+            <div className="pl-3 text-xl">Tokens</div>
           </div>
           <div className="flex flex-col pt-8">
             {/* scroll to top of table with this button when pagination is clicked  */}
             <button ref={tokensTableRef} />
             <div className="grid grid-cols-3 pb-3 text-gray-lightManatee">
               {columns?.map((col, idx) => (
-                <div key={`token-table-header-${idx}`}>{col}</div>
+                <div key={`token-table-header-${idx}`} className="text-sm">{col}</div>
               ))}
             </div>
           </div>
@@ -157,14 +156,14 @@ const TokenTable: FC<Props> = ({ columns, tableData, activeAssetTab }) => {
                             />
                           )}
                         </div>
-                        <div className="text-base">
+                        <div className="text-base flex items-center">
                           {tokenName}&nbsp;
                           <span className="text-gray-lightManatee">
                             ({tokenSymbol})
                           </span>
                         </div>
                       </div>
-                      <div className="text-base">
+                      <div className="text-base flex items-center">
                         {balanceValue}
                         {balanceDecimalValue && (
                           <span className="text-gray-lightManatee">
@@ -174,7 +173,7 @@ const TokenTable: FC<Props> = ({ columns, tableData, activeAssetTab }) => {
                         &nbsp;
                         {tokenSymbol}
                       </div>
-                      <div className="text-base">
+                      <div className="text-base flex items-center">
                         {usd}
                         {usdDecimalValue && (
                           <span className="text-gray-lightManatee">

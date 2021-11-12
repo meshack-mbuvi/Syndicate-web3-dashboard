@@ -1,4 +1,5 @@
 import { useCreateInvestmentClubContext } from "@/context/CreateInvestmentClubContext";
+import { useSpring, animated } from "react-spring";
 
 const InvestmentClubCTAs: React.FC = () => {
   const {
@@ -13,13 +14,20 @@ const InvestmentClubCTAs: React.FC = () => {
     showNextButton,
   } = useCreateInvestmentClubContext();
 
+  const styles = useSpring({
+    to: { y: 0 },
+    from: { y: -50 },
+    delay: 500,
+  });
+
   return (
-    <div
+    <animated.div
       className={`bg-black flex-none flex flex-col ${
         reviewStep
           ? "fixed bottom-1 w-4/5 lg:w-2/5 border-t border-gray-syn4 pt-6"
           : ""
       }`}
+      style={styles}
     >
       <div
         className={`relative flex items-center h-20 ${
@@ -56,7 +64,7 @@ const InvestmentClubCTAs: React.FC = () => {
           </button>
         )}
       </div>
-    </div>
+    </animated.div>
   );
 };
 

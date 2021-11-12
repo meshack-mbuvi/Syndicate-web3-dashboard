@@ -1,7 +1,6 @@
 import axios from "axios";
 
 export const getGnosisTxnInfo = async (txHash) => {
-
   const transactionInfo = await new Promise(async (resolve, reject) => {
     let status;
     let txnInfo;
@@ -18,7 +17,7 @@ export const getGnosisTxnInfo = async (txHash) => {
         )
         .then(
           async (response) => {
-            let result = response.data;
+            const result = response.data;
             // resolve(result);
             status = result.isSuccessful;
             txnInfo = result;
@@ -28,6 +27,7 @@ export const getGnosisTxnInfo = async (txHash) => {
           },
         );
     }
+
     if (status) {
       resolve(txnInfo);
     } else {

@@ -59,15 +59,29 @@ const PortfolioAndDiscover: React.FC = () => {
         // show some animations during loading process
         // skeleton loader
         <div>
-          <div className="mt-16">
-            <div className="grid grid-cols-6">
-              {generateSkeletons(6, "30", "8", "rounded-md")}
+          <div className="flex justify-between items-center w-full mt-14 mb-16">
+            <SkeletonLoader
+              width="32"
+              height="8"
+              borderRadius="rounded-lg"
+            />
+          </div>
+          <div className="mb-8">
+            <SkeletonLoader
+              width="20"
+              height="6"
+              borderRadius="rounded-md"
+            />
+          </div>
+          <div className="">
+            <div className="grid grid-cols-6 -mx-2">
+              {generateSkeletons(6, "28", "5", "rounded-md")}
             </div>
-            <div className="mt-6">
+            <div className="mt-6 border-b-1 w-full border-gray-steelGrey">
               {[1, 2].map((index) => {
                 return (
-                  <div className="grid grid-cols-6" key={index}>
-                    <div className="flex justify-between items-center w-full px-2">
+                  <div className="grid grid-cols-6 pb-3" key={index}>
+                    <div className="flex justify-evenly items-center w-full">
                       <SkeletonLoader
                         width="7"
                         height="7"
@@ -75,12 +89,12 @@ const PortfolioAndDiscover: React.FC = () => {
                       />
                       <SkeletonLoader
                         width="2/3"
-                        height="8"
+                        height="7"
                         borderRadius="rounded-md"
                       />
                     </div>
-                    {generateSkeletons(4, "30", "8", "rounded-md")}
-                    {generateSkeletons(1, "30", "8", "rounded-full")}
+                    {generateSkeletons(4, "30", "7", "rounded-md")}
+                    {generateSkeletons(1, "30", "7", "rounded-full")}
                   </div>
                 );
               })}

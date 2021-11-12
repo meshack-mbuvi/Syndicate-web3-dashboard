@@ -2,10 +2,7 @@ import React, { useState, useEffect } from "react";
 import TabsButton from "@/components/TabsButton";
 import TokenTable from "@/containers/layoutWithSyndicateDetails/assets/TokenTable";
 import Collectibles from "@/containers/layoutWithSyndicateDetails/assets/Collectibles";
-import {
-  assetsFilterOptions,
-  tokenTableColumns,
-} from "@/containers/layoutWithSyndicateDetails/assets/constants";
+import { tokenTableColumns } from "@/containers/layoutWithSyndicateDetails/assets/constants";
 import AssetEmptyState from "@/containers/layoutWithSyndicateDetails/assets/AssetEmptyState";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
@@ -22,6 +19,27 @@ const Assets: React.FC = () => {
   useEffect(() => {
     setActiveAssetTab("all");
   }, [account]);
+
+  // only show tabs for assets that exist.
+  const tokensFound = tokensResult.length > 0;
+  const collectiblesFound = collectiblesResult.length > 0;
+  let assetsFilterOptions = [
+    {
+      label: "All Assets",
+      value: "all",
+      show: true,
+    },
+    {
+      label: "Tokens",
+      value: "tokens",
+      show: tokensFound && collectiblesFound,
+    },
+    {
+      label: "Collectibles",
+      value: "collectibles",
+      show: collectiblesFound && tokensFound,
+    },
+  ];
 
   // return empty state if account has no assets
   if (!tokensResult.length && !collectiblesResult.length) {
