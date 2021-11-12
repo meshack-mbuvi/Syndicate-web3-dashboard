@@ -1,5 +1,8 @@
 import React from "react";
 import { Spinner } from "@/components/shared/spinner";
+import { RootState } from "@/redux/store";
+import { useSelector } from "react-redux";
+import { SkeletonLoader } from "@/components/skeletonLoader";
 
 interface Props {
   depositsEnabled: boolean;
@@ -21,6 +24,12 @@ const StatusBadge = (props: Props): JSX.Element => {
     syndicateCreationFailed,
     showConfettiSuccess,
   } = props;
+
+  const {
+    erc20TokenSliceReducer: {
+      erc20Token: { loading },
+    },
+  } = useSelector((state: RootState) => state);
 
   let badgeBackgroundColor = "bg-blue-darker";
   let badgeIcon: string | React.ReactNode = "depositIcon.svg";
@@ -57,20 +66,24 @@ const StatusBadge = (props: Props): JSX.Element => {
       <div
         className={`h-20 ring ring-black w-full px-8 py-4 rounded-2xl ${badgeBackgroundColor} flex flex-shrink-0 justify-between items-center`}
       >
-        <div className="flex items-center space-x-4">
-          {typeof badgeIcon === "string" ? (
-            <div className="w-6 h-6">
-              <img
-                src={`/images/syndicateStatusIcons/${badgeIcon}`}
-                alt={titleText}
-                style={{ height: "100%", width: "100%" }}
-              />
-            </div>
-          ) : (
-            <div className="m-0">{badgeIcon}</div>
-          )}
-          <p className="text-sm sm:text-lg leading-snug ml-4">{titleText}</p>
-        </div>
+        {loading ? (
+          <SkeletonLoader width="2/3" height="7" borderRadius="rounded-full" />
+        ) : (
+          <div className="flex items-center space-x-4">
+            {typeof badgeIcon === "string" ? (
+              <div className="w-6 h-6">
+                <img
+                  src={`/images/syndicateStatusIcons/${badgeIcon}`}
+                  alt={titleText}
+                  style={{ height: "100%", width: "100%" }}
+                />
+              </div>
+            ) : (
+              <div className="m-0">{badgeIcon}</div>
+            )}
+            <p className="text-sm sm:text-lg leading-snug ml-4">{titleText}</p>
+          </div>
+        )}
       </div>
     </div>
   );

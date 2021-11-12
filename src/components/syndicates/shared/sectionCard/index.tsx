@@ -1,5 +1,8 @@
 import Portal from "@/components/shared/Portal";
+import { SkeletonLoader } from "@/components/skeletonLoader";
+import { RootState } from "@/redux/store";
 import React, { FC, useRef, useState } from "react";
+import { useSelector } from "react-redux";
 
 // Description of SectionCard props
 export interface SectionCardProps {
@@ -25,6 +28,12 @@ export const SectionCard: FC<SectionCardProps> = (props) => {
   const greenSubtext =
     header === "Total Withdraws / Distributions To Date" ||
     header === "Total Distributions / Deposits";
+
+  const {
+    erc20TokenSliceReducer: {
+      erc20Token: { loading },
+    },
+  } = useSelector((state: RootState) => state);
 
   const [coord, setCoords] = useState({});
   const [anchorEl, setAnchorEl] = React.useState(null);
@@ -72,14 +81,25 @@ export const SectionCard: FC<SectionCardProps> = (props) => {
           handlePopoverClose();
         }}
       >
-        <p className="text-gray-syn4 leading-6 pb-2">{header?.toString()}</p>
-        <p
-          className={
-            greenSubtext ? "text-base text-green-screamin" : "text-base"
-          }
-        >
-          {content}
-        </p>
+        {loading ? (
+          <div className="space-y-2 w-32">
+            <SkeletonLoader height="3" width="2/3" borderRadius="rounded-md" />
+            <SkeletonLoader height="5" width="full" borderRadius="rounded-md" />
+          </div>
+        ) : (
+          <>
+            <p className="text-gray-syn4 leading-6 pb-2">
+              {header?.toString()}
+            </p>
+            <p
+              className={
+                greenSubtext ? "text-base text-green-screamin" : "text-base"
+              }
+            >
+              {content}
+            </p>
+          </>
+        )}
       </div>
     </div>
   );

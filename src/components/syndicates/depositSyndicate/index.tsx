@@ -588,32 +588,58 @@ const DepositSyndicate: React.FC = () => {
   return (
     <ErrorBoundary>
       <div className="w-full mt-4 sm:mt-0 top-44">
-        <FadeIn>
+        <div className={`rounded-2-half bg-gray-syn8`}>
+          <StatusBadge
+            depositsEnabled={depositsEnabled}
+            depositExceedTotal={+totalDeposits === +maxTotalDeposits}
+          />
+
           {loading || !readyToDisplay ? (
-            <div className="h-fit-content rounded-2xl p-4 md:mx-2 md:p-6 bg-gray-9 mt-6 md:mt-0 w-full">
-              <div className="h-fit-content rounded-3xl">
-                <SkeletonLoader width="full" height="20" />
-                <div className="mb-6">
-                  <SkeletonLoader width="full" height="10" />
+            <div className="h-fit-content rounded-2-half pt-6 px-8 pb-16">
+              <SkeletonLoader
+                width="1/3"
+                height="5"
+                borderRadius="rounded-full"
+              />
+              <div className="flex justify-between items-center mt-5 h-20 flex-wrap">
+                <div className="w-1/2">
+                  <SkeletonLoader
+                    width="full"
+                    height="8"
+                    borderRadius="rounded-lg"
+                  />
                 </div>
-                <div className="mb-4">
-                  <SkeletonLoader width="full" height="12" />
+
+                <div className="flex flex-row justify-between w-1/4 space-x-1">
+                  <SkeletonLoader
+                    width="8"
+                    height="6"
+                    borderRadius="rounded-full"
+                  />
+                  <SkeletonLoader
+                    width="full"
+                    height="6"
+                    borderRadius="rounded-full"
+                  />
                 </div>
-                <div className="mb-4">
-                  <SkeletonLoader width="full" height="12" />
+                <div className="w-full pt-1.5">
+                  <SkeletonLoader
+                    width="full"
+                    height="10"
+                    borderRadius="rounded-lg"
+                  />
                 </div>
-                <div className="mb-4">
-                  <SkeletonLoader width="full" height="12" />
+                <div className="flex justify-center w-full pb-1.5">
+                  <SkeletonLoader
+                    width="2/3"
+                    height="3"
+                    borderRadius="rounded-full"
+                  />
                 </div>
               </div>
             </div>
           ) : (
-            <div className={`rounded-2-half bg-gray-syn8`}>
-              <StatusBadge
-                depositsEnabled={depositsEnabled}
-                depositExceedTotal={+totalDeposits === +maxTotalDeposits}
-              />
-
+            <FadeIn>
               {submitting ? (
                 <div className="h-fit-content rounded-2-half text-center">
                   <div className="pt-10 pb-8">
@@ -813,9 +839,9 @@ const DepositSyndicate: React.FC = () => {
                   ) : null}
                 </div>
               )}
-            </div>
+            </FadeIn>
           )}
-        </FadeIn>
+        </div>
       </div>
 
       {/* We show holding component when user has made initial deposit */}
