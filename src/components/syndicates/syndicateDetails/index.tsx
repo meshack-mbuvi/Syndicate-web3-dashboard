@@ -128,7 +128,7 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
                 header: `Members (max)`,
                 content: (
                   <div>
-                    {memberCount} <span className="text-gray-syn4">(99)</span>
+                    {memberCount} <span className="text-gray-syn4">({maxMemberCount})</span>
                   </div>
                 ),
                 tooltip: "",
