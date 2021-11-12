@@ -49,7 +49,6 @@ const useClubERC20s = () => {
     },
   });
 
-
   useEffect(() => {
     if (router.isReady) {
       refetch();
@@ -61,7 +60,6 @@ const useClubERC20s = () => {
     dispatch(setLoadingClubERC20s(false));
 
     if (!tokens || !tokens?.length) return [];
-
     dispatch(setLoadingClubERC20s(true));
 
     const processedTokens = await Promise.all([
@@ -150,6 +148,7 @@ const useClubERC20s = () => {
     // This will reset syndicate details when we are on portfolio page.
     // The currentEthereumNetwork has been added as a dependency to trigger a re-fetch
     // whenever the Ethereum network is changed.
+    dispatch(setLoadingClubERC20s(true));
     dispatch({
       data: null,
       type: SYNDICATE_BY_ADDRESS,
