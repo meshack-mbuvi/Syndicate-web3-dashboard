@@ -1,3 +1,3 @@
-import CreateClubs from "./club";
+import CreateClubs from "./clubprivatebetainvite";
 
 export default CreateClubs;
