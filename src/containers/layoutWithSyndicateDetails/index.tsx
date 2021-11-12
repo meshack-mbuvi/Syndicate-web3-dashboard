@@ -23,12 +23,13 @@ import { useDispatch, useSelector } from "react-redux";
 import { syndicateActionConstants } from "src/components/syndicates/shared/Constants";
 import ClubTokenMembers from "../managerActions/clubTokenMembers";
 import Assets from "./assets";
+import { Status } from "@/state/wallet/types";
 
 const LayoutWithSyndicateDetails: FC = ({ children }) => {
   // Retrieve state
   const {
     web3Reducer: {
-      web3: { account, web3 },
+      web3: { account, web3, status },
     },
     erc20TokenSliceReducer: { erc20Token },
   } = useSelector((state: RootState) => state);
@@ -90,7 +91,7 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
   }, [clubAddress, router.isReady, web3]);
 
   useEffect(() => {
-    if (clubERC20tokenContract && account && router.isReady) {
+    if (clubERC20tokenContract && router.isReady) {
       dispatch(setERC20Token(clubERC20tokenContract, account));
     }
   }, [clubERC20tokenContract, account, router.isReady]);
@@ -106,6 +107,7 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
     if (!router.isReady || !erc20Token) return;
 
     if (
+      status !== Status.DISCONNECTED &&
       !isEmpty(erc20Token) &&
       erc20Token.name &&
       clubAddress !== undefined &&
@@ -257,52 +259,54 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
                   <div className="sticky top-33 w-100">{children}</div>
                 </div>
 
-                <div className="mt-16 col-span-12">
-                  <div
-                    ref={subNav}
-                    className={`${
-                      isSubNavStuck ? "bg-gray-syn8" : "bg-black"
-                    } transition-all edge-to-edge-with-left-inset`}
-                  >
-                    <nav className="flex space-x-10" aria-label="Tabs">
-                      <button
-                        key="members"
-                        onClick={() => setActiveTab("assets")}
-                        className={`whitespace-nowrap h4 w-fit-content py-6 transition-all h-16 border-b-1 focus:ring-0 font-whyte text-sm cursor-pointer ${
-                          activeTab == "assets"
-                            ? "border-white text-white"
-                            : "border-transparent text-gray-500 hover:text-gray-40"
-                        }`}
-                      >
-                        Assets
-                      </button>
-                      <button
-                        key="members"
-                        onClick={() => setActiveTab("members")}
-                        className={`whitespace-nowrap h4 py-6 transition-all h-16 border-b-1 focus:ring-0 font-whyte text-sm cursor-pointer ${
-                          activeTab == "members"
-                            ? "border-white text-white"
-                            : "border-transparent text-gray-500 hover:text-gray-400 "
-                        }`}
-                      >
-                        Members
-                      </button>
-                      {/* add more tabs here */}
-                    </nav>
+                {status !== Status.DISCONNECTED && (
+                  <div className="mt-16 col-span-12">
                     <div
+                      ref={subNav}
                       className={`${
-                        isSubNavStuck ? "hidden" : "block"
-                      } border-b-1 border-gray-24 absolute w-screen right-0`}
-                    ></div>
-                  </div>
+                        isSubNavStuck ? "bg-gray-syn8" : "bg-black"
+                      } transition-all edge-to-edge-with-left-inset`}
+                    >
+                      <nav className="flex space-x-10" aria-label="Tabs">
+                        <button
+                          key="members"
+                          onClick={() => setActiveTab("assets")}
+                          className={`whitespace-nowrap h4 w-fit-content py-6 transition-all h-16 border-b-1 focus:ring-0 font-whyte text-sm cursor-pointer ${
+                            activeTab == "assets"
+                              ? "border-white text-white"
+                              : "border-transparent text-gray-500 hover:text-gray-40"
+                          }`}
+                        >
+                          Assets
+                        </button>
+                        <button
+                          key="members"
+                          onClick={() => setActiveTab("members")}
+                          className={`whitespace-nowrap h4 py-6 transition-all h-16 border-b-1 focus:ring-0 font-whyte text-sm cursor-pointer ${
+                            activeTab == "members"
+                              ? "border-white text-white"
+                              : "border-transparent text-gray-500 hover:text-gray-400 "
+                          }`}
+                        >
+                          Members
+                        </button>
+                        {/* add more tabs here */}
+                      </nav>
+                      <div
+                        className={`${
+                          isSubNavStuck ? "hidden" : "block"
+                        } border-b-1 border-gray-24 absolute w-screen right-0`}
+                      ></div>
+                    </div>
 
-                  <div className="text-base grid grid-cols-12 gap-y-5">
-                    <div className="col-span-12">
-                      {activeTab == "assets" && <Assets />}
-                      {activeTab == "members" && <ClubTokenMembers />}
+                    <div className="text-base grid grid-cols-12 gap-y-5">
+                      <div className="col-span-12">
+                        {activeTab == "assets" && <Assets />}
+                        {activeTab == "members" && <ClubTokenMembers />}
+                      </div>
                     </div>
                   </div>
-                </div>
+                )}
               </div>
 
               <Footer extraClasses="mt-24 sm:mt-24 md:mt-40 mb-12" />

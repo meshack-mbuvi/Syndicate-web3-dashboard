@@ -16,6 +16,7 @@ import { DetailsCard } from "../shared";
 import { ProgressIndicator } from "../shared/progressIndicator";
 import { CopyToClipboardIcon } from "@/components/iconWrappers";
 import ReactTooltip from "react-tooltip";
+import { Status } from "@/state/wallet/types";
 
 interface ClubDetails {
   header: string;
@@ -29,7 +30,7 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
   const {
     erc20TokenSliceReducer: { erc20Token },
     web3Reducer: {
-      web3: { web3 },
+      web3: { web3, status },
     },
     syndicatesReducer: { syndicate },
   } = useSelector((state: RootState) => state);
@@ -128,7 +129,8 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
                 header: `Members (max)`,
                 content: (
                   <div>
-                    {memberCount} <span className="text-gray-syn4">({maxMemberCount})</span>
+                    {memberCount}{" "}
+                    <span className="text-gray-syn4">({maxMemberCount})</span>
                   </div>
                 ),
                 tooltip: "",
@@ -337,7 +339,7 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
           </div>
         </div>
 
-        {depositsEnabled && (
+        {status !== Status.DISCONNECTED && depositsEnabled && (
           <div className="h-fit-content flex w-full justify-start mt-16">
             <ProgressIndicator
               totalDeposits={totalDeposits}
@@ -351,19 +353,21 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
         )}
 
         {/* This component should be shown when we have details about user deposits */}
-        <div className="overflow-hidden mt-6 relative">
-          <DetailsCard
-            {...{
-              title: "Details",
-              sections: details,
-              syndicateDetails: true,
-              syndicate,
-            }}
-            customStyles={"w-full pt-4"}
-            customInnerWidth="w-full grid xl:grid-cols-3 lg:grid-cols-3
-          grid-cols-3 xl:gap-8 gap-6s gap-y-8"
-          />
-        </div>
+        {status !== Status.DISCONNECTED && (
+          <div className="overflow-hidden mt-6 relative">
+            <DetailsCard
+              {...{
+                title: "Details",
+                sections: details,
+                syndicateDetails: true,
+                syndicate,
+              }}
+              customStyles={"w-full pt-4"}
+              customInnerWidth="w-full grid xl:grid-cols-3 lg:grid-cols-3
+            grid-cols-3 xl:gap-8 gap-6s gap-y-8"
+            />
+          </div>
+        )}
       </div>
       {/* Syndicate details */}
       {/* details rendered on small devices only. render right column components on the left column in small devices */}

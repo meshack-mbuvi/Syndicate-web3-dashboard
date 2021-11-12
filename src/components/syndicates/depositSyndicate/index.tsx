@@ -44,6 +44,8 @@ import { InfoIcon } from "src/components/iconWrappers";
 import { SkeletonLoader } from "src/components/skeletonLoader";
 import ERC20ABI from "src/utils/abi/erc20";
 import { AbiItem } from "web3-utils";
+import ConnectWalletAction from "../shared/connectWalletAction";
+import { Status } from "@/state/wallet/types";
 
 const DepositSyndicate: React.FC = () => {
   // HOOK DECLARATIONS
@@ -53,7 +55,7 @@ const DepositSyndicate: React.FC = () => {
     initializeContractsReducer: { syndicateContracts },
     syndicatesReducer: { syndicate },
     web3Reducer: {
-      web3: { account, web3 },
+      web3: { account, web3, status },
     },
     syndicateMemberDetailsReducer: { memberDepositDetails },
     erc20TokenSliceReducer: { erc20Token, erc20TokenContract },
@@ -594,7 +596,7 @@ const DepositSyndicate: React.FC = () => {
             depositExceedTotal={+totalDeposits === +maxTotalDeposits}
           />
 
-          {loading || !readyToDisplay ? (
+          {status !== Status.DISCONNECTED && (loading || !readyToDisplay) ? (
             <div className="h-fit-content rounded-2-half pt-6 px-8 pb-16">
               <SkeletonLoader
                 width="1/3"
@@ -689,6 +691,10 @@ const DepositSyndicate: React.FC = () => {
                     accountClubTokens: accountClubTokens.toString(),
                   }}
                 />
+              ) : status === Status.DISCONNECTED ? (
+                <div className="py-6 px-8">
+                  <ConnectWalletAction />
+                </div>
               ) : (
                 <div className="h-fit-content rounded-2-half pt-6 px-8 pb-4">
                   <p className="h4 uppercase text-sm">

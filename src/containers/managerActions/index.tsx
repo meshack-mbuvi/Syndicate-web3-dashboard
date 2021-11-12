@@ -11,6 +11,8 @@ import StatusBadge from "@/components/syndicateDetails/statusBadge";
 import { EtherscanLink } from "@/components/syndicates/shared/EtherscanLink";
 import { SuccessCard } from "@/containers/managerActions/successCard";
 import { RootState } from "@/redux/store";
+import { Status } from "@/state/wallet/types";
+import ConnectWalletAction from "@/components/syndicates/shared/connectWalletAction";
 
 const useShowShareWarning = () => {
   const router = useRouter();
@@ -36,6 +38,9 @@ const useShowShareWarning = () => {
 
 const ManagerActions = (): JSX.Element => {
   const {
+    web3Reducer: {
+      web3: { status },
+    },
     erc20TokenSliceReducer: { erc20Token },
     createInvestmentClubSliceReducer: {
       clubCreationStatus: {
@@ -61,7 +66,8 @@ const ManagerActions = (): JSX.Element => {
     if (!address) return;
 
     // Redirect the owner to the manage page
-    if (!isOwner) {
+    // Don't Migrate if wallet is disconnected
+    if (status !== Status.DISCONNECTED && !isOwner) {
       router.push(`/clubs/${clubAddress}/deposit`);
     } else {
       setReadyToDisplay(true);
@@ -135,7 +141,7 @@ const ManagerActions = (): JSX.Element => {
                 showConfettiSuccess,
               }}
             />
-            {loading || !readyToDisplay ? (
+            {status !== Status.DISCONNECTED && (loading || !readyToDisplay) ? (
               <div className="h-fit-content relative py-6 px-8 flex justify-center items-start flex-col w-full">
                 <SkeletonLoader
                   width="1/3"
@@ -147,10 +153,7 @@ const ManagerActions = (): JSX.Element => {
                   height="4"
                   borderRadius="rounded-full"
                 />
-                <SkeletonLoader
-                  width="full"
-                  height="12"
-                />
+                <SkeletonLoader width="full" height="12" />
               </div>
             ) : (
               <div
@@ -160,118 +163,126 @@ const ManagerActions = (): JSX.Element => {
                     : `pt-6 ${showShareWarning ? "pb-6" : "pb-10"} px-8`
                 } flex justify-center items-start flex-col w-full`}
               >
-                {!syndicateCreationFailed &&
-                  !creatingSyndicate &&
-                  !showConfettiSuccess && (
-                    <div className="flex flex-col items-start pb-6">
-                      <p className="pb-2 uppercase text-white text-sm font-whyte-medium">
-                        Invite to deposit
-                      </p>
-                      <p className="text-gray-syn4">
-                        Invite members by sharing your club’s deposit link
-                      </p>
-                    </div>
-                  )}
+                {status === Status.DISCONNECTED ? (
+                  <ConnectWalletAction />
+                ) : (
+                  <>
+                    {!syndicateCreationFailed &&
+                      !creatingSyndicate &&
+                      !showConfettiSuccess && (
+                        <div className="flex flex-col items-start pb-6">
+                          <p className="pb-2 uppercase text-white text-sm font-whyte-medium">
+                            Invite to deposit
+                          </p>
+                          <p className="text-gray-syn4">
+                            Invite members by sharing your club’s deposit link
+                          </p>
+                        </div>
+                      )}
 
-                {creatingSyndicate && (
-                  <div className="pb-6 flex flex-col items-center justify-center">
-                    <p className="pb-6 text-gray-syn4 text-center">
-                      Your investment club is coming into on-chain existence.
-                      Once the transaction is complete, you’ll see your club’s
-                      deposit link below.
-                    </p>
-                    <EtherscanLink
-                      etherscanInfo={transactionHash}
-                      text="View progress on Etherscan"
-                      type="transaction"
-                    />
-                  </div>
-                )}
+                    {creatingSyndicate && (
+                      <div className="pb-6 flex flex-col items-center justify-center">
+                        <p className="pb-6 text-gray-syn4 text-center">
+                          Your investment club is coming into on-chain
+                          existence. Once the transaction is complete, you’ll
+                          see your club’s deposit link below.
+                        </p>
+                        <EtherscanLink
+                          etherscanInfo={transactionHash}
+                          text="View progress on Etherscan"
+                          type="transaction"
+                        />
+                      </div>
+                    )}
 
-                {syndicateCreationFailed && (
-                  <div className="flex flex-col items-center pb-6">
-                    <p className="text-gray-syn4 pb-6">
-                      Please try again and{" "}
-                      <a
-                        href="#"
-                        className="text-blue hover:opacity-90"
-                        target="_blank"
+                    {syndicateCreationFailed && (
+                      <div className="flex flex-col items-center pb-6">
+                        <p className="text-gray-syn4 pb-6">
+                          Please try again and{" "}
+                          <a
+                            href="#"
+                            className="text-blue hover:opacity-90"
+                            target="_blank"
+                          >
+                            let us know
+                          </a>{" "}
+                          if the issue persists.
+                        </p>
+                        <EtherscanLink
+                          etherscanInfo={transactionHash}
+                          text="View on Etherscan"
+                          type="transaction"
+                        />
+                      </div>
+                    )}
+
+                    {showConfettiSuccess && (
+                      <div className="w-full py-10 px-8">
+                        <SuccessCard
+                          {...{
+                            syndicateSuccessfullyCreated,
+                            updateDepositLinkCopyState,
+                            showDepositLinkCopyState,
+                            clubDepositLink,
+                            showConfettiSuccess,
+                            setShowConfettiSuccess,
+                          }}
+                        />
+                      </div>
+                    )}
+
+                    {syndicateCreationFailed ? (
+                      <button
+                        className="bg-white hover:bg-opacity-90 py-4 w-full rounded-custom text-black"
+                        onClick={showReviewPage}
                       >
-                        let us know
-                      </a>{" "}
-                      if the issue persists.
-                    </p>
-                    <EtherscanLink
-                      etherscanInfo={transactionHash}
-                      text="View on Etherscan"
-                      type="transaction"
-                    />
-                  </div>
-                )}
-
-                {showConfettiSuccess && (
-                  <div className="w-full py-10 px-8">
-                    <SuccessCard
-                      {...{
-                        syndicateSuccessfullyCreated,
-                        updateDepositLinkCopyState,
-                        showDepositLinkCopyState,
-                        clubDepositLink,
-                        showConfettiSuccess,
-                        setShowConfettiSuccess,
-                      }}
-                    />
-                  </div>
-                )}
-
-                {syndicateCreationFailed ? (
-                  <button
-                    className="bg-white hover:bg-opacity-90 py-4 w-full rounded-custom text-black"
-                    onClick={showReviewPage}
-                  >
-                    Try again
-                  </button>
-                ) : !showConfettiSuccess ? (
-                  <CopyLink
-                    link={clubDepositLink}
-                    updateCopyState={updateDepositLinkCopyState}
-                    showCopiedState={showDepositLinkCopyState}
-                    creatingSyndicate={creatingSyndicate}
-                    syndicateSuccessfullyCreated={syndicateSuccessfullyCreated}
-                    showConfettiSuccess={showConfettiSuccess}
-                  />
-                ) : null}
-                {showShareWarning && !showConfettiSuccess && (
-                  <div className="flex flex-row mt-4 text-yellow-saffron bg-brown-dark rounded-1.5lg py-3 px-4">
-                    <p className="text-sm">
-                      Do not publicly share this deposit link. Only share with
-                      trusted and qualified people.&nbsp;
-                      <a
-                        className="underline"
-                        rel="noreferrer"
-                        href="https://www.sec.gov/reportspubs/investor-publications/investorpubsinvclubhtm.html"
-                        target="_blank"
-                      >
-                        Learn more from the SEC
-                        <ArrowNarrowRightIcon className="h-4 w-4 inline-block no-underline ml-1" />
-                      </a>
-                    </p>
-                    <div className="flex items-center pl-2.5">
-                      <XIcon
-                        className="h-7 w-7 cursor-pointer"
-                        onClick={() => handleShowShareWarning(false)}
-                        onKeyPress={() => handleShowShareWarning(false)}
-                        role="button"
-                        tabIndex={0}
+                        Try again
+                      </button>
+                    ) : !showConfettiSuccess ? (
+                      <CopyLink
+                        link={clubDepositLink}
+                        updateCopyState={updateDepositLinkCopyState}
+                        showCopiedState={showDepositLinkCopyState}
+                        creatingSyndicate={creatingSyndicate}
+                        syndicateSuccessfullyCreated={
+                          syndicateSuccessfullyCreated
+                        }
+                        showConfettiSuccess={showConfettiSuccess}
                       />
-                    </div>
-                  </div>
+                    ) : null}
+                    {showShareWarning && !showConfettiSuccess && (
+                      <div className="flex flex-row mt-4 text-yellow-saffron bg-brown-dark rounded-1.5lg py-3 px-4">
+                        <p className="text-sm">
+                          Do not publicly share this deposit link. Only share
+                          with trusted and qualified people.&nbsp;
+                          <a
+                            className="underline"
+                            rel="noreferrer"
+                            href="https://www.sec.gov/reportspubs/investor-publications/investorpubsinvclubhtm.html"
+                            target="_blank"
+                          >
+                            Learn more from the SEC
+                            <ArrowNarrowRightIcon className="h-4 w-4 inline-block no-underline ml-1" />
+                          </a>
+                        </p>
+                        <div className="flex items-center pl-2.5">
+                          <XIcon
+                            className="h-7 w-7 cursor-pointer"
+                            onClick={() => handleShowShareWarning(false)}
+                            onKeyPress={() => handleShowShareWarning(false)}
+                            role="button"
+                            tabIndex={0}
+                          />
+                        </div>
+                      </div>
+                    )}
+                  </>
                 )}
               </div>
             )}
           </div>
         </FadeIn>
-        <CreateEntityCard />
+        {status !== Status.DISCONNECTED && <CreateEntityCard />}
       </div>
     </ErrorBoundary>
   );
