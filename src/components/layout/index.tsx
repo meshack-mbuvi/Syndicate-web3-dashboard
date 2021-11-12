@@ -22,7 +22,7 @@ const Layout: FC<Props> = ({ children, backLink = null, showNav = true }) => {
     },
   } = useSelector((state: RootState) => state);
 
-  const showCreateProgressBar = router.pathname === "/clubs/create";
+  const showCreateProgressBar = router.pathname === "/clubs/clubprivatebetainvite";
 
   const { currentStep, steps } = useCreateInvestmentClubContext();
   return (

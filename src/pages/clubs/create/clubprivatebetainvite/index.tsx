@@ -1,4 +1,3 @@
-import { MagicLinkClaimHandler } from "@/components/claimComponent/MagicLinkClaim";
 import Layout from "@/components/layout";
 import Modal, { ModalStyle } from "@/components/modal";
 import { Spinner } from "@/components/shared/spinner";
@@ -33,40 +32,6 @@ const CreateInvestmentClub: React.FC = () => {
   const [status, setStatus] = useState(0);
 
   const { accountHasClubs } = useClubERC20s();
-
-  // Redirect to portfolio if user has clubs
-  useEffect(() => {
-    if (accountHasClubs) {
-      router.replace("/clubs");
-    }
-  }, [accountHasClubs]);
-
-  // check whether UUID is valid
-  const handleClaimVerification = async () => {
-    const uuid = localStorage.getItem("claim-uuid");
-    if (uuid) {
-      const status = await MagicLinkClaimHandler.get(uuid.toString());
-      setStatus(status);
-    } else {
-      setStatus(404);
-    }
-  };
-
-  useEffect(() => {
-    if (router.isReady) {
-      handleClaimVerification();
-    }
-  }, [router.isReady]);
-
-  useEffect(() => {
-    if (!router.isReady) return;
-
-    if (status === 404) {
-      router?.push(process.env.NEXT_PUBLIC_WAITLIST_LINK);
-    } else if (status === 200) {
-      router?.push("/clubs/create");
-    }
-  }, [status, router.isReady]);
 
   const parentRef = useRef(null);
 
