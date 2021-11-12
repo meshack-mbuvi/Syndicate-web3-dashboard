@@ -33,6 +33,13 @@ const CreateInvestmentClub: React.FC = () => {
 
   const { accountHasClubs } = useClubERC20s();
 
+  // Redirect to portfolio if user has clubs
+  useEffect(() => {
+    if (accountHasClubs) {
+      router.replace("/clubs");
+    }
+  }, [accountHasClubs]);
+
   const parentRef = useRef(null);
 
   const {
