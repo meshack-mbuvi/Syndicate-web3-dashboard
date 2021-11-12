@@ -286,6 +286,7 @@ module.exports = {
       margin: {
         0.5: "0.15rem",
         24.5: "6.5rem",
+        27: "6.875rem"
       },
       padding: {
         4.5: "1.125rem",

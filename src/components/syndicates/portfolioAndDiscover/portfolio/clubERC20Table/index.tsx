@@ -81,6 +81,7 @@ const ClubERC20Table: FC<Props> = ({ columns, tableData }) => {
               membersCount,
               totalDeposits,
               isOwner,
+              memberDeposits,
             } = dataItem;
 
             return (
@@ -120,10 +121,8 @@ const ClubERC20Table: FC<Props> = ({ columns, tableData }) => {
                 {!isOwner && (
                   <>
                     <div className="flex text-base items-center justify-end">
-                      {hasDecimals(depositAmount)
-                        ? floatedNumberWithCommas(depositAmount)
-                        : numberWithCommas(depositAmount)}{" "}
-                      {depositAmount?.trim() !== "-" && depositERC20TokenSymbol}
+                      {floatedNumberWithCommas(memberDeposits)}{" "}
+                      {depositERC20TokenSymbol}
                     </div>
                     <div className="flex text-base items-center justify-end">
                       {`${

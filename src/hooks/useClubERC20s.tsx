@@ -104,7 +104,7 @@ const useClubERC20s = () => {
 
           //  calculate ownership share
           const memberDeposits = getWeiAmount(depositAmount, 6, false);
-          const totalDeposits = getWeiAmount(totalSupply, +decimals, false);
+          const totalDeposits = getWeiAmount(totalSupply, +decimals, false);          
 
           const ownershipShare = (+memberDeposits * 100) / +totalDeposits;
           return {
@@ -121,6 +121,7 @@ const useClubERC20s = () => {
             ownerAddress,
             totalDeposits: getWeiAmount(totalSupply, +decimals, false),
             membersCount: members.length,
+            memberDeposits,
             // TODO: Update this when we have exact status
             status: depositsEnabled ? `Open to deposits` : "Active",
             startTime: formatDate(new Date(+startTime * 1000)),
