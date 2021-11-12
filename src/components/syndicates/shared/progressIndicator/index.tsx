@@ -1,8 +1,8 @@
 // component to show syndicate deposits progress
+import { useGrayDecimalNumber } from "@/hooks/useGrayDecimalNumber";
 import { divideIfNotByZero } from "@/utils/conversions";
 import { floatedNumberWithCommas } from "@/utils/formattedNumbers";
 import { SkeletonLoader } from "src/components/skeletonLoader";
-import { useGrayDecimalNumber } from "@/hooks/useGrayDecimalNumber";
 
 interface IProgressIndicator {
   totalDeposits: number;
@@ -44,16 +44,36 @@ export const ProgressIndicator = (props: IProgressIndicator): JSX.Element => {
       {loading ? (
         <div>
           <div className="mb-4">
-            <SkeletonLoader height="5" width="full" borderRadius="rounded-full" />
+            <SkeletonLoader
+              height="5"
+              width="full"
+              borderRadius="rounded-full"
+            />
           </div>
           <div className="flex justify-between mt-6">
             <div className="w-1/4">
-              <SkeletonLoader height="3" width="full" borderRadius="rounded-full" />
-              <SkeletonLoader height="6" width="full" borderRadius="rounded-lg" />
+              <SkeletonLoader
+                height="3"
+                width="full"
+                borderRadius="rounded-full"
+              />
+              <SkeletonLoader
+                height="6"
+                width="full"
+                borderRadius="rounded-lg"
+              />
             </div>
             <div className="w-1/4 items-end place-content-end">
-              <SkeletonLoader height="3" width="full" borderRadius="rounded-full" />
-              <SkeletonLoader height="6" width="full" borderRadius="rounded-lg" />
+              <SkeletonLoader
+                height="3"
+                width="full"
+                borderRadius="rounded-full"
+              />
+              <SkeletonLoader
+                height="6"
+                width="full"
+                borderRadius="rounded-lg"
+              />
             </div>
           </div>
         </div>
@@ -73,9 +93,8 @@ export const ProgressIndicator = (props: IProgressIndicator): JSX.Element => {
                   {formattedTotalDeposits}&nbsp;
                   {depositERC20TokenSymbol}
                 </p>
-                <p className="xl:text-2xl lg:text-xl text-gray-lightManatee leading-loose ml-4 font-whyte-light">
-                  {currentDepositsPercentage}
-                  <span className="font-whyte-light">%</span>
+                <p className="xl:text-2xl lg:text-xl text-gray-lightManatee leading-loose font-light ml-4">
+                  {currentDepositsPercentage} %
                 </p>
               </div>
             </div>

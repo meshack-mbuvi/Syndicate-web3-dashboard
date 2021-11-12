@@ -84,7 +84,7 @@ export const getERC20TokenDetails = async (
       const depositsEnabled =
         +totalSupply < +getWeiAmount(maxTotalSupply, tokenDecimals, false) &&
         endDateInFuture &&
-        memberCount < maxMemberCount;
+        +memberCount < +maxMemberCount;
 
       return {
         address,
