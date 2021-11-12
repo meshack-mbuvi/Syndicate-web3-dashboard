@@ -80,6 +80,28 @@ const ClubNameSelector: React.FC = () => {
     setIsButtonActive(true);
     const slug = generateSlug(2, {
       format: "title",
+      categories: {
+        noun: [
+          "media",
+          "science",
+          "sports",
+          "technology",
+          "thing",
+          "time",
+          "transportation",
+          "animals",
+        ],
+        adjective: [
+          "appearance",
+          "color",
+          "quantity",
+          "shapes",
+          "size",
+          "sounds",
+          "taste",
+          "touch",
+        ],
+      },
     });
     dispatch(setInvestmentClubName(slug));
   };
