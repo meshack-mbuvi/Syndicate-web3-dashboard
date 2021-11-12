@@ -11,3 +11,5 @@ export enum PERCENTAGES {
 }
 
 export const NON_WORD_CHAR_REGEX = /[^A-Za-z0-9_]/g;
+// Max length for token symbol of club
+export const SYM_MAX_LENGTH = 10;

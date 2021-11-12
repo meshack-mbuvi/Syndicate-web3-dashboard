@@ -1,4 +1,4 @@
-import { NON_WORD_CHAR_REGEX } from "../constants";
+import { NON_WORD_CHAR_REGEX, SYM_MAX_LENGTH } from "../constants";
 
 /**
  * This methods checks whether the provided value is a valid number.
@@ -86,7 +86,7 @@ export const removeSubstring = (
 export const symbolValidation = (sym: string): Record<string, string> => {
   const errorText = {
     invalidChar: "Only letters and numbers allowed",
-    maxChar: "Up to 4 characters allowed",
+    maxChar: `Up to ${SYM_MAX_LENGTH} characters allowed`,
   };
 
   let res = {
@@ -101,9 +101,9 @@ export const symbolValidation = (sym: string): Record<string, string> => {
     };
   }
 
-  if (res.validSym.length > 4) {
+  if (res.validSym.length > SYM_MAX_LENGTH) {
     res = {
-      validSym: res.validSym.slice(0, 4),
+      validSym: res.validSym.slice(0, SYM_MAX_LENGTH),
       errorMsg: errorText.maxChar,
     };
   }
