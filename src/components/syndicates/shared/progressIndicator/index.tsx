@@ -93,8 +93,17 @@ export const ProgressIndicator = (props: IProgressIndicator): JSX.Element => {
                   {formattedTotalDeposits}&nbsp;
                   {depositERC20TokenSymbol}
                 </p>
-                <p className="xl:text-2xl lg:text-xl text-gray-lightManatee leading-loose font-light ml-4">
-                  {currentDepositsPercentage} %
+                <p className="xl:text-2xl lg:text-xl text-gray-lightManatee leading-loose ml-4 font-whyte-light">
+                  {currentDepositsPercentage}
+                  {/* Temporary fix to add font weight to symbol  */}
+                  <span
+                    style={{
+                      fontFamily: "Arial",
+                      fontWeight: 300,
+                    }}
+                  >
+                    %
+                  </span>
                 </p>
               </div>
             </div>

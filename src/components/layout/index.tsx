@@ -40,7 +40,7 @@ const Layout: FC<Props> = ({ children, backLink = null, showNav = true }) => {
       />
       <Header backLink={backLink} show={showNav} />
       <div
-        className={`sticky top-20 z-20 ${
+        className={`sticky top-18 z-20 ${
           showCreateProgressBar
             ? "bg-black bg-opacity-50 z-20 backdrop-filter"
             : ""
@@ -48,7 +48,7 @@ const Layout: FC<Props> = ({ children, backLink = null, showNav = true }) => {
       >
         <SyndicateInBetaBanner />
         {showCreateProgressBar && account ? (
-          <div className="mt-2">
+          <div className="pt-6 bg-black">
             <ProgressBar
               percentageWidth={((currentStep + 1) / steps.length) * 100}
               tailwindColor="bg-green"
@@ -56,7 +56,11 @@ const Layout: FC<Props> = ({ children, backLink = null, showNav = true }) => {
           </div>
         ) : null}
       </div>
-      <div className="flex w-full flex-col sm:flex-row pt-36 z-20 justify-center items-center my-0 mx-auto">
+      <div
+        className={`flex w-full flex-col sm:flex-row ${
+          showCreateProgressBar ? "pt-16" : "pt-24"
+        } z-20 justify-center items-center my-0 mx-auto`}
+      >
         {children}
       </div>
       <ConnectWallet />

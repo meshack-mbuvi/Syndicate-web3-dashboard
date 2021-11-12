@@ -215,7 +215,7 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
   //hide modal for setting allowances by the manager
 
   return (
-    <div className="flex flex-col relative mt-9">
+    <div className="flex flex-col relative">
       <div className="h-fit-content rounded-custom">
         <div className="flex items-center justify-between">
           <div>

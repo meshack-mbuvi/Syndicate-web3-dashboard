@@ -101,7 +101,7 @@ export const Wallet: React.FC = () => {
     <div className="flex justify-between rounded-full bg-gray-shark bg-opacity-50 items-center">
       <>
         {/* hide wallet on signin page */}
-          <div className="wallet-connect flex relative justify-center my-1 mr-1">
+          <div className="wallet-connect flex relative justify-center">
             {status === Status.CONNECTED ? (
               <AddressMenuDropDown web3={web3} />
             ) : (

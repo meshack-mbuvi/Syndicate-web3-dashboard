@@ -281,7 +281,8 @@ module.exports = {
       },
       inset: {
         84: "22rem",
-        31: "7.5rem"
+        31: "7.5rem",
+        18: "4.5rem"
       },
       margin: {
         0.5: "0.15rem",
@@ -290,6 +291,7 @@ module.exports = {
       },
       padding: {
         4.5: "1.125rem",
+        26: "6.6rem"
       },
       borderRadius: {
         "1.5lg": "0.625rem",
