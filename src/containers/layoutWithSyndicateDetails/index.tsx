@@ -264,13 +264,11 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
                       isSubNavStuck ? "bg-gray-syn8" : "bg-black"
                     } transition-all edge-to-edge-with-left-inset`}
                   >
-                    <nav className="flex space-x-10 h-20" aria-label="Tabs">
+                    <nav className="flex space-x-10" aria-label="Tabs">
                       <button
                         key="members"
                         onClick={() => setActiveTab("assets")}
-                        className={`whitespace-nowrap h4 w-fit-content ${
-                          isSubNavStuck ? "py-6" : "h-16"
-                        } transition-all h-16 border-b-1 focus:ring-0 font-whyte text-sm cursor-pointer ${
+                        className={`whitespace-nowrap h4 w-fit-content py-6 transition-all h-16 border-b-1 focus:ring-0 font-whyte text-sm cursor-pointer ${
                           activeTab == "assets"
                             ? "border-white text-white"
                             : "border-transparent text-gray-500 hover:text-gray-40"
@@ -281,9 +279,7 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
                       <button
                         key="members"
                         onClick={() => setActiveTab("members")}
-                        className={`whitespace-nowrap h4 ${
-                          isSubNavStuck ? "py-6" : "h-16"
-                        } transition-all h-16 border-b-1 focus:ring-0 font-whyte text-sm cursor-pointer ${
+                        className={`whitespace-nowrap h4 py-6 transition-all h-16 border-b-1 focus:ring-0 font-whyte text-sm cursor-pointer ${
                           activeTab == "members"
                             ? "border-white text-white"
                             : "border-transparent text-gray-500 hover:text-gray-400 "
