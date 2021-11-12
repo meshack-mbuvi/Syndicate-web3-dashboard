@@ -9,7 +9,8 @@ import {
   clubERCTableColumns,
   MyClubERC20TableColumns,
 } from "./portfolio/clubERC20Table/constants";
-
+import PortfolioEmptyState from "@/components/syndicates/portfolioAndDiscover/portfolio/portfolioEmptyState";
+import Footer from "@/components/navigation/footer";
 /**
  * My Syndicates: IF their wallet (a) is leading a syndicate or
  * (b) has deposited into a syndicate, the syndicates shows up on
@@ -133,22 +134,21 @@ const PortfolioAndDiscover: React.FC = () => {
             </div>
           ) : account && !myClubERC20s.length && !invalidEthereumNetwork ? (
             // if connected, then it means no syndicates for this wallet
-            <div
-              className="text-center flex-col"
-              style={{ height: "calc(100vh - 300px)" }}
-            >
-              <div className="vertically-center">
-                <p className="text-2xl font-whyte-light">
-                  There are no investment clubs you are leading or have invested
-                  in at the moment.
-                </p>
-              </div>
-            </div>
+            <PortfolioEmptyState />
           ) : !account ? (
             <WalletNotConnected />
           ) : null}
         </>
       )}
+      <div
+        className={`${
+          account && !myClubERC20s.length && !invalidEthereumNetwork
+            ? "mt-27"
+            : "mt-24 sm:mt-24 md:mt-40"
+        }`}
+      >
+        <Footer extraClasses="mb-12 -mt-2" />
+      </div>
     </div>
   );
 };
