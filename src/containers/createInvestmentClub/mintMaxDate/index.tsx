@@ -10,6 +10,7 @@ import Fade from "@/components/Fade";
 import { mintEndTime } from "@/state/createInvestmentClub/types";
 import moment from "moment";
 import { useSpring, animated } from "react-spring";
+import {DAY_IN_SECONDS} from "@/utils/constants";
 
 const MintMaxDate: FC = () => {
   const dispatch = useDispatch();
@@ -108,7 +109,7 @@ const MintMaxDate: FC = () => {
     // this check prevents using null date which creates date as 01/01/1970
     const dateToSet = date
       ? parseInt((date / 1000).toString())
-      : parseInt((new Date().getTime() / 1000).toString());
+      : parseInt(((new Date().getTime() / 1000) + DAY_IN_SECONDS).toString());
     dispatch(setMintEndTime({ mintTime: "Custom", value: dateToSet }));
   };
 
@@ -168,7 +169,7 @@ const MintMaxDate: FC = () => {
                   positionFixed: true, // use this to make the popper position: fixed
                 }}
                 closeOnScroll={(e) => e.target === document}
-                selected={new Date(mintEndTime?.value * 1000) || new Date()}
+                selected={new Date(mintEndTime?.value * 1000)}
                 onChange={(date: Date | null) => handleDateChange(+date as any)}
                 todayButton="Go to Today"
                 dateFormat="P"

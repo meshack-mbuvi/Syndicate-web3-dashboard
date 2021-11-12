@@ -27,7 +27,7 @@ export const initialState: InitialState = {
   tokenCap: "", // How much are you raising?
   mintEndTime: {
     mintTime: "",
-    value: parseInt((new Date().getTime() / 1000).toString()),
+    value: parseInt((new Date(new Date().setHours(23, 59, 0, 0)).getTime() / 1000).toString()),
   }, // How long will deposits be accepted?
   membersCount: "", // How many members can join?
   clubCreationStatus: {
