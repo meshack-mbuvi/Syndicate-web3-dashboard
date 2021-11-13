@@ -11,7 +11,10 @@ const CreateEntityCard = () => {
         <p className="text-sm leading-6 text-gray-syn4 mt-1">
           Syndicate can help with basic formation, filings, and legal document
           templates{" "}
-          <a href="" className="text-blue">
+          <a
+            href="https://bpiowescm93.typeform.com/to/LYYYLj9L"
+            className="text-blue"
+          >
             Learn more
           </a>
         </p>
