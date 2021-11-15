@@ -2,10 +2,7 @@ import React from "react";
 
 const CreateEntityCard = () => {
   return (
-    <a
-      href="https://bpiowescm93.typeform.com/to/LYYYLj9L"
-      className="text-blue"
-    >
+    <a href="https://bpiowescm93.typeform.com/to/LYYYLj9L">
       <div className="bg-gray-syn8 rounded-2xl my-6 px-8 py-6 flex items-start">
         <img src="/images/ribbon.svg" className="mt-1" />
         <div className="ml-4">
