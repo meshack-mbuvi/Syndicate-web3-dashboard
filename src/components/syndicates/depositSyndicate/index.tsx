@@ -53,11 +53,9 @@ const DepositSyndicate: React.FC = () => {
 
   const {
     initializeContractsReducer: { syndicateContracts },
-    syndicatesReducer: { syndicate },
     web3Reducer: {
       web3: { account, web3, status },
     },
-    syndicateMemberDetailsReducer: { memberDepositDetails },
     erc20TokenSliceReducer: { erc20Token, erc20TokenContract },
   } = useSelector((state: RootState) => state);
 
@@ -83,7 +81,6 @@ const DepositSyndicate: React.FC = () => {
   const { depositTokenSymbol, depositTokenLogo, depositTokenDecimals } =
     useUSDCDetails();
 
-  const { memberTotalDeposits } = memberDepositDetails;
   const [submitting, setSubmitting] = useState<boolean>(false);
   const [metamaskConfirmPending, setMetamaskConfirmPending] =
     useState<boolean>(false);
@@ -540,9 +537,7 @@ const DepositSyndicate: React.FC = () => {
   };
 
   useEffect(() => {
-    if (syndicate) {
-      checkClubWideErrors();
-    }
+    checkClubWideErrors();
   }, [JSON.stringify(erc20Token), account]);
 
   const checkClubWideErrors = () => {
@@ -553,7 +548,7 @@ const DepositSyndicate: React.FC = () => {
       setDepositError("");
       setImageSRC("/images/deposit/depositReached.svg");
     } else if (
-      !(parseInt(memberTotalDeposits) > 0) &&
+      !(accountClubTokens > 0) &&
       memberCount === maxMemberCount
     ) {
       message = `The maximum amount of members (${maxMemberCount}) for this club has been reached.`;
