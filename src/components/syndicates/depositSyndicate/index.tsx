@@ -1022,8 +1022,8 @@ const DepositSyndicate: React.FC = () => {
                     content={
                       <div>
                         When you deposit into this club, you <br />
-                        receive a club token in return that
-                        <br /> represents your ownership share of the
+                        receive club tokens in return that
+                        <br /> represent your ownership share of the
                         <br /> club.
                       </div>
                     }
