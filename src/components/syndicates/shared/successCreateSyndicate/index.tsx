@@ -12,7 +12,7 @@ const SuccessCreateSyndicate: React.FC<{ account: string }> = ({ account }) => {
 
   useEffect(() => {
     setSyndicateDepositLink(
-      `${window.location.origin}/clubs/${account}/deposit`,
+      `${window.location.origin}/clubs/${account}/`,
     );
   }, [account]);
 

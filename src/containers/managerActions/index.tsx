@@ -50,7 +50,14 @@ const ManagerActions = (): JSX.Element => {
   } = useSelector((state: RootState) => state);
   const router = useRouter();
 
-  const { loading, depositsEnabled, address, isOwner } = erc20Token;
+  const {
+    loading,
+    depositsEnabled,
+    address,
+    isOwner,
+    totalDeposits,
+    maxTotalDeposits,
+  } = erc20Token;
 
   const { clubAddress, source } = router.query;
 
@@ -68,7 +75,7 @@ const ManagerActions = (): JSX.Element => {
     // Redirect the owner to the manage page
     // Don't Migrate if wallet is disconnected
     if (status !== Status.DISCONNECTED && !isOwner) {
-      router.push(`/clubs/${clubAddress}/deposit`);
+      router.push(`/clubs/${clubAddress}/`);
     } else {
       setReadyToDisplay(true);
     }
@@ -88,9 +95,7 @@ const ManagerActions = (): JSX.Element => {
 
   // club deposit link
   useEffect(() => {
-    setClubDepositLink(
-      `${window.location.origin}/clubs/${clubAddress}/deposit`,
-    );
+    setClubDepositLink(`${window.location.origin}/clubs/${clubAddress}/`);
   }, [clubAddress]);
 
   // trigger confetti if we are coming from syndicateCreate page
@@ -140,6 +145,7 @@ const ManagerActions = (): JSX.Element => {
                 syndicateCreationFailed,
                 showConfettiSuccess,
               }}
+              depositExceedTotal={+totalDeposits === +maxTotalDeposits}
             />
             {status !== Status.DISCONNECTED && (loading || !readyToDisplay) ? (
               <div className="h-fit-content relative py-6 px-8 flex justify-center items-start flex-col w-full">
@@ -155,7 +161,7 @@ const ManagerActions = (): JSX.Element => {
                 />
                 <SkeletonLoader width="full" height="12" />
               </div>
-            ) : (
+            ) : depositsEnabled ? (
               <div
                 className={`h-fit-content relative ${
                   showConfettiSuccess
@@ -279,7 +285,7 @@ const ManagerActions = (): JSX.Element => {
                   </>
                 )}
               </div>
-            )}
+            ) : null}
           </div>
         </FadeIn>
         {status !== Status.DISCONNECTED && <CreateEntityCard />}

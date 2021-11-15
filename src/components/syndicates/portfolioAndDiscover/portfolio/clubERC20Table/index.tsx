@@ -92,7 +92,7 @@ const ClubERC20Table: FC<Props> = ({ columns, tableData }) => {
                   if (isOwner) {
                     router.replace(`/clubs/${address}/manage`);
                   } else {
-                    router.replace(`/clubs/${address}/deposit`);
+                    router.replace(`/clubs/${address}/`);
                   }
                 }}
               >

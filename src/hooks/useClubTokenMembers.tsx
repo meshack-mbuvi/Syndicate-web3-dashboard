@@ -29,7 +29,11 @@ const useClubTokenMembers = () => {
     },
   });
 
-  const processMembers = (members) => {
+  const processMembers = (members) => {  
+    if (!members || !members.length) {
+      return;
+    }
+
     const { symbol, totalSupply } = erc20Token;
 
     const clubMembers = members.map(
@@ -64,7 +68,7 @@ const useClubTokenMembers = () => {
 
   useEffect(() => {
     if (!loading) {
-      processMembers(data?.syndicateDAOs?.[0].members);
+      processMembers(data?.syndicateDAOs?.[0]?.members);
     }
   }, [JSON.stringify(data?.syndicateDAOs?.[0]?.members), loading]);
 

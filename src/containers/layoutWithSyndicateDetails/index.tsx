@@ -125,31 +125,22 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
       switch (router.pathname) {
         case "/clubs/[syndicateAddress]/manage":
           if (!erc20Token?.isOwner) {
-            router.replace(`/syndicates/${clubAddress}/deposit`);
-          }
-
-          break;
-
-        case "/clubs/[syndicateAddress]/deposit":
-          if (erc20Token?.isOwner) {
-            router.replace(`/clubs/${clubAddress}/manage`);
+            router.replace(`/syndicates/${clubAddress}/`);
           }
           break;
 
-        // case when address lacks action
         case "/clubs/[syndicateAddress]/":
           if (erc20Token?.isOwner) {
             router.replace(`/clubs/${clubAddress}/manage`);
-          } else if (erc20Token?.depositsEnabled) {
-            router.replace(`/clubs/${clubAddress}/deposit`);
           }
           break;
+
         default:
           if (clubAddress && erc20Token?.name) {
             if (erc20Token?.isOwner) {
               router.replace(`/clubs/${clubAddress}/manage`);
             } else if (erc20Token?.depositsEnabled) {
-              router.replace(`/clubs/${clubAddress}/deposit`);
+              router.replace(`/clubs/${clubAddress}/`);
             }
           }
           break;
@@ -214,6 +205,9 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
 
   const [activeTab, setActiveTab] = useState("assets");
 
+  const isActive = !erc20Token?.depositsEnabled;
+  const isOwnerOrMember = erc20Token?.isOwner || +erc20Token?.accountClubTokens;
+
   return (
     <>
       {router.isReady && !web3.utils.isAddress(clubAddress) ? (
@@ -247,7 +241,7 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
                       <div className="sticky top-33 w-100">{children}</div>
                     </div>
 
-                    {status !== Status.DISCONNECTED && (
+                    {status !== Status.DISCONNECTED && !(isActive && !isOwnerOrMember) && (
                       <div className="mt-16 col-span-12">
                         <div
                           ref={subNav}

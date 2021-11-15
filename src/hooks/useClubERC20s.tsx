@@ -100,11 +100,7 @@ const useClubERC20s = () => {
             web3.web3,
           ).symbol();
 
-          const depositsEnabled =
-            +getWeiAmount(totalSupply, +decimals, false) <
-              +getWeiAmount(maxTotalSupply, +decimals, false) &&
-            !pastDate(new Date(+endTime * 1000)) &&
-            members.length < maxMemberCount;
+          const depositsEnabled = !pastDate(new Date(+endTime * 1000));
 
           //  calculate ownership share
           const memberDeposits = getWeiAmount(depositAmount, 6, false);

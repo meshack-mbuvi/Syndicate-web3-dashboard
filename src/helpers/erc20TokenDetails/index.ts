@@ -84,10 +84,8 @@ export const getERC20TokenDetails = async (
 
       const endDateInFuture = +endTime * 1000 > new Date().getTime();
 
-      const depositsEnabled =
-        +totalSupply < +getWeiAmount(maxTotalSupply, tokenDecimals, false) &&
-        endDateInFuture &&
-        +memberCount < +maxMemberCount;
+      const depositsEnabled = endDateInFuture;
+
 
       return {
         address,
@@ -132,8 +130,9 @@ export const setERC20Token =
         syndicateContracts: { mintPolicy },
       },
     } = getState();
-    dispatch(setLoading({ loading: true }));
+
     dispatch(setERC20TokenContract(ERC20tokenContract));
+    dispatch(setLoading(true));
     try {
       const erc20Token = await getERC20TokenDetails(
         ERC20tokenContract,

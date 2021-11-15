@@ -1,6 +1,5 @@
 import { SkeletonLoader } from "@/components/skeletonLoader";
 import { RootState } from "@/redux/store";
-import { isUnlimited } from "@/utils/conversions";
 import { epochTimeToDateFormat, getCountDownDays } from "@/utils/dateUtils";
 import { floatedNumberWithCommas } from "@/utils/formattedNumbers";
 import abi from "human-standard-token-abi";
@@ -47,9 +46,10 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
     name,
     symbol,
     maxTotalSupply,
+    depositsEnabled,
     accountClubTokens,
+    isOwner,
   } = erc20Token;
-  const depositsEnabled = true;
   const router = useRouter();
   const [details, setDetails] = useState<ClubDetails[]>([]);
 
@@ -165,7 +165,7 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
                 header: "Club tokens minted",
                 content: (
                   <span>
-                    {floatedNumberWithCommas(accountClubTokens)} {symbol}
+                    {floatedNumberWithCommas(totalDeposits)} {symbol}
                   </span>
                 ),
                 tooltip: "",
@@ -173,11 +173,7 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
               {
                 header: "Members",
                 content: <div>{memberCount}</div>,
-                tooltip: `This is the amount of unique member addresses who have deposited funds into this syndicate. ${
-                  !isUnlimited(maxMemberCount)
-                    ? `A maximum of ${maxMemberCount} members are allowed for this syndicate.`
-                    : ""
-                }`,
+                tooltip: "",
               },
               {
                 header: "Created",
@@ -210,6 +206,9 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
     setShowAddressCopyState(true);
     setTimeout(() => setShowAddressCopyState(false), 1000);
   };
+
+  const isActive = !depositsEnabled;
+  const isOwnerOrMember = isOwner || +accountClubTokens;
 
   return (
     <div className="flex flex-col relative">
@@ -333,7 +332,7 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
         )}
 
         {/* This component should be shown when we have details about user deposits */}
-        {status !== Status.DISCONNECTED && (
+        {status !== Status.DISCONNECTED && (loading || !(isActive && !isOwnerOrMember)) && (
           <div className="overflow-hidden mt-6 relative">
             <DetailsCard
               {...{

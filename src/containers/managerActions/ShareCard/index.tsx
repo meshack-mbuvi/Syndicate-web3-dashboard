@@ -25,7 +25,7 @@ const ShareModal = () => {
   const [clubDepositLink, setClubDepositLink] = useState<string>("");
   useEffect(() => {
     setClubDepositLink(
-      `${window.location.origin}/syndicates/${syndicateAddress}/deposit`,
+      `${window.location.origin}/syndicates/${syndicateAddress}/`,
     );
   }, [syndicateAddress]);
 

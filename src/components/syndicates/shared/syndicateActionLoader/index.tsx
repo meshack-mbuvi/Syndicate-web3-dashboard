@@ -84,7 +84,7 @@ export const SyndicateActionLoader = (props: LoaderProp) => {
 
       {showlinkToDeposit ? (
         <div>
-          <Link href={`/clubs/${clubAddress}/deposit`}>
+          <Link href={`/clubs/${clubAddress}/`}>
             <a className="font-whyte text-center text-base font-medium text-blue-light hover">
               Go to deposit page.
             </a>

@@ -25,7 +25,7 @@ const ClubTokenMembers = (): JSX.Element => {
   // club deposit link
   useEffect(() => {
     setClubDepositLink(
-      `${window.location.origin}/syndicates/${erc20Token?.address}/deposit`,
+      `${window.location.origin}/syndicates/${erc20Token?.address}/`,
     );
   }, [erc20Token.address]);
 

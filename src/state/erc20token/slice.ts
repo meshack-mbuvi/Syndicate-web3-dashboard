@@ -11,7 +11,7 @@ const erc20TokenSlice = createSlice({
     setERC20TokenContract(state, action: PayloadAction<any>) {
       state.erc20TokenContract = action.payload;
     },
-    setLoading(state, action) {
+    setLoading(state, action: PayloadAction<boolean>) {
       state.erc20Token.loading = action.payload;
     },
     setMemberPercentShare(state, action) {

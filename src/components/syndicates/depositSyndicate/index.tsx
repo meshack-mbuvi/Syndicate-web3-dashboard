@@ -649,7 +649,7 @@ const DepositSyndicate: React.FC = () => {
                 </div>
               </div>
             </div>
-          ) : (
+          ) : depositsEnabled ? (
             <FadeIn>
               {submitting ? (
                 <div className="h-fit-content rounded-2-half text-center">
@@ -835,7 +835,7 @@ const DepositSyndicate: React.FC = () => {
                       </button>
                     </div>
                   ) : (
-                    <div className="font-whyte text-sm text-red-semantic flex mt-4 items-center">
+                    <div className="font-whyte text-sm text-red-semantic flex mb-8 items-center">
                       <div className="h-4">
                         <Image src={imageSRC} height={24} width={24} />
                       </div>
@@ -855,12 +855,12 @@ const DepositSyndicate: React.FC = () => {
                 </div>
               )}
             </FadeIn>
-          )}
+          ) : null}
         </div>
       </div>
 
       {/* We show holding component when user has made initial deposit */}
-      {+connectedMemberDeposits > 0 && !loading ? (
+      {+connectedMemberDeposits > 0 && !loading && depositsEnabled ? (
         <div className="bg-gray-syn8 rounded-2xl mt-6 px-8 py-6">
           <div className="pb-5 text-sm font-bold uppercase tracking-widest">
             Your Holdings
@@ -1050,7 +1050,7 @@ const DepositSyndicate: React.FC = () => {
                         height={24}
                         width={24}
                       />
-                      <p className="ml-2 text-base">{symbol}</p>
+                      <p className="ml-2 text-base">{symbol.slice(1)}</p>
                     </div>
                   </div>
                 </div>
@@ -1230,6 +1230,6 @@ const DepositSyndicate: React.FC = () => {
       </Modal>
     </ErrorBoundary>
   );
-};;
+};
 
 export default DepositSyndicate;
