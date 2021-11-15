@@ -105,8 +105,10 @@ const MintMaxDate: FC = () => {
     }
   };
 
-  const handleDateChange = (date) => {
+  const handleDateChange = (targetDate) => {
     // this check prevents using null date which creates date as 01/01/1970
+    const eodToday = new Date(new Date().setHours(23, 59, 0, 0)).getTime()
+    const date = targetDate < eodToday ? eodToday : targetDate
     const dateToSet = date
       ? parseInt((date / 1000).toString())
       : parseInt(((new Date().getTime() / 1000) + DAY_IN_SECONDS).toString());
