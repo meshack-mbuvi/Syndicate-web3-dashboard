@@ -107,6 +107,15 @@ const useClubERC20s = () => {
           const totalDeposits = getWeiAmount(totalSupply, +decimals, false);
 
           const ownershipShare = (+memberDeposits * 100) / +totalDeposits;
+          const maxTotalSupplyInWei = getWeiAmount(maxTotalSupply, +decimals, false);
+
+          let status = "Open to deposits";
+          if (!depositsEnabled) {
+            status = "Active";
+          } else if (+totalDeposits === +maxTotalSupplyInWei) {
+            status = "Fully deposited";
+          }
+
           return {
             clubName,
             ownershipShare,
@@ -114,7 +123,7 @@ const useClubERC20s = () => {
             endTime,
             depositERC20TokenSymbol,
             maxMemberCount,
-            maxTotalSupply: getWeiAmount(maxTotalSupply, +decimals, false),
+            maxTotalSupply: maxTotalSupplyInWei,
             requiredToken,
             requiredTokenMinBalance,
             address: contractAddress,
@@ -122,8 +131,7 @@ const useClubERC20s = () => {
             totalDeposits: getWeiAmount(totalSupply, +decimals, false),
             membersCount: members.length,
             memberDeposits,
-            // TODO: Update this when we have exact status
-            status: depositsEnabled ? `Open to deposits` : "Active",
+            status,
             startTime: formatDate(new Date(+startTime * 1000)),
             isOwner:
               ownerAddress.toLocaleLowerCase() == account.toLocaleLowerCase(),

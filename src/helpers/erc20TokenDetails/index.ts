@@ -6,7 +6,7 @@ import {
 import { ERC20Token } from "@/state/erc20token/types";
 import { getWeiAmount } from "@/utils/conversions";
 
-const ERC20TokenDefaultState = {
+export const ERC20TokenDefaultState = {
   name: "",
   owner: "",
   address: "",

@@ -7,7 +7,10 @@ import BackButton from "@/components/socialProfiles/backButton";
 import { EtherscanLink } from "@/components/syndicates/shared/EtherscanLink";
 import Head from "@/components/syndicates/shared/HeaderTitle";
 import SyndicateDetails from "@/components/syndicates/syndicateDetails";
-import { setERC20Token } from "@/helpers/erc20TokenDetails";
+import {
+  ERC20TokenDefaultState,
+  setERC20Token,
+} from "@/helpers/erc20TokenDetails";
 import { RootState } from "@/redux/store";
 import {
   fetchCollectiblesTransactions,
@@ -25,6 +28,8 @@ import ClubTokenMembers from "../managerActions/clubTokenMembers";
 import Assets from "./assets";
 import { Status } from "@/state/wallet/types";
 import NotFoundPage from "@/pages/404";
+import { setERC20TokenDetails } from "@/state/erc20token/slice";
+import { setClubMembers } from "@/state/clubMembers";
 
 const LayoutWithSyndicateDetails: FC = ({ children }) => {
   // Retrieve state
@@ -102,6 +107,11 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
         ),
       );
     }
+    return () => {
+      // reset to default when component unmounts
+      dispatch(setERC20TokenDetails(ERC20TokenDefaultState));
+      dispatch(setClubMembers([]));
+    };
   }, [clubERC20tokenContract, account, router.isReady]);
 
   const showOnboardingIfNeeded = router.pathname.endsWith("deposit");
@@ -116,6 +126,7 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
 
     if (
       status !== Status.DISCONNECTED &&
+      !erc20Token?.loading &&
       !isEmpty(erc20Token) &&
       erc20Token.name &&
       clubAddress !== undefined &&
@@ -123,33 +134,26 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
       router.isReady
     ) {
       switch (router.pathname) {
-        case "/clubs/[syndicateAddress]/manage":
+        case "/clubs/[clubAddress]/manage":
           if (!erc20Token?.isOwner) {
-            router.replace(`/syndicates/${clubAddress}/`);
+            router.replace(`/clubs/${clubAddress}`);
           }
           break;
 
-        case "/clubs/[syndicateAddress]/":
+        case "/clubs/[clubAddress]":
           if (erc20Token?.isOwner) {
             router.replace(`/clubs/${clubAddress}/manage`);
           }
           break;
 
         default:
-          if (clubAddress && erc20Token?.name) {
-            if (erc20Token?.isOwner) {
-              router.replace(`/clubs/${clubAddress}/manage`);
-            } else if (erc20Token?.depositsEnabled) {
-              router.replace(`/clubs/${clubAddress}/`);
-            }
-          }
           break;
       }
     }
   }, [account, router.isReady, JSON.stringify(erc20Token)]);
 
   // get static text from constants
-  const { noTokenTitleText, invalidTokenAddress } = syndicateActionConstants;
+  const { noTokenTitleText } = syndicateActionConstants;
 
   // set texts to display on empty state
   // we'll initialize this to instances where address is not a syndicate.
@@ -241,54 +245,55 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
                       <div className="sticky top-33 w-100">{children}</div>
                     </div>
 
-                    {status !== Status.DISCONNECTED && !(isActive && !isOwnerOrMember) && (
-                      <div className="mt-16 col-span-12">
-                        <div
-                          ref={subNav}
-                          className={`${
-                            isSubNavStuck ? "bg-gray-syn8" : "bg-black"
-                          } transition-all edge-to-edge-with-left-inset`}
-                        >
-                          <nav className="flex space-x-10" aria-label="Tabs">
-                            <button
-                              key="members"
-                              onClick={() => setActiveTab("assets")}
-                              className={`whitespace-nowrap h4 w-fit-content py-6 transition-all h-16 border-b-1 focus:ring-0 font-whyte text-sm cursor-pointer ${
-                                activeTab == "assets"
-                                  ? "border-white text-white"
-                                  : "border-transparent text-gray-500 hover:text-gray-40"
-                              }`}
-                            >
-                              Assets
-                            </button>
-                            <button
-                              key="members"
-                              onClick={() => setActiveTab("members")}
-                              className={`whitespace-nowrap h4 py-6 transition-all h-16 border-b-1 focus:ring-0 font-whyte text-sm cursor-pointer ${
-                                activeTab == "members"
-                                  ? "border-white text-white"
-                                  : "border-transparent text-gray-500 hover:text-gray-400 "
-                              }`}
-                            >
-                              Members
-                            </button>
-                            {/* add more tabs here */}
-                          </nav>
+                    {status !== Status.DISCONNECTED &&
+                      !(isActive && !isOwnerOrMember) && (
+                        <div className="mt-16 col-span-12">
                           <div
+                            ref={subNav}
                             className={`${
-                              isSubNavStuck ? "hidden" : "block"
-                            } border-b-1 border-gray-24 absolute w-screen right-0`}
-                          ></div>
-                        </div>
+                              isSubNavStuck ? "bg-gray-syn8" : "bg-black"
+                            } transition-all edge-to-edge-with-left-inset`}
+                          >
+                            <nav className="flex space-x-10" aria-label="Tabs">
+                              <button
+                                key="members"
+                                onClick={() => setActiveTab("assets")}
+                                className={`whitespace-nowrap h4 w-fit-content py-6 transition-all h-16 border-b-1 focus:ring-0 font-whyte text-sm cursor-pointer ${
+                                  activeTab == "assets"
+                                    ? "border-white text-white"
+                                    : "border-transparent text-gray-500 hover:text-gray-40"
+                                }`}
+                              >
+                                Assets
+                              </button>
+                              <button
+                                key="members"
+                                onClick={() => setActiveTab("members")}
+                                className={`whitespace-nowrap h4 py-6 transition-all h-16 border-b-1 focus:ring-0 font-whyte text-sm cursor-pointer ${
+                                  activeTab == "members"
+                                    ? "border-white text-white"
+                                    : "border-transparent text-gray-500 hover:text-gray-400 "
+                                }`}
+                              >
+                                Members
+                              </button>
+                              {/* add more tabs here */}
+                            </nav>
+                            <div
+                              className={`${
+                                isSubNavStuck ? "hidden" : "block"
+                              } border-b-1 border-gray-24 absolute w-screen right-0`}
+                            ></div>
+                          </div>
 
-                        <div className="text-base grid grid-cols-12 gap-y-5">
-                          <div className="col-span-12">
-                            {activeTab == "assets" && <Assets />}
-                            {activeTab == "members" && <ClubTokenMembers />}
+                          <div className="text-base grid grid-cols-12 gap-y-5">
+                            <div className="col-span-12">
+                              {activeTab == "assets" && <Assets />}
+                              {activeTab == "members" && <ClubTokenMembers />}
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    )}
+                      )}
                   </div>
 
                   <Footer extraClasses="mt-24 sm:mt-24 md:mt-40 mb-12" />

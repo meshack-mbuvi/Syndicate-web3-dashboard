@@ -4,7 +4,7 @@ import {
 } from "@/utils/formattedNumbers";
 import { hasDecimals } from "@/utils/hasDecimals";
 import Image from "next/image";
-import router from "next/router";
+import Link from "next/link";
 import React, { FC, useEffect, useRef, useState } from "react";
 import GradientAvatar from "../GradientAvatar";
 
@@ -76,7 +76,6 @@ const ClubERC20Table: FC<Props> = ({ columns, tableData }) => {
               clubName,
               status,
               ownershipShare,
-              depositAmount,
               depositERC20TokenSymbol,
               membersCount,
               totalDeposits,
@@ -85,55 +84,50 @@ const ClubERC20Table: FC<Props> = ({ columns, tableData }) => {
             } = dataItem;
 
             return (
-              <div
+              <Link
                 key={`token-table-row-${index}`}
-                className="grid grid-cols-6 border-b-1 w-full border-gray-steelGrey py-5 cursor-pointer"
-                onClick={() => {
-                  if (isOwner) {
-                    router.replace(`/clubs/${address}/manage`);
-                  } else {
-                    router.replace(`/clubs/${address}/`);
-                  }
-                }}
+                href={`/clubs/${address}/${isOwner ? "manage" : ""}`}
               >
-                <div className="flex flex-row items-center">
-                  <div className="flex flex-shrink-0">
-                    <div className="mr-4">
-                      <GradientAvatar
-                        syndicateAddress={clubName}
-                        size="h-8 w-8"
-                      />
+                <div className="grid grid-cols-6 border-b-1 w-full border-gray-steelGrey py-5 cursor-pointer">
+                  <div className="flex flex-row items-center">
+                    <div className="flex flex-shrink-0">
+                      <div className="mr-4">
+                        <GradientAvatar
+                          syndicateAddress={clubName}
+                          size="h-8 w-8"
+                        />
+                      </div>
                     </div>
+                    <div className="flex text-base items-center">{clubName}</div>
                   </div>
-                  <div className="flex text-base items-center">{clubName}</div>
-                </div>
-                <div className="flex text-base items-center">{status}</div>
-                <div className="flex text-base items-center">
-                  {hasDecimals(totalDeposits)
-                    ? floatedNumberWithCommas(parseFloat(totalDeposits))
-                    : numberWithCommas(totalDeposits)}{" "}
-                  {depositERC20TokenSymbol}
-                </div>
-                <div className="flex text-base items-center">
-                  {membersCount}
-                </div>
+                  <div className="flex text-base items-center">{status}</div>
+                  <div className="flex text-base items-center">
+                    {hasDecimals(totalDeposits)
+                      ? floatedNumberWithCommas(parseFloat(totalDeposits))
+                      : numberWithCommas(totalDeposits)}{" "}
+                    {depositERC20TokenSymbol}
+                  </div>
+                  <div className="flex text-base items-center">
+                    {membersCount}
+                  </div>
 
-                {!isOwner && (
-                  <>
-                    <div className="flex text-base items-center justify-end">
-                      {floatedNumberWithCommas(memberDeposits)}{" "}
-                      {depositERC20TokenSymbol}
-                    </div>
-                    <div className="flex text-base items-center justify-end">
-                      {`${
-                        hasDecimals(ownershipShare)
-                          ? ownershipShare.toFixed(2)
-                          : ownershipShare
-                      } %`}
-                    </div>
-                  </>
-                )}
-              </div>
+                  {!isOwner && (
+                    <>
+                      <div className="flex text-base items-center justify-end">
+                        {floatedNumberWithCommas(memberDeposits)}{" "}
+                        {depositERC20TokenSymbol}
+                      </div>
+                      <div className="flex text-base items-center justify-end">
+                        {`${
+                          hasDecimals(ownershipShare)
+                            ? ownershipShare.toFixed(2)
+                            : ownershipShare
+                        } %`}
+                      </div>
+                    </>
+                  )}
+                </div>
+              </Link>
             );
           })}
         </div>
