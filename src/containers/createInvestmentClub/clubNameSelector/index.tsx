@@ -168,10 +168,10 @@ const ClubNameSelector: React.FC = () => {
               <span className="text-red-semantic text-sm">{errors}</span>
             ) : (
               <span className="text-gray-3 text-sm">
-                Set an easily recognizable symbol for your investment club token
-                that powers the club&apos;s cap table management and governance
-                infrastructure. Members receive this investment club token as
-                proof of their deposit.
+                Set an easily recognizable symbol for your investment club
+                token, which powers the club&apos;s cap table management and
+                governance infrastructure. Members receive this investment club
+                token as proof of their deposit.
               </span>
             )}
           </div>
