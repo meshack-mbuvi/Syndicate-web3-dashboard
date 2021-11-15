@@ -108,7 +108,7 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
         ...(depositsEnabled
           ? [
               {
-                header: "Club token supply",
+                header: "Club token max supply",
                 content: (
                   <span>
                     {floatedNumberWithCommas(maxTotalSupply)} {symbol}
@@ -248,7 +248,9 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
                     </div>
                   ) : (
                     <div className="flex items-center w-fit-content">
-                      <div className={`mr-6 2xl:text-4.5xl leading-10 lg:text-4xl md:text-xl sm:text-4xl text-lg font-normal line-clamp-2 w-48 xl:w-64`}>
+                      <div
+                        className={`mr-6 2xl:text-4.5xl leading-10 lg:text-4xl md:text-xl sm:text-4xl text-lg font-normal line-clamp-2 w-48 xl:w-64`}
+                      >
                         {name}
                       </div>
                       <div className="flex flex-wrap">
@@ -332,21 +334,22 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
         )}
 
         {/* This component should be shown when we have details about user deposits */}
-        {status !== Status.DISCONNECTED && (loading || !(isActive && !isOwnerOrMember)) && (
-          <div className="overflow-hidden mt-6 relative">
-            <DetailsCard
-              {...{
-                title: "Details",
-                sections: details,
-                syndicateDetails: true,
-                syndicate,
-              }}
-              customStyles={"w-full pt-4"}
-              customInnerWidth="w-full grid xl:grid-cols-3 lg:grid-cols-3
+        {status !== Status.DISCONNECTED &&
+          (loading || !(isActive && !isOwnerOrMember)) && (
+            <div className="overflow-hidden mt-6 relative">
+              <DetailsCard
+                {...{
+                  title: "Details",
+                  sections: details,
+                  syndicateDetails: true,
+                  syndicate,
+                }}
+                customStyles={"w-full pt-4"}
+                customInnerWidth="w-full grid xl:grid-cols-3 lg:grid-cols-3
             grid-cols-3 xl:gap-8 gap-6s gap-y-8"
-            />
-          </div>
-        )}
+              />
+            </div>
+          )}
       </div>
       {/* Syndicate details */}
       {/* details rendered on small devices only. render right column components on the left column in small devices */}
