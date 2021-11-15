@@ -9,6 +9,7 @@ import InvestmentClubCTAs from "@/containers/create/shared/controls/investmentCl
 import ReviewDetails from "@/containers/createInvestmentClub/reviewDetails";
 import { useCreateInvestmentClubContext } from "@/context/CreateInvestmentClubContext";
 import useClubERC20s from "@/hooks/useClubERC20s";
+import StatusBadge from "@/components/syndicateDetails/statusBadge";
 import { RootState } from "@/redux/store";
 import Image from "next/image";
 import Link from "next/link";
@@ -27,6 +28,7 @@ const CreateInvestmentClub: React.FC = () => {
     errorModal,
     setShowModal,
     errorModalMessage,
+    handleCreateInvestmentClub,
   } = useCreateInvestmentClubContext();
   const router = useRouter();
   const [status, setStatus] = useState(0);
@@ -166,21 +168,42 @@ const CreateInvestmentClub: React.FC = () => {
             errorModal: false,
           }))
         }
+        showCloseButton={false}
         outsideOnClick={true}
         customWidth="w-11/12 md:w-1/2 lg:w-1/3"
+        customClassName="p-0"
+        showHeader={false}
       >
-        <div className="flex flex-col justify-center py-10 -mx-4 px-8">
-          <Image
-            src={"/images/errorClose.svg"}
-            alt="Error image"
-            height="64"
-            width="64"
-            className="m-auto"
-          />
-          <p className="text-lg text-center mt-8 mb-1">An error occurred</p>
-          <div className="modal-header font-medium text-center leading-8 text-sm text-blue-rockBlue">
-            {/* TODO: no designs for this */}
-            {errorModalMessage}
+        <div>
+          <StatusBadge syndicateCreationFailed />
+          <div className="h-fit-content rounded-2-half py-10 px-8 flex justify-center items-center flex-col">
+            <div className="mt-8">
+              <p className="text-gray-syn4">
+                Please try again and{" "}
+                <a className="text-blue" href="mailto:support@syndicate.io" target="_blank">
+                  let us know
+                </a>{" "}
+                if the issue persists.
+              </p>
+            </div>
+            {transactionHash ? (
+              <div className="mt-6">
+                <EtherscanLink
+                  etherscanInfo={transactionHash}
+                  text="View on Etherscan"
+                  type="transaction"
+                />
+              </div>
+            ) : null}
+            <div className="mt-7 w-full">
+              <button
+                type="button"
+                className="bg-white rounded-md text-black py-4 w-full"
+                onClick={handleCreateInvestmentClub}
+              >
+                Try again
+              </button>
+            </div>
           </div>
         </div>
       </Modal>

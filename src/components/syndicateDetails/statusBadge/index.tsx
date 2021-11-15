@@ -5,7 +5,7 @@ import { useSelector } from "react-redux";
 import { SkeletonLoader } from "@/components/skeletonLoader";
 
 interface Props {
-  depositsEnabled: boolean;
+  depositsEnabled?: boolean;
   depositExceedTotal?: boolean;
 
   // investment club creation loading states
