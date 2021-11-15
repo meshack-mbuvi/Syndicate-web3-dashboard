@@ -14,6 +14,15 @@ import { RootState } from "@/redux/store";
 import Fade from "@/components/Fade";
 
 const MAX_AMOUNT_TO_RAISE = "25000000";
+const SYN_SUPPORT_MSG = (
+  <span>
+    Syndicate supports club sizes greater than 25 million USDC upon request.
+    Reach out to us at{" "}
+    <a className="text-blue" href="mailto:support@syndicate.io" target="_blank">
+      support@syndicate.io
+    </a>{" "}
+  </span>
+);
 
 const AmountToRaise: React.FC = () => {
   const {
@@ -22,7 +31,7 @@ const AmountToRaise: React.FC = () => {
 
   const { setShowNextButton, handleNext } = useCreateInvestmentClubContext();
 
-  const [error, setError] = useState<string>("");
+  const [error, setError] = useState<string | React.ReactNode>("");
   const [amount, setAmount] = useState<string>(tokenCap);
   const dispatch = useDispatch();
 
@@ -65,9 +74,7 @@ const AmountToRaise: React.FC = () => {
   // catch input field errors
   useEffect(() => {
     if (+amount > +MAX_AMOUNT_TO_RAISE) {
-      setError(
-        "Investment clubs above 25 million USDC are not currently supported.",
-      );
+      setError(SYN_SUPPORT_MSG);
       setNextBtnDisabled(true);
     } else if (!amount) {
       setNextBtnDisabled(true);

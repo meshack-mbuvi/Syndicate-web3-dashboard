@@ -13,7 +13,7 @@ export const AdvancedInputField = (props: {
   onChange?;
   disabled?: boolean;
   placeholder?: string;
-  error?: string;
+  error?: string | React.ReactNode;
   required?: boolean;
   value: string | number;
   type?: string;
