@@ -211,9 +211,6 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
     setTimeout(() => setShowAddressCopyState(false), 1000);
   };
 
-  // show modal for manager to set allowances for deposits/distributions
-  //hide modal for setting allowances by the manager
-
   return (
     <div className="flex flex-col relative">
       <div className="h-fit-content rounded-custom">
@@ -236,81 +233,12 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
               </div>
 
               <div className="flex-shrink main-title flex-wrap break-normal m-0">
-                {/* Syndicate address and action buttons  */}
+                {/* Syndicate name, symbol and action buttons  */}
                 <div
-                  className="flex items-center relative"
+                  className="flex justify-start items-center"
                   onMouseEnter={() => setShowActionIcons(true)}
                   onMouseLeave={() => setShowActionIcons(false)}
                 >
-                  {loading ? (
-                    <SkeletonLoader
-                      height="6"
-                      width="1/3"
-                      borderRadius="rounded-full"
-                    />
-                  ) : (
-                    <div className="flex items-center mb-2 space-x-8">
-                      <div className="text-sm cursor-default">
-                        <span className="text-gray-syn4 text-lg md:text-2xl">
-                          {formattedSyndicateAddress}
-                        </span>
-                      </div>
-
-                      {showActionIcons ? (
-                        <div className="flex space-x-6">
-                          <CopyToClipboard text={clubAddress as string}>
-                            <button
-                              className="flex items-center relative w-4 h-4 cursor-pointer"
-                              onClick={updateAddressCopyState}
-                              onKeyDown={updateAddressCopyState}
-                              data-for="copy-club-address"
-                              data-tip
-                            >
-                              {showAddressCopyState ? (
-                                <span className="absolute text-xs -bottom-5">
-                                  copied
-                                </span>
-                              ) : null}
-                              <ReactTooltip
-                                id="copy-club-address"
-                                place="top"
-                                effect="solid"
-                                className="actionsTooltip"
-                                arrowColor="transparent"
-                                backgroundColor="#131416"
-                              >
-                                Copy club address
-                              </ReactTooltip>
-
-                              <CopyToClipboardIcon color="text-gray-syn5 hover:text-gray-syn4" />
-                            </button>
-                          </CopyToClipboard>
-
-                          <div data-for="view-on-etherscan" data-tip>
-                            <EtherscanLink
-                              customStyles="w-4 h-4"
-                              etherscanInfo={clubAddress}
-                              grouped
-                              iconOnly
-                            />
-                            <ReactTooltip
-                              id="view-on-etherscan"
-                              place="top"
-                              effect="solid"
-                              className="actionsTooltip"
-                              arrowColor="transparent"
-                              backgroundColor="#131416"
-                            >
-                              View on Etherscan
-                            </ReactTooltip>
-                          </div>
-                        </div>
-                      ) : null}
-                    </div>
-                  )}
-                </div>
-                {/* Syndicate name and symbol  */}
-                <div className="flex justify-start items-center">
                   {loading ? (
                     <div className="md:w-96 w-50">
                       <SkeletonLoader
@@ -321,7 +249,7 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
                     </div>
                   ) : (
                     <div className="flex items-center w-fit-content">
-                      <div className="mr-6 2xl:text-4.5xl leading-10 lg:text-4xl md:text-xl sm:text-4xl text-lg font-normal line-clamp-2">
+                      <div className={`mr-6 2xl:text-4.5xl leading-10 lg:text-4xl md:text-xl sm:text-4xl text-lg font-normal line-clamp-2 w-48 xl:w-64`}>
                         {name}
                       </div>
                       <div className="flex flex-wrap">
@@ -330,6 +258,58 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
                             {symbol}
                           </span>
                         </div>
+                      </div>
+                      <div className="flex items-center ml-6 space-x-8 pr-2">
+                        {showActionIcons ? (
+                          <div className="flex space-x-6">
+                            <CopyToClipboard text={erc20Token.owner as string}>
+                              <button
+                                className="flex items-center relative w-4 h-4 cursor-pointer"
+                                onClick={updateAddressCopyState}
+                                onKeyDown={updateAddressCopyState}
+                                data-for="copy-club-address"
+                                data-tip
+                              >
+                                {showAddressCopyState ? (
+                                  <span className="absolute text-xs -bottom-5">
+                                    copied
+                                  </span>
+                                ) : null}
+                                <ReactTooltip
+                                  id="copy-club-address"
+                                  place="top"
+                                  effect="solid"
+                                  className="actionsTooltip"
+                                  arrowColor="transparent"
+                                  backgroundColor="#131416"
+                                >
+                                  Copy club wallet address
+                                </ReactTooltip>
+
+                                <CopyToClipboardIcon color="text-gray-syn5 hover:text-gray-syn4" />
+                              </button>
+                            </CopyToClipboard>
+
+                            <div data-for="view-on-etherscan" data-tip>
+                              <EtherscanLink
+                                customStyles="w-4 h-4"
+                                etherscanInfo={erc20Token.owner}
+                                grouped
+                                iconOnly
+                              />
+                              <ReactTooltip
+                                id="view-on-etherscan"
+                                place="top"
+                                effect="solid"
+                                className="actionsTooltip"
+                                arrowColor="transparent"
+                                backgroundColor="#131416"
+                              >
+                                View on Etherscan
+                              </ReactTooltip>
+                            </div>
+                          </div>
+                        ) : null}
                       </div>
                     </div>
                   )}
