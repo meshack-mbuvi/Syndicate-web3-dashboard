@@ -29,61 +29,6 @@
     "inputs": [
       {
         "indexed": true,
-        "internalType": "string",
-        "name": "name_",
-        "type": "string"
-      },
-      {
-        "indexed": false,
-        "internalType": "string",
-        "name": "symbol_",
-        "type": "string"
-      },
-      {
-        "indexed": false,
-        "internalType": "address",
-        "name": "mintPolicy_",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "address",
-        "name": "burnPolicy_",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "address",
-        "name": "transferPolicy_",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "address",
-        "name": "mintAmount_",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "address",
-        "name": "mintFee_",
-        "type": "address"
-      },
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "depositToken_",
-        "type": "address"
-      }
-    ],
-    "name": "ClubERC20Initialized",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": true,
         "internalType": "address",
         "name": "member",
         "type": "address"
@@ -103,56 +48,6 @@
       }
     ],
     "name": "MemberJoined",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "member",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "mintAmount",
-        "type": "uint256"
-      },
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "depositToken",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "depositAmount",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "feeAmount",
-        "type": "uint256"
-      }
-    ],
-    "name": "MemberMinted",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "mintAmount",
-        "type": "address"
-      }
-    ],
-    "name": "MintAmountSet",
     "type": "event"
   },
   {
@@ -182,6 +77,12 @@
   },
   {
     "anonymous": false,
+    "inputs": [],
+    "name": "PoliciesLocked",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
     "inputs": [
       {
         "indexed": true,
@@ -196,7 +97,38 @@
         "type": "address"
       }
     ],
-    "name": "PolicyChanged",
+    "name": "PolicyUpdated",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "requestedBy",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "sender",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "recipient",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      }
+    ],
+    "name": "Transfer",
     "type": "event"
   },
   {
@@ -223,6 +155,10 @@
     ],
     "name": "Transfer",
     "type": "event"
+  },
+  {
+    "stateMutability": "nonpayable",
+    "type": "fallback"
   },
   {
     "inputs": [],
@@ -262,21 +198,6 @@
       {
         "internalType": "address",
         "name": "transferPolicy_",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "mintAmount_",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "mintFee_",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "depositToken_",
         "type": "address"
       }
     ],
@@ -361,7 +282,13 @@
       }
     ],
     "name": "burn",
-    "outputs": [],
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
     "stateMutability": "nonpayable",
     "type": "function"
   },
@@ -369,7 +296,7 @@
     "inputs": [
       {
         "internalType": "address",
-        "name": "from",
+        "name": "sender",
         "type": "address"
       },
       {
@@ -441,19 +368,6 @@
   },
   {
     "inputs": [],
-    "name": "depositToken",
-    "outputs": [
-      {
-        "internalType": "contract IERC20",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
     "name": "disableOverride",
     "outputs": [],
     "stateMutability": "nonpayable",
@@ -500,65 +414,9 @@
     "inputs": [
       {
         "internalType": "address",
-        "name": "burner",
+        "name": "requestedBy",
         "type": "address"
       },
-      {
-        "internalType": "uint256",
-        "name": "amount",
-        "type": "uint256"
-      }
-    ],
-    "name": "isBurnAllowed",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "minter",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "amount",
-        "type": "uint256"
-      }
-    ],
-    "name": "isMintAllowed",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "isOverrideDisabled",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
       {
         "internalType": "address",
         "name": "sender",
@@ -575,7 +433,20 @@
         "type": "uint256"
       }
     ],
-    "name": "isTransferAllowed",
+    "name": "isAllowed",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "isOverrideDisabled",
     "outputs": [
       {
         "internalType": "bool",
@@ -607,51 +478,6 @@
     "type": "function"
   },
   {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "depositAmount",
-        "type": "uint256"
-      }
-    ],
-    "name": "mint",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "mintAmount",
-    "outputs": [
-      {
-        "internalType": "contract MintVariable",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "mintFee",
-    "outputs": [
-      {
-        "internalType": "contract MintVariable",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
     "inputs": [],
     "name": "mintPolicy",
     "outputs": [
@@ -662,6 +488,30 @@
       }
     ],
     "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "recipient",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      }
+    ],
+    "name": "mintTo",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
@@ -778,37 +628,6 @@
   {
     "inputs": [],
     "name": "renounceOwnership",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "mintAmount_",
-        "type": "address"
-      }
-    ],
-    "name": "setMintAmount",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "enum PolicyType",
-        "name": "policy",
-        "type": "uint8"
-      },
-      {
-        "internalType": "address",
-        "name": "implementation",
-        "type": "address"
-      }
-    ],
-    "name": "setPolicy",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -937,6 +756,45 @@
       }
     ],
     "name": "treasuryOverride",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "implementation",
+        "type": "address"
+      }
+    ],
+    "name": "updateBurnPolicy",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "implementation",
+        "type": "address"
+      }
+    ],
+    "name": "updateMintPolicy",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "implementation",
+        "type": "address"
+      }
+    ],
+    "name": "updateTransferPolicy",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"

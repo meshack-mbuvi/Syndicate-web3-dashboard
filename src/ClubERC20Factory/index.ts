@@ -5,7 +5,8 @@ import { SyndicateDepositTransferLogic } from "./depositTransferLogic";
 import { SyndicateDistributionLogic } from "./distributionLogic";
 import { SyndicateGetterLogic } from "./getterLogic";
 import { SyndicateManagerLogic } from "./managerLogic";
-import { MintPolicyManagerContract } from "./mintPolicyManager";
+import { MintPolicyContract } from "./mintPolicy";
+import { SingleTokenMintModuleContract } from "./singleTokenMintModule";
 
 // contract names
 const getterLogicContractName =
@@ -27,7 +28,9 @@ const depositTransferLogicContractName =
 
 // Contract addresses for new contracts
 const CLUB_ERC20_FACTORY_ADDRESS = process.env.NEXT_PUBLIC_CLUB_ERC20_FACTORY;
-const MINT_POLICY_MANAGER_ADDRESS = process.env.NEXT_PUBLIC_MINT_POLICY_MANAGER;
+const MINT_POLICY_ADDRESS = process.env.NEXT_PUBLIC_MINT_POLICY;
+const SINGLE_TOKEN_MINT_MODULE =
+  process.env.NEXT_PUBLIC_SINGLE_TOKEN_MINT_MODULE;
 
 export const getSyndicateContracts = async (web3: any) => {
   // Retrieve contract from cache.
@@ -68,8 +71,10 @@ export const getSyndicateContracts = async (web3: any) => {
     CLUB_ERC20_FACTORY_ADDRESS,
     web3,
   );
-  const mintPolicyManager = new MintPolicyManagerContract(
-    MINT_POLICY_MANAGER_ADDRESS,
+  const mintPolicy = new MintPolicyContract(MINT_POLICY_ADDRESS, web3);
+
+  const SingleTokenMintModule = new SingleTokenMintModuleContract(
+    SINGLE_TOKEN_MINT_MODULE,
     web3,
   );
 
@@ -84,6 +89,7 @@ export const getSyndicateContracts = async (web3: any) => {
     DepositTransferLogicContract,
     // new protocol contracts
     clubERC20Factory,
-    mintPolicyManager,
+    mintPolicy,
+    SingleTokenMintModule,
   };
 };

@@ -180,7 +180,13 @@ const DepositSyndicate: React.FC = () => {
 
     dispatch(setAccountClubTokens(+accountClubTokens + +memberTokens));
 
-    dispatch(setERC20Token(erc20TokenContract, account));
+    dispatch(
+      setERC20Token(
+        erc20TokenContract,
+        syndicateContracts.SingleTokenMintModule,
+        account,
+      ),
+    );
   };
 
   const [transactionRejected, setTransactionRejected] = useState(false);
@@ -206,8 +212,9 @@ const DepositSyndicate: React.FC = () => {
     setTransactionFailed(false);
 
     try {
-      await erc20TokenContract?.deposit(
+      await syndicateContracts.SingleTokenMintModule?.deposit(
         getWeiAmount(amount, depositTokenDecimals, true),
+        erc20TokenContract.clubERC20Contract._address,
         account,
         onTxConfirm,
         onTxReceipt,
@@ -260,7 +267,6 @@ const DepositSyndicate: React.FC = () => {
    *
    * @returns {string} balance of the user for the deposit ERC20 token
    */
-
   const erc20Balance = useERC20TokenBalance(
     account,
     new web3.eth.Contract(ERC20ABI as AbiItem[], depositToken),
@@ -334,12 +340,15 @@ const DepositSyndicate: React.FC = () => {
 
   /** ====== ADDITIONAL METHODS ======== */
 
+  const SINGLE_TOKEN_MINT_MODULE_ADDR =
+    process.env.NEXT_PUBLIC_SINGLE_TOKEN_MINT_MODULE;
+
   // method to check the allowance amount approved by a member.
   const checkUnlimitedAllowanceSet = async () => {
     if (syndicateContracts && account && depositTokenContract) {
       try {
         const memberAllowanceAmount = await depositTokenContract?.methods
-          .allowance(account.toString(), erc20Token.address)
+          .allowance(account.toString(), SINGLE_TOKEN_MINT_MODULE_ADDR)
           .call({ from: account });
 
         const currentMemberAllowanceAmount = getWeiAmount(
@@ -373,7 +382,7 @@ const DepositSyndicate: React.FC = () => {
       let gnosisTxHash;
       await new Promise((resolve, reject) => {
         depositTokenContract.methods
-          .approve(erc20Token.address, amountToApprove)
+          .approve(SINGLE_TOKEN_MINT_MODULE_ADDR, amountToApprove)
           .send({ from: account })
           .on("transactionHash", (transactionHash) => {
             // user clicked on confirm
@@ -1221,6 +1230,6 @@ const DepositSyndicate: React.FC = () => {
       </Modal>
     </ErrorBoundary>
   );
-};
+};;
 
 export default DepositSyndicate;

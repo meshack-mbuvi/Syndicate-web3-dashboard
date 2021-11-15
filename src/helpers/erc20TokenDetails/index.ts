@@ -36,7 +36,8 @@ const ERC20TokenDefaultState = {
  */
 export const getERC20TokenDetails = async (
   ERC20tokenContract,
-  mintPolicyManager,
+  SingleTokenMintModule,
+  mintPolicy,
   account: string,
 ): Promise<ERC20Token> => {
   if (ERC20tokenContract) {
@@ -50,13 +51,15 @@ export const getERC20TokenDetails = async (
         requiredToken,
         requiredTokenMinBalance,
         startTime,
-      } = await mintPolicyManager?.getSyndicateValues(address);
+      } = await mintPolicy?.getSyndicateValues(address);
 
       const name = await ERC20tokenContract?.name();
       const owner = await ERC20tokenContract?.owner();
       const tokenDecimals = await ERC20tokenContract?.decimals();
 
-      const depositToken = await ERC20tokenContract?.depositToken();
+      const depositToken = await SingleTokenMintModule?.depositToken(
+        ERC20tokenContract.clubERC20Contract._address,
+      );
 
       const isOwner = owner === account;
 
@@ -117,7 +120,7 @@ export const getERC20TokenDetails = async (
 };
 
 export const setERC20Token =
-  (ERC20tokenContract, account: string) =>
+  (ERC20tokenContract, SingleTokenMintModule, account: string) =>
   async (
     dispatch,
     getState: () => {
@@ -126,7 +129,7 @@ export const setERC20Token =
   ) => {
     const {
       initializeContractsReducer: {
-        syndicateContracts: { mintPolicyManager },
+        syndicateContracts: { mintPolicy },
       },
     } = getState();
 
@@ -135,7 +138,8 @@ export const setERC20Token =
     try {
       const erc20Token = await getERC20TokenDetails(
         ERC20tokenContract,
-        mintPolicyManager,
+        SingleTokenMintModule,
+        mintPolicy,
         account,
       );
       return dispatch(setERC20TokenDetails(erc20Token));

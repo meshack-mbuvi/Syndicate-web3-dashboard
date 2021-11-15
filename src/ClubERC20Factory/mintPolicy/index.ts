@@ -1,6 +1,6 @@
-import MintPolicyManagerABI from "src/contracts/MintPolicyManager.json";
+import MintPolicyABI from "src/contracts/MintPolicy.json";
 
-export class MintPolicyManagerContract {
+export class MintPolicyContract {
   web3;
   address;
 
@@ -14,13 +14,13 @@ export class MintPolicyManagerContract {
   }
 
   async init(): Promise<void> {
-    if (!MintPolicyManagerABI) {
+    if (!MintPolicyABI) {
       return;
     }
 
     try {
       this.mintPolicyContract = new this.web3.eth.Contract(
-        MintPolicyManagerABI,
+        MintPolicyABI,
         this.address,
       );
     } catch (error) {
@@ -41,6 +41,6 @@ export class MintPolicyManagerContract {
     requiredTokenMinBalance;
     startTime;
   }> {
-    return this.mintPolicyContract.methods.configs(address).call();
+    return this.mintPolicyContract.methods.configOf(address).call();
   }
 }

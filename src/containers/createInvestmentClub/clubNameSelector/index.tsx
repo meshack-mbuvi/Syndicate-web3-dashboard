@@ -151,8 +151,8 @@ const ClubNameSelector: React.FC = () => {
         <div className="h3">a.k.a.</div>
         <div>
           <div className="relative mb-2">
-            <span className="absolute inset-y-0 left-0 text-base symbol-prefix">
-              syn
+            <span className="absolute inset-y-0 left-0 text-3xl pl-4 mt-3">
+              ✺
             </span>
             <input
               data-tip

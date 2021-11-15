@@ -28,6 +28,7 @@ import { Status } from "@/state/wallet/types";
 const LayoutWithSyndicateDetails: FC = ({ children }) => {
   // Retrieve state
   const {
+    initializeContractsReducer: { syndicateContracts },
     web3Reducer: {
       web3: { account, web3, status },
     },
@@ -92,7 +93,13 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
 
   useEffect(() => {
     if (clubERC20tokenContract && router.isReady) {
-      dispatch(setERC20Token(clubERC20tokenContract, account));
+      dispatch(
+        setERC20Token(
+          clubERC20tokenContract,
+          syndicateContracts.SingleTokenMintModule,
+          account,
+        ),
+      );
     }
   }, [clubERC20tokenContract, account, router.isReady]);
 

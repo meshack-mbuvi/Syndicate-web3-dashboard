@@ -79,7 +79,7 @@ const useClubERC20s = () => {
             requiredToken,
             requiredTokenMinBalance,
             startTime,
-          } = await syndicateContracts?.mintPolicyManager?.getSyndicateValues(
+          } = await syndicateContracts?.mintPolicy?.getSyndicateValues(
             contractAddress,
           );
 
@@ -87,7 +87,11 @@ const useClubERC20s = () => {
             contractAddress,
             web3.web3,
           );
-          const depositToken = await clubERC20Contract.depositToken();
+
+          const depositToken =
+            await syndicateContracts?.SingleTokenMintModule?.depositToken(
+              contractAddress,
+            );
 
           const decimals = await clubERC20Contract.decimals();
           const clubName = await clubERC20Contract.name();
@@ -104,7 +108,7 @@ const useClubERC20s = () => {
 
           //  calculate ownership share
           const memberDeposits = getWeiAmount(depositAmount, 6, false);
-          const totalDeposits = getWeiAmount(totalSupply, +decimals, false);          
+          const totalDeposits = getWeiAmount(totalSupply, +decimals, false);
 
           const ownershipShare = (+memberDeposits * 100) / +totalDeposits;
           return {

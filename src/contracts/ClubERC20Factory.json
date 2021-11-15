@@ -28,12 +28,7 @@
       },
       {
         "internalType": "address",
-        "name": "mintAmount_",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "mintFee_",
+        "name": "mintModule_",
         "type": "address"
       }
     ],
@@ -50,7 +45,7 @@
         "type": "address"
       },
       {
-        "indexed": true,
+        "indexed": false,
         "internalType": "string",
         "name": "name",
         "type": "string"
@@ -60,15 +55,46 @@
         "internalType": "string",
         "name": "symbol",
         "type": "string"
-      },
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "depositToken",
-        "type": "address"
       }
     ],
     "name": "ClubERC20Created",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "clubToken",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "mintPolicy",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "burnPolicy",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "transferPolicy",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "mintModule",
+        "type": "address"
+      }
+    ],
+    "name": "ClubERC20FactoryImplementationsSet",
     "type": "event"
   },
   {
@@ -117,6 +143,10 @@
     "type": "event"
   },
   {
+    "stateMutability": "nonpayable",
+    "type": "fallback"
+  },
+  {
     "inputs": [],
     "name": "burnPolicy",
     "outputs": [
@@ -153,11 +183,6 @@
         "internalType": "string",
         "name": "symbol_",
         "type": "string"
-      },
-      {
-        "internalType": "address",
-        "name": "depositToken_",
-        "type": "address"
       }
     ],
     "name": "create",
@@ -184,28 +209,23 @@
         "type": "string"
       },
       {
-        "internalType": "address",
-        "name": "depositToken_",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
+        "internalType": "uint64",
         "name": "startTime_",
-        "type": "uint256"
+        "type": "uint64"
       },
       {
-        "internalType": "uint256",
+        "internalType": "uint64",
         "name": "endTime_",
-        "type": "uint256"
+        "type": "uint64"
+      },
+      {
+        "internalType": "uint64",
+        "name": "maxMemberCount_",
+        "type": "uint64"
       },
       {
         "internalType": "uint256",
         "name": "maxTotalSupply_",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "maxMemberCount_",
         "type": "uint256"
       },
       {
@@ -217,9 +237,14 @@
         "internalType": "uint256",
         "name": "requiredTokenMinBalance_",
         "type": "uint256"
+      },
+      {
+        "internalType": "address",
+        "name": "depositToken_",
+        "type": "address"
       }
     ],
-    "name": "createWithMintPolicy",
+    "name": "createWithMintParams",
     "outputs": [
       {
         "internalType": "address",
@@ -232,20 +257,7 @@
   },
   {
     "inputs": [],
-    "name": "mintAmount",
-    "outputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "mintFee",
+    "name": "mintModule",
     "outputs": [
       {
         "internalType": "address",
@@ -333,12 +345,7 @@
       },
       {
         "internalType": "address",
-        "name": "mintAmount_",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "mintFee_",
+        "name": "mintModule_",
         "type": "address"
       }
     ],

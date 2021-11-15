@@ -92,7 +92,7 @@ const ReviewDetails: React.FC = () => {
             <div className="flex mt-2 text-base">
               <p className="text-white">{investmentClubName}</p>
               <p className="ml-4 text-gray-syn4">
-                a.k.a. {investmentClubSymbol}
+                a.k.a. ✺{investmentClubSymbol}
               </p>
             </div>
           </animated.div>

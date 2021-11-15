@@ -3,17 +3,22 @@
     "inputs": [
       {
         "internalType": "address",
-        "name": "",
+        "name": "requestedBy",
         "type": "address"
       },
       {
         "internalType": "address",
-        "name": "",
+        "name": "sender",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "recipient",
         "type": "address"
       },
       {
         "internalType": "uint256",
-        "name": "",
+        "name": "amount",
         "type": "uint256"
       }
     ],
@@ -21,11 +26,11 @@
     "outputs": [
       {
         "internalType": "bool",
-        "name": "",
+        "name": "isAllowed",
         "type": "bool"
       }
     ],
-    "stateMutability": "nonpayable",
+    "stateMutability": "view",
     "type": "function"
   }
 ]

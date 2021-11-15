@@ -10,7 +10,7 @@ const createInvestmentClubSlice = createSlice({
     },
     setInvestmentClubSymbolPlaceHolder(state, action: PayloadAction<string>) {
       state.investmentClubSymbolPlaceHolder = action.payload;
-      state.investmentClubSymbol = `syn${action.payload}`;
+      state.investmentClubSymbol = `${action.payload}`;
     },
     setMembersCount(state, action: PayloadAction<string>) {
       state.membersCount = action.payload;
