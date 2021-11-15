@@ -88,7 +88,7 @@ const ClubERC20Table: FC<Props> = ({ columns, tableData }) => {
                 key={`token-table-row-${index}`}
                 href={`/clubs/${address}/${isOwner ? "manage" : ""}`}
               >
-                <div className="grid grid-cols-6 border-b-1 w-full border-gray-steelGrey py-5 cursor-pointer">
+                <div className="grid gap-2 grid-cols-6 border-b-1 w-full border-gray-steelGrey py-5 cursor-pointer">
                   <div className="flex flex-row items-center">
                     <div className="flex flex-shrink-0">
                       <div className="mr-4">

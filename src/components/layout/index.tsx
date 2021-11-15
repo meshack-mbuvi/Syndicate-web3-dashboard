@@ -22,9 +22,11 @@ const Layout: FC<Props> = ({ children, backLink = null, showNav = true }) => {
     },
   } = useSelector((state: RootState) => state);
 
-  const showCreateProgressBar = router.pathname === "/clubs/clubprivatebetainvite";
+  const showCreateProgressBar =
+    router.pathname === "/clubs/create/clubprivatebetainvite";
 
-  const { currentStep, steps } = useCreateInvestmentClubContext();
+  const { currentStep, steps, showByInvitationOnly } =
+    useCreateInvestmentClubContext();
   return (
     <div>
       <SEO
@@ -50,7 +52,11 @@ const Layout: FC<Props> = ({ children, backLink = null, showNav = true }) => {
         {showCreateProgressBar && account ? (
           <div className="pt-6 bg-black">
             <ProgressBar
-              percentageWidth={((currentStep + 1) / steps.length) * 100}
+              percentageWidth={
+                showByInvitationOnly
+                  ? 0
+                  : ((currentStep + 1) / steps.length) * 100
+              }
               tailwindColor="bg-green"
             />
           </div>

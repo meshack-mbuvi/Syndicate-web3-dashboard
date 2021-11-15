@@ -42,6 +42,8 @@ type CreateInvestmentClubProviderProps = {
   processingModalTitle: string;
   processingModalDescription: string;
   errorModalMessage: string;
+  showByInvitationOnly: boolean;
+  setShowByInvitationOnly: Dispatch<SetStateAction<boolean>>;
 };
 
 const CreateInvestmentClubContext = createContext<
@@ -80,6 +82,9 @@ const CreateInvestmentClubProvider: React.FC = ({ children }) => {
   const [processingModalTitle, setProcessingTitle] = useState("");
   const [processingModalDescription, setProcessingDescription] = useState("");
   const [errorModalMessage, setErrorModalMessage] = useState("");
+  // show by invitation only box
+  const [showByInvitationOnly, setShowByInvitationOnly] =
+    useState<boolean>(true);
 
   const [
     { waitingConfirmationModal, transactionModal, errorModal },
@@ -211,6 +216,8 @@ const CreateInvestmentClubProvider: React.FC = ({ children }) => {
         processingModalTitle,
         processingModalDescription,
         errorModalMessage,
+        showByInvitationOnly,
+        setShowByInvitationOnly
       }}
     >
       {children}

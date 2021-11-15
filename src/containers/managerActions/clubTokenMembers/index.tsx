@@ -25,7 +25,7 @@ const ClubTokenMembers = (): JSX.Element => {
   // club deposit link
   useEffect(() => {
     setClubDepositLink(
-      `${window.location.origin}/syndicates/${erc20Token?.address}/`,
+      `${window.location.origin}/clubs/${erc20Token?.address}/deposit`,
     );
   }, [erc20Token.address]);
 
@@ -201,17 +201,22 @@ const ClubTokenMembers = (): JSX.Element => {
               <div className="flex flex-col space-y-4 text-center">
                 <p className="text-xl ">This club has no members yet.</p>
 
-                <div className="space-y-8">
+                <div className="space-y-8 flex flex-col items-center">
                   <p className="text-gray-syn4 text-base">
-                    Members will show up here once they deposit funds into this
-                    club.
+                    Invite members by sharing your clubs deposit link. They’ll
+                    show up here once they deposit.
                   </p>
                   {erc20Token.isOwner && (
-                    <CopyLink
-                      link={clubDepositLink}
-                      updateCopyState={updateDepositLinkCopyState}
-                      showCopiedState={showDepositLinkCopyState}
-                    />
+                    <div
+                      style={{ width: "416px" }}
+                      className="flex justify-center"
+                    >
+                      <CopyLink
+                        link={clubDepositLink}
+                        updateCopyState={updateDepositLinkCopyState}
+                        showCopiedState={showDepositLinkCopyState}
+                      />
+                    </div>
                   )}
                 </div>
               </div>

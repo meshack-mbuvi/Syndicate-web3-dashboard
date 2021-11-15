@@ -16,6 +16,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
+import ByInvitationOnly from "@/containers/createInvestmentClub/byInvitationOnly";
 
 const CreateInvestmentClub: React.FC = () => {
   const {
@@ -29,6 +30,8 @@ const CreateInvestmentClub: React.FC = () => {
     setShowModal,
     errorModalMessage,
     handleCreateInvestmentClub,
+    showByInvitationOnly,
+    setShowByInvitationOnly,
   } = useCreateInvestmentClubContext();
   const router = useRouter();
   const [status, setStatus] = useState(0);
@@ -62,6 +65,10 @@ const CreateInvestmentClub: React.FC = () => {
       <>
         {!account ? (
           <WalletNotConnected />
+        ) : showByInvitationOnly ? (
+          <div style={{ marginTop: "183px" }}>
+            <ByInvitationOnly showByInvitationOnly={setShowByInvitationOnly} />
+          </div>
         ) : (
           <div className="container mx-auto w-full">
             <div
@@ -180,7 +187,11 @@ const CreateInvestmentClub: React.FC = () => {
             <div className="mt-8">
               <p className="text-gray-syn4">
                 Please try again and{" "}
-                <a className="text-blue" href="mailto:support@syndicate.io" target="_blank">
+                <a
+                  className="text-blue"
+                  href="mailto:support@syndicate.io"
+                  target="_blank"
+                >
                   let us know
                 </a>{" "}
                 if the issue persists.
