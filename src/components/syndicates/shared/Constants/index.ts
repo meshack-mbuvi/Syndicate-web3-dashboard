@@ -278,14 +278,15 @@ export const createdDateToolTip =
 export const SyndicateInBetaBannerText = "BETA";
 
 // syndicate actions page
-const noTokenTitleText = "No Syndicate DAO found at that address.";
+const noTokenTitleText = "No club found at that address.";
 const noTokenMessageText =
   "Check for more details on Etherscan to see if your transaction is pending or failed.";
 const syndicateAddressInvalidTitleText = "Invalid syndicate address";
 const syndicateAddressInvalidMessageText =
   "Check to ensure you have the correct address.";
 const backLinkText = "Back To My Investments Clubs";
-const notSyndicateYetTitleText = "isn't a syndicate yet";
+const notSyndicateYetTitleText = "isn't a club yet";
+const invalidTokenAddress = "is not a valid Ethereum address";
 const notSyndicateYetMessageText =
   "This URL isn't currently associated with a syndicate. Invite someone to create a syndicate by copying the link below.";
 const notSyndicateForManagerYetMessageText =
@@ -314,6 +315,7 @@ export const syndicateActionConstants = {
   notSyndicateForManagerYetMessageText,
   nonModifiableSyndicateErrorText,
   enableDistributionToModifySyndicateText,
+  invalidTokenAddress,
 };
 
 // home page

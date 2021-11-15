@@ -132,9 +132,8 @@ export const setERC20Token =
         syndicateContracts: { mintPolicy },
       },
     } = getState();
-
-    dispatch(setERC20TokenContract(ERC20tokenContract));
     dispatch(setLoading({ loading: true }));
+    dispatch(setERC20TokenContract(ERC20tokenContract));
     try {
       const erc20Token = await getERC20TokenDetails(
         ERC20tokenContract,

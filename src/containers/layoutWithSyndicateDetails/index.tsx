@@ -24,6 +24,7 @@ import { syndicateActionConstants } from "src/components/syndicates/shared/Const
 import ClubTokenMembers from "../managerActions/clubTokenMembers";
 import Assets from "./assets";
 import { Status } from "@/state/wallet/types";
+import NotFoundPage from "@/pages/404";
 
 const LayoutWithSyndicateDetails: FC = ({ children }) => {
   // Retrieve state
@@ -157,29 +158,11 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
   }, [account, router.isReady, JSON.stringify(erc20Token)]);
 
   // get static text from constants
-  const {
-    noTokenTitleText,
-    noTokenMessageText,
-    notSyndicateYetTitleText,
-    notSyndicateYetMessageText,
-    notSyndicateForManagerYetMessageText,
-  } = syndicateActionConstants;
+  const { noTokenTitleText, invalidTokenAddress } = syndicateActionConstants;
 
   // set texts to display on empty state
   // we'll initialize this to instances where address is not a syndicate.
   // if the address is invalid, this texts will be updated accordingly.
-  let emptyStateTitle = noTokenTitleText;
-  let emptyStateMessage = noTokenMessageText;
-
-  if (!erc20Token.name && !erc20Token?.loading && account !== clubAddress) {
-    emptyStateTitle = notSyndicateYetTitleText;
-    emptyStateMessage = notSyndicateYetMessageText;
-  }
-
-  if (!erc20Token?.name && !erc20Token?.loading && erc20Token?.isOwner) {
-    emptyStateTitle = notSyndicateYetTitleText;
-    emptyStateMessage = notSyndicateForManagerYetMessageText;
-  }
 
   // set syndicate empty state.
   // component will be rendered if the address is not a syndicate or
@@ -193,10 +176,7 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
             className="h-12 text-gray-500 text-7xl"
           />
         </div>
-        <p className="font-semibold text-2xl text-center">{emptyStateTitle}</p>
-        <p className="text-base my-5 font-normal text-gray-dim text-center">
-          {emptyStateMessage}
-        </p>
+        <p className="font-semibold text-2xl text-center">{noTokenTitleText}</p>
         <EtherscanLink etherscanInfo={clubAddress} />
       </div>
     </div>
@@ -206,10 +186,7 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
     <div className="flex justify-center items-center h-full w-full mt-6 sm:mt-10">
       <div className="flex flex-col items-center justify-center sm:w-7/12 md:w-5/12 rounded-custom p-10">
         <p className="font-semibold text-2xl text-center">
-          {formatAddress(clubAddress, 9, 6)} {emptyStateTitle}
-        </p>
-        <p className="text-base my-5 font-normal text-gray-dim text-center">
-          {emptyStateMessage}
+          {formatAddress(clubAddress, 9, 6)} {noTokenTitleText}
         </p>
       </div>
     </div>
@@ -220,7 +197,7 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
     !erc20Token?.loading &&
     router.isReady &&
     !clubAddress &&
-    account
+    status !== "connecting"
   ) {
     noToken = syndicateEmptyState;
   }
@@ -230,7 +207,7 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
     !erc20Token?.loading &&
     router.isReady &&
     clubAddress &&
-    account
+    status !== "connecting"
   ) {
     noToken = syndicateNotFoundState;
   }
@@ -238,90 +215,96 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
   const [activeTab, setActiveTab] = useState("assets");
 
   return (
-    <Layout showNav={showNav}>
-      <Head title={erc20Token?.name || "Club"} />
-      <ErrorBoundary>
-        {showOnboardingIfNeeded && <OnboardingModal />}
-        <div className="w-full">
-          {noToken ? (
-            noToken
-          ) : (
-            <div className="container mx-auto ">
-              {/* Two Columns (Syndicate Details + Widget Cards) */}
-              <BackButton />
-              <div className="grid grid-cols-12 gap-5">
-                {/* Left Column */}
-                <div className="md:col-start-1 md:col-end-7 col-span-12">
-                  {/* its used as an identifier for ref in small devices */}
-                  {/*
+    <>
+      {router.isReady && !web3.utils.isAddress(clubAddress) ? (
+        <NotFoundPage />
+      ) : (
+        <Layout showNav={showNav}>
+          <Head title={erc20Token?.name || "Club"} />
+          <ErrorBoundary>
+            {showOnboardingIfNeeded && <OnboardingModal />}
+            <div className="w-full">
+              {noToken ? (
+                noToken
+              ) : (
+                <div className="container mx-auto ">
+                  {/* Two Columns (Syndicate Details + Widget Cards) */}
+                  <BackButton />
+                  <div className="grid grid-cols-12 gap-5">
+                    {/* Left Column */}
+                    <div className="md:col-start-1 md:col-end-7 col-span-12">
+                      {/* its used as an identifier for ref in small devices */}
+                      {/*
                   we should have an isChildVisible child here,
                   but it's not working as expected
                   */}
-                  <SyndicateDetails accountIsManager={erc20Token?.isOwner}>
-                    <div className="w-full md:hidden mt-5">{children}</div>
-                  </SyndicateDetails>
-                </div>
-                {/* Right Column */}
-                <div className="md:col-end-13 md:col-span-5 col-span-12 hidden md:flex justify-end items-start pt-0 h-full">
-                  <div className="sticky top-33 w-100">{children}</div>
-                </div>
-
-                {status !== Status.DISCONNECTED && (
-                  <div className="mt-16 col-span-12">
-                    <div
-                      ref={subNav}
-                      className={`${
-                        isSubNavStuck ? "bg-gray-syn8" : "bg-black"
-                      } transition-all edge-to-edge-with-left-inset`}
-                    >
-                      <nav className="flex space-x-10" aria-label="Tabs">
-                        <button
-                          key="members"
-                          onClick={() => setActiveTab("assets")}
-                          className={`whitespace-nowrap h4 w-fit-content py-6 transition-all h-16 border-b-1 focus:ring-0 font-whyte text-sm cursor-pointer ${
-                            activeTab == "assets"
-                              ? "border-white text-white"
-                              : "border-transparent text-gray-500 hover:text-gray-40"
-                          }`}
-                        >
-                          Assets
-                        </button>
-                        <button
-                          key="members"
-                          onClick={() => setActiveTab("members")}
-                          className={`whitespace-nowrap h4 py-6 transition-all h-16 border-b-1 focus:ring-0 font-whyte text-sm cursor-pointer ${
-                            activeTab == "members"
-                              ? "border-white text-white"
-                              : "border-transparent text-gray-500 hover:text-gray-400 "
-                          }`}
-                        >
-                          Members
-                        </button>
-                        {/* add more tabs here */}
-                      </nav>
-                      <div
-                        className={`${
-                          isSubNavStuck ? "hidden" : "block"
-                        } border-b-1 border-gray-24 absolute w-screen right-0`}
-                      ></div>
+                      <SyndicateDetails accountIsManager={erc20Token?.isOwner}>
+                        <div className="w-full md:hidden mt-5">{children}</div>
+                      </SyndicateDetails>
+                    </div>
+                    {/* Right Column */}
+                    <div className="md:col-end-13 md:col-span-5 col-span-12 hidden md:flex justify-end items-start pt-0 h-full">
+                      <div className="sticky top-33 w-100">{children}</div>
                     </div>
 
-                    <div className="text-base grid grid-cols-12 gap-y-5">
-                      <div className="col-span-12">
-                        {activeTab == "assets" && <Assets />}
-                        {activeTab == "members" && <ClubTokenMembers />}
+                    {status !== Status.DISCONNECTED && (
+                      <div className="mt-16 col-span-12">
+                        <div
+                          ref={subNav}
+                          className={`${
+                            isSubNavStuck ? "bg-gray-syn8" : "bg-black"
+                          } transition-all edge-to-edge-with-left-inset`}
+                        >
+                          <nav className="flex space-x-10" aria-label="Tabs">
+                            <button
+                              key="members"
+                              onClick={() => setActiveTab("assets")}
+                              className={`whitespace-nowrap h4 w-fit-content py-6 transition-all h-16 border-b-1 focus:ring-0 font-whyte text-sm cursor-pointer ${
+                                activeTab == "assets"
+                                  ? "border-white text-white"
+                                  : "border-transparent text-gray-500 hover:text-gray-40"
+                              }`}
+                            >
+                              Assets
+                            </button>
+                            <button
+                              key="members"
+                              onClick={() => setActiveTab("members")}
+                              className={`whitespace-nowrap h4 py-6 transition-all h-16 border-b-1 focus:ring-0 font-whyte text-sm cursor-pointer ${
+                                activeTab == "members"
+                                  ? "border-white text-white"
+                                  : "border-transparent text-gray-500 hover:text-gray-400 "
+                              }`}
+                            >
+                              Members
+                            </button>
+                            {/* add more tabs here */}
+                          </nav>
+                          <div
+                            className={`${
+                              isSubNavStuck ? "hidden" : "block"
+                            } border-b-1 border-gray-24 absolute w-screen right-0`}
+                          ></div>
+                        </div>
+
+                        <div className="text-base grid grid-cols-12 gap-y-5">
+                          <div className="col-span-12">
+                            {activeTab == "assets" && <Assets />}
+                            {activeTab == "members" && <ClubTokenMembers />}
+                          </div>
+                        </div>
                       </div>
-                    </div>
+                    )}
                   </div>
-                )}
-              </div>
 
-              <Footer extraClasses="mt-24 sm:mt-24 md:mt-40 mb-12" />
+                  <Footer extraClasses="mt-24 sm:mt-24 md:mt-40 mb-12" />
+                </div>
+              )}
             </div>
-          )}
-        </div>
-      </ErrorBoundary>
-    </Layout>
+          </ErrorBoundary>
+        </Layout>
+      )}
+    </>
   );
 };
 
