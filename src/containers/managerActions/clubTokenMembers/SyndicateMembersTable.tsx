@@ -82,7 +82,7 @@ const SyndicateMembersTable = ({
                   <tr
                     {...headerGroup.getHeaderGroupProps()}
                     key={index}
-                    className="text-gray-sun4 text-sm grid grid-cols-12 leading-6"
+                    className="text-gray-sun4 text-sm grid grid-cols-12 gap-5 leading-6"
                   >
                     {
                       // Loop over the headers in each row
@@ -93,7 +93,7 @@ const SyndicateMembersTable = ({
                           <th
                             {...column.getHeaderProps()}
                             key={index}
-                            className="rounded-md pb-2 col-span-3 text-left text-sm font-whyte-light text-gray-syn4"
+                            className="flex align-middle rounded-md col-span-3 text-left text-sm font-whyte-light text-gray-syn4"
                           >
                             {
                               // Render the header
@@ -125,7 +125,7 @@ const SyndicateMembersTable = ({
                 <tr
                   {...row.getRowProps()}
                   key={index}
-                  className="border-b-1 w-full text-base grid grid-cols-12 gap-5 border-gray-syn6 text-left"
+                  className="w-full text-base grid grid-cols-12 gap-5 border-gray-syn6 text-left"
                 >
                   {
                     // Loop over the rows cells

@@ -117,7 +117,7 @@ const TokenTable: FC<Props> = ({ columns, tableData, activeAssetTab }) => {
           <div className="flex flex-col pt-8">
             {/* scroll to top of table with this button when pagination is clicked  */}
             <button ref={tokensTableRef} />
-            <div className="grid grid-cols-12 pb-3 text-gray-lightManatee">
+            <div className="grid grid-cols-12 gap-5 pb-3 text-gray-lightManatee">
               {columns?.map((col, idx) => (
                 <div
                   key={`token-table-header-${idx}`}
@@ -144,7 +144,7 @@ const TokenTable: FC<Props> = ({ columns, tableData, activeAssetTab }) => {
                   return (
                     <div
                       key={`token-table-row-${index}`}
-                      className="grid grid-cols-12 border-b-1 border-gray-steelGrey py-5"
+                      className="grid grid-cols-12 gap-5 border-b-1 border-gray-steelGrey py-5"
                     >
                       <div className="flex flex-row col-span-3 items-center">
                         <div className="flex flex-shrink-0 pr-4">
