@@ -5,7 +5,7 @@ interface IHoldingsInfoProps {
   title: string;
   amount: string;
   tokenName: string;
-  percentValue?: number;
+  percentValue?: number | string;
   loading?: boolean;
   wrap?: string;
 }

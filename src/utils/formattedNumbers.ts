@@ -12,6 +12,11 @@ export const floatedNumberWithCommas = (number): string => {
     return "0";
   }
 
+  // return this for values smaller than 0.01 since we use 2dp
+  if (number < 0.01) {
+    return "< 0.01";
+  }
+
   // do not show decimal points if there are only zeros after the decimal point.
   // applying this across the app following this ticket: https://linear.app/syndicate/issue/ENG-2288/implement-header-section-updates
   if (number.toString().indexOf(".") < 0) {
@@ -23,7 +28,7 @@ export const floatedNumberWithCommas = (number): string => {
     const numberTo2decimalsWithoutRoundingUp = number
       .toString()
       .match(/^-?\d+(?:\.\d{0,2})?/)[0];
-    return numberWithCommas(numberTo2decimalsWithoutRoundingUp);
+    return numberWithCommas(numberTo2decimalsWithoutRoundingUp).replace('.00', '');
   } catch (error) {
     return "0";
   }

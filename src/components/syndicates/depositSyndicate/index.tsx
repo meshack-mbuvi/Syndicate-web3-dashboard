@@ -890,11 +890,7 @@ const DepositSyndicate: React.FC = () => {
                       : "0"
                   }
                   tokenName={symbol}
-                  percentValue={
-                    isNaN(memberPercentShare)
-                      ? 0
-                      : +memberPercentShare.toFixed(2)
-                  }
+                  percentValue={floatedNumberWithCommas(memberPercentShare)}
                   wrap="flex-wrap"
                 />
               </div>
@@ -933,9 +929,7 @@ const DepositSyndicate: React.FC = () => {
               <span className="text-base text-gray-syn4">
                 {`You now have ${floatedNumberWithCommas(
                   accountClubTokens,
-                )} ${symbol}, which represents a ${+memberPercentShare.toFixed(
-                  2,
-                )}% ownership
+                )} ${symbol}, which represents a ${floatedNumberWithCommas(memberPercentShare)}% ownership
                 share of this club.`}
               </span>
             </div>
@@ -1036,7 +1030,7 @@ const DepositSyndicate: React.FC = () => {
                 </div>
                 <div className="flex items-center justify-between mt-1">
                   <div className="text-2xl">
-                    <p>{addGrayToDecimalInput(memberTokens.toFixed(2))}</p>
+                    <p>{floatedNumberWithCommas(memberTokens)}</p>
                   </div>
                   <div className="flex flex-col items-end">
                     <div className="flex items-center p-0 h-6">
@@ -1051,7 +1045,8 @@ const DepositSyndicate: React.FC = () => {
                 </div>
                 <div className="flex items-center justify-between mt-1">
                   <p className="text-sm text-gray-syn4">
-                    = {ownershipShare.toFixed(2)}% ownership share
+                    {floatedNumberWithCommas(ownershipShare) === '< 0.01' ? null : '= '}
+                    {floatedNumberWithCommas(ownershipShare)}% ownership share
                   </p>
                 </div>
               </div>

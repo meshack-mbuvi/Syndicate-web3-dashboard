@@ -24,10 +24,6 @@ export const ProgressIndicator = (props: IProgressIndicator): JSX.Element => {
 
   const depositsPercentage =
     divideIfNotByZero(totalDeposits, depositTotalMax) * 100;
-  const currentDepositsPercentage =
-    depositsPercentage < 0.01
-      ? 0
-      : parseFloat(depositsPercentage.toString()).toFixed(2);
 
   const remainingDeposits =
     parseFloat(depositTotalMax) - parseFloat(totalDeposits.toString());
@@ -81,7 +77,7 @@ export const ProgressIndicator = (props: IProgressIndicator): JSX.Element => {
         <div>
           <div className="h-5 overflow-hidden mb-4 text-sm flex rounded-full bg-gray-9">
             <div
-              style={{ width: `${currentDepositsPercentage}%` }}
+              style={{ width: `${floatedNumberWithCommas(depositsPercentage)}%` }}
               className="shadow-none flex flex-col transition-all text-center whitespace-nowrap text-white justify-center bg-blue"
             ></div>
           </div>
@@ -94,7 +90,7 @@ export const ProgressIndicator = (props: IProgressIndicator): JSX.Element => {
                   {depositERC20TokenSymbol}
                 </p>
                 <p className="xl:text-2xl lg:text-xl text-gray-lightManatee leading-loose ml-4 font-whyte-light">
-                  {currentDepositsPercentage}
+                  {floatedNumberWithCommas(depositsPercentage)}
                   {/* Temporary fix to add font weight to symbol  */}
                   <span
                     style={{

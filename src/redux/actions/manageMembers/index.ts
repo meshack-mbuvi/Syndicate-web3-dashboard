@@ -10,6 +10,7 @@ import {
   SHOW_TRANSFER_DEPOSIT_MODAL,
   TRANSFERRING_DEPOSIT,
 } from "../types";
+import {floatedNumberWithCommas} from "@/utils/formattedNumbers";
 
 /**
  * Action creator for loading state when loading manage member distribution
@@ -174,10 +175,11 @@ export const getMemberDetails = async (
 
     memberDeposit = getWeiAmount(memberDeposit, syndicate.tokenDecimals, false);
 
-    const memberStake = divideIfNotByZero(
-      +memberDeposit * 100,
-      +depositTotal,
-    ).toFixed(2);
+    const memberStake = floatedNumberWithCommas(divideIfNotByZero(
+        +memberDeposit * 100,
+        +depositTotal,
+      )
+    );
 
     return {
       memberAddress,

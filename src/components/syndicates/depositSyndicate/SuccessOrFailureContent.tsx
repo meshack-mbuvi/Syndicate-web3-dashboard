@@ -61,16 +61,15 @@ export const SuccessOrFailureContent: React.FC<{
             : `Deposit failed`}
         </span>
       </div>
-      
+
       {successfulDeposit ? (
         <>
           <div className="pb-6 px-8">
             {`You now have ${floatedNumberWithCommas(
               accountClubTokens,
-            )} ${clubTokenSymbol}, which represents a ${memberPercentShare.toFixed(
-              2,
-            )}% ownership
-                share of this club.`}
+            )} ${clubTokenSymbol}, which represents a ${floatedNumberWithCommas(memberPercentShare)}% ownership
+                share of this club.`
+            }
           </div>
           <CopyToClipboard
             text={`${
