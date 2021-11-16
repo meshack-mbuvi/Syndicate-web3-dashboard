@@ -676,7 +676,7 @@ const DepositSyndicate: React.FC = () => {
                     copied,
                     memberPercentShare,
                     clubTokenSymbol: symbol,
-                    accountClubTokens: accountClubTokens.toString(),
+                    accountClubTokens: accountClubTokens ? accountClubTokens.toString() : "0",
                   }}
                 />
               ) : showDepositProcessingModal && depositFailed ? (
@@ -692,7 +692,7 @@ const DepositSyndicate: React.FC = () => {
                     copied,
                     memberPercentShare,
                     clubTokenSymbol: symbol,
-                    accountClubTokens: accountClubTokens.toString(),
+                    accountClubTokens: accountClubTokens ? accountClubTokens.toString() : "0",
                   }}
                 />
               ) : status === Status.DISCONNECTED ? (
@@ -1141,8 +1141,7 @@ const DepositSyndicate: React.FC = () => {
                     : null}
                   {submittingAllowanceApproval
                     ? `Approving ${depositTokenSymbol}`
-                    : null}
-                  {submitting
+                    : submitting
                     ? `Depositing ${floatedNumberWithCommas(
                         depositAmount,
                       )} ${depositTokenSymbol}`

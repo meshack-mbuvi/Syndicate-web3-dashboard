@@ -40,7 +40,7 @@ export const getWeiAmount = (
   tokenDecimals: number,
   multiplication: boolean,
 ) => {
-  if (!amount) return;
+  if (!amount) return 0;
 
   // get unit mappings from web3
   const unitMappings = web3.utils.unitMap;
