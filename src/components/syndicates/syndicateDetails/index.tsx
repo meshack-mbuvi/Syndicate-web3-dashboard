@@ -247,20 +247,20 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
                       />
                     </div>
                   ) : (
-                    <div className="flex items-center w-fit-content">
+                    <div className="block items-center w-fit-content">
                       <div
-                        className={`mr-6 2xl:text-4.5xl leading-10 lg:text-4xl md:text-xl sm:text-4xl text-lg font-normal line-clamp-2 w-48 xl:w-64`}
+                        className={`2xl:text-4.5xl leading-10 lg:text-4xl md:text-xl sm:text-4xl text-lg font-normal line-clamp-2`}
                       >
                         {name}
                       </div>
-                      <div className="flex flex-wrap">
+                      <div className="inline-block flex-wrap">
                         <div className="font-whyte-light text-gray-syn4 flex items-center justify-center">
                           <span className="2xl:text-4.5xl leading-10 lg:text-4xl md:text-xl sm:text-4xl text-lg">
                             {symbol}
                           </span>
                         </div>
                       </div>
-                      <div className="flex items-center ml-6 space-x-8 pr-2">
+                      <div className="inline-flex items-center ml-6 space-x-8 pr-2">
                         {showActionIcons ? (
                           <div className="flex space-x-6">
                             <CopyToClipboard text={erc20Token.owner as string}>
