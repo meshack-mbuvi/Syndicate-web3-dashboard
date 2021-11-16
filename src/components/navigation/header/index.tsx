@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { useRouter } from "next/router";
 import React from "react";
 import { NavBarNavItem } from "./navbarItems";
 import { UserProfileWrapper } from "./UserProfileWrapper";
@@ -16,14 +15,8 @@ const navbarItems = [
     url: "/clubs",
     urlText: "Portfolio",
   },
-  {
-    url: "/discover",
-    urlText: "Discover",
-  },
 ];
 const Header: React.FC<props> = ({ backLink = null, show = true }) => {
-  const router = useRouter();
-
   return (
     <nav
       className={`${
