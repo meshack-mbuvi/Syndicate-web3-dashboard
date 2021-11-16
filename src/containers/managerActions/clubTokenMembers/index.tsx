@@ -87,7 +87,7 @@ const ClubTokenMembers = (): JSX.Element => {
                 src={"/images/user.svg"}
                 alt="user"
               />
-              <p className="my-auto">{formatAddress(memberAddress, 6, 6)}</p>
+              <p className="my-1">{formatAddress(memberAddress, 6, 6)}</p>
             </div>
           );
         },
@@ -99,7 +99,7 @@ const ClubTokenMembers = (): JSX.Element => {
           depositSymbol = "USDC",
         }) {
           return (
-            <p className="flex text-white text-base">
+            <p className="flex text-white text-base my-1 leading-6">
               {`${floatedNumberWithCommas(depositAmount)} ${depositSymbol}`}
             </p>
           );
@@ -113,7 +113,7 @@ const ClubTokenMembers = (): JSX.Element => {
           symbol,
         }) {
           return (
-            <p className="">
+            <p className="my-1">
               {`${floatedNumberWithCommas(clubTokens)} ${symbol}`}
               <span className="ml-1 font-whyte-light text-gray-syn4">
                 {`(${floatedNumberWithCommas(ownershipShare)} %)`}
