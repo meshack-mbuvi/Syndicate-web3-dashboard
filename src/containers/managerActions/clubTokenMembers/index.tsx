@@ -93,7 +93,7 @@ const ClubTokenMembers = (): JSX.Element => {
         },
       },
       {
-        Header: `Deposit Amount`,
+        Header: `Deposit amount`,
         accessor: function depositAmount({
           depositAmount,
           depositSymbol = "USDC",
@@ -203,7 +203,7 @@ const ClubTokenMembers = (): JSX.Element => {
 
                 <div className="space-y-8 flex flex-col items-center">
                   <p className="text-gray-syn4 text-base">
-                    Invite members by sharing your clubs deposit link. They’ll
+                    Invite members by sharing your club's deposit link. They’ll
                     show up here once they deposit.
                   </p>
                   {erc20Token.isOwner && (
