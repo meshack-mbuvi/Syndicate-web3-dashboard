@@ -76,7 +76,7 @@ const AmountToRaise: React.FC = () => {
     if (+amount > +MAX_AMOUNT_TO_RAISE) {
       setError(SYN_SUPPORT_MSG);
       setNextBtnDisabled(true);
-    } else if (!amount) {
+    } else if (!amount || +amount === 0) {
       setNextBtnDisabled(true);
     } else {
       setError("");
@@ -85,12 +85,13 @@ const AmountToRaise: React.FC = () => {
     dispatch(setTokenCap(amount));
   }, [amount]);
 
+  console.log({amount})
   return (
     <Fade delay={500}>
       <div className="flex w-full pb-6">
         <AdvancedInputField
           {...{
-            value: numberWithCommas(amount),
+            value: numberWithCommas(amount.replace(/^0{2,}/, "0")),
             label: "How much are you raising?",
             addOn: <MaxButton handleClick={() => setMaxAmount()} />,
             onChange: handleChange,

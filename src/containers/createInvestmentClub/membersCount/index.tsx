@@ -61,7 +61,7 @@ const MembersCount: React.FC = () => {
       <div className="flex w-full pb-6">
         <InputFieldWithMax
           {...{
-            value: parseInt(membersNumCount),
+            value: parseInt(membersNumCount.replace(/^0+/, "")),
             label: "How many members can join?",
             addOn: <MaxButton handleClick={() => handleSetMax()} />,
             onChange: handleSetMembersCount,

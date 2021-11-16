@@ -65,6 +65,7 @@ export const InputFieldWithMax = (props: {
                 onChange(event);
               }}
               value={value}
+              min="1"
             />
             {addOn && (
               <div

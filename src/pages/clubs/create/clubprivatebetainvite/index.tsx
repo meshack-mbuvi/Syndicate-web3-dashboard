@@ -82,7 +82,7 @@ const CreateInvestmentClub: React.FC = () => {
               <div className="hidden lg:block flex-1 w-1/4" />
               <div className="w-full lg:w-3/4">
                 <MainContent>
-                  <div className="flex-grow flex overflow-y-auto justify-between h-full no-scroll-bar">
+                  <div className="flex-grow flex overflow-y-auto justify-between h-full no-scroll-bar px-1">
                     <div className="flex flex-col w-full" ref={parentRef}>
                       <ReviewDetails />
                       {steps[currentStep].component}
