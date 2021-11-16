@@ -23,7 +23,8 @@ const Assets: React.FC = () => {
   // only show tabs for assets that exist.
   const tokensFound = tokensResult.length > 0;
   const collectiblesFound = collectiblesResult.length > 0;
-  let assetsFilterOptions = [
+  
+  const assetsFilterOptions = [
     {
       label: "All Assets",
       value: "all",

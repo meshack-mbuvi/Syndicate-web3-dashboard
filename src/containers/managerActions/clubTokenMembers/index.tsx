@@ -128,7 +128,7 @@ const ClubTokenMembers = (): JSX.Element => {
 
   return (
     <div className="w-full rounded-md h-full max-w-1480">
-      <div className="w-full px-2 sm:px-0">
+      <div className="w-full px-2 sm:px-0 col-span-12">
         {loading ? (
           <div className="space-y-6 my-11">
             <div className="flex space-x-3">
@@ -187,15 +187,15 @@ const ClubTokenMembers = (): JSX.Element => {
             </div>
           </div>
         ) : tableData.length || filteredAddress ? (
-          <div className="flex flex-col overflow-y-hidden">
-            <SyndicateMembersTable
-              columns={columns}
-              data={tableData}
-              filterAddressOnChangeHandler={filterAddressOnChangeHandler}
-              searchAddress={filteredAddress}
-            />
-          </div>
+          // <div className="flex flex-col overflow-y-hidden">
+          <SyndicateMembersTable
+            columns={columns}
+            data={tableData}
+            filterAddressOnChangeHandler={filterAddressOnChangeHandler}
+            searchAddress={filteredAddress}
+          />
         ) : (
+          // </div>
           <div className="flex justify-center">
             <div className="my-24.5">
               <div className="flex flex-col space-y-4 text-center">
