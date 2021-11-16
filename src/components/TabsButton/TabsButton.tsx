@@ -23,7 +23,11 @@ const TabsButton: FC<Props> = ({
   };
 
   return (
-    <div className="text-sm leading-4 inline-flex border-1 border-gray-steelGrey rounded-3xl box-border">
+    <div
+      className={`text-sm leading-4 inline-flex ${
+        options.some((option) => option.show) ? "border-1" : ""
+      } border-gray-steelGrey rounded-3xl box-border`}
+    >
       {options.map(({ label, value: val, show }, index) => {
         if (show) {
           return (
