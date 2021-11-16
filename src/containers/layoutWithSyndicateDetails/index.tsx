@@ -227,7 +227,7 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
               ) : (
                 <div className="container mx-auto ">
                   {/* Two Columns (Syndicate Details + Widget Cards) */}
-                  <BackButton />
+                  <BackButton topOffset={isSubNavStuck ? "-0.68rem" : "-0.25rem"} />
                   <div className="grid grid-cols-12 gap-5">
                     {/* Left Column */}
                     <div className="md:col-start-1 md:col-end-7 col-span-12">
@@ -252,7 +252,7 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
                             ref={subNav}
                             className={`${
                               isSubNavStuck ? "bg-gray-syn8" : "bg-black"
-                            } transition-all edge-to-edge-with-left-inset`}
+                            } sticky top-0 z-20 transition-all edge-to-edge-with-left-inset`}
                           >
                             <nav className="flex space-x-10" aria-label="Tabs">
                               <button
