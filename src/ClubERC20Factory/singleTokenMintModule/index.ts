@@ -80,9 +80,9 @@ export class SingleTokenMintModuleContract {
             setTransactionHash("");
             gnosisTxHash = transactionHash;
             resolve(transactionHash);
+          } else {
+            setTransactionHash(transactionHash);
           }
-
-          setTransactionHash(transactionHash);
         })
         .on("receipt", (receipt) => {
           onTxReceipt(receipt);
@@ -98,6 +98,11 @@ export class SingleTokenMintModuleContract {
     if (gnosisTxHash) {
       const receipt: any = await getGnosisTxnInfo(gnosisTxHash);
       setTransactionHash(receipt.transactionHash);
+      if (receipt.isSuccessful) {
+        onTxReceipt(receipt);
+      } else {
+        onTxFail("Transaction failed");
+      }
     }
   }
 }
