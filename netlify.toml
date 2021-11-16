@@ -23,3 +23,7 @@
   to = "https://demo.syndicate.io/clubs/*"
   status = 301
   force = true
+
+[[redirects]]
+  from = "/syndicates/*"
+  to = "https://app.syndicate.io/syndicates/:splat"
