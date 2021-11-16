@@ -21,5 +21,5 @@
 [[redirects]]
   from = "https://demo.syndicate.io/syndicates/*"
   to = "https://demo.syndicate.io/clubs/*"
-  status = 200
-  force = false
+  status = 301
+  force = true
