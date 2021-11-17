@@ -11,11 +11,15 @@ import {
   ERC20TokenDefaultState,
   setERC20Token,
 } from "@/helpers/erc20TokenDetails";
+import NotFoundPage from "@/pages/404";
 import { RootState } from "@/redux/store";
 import {
   fetchCollectiblesTransactions,
   fetchTokenTransactions,
 } from "@/state/assets/slice";
+import { setClubMembers } from "@/state/clubMembers";
+import { setERC20TokenDetails } from "@/state/erc20token/slice";
+import { Status } from "@/state/wallet/types";
 import { formatAddress } from "@/utils/formatAddress";
 import { faExclamationTriangle } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -26,10 +30,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { syndicateActionConstants } from "src/components/syndicates/shared/Constants";
 import ClubTokenMembers from "../managerActions/clubTokenMembers";
 import Assets from "./assets";
-import { Status } from "@/state/wallet/types";
-import NotFoundPage from "@/pages/404";
-import { setERC20TokenDetails } from "@/state/erc20token/slice";
-import { setClubMembers } from "@/state/clubMembers";
 
 const LayoutWithSyndicateDetails: FC = ({ children }) => {
   // Retrieve state
@@ -260,10 +260,10 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
                               <button
                                 key="members"
                                 onClick={() => setActiveTab("assets")}
-                                className={`whitespace-nowrap h4 w-fit-content py-6 transition-all h-16 border-b-1 focus:ring-0 font-whyte text-sm cursor-pointer ${
+                                className={`whitespace-nowrap h4 w-fit-content py-6 transition-all border-b-1 focus:ring-0 font-whyte text-sm cursor-pointer ${
                                   activeTab == "assets"
                                     ? "border-white text-white"
-                                    : "border-transparent text-gray-500 hover:text-gray-40"
+                                    : "border-transparent text-gray-syn4 hover:text-gray-40"
                                 }`}
                               >
                                 Assets
@@ -271,10 +271,10 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
                               <button
                                 key="members"
                                 onClick={() => setActiveTab("members")}
-                                className={`whitespace-nowrap h4 py-6 transition-all h-16 border-b-1 focus:ring-0 font-whyte text-sm cursor-pointer ${
+                                className={`whitespace-nowrap h4 py-6 transition-all border-b-1 focus:ring-0 font-whyte text-sm cursor-pointer ${
                                   activeTab == "members"
                                     ? "border-white text-white"
-                                    : "border-transparent text-gray-500 hover:text-gray-400 "
+                                    : "border-transparent text-gray-syn4 hover:text-gray-400 "
                                 }`}
                               >
                                 Members
