@@ -28,6 +28,7 @@ import { useRouter } from "next/router";
 import React, { FC, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { syndicateActionConstants } from "src/components/syndicates/shared/Constants";
+
 import ClubTokenMembers from "../managerActions/clubTokenMembers";
 import Assets from "./assets";
 
@@ -68,12 +69,13 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
   }, [scrollTop]);
 
   useEffect(() => {
-    // fetch token transactions for the connected account.
-    dispatch(fetchTokenTransactions(erc20Token.owner));
-
-    // test nft account: 0xf4c2c3e12b61d44e6b228c43987158ac510426fb
-    dispatch(fetchCollectiblesTransactions(erc20Token.owner));
-  }, [erc20Token]);
+    if (erc20Token.owner) {
+      // fetch token transactions for the connected account.
+      dispatch(fetchTokenTransactions(erc20Token.owner));
+      // test nft account: 0xf4c2c3e12b61d44e6b228c43987158ac510426fb
+      dispatch(fetchCollectiblesTransactions(erc20Token.owner));
+    }
+  }, [erc20Token.owner]);
 
   const router = useRouter();
   const dispatch = useDispatch();
@@ -82,23 +84,13 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
 
   const { clubAddress } = router.query;
 
-  const [clubERC20tokenContract, setClubERC20tokenContract] = useState(null);
-
   useEffect(() => {
     if (router.isReady && web3.utils.isAddress(clubAddress)) {
       const clubERC20tokenContract = new ClubERC20Contract(
         clubAddress as string,
         web3,
       );
-      setClubERC20tokenContract(clubERC20tokenContract);
-    }
-    return () => {
-      setClubERC20tokenContract(null);
-    };
-  }, [clubAddress, router.isReady, web3]);
 
-  useEffect(() => {
-    if (clubERC20tokenContract && router.isReady) {
       dispatch(
         setERC20Token(
           clubERC20tokenContract,
@@ -106,13 +98,13 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
           account,
         ),
       );
+
+      return () => {
+        dispatch(setERC20TokenDetails(ERC20TokenDefaultState));
+        dispatch(setClubMembers([]));
+      };
     }
-    return () => {
-      // reset to default when component unmounts
-      dispatch(setERC20TokenDetails(ERC20TokenDefaultState));
-      dispatch(setClubMembers([]));
-    };
-  }, [clubERC20tokenContract, account, router.isReady]);
+  }, [clubAddress, account, router.isReady]);
 
   const showOnboardingIfNeeded = router.pathname.endsWith("deposit");
 
