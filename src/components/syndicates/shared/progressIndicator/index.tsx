@@ -36,7 +36,7 @@ export const ProgressIndicator = (props: IProgressIndicator): JSX.Element => {
   );
 
   return (
-    <div className="w-full xl:pb-14 pb-10 border-b-2 border-gray-9">
+    <div className="w-full xl:pb-14 pb-10 border-b-2 border-gray-syn6">
       {loading ? (
         <div>
           <div className="mb-4">
