@@ -5,11 +5,9 @@ import React, { FC } from "react";
 import Head from "src/components/syndicates/shared/HeaderTitle";
 
 /**
- * Diplays all syndicates.
- * The main groups for syndicates are active and inactive
+ * Diplays all clubs.
+ 
  *
- * At the top-right of the page, there is a create button which opens a modal
- * with a form to create a new syndicate
  */
 const SyndicatesComponent: FC = () => {
   return (
@@ -29,7 +27,7 @@ const SyndicatesComponent: FC = () => {
       </form>
       <ErrorBoundary>
         <div className="w-full">
-          {/* show my syndicates */}
+          {/* show my clubs */}
           <div className="container mx-auto">
             <PortfolioAndDiscover />
           </div>

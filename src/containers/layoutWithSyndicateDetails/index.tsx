@@ -297,8 +297,6 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
                         </div>
                       )}
                   </div>
-
-                  <Footer extraClasses="mt-24 sm:mt-24 md:mt-40 mb-12" />
                 </div>
               )}
             </div>
