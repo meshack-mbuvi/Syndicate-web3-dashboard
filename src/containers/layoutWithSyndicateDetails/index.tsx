@@ -68,11 +68,13 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
   }, [scrollTop]);
 
   useEffect(() => {
-    // fetch token transactions for the connected account.
-    dispatch(fetchTokenTransactions(erc20Token.owner));
+    if (erc20Token.owner) {
+      // fetch token transactions for the connected account.
+      dispatch(fetchTokenTransactions(erc20Token.owner));
 
-    // test nft account: 0xf4c2c3e12b61d44e6b228c43987158ac510426fb
-    dispatch(fetchCollectiblesTransactions(erc20Token.owner));
+      // test nft account: 0xf4c2c3e12b61d44e6b228c43987158ac510426fb
+      dispatch(fetchCollectiblesTransactions(erc20Token.owner));
+    }
   }, [erc20Token.owner]);
 
   const router = useRouter();
