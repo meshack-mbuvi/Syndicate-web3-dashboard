@@ -28,7 +28,7 @@ const Assets: React.FC = () => {
     {
       label: "All Assets",
       value: "all",
-      show: true,
+      show: tokensFound && collectiblesFound,
     },
     {
       label: "Tokens",
@@ -61,7 +61,9 @@ const Assets: React.FC = () => {
 
   return (
     <>
-      <div className="mt-14 mb-16">
+      <div
+        className={`${collectiblesFound && tokensFound ? "mt-14" : ""} mb-16`}
+      >
         <TabsButton
           options={assetsFilterOptions}
           value="all"
