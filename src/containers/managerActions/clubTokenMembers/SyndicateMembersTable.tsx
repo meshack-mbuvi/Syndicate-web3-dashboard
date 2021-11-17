@@ -48,8 +48,8 @@ const SyndicateMembersTable = ({
   }
 
   return (
-    <div className="flex flex-col overflow-y-hidden">
-      <div className="flex my-11 space-x-8 justify-between items-center">
+    <div className=" overflow-y-hidden ">
+      <div className="flex my-11 col-span-12 space-x-8 justify-between items-center">
         {
           // no point showing the search form if there is just one member.
           page.length > 1 || searchAddress ? (
@@ -82,7 +82,7 @@ const SyndicateMembersTable = ({
                   <tr
                     {...headerGroup.getHeaderGroupProps()}
                     key={index}
-                    className="text-gray-sun4 text-sm leading-6"
+                    className="text-gray-sun4 text-sm grid grid-cols-12 gap-5 leading-6"
                   >
                     {
                       // Loop over the headers in each row
@@ -93,7 +93,7 @@ const SyndicateMembersTable = ({
                           <th
                             {...column.getHeaderProps()}
                             key={index}
-                            className="rounded-md pb-2 w-1/4 text-left text-sm font-whyte-light text-gray-syn4"
+                            className="flex align-middle rounded-md col-span-3 text-left text-sm font-whyte-light text-gray-syn4"
                           >
                             {
                               // Render the header
@@ -110,7 +110,7 @@ const SyndicateMembersTable = ({
         </thead>
 
         <tbody
-          className="divide-y divide-gray-syn6 overflow-y-scroll"
+          className="w-full divide-y divide-gray-syn6 overflow-y-scroll"
           {...getTableBodyProps()}
         >
           {
@@ -125,7 +125,7 @@ const SyndicateMembersTable = ({
                 <tr
                   {...row.getRowProps()}
                   key={index}
-                  className="border-b-1 text-base border-gray-syn6 text-left"
+                  className="w-full text-base grid grid-cols-12 gap-5 border-gray-syn6 text-left"
                 >
                   {
                     // Loop over the rows cells
@@ -137,7 +137,7 @@ const SyndicateMembersTable = ({
                         <td
                           {...cell.getCellProps()}
                           key={cellIndex}
-                          className={`m-0 font-whyte-light text-base py-5 text-white`}
+                          className={`m-0 font-whyte-light col-span-3 text-base py-5 text-white`}
                         >
                           {
                             // Render the cell contents

@@ -1,11 +1,11 @@
-import { FC, useEffect, useState, useRef } from "react";
-import Image from "next/image";
-import { useSelector } from "react-redux";
+import { SkeletonLoader } from "@/components/skeletonLoader";
+import GradientAvatar from "@/components/syndicates/portfolioAndDiscover/portfolio/GradientAvatar";
+import AssetEmptyState from "@/containers/layoutWithSyndicateDetails/assets/AssetEmptyState";
 import { RootState } from "@/redux/store";
 import { floatedNumberWithCommas } from "@/utils/formattedNumbers";
-import GradientAvatar from "@/components/syndicates/portfolioAndDiscover/portfolio/GradientAvatar";
-import { SkeletonLoader } from "@/components/skeletonLoader";
-import AssetEmptyState from "@/containers/layoutWithSyndicateDetails/assets/AssetEmptyState";
+import Image from "next/image";
+import { FC, useEffect, useRef, useState } from "react";
+import { useSelector } from "react-redux";
 interface Props {
   columns: string[];
   tableData: any[];
@@ -117,9 +117,14 @@ const TokenTable: FC<Props> = ({ columns, tableData, activeAssetTab }) => {
           <div className="flex flex-col pt-8">
             {/* scroll to top of table with this button when pagination is clicked  */}
             <button ref={tokensTableRef} />
-            <div className="grid grid-cols-3 pb-3 text-gray-lightManatee">
+            <div className="grid grid-cols-12 gap-5 pb-3 text-gray-lightManatee">
               {columns?.map((col, idx) => (
-                <div key={`token-table-header-${idx}`} className="text-sm">{col}</div>
+                <div
+                  key={`token-table-header-${idx}`}
+                  className="text-sm col-span-3"
+                >
+                  {col}
+                </div>
               ))}
             </div>
           </div>
@@ -139,9 +144,9 @@ const TokenTable: FC<Props> = ({ columns, tableData, activeAssetTab }) => {
                   return (
                     <div
                       key={`token-table-row-${index}`}
-                      className="grid grid-cols-3 border-b-1 border-gray-steelGrey py-5"
+                      className="grid grid-cols-12 gap-5 border-b-1 border-gray-steelGrey py-5"
                     >
-                      <div className="flex flex-row items-center">
+                      <div className="flex flex-row col-span-3 items-center">
                         <div className="flex flex-shrink-0 pr-4">
                           {logo ? (
                             <img
@@ -163,7 +168,8 @@ const TokenTable: FC<Props> = ({ columns, tableData, activeAssetTab }) => {
                           </span>
                         </div>
                       </div>
-                      <div className="text-base flex items-center">
+
+                      <div className="text-base col-span-3 flex items-center">
                         {balanceValue}
                         {balanceDecimalValue && (
                           <span className="text-gray-lightManatee">
@@ -173,7 +179,8 @@ const TokenTable: FC<Props> = ({ columns, tableData, activeAssetTab }) => {
                         &nbsp;
                         {tokenSymbol}
                       </div>
-                      <div className="text-base flex items-center">
+
+                      <div className="text-base flex col-span-3 items-center">
                         {usd}
                         {usdDecimalValue && (
                           <span className="text-gray-lightManatee">

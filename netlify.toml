@@ -17,3 +17,13 @@
 
 [build.environment]
   NODE_OPTIONS = "--max_old_space_size=8192"
+
+[[redirects]]
+  from = "https://demo.syndicate.io/syndicates/*"
+  to = "https://demo.syndicate.io/clubs/*"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/syndicates/*"
+  to = "https://app.syndicate.io/syndicates/:splat"

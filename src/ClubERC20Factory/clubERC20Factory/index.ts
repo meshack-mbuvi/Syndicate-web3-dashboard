@@ -73,12 +73,14 @@ export class ClubERC20Factory {
         )
         .send({ from: account })
         .on("transactionHash", (transactionHash) => {
-          onTxConfirm(transactionHash);
           if (
             this.web3._provider.wc?._peerMeta.name === "Gnosis Safe Multisig"
           ) {
             gnosisTxHash = transactionHash;
             resolve(transactionHash);
+            onTxConfirm("");
+          } else {
+            onTxConfirm(transactionHash);
           }
         })
         .on("receipt", (receipt) => {
@@ -92,7 +94,26 @@ export class ClubERC20Factory {
 
     // fallback for gnosisSafe <> walletConnect
     if (gnosisTxHash) {
-      await getGnosisTxnInfo(gnosisTxHash);
+      const receipt: any = await getGnosisTxnInfo(gnosisTxHash);
+      onTxConfirm(receipt.transactionHash);
+
+      const createEvents = await this.clubERC20Factory.getPastEvents(
+        "ClubERC20Created",
+        {
+          filter: { transactionHash: receipt.transactionHash },
+          fromBlock: receipt.blockNumber,
+          toBlock: receipt.blockNumber,
+        },
+      );
+
+      if (receipt.isSuccessful) {
+        onTxReceipt({
+          ...receipt,
+          events: { ClubERC20Created: createEvents[0] },
+        });
+      } else {
+        throw "Transaction Failed";
+      }
     }
   }
 }

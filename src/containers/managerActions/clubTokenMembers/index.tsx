@@ -87,7 +87,7 @@ const ClubTokenMembers = (): JSX.Element => {
                 src={"/images/user.svg"}
                 alt="user"
               />
-              <p className="my-auto">{formatAddress(memberAddress, 6, 6)}</p>
+              <p className="my-1">{formatAddress(memberAddress, 6, 6)}</p>
             </div>
           );
         },
@@ -99,7 +99,7 @@ const ClubTokenMembers = (): JSX.Element => {
           depositSymbol = "USDC",
         }) {
           return (
-            <p className="flex text-white text-base">
+            <p className="flex text-white text-base my-1 leading-6">
               {`${floatedNumberWithCommas(depositAmount)} ${depositSymbol}`}
             </p>
           );
@@ -113,7 +113,7 @@ const ClubTokenMembers = (): JSX.Element => {
           symbol,
         }) {
           return (
-            <p className="">
+            <p className="my-1">
               {`${floatedNumberWithCommas(clubTokens)} ${symbol}`}
               <span className="ml-1 font-whyte-light text-gray-syn4">
                 {`(${floatedNumberWithCommas(ownershipShare)} %)`}
@@ -128,7 +128,7 @@ const ClubTokenMembers = (): JSX.Element => {
 
   return (
     <div className="w-full rounded-md h-full max-w-1480">
-      <div className="w-full px-2 sm:px-0">
+      <div className="w-full px-2 sm:px-0 col-span-12">
         {loading ? (
           <div className="space-y-6 my-11">
             <div className="flex space-x-3">
@@ -187,15 +187,15 @@ const ClubTokenMembers = (): JSX.Element => {
             </div>
           </div>
         ) : tableData.length || filteredAddress ? (
-          <div className="flex flex-col overflow-y-hidden">
-            <SyndicateMembersTable
-              columns={columns}
-              data={tableData}
-              filterAddressOnChangeHandler={filterAddressOnChangeHandler}
-              searchAddress={filteredAddress}
-            />
-          </div>
+          // <div className="flex flex-col overflow-y-hidden">
+          <SyndicateMembersTable
+            columns={columns}
+            data={tableData}
+            filterAddressOnChangeHandler={filterAddressOnChangeHandler}
+            searchAddress={filteredAddress}
+          />
         ) : (
+          // </div>
           <div className="flex justify-center">
             <div className="my-24.5">
               <div className="flex flex-col space-y-4 text-center">

@@ -20,7 +20,7 @@
         "type": "uint16"
       }
     ],
-    "name": "MintPercentageFeeSet",
+    "name": "MintPercentageFeeUpdated",
     "type": "event"
   },
   {
@@ -115,12 +115,12 @@
   {
     "inputs": [
       {
-        "internalType": "uint16",
-        "name": "basisPoints_",
-        "type": "uint16"
+        "internalType": "address",
+        "name": "newOwner",
+        "type": "address"
       }
     ],
-    "name": "setBasisPoints",
+    "name": "transferOwnership",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -128,12 +128,12 @@
   {
     "inputs": [
       {
-        "internalType": "address",
-        "name": "newOwner",
-        "type": "address"
+        "internalType": "uint16",
+        "name": "basisPoints_",
+        "type": "uint16"
       }
     ],
-    "name": "transferOwnership",
+    "name": "updateBasisPoints",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"

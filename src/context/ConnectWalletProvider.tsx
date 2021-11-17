@@ -71,9 +71,7 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
 }) => {
   const {
     web3Reducer: {
-      web3: {
-        currentEthereumNetwork,
-      },
+      web3: { currentEthereumNetwork },
     },
   } = useSelector((state: RootState) => state);
 
@@ -97,11 +95,21 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
       package: WalletConnectProvider, // required
       options: {
         rpc: {
-          1: process.env.NEXT_PUBLIC_ALCHEMY,
-          4: process.env.NEXT_PUBLIC_ALCHEMY_ENDPOINT_RINKEBY,
+          1: `${process.env.NEXT_PUBLIC_ALCHEMY_MAINNET}`,
+          4: `${process.env.NEXT_PUBLIC_ALCHEMY_RINKEBY}`,
         },
       },
     },
+  };
+
+  /*
+   * Allows running as a gnosis safe app
+   * This checks and connects automatially in gnosis safe.
+   * Needs `public/manifest.json` to work.
+   */
+  const checkGnosis = async (w3Modal) => {
+    const isSafeApp = await w3Modal.isSafeApp();
+    await setLoadedAsSafeApp(isSafeApp);
   };
 
   // Initialize web3modal
@@ -111,17 +119,8 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
       cacheProvider: true,
       providerOptions, // required
     });
+    checkGnosis(web3Modal);
   }
-
-  /*
-   * Allows running as a gnosis safe app
-   * This checks and connects automatially in gnosis safe.
-   * Needs `public/manifest.json` to work.
-   */
-  const checkGnosis = async () => {
-    const isSafeApp = await web3Modal.isSafeApp();
-    await setLoadedAsSafeApp(isSafeApp);
-  };
 
   /**
    * Instantiates contract, and adds it together with web3 provider details to
@@ -173,7 +172,6 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
       const parseCacheWallet = parse(cacheWallet);
       setCachedWalletData(parseCacheWallet);
     }
-    checkGnosis();
   }, []);
 
   // Connect from cached provider info.
@@ -259,7 +257,7 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
 
     let provider;
     if (providerName === "GnosisSafe") {
-      provider = await web3Modal.getProvider();
+      provider = await web3Modal.requestProvider();
     } else {
       // connect to selected providers
       provider = await web3Modal.connectTo(providerName.toLowerCase());
