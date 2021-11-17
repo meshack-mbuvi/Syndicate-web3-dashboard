@@ -20,6 +20,38 @@
     "inputs": [
       {
         "indexed": true,
+        "internalType": "address",
+        "name": "club",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "fee",
+        "type": "address"
+      }
+    ],
+    "name": "ClubFeeCalculatorUpdated",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "fee",
+        "type": "address"
+      }
+    ],
+    "name": "DefaultFeeCalculatorUpdated",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
         "internalType": "bytes32",
         "name": "role",
         "type": "bytes32"
@@ -178,7 +210,7 @@
     "inputs": [
       {
         "internalType": "address",
-        "name": "clubToken",
+        "name": "club",
         "type": "address"
       }
     ],
@@ -306,37 +338,6 @@
   {
     "inputs": [
       {
-        "internalType": "address",
-        "name": "clubToken",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "fee",
-        "type": "address"
-      }
-    ],
-    "name": "setClubFeeCalculator",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "defaultFeeCalculator_",
-        "type": "address"
-      }
-    ],
-    "name": "setDefaultFeeCalculator",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
         "internalType": "bytes4",
         "name": "interfaceId",
         "type": "bytes4"
@@ -362,6 +363,37 @@
       }
     ],
     "name": "transferOwnership",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "club",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "fee",
+        "type": "address"
+      }
+    ],
+    "name": "updateClubFeeCalculator",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "defaultFeeCalculator_",
+        "type": "address"
+      }
+    ],
+    "name": "updateDefaultFeeCalculator",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
