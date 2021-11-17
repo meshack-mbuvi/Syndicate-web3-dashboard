@@ -73,7 +73,7 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
 
     // test nft account: 0xf4c2c3e12b61d44e6b228c43987158ac510426fb
     dispatch(fetchCollectiblesTransactions(erc20Token.owner));
-  }, [erc20Token]);
+  }, [erc20Token.owner]);
 
   const router = useRouter();
   const dispatch = useDispatch();
