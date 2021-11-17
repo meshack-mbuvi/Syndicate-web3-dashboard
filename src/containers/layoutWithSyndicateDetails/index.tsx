@@ -72,7 +72,6 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
     if (erc20Token.owner) {
       // fetch token transactions for the connected account.
       dispatch(fetchTokenTransactions(erc20Token.owner));
-
       // test nft account: 0xf4c2c3e12b61d44e6b228c43987158ac510426fb
       dispatch(fetchCollectiblesTransactions(erc20Token.owner));
     }
@@ -91,6 +90,7 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
         clubAddress as string,
         web3,
       );
+
       dispatch(
         setERC20Token(
           clubERC20tokenContract,
@@ -104,7 +104,7 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
         dispatch(setClubMembers([]));
       };
     }
-  }, [clubAddress, account, router.isReady, web3]);
+  }, [clubAddress, account, router.isReady]);
 
   const showOnboardingIfNeeded = router.pathname.endsWith("deposit");
 
