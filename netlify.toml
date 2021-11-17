@@ -20,4 +20,4 @@
 
 [[redirects]]
   from = "/syndicates/*"
-  to = "https://app.syndicate.io/syndicates/:splat"
+  to = "https://v1.syndicate.io/syndicates/:splat"
