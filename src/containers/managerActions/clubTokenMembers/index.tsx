@@ -187,7 +187,6 @@ const ClubTokenMembers = (): JSX.Element => {
             </div>
           </div>
         ) : tableData.length || filteredAddress ? (
-          // <div className="flex flex-col overflow-y-hidden">
           <SyndicateMembersTable
             columns={columns}
             data={tableData}
@@ -195,7 +194,6 @@ const ClubTokenMembers = (): JSX.Element => {
             searchAddress={filteredAddress}
           />
         ) : (
-          // </div>
           <div className="flex justify-center">
             <div className="my-24.5">
               <div className="flex flex-col space-y-4 text-center">
@@ -203,8 +201,8 @@ const ClubTokenMembers = (): JSX.Element => {
 
                 <div className="space-y-8 flex flex-col items-center">
                   <p className="text-gray-syn4 text-base">
-                    Invite members by sharing your club's deposit link. They’ll
-                    show up here once they deposit.
+                    Invite members by sharing your club&apos;s deposit link.
+                    They’ll show up here once they deposit.
                   </p>
                   {erc20Token.isOwner && (
                     <div

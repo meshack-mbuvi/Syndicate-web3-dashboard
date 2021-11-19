@@ -1,7 +1,6 @@
 import { ClubERC20Contract } from "@/ClubERC20Factory/clubERC20";
 import ErrorBoundary from "@/components/errorBoundary";
 import Layout from "@/components/layout";
-import Footer from "@/components/navigation/footer";
 import OnboardingModal from "@/components/onboarding";
 import BackButton from "@/components/socialProfiles/backButton";
 import { EtherscanLink } from "@/components/syndicates/shared/EtherscanLink";
@@ -28,7 +27,6 @@ import { useRouter } from "next/router";
 import React, { FC, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { syndicateActionConstants } from "src/components/syndicates/shared/Constants";
-
 import ClubTokenMembers from "../managerActions/clubTokenMembers";
 import Assets from "./assets";
 
