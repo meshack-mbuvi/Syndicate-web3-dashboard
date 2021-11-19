@@ -54,17 +54,15 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
 
 
   useEffect( () => {
-    if(typeof window !== 'undefined') {
-      const nameSplit = name.split(" ")
-      const renderedOutput = nameSplit.map(item => <div className="mr-6"> {item} </div>)
-      const divChunks = (
-        <div className="flex">
-          {renderedOutput}
-        </div>
-      )
-      setNameDivs(divChunks)
-    }
-  }, [window])
+    const nameSplit = name.split(" ")
+    const renderedOutput = nameSplit.map(item => <div className="mr-4"> {item} </div>)
+    const divChunks = (
+      <div className="flex">
+        {renderedOutput}
+      </div>
+    )
+    setNameDivs(divChunks)
+  }, [name])
 
   const router = useRouter();
   const [details, setDetails] = useState<ClubDetails[]>([]);
