@@ -34,6 +34,7 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
     syndicatesReducer: { syndicate },
   } = useSelector((state: RootState) => state);
 
+  const [nameDivs, setNameDivs] = useState(<></>);
   const {
     loading,
     maxTotalDeposits,
@@ -50,6 +51,21 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
     accountClubTokens,
     isOwner,
   } = erc20Token;
+
+
+  useEffect( () => {
+    if(typeof window !== 'undefined') {
+      const nameSplit = name.split(" ")
+      const renderedOutput = nameSplit.map(item => <div className="mr-6"> {item} </div>)
+      const divChunks = (
+        <div className="flex">
+          {renderedOutput}
+        </div>
+      )
+      setNameDivs(divChunks)
+    }
+  }, [window])
+
   const router = useRouter();
   const [details, setDetails] = useState<ClubDetails[]>([]);
 
@@ -247,11 +263,12 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
                       />
                     </div>
                   ) : (
-                    <div className="block items-center w-fit-content">
+                    <div className="flex items-center w-fit-content">
                       <div
-                        className={`2xl:text-4.5xl leading-10 lg:text-4xl md:text-xl sm:text-4xl text-lg font-normal line-clamp-2`}
+                        // className={`2xl:text-4.5xl leading-10 lg:text-4xl md:text-xl sm:text-4xl text-lg font-normal line-clamp-2`}
+                        className={`inline-flex 2xl:text-4.5xl leading-10 lg:text-4xl md:text-xl sm:text-4xl text-lg font-normal`}
                       >
-                        {name}
+                        {nameDivs}
                       </div>
                       <div className="inline-block flex-wrap">
                         <div className="font-whyte-light text-gray-syn4 flex items-center justify-center">
