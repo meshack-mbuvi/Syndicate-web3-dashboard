@@ -4,7 +4,7 @@ import React from "react";
 import Layout from "src/components/layout";
 import SEO from "src/components/seo";
 
-function NotFoundPage() {
+const NotFoundPage: React.FC = () => {
   return (
     <Layout>
       <SEO
@@ -23,7 +23,7 @@ function NotFoundPage() {
           <div className="w-full sm:w-8/12 lg:w-5/12">
             <h2 className="tagline mb-4">404 / Not Found</h2>
             <h1 className="font-whyte text-3xl mb-3">
-              There's nothing here yet
+              There&apos;s nothing here yet
             </h1>
             <p className="mb-3 text-gray-3">
               Make sure you’re connected with a wallet that has permission to

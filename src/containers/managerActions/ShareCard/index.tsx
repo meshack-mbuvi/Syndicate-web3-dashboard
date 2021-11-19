@@ -2,17 +2,19 @@ import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useRouter } from "next/router";
 
-import { RootState } from "@/redux/store";
+import { AppState } from "@/state";
 import StatusBadge from "@/components/syndicateDetails/statusBadge";
 import CopyLink from "@/components/shared/CopyLink";
 
-const ShareModal = () => {
+const ShareModal: React.FC = () => {
   const {
-    syndicatesReducer: { syndicate },
-  } = useSelector((state: RootState) => state);
+    erc20TokenSliceReducer: {
+      erc20Token: { depositsEnabled }
+    }
+  } = useSelector((state: AppState) => state);
 
   const router = useRouter();
-  const { syndicateAddress } = router.query;
+  const { clubAddress } = router.query;
   const [showDepositLinkCopyState, setShowDepositLinkCopyState] =
     useState<boolean>(false);
 
@@ -25,14 +27,14 @@ const ShareModal = () => {
   const [clubDepositLink, setClubDepositLink] = useState<string>("");
   useEffect(() => {
     setClubDepositLink(
-      `${window.location.origin}/syndicates/${syndicateAddress}/`,
+      `${window.location.origin}/clubs/${clubAddress}/`,
     );
-  }, [syndicateAddress]);
+  }, [clubAddress]);
 
   return (
     <div className="rounded-2-half bg-gray-syn8">
       <StatusBadge
-        depositsEnabled={syndicate?.depositsEnabled}
+        depositsEnabled={depositsEnabled}
       />
       <div className="h-fit-content rounded-2-half py-10 px-8 flex justify-center items-center flex-col">
         <img

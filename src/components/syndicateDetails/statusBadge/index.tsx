@@ -1,6 +1,6 @@
 import React from "react";
 import { Spinner } from "@/components/shared/spinner";
-import { RootState } from "@/redux/store";
+import { AppState } from "@/state";
 import { useSelector } from "react-redux";
 import { SkeletonLoader } from "@/components/skeletonLoader";
 
@@ -29,7 +29,7 @@ const StatusBadge = (props: Props): JSX.Element => {
     erc20TokenSliceReducer: {
       erc20Token: { loading },
     },
-  } = useSelector((state: RootState) => state);
+  } = useSelector((state: AppState) => state);
 
   let badgeBackgroundColor = "bg-blue-darker";
   let badgeIcon: string | React.ReactNode = "depositIcon.svg";

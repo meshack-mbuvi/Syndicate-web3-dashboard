@@ -1,6 +1,10 @@
 import Link from "next/link";
 
-const BackButton = ({
+const BackButton: React.FC<{
+  isSticky?: boolean;
+  topOffset?: string;
+  customClasses?: string;
+}> = ({
   isSticky = true,
   topOffset = null,
   customClasses = "",

@@ -5,7 +5,6 @@ import TransactionStateModal from "../shared";
 
 interface Props {
   show: boolean;
-  children;
   spinnerHeight?: string;
   spinnerWidth?: string;
   modalStyle?: string;
@@ -15,7 +14,7 @@ interface Props {
  * This is a modal that shows different transaction states
  * @returns an html node in a form of a modal
  */
-export const ConfirmStateModal = (props: Props) => {
+export const ConfirmStateModal: React.FC<Props> = (props) => {
   const { children, spinnerHeight, spinnerWidth, modalStyle, width, ...rest } =
     props;
   return (

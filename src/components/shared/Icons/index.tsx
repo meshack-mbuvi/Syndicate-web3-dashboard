@@ -3,7 +3,7 @@ interface Idelete {
   color?: string;
   dimensions?: string;
 }
-export const DeleteIcon = (props: Idelete) => {
+export const DeleteIcon: React.FC<Idelete> = (props) => {
   const { color, dimensions } = props;
   return (
     <svg
@@ -26,7 +26,7 @@ export const DeleteIcon = (props: Idelete) => {
 interface IBan {
   color?: string;
 }
-export const BanIcon = (props: IBan) => {
+export const BanIcon: React.FC<IBan> = (props) => {
   const { color } = props;
   return (
     <svg
@@ -51,7 +51,7 @@ interface ICancelIcon {
   width?: string;
   color?: string;
 }
-export const CancelIcon = (props: ICancelIcon) => {
+export const CancelIcon: React.FC<ICancelIcon> = (props) => {
   const { height = "h-10", width = "w-10", color = "text-red-500" } = props;
   return (
     <svg
@@ -71,36 +71,12 @@ export const CancelIcon = (props: ICancelIcon) => {
   );
 };
 
-interface IChevronDown {
-  height?: string;
-  width?: string;
-}
-export const ChevronDown = (props: IChevronDown) => {
-  const { height = "h-10", width = "w-10" } = props;
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      className={`${height} ${width} text-gray-3`}
-      fill="none"
-      viewBox="0 0 24 24"
-      stroke="currentColor"
-    >
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth={2}
-        d="M19 9l-7 7-7-7"
-      />
-    </svg>
-  );
-};
-
 interface ISearchIcon {
   height?: string;
   width?: string;
   color?: string;
 }
-export const SearchIcon = (props: ISearchIcon) => {
+export const SearchIcon: React.FC<ISearchIcon> = (props) => {
   const { height = "h-4", width = "w-4", color = "text-gray-3" } = props;
   return (
     <svg
@@ -120,7 +96,7 @@ export const SearchIcon = (props: ISearchIcon) => {
   );
 };
 
-export const MoreInfoIcon = () => {
+export const MoreInfoIcon: React.FC = () => {
   return (
     <svg
       width="16"

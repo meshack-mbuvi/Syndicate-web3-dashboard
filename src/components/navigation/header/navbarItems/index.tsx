@@ -1,20 +1,20 @@
 import React from "react";
-import Link from "src/components/syndicates/shared/ActiveLink";
-import PropTypes from "prop-types";
+import ActiveLink from "@/components/syndicates/shared/ActiveLink";
 
-export const NavBarNavItem = ({ url, urlText, customClasses = "" }) => {
+interface IProps {
+  url: string;
+  urlText: string;
+  customClasses?: string;
+}
+
+export const NavBarNavItem: React.FC<IProps> = ({ url, urlText, customClasses = "" }) => {
   return (
-    <Link href={`${url}`} customActive="border-b-1 hover:border-opacity-100">
+    <ActiveLink href={url} customActive="border-b-1 hover:border-opacity-100">
       <div className="h-full mr-3 md:mr-6 lg:mr-9 hover:border-b-1 hover:border-opacity-50 cursor-pointer">
         <a className={`${customClasses} text-sm sm:text-base text-white leading-7 vertically-center inline-block transition-all`}>
           {urlText}
         </a>
       </div>
-    </Link>
+    </ActiveLink>
   );
-};
-
-NavBarNavItem.propTypes = {
-  url: PropTypes.string.isRequired,
-  urlText: PropTypes.string.isRequired,
 };

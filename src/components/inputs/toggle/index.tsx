@@ -1,12 +1,12 @@
 import React from "react";
 import { InfoIcon } from "src/components/iconWrappers";
 
-export const Toggle = (props: {
+export const Toggle: React.FC<{
   enabled: boolean;
   toggleEnabled: () => void;
   label: string;
   tooltip?: string;
-}) => {
+}> = (props) => {
   const { toggleEnabled, label, tooltip, enabled = false } = props;
   let translateClass = "translate-x-0";
   let backgroundClass = "bg-gray-light";

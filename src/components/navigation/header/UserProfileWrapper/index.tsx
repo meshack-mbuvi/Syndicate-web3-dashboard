@@ -1,10 +1,6 @@
 import React from "react";
 
-interface Props {
-  children: JSX.Element;
-}
-
-export const UserProfileWrapper = ({ children }: Props) => {
+export const UserProfileWrapper: React.FC = ({ children }) => {
   return (
     <div
       className="flex ml-1 flex-col md:flex-row md:px-1 md:py-1 bg-gray-9

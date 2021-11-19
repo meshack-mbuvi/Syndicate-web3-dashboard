@@ -1,7 +1,6 @@
 import { ClubERC20Contract } from "@/ClubERC20Factory/clubERC20";
 import { CLUBS_HAVE_INVESTED, MY_CLUBS_QUERY } from "@/graphql/queries";
-import { SYNDICATE_BY_ADDRESS } from "@/redux/actions/types";
-import { RootState } from "@/redux/store";
+import { AppState } from "@/state";
 import {
   setLoadingClubERC20s,
   setMyClubERC20s,
@@ -20,7 +19,7 @@ const useClubERC20s = () => {
   const {
     initializeContractsReducer: { syndicateContracts },
     web3Reducer: { web3 },
-  } = useSelector((state: RootState) => state);
+  } = useSelector((state: AppState) => state);
 
   const [accountHasClubs, setAccountHasClubs] = useState(false);
 
@@ -158,10 +157,6 @@ const useClubERC20s = () => {
     // The currentEthereumNetwork has been added as a dependency to trigger a re-fetch
     // whenever the Ethereum network is changed.
     dispatch(setLoadingClubERC20s(true));
-    dispatch({
-      data: null,
-      type: SYNDICATE_BY_ADDRESS,
-    });
     if (account && !loading && !memberClubLoading) {
       const clubTokens = [];
 

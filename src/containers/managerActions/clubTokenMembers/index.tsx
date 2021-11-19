@@ -1,7 +1,7 @@
 import CopyLink from "@/components/shared/CopyLink";
 import { SkeletonLoader } from "@/components/skeletonLoader";
 import useClubTokenMembers from "@/hooks/useClubTokenMembers";
-import { RootState } from "@/redux/store";
+import { AppState } from "@/state";
 import { formatAddress } from "@/utils/formatAddress";
 import { floatedNumberWithCommas } from "@/utils/formattedNumbers";
 import Image from "next/image";
@@ -14,7 +14,7 @@ const ClubTokenMembers = (): JSX.Element => {
   const {
     clubMembersSliceReducer: { clubMembers },
     erc20TokenSliceReducer: { erc20Token },
-  } = useSelector((state: RootState) => state);
+  } = useSelector((state: AppState) => state);
 
   const [filteredAddress, setFilteredAddress] = useState("");
 

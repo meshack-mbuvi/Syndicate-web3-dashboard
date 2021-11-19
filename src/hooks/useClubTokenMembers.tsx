@@ -1,5 +1,5 @@
 import { CLUB_TOKEN_MEMBERS } from "@/graphql/queries";
-import { RootState } from "@/redux/store";
+import { AppState } from "@/state";
 import { setClubMembers } from "@/state/clubMembers";
 import { getWeiAmount } from "@/utils/conversions";
 import { useQuery } from "@apollo/client";
@@ -13,7 +13,7 @@ const useClubTokenMembers = () => {
   const {
     web3Reducer: { web3 },
     erc20TokenSliceReducer: { erc20Token },
-  } = useSelector((state: RootState) => state);
+  } = useSelector((state: AppState) => state);
 
   const router = useRouter();
   const { clubAddress } = router.query;

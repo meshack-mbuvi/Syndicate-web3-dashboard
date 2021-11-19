@@ -1,13 +1,14 @@
 import React from "react";
 
-const CreateEntityCard = () => {
+const CreateEntityCard: React.FC = () => {
   return (
     <a
       href="https://syndicatedao.gitbook.io/syndicate-wiki/web3-investment-clubs/create-a-legal-entity/form-your-legal-entity"
       target="_blank"
+      rel="noreferrer"
     >
       <div className="bg-gray-syn8 rounded-2xl my-6 px-8 py-6 flex items-start">
-        <img src="/images/ribbon.svg" className="mt-1" />
+        <img src="/images/ribbon.svg" className="mt-1" alt="ribbon" />
         <div className="ml-4">
           <div className="text-base leading-6">
             Create an off-chain legal entity

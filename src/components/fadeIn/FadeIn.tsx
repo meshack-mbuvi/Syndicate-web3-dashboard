@@ -8,7 +8,10 @@ import React from 'react';
  * @param props
  * @returns ReactChild
  */
-const FadeIn = ({
+const FadeIn: React.FC<{
+  duration: number;
+  delay: number;
+} | any> = ({
   duration = 300,
   delay = 0,
   children,

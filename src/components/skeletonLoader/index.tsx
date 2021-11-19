@@ -13,7 +13,7 @@ interface SkeletonProps {
   customClass?: string;
 }
 
-export const SkeletonLoader = (props: SkeletonProps) => {
+export const SkeletonLoader: React.FC<SkeletonProps> = (props) => {
   const {
     width,
     height,

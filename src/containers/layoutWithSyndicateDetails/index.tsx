@@ -11,7 +11,7 @@ import {
   setERC20Token,
 } from "@/helpers/erc20TokenDetails";
 import NotFoundPage from "@/pages/404";
-import { RootState } from "@/redux/store";
+import { AppState } from "@/state";
 import {
   fetchCollectiblesTransactions,
   fetchTokenTransactions,
@@ -38,7 +38,7 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
       web3: { account, web3, status },
     },
     erc20TokenSliceReducer: { erc20Token },
-  } = useSelector((state: RootState) => state);
+  } = useSelector((state: AppState) => state);
 
   const [scrollTop, setScrollTop] = useState(0);
   const [showNav, setShowNav] = useState(true);
@@ -248,7 +248,7 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
                           >
                             <nav className="flex space-x-10" aria-label="Tabs">
                               <button
-                                key="members"
+                                key="assets"
                                 onClick={() => setActiveTab("assets")}
                                 className={`whitespace-nowrap h4 w-fit-content py-6 transition-all border-b-1 focus:ring-0 font-whyte text-sm cursor-pointer ${
                                   activeTab == "assets"

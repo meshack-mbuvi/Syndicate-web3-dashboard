@@ -13,4 +13,4 @@ export const showErrorModal = createAction<IModalErrors>("wallet/showErrorModal"
 export const hideErrorModal = createAction("wallet/hideErrorModal");
 export const storeEthereumNetwork = createAction<IEthereumNetwork>("wallet/storeEthereumNetwork");
 export const storeCurrentEthNetwork = createAction<string>("wallet/storeCurrentEthNetwork");
-export const logout = createAction("USER_LOGOUT");
+export const logout = createAction("wallet/logout");

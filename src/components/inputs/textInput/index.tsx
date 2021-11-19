@@ -1,13 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import { InfoIcon } from "src/components/iconWrappers";
 
-/**
- * An input component with label and icon at the right end
- * If the input is disable, the input field without border, and with grayish
- *  small text is rendered.
- * @param {*} props
- */
-export const TextInput = (props: {
+interface IProps {
   label?: string;
   name?: string;
   id?: string;
@@ -24,7 +18,14 @@ export const TextInput = (props: {
   customWidth?: string;
   logo?: string;
   focus?: boolean;
-}) => {
+}
+/**
+ * An input component with label and icon at the right end
+ * If the input is disable, the input field without border, and with grayish
+ *  small text is rendered.
+ * @param {*} props
+ */
+export const TextInput: React.FC<IProps> = (props) => {
   const {
     label,
     name,

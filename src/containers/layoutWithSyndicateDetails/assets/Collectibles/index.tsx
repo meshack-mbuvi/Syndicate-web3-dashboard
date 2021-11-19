@@ -1,13 +1,13 @@
 import { FC } from "react";
 import { SkeletonLoader } from "@/components/skeletonLoader";
 import { useSelector } from "react-redux";
-import { RootState } from "@/redux/store";
+import { AppState } from "@/state";
 import AssetEmptyState from "@/containers/layoutWithSyndicateDetails/assets/AssetEmptyState";
 
 const Collectibles: FC<{ activeAssetTab: string }> = ({ activeAssetTab }) => {
   const {
     assetsSliceReducer: { loadingCollectibles, collectiblesResult },
-  } = useSelector((state: RootState) => state);
+  } = useSelector((state: AppState) => state);
 
   const collectiblesTitle = (
     <div className="flex items-center space-x-4 pb-8">

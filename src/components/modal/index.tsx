@@ -45,7 +45,7 @@ export enum ModalStyle {
  *
  * @returns an html node in a form of a modal
  */
-export const Modal = (props: ModalProps): JSX.Element => {
+const Modal = (props: ModalProps): JSX.Element => {
   const {
     title,
     children,

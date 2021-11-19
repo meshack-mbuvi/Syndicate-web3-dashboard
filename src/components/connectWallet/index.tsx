@@ -3,7 +3,7 @@ import { BanIcon, CancelIcon } from "@/components/shared/Icons";
 // actions
 import { useConnectWalletContext } from "@/context/ConnectWalletProvider";
 import { hideErrorModal, hideWalletModal } from "@/state/wallet/actions";
-import { RootState } from "@/redux/store";
+import { AppState } from "@/state";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -33,7 +33,7 @@ const ConnectWallet: React.FC = () => {
       },
       showWalletModal,
     },
-  } = useSelector((state: RootState) => state);
+  } = useSelector((state: AppState) => state);
 
   const {
     connectWallet,
@@ -220,7 +220,7 @@ const ConnectWallet: React.FC = () => {
 
           <p className="mt-5 text-sm text-center">New to Ethereum?</p>
           <div className="w-full flex justify-center">
-            <p
+            <button
               className="mt-2 mb-4 text-sm text-blue hover:underline text-center w-fit-content cursor-pointer"
               onClick={() =>
                 openExternalLink(
@@ -229,7 +229,7 @@ const ConnectWallet: React.FC = () => {
               }
             >
               Learn more about crypto wallets
-            </p>
+            </button>
           </div>
         </>
       </ConnectModal>
@@ -247,17 +247,17 @@ const ConnectWallet: React.FC = () => {
             <SpinnerWithImage icon={providerIcon} />
           </div>
 
-          <p className="mx-5 text-lg font-whyte-light text-center" tabIndex={0}>
+          <p className="mx-5 text-lg font-whyte-light text-center">
             {walletConnectingText}
           </p>
           {showHelpLink ? (
             <div className="w-full flex justify-center">
-              <p
+              <button
                 className="mt-4 mb-4 text-base text-blue hover:underline text-center w-fit-content cursor-pointer"
                 onClick={() => openExternalLink(helpLink)}
               >
                 Help
-              </p>
+              </button>
             </div>
           ) : null}
         </div>
@@ -274,12 +274,11 @@ const ConnectWallet: React.FC = () => {
       >
         <div className="flex flex-col items-center justify-center h-full">
           <div className="rounded-full h-28 w-28 border-4 border-green-light flex items-center justify-center">
-            <img src={providerIcon} className="inline w-6 sm:w-10" />
+            <img src={providerIcon} className="inline w-6 sm:w-10" alt="provider-icon" />
           </div>
 
           <p
             className="mx-5 mt-4 text-sm sm:text-lg font-whyte-light text-center"
-            tabIndex={0}
           >
             Connected
           </p>
@@ -312,14 +311,14 @@ const ConnectWallet: React.FC = () => {
                   to the Ethereum {correctEthereumNetwork} to continue.
                 </p>
                 <div className="w-full flex justify-center">
-                  <p
+                  <button
                     className="my-6 text-base text-blue font-whyte-light hover:underline text-center w-fit-content cursor-pointer"
                     onClick={() =>
                       openExternalLink("https://metamask.zendesk.com/hc/en-us")
                     }
                   >
                     Show me how
-                  </p>
+                  </button>
                 </div>
               </div>
               <button

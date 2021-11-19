@@ -6,7 +6,7 @@ interface Props {
   customClasses?: string;
 }
 
-const GradientAvatar = (props: Props) => {
+const GradientAvatar: React.FC<Props> = (props) => {
   const { syndicateAddress, size = "h-7 w-7", customClasses } = props;
 
   function djb2Hash(str) {

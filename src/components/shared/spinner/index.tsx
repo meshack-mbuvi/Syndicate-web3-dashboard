@@ -7,7 +7,7 @@ interface ISpinner {
   color?: string;
 }
 
-export const Spinner = (props: ISpinner) => {
+export const Spinner: React.FC<ISpinner> = (props) => {
   const {
     margin,
     height = "h-10",

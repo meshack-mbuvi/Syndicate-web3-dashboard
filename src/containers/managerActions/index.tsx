@@ -10,7 +10,7 @@ import { SkeletonLoader } from "@/components/skeletonLoader";
 import StatusBadge from "@/components/syndicateDetails/statusBadge";
 import { EtherscanLink } from "@/components/syndicates/shared/EtherscanLink";
 import { SuccessCard } from "@/containers/managerActions/successCard";
-import { RootState } from "@/redux/store";
+import { AppState } from "@/state";
 import { Status } from "@/state/wallet/types";
 import ConnectWalletAction from "@/components/syndicates/shared/connectWalletAction";
 
@@ -47,7 +47,7 @@ const ManagerActions = (): JSX.Element => {
         transactionHash, // TODO: this will be empty after reload
       },
     },
-  } = useSelector((state: RootState) => state);
+  } = useSelector((state: AppState) => state);
   const router = useRouter();
 
   const {

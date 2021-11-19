@@ -12,7 +12,7 @@ interface ISpinner {
  * @param width width of the spinner
  * @param strokeWidth how thick the circle element of the svg should be
  * @param icon the url of the icon. Set this to null if you don't want to display an icon */
-export const SpinnerWithImage = (props: ISpinner) => {
+export const SpinnerWithImage: React.FC<ISpinner> = (props) => {
   const {
     height = "h-28",
     width = "w-28",

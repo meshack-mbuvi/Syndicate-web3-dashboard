@@ -7,7 +7,7 @@ export class MintPolicyContract {
   // This will be used to call other functions. eg mint
   mintPolicyContract;
 
-  constructor(mintPolicyAddress: string, web3) {
+  constructor(mintPolicyAddress: string, web3: Web3) {
     this.web3 = web3;
     this.address = mintPolicyAddress;
     this.init();

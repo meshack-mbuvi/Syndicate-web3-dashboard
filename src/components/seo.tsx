@@ -12,13 +12,21 @@ const config = {
   },
 };
 
-export default function SEO({
+interface IProps {
+  title: string;
+  keywords: string[];
+  description?: string;
+  customSecondaryTitle?: string;
+  image?: string;
+}
+
+const SEO: React.FC<IProps> = ({
   keywords,
   description = "Official dashboard for Syndicate Protocol",
   title,
   customSecondaryTitle = null,
   image = "/images/social/logoBanner.png",
-}) {
+}) => {
   const siteTitle = config.title;
   const imageAbsolutePath = process.env.NEXT_BASE_URL + image;
 
@@ -28,7 +36,7 @@ export default function SEO({
         customSecondaryTitle ? customSecondaryTitle : siteTitle
       }`}</title>
       <meta name="description" content={description} />
-      <meta name="keywords" content={keywords} />
+      <meta name="keywords" content={keywords.join(",")} />
       <meta property="og:type" content="website" />
       <meta property="og:title" content={title} />
       <meta property="og:description" content={description} />
@@ -43,3 +51,5 @@ export default function SEO({
     </Head>
   );
 }
+
+export default SEO;

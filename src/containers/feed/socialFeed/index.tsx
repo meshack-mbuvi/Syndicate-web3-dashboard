@@ -1,7 +1,4 @@
 import React, { useState } from "react";
-import { connect } from "react-redux";
-import PropTypes from "prop-types";
-
 import PageHeader from "src/components/pageHeader";
 
 import { SocialFeedAnimatedLoader } from "./socialFeedAnimatedLoader";
@@ -10,7 +7,7 @@ import { SocialFeedAnimatedLoader } from "./socialFeedAnimatedLoader";
  * Renders feeds on socialPage. During loading, loading animation is
  * shown until the content is loaded
  */
-const SocialFeed = () => {
+const SocialFeed: React.FC = () => {
   const [isLoading] = useState(true);
   return (
     <div className="w-full sm:w-3/4 mr-4 mt-4">
@@ -24,11 +21,4 @@ const SocialFeed = () => {
   );
 };
 
-SocialFeed.propTypes = {
-  props: PropTypes.any,
-};
-
-const mapStateToProps = (state) => {
-  return { state };
-};
-export default connect(mapStateToProps, null)(SocialFeed);
+export default SocialFeed;

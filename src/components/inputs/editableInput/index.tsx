@@ -11,23 +11,23 @@ import { isUnlimited } from "src/utils/conversions";
 
 interface Props {
   label: string;
-  defaults: object;
+  defaults: Record<string, any>;
   currency?: boolean;
   percent?: boolean;
-  validations?: object;
+  validations?: Record<string, any>;
   showInputIndex: number;
-  handleShowInputIndex: () => {};
+  handleShowInputIndex: () => void;
   index: number;
   depositERC20TokenSymbol: string;
-  handler: Function;
+  handler: (value) => void;
   address?: boolean;
   type?: string;
   step?: string;
   placeholder?: string;
-  handleChange?: (value) => {};
+  handleChange?: (value) => void;
   display: boolean;
 }
-type StringKeys<objType extends {}> = Array<Extract<keyof objType, string>>;
+type StringKeys<objType extends Record<string, any>> = Array<Extract<keyof objType, string>>;
 
 export const EditableInput: FC<Props> = (props: Props) => {
   const {

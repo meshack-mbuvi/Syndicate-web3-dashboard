@@ -3,7 +3,7 @@ import { useSelector } from "react-redux";
 import Image from "next/image";
 import { useTransition, animated } from "react-spring";
 import { format } from "date-fns";
-import { RootState } from "@/redux/store";
+import { AppState } from "@/state";
 import useUSDCDetails from "@/hooks/useUSDCDetails";
 import { floatedNumberWithCommas } from "@/utils/formattedNumbers";
 import { useCreateInvestmentClubContext } from "@/context/CreateInvestmentClubContext";
@@ -15,7 +15,7 @@ const ReviewDetails: React.FC = () => {
     membersCount,
     mintEndTime,
     tokenCap,
-  } = useSelector((state: RootState) => state.createInvestmentClubSliceReducer);
+  } = useSelector((state: AppState) => state.createInvestmentClubSliceReducer);
 
   const { depositTokenSymbol, depositTokenLogo } = useUSDCDetails();
   const { currentStep } = useCreateInvestmentClubContext();

@@ -2,7 +2,7 @@
 import { useEffect } from "react";
 import { useRouter } from "next/router";
 
-const GenerateDai = () => {
+const GenerateDai: React.FC = () => {
   const router = useRouter();
 
   useEffect(() => {
