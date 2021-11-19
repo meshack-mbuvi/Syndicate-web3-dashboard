@@ -11,11 +11,15 @@ import {
   ERC20TokenDefaultState,
   setERC20Token,
 } from "@/helpers/erc20TokenDetails";
+import NotFoundPage from "@/pages/404";
 import { RootState } from "@/redux/store";
 import {
   fetchCollectiblesTransactions,
   fetchTokenTransactions,
 } from "@/state/assets/slice";
+import { setClubMembers } from "@/state/clubMembers";
+import { setERC20TokenDetails } from "@/state/erc20token/slice";
+import { Status } from "@/state/wallet/types";
 import { formatAddress } from "@/utils/formatAddress";
 import { faExclamationTriangle } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -24,12 +28,9 @@ import { useRouter } from "next/router";
 import React, { FC, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { syndicateActionConstants } from "src/components/syndicates/shared/Constants";
+
 import ClubTokenMembers from "../managerActions/clubTokenMembers";
 import Assets from "./assets";
-import { Status } from "@/state/wallet/types";
-import NotFoundPage from "@/pages/404";
-import { setERC20TokenDetails } from "@/state/erc20token/slice";
-import { setClubMembers } from "@/state/clubMembers";
 
 const LayoutWithSyndicateDetails: FC = ({ children }) => {
   // Retrieve state
@@ -68,12 +69,13 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
   }, [scrollTop]);
 
   useEffect(() => {
-    // fetch token transactions for the connected account.
-    dispatch(fetchTokenTransactions(erc20Token.owner));
-
-    // test nft account: 0xf4c2c3e12b61d44e6b228c43987158ac510426fb
-    dispatch(fetchCollectiblesTransactions(erc20Token.owner));
-  }, [erc20Token]);
+    if (erc20Token.owner) {
+      // fetch token transactions for the connected account.
+      dispatch(fetchTokenTransactions(erc20Token.owner));
+      // test nft account: 0xf4c2c3e12b61d44e6b228c43987158ac510426fb
+      dispatch(fetchCollectiblesTransactions(erc20Token.owner));
+    }
+  }, [erc20Token.owner]);
 
   const router = useRouter();
   const dispatch = useDispatch();
@@ -82,23 +84,13 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
 
   const { clubAddress } = router.query;
 
-  const [clubERC20tokenContract, setClubERC20tokenContract] = useState(null);
-
   useEffect(() => {
     if (router.isReady && web3.utils.isAddress(clubAddress)) {
       const clubERC20tokenContract = new ClubERC20Contract(
         clubAddress as string,
         web3,
       );
-      setClubERC20tokenContract(clubERC20tokenContract);
-    }
-    return () => {
-      setClubERC20tokenContract(null);
-    };
-  }, [clubAddress, router.isReady, web3]);
 
-  useEffect(() => {
-    if (clubERC20tokenContract && router.isReady) {
       dispatch(
         setERC20Token(
           clubERC20tokenContract,
@@ -106,13 +98,13 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
           account,
         ),
       );
+
+      return () => {
+        dispatch(setERC20TokenDetails(ERC20TokenDefaultState));
+        dispatch(setClubMembers([]));
+      };
     }
-    return () => {
-      // reset to default when component unmounts
-      dispatch(setERC20TokenDetails(ERC20TokenDefaultState));
-      dispatch(setClubMembers([]));
-    };
-  }, [clubERC20tokenContract, account, router.isReady]);
+  }, [clubAddress, account, router.isReady]);
 
   const showOnboardingIfNeeded = router.pathname.endsWith("deposit");
 
@@ -227,7 +219,9 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
               ) : (
                 <div className="container mx-auto ">
                   {/* Two Columns (Syndicate Details + Widget Cards) */}
-                  <BackButton topOffset={isSubNavStuck ? "-0.68rem" : "-0.25rem"} />
+                  <BackButton
+                    topOffset={isSubNavStuck ? "-0.68rem" : "-0.25rem"}
+                  />
                   <div className="grid grid-cols-12 gap-5">
                     {/* Left Column */}
                     <div className="md:col-start-1 md:col-end-7 col-span-12">
@@ -258,10 +252,10 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
                               <button
                                 key="members"
                                 onClick={() => setActiveTab("assets")}
-                                className={`whitespace-nowrap h4 w-fit-content py-6 transition-all h-16 border-b-1 focus:ring-0 font-whyte text-sm cursor-pointer ${
+                                className={`whitespace-nowrap h4 w-fit-content py-6 transition-all border-b-1 focus:ring-0 font-whyte text-sm cursor-pointer ${
                                   activeTab == "assets"
                                     ? "border-white text-white"
-                                    : "border-transparent text-gray-500 hover:text-gray-40"
+                                    : "border-transparent text-gray-syn4 hover:text-gray-40"
                                 }`}
                               >
                                 Assets
@@ -269,10 +263,10 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
                               <button
                                 key="members"
                                 onClick={() => setActiveTab("members")}
-                                className={`whitespace-nowrap h4 py-6 transition-all h-16 border-b-1 focus:ring-0 font-whyte text-sm cursor-pointer ${
+                                className={`whitespace-nowrap h4 py-6 transition-all border-b-1 focus:ring-0 font-whyte text-sm cursor-pointer ${
                                   activeTab == "members"
                                     ? "border-white text-white"
-                                    : "border-transparent text-gray-500 hover:text-gray-400 "
+                                    : "border-transparent text-gray-syn4 hover:text-gray-400 "
                                 }`}
                               >
                                 Members
@@ -282,7 +276,7 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
                             <div
                               className={`${
                                 isSubNavStuck ? "hidden" : "block"
-                              } border-b-1 border-gray-24 absolute w-screen right-0`}
+                              } border-b-1 border-gray-syn6 absolute w-screen right-0`}
                             ></div>
                           </div>
 
@@ -295,8 +289,6 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
                         </div>
                       )}
                   </div>
-
-                  <Footer extraClasses="mt-24 sm:mt-24 md:mt-40 mb-12" />
                 </div>
               )}
             </div>

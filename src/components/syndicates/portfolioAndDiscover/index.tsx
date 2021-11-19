@@ -10,7 +10,6 @@ import {
   MyClubERC20TableColumns,
 } from "./portfolio/clubERC20Table/constants";
 import PortfolioEmptyState from "@/components/syndicates/portfolioAndDiscover/portfolio/portfolioEmptyState";
-import Footer from "@/components/navigation/footer";
 /**
  * My Syndicates: IF their wallet (a) is leading a syndicate or
  * (b) has deposited into a syndicate, the syndicates shows up on
@@ -61,18 +60,10 @@ const PortfolioAndDiscover: React.FC = () => {
         // skeleton loader
         <div>
           <div className="flex justify-between items-center w-full mt-14 mb-16">
-            <SkeletonLoader
-              width="32"
-              height="8"
-              borderRadius="rounded-lg"
-            />
+            <SkeletonLoader width="32" height="8" borderRadius="rounded-lg" />
           </div>
           <div className="mb-8">
-            <SkeletonLoader
-              width="20"
-              height="6"
-              borderRadius="rounded-md"
-            />
+            <SkeletonLoader width="20" height="6" borderRadius="rounded-md" />
           </div>
           <div className="">
             <div className="grid grid-cols-6 -mx-2">
@@ -140,15 +131,6 @@ const PortfolioAndDiscover: React.FC = () => {
           ) : null}
         </>
       )}
-      <div
-        className={`${
-          account && !myClubERC20s.length && !invalidEthereumNetwork
-            ? "mt-27"
-            : "mt-24 sm:mt-24 md:mt-40"
-        }`}
-      >
-        <Footer extraClasses="mb-12 -mt-2" />
-      </div>
     </div>
   );
 };

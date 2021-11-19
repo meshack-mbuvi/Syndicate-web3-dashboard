@@ -25,7 +25,7 @@ const ClubTokenMembers = (): JSX.Element => {
   // club deposit link
   useEffect(() => {
     setClubDepositLink(
-      `${window.location.origin}/clubs/${erc20Token?.address}/deposit`,
+      `${window.location.origin}/clubs/${erc20Token?.address}/`,
     );
   }, [erc20Token.address]);
 
@@ -115,8 +115,8 @@ const ClubTokenMembers = (): JSX.Element => {
           return (
             <p className="my-1">
               {`${floatedNumberWithCommas(clubTokens)} ${symbol}`}
-              <span className="ml-1 font-whyte-light text-gray-syn4">
-                {`(${floatedNumberWithCommas(ownershipShare)} %)`}
+              <span className="ml-1 text-gray-syn4">
+                {`(${floatedNumberWithCommas(ownershipShare)}%)`}
               </span>
             </p>
           );

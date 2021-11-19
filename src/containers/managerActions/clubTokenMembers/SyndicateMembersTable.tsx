@@ -137,7 +137,7 @@ const SyndicateMembersTable = ({
                         <td
                           {...cell.getCellProps()}
                           key={cellIndex}
-                          className={`m-0 font-whyte-light col-span-3 text-base py-5 text-white`}
+                          className={`m-0 col-span-3 text-base py-5 text-white`}
                         >
                           {
                             // Render the cell contents

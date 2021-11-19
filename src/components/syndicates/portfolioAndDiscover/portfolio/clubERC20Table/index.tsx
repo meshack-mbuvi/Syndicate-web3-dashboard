@@ -98,7 +98,9 @@ const ClubERC20Table: FC<Props> = ({ columns, tableData }) => {
                         />
                       </div>
                     </div>
-                    <div className="flex text-base items-center">{clubName}</div>
+                    <div className="flex text-base items-center">
+                      {clubName}
+                    </div>
                   </div>
                   <div className="flex text-base items-center">{status}</div>
                   <div className="flex text-base items-center">
@@ -122,7 +124,7 @@ const ClubERC20Table: FC<Props> = ({ columns, tableData }) => {
                           hasDecimals(ownershipShare)
                             ? ownershipShare.toFixed(2)
                             : ownershipShare
-                        } %`}
+                        }%`}
                       </div>
                     </>
                   )}

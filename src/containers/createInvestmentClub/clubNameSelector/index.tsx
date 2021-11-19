@@ -110,8 +110,8 @@ const ClubNameSelector: React.FC = () => {
 
   return (
     <Fade>
-      <div className="flex flex-col space-y-6 pb-6 w-full lg:w-2/3">
-        <div className="h3">What should we call this investment club?</div>
+      <div className="flex flex-col pb-6 w-full lg:w-2/3">
+        <div className="h3 pb-6">What should we call this investment club?</div>
         <div>
           <div className="relative" data-tip data-for="change-settings-tip">
             <input
@@ -148,7 +148,7 @@ const ClubNameSelector: React.FC = () => {
             </div>
           </div>
         </div>
-        <div className="h3">a.k.a.</div>
+        <div className="h3 pb-6 pt-10">Club token</div>
         <div>
           <div className="relative mb-2">
             <span className="absolute inset-y-0 left-0 text-3xl pl-4 mt-3">

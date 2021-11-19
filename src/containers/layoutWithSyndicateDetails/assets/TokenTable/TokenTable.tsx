@@ -81,7 +81,7 @@ const TokenTable: FC<Props> = ({ columns, tableData, activeAssetTab }) => {
       {[1, 2, 3, 4].map((index) => {
         return (
           <div
-            className="grid grid-cols-3 border-b-1 border-gray-steelGrey py-3"
+            className="grid grid-cols-3 border-b-1 border-gray-syn6 py-3"
             key={index}
           >
             <div className="flex justify-start space-x-4 items-center w-full">
@@ -144,7 +144,7 @@ const TokenTable: FC<Props> = ({ columns, tableData, activeAssetTab }) => {
                   return (
                     <div
                       key={`token-table-row-${index}`}
-                      className="grid grid-cols-12 gap-5 border-b-1 border-gray-steelGrey py-5"
+                      className="grid grid-cols-12 gap-5 border-b-1 border-gray-syn6 py-5"
                     >
                       <div className="flex flex-row col-span-3 items-center">
                         <div className="flex flex-shrink-0 pr-4">

@@ -53,26 +53,31 @@ export const getERC20TokenDetails = async (
         startTime,
       } = await mintPolicy?.getSyndicateValues(address);
 
-      const name = await ERC20tokenContract?.name();
-      const owner = await ERC20tokenContract?.owner();
-      const tokenDecimals = await ERC20tokenContract?.decimals();
-
-      const depositToken = await SingleTokenMintModule?.depositToken(
-        ERC20tokenContract.clubERC20Contract._address,
-      );
+      // TODO: Multicall :-)
+      const [
+        name,
+        owner,
+        tokenDecimals,
+        depositToken,
+        symbol,
+        memberCount,
+        connectedAccountTokenBalance,
+      ] = await Promise.all([
+        ERC20tokenContract.name(),
+        ERC20tokenContract.owner(),
+        ERC20tokenContract.decimals(),
+        SingleTokenMintModule.depositToken(
+          ERC20tokenContract.clubERC20Contract._address,
+        ),
+        ERC20tokenContract.symbol(),
+        ERC20tokenContract.memberCount(),
+        ERC20tokenContract.balanceOf(account),
+      ]);
 
       const isOwner = owner === account;
-
-      const symbol = await ERC20tokenContract?.symbol();
-
-      const memberCount = await ERC20tokenContract?.memberCount();
-
-      const totalSupplyInWei = await ERC20tokenContract?.totalSupply();
-      const connectedAccountTokenBalance = await ERC20tokenContract?.balanceOf(
-        account,
+      const totalSupply = await ERC20tokenContract.totalSupply().then((wei) =>
+        getWeiAmount(wei, tokenDecimals, false),
       );
-
-      const totalSupply = getWeiAmount(totalSupplyInWei, tokenDecimals, false);
       const totalDeposits = parseFloat(totalSupply);
 
       const accountClubTokens = getWeiAmount(
@@ -85,7 +90,6 @@ export const getERC20TokenDetails = async (
       const endDateInFuture = +endTime * 1000 > new Date().getTime();
 
       const depositsEnabled = endDateInFuture;
-
 
       return {
         address,

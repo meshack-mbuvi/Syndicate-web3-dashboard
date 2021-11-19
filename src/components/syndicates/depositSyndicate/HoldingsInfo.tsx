@@ -34,7 +34,7 @@ const HoldingsInfo: FC<IHoldingsInfoProps> = ({
         </div>
         <div className="mr-2 w-min-44">{tokenName}</div>
         {percentValue && (
-          <div className="text-gray-syn4 ">{`(${percentValue} %)`}</div>
+          <div className="text-gray-syn4 ">{`(${percentValue}%)`}</div>
         )}
       </div>
     </div>

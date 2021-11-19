@@ -85,7 +85,6 @@ const AmountToRaise: React.FC = () => {
     dispatch(setTokenCap(amount));
   }, [amount]);
 
-  console.log({amount})
   return (
     <Fade delay={500}>
       <div className="flex w-full pb-6">

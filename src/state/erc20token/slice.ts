@@ -1,4 +1,5 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { PayloadAction, createSlice } from "@reduxjs/toolkit";
+
 import { ERC20Token, initialState } from "./types";
 
 const erc20TokenSlice = createSlice({
@@ -6,7 +7,10 @@ const erc20TokenSlice = createSlice({
   initialState,
   reducers: {
     setERC20TokenDetails(state, action: PayloadAction<ERC20Token>) {
-      state.erc20Token = action.payload;
+      const erc20Token = action.payload;
+      if (erc20Token.address !== state.erc20Token?.address) {
+        state.erc20Token = erc20Token;
+      }
     },
     setERC20TokenContract(state, action: PayloadAction<any>) {
       state.erc20TokenContract = action.payload;
