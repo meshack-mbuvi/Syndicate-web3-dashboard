@@ -144,7 +144,8 @@ export const setERC20Token =
         mintPolicy,
         account,
       );
-      return dispatch(setERC20TokenDetails(erc20Token));
+      dispatch(setERC20TokenDetails(erc20Token));
+      dispatch(setLoading(false));
     } catch (error) {
       return dispatch(setERC20TokenDetails(ERC20TokenDefaultState));
     }

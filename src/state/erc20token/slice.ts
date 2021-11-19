@@ -1,5 +1,4 @@
-import { PayloadAction, createSlice } from "@reduxjs/toolkit";
-
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { ERC20Token, initialState } from "./types";
 
 const erc20TokenSlice = createSlice({
