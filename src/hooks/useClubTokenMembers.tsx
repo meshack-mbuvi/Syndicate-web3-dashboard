@@ -61,6 +61,7 @@ const useClubTokenMembers = () => {
     account,
     currentEthereumNetwork,
     JSON.stringify(erc20Token),
+    erc20Token.totalSupply,
   ]);
 
   useEffect(() => {
