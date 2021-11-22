@@ -143,7 +143,7 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
     }
     const textWidth = getTextWidth(erc20Token.name)
     if (textWidth > 590) {
-      setCustomTransform("translateY(-20%)")
+      setCustomTransform("translateY(0%)")
     }
   }, [account, router.isReady, JSON.stringify(erc20Token)]);
 
