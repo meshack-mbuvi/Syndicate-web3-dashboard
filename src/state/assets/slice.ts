@@ -140,9 +140,9 @@ export const fetchCollectiblesTransactions = createAsyncThunk(
     );
 
     // get nft metadata
-    const nftsOwnedMetadata = await Promise.all(
-      getNftMetadata(nftsOwnedByAccount),
-    );
+    const nftsOwnedMetadata = (
+      await Promise.all(getNftMetadata(nftsOwnedByAccount))
+    ).filter((data) => data);
 
     const nftTokenDetails = nftsOwnedMetadata.reduce((acc, value) => {
       const { name, image } = value;
@@ -159,14 +159,21 @@ const getNftMetadata = (nftTokensList: any[]) => {
   const nftMetadata = nftTokensList.map(async (nftToken) => {
     const { contractAddress, tokenID } = nftToken;
 
-    const nftContractInstance = new web3.eth.Contract(
+    const nftContractInstance = await new web3.eth.Contract(
       erc721abi as AbiItem[],
       contractAddress,
     );
-    const tokenURI = await nftContractInstance.methods.tokenURI(tokenID).call();
-    const tokenMetadata = await axios.get(tokenURI);
+    try {
+      const tokenURI = await nftContractInstance.methods
+        .tokenURI(tokenID)
+        .call();
 
-    return tokenMetadata.data;
+      const tokenMetadata = await axios.get(tokenURI);
+      return tokenMetadata.data;
+    } catch (error) {
+      // TODO: mock return values for nfts that don't have tokenURIs
+      return null;
+    }
   });
 
   return nftMetadata;
