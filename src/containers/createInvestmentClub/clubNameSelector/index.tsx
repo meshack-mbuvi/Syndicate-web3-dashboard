@@ -4,7 +4,7 @@ import { useDebounce } from "@/hooks/useDebounce";
 import { acronymGenerator } from "@/utils/acronymGenerator";
 import { symbolValidation } from "@/utils/validators";
 import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "@/redux/store";
+import { AppState } from "@/state";
 import {
   setInvestmentClubName,
   setInvestmentClubSymbolPlaceHolder,
@@ -22,7 +22,7 @@ const ClubNameSelector: React.FC = () => {
       investmentClubName,
       investmentClubSymbolPlaceHolder,
     },
-  } = useSelector((state: RootState) => state);
+  } = useSelector((state: AppState) => state);
 
   const dispatch = useDispatch();
   const { setNextBtnDisabled } = useCreateInvestmentClubContext();

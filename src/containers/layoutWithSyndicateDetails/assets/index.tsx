@@ -5,7 +5,7 @@ import Collectibles from "@/containers/layoutWithSyndicateDetails/assets/Collect
 import { tokenTableColumns } from "@/containers/layoutWithSyndicateDetails/assets/constants";
 import AssetEmptyState from "@/containers/layoutWithSyndicateDetails/assets/AssetEmptyState";
 import { useSelector } from "react-redux";
-import { RootState } from "@/redux/store";
+import { AppState } from "@/state";
 
 const Assets: React.FC = () => {
   const {
@@ -13,7 +13,7 @@ const Assets: React.FC = () => {
     web3Reducer: {
       web3: { account },
     },
-  } = useSelector((state: RootState) => state);
+  } = useSelector((state: AppState) => state);
   const [activeAssetTab, setActiveAssetTab] = useState<string>("all");
 
   useEffect(() => {

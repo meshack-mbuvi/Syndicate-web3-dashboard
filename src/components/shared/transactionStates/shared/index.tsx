@@ -7,7 +7,6 @@ export enum ModalStyle {
 }
 interface Props {
   show: boolean;
-  children: JSX.Element;
   width?: string;
   modalStyle?: string;
 }
@@ -15,7 +14,7 @@ interface Props {
  * This is a modal that shows different transaction states
  * @returns an html node in a form of a modal
  */
-export const StateModal = (props: Props) => {
+export const StateModal: React.FC<Props> = (props) => {
   const {
     children,
     show,

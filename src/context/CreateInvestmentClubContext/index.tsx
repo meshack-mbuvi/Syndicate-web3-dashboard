@@ -1,7 +1,7 @@
 import { metamaskConstants } from "@/components/syndicates/shared/Constants";
 import { getMetamaskError } from "@/helpers";
 import useUSDCDetails from "@/hooks/useUSDCDetails";
-import { RootState } from "@/redux/store";
+import { AppState } from "@/state";
 import {
   setClubCreationReceipt,
   setTransactionHash,
@@ -69,7 +69,7 @@ const CreateInvestmentClubProvider: React.FC = ({ children }) => {
       mintEndTime: { value: endMintTime },
       membersCount,
     },
-  } = useSelector((state: RootState) => state);
+  } = useSelector((state: AppState) => state);
 
   const { depositTokenAddress } = useUSDCDetails();
   const dispatch = useDispatch();
@@ -161,7 +161,7 @@ const CreateInvestmentClubProvider: React.FC = ({ children }) => {
         startTime,
         endMintTime,
         _tokenCap,
-        membersCount,
+        +membersCount,
         onTxConfirm,
         onTxReceipt,
       );

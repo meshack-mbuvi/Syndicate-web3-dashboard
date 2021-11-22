@@ -34,32 +34,6 @@ export const floatedNumberWithCommas = (number): string => {
   }
 };
 
-/**
- * This method formats a given value to add symbols for thousand(K),
- * million(M), billion(B) and trillion(T) etc.
- * @param number
- * @returns
- */
-const SI_SYMBOL = ["", "k", "M", "B", "T", "P", "E"];
-
-export const formatNumbers = (number) => {
-  // what tier? (determines SI symbol)
-  const tier = (Math.log10(Math.abs(number)) / 3) | 0;
-
-  // if zero, we don't need a suffix
-  if (tier == 0) return number.toString();
-
-  // get suffix and determine scale
-  const suffix = SI_SYMBOL[tier];
-  const scale = Math.pow(10, tier * 3);
-
-  // scale the number
-  const scaled = number / scale;
-
-  // format number and add suffix
-  return scaled.toFixed(1) + suffix;
-};
-
 export const numberInputRemoveCommas = (
   event: React.ChangeEvent<HTMLInputElement>,
 ) => {

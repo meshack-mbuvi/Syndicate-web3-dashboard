@@ -12,7 +12,7 @@ interface ConnectModalProps {
   height?: string;
 }
 
-export const ConnectModal = (props: ConnectModalProps) => {
+export const ConnectModal: React.FC<ConnectModalProps> = (props) => {
   const {
     show,
     closeModal,

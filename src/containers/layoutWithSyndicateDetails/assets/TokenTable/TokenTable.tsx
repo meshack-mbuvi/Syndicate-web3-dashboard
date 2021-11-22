@@ -1,7 +1,7 @@
 import { SkeletonLoader } from "@/components/skeletonLoader";
 import GradientAvatar from "@/components/syndicates/portfolioAndDiscover/portfolio/GradientAvatar";
 import AssetEmptyState from "@/containers/layoutWithSyndicateDetails/assets/AssetEmptyState";
-import { RootState } from "@/redux/store";
+import { AppState } from "@/state";
 import { floatedNumberWithCommas } from "@/utils/formattedNumbers";
 import Image from "next/image";
 import { FC, useEffect, useRef, useState } from "react";
@@ -15,7 +15,7 @@ interface Props {
 const TokenTable: FC<Props> = ({ columns, tableData, activeAssetTab }) => {
   const {
     assetsSliceReducer: { loading, tokensResult },
-  } = useSelector((state: RootState) => state);
+  } = useSelector((state: AppState) => state);
 
   // pagination
   const dataLimit = 10; // number of items to show on each page.

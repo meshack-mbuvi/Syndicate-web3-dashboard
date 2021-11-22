@@ -5,12 +5,12 @@ import { useDispatch, useSelector } from "react-redux";
 import DatePicker from "react-datepicker";
 import { setMintEndTime } from "@/state/createInvestmentClub/slice";
 import { useCreateInvestmentClubContext } from "@/context/CreateInvestmentClubContext";
-import { RootState } from "@/redux/store";
+import { AppState } from "@/state";
 import Fade from "@/components/Fade";
 import { mintEndTime } from "@/state/createInvestmentClub/types";
 import moment from "moment";
 import { useSpring, animated } from "react-spring";
-import {DAY_IN_SECONDS} from "@/utils/constants";
+import { DAY_IN_SECONDS } from "@/utils/constants";
 
 const MintMaxDate: FC = () => {
   const dispatch = useDispatch();
@@ -22,7 +22,7 @@ const MintMaxDate: FC = () => {
 
   const {
     createInvestmentClubSliceReducer: { mintEndTime },
-  } = useSelector((state: RootState) => state);
+  } = useSelector((state: AppState) => state);
 
   // hide next button
   useEffect(() => {
@@ -107,11 +107,11 @@ const MintMaxDate: FC = () => {
 
   const handleDateChange = (targetDate) => {
     // this check prevents using null date which creates date as 01/01/1970
-    const eodToday = new Date(new Date().setHours(23, 59, 0, 0)).getTime()
-    const date = targetDate < eodToday ? eodToday : targetDate
+    const eodToday = new Date(new Date().setHours(23, 59, 0, 0)).getTime();
+    const date = targetDate < eodToday ? eodToday : targetDate;
     const dateToSet = date
       ? parseInt((date / 1000).toString())
-      : parseInt(((new Date().getTime() / 1000) + DAY_IN_SECONDS).toString());
+      : parseInt((new Date().getTime() / 1000 + DAY_IN_SECONDS).toString());
     dispatch(setMintEndTime({ mintTime: "Custom", value: dateToSet }));
   };
 

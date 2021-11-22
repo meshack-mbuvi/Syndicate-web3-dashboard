@@ -1,7 +1,6 @@
 import { ClubERC20Contract } from "@/ClubERC20Factory/clubERC20";
 import ErrorBoundary from "@/components/errorBoundary";
 import Layout from "@/components/layout";
-import Footer from "@/components/navigation/footer";
 import OnboardingModal from "@/components/onboarding";
 import BackButton from "@/components/socialProfiles/backButton";
 import { EtherscanLink } from "@/components/syndicates/shared/EtherscanLink";
@@ -12,7 +11,7 @@ import {
   setERC20Token,
 } from "@/helpers/erc20TokenDetails";
 import NotFoundPage from "@/pages/404";
-import { RootState } from "@/redux/store";
+import { AppState } from "@/state";
 import {
   fetchCollectiblesTransactions,
   fetchTokenTransactions,
@@ -28,7 +27,6 @@ import { useRouter } from "next/router";
 import React, { FC, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { syndicateActionConstants } from "src/components/syndicates/shared/Constants";
-
 import ClubTokenMembers from "../managerActions/clubTokenMembers";
 import Assets from "./assets";
 
@@ -40,7 +38,7 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
       web3: { account, web3, status },
     },
     erc20TokenSliceReducer: { erc20Token },
-  } = useSelector((state: RootState) => state);
+  } = useSelector((state: AppState) => state);
 
   const [scrollTop, setScrollTop] = useState(0);
   const [showNav, setShowNav] = useState(true);
@@ -250,7 +248,7 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
                           >
                             <nav className="flex space-x-10" aria-label="Tabs">
                               <button
-                                key="members"
+                                key="assets"
                                 onClick={() => setActiveTab("assets")}
                                 className={`whitespace-nowrap h4 w-fit-content py-6 transition-all border-b-1 focus:ring-0 font-whyte text-sm cursor-pointer ${
                                   activeTab == "assets"

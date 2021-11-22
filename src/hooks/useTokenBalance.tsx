@@ -1,4 +1,4 @@
-import { RootState } from "@/redux/store";
+import { AppState } from "@/state";
 import { getWeiAmount } from "@/utils/conversions";
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/router";
@@ -15,7 +15,7 @@ export const useERC20TokenBalance = (
     web3Reducer: {
       web3: { web3 },
     },
-  } = useSelector((state: RootState) => state);
+  } = useSelector((state: AppState) => state);
 
   const router = useRouter();
 

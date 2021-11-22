@@ -1,3 +1,6 @@
+import { MintPolicyContract } from "@/ClubERC20Factory/mintPolicy";
+import { SingleTokenMintModuleContract } from "@/ClubERC20Factory/singleTokenMintModule";
+import { AppState } from "@/state";
 import {
   setERC20TokenContract,
   setERC20TokenDetails,
@@ -36,8 +39,8 @@ export const ERC20TokenDefaultState = {
  */
 export const getERC20TokenDetails = async (
   ERC20tokenContract,
-  SingleTokenMintModule,
-  mintPolicy,
+  SingleTokenMintModule: SingleTokenMintModuleContract,
+  mintPolicy: MintPolicyContract,
   account: string,
 ): Promise<ERC20Token> => {
   if (ERC20tokenContract) {
@@ -122,13 +125,11 @@ export const getERC20TokenDetails = async (
 };
 
 export const setERC20Token =
-  (ERC20tokenContract, SingleTokenMintModule, account: string) =>
+  (ERC20tokenContract, SingleTokenMintModule: SingleTokenMintModuleContract, account: string) =>
   async (
     dispatch,
-    getState: () => {
-      initializeContractsReducer: { syndicateContracts: any };
-    },
-  ) => {
+    getState: () => AppState,
+  ): Promise<void> => {
     const {
       initializeContractsReducer: {
         syndicateContracts: { mintPolicy },
@@ -144,7 +145,8 @@ export const setERC20Token =
         mintPolicy,
         account,
       );
-      return dispatch(setERC20TokenDetails(erc20Token));
+      dispatch(setERC20TokenDetails(erc20Token));
+      dispatch(setLoading(false));
     } catch (error) {
       return dispatch(setERC20TokenDetails(ERC20TokenDefaultState));
     }

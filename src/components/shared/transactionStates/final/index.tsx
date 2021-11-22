@@ -5,8 +5,8 @@ import TransactionStateModal from "../shared";
 
 interface Props {
   show: boolean;
-  handleCloseModal: Function;
-  icon: any;
+  handleCloseModal: () => void;
+  icon: string;
   buttonText: string;
   feedbackText?: string;
   headerText?: string;
@@ -19,7 +19,7 @@ interface Props {
  * This is a modal that shows different transaction states
  * @returns an html node in a form of a modal
  */
-export const FinalStateModal = (props: Props) => {
+export const FinalStateModal: React.FC<Props> = (props) => {
   const {
     handleCloseModal,
     icon,

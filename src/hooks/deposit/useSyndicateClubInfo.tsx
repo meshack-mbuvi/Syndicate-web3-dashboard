@@ -16,6 +16,8 @@ const CLUB_TOKEN: Record<keyof TokenDetails, string | number> = {
   syndicateClubName: "sFWB",
   syndicateClubDecimals: 6,
 };
-export default (): Record<keyof TokenDetails, string | number> => {
+const useSyndicateClubInfo = (): Record<keyof TokenDetails, string | number> => {
   return useMemo(() => CLUB_TOKEN, []);
 };
+
+export default useSyndicateClubInfo;

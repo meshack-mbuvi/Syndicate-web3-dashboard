@@ -22,7 +22,7 @@ import useModal from "@/hooks/useModal";
 import { useERC20TokenBalance } from "@/hooks/useTokenBalance";
 import useUSDCDetails from "@/hooks/useUSDCDetails";
 import useWindowSize from "@/hooks/useWindowSize";
-import { RootState } from "@/redux/store";
+import { AppState } from "@/state";
 import {
   setAccountClubTokens,
   setMemberPercentShare,
@@ -57,7 +57,7 @@ const DepositSyndicate: React.FC = () => {
       web3: { account, web3, status },
     },
     erc20TokenSliceReducer: { erc20Token, erc20TokenContract },
-  } = useSelector((state: RootState) => state);
+  } = useSelector((state: AppState) => state);
 
   const [readyToDisplay, setReadyToDisplay] = useState(false);
 

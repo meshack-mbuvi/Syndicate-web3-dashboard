@@ -4,7 +4,7 @@ import ManagerActions from "@/containers/managerActions";
 /**
  * This page shows the manager component for a given syndicate address
  */
-const ManageSyndicatePage = () => {
+const ManageSyndicatePage: React.FC = () => {
   return (
     <LayoutWithSyndicateDetails>
       <ManagerActions />

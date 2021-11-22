@@ -2,7 +2,7 @@ import React from "react";
 import Layout from "src/components/layout";
 import Head from "src/components/syndicates/shared/HeaderTitle";
 
-function ContactPage() {
+const ContactPage: React.FC = () => {
   return (
     <Layout>
       <Head title="Contact" />

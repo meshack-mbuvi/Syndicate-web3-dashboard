@@ -25,9 +25,11 @@ const USDC_MAPPING: Record<string, TokenDetails> = {
     depositTokenDecimals: 6,
   },
 };
-export default (): TokenDetails => {
+const useUSDCDetails = (): TokenDetails => {
   return useMemo(
     () => (isDev ? USDC_MAPPING["rinkeby"] : USDC_MAPPING["mainnet"]),
     [],
   );
 };
+
+export default useUSDCDetails;

@@ -2,7 +2,7 @@ import React, { FC } from "react";
 import { useRouter } from "next/router";
 import { useSelector } from "react-redux";
 import { useCreateInvestmentClubContext } from "@/context/CreateInvestmentClubContext";
-import { RootState } from "@/redux/store";
+import { AppState } from "@/state";
 import ConnectWallet from "src/components/connectWallet";
 import Header from "src/components/navigation/header";
 import ProgressBar from "../ProgressBar";
@@ -23,7 +23,7 @@ const Layout: FC<Props> = ({ children, backLink = null, showNav = true }) => {
     },
     clubERC20sReducer: { myClubERC20s, otherClubERC20s, loading },
     erc20TokenSliceReducer: { erc20Token },
-  } = useSelector((state: RootState) => state);
+  } = useSelector((state: AppState) => state);
 
   const loadingClubDetails = erc20Token?.loading;
 

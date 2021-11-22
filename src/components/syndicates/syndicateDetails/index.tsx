@@ -1,5 +1,5 @@
 import { SkeletonLoader } from "@/components/skeletonLoader";
-import { RootState } from "@/redux/store";
+import { AppState } from "@/state";
 import { epochTimeToDateFormat, getCountDownDays } from "@/utils/dateUtils";
 import { floatedNumberWithCommas } from "@/utils/formattedNumbers";
 import abi from "human-standard-token-abi";
@@ -9,7 +9,6 @@ import { CopyToClipboard } from "react-copy-to-clipboard";
 import { useSelector } from "react-redux";
 import { EtherscanLink } from "src/components/syndicates/shared/EtherscanLink";
 // utils
-import { formatAddress } from "src/utils/formatAddress";
 import GradientAvatar from "../portfolioAndDiscover/portfolio/GradientAvatar";
 import { DetailsCard } from "../shared";
 import { ProgressIndicator } from "../shared/progressIndicator";
@@ -31,8 +30,7 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
     web3Reducer: {
       web3: { web3, status },
     },
-    syndicatesReducer: { syndicate },
-  } = useSelector((state: RootState) => state);
+  } = useSelector((state: AppState) => state);
 
   const {
     loading,
@@ -215,10 +213,6 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
     }
   }, [JSON.stringify(erc20Token)]);
 
-  // format an account address in the format 0x3f6q9z52…54h2kjh51h5zfa
-
-  const formattedSyndicateAddress = formatAddress(clubAddress, 6, 4);
-
   // show message to the user when address has been copied.
   const updateAddressCopyState = () => {
     setShowAddressCopyState(true);
@@ -357,12 +351,8 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
           (loading || !(isActive && !isOwnerOrMember)) && (
             <div className="overflow-hidden mt-6 relative">
               <DetailsCard
-                {...{
-                  title: "Details",
-                  sections: details,
-                  syndicateDetails: true,
-                  syndicate,
-                }}
+                title="Details"
+                sections={details}
                 customStyles={"w-full pt-4"}
                 customInnerWidth="w-full grid xl:grid-cols-3 lg:grid-cols-3
             grid-cols-3 xl:gap-8 gap-6s gap-y-8"

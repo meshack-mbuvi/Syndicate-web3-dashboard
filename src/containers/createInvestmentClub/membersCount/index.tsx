@@ -4,7 +4,7 @@ import { InputFieldWithMax } from "../shared/InputFieldWithMax";
 import { setMembersCount } from "@/state/createInvestmentClub/slice";
 import MaxButton from "../shared/MaxButton";
 import { useCreateInvestmentClubContext } from "@/context/CreateInvestmentClubContext";
-import { RootState } from "@/redux/store";
+import { AppState } from "@/state";
 import Fade from "@/components/Fade";
 
 const ERROR_MESSAGE = "Between 1 and 99 accepted";
@@ -13,7 +13,7 @@ const MAX_MEMBERS_ALLOWED = "99";
 const MembersCount: React.FC = () => {
   const {
     createInvestmentClubSliceReducer: { membersCount },
-  } = useSelector((state: RootState) => state);
+  } = useSelector((state: AppState) => state);
 
   const [membersNumCount, setMembersNumCount] = useState(membersCount);
   const [memberCountError, setMemberCountError] = useState("");

@@ -1,6 +1,6 @@
 import Portal from "@/components/shared/Portal";
 import { SkeletonLoader } from "@/components/skeletonLoader";
-import { RootState } from "@/redux/store";
+import { AppState } from "@/state";
 import React, { FC, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 
@@ -33,7 +33,7 @@ export const SectionCard: FC<SectionCardProps> = (props) => {
     erc20TokenSliceReducer: {
       erc20Token: { loading },
     },
-  } = useSelector((state: RootState) => state);
+  } = useSelector((state: AppState) => state);
 
   const [coord, setCoords] = useState({});
   const [anchorEl, setAnchorEl] = React.useState(null);
@@ -88,16 +88,16 @@ export const SectionCard: FC<SectionCardProps> = (props) => {
           </div>
         ) : (
           <>
-            <p className="text-gray-syn4 leading-6 pb-2">
+            <div className="text-gray-syn4 leading-6 pb-2">
               {header?.toString()}
-            </p>
-            <p
+            </div>
+            <div
               className={
                 greenSubtext ? "text-base text-green-screamin" : "text-base"
               }
             >
               {content}
-            </p>
+            </div>
           </>
         )}
       </div>

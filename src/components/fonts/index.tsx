@@ -5,13 +5,6 @@ const FontsPreloader: React.FC = () => {
     <>
       <link
         rel="preload"
-        href="/fonts/ABC_Whyte_Variable/ABCWhyteVariable-Trial.woff"
-        as="font"
-        crossOrigin=""
-        type="font/woff"
-      />
-      <link
-        rel="preload"
         href="/fonts/Whyte/ABCWhyte-Medium.woff"
         as="font"
         crossOrigin=""

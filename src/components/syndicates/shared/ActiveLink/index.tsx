@@ -20,7 +20,7 @@ import React from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
-const ActiveLink = (props: ActiveLinkProp) => {
+const ActiveLink: React.FC<ActiveLinkProp> = (props) => {
   const { href, customActive, children } = props;
   const { pathname } = useRouter();
 

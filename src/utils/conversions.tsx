@@ -60,15 +60,6 @@ export const getWeiAmount = (
   }
 };
 
-/** Function to convert basis points to percentage
- * 100 basis points = 1%
- * @param basisPoints total basis points as a string
- * @returns percentage as a float.
- */
-export const basisPointsToPercentage = (basisPoints: string) => {
-  return parseFloat(basisPoints) / 100;
-};
-
 /** Function to divide two numbers by first checking
  * if the denominator is zero or not a number
  * @param numerator
@@ -81,14 +72,6 @@ export const divideIfNotByZero = (numerator, denominator) => {
   } else {
     return numerator / denominator;
   }
-};
-
-/** Function to filter a given array by unique values
- * use this as a callback inside an array filter method
- * @params details on the current index
- */
-export const onlyUnique = (value, index, self) => {
-  return self.indexOf(value) === index;
 };
 
 export const isUnlimited = (value) => {

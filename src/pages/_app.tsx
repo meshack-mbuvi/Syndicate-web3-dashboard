@@ -1,9 +1,7 @@
 import FontsPreloader from "@/components/fonts";
 import ConnectWalletProvider from "@/context/ConnectWalletProvider";
 import CreateInvestmentClubProvider from "@/context/CreateInvestmentClubContext";
-import CreateSyndicateProvider from "@/context/CreateSyndicateContext";
 import OnboardingProvider from "@/context/OnboardingContext";
-import SyndicateInBetaBannerProvider from "@/context/SyndicateInBetaBannerContext";
 import { isDev, isSSR } from "@/utils/environment";
 import {
   ApolloClient,
@@ -23,7 +21,7 @@ import React from "react";
  * from here to make them available globally
  */
 import "react-datepicker/dist/react-datepicker.css";
-import { wrapper } from "../redux/store";
+import { wrapper } from "@/state";
 import "../styles/animation.css";
 import "../styles/custom-datepicker.css";
 import "../styles/global.css";
@@ -41,32 +39,25 @@ const AmplitudeProvider = dynamic(() => import("@/components/amplitude"), {
 const App = ({ Component, pageProps, apollo }) => {
   return (
     <ApolloProvider client={apollo}>
-      <SyndicateInBetaBannerProvider>
-        <OnboardingProvider>
-          <ConnectWalletProvider>
-            <CreateSyndicateProvider>
-              <CreateInvestmentClubProvider>
-                <Head>
-                  <title>Home | Syndicate Dashboard</title>
-                  <link rel="shortcut icon" href="/images/logo.svg" />
+      <OnboardingProvider>
+        <ConnectWalletProvider>
+          <CreateInvestmentClubProvider>
+            <Head>
+              <title>Home | Syndicate Dashboard</title>
+              <link rel="shortcut icon" href="/images/logo.svg" />
 
-                  <FontsPreloader />
+              <FontsPreloader />
 
-                  <meta
-                    name="viewport"
-                    content="width=device-width, initial-scale=1, shrink-to-fit=no"
-                  />
-                </Head>
-                <AmplitudeProvider />
-                <Component {...pageProps} />
-              </CreateInvestmentClubProvider>
-            </CreateSyndicateProvider>
-          </ConnectWalletProvider>
-        </OnboardingProvider>
-      </SyndicateInBetaBannerProvider>
-      {/* Placing tooltips rendered within modals in this high level component 
-      "I suggest always putting <ReactTooltip /> in the Highest level or smart component of Redux, so you might need these static method to control tooltip's behaviour in some situations"
-      Source: Troubleshooting section of https://www.npmjs.com/package/react-tooltip */}
+              <meta
+                name="viewport"
+                content="width=device-width, initial-scale=1, shrink-to-fit=no"
+              />
+            </Head>
+            <AmplitudeProvider />
+            <Component {...pageProps} />
+          </CreateInvestmentClubProvider>
+        </ConnectWalletProvider>
+      </OnboardingProvider>
     </ApolloProvider>
   );
 };

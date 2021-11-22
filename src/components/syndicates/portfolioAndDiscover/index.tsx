@@ -1,6 +1,6 @@
 import WalletNotConnected from "@/components/walletNotConnected";
 import useClubERC20s from "@/hooks/useClubERC20s";
-import { RootState } from "@/redux/store";
+import { AppState } from "@/state";
 import React from "react";
 import { useSelector } from "react-redux";
 import { SkeletonLoader } from "src/components/skeletonLoader";
@@ -22,7 +22,7 @@ const PortfolioAndDiscover: React.FC = () => {
   const {
     web3Reducer: { web3 },
     clubERC20sReducer: { myClubERC20s, otherClubERC20s, loading },
-  } = useSelector((state: RootState) => state);
+  } = useSelector((state: AppState) => state);
 
   const {
     account,

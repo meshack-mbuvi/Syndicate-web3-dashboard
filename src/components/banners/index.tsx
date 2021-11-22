@@ -2,7 +2,7 @@ import React from "react";
 import { useRouter } from "next/router";
 import { SyndicateInBetaBannerText } from "src/components/syndicates/shared/Constants";
 
-export const SyndicateInBetaBanner = () => {
+export const SyndicateInBetaBanner: React.FC = () => {
   const router = useRouter();
   const showCreateProgressBar = router.pathname === "/clubs/clubprivatebetainvite";
   return (

@@ -10,11 +10,11 @@ import ReviewDetails from "@/containers/createInvestmentClub/reviewDetails";
 import { useCreateInvestmentClubContext } from "@/context/CreateInvestmentClubContext";
 import useClubERC20s from "@/hooks/useClubERC20s";
 import StatusBadge from "@/components/syndicateDetails/statusBadge";
-import { RootState } from "@/redux/store";
+import { AppState } from "@/state";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { useSelector } from "react-redux";
 import ByInvitationOnly from "@/containers/createInvestmentClub/byInvitationOnly";
 
@@ -28,13 +28,11 @@ const CreateInvestmentClub: React.FC = () => {
     processingModalDescription,
     errorModal,
     setShowModal,
-    errorModalMessage,
     handleCreateInvestmentClub,
     showByInvitationOnly,
     setShowByInvitationOnly,
   } = useCreateInvestmentClubContext();
   const router = useRouter();
-  const [status, setStatus] = useState(0);
 
   const { accountHasClubs } = useClubERC20s();
 
@@ -55,7 +53,7 @@ const CreateInvestmentClub: React.FC = () => {
         transactionHash,
       },
     },
-  } = useSelector((state: RootState) => state);
+  } = useSelector((state: AppState) => state);
 
   const { account } = web3;
 
@@ -190,7 +188,7 @@ const CreateInvestmentClub: React.FC = () => {
                 <a
                   className="text-blue"
                   href="mailto:support@syndicate.io"
-                  target="_blank"
+                  target="_blank" rel="noreferrer"
                 >
                   let us know
                 </a>{" "}

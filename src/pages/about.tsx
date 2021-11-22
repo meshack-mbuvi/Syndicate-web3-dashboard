@@ -3,7 +3,7 @@ import Head from "src/components/syndicates/shared/HeaderTitle";
 import Layout from "src/components/layout";
 import SEO from "src/components/seo";
 
-function AboutPage() {
+const AboutPage: React.FC = () => {
   return (
     <Layout>
       <Head title="About" />

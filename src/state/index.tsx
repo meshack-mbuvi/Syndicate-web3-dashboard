@@ -1,29 +1,34 @@
 import { isDev } from "@/utils/environment";
 import { Action, configureStore, ThunkAction } from "@reduxjs/toolkit";
 import { createWrapper } from "next-redux-wrapper";
-import { composeWithDevTools } from "redux-devtools-extension";
 
-const devToolsEnhancer = composeWithDevTools({ trace: true, traceLimit: 25 });
+import clubERC20sReducer from "@/state/clubERC20";
+import clubMembersSliceReducer from "@/state/clubMembers";
+import createInvestmentClubSliceReducer from "@/state/createInvestmentClub/slice";
+import erc20TokenSliceReducer from "@/state/erc20token/slice";
+import modalsReducer from "@/state/modals";
+import web3Reducer from "@/state/wallet/reducer";
+import initializeContractsReducer from "@/state/contracts";
+import assetsSliceReducer from "@/state/assets/slice";
 
-const store = configureStore({
+export const store = configureStore({
   reducer: {
-    // web3Reducer,
-    // createInvestmentClubSliceReducer,
-    // erc20TokenSliceReducer,
-    // clubMembersSlice
-    // modalsReducer,
-    // createInvestmentClubSliceReducer,
-    // clubERC20sReducer,
-    // clubMembersSliceReducer,
+    clubERC20sReducer,
+    clubMembersSliceReducer,
+    createInvestmentClubSliceReducer,
+    erc20TokenSliceReducer,
+    modalsReducer,
+    web3Reducer,
+    initializeContractsReducer,
+    assetsSliceReducer,
   },
-  middleware: (getDefaultMiddleware) => getDefaultMiddleware({ thunk: true }),
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({ thunk: true, serializableCheck: false }),
   devTools: isDev,
-  enhancers: [devToolsEnhancer],
 });
 
-export default store;
-
-export const wrapper = createWrapper(() => store, { debug: isDev });
 export type AppState = ReturnType<typeof store.getState>;
-export type AppDispatch = typeof store.dispatch;
+export type AppDispatch = ReturnType<typeof store.dispatch>;
 export type AppThunk = ThunkAction<void, AppState, null, Action<string>>;
+
+export const wrapper = createWrapper<AppState>(() => store);

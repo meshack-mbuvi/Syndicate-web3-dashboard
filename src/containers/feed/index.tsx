@@ -1,5 +1,4 @@
 import React from "react";
-import PropTypes from "prop-types";
 import Head from "src/components/syndicates/shared/HeaderTitle";
 
 // Social page components
@@ -10,7 +9,7 @@ import Layout from "src/components/layout";
 /**
  * Manages feeds page
  */
-const FeedPage = () => {
+const FeedPage: React.FC = () => {
   return (
     <Layout>
       <Head title="Social" />
@@ -18,10 +17,6 @@ const FeedPage = () => {
       <Discovery />
     </Layout>
   );
-};
-
-FeedPage.propTypes = {
-  props: PropTypes.any,
 };
 
 export default FeedPage;

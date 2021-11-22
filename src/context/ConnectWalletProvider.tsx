@@ -1,6 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { web3InstantiationErrorText } from "@/components/syndicates/shared/Constants";
-import { INITIALIZE_CONTRACTS } from "@/redux/actions/types";
 import {
   logout,
   hideErrorModal,
@@ -24,11 +23,12 @@ import React, {
   useState,
 } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "@/redux/store";
+import { AppState } from "@/state";
 import { isEmpty } from "lodash";
 import WalletConnectProvider from "@walletconnect/web3-provider";
 import { providers } from "ethers";
 import { SafeAppWeb3Modal } from "@gnosis.pm/safe-apps-web3modal";
+import { setContracts } from "@/state/contracts";
 
 const Web3 = require("web3");
 const debugging = process.env.NEXT_PUBLIC_DEBUG;
@@ -73,7 +73,7 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
     web3Reducer: {
       web3: { currentEthereumNetwork },
     },
-  } = useSelector((state: RootState) => state);
+  } = useSelector((state: AppState) => state);
 
   const initialWeb3 = new Web3(`${process.env.NEXT_PUBLIC_ALCHEMY}`);
 
@@ -130,10 +130,7 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
     // initialize contract now
     const contracts = await getSyndicateContracts(web3);
 
-    dispatch({
-      data: contracts,
-      type: INITIALIZE_CONTRACTS,
-    });
+    dispatch(setContracts(contracts));
     try {
       dispatch(hideErrorModal());
       if (account && activeProvider) {

@@ -1,5 +1,5 @@
 import { showWalletModal } from "@/state/wallet/actions";
-import { RootState } from "@/redux/store";
+import { AppState } from "@/state";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -9,7 +9,7 @@ import SEO from "src/components/seo";
 import Head from "src/components/syndicates/shared/HeaderTitle";
 import { getWeiAmount } from "src/utils/conversions";
 
-const GenerateDai = () => {
+const GenerateDai: React.FC = () => {
   const daiABI = require("src/utils/abi/rinkeby-dai");
   const erc20ABI = require("src/utils/abi/erc20");
   const daiContractAddress = "0xc3dbf84Abb494ce5199D5d4D815b10EC29529ff8";
@@ -17,9 +17,8 @@ const GenerateDai = () => {
 
   const [amount, setAmount] = useState("");
   const [tokenContractAddress, setTokenContractAddress] = useState("");
-  const [tokenContractAddressError, setTokenContractAddressError] = useState(
-    "",
-  );
+  const [tokenContractAddressError, setTokenContractAddressError] =
+    useState("");
   const [daiSelected, setDaiSelected] = useState(false);
   const [usdcSelected, setUSDCSelected] = useState(false);
   const [otherSelected, setOtherSelected] = useState(false);
@@ -37,7 +36,7 @@ const GenerateDai = () => {
     web3Reducer: {
       web3: { account, web3 },
     },
-  } = useSelector((state: RootState) => state);
+  } = useSelector((state: AppState) => state);
 
   const dispatch = useDispatch();
 
@@ -64,7 +63,9 @@ const GenerateDai = () => {
     setTokenContractAddress("");
   };
 
-  const handleCustomERC20TokenAddress = (event: any) => {
+  const handleCustomERC20TokenAddress = (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
     event.preventDefault();
     const { value } = event.target;
     setTokenContractAddress(value);

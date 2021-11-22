@@ -10,7 +10,7 @@ import {
 } from "@/utils/formattedNumbers";
 import { useCreateInvestmentClubContext } from "@/context/CreateInvestmentClubContext";
 import { setTokenCap } from "@/state/createInvestmentClub/slice";
-import { RootState } from "@/redux/store";
+import { AppState } from "@/state";
 import Fade from "@/components/Fade";
 
 const MAX_AMOUNT_TO_RAISE = "25000000";
@@ -27,7 +27,7 @@ const SYN_SUPPORT_MSG = (
 const AmountToRaise: React.FC = () => {
   const {
     createInvestmentClubSliceReducer: { tokenCap },
-  } = useSelector((state: RootState) => state);
+  } = useSelector((state: AppState) => state);
 
   const { setShowNextButton, handleNext } = useCreateInvestmentClubContext();
 

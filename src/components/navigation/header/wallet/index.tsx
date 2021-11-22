@@ -1,12 +1,8 @@
-import { oneSyndicatePerAccountText } from "@/components/syndicates/shared/Constants";
-import { setOneSyndicatePerAccount } from "@/redux/actions/syndicateMemberDetails";
 import { showWalletModal } from "@/state/wallet/actions";
 import { Status } from "@/state/wallet/types";
 
-import React, { useState } from "react";
-import Joyride from "react-joyride";
 import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "src/redux/store";
+import { AppState } from "@/state";
 import AddressMenuDropDown from "./accountMenuDropdown";
 
 export const Wallet: React.FC = () => {
@@ -15,65 +11,17 @@ export const Wallet: React.FC = () => {
    * hook web3modal.
    * The instance is in the application's store and is passed here as props
    */
-  const { web3 } = useSelector((state: RootState) => state.web3Reducer);
+  const { web3 } = useSelector((state: AppState) => state.web3Reducer);
 
   const { status } = web3;
   const dispatch = useDispatch();
-
-  const { oneSyndicatePerAccount } = useSelector(
-    (state: RootState) => state.syndicateMemberDetailsReducer,
-  );
-
-  const [steps] = useState([
-    {
-      target: ".wallet-connect",
-      content: oneSyndicatePerAccountText,
-      disableBeacon: true,
-      offset: -5,
-      isFixed: true,
-    },
-  ]);
 
   /**
    * open variable is used to determine whether to show or hide
    *  the wallet connection modal.
    */
   const connectWallet = () => {
-    dispatch(setOneSyndicatePerAccount(false));
     dispatch(showWalletModal());
-  };
-
-  // custom component used in place of the default tooltip component to
-  // indicate that the user cannot create another syndicate with the same address.
-  // documentation: https://docs.react-joyride.com/custom-components
-  const Tooltip = ({ tooltipProps, step }) => (
-    <div
-      className="bg-gray-dark rounded-custom w-64 px-6 py-4"
-      {...tooltipProps}
-    >
-      <div className="mb-2 w-full flex justify-center">
-        <img
-          className="h-6 w-6 opacity-50"
-          src="/images/chevron-up.svg"
-          alt="down-arrow"
-        />
-      </div>
-      <p className="font-whyte-light text-white text-sm text-center">
-        {step.content}
-      </p>
-    </div>
-  );
-
-  /** method to reset the one syndicate per account state in the redux store
-   * We'll disable this like so for the user to be able to get the same notification
-   * after closing the tooltip and clicking on 'create a syndicate` again.
-   * documentation: https://docs.react-joyride.com/callback
-   */
-  const handleClose = (data) => {
-    const { action } = data;
-    if (action === "reset") {
-      dispatch(setOneSyndicatePerAccount(false));
-    }
   };
 
   const connectedWalletIconStyles = "fill-current text-green-500";
@@ -107,13 +55,6 @@ export const Wallet: React.FC = () => {
             ) : (
               <NotConnectedButton />
             )}
-            <Joyride
-              steps={steps}
-              run={oneSyndicatePerAccount}
-              tooltipComponent={Tooltip}
-              floaterProps={{ hideArrow: true, disableAnimation: true }}
-              callback={handleClose}
-            />
           </div>
       </>
     </div>

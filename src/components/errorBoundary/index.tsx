@@ -1,9 +1,9 @@
 import React from "react";
 
-export const ErrorBoundary = (props) => {
+export const ErrorBoundary = ({ children }: { children }): JSX.Element => {
   try {
     // just render children. Everything is fine here
-    return props.children;
+    return children;
   } catch (error) {
     // An error occured in the component tree
     return (
