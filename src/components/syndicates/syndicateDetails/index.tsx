@@ -33,8 +33,7 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
     },
     syndicatesReducer: { syndicate },
   } = useSelector((state: RootState) => state);
-  const [divWidth, setDivWidth] = useState(0)
-  const [nameWidth , setNameWidth] = useState(0)
+
   const {
     loading,
     maxTotalDeposits,
@@ -51,11 +50,6 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
     accountClubTokens,
     isOwner,
   } = erc20Token;
-
-  useEffect( () => {
-    setDivWidth(document?.getElementById('club-name')?.offsetWidth)
-    setNameWidth(getTextWidth(name))
-  }, [name])
 
   // Use canvas to determine text width
   const getTextWidth = (text) => {
@@ -90,6 +84,9 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
   const depositERC20Address = depositToken;
   const [showActionIcons, setShowActionIcons] = useState<boolean>(false);
 
+  const [divWidth, setDivWidth] = useState(0);
+  const [nameWidth , setNameWidth] = useState(0);
+
   // get and set current token details
   useEffect(() => {
     if (depositERC20Address && web3) {
@@ -99,6 +96,12 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
       setDepositTokenContract(tokenContract);
     }
   }, [depositERC20Address, web3]);
+
+  // perform size checks
+  useEffect( () => {
+    setDivWidth(document?.getElementById('club-name')?.offsetWidth)
+    setNameWidth(getTextWidth(name))
+  }, [name]);
 
   // set syndicate cumulative values
   useEffect(() => {
