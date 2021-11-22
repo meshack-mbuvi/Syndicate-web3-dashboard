@@ -7,36 +7,55 @@ import abi from "human-standard-token-abi";
 import erc721abi from "@/utils/abi/erc721";
 import { isDev } from "@/utils/environment";
 import { getCoinFromContractAddress } from "functions/src/utils/ethereum";
+import { getEthereumTokenPrice } from "@/helpers/ethereumTokenDetails";
 
 import { initialState } from "./types";
 
 const baseURL = isDev
   ? "https://api-rinkeby.etherscan.io/api"
   : "https://api.etherscan.io/api";
-const etherscanAPIKey = process.env.NEXT_PUBLIC_ETHERSCAN_API_KEY
+const etherscanAPIKey = process.env.NEXT_PUBLIC_ETHERSCAN_API_KEY;
 
 /** Async thunks */
 // ERC20 transactions
 export const fetchTokenTransactions = createAsyncThunk(
   "assets/fetchTokenTransactions",
   async (account: string) => {
-    const response = await axios.get(`${baseURL}`, {
-      params: {
-        module: "account",
-        action: "tokentx",
-        apikey: etherscanAPIKey,
-        address: account,
-      },
-    });
+    const response = await Promise.all([
+      // ERC20 tokens transactions
+      axios.get(`${baseURL}`, {
+        params: {
+          module: "account",
+          action: "tokentx",
+          apikey: etherscanAPIKey,
+          address: account,
+        },
+      }),
+      // ETH balance for owner address
+      axios.get(`${baseURL}`, {
+        params: {
+          module: "account",
+          action: "balance",
+          tag: "latest",
+          apikey: etherscanAPIKey,
+          address: account,
+        },
+      }),
+      // ETH price
+      getEthereumTokenPrice(),
+    ])
+      .then((result) => result)
+      .catch(() => []);
 
-    const { result } = response.data;
+    const [erc20TokensResult, ethBalanceResponse, ethPriceResponse] = response;
 
     // get relevant token values from each transactions
-    const tokenValues = result.reduce((acc, value) => {
+    const tokenValues = erc20TokensResult.data.result.reduce((acc, value) => {
       const { contractAddress, tokenDecimal, tokenName, tokenSymbol } = value;
       acc.push({ contractAddress, tokenDecimal, tokenName, tokenSymbol });
       return acc;
     }, []);
+
 
     // get unique token contracts
     const uniquesTokens = filterByUniqueContractAddress(tokenValues);
@@ -46,8 +65,8 @@ export const fetchTokenTransactions = createAsyncThunk(
       filterByTokenBalances(uniquesTokens, account),
     );
 
-    // get token logo and value from CoinGecko API
-    const completeTokenDetails = await Promise.all(
+    // get token logo and price from CoinGecko API
+    const completeTokensDetails = await Promise.all(
       uniqueTokenBalances.map(async (value) => {
         const {
           contractAddress,
@@ -72,7 +91,22 @@ export const fetchTokenTransactions = createAsyncThunk(
       }),
     );
 
-    return completeTokenDetails;
+    // get eth details to append to token details
+    const { usd } = ethPriceResponse.data.ethereum;
+    const ethBalance = getWeiAmount(ethBalanceResponse.data.result, 18, false);
+    const ethDetails = {
+      price: usd,
+      logo: "/images/ethereum-logo.png",
+      tokenDecimal: "18",
+      tokenSymbol: "ETH",
+      tokenBalance: ethBalance,
+      tokenName: "Ethereum",
+    };
+
+    // add eth details as the first item.
+    completeTokensDetails.unshift(ethDetails);
+
+    return completeTokensDetails;
   },
 );
 

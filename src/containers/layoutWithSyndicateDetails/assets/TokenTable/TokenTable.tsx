@@ -64,7 +64,7 @@ const TokenTable: FC<Props> = ({ columns, tableData, activeAssetTab }) => {
     const skeletonsWrapper = [];
     for (let i = 0; i < num; i++) {
       skeletonsWrapper.push(
-        <div className="w-full flex items-center" key={i}>
+        <div className="w-full flex items-center col-span-3" key={i}>
           <SkeletonLoader
             width={width}
             height={height}
@@ -81,10 +81,10 @@ const TokenTable: FC<Props> = ({ columns, tableData, activeAssetTab }) => {
       {[1, 2, 3, 4].map((index) => {
         return (
           <div
-            className="grid grid-cols-3 border-b-1 border-gray-syn6 py-3"
+            className="grid grid-cols-12 gap-5 border-b-1 border-gray-syn6 py-3"
             key={index}
           >
-            <div className="flex justify-start space-x-4 items-center w-full">
+            <div className="flex justify-start space-x-4 items-center w-full col-span-3">
               <div className="flex-shrink-0">
                 <SkeletonLoader
                   width="8"
@@ -138,7 +138,7 @@ const TokenTable: FC<Props> = ({ columns, tableData, activeAssetTab }) => {
                   const [balanceValue, balanceDecimalValue] =
                     floatedNumberWithCommas(tokenBalance).split(".");
                   const tokenValue =
-                    parseFloat(price ? price : 1) * parseFloat(tokenBalance);
+                    parseFloat(price ? price : 0) * parseFloat(tokenBalance);
                   const [usd, usdDecimalValue] =
                     floatedNumberWithCommas(tokenValue).split(".");
                   return (
