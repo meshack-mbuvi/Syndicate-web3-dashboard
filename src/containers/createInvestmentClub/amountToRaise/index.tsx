@@ -103,7 +103,7 @@ const AmountToRaise: React.FC = () => {
             addSettingDisclaimer: true,
             extraAddon: extraAddonContent,
             moreInfo:
-              "Syndicate encourages all groups to consult with their legal and tax advisors prior to launch.",
+              "Syndicate strongly encourages all users to consult with their own legal and tax advisors prior to launch.",
           }}
         />
       </div>
