@@ -21,7 +21,7 @@ const Header: React.FC<props> = ({ backLink = null, show = true }) => {
     <nav
       className={`${
         show ? "block" : "hidden"
-      } bg-black h-20 fixed top-0 inset-x-0 align-middle bg-opacity-50 z-20 backdrop-filter backdrop-blur-xl`}
+      } bg-black h-20 fixed top-0 inset-x-0 align-middle z-20 backdrop-filter backdrop-blur-xl`}
     >
       <div className="container mx-auto flex justify-between h-full">
         {/* This backlink is only displayed on mobile sizes */}

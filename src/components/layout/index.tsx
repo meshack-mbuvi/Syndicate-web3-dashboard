@@ -63,7 +63,7 @@ const Layout: FC<Props> = ({ children, backLink = null, showNav = true }) => {
         <div
           className={`sticky top-18 z-20 ${
             showCreateProgressBar
-              ? "bg-black bg-opacity-50 z-20 backdrop-filter"
+              ? "bg-black z-20 backdrop-filter"
               : ""
           }`}
         >
@@ -82,7 +82,7 @@ const Layout: FC<Props> = ({ children, backLink = null, showNav = true }) => {
           ) : null}
         </div>
         <div
-          className={`flex w-full flex-col sm:flex-row ${
+          className={`flex w-full bg-black flex-col sm:flex-row ${
             showCreateProgressBar ? "pt-16" : "pt-24"
           } z-20 justify-center items-center my-0 mx-auto`}
         >
