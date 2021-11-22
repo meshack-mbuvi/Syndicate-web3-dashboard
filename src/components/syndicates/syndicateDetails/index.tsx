@@ -262,7 +262,7 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
                     <div className={`flex flex-wrap items-center w-fit-content`}>
                       <div
                         id="club-name"
-                        className={`2xl:text-4.5xl leading-10 lg:text-4xl md:text-xl sm:text-4xl text-lg font-normal ${(nameWidth) >= divWidth ? `line-clamp-2` : `flex mr-6`}`}
+                        className={`2xl:text-4.5xl leading-10 lg:text-4xl md:text-xl sm:text-4xl text-lg font-normal ${(nameWidth) >= divWidth ? `line-clamp-2 mb-2` : `flex mr-6`}`}
                       >
                         {name}
                       </div>

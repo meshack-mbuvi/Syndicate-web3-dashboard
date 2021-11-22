@@ -43,6 +43,7 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
   const [scrollTop, setScrollTop] = useState(0);
   const [showNav, setShowNav] = useState(true);
   const [isSubNavStuck, setIsSubNavStuck] = useState(true);
+  const [customTransform, setCustomTransform] = useState(undefined)
   const subNav = useRef(null);
 
   // Listen to page scrolling
@@ -140,6 +141,10 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
           break;
       }
     }
+    const textWidth = getTextWidth(erc20Token.name)
+    if (textWidth > 590) {
+      setCustomTransform("translateY(-20%)")
+    }
   }, [account, router.isReady, JSON.stringify(erc20Token)]);
 
   // get static text from constants
@@ -202,6 +207,14 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
   const isActive = !erc20Token?.depositsEnabled;
   const isOwnerOrMember = erc20Token?.isOwner || +erc20Token?.accountClubTokens;
 
+  // Use canvas to determine text width
+  const getTextWidth = (text) => {
+    const canvas = document?.createElement("canvas");
+    const context = canvas.getContext("2d");
+    context.font = getComputedStyle(document.body).font;
+    return context.measureText(text).width;
+  };
+
   return (
     <>
       {router.isReady && !web3.utils.isAddress(clubAddress) ? (
@@ -219,6 +232,7 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
                   {/* Two Columns (Syndicate Details + Widget Cards) */}
                   <BackButton
                     topOffset={isSubNavStuck ? "-0.68rem" : "-0.25rem"}
+                    customTransform={customTransform}
                   />
                   <div className="grid grid-cols-12 gap-5">
                     {/* Left Column */}
