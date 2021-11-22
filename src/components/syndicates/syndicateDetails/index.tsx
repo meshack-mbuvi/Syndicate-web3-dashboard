@@ -33,9 +33,8 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
     },
     syndicatesReducer: { syndicate },
   } = useSelector((state: RootState) => state);
-
-  const [nameDivs, setNameDivs] = useState(<></>);
-  const [divSize, setDivSize] = useState(0)
+  const [divWidth, setDivWidth] = useState(0)
+  const [nameWidth , setNameWidth] = useState(0)
   const {
     loading,
     maxTotalDeposits,
@@ -53,20 +52,18 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
     isOwner,
   } = erc20Token;
 
-
   useEffect( () => {
-    const nameSplit = name.split(" ")
-    setDivSize(nameSplit.length)
-    const renderedOutput = nameSplit.map(item => <div className="mr-4"> {item} </div>)
-    const divChunks = (
-      <div className="flex">
-        {renderedOutput}
-      </div>
-    )
-    setNameDivs(divChunks)
+    setDivWidth(document?.getElementById('club-name')?.offsetWidth)
+    setNameWidth(getTextWidth(name))
   }, [name])
 
-  console.log('divSize --->', divSize)
+  // Use canvas to determine text width
+  const getTextWidth = (text) => {
+    const canvas = document?.createElement("canvas");
+    const context = canvas.getContext("2d");
+    context.font = getComputedStyle(document.body).font;
+    return context.measureText(text).width;
+  };
 
   const router = useRouter();
   const [details, setDetails] = useState<ClubDetails[]>([]);
@@ -265,18 +262,16 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
                       />
                     </div>
                   ) : (
-                    <div className={ divSize < 3 ? `flex items-center w-fit-content` : `block items-center w-fit-content`}>
+                    <div className={`flex flex-wrap items-center w-fit-content`}>
                       <div
-                        // className={`2xl:text-4.5xl leading-10 lg:text-4xl md:text-xl sm:text-4xl text-lg font-normal line-clamp-2`}
-                        className={divSize < 3 ? `inline-flex 2xl:text-4.5xl leading-10 lg:text-4xl md:text-xl sm:text-4xl text-lg font-normal` :
-                          `2xl:text-4.5xl leading-10 lg:text-4xl md:text-xl sm:text-4xl text-lg font-normal line-clamp-2`
-                        }
+                        id="club-name"
+                        className={`2xl:text-4.5xl leading-10 lg:text-4xl md:text-xl sm:text-4xl text-lg font-normal ${(nameWidth) >= divWidth ? `line-clamp-2` : `flex mr-4`}`}
                       >
-                        {divSize < 3 ? nameDivs : name}
+                        {name}
                       </div>
-                      <div className="inline-block flex-wrap">
+                      <div className="flex flex-wrap">
                         <div className="font-whyte-light text-gray-syn4 flex items-center justify-center">
-                          <span className={`2xl:text-4.5xl leading-10 lg:text-4xl md:text-xl sm:text-4xl text-lg ${divSize < 3 ? `ml-4` : '' }`}>
+                          <span className={`2xl:text-4.5xl leading-10 lg:text-4xl md:text-xl sm:text-4xl text-lg`}>
                             {symbol}
                           </span>
                         </div>
