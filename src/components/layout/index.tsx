@@ -43,6 +43,10 @@ const Layout: FC<Props> = ({ children, backLink = null, showNav = true }) => {
   const pushFooter =
     onPortfolioPage || !account || loading || loadingClubDetails;
 
+  // we don't need to render the footer on the creation page.
+  const createClubPage =
+    router.pathname === "/clubs/create/clubprivatebetainvite";
+
   return (
     <div
       className={`flex flex-col justify-between ${pushFooter && "h-screen"}`}
@@ -90,11 +94,13 @@ const Layout: FC<Props> = ({ children, backLink = null, showNav = true }) => {
         </div>
         <ConnectWallet />
       </div>
-      <div>
-        <div className="container mx-auto">
-          <Footer extraClasses="mt-24 sm:mt-24 md:mt-40 mb-12" />
+      {createClubPage ? null : (
+        <div>
+          <div className="container mx-auto">
+            <Footer extraClasses="mt-24 sm:mt-24 md:mt-40 mb-12" />
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };
