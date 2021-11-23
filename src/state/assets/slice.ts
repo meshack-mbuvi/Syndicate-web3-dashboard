@@ -1,14 +1,13 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import axios from "axios";
-import { web3 } from "@/utils/web3Utils";
-import { AbiItem } from "web3-utils";
-import { getWeiAmount } from "src/utils/conversions";
-import abi from "human-standard-token-abi";
+import { getEthereumTokenPrice } from "@/helpers/ethereumTokenDetails";
 import erc721abi from "@/utils/abi/erc721";
 import { isDev } from "@/utils/environment";
+import { web3 } from "@/utils/web3Utils";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import axios from "axios";
 import { getCoinFromContractAddress } from "functions/src/utils/ethereum";
-import { getEthereumTokenPrice } from "@/helpers/ethereumTokenDetails";
-
+import abi from "human-standard-token-abi";
+import { getWeiAmount } from "src/utils/conversions";
+import { AbiItem } from "web3-utils";
 import { initialState } from "./types";
 
 const baseURL = isDev
@@ -56,14 +55,13 @@ export const fetchTokenTransactions = createAsyncThunk(
       return acc;
     }, []);
 
-
     // get unique token contracts
     const uniquesTokens = filterByUniqueContractAddress(tokenValues);
 
     // check if account has token balance
-    const uniqueTokenBalances = await Promise.all(
-      filterByTokenBalances(uniquesTokens, account),
-    );
+    const uniqueTokenBalances = await (
+      await Promise.all(fetchTokenBalances(uniquesTokens, account))
+    ).filter((token) => +token.tokenBalance > 0);
 
     // get token logo and price from CoinGecko API
     const completeTokensDetails = await Promise.all(
@@ -196,7 +194,7 @@ const filterByUniqueContractAddress = (tokensList: any[]) => {
   return uniqueTokensByContractAddress;
 };
 
-const filterByTokenBalances = (tokensList: any[], account: string) => {
+const fetchTokenBalances = (tokensList: any[], account: string) => {
   return tokensList.map(async (token) => {
     const tokenCopy = { ...token };
     const { contractAddress, tokenDecimal } = token;
@@ -210,16 +208,11 @@ const filterByTokenBalances = (tokensList: any[], account: string) => {
       .balanceOf(account)
       .call();
 
-    // add check for token balance.
-    // just because a transaction involved a specific token does not mean
-    // the account currently holds that token.
-    if (+accountBalance > 0) {
-      tokenCopy["tokenBalance"] = getWeiAmount(
-        accountBalance,
-        tokenDecimal,
-        false,
-      );
-    }
+    tokenCopy["tokenBalance"] = getWeiAmount(
+      accountBalance,
+      tokenDecimal,
+      false,
+    );
 
     return tokenCopy;
   });
