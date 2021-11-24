@@ -71,8 +71,8 @@ const Collectibles: FC<{ activeAssetTab: string }> = ({ activeAssetTab }) => {
                     }}
                     className="border-r-1 border-l-1 border-t-1 border-gray-syn6 w-80 h-80 rounded-t-lg"
                   ></div>
-                  <div className="text-xl rounded-b-lg w-80 px-8 py-6 border-b-1 border-r-1 border-l-1 border-gray-syn6">
-                    {name}
+                  <div className="flex items-center text-xl rounded-b-lg w-80 h-24 py-6 border-b-1 border-r-1 border-l-1 border-gray-syn6 break-words">
+                    <span className="w-4/5 mx-8 line-clamp-2">{name}</span>
                   </div>
                 </div>
               );
