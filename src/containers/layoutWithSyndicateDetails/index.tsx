@@ -15,6 +15,7 @@ import { AppState } from "@/state";
 import {
   fetchCollectiblesTransactions,
   fetchTokenTransactions,
+  clearCollectiblesTransactions,
 } from "@/state/assets/slice";
 import { setClubMembers } from "@/state/clubMembers";
 import { setERC20TokenDetails } from "@/state/erc20token/slice";
@@ -71,9 +72,21 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
       // fetch token transactions for the connected account.
       dispatch(fetchTokenTransactions(erc20Token.owner));
       // test nft account: 0xf4c2c3e12b61d44e6b228c43987158ac510426fb
-      dispatch(fetchCollectiblesTransactions(erc20Token.owner));
+      dispatch(
+        fetchCollectiblesTransactions({
+          account: erc20Token.owner,
+          offset: "0",
+        }),
+      );
     }
   }, [erc20Token.owner]);
+
+  useEffect(() => {
+    // clear collectibles on account switch
+    if (account) {
+      dispatch(clearCollectiblesTransactions());
+    }
+  }, [account]);
 
   const router = useRouter();
   const dispatch = useDispatch();

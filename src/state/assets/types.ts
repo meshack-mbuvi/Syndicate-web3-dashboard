@@ -5,6 +5,7 @@ export interface InitialState {
   loadingCollectibles: boolean;
   tokensFetchError: boolean;
   collectiblesFetchError: boolean;
+  allCollectiblesFetched: boolean;
 }
 
 export const initialState: InitialState = {
@@ -14,4 +15,5 @@ export const initialState: InitialState = {
   loadingCollectibles: false,
   tokensFetchError: false,
   collectiblesFetchError: false,
+  allCollectiblesFetched: false
 };
