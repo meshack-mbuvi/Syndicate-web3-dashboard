@@ -117,6 +117,7 @@ interface CollectiblesFetchParams {
   account: string;
   offset: string;
 }
+
 export const fetchCollectiblesTransactions = createAsyncThunk(
   "assets/fetchCollectiblesTransactions",
   async (params: CollectiblesFetchParams) => {
