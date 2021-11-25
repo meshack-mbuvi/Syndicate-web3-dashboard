@@ -1,5 +1,4 @@
 import { getEthereumTokenPrice } from "@/helpers/ethereumTokenDetails";
-import erc721abi from "@/utils/abi/erc721";
 import { isDev } from "@/utils/environment";
 import { web3 } from "@/utils/web3Utils";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
@@ -13,7 +12,12 @@ import { initialState } from "./types";
 const baseURL = isDev
   ? "https://api-rinkeby.etherscan.io/api"
   : "https://api.etherscan.io/api";
+
+const openSeaBaseURL = isDev
+  ? "https://rinkeby-api.opensea.io/api/v1/assets"
+  : "https://api.opensea.io/api/v1/assets";
 const etherscanAPIKey = process.env.NEXT_PUBLIC_ETHERSCAN_API_KEY;
+const openSeaAPIKey = process.env.NEXT_PUBLIC_OPENSEA_API_KEY;
 
 /** Async thunks */
 // ERC20 transactions
@@ -108,81 +112,45 @@ export const fetchTokenTransactions = createAsyncThunk(
   },
 );
 
-// ERC721 transactions
+// collectibles assets
+interface CollectiblesFetchParams {
+  account: string;
+  offset: string;
+}
 export const fetchCollectiblesTransactions = createAsyncThunk(
   "assets/fetchCollectiblesTransactions",
-  async (account: string) => {
-    const response = await axios.get(`${baseURL}`, {
+  async (params: CollectiblesFetchParams) => {
+    const { account, offset } = params;
+
+    const response = await axios.get(`${openSeaBaseURL}`, {
+      headers: { "x-api-key": isDev ? "" : openSeaAPIKey },
       params: {
-        module: "account",
-        action: "tokennfttx",
-        apikey: etherscanAPIKey,
-        address: account,
+        // test account on mainnet: 0x6eb534ed1329e991842b55be375abc63fe7c0e2b,
+        // test account on rinkeby: 0xf4c2c3e12b61d44e6b228c43987158ac510426fb
+        owner: account,
+        limit: "20", // in case OpenSea changes the default limit
+        offset,
       },
     });
 
-    const { result } = response.data;
+    const { assets } = response.data;
 
-    const nftTokenValues = result.reduce((acc, value) => {
-      const { contractAddress, tokenID } = value;
-      acc.push({ contractAddress, tokenID });
-      return acc;
-    }, []);
-
-    // get unique token contracts
-    const uniqueNftTokens = filterByUniqueContractAddress(nftTokenValues);
-
-    // check if account is owner of nft
-    const nftsOwnedByAccount = await Promise.all(
-      filterNftByOwnership(uniqueNftTokens, account),
-    );
-
-    // get nft metadata
-    const nftsOwnedMetadata = await Promise.all(
-      getNftMetadata(nftsOwnedByAccount),
-    );
-
-    const nftTokenDetails = nftsOwnedMetadata.reduce((acc, value) => {
-      const { name, image } = value;
-      acc.push({ name, image });
-      return acc;
-    }, []);
-
-    return nftTokenDetails;
+    return assets.map((asset) => ({
+      name: asset.name,
+      image: asset.image_url,
+      animation: asset.animation_url,
+      permalink: asset.permalink,
+      id: asset.token_id,
+    }));
   },
 );
 
-/** Methods */
-const getNftMetadata = (nftTokensList: any[]) => {
-  const nftMetadata = nftTokensList.map(async (nftToken) => {
-    const { contractAddress, tokenID } = nftToken;
-
-    const nftContractInstance = new web3.eth.Contract(
-      erc721abi as AbiItem[],
-      contractAddress,
-    );
-    const tokenURI = await nftContractInstance.methods.tokenURI(tokenID).call();
-    const tokenMetadata = await axios.get(tokenURI);
-
-    return tokenMetadata.data;
-  });
-
-  return nftMetadata;
-};
-
-// filter nfts by ownership
-const filterNftByOwnership = (nftTokensList: any[], account: string) => {
-  const nftsOwned = nftTokensList.filter(async (nftToken) => {
-    const { contractAddress, tokenID } = nftToken;
-    const nftContractInstance = new web3.eth.Contract(
-      erc721abi as AbiItem[],
-      contractAddress,
-    );
-    const nftOwner = await nftContractInstance.methods.ownerOf(tokenID).call();
-    return nftOwner !== account;
-  });
-  return nftsOwned;
-};
+// collectibles needs to be cleared when account is switched.
+// this prevents duplicate renders on refetch
+export const clearCollectiblesTransactions = createAsyncThunk(
+  "assets/clearCollectiblesTransactions",
+  async () => [],
+);
 
 // get unique token contracts from token transactions
 const filterByUniqueContractAddress = (tokensList: any[]) => {
@@ -240,12 +208,35 @@ const assetsSlice = createSlice({
         state.loadingCollectibles = true;
       })
       .addCase(fetchCollectiblesTransactions.fulfilled, (state, action) => {
-        state.collectiblesResult = action.payload;
+        if (action.payload.length < 20) {
+          state.allCollectiblesFetched = true;
+        } else {
+          state.allCollectiblesFetched = false;
+        }
+
+        // unique values only
+        const result = [...state.collectiblesResult, ...action.payload];
+        const flag = {};
+        const uniqueNfts = [];
+        result.forEach((item) => {
+          const { id } = item;
+          if (!flag[id]) {
+            flag[id] = true;
+            uniqueNfts.push(item);
+          }
+        });
+
+        state.collectiblesResult = uniqueNfts;
         state.loadingCollectibles = false;
         state.collectiblesFetchError = false;
       })
       .addCase(fetchCollectiblesTransactions.rejected, (state, action) => {
         state.collectiblesFetchError = true;
+      })
+      .addCase(clearCollectiblesTransactions.fulfilled, (state, action) => {
+        state.collectiblesResult = action.payload;
+        state.loadingCollectibles = false;
+        state.collectiblesFetchError = false;
       });
   },
 });

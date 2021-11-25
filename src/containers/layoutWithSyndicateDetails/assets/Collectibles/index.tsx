@@ -1,13 +1,22 @@
-import { FC } from "react";
+import { FC, useState } from "react";
+import InfiniteScroll from "react-infinite-scroll-component";
+import { useDispatch, useSelector } from "react-redux";
 import { SkeletonLoader } from "@/components/skeletonLoader";
-import { useSelector } from "react-redux";
 import { AppState } from "@/state";
 import AssetEmptyState from "@/containers/layoutWithSyndicateDetails/assets/AssetEmptyState";
+import { fetchCollectiblesTransactions } from "@/state/assets/slice";
 
 const Collectibles: FC<{ activeAssetTab: string }> = ({ activeAssetTab }) => {
   const {
-    assetsSliceReducer: { loadingCollectibles, collectiblesResult },
+    assetsSliceReducer: {
+      loadingCollectibles,
+      collectiblesResult,
+      allCollectiblesFetched,
+    },
+    erc20TokenSliceReducer: { erc20Token },
   } = useSelector((state: AppState) => state);
+  const dispatch = useDispatch();
+  const [pageOffSet, setPageOffSet] = useState<number>(20);
 
   const collectiblesTitle = (
     <div className="flex items-center space-x-4 pb-8">
@@ -17,31 +26,37 @@ const Collectibles: FC<{ activeAssetTab: string }> = ({ activeAssetTab }) => {
   );
 
   // loading state
-  if (loadingCollectibles) {
-    return (
-      <>
-        {collectiblesTitle}
-        <div className="w-fit-content">
+  const collectibleLoader = (
+    <>
+      <div className="w-fit-content">
+        <SkeletonLoader
+          borderRadius="rounded-t-lg"
+          width="80"
+          height="80"
+          customClass="border-r-1 border-l-1 border-t-1 border-gray-syn6"
+          margin="m-0"
+        />
+        <div className="rounded-b-lg w-80 p-7 border-b-1 border-r-1 border-l-1 border-gray-syn6">
           <SkeletonLoader
-            borderRadius="rounded-t-lg"
-            width="80"
-            height="80"
-            customClass="border-r-1 border-l-1 border-t-1 border-gray-syn6"
+            width="44"
+            height="7"
             margin="m-0"
+            borderRadius="rounded-lg"
           />
-          <div className="rounded-b-lg w-80 p-7 border-b-1 border-r-1 border-l-1 border-gray-syn6">
-            <SkeletonLoader
-              width="44"
-              height="7"
-              margin="m-0"
-              borderRadius="rounded-lg"
-            />
-          </div>
         </div>
-      </>
-    );
-  }
+      </div>
+    </>
+  );
 
+  const loaderContent = (
+    <div className={`${collectiblesResult.length > 0 && "pt-6"}`}>
+      <div className="grid grid-cols-1 lg:grid-cols-3 sm:grid-cols-2 gap-6">
+        {[...Array(3)].map((item, idx) => {
+          return <div key={idx}>{collectibleLoader}</div>;
+        })}
+      </div>
+    </div>
+  );
   // return empty state if on active tab and there are no collectibles
   if (
     activeAssetTab === "collectibles" &&
@@ -51,34 +66,107 @@ const Collectibles: FC<{ activeAssetTab: string }> = ({ activeAssetTab }) => {
     return <AssetEmptyState activeAssetTab={activeAssetTab} />;
   }
 
+  // fetch more collectibles
+  const fetchMoreCollectibles = () => {
+    setPageOffSet(pageOffSet + 20);
+    dispatch(
+      fetchCollectiblesTransactions({
+        account: erc20Token.owner,
+        offset: pageOffSet.toString(),
+      }),
+    );
+  };
+
+  // initial loading state.
+  if (loadingCollectibles && !collectiblesResult.length) {
+    return (
+      <>
+        {collectiblesTitle}
+        {loaderContent}
+      </>
+    );
+  }
+
   return (
     <div>
-      {collectiblesResult.length ? (
-        <>
+      {collectiblesResult.length > 0 ? (
+        <div>
           {collectiblesTitle}
-          <div className="grid grid-cols-1 xl:grid-cols-3 lg:grid-cols-3 sm:grid-cols-2 gap-6">
-            {collectiblesResult.map((collectible, index) => {
-              const { image, name } = collectible;
-              return (
-                <div className="w-80" key={index}>
-                  <div
-                    style={{
-                      backgroundColor: "#232529",
-                      backgroundImage: `url('${image}')`,
-                      backgroundSize: "cover",
-                      backgroundRepeat: "no-repeat",
-                      backgroundPosition: "center center",
-                    }}
-                    className="border-r-1 border-l-1 border-t-1 border-gray-syn6 w-80 h-80 rounded-t-lg"
-                  ></div>
-                  <div className="flex items-center text-xl rounded-b-lg w-80 h-24 py-6 border-b-1 border-r-1 border-l-1 border-gray-syn6 break-words">
-                    <span className="w-4/5 mx-8 line-clamp-2">{name}</span>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </>
+          <InfiniteScroll
+            dataLength={collectiblesResult.length}
+            next={fetchMoreCollectibles}
+            hasMore={!allCollectiblesFetched}
+            loader={loaderContent}
+          >
+            <div className="grid grid-cols-1 xl:grid-cols-3 lg:grid-cols-3 sm:grid-cols-2 gap-6">
+              {collectiblesResult.map((collectible, index) => {
+                const { image, name, animation, permalink } = collectible;
+                let media;
+                if (image && !animation) {
+                  media = (
+                    <div
+                      style={{
+                        backgroundColor: "#232529",
+                        backgroundImage: `url('${image}')`,
+                        backgroundSize: "cover",
+                        backgroundRepeat: "no-repeat",
+                        backgroundPosition: "center center",
+                      }}
+                      className="border-r-1 border-l-1 border-t-1 border-gray-syn6 w-80 h-80 rounded-t-lg"
+                    ></div>
+                  );
+                } else if (animation) {
+                  // animation could be a .mov or .mp4 video
+                  const movAnimation = animation.match(/\.mov$/) != null;
+                  const mp4Animation = animation.match(/\.mp4$/) != null;
+
+                  // animation could be a gif
+                  const animatedGif = animation.match(/\.gif$/) != null;
+                  if (animatedGif) {
+                    media = (
+                      <div className="bg-gray-syn7 border-r-1 border-l-1 border-t-1 border-gray-syn6 w-80 h-80 rounded-t-lg overflow-hidden">
+                        <img src={animation} alt="animated nft image" />
+                      </div>
+                    );
+                  } else if (movAnimation || mp4Animation) {
+                    media = (
+                      <div className="border-r-1 border-l-1 border-t-1 border-gray-syn6 w-80 h-80 rounded-t-lg bg-gray-syn7 overflow-hidden">
+                        <video
+                          controls
+                          autoPlay
+                          loop
+                          muted
+                          className="rounded-t-lg"
+                        >
+                          {/* Specifying type as "video/mp4" works for both .mov and .mp4 files  */}
+                          <source src={animation} type="video/mp4"></source>
+                        </video>
+                      </div>
+                    );
+                  }
+                }
+
+                // nft should have a name at least
+                if (name && media) {
+                  return (
+                    <a
+                      className="w-80"
+                      key={index}
+                      href={permalink ? permalink : ""}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      {media}
+                      <div className="flex items-center text-xl rounded-b-lg w-80 h-24 py-6 border-b-1 border-r-1 border-l-1 border-gray-syn6 break-words">
+                        <span className="w-4/5 mx-8 line-clamp-2">{name}</span>
+                      </div>
+                    </a>
+                  );
+                }
+              })}
+            </div>
+          </InfiniteScroll>
+        </div>
       ) : null}
     </div>
   );
