@@ -1,5 +1,7 @@
+export { Checkbox } from "./checkbox";
 export { EditableInput } from "./editableInput";
 export { InputWithTrailingIcon } from "./inputWithTrailingIcon";
+export { NumberField } from "./numberField";
 export { TextArea } from "./textArea";
-export { TextInput } from "./textInput";
+export { TextField } from "./textField";
 export { Toggle } from "./toggle";
