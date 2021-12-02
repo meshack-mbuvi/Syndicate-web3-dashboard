@@ -1,18 +1,18 @@
-import { useEffect, useState, useRef } from "react";
-import { generateSlug } from "random-word-slugs";
+import Fade from "@/components/Fade";
+import { useCreateInvestmentClubContext } from "@/context/CreateInvestmentClubContext";
 import { useDebounce } from "@/hooks/useDebounce";
-import { acronymGenerator } from "@/utils/acronymGenerator";
-import { symbolValidation } from "@/utils/validators";
-import { useDispatch, useSelector } from "react-redux";
 import { AppState } from "@/state";
 import {
   setInvestmentClubName,
   setInvestmentClubSymbolPlaceHolder,
 } from "@/state/createInvestmentClub/slice";
-import { useCreateInvestmentClubContext } from "@/context/CreateInvestmentClubContext";
+import { acronymGenerator } from "@/utils/acronymGenerator";
+import { symbolValidation } from "@/utils/validators";
+import { generateSlug } from "random-word-slugs";
+import { useEffect, useRef, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { SettingsDisclaimerTooltip } from "../shared/SettingDisclaimer";
 import useOnClickOutside from "../shared/useOnClickOutside";
-import Fade from "@/components/Fade";
 
 const ClubNameSelector: React.FC = () => {
   const ref = useRef();
@@ -151,13 +151,16 @@ const ClubNameSelector: React.FC = () => {
         <div className="h3 pb-6 pt-10">Club token</div>
         <div>
           <div className="relative mb-2">
-            <span className="absolute inset-y-0 left-0 text-3xl pl-4 mt-3">
+            <span
+              className="absolute inset-y-0 left-0 text-3xl pl-4"
+              style={{ marginTop: "11.5px" }}
+            >
               ✺
             </span>
             <input
               data-tip
               data-for="change-settings-tip"
-              className="text-base font-whyte bg-transparent py-4 pl-12 rounded-md border-1 w-full border-gray-24 focus:border-blue-navy outline-none text-white hover:border-gray-syn3"
+              className="text-base font-whyte bg-transparent leading-6 align-baseline py-4 pl-12 rounded-md border-1 w-full border-gray-24 focus:border-blue-navy outline-none text-white hover:border-gray-syn3"
               placeholder="(e.g. FWB)"
               value={investmentClubSymbolPlaceHolder}
               onChange={handleSymbolChange}
