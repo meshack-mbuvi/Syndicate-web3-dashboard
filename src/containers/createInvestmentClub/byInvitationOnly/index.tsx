@@ -16,7 +16,7 @@ const ByInvitationOnly: React.FC<{ showByInvitationOnly: Dispatch<SetStateAction
           <a
             href="https://www.notion.so/syndicateprotocol/Syndicate-Terms-of-Service-04674deec934472e88261e861cdcbc7c"
             className="text-blue flex items-center justify-start"
-            target="_blank"
+            target="_blank" rel="noreferrer"
           >
             <p>Terms of Service</p>{" "}
             <ExternalLinkIcon className="ml-1 w-4 text-blue" />{" "}
