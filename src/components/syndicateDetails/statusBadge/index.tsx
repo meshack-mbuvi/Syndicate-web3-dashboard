@@ -1,8 +1,8 @@
-import React from "react";
 import { Spinner } from "@/components/shared/spinner";
-import { AppState } from "@/state";
-import { useSelector } from "react-redux";
 import { SkeletonLoader } from "@/components/skeletonLoader";
+import { AppState } from "@/state";
+import React from "react";
+import { useSelector } from "react-redux";
 
 interface Props {
   depositsEnabled?: boolean;
@@ -56,7 +56,7 @@ const StatusBadge = (props: Props): JSX.Element => {
     badgeIcon = "logo.svg";
     titleText = "Club successfully created";
   } else if (syndicateCreationFailed) {
-    badgeBackgroundColor = "bg-red-semantic bg-opacity-10";
+    badgeBackgroundColor = "bg-red-error bg-opacity-10";
     badgeIcon = "warning-triangle.svg";
     titleText = "Club creation failed";
   }
