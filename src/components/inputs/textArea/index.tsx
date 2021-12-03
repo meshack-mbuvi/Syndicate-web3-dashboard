@@ -1,4 +1,5 @@
 import React from "react";
+import { useController } from "react-hook-form";
 
 /**
  * An textarea component with label and icon at the right end
@@ -9,16 +10,14 @@ import React from "react";
 
 interface ITextAreaProps {
   id?: string;
-  classoverride?: string;
+  classOverride?: string;
   name?: string;
   onChange?: (event: React.ChangeEvent<HTMLTextAreaElement>) => void;
   disabled?: boolean;
   placeholder?: string;
-  error?: string;
-  required?: boolean;
-  value?: string | number;
   rows?: number;
   customHoverBorder?: string;
+  control: any;
   onPaste?: (event: React.ClipboardEvent<HTMLTextAreaElement>) => void;
   onKeyUp?: (event: React.KeyboardEvent<HTMLTextAreaElement>) => void;
   onSelect?: (event: React.ChangeEvent<HTMLTextAreaElement>) => void;
@@ -28,18 +27,22 @@ export const TextArea: React.FC<ITextAreaProps> = (props) => {
   const {
     id,
     name,
-    onChange,
-    error,
-    value,
-    disabled = false,
     rows = 4,
-    onPaste,
-    onKeyUp,
-    onSelect,
-    classoverride = "bg-white",
     customHoverBorder,
+    control,
+    disabled = false,
+    classOverride = "bg-white",
     ...rest
   } = props;
+
+  const {
+    field,
+    formState: { errors },
+  } = useController({
+    name,
+    control,
+    defaultValue: "",
+  });
 
   const disabledClasses = disabled
     ? "text-gray-500 border-0"
@@ -50,22 +53,22 @@ export const TextArea: React.FC<ITextAreaProps> = (props) => {
       <textarea
         id={id}
         name={name}
-        onChange={onChange}
-        onPaste={onPaste}
-        onKeyUp={onKeyUp}
-        onSelect={onSelect}
-        value={value}
+        {...field}
         className={`text-input-placeholder break-all border border-gray-french rounded-lg w-full py-3 px-4 focus:border-blue ${
           customHoverBorder
             ? customHoverBorder
             : "hover:border-white hover:border-opacity-70"
-        } ${disabledClasses} ${classoverride}`}
+        } ${disabledClasses} ${classOverride}`}
         {...rest}
         rows={rows}
         cols={50}
         disabled={disabled}
       ></textarea>
-      {error ? <p className="text-red-500 text-xs break-all -mt-1">{error}</p> : null}
+      {errors?.[`${name}`]?.message ? (
+        <p className="text-red-semantic text-xs break-all -mt-1">
+          {errors?.[`${name}`]?.message}
+        </p>
+      ) : null}
     </div>
   );
 };
