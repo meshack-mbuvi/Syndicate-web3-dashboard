@@ -53,9 +53,7 @@ export const TextField: React.FC<IProps> = ({
       <div className="relative">
         <input
           className={`block font-whyte text-base bg-transparent p-4 rounded-md border-1 w-full ${
-            errors?.[`${name}`]?.message
-              ? "border-red-semantic"
-              : "border-gray-24"
+            errors?.[`${name}`]?.message ? "border-red-error" : "border-gray-24"
           } focus:border-blue-navy outline-none text-white hover:border-gray-syn3`}
           name={name}
           {...field}
@@ -76,7 +74,7 @@ export const TextField: React.FC<IProps> = ({
         )}
       </div>
       {errors[`${name}`]?.message ? (
-        <p className="text-red-semantic font-whyte text-sm pt-2">
+        <p className="text-red-error font-whyte text-sm pt-2">
           {errors?.[`${name}`]?.message}
         </p>
       ) : (

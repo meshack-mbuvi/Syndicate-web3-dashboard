@@ -168,7 +168,7 @@ const ClubNameSelector: React.FC = () => {
           </div>
           <div className="text-sm">
             {errors ? (
-              <span className="text-red-semantic text-sm">{errors}</span>
+              <span className="text-red-error text-sm">{errors}</span>
             ) : (
               <span className="text-gray-3 text-sm">
                 Set an easily recognizable symbol for your investment club

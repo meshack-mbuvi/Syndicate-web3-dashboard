@@ -1,6 +1,6 @@
-import { useState } from "react";
 import { SettingsDisclaimerTooltip } from "@/containers/createInvestmentClub/shared/SettingDisclaimer";
 import cn from "classnames";
+import { useState } from "react";
 
 /**
  * An input component with label, component to the right, and an icon to the furthest right.
@@ -57,7 +57,7 @@ export const AdvancedInputField = (props: {
         className={cn("mt-1 mb-2 flex border rounded-md overflow-hidden", {
           "border-blue-navy ring-0": focused && !error,
           "border-gray-24": !focused,
-          "border-red-semantic": error,
+          "border-red-error": error,
           "border-gray-syn3": hover,
         })}
       >
@@ -114,7 +114,7 @@ export const AdvancedInputField = (props: {
               {
                 "border-blue-navy ring-0": focused && !error,
                 "border-gray-24": !focused,
-                "border-red-semantic": error,
+                "border-red-error": error,
                 "border-gray-syn3": hover,
               },
             )}

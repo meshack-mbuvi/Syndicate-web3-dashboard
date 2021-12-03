@@ -43,9 +43,7 @@ export const NumberField: React.FC<IProps> = ({
           thousandSeparator={true}
           allowNegative={false}
           className={`block font-whyte text-base bg-transparent p-4 rounded-md border-1 w-full ${
-            errors?.[`${name}`]?.message
-              ? "border-red-semantic"
-              : "border-gray-24"
+            errors?.[`${name}`]?.message ? "border-red-error" : "border-gray-24"
           } focus:border-blue-navy outline-none text-white hover:border-gray-syn3 ${
             addOn ? "pr-20" : "pr-4"
           }`}
@@ -69,7 +67,7 @@ export const NumberField: React.FC<IProps> = ({
         )}
       </div>
       {errors?.[`${name}`]?.message ? (
-        <p className=" text-red-semantic text-sm pt-2">
+        <p className=" text-red-error text-sm pt-2">
           {errors[`${name}`]?.message}
         </p>
       ) : (

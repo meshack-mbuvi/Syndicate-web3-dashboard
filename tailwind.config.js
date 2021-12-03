@@ -189,7 +189,7 @@ module.exports = {
         },
         red: {
           ...colors.red,
-          semantic: "#F14D4D",
+          error: "#F14D4D",
         },
         green: {
           ...colors.green,
@@ -282,16 +282,16 @@ module.exports = {
       inset: {
         84: "22rem",
         31: "7.5rem",
-        18: "4.5rem"
+        18: "4.5rem",
       },
       margin: {
         0.5: "0.15rem",
         24.5: "6.5rem",
-        27: "6.875rem"
+        27: "6.875rem",
       },
       padding: {
         4.5: "1.125rem",
-        26: "6.6rem"
+        26: "6.6rem",
       },
       borderRadius: {
         "1.5lg": "0.625rem",

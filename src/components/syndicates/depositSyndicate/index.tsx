@@ -27,6 +27,7 @@ import {
   setAccountClubTokens,
   setMemberPercentShare,
 } from "@/state/erc20token/slice";
+import { Status } from "@/state/wallet/types";
 import { getWeiAmount } from "@/utils/conversions";
 import { isDev } from "@/utils/environment";
 import {
@@ -45,7 +46,6 @@ import { SkeletonLoader } from "src/components/skeletonLoader";
 import ERC20ABI from "src/utils/abi/erc20";
 import { AbiItem } from "web3-utils";
 import ConnectWalletAction from "../shared/connectWalletAction";
-import { Status } from "@/state/wallet/types";
 
 const DepositSyndicate: React.FC = () => {
   // HOOK DECLARATIONS
@@ -547,10 +547,7 @@ const DepositSyndicate: React.FC = () => {
       setClubWideErrors(message);
       setDepositError("");
       setImageSRC("/images/deposit/depositReached.svg");
-    } else if (
-      !(accountClubTokens > 0) &&
-      memberCount === maxMemberCount
-    ) {
+    } else if (!(accountClubTokens > 0) && memberCount === maxMemberCount) {
       message = `The maximum amount of members (${maxMemberCount}) for this club has been reached.`;
       setClubWideErrors(message);
       setDepositError("");
@@ -676,7 +673,9 @@ const DepositSyndicate: React.FC = () => {
                     copied,
                     memberPercentShare,
                     clubTokenSymbol: symbol,
-                    accountClubTokens: accountClubTokens ? accountClubTokens.toString() : "0",
+                    accountClubTokens: accountClubTokens
+                      ? accountClubTokens.toString()
+                      : "0",
                   }}
                 />
               ) : showDepositProcessingModal && depositFailed ? (
@@ -692,7 +691,9 @@ const DepositSyndicate: React.FC = () => {
                     copied,
                     memberPercentShare,
                     clubTokenSymbol: symbol,
-                    accountClubTokens: accountClubTokens ? accountClubTokens.toString() : "0",
+                    accountClubTokens: accountClubTokens
+                      ? accountClubTokens.toString()
+                      : "0",
                   }}
                 />
               ) : status === Status.DISCONNECTED ? (
@@ -768,7 +769,7 @@ const DepositSyndicate: React.FC = () => {
                   </div>
                   {/* Error state for insufficientBalance */}
                   {insufficientBalance && (
-                    <span className="text-red-semantic text-sm">
+                    <span className="text-red-error text-sm">
                       Insufficient balance.
                     </span>
                   )}
@@ -789,7 +790,7 @@ const DepositSyndicate: React.FC = () => {
                     )}
 
                   {depositError ? (
-                    <div className="font-whyte text-sm text-red-semantic mt-4">
+                    <div className="font-whyte text-sm text-red-error mt-4">
                       {depositError}
                     </div>
                   ) : null}
@@ -830,7 +831,7 @@ const DepositSyndicate: React.FC = () => {
                       </button>
                     </div>
                   ) : (
-                    <div className="font-whyte text-sm text-red-semantic flex mb-8 items-center">
+                    <div className="font-whyte text-sm text-red-error flex mb-8 items-center">
                       <div className="h-4">
                         <Image src={imageSRC} height={24} width={24} />
                       </div>
@@ -929,7 +930,9 @@ const DepositSyndicate: React.FC = () => {
               <span className="text-base text-gray-syn4">
                 {`You now have ${floatedNumberWithCommas(
                   accountClubTokens,
-                )} ${symbol}, which represents a ${floatedNumberWithCommas(memberPercentShare)}% ownership
+                )} ${symbol}, which represents a ${floatedNumberWithCommas(
+                  memberPercentShare,
+                )}% ownership
                 share of this club.`}
               </span>
             </div>
@@ -1045,7 +1048,9 @@ const DepositSyndicate: React.FC = () => {
                 </div>
                 <div className="flex items-center justify-between mt-1">
                   <p className="text-sm text-gray-syn4">
-                    {floatedNumberWithCommas(ownershipShare) === '< 0.01' ? null : '= '}
+                    {floatedNumberWithCommas(ownershipShare) === "< 0.01"
+                      ? null
+                      : "= "}
                     {floatedNumberWithCommas(ownershipShare)}% ownership share
                   </p>
                 </div>
@@ -1163,7 +1168,7 @@ const DepositSyndicate: React.FC = () => {
               <div
                 className={`${
                   depositFailed || transactionFailed || transactionRejected
-                    ? "bg-red-semantic"
+                    ? "bg-red-error"
                     : ""
                 }   rounded-md bg-opacity-10 mt-4 py-6 flex flex-col justify-center px-5`}
               >
