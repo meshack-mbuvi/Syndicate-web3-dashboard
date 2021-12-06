@@ -9,7 +9,6 @@ import InvestmentClubCTAs from "@/containers/create/shared/controls/investmentCl
 import ReviewDetails from "@/containers/createInvestmentClub/reviewDetails";
 import { useCreateInvestmentClubContext } from "@/context/CreateInvestmentClubContext";
 import useClubERC20s from "@/hooks/useClubERC20s";
-import StatusBadge from "@/components/syndicateDetails/statusBadge";
 import { AppState } from "@/state";
 import Image from "next/image";
 import Link from "next/link";
@@ -180,15 +179,26 @@ const CreateInvestmentClub: React.FC = () => {
         showHeader={false}
       >
         <div>
-          <StatusBadge syndicateCreationFailed />
-          <div className="h-fit-content rounded-2-half py-10 px-8 flex justify-center items-center flex-col">
-            <div className="mt-8">
+          <div className="flex justify-center items-center w-full mt-10 mb-8">
+            <Image
+              width={64}
+              height={64}
+              src={"/images/syndicateStatusIcons/transactionFailed.svg"}
+              alt="failed"
+            />
+          </div>
+          <div className="flex justify-center items-center w-full text-xl">
+            Club creation failed
+          </div>
+          <div className="h-fit-content rounded-2-half flex justify-center items-center flex-col mt-6">
+            <div>
               <p className="text-gray-syn4">
                 Please try again and{" "}
                 <a
                   className="text-blue"
                   href="mailto:support@syndicate.io"
-                  target="_blank" rel="noreferrer"
+                  target="_blank"
+                  rel="noreferrer"
                 >
                   let us know
                 </a>{" "}
@@ -204,10 +214,10 @@ const CreateInvestmentClub: React.FC = () => {
                 />
               </div>
             ) : null}
-            <div className="mt-7 w-full">
+            <div className="mt-7 mb-10">
               <button
                 type="button"
-                className="bg-white rounded-md text-black py-4 w-full"
+                className="bg-white rounded-custom text-black py-4 w-full px-8"
                 onClick={handleCreateInvestmentClub}
               >
                 Try again
