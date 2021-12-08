@@ -263,7 +263,7 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
                         ref={subNav}
                         className={`${
                           isSubNavStuck ? "bg-gray-syn8" : "bg-black"
-                        } sticky top-0 z-20 transition-all edge-to-edge-with-left-inset`}
+                        } sticky top-0 z-10 transition-all edge-to-edge-with-left-inset`}
                       >
                         <nav className="flex space-x-10" aria-label="Tabs">
                           <button
