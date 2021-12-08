@@ -49,7 +49,7 @@ export class MerkleDistributorModuleContract {
         .on("error", reject)
         .on("transactionHash", async (transactionHash) => {
           if (!this.isGnosisSafe) {
-            resolve(transactionHash);
+            return resolve(transactionHash);
           }
 
           // Stop waiting if we are connected to gnosis safe via walletConnect
