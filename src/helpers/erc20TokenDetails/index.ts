@@ -1,4 +1,3 @@
-import { MerkleDistributorModuleContract } from "@/ClubERC20Factory/merkleDistributorModule";
 import { MintPolicyContract } from "@/ClubERC20Factory/mintPolicy";
 import { SingleTokenMintModuleContract } from "@/ClubERC20Factory/singleTokenMintModule";
 import { AppState } from "@/state";

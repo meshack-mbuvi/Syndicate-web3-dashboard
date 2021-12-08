@@ -1,8 +1,8 @@
 import { ClubERC20Factory } from "@/ClubERC20Factory/clubERC20Factory";
+import { MerkleDistributorModuleContract } from "@/ClubERC20Factory/merkleDistributorModule";
 import { MintPolicyContract } from "@/ClubERC20Factory/mintPolicy";
 import { SingleTokenMintModuleContract } from "@/ClubERC20Factory/singleTokenMintModule";
-import { MerkleDistributorModuleContract } from "@/ClubERC20Factory/merkleDistributorModule";
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 
 export interface ISyndicateContracts {
   clubERC20Factory: ClubERC20Factory;

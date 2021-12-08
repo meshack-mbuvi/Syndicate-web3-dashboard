@@ -1,8 +1,9 @@
 import { ISyndicateContracts } from "@/state/contracts";
+
 import { ClubERC20Factory } from "./clubERC20Factory";
+import { MerkleDistributorModuleContract } from "./merkleDistributorModule";
 import { MintPolicyContract } from "./mintPolicy";
 import { SingleTokenMintModuleContract } from "./singleTokenMintModule";
-import { MerkleDistributorModuleContract } from "./merkleDistributorModule";
 
 // Contract addresses for new contracts
 const CLUB_ERC20_FACTORY_ADDRESS = process.env.NEXT_PUBLIC_CLUB_ERC20_FACTORY;
