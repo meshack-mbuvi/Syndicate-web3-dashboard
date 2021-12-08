@@ -57,7 +57,6 @@ const Collectibles: FC<{ activeAssetTab: string }> = ({ activeAssetTab }) => {
               {collectibleLoader}
             </div>
           );
-        })}
       </div>
     </div>
   );

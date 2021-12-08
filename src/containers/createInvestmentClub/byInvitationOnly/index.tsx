@@ -14,7 +14,7 @@ const ByInvitationOnly: React.FC<{ showByInvitationOnly: Dispatch<SetStateAction
           authorized to access our platform at this time. By clicking below, you
           agree to these conditions in addition to our standard{" "}
           <a
-            href="https://www.notion.so/syndicateprotocol/Syndicate-Terms-of-Service-04674deec934472e88261e861cdcbc7c"
+            href="https://docs.google.com/document/d/1U5D6AtmZXrxmgBeobyvHaXTs7p7_wq6V"
             className="text-blue flex items-center justify-start"
             target="_blank" rel="noreferrer"
           >
