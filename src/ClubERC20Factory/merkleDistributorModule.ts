@@ -17,10 +17,6 @@ export class MerkleDistributorModuleContract {
       web3._provider.wc?._peerMeta.name === "Gnosis Safe Multisig";
   }
 
-  async depositToken(clubAddress: string): Promise<string> {
-    return await this.contract.methods.depositToken(clubAddress).call();
-  }
-
   /**
    * When a member makes a deposit, we mint tokens equivalent to the deposit/
    * mint amount and then transfer the tokens to the caller address.
@@ -29,38 +25,37 @@ export class MerkleDistributorModuleContract {
    *
    * @param amount
    * @param clubAddress
-   * @param ownerAddress
+   * @param forAddress
    * @param onTxConfirm
    * @param onTxReceipt
    */
-  async claim(
-    ownerAddress: string,
+  claim = async (
+    forAddress: string,
     clubAddress: string,
     amount: string,
     index: number,
-    merkleProof: [],
+    merkleProof: string[],
     onTxReceipt: (receipt?) => void,
-  ): Promise<string> {
-    return await new Promise((resolve, reject) => {
+  ): Promise<string> =>
+    new Promise((resolve, reject) =>
       this.contract.methods
-        .claim(clubAddress, amount, index, merkleProof)
-        .send({ from: ownerAddress })
+        .claim(clubAddress, 1, amount, index, merkleProof)
+        .send({ from: forAddress })
         .on("receipt", onTxReceipt)
         .on("error", reject)
-        .on("transactionHash", async (transactionHash) => {
+        .on("transactionHash", async (transactionHash: string) => {
           if (!this.isGnosisSafe) {
             return resolve(transactionHash);
           }
 
           // Stop waiting if we are connected to gnosis safe via walletConnect
-          const receipt: any = await getGnosisTxnInfo(transactionHash);
-          if (receipt.isSuccessful) {
-            onTxReceipt(receipt);
-            resolve(transactionHash);
-          } else {
-            reject("Receipt failed");
+          const receipt = await getGnosisTxnInfo(transactionHash);
+          if (!(receipt as { isSuccessful: boolean }).isSuccessful) {
+            return reject("Receipt failed");
           }
-        });
-    });
-  }
+
+          onTxReceipt(receipt);
+          return resolve(transactionHash);
+        }),
+    );
 }

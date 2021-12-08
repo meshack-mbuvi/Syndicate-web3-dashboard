@@ -1,5 +1,7 @@
+import { CopyToClipboardIcon } from "@/components/iconWrappers";
 import { SkeletonLoader } from "@/components/skeletonLoader";
 import { AppState } from "@/state";
+import { Status } from "@/state/wallet/types";
 import { epochTimeToDateFormat, getCountDownDays } from "@/utils/dateUtils";
 import { floatedNumberWithCommas } from "@/utils/formattedNumbers";
 import abi from "human-standard-token-abi";
@@ -7,14 +9,13 @@ import { useRouter } from "next/router";
 import React, { FC, useEffect, useState } from "react";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import { useSelector } from "react-redux";
+import ReactTooltip from "react-tooltip";
 import { EtherscanLink } from "src/components/syndicates/shared/EtherscanLink";
+
 // utils
 import GradientAvatar from "../portfolioAndDiscover/portfolio/GradientAvatar";
 import { DetailsCard } from "../shared";
 import { ProgressIndicator } from "../shared/progressIndicator";
-import { CopyToClipboardIcon } from "@/components/iconWrappers";
-import ReactTooltip from "react-tooltip";
-import { Status } from "@/state/wallet/types";
 
 interface ClubDetails {
   header: string;
@@ -153,13 +154,8 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
           : claimEnabled
           ? [
               {
-                header: "Total deposited",
-                content: (
-                  <span>
-                    {floatedNumberWithCommas(totalDeposits)}{" "}
-                    {depositERC20TokenSymbol}
-                  </span>
-                ),
+                header: "Club token max supply",
+                content: <span>{floatedNumberWithCommas(maxTotalSupply)}</span>,
                 tooltip: "",
               },
               {

@@ -1,25 +1,21 @@
-import { useQuery } from "@apollo/client";
 import { INDEX_AND_PROOF } from "@/graphql/merkleDistributor";
-import { useSelector } from "react-redux";
 import { AppState } from "@/state";
+import { useQuery } from "@apollo/client";
+import { useSelector } from "react-redux";
 
-export const useFetchMerkleProof: any = (skipQuery: boolean = true) => {
+export const useFetchMerkleProof: any = (skipQuery = true) => {
   const {
     web3Reducer: {
-      web3: { account },
+      web3: { account: address },
     },
-    erc20TokenSliceReducer: { erc20Token },
+    erc20TokenSliceReducer: {
+      erc20Token: { address: clubAddress },
+    },
   } = useSelector((state: AppState) => state);
 
-  console.log("XXXXXX");
-  console.log(erc20Token.address, account);
-
   return useQuery(INDEX_AND_PROOF, {
-    variables: {
-      clubAddress: erc20Token.address,
-      address: account,
-    },
-    skip: !account || skipQuery,
+    variables: { clubAddress, address },
+    skip: !address || skipQuery,
     context: { clientName: "backend" },
   });
 };
