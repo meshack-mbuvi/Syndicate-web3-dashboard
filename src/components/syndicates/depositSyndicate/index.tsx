@@ -53,6 +53,7 @@ const DepositSyndicate: React.FC = () => {
 
   const {
     initializeContractsReducer: { syndicateContracts },
+    merkleProofSliceReducer: { myMerkleProof },
     web3Reducer: {
       web3: { account, web3, status },
     },
@@ -68,6 +69,7 @@ const DepositSyndicate: React.FC = () => {
     totalDeposits,
     memberCount,
     depositsEnabled,
+    claimEnabled,
     symbol,
     totalSupply,
     accountClubTokens,
@@ -90,6 +92,8 @@ const DepositSyndicate: React.FC = () => {
   const [approvedAllowanceAmount, setApprovedAllowanceAmount] =
     useState<string>("0");
   const [successfulDeposit, setSuccessfulDeposit] = useState<boolean>(false);
+  const [successfulClaim, setSuccessfulClaim] = useState<boolean>(false);
+
   const [depositTokenContract, setDepositTokenContract] = useState<any>({});
   const [submittingAllowanceApproval, setSubmittingAllowanceApproval] =
     useState<boolean>(false);
@@ -101,16 +105,19 @@ const DepositSyndicate: React.FC = () => {
   const [insufficientBalance, setInsufficientBalance] =
     useState<boolean>(false);
   const [copied, setCopied] = useState(false);
-  const [transactionHash, setTransactionHash] = useState<string>("");
+  const [transactionHash, setTransactionHash] = useState<string>("ewwe");
   const [depositError, setDepositError] = useState("");
   const [clubWideErrors, setClubWideErrors] = useState("");
   const [imageSRC, setImageSRC] = useState("");
   const [isTextRed, setIsTextRed] = useState(false);
   const [depositFailed, setDepositFailed] = useState<boolean>(false);
+  const [claimFailed, setClaimFailed] = useState<boolean>(false);
   const [showDepositProcessingModal, toggleDepositProcessingModal] = useModal();
   const [ownershipShare, setOwnershipShare] = useState<number>(0);
   const [memberTokens, setMemberTokens] = useState(0);
   const [depositAmount, setDepositAmount] = useState<string>("");
+  const [claimBalanceValue, setClaimBalanceValue] = useState("");
+  const [claimBalanceDecimalValue, setClaimBalanceDecimalValue] = useState("");
 
   const router = useRouter();
 
@@ -130,6 +137,18 @@ const DepositSyndicate: React.FC = () => {
       setOwnershipShare(0);
     };
   }, [depositAmount, totalSupply]);
+
+  useEffect(() => {
+    const [claimValue, claimDecimalValue] = floatedNumberWithCommas(
+      myMerkleProof?._amount,
+    ).split(".");
+    setClaimBalanceValue(claimValue);
+    setClaimBalanceDecimalValue(claimDecimalValue);
+    const newTotalSupply = +totalSupply + +myMerkleProof?._amount;
+    const memberPercentShare = +myMerkleProof?._amount / newTotalSupply;
+    setOwnershipShare(+memberPercentShare * 100);
+    setMemberTokens(+myMerkleProof?._amount);
+  }, [myMerkleProof?._amount, totalSupply]);
 
   useEffect(() => {
     if (syndicateContracts && erc20Token && depositToken) {
@@ -165,7 +184,11 @@ const DepositSyndicate: React.FC = () => {
   const onTxReceipt = () => {
     setMetamaskConfirmPending(false);
     setSubmitting(false);
-    setSuccessfulDeposit(true);
+    if (claimEnabled) {
+      setSuccessfulClaim(true);
+    } else {
+      setSuccessfulDeposit(true);
+    }
 
     // Update ownership details as we wait for the same data from the
     // smart contract. We need this to show it to the user since the contract
@@ -192,7 +215,36 @@ const DepositSyndicate: React.FC = () => {
   const onTxFail = () => {
     setMetamaskConfirmPending(false);
     setSubmitting(false);
-    setTransactionRejected(true);
+    if (claimEnabled) {
+      setSuccessfulClaim(false);
+      setClaimFailed(true);
+    } else {
+      setTransactionRejected(true);
+    }
+  };
+
+  const claimClubTokens = async () => {
+    console.log(myMerkleProof?._amount, account);
+    setMetamaskConfirmPending(true);
+    setTransactionRejected(false);
+    setTransactionFailed(false);
+    try {
+      await syndicateContracts.MerkleDistributorModule?.claim(
+        account,
+        address,
+        myMerkleProof.amount,
+        myMerkleProof.accountIndex,
+        myMerkleProof.merkleProof,
+        onTxConfirm,
+        onTxReceipt,
+        onTxFail,
+        setTransactionHash,
+      );
+    } catch (error) {
+      setSubmitting(false);
+      setSuccessfulClaim(false);
+      setClaimFailed(true);
+    }
   };
 
   /**
@@ -474,6 +526,15 @@ const DepositSyndicate: React.FC = () => {
     }
   };
 
+  const closeClaimCard = () => {
+    setSuccessfulClaim(false);
+    setSubmitting(false);
+    setMetamaskConfirmPending(false);
+    setClaimFailed(false);
+    setTransactionFailed(false);
+    setTransactionRejected(false);
+  };
+
   // method to handle copying of transaction links
   const handleOnCopy = () => {
     setCopied(true);
@@ -595,6 +656,7 @@ const DepositSyndicate: React.FC = () => {
           <StatusBadge
             depositsEnabled={depositsEnabled}
             depositExceedTotal={+totalDeposits === +maxTotalDeposits}
+            claimEnabled={claimEnabled}
           />
 
           {status !== Status.DISCONNECTED && (loading || !readyToDisplay) ? (
@@ -848,6 +910,98 @@ const DepositSyndicate: React.FC = () => {
                       </p>
                     </div>
                   ) : null}
+                </div>
+              )}
+            </FadeIn>
+          ) : claimEnabled ? (
+            <FadeIn>
+              {submitting ? (
+                <div className="h-fit-content rounded-2-half text-center">
+                  <div className="pt-10 pb-8">
+                    <Spinner width="w-16" height="h-16" margin="m-0" />
+                  </div>
+                  <div className="pb-6">
+                    <span className="text-2xl">
+                      Claiming {claimBalanceValue}
+                      {claimBalanceDecimalValue && (
+                        <span className="text-gray-lightManatee">
+                          .{claimBalanceDecimalValue}
+                        </span>
+                      )}{" "}
+                      {symbol}
+                    </span>
+                  </div>
+                  {transactionHash && (
+                    <div className="pb-8 text-base flex justify-center items-center hover:opacity-80">
+                      <EtherscanLink
+                        etherscanInfo={transactionHash}
+                        type="transaction"
+                        text="View on Etherscan"
+                      />
+                    </div>
+                  )}
+                </div>
+              ) : successfulClaim || claimFailed ? (
+                <SuccessOrFailureContent
+                  {...{
+                    closeCard: closeClaimCard,
+                    successfulClaim,
+                    claimFailed,
+                    depositAmount,
+                    transactionHash,
+                    handleOnCopy,
+                    copied,
+                    memberPercentShare,
+                    clubTokenSymbol: symbol,
+                    accountClubTokens: accountClubTokens
+                      ? accountClubTokens.toString()
+                      : "0",
+                  }}
+                />
+              ) : status === Status.DISCONNECTED ? (
+                <div className="py-6 px-8">
+                  <ConnectWalletAction />
+                </div>
+              ) : (
+                <div className="h-fit-content rounded-2-half pt-6 px-8 pb-4">
+                  <p className="h4 uppercase text-sm">
+                    {claimEnabled && "You will receive"}
+                  </p>
+                  <div className="flex justify-between items-center mt-4 flex-wrap">
+                    <div className="text-5xl leading-14">
+                      {claimBalanceValue}
+                      {claimBalanceDecimalValue && (
+                        <span className="text-gray-lightManatee">
+                          .{claimBalanceDecimalValue}
+                        </span>
+                      )}
+                    </div>
+                    <div className="flex items-center p-0 h-6 text-base">
+                      {symbol}
+                    </div>
+                  </div>
+                  <div className="text-gray-lightManatee mt-2 leading-5">
+                    {" "}
+                    {floatedNumberWithCommas(ownershipShare) === "< 0.01"
+                      ? null
+                      : "= "}
+                    {floatedNumberWithCommas(ownershipShare)}% ownership share
+                    in this club
+                  </div>
+                  <div className="mt-8 flex justify-center">
+                    <button
+                      className={`w-full rounded-lg text-base text-black px-8 py-4 bg-green`}
+                      onClick={(e) => {
+                        claimClubTokens();
+                      }}
+                    >
+                      Claim
+                    </button>
+                  </div>
+                  <div className="text-center text-sm text-gray-shuttle mt-4">
+                    Club tokens are non-transferable and represent your
+                    ownership share in this club.
+                  </div>
                 </div>
               )}
             </FadeIn>

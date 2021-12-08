@@ -27,8 +27,9 @@ interface ClubDetails {
 const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
   const {
     erc20TokenSliceReducer: { erc20Token },
+    merkleProofSliceReducer: { myMerkleProof },
     web3Reducer: {
-      web3: { web3, status },
+      web3: { web3, status, account },
     },
   } = useSelector((state: AppState) => state);
 
@@ -45,6 +46,7 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
     symbol,
     maxTotalSupply,
     depositsEnabled,
+    claimEnabled,
     accountClubTokens,
     isOwner,
   } = erc20Token;
@@ -148,6 +150,41 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
                 tooltip: "",
               },
             ]
+          : claimEnabled
+          ? [
+              {
+                header: "Total deposited",
+                content: (
+                  <span>
+                    {floatedNumberWithCommas(totalDeposits)}{" "}
+                    {depositERC20TokenSymbol}
+                  </span>
+                ),
+                tooltip: "",
+              },
+              {
+                header: "Club tokens minted",
+                content: (
+                  <span>
+                    {floatedNumberWithCommas(totalDeposits)} {symbol}
+                  </span>
+                ),
+                tooltip: "",
+              },
+              {
+                header: "Members",
+                content: <div>{memberCount}</div>,
+                tooltip: "",
+              },
+              {
+                header: "Created",
+                content: `${epochTimeToDateFormat(
+                  new Date(startTime),
+                  "LLL dd, yyyy",
+                )}`,
+                tooltip: "",
+              },
+            ]
           : [
               {
                 header: "Total deposited",
@@ -201,8 +238,9 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
     setTimeout(() => setShowAddressCopyState(false), 1000);
   };
 
-  const isActive = !depositsEnabled;
-  const isOwnerOrMember = isOwner || +accountClubTokens;
+  const isActive = !depositsEnabled || claimEnabled;
+  const isOwnerOrMember =
+    isOwner || +accountClubTokens || myMerkleProof?.account === account;
 
   return (
     <div className="flex flex-col relative">

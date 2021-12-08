@@ -201,6 +201,7 @@ module.exports = {
           success: "#0D3325",
           "light-dark": "#01A979",
           "light-darker": "#02504B",
+          "phthalo-green": "#082B1E",
         },
         blue: {
           ...colors.blue,

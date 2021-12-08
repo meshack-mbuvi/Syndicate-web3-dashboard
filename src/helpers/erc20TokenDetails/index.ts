@@ -1,3 +1,4 @@
+import { MerkleDistributorModuleContract } from "@/ClubERC20Factory/merkleDistributorModule";
 import { MintPolicyContract } from "@/ClubERC20Factory/mintPolicy";
 import { SingleTokenMintModuleContract } from "@/ClubERC20Factory/singleTokenMintModule";
 import { AppState } from "@/state";
@@ -15,6 +16,7 @@ export const ERC20TokenDefaultState = {
   address: "",
   depositToken: "",
   depositsEnabled: false,
+  claimEnabled: false,
   totalSupply: 0,
   tokenDecimals: 18, //default to 18
   totalDeposits: 0,
@@ -76,7 +78,8 @@ export const getERC20TokenDetails = async (
         ERC20tokenContract.memberCount(),
         ERC20tokenContract.balanceOf(account),
       ]);
-
+      const MERKLE_DISTRIBUTOR_MODULE =
+        process.env.NEXT_PUBLIC_MERKLE_DISTRIBUTOR_MODULE;
       const isOwner = owner === account;
       const totalSupply = await ERC20tokenContract.totalSupply().then((wei) =>
         getWeiAmount(wei, tokenDecimals, false),
@@ -90,9 +93,18 @@ export const getERC20TokenDetails = async (
       );
       const memberPercentShare = (+accountClubTokens * 100) / +totalSupply;
 
-      const endDateInFuture = +endTime * 1000 > new Date().getTime();
+      const claimEnabled = await mintPolicy.isModuleAllowed(
+        ERC20tokenContract.clubERC20Contract._address,
+        MERKLE_DISTRIBUTOR_MODULE,
+      );
+      console.log({ claimEnabled });
 
-      const depositsEnabled = endDateInFuture;
+      let depositsEnabled = false;
+      if (!claimEnabled) {
+        const endDateInFuture = +endTime * 1000 > new Date().getTime();
+
+        depositsEnabled = endDateInFuture;
+      }
 
       return {
         address,
@@ -112,6 +124,7 @@ export const getERC20TokenDetails = async (
         maxTotalSupply: getWeiAmount(maxTotalSupply, tokenDecimals, false),
         requiredToken,
         depositsEnabled,
+        claimEnabled,
         requiredTokenMinBalance,
         maxTotalDeposits: getWeiAmount(maxTotalSupply, tokenDecimals, false), //should be updated if token prices is not 1:1
         connectedMemberDeposits: accountClubTokens,
@@ -125,11 +138,12 @@ export const getERC20TokenDetails = async (
 };
 
 export const setERC20Token =
-  (ERC20tokenContract, SingleTokenMintModule: SingleTokenMintModuleContract, account: string) =>
-  async (
-    dispatch,
-    getState: () => AppState,
-  ): Promise<void> => {
+  (
+    ERC20tokenContract,
+    SingleTokenMintModule: SingleTokenMintModuleContract,
+    account: string,
+  ) =>
+  async (dispatch, getState: () => AppState): Promise<void> => {
     const {
       initializeContractsReducer: {
         syndicateContracts: { mintPolicy },

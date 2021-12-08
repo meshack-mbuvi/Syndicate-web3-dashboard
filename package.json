@@ -27,6 +27,7 @@
     "@walletconnect/web3-provider": "^1.6.6",
     "alpinejs": "^2.8.2",
     "amplitude-js": "^8.3.1",
+    "apollo-link": "^1.2.14",
     "assert": "^2.0.0",
     "axios": "^0.21.4",
     "bignumber.js": "^7.2.1",

@@ -7,6 +7,7 @@ import { useSelector } from "react-redux";
 interface Props {
   depositsEnabled?: boolean;
   depositExceedTotal?: boolean;
+  claimEnabled?: boolean;
 
   // investment club creation loading states
   creatingSyndicate?: boolean;
@@ -19,6 +20,7 @@ const StatusBadge = (props: Props): JSX.Element => {
   const {
     depositsEnabled,
     depositExceedTotal,
+    claimEnabled = true,
     creatingSyndicate,
     syndicateSuccessfullyCreated,
     syndicateCreationFailed,
@@ -34,7 +36,11 @@ const StatusBadge = (props: Props): JSX.Element => {
   let badgeBackgroundColor = "bg-blue-darker";
   let badgeIcon: string | React.ReactNode = "depositIcon.svg";
   let titleText = "Open to deposits";
-  if (!depositsEnabled) {
+  if (claimEnabled) {
+    badgeBackgroundColor = "bg-green-phthalo-green";
+    badgeIcon = "claimToken.svg";
+    titleText = "Claim club tokens";
+  } else if (!depositsEnabled) {
     badgeBackgroundColor = "bg-green-dark";
     badgeIcon = "active.svg";
     titleText = "Active";

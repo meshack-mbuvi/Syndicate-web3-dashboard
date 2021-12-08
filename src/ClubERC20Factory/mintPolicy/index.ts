@@ -43,4 +43,13 @@ export class MintPolicyContract {
   }> {
     return this.mintPolicyContract.methods.configOf(address).call();
   }
+
+  async isModuleAllowed(
+    clubAddress: string,
+    moduleAddress: string,
+  ): Promise<boolean> {
+    return this.mintPolicyContract.methods
+      .allowedModules(clubAddress, moduleAddress)
+      .call();
+  }
 }
