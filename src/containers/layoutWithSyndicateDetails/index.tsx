@@ -214,6 +214,14 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
 
   const isActive = !erc20Token?.depositsEnabled;
   const isOwnerOrMember = erc20Token?.isOwner || +erc20Token?.accountClubTokens;
+  const renderOnDisconnect =
+    status !== Status.DISCONNECTED && !(isActive && !isOwnerOrMember);
+
+  useEffect(() => {
+    if (!renderOnDisconnect) {
+      setActiveTab("assets");
+    }
+  }, [renderOnDisconnect]);
 
   return (
     <>
@@ -250,55 +258,56 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
                       <div className="sticky top-33 w-100">{children}</div>
                     </div>
 
-                    {status !== Status.DISCONNECTED &&
-                      !(isActive && !isOwnerOrMember) && (
-                        <div className="mt-16 col-span-12">
-                          <div
-                            ref={subNav}
-                            className={`${
-                              isSubNavStuck ? "bg-gray-syn8" : "bg-black"
-                            } sticky top-0 z-20 transition-all edge-to-edge-with-left-inset`}
+                    <div className="mt-16 col-span-12">
+                      <div
+                        ref={subNav}
+                        className={`${
+                          isSubNavStuck ? "bg-gray-syn8" : "bg-black"
+                        } sticky top-0 z-20 transition-all edge-to-edge-with-left-inset`}
+                      >
+                        <nav className="flex space-x-10" aria-label="Tabs">
+                          <button
+                            key="assets"
+                            onClick={() => setActiveTab("assets")}
+                            className={`whitespace-nowrap h4 w-fit-content py-6 transition-all border-b-1 focus:ring-0 font-whyte text-sm cursor-pointer ${
+                              activeTab == "assets"
+                                ? "border-white text-white"
+                                : "border-transparent text-gray-syn4 hover:text-gray-40"
+                            }`}
                           >
-                            <nav className="flex space-x-10" aria-label="Tabs">
-                              <button
-                                key="assets"
-                                onClick={() => setActiveTab("assets")}
-                                className={`whitespace-nowrap h4 w-fit-content py-6 transition-all border-b-1 focus:ring-0 font-whyte text-sm cursor-pointer ${
-                                  activeTab == "assets"
-                                    ? "border-white text-white"
-                                    : "border-transparent text-gray-syn4 hover:text-gray-40"
-                                }`}
-                              >
-                                Assets
-                              </button>
-                              <button
-                                key="members"
-                                onClick={() => setActiveTab("members")}
-                                className={`whitespace-nowrap h4 py-6 transition-all border-b-1 focus:ring-0 font-whyte text-sm cursor-pointer ${
-                                  activeTab == "members"
-                                    ? "border-white text-white"
-                                    : "border-transparent text-gray-syn4 hover:text-gray-400 "
-                                }`}
-                              >
-                                Members
-                              </button>
-                              {/* add more tabs here */}
-                            </nav>
-                            <div
-                              className={`${
-                                isSubNavStuck ? "hidden" : "block"
-                              } border-b-1 border-gray-syn6 absolute w-screen right-0`}
-                            ></div>
-                          </div>
+                            Assets
+                          </button>
+                          {renderOnDisconnect && (
+                            <button
+                              key="members"
+                              onClick={() => setActiveTab("members")}
+                              className={`whitespace-nowrap h4 py-6 transition-all border-b-1 focus:ring-0 font-whyte text-sm cursor-pointer ${
+                                activeTab == "members"
+                                  ? "border-white text-white"
+                                  : "border-transparent text-gray-syn4 hover:text-gray-400 "
+                              }`}
+                            >
+                              Members
+                            </button>
+                          )}
+                          {/* add more tabs here */}
+                        </nav>
+                        <div
+                          className={`${
+                            isSubNavStuck ? "hidden" : "block"
+                          } border-b-1 border-gray-syn6 absolute w-screen right-0`}
+                        ></div>
+                      </div>
 
-                          <div className="text-base grid grid-cols-12 gap-y-5">
-                            <div className="col-span-12">
-                              {activeTab == "assets" && <Assets />}
-                              {activeTab == "members" && <ClubTokenMembers />}
-                            </div>
-                          </div>
+                      <div className="text-base grid grid-cols-12 gap-y-5">
+                        <div className="col-span-12">
+                          {activeTab == "assets" && <Assets />}
+                          {activeTab == "members" && renderOnDisconnect && (
+                            <ClubTokenMembers />
+                          )}
                         </div>
-                      )}
+                      </div>
+                    </div>
                   </div>
                 </div>
               )}
