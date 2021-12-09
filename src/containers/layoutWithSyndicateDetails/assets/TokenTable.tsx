@@ -206,11 +206,11 @@ const TokenTable: FC<Props> = ({ columns, tableData, activeAssetTab }) => {
                   ? "opacity-50 cursor-not-allowed"
                   : "hover:opacity-90"
               }`}
-              onClick={() => goToPreviousPage()}
+              onClick={goToPreviousPage}
               disabled={!canPreviousPage}
             >
               <Image
-                src={"/images/arrowBack.svg"}
+                src="/images/arrowBack.svg"
                 height="16"
                 width="16"
                 alt="Previous"
@@ -228,11 +228,11 @@ const TokenTable: FC<Props> = ({ columns, tableData, activeAssetTab }) => {
                   ? "opacity-50 cursor-not-allowed"
                   : "hover:opacity-90"
               }`}
-              onClick={() => goToNextPage()}
+              onClick={goToNextPage}
               disabled={!canNextPage}
             >
               <Image
-                src={"/images/arrowNext.svg"}
+                src="/images/arrowNext.svg"
                 height="16"
                 width="16"
                 alt="Next"
