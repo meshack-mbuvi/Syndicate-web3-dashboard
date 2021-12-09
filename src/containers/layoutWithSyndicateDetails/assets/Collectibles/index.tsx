@@ -1,10 +1,10 @@
+import { SkeletonLoader } from "@/components/skeletonLoader";
+import AssetEmptyState from "@/containers/layoutWithSyndicateDetails/assets/AssetEmptyState";
+import { AppState } from "@/state";
+import { fetchCollectiblesTransactions } from "@/state/assets/slice";
 import { FC, useState } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { useDispatch, useSelector } from "react-redux";
-import { SkeletonLoader } from "@/components/skeletonLoader";
-import { AppState } from "@/state";
-import AssetEmptyState from "@/containers/layoutWithSyndicateDetails/assets/AssetEmptyState";
-import { fetchCollectiblesTransactions } from "@/state/assets/slice";
 
 const Collectibles: FC<{ activeAssetTab: string }> = ({ activeAssetTab }) => {
   const {
@@ -51,12 +51,11 @@ const Collectibles: FC<{ activeAssetTab: string }> = ({ activeAssetTab }) => {
   const loaderContent = (
     <div className={`${collectiblesResult.length > 0 && "pt-6"}`}>
       <div className="grid grid-cols-12 gap-5">
-        {[...Array(4)].map((item, idx) => {
-          return (
-            <div key={idx} className="col-span-5 md:col-span-3 xl:col-span-3">
-              {collectibleLoader}
-            </div>
-          );
+        {[...Array(4)].map((_, idx) => (
+          <div key={idx} className="col-span-5 md:col-span-3 xl:col-span-3">
+            {collectibleLoader}
+          </div>
+        ))}
       </div>
     </div>
   );
@@ -92,7 +91,7 @@ const Collectibles: FC<{ activeAssetTab: string }> = ({ activeAssetTab }) => {
 
   return (
     <div className="w-full">
-      {collectiblesResult.length > 0 ? (
+      {collectiblesResult.length > 0 && (
         <div>
           {collectiblesTitle}
           <InfiniteScroll
@@ -128,7 +127,7 @@ const Collectibles: FC<{ activeAssetTab: string }> = ({ activeAssetTab }) => {
                   if (animatedGif) {
                     media = (
                       <div className="bg-gray-syn7 border-r-1 border-l-1 border-t-1 border-gray-syn6 h-80 rounded-t-lg overflow-hidden">
-                        <img src={animation} alt="animated nft image" />
+                        <img src={animation} alt="animated nft" />
                       </div>
                     );
                   } else if (movAnimation || mp4Animation) {
@@ -170,7 +169,7 @@ const Collectibles: FC<{ activeAssetTab: string }> = ({ activeAssetTab }) => {
             </div>
           </InfiniteScroll>
         </div>
-      ) : null}
+      )}
     </div>
   );
 };
