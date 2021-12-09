@@ -966,12 +966,12 @@ const DepositSyndicate: React.FC = () => {
                     </div>
                   </div>
                   <div className="mt-8 flex justify-center">
-                    <button
+                    {(parseInt(claimBalanceValue) > 0) && (<button
                       className={`w-full rounded-lg text-base text-black px-8 py-4 bg-green`}
                       onClick={claimClubTokens}
                     >
                       Claim
-                    </button>
+                    </button>)}
                   </div>
                   <div className="text-center text-sm text-gray-shuttle mt-4">
                     Club tokens are non-transferable and represent your
