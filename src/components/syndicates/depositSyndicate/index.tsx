@@ -35,7 +35,6 @@ import {
 } from "@/utils/formattedNumbers";
 import { CheckIcon } from "@heroicons/react/solid";
 import Image from "next/image";
-import { useRouter } from "next/router";
 import React, { useCallback, useEffect, useState } from "react";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import { useDispatch, useSelector } from "react-redux";
@@ -75,7 +74,6 @@ const DepositSyndicate: React.FC = () => {
     loading,
     memberPercentShare,
     maxMemberCount,
-    isOwner,
   } = erc20Token;
 
   const { depositTokenSymbol, depositTokenLogo, depositTokenDecimals } =
