@@ -6,6 +6,7 @@ import BackButton from "@/components/socialProfiles/backButton";
 import { EtherscanLink } from "@/components/syndicates/shared/EtherscanLink";
 import Head from "@/components/syndicates/shared/HeaderTitle";
 import SyndicateDetails from "@/components/syndicates/syndicateDetails";
+import { getWeiAmount } from "@/utils/conversions";
 import {
   ERC20TokenDefaultState,
   setERC20Token,
@@ -14,9 +15,9 @@ import { useFetchMerkleProof } from "@/hooks/useMerkleProof";
 import NotFoundPage from "@/pages/404";
 import { AppState } from "@/state";
 import {
-  clearCollectiblesTransactions,
   fetchCollectiblesTransactions,
   fetchTokenTransactions,
+  clearCollectiblesTransactions,
 } from "@/state/assets/slice";
 import { setClubMembers } from "@/state/clubMembers";
 import { setERC20TokenDetails } from "@/state/erc20token/slice";
@@ -25,7 +26,6 @@ import {
   setMerkleProof,
 } from "@/state/merkleProofs/slice";
 import { Status } from "@/state/wallet/types";
-import { getWeiAmount } from "@/utils/conversions";
 import { formatAddress } from "@/utils/formatAddress";
 import { faExclamationTriangle } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -34,7 +34,6 @@ import { useRouter } from "next/router";
 import React, { FC, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { syndicateActionConstants } from "src/components/syndicates/shared/Constants";
-
 import ClubTokenMembers from "../managerActions/clubTokenMembers";
 import Assets from "./assets";
 
@@ -176,12 +175,20 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
       router.isReady
     ) {
       switch (router.pathname) {
-        case "/clubs/[clubAddress]/manage": {
+        case "/clubs/[clubAddress]/manage":
           if (!erc20Token?.isOwner) {
             router.replace(`/clubs/${clubAddress}`);
           }
           break;
-        }
+
+        case "/clubs/[clubAddress]":
+          if (erc20Token?.isOwner) {
+            router.replace(`/clubs/${clubAddress}/manage`);
+          }
+          break;
+
+        default:
+          break;
       }
     }
   }, [account, router.isReady, JSON.stringify(erc20Token)]);
