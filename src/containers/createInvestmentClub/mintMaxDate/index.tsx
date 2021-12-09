@@ -135,7 +135,7 @@ const MintMaxDate: FC = () => {
               <button
                 className="flex items-center w-full h-full"
                 key={index}
-                onClick={(e) => {
+                onClick={() => {
                   handleSetMintTime(index, { mintTime, value });
                 }}
                 disabled={disableButtons}

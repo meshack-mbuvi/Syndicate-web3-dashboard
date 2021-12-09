@@ -1,13 +1,14 @@
-import React from "react";
 import { Spinner } from "@/components/shared/spinner";
-import { AppState } from "@/state";
-import { useSelector } from "react-redux";
 import { SkeletonLoader } from "@/components/skeletonLoader";
+import { AppState } from "@/state";
+import React from "react";
+import { useSelector } from "react-redux";
 
 interface Props {
+  isManager?: boolean;
   depositsEnabled?: boolean;
   depositExceedTotal?: boolean;
-
+  claimEnabled?: boolean;
   // investment club creation loading states
   creatingSyndicate?: boolean;
   syndicateSuccessfullyCreated?: boolean;
@@ -19,6 +20,8 @@ const StatusBadge = (props: Props): JSX.Element => {
   const {
     depositsEnabled,
     depositExceedTotal,
+    isManager = false,
+    claimEnabled,
     creatingSyndicate,
     syndicateSuccessfullyCreated,
     syndicateCreationFailed,
@@ -34,7 +37,11 @@ const StatusBadge = (props: Props): JSX.Element => {
   let badgeBackgroundColor = "bg-blue-darker";
   let badgeIcon: string | React.ReactNode = "depositIcon.svg";
   let titleText = "Open to deposits";
-  if (!depositsEnabled) {
+  if (claimEnabled) {
+    badgeBackgroundColor = "bg-green-phthalo-green";
+    badgeIcon = "claimToken.svg";
+    titleText = isManager ? "Airdrop Enabled" : "Claim club tokens";
+  } else if (!depositsEnabled) {
     badgeBackgroundColor = "bg-green-dark";
     badgeIcon = "active.svg";
     titleText = "Active";
@@ -56,7 +63,7 @@ const StatusBadge = (props: Props): JSX.Element => {
     badgeIcon = "logo.svg";
     titleText = "Club successfully created";
   } else if (syndicateCreationFailed) {
-    badgeBackgroundColor = "bg-red-semantic bg-opacity-10";
+    badgeBackgroundColor = "bg-red-error bg-opacity-10";
     badgeIcon = "warning-triangle.svg";
     titleText = "Club creation failed";
   }

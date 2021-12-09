@@ -16,7 +16,7 @@ const ByInvitationOnly: React.FC<{ showByInvitationOnly: Dispatch<SetStateAction
           <a
             href="https://docs.google.com/document/d/1U5D6AtmZXrxmgBeobyvHaXTs7p7_wq6V"
             className="text-blue flex items-center justify-start"
-            target="_blank"
+            target="_blank" rel="noreferrer"
           >
             <p>Terms of Service</p>{" "}
             <ExternalLinkIcon className="ml-1 w-4 text-blue" />{" "}

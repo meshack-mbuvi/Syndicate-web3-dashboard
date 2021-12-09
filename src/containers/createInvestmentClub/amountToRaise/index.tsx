@@ -18,7 +18,7 @@ const SYN_SUPPORT_MSG = (
   <span>
     Syndicate supports club sizes greater than 25 million USDC upon request.
     Reach out to us at{" "}
-    <a className="text-blue" href="mailto:support@syndicate.io" target="_blank">
+    <a className="text-blue" href="mailto:support@syndicate.io" target="_blank" rel="noreferrer">
       support@syndicate.io
     </a>{" "}
   </span>

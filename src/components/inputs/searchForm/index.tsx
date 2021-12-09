@@ -86,7 +86,7 @@ export const SearchForm = (props: {
           </div>
         </div>
         {error && (
-          <p className="text-red-semantic text-xs mt-1 mb-1">
+          <p className="text-red-error text-xs mt-1 mb-1">
             {error && !disabled ? error : null}
           </p>
         )}

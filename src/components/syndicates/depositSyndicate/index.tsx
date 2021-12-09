@@ -1,5 +1,4 @@
-import { getGnosisTxnInfo } from "@/ClubERC20Factory/shared/gnosisTransactionInfo";
-import { amplitudeLogger, Flow } from "@/components/amplitude";
+import { Flow, amplitudeLogger } from "@/components/amplitude";
 import {
   APPROVE_DEPOSIT_ALLOWANCE,
   ERROR_APPROVE_ALLOWANCE,
@@ -27,6 +26,7 @@ import {
   setAccountClubTokens,
   setMemberPercentShare,
 } from "@/state/erc20token/slice";
+import { Status } from "@/state/wallet/types";
 import { getWeiAmount } from "@/utils/conversions";
 import { isDev } from "@/utils/environment";
 import {
@@ -36,7 +36,7 @@ import {
 import { CheckIcon } from "@heroicons/react/solid";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import { useDispatch, useSelector } from "react-redux";
 import Tooltip from "react-tooltip-lite";
@@ -44,8 +44,8 @@ import { InfoIcon } from "src/components/iconWrappers";
 import { SkeletonLoader } from "src/components/skeletonLoader";
 import ERC20ABI from "src/utils/abi/erc20";
 import { AbiItem } from "web3-utils";
+
 import ConnectWalletAction from "../shared/connectWalletAction";
-import { Status } from "@/state/wallet/types";
 
 const DepositSyndicate: React.FC = () => {
   // HOOK DECLARATIONS
@@ -53,6 +53,7 @@ const DepositSyndicate: React.FC = () => {
 
   const {
     initializeContractsReducer: { syndicateContracts },
+    merkleProofSliceReducer: { myMerkleProof },
     web3Reducer: {
       web3: { account, web3, status },
     },
@@ -68,6 +69,7 @@ const DepositSyndicate: React.FC = () => {
     totalDeposits,
     memberCount,
     depositsEnabled,
+    claimEnabled,
     symbol,
     totalSupply,
     accountClubTokens,
@@ -90,6 +92,8 @@ const DepositSyndicate: React.FC = () => {
   const [approvedAllowanceAmount, setApprovedAllowanceAmount] =
     useState<string>("0");
   const [successfulDeposit, setSuccessfulDeposit] = useState<boolean>(false);
+  const [successfulClaim, setSuccessfulClaim] = useState<boolean>(false);
+
   const [depositTokenContract, setDepositTokenContract] = useState<any>({});
   const [submittingAllowanceApproval, setSubmittingAllowanceApproval] =
     useState<boolean>(false);
@@ -101,16 +105,19 @@ const DepositSyndicate: React.FC = () => {
   const [insufficientBalance, setInsufficientBalance] =
     useState<boolean>(false);
   const [copied, setCopied] = useState(false);
-  const [transactionHash, setTransactionHash] = useState<string>("");
+  const [transactionHash, setTransactionHash] = useState<string>("ewwe");
   const [depositError, setDepositError] = useState("");
   const [clubWideErrors, setClubWideErrors] = useState("");
   const [imageSRC, setImageSRC] = useState("");
   const [isTextRed, setIsTextRed] = useState(false);
   const [depositFailed, setDepositFailed] = useState<boolean>(false);
+  const [claimFailed, setClaimFailed] = useState<boolean>(false);
   const [showDepositProcessingModal, toggleDepositProcessingModal] = useModal();
   const [ownershipShare, setOwnershipShare] = useState<number>(0);
   const [memberTokens, setMemberTokens] = useState(0);
   const [depositAmount, setDepositAmount] = useState<string>("");
+  const [claimBalanceValue, setClaimBalanceValue] = useState("");
+  const [claimBalanceDecimalValue, setClaimBalanceDecimalValue] = useState("");
 
   const router = useRouter();
 
@@ -130,6 +137,18 @@ const DepositSyndicate: React.FC = () => {
       setOwnershipShare(0);
     };
   }, [depositAmount, totalSupply]);
+
+  useEffect(() => {
+    const [claimValue, claimDecimalValue] = floatedNumberWithCommas(
+      myMerkleProof?._amount,
+    ).split(".");
+    setClaimBalanceValue(claimValue);
+    setClaimBalanceDecimalValue(claimDecimalValue);
+    const newTotalSupply = +totalSupply + +myMerkleProof?._amount;
+    const memberPercentShare = +myMerkleProof?._amount / newTotalSupply;
+    setOwnershipShare(+memberPercentShare * 100);
+    setMemberTokens(+myMerkleProof?._amount);
+  }, [myMerkleProof?._amount, totalSupply]);
 
   useEffect(() => {
     if (syndicateContracts && erc20Token && depositToken) {
@@ -165,7 +184,11 @@ const DepositSyndicate: React.FC = () => {
   const onTxReceipt = () => {
     setMetamaskConfirmPending(false);
     setSubmitting(false);
-    setSuccessfulDeposit(true);
+    if (claimEnabled) {
+      setSuccessfulClaim(true);
+    } else {
+      setSuccessfulDeposit(true);
+    }
 
     // Update ownership details as we wait for the same data from the
     // smart contract. We need this to show it to the user since the contract
@@ -192,7 +215,38 @@ const DepositSyndicate: React.FC = () => {
   const onTxFail = () => {
     setMetamaskConfirmPending(false);
     setSubmitting(false);
-    setTransactionRejected(true);
+    if (claimEnabled) {
+      setSuccessfulClaim(false);
+      setClaimFailed(true);
+    } else {
+      setTransactionRejected(true);
+    }
+  };
+
+  const claimClubTokens = async () => {
+    console.log(myMerkleProof, account);
+    setMetamaskConfirmPending(true);
+    setTransactionRejected(false);
+    setTransactionFailed(false);
+    setSubmitting(true);
+    try {
+      const { amount, accountIndex, merkleProof } = myMerkleProof;
+      const { MerkleDistributorModule } = syndicateContracts;
+      const transactionHash = await MerkleDistributorModule.claim(
+        account,
+        address,
+        amount,
+        accountIndex,
+        merkleProof,
+        onTxReceipt,
+      );
+      setTransactionHash(transactionHash);
+    } catch (error) {
+      setSuccessfulClaim(false);
+      setClaimFailed(true);
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   /**
@@ -313,11 +367,6 @@ const DepositSyndicate: React.FC = () => {
     { title: "Complete deposit" },
   ];
 
-  // check current member token allowance
-  useEffect(() => {
-    checkUnlimitedAllowanceSet();
-  }, [syndicateContracts, account, depositTokenContract]);
-
   // check if approval is required for current amount.
   // if approval is not required, run the deposit function.
   // if not, set allowance to unlimited.
@@ -341,7 +390,7 @@ const DepositSyndicate: React.FC = () => {
     process.env.NEXT_PUBLIC_SINGLE_TOKEN_MINT_MODULE;
 
   // method to check the allowance amount approved by a member.
-  const checkUnlimitedAllowanceSet = async () => {
+  const checkUnlimitedAllowanceSet = useCallback(async () => {
     if (syndicateContracts && account && depositTokenContract) {
       try {
         const memberAllowanceAmount = await depositTokenContract?.methods
@@ -359,7 +408,12 @@ const DepositSyndicate: React.FC = () => {
         setUnlimitedAllowanceSet(false);
       }
     }
-  };
+  }, [syndicateContracts, account, depositTokenContract]);
+
+  // check current member token allowance
+  useEffect(() => {
+    checkUnlimitedAllowanceSet();
+  }, [checkUnlimitedAllowanceSet]);
 
   // method to handle approval of unlimited allowances by a member.
   const handleAllowanceApproval = async (event: any) => {
@@ -434,7 +488,7 @@ const DepositSyndicate: React.FC = () => {
 
       // fallback for gnosisSafe <> walletConnect
       if (gnosisTxHash) {
-        await getGnosisTxnInfo(gnosisTxHash);
+        // await getGnosisTxnInfo(gnosisTxHash);
         await checkUnlimitedAllowanceSet();
         setSubmittingAllowanceApproval(false);
 
@@ -472,6 +526,15 @@ const DepositSyndicate: React.FC = () => {
     if (showDepositProcessingModal) {
       toggleDepositProcessingModal();
     }
+  };
+
+  const closeClaimCard = () => {
+    setSuccessfulClaim(false);
+    setSubmitting(false);
+    setMetamaskConfirmPending(false);
+    setClaimFailed(false);
+    setTransactionFailed(false);
+    setTransactionRejected(false);
   };
 
   // method to handle copying of transaction links
@@ -547,10 +610,7 @@ const DepositSyndicate: React.FC = () => {
       setClubWideErrors(message);
       setDepositError("");
       setImageSRC("/images/deposit/depositReached.svg");
-    } else if (
-      !(accountClubTokens > 0) &&
-      memberCount === maxMemberCount
-    ) {
+    } else if (!(accountClubTokens > 0) && memberCount === maxMemberCount) {
       message = `The maximum amount of members (${maxMemberCount}) for this club has been reached.`;
       setClubWideErrors(message);
       setDepositError("");
@@ -598,6 +658,7 @@ const DepositSyndicate: React.FC = () => {
           <StatusBadge
             depositsEnabled={depositsEnabled}
             depositExceedTotal={+totalDeposits === +maxTotalDeposits}
+            claimEnabled={claimEnabled}
           />
 
           {status !== Status.DISCONNECTED && (loading || !readyToDisplay) ? (
@@ -676,7 +737,9 @@ const DepositSyndicate: React.FC = () => {
                     copied,
                     memberPercentShare,
                     clubTokenSymbol: symbol,
-                    accountClubTokens: accountClubTokens ? accountClubTokens.toString() : "0",
+                    accountClubTokens: accountClubTokens
+                      ? accountClubTokens.toString()
+                      : "0",
                   }}
                 />
               ) : showDepositProcessingModal && depositFailed ? (
@@ -692,7 +755,9 @@ const DepositSyndicate: React.FC = () => {
                     copied,
                     memberPercentShare,
                     clubTokenSymbol: symbol,
-                    accountClubTokens: accountClubTokens ? accountClubTokens.toString() : "0",
+                    accountClubTokens: accountClubTokens
+                      ? accountClubTokens.toString()
+                      : "0",
                   }}
                 />
               ) : status === Status.DISCONNECTED ? (
@@ -768,7 +833,7 @@ const DepositSyndicate: React.FC = () => {
                   </div>
                   {/* Error state for insufficientBalance */}
                   {insufficientBalance && (
-                    <span className="text-red-semantic text-sm">
+                    <span className="text-red-error text-sm">
                       Insufficient balance.
                     </span>
                   )}
@@ -788,11 +853,11 @@ const DepositSyndicate: React.FC = () => {
                       </div>
                     )}
 
-                  {depositError ? (
-                    <div className="font-whyte text-sm text-red-semantic mt-4">
+                  {depositError && (
+                    <div className="font-whyte text-sm text-red-error mt-4">
                       {depositError}
                     </div>
-                  ) : null}
+                  )}
 
                   {!clubWideErrors ? (
                     <div className="mt-6 flex justify-center">
@@ -830,7 +895,7 @@ const DepositSyndicate: React.FC = () => {
                       </button>
                     </div>
                   ) : (
-                    <div className="font-whyte text-sm text-red-semantic flex mb-8 items-center">
+                    <div className="font-whyte text-sm text-red-error flex mb-8 items-center">
                       <div className="h-4">
                         <Image src={imageSRC} height={24} width={24} />
                       </div>
@@ -838,7 +903,7 @@ const DepositSyndicate: React.FC = () => {
                     </div>
                   )}
 
-                  {!clubWideErrors ? (
+                  {!clubWideErrors && (
                     <div className="mt-4 flex w-full justify-center">
                       <p className="text-sm text-gray-syn5">
                         Your wallet balance:{" "}
@@ -846,7 +911,89 @@ const DepositSyndicate: React.FC = () => {
                         {depositTokenSymbol}
                       </p>
                     </div>
-                  ) : null}
+                  )}
+                </div>
+              )}
+            </FadeIn>
+          ) : claimEnabled ? (
+            <FadeIn>
+              {submitting ? (
+                <div className="h-fit-content rounded-2-half text-center">
+                  <div className="pt-10 pb-8">
+                    <Spinner width="w-16" height="h-16" margin="m-0" />
+                  </div>
+                  <div className="pb-6">
+                    <span className="text-2xl">
+                      Claiming {claimBalanceValue}
+                      {claimBalanceDecimalValue && (
+                        <span className="text-gray-lightManatee">
+                          .{claimBalanceDecimalValue}
+                        </span>
+                      )}{" "}
+                      {symbol}
+                    </span>
+                  </div>
+                  {transactionHash && (
+                    <div className="pb-8 text-base flex justify-center items-center hover:opacity-80">
+                      <EtherscanLink
+                        etherscanInfo={transactionHash}
+                        type="transaction"
+                        text="View on Etherscan"
+                      />
+                    </div>
+                  )}
+                </div>
+              ) : successfulClaim || claimFailed ? (
+                <SuccessOrFailureContent
+                  {...{
+                    closeCard: closeClaimCard,
+                    successfulClaim,
+                    claimFailed,
+                    depositAmount,
+                    transactionHash,
+                    handleOnCopy,
+                    copied,
+                    memberPercentShare,
+                    clubTokenSymbol: symbol,
+                    accountClubTokens: accountClubTokens
+                      ? accountClubTokens.toString()
+                      : "0",
+                  }}
+                />
+              ) : status === Status.DISCONNECTED ? (
+                <div className="py-6 px-8">
+                  <ConnectWalletAction />
+                </div>
+              ) : (
+                <div className="h-fit-content rounded-2-half pt-6 px-8 pb-4">
+                  <p className="h4 uppercase text-sm">
+                    {claimEnabled && "You will receive"}
+                  </p>
+                  <div className="flex justify-between items-center mt-4 flex-wrap">
+                    <div className="text-5xl leading-14">
+                      {claimBalanceValue}
+                      {claimBalanceDecimalValue && (
+                        <span className="text-gray-lightManatee">
+                          .{claimBalanceDecimalValue}
+                        </span>
+                      )}
+                    </div>
+                    <div className="flex items-center p-0 h-6 text-base">
+                      {symbol}
+                    </div>
+                  </div>
+                  <div className="mt-8 flex justify-center">
+                    <button
+                      className={`w-full rounded-lg text-base text-black px-8 py-4 bg-green`}
+                      onClick={claimClubTokens}
+                    >
+                      Claim
+                    </button>
+                  </div>
+                  <div className="text-center text-sm text-gray-shuttle mt-4">
+                    Club tokens are non-transferable and represent your
+                    ownership share in this club.
+                  </div>
                 </div>
               )}
             </FadeIn>
@@ -855,7 +1002,7 @@ const DepositSyndicate: React.FC = () => {
       </div>
 
       {/* We show holding component when user has made initial deposit */}
-      {+connectedMemberDeposits > 0 && !loading && depositsEnabled ? (
+      {+connectedMemberDeposits > 0 && !loading && depositsEnabled && (
         <div className="bg-gray-syn8 rounded-2xl mt-6 px-8 py-6">
           <div className="pb-5 text-sm font-bold uppercase tracking-widest">
             Your Holdings
@@ -897,7 +1044,7 @@ const DepositSyndicate: React.FC = () => {
             </div>
           )}
         </div>
-      ) : null}
+      )}
 
       <Modal
         {...{
@@ -922,21 +1069,21 @@ const DepositSyndicate: React.FC = () => {
             />
             <div className="pt-8">
               <span className="text-2xl">
-                {`Deposited ${floatedNumberWithCommas(depositAmount)} USDC`}
+                Deposited {floatedNumberWithCommas(depositAmount)} USDC
               </span>
             </div>
             <div className="pt-4 px-3 text-center">
               <span className="text-base text-gray-syn4">
-                {`You now have ${floatedNumberWithCommas(
-                  accountClubTokens,
-                )} ${symbol}, which represents a ${floatedNumberWithCommas(memberPercentShare)}% ownership
-                share of this club.`}
+                You now have {floatedNumberWithCommas(accountClubTokens)}{" "}
+                {symbol} which represents a{" "}
+                {floatedNumberWithCommas(memberPercentShare)}% ownership share
+                of this club.
               </span>
             </div>
             <CopyToClipboard
-              text={`${
-                isDev ? "https://rinkeby.etherscan.io" : "https://etherscan.io"
-              }/tx/${transactionHash}`}
+              text={`https://${
+                isDev ? "rinkeby." : ""
+              }etherscan.io/tx/${transactionHash}`}
               onCopy={handleOnCopy}
             >
               <div className="relative py-8 w-fit-content">
@@ -1045,7 +1192,9 @@ const DepositSyndicate: React.FC = () => {
                 </div>
                 <div className="flex items-center justify-between mt-1">
                   <p className="text-sm text-gray-syn4">
-                    {floatedNumberWithCommas(ownershipShare) === '< 0.01' ? null : '= '}
+                    {floatedNumberWithCommas(ownershipShare) === "< 0.01"
+                      ? null
+                      : "= "}
                     {floatedNumberWithCommas(ownershipShare)}% ownership share
                   </p>
                 </div>
@@ -1163,7 +1312,7 @@ const DepositSyndicate: React.FC = () => {
               <div
                 className={`${
                   depositFailed || transactionFailed || transactionRejected
-                    ? "bg-red-semantic"
+                    ? "bg-red-error"
                     : ""
                 }   rounded-md bg-opacity-10 mt-4 py-6 flex flex-col justify-center px-5`}
               >

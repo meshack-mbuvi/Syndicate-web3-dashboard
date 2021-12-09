@@ -28,17 +28,17 @@ const Collectibles: FC<{ activeAssetTab: string }> = ({ activeAssetTab }) => {
   // loading state
   const collectibleLoader = (
     <>
-      <div className="w-fit-content">
+      <div className="w-full">
         <SkeletonLoader
           borderRadius="rounded-t-lg"
-          width="80"
+          width="full"
           height="80"
           customClass="border-r-1 border-l-1 border-t-1 border-gray-syn6"
           margin="m-0"
         />
-        <div className="rounded-b-lg w-80 p-7 border-b-1 border-r-1 border-l-1 border-gray-syn6">
+        <div className="rounded-b-lg w-full p-7 border-b-1 border-r-1 border-l-1 border-gray-syn6">
           <SkeletonLoader
-            width="44"
+            width="full"
             height="7"
             margin="m-0"
             borderRadius="rounded-lg"
@@ -50,10 +50,13 @@ const Collectibles: FC<{ activeAssetTab: string }> = ({ activeAssetTab }) => {
 
   const loaderContent = (
     <div className={`${collectiblesResult.length > 0 && "pt-6"}`}>
-      <div className="grid grid-cols-1 lg:grid-cols-3 sm:grid-cols-2 gap-6">
-        {[...Array(3)].map((item, idx) => {
-          return <div key={idx}>{collectibleLoader}</div>;
-        })}
+      <div className="grid grid-cols-12 gap-5">
+        {[...Array(4)].map((item, idx) => {
+          return (
+            <div key={idx} className="col-span-5 md:col-span-3 xl:col-span-3">
+              {collectibleLoader}
+            </div>
+          );
       </div>
     </div>
   );
@@ -88,7 +91,7 @@ const Collectibles: FC<{ activeAssetTab: string }> = ({ activeAssetTab }) => {
   }
 
   return (
-    <div>
+    <div className="w-full">
       {collectiblesResult.length > 0 ? (
         <div>
           {collectiblesTitle}
@@ -98,7 +101,7 @@ const Collectibles: FC<{ activeAssetTab: string }> = ({ activeAssetTab }) => {
             hasMore={!allCollectiblesFetched}
             loader={loaderContent}
           >
-            <div className="grid grid-cols-1 xl:grid-cols-3 lg:grid-cols-3 sm:grid-cols-2 gap-6">
+            <div className="grid grid-cols-12 gap-5">
               {collectiblesResult.map((collectible, index) => {
                 const { image, name, animation, permalink } = collectible;
                 let media;
@@ -112,7 +115,7 @@ const Collectibles: FC<{ activeAssetTab: string }> = ({ activeAssetTab }) => {
                         backgroundRepeat: "no-repeat",
                         backgroundPosition: "center center",
                       }}
-                      className="border-r-1 border-l-1 border-t-1 border-gray-syn6 w-80 h-80 rounded-t-lg"
+                      className="border-r-1 border-l-1 border-t-1 border-gray-syn6 h-80 rounded-t-lg"
                     ></div>
                   );
                 } else if (animation) {
@@ -124,13 +127,13 @@ const Collectibles: FC<{ activeAssetTab: string }> = ({ activeAssetTab }) => {
                   const animatedGif = animation.match(/\.gif$/) != null;
                   if (animatedGif) {
                     media = (
-                      <div className="bg-gray-syn7 border-r-1 border-l-1 border-t-1 border-gray-syn6 w-80 h-80 rounded-t-lg overflow-hidden">
+                      <div className="bg-gray-syn7 border-r-1 border-l-1 border-t-1 border-gray-syn6 h-80 rounded-t-lg overflow-hidden">
                         <img src={animation} alt="animated nft image" />
                       </div>
                     );
                   } else if (movAnimation || mp4Animation) {
                     media = (
-                      <div className="border-r-1 border-l-1 border-t-1 border-gray-syn6 w-80 h-80 rounded-t-lg bg-gray-syn7 overflow-hidden">
+                      <div className="border-r-1 border-l-1 border-t-1 border-gray-syn6 h-80 rounded-t-lg bg-gray-syn7 overflow-hidden">
                         <video
                           controls
                           autoPlay
@@ -150,14 +153,14 @@ const Collectibles: FC<{ activeAssetTab: string }> = ({ activeAssetTab }) => {
                 if (name && media) {
                   return (
                     <a
-                      className="w-80"
+                      className="col-span-5 md:col-span-4 xl:col-span-3"
                       key={index}
                       href={permalink ? permalink : ""}
                       target="_blank"
                       rel="noreferrer"
                     >
                       {media}
-                      <div className="flex items-center text-xl rounded-b-lg w-80 h-24 py-6 border-b-1 border-r-1 border-l-1 border-gray-syn6 break-words">
+                      <div className="flex items-center text-xl rounded-b-lg h-24 py-6 border-b-1 border-r-1 border-l-1 border-gray-syn6 break-words">
                         <span className="w-4/5 mx-8 line-clamp-2">{name}</span>
                       </div>
                     </a>

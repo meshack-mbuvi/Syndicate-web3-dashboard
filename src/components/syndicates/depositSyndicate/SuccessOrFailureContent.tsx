@@ -7,7 +7,9 @@ import { CopyToClipboard } from "react-copy-to-clipboard";
 
 export const SuccessOrFailureContent: React.FC<{
   closeCard: () => void;
-  successfulDeposit: boolean;
+  successfulDeposit?: boolean;
+  successfulClaim?: boolean;
+  claimFailed?: boolean;
   depositAmount: string;
   transactionHash: string;
   handleOnCopy: () => void;
@@ -18,6 +20,8 @@ export const SuccessOrFailureContent: React.FC<{
 }> = ({
   closeCard,
   successfulDeposit,
+  successfulClaim,
+  claimFailed,
   depositAmount,
   transactionHash,
   handleOnCopy,
@@ -47,56 +51,75 @@ export const SuccessOrFailureContent: React.FC<{
         <img
           className="h-16 w-16"
           src={
-            successfulDeposit
+            successfulDeposit || successfulClaim
               ? "/images/syndicateStatusIcons/checkCircleGreen.svg"
               : "/images/syndicateStatusIcons/transactionFailed.svg"
           }
           alt="checkmark"
         />
       </div>
-      <div className={`pt-8 ${successfulDeposit ? "pb-4" : "pb-6"}`}>
+      <div
+        className={`pt-8 ${
+          successfulDeposit || successfulClaim ? "pb-4" : "pb-6"
+        }`}
+      >
         <span className="text-2xl">
           {successfulDeposit
             ? `Deposited ${floatedNumberWithCommas(depositAmount)} USDC`
+            : successfulClaim
+            ? "Claim successfull"
+            : claimFailed
+            ? "Claim failed"
             : `Deposit failed`}
         </span>
       </div>
 
-      {successfulDeposit ? (
+      {successfulDeposit || successfulClaim ? (
         <>
-          <div className="pb-6 px-8">
+          <div className="pb-6 px-8 text-gray-lightManatee">
             {`You now have ${floatedNumberWithCommas(
               accountClubTokens,
-            )} ${clubTokenSymbol}, which represents a ${floatedNumberWithCommas(memberPercentShare)}% ownership
-                share of this club.`
-            }
+            )} ${clubTokenSymbol}, which represents a ${floatedNumberWithCommas(
+              memberPercentShare,
+            )}% ownership
+                share of this club.`}
           </div>
-          <CopyToClipboard
-            text={`${
-              isDev ? "https://rinkeby.etherscan.io" : "https://etherscan.io"
-            }/tx/${transactionHash}`}
-            onCopy={handleOnCopy}
-          >
-            <div className="relative pb-8  w-full">
-              <div className="flex justify-center items-center cursor-pointer hover:opacity-80">
-                <Image
-                  src="/images/actionIcons/copy-clipboard-blue.svg"
-                  height={12}
-                  width={12}
-                />
-                <span className="text-base ml-2 text-blue">
-                  Copy transaction link
-                </span>
-              </div>
-              {copied && (
-                <div className="absolute w-full flex justify-center items-center">
-                  <span className="text-xs text-gray-syn4 font-whyte-light">
-                    Link copied
+          {successfulDeposit ? (
+            <CopyToClipboard
+              text={`${
+                isDev ? "https://rinkeby.etherscan.io" : "https://etherscan.io"
+              }/tx/${transactionHash}`}
+              onCopy={handleOnCopy}
+            >
+              <div className="relative pb-8  w-full">
+                <div className="flex justify-center items-center cursor-pointer hover:opacity-80">
+                  <Image
+                    src="/images/actionIcons/copy-clipboard-blue.svg"
+                    height={12}
+                    width={12}
+                  />
+                  <span className="text-base ml-2 text-blue">
+                    Copy transaction link
                   </span>
                 </div>
-              )}
+                {copied && (
+                  <div className="absolute w-full flex justify-center items-center">
+                    <span className="text-xs text-gray-syn4 font-whyte-light">
+                      Link copied
+                    </span>
+                  </div>
+                )}
+              </div>
+            </CopyToClipboard>
+          ) : (
+            <div className="pb-6 text-base flex justify-center items-center hover:opacity-80">
+              <EtherscanLink
+                etherscanInfo={transactionHash}
+                type="transaction"
+                text="View on Etherscan"
+              />
             </div>
-          </CopyToClipboard>
+          )}
         </>
       ) : (
         <div className="pb-6 text-base flex justify-center items-center hover:opacity-80">

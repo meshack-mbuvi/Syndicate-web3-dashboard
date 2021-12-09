@@ -1,4 +1,5 @@
 import SingleTokenMintModule_ABI from "src/contracts/SingleTokenMintModule.json";
+
 import { getGnosisTxnInfo } from "../shared/gnosisTransactionInfo";
 
 export class SingleTokenMintModuleContract {

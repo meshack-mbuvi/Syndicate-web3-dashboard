@@ -10,6 +10,7 @@ import modalsReducer from "@/state/modals";
 import web3Reducer from "@/state/wallet/reducer";
 import initializeContractsReducer from "@/state/contracts";
 import assetsSliceReducer from "@/state/assets/slice";
+import merkleProofSliceReducer from "@/state/merkleProofs/slice";
 
 export const store = configureStore({
   reducer: {
@@ -21,6 +22,7 @@ export const store = configureStore({
     web3Reducer,
     initializeContractsReducer,
     assetsSliceReducer,
+    merkleProofSliceReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({ thunk: true, serializableCheck: false }),

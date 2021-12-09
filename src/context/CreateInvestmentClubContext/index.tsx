@@ -7,7 +7,7 @@ import {
   setTransactionHash,
 } from "@/state/createInvestmentClub/slice";
 import { getWeiAmount } from "@/utils/conversions";
-import router from "next/router";
+import { useRouter } from "next/router";
 import React, {
   createContext,
   Dispatch,
@@ -70,6 +70,8 @@ const CreateInvestmentClubProvider: React.FC = ({ children }) => {
       membersCount,
     },
   } = useSelector((state: AppState) => state);
+
+  const router = useRouter();
 
   const { depositTokenAddress } = useUSDCDetails();
   const dispatch = useDispatch();
@@ -183,6 +185,9 @@ const CreateInvestmentClubProvider: React.FC = ({ children }) => {
   };
 
   const keyPressEnter = (e) => {
+    // This should work only when in create IC(Investment club)
+    if (!router.pathname.endsWith("clubprivatebetainvite")) return;
+
     // it triggers by pressing the enter key
     if ((nextBtnDisabled || showNextButton) && e.keyCode === 13) {
       if (reviewStep) {
@@ -217,7 +222,7 @@ const CreateInvestmentClubProvider: React.FC = ({ children }) => {
         processingModalDescription,
         errorModalMessage,
         showByInvitationOnly,
-        setShowByInvitationOnly
+        setShowByInvitationOnly,
       }}
     >
       {children}

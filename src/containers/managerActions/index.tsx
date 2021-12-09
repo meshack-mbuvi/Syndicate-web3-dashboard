@@ -1,18 +1,18 @@
-import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
-import { useRouter } from "next/router";
-import { ArrowNarrowRightIcon, XIcon } from "@heroicons/react/solid";
 import ErrorBoundary from "@/components/errorBoundary";
 import FadeIn from "@/components/fadeIn/FadeIn";
 import CopyLink from "@/components/shared/CopyLink";
 import CreateEntityCard from "@/components/shared/createEntityCard";
 import { SkeletonLoader } from "@/components/skeletonLoader";
 import StatusBadge from "@/components/syndicateDetails/statusBadge";
+import ConnectWalletAction from "@/components/syndicates/shared/connectWalletAction";
 import { EtherscanLink } from "@/components/syndicates/shared/EtherscanLink";
 import { SuccessCard } from "@/containers/managerActions/successCard";
 import { AppState } from "@/state";
 import { Status } from "@/state/wallet/types";
-import ConnectWalletAction from "@/components/syndicates/shared/connectWalletAction";
+import { ArrowNarrowRightIcon, XIcon } from "@heroicons/react/solid";
+import { useRouter } from "next/router";
+import React, { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 
 const useShowShareWarning = () => {
   const router = useRouter();
@@ -55,6 +55,7 @@ const ManagerActions = (): JSX.Element => {
     depositsEnabled,
     address,
     isOwner,
+    claimEnabled,
     totalDeposits,
     maxTotalDeposits,
   } = erc20Token;
@@ -140,11 +141,13 @@ const ManagerActions = (): JSX.Element => {
             <StatusBadge
               {...{
                 depositsEnabled,
+                claimEnabled,
                 creatingSyndicate,
                 syndicateSuccessfullyCreated,
                 syndicateCreationFailed,
                 showConfettiSuccess,
               }}
+              isManager
               depositExceedTotal={+totalDeposits === +maxTotalDeposits}
             />
             {status !== Status.DISCONNECTED && (loading || !readyToDisplay) ? (
@@ -161,7 +164,7 @@ const ManagerActions = (): JSX.Element => {
                 />
                 <SkeletonLoader width="full" height="12" />
               </div>
-            ) : depositsEnabled ? (
+            ) : depositsEnabled || claimEnabled ? (
               <div
                 className={`h-fit-content relative ${
                   showConfettiSuccess
@@ -178,10 +181,11 @@ const ManagerActions = (): JSX.Element => {
                       !showConfettiSuccess && (
                         <div className="flex flex-col items-start pb-6">
                           <p className="pb-2 uppercase text-white text-sm font-whyte-medium">
-                            Invite to deposit
+                            Invite to {claimEnabled ? "claim" : "deposit"}
                           </p>
                           <p className="text-gray-syn4">
-                            Invite members by sharing your club’s deposit link
+                            Invite members by sharing your club’s{" "}
+                            {claimEnabled ? "claim" : "deposit"} link
                           </p>
                         </div>
                       )}

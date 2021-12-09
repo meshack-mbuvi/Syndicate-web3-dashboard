@@ -67,6 +67,17 @@ export const fetchTokenTransactions = createAsyncThunk(
       await Promise.all(fetchTokenBalances(uniquesTokens, account))
     ).filter((token) => +token.tokenBalance > 0);
 
+    // Batch fetch prices from CoinGecko
+    const uniqueTokenPrices = await axios
+    .get("/.netlify/functions/getCoinPriceByContractAddress", {
+      params: {
+        contractAddresses: uniqueTokenBalances.map(t => t.contractAddress).join(),
+      },
+    })
+      .then((res) => res.data.data)
+      .catch(() => []);
+
+
     // get token logo and price from CoinGecko API
     const completeTokensDetails = await Promise.all(
       uniqueTokenBalances.map(async (value) => {
@@ -78,12 +89,15 @@ export const fetchTokenTransactions = createAsyncThunk(
           tokenName,
         } = value;
 
-        const { price, logo } = await getCoinFromContractAddress(
-          contractAddress,
-        );
+        const { logo } = await axios
+          .get(
+            `/.netlify/functions/getCoinInfoByContractAddress/?contractAddress=${contractAddress}`,
+          )
+          .then((res) => res.data.data)
+          .catch(() => ({ logo: "" }));
 
         return {
-          price,
+          price: uniqueTokenPrices[contractAddress],
           logo,
           tokenDecimal,
           tokenSymbol,

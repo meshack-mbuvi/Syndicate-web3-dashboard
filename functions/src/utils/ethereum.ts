@@ -154,3 +154,35 @@ export async function getCoinFromContractAddress(contractAddress) {
     return emptyTokenDetails;
   }
 }
+
+const getCoinPricesFromCoinGecko = async (contractAddresses) => {
+  try {
+    const { data } = await CoinGeckoClient.simple.fetchTokenPrice({
+      contract_addresses: contractAddresses,
+      vs_currencies: "usd",
+    });
+
+    for (const tokenAddress of contractAddresses) {
+      if (!(tokenAddress in data)) {
+        data[tokenAddress] = { usd: 0 };
+      }
+    }
+
+    return data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+const getCoinPricesFromTokenMappings = (contractAddresses) => {
+  let response = {};
+  for (const tokenAddress of contractAddresses) {
+    response[tokenAddress] = TokenMappings[tokenAddress]?.price ?? 0;
+  }
+  return response;
+};
+
+export const getCoinPrices =
+  debugging === "true"
+    ? getCoinPricesFromTokenMappings
+    : getCoinPricesFromCoinGecko;

@@ -15,6 +15,11 @@
     [headers.values]
       Access-Control-Allow-Origin = "*"
 
+[[headers]]
+  for = "/.netlify/functions/getCoinInfoByContractAddress/*"
+  [headers.values]
+    cache-control = "s-maxage=86401"
+
 [build.environment]
   NODE_OPTIONS = "--max_old_space_size=8192"
 
