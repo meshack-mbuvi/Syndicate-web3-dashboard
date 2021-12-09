@@ -39,7 +39,7 @@ export class MerkleDistributorModuleContract {
   ): Promise<string> =>
     new Promise((resolve, reject) =>
       this.contract.methods
-        .claim(clubAddress, 1, amount, index, merkleProof)
+        .claim(clubAddress, 0, amount, index, merkleProof)
         .send({ from: forAddress })
         .on("receipt", onTxReceipt)
         .on("error", reject)
