@@ -60,8 +60,6 @@ const DepositSyndicate: React.FC = () => {
     erc20TokenSliceReducer: { erc20Token, erc20TokenContract },
   } = useSelector((state: AppState) => state);
 
-  const [readyToDisplay, setReadyToDisplay] = useState(false);
-
   const {
     address,
     maxTotalDeposits,
@@ -119,11 +117,8 @@ const DepositSyndicate: React.FC = () => {
   const [claimBalanceValue, setClaimBalanceValue] = useState("");
   const [claimBalanceDecimalValue, setClaimBalanceDecimalValue] = useState("");
 
-  const router = useRouter();
-
   useEffect(() => {
     // calculate member ownership for the intended deposits
-
     if (totalSupply) {
       const memberTokens = +depositAmount;
       const newTotalSupply = +totalSupply + +memberTokens;
@@ -164,17 +159,7 @@ const DepositSyndicate: React.FC = () => {
     }
   }, [depositToken, JSON.stringify(erc20Token), syndicateContracts]);
 
-  useEffect(() => {
-    //  Content processing not yet completed
-    if (!address) return;
-
-    // Redirect the owner to the manage page
-    if (isOwner) {
-      router.push(`/clubs/${address}/manage`);
-    } else {
-      setReadyToDisplay(true);
-    }
-  }, [isOwner, address, router]);
+  const readyToDisplay = Boolean(address);
 
   const onTxConfirm = () => {
     setMetamaskConfirmPending(false);
