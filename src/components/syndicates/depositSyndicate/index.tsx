@@ -966,7 +966,7 @@ const DepositSyndicate: React.FC = () => {
                     </div>
                   </div>
                   <div className="mt-8 flex justify-center">
-                    {(parseInt(claimBalanceValue) > 0) && (<button
+                    {(parseInt(claimBalanceValue) > 0 || parseInt(claimBalanceDecimalValue) > 0) && (<button
                       className={`w-full rounded-lg text-base text-black px-8 py-4 bg-green`}
                       onClick={claimClubTokens}
                     >
