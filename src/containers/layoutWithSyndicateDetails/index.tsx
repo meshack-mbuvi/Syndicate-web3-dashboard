@@ -205,14 +205,15 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
   // if the address is invalid.
   const syndicateEmptyState = (
     <div className="flex justify-center items-center h-full w-full mt-6 sm:mt-10">
-      <div className="flex flex-col items-center justify-center sm:w-7/12 md:w-5/12 rounded-custom bg-gray-6 p-10">
+      <div className="flex flex-col items-center justify-center sm:w-7/12 md:w-5/12 rounded-custom p-10">
         <div className="w-full flex justify-center mb-6">
-          <FontAwesomeIcon
-            icon={faExclamationTriangle}
-            className="h-12 text-gray-500 text-7xl"
+          <img
+            className="inline w-12 mr-2"
+            src="/images/syndicateStatusIcons/warning-triangle-gray.svg"
+            alt="Warning"
           />
         </div>
-        <p className="font-semibold text-2xl text-center">{noTokenTitleText}</p>
+        <p className="text-lg md:text-2xl text-center mb-3">{noTokenTitleText}</p>
         <EtherscanLink etherscanInfo={clubAddress} />
       </div>
     </div>
