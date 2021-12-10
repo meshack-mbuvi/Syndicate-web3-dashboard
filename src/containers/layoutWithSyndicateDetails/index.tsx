@@ -194,7 +194,7 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
   }, [account, router.isReady, JSON.stringify(erc20Token)]);
 
   // get static text from constants
-  const { noTokenTitleText } = syndicateActionConstants;
+  const { connectWalletToAccess, noTokenTitleText } = syndicateActionConstants;
 
   // set texts to display on empty state
   // we'll initialize this to instances where address is not a syndicate.
@@ -218,11 +218,11 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
     </div>
   );
 
-  const syndicateNotFoundState = (
-    <div className="flex justify-center items-center h-full w-full mt-6 sm:mt-10">
+  const syndicateNotAvailableState = (
+    <div className="flex justify-center items-center h-full w-full mt-6 sm:mt-20">
       <div className="flex flex-col items-center justify-center sm:w-7/12 md:w-5/12 rounded-custom p-10">
-        <p className="font-semibold text-2xl text-center">
-          {formatAddress(clubAddress, 9, 6)} {noTokenTitleText}
+        <p className="text-lg md:text-2xl text-center">
+          {connectWalletToAccess} {formatAddress(clubAddress, 9, 6)}
         </p>
       </div>
     </div>
@@ -245,7 +245,7 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
     clubAddress &&
     status !== "connecting"
   ) {
-    noToken = syndicateNotFoundState;
+    noToken = syndicateNotAvailableState;
   }
 
   const [activeTab, setActiveTab] = useState("assets");
