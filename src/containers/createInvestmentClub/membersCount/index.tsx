@@ -8,6 +8,8 @@ import { AppState } from "@/state";
 import Fade from "@/components/Fade";
 
 const ERROR_MESSAGE = "Between 1 and 99 accepted";
+const MEMBER_COUNT_WARNING =
+  "Permitting more than 99 members may create significant adverse legal and/or tax consequences. Please consult with an attorney before doing so.";
 const MAX_MEMBERS_ALLOWED = "99";
 
 const MembersCount: React.FC = () => {
@@ -17,6 +19,7 @@ const MembersCount: React.FC = () => {
 
   const [membersNumCount, setMembersNumCount] = useState(membersCount);
   const [memberCountError, setMemberCountError] = useState("");
+  const [memberCountWarning, setMemberCountWarning] = useState<string>("");
   const [isInputError, setIsInputError] = useState(false);
   const { setNextBtnDisabled } = useCreateInvestmentClubContext();
   const dispatch = useDispatch();
@@ -28,16 +31,15 @@ const MembersCount: React.FC = () => {
       setNextBtnDisabled(true);
       setMemberCountError("");
       setIsInputError(false);
-    } else if (
-      +membersNumCount > 99 ||
-      +membersNumCount < 0 ||
-      +membersNumCount === 0
-    ) {
+    } else if (+membersNumCount < 0 || +membersNumCount === 0) {
       setNextBtnDisabled(true);
       setMemberCountError(ERROR_MESSAGE);
       setIsInputError(true);
+    } else if (+membersNumCount > 99) {
+      setMemberCountWarning(MEMBER_COUNT_WARNING);
     } else {
       setMemberCountError("");
+      setMemberCountWarning("");
       setIsInputError(false);
       setNextBtnDisabled(false);
     }
@@ -66,6 +68,7 @@ const MembersCount: React.FC = () => {
             addOn: <MaxButton handleClick={() => handleSetMax()} />,
             onChange: handleSetMembersCount,
             error: memberCountError,
+            warning: memberCountWarning,
             hasError: Boolean(isInputError),
             type: "number",
             addSettingDisclaimer: true,

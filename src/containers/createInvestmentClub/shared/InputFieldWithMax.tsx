@@ -12,6 +12,7 @@ export const InputFieldWithMax = (props: {
   disabled?: boolean;
   placeholder?: string;
   error?: string;
+  warning?: string;
   required?: boolean;
   value: string | number;
   type?: string;
@@ -29,6 +30,7 @@ export const InputFieldWithMax = (props: {
     id,
     onChange,
     error,
+    warning,
     value,
     disabled = false,
     type = "number",
@@ -56,6 +58,8 @@ export const InputFieldWithMax = (props: {
               className={`block font-whyte text-base bg-transparent p-4 rounded-md border w-full outline-none text-white ${
                 error
                   ? "border-red-500 focus:border-red-500 focus:ring-0"
+                  : warning
+                  ? "border-yellow-saffron focus:border-yellow-saffron focus:ring-0"
                   : "border-gray-24 focus:border-blue-navy hover:border-gray-syn3"
               }`}
               type={type}
@@ -96,12 +100,16 @@ export const InputFieldWithMax = (props: {
         )}
       </div>
       <div className="w-full lg:w-2/3">
-        {error && (
-          <span className="text-sm text-red-500 pt-2">
-            {error && !disabled ? error : ""}
+        {(error || warning) && (
+          <span
+            className={`text-sm ${warning && "text-yellow-saffron"} ${
+              error && "text-red-500"
+            } pt-2`}
+          >
+            {(error || warning) && !disabled ? error || warning : ""}
           </span>
         )}
-        {moreInfo && !error && (
+        {moreInfo && !(error || warning) && (
           <span className="text-sm text-gray-3 pt-2">{moreInfo}</span>
         )}
       </div>
