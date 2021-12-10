@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AdvancedInputField } from "../shared/AdvancedInputField";
-import MaxButton from "../shared/MaxButton";
 import useUSDCDetails from "@/hooks/useUSDCDetails";
 import Image from "next/image";
 import {
@@ -13,23 +12,10 @@ import { setTokenCap } from "@/state/createInvestmentClub/slice";
 import { AppState } from "@/state";
 import Fade from "@/components/Fade";
 
-const MAX_AMOUNT_TO_RAISE = "25000000";
-const SYN_SUPPORT_MSG = (
-  <span>
-    Syndicate supports club sizes greater than 25 million USDC upon request.
-    Reach out to us at{" "}
-    <a className="text-blue" href="mailto:support@syndicate.io" target="_blank" rel="noreferrer">
-      support@syndicate.io
-    </a>{" "}
-  </span>
-);
-
 const AmountToRaise: React.FC = () => {
   const {
     createInvestmentClubSliceReducer: { tokenCap },
   } = useSelector((state: AppState) => state);
-
-  const { setShowNextButton, handleNext } = useCreateInvestmentClubContext();
 
   const [error, setError] = useState<string | React.ReactNode>("");
   const [amount, setAmount] = useState<string>(tokenCap);
@@ -52,15 +38,6 @@ const AmountToRaise: React.FC = () => {
     </div>
   );
 
-  // Maximum amount that can be raised for an investment club is 25,000,000
-  const setMaxAmount = () => {
-    setAmount(MAX_AMOUNT_TO_RAISE);
-    setTimeout(() => {
-      handleNext();
-      setShowNextButton(true);
-    }, 400);
-  };
-
   // get input value
   const handleChange = (e) => {
     e.preventDefault();
@@ -73,10 +50,7 @@ const AmountToRaise: React.FC = () => {
 
   // catch input field errors
   useEffect(() => {
-    if (+amount > +MAX_AMOUNT_TO_RAISE) {
-      setError(SYN_SUPPORT_MSG);
-      setNextBtnDisabled(true);
-    } else if (!amount || +amount === 0) {
+    if (!amount || +amount === 0) {
       setNextBtnDisabled(true);
     } else {
       setError("");
@@ -92,7 +66,6 @@ const AmountToRaise: React.FC = () => {
           {...{
             value: numberWithCommas(amount.replace(/^0{2,}/, "0")),
             label: "How much are you raising?",
-            addOn: <MaxButton handleClick={() => setMaxAmount()} />,
             onChange: handleChange,
             error: error,
             hasError: Boolean(error),
