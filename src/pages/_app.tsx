@@ -10,6 +10,7 @@ import {
   InMemoryCache,
 } from "@apollo/client";
 import withApollo from "next-with-apollo";
+import { RetryLink } from "@apollo/client/link/retry";
 import dynamic from "next/dynamic";
 import Head from "next/head";
 import Router from "next/router";
@@ -63,15 +64,26 @@ const App = ({ Component, pageProps, apollo }) => {
 };
 
 export default withApollo(({ initialState }) => {
-  const httpLink = new HttpLink({
+  const backendHttpLink = new HttpLink({
+    uri: isDev
+      ? process.env.NEXT_PUBLIC_BACKEND_GRAPHQL_ENDPOINT_STAGING
+      : process.env.NEXT_PUBLIC_BACKEND_GRAPHQL_ENDPOINT_PROD,
+  });
+  const graphHttpLink = new HttpLink({
     uri: isDev
       ? process.env.NEXT_PUBLIC_GRAPHQL_ENDPOINT
       : process.env.NEXT_PUBLIC_GRAPHQL_MAINNET_ENDPOINT,
   });
 
+  const directionalLink = new RetryLink().split(
+    (operation) => operation.getContext().clientName === "backend",
+    backendHttpLink,
+    graphHttpLink,
+  );
+
   return new ApolloClient({
     ssrMode: isSSR(),
-    link: httpLink,
+    link: directionalLink,
     cache: new InMemoryCache().restore(initialState || {}),
     connectToDevTools: isDev,
   });

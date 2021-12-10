@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from "react";
 import TabsButton from "@/components/TabsButton";
-import TokenTable from "@/containers/layoutWithSyndicateDetails/assets/TokenTable";
+import AssetEmptyState from "@/containers/layoutWithSyndicateDetails/assets/AssetEmptyState";
 import Collectibles from "@/containers/layoutWithSyndicateDetails/assets/Collectibles";
 import { tokenTableColumns } from "@/containers/layoutWithSyndicateDetails/assets/constants";
-import AssetEmptyState from "@/containers/layoutWithSyndicateDetails/assets/AssetEmptyState";
-import { useSelector } from "react-redux";
+import TokenTable from "@/containers/layoutWithSyndicateDetails/assets/TokenTable";
 import { AppState } from "@/state";
+import React, { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 
 const Assets: React.FC = () => {
   const {
@@ -23,7 +23,7 @@ const Assets: React.FC = () => {
   // only show tabs for assets that exist.
   const tokensFound = tokensResult.length > 0;
   const collectiblesFound = collectiblesResult.length > 0;
-  
+
   const assetsFilterOptions = [
     {
       label: "All Assets",

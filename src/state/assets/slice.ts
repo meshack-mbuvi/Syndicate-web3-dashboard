@@ -77,6 +77,7 @@ export const fetchTokenTransactions = createAsyncThunk(
       .then((res) => res.data.data)
       .catch(() => []);
 
+
     // get token logo and price from CoinGecko API
     const completeTokensDetails = await Promise.all(
       uniqueTokenBalances.map(async (value) => {

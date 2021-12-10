@@ -6,6 +6,7 @@ export interface ERC20Token {
   tokenDecimals: number;
   totalDeposits: number;
   depositsEnabled: boolean;
+  claimEnabled: boolean;
   depositToken: string;
   symbol: string;
   startTime: number;
@@ -31,6 +32,7 @@ export const initialState: { erc20Token: ERC20Token; erc20TokenContract: any } =
       address: "",
       depositToken: "",
       depositsEnabled: false,
+      claimEnabled: false,
       totalSupply: 0,
       tokenDecimals: 18, //default to 18
       totalDeposits: 0,

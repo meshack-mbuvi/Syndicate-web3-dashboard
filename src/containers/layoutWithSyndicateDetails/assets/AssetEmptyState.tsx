@@ -1,5 +1,5 @@
-import React from "react";
 import Image from "next/image";
+import React from "react";
 
 const AssetEmptyState: React.FC<{ activeAssetTab: string }> = ({
   activeAssetTab,
@@ -12,7 +12,7 @@ const AssetEmptyState: React.FC<{ activeAssetTab: string }> = ({
             <Image
               width="35"
               height="26"
-              src={"/images/tray-icon.svg"}
+              src="/images/tray-icon.svg"
               alt="docs"
             />
           </div>
