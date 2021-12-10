@@ -246,7 +246,10 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
           <ErrorBoundary>
             {showOnboardingIfNeeded && <OnboardingModal />}
             <div className="w-full">
-              {!erc20Token.name ? (
+              {!erc20Token.name &&
+              !erc20Token.loading &&
+              status !== "connecting" &&
+              router.isReady ? (
                 syndicateEmptyState
               ) : (
                 <div className="container mx-auto ">
