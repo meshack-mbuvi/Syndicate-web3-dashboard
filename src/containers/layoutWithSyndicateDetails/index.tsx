@@ -232,20 +232,10 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
     !erc20Token?.name &&
     !erc20Token?.loading &&
     router.isReady &&
-    !clubAddress &&
-    status !== "connecting"
-  ) {
-    noToken = syndicateEmptyState;
-  }
-
-  if (
-    !erc20Token?.name &&
-    !erc20Token?.loading &&
-    router.isReady &&
     clubAddress &&
     status !== "connecting"
   ) {
-    noToken = syndicateNotAvailableState;
+    noToken = syndicateEmptyState;
   }
 
   const [activeTab, setActiveTab] = useState("assets");
@@ -263,7 +253,6 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
       setActiveTab("assets");
     }
   }, [renderOnDisconnect]);
-  
 
   return (
     <>
