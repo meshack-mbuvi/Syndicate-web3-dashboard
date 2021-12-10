@@ -157,7 +157,6 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
 
   const showOnboardingIfNeeded = router.pathname.endsWith("deposit");
 
-  let noToken;
   // A manager should not access deposit page but should be redirected
   // to syndicates page
   useEffect(() => {
@@ -213,31 +212,13 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
             alt="Warning"
           />
         </div>
-        <p className="text-lg md:text-2xl text-center mb-3">{noTokenTitleText}</p>
+        <p className="text-lg md:text-2xl text-center mb-3">
+          {noTokenTitleText}
+        </p>
         <EtherscanLink etherscanInfo={clubAddress} />
       </div>
     </div>
   );
-
-  const syndicateNotAvailableState = (
-    <div className="flex justify-center items-center h-full w-full mt-6 sm:mt-20">
-      <div className="flex flex-col items-center justify-center sm:w-7/12 md:w-5/12 rounded-custom p-10">
-        <p className="text-lg md:text-2xl text-center">
-          {connectWalletToAccess} {formatAddress(clubAddress, 9, 6)}
-        </p>
-      </div>
-    </div>
-  );
-
-  if (
-    !erc20Token?.name &&
-    !erc20Token?.loading &&
-    router.isReady &&
-    clubAddress &&
-    status !== "connecting"
-  ) {
-    noToken = syndicateEmptyState;
-  }
 
   const [activeTab, setActiveTab] = useState("assets");
 
@@ -265,8 +246,8 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
           <ErrorBoundary>
             {showOnboardingIfNeeded && <OnboardingModal />}
             <div className="w-full">
-              {noToken ? (
-                noToken
+              {!erc20Token.name ? (
+                syndicateEmptyState
               ) : (
                 <div className="container mx-auto ">
                   {/* Two Columns (Syndicate Details + Widget Cards) */}
