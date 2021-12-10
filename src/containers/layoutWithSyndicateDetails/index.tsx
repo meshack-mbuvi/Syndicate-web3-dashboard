@@ -208,7 +208,7 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
       <div className="flex flex-col items-center justify-center sm:w-7/12 md:w-5/12 rounded-custom p-10">
         <div className="w-full flex justify-center mb-6">
           <img
-            className="inline w-12 mr-2"
+            className="inline w-12"
             src="/images/syndicateStatusIcons/warning-triangle-gray.svg"
             alt="Warning"
           />
