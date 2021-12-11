@@ -36,6 +36,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { syndicateActionConstants } from "src/components/syndicates/shared/Constants";
 import ClubTokenMembers from "../managerActions/clubTokenMembers";
 import Assets from "./assets";
+import { ERC20Token } from "../../state/erc20token/types";
+
+// const showEmptySyndicateState = (erc20: ERC20Token, ) =>
 
 const LayoutWithSyndicateDetails: FC = ({ children }) => {
   // Retrieve state
@@ -200,8 +203,7 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
   // if the address is invalid, this texts will be updated accordingly.
 
   // set syndicate empty state.
-  // component will be rendered if the address is not a syndicate or
-  // if the address is invalid.
+  // component will be rendered if the address is not a syndicate
   const syndicateEmptyState = (
     <div className="flex justify-center items-center h-full w-full mt-6 sm:mt-10">
       <div className="flex flex-col items-center justify-center sm:w-7/12 md:w-5/12 rounded-custom p-10">
@@ -246,10 +248,8 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
           <ErrorBoundary>
             {showOnboardingIfNeeded && <OnboardingModal />}
             <div className="w-full">
-              {!erc20Token.name &&
-              !erc20Token.loading &&
-              status !== "connecting" &&
-              router.isReady ? (
+              {/* TODO: Why does this work locally but not in staging */}
+              {router.isReady && !erc20Token.name && !erc20Token.loading ? (
                 syndicateEmptyState
               ) : (
                 <div className="container mx-auto ">
