@@ -39,6 +39,8 @@ export const metamaskConstants = {
 export const SyndicateInBetaBannerText = "BETA";
 
 // syndicate actions page
+const connectWalletToAccess =
+  "If this club exists, connect a wallet to continue";
 const noTokenTitleText = "No club found at that address.";
 const noTokenMessageText =
   "Check for more details on Etherscan to see if your transaction is pending or failed.";
@@ -63,6 +65,7 @@ const enableDistributionToModifySyndicateText =
   "Distributions must be set before modifying syndicate details.";
 
 export const syndicateActionConstants = {
+  connectWalletToAccess,
   noTokenTitleText,
   noTokenMessageText,
   syndicateAddressInvalidMessageText,
