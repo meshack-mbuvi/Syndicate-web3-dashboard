@@ -222,7 +222,7 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
     <div className="flex justify-center items-center h-full w-full mt-6 sm:mt-20">
       <div className="flex flex-col items-center justify-center sm:w-7/12 md:w-5/12 rounded-custom p-10">
         <p className="text-lg md:text-2xl text-center">
-          {connectWalletToAccess} {formatAddress(clubAddress, 9, 6)}
+          {connectWalletToAccess}
         </p>
       </div>
     </div>
