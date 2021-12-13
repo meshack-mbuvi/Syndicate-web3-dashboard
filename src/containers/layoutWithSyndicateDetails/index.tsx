@@ -248,7 +248,6 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
           <ErrorBoundary>
             {showOnboardingIfNeeded && <OnboardingModal />}
             <div className="w-full">
-              {/* TODO: Why does this work locally but not in staging */}
               {router.isReady && !erc20Token.name && !erc20Token.loading ? (
                 syndicateEmptyState
               ) : (
