@@ -146,7 +146,7 @@ const TokenTable: FC<Props> = ({ columns, tableData, activeAssetTab }) => {
                   return (
                     <div
                       key={`token-table-row-${index}`}
-                      className="grid grid-cols-12 gap-5 border-b-1 border-gray-syn6 py-5"
+                      className="grid grid-cols-12 gap-5 border-b-1 border-gray-syn7 py-5"
                     >
                       <div className="flex flex-row col-span-3 items-center">
                         <div className="flex flex-shrink-0 pr-4">

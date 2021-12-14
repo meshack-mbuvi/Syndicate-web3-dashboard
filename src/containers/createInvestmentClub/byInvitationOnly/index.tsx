@@ -23,7 +23,7 @@ const ByInvitationOnly: React.FC<{ showByInvitationOnly: Dispatch<SetStateAction
           </a>
         </p>
         <button
-          className="bg-green rounded-custom w-full flex items-center justify-center py-4"
+          className="green-CTA w-full flex items-center justify-center"
           onClick={() => showByInvitationOnly(false)}
         >
           <p className="text-black pr-1 whitespace-nowrap">I agree</p>

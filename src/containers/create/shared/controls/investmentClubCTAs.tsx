@@ -48,10 +48,10 @@ const InvestmentClubCTAs: React.FC = () => {
         )}
         {showNextButton && (
           <button
-            className={`${reviewStep && "bg-green-400"} primary-CTA ${
+            className={`${reviewStep} ${
               nextBtnDisabled
                 ? "primary-CTA-disabled text-gray-lightManatee"
-                : "hover:opacity-90 transition-all"
+                : "green-CTA transition-all"
             }`}
             onClick={reviewStep ? handleCreateInvestmentClub : handleNext}
             disabled={nextBtnDisabled}
