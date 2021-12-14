@@ -141,6 +141,17 @@ const TokenTable: FC<Props> = ({ columns, tableData, activeAssetTab }) => {
                     parseFloat(price ? price : 0) * parseFloat(tokenBalance);
                   const [usd, usdDecimalValue] =
                     floatedNumberWithCommas(tokenValue).split(".");
+
+                  // content
+                  console.log({
+                    price,
+                    tokenValue,
+                    usd,
+                    balanceValue,
+                    balanceDecimalValue,
+                    logo,
+                  });
+
                   return (
                     <div
                       key={`token-table-row-${index}`}
