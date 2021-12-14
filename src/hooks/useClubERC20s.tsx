@@ -106,7 +106,11 @@ const useClubERC20s = () => {
           const totalDeposits = getWeiAmount(totalSupply, +decimals, false);
 
           const ownershipShare = (+memberDeposits * 100) / +totalDeposits;
-          const maxTotalSupplyInWei = getWeiAmount(maxTotalSupply, +decimals, false);
+          const maxTotalSupplyInWei = getWeiAmount(
+            maxTotalSupply,
+            +decimals,
+            false,
+          );
 
           let status = "Open to deposits";
           if (!depositsEnabled) {

@@ -173,7 +173,6 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
       !isEmpty(erc20Token) &&
       erc20Token.name &&
       clubAddress !== undefined &&
-      account !== undefined &&
       router.isReady
     ) {
       switch (router.pathname) {
