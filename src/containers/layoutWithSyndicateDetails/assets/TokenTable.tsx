@@ -138,13 +138,15 @@ const TokenTable: FC<Props> = ({ columns, tableData, activeAssetTab }) => {
                   const [balanceValue, balanceDecimalValue] =
                     floatedNumberWithCommas(tokenBalance).split(".");
                   const tokenValue =
-                    parseFloat(price ? price : 0) * parseFloat(tokenBalance);
+                    parseFloat(Number(price) ? price : price?.usd ?? 0) *
+                    parseFloat(tokenBalance);
                   const [usd, usdDecimalValue] =
                     floatedNumberWithCommas(tokenValue).split(".");
+
                   return (
                     <div
                       key={`token-table-row-${index}`}
-                      className="grid grid-cols-12 gap-5 border-b-1 border-gray-syn6 py-5"
+                      className="grid grid-cols-12 gap-5 border-b-1 border-gray-syn7 py-5"
                     >
                       <div className="flex flex-row col-span-3 items-center">
                         <div className="flex flex-shrink-0 pr-4">

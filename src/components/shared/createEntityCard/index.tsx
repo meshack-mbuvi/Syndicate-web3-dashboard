@@ -7,8 +7,10 @@ const CreateEntityCard: React.FC = () => {
       target="_blank"
       rel="noreferrer"
     >
-      <div className="bg-gray-syn8 rounded-2xl my-6 px-8 py-6 flex items-start">
-        <img src="/images/ribbon.svg" className="mt-1" alt="ribbon" />
+      <div className="bg-gray-syn8 hover:bg-gray-syn7 duration-500 transition-all rounded-2-half my-6 px-8 py-6 flex items-stretch items-start">
+        <div className="flex-shrink-0">
+          <img src="/images/ribbon.svg" className="mt-1" alt="ribbon" />
+        </div>
         <div className="ml-4">
           <div className="text-base leading-6">
             Create an off-chain legal entity
@@ -18,6 +20,7 @@ const CreateEntityCard: React.FC = () => {
             templates{" "}
           </p>
         </div>
+        <img src="/images/chevron-right-dark.svg" className="mt-1 flex-shrink-0 ml-3" alt="chevron" />
       </div>
     </a>
   );
