@@ -86,6 +86,7 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
       );
     }
   }, [erc20Token.owner]);
+  console.log({ syndicateContracts });
 
   useEffect(() => {
     // clear collectibles on account switch
@@ -108,7 +109,11 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
   } = useFetchMerkleProof(false);
 
   useEffect(() => {
-    if (router.isReady && web3.utils.isAddress(clubAddress)) {
+    if (
+      router.isReady &&
+      web3.utils.isAddress(clubAddress) &&
+      syndicateContracts?.SingleTokenMintModule
+    ) {
       const clubERC20tokenContract = new ClubERC20Contract(
         clubAddress as string,
         web3,
@@ -129,7 +134,12 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
         dispatch(setClubMembers([]));
       };
     }
-  }, [clubAddress, account, router.isReady]);
+  }, [
+    clubAddress,
+    account,
+    router.isReady,
+    syndicateContracts.SingleTokenMintModule,
+  ]);
 
   const processMerkleProofData = async (merkleObj) => {
     dispatch(setLoadingMerkleProof(true));
