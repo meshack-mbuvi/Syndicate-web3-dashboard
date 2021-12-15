@@ -6,7 +6,6 @@ import BackButton from "@/components/socialProfiles/backButton";
 import { EtherscanLink } from "@/components/syndicates/shared/EtherscanLink";
 import Head from "@/components/syndicates/shared/HeaderTitle";
 import SyndicateDetails from "@/components/syndicates/syndicateDetails";
-import { getWeiAmount } from "@/utils/conversions";
 import {
   ERC20TokenDefaultState,
   setERC20Token,
@@ -15,9 +14,9 @@ import { useFetchMerkleProof } from "@/hooks/useMerkleProof";
 import NotFoundPage from "@/pages/404";
 import { AppState } from "@/state";
 import {
+  clearCollectiblesTransactions,
   fetchCollectiblesTransactions,
   fetchTokenTransactions,
-  clearCollectiblesTransactions,
 } from "@/state/assets/slice";
 import { setClubMembers } from "@/state/clubMembers";
 import { setERC20TokenDetails } from "@/state/erc20token/slice";
@@ -26,9 +25,7 @@ import {
   setMerkleProof,
 } from "@/state/merkleProofs/slice";
 import { Status } from "@/state/wallet/types";
-import { formatAddress } from "@/utils/formatAddress";
-import { faExclamationTriangle } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { getWeiAmount } from "@/utils/conversions";
 import { isEmpty } from "lodash";
 import { useRouter } from "next/router";
 import React, { FC, useEffect, useRef, useState } from "react";
@@ -36,7 +33,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { syndicateActionConstants } from "src/components/syndicates/shared/Constants";
 import ClubTokenMembers from "../managerActions/clubTokenMembers";
 import Assets from "./assets";
-import { ERC20Token } from "../../state/erc20token/types";
 
 // const showEmptySyndicateState = (erc20: ERC20Token, ) =>
 
