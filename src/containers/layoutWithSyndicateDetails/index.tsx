@@ -86,7 +86,6 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
       );
     }
   }, [erc20Token.owner]);
-  console.log({ syndicateContracts });
 
   useEffect(() => {
     // clear collectibles on account switch

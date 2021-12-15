@@ -56,7 +56,6 @@ export const getERC20TokenDetails = async (
         requiredTokenMinBalance,
         startTime,
       } = await mintPolicy?.getSyndicateValues(address);
-      console.log({ SingleTokenMintModule });
       // TODO: Multicall :-)
       const [
         name,
@@ -130,7 +129,6 @@ export const getERC20TokenDetails = async (
         endTime: parseInt(endTime, 10) * 1000, // time is in seconds. need to change to milliseconds
       };
     } catch (error) {
-      console.log({ getERC20TokenDetails: error });
       return ERC20TokenDefaultState;
     }
   }
@@ -161,7 +159,6 @@ export const setERC20Token =
       dispatch(setERC20TokenDetails(erc20Token));
       dispatch(setLoading(false));
     } catch (error) {
-      console.log({ setERC20Token: error });
       return dispatch(setERC20TokenDetails(ERC20TokenDefaultState));
     }
   };
