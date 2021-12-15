@@ -6,7 +6,6 @@ import BackButton from "@/components/socialProfiles/backButton";
 import { EtherscanLink } from "@/components/syndicates/shared/EtherscanLink";
 import Head from "@/components/syndicates/shared/HeaderTitle";
 import SyndicateDetails from "@/components/syndicates/syndicateDetails";
-import { getWeiAmount } from "@/utils/conversions";
 import {
   ERC20TokenDefaultState,
   setERC20Token,
@@ -15,9 +14,9 @@ import { useFetchMerkleProof } from "@/hooks/useMerkleProof";
 import NotFoundPage from "@/pages/404";
 import { AppState } from "@/state";
 import {
+  clearCollectiblesTransactions,
   fetchCollectiblesTransactions,
   fetchTokenTransactions,
-  clearCollectiblesTransactions,
 } from "@/state/assets/slice";
 import { setClubMembers } from "@/state/clubMembers";
 import { setERC20TokenDetails } from "@/state/erc20token/slice";
@@ -26,9 +25,7 @@ import {
   setMerkleProof,
 } from "@/state/merkleProofs/slice";
 import { Status } from "@/state/wallet/types";
-import { formatAddress } from "@/utils/formatAddress";
-import { faExclamationTriangle } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { getWeiAmount } from "@/utils/conversions";
 import { isEmpty } from "lodash";
 import { useRouter } from "next/router";
 import React, { FC, useEffect, useRef, useState } from "react";
@@ -109,7 +106,11 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
   } = useFetchMerkleProof(false);
 
   useEffect(() => {
-    if (router.isReady && web3.utils.isAddress(clubAddress)) {
+    if (
+      router.isReady &&
+      web3.utils.isAddress(clubAddress) &&
+      syndicateContracts?.SingleTokenMintModule
+    ) {
       const clubERC20tokenContract = new ClubERC20Contract(
         clubAddress as string,
         web3,
@@ -130,7 +131,12 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
         dispatch(setClubMembers([]));
       };
     }
-  }, [clubAddress, account, router.isReady]);
+  }, [
+    clubAddress,
+    account,
+    router.isReady,
+    syndicateContracts?.SingleTokenMintModule,
+  ]);
 
   const processMerkleProofData = async (merkleObj) => {
     dispatch(setLoadingMerkleProof(true));
@@ -157,7 +163,6 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
 
   const showOnboardingIfNeeded = router.pathname.endsWith("deposit");
 
-  let noToken;
   // A manager should not access deposit page but should be redirected
   // to syndicates page
   useEffect(() => {
@@ -171,7 +176,6 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
       !isEmpty(erc20Token) &&
       erc20Token.name &&
       clubAddress !== undefined &&
-      account !== undefined &&
       router.isReady
     ) {
       switch (router.pathname) {
@@ -194,59 +198,31 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
   }, [account, router.isReady, JSON.stringify(erc20Token)]);
 
   // get static text from constants
-  const { connectWalletToAccess, noTokenTitleText } = syndicateActionConstants;
+  const { noTokenTitleText } = syndicateActionConstants;
 
   // set texts to display on empty state
   // we'll initialize this to instances where address is not a syndicate.
   // if the address is invalid, this texts will be updated accordingly.
 
   // set syndicate empty state.
-  // component will be rendered if the address is not a syndicate or
-  // if the address is invalid.
+  // component will be rendered if the address is not a syndicate
   const syndicateEmptyState = (
     <div className="flex justify-center items-center h-full w-full mt-6 sm:mt-10">
-      <div className="flex flex-col items-center justify-center sm:w-7/12 md:w-5/12 rounded-custom bg-gray-6 p-10">
+      <div className="flex flex-col items-center justify-center sm:w-7/12 md:w-5/12 rounded-custom p-10">
         <div className="w-full flex justify-center mb-6">
-          <FontAwesomeIcon
-            icon={faExclamationTriangle}
-            className="h-12 text-gray-500 text-7xl"
+          <img
+            className="inline w-12"
+            src="/images/syndicateStatusIcons/warning-triangle-gray.svg"
+            alt="Warning"
           />
         </div>
-        <p className="font-semibold text-2xl text-center">{noTokenTitleText}</p>
+        <p className="text-lg md:text-2xl text-center mb-3">
+          {noTokenTitleText}
+        </p>
         <EtherscanLink etherscanInfo={clubAddress} />
       </div>
     </div>
   );
-
-  const syndicateNotAvailableState = (
-    <div className="flex justify-center items-center h-full w-full mt-6 sm:mt-20">
-      <div className="flex flex-col items-center justify-center sm:w-7/12 md:w-5/12 rounded-custom p-10">
-        <p className="text-lg md:text-2xl text-center">
-          {connectWalletToAccess}
-        </p>
-      </div>
-    </div>
-  );
-
-  if (
-    !erc20Token?.name &&
-    !erc20Token?.loading &&
-    router.isReady &&
-    !clubAddress &&
-    status !== "connecting"
-  ) {
-    noToken = syndicateEmptyState;
-  }
-
-  if (
-    !erc20Token?.name &&
-    !erc20Token?.loading &&
-    router.isReady &&
-    clubAddress &&
-    status !== "connecting"
-  ) {
-    noToken = syndicateNotAvailableState;
-  }
 
   const [activeTab, setActiveTab] = useState("assets");
 
@@ -263,7 +239,6 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
       setActiveTab("assets");
     }
   }, [renderOnDisconnect]);
-  
 
   return (
     <>
@@ -275,8 +250,8 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
           <ErrorBoundary>
             {showOnboardingIfNeeded && <OnboardingModal />}
             <div className="w-full">
-              {noToken ? (
-                noToken
+              {router.isReady && !erc20Token.name && !erc20Token.loading ? (
+                syndicateEmptyState
               ) : (
                 <div className="container mx-auto ">
                   {/* Two Columns (Syndicate Details + Widget Cards) */}
