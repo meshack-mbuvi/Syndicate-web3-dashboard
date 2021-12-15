@@ -183,7 +183,11 @@
   }
 
   .primary-CTA {
-    @apply CTA-base bg-white text-black;
+    @apply CTA-base bg-white text-black duration-300 transition-all hover:bg-opacity-85;
+  }
+
+  .green-CTA {
+    @apply CTA-base bg-green text-black transition-all hover:bg-green-shine duration-300;
   }
 
   .primary-CTA-disabled {

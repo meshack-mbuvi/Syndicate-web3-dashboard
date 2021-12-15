@@ -67,6 +67,9 @@ module.exports = {
       "4xl": "2500px",
     },
     extend: {
+      opacity: {
+        '85': '.85'
+      },
       zIndex: {
         8: "8",
       },
@@ -194,6 +197,7 @@ module.exports = {
         green: {
           ...colors.green,
           DEFAULT: "#30E696",
+          shine: "#64ECB0",
           screamin: "#80FF75",
           light: "#2FE696",
           dark: "#0E2833",

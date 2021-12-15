@@ -1,6 +1,6 @@
 import { getCoinPrices } from "./utils/ethereum";
 
-const handler = async (event, _) => {  
+const handler = async (event, _) => {
   const contractAddresses = event.queryStringParameters.contractAddresses || "";
   if (event.httpMethod !== "GET") {
     return {
@@ -18,7 +18,7 @@ const handler = async (event, _) => {
   }
 
   try {
-    const response = await getCoinPrices(contractAddresses.split(','));
+    const response = await getCoinPrices(contractAddresses.split(","));
     return {
       statusCode: 200,
       body: JSON.stringify({

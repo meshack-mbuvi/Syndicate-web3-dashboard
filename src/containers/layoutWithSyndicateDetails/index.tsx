@@ -137,7 +137,7 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
     clubAddress,
     account,
     router.isReady,
-    syndicateContracts.SingleTokenMintModule,
+    syndicateContracts?.SingleTokenMintModule,
   ]);
 
   const processMerkleProofData = async (merkleObj) => {
@@ -200,7 +200,7 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
   }, [account, router.isReady, JSON.stringify(erc20Token)]);
 
   // get static text from constants
-  const { connectWalletToAccess, noTokenTitleText } = syndicateActionConstants;
+  const { noTokenTitleText } = syndicateActionConstants;
 
   // set texts to display on empty state
   // we'll initialize this to instances where address is not a syndicate.
