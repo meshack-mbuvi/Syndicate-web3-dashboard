@@ -56,7 +56,7 @@ export const getERC20TokenDetails = async (
         requiredTokenMinBalance,
         startTime,
       } = await mintPolicy?.getSyndicateValues(address);
-
+      console.log({ SingleTokenMintModule });
       // TODO: Multicall :-)
       const [
         name,
