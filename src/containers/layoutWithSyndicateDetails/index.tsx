@@ -34,8 +34,6 @@ import { syndicateActionConstants } from "src/components/syndicates/shared/Const
 import ClubTokenMembers from "../managerActions/clubTokenMembers";
 import Assets from "./assets";
 
-// const showEmptySyndicateState = (erc20: ERC20Token, ) =>
-
 const LayoutWithSyndicateDetails: FC = ({ children }) => {
   // Retrieve state
   const {
