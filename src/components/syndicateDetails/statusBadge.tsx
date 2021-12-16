@@ -37,8 +37,7 @@ const StatusBadge = (props: Props): JSX.Element => {
   } = useSelector((state: AppState) => state);
 
   const { loading: merkleLoading } = useFetchMerkleProof();
-  const { loading: claimLoading, refetch: refetchTokenClaim } =
-    useFetchTokenClaim();
+  const { loading: claimLoading } = useFetchTokenClaim();
 
   let badgeBackgroundColor = "bg-blue-darker";
   let badgeIcon: string | React.ReactNode = "depositIcon.svg";
