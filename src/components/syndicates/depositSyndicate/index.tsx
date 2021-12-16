@@ -22,6 +22,9 @@ import { useERC20TokenBalance } from "@/hooks/useTokenBalance";
 import useUSDCDetails from "@/hooks/useUSDCDetails";
 import useWindowSize from "@/hooks/useWindowSize";
 import { AppState } from "@/state";
+import useFetchMerkleProof from "@/hooks/useMerkleProof";
+import useFetchTokenClaim from "@/hooks/useTokenClaim";
+import useFetchAirdropInfo from "@/hooks/useAirdropInfo";
 import {
   setAccountClubTokens,
   setMemberPercentShare,
@@ -53,6 +56,8 @@ const DepositSyndicate: React.FC = () => {
   const {
     initializeContractsReducer: { syndicateContracts },
     merkleProofSliceReducer: { myMerkleProof },
+    airdopInfoSliceReducer: { airdropInfo },
+    tokenClaimedSliceReducer: { isTokenClaimed },
     web3Reducer: {
       web3: { account, web3, status },
     },
@@ -78,6 +83,10 @@ const DepositSyndicate: React.FC = () => {
 
   const { depositTokenSymbol, depositTokenLogo, depositTokenDecimals } =
     useUSDCDetails();
+
+  const { loading: merkleLoading } = useFetchMerkleProof();
+  const { loading: claimLoading } = useFetchTokenClaim();
+  const { loading: airdropInfoLoading } = useFetchAirdropInfo();
 
   const [submitting, setSubmitting] = useState<boolean>(false);
   const [metamaskConfirmPending, setMetamaskConfirmPending] =
@@ -114,6 +123,7 @@ const DepositSyndicate: React.FC = () => {
   const [depositAmount, setDepositAmount] = useState<string>("");
   const [claimBalanceValue, setClaimBalanceValue] = useState("");
   const [claimBalanceDecimalValue, setClaimBalanceDecimalValue] = useState("");
+  const [invalidClaim, setInvalidClaim] = useState<boolean>(false);
 
   useEffect(() => {
     // calculate member ownership for the intended deposits
@@ -135,13 +145,31 @@ const DepositSyndicate: React.FC = () => {
     const [claimValue, claimDecimalValue] = floatedNumberWithCommas(
       myMerkleProof?._amount,
     ).split(".");
+
     setClaimBalanceValue(claimValue);
     setClaimBalanceDecimalValue(claimDecimalValue);
+
     const newTotalSupply = +totalSupply + +myMerkleProof?._amount;
     const memberPercentShare = +myMerkleProof?._amount / newTotalSupply;
+
     setOwnershipShare(+memberPercentShare * 100);
     setMemberTokens(+myMerkleProof?._amount);
   }, [myMerkleProof?._amount, totalSupply]);
+
+  useEffect(() => {
+    const now = ~~(Date.now() / 1000);
+
+    if (
+      isTokenClaimed.claimed ||
+      !airdropInfo.id ||
+      airdropInfo.startTime > now ||
+      airdropInfo.endTime < now
+    ) {
+      setInvalidClaim(true);
+    } else {
+      setInvalidClaim(false);
+    }
+  }, [isTokenClaimed, airdropInfo]);
 
   useEffect(() => {
     if (syndicateContracts && erc20Token && depositToken) {
@@ -207,7 +235,6 @@ const DepositSyndicate: React.FC = () => {
   };
 
   const claimClubTokens = async () => {
-    console.log(myMerkleProof, account);
     setMetamaskConfirmPending(true);
     setTransactionRejected(false);
     setTransactionFailed(false);
@@ -215,13 +242,16 @@ const DepositSyndicate: React.FC = () => {
     try {
       const { amount, accountIndex, merkleProof } = myMerkleProof;
       const { MerkleDistributorModule } = syndicateContracts;
-      const transactionHash = await MerkleDistributorModule.claim(
+      await MerkleDistributorModule.claim(
         account,
         address,
         amount,
         accountIndex,
         merkleProof,
+        onTxConfirm,
         onTxReceipt,
+        onTxFail,
+        setTransactionHash,
       );
       setTransactionHash(transactionHash);
     } catch (error) {
@@ -512,6 +542,10 @@ const DepositSyndicate: React.FC = () => {
   };
 
   const closeClaimCard = () => {
+    if (successfulClaim) {
+      setInvalidClaim(true);
+    }
+
     setSuccessfulClaim(false);
     setSubmitting(false);
     setMetamaskConfirmPending(false);
@@ -641,10 +675,15 @@ const DepositSyndicate: React.FC = () => {
           <StatusBadge
             depositsEnabled={depositsEnabled}
             depositExceedTotal={+totalDeposits === +maxTotalDeposits}
-            claimEnabled={claimEnabled}
+            claimEnabled={claimEnabled && !invalidClaim ? claimEnabled : false}
           />
 
-          {status !== Status.DISCONNECTED && (loading || !readyToDisplay) ? (
+          {status !== Status.DISCONNECTED &&
+          (loading ||
+            merkleLoading ||
+            claimLoading ||
+            airdropInfoLoading ||
+            !readyToDisplay) ? (
             <div className="h-fit-content rounded-2-half pt-6 px-8 pb-16">
               <SkeletonLoader
                 width="1/3"
@@ -898,7 +937,7 @@ const DepositSyndicate: React.FC = () => {
                 </div>
               )}
             </FadeIn>
-          ) : claimEnabled ? (
+          ) : claimEnabled && !invalidClaim ? (
             <FadeIn>
               {submitting ? (
                 <div className="h-fit-content rounded-2-half text-center">
@@ -947,7 +986,8 @@ const DepositSyndicate: React.FC = () => {
                 <div className="py-6 px-8">
                   <ConnectWalletAction />
                 </div>
-              ) : (
+              ) : parseInt(claimBalanceValue) > 0 ||
+                parseInt(claimBalanceDecimalValue) > 0 ? (
                 <div className="h-fit-content rounded-2-half pt-6 px-8 pb-4">
                   <p className="h4 uppercase text-sm">
                     {claimEnabled && "You will receive"}
@@ -966,16 +1006,27 @@ const DepositSyndicate: React.FC = () => {
                     </div>
                   </div>
                   <div className="mt-8 flex justify-center">
-                    {(parseInt(claimBalanceValue) > 0 || parseInt(claimBalanceDecimalValue) > 0) && (<button
-                      className={`w-full rounded-lg text-base text-black px-8 py-4 bg-green`}
-                      onClick={claimClubTokens}
-                    >
-                      Claim
-                    </button>)}
+                    {(parseInt(claimBalanceValue) > 0 ||
+                      parseInt(claimBalanceDecimalValue) > 0) && (
+                      <button
+                        className={`w-full rounded-lg text-base text-black px-8 py-4 bg-green`}
+                        onClick={claimClubTokens}
+                      >
+                        Claim
+                      </button>
+                    )}
                   </div>
                   <div className="text-center text-sm text-gray-shuttle mt-4">
                     Club tokens are non-transferable and represent your
                     ownership share in this club.
+                  </div>
+                </div>
+              ) : (
+                <div className="h-fit-content rounded-2-half py-10 px-8">
+                  <div className="text-center text-base text-gray-lightManatee">
+                    The wallet you’re connected with has no {symbol} tokens
+                    available to claim. <br></br> <br></br> If you expect that a
+                    claim is available, try connecting a different wallet.
                   </div>
                 </div>
               )}

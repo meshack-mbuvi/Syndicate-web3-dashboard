@@ -11,7 +11,6 @@ import {
   ERC20TokenDefaultState,
   setERC20Token,
 } from "@/helpers/erc20TokenDetails";
-import { useFetchMerkleProof } from "@/hooks/useMerkleProof";
 import NotFoundPage from "@/pages/404";
 import { AppState } from "@/state";
 import {
@@ -21,10 +20,6 @@ import {
 } from "@/state/assets/slice";
 import { setClubMembers } from "@/state/clubMembers";
 import { setERC20TokenDetails } from "@/state/erc20token/slice";
-import {
-  setLoadingMerkleProof,
-  setMerkleProof,
-} from "@/state/merkleProofs/slice";
 import { Status } from "@/state/wallet/types";
 import { formatAddress } from "@/utils/formatAddress";
 import { faExclamationTriangle } from "@fortawesome/free-solid-svg-icons";
@@ -102,12 +97,6 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
 
   const { clubAddress } = router.query;
 
-  const {
-    loading: transactionsLoading,
-    data: merkleProofData = {},
-    refetch: refetchMerkleProof,
-  } = useFetchMerkleProof(false);
-
   useEffect(() => {
     if (router.isReady && web3.utils.isAddress(clubAddress)) {
       const clubERC20tokenContract = new ClubERC20Contract(
@@ -123,37 +112,12 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
         ),
       );
 
-      refetchMerkleProof();
-
       return () => {
         dispatch(setERC20TokenDetails(ERC20TokenDefaultState));
         dispatch(setClubMembers([]));
       };
     }
   }, [clubAddress, account, router.isReady]);
-
-  const processMerkleProofData = async (merkleObj) => {
-    dispatch(setLoadingMerkleProof(true));
-    dispatch(
-      setMerkleProof({
-        ...merkleObj,
-        account,
-        _amount: getWeiAmount(
-          merkleObj?.amount,
-          erc20Token.tokenDecimals,
-          false,
-        ),
-      }),
-    );
-    dispatch(setLoadingMerkleProof(false));
-  };
-
-  useEffect(() => {
-    dispatch(setLoadingMerkleProof(true));
-    if (merkleProofData.Financial_getIndexAndProof?.accountIndex) {
-      processMerkleProofData(merkleProofData.Financial_getIndexAndProof);
-    }
-  }, [account, transactionsLoading, JSON.stringify(merkleProofData)]);
 
   const showOnboardingIfNeeded = router.pathname.endsWith("deposit");
 
@@ -263,7 +227,6 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
       setActiveTab("assets");
     }
   }, [renderOnDisconnect]);
-  
 
   return (
     <>
