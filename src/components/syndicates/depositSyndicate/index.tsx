@@ -157,6 +157,8 @@ const DepositSyndicate: React.FC = () => {
   }, [myMerkleProof?._amount, totalSupply]);
 
   useEffect(() => {
+    // Convert time now from milliseconds to seconds and round-down/floor
+    // https://stackoverflow.com/questions/5971645/what-is-the-double-tilde-operator-in-javascript
     const now = ~~(Date.now() / 1000);
 
     if (
