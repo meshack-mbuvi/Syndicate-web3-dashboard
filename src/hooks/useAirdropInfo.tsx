@@ -30,7 +30,7 @@ const useFetchAirdropInfo: any = (skipQuery) => {
   } = useQuery(MERKLE_AIRDROP_CREATED, {
     variables: {
       where: {
-        club: clubAddress.toString(),
+        club: clubAddress.toLowerCase(),
         treeIndex: 0,
       },
     },
