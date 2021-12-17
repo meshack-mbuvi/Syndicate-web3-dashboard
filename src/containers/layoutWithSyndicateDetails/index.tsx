@@ -52,6 +52,8 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
     },
   } = useSelector((state: AppState) => state);
 
+  const isOwner = account === owner && account != "" && owner != "";
+
   const router = useRouter();
   const dispatch = useDispatch();
   const [scrollTop, setScrollTop] = useState(0);
@@ -104,7 +106,6 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
   // used to render right column components on the left column in small devices
   const {
     pathname,
-    isReady,
     query: { clubAddress },
   } = router;
 
@@ -114,85 +115,69 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
     refetch: refetchMerkleProof,
   } = useFetchMerkleProof(false);
 
-  const loadClubData = () => {
-    const clubERC20tokenContract = new ClubERC20Contract(
-      clubAddress as string,
-      web3,
-    );
-
-    dispatch(
-      setERC20Token(
-        clubERC20tokenContract,
-        syndicateContracts.SingleTokenMintModule,
-        account,
-      ),
-    );
-
-    refetchMerkleProof();
-
-    return () => {
-      dispatch(setERC20TokenDetails(ERC20TokenDefaultState));
-      dispatch(setClubMembers([]));
-    };
-  };
-
   useEffect(() => {
-    if (!clubAddress || !isReady) return;
-
+    if (!clubAddress || status == Status.CONNECTING) return;
     if (
       web3.utils.isAddress(clubAddress) &&
       syndicateContracts?.SingleTokenMintModule
     ) {
-      loadClubData();
+      const clubERC20tokenContract = new ClubERC20Contract(
+        clubAddress as string,
+        web3,
+      );
+
+      dispatch(
+        setERC20Token(
+          clubERC20tokenContract,
+          syndicateContracts.SingleTokenMintModule,
+          account,
+        ),
+      );
+
+      refetchMerkleProof();
+
+      return () => {
+        dispatch(setERC20TokenDetails(ERC20TokenDefaultState));
+        dispatch(setClubMembers([]));
+      };
     }
-  }, [
-    clubAddress,
-    account,
-    isReady,
-    syndicateContracts?.SingleTokenMintModule,
-  ]);
+  }, [clubAddress, account, status, syndicateContracts?.SingleTokenMintModule]);
+
+  const processMerkleProofData = async (merkleObj) => {
+    dispatch(setLoadingMerkleProof(true));
+    dispatch(
+      setMerkleProof({
+        ...merkleObj,
+        account,
+        _amount: getWeiAmount(merkleObj?.amount, tokenDecimals, false),
+      }),
+    );
+    dispatch(setLoadingMerkleProof(false));
+  };
 
   useEffect(() => {
     dispatch(setLoadingMerkleProof(true));
     if (merkleProofData.Financial_getIndexAndProof?.accountIndex) {
-      const merkleObj = merkleProofData.Financial_getIndexAndProof;
-      dispatch(setLoadingMerkleProof(true));
-      dispatch(
-        setMerkleProof({
-          ...merkleObj,
-          account,
-          _amount: getWeiAmount(merkleObj?.amount, tokenDecimals, false),
-        }),
-      );
-      dispatch(setLoadingMerkleProof(false));
+      processMerkleProofData(merkleProofData.Financial_getIndexAndProof);
     }
-  }, [
-    account,
-    transactionsLoading,
-    merkleProofData.Financial_getIndexAndProof?.accountIndex,
-    merkleProofData.Financial_getIndexAndProof,
-    dispatch,
-    tokenDecimals,
-  ]);
+  }, [account, transactionsLoading, JSON.stringify(merkleProofData)]);
 
   const showOnboardingIfNeeded = router.pathname.endsWith("deposit");
 
-  // "" === "" returns true for isOwner which cause URL to flash /manage
-  // when on /clubs/[clubAddress]
-  const isOwner = account === owner && account != "" && owner != "";
-  // A manager should not access deposit page but should be redirected
-  // to syndicates page
   useEffect(() => {
-    // We need to have syndicate loaded so that we know whether it's open to
-    // deposit or not.
-    if (!isReady || loading || !clubAddress) return;
+    if (loading || !clubAddress || status === Status.CONNECTING) return;
 
-    if (pathname.includes("/manage") && !isOwner) {
+    if (!account && pathname.includes("/manage")) {
       router.replace(`/clubs/${clubAddress}`);
-    } else if (pathname === "/clubs/[clubAddress]" && isOwner) {
-      router.replace(`/clubs/${clubAddress}/manage`);
+      return;
+    } else {
+      if (pathname.includes("/manage") && !isOwner) {
+        router.replace(`/clubs/${clubAddress}`);
+      } else if (pathname === "/clubs/[clubAddress]" && isOwner) {
+        router.replace(`/clubs/${clubAddress}/manage`);
+      }
     }
-  }, [isOwner, clubAddress, isReady, pathname, account, loading]);
+  }, [owner, clubAddress, account, loading]);
 
   // get static text from constants
   const { noTokenTitleText } = syndicateActionConstants;

@@ -69,7 +69,7 @@ export const getERC20TokenDetails = async (
         ERC20tokenContract.name(),
         ERC20tokenContract.owner(),
         ERC20tokenContract.decimals(),
-        SingleTokenMintModule.depositToken(
+        SingleTokenMintModule?.depositToken(
           ERC20tokenContract.clubERC20Contract._address,
         ),
         ERC20tokenContract.symbol(),
