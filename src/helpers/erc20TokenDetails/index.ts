@@ -95,6 +95,7 @@ export const getERC20TokenDetails = async (
         ERC20tokenContract.clubERC20Contract._address,
         MERKLE_DISTRIBUTOR_MODULE,
       );
+      console.log({ claimEnabled });
 
       let depositsEnabled = false;
       if (!claimEnabled) {

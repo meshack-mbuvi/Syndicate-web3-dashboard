@@ -3,8 +3,6 @@ import { SkeletonLoader } from "@/components/skeletonLoader";
 import { AppState } from "@/state";
 import React from "react";
 import { useSelector } from "react-redux";
-import useFetchMerkleProof from "@/hooks/useMerkleProof";
-import useFetchTokenClaim from "@/hooks/useTokenClaim";
 
 interface Props {
   isManager?: boolean;
@@ -35,9 +33,6 @@ const StatusBadge = (props: Props): JSX.Element => {
       erc20Token: { loading },
     },
   } = useSelector((state: AppState) => state);
-
-  const { loading: merkleLoading } = useFetchMerkleProof();
-  const { loading: claimLoading } = useFetchTokenClaim();
 
   let badgeBackgroundColor = "bg-blue-darker";
   let badgeIcon: string | React.ReactNode = "depositIcon.svg";
@@ -78,7 +73,7 @@ const StatusBadge = (props: Props): JSX.Element => {
       <div
         className={`h-20 ring ring-black w-full px-8 py-4 rounded-2xl ${badgeBackgroundColor} flex flex-shrink-0 justify-between items-center`}
       >
-        {loading || merkleLoading || claimLoading ? (
+        {loading ? (
           <SkeletonLoader width="2/3" height="7" borderRadius="rounded-full" />
         ) : (
           <div className="flex items-center space-x-4">
