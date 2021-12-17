@@ -35,31 +35,27 @@ export class MerkleDistributorModuleContract {
     amount: string,
     index: number,
     merkleProof: string[],
-    onTxConfirm: (transactionHash?) => void,
     onTxReceipt: (receipt?) => void,
-    onTxFail: (error?) => void,
-    setTransactionHash,
   ): Promise<string> =>
     new Promise((resolve, reject) =>
       this.contract.methods
         .claim(clubAddress, 0, amount, index, merkleProof)
         .send({ from: forAddress })
         .on("receipt", onTxReceipt)
-        .on("error", onTxFail)
+        .on("error", reject)
         .on("transactionHash", async (transactionHash: string) => {
-          onTxConfirm(transactionHash);
           if (!this.isGnosisSafe) {
-            setTransactionHash(transactionHash);
-          } else {
-            setTransactionHash("");
-            // Stop waiting if we are connected to gnosis safe via walletConnect
-            const receipt = await getGnosisTxnInfo(transactionHash);
-            if (!(receipt as { isSuccessful: boolean }).isSuccessful) {
-              return reject("Receipt failed");
-            }
-
-            onTxReceipt(receipt);
+            return resolve(transactionHash);
           }
+
+          // Stop waiting if we are connected to gnosis safe via walletConnect
+          const receipt = await getGnosisTxnInfo(transactionHash);
+          if (!(receipt as { isSuccessful: boolean }).isSuccessful) {
+            return reject("Receipt failed");
+          }
+
+          onTxReceipt(receipt);
+          return resolve(transactionHash);
         }),
     );
 }
