@@ -101,12 +101,14 @@ const ManagerActions = (): JSX.Element => {
 
   // trigger confetti if we are coming from syndicateCreate page
   useEffect(() => {
+    if (!clubAddress) return;
+    
     if (source && source === "create") {
       setSyndicateSuccessfullyCreated(true);
       // truncates the query part to prevent reshowing confetti
       router.push(`/clubs/${clubAddress}/manage`);
     }
-  }, [source]);
+  }, [source, clubAddress, router]);
 
   // check for success state to show success + confetti component
   // TODO: Add localstorage state from create syndicate function to track these conditions:

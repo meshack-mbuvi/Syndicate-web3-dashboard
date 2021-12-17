@@ -26,7 +26,6 @@ import {
 } from "@/state/merkleProofs/slice";
 import { Status } from "@/state/wallet/types";
 import { getWeiAmount } from "@/utils/conversions";
-import { isEmpty } from "lodash";
 import { useRouter } from "next/router";
 import React, { FC, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -35,16 +34,28 @@ import ClubTokenMembers from "../managerActions/clubTokenMembers";
 import Assets from "./assets";
 
 const LayoutWithSyndicateDetails: FC = ({ children }) => {
-  // Retrieve state
   const {
     initializeContractsReducer: { syndicateContracts },
     merkleProofSliceReducer: { myMerkleProof },
     web3Reducer: {
       web3: { account, web3, status },
     },
-    erc20TokenSliceReducer: { erc20Token },
+    erc20TokenSliceReducer: {
+      erc20Token: {
+        owner,
+        loading,
+        name,
+        tokenDecimals,
+        depositsEnabled,
+        accountClubTokens,
+      },
+    },
   } = useSelector((state: AppState) => state);
 
+  const isOwner = account === owner && account != "" && owner != "";
+
+  const router = useRouter();
+  const dispatch = useDispatch();
   const [scrollTop, setScrollTop] = useState(0);
   const [showNav, setShowNav] = useState(true);
   const [isSubNavStuck, setIsSubNavStuck] = useState(true);
@@ -72,32 +83,31 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
   }, [scrollTop]);
 
   useEffect(() => {
-    if (erc20Token.owner) {
+    if (owner) {
       // fetch token transactions for the connected account.
-      dispatch(fetchTokenTransactions(erc20Token.owner));
+      dispatch(fetchTokenTransactions(owner));
       // test nft account: 0xf4c2c3e12b61d44e6b228c43987158ac510426fb
       dispatch(
         fetchCollectiblesTransactions({
-          account: erc20Token.owner,
+          account: owner,
           offset: "0",
         }),
       );
     }
-  }, [erc20Token.owner]);
+  }, [owner, dispatch]);
 
   useEffect(() => {
     // clear collectibles on account switch
     if (account) {
       dispatch(clearCollectiblesTransactions());
     }
-  }, [account]);
-
-  const router = useRouter();
-  const dispatch = useDispatch();
+  }, [account, dispatch]);
 
   // used to render right column components on the left column in small devices
-
-  const { clubAddress } = router.query;
+  const {
+    pathname,
+    query: { clubAddress },
+  } = router;
 
   const {
     loading: transactionsLoading,
@@ -106,8 +116,8 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
   } = useFetchMerkleProof(false);
 
   useEffect(() => {
+    if (!clubAddress || status == Status.CONNECTING) return;
     if (
-      router.isReady &&
       web3.utils.isAddress(clubAddress) &&
       syndicateContracts?.SingleTokenMintModule
     ) {
@@ -131,12 +141,7 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
         dispatch(setClubMembers([]));
       };
     }
-  }, [
-    clubAddress,
-    account,
-    router.isReady,
-    syndicateContracts?.SingleTokenMintModule,
-  ]);
+  }, [clubAddress, account, status, syndicateContracts?.SingleTokenMintModule]);
 
   const processMerkleProofData = async (merkleObj) => {
     dispatch(setLoadingMerkleProof(true));
@@ -144,11 +149,7 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
       setMerkleProof({
         ...merkleObj,
         account,
-        _amount: getWeiAmount(
-          merkleObj?.amount,
-          erc20Token.tokenDecimals,
-          false,
-        ),
+        _amount: getWeiAmount(merkleObj?.amount, tokenDecimals, false),
       }),
     );
     dispatch(setLoadingMerkleProof(false));
@@ -163,39 +164,20 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
 
   const showOnboardingIfNeeded = router.pathname.endsWith("deposit");
 
-  // A manager should not access deposit page but should be redirected
-  // to syndicates page
   useEffect(() => {
-    // We need to have syndicate loaded so that we know whether it's open to
-    // deposit or not.
-    if (!router.isReady || !erc20Token) return;
+    if (loading || !clubAddress || status === Status.CONNECTING) return;
 
-    if (
-      status !== Status.DISCONNECTED &&
-      !erc20Token?.loading &&
-      !isEmpty(erc20Token) &&
-      erc20Token.name &&
-      clubAddress !== undefined &&
-      router.isReady
-    ) {
-      switch (router.pathname) {
-        case "/clubs/[clubAddress]/manage":
-          if (!erc20Token?.isOwner) {
-            router.replace(`/clubs/${clubAddress}`);
-          }
-          break;
-
-        case "/clubs/[clubAddress]":
-          if (erc20Token?.isOwner) {
-            router.replace(`/clubs/${clubAddress}/manage`);
-          }
-          break;
-
-        default:
-          break;
+    if (!account && pathname.includes("/manage")) {
+      router.replace(`/clubs/${clubAddress}`);
+      return;
+    } else {
+      if (pathname.includes("/manage") && !isOwner) {
+        router.replace(`/clubs/${clubAddress}`);
+      } else if (pathname === "/clubs/[clubAddress]" && isOwner) {
+        router.replace(`/clubs/${clubAddress}/manage`);
       }
     }
-  }, [account, router.isReady, JSON.stringify(erc20Token)]);
+  }, [owner, clubAddress, account, loading]);
 
   // get static text from constants
   const { noTokenTitleText } = syndicateActionConstants;
@@ -226,11 +208,9 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
 
   const [activeTab, setActiveTab] = useState("assets");
 
-  const isActive = !erc20Token?.depositsEnabled;
+  const isActive = !depositsEnabled;
   const isOwnerOrMember =
-    erc20Token?.isOwner ||
-    +erc20Token?.accountClubTokens ||
-    myMerkleProof?.account === account;
+    isOwner || +accountClubTokens || myMerkleProof?.account === account;
   const renderOnDisconnect =
     status !== Status.DISCONNECTED && !(isActive && !isOwnerOrMember);
 
@@ -239,7 +219,6 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
       setActiveTab("assets");
     }
   }, [renderOnDisconnect]);
-  
 
   return (
     <>
@@ -247,11 +226,11 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
         <NotFoundPage />
       ) : (
         <Layout showNav={showNav}>
-          <Head title={erc20Token?.name || "Club"} />
+          <Head title={name || "Club"} />
           <ErrorBoundary>
             {showOnboardingIfNeeded && <OnboardingModal />}
             <div className="w-full">
-              {router.isReady && !erc20Token.name && !erc20Token.loading ? (
+              {router.isReady && !name && !loading ? (
                 syndicateEmptyState
               ) : (
                 <div className="container mx-auto ">
@@ -267,7 +246,7 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
                   we should have an isChildVisible child here,
                   but it's not working as expected
                   */}
-                      <SyndicateDetails accountIsManager={erc20Token?.isOwner}>
+                      <SyndicateDetails accountIsManager={isOwner}>
                         <div className="w-full md:hidden mt-5">{children}</div>
                       </SyndicateDetails>
                     </div>
