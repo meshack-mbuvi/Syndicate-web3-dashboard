@@ -78,7 +78,9 @@ export const getERC20TokenDetails = async (
       ]);
       const MERKLE_DISTRIBUTOR_MODULE =
         process.env.NEXT_PUBLIC_MERKLE_DISTRIBUTOR_MODULE;
-      const isOwner = owner === account;
+
+      const isOwner = owner == "" || account == "" ? false : owner === account;
+
       const totalSupply = await ERC20tokenContract.totalSupply().then((wei) =>
         getWeiAmount(wei, tokenDecimals, false),
       );
@@ -95,7 +97,6 @@ export const getERC20TokenDetails = async (
         ERC20tokenContract.clubERC20Contract._address,
         MERKLE_DISTRIBUTOR_MODULE,
       );
-      console.log({ claimEnabled });
 
       let depositsEnabled = false;
       if (!claimEnabled) {

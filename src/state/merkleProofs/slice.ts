@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { MerkleProof, initialState } from "./types";
+import { initialState, MerkleProof } from "./types";
 
 const setMerkleProofSlice = createSlice({
   name: "merkleProof",
@@ -12,7 +12,7 @@ const setMerkleProofSlice = createSlice({
     setLoadingMerkleProof(state, action: PayloadAction<boolean>) {
       state.loading = action.payload;
     },
-    clearMerkleProof(state, action: PayloadAction<boolean>) {
+    clearMerkleProof(state) {
       state.myMerkleProof = initialState.myMerkleProof;
     },
   },
