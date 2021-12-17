@@ -46,7 +46,6 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
         loading,
         name,
         tokenDecimals,
-        isOwner,
         depositsEnabled,
         accountClubTokens,
       },
@@ -103,8 +102,11 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
   }, [account, dispatch]);
 
   // used to render right column components on the left column in small devices
-
-  const { clubAddress } = router.query;
+  const {
+    pathname,
+    isReady,
+    query: { clubAddress },
+  } = router;
 
   const {
     loading: transactionsLoading,
@@ -112,41 +114,42 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
     refetch: refetchMerkleProof,
   } = useFetchMerkleProof(false);
 
+  const loadClubData = () => {
+    const clubERC20tokenContract = new ClubERC20Contract(
+      clubAddress as string,
+      web3,
+    );
+
+    dispatch(
+      setERC20Token(
+        clubERC20tokenContract,
+        syndicateContracts.SingleTokenMintModule,
+        account,
+      ),
+    );
+
+    refetchMerkleProof();
+
+    return () => {
+      dispatch(setERC20TokenDetails(ERC20TokenDefaultState));
+      dispatch(setClubMembers([]));
+    };
+  };
+
   useEffect(() => {
-    if (!clubAddress || !router.isReady) return;
+    if (!clubAddress || !isReady) return;
+
     if (
-      router.isReady &&
       web3.utils.isAddress(clubAddress) &&
       syndicateContracts?.SingleTokenMintModule
     ) {
-      const clubERC20tokenContract = new ClubERC20Contract(
-        clubAddress as string,
-        web3,
-      );
-
-      dispatch(
-        setERC20Token(
-          clubERC20tokenContract,
-          syndicateContracts.SingleTokenMintModule,
-          account,
-        ),
-      );
-
-      refetchMerkleProof();
-
-      return () => {
-        dispatch(setERC20TokenDetails(ERC20TokenDefaultState));
-        dispatch(setClubMembers([]));
-      };
+      loadClubData();
     }
   }, [
     clubAddress,
     account,
-    router.isReady,
+    isReady,
     syndicateContracts?.SingleTokenMintModule,
-    dispatch,
-    refetchMerkleProof,
-    web3,
   ]);
 
   useEffect(() => {
@@ -174,23 +177,22 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
 
   const showOnboardingIfNeeded = router.pathname.endsWith("deposit");
 
+  // "" === "" returns true for isOwner which cause URL to flash /manage
+  // when on /clubs/[clubAddress]
+  const isOwner = account === owner && account != "" && owner != "";
   // A manager should not access deposit page but should be redirected
   // to syndicates page
   useEffect(() => {
     // We need to have syndicate loaded so that we know whether it's open to
     // deposit or not.
-    if (!router.isReady || loading || !clubAddress) return;
+    if (!isReady || loading || !clubAddress) return;
 
-    // "" === "" returns true for isOwner which cause URL to flash /manage
-    // when on /clubs/[clubAddress]
-    const isOwner = account === owner && account != "" && owner != "";
-
-    if (router.pathname.includes("/manage") && !isOwner) {
+    if (pathname.includes("/manage") && !isOwner) {
       router.replace(`/clubs/${clubAddress}`);
-    } else if (router.pathname === "/clubs/[clubAddress]" && isOwner) {
+    } else if (pathname === "/clubs/[clubAddress]" && isOwner) {
       router.replace(`/clubs/${clubAddress}/manage`);
     }
-  }, [owner, clubAddress, router, account, loading]);
+  }, [isOwner, clubAddress, isReady, pathname, account, loading]);
 
   // get static text from constants
   const { noTokenTitleText } = syndicateActionConstants;
