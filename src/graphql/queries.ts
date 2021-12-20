@@ -51,3 +51,29 @@ export const CLUB_TOKEN_MEMBERS = gql`
     }
   }
 `;
+
+export const CLAIMED_TOKEN = gql`
+  query checkTokenClaim($where: TokensClaimed_filter) {
+    tokensClaimeds(where: $where) {
+      id
+      claimant
+      club
+      treeIndex
+      amount
+      index
+    }
+  }
+`;
+
+export const MERKLE_AIRDROP_CREATED = gql`
+  query airdropCreated($where: MerkleAirdropCreated_filter) {
+    merkleAirdropCreateds(where: $where) {
+      id
+      club
+      treeIndex
+      endTime
+      startTime
+      root
+    }
+  }
+`;
