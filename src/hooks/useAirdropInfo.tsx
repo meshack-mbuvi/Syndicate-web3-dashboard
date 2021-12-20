@@ -31,7 +31,7 @@ const useFetchAirdropInfo: any = (skipQuery) => {
     variables: {
       where: {
         club: clubAddress.toLowerCase(),
-        treeIndex: 0,
+        treeIndex: myMerkleProof.treeIndex,
       },
     },
     skip: !account || skipQuery,

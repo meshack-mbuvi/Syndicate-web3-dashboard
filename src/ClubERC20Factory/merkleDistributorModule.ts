@@ -34,6 +34,7 @@ export class MerkleDistributorModuleContract {
     clubAddress: string,
     amount: string,
     index: number,
+    treeIndex: number,
     merkleProof: string[],
     onTxConfirm: (transactionHash?) => void,
     onTxReceipt: (receipt?) => void,
@@ -42,7 +43,7 @@ export class MerkleDistributorModuleContract {
   ): Promise<string> =>
     new Promise((resolve, reject) =>
       this.contract.methods
-        .claim(clubAddress, 0, amount, index, merkleProof)
+        .claim(clubAddress, treeIndex, amount, index, merkleProof)
         .send({ from: forAddress })
         .on("receipt", onTxReceipt)
         .on("error", onTxFail)

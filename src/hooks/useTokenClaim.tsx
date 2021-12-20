@@ -33,6 +33,7 @@ const useFetchTokenClaim: any = (skipQuery) => {
         claimant: account.toLowerCase(),
         club: clubAddress.toLowerCase(),
         amount: myMerkleProof.amount,
+        treeIndex: myMerkleProof.treeIndex,
       },
     },
     skip: !account || skipQuery,

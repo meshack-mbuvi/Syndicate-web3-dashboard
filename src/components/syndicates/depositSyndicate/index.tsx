@@ -242,13 +242,14 @@ const DepositSyndicate: React.FC = () => {
     setTransactionFailed(false);
     setSubmitting(true);
     try {
-      const { amount, accountIndex, merkleProof } = myMerkleProof;
+      const { amount, accountIndex, merkleProof, treeIndex } = myMerkleProof;
       const { MerkleDistributorModule } = syndicateContracts;
       await MerkleDistributorModule.claim(
         account,
         address,
         amount,
         accountIndex,
+        treeIndex,
         merkleProof,
         onTxConfirm,
         onTxReceipt,
