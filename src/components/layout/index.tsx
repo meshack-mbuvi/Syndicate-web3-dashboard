@@ -1,56 +1,37 @@
-import Footer from "@/components/navigation/footer";
+import React, { FC } from "react";
+import { useRouter } from "next/router";
+import { useSelector } from "react-redux";
 import { useCreateInvestmentClubContext } from "@/context/CreateInvestmentClubContext";
 import { AppState } from "@/state";
-import { Status } from "@/state/wallet/types";
-import { useRouter } from "next/router";
-import React, { FC, useEffect } from "react";
-import { useSelector } from "react-redux";
-import { SyndicateInBetaBanner } from "src/components/banners";
 import ConnectWallet from "src/components/connectWallet";
 import Header from "src/components/navigation/header";
 import ProgressBar from "../ProgressBar";
 import SEO from "../seo";
+import { SyndicateInBetaBanner } from "src/components/banners";
+import Footer from "@/components/navigation/footer";
 
 interface Props {
   backLink?: string;
   showNav?: boolean;
-  navItems?: { url: string; urlText: string }[];
 }
 
-const Layout: FC<Props> = ({
-  children,
-  backLink = null,
-  showNav = true,
-  navItems = [
-    {
-      url: "/clubs",
-      urlText: "Portfolio",
-    },
-  ],
-}) => {
-  const {
-    web3Reducer: {
-      web3: { account, status },
-    },
-    clubERC20sReducer: { myClubERC20s, otherClubERC20s, loading },
-    erc20TokenSliceReducer: {
-      erc20Token: { owner, loading: loadingClubDetails },
-    },
-  } = useSelector((state: AppState) => state);
-
+const Layout: FC<Props> = ({ children, backLink = null, showNav = true }) => {
   const router = useRouter();
   const {
-    pathname,
-    query: { clubAddress },
-  } = router;
+    web3Reducer: {
+      web3: { account },
+    },
+    clubERC20sReducer: { myClubERC20s, otherClubERC20s, loading },
+    erc20TokenSliceReducer: { erc20Token },
+  } = useSelector((state: AppState) => state);
 
-  const isOwner = account === owner && account != "" && owner != "";
+  const loadingClubDetails = erc20Token?.loading;
 
   const showCreateProgressBar =
     router.pathname === "/clubs/create/clubprivatebetainvite";
   const portfolioPage = router.pathname === "/clubs" || router.pathname === "/";
 
-  const { currentStep, steps, preClubCreationStep } =
+  const { currentStep, steps, showByInvitationOnly } =
     useCreateInvestmentClubContext();
 
   // get content to occupy the viewport if we are in these states.
@@ -65,31 +46,6 @@ const Layout: FC<Props> = ({
   // we don't need to render the footer on the creation page.
   const createClubPage =
     router.pathname === "/clubs/create/clubprivatebetainvite";
-
-  const handleRouting = () => {
-    if (!account && pathname.includes("/manage")) {
-      router.replace(`/clubs/${clubAddress}`);
-      return;
-    } else {
-      if (pathname.includes("/manage") && !isOwner) {
-        router.replace(`/clubs/${clubAddress}`);
-      } else if (pathname === "/clubs/[clubAddress]" && isOwner) {
-        router.replace(`/clubs/${clubAddress}/manage`);
-      }
-    }
-  };
-
-  useEffect(() => {
-    if (
-      loadingClubDetails ||
-      !clubAddress ||
-      status === Status.CONNECTING ||
-      !owner
-    )
-      return;
-
-    handleRouting();
-  }, [owner, clubAddress, account, loadingClubDetails]);
 
   return (
     <div
@@ -107,10 +63,12 @@ const Layout: FC<Props> = ({
           ]}
           title="Home"
         />
-        <Header backLink={backLink} show={showNav} navItems={navItems} />
+        <Header backLink={backLink} show={showNav} />
         <div
           className={`sticky top-18 z-20 ${
-            showCreateProgressBar ? "bg-black z-20 backdrop-filter" : ""
+            showCreateProgressBar
+              ? "bg-black z-20 backdrop-filter"
+              : ""
           }`}
         >
           <SyndicateInBetaBanner />
@@ -118,7 +76,7 @@ const Layout: FC<Props> = ({
             <div className="pt-6 bg-black">
               <ProgressBar
                 percentageWidth={
-                  preClubCreationStep
+                  showByInvitationOnly
                     ? 0
                     : ((currentStep + 1) / steps.length) * 100
                 }

@@ -6,8 +6,6 @@ import Head from "@/components/syndicates/shared/HeaderTitle";
 import WalletNotConnected from "@/components/walletNotConnected";
 import { MainContent } from "@/containers/create/shared";
 import InvestmentClubCTAs from "@/containers/create/shared/controls/investmentClubCTAs";
-import ByInvitationOnly from "@/containers/createInvestmentClub/byInvitationOnly";
-import GettingStarted from "@/containers/createInvestmentClub/gettingStarted";
 import ReviewDetails from "@/containers/createInvestmentClub/reviewDetails";
 import { useCreateInvestmentClubContext } from "@/context/CreateInvestmentClubContext";
 import useClubERC20s from "@/hooks/useClubERC20s";
@@ -17,6 +15,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useRef } from "react";
 import { useSelector } from "react-redux";
+import ByInvitationOnly from "@/containers/createInvestmentClub/byInvitationOnly";
 
 const CreateInvestmentClub: React.FC = () => {
   const {
@@ -29,8 +28,8 @@ const CreateInvestmentClub: React.FC = () => {
     errorModal,
     setShowModal,
     handleCreateInvestmentClub,
-    preClubCreationStep,
-    setPreClubCreationStep,
+    showByInvitationOnly,
+    setShowByInvitationOnly,
   } = useCreateInvestmentClubContext();
   const router = useRouter();
 
@@ -41,7 +40,7 @@ const CreateInvestmentClub: React.FC = () => {
     if (accountHasClubs) {
       router.replace("/clubs");
     }
-  }, [accountHasClubs, router.isReady]);
+  }, [accountHasClubs]);
 
   const parentRef = useRef(null);
 
@@ -63,12 +62,10 @@ const CreateInvestmentClub: React.FC = () => {
       <>
         {!account ? (
           <WalletNotConnected />
-        ) : preClubCreationStep ? (
-          preClubCreationStep === "invite" ? (
-            <ByInvitationOnly setClubStep={setPreClubCreationStep} />
-          ) : (
-            <GettingStarted setClubStep={setPreClubCreationStep} />
-          )
+        ) : showByInvitationOnly ? (
+          <div style={{ marginTop: "183px" }}>
+            <ByInvitationOnly showByInvitationOnly={setShowByInvitationOnly} />
+          </div>
         ) : (
           <div className="container mx-auto w-full">
             <div

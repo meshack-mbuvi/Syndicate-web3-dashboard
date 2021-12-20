@@ -13,7 +13,6 @@ interface Props {
   creatingSyndicate?: boolean;
   syndicateSuccessfullyCreated?: boolean;
   showConfettiSuccess?: boolean;
-  borderColor?: string;
 }
 const CopyLink: FC<Props> = ({
   link,
@@ -22,7 +21,6 @@ const CopyLink: FC<Props> = ({
   creatingSyndicate = false,
   syndicateSuccessfullyCreated = false,
   showConfettiSuccess = false,
-  borderColor = "border-gray-syn6",
 }) => {
   // show greyed out content when syndicate is being created.
   const creatingSyndicateContent = (
@@ -48,7 +46,7 @@ const CopyLink: FC<Props> = ({
   // content to display after completion of the syndicate creation process.
   const defaultContent = (
     <div
-      className={`w-full border-1 ${borderColor} bg-gray-syn8 hover:bg-gray-syn7 transition-all duration-300 rounded flex ${
+      className={`w-full border-1 border-gray-syn6 bg-gray-syn8 hover:bg-gray-syn7 transition-all duration-300 rounded flex ${
         syndicateSuccessfullyCreated && showConfettiSuccess
           ? "p-4"
           : "pl-4 py-2 pr-2"
