@@ -10,7 +10,6 @@ interface IProps {
   info?: string;
   control: any;
   addOn?: string;
-  defaultValue?: string;
 }
 /**
  * An input component with label and icon at the right end
@@ -25,7 +24,6 @@ export const NumberField: React.FC<IProps> = ({
   placeholder,
   info,
   addOn,
-  defaultValue = "",
 }) => {
   const {
     field: { onChange, ...rest },
@@ -33,7 +31,7 @@ export const NumberField: React.FC<IProps> = ({
   } = useController({
     name,
     control,
-    defaultValue,
+    defaultValue: "",
   });
 
   return (
@@ -54,7 +52,6 @@ export const NumberField: React.FC<IProps> = ({
             const { value } = event.target;
             onChange(value.replaceAll(",", ""));
           }}
-          decimalScale={2}
         />
         {addOn && (
           <div

@@ -1,16 +1,16 @@
-import assetsSliceReducer from "@/state/assets/slice";
-import clubERC20sReducer from "@/state/clubERC20";
-import clubMembersSliceReducer from "@/state/clubMembers";
-import initializeContractsReducer from "@/state/contracts";
-import createInvestmentClubSliceReducer from "@/state/createInvestmentClub/slice";
-import erc20TokenSliceReducer from "@/state/erc20token/slice";
-import legalInfoReducer from "@/state/legalInfo";
-import merkleProofSliceReducer from "@/state/merkleProofs/slice";
-import modalsReducer from "@/state/modals";
-import web3Reducer from "@/state/wallet/reducer";
 import { isDev } from "@/utils/environment";
 import { Action, configureStore, ThunkAction } from "@reduxjs/toolkit";
 import { createWrapper } from "next-redux-wrapper";
+
+import clubERC20sReducer from "@/state/clubERC20";
+import clubMembersSliceReducer from "@/state/clubMembers";
+import createInvestmentClubSliceReducer from "@/state/createInvestmentClub/slice";
+import erc20TokenSliceReducer from "@/state/erc20token/slice";
+import modalsReducer from "@/state/modals";
+import web3Reducer from "@/state/wallet/reducer";
+import initializeContractsReducer from "@/state/contracts";
+import assetsSliceReducer from "@/state/assets/slice";
+import merkleProofSliceReducer from "@/state/merkleProofs/slice";
 
 export const store = configureStore({
   reducer: {
@@ -22,7 +22,6 @@ export const store = configureStore({
     web3Reducer,
     initializeContractsReducer,
     assetsSliceReducer,
-    legalInfoReducer,
     merkleProofSliceReducer,
   },
   middleware: (getDefaultMiddleware) =>

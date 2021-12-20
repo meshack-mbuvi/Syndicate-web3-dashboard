@@ -13,7 +13,6 @@ interface IProps {
     text: string | any;
     textColor?: string;
   };
-  style?: any;
 }
 /**
  * An input component with label and icon at the right end
@@ -36,7 +35,6 @@ export const TextField: React.FC<IProps> = ({
   } = useController({
     name,
     control,
-    rules: { required: true },
     defaultValue: "",
   });
 

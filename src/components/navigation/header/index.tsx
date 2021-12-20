@@ -1,6 +1,5 @@
 import Link from "next/link";
 import React from "react";
-
 import { NavBarNavItem } from "./navbarItems";
 import { UserProfileWrapper } from "./UserProfileWrapper";
 import WalletComponent from "./wallet";
@@ -8,14 +7,16 @@ import WalletComponent from "./wallet";
 interface props {
   backLink: string;
   show?: boolean;
-  navItems: { url: string; urlText: string }[];
 }
 
-const Header: React.FC<props> = ({
-  backLink = null,
-  show = true,
-  navItems,
-}) => {
+// links to show on the navbar
+const navbarItems = [
+  {
+    url: "/clubs",
+    urlText: "Portfolio",
+  },
+];
+const Header: React.FC<props> = ({ backLink = null, show = true }) => {
   return (
     <nav
       className={`${
@@ -23,7 +24,7 @@ const Header: React.FC<props> = ({
       } bg-black h-20 fixed top-0 inset-x-0 align-middle z-20 backdrop-filter backdrop-blur-xl`}
     >
       <div className="container mx-auto flex justify-between h-full">
-        {/* This back link is only displayed on mobile sizes */}
+        {/* This backlink is only displayed on mobile sizes */}
         {backLink ? (
           <div className="md:flex-1 mr-4 md:mr-0">
             <div className="md:hidden float-left vertically-center">
@@ -45,9 +46,10 @@ const Header: React.FC<props> = ({
         >
           {" "}
           {/* Navbar links  */}
-          {navItems.map(({ url, urlText }, index) => (
-            <NavBarNavItem key={index} url={url} urlText={urlText} />
-          ))}
+          {navbarItems.map((item, index) => {
+            const { url, urlText } = item;
+            return <NavBarNavItem key={index} url={url} urlText={urlText} />;
+          })}
         </div>
         {/* logo */}
         <div className="flex-1 space-x-1 mx-auto w-fit-content flex items-center justify-center">

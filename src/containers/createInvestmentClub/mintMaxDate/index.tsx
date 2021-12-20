@@ -182,7 +182,7 @@ const MintMaxDate: FC = () => {
               />
             </div>
             {warning && (
-              <div className="text-yellow-warning pt-2 text-sm">{warning}</div>
+              <div className="text-yellow-saffron pt-2 text-sm">{warning}</div>
             )}
           </animated.div>
         )}
