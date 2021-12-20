@@ -82,19 +82,23 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
     }
   }, [scrollTop]);
 
+  const fetchAssets = () => {
+    // fetch token transactions for the connected account.
+    dispatch(fetchTokenTransactions(owner));
+    // test nft account: 0xf4c2c3e12b61d44e6b228c43987158ac510426fb
+    dispatch(
+      fetchCollectiblesTransactions({
+        account: owner,
+        offset: "0",
+      }),
+    );
+  };
+
   useEffect(() => {
     if (owner) {
-      // fetch token transactions for the connected account.
-      dispatch(fetchTokenTransactions(owner));
-      // test nft account: 0xf4c2c3e12b61d44e6b228c43987158ac510426fb
-      dispatch(
-        fetchCollectiblesTransactions({
-          account: owner,
-          offset: "0",
-        }),
-      );
+      fetchAssets();
     }
-  }, [owner, dispatch]);
+  }, [owner]);
 
   useEffect(() => {
     // clear collectibles on account switch
@@ -105,7 +109,6 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
 
   // used to render right column components on the left column in small devices
   const {
-    pathname,
     query: { clubAddress },
   } = router;
 
@@ -162,22 +165,7 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
     }
   }, [account, transactionsLoading, JSON.stringify(merkleProofData)]);
 
-  const showOnboardingIfNeeded = router.pathname.endsWith("deposit");
-
-  useEffect(() => {
-    if (loading || !clubAddress || status === Status.CONNECTING) return;
-
-    if (!account && pathname.includes("/manage")) {
-      router.replace(`/clubs/${clubAddress}`);
-      return;
-    } else {
-      if (pathname.includes("/manage") && !isOwner) {
-        router.replace(`/clubs/${clubAddress}`);
-      } else if (pathname === "/clubs/[clubAddress]" && isOwner) {
-        router.replace(`/clubs/${clubAddress}/manage`);
-      }
-    }
-  }, [owner, clubAddress, account, loading]);
+  const showOnboardingIfNeeded = router.pathname.endsWith("[clubAddress]");
 
   // get static text from constants
   const { noTokenTitleText } = syndicateActionConstants;

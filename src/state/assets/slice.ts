@@ -3,7 +3,6 @@ import { isDev } from "@/utils/environment";
 import { web3 } from "@/utils/web3Utils";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
-import { getCoinFromContractAddress } from "functions/src/utils/ethereum";
 import abi from "human-standard-token-abi";
 import { getWeiAmount } from "src/utils/conversions";
 import { AbiItem } from "web3-utils";
@@ -69,14 +68,15 @@ export const fetchTokenTransactions = createAsyncThunk(
 
     // Batch fetch prices from CoinGecko
     const uniqueTokenPrices = await axios
-    .get("/.netlify/functions/getCoinPriceByContractAddress", {
-      params: {
-        contractAddresses: uniqueTokenBalances.map(t => t.contractAddress).join(),
-      },
-    })
+      .get("/.netlify/functions/getCoinPriceByContractAddress", {
+        params: {
+          contractAddresses: uniqueTokenBalances
+            .map((t) => t.contractAddress)
+            .join(),
+        },
+      })
       .then((res) => res.data.data)
       .catch(() => []);
-
 
     // get token logo and price from CoinGecko API
     const completeTokensDetails = await Promise.all(

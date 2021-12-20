@@ -1,4 +1,4 @@
-import { Flow, amplitudeLogger } from "@/components/amplitude";
+import { amplitudeLogger, Flow } from "@/components/amplitude";
 import {
   APPROVE_DEPOSIT_ALLOWANCE,
   ERROR_APPROVE_ALLOWANCE,
@@ -43,7 +43,6 @@ import { InfoIcon } from "src/components/iconWrappers";
 import { SkeletonLoader } from "src/components/skeletonLoader";
 import ERC20ABI from "src/utils/abi/erc20";
 import { AbiItem } from "web3-utils";
-
 import ConnectWalletAction from "../shared/connectWalletAction";
 
 const DepositSyndicate: React.FC = () => {
@@ -156,8 +155,6 @@ const DepositSyndicate: React.FC = () => {
       checkClubWideErrors();
     }
   }, [depositToken, JSON.stringify(erc20Token), syndicateContracts]);
-
-  const readyToDisplay = Boolean(address);
 
   const onTxConfirm = () => {
     setMetamaskConfirmPending(false);
@@ -644,7 +641,7 @@ const DepositSyndicate: React.FC = () => {
             claimEnabled={claimEnabled}
           />
 
-          {status !== Status.DISCONNECTED && (loading || !readyToDisplay) ? (
+          {status !== Status.DISCONNECTED && loading ? (
             <div className="h-fit-content rounded-2-half pt-6 px-8 pb-16">
               <SkeletonLoader
                 width="1/3"
@@ -966,12 +963,15 @@ const DepositSyndicate: React.FC = () => {
                     </div>
                   </div>
                   <div className="mt-8 flex justify-center">
-                    {(parseInt(claimBalanceValue) > 0 || parseInt(claimBalanceDecimalValue) > 0) && (<button
-                      className={`w-full rounded-lg text-base text-black px-8 py-4 bg-green`}
-                      onClick={claimClubTokens}
-                    >
-                      Claim
-                    </button>)}
+                    {(parseInt(claimBalanceValue) > 0 ||
+                      parseInt(claimBalanceDecimalValue) > 0) && (
+                      <button
+                        className={`w-full rounded-lg text-base text-black px-8 py-4 bg-green`}
+                        onClick={claimClubTokens}
+                      >
+                        Claim
+                      </button>
+                    )}
                   </div>
                   <div className="text-center text-sm text-gray-shuttle mt-4">
                     Club tokens are non-transferable and represent your

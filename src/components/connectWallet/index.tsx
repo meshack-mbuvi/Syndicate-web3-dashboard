@@ -2,8 +2,8 @@ import { BanIcon, CancelIcon } from "@/components/shared/Icons";
 // set up smart contract and pass it as context
 // actions
 import { useConnectWalletContext } from "@/context/ConnectWalletProvider";
-import { hideErrorModal, hideWalletModal } from "@/state/wallet/actions";
 import { AppState } from "@/state";
+import { hideErrorModal, hideWalletModal } from "@/state/wallet/actions";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -56,7 +56,7 @@ const ConnectWallet: React.FC = () => {
     if (providerName) {
       const name = providerName === "Injected" ? "Metamask" : providerName;
       setWalletConnectingText(`Sign in using the ${name} pop-up to continue.`);
-      setTimeout(() => {
+      const timeoutId = setTimeout(() => {
         setWalletConnectingText(`Waiting for ${name}...`);
 
         // set help link based on provider
@@ -68,6 +68,7 @@ const ConnectWallet: React.FC = () => {
         }
         setShowHelpLink(true);
       }, 10000);
+      return () => clearTimeout(timeoutId);
     }
   }, [providerName]);
 
@@ -274,12 +275,14 @@ const ConnectWallet: React.FC = () => {
       >
         <div className="flex flex-col items-center justify-center h-full">
           <div className="rounded-full h-28 w-28 border-4 border-green-light flex items-center justify-center">
-            <img src={providerIcon} className="inline w-6 sm:w-10" alt="provider-icon" />
+            <img
+              src={providerIcon}
+              className="inline w-6 sm:w-10"
+              alt="provider-icon"
+            />
           </div>
 
-          <p
-            className="mx-5 mt-4 text-sm sm:text-lg font-whyte-light text-center"
-          >
+          <p className="mx-5 mt-4 text-sm sm:text-lg font-whyte-light text-center">
             Connected
           </p>
         </div>

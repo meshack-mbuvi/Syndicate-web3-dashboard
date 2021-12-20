@@ -17,14 +17,15 @@ export const Checkbox: React.FC<IProps> = ({ control, name, label }) => {
   return (
     <div className={`flex justify-center w-full flex-col`}>
       <div className="relative">
-        <div className="flex-row flex items-center pt-4">
+        <label className="flex-row flex items-center pt-4">
           <input
             type="checkbox"
             className="bg-transparent rounded focus:ring-offset-0"
+            checked={field.value}
             {...field}
           />
           <span className="pl-4">{label}</span>
-        </div>
+        </label>
       </div>
     </div>
   );
