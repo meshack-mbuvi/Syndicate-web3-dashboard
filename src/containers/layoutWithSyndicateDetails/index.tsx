@@ -10,7 +10,6 @@ import {
   ERC20TokenDefaultState,
   setERC20Token,
 } from "@/helpers/erc20TokenDetails";
-import { useFetchMerkleProof } from "@/hooks/useMerkleProof";
 import NotFoundPage from "@/pages/404";
 import { AppState } from "@/state";
 import {
@@ -20,10 +19,6 @@ import {
 } from "@/state/assets/slice";
 import { setClubMembers } from "@/state/clubMembers";
 import { setERC20TokenDetails } from "@/state/erc20token/slice";
-import {
-  setLoadingMerkleProof,
-  setMerkleProof,
-} from "@/state/merkleProofs/slice";
 import { Status } from "@/state/wallet/types";
 import { getWeiAmount } from "@/utils/conversions";
 import { useRouter } from "next/router";
@@ -109,12 +104,6 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
     query: { clubAddress },
   } = router;
 
-  const {
-    loading: transactionsLoading,
-    data: merkleProofData = {},
-    refetch: refetchMerkleProof,
-  } = useFetchMerkleProof(false);
-
   useEffect(() => {
     if (!clubAddress || status == Status.CONNECTING) return;
     if (
@@ -134,33 +123,12 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
         ),
       );
 
-      refetchMerkleProof();
-
       return () => {
         dispatch(setERC20TokenDetails(ERC20TokenDefaultState));
         dispatch(setClubMembers([]));
       };
     }
   }, [clubAddress, account, status, syndicateContracts?.SingleTokenMintModule]);
-
-  const processMerkleProofData = async (merkleObj) => {
-    dispatch(setLoadingMerkleProof(true));
-    dispatch(
-      setMerkleProof({
-        ...merkleObj,
-        account,
-        _amount: getWeiAmount(merkleObj?.amount, tokenDecimals, false),
-      }),
-    );
-    dispatch(setLoadingMerkleProof(false));
-  };
-
-  useEffect(() => {
-    dispatch(setLoadingMerkleProof(true));
-    if (merkleProofData.Financial_getIndexAndProof?.accountIndex) {
-      processMerkleProofData(merkleProofData.Financial_getIndexAndProof);
-    }
-  }, [account, transactionsLoading, JSON.stringify(merkleProofData)]);
 
   const showOnboardingIfNeeded = router.pathname.endsWith("deposit");
 
