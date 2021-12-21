@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import NumberFormat, { NumberFormatProps } from "react-number-format";
 
-interface AutoGrowInputField extends NumberFormatProps {
+interface AutoGrowInputField extends NumberFormatProps<any> {
   value: string;
   onChangeHandler: (value: string) => void;
   placeholder: string;
