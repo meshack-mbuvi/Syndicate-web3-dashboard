@@ -15,22 +15,22 @@ git clone https://github.com/SyndicateProtocol/Syndicate-Web3-Dashboard.git
 Switch to the `Syndicate-Web3-Dashboard` directory and install packages
 
 ```sh
-
-npm i
-
+yarn install
 ```
 
 Run the project in development mode
 
 ```sh
-
-npm run dev
-
+yarn dev
 ```
 
 ## Build your site
 
-Use `npm run build` to build your site for production.
+Use `yarn build` to build your site for production, and `yarn start` to preview it locally.
+
+If you run into the "heap size limit" error run `export NODE_OPTIONS='--trace-warnings --max_old_space_size=10240'` before running `yarn build`.
+
+To enable sourcemaps in the local build run `export NEXT_SOURCE_MAPS_ENABLED=1` before running `yarn build`.
 
 ## Deployment
 
@@ -49,13 +49,10 @@ The Syndicate smart contract is available on the Rinkeby test network at [0x9a89
 ## Resources
 
 - [NextJS documentation](https://nextjs.org/docs)
-
 - [Tailwind documentation](https://tailwindcss.com/docs/what-is-tailwind/)
-
 - [Prettier documentation](https://prettier.io/docs/en/index.html)
-
 - [ESLint documentation](https://eslint.org/docs/user-guide/configuring)
 
 ## License
 
-This code is copyright Syndicate Inc.
+This code is copyright Syndicate Inc 2022.
