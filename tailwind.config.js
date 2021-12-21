@@ -68,7 +68,7 @@ module.exports = {
     },
     extend: {
       opacity: {
-        '85': '.85'
+        85: ".85",
       },
       zIndex: {
         8: "8",
@@ -136,6 +136,7 @@ module.exports = {
       },
       lineHeight: {
         17: "4.25rem",
+        5.5: "1.3125rem",
       },
       colors: {
         "twitter-blue": "#1DA1F2",
@@ -153,6 +154,7 @@ module.exports = {
           syn7: "#232529",
           syn8: "#131416",
           syn9: "#0B0C0D",
+          syn10: "#A8AFBD",
           2: "#D9DDE5",
           3: "#A8AFBD",
           4: "#1B1D20",
@@ -229,7 +231,8 @@ module.exports = {
           light: "#FFD02B",
           dark: "#FFC83C",
           semantic: "#F9D252",
-          saffron: "#FFA439",
+          warning: "#FFA439",
+          highlight: "#FFD252",
         },
         orange: {
           ...colors.orange,
@@ -248,6 +251,7 @@ module.exports = {
       },
       spacing: {
         "1px": "1px",
+        7.5: "1.875rem",
         33: "8.5rem",
         50: "12.5rem",
         66: "16.5rem",
@@ -288,6 +292,8 @@ module.exports = {
         84: "22rem",
         31: "7.5rem",
         18: "4.5rem",
+        25: "6.2rem",
+        71: "17.8rem",
       },
       margin: {
         0.5: "0.15rem",
@@ -297,9 +303,13 @@ module.exports = {
       padding: {
         4.5: "1.125rem",
         26: "6.6rem",
+        "6-percent": "6%",
       },
       borderRadius: {
         "1.5lg": "0.625rem",
+      },
+      letterSpacing: {
+        px: "0.0625rem",
       },
     },
   },

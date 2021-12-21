@@ -1,4 +1,3 @@
-import { omit } from "lodash";
 import React from "react";
 
 /**
@@ -42,15 +41,12 @@ export const InfoIcon = (props: {
 };
 
 /**Shows an icon for external links */
-export const ExternalLinkIcon: React.FC<{ className: string, grayIcon? }> = (props) => {
-  const { grayIcon } = props;
-  omit(props, "grayIcon");
-  return !grayIcon ? (
+export const ExternalLinkIcon: React.FC<any> = (props) =>
+  !(props as any).grayIcon ? (
     <img src="/images/externalLink.svg" {...props} alt="extenal-link" />
   ) : (
     <img src="/images/externalLinkGray.svg" {...props} alt="extenal-link" />
   );
-};
 
 export const CopyLinkIcon = (props: {
   color?: string;
@@ -175,6 +171,29 @@ export const OpenExternalLinkIcon = (props: {
       />
       <path
         d="M14.6373 0.234337C14.9498 -0.0781125 15.4563 -0.0781125 15.7688 0.234337C16.0572 0.522753 16.0794 0.976582 15.8353 1.29045L15.7688 1.36582L6.96793 10.1667C6.65548 10.4791 6.1489 10.4791 5.83645 10.1667C5.54803 9.87826 5.52585 9.42443 5.76989 9.11057L5.83645 9.0352L14.6373 0.234337Z"
+        className="fill-current"
+      />
+    </svg>
+  );
+};
+
+export const RightArrow = (props: {
+  color?: string;
+  width?: string;
+  height?: string;
+}): JSX.Element => {
+  const { color = "#90949E", width = "16", height = "14" } = props;
+  return (
+    <svg
+      width={width}
+      height={height}
+      style={{ color }}
+      viewBox="0 0 16 14"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M16 7C16 6.78562 15.9052 6.58839 15.7329 6.42546L10.0118 0.740105C9.83953 0.577176 9.65859 0.499999 9.4518 0.499999C9.02962 0.499999 8.69359 0.808706 8.69359 1.23747C8.69359 1.44327 8.77114 1.64908 8.90899 1.7777L10.839 3.73285L13.7426 6.36544L11.6575 6.23681L0.758213 6.23681C0.310179 6.23681 9.53674e-07 6.55409 9.53674e-07 7C9.53674e-07 7.44591 0.310179 7.76319 0.758213 7.76319L11.6575 7.76319L13.734 7.63456L10.839 10.2672L8.90899 12.2223C8.77114 12.3595 8.69359 12.5567 8.69359 12.7625C8.69359 13.1913 9.02962 13.5 9.4518 13.5C9.65859 13.5 9.83953 13.4314 10.0291 13.2427L15.7329 7.57454C15.9052 7.41161 16 7.21438 16 7Z"
         className="fill-current"
       />
     </svg>
