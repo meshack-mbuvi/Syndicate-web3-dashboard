@@ -2,43 +2,40 @@
  * https://developers.amplitude.com/docs/how-amplitude-works
  */
 
-import { useEffect } from "react";
 import { getCookie } from "@/utils/cookies";
+import amplitude from "amplitude-js";
+import { useEffect } from "react";
 
 const INTERCOM_ID = "intercom-id-qis66b83";
 
-export const initializeAmplitudeJS = (): void => {
+const isAmplitudeEnabled = () => {
   const isDeployPreview =
     window?.location?.hostname.indexOf("deploy-preview") > -1;
-  if (window === undefined) {
-    // An edge case when window is undefined
-    return;
-  } else if (
+  return (
     window !== undefined &&
     process.env.NODE_ENV === "production" &&
     !isDeployPreview
-  ) {
+  );
+};
+
+const initializeAmplitude = () => {
+  if (isAmplitudeEnabled()) {
     // Initialize AmplitudeJS
-    require("amplitude-js")
-      .getInstance()
-      .init(process.env.NEXT_PUBLIC_AMPLITUDE_API_KEY);
-  } else {
-    return;
+    amplitude.getInstance().init(process.env.NEXT_PUBLIC_AMPLITUDE_API_KEY);
   }
 };
 
-export default function Amplitude() {
+export function useAmplitude(): void {
   // initialize amplitude
-  useEffect(() => initializeAmplitudeJS(), []);
-  return null;
+  useEffect(initializeAmplitude, []);
 }
 
 export enum Flow {
   MBR_DEP = "MBR_DEP", // member deposit
   MGR_CREATE_SYN = "MGR_CREATE_SYN", // manager create syndicate
   MGR_SET_DIST = "MGR_SET_DIST", //manager set distributions
-  MBR_WITHDRAW_DIST = 'MBR_WITHDRAW_DIST', // member withdraw distribution
-  MBR_WITHDRAW_DEP = 'MBR_WITHDRAW_DEP',  // member withdraw deposit
+  MBR_WITHDRAW_DIST = "MBR_WITHDRAW_DIST", // member withdraw distribution
+  MBR_WITHDRAW_DEP = "MBR_WITHDRAW_DEP", // member withdraw deposit
 }
 
 type EventProperty = {
@@ -55,22 +52,25 @@ export const amplitudeLogger = (
   eventProperties: EventProperty,
 ): Promise<boolean> => {
   // TODO: Implementation of checking environment can be improved using netlify-plugin-contextual-env
-  const isDeployPreview =
-    window?.location?.hostname.indexOf("deploy-preview") > -1;
-
   const intercomUserId = getCookie(INTERCOM_ID);
 
-  return new Promise((resolve) => {
-    if (
-      window !== undefined &&
-      process.env.NODE_ENV === "production" &&
-      !isDeployPreview
-    ) {
-      require("amplitude-js")
+  if (isAmplitudeEnabled()) {
+    return new Promise((resolve, reject) =>
+      amplitude
         .getInstance()
-        .logEvent(eventName, { ...eventProperties, intercomUserId }, () => resolve(true));
-    } else {
-      console.log("[Amplitude]", eventName, { ...eventProperties, intercomUserId });
-    }
+        .logEvent(
+          eventName,
+          { ...eventProperties, intercomUserId },
+          resolve,
+          reject,
+        ),
+    );
+  }
+
+  console.log("[Amplitude]", eventName, {
+    ...eventProperties,
+    intercomUserId,
   });
+
+  return Promise.resolve(true);
 };
