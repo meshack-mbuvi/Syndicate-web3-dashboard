@@ -24,6 +24,27 @@ Run the project in development mode
 yarn dev
 ```
 
+## Node Version
+
+[Use NVM to install Node.js 16](https://github.com/nvm-sh/nvm). You can add this script to your `.bashrc` or `.zshrc` to auto-use the right version of Node.
+
+```sh
+enter_directory() {
+  if [[ $PWD == $PREV_PWD ]]; then
+    return
+  fi
+
+  PREV_PWD=$PWD
+  [[ -f ".nvmrc" ]] && nvm use
+}
+
+export PROMPT_COMMAND=enter_directory
+```
+
+## Debugging
+
+You can use the built-in VS Code by pressing CMD+SHIFT+D then "Run" Debug Next.js. You can add breakpoints in the code and the debugger will automatically pause there.
+
 ## Build your site
 
 Use `yarn build` to build your site for production, and `yarn start` to preview it locally.
