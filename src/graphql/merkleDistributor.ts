@@ -8,6 +8,7 @@ export const INDEX_AND_PROOF = gql`
       accountIndex
       amount
       merkleProof
+      treeIndex
     }
   }
 `;

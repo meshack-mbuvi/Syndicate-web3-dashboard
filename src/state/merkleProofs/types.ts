@@ -3,6 +3,7 @@ export interface MerkleProof {
   amount: string;
   merkleProof: [];
   account: string;
+  treeIndex: number;
   _amount: string;
 }
 
