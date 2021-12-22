@@ -127,11 +127,7 @@ const ClaimNFT: React.FC = () => {
 
   return (
     <div className="w-full flex justify-center px-25.5">
-      {airdropLoading ||
-      merkleLoading ||
-      claimedLoading ||
-      erc721Loading ||
-      !account ? (
+      {airdropLoading || merkleLoading || claimedLoading || erc721Loading ? (
         <div className="flex md:justify-between sm:justify-center w-full max-w-5.5xl md:flex-nowrap sm:flex-wrap">
           <div className="md:max-w-480 md:mb-0 sm:mb-8 md:w-5.21/12 sm:w-full">
             <div className="mb-14">
