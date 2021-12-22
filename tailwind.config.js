@@ -68,7 +68,7 @@ module.exports = {
     },
     extend: {
       opacity: {
-        '85': '.85'
+        85: ".85",
       },
       zIndex: {
         8: "8",
@@ -78,22 +78,27 @@ module.exports = {
         4.5: "1.125rem",
         17.5: "4.375rem",
         18: "4.5rem",
+        100: "30rem",
         104: "26rem",
         202: "50.5rem",
       }),
       width: () => ({
         "fit-content": "fit-content",
         "2/1": "200%",
+        "5.21/12": "43.47826%",
         100: "30rem",
         "slightly-over-100": "30.25rem",
       }),
       maxWidth: {
+        480: "30rem",
         564: "35.25rem",
         868: "54rem",
         1480: "92.5rem",
+        "5.5xl": "69rem",
       },
       maxHeight: {
         104: "26rem",
+        480: "30rem",
         816: "50.5rem",
       },
       backgroundOpacity: {
@@ -135,6 +140,8 @@ module.exports = {
         "7xl": ["4.5rem", "5.4rem"],
       },
       lineHeight: {
+        9: "2.25rem",
+        11.5: "2.875rem",
         17: "4.25rem",
       },
       colors: {
@@ -292,14 +299,18 @@ module.exports = {
       margin: {
         0.5: "0.15rem",
         24.5: "6.5rem",
+        25.5: "6.25rem",
         27: "6.875rem",
       },
       padding: {
         4.5: "1.125rem",
+        25.5: "6.25rem",
+        25: "6.35rem",
         26: "6.6rem",
       },
       borderRadius: {
         "1.5lg": "0.625rem",
+        "2.5xl": "1.25rem",
       },
     },
   },

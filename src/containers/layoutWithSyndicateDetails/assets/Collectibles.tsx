@@ -138,7 +138,7 @@ const Collectibles: FC<{ activeAssetTab: string }> = ({ activeAssetTab }) => {
                           autoPlay
                           loop
                           muted
-                          className="rounded-t-lg"
+                          className="rounded-t-lg video-320"
                         >
                           {/* Specifying type as "video/mp4" works for both .mov and .mp4 files  */}
                           <source src={animation} type="video/mp4"></source>

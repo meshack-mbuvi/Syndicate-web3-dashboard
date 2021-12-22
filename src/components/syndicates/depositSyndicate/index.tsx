@@ -110,7 +110,7 @@ const DepositSyndicate: React.FC = () => {
   const [insufficientBalance, setInsufficientBalance] =
     useState<boolean>(false);
   const [copied, setCopied] = useState(false);
-  const [transactionHash, setTransactionHash] = useState<string>("ewwe");
+  const [transactionHash, setTransactionHash] = useState<string>("");
   const [depositError, setDepositError] = useState("");
   const [clubWideErrors, setClubWideErrors] = useState("");
   const [imageSRC, setImageSRC] = useState("");

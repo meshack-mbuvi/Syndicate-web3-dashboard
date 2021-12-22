@@ -2,6 +2,7 @@ import { ISyndicateContracts } from "@/state/contracts";
 
 import { ClubERC20Factory } from "./clubERC20Factory";
 import { MerkleDistributorModuleContract } from "./merkleDistributorModule";
+import { MerkleDistributorModuleERC721Contract } from "./merkleDistributorModuleERC721";
 import { MintPolicyContract } from "./mintPolicy";
 import { SingleTokenMintModuleContract } from "./singleTokenMintModule";
 
@@ -12,6 +13,8 @@ const SINGLE_TOKEN_MINT_MODULE =
   process.env.NEXT_PUBLIC_SINGLE_TOKEN_MINT_MODULE;
 const MERKLE_DISTRIBUTOR_MODULE =
   process.env.NEXT_PUBLIC_MERKLE_DISTRIBUTOR_MODULE;
+const MERKLE_DISTRIBUTOR_MODULE_ERC721 =
+  process.env.NEXT_PUBLIC_MERKLE_DISTRIBUTOR_MODULE_ERC721;
 
 export const getSyndicateContracts = async (
   web3: Web3,
@@ -36,11 +39,18 @@ export const getSyndicateContracts = async (
     web3,
   );
 
+  const MerkleDistributorModuleERC721 =
+    new MerkleDistributorModuleERC721Contract(
+      MERKLE_DISTRIBUTOR_MODULE_ERC721,
+      web3,
+    );
+
   // return all initialized contracts
   return {
     clubERC20Factory,
     mintPolicy,
     SingleTokenMintModule,
     MerkleDistributorModule,
+    MerkleDistributorModuleERC721,
   };
 };

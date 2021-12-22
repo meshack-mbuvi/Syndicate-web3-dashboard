@@ -6,6 +6,7 @@ import clubERC20sReducer from "@/state/clubERC20";
 import clubMembersSliceReducer from "@/state/clubMembers";
 import createInvestmentClubSliceReducer from "@/state/createInvestmentClub/slice";
 import erc20TokenSliceReducer from "@/state/erc20token/slice";
+import erc721TokenSliceReducer from "@/state/erc721token/slice";
 import modalsReducer from "@/state/modals";
 import web3Reducer from "@/state/wallet/reducer";
 import initializeContractsReducer from "@/state/contracts";
@@ -13,6 +14,9 @@ import assetsSliceReducer from "@/state/assets/slice";
 import merkleProofSliceReducer from "@/state/merkleProofs/slice";
 import tokenClaimedSliceReducer from "@/state/claimedToken/slice";
 import airdopInfoSliceReducer from "@/state/airdropInfo/slice";
+import erc721MerkleProofSliceReducer from "@/state/erc721MerkleProofs/slice";
+import erc721AirdropInfoSliceReducer from "@/state/erc721AirdropInfo/slice";
+import claimedERC721SliceReducer from "@/state/claimedERC721/slice";
 
 export const store = configureStore({
   reducer: {
@@ -20,6 +24,7 @@ export const store = configureStore({
     clubMembersSliceReducer,
     createInvestmentClubSliceReducer,
     erc20TokenSliceReducer,
+    erc721TokenSliceReducer,
     modalsReducer,
     web3Reducer,
     initializeContractsReducer,
@@ -27,6 +32,9 @@ export const store = configureStore({
     merkleProofSliceReducer,
     tokenClaimedSliceReducer,
     airdopInfoSliceReducer,
+    erc721MerkleProofSliceReducer,
+    erc721AirdropInfoSliceReducer,
+    claimedERC721SliceReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({ thunk: true, serializableCheck: false }),
