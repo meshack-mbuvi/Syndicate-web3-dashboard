@@ -62,7 +62,7 @@ const Header: React.FC<props> = ({ backLink = null, show = true }) => {
 
         {/* secondary nav */}
         <div className="flex-1">
-          <div className="float-right flex items-center space-x-1 vertically-center hidden sm:block">
+          <div className="float-right flex items-center space-x-1 vertically-center sm:block">
             <UserProfileWrapper>
               <WalletComponent />
             </UserProfileWrapper>
