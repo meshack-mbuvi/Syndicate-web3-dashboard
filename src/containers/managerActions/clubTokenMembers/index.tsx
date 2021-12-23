@@ -1,18 +1,16 @@
 import CopyLink from "@/components/shared/CopyLink";
 import { SkeletonLoader } from "@/components/skeletonLoader";
-import useClubTokenMembers from "@/hooks/useClubTokenMembers";
 import { AppState } from "@/state";
-import { formatAddress } from "@/utils/formatAddress";
 import { floatedNumberWithCommas } from "@/utils/formattedNumbers";
-import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import SyndicateMembersTable from "./SyndicateMembersTable";
+import { MemberAddressComponent } from "./memberAddress";
+import MembersTable from "./MembersTable";
 
 const ClubTokenMembers = (): JSX.Element => {
   // retrieve state variables
   const {
-    clubMembersSliceReducer: { clubMembers },
+    clubMembersSliceReducer: { clubMembers, loadingClubMembers },
     erc20TokenSliceReducer: { erc20Token },
   } = useSelector((state: AppState) => state);
 
@@ -42,7 +40,6 @@ const ClubTokenMembers = (): JSX.Element => {
     const { value } = event.target;
     setFilteredAddress(value.trim());
   };
-  const { loading } = useClubTokenMembers();
 
   const [syndicateMembersToShow, setSynMembersToShow] = useState(clubMembers);
 
@@ -77,19 +74,7 @@ const ClubTokenMembers = (): JSX.Element => {
       {
         Header: "Member",
         accessor: function memberAddress(row: { memberAddress: string }) {
-          const { memberAddress } = row;
-
-          return (
-            <div className="flex space-x-3 align-center text-base leading-6">
-              <Image
-                width="32"
-                height="32"
-                src={"/images/user.svg"}
-                alt="user"
-              />
-              <p className="my-1">{formatAddress(memberAddress, 6, 6)}</p>
-            </div>
-          );
+          return <MemberAddressComponent {...row} />;
         },
       },
       {
@@ -129,7 +114,7 @@ const ClubTokenMembers = (): JSX.Element => {
   return (
     <div className="w-full rounded-md h-full max-w-1480">
       <div className="w-full px-2 sm:px-0 col-span-12">
-        {loading ? (
+        {loadingClubMembers ? (
           <div className="space-y-6 my-11">
             <div className="flex space-x-3">
               <SkeletonLoader
@@ -187,7 +172,7 @@ const ClubTokenMembers = (): JSX.Element => {
             </div>
           </div>
         ) : tableData.length || filteredAddress ? (
-          <SyndicateMembersTable
+          <MembersTable
             columns={columns}
             data={tableData}
             filterAddressOnChangeHandler={filterAddressOnChangeHandler}

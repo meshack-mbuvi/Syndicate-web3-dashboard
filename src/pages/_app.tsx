@@ -22,7 +22,7 @@ import {
   HttpLink,
   InMemoryCache,
 } from "@apollo/client";
-import { RetryLink } from "@apollo/client/link/retry";
+import { RetryLink } from '@apollo/client/link/retry';
 import withApollo from "next-with-apollo";
 import Head from "next/head";
 import Router from "next/router";

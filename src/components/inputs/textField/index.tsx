@@ -9,10 +9,16 @@ interface IProps {
   info?: any;
   control: any;
   addOn?: string;
+  column?: boolean;
+  borderStyles?: string;
+  paddingStyles?: string;
+  borderOutline?: boolean;
+  textAlignment?: string;
   cornerHint?: {
     text: string | any;
     textColor?: string;
   };
+  disabled?: boolean;
   style?: any;
 }
 /**
@@ -24,11 +30,17 @@ interface IProps {
 export const TextField: React.FC<IProps> = ({
   control,
   name,
-  label,
   placeholder,
   info,
   addOn,
   cornerHint,
+  borderStyles = "",
+  column = false,
+  label = "",
+  borderOutline = true,
+  textAlignment = "",
+  paddingStyles = "p-4",
+  disabled = false,
 }) => {
   const {
     field,
@@ -41,8 +53,14 @@ export const TextField: React.FC<IProps> = ({
   });
 
   return (
-    <div className={`flex  justify-center w-full flex-col`}>
-      <div className="flex justify-between mb-2">
+    <div
+      className={`flex ${borderStyles} ${
+        column ? "flex-row justify-between" : "flex-col justify-center"
+      } w-full`}
+    >
+      <div
+        className={`flex justify-between ${column ? "w-2/5 my-auto" : "mb-2"}`}
+      >
         {label ? <div className="leading-5">{label}</div> : null}
         {!isEmpty(cornerHint) ? (
           <div
@@ -52,15 +70,22 @@ export const TextField: React.FC<IProps> = ({
           </div>
         ) : null}
       </div>
-      <div className="relative">
+      <div className="relative flex-grow">
         <input
-          className={`block font-whyte text-base bg-transparent p-4 rounded-md border-1 w-full ${
-            errors?.[`${name}`]?.message ? "border-red-error" : "border-gray-24"
-          } focus:border-blue-navy outline-none text-white hover:border-gray-syn3`}
+          className={`block font-whyte text-base ${textAlignment} bg-transparent ${paddingStyles} rounded-md w-full ${
+            errors?.[`${name}`]?.message
+              ? "border-red-error"
+              : `${
+                  borderOutline
+                    ? "border-1 border-gray-24 hover:border-gray-syn3"
+                    : "border-0 focus:outline-none focus:ring-0 outline-none hover:border-0 ring-0"
+                }`
+          }  text-white `}
           name={name}
           {...field}
           type="text"
           placeholder={placeholder}
+          disabled={disabled}
         />
         {addOn && (
           <div

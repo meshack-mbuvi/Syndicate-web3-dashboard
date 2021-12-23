@@ -10,6 +10,13 @@ interface IProps {
   info?: string;
   control: any;
   addOn?: string;
+  column?: boolean;
+  borderStyles?: string;
+  paddingStyles?: string;
+  addOnStyles?: string;
+  borderOutline?: boolean;
+  textAlignment?: string;
+  disabled?: boolean;
   defaultValue?: string;
 }
 /**
@@ -21,10 +28,17 @@ interface IProps {
 export const NumberField: React.FC<IProps> = ({
   control,
   name,
-  label,
   placeholder,
   info,
   addOn,
+  addOnStyles = "pr-20",
+  borderStyles = "",
+  column = false,
+  label = "",
+  borderOutline = true,
+  textAlignment = "",
+  paddingStyles = "p-4",
+  disabled = false,
   defaultValue = "",
 }) => {
   const {
@@ -37,17 +51,33 @@ export const NumberField: React.FC<IProps> = ({
   });
 
   return (
-    <div className={`flex  justify-center w-full flex-col`}>
-      <div className="mb-2 leading-5">{label}</div>
-      <div className="relative">
+    <div
+      className={`flex w-full ${borderStyles} ${
+        column ? "flex-row justify-between" : "flex-col justify-center"
+      }`}
+    >
+      {label ? (
+        <div className={`${column ? "my-auto w-2/5" : "mb-2"} leading-5`}>
+          {label}
+        </div>
+      ) : null}
+
+      <div className="relative flex-grow">
         <NumberFormat
           {...rest}
+          disabled={disabled}
           thousandSeparator={true}
           allowNegative={false}
-          className={`block font-whyte text-base bg-transparent p-4 rounded-md border-1 w-full ${
-            errors?.[`${name}`]?.message ? "border-red-error" : "border-gray-24"
-          } focus:border-blue-navy outline-none text-white hover:border-gray-syn3 ${
-            addOn ? "pr-20" : "pr-4"
+          className={`block font-whyte text-base ${textAlignment} bg-transparent ${paddingStyles} rounded-md w-full autocomplete-off ${
+            errors?.[`${name}`]?.message
+              ? "border-red-error"
+              : `${
+                  borderOutline
+                    ? "border-1 border-gray-24 hover:border-gray-syn3"
+                    : "border-0 focus:border-0 focus:ring-0 outline-none hover:border-0 ring-0"
+                }`
+          }  text-white ${
+            addOn ? addOnStyles : paddingStyles ? "pr-0" : "pr-4"
           }`}
           placeholder={placeholder}
           onChange={(event) => {
@@ -58,7 +88,9 @@ export const NumberField: React.FC<IProps> = ({
         />
         {addOn && (
           <div
-            className={`absolute inset-y-0 right-0 pr-4 py-4 flex items-center `}
+            className={`absolute inset-y-0 right-0 ${
+              addOnStyles ? `pr-0` : `pr-4`
+            } py-4 flex items-center `}
           >
             <span
               className={`font-whyte text-base text-gray-syn4`}

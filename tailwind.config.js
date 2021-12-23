@@ -72,6 +72,7 @@ module.exports = {
       },
       zIndex: {
         8: "8",
+        15: 15,
       },
       height: () => ({
         "fit-content": "fit-content",
@@ -86,6 +87,7 @@ module.exports = {
         "2/1": "200%",
         100: "30rem",
         "slightly-over-100": "30.25rem",
+        564: "35.25rem",
       }),
       maxWidth: {
         564: "35.25rem",
@@ -93,6 +95,7 @@ module.exports = {
         1480: "92.5rem",
       },
       maxHeight: {
+        25: "6.125",
         104: "26rem",
         816: "50.5rem",
       },
@@ -137,6 +140,9 @@ module.exports = {
       lineHeight: {
         17: "4.25rem",
         5.5: "1.3125rem",
+      },
+      letterSpacing: {
+        px: "0.063rem",
       },
       colors: {
         "twitter-blue": "#1DA1F2",
@@ -223,8 +229,10 @@ module.exports = {
           navy: "#4376FF",
           rockBlue: "#8F9CAB",
           melanie: "#BDCFE3",
+          gunMetal: "#0D2833",
           darkGunMetal: "#232529",
           midnightExpress: "#0D1833",
+          oxfordBlue: "#0D1833",
         },
         yellow: {
           ...colors.yellow,
@@ -233,6 +241,7 @@ module.exports = {
           semantic: "#F9D252",
           warning: "#FFA439",
           highlight: "#FFD252",
+          saffron: "#FFA439"
         },
         orange: {
           ...colors.orange,
@@ -307,6 +316,10 @@ module.exports = {
       },
       borderRadius: {
         "1.5lg": "0.625rem",
+        "4xl": "2rem",
+      },
+      transitionProperty: {
+        height: "height",
       },
       letterSpacing: {
         px: "0.0625rem",

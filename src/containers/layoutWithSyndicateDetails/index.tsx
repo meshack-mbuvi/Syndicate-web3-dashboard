@@ -10,6 +10,8 @@ import {
   ERC20TokenDefaultState,
   setERC20Token,
 } from "@/helpers/erc20TokenDetails";
+import useClubTokenMembers from '@/hooks/useClubTokenMembers';
+import useTransactions from '@/hooks/useTransactions';
 import NotFoundPage from "@/pages/404";
 import { AppState } from "@/state";
 import {
@@ -19,13 +21,16 @@ import {
 } from "@/state/assets/slice";
 import { setClubMembers } from "@/state/clubMembers";
 import { setERC20TokenDetails } from "@/state/erc20token/slice";
+import { clearMyTransactions } from '@/state/erc20transactions';
 import { Status } from "@/state/wallet/types";
 import { useRouter } from "next/router";
 import React, { FC, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { syndicateActionConstants } from "src/components/syndicates/shared/Constants";
 import ClubTokenMembers from "../managerActions/clubTokenMembers";
+import ActivityView from "./activity";
 import Assets from "./assets";
+import TabButton from "./TabButton";
 
 const LayoutWithSyndicateDetails: FC = ({ children }) => {
   const {
@@ -38,6 +43,21 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
       erc20Token: { owner, loading, name, depositsEnabled, accountClubTokens },
     },
   } = useSelector((state: AppState) => state);
+
+  // fetch club transactions
+  useTransactions();
+
+  // fetch club members
+  useClubTokenMembers();
+
+  useEffect(() => {
+    return () => {
+      // clear transactions when component unmounts
+      // solves an issue with previous transactions being loaded
+      // when a switch is made to another club with a different owner.
+      dispatch(clearMyTransactions());
+    };
+  }, []);
 
   const isOwner = account === owner && account != "" && owner != "";
 
@@ -208,7 +228,7 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
                         ref={subNav}
                         className={`${
                           isSubNavStuck ? "bg-gray-syn8" : "bg-black"
-                        } sticky top-0 z-10 transition-all edge-to-edge-with-left-inset`}
+                        } sticky top-0 z-15 transition-all edge-to-edge-with-left-inset`}
                       >
                         <nav className="flex space-x-10" aria-label="Tabs">
                           <button
@@ -235,7 +255,13 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
                               Members
                             </button>
                           )}
-                          {/* add more tabs here */}
+                          {renderOnDisconnect && (
+                            <TabButton
+                              active={activeTab === "activity"}
+                              label="Activity"
+                              onClick={() => setActiveTab("activity")}
+                            />
+                          )}
                         </nav>
                         <div
                           className={`${
@@ -249,6 +275,9 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
                           {activeTab == "assets" && <Assets />}
                           {activeTab == "members" && renderOnDisconnect && (
                             <ClubTokenMembers />
+                          )}
+                          {activeTab == "activity" && renderOnDisconnect && (
+                            <ActivityView />
                           )}
                         </div>
                       </div>

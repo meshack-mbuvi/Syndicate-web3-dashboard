@@ -21,6 +21,8 @@ interface ModalProps {
   titleMarginClassName?: string;
   titleAlignment?: string;
   showHeader?: boolean;
+  overflowYScroll?: boolean;
+  isMaxHeightScreen?: boolean;
   alignment?: string;
   margin?: string;
 }
@@ -65,6 +67,8 @@ const Modal = (props: ModalProps): JSX.Element => {
     showBackButton = false,
     modalStyle = ModalStyle.LIGHT,
     showHeader = true,
+    overflowYScroll = true,
+    isMaxHeightScreen = true,
     alignment = "align-middle",
     margin = "md:my-14",
   } = props;
@@ -125,8 +129,12 @@ const Modal = (props: ModalProps): JSX.Element => {
             leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
           >
             <div
-              className={`overflow-y-scroll no-scroll-bar ${margin} ${alignment} mx-auto inline-block max-h-screen ${
-                bgColor || ""
+              className={`${
+                overflowYScroll ? `overflow-y-scroll` : ``
+              } no-scroll-bar ${margin} ${alignment} mx-auto inline-block ${
+                isMaxHeightScreen ? "max-h-screen" : ""
+              } ${
+                bgColor ? bgColor : ""
               } rounded-2xl text-left shadow-xl transform transition-all ${
                 customWidth || ""
               } ${overflow || ""} ${customClassName || ""}`}

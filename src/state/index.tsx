@@ -10,6 +10,7 @@ import legalInfoReducer from "@/state/legalInfo";
 import merkleProofSliceReducer from "@/state/merkleProofs/slice";
 import modalsReducer from "@/state/modals";
 import web3Reducer from "@/state/wallet/reducer";
+import transactionsReducer from "@/state/erc20transactions/index";
 import { isDev } from "@/utils/environment";
 import { Action, configureStore, ThunkAction } from "@reduxjs/toolkit";
 import { createWrapper } from "next-redux-wrapper";
@@ -24,6 +25,7 @@ export const store = configureStore({
     web3Reducer,
     initializeContractsReducer,
     assetsSliceReducer,
+    transactionsReducer,
     legalInfoReducer,
     merkleProofSliceReducer,
     tokenClaimedSliceReducer,
