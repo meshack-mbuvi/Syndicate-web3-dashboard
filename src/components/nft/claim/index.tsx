@@ -78,7 +78,7 @@ const ClaimNFT: React.FC = () => {
       name,
       symbol,
       owner,
-      maxSupply: 18614,
+      maxSupply: 19000,
       currentSupply,
       rendererAddr,
       loading: false,
