@@ -1,24 +1,10 @@
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { DataStorageToolTip } from "./DataStorageToolTip";
-import useWindowSize from "@/hooks/useWindowSize";
 
 export const DataStorageInfo: React.FC = () => {
   const toolTipMessage =
     "Syndicate stores this data. It is not publicly viewable on-chain.<br /><br />Only members of this club can view the data entered in this field.";
-  const [tipSize, setScreenSize] = useState(110);
-  const windowSize = useWindowSize()
-
-  useEffect(() => {
-    if (windowSize.width <= 1440) {
-      setScreenSize(310);
-      return;
-    }
-    if (windowSize.width <= 1920) {
-      setScreenSize(510);
-      return;
-    }
-  }, [windowSize.width]);
 
   return (
     <div>
@@ -34,7 +20,7 @@ export const DataStorageInfo: React.FC = () => {
           </div>
         </div>
       </div>
-      <DataStorageToolTip id="info-storage-tip" tip={toolTipMessage} tipSize={tipSize}/>
+      <DataStorageToolTip id="info-storage-tip" tip={toolTipMessage}/>
     </div>
   );
 };
