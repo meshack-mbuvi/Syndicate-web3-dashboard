@@ -1,17 +1,21 @@
-import React, { useEffect, useState } from "react";
 import Modal, { ModalStyle } from "@/components/modal";
-import Image from "next/image";
-import { isDev } from "@/utils/environment";
-import { ExternalLinkIcon } from "src/components/iconWrappers";
-import TransactionDetails from "../TransactionDetails";
 import { CategoryPill } from "@/containers/layoutWithSyndicateDetails/activity/shared/CategoryPill";
-import ActivityNote from "./ActivityNote";
 import InvestmentDetailsModal from "@/containers/layoutWithSyndicateDetails/activity/shared/InvestmentDetails/InvestmentDetails";
-import { ANNOTATE_TRANSACTIONS } from "@/graphql/mutations";
-import { useMutation } from "@apollo/client";
-import { useSelector } from "react-redux";
+import {
+  ANNOTATE_TRANSACTIONS,
+  SET_MEMBER_SIGN_STATUS,
+} from "@/graphql/mutations";
+import { MEMBER_SIGNED_QUERY } from "@/graphql/queries";
 import { AppState } from "@/state";
+import { isDev } from "@/utils/environment";
+import { useMutation, useQuery } from "@apollo/client";
+import Image from "next/image";
+import React, { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+import { ExternalLinkIcon } from "src/components/iconWrappers";
 import { investmentRounds } from "../InvestmentDetails/InvestmentDetailsConstants";
+import TransactionDetails from "../TransactionDetails";
+import ActivityNote from "./ActivityNote";
 
 interface IActivityModal {
   showModal: boolean;
@@ -52,17 +56,39 @@ const ActivityModal: React.FC<IActivityModal> = ({
         blockTimestamp,
       },
     },
-    erc20TokenSliceReducer: { erc20Token },
-    web3Reducer: {
-      web3: { account },
+    erc20TokenSliceReducer: {
+      erc20Token: { address, isOwner },
     },
   } = useSelector((state: AppState) => state);
-  const isManager = erc20Token.isOwner;
-  const etherScanBaseUrl = isDev ? 'https://rinkeby.etherscan.io/tx' : 'https://etherscan.io/tx';
+  const isManager = isOwner;
+  const etherScanBaseUrl = isDev
+    ? "https://rinkeby.etherscan.io/tx"
+    : "https://etherscan.io/tx";
 
-  const [adaptiveBackground, setadaptiveBackground] = useState<string>("");
+  const [setMemberHasSigned] = useMutation(SET_MEMBER_SIGN_STATUS, {
+    context: { clientName: "backend" },
+  });
+
+  const { from } = transactionInfo;
+
+  // find out whether member has signed document
+  const { loading, data, refetch } = useQuery(MEMBER_SIGNED_QUERY, {
+    variables: {
+      clubAddress: address,
+      address: from,
+    },
+    skip: !address || !from,
+    context: { clientName: "backend" },
+  });
+
+  useEffect(() => {
+    if (address && from) {
+      refetch();
+    }
+  }, [address, from, loading]);
+
+  const [adaptiveBackground, setAdaptiveBackground] = useState<string>("");
   const [etherscanLink, setEtherscanLink] = useState<string>("");
-  // const [showNote, setShowNote] = useState<boolean>(false);
   const [selectedCategory, setSelectedCategory] = useState<string>("");
   const [showTransactionDetails, setShowTransactionDetails] =
     useState<boolean>(false);
@@ -105,30 +131,30 @@ const ActivityModal: React.FC<IActivityModal> = ({
   }, [metadata, blockTimestamp]);
 
   useEffect(() => {
-    setEtherscanLink(`${etherScanBaseUrl}/${transactionInfo?.transactionHash}`)
+    setEtherscanLink(`${etherScanBaseUrl}/${transactionInfo?.transactionHash}`);
   }, [transactionInfo?.transactionHash]);
 
   // text and icon to show based on category
   useEffect(() => {
     switch (selectedCategory) {
       case "EXPENSE":
-        setadaptiveBackground("bg-blue-darkGunMetal");
+        setAdaptiveBackground("bg-blue-darkGunMetal");
         break;
       case "INVESTMENT":
-        setadaptiveBackground("bg-blue-gunMetal");
+        setAdaptiveBackground("bg-blue-gunMetal");
         setShowTransactionDetails(true);
         break;
       case "DEPOSIT":
-        setadaptiveBackground("bg-blue-oxfordBlue rounded-b-2xl");
+        setAdaptiveBackground("bg-blue-oxfordBlue");
         break;
       case "INVESTMENT_TOKEN":
-        setadaptiveBackground("bg-blue-darkGunMetal");
+        setAdaptiveBackground("bg-blue-darkGunMetal");
         break;
       case "OTHER":
-        setadaptiveBackground("bg-blue-darkGunMetal");
+        setAdaptiveBackground("bg-blue-darkGunMetal");
         break;
       default:
-        setadaptiveBackground("");
+        setAdaptiveBackground("");
         break;
     }
   }, [selectedCategory]);
@@ -186,6 +212,22 @@ const ActivityModal: React.FC<IActivityModal> = ({
     }
   };
 
+  const handleSetMemberHasSigned = async (event) => {
+    event.preventDefault();
+
+    const { data } = await setMemberHasSigned({
+      variables: {
+        clubAddress: address,
+        address: from,
+        hasSigned: true,
+      },
+    });
+
+    if (data) {
+      refetch();
+    }
+  };
+
   return (
     <Modal
       modalStyle={ModalStyle.DARK}
@@ -206,9 +248,7 @@ const ActivityModal: React.FC<IActivityModal> = ({
     >
       <div>
         <div
-          className={`flex rounded-t-2xl items-center flex-col relative py-10 px-5 ${adaptiveBackground} ${
-            !isManager && !note && "rounded-b-2xl"
-          }`}
+          className={`flex rounded-t-2xl items-center flex-col relative py-10 px-5 ${adaptiveBackground} last:rounded-b-2xl`}
         >
           <div className="mb-8">
             <CategoryPill
@@ -226,7 +266,7 @@ const ActivityModal: React.FC<IActivityModal> = ({
             />
           </div>
           <div className="items-center flex flex-col">
-            {transactionInfo && Object.keys(transactionInfo).length > 0 && (
+            {transactionInfo && Object.keys(transactionInfo).length && (
               <TransactionDetails
                 tokenLogo={tokenLogo}
                 tokenSymbol={tokenSymbol}
@@ -268,6 +308,20 @@ const ActivityModal: React.FC<IActivityModal> = ({
           </div>
         </div>
 
+        {/* Show this component only when manager has not marked member signature status */}
+        {!data?.Financial_memberSigned && !loading && category === "DEPOSIT" && (
+          <div className="flex flex-col space-y-6 py-6 px-5">
+            <div className="bg-gray-syn7 px-5 py-4 space-y-2 rounded-xl">
+              <p className="text-gray-syn4 leading-6">
+                Has this member signed the associated legal agreements?
+              </p>
+              <button className="text-blue" onClick={handleSetMemberHasSigned}>
+                Yes, mark as signed
+              </button>
+            </div>
+          </div>
+        )}
+
         {/* Note and details section */}
         {category === "DEPOSIT" ||
         category === "UNCATEGORISED" ||
@@ -276,7 +330,7 @@ const ActivityModal: React.FC<IActivityModal> = ({
           <div className="flex flex-col space-y-6 py-6 px-5">
             {/* note */}
             {!showNote && isManager ? (
-              <div
+              <button
                 className="flex items-center px-5 py-4 text-base text-gray-lightManatee bg-blue-darkGunMetal rounded-1.5lg leading-6 cursor-pointer"
                 onClick={() => setShowNote(true)}
               >
@@ -286,7 +340,7 @@ const ActivityModal: React.FC<IActivityModal> = ({
                   width={16}
                 />
                 <span className="ml-2">Add note</span>
-              </div>
+              </button>
             ) : (
               <div className="">
                 {!note && !isManager ? null : (
@@ -303,7 +357,7 @@ const ActivityModal: React.FC<IActivityModal> = ({
               <div>
                 {/* Checks if the stored investment details has empty values */}
                 {!showDetailSection && !editMode && isManager && (
-                  <div
+                  <button
                     className="flex items-center px-5 py-4 text-base text-gray-lightManatee bg-blue-darkGunMetal rounded-1.5lg leading-6 cursor-pointer"
                     onClick={() => handleAddDetails()}
                   >
@@ -313,7 +367,7 @@ const ActivityModal: React.FC<IActivityModal> = ({
                       width={16}
                     />
                     <span className="ml-2">Add details</span>
-                  </div>
+                  </button>
                 )}
                 {/* implement Details edit and view mode here */}
                 {showDetailSection || editMode ? (
