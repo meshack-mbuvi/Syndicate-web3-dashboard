@@ -97,7 +97,7 @@ const MembersTable = ({
 
   const memberAddress = memberInfo?.["Wallet address"];
 
-  const [setMemberSignStatus, { loading }] = useMutation(
+  const [setMemberHasSigned, { loading }] = useMutation(
     SET_MEMBER_SIGN_STATUS,
     { context: { clientName: "backend" } },
   );
@@ -143,7 +143,7 @@ const MembersTable = ({
   const handleSetSelected = async (index: number) => {
     const hasSigned = menuItems[index].menuText === "Signed";
 
-    setMemberSignStatus({
+    setMemberHasSigned({
       variables: { clubAddress, address: memberAddress, hasSigned },
     });
   };
