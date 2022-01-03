@@ -248,7 +248,7 @@ const ClaimNFT: React.FC = () => {
                       <div className="text-gray-lightManatee">$456.78</div>
                     </div>
                   ) : (
-                    <div>Only gas</div>
+                    <div className="text-2xl">Only gas</div>
                   )}
                 </div>
               </div>

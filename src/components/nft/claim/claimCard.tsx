@@ -6,6 +6,7 @@ import { AppState } from "@/state";
 import { clearERC721Claimed } from "@/state/claimedERC721/slice";
 import { Status } from "@/state/wallet/types";
 import { formatAddress } from "@/utils/formatAddress";
+import moment from "moment";
 
 const ClaimCard: React.FC<{
   handleMintUpdate?: () => void;
@@ -16,6 +17,7 @@ const ClaimCard: React.FC<{
   const {
     initializeContractsReducer: { syndicateContracts },
     erc721MerkleProofSliceReducer: { erc721MerkleProof },
+    erc721AirdropInfoSliceReducer: { erc721AirdropInfo },
     claimedERC721SliceReducer: { erc721Claimed },
     web3Reducer: {
       web3: { account, status },
@@ -28,6 +30,8 @@ const ClaimCard: React.FC<{
   const [claimFailed, setClaimFailed] = useState(false);
   const [submitting, setSubmitting] = useState<boolean>(false);
   const [successfulClaim, setSuccessfulClaim] = useState<boolean>(false);
+  const [claimStarted, setClaimStarted] = useState<boolean>(false);
+  const [claimEnded, setClaimEnded] = useState<boolean>(false);
 
   useEffect(() => {
     if (status == Status.DISCONNECTED) {
@@ -42,6 +46,25 @@ const ClaimCard: React.FC<{
   const viewCollection = () => {
     window.open(openseaLink, "_blank");
   };
+
+  useEffect(() => {
+    // Convert time now from milliseconds to seconds and round-down/floor
+    // https://stackoverflow.com/questions/5971645/what-is-the-double-tilde-operator-in-javascript
+    const now = ~~(Date.now() / 1000);
+
+    if (erc721AirdropInfo.startTime > now) {
+      setClaimStarted(false);
+      setClaimEnded(false);
+    }
+    if (erc721AirdropInfo.startTime < now && erc721AirdropInfo.endTime > now) {
+      setClaimStarted(true);
+      setClaimEnded(false);
+    }
+    if (erc721AirdropInfo.endTime < now) {
+      setClaimStarted(true);
+      setClaimEnded(true);
+    }
+  }, [erc721AirdropInfo.startTime, erc721AirdropInfo.endTime]);
 
   useEffect(() => {
     if (erc721MerkleProof?.account) {
@@ -74,13 +97,6 @@ const ClaimCard: React.FC<{
     try {
       const { accountIndex, merkleProof, treeIndex } = erc721MerkleProof;
       const { MerkleDistributorModuleERC721 } = syndicateContracts;
-      console.log(
-        account,
-        erc721Token.address,
-        accountIndex,
-        treeIndex,
-        merkleProof,
-      );
       await MerkleDistributorModuleERC721.claim(
         account,
         erc721Token.address,
@@ -131,7 +147,7 @@ const ClaimCard: React.FC<{
 
           <button
             className={`flex items-center justify-center w-full rounded-lg text-base text-black px-8 py-4 mb-6 text-black font-medium ${
-              !openseaLink
+              !openseaLink && !claimFailed
                 ? "bg-gray-syn7 text-white cursor-default"
                 : "bg-white"
             }`}
@@ -139,7 +155,9 @@ const ClaimCard: React.FC<{
               claimFailed ? tryAgain : openseaLink ? viewCollection : null
             }
             disabled={
-              status == Status.DISCONNECTED || !claimAvailable || !openseaLink
+              status == Status.DISCONNECTED ||
+              !claimAvailable ||
+              (!openseaLink && !claimFailed)
             }
           >
             {successfulClaim || erc721Claimed.claimed ? (
@@ -183,41 +201,80 @@ const ClaimCard: React.FC<{
         </div>
       ) : (
         <div>
-          <div className="text-lg text-center mb-8">
-            {status == Status.DISCONNECTED
-              ? "Connect your wallet to claim this NFT"
-              : !claimAvailable
-              ? `Your connected wallet (${formatAddress(
-                  account,
-                  6,
-                  4,
-                )}) isn’t eligible to claim this NFT`
-              : "Your wallet is eligible to claim this NFT"}
-          </div>
-          <button
-            className={`w-full rounded-lg text-base text-black px-8 py-4 mb-4 font-medium ${
-              status == Status.DISCONNECTED || !claimAvailable
-                ? "bg-gray-syn7 text-white cursor-default"
-                : "bg-green"
-            }`}
-            onClick={
-              status == Status.DISCONNECTED || !claimAvailable ? null : claimNFT
-            }
-            disabled={status == Status.DISCONNECTED || !claimAvailable}
-          >
-            {status == Status.DISCONNECTED
-              ? "Connect wallet"
-              : !claimAvailable
-              ? "Connect a different wallet"
-              : "Claim"}
-          </button>
-          {status != Status.DISCONNECTED
-            ? // <div className="text-sm text-gray-shuttle text-center">
-              //   Having trouble claiming your NFT? Join the Poolsuite Discord to
-              //   get some help.
-              // </div>
-              null
-            : null}
+          {claimStarted && !claimEnded ? (
+            <div>
+              <div className="text-lg text-center mb-8">
+                {status == Status.DISCONNECTED
+                  ? "Connect your wallet to claim this NFT"
+                  : !claimAvailable
+                  ? `Your connected wallet (${formatAddress(
+                      account,
+                      6,
+                      4,
+                    )}) isn’t eligible to claim this NFT`
+                  : "Your wallet is eligible to claim this NFT"}
+              </div>
+              <button
+                className={`w-full rounded-lg text-base text-black px-8 py-4 mb-4 font-medium ${
+                  status == Status.DISCONNECTED || !claimAvailable
+                    ? "bg-gray-syn7 text-white cursor-default"
+                    : "bg-green"
+                }`}
+                onClick={
+                  status == Status.DISCONNECTED || !claimAvailable
+                    ? null
+                    : claimNFT
+                }
+                disabled={status == Status.DISCONNECTED || !claimAvailable}
+              >
+                {status == Status.DISCONNECTED
+                  ? "Connect wallet"
+                  : !claimAvailable
+                  ? "Connect a different wallet"
+                  : "Claim"}
+              </button>
+              {status != Status.DISCONNECTED
+                ? // <div className="text-sm text-gray-shuttle text-center">
+                  //   Having trouble claiming your NFT? Join the Poolsuite Discord to
+                  //   get some help.
+                  // </div>
+                  null
+                : null}
+            </div>
+          ) : !claimStarted ? (
+            <div>
+              {erc721AirdropInfo.startTime ? (
+                <div className="text-lg text-center mb-6">
+                  Claim starts{" "}
+                  {moment(erc721AirdropInfo.startTime * 1000).fromNow()}
+                </div>
+              ) : null}
+            </div>
+          ) : claimEnded ? (
+            <div>
+              <div className="text-lg text-center mb-8">
+                Claim ended {moment(erc721AirdropInfo.endTime * 1000).fromNow()}
+              </div>
+              <button
+                className={`flex items-center justify-center w-full rounded-lg text-base text-black px-8 py-4 mb-6 text-black font-medium ${
+                  !openseaLink
+                    ? "bg-gray-syn7 text-white cursor-default"
+                    : "bg-white"
+                }`}
+                onClick={openseaLink ? viewCollection : null}
+                disabled={!openseaLink}
+              >
+                <span className="flex items-center">
+                  View collection on Opensea
+                  <img
+                    className="h-4 w-4 ml-2 text-white"
+                    src="/images/nftClaim/opensea-black.svg"
+                    alt="checkmark"
+                  />
+                </span>
+              </button>
+            </div>
+          ) : null}
         </div>
       )}
     </div>

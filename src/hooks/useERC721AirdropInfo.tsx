@@ -13,7 +13,7 @@ const useFetchAirdropInfo: any = () => {
 
   const {
     web3Reducer: {
-      web3: { account, web3 },
+      web3: { account, web3, currentEthereumNetwork },
     },
     erc721MerkleProofSliceReducer: { erc721MerkleProof },
     erc721TokenSliceReducer: {
@@ -40,30 +40,52 @@ const useFetchAirdropInfo: any = () => {
   const [loading, setLoading] = useState(false);
   const [airdropData, setAirdropData] = useState([]);
 
-  const getAirdropInfo = async () => {
+  const getAirdropInfo = async (merkleExists) => {
     setLoading(true);
     const { MerkleDistributorModuleERC721 } = syndicateContracts;
-    const events = await MerkleDistributorModuleERC721.getPastEvents(
-      "MerkleAirdropCreated",
-      {
-        token: nftAddress,
-        treeIndex: erc721MerkleProof.treeIndex.toString(),
-      },
-    );
-    setAirdropData(events);
+    let events;
+    if (merkleExists) {
+      events = await MerkleDistributorModuleERC721?.getPastEvents(
+        "MerkleAirdropCreated",
+        {
+          token: nftAddress,
+          treeIndex: erc721MerkleProof.treeIndex.toString(),
+        },
+      );
+      setAirdropData(events);
+    } else {
+      // alternative to get info when the user has no claim.
+      events = await MerkleDistributorModuleERC721?.getPastEvents(
+        "MerkleAirdropCreated",
+        {
+          token: nftAddress,
+        },
+      );
+      if (events.length) {
+        setAirdropData([events[events.length - 1]]);
+      }
+    }
+
     setLoading(false);
   };
 
   useEffect(() => {
     if (erc721MerkleProof.accountIndex && account && nftAddress) {
-      getAirdropInfo();
+      getAirdropInfo(true);
+    } else if (account && nftAddress) {
+      getAirdropInfo(false);
     }
-  }, [erc721MerkleProof.accountIndex, account, nftAddress]);
+  }, [
+    erc721MerkleProof.accountIndex,
+    account,
+    nftAddress,
+    currentEthereumNetwork,
+  ]);
 
   useEffect(() => {
     dispatch(setLoadingERC721AirdropInfo(true));
     if (airdropData?.length) {
-      const airdropObj = airdropData[0];
+      const airdropObj = airdropData[0].returnValues;
       dispatch(
         setERC721AirdropInfo({
           ...airdropObj,
