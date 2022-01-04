@@ -10,8 +10,8 @@ import {
   ERC20TokenDefaultState,
   setERC20Token,
 } from "@/helpers/erc20TokenDetails";
-import useClubTokenMembers from '@/hooks/useClubTokenMembers';
-import useTransactions from '@/hooks/useTransactions';
+import useClubTokenMembers from "@/hooks/useClubTokenMembers";
+import useTransactions from "@/hooks/useTransactions";
 import NotFoundPage from "@/pages/404";
 import { AppState } from "@/state";
 import {
@@ -21,8 +21,9 @@ import {
 } from "@/state/assets/slice";
 import { setClubMembers } from "@/state/clubMembers";
 import { setERC20TokenDetails } from "@/state/erc20token/slice";
-import { clearMyTransactions } from '@/state/erc20transactions';
+import { clearMyTransactions } from "@/state/erc20transactions";
 import { Status } from "@/state/wallet/types";
+import window from "global";
 import { useRouter } from "next/router";
 import React, { FC, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -114,13 +115,14 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
     }
   }, [account, dispatch]);
 
-  // used to render right column components on the left column in small devices
-  const {
-    query: { clubAddress },
-  } = router;
+  // Get clubAddress from window.location object since during page load, router is not ready
+  // hence clubAddress is undefined.
+  // We need to have access to clubAddress as early as possible.
+  const clubAddress = window?.location?.pathname.split("/")[2];
 
   useEffect(() => {
     if (!clubAddress || status == Status.CONNECTING) return;
+
     if (
       web3.utils.isAddress(clubAddress) &&
       syndicateContracts?.SingleTokenMintModule

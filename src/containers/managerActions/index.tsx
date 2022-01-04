@@ -80,14 +80,11 @@ const ManagerActions = (): JSX.Element => {
     //  Content processing not yet completed
     if (!address) return;
 
-    // Redirect the owner to the manage page
     // Don't Migrate if wallet is disconnected
-    if (status !== Status.DISCONNECTED && !isOwner) {
-      router.push(`/clubs/${clubAddress}/`);
-    } else {
+    if (status === Status.CONNECTED && isOwner) {
       setReadyToDisplay(true);
     }
-  }, [isOwner, address, router, clubAddress]);
+  }, [isOwner, address, router, clubAddress, status]);
 
   const [showDepositLinkCopyState, setShowDepositLinkCopyState] =
     useState(false);
@@ -131,7 +128,7 @@ const ManagerActions = (): JSX.Element => {
   // trigger confetti if we are coming from syndicateCreate page
   useEffect(() => {
     if (!clubAddress) return;
-    
+
     if (source && source === "create") {
       setSyndicateSuccessfullyCreated(true);
       // truncates the query part to prevent reshowing confetti
@@ -224,12 +221,12 @@ const ManagerActions = (): JSX.Element => {
                                 {hasAgreements
                                   ? "Contains legal agreements"
                                   : "Bypasses legal agreements"}{" "}
-                                <span
+                                <button
                                   className="text-blue-navy cursor-pointer"
                                   onClick={() => setShowGenerateLinkModal(true)}
                                 >
                                   Change
-                                </span>
+                                </button>
                               </p>
                             )}
                           </div>
