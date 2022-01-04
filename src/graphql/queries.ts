@@ -135,6 +135,7 @@ export const RECENT_TRANSACTIONS = gql`
                 toAddress
                 tokenDecimal
                 tokenName
+                tokenLogo
                 tokenSymbol
                 value
             }
