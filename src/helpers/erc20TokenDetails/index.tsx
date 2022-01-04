@@ -79,7 +79,7 @@ export const getERC20TokenDetails = async (
       const MERKLE_DISTRIBUTOR_MODULE =
         process.env.NEXT_PUBLIC_MERKLE_DISTRIBUTOR_MODULE;
 
-      const isOwner = owner == "" || account == "" ? false : owner === account;
+      const isOwner = account === owner && account != "" && owner != "";
 
       const totalSupply = await ERC20tokenContract.totalSupply().then((wei) =>
         getWeiAmount(wei, tokenDecimals, false),

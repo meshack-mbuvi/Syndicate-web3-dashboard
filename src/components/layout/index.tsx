@@ -67,15 +67,10 @@ const Layout: FC<Props> = ({
     router.pathname === "/clubs/create/clubprivatebetainvite";
 
   const handleRouting = () => {
-    if (!account && pathname.includes("/manage")) {
+    if (pathname.includes("/manage") && !isOwner) {
       router.replace(`/clubs/${clubAddress}`);
-      return;
-    } else {
-      if (pathname.includes("/manage") && !isOwner) {
-        router.replace(`/clubs/${clubAddress}`);
-      } else if (pathname === "/clubs/[clubAddress]" && isOwner) {
-        router.replace(`/clubs/${clubAddress}/manage`);
-      }
+    } else if (pathname === "/clubs/[clubAddress]" && isOwner) {
+      router.replace(`/clubs/${clubAddress}/manage`);
     }
   };
 
@@ -89,7 +84,7 @@ const Layout: FC<Props> = ({
       return;
 
     handleRouting();
-  }, [owner, clubAddress, account, loadingClubDetails]);
+  }, [owner, clubAddress, account, loadingClubDetails, status]);
 
   return (
     <div
