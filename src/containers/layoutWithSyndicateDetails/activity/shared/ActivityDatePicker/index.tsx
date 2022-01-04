@@ -44,11 +44,7 @@ const ActivityDatePicker: React.FC<Props> = ({
   };
 
   return (
-    <div
-      className={`flex justify-between ${borderStyles} ${
-        disabled ? "h-10" : ""
-      }`}
-    >
+    <div className={`flex justify-between ${borderStyles}`}>
       {label ? <div className={`my-auto w-2/5 leading-5`}>{label}</div> : null}
 
       <div className="flex">

@@ -150,7 +150,10 @@ const InvestmentDetailsModal: React.FC<IInvestmentDetailsModal> = ({
     onClick(values);
   };
 
-  const borderStyles = `border-b-1 border-gray-syn6 border-collapse text-gray-syn4`;
+  const borderStyles =
+    "border-b-1 border-gray-syn6 border-collapse text-gray-syn4";
+  const dateBorderStyles =
+    "w-full border-b-1 border-gray-syn6 border-collapse text-gray-syn4 flex-row";
   const details = Object.values(formValues);
   return (
     <>
@@ -257,7 +260,7 @@ const InvestmentDetailsModal: React.FC<IInvestmentDetailsModal> = ({
                     control={control}
                     name={"investmentDate"}
                     disabled={disabled}
-                    borderStyles={borderStyles}
+                    borderStyles={dateBorderStyles}
                     label="Investment date"
                     textAlignment="text-right"
                   />
