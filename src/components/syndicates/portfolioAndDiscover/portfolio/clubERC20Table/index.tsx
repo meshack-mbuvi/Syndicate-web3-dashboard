@@ -84,7 +84,7 @@ const ClubERC20Table: FC<Props> = ({ columns, tableData }) => {
                     <div className="flex flex-shrink-0">
                       <div className="hidden sm:block sm:mr-4">
                         <GradientAvatar
-                          syndicateAddress={clubName}
+                          name={clubName}
                           size="h-8 w-8"
                         />
                       </div>

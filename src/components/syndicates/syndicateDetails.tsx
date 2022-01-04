@@ -251,7 +251,7 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
                   />
                 ) : clubAddress ? (
                   <GradientAvatar
-                    syndicateAddress={clubAddress}
+                    name={name}
                     size="xl:w-20 lg:w-16 xl:h-20 lg:h-16 w-10 h-10"
                   />
                 ) : null}

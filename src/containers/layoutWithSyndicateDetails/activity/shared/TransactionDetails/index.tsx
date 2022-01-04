@@ -81,7 +81,7 @@ const TransactionDetails: React.FC<ITransactionDetails> = ({
       {tokenLogo ? (
         <Image src={tokenLogo} height={24} width={24} />
       ) : (
-        <GradientAvatar syndicateAddress={tokenName} size={"w-6 h-6"} />
+        <GradientAvatar name={tokenName} size={"w-6 h-6"} />
       )}
       <div className={`flex ml-2 ${onModal ? "text-2xl" : "text-base"}`}>
         {addGrayToDecimalInput(floatedNumberWithCommas(amount))}&nbsp;

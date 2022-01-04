@@ -158,7 +158,7 @@ const TokenTable: FC<Props> = ({ columns, tableData, activeAssetTab }) => {
                             />
                           ) : (
                             <GradientAvatar
-                              syndicateAddress={tokenName}
+                              name={tokenName}
                               size={"w-8 h-8"}
                             />
                           )}
