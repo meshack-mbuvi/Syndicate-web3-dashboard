@@ -358,7 +358,7 @@ const ActivityModal: React.FC<IActivityModal> = ({
                 {/* Checks if the stored investment details has empty values */}
                 {!showDetailSection && !editMode && isManager && (
                   <button
-                    className="flex items-center px-5 py-4 text-base text-gray-lightManatee bg-blue-darkGunMetal rounded-1.5lg leading-6 cursor-pointer"
+                    className="w-full flex items-center px-5 py-4 text-base text-gray-lightManatee bg-blue-darkGunMetal rounded-1.5lg leading-6 cursor-pointer"
                     onClick={() => handleAddDetails()}
                   >
                     <Image
