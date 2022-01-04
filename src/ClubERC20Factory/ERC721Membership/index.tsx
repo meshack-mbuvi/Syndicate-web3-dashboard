@@ -75,4 +75,12 @@ export class ERC721Contract {
       return "";
     }
   }
+
+  async balanceOf(address): Promise<string> {
+    try {
+      return this.erc721Contract.methods.balanceOf(address).call();
+    } catch (error) {
+      return "";
+    }
+  }
 }

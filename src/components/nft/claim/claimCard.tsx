@@ -48,23 +48,41 @@ const ClaimCard: React.FC<{
   };
 
   useEffect(() => {
-    // Convert time now from milliseconds to seconds and round-down/floor
-    // https://stackoverflow.com/questions/5971645/what-is-the-double-tilde-operator-in-javascript
-    const now = ~~(Date.now() / 1000);
+    if (erc721Token.merkleClaimEnabled) {
+      // Convert time now from milliseconds to seconds and round-down/floor
+      // https://stackoverflow.com/questions/5971645/what-is-the-double-tilde-operator-in-javascript
+      const now = ~~(Date.now() / 1000);
 
-    if (erc721AirdropInfo.startTime > now) {
-      setClaimStarted(false);
-      setClaimEnded(false);
-    }
-    if (erc721AirdropInfo.startTime < now && erc721AirdropInfo.endTime > now) {
+      if (erc721AirdropInfo.startTime > now) {
+        setClaimStarted(false);
+        setClaimEnded(false);
+      }
+      if (
+        erc721AirdropInfo.startTime < now &&
+        erc721AirdropInfo.endTime > now
+      ) {
+        setClaimStarted(true);
+        setClaimEnded(false);
+      }
+      if (erc721AirdropInfo.endTime < now) {
+        setClaimStarted(true);
+        setClaimEnded(true);
+      }
+    } else if (erc721Token.publicSingleClaimEnabled) {
       setClaimStarted(true);
       setClaimEnded(false);
+
+      if (erc721Token.currentSupply >= erc721Token.publicSupply) {
+        setClaimEnded(true);
+      }
     }
-    if (erc721AirdropInfo.endTime < now) {
-      setClaimStarted(true);
-      setClaimEnded(true);
-    }
-  }, [erc721AirdropInfo.startTime, erc721AirdropInfo.endTime]);
+  }, [
+    erc721AirdropInfo.startTime,
+    erc721AirdropInfo.endTime,
+    erc721Token.publicSingleClaimEnabled,
+    erc721Token.publicSupply,
+    erc721Token.currentSupply,
+  ]);
 
   useEffect(() => {
     if (erc721MerkleProof?.account) {
@@ -73,6 +91,10 @@ const ClaimCard: React.FC<{
       setClaimAvailable(false);
     }
   }, [erc721MerkleProof?.account]);
+
+  useEffect(() => {
+    setClaimAvailable(!erc721Claimed?.claimed);
+  }, [erc721Claimed?.claimed]);
 
   const onTxConfirm = () => {
     setSubmitting(true);
@@ -96,18 +118,31 @@ const ClaimCard: React.FC<{
     setSubmitting(true);
     try {
       const { accountIndex, merkleProof, treeIndex } = erc721MerkleProof;
-      const { MerkleDistributorModuleERC721 } = syndicateContracts;
-      await MerkleDistributorModuleERC721.claim(
-        account,
-        erc721Token.address,
-        accountIndex,
-        treeIndex,
-        merkleProof,
-        onTxConfirm,
-        onTxReceipt,
-        onTxFail,
-        setTransactionHash,
-      );
+      const { MerkleDistributorModuleERC721, PublicOnePerAddressModule } =
+        syndicateContracts;
+      if (erc721Token.merkleClaimEnabled) {
+        await MerkleDistributorModuleERC721.claim(
+          account,
+          erc721Token.address,
+          accountIndex,
+          treeIndex,
+          merkleProof,
+          onTxConfirm,
+          onTxReceipt,
+          onTxFail,
+          setTransactionHash,
+        );
+      } else if (erc721Token.publicSingleClaimEnabled) {
+        await PublicOnePerAddressModule.mint(
+          account,
+          erc721Token.address,
+          onTxConfirm,
+          onTxReceipt,
+          onTxFail,
+          setTransactionHash,
+        );
+      }
+
       setTransactionHash(transactionHash);
     } catch (error) {
       setSuccessfulClaim(false);
@@ -253,7 +288,12 @@ const ClaimCard: React.FC<{
           ) : claimEnded ? (
             <div>
               <div className="text-lg text-center mb-8">
-                Claim ended {moment(erc721AirdropInfo.endTime * 1000).fromNow()}
+                {`Claim ended ${
+                  moment(erc721AirdropInfo.endTime * 1000).fromNow() !=
+                  "Invalid date"
+                    ? moment(erc721AirdropInfo.endTime * 1000).fromNow()
+                    : ""
+                }`}
               </div>
               <button
                 className={`flex items-center justify-center w-full rounded-lg text-base text-black px-8 py-4 mb-6 text-black font-medium ${

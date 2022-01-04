@@ -5,9 +5,12 @@ export interface ERC721Token {
   address: string;
   currentSupply: number;
   maxSupply: number;
+  publicSupply: number;
   rendererAddr: string;
   loading: boolean;
   mintPrice: number;
+  merkleClaimEnabled: boolean;
+  publicSingleClaimEnabled: boolean;
 }
 
 export const initialState: {
@@ -21,9 +24,12 @@ export const initialState: {
     address: "",
     currentSupply: 0,
     maxSupply: 0,
+    publicSupply: 0,
     rendererAddr: "",
     loading: false,
     mintPrice: 0,
+    merkleClaimEnabled: false,
+    publicSingleClaimEnabled: false,
   },
   erc721TokenContract: null,
 };

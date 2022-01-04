@@ -13,6 +13,7 @@ import {
 } from "@/state/erc721token/slice";
 import useFetchERC721MerkleProof from "@/hooks/useERC721MerkleProof";
 import useFetchERC721Claim from "@/hooks/useClaimedERC721";
+import useFetchERC721PublicClaim from "@/hooks/usePublicClaimedERC721";
 import useFetchAirdropInfo from "@/hooks/useERC721AirdropInfo";
 import { SkeletonLoader } from "src/components/skeletonLoader";
 import { useRouter } from "next/router";
@@ -35,6 +36,7 @@ const ClaimNFT: React.FC = () => {
   const { loading: merkleLoading } = useFetchERC721MerkleProof();
   const { loading: claimedLoading } = useFetchERC721Claim();
   const { loading: airdropLoading } = useFetchAirdropInfo();
+  const { loading: claimedPublicLoading } = useFetchERC721PublicClaim();
   const { loading: erc721Loading } = erc721Token;
 
   const [openseaLink, setOpenseaLink] = useState<string>("");
@@ -73,6 +75,18 @@ const ClaimNFT: React.FC = () => {
       ERC721tokenContract.rendererAddr(),
     ]);
 
+    const PUBLIC_ONE_PER_ADDRESS_MODULE =
+      process.env.NEXT_PUBLIC_ONE_PER_ADDRESS_MODULE;
+
+    let publicSingleClaimEnabled;
+    if (address) {
+      publicSingleClaimEnabled =
+        await syndicateContracts.mintPolicyERC721.isModuleAllowed(
+          address,
+          PUBLIC_ONE_PER_ADDRESS_MODULE,
+        );
+    }
+
     const erc721: ERC721Token = {
       address,
       name,
@@ -80,9 +94,12 @@ const ClaimNFT: React.FC = () => {
       owner,
       maxSupply: 19000,
       currentSupply,
+      publicSupply: 19000,
       rendererAddr,
       loading: false,
       mintPrice: 0,
+      merkleClaimEnabled: !publicSingleClaimEnabled,
+      publicSingleClaimEnabled,
     };
     dispatch(setERC721TokenDetails(erc721));
     dispatch(setERC721Loading(false));
@@ -90,9 +107,10 @@ const ClaimNFT: React.FC = () => {
 
   useEffect(() => {
     if (
-      router.isReady &&
-      web3.utils.isAddress(nftAddress) &&
-      syndicateContracts?.MerkleDistributorModuleERC721
+      (router.isReady &&
+        web3.utils.isAddress(nftAddress) &&
+        syndicateContracts?.MerkleDistributorModuleERC721,
+      syndicateContracts?.mintPolicyERC721?.mintPolicyERC721Contract._address)
     ) {
       const ERC721tokenContract = new ERC721Contract(
         nftAddress as string,
@@ -119,6 +137,7 @@ const ClaimNFT: React.FC = () => {
     account,
     router.isReady,
     syndicateContracts?.MerkleDistributorModuleERC721,
+    syndicateContracts?.mintPolicyERC721,
   ]);
 
   useEffect(() => {
@@ -127,7 +146,11 @@ const ClaimNFT: React.FC = () => {
 
   return (
     <div className="w-full flex justify-center px-25.5">
-      {airdropLoading || merkleLoading || claimedLoading || erc721Loading ? (
+      {airdropLoading ||
+      merkleLoading ||
+      claimedLoading ||
+      erc721Loading ||
+      claimedPublicLoading ? (
         <div className="flex md:justify-between sm:justify-center w-full max-w-5.5xl md:flex-nowrap sm:flex-wrap">
           <div className="md:max-w-480 md:mb-0 sm:mb-8 md:w-5.21/12 sm:w-full">
             <div className="mb-14">
