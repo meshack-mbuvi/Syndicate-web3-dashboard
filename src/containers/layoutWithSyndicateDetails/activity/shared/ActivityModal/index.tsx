@@ -13,7 +13,7 @@ import { useMutation, useQuery } from "@apollo/client";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { ExternalLinkIcon } from "src/components/iconWrappers";
+import { OpenExternalLinkIcon } from "src/components/iconWrappers";
 import TransactionDetails from "../TransactionDetails";
 import ActivityNote from "./ActivityNote";
 
@@ -299,7 +299,7 @@ const ActivityModal: React.FC<IActivityModal> = ({
                   alt=""
                 />{" "}
                 Completed on {timestamp}
-                <ExternalLinkIcon grayIcon className="ml-2 w-4" />
+                <OpenExternalLinkIcon color="text-gray-syn4 ml-2 w-4" />
               </a>
             </div>
           </div>
