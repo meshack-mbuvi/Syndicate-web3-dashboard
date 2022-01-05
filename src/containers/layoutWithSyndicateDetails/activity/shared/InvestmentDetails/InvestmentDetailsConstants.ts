@@ -43,14 +43,10 @@ export const investmentRounds: {
   value: string;
   icon?: string;
 }[] = [
-  { text: "Ico", value: "ICO" },
-  { text: "Other", value: "OTHER" },
-  { text: "Public", value: "PUBLIC" },
-  { text: "Seed", value: "SEED" },
-  { text: "Series A", value: "SERIES_A" },
-  { text: "Series B", value: "SERIES_B" },
-  { text: "Series C", value: "SERIES_C" },
-  { text: "Series D", value: "SERIES_D" },
-  { text: "Series E", value: "SERIES_E" },
-  { text: "Custom", value: "custom", icon: "plus-sign.svg" },
+  { text: "Pre-seed", value: "Pre-seed" },
+  { text: "Seed", value: "Seed" },
+  { text: "Series A", value: "Series A" },
+  { text: "Series B", value: "Series B" },
+  { text: "Public", value: "Public" },
+  { text: "Custom", value: "", icon: "plus-sign.svg" },
 ];

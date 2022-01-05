@@ -20,6 +20,8 @@ interface IProps {
   };
   disabled?: boolean;
   style?: any;
+  required?: boolean;
+  autoFocus?: boolean;
 }
 /**
  * An input component with label and icon at the right end
@@ -41,6 +43,8 @@ export const TextField: React.FC<IProps> = ({
   textAlignment = "",
   paddingStyles = "p-4",
   disabled = false,
+  required = true,
+  autoFocus = false,
 }) => {
   const {
     field,
@@ -48,7 +52,7 @@ export const TextField: React.FC<IProps> = ({
   } = useController({
     name,
     control,
-    rules: { required: true },
+    rules: { required },
     defaultValue: "",
   });
 
@@ -86,6 +90,8 @@ export const TextField: React.FC<IProps> = ({
           type="text"
           placeholder={placeholder}
           disabled={disabled}
+          // eslint-disable-next-line jsx-a11y/no-autofocus
+          autoFocus={autoFocus}
         />
         {addOn && (
           <div

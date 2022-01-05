@@ -114,11 +114,7 @@ const ActivityModal: React.FC<IActivityModal> = ({
     // Update with new details as the user selects different transactions
     setStoredInvestmentDetails({
       companyName: metadata?.companyName,
-      investmentRound: metadata?.roundCategory
-        ? investmentRounds.find(
-            (option) => option.value === metadata?.roundCategory?.toString(),
-          )?.text
-        : null,
+      investmentRound: metadata?.roundCategory,
       shareAmount: metadata?.sharesAmount,
       tokenAmount: metadata?.tokenAmount,
       ownershipStake: metadata?.equityStake,

@@ -8,8 +8,7 @@ import PiiWarning from "@/containers/layoutWithSyndicateDetails/activity/shared/
 import { ANNOTATE_TRANSACTIONS } from "@/graphql/mutations";
 import { useMutation } from "@apollo/client";
 import { DataStorageInfo } from "@/containers/layoutWithSyndicateDetails/activity/shared/DataStorageInfo";
-import { investmentRounds } from "../InvestmentDetailsConstants";
-import { isEmpty, isEqual } from "lodash";
+import { isEmpty } from "lodash";
 import { AppState } from "@/state";
 import { useSelector } from "react-redux";
 
@@ -62,12 +61,13 @@ const InvestmentDetailsModal: React.FC<IInvestmentDetailsModal> = ({
   };
 
   const {
-    watch,
     control,
     handleSubmit,
     reset,
     getValues,
     setValue,
+    setFocus,
+    register,
     formState: { isDirty, dirtyFields },
   } = useForm<Details>({
     mode: "onChange",
@@ -131,9 +131,7 @@ const InvestmentDetailsModal: React.FC<IInvestmentDetailsModal> = ({
         sharesAmount: values?.shareAmount,
       }),
       ...(values?.investmentRound && {
-        roundCategory: investmentRounds.find(
-          (round) => round.text === values?.investmentRound,
-        )?.value,
+        roundCategory: values?.investmentRound,
       }),
     };
 
@@ -199,6 +197,7 @@ const InvestmentDetailsModal: React.FC<IInvestmentDetailsModal> = ({
                     textAlignment="text-right"
                     paddingStyles="p-4 pr-0"
                     disabled={disabled}
+                    required={false}
                   />
                 ) : null}
 
@@ -210,6 +209,9 @@ const InvestmentDetailsModal: React.FC<IInvestmentDetailsModal> = ({
                     control={control}
                     borderStyles={borderStyles}
                     disabled={disabled}
+                    resetRound={() =>
+                      setValue("investmentRound", "", { shouldDirty: true })
+                    }
                   />
                 ) : null}
 

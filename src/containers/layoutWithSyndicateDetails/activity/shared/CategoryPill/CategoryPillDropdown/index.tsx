@@ -47,7 +47,13 @@ const CategoryPillDropDown: React.FC<ICategoryPillDropDown> = ({
                   <img src={`/images/activity/${icon}`} alt="option-icon" />
                 </div>
               )}
-              <p className="whitespace-nowrap">{text}</p>
+              <p
+                className={`whitespace-nowrap ${
+                  text === "Custom" && "text-gray-syn4"
+                }`}
+              >
+                {text}
+              </p>
             </div>
           );
         })}

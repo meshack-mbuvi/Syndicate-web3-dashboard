@@ -18,6 +18,7 @@ interface IRoundDropDown {
   control: any;
   borderStyles?: string;
   disabled?: boolean;
+  resetRound: () => void;
 }
 
 const RoundDropDown: React.FC<IRoundDropDown> = ({
@@ -27,6 +28,7 @@ const RoundDropDown: React.FC<IRoundDropDown> = ({
   control,
   borderStyles = "border-none",
   disabled = false,
+  resetRound,
 }) => {
   const categorySelect = useRef(null);
   // drop down
@@ -51,6 +53,8 @@ const RoundDropDown: React.FC<IRoundDropDown> = ({
         }
       : value
       ? investmentRounds.find((round) => round.text === value)
+        ? investmentRounds.find((round) => round.text === value)
+        : { text: value, value }
       : investmentRounds[0],
   );
 
@@ -79,16 +83,19 @@ const RoundDropDown: React.FC<IRoundDropDown> = ({
   }, [showDropdown, setShowDropdown]);
 
   const handleSelect = (round) => {
-    if (round === "custom") {
+    if (!round) {
       setShowInputField(true);
+      // Remove the previously set round value
+      resetRound();
       return;
-    }
-    const selectedCategory = investmentRounds.find(
-      (option) => option.value === round,
-    );
+    } else {
+      const selectedCategory = investmentRounds.find(
+        (option) => option.text === round,
+      );
 
-    setSelectedCategory(selectedCategory);
-    onChange(selectedCategory.text);
+      setSelectedCategory(selectedCategory);
+      onChange(selectedCategory.text);
+    }
   };
 
   const customTextStyles = "text-white text-base";
@@ -111,13 +118,11 @@ const RoundDropDown: React.FC<IRoundDropDown> = ({
                 {selectedCategory?.text}
               </span>
             </div>
-            {showDropdown &&
-            editMode &&
-            selectedCategory?.value !== "custom" ? (
+            {showDropdown && editMode ? (
               <div className="w-50 mt-1 absolute z-20 top-10 transition-all duration-500 ease-in-out">
                 <PillDropDown
                   options={investmentRounds}
-                  onSelect={(e) => handleSelect(e)}
+                  onSelect={(text: string) => handleSelect(text)}
                   customTextStyles={customTextStyles}
                 />
               </div>
@@ -139,6 +144,8 @@ const RoundDropDown: React.FC<IRoundDropDown> = ({
           placeholder="Enter custom round"
           paddingStyles="p-4 pr-0"
           disabled={disabled}
+          // eslint-disable-next-line jsx-a11y/no-autofocus
+          autoFocus={true}
         />
       )}
     </div>
