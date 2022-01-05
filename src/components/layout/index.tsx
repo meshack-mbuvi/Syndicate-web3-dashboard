@@ -1,5 +1,6 @@
 import Footer from "@/components/navigation/footer";
 import { useCreateInvestmentClubContext } from "@/context/CreateInvestmentClubContext";
+import { useIsClubOwner } from "@/hooks/useClubOwner";
 import { AppState } from "@/state";
 import { Status } from "@/state/wallet/types";
 import { useRouter } from "next/router";
@@ -41,10 +42,11 @@ const Layout: FC<Props> = ({
   const router = useRouter();
   const {
     pathname,
+    isReady,
     query: { clubAddress },
   } = router;
 
-  const isOwner = account === owner && account != "" && owner != "";
+  const isOwner = useIsClubOwner();
 
   const showCreateProgressBar =
     router.pathname === "/clubs/create/clubprivatebetainvite";
@@ -79,12 +81,13 @@ const Layout: FC<Props> = ({
       loadingClubDetails ||
       !clubAddress ||
       status === Status.CONNECTING ||
-      !owner
+      !owner ||
+      !isReady
     )
       return;
 
     handleRouting();
-  }, [owner, clubAddress, account, loadingClubDetails, status]);
+  }, [owner, clubAddress, account, loadingClubDetails, status, isReady]);
 
   return (
     <div

@@ -1,5 +1,6 @@
 import CopyLink from "@/components/shared/CopyLink";
 import { SkeletonLoader } from "@/components/skeletonLoader";
+import { useIsClubOwner } from "@/hooks/useClubOwner";
 import { AppState } from "@/state";
 import { floatedNumberWithCommas } from "@/utils/formattedNumbers";
 import React, { useEffect, useState } from "react";
@@ -13,6 +14,8 @@ const ClubTokenMembers = (): JSX.Element => {
     clubMembersSliceReducer: { clubMembers, loadingClubMembers },
     erc20TokenSliceReducer: { erc20Token },
   } = useSelector((state: AppState) => state);
+
+  const isOwner = useIsClubOwner();
 
   const [filteredAddress, setFilteredAddress] = useState("");
 
@@ -189,7 +192,7 @@ const ClubTokenMembers = (): JSX.Element => {
                     Invite members by sharing your club&apos;s deposit link.
                     They’ll show up here once they deposit.
                   </p>
-                  {erc20Token.isOwner && (
+                  {isOwner && (
                     <div
                       style={{ width: "416px" }}
                       className="flex justify-center"

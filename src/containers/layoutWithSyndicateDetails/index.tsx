@@ -6,10 +6,8 @@ import BackButton from "@/components/socialProfiles/backButton";
 import { EtherscanLink } from "@/components/syndicates/shared/EtherscanLink";
 import Head from "@/components/syndicates/shared/HeaderTitle";
 import SyndicateDetails from "@/components/syndicates/syndicateDetails";
-import {
-  ERC20TokenDefaultState,
-  setERC20Token,
-} from "@/helpers/erc20TokenDetails";
+import { setERC20Token } from "@/helpers/erc20TokenDetails";
+import { useIsClubOwner } from "@/hooks/useClubOwner";
 import useClubTokenMembers from "@/hooks/useClubTokenMembers";
 import useTransactions from "@/hooks/useTransactions";
 import NotFoundPage from "@/pages/404";
@@ -20,7 +18,6 @@ import {
   fetchTokenTransactions,
 } from "@/state/assets/slice";
 import { setClubMembers } from "@/state/clubMembers";
-import { setERC20TokenDetails } from "@/state/erc20token/slice";
 import { clearMyTransactions } from "@/state/erc20transactions";
 import { Status } from "@/state/wallet/types";
 import window from "global";
@@ -60,7 +57,7 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
     };
   }, []);
 
-  const isOwner = account === owner && account != "" && owner != "";
+  const isOwner = useIsClubOwner();
 
   const router = useRouter();
   const dispatch = useDispatch();
@@ -141,7 +138,6 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
       );
 
       return () => {
-        dispatch(setERC20TokenDetails(ERC20TokenDefaultState));
         dispatch(setClubMembers([]));
       };
     }

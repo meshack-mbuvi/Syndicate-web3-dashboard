@@ -1,5 +1,6 @@
 import { CopyToClipboardIcon } from "@/components/iconWrappers";
 import { SkeletonLoader } from "@/components/skeletonLoader";
+import { useIsClubOwner } from "@/hooks/useClubOwner";
 import { AppState } from "@/state";
 import { Status } from "@/state/wallet/types";
 import { epochTimeToDateFormat, getCountDownDays } from "@/utils/dateUtils";
@@ -47,7 +48,6 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
     depositsEnabled,
     claimEnabled,
     accountClubTokens,
-    isOwner,
   } = erc20Token;
   const router = useRouter();
   const [details, setDetails] = useState<ClubDetails[]>([]);
@@ -231,7 +231,7 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
     setShowAddressCopyState(true);
     setTimeout(() => setShowAddressCopyState(false), 1000);
   };
-
+  const isOwner = useIsClubOwner();
   const isActive = !depositsEnabled || claimEnabled;
   const isOwnerOrMember =
     isOwner || +accountClubTokens || myMerkleProof?.account === account;

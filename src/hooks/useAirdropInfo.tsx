@@ -14,7 +14,7 @@ const useFetchAirdropInfo: any = (skipQuery) => {
 
   const {
     web3Reducer: {
-      web3: { account, web3 },
+      web3: { account, },
     },
     merkleProofSliceReducer: { myMerkleProof },
     erc20TokenSliceReducer: {

@@ -15,7 +15,6 @@ export interface ERC20Token {
   maxTotalDeposits: number;
   accountClubTokens: number;
   connectedMemberDeposits: string | number;
-  isOwner: boolean;
   loading: boolean;
   memberPercentShare: number;
   maxMemberCount: number;
@@ -43,7 +42,6 @@ export const initialState: { erc20Token: ERC20Token; erc20TokenContract: any } =
       memberCount: 0,
       maxTotalDeposits: 25000000,
       accountClubTokens: 0,
-      isOwner: false,
       loading: false,
       memberPercentShare: 0,
       maxMemberCount: 0,

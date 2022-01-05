@@ -1,18 +1,19 @@
-import React, {
-  useEffect,
-  useState,
-  useRef,
-  Dispatch,
-  SetStateAction,
-} from "react";
-import { useMutation } from "@apollo/client";
-import CategoryPillDropDown from "./CategoryPillDropdown";
-import { TransactionCategory } from "@/state/erc20transactions/types";
-import { ANNOTATE_TRANSACTIONS } from "@/graphql/mutations";
 import { SkeletonLoader } from "@/components/skeletonLoader";
-import { useSelector, useDispatch } from "react-redux";
+import { ANNOTATE_TRANSACTIONS } from "@/graphql/mutations";
+import { useIsClubOwner } from "@/hooks/useClubOwner";
 import { AppState } from "@/state";
 import { setCurrentTransaction } from "@/state/erc20transactions";
+import { TransactionCategory } from "@/state/erc20transactions/types";
+import { useMutation } from "@apollo/client";
+import React, {
+  Dispatch,
+  SetStateAction,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
+import { useDispatch, useSelector } from "react-redux";
+import CategoryPillDropDown from "./CategoryPillDropdown";
 interface ICategoryPill {
   outgoing?: boolean;
   category?: TransactionCategory;
@@ -55,9 +56,9 @@ export const CategoryPill: React.FC<ICategoryPill> = ({
   const dispatch = useDispatch();
   const {
     transactionsReducer: { currentTransaction },
-    erc20TokenSliceReducer: { erc20Token },
   } = useSelector((state: AppState) => state);
-  const isManager = erc20Token.isOwner;
+
+  const isManager = useIsClubOwner();
   const categorySelect = useRef(null);
   const [pillIcon, setPillIcon] = useState<string>("");
   const [pillText, setPillText] = useState<string>("");

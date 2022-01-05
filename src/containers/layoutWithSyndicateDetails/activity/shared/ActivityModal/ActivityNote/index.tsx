@@ -1,17 +1,18 @@
+import { DataStorageInfo } from "@/containers/layoutWithSyndicateDetails/activity/shared/DataStorageInfo";
+import { useIsClubOwner } from "@/hooks/useClubOwner";
+import { AppState } from "@/state";
+import { setCurrentTransaction } from "@/state/erc20transactions";
+import Linkify from "linkify-react";
+import Image from "next/image";
 import React, {
-  useEffect,
-  useState,
   Dispatch,
   SetStateAction,
+  useEffect,
   useRef,
+  useState,
 } from "react";
-import Linkify from "linkify-react";
-import { useSelector, useDispatch } from "react-redux";
-import { AppState } from "@/state";
-import Image from "next/image";
+import { useDispatch, useSelector } from "react-redux";
 import { TextArea } from "./textArea";
-import { setCurrentTransaction } from "@/state/erc20transactions";
-import { DataStorageInfo } from "@/containers/layoutWithSyndicateDetails/activity/shared/DataStorageInfo";
 
 interface IActivityNote {
   saveTransactionNote: (noteValue: string) => void;
@@ -30,13 +31,9 @@ const ActivityNote: React.FC<IActivityNote> = ({
   const dispatch = useDispatch();
   const {
     transactionsReducer: { currentTransaction },
-    erc20TokenSliceReducer: { erc20Token },
-    web3Reducer: {
-      web3: { account },
-    },
   } = useSelector((state: AppState) => state);
   const { note } = currentTransaction;
-  const isManager = erc20Token.isOwner;
+  const isManager = useIsClubOwner();
 
   const [hover, setHover] = useState<boolean>(false);
   const [readOnly, setReadOnly] = useState<boolean>(true);
