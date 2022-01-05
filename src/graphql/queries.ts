@@ -154,3 +154,28 @@ export const TOKEN_INTERACTIONS = gql`
         }
     }
 `;
+export const CLAIMED_ERC721 = gql`
+  query checkERC721Claim($where: TokensClaimed_filter) {
+    tokensClaimeds(where: $where) {
+      id
+      claimant
+      club
+      treeIndex
+      amount
+      index
+    }
+  }
+`;
+
+export const ERC721_MERKLE_AIRDROP_CREATED = gql`
+  query airdropERC721Created($where: MerkleAirdropCreated_filter) {
+    merkleAirdropCreateds(where: $where) {
+      id
+      club
+      treeIndex
+      endTime
+      startTime
+      root
+    }
+  }
+`;

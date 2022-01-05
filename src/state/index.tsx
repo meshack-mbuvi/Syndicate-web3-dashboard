@@ -1,16 +1,20 @@
 import airdopInfoSliceReducer from "@/state/airdropInfo/slice";
 import assetsSliceReducer from "@/state/assets/slice";
+import claimedERC721SliceReducer from "@/state/claimedERC721/slice";
 import tokenClaimedSliceReducer from "@/state/claimedToken/slice";
 import clubERC20sReducer from "@/state/clubERC20";
 import clubMembersSliceReducer from "@/state/clubMembers";
 import initializeContractsReducer from "@/state/contracts";
 import createInvestmentClubSliceReducer from "@/state/createInvestmentClub/slice";
 import erc20TokenSliceReducer from "@/state/erc20token/slice";
+import transactionsReducer from "@/state/erc20transactions/index";
+import erc721AirdropInfoSliceReducer from "@/state/erc721AirdropInfo/slice";
+import erc721MerkleProofSliceReducer from "@/state/erc721MerkleProofs/slice";
+import erc721TokenSliceReducer from "@/state/erc721token/slice";
 import legalInfoReducer from "@/state/legalInfo";
 import merkleProofSliceReducer from "@/state/merkleProofs/slice";
 import modalsReducer from "@/state/modals";
 import web3Reducer from "@/state/wallet/reducer";
-import transactionsReducer from "@/state/erc20transactions/index";
 import { isDev } from "@/utils/environment";
 import { Action, configureStore, ThunkAction } from "@reduxjs/toolkit";
 import { createWrapper } from "next-redux-wrapper";
@@ -21,6 +25,7 @@ export const store = configureStore({
     clubMembersSliceReducer,
     createInvestmentClubSliceReducer,
     erc20TokenSliceReducer,
+    erc721TokenSliceReducer,
     modalsReducer,
     web3Reducer,
     initializeContractsReducer,
@@ -30,6 +35,9 @@ export const store = configureStore({
     merkleProofSliceReducer,
     tokenClaimedSliceReducer,
     airdopInfoSliceReducer,
+    erc721MerkleProofSliceReducer,
+    erc721AirdropInfoSliceReducer,
+    claimedERC721SliceReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({ thunk: true, serializableCheck: false }),
