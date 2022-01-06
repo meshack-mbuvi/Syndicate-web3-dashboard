@@ -3,7 +3,6 @@ import { format } from "date-fns";
 import React, { useEffect, useState } from "react";
 import DatePicker from "react-datepicker";
 import { useController } from "react-hook-form";
-import { useSelector } from "react-redux";
 
 interface Props {
   disabled: boolean;
@@ -38,10 +37,31 @@ const ActivityDatePicker: React.FC<Props> = ({
     }
   }, [value]);
 
-  const handleDateChange = (date) => {
+  const handleDateChange = (date: React.SetStateAction<Date>) => {
     setTransactionDate(date);
     onChange(date);
   };
+
+  const CustomInput = React.forwardRef<
+    any,
+    { onClick?: () => void; value?: string }
+  >(({ value, onClick }, ref) => (
+    <button
+      className="flex mr-0 my-auto py-4 items-center font-whyte text-base text-white"
+      onClick={(e) => {
+        e.preventDefault();
+        onClick();
+      }}
+      value={value}
+    >
+      {value}
+      <img
+        src="/images/activity/chevron-down.svg"
+        alt="chevron-down"
+        className="ml-2"
+      />
+    </button>
+  ));
 
   return (
     <div className={`flex justify-between ${borderStyles}`}>
@@ -49,12 +69,11 @@ const ActivityDatePicker: React.FC<Props> = ({
 
       <div className="flex">
         {disabled ? (
-          <div className="text-base py-4 my-auto">
+          <div className="text-base py-4 my-auto text-white">
             {format(transactionDate, "LLL d, yyyy")}
           </div>
         ) : (
           <DatePicker
-            minDate={new Date()}
             closeOnScroll={(e) => e.target === document}
             selected={transactionDate}
             onChange={(date: Date) => handleDateChange(date)}
@@ -64,13 +83,9 @@ const ActivityDatePicker: React.FC<Props> = ({
             showPopperArrow={false}
             dropdownMode="select"
             className={`border-none text-base text-gray-syn4 inherit ${textAlignment}`}
+            customInput={<CustomInput />}
           />
         )}
-        {!disabled ? (
-          <div className="mr-0 my-auto">
-            <img src="/images/activity/chevron-down.svg" alt="chevron-down" />
-          </div>
-        ) : null}
       </div>
     </div>
   );
