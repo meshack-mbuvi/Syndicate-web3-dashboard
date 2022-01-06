@@ -4,6 +4,7 @@ import { AppState } from "@/state";
 import { setWalletSignature } from "@/state/legalInfo";
 import { IClubInfo, IMemberInfo } from "@/state/legalInfo/types";
 import { formatAddress } from "@/utils/formatAddress";
+import { getTemplates } from "@/utils/templates";
 import {
   ArrowLeftIcon,
   ArrowRightIcon,
@@ -11,12 +12,11 @@ import {
   ChevronUpIcon,
 } from "@heroicons/react/outline";
 import mapValues from "lodash/mapValues";
-import { getTemplates } from "@/utils/templates";
 import moment from "moment";
 import { useRouter } from "next/router";
-import { useEffect, useLayoutEffect, useMemo, useState, useRef } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { useIsVisible } from "react-is-visible";
+import { useDispatch, useSelector } from "react-redux";
 
 const agreementSteps = [
   {
@@ -353,7 +353,7 @@ const SignAgreement: React.FC<ISignAgreementProps> = ({
                 Operating Agreement
               </span>
               <span
-                className="leading-17"
+                className="leading-6 text-base"
                 style={{ whiteSpace: "pre-wrap" }}
                 dangerouslySetInnerHTML={{
                   __html: compiledOp({ ...fieldValues, ...fillers }),
@@ -365,7 +365,7 @@ const SignAgreement: React.FC<ISignAgreementProps> = ({
                 Subscription Agreement
               </span>
               <span
-                className="leading-17"
+                className="leading-6 text-base"
                 style={{ whiteSpace: "pre-wrap" }}
                 dangerouslySetInnerHTML={{
                   __html: compiledSub({ ...fieldValues, ...fillers }),

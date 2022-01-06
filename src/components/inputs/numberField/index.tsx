@@ -89,7 +89,7 @@ export const NumberField: React.FC<IProps> = ({
         {addOn && (
           <div
             className={`absolute inset-y-0 right-0 ${
-              addOnStyles ? `pr-0` : `pr-4`
+              addOnStyles ?? `pr-4`
             } py-4 flex items-center `}
           >
             <span
