@@ -455,7 +455,7 @@ const CTAs = ({
         </button>
       ) : (
         <button
-          className="py-4 px-8 rounded-md bg-white text-black flex flex-row items-center font-whyte-medium w-full justify-center"
+          className="py-4 px-8 rounded-md bg-green text-black flex flex-row items-center font-whyte-medium w-full justify-center"
           onClick={handleWalletSignature}
         >
           Sign
