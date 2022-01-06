@@ -157,7 +157,7 @@ const InvestmentDetailsModal: React.FC<IInvestmentDetailsModal> = ({
     <>
       {editMode || details.join("").length ? (
         <div
-          className={`border border-none p-5 rounded-lg mt-4 mb-6 ${
+          className={`border border-none px-5 pb-6 pt-4 rounded-lg ${
             editMode ? `bg-black` : isManager ? `hover:bg-black` : ""
           }`}
           onMouseOver={() => setHoverState(true)}
@@ -302,7 +302,7 @@ const InvestmentDetailsModal: React.FC<IInvestmentDetailsModal> = ({
             {editMode ? (
               <div>
                 <PiiWarning />
-                <div className="w-full py-6 w-full pb-5 bg-black">
+                <div className="w-full pt-6 w-full bg-black">
                   <button
                     className="w-full rounded-lg text-base px-8 py-4 bg-white text-black"
                     type="submit"
