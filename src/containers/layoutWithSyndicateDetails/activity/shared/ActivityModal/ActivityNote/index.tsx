@@ -127,9 +127,7 @@ const ActivityNote: React.FC<IActivityNote> = ({
             {noteValue}
           </div>
           <div
-            className={`mb-4 whitespace-pre-wrap ${
-              !noteReadMore && "line-clamp-4"
-            }`}
+            className={`whitespace-pre-wrap ${!noteReadMore && "line-clamp-4"}`}
           >
             <Linkify
               options={{ className: "text-blue underline", target: "_blank" }}
@@ -141,7 +139,7 @@ const ActivityNote: React.FC<IActivityNote> = ({
           {!fixedNote ? (
             !noteReadMore ? (
               <div
-                className="flex text-gray-shuttle cursor-pointer"
+                className="mt-4 flex text-gray-shuttle cursor-pointer"
                 onClick={() => readMore()}
               >
                 Read more
@@ -153,7 +151,7 @@ const ActivityNote: React.FC<IActivityNote> = ({
               </div>
             ) : (
               <div
-                className="flex text-gray-shuttle cursor-pointer"
+                className="mt-4 flex text-gray-shuttle cursor-pointer"
                 onClick={() => readMore()}
               >
                 Read less
