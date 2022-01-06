@@ -199,7 +199,7 @@ const CreateAgreementComponent: React.FC = () => {
                 addOn="%"
                 defaultValue="20"
                 control={control}
-                addOnStyles="pr-4"
+                addOnStyles=""
                 info={`Percentage loss resulting from a bug, defect, or error that you would like to define as "material" for your investment club. This number varies by use case but is usually 20% or greater.`}
               />
 
