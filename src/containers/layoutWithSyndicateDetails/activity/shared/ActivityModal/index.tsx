@@ -288,7 +288,7 @@ const ActivityModal: React.FC<IActivityModal> = ({
 
             <div className="text-gray-lightManatee text-sm mt-6 flex items-center justify-center">
               <a
-                className="flex cursor-pointer"
+                className="flex cursor-pointer items-center"
                 href={`${etherscanLink}`}
                 target="_blank"
                 rel="noreferrer"
@@ -299,7 +299,7 @@ const ActivityModal: React.FC<IActivityModal> = ({
                   alt=""
                 />{" "}
                 Completed on {timestamp}
-                <OpenExternalLinkIcon color="text-gray-syn4 ml-2 w-4" />
+                <OpenExternalLinkIcon className="text-gray-syn4 ml-2 w-3 h-3" />
               </a>
             </div>
           </div>

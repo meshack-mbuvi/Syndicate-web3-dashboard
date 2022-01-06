@@ -147,11 +147,11 @@ export const LockIcon = ({
 };
 
 export const OpenExternalLinkIcon = (props: {
-  color?: string;
+  className?: string;
   width?: string;
   height?: string;
 }): JSX.Element => {
-  const { color = "#000", width = "16", height = "16" } = props;
+  const { className = "text-black", width = "16", height = "16" } = props;
   return (
     <svg
       width={width}
@@ -159,7 +159,7 @@ export const OpenExternalLinkIcon = (props: {
       viewBox="0 0 16 16"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
-      className={color}
+      className={className}
     >
       <path
         d="M7.2007 2.39868C7.64257 2.39868 8.00078 2.75689 8.00078 3.19876C8.00078 3.60907 7.69192 3.94724 7.29401 3.99346L7.2007 3.99884H2.40023C1.98993 3.99884 1.65176 4.3077 1.60554 4.70561L1.60016 4.79892V13.5998C1.60016 14.0101 1.90902 14.3483 2.30693 14.3945L2.40023 14.3999H11.2011C11.6114 14.3999 11.9496 14.091 11.9958 13.6931L12.0012 13.5998V8.79931C12.0012 8.35744 12.3594 7.99923 12.8012 7.99923C13.2116 7.99923 13.5497 8.30809 13.5959 8.706L13.6013 8.79931V13.5998C13.6013 14.878 12.6021 15.9229 11.3421 15.9959L11.2011 16H2.40023C1.12196 16 0.0770788 15.0008 0.00407455 13.7408L0 13.5998V4.79892C0 3.52065 0.999234 2.47576 2.2592 2.40276L2.40023 2.39868H7.2007Z"

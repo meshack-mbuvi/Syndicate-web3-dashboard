@@ -48,7 +48,7 @@ export const EtherscanLink: React.FC<LinkProp> = (props) => {
       rel="noreferrer"
     >
       {grouped && iconOnly && (
-        <OpenExternalLinkIcon color="text-gray-syn5 hover:text-gray-syn4" />
+        <OpenExternalLinkIcon className="text-gray-syn5 hover:text-gray-syn4" />
       )}
       {!iconOnly ? (
         <p className="flex items-center">
