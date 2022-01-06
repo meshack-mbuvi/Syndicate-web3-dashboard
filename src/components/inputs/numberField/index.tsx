@@ -76,7 +76,7 @@ export const NumberField: React.FC<IProps> = ({
                     ? "border-1 border-gray-24 hover:border-gray-syn3"
                     : "border-0 focus:border-0 focus:ring-0 outline-none hover:border-0 ring-0"
                 }`
-          }  text-white ${
+          }  text-white placeholder-gray-syn5 ${
             addOn ? addOnStyles : paddingStyles ? "pr-0" : "pr-4"
           }`}
           placeholder={placeholder}
@@ -93,7 +93,9 @@ export const NumberField: React.FC<IProps> = ({
             } py-4 flex items-center `}
           >
             <span
-              className={`font-whyte text-base text-gray-syn4`}
+              className={`font-whyte text-base ${
+                rest.value ? "text-white" : "text-gray-syn5"
+              }`}
               id="price-currency"
             >
               {addOn}

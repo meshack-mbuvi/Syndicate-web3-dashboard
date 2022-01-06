@@ -113,7 +113,7 @@ export const TextField: React.FC<IProps> = ({
                     ? "border-1 border-gray-24 hover:border-gray-syn3"
                     : "border-0 focus:outline-none focus:ring-0 outline-none hover:border-0 ring-0"
                 }`
-          }  text-white `}
+          }  text-white placeholder-gray-syn5`}
           name={name}
           {...field}
           type="text"
@@ -129,7 +129,7 @@ export const TextField: React.FC<IProps> = ({
             className={`absolute inset-y-0 right-0 pr-4 py-4 flex items-center `}
           >
             <span
-              className={`font-whyte text-base text-gray-syn4`}
+              className={`font-whyte text-base ${field.value? "text-white": "text-gray-syn5"}`}
               id="price-currency"
             >
               {addOn}

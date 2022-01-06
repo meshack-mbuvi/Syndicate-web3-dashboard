@@ -302,7 +302,7 @@ const InvestmentDetailsModal: React.FC<IInvestmentDetailsModal> = ({
             {editMode ? (
               <div>
                 <PiiWarning />
-                <div className="w-full pt-6 w-full bg-black">
+                <div className="w-full pt-6 bg-black">
                   <button
                     className="w-full rounded-lg text-base px-8 py-4 bg-white text-black"
                     type="submit"
