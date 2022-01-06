@@ -8,6 +8,7 @@ import StatusBadge from "@/components/syndicateDetails/statusBadge";
 import ConnectWalletAction from "@/components/syndicates/shared/connectWalletAction";
 import { EtherscanLink } from "@/components/syndicates/shared/EtherscanLink";
 import { SuccessCard } from "@/containers/managerActions/successCard";
+import { useIsClubOwner } from "@/hooks/useClubOwner";
 import { AppState } from "@/state";
 import { Status } from "@/state/wallet/types";
 import { generateMemberSignURL } from "@/utils/generateMemberSignURL";
@@ -43,7 +44,7 @@ const useShowShareWarning = () => {
 const ManagerActions = (): JSX.Element => {
   const {
     web3Reducer: {
-      web3: { status },
+      web3: { status, account },
     },
     erc20TokenSliceReducer: { erc20Token },
     createInvestmentClubSliceReducer: {
@@ -61,7 +62,6 @@ const ManagerActions = (): JSX.Element => {
     loading,
     depositsEnabled,
     address,
-    isOwner,
     claimEnabled,
     totalDeposits,
     maxTotalDeposits,
@@ -75,6 +75,7 @@ const ManagerActions = (): JSX.Element => {
   const [readyToDisplay, setReadyToDisplay] = useState(false);
 
   const { showShareWarning, handleShowShareWarning } = useShowShareWarning();
+  const isOwner = useIsClubOwner();
 
   useEffect(() => {
     //  Content processing not yet completed
@@ -84,7 +85,7 @@ const ManagerActions = (): JSX.Element => {
     if (status === Status.CONNECTED && isOwner) {
       setReadyToDisplay(true);
     }
-  }, [isOwner, address, router, clubAddress, status]);
+  }, [isOwner, address, router, clubAddress, status, account]);
 
   const [showDepositLinkCopyState, setShowDepositLinkCopyState] =
     useState(false);

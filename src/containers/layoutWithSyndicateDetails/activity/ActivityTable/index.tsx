@@ -1,33 +1,30 @@
-import React, { useEffect, useMemo, useState } from "react";
-import TransactionsTable from "@/containers/layoutWithSyndicateDetails/activity/ActivityTable/TransactionsTable";
 import { SearchForm } from "@/components/inputs/searchForm";
-import FilterPill from "../shared/FilterPill";
+import TransactionsTable from "@/containers/layoutWithSyndicateDetails/activity/ActivityTable/TransactionsTable";
+import { CategoryPill } from "@/containers/layoutWithSyndicateDetails/activity/shared/CategoryPill";
+import { ANNOTATE_TRANSACTIONS } from "@/graphql/mutations";
+import { useIsClubOwner } from "@/hooks/useClubOwner";
+import { useDebounce } from "@/hooks/useDebounce";
 import { useFetchRecentTransactions } from "@/hooks/useFetchRecentTransactions";
+import { AppState } from "@/state";
 import {
   setLoadingTransactions,
   setMyTransactions,
   setTotalTransactionsCount,
 } from "@/state/erc20transactions";
-import { useDispatch, useSelector } from "react-redux";
-import { useDebounce } from "@/hooks/useDebounce";
-import { capitalize } from "lodash";
-import { NetworkStatus, useMutation } from "@apollo/client";
-import Image from "next/image";
-import { CategoryPill } from "@/containers/layoutWithSyndicateDetails/activity/shared/CategoryPill";
 import { TransactionCategory } from "@/state/erc20transactions/types";
-import { ANNOTATE_TRANSACTIONS } from "@/graphql/mutations";
-import { AppState } from "@/state";
+import { NetworkStatus, useMutation } from "@apollo/client";
+import { capitalize } from "lodash";
+import Image from "next/image";
+import React, { useEffect, useMemo, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import FilterPill from "../shared/FilterPill";
 
 const ActivityTable: React.FC = () => {
   const dispatch = useDispatch();
   const {
-    erc20TokenSliceReducer: { erc20Token },
-    web3Reducer: {
-      web3: { account },
-    },
     transactionsReducer: { totalTransactionsCount },
   } = useSelector((state: AppState) => state);
-  const isManager = erc20Token.isOwner;
+  const isManager = useIsClubOwner();
 
   const [filter, setFilter] = useState<string>("");
   const [searchValue, setSearchValue] = useState<string>("");

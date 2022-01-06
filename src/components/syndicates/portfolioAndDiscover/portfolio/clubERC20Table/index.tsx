@@ -1,3 +1,4 @@
+import { useIsClubOwner } from "@/hooks/useClubOwner";
 import {
   floatedNumberWithCommas,
   numberWithCommas,
@@ -6,7 +7,6 @@ import { hasDecimals } from "@/utils/hasDecimals";
 import Image from "next/image";
 import Link from "next/link";
 import React, { FC, useEffect, useMemo, useRef, useState } from "react";
-
 import GradientAvatar from "../GradientAvatar";
 
 interface Props {
@@ -20,6 +20,8 @@ const ClubERC20Table: FC<Props> = ({ columns, tableData }) => {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [paginatedData, setPaginatedData] = useState<any[]>([]);
   const tokensTableRef = useRef(null);
+
+  const isOwner = useIsClubOwner();
 
   function goToNextPage() {
     setCurrentPage((page) => page + 1);
@@ -70,7 +72,6 @@ const ClubERC20Table: FC<Props> = ({ columns, tableData }) => {
                 depositERC20TokenSymbol,
                 membersCount,
                 totalDeposits,
-                isOwner,
                 memberDeposits,
               },
               index,
@@ -83,10 +84,7 @@ const ClubERC20Table: FC<Props> = ({ columns, tableData }) => {
                   <div className="flex flex-row items-center">
                     <div className="flex flex-shrink-0">
                       <div className="hidden sm:block sm:mr-4">
-                        <GradientAvatar
-                          name={clubName}
-                          size="h-8 w-8"
-                        />
+                        <GradientAvatar name={clubName} size="h-8 w-8" />
                       </div>
                     </div>
                     <div className="flex text-base items-center">

@@ -6,6 +6,7 @@ import {
   SET_MEMBER_SIGN_STATUS,
 } from "@/graphql/mutations";
 import { MEMBER_SIGNED_QUERY } from "@/graphql/queries";
+import { useIsClubOwner } from "@/hooks/useClubOwner";
 import { AppState } from "@/state";
 import { isDev } from "@/utils/environment";
 import { useMutation, useQuery } from "@apollo/client";
@@ -13,7 +14,6 @@ import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { ExternalLinkIcon } from "src/components/iconWrappers";
-import { investmentRounds } from "../InvestmentDetails/InvestmentDetailsConstants";
 import TransactionDetails from "../TransactionDetails";
 import ActivityNote from "./ActivityNote";
 
@@ -57,10 +57,11 @@ const ActivityModal: React.FC<IActivityModal> = ({
       },
     },
     erc20TokenSliceReducer: {
-      erc20Token: { address, isOwner },
+      erc20Token: { address },
     },
   } = useSelector((state: AppState) => state);
-  const isManager = isOwner;
+
+  const isManager = useIsClubOwner();
   const etherScanBaseUrl = isDev
     ? "https://rinkeby.etherscan.io/tx"
     : "https://etherscan.io/tx";
