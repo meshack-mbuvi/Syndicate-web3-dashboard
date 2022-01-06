@@ -72,20 +72,8 @@ const ManagerActions = (): JSX.Element => {
   // we show loading state until content processing has been completed
   // meaning we are sure what to show the user depending on whether it's member
   // or manager content
-  const [readyToDisplay, setReadyToDisplay] = useState(false);
 
   const { showShareWarning, handleShowShareWarning } = useShowShareWarning();
-  const isOwner = useIsClubOwner();
-
-  useEffect(() => {
-    //  Content processing not yet completed
-    if (!address) return;
-
-    // Don't Migrate if wallet is disconnected
-    if (status === Status.CONNECTED && isOwner) {
-      setReadyToDisplay(true);
-    }
-  }, [isOwner, address, router, clubAddress, status, account]);
 
   const [showDepositLinkCopyState, setShowDepositLinkCopyState] =
     useState(false);
@@ -179,7 +167,7 @@ const ManagerActions = (): JSX.Element => {
               isManager
               depositExceedTotal={+totalDeposits === +maxTotalDeposits}
             />
-            {status !== Status.DISCONNECTED && (loading || !readyToDisplay) ? (
+            {status !== Status.DISCONNECTED && loading ? (
               <div className="h-fit-content relative py-6 px-8 flex justify-center items-start flex-col w-full">
                 <SkeletonLoader
                   width="1/3"
