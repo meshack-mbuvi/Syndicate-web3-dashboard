@@ -170,6 +170,8 @@ const CreateAgreementComponent: React.FC = () => {
                 info="This is the person who will pay expenses and perform admin
                     functions for the club, such as reviewing member
                     documentation and coordinating tax reporting."
+                showWarning={true}
+                warningText="Admin name should have first and last names"
               />
 
               <TextField
@@ -185,6 +187,9 @@ const CreateAgreementComponent: React.FC = () => {
                     comfortable with.
                   </span>
                 }
+                showWarning={true}
+                warningText="Location should be formatted as City, State"
+                checkType=","
               />
 
               <NumberField
@@ -211,6 +216,8 @@ const CreateAgreementComponent: React.FC = () => {
                   cornerHint={{ text: "If applicable" }}
                   control={control}
                   placeholder="Name of counsel"
+                  showWarning={true}
+                  warningText="Counsel name should have first and last names"
                 />
 
                 <TextField
