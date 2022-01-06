@@ -164,7 +164,7 @@ const InvestmentDetailsModal: React.FC<IInvestmentDetailsModal> = ({
           onMouseLeave={() => setHoverState(false)}
           onFocus={() => ""}
         >
-          <div className="w-full flex justify-between">
+          <div className="w-full flex justify-between mb-4">
             <div className="flex">Details</div>
             {editMode ? (
               <DataStorageInfo />
