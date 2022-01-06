@@ -1,5 +1,5 @@
 import { isEmpty } from "lodash";
-import React from "react";
+import React, { useState } from "react";
 import { useController } from "react-hook-form";
 
 interface IProps {
@@ -22,6 +22,9 @@ interface IProps {
   style?: any;
   required?: boolean;
   autoFocus?: boolean;
+  showWarning?: boolean;
+  warningText?: string;
+  checkType?: string;
 }
 /**
  * An input component with label and icon at the right end
@@ -45,6 +48,9 @@ export const TextField: React.FC<IProps> = ({
   disabled = false,
   required = true,
   autoFocus = false,
+  showWarning = false,
+  warningText = "",
+  checkType = " ",
 }) => {
   const {
     field,
@@ -55,6 +61,29 @@ export const TextField: React.FC<IProps> = ({
     rules: { required },
     defaultValue: "",
   });
+  const [warning, setWarning] = useState("");
+
+  const handleBlur = () => {
+    const { value } = field;
+
+    if (
+      (checkType == "," && !value.includes(",")) ||
+      value.trim().split(checkType).length < 2
+    ) {
+      setWarning(warningText);
+    } else {
+      setWarning("");
+    }
+
+    // clear warning when there is an error in the input field
+    if (errors[`${name}`]) {
+      setWarning("");
+    }
+  };
+
+  const handleFocus = () => {
+    setWarning("");
+  };
 
   return (
     <div
@@ -92,6 +121,8 @@ export const TextField: React.FC<IProps> = ({
           disabled={disabled}
           // eslint-disable-next-line jsx-a11y/no-autofocus
           autoFocus={autoFocus}
+          onBlur={handleBlur}
+          onFocus={handleFocus}
         />
         {addOn && (
           <div
@@ -106,13 +137,17 @@ export const TextField: React.FC<IProps> = ({
           </div>
         )}
       </div>
+
       {errors[`${name}`]?.message ? (
         <p className="text-red-error font-whyte text-sm pt-2">
           {errors?.[`${name}`]?.message}
         </p>
+      ) : showWarning && warning ? (
+        // show warning
+        <p className="text-yellow-semantic">{warning}</p>
       ) : (
         info && <p className="text-sm mt-2 text-gray-syn3 font-whyte">{info}</p>
-      )}{" "}
+      )}
     </div>
   );
 };

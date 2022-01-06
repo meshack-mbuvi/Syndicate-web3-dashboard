@@ -140,6 +140,8 @@ const LegalAgreement: React.FC = () => {
               name="memberName"
               control={control}
               placeholder="Member’s full name"
+              showWarning={true}
+              warningText="Member name should have first and last names"
             />
 
             <NumberField

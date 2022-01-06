@@ -1,4 +1,3 @@
-import { useIsClubOwner } from "@/hooks/useClubOwner";
 import {
   floatedNumberWithCommas,
   numberWithCommas,
@@ -20,8 +19,6 @@ const ClubERC20Table: FC<Props> = ({ columns, tableData }) => {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [paginatedData, setPaginatedData] = useState<any[]>([]);
   const tokensTableRef = useRef(null);
-
-  const isOwner = useIsClubOwner();
 
   function goToNextPage() {
     setCurrentPage((page) => page + 1);
@@ -73,6 +70,7 @@ const ClubERC20Table: FC<Props> = ({ columns, tableData }) => {
                 membersCount,
                 totalDeposits,
                 memberDeposits,
+                isOwner,
               },
               index,
             ) => (
