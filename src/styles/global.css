@@ -818,3 +818,7 @@ video {
   height: 320px !important;
   width: 320px !important;
 }
+
+.max-h-modal {
+  max-height: calc(100vh - 112px);
+}
