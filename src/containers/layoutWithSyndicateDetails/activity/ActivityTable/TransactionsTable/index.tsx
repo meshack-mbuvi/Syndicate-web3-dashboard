@@ -353,7 +353,7 @@ const TransactionsTable: FC<ITransactionsTableProps> = ({
         <ActivityModal
           showModal={showAnnotationsModal}
           closeModal={() => {
-            dispatch(clearCurrentTransaction());
+            setTimeout(() => dispatch(clearCurrentTransaction()), 400); // Quick hack. clearCurrentTransaction is dispatched before Modal is closed hence it appears like second modal pops up before closing modal.
             setShowNote(false);
             setShowAnnotationsModal();
           }}
