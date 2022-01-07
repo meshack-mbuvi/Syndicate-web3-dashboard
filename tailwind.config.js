@@ -327,6 +327,7 @@ module.exports = {
       },
       borderRadius: {
         "1.5lg": "0.625rem",
+        "2.5xl": "1.25rem",
         "4xl": "2rem",
       },
       transitionProperty: {

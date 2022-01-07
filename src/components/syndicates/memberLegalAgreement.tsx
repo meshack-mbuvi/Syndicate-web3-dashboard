@@ -151,6 +151,7 @@ const LegalAgreement: React.FC = () => {
               addOn={depositTokenSymbol}
               control={control}
               info="Total amount you intend to deposit"
+              addOnStyles=''
             />
 
             <TextField
