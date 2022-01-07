@@ -150,8 +150,7 @@ const InvestmentDetailsModal: React.FC<IInvestmentDetailsModal> = ({
 
   const borderStyles =
     "border-b-1 border-gray-syn6 border-collapse text-gray-syn4";
-  const dateBorderStyles =
-    "w-full border-b-1 border-gray-syn6 border-collapse text-gray-syn4 flex-row";
+  const dateBorderStyles = `w-full flex-row ${borderStyles}`;
   const details = Object.values(formValues);
   return (
     <>
