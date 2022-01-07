@@ -6,10 +6,10 @@ import BackButton from "@/components/socialProfiles/backButton";
 import { EtherscanLink } from "@/components/syndicates/shared/EtherscanLink";
 import Head from "@/components/syndicates/shared/HeaderTitle";
 import SyndicateDetails from "@/components/syndicates/syndicateDetails";
-import {
-  ERC20TokenDefaultState,
-  setERC20Token,
-} from "@/helpers/erc20TokenDetails";
+import { setERC20Token } from "@/helpers/erc20TokenDetails";
+import { useIsClubOwner } from "@/hooks/useClubOwner";
+import useClubTokenMembers from "@/hooks/useClubTokenMembers";
+import useTransactions from "@/hooks/useTransactions";
 import NotFoundPage from "@/pages/404";
 import { AppState } from "@/state";
 import {
@@ -18,15 +18,17 @@ import {
   fetchTokenTransactions,
 } from "@/state/assets/slice";
 import { setClubMembers } from "@/state/clubMembers";
-import { setERC20TokenDetails } from "@/state/erc20token/slice";
+import { clearMyTransactions } from "@/state/erc20transactions";
 import { Status } from "@/state/wallet/types";
-import { getWeiAmount } from "@/utils/conversions";
+import window from "global";
 import { useRouter } from "next/router";
 import React, { FC, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { syndicateActionConstants } from "src/components/syndicates/shared/Constants";
 import ClubTokenMembers from "../managerActions/clubTokenMembers";
+import ActivityView from "./activity";
 import Assets from "./assets";
+import TabButton from "./TabButton";
 
 const LayoutWithSyndicateDetails: FC = ({ children }) => {
   const {
@@ -36,18 +38,26 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
       web3: { account, web3, status },
     },
     erc20TokenSliceReducer: {
-      erc20Token: {
-        owner,
-        loading,
-        name,
-        tokenDecimals,
-        depositsEnabled,
-        accountClubTokens,
-      },
+      erc20Token: { owner, loading, name, depositsEnabled, accountClubTokens },
     },
   } = useSelector((state: AppState) => state);
 
-  const isOwner = account === owner && account != "" && owner != "";
+  // fetch club transactions
+  useTransactions();
+
+  // fetch club members
+  useClubTokenMembers();
+
+  useEffect(() => {
+    return () => {
+      // clear transactions when component unmounts
+      // solves an issue with previous transactions being loaded
+      // when a switch is made to another club with a different owner.
+      dispatch(clearMyTransactions());
+    };
+  }, []);
+
+  const isOwner = useIsClubOwner();
 
   const router = useRouter();
   const dispatch = useDispatch();
@@ -77,19 +87,23 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
     }
   }, [scrollTop]);
 
+  const fetchAssets = () => {
+    // fetch token transactions for the connected account.
+    dispatch(fetchTokenTransactions(owner));
+    // test nft account: 0xf4c2c3e12b61d44e6b228c43987158ac510426fb
+    dispatch(
+      fetchCollectiblesTransactions({
+        account: owner,
+        offset: "0",
+      }),
+    );
+  };
+
   useEffect(() => {
     if (owner) {
-      // fetch token transactions for the connected account.
-      dispatch(fetchTokenTransactions(owner));
-      // test nft account: 0xf4c2c3e12b61d44e6b228c43987158ac510426fb
-      dispatch(
-        fetchCollectiblesTransactions({
-          account: owner,
-          offset: "0",
-        }),
-      );
+      fetchAssets();
     }
-  }, [owner, dispatch]);
+  }, [owner]);
 
   useEffect(() => {
     // clear collectibles on account switch
@@ -98,14 +112,14 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
     }
   }, [account, dispatch]);
 
-  // used to render right column components on the left column in small devices
-  const {
-    pathname,
-    query: { clubAddress },
-  } = router;
+  // Get clubAddress from window.location object since during page load, router is not ready
+  // hence clubAddress is undefined.
+  // We need to have access to clubAddress as early as possible.
+  const clubAddress = window?.location?.pathname.split("/")[2];
 
   useEffect(() => {
     if (!clubAddress || status == Status.CONNECTING) return;
+
     if (
       web3.utils.isAddress(clubAddress) &&
       syndicateContracts?.SingleTokenMintModule
@@ -124,28 +138,12 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
       );
 
       return () => {
-        dispatch(setERC20TokenDetails(ERC20TokenDefaultState));
         dispatch(setClubMembers([]));
       };
     }
   }, [clubAddress, account, status, syndicateContracts?.SingleTokenMintModule]);
 
-  const showOnboardingIfNeeded = router.pathname.endsWith("deposit");
-
-  useEffect(() => {
-    if (loading || !clubAddress || status === Status.CONNECTING) return;
-
-    if (!account && pathname.includes("/manage")) {
-      router.replace(`/clubs/${clubAddress}`);
-      return;
-    } else {
-      if (pathname.includes("/manage") && !isOwner) {
-        router.replace(`/clubs/${clubAddress}`);
-      } else if (pathname === "/clubs/[clubAddress]" && isOwner) {
-        router.replace(`/clubs/${clubAddress}/manage`);
-      }
-    }
-  }, [owner, clubAddress, account, loading]);
+  const showOnboardingIfNeeded = router.pathname.endsWith("[clubAddress]");
 
   // get static text from constants
   const { noTokenTitleText } = syndicateActionConstants;
@@ -228,7 +226,7 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
                         ref={subNav}
                         className={`${
                           isSubNavStuck ? "bg-gray-syn8" : "bg-black"
-                        } sticky top-0 z-10 transition-all edge-to-edge-with-left-inset`}
+                        } sticky top-0 z-15 transition-all edge-to-edge-with-left-inset`}
                       >
                         <nav className="flex space-x-10" aria-label="Tabs">
                           <button
@@ -255,7 +253,13 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
                               Members
                             </button>
                           )}
-                          {/* add more tabs here */}
+                          {renderOnDisconnect && (
+                            <TabButton
+                              active={activeTab === "activity"}
+                              label="Activity"
+                              onClick={() => setActiveTab("activity")}
+                            />
+                          )}
                         </nav>
                         <div
                           className={`${
@@ -269,6 +273,9 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
                           {activeTab == "assets" && <Assets />}
                           {activeTab == "members" && renderOnDisconnect && (
                             <ClubTokenMembers />
+                          )}
+                          {activeTab == "activity" && renderOnDisconnect && (
+                            <ActivityView />
                           )}
                         </div>
                       </div>

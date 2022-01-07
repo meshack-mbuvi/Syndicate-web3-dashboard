@@ -9,6 +9,7 @@ import { useController } from "react-hook-form";
  */
 
 interface ITextAreaProps {
+  label?: string;
   id?: string;
   classOverride?: string;
   name?: string;
@@ -25,13 +26,14 @@ interface ITextAreaProps {
 
 export const TextArea: React.FC<ITextAreaProps> = (props) => {
   const {
+    label,
     id,
     name,
     rows = 4,
     customHoverBorder,
     control,
     disabled = false,
-    classOverride = "bg-white",
+    classOverride = "",
     ...rest
   } = props;
 
@@ -46,15 +48,18 @@ export const TextArea: React.FC<ITextAreaProps> = (props) => {
 
   const disabledClasses = disabled
     ? "text-gray-500 border-0"
-    : "text-black border-gray-85";
+    : "text-black border-gray-24";
 
   return (
     <div className="w-full">
+      <div className="flex justify-between mb-2 ">
+        {label ? <div className="leading-5">{label}</div> : null}
+      </div>
       <textarea
         id={id}
         name={name}
         {...field}
-        className={`text-input-placeholder break-all border border-gray-french rounded-lg w-full py-3 px-4 focus:border-blue ${
+        className={`text-input-placeholder text-white font-whyte border border-gray-french rounded-lg w-full py-3 px-4 focus:border-blue bg-transparent ${
           customHoverBorder
             ? customHoverBorder
             : "hover:border-white hover:border-opacity-70"

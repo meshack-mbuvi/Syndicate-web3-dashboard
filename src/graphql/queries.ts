@@ -52,6 +52,11 @@ export const CLUB_TOKEN_MEMBERS = gql`
   }
 `;
 
+export const MEMBER_SIGNED_QUERY = gql`
+  query memberHasSigned($clubAddress: String!, $address: String!) {
+    Financial_memberSigned(clubAddress: $clubAddress, address: $address)
+  }
+`;
 export const CLAIMED_TOKEN = gql`
   query checkTokenClaim($where: TokensClaimed_filter) {
     tokensClaimeds(where: $where) {
@@ -78,6 +83,77 @@ export const MERKLE_AIRDROP_CREATED = gql`
   }
 `;
 
+export const RECENT_TRANSACTIONS = gql`
+    query Query(
+        $syndicateAddress: String!
+        $take: Int
+        $where: Financial_JSONObject
+        $skip: Int
+    ) {
+        Financial_recentTransactions(
+            syndicateAddress: $syndicateAddress
+            take: $take
+            where: $where
+            skip: $skip
+        ) {
+            edges {
+                blockNumber
+                blockTimestamp
+                contractAddress
+                cumulativeGasUsed
+                events {
+                    eventType
+                    id
+                    transactionId
+                }
+                fromAddress
+                gasLimit
+                gasPrice
+                gasUsed
+                hash
+                isError
+                isOutgoingTransaction
+                metadata {
+                    acquisitionDate
+                    annotationMetadata
+                    createdAt
+                    fromLabel
+                    equityStake
+                    memo
+                    postMoneyValuation
+                    preMoneyValuation
+                    roundCategory
+                    sharesAmount
+                    toLabel
+                    tokenAmount
+                    transactionCategory
+                    transactionId
+                    updatedAt
+                    companyName
+                }
+                syndicateAddress
+                toAddress
+                tokenDecimal
+                tokenName
+                tokenLogo
+                tokenSymbol
+                value
+            }
+            totalCount
+        }
+    }
+`;
+
+export const TOKEN_INTERACTIONS = gql`
+    query getTokenInteractions($where: syndicateAddress_filter) {
+        Financial_tokenInteractions(where: $where) {
+            tokenName
+            tokenSymbol
+            tokenDecimal
+            contractAddress
+        }
+    }
+`;
 export const CLAIMED_ERC721 = gql`
   query checkERC721Claim($where: TokensClaimed_filter) {
     tokensClaimeds(where: $where) {

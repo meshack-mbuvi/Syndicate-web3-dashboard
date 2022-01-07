@@ -1,6 +1,6 @@
 import { CLUB_TOKEN_MEMBERS } from "@/graphql/queries";
 import { AppState } from "@/state";
-import { setClubMembers } from "@/state/clubMembers";
+import { setClubMembers, setLoadingClubMembers } from "@/state/clubMembers";
 import { getWeiAmount } from "@/utils/conversions";
 import { useQuery } from "@apollo/client";
 import { useRouter } from "next/router";
@@ -21,7 +21,11 @@ const useClubTokenMembers = () => {
   const { account, currentEthereumNetwork } = web3;
 
   // Retrieve syndicates that I manage
-  const { loading, refetch, data } = useQuery(CLUB_TOKEN_MEMBERS, {
+  const {
+    loading: loadingClubMembers,
+    refetch,
+    data,
+  } = useQuery(CLUB_TOKEN_MEMBERS, {
     variables: {
       where: {
         contractAddress: clubAddress?.toString().toLocaleLowerCase(),
@@ -65,12 +69,13 @@ const useClubTokenMembers = () => {
   ]);
 
   useEffect(() => {
-    if (!loading) {
+    if (loadingClubMembers) {
+      dispatch(setLoadingClubMembers(true));
+    } else {
       processMembers(data?.syndicateDAOs?.[0]?.members);
+      dispatch(setLoadingClubMembers(false));
     }
-  }, [JSON.stringify(data?.syndicateDAOs?.[0]?.members), loading]);
-
-  return { loading };
+  }, [JSON.stringify(data?.syndicateDAOs?.[0]?.members), loadingClubMembers]);
 };
 
 export default useClubTokenMembers;

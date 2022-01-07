@@ -72,6 +72,7 @@ module.exports = {
       },
       zIndex: {
         8: "8",
+        15: 15,
       },
       height: () => ({
         "fit-content": "fit-content",
@@ -88,6 +89,7 @@ module.exports = {
         "5.21/12": "43.47826%",
         100: "30rem",
         "slightly-over-100": "30.25rem",
+        564: "35.25rem",
       }),
       maxWidth: {
         480: "30rem",
@@ -97,6 +99,7 @@ module.exports = {
         "5.5xl": "69rem",
       },
       maxHeight: {
+        25: "6.125",
         104: "26rem",
         480: "30rem",
         816: "50.5rem",
@@ -143,6 +146,11 @@ module.exports = {
         9: "2.25rem",
         11.5: "2.875rem",
         17: "4.25rem",
+        5.5: "1.3125rem",
+      },
+      letterSpacing: {
+        px: "0.0625rem",
+        "2.5xl": "1.25rem",
       },
       colors: {
         "twitter-blue": "#1DA1F2",
@@ -160,6 +168,7 @@ module.exports = {
           syn7: "#232529",
           syn8: "#131416",
           syn9: "#0B0C0D",
+          syn10: "#A8AFBD",
           2: "#D9DDE5",
           3: "#A8AFBD",
           4: "#1B1D20",
@@ -228,14 +237,18 @@ module.exports = {
           navy: "#4376FF",
           rockBlue: "#8F9CAB",
           melanie: "#BDCFE3",
+          gunMetal: "#0D2833",
           darkGunMetal: "#232529",
           midnightExpress: "#0D1833",
+          oxfordBlue: "#0D1833",
         },
         yellow: {
           ...colors.yellow,
           light: "#FFD02B",
           dark: "#FFC83C",
           semantic: "#F9D252",
+          warning: "#FFA439",
+          highlight: "#FFD252",
           saffron: "#FFA439",
         },
         orange: {
@@ -255,6 +268,7 @@ module.exports = {
       },
       spacing: {
         "1px": "1px",
+        7.5: "1.875rem",
         33: "8.5rem",
         50: "12.5rem",
         66: "16.5rem",
@@ -295,6 +309,8 @@ module.exports = {
         84: "22rem",
         31: "7.5rem",
         18: "4.5rem",
+        25: "6.2rem",
+        71: "17.8rem",
       },
       margin: {
         0.5: "0.15rem",
@@ -307,10 +323,15 @@ module.exports = {
         25.5: "6.25rem",
         25: "6.35rem",
         26: "6.6rem",
+        "6-percent": "6%",
       },
       borderRadius: {
         "1.5lg": "0.625rem",
         "2.5xl": "1.25rem",
+        "4xl": "2rem",
+      },
+      transitionProperty: {
+        height: "height",
       },
     },
   },

@@ -1,4 +1,4 @@
-import { Flow, amplitudeLogger } from "@/components/amplitude";
+import { amplitudeLogger, Flow } from "@/components/amplitude";
 import {
   APPROVE_DEPOSIT_ALLOWANCE,
   ERROR_APPROVE_ALLOWANCE,
@@ -17,14 +17,14 @@ import { SuccessOrFailureContent } from "@/components/syndicates/depositSyndicat
 import { EtherscanLink } from "@/components/syndicates/shared/EtherscanLink";
 import { setERC20Token } from "@/helpers/erc20TokenDetails";
 import useSyndicateClubInfo from "@/hooks/deposit/useSyndicateClubInfo";
+import useFetchAirdropInfo from "@/hooks/useAirdropInfo";
+import useFetchMerkleProof from "@/hooks/useMerkleProof";
 import useModal from "@/hooks/useModal";
 import { useERC20TokenBalance } from "@/hooks/useTokenBalance";
+import useFetchTokenClaim from "@/hooks/useTokenClaim";
 import useUSDCDetails from "@/hooks/useUSDCDetails";
 import useWindowSize from "@/hooks/useWindowSize";
 import { AppState } from "@/state";
-import useFetchMerkleProof from "@/hooks/useMerkleProof";
-import useFetchTokenClaim from "@/hooks/useTokenClaim";
-import useFetchAirdropInfo from "@/hooks/useAirdropInfo";
 import {
   setAccountClubTokens,
   setMemberPercentShare,
@@ -46,7 +46,6 @@ import { InfoIcon } from "src/components/iconWrappers";
 import { SkeletonLoader } from "src/components/skeletonLoader";
 import ERC20ABI from "src/utils/abi/erc20";
 import { AbiItem } from "web3-utils";
-
 import ConnectWalletAction from "../shared/connectWalletAction";
 
 const DepositSyndicate: React.FC = () => {
@@ -186,8 +185,6 @@ const DepositSyndicate: React.FC = () => {
       checkClubWideErrors();
     }
   }, [depositToken, JSON.stringify(erc20Token), syndicateContracts]);
-
-  const readyToDisplay = Boolean(address);
 
   const onTxConfirm = () => {
     setMetamaskConfirmPending(false);
@@ -682,11 +679,7 @@ const DepositSyndicate: React.FC = () => {
           />
 
           {status !== Status.DISCONNECTED &&
-          (loading ||
-            merkleLoading ||
-            claimLoading ||
-            airdropInfoLoading ||
-            !readyToDisplay) ? (
+          (loading || merkleLoading || claimLoading || airdropInfoLoading) ? (
             <div className="h-fit-content rounded-2-half pt-6 px-8 pb-16">
               <SkeletonLoader
                 width="1/3"

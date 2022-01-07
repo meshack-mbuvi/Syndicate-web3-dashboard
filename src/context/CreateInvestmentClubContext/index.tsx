@@ -42,8 +42,8 @@ type CreateInvestmentClubProviderProps = {
   processingModalTitle: string;
   processingModalDescription: string;
   errorModalMessage: string;
-  showByInvitationOnly: boolean;
-  setShowByInvitationOnly: Dispatch<SetStateAction<boolean>>;
+  preClubCreationStep: string;
+  setPreClubCreationStep: Dispatch<SetStateAction<string>>;
 };
 
 const CreateInvestmentClubContext = createContext<
@@ -84,9 +84,9 @@ const CreateInvestmentClubProvider: React.FC = ({ children }) => {
   const [processingModalTitle, setProcessingTitle] = useState("");
   const [processingModalDescription, setProcessingDescription] = useState("");
   const [errorModalMessage, setErrorModalMessage] = useState("");
-  // show by invitation only box
-  const [showByInvitationOnly, setShowByInvitationOnly] =
-    useState<boolean>(true);
+  // show initial steps in create flow
+  const [preClubCreationStep, setPreClubCreationStep] =
+    useState<string>("invite");
 
   const [
     { waitingConfirmationModal, transactionModal, errorModal },
@@ -221,8 +221,8 @@ const CreateInvestmentClubProvider: React.FC = ({ children }) => {
         processingModalTitle,
         processingModalDescription,
         errorModalMessage,
-        showByInvitationOnly,
-        setShowByInvitationOnly,
+        preClubCreationStep,
+        setPreClubCreationStep,
       }}
     >
       {children}

@@ -1,13 +1,13 @@
 import React from "react";
 
 interface Props {
-  syndicateAddress: string | string[];
+  name: string | string[];
   size?: string;
   customClasses?: string;
 }
 
 const GradientAvatar: React.FC<Props> = (props) => {
-  const { syndicateAddress, size = "h-7 w-7", customClasses } = props;
+  const { name, size = "h-7 w-7", customClasses } = props;
 
   function djb2Hash(str) {
     const len = str.length;
@@ -18,7 +18,7 @@ const GradientAvatar: React.FC<Props> = (props) => {
     return hash;
   }
 
-  const hashValue = djb2Hash(syndicateAddress);
+  const hashValue = djb2Hash(name);
   const degreesInACircle = 360;
   const hue1 = hashValue % degreesInACircle;
   const hue2 = (hue1 + 120) % degreesInACircle;

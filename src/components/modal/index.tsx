@@ -21,6 +21,10 @@ interface ModalProps {
   titleMarginClassName?: string;
   titleAlignment?: string;
   showHeader?: boolean;
+  overflowYScroll?: boolean;
+  isMaxHeightScreen?: boolean;
+  alignment?: string;
+  margin?: string;
 }
 
 export enum ModalStyle {
@@ -63,6 +67,10 @@ const Modal = (props: ModalProps): JSX.Element => {
     showBackButton = false,
     modalStyle = ModalStyle.LIGHT,
     showHeader = true,
+    overflowYScroll = true,
+    isMaxHeightScreen = true,
+    alignment = "align-middle",
+    margin = "md:my-14",
   } = props;
 
   const bgColor = `${modalStyle === ModalStyle.LIGHT && "bg-white"} ${
@@ -121,13 +129,15 @@ const Modal = (props: ModalProps): JSX.Element => {
             leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
           >
             <div
-              className={`overflow-y-scroll no-scroll-bar md:my-14 align-middle mx-auto inline-block max-h-screen ${
+              className={`${
+                overflowYScroll ? `overflow-y-scroll` : ``
+              } no-scroll-bar ${margin} ${alignment} mx-auto inline-block ${
+                isMaxHeightScreen ? "max-h-screen" : ""
+              } ${
                 bgColor ? bgColor : ""
               } rounded-2xl text-left shadow-xl transform transition-all ${
-                customWidth ? customWidth : ""
-              } ${overflow ? overflow : ""} ${
-                customClassName !== undefined ? customClassName : ""
-              }`}
+                customWidth || ""
+              } ${overflow || ""} ${customClassName || ""}`}
               role="dialog"
               aria-modal="true"
               aria-labelledby="modal-headline"

@@ -5,7 +5,7 @@ import {
 import { hasDecimals } from "@/utils/hasDecimals";
 import Image from "next/image";
 import Link from "next/link";
-import React, { FC, useEffect, useRef, useState } from "react";
+import React, { FC, useEffect, useMemo, useRef, useState } from "react";
 import GradientAvatar from "../GradientAvatar";
 
 interface Props {
@@ -17,9 +17,7 @@ const ClubERC20Table: FC<Props> = ({ columns, tableData }) => {
   // pagination
   const dataLimit = 10; // number of items to show on each page.
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const [paginatedData, setpaginatedData] = useState<any[]>([]);
-  const [canNextPage, setCanNextPage] = useState<boolean>(true);
-  const [canPreviousPage, setCanPreviousPage] = useState<boolean>(true);
+  const [paginatedData, setPaginatedData] = useState<any[]>([]);
   const tokensTableRef = useRef(null);
 
   function goToNextPage() {
@@ -30,26 +28,17 @@ const ClubERC20Table: FC<Props> = ({ columns, tableData }) => {
     setCurrentPage((page) => page - 1);
   }
 
-  const getPaginatedData = () => {
-    const startIndex = currentPage * dataLimit - dataLimit;
-    const endIndex = startIndex + dataLimit;
-    setpaginatedData(tableData.slice(startIndex, endIndex));
-  };
+  const canPreviousPage = useMemo(() => currentPage !== 1, [currentPage]);
+  const canNextPage = useMemo(
+    () => tableData.length - (currentPage - 1) * dataLimit > dataLimit,
+    [tableData.length, currentPage, dataLimit],
+  );
 
   useEffect(() => {
-    getPaginatedData();
-    if (currentPage === 1) {
-      setCanPreviousPage(false);
-    } else {
-      setCanPreviousPage(true);
-    }
-
-    if (tableData.length - (currentPage - 1) * dataLimit > dataLimit) {
-      setCanNextPage(true);
-    } else {
-      setCanNextPage(false);
-    }
-  }, [tableData, currentPage, dataLimit]);
+    const startIndex = currentPage * dataLimit - dataLimit;
+    const endIndex = startIndex + dataLimit;
+    setPaginatedData(tableData.slice(startIndex, endIndex));
+  }, [currentPage, dataLimit, tableData]);
 
   return (
     <>
@@ -58,7 +47,7 @@ const ClubERC20Table: FC<Props> = ({ columns, tableData }) => {
           <div className="flex flex-col">
             {/* scroll to top of table with this button when pagination is clicked  */}
             <button ref={tokensTableRef} />
-            <div className="grid grid-cols-6 pb-3 text-gray-syn4 font-whyte text-sm">
+            <div className="grid grid-cols-4 md:grid-cols-6 pb-3 text-gray-syn4 font-whyte text-sm">
               {columns?.map((col, idx) => (
                 <div
                   key={`token-table-header-${idx}`}
@@ -70,32 +59,30 @@ const ClubERC20Table: FC<Props> = ({ columns, tableData }) => {
             </div>
           </div>
 
-          {paginatedData.map((dataItem, index) => {
-            const {
-              address,
-              clubName,
-              status,
-              ownershipShare,
-              depositERC20TokenSymbol,
-              membersCount,
-              totalDeposits,
-              isOwner,
-              memberDeposits,
-            } = dataItem;
-
-            return (
+          {paginatedData.map(
+            (
+              {
+                address,
+                clubName,
+                status,
+                ownershipShare,
+                depositERC20TokenSymbol,
+                membersCount,
+                totalDeposits,
+                memberDeposits,
+                isOwner,
+              },
+              index,
+            ) => (
               <Link
                 key={`token-table-row-${index}`}
                 href={`/clubs/${address}/${isOwner ? "manage" : ""}`}
               >
-                <div className="grid gap-2 grid-cols-6 border-b-1 w-full border-gray-steelGrey py-5 cursor-pointer">
+                <div className="grid gap-2 grid-cols-4 md:grid-cols-6 border-b-1 w-full border-gray-steelGrey py-5 cursor-pointer">
                   <div className="flex flex-row items-center">
                     <div className="flex flex-shrink-0">
-                      <div className="mr-4">
-                        <GradientAvatar
-                          syndicateAddress={clubName}
-                          size="h-8 w-8"
-                        />
+                      <div className="hidden sm:block sm:mr-4">
+                        <GradientAvatar name={clubName} size="h-8 w-8" />
                       </div>
                     </div>
                     <div className="flex text-base items-center">
@@ -130,8 +117,8 @@ const ClubERC20Table: FC<Props> = ({ columns, tableData }) => {
                   )}
                 </div>
               </Link>
-            );
-          })}
+            ),
+          )}
         </div>
       ) : null}
       <div>
@@ -144,7 +131,7 @@ const ClubERC20Table: FC<Props> = ({ columns, tableData }) => {
                   ? "opacity-50 cursor-not-allowed"
                   : "hover:opacity-90"
               }`}
-              onClick={() => goToPreviousPage()}
+              onClick={goToPreviousPage}
               disabled={!canPreviousPage}
             >
               <Image
@@ -166,7 +153,7 @@ const ClubERC20Table: FC<Props> = ({ columns, tableData }) => {
                   ? "opacity-50 cursor-not-allowed"
                   : "hover:opacity-90"
               }`}
-              onClick={() => goToNextPage()}
+              onClick={goToNextPage}
               disabled={!canNextPage}
             >
               <Image

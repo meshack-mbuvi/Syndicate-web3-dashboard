@@ -1,37 +1,58 @@
-import React, { FC } from "react";
-import { useRouter } from "next/router";
-import { useSelector } from "react-redux";
+import Footer from "@/components/navigation/footer";
 import { useCreateInvestmentClubContext } from "@/context/CreateInvestmentClubContext";
+import { useIsClubOwner } from "@/hooks/useClubOwner";
 import { AppState } from "@/state";
+import { Status } from "@/state/wallet/types";
+import { useRouter } from "next/router";
+import React, { FC, useEffect } from "react";
+import { useSelector } from "react-redux";
+import { SyndicateInBetaBanner } from "src/components/banners";
 import ConnectWallet from "src/components/connectWallet";
 import Header from "src/components/navigation/header";
 import ProgressBar from "../ProgressBar";
 import SEO from "../seo";
-import { SyndicateInBetaBanner } from "src/components/banners";
-import Footer from "@/components/navigation/footer";
 
 interface Props {
   backLink?: string;
   showNav?: boolean;
+  navItems?: { url: string; urlText: string }[];
 }
 
-const Layout: FC<Props> = ({ children, backLink = null, showNav = true }) => {
-  const router = useRouter();
+const Layout: FC<Props> = ({
+  children,
+  backLink = null,
+  showNav = true,
+  navItems = [
+    {
+      url: "/clubs",
+      urlText: "Portfolio",
+    },
+  ],
+}) => {
   const {
     web3Reducer: {
-      web3: { account },
+      web3: { account, status },
     },
     clubERC20sReducer: { myClubERC20s, otherClubERC20s, loading },
-    erc20TokenSliceReducer: { erc20Token },
+    erc20TokenSliceReducer: {
+      erc20Token: { owner, loading: loadingClubDetails },
+    },
   } = useSelector((state: AppState) => state);
 
-  const loadingClubDetails = erc20Token?.loading;
+  const router = useRouter();
+  const {
+    pathname,
+    isReady,
+    query: { clubAddress },
+  } = router;
+
+  const isOwner = useIsClubOwner();
 
   const showCreateProgressBar =
     router.pathname === "/clubs/create/clubprivatebetainvite";
   const portfolioPage = router.pathname === "/clubs" || router.pathname === "/";
 
-  const { currentStep, steps, showByInvitationOnly } =
+  const { currentStep, steps, preClubCreationStep } =
     useCreateInvestmentClubContext();
 
   // get content to occupy the viewport if we are in these states.
@@ -46,6 +67,27 @@ const Layout: FC<Props> = ({ children, backLink = null, showNav = true }) => {
   // we don't need to render the footer on the creation page.
   const createClubPage =
     router.pathname === "/clubs/create/clubprivatebetainvite";
+
+  const handleRouting = () => {
+    if (pathname.includes("/manage") && !isOwner) {
+      router.replace(`/clubs/${clubAddress}`);
+    } else if (pathname === "/clubs/[clubAddress]" && isOwner) {
+      router.replace(`/clubs/${clubAddress}/manage`);
+    }
+  };
+
+  useEffect(() => {
+    if (
+      loadingClubDetails ||
+      !clubAddress ||
+      status === Status.CONNECTING ||
+      !owner ||
+      !isReady
+    )
+      return;
+
+    handleRouting();
+  }, [owner, clubAddress, account, loadingClubDetails, status, isReady]);
 
   return (
     <div
@@ -63,12 +105,10 @@ const Layout: FC<Props> = ({ children, backLink = null, showNav = true }) => {
           ]}
           title="Home"
         />
-        <Header backLink={backLink} show={showNav} />
+        <Header backLink={backLink} show={showNav} navItems={navItems} />
         <div
           className={`sticky top-18 z-20 ${
-            showCreateProgressBar
-              ? "bg-black z-20 backdrop-filter"
-              : ""
+            showCreateProgressBar ? "bg-black z-20 backdrop-filter" : ""
           }`}
         >
           <SyndicateInBetaBanner />
@@ -76,7 +116,7 @@ const Layout: FC<Props> = ({ children, backLink = null, showNav = true }) => {
             <div className="pt-6 bg-black">
               <ProgressBar
                 percentageWidth={
-                  showByInvitationOnly
+                  preClubCreationStep
                     ? 0
                     : ((currentStep + 1) / steps.length) * 100
                 }

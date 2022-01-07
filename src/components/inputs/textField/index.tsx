@@ -1,5 +1,5 @@
 import { isEmpty } from "lodash";
-import React from "react";
+import React, { useState } from "react";
 import { useController } from "react-hook-form";
 
 interface IProps {
@@ -9,10 +9,22 @@ interface IProps {
   info?: any;
   control: any;
   addOn?: string;
+  column?: boolean;
+  borderStyles?: string;
+  paddingStyles?: string;
+  borderOutline?: boolean;
+  textAlignment?: string;
   cornerHint?: {
     text: string | any;
     textColor?: string;
   };
+  disabled?: boolean;
+  style?: any;
+  required?: boolean;
+  autoFocus?: boolean;
+  showWarning?: boolean;
+  warningText?: string;
+  checkType?: string;
 }
 /**
  * An input component with label and icon at the right end
@@ -23,11 +35,22 @@ interface IProps {
 export const TextField: React.FC<IProps> = ({
   control,
   name,
-  label,
   placeholder,
   info,
   addOn,
   cornerHint,
+  borderStyles = "",
+  column = false,
+  label = "",
+  borderOutline = true,
+  textAlignment = "",
+  paddingStyles = "p-4",
+  disabled = false,
+  required = true,
+  autoFocus = false,
+  showWarning = false,
+  warningText = "",
+  checkType = " ",
 }) => {
   const {
     field,
@@ -35,12 +58,42 @@ export const TextField: React.FC<IProps> = ({
   } = useController({
     name,
     control,
+    rules: { required },
     defaultValue: "",
   });
+  const [warning, setWarning] = useState("");
+
+  const handleBlur = () => {
+    const { value } = field;
+
+    if (
+      (checkType == "," && !value.includes(",")) ||
+      value.trim().split(checkType).length < 2
+    ) {
+      setWarning(warningText);
+    } else {
+      setWarning("");
+    }
+
+    // clear warning when there is an error in the input field
+    if (errors[`${name}`]) {
+      setWarning("");
+    }
+  };
+
+  const handleFocus = () => {
+    setWarning("");
+  };
 
   return (
-    <div className={`flex  justify-center w-full flex-col`}>
-      <div className="flex justify-between mb-2">
+    <div
+      className={`flex ${borderStyles} ${
+        column ? "flex-row justify-between" : "flex-col justify-center"
+      } w-full`}
+    >
+      <div
+        className={`flex justify-between ${column ? "w-2/5 my-auto" : "mb-2"}`}
+      >
         {label ? <div className="leading-5">{label}</div> : null}
         {!isEmpty(cornerHint) ? (
           <div
@@ -50,22 +103,33 @@ export const TextField: React.FC<IProps> = ({
           </div>
         ) : null}
       </div>
-      <div className="relative">
+      <div className="relative flex-grow">
         <input
-          className={`block font-whyte text-base bg-transparent p-4 rounded-md border-1 w-full ${
-            errors?.[`${name}`]?.message ? "border-red-error" : "border-gray-24"
-          } focus:border-blue-navy outline-none text-white hover:border-gray-syn3`}
+          className={`block font-whyte text-base ${textAlignment} bg-transparent ${paddingStyles} rounded-md w-full ${
+            errors?.[`${name}`]?.message
+              ? "border-red-error"
+              : `${
+                  borderOutline
+                    ? "border-1 border-gray-24 hover:border-gray-syn3"
+                    : "border-0 focus:outline-none focus:ring-0 outline-none hover:border-0 ring-0"
+                }`
+          }  text-white placeholder-gray-syn5`}
           name={name}
           {...field}
           type="text"
           placeholder={placeholder}
+          disabled={disabled}
+          // eslint-disable-next-line jsx-a11y/no-autofocus
+          autoFocus={autoFocus}
+          onBlur={handleBlur}
+          onFocus={handleFocus}
         />
         {addOn && (
           <div
             className={`absolute inset-y-0 right-0 pr-4 py-4 flex items-center `}
           >
             <span
-              className={`font-whyte text-base text-gray-syn4`}
+              className={`font-whyte text-base ${field.value? "text-white": "text-gray-syn5"}`}
               id="price-currency"
             >
               {addOn}
@@ -73,13 +137,17 @@ export const TextField: React.FC<IProps> = ({
           </div>
         )}
       </div>
+
       {errors[`${name}`]?.message ? (
         <p className="text-red-error font-whyte text-sm pt-2">
           {errors?.[`${name}`]?.message}
         </p>
+      ) : showWarning && warning ? (
+        // show warning
+        <p className="text-yellow-semantic">{warning}</p>
       ) : (
         info && <p className="text-sm mt-2 text-gray-syn3 font-whyte">{info}</p>
-      )}{" "}
+      )}
     </div>
   );
 };
