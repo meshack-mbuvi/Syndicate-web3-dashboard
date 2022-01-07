@@ -235,11 +235,11 @@ const ActivityModal: React.FC<IActivityModal> = ({
         setShowDetailSection(false);
       }}
       customWidth="w-564"
-      customClassName="p-0 max-h-modal"
+      customClassName="p-0"
       showCloseButton={false}
       outsideOnClick={true}
       showHeader={false}
-      overflow="overflow-x-scroll"
+      overflow="overflow-x-visible"
       overflowYScroll={false}
       isMaxHeightScreen={false}
     >
