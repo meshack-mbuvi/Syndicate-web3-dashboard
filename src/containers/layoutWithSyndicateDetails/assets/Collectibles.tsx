@@ -128,7 +128,7 @@ const Collectibles: FC<{ activeAssetTab: string }> = ({ activeAssetTab }) => {
                   // https://litwtf.mypinata.cloud/ipfs/QmVjgAD5gaNQ1cLpgKLeuXDPX8R1yeajtWUhM6nV7VAe6e/4.mp4
                   // details for the nft with id below are not returned correctly and hence does not render
                   const htmlAnimation =
-                    animation.match(/\.html&/) != null && id == "3216";
+                    animation.match(/\.html$/) != null && id == "3216";
 
                   // animation could be a gif
                   const animatedGif = animation.match(/\.gif$/) != null;
@@ -138,24 +138,7 @@ const Collectibles: FC<{ activeAssetTab: string }> = ({ activeAssetTab }) => {
                         <img src={animation} alt="animated nft" />
                       </div>
                     );
-                  } else if (movAnimation || mp4Animation) {
-                    media = (
-                      <div className="border-r-1 border-l-1 border-t-1 border-gray-syn6 h-80 rounded-t-lg bg-gray-syn7 overflow-hidden">
-                        <video
-                          controls
-                          autoPlay
-                          loop
-                          muted
-                          className="rounded-t-lg video-320"
-                        >
-                          {/* Specifying type as "video/mp4" works for both .mov and .mp4 files  */}
-                          <source src={animation} type="video/mp4"></source>
-                        </video>
-                      </div>
-                    );
-                  }
-
-                  if (htmlAnimation) {
+                  } else if (movAnimation || mp4Animation || htmlAnimation) {
                     media = (
                       <div className="border-r-1 border-l-1 border-t-1 border-gray-syn6 h-80 rounded-t-lg bg-gray-syn7 overflow-hidden">
                         <video
@@ -168,7 +151,9 @@ const Collectibles: FC<{ activeAssetTab: string }> = ({ activeAssetTab }) => {
                           {/* Specifying type as "video/mp4" works for both .mov and .mp4 files  */}
                           <source
                             src={
-                              "https://litwtf.mypinata.cloud/ipfs/QmVjgAD5gaNQ1cLpgKLeuXDPX8R1yeajtWUhM6nV7VAe6e/4.mp4"
+                              htmlAnimation
+                                ? "https://litwtf.mypinata.cloud/ipfs/QmVjgAD5gaNQ1cLpgKLeuXDPX8R1yeajtWUhM6nV7VAe6e/4.mp4"
+                                : animation
                             }
                             type="video/mp4"
                           ></source>
