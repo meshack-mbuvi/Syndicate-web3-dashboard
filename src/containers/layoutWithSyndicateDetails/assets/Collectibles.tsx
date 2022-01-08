@@ -89,6 +89,8 @@ const Collectibles: FC<{ activeAssetTab: string }> = ({ activeAssetTab }) => {
     );
   }
 
+  console.log({ collectiblesResult });
+
   return (
     <div className="w-full">
       {collectiblesResult.length > 0 && (
