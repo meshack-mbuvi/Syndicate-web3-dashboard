@@ -111,7 +111,7 @@ export const fetchTokenTransactions = createAsyncThunk(
     const { usd } = ethPriceResponse.data.ethereum;
     const ethBalance = getWeiAmount(ethBalanceResponse.data.result, 18, false);
     const ethDetails = {
-      price: usd,
+      price: { usd },
       logo: "/images/ethereum-logo.png",
       tokenDecimal: "18",
       tokenSymbol: "ETH",
@@ -208,20 +208,22 @@ const assetsSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
-      .addCase(fetchTokenTransactions.pending, (state, action) => {
+      .addCase(fetchTokenTransactions.pending, (state) => {
         state.loading = true;
       })
       .addCase(fetchTokenTransactions.fulfilled, (state, action) => {
-        console.log({ tokens: action.payload });
-        state.tokensResult = action.payload;
+        const sortedInDescendingOrder = action.payload.sort(
+          (a, b) => b.price.usd - a.price.usd,
+        );
+        state.tokensResult = sortedInDescendingOrder;
         state.loading = false;
         state.tokensFetchError = false;
       })
-      .addCase(fetchTokenTransactions.rejected, (state, action) => {
+      .addCase(fetchTokenTransactions.rejected, (state) => {
         state.loading = false;
         state.tokensFetchError = true;
       })
-      .addCase(fetchCollectiblesTransactions.pending, (state, action) => {
+      .addCase(fetchCollectiblesTransactions.pending, (state) => {
         state.loadingCollectibles = true;
       })
       .addCase(fetchCollectiblesTransactions.fulfilled, (state, action) => {
