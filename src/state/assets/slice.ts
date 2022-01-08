@@ -198,8 +198,6 @@ const fetchTokenBalances = (tokensList: any[], account: string) => {
     tokenCopy["tokenValue"] =
       parseFloat(tokenCopy.price?.usd ?? 0) * parseFloat(tokenBalance);
 
-    console.log({ tokenCopy });
-
     return tokenCopy;
   });
 };
