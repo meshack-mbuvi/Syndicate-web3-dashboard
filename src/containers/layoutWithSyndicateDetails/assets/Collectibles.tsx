@@ -103,6 +103,7 @@ const Collectibles: FC<{ activeAssetTab: string }> = ({ activeAssetTab }) => {
             <div className="grid grid-cols-12 gap-5">
               {collectiblesResult.map((collectible, index) => {
                 const { image, name, animation, permalink } = collectible;
+                console.log({ animation, collectible });
                 let media;
                 if (image && !animation) {
                   media = (
