@@ -104,7 +104,7 @@ const Collectibles: FC<{ activeAssetTab: string }> = ({ activeAssetTab }) => {
           >
             <div className="grid grid-cols-12 gap-5">
               {collectiblesResult.map((collectible, index) => {
-                const { image, name, animation, permalink } = collectible;
+                const { id, image, name, animation, permalink } = collectible;
                 console.log({ animation, collectible });
                 let media;
                 if (image && !animation) {
@@ -124,6 +124,11 @@ const Collectibles: FC<{ activeAssetTab: string }> = ({ activeAssetTab }) => {
                   // animation could be a .mov or .mp4 video
                   const movAnimation = animation.match(/\.mov$/) != null;
                   const mp4Animation = animation.match(/\.mp4$/) != null;
+
+                  // https://litwtf.mypinata.cloud/ipfs/QmVjgAD5gaNQ1cLpgKLeuXDPX8R1yeajtWUhM6nV7VAe6e/4.mp4
+                  // details for the nft with id below are not returned correctly and hence does not render
+                  const htmlAnimation =
+                    animation.match(/\.html&/) != null && id == "3216";
 
                   // animation could be a gif
                   const animatedGif = animation.match(/\.gif$/) != null;
@@ -145,6 +150,28 @@ const Collectibles: FC<{ activeAssetTab: string }> = ({ activeAssetTab }) => {
                         >
                           {/* Specifying type as "video/mp4" works for both .mov and .mp4 files  */}
                           <source src={animation} type="video/mp4"></source>
+                        </video>
+                      </div>
+                    );
+                  }
+
+                  if (htmlAnimation) {
+                    media = (
+                      <div className="border-r-1 border-l-1 border-t-1 border-gray-syn6 h-80 rounded-t-lg bg-gray-syn7 overflow-hidden">
+                        <video
+                          controls
+                          autoPlay
+                          loop
+                          muted
+                          className="rounded-t-lg video-320"
+                        >
+                          {/* Specifying type as "video/mp4" works for both .mov and .mp4 files  */}
+                          <source
+                            src={
+                              "https://litwtf.mypinata.cloud/ipfs/QmVjgAD5gaNQ1cLpgKLeuXDPX8R1yeajtWUhM6nV7VAe6e/4.mp4"
+                            }
+                            type="video/mp4"
+                          ></source>
                         </video>
                       </div>
                     );
