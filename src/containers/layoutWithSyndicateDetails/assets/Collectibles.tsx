@@ -102,7 +102,7 @@ const Collectibles: FC<{ activeAssetTab: string }> = ({ activeAssetTab }) => {
           >
             <div className="grid grid-cols-12 gap-5">
               {collectiblesResult.map((collectible, index) => {
-                const { image, name, animation, permalink } = collectible;
+                const { id, image, name, animation, permalink } = collectible;
                 let media;
                 if (image && !animation) {
                   media = (
@@ -122,6 +122,13 @@ const Collectibles: FC<{ activeAssetTab: string }> = ({ activeAssetTab }) => {
                   const movAnimation = animation.match(/\.mov$/) != null;
                   const mp4Animation = animation.match(/\.mp4$/) != null;
 
+                  // https://litwtf.mypinata.cloud/ipfs/QmVjgAD5gaNQ1cLpgKLeuXDPX8R1yeajtWUhM6nV7VAe6e/4.mp4
+                  // details for the nft with id below are not returned correctly and hence does not render
+                  // The animation link is a .html which is not capture.
+                  // Until we find a better way to handle this, let's have the fix below
+                  const htmlAnimation =
+                    animation.match(/\.html$/) != null && id == "3216";
+
                   // animation could be a gif
                   const animatedGif = animation.match(/\.gif$/) != null;
                   if (animatedGif) {
@@ -130,7 +137,7 @@ const Collectibles: FC<{ activeAssetTab: string }> = ({ activeAssetTab }) => {
                         <img src={animation} alt="animated nft" />
                       </div>
                     );
-                  } else if (movAnimation || mp4Animation) {
+                  } else if (movAnimation || mp4Animation || htmlAnimation) {
                     media = (
                       <div className="border-r-1 border-l-1 border-t-1 border-gray-syn6 h-80 rounded-t-lg bg-gray-syn7 overflow-hidden">
                         <video
@@ -141,7 +148,14 @@ const Collectibles: FC<{ activeAssetTab: string }> = ({ activeAssetTab }) => {
                           className="rounded-t-lg video-320"
                         >
                           {/* Specifying type as "video/mp4" works for both .mov and .mp4 files  */}
-                          <source src={animation} type="video/mp4"></source>
+                          <source
+                            src={
+                              htmlAnimation
+                                ? "https://litwtf.mypinata.cloud/ipfs/QmVjgAD5gaNQ1cLpgKLeuXDPX8R1yeajtWUhM6nV7VAe6e/4.mp4"
+                                : animation
+                            }
+                            type="video/mp4"
+                          ></source>
                         </video>
                       </div>
                     );
