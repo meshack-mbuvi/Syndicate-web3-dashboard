@@ -87,6 +87,7 @@ export const fetchTokenTransactions = createAsyncThunk(
           tokenSymbol,
           tokenBalance,
           tokenName,
+          tokenValue = 0,
         } = value;
 
         const { logo } = await axios
@@ -103,6 +104,7 @@ export const fetchTokenTransactions = createAsyncThunk(
           tokenSymbol,
           tokenBalance,
           tokenName,
+          tokenValue,
         };
       }),
     );
@@ -195,9 +197,6 @@ const fetchTokenBalances = (tokensList: any[], account: string) => {
     const tokenBalance = getWeiAmount(accountBalance, tokenDecimal, false);
 
     tokenCopy["tokenBalance"] = tokenBalance;
-    tokenCopy["tokenValue"] =
-      parseFloat(tokenCopy.price?.usd ?? 0) * parseFloat(tokenBalance);
-
     return tokenCopy;
   });
 };
@@ -212,8 +211,17 @@ const assetsSlice = createSlice({
         state.loading = true;
       })
       .addCase(fetchTokenTransactions.fulfilled, (state, action) => {
-        const sortedInDescendingOrder = action.payload.sort(
-          (a, b) => b.price.usd - a.price.usd,
+        // find token value here
+        const tokensWithValue = action.payload.map((token) => {
+          const tokenCopy = token;
+          tokenCopy["tokenValue"] =
+            parseFloat(tokenCopy.price?.usd ?? 0) *
+            parseFloat(tokenCopy.tokenBalance);
+          return tokenCopy;
+        });
+        // sort the tokens
+        const sortedInDescendingOrder = tokensWithValue.sort(
+          (a, b) => b.tokenValue - a.tokenValue,
         );
         state.tokensResult = sortedInDescendingOrder;
         state.loading = false;
@@ -249,7 +257,7 @@ const assetsSlice = createSlice({
         state.loadingCollectibles = false;
         state.collectiblesFetchError = false;
       })
-      .addCase(fetchCollectiblesTransactions.rejected, (state, action) => {
+      .addCase(fetchCollectiblesTransactions.rejected, (state) => {
         state.collectiblesFetchError = true;
       })
       .addCase(clearCollectiblesTransactions.fulfilled, (state, action) => {
