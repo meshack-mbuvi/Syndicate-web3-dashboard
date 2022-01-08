@@ -117,6 +117,7 @@ export const fetchTokenTransactions = createAsyncThunk(
       tokenSymbol: "ETH",
       tokenBalance: ethBalance,
       tokenName: "Ethereum",
+      tokenValue: parseFloat(usd) * parseFloat(ethBalance),
     };
 
     // add eth details as the first item.
@@ -191,11 +192,13 @@ const fetchTokenBalances = (tokensList: any[], account: string) => {
       .balanceOf(account)
       .call();
 
-    tokenCopy["tokenBalance"] = getWeiAmount(
-      accountBalance,
-      tokenDecimal,
-      false,
-    );
+    const tokenBalance = getWeiAmount(accountBalance, tokenDecimal, false);
+
+    tokenCopy["tokenBalance"] = tokenBalance;
+    tokenCopy["tokenValue"] =
+      parseFloat(tokenCopy.price?.usd ?? 0) * parseFloat(tokenBalance);
+
+    console.log({ tokenCopy });
 
     return tokenCopy;
   });
@@ -211,6 +214,7 @@ const assetsSlice = createSlice({
         state.loading = true;
       })
       .addCase(fetchTokenTransactions.fulfilled, (state, action) => {
+        console.log({ tokens: action.payload });
         state.tokensResult = action.payload;
         state.loading = false;
         state.tokensFetchError = false;
