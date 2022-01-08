@@ -89,8 +89,6 @@ const Collectibles: FC<{ activeAssetTab: string }> = ({ activeAssetTab }) => {
     );
   }
 
-  console.log({ collectiblesResult });
-
   return (
     <div className="w-full">
       {collectiblesResult.length > 0 && (
@@ -105,7 +103,6 @@ const Collectibles: FC<{ activeAssetTab: string }> = ({ activeAssetTab }) => {
             <div className="grid grid-cols-12 gap-5">
               {collectiblesResult.map((collectible, index) => {
                 const { id, image, name, animation, permalink } = collectible;
-                console.log({ animation, collectible });
                 let media;
                 if (image && !animation) {
                   media = (
@@ -127,6 +124,8 @@ const Collectibles: FC<{ activeAssetTab: string }> = ({ activeAssetTab }) => {
 
                   // https://litwtf.mypinata.cloud/ipfs/QmVjgAD5gaNQ1cLpgKLeuXDPX8R1yeajtWUhM6nV7VAe6e/4.mp4
                   // details for the nft with id below are not returned correctly and hence does not render
+                  // The animation link is a .html which is not capture.
+                  // Until we find a better way to handle this, let's have the fix below
                   const htmlAnimation =
                     animation.match(/\.html$/) != null && id == "3216";
 
