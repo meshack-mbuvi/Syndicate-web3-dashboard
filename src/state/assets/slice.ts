@@ -87,6 +87,7 @@ export const fetchTokenTransactions = createAsyncThunk(
           tokenSymbol,
           tokenBalance,
           tokenName,
+          tokenValue = 0,
         } = value;
 
         const { logo } = await axios
@@ -103,6 +104,7 @@ export const fetchTokenTransactions = createAsyncThunk(
           tokenSymbol,
           tokenBalance,
           tokenName,
+          tokenValue,
         };
       }),
     );
@@ -111,12 +113,13 @@ export const fetchTokenTransactions = createAsyncThunk(
     const { usd } = ethPriceResponse.data.ethereum;
     const ethBalance = getWeiAmount(ethBalanceResponse.data.result, 18, false);
     const ethDetails = {
-      price: usd,
+      price: { usd },
       logo: "/images/ethereum-logo.png",
       tokenDecimal: "18",
       tokenSymbol: "ETH",
       tokenBalance: ethBalance,
       tokenName: "Ethereum",
+      tokenValue: parseFloat(usd) * parseFloat(ethBalance),
     };
 
     // add eth details as the first item.
@@ -191,12 +194,9 @@ const fetchTokenBalances = (tokensList: any[], account: string) => {
       .balanceOf(account)
       .call();
 
-    tokenCopy["tokenBalance"] = getWeiAmount(
-      accountBalance,
-      tokenDecimal,
-      false,
-    );
+    const tokenBalance = getWeiAmount(accountBalance, tokenDecimal, false);
 
+    tokenCopy["tokenBalance"] = tokenBalance;
     return tokenCopy;
   });
 };
@@ -207,19 +207,31 @@ const assetsSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
-      .addCase(fetchTokenTransactions.pending, (state, action) => {
+      .addCase(fetchTokenTransactions.pending, (state) => {
         state.loading = true;
       })
       .addCase(fetchTokenTransactions.fulfilled, (state, action) => {
-        state.tokensResult = action.payload;
+        // find token value here
+        const tokensWithValue = action.payload.map((token) => {
+          const tokenCopy = token;
+          tokenCopy["tokenValue"] =
+            parseFloat(tokenCopy.price?.usd ?? 0) *
+            parseFloat(tokenCopy.tokenBalance);
+          return tokenCopy;
+        });
+        // sort the tokens
+        const sortedInDescendingOrder = tokensWithValue.sort(
+          (a, b) => b.tokenValue - a.tokenValue,
+        );
+        state.tokensResult = sortedInDescendingOrder;
         state.loading = false;
         state.tokensFetchError = false;
       })
-      .addCase(fetchTokenTransactions.rejected, (state, action) => {
+      .addCase(fetchTokenTransactions.rejected, (state) => {
         state.loading = false;
         state.tokensFetchError = true;
       })
-      .addCase(fetchCollectiblesTransactions.pending, (state, action) => {
+      .addCase(fetchCollectiblesTransactions.pending, (state) => {
         state.loadingCollectibles = true;
       })
       .addCase(fetchCollectiblesTransactions.fulfilled, (state, action) => {
@@ -245,7 +257,7 @@ const assetsSlice = createSlice({
         state.loadingCollectibles = false;
         state.collectiblesFetchError = false;
       })
-      .addCase(fetchCollectiblesTransactions.rejected, (state, action) => {
+      .addCase(fetchCollectiblesTransactions.rejected, (state) => {
         state.collectiblesFetchError = true;
       })
       .addCase(clearCollectiblesTransactions.fulfilled, (state, action) => {
