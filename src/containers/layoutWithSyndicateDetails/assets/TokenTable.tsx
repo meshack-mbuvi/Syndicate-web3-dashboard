@@ -24,6 +24,7 @@ const TokenTable: FC<Props> = ({ columns, tableData, activeAssetTab }) => {
   const [canNextPage, setCanNextPage] = useState<boolean>(true);
   const [canPreviousPage, setCanPreviousPage] = useState<boolean>(true);
   const tokensTableRef = useRef(null);
+  const [skeletonState, setSkeletonState] = useState<boolean>(loading)
 
   function goToNextPage() {
     setCurrentPage((page) => page + 1);
@@ -51,6 +52,12 @@ const TokenTable: FC<Props> = ({ columns, tableData, activeAssetTab }) => {
       setCanNextPage(true);
     } else {
       setCanNextPage(false);
+    }
+    // defaults to time of 1 second or loading time (whichever is higher)
+    if (skeletonState) {
+      setTimeout(() => {
+        setSkeletonState(false);
+      }, 1000)
     }
   }, [tableData, currentPage, dataLimit]);
 
@@ -128,7 +135,7 @@ const TokenTable: FC<Props> = ({ columns, tableData, activeAssetTab }) => {
               ))}
             </div>
           </div>
-          {loading
+          {(loading || skeletonState)
             ? loaderContent
             : paginatedData.map(
                 (
