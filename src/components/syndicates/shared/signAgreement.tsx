@@ -345,33 +345,39 @@ const SignAgreement: React.FC<ISignAgreementProps> = ({
             }}
           />
         </div>
-        <div className="bg-white rounded-none sm:rounded-3xl text-black h-full">
-          <div className="container mx-auto flex flex-col py-12">
-            {/* Text Document Content. Change code below */}
-            <span ref={operatingAgRef}>
-              <span className="text-center py-5" ref={operatingAgTitleRef}>
-                Operating Agreement
+        <div className="flex flex-col space-y-5">
+          <div className="bg-white rounded-none sm:rounded-3xl text-black h-full">
+            <div className="container mx-auto flex flex-col py-12">
+              {/* Text Document Content. Change code below */}
+              <span ref={operatingAgRef}>
+                <span className="text-center py-5" ref={operatingAgTitleRef}>
+                  Operating Agreement
+                </span>
+                <span
+                  className="leading-6 text-base"
+                  style={{ whiteSpace: "pre-wrap" }}
+                  dangerouslySetInnerHTML={{
+                    __html: compiledOp({ ...fieldValues, ...fillers }),
+                  }}
+                />
               </span>
-              <span
-                className="leading-6 text-base"
-                style={{ whiteSpace: "pre-wrap" }}
-                dangerouslySetInnerHTML={{
-                  __html: compiledOp({ ...fieldValues, ...fillers }),
-                }}
-              />
-            </span>
-            <span ref={subscriptionAgRef}>
-              <span className="text-center py-5" ref={subscriptionAgTitleRef}>
-                Subscription Agreement
+            </div>
+          </div>
+          <div className="bg-white rounded-none sm:rounded-3xl text-black h-full">
+            <div className="container mx-auto flex flex-col py-12">
+              <span ref={subscriptionAgRef}>
+                <span className="text-center py-5" ref={subscriptionAgTitleRef}>
+                  Subscription Agreement
+                </span>
+                <span
+                  className="leading-6 text-base"
+                  style={{ whiteSpace: "pre-wrap" }}
+                  dangerouslySetInnerHTML={{
+                    __html: compiledSub({ ...fieldValues, ...fillers }),
+                  }}
+                />
               </span>
-              <span
-                className="leading-6 text-base"
-                style={{ whiteSpace: "pre-wrap" }}
-                dangerouslySetInnerHTML={{
-                  __html: compiledSub({ ...fieldValues, ...fillers }),
-                }}
-              />
-            </span>
+            </div>
           </div>
         </div>
       </div>
