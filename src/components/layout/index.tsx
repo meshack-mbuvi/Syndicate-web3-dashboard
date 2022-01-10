@@ -107,8 +107,8 @@ const Layout: FC<Props> = ({
         />
         <Header backLink={backLink} show={showNav} navItems={navItems} />
         <div
-          className={`sticky top-18 z-20 ${
-            showCreateProgressBar ? "bg-black z-20 backdrop-filter" : ""
+          className={`sticky top-18 ${
+            showCreateProgressBar ? "bg-black backdrop-filter" : ""
           }`}
         >
           <SyndicateInBetaBanner />
