@@ -198,7 +198,7 @@ const Modal = (props: ModalProps): JSX.Element => {
               ) : null}
               {/* end of modal title */}
 
-              <div className={`${showHeader ? "mx-4 align-middle" : ""}`}>
+              <div className={`max-h-modal overflow-x-scroll no-scroll-bar ${showHeader ? "mx-4 align-middle" : ""}`}>
                 {children}
               </div>
             </div>
