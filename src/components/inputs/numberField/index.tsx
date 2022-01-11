@@ -9,7 +9,7 @@ interface IProps {
   type?: string;
   info?: string;
   control: any;
-  addOn?: string;
+  addOn?: any;
   column?: boolean;
   borderStyles?: string;
   paddingStyles?: string;
@@ -18,6 +18,7 @@ interface IProps {
   textAlignment?: string;
   disabled?: boolean;
   defaultValue?: string;
+  thousandSeparator?: boolean;
 }
 /**
  * An input component with label and icon at the right end
@@ -40,6 +41,7 @@ export const NumberField: React.FC<IProps> = ({
   paddingStyles = "p-4",
   disabled = false,
   defaultValue = "",
+  thousandSeparator = true,
 }) => {
   const {
     field: { onChange, ...rest },
@@ -66,7 +68,7 @@ export const NumberField: React.FC<IProps> = ({
         <NumberFormat
           {...rest}
           disabled={disabled}
-          thousandSeparator={true}
+          thousandSeparator={thousandSeparator}
           allowNegative={false}
           className={`block font-whyte text-base ${textAlignment} bg-transparent ${paddingStyles} rounded-md w-full autocomplete-off ${
             errors?.[`${name}`]?.message

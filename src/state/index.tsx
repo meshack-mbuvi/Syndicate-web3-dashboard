@@ -14,6 +14,7 @@ import erc721TokenSliceReducer from "@/state/erc721token/slice";
 import legalInfoReducer from "@/state/legalInfo";
 import merkleProofSliceReducer from "@/state/merkleProofs/slice";
 import modalsReducer from "@/state/modals";
+import utilityNFTSliceReducer from "@/state/UtilityNFT/slice";
 import web3Reducer from "@/state/wallet/reducer";
 import { isDev } from "@/utils/environment";
 import { Action, configureStore, ThunkAction } from "@reduxjs/toolkit";
@@ -38,6 +39,7 @@ export const store = configureStore({
     erc721MerkleProofSliceReducer,
     erc721AirdropInfoSliceReducer,
     claimedERC721SliceReducer,
+    utilityNFTSliceReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({ thunk: true, serializableCheck: false }),
