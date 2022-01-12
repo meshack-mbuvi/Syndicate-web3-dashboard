@@ -110,6 +110,8 @@ interface InitialState {
   currentTransaction: CurrentTransaction;
   totalTransactionsCount: number;
   loading: boolean;
+  investmentTransactions: ClubTransactions;
+  totalInvestmentTransactionsCount: number;
 }
 
 export const emptyCurrentTransaction: CurrentTransaction = {
@@ -135,4 +137,6 @@ export const initialState: InitialState = {
   currentTransaction: emptyCurrentTransaction,
   totalTransactionsCount: 0,
   loading: true,
+  investmentTransactions: {},
+  totalInvestmentTransactionsCount: 0,
 };
