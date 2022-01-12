@@ -28,6 +28,7 @@ interface ICategoryPill {
   showLoader?: boolean;
   setActiveTransactionHash?: (transactionHashes: Array<string>) => void;
   uncategorisedIcon?: string;
+  disableDropDown?: boolean;
 }
 
 /**
@@ -52,6 +53,7 @@ export const CategoryPill: React.FC<ICategoryPill> = ({
   showLoader = false,
   setActiveTransactionHash,
   uncategorisedIcon,
+  disableDropDown,
 }) => {
   const dispatch = useDispatch();
   const {
@@ -241,12 +243,17 @@ export const CategoryPill: React.FC<ICategoryPill> = ({
     if (readonly && renderedInline && showDropdown) {
       setShowDropdown(false);
     }
-  }, [readonly, renderedInline, showDropdown]);
+    if (disableDropDown) {
+      setShowDropdown(false);
+    }
+  }, [readonly, renderedInline, showDropdown, disableDropDown]);
 
   const closeDropDown = () => {
     if (renderedInline && readonly) {
       setShowDropdown(false);
+      return;
     }
+    setShowDropdown(!disableDropDown);
   };
 
   return (

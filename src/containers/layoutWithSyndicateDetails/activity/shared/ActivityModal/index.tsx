@@ -93,11 +93,12 @@ const ActivityModal: React.FC<IActivityModal> = ({
   const [selectedCategory, setSelectedCategory] = useState<string>("");
   const [showTransactionDetails, setShowTransactionDetails] =
     useState<boolean>(false);
-  const [showDetailSection, setShowDetailSection] = useState<boolean>(false);
-  const [editMode, setEditMode] = useState<boolean>(false);
+  const [showDetailSection, setShowDetailSection] = useState(false);
+  const [editMode, setEditMode] = useState(false);
   const [storedInvestmentDetails, setStoredInvestmentDetails] = useState<
     Record<string, number | string>
   >({});
+  const [disableDropDown, setDisableDropDown] = useState(false);
 
   // we use this function to determine what happens when done button is hit from investmentDetails component
   const handleClick = () => {
@@ -225,6 +226,10 @@ const ActivityModal: React.FC<IActivityModal> = ({
     }
   };
 
+  const toggleDropDown = (value: boolean) => {
+    setDisableDropDown(value);
+  };
+
   return (
     <Modal
       modalStyle={ModalStyle.DARK}
@@ -247,20 +252,26 @@ const ActivityModal: React.FC<IActivityModal> = ({
         <div
           className={`flex rounded-t-2xl items-center flex-col relative py-10 px-5 ${adaptiveBackground} last:rounded-b-2xl`}
         >
-          <div className="mb-8">
-            <CategoryPill
-              category={category}
-              outgoing={
-                transactionInfo?.isOutgoingTransaction
-                  ? transactionInfo.isOutgoingTransaction
-                  : false
-              }
-              readonly={readOnly}
-              changeAdaptiveBackground={changeAdaptiveBackground}
-              renderedInModal={true}
-              refetchTransactions={refetchTransactions}
-              transactionHash={transactionInfo?.transactionHash}
-            />
+          <div
+            onMouseLeave={() => toggleDropDown(true)}
+            onMouseEnter={() => toggleDropDown(false)}
+          >
+            <div className="mb-8">
+              <CategoryPill
+                category={category}
+                outgoing={
+                  transactionInfo?.isOutgoingTransaction
+                    ? transactionInfo.isOutgoingTransaction
+                    : false
+                }
+                readonly={readOnly}
+                changeAdaptiveBackground={changeAdaptiveBackground}
+                renderedInModal={true}
+                refetchTransactions={refetchTransactions}
+                transactionHash={transactionInfo?.transactionHash}
+                disableDropDown={disableDropDown}
+              />
+            </div>
           </div>
           <div className="items-center flex flex-col">
             {transactionInfo && Object.keys(transactionInfo).length && (
