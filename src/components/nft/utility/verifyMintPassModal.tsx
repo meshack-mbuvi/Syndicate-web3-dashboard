@@ -95,6 +95,9 @@ const VerifyMintPassModal: React.FC<IVerifyMintPassModal> = ({
     window.open(openseaLink, "_blank");
   };
 
+  console.log("mintPassClaimed: ", mintPassClaimed)
+  console.log("mintChecked: ", mintChecked)
+
   return (
     <Modal
       modalStyle={ModalStyle.DARK}
@@ -114,22 +117,36 @@ const VerifyMintPassModal: React.FC<IVerifyMintPassModal> = ({
       <div className="mx--4">
         <div className="uppercase h4 mb-8">verify mint pass</div>
         <form onSubmit={handleSubmit(onSubmit)} className="w-full">
-          <NumberField
-            label="Enter mint pass ID"
-            name="mintPassID"
-            type="number"
-            placeholder="e.g. 2846"
-            control={control}
-            addOn={mintPassStatus()}
-            info=""
-            addOnStyles=""
-            thousandSeparator={false}
-          />
+          {
+            !mintChecked 
+            ?         
+            <>
+              <NumberField
+                label="Enter mint pass ID"
+                name="mintPassID"
+                type="number"
+                placeholder="e.g. 2846"
+                control={control}
+                addOn={mintPassStatus()}
+                info=""
+                addOnStyles=""
+                thousandSeparator={false}
+              />
+              <button
+                className="rounded-lg text-base text-black px-4 py-2 mb-2 mt-3 font-medium bg-green"
+              >
+                {"Verify"}
+              </button>
+            </>  
+            : null
+          }
         </form>
         <div className="text-center mt-6">
           {!mintPassClaimed && mintChecked
             ? "This mint pass is unused and available to purchase on the secondary market."
             : !mintPassClaimed && !mintChecked
+            ? null
+            : mintPassClaimed && !mintChecked
             ? null
             : "This mint pass has already been used to claim an NFT."}
         </div>
@@ -161,6 +178,17 @@ const VerifyMintPassModal: React.FC<IVerifyMintPassModal> = ({
             </button>
           </div>
         ) : null}
+        {
+          mintChecked 
+          ?
+            <button
+              onClick={() => {setMintChecked(!mintChecked)}}
+              className="w-full rounded-lg text-base text-black px-4 py-2 mb-2 mt-4 font-medium bg-green"
+            >
+              {"Try another mint pass ID"}
+            </button>
+          : null
+        }
       </div>
     </Modal>
   );

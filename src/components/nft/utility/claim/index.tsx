@@ -20,8 +20,18 @@ const ClaimUtilityNFT: React.FC = () => {
   const { loading: utilityLoading } = useUtilityNFT();
   const [loading, setLoading] = useState<boolean>(true);
   const [invalidMembership, setInvalidMembership] = useState<boolean>(false);
+  const [selectedNFTCards, setSelectedNFTCards] = useState<Array<number>>([])
 
   const { nftAddress } = router.query;
+
+  const handleSelected = (childData) => {
+    if (!(selectedNFTCards.includes(childData))) {
+      setSelectedNFTCards(oldArray => [...oldArray, childData])
+    } else {
+      setSelectedNFTCards(selectedNFTCards.filter(item => item !== childData))
+    }
+    
+  }
 
   useEffect(() => {
     if (
@@ -40,7 +50,7 @@ const ClaimUtilityNFT: React.FC = () => {
   }, [nftAddress, router.isReady, utilityLoading, utilityNFT.membershipToken]);
 
   return (
-    <div className="w-full flex flex-col justify-center items-center  sm:px-8 md:px-25.5">
+    <div className="w-full flex flex-col justify-center items-center sm:px-8 md:px-25.5">
       {utilityLoading ||
       invalidMembership ||
       loading ||
@@ -61,29 +71,34 @@ const ClaimUtilityNFT: React.FC = () => {
             </div>
           </div>
           <div className="w-full">
-            {/* <div className="w-full flex items-center justify-between mb-10">
+            <div className="w-full flex justify-center mb-10">
               <div></div>
-              <div className="flex  items-center">
+              <div className="flex items-center">
                 <div className="flex space-x-8 mr-8">
-                  <div>1 of 11 selected:</div>
-                  <div>Unselect all</div>
+                  <div>{selectedNFTCards.length} of {utilityNFT.totalClaims} selected:</div>
                 </div>
-                <button
-                  className="rounded-lg text-base text-black px-8 py-4 font-medium bg-white"
-                  onClick={() => {}}
+                <button 
+                  className="rounded-lg px-8 py-4 text-white font-medium bg-red-700 mr-8 opacity-95 hover:opacity-100"
+                  onClick={() => {setSelectedNFTCards([])}}
                 >
-                  {"Claim selected (1)"}
+                    Unselect all
+                </button>
+                <button
+                  className="rounded-lg text-base text-black px-8 py-4 font-medium bg-white opacity-95 hover:opacity-100"
+                  /* onClick={() => {}} */
+                >
+                  Claim selected ({selectedNFTCards.length})
                 </button>
                 <span className="mx-8 border-1 border-gray-syn6 h-8"></span>
                 <button
-                  className="rounded-lg text-base text-black px-8 py-4 font-medium bg-green"
-                  onClick={() => {}}
+                  className="rounded-lg text-base text-black px-8 py-4 font-medium bg-green opacity-95 hover:opacity-100"
+                  /* onClick={() => {}} */
                 >
                   {"Claim all"}
                 </button>
               </div>
-            </div> */}
-            <div className="flex gap-5 flex-wrap">
+            </div>
+            <div className="flex gap-5 justify-center flex-wrap">
               {utilityNFT.membershipPasses.map((membershipPass, i) => {
                 return (
                   <div key={i}>
@@ -91,7 +106,9 @@ const ClaimUtilityNFT: React.FC = () => {
                       {...{
                         collectible: membershipPass,
                       }}
-                    ></NFTCard>
+                      collectibleSelected={selectedNFTCards}
+                      selectedCollectibleId={handleSelected}
+                    />
                   </div>
                 );
               })}

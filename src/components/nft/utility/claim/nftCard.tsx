@@ -1,12 +1,10 @@
 import React, { useState } from "react";
 import { ArrowNarrowRightIcon, ExternalLinkIcon } from "@heroicons/react/solid";
-
 import { AppState } from "@/state";
 import { useSelector } from "react-redux";
-
 import ProcessingClaimModal from "./processingClaimModal";
 
-const NFTCard: React.FC<{ collectible: any }> = ({ collectible }) => {
+const NFTCard: React.FC<{ collectible: any, selectedCollectibleId: any, collectibleSelected: any }> = ({ collectible, selectedCollectibleId, collectibleSelected }) => {
   const {
     web3Reducer: {
       web3: { account },
@@ -40,6 +38,11 @@ const NFTCard: React.FC<{ collectible: any }> = ({ collectible }) => {
     setClaimFailed(true);
   };
 
+  const handleSelectClick = (e) => {
+    e.preventDefault();
+    selectedCollectibleId(parseInt(collectible.token_id))
+  }
+
   const claimNFT = async () => {
     setSubmitting(true);
     setShowProcessingClaimModal(true);
@@ -53,7 +56,6 @@ const NFTCard: React.FC<{ collectible: any }> = ({ collectible }) => {
         onTxFail,
         setTransactionHash,
       );
-
       setTransactionHash(transactionHash);
     } catch (error) {
       setSuccessfulClaim(false);
@@ -76,6 +78,7 @@ const NFTCard: React.FC<{ collectible: any }> = ({ collectible }) => {
       onMouseLeave={() => {
         setHoverState(false);
       }}
+      style={(collectibleSelected.includes(parseInt(collectible.token_id))) ? { border: '2px solid #4376FF', boxSizing: 'border-box', borderRadius: '20px' } : null}
     >
       {
         collectible.claimed || successfulClaim ? (
@@ -85,14 +88,14 @@ const NFTCard: React.FC<{ collectible: any }> = ({ collectible }) => {
               <ExternalLinkIcon className="w-5 h-5 text-white inline"></ExternalLinkIcon>
             </div>
           </div>
-        ) : null
-        // <div className="absolute px-3 py-2 bg-white bg-opacity-30 rounded-4xl top-4 left-4">
-        //   Select
-        // </div>
+        ) :
+         <button onClick={handleSelectClick} className="absolute px-3 py-2 bg-white bg-opacity-30 rounded-4xl top-4 left-4">
+           Select
+         </button>
       }
 
       <div
-        style={{
+        style={(collectibleSelected.includes(parseInt(collectible.token_id))) ? {
           backgroundColor: "#232529",
           backgroundImage: `url('${
             collectible.image
@@ -102,6 +105,13 @@ const NFTCard: React.FC<{ collectible: any }> = ({ collectible }) => {
           backgroundSize: "cover",
           backgroundRepeat: "no-repeat",
           backgroundPosition: "center center",
+          borderRadius: '20px'
+        } : {
+          backgroundColor: "#232529",
+          backgroundImage: `url('${collectible.image}')`,
+          backgroundSize: "cover",
+          backgroundRepeat: "no-repeat",
+          backgroundPosition: "center center"
         }}
         className="rounded-t-1.5lg h-88 w-88 bg-gray-syn6"
       ></div>
