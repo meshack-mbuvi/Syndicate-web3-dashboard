@@ -136,7 +136,7 @@ const VerifyMintPassModal: React.FC<IVerifyMintPassModal> = ({
         {!mintPassClaimed && mintChecked ? (
           <div>
             <div className="mt-2 text-center text-sm text-gray-syn4">
-              If purchased on the secondary market, this mint pass could still
+              &#9888; If purchased on the secondary market, this mint pass could still
               be minted by the owner prior to the purchase completing.
             </div>
 

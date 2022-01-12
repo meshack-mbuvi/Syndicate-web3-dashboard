@@ -81,7 +81,7 @@ const UtilityNFT: React.FC = () => {
         ) : null}
         <div className="flex justify-center">
           <button
-            className="text-gray-syn5 text-center underline cursor-pointer"
+            className="text-white text-center underline cursor-pointer"
             onClick={() => setShowVerifyMintPassModal(true)}
           >
             Verify if any Rug Radio mint pass has been claimed
