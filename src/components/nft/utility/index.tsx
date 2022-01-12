@@ -17,7 +17,6 @@ const UtilityNFT: React.FC = () => {
   const router = useRouter();
   const [showVerifyMintPassModal, setShowVerifyMintPassModal] =
     useState<boolean>(false);
-  const [loading, setLoading] = useState<boolean>(true);
   const [invalidMembership, setInvalidMembership] = useState<boolean>(false);
 
   const { nftAddress } = router.query;
@@ -29,7 +28,6 @@ const UtilityNFT: React.FC = () => {
       !utilityLoading &&
       utilityNFT.membershipToken
     ) {
-      setLoading(false);
       if (nftAddress === utilityNFT.membershipToken) {
         setInvalidMembership(false);
       } else {
@@ -58,7 +56,7 @@ const UtilityNFT: React.FC = () => {
             <div className="text-gray-lightManatee text-base leading-6 mb-2">
               Mint price
             </div>
-            {loading || utilityLoading ? (
+            {utilityLoading ? (
               <div>
                 <SkeletonLoader width="full" height="9" margin="mb-3" />
               </div>
@@ -72,7 +70,7 @@ const UtilityNFT: React.FC = () => {
             )}
           </div>
         </div>
-        {loading || utilityLoading ? (
+        {utilityLoading ? (
           <div className="mb-8">
             <SkeletonLoader width="" height="88" margin="mb-3" />
           </div>

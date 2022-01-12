@@ -95,9 +95,6 @@ const VerifyMintPassModal: React.FC<IVerifyMintPassModal> = ({
     window.open(openseaLink, "_blank");
   };
 
-  console.log("mintPassClaimed: ", mintPassClaimed)
-  console.log("mintChecked: ", mintChecked)
-
   return (
     <Modal
       modalStyle={ModalStyle.DARK}

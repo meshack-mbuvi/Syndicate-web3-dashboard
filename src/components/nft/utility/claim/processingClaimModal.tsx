@@ -10,6 +10,7 @@ interface IProcessingClaimModal {
   transactionHash: string;
   claimFailed: boolean;
   submitting: boolean;
+  claimMany?: number;
 }
 
 const ProcessingClaimModal: React.FC<IProcessingClaimModal> = ({
@@ -19,6 +20,7 @@ const ProcessingClaimModal: React.FC<IProcessingClaimModal> = ({
   transactionHash,
   claimFailed,
   submitting,
+  claimMany,
 }) => {
   return (
     <Modal
@@ -42,7 +44,9 @@ const ProcessingClaimModal: React.FC<IProcessingClaimModal> = ({
             <div className="pb-8">
               <Spinner width="w-16" height="h-16" margin="m-0" />
             </div>
-            <div className="pb-6 text-2xl">Claiming NFT</div>
+            <div className="pb-6 text-2xl">
+              {claimMany ? `Claiming ${claimMany} NFTs` : "Claiming NFT"}
+            </div>
             {transactionHash && (
               <div className="pb-8 text-base flex justify-center items-center hover:opacity-80">
                 <EtherscanLink
@@ -68,7 +72,9 @@ const ProcessingClaimModal: React.FC<IProcessingClaimModal> = ({
             </div>
             <div className="mb-4 text-2xl">
               {successfulClaim
-                ? "NFT claimed"
+                ? claimMany
+                  ? `${claimMany} NFTs claimed`
+                  : "NFT claimed"
                 : claimFailed
                 ? "Claim failed"
                 : null}

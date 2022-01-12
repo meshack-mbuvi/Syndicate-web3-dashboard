@@ -6,7 +6,7 @@ export interface Utility {
 export interface MembershipPass {
   token_id: number;
   claimed: boolean;
-  claiminng: boolean;
+  claiming: boolean;
   utility: Utility;
 }
 
@@ -38,5 +38,5 @@ export const initialState = {
   utilityNFT: emptyUtilityNFT,
   MembershipPass: [],
   Utility: {},
-  loading: false,
+  loading: true,
 };

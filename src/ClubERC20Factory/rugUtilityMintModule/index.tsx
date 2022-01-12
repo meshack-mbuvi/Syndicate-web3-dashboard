@@ -51,7 +51,7 @@ export class RugUtilityMintModuleContract {
     tokenIDs: [],
     value: string,
     onTxConfirm: (transactionHash?) => void,
-    onTxReceipt: (receipt?) => void,
+    onTxReceipt: (receipt, tokenIDs) => void,
     onTxFail: (error?) => void,
     setTransactionHash,
   ): Promise<string> =>
@@ -59,7 +59,9 @@ export class RugUtilityMintModuleContract {
       this.contract.methods
         .redeemMany(tokenIDs)
         .send({ from: forAddress, value })
-        .on("receipt", onTxReceipt)
+        .on("receipt", async (receipt) => {
+          onTxReceipt(receipt, tokenIDs);
+        })
         .on("error", onTxFail)
         .on("transactionHash", async (transactionHash: string) => {
           onTxConfirm(transactionHash);
@@ -73,7 +75,7 @@ export class RugUtilityMintModuleContract {
               return reject("Receipt failed");
             }
 
-            onTxReceipt(receipt);
+            onTxReceipt(receipt, tokenIDs);
           }
         }),
     );

@@ -1,10 +1,24 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { ArrowNarrowRightIcon, ExternalLinkIcon } from "@heroicons/react/solid";
 import { AppState } from "@/state";
 import { useSelector } from "react-redux";
 import ProcessingClaimModal from "./processingClaimModal";
 
-const NFTCard: React.FC<{ collectible: any, selectedCollectibleId: any, collectibleSelected: any }> = ({ collectible, selectedCollectibleId, collectibleSelected }) => {
+const NFTCard: React.FC<{
+  collectible: any;
+  handeleSelectedCollectibleId: any;
+  collectibleSelected: boolean;
+  handleClaimedCollectible: any;
+  claiming: boolean;
+  claimed: boolean;
+}> = ({
+  collectible,
+  handeleSelectedCollectibleId,
+  collectibleSelected,
+  handleClaimedCollectible,
+  claiming,
+  claimed,
+}) => {
   const {
     web3Reducer: {
       web3: { account },
@@ -23,6 +37,10 @@ const NFTCard: React.FC<{ collectible: any, selectedCollectibleId: any, collecti
 
   const { RugUtilityMintModule } = syndicateContracts;
 
+  useEffect(() => {
+    setSubmitting(claiming);
+  }, [claiming]);
+
   const onTxConfirm = () => {
     setSubmitting(true);
   };
@@ -30,6 +48,7 @@ const NFTCard: React.FC<{ collectible: any, selectedCollectibleId: any, collecti
   const onTxReceipt = async () => {
     setSubmitting(false);
     setSuccessfulClaim(true);
+    handleClaimedCollectible(collectible.token_id);
   };
 
   const onTxFail = () => {
@@ -40,8 +59,8 @@ const NFTCard: React.FC<{ collectible: any, selectedCollectibleId: any, collecti
 
   const handleSelectClick = (e) => {
     e.preventDefault();
-    selectedCollectibleId(parseInt(collectible.token_id))
-  }
+    handeleSelectedCollectibleId(parseInt(collectible.token_id));
+  };
 
   const claimNFT = async () => {
     setSubmitting(true);
@@ -78,24 +97,32 @@ const NFTCard: React.FC<{ collectible: any, selectedCollectibleId: any, collecti
       onMouseLeave={() => {
         setHoverState(false);
       }}
-      style={(collectibleSelected.includes(parseInt(collectible.token_id))) ? { border: '2px solid #4376FF', boxSizing: 'border-box', borderRadius: '20px' } : null}
     >
-      {
-        collectible.claimed || successfulClaim ? (
-          <div className="absolute w-full top-4 px-4">
-            <div className="px-3 py-2 bg-white bg-opacity-30 rounded-4xl flex justify-between align-middle items-center">
-              <span>Claimed with mint pass #{collectible.token_id}</span>{" "}
-              <ExternalLinkIcon className="w-5 h-5 text-white inline"></ExternalLinkIcon>
-            </div>
+      {claimed || successfulClaim ? (
+        <div className="absolute w-full top-4 px-4">
+          <div className="px-3 py-2 bg-white bg-opacity-30 rounded-4xl flex justify-between align-middle items-center">
+            <span>Claimed with mint pass #{collectible.token_id}</span>{" "}
+            <ExternalLinkIcon className="w-5 h-5 text-white inline"></ExternalLinkIcon>
           </div>
-        ) :
-         <button onClick={handleSelectClick} className="absolute px-3 py-2 bg-white bg-opacity-30 rounded-4xl top-4 left-4">
-           Select
-         </button>
-      }
+        </div>
+      ) : hoverState || collectibleSelected ? (
+        <button
+          onClick={handleSelectClick}
+          className={`absolute px-3 py-2 bg-white bg-opacity-30 rounded-4xl top-4 left-4  cursor pointer flex items-center space-x-2`}
+        >
+          <input
+            type="checkbox"
+            className="bg-transparent rounded focus:ring-offset-0 border-white ring-white h-4 w-4"
+            checked={collectibleSelected}
+            style={{ pointerEvents: "none" }}
+            readOnly
+          />{" "}
+          <span>{collectibleSelected ? "Selected" : "Select"}</span>
+        </button>
+      ) : null}
 
       <div
-        style={(collectibleSelected.includes(parseInt(collectible.token_id))) ? {
+        style={{
           backgroundColor: "#232529",
           backgroundImage: `url('${
             collectible.image
@@ -105,18 +132,11 @@ const NFTCard: React.FC<{ collectible: any, selectedCollectibleId: any, collecti
           backgroundSize: "cover",
           backgroundRepeat: "no-repeat",
           backgroundPosition: "center center",
-          borderRadius: '20px'
-        } : {
-          backgroundColor: "#232529",
-          backgroundImage: `url('${collectible.image}')`,
-          backgroundSize: "cover",
-          backgroundRepeat: "no-repeat",
-          backgroundPosition: "center center"
         }}
         className="rounded-t-1.5lg h-88 w-88 bg-gray-syn6"
       ></div>
       <div className="py-6 px-8 w-88">
-        {!hoverState || collectible.claimed || successfulClaim ? (
+        {!hoverState || claimed || successfulClaim ? (
           <div>
             <div className="h3 mb-2">RugRadio Genesis</div>
             <div className="flex align-middle items-center text-gray-syn4 text-right">
@@ -131,12 +151,12 @@ const NFTCard: React.FC<{ collectible: any, selectedCollectibleId: any, collecti
                   alt=""
                 />
               </span>
-              {collectible.claimed
+              {claimed
                 ? "Generating 1,000 RUG per week"
                 : "Generates 1,000 RUG per week"}
             </div> */}
           </div>
-        ) : !collectible.claimed && !successfulClaim ? (
+        ) : !claimed && !successfulClaim ? (
           <div>
             <button
               className={`w-full rounded-lg text-base text-black px-8 py-4 font-medium ${
@@ -165,7 +185,7 @@ const NFTCard: React.FC<{ collectible: any, selectedCollectibleId: any, collecti
         successfulClaim={successfulClaim}
         transactionHash={transactionHash}
         claimFailed={claimFailed}
-        submitting={submitting}
+        submitting={submitting || claiming}
       ></ProcessingClaimModal>
     </div>
   );

@@ -8,3 +8,14 @@ export const getEthereumTokenPrice = async () => {
 
     return result.data.result.ethusd;
 }
+
+export const getEtherscanTransactionHistory = async (address: string, contractaddress: string) => {
+    const result = await proxyGet('etherscan/api', {
+        module: "account",
+        action: "tokennfttx",
+        address,
+        contractaddress,
+    });
+
+    return result.data.result;
+};

@@ -2,16 +2,14 @@ import { AppState } from "@/state";
 import { useDispatch, useSelector } from "react-redux";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import {
-  setUtilityNFT,
-  setLoading,
-  clearUtilityNFT,
-} from "@/state/UtilityNFT/slice";
+import { setUtilityNFT, clearUtilityNFT } from "@/state/UtilityNFT/slice";
 import { ERC721Contract } from "@/ClubERC20Factory/ERC721Membership";
 import { MembershipPass, Utility } from "@/state/UtilityNFT/types";
 import { getWeiAmount } from "@/utils/conversions";
-import { getEthereumTokenPrice } from "@/utils/api/etherscan";
-import { getOpenseaTokens } from "@/utils/api/opensea";
+import {
+  getEthereumTokenPrice,
+  getEtherscanTransactionHistory,
+} from "@/utils/api/etherscan";
 
 const useUtilityNFT: any = () => {
   const dispatch = useDispatch();
@@ -34,6 +32,11 @@ const useUtilityNFT: any = () => {
   const [ethPrice, setEthPRice] = useState<string>("0");
   const [tokenPrice, setTokenPRice] = useState<number>(0);
   const [membershipToken, setMembershipToken] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(true);
+  const [loadingBasic, setLoadingBasic] = useState<boolean>(false);
+  const [loadingBalance, setLoadingBalance] = useState<boolean>(false);
+  const [loadingMambershipTokens, setMambershipTokens] =
+    useState<boolean>(false);
 
   const getRedemptionToken = async () => {
     setRedemptionToken("");
@@ -46,6 +49,16 @@ const useUtilityNFT: any = () => {
     const response = await RugUtilityMintModule.membership();
     setMembershipToken(response);
     return response;
+  };
+
+  const checkTokenOwnership = async (
+    owner: string,
+    contract: string,
+    tokenId: string,
+  ) => {
+    const ERC721tokenContract = new ERC721Contract(contract as string, web3);
+
+    return owner == (await ERC721tokenContract.ownerOf(tokenId));
   };
 
   const getTokenClaimStatus = async (tokenID) => {
@@ -71,36 +84,52 @@ const useUtilityNFT: any = () => {
   };
 
   const getMembershipTokens = async () => {
-    const { assets } = await getOpenseaTokens(address, redemptionToken);
+    const result = await getEtherscanTransactionHistory(
+      address,
+      redemptionToken,
+    );
+
+    const tokenIds = new Set<string>();
+    result.forEach((el) => {
+      tokenIds.add(el.tokenID);
+    });
 
     let _memberships = new Array();
 
-    if (assets.length > 0) {
-      assets.map(async (item, index) => {
-        const claimed = await getTokenClaimStatus(item.token_id);
+    if (tokenIds.size > 0) {
+      await Promise.all(
+        [...tokenIds].map(async (tokenId) => {
+          // Check ownership on tokenId
+          if (!(await checkTokenOwnership(address, redemptionToken, tokenId)))
+            return;
 
-        if (!claimed) {
-          setClaimAvailable(true);
-        }
+          const claimed = await getTokenClaimStatus(tokenId);
 
-        //TODO: get utility info
-        const utility: Utility = { image: "", role: "" };
+          if (!claimed) {
+            setClaimAvailable(true);
+          }
 
-        const membership = {
-          ...item,
-          claimed,
-          utility,
-        };
+          //TODO: get utility info
+          const utility: Utility = { image: "", role: "" };
 
-        _memberships = [..._memberships, membership];
+          const membership = {
+            token_id: tokenId,
+            claimed,
+            utility,
+          };
 
-        setMembership(_memberships);
-      });
+          _memberships = [..._memberships, membership];
+
+          setMembership(_memberships);
+        }),
+      );
     }
+    setMambershipTokens(false);
   };
 
-  const checkOwnership = async () => {
+  const checkTokenBalance = async () => {
     if (redemptionToken) {
+      setMembershipBalance(0);
       const ERC721tokenContract = new ERC721Contract(
         redemptionToken as string,
         web3,
@@ -109,38 +138,40 @@ const useUtilityNFT: any = () => {
       const balance = parseInt(await ERC721tokenContract.balanceOf(address));
       setMembershipBalance(balance);
     }
-    // get membership tokens owned
+    setLoadingBalance(false);
   };
 
   const fetchBasicDetails = async () => {
     await getRedemptionToken();
     await getMembershipToken();
     await getEthPrice();
+    setLoadingBasic(false);
   };
 
   useEffect(() => {
     if (redemptionToken && membershipToken) {
-      checkOwnership();
+      setLoadingBalance(true);
+      checkTokenBalance();
     }
   }, [redemptionToken, membershipToken]);
 
   useEffect(() => {
-    if (balance > 0) {
+    if (balance > 0 && redemptionToken && address) {
+      setMambershipTokens(true);
       getMembershipTokens();
     } else {
+      setMambershipTokens(false);
       setClaimAvailable(false);
       dispatch(clearUtilityNFT);
+      setMembership([]);
     }
-    dispatch(setLoading(false));
-  }, [balance]);
+  }, [balance, redemptionToken, address]);
 
   useEffect(() => {
     if (router.isReady && address) {
       // fetch data
-      dispatch(setLoading(true));
+      setLoadingBasic(true);
       fetchBasicDetails();
-    } else {
-      dispatch(clearUtilityNFT);
     }
   }, [address, router.isReady]);
 
@@ -163,9 +194,15 @@ const useUtilityNFT: any = () => {
         membershipPasses: memberships,
       }),
     );
-
-    dispatch(setLoading(false));
   };
+
+  useEffect(() => {
+    if (!loadingBasic && !loadingBalance && !loadingMambershipTokens) {
+      setLoading(false);
+    } else {
+      setLoading(true);
+    }
+  }, [loadingBasic, loadingBalance, loadingMambershipTokens]);
 
   useEffect(() => {
     if (ethPrice && tokenPrice && membershipToken) {
@@ -182,7 +219,7 @@ const useUtilityNFT: any = () => {
     membershipToken,
   ]);
 
-  return { loading: utilityNFTSliceReducer.loading };
+  return { loading };
 };
 
 export default useUtilityNFT;

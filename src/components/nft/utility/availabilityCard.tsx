@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useRouter } from "next/router";
 import { showWalletModal } from "@/state/wallet/actions";
@@ -14,6 +14,8 @@ const AvailabilityCard: React.FC = () => {
     utilityNFTSliceReducer: { utilityNFT },
   } = useSelector((state: AppState) => state);
 
+  const [unclaimedNFTs, setUnclaimedNFTs] = useState<number>(0);
+
   const { status } = web3;
   const { nftAddress } = router.query;
 
@@ -28,6 +30,16 @@ const AvailabilityCard: React.FC = () => {
   const goToClaim = () => {
     router.push(`/${nftAddress}/utility/claim`);
   };
+
+  useEffect(() => {
+    if (utilityNFT.membershipPasses.length) {
+      utilityNFT.membershipPasses.map((membershipPass) => {
+        if (!membershipPass.claimed) {
+          setUnclaimedNFTs((item) => item + 1);
+        }
+      });
+    }
+  }, [utilityNFT.membershipPasses]);
 
   return (
     <div className="mb-8">
@@ -59,8 +71,8 @@ const AvailabilityCard: React.FC = () => {
           ) : utilityNFT.claimAvailable ? (
             <div>
               <div className="mb-8 text-center h3">
-                You’re eligible to claim {utilityNFT.totalClaims} NFT
-                {utilityNFT.totalClaims > 1 && "s"}
+                You’re eligible to claim {unclaimedNFTs} NFT
+                {unclaimedNFTs > 1 && "s"}
               </div>
               <button
                 className="w-full rounded-lg text-base text-black px-8 py-4 mb-4 font-medium bg-green"
@@ -72,6 +84,15 @@ const AvailabilityCard: React.FC = () => {
           ) : (
             <div className="h3 text-center mb-2 mt-2">
               You don’t meet the requirements to claim this NFT.
+              {utilityNFT.membershipPasses?.length ? (
+                <button
+                  className=" w-full text-base mt-4 text-gray-syn3 underline"
+                  onClick={goToClaim}
+                >
+                  {" "}
+                  View Claimed{" "}
+                </button>
+              ) : null}
             </div>
           )}
         </div>
