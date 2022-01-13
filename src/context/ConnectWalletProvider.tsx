@@ -270,6 +270,10 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
     setAccount(address);
 
     const newWeb3 = new Web3(provider);
+    // hot fix
+    // increase default timeout to 48hrs (172800 seconds)
+    // this stops transactions from being marked as failed on the UI while still pending on-chain.
+    newWeb3.eth.transactionPollingTimeout = 172800;
     await initializeWeb3(newWeb3);
 
     await setActiveProvider(provider);
