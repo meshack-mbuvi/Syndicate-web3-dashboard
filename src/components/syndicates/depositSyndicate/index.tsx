@@ -123,6 +123,10 @@ const DepositSyndicate: React.FC = () => {
   const [claimBalanceValue, setClaimBalanceValue] = useState("");
   const [claimBalanceDecimalValue, setClaimBalanceDecimalValue] = useState("");
   const [invalidClaim, setInvalidClaim] = useState<boolean>(false);
+  const [transactionTooLong, setTransactionTooLong] = useState<boolean>(false);
+
+  const TRANSACTION_TOO_LONG_MSG =
+    "This transaction is taking a while. You can speed it up by spending more gas via your wallet.";
 
   useEffect(() => {
     // calculate member ownership for the intended deposits
@@ -222,7 +226,12 @@ const DepositSyndicate: React.FC = () => {
   const [transactionRejected, setTransactionRejected] = useState(false);
   const [transactionFailed, setTransactionFailed] = useState(false);
 
-  const onTxFail = () => {
+  const onTxFail = (error) => {
+    // if transaction errored because of a timeout, we do not need to
+    // show the error state.
+    if (error?.message.includes("Be aware that it might still be mined")) {
+      return;
+    }
     setMetamaskConfirmPending(false);
     setSubmitting(false);
     if (claimEnabled) {
@@ -305,16 +314,20 @@ const DepositSyndicate: React.FC = () => {
         amount,
       });
     } catch (error) {
-      const { code } = error;
-      setSubmitting(false);
-      setSuccessfulDeposit(false);
+      const { code, message } = error;
 
       // we don't want to dismiss the modal when the user rejects
       // the transaction.
-      if (code !== 4001) {
-        setDepositFailed(true);
-      } else {
+      if (code === 4001) {
         setTransactionRejected(true);
+        setSubmitting(false);
+        setSuccessfulDeposit(false);
+      } else if (message.includes("Be aware that it might still be mined")) {
+        setTransactionTooLong(true);
+      } else {
+        setDepositFailed(true);
+        setSubmitting(false);
+        setSuccessfulDeposit(false);
       }
       setMetamaskConfirmPending(false);
 
@@ -480,13 +493,18 @@ const DepositSyndicate: React.FC = () => {
           })
           .on("error", (error) => {
             // user clicked reject.
-            setSubmittingAllowanceApproval(false);
-            setMetamaskConfirmPending(false);
-
             if (error?.code === 4001) {
               setTransactionRejected(true);
+              setSubmittingAllowanceApproval(false);
+              setMetamaskConfirmPending(false);
+            } else if (
+              error?.message.includes("Be aware that it might still be mined")
+            ) {
+              setTransactionTooLong(true);
             } else {
               setTransactionFailed(true);
+              setSubmittingAllowanceApproval(false);
+              setMetamaskConfirmPending(false);
             }
 
             // Amplitude logger: Error Approve Allowance
@@ -1321,10 +1339,20 @@ const DepositSyndicate: React.FC = () => {
                       )} ${depositTokenSymbol}`
                     : null}
                 </span>
-                <span className="leading-snug font-whyte text-sm text-gray-syn4 px-5 text-center pb-5">
-                  {submittingAllowanceApproval || submitting
+                <span
+                  className={`leading-snug font-whyte text-sm ${
+                    transactionTooLong
+                      ? "text-yellow-semantic"
+                      : "text-gray-syn4"
+                  } px-5 text-center pb-5`}
+                >
+                  {(submittingAllowanceApproval || submitting) &&
+                  !transactionTooLong
                     ? "This could take anywhere from seconds to hours depending on network congestion and the gas fees you set. You can safely leave this page while you wait."
                     : null}
+                  {(submitting || submittingAllowanceApproval) &&
+                    transactionTooLong &&
+                    TRANSACTION_TOO_LONG_MSG}
                   {metamaskConfirmPending && unlimitedAllowanceSet
                     ? "Deposits are irreversible."
                     : null}
