@@ -1,3 +1,4 @@
+import { amplitudeLogger, Flow } from "@/components/amplitude";
 import { metamaskConstants } from "@/components/syndicates/shared/Constants";
 import { getMetamaskError } from "@/helpers";
 import useUSDCDetails from "@/hooks/useUSDCDetails";
@@ -18,6 +19,10 @@ import React, {
 } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import steps from "./steps";
+import {
+  ERROR_INVESTMENT_CLUB_CREATION,
+  CREATE_INVESTMENT_CLUB,
+} from "@/components/amplitude/eventNames";
 
 type CreateInvestmentClubProviderProps = {
   handleNext: () => void;
@@ -167,6 +172,9 @@ const CreateInvestmentClubProvider: React.FC = ({ children }) => {
         onTxConfirm,
         onTxReceipt,
       );
+      amplitudeLogger(CREATE_INVESTMENT_CLUB, {
+        flow: Flow.CLUB_CREATION,
+      });
     } catch (error) {
       const { code } = error;
       if (code) {
@@ -181,6 +189,10 @@ const CreateInvestmentClubProvider: React.FC = ({ children }) => {
         transactionModal: false,
         errorModal: true,
       }));
+      amplitudeLogger(ERROR_INVESTMENT_CLUB_CREATION, {
+        flow: Flow.CLUB_CREATION,
+        error,
+      });
     }
   };
 

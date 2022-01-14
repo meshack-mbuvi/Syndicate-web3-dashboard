@@ -43,7 +43,6 @@ const AmountToRaise: React.FC = () => {
     e.preventDefault();
     const value = numberInputRemoveCommas(e);
     setAmount(value);
-
     // push amount to the redux store.
     dispatch(setTokenCap(value));
   };

@@ -5,6 +5,8 @@ import React, { Dispatch, FC, SetStateAction, useEffect } from "react";
 import { ExternalLinkIcon, RightArrow } from "src/components/iconWrappers";
 import { setWalletSignature } from "@/state/legalInfo";
 import { useDispatch } from "react-redux";
+import { amplitudeLogger, Flow } from "@/components/amplitude";
+import { CLICKED_HELP_FORM_LEGAL_ENTITY } from "@/components/amplitude/eventNames";
 
 interface ILinkModal {
   setDocSigned: Dispatch<SetStateAction<boolean>>;
@@ -123,6 +125,11 @@ const GenerateDepositLink: FC<ILinkModal> = ({
             href="https://syndicatedao.gitbook.io/syndicate-wiki/web3-investment-clubs/create-a-legal-entity/form-your-legal-entity"
             target="_blank"
             rel="noopener noreferrer"
+            onClick={() => {
+              amplitudeLogger(CLICKED_HELP_FORM_LEGAL_ENTITY, {
+                flow: Flow.LEGAL_ENTITY_FLOW,
+              });
+            }}
           >
             form a legal entity
           </a>{" "}

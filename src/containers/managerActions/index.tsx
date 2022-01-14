@@ -1,3 +1,8 @@
+import { amplitudeLogger, Flow } from "@/components/amplitude";
+import {
+  CLICK_COPY_DEPOSIT_LINK_TO_SHARE,
+  CLICK_GENERATE_LINK_TO_INVITE_MEMBERS,
+} from "@/components/amplitude/eventNames";
 import ErrorBoundary from "@/components/errorBoundary";
 import FadeIn from "@/components/fadeIn/FadeIn";
 import ArrowDown from "@/components/icons/arrowDown";
@@ -143,6 +148,9 @@ const ManagerActions = (): JSX.Element => {
   const updateDepositLinkCopyState = () => {
     setShowDepositLinkCopyState(true);
     setTimeout(() => setShowDepositLinkCopyState(false), 1000);
+    amplitudeLogger(CLICK_COPY_DEPOSIT_LINK_TO_SHARE, {
+      flow: Flow.POST_CLUB_CREATION,
+    });
   };
 
   const showReviewPage = () => {
@@ -276,7 +284,15 @@ const ManagerActions = (): JSX.Element => {
                       <>
                         <button
                           className="bg-green rounded-custom w-full flex items-center justify-center py-4 mb-4"
-                          onClick={() => setShowGenerateLinkModal(true)}
+                          onClick={() => {
+                            setShowGenerateLinkModal(true);
+                            amplitudeLogger(
+                              CLICK_GENERATE_LINK_TO_INVITE_MEMBERS,
+                              {
+                                flow: Flow.POST_CLUB_CREATION,
+                              },
+                            );
+                          }}
                         >
                           <div className="flex-grow-1 mr-3">
                             <CopyLinkIcon color="text-black" />

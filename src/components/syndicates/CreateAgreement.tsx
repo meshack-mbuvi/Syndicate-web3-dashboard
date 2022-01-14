@@ -12,6 +12,8 @@ import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
 import * as yup from "yup";
+import { amplitudeLogger, Flow } from "@/components/amplitude";
+import { CLICKED_HELP_FORM_LEGAL_ENTITY } from "@/components/amplitude/eventNames";
 
 interface FormInputs {
   legalEntityName: string;
@@ -135,6 +137,11 @@ const CreateAgreementComponent: React.FC = () => {
                         target="_blank"
                         rel="noreferrer"
                         style={{ float: "right" }}
+                        onClick={() => {
+                          amplitudeLogger(CLICKED_HELP_FORM_LEGAL_ENTITY, {
+                            flow: Flow.LEGAL_ENTITY_FLOW,
+                          });
+                        }}
                       >
                         Help me form one first
                       </a>

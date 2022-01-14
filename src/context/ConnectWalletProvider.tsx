@@ -29,6 +29,12 @@ import WalletConnectProvider from "@walletconnect/web3-provider";
 import { providers } from "ethers";
 import { SafeAppWeb3Modal } from "@gnosis.pm/safe-apps-web3modal";
 import { setContracts } from "@/state/contracts";
+import { amplitudeLogger, Flow } from "@/components/amplitude";
+import {
+  SUCCESSFUL_WALLET_CONNECT,
+  ERROR_WALLET_CONNECTION,
+} from "@/components/amplitude/eventNames";
+import router from "next/router";
 
 const Web3 = require("web3");
 const debugging = process.env.NEXT_PUBLIC_DEBUG;
@@ -355,11 +361,20 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
 
       setWalletConnecting(false);
       setShowSuccessModal(true);
+      if (router.pathname === "/clubs/create/clubprivatebetainvite") {
+        amplitudeLogger(SUCCESSFUL_WALLET_CONNECT, {
+          flow: Flow.WALLET_CONNECT,
+        });
+      }
     } catch (error) {
       const customError = getErrorMessage();
       setWalletConnecting(false);
       setShowSuccessModal(false);
       dispatch(showErrorModal(customError));
+      amplitudeLogger(ERROR_WALLET_CONNECTION, {
+        flow: Flow.WALLET_CONNECT,
+        error,
+      });
     }
     // set loader to false after process is complete
     setWalletConnecting(false);
