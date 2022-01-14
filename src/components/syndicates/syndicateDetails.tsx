@@ -1,5 +1,6 @@
 import { CopyToClipboardIcon } from "@/components/iconWrappers";
 import { SkeletonLoader } from "@/components/skeletonLoader";
+import { useAccountTokens } from "@/hooks/useAccountTokens";
 import { useIsClubOwner } from "@/hooks/useClubOwner";
 import { AppState } from "@/state";
 import { Status } from "@/state/wallet/types";
@@ -33,6 +34,8 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
     },
   } = useSelector((state: AppState) => state);
 
+  const { accountTokens } = useAccountTokens();
+
   const {
     loading,
     maxTotalDeposits,
@@ -47,7 +50,6 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
     maxTotalSupply,
     depositsEnabled,
     claimEnabled,
-    accountClubTokens,
   } = erc20Token;
   const router = useRouter();
   const [details, setDetails] = useState<ClubDetails[]>([]);
@@ -234,7 +236,7 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
   const isOwner = useIsClubOwner();
   const isActive = !depositsEnabled || claimEnabled;
   const isOwnerOrMember =
-    isOwner || +accountClubTokens || myMerkleProof?.account === account;
+    isOwner || +accountTokens || myMerkleProof?.account === account;
 
   return (
     <div className="flex flex-col relative">

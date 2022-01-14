@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { isEqual } from "lodash";
 import { ERC20Token, initialState } from "./types";
 
 const erc20TokenSlice = createSlice({
@@ -7,7 +8,7 @@ const erc20TokenSlice = createSlice({
   reducers: {
     setERC20TokenDetails(state, action: PayloadAction<ERC20Token>) {
       const erc20Token = action.payload;
-      if (erc20Token.address !== state.erc20Token?.address) {
+      if (!isEqual(erc20Token, state.erc20Token)) {
         state.erc20Token = erc20Token;
       }
     },
@@ -17,21 +18,10 @@ const erc20TokenSlice = createSlice({
     setLoading(state, action: PayloadAction<boolean>) {
       state.erc20Token.loading = action.payload;
     },
-    setMemberPercentShare(state, action) {
-      state.erc20Token.memberPercentShare = action.payload;
-    },
-    setAccountClubTokens(state, action) {
-      state.erc20Token.accountClubTokens = action.payload;
-    },
   },
 });
 
-export const {
-  setERC20TokenDetails,
-  setERC20TokenContract,
-  setLoading,
-  setMemberPercentShare,
-  setAccountClubTokens,
-} = erc20TokenSlice.actions;
+export const { setERC20TokenDetails, setERC20TokenContract, setLoading } =
+  erc20TokenSlice.actions;
 
 export default erc20TokenSlice.reducer;

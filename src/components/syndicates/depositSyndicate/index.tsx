@@ -17,6 +17,7 @@ import { SuccessOrFailureContent } from "@/components/syndicates/depositSyndicat
 import { EtherscanLink } from "@/components/syndicates/shared/EtherscanLink";
 import { setERC20Token } from "@/helpers/erc20TokenDetails";
 import useSyndicateClubInfo from "@/hooks/deposit/useSyndicateClubInfo";
+import { useAccountTokens } from "@/hooks/useAccountTokens";
 import useFetchAirdropInfo from "@/hooks/useAirdropInfo";
 import useFetchMerkleProof from "@/hooks/useMerkleProof";
 import useModal from "@/hooks/useModal";
@@ -25,10 +26,6 @@ import useFetchTokenClaim from "@/hooks/useTokenClaim";
 import useUSDCDetails from "@/hooks/useUSDCDetails";
 import useWindowSize from "@/hooks/useWindowSize";
 import { AppState } from "@/state";
-import {
-  setAccountClubTokens,
-  setMemberPercentShare,
-} from "@/state/erc20token/slice";
 import { Status } from "@/state/wallet/types";
 import { getWeiAmount } from "@/utils/conversions";
 import { isDev } from "@/utils/environment";
@@ -73,10 +70,7 @@ const DepositSyndicate: React.FC = () => {
     claimEnabled,
     symbol,
     totalSupply,
-    accountClubTokens,
-    connectedMemberDeposits,
     loading,
-    memberPercentShare,
     maxMemberCount,
   } = erc20Token;
 
@@ -124,9 +118,15 @@ const DepositSyndicate: React.FC = () => {
   const [claimBalanceDecimalValue, setClaimBalanceDecimalValue] = useState("");
   const [invalidClaim, setInvalidClaim] = useState<boolean>(false);
   const [transactionTooLong, setTransactionTooLong] = useState<boolean>(false);
+  const [newMemberTokens, setNewMemberTokens] = useState(0);
+  const [newOwnershipShare, setNewOwnershipShare] = useState(0);
 
   const TRANSACTION_TOO_LONG_MSG =
     "This transaction is taking a while. You can speed it up by spending more gas via your wallet.";
+
+  //  tokens for the connected wallet account
+  const { accountTokens: connectedMemberDeposits, memberPercentShare } =
+    useAccountTokens();
 
   useEffect(() => {
     // calculate member ownership for the intended deposits
@@ -204,21 +204,18 @@ const DepositSyndicate: React.FC = () => {
       setSuccessfulDeposit(true);
     }
 
-    // Update ownership details as we wait for the same data from the
-    // smart contract. We need this to show it to the user since the contract
-    // calls can take long to return data.
-    const memberPercentShare =
-      ((+accountClubTokens + +memberTokens) * 100) /
-      (+totalSupply + memberTokens);
-    dispatch(setMemberPercentShare(memberPercentShare));
+    const newTotalSupply = +totalSupply + +depositAmount;
+    const newMemberDeposits = +connectedMemberDeposits + +depositAmount;
 
-    dispatch(setAccountClubTokens(+accountClubTokens + +memberTokens));
+    const newMemberShare = (newMemberDeposits * 100) / newTotalSupply;
+
+    setNewMemberTokens(+connectedMemberDeposits + +depositAmount);
+    setNewOwnershipShare(newMemberShare);
 
     dispatch(
       setERC20Token(
         erc20TokenContract,
         syndicateContracts.SingleTokenMintModule,
-        account,
       ),
     );
   };
@@ -645,7 +642,10 @@ const DepositSyndicate: React.FC = () => {
       setClubWideErrors(message);
       setDepositError("");
       setImageSRC("/images/deposit/depositReached.svg");
-    } else if (!(accountClubTokens > 0) && memberCount === maxMemberCount) {
+    } else if (
+      !(+connectedMemberDeposits > 0) &&
+      memberCount === maxMemberCount
+    ) {
       message = `The maximum amount of members (${maxMemberCount}) for this club has been reached.`;
       setClubWideErrors(message);
       setDepositError("");
@@ -679,6 +679,16 @@ const DepositSyndicate: React.FC = () => {
       setDepositError("");
       setClubWideErrors("");
     }
+  };
+
+  const handleCloseSuccessModal = () => {
+    dispatch(
+      setERC20Token(
+        erc20TokenContract,
+        syndicateContracts.SingleTokenMintModule,
+      ),
+    );
+    toggleDepositProcessingModal();
   };
 
   const { width } = useWindowSize();
@@ -773,9 +783,7 @@ const DepositSyndicate: React.FC = () => {
                     copied,
                     memberPercentShare,
                     clubTokenSymbol: symbol,
-                    accountClubTokens: accountClubTokens
-                      ? accountClubTokens.toString()
-                      : "0",
+                    accountClubTokens: connectedMemberDeposits,
                   }}
                 />
               ) : showDepositProcessingModal && depositFailed ? (
@@ -791,9 +799,7 @@ const DepositSyndicate: React.FC = () => {
                     copied,
                     memberPercentShare,
                     clubTokenSymbol: symbol,
-                    accountClubTokens: accountClubTokens
-                      ? accountClubTokens.toString()
-                      : "0",
+                    accountClubTokens: connectedMemberDeposits,
                   }}
                 />
               ) : status === Status.DISCONNECTED ? (
@@ -991,9 +997,7 @@ const DepositSyndicate: React.FC = () => {
                     copied,
                     memberPercentShare,
                     clubTokenSymbol: symbol,
-                    accountClubTokens: accountClubTokens
-                      ? accountClubTokens.toString()
-                      : "0",
+                    accountClubTokens: connectedMemberDeposits,
                   }}
                 />
               ) : status === Status.DISCONNECTED ? (
@@ -1079,11 +1083,7 @@ const DepositSyndicate: React.FC = () => {
               <div className={isHoldingsCardColumn ? "pt-5" : ""}>
                 <HoldingsInfo
                   title="Club tokens (ownership share)"
-                  amount={
-                    accountClubTokens
-                      ? floatedNumberWithCommas(accountClubTokens)
-                      : "0"
-                  }
+                  amount={floatedNumberWithCommas(connectedMemberDeposits)}
                   tokenName={symbol}
                   percentValue={floatedNumberWithCommas(memberPercentShare)}
                   wrap="flex-wrap"
@@ -1098,9 +1098,7 @@ const DepositSyndicate: React.FC = () => {
         {...{
           modalStyle: successfulDeposit ? ModalStyle.SUCCESS : ModalStyle.DARK,
           show: showDepositProcessingModal && !depositFailed,
-          closeModal: () => {
-            toggleDepositProcessingModal();
-          },
+          closeModal: () => handleCloseSuccessModal(),
           customWidth: "w-100",
           customClassName: "pt-8 px-5 pb-5",
           showCloseButton: true,
@@ -1122,10 +1120,9 @@ const DepositSyndicate: React.FC = () => {
             </div>
             <div className="pt-4 px-3 text-center">
               <span className="text-base text-gray-syn4">
-                You now have {floatedNumberWithCommas(accountClubTokens)}{" "}
-                {symbol} which represents a{" "}
-                {floatedNumberWithCommas(memberPercentShare)}% ownership share
-                of this club.
+                You now have {floatedNumberWithCommas(newMemberTokens)} {symbol}{" "}
+                which represents a {floatedNumberWithCommas(newOwnershipShare)}%
+                ownership share of this club.
               </span>
             </div>
             <CopyToClipboard
