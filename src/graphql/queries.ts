@@ -84,75 +84,76 @@ export const MERKLE_AIRDROP_CREATED = gql`
 `;
 
 export const RECENT_TRANSACTIONS = gql`
-    query Query(
-        $syndicateAddress: String!
-        $take: Int
-        $where: Financial_JSONObject
-        $skip: Int
+  query Query(
+    $syndicateAddress: String!
+    $take: Int
+    $where: Financial_JSONObject
+    $skip: Int
+  ) {
+    Financial_recentTransactions(
+      syndicateAddress: $syndicateAddress
+      take: $take
+      where: $where
+      skip: $skip
     ) {
-        Financial_recentTransactions(
-            syndicateAddress: $syndicateAddress
-            take: $take
-            where: $where
-            skip: $skip
-        ) {
-            edges {
-                blockNumber
-                blockTimestamp
-                contractAddress
-                cumulativeGasUsed
-                events {
-                    eventType
-                    id
-                    transactionId
-                }
-                fromAddress
-                gasLimit
-                gasPrice
-                gasUsed
-                hash
-                isError
-                isOutgoingTransaction
-                metadata {
-                    acquisitionDate
-                    annotationMetadata
-                    createdAt
-                    fromLabel
-                    equityStake
-                    memo
-                    postMoneyValuation
-                    preMoneyValuation
-                    roundCategory
-                    sharesAmount
-                    toLabel
-                    tokenAmount
-                    transactionCategory
-                    transactionId
-                    updatedAt
-                    companyName
-                }
-                syndicateAddress
-                toAddress
-                tokenDecimal
-                tokenName
-                tokenLogo
-                tokenSymbol
-                value
-            }
-            totalCount
+      edges {
+        blockNumber
+        blockTimestamp
+        contractAddress
+        cumulativeGasUsed
+        events {
+          eventType
+          id
+          transactionId
         }
+        fromAddress
+        gasLimit
+        gasPrice
+        gasUsed
+        hash
+        isError
+        isOutgoingTransaction
+        metadata {
+          acquisitionDate
+          annotationMetadata
+          companyName
+          createdAt
+          fromLabel
+          fullyDilutedOwnershipStake
+          memo
+          numberShares
+          numberTokens
+          postMoneyValuation
+          preMoneyValuation
+          roundCategory
+          toLabel
+          transactionCategory
+          transactionId
+          updatedAt
+        }
+        syndicateAddress
+        toAddress
+        tokenDecimal
+        tokenName
+        tokenLogo
+        tokenSymbol
+        value
+        tokenDescription
+      }
+      totalCount
     }
+  }
 `;
 
 export const TOKEN_INTERACTIONS = gql`
-    query getTokenInteractions($where: syndicateAddress_filter) {
-        Financial_tokenInteractions(where: $where) {
-            tokenName
-            tokenSymbol
-            tokenDecimal
-            contractAddress
-        }
+  query getTokenInteractions($where: syndicateAddress_filter) {
+    Financial_tokenInteractions(where: $where) {
+      tokenName
+      tokenSymbol
+      tokenDecimal
+      contractAddress
     }
+  }
 `;
 export const CLAIMED_ERC721 = gql`
   query checkERC721Claim($where: TokensClaimed_filter) {

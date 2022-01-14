@@ -59,7 +59,7 @@ export const NumberField: React.FC<IProps> = ({
       }`}
     >
       {label ? (
-        <div className={`${column ? "my-auto w-2/5" : "mb-2"} leading-5`}>
+        <div className={`${column ? "my-auto w-3/5" : "mb-2"} leading-5`}>
           {label}
         </div>
       ) : null}

@@ -18,9 +18,9 @@ interface Details {
   currentInvestmentValue: string;
   investmentDate: string;
   investmentRound: string;
-  ownershipStake: string;
-  shareAmount: string;
-  tokenAmount: string;
+  fullyDilutedOwnershipStake: string;
+  numberShares: string;
+  numberTokens: string;
 }
 
 interface IInvestmentDetailsModal {
@@ -101,9 +101,9 @@ const InvestmentDetailsModal: React.FC<IInvestmentDetailsModal> = ({
     currentInvestmentValue,
     investmentDate,
     investmentRound,
-    ownershipStake,
-    shareAmount,
-    tokenAmount,
+    fullyDilutedOwnershipStake,
+    numberShares,
+    numberTokens,
   } = formValues;
 
   const onSubmit = (values) => {
@@ -121,14 +121,14 @@ const InvestmentDetailsModal: React.FC<IInvestmentDetailsModal> = ({
       ...(values?.investmentDate && {
         acquisitionDate: new Date(values?.investmentDate).toISOString(),
       }),
-      ...(values?.ownershipStake && {
-        equityStake: values?.ownershipStake,
+      ...(values?.fullyDilutedOwnershipStake && {
+        equityStake: values?.fullyDilutedOwnershipStake,
       }),
-      ...(values?.tokenAmount && {
-        tokenAmount: values?.tokenAmount,
+      ...(values?.numberTokens && {
+        tokenAmount: values?.numberTokens,
       }),
-      ...(values?.shareAmount && {
-        sharesAmount: values?.shareAmount,
+      ...(values?.numberShares && {
+        sharesAmount: values?.numberShares,
       }),
       ...(values?.investmentRound && {
         roundCategory: values?.investmentRound,
@@ -214,11 +214,11 @@ const InvestmentDetailsModal: React.FC<IInvestmentDetailsModal> = ({
                   />
                 ) : null}
 
-                {editMode || shareAmount ? (
+                {editMode || numberShares ? (
                   <NumberField
-                    name="shareAmount"
+                    name="numberShares"
                     control={control}
-                    label="Amount of shares"
+                    label="Number of shares"
                     column={true}
                     borderStyles={borderStyles}
                     borderOutline={false}
@@ -228,11 +228,11 @@ const InvestmentDetailsModal: React.FC<IInvestmentDetailsModal> = ({
                     disabled={disabled}
                   />
                 ) : null}
-                {editMode || tokenAmount ? (
+                {editMode || numberTokens ? (
                   <NumberField
-                    name="tokenAmount"
+                    name="numberTokens"
                     control={control}
-                    label="Amount of tokens"
+                    label="Number of tokens"
                     column={true}
                     borderStyles={borderStyles}
                     borderOutline={false}
@@ -241,15 +241,15 @@ const InvestmentDetailsModal: React.FC<IInvestmentDetailsModal> = ({
                     disabled={disabled}
                   />
                 ) : null}
-                {editMode || ownershipStake ? (
+                {editMode || fullyDilutedOwnershipStake ? (
                   <NumberField
-                    name="ownershipStake"
+                    name="fullyDilutedOwnershipStake"
                     control={control}
                     addOn="%"
                     addOnStyles="pr-4"
                     column={true}
                     borderStyles={borderStyles}
-                    label="Ownership stake"
+                    label="Fully diluted ownership stake"
                     borderOutline={false}
                     textAlignment="text-right"
                     placeholder="0"
