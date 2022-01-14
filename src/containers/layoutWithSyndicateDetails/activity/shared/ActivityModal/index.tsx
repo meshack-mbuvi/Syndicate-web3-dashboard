@@ -117,9 +117,9 @@ const ActivityModal: React.FC<IActivityModal> = ({
     setStoredInvestmentDetails({
       companyName: metadata?.companyName,
       investmentRound: metadata?.roundCategory,
-      shareAmount: metadata?.sharesAmount,
-      tokenAmount: metadata?.tokenAmount,
-      ownershipStake: metadata?.equityStake,
+      numberShares: metadata?.numberShares,
+      numberTokens: metadata?.numberTokens,
+      fullyDilutedOwnershipStake: metadata?.fullyDilutedOwnershipStake,
       investmentDate: metadata?.acquisitionDate
         ? new Date(metadata?.acquisitionDate).toISOString()
         : null,

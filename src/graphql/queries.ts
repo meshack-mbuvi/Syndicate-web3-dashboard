@@ -134,10 +134,11 @@ export const RECENT_TRANSACTIONS = gql`
         syndicateAddress
         toAddress
         tokenDecimal
-        tokenLogo
         tokenName
+        tokenLogo
         tokenSymbol
         value
+        tokenDescription
       }
       totalCount
     }
