@@ -19,16 +19,13 @@ export const ERC20TokenDefaultState = {
   totalSupply: 0,
   tokenDecimals: 18, //default to 18
   totalDeposits: 0,
-  connectedMemberDeposits: "0.0",
   symbol: "",
   startTime: 0,
   endTime: 0,
   memberCount: 0,
   maxTotalDeposits: 25000000,
-  accountClubTokens: 0,
   isOwner: false,
   loading: false,
-  memberPercentShare: 0,
   maxMemberCount: 0,
   maxTotalSupply: 0,
   requiredToken: "",
@@ -42,7 +39,6 @@ export const getERC20TokenDetails = async (
   ERC20tokenContract,
   SingleTokenMintModule: SingleTokenMintModuleContract,
   mintPolicy: MintPolicyContract,
-  account: string,
 ): Promise<ERC20Token> => {
   if (ERC20tokenContract) {
     try {
@@ -57,25 +53,17 @@ export const getERC20TokenDetails = async (
         startTime,
       } = await mintPolicy?.getSyndicateValues(address);
       // TODO: Multicall :-)
-      const [
-        name,
-        owner,
-        tokenDecimals,
-        depositToken,
-        symbol,
-        memberCount,
-        connectedAccountTokenBalance,
-      ] = await Promise.all([
-        ERC20tokenContract.name(),
-        ERC20tokenContract.owner(),
-        ERC20tokenContract.decimals(),
-        SingleTokenMintModule?.depositToken(
-          ERC20tokenContract.clubERC20Contract._address,
-        ),
-        ERC20tokenContract.symbol(),
-        ERC20tokenContract.memberCount(),
-        ERC20tokenContract.balanceOf(account),
-      ]);
+      const [name, owner, tokenDecimals, depositToken, symbol, memberCount] =
+        await Promise.all([
+          ERC20tokenContract.name(),
+          ERC20tokenContract.owner(),
+          ERC20tokenContract.decimals(),
+          SingleTokenMintModule?.depositToken(
+            ERC20tokenContract.clubERC20Contract._address,
+          ),
+          ERC20tokenContract.symbol(),
+          ERC20tokenContract.memberCount(),
+        ]);
       const MERKLE_DISTRIBUTOR_MODULE =
         process.env.NEXT_PUBLIC_MERKLE_DISTRIBUTOR_MODULE;
 
@@ -83,13 +71,6 @@ export const getERC20TokenDetails = async (
         getWeiAmount(wei, tokenDecimals, false),
       );
       const totalDeposits = parseFloat(totalSupply);
-
-      const accountClubTokens = getWeiAmount(
-        connectedAccountTokenBalance,
-        tokenDecimals,
-        false,
-      );
-      const memberPercentShare = (+accountClubTokens * 100) / +totalSupply;
 
       const claimEnabled = await mintPolicy.isModuleAllowed(
         ERC20tokenContract.clubERC20Contract._address,
@@ -112,9 +93,7 @@ export const getERC20TokenDetails = async (
         totalSupply,
         depositToken,
         symbol,
-        accountClubTokens,
         memberCount,
-        memberPercentShare,
         loading: false,
         maxMemberCount,
         maxTotalSupply: getWeiAmount(maxTotalSupply, tokenDecimals, false),
@@ -123,7 +102,6 @@ export const getERC20TokenDetails = async (
         claimEnabled,
         requiredTokenMinBalance,
         maxTotalDeposits: getWeiAmount(maxTotalSupply, tokenDecimals, false), //should be updated if token prices is not 1:1
-        connectedMemberDeposits: accountClubTokens,
         startTime: parseInt(startTime, 10) * 1000, // time is in seconds. need to change to milliseconds
         endTime: parseInt(endTime, 10) * 1000, // time is in seconds. need to change to milliseconds
       };
@@ -134,11 +112,7 @@ export const getERC20TokenDetails = async (
 };
 
 export const setERC20Token =
-  (
-    ERC20tokenContract,
-    SingleTokenMintModule: SingleTokenMintModuleContract,
-    account: string,
-  ) =>
+  (ERC20tokenContract, SingleTokenMintModule: SingleTokenMintModuleContract) =>
   async (dispatch, getState: () => AppState): Promise<void> => {
     const {
       initializeContractsReducer: {
@@ -153,7 +127,6 @@ export const setERC20Token =
         ERC20tokenContract,
         SingleTokenMintModule,
         mintPolicy,
-        account,
       );
       dispatch(setERC20TokenDetails(erc20Token));
       dispatch(setLoading(false));

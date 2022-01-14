@@ -13,10 +13,7 @@ export interface ERC20Token {
   endTime: number;
   memberCount: number;
   maxTotalDeposits: number;
-  accountClubTokens: number;
-  connectedMemberDeposits: string | number;
   loading: boolean;
-  memberPercentShare: number;
   maxMemberCount: number;
   maxTotalSupply: number;
   requiredToken;
@@ -35,15 +32,12 @@ export const initialState: { erc20Token: ERC20Token; erc20TokenContract: any } =
       totalSupply: 0,
       tokenDecimals: 18, //default to 18
       totalDeposits: 0,
-      connectedMemberDeposits: "0.0",
       symbol: "",
       startTime: 0,
       endTime: 0,
       memberCount: 0,
       maxTotalDeposits: 25000000,
-      accountClubTokens: 0,
       loading: false,
-      memberPercentShare: 0,
       maxMemberCount: 0,
       maxTotalSupply: 0,
       requiredToken: "",

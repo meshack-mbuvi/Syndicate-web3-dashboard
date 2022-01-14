@@ -14,13 +14,13 @@ import { numberWithCommas } from "@/utils/formattedNumbers";
 // See this issue to find out why yup is imported this way
 // https://github.com/react-hook-form/resolvers/issues/271
 import { yupResolver } from "@hookform/resolvers/yup";
-import ArrowDown from "/public/images/arrowDown.svg";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import * as yup from "yup";
+import ArrowDown from "/public/images/arrowDown.svg";
 
 interface FormInputs {
   memberName: string;
@@ -77,7 +77,6 @@ const LegalAgreement: React.FC = () => {
         setERC20Token(
           clubERC20tokenContract,
           syndicateContracts.SingleTokenMintModule,
-          account,
         ),
       );
 
@@ -151,7 +150,7 @@ const LegalAgreement: React.FC = () => {
               addOn={depositTokenSymbol}
               control={control}
               info="Total amount you intend to deposit"
-              addOnStyles=''
+              addOnStyles=""
             />
 
             <TextField

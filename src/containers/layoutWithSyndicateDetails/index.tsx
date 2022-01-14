@@ -7,6 +7,7 @@ import { EtherscanLink } from "@/components/syndicates/shared/EtherscanLink";
 import Head from "@/components/syndicates/shared/HeaderTitle";
 import SyndicateDetails from "@/components/syndicates/syndicateDetails";
 import { setERC20Token } from "@/helpers/erc20TokenDetails";
+import { useAccountTokens } from "@/hooks/useAccountTokens";
 import { useIsClubOwner } from "@/hooks/useClubOwner";
 import useClubTokenMembers from "@/hooks/useClubTokenMembers";
 import useTransactions from "@/hooks/useTransactions";
@@ -38,9 +39,12 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
       web3: { account, web3, status },
     },
     erc20TokenSliceReducer: {
-      erc20Token: { owner, loading, name, depositsEnabled, accountClubTokens },
+      erc20Token: { owner, loading, name, depositsEnabled },
     },
   } = useSelector((state: AppState) => state);
+
+  //  tokens for the connected wallet account
+  const { accountTokens } = useAccountTokens();
 
   // fetch club transactions
   useTransactions();
@@ -133,7 +137,6 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
         setERC20Token(
           clubERC20tokenContract,
           syndicateContracts.SingleTokenMintModule,
-          account,
         ),
       );
 
@@ -176,7 +179,7 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
 
   const isActive = !depositsEnabled;
   const isOwnerOrMember =
-    isOwner || +accountClubTokens || myMerkleProof?.account === account;
+    isOwner || +accountTokens || myMerkleProof?.account === account;
   const renderOnDisconnect =
     status !== Status.DISCONNECTED && !(isActive && !isOwnerOrMember);
 

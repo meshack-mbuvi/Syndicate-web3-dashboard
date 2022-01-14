@@ -51,7 +51,6 @@ const GettingStarted: React.FC = () => {
         setERC20Token(
           clubERC20tokenContract,
           syndicateContracts.SingleTokenMintModule,
-          account,
         ),
       );
 
