@@ -16,44 +16,44 @@ const useFetchERC721PublicClaim: any = () => {
     web3Reducer: {
       web3: { account, web3 },
     },
-    erc721MerkleProofSliceReducer: { erc721MerkleProof },
     erc721TokenSliceReducer: { erc721Token },
     initializeContractsReducer: { syndicateContracts },
   } = useSelector((state: AppState) => state);
 
-  const { address: nftAddress } = erc721Token;
+  const { address: nftAddress, publicUtilityClaimEnabled } = erc721Token;
 
   const [loading, setLoading] = useState(false);
   const [hasMinted, setHasMinted] = useState<boolean>(false);
 
   const getClaim = async () => {
     setLoading(true);
+    setHasMinted(false);
     const { PublicOnePerAddressModule } = syndicateContracts;
-    let hasMinted = await PublicOnePerAddressModule.hasMinted(
+    let _hasMinted = await PublicOnePerAddressModule.hasMinted(
       nftAddress,
       account,
     );
-    if (!hasMinted) {
+    if (!_hasMinted) {
       const ERC721tokenContract = new ERC721Contract(
         nftAddress as string,
         web3,
       );
-      hasMinted = parseInt(await ERC721tokenContract.balanceOf(account)) > 0;
+      _hasMinted = parseInt(await ERC721tokenContract.balanceOf(account)) > 0;
     }
-    setHasMinted(hasMinted);
+    setHasMinted(_hasMinted);
     setLoading(false);
   };
 
   useEffect(() => {
-    if (erc721MerkleProof.accountIndex >= 0 && account && nftAddress) {
+    if (account && nftAddress) {
       getClaim();
     }
-  }, [erc721MerkleProof.accountIndex, account, nftAddress]);
+  }, [account, nftAddress]);
 
   useEffect(() => {
     dispatch(setLoadingERC721Claimed(true));
 
-    if (hasMinted) {
+    if (hasMinted && !publicUtilityClaimEnabled) {
       dispatch(
         setERC721Claimed({
           claimant: account,
@@ -69,7 +69,7 @@ const useFetchERC721PublicClaim: any = () => {
     }
 
     dispatch(setLoadingERC721Claimed(false));
-  }, [loading, hasMinted]);
+  }, [loading, hasMinted, publicUtilityClaimEnabled]);
 
   return { loading, getClaim };
 };

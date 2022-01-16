@@ -231,6 +231,10 @@
     @apply block text-white text-lg lg:text-xl;
   }
 
+  .h1 {
+    @apply block text-white text-5xl;
+  }
+
   .bottom-triangle-blue::after {
     border-left: 1rem solid transparent;
     border-right: 1rem solid transparent;
