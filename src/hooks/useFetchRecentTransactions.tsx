@@ -2,6 +2,9 @@ import { useQuery } from "@apollo/client";
 import { RECENT_TRANSACTIONS } from "@/graphql/queries";
 import { useSelector } from "react-redux";
 import { AppState } from "@/state";
+import * as CryptoJS from 'crypto-js';
+
+const SECRET_KEY = process.env.ENCRYPTION_SECRET_KEY;
 
 export const useFetchRecentTransactions: any = (
   skip = 0,
@@ -17,7 +20,7 @@ export const useFetchRecentTransactions: any = (
 
   return useQuery(RECENT_TRANSACTIONS, {
     variables: {
-      syndicateAddress: erc20Token.owner.toString(),
+      syndicateAddress: CryptoJS.AES.encrypt(erc20Token.owner.toString(), SECRET_KEY), // encrypted input
       where,
       take: 10,
       skip,
