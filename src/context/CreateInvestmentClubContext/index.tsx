@@ -155,7 +155,7 @@ const CreateInvestmentClubProvider: React.FC = ({ children }) => {
     try {
       setProcessingTitle("Confirm in wallet");
       setProcessingDescription(
-        "Confirm the creation of this investment club in your wallet",
+        "Confirm the creation of this investment club in your wallet.",
       );
       setShowModal(() => ({
         waitingConfirmationModal: true,
