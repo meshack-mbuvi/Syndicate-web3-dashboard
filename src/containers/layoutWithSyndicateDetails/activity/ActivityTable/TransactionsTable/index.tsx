@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from "react";
+import { FC, useState } from "react";
 import moment from "moment";
 import Image from "next/image";
 import { useSelector, useDispatch } from "react-redux";
@@ -63,7 +63,7 @@ const TransactionsTable: FC<ITransactionsTableProps> = ({
 
   // table functionality
   const [inlineCategorising, setInlineCategorising] = useState<boolean>(false);
-  const [showAnnotationsModal, setShowAnnotationsModal] = useModal();
+  const [showAnnotationsModal, toggleShowAnnotationsModal] = useModal();
   const [checkboxActive, setCheckboxActive] = useState<boolean>(false);
   const [showNote, setShowNote] = useState<boolean>(false);
 
@@ -198,7 +198,7 @@ const TransactionsTable: FC<ITransactionsTableProps> = ({
                         blockTimestamp,
                       };
                       dispatch(setCurrentTransaction(selectedTransactionData));
-                      setShowAnnotationsModal();
+                      toggleShowAnnotationsModal();
                       if (metadata?.memo) {
                         setShowNote(true);
                       }
@@ -286,6 +286,7 @@ const TransactionsTable: FC<ITransactionsTableProps> = ({
                       address={isOutgoingTransaction ? toAddress : fromAddress}
                       category={metadata?.transactionCategory}
                       companyName={metadata?.companyName}
+                      round={metadata?.roundCategory}
                     />
                   </div>
 
@@ -355,7 +356,7 @@ const TransactionsTable: FC<ITransactionsTableProps> = ({
           closeModal={() => {
             setTimeout(() => dispatch(clearCurrentTransaction()), 400); // Quick hack. clearCurrentTransaction is dispatched before Modal is closed hence it appears like second modal pops up before closing modal.
             setShowNote(false);
-            setShowAnnotationsModal();
+            toggleShowAnnotationsModal();
           }}
           refetchTransactions={refetchTransactions}
           showNote={showNote}

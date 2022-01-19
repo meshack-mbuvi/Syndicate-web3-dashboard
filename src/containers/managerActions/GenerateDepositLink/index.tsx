@@ -1,29 +1,132 @@
 import Modal, { ModalStyle } from "@/components/modal";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import React, { Dispatch, FC, SetStateAction, useEffect } from "react";
+import React, {
+  Dispatch,
+  FC,
+  SetStateAction,
+  useEffect,
+  useState,
+} from "react";
 import { ExternalLinkIcon, RightArrow } from "src/components/iconWrappers";
 import { setWalletSignature } from "@/state/legalInfo";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import CopyLink from "@/components/shared/CopyLink";
+import { CopyLinkIcon } from "src/components/iconWrappers";
+import ArrowDown from "@/components/icons/arrowDown";
+import { AppState } from "@/state";
+import { setDepositReadyInfo } from "@/state/legalInfo";
 import { amplitudeLogger, Flow } from "@/components/amplitude";
 import { CLICKED_HELP_FORM_LEGAL_ENTITY } from "@/components/amplitude/eventNames";
+import { useDemoMode } from "@/hooks/useDemoMode";
+
+interface ILinK {
+  setShowGenerateLinkModal: Dispatch<SetStateAction<boolean>>;
+  showGenerateLinkModal: boolean;
+  updateDepositLinkCopyState: () => void;
+  showDepositLinkCopyState: boolean;
+  syndicateCreationFailed?: boolean;
+  showConfettiSuccess?: boolean;
+  creatingSyndicate?: boolean;
+  syndicateSuccessfullyCreated?: boolean;
+}
+
+const GenerateDepositLink: FC<ILinK> = ({
+  setShowGenerateLinkModal,
+  showGenerateLinkModal,
+  updateDepositLinkCopyState,
+  showDepositLinkCopyState,
+  syndicateCreationFailed,
+  showConfettiSuccess,
+  creatingSyndicate,
+  syndicateSuccessfullyCreated,
+}) => {
+  const [copyLinkCTA, setCopyLinkCTA] = useState("border-gray-syn6");
+  const {
+    legalInfoReducer: {
+      depositReadyInfo: { depositLink, adminSigned },
+    },
+  } = useSelector((state: AppState) => state);
+
+  const isDemoMode = useDemoMode();
+
+  const showReviewPage = () => {
+    // TODO: navigate to the review page from here.
+    return;
+  };
+
+  return (
+    <>
+      {!adminSigned && (
+        <>
+          <button
+            className="bg-green rounded-custom w-full flex items-center justify-center py-4 mb-4"
+            onClick={() => setShowGenerateLinkModal(true)}
+            disabled={isDemoMode}
+          >
+            <div className="flex-grow-1 mr-3">
+              <CopyLinkIcon color="text-black" />
+            </div>
+            <p className="text-black pr-1 whitespace-nowrap font-whyte-medium">
+              Generate link to invite members
+            </p>
+          </button>
+          <div className="flex justify-center w-full mb-4">
+            <ArrowDown />
+          </div>
+        </>
+      )}
+      {syndicateCreationFailed ? (
+        <button
+          className="bg-white hover:bg-opacity-90 py-4 w-full rounded-custom text-black"
+          onClick={showReviewPage}
+        >
+          Try again
+        </button>
+      ) : !showConfettiSuccess ? (
+        <CopyLink
+          link={depositLink}
+          updateCopyState={updateDepositLinkCopyState}
+          showCopiedState={showDepositLinkCopyState}
+          creatingSyndicate={!adminSigned ? true : creatingSyndicate}
+          syndicateSuccessfullyCreated={syndicateSuccessfullyCreated}
+          showConfettiSuccess={showConfettiSuccess}
+          borderColor={copyLinkCTA}
+        />
+      ) : null}
+      <DepositLinkModal
+        setShowGenerateLinkModal={setShowGenerateLinkModal}
+        showGenerateLinkModal={showGenerateLinkModal}
+        setCopyLinkCTA={setCopyLinkCTA}
+      />
+    </>
+  );
+};
 
 interface ILinkModal {
-  setDocSigned: Dispatch<SetStateAction<boolean>>;
   setShowGenerateLinkModal: Dispatch<SetStateAction<boolean>>;
   showGenerateLinkModal: boolean;
   setCopyLinkCTA: Dispatch<SetStateAction<string>>;
 }
 
-const GenerateDepositLink: FC<ILinkModal> = ({
-  setDocSigned,
+const DepositLinkModal: FC<ILinkModal> = ({
   setShowGenerateLinkModal,
   showGenerateLinkModal,
   setCopyLinkCTA,
 }) => {
+  const {
+    legalInfoReducer: {
+      depositReadyInfo: { depositLink },
+    },
+  } = useSelector((state: AppState) => state);
+
   const router = useRouter();
   const dispatch = useDispatch();
   const { clubAddress } = router.query;
+
+  const setDocSigned = () => {
+    dispatch(setDepositReadyInfo({ adminSigned: true, depositLink }));
+  };
 
   const startDocumentSigning = (option: string) => {
     if (option === "no") {
@@ -36,6 +139,7 @@ const GenerateDepositLink: FC<ILinkModal> = ({
         }),
       );
       setShowGenerateLinkModal(false);
+      setDocSigned();
       // change link component border to green momentarily as a call to action
       setCopyLinkCTA("border-green-semantic");
       setTimeout(() => {
@@ -49,7 +153,7 @@ const GenerateDepositLink: FC<ILinkModal> = ({
   useEffect(() => {
     const legalData = JSON.parse(localStorage.getItem("legal") || "{}");
     if (legalData[clubAddress as string]) {
-      setDocSigned(true);
+      setDocSigned();
     }
   }, [showGenerateLinkModal]);
 

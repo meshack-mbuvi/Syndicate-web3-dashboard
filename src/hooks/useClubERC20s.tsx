@@ -34,6 +34,8 @@ const useClubERC20s = () => {
         ownerAddress: account.toLocaleLowerCase(),
       },
     },
+    // Avoid unnecessary calls when account is not defined
+    skip: !account,
   });
 
   const {
@@ -46,6 +48,8 @@ const useClubERC20s = () => {
         memberAddress: account.toLocaleLowerCase(),
       },
     },
+    // Avoid unnecessary calls when account is not defined
+    skip: !account,
   });
 
   useEffect(() => {

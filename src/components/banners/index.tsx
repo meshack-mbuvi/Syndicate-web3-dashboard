@@ -5,7 +5,7 @@ import { SyndicateInBetaBannerText } from "src/components/syndicates/shared/Cons
 export const SyndicateInBetaBanner: React.FC = () => {
   const router = useRouter();
   const showCreateProgressBar =
-    router.pathname === "/clubs/create/clubprivatebetainvite" ||
+    router.pathname === "/clubs/create" ||
     router.pathname.includes("/legal/sign");
   return (
     <div

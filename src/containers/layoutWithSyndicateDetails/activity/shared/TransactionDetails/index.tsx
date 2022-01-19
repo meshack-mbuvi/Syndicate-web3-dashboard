@@ -5,7 +5,10 @@ import { formatAddress } from "@/utils/formatAddress";
 import { AppState } from "@/state";
 import { useSelector } from "react-redux";
 import GradientAvatar from "@/components/syndicates/portfolioAndDiscover/portfolio/GradientAvatar";
-import { TransactionCategory } from "@/state/erc20transactions/types";
+import {
+  RoundCategory,
+  TransactionCategory,
+} from "@/state/erc20transactions/types";
 
 type Transaction = "outgoing" | "incoming";
 
@@ -20,6 +23,7 @@ interface ITransactionDetails {
   onModal?: boolean;
   category: TransactionCategory;
   companyName?: string;
+  round: RoundCategory;
 }
 
 const TransactionDetails: React.FC<ITransactionDetails> = ({
@@ -33,6 +37,7 @@ const TransactionDetails: React.FC<ITransactionDetails> = ({
   onModal = false,
   category,
   companyName,
+  round,
 }) => {
   const {
     web3Reducer: {
@@ -77,36 +82,59 @@ const TransactionDetails: React.FC<ITransactionDetails> = ({
   };
 
   return (
-    <div className="flex items-center">
-      {tokenLogo ? (
-        <Image src={tokenLogo} height={24} width={24} />
-      ) : (
-        <GradientAvatar name={tokenName} size={"w-6 h-6"} />
-      )}
-      <div className={`flex ml-2 ${onModal ? "text-2xl" : "text-base"}`}>
-        {addGrayToDecimalInput(floatedNumberWithCommas(amount))}&nbsp;
-        {tokenSymbol}
-      </div>
-      <p className={`text-gray-syn4 ${onModal ? "mx-4" : "mx-3"}`}>
-        {getTransactionText(transactionType, onModal)}
-      </p>
-      {!onModal && transactionType === "incoming" && isTransactionAnnotated ? (
-        <>
-          {AddressIsMember(address) && (
-            <div className="mx-2 flex items-center">
-              <Image src={"/images/User_Icon.svg"} height={24} width={24} />
-            </div>
+    <>
+      {category !== "OFF_CHAIN_INVESTMENT" ? (
+        <div className="flex items-center">
+          {tokenLogo ? (
+            <Image src={tokenLogo} height={24} width={24} />
+          ) : (
+            <GradientAvatar name={tokenName} size={"w-6 h-6"} />
           )}
-        </>
-      ) : null}
-      <p className={`${onModal ? "text-2xl" : "text-base"}`}>
-        {companyName
-          ? companyName
-          : !web3.utils.isAddress(address)
-          ? address
-          : formatAddress(address, 6, 4)}
-      </p>
-    </div>
+          <div className={`flex ml-2 ${onModal ? "text-2xl" : "text-base"}`}>
+            {addGrayToDecimalInput(floatedNumberWithCommas(amount))}&nbsp;
+            {tokenSymbol}
+          </div>
+          <p className={`text-gray-syn4 ${onModal ? "mx-4" : "mx-3"}`}>
+            {getTransactionText(transactionType, onModal)}
+          </p>
+          {!onModal &&
+          transactionType === "incoming" &&
+          isTransactionAnnotated ? (
+            <>
+              {AddressIsMember(address) && (
+                <div className="mx-2 flex items-center">
+                  <Image src={"/images/User_Icon.svg"} height={24} width={24} />
+                </div>
+              )}
+            </>
+          ) : null}
+          <p className={`${onModal ? "text-2xl" : "text-base"}`}>
+            {companyName
+              ? companyName
+              : !web3.utils.isAddress(address)
+              ? address
+              : formatAddress(address, 6, 4)}
+          </p>
+        </div>
+      ) : (
+        <div className="flex flex-col items-center">
+          <div className="flex justify-center">
+            <p className="text-xl">
+              {companyName
+                ? companyName
+                : !web3.utils.isAddress(address)
+                ? address
+                : formatAddress(address, 6, 4)}
+            </p>
+            <p className="text-gray-syn4 text-xl ml-2">{round}</p>
+          </div>
+          <div className={`flex mt-4 text-4.5xl`}>
+            {addGrayToDecimalInput(floatedNumberWithCommas(amount))}&nbsp;
+            {tokenSymbol}
+          </div>
+        </div>
+      )}
+    </>
   );
 };
 

@@ -37,7 +37,7 @@ const schema = yup.object({
     .string()
     .email("Invalid email address")
     .when("counselName", {
-      is: (counselName) => counselName.trim().length > 0,
+      is: (counselName) => counselName?.trim().length > 0,
       then: yup
         .string()
         .email("Invalid email address")
@@ -76,7 +76,7 @@ const CreateAgreementComponent: React.FC = () => {
     mode: "onChange",
   });
 
-  const { isSeriesLLC } = watch();
+  const { isSeriesLLC, adminName, location, counselName } = watch();
   const dispatch = useDispatch();
 
   const router = useRouter();
@@ -177,7 +177,7 @@ const CreateAgreementComponent: React.FC = () => {
                 info="This is the person who will pay expenses and perform admin
                     functions for the club, such as reviewing member
                     documentation and coordinating tax reporting."
-                showWarning={true}
+                showWarning={adminName?.trim().split(" ").length < 2}
                 warningText="Admin name should have first and last names"
               />
 
@@ -194,9 +194,8 @@ const CreateAgreementComponent: React.FC = () => {
                     comfortable with.
                   </span>
                 }
-                showWarning={true}
+                showWarning={location?.trim().split(",").length < 2}
                 warningText="Location should be formatted as City, State"
-                checkType=","
               />
 
               <NumberField
@@ -224,7 +223,7 @@ const CreateAgreementComponent: React.FC = () => {
                   cornerHint={{ text: "If applicable" }}
                   control={control}
                   placeholder="Name of counsel"
-                  showWarning={true}
+                  showWarning={counselName?.trim().split(" ").length < 2}
                   warningText="Counsel name should have first and last names"
                 />
 

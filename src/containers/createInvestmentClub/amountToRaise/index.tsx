@@ -11,6 +11,7 @@ import { useCreateInvestmentClubContext } from "@/context/CreateInvestmentClubCo
 import { setTokenCap } from "@/state/createInvestmentClub/slice";
 import { AppState } from "@/state";
 import Fade from "@/components/Fade";
+import Modal, { ModalStyle } from "@/components/modal";
 
 const AmountToRaise: React.FC = () => {
   const {
@@ -19,6 +20,8 @@ const AmountToRaise: React.FC = () => {
 
   const [error, setError] = useState<string | React.ReactNode>("");
   const [amount, setAmount] = useState<string>(tokenCap);
+  const [showDisclaimerModal, setShowDisclaimerModal] = useState(false);
+
   const dispatch = useDispatch();
 
   const { depositTokenSymbol, depositTokenLogo } = useUSDCDetails();
@@ -59,27 +62,74 @@ const AmountToRaise: React.FC = () => {
   }, [amount]);
 
   return (
-    <Fade delay={500}>
-      <div className="flex w-full pb-6">
-        <AdvancedInputField
-          {...{
-            value: numberWithCommas(amount.replace(/^0{2,}/, "0")),
-            label: "How much are you raising?",
-            onChange: handleChange,
-            error: error,
-            hasError: Boolean(error),
-            placeholder: "Unlimited",
-            type: "text",
-            isNumber: true,
-            focus,
-            addSettingDisclaimer: true,
-            extraAddon: extraAddonContent,
-            moreInfo:
-              "Syndicate strongly encourages all users to consult with their own legal and tax advisors prior to launch.",
-          }}
-        />
-      </div>
-    </Fade>
+    <>
+      <Modal
+        {...{
+          modalStyle: ModalStyle.DARK,
+          show: showDisclaimerModal,
+          closeModal: () => {
+            setShowDisclaimerModal(false);
+          },
+          customWidth: "w-100",
+          customClassName: "p-8",
+          showCloseButton: false,
+          outsideOnClick: true,
+          showHeader: false,
+          alignment: "align-top",
+          margin: "mt-48",
+        }}
+      >
+        <div className="space-y-6">
+          <p className="text-xl leading-4 tracking-px text-white">
+            Investing in crypto can be risky
+          </p>
+          <p className="text-sm text-gray-syn4 leading-5">
+            Crypto is a new asset class and is subject to many risks including
+            frequent price changes. All crypto assets are different. Each one
+            has its own set of features and risks that could affect its value
+            and how you're able to use it. Be sure to research any asset fully
+            before selecting. Syndicate strongly encourages all groups to
+            consult with their legal and tax advisors prior to launch.
+          </p>
+          <button
+            className="bg-white rounded-custom w-full flex items-center justify-center py-4 px-8"
+            onClick={() => setShowDisclaimerModal(false)}
+          >
+            <p className="text-black whitespace-nowrap text-base">Back</p>
+          </button>
+        </div>
+      </Modal>
+      <Fade delay={500}>
+        <div className="flex w-full pb-6">
+          <AdvancedInputField
+            {...{
+              value: numberWithCommas(amount.replace(/^0{2,}/, "0")),
+              label: "How much are you raising?",
+              onChange: handleChange,
+              error: error,
+              hasError: Boolean(error),
+              placeholder: "Unlimited",
+              type: "text",
+              isNumber: true,
+              focus,
+              addSettingDisclaimer: true,
+              extraAddon: extraAddonContent,
+              moreInfo: (
+                <div>
+                  Investing in crypto can be risky.{" "}
+                  <span
+                    className=" text-blue-navy cursor-pointer"
+                    onClick={() => setShowDisclaimerModal(true)}
+                  >
+                    Learn more.
+                  </span>
+                </div>
+              ),
+            }}
+          />
+        </div>
+      </Fade>
+    </>
   );
 };
 

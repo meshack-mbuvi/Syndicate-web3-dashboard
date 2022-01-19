@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import TabsButton from "@/components/TabsButton";
-import AssetEmptyState from "@/containers/layoutWithSyndicateDetails/assets/AssetEmptyState";
-import Collectibles from "@/containers/layoutWithSyndicateDetails/assets/Collectibles";
+import Collectibles from "@/containers/layoutWithSyndicateDetails/assets/collectibles";
 import InvestmentsView from "@/containers/layoutWithSyndicateDetails/assets/InvestmentsView";
 import { tokenTableColumns } from "@/containers/layoutWithSyndicateDetails/assets/constants";
-import TokenTable from "@/containers/layoutWithSyndicateDetails/assets/TokenTable";
+import TokenTable from "@/containers/layoutWithSyndicateDetails/assets/tokens/TokenTable";
 import { AppState } from "@/state";
 import {
   setLoadingTransactions,
@@ -13,15 +12,22 @@ import {
   setTotalInvestmentTransactionsCount,
 } from "@/state/erc20transactions";
 import { useFetchRecentTransactions } from "@/hooks/useFetchRecentTransactions";
+import { mockOffChainTransactionsData } from "@/utils/mockdata";
+import { useRouter } from "next/router";
+import { useDemoMode } from "@/hooks/useDemoMode";
 
 const Assets: React.FC = () => {
   const {
-    assetsSliceReducer: { tokensResult, collectiblesResult },
+    assetsSliceReducer: { tokensResult },
     web3Reducer: {
       web3: { account },
     },
     transactionsReducer: { totalInvestmentTransactionsCount },
   } = useSelector((state: AppState) => state);
+
+  const router = useRouter();
+  const {query: { clubAddress }} = router;
+  const isDemoMode = useDemoMode();
 
   const dispatch = useDispatch();
   const DATA_LIMIT = 10;
@@ -73,62 +79,41 @@ const Assets: React.FC = () => {
       } else {
         setCanNextPage(true);
       }
+    } else if (isDemoMode) {
+      dispatch(
+        setInvestmentTransactions({
+          txns: mockOffChainTransactionsData.edges as any,
+          skip: pageOffset,
+        }),
+      );
+      dispatch(
+        setTotalInvestmentTransactionsCount(mockOffChainTransactionsData.totalCount),
+      );
     }
-  }, [investmentsTransactionsData]);
-
-  const tokensFound = tokensResult.length > 0;
-  const collectiblesFound = collectiblesResult.length > 0;
-  const investmentsFound = totalInvestmentTransactionsCount > 0;
-  const noAssetsFound = !tokensFound && !collectiblesFound && !investmentsFound;
-
-  const showAllAssetsTab =
-    [tokensFound, collectiblesFound, investmentsFound].filter(
-      (value) => value === true,
-    ).length > 1;
+  }, [investmentsTransactionsData, clubAddress]);
 
   const assetsFilterOptions = [
     {
       label: "All Assets",
       value: "all",
-      show: showAllAssetsTab,
     },
     {
       label: "Tokens",
       value: "tokens",
-      show: tokensFound && (investmentsFound || collectiblesFound),
     },
     {
       label: "Investments",
       value: "investments",
-      show: investmentsFound && (tokensFound || collectiblesFound),
     },
     {
       label: "Collectibles",
       value: "collectibles",
-      show: collectiblesFound && (tokensFound || investmentsFound),
     },
   ];
 
-  // return empty state if account has no assets
-  if (noAssetsFound) {
-    return (
-      <div>
-        <div className="mt-14 mb-16">
-          <TabsButton
-            options={assetsFilterOptions}
-            value="all"
-            onChange={(val) => setActiveAssetTab(val)}
-            activeAssetTab={activeAssetTab}
-          />
-          <AssetEmptyState activeAssetTab={activeAssetTab} />
-        </div>
-      </div>
-    );
-  }
-
   return (
     <>
-      <div className={`${showAllAssetsTab ? "mt-14" : ""} mb-16`}>
+      <div className="mt-14 mb-16">
         <TabsButton
           options={assetsFilterOptions}
           value="all"
@@ -158,6 +143,7 @@ const Assets: React.FC = () => {
                 canNextPage,
                 transactionsLoading,
                 dataLimit: DATA_LIMIT,
+                refetchTransactions: () => refetchTransactions(),
               }}
             />
           </div>
@@ -178,6 +164,7 @@ const Assets: React.FC = () => {
                   canNextPage,
                   transactionsLoading,
                   dataLimit: DATA_LIMIT,
+                  refetchTransactions: () => refetchTransactions(),
                 }}
               />
             </div>

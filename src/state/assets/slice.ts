@@ -1,5 +1,6 @@
 import { getEthereumTokenPrice } from "@/helpers/ethereumTokenDetails";
 import { isDev } from "@/utils/environment";
+import { mockCollectiblesResult, mockTokensResult } from "@/utils/mockdata";
 import { web3 } from "@/utils/web3Utils";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
@@ -12,9 +13,10 @@ const baseURL = isDev
   ? "https://api-rinkeby.etherscan.io/api"
   : "https://api.etherscan.io/api";
 
+  // https://rinkeby-api.opensea.io/api/v1
 const openSeaBaseURL = isDev
-  ? "https://rinkeby-api.opensea.io/api/v1/assets"
-  : "https://api.opensea.io/api/v1/assets";
+  ? "https://rinkeby-api.opensea.io/api/v1"
+  : "https://api.opensea.io/api/v1";
 const etherscanAPIKey = process.env.NEXT_PUBLIC_ETHERSCAN_API_KEY;
 const openSeaAPIKey = process.env.NEXT_PUBLIC_OPENSEA_API_KEY;
 
@@ -125,7 +127,7 @@ export const fetchTokenTransactions = createAsyncThunk(
     // add eth details as the first item.
     completeTokensDetails.unshift(ethDetails);
 
-    return completeTokensDetails;
+    return { completeTokensDetails, ethereumTokenPrice: usd };
   },
 );
 
@@ -140,7 +142,7 @@ export const fetchCollectiblesTransactions = createAsyncThunk(
   async (params: CollectiblesFetchParams) => {
     const { account, offset } = params;
 
-    const response = await axios.get(`${openSeaBaseURL}`, {
+    const response = await axios.get(`${openSeaBaseURL}/assets`, {
       headers: { "x-api-key": isDev ? "" : openSeaAPIKey },
       params: {
         // test account on mainnet: 0x6eb534ed1329e991842b55be375abc63fe7c0e2b,
@@ -153,12 +155,55 @@ export const fetchCollectiblesTransactions = createAsyncThunk(
 
     const { assets } = response.data;
 
+    const collections = [
+      ...new Set(assets.map((asset) => asset.collection.slug)),
+    ];
+
+    const floorPrices = await Promise.all(
+      collections.map(async (slug: string) => {
+        return await axios
+          .get(`${openSeaBaseURL}/collection/${slug}/stats`, {
+            headers: { "x-api-key": isDev ? "" : openSeaAPIKey },
+          })
+          .then((result) => ({
+            floorPrice: result.data.stats.floor_price,
+            slug,
+          }))
+          .catch(() => ({ floorPrice: 0, slug }));
+      }),
+    )
+      .then((result) => result)
+      .catch(() => []);
+
+    // get last purchase price.
+    const lastSale = assets.last_sale;
+    let lastPurchasePrice = {
+      lastPurchasePriceUSD: 0,
+      lastPurchasePriceETH: 0,
+    };
+    if (lastSale) {
+      const {
+        payment_token: { usd_price, eth_price, decimals },
+        total_price,
+      } = lastSale;
+      const lastPurchasePriceUSD =
+        +usd_price * +getWeiAmount(total_price, decimals, false);
+      lastPurchasePrice.lastPurchasePriceUSD = lastPurchasePriceUSD;
+      lastPurchasePrice.lastPurchasePriceETH = eth_price;
+    }
+
     return assets.map((asset) => ({
       name: asset.name,
       image: asset.image_url,
       animation: asset.animation_url,
       permalink: asset.permalink,
       id: asset.token_id,
+      collection: asset.collection,
+      description: asset.description,
+      floorPrice: floorPrices.find(
+        (price) => price.slug === asset.collection.slug,
+      ).floorPrice,
+      lastPurchasePrice,
     }));
   },
 );
@@ -204,7 +249,14 @@ const fetchTokenBalances = (tokensList: any[], account: string) => {
 const assetsSlice = createSlice({
   name: "assets",
   initialState,
-  reducers: {},
+  reducers: {
+    setMockTokensResult(state) {
+      state.tokensResult = mockTokensResult;
+    },
+    setMockCollectiblesTransactions(state) {
+      state.collectiblesResult = mockCollectiblesResult;
+    }
+  },
   extraReducers: (builder) => {
     builder
       .addCase(fetchTokenTransactions.pending, (state) => {
@@ -212,13 +264,16 @@ const assetsSlice = createSlice({
       })
       .addCase(fetchTokenTransactions.fulfilled, (state, action) => {
         // find token value here
-        const tokensWithValue = action.payload.map((token) => {
-          const tokenCopy = token;
-          tokenCopy["tokenValue"] =
-            parseFloat(tokenCopy.price?.usd ?? 0) *
-            parseFloat(tokenCopy.tokenBalance);
-          return tokenCopy;
-        });
+
+        const tokensWithValue = action.payload.completeTokensDetails.map(
+          (token) => {
+            const tokenCopy = token;
+            tokenCopy["tokenValue"] =
+              parseFloat(tokenCopy.price?.usd ?? 0) *
+              parseFloat(tokenCopy.tokenBalance);
+            return tokenCopy;
+          },
+        );
         // sort the tokens
         const sortedInDescendingOrder = tokensWithValue.sort(
           (a, b) => b.tokenValue - a.tokenValue,
@@ -226,6 +281,7 @@ const assetsSlice = createSlice({
         state.tokensResult = sortedInDescendingOrder;
         state.loading = false;
         state.tokensFetchError = false;
+        state.ethereumTokenPrice = action.payload.ethereumTokenPrice;
       })
       .addCase(fetchTokenTransactions.rejected, (state) => {
         state.loading = false;
@@ -267,5 +323,10 @@ const assetsSlice = createSlice({
       });
   },
 });
+
+export const {
+  setMockTokensResult,
+  setMockCollectiblesTransactions,
+} = assetsSlice.actions;
 
 export default assetsSlice.reducer;

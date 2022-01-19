@@ -1,4 +1,5 @@
 import ClubERC20 from "src/contracts/ClubERC20.json";
+import { getGnosisTxnInfo } from "../shared/gnosisTransactionInfo";
 
 export class ClubERC20Contract {
   web3;
@@ -86,6 +87,7 @@ export class ClubERC20Contract {
   }
 
   async balanceOf(account: string): Promise<string | number> {
+    if (!account) return "0";
     try {
       return this.clubERC20Contract.methods
         .balanceOf(account.toString())
@@ -95,4 +97,54 @@ export class ClubERC20Contract {
     }
   }
 
+  async mintTo(
+    recipientAddress: string,
+    amount: string,
+    ownerAddress: string,
+    onTxConfirm: (transactionHash?) => void,
+    onTxReceipt: (receipt?) => void,
+    onTxFail: (error?) => void,
+    setTransactionHash: (txHas) => void,
+  ): Promise<void> {
+    let gnosisTxHash;
+
+    await new Promise((resolve, reject) => {
+      this.clubERC20Contract.methods
+        .mintTo(recipientAddress, amount)
+        .send({ from: ownerAddress })
+        .on("transactionHash", (transactionHash) => {
+          onTxConfirm(transactionHash);
+
+          // Stop waiting if we are connected to gnosis safe via walletConnect
+          if (
+            this.web3._provider.wc?._peerMeta.name === "Gnosis Safe Multisig"
+          ) {
+            setTransactionHash("");
+            gnosisTxHash = transactionHash;
+            resolve(transactionHash);
+          } else {
+            setTransactionHash(transactionHash);
+          }
+        })
+        .on("receipt", (receipt) => {
+          onTxReceipt(receipt);
+          resolve(receipt);
+        })
+        .on("error", (error) => {
+          onTxFail(error);
+          reject(error);
+        });
+    });
+
+    // fallback for gnosisSafe <> walletConnect
+    if (gnosisTxHash) {
+      const receipt: any = await getGnosisTxnInfo(gnosisTxHash);
+      setTransactionHash(receipt.transactionHash);
+      if (receipt.isSuccessful) {
+        onTxReceipt(receipt);
+      } else {
+        onTxFail("Transaction failed");
+      }
+    }
+  }
 }

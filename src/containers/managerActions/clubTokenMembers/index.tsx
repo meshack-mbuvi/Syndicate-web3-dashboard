@@ -4,31 +4,62 @@ import { useIsClubOwner } from "@/hooks/useClubOwner";
 import { AppState } from "@/state";
 import { floatedNumberWithCommas } from "@/utils/formattedNumbers";
 import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { MemberAddressComponent } from "./memberAddress";
 import MembersTable from "./MembersTable";
+import GenerateDepositLink from "../GenerateDepositLink";
+import { setDepositReadyInfo } from "@/state/legalInfo";
+import { useRouter } from "next/router";
+import { generateMemberSignURL } from "@/utils/generateMemberSignURL";
 
 const ClubTokenMembers = (): JSX.Element => {
   // retrieve state variables
   const {
     clubMembersSliceReducer: { clubMembers, loadingClubMembers },
     erc20TokenSliceReducer: { erc20Token },
+    legalInfoReducer: {
+      depositReadyInfo: { adminSigned },
+      walletSignature: { signature },
+    },
   } = useSelector((state: AppState) => state);
-
+  const dispatch = useDispatch();
   const isOwner = useIsClubOwner();
+  const router = useRouter();
+  const { clubAddress } = router.query;
 
   const [filteredAddress, setFilteredAddress] = useState("");
 
   const [showDepositLinkCopyState, setShowDepositLinkCopyState] =
     useState(false);
-  const [clubDepositLink, setClubDepositLink] = useState("");
+  const [showGenerateLinkModal, setShowGenerateLinkModal] = useState(false);
+
+  const setClubDepositLink = (clubDepositLink: string) => {
+    dispatch(
+      setDepositReadyInfo({ adminSigned, depositLink: clubDepositLink }),
+    );
+  };
 
   // club deposit link
   useEffect(() => {
-    setClubDepositLink(
-      `${window.location.origin}/clubs/${erc20Token?.address}/`,
-    );
-  }, [erc20Token.address]);
+    const legal = JSON.parse(localStorage.getItem("legal") || "{}");
+    const clubLegalData = legal[clubAddress as string];
+    if (!clubLegalData?.signaturesNeeded) {
+      return setClubDepositLink(
+        `${window.location.origin}/clubs/${clubAddress}`,
+      );
+    }
+    if (
+      clubLegalData?.clubData.adminSignature &&
+      clubLegalData.signaturesNeeded
+    ) {
+      const memberSignURL = generateMemberSignURL(
+        clubAddress as string,
+        clubLegalData.clubData,
+        clubLegalData.clubData.adminSignature,
+      );
+      setClubDepositLink(memberSignURL);
+    }
+  }, [clubAddress, signature, showGenerateLinkModal]);
 
   const updateDepositLinkCopyState = () => {
     setShowDepositLinkCopyState(true);
@@ -114,6 +145,11 @@ const ClubTokenMembers = (): JSX.Element => {
     [clubMembers],
   );
 
+  const membersTabInstruction = isOwner
+    ? "Invite members by sharing your club's deposit link.\
+                    They’ll show up here once they deposit."
+    : "Members will show up here once they deposit funds into this club.";
+
   return (
     <div className="w-full rounded-md h-full max-w-1480">
       <div className="w-full px-2 sm:px-0 col-span-12">
@@ -189,18 +225,18 @@ const ClubTokenMembers = (): JSX.Element => {
 
                 <div className="space-y-8 flex flex-col items-center">
                   <p className="text-gray-syn4 text-base">
-                    Invite members by sharing your club&apos;s deposit link.
-                    They’ll show up here once they deposit.
+                    {membersTabInstruction}
                   </p>
                   {isOwner && (
                     <div
                       style={{ width: "416px" }}
-                      className="flex justify-center"
+                      className="flex justify-center flex-col"
                     >
-                      <CopyLink
-                        link={clubDepositLink}
-                        updateCopyState={updateDepositLinkCopyState}
-                        showCopiedState={showDepositLinkCopyState}
+                      <GenerateDepositLink
+                        showGenerateLinkModal={showGenerateLinkModal}
+                        setShowGenerateLinkModal={setShowGenerateLinkModal}
+                        updateDepositLinkCopyState={updateDepositLinkCopyState}
+                        showDepositLinkCopyState={showDepositLinkCopyState}
                       />
                     </div>
                   )}

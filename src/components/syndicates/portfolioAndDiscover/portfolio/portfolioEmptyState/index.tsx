@@ -1,5 +1,5 @@
+import CreateClubButton from "@/components/createClubButton";
 import React from "react";
-import WaitListCard from "./waitListCard";
 
 const PortfolioEmptyState: React.FC = () => {
   return (
@@ -16,8 +16,8 @@ const PortfolioEmptyState: React.FC = () => {
         <p className="text-gray-syn4 pt-2.5">
           Once you create or join one, it’ll appear here
         </p>
-        <div style={{ marginTop: "210px" }}>
-          <WaitListCard />
+        <div className="mt-8">
+          <CreateClubButton />
         </div>
       </div>
     </div>

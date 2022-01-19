@@ -1,9 +1,19 @@
-import { FC, useRef, Dispatch, SetStateAction } from "react";
+import { FC, useRef, Dispatch, SetStateAction, useState } from "react";
 import Image from "next/image";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { SkeletonLoader } from "@/components/skeletonLoader";
 import { AppState } from "@/state";
 import { floatedNumberWithCommas } from "@/utils/formattedNumbers";
+import {
+  clearCurrentTransaction,
+  setCurrentTransaction,
+} from "@/state/erc20transactions";
+import { getWeiAmount } from "@/utils/conversions";
+
+import moment from "moment";
+import ActivityModal from "../activity/shared/ActivityModal";
+import useModal from "@/hooks/useModal";
+import { TransactionCategory } from "@/state/erc20transactions/types";
 
 interface InvestmentsViewProps {
   pageOffset: number;
@@ -11,6 +21,7 @@ interface InvestmentsViewProps {
   canNextPage: boolean;
   transactionsLoading: boolean;
   dataLimit: number;
+  refetchTransactions: () => void;
 }
 
 const InvestmentsView: FC<InvestmentsViewProps> = ({
@@ -19,16 +30,23 @@ const InvestmentsView: FC<InvestmentsViewProps> = ({
   canNextPage,
   transactionsLoading,
   dataLimit,
+  refetchTransactions,
 }) => {
   const {
     transactionsReducer: {
       totalInvestmentTransactionsCount,
       investmentTransactions,
+      currentTransaction,
     },
   } = useSelector((state: AppState) => state);
 
+  const [showOffChainInvestmentsModal, toggleShowOffChainInvestmentsModal] =
+    useModal();
+  const [showNote, setShowNote] = useState(false);
+
   const investmentsTableRef = useRef(null);
 
+  const dispatch = useDispatch();
   // pagination functions
   function goToNextPage() {
     investmentsTableRef.current.focus();
@@ -47,41 +65,84 @@ const InvestmentsView: FC<InvestmentsViewProps> = ({
     </div>
   );
 
-  // loading state for transactions table.
-  const loaderContent = (
-    <div>
-      {invesmentsTitle}
-      {[...Array(4).keys()].map((counter, index) => {
-        return (
-          <div
-            className={`grid grid-cols-12 gap-5 border-b-1 border-gray-syn6 ${
-              index === 0 ? "pb-3" : "py-3"
-            }`}
-            key={index}
-          >
-            <div className="flex justify-start items-center w-full col-span-3">
-              <SkeletonLoader width="50" height="6" borderRadius="rounded-lg" />
+  // loading/empty state for investments table.
+  const LoaderContent: React.FC<{ animate: boolean }> = ({ animate }) => {
+    return (
+      <div>
+        {invesmentsTitle}
+        <div className="relative">
+          {!animate && (
+            <div className="absolute flex flex-col justify-center items-center top-1/3 w-full z-10">
+              <span className="text-white mb-4 text-xl">
+                This club has no investments yet.
+              </span>
+              <span className="text-gray-syn4">
+                Any off-chain investments added will appear here.
+              </span>
             </div>
-            <div className="flex justify-start items-center w-full col-span-3">
-              <SkeletonLoader width="40" height="6" borderRadius="rounded-lg" />
-            </div>
-            <div className="flex justify-start items-center w-full col-span-2">
-              <SkeletonLoader width="40" height="6" borderRadius="rounded-lg" />
-            </div>
-            <div className="flex justify-start items-center w-full col-span-2">
-              <SkeletonLoader width="40" height="6" borderRadius="rounded-lg" />
-            </div>
-            <div className="flex items-center justify-end col-span-2">
-              <SkeletonLoader width="36" height="6" borderRadius="rounded-lg" />
-            </div>
+          )}
+          <div className={!animate && `filter grayscale blur-md`}>
+            {[...Array(4).keys()].map((_, index) => {
+              return (
+                <div
+                  className={`grid grid-cols-12 gap-5 border-b-1 border-gray-syn6 ${
+                    index === 0 ? "pb-3" : "py-3"
+                  }`}
+                  key={index}
+                >
+                  {[...Array(2).keys()].map((_, index) => (
+                    <div
+                      className="flex justify-start items-center w-full col-span-3"
+                      key={index}
+                    >
+                      <SkeletonLoader
+                        width="50"
+                        height="6"
+                        borderRadius="rounded-lg"
+                        animate={animate}
+                      />
+                    </div>
+                  ))}
+                  {[...Array(2).keys()].map((_, index) => (
+                    <div
+                      className="flex justify-start items-center w-full col-span-2"
+                      key={index}
+                    >
+                      <SkeletonLoader
+                        width="40"
+                        height="6"
+                        borderRadius="rounded-lg"
+                        animate={animate}
+                      />
+                    </div>
+                  ))}
+
+                  <div className="flex items-center justify-end col-span-2">
+                    <SkeletonLoader
+                      width="36"
+                      height="6"
+                      borderRadius="rounded-lg"
+                      animate={animate}
+                    />
+                  </div>
+                </div>
+              );
+            })}
+            {animate && (
+              <div className="w-full flex items-center justify-center pt-8">
+                <SkeletonLoader
+                  width="36"
+                  height="6"
+                  borderRadius="rounded-full"
+                  animate={animate}
+                />
+              </div>
+            )}
           </div>
-        );
-      })}
-      <div className="w-full flex items-center justify-center pt-8">
-        <SkeletonLoader width="36" height="6" borderRadius="rounded-full" />
+        </div>
       </div>
-    </div>
-  );
+    );
+  };
 
   const columns = [
     "Company",
@@ -94,8 +155,8 @@ const InvestmentsView: FC<InvestmentsViewProps> = ({
   // when to show pagination
   const showPagination = totalInvestmentTransactionsCount > dataLimit;
 
-  if (transactionsLoading) {
-    return loaderContent;
+  if (transactionsLoading && !currentTransaction.hash) {
+    return <LoaderContent animate={true} />;
   }
 
   return (
@@ -121,15 +182,27 @@ const InvestmentsView: FC<InvestmentsViewProps> = ({
           {investmentTransactions?.[pageOffset].map(
             (
               {
-                metadata: {
-                  companyName,
-                  roundCategory,
-                  preMoneyValuation,
-                  postMoneyValuation,
-                },
+                fromAddress,
+                toAddress,
+                isOutgoingTransaction,
+                hash,
+                tokenName,
+                blockTimestamp,
+                tokenSymbol,
+                tokenDecimal,
+                value,
+                tokenLogo,
+                metadata,
               },
               index,
             ) => {
+              const {
+                companyName,
+                roundCategory,
+                preMoneyValuation,
+                postMoneyValuation,
+                memo,
+              } = metadata;
               const [costBasisUSD, costBasisDecimalValue] =
                 floatedNumberWithCommas(postMoneyValuation).split(".");
               const [investmentValueUSD, investmentDecimalValue] =
@@ -195,7 +268,45 @@ const InvestmentsView: FC<InvestmentsViewProps> = ({
                           src="/images/assets/memo.svg"
                         />
                       </div>
-                      <span className="text-gray-syn4">View memo</span>
+                      <span
+                        className="text-gray-syn4"
+                        aria-hidden={true}
+                        onClick={() => {
+                          const formattedBlockTime = moment(
+                            blockTimestamp * 1000,
+                          ).format("dddd, MMM Do YYYY, h:mm A");
+
+                          const category =
+                            "OFF_CHAIN_INVESTMENT" as TransactionCategory;
+
+                          const selectedTransactionData = {
+                            category,
+                            note: memo ?? "",
+                            hash,
+                            transactionInfo: {
+                              transactionHash: hash,
+                              from: fromAddress,
+                              to: toAddress,
+                              isOutgoingTransaction: isOutgoingTransaction,
+                            },
+                            amount: getWeiAmount(value, tokenDecimal, false),
+                            tokenSymbol,
+                            tokenLogo,
+                            tokenName,
+                            readOnly: false,
+                            timestamp: formattedBlockTime,
+                            transactionId: metadata?.transactionId,
+                            metadata,
+                            blockTimestamp,
+                          };
+                          dispatch(
+                            setCurrentTransaction(selectedTransactionData),
+                          );
+                          toggleShowOffChainInvestmentsModal();
+                        }}
+                      >
+                        View memo
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -203,7 +314,9 @@ const InvestmentsView: FC<InvestmentsViewProps> = ({
             },
           )}
         </div>
-      ) : null}
+      ) : (
+        <LoaderContent animate={false} />
+      )}
       <div>
         {/* Pagination  */}
         {showPagination && (
@@ -251,6 +364,19 @@ const InvestmentsView: FC<InvestmentsViewProps> = ({
           </div>
         )}
       </div>
+      <ActivityModal
+        showModal={showOffChainInvestmentsModal}
+        closeModal={() => {
+          setTimeout(() => dispatch(clearCurrentTransaction()), 400); // Quick hack. clearCurrentTransaction is dispatched before Modal is closed hence it appears like second modal pops up before closing modal.
+          setShowNote(false);
+          toggleShowOffChainInvestmentsModal();
+        }}
+        refetchTransactions={() => {
+          refetchTransactions();
+        }}
+        showNote={showNote}
+        setShowNote={setShowNote}
+      />
     </>
   );
 };

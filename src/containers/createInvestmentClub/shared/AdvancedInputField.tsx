@@ -21,7 +21,7 @@ export const AdvancedInputField = (props: {
   extraAddon: any;
   isNumber?: boolean;
   hasError?: boolean;
-  moreInfo?: string;
+  moreInfo?: string | React.ReactNode;
   addSettingDisclaimer?: boolean;
   customClass?: { addon?: string; input?: string };
 }): JSX.Element => {

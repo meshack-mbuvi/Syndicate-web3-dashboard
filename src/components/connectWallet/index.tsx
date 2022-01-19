@@ -9,6 +9,7 @@ import { useDispatch, useSelector } from "react-redux";
 
 import { SpinnerWithImage } from "../shared/spinner/spinnerWithImage";
 import { ConnectModal } from "./connectModal";
+import WalletConnectDemoButton from "@/containers/layoutWithSyndicateDetails/demo/buttons/WalletConnectDemoButton";
 
 /**
  * The component shows a modal with buttons to connect to different
@@ -231,6 +232,12 @@ const ConnectWallet: React.FC = () => {
             >
               Learn more about crypto wallets
             </button>
+          </div>
+          <div className="pt-12 pb-4">
+            <WalletConnectDemoButton
+              buttonText="Try demo mode"
+              alignment="justify-between"
+            />
           </div>
         </>
       </ConnectModal>

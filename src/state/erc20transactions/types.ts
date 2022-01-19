@@ -15,7 +15,10 @@ export type TransactionCategory =
   | "DEPOSIT"
   | "OTHER"
   | "UNCATEGORISED"
-  | "SELECT_CATEGORY";
+  | "SELECT_CATEGORY"
+  | "TOKEN"
+  | "COLLECTIBLE"
+  | "OFF_CHAIN_INVESTMENT";
 
 export enum RoundCategory {
   SEED,

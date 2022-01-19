@@ -10,12 +10,10 @@ import ByInvitationOnly from "@/containers/createInvestmentClub/byInvitationOnly
 import GettingStarted from "@/containers/createInvestmentClub/gettingStarted";
 import ReviewDetails from "@/containers/createInvestmentClub/reviewDetails";
 import { useCreateInvestmentClubContext } from "@/context/CreateInvestmentClubContext";
-import useClubERC20s from "@/hooks/useClubERC20s";
 import { AppState } from "@/state";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/router";
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
 import { useSelector } from "react-redux";
 
 const CreateInvestmentClub: React.FC = () => {
@@ -32,16 +30,6 @@ const CreateInvestmentClub: React.FC = () => {
     preClubCreationStep,
     setPreClubCreationStep,
   } = useCreateInvestmentClubContext();
-  const router = useRouter();
-
-  const { accountHasClubs } = useClubERC20s();
-
-  // Redirect to portfolio if user has clubs
-  useEffect(() => {
-    if (accountHasClubs) {
-      router.replace("/clubs");
-    }
-  }, [accountHasClubs, router.isReady]);
 
   const parentRef = useRef(null);
 

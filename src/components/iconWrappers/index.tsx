@@ -1,3 +1,4 @@
+import { useDemoMode } from "@/hooks/useDemoMode";
 import React from "react";
 
 /**
@@ -196,6 +197,45 @@ export const RightArrow = (props: {
         d="M16 7C16 6.78562 15.9052 6.58839 15.7329 6.42546L10.0118 0.740105C9.83953 0.577176 9.65859 0.499999 9.4518 0.499999C9.02962 0.499999 8.69359 0.808706 8.69359 1.23747C8.69359 1.44327 8.77114 1.64908 8.90899 1.7777L10.839 3.73285L13.7426 6.36544L11.6575 6.23681L0.758213 6.23681C0.310179 6.23681 9.53674e-07 6.55409 9.53674e-07 7C9.53674e-07 7.44591 0.310179 7.76319 0.758213 7.76319L11.6575 7.76319L13.734 7.63456L10.839 10.2672L8.90899 12.2223C8.77114 12.3595 8.69359 12.5567 8.69359 12.7625C8.69359 13.1913 9.02962 13.5 9.4518 13.5C9.65859 13.5 9.83953 13.4314 10.0291 13.2427L15.7329 7.57454C15.9052 7.41161 16 7.21438 16 7Z"
         className="fill-current"
       />
+    </svg>
+  );
+};
+
+export const WalletIcon = (props: {
+  className?: string;
+  width?: string;
+  height?: string;
+}): JSX.Element => {
+  const { className = "text-green", width = "13", height = "10" } = props;
+
+  const isDemoMode = useDemoMode();
+
+  if (isDemoMode) {
+    return (
+      <img
+        className="mr-2"
+        width={18}
+        height={12}
+        src="/images/status/gamecontroller.svg"
+        alt="demo icon"
+      />
+    );
+  }
+
+  return (
+    <svg
+      width={width}
+      height={height}
+      viewBox="0 0 13 10"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className={className}
+    >
+      <path
+        d="M11.875 0H0.625C0.25 0 0 0.25 0 0.625V9.375C0 9.75 0.25 10 0.625 10H11.875C12.25 10 12.5 9.75 12.5 9.375V7.25H7.375C6.13236 7.25 5.125 6.24264 5.125 5C5.125 3.75736 6.13236 2.75 7.375 2.75H12.5V0.625C12.5 0.25 12.25 0 11.875 0Z"
+        className="fill-current"
+      />
+      <circle cx="7.5" cy="5" r="1.25" className="fill-current" />
     </svg>
   );
 };
