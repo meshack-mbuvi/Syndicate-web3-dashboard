@@ -170,14 +170,14 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
                 content: <div>{memberCount}</div>,
                 tooltip: "",
               },
-              {
-                header: "Created",
-                content: `${epochTimeToDateFormat(
-                  new Date(startTime),
-                  "LLL dd, yyyy",
-                )}`,
-                tooltip: "",
-              },
+              // {
+              //   header: "Created",
+              //   content: `${epochTimeToDateFormat(
+              //     new Date(startTime * 1000),
+              //     "LLL dd, yyyy",
+              //   )}`,
+              //   tooltip: "",
+              // },
             ]
           : [
               {

@@ -48,10 +48,10 @@ const useFetchTokenClaim: any = (skipQuery) => {
 
   useEffect(() => {
     dispatch(setLoadingTokenClaimed(true));
-    if (claimData.tokensClaimeds?.length) {
+    if (claimData.tokensClaimedERC20S?.length) {
       dispatch(
         setTokenClaimed({
-          ...claimData.tokensClaimeds[0],
+          ...claimData.tokensClaimedERC20S[0],
           claimed: true,
         }),
       );
