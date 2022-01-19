@@ -1,6 +1,5 @@
 import ErrorBoundary from "@/components/errorBoundary";
 import { Checkbox } from "@/components/inputs/checkbox";
-import { NumberField } from "@/components/inputs/numberField";
 import { TextArea } from "@/components/inputs/textArea";
 import { TextField } from "@/components/inputs/textField";
 import Head from "@/components/syndicates/shared/HeaderTitle";
@@ -24,7 +23,6 @@ interface FormInputs {
   location: string;
   managerEmail: string;
   counselEmail: string;
-  percentLoss: number;
   generalPurposeStatement: string;
 }
 
@@ -52,10 +50,6 @@ const schema = yup.object({
     is: true,
     then: yup.string().required("Master LLC is required"),
   }),
-  percentLoss: yup
-    .number()
-    .required("Percent loss is required")
-    .typeError("Percent loss is required"),
   generalPurposeStatement: yup
     .string()
     .required("General purpose statement is required"),
@@ -196,17 +190,6 @@ const CreateAgreementComponent: React.FC = () => {
                 }
                 showWarning={location?.trim().split(",").length < 2}
                 warningText="Location should be formatted as City, State"
-              />
-
-              <NumberField
-                label="Percent loss"
-                name="percentLoss"
-                type="number"
-                addOn="%"
-                defaultValue="20"
-                control={control}
-                addOnStyles=""
-                info={`Percentage loss resulting from a bug, defect, or error that you would like to define as "material" for your investment club. This number varies by use case but is usually 20% or greater.`}
               />
 
               <TextArea
