@@ -117,13 +117,17 @@ const CreateInvestmentClubProvider: React.FC = ({ children }) => {
 
   const handleNext = () => {
     setShowNextButton(true);
-    setCurrentStep((prev) => prev + 1);
+    if (currentStep < 4) {
+      setCurrentStep((prev) => prev + 1);
+    }
   };
 
   const handleBack = () => {
     setNextBtnDisabled(false);
     setShowNextButton(true);
-    setCurrentStep((prev) => prev - 1);
+    if (currentStep > 0) {
+      setCurrentStep((prev) => prev - 1);
+    }
   };
 
   const onTxConfirm = (transactionHash: string) => {
@@ -223,6 +227,7 @@ const CreateInvestmentClubProvider: React.FC = ({ children }) => {
         backBtnDisabled,
         nextBtnDisabled,
         handleCreateInvestmentClub,
+        setBackBtnDisabled,
         setNextBtnDisabled,
         showNextButton,
         setShowNextButton,

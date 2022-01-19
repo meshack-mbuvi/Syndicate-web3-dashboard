@@ -61,7 +61,7 @@ const CreateInvestmentClub: React.FC = () => {
           <div className="container mx-auto w-full">
             <div
               className={`h4 text-center ${
-                currentStep === 0 ? "" : "pb-16"
+                currentStep === 0 ? "" : "pb-11"
               } pt-11`}
             >
               Create an investment club

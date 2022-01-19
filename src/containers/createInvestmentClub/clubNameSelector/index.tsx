@@ -14,7 +14,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { SettingsDisclaimerTooltip } from "../shared/SettingDisclaimer";
 import useOnClickOutside from "../shared/useOnClickOutside";
 
-const ClubNameSelector: React.FC = () => {
+const ClubNameSelector: React.FC<{ className?: string, editButtonClicked?: boolean }> = ({ className, editButtonClicked }) => {
   const ref = useRef();
 
   const {
@@ -43,7 +43,7 @@ const ClubNameSelector: React.FC = () => {
     } else if (!debouncedSymbol && !hasSymbolBeenEdited) {
       dispatch(setInvestmentClubSymbolPlaceHolder(""));
     }
-  }, [debouncedSymbol]);
+  }, [debouncedSymbol, dispatch, hasSymbolBeenEdited]);
 
   useEffect(() => {
     // Dismiss error message after 1 second
@@ -55,12 +55,12 @@ const ClubNameSelector: React.FC = () => {
   }, [errors]);
 
   useEffect(() => {
-    if (investmentClubName && investmentClubSymbolPlaceHolder) {
+    if (investmentClubName && investmentClubSymbolPlaceHolder && !editButtonClicked) {
       setNextBtnDisabled(false);
     } else {
       setNextBtnDisabled(true);
     }
-  }, [investmentClubName, investmentClubSymbolPlaceHolder, setNextBtnDisabled]);
+  }, [investmentClubName, investmentClubSymbolPlaceHolder, editButtonClicked, setNextBtnDisabled]);
 
   const handleSymbolChange = (e) => {
     const _sym = (e.target.value as string).trim().toUpperCase();
@@ -110,7 +110,7 @@ const ClubNameSelector: React.FC = () => {
 
   return (
     <Fade>
-      <div className="flex flex-col pb-6 w-full lg:w-2/3">
+      <div className={className}>
         <div className="h3 pb-6">What should we call this investment club?</div>
         <div>
           <div className="relative" data-tip data-for="change-settings-tip">

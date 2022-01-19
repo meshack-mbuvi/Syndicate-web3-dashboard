@@ -12,7 +12,7 @@ const MEMBER_COUNT_WARNING =
   "Permitting more than 99 members may create significant adverse legal and/or tax consequences. Please consult with an attorney before doing so.";
 const MAX_MEMBERS_ALLOWED = "99";
 
-const MembersCount: React.FC = () => {
+const MembersCount: React.FC<{ className?: string, editButtonClicked?: boolean }> = ({ className, editButtonClicked }) => {
   const {
     createInvestmentClubSliceReducer: { membersCount },
   } = useSelector((state: AppState) => state);
@@ -27,11 +27,11 @@ const MembersCount: React.FC = () => {
   const { setShowNextButton, handleNext } = useCreateInvestmentClubContext();
 
   useEffect(() => {
-    if (!membersNumCount) {
+    if (!membersNumCount || editButtonClicked) {
       setNextBtnDisabled(true);
       setMemberCountError("");
       setIsInputError(false);
-    } else if (+membersNumCount < 0 || +membersNumCount === 0) {
+    } else if ((+membersNumCount < 0 || +membersNumCount === 0) || editButtonClicked) {
       setNextBtnDisabled(true);
       setMemberCountError(ERROR_MESSAGE);
       setIsInputError(true);
@@ -43,8 +43,8 @@ const MembersCount: React.FC = () => {
       setIsInputError(false);
       setNextBtnDisabled(false);
     }
-    dispatch(setMembersCount(membersNumCount));
-  }, [membersNumCount]);
+    (membersNumCount) ? dispatch(setMembersCount(membersNumCount)) : dispatch(setMembersCount("1"))
+  }, [membersNumCount, dispatch, editButtonClicked, setNextBtnDisabled]);
 
   const handleSetMax = () => {
     setMembersNumCount(MAX_MEMBERS_ALLOWED);
@@ -63,7 +63,7 @@ const MembersCount: React.FC = () => {
       <div className="flex w-full pb-6">
         <InputFieldWithMax
           {...{
-            value: parseInt(membersNumCount.replace(/^0+/, "")),
+            value: (membersNumCount) ? parseInt(membersNumCount.replace(/^0+/, "")) : parseInt(""),
             label: "How many members can join?",
             addOn: <MaxButton handleClick={() => handleSetMax()} />,
             onChange: handleSetMembersCount,
@@ -73,6 +73,7 @@ const MembersCount: React.FC = () => {
             type: "number",
             addSettingDisclaimer: true,
             moreInfo: "You can invite up to 99 members",
+            className: className
           }}
         />
       </div>

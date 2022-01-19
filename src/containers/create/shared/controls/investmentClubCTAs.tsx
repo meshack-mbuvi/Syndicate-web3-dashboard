@@ -24,7 +24,7 @@ const InvestmentClubCTAs: React.FC = () => {
     <animated.div
       className={`bg-black flex-none flex flex-col ${
         reviewStep
-          ? "fixed bottom-1 w-4/5 lg:w-2/5 border-t border-gray-syn4 pt-6"
+          ? "bottom-1 w-4/5 lg:w-full border-t border-gray-syn4 pt-4"
           : ""
       }`}
       style={styles}

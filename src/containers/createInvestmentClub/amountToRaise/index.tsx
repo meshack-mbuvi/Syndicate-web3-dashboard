@@ -13,7 +13,7 @@ import { AppState } from "@/state";
 import Fade from "@/components/Fade";
 import Modal, { ModalStyle } from "@/components/modal";
 
-const AmountToRaise: React.FC = () => {
+const AmountToRaise: React.FC<{ className?: string, editButtonClicked?: boolean }> = ({ className, editButtonClicked }) => {
   const {
     createInvestmentClubSliceReducer: { tokenCap },
   } = useSelector((state: AppState) => state);
@@ -52,14 +52,14 @@ const AmountToRaise: React.FC = () => {
 
   // catch input field errors
   useEffect(() => {
-    if (!amount || +amount === 0) {
+    if ((!amount || +amount === 0) || editButtonClicked) {
       setNextBtnDisabled(true);
     } else {
       setError("");
       setNextBtnDisabled(false);
     }
-    dispatch(setTokenCap(amount));
-  }, [amount]);
+    (amount) ? dispatch(setTokenCap(amount)) : dispatch(setTokenCap("0"))
+  }, [amount, dispatch, editButtonClicked, setNextBtnDisabled]);
 
   return (
     <>
@@ -87,7 +87,7 @@ const AmountToRaise: React.FC = () => {
             Crypto is a new asset class and is subject to many risks including
             frequent price changes. All crypto assets are different. Each one
             has its own set of features and risks that could affect its value
-            and how you're able to use it. Be sure to research any asset fully
+            and how you&apos;re able to use it. Be sure to research any asset fully
             before selecting. Syndicate strongly encourages all groups to
             consult with their legal and tax advisors prior to launch.
           </p>
@@ -103,7 +103,7 @@ const AmountToRaise: React.FC = () => {
         <div className="flex w-full pb-6">
           <AdvancedInputField
             {...{
-              value: numberWithCommas(amount.replace(/^0{2,}/, "0")),
+              value: (amount) ? numberWithCommas(amount.replace(/^0{2,}/, "0")) : numberWithCommas(""),
               label: "How much are you raising?",
               onChange: handleChange,
               error: error,
@@ -116,15 +116,17 @@ const AmountToRaise: React.FC = () => {
               extraAddon: extraAddonContent,
               moreInfo: (
                 <div>
-                  Investing in crypto can be risky.{" "}
-                  <span
+                  Investing in crypto can be risky. Syndicate strongly encourages all users to consult with their own legal and tax advisors prior to launch.{" "}
+                  <span role="button" tabIndex={0}
                     className=" text-blue-navy cursor-pointer"
                     onClick={() => setShowDisclaimerModal(true)}
+                    onKeyDown={() => setShowDisclaimerModal(true)}
                   >
                     Learn more.
                   </span>
                 </div>
               ),
+              className: className
             }}
           />
         </div>

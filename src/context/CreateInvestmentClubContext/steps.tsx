@@ -5,16 +5,16 @@ import MembersCount from "@/containers/createInvestmentClub/membersCount";
 
 export default [
   {
-    component: <ClubNameSelector />,
+    component: <ClubNameSelector className="flex flex-col pb-6 w-full lg:w-2/3" />,
   },
   {
-    component: <AmountToRaise />,
+    component: <AmountToRaise className="w-full lg:w-2/3" />,
   },
   {
-    component: <MintMaxDate />,
+    component: <MintMaxDate className="w-full lg:w-2/3" />,
   },
   {
-    component: <MembersCount />,
+    component: <MembersCount className="w-full lg:w-2/3" />,
   },
   {
     component: <div></div>,

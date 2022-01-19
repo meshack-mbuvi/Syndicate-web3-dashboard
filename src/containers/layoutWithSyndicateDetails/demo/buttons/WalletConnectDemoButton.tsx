@@ -1,3 +1,4 @@
+import React from "react";
 import { useDemoMode } from "@/hooks/useDemoMode";
 
 interface IWalletConnectDemoButton {
