@@ -334,10 +334,12 @@ const ManagerActions = (): JSX.Element => {
           </div>
         </FadeIn>
         {status !== Status.DISCONNECTED && (
-          <div className="flex bg-gray-syn8 hover:bg-gray-syn7 duration-500 transition-all rounded-2-half my-6 px-8 py-6 space-y-6 items-stretch items-start flex-col">
+          <div className="flex bg-gray-syn8 duration-500 transition-all rounded-2.5xl my-6 p-4 space-y-4 items-start flex-col">
+            <div className="hover:bg-gray-syn7 rounded-xl py-2 px-4">
             <CreateEntityCard />
+            </div>
             <button
-              className="cursor-pointer space-x-4 focus:outline-none flex items-stretch items-start text-base leading-6"
+              className="cursor-pointer space-x-4 focus:outline-none flex w-full items-start text-base leading-6 hover:bg-gray-syn7 rounded-xl py-2 px-4"
               onClick={handleShowMintTokens}
             >
               <div className="flex-shrink-0">
