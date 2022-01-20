@@ -108,6 +108,11 @@ const TransactionDetails: React.FC<ITransactionDetails> = ({
               )}
             </>
           ) : null}
+          {onModal && category === "DEPOSIT" ? (
+            <div className="mx-2 flex items-center">
+              <Image src={"/images/User_Icon.svg"} height={24} width={24} />
+            </div>
+          ) : null}
           <p className={`${onModal ? "text-2xl" : "text-base"}`}>
             {companyName
               ? companyName
