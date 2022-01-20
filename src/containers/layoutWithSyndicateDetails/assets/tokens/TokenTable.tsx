@@ -166,14 +166,9 @@ const TokenTable: FC<Props> = ({ columns, tableData }) => {
                 { tokenBalance, tokenName, tokenSymbol, price, logo },
                 index,
               ) => {
-                const [balanceValue, balanceDecimalValue] =
-                  floatedNumberWithCommas(tokenBalance).split(".");
                 const tokenValue =
                   parseFloat(Number(price) ? price : price?.usd ?? 0) *
                   parseFloat(tokenBalance);
-                const [usd, usdDecimalValue] =
-                  floatedNumberWithCommas(tokenValue).split(".");
-
                 return (
                   <div
                     key={`token-table-row-${index}`}
@@ -211,16 +206,14 @@ const TokenTable: FC<Props> = ({ columns, tableData }) => {
                       </div>
                     </div>
                     <PriceContainer
-                      wholeNumberValue={balanceValue}
-                      decimalValue={balanceDecimalValue}
+                    numberValue={tokenBalance}
                     >
                       &nbsp;
                       {tokenSymbol}
                     </PriceContainer>
 
                     <PriceContainer
-                      wholeNumberValue={usd}
-                      decimalValue={usdDecimalValue}
+                    numberValue={`${tokenValue || ''}`}
                     >
                       &nbsp;
                       {"USD"}

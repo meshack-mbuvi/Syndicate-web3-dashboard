@@ -18,15 +18,11 @@ const TokenDetail: React.FC<{ title: string; value: any; symbol?: any }> = ({
   if (title === "Floor price") {
     const floorPriceValue = value * ethereumTokenPrice;
 
-    const [floorPriceETHValue, floorPriceETHDecimalValue] =
-      floatedNumberWithCommas(value).split(".");
-
     floorPriceFormattedTotalValue = (
       <div className="flex flex-col items-end">
         {" "}
         <PriceContainer
-          wholeNumberValue={floorPriceETHValue}
-          decimalValue={floorPriceETHDecimalValue}
+        numberValue={value}
         >
           &nbsp;
           {"ETH"}
@@ -41,14 +37,10 @@ const TokenDetail: React.FC<{ title: string; value: any; symbol?: any }> = ({
   if (title === "Last purchase price") {
     const { lastPurchasePriceUSD, lastPurchasePriceETH } = value;
 
-    const [purchasePriceETHValue, purchasePriceETHDecimalValue] =
-      floatedNumberWithCommas(lastPurchasePriceETH).split(".");
-
     purchasePriceFormattedTotalValue = (
       <div className="flex flex-col items-end">
         <PriceContainer
-          wholeNumberValue={purchasePriceETHValue}
-          decimalValue={purchasePriceETHDecimalValue}
+        numberValue={lastPurchasePriceETH}
         >
           &nbsp;
           {"ETH"}
@@ -62,13 +54,10 @@ const TokenDetail: React.FC<{ title: string; value: any; symbol?: any }> = ({
   }
 
   if (title === "Club balance") {
-    const [tokenBalance, balanceDecimalValue] =
-      floatedNumberWithCommas(value).split(".");
     balanceValue = (
       <div className="flex flex-col items-end">
         <PriceContainer
-          wholeNumberValue={tokenBalance}
-          decimalValue={balanceDecimalValue}
+        numberValue={value}
         >
           &nbsp;
           {symbol}
@@ -78,13 +67,10 @@ const TokenDetail: React.FC<{ title: string; value: any; symbol?: any }> = ({
   }
 
   if (title === "Value") {
-    const [tokenWorth, worthDecimalValue] =
-      floatedNumberWithCommas(value).split(".");
     clubBalance = (
       <div className="flex flex-col items-end">
         <PriceContainer
-          wholeNumberValue={tokenWorth}
-          decimalValue={worthDecimalValue}
+        numberValue={value}
         >
           &nbsp;
           {"USD"}
