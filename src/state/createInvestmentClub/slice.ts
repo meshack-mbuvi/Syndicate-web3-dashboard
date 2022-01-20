@@ -27,6 +27,27 @@ const createInvestmentClubSlice = createSlice({
     setClubCreationReceipt(state, action) {
       state.clubCreationStatus.creationReceipt = action.payload;
     },
+    resetClubCreationReduxState(state) {
+      state.investmentClubName = "";
+      state.investmentClubSymbolPlaceHolder = "";
+      state.investmentClubSymbol = "";
+      state.membersCount = "";
+      state.tokenCap = "";
+      state.mintEndTime = {
+        mintTime: "",
+        value: parseInt(
+          (
+            new Date(new Date().setHours(23, 59, 0, 0)).getTime() / 1000
+          ).toString(),
+        ),
+      };
+      state.clubCreationStatus = {
+        transactionHash: "",
+        creationReceipt: {
+          token: "",
+        },
+      };
+    },
   },
 });
 
@@ -38,5 +59,6 @@ export const {
   setMintEndTime,
   setTransactionHash,
   setClubCreationReceipt,
+  resetClubCreationReduxState,
 } = createInvestmentClubSlice.actions;
 export default createInvestmentClubSlice.reducer;
