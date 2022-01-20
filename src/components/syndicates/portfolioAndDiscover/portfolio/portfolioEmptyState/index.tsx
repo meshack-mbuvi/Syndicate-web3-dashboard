@@ -3,7 +3,7 @@ import React from "react";
 
 const PortfolioEmptyState: React.FC = () => {
   return (
-    <div className="text-center flex-col" style={{ marginTop: "196px" }}>
+    <div className="text-center flex-col" style={{ marginTop: "146px" }}>
       <div className="flex flex-col justify-start items-center mt-20">
         <img
           style={{ marginBottom: "44.9px" }}
