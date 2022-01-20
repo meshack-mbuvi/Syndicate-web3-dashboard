@@ -211,7 +211,7 @@ const useClubERC20s = () => {
       }
 
       // check whether connected account has clubs
-      if (data.syndicateDAOs.length) {
+      if (data?.syndicateDAOs?.length) {
         setAccountHasClubs(true);
       } else {
         setAccountHasClubs(false);

@@ -59,9 +59,9 @@ export function useClubDepositsAndSupply(contractAddress: string): {
 
     const {
       syndicateDAOs: [syndicateDAO],
-    } = data;
+    } = data || {};
 
-    const { totalDeposits, totalSupply } = syndicateDAO;
+    const { totalDeposits, totalSupply } = syndicateDAO || {};
 
     setTotalSupply(getWeiAmount(totalSupply, tokenDecimals || 18, false));
     setTotalDeposits(getWeiAmount(totalDeposits, 6, false));
