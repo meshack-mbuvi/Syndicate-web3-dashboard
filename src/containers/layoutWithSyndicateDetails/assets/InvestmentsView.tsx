@@ -159,6 +159,51 @@ const InvestmentsView: FC<InvestmentsViewProps> = ({
     return <LoaderContent animate={true} />;
   }
 
+  const viewInvestmentDetails = (investmentData) => {
+    const {
+      fromAddress,
+      toAddress,
+      isOutgoingTransaction,
+      hash,
+      tokenName,
+      blockTimestamp,
+      tokenSymbol,
+      tokenDecimal,
+      value,
+      tokenLogo,
+      metadata,
+    } = investmentData;
+    const { memo } = metadata;
+    const formattedBlockTime = moment(blockTimestamp * 1000).format(
+      "dddd, MMM Do YYYY, h:mm A",
+    );
+
+    const category = "OFF_CHAIN_INVESTMENT" as TransactionCategory;
+
+    const selectedTransactionData = {
+      category,
+      note: memo ?? "",
+      hash,
+      transactionInfo: {
+        transactionHash: hash,
+        from: fromAddress,
+        to: toAddress,
+        isOutgoingTransaction: isOutgoingTransaction,
+      },
+      amount: getWeiAmount(value, tokenDecimal, false),
+      tokenSymbol,
+      tokenLogo,
+      tokenName,
+      readOnly: false,
+      timestamp: formattedBlockTime,
+      transactionId: metadata?.transactionId,
+      metadata,
+      blockTimestamp,
+    };
+    dispatch(setCurrentTransaction(selectedTransactionData));
+    toggleShowOffChainInvestmentsModal();
+  };
+
   return (
     <>
       {investmentTransactions?.[pageOffset]?.length ? (
@@ -179,140 +224,93 @@ const InvestmentsView: FC<InvestmentsViewProps> = ({
             </div>
           </div>
 
-          {investmentTransactions?.[pageOffset].map(
-            (
-              {
-                fromAddress,
-                toAddress,
-                isOutgoingTransaction,
-                hash,
-                tokenName,
-                blockTimestamp,
-                tokenSymbol,
-                tokenDecimal,
-                value,
-                tokenLogo,
-                metadata,
-              },
-              index,
-            ) => {
-              const {
-                companyName,
-                roundCategory,
-                preMoneyValuation,
-                postMoneyValuation,
-                memo,
-              } = metadata;
-              const [costBasisUSD, costBasisDecimalValue] =
-                floatedNumberWithCommas(postMoneyValuation).split(".");
-              const [investmentValueUSD, investmentDecimalValue] =
-                floatedNumberWithCommas(preMoneyValuation).split(".");
-              const dashForMissingValue = (
-                <span className="text-gray-syn4">-</span>
-              );
+          {investmentTransactions?.[pageOffset].map((investmentData, index) => {
+            const { metadata } = investmentData;
+            const {
+              companyName,
+              roundCategory,
+              preMoneyValuation,
+              postMoneyValuation,
+              memo,
+            } = metadata;
+            const [costBasisUSD, costBasisDecimalValue] =
+              floatedNumberWithCommas(postMoneyValuation).split(".");
+            const [investmentValueUSD, investmentDecimalValue] =
+              floatedNumberWithCommas(preMoneyValuation).split(".");
+            const dashForMissingValue = (
+              <span className="text-gray-syn4">-</span>
+            );
 
-              return (
-                <div
-                  key={`token-table-row-${index}`}
-                  className="grid grid-cols-12 gap-5 border-b-1 border-gray-syn7 py-5"
-                >
-                  <div className="flex flex-row col-span-3 items-center">
-                    <div className="text-base flex items-center">
-                      {companyName ? companyName : dashForMissingValue}
-                    </div>
-                  </div>
-
-                  <div className="text-base col-span-3 flex items-center">
-                    {roundCategory ? roundCategory : dashForMissingValue}
-                  </div>
-
-                  <div className="text-base flex col-span-2 items-center">
-                    {+postMoneyValuation > 0 ? (
-                      <span>
-                        {costBasisUSD}
-                        {costBasisDecimalValue && (
-                          <span className="text-gray-lightManatee">
-                            .{costBasisDecimalValue}
-                          </span>
-                        )}
-                        &nbsp;
-                        {"USD"}
-                      </span>
-                    ) : (
-                      dashForMissingValue
-                    )}
-                  </div>
-
-                  <div className="text-base flex col-span-2 items-center">
-                    {+preMoneyValuation > 0 ? (
-                      <span>
-                        {investmentValueUSD}
-                        {investmentDecimalValue && (
-                          <span className="text-gray-lightManatee">
-                            .{investmentDecimalValue}
-                          </span>
-                        )}
-                        &nbsp;
-                        {"USD"}
-                      </span>
-                    ) : (
-                      dashForMissingValue
-                    )}
-                  </div>
-                  <div className="text-base flex col-span-2 items-center justify-end">
-                    <div className="cursor-pointer flex items-center">
-                      <div className="mr-2 flex items-center">
-                        <Image
-                          width="16"
-                          height="16"
-                          src="/images/assets/memo.svg"
-                        />
-                      </div>
-                      <span
-                        className="text-gray-syn4"
-                        aria-hidden={true}
-                        onClick={() => {
-                          const formattedBlockTime = moment(
-                            blockTimestamp * 1000,
-                          ).format("dddd, MMM Do YYYY, h:mm A");
-
-                          const category =
-                            "OFF_CHAIN_INVESTMENT" as TransactionCategory;
-
-                          const selectedTransactionData = {
-                            category,
-                            note: memo ?? "",
-                            hash,
-                            transactionInfo: {
-                              transactionHash: hash,
-                              from: fromAddress,
-                              to: toAddress,
-                              isOutgoingTransaction: isOutgoingTransaction,
-                            },
-                            amount: getWeiAmount(value, tokenDecimal, false),
-                            tokenSymbol,
-                            tokenLogo,
-                            tokenName,
-                            readOnly: false,
-                            timestamp: formattedBlockTime,
-                            transactionId: metadata?.transactionId,
-                            metadata,
-                            blockTimestamp,
-                          };
-                          dispatch(
-                            setCurrentTransaction(selectedTransactionData),
-                          );
-                          toggleShowOffChainInvestmentsModal();
-                        }}
-                      >
-                        View memo
-                      </span>
-                    </div>
+            return (
+              <div
+                key={`token-table-row-${index}`}
+                className="grid grid-cols-12 gap-5 border-b-1 border-gray-syn7 py-5 cursor-pointer"
+                onClick={() => viewInvestmentDetails(investmentData)}
+              >
+                <div className="flex flex-row col-span-3 items-center">
+                  <div className="text-base flex items-center">
+                    {companyName ? companyName : dashForMissingValue}
                   </div>
                 </div>
-              );
-            },
-          )}
+
+                <div className="text-base col-span-3 flex items-center">
+                  {roundCategory ? roundCategory : dashForMissingValue}
+                </div>
+
+                <div className="text-base flex col-span-2 items-center">
+                  {+postMoneyValuation > 0 ? (
+                    <span>
+                      {costBasisUSD}
+                      {costBasisDecimalValue && (
+                        <span className="text-gray-lightManatee">
+                          .{costBasisDecimalValue}
+                        </span>
+                      )}
+                      &nbsp;
+                      {"USD"}
+                    </span>
+                  ) : (
+                    dashForMissingValue
+                  )}
+                </div>
+
+                <div className="text-base flex col-span-2 items-center">
+                  {+preMoneyValuation > 0 ? (
+                    <span>
+                      {investmentValueUSD}
+                      {investmentDecimalValue && (
+                        <span className="text-gray-lightManatee">
+                          .{investmentDecimalValue}
+                        </span>
+                      )}
+                      &nbsp;
+                      {"USD"}
+                    </span>
+                  ) : (
+                    dashForMissingValue
+                  )}
+                </div>
+                <div className="text-base flex col-span-2 items-center justify-end">
+                  <div className="cursor-pointer flex items-center">
+                    <div className="mr-2 flex items-center">
+                      <Image
+                        width="16"
+                        height="16"
+                        src="/images/assets/memo.svg"
+                      />
+                    </div>
+                    <span
+                      className="text-gray-syn4"
+                      aria-hidden={true}
+                      onClick={() => viewInvestmentDetails(investmentData)}
+                    >
+                      View memo
+                    </span>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
         </div>
       ) : (
         <LoaderContent animate={false} />
