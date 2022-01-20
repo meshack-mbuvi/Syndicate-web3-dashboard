@@ -206,18 +206,10 @@ const TokenTable: FC<Props> = ({ columns, tableData }) => {
                       </div>
                     </div>
                     <PriceContainer
-                    numberValue={tokenBalance}
-                    >
-                      &nbsp;
-                      {tokenSymbol}
-                    </PriceContainer>
-
-                    <PriceContainer
-                    numberValue={`${tokenValue || ''}`}
-                    >
-                      &nbsp;
-                      {"USD"}
-                    </PriceContainer>
+                      numberValue={tokenBalance}
+                      customSymbol={tokenSymbol}
+                    />
+                    <PriceContainer numberValue={`${tokenValue || ""}`} />
                   </div>
                 );
               },

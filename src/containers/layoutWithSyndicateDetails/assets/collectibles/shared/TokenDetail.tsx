@@ -21,12 +21,7 @@ const TokenDetail: React.FC<{ title: string; value: any; symbol?: any }> = ({
     floorPriceFormattedTotalValue = (
       <div className="flex flex-col items-end">
         {" "}
-        <PriceContainer
-        numberValue={value}
-        >
-          &nbsp;
-          {"ETH"}
-        </PriceContainer>
+        <PriceContainer numberValue={value} ethValue={true} />
         <div className="text-gray-syn4">
           {floatedNumberWithCommas(floorPriceValue)} USD
         </div>
@@ -39,13 +34,7 @@ const TokenDetail: React.FC<{ title: string; value: any; symbol?: any }> = ({
 
     purchasePriceFormattedTotalValue = (
       <div className="flex flex-col items-end">
-        <PriceContainer
-        numberValue={lastPurchasePriceETH}
-        >
-          &nbsp;
-          {"ETH"}
-        </PriceContainer>
-
+        <PriceContainer numberValue={lastPurchasePriceETH} ethValue={true} />
         <div className="text-gray-syn4">
           {floatedNumberWithCommas(lastPurchasePriceUSD)} USD
         </div>
@@ -56,12 +45,7 @@ const TokenDetail: React.FC<{ title: string; value: any; symbol?: any }> = ({
   if (title === "Club balance") {
     balanceValue = (
       <div className="flex flex-col items-end">
-        <PriceContainer
-        numberValue={value}
-        >
-          &nbsp;
-          {symbol}
-        </PriceContainer>
+        <PriceContainer numberValue={value} customSymbol={symbol} />
       </div>
     );
   }
@@ -69,12 +53,7 @@ const TokenDetail: React.FC<{ title: string; value: any; symbol?: any }> = ({
   if (title === "Value") {
     clubBalance = (
       <div className="flex flex-col items-end">
-        <PriceContainer
-        numberValue={value}
-        >
-          &nbsp;
-          {"USD"}
-        </PriceContainer>
+        <PriceContainer numberValue={value} ethValue={false} />
       </div>
     );
   }

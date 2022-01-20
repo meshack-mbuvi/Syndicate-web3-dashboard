@@ -14,6 +14,7 @@ import { CopyToClipboard } from "react-copy-to-clipboard";
 import { useSelector } from "react-redux";
 import ReactTooltip from "react-tooltip";
 import { EtherscanLink } from "src/components/syndicates/shared/EtherscanLink";
+import NumberTreatment from "../NumberTreatment";
 // utils
 import GradientAvatar from "./portfolioAndDiscover/portfolio/GradientAvatar";
 import { DetailsCard, ProgressIndicator } from "./shared";
@@ -116,7 +117,8 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
                 header: "Club token max supply",
                 content: (
                   <span>
-                    {floatedNumberWithCommas(maxTotalSupply)} {symbol}
+                    <NumberTreatment numberValue={`${maxTotalSupply || ""} `} />
+                    {symbol}
                   </span>
                 ),
                 tooltip: "",
@@ -125,7 +127,7 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
                 header: "Club tokens minted",
                 content: (
                   <span>
-                    {floatedNumberWithCommas(totalSupply)} {symbol}
+                    <NumberTreatment numberValue={totalSupply} /> {symbol}
                   </span>
                 ),
                 tooltip: "",
@@ -159,14 +161,18 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
           ? [
               {
                 header: "Club token max supply",
-                content: <span>{floatedNumberWithCommas(maxTotalSupply)}</span>,
+                content: (
+                  <span>
+                    <NumberTreatment numberValue={`${maxTotalSupply || ""}`} />
+                  </span>
+                ),
                 tooltip: "",
               },
               {
                 header: "Club tokens minted",
                 content: (
                   <span>
-                    {floatedNumberWithCommas(totalDeposits)} {symbol}
+                    <NumberTreatment numberValue={totalDeposits} /> {symbol}
                   </span>
                 ),
                 tooltip: "",
@@ -190,7 +196,7 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
                 header: "Total deposited",
                 content: (
                   <span>
-                    {floatedNumberWithCommas(totalDeposits)}{" "}
+                    <NumberTreatment numberValue={totalDeposits} />{" "}
                     {depositERC20TokenSymbol}
                   </span>
                 ),
@@ -200,7 +206,7 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
                 header: "Club tokens minted",
                 content: (
                   <span>
-                    {floatedNumberWithCommas(totalDeposits)} {symbol}
+                    <NumberTreatment numberValue={totalDeposits} /> {symbol}
                   </span>
                 ),
                 tooltip: "",
