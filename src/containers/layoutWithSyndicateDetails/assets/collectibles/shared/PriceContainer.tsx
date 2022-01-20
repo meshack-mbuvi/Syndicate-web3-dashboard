@@ -8,13 +8,17 @@ const PriceContainer: React.FC<{
   return (
     <div className="text-base flex col-span-3 items-center">
       <span
-        className={parseInt(wholeNumberValue) <= 0 && `text-gray-lightManatee`}
+        className={parseInt(wholeNumberValue) == 0 && "text-gray-lightManatee"}
       >
         {wholeNumberValue}
       </span>
       {decimalValue && (
         <span
-          className={parseInt(decimalValue) <= 0 && `text-gray-lightManatee`}
+          className={
+            parseInt(wholeNumberValue) == 0 && parseInt(decimalValue) > 0
+              ? "text-white"
+              : "text-gray-lightManatee"
+          }
         >
           .{decimalValue}
         </span>
