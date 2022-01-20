@@ -27,8 +27,10 @@ const TokenDetail: React.FC<{ title: string; value: any; symbol?: any }> = ({
         <PriceContainer
           wholeNumberValue={floorPriceETHValue}
           decimalValue={floorPriceETHDecimalValue}
-          ethValue={true}
-        />
+        >
+          &nbsp;
+          {"ETH"}
+        </PriceContainer>
         <div className="text-gray-syn4">
           {floatedNumberWithCommas(floorPriceValue)} USD
         </div>
@@ -47,8 +49,10 @@ const TokenDetail: React.FC<{ title: string; value: any; symbol?: any }> = ({
         <PriceContainer
           wholeNumberValue={purchasePriceETHValue}
           decimalValue={purchasePriceETHDecimalValue}
-          ethValue={true}
-        />
+        >
+          &nbsp;
+          {"ETH"}
+        </PriceContainer>
 
         <div className="text-gray-syn4">
           {floatedNumberWithCommas(lastPurchasePriceUSD)} USD
@@ -65,8 +69,10 @@ const TokenDetail: React.FC<{ title: string; value: any; symbol?: any }> = ({
         <PriceContainer
           wholeNumberValue={tokenBalance}
           decimalValue={balanceDecimalValue}
-          customSymbol={symbol}
-        />
+        >
+          &nbsp;
+          {symbol}
+        </PriceContainer>
       </div>
     );
   }
@@ -79,8 +85,10 @@ const TokenDetail: React.FC<{ title: string; value: any; symbol?: any }> = ({
         <PriceContainer
           wholeNumberValue={tokenWorth}
           decimalValue={worthDecimalValue}
-          ethValue={false}
-        />
+        >
+          &nbsp;
+          {"USD"}
+        </PriceContainer>
       </div>
     );
   }

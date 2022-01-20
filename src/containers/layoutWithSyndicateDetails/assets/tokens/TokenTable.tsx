@@ -6,6 +6,7 @@ import { floatedNumberWithCommas } from "@/utils/formattedNumbers";
 import Image from "next/image";
 import { FC, useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
+import PriceContainer from "../collectibles/shared/PriceContainer";
 import TokenModal from "./TokenModal";
 interface Props {
   columns: string[];
@@ -209,28 +210,21 @@ const TokenTable: FC<Props> = ({ columns, tableData }) => {
                         </span>
                       </div>
                     </div>
-
-                    <div className="text-base col-span-3 flex items-center">
-                      {balanceValue}
-                      {balanceDecimalValue && (
-                        <span className="text-gray-lightManatee">
-                          .{balanceDecimalValue}
-                        </span>
-                      )}
+                    <PriceContainer
+                      wholeNumberValue={balanceValue}
+                      decimalValue={balanceDecimalValue}
+                    >
                       &nbsp;
                       {tokenSymbol}
-                    </div>
+                    </PriceContainer>
 
-                    <div className="text-base flex col-span-3 items-center">
-                      {usd}
-                      {usdDecimalValue && (
-                        <span className="text-gray-lightManatee">
-                          .{usdDecimalValue}
-                        </span>
-                      )}
+                    <PriceContainer
+                      wholeNumberValue={usd}
+                      decimalValue={usdDecimalValue}
+                    >
                       &nbsp;
                       {"USD"}
-                    </div>
+                    </PriceContainer>
                   </div>
                 );
               },

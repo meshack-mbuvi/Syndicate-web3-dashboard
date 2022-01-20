@@ -3,22 +3,23 @@ import React from "react";
 const PriceContainer: React.FC<{
   wholeNumberValue: string;
   decimalValue: string;
-  ethValue?: boolean;
-  customSymbol?: any;
-}> = ({
-  wholeNumberValue,
-  decimalValue,
-  ethValue = false,
-  customSymbol = "USD",
-}) => {
+  children?: React.ReactNode;
+}> = ({ wholeNumberValue, decimalValue, children }) => {
   return (
     <div className="text-base flex col-span-3 items-center">
-      {wholeNumberValue}
+      <span
+        className={parseInt(wholeNumberValue) <= 0 && `text-gray-lightManatee`}
+      >
+        {wholeNumberValue}
+      </span>
       {decimalValue && (
-        <span className="text-gray-lightManatee">.{decimalValue}</span>
+        <span
+          className={parseInt(decimalValue) <= 0 && `text-gray-lightManatee`}
+        >
+          .{decimalValue}
+        </span>
       )}
-      &nbsp;
-      {ethValue ? "ETH" : `${customSymbol}`}
+      {children}
     </div>
   );
 };
