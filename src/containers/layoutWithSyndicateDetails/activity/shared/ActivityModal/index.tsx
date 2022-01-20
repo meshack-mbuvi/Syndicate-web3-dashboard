@@ -325,8 +325,11 @@ const ActivityModal: React.FC<IActivityModal> = ({
           </div>
         </div>
 
-        {/* Show this component only when manager has not marked member signature status */}
-        {!data?.Financial_memberSigned && !loading && category === "DEPOSIT" && (
+        {/* Show this component only when manager has not marked member signature status 
+        
+        Adding essential check for isManager. Members should not see this*/}
+        
+        {!data?.Financial_memberSigned && !loading && category === "DEPOSIT" && isManager && (
           <div className="flex flex-col space-y-6 py-6 px-5">
             <div className="bg-gray-syn7 px-5 py-4 space-y-2 rounded-xl">
               <p className="text-gray-syn4 leading-6">
