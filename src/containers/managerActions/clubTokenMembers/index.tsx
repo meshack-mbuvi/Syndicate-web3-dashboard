@@ -11,6 +11,7 @@ import GenerateDepositLink from "../GenerateDepositLink";
 import { setDepositReadyInfo } from "@/state/legalInfo";
 import { useRouter } from "next/router";
 import { generateMemberSignURL } from "@/utils/generateMemberSignURL";
+import useClubTokenMembers from "@/hooks/useClubTokenMembers";
 
 const ClubTokenMembers = (): JSX.Element => {
   // retrieve state variables
@@ -38,6 +39,9 @@ const ClubTokenMembers = (): JSX.Element => {
       setDepositReadyInfo({ adminSigned, depositLink: clubDepositLink }),
     );
   };
+
+  // fetch club members
+  useClubTokenMembers();
 
   // club deposit link
   useEffect(() => {
@@ -154,62 +158,50 @@ const ClubTokenMembers = (): JSX.Element => {
     <div className="w-full rounded-md h-full max-w-1480">
       <div className="w-full px-2 sm:px-0 col-span-12">
         {loadingClubMembers ? (
-          <div className="space-y-6 my-11">
-            <div className="flex space-x-3">
-              <SkeletonLoader
-                width="full"
-                height="8"
-                borderRadius="rounded-md"
-              />
-              <SkeletonLoader
-                width="full"
-                height="8"
-                borderRadius="rounded-md"
-              />
-              <SkeletonLoader
-                width="full"
-                height="8"
-                borderRadius="rounded-md"
-              />
-              <SkeletonLoader
-                width="full"
-                height="8"
-                borderRadius="rounded-md"
-              />
-              <SkeletonLoader
-                width="full"
-                height="8"
-                borderRadius="rounded-md"
-              />
+          <>
+            <div className="mb-8 mt-10">
+              <SkeletonLoader width="36" height="6" borderRadius="rounded-md" />
             </div>
-            <div className="flex space-x-3">
-              <SkeletonLoader
-                width="full"
-                height="8"
-                borderRadius="rounded-md"
-              />
-              <SkeletonLoader
-                width="full"
-                height="8"
-                borderRadius="rounded-md"
-              />
-              <SkeletonLoader
-                width="full"
-                height="8"
-                borderRadius="rounded-md"
-              />
-              <SkeletonLoader
-                width="full"
-                height="8"
-                borderRadius="rounded-md"
-              />
-              <SkeletonLoader
-                width="full"
-                height="8"
-                borderRadius="rounded-md"
-              />
-            </div>
-          </div>
+            <>
+              {[...Array(4).keys()].map((_, index) => {
+                return (
+                  <div
+                    className="grid grid-cols-12 gap-5 border-b-1 border-gray-syn6 py-3"
+                    key={index}
+                  >
+                    <div className="flex justify-start space-x-4 items-center w-full col-span-3">
+                      <div className="flex-shrink-0">
+                        <SkeletonLoader
+                          width="8"
+                          height="8"
+                          borderRadius="rounded-full"
+                        />
+                      </div>
+                      <SkeletonLoader
+                        width="36"
+                        height="6"
+                        borderRadius="rounded-md"
+                      />
+                    </div>
+                    {[...Array(2).keys()].map((_, index) => {
+                      return (
+                        <div
+                          className="w-full flex items-center col-span-3"
+                          key={index}
+                        >
+                          <SkeletonLoader
+                            width="36"
+                            height="6"
+                            borderRadius="rounded-md"
+                          />
+                        </div>
+                      );
+                    })}
+                  </div>
+                );
+              })}
+            </>
+          </>
         ) : tableData.length || filteredAddress ? (
           <MembersTable
             columns={columns}

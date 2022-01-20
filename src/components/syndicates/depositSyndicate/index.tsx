@@ -206,7 +206,15 @@ const DepositSyndicate: React.FC = () => {
     }
 
     setNewMemberTokens(+accountTokens + +depositAmount);
-    setNewOwnershipShare(+memberOwnership + +ownershipShare);
+
+    // Bug fix: setting new ownership share to an addition of memberOwnership and ownershipShare
+    // leads to a situation where the total percentage ownership on the success modal exceeds 100% if the club has only 1 member.
+    // see this screenshot: https://drive.google.com/file/d/1l0kS3hVKqG_VoM6pf7UpX93DnKSTyRMU/view?usp=sharing
+    if (+memberOwnership === 100) {
+      setNewOwnershipShare(+memberOwnership);
+    } else {
+      setNewOwnershipShare(+memberOwnership + +ownershipShare);
+    }
 
     dispatch(
       setERC20Token(
