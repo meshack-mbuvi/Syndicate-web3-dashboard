@@ -118,6 +118,7 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
                 content: (
                   <span>
                     <NumberTreatment numberValue={`${maxTotalSupply || ""} `} />
+                    &nbsp;
                     {symbol}
                   </span>
                 ),
@@ -127,7 +128,8 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
                 header: "Club tokens minted",
                 content: (
                   <span>
-                    <NumberTreatment numberValue={totalSupply} /> {symbol}
+                    <NumberTreatment numberValue={totalSupply} />
+                    &nbsp;{symbol}
                   </span>
                 ),
                 tooltip: "",
@@ -172,7 +174,8 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
                 header: "Club tokens minted",
                 content: (
                   <span>
-                    <NumberTreatment numberValue={totalDeposits} /> {symbol}
+                    <NumberTreatment numberValue={totalDeposits} />
+                    &nbsp;{symbol}
                   </span>
                 ),
                 tooltip: "",
