@@ -90,6 +90,7 @@ const useClubTokenMembers = () => {
     JSON.stringify(data?.syndicateDAOs?.[0]?.members),
     loadingClubMembers,
     clubAddress,
+    account,
   ]);
 };
 

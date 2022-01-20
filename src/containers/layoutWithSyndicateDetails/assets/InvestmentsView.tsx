@@ -14,6 +14,7 @@ import moment from "moment";
 import ActivityModal from "../activity/shared/ActivityModal";
 import useModal from "@/hooks/useModal";
 import { TransactionCategory } from "@/state/erc20transactions/types";
+import { useIsClubOwner, useIsClubMember } from "@/hooks/useClubOwner";
 
 interface InvestmentsViewProps {
   pageOffset: number;
@@ -47,6 +48,8 @@ const InvestmentsView: FC<InvestmentsViewProps> = ({
   const investmentsTableRef = useRef(null);
 
   const dispatch = useDispatch();
+  const isOwner = useIsClubOwner();
+  const isMember = useIsClubMember();
   // pagination functions
   function goToNextPage() {
     investmentsTableRef.current.focus();
@@ -160,6 +163,7 @@ const InvestmentsView: FC<InvestmentsViewProps> = ({
   }
 
   const viewInvestmentDetails = (investmentData) => {
+    if (!isMember && !isOwner) return;
     const {
       fromAddress,
       toAddress,
@@ -244,7 +248,9 @@ const InvestmentsView: FC<InvestmentsViewProps> = ({
             return (
               <div
                 key={`token-table-row-${index}`}
-                className="grid grid-cols-12 gap-5 border-b-1 border-gray-syn7 py-5 cursor-pointer"
+                className={`grid grid-cols-12 gap-5 border-b-1 border-gray-syn7 py-5 ${
+                  isMember || isOwner ? "cursor-pointer" : ""
+                }`}
                 onClick={() => viewInvestmentDetails(investmentData)}
               >
                 <div className="flex flex-row col-span-3 items-center">
@@ -290,24 +296,26 @@ const InvestmentsView: FC<InvestmentsViewProps> = ({
                     dashForMissingValue
                   )}
                 </div>
-                <div className="text-base flex col-span-2 items-center justify-end">
-                  <div className="cursor-pointer flex items-center">
-                    <div className="mr-2 flex items-center">
-                      <Image
-                        width="16"
-                        height="16"
-                        src="/images/assets/memo.svg"
-                      />
+                {(isMember || isOwner) && (
+                  <div className="text-base flex col-span-2 items-center justify-end">
+                    <div className="cursor-pointer flex items-center">
+                      <div className="mr-2 flex items-center">
+                        <Image
+                          width="16"
+                          height="16"
+                          src="/images/assets/memo.svg"
+                        />
+                      </div>
+                      <span
+                        className="text-gray-syn4"
+                        aria-hidden={true}
+                        onClick={() => viewInvestmentDetails(investmentData)}
+                      >
+                        View memo
+                      </span>
                     </div>
-                    <span
-                      className="text-gray-syn4"
-                      aria-hidden={true}
-                      onClick={() => viewInvestmentDetails(investmentData)}
-                    >
-                      View memo
-                    </span>
                   </div>
-                </div>
+                )}
               </div>
             );
           })}
