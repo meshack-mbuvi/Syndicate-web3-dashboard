@@ -29,7 +29,9 @@ const ActivityTable: React.FC = () => {
   } = useSelector((state: AppState) => state);
   const isManager = useIsClubOwner();
   const router = useRouter();
-  const { query: { clubAddress } } = router;
+  const {
+    query: { clubAddress },
+  } = router;
   const isDemoMode = useDemoMode();
 
   const [filter, setFilter] = useState<string>("");
@@ -234,9 +236,12 @@ const ActivityTable: React.FC = () => {
         setCanNextPage(true);
       }
     } else if (isDemoMode) {
-      processERC20Transactions(mockActivityTransactionsData)
+      processERC20Transactions(mockActivityTransactionsData);
     }
-  }, [JSON.stringify(transactionsData?.Financial_recentTransactions), clubAddress]);
+  }, [
+    JSON.stringify(transactionsData?.Financial_recentTransactions),
+    clubAddress,
+  ]);
 
   const processERC20Transactions = async (txns) => {
     const { edges, totalCount } = txns;
@@ -359,7 +364,7 @@ const ActivityTable: React.FC = () => {
             {...{
               onChangeHandler: handleSearchOnChange,
               searchValue,
-              searchItem: "transactions",
+              searchItem: "activity",
               clearSearchValue: () => setSearchValue(""),
               disabled:
                 filter &&
