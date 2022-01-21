@@ -203,7 +203,7 @@ const DepositSyndicate: React.FC = () => {
   };
 
   const onTxReceipt = () => {
-    startPolling(1); // start polling for member stakes
+    startPolling(1000); // start polling for member stakes
 
     setMetamaskConfirmPending(false);
     setSubmitting(false);
