@@ -343,6 +343,47 @@ export const mockCollectiblesResult = [
       lastPurchasePriceETH: 0,
     },
   },
+  {
+    name: "Cool Cat #3155",
+    image:
+      "https://lh3.googleusercontent.com/kGd5K1UPnRVe2k_3na9U5IKsAKr2ERGHn6iSQwQBPGywEMcRWiKtFmUh85nuG0tBPKLVqaXsWqHKCEJidwa2w4oUgcITcJ7Kh-ObsA",
+    animation: null,
+    permalink:
+      "https://opensea.io/assets/0x1a92f7381b9f03921564a437210bb9396471050c/3155",
+    id: "3155",
+    collection: {
+      name: "Cool Cats NFT",
+      slug: "cool-cats-nft",
+    },
+    description:
+      "Cool Cats is a collection of 9,999 randomly generated and stylistically curated NFTs that exist on the Ethereum Blockchain. Cool Cat holders can participate in exclusive events such as NFT claims, raffles, community giveaways, and more. Remember, all cats are cool, but some are cooler than others. Visit [www.coolcatsnft.com](https://www.coolcatsnft.com/) to learn more.",
+    floorPrice: 0,
+    lastPurchasePrice: {
+      lastPurchasePriceUSD: 0,
+      lastPurchasePriceETH: 0,
+    },
+  },
+  {
+    name: "One Year of Motion #8",
+    image:
+      "https://lh3.googleusercontent.com/zo-i2y1RCv734ZcOO203hYbg3ac2DgZ8hnp532jl0ygZs6DSS5yqogCSQndgzRqru8oclgb3yy8t7QNlBDEmFN_oH3xhW6a52VsDAw",
+    animation:
+      "https://litwtf.mypinata.cloud/ipfs/QmZMLMXFiXKLswGb5UM7zSnDgghKeZ9yKUUhSGsSTMZs1k/one_year_eth.html",
+    permalink:
+      "https://opensea.io/assets/0xfc0946b334b3ba133d239207a4d01da1b75cf51b/784",
+    id: "3216",
+    collection: {
+      name: "LIT Project Two: Motion",
+      slug: "lit-project-two-1",
+    },
+    description:
+      "LIT Project Two with Robert De Niro is a dynamic NFT programmed to react to the movement of Ethereum in different time increments. Zoom in or zoom out. Reflect. Match multiple Motions for multiple perspectives. Every wallet needs a watcher.\n\nSmart contract & metadata by Transient Labs.",
+    floorPrice: 0,
+    lastPurchasePrice: {
+      lastPurchasePriceUSD: 0,
+      lastPurchasePriceETH: 0,
+    },
+  },
 ];
 
 export const mockOffChainTransactionsData = {
