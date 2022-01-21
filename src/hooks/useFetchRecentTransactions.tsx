@@ -4,9 +4,16 @@ import { useSelector } from "react-redux";
 import { AppState } from "@/state";
 import * as CryptoJS from 'crypto-js';
 import { useDemoMode } from "./useDemoMode";
-import { web3 } from '@/utils/web3Utils';
 
-const SECRET_KEY = process.env.NEXT_PUBLIC_ENCRYPTION_SECRET_KEY;
+const GRAPHQL_HEADER = process.env.NEXT_PUBLIC_GRAPHQL_HEADER;
+
+// Get input, note this is deterministic 
+export const getInput: any = (
+  address: string
+) => {
+  const wordArray = CryptoJS.enc.Utf8.parse(GRAPHQL_HEADER);
+  return CryptoJS.AES.encrypt(address, wordArray, { mode: CryptoJS.mode.ECB }).toString();
+}
 
 export const useFetchRecentTransactions: any = (
   skip = 0,
@@ -21,11 +28,10 @@ export const useFetchRecentTransactions: any = (
   } = useSelector((state: AppState) => state);
   const isDemoMode = useDemoMode();
 
-  const encryptedInput = CryptoJS.AES.encrypt(web3.utils.toChecksumAddress(erc20Token.owner.toString()), SECRET_KEY).toString();
-
+  const input = erc20Token.owner.toString() === '' ? '' : getInput(erc20Token.owner.toString());
   return useQuery(RECENT_TRANSACTIONS, {
     variables: {
-      encryptedInput: encryptedInput, // encrypted input
+      input,
       where,
       take: 10,
       skip,
