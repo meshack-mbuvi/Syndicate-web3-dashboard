@@ -46,6 +46,7 @@ export function useAccountTokens(): {
     skip: !account || !address || isDemoMode,
   });
 
+  const stringifiedData = JSON.stringify(data);
   useEffect(() => {
     if (isDemoMode) {
       setAccountTokens("3812");
@@ -54,7 +55,16 @@ export function useAccountTokens(): {
       return;
     }
 
-    if (loading || !data || !data.members.length) return;
+    if (loading || !data) return;
+
+    // adding this block to reset values.
+    // fixes an issue where member deposit data is not updated when switching from a member
+    // with deposits to one with zero deposits.
+    if (!data.members.length) {
+      setAccountTokens("0");
+      setMemberDeposits("0");
+      setMemberOwnership("0");
+    }
 
     const {
       members: [member],
@@ -77,11 +87,19 @@ export function useAccountTokens(): {
         setMemberOwnership(`${+ownershipShare / 10000}`);
       }
     }
-  }, [account, tokenDecimals, loading, address, totalSupply]);
+  }, [
+    account,
+    tokenDecimals,
+    loading,
+    address,
+    totalSupply,
+    totalDeposits,
+    stringifiedData,
+  ]);
 
   useEffect(() => {
     refetch();
-  }, [totalSupply, totalDeposits]);
+  }, [totalSupply, totalDeposits, account]);
 
   return {
     loadingMemberOwnership: loading,

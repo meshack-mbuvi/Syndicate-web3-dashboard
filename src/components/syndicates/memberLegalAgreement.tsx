@@ -99,7 +99,7 @@ const LegalAgreement: React.FC = () => {
     resolver: yupResolver(schema(erc20Token.maxTotalDeposits)),
   });
 
-  const { memberName } = watch();
+  const { memberName = "" } = watch();
 
   const { form } = router.query;
   // Check whether form query param exist when page has loaded
@@ -142,7 +142,9 @@ const LegalAgreement: React.FC = () => {
               name="memberName"
               control={control}
               placeholder="Member’s full name"
-              showWarning={memberName.trim().split(" ").length < 2}
+              showWarning={
+                memberName && memberName?.trim().split(" ").length < 2
+              }
               warningText="Member name should have first and last names"
             />
 

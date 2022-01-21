@@ -206,7 +206,15 @@ const DepositSyndicate: React.FC = () => {
     }
 
     setNewMemberTokens(+accountTokens + +depositAmount);
-    setNewOwnershipShare(+memberOwnership + +ownershipShare);
+
+    // Bug fix: setting new ownership share to an addition of memberOwnership and ownershipShare
+    // leads to a situation where the total percentage ownership on the success modal exceeds 100% if the club has only 1 member.
+    // see this screenshot: https://drive.google.com/file/d/1l0kS3hVKqG_VoM6pf7UpX93DnKSTyRMU/view?usp=sharing
+    if (+memberOwnership === 100) {
+      setNewOwnershipShare(+memberOwnership);
+    } else {
+      setNewOwnershipShare(+memberOwnership + +ownershipShare);
+    }
 
     dispatch(
       setERC20Token(
@@ -1051,45 +1059,52 @@ const DepositSyndicate: React.FC = () => {
       </div>
 
       {/* We show holding component when user has made initial deposit */}
-      {+memberDeposits > 0 && !loading && depositsEnabled && (
-        <div className="bg-gray-syn8 rounded-2xl mt-6 px-8 py-6">
-          <div className="pb-5 text-sm font-bold uppercase tracking-widest">
-            Your Holdings
-          </div>
-          {loading ? (
-            <SkeletonLoader height="9" width="full" borderRadius="rounded-md" />
-          ) : (
-            <div className={`flex ${isHoldingsCardColumn ? "flex-col" : ""}`}>
-              <div
-                className={
-                  isHoldingsCardColumn
-                    ? ""
-                    : (width < 1380 || width < 868) &&
-                      +memberDeposits >= 1000 &&
-                      +memberDeposits < 10000
-                    ? "mr-6"
-                    : "mr-8"
-                }
-              >
-                <HoldingsInfo
-                  title="Amount deposited"
-                  amount={floatedNumberWithCommas(memberDeposits)}
-                  tokenName={"USDC"}
-                />
-              </div>
-              <div className={isHoldingsCardColumn ? "pt-5" : ""}>
-                <HoldingsInfo
-                  title="Club tokens (ownership share)"
-                  amount={floatedNumberWithCommas(accountTokens)}
-                  tokenName={symbol}
-                  percentValue={floatedNumberWithCommas(memberOwnership)}
-                  wrap="flex-wrap"
-                />
-              </div>
+      {status !== Status.DISCONNECTED &&
+        +memberDeposits > 0 &&
+        !loading &&
+        depositsEnabled && (
+          <div className="bg-gray-syn8 rounded-2xl mt-6 px-8 py-6">
+            <div className="pb-5 text-sm font-bold uppercase tracking-widest">
+              Your Holdings
             </div>
-          )}
-        </div>
-      )}
+            {loading ? (
+              <SkeletonLoader
+                height="9"
+                width="full"
+                borderRadius="rounded-md"
+              />
+            ) : (
+              <div className={`flex ${isHoldingsCardColumn ? "flex-col" : ""}`}>
+                <div
+                  className={
+                    isHoldingsCardColumn
+                      ? ""
+                      : (width < 1380 || width < 868) &&
+                        +memberDeposits >= 1000 &&
+                        +memberDeposits < 10000
+                      ? "mr-6"
+                      : "mr-8"
+                  }
+                >
+                  <HoldingsInfo
+                    title="Amount deposited"
+                    amount={floatedNumberWithCommas(memberDeposits)}
+                    tokenName={"USDC"}
+                  />
+                </div>
+                <div className={isHoldingsCardColumn ? "pt-5" : ""}>
+                  <HoldingsInfo
+                    title="Club tokens (ownership share)"
+                    amount={floatedNumberWithCommas(accountTokens)}
+                    tokenName={symbol}
+                    percentValue={floatedNumberWithCommas(memberOwnership)}
+                    wrap="flex-wrap"
+                  />
+                </div>
+              </div>
+            )}
+          </div>
+        )}
 
       <Modal
         {...{

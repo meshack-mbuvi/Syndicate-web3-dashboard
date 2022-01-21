@@ -18,6 +18,7 @@ import { useDispatch, useSelector } from "react-redux";
 import GenerateDepositLink from "./GenerateDepositLink";
 import { MintAndShareTokens } from "./mintAndShareTokens";
 import { setDepositReadyInfo } from "@/state/legalInfo";
+import { useCreateInvestmentClubContext } from "@/context/CreateInvestmentClubContext";
 
 const useShowShareWarning = () => {
   const router = useRouter();
@@ -57,6 +58,8 @@ const ManagerActions = (): JSX.Element => {
       depositReadyInfo: { depositLink, adminSigned },
     },
   } = useSelector((state: AppState) => state);
+
+  const { resetCreationStates } = useCreateInvestmentClubContext();
   const router = useRouter();
   const dispatch = useDispatch();
 
@@ -125,6 +128,8 @@ const ManagerActions = (): JSX.Element => {
     if (!clubAddress) return;
 
     if (source && source === "create") {
+      // reset creation context states
+      resetCreationStates();
       setSyndicateSuccessfullyCreated(true);
       // truncates the query part to prevent reshowing confetti
       router.push(`/clubs/${clubAddress}/manage`);
@@ -281,18 +286,20 @@ const ManagerActions = (): JSX.Element => {
                         />
                       </div>
                     )}
-                    <GenerateDepositLink
-                      showGenerateLinkModal={showGenerateLinkModal}
-                      setShowGenerateLinkModal={setShowGenerateLinkModal}
-                      updateDepositLinkCopyState={updateDepositLinkCopyState}
-                      showDepositLinkCopyState={showDepositLinkCopyState}
-                      syndicateCreationFailed={syndicateCreationFailed}
-                      showConfettiSuccess={showConfettiSuccess}
-                      creatingSyndicate={creatingSyndicate}
-                      syndicateSuccessfullyCreated={
-                        syndicateSuccessfullyCreated
-                      }
-                    />
+                    {!showConfettiSuccess && (
+                      <GenerateDepositLink
+                        showGenerateLinkModal={showGenerateLinkModal}
+                        setShowGenerateLinkModal={setShowGenerateLinkModal}
+                        updateDepositLinkCopyState={updateDepositLinkCopyState}
+                        showDepositLinkCopyState={showDepositLinkCopyState}
+                        syndicateCreationFailed={syndicateCreationFailed}
+                        showConfettiSuccess={showConfettiSuccess}
+                        creatingSyndicate={creatingSyndicate}
+                        syndicateSuccessfullyCreated={
+                          syndicateSuccessfullyCreated
+                        }
+                      />
+                    )}
 
                     {showShareWarning && !showConfettiSuccess && adminSigned && (
                       <div className="flex flex-row mt-4 text-yellow-warning bg-brown-dark rounded-1.5lg py-3 px-4">
@@ -327,10 +334,12 @@ const ManagerActions = (): JSX.Element => {
           </div>
         </FadeIn>
         {status !== Status.DISCONNECTED && (
-          <div className="flex bg-gray-syn8 hover:bg-gray-syn7 duration-500 transition-all rounded-2-half my-6 px-8 py-6 space-y-6 items-stretch items-start flex-col">
+          <div className="flex bg-gray-syn8 duration-500 transition-all rounded-2.5xl my-6 p-4 space-y-4 items-start flex-col">
+            <div className="hover:bg-gray-syn7 rounded-xl py-2 px-4">
             <CreateEntityCard />
+            </div>
             <button
-              className="cursor-pointer space-x-4 focus:outline-none flex items-stretch items-start text-base leading-6"
+              className="cursor-pointer space-x-4 focus:outline-none flex w-full items-start text-base leading-6 hover:bg-gray-syn7 rounded-xl py-2 px-4"
               onClick={handleShowMintTokens}
             >
               <div className="flex-shrink-0">
