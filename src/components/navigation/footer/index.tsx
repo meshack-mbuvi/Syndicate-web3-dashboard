@@ -2,14 +2,14 @@ import React from "react";
 import { syndicateDetailsConstants } from "src/components/syndicates/shared/Constants";
 
 const Footer: React.FC<{extraClasses: string}> = ({ extraClasses = ""}) => {
-  const { syndicateDetailsFooterText, syndicateDetailsSecurityFooterText  } = syndicateDetailsConstants;
+  const { syndicateDetailsFooterText } = syndicateDetailsConstants;
 
   return (
     <footer className={`${extraClasses} w-full pt-5 border-gray-matterhorn`}>
       <img className="w-32 sm:w-44 mb-8 sm:mb-12" src="/images/wordmark.svg" alt=""/>
       <div className={`mx-auto`}>
         <p className="text-xs mb-6 sm:mb-8 text-gray-syn4">
-          {syndicateDetailsFooterText} {syndicateDetailsSecurityFooterText}
+          {syndicateDetailsFooterText}
         </p>
         <div className="md:flex justify-between">
           <p className="text-sm text-gray-syn4">
