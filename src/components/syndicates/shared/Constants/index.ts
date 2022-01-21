@@ -3,15 +3,12 @@
 
 // syndicate details section
 const syndicateDetailsFooterText =
-  "Syndicate is currently in private beta and is open only to accredited investors. No materials on the Syndicate site should be construed as a solicitation or advice to buy any security.";
-const syndicateDetailsSecurityFooterText =
-  "We take security seriously. Syndicate has received multiple security audits and is formally verified but bugs may still exist.";
+  "Syndicate is currently in beta and should be used at your own risk. We take security seriously and our contracts have been thoroughly tested and formally verified but are pending audit and bugs may still exist. No materials on the Syndicate site should be construed as a solicitation or advice to buy any security.";
 const syndicateDetailsLinkText = "View the audit report here.";
 const syndicateModifiableText = "This syndicate is modifiable";
 
 export const syndicateDetailsConstants = {
   syndicateDetailsFooterText,
-  syndicateDetailsSecurityFooterText,
   syndicateDetailsLinkText,
   syndicateModifiableText,
 };
