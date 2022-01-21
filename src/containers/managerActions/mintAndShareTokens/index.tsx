@@ -46,7 +46,7 @@ const schema = (maximumTokensToMint, web3) =>
     amount: yup
       .number()
       .required("Amount is required")
-      .moreThan(0)
+      .moreThan(0, "Amount must be greater than 0")
       .max(
         maximumTokensToMint,
         `Amount must be less or equal to ${numberWithCommas(
