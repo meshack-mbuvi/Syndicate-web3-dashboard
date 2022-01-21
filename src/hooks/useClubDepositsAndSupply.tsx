@@ -38,13 +38,13 @@ export function useClubDepositsAndSupply(contractAddress: string): {
       where: {
         contractAddress: contractAddress?.toLocaleLowerCase() || "",
       },
-      pollInterval: 1000,
     },
     // Avoid unnecessary calls when contractAddress is not defined or in demo mode
     skip: !contractAddress || isDemoMode,
   });
 
   const { tokenDecimals } = erc20Token;
+  
   const { memberDeposits, accountTokens } = useAccountTokens();
 
   /**
