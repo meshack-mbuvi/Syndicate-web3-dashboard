@@ -4,6 +4,7 @@ import { useSelector } from "react-redux";
 import { AppState } from "@/state";
 import * as CryptoJS from 'crypto-js';
 import { useDemoMode } from "./useDemoMode";
+import { web3 } from '@/utils/web3Utils';
 
 const SECRET_KEY = process.env.NEXT_PUBLIC_ENCRYPTION_SECRET_KEY;
 
@@ -20,9 +21,11 @@ export const useFetchRecentTransactions: any = (
   } = useSelector((state: AppState) => state);
   const isDemoMode = useDemoMode();
 
+  const encryptedInput = CryptoJS.AES.encrypt(web3.utils.toChecksumAddress(erc20Token.owner.toString()), SECRET_KEY).toString();
+
   return useQuery(RECENT_TRANSACTIONS, {
     variables: {
-      encryptedInput: CryptoJS.AES.encrypt(erc20Token.owner.toString(), SECRET_KEY).toString(), // encrypted input
+      encryptedInput: encryptedInput, // encrypted input
       where,
       take: 10,
       skip,
