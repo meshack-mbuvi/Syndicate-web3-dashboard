@@ -22,6 +22,7 @@ interface ModalProps {
   titleAlignment?: string;
   showHeader?: boolean;
   overflowYScroll?: boolean;
+  overflowXScroll?: boolean;
   isMaxHeightScreen?: boolean;
   alignment?: string;
   margin?: string;
@@ -68,6 +69,7 @@ const Modal = (props: ModalProps): JSX.Element => {
     modalStyle = ModalStyle.LIGHT,
     showHeader = true,
     overflowYScroll = true,
+    overflowXScroll = true,
     isMaxHeightScreen = true,
     alignment = "align-middle",
     margin = "md:my-14",
@@ -198,7 +200,7 @@ const Modal = (props: ModalProps): JSX.Element => {
               ) : null}
               {/* end of modal title */}
 
-              <div className={`max-h-modal overflow-x-scroll no-scroll-bar ${showHeader ? "mx-4 align-middle" : ""}`}>
+              <div className={`max-h-modal ${overflowXScroll ? "overflow-x-scroll" : ""} no-scroll-bar ${showHeader ? "mx-4 align-middle" : ""}`}>
                 {children}
               </div>
             </div>
