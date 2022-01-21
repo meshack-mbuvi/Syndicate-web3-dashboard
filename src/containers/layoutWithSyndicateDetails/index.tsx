@@ -18,8 +18,8 @@ import {
   clearCollectiblesTransactions,
   fetchCollectiblesTransactions,
   fetchTokenTransactions,
-  setMockTokensResult,
   setMockCollectiblesTransactions,
+  setMockTokensResult,
 } from "@/state/assets/slice";
 import { setClubMembers } from "@/state/clubMembers";
 import {
@@ -57,14 +57,14 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
   const clubAddress = window?.location?.pathname.split("/")[2];
 
   const isDemoMode = useDemoMode(clubAddress);
-  const zeroAddress = "0x0000000000000000000000000000000000000000"
+  const zeroAddress = "0x0000000000000000000000000000000000000000";
 
   useEffect(() => {
     // Demo mode
     if (clubAddress === zeroAddress) {
       router.push("/clubs/demo/manage");
     }
-  })
+  });
 
   //  tokens for the connected wallet account
   const { accountTokens } = useAccountTokens();
@@ -142,6 +142,9 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
     }
   }, [account, clubAddress, dispatch]);
 
+  /**
+   * Fetch club details
+   */
   useEffect(() => {
     if (!clubAddress || status == Status.CONNECTING) return;
 
@@ -217,9 +220,7 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
 
   return (
     <>
-      {router.isReady &&
-      !isDemoMode &&
-      !web3.utils.isAddress(clubAddress) ? (
+      {router.isReady && !isDemoMode && !web3.utils.isAddress(clubAddress) ? (
         <NotFoundPage />
       ) : (
         <Layout showNav={showNav}>

@@ -561,6 +561,7 @@ const DepositSyndicate: React.FC = () => {
     if (showDepositProcessingModal) {
       toggleDepositProcessingModal();
     }
+    refetchMemberData();
   };
 
   const closeClaimCard = () => {

@@ -42,6 +42,7 @@ export function useAccountTokens(): {
         syndicateDAO: address.toLowerCase(),
       },
     },
+    pollInterval: 1000, // pool every second
     // Avoid unnecessary calls when account/clubAddress is not defined
     skip: !account || !address || isDemoMode,
   });
