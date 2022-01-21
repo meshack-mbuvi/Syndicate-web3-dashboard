@@ -29,7 +29,8 @@ const MemberAgreementPage: NextPage = () => {
     },
     {
       url: `/clubs/${clubAddress}/member/legal/prepare`,
-      urlText: "Prepare legal documents",
+      urlText: "Sign legal documents",
+      isLegal: true,
     },
   ];
 

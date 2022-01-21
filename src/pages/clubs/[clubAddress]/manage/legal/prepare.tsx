@@ -27,6 +27,7 @@ const CreateAgreementPage: NextPage = () => {
     {
       url: `/clubs/${clubAddress}/manage/legal/prepare`,
       urlText: "Prepare legal documents",
+      isLegal: true,
     },
   ];
 

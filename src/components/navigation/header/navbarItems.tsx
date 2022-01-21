@@ -5,12 +5,14 @@ interface IProps {
   url: string;
   urlText: string;
   customClasses?: string;
+  isLegal?: boolean;
 }
 
 export const NavBarNavItem: React.FC<IProps> = ({
   url,
   urlText,
   customClasses = "",
+  isLegal = false,
 }) => {
   return (
     <ActiveLink href={url} customActive="border-b-1 hover:border-opacity-100">
@@ -20,6 +22,15 @@ export const NavBarNavItem: React.FC<IProps> = ({
           style={{ lineHeight: "1.3em" }}
         >
           {urlText}
+        {isLegal ? (
+          <div className="flex pt-1">
+            <div className="text-xs mr-1">Powered by</div>
+            <img
+              src="/images/latham&watkinsllp.svg"
+              alt="latham & watkins llp logo"
+            />
+          </div>
+        ) : null}
         </a>
       </div>
     </ActiveLink>
