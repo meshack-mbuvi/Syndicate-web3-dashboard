@@ -181,7 +181,7 @@ const DepositLinkModal: FC<ILinkModal> = ({
             before they deposit?
           </div>
           <div className="text-sm text-gray-syn4 mt-4 mb-6">
-            To adapt our templates to your needs,{" "}
+            To adapt these legal documents to your needs,{" "}
             <a
               href="https://syndicatedao.gitbook.io/syndicate-wiki/web3-investment-clubs/create-a-legal-entity/template-legal-docs"
               className="text-blue cursor-pointer"
@@ -198,16 +198,27 @@ const DepositLinkModal: FC<ILinkModal> = ({
           <div className="space-y-4">
             <Link href={`/clubs/${clubAddress}/manage/legal/prepare`}>
               <div
-                className="border-1 border-gray-syn6 hover:border-blue cursor-pointer p-8 rounded-1.5lg flex justify-between items-center svgBlueHover"
+                // className="border-1 border-gray-syn6 hover:border-blue cursor-pointer p-8 rounded-1.5lg flex justify-between items-center svgBlueHover"
+                className="border-1 border-gray-syn6 hover:border-blue hover:cursor-pointer rounded-1.5lg flex flex-col svgBlueHover group"
                 onClick={() => startDocumentSigning("yes")}
               >
-                <div>
-                  <div className="leading-6">Yes, use LLC template</div>
-                  <div className="text-sm leading-4 text-gray-syn3 mt-1">
-                    Requires an existing LLC
+                <div className="flex justify-between px-8 py-6 items-center leading-3.5">
+                  <div>
+                    <div className="leading-6">Yes, use default LLC agreements</div>
+                    <div className="text-sm leading-4 text-gray-syn3 mt-1">
+                      Requires an existing LLC
+                    </div>
                   </div>
+                  <RightArrow />
                 </div>
-                <RightArrow />
+                <div className="flex justify-center align-middle rounded-b-1.5lg py-2 bg-gray-inactive group-hover:bg-blue">
+                  <img src="/images/ribbon.svg" alt="ribbon" />
+                  <span className="mx-1 text-xs">Powered by</span>
+                  <img
+                    src="/images/latham&watkinsllp.svg"
+                    alt="latham & watkins llp logo"
+                  />
+                </div>
               </div>
             </Link>
             <button
