@@ -6,6 +6,7 @@ import { useQuery } from "@apollo/client";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
+import { useAccountTokens } from "./useAccountTokens";
 import { useDemoMode } from "./useDemoMode";
 
 /**
@@ -43,9 +44,13 @@ export function useClubDepositsAndSupply(contractAddress: string): {
   });
 
   const { tokenDecimals } = erc20Token;
+  
+  const { memberDeposits, accountTokens } = useAccountTokens();
 
   /**
    * Retrieve totalDeposits,totalSupply from the thegraph
+   *
+   * Also,whenever connected wallet tokens/deposits change, refetch club details
    */
   useEffect(() => {
     if (isDemoMode) {
@@ -66,7 +71,15 @@ export function useClubDepositsAndSupply(contractAddress: string): {
     setTotalSupply(getWeiAmount(totalSupply, tokenDecimals || 18, false));
     setTotalDeposits(getWeiAmount(totalDeposits, 6, false));
     setLoadingClubDeposits(false);
-  }, [data, loading, tokenDecimals, erc20Token.loading, isReady]);
+  }, [
+    data,
+    loading,
+    tokenDecimals,
+    erc20Token.loading,
+    isReady,
+    memberDeposits,
+    accountTokens,
+  ]);
 
   return {
     totalDeposits,

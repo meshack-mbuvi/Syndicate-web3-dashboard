@@ -126,8 +126,14 @@ const DepositSyndicate: React.FC = () => {
     "This transaction is taking a while. You can speed it up by spending more gas via your wallet.";
 
   //  tokens for the connected wallet account
-  const { accountTokens, memberOwnership, memberDeposits, refetchMemberData } =
-    useAccountTokens();
+  const {
+    accountTokens,
+    memberOwnership,
+    memberDeposits,
+    refetchMemberData,
+    startPolling,
+    stopPolling,
+  } = useAccountTokens();
 
   useEffect(() => {
     // calculate member ownership for the intended deposits
@@ -197,6 +203,8 @@ const DepositSyndicate: React.FC = () => {
   };
 
   const onTxReceipt = () => {
+    startPolling(1000); // start polling for member stakes
+
     setMetamaskConfirmPending(false);
     setSubmitting(false);
     if (claimEnabled) {
@@ -567,6 +575,8 @@ const DepositSyndicate: React.FC = () => {
     if (showDepositProcessingModal) {
       toggleDepositProcessingModal();
     }
+    stopPolling();
+    refetchMemberData();
   };
 
   const closeClaimCard = () => {

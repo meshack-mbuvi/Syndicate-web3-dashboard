@@ -18,6 +18,8 @@ export function useAccountTokens(): {
   memberOwnership;
   loadingMemberOwnership;
   refetchMemberData;
+  startPolling;
+  stopPolling;
 } {
   const {
     web3Reducer: {
@@ -33,18 +35,21 @@ export function useAccountTokens(): {
 
   const isDemoMode = useDemoMode();
 
-  const { loading, data, refetch } = useQuery(CLUB_MEMBER_QUERY, {
-    variables: {
-      where: {
-        memberAddress: account.toLocaleLowerCase(),
+  const { loading, data, refetch, startPolling, stopPolling } = useQuery(
+    CLUB_MEMBER_QUERY,
+    {
+      variables: {
+        where: {
+          memberAddress: account.toLocaleLowerCase(),
+        },
+        syndicateDaOsWhere2: {
+          syndicateDAO: address.toLowerCase(),
+        },
       },
-      syndicateDaOsWhere2: {
-        syndicateDAO: address.toLowerCase(),
-      },
+      // Avoid unnecessary calls when account/clubAddress is not defined
+      skip: !account || !address || isDemoMode,
     },
-    // Avoid unnecessary calls when account/clubAddress is not defined
-    skip: !account || !address || isDemoMode,
-  });
+  );
 
   const stringifiedData = JSON.stringify(data);
   useEffect(() => {
@@ -114,5 +119,7 @@ export function useAccountTokens(): {
     memberDeposits,
     memberOwnership,
     refetchMemberData: refetch,
+    startPolling,
+    stopPolling,
   };
 }

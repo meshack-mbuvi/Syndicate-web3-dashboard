@@ -18,8 +18,8 @@ import {
   clearCollectiblesTransactions,
   fetchCollectiblesTransactions,
   fetchTokenTransactions,
-  setMockTokensResult,
   setMockCollectiblesTransactions,
+  setMockTokensResult,
 } from "@/state/assets/slice";
 import { setClubMembers } from "@/state/clubMembers";
 import {
@@ -142,6 +142,9 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
     }
   }, [account, clubAddress, dispatch]);
 
+  /**
+   * Fetch club details
+   */
   useEffect(() => {
     if (!clubAddress || status == Status.CONNECTING) return;
 
