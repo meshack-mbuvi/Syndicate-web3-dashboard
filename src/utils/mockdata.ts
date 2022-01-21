@@ -452,7 +452,7 @@ export const mockOffChainTransactionsData = {
         memo: "NFTs are internet media assets that are owned by users, not platforms. This DAO focuses on NFTs and building a global community of NFT collectors.",
         fullyDilutedOwnershipStake: "5",
         preMoneyValuation: "1000000",
-        numberShares: "10000",
+        numberShares: "0",
         numberTokens: "50000",
 
         __typename: "Financial_TransactionAnnotation",
