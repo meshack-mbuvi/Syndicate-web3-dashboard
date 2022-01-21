@@ -97,7 +97,7 @@ const DepositSyndicate: React.FC = () => {
   const [submittingAllowanceApproval, setSubmittingAllowanceApproval] =
     useState<boolean>(false);
 
-  const [unlimitedAllowanceSet, setUnlimitedAllowanceSet] =
+  const [sufficientAllowanceSet, setSufficientAllowanceSet] =
     useState<boolean>(false);
   const [currentMemberAllowance, setCurrentMemberAllowance] =
     useState<string>("0");
@@ -320,6 +320,9 @@ const DepositSyndicate: React.FC = () => {
         setApprovedAllowanceAmount("0");
       }
 
+      // refetch member stats
+      refetchMemberData();
+
       // Amplitude logger: Deposit funds
       amplitudeLogger(SUCCESSFUL_DEPOSIT, {
         flow: Flow.MBR_DEP,
@@ -400,23 +403,23 @@ const DepositSyndicate: React.FC = () => {
   }[] = [
     {
       title: "Approve USDC",
-      info: "Before depositing, you need to allow the protocol to use your USDC. You need to do this once per club.",
+      info: "Before depositing, you need to allow the protocol to use your USDC.",
     },
     { title: "Complete deposit" },
   ];
 
   // check if approval is required for current amount.
   // if approval is not required, run the deposit function.
-  // if not, set allowance to unlimited.
+  // if not, set allowance to the deposit amount.
   useEffect(() => {
     if (depositAmount) {
-      if (parseInt(currentMemberAllowance) > parseInt(depositAmount)) {
+      if (parseInt(currentMemberAllowance) >= parseInt(depositAmount)) {
         // allowance already exists. Proceed with deposit
-        setUnlimitedAllowanceSet(true);
+        setSufficientAllowanceSet(true);
         setCurrentTransaction(1);
       } else {
-        // unlimited allowance needs to be set. Proceed with approval first.
-        setUnlimitedAllowanceSet(false);
+        // sufficient allowance needs to be set. Proceed with approval first.
+        setSufficientAllowanceSet(false);
         setCurrentTransaction(0);
       }
     }
@@ -428,7 +431,7 @@ const DepositSyndicate: React.FC = () => {
     process.env.NEXT_PUBLIC_SINGLE_TOKEN_MINT_MODULE;
 
   // method to check the allowance amount approved by a member.
-  const checkUnlimitedAllowanceSet = useCallback(async () => {
+  const checkCurrentMemberAllowance = useCallback(async () => {
     if (syndicateContracts && account && depositTokenContract) {
       try {
         const memberAllowanceAmount = await depositTokenContract?.methods
@@ -443,17 +446,17 @@ const DepositSyndicate: React.FC = () => {
 
         setCurrentMemberAllowance(currentMemberAllowanceAmount);
       } catch (error) {
-        setUnlimitedAllowanceSet(false);
+        setSufficientAllowanceSet(false);
       }
     }
   }, [syndicateContracts, account, depositTokenContract]);
 
   // check current member token allowance
   useEffect(() => {
-    checkUnlimitedAllowanceSet();
-  }, [checkUnlimitedAllowanceSet]);
+    checkCurrentMemberAllowance();
+  }, [checkCurrentMemberAllowance]);
 
-  // method to handle approval of unlimited allowances by a member.
+  // method to handle approval of allowances by a member.
   const handleAllowanceApproval = async (event: any) => {
     event.preventDefault();
     setMetamaskConfirmPending(true);
@@ -463,9 +466,12 @@ const DepositSyndicate: React.FC = () => {
     // update current transaction step
     setCurrentTransaction(1);
 
-    // set amount to approve to unlimited tokens (2^256 - 1 )
-    const amountToApprove =
-      "115792089237316195423570985008687907853269984665640564039457584007913129639935";
+    // set amount to approve.
+    const amountToApprove = getWeiAmount(
+      depositAmount.toString(),
+      depositTokenDecimals,
+      true,
+    );
 
     try {
       let gnosisTxHash;
@@ -490,7 +496,7 @@ const DepositSyndicate: React.FC = () => {
             // value key, hence the will be undefined.
             // call this function does the job of checking whether the allowance
             // was approved successfully or not.
-            await checkUnlimitedAllowanceSet();
+            await checkCurrentMemberAllowance();
             setSubmittingAllowanceApproval(false);
 
             // Amplitude logger: Approve Allowance
@@ -532,7 +538,7 @@ const DepositSyndicate: React.FC = () => {
       // fallback for gnosisSafe <> walletConnect
       if (gnosisTxHash) {
         // await getGnosisTxnInfo(gnosisTxHash);
-        await checkUnlimitedAllowanceSet();
+        await checkCurrentMemberAllowance();
         setSubmittingAllowanceApproval(false);
 
         // Amplitude logger: Approve Allowance
@@ -612,12 +618,12 @@ const DepositSyndicate: React.FC = () => {
         <span>{`Approving ${depositTokenSymbol}`}</span>
       </div>
     );
-  } else if (unlimitedAllowanceSet && depositAmount) {
-    depositButtonText = "Complete deposit";
+  } else if (sufficientAllowanceSet && depositAmount) {
+    depositButtonText = "Continue";
   } else if (!depositAmount) {
     depositButtonText = "Enter an amount to deposit";
   } else if (
-    !unlimitedAllowanceSet &&
+    !sufficientAllowanceSet &&
     !submittingAllowanceApproval &&
     depositAmount
   ) {
@@ -933,7 +939,7 @@ const DepositSyndicate: React.FC = () => {
                             toggleDepositProcessingModal();
                             return;
                           }
-                          if (!unlimitedAllowanceSet) {
+                          if (!sufficientAllowanceSet) {
                             handleAllowanceApproval(e);
                           } else {
                             investInSyndicate(depositAmount);
@@ -1343,11 +1349,11 @@ const DepositSyndicate: React.FC = () => {
                   </div>
                 ) : null}
                 <span className="font-whyte leading-normal pb-2">
-                  {metamaskConfirmPending && !unlimitedAllowanceSet
+                  {metamaskConfirmPending && !sufficientAllowanceSet
                     ? `Approve ${depositTokenSymbol} from your wallet`
                     : null}
 
-                  {metamaskConfirmPending && unlimitedAllowanceSet
+                  {metamaskConfirmPending && sufficientAllowanceSet
                     ? "Confirm deposit from your wallet"
                     : null}
                   {submittingAllowanceApproval
@@ -1372,7 +1378,7 @@ const DepositSyndicate: React.FC = () => {
                   {(submitting || submittingAllowanceApproval) &&
                     transactionTooLong &&
                     TRANSACTION_TOO_LONG_MSG}
-                  {metamaskConfirmPending && unlimitedAllowanceSet
+                  {metamaskConfirmPending && sufficientAllowanceSet
                     ? "Deposits are irreversible."
                     : null}
                 </span>
@@ -1421,7 +1427,7 @@ const DepositSyndicate: React.FC = () => {
                 <button
                   className="w-full rounded-lg text-base py-4 bg-white text-black"
                   onClick={(e) => {
-                    if (unlimitedAllowanceSet) {
+                    if (sufficientAllowanceSet) {
                       investInSyndicate(depositAmount);
                     } else {
                       handleAllowanceApproval(e);
@@ -1434,7 +1440,7 @@ const DepositSyndicate: React.FC = () => {
                 >
                   {depositFailed || transactionFailed || transactionRejected
                     ? "Try again"
-                    : unlimitedAllowanceSet
+                    : sufficientAllowanceSet
                     ? "Complete deposit"
                     : "Continue"}
                 </button>

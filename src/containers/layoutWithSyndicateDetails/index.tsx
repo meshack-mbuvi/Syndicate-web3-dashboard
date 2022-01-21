@@ -297,7 +297,7 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
                         <div
                           className={`${
                             isSubNavStuck ? "hidden" : "block"
-                          } border-b-1 border-gray-syn6 absolute w-screen right-0`}
+                          } border-b-1 border-gray-syn7 absolute w-screen right-0`}
                         ></div>
                       </div>
 

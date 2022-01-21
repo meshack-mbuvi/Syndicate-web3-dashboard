@@ -65,10 +65,14 @@ export function useAccountTokens(): {
     // adding this block to reset values.
     // fixes an issue where member deposit data is not updated when switching from a member
     // with deposits to one with zero deposits.
-    if (!data.members.length) {
+    const resetMemberStats = () => {
       setAccountTokens("0");
       setMemberDeposits("0");
       setMemberOwnership("0");
+    };
+
+    if (!data.members.length) {
+      resetMemberStats();
     }
 
     const {
@@ -90,6 +94,8 @@ export function useAccountTokens(): {
         setAccountTokens(getWeiAmount(tokens, tokenDecimals, false));
         setMemberDeposits(getWeiAmount(depositAmount, 6, false));
         setMemberOwnership(`${+ownershipShare / 10000}`);
+      } else {
+        resetMemberStats();
       }
     }
   }, [

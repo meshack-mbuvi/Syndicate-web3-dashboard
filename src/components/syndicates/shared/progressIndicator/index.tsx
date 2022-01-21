@@ -36,7 +36,7 @@ export const ProgressIndicator = (props: IProgressIndicator): JSX.Element => {
   );
 
   return (
-    <div className="w-full xl:pb-14 pb-10 border-b-2 border-gray-syn6">
+    <div className="w-full xl:pb-14 pb-10 border-b-1 border-gray-syn6">
       {loading ? (
         <div>
           <div className="mb-4">
@@ -75,7 +75,7 @@ export const ProgressIndicator = (props: IProgressIndicator): JSX.Element => {
         </div>
       ) : (
         <div>
-          <div className="h-5 overflow-hidden mb-4 text-sm flex rounded-full bg-gray-9">
+          <div className="h-5 overflow-hidden mb-4 text-sm flex rounded-full bg-gray-syn7">
             <div
               style={{
                 width: `${floatedNumberWithCommas(depositsPercentage)}%`,
