@@ -200,15 +200,15 @@ const DepositLinkModal: FC<ILinkModal> = ({
                 <div className="flex justify-between px-8 py-6 items-center leading-3.5">
                   <div>
                     <div className="leading-6">Yes, use default LLC agreements</div>
-                    <div className="text-sm leading-4 text-gray-syn3 mt-1">
+                    <div className="text-sm leading-4 text-gray-syn3 mt-0.5">
                       Requires an existing LLC
                     </div>
                   </div>
                   <RightArrow className="text-gray-syn4 group-hover:text-blue"/>
                 </div>
-                <div className="flex justify-center align-middle rounded-b-1.5lg py-2 bg-gray-inactive group-hover:bg-blue">
-                  <RibbonIcon className="text-white"/>
-                  <span className="mx-1 text-xs">Powered by</span>
+                <div className="flex justify-center align-middle rounded-b-1.5lg py-2.5 bg-gray-inactive group-hover:bg-blue">
+                  <RibbonIcon className="text-white" height={'0.75rem'} width={'0.75rem'}/>
+                  <span className="mx-1 text-subtext ">Powered by</span>
                   <img
                     src="/images/latham&watkinsllp.svg"
                     alt="latham & watkins llp logo"
@@ -221,7 +221,7 @@ const DepositLinkModal: FC<ILinkModal> = ({
               onClick={() => startDocumentSigning("no")}
             >
               <p className="leading-6 text-left">No</p>
-              <p className="text-sm text-left leading-4 text-gray-syn3 mt-1">
+              <p className="text-sm text-left leading-4 text-gray-syn3 mt-0.5">
                 I will handle legal documents separately
               </p>
             </button>

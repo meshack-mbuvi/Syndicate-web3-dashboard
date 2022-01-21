@@ -134,6 +134,7 @@ module.exports = {
         ],
       },
       fontSize: {
+        subtext: ["0.75rem", "0.875rem"],
         modalTitle: "2.1875rem",
         modalSubTitle: "1.5rem",
         "1.5xl": "1.375rem",

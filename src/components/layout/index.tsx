@@ -15,7 +15,7 @@ import SEO from "../seo";
 interface Props {
   backLink?: string;
   showNav?: boolean;
-  navItems?: { url: string; urlText: string; isLegal?: boolean }[];
+  navItems?: { navItemText: string; url?: string; isLegal?: boolean }[];
 }
 
 const Layout: FC<Props> = ({
@@ -25,7 +25,7 @@ const Layout: FC<Props> = ({
   navItems = [
     {
       url: "/clubs",
-      urlText: "Portfolio",
+      navItemText: "Portfolio",
     },
   ],
 }) => {
