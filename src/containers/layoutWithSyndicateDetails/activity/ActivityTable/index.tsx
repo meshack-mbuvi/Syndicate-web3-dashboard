@@ -185,8 +185,10 @@ const ActivityTable: React.FC = () => {
       description =
         "There are currently no uncategorised transactions in this club’s activity.";
     } else {
-      title = `No transactions categorised as “${cleanedFilter}”`;
-      description = `There are currently no transactions categorised as "${cleanedFilter}" in this club’s activity.`;
+      if (!searchValue) {
+        title = `No transactions categorised as “${cleanedFilter}”`;
+        description = `There are currently no transactions categorised as "${cleanedFilter}" in this club’s activity.`;
+      }
     }
 
     return (

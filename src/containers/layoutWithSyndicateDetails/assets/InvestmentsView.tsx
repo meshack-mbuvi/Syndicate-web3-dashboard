@@ -77,7 +77,7 @@ const InvestmentsView: FC<InvestmentsViewProps> = ({
           {!animate && (
             <div className="absolute flex flex-col justify-center items-center top-1/3 w-full z-10">
               <span className="text-white mb-4 text-xl">
-                This club has no investments yet.
+                This club has no off-chain investments yet.
               </span>
               <span className="text-gray-syn4">
                 Any off-chain investments added will appear here.
