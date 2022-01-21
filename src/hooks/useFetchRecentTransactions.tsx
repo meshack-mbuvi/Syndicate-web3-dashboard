@@ -5,7 +5,7 @@ import { AppState } from "@/state";
 import * as CryptoJS from 'crypto-js';
 import { useDemoMode } from "./useDemoMode";
 
-const SECRET_KEY = process.env.ENCRYPTION_SECRET_KEY;
+const SECRET_KEY = process.env.NEXT_PUBLIC_ENCRYPTION_SECRET_KEY;
 
 export const useFetchRecentTransactions: any = (
   skip = 0,
@@ -22,7 +22,7 @@ export const useFetchRecentTransactions: any = (
 
   return useQuery(RECENT_TRANSACTIONS, {
     variables: {
-      syndicateAddress: CryptoJS.AES.encrypt(erc20Token.owner.toString(), SECRET_KEY), // encrypted input
+      syndicateAddress: CryptoJS.AES.encrypt(erc20Token.owner.toString(), SECRET_KEY).toString(), // encrypted input
       where,
       take: 10,
       skip,
