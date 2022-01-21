@@ -373,7 +373,7 @@ export const mockOffChainTransactionsData = {
 
         __typename: "Financial_TransactionAnnotation",
         annotationMetadata: {},
-        createdAt: "2021-12-20T07:21:32.246Z",
+        createdAt: "2022-01-25T00:00:00.000Z",
         fromLabel: "",
         toLabel: "",
         transactionCategory: "INVESTMENT",
@@ -403,7 +403,7 @@ export const mockOffChainTransactionsData = {
       isError: false,
       isOutgoingTransaction: true,
       metadata: {
-        acquisitionDate: "2021-10-22T00:00:00.000Z",
+        acquisitionDate: "2021-10-28T00:00:00.000Z",
         companyName: "Metaverse Company",
         roundCategory: "Series B",
         postMoneyValuation: "100000",
@@ -415,7 +415,7 @@ export const mockOffChainTransactionsData = {
 
         __typename: "Financial_TransactionAnnotation",
         annotationMetadata: {},
-        createdAt: "2021-12-20T10:22:11.141Z",
+        createdAt: "2021-10-28T10:22:11.141Z",
         fromLabel: "",
         toLabel: "",
         transactionCategory: "INVESTMENT",
@@ -457,13 +457,13 @@ export const mockOffChainTransactionsData = {
 
         __typename: "Financial_TransactionAnnotation",
         annotationMetadata: {},
-        createdAt: "2021-12-21T06:02:04.957Z",
+        createdAt: "2022-01-01T00:00:00.000Z",
         fromLabel: "",
         toLabel: "",
         transactionCategory: "INVESTMENT",
         transactionId:
           "0xa5baf7f1fdeabc40e5773f103daa473679d4cf38c39b09fee6500481f851a17e",
-        updatedAt: "2021-12-21T06:02:04.957Z",
+        updatedAt: "2022-01-01T00:00:00.000Z",
       },
       syndicateAddress: "0x2502947319f2166eF46f0a7c081D23C63f88112B",
       toAddress: "0x23cf727486ebc811625ae2664adb3891d2111cb2",
