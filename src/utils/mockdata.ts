@@ -96,7 +96,7 @@ export const mockTokensResult = [
     tokenDecimal: "18",
     tokenSymbol: "sOHM",
     tokenBalance: "347.53",
-    tokenName: "SafeOHM",
+    tokenName: "Staked Olympus v1",
     tokenValue: 0,
   },
   {
