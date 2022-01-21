@@ -609,7 +609,7 @@ const DepositSyndicate: React.FC = () => {
       </div>
     );
   } else if (sufficientAllowanceSet && depositAmount) {
-    depositButtonText = "Complete deposit";
+    depositButtonText = "Continue";
   } else if (!depositAmount) {
     depositButtonText = "Enter an amount to deposit";
   } else if (

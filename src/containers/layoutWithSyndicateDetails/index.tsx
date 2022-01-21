@@ -57,14 +57,14 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
   const clubAddress = window?.location?.pathname.split("/")[2];
 
   const isDemoMode = useDemoMode(clubAddress);
-  const zeroAddress = "0x0000000000000000000000000000000000000000"
+  const zeroAddress = "0x0000000000000000000000000000000000000000";
 
   useEffect(() => {
     // Demo mode
     if (clubAddress === zeroAddress) {
       router.push("/clubs/demo/manage");
     }
-  })
+  });
 
   //  tokens for the connected wallet account
   const { accountTokens } = useAccountTokens();
@@ -217,9 +217,7 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
 
   return (
     <>
-      {router.isReady &&
-      !isDemoMode &&
-      !web3.utils.isAddress(clubAddress) ? (
+      {router.isReady && !isDemoMode && !web3.utils.isAddress(clubAddress) ? (
         <NotFoundPage />
       ) : (
         <Layout showNav={showNav}>
@@ -296,7 +294,7 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
                         <div
                           className={`${
                             isSubNavStuck ? "hidden" : "block"
-                          } border-b-1 border-gray-syn6 absolute w-screen right-0`}
+                          } border-b-1 border-gray-syn7 absolute w-screen right-0`}
                         ></div>
                       </div>
 
