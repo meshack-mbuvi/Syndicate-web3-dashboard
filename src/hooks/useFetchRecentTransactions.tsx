@@ -22,7 +22,7 @@ export const useFetchRecentTransactions: any = (
 
   return useQuery(RECENT_TRANSACTIONS, {
     variables: {
-      syndicateAddress: CryptoJS.AES.encrypt(erc20Token.owner.toString(), SECRET_KEY).toString(), // encrypted input
+      encryptedInput: CryptoJS.AES.encrypt(erc20Token.owner.toString(), SECRET_KEY).toString(), // encrypted input
       where,
       take: 10,
       skip,

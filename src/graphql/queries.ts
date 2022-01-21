@@ -86,13 +86,13 @@ export const MERKLE_AIRDROP_CREATED = gql`
 
 export const RECENT_TRANSACTIONS = gql`
   query Query(
-    $syndicateAddress: String!
+    $encryptedInput: String!
     $take: Int
     $where: Financial_JSONObject
     $skip: Int
   ) {
     Financial_recentTransactions(
-      syndicateAddress: $syndicateAddress
+      encryptedInput: $encryptedInput
       take: $take
       where: $where
       skip: $skip
