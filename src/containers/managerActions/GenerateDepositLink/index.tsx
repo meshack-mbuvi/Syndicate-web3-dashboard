@@ -8,7 +8,7 @@ import React, {
   useEffect,
   useState,
 } from "react";
-import { ExternalLinkIcon, RightArrow } from "src/components/iconWrappers";
+import { RibbonIcon, RightArrow } from "src/components/iconWrappers";
 import { setWalletSignature } from "@/state/legalInfo";
 import { useDispatch, useSelector } from "react-redux";
 import CopyLink from "@/components/shared/CopyLink";
@@ -189,17 +189,12 @@ const DepositLinkModal: FC<ILinkModal> = ({
               rel="noopener noreferrer"
             >
               <span>make a copy</span>
-              <ExternalLinkIcon
-                style={{ position: "relative", top: -1, marginLeft: 4 }}
-                className="text-blue w-3.5 inline"
-              />
             </a>
           </div>
           <div className="space-y-4">
             <Link href={`/clubs/${clubAddress}/manage/legal/prepare`}>
               <div
-                // className="border-1 border-gray-syn6 hover:border-blue cursor-pointer p-8 rounded-1.5lg flex justify-between items-center svgBlueHover"
-                className="border-1 border-gray-syn6 hover:border-blue hover:cursor-pointer rounded-1.5lg flex flex-col svgBlueHover group"
+                className="border-1 border-gray-syn6 hover:border-blue hover:cursor-pointer rounded-1.5lg flex flex-col group"
                 onClick={() => startDocumentSigning("yes")}
               >
                 <div className="flex justify-between px-8 py-6 items-center leading-3.5">
@@ -209,10 +204,10 @@ const DepositLinkModal: FC<ILinkModal> = ({
                       Requires an existing LLC
                     </div>
                   </div>
-                  <RightArrow />
+                  <RightArrow className="text-gray-syn4 group-hover:text-blue"/>
                 </div>
                 <div className="flex justify-center align-middle rounded-b-1.5lg py-2 bg-gray-inactive group-hover:bg-blue">
-                  <img src="/images/ribbon.svg" alt="ribbon" />
+                  <RibbonIcon className="text-white"/>
                   <span className="mx-1 text-xs">Powered by</span>
                   <img
                     src="/images/latham&watkinsllp.svg"
