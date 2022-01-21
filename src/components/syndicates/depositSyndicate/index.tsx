@@ -312,6 +312,9 @@ const DepositSyndicate: React.FC = () => {
         setApprovedAllowanceAmount("0");
       }
 
+      // refetch member stats
+      refetchMemberData();
+
       // Amplitude logger: Deposit funds
       amplitudeLogger(SUCCESSFUL_DEPOSIT, {
         flow: Flow.MBR_DEP,
