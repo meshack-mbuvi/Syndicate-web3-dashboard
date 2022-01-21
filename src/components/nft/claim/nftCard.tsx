@@ -72,7 +72,7 @@ const NFTCard: React.FC = () => {
             autoPlay
             loop
             muted
-            className="rounded-1.5lg h-full w-full object-cover"
+            className="rounded-1.5lg h-full w-full object-cover video-320"
             ref={videoRef}
           >
             {/* Specifying type as "video/mp4" works for both .mov and .mp4 files  */}

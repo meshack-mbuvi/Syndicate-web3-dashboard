@@ -32,6 +32,7 @@ interface IInvestmentDetailsModal {
   transactionId: string;
   setStoredInvestmentDetails: (details) => void;
   isManager: boolean;
+  onSuccessfulAnnotation: () => void;
 }
 
 const InvestmentDetailsModal: React.FC<IInvestmentDetailsModal> = ({
@@ -42,6 +43,7 @@ const InvestmentDetailsModal: React.FC<IInvestmentDetailsModal> = ({
   transactionId,
   setStoredInvestmentDetails,
   isManager,
+  onSuccessfulAnnotation,
 }) => {
   const disabled = !editMode;
   const [hover, setHover] = useState<boolean>(false);
@@ -84,7 +86,7 @@ const InvestmentDetailsModal: React.FC<IInvestmentDetailsModal> = ({
   useEffect(() => {
     if (!storedInvestmentDetails?.investmentDate) {
       //  Set the date to the current block timestamp
-      setValue("investmentDate", new Date(blockTimestamp * 1000).toISOString());
+      setValue("investmentDate", new Date(null).toISOString());
     }
   }, [blockTimestamp, storedInvestmentDetails?.investmentDate]);
 
@@ -146,12 +148,14 @@ const InvestmentDetailsModal: React.FC<IInvestmentDetailsModal> = ({
       keepValues: true,
     });
     onClick(values);
+    onSuccessfulAnnotation();
   };
 
   const borderStyles =
     "border-b-1 border-gray-syn6 border-collapse text-gray-syn4";
   const dateBorderStyles = `w-full flex-row ${borderStyles}`;
   const details = Object.values(formValues);
+
   return (
     <>
       {editMode || details.join("").length ? (

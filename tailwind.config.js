@@ -73,10 +73,12 @@ module.exports = {
       zIndex: {
         8: "8",
         15: 15,
+        60: 60,
       },
       height: () => ({
         "fit-content": "fit-content",
         4.5: "1.125rem",
+        13: "3.25rem",
         17.5: "4.375rem",
         18: "4.5rem",
         100: "30rem",
@@ -213,6 +215,7 @@ module.exports = {
         green: {
           ...colors.green,
           DEFAULT: "#30E696",
+          semantic: "#30E696",
           shine: "#64ECB0",
           screamin: "#80FF75",
           light: "#2FE696",
@@ -222,6 +225,7 @@ module.exports = {
           "light-dark": "#01A979",
           "light-darker": "#02504B",
           "phthalo-green": "#082B1E",
+          "electric-lime": "#CCFF00",
         },
         blue: {
           ...colors.blue,

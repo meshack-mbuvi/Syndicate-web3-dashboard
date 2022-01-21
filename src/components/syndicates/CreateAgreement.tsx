@@ -1,6 +1,5 @@
 import ErrorBoundary from "@/components/errorBoundary";
 import { Checkbox } from "@/components/inputs/checkbox";
-import { NumberField } from "@/components/inputs/numberField";
 import { TextArea } from "@/components/inputs/textArea";
 import { TextField } from "@/components/inputs/textField";
 import Head from "@/components/syndicates/shared/HeaderTitle";
@@ -24,7 +23,6 @@ interface FormInputs {
   location: string;
   managerEmail: string;
   counselEmail: string;
-  percentLoss: number;
   generalPurposeStatement: string;
 }
 
@@ -37,7 +35,7 @@ const schema = yup.object({
     .string()
     .email("Invalid email address")
     .when("counselName", {
-      is: (counselName) => counselName.trim().length > 0,
+      is: (counselName) => counselName?.trim().length > 0,
       then: yup
         .string()
         .email("Invalid email address")
@@ -52,10 +50,6 @@ const schema = yup.object({
     is: true,
     then: yup.string().required("Master LLC is required"),
   }),
-  percentLoss: yup
-    .number()
-    .required("Percent loss is required")
-    .typeError("Percent loss is required"),
   generalPurposeStatement: yup
     .string()
     .required("General purpose statement is required"),
@@ -76,7 +70,7 @@ const CreateAgreementComponent: React.FC = () => {
     mode: "onChange",
   });
 
-  const { isSeriesLLC } = watch();
+  const { isSeriesLLC, adminName, location, counselName } = watch();
   const dispatch = useDispatch();
 
   const router = useRouter();
@@ -177,7 +171,7 @@ const CreateAgreementComponent: React.FC = () => {
                 info="This is the person who will pay expenses and perform admin
                     functions for the club, such as reviewing member
                     documentation and coordinating tax reporting."
-                showWarning={true}
+                showWarning={adminName?.trim().split(" ").length < 2}
                 warningText="Admin name should have first and last names"
               />
 
@@ -194,20 +188,8 @@ const CreateAgreementComponent: React.FC = () => {
                     comfortable with.
                   </span>
                 }
-                showWarning={true}
+                showWarning={location?.trim().split(",").length < 2}
                 warningText="Location should be formatted as City, State"
-                checkType=","
-              />
-
-              <NumberField
-                label="Percent loss"
-                name="percentLoss"
-                type="number"
-                addOn="%"
-                defaultValue="20"
-                control={control}
-                addOnStyles=""
-                info={`Percentage loss resulting from a bug, defect, or error that you would like to define as "material" for your investment club. This number varies by use case but is usually 20% or greater.`}
               />
 
               <TextArea
@@ -224,7 +206,7 @@ const CreateAgreementComponent: React.FC = () => {
                   cornerHint={{ text: "If applicable" }}
                   control={control}
                   placeholder="Name of counsel"
-                  showWarning={true}
+                  showWarning={counselName?.trim().split(" ").length < 2}
                   warningText="Counsel name should have first and last names"
                 />
 

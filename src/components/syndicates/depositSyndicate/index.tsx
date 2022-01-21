@@ -19,6 +19,7 @@ import { setERC20Token } from "@/helpers/erc20TokenDetails";
 import useSyndicateClubInfo from "@/hooks/deposit/useSyndicateClubInfo";
 import { useAccountTokens } from "@/hooks/useAccountTokens";
 import useFetchAirdropInfo from "@/hooks/useAirdropInfo";
+import { useDemoMode } from "@/hooks/useDemoMode";
 import useFetchMerkleProof from "@/hooks/useMerkleProof";
 import useModal from "@/hooks/useModal";
 import { useERC20TokenBalance } from "@/hooks/useTokenBalance";
@@ -125,7 +126,7 @@ const DepositSyndicate: React.FC = () => {
     "This transaction is taking a while. You can speed it up by spending more gas via your wallet.";
 
   //  tokens for the connected wallet account
-  const { accountTokens: connectedMemberDeposits, memberPercentShare } =
+  const { accountTokens, memberOwnership, memberDeposits, refetchMemberData } =
     useAccountTokens();
 
   useEffect(() => {
@@ -204,13 +205,16 @@ const DepositSyndicate: React.FC = () => {
       setSuccessfulDeposit(true);
     }
 
-    const newTotalSupply = +totalSupply + +depositAmount;
-    const newMemberDeposits = +connectedMemberDeposits + +depositAmount;
+    setNewMemberTokens(+accountTokens + +depositAmount);
 
-    const newMemberShare = (newMemberDeposits * 100) / newTotalSupply;
-
-    setNewMemberTokens(+connectedMemberDeposits + +depositAmount);
-    setNewOwnershipShare(newMemberShare);
+    // Bug fix: setting new ownership share to an addition of memberOwnership and ownershipShare
+    // leads to a situation where the total percentage ownership on the success modal exceeds 100% if the club has only 1 member.
+    // see this screenshot: https://drive.google.com/file/d/1l0kS3hVKqG_VoM6pf7UpX93DnKSTyRMU/view?usp=sharing
+    if (+memberOwnership === 100) {
+      setNewOwnershipShare(+memberOwnership);
+    } else {
+      setNewOwnershipShare(+memberOwnership + +ownershipShare);
+    }
 
     dispatch(
       setERC20Token(
@@ -218,6 +222,9 @@ const DepositSyndicate: React.FC = () => {
         syndicateContracts.SingleTokenMintModule,
       ),
     );
+
+    // Refetch after a second
+    setTimeout(() => refetchMemberData(), 4000);
   };
 
   const [transactionRejected, setTransactionRejected] = useState(false);
@@ -642,10 +649,7 @@ const DepositSyndicate: React.FC = () => {
       setClubWideErrors(message);
       setDepositError("");
       setImageSRC("/images/deposit/depositReached.svg");
-    } else if (
-      !(+connectedMemberDeposits > 0) &&
-      memberCount === maxMemberCount
-    ) {
+    } else if (!(+memberDeposits > 0) && memberCount === maxMemberCount) {
       message = `The maximum amount of members (${maxMemberCount}) for this club has been reached.`;
       setClubWideErrors(message);
       setDepositError("");
@@ -693,8 +697,9 @@ const DepositSyndicate: React.FC = () => {
 
   const { width } = useWindowSize();
   const isHoldingsCardColumn =
-    +connectedMemberDeposits >= 10000 &&
-    ((width > 868 && width < 1536) || width < 500);
+    +memberDeposits >= 10000 && ((width > 868 && width < 1536) || width < 500);
+
+  const isDemoMode = useDemoMode();
 
   return (
     <ErrorBoundary>
@@ -781,9 +786,9 @@ const DepositSyndicate: React.FC = () => {
                     transactionHash,
                     handleOnCopy,
                     copied,
-                    memberPercentShare,
+                    memberPercentShare: memberOwnership,
                     clubTokenSymbol: symbol,
-                    accountClubTokens: connectedMemberDeposits,
+                    accountClubTokens: memberDeposits,
                   }}
                 />
               ) : showDepositProcessingModal && depositFailed ? (
@@ -797,9 +802,9 @@ const DepositSyndicate: React.FC = () => {
                     transactionHash,
                     handleOnCopy,
                     copied,
-                    memberPercentShare,
+                    memberPercentShare: memberOwnership,
                     clubTokenSymbol: symbol,
-                    accountClubTokens: connectedMemberDeposits,
+                    accountClubTokens: memberDeposits,
                   }}
                 />
               ) : status === Status.DISCONNECTED ? (
@@ -809,9 +814,7 @@ const DepositSyndicate: React.FC = () => {
               ) : (
                 <div className="h-fit-content rounded-2-half pt-6 px-8 pb-4">
                   <p className="h4 uppercase text-sm">
-                    {+connectedMemberDeposits > 0
-                      ? "deposit more"
-                      : "join this club"}
+                    {+memberDeposits > 0 ? "deposit more" : "join this club"}
                   </p>
                   <div className="flex justify-between items-center mt-5 h-20 flex-wrap">
                     <div className="flex items-center">
@@ -882,7 +885,7 @@ const DepositSyndicate: React.FC = () => {
                   {/* Show token approval text  */}
                   {+currentMemberAllowance >= +depositAmount &&
                     +depositAmount > 0 &&
-                    +connectedMemberDeposits == 0 && (
+                    +memberDeposits == 0 && (
                       <div className="flex items-center w-full justify-center mt-6">
                         <Image
                           src="/images/checkCircleGreen.svg"
@@ -910,7 +913,8 @@ const DepositSyndicate: React.FC = () => {
                           submittingAllowanceApproval ||
                           submitting ||
                           insufficientBalance ||
-                          depositAmount === "0.00"
+                          depositAmount === "0.00" ||
+                          isDemoMode
                             ? "bg-gray-syn6 text-gray-syn4"
                             : "bg-white text-black"
                         } `}
@@ -930,7 +934,8 @@ const DepositSyndicate: React.FC = () => {
                           insufficientBalance ||
                           depositAmount === "0.00" ||
                           !depositAmount ||
-                          Boolean(depositError)
+                          Boolean(depositError) ||
+                          isDemoMode
                         }
                       >
                         {depositButtonText}
@@ -995,9 +1000,9 @@ const DepositSyndicate: React.FC = () => {
                     transactionHash,
                     handleOnCopy,
                     copied,
-                    memberPercentShare,
+                    memberPercentShare: memberOwnership,
                     clubTokenSymbol: symbol,
-                    accountClubTokens: connectedMemberDeposits,
+                    accountClubTokens: accountTokens,
                   }}
                 />
               ) : status === Status.DISCONNECTED ? (
@@ -1054,45 +1059,52 @@ const DepositSyndicate: React.FC = () => {
       </div>
 
       {/* We show holding component when user has made initial deposit */}
-      {+connectedMemberDeposits > 0 && !loading && depositsEnabled && (
-        <div className="bg-gray-syn8 rounded-2xl mt-6 px-8 py-6">
-          <div className="pb-5 text-sm font-bold uppercase tracking-widest">
-            Your Holdings
-          </div>
-          {loading ? (
-            <SkeletonLoader height="9" width="full" borderRadius="rounded-md" />
-          ) : (
-            <div className={`flex ${isHoldingsCardColumn ? "flex-col" : ""}`}>
-              <div
-                className={
-                  isHoldingsCardColumn
-                    ? ""
-                    : (width < 1380 || width < 868) &&
-                      +connectedMemberDeposits >= 1000 &&
-                      +connectedMemberDeposits < 10000
-                    ? "mr-6"
-                    : "mr-8"
-                }
-              >
-                <HoldingsInfo
-                  title="Amount deposited"
-                  amount={floatedNumberWithCommas(connectedMemberDeposits)}
-                  tokenName={"USDC"}
-                />
-              </div>
-              <div className={isHoldingsCardColumn ? "pt-5" : ""}>
-                <HoldingsInfo
-                  title="Club tokens (ownership share)"
-                  amount={floatedNumberWithCommas(connectedMemberDeposits)}
-                  tokenName={symbol}
-                  percentValue={floatedNumberWithCommas(memberPercentShare)}
-                  wrap="flex-wrap"
-                />
-              </div>
+      {status !== Status.DISCONNECTED &&
+        +memberDeposits > 0 &&
+        !loading &&
+        depositsEnabled && (
+          <div className="bg-gray-syn8 rounded-2xl mt-6 px-8 py-6">
+            <div className="pb-5 text-sm font-bold uppercase tracking-widest">
+              Your Holdings
             </div>
-          )}
-        </div>
-      )}
+            {loading ? (
+              <SkeletonLoader
+                height="9"
+                width="full"
+                borderRadius="rounded-md"
+              />
+            ) : (
+              <div className={`flex ${isHoldingsCardColumn ? "flex-col" : ""}`}>
+                <div
+                  className={
+                    isHoldingsCardColumn
+                      ? ""
+                      : (width < 1380 || width < 868) &&
+                        +memberDeposits >= 1000 &&
+                        +memberDeposits < 10000
+                      ? "mr-6"
+                      : "mr-8"
+                  }
+                >
+                  <HoldingsInfo
+                    title="Amount deposited"
+                    amount={floatedNumberWithCommas(memberDeposits)}
+                    tokenName={"USDC"}
+                  />
+                </div>
+                <div className={isHoldingsCardColumn ? "pt-5" : ""}>
+                  <HoldingsInfo
+                    title="Club tokens (ownership share)"
+                    amount={floatedNumberWithCommas(accountTokens)}
+                    tokenName={symbol}
+                    percentValue={floatedNumberWithCommas(memberOwnership)}
+                    wrap="flex-wrap"
+                  />
+                </div>
+              </div>
+            )}
+          </div>
+        )}
 
       <Modal
         {...{
@@ -1248,7 +1260,7 @@ const DepositSyndicate: React.FC = () => {
 
             {/* Show transaction steps if this is user's first deposit */}
             <div className="mt-8 px-5">
-              {!(+connectedMemberDeposits > 0) &&
+              {!(+memberDeposits > 0) &&
                 depositSteps.map((step, stepIdx) => {
                   const completedStep = currentTransaction > stepIdx + 1;
                   const inactiveStep = currentTransaction < stepIdx + 1;

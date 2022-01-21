@@ -30,7 +30,7 @@ export class SingleTokenMintModuleContract {
     }
   }
 
-  async depositToken(clubAddress): Promise<string> {
+  async depositToken(clubAddress:string): Promise<string> {
     try {
       return this.SingleTokenMintModuleContract.methods
         .depositToken(clubAddress)

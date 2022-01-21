@@ -1,6 +1,7 @@
 import { CopyToClipboardIcon } from "@/components/iconWrappers";
 import { SkeletonLoader } from "@/components/skeletonLoader";
 import { useAccountTokens } from "@/hooks/useAccountTokens";
+import { useClubDepositsAndSupply } from "@/hooks/useClubDepositsAndSupply";
 import { useIsClubOwner } from "@/hooks/useClubOwner";
 import { AppState } from "@/state";
 import { Status } from "@/state/wallet/types";
@@ -37,10 +38,10 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
   const { accountTokens } = useAccountTokens();
 
   const {
+    address,
     loading,
     maxTotalDeposits,
     depositToken,
-    totalDeposits,
     memberCount,
     startTime,
     endTime,
@@ -51,8 +52,12 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
     depositsEnabled,
     claimEnabled,
   } = erc20Token;
+
   const router = useRouter();
   const [details, setDetails] = useState<ClubDetails[]>([]);
+
+  const { totalDeposits, totalSupply, loadingClubDeposits } =
+    useClubDepositsAndSupply(address);
 
   // state to handle copying of the syndicate address to clipboard.
   const [showAddressCopyState, setShowAddressCopyState] =
@@ -88,8 +93,7 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
 
   // set syndicate cumulative values
   useEffect(() => {
-    if (erc20Token) {
-      const { totalDeposits, memberCount } = erc20Token;
+    if (totalDeposits) {
       setSyndicateCumulativeDetails([
         {
           header: "Deposits",
@@ -101,7 +105,7 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
         },
       ]);
     }
-  }, [erc20Token]);
+  }, [totalDeposits, memberCount]);
 
   useEffect(() => {
     if (erc20Token) {
@@ -121,7 +125,7 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
                 header: "Club tokens minted",
                 content: (
                   <span>
-                    {floatedNumberWithCommas(totalDeposits)} {symbol}
+                    {floatedNumberWithCommas(totalSupply)} {symbol}
                   </span>
                 ),
                 tooltip: "",
@@ -226,7 +230,7 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
             ]),
       ]);
     }
-  }, [JSON.stringify(erc20Token)]);
+  }, [JSON.stringify(erc20Token), totalDeposits]);
 
   // show message to the user when address has been copied.
   const updateAddressCopyState = () => {
@@ -245,7 +249,7 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
           <div>
             <div className="flex justify-center items-center">
               <div className="mr-8">
-                {loading ? (
+                {loading || loadingClubDeposits || totalDeposits == "" ? (
                   <SkeletonLoader
                     height="20"
                     width="20"
@@ -356,7 +360,7 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
               depositERC20TokenSymbol={depositERC20TokenSymbol}
               openDate={startTime.toString()}
               closeDate={endTime.toString()}
-              loading={loading}
+              loading={loading || loadingClubDeposits}
             />
           </div>
         )}

@@ -3,6 +3,7 @@ import { RECENT_TRANSACTIONS } from "@/graphql/queries";
 import { useSelector } from "react-redux";
 import { AppState } from "@/state";
 import * as CryptoJS from 'crypto-js';
+import { useDemoMode } from "./useDemoMode";
 
 const SECRET_KEY = process.env.ENCRYPTION_SECRET_KEY;
 
@@ -17,6 +18,7 @@ export const useFetchRecentTransactions: any = (
     },
     erc20TokenSliceReducer: { erc20Token },
   } = useSelector((state: AppState) => state);
+  const isDemoMode = useDemoMode();
 
   return useQuery(RECENT_TRANSACTIONS, {
     variables: {
@@ -27,7 +29,7 @@ export const useFetchRecentTransactions: any = (
     },
     // set notification to true to receive loading state
     notifyOnNetworkStatusChange: true,
-    skip: !account || skipQuery,
+    skip: !account || skipQuery || isDemoMode,
     context: { clientName: "backend" },
   });
 };

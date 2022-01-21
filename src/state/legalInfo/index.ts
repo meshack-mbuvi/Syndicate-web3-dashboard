@@ -1,11 +1,17 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 
-import { IClubInfo, IMemberInfo, IWalletSignature } from "./types";
+import {
+  IClubInfo,
+  IMemberInfo,
+  IWalletSignature,
+  IDepositReadyInfo,
+} from "./types";
 
 export interface IState {
   memberInfo: IMemberInfo;
   clubInfo: IClubInfo;
   walletSignature: IWalletSignature;
+  depositReadyInfo: IDepositReadyInfo;
 }
 
 const initialState: IState = {
@@ -25,11 +31,11 @@ const initialState: IState = {
     counselEmail: "",
     location: "",
     managerEmail: "",
-    percentLoss: 0,
     generalPurposeStatement: "",
     dueDate: "",
     adminSignDate: "",
     adminSignature: "SIGN HERE",
+    percentLoss: 20,
     blockNumber: "ten",
     daysNotice: 3,
     adminRemovalThreshold: "Majority in interest",
@@ -38,6 +44,10 @@ const initialState: IState = {
   walletSignature: {
     signature: "",
     timeSigned: new Date(),
+  },
+  depositReadyInfo: {
+    depositLink: "",
+    adminSigned: false,
   },
 };
 
@@ -67,10 +77,17 @@ export const LegalInfo = createSlice({
     setWalletSignature(state, action: PayloadAction<IWalletSignature>) {
       state.walletSignature = action.payload;
     },
+    setDepositReadyInfo(state, action: PayloadAction<IDepositReadyInfo>) {
+      state.depositReadyInfo = action.payload;
+    },
   },
 });
 
-export const { setMemberLegalInfo, setClubLegalInfo, setWalletSignature } =
-  LegalInfo.actions;
+export const {
+  setMemberLegalInfo,
+  setClubLegalInfo,
+  setWalletSignature,
+  setDepositReadyInfo,
+} = LegalInfo.actions;
 
 export default LegalInfo.reducer;

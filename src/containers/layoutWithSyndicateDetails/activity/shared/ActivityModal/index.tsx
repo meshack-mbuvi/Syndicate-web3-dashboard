@@ -7,6 +7,7 @@ import {
 } from "@/graphql/mutations";
 import { MEMBER_SIGNED_QUERY } from "@/graphql/queries";
 import { useIsClubOwner } from "@/hooks/useClubOwner";
+import { useDemoMode } from "@/hooks/useDemoMode";
 import { AppState } from "@/state";
 import { isDev } from "@/utils/environment";
 import { useMutation, useQuery } from "@apollo/client";
@@ -65,6 +66,8 @@ const ActivityModal: React.FC<IActivityModal> = ({
   const etherScanBaseUrl = isDev
     ? "https://rinkeby.etherscan.io/tx"
     : "https://etherscan.io/tx";
+  
+  const isDemoMode = useDemoMode();
 
   const [setMemberHasSigned] = useMutation(SET_MEMBER_SIGN_STATUS, {
     context: { clientName: "backend" },
@@ -103,8 +106,6 @@ const ActivityModal: React.FC<IActivityModal> = ({
   // we use this function to determine what happens when done button is hit from investmentDetails component
   const handleClick = () => {
     setEditMode(!editMode);
-
-    refetchTransactions();
   };
 
   const handleAddDetails = () => {
@@ -147,6 +148,10 @@ const ActivityModal: React.FC<IActivityModal> = ({
         break;
       case "INVESTMENT_TOKEN":
         setAdaptiveBackground("bg-blue-darkGunMetal");
+        break;
+      case "OFF_CHAIN_INVESTMENT":
+        setAdaptiveBackground("bg-blue-darkGunMetal");
+        setShowTransactionDetails(true);
         break;
       case "OTHER":
         setAdaptiveBackground("bg-blue-darkGunMetal");
@@ -248,7 +253,8 @@ const ActivityModal: React.FC<IActivityModal> = ({
       overflowYScroll={false}
       isMaxHeightScreen={false}
     >
-      <div>
+      <div className="relative">
+        {isDemoMode && <div className="absolute inset-0 z-10" />}
         <div
           className={`flex rounded-t-2xl items-center flex-col relative py-10 px-5 ${adaptiveBackground} last:rounded-b-2xl`}
         >
@@ -294,30 +300,36 @@ const ActivityModal: React.FC<IActivityModal> = ({
                 onModal={true}
                 category={category}
                 companyName={metadata?.companyName}
+                round={metadata?.roundCategory}
               />
             )}
 
-            <div className="text-gray-lightManatee text-sm mt-6 flex items-center justify-center">
-              <a
-                className="flex cursor-pointer items-center"
-                href={`${etherscanLink}`}
-                target="_blank"
-                rel="noreferrer"
-              >
-                <img
-                  className="pr-2"
-                  src={`/images/actionIcons/checkMark.svg`}
-                  alt=""
-                />{" "}
-                Completed on {timestamp}
-                <OpenExternalLinkIcon className="text-gray-syn4 ml-2 w-3 h-3" />
-              </a>
-            </div>
+            {category !== "OFF_CHAIN_INVESTMENT" ? (
+              <div className="text-gray-lightManatee text-sm mt-6 flex items-center justify-center">
+                <a
+                  className="flex cursor-pointer items-center"
+                  href={`${etherscanLink}`}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  <img
+                    className="pr-2"
+                    src={`/images/actionIcons/checkMark.svg`}
+                    alt=""
+                  />{" "}
+                  Completed on {timestamp}
+                  <OpenExternalLinkIcon className="text-gray-syn4 ml-2 w-3 h-3" />
+                </a>
+              </div>
+            ) : null}
           </div>
         </div>
 
-        {/* Show this component only when manager has not marked member signature status */}
-        {!data?.Financial_memberSigned && !loading && category === "DEPOSIT" && (
+        {/* Show this component only when manager has not marked member signature status 
+        
+        Adding essential check for isManager. Members should not see this*/}
+        
+        {!data?.Financial_memberSigned && !loading && category === "DEPOSIT" && isManager && (
           <div className="flex flex-col space-y-6 py-6 px-5">
             <div className="bg-gray-syn7 px-5 py-4 space-y-2 rounded-xl">
               <p className="text-gray-syn4 leading-6">
@@ -361,7 +373,8 @@ const ActivityModal: React.FC<IActivityModal> = ({
             )}
 
             {/* details */}
-            {category === "INVESTMENT" && (
+            {(category === "INVESTMENT" ||
+              category === "OFF_CHAIN_INVESTMENT") && (
               <div>
                 {/* Checks if the stored investment details has empty values */}
                 {!showDetailSection && !editMode && isManager && (
@@ -388,6 +401,9 @@ const ActivityModal: React.FC<IActivityModal> = ({
                     transactionId={hash}
                     setStoredInvestmentDetails={setStoredInvestmentDetails}
                     isManager={isManager}
+                    onSuccessfulAnnotation={() => {
+                      refetchTransactions();
+                    }}
                   />
                 ) : null}
               </div>

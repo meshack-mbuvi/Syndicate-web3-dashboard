@@ -1,5 +1,6 @@
 import Portal from "@/components/shared/Portal";
 import { SkeletonLoader } from "@/components/skeletonLoader";
+import { useClubDepositsAndSupply } from "@/hooks/useClubDepositsAndSupply";
 import { AppState } from "@/state";
 import React, { FC, useRef, useState } from "react";
 import { useSelector } from "react-redux";
@@ -31,9 +32,11 @@ export const SectionCard: FC<SectionCardProps> = (props) => {
 
   const {
     erc20TokenSliceReducer: {
-      erc20Token: { loading },
+      erc20Token: { loading, address },
     },
   } = useSelector((state: AppState) => state);
+
+  const { loadingClubDeposits } = useClubDepositsAndSupply(address);
 
   const [coord, setCoords] = useState({});
   const [anchorEl, setAnchorEl] = React.useState(null);
@@ -81,7 +84,7 @@ export const SectionCard: FC<SectionCardProps> = (props) => {
           handlePopoverClose();
         }}
       >
-        {loading ? (
+        {loading || loadingClubDeposits ? (
           <div className="space-y-2 w-32">
             <SkeletonLoader height="3" width="2/3" borderRadius="rounded-md" />
             <SkeletonLoader height="5" width="full" borderRadius="rounded-md" />

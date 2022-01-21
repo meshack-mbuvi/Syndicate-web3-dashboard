@@ -14,7 +14,7 @@ interface IProgressIndicator {
 }
 export const ProgressIndicator = (props: IProgressIndicator): JSX.Element => {
   const {
-    totalDeposits,
+    totalDeposits = 0,
     depositTotalMax,
     depositERC20TokenSymbol,
     loading = false,
@@ -77,7 +77,9 @@ export const ProgressIndicator = (props: IProgressIndicator): JSX.Element => {
         <div>
           <div className="h-5 overflow-hidden mb-4 text-sm flex rounded-full bg-gray-9">
             <div
-              style={{ width: `${floatedNumberWithCommas(depositsPercentage)}%` }}
+              style={{
+                width: `${floatedNumberWithCommas(depositsPercentage)}%`,
+              }}
               className="shadow-none flex flex-col transition-all text-center whitespace-nowrap text-white justify-center bg-blue"
             ></div>
           </div>

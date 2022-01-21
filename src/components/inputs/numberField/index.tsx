@@ -18,6 +18,8 @@ interface IProps {
   textAlignment?: string;
   disabled?: boolean;
   defaultValue?: string;
+  maximumValue?: number;
+  maxButtonEnabled?: boolean;
 }
 /**
  * An input component with label and icon at the right end
@@ -40,6 +42,8 @@ export const NumberField: React.FC<IProps> = ({
   paddingStyles = "p-4",
   disabled = false,
   defaultValue = "",
+  maximumValue = 0,
+  maxButtonEnabled = false,
 }) => {
   const {
     field: { onChange, ...rest },
@@ -49,6 +53,12 @@ export const NumberField: React.FC<IProps> = ({
     control,
     defaultValue,
   });
+
+  const handleSetMax = () => {
+    onChange(maximumValue);
+  };
+
+  const disableMax = maximumValue === rest.value;
 
   return (
     <div
@@ -77,7 +87,13 @@ export const NumberField: React.FC<IProps> = ({
                     : "border-0 focus:border-0 focus:ring-0 outline-none hover:border-0 ring-0"
                 }`
           }  text-white placeholder-gray-syn5 ${
-            addOn ? addOnStyles : paddingStyles ? "pr-0" : "pr-4"
+            addOn && maxButtonEnabled
+              ? "pr-40"
+              : addOn
+              ? addOnStyles
+              : paddingStyles
+              ? "pr-0"
+              : "pr-4"
           }`}
           placeholder={placeholder}
           onChange={(event) => {
@@ -86,22 +102,39 @@ export const NumberField: React.FC<IProps> = ({
           }}
           decimalScale={2}
         />
-        {addOn && (
-          <div
-            className={`absolute inset-y-0 right-0 ${
-              addOnStyles ? "pr-0" : `pr-4`
-            } py-4 flex items-center `}
-          >
-            <span
-              className={`font-whyte text-base ${
-                rest.value ? "text-white" : "text-gray-syn5"
-              }`}
-              id="price-currency"
-            >
-              {addOn}
-            </span>
+
+        <div className={`absolute inset-y-0 right-0 py-4 flex items-center `}>
+          <div className="flex space-x-4">
+            {maxButtonEnabled === true && (
+              <button
+                className={`px-4 py-1.5 my-3 text-gray-syn4 bg-gray-syn7 rounded-2xl ${
+                  disableMax ? "cursor-not-allowed" : ""
+                }`}
+                onClick={handleSetMax}
+                disabled={maximumValue === rest.value ? true : false}
+              >
+                Max
+              </button>
+            )}
+
+            {addOn && (
+              <div
+                className={`${
+                  addOnStyles ? "pr-0" : `pr-4`
+                } py-4 flex items-center `}
+              >
+                <span
+                  className={`font-whyte text-base ${
+                    rest.value ? "text-white" : "text-gray-syn5"
+                  }`}
+                  id="price-currency"
+                >
+                  {addOn}
+                </span>
+              </div>
+            )}
           </div>
-        )}
+        </div>
       </div>
       {errors?.[`${name}`]?.message ? (
         <p className=" text-red-error text-sm pt-2">

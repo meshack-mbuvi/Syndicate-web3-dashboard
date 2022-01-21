@@ -40,6 +40,7 @@ const agreementSteps = [
 ];
 
 const nonHighlightFields = new Set([
+  "percentLoss",
   "blockNumber",
   "daysNotice",
   "adminRemovalThreshold",

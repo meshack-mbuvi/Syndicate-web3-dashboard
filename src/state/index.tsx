@@ -15,6 +15,7 @@ import legalInfoReducer from "@/state/legalInfo";
 import merkleProofSliceReducer from "@/state/merkleProofs/slice";
 import modalsReducer from "@/state/modals";
 import web3Reducer from "@/state/wallet/reducer";
+import setCollectibleDetailsSliceReducer from "@/state/assets/collectibles/slice";
 import { isDev } from "@/utils/environment";
 import { Action, configureStore, ThunkAction } from "@reduxjs/toolkit";
 import { createWrapper } from "next-redux-wrapper";
@@ -38,6 +39,7 @@ export const store = configureStore({
     erc721MerkleProofSliceReducer,
     erc721AirdropInfoSliceReducer,
     claimedERC721SliceReducer,
+    setCollectibleDetailsSliceReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({ thunk: true, serializableCheck: false }),

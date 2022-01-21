@@ -2,9 +2,9 @@ export interface ERC20Token {
   name: string;
   owner: string;
   address: string;
-  totalSupply: number;
+  totalSupply?: number;
   tokenDecimals: number;
-  totalDeposits: number;
+  totalDeposits?: number;
   depositsEnabled: boolean;
   claimEnabled: boolean;
   depositToken: string;

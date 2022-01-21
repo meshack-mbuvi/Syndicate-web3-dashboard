@@ -809,11 +809,6 @@ input[type="checkbox"] {
   fill: #4376ff;
 }
 
-video {
-  height: 320px !important;
-  width: 320px !important;
-}
-
 .video-320 {
   height: 320px !important;
   width: 320px !important;
@@ -821,4 +816,11 @@ video {
 
 .max-h-modal {
   max-height: calc(100vh - 112px);
+}
+.accountPill {
+  border: 1px solid rgba(48, 230, 150, 0.6);
+  box-shadow: 0px 0px 4px #30e696;
+  backdrop-filter: blur(34px);
+  height: 34px;
+  width: 196px;
 }

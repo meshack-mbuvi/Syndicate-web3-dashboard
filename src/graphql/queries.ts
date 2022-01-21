@@ -42,6 +42,7 @@ export const CLUB_TOKEN_MEMBERS = gql`
       members {
         ownershipShare
         depositAmount
+        tokens
         member {
           memberAddress
         }
@@ -177,6 +178,34 @@ export const ERC721_MERKLE_AIRDROP_CREATED = gql`
       endTime
       startTime
       root
+    }
+  }
+`;
+
+export const CLUB_MEMBER_QUERY = gql`
+  query MemberDetails(
+    $where: Member_filter
+    $syndicateDaOsWhere2: Membership_filter
+  ) {
+    members(where: $where) {
+      memberAddress
+      syndicateDAOs(where: $syndicateDaOsWhere2) {
+        tokens
+        depositAmount
+        ownershipShare
+      }
+    }
+  }
+`;
+
+export const SINGLE_CLUB_DETAILS = gql`
+  query SyndicateDAOs($where: SyndicateDAO_filter) {
+    syndicateDAOs(where: $where) {
+      contractAddress
+      ownerAddress
+      totalSupply
+      createdAt
+      totalDeposits
     }
   }
 `;

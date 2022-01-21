@@ -12,10 +12,10 @@ import moment from "moment";
 import { useSpring, animated } from "react-spring";
 import { DAY_IN_SECONDS } from "@/utils/constants";
 
-const MintMaxDate: FC = () => {
+const MintMaxDate: FC<{ className?: string }> = ({ className }) => {
   const dispatch = useDispatch();
 
-  const { setShowNextButton, handleNext } = useCreateInvestmentClubContext();
+  const { setShowNextButton, handleNext, currentStep } = useCreateInvestmentClubContext();
 
   const [warning, setWarning] = useState("");
   const [disableButtons, setDisableButtons] = useState(false);
@@ -26,9 +26,11 @@ const MintMaxDate: FC = () => {
 
   // hide next button
   useEffect(() => {
-    setShowNextButton(false);
-    setDisableButtons(false);
-  }, [setShowNextButton]);
+    if (currentStep <= 2) {
+      setShowNextButton(false);
+      setDisableButtons(false);
+    }
+  }, [setShowNextButton, currentStep]);
 
   useEffect(() => {
     const threeMonthsAfterToday = +moment(moment(), "MM-DD-YYYY").add(
@@ -86,7 +88,7 @@ const MintMaxDate: FC = () => {
     setActiveDateCard(index);
     if (value) {
       setShowCustomDatePicker(false);
-      setShowNextButton(false);
+      // setShowNextButton(false);
       // push amount to the redux store.
       dispatch(
         setMintEndTime({
@@ -95,10 +97,12 @@ const MintMaxDate: FC = () => {
         }),
       );
       setDisableButtons(true);
-      setTimeout(() => {
-        handleNext();
-        setShowNextButton(true);
-      }, 400);
+      if (currentStep == 2) {
+        setTimeout(() => {
+          handleNext();
+          setShowNextButton(true);
+        }, 400);
+      }
     } else {
       setShowNextButton(true);
       setShowCustomDatePicker(true);
@@ -123,7 +127,7 @@ const MintMaxDate: FC = () => {
 
   return (
     <Fade delay={500}>
-      <div className="w-full lg:w-2/3">
+      <div className={className}>
         <div className="h3 pb-6">How long will deposits be accepted?</div>
         <div>
           <div

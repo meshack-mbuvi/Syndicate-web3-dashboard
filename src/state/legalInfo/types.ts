@@ -32,3 +32,8 @@ export interface IWalletSignature {
   signature: string;
   timeSigned: Date;
 }
+
+export interface IDepositReadyInfo {
+  depositLink: string;
+  adminSigned: boolean;
+}

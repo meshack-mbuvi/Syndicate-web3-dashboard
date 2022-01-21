@@ -135,6 +135,10 @@ export const CategoryPill: React.FC<ICategoryPill> = ({
         setPillIcon("investment-tokens.svg");
         setPillText("Investment token");
         break;
+      case "OFF_CHAIN_INVESTMENT":
+        setPillIcon("offchain-investment.svg");
+        setPillText("Off-chain investment");
+        break;
       case "OTHER":
         setPillIcon("other-transaction.svg");
         setPillText("Other");
@@ -142,6 +146,14 @@ export const CategoryPill: React.FC<ICategoryPill> = ({
       case "SELECT_CATEGORY":
         setPillIcon("select-category.svg");
         setPillText("Select category");
+        break;
+      case "TOKEN":
+        setPillIcon("token.svg");
+        setPillText("Token");
+        break;
+      case "COLLECTIBLE":
+        setPillIcon("collectibleIcon.svg");
+        setPillText("Collectible");
         break;
       default:
         if (bulkCategoriseTransactions) {

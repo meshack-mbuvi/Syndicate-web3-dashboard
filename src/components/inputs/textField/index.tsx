@@ -1,5 +1,5 @@
 import { isEmpty } from "lodash";
-import React, { useState } from "react";
+import React from "react";
 import { useController } from "react-hook-form";
 
 interface IProps {
@@ -24,7 +24,6 @@ interface IProps {
   autoFocus?: boolean;
   showWarning?: boolean;
   warningText?: string;
-  checkType?: string;
 }
 /**
  * An input component with label and icon at the right end
@@ -50,10 +49,9 @@ export const TextField: React.FC<IProps> = ({
   autoFocus = false,
   showWarning = false,
   warningText = "",
-  checkType = " ",
 }) => {
   const {
-    field,
+    field: { value, ...fieldAttributes },
     formState: { errors },
   } = useController({
     name,
@@ -61,29 +59,6 @@ export const TextField: React.FC<IProps> = ({
     rules: { required },
     defaultValue: "",
   });
-  const [warning, setWarning] = useState("");
-
-  const handleBlur = () => {
-    const { value } = field;
-
-    if (
-      (checkType == "," && !value.includes(",")) ||
-      value.trim().split(checkType).length < 2
-    ) {
-      setWarning(warningText);
-    } else {
-      setWarning("");
-    }
-
-    // clear warning when there is an error in the input field
-    if (errors[`${name}`]) {
-      setWarning("");
-    }
-  };
-
-  const handleFocus = () => {
-    setWarning("");
-  };
 
   return (
     <div
@@ -115,21 +90,22 @@ export const TextField: React.FC<IProps> = ({
                 }`
           }  text-white placeholder-gray-syn5`}
           name={name}
-          {...field}
+          {...fieldAttributes}
+          value={value}
           type="text"
           placeholder={placeholder}
           disabled={disabled}
           // eslint-disable-next-line jsx-a11y/no-autofocus
           autoFocus={autoFocus}
-          onBlur={handleBlur}
-          onFocus={handleFocus}
         />
         {addOn && (
           <div
             className={`absolute inset-y-0 right-0 pr-4 py-4 flex items-center `}
           >
             <span
-              className={`font-whyte text-base ${field.value? "text-white": "text-gray-syn5"}`}
+              className={`font-whyte text-base ${
+                value ? "text-white" : "text-gray-syn5"
+              }`}
               id="price-currency"
             >
               {addOn}
@@ -142,9 +118,9 @@ export const TextField: React.FC<IProps> = ({
         <p className="text-red-error font-whyte text-sm pt-2">
           {errors?.[`${name}`]?.message}
         </p>
-      ) : showWarning && warning ? (
+      ) : showWarning && warningText ? (
         // show warning
-        <p className="text-yellow-semantic">{warning}</p>
+        <p className="text-yellow-semantic mt-2">{warningText}</p>
       ) : (
         info && <p className="text-sm mt-2 text-gray-syn3 font-whyte">{info}</p>
       )}

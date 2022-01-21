@@ -4,7 +4,7 @@ import { AppState } from "@/state";
 import {
   setERC20TokenContract,
   setERC20TokenDetails,
-  setLoading,
+  setLoadingClub,
 } from "@/state/erc20token/slice";
 import { ERC20Token } from "@/state/erc20token/types";
 import { getWeiAmount } from "@/utils/conversions";
@@ -70,7 +70,6 @@ export const getERC20TokenDetails = async (
       const totalSupply = await ERC20tokenContract.totalSupply().then((wei) =>
         getWeiAmount(wei, tokenDecimals, false),
       );
-      const totalDeposits = parseFloat(totalSupply);
 
       const claimEnabled = await mintPolicy.isModuleAllowed(
         ERC20tokenContract.clubERC20Contract._address,
@@ -85,12 +84,11 @@ export const getERC20TokenDetails = async (
       }
 
       return {
+        totalSupply,
         address,
         name,
         owner,
         tokenDecimals,
-        totalDeposits,
-        totalSupply,
         depositToken,
         symbol,
         memberCount,
@@ -111,6 +109,19 @@ export const getERC20TokenDetails = async (
   }
 };
 
+/**
+ * This function retrieves limited club details. The details retrieved here are
+ * missing club totalDeposits.
+ *
+ * NOTE: In order to get club totalDeposits, call useClubDepositsAndSupply() hook
+ * where you have called dispatch(setERC20Token)
+ * Reason for separating the two is coz, there is no function on the club contract to retrive
+ *  totalDeposits, but we can get this from the thegraph endpoint.
+ *
+ * @param ERC20tokenContract
+ * @param SingleTokenMintModule
+ * @returns
+ */
 export const setERC20Token =
   (ERC20tokenContract, SingleTokenMintModule: SingleTokenMintModuleContract) =>
   async (dispatch, getState: () => AppState): Promise<void> => {
@@ -121,7 +132,7 @@ export const setERC20Token =
     } = getState();
 
     dispatch(setERC20TokenContract(ERC20tokenContract));
-    dispatch(setLoading(true));
+    dispatch(setLoadingClub(true));
     try {
       const erc20Token = await getERC20TokenDetails(
         ERC20tokenContract,
@@ -129,7 +140,7 @@ export const setERC20Token =
         mintPolicy,
       );
       dispatch(setERC20TokenDetails(erc20Token));
-      dispatch(setLoading(false));
+      dispatch(setLoadingClub(false));
     } catch (error) {
       return dispatch(setERC20TokenDetails(ERC20TokenDefaultState));
     }
