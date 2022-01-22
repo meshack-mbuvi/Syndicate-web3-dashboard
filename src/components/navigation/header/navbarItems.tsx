@@ -23,8 +23,7 @@ export const NavBarNavItem: React.FC<IProps> = ({
         >
           <div className="h-full mr-3 md:mr-6 lg:mr-9 border-b-1 border-opacity-0 hover:border-opacity-50 cursor-pointer">
             <a
-              className={`${customClasses} text-sm sm:text-base text-white leading-7 vertically-center inline-block transition-all`}
-              style={{ lineHeight: "1.3em" }}
+              className={`${customClasses} text-sm sm:text-base text-white leading-5 vertically-center inline-block transition-all`}
             >
               {navItemText}
             </a>
@@ -34,7 +33,7 @@ export const NavBarNavItem: React.FC<IProps> = ({
         <div className="hidden sm:block md:ml-4 lg:ml-6">
           {navItemText}
           {isLegal ? (
-            <div className="flex pt-1 text-gray-syn3 text-base items-center">
+            <div className="flex pt-1 text-gray-syn3 text-base leading-5 items-center">
               <div className="text-xs mr-1">Powered by</div>
               <svg
                 width="139"
