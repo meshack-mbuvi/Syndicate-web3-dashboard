@@ -169,6 +169,7 @@ export const mockCollectiblesResult = [
       name: "CryptoPunks",
       slug: "cryptopunks",
     },
+    slug: "cryptopunks",
     description: null,
     floorPrice: null,
     lastPurchasePrice: {
@@ -188,6 +189,7 @@ export const mockCollectiblesResult = [
       name: "Crypto Coven",
       slug: "cryptocoven",
     },
+    slug: "cryptocoven",
     description:
       "You are a WITCH with cunning beyond measure. You pluck secrets from the universe like leaves from a tree. Your magic spawns from bone broth and broccoli. People from all places travel to linger below your balcony and bask in your beauty. FLOURISH MY FRIEND!",
     floorPrice: 0,
@@ -208,6 +210,7 @@ export const mockCollectiblesResult = [
       name: "World of Women",
       slug: "world-of-women-nft",
     },
+    slug: "world-of-women-nft",
     description:
       "World of Women: 10,000 unique, cool and diverse Women living on the Blockchain.",
     floorPrice: 0,
@@ -229,6 +232,7 @@ export const mockCollectiblesResult = [
       name: "LIT Project Two: Motion",
       slug: "lit-project-two-1",
     },
+    slug: "lit-project-two-1",
     description:
       "LIT Project Two with Robert De Niro is a dynamic NFT programmed to react to the movement of Ethereum in different time increments. Zoom in or zoom out. Reflect. Match multiple Motions for multiple perspectives. Every wallet needs a watcher.\n\nSmart contract & metadata by Transient Labs.",
     floorPrice: 0,
@@ -250,6 +254,7 @@ export const mockCollectiblesResult = [
       name: "Rug Radio - Genesis NFT",
       slug: "ruggenesis-nft",
     },
+    slug: "ruggenesis-nft",
     description:
       "The Rug Radio NFT is a Utility NFT that yields token based on the scarcity of the rug. The longer you hold the utility NFT, the more tokens you will receive.\n\nTokens yield per day:\n\nRare 1 & 2 = 11, Scarce 1 & 2 = 7, Standard = 5\n\nTo learn more about the RugRadio ecosystem, join our Discord or visit http://rug.fm/",
     floorPrice: 0,
@@ -271,6 +276,7 @@ export const mockCollectiblesResult = [
       name: "Loot (for Adventurers)",
       slug: "lootproject",
     },
+    slug: "lootproject",
     description:
       "Loot is randomized adventurer gear generated and stored on chain. Stats, images, and other functionality are intentionally omitted for others to interpret. Feel free to use Loot in any way you want.",
     floorPrice: null,
@@ -292,6 +298,7 @@ export const mockCollectiblesResult = [
       name: "Chain Runners",
       slug: "chain-runners-nft",
     },
+    slug: "chain-runners-nft",
     description:
       "Chain Runners are Mega City renegades 100% generated on chain.",
     floorPrice: 0,
@@ -314,6 +321,7 @@ export const mockCollectiblesResult = [
       name: "Poolsuite - Executive Member",
       slug: "poolsuite-executive-member",
     },
+    slug: "poolsuite-executive-member",
     description:
       "Holding the Poolsuite Executive Member card suggests your esteemed presence within the crème de la crème of internet high society, and says a lot about the way you live your life on the web. This NFT can be connected to your account at Poolsuite.net to unlock perks, including early access to all Poolsuite projects.",
     floorPrice: 0,
@@ -336,6 +344,7 @@ export const mockCollectiblesResult = [
       name: "SUPERPLASTIC: Cryptojankyz",
       slug: "cryptojankyz",
     },
+    slug: "cryptojankyz",
     description: null,
     floorPrice: 0,
     lastPurchasePrice: {
@@ -355,6 +364,7 @@ export const mockCollectiblesResult = [
       name: "Cool Cats NFT",
       slug: "cool-cats-nft",
     },
+    slug: "cool-cats-nft",
     description:
       "Cool Cats is a collection of 9,999 randomly generated and stylistically curated NFTs that exist on the Ethereum Blockchain. Cool Cat holders can participate in exclusive events such as NFT claims, raffles, community giveaways, and more. Remember, all cats are cool, but some are cooler than others. Visit [www.coolcatsnft.com](https://www.coolcatsnft.com/) to learn more.",
     floorPrice: 0,
@@ -376,6 +386,7 @@ export const mockCollectiblesResult = [
       name: "LIT Project Two: Motion",
       slug: "lit-project-two-1",
     },
+    slug: "lit-project-two-1",
     description:
       "LIT Project Two with Robert De Niro is a dynamic NFT programmed to react to the movement of Ethereum in different time increments. Zoom in or zoom out. Reflect. Match multiple Motions for multiple perspectives. Every wallet needs a watcher.\n\nSmart contract & metadata by Transient Labs.",
     floorPrice: 0,

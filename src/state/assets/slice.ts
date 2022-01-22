@@ -246,6 +246,30 @@ const fetchTokenBalances = (tokensList: any[], account: string) => {
   });
 };
 
+export const fetchMockCollectibles = createAsyncThunk(
+  'assets/fetchMockCollectibles',
+  async () => {
+    return await Promise.all([
+      getEthereumTokenPrice()
+        .then((result) => result.data.ethereum.usd)
+        .catch(() => 0),
+      ...mockCollectiblesResult.map(async (collectible) => {
+        return await axios
+          .get(`https://api.opensea.io/api/v1/collection/${collectible.slug}/stats`, {
+            headers: { "x-api-key": openSeaAPIKey },
+          })
+          .then((result) => ({
+            ...collectible,
+            floorPrice: result.data.stats.floor_price,
+          }))
+          .catch(() => ({ ...collectible, floorPrice: 0 }));
+      }),
+    ])
+      .then((result) => result)
+      .catch(() => []);
+  }
+)
+
 const assetsSlice = createSlice({
   name: "assets",
   initialState,
@@ -253,9 +277,6 @@ const assetsSlice = createSlice({
     setMockTokensResult(state) {
       state.tokensResult = mockTokensResult;
     },
-    setMockCollectiblesTransactions(state) {
-      state.collectiblesResult = mockCollectiblesResult;
-    }
   },
   extraReducers: (builder) => {
     builder
@@ -320,13 +341,16 @@ const assetsSlice = createSlice({
         state.collectiblesResult = action.payload;
         state.loadingCollectibles = false;
         state.collectiblesFetchError = false;
+      })
+      .addCase(fetchMockCollectibles.fulfilled, (state, action) => {
+        state.collectiblesResult = action.payload.slice(1);
+        state.ethereumTokenPrice = action.payload[0];
       });
   },
 });
 
 export const {
   setMockTokensResult,
-  setMockCollectiblesTransactions,
 } = assetsSlice.actions;
 
 export default assetsSlice.reducer;
