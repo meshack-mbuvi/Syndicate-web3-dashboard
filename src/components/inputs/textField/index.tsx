@@ -1,5 +1,5 @@
 import { isEmpty } from "lodash";
-import React from "react";
+import React, { useState } from "react";
 import { useController } from "react-hook-form";
 
 interface IProps {
@@ -60,6 +60,16 @@ export const TextField: React.FC<IProps> = ({
     defaultValue: "",
   });
 
+  const [showValidation, setShowValidation] = useState(false);
+
+  const handleOnFocus = () => {
+    setShowValidation(false);
+  };
+
+  const handleOnBlur = () => {
+    setShowValidation(true);
+  };
+
   return (
     <div
       className={`flex ${borderStyles} ${
@@ -95,6 +105,8 @@ export const TextField: React.FC<IProps> = ({
           type="text"
           placeholder={placeholder}
           disabled={disabled}
+          onFocus={handleOnFocus}
+          onBlur={handleOnBlur}
           // eslint-disable-next-line jsx-a11y/no-autofocus
           autoFocus={autoFocus}
         />
@@ -114,15 +126,21 @@ export const TextField: React.FC<IProps> = ({
         )}
       </div>
 
-      {errors[`${name}`]?.message ? (
-        <p className="text-red-error font-whyte text-sm pt-2">
-          {errors?.[`${name}`]?.message}
-        </p>
-      ) : showWarning && warningText ? (
-        // show warning
-        <p className="text-yellow-semantic mt-2">{warningText}</p>
+      {showValidation ? (
+        errors[`${name}`]?.message ? (
+          <p className="text-red-error font-whyte text-sm pt-2">
+            {errors?.[`${name}`]?.message}
+          </p>
+        ) : showWarning && warningText ? (
+          // show warning
+          <p className="text-sm text-yellow-semantic mt-2">{warningText}</p>
+        ) : (
+          info && (
+            <p className="text-sm mt-2 text-gray-syn3 font-whyte">{info}</p>
+          )
+        )
       ) : (
-        info && <p className="text-sm mt-2 text-gray-syn3 font-whyte">{info}</p>
+        ""
       )}
     </div>
   );
