@@ -23,28 +23,53 @@ const ReviewDetails: React.FC = () => {
 
   const { depositTokenSymbol, depositTokenLogo } = useUSDCDetails();
   const { currentStep } = useCreateInvestmentClubContext();
-  const { setBackBtnDisabled, setNextBtnDisabled } = useCreateInvestmentClubContext();
+  const { setBackBtnDisabled, setNextBtnDisabled } =
+    useCreateInvestmentClubContext();
   const [inlineEditView, setInlineEditView] = useState<string>("");
-  const [editClubNameSelector, setEditClubNameSelector] = useState<boolean>(false)
-  const [editAmountToRaise, setEditAmountToRaise] = useState<boolean>(false)
-  const [editMintMaxDate, setEditMintMaxDate] = useState<boolean>(false)
-  const [editMembersCount, setEditMembersCount] = useState<boolean>(false)
+  const [editClubNameSelector, setEditClubNameSelector] =
+    useState<boolean>(false);
+  const [editAmountToRaise, setEditAmountToRaise] = useState<boolean>(false);
+  const [editMintMaxDate, setEditMintMaxDate] = useState<boolean>(false);
+  const [editMembersCount, setEditMembersCount] = useState<boolean>(false);
 
   useEffect(() => {
-    if (editClubNameSelector || editAmountToRaise || editMintMaxDate || editMembersCount) {
+    if (
+      editClubNameSelector ||
+      editAmountToRaise ||
+      editMintMaxDate ||
+      editMembersCount
+    ) {
       setBackBtnDisabled(true);
     } else {
       setBackBtnDisabled(false);
     }
-  }, [editClubNameSelector, editAmountToRaise, editMintMaxDate, editMembersCount, setBackBtnDisabled]);
+  }, [
+    editClubNameSelector,
+    editAmountToRaise,
+    editMintMaxDate,
+    editMembersCount,
+    setBackBtnDisabled,
+  ]);
 
   useEffect(() => {
-    if ((editClubNameSelector || editAmountToRaise || editMintMaxDate || editMembersCount)) {
-      setNextBtnDisabled(true)
+    if (
+      editClubNameSelector ||
+      editAmountToRaise ||
+      editMintMaxDate ||
+      editMembersCount
+    ) {
+      setNextBtnDisabled(true);
     } else {
-      setNextBtnDisabled(false)
+      setNextBtnDisabled(false);
     }
-  }, [editClubNameSelector, editAmountToRaise, editMintMaxDate, editMembersCount, currentStep, setNextBtnDisabled])
+  }, [
+    editClubNameSelector,
+    editAmountToRaise,
+    editMintMaxDate,
+    editMembersCount,
+    currentStep,
+    setNextBtnDisabled,
+  ]);
 
   const showInvestmentName = investmentClubName && currentStep >= 1;
   const showTokenCap = tokenCap && currentStep >= 2;
@@ -104,284 +129,298 @@ const ReviewDetails: React.FC = () => {
 
   return (
     <div className="w-full lg:w-2/3 mb-12">
-      {
-        editClubNameSelector
-        ? (
-          <animated.div 
-            className="relative w-full mb-2 pt-2 pb-2 pl-5 pr-5" 
-          >
-            <ClubNameSelector editButtonClicked={editClubNameSelector} />
-            {
-              investmentClubName
-                ? 
-                  <animated.div 
-                    className="flex items-center absolute top-3 right-5" 
-                    onClick={() => setEditClubNameSelector(!editClubNameSelector)} 
-                    style={{ color: '#4376FF', cursor: 'pointer' }}
-                  >
-                    {"Save"}
-                  </animated.div> 
-                : null
-            }
-          </animated.div>
-        ) : (
-          investmentClubTransition((styles, item) =>
-            item ? (
-              <animated.div 
-                className="flex justify-between pl-5 pr-5 pt-4 pb-4" 
-                style={inlineEditView === "investmentClub" && currentStep == 4 ? { backgroundColor: '#131416', borderRadius: '10px', cursor: 'pointer' } : { display: 'inherit' }}
-                onMouseEnter={() => setInlineEditView("investmentClub")}
-                onMouseLeave={() => setInlineEditView("")}
-              >
-                <animated.div style={styles}>
-                  {
-                    editClubNameSelector
-                    ?
-                      <ClubNameSelector className="flex flex-col pb-6 w-full lg:w-full" />
-                    : 
-                      <>
-                        {investmentClubHeaderTransition((styles, item) =>
-                          item ? (
-                            <animated.p style={styles} className="text-sm text-gray-syn4">
-                              What should we call this investment club?
-                            </animated.p>
-                          ) : null,
-                        )}
-                        <div className="flex mt-2 text-base">
-                          <p className="text-white">{investmentClubName}</p>
-                          <p className="ml-4 text-gray-syn4">
-                            Club token ✺{investmentClubSymbol}
-                          </p>
-                        </div>
-                      </>
-                  }
-                </animated.div>
-                {
-                  inlineEditView === "investmentClub" && currentStep == 4
-                  ? 
-                    <animated.div 
-                      className="flex items-center" 
-                      onClick={() => setEditClubNameSelector(!editClubNameSelector)} 
-                      style={{ color: '#4376FF', cursor: 'pointer' }}
-                    >
-                      {"Edit"}
-                    </animated.div>
-                  : null
-                }
-              </animated.div>
-            ) : null,
-          )
-        )
-      }
-
-      {
-        editAmountToRaise 
-        ? (
-          <animated.div 
-            className="relative w-full mt-4 mb-2 pl-5 pr-5 pt-2 pb-2" 
-          >
-            <AmountToRaise editButtonClicked={editAmountToRaise} />
-            <animated.div 
-              className="flex items-center absolute top-3 right-5" 
-              onClick={() => setEditAmountToRaise(!editAmountToRaise)} 
-              style={{ color: '#4376FF', cursor: 'pointer' }}
+      {editClubNameSelector ? (
+        <animated.div className="relative w-full mb-2 pt-2 pb-2 pl-5 pr-5">
+          <ClubNameSelector editButtonClicked={editClubNameSelector} />
+          {investmentClubName ? (
+            <animated.div
+              className="flex items-center absolute top-3 right-5"
+              onClick={() => setEditClubNameSelector(!editClubNameSelector)}
+              style={{ color: "#4376FF", cursor: "pointer" }}
             >
               {"Save"}
-            </animated.div> 
-          </animated.div>
-        ) : (
-          tokenCapTransition((styles, item) =>
-            item ? (
-                <animated.div 
-                  className="flex justify-between pl-5 pr-5 pt-4 pb-4" 
-                  style={inlineEditView === "tokenCap" && currentStep == 4 ? { backgroundColor: '#131416', borderRadius: '10px', cursor: 'pointer' } : { display: 'inherit' }}
-                  onMouseEnter={() => setInlineEditView("tokenCap")} 
-                  onMouseLeave={() => setInlineEditView("")}
-                >
-                  <animated.div style={styles}>
-                    {
-                      editAmountToRaise
-                      ?
-                        <AmountToRaise className="w-full lg:w-full" />
-                      : 
-                        <>
-                          {tokenCapHeaderTransition((styles, item) =>
-                            item ? (
-                              <animated.p style={styles}>
-                                How much are you raising?
-                              </animated.p>
-                            ) : null,
-                          )}
-                          <div className="flex mt-2 text-base">  
-                            <p className="text-white">{floatedNumberWithCommas(tokenCap)}</p>                 
-                            {usdcTransition((styles, item) =>
-                              item ? (
-                                <animated.div
-                                  style={styles}
-                                  className="ml-4 text-gray-syn4 flex"
-                                >
-                                  <Image src={depositTokenLogo} height={24} width={24} />
-                                  <p className="ml-2 text-base">{depositTokenSymbol}</p>
-                                </animated.div>
-                              ) : null,
-                            )}
-                          </div>
-                        </>
-                    }
-                  </animated.div>
-                  {
-                    inlineEditView === "tokenCap" && currentStep == 4
-                    ? 
-                      <animated.div 
-                        className="flex items-center" 
-                        onClick={() => setEditAmountToRaise(!editAmountToRaise)} 
-                        style={{ color: '#4376FF', cursor: 'pointer' }}
-                      >
-                        {"Edit"}
-                      </animated.div>
-                    : null
-                  }
-                </animated.div>
-            ) : null
-          )
-        )
-      }
-
-      {
-        editMintMaxDate 
-        ? (
-            <animated.div 
-              className="relative w-full mt-4 mb-2 pl-5 pr-5 pt-2 pb-2" 
-            >
-              <MintMaxDate />
-              <animated.div 
-                className="flex items-center absolute top-3 right-5" 
-                onClick={() => setEditMintMaxDate(!editMintMaxDate)} 
-                style={{ color: '#4376FF', cursor: 'pointer' }}
-              >
-                {"Save"}
-              </animated.div> 
             </animated.div>
-        ) : (
-          mindEndTimeTransition((styles, item) =>
-            item ? (
-              <animated.div 
-                  className="flex justify-between pl-5 pr-5 pt-4 pb-4" 
-                  style={inlineEditView === "mindEnd" && currentStep == 4 ? { backgroundColor: '#131416', borderRadius: '10px', cursor: 'pointer' } : { display: 'inherit' }}
-                  onMouseEnter={() => setInlineEditView("mindEnd")} 
-                  onMouseLeave={() => setInlineEditView("")}
-              >
-                <animated.div style={styles}>
-                  {
-                    editMintMaxDate
-                    ?
-                      <MintMaxDate className="w-full lg:w-full" />
-                    : 
-                      <>
-                        {mindEndTimeHeaderTransition((styles, item) =>
-                          item ? (
-                            <animated.p style={styles} className="text-sm text-gray-syn4">
-                              How long will deposits be accepted?
-                            </animated.p>
-                          ) : null,
-                        )}
-                        <div className="flex mt-2 text-base">
-                          {!mintEndTime?.mintTime || mintEndTime?.mintTime === "Custom" ? (
-                            <></>
-                          ) : (
-                            <p className="text-white mr-4">{mintEndTime?.mintTime}</p>
-                          )}
-                          <p className="text-gray-syn4">
-                            {format(
-                              new Date(
-                                mintEndTime?.value ? mintEndTime?.value * 1000 : new Date(),
-                              ),
-                              "MMM dd, yyyy, hh:mm b",
-                            )}
-                          </p>
-                        </div>
-                      </>
-                  }
-                </animated.div>
-                {
-                  inlineEditView === "mindEnd" && currentStep == 4
-                  ? 
-                    <animated.div 
-                      className="flex items-center" 
-                      onClick={() => setEditMintMaxDate(!editMintMaxDate)} 
-                      style={{ color: '#4376FF', cursor: 'pointer' }}
-                    >
-                      {"Edit"}
-                    </animated.div>
-                  : null
-                }
-              </animated.div>
-            ) : null
-          )
-        )
-      }
-
-      {
-        editMembersCount 
-        ? (
-          <animated.div 
-            className="relative w-full pl-5 pt-2 pb-2 pr-5" 
-          >
-            <MembersCount editButtonClicked={editMembersCount} className="w-full lg:w-full" />
-            <animated.div 
-              className="flex items-center absolute top-3 right-5" 
-              onClick={() => setEditMembersCount(!editMembersCount)} 
-              style={{ color: '#4376FF', cursor: 'pointer' }}
+          ) : null}
+        </animated.div>
+      ) : (
+        investmentClubTransition((styles, item) =>
+          item ? (
+            <animated.div
+              className="flex justify-between pl-5 pr-5 pt-4 pb-4"
+              style={
+                inlineEditView === "investmentClub" && currentStep == 4
+                  ? {
+                      backgroundColor: "#131416",
+                      borderRadius: "10px",
+                      cursor: "pointer",
+                    }
+                  : { display: "inherit" }
+              }
+              onMouseEnter={() => setInlineEditView("investmentClub")}
+              onMouseLeave={() => setInlineEditView("")}
             >
-              {"Save"}
-            </animated.div> 
-          </animated.div>
-        ) : (
-          memberCountTransition((styles, item) =>
-            item ? (
-              <animated.div 
-                className="flex justify-between pl-5 pr-5 pt-4 pb-4" 
-                style={inlineEditView === "memberCount" && currentStep == 4 ? { backgroundColor: '#131416', borderRadius: '10px', cursor: 'pointer' } : { display: 'inherit' }}
-                onMouseEnter={() => setInlineEditView("memberCount")} 
-                onMouseLeave={() => setInlineEditView("")}
-              >
-                <animated.div style={styles}>
-                  {
-                    editMembersCount
-                    ?
-                      <MembersCount />
-                    : 
-                      <>
-                        {memberCountHeaderTransition((styles, item) =>
-                          item ? (
-                            <animated.p style={styles} className="text-sm text-gray-syn4">
-                              How many members can join?
-                            </animated.p>
-                          ) : null,
-                        )}
-                        <div className="flex mt-2 text-base">
-                          <p className="text-white">{membersCount}</p>
-                        </div>
-                      </>
-                  }
-                </animated.div>
-                {
-                  inlineEditView === "memberCount" && currentStep == 4
-                  ? 
-                    <animated.div 
-                      className="flex items-center" 
-                      onClick={() => setEditMembersCount(!editMembersCount)} 
-                      style={{ color: '#4376FF', cursor: 'pointer' }}
-                    >
-                      {"Edit"}
-                    </animated.div>
-                  : null
-                }
+              <animated.div style={styles}>
+                {editClubNameSelector ? (
+                  <ClubNameSelector className="flex flex-col pb-6 w-full lg:w-full" />
+                ) : (
+                  <>
+                    {investmentClubHeaderTransition((styles, item) =>
+                      item ? (
+                        <animated.p
+                          style={styles}
+                          className="text-sm text-gray-syn4"
+                        >
+                          What should we call this investment club?
+                        </animated.p>
+                      ) : null,
+                    )}
+                    <div className="flex mt-2 text-base">
+                      <p className="text-white">{investmentClubName}</p>
+                      <p className="ml-4 text-gray-syn4">
+                        Club token ✺{investmentClubSymbol}
+                      </p>
+                    </div>
+                  </>
+                )}
               </animated.div>
-            ) : null,
-          )
+              {inlineEditView === "investmentClub" && currentStep == 4 ? (
+                <animated.div
+                  className="flex items-center"
+                  onClick={() => setEditClubNameSelector(!editClubNameSelector)}
+                  style={{ color: "#4376FF", cursor: "pointer" }}
+                >
+                  {"Edit"}
+                </animated.div>
+              ) : null}
+            </animated.div>
+          ) : null,
         )
-      }
+      )}
+
+      {editAmountToRaise ? (
+        <animated.div className="relative w-full mt-4 mb-2 pl-5 pr-5 pt-2 pb-2">
+          <AmountToRaise editButtonClicked={editAmountToRaise} />
+          <animated.div
+            className="flex items-center absolute top-3 right-5"
+            onClick={() => setEditAmountToRaise(!editAmountToRaise)}
+            style={{ color: "#4376FF", cursor: "pointer" }}
+          >
+            {"Save"}
+          </animated.div>
+        </animated.div>
+      ) : (
+        tokenCapTransition((styles, item) =>
+          item ? (
+            <animated.div
+              className="flex justify-between pl-5 pr-5 pt-4 pb-4"
+              style={
+                inlineEditView === "tokenCap" && currentStep == 4
+                  ? {
+                      backgroundColor: "#131416",
+                      borderRadius: "10px",
+                      cursor: "pointer",
+                    }
+                  : { display: "inherit" }
+              }
+              onMouseEnter={() => setInlineEditView("tokenCap")}
+              onMouseLeave={() => setInlineEditView("")}
+            >
+              <animated.div style={styles}>
+                {editAmountToRaise ? (
+                  <AmountToRaise className="w-full lg:w-full" />
+                ) : (
+                  <>
+                    {tokenCapHeaderTransition((styles, item) =>
+                      item ? (
+                        <animated.p style={styles}>
+                          How much are you raising?
+                        </animated.p>
+                      ) : null,
+                    )}
+                    <div className="flex mt-2 text-base">
+                      <p className="text-white">
+                        {floatedNumberWithCommas(tokenCap)}
+                      </p>
+                      {usdcTransition((styles, item) =>
+                        item ? (
+                          <animated.div
+                            style={styles}
+                            className="ml-4 text-gray-syn4 flex"
+                          >
+                            <Image
+                              src={depositTokenLogo}
+                              height={24}
+                              width={24}
+                            />
+                            <p className="ml-2 text-base">
+                              {depositTokenSymbol}
+                            </p>
+                          </animated.div>
+                        ) : null,
+                      )}
+                    </div>
+                  </>
+                )}
+              </animated.div>
+              {inlineEditView === "tokenCap" && currentStep == 4 ? (
+                <animated.div
+                  className="flex items-center"
+                  onClick={() => setEditAmountToRaise(!editAmountToRaise)}
+                  style={{ color: "#4376FF", cursor: "pointer" }}
+                >
+                  {"Edit"}
+                </animated.div>
+              ) : null}
+            </animated.div>
+          ) : null,
+        )
+      )}
+
+      {editMintMaxDate ? (
+        <animated.div className="relative w-full mt-4 mb-2 pl-5 pr-5 pt-2 pb-2">
+          <MintMaxDate />
+          <animated.div
+            className="flex items-center absolute top-3 right-5"
+            onClick={() => setEditMintMaxDate(!editMintMaxDate)}
+            style={{ color: "#4376FF", cursor: "pointer" }}
+          >
+            {"Save"}
+          </animated.div>
+        </animated.div>
+      ) : (
+        mindEndTimeTransition((styles, item) =>
+          item ? (
+            <animated.div
+              className="flex justify-between pl-5 pr-5 pt-4 pb-4"
+              style={
+                inlineEditView === "mindEnd" && currentStep == 4
+                  ? {
+                      backgroundColor: "#131416",
+                      borderRadius: "10px",
+                      cursor: "pointer",
+                    }
+                  : { display: "inherit" }
+              }
+              onMouseEnter={() => setInlineEditView("mindEnd")}
+              onMouseLeave={() => setInlineEditView("")}
+            >
+              <animated.div style={styles}>
+                {editMintMaxDate ? (
+                  <MintMaxDate className="w-full lg:w-full" />
+                ) : (
+                  <>
+                    {mindEndTimeHeaderTransition((styles, item) =>
+                      item ? (
+                        <animated.p
+                          style={styles}
+                          className="text-sm text-gray-syn4"
+                        >
+                          How long will deposits be accepted?
+                        </animated.p>
+                      ) : null,
+                    )}
+                    <div className="flex mt-2 text-base">
+                      {!mintEndTime?.mintTime ||
+                      mintEndTime?.mintTime === "Custom" ? (
+                        <></>
+                      ) : (
+                        <p className="text-white mr-4">
+                          {mintEndTime?.mintTime}
+                        </p>
+                      )}
+                      <p className="text-white">
+                        {format(
+                          new Date(
+                            mintEndTime?.value
+                              ? mintEndTime?.value * 1000
+                              : new Date(),
+                          ),
+                          "MMM dd, yyyy, hh:mm b",
+                        )}
+                      </p>
+                    </div>
+                  </>
+                )}
+              </animated.div>
+              {inlineEditView === "mindEnd" && currentStep == 4 ? (
+                <animated.div
+                  className="flex items-center"
+                  onClick={() => setEditMintMaxDate(!editMintMaxDate)}
+                  style={{ color: "#4376FF", cursor: "pointer" }}
+                >
+                  {"Edit"}
+                </animated.div>
+              ) : null}
+            </animated.div>
+          ) : null,
+        )
+      )}
+
+      {editMembersCount ? (
+        <animated.div className="relative w-full pl-5 pt-2 pb-2 pr-5">
+          <MembersCount
+            editButtonClicked={editMembersCount}
+            className="w-full lg:w-full"
+          />
+          <animated.div
+            className="flex items-center absolute top-3 right-5"
+            onClick={() => setEditMembersCount(!editMembersCount)}
+            style={{ color: "#4376FF", cursor: "pointer" }}
+          >
+            {"Save"}
+          </animated.div>
+        </animated.div>
+      ) : (
+        memberCountTransition((styles, item) =>
+          item ? (
+            <animated.div
+              className="flex justify-between pl-5 pr-5 pt-4 pb-4"
+              style={
+                inlineEditView === "memberCount" && currentStep == 4
+                  ? {
+                      backgroundColor: "#131416",
+                      borderRadius: "10px",
+                      cursor: "pointer",
+                    }
+                  : { display: "inherit" }
+              }
+              onMouseEnter={() => setInlineEditView("memberCount")}
+              onMouseLeave={() => setInlineEditView("")}
+            >
+              <animated.div style={styles}>
+                {editMembersCount ? (
+                  <MembersCount />
+                ) : (
+                  <>
+                    {memberCountHeaderTransition((styles, item) =>
+                      item ? (
+                        <animated.p
+                          style={styles}
+                          className="text-sm text-gray-syn4"
+                        >
+                          How many members can join?
+                        </animated.p>
+                      ) : null,
+                    )}
+                    <div className="flex mt-2 text-base">
+                      <p className="text-white">{membersCount}</p>
+                    </div>
+                  </>
+                )}
+              </animated.div>
+              {inlineEditView === "memberCount" && currentStep == 4 ? (
+                <animated.div
+                  className="flex items-center"
+                  onClick={() => setEditMembersCount(!editMembersCount)}
+                  style={{ color: "#4376FF", cursor: "pointer" }}
+                >
+                  {"Edit"}
+                </animated.div>
+              ) : null}
+            </animated.div>
+          ) : null,
+        )
+      )}
     </div>
   );
 };

@@ -328,6 +328,7 @@ const MembersTable = ({
             customClassName: "py-8",
             showHeader: false,
             overflowYScroll: false,
+            overflowXScroll: false,
             overflow: "overflow-visible",
           }}
         >

@@ -46,6 +46,7 @@ const schema = (maximumTokensToMint, web3) =>
     amount: yup
       .number()
       .required("Amount is required")
+      .moreThan(0, "Amount must be greater than 0")
       .max(
         maximumTokensToMint,
         `Amount must be less or equal to ${numberWithCommas(
@@ -70,14 +71,7 @@ export const MintAndShareTokens: React.FC<Props> = (props) => {
   const {
     initializeContractsReducer: { syndicateContracts },
     erc20TokenSliceReducer: {
-      erc20Token: {
-        symbol,
-        owner,
-        maxTotalSupply,
-        totalSupply,
-        tokenDecimals,
-        address,
-      },
+      erc20Token: { symbol, owner, maxTotalSupply, totalSupply, tokenDecimals },
       erc20TokenContract,
     },
     web3Reducer: {

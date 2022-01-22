@@ -49,7 +49,7 @@ export const SearchForm = (props: {
           <div className="relative flex items-center justify-start w-full">
             <div className="relative bg-gray-8 pl-1 flex items-stretch flex-grow focus-within:z-10">
               <div
-                className={`absolute my-auto align-middle inset-y-0 pt-0.5 h-full z-8 flex items-center justify-center ${
+                className={`absolute my-auto align-middle inset-y-0 pt-0.5 h-full z-8 flex items-center justify-center pr-2 ${
                   disabled ? "opacity-40" : ""
                 }`}
               >
@@ -64,7 +64,7 @@ export const SearchForm = (props: {
                 type="text"
                 name="search"
                 id="search"
-                className={`focus:ring-0 ${customClass} relative border-0 text-white font-whyte leading-6 text-base block w-full rounded-md pl-5 pr-5 sm:text-sm ${
+                className={`focus:ring-0 ${customClass} relative border-0 font-whyte text-white leading-6 text-lg block w-full rounded-md pl-5 pr-5 sm:text-sm ${
                   disabled ? "opacity-40" : ""
                 }`}
                 placeholder={`Search ${

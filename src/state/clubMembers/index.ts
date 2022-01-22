@@ -11,9 +11,12 @@ const clubMembersSlice = createSlice({
     setLoadingClubMembers(state, action: PayloadAction<boolean>) {
       state.loadingClubMembers = action.payload;
     },
+    clearClubMembers(state) {
+      state.clubMembers = [];
+    },
   },
 });
 
-export const { setClubMembers, setLoadingClubMembers } =
+export const { setClubMembers, setLoadingClubMembers, clearClubMembers } =
   clubMembersSlice.actions;
 export default clubMembersSlice.reducer;

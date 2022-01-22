@@ -8,6 +8,7 @@ import { useRouter } from "next/router";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useDemoMode } from "./useDemoMode";
+import { clearClubMembers } from "@/state/clubMembers";
 
 const useClubTokenMembers = () => {
   const dispatch = useDispatch();
@@ -83,6 +84,9 @@ const useClubTokenMembers = () => {
     } else if (isDemoMode) {
       processMembers(mockClubMembers);
     } else {
+      // remove mock data from the redux store
+      dispatch(clearClubMembers());
+      
       processMembers(data?.syndicateDAOs?.[0]?.members);
       dispatch(setLoadingClubMembers(false));
     }
@@ -90,7 +94,7 @@ const useClubTokenMembers = () => {
     JSON.stringify(data?.syndicateDAOs?.[0]?.members),
     loadingClubMembers,
     clubAddress,
-    account
+    account,
   ]);
 };
 

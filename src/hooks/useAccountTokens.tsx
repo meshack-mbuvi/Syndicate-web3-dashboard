@@ -18,6 +18,8 @@ export function useAccountTokens(): {
   memberOwnership;
   loadingMemberOwnership;
   refetchMemberData;
+  startPolling;
+  stopPolling;
 } {
   const {
     web3Reducer: {
@@ -33,18 +35,21 @@ export function useAccountTokens(): {
 
   const isDemoMode = useDemoMode();
 
-  const { loading, data, refetch } = useQuery(CLUB_MEMBER_QUERY, {
-    variables: {
-      where: {
-        memberAddress: account.toLocaleLowerCase(),
+  const { loading, data, refetch, startPolling, stopPolling } = useQuery(
+    CLUB_MEMBER_QUERY,
+    {
+      variables: {
+        where: {
+          memberAddress: account.toLocaleLowerCase(),
+        },
+        syndicateDaOsWhere2: {
+          syndicateDAO: address.toLowerCase(),
+        },
       },
-      syndicateDaOsWhere2: {
-        syndicateDAO: address.toLowerCase(),
-      },
+      // Avoid unnecessary calls when account/clubAddress is not defined
+      skip: !account || !address || isDemoMode,
     },
-    // Avoid unnecessary calls when account/clubAddress is not defined
-    skip: !account || !address || isDemoMode,
-  });
+  );
 
   const stringifiedData = JSON.stringify(data);
   useEffect(() => {
@@ -60,10 +65,14 @@ export function useAccountTokens(): {
     // adding this block to reset values.
     // fixes an issue where member deposit data is not updated when switching from a member
     // with deposits to one with zero deposits.
-    if (!data.members.length) {
+    const resetMemberStats = () => {
       setAccountTokens("0");
       setMemberDeposits("0");
       setMemberOwnership("0");
+    };
+
+    if (!data.members.length) {
+      resetMemberStats();
     }
 
     const {
@@ -85,6 +94,8 @@ export function useAccountTokens(): {
         setAccountTokens(getWeiAmount(tokens, tokenDecimals, false));
         setMemberDeposits(getWeiAmount(depositAmount, 6, false));
         setMemberOwnership(`${+ownershipShare / 10000}`);
+      } else {
+        resetMemberStats();
       }
     }
   }, [
@@ -108,5 +119,7 @@ export function useAccountTokens(): {
     memberDeposits,
     memberOwnership,
     refetchMemberData: refetch,
+    startPolling,
+    stopPolling,
   };
 }
