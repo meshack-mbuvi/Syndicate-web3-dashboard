@@ -254,7 +254,6 @@ const Collectibles: FC<{ activeAssetTab: string }> = ({ activeAssetTab }) => {
                               borderRadius="rounded-lg"
                               width="1/2"
                               height="1/3"
-                              customClass="border border-gray-syn6"
                               animate={true}
                             />
                           ) : (
