@@ -253,10 +253,10 @@ export const fetchDemoFloorPrices = createAsyncThunk(
       getEthereumTokenPrice()
         .then((result) => result.data.ethereum.usd)
         .catch(() => 0),
-      ...mockCollectiblesResult.map(async (collectible) => {
+      ...mockCollectiblesResult.map(async (collectible, idx) => {
         // opensea api timesout when it receives too many calls
         // setTimeout below will introduces a 1 sec delay between calls
-        await new Promise(resolve => setTimeout(resolve, 1000)) 
+        await new Promise(resolve => setTimeout(resolve, idx * 1000)) 
         return await axios
           .get(`https://api.opensea.io/api/v1/collection/${collectible.slug}/stats`, {
             headers: { "x-api-key": openSeaAPIKey },
