@@ -156,7 +156,7 @@ const CollectibleMedia: FC<ICollectibleMedia> = ({
           backgroundImage: `url('${image}')`,
           backgroundSize: "cover",
           backgroundRepeat: "no-repeat",
-          backgroundPosition: "center center",
+          backgroundPosition: "center 20%",
         }}
         className={`${showFullScreen ? "h-full" : "h-80"} w-full relative`}
       >
