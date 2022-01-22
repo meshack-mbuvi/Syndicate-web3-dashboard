@@ -213,15 +213,29 @@ const DepositSyndicate: React.FC = () => {
       setSuccessfulDeposit(true);
     }
 
-    setNewMemberTokens(+accountTokens + +depositAmount);
+    /**
+     * Since we have current total supply, current member tokens(accountTokens)
+     * and deposit amount, we can with high accuracy determine the new member 
+     * ownership. This holds true for 1:1 relationship between tokens minted and
+     * amount deposited. 
+     * 
+     * TODO: Update this for ETH. We need to determine the tokens to be minted
+     * for each Ether deposited and sum it with account tokens and total supply.
+     */
+    const newMemberTokens =
+      +parseFloat(accountTokens) + parseFloat(depositAmount);
+    const newTotalSupply = +totalSupply + +parseFloat(depositAmount);
+    setNewMemberTokens(newMemberTokens);
 
     // Bug fix: setting new ownership share to an addition of memberOwnership and ownershipShare
     // leads to a situation where the total percentage ownership on the success modal exceeds 100% if the club has only 1 member.
     // see this screenshot: https://drive.google.com/file/d/1l0kS3hVKqG_VoM6pf7UpX93DnKSTyRMU/view?usp=sharing
     if (+memberOwnership === 100) {
-      setNewOwnershipShare(+memberOwnership);
+      setNewOwnershipShare(100);
     } else {
-      setNewOwnershipShare(+memberOwnership + +ownershipShare);
+      // % member ownership after successful deposit.
+      const newOwnership = (newMemberTokens * 100) / newTotalSupply;
+      setNewOwnershipShare(newOwnership);
     }
 
     dispatch(
