@@ -19,7 +19,8 @@ import {
   fetchCollectiblesTransactions,
   fetchTokenTransactions,
   setMockTokensResult,
-  fetchMockCollectibles,
+  setMockCollectiblesResult,
+  fetchDemoFloorPrices,
 } from "@/state/assets/slice";
 import { setClubMembers } from "@/state/clubMembers";
 import {
@@ -131,9 +132,10 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
       fetchAssets();
     } else if (isDemoMode) {
       dispatch(setMockTokensResult());
-      dispatch(fetchMockCollectibles());
+      dispatch(setMockCollectiblesResult());
+      dispatch(fetchDemoFloorPrices());
     }
-  }, [owner, clubAddress]);
+  }, [owner, clubAddress, depositsEnabled]);
 
   useEffect(() => {
     // clear collectibles on account switch

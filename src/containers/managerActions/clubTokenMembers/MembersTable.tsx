@@ -4,6 +4,7 @@ import { Spinner } from "@/components/shared/spinner";
 import { SET_MEMBER_SIGN_STATUS } from "@/graphql/mutations";
 import { MEMBER_SIGNED_QUERY } from "@/graphql/queries";
 import { useIsClubOwner } from '@/hooks/useClubOwner';
+import { useDemoMode } from "@/hooks/useDemoMode";
 import useUSDCDetails from "@/hooks/useUSDCDetails";
 import { AppState } from "@/state";
 import { formatAddress } from "@/utils/formatAddress";
@@ -123,6 +124,8 @@ const MembersTable = ({
       refetchMemberStatus();
     }
   }, [clubAddress, memberAddress, loading]);
+
+  const isDemoMode = useDemoMode();
 
   const handleClick = (memberData) => {
     const { clubTokens, depositAmount, memberAddress, ownershipShare } =
@@ -316,7 +319,7 @@ const MembersTable = ({
         ""
       )}
 
-      {isOwner && account ? (
+      {isOwner && account || isDemoMode ? (
         <Modal
           {...{
             show: showMemberDetailsModal,

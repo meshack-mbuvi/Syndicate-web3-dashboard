@@ -1,6 +1,6 @@
 import { getEthereumTokenPrice } from "@/helpers/ethereumTokenDetails";
 import { isDev } from "@/utils/environment";
-import { mockCollectiblesResult, mockTokensResult } from "@/utils/mockdata";
+import { mockCollectiblesResult, mockTokensResult, mockDepositModeTokens } from "@/utils/mockdata";
 import { web3 } from "@/utils/web3Utils";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
@@ -246,14 +246,17 @@ const fetchTokenBalances = (tokensList: any[], account: string) => {
   });
 };
 
-export const fetchMockCollectibles = createAsyncThunk(
-  'assets/fetchMockCollectibles',
+export const fetchDemoFloorPrices = createAsyncThunk(
+  'assets/fetchDemoFloorPrices',
   async () => {
     return await Promise.all([
       getEthereumTokenPrice()
         .then((result) => result.data.ethereum.usd)
         .catch(() => 0),
       ...mockCollectiblesResult.map(async (collectible) => {
+        // opensea api timesout when it receives too many calls
+        // setTimeout below will introduces a 1 sec delay between calls
+        await new Promise(resolve => setTimeout(resolve, 1000)) 
         return await axios
           .get(`https://api.opensea.io/api/v1/collection/${collectible.slug}/stats`, {
             headers: { "x-api-key": openSeaAPIKey },
@@ -276,6 +279,9 @@ const assetsSlice = createSlice({
   reducers: {
     setMockTokensResult(state) {
       state.tokensResult = mockTokensResult;
+    },
+    setMockCollectiblesResult(state) {
+      state.collectiblesResult = mockCollectiblesResult;
     },
   },
   extraReducers: (builder) => {
@@ -342,15 +348,20 @@ const assetsSlice = createSlice({
         state.loadingCollectibles = false;
         state.collectiblesFetchError = false;
       })
-      .addCase(fetchMockCollectibles.fulfilled, (state, action) => {
+      .addCase(fetchDemoFloorPrices.fulfilled, (state, action) => {
+        state.loadingDemoFloorPrices = false;
         state.collectiblesResult = action.payload.slice(1);
         state.ethereumTokenPrice = action.payload[0];
+      })
+      .addCase(fetchDemoFloorPrices.pending, (state) => {
+        state.loadingDemoFloorPrices = true;
       });
   },
 });
 
 export const {
   setMockTokensResult,
+  setMockCollectiblesResult,
 } = assetsSlice.actions;
 
 export default assetsSlice.reducer;

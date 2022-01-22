@@ -3,6 +3,7 @@ export interface InitialState {
   collectiblesResult: any;
   loading: boolean;
   loadingCollectibles: boolean;
+  loadingDemoFloorPrices: boolean;
   tokensFetchError: boolean;
   collectiblesFetchError: boolean;
   allCollectiblesFetched: boolean;
@@ -14,6 +15,7 @@ export const initialState: InitialState = {
   collectiblesResult: [],
   loading: false,
   loadingCollectibles: false,
+  loadingDemoFloorPrices: false,
   tokensFetchError: false,
   collectiblesFetchError: false,
   allCollectiblesFetched: false,

@@ -22,6 +22,7 @@ const Collectibles: FC<{ activeAssetTab: string }> = ({ activeAssetTab }) => {
       allCollectiblesFetched,
       ethereumTokenPrice,
       loading,
+      loadingDemoFloorPrices,
     },
     erc20TokenSliceReducer: { erc20Token },
   } = useSelector((state: AppState) => state);
@@ -248,16 +249,26 @@ const Collectibles: FC<{ activeAssetTab: string }> = ({ activeAssetTab }) => {
                           <span className="text-gray-syn4 text-sm pt-4">
                             Floor price
                           </span>
-                          <div className="space-x-2 pt-1 h-1/3 overflow-y-scroll no-scroll-bar">
-                            <span className="">{floorPrice ?? 0} ETH</span>
-                            <span className="text-gray-syn4">
-                              (
-                              {floatedNumberWithCommas(
-                                floorPrice * ethereumTokenPrice,
-                              )}{" "}
-                              USD)
-                            </span>
-                          </div>
+                          {loadingDemoFloorPrices ? (
+                            <SkeletonLoader
+                              borderRadius="rounded-lg"
+                              width="1/2"
+                              height="1/3"
+                              customClass="border border-gray-syn6"
+                              animate={true}
+                            />
+                          ) : (
+                            <div className="space-x-2 pt-1 h-1/3 overflow-y-scroll no-scroll-bar">
+                              <span className="">{floorPrice ?? 0} ETH</span>
+                              <span className="text-gray-syn4">
+                                (
+                                {floatedNumberWithCommas(
+                                  floorPrice * ethereumTokenPrice,
+                                )}{" "}
+                                USD)
+                              </span>
+                            </div>
+                          )}
                         </div>
                       </div>
                     </div>
