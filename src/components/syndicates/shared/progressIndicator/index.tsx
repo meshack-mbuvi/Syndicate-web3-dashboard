@@ -1,8 +1,8 @@
 // component to show syndicate deposits progress
-import { useGrayDecimalNumber } from "@/hooks/useGrayDecimalNumber";
 import { divideIfNotByZero } from "@/utils/conversions";
 import { floatedNumberWithCommas } from "@/utils/formattedNumbers";
 import { SkeletonLoader } from "src/components/skeletonLoader";
+import NumberTreatment from "@/components/NumberTreatment";
 
 interface IProgressIndicator {
   totalDeposits: number;
@@ -27,13 +27,6 @@ export const ProgressIndicator = (props: IProgressIndicator): JSX.Element => {
 
   const remainingDeposits =
     parseFloat(depositTotalMax) - parseFloat(totalDeposits.toString());
-
-  const formattedTotalDeposits = useGrayDecimalNumber(
-    floatedNumberWithCommas(totalDeposits),
-  );
-  const formattedRemainingDeposits = useGrayDecimalNumber(
-    floatedNumberWithCommas(remainingDeposits),
-  );
 
   return (
     <div className="w-full xl:pb-14 pb-10 border-b-1 border-gray-syn6">
@@ -87,8 +80,9 @@ export const ProgressIndicator = (props: IProgressIndicator): JSX.Element => {
             <div className="text-left">
               <p className="text-gray-syn4 leading-6 pb-2">Deposits</p>
               <div className="flex">
-                <p className="text-white leading-loose xl:text-2xl lg:text-xl text-base">
-                  {formattedTotalDeposits}&nbsp;
+                <p className="leading-loose xl:text-2xl lg:text-xl text-base">
+                  <NumberTreatment numberValue={`${totalDeposits || ""}`} />
+                  &nbsp;
                   {depositERC20TokenSymbol}
                 </p>
                 <p className="xl:text-2xl lg:text-xl text-gray-lightManatee leading-loose ml-4 font-whyte-light">
@@ -108,7 +102,12 @@ export const ProgressIndicator = (props: IProgressIndicator): JSX.Element => {
             <div className="text-right">
               <p className="text-gray-syn4 leading-6 pb-2">Remaining</p>
               <p className="xl:text-2xl lg:text-xl text-sm text-white leading-loose">
-                {remainingDeposits > 0 ? formattedRemainingDeposits : 0}&nbsp;
+                {remainingDeposits > 0 ? (
+                  <NumberTreatment numberValue={`${remainingDeposits || ""}`} />
+                ) : (
+                  0
+                )}
+                &nbsp;
                 {depositERC20TokenSymbol}
               </p>
             </div>

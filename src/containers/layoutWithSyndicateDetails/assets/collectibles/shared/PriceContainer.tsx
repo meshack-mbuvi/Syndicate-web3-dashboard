@@ -1,22 +1,14 @@
 import React from "react";
+import NumberTreatment from "@/components/NumberTreatment";
 
 const PriceContainer: React.FC<{
-  wholeNumberValue: string;
-  decimalValue: string;
+  numberValue: string;
   ethValue?: boolean;
   customSymbol?: any;
-}> = ({
-  wholeNumberValue,
-  decimalValue,
-  ethValue = false,
-  customSymbol = "USD",
-}) => {
+}> = ({ numberValue, ethValue = false, customSymbol = "USD" }) => {
   return (
     <div className="text-base flex col-span-3 items-center">
-      {wholeNumberValue}
-      {decimalValue && (
-        <span className="text-gray-lightManatee">.{decimalValue}</span>
-      )}
+      <NumberTreatment numberValue={numberValue} />
       &nbsp;
       {ethValue ? "ETH" : `${customSymbol}`}
     </div>

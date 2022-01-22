@@ -6,6 +6,7 @@ import { floatedNumberWithCommas } from "@/utils/formattedNumbers";
 import Image from "next/image";
 import { FC, useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
+import PriceContainer from "../collectibles/shared/PriceContainer";
 import TokenModal from "./TokenModal";
 interface Props {
   columns: string[];
@@ -165,14 +166,9 @@ const TokenTable: FC<Props> = ({ columns, tableData }) => {
                 { tokenBalance, tokenName, tokenSymbol, price, logo },
                 index,
               ) => {
-                const [balanceValue, balanceDecimalValue] =
-                  floatedNumberWithCommas(tokenBalance).split(".");
                 const tokenValue =
                   parseFloat(Number(price) ? price : price?.usd ?? 0) *
                   parseFloat(tokenBalance);
-                const [usd, usdDecimalValue] =
-                  floatedNumberWithCommas(tokenValue).split(".");
-
                 return (
                   <div
                     key={`token-table-row-${index}`}
@@ -209,28 +205,11 @@ const TokenTable: FC<Props> = ({ columns, tableData }) => {
                         </span>
                       </div>
                     </div>
-
-                    <div className="text-base col-span-3 flex items-center">
-                      {balanceValue}
-                      {balanceDecimalValue && (
-                        <span className="text-gray-lightManatee">
-                          .{balanceDecimalValue}
-                        </span>
-                      )}
-                      &nbsp;
-                      {tokenSymbol}
-                    </div>
-
-                    <div className="text-base flex col-span-3 items-center">
-                      {usd}
-                      {usdDecimalValue && (
-                        <span className="text-gray-lightManatee">
-                          .{usdDecimalValue}
-                        </span>
-                      )}
-                      &nbsp;
-                      {"USD"}
-                    </div>
+                    <PriceContainer
+                      numberValue={tokenBalance}
+                      customSymbol={tokenSymbol}
+                    />
+                    <PriceContainer numberValue={`${tokenValue || ""}`} />
                   </div>
                 );
               },

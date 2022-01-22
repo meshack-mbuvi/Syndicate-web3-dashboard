@@ -18,17 +18,10 @@ const TokenDetail: React.FC<{ title: string; value: any; symbol?: any }> = ({
   if (title === "Floor price") {
     const floorPriceValue = value * ethereumTokenPrice;
 
-    const [floorPriceETHValue, floorPriceETHDecimalValue] =
-      floatedNumberWithCommas(value).split(".");
-
     floorPriceFormattedTotalValue = (
       <div className="flex flex-col items-end">
         {" "}
-        <PriceContainer
-          wholeNumberValue={floorPriceETHValue}
-          decimalValue={floorPriceETHDecimalValue}
-          ethValue={true}
-        />
+        <PriceContainer numberValue={value} ethValue={true} />
         <div className="text-gray-syn4">
           {floatedNumberWithCommas(floorPriceValue)} USD
         </div>
@@ -39,17 +32,9 @@ const TokenDetail: React.FC<{ title: string; value: any; symbol?: any }> = ({
   if (title === "Last purchase price") {
     const { lastPurchasePriceUSD, lastPurchasePriceETH } = value;
 
-    const [purchasePriceETHValue, purchasePriceETHDecimalValue] =
-      floatedNumberWithCommas(lastPurchasePriceETH).split(".");
-
     purchasePriceFormattedTotalValue = (
       <div className="flex flex-col items-end">
-        <PriceContainer
-          wholeNumberValue={purchasePriceETHValue}
-          decimalValue={purchasePriceETHDecimalValue}
-          ethValue={true}
-        />
-
+        <PriceContainer numberValue={lastPurchasePriceETH} ethValue={true} />
         <div className="text-gray-syn4">
           {floatedNumberWithCommas(lastPurchasePriceUSD)} USD
         </div>
@@ -58,29 +43,17 @@ const TokenDetail: React.FC<{ title: string; value: any; symbol?: any }> = ({
   }
 
   if (title === "Club balance") {
-    const [tokenBalance, balanceDecimalValue] =
-      floatedNumberWithCommas(value).split(".");
     balanceValue = (
       <div className="flex flex-col items-end">
-        <PriceContainer
-          wholeNumberValue={tokenBalance}
-          decimalValue={balanceDecimalValue}
-          customSymbol={symbol}
-        />
+        <PriceContainer numberValue={value} customSymbol={symbol} />
       </div>
     );
   }
 
   if (title === "Value") {
-    const [tokenWorth, worthDecimalValue] =
-      floatedNumberWithCommas(value).split(".");
     clubBalance = (
       <div className="flex flex-col items-end">
-        <PriceContainer
-          wholeNumberValue={tokenWorth}
-          decimalValue={worthDecimalValue}
-          ethValue={false}
-        />
+        <PriceContainer numberValue={value} ethValue={false} />
       </div>
     );
   }
