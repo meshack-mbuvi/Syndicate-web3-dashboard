@@ -23,18 +23,18 @@ export const NavBarNavItem: React.FC<IProps> = ({
         >
           <div className="h-full mr-3 md:mr-6 lg:mr-9 border-b-1 border-opacity-0 hover:border-opacity-50 cursor-pointer">
             <a
-              className={`${customClasses} text-sm sm:text-base text-white leading-5 vertically-center inline-block transition-all`}
+              className={`${customClasses} text-sm sm:text-base sm:leading-4.75 text-white vertically-center inline-block transition-all`}
             >
               {navItemText}
             </a>
           </div>
         </ActiveLink>
       ) : (
-        <div className="hidden sm:block md:ml-4 lg:ml-6">
+        <div className="hidden sm:block md:ml-4 lg:ml-6 leading-4.75">
           {navItemText}
           {isLegal ? (
-            <div className="flex pt-1 text-gray-syn3 text-base leading-5 items-center">
-              <div className="text-xs mr-1">Powered by</div>
+            <div className="flex pt-1 text-gray-syn3 items-center">
+              <div className="text-xs leading-4.5 mr-1">Powered by</div>
               <svg
                 width="139"
                 height="9"
