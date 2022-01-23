@@ -1,6 +1,6 @@
 import { getEthereumTokenPrice } from "@/helpers/ethereumTokenDetails";
 import { isDev } from "@/utils/environment";
-import { mockCollectiblesResult, mockTokensResult, mockDepositModeTokens } from "@/utils/mockdata";
+import { mockCollectiblesResult, mockTokensResult } from "@/utils/mockdata";
 import { web3 } from "@/utils/web3Utils";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
@@ -13,7 +13,7 @@ const baseURL = isDev
   ? "https://api-rinkeby.etherscan.io/api"
   : "https://api.etherscan.io/api";
 
-  // https://rinkeby-api.opensea.io/api/v1
+// https://rinkeby-api.opensea.io/api/v1
 const openSeaBaseURL = isDev
   ? "https://rinkeby-api.opensea.io/api/v1"
   : "https://api.opensea.io/api/v1";
@@ -247,31 +247,45 @@ const fetchTokenBalances = (tokensList: any[], account: string) => {
 };
 
 export const fetchDemoFloorPrices = createAsyncThunk(
-  'assets/fetchDemoFloorPrices',
-  async () => {
+  "assets/fetchDemoFloorPrices",
+  async (_, thunkAPI) => {
     return await Promise.all([
-      getEthereumTokenPrice()
-        .then((result) => result.data.ethereum.usd)
-        .catch(() => 0),
+      getEthereumTokenPrice().then((result) =>
+        thunkAPI.dispatch(setEthereumTokenPrice(result.data.ethereum.usd)),
+      ),
       ...mockCollectiblesResult.map(async (collectible, idx) => {
         // opensea api timesout when it receives too many calls
         // setTimeout below will introduces a 1 sec delay between calls
-        await new Promise(resolve => setTimeout(resolve, idx * 1000)) 
+        await new Promise((resolve) => setTimeout(resolve, idx * 500));
         return await axios
-          .get(`https://api.opensea.io/api/v1/collection/${collectible.slug}/stats`, {
-            headers: { "x-api-key": openSeaAPIKey },
-          })
-          .then((result) => ({
-            ...collectible,
-            floorPrice: result.data.stats.floor_price,
-          }))
-          .catch(() => ({ ...collectible, floorPrice: 0 }));
+          .get(
+            `https://api.opensea.io/api/v1/collection/${collectible.slug}/stats`,
+            {
+              headers: { "x-api-key": openSeaAPIKey },
+            },
+          )
+          .then((result) =>
+            thunkAPI.dispatch(
+              setDemoFloorPrice({
+                slug: collectible.slug,
+                floorPrice: result.data.stats.floor_price,
+              }),
+            ),
+          )
+          .catch(() =>
+            thunkAPI.dispatch(
+              setDemoFloorPrice({
+                slug: collectible.slug,
+                floorPrice: 0,
+              }),
+            ),
+          );
       }),
     ])
       .then((result) => result)
       .catch(() => []);
-  }
-)
+  },
+);
 
 const assetsSlice = createSlice({
   name: "assets",
@@ -282,6 +296,13 @@ const assetsSlice = createSlice({
     },
     setMockCollectiblesResult(state) {
       state.collectiblesResult = mockCollectiblesResult;
+    },
+    setDemoFloorPrice(state, action) {
+      const { slug, floorPrice } = action.payload;
+      state.demoFloorPrices[slug] = floorPrice;
+    },
+    setEthereumTokenPrice(state, action) {
+      state.ethereumTokenPrice = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -347,14 +368,6 @@ const assetsSlice = createSlice({
         state.collectiblesResult = action.payload;
         state.loadingCollectibles = false;
         state.collectiblesFetchError = false;
-      })
-      .addCase(fetchDemoFloorPrices.fulfilled, (state, action) => {
-        state.loadingDemoFloorPrices = false;
-        state.collectiblesResult = action.payload.slice(1);
-        state.ethereumTokenPrice = action.payload[0];
-      })
-      .addCase(fetchDemoFloorPrices.pending, (state) => {
-        state.loadingDemoFloorPrices = true;
       });
   },
 });
@@ -362,6 +375,8 @@ const assetsSlice = createSlice({
 export const {
   setMockTokensResult,
   setMockCollectiblesResult,
+  setDemoFloorPrice,
+  setEthereumTokenPrice,
 } = assetsSlice.actions;
 
 export default assetsSlice.reducer;
