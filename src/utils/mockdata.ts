@@ -6,11 +6,11 @@ export const MOCK_TOTALSUPPLY = "12044.45";
 export const mockERC20Token = {
   totalSupply: 12044.45,
   address: "demo",
-  name: "Demo Club",
+  name: "Alpha Beta Club",
   owner: "",
   tokenDecimals: 18,
   depositToken: "0xeb8f08a975Ab53E34D8a0330E0D34de942C95926",
-  symbol: "✺DEMO",
+  symbol: "✺ABC",
   memberCount: 6,
   loading: false,
   maxMemberCount: 30,
