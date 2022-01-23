@@ -126,21 +126,18 @@ export const TextField: React.FC<IProps> = ({
         )}
       </div>
 
-      {showValidation ? (
+      {showValidation &&
+      (errors[`${name}`]?.message || (showWarning && warningText)) ? (
         errors[`${name}`]?.message ? (
-          <p className="text-red-error font-whyte text-sm pt-2">
+          <p className="text-red-error font-whyte text-sm mt-2">
             {errors?.[`${name}`]?.message}
           </p>
         ) : showWarning && warningText ? (
           // show warning
           <p className="text-sm text-yellow-semantic mt-2">{warningText}</p>
-        ) : (
-          info && (
-            <p className="text-sm mt-2 text-gray-syn3 font-whyte">{info}</p>
-          )
-        )
+        ) : undefined
       ) : (
-        ""
+        info && <p className="text-sm mt-2 text-gray-syn3 font-whyte">{info}</p>
       )}
     </div>
   );

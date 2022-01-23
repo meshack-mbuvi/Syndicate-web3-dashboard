@@ -70,7 +70,7 @@ export const TextArea: React.FC<ITextAreaProps> = (props) => {
         disabled={disabled}
       ></textarea>
       {errors?.[`${name}`]?.message ? (
-        <p className="text-red-error text-xs break-all -mt-1">
+        <p className="text-red-error text-sm break-all -mt-1">
           {errors?.[`${name}`]?.message}
         </p>
       ) : null}
