@@ -104,7 +104,7 @@ const Layout: FC<Props> = ({
           title="Home"
         />
         <Header backLink={backLink} show={showNav} navItems={navItems} />
-        <div className=" sticky top-0 pt-1 z-20">
+        <div className="sticky top-0 pt-1 z-15">
           <DemoBanner />
         </div>
         <div
