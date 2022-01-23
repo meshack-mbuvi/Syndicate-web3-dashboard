@@ -1075,10 +1075,10 @@ const DepositSyndicate: React.FC = () => {
       </div>
 
       {/* We show holding component when user has made initial deposit */}
-      {status !== Status.DISCONNECTED &&
+      {((status !== Status.DISCONNECTED &&
         +memberDeposits > 0 &&
         !loading &&
-        depositsEnabled && (
+        depositsEnabled) || isDemoMode) && (
           <div className="bg-gray-syn8 rounded-2xl mt-6 px-8 py-6">
             <div className="pb-5 text-sm font-bold uppercase tracking-widest">
               Your Holdings
