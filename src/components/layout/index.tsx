@@ -128,7 +128,7 @@ const Layout: FC<Props> = ({
         <div
           className={`flex w-full bg-black flex-col sm:flex-row ${
             showCreateProgressBar ? "pt-16" : "pt-24"
-          } z-20 justify-center items-center my-0 mx-auto`}
+          } z-20 justify-center items-center my-0 mx-auto overflow-x-hidden`}
         >
           {children}
         </div>

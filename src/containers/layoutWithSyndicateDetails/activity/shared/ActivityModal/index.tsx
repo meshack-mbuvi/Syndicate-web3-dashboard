@@ -66,8 +66,8 @@ const ActivityModal: React.FC<IActivityModal> = ({
   const etherScanBaseUrl = isDev
     ? "https://rinkeby.etherscan.io/tx"
     : "https://etherscan.io/tx";
-  
-  const isDemoMode = useDemoMode();
+    
+    const isDemoMode = useDemoMode();
 
   const [setMemberHasSigned] = useMutation(SET_MEMBER_SIGN_STATUS, {
     context: { clientName: "backend" },
@@ -252,6 +252,8 @@ const ActivityModal: React.FC<IActivityModal> = ({
       overflow="overflow-x-visible"
       overflowYScroll={false}
       isMaxHeightScreen={false}
+      overflowXScroll={false}
+      maxHeight={false}
     >
       <div className="relative">
         {isDemoMode && <div className="absolute inset-0 z-10" />}
@@ -328,7 +330,7 @@ const ActivityModal: React.FC<IActivityModal> = ({
         {/* Show this component only when manager has not marked member signature status 
         
         Adding essential check for isManager. Members should not see this*/}
-        
+
         {!data?.Financial_memberSigned && !loading && category === "DEPOSIT" && isManager && (
           <div className="flex flex-col space-y-6 py-6 px-5">
             <div className="bg-gray-syn7 px-5 py-4 space-y-2 rounded-xl">
