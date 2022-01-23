@@ -249,7 +249,7 @@ const Collectibles: FC<{ activeAssetTab: string }> = ({ activeAssetTab }) => {
                           <span className="text-gray-syn4 text-sm pt-4">
                             Floor price
                           </span>
-                          {!loadingDemoFloorPrices ? (
+                          {loadingDemoFloorPrices ? (
                             <SkeletonLoader
                               borderRadius="rounded-lg"
                               width="1/2"
