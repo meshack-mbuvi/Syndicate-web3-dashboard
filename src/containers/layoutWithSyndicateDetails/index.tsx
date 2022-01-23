@@ -29,7 +29,7 @@ import {
 } from "@/state/erc20token/slice";
 import { clearMyTransactions } from "@/state/erc20transactions";
 import { Status } from "@/state/wallet/types";
-import { mockDepositERC20Token } from "@/utils/mockdata";
+import { mockActiveERC20Token, mockDepositERC20Token } from "@/utils/mockdata";
 import window from "global";
 import { useRouter } from "next/router";
 import React, { FC, useEffect, useRef, useState } from "react";
@@ -93,6 +93,9 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
   const [showNav, setShowNav] = useState(true);
   const [isSubNavStuck, setIsSubNavStuck] = useState(true);
   const subNav = useRef(null);
+  const {
+    query: { status: isOpenForDeposits },
+  } = router;
 
   // Listen to page scrolling
   useEffect(() => {
@@ -173,7 +176,11 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
         dispatch(setClubMembers([]));
       };
     } else if (isDemoMode) {
-      dispatch(setERC20TokenDetails(mockDepositERC20Token));
+      const mockData =
+        isOpenForDeposits === "active"
+          ? mockActiveERC20Token
+          : mockDepositERC20Token;
+      dispatch(setERC20TokenDetails(mockData));
     }
   }, [clubAddress, account, status, syndicateContracts?.SingleTokenMintModule]);
 
