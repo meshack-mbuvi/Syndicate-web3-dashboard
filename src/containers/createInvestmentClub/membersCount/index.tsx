@@ -65,7 +65,9 @@ const MembersCount: React.FC<{
   };
 
   const handleSetMembersCount = (event) => {
-    setMembersNumCount(event.target.value);
+    setMembersNumCount(
+      event.target.value > 99 ? MAX_MEMBERS_ALLOWED : event.target.value,
+    );
   };
 
   return (
