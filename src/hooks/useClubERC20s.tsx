@@ -54,15 +54,40 @@ const useClubERC20s = () => {
 
   useEffect(() => {
     if (router.isReady) {
-      refetch();
-      refetchMyClubs();
+      refetch({
+        where: {
+          ownerAddress: account.toLocaleLowerCase(),
+        },
+      });
+      refetchMyClubs({
+        where: {
+          memberAddress: account.toLocaleLowerCase(),
+        },
+      });
     }
   }, [router.isReady, account]);
 
+  const [clubIAmMember, setClubIamMember] = useState([]);
+  const [myClubs, setMyClubs] = useState([]);
+
+  useEffect(() => {
+    processClubERC20Tokens(clubIAmMember).then((data) => {
+      dispatch(setOtherClubERC20s(data));
+    });
+  }, [JSON.stringify(clubIAmMember)]);
+
+  useEffect(() => {
+    processClubERC20Tokens(myClubs).then((data) => {
+      dispatch(setMyClubERC20s(data));
+    });
+  }, [JSON.stringify(myClubs)]);
+
   const processClubERC20Tokens = async (tokens) => {
     dispatch(setLoadingClubERC20s(false));
+    if (!tokens || !tokens?.length) {
+      return [];
+    }
 
-    if (!tokens || !tokens?.length) return [];
     dispatch(setLoadingClubERC20s(true));
 
     const processedTokens = await Promise.all([
@@ -147,14 +172,8 @@ const useClubERC20s = () => {
       ),
     ]);
 
-    const clubsERC20s = processedTokens.filter(
-      ({ isOwner }) => isOwner !== true,
-    );
-    const myClubs = processedTokens.filter(({ isOwner }) => isOwner === true);
-
-    dispatch(setMyClubERC20s(myClubs));
-    dispatch(setOtherClubERC20s(clubsERC20s));
     dispatch(setLoadingClubERC20s(false));
+    return processedTokens;
   };
 
   /**
@@ -165,7 +184,7 @@ const useClubERC20s = () => {
     // The currentEthereumNetwork has been added as a dependency to trigger a re-fetch
     // whenever the Ethereum network is changed.
     dispatch(setLoadingClubERC20s(true));
-    if (account && !loading && !memberClubLoading) {
+    if (account && !memberClubLoading) {
       const clubTokens = [];
 
       // get clubs connected account has invested in
@@ -176,6 +195,8 @@ const useClubERC20s = () => {
           memberIndex++
         ) {
           const member = memberClubData.members[memberIndex];
+          if (member?.memberAddress.toLowerCase() !== account.toLowerCase())
+            return;
           if (member?.syndicateDAOs?.length) {
             const { syndicateDAOs } = member;
             for (
@@ -210,26 +231,35 @@ const useClubERC20s = () => {
         }
       }
 
+      setClubIamMember(clubTokens);
+    }
+    dispatch(setLoadingClubERC20s(false));
+  }, [
+    account,
+    memberClubLoading,
+    currentEthereumNetwork,
+    memberClubData?.members?.length,
+  ]);
+
+  useEffect(() => {
+    // This will reset syndicate details when we are on portfolio page.
+    // The currentEthereumNetwork has been added as a dependency to trigger a re-fetch
+    // whenever the Ethereum network is changed.
+    // dispatch(setLoadingClubERC20s(true));
+    if (account && !loading && data?.syndicateDAOs) {
       // check whether connected account has clubs
-      if (data?.syndicateDAOs?.length) {
+      if (data.syndicateDAOs.length) {
         setAccountHasClubs(true);
       } else {
         setAccountHasClubs(false);
       }
-
-      processClubERC20Tokens([...data.syndicateDAOs, ...clubTokens]);
-    } else {
-      dispatch(setOtherClubERC20s([]));
-      dispatch(setMyClubERC20s([]));
+      setMyClubs(data.syndicateDAOs);
     }
   }, [
     account,
     currentEthereumNetwork,
     loading,
-    memberClubLoading,
-    JSON.stringify(memberClubData?.members),
-    JSON.stringify(data),
-    currentEthereumNetwork,
+    JSON.stringify(data?.syndicateDAOs),
   ]);
 
   return { loading, memberClubLoading, accountHasClubs };
