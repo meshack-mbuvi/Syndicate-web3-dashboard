@@ -13,7 +13,10 @@ import { AppState } from "@/state";
 import Fade from "@/components/Fade";
 import Modal, { ModalStyle } from "@/components/modal";
 
-const AmountToRaise: React.FC<{ className?: string, editButtonClicked?: boolean }> = ({ className, editButtonClicked }) => {
+const AmountToRaise: React.FC<{
+  className?: string;
+  editButtonClicked?: boolean;
+}> = ({ className, editButtonClicked }) => {
   const {
     createInvestmentClubSliceReducer: { tokenCap },
   } = useSelector((state: AppState) => state);
@@ -52,13 +55,13 @@ const AmountToRaise: React.FC<{ className?: string, editButtonClicked?: boolean 
 
   // catch input field errors
   useEffect(() => {
-    if ((!amount || +amount === 0) || editButtonClicked) {
+    if (!amount || +amount === 0 || editButtonClicked) {
       setNextBtnDisabled(true);
     } else {
       setError("");
       setNextBtnDisabled(false);
     }
-    (amount) ? dispatch(setTokenCap(amount)) : dispatch(setTokenCap("0"))
+    amount ? dispatch(setTokenCap(amount)) : dispatch(setTokenCap("0"));
   }, [amount, dispatch, editButtonClicked, setNextBtnDisabled]);
 
   return (
@@ -80,15 +83,13 @@ const AmountToRaise: React.FC<{ className?: string, editButtonClicked?: boolean 
         }}
       >
         <div className="space-y-6">
-          <p className="text-xl leading-4 tracking-px text-white">
-            Investing in crypto can be risky
-          </p>
+          <p className="h3">Investing in crypto can be risky</p>
           <p className="text-sm text-gray-syn4 leading-5">
             Crypto is a new asset class and is subject to many risks including
             frequent price changes. All crypto assets are different. Each one
             has its own set of features and risks that could affect its value
-            and how you&apos;re able to use it. Be sure to research any asset fully
-            before selecting. Syndicate strongly encourages all groups to
+            and how you&apos;re able to use it. Be sure to research any asset
+            fully before selecting. Syndicate strongly encourages all groups to
             consult with their legal and tax advisors prior to launch.
           </p>
           <button
@@ -103,7 +104,11 @@ const AmountToRaise: React.FC<{ className?: string, editButtonClicked?: boolean 
         <div className="flex w-full pb-6">
           <AdvancedInputField
             {...{
-              value: (amount) ? numberWithCommas(amount.replace(/^0{2,}/, "0")) : numberWithCommas(""),
+              value: amount
+                ? numberWithCommas(
+                    amount.replace(/^0{2,}/, "0").replace(/^0/, ""),
+                  )
+                : numberWithCommas(""),
               label: "How much are you raising?",
               onChange: handleChange,
               error: error,
@@ -116,8 +121,12 @@ const AmountToRaise: React.FC<{ className?: string, editButtonClicked?: boolean 
               extraAddon: extraAddonContent,
               moreInfo: (
                 <div>
-                  Investing in crypto can be risky. Syndicate strongly encourages all users to consult with their own legal and tax advisors prior to launch.{" "}
-                  <span role="button" tabIndex={0}
+                  Investing in crypto can be risky. Syndicate strongly
+                  encourages all users to consult with their own legal and tax
+                  advisors prior to launch.{" "}
+                  <span
+                    role="button"
+                    tabIndex={0}
                     className=" text-blue-navy cursor-pointer"
                     onClick={() => setShowDisclaimerModal(true)}
                     onKeyDown={() => setShowDisclaimerModal(true)}
@@ -126,7 +135,7 @@ const AmountToRaise: React.FC<{ className?: string, editButtonClicked?: boolean 
                   </span>
                 </div>
               ),
-              className: className
+              className: className,
             }}
           />
         </div>
