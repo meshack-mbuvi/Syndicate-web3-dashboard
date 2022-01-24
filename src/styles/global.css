@@ -805,9 +805,6 @@ input[type="checkbox"] {
   padding-top: 17px;
   padding-left: 17px;
 }
-.svgBlueHover:hover svg path {
-  fill: #4376ff;
-}
 
 .video-320 {
   height: 320px !important;

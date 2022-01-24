@@ -8,7 +8,7 @@ import React, {
   useEffect,
   useState,
 } from "react";
-import { ExternalLinkIcon, RightArrow } from "src/components/iconWrappers";
+import { RibbonIcon, RightArrow } from "src/components/iconWrappers";
 import { setWalletSignature } from "@/state/legalInfo";
 import { useDispatch, useSelector } from "react-redux";
 import CopyLink from "@/components/shared/CopyLink";
@@ -181,7 +181,7 @@ const DepositLinkModal: FC<ILinkModal> = ({
             before they deposit?
           </div>
           <div className="text-sm text-gray-syn4 mt-4 mb-6">
-            To adapt our templates to your needs,{" "}
+            To adapt these legal documents to your needs,{" "}
             <a
               href="https://syndicatedao.gitbook.io/syndicate-wiki/web3-investment-clubs/create-a-legal-entity/template-legal-docs"
               className="text-blue cursor-pointer"
@@ -189,25 +189,31 @@ const DepositLinkModal: FC<ILinkModal> = ({
               rel="noopener noreferrer"
             >
               <span>make a copy</span>
-              <ExternalLinkIcon
-                style={{ position: "relative", top: -1, marginLeft: 4 }}
-                className="text-blue w-3.5 inline"
-              />
             </a>
           </div>
           <div className="space-y-4">
             <Link href={`/clubs/${clubAddress}/manage/legal/prepare`}>
               <div
-                className="border-1 border-gray-syn6 hover:border-blue cursor-pointer p-8 rounded-1.5lg flex justify-between items-center svgBlueHover"
+                className="border-1 border-gray-syn6 hover:border-blue hover:cursor-pointer rounded-1.5lg flex flex-col group"
                 onClick={() => startDocumentSigning("yes")}
               >
-                <div>
-                  <div className="leading-6">Yes, use LLC template</div>
-                  <div className="text-sm leading-4 text-gray-syn3 mt-1">
-                    Requires an existing LLC
+                <div className="flex justify-between px-8 py-6 items-center leading-3.5">
+                  <div>
+                    <div className="leading-6">Yes, use default LLC agreements</div>
+                    <div className="text-sm leading-4 text-gray-syn3 mt-0.5">
+                      Requires an existing LLC
+                    </div>
                   </div>
+                  <RightArrow className="text-gray-syn4 group-hover:text-blue"/>
                 </div>
-                <RightArrow />
+                <div className="flex justify-center align-middle rounded-b-1.5lg py-2.5 bg-gray-inactive group-hover:bg-blue">
+                  <RibbonIcon className="text-white" height={'0.75rem'} width={'0.75rem'}/>
+                  <span className="mx-1 text-subtext ">Powered by</span>
+                  <img
+                    src="/images/latham&watkinsllp.svg"
+                    alt="latham & watkins llp logo"
+                  />
+                </div>
               </div>
             </Link>
             <button
@@ -215,7 +221,7 @@ const DepositLinkModal: FC<ILinkModal> = ({
               onClick={() => startDocumentSigning("no")}
             >
               <p className="leading-6 text-left">No</p>
-              <p className="text-sm text-left leading-4 text-gray-syn3 mt-1">
+              <p className="text-sm text-left leading-4 text-gray-syn3 mt-0.5">
                 I will handle legal documents separately
               </p>
             </button>

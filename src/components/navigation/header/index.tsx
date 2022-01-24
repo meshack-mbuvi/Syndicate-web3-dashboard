@@ -8,7 +8,7 @@ import WalletComponent from "./wallet";
 interface props {
   backLink: string;
   show?: boolean;
-  navItems: { url: string; urlText: string }[];
+  navItems: { navItemText: string; url?: string; isLegal?: boolean }[];
 }
 
 const Header: React.FC<props> = ({
@@ -45,8 +45,8 @@ const Header: React.FC<props> = ({
         >
           {" "}
           {/* Navbar links  */}
-          {navItems.map(({ url, urlText }, index) => (
-            <NavBarNavItem key={index} url={url} urlText={urlText} />
+          {navItems.map(({ navItemText, url, isLegal }, index) => (
+            <NavBarNavItem key={index} navItemText={navItemText} url={url} isLegal={isLegal} />
           ))}
         </div>
         {/* logo */}
