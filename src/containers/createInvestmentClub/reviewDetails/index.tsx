@@ -66,7 +66,7 @@ const ReviewDetails: React.FC = () => {
       setNextBtnDisabled(true);
     } else if (
       (currentStep >= 4 && !agreementFirstChecked) ||
-      (!agreementSecondChecked && !editMembersCount)
+      !agreementSecondChecked
     ) {
       setNextBtnDisabled(true);
     } else {

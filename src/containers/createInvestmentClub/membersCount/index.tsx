@@ -62,7 +62,11 @@ const MembersCount: React.FC<{
       setMemberCountError("");
       setMemberCountWarning("");
       setIsInputError(false);
-      setNextBtnDisabled(false);
+      if (editButtonClicked) {
+        setNextBtnDisabled(true);
+      } else {
+        setNextBtnDisabled(false);
+      }
     }
     membersNumCount
       ? dispatch(setMembersCount(membersNumCount))
