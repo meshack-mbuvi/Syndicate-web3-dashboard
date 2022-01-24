@@ -87,16 +87,16 @@ const AddressMenuDropDown: FC<IAddressMenuDropDown> = ({ web3 }) => {
         <>
           <Menu.Button className="flex rounded-full px-4 py-1 items-center bg-green-500 bg-opacity-10 border border-green-500 border-opacity-20 h-9">
             <WalletIcon
-              className={`text-green mr-3 w-3 h-2.5 ${connectedWalletIconStyles}`}
+              className={`text-green w-3 h-2.5 ${connectedWalletIconStyles}`}
             />
 
-            <span className="focus:outline-none mr-1 text-sm font-whyte-regular">
+            <span className="hidden sm:block focus:outline-none ml-3 mr-1 text-sm font-whyte-regular">
               <span className="text-gray-syn4">
                 {formattedAddress.slice(0, 2)}
               </span>
               {formattedAddress.slice(2)}
             </span>
-            <div className="flex items-center ml-2">
+            <div className="hidden sm:flex items-center ml-2">
               <img src="/images/chevron-down.svg" alt="down-arrow" />
             </div>
           </Menu.Button>

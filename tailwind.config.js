@@ -92,6 +92,7 @@ module.exports = {
         100: "30rem",
         "slightly-over-100": "30.25rem",
         564: "35.25rem",
+        730: "45.625rem",
       }),
       maxWidth: {
         480: "30rem",
@@ -275,12 +276,13 @@ module.exports = {
       },
       spacing: {
         "1px": "1px",
-        7.5: "1.875rem",
+        7.5: "1.875rem", 
         33: "8.5rem",
         50: "12.5rem",
         66: "16.5rem",
         68: "17rem",
         76: "19rem",
+        82: "22.188rem", // NFT card size
         102: "30rem",
       },
       fill: (theme) => ({
@@ -317,7 +319,7 @@ module.exports = {
         31: "7.5rem",
         18: "4.5rem",
         25: "6.2rem",
-        71: "17.8rem",
+        71: "17.3rem",
       },
       margin: {
         0.5: "0.15rem",

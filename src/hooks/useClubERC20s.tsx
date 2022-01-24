@@ -87,6 +87,7 @@ const useClubERC20s = () => {
     if (!tokens || !tokens?.length) {
       return [];
     }
+    console.log({ tokens });
 
     dispatch(setLoadingClubERC20s(true));
 
