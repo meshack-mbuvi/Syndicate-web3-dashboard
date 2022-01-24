@@ -87,7 +87,6 @@ const useClubERC20s = () => {
     if (!tokens || !tokens?.length) {
       return [];
     }
-    console.log({ tokens });
 
     dispatch(setLoadingClubERC20s(true));
 
@@ -113,7 +112,7 @@ const useClubERC20s = () => {
           );
 
           let clubERC20Contract;
-          let decimals = 18;
+          let decimals = 0;
           let clubName = "";
 
           try {
@@ -125,7 +124,7 @@ const useClubERC20s = () => {
             decimals = await clubERC20Contract.decimals();
             clubName = await clubERC20Contract.name();
           } catch (error) {
-            // error is thrown for clubs that are not erc20.
+            // error is thrown for clubs that were used in claim flow.
             return;
           }
 
@@ -144,9 +143,13 @@ const useClubERC20s = () => {
 
           const depositsEnabled = !pastDate(new Date(+endTime * 1000));
 
+          let totalDeposits = totalSupply;
+          if (decimals) {
+            totalDeposits = getWeiAmount(totalSupply, +decimals, false);
+          }
+
           //  calculate ownership share
           const memberDeposits = getWeiAmount(depositAmount, 6, false);
-          const totalDeposits = getWeiAmount(totalSupply, +decimals, false);
 
           const ownershipShare = (+memberDeposits * 100) / +totalDeposits;
           const maxTotalSupplyInWei = getWeiAmount(
@@ -174,7 +177,7 @@ const useClubERC20s = () => {
             requiredTokenMinBalance,
             address: contractAddress,
             ownerAddress,
-            totalDeposits: getWeiAmount(totalSupply, +decimals, false),
+            totalDeposits,
             membersCount: members.length,
             memberDeposits,
             status,
@@ -187,9 +190,6 @@ const useClubERC20s = () => {
     ]);
 
     dispatch(setLoadingClubERC20s(false));
-    // remove clubs that is not defined;
-    // Happens to clubs where connected wallet claimed some tokens.
-
     return processedTokens.filter((club) => club !== undefined);
   };
 
@@ -203,7 +203,6 @@ const useClubERC20s = () => {
     dispatch(setLoadingClubERC20s(true));
     if (account && !memberClubLoading) {
       const clubTokens = [];
-
       // get clubs connected account has invested in
       if (memberClubData?.members?.length) {
         for (
