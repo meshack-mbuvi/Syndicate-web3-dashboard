@@ -14,7 +14,10 @@ import { useDispatch, useSelector } from "react-redux";
 import { SettingsDisclaimerTooltip } from "../shared/SettingDisclaimer";
 import useOnClickOutside from "../shared/useOnClickOutside";
 
-const ClubNameSelector: React.FC<{ className?: string, editButtonClicked?: boolean }> = ({ className, editButtonClicked }) => {
+const ClubNameSelector: React.FC<{
+  className?: string;
+  editButtonClicked?: boolean;
+}> = ({ className, editButtonClicked }) => {
   const ref = useRef();
 
   const {
@@ -55,12 +58,21 @@ const ClubNameSelector: React.FC<{ className?: string, editButtonClicked?: boole
   }, [errors]);
 
   useEffect(() => {
-    if (investmentClubName && investmentClubSymbolPlaceHolder && !editButtonClicked) {
+    if (
+      investmentClubName &&
+      investmentClubSymbolPlaceHolder &&
+      !editButtonClicked
+    ) {
       setNextBtnDisabled(false);
     } else {
       setNextBtnDisabled(true);
     }
-  }, [investmentClubName, investmentClubSymbolPlaceHolder, editButtonClicked, setNextBtnDisabled]);
+  }, [
+    investmentClubName,
+    investmentClubSymbolPlaceHolder,
+    editButtonClicked,
+    setNextBtnDisabled,
+  ]);
 
   const handleSymbolChange = (e) => {
     const _sym = (e.target.value as string).trim().toUpperCase();
@@ -171,10 +183,11 @@ const ClubNameSelector: React.FC<{ className?: string, editButtonClicked?: boole
               <span className="text-red-error text-sm">{errors}</span>
             ) : (
               <span className="text-gray-3 text-sm">
-                Set an easily recognizable symbol for your investment club
-                token, which powers the club&apos;s cap table management and
-                governance infrastructure. Members receive this investment club
-                token as proof of their deposit.
+                Set an easily recognizable symbol for your investment club token
+                that powers the club&apos;s cap table management and governance
+                infrastructure. Members receive this investment club token
+                (initially defaults to non- transferable) as proof of their
+                deposit.
               </span>
             )}
           </div>
