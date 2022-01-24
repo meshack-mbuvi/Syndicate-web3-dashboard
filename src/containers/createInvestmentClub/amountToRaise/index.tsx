@@ -133,7 +133,7 @@ const AmountToRaise: React.FC<{
                   >
                     Learn more.
                   </span> */}
-                  Members will recieve 1 {investmentClubSymbol} club token for
+                  Members will recieve 1 ✺{investmentClubSymbol} club token for
                   every 1 USDC deposited.
                 </div>
               ),

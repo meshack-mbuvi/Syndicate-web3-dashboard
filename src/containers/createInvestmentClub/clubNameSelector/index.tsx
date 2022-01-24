@@ -186,7 +186,7 @@ const ClubNameSelector: React.FC<{
                 Set an easily recognizable symbol for your investment club token
                 that powers the club&apos;s cap table management and governance
                 infrastructure. Members receive this investment club token
-                (initially defaults to non- transferable) as proof of their
+                (initially defaults to non-transferable) as proof of their
                 deposit.
               </span>
             )}

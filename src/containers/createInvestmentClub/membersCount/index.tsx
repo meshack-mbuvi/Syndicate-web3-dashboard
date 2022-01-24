@@ -31,15 +31,11 @@ const MembersCount: React.FC<{
   const { setShowNextButton, handleNext } = useCreateInvestmentClubContext();
 
   useEffect(() => {
-    if (!membersNumCount || editButtonClicked) {
+    if (!membersNumCount) {
       setNextBtnDisabled(true);
       setMemberCountError("");
       setIsInputError(false);
-    } else if (
-      +membersNumCount < 0 ||
-      +membersNumCount === 0 ||
-      editButtonClicked
-    ) {
+    } else if (+membersNumCount < 0 || +membersNumCount === 0) {
       setNextBtnDisabled(true);
       setMemberCountError(ERROR_MESSAGE);
       setIsInputError(true);
