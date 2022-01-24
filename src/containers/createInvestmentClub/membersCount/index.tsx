@@ -89,7 +89,7 @@ const MembersCount: React.FC<{
             warning: memberCountWarning,
             hasError: Boolean(isInputError),
             type: "number",
-            addSettingDisclaimer: true,
+            addSettingDisclaimer: false,
             moreInfo: "You can invite up to 99 members",
             className: className,
           }}

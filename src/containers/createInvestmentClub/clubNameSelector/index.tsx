@@ -11,7 +11,6 @@ import { symbolValidation } from "@/utils/validators";
 import { generateSlug } from "random-word-slugs";
 import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { SettingsDisclaimerTooltip } from "../shared/SettingDisclaimer";
 import useOnClickOutside from "../shared/useOnClickOutside";
 
 const ClubNameSelector: React.FC<{
@@ -148,10 +147,6 @@ const ClubNameSelector: React.FC<{
               </div>
             </button>
           </div>
-          <SettingsDisclaimerTooltip
-            id="change-settings-tip"
-            tip="Cannot be modified after club is created"
-          />
           <div className="rounded-xl bg-blue-navy bg-opacity-20 flex flex-row text-blue-navy items-center p-4 mt-4 space-x-3">
             <img className="w-5 h-5" src="/images/eye-open.svg" alt="" />
             <div className="text-sm">
