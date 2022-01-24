@@ -7,7 +7,6 @@ export interface InitialState {
   collectiblesFetchError: boolean;
   allCollectiblesFetched: boolean;
   ethereumTokenPrice: number;
-  demoFloorPrices: Record<string, number | null>;
 }
 
 export const initialState: InitialState = {
@@ -19,5 +18,4 @@ export const initialState: InitialState = {
   collectiblesFetchError: false,
   allCollectiblesFetched: false,
   ethereumTokenPrice: 0,
-  demoFloorPrices: {}
 };

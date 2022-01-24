@@ -20,7 +20,6 @@ import {
   fetchTokenTransactions,
   setMockTokensResult,
   setMockCollectiblesResult,
-  fetchDemoFloorPrices,
 } from "@/state/assets/slice";
 import { setClubMembers } from "@/state/clubMembers";
 import {
@@ -145,7 +144,6 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
       dispatch(setMockTokensResult(mockTokens));
 
       dispatch(setMockCollectiblesResult(depositsEnabled));
-      dispatch(fetchDemoFloorPrices(depositsEnabled));
     }
   }, [owner, clubAddress, depositsEnabled]);
 

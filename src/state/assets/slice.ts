@@ -246,48 +246,6 @@ const fetchTokenBalances = (tokensList: any[], account: string) => {
   });
 };
 
-export const fetchDemoFloorPrices = createAsyncThunk(
-  "assets/fetchDemoFloorPrices",
-  async (isDepositEnabled: boolean, thunkAPI) => {
-    if (isDepositEnabled) return;
-    return await Promise.all([
-      getEthereumTokenPrice().then((result) =>
-        thunkAPI.dispatch(setEthereumTokenPrice(result.data.ethereum.usd)),
-      ),
-      ...mockCollectiblesResult.map(async (collectible, idx) => {
-        // opensea api timesout when it receives too many calls
-        // setTimeout below will introduces a 1 sec delay between calls
-        await new Promise((resolve) => setTimeout(resolve, idx * 500));
-        return await axios
-          .get(
-            `https://api.opensea.io/api/v1/collection/${collectible.slug}/stats`,
-            {
-              headers: { "x-api-key": openSeaAPIKey },
-            },
-          )
-          .then((result) =>
-            thunkAPI.dispatch(
-              setDemoFloorPrice({
-                slug: collectible.slug,
-                floorPrice: result.data.stats.floor_price,
-              }),
-            ),
-          )
-          .catch(() =>
-            thunkAPI.dispatch(
-              setDemoFloorPrice({
-                slug: collectible.slug,
-                floorPrice: 0,
-              }),
-            ),
-          );
-      }),
-    ])
-      .then((result) => result)
-      .catch(() => []);
-  },
-);
-
 const assetsSlice = createSlice({
   name: "assets",
   initialState,
@@ -298,16 +256,7 @@ const assetsSlice = createSlice({
     setMockCollectiblesResult(state, action) {
       const isDepositEnabled = action.payload;
       state.collectiblesResult = isDepositEnabled ? [] : mockCollectiblesResult;
-    },
-    resetCollectiblesResult(state) {
-      state.collectiblesResult = [];
-    },
-    setDemoFloorPrice(state, action) {
-      const { slug, floorPrice } = action.payload;
-      state.demoFloorPrices[slug] = floorPrice;
-    },
-    setEthereumTokenPrice(state, action) {
-      state.ethereumTokenPrice = action.payload;
+      state.ethereumTokenPrice = 2396.93;
     },
   },
   extraReducers: (builder) => {
@@ -380,8 +329,6 @@ const assetsSlice = createSlice({
 export const {
   setMockTokensResult,
   setMockCollectiblesResult,
-  setDemoFloorPrice,
-  setEthereumTokenPrice,
 } = assetsSlice.actions;
 
 export default assetsSlice.reducer;
