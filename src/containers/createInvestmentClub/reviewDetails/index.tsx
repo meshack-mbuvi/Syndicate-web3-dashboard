@@ -31,6 +31,8 @@ const ReviewDetails: React.FC = () => {
   const [editAmountToRaise, setEditAmountToRaise] = useState<boolean>(false);
   const [editMintMaxDate, setEditMintMaxDate] = useState<boolean>(false);
   const [editMembersCount, setEditMembersCount] = useState<boolean>(false);
+  const [agreementFirstChecked, setAgreementFirstChecked] = useState<boolean>(false);
+  const [agreementSecondChecked, setAgreementSecondChecked] = useState<boolean>(false);
 
   useEffect(() => {
     if (
@@ -59,8 +61,16 @@ const ReviewDetails: React.FC = () => {
       editMembersCount
     ) {
       setNextBtnDisabled(true);
+    } else if (currentStep >= 4 && !agreementFirstChecked || !agreementSecondChecked) {
+      setNextBtnDisabled(true);
     } else {
       setNextBtnDisabled(false);
+    }
+
+    // temporary solution for edge case of Back button and then review again
+    if (currentStep < 4) {
+      setAgreementFirstChecked(false)
+      setAgreementSecondChecked(false)
     }
   }, [
     editClubNameSelector,
@@ -69,6 +79,8 @@ const ReviewDetails: React.FC = () => {
     editMembersCount,
     currentStep,
     setNextBtnDisabled,
+    agreementFirstChecked, 
+    agreementSecondChecked
   ]);
 
   const showInvestmentName = investmentClubName && currentStep >= 1;
@@ -128,7 +140,9 @@ const ReviewDetails: React.FC = () => {
   });
 
   return (
-    <div className="w-full lg:w-2/3 mb-12">
+    <>
+    
+    <div className="w-full lg:w-2/3 mb-6">
       {editClubNameSelector ? (
         <animated.div className="relative w-full mb-2 pt-2 pb-2 pl-5 pr-5">
           <ClubNameSelector editButtonClicked={editClubNameSelector} />
@@ -422,6 +436,33 @@ const ReviewDetails: React.FC = () => {
         )
       )}
     </div>
+    {
+      currentStep >= 4 && (
+          <div className="w-full lg:w-2/3 mb-6">
+            <div className="flex items-center space-between pl-5 pr-5 mb-5">
+              <input className="bg-transparent rounded focus:ring-offset-0" onChange={() => setAgreementFirstChecked(!agreementFirstChecked)} type="checkbox" id="agreementFirst" name="agreementFirst" />
+              <animated.p
+                className="text-sm text-gray-syn4 ml-5"
+              >
+                I represent that my access and use of Syndicate’s app and its protocol will fully comply with all applicable laws and regulations, 
+                including United States securities laws, and that I will not access or use the protocol to conduct, promote, or otherwise facilitate 
+                any illegal activity. {" "}
+              </animated.p>
+            </div>
+            <div className="flex items-center space-between pl-5 pr-5 mb-5">
+              <input className="bg-transparent rounded focus:ring-offset-0" onChange={() => setAgreementSecondChecked(!agreementSecondChecked)} type="checkbox" id="agreementSecond" name="agreementSecond" />
+              <animated.p
+                className="text-sm text-gray-syn4 ml-5"
+              >
+                By accessing and using Syndicate’s app and its protocol, I represent that I will seek advice from my own legal counsel and financial 
+                advisors. I understand and agree to assume full responsibility for all of the risks of accessing and using Syndicate’s app to interact 
+                with the Syndicate protocol. {" "}
+              </animated.p>
+            </div>
+          </div>
+      )
+    }
+    </>
   );
 };
 

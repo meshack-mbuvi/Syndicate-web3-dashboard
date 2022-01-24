@@ -18,11 +18,11 @@ const SignMemberLegalAgreement: NextPage = () => {
   const navItems = [
     {
       url: `/clubs/${clubAddress}`,
-      urlText: "Exit",
+      navItemText: "Exit",
     },
     {
-      url: `/clubs/${clubAddress}/member/legal/sign`,
-      urlText: "Sign legal agreements",
+      navItemText: "Sign legal agreements",
+      isLegal: true,
     },
   ];
 

@@ -28,11 +28,11 @@ const ManagerAgreementPage: NextPage = () => {
   const navbarItems = [
     {
       url: `/clubs/${clubAddress}/manage`,
-      urlText: "Exit",
+      navItemText: "Exit",
     },
     {
-      url: `/clubs/${clubAddress}/manage/legal/prepare`,
-      urlText: "Prepare legal documents",
+      navItemText: "Prepare legal documents",
+      isLegal: true,
     },
   ];
 

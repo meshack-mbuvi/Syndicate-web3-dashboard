@@ -16,6 +16,7 @@ import { mockOffChainTransactionsData } from "@/utils/mockdata";
 import { useRouter } from "next/router";
 import { useDemoMode } from "@/hooks/useDemoMode";
 
+
 const Assets: React.FC = () => {
   const {
     assetsSliceReducer: { tokensResult },
@@ -147,7 +148,7 @@ const Assets: React.FC = () => {
 
         {activeAssetTab === "collectibles" && (
           <div className="mt-16">
-            <Collectibles activeAssetTab={activeAssetTab} />
+            <Collectibles />
           </div>
         )}
 
@@ -186,8 +187,9 @@ const Assets: React.FC = () => {
               />
             </div>
             <div className="mt-16">
-              <Collectibles activeAssetTab={activeAssetTab} />
+              <Collectibles />
             </div>
+            
           </>
         )}
       </div>

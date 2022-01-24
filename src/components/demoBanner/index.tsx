@@ -35,7 +35,7 @@ const DemoBanner: React.FC = () => {
 
   if (isDemoMode) {
     return (
-      <div className="container mx-auto">
+      <div className="container mx-auto sticky top-0 pt-1 z-20">
         <div className="bg-green-electric-lime md:h-13 space-y-0 md:space-x-2 max-h-full rounded-4xl mt-24 flex md:flex-row flex-col justify-between text-black text-sm">
           <div className="flex items-center self-center">
             <button
