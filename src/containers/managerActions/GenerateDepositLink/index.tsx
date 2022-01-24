@@ -8,6 +8,7 @@ import React, {
   useEffect,
   useState,
 } from "react";
+import Floater from "react-floater";
 import { ExternalLinkIcon, RightArrow } from "src/components/iconWrappers";
 import { setWalletSignature } from "@/state/legalInfo";
 import { useDispatch, useSelector } from "react-redux";
@@ -50,6 +51,8 @@ const GenerateDepositLink: FC<ILinK> = ({
 
   const isDemoMode = useDemoMode();
 
+  const [open, setOpen] = useState(false);
+
   const showReviewPage = () => {
     // TODO: navigate to the review page from here.
     return;
@@ -59,18 +62,79 @@ const GenerateDepositLink: FC<ILinK> = ({
     <>
       {!adminSigned && (
         <>
-          <button
-            className="bg-green rounded-custom w-full flex items-center justify-center py-4 mb-4"
-            onClick={() => setShowGenerateLinkModal(true)}
-            disabled={isDemoMode}
-          >
-            <div className="flex-grow-1 mr-3">
-              <CopyLinkIcon color="text-black" />
-            </div>
-            <p className="text-black pr-1 whitespace-nowrap font-whyte-medium">
-              Generate link to invite members
-            </p>
-          </button>
+          {isDemoMode ? (
+            <Floater
+              content={
+                <div className="text-green-electric-lime text-sm">
+                  <p>
+                    Generate a deposit invite link with the option to include
+                    default legal agreements for members to sign.
+                  </p>
+                  <p className="mt-4">Action disabled in demo mode.</p>
+                </div>
+              }
+              disableHoverToClick
+              event="hover"
+              eventDelay={0}
+              placement="bottom"
+              open={open}
+              styles={{
+                floater: {
+                  filter: "none",
+                },
+                container: {
+                  backgroundColor: "#293300",
+                  borderRadius: 5,
+                  color: "#fff",
+                  filter: "none",
+                  minHeight: "none",
+                  width: 310,
+                  padding: 12,
+                  textAlign: "center",
+                },
+                arrow: {
+                  color: "#293300",
+                  length: 8,
+                  spread: 10,
+                },
+                options: { zIndex: 250 },
+                wrapper: {
+                  cursor: "pointer",
+                },
+              }}
+            >
+              <button
+                className={`bg-green rounded-custom w-full flex items-center justify-center py-4 mb-4 ${
+                  isDemoMode ? "cursor-pointer" : ""
+                }`}
+                onMouseEnter={() => setOpen(true)}
+                onMouseLeave={() => setOpen(false)}
+              >
+                <div className="flex-grow-1 mr-3">
+                  <CopyLinkIcon color="text-black" />
+                </div>
+                <p className="text-black pr-1 whitespace-nowrap font-whyte-medium">
+                  Generate link to invite members
+                </p>
+              </button>
+            </Floater>
+          ) : (
+            <button
+              className="bg-green rounded-custom w-full flex items-center justify-center py-4 mb-4"
+              onClick={() => setShowGenerateLinkModal(true)}
+            >
+              <div className="flex-grow-1 mr-3">
+                <CopyLinkIcon color="text-black" />
+              </div>
+              <p className="text-black pr-1 whitespace-nowrap font-whyte-medium">
+                Generate link to invite members
+              </p>
+            </button>
+          )}
+          {/* Overlay */}
+          {open ? (
+            <div className="fixed top-0 bottom-0 left-0 right-0 bg-black bg-opacity-60" />
+          ) : null}
           <div className="flex justify-center w-full mb-4">
             <ArrowDown />
           </div>
