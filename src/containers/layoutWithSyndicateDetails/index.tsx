@@ -177,9 +177,9 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
       };
     } else if (isDemoMode) {
       const mockData =
-        isOpenForDeposits === "active"
-          ? mockActiveERC20Token
-          : mockDepositERC20Token;
+        isOpenForDeposits === "open"
+          ? mockDepositERC20Token
+          : mockActiveERC20Token;
       dispatch(setERC20TokenDetails(mockData));
     }
   }, [clubAddress, account, status, syndicateContracts?.SingleTokenMintModule]);

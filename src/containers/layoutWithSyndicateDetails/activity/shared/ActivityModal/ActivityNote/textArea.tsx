@@ -28,8 +28,12 @@ export const TextArea: React.FC<ITextAreaProps> = (props) => {
 
   // get number of new lines and multiply by line-height(1.5rem)
   // to get initial height of the text area based on current note value.
+  // using 60 to represent the number of words on one line.
   const lines = value.split(/\r\n|\r|\n/).length;
-  const textAreaHeight = `${lines * 1.5}rem`;
+  const linesWithoutNewLines = Math.floor(value.trim().length / 60);
+  const totalLines =
+    value.trim().length < 60 ? lines : lines + linesWithoutNewLines;
+  const textAreaHeight = totalLines <= 4 ? `${totalLines * 1.5}rem` : "6rem";
 
   const autoGrow = () => {
     noteTextArea.current.style.height = "5px";
@@ -50,7 +54,7 @@ export const TextArea: React.FC<ITextAreaProps> = (props) => {
         onPaste={onPaste}
         onKeyUp={onKeyUp}
         value={value}
-        className={`p-0 m-0 align-bottom text-input-placeholder border-0 border-transparent bg-black text-white rounded-none focus:ring-0 focus:border-transparent resize-none w-full leading-6 no-scroll-bar whitespace-pre-wrap`}
+        className={`p-0 m-0 align-bottom text-input-placeholder border-0 border-transparent bg-black text-white rounded-none focus:ring-0 focus:border-transparent resize-none w-full leading-6 whitespace-pre-wrap overflow-y-scroll`}
         {...rest}
         style={{ height: textAreaHeight }}
         rows={rows}

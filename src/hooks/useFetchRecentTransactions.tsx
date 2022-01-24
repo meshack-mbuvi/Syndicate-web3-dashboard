@@ -28,7 +28,7 @@ export const useFetchRecentTransactions: any = (
   } = useSelector((state: AppState) => state);
   const isDemoMode = useDemoMode();
 
-  const input = erc20Token.owner.toString() === '' ? '' : getInput(erc20Token.owner.toString());
+  const input = getInput(`${erc20Token.address}:${account}`);
   return useQuery(RECENT_TRANSACTIONS, {
     variables: {
       input,

@@ -824,3 +824,23 @@ input[type="checkbox"] {
   height: 34px;
   width: 196px;
 }
+
+/* scrollbar styling on Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #3F4147 #000000;
+}
+
+/* scrollbar styling on Chrome, Edge, and Safari */
+*::-webkit-scrollbar {
+  width: 4px;
+}
+
+*::-webkit-scrollbar-track {
+  background: #000000;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: #3F4147;
+  border-radius: 4px;
+}

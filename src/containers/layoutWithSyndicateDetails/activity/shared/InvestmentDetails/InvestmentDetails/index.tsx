@@ -109,37 +109,23 @@ const InvestmentDetailsModal: React.FC<IInvestmentDetailsModal> = ({
   } = formValues;
 
   const onSubmit = (values) => {
-    const newObj = {
+    // fields without values will be sent to the backend as an empty string
+    // this makes it possible to remove a previously set value.
+    const detailsAnnotationData = {
       transactionId: transactionId,
-      ...(values.companyName && {
-        companyName: values.companyName,
-      }),
-      ...(values?.costBasis && {
-        postMoneyValuation: values?.costBasis,
-      }),
-      ...(values?.currentInvestmentValue && {
-        preMoneyValuation: values?.currentInvestmentValue,
-      }),
-      ...(values?.investmentDate && {
-        acquisitionDate: new Date(values?.investmentDate).toISOString(),
-      }),
-      ...(values?.fullyDilutedOwnershipStake && {
-        equityStake: values?.fullyDilutedOwnershipStake,
-      }),
-      ...(values?.numberTokens && {
-        tokenAmount: values?.numberTokens,
-      }),
-      ...(values?.numberShares && {
-        sharesAmount: values?.numberShares,
-      }),
-      ...(values?.investmentRound && {
-        roundCategory: values?.investmentRound,
-      }),
+      companyName: values?.companyName,
+      postMoneyValuation: values?.costBasis,
+      preMoneyValuation: values?.currentInvestmentValue,
+      acquisitionDate: new Date(values?.investmentDate).toISOString(),
+      equityStake: values?.fullyDilutedOwnershipStake,
+      tokenAmount: values?.numberTokens,
+      sharesAmount: values?.numberShares,
+      roundCategory: values?.investmentRound,
     };
 
     annotationMutation({
       variables: {
-        transactionAnnotationList: [{ ...newObj }],
+        transactionAnnotationList: [{ ...detailsAnnotationData }],
       },
       context: { clientName: "backend" },
     });

@@ -104,7 +104,7 @@ const Layout: FC<Props> = ({
           title="Home"
         />
         <Header backLink={backLink} show={showNav} navItems={navItems} />
-        <div className=" sticky top-0 pt-1 z-20">
+        <div className="sticky top-0 pt-1 z-20">
           <DemoBanner />
         </div>
         <div
@@ -128,7 +128,7 @@ const Layout: FC<Props> = ({
         <div
           className={`flex w-full bg-black flex-col sm:flex-row ${
             showCreateProgressBar ? "pt-16" : "pt-24"
-          } z-20 justify-center items-center my-0 mx-auto`}
+          } z-20 justify-center items-center my-0 mx-auto overflow-x-hidden`}
         >
           {children}
         </div>
