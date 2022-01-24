@@ -1,3 +1,4 @@
+import Tooltip from "react-tooltip-lite";
 import { MEMBER_SIGNED_QUERY } from "@/graphql/queries";
 import { formatAddress } from "@/utils/formatAddress";
 import { useQuery } from "@apollo/client";
@@ -31,13 +32,23 @@ export const MemberAddressComponent = (row) => {
   return (
     <div className="flex space-x-3 align-center text-base leading-6">
       <Image width="32" height="32" src={"/images/user.svg"} alt="user" />
-      <p className="flex my-1">
-        {formatAddress(memberAddress, 6, 6)}{" "}
-        {data?.Financial_memberSigned == true && (
-          <span className="my-auto ml-1">
-            <SignedIcon />
-          </span>
-        )}
+      <p className="flex my-1 items-center ">
+        <span className="mr-2">{formatAddress(memberAddress, 6, 4)}</span>
+        <Tooltip
+          content={
+            <div className="text-sm text-gray-syn4">
+              This member has signed the associated <br /> legal agreements.
+            </div>
+          }
+          arrow={false}
+          tipContentClassName="actionsTooltip"
+          background="#232529"
+          padding="16px 12px"
+          distance={10}
+          className="cursor-default"
+        >
+          {data?.Financial_memberSigned == true && <SignedIcon />}
+        </Tooltip>
       </p>
     </div>
   );
