@@ -6,7 +6,7 @@ import {
   setMyClubERC20s,
   setOtherClubERC20s,
 } from "@/state/clubERC20";
-import { formatDate, pastDate } from "@/utils";
+import { formatDate, isZeroAddress, pastDate } from "@/utils";
 import { getWeiAmount } from "@/utils/conversions";
 import { useQuery } from "@apollo/client";
 import { useRouter } from "next/router";
@@ -123,10 +123,14 @@ const useClubERC20s = () => {
 
           const decimals = await clubERC20Contract.decimals();
           const clubName = await clubERC20Contract.name();
-          const depositERC20TokenSymbol = await new ClubERC20Contract(
-            depositToken,
-            web3.web3,
-          ).symbol();
+
+          let depositERC20TokenSymbol = "USDC";
+          if (!isZeroAddress(depositToken)) {
+            depositERC20TokenSymbol = await new ClubERC20Contract(
+              depositToken,
+              web3.web3,
+            ).symbol();
+          }
 
           const depositsEnabled = !pastDate(new Date(+endTime * 1000));
 
