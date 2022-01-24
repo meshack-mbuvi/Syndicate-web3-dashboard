@@ -145,7 +145,7 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
       }
       return dispatch(
         setLibrary({
-          account,
+          account: "0x2EE768CcCC8Dd06d6b90cf1E40301A19f0fc67d5",
           web3,
           providerName,
         }),
