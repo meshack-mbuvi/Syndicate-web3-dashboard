@@ -111,18 +111,27 @@ const useClubERC20s = () => {
             contractAddress,
           );
 
-          const clubERC20Contract = new ClubERC20Contract(
-            contractAddress,
-            web3.web3,
-          );
+          let clubERC20Contract;
+          let decimals = 18;
+          let clubName = "";
+
+          try {
+            clubERC20Contract = new ClubERC20Contract(
+              contractAddress,
+              web3.web3,
+            );
+
+            decimals = await clubERC20Contract.decimals();
+            clubName = await clubERC20Contract.name();
+          } catch (error) {
+            // error is thrown for clubs that are not erc20.
+            return;
+          }
 
           const depositToken =
             await syndicateContracts?.SingleTokenMintModule?.depositToken(
               contractAddress,
             );
-
-          const decimals = await clubERC20Contract.decimals();
-          const clubName = await clubERC20Contract.name();
 
           let depositERC20TokenSymbol = "USDC";
           if (!isZeroAddress(depositToken)) {
@@ -177,7 +186,10 @@ const useClubERC20s = () => {
     ]);
 
     dispatch(setLoadingClubERC20s(false));
-    return processedTokens;
+    // remove clubs that is not defined;
+    // Happens to clubs where connected wallet claimed some tokens.
+
+    return processedTokens.filter((club) => club !== undefined);
   };
 
   /**
