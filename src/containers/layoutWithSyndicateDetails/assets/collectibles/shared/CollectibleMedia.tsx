@@ -158,7 +158,9 @@ const CollectibleMedia: FC<ICollectibleMedia> = ({
           backgroundRepeat: "no-repeat",
           backgroundPosition: "center center",
         }}
-        className={`${showFullScreen ? "h-full" : "h-80"} w-full relative`}
+        className={`${
+          showFullScreen ? "h-full" : "perfect-square-box"
+        } w-full relative`}
       >
         {mediaClickButton}
       </div>
@@ -178,7 +180,9 @@ const CollectibleMedia: FC<ICollectibleMedia> = ({
     media = (
       <div
         className={`relative ${
-          showFullScreen ? "flex justify-center items-center" : "h-80"
+          showFullScreen
+            ? "flex justify-center items-center"
+            : "perfect-square-box"
         }`}
       >
         <div className="absolute inset-0 z-8">{mediaClickButton}</div>
@@ -212,7 +216,7 @@ const CollectibleMedia: FC<ICollectibleMedia> = ({
           backgroundPosition: "center center",
         }}
         className={`flex flex-col w-full justify-end items-center ${
-          showFullScreen ? "h-full" : "h-80"
+          showFullScreen ? "h-full" : "perfect-square-box"
         } relative border-0`}
       >
         <div className="w-full h-full flex justify-center">
@@ -245,10 +249,10 @@ const CollectibleMedia: FC<ICollectibleMedia> = ({
         <div
           className={`${
             showCollectibles
-              ? "border-r-1 border-l-1 border-t-1 border-gray-syn6 rounded-t-lg"
+              ? "border-r-1 border-l-1 border-t-1 border-gray-syn6 rounded-t-2.5xl perfect-square-box"
               : ""
           }  bg-gray-syn7 overflow-hidden ${
-            showFullScreen ? "h-full" : "relative h-80"
+            showFullScreen ? "h-full" : "relative"
           }`}
         >
           {media}
@@ -261,11 +265,13 @@ const CollectibleMedia: FC<ICollectibleMedia> = ({
                   rel="noreferrer"
                   target="_blank"
                 >
-                  <img
-                    src="/images/actionIcons/openSeaIconDark.svg"
-                    className="w-8 h-8"
-                    alt="View on OpenSea"
-                  />
+                  <div className="bg-white rounded-full w-8 h-8 flex items-center justify-center">
+                    <img
+                      src="/images/actionIcons/openSeaIconDark.svg"
+                      className="w-4 h-4"
+                      alt="View on OpenSea"
+                    />
+                  </div>
                 </a>
               )}
 
@@ -329,11 +335,13 @@ const CollectibleMedia: FC<ICollectibleMedia> = ({
                   dispatch(setShowFullScreen(false));
                 }}
               >
-                <img
-                  src="/images/actionIcons/exitFullScreen.svg"
-                  className="w-8 h-8"
-                  alt="exit full screen"
-                />
+                <div className="bg-white rounded-full w-8 h-8 flex items-center justify-center">
+                  <img
+                    src="/images/actionIcons/exitFullScreen.svg"
+                    className="w-4 h-4"
+                    alt="exit full screen"
+                  />
+                </div>
               </button>
             </div>
           ) : (

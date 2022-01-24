@@ -275,12 +275,13 @@ module.exports = {
       },
       spacing: {
         "1px": "1px",
-        7.5: "1.875rem",
+        7.5: "1.875rem", 
         33: "8.5rem",
         50: "12.5rem",
         66: "16.5rem",
         68: "17rem",
         76: "19rem",
+        82: "22.188rem", // NFT card size
         102: "30rem",
       },
       fill: (theme) => ({
