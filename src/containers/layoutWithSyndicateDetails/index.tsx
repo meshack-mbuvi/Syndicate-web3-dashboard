@@ -28,7 +28,7 @@ import {
 } from "@/state/erc20token/slice";
 import { clearMyTransactions } from "@/state/erc20transactions";
 import { Status } from "@/state/wallet/types";
-import { mockDepositERC20Token } from "@/utils/mockdata";
+import { mockActiveERC20Token } from "@/utils/mockdata";
 import window from "global";
 import { useRouter } from "next/router";
 import React, { FC, useEffect, useRef, useState } from "react";
@@ -171,7 +171,8 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
         dispatch(setClubMembers([]));
       };
     } else if (isDemoMode) {
-      dispatch(setERC20TokenDetails(mockDepositERC20Token));
+      // sets default demo token
+      dispatch(setERC20TokenDetails(mockActiveERC20Token));
     }
   }, [clubAddress, account, status, syndicateContracts?.SingleTokenMintModule]);
 

@@ -83,9 +83,7 @@ const AmountToRaise: React.FC<{
         }}
       >
         <div className="space-y-6">
-          <p className="text-xl leading-4 tracking-px text-white">
-            Investing in crypto can be risky
-          </p>
+          <p className="h3">Investing in crypto can be risky</p>
           <p className="text-sm text-gray-syn4 leading-5">
             Crypto is a new asset class and is subject to many risks including
             frequent price changes. All crypto assets are different. Each one
@@ -107,7 +105,9 @@ const AmountToRaise: React.FC<{
           <AdvancedInputField
             {...{
               value: amount
-                ? numberWithCommas(amount.replace(/^0{2,}/, "0"))
+                ? numberWithCommas(
+                    amount.replace(/^0{2,}/, "0").replace(/^0/, ""),
+                  )
                 : numberWithCommas(""),
               label: "How much are you raising?",
               onChange: handleChange,
@@ -121,7 +121,7 @@ const AmountToRaise: React.FC<{
               extraAddon: extraAddonContent,
               moreInfo: (
                 <div>
-                  Members will recieve 1 ✺{investmentClubSymbol} club token for
+                  Members will receive 1 ✺{investmentClubSymbol} club token for
                   every 1 USDC deposited.
                 </div>
               ),

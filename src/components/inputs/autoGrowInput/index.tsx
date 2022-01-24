@@ -82,6 +82,7 @@ const AutoGrowInputField: React.FC<AutoGrowInputField> = ({
           const { value } = values;
           onChangeHandler(value);
         }}
+        maxLength={12}
       />
     </div>
   );
