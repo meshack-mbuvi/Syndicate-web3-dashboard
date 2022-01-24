@@ -25,11 +25,11 @@ const MemberAgreementPage: NextPage = () => {
   const navbarItems = [
     {
       url: `/clubs/${clubAddress}`,
-      urlText: "Exit",
+      navItemText: "Exit",
     },
     {
-      url: `/clubs/${clubAddress}/member/legal/prepare`,
-      urlText: "Prepare legal documents",
+      navItemText: "Sign legal documents",
+      isLegal: true,
     },
   ];
 

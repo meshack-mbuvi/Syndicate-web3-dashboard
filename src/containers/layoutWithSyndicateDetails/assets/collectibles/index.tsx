@@ -6,7 +6,7 @@ import { SkeletonLoader } from "@/components/skeletonLoader";
 import { AppState } from "@/state";
 import { fetchCollectiblesTransactions } from "@/state/assets/slice";
 import CollectibleDetailsModal from "@/containers/layoutWithSyndicateDetails/assets/collectibles/collectibleDetailsModal";
-import FullScreenOverlay from "@/containers/layoutWithSyndicateDetails/assets/collectibles/shared/FullscreenOverlay";
+
 import CollectibleMedia from "@/containers/layoutWithSyndicateDetails/assets/collectibles/shared/CollectibleMedia";
 import { floatedNumberWithCommas } from "@/utils/formattedNumbers";
 import {
@@ -14,8 +14,9 @@ import {
   setShowCollectibleModal,
 } from "@/state/assets/collectibles/slice";
 import { useDemoMode } from "@/hooks/useDemoMode";
+import FullScreenOverlay from "@/containers/layoutWithSyndicateDetails/assets/collectibles/shared/FullscreenOverlay";
 
-const Collectibles: FC<{ activeAssetTab: string }> = ({ activeAssetTab }) => {
+const Collectibles: FC = () => {
   const {
     assetsSliceReducer: {
       collectiblesResult,
@@ -61,21 +62,39 @@ const Collectibles: FC<{ activeAssetTab: string }> = ({ activeAssetTab }) => {
               <>
                 <div className="w-full">
                   <SkeletonLoader
-                    borderRadius="rounded-t-lg"
+                    borderRadius="rounded-t-2.5xl"
                     width="full"
-                    height="80"
-                    customClass="border-r-1 border-l-1 border-t-1 border-gray-syn6"
+                    height="full"
+                    customClass="border-r-1 border-l-1 border-t-1 border-gray-syn6 perfect-square-box"
                     margin="m-0"
                     animate={animate}
                   />
-                  <div className="rounded-b-lg w-full p-7 border-b-1 border-r-1 border-l-1 border-gray-syn6">
+                  <div className="rounded-b-2.5xl w-full p-7 border-b-1 border-r-1 border-l-1 border-gray-syn6">
+                    <div className="pb-4">
+                      <SkeletonLoader
+                        width="full"
+                        height="6"
+                        margin="m-0"
+                        borderRadius="rounded-lg"
+                        animate={animate}
+                      />
+                    </div>
                     <SkeletonLoader
-                      width="full"
-                      height="7"
+                      width="16"
+                      height="4"
                       margin="m-0"
                       borderRadius="rounded-lg"
                       animate={animate}
                     />
+                    <div className="pt-2">
+                      <SkeletonLoader
+                        width="32"
+                        height="5"
+                        margin="m-0"
+                        borderRadius="rounded-lg"
+                        animate={animate}
+                      />
+                    </div>
                   </div>
                 </div>
               </>
@@ -207,7 +226,7 @@ const Collectibles: FC<{ activeAssetTab: string }> = ({ activeAssetTab }) => {
                 if (name && mediaType) {
                   return (
                     <div
-                      className="col-span-5 md:col-span-4 xl:col-span-3 cursor-pointer"
+                      className="col-span-12 sm:col-span-6 md:col-span-4 xl:col-span-3 cursor-pointer"
                       key={index}
                     >
                       <CollectibleMedia
@@ -218,10 +237,10 @@ const Collectibles: FC<{ activeAssetTab: string }> = ({ activeAssetTab }) => {
                           showCollectibles: true,
                         }}
                       />
-                      <FullScreenOverlay />
 
+                      <FullScreenOverlay />
                       <div
-                        className="flex rounded-b-lg py-6 border-b-1 border-r-1 border-l-1 border-gray-syn6 h-36"
+                        className="flex rounded-b-2.5xl py-6 border-b-1 border-r-1 border-l-1 border-gray-syn6 h-36"
                         onClick={() => {
                           setDetailsOfSelectedCollectible({
                             collectible,

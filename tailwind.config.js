@@ -92,6 +92,7 @@ module.exports = {
         100: "30rem",
         "slightly-over-100": "30.25rem",
         564: "35.25rem",
+        730: "45.625rem",
       }),
       maxWidth: {
         480: "30rem",
@@ -134,6 +135,7 @@ module.exports = {
         ],
       },
       fontSize: {
+        subtext: ["0.75rem", "0.875rem"],
         modalTitle: "2.1875rem",
         modalSubTitle: "1.5rem",
         "1.5xl": "1.375rem",
@@ -145,6 +147,8 @@ module.exports = {
         "7xl": ["4.5rem", "5.4rem"],
       },
       lineHeight: {
+        4.5: "1.125rem",
+        4.75: "1.1875rem",
         9: "2.25rem",
         11.5: "2.875rem",
         17: "4.25rem",
@@ -272,12 +276,13 @@ module.exports = {
       },
       spacing: {
         "1px": "1px",
-        7.5: "1.875rem",
+        7.5: "1.875rem", 
         33: "8.5rem",
         50: "12.5rem",
         66: "16.5rem",
         68: "17rem",
         76: "19rem",
+        82: "22.188rem", // NFT card size
         102: "30rem",
       },
       fill: (theme) => ({
@@ -314,7 +319,7 @@ module.exports = {
         31: "7.5rem",
         18: "4.5rem",
         25: "6.2rem",
-        71: "17.8rem",
+        71: "17.3rem",
       },
       margin: {
         0.5: "0.15rem",
