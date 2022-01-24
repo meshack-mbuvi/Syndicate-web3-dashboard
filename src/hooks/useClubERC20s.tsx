@@ -111,7 +111,6 @@ const useClubERC20s = () => {
           } = await syndicateContracts?.mintPolicy?.getSyndicateValues(
             contractAddress,
           );
-          console.log({ totalSupply });
 
           const clubERC20Contract = new ClubERC20Contract(
             contractAddress,
@@ -123,23 +122,17 @@ const useClubERC20s = () => {
               contractAddress,
             );
 
+          const decimals = await clubERC20Contract.decimals();
+          const clubName = await clubERC20Contract.name();
+
           let depositERC20TokenSymbol = "USDC";
-          let decimals = "18";
-          let clubName = "No name";
-
-          try {
-            if (!isZeroAddress(depositToken)) {
-              depositERC20TokenSymbol = await new ClubERC20Contract(
-                depositToken,
-                web3.web3,
-              ).symbol();
-
-              decimals = await clubERC20Contract.decimals();
-              clubName = await clubERC20Contract.name();
-            }
-          } catch (error) {
-            console.log({ error });
+          if (!isZeroAddress(depositToken)) {
+            depositERC20TokenSymbol = await new ClubERC20Contract(
+              depositToken,
+              web3.web3,
+            ).symbol();
           }
+
           const depositsEnabled = !pastDate(new Date(+endTime * 1000));
 
           //  calculate ownership share

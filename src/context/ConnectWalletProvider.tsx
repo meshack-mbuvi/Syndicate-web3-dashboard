@@ -1,20 +1,32 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { web3InstantiationErrorText } from "@/components/syndicates/shared/Constants";
+import { getSyndicateContracts } from "@/ClubERC20Factory";
+import { amplitudeLogger, Flow } from "@/components/amplitude";
 import {
-  logout,
+  ERROR_WALLET_CONNECTION,
+  SUCCESSFUL_WALLET_CONNECT,
+} from "@/components/amplitude/eventNames";
+import { web3InstantiationErrorText } from "@/components/syndicates/shared/Constants";
+import { AppState } from "@/state";
+import { setContracts } from "@/state/contracts";
+import {
   hideErrorModal,
   hideWalletModal,
+  logout,
   setConnected,
   setConnectedProviderName,
   setConnecting,
   setDisConnected,
   setLibrary,
   showErrorModal,
-  storeEthereumNetwork,
   storeCurrentEthNetwork,
+  storeEthereumNetwork,
 } from "@/state/wallet/actions";
-import { getSyndicateContracts } from "@/ClubERC20Factory";
+import { SafeAppWeb3Modal } from "@gnosis.pm/safe-apps-web3modal";
+import WalletConnectProvider from "@walletconnect/web3-provider";
+import { providers } from "ethers";
 import { parse, stringify } from "flatted";
+import { isEmpty } from "lodash";
+import router from "next/router";
 import React, {
   createContext,
   ReactNode,
@@ -23,18 +35,6 @@ import React, {
   useState,
 } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { AppState } from "@/state";
-import { isEmpty } from "lodash";
-import WalletConnectProvider from "@walletconnect/web3-provider";
-import { providers } from "ethers";
-import { SafeAppWeb3Modal } from "@gnosis.pm/safe-apps-web3modal";
-import { setContracts } from "@/state/contracts";
-import { amplitudeLogger, Flow } from "@/components/amplitude";
-import {
-  SUCCESSFUL_WALLET_CONNECT,
-  ERROR_WALLET_CONNECTION,
-} from "@/components/amplitude/eventNames";
-import router from "next/router";
 
 const Web3 = require("web3");
 const debugging = process.env.NEXT_PUBLIC_DEBUG;
@@ -145,7 +145,7 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
       }
       return dispatch(
         setLibrary({
-          account: "0x2EE768CcCC8Dd06d6b90cf1E40301A19f0fc67d5",
+          account,
           web3,
           providerName,
         }),

@@ -38,7 +38,7 @@ const MembersCount: React.FC<{
   const { setShowNextButton, handleNext } = useCreateInvestmentClubContext();
 
   useEffect(() => {
-    if (setIsInputError) {
+    if (setInputHasError) {
       setInputHasError(isInputError);
     }
   }, [isInputError]);
