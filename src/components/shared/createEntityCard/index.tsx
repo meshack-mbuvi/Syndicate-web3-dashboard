@@ -1,9 +1,12 @@
+import { useDemoMode } from "@/hooks/useDemoMode";
 import React from "react";
 
 const CreateEntityCard: React.FC = () => {
+  const isDemoMode = useDemoMode();
+
   return (
     <a
-      href="https://syndicatedao.gitbook.io/syndicate-wiki/web3-investment-clubs/create-a-legal-entity/form-your-legal-entity"
+      href={isDemoMode ? undefined : "https://syndicatedao.gitbook.io/syndicate-wiki/web3-investment-clubs/create-a-legal-entity/form-your-legal-entity"}
       target="_blank"
       rel="noreferrer"
     >

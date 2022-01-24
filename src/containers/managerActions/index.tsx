@@ -19,6 +19,7 @@ import GenerateDepositLink from "./GenerateDepositLink";
 import { MintAndShareTokens } from "./mintAndShareTokens";
 import { setDepositReadyInfo } from "@/state/legalInfo";
 import { useCreateInvestmentClubContext } from "@/context/CreateInvestmentClubContext";
+import { useDemoMode } from "@/hooks/useDemoMode";
 
 const useShowShareWarning = () => {
   const router = useRouter();
@@ -99,6 +100,8 @@ const ManagerActions = (): JSX.Element => {
   const [syndicateSuccessfullyCreated, setSyndicateSuccessfullyCreated] =
     useState<boolean>(false);
   const syndicateCreationFailed = false;
+
+  const isDemoMode = useDemoMode();
 
   // club deposit link
   useEffect(() => {
@@ -341,6 +344,7 @@ const ManagerActions = (): JSX.Element => {
             <button
               className="cursor-pointer space-x-4 focus:outline-none flex w-full items-start text-base leading-6 hover:bg-gray-syn7 rounded-xl py-2 px-4"
               onClick={handleShowMintTokens}
+              disabled={isDemoMode}
             >
               <div className="flex-shrink-0">
                 <img
