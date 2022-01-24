@@ -209,7 +209,10 @@ const TokenTable: FC<Props> = ({ columns, tableData }) => {
                       numberValue={tokenBalance}
                       customSymbol={tokenSymbol}
                     />
-                    <PriceContainer numberValue={`${tokenValue || ""}`} />
+                    <PriceContainer
+                      numberValue={`${tokenValue || ""}`}
+                      noUSDValue={!price?.usd}
+                    />
                   </div>
                 );
               },

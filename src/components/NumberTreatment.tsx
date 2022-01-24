@@ -3,7 +3,8 @@ import { floatedNumberWithCommas } from "@/utils/formattedNumbers";
 
 const NumberTreatment: React.FC<{
   numberValue: string;
-}> = ({ numberValue }) => {
+  noUSDValue?: boolean;
+}> = ({ numberValue, noUSDValue }) => {
   const [wholeNumberValue, decimalValue] =
     floatedNumberWithCommas(numberValue).split(".");
   const isColourReversed =
@@ -11,7 +12,7 @@ const NumberTreatment: React.FC<{
   return (
     <>
       <span className={isColourReversed ? "text-gray-syn4" : undefined}>
-        {wholeNumberValue}
+        {noUSDValue ? "-" : wholeNumberValue}
       </span>
       {decimalValue && (
         <span className={isColourReversed ? "text-white" : "text-gray-syn4"}>
