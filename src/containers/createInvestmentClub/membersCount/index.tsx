@@ -22,7 +22,8 @@ const MAX_MEMBERS_ALLOWED = "99";
 const MembersCount: React.FC<{
   className?: string;
   editButtonClicked?: boolean;
-}> = ({ className, editButtonClicked }) => {
+  setInputHasError?: (state: boolean) => void;
+}> = ({ className, editButtonClicked, setInputHasError }) => {
   const {
     createInvestmentClubSliceReducer: { membersCount },
   } = useSelector((state: AppState) => state);
@@ -35,6 +36,12 @@ const MembersCount: React.FC<{
   const dispatch = useDispatch();
 
   const { setShowNextButton, handleNext } = useCreateInvestmentClubContext();
+
+  useEffect(() => {
+    if (setIsInputError) {
+      setInputHasError(isInputError);
+    }
+  }, [isInputError]);
 
   useEffect(() => {
     if (!membersNumCount) {

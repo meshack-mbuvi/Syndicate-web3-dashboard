@@ -1,16 +1,16 @@
-import React, { useState, useEffect } from "react";
-import { useSelector } from "react-redux";
-import Image from "next/image";
-import { useTransition, animated } from "react-spring";
-import { format } from "date-fns";
-import { AppState } from "@/state";
-import useUSDCDetails from "@/hooks/useUSDCDetails";
-import { floatedNumberWithCommas } from "@/utils/formattedNumbers";
 import { useCreateInvestmentClubContext } from "@/context/CreateInvestmentClubContext";
-import ClubNameSelector from "../clubNameSelector";
+import useUSDCDetails from "@/hooks/useUSDCDetails";
+import { AppState } from "@/state";
+import { floatedNumberWithCommas } from "@/utils/formattedNumbers";
+import { format } from "date-fns";
+import Image from "next/image";
+import React, { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+import { animated, useTransition } from "react-spring";
 import AmountToRaise from "../amountToRaise";
-import MintMaxDate from "../mintMaxDate";
+import ClubNameSelector from "../clubNameSelector";
 import MembersCount from "../membersCount";
+import MintMaxDate from "../mintMaxDate";
 
 const ReviewDetails: React.FC = () => {
   const {
@@ -31,6 +31,7 @@ const ReviewDetails: React.FC = () => {
   const [editAmountToRaise, setEditAmountToRaise] = useState<boolean>(false);
   const [editMintMaxDate, setEditMintMaxDate] = useState<boolean>(false);
   const [editMembersCount, setEditMembersCount] = useState<boolean>(false);
+  const [memberCountHasError, setMemberCountHasError] = useState(false);
 
   useEffect(() => {
     if (
@@ -361,14 +362,17 @@ const ReviewDetails: React.FC = () => {
           <MembersCount
             editButtonClicked={editMembersCount}
             className="w-full lg:w-full"
+            setInputHasError={setMemberCountHasError}
           />
-          <animated.div
-            className="flex items-center absolute top-3 right-5"
-            onClick={() => setEditMembersCount(!editMembersCount)}
-            style={{ color: "#4376FF", cursor: "pointer" }}
-          >
-            {"Save"}
-          </animated.div>
+          {!memberCountHasError ? (
+            <animated.div
+              className="flex items-center absolute top-3 right-5"
+              onClick={() => setEditMembersCount(!editMembersCount)}
+              style={{ color: "#4376FF", cursor: "pointer" }}
+            >
+              {"Save"}
+            </animated.div>
+          ) : null}
         </animated.div>
       ) : (
         memberCountTransition((styles, item) =>
