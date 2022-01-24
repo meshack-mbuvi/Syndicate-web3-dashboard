@@ -248,7 +248,8 @@ const fetchTokenBalances = (tokensList: any[], account: string) => {
 
 export const fetchDemoFloorPrices = createAsyncThunk(
   "assets/fetchDemoFloorPrices",
-  async (_, thunkAPI) => {
+  async (isDepositEnabled: boolean, thunkAPI) => {
+    if (isDepositEnabled) return;
     return await Promise.all([
       getEthereumTokenPrice().then((result) =>
         thunkAPI.dispatch(setEthereumTokenPrice(result.data.ethereum.usd)),
@@ -291,11 +292,15 @@ const assetsSlice = createSlice({
   name: "assets",
   initialState,
   reducers: {
-    setMockTokensResult(state) {
-      state.tokensResult = mockTokensResult;
+    setMockTokensResult(state, action) {
+      state.tokensResult = action.payload;
     },
-    setMockCollectiblesResult(state) {
-      state.collectiblesResult = mockCollectiblesResult;
+    setMockCollectiblesResult(state, action) {
+      const isDepositEnabled = action.payload;
+      state.collectiblesResult = isDepositEnabled ? [] : mockCollectiblesResult;
+    },
+    resetCollectiblesResult(state) {
+      state.collectiblesResult = [];
     },
     setDemoFloorPrice(state, action) {
       const { slug, floorPrice } = action.payload;

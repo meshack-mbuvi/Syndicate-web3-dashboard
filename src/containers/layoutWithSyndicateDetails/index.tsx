@@ -29,7 +29,12 @@ import {
 } from "@/state/erc20token/slice";
 import { clearMyTransactions } from "@/state/erc20transactions";
 import { Status } from "@/state/wallet/types";
-import { mockActiveERC20Token, mockDepositERC20Token } from "@/utils/mockdata";
+import {
+  mockActiveERC20Token,
+  mockDepositERC20Token,
+  mockDepositModeTokens,
+  mockTokensResult,
+} from "@/utils/mockdata";
 import window from "global";
 import { useRouter } from "next/router";
 import React, { FC, useEffect, useRef, useState } from "react";
@@ -134,9 +139,13 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
     if (owner) {
       fetchAssets();
     } else if (isDemoMode) {
-      dispatch(setMockTokensResult());
-      dispatch(setMockCollectiblesResult());
-      dispatch(fetchDemoFloorPrices());
+      const mockTokens = depositsEnabled
+        ? mockDepositModeTokens
+        : mockTokensResult;
+      dispatch(setMockTokensResult(mockTokens));
+
+      dispatch(setMockCollectiblesResult(depositsEnabled));
+      dispatch(fetchDemoFloorPrices(depositsEnabled));
     }
   }, [owner, clubAddress, depositsEnabled]);
 
@@ -145,7 +154,7 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
     if (account && !isDemoMode) {
       dispatch(clearCollectiblesTransactions());
     }
-  }, [account, clubAddress, dispatch]);
+  }, [account, clubAddress, dispatch, isDemoMode]);
 
   /**
    * Fetch club details
