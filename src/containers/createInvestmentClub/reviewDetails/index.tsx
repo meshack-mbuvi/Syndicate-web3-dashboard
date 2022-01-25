@@ -455,9 +455,10 @@ const ReviewDetails: React.FC = () => {
               type="checkbox"
               id="agreementFirst"
               name="agreementFirst"
+              checked={agreementFirstChecked}
             />
             <animated.p
-              className="text-sm text-gray-syn4 ml-5 cursor-pointer"
+              className="text-sm text-gray-syn4 ml-5 cursor-pointer select-none"
               onClick={() => setAgreementFirstChecked(!agreementFirstChecked)}
             >
               I represent that my access and use of Syndicate’s app and its
@@ -476,9 +477,10 @@ const ReviewDetails: React.FC = () => {
               type="checkbox"
               id="agreementSecond"
               name="agreementSecond"
+              checked={agreementSecondChecked}
             />
             <animated.p
-              className="text-sm text-gray-syn4 ml-5 cursor-pointer"
+              className="text-sm text-gray-syn4 ml-5 cursor-pointer select-none"
               onClick={() => setAgreementSecondChecked(!agreementSecondChecked)}
             >
               By accessing and using Syndicate’s app and its protocol, I
