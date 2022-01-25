@@ -7,7 +7,7 @@ const PriceContainer: React.FC<{
   customSymbol?: any;
 }> = ({ numberValue, ethValue = false, customSymbol = "USD" }) => {
   return (
-    <div className="text-base flex col-span-3 items-center">
+    <div className="text-base md:items-center">
       <NumberTreatment numberValue={numberValue} />
       &nbsp;
       {ethValue ? "ETH" : `${customSymbol}`}
