@@ -1,5 +1,4 @@
-import SingleTokenMintModule_ABI from "src/contracts/SingleTokenMintModule.json";
-
+import DepositTokenMintModule_ABI from "src/contracts/DepositTokenMintModule.json";
 import { getGnosisTxnInfo } from "../shared/gnosisTransactionInfo";
 
 export class SingleTokenMintModuleContract {
@@ -17,12 +16,12 @@ export class SingleTokenMintModuleContract {
   }
 
   async init(): Promise<void> {
-    if (!SingleTokenMintModule_ABI) {
+    if (!DepositTokenMintModule_ABI) {
       return;
     }
     try {
       this.SingleTokenMintModuleContract = new this.web3.eth.Contract(
-        SingleTokenMintModule_ABI,
+        DepositTokenMintModule_ABI,
         this.address,
       );
     } catch (error) {
@@ -30,7 +29,7 @@ export class SingleTokenMintModuleContract {
     }
   }
 
-  async depositToken(clubAddress:string): Promise<string> {
+  async depositToken(clubAddress: string): Promise<string> {
     try {
       return this.SingleTokenMintModuleContract.methods
         .depositToken(clubAddress)
