@@ -29,6 +29,7 @@ interface ILinK {
   showConfettiSuccess?: boolean;
   creatingSyndicate?: boolean;
   syndicateSuccessfullyCreated?: boolean;
+  agreementChecked?: boolean;
 }
 
 const GenerateDepositLink: FC<ILinK> = ({
@@ -40,6 +41,7 @@ const GenerateDepositLink: FC<ILinK> = ({
   showConfettiSuccess,
   creatingSyndicate,
   syndicateSuccessfullyCreated,
+  agreementChecked
 }) => {
   const [copyLinkCTA, setCopyLinkCTA] = useState("border-gray-syn6");
   const {
@@ -60,14 +62,18 @@ const GenerateDepositLink: FC<ILinK> = ({
       {!adminSigned && (
         <>
           <button
-            className="bg-green rounded-custom w-full flex items-center justify-center py-4 mb-4"
+            className={"rounded-custom w-full flex items-center justify-center py-4 mb-4"}
+            style={{
+              backgroundColor: !agreementChecked ? '#3F4147' : '#30E696',
+              cursor: !agreementChecked ? 'auto' : 'pointer'
+            }}
             onClick={() => setShowGenerateLinkModal(true)}
-            disabled={isDemoMode}
+            disabled={isDemoMode || !agreementChecked}
           >
             <div className="flex-grow-1 mr-3">
-              <CopyLinkIcon color="text-black" />
+              <CopyLinkIcon color={!agreementChecked ? 'text-gray-syn4' : "text-black"} />
             </div>
-            <p className="text-black pr-1 whitespace-nowrap font-whyte-medium">
+            <p className={"pr-1 whitespace-nowrap font-whyte-medium"} style={{ color: !agreementChecked ? '#90949E' : 'black' }}>
               Generate link to invite members
             </p>
           </button>

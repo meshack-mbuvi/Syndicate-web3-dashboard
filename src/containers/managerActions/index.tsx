@@ -222,23 +222,27 @@ const ManagerActions = (): JSX.Element => {
                               Invite members by sharing your club’s{" "}
                               {claimEnabled ? "claim" : "deposit"} link
                             </p>
-                            <div className="flex space-between mt-3">
-                              <input 
-                                className="bg-transparent rounded mt-1 focus:ring-offset-0" 
-                                onChange={() => setLinkShareAgreementChecked(!linkShareAgreementChecked)} 
-                                type="checkbox" 
-                                id="linkShareAgreement" 
-                                name="linkShareAgreement" 
-                              />
-                              <animated.p
-                                className="text-sm text-gray-syn4 ml-3"
-                              >
-                                I agree to only share this link privately. I understand that publicly 
-                                sharing this link may violate securities laws. <br></br> 
-                                <a target="_blank" style={{ color: '#4376ff' }} href="https://www.sec.gov/reportspubs/investor-publications/investorpubsinvclubhtm.html" 
-                                rel="noopener noreferrer">Learn more.</a> {" "}
-                              </animated.p>
-                            </div>
+                            {
+                              !adminSigned && (
+                                <div className="flex space-between mt-3">
+                                  <input 
+                                    className="bg-transparent rounded mt-1 focus:ring-offset-0" 
+                                    onChange={() => setLinkShareAgreementChecked(!linkShareAgreementChecked)} 
+                                    type="checkbox" 
+                                    id="linkShareAgreement" 
+                                    name="linkShareAgreement" 
+                                  />
+                                  <animated.p
+                                    className="text-sm text-gray-syn4 ml-3"
+                                  >
+                                    I agree to only share this link privately. I understand that publicly 
+                                    sharing this link may violate securities laws. <br></br> 
+                                    <a target="_blank" style={{ color: '#4376ff' }} href="https://www.sec.gov/reportspubs/investor-publications/investorpubsinvclubhtm.html" 
+                                    rel="noopener noreferrer">Learn more.</a> {" "}
+                                  </animated.p>
+                                </div>
+                              )
+                            }
                             {adminSigned && (
                               <p>
                                 {hasAgreements
@@ -318,6 +322,7 @@ const ManagerActions = (): JSX.Element => {
                         syndicateSuccessfullyCreated={
                           syndicateSuccessfullyCreated
                         }
+                        agreementChecked={linkShareAgreementChecked}
                       />
                     )}
 
