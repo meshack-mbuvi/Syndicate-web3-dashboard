@@ -8,6 +8,7 @@ import React, {
   useEffect,
   useState,
 } from "react";
+import Floater from "react-floater";
 import { RibbonIcon, RightArrow } from "src/components/iconWrappers";
 import { setWalletSignature } from "@/state/legalInfo";
 import { useDispatch, useSelector } from "react-redux";
@@ -41,7 +42,7 @@ const GenerateDepositLink: FC<ILinK> = ({
   showConfettiSuccess,
   creatingSyndicate,
   syndicateSuccessfullyCreated,
-  agreementChecked
+  agreementChecked,
 }) => {
   const [copyLinkCTA, setCopyLinkCTA] = useState("border-gray-syn6");
   const {
@@ -52,6 +53,8 @@ const GenerateDepositLink: FC<ILinK> = ({
 
   const isDemoMode = useDemoMode();
 
+  const [open, setOpen] = useState(false);
+
   const showReviewPage = () => {
     // TODO: navigate to the review page from here.
     return;
@@ -61,22 +64,91 @@ const GenerateDepositLink: FC<ILinK> = ({
     <>
       {!adminSigned && (
         <>
-          <button
-            className={"rounded-custom w-full flex items-center justify-center py-4 mb-4"}
-            style={{
-              backgroundColor: !agreementChecked ? '#3F4147' : '#30E696',
-              cursor: !agreementChecked ? 'auto' : 'pointer'
-            }}
-            onClick={() => setShowGenerateLinkModal(true)}
-            disabled={isDemoMode || !agreementChecked}
-          >
-            <div className="flex-grow-1 mr-3">
-              <CopyLinkIcon color={!agreementChecked ? 'text-gray-syn4' : "text-black"} />
-            </div>
-            <p className={"pr-1 whitespace-nowrap font-whyte-medium"} style={{ color: !agreementChecked ? '#90949E' : 'black' }}>
-              Generate link to invite members
-            </p>
-          </button>
+          {isDemoMode ? (
+            <Floater
+              content={
+                <div className="text-green-electric-lime text-sm">
+                  <p>
+                    Generate a deposit invite link with the option to include
+                    default legal agreements for members to sign.
+                  </p>
+                  <p className="mt-4">Action disabled in demo mode.</p>
+                </div>
+              }
+              disableHoverToClick
+              event="hover"
+              eventDelay={0}
+              placement="bottom"
+              open={open}
+              styles={{
+                floater: {
+                  filter: "none",
+                },
+                container: {
+                  backgroundColor: "#293300",
+                  borderRadius: 5,
+                  color: "#fff",
+                  filter: "none",
+                  minHeight: "none",
+                  width: 310,
+                  padding: 12,
+                  textAlign: "center",
+                },
+                arrow: {
+                  color: "#293300",
+                  length: 8,
+                  spread: 10,
+                },
+                options: { zIndex: 250 },
+                wrapper: {
+                  cursor: "pointer",
+                },
+              }}
+            >
+              <button
+                className={`bg-green rounded-custom w-full flex items-center justify-center py-4 mb-4 ${
+                  isDemoMode ? "cursor-pointer" : ""
+                }`}
+                onMouseEnter={() => setOpen(true)}
+                onMouseLeave={() => setOpen(false)}
+              >
+                <div className="flex-grow-1 mr-3">
+                  <CopyLinkIcon color="text-black" />
+                </div>
+                <p className="text-black pr-1 whitespace-nowrap font-whyte-medium">
+                  Generate link to invite members
+                </p>
+              </button>
+            </Floater>
+          ) : (
+            <button
+              className={
+                "rounded-custom w-full flex items-center justify-center py-4 mb-4"
+              }
+              style={{
+                backgroundColor: !agreementChecked ? "#3F4147" : "#30E696",
+                cursor: !agreementChecked ? "auto" : "pointer",
+              }}
+              onClick={() => setShowGenerateLinkModal(true)}
+              disabled={isDemoMode || !agreementChecked}
+            >
+              <div className="flex-grow-1 mr-3">
+                <CopyLinkIcon
+                  color={!agreementChecked ? "text-gray-syn4" : "text-black"}
+                />
+              </div>
+              <p
+                className={"pr-1 whitespace-nowrap font-whyte-medium"}
+                style={{ color: !agreementChecked ? "#90949E" : "black" }}
+              >
+                Generate link to invite members
+              </p>
+            </button>
+          )}
+          {/* Overlay */}
+          {open ? (
+            <div className="fixed top-0 bottom-0 left-0 right-0 bg-black bg-opacity-60" />
+          ) : null}
           <div className="flex justify-center w-full mb-4">
             <ArrowDown />
           </div>
@@ -205,15 +277,21 @@ const DepositLinkModal: FC<ILinkModal> = ({
               >
                 <div className="flex justify-between px-8 py-6 items-center leading-3.5">
                   <div>
-                    <div className="leading-6">Yes, use default LLC agreements</div>
+                    <div className="leading-6">
+                      Yes, use default LLC agreements
+                    </div>
                     <div className="text-sm leading-4 text-gray-syn3 mt-0.5">
                       Requires an existing LLC
                     </div>
                   </div>
-                  <RightArrow className="text-gray-syn4 group-hover:text-blue"/>
+                  <RightArrow className="text-gray-syn4 group-hover:text-blue" />
                 </div>
                 <div className="flex justify-center align-middle rounded-b-1.5lg py-2.5 bg-gray-inactive group-hover:bg-blue">
-                  <RibbonIcon className="text-white" height={'0.75rem'} width={'0.75rem'}/>
+                  <RibbonIcon
+                    className="text-white"
+                    height={"0.75rem"}
+                    width={"0.75rem"}
+                  />
                   <span className="mx-1 text-subtext ">Powered by</span>
                   <img
                     src="/images/latham&watkinsllp.svg"

@@ -1,21 +1,21 @@
-import { FC, useEffect, useState } from "react";
-import { SettingsDisclaimerTooltip } from "../shared/SettingDisclaimer";
-import DateCard from "./DateCard";
-import { useDispatch, useSelector } from "react-redux";
-import DatePicker from "react-datepicker";
-import { setMintEndTime } from "@/state/createInvestmentClub/slice";
+import Fade from "@/components/Fade";
 import { useCreateInvestmentClubContext } from "@/context/CreateInvestmentClubContext";
 import { AppState } from "@/state";
-import Fade from "@/components/Fade";
+import { setMintEndTime } from "@/state/createInvestmentClub/slice";
 import { mintEndTime } from "@/state/createInvestmentClub/types";
-import moment from "moment";
-import { useSpring, animated } from "react-spring";
 import { DAY_IN_SECONDS } from "@/utils/constants";
+import moment from "moment";
+import { FC, useEffect, useState } from "react";
+import DatePicker from "react-datepicker";
+import { useDispatch, useSelector } from "react-redux";
+import { animated, useSpring } from "react-spring";
+import DateCard from "./DateCard";
 
 const MintMaxDate: FC<{ className?: string }> = ({ className }) => {
   const dispatch = useDispatch();
 
-  const { setShowNextButton, handleNext, currentStep } = useCreateInvestmentClubContext();
+  const { setShowNextButton, handleNext, currentStep } =
+    useCreateInvestmentClubContext();
 
   const [warning, setWarning] = useState("");
   const [disableButtons, setDisableButtons] = useState(false);
@@ -154,17 +154,7 @@ const MintMaxDate: FC<{ className?: string }> = ({ className }) => {
             ))}
           </div>
         </div>
-        <div className="hidden lg:flex pl-4 justify-center items-center w-1/3">
-          <SettingsDisclaimerTooltip
-            id="disclaimer-tip"
-            tip={
-              <span>
-                Can be modified later via an on-chain <br /> transaction with
-                gas
-              </span>
-            }
-          />
-        </div>
+
         {showCustomDatePicker && (
           <animated.div style={styles} className="py-6">
             <div className="pb-2">Close date</div>
