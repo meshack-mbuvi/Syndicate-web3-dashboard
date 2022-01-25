@@ -6,7 +6,7 @@ const CreateEntityCard: React.FC = () => {
 
   return (
     <a
-      href={isDemoMode ? undefined : "https://syndicatedao.gitbook.io/syndicate-wiki/web3-investment-clubs/create-a-legal-entity/form-your-legal-entity"}
+      href={isDemoMode ? undefined : "https://doolahq.typeform.com/syndicate"}
       target="_blank"
       rel="noreferrer"
     >
