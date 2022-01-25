@@ -156,7 +156,7 @@ const CollectibleMedia: FC<ICollectibleMedia> = ({
           backgroundImage: `url('${image}')`,
           backgroundSize: "cover",
           backgroundRepeat: "no-repeat",
-          backgroundPosition: "center center",
+          backgroundPosition: "center 20%",
         }}
         className={`${
           showFullScreen ? "h-full" : "perfect-square-box"
@@ -190,7 +190,7 @@ const CollectibleMedia: FC<ICollectibleMedia> = ({
           autoPlay
           loop
           muted
-          className={`${!showFullScreen ? "object-cover video-320" : ""} z-10`}
+          className={`${!showFullScreen ? "object-cover" : ""} z-10`}
           ref={videoRef}
         >
           {/* Specifying type as "video/mp4" works for both .mov and .mp4 files  */}

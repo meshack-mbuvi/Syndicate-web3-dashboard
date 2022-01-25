@@ -27,7 +27,10 @@ const DemoBanner: React.FC = () => {
   };
 
   const handleSwitchClubViewing = () => {
-    router.push(`/clubs/demo/${isManager ? "" : "manage"}`);
+    router.push({
+      pathname: `/clubs/demo/${isManager ? "" : "manage"}`,
+      query: { status: isOpenForDeposits ? "open" : "active" },
+    });
   };
 
   if (isDemoMode) {

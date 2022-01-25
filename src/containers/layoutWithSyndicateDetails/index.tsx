@@ -18,8 +18,8 @@ import {
   clearCollectiblesTransactions,
   fetchCollectiblesTransactions,
   fetchTokenTransactions,
-  setMockCollectiblesTransactions,
   setMockTokensResult,
+  setMockCollectiblesResult,
 } from "@/state/assets/slice";
 import { setClubMembers } from "@/state/clubMembers";
 import {
@@ -28,7 +28,12 @@ import {
 } from "@/state/erc20token/slice";
 import { clearMyTransactions } from "@/state/erc20transactions";
 import { Status } from "@/state/wallet/types";
-import { mockActiveERC20Token } from "@/utils/mockdata";
+import {
+  mockActiveERC20Token,
+  mockDepositERC20Token,
+  mockDepositModeTokens,
+  mockTokensResult,
+} from "@/utils/mockdata";
 import window from "global";
 import { useRouter } from "next/router";
 import React, { FC, useEffect, useRef, useState } from "react";
@@ -92,6 +97,9 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
   const [showNav, setShowNav] = useState(true);
   const [isSubNavStuck, setIsSubNavStuck] = useState(true);
   const subNav = useRef(null);
+  const {
+    query: { status: isOpenForDeposits },
+  } = router;
 
   // Listen to page scrolling
   useEffect(() => {
@@ -130,17 +138,21 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
     if (owner) {
       fetchAssets();
     } else if (isDemoMode) {
-      dispatch(setMockTokensResult());
-      dispatch(setMockCollectiblesTransactions());
+      const mockTokens = depositsEnabled
+        ? mockDepositModeTokens
+        : mockTokensResult;
+      dispatch(setMockTokensResult(mockTokens));
+
+      dispatch(setMockCollectiblesResult(depositsEnabled));
     }
-  }, [owner, clubAddress]);
+  }, [owner, clubAddress, depositsEnabled]);
 
   useEffect(() => {
     // clear collectibles on account switch
     if (account && !isDemoMode) {
       dispatch(clearCollectiblesTransactions());
     }
-  }, [account, clubAddress, dispatch]);
+  }, [account, clubAddress, dispatch, isDemoMode]);
 
   /**
    * Fetch club details
@@ -171,8 +183,11 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
         dispatch(setClubMembers([]));
       };
     } else if (isDemoMode) {
-      // sets default demo token
-      dispatch(setERC20TokenDetails(mockActiveERC20Token));
+      const mockData =
+        isOpenForDeposits === "open"
+          ? mockDepositERC20Token
+          : mockActiveERC20Token;
+      dispatch(setERC20TokenDetails(mockData));
     }
   }, [clubAddress, account, status, syndicateContracts?.SingleTokenMintModule]);
 
