@@ -20,6 +20,7 @@ export const BeforeGettingStarted: React.FC = () => {
     const showBeforeGettingStartedVariable = localStorage.getItem(
       "showBeforeGettingStarted",
     );
+    console.log({ showBeforeGettingStartedVariable });
 
     if (showBeforeGettingStartedVariable == null || undefined) {
       localStorage.setItem("showBeforeGettingStarted", "true");
@@ -57,7 +58,9 @@ export const BeforeGettingStarted: React.FC = () => {
     } else {
       setError(false);
       localStorage.setItem("showBeforeGettingStarted", "false");
-      setShowBeforeGettingStarted(false);
+
+      // A short delay before setting this.
+      setTimeout(() => setShowBeforeGettingStarted(false), 500);
     }
   };
 
