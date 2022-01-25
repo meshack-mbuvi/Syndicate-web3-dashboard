@@ -232,7 +232,7 @@ const ManagerActions = (): JSX.Element => {
                             {!adminSigned && (
                               <div className="flex space-between mt-3">
                                 <input
-                                  className="bg-transparent rounded mt-1 focus:ring-offset-0"
+                                  className="bg-transparent rounded mt-1 focus:ring-offset-0 cursor-pointer"
                                   onChange={() =>
                                     setLinkShareAgreementChecked(
                                       !linkShareAgreementChecked,

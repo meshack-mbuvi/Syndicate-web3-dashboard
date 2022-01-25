@@ -275,7 +275,7 @@ const DepositLinkModal: FC<ILinkModal> = ({
                 className="border-1 border-gray-syn6 hover:border-blue hover:cursor-pointer rounded-1.5lg flex flex-col group"
                 onClick={() => startDocumentSigning("yes")}
               >
-                <div className="flex justify-between px-8 py-6 items-center leading-3.5">
+                <div className="flex justify-between px-8 py-6 items-center leading-3.5 cursor-pointer">
                   <div>
                     <div className="leading-6">
                       Yes, use default LLC agreements
