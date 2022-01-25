@@ -40,6 +40,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import { useDispatch, useSelector } from "react-redux";
 import Tooltip from "react-tooltip-lite";
+import Floater from "react-floater";
 import { InfoIcon } from "src/components/iconWrappers";
 import { SkeletonLoader } from "src/components/skeletonLoader";
 import ERC20ABI from "src/utils/abi/erc20";
@@ -121,6 +122,8 @@ const DepositSyndicate: React.FC = () => {
   const [transactionTooLong, setTransactionTooLong] = useState<boolean>(false);
   const [newMemberTokens, setNewMemberTokens] = useState(0);
   const [newOwnershipShare, setNewOwnershipShare] = useState(0);
+
+  const [isDemoTooltipOpen, setIsDemoTooltipOpen] = useState(false);
 
   const TRANSACTION_TOO_LONG_MSG =
     "This transaction is taking a while. You can speed it up by spending more gas via your wallet.";
@@ -215,10 +218,10 @@ const DepositSyndicate: React.FC = () => {
 
     /**
      * Since we have current total supply, current member tokens(accountTokens)
-     * and deposit amount, we can with high accuracy determine the new member 
+     * and deposit amount, we can with high accuracy determine the new member
      * ownership. This holds true for 1:1 relationship between tokens minted and
-     * amount deposited. 
-     * 
+     * amount deposited.
+     *
      * TODO: Update this for ETH. We need to determine the tokens to be minted
      * for each Ether deposited and sum it with account tokens and total supply.
      */
@@ -934,42 +937,110 @@ const DepositSyndicate: React.FC = () => {
                     </div>
                   )}
 
+                  {/* Demo Mode Overlay */}
+                  {isDemoTooltipOpen ? (
+                    <div className="fixed top-0 bottom-0 left-0 right-0 bg-black bg-opacity-60" />
+                  ) : null}
+
                   {!clubWideErrors ? (
                     <div className="mt-6 flex justify-center">
-                      <button
-                        className={`w-full rounded-lg text-base px-8 py-4 ${
-                          Boolean(depositError) ||
-                          !depositAmount ||
-                          submittingAllowanceApproval ||
-                          submitting ||
-                          insufficientBalance ||
-                          depositAmount === "0.00" ||
-                          isDemoMode
-                            ? "bg-gray-syn6 text-gray-syn4"
-                            : "bg-white text-black"
-                        } `}
-                        onClick={(e) => {
-                          if (submittingAllowanceApproval) {
+                      {isDemoMode ? (
+                        <Floater
+                          content={
+                            <div className="text-green-electric-lime text-sm">
+                              <p>
+                                Approve and sign transactions directly via your
+                                wallet.
+                              </p>
+                              <p className="mt-4">
+                                Action disabled in demo mode.
+                              </p>
+                            </div>
+                          }
+                          disableHoverToClick
+                          event="hover"
+                          eventDelay={0}
+                          placement="bottom"
+                          open={isDemoTooltipOpen}
+                          styles={{
+                            floater: {
+                              filter: "none",
+                            },
+                            container: {
+                              backgroundColor: "#293300",
+                              borderRadius: 5,
+                              color: "#fff",
+                              filter: "none",
+                              minHeight: "none",
+                              width: 310,
+                              padding: 12,
+                              textAlign: "center",
+                            },
+                            arrow: {
+                              color: "#293300",
+                              length: 8,
+                              spread: 10,
+                            },
+                            options: { zIndex: 250 },
+                            wrapper: {
+                              cursor: "pointer",
+                            },
+                          }}
+                        >
+                          <button
+                            className={`w-full rounded-lg text-base px-8 py-4 ${
+                              Boolean(depositError) ||
+                              !depositAmount ||
+                              submittingAllowanceApproval ||
+                              submitting ||
+                              insufficientBalance ||
+                              depositAmount === "0.00" ||
+                              isDemoMode
+                                ? "bg-gray-syn6 text-gray-syn4"
+                                : "bg-white text-black"
+                            } ${isDemoMode ? "cursor-pointer" : ""}`}
+                            onMouseEnter={() => setIsDemoTooltipOpen(true)}
+                            onMouseLeave={() => setIsDemoTooltipOpen(false)}
+                          >
+                            {depositButtonText}
+                          </button>
+                        </Floater>
+                      ) : (
+                        <button
+                          className={`w-full rounded-lg text-base px-8 py-4 ${
+                            Boolean(depositError) ||
+                            !depositAmount ||
+                            submittingAllowanceApproval ||
+                            submitting ||
+                            insufficientBalance ||
+                            depositAmount === "0.00" ||
+                            isDemoMode
+                              ? "bg-gray-syn6 text-gray-syn4"
+                              : "bg-white text-black"
+                          } `}
+                          onClick={(e) => {
+                            if (submittingAllowanceApproval) {
+                              toggleDepositProcessingModal();
+                              return;
+                            }
+                            if (!sufficientAllowanceSet) {
+                              handleAllowanceApproval(e);
+                            } else {
+                              investInSyndicate(depositAmount);
+                            }
                             toggleDepositProcessingModal();
-                            return;
+                          }}
+                          disabled={
+                            insufficientBalance ||
+                            depositAmount === "0.00" ||
+                            !depositAmount ||
+                            Boolean(depositError) ||
+                            isDemoMode
                           }
-                          if (!sufficientAllowanceSet) {
-                            handleAllowanceApproval(e);
-                          } else {
-                            investInSyndicate(depositAmount);
-                          }
-                          toggleDepositProcessingModal();
-                        }}
-                        disabled={
-                          insufficientBalance ||
-                          depositAmount === "0.00" ||
-                          !depositAmount ||
-                          Boolean(depositError) ||
-                          isDemoMode
-                        }
-                      >
-                        {depositButtonText}
-                      </button>
+                        >
+                          {depositButtonText}
+                        </button>
+                      )}
                     </div>
                   ) : (
                     <div className="font-whyte text-sm text-red-error flex mb-8 items-center">

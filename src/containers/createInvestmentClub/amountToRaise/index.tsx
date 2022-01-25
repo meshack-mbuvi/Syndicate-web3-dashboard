@@ -1,24 +1,24 @@
-import React, { useState, useEffect, useRef } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { AdvancedInputField } from "../shared/AdvancedInputField";
-import useUSDCDetails from "@/hooks/useUSDCDetails";
-import Image from "next/image";
-import {
-  numberWithCommas,
-  numberInputRemoveCommas,
-} from "@/utils/formattedNumbers";
-import { useCreateInvestmentClubContext } from "@/context/CreateInvestmentClubContext";
-import { setTokenCap } from "@/state/createInvestmentClub/slice";
-import { AppState } from "@/state";
 import Fade from "@/components/Fade";
 import Modal, { ModalStyle } from "@/components/modal";
+import { useCreateInvestmentClubContext } from "@/context/CreateInvestmentClubContext";
+import useUSDCDetails from "@/hooks/useUSDCDetails";
+import { AppState } from "@/state";
+import { setTokenCap } from "@/state/createInvestmentClub/slice";
+import {
+  numberInputRemoveCommas,
+  numberWithCommas,
+} from "@/utils/formattedNumbers";
+import Image from "next/image";
+import React, { useEffect, useRef, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { AdvancedInputField } from "../shared/AdvancedInputField";
 
 const AmountToRaise: React.FC<{
   className?: string;
   editButtonClicked?: boolean;
 }> = ({ className, editButtonClicked }) => {
   const {
-    createInvestmentClubSliceReducer: { tokenCap },
+    createInvestmentClubSliceReducer: { tokenCap, investmentClubSymbol },
   } = useSelector((state: AppState) => state);
 
   const [error, setError] = useState<string | React.ReactNode>("");
@@ -117,22 +117,12 @@ const AmountToRaise: React.FC<{
               type: "text",
               isNumber: true,
               focus,
-              addSettingDisclaimer: true,
+              addSettingDisclaimer: false,
               extraAddon: extraAddonContent,
               moreInfo: (
                 <div>
-                  Investing in crypto can be risky. Syndicate strongly
-                  encourages all users to consult with their own legal and tax
-                  advisors prior to launch.{" "}
-                  <span
-                    role="button"
-                    tabIndex={0}
-                    className=" text-blue-navy cursor-pointer"
-                    onClick={() => setShowDisclaimerModal(true)}
-                    onKeyDown={() => setShowDisclaimerModal(true)}
-                  >
-                    Learn more.
-                  </span>
+                  Members will receive 1 ✺{investmentClubSymbol} club token for
+                  every 1 USDC deposited.
                 </div>
               ),
               className: className,

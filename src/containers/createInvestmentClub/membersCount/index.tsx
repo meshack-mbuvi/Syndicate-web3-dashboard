@@ -1,24 +1,35 @@
+import { EmailSupport } from "@/components/emailSupport";
+import Fade from "@/components/Fade";
+import { useCreateInvestmentClubContext } from "@/context/CreateInvestmentClubContext";
+import { AppState } from "@/state";
+import { setMembersCount } from "@/state/createInvestmentClub/slice";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { InputFieldWithMax } from "../shared/InputFieldWithMax";
-import { setMembersCount } from "@/state/createInvestmentClub/slice";
 import MaxButton from "../shared/MaxButton";
-import { useCreateInvestmentClubContext } from "@/context/CreateInvestmentClubContext";
-import { AppState } from "@/state";
-import Fade from "@/components/Fade";
 
-const ERROR_MESSAGE = "Between 1 and 99 accepted";
-const MEMBER_COUNT_WARNING =
-  "Permitting more than 99 members may create significant adverse legal and/or tax consequences. Please consult with an attorney before doing so.";
+const ERROR_MESSAGE = (
+  <span>
+    Between 1 and 99 accepted to maintain investment club status. Reach out to
+    us at <EmailSupport href="hello@syndicate.io" className="text-blue" /> if
+    you’re looking to involve more members.
+  </span>
+);
+// const MEMBER_COUNT_WARNING =
+//   "Permitting more than 99 members may create significant adverse legal and/or tax consequences. Please consult with an attorney before doing so.";
 const MAX_MEMBERS_ALLOWED = "99";
 
-const MembersCount: React.FC<{ className?: string, editButtonClicked?: boolean }> = ({ className, editButtonClicked }) => {
+const MembersCount: React.FC<{
+  className?: string;
+  editButtonClicked?: boolean;
+  setInputHasError?: (state: boolean) => void;
+}> = ({ className, editButtonClicked, setInputHasError }) => {
   const {
     createInvestmentClubSliceReducer: { membersCount },
   } = useSelector((state: AppState) => state);
 
   const [membersNumCount, setMembersNumCount] = useState(membersCount);
-  const [memberCountError, setMemberCountError] = useState("");
+  const [memberCountError, setMemberCountError] = useState(null);
   const [memberCountWarning, setMemberCountWarning] = useState<string>("");
   const [isInputError, setIsInputError] = useState(false);
   const { setNextBtnDisabled } = useCreateInvestmentClubContext();
@@ -27,23 +38,39 @@ const MembersCount: React.FC<{ className?: string, editButtonClicked?: boolean }
   const { setShowNextButton, handleNext } = useCreateInvestmentClubContext();
 
   useEffect(() => {
-    if (!membersNumCount || editButtonClicked) {
+    if (setInputHasError) {
+      setInputHasError(isInputError);
+    }
+  }, [isInputError]);
+
+  useEffect(() => {
+    if (!membersNumCount) {
       setNextBtnDisabled(true);
       setMemberCountError("");
       setIsInputError(false);
-    } else if ((+membersNumCount < 0 || +membersNumCount === 0) || editButtonClicked) {
+    } else if (+membersNumCount < 0 || +membersNumCount === 0) {
       setNextBtnDisabled(true);
       setMemberCountError(ERROR_MESSAGE);
       setIsInputError(true);
     } else if (+membersNumCount > 99) {
-      setMemberCountWarning(MEMBER_COUNT_WARNING);
+      // Adding hard cap of 99 for launch
+      // setMemberCountWarning(MEMBER_COUNT_WARNING);
+      setNextBtnDisabled(true);
+      setMemberCountError(ERROR_MESSAGE);
+      setIsInputError(true);
     } else {
       setMemberCountError("");
       setMemberCountWarning("");
       setIsInputError(false);
-      setNextBtnDisabled(false);
+      if (editButtonClicked) {
+        setNextBtnDisabled(true);
+      } else {
+        setNextBtnDisabled(false);
+      }
     }
-    (membersNumCount) ? dispatch(setMembersCount(membersNumCount)) : dispatch(setMembersCount("1"))
+    membersNumCount
+      ? dispatch(setMembersCount(membersNumCount))
+      : dispatch(setMembersCount("1"));
   }, [membersNumCount, dispatch, editButtonClicked, setNextBtnDisabled]);
 
   const handleSetMax = () => {
@@ -63,7 +90,9 @@ const MembersCount: React.FC<{ className?: string, editButtonClicked?: boolean }
       <div className="flex w-full pb-6">
         <InputFieldWithMax
           {...{
-            value: (membersNumCount) ? parseInt(membersNumCount.replace(/^0+/, "")) : parseInt(""),
+            value: membersNumCount
+              ? parseInt(membersNumCount.replace(/^0+/, ""))
+              : parseInt(""),
             label: "How many members can join?",
             addOn: <MaxButton handleClick={() => handleSetMax()} />,
             onChange: handleSetMembersCount,
@@ -71,9 +100,9 @@ const MembersCount: React.FC<{ className?: string, editButtonClicked?: boolean }
             warning: memberCountWarning,
             hasError: Boolean(isInputError),
             type: "number",
-            addSettingDisclaimer: true,
+            addSettingDisclaimer: false,
             moreInfo: "You can invite up to 99 members",
-            className: className
+            className: className,
           }}
         />
       </div>
