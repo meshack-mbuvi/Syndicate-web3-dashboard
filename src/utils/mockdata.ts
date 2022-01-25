@@ -152,11 +152,11 @@ export const mockCollectiblesResult = [
       slug: "cryptopunks",
     },
     slug: "cryptopunks",
-    description: null,
-    floorPrice: null,
+    description: "CryptoPunks launched as a fixed set of 10,000 items in mid-2017 and became one of the inspirations for the ERC-721 standard. They have been featured in places like The New York Times, Christie’s of London, Art|Basel Miami, and The PBS NewsHour.",
+    floorPrice: 2.5,
     lastPurchasePrice: {
-      lastPurchasePriceUSD: 0,
-      lastPurchasePriceETH: 0,
+      lastPurchasePriceUSD: 8498,
+      lastPurchasePriceETH: 3.5,
     },
   },
   {
@@ -176,8 +176,8 @@ export const mockCollectiblesResult = [
       "You are a WITCH with cunning beyond measure. You pluck secrets from the universe like leaves from a tree. Your magic spawns from bone broth and broccoli. People from all places travel to linger below your balcony and bask in your beauty. FLOURISH MY FRIEND!",
     floorPrice: 1.6,
     lastPurchasePrice: {
-      lastPurchasePriceUSD: 0,
-      lastPurchasePriceETH: 0,
+      lastPurchasePriceUSD: 4321.84,
+      lastPurchasePriceETH: 1.78,
     },
   },
   {
@@ -197,8 +197,8 @@ export const mockCollectiblesResult = [
       "World of Women: 10,000 unique, cool and diverse Women living on the Blockchain.",
     floorPrice: 7,
     lastPurchasePrice: {
-      lastPurchasePriceUSD: 0,
-      lastPurchasePriceETH: 0,
+      lastPurchasePriceUSD: 14033.84,
+      lastPurchasePriceETH: 4.78,
     },
   },
   {
@@ -218,8 +218,8 @@ export const mockCollectiblesResult = [
       "The Rug Radio NFT is a Utility NFT that yields token based on the scarcity of the rug. The longer you hold the utility NFT, the more tokens you will receive.\n\nTokens yield per day:\n\nRare 1 & 2 = 11, Scarce 1 & 2 = 7, Standard = 5\n\nTo learn more about the RugRadio ecosystem, join our Discord or visit http://rug.fm/",
     floorPrice: 0.27,
     lastPurchasePrice: {
-      lastPurchasePriceUSD: 0,
-      lastPurchasePriceETH: 0,
+      lastPurchasePriceUSD: 607,
+      lastPurchasePriceETH: 0.25,
     },
   },
   {
@@ -239,8 +239,8 @@ export const mockCollectiblesResult = [
       "Loot is randomized adventurer gear generated and stored on chain. Stats, images, and other functionality are intentionally omitted for others to interpret. Feel free to use Loot in any way you want.",
     floorPrice: 2.29,
     lastPurchasePrice: {
-      lastPurchasePriceUSD: 0,
-      lastPurchasePriceETH: 0,
+      lastPurchasePriceUSD: 3860.52,
+      lastPurchasePriceETH: 1.59,
     },
   },
   {
@@ -260,8 +260,8 @@ export const mockCollectiblesResult = [
       "Chain Runners are Mega City renegades 100% generated on chain.",
     floorPrice: 0.585,
     lastPurchasePrice: {
-      lastPurchasePriceUSD: 0,
-      lastPurchasePriceETH: 0,
+      lastPurchasePriceUSD: 728.4,
+      lastPurchasePriceETH: 0.3,
     },
   },
   {
@@ -282,8 +282,8 @@ export const mockCollectiblesResult = [
       "Holding the Poolsuite Executive Member card suggests your esteemed presence within the crème de la crème of internet high society, and says a lot about the way you live your life on the web. This NFT can be connected to your account at Poolsuite.net to unlock perks, including early access to all Poolsuite projects.",
     floorPrice: 1.5,
     lastPurchasePrice: {
-      lastPurchasePriceUSD: 0,
-      lastPurchasePriceETH: 0,
+      lastPurchasePriceUSD: 3399.72,
+      lastPurchasePriceETH: 1.4,
     },
   },
   {
@@ -303,8 +303,8 @@ export const mockCollectiblesResult = [
     description: null,
     floorPrice: 0.61,
     lastPurchasePrice: {
-      lastPurchasePriceUSD: 0,
-      lastPurchasePriceETH: 0,
+      lastPurchasePriceUSD: 1214,
+      lastPurchasePriceETH: 0.5,
     },
   },
   {
@@ -324,8 +324,8 @@ export const mockCollectiblesResult = [
       "Cool Cats is a collection of 9,999 randomly generated and stylistically curated NFTs that exist on the Ethereum Blockchain. Cool Cat holders can participate in exclusive events such as NFT claims, raffles, community giveaways, and more. Remember, all cats are cool, but some are cooler than others. Visit [www.coolcatsnft.com](https://www.coolcatsnft.com/) to learn more.",
     floorPrice: 11.89,
     lastPurchasePrice: {
-      lastPurchasePriceUSD: 0,
-      lastPurchasePriceETH: 0,
+      lastPurchasePriceUSD: 25008.40,
+      lastPurchasePriceETH: 10.3,
     },
   },
   {
@@ -346,8 +346,8 @@ export const mockCollectiblesResult = [
       "LIT Project Two with Robert De Niro is a dynamic NFT programmed to react to the movement of Ethereum in different time increments. Zoom in or zoom out. Reflect. Match multiple Motions for multiple perspectives. Every wallet needs a watcher.\n\nSmart contract & metadata by Transient Labs.",
     floorPrice: 0.1,
     lastPurchasePrice: {
-      lastPurchasePriceUSD: 0,
-      lastPurchasePriceETH: 0,
+      lastPurchasePriceUSD: 1699.6,
+      lastPurchasePriceETH: 0.7,
     },
   },
 ];
