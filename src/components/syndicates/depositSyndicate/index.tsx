@@ -45,8 +45,8 @@ import { InfoIcon } from "src/components/iconWrappers";
 import { SkeletonLoader } from "src/components/skeletonLoader";
 import ERC20ABI from "src/utils/abi/erc20";
 import { AbiItem } from "web3-utils";
+import BeforeGettingStarted from "../../beforeGettingStarted";
 import ConnectWalletAction from "../shared/connectWalletAction";
-import { BeforeGettingStarted } from "./beforeGettingStarted";
 
 const DepositSyndicate: React.FC = () => {
   // HOOK DECLARATIONS
