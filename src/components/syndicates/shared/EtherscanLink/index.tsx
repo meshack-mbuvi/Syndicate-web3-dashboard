@@ -1,9 +1,9 @@
+import { isDev } from "@/utils/environment";
 import React from "react";
 import {
   ExternalLinkIcon,
   OpenExternalLinkIcon,
 } from "src/components/iconWrappers";
-import { isDev } from "@/utils/environment";
 
 interface LinkProp {
   etherscanInfo: string | string[];
@@ -12,6 +12,7 @@ interface LinkProp {
   iconOnly?: boolean;
   text?: string;
   grouped?: boolean;
+  grayIcon?: boolean;
 }
 
 /** Link used to redirect the user to the Etherscan
@@ -26,12 +27,15 @@ export const EtherscanLink: React.FC<LinkProp> = (props) => {
     iconOnly,
     text = "Etherscan",
     grouped,
+    grayIcon = false,
   } = props;
+
   // get debug mode from the .env
   // If we're in debug mode, we'll use the rinkeby testnet.
   let etherscanLink = `https://etherscan.io/${
     type === "transaction" ? "tx" : "address"
   }/`;
+
   if (isDev) {
     etherscanLink = `https://rinkeby.etherscan.io/${
       type === "transaction" ? "tx" : "address"
@@ -52,10 +56,14 @@ export const EtherscanLink: React.FC<LinkProp> = (props) => {
       )}
       {!iconOnly ? (
         <p className="flex items-center">
-          {text} <ExternalLinkIcon className="ml-2 w-4 text-blue" />
+          {text}{" "}
+          <ExternalLinkIcon
+            className={`ml-2 w-4 text-blue`}
+            grayIcon={grayIcon}
+          />
         </p>
       ) : !grouped ? (
-        <ExternalLinkIcon grayIcon className="ml-2 w-4 text-blue" />
+        <ExternalLinkIcon grayIcon className={`ml-2 w-4 text-blue`} />
       ) : null}
     </a>
   );

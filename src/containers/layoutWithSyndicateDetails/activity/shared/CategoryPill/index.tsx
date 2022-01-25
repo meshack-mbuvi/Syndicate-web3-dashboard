@@ -28,6 +28,7 @@ interface ICategoryPill {
   showLoader?: boolean;
   setActiveTransactionHash?: (transactionHashes: Array<string>) => void;
   uncategorisedIcon?: string;
+  disableDropDown?: boolean;
 }
 
 /**
@@ -52,6 +53,7 @@ export const CategoryPill: React.FC<ICategoryPill> = ({
   showLoader = false,
   setActiveTransactionHash,
   uncategorisedIcon,
+  disableDropDown,
 }) => {
   const dispatch = useDispatch();
   const {
@@ -133,6 +135,10 @@ export const CategoryPill: React.FC<ICategoryPill> = ({
         setPillIcon("investment-tokens.svg");
         setPillText("Investment token");
         break;
+      case "OFF_CHAIN_INVESTMENT":
+        setPillIcon("offchain-investment.svg");
+        setPillText("Off-chain investment");
+        break;
       case "OTHER":
         setPillIcon("other-transaction.svg");
         setPillText("Other");
@@ -140,6 +146,14 @@ export const CategoryPill: React.FC<ICategoryPill> = ({
       case "SELECT_CATEGORY":
         setPillIcon("select-category.svg");
         setPillText("Select category");
+        break;
+      case "TOKEN":
+        setPillIcon("token.svg");
+        setPillText("Token");
+        break;
+      case "COLLECTIBLE":
+        setPillIcon("collectibleIcon.svg");
+        setPillText("Collectible");
         break;
       default:
         if (bulkCategoriseTransactions) {
@@ -241,12 +255,17 @@ export const CategoryPill: React.FC<ICategoryPill> = ({
     if (readonly && renderedInline && showDropdown) {
       setShowDropdown(false);
     }
-  }, [readonly, renderedInline, showDropdown]);
+    if (disableDropDown) {
+      setShowDropdown(false);
+    }
+  }, [readonly, renderedInline, showDropdown, disableDropDown]);
 
   const closeDropDown = () => {
     if (renderedInline && readonly) {
       setShowDropdown(false);
+      return;
     }
+    setShowDropdown(!disableDropDown);
   };
 
   return (

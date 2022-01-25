@@ -14,13 +14,13 @@ import { numberWithCommas } from "@/utils/formattedNumbers";
 // See this issue to find out why yup is imported this way
 // https://github.com/react-hook-form/resolvers/issues/271
 import { yupResolver } from "@hookform/resolvers/yup";
-import ArrowDown from "/public/images/arrowDown.svg";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import * as yup from "yup";
+import ArrowDown from "/public/images/arrowDown.svg";
 
 interface FormInputs {
   memberName: string;
@@ -77,7 +77,6 @@ const LegalAgreement: React.FC = () => {
         setERC20Token(
           clubERC20tokenContract,
           syndicateContracts.SingleTokenMintModule,
-          account,
         ),
       );
 
@@ -93,11 +92,14 @@ const LegalAgreement: React.FC = () => {
   const {
     control,
     handleSubmit,
+    watch,
     formState: { isValid },
   } = useForm<FormInputs>({
     mode: "onChange",
     resolver: yupResolver(schema(erc20Token.maxTotalDeposits)),
   });
+
+  const { memberName = "" } = watch();
 
   const { form } = router.query;
   // Check whether form query param exist when page has loaded
@@ -140,7 +142,9 @@ const LegalAgreement: React.FC = () => {
               name="memberName"
               control={control}
               placeholder="Member’s full name"
-              showWarning={true}
+              showWarning={
+                memberName && memberName?.trim().split(" ").length < 2
+              }
               warningText="Member name should have first and last names"
             />
 
@@ -151,7 +155,7 @@ const LegalAgreement: React.FC = () => {
               addOn={depositTokenSymbol}
               control={control}
               info="Total amount you intend to deposit"
-              addOnStyles=''
+              addOnStyles=""
             />
 
             <TextField

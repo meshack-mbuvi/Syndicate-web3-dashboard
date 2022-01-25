@@ -1,15 +1,15 @@
 import { NumberField, TextField } from "@/components/inputs";
 import ActivityDatePicker from "@/containers/layoutWithSyndicateDetails/activity/shared/ActivityDatePicker";
+import { DataStorageInfo } from "@/containers/layoutWithSyndicateDetails/activity/shared/DataStorageInfo";
 import RoundDropDown from "@/containers/layoutWithSyndicateDetails/activity/shared/InvestmentDetails/InvestmentDetails/RoundDropDown";
+import PiiWarning from "@/containers/layoutWithSyndicateDetails/activity/shared/PiiWarning";
+import { ANNOTATE_TRANSACTIONS } from "@/graphql/mutations";
+import { AppState } from "@/state";
+import { useMutation } from "@apollo/client";
+import { isEmpty } from "lodash";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import PiiWarning from "@/containers/layoutWithSyndicateDetails/activity/shared/PiiWarning";
-import { ANNOTATE_TRANSACTIONS } from "@/graphql/mutations";
-import { useMutation } from "@apollo/client";
-import { DataStorageInfo } from "@/containers/layoutWithSyndicateDetails/activity/shared/DataStorageInfo";
-import { isEmpty } from "lodash";
-import { AppState } from "@/state";
 import { useSelector } from "react-redux";
 
 interface Details {
@@ -32,6 +32,7 @@ interface IInvestmentDetailsModal {
   transactionId: string;
   setStoredInvestmentDetails: (details) => void;
   isManager: boolean;
+  onSuccessfulAnnotation: () => void;
 }
 
 const InvestmentDetailsModal: React.FC<IInvestmentDetailsModal> = ({
@@ -42,6 +43,7 @@ const InvestmentDetailsModal: React.FC<IInvestmentDetailsModal> = ({
   transactionId,
   setStoredInvestmentDetails,
   isManager,
+  onSuccessfulAnnotation,
 }) => {
   const disabled = !editMode;
   const [hover, setHover] = useState<boolean>(false);
@@ -66,8 +68,6 @@ const InvestmentDetailsModal: React.FC<IInvestmentDetailsModal> = ({
     reset,
     getValues,
     setValue,
-    setFocus,
-    register,
     formState: { isDirty, dirtyFields },
   } = useForm<Details>({
     mode: "onChange",
@@ -84,15 +84,12 @@ const InvestmentDetailsModal: React.FC<IInvestmentDetailsModal> = ({
   useEffect(() => {
     if (!storedInvestmentDetails?.investmentDate) {
       //  Set the date to the current block timestamp
-      setValue("investmentDate", new Date(blockTimestamp * 1000).toISOString());
+      setValue("investmentDate", new Date(null).toISOString());
     }
   }, [blockTimestamp, storedInvestmentDetails?.investmentDate]);
 
   // Annotation
-  const [
-    annotationMutation,
-    { data: annotationData, loading: annotationLoading, error: err },
-  ] = useMutation(ANNOTATE_TRANSACTIONS);
+  const [annotationMutation] = useMutation(ANNOTATE_TRANSACTIONS);
 
   const formValues = getValues();
   const {
@@ -107,37 +104,23 @@ const InvestmentDetailsModal: React.FC<IInvestmentDetailsModal> = ({
   } = formValues;
 
   const onSubmit = (values) => {
-    const newObj = {
+    // fields without values will be sent to the backend as an empty string
+    // this makes it possible to remove a previously set value.
+    const detailsAnnotationData = {
       transactionId: transactionId,
-      ...(values.companyName && {
-        companyName: values.companyName,
-      }),
-      ...(values?.costBasis && {
-        postMoneyValuation: values?.costBasis,
-      }),
-      ...(values?.currentInvestmentValue && {
-        preMoneyValuation: values?.currentInvestmentValue,
-      }),
-      ...(values?.investmentDate && {
-        acquisitionDate: new Date(values?.investmentDate).toISOString(),
-      }),
-      ...(values?.fullyDilutedOwnershipStake && {
-        equityStake: values?.fullyDilutedOwnershipStake,
-      }),
-      ...(values?.numberTokens && {
-        tokenAmount: values?.numberTokens,
-      }),
-      ...(values?.numberShares && {
-        sharesAmount: values?.numberShares,
-      }),
-      ...(values?.investmentRound && {
-        roundCategory: values?.investmentRound,
-      }),
+      companyName: values?.companyName,
+      postMoneyValuation: values?.costBasis,
+      preMoneyValuation: values?.currentInvestmentValue,
+      acquisitionDate: new Date(values?.investmentDate).toISOString(),
+      equityStake: values?.fullyDilutedOwnershipStake,
+      tokenAmount: values?.numberTokens,
+      sharesAmount: values?.numberShares,
+      roundCategory: values?.investmentRound,
     };
 
     annotationMutation({
       variables: {
-        transactionAnnotationList: [{ ...newObj }],
+        transactionAnnotationList: [{ ...detailsAnnotationData }],
       },
       context: { clientName: "backend" },
     });
@@ -146,12 +129,14 @@ const InvestmentDetailsModal: React.FC<IInvestmentDetailsModal> = ({
       keepValues: true,
     });
     onClick(values);
+    onSuccessfulAnnotation();
   };
 
   const borderStyles =
     "border-b-1 border-gray-syn6 border-collapse text-gray-syn4";
   const dateBorderStyles = `w-full flex-row ${borderStyles}`;
   const details = Object.values(formValues);
+
   return (
     <>
       {editMode || details.join("").length ? (

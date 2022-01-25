@@ -6,16 +6,16 @@ import { Status } from "@/state/wallet/types";
 import { useRouter } from "next/router";
 import React, { FC, useEffect } from "react";
 import { useSelector } from "react-redux";
-import { SyndicateInBetaBanner } from "src/components/banners";
 import ConnectWallet from "src/components/connectWallet";
 import Header from "src/components/navigation/header";
+import DemoBanner from "../demoBanner";
 import ProgressBar from "../ProgressBar";
 import SEO from "../seo";
 
 interface Props {
   backLink?: string;
   showNav?: boolean;
-  navItems?: { url: string; urlText: string }[];
+  navItems?: { navItemText: string; url?: string; isLegal?: boolean }[];
 }
 
 const Layout: FC<Props> = ({
@@ -25,7 +25,7 @@ const Layout: FC<Props> = ({
   navItems = [
     {
       url: "/clubs",
-      urlText: "Portfolio",
+      navItemText: "Portfolio",
     },
   ],
 }) => {
@@ -48,8 +48,7 @@ const Layout: FC<Props> = ({
 
   const isOwner = useIsClubOwner();
 
-  const showCreateProgressBar =
-    router.pathname === "/clubs/create/clubprivatebetainvite";
+  const showCreateProgressBar = router.pathname === "/clubs/create";
   const portfolioPage = router.pathname === "/clubs" || router.pathname === "/";
 
   const { currentStep, steps, preClubCreationStep } =
@@ -65,8 +64,7 @@ const Layout: FC<Props> = ({
     onPortfolioPage || !account || loading || loadingClubDetails;
 
   // we don't need to render the footer on the creation page.
-  const createClubPage =
-    router.pathname === "/clubs/create/clubprivatebetainvite";
+  const createClubPage = router.pathname === "/clubs/create";
 
   const handleRouting = () => {
     if (pathname.includes("/manage") && !isOwner) {
@@ -106,12 +104,12 @@ const Layout: FC<Props> = ({
           title="Home"
         />
         <Header backLink={backLink} show={showNav} navItems={navItems} />
+        <DemoBanner />
         <div
-          className={`sticky top-18 z-20 ${
-            showCreateProgressBar ? "bg-black z-20 backdrop-filter" : ""
+          className={`sticky top-18 ${
+            showCreateProgressBar ? "bg-black backdrop-filter" : ""
           }`}
         >
-          <SyndicateInBetaBanner />
           {showCreateProgressBar && account ? (
             <div className="pt-6 bg-black">
               <ProgressBar

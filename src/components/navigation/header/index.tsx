@@ -8,7 +8,7 @@ import WalletComponent from "./wallet";
 interface props {
   backLink: string;
   show?: boolean;
-  navItems: { url: string; urlText: string }[];
+  navItems: { navItemText: string; url?: string; isLegal?: boolean }[];
 }
 
 const Header: React.FC<props> = ({
@@ -20,7 +20,7 @@ const Header: React.FC<props> = ({
     <nav
       className={`${
         show ? "block" : "hidden"
-      } bg-black h-20 fixed top-0 inset-x-0 align-middle z-20 backdrop-filter backdrop-blur-xl`}
+      } bg-black h-20 fixed top-0 inset-x-0 align-middle z-30 backdrop-filter backdrop-blur-xl`}
     >
       <div className="container mx-auto flex justify-between h-full">
         {/* This back link is only displayed on mobile sizes */}
@@ -45,8 +45,8 @@ const Header: React.FC<props> = ({
         >
           {" "}
           {/* Navbar links  */}
-          {navItems.map(({ url, urlText }, index) => (
-            <NavBarNavItem key={index} url={url} urlText={urlText} />
+          {navItems.map(({ navItemText, url, isLegal }, index) => (
+            <NavBarNavItem key={index} navItemText={navItemText} url={url} isLegal={isLegal} />
           ))}
         </div>
         {/* logo */}

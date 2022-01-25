@@ -82,6 +82,10 @@ const RoundDropDown: React.FC<IRoundDropDown> = ({
     };
   }, [showDropdown, setShowDropdown]);
 
+  const closeDropDown = () => {
+    setShowDropdown(false);
+  };
+
   const handleSelect = (round) => {
     if (!round) {
       setShowInputField(true);
@@ -106,6 +110,7 @@ const RoundDropDown: React.FC<IRoundDropDown> = ({
       onClick={() => toggleDropdown()}
       ref={categorySelect}
       aria-hidden="true"
+      onMouseLeave={() => closeDropDown()}
     >
       {label ? (
         <div className={`my-auto w-2/5 leading-5 text-gray-syn4`}>{label}</div>

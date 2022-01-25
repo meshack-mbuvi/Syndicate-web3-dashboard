@@ -1,8 +1,14 @@
+import { amplitudeLogger, Flow } from "@/components/amplitude";
+import {
+  CREATE_INVESTMENT_CLUB,
+  ERROR_INVESTMENT_CLUB_CREATION,
+} from "@/components/amplitude/eventNames";
 import { metamaskConstants } from "@/components/syndicates/shared/Constants";
 import { getMetamaskError } from "@/helpers";
 import useUSDCDetails from "@/hooks/useUSDCDetails";
 import { AppState } from "@/state";
 import {
+  resetClubCreationReduxState,
   setClubCreationReceipt,
   setTransactionHash,
 } from "@/state/createInvestmentClub/slice";
@@ -44,6 +50,7 @@ type CreateInvestmentClubProviderProps = {
   errorModalMessage: string;
   preClubCreationStep: string;
   setPreClubCreationStep: Dispatch<SetStateAction<string>>;
+  resetCreationStates: () => void;
 };
 
 const CreateInvestmentClubContext = createContext<
@@ -97,6 +104,17 @@ const CreateInvestmentClubProvider: React.FC = ({ children }) => {
     errorModal: false,
   });
 
+  const resetCreationStates = () => {
+    dispatch(resetClubCreationReduxState());
+    setCurrentStep(0);
+    setPreClubCreationStep("invite");
+    setShowModal(() => ({
+      waitingConfirmationModal: false,
+      transactionModal: false,
+      errorModal: false,
+    }));
+  };
+
   const reviewStep = currentStep === steps.length - 1;
   const lastStep = currentStep === steps.length - 2;
   const firstStep = currentStep === 0;
@@ -112,13 +130,17 @@ const CreateInvestmentClubProvider: React.FC = ({ children }) => {
 
   const handleNext = () => {
     setShowNextButton(true);
-    setCurrentStep((prev) => prev + 1);
+    if (currentStep < 4) {
+      setCurrentStep((prev) => prev + 1);
+    }
   };
 
   const handleBack = () => {
     setNextBtnDisabled(false);
     setShowNextButton(true);
-    setCurrentStep((prev) => prev - 1);
+    if (currentStep > 0) {
+      setCurrentStep((prev) => prev - 1);
+    }
   };
 
   const onTxConfirm = (transactionHash: string) => {
@@ -132,7 +154,7 @@ const CreateInvestmentClubProvider: React.FC = ({ children }) => {
 
   const onTxReceipt = (receipt) => {
     dispatch(
-      setClubCreationReceipt(receipt.events.ClubERC20Created.returnValues),
+      setClubCreationReceipt(receipt.events.ERC20ClubCreated.returnValues),
     );
     dispatch(setTransactionHash(""));
     setShowModal(() => ({
@@ -146,7 +168,7 @@ const CreateInvestmentClubProvider: React.FC = ({ children }) => {
     try {
       setProcessingTitle("Confirm in wallet");
       setProcessingDescription(
-        "Confirm the creation of this investment club in your wallet",
+        "Confirm the creation of this investment club in your wallet.",
       );
       setShowModal(() => ({
         waitingConfirmationModal: true,
@@ -167,6 +189,9 @@ const CreateInvestmentClubProvider: React.FC = ({ children }) => {
         onTxConfirm,
         onTxReceipt,
       );
+      amplitudeLogger(CREATE_INVESTMENT_CLUB, {
+        flow: Flow.CLUB_CREATION,
+      });
     } catch (error) {
       const { code } = error;
       if (code) {
@@ -181,6 +206,10 @@ const CreateInvestmentClubProvider: React.FC = ({ children }) => {
         transactionModal: false,
         errorModal: true,
       }));
+      amplitudeLogger(ERROR_INVESTMENT_CLUB_CREATION, {
+        flow: Flow.CLUB_CREATION,
+        error,
+      });
     }
   };
 
@@ -211,6 +240,7 @@ const CreateInvestmentClubProvider: React.FC = ({ children }) => {
         backBtnDisabled,
         nextBtnDisabled,
         handleCreateInvestmentClub,
+        setBackBtnDisabled,
         setNextBtnDisabled,
         showNextButton,
         setShowNextButton,
@@ -223,6 +253,7 @@ const CreateInvestmentClubProvider: React.FC = ({ children }) => {
         errorModalMessage,
         preClubCreationStep,
         setPreClubCreationStep,
+        resetCreationStates,
       }}
     >
       {children}

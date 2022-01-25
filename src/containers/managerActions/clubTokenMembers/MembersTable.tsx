@@ -4,6 +4,7 @@ import { Spinner } from "@/components/shared/spinner";
 import { SET_MEMBER_SIGN_STATUS } from "@/graphql/mutations";
 import { MEMBER_SIGNED_QUERY } from "@/graphql/queries";
 import { useIsClubOwner } from '@/hooks/useClubOwner';
+import { useDemoMode } from "@/hooks/useDemoMode";
 import useUSDCDetails from "@/hooks/useUSDCDetails";
 import { AppState } from "@/state";
 import { formatAddress } from "@/utils/formatAddress";
@@ -27,14 +28,14 @@ const MembersTable = ({
 }): JSX.Element => {
   const {
     erc20TokenSliceReducer: {
-      erc20Token: { symbol},
+      erc20Token: { symbol },
     },
     web3Reducer: {
       web3: { account },
     },
   } = useSelector((state: AppState) => state);
 
-  const isOwner = useIsClubOwner()
+  const isOwner = useIsClubOwner();
 
   const { depositTokenSymbol } = useUSDCDetails();
 
@@ -123,6 +124,8 @@ const MembersTable = ({
       refetchMemberStatus();
     }
   }, [clubAddress, memberAddress, loading]);
+
+  const isDemoMode = useDemoMode();
 
   const handleClick = (memberData) => {
     const { clubTokens, depositAmount, memberAddress, ownershipShare } =
@@ -231,9 +234,7 @@ const MembersTable = ({
                 <tr
                   {...row.getRowProps()}
                   key={index}
-                  className={`w-full text-base grid grid-cols-12 gap-5 ${
-                    isOwner == true && "cursor-pointer"
-                  } border-gray-syn6 text-left`}
+                  className={`w-full text-base grid grid-cols-12 gap-5 cursor-pointer border-gray-syn6 text-left`}
                   onClick={() => {
                     handleClick(row.original);
                   }}
@@ -316,18 +317,19 @@ const MembersTable = ({
         ""
       )}
 
-      {isOwner && account ? (
+      {account || isDemoMode ? (
         <Modal
           {...{
             show: showMemberDetailsModal,
             modalStyle: ModalStyle.DARK,
             showCloseButton: false,
-            customWidth: "w-2/5",
+            customWidth: "w-730",
             outsideOnClick: true,
             closeModal: closeMemberDetailsModal,
             customClassName: "py-8",
             showHeader: false,
             overflowYScroll: false,
+            overflowXScroll: false,
             overflow: "overflow-visible",
           }}
         >
@@ -369,17 +371,32 @@ const MembersTable = ({
 
                   <div className="py-4 flex justify-between border-b-1 border-gray-24">
                     <div className="text-gray-syn4 pr-4">Legal agreements</div>
-                    <div className=" no-scroll-bar">
-                      {memberDocSignLoading || loading ? (
-                        <Spinner width="w-5" height="h-5" margin="mr-4" />
-                      ) : (
-                        <SignerMenu
-                          titleIndex={hasMemberSigned ? 0 : 1}
-                          setSelectedIndex={handleSetSelected}
-                          menuItems={menuItems}
-                        />
-                      )}
-                    </div>
+                    {isOwner ? (
+                      <div className="no-scroll-bar">
+                        {memberDocSignLoading || loading ? (
+                          <Spinner width="w-5" height="h-5" margin="mr-4" />
+                        ) : (
+                          <SignerMenu
+                            titleIndex={hasMemberSigned ? 0 : 1}
+                            setSelectedIndex={handleSetSelected}
+                            menuItems={menuItems}
+                          />
+                        )}
+                      </div>
+                    ) : (
+                      <div className="flex items-center">
+                        <div className="flex items-center mr-2">
+                          {hasMemberSigned
+                            ? menuItems[0].menuIcon
+                            : menuItems[1].menuIcon}
+                        </div>
+                        <span>
+                          {hasMemberSigned
+                            ? menuItems[0].menuText
+                            : menuItems[1].menuText}
+                        </span>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>

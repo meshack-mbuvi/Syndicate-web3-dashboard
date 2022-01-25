@@ -1,69 +1,137 @@
-import TabsButton from "@/components/TabsButton";
-import AssetEmptyState from "@/containers/layoutWithSyndicateDetails/assets/AssetEmptyState";
-import Collectibles from "@/containers/layoutWithSyndicateDetails/assets/Collectibles";
-import { tokenTableColumns } from "@/containers/layoutWithSyndicateDetails/assets/constants";
-import TokenTable from "@/containers/layoutWithSyndicateDetails/assets/TokenTable";
-import { AppState } from "@/state";
 import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import TabsButton from "@/components/TabsButton";
+import Collectibles from "@/containers/layoutWithSyndicateDetails/assets/collectibles";
+import InvestmentsView from "@/containers/layoutWithSyndicateDetails/assets/InvestmentsView";
+import { tokenTableColumns } from "@/containers/layoutWithSyndicateDetails/assets/constants";
+import TokenTable from "@/containers/layoutWithSyndicateDetails/assets/tokens/TokenTable";
+import { AppState } from "@/state";
+import {
+  setLoadingTransactions,
+  setInvestmentTransactions,
+  setTotalInvestmentTransactionsCount,
+} from "@/state/erc20transactions";
+import { useFetchRecentTransactions } from "@/hooks/useFetchRecentTransactions";
+import { mockOffChainTransactionsData } from "@/utils/mockdata";
+import { useRouter } from "next/router";
+import { useDemoMode } from "@/hooks/useDemoMode";
+
 
 const Assets: React.FC = () => {
   const {
-    assetsSliceReducer: { tokensResult, collectiblesResult },
+    assetsSliceReducer: { tokensResult },
     web3Reducer: {
       web3: { account },
     },
+    transactionsReducer: { totalInvestmentTransactionsCount },
+    erc20TokenSliceReducer: {
+      erc20Token: { depositsEnabled },
+    },
   } = useSelector((state: AppState) => state);
+
+  const router = useRouter();
+  const {
+    query: { clubAddress },
+  } = router;
+  const isDemoMode = useDemoMode();
+
+  const dispatch = useDispatch();
+  const DATA_LIMIT = 10;
+
   const [activeAssetTab, setActiveAssetTab] = useState<string>("all");
+  const [pageOffset, setPageOffset] = useState<number>(0);
+  const [canNextPage, setCanNextPage] = useState<boolean>(true);
 
   useEffect(() => {
     setActiveAssetTab("all");
   }, [account]);
 
-  // only show tabs for assets that exist.
-  const tokensFound = tokensResult.length > 0;
-  const collectiblesFound = collectiblesResult.length > 0;
+  // fetch off-chain investment transactions
+  const {
+    loading: transactionsLoading,
+    data: transactionsData,
+    refetch: refetchTransactions,
+  } = useFetchRecentTransactions(pageOffset, false, {
+    metadata: { transactionCategory: "INVESTMENT" },
+  });
+
+  const processERC20Transactions = async (txns) => {
+    const { edges, totalCount } = txns;
+    dispatch(setLoadingTransactions(true));
+    dispatch(setInvestmentTransactions({ txns: edges, skip: pageOffset }));
+    dispatch(setTotalInvestmentTransactionsCount(totalCount));
+    dispatch(setLoadingTransactions(false));
+  };
+
+  useEffect(() => {
+    refetchTransactions();
+  }, [pageOffset]);
+
+  const investmentsTransactionsData = JSON.stringify(
+    transactionsData?.Financial_recentTransactions,
+  );
+  useEffect(() => {
+    if (transactionsData?.Financial_recentTransactions) {
+      processERC20Transactions(transactionsData.Financial_recentTransactions);
+      // disable next page button if no.of transactions is less than limit.
+      const { edges } = transactionsData.Financial_recentTransactions;
+      const countofTransactions = pageOffset + DATA_LIMIT;
+
+      if (
+        edges.length < DATA_LIMIT ||
+        countofTransactions === totalInvestmentTransactionsCount
+      ) {
+        setCanNextPage(false);
+      } else {
+        setCanNextPage(true);
+      }
+    } else if (isDemoMode) {
+      if (depositsEnabled) {
+        dispatch(
+          setInvestmentTransactions({
+            txns: [],
+            skip: 0,
+          }),
+        );
+        dispatch(setTotalInvestmentTransactionsCount(0));
+      } else {
+        dispatch(
+          setInvestmentTransactions({
+            txns: mockOffChainTransactionsData.edges as any,
+            skip: pageOffset,
+          }),
+        );
+        dispatch(
+          setTotalInvestmentTransactionsCount(
+            mockOffChainTransactionsData.totalCount,
+          ),
+        );
+      }
+    }
+  }, [investmentsTransactionsData, clubAddress, depositsEnabled]);
 
   const assetsFilterOptions = [
     {
       label: "All Assets",
       value: "all",
-      show: tokensFound && collectiblesFound,
     },
     {
       label: "Tokens",
       value: "tokens",
-      show: tokensFound && collectiblesFound,
+    },
+    {
+      label: "Investments",
+      value: "investments",
     },
     {
       label: "Collectibles",
       value: "collectibles",
-      show: collectiblesFound && tokensFound,
     },
   ];
 
-  // return empty state if account has no assets
-  if (!tokensResult.length && !collectiblesResult.length) {
-    return (
-      <div>
-        <div className="mt-14 mb-16">
-          <TabsButton
-            options={assetsFilterOptions}
-            value="all"
-            onChange={(val) => setActiveAssetTab(val)}
-            activeAssetTab={activeAssetTab}
-          />
-          <AssetEmptyState activeAssetTab={activeAssetTab} />
-        </div>
-      </div>
-    );
-  }
-
   return (
     <>
-      <div
-        className={`${collectiblesFound && tokensFound ? "mt-14" : ""} mb-16`}
-      >
+      <div className="mt-14 mb-16">
         <TabsButton
           options={assetsFilterOptions}
           value="all"
@@ -80,7 +148,22 @@ const Assets: React.FC = () => {
 
         {activeAssetTab === "collectibles" && (
           <div className="mt-16">
-            <Collectibles activeAssetTab={activeAssetTab} />
+            <Collectibles />
+          </div>
+        )}
+
+        {activeAssetTab === "investments" && (
+          <div className="mt-16">
+            <InvestmentsView
+              {...{
+                setPageOffset,
+                pageOffset,
+                canNextPage,
+                transactionsLoading,
+                dataLimit: DATA_LIMIT,
+                refetchTransactions: () => refetchTransactions(),
+              }}
+            />
           </div>
         )}
 
@@ -92,8 +175,21 @@ const Assets: React.FC = () => {
               activeAssetTab={activeAssetTab}
             />
             <div className="mt-16">
-              <Collectibles activeAssetTab={activeAssetTab} />
+              <InvestmentsView
+                {...{
+                  setPageOffset,
+                  pageOffset,
+                  canNextPage,
+                  transactionsLoading,
+                  dataLimit: DATA_LIMIT,
+                  refetchTransactions: () => refetchTransactions(),
+                }}
+              />
             </div>
+            <div className="mt-16">
+              <Collectibles />
+            </div>
+            
           </>
         )}
       </div>

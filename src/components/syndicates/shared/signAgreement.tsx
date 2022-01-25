@@ -1,3 +1,5 @@
+import { amplitudeLogger, Flow } from "@/components/amplitude";
+import { MGR_SIGN_LEGAL_DOC } from "@/components/amplitude/eventNames";
 import { DiscordLink } from "@/components/DiscordLink";
 import { EmailSupport } from "@/components/emailSupport";
 import { AppState } from "@/state";
@@ -38,6 +40,7 @@ const agreementSteps = [
 ];
 
 const nonHighlightFields = new Set([
+  "percentLoss",
   "blockNumber",
   "daysNotice",
   "adminRemovalThreshold",
@@ -229,6 +232,9 @@ const SignAgreement: React.FC<ISignAgreementProps> = ({
       };
       localStorage.setItem("legal", JSON.stringify(legal));
     }
+    amplitudeLogger(MGR_SIGN_LEGAL_DOC, {
+      flow: Flow.LEGAL_ENTITY_FLOW,
+    });
   };
 
   const [inputWidth, setInputWidth] = useState(0);
@@ -239,8 +245,9 @@ const SignAgreement: React.FC<ISignAgreementProps> = ({
   }, [currentField]);
 
   return (
-    <div className="flex flex-col md:flex-row px-0 sm:px-6-percent mx-auto w-full md:space-x-28">
-      <div className="flex flex-col w-full md:w-1/4 text-right md:sticky md:h-full top-25">
+    // temp fix: uses negative mt to offset layout pt
+    <div className="flex flex-col md:flex-row -mt-4 px-0 sm:px-10 mx-auto w-full md:space-x-28">
+      <div className="flex flex-col w-full md:w-1/4 text-right md:sticky md:h-full top-20">
         <div className="md:pt-20">
           <div className="hidden md:flex justify-end pb-8">
             <button onClick={router.back}>
@@ -272,8 +279,8 @@ const SignAgreement: React.FC<ISignAgreementProps> = ({
         </div>
       </div>
       <div className="flex flex-col w-full md:w-3/4">
-        <div className="fixed bottom-0 sm:top-24 sm:sticky sm:h-full bg-black z-8 md:z-0 w-full">
-          <div className="flex flex-row justify-between items-center w-full py-6 px-10 sm:px-0">
+        <div className="fixed bottom-0 sm:top-20 sm:sticky sm:h-full bg-black z-8 md:z-0 w-full px-10 sm:px-0">
+          <div className="flex flex-row justify-between items-center w-full py-6">
             <div className="text-xl md:text-1.5xl">Review &amp; Confirm</div>
             <div className="flex flex-row items-center">
               <button className="p-3" onClick={handlePreviousField}>
@@ -324,7 +331,7 @@ const SignAgreement: React.FC<ISignAgreementProps> = ({
               />
             </div>
           </div>
-          <div className="block md:hidden pb-6 sticky h-full">
+          <div className="block md:hidden pb-8 sticky h-full">
             <CTAs
               {...{
                 isManager,
@@ -335,7 +342,7 @@ const SignAgreement: React.FC<ISignAgreementProps> = ({
             />
           </div>
         </div>
-        <div className="block md:hidden pb-6 sticky h-full bg-black top-25 pt-3 sm:pt-0 sm:top-71">
+        <div className="block md:hidden pb-6 sticky h-full bg-black top-20 pt-3 sm:pt-0 sm:top-71">
           <Stepper
             {...{
               isOperatingAgVisible,
@@ -345,33 +352,39 @@ const SignAgreement: React.FC<ISignAgreementProps> = ({
             }}
           />
         </div>
-        <div className="bg-white rounded-none sm:rounded-3xl text-black h-full">
-          <div className="container mx-auto flex flex-col py-12">
-            {/* Text Document Content. Change code below */}
-            <span ref={operatingAgRef}>
-              <span className="text-center py-5" ref={operatingAgTitleRef}>
-                Operating Agreement
+        <div className="flex flex-col space-y-5">
+          <div className="bg-white rounded-none text-black h-full overflow-x-hidden">
+            <div className="container mx-auto flex flex-col py-12">
+              {/* Text Document Content. Change code below */}
+              <span ref={operatingAgRef}>
+                <span className="text-center py-5" ref={operatingAgTitleRef}>
+                  Operating Agreement
+                </span>
+                <span
+                  className="leading-6 text-base"
+                  style={{ whiteSpace: "pre-wrap" }}
+                  dangerouslySetInnerHTML={{
+                    __html: compiledOp({ ...fieldValues, ...fillers }),
+                  }}
+                />
               </span>
-              <span
-                className="leading-6 text-base"
-                style={{ whiteSpace: "pre-wrap" }}
-                dangerouslySetInnerHTML={{
-                  __html: compiledOp({ ...fieldValues, ...fillers }),
-                }}
-              />
-            </span>
-            <span ref={subscriptionAgRef}>
-              <span className="text-center py-5" ref={subscriptionAgTitleRef}>
-                Subscription Agreement
+            </div>
+          </div>
+          <div className="bg-white rounded-none text-black h-full overflow-x-hidden">
+            <div className="container mx-auto flex flex-col py-12">
+              <span ref={subscriptionAgRef}>
+                <span className="text-center py-5" ref={subscriptionAgTitleRef}>
+                  Subscription Agreement
+                </span>
+                <span
+                  className="leading-6 text-base"
+                  style={{ whiteSpace: "pre-wrap" }}
+                  dangerouslySetInnerHTML={{
+                    __html: compiledSub({ ...fieldValues, ...fillers }),
+                  }}
+                />
               </span>
-              <span
-                className="leading-6 text-base"
-                style={{ whiteSpace: "pre-wrap" }}
-                dangerouslySetInnerHTML={{
-                  __html: compiledSub({ ...fieldValues, ...fillers }),
-                }}
-              />
-            </span>
+            </div>
           </div>
         </div>
       </div>
@@ -444,7 +457,7 @@ const CTAs = ({
   handleWalletSignature,
 }) => {
   return (
-    <div className="px-6-percent sm:px-0">
+    <div>
       {signature ? (
         <button
           className="py-4 px-8 rounded-md bg-green text-black flex flex-row items-center font-whyte-medium space-x-2  w-full justify-center"

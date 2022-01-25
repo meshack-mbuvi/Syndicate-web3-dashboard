@@ -1,5 +1,7 @@
 import { CopyToClipboardIcon } from "@/components/iconWrappers";
 import { SkeletonLoader } from "@/components/skeletonLoader";
+import { useAccountTokens } from "@/hooks/useAccountTokens";
+import { useClubDepositsAndSupply } from "@/hooks/useClubDepositsAndSupply";
 import { useIsClubOwner } from "@/hooks/useClubOwner";
 import { AppState } from "@/state";
 import { Status } from "@/state/wallet/types";
@@ -12,6 +14,7 @@ import { CopyToClipboard } from "react-copy-to-clipboard";
 import { useSelector } from "react-redux";
 import ReactTooltip from "react-tooltip";
 import { EtherscanLink } from "src/components/syndicates/shared/EtherscanLink";
+import NumberTreatment from "../NumberTreatment";
 // utils
 import GradientAvatar from "./portfolioAndDiscover/portfolio/GradientAvatar";
 import { DetailsCard, ProgressIndicator } from "./shared";
@@ -33,11 +36,13 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
     },
   } = useSelector((state: AppState) => state);
 
+  const { accountTokens } = useAccountTokens();
+
   const {
+    address,
     loading,
     maxTotalDeposits,
     depositToken,
-    totalDeposits,
     memberCount,
     startTime,
     endTime,
@@ -47,10 +52,13 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
     maxTotalSupply,
     depositsEnabled,
     claimEnabled,
-    accountClubTokens,
   } = erc20Token;
+
   const router = useRouter();
   const [details, setDetails] = useState<ClubDetails[]>([]);
+
+  const { totalDeposits, totalSupply, loadingClubDeposits } =
+    useClubDepositsAndSupply(address);
 
   // state to handle copying of the syndicate address to clipboard.
   const [showAddressCopyState, setShowAddressCopyState] =
@@ -86,8 +94,7 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
 
   // set syndicate cumulative values
   useEffect(() => {
-    if (erc20Token) {
-      const { totalDeposits, memberCount } = erc20Token;
+    if (totalDeposits) {
       setSyndicateCumulativeDetails([
         {
           header: "Deposits",
@@ -99,7 +106,7 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
         },
       ]);
     }
-  }, [erc20Token]);
+  }, [totalDeposits, memberCount]);
 
   useEffect(() => {
     if (erc20Token) {
@@ -110,7 +117,9 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
                 header: "Club token max supply",
                 content: (
                   <span>
-                    {floatedNumberWithCommas(maxTotalSupply)} {symbol}
+                    <NumberTreatment numberValue={`${maxTotalSupply || ""} `} />
+                    &nbsp;
+                    {symbol}
                   </span>
                 ),
                 tooltip: "",
@@ -119,7 +128,8 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
                 header: "Club tokens minted",
                 content: (
                   <span>
-                    {floatedNumberWithCommas(totalDeposits)} {symbol}
+                    <NumberTreatment numberValue={totalSupply} />
+                    &nbsp;{symbol}
                   </span>
                 ),
                 tooltip: "",
@@ -153,14 +163,19 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
           ? [
               {
                 header: "Club token max supply",
-                content: <span>{floatedNumberWithCommas(maxTotalSupply)}</span>,
+                content: (
+                  <span>
+                    <NumberTreatment numberValue={`${maxTotalSupply || ""}`} />
+                  </span>
+                ),
                 tooltip: "",
               },
               {
                 header: "Club tokens minted",
                 content: (
                   <span>
-                    {floatedNumberWithCommas(totalDeposits)} {symbol}
+                    <NumberTreatment numberValue={totalDeposits} />
+                    &nbsp;{symbol}
                   </span>
                 ),
                 tooltip: "",
@@ -184,7 +199,7 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
                 header: "Total deposited",
                 content: (
                   <span>
-                    {floatedNumberWithCommas(totalDeposits)}{" "}
+                    <NumberTreatment numberValue={totalDeposits} />{" "}
                     {depositERC20TokenSymbol}
                   </span>
                 ),
@@ -194,7 +209,7 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
                 header: "Club tokens minted",
                 content: (
                   <span>
-                    {floatedNumberWithCommas(totalDeposits)} {symbol}
+                    <NumberTreatment numberValue={totalDeposits} /> {symbol}
                   </span>
                 ),
                 tooltip: "",
@@ -224,7 +239,7 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
             ]),
       ]);
     }
-  }, [JSON.stringify(erc20Token)]);
+  }, [JSON.stringify(erc20Token), totalDeposits]);
 
   // show message to the user when address has been copied.
   const updateAddressCopyState = () => {
@@ -234,7 +249,7 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
   const isOwner = useIsClubOwner();
   const isActive = !depositsEnabled || claimEnabled;
   const isOwnerOrMember =
-    isOwner || +accountClubTokens || myMerkleProof?.account === account;
+    isOwner || +accountTokens || myMerkleProof?.account === account;
 
   return (
     <div className="flex flex-col relative">
@@ -243,7 +258,7 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
           <div>
             <div className="flex justify-center items-center">
               <div className="mr-8">
-                {loading ? (
+                {loading || loadingClubDeposits || totalDeposits == "" ? (
                   <SkeletonLoader
                     height="20"
                     width="20"
@@ -354,7 +369,7 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
               depositERC20TokenSymbol={depositERC20TokenSymbol}
               openDate={startTime.toString()}
               closeDate={endTime.toString()}
-              loading={loading}
+              loading={loading || loadingClubDeposits}
             />
           </div>
         )}

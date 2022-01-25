@@ -7,8 +7,10 @@ import { EtherscanLink } from "@/components/syndicates/shared/EtherscanLink";
 import Head from "@/components/syndicates/shared/HeaderTitle";
 import SyndicateDetails from "@/components/syndicates/syndicateDetails";
 import { setERC20Token } from "@/helpers/erc20TokenDetails";
+import { useAccountTokens } from "@/hooks/useAccountTokens";
 import { useIsClubOwner } from "@/hooks/useClubOwner";
 import useClubTokenMembers from "@/hooks/useClubTokenMembers";
+import { useDemoMode } from "@/hooks/useDemoMode";
 import useTransactions from "@/hooks/useTransactions";
 import NotFoundPage from "@/pages/404";
 import { AppState } from "@/state";
@@ -16,10 +18,22 @@ import {
   clearCollectiblesTransactions,
   fetchCollectiblesTransactions,
   fetchTokenTransactions,
+  setMockTokensResult,
+  setMockCollectiblesResult,
 } from "@/state/assets/slice";
 import { setClubMembers } from "@/state/clubMembers";
+import {
+  setERC20TokenContract,
+  setERC20TokenDetails,
+} from "@/state/erc20token/slice";
 import { clearMyTransactions } from "@/state/erc20transactions";
 import { Status } from "@/state/wallet/types";
+import {
+  mockActiveERC20Token,
+  mockDepositERC20Token,
+  mockDepositModeTokens,
+  mockTokensResult,
+} from "@/utils/mockdata";
 import window from "global";
 import { useRouter } from "next/router";
 import React, { FC, useEffect, useRef, useState } from "react";
@@ -38,9 +52,27 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
       web3: { account, web3, status },
     },
     erc20TokenSliceReducer: {
-      erc20Token: { owner, loading, name, depositsEnabled, accountClubTokens },
+      erc20Token: { owner, loading, name, depositsEnabled },
     },
   } = useSelector((state: AppState) => state);
+
+  // Get clubAddress from window.location object since during page load, router is not ready
+  // hence clubAddress is undefined.
+  // We need to have access to clubAddress as early as possible.
+  const clubAddress = window?.location?.pathname.split("/")[2];
+
+  const isDemoMode = useDemoMode(clubAddress);
+  const zeroAddress = "0x0000000000000000000000000000000000000000";
+
+  useEffect(() => {
+    // Demo mode
+    if (clubAddress === zeroAddress) {
+      router.push("/clubs/demo/manage");
+    }
+  });
+
+  //  tokens for the connected wallet account
+  const { accountTokens } = useAccountTokens();
 
   // fetch club transactions
   useTransactions();
@@ -65,6 +97,9 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
   const [showNav, setShowNav] = useState(true);
   const [isSubNavStuck, setIsSubNavStuck] = useState(true);
   const subNav = useRef(null);
+  const {
+    query: { status: isOpenForDeposits },
+  } = router;
 
   // Listen to page scrolling
   useEffect(() => {
@@ -102,25 +137,31 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
   useEffect(() => {
     if (owner) {
       fetchAssets();
+    } else if (isDemoMode) {
+      const mockTokens = depositsEnabled
+        ? mockDepositModeTokens
+        : mockTokensResult;
+      dispatch(setMockTokensResult(mockTokens));
+
+      dispatch(setMockCollectiblesResult(depositsEnabled));
     }
-  }, [owner]);
+  }, [owner, clubAddress, depositsEnabled]);
 
   useEffect(() => {
     // clear collectibles on account switch
-    if (account) {
+    if (account && !isDemoMode) {
       dispatch(clearCollectiblesTransactions());
     }
-  }, [account, dispatch]);
+  }, [account, clubAddress, dispatch, isDemoMode]);
 
-  // Get clubAddress from window.location object since during page load, router is not ready
-  // hence clubAddress is undefined.
-  // We need to have access to clubAddress as early as possible.
-  const clubAddress = window?.location?.pathname.split("/")[2];
-
+  /**
+   * Fetch club details
+   */
   useEffect(() => {
     if (!clubAddress || status == Status.CONNECTING) return;
 
     if (
+      clubAddress !== zeroAddress &&
       web3.utils.isAddress(clubAddress) &&
       syndicateContracts?.SingleTokenMintModule
     ) {
@@ -129,17 +170,24 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
         web3,
       );
 
+      dispatch(setERC20TokenContract(clubERC20tokenContract));
+
       dispatch(
         setERC20Token(
           clubERC20tokenContract,
           syndicateContracts.SingleTokenMintModule,
-          account,
         ),
       );
 
       return () => {
         dispatch(setClubMembers([]));
       };
+    } else if (isDemoMode) {
+      const mockData =
+        isOpenForDeposits === "open"
+          ? mockDepositERC20Token
+          : mockActiveERC20Token;
+      dispatch(setERC20TokenDetails(mockData));
     }
   }, [clubAddress, account, status, syndicateContracts?.SingleTokenMintModule]);
 
@@ -176,7 +224,7 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
 
   const isActive = !depositsEnabled;
   const isOwnerOrMember =
-    isOwner || +accountClubTokens || myMerkleProof?.account === account;
+    isOwner || +accountTokens || myMerkleProof?.account === account;
   const renderOnDisconnect =
     status !== Status.DISCONNECTED && !(isActive && !isOwnerOrMember);
 
@@ -188,7 +236,7 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
 
   return (
     <>
-      {router.isReady && !web3.utils.isAddress(clubAddress) ? (
+      {router.isReady && !isDemoMode && !web3.utils.isAddress(clubAddress) ? (
         <NotFoundPage />
       ) : (
         <Layout showNav={showNav}>
@@ -196,13 +244,14 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
           <ErrorBoundary>
             {showOnboardingIfNeeded && <OnboardingModal />}
             <div className="w-full">
-              {router.isReady && !name && !loading ? (
+              {router.isReady && !name && !loading && !isDemoMode ? (
                 syndicateEmptyState
               ) : (
                 <div className="container mx-auto ">
                   {/* Two Columns (Syndicate Details + Widget Cards) */}
                   <BackButton
                     topOffset={isSubNavStuck ? "-0.68rem" : "-0.25rem"}
+                    isHidden={isDemoMode}
                   />
                   <div className="grid grid-cols-12 gap-5">
                     {/* Left Column */}
@@ -264,7 +313,7 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
                         <div
                           className={`${
                             isSubNavStuck ? "hidden" : "block"
-                          } border-b-1 border-gray-syn6 absolute w-screen right-0`}
+                          } border-b-1 border-gray-syn7 absolute w-screen right-0`}
                         ></div>
                       </div>
 

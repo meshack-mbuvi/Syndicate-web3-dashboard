@@ -1,20 +1,32 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { web3InstantiationErrorText } from "@/components/syndicates/shared/Constants";
+import { getSyndicateContracts } from "@/ClubERC20Factory";
+import { amplitudeLogger, Flow } from "@/components/amplitude";
 import {
-  logout,
+  ERROR_WALLET_CONNECTION,
+  SUCCESSFUL_WALLET_CONNECT,
+} from "@/components/amplitude/eventNames";
+import { web3InstantiationErrorText } from "@/components/syndicates/shared/Constants";
+import { AppState } from "@/state";
+import { setContracts } from "@/state/contracts";
+import {
   hideErrorModal,
   hideWalletModal,
+  logout,
   setConnected,
   setConnectedProviderName,
   setConnecting,
   setDisConnected,
   setLibrary,
   showErrorModal,
-  storeEthereumNetwork,
   storeCurrentEthNetwork,
+  storeEthereumNetwork,
 } from "@/state/wallet/actions";
-import { getSyndicateContracts } from "@/ClubERC20Factory";
+import { SafeAppWeb3Modal } from "@gnosis.pm/safe-apps-web3modal";
+import WalletConnectProvider from "@walletconnect/web3-provider";
+import { providers } from "ethers";
 import { parse, stringify } from "flatted";
+import { isEmpty } from "lodash";
+import router from "next/router";
 import React, {
   createContext,
   ReactNode,
@@ -23,12 +35,6 @@ import React, {
   useState,
 } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { AppState } from "@/state";
-import { isEmpty } from "lodash";
-import WalletConnectProvider from "@walletconnect/web3-provider";
-import { providers } from "ethers";
-import { SafeAppWeb3Modal } from "@gnosis.pm/safe-apps-web3modal";
-import { setContracts } from "@/state/contracts";
 
 const Web3 = require("web3");
 const debugging = process.env.NEXT_PUBLIC_DEBUG;
@@ -359,11 +365,20 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
 
       setWalletConnecting(false);
       setShowSuccessModal(true);
+      if (router.pathname === "/clubs/create/clubprivatebetainvite") {
+        amplitudeLogger(SUCCESSFUL_WALLET_CONNECT, {
+          flow: Flow.WALLET_CONNECT,
+        });
+      }
     } catch (error) {
       const customError = getErrorMessage();
       setWalletConnecting(false);
       setShowSuccessModal(false);
       dispatch(showErrorModal(customError));
+      amplitudeLogger(ERROR_WALLET_CONNECTION, {
+        flow: Flow.WALLET_CONNECT,
+        error,
+      });
     }
     // set loader to false after process is complete
     setWalletConnecting(false);

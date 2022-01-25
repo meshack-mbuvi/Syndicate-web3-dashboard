@@ -4,6 +4,7 @@ import { CategoryPill } from "@/containers/layoutWithSyndicateDetails/activity/s
 import { ANNOTATE_TRANSACTIONS } from "@/graphql/mutations";
 import { useIsClubOwner } from "@/hooks/useClubOwner";
 import { useDebounce } from "@/hooks/useDebounce";
+import { useDemoMode } from "@/hooks/useDemoMode";
 import { useFetchRecentTransactions } from "@/hooks/useFetchRecentTransactions";
 import { AppState } from "@/state";
 import {
@@ -12,9 +13,11 @@ import {
   setTotalTransactionsCount,
 } from "@/state/erc20transactions";
 import { TransactionCategory } from "@/state/erc20transactions/types";
+import { mockActivityTransactionsData } from "@/utils/mockdata";
 import { NetworkStatus, useMutation } from "@apollo/client";
 import { capitalize } from "lodash";
 import Image from "next/image";
+import { useRouter } from "next/router";
 import React, { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import FilterPill from "../shared/FilterPill";
@@ -25,6 +28,11 @@ const ActivityTable: React.FC = () => {
     transactionsReducer: { totalTransactionsCount },
   } = useSelector((state: AppState) => state);
   const isManager = useIsClubOwner();
+  const router = useRouter();
+  const {
+    query: { clubAddress },
+  } = router;
+  const isDemoMode = useDemoMode();
 
   const [filter, setFilter] = useState<string>("");
   const [searchValue, setSearchValue] = useState<string>("");
@@ -177,8 +185,10 @@ const ActivityTable: React.FC = () => {
       description =
         "There are currently no uncategorised transactions in this club’s activity.";
     } else {
-      title = `No transactions categorised as “${cleanedFilter}”`;
-      description = `There are currently no transactions categorised as "${cleanedFilter}" in this club’s activity.`;
+      if (!searchValue) {
+        title = `No transactions categorised as “${cleanedFilter}”`;
+        description = `There are currently no transactions categorised as "${cleanedFilter}" in this club’s activity.`;
+      }
     }
 
     return (
@@ -227,8 +237,13 @@ const ActivityTable: React.FC = () => {
       } else {
         setCanNextPage(true);
       }
+    } else if (isDemoMode) {
+      processERC20Transactions(mockActivityTransactionsData);
     }
-  }, [JSON.stringify(transactionsData?.Financial_recentTransactions)]);
+  }, [
+    JSON.stringify(transactionsData?.Financial_recentTransactions),
+    clubAddress,
+  ]);
 
   const processERC20Transactions = async (txns) => {
     const { edges, totalCount } = txns;
@@ -351,7 +366,7 @@ const ActivityTable: React.FC = () => {
             {...{
               onChangeHandler: handleSearchOnChange,
               searchValue,
-              searchItem: "transactions",
+              searchItem: "activity",
               clearSearchValue: () => setSearchValue(""),
               disabled:
                 filter &&

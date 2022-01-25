@@ -13,7 +13,7 @@ export const floatedNumberWithCommas = (number): string => {
   }
 
   // return this for values smaller than 0.01 since we use 2dp
-  if (number < 0.01) {
+  if (number < 0.01 && number > 0) {
     return "< 0.01";
   }
 

@@ -1,23 +1,26 @@
+import { amplitudeLogger, Flow } from "@/components/amplitude";
+import { CLICK_COPY_DEPOSIT_LINK_TO_SHARE } from "@/components/amplitude/eventNames";
 import ErrorBoundary from "@/components/errorBoundary";
 import FadeIn from "@/components/fadeIn/FadeIn";
-import ArrowDown from "@/components/icons/arrowDown";
-import CopyLink from "@/components/shared/CopyLink";
 import CreateEntityCard from "@/components/shared/createEntityCard";
 import { SkeletonLoader } from "@/components/skeletonLoader";
 import StatusBadge from "@/components/syndicateDetails/statusBadge";
 import ConnectWalletAction from "@/components/syndicates/shared/connectWalletAction";
 import { EtherscanLink } from "@/components/syndicates/shared/EtherscanLink";
 import { SuccessCard } from "@/containers/managerActions/successCard";
-import { useIsClubOwner } from "@/hooks/useClubOwner";
+import { useCreateInvestmentClubContext } from "@/context/CreateInvestmentClubContext";
+import { useDemoMode } from "@/hooks/useDemoMode";
 import { AppState } from "@/state";
+import { setDepositReadyInfo } from "@/state/legalInfo";
 import { Status } from "@/state/wallet/types";
 import { generateMemberSignURL } from "@/utils/generateMemberSignURL";
 import { ArrowNarrowRightIcon, XIcon } from "@heroicons/react/solid";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
-import { CopyLinkIcon } from "src/components/iconWrappers";
-import GenerateDepositLinkModal from "./GenerateDepositLink";
+import { useDispatch, useSelector } from "react-redux";
+import { animated } from "react-spring";
+import GenerateDepositLink from "./GenerateDepositLink";
+import { MintAndShareTokens } from "./mintAndShareTokens";
 
 const useShowShareWarning = () => {
   const router = useRouter();
@@ -44,7 +47,7 @@ const useShowShareWarning = () => {
 const ManagerActions = (): JSX.Element => {
   const {
     web3Reducer: {
-      web3: { status, account },
+      web3: { status },
     },
     erc20TokenSliceReducer: { erc20Token },
     createInvestmentClubSliceReducer: {
@@ -54,14 +57,17 @@ const ManagerActions = (): JSX.Element => {
     },
     legalInfoReducer: {
       walletSignature: { signature },
+      depositReadyInfo: { depositLink, adminSigned },
     },
   } = useSelector((state: AppState) => state);
+
+  const { resetCreationStates } = useCreateInvestmentClubContext();
   const router = useRouter();
+  const dispatch = useDispatch();
 
   const {
     loading,
     depositsEnabled,
-    address,
     claimEnabled,
     totalDeposits,
     maxTotalDeposits,
@@ -77,11 +83,16 @@ const ManagerActions = (): JSX.Element => {
 
   const [showDepositLinkCopyState, setShowDepositLinkCopyState] =
     useState(false);
-  const [clubDepositLink, setClubDepositLink] = useState("");
-  const [docSigned, setDocSigned] = useState(false);
-  const [copyLinkCTA, setCopyLinkCTA] = useState("border-gray-syn6");
   const [showGenerateLinkModal, setShowGenerateLinkModal] = useState(false);
+
   const [hasAgreements, setHasAgreememnts] = useState(false);
+  const [showMintToken, setShowMintToken] = useState(false);
+
+  const setClubDepositLink = (clubDepositLink: string) => {
+    dispatch(
+      setDepositReadyInfo({ adminSigned, depositLink: clubDepositLink }),
+    );
+  };
 
   // variables to track investment club creation process.
   // TODO: actual values should be fetched from the redux store.
@@ -90,6 +101,8 @@ const ManagerActions = (): JSX.Element => {
   const [syndicateSuccessfullyCreated, setSyndicateSuccessfullyCreated] =
     useState<boolean>(false);
   const syndicateCreationFailed = false;
+
+  const isDemoMode = useDemoMode();
 
   // club deposit link
   useEffect(() => {
@@ -119,6 +132,8 @@ const ManagerActions = (): JSX.Element => {
     if (!clubAddress) return;
 
     if (source && source === "create") {
+      // reset creation context states
+      resetCreationStates();
       setSyndicateSuccessfullyCreated(true);
       // truncates the query part to prevent reshowing confetti
       router.push(`/clubs/${clubAddress}/manage`);
@@ -143,12 +158,21 @@ const ManagerActions = (): JSX.Element => {
   const updateDepositLinkCopyState = () => {
     setShowDepositLinkCopyState(true);
     setTimeout(() => setShowDepositLinkCopyState(false), 1000);
+    amplitudeLogger(CLICK_COPY_DEPOSIT_LINK_TO_SHARE, {
+      flow: Flow.POST_CLUB_CREATION,
+    });
   };
 
-  const showReviewPage = () => {
-    // TODO: navigate to the review page from here.
-    return;
-  };
+  /**
+   * TODO: Uncomment this function after enabling mint tokens button.
+   */
+  // const handleShowMintTokens = (event) => {
+  //   event.stopPropagation();
+  //   setShowMintToken(true);
+  // };
+
+  const [linkShareAgreementChecked, setLinkShareAgreementChecked] =
+    useState(false);
 
   return (
     <ErrorBoundary>
@@ -205,7 +229,35 @@ const ManagerActions = (): JSX.Element => {
                               Invite members by sharing your club’s{" "}
                               {claimEnabled ? "claim" : "deposit"} link
                             </p>
-                            {docSigned && (
+                            {!adminSigned && (
+                              <div className="flex space-between mt-3">
+                                <input
+                                  className="bg-transparent rounded mt-1 focus:ring-offset-0 cursor-pointer"
+                                  onChange={() =>
+                                    setLinkShareAgreementChecked(
+                                      !linkShareAgreementChecked,
+                                    )
+                                  }
+                                  type="checkbox"
+                                  id="linkShareAgreement"
+                                  name="linkShareAgreement"
+                                />
+                                <animated.p className="text-sm text-gray-syn4 ml-3">
+                                  I agree to only share this link privately. I
+                                  understand that publicly sharing this link may
+                                  violate securities laws. <br></br>
+                                  <a
+                                    target="_blank"
+                                    style={{ color: "#4376ff" }}
+                                    href="https://www.sec.gov/reportspubs/investor-publications/investorpubsinvclubhtm.html"
+                                    rel="noopener noreferrer"
+                                  >
+                                    Learn more.
+                                  </a>{" "}
+                                </animated.p>
+                              </div>
+                            )}
+                            {adminSigned && (
                               <p>
                                 {hasAgreements
                                   ? "Contains legal agreements"
@@ -265,60 +317,30 @@ const ManagerActions = (): JSX.Element => {
                             syndicateSuccessfullyCreated,
                             updateDepositLinkCopyState,
                             showDepositLinkCopyState,
-                            clubDepositLink,
+                            clubDepositLink: depositLink,
                             showConfettiSuccess,
                             setShowConfettiSuccess,
                           }}
                         />
                       </div>
                     )}
-                    {!docSigned && (
-                      <>
-                        <button
-                          className="bg-green rounded-custom w-full flex items-center justify-center py-4 mb-4"
-                          onClick={() => setShowGenerateLinkModal(true)}
-                        >
-                          <div className="flex-grow-1 mr-3">
-                            <CopyLinkIcon color="text-black" />
-                          </div>
-                          <p className="text-black pr-1 whitespace-nowrap font-whyte-medium">
-                            Generate link to invite members
-                          </p>
-                        </button>
-                        <div className="flex justify-center w-full mb-4">
-                          <ArrowDown />
-                        </div>
-                      </>
-                    )}
-                    {syndicateCreationFailed ? (
-                      <button
-                        className="bg-white hover:bg-opacity-90 py-4 w-full rounded-custom text-black"
-                        onClick={showReviewPage}
-                      >
-                        Try again
-                      </button>
-                    ) : !showConfettiSuccess ? (
-                      <CopyLink
-                        link={clubDepositLink}
-                        updateCopyState={updateDepositLinkCopyState}
-                        showCopiedState={showDepositLinkCopyState}
-                        creatingSyndicate={
-                          !docSigned ? true : creatingSyndicate
-                        }
+                    {!showConfettiSuccess && (
+                      <GenerateDepositLink
+                        showGenerateLinkModal={showGenerateLinkModal}
+                        setShowGenerateLinkModal={setShowGenerateLinkModal}
+                        updateDepositLinkCopyState={updateDepositLinkCopyState}
+                        showDepositLinkCopyState={showDepositLinkCopyState}
+                        syndicateCreationFailed={syndicateCreationFailed}
+                        showConfettiSuccess={showConfettiSuccess}
+                        creatingSyndicate={creatingSyndicate}
                         syndicateSuccessfullyCreated={
                           syndicateSuccessfullyCreated
                         }
-                        showConfettiSuccess={showConfettiSuccess}
-                        borderColor={copyLinkCTA}
+                        agreementChecked={linkShareAgreementChecked}
                       />
-                    ) : null}
-                    <GenerateDepositLinkModal
-                      setDocSigned={setDocSigned}
-                      setShowGenerateLinkModal={setShowGenerateLinkModal}
-                      showGenerateLinkModal={showGenerateLinkModal}
-                      setCopyLinkCTA={setCopyLinkCTA}
-                    />
-                    {showShareWarning && !showConfettiSuccess && docSigned && (
+                    )}
+
+                    {showShareWarning && !showConfettiSuccess && adminSigned && (
                       <div className="flex flex-row mt-4 text-yellow-warning bg-brown-dark rounded-1.5lg py-3 px-4">
                         <p className="text-sm">
                           Do not publicly share this deposit link. Only share
@@ -350,7 +372,35 @@ const ManagerActions = (): JSX.Element => {
             ) : null}
           </div>
         </FadeIn>
-        {status !== Status.DISCONNECTED && <CreateEntityCard />}
+        {status !== Status.DISCONNECTED && (
+          <div className="flex bg-gray-syn8 duration-500 transition-all rounded-2.5xl my-6 p-4 space-y-4 items-start flex-col">
+            <div className="hover:bg-gray-syn7 rounded-xl py-2 px-4">
+              <CreateEntityCard />
+            </div>
+            {/* This button will be re-enabled. */}
+
+            {/* <button
+              className="cursor-pointer space-x-4 focus:outline-none flex w-full items-start text-base leading-6 hover:bg-gray-syn7 rounded-xl py-2 px-4"
+              onClick={handleShowMintTokens}
+              disabled={isDemoMode}
+            >
+              <div className="flex-shrink-0">
+                <img
+                  src="/images/token-gray.svg"
+                  className="mt-1"
+                  alt="ribbon"
+                />
+              </div>
+              <div className="text-base leading-6">Mint club tokens</div>
+            </button> */}
+          </div>
+        )}
+
+        {
+          <MintAndShareTokens
+            {...{ show: showMintToken, handleShow: setShowMintToken }}
+          />
+        }
       </div>
     </ErrorBoundary>
   );

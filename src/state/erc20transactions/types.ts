@@ -15,7 +15,10 @@ export type TransactionCategory =
   | "DEPOSIT"
   | "OTHER"
   | "UNCATEGORISED"
-  | "SELECT_CATEGORY";
+  | "SELECT_CATEGORY"
+  | "TOKEN"
+  | "COLLECTIBLE"
+  | "OFF_CHAIN_INVESTMENT";
 
 export enum RoundCategory {
   SEED,
@@ -110,6 +113,8 @@ interface InitialState {
   currentTransaction: CurrentTransaction;
   totalTransactionsCount: number;
   loading: boolean;
+  investmentTransactions: ClubTransactions;
+  totalInvestmentTransactionsCount: number;
 }
 
 export const emptyCurrentTransaction: CurrentTransaction = {
@@ -135,4 +140,6 @@ export const initialState: InitialState = {
   currentTransaction: emptyCurrentTransaction,
   totalTransactionsCount: 0,
   loading: true,
+  investmentTransactions: {},
+  totalInvestmentTransactionsCount: 0,
 };

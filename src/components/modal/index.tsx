@@ -22,9 +22,11 @@ interface ModalProps {
   titleAlignment?: string;
   showHeader?: boolean;
   overflowYScroll?: boolean;
+  overflowXScroll?: boolean;
   isMaxHeightScreen?: boolean;
   alignment?: string;
   margin?: string;
+  maxHeight?: boolean;
 }
 
 export enum ModalStyle {
@@ -68,9 +70,11 @@ const Modal = (props: ModalProps): JSX.Element => {
     modalStyle = ModalStyle.LIGHT,
     showHeader = true,
     overflowYScroll = true,
+    overflowXScroll = true,
     isMaxHeightScreen = true,
     alignment = "align-middle",
     margin = "md:my-14",
+    maxHeight = true,
   } = props;
 
   const bgColor = `${modalStyle === ModalStyle.LIGHT && "bg-white"} ${
@@ -198,7 +202,11 @@ const Modal = (props: ModalProps): JSX.Element => {
               ) : null}
               {/* end of modal title */}
 
-              <div className={`${showHeader ? "mx-4 align-middle" : ""}`}>
+              <div
+                className={`${maxHeight && "max-h-modal"} ${
+                  overflowXScroll ? "overflow-x-scroll" : ""
+                } no-scroll-bar ${showHeader ? "mx-4 align-middle" : ""}`}
+              >
                 {children}
               </div>
             </div>

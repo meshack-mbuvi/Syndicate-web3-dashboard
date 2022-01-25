@@ -23,6 +23,7 @@ export const InputFieldWithMax = (props: {
   moreInfo?: string;
   addSettingDisclaimer?: boolean;
   customClass?: { addon?: string; input?: string };
+  className?: string;
 }): JSX.Element => {
   const {
     label,
@@ -38,10 +39,11 @@ export const InputFieldWithMax = (props: {
     customClass,
     moreInfo,
     addSettingDisclaimer,
+    className,
   } = props;
 
   return (
-    <div className="w-full">
+    <div className={className}>
       <div className="flex justify-between">
         <label htmlFor={label} className="h3 pb-6">
           {label}
@@ -49,7 +51,7 @@ export const InputFieldWithMax = (props: {
       </div>
       <div className="flex">
         <div
-          className="mt-1 mb-2 flex rounded-md shadow-sm w-full lg:w-2/3"
+          className="mt-1 mb-2 flex rounded-md shadow-sm w-full lg:w-full"
           data-tip
           data-for="disclaimer-tip"
         >
@@ -84,30 +86,29 @@ export const InputFieldWithMax = (props: {
             )}
           </div>
         </div>
-
-        {addSettingDisclaimer && (
-          <div className="hidden lg:flex pl-4 justify-center items-center w-1/3">
-            <SettingsDisclaimerTooltip
-              id="disclaimer-tip"
-              tip={
-                <span>
-                  Can be modified later via an on-chain <br /> transaction with
-                  gas
-                </span>
-              }
-            />
-          </div>
-        )}
       </div>
-      <div className="w-full lg:w-2/3">
+      {addSettingDisclaimer && (
+        <div className="hidden lg:flex pl-4 justify-center items-center w-1/3">
+          <SettingsDisclaimerTooltip
+            id="disclaimer-tip"
+            tip={
+              <span>
+                Can be modified later via an on-chain <br /> transaction with
+                gas
+              </span>
+            }
+          />
+        </div>
+      )}
+      <div className="w-full lg:w-full">
         {(error || warning) && (
-          <span
+          <p
             className={`text-sm ${warning && "text-yellow-saffron"} ${
               error && "text-red-500"
             } pt-2`}
           >
             {(error || warning) && !disabled ? error || warning : ""}
-          </span>
+          </p>
         )}
         {moreInfo && !(error || warning) && (
           <span className="text-sm text-gray-3 pt-2">{moreInfo}</span>

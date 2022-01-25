@@ -13,3 +13,15 @@ export function useIsClubOwner(): boolean {
 
   return account === owner && account != "" && owner != "";
 }
+
+export const useIsClubMember = (): boolean => {
+  const {
+    clubMembersSliceReducer: { clubMembers },
+    web3Reducer: {
+      web3: { account },
+    },
+  } = useSelector((state: AppState) => state);
+  return clubMembers.some(
+    (member) => member.memberAddress.toLowerCase() === account.toLowerCase(),
+  );
+};

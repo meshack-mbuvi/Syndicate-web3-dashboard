@@ -1,19 +1,18 @@
-import { CLAIMED_ERC721 } from "@/graphql/queries";
 import { AppState } from "@/state";
-import { useDispatch, useSelector } from "react-redux";
-import { useEffect, useState } from "react";
 import {
-  setLoadingERC721Claimed,
-  setERC721Claimed,
   clearERC721Claimed,
+  setERC721Claimed,
+  setLoadingERC721Claimed,
 } from "@/state/claimedERC721/slice";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 
 const useFetchERC721Claim: any = () => {
   const dispatch = useDispatch();
 
   const {
     web3Reducer: {
-      web3: { account, web3 },
+      web3: { account },
     },
     erc721MerkleProofSliceReducer: { erc721MerkleProof },
     erc721TokenSliceReducer: {

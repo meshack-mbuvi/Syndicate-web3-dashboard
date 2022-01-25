@@ -1,3 +1,5 @@
+import { amplitudeLogger, Flow } from "@/components/amplitude";
+import { COPY_SEND_FOR_SIGNATURES_LINK } from "@/components/amplitude/eventNames";
 import Modal, { ModalStyle } from "@/components/modal";
 import CopyLink from "@/components/shared/CopyLink";
 import { AppState } from "@/state";
@@ -47,6 +49,9 @@ const SendForSignatures: FC<ILinkModal> = ({
   const updateLegalAgreementSignageLinkCopyState = () => {
     setShowLegalAgreementSignageCopyState(true);
     setTimeout(() => setShowLegalAgreementSignageCopyState(false), 1000);
+    amplitudeLogger(COPY_SEND_FOR_SIGNATURES_LINK, {
+      flow: Flow.LEGAL_ENTITY_FLOW,
+    });
   };
 
   useEffect(() => {

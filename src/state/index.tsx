@@ -1,4 +1,5 @@
 import airdopInfoSliceReducer from "@/state/airdropInfo/slice";
+import setCollectibleDetailsSliceReducer from "@/state/assets/collectibles/slice";
 import assetsSliceReducer from "@/state/assets/slice";
 import claimedERC721SliceReducer from "@/state/claimedERC721/slice";
 import tokenClaimedSliceReducer from "@/state/claimedToken/slice";
@@ -39,6 +40,7 @@ export const store = configureStore({
     erc721MerkleProofSliceReducer,
     erc721AirdropInfoSliceReducer,
     claimedERC721SliceReducer,
+    setCollectibleDetailsSliceReducer,
     utilityNFTSliceReducer,
   },
   middleware: (getDefaultMiddleware) =>

@@ -1,3 +1,4 @@
+import { useDemoMode } from "@/hooks/useDemoMode";
 import React from "react";
 
 /**
@@ -178,22 +179,84 @@ export const OpenExternalLinkIcon = (props: {
 };
 
 export const RightArrow = (props: {
-  color?: string;
+  className?: string;
   width?: string;
   height?: string;
 }): JSX.Element => {
-  const { color = "#90949E", width = "16", height = "14" } = props;
+  const { className, width = "16", height = "14" } = props;
   return (
     <svg
       width={width}
       height={height}
-      style={{ color }}
       viewBox="0 0 16 14"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
+      className={className}
     >
       <path
         d="M16 7C16 6.78562 15.9052 6.58839 15.7329 6.42546L10.0118 0.740105C9.83953 0.577176 9.65859 0.499999 9.4518 0.499999C9.02962 0.499999 8.69359 0.808706 8.69359 1.23747C8.69359 1.44327 8.77114 1.64908 8.90899 1.7777L10.839 3.73285L13.7426 6.36544L11.6575 6.23681L0.758213 6.23681C0.310179 6.23681 9.53674e-07 6.55409 9.53674e-07 7C9.53674e-07 7.44591 0.310179 7.76319 0.758213 7.76319L11.6575 7.76319L13.734 7.63456L10.839 10.2672L8.90899 12.2223C8.77114 12.3595 8.69359 12.5567 8.69359 12.7625C8.69359 13.1913 9.02962 13.5 9.4518 13.5C9.65859 13.5 9.83953 13.4314 10.0291 13.2427L15.7329 7.57454C15.9052 7.41161 16 7.21438 16 7Z"
+        className="fill-current"
+      />
+    </svg>
+  );
+};
+
+export const WalletIcon = (props: {
+  className?: string;
+  width?: string;
+  height?: string;
+}): JSX.Element => {
+  const { className = "text-green", width = "13", height = "10" } = props;
+
+  const isDemoMode = useDemoMode();
+
+  if (isDemoMode) {
+    return (
+      <img
+        className="mr-2"
+        width={18}
+        height={12}
+        src="/images/status/gamecontroller.svg"
+        alt="demo icon"
+      />
+    );
+  }
+
+  return (
+    <svg
+      width={width}
+      height={height}
+      viewBox="0 0 13 10"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className={className}
+    >
+      <path
+        d="M11.875 0H0.625C0.25 0 0 0.25 0 0.625V9.375C0 9.75 0.25 10 0.625 10H11.875C12.25 10 12.5 9.75 12.5 9.375V7.25H7.375C6.13236 7.25 5.125 6.24264 5.125 5C5.125 3.75736 6.13236 2.75 7.375 2.75H12.5V0.625C12.5 0.25 12.25 0 11.875 0Z"
+        className="fill-current"
+      />
+      <circle cx="7.5" cy="5" r="1.25" className="fill-current" />
+    </svg>
+  );
+};
+
+export const RibbonIcon = (props: {
+  className?: string;
+  width?: string;
+  height?: string;
+}): JSX.Element => {
+  const { className, width = "16", height = "16" } = props;
+  return (
+    <svg
+      width={width}
+      height={height}
+      viewBox="0 0 16 16"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className={className}
+    >
+      <path
+        d="M11.852 15.2887V10.0986C13.0146 9.04225 13.75 7.50704 13.75 5.80282C13.757 2.59155 11.1726 0 7.99999 0C4.82734 0 2.25 2.59155 2.25 5.80282C2.25 7.54225 3.0134 9.11268 4.22503 10.169V15.2887C4.22503 15.7817 4.51218 16 4.86936 16C5.14251 16 5.34561 15.8592 5.55572 15.6479L7.76887 13.4366C7.87393 13.331 7.95797 13.2958 8.04201 13.2958C8.11905 13.2958 8.2031 13.331 8.30815 13.4366L10.5213 15.6479C10.7384 15.8662 10.9485 16 11.2147 16C11.5719 16 11.852 15.7817 11.852 15.2887ZM8.007 10.2042C5.56973 10.1972 3.66474 8.23944 3.66474 5.80282C3.66474 3.35915 5.56973 1.40141 8.007 1.40141C10.4373 1.40141 12.3423 3.35915 12.3493 5.80282C12.3563 8.23944 10.4373 10.2042 8.007 10.2042Z"
         className="fill-current"
       />
     </svg>

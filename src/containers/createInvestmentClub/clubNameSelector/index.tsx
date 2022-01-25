@@ -11,10 +11,12 @@ import { symbolValidation } from "@/utils/validators";
 import { generateSlug } from "random-word-slugs";
 import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { SettingsDisclaimerTooltip } from "../shared/SettingDisclaimer";
 import useOnClickOutside from "../shared/useOnClickOutside";
 
-const ClubNameSelector: React.FC = () => {
+const ClubNameSelector: React.FC<{
+  className?: string;
+  editButtonClicked?: boolean;
+}> = ({ className, editButtonClicked }) => {
   const ref = useRef();
 
   const {
@@ -43,7 +45,7 @@ const ClubNameSelector: React.FC = () => {
     } else if (!debouncedSymbol && !hasSymbolBeenEdited) {
       dispatch(setInvestmentClubSymbolPlaceHolder(""));
     }
-  }, [debouncedSymbol]);
+  }, [debouncedSymbol, dispatch, hasSymbolBeenEdited]);
 
   useEffect(() => {
     // Dismiss error message after 1 second
@@ -55,12 +57,21 @@ const ClubNameSelector: React.FC = () => {
   }, [errors]);
 
   useEffect(() => {
-    if (investmentClubName && investmentClubSymbolPlaceHolder) {
+    if (
+      investmentClubName &&
+      investmentClubSymbolPlaceHolder &&
+      !editButtonClicked
+    ) {
       setNextBtnDisabled(false);
     } else {
       setNextBtnDisabled(true);
     }
-  }, [investmentClubName, investmentClubSymbolPlaceHolder, setNextBtnDisabled]);
+  }, [
+    investmentClubName,
+    investmentClubSymbolPlaceHolder,
+    editButtonClicked,
+    setNextBtnDisabled,
+  ]);
 
   const handleSymbolChange = (e) => {
     const _sym = (e.target.value as string).trim().toUpperCase();
@@ -110,7 +121,7 @@ const ClubNameSelector: React.FC = () => {
 
   return (
     <Fade>
-      <div className="flex flex-col pb-6 w-full lg:w-2/3">
+      <div className={className}>
         <div className="h3 pb-6">What should we call this investment club?</div>
         <div>
           <div className="relative" data-tip data-for="change-settings-tip">
@@ -136,10 +147,6 @@ const ClubNameSelector: React.FC = () => {
               </div>
             </button>
           </div>
-          <SettingsDisclaimerTooltip
-            id="change-settings-tip"
-            tip="Cannot be modified after club is created"
-          />
           <div className="rounded-xl bg-blue-navy bg-opacity-20 flex flex-row text-blue-navy items-center p-4 mt-4 space-x-3">
             <img className="w-5 h-5" src="/images/eye-open.svg" alt="" />
             <div className="text-sm">
@@ -171,10 +178,11 @@ const ClubNameSelector: React.FC = () => {
               <span className="text-red-error text-sm">{errors}</span>
             ) : (
               <span className="text-gray-3 text-sm">
-                Set an easily recognizable symbol for your investment club
-                token, which powers the club&apos;s cap table management and
-                governance infrastructure. Members receive this investment club
-                token as proof of their deposit.
+                Set an easily recognizable symbol for your investment club token
+                that powers the club&apos;s cap table management and governance
+                infrastructure. Members receive this investment club token
+                (initially defaults to non-transferable) as proof of their
+                deposit.
               </span>
             )}
           </div>

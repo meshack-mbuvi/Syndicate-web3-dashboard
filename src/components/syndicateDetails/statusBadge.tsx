@@ -5,6 +5,7 @@ import React from "react";
 import { useSelector } from "react-redux";
 import useFetchMerkleProof from "@/hooks/useMerkleProof";
 import useFetchTokenClaim from "@/hooks/useTokenClaim";
+import { useDemoMode } from "@/hooks/useDemoMode";
 
 interface Props {
   isManager?: boolean;
@@ -36,8 +37,10 @@ const StatusBadge = (props: Props): JSX.Element => {
     },
   } = useSelector((state: AppState) => state);
 
-  const { loading: merkleLoading } = useFetchMerkleProof();
-  const { loading: claimLoading } = useFetchTokenClaim();
+  const isDemoMode = useDemoMode();
+
+  const { loading: merkleLoading } = useFetchMerkleProof(isDemoMode);
+  const { loading: claimLoading } = useFetchTokenClaim(isDemoMode);
 
   let badgeBackgroundColor = "bg-blue-darker";
   let badgeIcon: string | React.ReactNode = "depositIcon.svg";
@@ -93,7 +96,7 @@ const StatusBadge = (props: Props): JSX.Element => {
             ) : (
               <div className="m-0">{badgeIcon}</div>
             )}
-            <p className="text-sm sm:text-lg leading-snug ml-4">{titleText}</p>
+            <p className="h3 sm:text-xl leading-snug ml-4">{titleText}</p>
           </div>
         )}
       </div>

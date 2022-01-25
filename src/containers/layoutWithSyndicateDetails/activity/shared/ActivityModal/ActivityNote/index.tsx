@@ -61,10 +61,12 @@ const ActivityNote: React.FC<IActivityNote> = ({
   };
 
   const cancelNote = () => {
-    if (noteValue) {
+    if (note) {
       setReadOnly(true);
+      setNoteValue(note);
     } else {
       setShowNote(false);
+      setNoteValue("");
     }
   };
 

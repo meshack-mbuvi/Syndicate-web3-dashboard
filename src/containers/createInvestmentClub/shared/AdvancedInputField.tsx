@@ -21,9 +21,10 @@ export const AdvancedInputField = (props: {
   extraAddon: any;
   isNumber?: boolean;
   hasError?: boolean;
-  moreInfo?: string;
+  moreInfo?: string | React.ReactNode;
   addSettingDisclaimer?: boolean;
   customClass?: { addon?: string; input?: string };
+  className?: string;
 }): JSX.Element => {
   const {
     label,
@@ -41,13 +42,14 @@ export const AdvancedInputField = (props: {
     extraAddon,
     moreInfo,
     addSettingDisclaimer,
+    className
   } = props;
 
   const [focused, setFocused] = useState(false);
   const [hover, setHover] = useState(false);
 
   return (
-    <div className="w-full lg:w-2/3">
+    <div className={className}>
       <div className="flex justify-between">
         <label htmlFor={label} className="h3 pb-6">
           {label}
