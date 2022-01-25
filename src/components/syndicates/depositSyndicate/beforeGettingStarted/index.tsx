@@ -17,14 +17,14 @@ export const BeforeGettingStarted: React.FC = () => {
    * Load control variable for showing BeforeGettingStarted from localstorage
    */
   useEffect(() => {
-    const showBeforeGettingStarted = localStorage.getItem(
+    const showBeforeGettingStartedVariable = localStorage.getItem(
       "showBeforeGettingStarted",
     );
 
-    if (showBeforeGettingStarted == null || undefined) {
+    if (showBeforeGettingStartedVariable == null || undefined) {
       localStorage.setItem("showBeforeGettingStarted", "true");
       setShowBeforeGettingStarted(false);
-    } else if (showBeforeGettingStarted === "true") {
+    } else if (showBeforeGettingStartedVariable === "true") {
       setShowBeforeGettingStarted(true);
     } else {
       setShowBeforeGettingStarted(false);
@@ -55,9 +55,9 @@ export const BeforeGettingStarted: React.FC = () => {
       setError(true);
       return;
     } else {
-      setShowBeforeGettingStarted(false);
       setError(false);
       localStorage.setItem("showBeforeGettingStarted", "false");
+      setShowBeforeGettingStarted(false);
     }
   };
 
