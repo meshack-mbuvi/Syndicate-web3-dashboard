@@ -1,12 +1,16 @@
 import { amplitudeLogger, Flow } from "@/components/amplitude";
+import {
+  CREATE_INVESTMENT_CLUB,
+  ERROR_INVESTMENT_CLUB_CREATION,
+} from "@/components/amplitude/eventNames";
 import { metamaskConstants } from "@/components/syndicates/shared/Constants";
 import { getMetamaskError } from "@/helpers";
 import useUSDCDetails from "@/hooks/useUSDCDetails";
 import { AppState } from "@/state";
 import {
+  resetClubCreationReduxState,
   setClubCreationReceipt,
   setTransactionHash,
-  resetClubCreationReduxState
 } from "@/state/createInvestmentClub/slice";
 import { getWeiAmount } from "@/utils/conversions";
 import { useRouter } from "next/router";
@@ -20,11 +24,6 @@ import React, {
 } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import steps from "./steps";
-import {
-  ERROR_INVESTMENT_CLUB_CREATION,
-  CREATE_INVESTMENT_CLUB,
-} from "@/components/amplitude/eventNames";
-
 
 type CreateInvestmentClubProviderProps = {
   handleNext: () => void;
@@ -114,7 +113,7 @@ const CreateInvestmentClubProvider: React.FC = ({ children }) => {
       transactionModal: false,
       errorModal: false,
     }));
-  }
+  };
 
   const reviewStep = currentStep === steps.length - 1;
   const lastStep = currentStep === steps.length - 2;
@@ -155,7 +154,7 @@ const CreateInvestmentClubProvider: React.FC = ({ children }) => {
 
   const onTxReceipt = (receipt) => {
     dispatch(
-      setClubCreationReceipt(receipt.events.ClubERC20Created.returnValues),
+      setClubCreationReceipt(receipt.events.ERC20ClubCreated.returnValues),
     );
     dispatch(setTransactionHash(""));
     setShowModal(() => ({
@@ -254,7 +253,7 @@ const CreateInvestmentClubProvider: React.FC = ({ children }) => {
         errorModalMessage,
         preClubCreationStep,
         setPreClubCreationStep,
-        resetCreationStates
+        resetCreationStates,
       }}
     >
       {children}
