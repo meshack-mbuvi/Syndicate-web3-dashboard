@@ -53,7 +53,7 @@ const useClubERC20s = () => {
   });
 
   useEffect(() => {
-    if (router.isReady) {
+    if (account && router.isReady) {
       refetch({
         where: {
           ownerAddress: account.toLocaleLowerCase(),
