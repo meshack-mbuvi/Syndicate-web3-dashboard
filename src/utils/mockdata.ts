@@ -72,17 +72,6 @@ export const mockTokensResult = [
   ...mockDepositModeTokens,
   {
     price: {
-      usd: 400.81,
-    },
-    logo: "/images/prodTokenLogos/safeohm.webp",
-    tokenDecimal: "18",
-    tokenSymbol: "sOHM",
-    tokenBalance: "347.53",
-    tokenName: "Staked Olympus v1",
-    tokenValue: 0,
-  },
-  {
-    price: {
       usd: 15.63,
     },
     logo: "/images/prodTokenLogos/uniswap.webp",
