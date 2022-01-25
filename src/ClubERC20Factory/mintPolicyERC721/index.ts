@@ -16,7 +16,6 @@ export class ERC721MintPolicyContract {
     clubAddress: string,
     moduleAddress: string,
   ): Promise<boolean> {
-    console.log(clubAddress, moduleAddress);
     return this.mintPolicyERC721Contract.methods
       .allowedModules(clubAddress, moduleAddress)
       .call();

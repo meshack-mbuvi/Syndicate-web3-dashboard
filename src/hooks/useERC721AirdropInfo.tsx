@@ -17,7 +17,11 @@ const useFetchAirdropInfo: any = () => {
     },
     erc721MerkleProofSliceReducer: { erc721MerkleProof },
     erc721TokenSliceReducer: {
-      erc721Token: { address: nftAddress, publicSingleClaimEnabled },
+      erc721Token: {
+        address: nftAddress,
+        publicSingleClaimEnabled,
+        publicUtilityClaimEnabled,
+      },
     },
     initializeContractsReducer: { syndicateContracts },
   } = useSelector((state: AppState) => state);
@@ -84,7 +88,11 @@ const useFetchAirdropInfo: any = () => {
 
   useEffect(() => {
     dispatch(setLoadingERC721AirdropInfo(true));
-    if (airdropData?.length && !publicSingleClaimEnabled) {
+    if (
+      airdropData?.length &&
+      !publicSingleClaimEnabled &&
+      !publicUtilityClaimEnabled
+    ) {
       const airdropObj = airdropData[0].returnValues;
       dispatch(
         setERC721AirdropInfo({
@@ -97,7 +105,12 @@ const useFetchAirdropInfo: any = () => {
     } else {
       dispatch(clearERC721AirdropInfo());
     }
-  }, [loading, airdropData, publicSingleClaimEnabled]);
+  }, [
+    loading,
+    airdropData,
+    publicSingleClaimEnabled,
+    publicUtilityClaimEnabled,
+  ]);
 
   return { loading };
 };

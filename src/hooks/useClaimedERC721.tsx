@@ -16,7 +16,11 @@ const useFetchERC721Claim: any = () => {
     },
     erc721MerkleProofSliceReducer: { erc721MerkleProof },
     erc721TokenSliceReducer: {
-      erc721Token: { address: nftAddress },
+      erc721Token: {
+        address: nftAddress,
+        publicSingleClaimEnabled,
+        publicUtilityClaimEnabled,
+      },
     },
     initializeContractsReducer: { syndicateContracts },
   } = useSelector((state: AppState) => state);
@@ -47,7 +51,11 @@ const useFetchERC721Claim: any = () => {
   useEffect(() => {
     dispatch(setLoadingERC721Claimed(true));
 
-    if (claimData?.length) {
+    if (
+      claimData?.length &&
+      !publicSingleClaimEnabled &&
+      !publicUtilityClaimEnabled
+    ) {
       const claim = claimData.filter(
         (_claim) =>
           _claim.returnValues?.treeIndex ===
@@ -74,7 +82,7 @@ const useFetchERC721Claim: any = () => {
     } else {
       dispatch(clearERC721Claimed());
     }
-  }, [loading]);
+  }, [loading, publicSingleClaimEnabled, publicUtilityClaimEnabled]);
 
   return { loading, getClaim };
 };

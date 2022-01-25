@@ -7,6 +7,8 @@ import { PublicOnePerAddressModuleContract } from "./publicOnePerAddressModule";
 import { MintPolicyContract } from "./mintPolicy";
 import { ERC721MintPolicyContract } from "./mintPolicyERC721";
 import { SingleTokenMintModuleContract } from "./singleTokenMintModule";
+import { RugUtilityMintModuleContract } from "./rugUtilityMintModule";
+import { publicMintWithFeeModuleContract } from "./publicMintWithFeeModule";
 
 // Contract addresses for new contracts
 const CLUB_ERC20_FACTORY_ADDRESS = process.env.NEXT_PUBLIC_CLUB_ERC20_FACTORY;
@@ -20,6 +22,9 @@ const MERKLE_DISTRIBUTOR_MODULE_ERC721 =
 const PUBLIC_ONE_PER_ADDRESS_MODULE =
   process.env.NEXT_PUBLIC_ONE_PER_ADDRESS_MODULE;
 const PUBLIC_ERC721_MINT_POLICY = process.env.NEXT_PUBLIC_ERC721_MINT_POLICY;
+const PUBLIC_RUG_UTILITY_MINT_MODULE =
+  process.env.NEXT_PUBLIC_RUG_UTILITY_MINT_MODULE;
+const PUBLIC_UTILITY_MINT_MODULE = process.env.NEXT_PUBLIC_UTILITY_MINT_MODULE;
 
 export const getSyndicateContracts = async (
   web3: Web3,
@@ -60,6 +65,16 @@ export const getSyndicateContracts = async (
     web3,
   );
 
+  const RugUtilityMintModule = new RugUtilityMintModuleContract(
+    PUBLIC_RUG_UTILITY_MINT_MODULE,
+    web3,
+  );
+
+  const PublicMintWithFeeModule = new publicMintWithFeeModuleContract(
+    PUBLIC_UTILITY_MINT_MODULE,
+    web3,
+  );
+
   // return all initialized contracts
   return {
     clubERC20Factory,
@@ -69,5 +84,7 @@ export const getSyndicateContracts = async (
     MerkleDistributorModuleERC721,
     PublicOnePerAddressModule,
     mintPolicyERC721,
+    RugUtilityMintModule,
+    PublicMintWithFeeModule,
   };
 };

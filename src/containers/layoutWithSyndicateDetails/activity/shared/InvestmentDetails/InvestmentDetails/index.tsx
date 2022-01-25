@@ -1,15 +1,15 @@
 import { NumberField, TextField } from "@/components/inputs";
 import ActivityDatePicker from "@/containers/layoutWithSyndicateDetails/activity/shared/ActivityDatePicker";
+import { DataStorageInfo } from "@/containers/layoutWithSyndicateDetails/activity/shared/DataStorageInfo";
 import RoundDropDown from "@/containers/layoutWithSyndicateDetails/activity/shared/InvestmentDetails/InvestmentDetails/RoundDropDown";
+import PiiWarning from "@/containers/layoutWithSyndicateDetails/activity/shared/PiiWarning";
+import { ANNOTATE_TRANSACTIONS } from "@/graphql/mutations";
+import { AppState } from "@/state";
+import { useMutation } from "@apollo/client";
+import { isEmpty } from "lodash";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import PiiWarning from "@/containers/layoutWithSyndicateDetails/activity/shared/PiiWarning";
-import { ANNOTATE_TRANSACTIONS } from "@/graphql/mutations";
-import { useMutation } from "@apollo/client";
-import { DataStorageInfo } from "@/containers/layoutWithSyndicateDetails/activity/shared/DataStorageInfo";
-import { isEmpty } from "lodash";
-import { AppState } from "@/state";
 import { useSelector } from "react-redux";
 
 interface Details {
@@ -68,8 +68,6 @@ const InvestmentDetailsModal: React.FC<IInvestmentDetailsModal> = ({
     reset,
     getValues,
     setValue,
-    setFocus,
-    register,
     formState: { isDirty, dirtyFields },
   } = useForm<Details>({
     mode: "onChange",
@@ -91,10 +89,7 @@ const InvestmentDetailsModal: React.FC<IInvestmentDetailsModal> = ({
   }, [blockTimestamp, storedInvestmentDetails?.investmentDate]);
 
   // Annotation
-  const [
-    annotationMutation,
-    { data: annotationData, loading: annotationLoading, error: err },
-  ] = useMutation(ANNOTATE_TRANSACTIONS);
+  const [annotationMutation] = useMutation(ANNOTATE_TRANSACTIONS);
 
   const formValues = getValues();
   const {
