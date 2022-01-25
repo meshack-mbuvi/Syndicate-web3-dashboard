@@ -39,7 +39,7 @@ export const InputFieldWithMax = (props: {
     customClass,
     moreInfo,
     addSettingDisclaimer,
-    className
+    className,
   } = props;
 
   return (
@@ -88,27 +88,27 @@ export const InputFieldWithMax = (props: {
         </div>
       </div>
       {addSettingDisclaimer && (
-          <div className="hidden lg:flex pl-4 justify-center items-center w-1/3">
-            <SettingsDisclaimerTooltip
-              id="disclaimer-tip"
-              tip={
-                <span>
-                  Can be modified later via an on-chain <br /> transaction with
-                  gas
-                </span>
-              }
-            />
-          </div>
-        )}
+        <div className="hidden lg:flex pl-4 justify-center items-center w-1/3">
+          <SettingsDisclaimerTooltip
+            id="disclaimer-tip"
+            tip={
+              <span>
+                Can be modified later via an on-chain <br /> transaction with
+                gas
+              </span>
+            }
+          />
+        </div>
+      )}
       <div className="w-full lg:w-full">
         {(error || warning) && (
-          <span
+          <p
             className={`text-sm ${warning && "text-yellow-saffron"} ${
               error && "text-red-500"
             } pt-2`}
           >
             {(error || warning) && !disabled ? error || warning : ""}
-          </span>
+          </p>
         )}
         {moreInfo && !(error || warning) && (
           <span className="text-sm text-gray-3 pt-2">{moreInfo}</span>

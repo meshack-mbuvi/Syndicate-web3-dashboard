@@ -1,14 +1,18 @@
 import React from "react";
-
-export const EmailSupport = () => (
-  <>
-    <a
-      className="text-gray-syn3 pointer"
-      href="mailto:support@syndicate.io"
-      target="_blank"
-      rel="noreferrer"
-    >
-      support@syndicate.io
-    </a>
-  </>
+interface EmailSupportProps {
+  href?: string;
+  className?: string;
+}
+export const EmailSupport: React.FC<EmailSupportProps> = ({
+  href = "support@syndicate.io",
+  className = "text-gray-syn3",
+}) => (
+  <a
+    className={`${className} cursor-pointer`}
+    href={`mailto:${href}`}
+    target="_blank"
+    rel="noreferrer"
+  >
+    {href}
+  </a>
 );

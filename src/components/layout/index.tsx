@@ -15,7 +15,7 @@ import SEO from "../seo";
 interface Props {
   backLink?: string;
   showNav?: boolean;
-  navItems?: { url: string; urlText: string }[];
+  navItems?: { navItemText: string; url?: string; isLegal?: boolean }[];
 }
 
 const Layout: FC<Props> = ({
@@ -25,7 +25,7 @@ const Layout: FC<Props> = ({
   navItems = [
     {
       url: "/clubs",
-      urlText: "Portfolio",
+      navItemText: "Portfolio",
     },
   ],
 }) => {
@@ -104,9 +104,7 @@ const Layout: FC<Props> = ({
           title="Home"
         />
         <Header backLink={backLink} show={showNav} navItems={navItems} />
-        <div className="sticky top-0 pt-1 z-20">
-          <DemoBanner />
-        </div>
+        <DemoBanner />
         <div
           className={`sticky top-18 ${
             showCreateProgressBar ? "bg-black backdrop-filter" : ""
@@ -128,7 +126,7 @@ const Layout: FC<Props> = ({
         <div
           className={`flex w-full bg-black flex-col sm:flex-row ${
             showCreateProgressBar ? "pt-16" : "pt-24"
-          } z-20 justify-center items-center my-0 mx-auto overflow-x-hidden`}
+          } z-20 justify-center items-center my-0 mx-auto`}
         >
           {children}
         </div>

@@ -286,6 +286,10 @@
       padding-bottom: 100%;
     }
 
+    .perfect-square-box {
+      aspect-ratio: 1 / 1;
+    }
+
     /* Padding */
 
     .pb-1px {
@@ -804,9 +808,6 @@ input[type="checkbox"] {
 .symbol-prefix {
   padding-top: 17px;
   padding-left: 17px;
-}
-.svgBlueHover:hover svg path {
-  fill: #4376ff;
 }
 
 .video-320 {
