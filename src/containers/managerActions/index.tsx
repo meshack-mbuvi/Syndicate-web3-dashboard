@@ -8,19 +8,19 @@ import StatusBadge from "@/components/syndicateDetails/statusBadge";
 import ConnectWalletAction from "@/components/syndicates/shared/connectWalletAction";
 import { EtherscanLink } from "@/components/syndicates/shared/EtherscanLink";
 import { SuccessCard } from "@/containers/managerActions/successCard";
+import { useCreateInvestmentClubContext } from "@/context/CreateInvestmentClubContext";
+import { useDemoMode } from "@/hooks/useDemoMode";
 import { AppState } from "@/state";
+import { setDepositReadyInfo } from "@/state/legalInfo";
 import { Status } from "@/state/wallet/types";
 import { generateMemberSignURL } from "@/utils/generateMemberSignURL";
 import { ArrowNarrowRightIcon, XIcon } from "@heroicons/react/solid";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { animated } from "react-spring";
 import GenerateDepositLink from "./GenerateDepositLink";
 import { MintAndShareTokens } from "./mintAndShareTokens";
-import { setDepositReadyInfo } from "@/state/legalInfo";
-import { useCreateInvestmentClubContext } from "@/context/CreateInvestmentClubContext";
-import { useDemoMode } from "@/hooks/useDemoMode";
-import { animated } from "react-spring";
 
 const useShowShareWarning = () => {
   const router = useRouter();
@@ -163,12 +163,16 @@ const ManagerActions = (): JSX.Element => {
     });
   };
 
-  const handleShowMintTokens = (event) => {
-    event.stopPropagation();
-    setShowMintToken(true);
-  };
+  /**
+   * TODO: Uncomment this function after enabling mint tokens button.
+   */
+  // const handleShowMintTokens = (event) => {
+  //   event.stopPropagation();
+  //   setShowMintToken(true);
+  // };
 
-  const [linkShareAgreementChecked, setLinkShareAgreementChecked] = useState(false);
+  const [linkShareAgreementChecked, setLinkShareAgreementChecked] =
+    useState(false);
 
   return (
     <ErrorBoundary>
@@ -225,27 +229,34 @@ const ManagerActions = (): JSX.Element => {
                               Invite members by sharing your club’s{" "}
                               {claimEnabled ? "claim" : "deposit"} link
                             </p>
-                            {
-                              !adminSigned && (
-                                <div className="flex space-between mt-3">
-                                  <input 
-                                    className="bg-transparent rounded mt-1 focus:ring-offset-0" 
-                                    onChange={() => setLinkShareAgreementChecked(!linkShareAgreementChecked)} 
-                                    type="checkbox" 
-                                    id="linkShareAgreement" 
-                                    name="linkShareAgreement" 
-                                  />
-                                  <animated.p
-                                    className="text-sm text-gray-syn4 ml-3"
+                            {!adminSigned && (
+                              <div className="flex space-between mt-3">
+                                <input
+                                  className="bg-transparent rounded mt-1 focus:ring-offset-0"
+                                  onChange={() =>
+                                    setLinkShareAgreementChecked(
+                                      !linkShareAgreementChecked,
+                                    )
+                                  }
+                                  type="checkbox"
+                                  id="linkShareAgreement"
+                                  name="linkShareAgreement"
+                                />
+                                <animated.p className="text-sm text-gray-syn4 ml-3">
+                                  I agree to only share this link privately. I
+                                  understand that publicly sharing this link may
+                                  violate securities laws. <br></br>
+                                  <a
+                                    target="_blank"
+                                    style={{ color: "#4376ff" }}
+                                    href="https://www.sec.gov/reportspubs/investor-publications/investorpubsinvclubhtm.html"
+                                    rel="noopener noreferrer"
                                   >
-                                    I agree to only share this link privately. I understand that publicly 
-                                    sharing this link may violate securities laws. <br></br> 
-                                    <a target="_blank" style={{ color: '#4376ff' }} href="https://www.sec.gov/reportspubs/investor-publications/investorpubsinvclubhtm.html" 
-                                    rel="noopener noreferrer">Learn more.</a> {" "}
-                                  </animated.p>
-                                </div>
-                              )
-                            }
+                                    Learn more.
+                                  </a>{" "}
+                                </animated.p>
+                              </div>
+                            )}
                             {adminSigned && (
                               <p>
                                 {hasAgreements
@@ -364,9 +375,11 @@ const ManagerActions = (): JSX.Element => {
         {status !== Status.DISCONNECTED && (
           <div className="flex bg-gray-syn8 duration-500 transition-all rounded-2.5xl my-6 p-4 space-y-4 items-start flex-col">
             <div className="hover:bg-gray-syn7 rounded-xl py-2 px-4">
-            <CreateEntityCard />
+              <CreateEntityCard />
             </div>
-            <button
+            {/* This button will be re-enabled. */}
+
+            {/* <button
               className="cursor-pointer space-x-4 focus:outline-none flex w-full items-start text-base leading-6 hover:bg-gray-syn7 rounded-xl py-2 px-4"
               onClick={handleShowMintTokens}
               disabled={isDemoMode}
@@ -379,7 +392,7 @@ const ManagerActions = (): JSX.Element => {
                 />
               </div>
               <div className="text-base leading-6">Mint club tokens</div>
-            </button>
+            </button> */}
           </div>
         )}
 
