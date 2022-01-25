@@ -13,7 +13,7 @@ const baseURL = isDev
   ? "https://api-rinkeby.etherscan.io/api"
   : "https://api.etherscan.io/api";
 
-  // https://rinkeby-api.opensea.io/api/v1
+// https://rinkeby-api.opensea.io/api/v1
 const openSeaBaseURL = isDev
   ? "https://rinkeby-api.opensea.io/api/v1"
   : "https://api.opensea.io/api/v1";
@@ -250,12 +250,14 @@ const assetsSlice = createSlice({
   name: "assets",
   initialState,
   reducers: {
-    setMockTokensResult(state) {
-      state.tokensResult = mockTokensResult;
+    setMockTokensResult(state, action) {
+      state.tokensResult = action.payload;
     },
-    setMockCollectiblesTransactions(state) {
-      state.collectiblesResult = mockCollectiblesResult;
-    }
+    setMockCollectiblesResult(state, action) {
+      const isDepositEnabled = action.payload;
+      state.collectiblesResult = isDepositEnabled ? [] : mockCollectiblesResult;
+      state.ethereumTokenPrice = 2396.93;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -326,7 +328,7 @@ const assetsSlice = createSlice({
 
 export const {
   setMockTokensResult,
-  setMockCollectiblesTransactions,
+  setMockCollectiblesResult,
 } = assetsSlice.actions;
 
 export default assetsSlice.reducer;

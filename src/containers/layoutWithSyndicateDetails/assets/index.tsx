@@ -24,10 +24,15 @@ const Assets: React.FC = () => {
       web3: { account },
     },
     transactionsReducer: { totalInvestmentTransactionsCount },
+    erc20TokenSliceReducer: {
+      erc20Token: { depositsEnabled },
+    },
   } = useSelector((state: AppState) => state);
 
   const router = useRouter();
-  const {query: { clubAddress }} = router;
+  const {
+    query: { clubAddress },
+  } = router;
   const isDemoMode = useDemoMode();
 
   const dispatch = useDispatch();
@@ -81,17 +86,29 @@ const Assets: React.FC = () => {
         setCanNextPage(true);
       }
     } else if (isDemoMode) {
-      dispatch(
-        setInvestmentTransactions({
-          txns: mockOffChainTransactionsData.edges as any,
-          skip: pageOffset,
-        }),
-      );
-      dispatch(
-        setTotalInvestmentTransactionsCount(mockOffChainTransactionsData.totalCount),
-      );
+      if (depositsEnabled) {
+        dispatch(
+          setInvestmentTransactions({
+            txns: [],
+            skip: 0,
+          }),
+        );
+        dispatch(setTotalInvestmentTransactionsCount(0));
+      } else {
+        dispatch(
+          setInvestmentTransactions({
+            txns: mockOffChainTransactionsData.edges as any,
+            skip: pageOffset,
+          }),
+        );
+        dispatch(
+          setTotalInvestmentTransactionsCount(
+            mockOffChainTransactionsData.totalCount,
+          ),
+        );
+      }
     }
-  }, [investmentsTransactionsData, clubAddress]);
+  }, [investmentsTransactionsData, clubAddress, depositsEnabled]);
 
   const assetsFilterOptions = [
     {
