@@ -127,7 +127,7 @@ const ClubNameSelector: React.FC<{
           <div className="relative" data-tip data-for="change-settings-tip">
             <input
               className="block font-whyte text-base bg-transparent p-4 rounded-md border-1 w-full border-gray-24 focus:border-blue-navy outline-none text-white hover:border-gray-syn3"
-              placeholder="Name (e.g. Friends With Benefits)"
+              placeholder="Name (e.g. Alpha DAO)"
               value={investmentClubName}
               onChange={(e) => dispatch(setInvestmentClubName(e.target.value))}
             />
@@ -168,7 +168,7 @@ const ClubNameSelector: React.FC<{
               data-tip
               data-for="change-settings-tip"
               className="text-base font-whyte bg-transparent leading-6 align-baseline py-4 pl-12 rounded-md border-1 w-full border-gray-24 focus:border-blue-navy outline-none text-white hover:border-gray-syn3"
-              placeholder="(e.g. FWB)"
+              placeholder="(e.g. ALDA)"
               value={investmentClubSymbolPlaceHolder}
               onChange={handleSymbolChange}
             />
