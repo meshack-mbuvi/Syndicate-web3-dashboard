@@ -8,8 +8,10 @@ const PriceContainer: React.FC<{
   noUSDValue?: boolean;
 }> = ({ numberValue, noUSDValue, ethValue = false, customSymbol = "USD" }) => {
   return (
-    <div className="text-base md:items-center">
-      <NumberTreatment numberValue={numberValue} noUSDValue={noUSDValue} />
+    <div className="text-base md:items-center flex flex-col md:flex-row">
+      <div>
+        <NumberTreatment numberValue={numberValue} noUSDValue={noUSDValue} />
+      </div>
       &nbsp;
       {ethValue ? "ETH" : `${noUSDValue ? "" : customSymbol}`}
     </div>
