@@ -341,23 +341,23 @@ const ManagerActions = (): JSX.Element => {
                     )}
 
                     {showShareWarning && !showConfettiSuccess && adminSigned && (
-                      <div className="flex flex-row mt-4 text-yellow-warning bg-brown-dark rounded-1.5lg py-3 px-4">
+                      <div className="flex flex-row mt-4 text-gray-syn4 bg-gray-syn9 rounded-1.5lg py-3 px-4">
                         <p className="text-sm">
-                          Do not publicly share this deposit link. Only share
-                          with trusted and qualified people.&nbsp;
+                          I agree to only share this link privately. I
+                          understand that publicly sharing this link may violate
+                          securities laws.{" "}
                           <a
-                            className="underline"
-                            rel="noreferrer"
-                            href="https://www.sec.gov/reportspubs/investor-publications/investorpubsinvclubhtm.html"
                             target="_blank"
+                            style={{ color: "#4376ff" }}
+                            href="https://www.sec.gov/reportspubs/investor-publications/investorpubsinvclubhtm.html"
+                            rel="noopener noreferrer"
                           >
-                            Learn more from the SEC
-                            <ArrowNarrowRightIcon className="h-4 w-4 inline-block no-underline ml-1" />
-                          </a>
+                            Learn more.
+                          </a>{" "}
                         </p>
                         <div className="flex items-center pl-2.5">
                           <XIcon
-                            className="h-7 w-7 cursor-pointer"
+                            className="h-3 w-3 cursor-pointer"
                             onClick={() => handleShowShareWarning(false)}
                             onKeyPress={() => handleShowShareWarning(false)}
                             role="button"
