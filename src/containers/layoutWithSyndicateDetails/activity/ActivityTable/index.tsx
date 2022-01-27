@@ -243,6 +243,7 @@ const ActivityTable: React.FC = () => {
   }, [
     JSON.stringify(transactionsData?.Financial_recentTransactions),
     clubAddress,
+    totalTransactionsCount
   ]);
 
   const processERC20Transactions = async (txns) => {
