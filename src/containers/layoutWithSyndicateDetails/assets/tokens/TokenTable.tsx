@@ -178,9 +178,7 @@ const TokenTable: FC<Props> = ({ columns, tableData }) => {
                         tokenBalance,
                         tokenName,
                         tokenSymbol,
-                        value:
-                          parseFloat(Number(price) ? price : price?.usd ?? 0) *
-                          parseFloat(tokenBalance),
+                        value: tokenValue,
                         logo,
                       });
                     }}
@@ -211,7 +209,10 @@ const TokenTable: FC<Props> = ({ columns, tableData }) => {
                       />
                     </div>
                     <div className="text-right md:text-left md:col-span-3">
-                      <PriceContainer numberValue={`${tokenValue || ""}`} />
+                      <PriceContainer
+                        numberValue={`${tokenValue || ""}`}
+                        noUSDValue={!price?.usd && !price}
+                      />
                     </div>
                   </div>
                 );

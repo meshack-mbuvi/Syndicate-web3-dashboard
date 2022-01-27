@@ -163,7 +163,7 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
     if (
       clubAddress !== zeroAddress &&
       web3.utils.isAddress(clubAddress) &&
-      syndicateContracts?.SingleTokenMintModule
+      syndicateContracts?.DepositTokenMintModule
     ) {
       const clubERC20tokenContract = new ClubERC20Contract(
         clubAddress as string,
@@ -175,7 +175,7 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
       dispatch(
         setERC20Token(
           clubERC20tokenContract,
-          syndicateContracts.SingleTokenMintModule,
+          syndicateContracts.DepositTokenMintModule,
         ),
       );
 
@@ -189,7 +189,12 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
           : mockActiveERC20Token;
       dispatch(setERC20TokenDetails(mockData));
     }
-  }, [clubAddress, account, status, syndicateContracts?.SingleTokenMintModule]);
+  }, [
+    clubAddress,
+    account,
+    status,
+    syndicateContracts?.DepositTokenMintModule,
+  ]);
 
   const showOnboardingIfNeeded = router.pathname.endsWith("[clubAddress]");
 

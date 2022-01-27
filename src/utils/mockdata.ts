@@ -10,6 +10,7 @@ export const mockERC20Token = {
   owner: "",
   tokenDecimals: 18,
   depositToken: "0xeb8f08a975Ab53E34D8a0330E0D34de942C95926",
+  mintModule: "0x36d367884b5088465C0Ea2EaF52224a922DC71E6",
   symbol: "✺ABC",
   memberCount: 6,
   loading: false,
