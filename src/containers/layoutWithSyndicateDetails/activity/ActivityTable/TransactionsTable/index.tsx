@@ -56,6 +56,7 @@ const TransactionsTable: FC<ITransactionsTableProps> = ({
       web3: { account },
     },
   } = useSelector((state: AppState) => state);
+
   const dispatch = useDispatch();
   const isManager = account === erc20Token.owner;
 

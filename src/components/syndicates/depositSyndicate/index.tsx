@@ -46,6 +46,7 @@ import { SkeletonLoader } from "src/components/skeletonLoader";
 import ERC20ABI from "src/utils/abi/erc20";
 import { AbiItem } from "web3-utils";
 import ConnectWalletAction from "../shared/connectWalletAction";
+import { useClubDepositsAndSupply } from "@/hooks/useClubDepositsAndSupply";
 
 const DepositSyndicate: React.FC = () => {
   // HOOK DECLARATIONS
@@ -67,7 +68,6 @@ const DepositSyndicate: React.FC = () => {
     maxTotalDeposits,
     depositToken,
     mintModule,
-    totalDeposits,
     memberCount,
     depositsEnabled,
     claimEnabled,
@@ -76,6 +76,8 @@ const DepositSyndicate: React.FC = () => {
     loading,
     maxMemberCount,
   } = erc20Token;
+
+  const { totalDeposits } = useClubDepositsAndSupply(address);
 
   const { depositTokenSymbol, depositTokenLogo, depositTokenDecimals } =
     useUSDCDetails();
@@ -1026,11 +1028,18 @@ const DepositSyndicate: React.FC = () => {
                             submittingAllowanceApproval ||
                             submitting ||
                             insufficientBalance ||
-                            depositAmount === "0.00" ||
+                            +depositAmount === 0 ||
                             isDemoMode
                               ? "bg-gray-syn6 text-gray-syn4"
                               : "bg-white text-black"
-                          } `}
+                          } ${
+                            Boolean(depositError) ||
+                            insufficientBalance ||
+                            +depositAmount === 0 ||
+                            !depositAmount
+                              ? "cursor-not-allowed"
+                              : "cursor-pointer"
+                          }`}
                           onClick={(e) => {
                             if (submittingAllowanceApproval) {
                               toggleDepositProcessingModal();
@@ -1045,7 +1054,7 @@ const DepositSyndicate: React.FC = () => {
                           }}
                           disabled={
                             insufficientBalance ||
-                            depositAmount === "0.00" ||
+                            +depositAmount === 0 ||
                             !depositAmount ||
                             Boolean(depositError) ||
                             isDemoMode
@@ -1176,49 +1185,46 @@ const DepositSyndicate: React.FC = () => {
       {((status !== Status.DISCONNECTED &&
         +memberDeposits > 0 &&
         !loading &&
-        depositsEnabled) || isDemoMode) && (
-          <div className="bg-gray-syn8 rounded-2xl mt-6 px-8 py-6">
-            <div className="pb-5 text-sm font-bold uppercase tracking-widest">
-              Your Holdings
-            </div>
-            {loading ? (
-              <SkeletonLoader
-                height="9"
-                width="full"
-                borderRadius="rounded-md"
-              />
-            ) : (
-              <div className={`flex ${isHoldingsCardColumn ? "flex-col" : ""}`}>
-                <div
-                  className={
-                    isHoldingsCardColumn
-                      ? ""
-                      : (width < 1380 || width < 868) &&
-                        +memberDeposits >= 1000 &&
-                        +memberDeposits < 10000
-                      ? "mr-6"
-                      : "mr-8"
-                  }
-                >
-                  <HoldingsInfo
-                    title="Amount deposited"
-                    amount={floatedNumberWithCommas(memberDeposits)}
-                    tokenName={"USDC"}
-                  />
-                </div>
-                <div className={isHoldingsCardColumn ? "pt-5" : ""}>
-                  <HoldingsInfo
-                    title="Club tokens (ownership share)"
-                    amount={floatedNumberWithCommas(accountTokens)}
-                    tokenName={symbol}
-                    percentValue={floatedNumberWithCommas(memberOwnership)}
-                    wrap="flex-wrap"
-                  />
-                </div>
-              </div>
-            )}
+        depositsEnabled) ||
+        isDemoMode) && (
+        <div className="bg-gray-syn8 rounded-2xl mt-6 px-8 py-6">
+          <div className="pb-5 text-sm font-bold uppercase tracking-widest">
+            Your Holdings
           </div>
-        )}
+          {loading ? (
+            <SkeletonLoader height="9" width="full" borderRadius="rounded-md" />
+          ) : (
+            <div className={`flex ${isHoldingsCardColumn ? "flex-col" : ""}`}>
+              <div
+                className={
+                  isHoldingsCardColumn
+                    ? ""
+                    : (width < 1380 || width < 868) &&
+                      +memberDeposits >= 1000 &&
+                      +memberDeposits < 10000
+                    ? "mr-6"
+                    : "mr-8"
+                }
+              >
+                <HoldingsInfo
+                  title="Amount deposited"
+                  amount={floatedNumberWithCommas(memberDeposits)}
+                  tokenName={"USDC"}
+                />
+              </div>
+              <div className={isHoldingsCardColumn ? "pt-5" : ""}>
+                <HoldingsInfo
+                  title="Club tokens (ownership share)"
+                  amount={floatedNumberWithCommas(accountTokens)}
+                  tokenName={symbol}
+                  percentValue={floatedNumberWithCommas(memberOwnership)}
+                  wrap="flex-wrap"
+                />
+              </div>
+            </div>
+          )}
+        </div>
+      )}
 
       <Modal
         {...{
