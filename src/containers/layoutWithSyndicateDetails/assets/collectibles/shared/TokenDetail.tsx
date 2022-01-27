@@ -53,7 +53,11 @@ const TokenDetail: React.FC<{ title: string; value: any; symbol?: any }> = ({
   if (title === "Value") {
     clubBalance = (
       <div className="flex flex-col items-end">
-        <PriceContainer numberValue={value} ethValue={false} />
+        <PriceContainer
+          numberValue={value}
+          ethValue={false}
+          noUSDValue={+value === 0}
+        />
       </div>
     );
   }
