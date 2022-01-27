@@ -127,7 +127,7 @@ export const MintAndShareTokens: React.FC<Props> = (props) => {
     dispatch(
       setERC20Token(
         erc20TokenContract,
-        syndicateContracts.SingleTokenMintModule,
+        syndicateContracts.DepositTokenMintModule,
       ),
     );
 

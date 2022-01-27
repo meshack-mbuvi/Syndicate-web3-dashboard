@@ -1,5 +1,5 @@
-import { MintPolicyContract } from "@/ClubERC20Factory/mintPolicy";
-import { SingleTokenMintModuleContract } from "@/ClubERC20Factory/singleTokenMintModule";
+import { MintPolicyContract } from "@/ClubERC20Factory/policyMintERC20";
+import { DepositTokenMintModuleContract } from "@/ClubERC20Factory/depositTokenMintModule";
 import { AppState } from "@/state";
 import {
   setERC20TokenContract,
@@ -8,12 +8,14 @@ import {
 } from "@/state/erc20token/slice";
 import { ERC20Token } from "@/state/erc20token/types";
 import { getWeiAmount } from "@/utils/conversions";
+import { isZeroAddress } from "@/utils";
 
 export const ERC20TokenDefaultState = {
   name: "",
   owner: "",
   address: "",
   depositToken: "",
+  mintModule: "",
   depositsEnabled: false,
   claimEnabled: false,
   totalSupply: 0,
@@ -37,30 +39,55 @@ export const ERC20TokenDefaultState = {
  */
 export const getERC20TokenDetails = async (
   ERC20tokenContract,
-  SingleTokenMintModule: SingleTokenMintModuleContract,
+  DepositTokenMintModule: DepositTokenMintModuleContract,
+  SingleTokenMintModule: DepositTokenMintModuleContract,
+  policyMintERC20: MintPolicyContract,
   mintPolicy: MintPolicyContract,
 ): Promise<ERC20Token> => {
   if (ERC20tokenContract) {
     try {
       // ERC20tokenContract is initialized with the contract address
       const { address } = ERC20tokenContract;
-      const {
+
+      let {
         endTime,
         maxMemberCount,
         maxTotalSupply,
         requiredToken,
         requiredTokenMinBalance,
         startTime,
-      } = await mintPolicy?.getSyndicateValues(address);
+      } = await policyMintERC20?.getSyndicateValues(address);
+
+      if (!+endTime && !+maxMemberCount && !+maxTotalSupply && !+startTime) {
+        ({
+          endTime,
+          maxMemberCount,
+          maxTotalSupply,
+          requiredToken,
+          requiredTokenMinBalance,
+          startTime,
+        } = await mintPolicy?.getSyndicateValues(address));
+      }
+
+      let mintModule = DepositTokenMintModule.address;
+
+      let depositToken = await DepositTokenMintModule?.depositToken(
+        ERC20tokenContract.clubERC20Contract._address,
+      );
+
+      if (isZeroAddress(depositToken)) {
+        depositToken = await SingleTokenMintModule?.depositToken(
+          ERC20tokenContract.clubERC20Contract._address,
+        );
+        mintModule = SingleTokenMintModule.address;
+      }
+
       // TODO: Multicall :-)
-      const [name, owner, tokenDecimals, depositToken, symbol, memberCount] =
+      const [name, owner, tokenDecimals, symbol, memberCount] =
         await Promise.all([
           ERC20tokenContract.name(),
           ERC20tokenContract.owner(),
           ERC20tokenContract.decimals(),
-          SingleTokenMintModule?.depositToken(
-            ERC20tokenContract.clubERC20Contract._address,
-          ),
           ERC20tokenContract.symbol(),
           ERC20tokenContract.memberCount(),
         ]);
@@ -71,7 +98,7 @@ export const getERC20TokenDetails = async (
         getWeiAmount(wei, tokenDecimals, false),
       );
 
-      const claimEnabled = await mintPolicy.isModuleAllowed(
+      const claimEnabled = await policyMintERC20.isModuleAllowed(
         ERC20tokenContract.clubERC20Contract._address,
         MERKLE_DISTRIBUTOR_MODULE,
       );
@@ -90,6 +117,7 @@ export const getERC20TokenDetails = async (
         owner,
         tokenDecimals,
         depositToken,
+        mintModule,
         symbol,
         memberCount,
         loading: false,
@@ -119,15 +147,22 @@ export const getERC20TokenDetails = async (
  *  totalDeposits, but we can get this from the thegraph endpoint.
  *
  * @param ERC20tokenContract
- * @param SingleTokenMintModule
+ * @param DepositTokenMintModule
  * @returns
  */
 export const setERC20Token =
-  (ERC20tokenContract, SingleTokenMintModule: SingleTokenMintModuleContract) =>
+  (
+    ERC20tokenContract,
+    DepositTokenMintModule: DepositTokenMintModuleContract,
+  ) =>
   async (dispatch, getState: () => AppState): Promise<void> => {
     const {
       initializeContractsReducer: {
-        syndicateContracts: { mintPolicy },
+        syndicateContracts: {
+          policyMintERC20,
+          mintPolicy,
+          SingleTokenMintModule,
+        },
       },
     } = getState();
 
@@ -136,7 +171,9 @@ export const setERC20Token =
     try {
       const erc20Token = await getERC20TokenDetails(
         ERC20tokenContract,
+        DepositTokenMintModule,
         SingleTokenMintModule,
+        policyMintERC20,
         mintPolicy,
       );
       dispatch(setERC20TokenDetails(erc20Token));
