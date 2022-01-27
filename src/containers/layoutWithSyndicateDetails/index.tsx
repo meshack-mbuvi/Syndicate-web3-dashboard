@@ -18,8 +18,8 @@ import {
   clearCollectiblesTransactions,
   fetchCollectiblesTransactions,
   fetchTokenTransactions,
-  setMockTokensResult,
   setMockCollectiblesResult,
+  setMockTokensResult,
 } from "@/state/assets/slice";
 import { setClubMembers } from "@/state/clubMembers";
 import {
@@ -41,7 +41,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { syndicateActionConstants } from "src/components/syndicates/shared/Constants";
 import ClubTokenMembers from "../managerActions/clubTokenMembers";
 import ActivityView from "./activity";
-import Assets from "./assets";
+import Assets from './assets';
 import TabButton from "./TabButton";
 
 const LayoutWithSyndicateDetails: FC = ({ children }) => {
