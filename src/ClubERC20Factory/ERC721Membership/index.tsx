@@ -83,4 +83,12 @@ export class ERC721Contract {
       return "";
     }
   }
+
+  async ownerOf(tokenId): Promise<string> {
+    try {
+      return this.erc721Contract.methods.ownerOf(tokenId).call();
+    } catch (error) {
+      return "";
+    }
+  }
 }

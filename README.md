@@ -76,4 +76,4 @@ The Syndicate smart contract is available on the Rinkeby test network at [0x9a89
 
 ## License
 
-This code is copyright Syndicate Inc 2022.
+This code is copyright Syndicate Inc. 2022.

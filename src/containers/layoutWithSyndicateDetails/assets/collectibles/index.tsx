@@ -268,7 +268,7 @@ const Collectibles: FC = () => {
                             Floor price
                           </span>
                           <div className="space-x-2 pt-1 h-1/3 overflow-y-scroll no-scroll-bar">
-                            <span className="">{floorPrice} ETH</span>
+                            <span className="">{floorPrice ?? 0} ETH</span>
                             <span className="text-gray-syn4">
                               (
                               {floatedNumberWithCommas(

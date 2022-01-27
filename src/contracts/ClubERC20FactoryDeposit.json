@@ -28,7 +28,12 @@
       },
       {
         "internalType": "address",
-        "name": "mintModule_",
+        "name": "depositTokenMintModule_",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "ownerMintModule_",
         "type": "address"
       }
     ],
@@ -57,7 +62,7 @@
         "type": "string"
       }
     ],
-    "name": "ClubERC20Created",
+    "name": "ERC20ClubCreated",
     "type": "event"
   },
   {
@@ -86,15 +91,9 @@
         "internalType": "address",
         "name": "transferPolicy",
         "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "address",
-        "name": "mintModule",
-        "type": "address"
       }
     ],
-    "name": "ClubERC20FactoryImplementationsSet",
+    "name": "ERC20ClubFactoryPoliciesSet",
     "type": "event"
   },
   {
@@ -257,7 +256,7 @@
   },
   {
     "inputs": [],
-    "name": "mintModule",
+    "name": "depositTokenMintModule",
     "outputs": [
       {
         "internalType": "address",
@@ -284,6 +283,19 @@
   {
     "inputs": [],
     "name": "owner",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "ownerMintModule",
     "outputs": [
       {
         "internalType": "address",
@@ -342,14 +354,9 @@
         "internalType": "address",
         "name": "transferPolicy_",
         "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "mintModule_",
-        "type": "address"
       }
     ],
-    "name": "setImplementations",
+    "name": "setPolicies",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"

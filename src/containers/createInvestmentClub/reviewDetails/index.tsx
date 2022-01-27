@@ -450,13 +450,17 @@ const ReviewDetails: React.FC = () => {
         <div className="w-full lg:w-2/3 mb-6">
           <div className="flex items-center space-between pl-5 pr-5 mb-5">
             <input
-              className="bg-transparent rounded focus:ring-offset-0"
+              className="bg-transparent rounded focus:ring-offset-0 cursor-pointer"
               onChange={() => setAgreementFirstChecked(!agreementFirstChecked)}
               type="checkbox"
               id="agreementFirst"
               name="agreementFirst"
+              checked={agreementFirstChecked}
             />
-            <animated.p className="text-sm text-gray-syn4 ml-5">
+            <animated.p
+              className="text-sm text-gray-syn4 ml-5 cursor-pointer select-none"
+              onClick={() => setAgreementFirstChecked(!agreementFirstChecked)}
+            >
               I represent that my access and use of Syndicate’s app and its
               protocol will fully comply with all applicable laws and
               regulations, including United States securities laws, and that I
@@ -466,15 +470,19 @@ const ReviewDetails: React.FC = () => {
           </div>
           <div className="flex items-center space-between pl-5 pr-5 mb-5">
             <input
-              className="bg-transparent rounded focus:ring-offset-0"
+              className="bg-transparent rounded focus:ring-offset-0 cursor-pointer"
               onChange={() =>
                 setAgreementSecondChecked(!agreementSecondChecked)
               }
               type="checkbox"
               id="agreementSecond"
               name="agreementSecond"
+              checked={agreementSecondChecked}
             />
-            <animated.p className="text-sm text-gray-syn4 ml-5">
+            <animated.p
+              className="text-sm text-gray-syn4 ml-5 cursor-pointer select-none"
+              onClick={() => setAgreementSecondChecked(!agreementSecondChecked)}
+            >
               By accessing and using Syndicate’s app and its protocol, I
               represent that I will seek advice from my own legal counsel and
               financial advisors. I understand and agree to assume full

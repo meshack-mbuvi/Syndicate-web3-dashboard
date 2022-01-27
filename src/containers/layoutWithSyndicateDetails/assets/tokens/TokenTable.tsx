@@ -2,7 +2,6 @@ import { SkeletonLoader } from "@/components/skeletonLoader";
 import GradientAvatar from "@/components/syndicates/portfolioAndDiscover/portfolio/GradientAvatar";
 import useModal from "@/hooks/useModal";
 import { AppState } from "@/state";
-import { floatedNumberWithCommas } from "@/utils/formattedNumbers";
 import Image from "next/image";
 import { FC, useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
@@ -147,11 +146,11 @@ const TokenTable: FC<Props> = ({ columns, tableData }) => {
           <div className="flex flex-col pt-8">
             {/* scroll to top of table with this button when pagination is clicked  */}
             <button ref={tokensTableRef} />
-            <div className="grid grid-cols-12 gap-5 pb-3 text-gray-lightManatee">
+            <div className="grid grid-cols-3 md:grid-cols-12 pb-3 text-gray-lightManatee">
               {columns?.map((col, idx) => (
                 <div
                   key={`token-table-header-${idx}`}
-                  className="text-sm col-span-3"
+                  className="text-sm md:col-span-3 text-center md:text-left"
                 >
                   {col}
                 </div>
@@ -172,7 +171,7 @@ const TokenTable: FC<Props> = ({ columns, tableData }) => {
                 return (
                   <div
                     key={`token-table-row-${index}`}
-                    className="grid grid-cols-12 gap-5 border-b-1 border-gray-syn7 py-5 cursor-pointer"
+                    className="grid grid-cols-3 md:grid-cols-12 md:gap-5 border-b-1 border-gray-syn7 py-5 cursor-pointer"
                     onClick={() => {
                       setShowTokenModal();
                       setTokenDetails({
@@ -184,8 +183,8 @@ const TokenTable: FC<Props> = ({ columns, tableData }) => {
                       });
                     }}
                   >
-                    <div className="flex flex-row col-span-3 items-center">
-                      <div className="flex flex-shrink-0 pr-4">
+                    <div className="flex flex-row md:col-span-3 items-center">
+                      <div className="hidden sm:flex flex-shrink-0 pr-4">
                         {logo ? (
                           <img
                             alt="token-icon"
@@ -196,21 +195,25 @@ const TokenTable: FC<Props> = ({ columns, tableData }) => {
                           <GradientAvatar name={tokenName} size={"w-8 h-8"} />
                         )}
                       </div>
-                      <div className="text-base flex items-center">
-                        {tokenName}&nbsp;
+                      <div className="text-base flex flex-col md:flex-row md:items-center">
+                        <span>{tokenName}&nbsp;</span>
                         <span className="text-gray-lightManatee">
                           ({tokenSymbol})
                         </span>
                       </div>
                     </div>
-                    <PriceContainer
-                      numberValue={tokenBalance}
-                      customSymbol={tokenSymbol}
-                    />
-                    <PriceContainer
-                      numberValue={`${tokenValue || ""}`}
-                      noUSDValue={!price?.usd && !price}
-                    />
+                    <div className="text-center md:text-left md:col-span-3">
+                      <PriceContainer
+                        numberValue={tokenBalance}
+                        customSymbol={tokenSymbol}
+                      />
+                    </div>
+                    <div className="text-right md:text-left md:col-span-3">
+                      <PriceContainer
+                        numberValue={`${tokenValue || ""}`}
+                        noUSDValue={!price?.usd && !price}
+                      />
+                    </div>
                   </div>
                 );
               },

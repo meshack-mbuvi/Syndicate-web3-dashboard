@@ -14,7 +14,7 @@ import DateCard from "./DateCard";
 const MintMaxDate: FC<{ className?: string }> = ({ className }) => {
   const dispatch = useDispatch();
 
-  const { setShowNextButton, handleNext, currentStep } =
+  const { setShowNextButton, handleNext, currentStep, setNextBtnDisabled } =
     useCreateInvestmentClubContext();
 
   const [warning, setWarning] = useState("");
@@ -104,6 +104,13 @@ const MintMaxDate: FC<{ className?: string }> = ({ className }) => {
         }, 400);
       }
     } else {
+      // execute a dispatch because we know default date
+      const date = new Date(new Date().setHours(23, 59, 0, 0)).getTime();
+      const dateToSet = date
+        ? parseInt((date / 1000).toString())
+        : parseInt((new Date().getTime() / 1000 + DAY_IN_SECONDS).toString());
+      dispatch(setMintEndTime({ mintTime: "Custom", value: dateToSet }));
+      setNextBtnDisabled(false);
       setShowNextButton(true);
       setShowCustomDatePicker(true);
     }

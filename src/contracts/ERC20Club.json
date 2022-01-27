@@ -140,12 +140,6 @@
   },
   {
     "anonymous": false,
-    "inputs": [],
-    "name": "PoliciesLocked",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
     "inputs": [
       {
         "indexed": true,
@@ -169,19 +163,13 @@
       {
         "indexed": true,
         "internalType": "address",
-        "name": "requestedBy",
+        "name": "recipient",
         "type": "address"
       },
       {
         "indexed": true,
         "internalType": "address",
-        "name": "from",
-        "type": "address"
-      },
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "to",
+        "name": "token",
         "type": "address"
       },
       {
@@ -191,7 +179,7 @@
         "type": "uint256"
       }
     ],
-    "name": "Transfer",
+    "name": "TokenRecovered",
     "type": "event"
   },
   {
@@ -264,7 +252,7 @@
         "type": "address"
       }
     ],
-    "name": "__ClubERC20_init",
+    "name": "__ERC20Club_init",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -341,7 +329,7 @@
     "name": "burnPolicy",
     "outputs": [
       {
-        "internalType": "contract IPolicy",
+        "internalType": "contract IPolicyToken",
         "name": "",
         "type": "address"
       }
@@ -435,19 +423,6 @@
     "type": "function"
   },
   {
-    "inputs": [],
-    "name": "hasLockedPolicies",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
     "inputs": [
       {
         "internalType": "address",
@@ -475,22 +450,22 @@
     "inputs": [
       {
         "internalType": "address",
-        "name": "requestedBy",
+        "name": "operator",
         "type": "address"
       },
       {
         "internalType": "address",
-        "name": "sender",
+        "name": "from",
         "type": "address"
       },
       {
         "internalType": "address",
-        "name": "recipient",
+        "name": "to",
         "type": "address"
       },
       {
         "internalType": "uint256",
-        "name": "amount",
+        "name": "value",
         "type": "uint256"
       }
     ],
@@ -520,13 +495,6 @@
   },
   {
     "inputs": [],
-    "name": "lockPolicies",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [],
     "name": "memberCount",
     "outputs": [
       {
@@ -543,7 +511,7 @@
     "name": "mintPolicy",
     "outputs": [
       {
-        "internalType": "contract IPolicy",
+        "internalType": "contract IPolicyToken",
         "name": "",
         "type": "address"
       }
@@ -833,7 +801,7 @@
     "name": "transferPolicy",
     "outputs": [
       {
-        "internalType": "contract IPolicy",
+        "internalType": "contract IPolicyToken",
         "name": "",
         "type": "address"
       }

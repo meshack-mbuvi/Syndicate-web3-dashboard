@@ -20,6 +20,8 @@ import { useRouter } from "next/router";
 import Tooltip from "react-tooltip-lite";
 import { isDev } from "@/utils/environment";
 import { numberWithCommas } from "@/utils/formattedNumbers";
+import { getWeiAmount } from "@/utils/conversions";
+import { getEthereumTokenPrice } from "@/utils/api/etherscan";
 
 const ClaimNFT: React.FC = () => {
   const router = useRouter();
@@ -43,48 +45,148 @@ const ClaimNFT: React.FC = () => {
   const [etherScanLink, setEtherscanLink] = useState<string>("");
   const [unMinted, setUnMinted] = useState<number>(0);
 
+  const [ethBalance, setEthBalance] = useState("");
+  const [rawEthBalance, setRawEthBalance] = useState("");
+  const [startTime, setStartTime] = useState<number>(0);
+  const [currentAccount, setCurrentAccount] = useState<string>(" ");
+  const [loading, setLoading] = useState<boolean>(true);
+  const [loading721, setLoading721] = useState<boolean>(true);
+
   const { nftAddress } = router.query;
 
-  const updateMinted = () => {
-    setUnMinted(unMinted - 1);
+  const updateMinted = (amount) => {
+    setUnMinted(unMinted - amount);
   };
 
   useEffect(() => {
-    if (isDev) {
-      setEtherscanLink(
-        `https://rinkeby.etherscan.io/address/${erc721Token.address}`,
-      );
-      setOpenseaLink("");
-      // setOpenseaLink(`https://testnets.opensea.io/collection/${"rug-radio"}`);
+    if (
+      !airdropLoading &&
+      !merkleLoading &&
+      !claimedLoading &&
+      !erc721Loading &&
+      !claimedPublicLoading &&
+      !loading721
+    ) {
+      setLoading(false);
     } else {
-      setEtherscanLink(`https://etherscan.io/address/${erc721Token.address}`);
-      setOpenseaLink("https://opensea.io/collection/rug-radio-membership-pass");
-      // setOpenseaLink(`https://opensea.io/collection/${erc721Token.address}`);
+      setLoading(true);
     }
-  }, [erc721Token.address, nftAddress]);
+  }, [
+    airdropLoading,
+    merkleLoading,
+    claimedLoading,
+    erc721Loading,
+    claimedPublicLoading,
+    loading721,
+  ]);
+
+  useEffect(() => {
+    if (
+      erc721Token.address &&
+      nftAddress &&
+      erc721Token.publicUtilityClaimEnabled
+    ) {
+      let collection = "rug-radio-membership-pass";
+
+      if (erc721Token.publicUtilityClaimEnabled) {
+        collection = "ruggenesis-nft";
+      }
+
+      if (isDev) {
+        setEtherscanLink(
+          `https://rinkeby.etherscan.io/address/${erc721Token.address}`,
+        );
+        setOpenseaLink("");
+        // setOpenseaLink(`https://testnets.opensea.io/collection/${collection}`);
+      } else {
+        setEtherscanLink(`https://etherscan.io/address/${erc721Token.address}`);
+        setOpenseaLink(`https://opensea.io/collection/${collection}`);
+        // setOpenseaLink(`https://opensea.io/collection/${erc721Token.address}`);
+      }
+    }
+  }, [erc721Token.address, nftAddress, erc721Token.publicUtilityClaimEnabled]);
+
+  const getEthBalance = async () => {
+    if (account) {
+      const balance = await web3.eth.getBalance(account);
+      const ethBalance = await web3.utils.fromWei(balance, "ether");
+      setEthBalance(ethBalance);
+      setRawEthBalance(balance);
+    }
+  };
+
+  useEffect(() => {
+    getEthBalance();
+  }, [account]);
 
   const getERC721TokenDetails = async (ERC721tokenContract) => {
     const { address } = ERC721tokenContract;
+    const { mintPolicyERC721, PublicMintWithFeeModule } = syndicateContracts;
 
-    const currentSupply = await ERC721tokenContract.currentSupply();
-
-    const [name, owner, symbol, rendererAddr] = await Promise.all([
-      ERC721tokenContract.name(),
-      ERC721tokenContract.owner(),
-      ERC721tokenContract.symbol(),
-      ERC721tokenContract.rendererAddr(),
-    ]);
+    const [name, owner, symbol, rendererAddr, currentSupply] =
+      await Promise.all([
+        ERC721tokenContract.name(),
+        ERC721tokenContract.owner(),
+        ERC721tokenContract.symbol(),
+        ERC721tokenContract.rendererAddr(),
+        ERC721tokenContract.currentSupply(),
+      ]);
 
     const PUBLIC_ONE_PER_ADDRESS_MODULE =
       process.env.NEXT_PUBLIC_ONE_PER_ADDRESS_MODULE;
 
-    let publicSingleClaimEnabled;
+    const PUBLIC_UTILITY_MINT_MODULE =
+      process.env.NEXT_PUBLIC_UTILITY_MINT_MODULE;
+
+    const tokenPrice = await getEthereumTokenPrice();
+    let publicUtilityClaimEnabled = false;
+    let publicSingleClaimEnabled = false;
+    let merkleClaimEnabled = true;
+    let publicSupply = 0;
+    let ethPrice = "0";
+    let maxPerAddress = 0;
+    let defaultImage = " ";
+    let amountMinted = 0;
+    let _startTime;
     if (address) {
-      publicSingleClaimEnabled =
-        await syndicateContracts.mintPolicyERC721.isModuleAllowed(
-          address,
-          PUBLIC_ONE_PER_ADDRESS_MODULE,
-        );
+      publicSingleClaimEnabled = await mintPolicyERC721.isModuleAllowed(
+        address,
+        PUBLIC_ONE_PER_ADDRESS_MODULE,
+      );
+
+      // publicUtilityClaimEnabled = true;
+      publicUtilityClaimEnabled = await mintPolicyERC721.isModuleAllowed(
+        address,
+        PUBLIC_UTILITY_MINT_MODULE,
+      );
+
+      defaultImage =
+        "https://daiakrtkievq7ofrm5xaoecjyjfmsybdd2nxxdm5ey74a4ku6ama.arweave.net/GBAFRmpBKw-4sWduBxBJwkrJYCMem3uNnSY_wHFU8Bg";
+
+      publicSupply = 19000;
+
+      if (publicUtilityClaimEnabled) {
+        publicSingleClaimEnabled = false;
+        merkleClaimEnabled = false;
+
+        // get info bout the mint
+        [publicSupply, ethPrice, amountMinted, maxPerAddress, _startTime] =
+          await Promise.all([
+            Number(await PublicMintWithFeeModule.publicSupply(address)),
+            await PublicMintWithFeeModule.ethPrice(address),
+            Number(
+              await PublicMintWithFeeModule.amountMinted(address, account),
+            ),
+            Number(await PublicMintWithFeeModule.maxPerAddress(address)),
+            Number(await PublicMintWithFeeModule.startTime(address)),
+          ]);
+
+        setStartTime(_startTime);
+        defaultImage =
+          "https://gateway.pinata.cloud/ipfs/Qma5cZH8yBaSYtqAYW5TUbGdm4YrfZ1YXQUnNeFeYVKjsB";
+      } else if (publicSingleClaimEnabled) {
+        merkleClaimEnabled = false;
+      }
     }
 
     const erc721: ERC721Token = {
@@ -92,32 +194,48 @@ const ClaimNFT: React.FC = () => {
       name,
       symbol,
       owner,
-      maxSupply: 19000,
+      maxSupply: publicSupply,
       currentSupply,
-      publicSupply: 19000,
+      publicSupply,
       rendererAddr,
       loading: false,
-      mintPrice: 0,
-      merkleClaimEnabled: !publicSingleClaimEnabled,
+      merkleClaimEnabled,
       publicSingleClaimEnabled,
+      publicUtilityClaimEnabled,
+      ethPrice,
+      mintPrice: Number(getWeiAmount(ethPrice, 18, false)),
+      priceUSD: parseFloat(
+        (
+          parseFloat(String(tokenPrice)) *
+          parseFloat(String(getWeiAmount(ethPrice, 18, false)))
+        ).toFixed(2),
+      ),
+      maxPerAddress,
+      defaultImage,
+      amountMinted,
     };
     dispatch(setERC721TokenDetails(erc721));
     dispatch(setERC721Loading(false));
+    setLoading721(false);
   };
 
   useEffect(() => {
     if (
-      (router.isReady &&
-        web3.utils.isAddress(nftAddress) &&
-        syndicateContracts?.MerkleDistributorModuleERC721,
-      syndicateContracts?.mintPolicyERC721?.mintPolicyERC721Contract._address)
+      account !== currentAccount &&
+      router.isReady &&
+      web3.utils.isAddress(nftAddress) &&
+      syndicateContracts?.MerkleDistributorModuleERC721 &&
+      syndicateContracts?.mintPolicyERC721?.mintPolicyERC721Contract._address &&
+      syndicateContracts?.PublicMintWithFeeModule
     ) {
       const ERC721tokenContract = new ERC721Contract(
         nftAddress as string,
         web3,
       );
+      setCurrentAccount(account);
       dispatch(setERC721TokenContract(ERC721tokenContract));
       dispatch(setERC721Loading(true));
+      setLoading721(true);
       // get token details
       try {
         getERC721TokenDetails(ERC721tokenContract);
@@ -135,9 +253,11 @@ const ClaimNFT: React.FC = () => {
   }, [
     nftAddress,
     account,
+    currentAccount,
     router.isReady,
     syndicateContracts?.MerkleDistributorModuleERC721,
-    syndicateContracts?.mintPolicyERC721,
+    syndicateContracts?.mintPolicyERC721?.mintPolicyERC721Contract._address,
+    syndicateContracts?.PublicMintWithFeeModule,
   ]);
 
   useEffect(() => {
@@ -146,11 +266,7 @@ const ClaimNFT: React.FC = () => {
 
   return (
     <div className="w-full flex justify-center px-25.5">
-      {airdropLoading ||
-      merkleLoading ||
-      claimedLoading ||
-      erc721Loading ||
-      claimedPublicLoading ? (
+      {loading ? (
         <div className="flex md:justify-between sm:justify-center w-full max-w-5.5xl md:flex-nowrap sm:flex-wrap">
           <div className="md:max-w-480 md:mb-0 sm:mb-8 md:w-5.21/12 sm:w-full">
             <div className="mb-14">
@@ -249,7 +365,7 @@ const ClaimNFT: React.FC = () => {
               </div>
             </div>
             <div>
-              <div className="mb-10 flex justify-between">
+              <div className="mb-6 flex justify-between">
                 <div className="w-1/2">
                   <div className="text-gray-lightManatee text-base leading-6 mb-2">
                     Remaining to mint
@@ -267,20 +383,29 @@ const ClaimNFT: React.FC = () => {
                   </div>
                   {erc721Token.mintPrice ? (
                     <div className=" text-2xl flex space-x-4">
-                      <div className="text-white">0.07 ETH</div>
-                      <div className="text-gray-lightManatee">$456.78</div>
+                      <div className="text-white">
+                        {erc721Token.mintPrice} ETH
+                      </div>
+                      <div className="text-gray-lightManatee">
+                        ${erc721Token.priceUSD}
+                      </div>
                     </div>
                   ) : (
                     <div className="text-2xl">Only gas</div>
                   )}
+                  <div className="text-gray-syn4 text-sm">
+                    Wallet balance: {(+ethBalance).toFixed(3)} ETH
+                  </div>
                 </div>
               </div>
               <ClaimCard
                 {...{
-                  handleMintUpdate: () => {
-                    updateMinted();
+                  handleMintUpdate: (amount) => {
+                    updateMinted(amount);
                   },
                   openseaLink,
+                  rawEthBalance,
+                  startTime,
                 }}
               ></ClaimCard>
             </div>

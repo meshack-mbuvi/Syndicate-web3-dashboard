@@ -59,8 +59,8 @@ export const MEMBER_SIGNED_QUERY = gql`
   }
 `;
 export const CLAIMED_TOKEN = gql`
-  query checkTokenClaim($where: TokensClaimed_filter) {
-    tokensClaimeds(where: $where) {
+  query checkTokenClaim($where: TokensClaimedERC20_filter) {
+    tokensClaimedERC20S(where: $where) {
       id
       claimant
       club
@@ -72,8 +72,8 @@ export const CLAIMED_TOKEN = gql`
 `;
 
 export const MERKLE_AIRDROP_CREATED = gql`
-  query airdropCreated($where: MerkleAirdropCreated_filter) {
-    merkleAirdropCreateds(where: $where) {
+  query airdropCreated($where: MerkleAirdropCreatedERC20_filter) {
+    merkleAirdropCreatedERC20S(where: $where) {
       id
       club
       treeIndex

@@ -79,7 +79,6 @@ export const MintAndShareTokens: React.FC<Props> = (props) => {
     },
   } = useSelector((state: AppState) => state);
   const dispatch = useDispatch();
-  const isDemoMode = useDemoMode();
 
   const [confirm, setConfirm] = useState(false);
   const [minting, setMinting] = useState(false);
@@ -356,12 +355,12 @@ export const MintAndShareTokens: React.FC<Props> = (props) => {
 
             <button
               className={`w-full ${
-                !isValid || isDemoMode
+                !isValid
                   ? "primary-CTA-disabled text-gray-lightManatee"
                   : "primary-CTA hover:opacity-90 transition-all"
               }`}
               type="submit"
-              disabled={!isValid || isDemoMode}
+              disabled={!isValid}
             >
               Continue
             </button>

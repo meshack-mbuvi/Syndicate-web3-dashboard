@@ -2,10 +2,12 @@ import { ClubERC20Factory } from "@/ClubERC20Factory/clubERC20Factory";
 import { MerkleDistributorModuleContract } from "@/ClubERC20Factory/merkleDistributorModule";
 import { MerkleDistributorModuleERC721Contract } from "@/ClubERC20Factory/merkleDistributorModuleERC721";
 import { MintPolicyContract } from "@/ClubERC20Factory/mintPolicy";
-import { PublicOnePerAddressModuleContract } from "@/ClubERC20Factory/publicOnePerAddressModule";
 import { ERC721MintPolicyContract } from "@/ClubERC20Factory/mintPolicyERC721";
+import { publicMintWithFeeModuleContract } from "@/ClubERC20Factory/publicMintWithFeeModule";
+import { PublicOnePerAddressModuleContract } from "@/ClubERC20Factory/publicOnePerAddressModule";
+import { RugUtilityMintModuleContract } from "@/ClubERC20Factory/rugUtilityMintModule";
 import { SingleTokenMintModuleContract } from "@/ClubERC20Factory/singleTokenMintModule";
-import { PayloadAction, createSlice } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 export interface ISyndicateContracts {
   clubERC20Factory: ClubERC20Factory;
@@ -15,6 +17,8 @@ export interface ISyndicateContracts {
   MerkleDistributorModuleERC721: MerkleDistributorModuleERC721Contract;
   PublicOnePerAddressModule: PublicOnePerAddressModuleContract;
   mintPolicyERC721: ERC721MintPolicyContract;
+  RugUtilityMintModule: RugUtilityMintModuleContract;
+  PublicMintWithFeeModule: publicMintWithFeeModuleContract;
 }
 
 interface InitialState {
@@ -30,6 +34,8 @@ const initialState: InitialState = {
     MerkleDistributorModuleERC721: null,
     PublicOnePerAddressModule: null,
     mintPolicyERC721: null,
+    RugUtilityMintModule: null,
+    PublicMintWithFeeModule: null,
   },
 };
 

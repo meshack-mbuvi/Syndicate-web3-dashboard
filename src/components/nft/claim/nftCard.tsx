@@ -1,6 +1,12 @@
+import { AppState } from "@/state";
 import React, { useEffect, useState, useRef } from "react";
+import { useSelector } from "react-redux";
 
 const NFTCard: React.FC = () => {
+  const {
+    erc721TokenSliceReducer: { erc721Token },
+  } = useSelector((state: AppState) => state);
+
   const [nftType, setNftType] = useState("");
   const [source, setSource] = useState("");
   // const [mute, setMute] = useState(true);
@@ -55,7 +61,7 @@ const NFTCard: React.FC = () => {
         <div
           style={{
             backgroundColor: "#232529",
-            backgroundImage: `url('${source}')`,
+            backgroundImage: `url('${erc721Token.defaultImage}')`,
             backgroundSize: "cover",
             backgroundRepeat: "no-repeat",
             backgroundPosition: "center center",
