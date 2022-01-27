@@ -34,8 +34,6 @@ const ReviewDetails: React.FC = () => {
   const [memberCountHasError, setMemberCountHasError] = useState(false);
   const [agreementFirstChecked, setAgreementFirstChecked] =
     useState<boolean>(false);
-  const [agreementSecondChecked, setAgreementSecondChecked] =
-    useState<boolean>(false);
 
   useEffect(() => {
     if (
@@ -64,10 +62,7 @@ const ReviewDetails: React.FC = () => {
       editMembersCount
     ) {
       setNextBtnDisabled(true);
-    } else if (
-      (currentStep >= 4 && !agreementFirstChecked) ||
-      !agreementSecondChecked
-    ) {
+    } else if (currentStep >= 4 && !agreementFirstChecked) {
       setNextBtnDisabled(true);
     } else {
       setNextBtnDisabled(false);
@@ -76,7 +71,6 @@ const ReviewDetails: React.FC = () => {
     // temporary solution for edge case of Back button and then review again
     if (currentStep < 4) {
       setAgreementFirstChecked(false);
-      setAgreementSecondChecked(false);
     }
   }, [
     editClubNameSelector,
@@ -86,7 +80,6 @@ const ReviewDetails: React.FC = () => {
     currentStep,
     setNextBtnDisabled,
     agreementFirstChecked,
-    agreementSecondChecked,
   ]);
 
   const showInvestmentName = investmentClubName && currentStep >= 1;
@@ -147,7 +140,7 @@ const ReviewDetails: React.FC = () => {
 
   return (
     <>
-      <div className="w-full lg:w-2/3 mb-6">
+      <div className="w-full mb-8 sm:mb-16">
         {editClubNameSelector ? (
           <animated.div className="relative w-full mb-2 pt-2 pb-2 pl-5 pr-5">
             <ClubNameSelector editButtonClicked={editClubNameSelector} />
@@ -447,48 +440,59 @@ const ReviewDetails: React.FC = () => {
         )}
       </div>
       {currentStep >= 4 && (
-        <div className="w-full lg:w-2/3 mb-6">
+        <div className="w-full mb-36">
           <div className="flex items-center space-between pl-5 pr-5 mb-5">
             <input
-              className="bg-transparent rounded focus:ring-offset-0 cursor-pointer"
+              className="self-start bg-transparent rounded focus:ring-offset-0 cursor-pointer"
               onChange={() => setAgreementFirstChecked(!agreementFirstChecked)}
               type="checkbox"
               id="agreementFirst"
               name="agreementFirst"
               checked={agreementFirstChecked}
             />
-            <animated.p
-              className="text-sm text-gray-syn4 ml-5 cursor-pointer select-none"
+            <animated.div
+              className="text-xs text-gray-syn4 leading-4.5 pl-4 cursor-pointer select-none"
               onClick={() => setAgreementFirstChecked(!agreementFirstChecked)}
             >
-              I represent that my access and use of Syndicate’s app and its
-              protocol will fully comply with all applicable laws and
-              regulations, including United States securities laws, and that I
-              will not access or use the protocol to conduct, promote, or
-              otherwise facilitate any illegal activity.{" "}
-            </animated.p>
-          </div>
-          <div className="flex items-center space-between pl-5 pr-5 mb-5">
-            <input
-              className="bg-transparent rounded focus:ring-offset-0 cursor-pointer"
-              onChange={() =>
-                setAgreementSecondChecked(!agreementSecondChecked)
-              }
-              type="checkbox"
-              id="agreementSecond"
-              name="agreementSecond"
-              checked={agreementSecondChecked}
-            />
-            <animated.p
-              className="text-sm text-gray-syn4 ml-5 cursor-pointer select-none"
-              onClick={() => setAgreementSecondChecked(!agreementSecondChecked)}
-            >
-              By accessing and using Syndicate’s app and its protocol, I
-              represent that I will seek advice from my own legal counsel and
-              financial advisors. I understand and agree to assume full
-              responsibility for all of the risks of accessing and using
-              Syndicate’s app to interact with the Syndicate protocol.{" "}
-            </animated.p>
+              <div>
+                By accessing or using Syndicate’s app and its protocol, I agree
+                that:
+              </div>
+
+              <ul className="list-disc list-outside ml-0 pl-6">
+                <li>
+                  I will not violate securities laws by using Syndicate’s app
+                  and its protocol, and to the extent necessary, will seek legal
+                  counsel to ensure compliance with securities laws in relevant
+                  jurisdictions.
+                </li>
+                <li>
+                  Any information or documentation provided has not been
+                  prepared with my specific circumstances in mind and may not be
+                  suitable for use in my personal circumstances.
+                </li>
+                <li>
+                  Syndicate or any of its advisors (including Syndicate’s tax
+                  and legal advisors) have not provided me any legal advice or
+                  other professional advice, and no confidential or special
+                  relationship between me and Syndicate or its affiliates or
+                  advisors exists.
+                </li>
+                <li>
+                  I will not use Syndicate’s app and its protocol to engage in
+                  illegal, fraudulent or other wrongful conduct, including but
+                  not limited to (a) distributing defamatory, obscene or
+                  unlawful content or content that promotes bigotry, racism,
+                  misogyny or religious or ethnic hatred, (b) transmitting any
+                  information or data that infringes any intellectual property
+                  rights of any third party or that is otherwise libelous,
+                  unlawful, or tortious, (c) stalking, harassment, or
+                  threatening others with violence or abuse, or (d) violating
+                  any anti-money laundering laws, anti-terrorist financing laws,
+                  anti-bribery or anti-boycott laws, or other applicable laws.
+                </li>
+              </ul>
+            </animated.div>
           </div>
         </div>
       )}

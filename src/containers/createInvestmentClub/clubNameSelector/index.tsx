@@ -155,7 +155,7 @@ const ClubNameSelector: React.FC<{
             </div>
           </div>
         </div>
-        <div className="h3 pb-6 pt-10">Club token</div>
+        <div className="h3 pb-6 pt-6">a.k.a.</div>
         <div>
           <div className="relative mb-2">
             <span

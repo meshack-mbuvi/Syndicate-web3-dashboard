@@ -22,21 +22,22 @@ const InvestmentClubCTAs: React.FC = () => {
 
   return (
     <animated.div
-      className={`bg-black flex-none flex flex-col ${
+      className={`bg-black flex-none flex flex-col sm:items-center ${
         reviewStep
-          ? "bottom-1 w-4/5 lg:w-full border-t border-gray-syn4 pt-4"
+          ? "fixed w-full left-0 bottom-0 h-32 px-10 "
           : ""
       }`}
       style={styles}
     >
       <div
-        className={`relative flex items-center h-20 ${
-          firstStep ? "justify-end" : "justify-between"
+        className={`flex flex-col-reverse items-center pt-4 sm:w-full sm:flex-row sm:max-w-480 sm:h-full sm:pt-0 ${
+          firstStep ? "justify-end" : "justify-between"}
+          ${reviewStep ? "sm:border-t border-gray-syn4" : ""}
         }`}
       >
         {!firstStep && (
           <button
-            className={`flex items-center py-3.5 text-gray-lightManatee text-base opacity-80 hover:opacity-100 focus:outline-none ${
+            className={`flex items-center mt-6 sm:mt-0 text-gray-syn4 text-base opacity-80 hover:opacity-100 focus:outline-none ${
               backBtnDisabled ? "cursor-not-allowed" : ""
             }`}
             onClick={handleBack}
@@ -48,10 +49,12 @@ const InvestmentClubCTAs: React.FC = () => {
         )}
         {showNextButton && (
           <button
-            className={`${reviewStep} ${
+            className={`w-full sm:w-auto ${
               nextBtnDisabled
-                ? "primary-CTA-disabled text-gray-lightManatee"
-                : "green-CTA transition-all"
+                ? "primary-CTA-disabled text-gray-syn4"
+                : reviewStep
+                ? "green-CTA transition-all"
+                : "primary-CTA"
             }`}
             onClick={reviewStep ? handleCreateInvestmentClub : handleNext}
             disabled={nextBtnDisabled}

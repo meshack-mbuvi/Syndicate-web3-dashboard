@@ -136,9 +136,9 @@ const MintMaxDate: FC<{ className?: string }> = ({ className }) => {
     <Fade delay={500}>
       <div className={className}>
         <div className="h3 pb-6">How long will deposits be accepted?</div>
-        <div>
+        <div className="pb-6">
           <div
-            className="flex justify-between items-center border content-center border-gray-24 rounded-md w-full h-14 "
+            className="flex justify-between items-center border content-center border-gray-24 rounded-md w-full h-14"
             data-tip
             data-for="disclaimer-tip"
           >
@@ -163,7 +163,7 @@ const MintMaxDate: FC<{ className?: string }> = ({ className }) => {
         </div>
 
         {showCustomDatePicker && (
-          <animated.div style={styles} className="py-6">
+          <animated.div style={styles} className="pb-6">
             <div className="pb-2">Close date</div>
             <div className="">
               <DatePicker

@@ -279,7 +279,7 @@ module.exports = {
       },
       spacing: {
         "1px": "1px",
-        7.5: "1.875rem", 
+        7.5: "1.875rem",
         33: "8.5rem",
         50: "12.5rem",
         66: "16.5rem",
