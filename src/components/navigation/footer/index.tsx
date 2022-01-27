@@ -27,8 +27,18 @@ const Footer: React.FC<{extraClasses: string}> = ({ extraClasses = ""}) => {
               </a>
             </li>
             <li className="md:inline">
+              <a href="https://syndicateprotocol.notion.site/Syndicate-Community-Standards-fb715cbe7e434070bbe7f6c0fcef5a72" target="_blank" rel="noreferrer">
+                Community
+              </a>
+            </li>
+            <li className="md:inline">
               <a href="https://docs.google.com/document/d/1U5D6AtmZXrxmgBeobyvHaXTs7p7_wq6V/" target="_blank" rel="noreferrer">
                 Terms
+              </a>
+            </li>
+            <li className="md:inline">
+              <a href="https://docs.google.com/document/d/1yATB2hQHjCHKaUvBIzEaO65Xa0xHq-nLOEEJlJngg90/" target="_blank" rel="noreferrer">
+                Privacy
               </a>
             </li>
             <li className="md:inline mb-3">
