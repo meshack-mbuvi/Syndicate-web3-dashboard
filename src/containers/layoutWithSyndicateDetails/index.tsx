@@ -113,7 +113,7 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
 
   // Change sub-nav and nav styles when stuck
   useEffect(() => {
-    if (subNav.current && subNav.current.getBoundingClientRect().top === 0) {
+    if (subNav.current && parseInt(subNav.current.getBoundingClientRect().top) <= 0) {
       setIsSubNavStuck(true);
       setShowNav(false);
     } else {
