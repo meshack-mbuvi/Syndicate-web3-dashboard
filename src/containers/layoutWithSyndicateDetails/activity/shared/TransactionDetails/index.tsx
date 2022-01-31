@@ -109,7 +109,7 @@ const TransactionDetails: React.FC<ITransactionDetails> = ({
             </>
           ) : null}
           {onModal && category === "DEPOSIT" ? (
-            <div className="mx-2 flex items-center">
+            <div className="mr-2 flex items-center">
               <Image src={"/images/User_Icon.svg"} height={24} width={24} />
             </div>
           ) : null}
