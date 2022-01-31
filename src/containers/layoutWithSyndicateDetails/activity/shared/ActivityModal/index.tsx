@@ -66,8 +66,8 @@ const ActivityModal: React.FC<IActivityModal> = ({
   const etherScanBaseUrl = isDev
     ? "https://rinkeby.etherscan.io/tx"
     : "https://etherscan.io/tx";
-    
-    const isDemoMode = useDemoMode();
+
+  const isDemoMode = useDemoMode();
 
   const [setMemberHasSigned] = useMutation(SET_MEMBER_SIGN_STATUS, {
     context: { clientName: "backend" },
@@ -285,7 +285,12 @@ const ActivityModal: React.FC<IActivityModal> = ({
             {transactionInfo && Object.keys(transactionInfo).length && (
               <TransactionDetails
                 tokenLogo={tokenLogo}
-                tokenSymbol={tokenSymbol}
+                tokenSymbol={
+                  category === "INVESTMENT" ||
+                  category === "OFF_CHAIN_INVESTMENT"
+                    ? "USD"
+                    : tokenSymbol
+                }
                 tokenName={tokenName}
                 transactionType={
                   transactionInfo.isOutgoingTransaction
@@ -293,7 +298,12 @@ const ActivityModal: React.FC<IActivityModal> = ({
                     : "incoming"
                 }
                 isTransactionAnnotated={false}
-                amount={amount}
+                amount={
+                  category === "INVESTMENT" ||
+                  category === "OFF_CHAIN_INVESTMENT"
+                    ? metadata?.postMoneyValuation
+                    : amount
+                }
                 address={
                   transactionInfo.isOutgoingTransaction
                     ? transactionInfo.to
@@ -331,18 +341,24 @@ const ActivityModal: React.FC<IActivityModal> = ({
         
         Adding essential check for isManager. Members should not see this*/}
 
-        {!data?.Financial_memberSigned && !loading && category === "DEPOSIT" && isManager && (
-          <div className="flex flex-col space-y-6 py-6 px-5">
-            <div className="bg-gray-syn7 px-5 py-4 space-y-2 rounded-xl">
-              <p className="text-gray-syn4 leading-6">
-                Has this member signed the associated legal agreements?
-              </p>
-              <button className="text-blue" onClick={handleSetMemberHasSigned}>
-                Yes, mark as signed
-              </button>
+        {!data?.Financial_memberSigned &&
+          !loading &&
+          category === "DEPOSIT" &&
+          isManager && (
+            <div className="flex flex-col space-y-6 py-6 px-5">
+              <div className="bg-gray-syn7 px-5 py-4 space-y-2 rounded-xl">
+                <p className="text-gray-syn4 leading-6">
+                  Has this member signed the associated legal agreements?
+                </p>
+                <button
+                  className="text-blue"
+                  onClick={handleSetMemberHasSigned}
+                >
+                  Yes, mark as signed
+                </button>
+              </div>
             </div>
-          </div>
-        )}
+          )}
 
         {/* Note and details section */}
         {category === "DEPOSIT" ||

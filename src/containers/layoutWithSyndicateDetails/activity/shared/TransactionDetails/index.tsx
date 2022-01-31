@@ -85,10 +85,14 @@ const TransactionDetails: React.FC<ITransactionDetails> = ({
     <>
       {category !== "OFF_CHAIN_INVESTMENT" ? (
         <div className="flex items-center">
-          {tokenLogo ? (
-            <Image src={tokenLogo} height={24} width={24} />
-          ) : (
-            <GradientAvatar name={tokenName} size={"w-6 h-6"} />
+          {tokenSymbol.toLowerCase() !== "usd" && (
+            <>
+              {tokenLogo ? (
+                <Image src={tokenLogo} height={24} width={24} />
+              ) : (
+                <GradientAvatar name={tokenName} size={"w-6 h-6"} />
+              )}
+            </>
           )}
           <div className={`flex ml-2 ${onModal ? "text-2xl" : "text-base"}`}>
             {addGrayToDecimalInput(floatedNumberWithCommas(amount))}&nbsp;
