@@ -196,7 +196,8 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
     syndicateContracts?.DepositTokenMintModule,
   ]);
 
-  const showOnboardingIfNeeded = router.pathname.endsWith("[clubAddress]");
+  const showOnboardingIfNeeded =
+    router.pathname.endsWith("[clubAddress]") && !isDemoMode;
 
   // get static text from constants
   const { noTokenTitleText } = syndicateActionConstants;
@@ -294,7 +295,7 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
                           >
                             Assets
                           </button>
-                          {renderOnDisconnect && (
+                          {(renderOnDisconnect || isDemoMode) && (
                             <button
                               key="members"
                               onClick={() => setActiveTab("members")}
@@ -307,7 +308,7 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
                               Members
                             </button>
                           )}
-                          {renderOnDisconnect && (
+                          {(renderOnDisconnect || isDemoMode) && (
                             <TabButton
                               active={activeTab === "activity"}
                               label="Activity"
@@ -325,12 +326,14 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
                       <div className="text-base grid grid-cols-12 gap-y-5">
                         <div className="col-span-12">
                           {activeTab == "assets" && <Assets />}
-                          {activeTab == "members" && renderOnDisconnect && (
-                            <ClubTokenMembers />
-                          )}
-                          {activeTab == "activity" && renderOnDisconnect && (
-                            <ActivityView />
-                          )}
+                          {activeTab == "members" &&
+                            (renderOnDisconnect || isDemoMode) && (
+                              <ClubTokenMembers />
+                            )}
+                          {activeTab == "activity" &&
+                            (renderOnDisconnect || isDemoMode) && (
+                              <ActivityView />
+                            )}
                         </div>
                       </div>
                     </div>

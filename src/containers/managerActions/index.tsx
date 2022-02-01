@@ -213,7 +213,7 @@ const ManagerActions = (): JSX.Element => {
                     : `pt-6 ${showShareWarning ? "pb-6" : "pb-10"} px-8`
                 } flex justify-center items-start flex-col w-full`}
               >
-                {status === Status.DISCONNECTED ? (
+                {status === Status.DISCONNECTED && !isDemoMode ? (
                   <ConnectWalletAction />
                 ) : (
                   <>

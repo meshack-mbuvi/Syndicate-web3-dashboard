@@ -15,6 +15,7 @@ import ActivityModal from "../activity/shared/ActivityModal";
 import useModal from "@/hooks/useModal";
 import { TransactionCategory } from "@/state/erc20transactions/types";
 import { useIsClubOwner, useIsClubMember } from "@/hooks/useClubOwner";
+import { useDemoMode } from "@/hooks/useDemoMode";
 
 interface InvestmentsViewProps {
   pageOffset: number;
@@ -44,6 +45,8 @@ const InvestmentsView: FC<InvestmentsViewProps> = ({
   const [showOffChainInvestmentsModal, toggleShowOffChainInvestmentsModal] =
     useModal();
   const [showNote, setShowNote] = useState(false);
+
+  const isDemoMode = useDemoMode();
 
   const investmentsTableRef = useRef(null);
 
@@ -296,7 +299,7 @@ const InvestmentsView: FC<InvestmentsViewProps> = ({
                     dashForMissingValue
                   )}
                 </div>
-                {(isMember || isOwner) && (
+                {(isMember || isOwner || isDemoMode) && (
                   <div className="text-base flex col-span-2 items-center justify-end">
                     <div className="cursor-pointer flex items-center">
                       <div className="mr-2 flex items-center">
