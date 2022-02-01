@@ -19,7 +19,7 @@ const BeforeGettingStartedModal: React.FC = () => {
         modalStyle: ModalStyle.DARK,
         showCloseButton: false,
         customWidth: "w-full max-w-480",
-        outsideOnClick: true,
+        outsideOnClick: buttonDisabled,// allow outside click only when button is disabled.
         closeModal: () => handleClickOutside(),
         customClassName: "py-8 px-10",
         showHeader: false,
@@ -38,7 +38,10 @@ const BeforeGettingStartedModal: React.FC = () => {
                 ? "text-red-error outline-red-error focus:ring-1 focus:ring-red-error border-red-error"
                 : undefined
             }`}
-            onChange={handleChange}
+            onChange={(e) => {
+              e.stopPropagation();
+              handleChange(e);
+            }}
             type="checkbox"
           />
           <animated.p

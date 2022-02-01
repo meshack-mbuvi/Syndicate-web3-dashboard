@@ -75,7 +75,7 @@ const BeforeGettingStartedProvider: React.FC<{ children: ReactNode }> = ({
   return (
     <BeforeGettingStartedContext.Provider
       value={{
-        showBeforeGettingStarted,
+        showBeforeGettingStarted: showBeforeGettingStarted,
         hideBeforeGettingStarted,
         agreementChecked,
         error,
