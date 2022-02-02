@@ -87,7 +87,7 @@ const MembersCount: React.FC<{
 
   return (
     <Fade>
-      <div className="flex w-full pb-6">
+      <div className="flex pb-6 ml-5">
         <InputFieldWithMax
           {...{
             value: membersNumCount

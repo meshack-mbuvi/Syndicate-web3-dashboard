@@ -158,7 +158,7 @@ const ReviewDetails: React.FC = () => {
           investmentClubTransition((styles, item) =>
             item ? (
               <animated.div
-                className="flex justify-between pl-5 pr-5 pt-4 pb-4"
+                className="flex justify-between px-5 py-4"
                 style={
                   inlineEditView === "investmentClub" && currentStep == 4
                     ? {
@@ -213,7 +213,10 @@ const ReviewDetails: React.FC = () => {
 
         {editAmountToRaise ? (
           <animated.div className="relative w-full mt-4 mb-2 pl-5 pr-5 pt-2 pb-2">
-            <AmountToRaise editButtonClicked={editAmountToRaise} />
+            <div className="-ml-5">
+              <AmountToRaise editButtonClicked={editAmountToRaise} />
+            </div>
+
             <animated.div
               className="flex items-center absolute top-3 right-5"
               onClick={() => setEditAmountToRaise(!editAmountToRaise)}
@@ -226,7 +229,7 @@ const ReviewDetails: React.FC = () => {
           tokenCapTransition((styles, item) =>
             item ? (
               <animated.div
-                className="flex justify-between pl-5 pr-5 pt-4 pb-4"
+                className="flex justify-between px-5 py-4"
                 style={
                   inlineEditView === "tokenCap" && currentStep == 4
                     ? {
@@ -241,7 +244,9 @@ const ReviewDetails: React.FC = () => {
               >
                 <animated.div style={styles}>
                   {editAmountToRaise ? (
-                    <AmountToRaise className="w-full lg:w-full" />
+                    <div className="-ml-5">
+                      <AmountToRaise className="w-full lg:w-full" />
+                    </div>
                   ) : (
                     <>
                       {tokenCapHeaderTransition((styles, item) =>
@@ -291,8 +296,10 @@ const ReviewDetails: React.FC = () => {
         )}
 
         {editMintMaxDate ? (
-          <animated.div className="relative w-full mt-4 mb-2 pl-5 pr-5 pt-2 pb-2">
-            <MintMaxDate />
+          <animated.div className="relative w-full my-2 px-5 pt-2 pb-2">
+            <div className="-ml-5">
+              <MintMaxDate />
+            </div>
             <animated.div
               className="flex items-center absolute top-3 right-5"
               onClick={() => setEditMintMaxDate(!editMintMaxDate)}
@@ -305,7 +312,7 @@ const ReviewDetails: React.FC = () => {
           mindEndTimeTransition((styles, item) =>
             item ? (
               <animated.div
-                className="flex justify-between pl-5 pr-5 pt-4 pb-4"
+                className="flex justify-between px-5 py-4"
                 style={
                   inlineEditView === "mindEnd" && currentStep == 4
                     ? {
@@ -320,7 +327,9 @@ const ReviewDetails: React.FC = () => {
               >
                 <animated.div style={styles}>
                   {editMintMaxDate ? (
-                    <MintMaxDate className="w-full lg:w-full" />
+                    <div className="-ml-5">
+                      <MintMaxDate className="w-full lg:w-full" />
+                    </div>
                   ) : (
                     <>
                       {mindEndTimeHeaderTransition((styles, item) =>
@@ -371,12 +380,14 @@ const ReviewDetails: React.FC = () => {
         )}
 
         {editMembersCount ? (
-          <animated.div className="relative w-full pl-5 pt-2 pb-2 pr-5">
-            <MembersCount
-              editButtonClicked={editMembersCount}
-              className="w-full lg:w-full"
-              setInputHasError={setMemberCountHasError}
-            />
+          <animated.div className="relative w-full py-2 px-5">
+            <div className="-ml-5">
+              <MembersCount
+                editButtonClicked={editMembersCount}
+                className="w-full lg:w-full"
+                setInputHasError={setMemberCountHasError}
+              />
+            </div>
             {!memberCountHasError ? (
               <animated.div
                 className="flex items-center absolute top-3 right-5"
@@ -391,7 +402,7 @@ const ReviewDetails: React.FC = () => {
           memberCountTransition((styles, item) =>
             item ? (
               <animated.div
-                className="flex justify-between pl-5 pr-5 pt-4 pb-4"
+                className="flex justify-between px-5 py-4"
                 style={
                   inlineEditView === "memberCount" && currentStep == 4
                     ? {
@@ -406,7 +417,9 @@ const ReviewDetails: React.FC = () => {
               >
                 <animated.div style={styles}>
                   {editMembersCount ? (
-                    <MembersCount />
+                    <div className="-ml-5">
+                      <MembersCount />
+                    </div>
                   ) : (
                     <>
                       {memberCountHeaderTransition((styles, item) =>
@@ -440,8 +453,8 @@ const ReviewDetails: React.FC = () => {
         )}
       </div>
       {currentStep >= 4 && (
-        <div className="w-full mb-36">
-          <div className="flex items-center space-between pl-5 pr-5 mb-5">
+        <div className="w-full mb-36 ml-5">
+          <div className="flex items-center space-between px-5 mb-5 -ml-5">
             <input
               className="self-start bg-transparent rounded focus:ring-offset-0 cursor-pointer"
               onChange={() => setAgreementFirstChecked(!agreementFirstChecked)}

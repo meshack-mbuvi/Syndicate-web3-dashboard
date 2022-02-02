@@ -121,70 +121,76 @@ const ClubNameSelector: React.FC<{
 
   return (
     <Fade>
-      <div className={className}>
-        <div className="h3 pb-6">What should we call this investment club?</div>
-        <div>
-          <div className="relative" data-tip data-for="change-settings-tip">
-            <input
-              className="block font-whyte text-base bg-transparent p-4 rounded-md border-1 w-full border-gray-24 focus:border-blue-navy outline-none text-white hover:border-gray-syn3"
-              placeholder="Name (e.g. Alpha DAO)"
-              value={investmentClubName}
-              onChange={(e) => dispatch(setInvestmentClubName(e.target.value))}
-            />
-
-            <button
-              ref={ref}
-              onClick={handleRandomizer}
-              className="absolute inset-y-0 right-0 pr-4 py-3.5"
-            >
-              <div
-                className={`flex flex-row items-center space-x-1 text-sm px-4 py-1.5 bg-gray-syn7 rounded-full text-center text-gray-syn4 hover:ring-1 hover:ring-blue-navy ${
-                  isButtonActive && activeClasses
-                }`}
-              >
-                <img src="/images/shuffle.svg" alt="" className="w-4 h-4" />
-                <span>Randomize</span>
-              </div>
-            </button>
+      <div className="ml-5">
+        <div className={className}>
+          <div className="h3 pb-6">
+            What should we call this investment club?
           </div>
-          <div className="rounded-xl bg-blue-navy bg-opacity-20 flex flex-row text-blue-navy items-center p-4 mt-4 space-x-3">
-            <img className="w-5 h-5" src="/images/eye-open.svg" alt="" />
-            <div className="text-sm">
-              Stored on-chain publicly. If you do not wish to publicize your
-              club’s name, generate a random one.
+          <div>
+            <div className="relative" data-tip data-for="change-settings-tip">
+              <input
+                className="block font-whyte text-base bg-transparent p-4 rounded-md border-1 w-full border-gray-24 focus:border-blue-navy outline-none text-white hover:border-gray-syn3"
+                placeholder="Name (e.g. Alpha DAO)"
+                value={investmentClubName}
+                onChange={(e) =>
+                  dispatch(setInvestmentClubName(e.target.value))
+                }
+              />
+
+              <button
+                ref={ref}
+                onClick={handleRandomizer}
+                className="absolute inset-y-0 right-0 pr-4 py-3.5"
+              >
+                <div
+                  className={`flex flex-row items-center space-x-1 text-sm px-4 py-1.5 bg-gray-syn7 rounded-full text-center text-gray-syn4 hover:ring-1 hover:ring-blue-navy ${
+                    isButtonActive && activeClasses
+                  }`}
+                >
+                  <img src="/images/shuffle.svg" alt="" className="w-4 h-4" />
+                  <span>Randomize</span>
+                </div>
+              </button>
+            </div>
+            <div className="rounded-xl bg-blue-navy bg-opacity-20 flex flex-row text-blue-navy items-center p-4 mt-4 space-x-3">
+              <img className="w-5 h-5" src="/images/eye-open.svg" alt="" />
+              <div className="text-sm">
+                Stored on-chain publicly. If you do not wish to publicize your
+                club’s name, generate a random one.
+              </div>
             </div>
           </div>
-        </div>
-        <div className="h3 pb-6 pt-6">a.k.a.</div>
-        <div>
-          <div className="relative mb-2">
-            <span
-              className="absolute inset-y-0 left-0 text-3xl pl-4"
-              style={{ marginTop: "11.5px" }}
-            >
-              ✺
-            </span>
-            <input
-              data-tip
-              data-for="change-settings-tip"
-              className="text-base font-whyte bg-transparent leading-6 align-baseline py-4 pl-12 rounded-md border-1 w-full border-gray-24 focus:border-blue-navy outline-none text-white hover:border-gray-syn3"
-              placeholder="(e.g. ALDA)"
-              value={investmentClubSymbolPlaceHolder}
-              onChange={handleSymbolChange}
-            />
-          </div>
-          <div className="text-sm">
-            {errors ? (
-              <span className="text-red-error text-sm">{errors}</span>
-            ) : (
-              <span className="text-gray-3 text-sm">
-                Set an easily recognizable symbol for your investment club token
-                that powers the club&apos;s cap table management and governance
-                infrastructure. Members receive this investment club token
-                (initially defaults to non-transferable) as proof of their
-                deposit.
+          <div className="h3 pb-6 pt-6">a.k.a.</div>
+          <div>
+            <div className="relative mb-2">
+              <span
+                className="absolute inset-y-0 left-0 text-3xl pl-4"
+                style={{ marginTop: "11.5px" }}
+              >
+                ✺
               </span>
-            )}
+              <input
+                data-tip
+                data-for="change-settings-tip"
+                className="text-base font-whyte bg-transparent leading-6 align-baseline py-4 pl-12 rounded-md border-1 w-full border-gray-24 focus:border-blue-navy outline-none text-white hover:border-gray-syn3"
+                placeholder="(e.g. ALDA)"
+                value={investmentClubSymbolPlaceHolder}
+                onChange={handleSymbolChange}
+              />
+            </div>
+            <div className="text-sm">
+              {errors ? (
+                <span className="text-red-error text-sm">{errors}</span>
+              ) : (
+                <span className="text-gray-3 text-sm">
+                  Set an easily recognizable symbol for your investment club
+                  token that powers the club&apos;s cap table management and
+                  governance infrastructure. Members receive this investment
+                  club token (initially defaults to non-transferable) as proof
+                  of their deposit.
+                </span>
+              )}
+            </div>
           </div>
         </div>
       </div>
