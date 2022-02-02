@@ -72,19 +72,23 @@ const InvestmentsView: FC<InvestmentsViewProps> = ({
   );
 
   // loading/empty state for investments table.
-  const LoaderContent: React.FC<{ animate: boolean }> = ({ animate }) => {
+  const LoaderContent: React.FC<{
+    animate: boolean;
+    titleText?: string;
+    subText?: string;
+  }> = ({
+    animate,
+    titleText = "This club has no off-chain investments yet.",
+    subText = "Any off-chain investments added will appear here.",
+  }) => {
     return (
       <div>
         {invesmentsTitle}
         <div className="relative">
           {!animate && (
             <div className="absolute flex flex-col justify-center items-center top-1/3 w-full z-10">
-              <span className="text-white mb-4 text-xl">
-                This club has no off-chain investments yet.
-              </span>
-              <span className="text-gray-syn4">
-                Any off-chain investments added will appear here.
-              </span>
+              <span className="text-white mb-4 text-xl">{titleText}</span>
+              <span className="text-gray-syn4">{subText}</span>
             </div>
           )}
           <div className={!animate && `filter grayscale blur-md`}>
@@ -163,6 +167,17 @@ const InvestmentsView: FC<InvestmentsViewProps> = ({
 
   if (transactionsLoading && !currentTransaction.hash) {
     return <LoaderContent animate={true} />;
+  }
+
+  // show empty state if account is not a member or the admin
+  if (!isMember && !isOwner) {
+    return (
+      <LoaderContent
+        animate={false}
+        titleText="Off-chain investments are only visible to members."
+        subText="If you're a member of this club, connect the same wallet you used to deposit."
+      />
+    );
   }
 
   const viewInvestmentDetails = (investmentData) => {
