@@ -106,17 +106,21 @@ const RoundDropDown: React.FC<IRoundDropDown> = ({
 
   return (
     <div
-      className={`relative flex justify-between items-center ${borderStyles} cursor-pointer float-right`}
-      onClick={() => toggleDropdown()}
+      className={`relative flex justify-between items-center ${borderStyles} ${
+        editMode ? "cursor-pointer" : ""
+      }float-right`}
       ref={categorySelect}
       aria-hidden="true"
-      onMouseLeave={() => closeDropDown()}
     >
       {label ? (
         <div className={`my-auto w-2/5 leading-5 text-gray-syn4`}>{label}</div>
       ) : null}
       {!showInputField && editMode ? (
-        <div className="flex items-center">
+        <div
+          className="flex items-center cursor-pointer"
+          onClick={() => toggleDropdown()}
+          onMouseLeave={() => closeDropDown()}
+        >
           <div className="flex flex-shrink ml-4 justify-start items-center">
             <div className={`whitespace-nowrap py-4`}>
               <span className="text-base font-whyte text-white">

@@ -3,6 +3,7 @@ import { SkeletonLoader } from "@/components/skeletonLoader";
 import { useAccountTokens } from "@/hooks/useAccountTokens";
 import { useClubDepositsAndSupply } from "@/hooks/useClubDepositsAndSupply";
 import { useIsClubOwner } from "@/hooks/useClubOwner";
+import { useDemoMode } from "@/hooks/useDemoMode";
 import { AppState } from "@/state";
 import { Status } from "@/state/wallet/types";
 import { epochTimeToDateFormat, getCountDownDays } from "@/utils/dateUtils";
@@ -35,6 +36,8 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
       web3: { web3, status, account },
     },
   } = useSelector((state: AppState) => state);
+
+  const isDemoMode = useDemoMode();
 
   const { accountTokens } = useAccountTokens();
 
@@ -185,14 +188,6 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
                 content: <div>{memberCount}</div>,
                 tooltip: "",
               },
-              // {
-              //   header: "Created",
-              //   content: `${epochTimeToDateFormat(
-              //     new Date(startTime * 1000),
-              //     "LLL dd, yyyy",
-              //   )}`,
-              //   tooltip: "",
-              // },
             ]
           : [
               {
@@ -375,18 +370,19 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
         )}
 
         {/* This component should be shown when we have details about user deposits */}
-        {status !== Status.DISCONNECTED &&
-          (loading || !(isActive && !isOwnerOrMember)) && (
-            <div className="overflow-hidden mt-6 relative">
-              <DetailsCard
-                title="Details"
-                sections={details}
-                customStyles={"w-full pt-4"}
-                customInnerWidth="w-full grid xl:grid-cols-3 lg:grid-cols-3
+        {(status !== Status.DISCONNECTED &&
+          (loading || !(isActive && !isOwnerOrMember))) ||
+        isDemoMode ? (
+          <div className="overflow-hidden mt-6 relative">
+            <DetailsCard
+              title="Details"
+              sections={details}
+              customStyles={"w-full pt-4"}
+              customInnerWidth="w-full grid xl:grid-cols-3 lg:grid-cols-3
             grid-cols-3 xl:gap-8 gap-6s gap-y-8"
-              />
-            </div>
-          )}
+            />
+          </div>
+        ) : null}
       </div>
       {/* Syndicate details */}
       {/* details rendered on small devices only. render right column components on the left column in small devices */}

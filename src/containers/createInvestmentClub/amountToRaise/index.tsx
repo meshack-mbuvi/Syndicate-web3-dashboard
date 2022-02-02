@@ -101,7 +101,7 @@ const AmountToRaise: React.FC<{
         </div>
       </Modal>
       <Fade delay={500}>
-        <div className="flex w-full pb-6">
+        <div className="flex pb-6 ml-5">
           <AdvancedInputField
             {...{
               value: amount

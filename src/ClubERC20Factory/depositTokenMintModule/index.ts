@@ -1,17 +1,17 @@
 import DepositTokenMintModule_ABI from "src/contracts/DepositTokenMintModule.json";
 import { getGnosisTxnInfo } from "../shared/gnosisTransactionInfo";
 
-export class SingleTokenMintModuleContract {
+export class DepositTokenMintModuleContract {
   web3;
   address;
 
   // This will be used to call other functions. eg mint
-  SingleTokenMintModuleContract;
+  DepositTokenMintModuleContract;
 
   // initialize a contract instance
-  constructor(SingleTokenMintModuleContractAddress: string, web3) {
+  constructor(DepositTokenMintModuleContractAddress: string, web3) {
     this.web3 = web3;
-    this.address = SingleTokenMintModuleContractAddress;
+    this.address = DepositTokenMintModuleContractAddress;
     this.init();
   }
 
@@ -20,18 +20,18 @@ export class SingleTokenMintModuleContract {
       return;
     }
     try {
-      this.SingleTokenMintModuleContract = new this.web3.eth.Contract(
+      this.DepositTokenMintModuleContract = new this.web3.eth.Contract(
         DepositTokenMintModule_ABI,
         this.address,
       );
     } catch (error) {
-      this.SingleTokenMintModuleContract = null;
+      this.DepositTokenMintModuleContract = null;
     }
   }
 
   async depositToken(clubAddress: string): Promise<string> {
     try {
-      return this.SingleTokenMintModuleContract.methods
+      return this.DepositTokenMintModuleContract.methods
         .depositToken(clubAddress)
         .call();
     } catch (error) {
@@ -60,14 +60,14 @@ export class SingleTokenMintModuleContract {
     onTxFail: (error?) => void,
     setTransactionHash,
   ): Promise<void> {
-    if (!this.SingleTokenMintModuleContract) {
+    if (!this.DepositTokenMintModuleContract) {
       this.init();
     }
 
     let gnosisTxHash;
 
     await new Promise((resolve, reject) => {
-      this.SingleTokenMintModuleContract.methods
+      this.DepositTokenMintModuleContract.methods
         .mint(clubAddress, amount)
         .send({ from: ownerAddress })
         .on("transactionHash", (transactionHash) => {

@@ -154,7 +154,7 @@ const GenerateDai: React.FC = () => {
       <Head title="Mint Rinkeby Tokens" />
       <SEO
         keywords={[`next`, `tailwind`, `react`, `tailwindcss`]}
-        title="Mint Rinkeby TokenS"
+        title="Mint Rinkeby Tokens"
       />
 
       <section className="flex flex-col content-center items-center justify-center md:flex-col">
@@ -163,7 +163,7 @@ const GenerateDai: React.FC = () => {
             This page is used to generate ERC-20s for the Rinkeby testnet. If
             you found this somehow, you should check out our{" "}
             <a
-              href="https://www.notion.so/Syndicate-Protocol-Job-Postings-ad09c123121445339d6dfe0da4e3495e"
+              href="https://jobs.ashbyhq.com/syndicate"
               className="text-gray-85 underline"
             >
               job postings
@@ -234,11 +234,13 @@ const GenerateDai: React.FC = () => {
                 </svg>
               </button>
             </div>
+            <br></br>
+            Note that by default, Syndicates on Rinkeby use Rinkeby USDC.
           </div>
           <div className="bg-white shadow sm:rounded-lg">
             <div className="px-4 py-5 sm:p-6">
               <h3 className="text-lg leading-6 font-medium text-gray-900">
-                Mint new Rinkeby TOKEN
+                Mint new Rinkeby tokens
               </h3>
               <div className="mt-2 max-w-xl text-sm text-gray-500">
                 <p>

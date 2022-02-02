@@ -14,7 +14,7 @@ import DateCard from "./DateCard";
 const MintMaxDate: FC<{ className?: string }> = ({ className }) => {
   const dispatch = useDispatch();
 
-  const { setShowNextButton, handleNext, currentStep } =
+  const { setShowNextButton, handleNext, currentStep, setNextBtnDisabled } =
     useCreateInvestmentClubContext();
 
   const [warning, setWarning] = useState("");
@@ -104,6 +104,13 @@ const MintMaxDate: FC<{ className?: string }> = ({ className }) => {
         }, 400);
       }
     } else {
+      // execute a dispatch because we know default date
+      const date = new Date(new Date().setHours(23, 59, 0, 0)).getTime();
+      const dateToSet = date
+        ? parseInt((date / 1000).toString())
+        : parseInt((new Date().getTime() / 1000 + DAY_IN_SECONDS).toString());
+      dispatch(setMintEndTime({ mintTime: "Custom", value: dateToSet }));
+      setNextBtnDisabled(false);
       setShowNextButton(true);
       setShowCustomDatePicker(true);
     }
@@ -128,58 +135,64 @@ const MintMaxDate: FC<{ className?: string }> = ({ className }) => {
   return (
     <Fade delay={500}>
       <div className={className}>
-        <div className="h3 pb-6">How long will deposits be accepted?</div>
-        <div>
-          <div
-            className="flex justify-between items-center border content-center border-gray-24 rounded-md w-full h-14 "
-            data-tip
-            data-for="disclaimer-tip"
-          >
-            {mintTimes.map(({ mintTime, value }, index) => (
-              <button
-                className="flex items-center w-full h-full"
-                key={index}
-                onClick={() => {
-                  handleSetMintTime(index, { mintTime, value });
-                }}
-                disabled={disableButtons}
-              >
-                <DateCard
-                  mintTime={mintTime}
-                  isLastItem={mintTime === lastMintTime.mintTime}
-                  index={index}
-                  activeIndex={activeDateCard}
-                />
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {showCustomDatePicker && (
-          <animated.div style={styles} className="py-6">
-            <div className="pb-2">Close date</div>
-            <div className="">
-              <DatePicker
-                minDate={new Date()}
-                popperProps={{
-                  positionFixed: true, // use this to make the popper position: fixed
-                }}
-                closeOnScroll={(e) => e.target === document}
-                selected={new Date(mintEndTime?.value * 1000)}
-                onChange={(date: Date | null) => handleDateChange(+date as any)}
-                todayButton="Go to Today"
-                dateFormat="P"
-                formatWeekDay={(nameOfDay) => nameOfDay.substr(0, 1)}
-                showPopperArrow={false}
-                dropdownMode="select"
-                className="focus:border-blue-navy hover:border-gray-syn3"
-              />
+        <div className="ml-5">
+          <div className="h3 pb-6">How long will deposits be accepted?</div>
+          <div className="pb-6">
+            <div
+              className="flex justify-between items-center border content-center border-gray-24 rounded-md w-full h-14"
+              data-tip
+              data-for="disclaimer-tip"
+            >
+              {mintTimes.map(({ mintTime, value }, index) => (
+                <button
+                  className="flex items-center w-full h-full"
+                  key={index}
+                  onClick={() => {
+                    handleSetMintTime(index, { mintTime, value });
+                  }}
+                  disabled={disableButtons}
+                >
+                  <DateCard
+                    mintTime={mintTime}
+                    isLastItem={mintTime === lastMintTime.mintTime}
+                    index={index}
+                    activeIndex={activeDateCard}
+                  />
+                </button>
+              ))}
             </div>
-            {warning && (
-              <div className="text-yellow-warning pt-2 text-sm">{warning}</div>
-            )}
-          </animated.div>
-        )}
+          </div>
+
+          {showCustomDatePicker && (
+            <animated.div style={styles} className="pb-6">
+              <div className="pb-2">Close date</div>
+              <div className="">
+                <DatePicker
+                  minDate={new Date()}
+                  popperProps={{
+                    positionFixed: true, // use this to make the popper position: fixed
+                  }}
+                  closeOnScroll={(e) => e.target === document}
+                  selected={new Date(mintEndTime?.value * 1000)}
+                  onChange={(date: Date | null) =>
+                    handleDateChange(+date as any)
+                  }
+                  todayButton="Go to Today"
+                  dateFormat="P"
+                  formatWeekDay={(nameOfDay) => nameOfDay.substr(0, 1)}
+                  showPopperArrow={false}
+                  dropdownMode="select"
+                  className="focus:border-blue-navy hover:border-gray-syn3"
+                />
+              </div>
+              {warning && (
+                <div className="text-yellow-warning pt-2 text-sm">
+                  {warning}
+                </div>
+              )}
+            </animated.div>
+          )}
+        </div>
       </div>
     </Fade>
   );

@@ -18,8 +18,8 @@ import {
   clearCollectiblesTransactions,
   fetchCollectiblesTransactions,
   fetchTokenTransactions,
-  setMockTokensResult,
   setMockCollectiblesResult,
+  setMockTokensResult,
 } from "@/state/assets/slice";
 import { setClubMembers } from "@/state/clubMembers";
 import {
@@ -41,7 +41,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { syndicateActionConstants } from "src/components/syndicates/shared/Constants";
 import ClubTokenMembers from "../managerActions/clubTokenMembers";
 import ActivityView from "./activity";
-import Assets from "./assets";
+import Assets from './assets';
 import TabButton from "./TabButton";
 
 const LayoutWithSyndicateDetails: FC = ({ children }) => {
@@ -113,7 +113,7 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
 
   // Change sub-nav and nav styles when stuck
   useEffect(() => {
-    if (subNav.current && subNav.current.getBoundingClientRect().top === 0) {
+    if (subNav.current && parseInt(subNav.current.getBoundingClientRect().top) <= 0) {
       setIsSubNavStuck(true);
       setShowNav(false);
     } else {
@@ -163,7 +163,7 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
     if (
       clubAddress !== zeroAddress &&
       web3.utils.isAddress(clubAddress) &&
-      syndicateContracts?.SingleTokenMintModule
+      syndicateContracts?.DepositTokenMintModule
     ) {
       const clubERC20tokenContract = new ClubERC20Contract(
         clubAddress as string,
@@ -175,7 +175,7 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
       dispatch(
         setERC20Token(
           clubERC20tokenContract,
-          syndicateContracts.SingleTokenMintModule,
+          syndicateContracts.DepositTokenMintModule,
         ),
       );
 
@@ -189,9 +189,15 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
           : mockActiveERC20Token;
       dispatch(setERC20TokenDetails(mockData));
     }
-  }, [clubAddress, account, status, syndicateContracts?.SingleTokenMintModule]);
+  }, [
+    clubAddress,
+    account,
+    status,
+    syndicateContracts?.DepositTokenMintModule,
+  ]);
 
-  const showOnboardingIfNeeded = router.pathname.endsWith("[clubAddress]");
+  const showOnboardingIfNeeded =
+    router.pathname.endsWith("[clubAddress]") && !isDemoMode;
 
   // get static text from constants
   const { noTokenTitleText } = syndicateActionConstants;
@@ -289,7 +295,7 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
                           >
                             Assets
                           </button>
-                          {renderOnDisconnect && (
+                          {(renderOnDisconnect || isDemoMode) && (
                             <button
                               key="members"
                               onClick={() => setActiveTab("members")}
@@ -302,7 +308,7 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
                               Members
                             </button>
                           )}
-                          {renderOnDisconnect && (
+                          {(renderOnDisconnect || isDemoMode) && (
                             <TabButton
                               active={activeTab === "activity"}
                               label="Activity"
@@ -320,12 +326,14 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
                       <div className="text-base grid grid-cols-12 gap-y-5">
                         <div className="col-span-12">
                           {activeTab == "assets" && <Assets />}
-                          {activeTab == "members" && renderOnDisconnect && (
-                            <ClubTokenMembers />
-                          )}
-                          {activeTab == "activity" && renderOnDisconnect && (
-                            <ActivityView />
-                          )}
+                          {activeTab == "members" &&
+                            (renderOnDisconnect || isDemoMode) && (
+                              <ClubTokenMembers />
+                            )}
+                          {activeTab == "activity" &&
+                            (renderOnDisconnect || isDemoMode) && (
+                              <ActivityView />
+                            )}
                         </div>
                       </div>
                     </div>

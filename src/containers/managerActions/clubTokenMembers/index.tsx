@@ -12,6 +12,7 @@ import { setDepositReadyInfo } from "@/state/legalInfo";
 import { useRouter } from "next/router";
 import { generateMemberSignURL } from "@/utils/generateMemberSignURL";
 import useClubTokenMembers from "@/hooks/useClubTokenMembers";
+import { animated } from "react-spring";
 
 const ClubTokenMembers = (): JSX.Element => {
   // retrieve state variables
@@ -33,6 +34,8 @@ const ClubTokenMembers = (): JSX.Element => {
   const [showDepositLinkCopyState, setShowDepositLinkCopyState] =
     useState(false);
   const [showGenerateLinkModal, setShowGenerateLinkModal] = useState(false);
+  const [linkShareAgreementChecked, setLinkShareAgreementChecked] =
+    useState(false);
 
   const setClubDepositLink = (clubDepositLink: string) => {
     dispatch(
@@ -224,11 +227,40 @@ const ClubTokenMembers = (): JSX.Element => {
                       style={{ width: "416px" }}
                       className="flex justify-center flex-col"
                     >
+                      {!adminSigned && (
+                        <div className="flex space-between mb-6">
+                          <input
+                            className="bg-transparent rounded mt-1 focus:ring-offset-0 cursor-pointer"
+                            onChange={() =>
+                              setLinkShareAgreementChecked(
+                                !linkShareAgreementChecked,
+                              )
+                            }
+                            type="checkbox"
+                            id="linkShareAgreement"
+                            name="linkShareAgreement"
+                          />
+                          <animated.p className="text-sm text-gray-syn4 ml-3 text-left">
+                            I agree to only share this link privately. I
+                            understand that publicly sharing this link may
+                            violate securities laws. <br></br>
+                            <a
+                              target="_blank"
+                              style={{ color: "#4376ff" }}
+                              href="https://www.sec.gov/reportspubs/investor-publications/investorpubsinvclubhtm.html"
+                              rel="noopener noreferrer"
+                            >
+                              Learn more.
+                            </a>{" "}
+                          </animated.p>
+                        </div>
+                      )}
                       <GenerateDepositLink
                         showGenerateLinkModal={showGenerateLinkModal}
                         setShowGenerateLinkModal={setShowGenerateLinkModal}
                         updateDepositLinkCopyState={updateDepositLinkCopyState}
                         showDepositLinkCopyState={showDepositLinkCopyState}
+                        agreementChecked={linkShareAgreementChecked}
                       />
                     </div>
                   )}

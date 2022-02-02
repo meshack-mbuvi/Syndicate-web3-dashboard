@@ -235,7 +235,7 @@ export const WalletIcon = (props: {
         d="M11.875 0H0.625C0.25 0 0 0.25 0 0.625V9.375C0 9.75 0.25 10 0.625 10H11.875C12.25 10 12.5 9.75 12.5 9.375V7.25H7.375C6.13236 7.25 5.125 6.24264 5.125 5C5.125 3.75736 6.13236 2.75 7.375 2.75H12.5V0.625C12.5 0.25 12.25 0 11.875 0Z"
         className="fill-current"
       />
-      <circle cx="7.5" cy="5" r="1.25" className="fill-current" />
+      <circle cx="7.5" cy="5" r="1.25" className="fill-current animate-none" />
     </svg>
   );
 };

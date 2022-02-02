@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { AppState } from "@/state";
 import AddressMenuDropDown from "./accountMenuDropdown";
 import React from "react";
+import { useDemoMode } from "@/hooks/useDemoMode";
 
 export const Wallet: React.FC = () => {
   /**
@@ -18,6 +19,8 @@ export const Wallet: React.FC = () => {
 
   const { status } = web3;
   const dispatch = useDispatch();
+
+  const isDemoMode = useDemoMode();
 
   /**
    * open variable is used to determine whether to show or hide
@@ -48,11 +51,6 @@ export const Wallet: React.FC = () => {
     </button>
   );
 
-  // DEMO CONTENT
-
-  // value to be fetched from redux store or url.
-  const demoMode = false;
-
   const formattedDemoAddress = formatAddress(
     "0x2502947319f2166eF46f0a7c081D23C63f88112B",
     7,
@@ -81,7 +79,7 @@ export const Wallet: React.FC = () => {
     </div>
   );
 
-  if (demoMode) {
+  if (isDemoMode) {
     return <DemoConnectButton />;
   }
 

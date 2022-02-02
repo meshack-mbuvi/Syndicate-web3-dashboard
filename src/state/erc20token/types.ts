@@ -8,6 +8,7 @@ export interface ERC20Token {
   depositsEnabled: boolean;
   claimEnabled: boolean;
   depositToken: string;
+  mintModule: string;
   symbol: string;
   startTime: number;
   endTime: number;
@@ -30,6 +31,7 @@ export const initialState: { erc20Token: ERC20Token; erc20TokenContract: any } =
       depositsEnabled: false,
       claimEnabled: false,
       totalSupply: 0,
+      mintModule: "",
       tokenDecimals: 18, //default to 18
       totalDeposits: 0,
       symbol: "",

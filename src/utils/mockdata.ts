@@ -10,6 +10,7 @@ export const mockERC20Token = {
   owner: "",
   tokenDecimals: 18,
   depositToken: "0xeb8f08a975Ab53E34D8a0330E0D34de942C95926",
+  mintModule: "0x36d367884b5088465C0Ea2EaF52224a922DC71E6",
   symbol: "✺ABC",
   memberCount: 6,
   loading: false,
@@ -544,7 +545,7 @@ export const mockActivityTransactionsData = {
       gasLimit: 185121,
       gasPrice: -1794967283,
       gasUsed: 118478,
-      hash: "0x2cd4ae5e78ce86a8f0ae8e2ebcc93e3025675f915605fbe8518e0f0e05a0e681",
+      hash: "0x2cd4ae5e78ce86a8f0ae8e2ebcc93e3025975f915605fbe8518e0f0e05a0e681",
       isError: false,
       isOutgoingTransaction: false,
       metadata: {
@@ -593,7 +594,7 @@ export const mockActivityTransactionsData = {
       gasLimit: 185121,
       gasPrice: -1794967283,
       gasUsed: 118478,
-      hash: "0x2cd4ae5e78ce86a8f0ae8e2ebcc93e3025675f915605fbe8518e0f0e05a0e681",
+      hash: "0x2cd4ae5e78ce86a8f0ae8e2ebcc93e3055675f915605fbe8518e0f0e05a0e681",
       isError: false,
       isOutgoingTransaction: false,
       metadata: {
@@ -642,7 +643,7 @@ export const mockActivityTransactionsData = {
       gasLimit: 185121,
       gasPrice: -1794967283,
       gasUsed: 118478,
-      hash: "0x2cd4ae5e78ce86a8f0ae8e2ebcc93e3025675f915605fbe8518e0f0e05a0e681",
+      hash: "0x2cd4ae5e78ce86a8f0ae8e2ebcc93f3025675f915605fbe8518e0f0e05a0e681",
       isError: false,
       isOutgoingTransaction: false,
       metadata: {
@@ -691,7 +692,7 @@ export const mockActivityTransactionsData = {
       gasLimit: 185121,
       gasPrice: -1794967283,
       gasUsed: 118478,
-      hash: "0x2cd4ae5e78ce86a8f0ae8e2ebcc93e3025675f915605fbe8518e0f0e05a0e681",
+      hash: "0x2cd4ae5e78ce68a8f0ae8e2ebcc93e3025675f915605fbe8518e0f0e05a0e681",
       isError: false,
       isOutgoingTransaction: false,
       metadata: {
@@ -740,7 +741,7 @@ export const mockActivityTransactionsData = {
       gasLimit: 185121,
       gasPrice: -1794967283,
       gasUsed: 118478,
-      hash: "0x2cd4ae5e78ce86a8f0ae8e2ebcc93e3025675f915605fbe8518e0f0e05a0e681",
+      hash: "0x2cd4ae5e78ce86a8f0ae8e2ebcc93e3025675f916605fbe8518e0f0e05a0e681",
       isError: false,
       isOutgoingTransaction: false,
       metadata: {
@@ -789,7 +790,7 @@ export const mockActivityTransactionsData = {
       gasLimit: 185121,
       gasPrice: -1794967283,
       gasUsed: 118478,
-      hash: "0x2cd4ae5e78ce86a8f0ae8e2ebcc93e3025675f915605fbe8518e0f0e05a0e681",
+      hash: "0x2cd4ae5e78ce86a8f0ae8e2ebcc93e3025675f415605fbe8518e0f0e05a0e681",
       isError: false,
       isOutgoingTransaction: false,
       metadata: {

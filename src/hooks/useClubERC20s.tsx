@@ -53,7 +53,7 @@ const useClubERC20s = () => {
   });
 
   useEffect(() => {
-    if (router.isReady) {
+    if (account && router.isReady) {
       refetch({
         where: {
           ownerAddress: account.toLocaleLowerCase(),
@@ -100,16 +100,34 @@ const useClubERC20s = () => {
           depositAmount,
         }) => {
           // get clubERC20 configs
-          const {
+          let {
             endTime,
             maxMemberCount,
             maxTotalSupply,
             requiredToken,
             requiredTokenMinBalance,
             startTime,
-          } = await syndicateContracts?.mintPolicy?.getSyndicateValues(
+          } = await syndicateContracts?.policyMintERC20?.getSyndicateValues(
             contractAddress,
           );
+
+          if (
+            !+endTime &&
+            !+maxMemberCount &&
+            !+maxTotalSupply &&
+            !+startTime
+          ) {
+            ({
+              endTime,
+              maxMemberCount,
+              maxTotalSupply,
+              requiredToken,
+              requiredTokenMinBalance,
+              startTime,
+            } = await syndicateContracts?.mintPolicy?.getSyndicateValues(
+              contractAddress,
+            ));
+          }
 
           let clubERC20Contract;
           let decimals = 0;
@@ -128,10 +146,17 @@ const useClubERC20s = () => {
             return;
           }
 
-          const depositToken =
-            await syndicateContracts?.SingleTokenMintModule?.depositToken(
+          let depositToken =
+            await syndicateContracts?.DepositTokenMintModule?.depositToken(
               contractAddress,
             );
+
+          if (isZeroAddress(depositToken)) {
+            depositToken =
+              await syndicateContracts?.SingleTokenMintModule?.depositToken(
+                contractAddress,
+              );
+          }
 
           let depositERC20TokenSymbol = "USDC";
           if (!isZeroAddress(depositToken)) {

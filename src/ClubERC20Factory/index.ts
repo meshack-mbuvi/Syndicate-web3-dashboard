@@ -2,16 +2,19 @@ import { ISyndicateContracts } from "@/state/contracts";
 import { ClubERC20Factory } from "./clubERC20Factory";
 import { MerkleDistributorModuleContract } from "./merkleDistributorModule";
 import { MerkleDistributorModuleERC721Contract } from "./merkleDistributorModuleERC721";
-import { MintPolicyContract } from "./mintPolicy";
+import { MintPolicyContract } from "./policyMintERC20";
 import { ERC721MintPolicyContract } from "./mintPolicyERC721";
 import { publicMintWithFeeModuleContract } from "./publicMintWithFeeModule";
 import { PublicOnePerAddressModuleContract } from "./publicOnePerAddressModule";
 import { RugUtilityMintModuleContract } from "./rugUtilityMintModule";
-import { SingleTokenMintModuleContract } from "./singleTokenMintModule";
+import { DepositTokenMintModuleContract } from "./depositTokenMintModule";
 
 // Contract addresses for new contracts
 const CLUB_ERC20_FACTORY_ADDRESS = process.env.NEXT_PUBLIC_CLUB_ERC20_FACTORY;
+const POLICY_MINT_ERC20_ADDRESS = process.env.NEXT_PUBLIC_POLICY_MINT_ERC20;
 const MINT_POLICY_ADDRESS = process.env.NEXT_PUBLIC_MINT_POLICY;
+const DEPOSIT_TOKEN_MINT_MODULE =
+  process.env.NEXT_PUBLIC_DEPOSIT_TOKEN_MINT_MODULE;
 const SINGLE_TOKEN_MINT_MODULE =
   process.env.NEXT_PUBLIC_SINGLE_TOKEN_MINT_MODULE;
 const MERKLE_DISTRIBUTOR_MODULE =
@@ -36,9 +39,18 @@ export const getSyndicateContracts = async (
     CLUB_ERC20_FACTORY_ADDRESS,
     web3,
   );
+  const policyMintERC20 = new MintPolicyContract(
+    POLICY_MINT_ERC20_ADDRESS,
+    web3,
+  );
   const mintPolicy = new MintPolicyContract(MINT_POLICY_ADDRESS, web3);
 
-  const SingleTokenMintModule = new SingleTokenMintModuleContract(
+  const DepositTokenMintModule = new DepositTokenMintModuleContract(
+    DEPOSIT_TOKEN_MINT_MODULE,
+    web3,
+  );
+
+  const SingleTokenMintModule = new DepositTokenMintModuleContract(
     SINGLE_TOKEN_MINT_MODULE,
     web3,
   );
@@ -77,7 +89,9 @@ export const getSyndicateContracts = async (
   // return all initialized contracts
   return {
     clubERC20Factory,
+    policyMintERC20,
     mintPolicy,
+    DepositTokenMintModule,
     SingleTokenMintModule,
     MerkleDistributorModule,
     MerkleDistributorModuleERC721,

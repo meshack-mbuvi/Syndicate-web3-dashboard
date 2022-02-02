@@ -47,6 +47,7 @@ import ERC20ABI from "src/utils/abi/erc20";
 import { AbiItem } from "web3-utils";
 import BeforeGettingStarted from "../../beforeGettingStarted";
 import ConnectWalletAction from "../shared/connectWalletAction";
+import { useClubDepositsAndSupply } from "@/hooks/useClubDepositsAndSupply";
 
 const DepositSyndicate: React.FC = () => {
   // HOOK DECLARATIONS
@@ -67,7 +68,7 @@ const DepositSyndicate: React.FC = () => {
     address,
     maxTotalDeposits,
     depositToken,
-    totalDeposits,
+    mintModule,
     memberCount,
     depositsEnabled,
     claimEnabled,
@@ -76,6 +77,8 @@ const DepositSyndicate: React.FC = () => {
     loading,
     maxMemberCount,
   } = erc20Token;
+
+  const { totalDeposits } = useClubDepositsAndSupply(address);
 
   const { depositTokenSymbol, depositTokenLogo, depositTokenDecimals } =
     useUSDCDetails();
@@ -245,7 +248,7 @@ const DepositSyndicate: React.FC = () => {
     dispatch(
       setERC20Token(
         erc20TokenContract,
-        syndicateContracts.SingleTokenMintModule,
+        syndicateContracts.DepositTokenMintModule,
       ),
     );
 
@@ -301,6 +304,9 @@ const DepositSyndicate: React.FC = () => {
     }
   };
 
+  const SINGLE_TOKEN_MINT_MODULE_ADDR =
+    process.env.NEXT_PUBLIC_SINGLE_TOKEN_MINT_MODULE;
+
   /**
    * This methods is used to invest in LP(syndicate)
    * The account that is investing is obtained from the connected wallet from
@@ -315,15 +321,27 @@ const DepositSyndicate: React.FC = () => {
     setTransactionFailed(false);
 
     try {
-      await syndicateContracts.SingleTokenMintModule?.deposit(
-        getWeiAmount(amount, depositTokenDecimals, true),
-        erc20TokenContract.clubERC20Contract._address,
-        account,
-        onTxConfirm,
-        onTxReceipt,
-        onTxFail,
-        setTransactionHash,
-      );
+      if (mintModule === SINGLE_TOKEN_MINT_MODULE_ADDR) {
+        await syndicateContracts.SingleTokenMintModule?.deposit(
+          getWeiAmount(amount, depositTokenDecimals, true),
+          erc20TokenContract.clubERC20Contract._address,
+          account,
+          onTxConfirm,
+          onTxReceipt,
+          onTxFail,
+          setTransactionHash,
+        );
+      } else {
+        await syndicateContracts.DepositTokenMintModule?.deposit(
+          getWeiAmount(amount, depositTokenDecimals, true),
+          erc20TokenContract.clubERC20Contract._address,
+          account,
+          onTxConfirm,
+          onTxReceipt,
+          onTxFail,
+          setTransactionHash,
+        );
+      }
 
       if (approved) {
         setApproved(false);
@@ -445,15 +463,12 @@ const DepositSyndicate: React.FC = () => {
 
   /** ====== ADDITIONAL METHODS ======== */
 
-  const SINGLE_TOKEN_MINT_MODULE_ADDR =
-    process.env.NEXT_PUBLIC_SINGLE_TOKEN_MINT_MODULE;
-
   // method to check the allowance amount approved by a member.
   const checkCurrentMemberAllowance = useCallback(async () => {
     if (syndicateContracts && account && depositTokenContract) {
       try {
         const memberAllowanceAmount = await depositTokenContract?.methods
-          .allowance(account.toString(), SINGLE_TOKEN_MINT_MODULE_ADDR)
+          .allowance(account.toString(), mintModule)
           .call({ from: account });
 
         const currentMemberAllowanceAmount = getWeiAmount(
@@ -495,7 +510,7 @@ const DepositSyndicate: React.FC = () => {
       let gnosisTxHash;
       await new Promise((resolve, reject) => {
         depositTokenContract.methods
-          .approve(SINGLE_TOKEN_MINT_MODULE_ADDR, amountToApprove)
+          .approve(mintModule, amountToApprove)
           .send({ from: account })
           .on("transactionHash", (transactionHash) => {
             // user clicked on confirm
@@ -723,7 +738,7 @@ const DepositSyndicate: React.FC = () => {
     dispatch(
       setERC20Token(
         erc20TokenContract,
-        syndicateContracts.SingleTokenMintModule,
+        syndicateContracts.DepositTokenMintModule,
       ),
     );
     toggleDepositProcessingModal();
@@ -1014,11 +1029,18 @@ const DepositSyndicate: React.FC = () => {
                             submittingAllowanceApproval ||
                             submitting ||
                             insufficientBalance ||
-                            depositAmount === "0.00" ||
+                            +depositAmount === 0 ||
                             isDemoMode
                               ? "bg-gray-syn6 text-gray-syn4"
                               : "bg-white text-black"
-                          } `}
+                          } ${
+                            Boolean(depositError) ||
+                            insufficientBalance ||
+                            +depositAmount === 0 ||
+                            !depositAmount
+                              ? "cursor-not-allowed"
+                              : "cursor-pointer"
+                          }`}
                           onClick={(e) => {
                             if (submittingAllowanceApproval) {
                               toggleDepositProcessingModal();
@@ -1033,7 +1055,7 @@ const DepositSyndicate: React.FC = () => {
                           }}
                           disabled={
                             insufficientBalance ||
-                            depositAmount === "0.00" ||
+                            +depositAmount === 0 ||
                             !depositAmount ||
                             Boolean(depositError) ||
                             isDemoMode
