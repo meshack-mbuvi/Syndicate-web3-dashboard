@@ -9,6 +9,7 @@ const BeforeGettingStartedModal: React.FC = () => {
     handleClickOutside,
     handleChange,
     buttonDisabled,
+    agreementChecked,
     hideBeforeGettingStarted,
   } = useBeforeGettingStartedContext();
 
@@ -19,7 +20,7 @@ const BeforeGettingStartedModal: React.FC = () => {
         modalStyle: ModalStyle.DARK,
         showCloseButton: false,
         customWidth: "w-full max-w-480",
-        outsideOnClick: buttonDisabled,// allow outside click only when button is disabled.
+        outsideOnClick: buttonDisabled, // allow outside click only when button is disabled.
         closeModal: () => handleClickOutside(),
         customClassName: "py-8 px-10",
         showHeader: false,
@@ -43,11 +44,16 @@ const BeforeGettingStartedModal: React.FC = () => {
               handleChange(e);
             }}
             type="checkbox"
+            checked={agreementChecked}
           />
           <animated.p
-            className={`text-base text-gray-syn4 ml-4 select-none leading-6 ${
+            className={`text-base text-gray-syn4 ml-4 cursor-pointer select-none leading-6 ${
               error ? "text-red-error" : undefined
             }`}
+            onClick={(e) => {
+              e.stopPropagation();
+              handleChange(e);
+            }}
           >
             I agree to only share this link privately. I understand that
             publicly sharing this link may violate securities laws.{" "}
