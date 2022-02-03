@@ -1,3 +1,4 @@
+import { useRouter } from "next/router";
 import {
   createContext,
   ReactNode,
@@ -33,19 +34,27 @@ const BeforeGettingStartedProvider: React.FC<{ children: ReactNode }> = ({
   const [showBeforeGettingStarted, setShowBeforeGettingStarted] =
     useState(false);
 
+  const {
+    query: { clubAddress },
+  } = useRouter();
+
   useEffect(() => {
     setButtonDisabled(!agreementChecked);
   }, [agreementChecked]);
 
   useEffect(() => {
-    const showBeforeGettingStarted = localStorage.getItem(
-      "showBeforeGettingStarted",
-    );
+    if (!clubAddress) return;
+
+    const { showBeforeGettingStarted } =
+      JSON.parse(localStorage.getItem(clubAddress as string)) || {};
 
     if (showBeforeGettingStarted == undefined || null) {
       setShowBeforeGettingStarted(true);
-      localStorage.setItem("showBeforeGettingStarted", "true");
-    } else if (showBeforeGettingStarted === "true") {
+      localStorage.setItem(
+        clubAddress as string,
+        JSON.stringify({ showBeforeGettingStarted: true }),
+      );
+    } else if (showBeforeGettingStarted === true) {
       setShowBeforeGettingStarted(true);
     } else {
       setShowBeforeGettingStarted(false);
@@ -54,11 +63,14 @@ const BeforeGettingStartedProvider: React.FC<{ children: ReactNode }> = ({
     return () => {
       setShowBeforeGettingStarted(false);
     };
-  }, [showBeforeGettingStarted]);
+  }, [showBeforeGettingStarted, clubAddress]);
 
   const hideBeforeGettingStarted = () => {
     setShowBeforeGettingStarted(false);
-    localStorage.setItem("showBeforeGettingStarted", "false");
+    localStorage.setItem(
+      clubAddress as string,
+      JSON.stringify({ showBeforeGettingStarted: false }),
+    );
   };
 
   const handleClickOutside = () => {
