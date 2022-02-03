@@ -22,7 +22,7 @@ import {
   HttpLink,
   InMemoryCache,
 } from "@apollo/client";
-import { RetryLink } from '@apollo/client/link/retry';
+import { RetryLink } from "@apollo/client/link/retry";
 import withApollo from "next-with-apollo";
 import Head from "next/head";
 import Router from "next/router";
@@ -33,8 +33,6 @@ import React from "react";
 Router.events.on("routeChangeStart", () => NProgress.start());
 Router.events.on("routeChangeComplete", () => NProgress.done());
 Router.events.on("routeChangeError", () => NProgress.done());
-
-// Initialize Amplitude Services.
 
 const App = ({ Component, pageProps, apollo }) => {
   useAmplitude();
