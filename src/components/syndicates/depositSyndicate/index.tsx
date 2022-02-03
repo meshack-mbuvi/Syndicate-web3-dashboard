@@ -38,13 +38,14 @@ import { CheckIcon } from "@heroicons/react/solid";
 import Image from "next/image";
 import React, { useCallback, useEffect, useState } from "react";
 import { CopyToClipboard } from "react-copy-to-clipboard";
+import Floater from "react-floater";
 import { useDispatch, useSelector } from "react-redux";
 import Tooltip from "react-tooltip-lite";
-import Floater from "react-floater";
 import { InfoIcon } from "src/components/iconWrappers";
 import { SkeletonLoader } from "src/components/skeletonLoader";
 import ERC20ABI from "src/utils/abi/erc20";
 import { AbiItem } from "web3-utils";
+import BeforeGettingStarted from "../../beforeGettingStarted";
 import ConnectWalletAction from "../shared/connectWalletAction";
 import { useClubDepositsAndSupply } from "@/hooks/useClubDepositsAndSupply";
 
@@ -1553,6 +1554,8 @@ const DepositSyndicate: React.FC = () => {
           </div>
         )}
       </Modal>
+
+      <BeforeGettingStarted />
     </ErrorBoundary>
   );
 };
