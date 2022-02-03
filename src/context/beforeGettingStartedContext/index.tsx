@@ -62,6 +62,7 @@ const BeforeGettingStartedProvider: React.FC<{ children: ReactNode }> = ({
 
     return () => {
       setShowBeforeGettingStarted(false);
+      setAgreementChecked(false);
     };
   }, [showBeforeGettingStarted, clubAddress]);
 
