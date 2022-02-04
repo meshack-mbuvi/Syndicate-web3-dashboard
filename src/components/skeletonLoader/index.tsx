@@ -11,6 +11,7 @@ interface SkeletonProps {
   borderRadius?: string;
   margin?: string;
   customClass?: string;
+  animate?: boolean;
 }
 
 export const SkeletonLoader: React.FC<SkeletonProps> = (props) => {
@@ -20,10 +21,13 @@ export const SkeletonLoader: React.FC<SkeletonProps> = (props) => {
     borderRadius = "rounded-custom",
     margin = "my-2",
     customClass,
+    animate = true,
   } = props;
   return (
     <div
-      className={`${borderRadius} custom-animation w-${width} ${margin} h-${height}
+      className={`${borderRadius} ${
+        animate ? "custom-animation" : "bg-gray-syn7"
+      } w-${width} ${margin} h-${height}
       ${customClass ? customClass : ""}`}
     ></div>
   );

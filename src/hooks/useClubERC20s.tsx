@@ -6,7 +6,7 @@ import {
   setMyClubERC20s,
   setOtherClubERC20s,
 } from "@/state/clubERC20";
-import { formatDate, pastDate } from "@/utils";
+import { formatDate, isZeroAddress, pastDate } from "@/utils";
 import { getWeiAmount } from "@/utils/conversions";
 import { useQuery } from "@apollo/client";
 import { useRouter } from "next/router";
@@ -34,6 +34,8 @@ const useClubERC20s = () => {
         ownerAddress: account.toLocaleLowerCase(),
       },
     },
+    // Avoid unnecessary calls when account is not defined
+    skip: !account,
   });
 
   const {
@@ -46,19 +48,46 @@ const useClubERC20s = () => {
         memberAddress: account.toLocaleLowerCase(),
       },
     },
+    // Avoid unnecessary calls when account is not defined
+    skip: !account,
   });
 
   useEffect(() => {
-    if (router.isReady) {
-      refetch();
-      refetchMyClubs();
+    if (account && router.isReady) {
+      refetch({
+        where: {
+          ownerAddress: account.toLocaleLowerCase(),
+        },
+      });
+      refetchMyClubs({
+        where: {
+          memberAddress: account.toLocaleLowerCase(),
+        },
+      });
     }
   }, [router.isReady, account]);
 
+  const [clubIAmMember, setClubIamMember] = useState([]);
+  const [myClubs, setMyClubs] = useState([]);
+
+  useEffect(() => {
+    processClubERC20Tokens(clubIAmMember).then((data) => {
+      dispatch(setOtherClubERC20s(data));
+    });
+  }, [JSON.stringify(clubIAmMember)]);
+
+  useEffect(() => {
+    processClubERC20Tokens(myClubs).then((data) => {
+      dispatch(setMyClubERC20s(data));
+    });
+  }, [JSON.stringify(myClubs)]);
+
   const processClubERC20Tokens = async (tokens) => {
     dispatch(setLoadingClubERC20s(false));
+    if (!tokens || !tokens?.length) {
+      return [];
+    }
 
-    if (!tokens || !tokens?.length) return [];
     dispatch(setLoadingClubERC20s(true));
 
     const processedTokens = await Promise.all([
@@ -71,42 +100,88 @@ const useClubERC20s = () => {
           depositAmount,
         }) => {
           // get clubERC20 configs
-          const {
+          let {
             endTime,
             maxMemberCount,
             maxTotalSupply,
             requiredToken,
             requiredTokenMinBalance,
             startTime,
-          } = await syndicateContracts?.mintPolicy?.getSyndicateValues(
+          } = await syndicateContracts?.policyMintERC20?.getSyndicateValues(
             contractAddress,
           );
 
-          const clubERC20Contract = new ClubERC20Contract(
-            contractAddress,
-            web3.web3,
-          );
+          if (
+            !+endTime &&
+            !+maxMemberCount &&
+            !+maxTotalSupply &&
+            !+startTime
+          ) {
+            ({
+              endTime,
+              maxMemberCount,
+              maxTotalSupply,
+              requiredToken,
+              requiredTokenMinBalance,
+              startTime,
+            } = await syndicateContracts?.mintPolicy?.getSyndicateValues(
+              contractAddress,
+            ));
+          }
 
-          const depositToken =
-            await syndicateContracts?.SingleTokenMintModule?.depositToken(
+          let clubERC20Contract;
+          let decimals = 0;
+          let clubName = "";
+
+          try {
+            clubERC20Contract = new ClubERC20Contract(
+              contractAddress,
+              web3.web3,
+            );
+
+            decimals = await clubERC20Contract.decimals();
+            clubName = await clubERC20Contract.name();
+          } catch (error) {
+            // error is thrown for clubs that were used in claim flow.
+            return;
+          }
+
+          let depositToken =
+            await syndicateContracts?.DepositTokenMintModule?.depositToken(
               contractAddress,
             );
 
-          const decimals = await clubERC20Contract.decimals();
-          const clubName = await clubERC20Contract.name();
-          const depositERC20TokenSymbol = await new ClubERC20Contract(
-            depositToken,
-            web3.web3,
-          ).symbol();
+          if (isZeroAddress(depositToken)) {
+            depositToken =
+              await syndicateContracts?.SingleTokenMintModule?.depositToken(
+                contractAddress,
+              );
+          }
+
+          let depositERC20TokenSymbol = "USDC";
+          if (!isZeroAddress(depositToken)) {
+            depositERC20TokenSymbol = await new ClubERC20Contract(
+              depositToken,
+              web3.web3,
+            ).symbol();
+          }
 
           const depositsEnabled = !pastDate(new Date(+endTime * 1000));
 
+          let totalDeposits = totalSupply;
+          if (decimals) {
+            totalDeposits = getWeiAmount(totalSupply, +decimals, false);
+          }
+
           //  calculate ownership share
           const memberDeposits = getWeiAmount(depositAmount, 6, false);
-          const totalDeposits = getWeiAmount(totalSupply, +decimals, false);
 
           const ownershipShare = (+memberDeposits * 100) / +totalDeposits;
-          const maxTotalSupplyInWei = getWeiAmount(maxTotalSupply, +decimals, false);
+          const maxTotalSupplyInWei = getWeiAmount(
+            maxTotalSupply,
+            +decimals,
+            false,
+          );
 
           let status = "Open to deposits";
           if (!depositsEnabled) {
@@ -127,7 +202,7 @@ const useClubERC20s = () => {
             requiredTokenMinBalance,
             address: contractAddress,
             ownerAddress,
-            totalDeposits: getWeiAmount(totalSupply, +decimals, false),
+            totalDeposits,
             membersCount: members.length,
             memberDeposits,
             status,
@@ -139,14 +214,8 @@ const useClubERC20s = () => {
       ),
     ]);
 
-    const clubsERC20s = processedTokens.filter(
-      ({ isOwner }) => isOwner !== true,
-    );
-    const myClubs = processedTokens.filter(({ isOwner }) => isOwner === true);
-
-    dispatch(setMyClubERC20s(myClubs));
-    dispatch(setOtherClubERC20s(clubsERC20s));
     dispatch(setLoadingClubERC20s(false));
+    return processedTokens.filter((club) => club !== undefined);
   };
 
   /**
@@ -157,9 +226,8 @@ const useClubERC20s = () => {
     // The currentEthereumNetwork has been added as a dependency to trigger a re-fetch
     // whenever the Ethereum network is changed.
     dispatch(setLoadingClubERC20s(true));
-    if (account && !loading && !memberClubLoading) {
+    if (account && !memberClubLoading) {
       const clubTokens = [];
-
       // get clubs connected account has invested in
       if (memberClubData?.members?.length) {
         for (
@@ -168,6 +236,8 @@ const useClubERC20s = () => {
           memberIndex++
         ) {
           const member = memberClubData.members[memberIndex];
+          if (member?.memberAddress.toLowerCase() !== account.toLowerCase())
+            return;
           if (member?.syndicateDAOs?.length) {
             const { syndicateDAOs } = member;
             for (
@@ -202,26 +272,35 @@ const useClubERC20s = () => {
         }
       }
 
+      setClubIamMember(clubTokens);
+    }
+    dispatch(setLoadingClubERC20s(false));
+  }, [
+    account,
+    memberClubLoading,
+    currentEthereumNetwork,
+    memberClubData?.members?.length,
+  ]);
+
+  useEffect(() => {
+    // This will reset syndicate details when we are on portfolio page.
+    // The currentEthereumNetwork has been added as a dependency to trigger a re-fetch
+    // whenever the Ethereum network is changed.
+    // dispatch(setLoadingClubERC20s(true));
+    if (account && !loading && data?.syndicateDAOs) {
       // check whether connected account has clubs
       if (data.syndicateDAOs.length) {
         setAccountHasClubs(true);
       } else {
         setAccountHasClubs(false);
       }
-
-      processClubERC20Tokens([...data.syndicateDAOs, ...clubTokens]);
-    } else {
-      dispatch(setOtherClubERC20s([]));
-      dispatch(setMyClubERC20s([]));
+      setMyClubs(data.syndicateDAOs);
     }
   }, [
     account,
     currentEthereumNetwork,
     loading,
-    memberClubLoading,
-    JSON.stringify(memberClubData?.members),
-    JSON.stringify(data),
-    currentEthereumNetwork,
+    JSON.stringify(data?.syndicateDAOs),
   ]);
 
   return { loading, memberClubLoading, accountHasClubs };

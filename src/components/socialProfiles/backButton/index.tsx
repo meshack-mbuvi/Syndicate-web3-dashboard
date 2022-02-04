@@ -1,16 +1,24 @@
 import Link from "next/link";
+import { useEffect, useState } from "react";
 
 const BackButton: React.FC<{
   isSticky?: boolean;
   topOffset?: string;
   customClasses?: string;
   transform: any;
+  isHidden?: boolean;
 }> = ({
   isSticky = true,
   topOffset = null,
   customClasses = "",
   transform = "translateY(-50%)",
+  isHidden = false,
 }) => {
+  // introduced React hooks because isHidden changed from false to true
+  // but this component did not update if isHidden changed
+  const [hiddenClass, setHiddenClass] = useState("");
+  useEffect(() => setHiddenClass(isHidden ? "hidden" : ""), [isHidden]);
+
   return (
     <div
       className={`bg-red-500 ${
@@ -19,13 +27,13 @@ const BackButton: React.FC<{
       style={{ top: topOffset ? topOffset : "0px" }}
     >
       <div
-        className={`relative hidden sm:block -left-9 sm:-left-14 xl:-left-20 -bottom-6 cursor-pointer w-14 h-14 rounded-full py-4 lg:hover:bg-gray-9 lg:active:bg-white lg:active:bg-opacity-20 ${
+        className={`relative hidden sm:block -left-9 sm:-left-14 xl:-left-20 -bottom-6 cursor-pointer w-14 h-14 rounded-full py-4 lg:hover:bg-gray-9 lg:active:bg-white lg:active:bg-opacity-20 transition-all duration-300 ${
           isSticky && "top-11"
         }`}
-        style={{ transform }}
+        style={{ transform: "translateY(-50%)" }}
       >
         <Link href="/clubs">
-          <a>
+          <a className={hiddenClass}>
             <svg
               style={{ left: "-1px" }}
               className="relative mx-auto vertically-center fill-current text-gray-syn5"

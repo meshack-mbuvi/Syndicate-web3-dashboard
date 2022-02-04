@@ -34,9 +34,8 @@ const AutoGrowInputField: React.FC<AutoGrowInputField> = ({
     );
 
     const diff = dynamicFontSize < 37 ? 5 : 10;
-    setExtraWidth((span.current.offsetWidth - (textWidth - diff)) - 16); // Only God knows whats happening here
-
-  }, [dynamicFontSize, placeholder, setWidth, value, width])
+    setExtraWidth(span.current.offsetWidth - (textWidth - diff) - 16); // Only God knows whats happening here
+  }, [dynamicFontSize, placeholder, setWidth, value, width]);
 
   useEffect(() => {
     // add 16 for 1rem spacing
@@ -72,7 +71,7 @@ const AutoGrowInputField: React.FC<AutoGrowInputField> = ({
         value={value}
         thousandSeparator={true}
         className={`bg-transparent border-none outline-none h-full p-0 text-5xl font-whyte-light focus:outline-none focus:border-none focus:ring-0 ${
-          hasError ? "text-red-semantic" : ""
+          hasError ? "text-red-error" : ""
         } ${value ? "text-white" : "text-gray-syn4"}`}
         style={{
           width: width - extraWidth,
@@ -83,6 +82,7 @@ const AutoGrowInputField: React.FC<AutoGrowInputField> = ({
           const { value } = values;
           onChangeHandler(value);
         }}
+        maxLength={12}
       />
     </div>
   );

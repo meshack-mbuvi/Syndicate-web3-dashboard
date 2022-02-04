@@ -15,9 +15,26 @@
     [headers.values]
       Access-Control-Allow-Origin = "*"
 
+[[headers]]
+  for = "/.netlify/functions/getCoinInfoByContractAddress/*"
+  [headers.values]
+    cache-control = "s-maxage=86401"
+
 [build.environment]
   NODE_OPTIONS = "--max_old_space_size=8192"
 
 [[redirects]]
   from = "/syndicates/*"
   to = "https://v1.syndicate.io/syndicates/:splat"
+
+# The following is intended to Redirect users from sanctioned countries to Unavailable page
+# Based on Coinbase list of countries ie Cuba(CU), Iran(IR), North Korea(KP), Sudan(SD), Syria(SY)
+# More on Coinbase Wallet Terms of Service and Trade sanction laws can be found here:
+# https://wallet.coinbase.com/terms-of-service
+
+[[redirects]]
+  from = "/*"
+  to = "/unavailable"
+  status = 302
+  force = true
+  conditions = {Country = ["CU", "IR", "KP", "SD", "SY"]}

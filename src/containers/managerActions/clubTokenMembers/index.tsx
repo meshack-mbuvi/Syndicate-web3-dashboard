@@ -1,33 +1,72 @@
 import CopyLink from "@/components/shared/CopyLink";
 import { SkeletonLoader } from "@/components/skeletonLoader";
-import useClubTokenMembers from "@/hooks/useClubTokenMembers";
+import { useIsClubOwner } from "@/hooks/useClubOwner";
 import { AppState } from "@/state";
-import { formatAddress } from "@/utils/formatAddress";
 import { floatedNumberWithCommas } from "@/utils/formattedNumbers";
-import Image from "next/image";
 import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
-import SyndicateMembersTable from "./SyndicateMembersTable";
+import { useSelector, useDispatch } from "react-redux";
+import { MemberAddressComponent } from "./memberAddress";
+import MembersTable from "./MembersTable";
+import GenerateDepositLink from "../GenerateDepositLink";
+import { setDepositReadyInfo } from "@/state/legalInfo";
+import { useRouter } from "next/router";
+import { generateMemberSignURL } from "@/utils/generateMemberSignURL";
+import useClubTokenMembers from "@/hooks/useClubTokenMembers";
+import { animated } from "react-spring";
 
 const ClubTokenMembers = (): JSX.Element => {
   // retrieve state variables
   const {
-    clubMembersSliceReducer: { clubMembers },
+    clubMembersSliceReducer: { clubMembers, loadingClubMembers },
     erc20TokenSliceReducer: { erc20Token },
+    legalInfoReducer: {
+      depositReadyInfo: { adminSigned },
+      walletSignature: { signature },
+    },
   } = useSelector((state: AppState) => state);
+  const dispatch = useDispatch();
+  const isOwner = useIsClubOwner();
+  const router = useRouter();
+  const { clubAddress } = router.query;
 
   const [filteredAddress, setFilteredAddress] = useState("");
 
   const [showDepositLinkCopyState, setShowDepositLinkCopyState] =
     useState(false);
-  const [clubDepositLink, setClubDepositLink] = useState("");
+  const [showGenerateLinkModal, setShowGenerateLinkModal] = useState(false);
+  const [linkShareAgreementChecked, setLinkShareAgreementChecked] =
+    useState(false);
+
+  const setClubDepositLink = (clubDepositLink: string) => {
+    dispatch(
+      setDepositReadyInfo({ adminSigned, depositLink: clubDepositLink }),
+    );
+  };
+
+  // fetch club members
+  useClubTokenMembers();
 
   // club deposit link
   useEffect(() => {
-    setClubDepositLink(
-      `${window.location.origin}/clubs/${erc20Token?.address}/`,
-    );
-  }, [erc20Token.address]);
+    const legal = JSON.parse(localStorage.getItem("legal") || "{}");
+    const clubLegalData = legal[clubAddress as string];
+    if (!clubLegalData?.signaturesNeeded) {
+      return setClubDepositLink(
+        `${window.location.origin}/clubs/${clubAddress}`,
+      );
+    }
+    if (
+      clubLegalData?.clubData.adminSignature &&
+      clubLegalData.signaturesNeeded
+    ) {
+      const memberSignURL = generateMemberSignURL(
+        clubAddress as string,
+        clubLegalData.clubData,
+        clubLegalData.clubData.adminSignature,
+      );
+      setClubDepositLink(memberSignURL);
+    }
+  }, [clubAddress, signature, showGenerateLinkModal]);
 
   const updateDepositLinkCopyState = () => {
     setShowDepositLinkCopyState(true);
@@ -42,7 +81,6 @@ const ClubTokenMembers = (): JSX.Element => {
     const { value } = event.target;
     setFilteredAddress(value.trim());
   };
-  const { loading } = useClubTokenMembers();
 
   const [syndicateMembersToShow, setSynMembersToShow] = useState(clubMembers);
 
@@ -77,19 +115,7 @@ const ClubTokenMembers = (): JSX.Element => {
       {
         Header: "Member",
         accessor: function memberAddress(row: { memberAddress: string }) {
-          const { memberAddress } = row;
-
-          return (
-            <div className="flex space-x-3 align-center text-base leading-6">
-              <Image
-                width="32"
-                height="32"
-                src={"/images/user.svg"}
-                alt="user"
-              />
-              <p className="my-1">{formatAddress(memberAddress, 6, 6)}</p>
-            </div>
-          );
+          return <MemberAddressComponent {...row} />;
         },
       },
       {
@@ -126,68 +152,61 @@ const ClubTokenMembers = (): JSX.Element => {
     [clubMembers],
   );
 
+  const membersTabInstruction = isOwner
+    ? "Invite members by sharing your club's deposit link.\
+                    They’ll show up here once they deposit."
+    : "Members will show up here once they deposit funds into this club.";
+
   return (
     <div className="w-full rounded-md h-full max-w-1480">
       <div className="w-full px-2 sm:px-0 col-span-12">
-        {loading ? (
-          <div className="space-y-6 my-11">
-            <div className="flex space-x-3">
-              <SkeletonLoader
-                width="full"
-                height="8"
-                borderRadius="rounded-md"
-              />
-              <SkeletonLoader
-                width="full"
-                height="8"
-                borderRadius="rounded-md"
-              />
-              <SkeletonLoader
-                width="full"
-                height="8"
-                borderRadius="rounded-md"
-              />
-              <SkeletonLoader
-                width="full"
-                height="8"
-                borderRadius="rounded-md"
-              />
-              <SkeletonLoader
-                width="full"
-                height="8"
-                borderRadius="rounded-md"
-              />
+        {loadingClubMembers ? (
+          <>
+            <div className="mb-8 mt-10">
+              <SkeletonLoader width="36" height="6" borderRadius="rounded-md" />
             </div>
-            <div className="flex space-x-3">
-              <SkeletonLoader
-                width="full"
-                height="8"
-                borderRadius="rounded-md"
-              />
-              <SkeletonLoader
-                width="full"
-                height="8"
-                borderRadius="rounded-md"
-              />
-              <SkeletonLoader
-                width="full"
-                height="8"
-                borderRadius="rounded-md"
-              />
-              <SkeletonLoader
-                width="full"
-                height="8"
-                borderRadius="rounded-md"
-              />
-              <SkeletonLoader
-                width="full"
-                height="8"
-                borderRadius="rounded-md"
-              />
-            </div>
-          </div>
+            <>
+              {[...Array(4).keys()].map((_, index) => {
+                return (
+                  <div
+                    className="grid grid-cols-12 gap-5 border-b-1 border-gray-syn6 py-3"
+                    key={index}
+                  >
+                    <div className="flex justify-start space-x-4 items-center w-full col-span-3">
+                      <div className="flex-shrink-0">
+                        <SkeletonLoader
+                          width="8"
+                          height="8"
+                          borderRadius="rounded-full"
+                        />
+                      </div>
+                      <SkeletonLoader
+                        width="36"
+                        height="6"
+                        borderRadius="rounded-md"
+                      />
+                    </div>
+                    {[...Array(2).keys()].map((_, index) => {
+                      return (
+                        <div
+                          className="w-full flex items-center col-span-3"
+                          key={index}
+                        >
+                          <SkeletonLoader
+                            width="36"
+                            height="6"
+                            borderRadius="rounded-md"
+                          />
+                        </div>
+                      );
+                    })}
+                  </div>
+                );
+              })}
+            </>
+          </>
         ) : tableData.length || filteredAddress ? (
-          <SyndicateMembersTable
+          <MembersTable
             columns={columns}
             data={tableData}
             filterAddressOnChangeHandler={filterAddressOnChangeHandler}
@@ -201,18 +220,47 @@ const ClubTokenMembers = (): JSX.Element => {
 
                 <div className="space-y-8 flex flex-col items-center">
                   <p className="text-gray-syn4 text-base">
-                    Invite members by sharing your club&apos;s deposit link.
-                    They’ll show up here once they deposit.
+                    {membersTabInstruction}
                   </p>
-                  {erc20Token.isOwner && (
+                  {isOwner && (
                     <div
                       style={{ width: "416px" }}
-                      className="flex justify-center"
+                      className="flex justify-center flex-col"
                     >
-                      <CopyLink
-                        link={clubDepositLink}
-                        updateCopyState={updateDepositLinkCopyState}
-                        showCopiedState={showDepositLinkCopyState}
+                      {!adminSigned && (
+                        <div className="flex space-between mb-6">
+                          <input
+                            className="bg-transparent rounded mt-1 focus:ring-offset-0 cursor-pointer"
+                            onChange={() =>
+                              setLinkShareAgreementChecked(
+                                !linkShareAgreementChecked,
+                              )
+                            }
+                            type="checkbox"
+                            id="linkShareAgreement"
+                            name="linkShareAgreement"
+                          />
+                          <animated.p className="text-sm text-gray-syn4 ml-3 text-left">
+                            I agree to only share this link privately. I
+                            understand that publicly sharing this link may
+                            violate securities laws. <br></br>
+                            <a
+                              target="_blank"
+                              style={{ color: "#4376ff" }}
+                              href="https://www.sec.gov/reportspubs/investor-publications/investorpubsinvclubhtm.html"
+                              rel="noopener noreferrer"
+                            >
+                              Learn more.
+                            </a>{" "}
+                          </animated.p>
+                        </div>
+                      )}
+                      <GenerateDepositLink
+                        showGenerateLinkModal={showGenerateLinkModal}
+                        setShowGenerateLinkModal={setShowGenerateLinkModal}
+                        updateDepositLinkCopyState={updateDepositLinkCopyState}
+                        showDepositLinkCopyState={showDepositLinkCopyState}
+                        agreementChecked={linkShareAgreementChecked}
                       />
                     </div>
                   )}

@@ -1,10 +1,31 @@
 {
-  "short_name": "SYN",
+  "short_name": "Syndicate",
   "name": "Syndicate Protocol",
   "description": "Decentralized investing protocol and social network.",
-  "iconPath": "images/logo-dark.svg",
+  "iconPath": "/images/logo-dark.svg",
   "providedBy": {
     "name": "Syndicate Inc.",
-    "url": "https://www.syndicateprotocol.org/"
-  }
+    "url": "https://www.syndicateprotocol.io/"
+  },
+  "icons": [
+    {
+      "src": "/images/pwa-icons/apple-icon-180x180.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/images/pwa-icons/apple-icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/images/pwa-icons/apple-icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "display": "standalone"
 }

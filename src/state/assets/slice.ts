@@ -1,38 +1,60 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import axios from "axios";
-import { web3 } from "@/utils/web3Utils";
-import { AbiItem } from "web3-utils";
-import { getWeiAmount } from "src/utils/conversions";
-import abi from "human-standard-token-abi";
-import erc721abi from "@/utils/abi/erc721";
+import { getEthereumTokenPrice } from "@/helpers/ethereumTokenDetails";
 import { isDev } from "@/utils/environment";
-import { getCoinFromContractAddress } from "functions/src/utils/ethereum";
-
+import { mockCollectiblesResult, mockTokensResult } from "@/utils/mockdata";
+import { web3 } from "@/utils/web3Utils";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import axios from "axios";
+import abi from "human-standard-token-abi";
+import { getWeiAmount } from "src/utils/conversions";
+import { AbiItem } from "web3-utils";
 import { initialState } from "./types";
 
 const baseURL = isDev
   ? "https://api-rinkeby.etherscan.io/api"
   : "https://api.etherscan.io/api";
-const etherscanAPIKey = process.env.NEXT_PUBLIC_ETHERSCAN_API_KEY
+
+// https://rinkeby-api.opensea.io/api/v1
+const openSeaBaseURL = isDev
+  ? "https://rinkeby-api.opensea.io/api/v1"
+  : "https://api.opensea.io/api/v1";
+const etherscanAPIKey = process.env.NEXT_PUBLIC_ETHERSCAN_API_KEY;
+const openSeaAPIKey = process.env.NEXT_PUBLIC_OPENSEA_API_KEY;
 
 /** Async thunks */
 // ERC20 transactions
 export const fetchTokenTransactions = createAsyncThunk(
   "assets/fetchTokenTransactions",
   async (account: string) => {
-    const response = await axios.get(`${baseURL}`, {
-      params: {
-        module: "account",
-        action: "tokentx",
-        apikey: etherscanAPIKey,
-        address: account,
-      },
-    });
+    const response = await Promise.all([
+      // ERC20 tokens transactions
+      axios.get(`${baseURL}`, {
+        params: {
+          module: "account",
+          action: "tokentx",
+          apikey: etherscanAPIKey,
+          address: account,
+        },
+      }),
+      // ETH balance for owner address
+      axios.get(`${baseURL}`, {
+        params: {
+          module: "account",
+          action: "balance",
+          tag: "latest",
+          apikey: etherscanAPIKey,
+          address: account,
+        },
+      }),
+      // ETH price
+      getEthereumTokenPrice(),
+    ])
+      .then((result) => result)
+      .catch(() => []);
 
-    const { result } = response.data;
+    const [erc20TokensResult, ethBalanceResponse, ethPriceResponse] = response;
 
     // get relevant token values from each transactions
-    const tokenValues = result.reduce((acc, value) => {
+    const tokenValues = erc20TokensResult.data.result.reduce((acc, value) => {
       const { contractAddress, tokenDecimal, tokenName, tokenSymbol } = value;
       acc.push({ contractAddress, tokenDecimal, tokenName, tokenSymbol });
       return acc;
@@ -42,12 +64,24 @@ export const fetchTokenTransactions = createAsyncThunk(
     const uniquesTokens = filterByUniqueContractAddress(tokenValues);
 
     // check if account has token balance
-    const uniqueTokenBalances = await Promise.all(
-      filterByTokenBalances(uniquesTokens, account),
-    );
+    const uniqueTokenBalances = await (
+      await Promise.all(fetchTokenBalances(uniquesTokens, account))
+    ).filter((token) => +token.tokenBalance > 0);
 
-    // get token logo and value from CoinGecko API
-    const completeTokenDetails = await Promise.all(
+    // Batch fetch prices from CoinGecko
+    const uniqueTokenPrices = await axios
+      .get("/.netlify/functions/getCoinPriceByContractAddress", {
+        params: {
+          contractAddresses: uniqueTokenBalances
+            .map((t) => t.contractAddress)
+            .join(),
+        },
+      })
+      .then((res) => res.data.data)
+      .catch(() => []);
+
+    // get token logo and price from CoinGecko API
+    const completeTokensDetails = await Promise.all(
       uniqueTokenBalances.map(async (value) => {
         const {
           contractAddress,
@@ -55,102 +89,131 @@ export const fetchTokenTransactions = createAsyncThunk(
           tokenSymbol,
           tokenBalance,
           tokenName,
+          tokenValue = 0,
         } = value;
 
-        const { price, logo } = await getCoinFromContractAddress(
-          contractAddress,
-        );
+        const { logo } = await axios
+          .get(
+            `/.netlify/functions/getCoinInfoByContractAddress/?contractAddress=${contractAddress}`,
+          )
+          .then((res) => res.data.data)
+          .catch(() => ({ logo: "" }));
 
         return {
-          price,
+          price: uniqueTokenPrices[contractAddress],
           logo,
           tokenDecimal,
           tokenSymbol,
           tokenBalance,
           tokenName,
+          tokenValue,
         };
       }),
     );
 
-    return completeTokenDetails;
+    // get eth details to append to token details
+    const { usd } = ethPriceResponse.data.ethereum;
+    const ethBalance = getWeiAmount(ethBalanceResponse.data.result, 18, false);
+    const ethDetails = {
+      price: { usd },
+      logo: "/images/ethereum-logo.png",
+      tokenDecimal: "18",
+      tokenSymbol: "ETH",
+      tokenBalance: ethBalance,
+      tokenName: "Ethereum",
+      tokenValue: parseFloat(usd) * parseFloat(ethBalance),
+    };
+
+    // add eth details as the first item.
+    completeTokensDetails.unshift(ethDetails);
+
+    return { completeTokensDetails, ethereumTokenPrice: usd };
   },
 );
 
-// ERC721 transactions
+// collectibles assets
+interface CollectiblesFetchParams {
+  account: string;
+  offset: string;
+}
+
 export const fetchCollectiblesTransactions = createAsyncThunk(
   "assets/fetchCollectiblesTransactions",
-  async (account: string) => {
-    const response = await axios.get(`${baseURL}`, {
+  async (params: CollectiblesFetchParams) => {
+    const { account, offset } = params;
+
+    const response = await axios.get(`${openSeaBaseURL}/assets`, {
+      headers: { "x-api-key": isDev ? "" : openSeaAPIKey },
       params: {
-        module: "account",
-        action: "tokennfttx",
-        apikey: etherscanAPIKey,
-        address: account,
+        // test account on mainnet: 0x6eb534ed1329e991842b55be375abc63fe7c0e2b,
+        // test account on rinkeby: 0xf4c2c3e12b61d44e6b228c43987158ac510426fb
+        owner: account,
+        limit: "20", // in case OpenSea changes the default limit
+        offset,
       },
     });
 
-    const { result } = response.data;
+    const { assets } = response.data;
 
-    const nftTokenValues = result.reduce((acc, value) => {
-      const { contractAddress, tokenID } = value;
-      acc.push({ contractAddress, tokenID });
-      return acc;
-    }, []);
+    const collections = [
+      ...new Set(assets.map((asset) => asset.collection.slug)),
+    ];
 
-    // get unique token contracts
-    const uniqueNftTokens = filterByUniqueContractAddress(nftTokenValues);
+    const floorPrices = await Promise.all(
+      collections.map(async (slug: string) => {
+        return await axios
+          .get(`${openSeaBaseURL}/collection/${slug}/stats`, {
+            headers: { "x-api-key": isDev ? "" : openSeaAPIKey },
+          })
+          .then((result) => ({
+            floorPrice: result.data.stats.floor_price,
+            slug,
+          }))
+          .catch(() => ({ floorPrice: 0, slug }));
+      }),
+    )
+      .then((result) => result)
+      .catch(() => []);
 
-    // check if account is owner of nft
-    const nftsOwnedByAccount = await Promise.all(
-      filterNftByOwnership(uniqueNftTokens, account),
-    );
+    // get last purchase price.
+    const lastSale = assets.last_sale;
+    let lastPurchasePrice = {
+      lastPurchasePriceUSD: 0,
+      lastPurchasePriceETH: 0,
+    };
+    if (lastSale) {
+      const {
+        payment_token: { usd_price, eth_price, decimals },
+        total_price,
+      } = lastSale;
+      const lastPurchasePriceUSD =
+        +usd_price * +getWeiAmount(total_price, decimals, false);
+      lastPurchasePrice.lastPurchasePriceUSD = lastPurchasePriceUSD;
+      lastPurchasePrice.lastPurchasePriceETH = eth_price;
+    }
 
-    // get nft metadata
-    const nftsOwnedMetadata = await Promise.all(
-      getNftMetadata(nftsOwnedByAccount),
-    );
-
-    const nftTokenDetails = nftsOwnedMetadata.reduce((acc, value) => {
-      const { name, image } = value;
-      acc.push({ name, image });
-      return acc;
-    }, []);
-
-    return nftTokenDetails;
+    return assets.map((asset) => ({
+      name: asset.name,
+      image: asset.image_url,
+      animation: asset.animation_url,
+      permalink: asset.permalink,
+      id: asset.token_id,
+      collection: asset.collection,
+      description: asset.description,
+      floorPrice: floorPrices.find(
+        (price) => price.slug === asset.collection.slug,
+      ).floorPrice,
+      lastPurchasePrice,
+    }));
   },
 );
 
-/** Methods */
-const getNftMetadata = (nftTokensList: any[]) => {
-  const nftMetadata = nftTokensList.map(async (nftToken) => {
-    const { contractAddress, tokenID } = nftToken;
-
-    const nftContractInstance = new web3.eth.Contract(
-      erc721abi as AbiItem[],
-      contractAddress,
-    );
-    const tokenURI = await nftContractInstance.methods.tokenURI(tokenID).call();
-    const tokenMetadata = await axios.get(tokenURI);
-
-    return tokenMetadata.data;
-  });
-
-  return nftMetadata;
-};
-
-// filter nfts by ownership
-const filterNftByOwnership = (nftTokensList: any[], account: string) => {
-  const nftsOwned = nftTokensList.filter(async (nftToken) => {
-    const { contractAddress, tokenID } = nftToken;
-    const nftContractInstance = new web3.eth.Contract(
-      erc721abi as AbiItem[],
-      contractAddress,
-    );
-    const nftOwner = await nftContractInstance.methods.ownerOf(tokenID).call();
-    return nftOwner !== account;
-  });
-  return nftsOwned;
-};
+// collectibles needs to be cleared when account is switched.
+// this prevents duplicate renders on refetch
+export const clearCollectiblesTransactions = createAsyncThunk(
+  "assets/clearCollectiblesTransactions",
+  async () => [],
+);
 
 // get unique token contracts from token transactions
 const filterByUniqueContractAddress = (tokensList: any[]) => {
@@ -162,7 +225,7 @@ const filterByUniqueContractAddress = (tokensList: any[]) => {
   return uniqueTokensByContractAddress;
 };
 
-const filterByTokenBalances = (tokensList: any[], account: string) => {
+const fetchTokenBalances = (tokensList: any[], account: string) => {
   return tokensList.map(async (token) => {
     const tokenCopy = { ...token };
     const { contractAddress, tokenDecimal } = token;
@@ -176,17 +239,9 @@ const filterByTokenBalances = (tokensList: any[], account: string) => {
       .balanceOf(account)
       .call();
 
-    // add check for token balance.
-    // just because a transaction involved a specific token does not mean
-    // the account currently holds that token.
-    if (+accountBalance > 0) {
-      tokenCopy["tokenBalance"] = getWeiAmount(
-        accountBalance,
-        tokenDecimal,
-        false,
-      );
-    }
+    const tokenBalance = getWeiAmount(accountBalance, tokenDecimal, false);
 
+    tokenCopy["tokenBalance"] = tokenBalance;
     return tokenCopy;
   });
 };
@@ -194,33 +249,86 @@ const filterByTokenBalances = (tokensList: any[], account: string) => {
 const assetsSlice = createSlice({
   name: "assets",
   initialState,
-  reducers: {},
+  reducers: {
+    setMockTokensResult(state, action) {
+      state.tokensResult = action.payload;
+    },
+    setMockCollectiblesResult(state, action) {
+      const isDepositEnabled = action.payload;
+      state.collectiblesResult = isDepositEnabled ? [] : mockCollectiblesResult;
+      state.ethereumTokenPrice = 2396.93;
+    },
+  },
   extraReducers: (builder) => {
     builder
-      .addCase(fetchTokenTransactions.pending, (state, action) => {
+      .addCase(fetchTokenTransactions.pending, (state) => {
         state.loading = true;
       })
       .addCase(fetchTokenTransactions.fulfilled, (state, action) => {
-        state.tokensResult = action.payload;
+        // find token value here
+
+        const tokensWithValue = action.payload.completeTokensDetails.map(
+          (token) => {
+            const tokenCopy = token;
+            tokenCopy["tokenValue"] =
+              parseFloat(tokenCopy.price?.usd ?? 0) *
+              parseFloat(tokenCopy.tokenBalance);
+            return tokenCopy;
+          },
+        );
+        // sort the tokens
+        const sortedInDescendingOrder = tokensWithValue.sort(
+          (a, b) => b.tokenValue - a.tokenValue,
+        );
+        state.tokensResult = sortedInDescendingOrder;
         state.loading = false;
         state.tokensFetchError = false;
+        state.ethereumTokenPrice = action.payload.ethereumTokenPrice;
       })
-      .addCase(fetchTokenTransactions.rejected, (state, action) => {
+      .addCase(fetchTokenTransactions.rejected, (state) => {
         state.loading = false;
         state.tokensFetchError = true;
       })
-      .addCase(fetchCollectiblesTransactions.pending, (state, action) => {
+      .addCase(fetchCollectiblesTransactions.pending, (state) => {
         state.loadingCollectibles = true;
       })
       .addCase(fetchCollectiblesTransactions.fulfilled, (state, action) => {
-        state.collectiblesResult = action.payload;
+        if (action.payload.length < 20) {
+          state.allCollectiblesFetched = true;
+        } else {
+          state.allCollectiblesFetched = false;
+        }
+
+        // unique values only
+        const result = [...state.collectiblesResult, ...action.payload];
+        const flag = {};
+        const uniqueNfts = [];
+        result.forEach((item) => {
+          const { id } = item;
+          if (!flag[id]) {
+            flag[id] = true;
+            uniqueNfts.push(item);
+          }
+        });
+
+        state.collectiblesResult = uniqueNfts;
         state.loadingCollectibles = false;
         state.collectiblesFetchError = false;
       })
-      .addCase(fetchCollectiblesTransactions.rejected, (state, action) => {
+      .addCase(fetchCollectiblesTransactions.rejected, (state) => {
         state.collectiblesFetchError = true;
+      })
+      .addCase(clearCollectiblesTransactions.fulfilled, (state, action) => {
+        state.collectiblesResult = action.payload;
+        state.loadingCollectibles = false;
+        state.collectiblesFetchError = false;
       });
   },
 });
+
+export const {
+  setMockTokensResult,
+  setMockCollectiblesResult,
+} = assetsSlice.actions;
 
 export default assetsSlice.reducer;

@@ -10,6 +10,8 @@ import {
   MyClubERC20TableColumns,
 } from "./portfolio/clubERC20Table/constants";
 import PortfolioEmptyState from "@/components/syndicates/portfolioAndDiscover/portfolio/portfolioEmptyState";
+import CreateClubButton from "@/components/createClubButton";
+
 /**
  * My Syndicates: IF their wallet (a) is leading a syndicate or
  * (b) has deposited into a syndicate, the syndicates shows up on
@@ -61,6 +63,7 @@ const PortfolioAndDiscover: React.FC = () => {
         <div>
           <div className="flex justify-between items-center w-full mt-14 mb-16">
             <SkeletonLoader width="32" height="8" borderRadius="rounded-lg" />
+            <SkeletonLoader width="64" height="14" borderRadius="rounded-lg" />
           </div>
           <div className="mb-8">
             <SkeletonLoader width="20" height="6" borderRadius="rounded-md" />
@@ -98,7 +101,8 @@ const PortfolioAndDiscover: React.FC = () => {
           {myClubERC20s.length || otherClubERC20s.length ? (
             <div>
               <div className="flex justify-between items-center w-full mt-14 mb-16">
-                <p className="text-3xl ">Portfolio</p>
+                <p className="text-3xl">Portfolio</p>
+                <CreateClubButton />
               </div>
               {/* show active clubsERC20s here */}
               {myClubERC20s.length ? (

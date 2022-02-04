@@ -4,6 +4,8 @@ import { Menu, Transition } from "@headlessui/react";
 import { EtherscanLink } from "@/components/syndicates/shared/EtherscanLink";
 import { formatAddress } from "@/utils/formatAddress";
 import { useConnectWalletContext } from "@/context/ConnectWalletProvider";
+import { WalletIcon } from "@/components/iconWrappers";
+import WalletConnectDemoButton from "@/containers/layoutWithSyndicateDetails/demo/buttons/WalletConnectDemoButton";
 
 interface IAddressMenuDropDown {
   web3: any;
@@ -76,22 +78,25 @@ const AddressMenuDropDown: FC<IAddressMenuDropDown> = ({ web3 }) => {
     );
   };
 
+  const formattedAddress = formatAddress(account, 7, 6);
+
   const connectedWalletIconStyles = "fill-current text-green-500";
   return (
     <Menu as="div" className="relative">
       {({ open }) => (
         <>
-          <Menu.Button className="flex rounded-full px-4 py-1 items-center bg-green-500 bg-opacity-10 border border-green-500 border-opacity-20">
-            <img
-              src="/images/walletConnected.svg"
-              className={`w-5 h-4 pr-1 m-2 ${connectedWalletIconStyles}`}
-              alt="wallet-icon"
+          <Menu.Button className="flex rounded-full px-4 py-1 items-center bg-green-500 bg-opacity-10 border border-green-500 border-opacity-20 h-9">
+            <WalletIcon
+              className={`text-green w-3 h-2.5 ${connectedWalletIconStyles}`}
             />
 
-            <span className="focus:outline-none mr-1 text-sm font-whyte-regular">
-              {formatAddress(account, 4, 4)}
+            <span className="hidden sm:block focus:outline-none ml-3 mr-1 text-sm font-whyte-regular">
+              <span className="text-gray-syn4">
+                {formattedAddress.slice(0, 2)}
+              </span>
+              {formattedAddress.slice(2)}
             </span>
-            <div className="flex items-center ml-2">
+            <div className="hidden sm:flex items-center ml-2">
               <img src="/images/chevron-down.svg" alt="down-arrow" />
             </div>
           </Menu.Button>
@@ -164,6 +169,9 @@ const AddressMenuDropDown: FC<IAddressMenuDropDown> = ({ web3 }) => {
                 </div>
                 <div className="flex justify-center">
                   <p className="text-sm">Switch wallets directly in Metamask</p>
+                </div>
+                <div className="w-full mt-8">
+                  <WalletConnectDemoButton buttonText="Switch to demo mode" />
                 </div>
               </div>
             </Menu.Items>

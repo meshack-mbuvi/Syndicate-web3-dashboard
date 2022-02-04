@@ -12,7 +12,7 @@ const WaitListCard: React.FC = () => {
       </p>
       <a
         href="https://bpiowescm93.typeform.com/to/mJnnQ5ZI"
-        className="px-8 py-4 rounded-custom bg-white flex justify-center items-center"
+        className="primary-CTA flex justify-center items-center"
         target="_blank"
         rel="noreferrer"
       >

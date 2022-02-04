@@ -1,38 +1,30 @@
-import React, { useState, useEffect, useRef } from "react";
+import Fade from "@/components/Fade";
+import Modal, { ModalStyle } from "@/components/modal";
+import { useCreateInvestmentClubContext } from "@/context/CreateInvestmentClubContext";
+import useUSDCDetails from "@/hooks/useUSDCDetails";
+import { AppState } from "@/state";
+import { setTokenCap } from "@/state/createInvestmentClub/slice";
+import {
+  numberInputRemoveCommas,
+  numberWithCommas,
+} from "@/utils/formattedNumbers";
+import Image from "next/image";
+import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AdvancedInputField } from "../shared/AdvancedInputField";
-import MaxButton from "../shared/MaxButton";
-import useUSDCDetails from "@/hooks/useUSDCDetails";
-import Image from "next/image";
-import {
-  numberWithCommas,
-  numberInputRemoveCommas,
-} from "@/utils/formattedNumbers";
-import { useCreateInvestmentClubContext } from "@/context/CreateInvestmentClubContext";
-import { setTokenCap } from "@/state/createInvestmentClub/slice";
-import { AppState } from "@/state";
-import Fade from "@/components/Fade";
 
-const MAX_AMOUNT_TO_RAISE = "25000000";
-const SYN_SUPPORT_MSG = (
-  <span>
-    Syndicate supports club sizes greater than 25 million USDC upon request.
-    Reach out to us at{" "}
-    <a className="text-blue" href="mailto:support@syndicate.io" target="_blank">
-      support@syndicate.io
-    </a>{" "}
-  </span>
-);
-
-const AmountToRaise: React.FC = () => {
+const AmountToRaise: React.FC<{
+  className?: string;
+  editButtonClicked?: boolean;
+}> = ({ className, editButtonClicked }) => {
   const {
-    createInvestmentClubSliceReducer: { tokenCap },
+    createInvestmentClubSliceReducer: { tokenCap, investmentClubSymbol },
   } = useSelector((state: AppState) => state);
-
-  const { setShowNextButton, handleNext } = useCreateInvestmentClubContext();
 
   const [error, setError] = useState<string | React.ReactNode>("");
   const [amount, setAmount] = useState<string>(tokenCap);
+  const [showDisclaimerModal, setShowDisclaimerModal] = useState(false);
+
   const dispatch = useDispatch();
 
   const { depositTokenSymbol, depositTokenLogo } = useUSDCDetails();
@@ -52,62 +44,93 @@ const AmountToRaise: React.FC = () => {
     </div>
   );
 
-  // Maximum amount that can be raised for an investment club is 25,000,000
-  const setMaxAmount = () => {
-    setAmount(MAX_AMOUNT_TO_RAISE);
-    setTimeout(() => {
-      handleNext();
-      setShowNextButton(true);
-    }, 400);
-  };
-
   // get input value
   const handleChange = (e) => {
     e.preventDefault();
     const value = numberInputRemoveCommas(e);
     setAmount(value);
-
     // push amount to the redux store.
     dispatch(setTokenCap(value));
   };
 
   // catch input field errors
   useEffect(() => {
-    if (+amount > +MAX_AMOUNT_TO_RAISE) {
-      setError(SYN_SUPPORT_MSG);
-      setNextBtnDisabled(true);
-    } else if (!amount || +amount === 0) {
+    if (!amount || +amount === 0 || editButtonClicked) {
       setNextBtnDisabled(true);
     } else {
       setError("");
       setNextBtnDisabled(false);
     }
-    dispatch(setTokenCap(amount));
-  }, [amount]);
+    amount ? dispatch(setTokenCap(amount)) : dispatch(setTokenCap("0"));
+  }, [amount, dispatch, editButtonClicked, setNextBtnDisabled]);
 
   return (
-    <Fade delay={500}>
-      <div className="flex w-full pb-6">
-        <AdvancedInputField
-          {...{
-            value: numberWithCommas(amount.replace(/^0{2,}/, "0")),
-            label: "How much are you raising?",
-            addOn: <MaxButton handleClick={() => setMaxAmount()} />,
-            onChange: handleChange,
-            error: error,
-            hasError: Boolean(error),
-            placeholder: "Unlimited",
-            type: "text",
-            isNumber: true,
-            focus,
-            addSettingDisclaimer: true,
-            extraAddon: extraAddonContent,
-            moreInfo:
-              "Syndicate encourages all groups to consult with their legal and tax advisors prior to launch.",
-          }}
-        />
-      </div>
-    </Fade>
+    <>
+      <Modal
+        {...{
+          modalStyle: ModalStyle.DARK,
+          show: showDisclaimerModal,
+          closeModal: () => {
+            setShowDisclaimerModal(false);
+          },
+          customWidth: "w-100",
+          customClassName: "p-8",
+          showCloseButton: false,
+          outsideOnClick: true,
+          showHeader: false,
+          alignment: "align-top",
+          margin: "mt-48",
+        }}
+      >
+        <div className="space-y-6">
+          <p className="h3">Investing in crypto can be risky</p>
+          <p className="text-sm text-gray-syn4 leading-5">
+            Crypto is a new asset class and is subject to many risks including
+            frequent price changes. All crypto assets are different. Each one
+            has its own set of features and risks that could affect its value
+            and how you&apos;re able to use it. Be sure to research any asset
+            fully before selecting. Syndicate strongly encourages all groups to
+            consult with their legal and tax advisors prior to launch.
+          </p>
+          <button
+            className="bg-white rounded-custom w-full flex items-center justify-center py-4 px-8"
+            onClick={() => setShowDisclaimerModal(false)}
+          >
+            <p className="text-black whitespace-nowrap text-base">Back</p>
+          </button>
+        </div>
+      </Modal>
+      <Fade delay={500}>
+        <div className="flex pb-6 ml-5">
+          <AdvancedInputField
+            {...{
+              value: amount
+                ? numberWithCommas(
+                    amount.replace(/^0{2,}/, "0").replace(/^0/, ""),
+                  )
+                : numberWithCommas(""),
+              title: "How much are you raising?",
+              onChange: handleChange,
+              error: error,
+              hasError: Boolean(error),
+              placeholder: "Unlimited",
+              type: "text",
+              isNumber: true,
+              focus,
+              addSettingDisclaimer: false,
+              extraAddon: extraAddonContent,
+              moreInfo: (
+                <div>
+                  Members will receive 1 ✺{investmentClubSymbol} club token for
+                  every 1 USDC deposited.
+                </div>
+              ),
+              className: className,
+            }}
+          />
+        </div>
+      </Fade>
+    </>
   );
 };
 

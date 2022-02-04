@@ -107,6 +107,10 @@
   .main-title {
     @apply text-xl sm:text-2xl lg:text-3xl my-3;
   }
+
+  .bg-black-monolith {
+    background: linear-gradient(206.57deg, #0E1C21 0%, #02070A 83.33%);
+  }
 }
 
 @layer components {
@@ -178,20 +182,24 @@
 
   /* Button CTAs */
 
-  .CTA-base {
-    @apply px-8 py-3.5 rounded-lg focus:outline-none border-none whitespace-nowrap font-medium;
+  .base-CTA {
+    @apply px-8 py-3.5 rounded-lg focus:outline-none border-none whitespace-nowrap font-medium transition-all;
   }
 
   .primary-CTA {
-    @apply CTA-base bg-white text-black;
+    @apply base-CTA bg-white text-black transition-all hover:bg-opacity-90;
+  }
+
+  .green-CTA {
+    @apply base-CTA bg-green text-black transition-all hover:bg-green-shine;
   }
 
   .primary-CTA-disabled {
-    @apply CTA-base cursor-not-allowed bg-gray-steelGrey text-gray-manatee;
+    @apply base-CTA cursor-not-allowed bg-gray-syn6 text-gray-syn4 hover:bg-opacity-100;
   }
 
   .secondary-CTA {
-    @apply CTA-base bg-gray-manatee bg-opacity-30 text-white;
+    @apply base-CTA bg-gray-6 bg-opacity-30 text-white;
   }
 
   /* The tagline above the syndicate name on the social profile */
@@ -225,6 +233,10 @@
 
   .h3 {
     @apply block text-white text-lg lg:text-xl;
+  }
+
+  .h1 {
+    @apply block text-white text-5xl;
   }
 
   .bottom-triangle-blue::after {
@@ -280,6 +292,10 @@
       content: "";
       display: block;
       padding-bottom: 100%;
+    }
+
+    .perfect-square-box {
+      aspect-ratio: 1 / 1;
     }
 
     /* Padding */
@@ -801,6 +817,39 @@ input[type="checkbox"] {
   padding-top: 17px;
   padding-left: 17px;
 }
-.overflowFade {
-  box-shadow: -30px 0px 20px -7px #000;
+
+.video-320 {
+  height: 320px !important;
+  width: 320px !important;
+}
+
+.max-h-modal {
+  max-height: calc(100vh - 112px);
+}
+.accountPill {
+  border: 1px solid rgba(48, 230, 150, 0.6);
+  box-shadow: 0px 0px 4px #30e696;
+  backdrop-filter: blur(34px);
+  height: 34px;
+  width: 196px;
+}
+
+/* scrollbar styling on Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #3F4147 #000000;
+}
+
+/* scrollbar styling on Chrome, Edge, and Safari */
+*::-webkit-scrollbar {
+  width: 4px;
+}
+
+*::-webkit-scrollbar-track {
+  background: #000000;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: #3F4147;
+  border-radius: 4px;
 }

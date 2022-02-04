@@ -1,13 +1,13 @@
-import { useState } from "react";
 import { SettingsDisclaimerTooltip } from "@/containers/createInvestmentClub/shared/SettingDisclaimer";
 import cn from "classnames";
+import { useState } from "react";
 
 /**
  * An input component with label, component to the right, and an icon to the furthest right.
  * @param {*} props
  */
 export const AdvancedInputField = (props: {
-  label?: string;
+  title?: string;
   name?: string;
   id?: string;
   onChange?;
@@ -21,15 +21,17 @@ export const AdvancedInputField = (props: {
   extraAddon: any;
   isNumber?: boolean;
   hasError?: boolean;
-  moreInfo?: string;
+  moreInfo?: string | React.ReactNode;
   addSettingDisclaimer?: boolean;
   customClass?: { addon?: string; input?: string };
+  className?: string;
 }): JSX.Element => {
   const {
-    label,
+    title,
     name,
     id,
     onChange,
+    placeholder,
     error,
     value,
     disabled = false,
@@ -41,23 +43,24 @@ export const AdvancedInputField = (props: {
     extraAddon,
     moreInfo,
     addSettingDisclaimer,
+    className
   } = props;
 
   const [focused, setFocused] = useState(false);
   const [hover, setHover] = useState(false);
 
   return (
-    <div className="w-full lg:w-2/3">
+    <div className={className}>
       <div className="flex justify-between">
-        <label htmlFor={label} className="h3 pb-6">
-          {label}
+        <label htmlFor={title} className="h3 pb-6">
+          {title}
         </label>
       </div>
       <div
         className={cn("mt-1 mb-2 flex border rounded-md overflow-hidden", {
           "border-blue-navy ring-0": focused && !error,
           "border-gray-24": !focused,
-          "border-red-semantic": error,
+          "border-red-error": error,
           "border-gray-syn3": hover,
         })}
       >
@@ -71,6 +74,7 @@ export const AdvancedInputField = (props: {
               type={type}
               name={name}
               id={id}
+              placeholder={placeholder}
               onFocus={() => setFocused(true)}
               onBlur={() => setFocused(false)}
               onMouseEnter={() => setHover(true)}
@@ -114,7 +118,7 @@ export const AdvancedInputField = (props: {
               {
                 "border-blue-navy ring-0": focused && !error,
                 "border-gray-24": !focused,
-                "border-red-semantic": error,
+                "border-red-error": error,
                 "border-gray-syn3": hover,
               },
             )}

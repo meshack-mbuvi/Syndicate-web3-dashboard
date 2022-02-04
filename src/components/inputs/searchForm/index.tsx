@@ -17,20 +17,24 @@ export const SearchForm = (props: {
   column?: boolean;
   full?: boolean;
   searchValue: string;
-  memberCount?;
+  itemsCount?;
   customClass?: string;
+  searchItem?: string;
   clearSearchValue?: (event) => void;
+  width?: number;
 }): JSX.Element => {
   const {
     error,
     onChangeHandler,
     searchValue,
-    memberCount,
+    itemsCount,
     full,
     clearSearchValue,
     customClass = "bg-black",
     disabled = false,
     column = false,
+    searchItem = "members",
+    width,
   } = props;
 
   return (
@@ -42,10 +46,10 @@ export const SearchForm = (props: {
       <div className={`w-5/6 flex-grow flex flex-col justify-between`}>
         {/* input field */}
         <div className="flex justify-start items-center">
-          <div className="relative w-full">
+          <div className="relative flex items-center justify-start w-full">
             <div className="relative bg-gray-8 pl-1 flex items-stretch flex-grow focus-within:z-10">
               <div
-                className={`absolute my-auto align-middle inset-y-0 pt-0.5 h-full z-8 flex items-center justify-center ${
+                className={`absolute my-auto align-middle inset-y-0 pt-0.5 h-full z-8 flex items-center justify-center pr-2 ${
                   disabled ? "opacity-40" : ""
                 }`}
               >
@@ -60,33 +64,42 @@ export const SearchForm = (props: {
                 type="text"
                 name="search"
                 id="search"
-                className={`focus:ring-0 ${customClass} relative border-0 text-white font-whyte leading-6 text-base block w-full rounded-md pl-5 pr-8 sm:text-sm ${
+                className={`focus:ring-0 ${customClass} relative border-0 font-whyte text-white leading-6 text-lg block w-full rounded-md pl-5 pr-5 sm:text-sm ${
                   disabled ? "opacity-40" : ""
                 }`}
-                placeholder={`Search ${memberCount ? memberCount : ""} members`}
+                placeholder={`Search ${
+                  itemsCount ? itemsCount : ""
+                } ${searchItem}`}
                 onChange={onChangeHandler}
                 value={searchValue}
                 disabled={disabled ? true : false}
                 autoComplete="off"
+                style={{
+                  width: searchValue && width ? width : "auto",
+                }}
               />
-              {searchValue.trim() !== "" && clearSearchValue !== undefined && (
-                <button
-                  className="absolute inset-y-0 right-0 flex items-center pr-2 cursor-pointer"
-                  onClick={clearSearchValue}
-                >
+            </div>
+            {searchValue.trim() !== "" && clearSearchValue !== undefined && (
+              <button
+                className="flex items-center pr-2 cursor-pointer text-gray-syn5"
+                onClick={clearSearchValue}
+              >
+                <div className="flex-shrink-0 flex items-center">
                   <Image
                     src="/images/close-circle.svg"
-                    height="19"
+                    height="16"
                     width="16"
                     alt="Selector Icon"
                   />
-                </button>
-              )}
-            </div>
+                </div>
+
+                <p className="ml-2">Clear</p>
+              </button>
+            )}
           </div>
         </div>
         {error && (
-          <p className="text-red-semantic text-xs mt-1 mb-1">
+          <p className="text-red-error text-xs mt-1 mb-1">
             {error && !disabled ? error : null}
           </p>
         )}

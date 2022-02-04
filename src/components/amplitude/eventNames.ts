@@ -41,3 +41,27 @@ export const SUCCESSFUL_WITHDRAWAL = "Successful Withdrawal";
 export const CLICK_WITHDRAW_MORE = "Click Withdraw More widget";
 export const CHANGE_DISTRIBUTION_TOKEN = "Change Distribution Token";
 export const ERROR_WITHDRAWING = "Error withdrawing";
+
+// CREATE CLUBS EVENTS
+export const CLICK_I_AGREE = "Clicked I Agree on the disclaimer";
+export const CREATE_INVESTMENT_CLUB =
+  "Clicked create an investment club button";
+export const ERROR_INVESTMENT_CLUB_CREATION = "Error in club creation";
+
+// WALLET CONNECT
+export const SUCCESSFUL_WALLET_CONNECT = "Successful wallet connection";
+export const ERROR_WALLET_CONNECTION = "Error connecting to a wallet";
+
+// POST CLUB CREATION EVENTS
+export const CLICK_COPY_DEPOSIT_LINK_TO_SHARE =
+  "Clicked copy deposit link to share";
+export const CLICK_GENERATE_LINK_TO_INVITE_MEMBERS =
+  "Clicked on link to invite members";
+
+// LEGAL EVENTS
+export const CLICKED_HELP_FORM_LEGAL_ENTITY =
+  "Clicked on the help create legal entity";
+export const SEND_FOR_SIGNATURES = "Clicked on send for signatures";
+export const COPY_SEND_FOR_SIGNATURES_LINK =
+  "Clicked on copy link to send for signatures";
+export const MGR_SIGN_LEGAL_DOC = "Manager signs legal documents";

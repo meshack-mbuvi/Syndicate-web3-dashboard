@@ -2,7 +2,7 @@
  * @param number number to be formatted
  * @returns formatted number as a string
  * */
-export const numberWithCommas = (number: string | Number): string => {
+export const numberWithCommas = (number: string | number): string => {
   return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 };
 
@@ -13,7 +13,7 @@ export const floatedNumberWithCommas = (number): string => {
   }
 
   // return this for values smaller than 0.01 since we use 2dp
-  if (number < 0.01) {
+  if (number < 0.01 && number > 0) {
     return "< 0.01";
   }
 
@@ -28,7 +28,10 @@ export const floatedNumberWithCommas = (number): string => {
     const numberTo2decimalsWithoutRoundingUp = number
       .toString()
       .match(/^-?\d+(?:\.\d{0,2})?/)[0];
-    return numberWithCommas(numberTo2decimalsWithoutRoundingUp).replace('.00', '');
+    return numberWithCommas(numberTo2decimalsWithoutRoundingUp).replace(
+      ".00",
+      "",
+    );
   } catch (error) {
     return "0";
   }

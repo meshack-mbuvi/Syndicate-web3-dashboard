@@ -1,18 +1,26 @@
-import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
-import { useRouter } from "next/router";
-import { ArrowNarrowRightIcon, XIcon } from "@heroicons/react/solid";
+import { amplitudeLogger, Flow } from "@/components/amplitude";
+import { CLICK_COPY_DEPOSIT_LINK_TO_SHARE } from "@/components/amplitude/eventNames";
 import ErrorBoundary from "@/components/errorBoundary";
 import FadeIn from "@/components/fadeIn/FadeIn";
-import CopyLink from "@/components/shared/CopyLink";
 import CreateEntityCard from "@/components/shared/createEntityCard";
 import { SkeletonLoader } from "@/components/skeletonLoader";
 import StatusBadge from "@/components/syndicateDetails/statusBadge";
+import ConnectWalletAction from "@/components/syndicates/shared/connectWalletAction";
 import { EtherscanLink } from "@/components/syndicates/shared/EtherscanLink";
 import { SuccessCard } from "@/containers/managerActions/successCard";
+import { useCreateInvestmentClubContext } from "@/context/CreateInvestmentClubContext";
+import { useDemoMode } from "@/hooks/useDemoMode";
 import { AppState } from "@/state";
+import { setDepositReadyInfo } from "@/state/legalInfo";
 import { Status } from "@/state/wallet/types";
-import ConnectWalletAction from "@/components/syndicates/shared/connectWalletAction";
+import { generateMemberSignURL } from "@/utils/generateMemberSignURL";
+import { ArrowNarrowRightIcon, XIcon } from "@heroicons/react/solid";
+import { useRouter } from "next/router";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { animated } from "react-spring";
+import GenerateDepositLink from "./GenerateDepositLink";
+import { MintAndShareTokens } from "./mintAndShareTokens";
 
 const useShowShareWarning = () => {
   const router = useRouter();
@@ -47,14 +55,20 @@ const ManagerActions = (): JSX.Element => {
         transactionHash, // TODO: this will be empty after reload
       },
     },
+    legalInfoReducer: {
+      walletSignature: { signature },
+      depositReadyInfo: { depositLink, adminSigned },
+    },
   } = useSelector((state: AppState) => state);
+
+  const { resetCreationStates } = useCreateInvestmentClubContext();
   const router = useRouter();
+  const dispatch = useDispatch();
 
   const {
     loading,
     depositsEnabled,
-    address,
-    isOwner,
+    claimEnabled,
     totalDeposits,
     maxTotalDeposits,
   } = erc20Token;
@@ -64,26 +78,21 @@ const ManagerActions = (): JSX.Element => {
   // we show loading state until content processing has been completed
   // meaning we are sure what to show the user depending on whether it's member
   // or manager content
-  const [readyToDisplay, setReadyToDisplay] = useState(false);
 
   const { showShareWarning, handleShowShareWarning } = useShowShareWarning();
 
-  useEffect(() => {
-    //  Content processing not yet completed
-    if (!address) return;
-
-    // Redirect the owner to the manage page
-    // Don't Migrate if wallet is disconnected
-    if (status !== Status.DISCONNECTED && !isOwner) {
-      router.push(`/clubs/${clubAddress}/`);
-    } else {
-      setReadyToDisplay(true);
-    }
-  }, [isOwner, address, router, clubAddress]);
-
   const [showDepositLinkCopyState, setShowDepositLinkCopyState] =
     useState(false);
-  const [clubDepositLink, setClubDepositLink] = useState("");
+  const [showGenerateLinkModal, setShowGenerateLinkModal] = useState(false);
+
+  const [hasAgreements, setHasAgreememnts] = useState(false);
+  const [showMintToken, setShowMintToken] = useState(false);
+
+  const setClubDepositLink = (clubDepositLink: string) => {
+    dispatch(
+      setDepositReadyInfo({ adminSigned, depositLink: clubDepositLink }),
+    );
+  };
 
   // variables to track investment club creation process.
   // TODO: actual values should be fetched from the redux store.
@@ -93,19 +102,43 @@ const ManagerActions = (): JSX.Element => {
     useState<boolean>(false);
   const syndicateCreationFailed = false;
 
+  const isDemoMode = useDemoMode();
+
   // club deposit link
   useEffect(() => {
-    setClubDepositLink(`${window.location.origin}/clubs/${clubAddress}/`);
-  }, [clubAddress]);
+    const legal = JSON.parse(localStorage.getItem("legal") || "{}");
+    const clubLegalData = legal[clubAddress as string];
+    setHasAgreememnts(clubLegalData?.signaturesNeeded || false);
+    if (!clubLegalData?.signaturesNeeded) {
+      return setClubDepositLink(
+        `${window.location.origin}/clubs/${clubAddress}`,
+      );
+    }
+    if (
+      clubLegalData?.clubData.adminSignature &&
+      clubLegalData.signaturesNeeded
+    ) {
+      const memberSignURL = generateMemberSignURL(
+        clubAddress as string,
+        clubLegalData.clubData,
+        clubLegalData.clubData.adminSignature,
+      );
+      setClubDepositLink(memberSignURL);
+    }
+  }, [clubAddress, signature, showGenerateLinkModal]);
 
   // trigger confetti if we are coming from syndicateCreate page
   useEffect(() => {
+    if (!clubAddress) return;
+
     if (source && source === "create") {
+      // reset creation context states
+      resetCreationStates();
       setSyndicateSuccessfullyCreated(true);
       // truncates the query part to prevent reshowing confetti
       router.push(`/clubs/${clubAddress}/manage`);
     }
-  }, [source]);
+  }, [source, clubAddress, router]);
 
   // check for success state to show success + confetti component
   // TODO: Add localstorage state from create syndicate function to track these conditions:
@@ -125,12 +158,21 @@ const ManagerActions = (): JSX.Element => {
   const updateDepositLinkCopyState = () => {
     setShowDepositLinkCopyState(true);
     setTimeout(() => setShowDepositLinkCopyState(false), 1000);
+    amplitudeLogger(CLICK_COPY_DEPOSIT_LINK_TO_SHARE, {
+      flow: Flow.POST_CLUB_CREATION,
+    });
   };
 
-  const showReviewPage = () => {
-    // TODO: navigate to the review page from here.
-    return;
-  };
+  /**
+   * TODO: Uncomment this function after enabling mint tokens button.
+   */
+  // const handleShowMintTokens = (event) => {
+  //   event.stopPropagation();
+  //   setShowMintToken(true);
+  // };
+
+  const [linkShareAgreementChecked, setLinkShareAgreementChecked] =
+    useState(false);
 
   return (
     <ErrorBoundary>
@@ -140,14 +182,16 @@ const ManagerActions = (): JSX.Element => {
             <StatusBadge
               {...{
                 depositsEnabled,
+                claimEnabled,
                 creatingSyndicate,
                 syndicateSuccessfullyCreated,
                 syndicateCreationFailed,
                 showConfettiSuccess,
               }}
+              isManager
               depositExceedTotal={+totalDeposits === +maxTotalDeposits}
             />
-            {status !== Status.DISCONNECTED && (loading || !readyToDisplay) ? (
+            {status !== Status.DISCONNECTED && loading ? (
               <div className="h-fit-content relative py-6 px-8 flex justify-center items-start flex-col w-full">
                 <SkeletonLoader
                   width="1/3"
@@ -161,7 +205,7 @@ const ManagerActions = (): JSX.Element => {
                 />
                 <SkeletonLoader width="full" height="12" />
               </div>
-            ) : depositsEnabled ? (
+            ) : depositsEnabled || claimEnabled ? (
               <div
                 className={`h-fit-content relative ${
                   showConfettiSuccess
@@ -169,20 +213,64 @@ const ManagerActions = (): JSX.Element => {
                     : `pt-6 ${showShareWarning ? "pb-6" : "pb-10"} px-8`
                 } flex justify-center items-start flex-col w-full`}
               >
-                {status === Status.DISCONNECTED ? (
+                {status === Status.DISCONNECTED && !isDemoMode ? (
                   <ConnectWalletAction />
                 ) : (
                   <>
                     {!syndicateCreationFailed &&
                       !creatingSyndicate &&
                       !showConfettiSuccess && (
-                        <div className="flex flex-col items-start pb-6">
+                        <div className="flex flex-col items-start mb-6">
                           <p className="pb-2 uppercase text-white text-sm font-whyte-medium">
-                            Invite to deposit
+                            Invite to {claimEnabled ? "claim" : "deposit"}
                           </p>
-                          <p className="text-gray-syn4">
-                            Invite members by sharing your club’s deposit link
-                          </p>
+                          <div className="text-gray-syn4">
+                            <p>
+                              Invite members by sharing your club’s{" "}
+                              {claimEnabled ? "claim" : "deposit"} link
+                            </p>
+                            {!adminSigned && (
+                              <div className="flex space-between mt-3">
+                                <input
+                                  className="bg-transparent rounded mt-1 focus:ring-offset-0 cursor-pointer"
+                                  onChange={() =>
+                                    setLinkShareAgreementChecked(
+                                      !linkShareAgreementChecked,
+                                    )
+                                  }
+                                  type="checkbox"
+                                  id="linkShareAgreement"
+                                  name="linkShareAgreement"
+                                />
+                                <animated.p className="text-sm text-gray-syn4 ml-3">
+                                  I agree to only share this link privately. I
+                                  understand that publicly sharing this link may
+                                  violate securities laws. <br></br>
+                                  <a
+                                    target="_blank"
+                                    style={{ color: "#4376ff" }}
+                                    href="https://www.sec.gov/reportspubs/investor-publications/investorpubsinvclubhtm.html"
+                                    rel="noopener noreferrer"
+                                  >
+                                    Learn more.
+                                  </a>{" "}
+                                </animated.p>
+                              </div>
+                            )}
+                            {adminSigned && (
+                              <p>
+                                {hasAgreements
+                                  ? "Contains legal agreements"
+                                  : "Bypasses legal agreements"}{" "}
+                                <button
+                                  className="text-blue-navy cursor-pointer"
+                                  onClick={() => setShowGenerateLinkModal(true)}
+                                >
+                                  Change
+                                </button>
+                              </p>
+                            )}
+                          </div>
                         </div>
                       )}
 
@@ -229,51 +317,47 @@ const ManagerActions = (): JSX.Element => {
                             syndicateSuccessfullyCreated,
                             updateDepositLinkCopyState,
                             showDepositLinkCopyState,
-                            clubDepositLink,
+                            clubDepositLink: depositLink,
                             showConfettiSuccess,
                             setShowConfettiSuccess,
                           }}
                         />
                       </div>
                     )}
-
-                    {syndicateCreationFailed ? (
-                      <button
-                        className="bg-white hover:bg-opacity-90 py-4 w-full rounded-custom text-black"
-                        onClick={showReviewPage}
-                      >
-                        Try again
-                      </button>
-                    ) : !showConfettiSuccess ? (
-                      <CopyLink
-                        link={clubDepositLink}
-                        updateCopyState={updateDepositLinkCopyState}
-                        showCopiedState={showDepositLinkCopyState}
+                    {!showConfettiSuccess && (
+                      <GenerateDepositLink
+                        showGenerateLinkModal={showGenerateLinkModal}
+                        setShowGenerateLinkModal={setShowGenerateLinkModal}
+                        updateDepositLinkCopyState={updateDepositLinkCopyState}
+                        showDepositLinkCopyState={showDepositLinkCopyState}
+                        syndicateCreationFailed={syndicateCreationFailed}
+                        showConfettiSuccess={showConfettiSuccess}
                         creatingSyndicate={creatingSyndicate}
                         syndicateSuccessfullyCreated={
                           syndicateSuccessfullyCreated
                         }
-                        showConfettiSuccess={showConfettiSuccess}
+                        agreementChecked={linkShareAgreementChecked}
                       />
-                    ) : null}
-                    {showShareWarning && !showConfettiSuccess && (
-                      <div className="flex flex-row mt-4 text-yellow-saffron bg-brown-dark rounded-1.5lg py-3 px-4">
+                    )}
+
+                    {showShareWarning && !showConfettiSuccess && adminSigned && (
+                      <div className="flex flex-row mt-4 text-gray-syn4 bg-gray-syn9 rounded-1.5lg py-3 px-4">
                         <p className="text-sm">
-                          Do not publicly share this deposit link. Only share
-                          with trusted and qualified people.&nbsp;
+                          I agree to only share this link privately. I
+                          understand that publicly sharing this link may violate
+                          securities laws.{" "}
                           <a
-                            className="underline"
-                            rel="noreferrer"
-                            href="https://www.sec.gov/reportspubs/investor-publications/investorpubsinvclubhtm.html"
                             target="_blank"
+                            style={{ color: "#4376ff" }}
+                            href="https://www.sec.gov/reportspubs/investor-publications/investorpubsinvclubhtm.html"
+                            rel="noopener noreferrer"
                           >
-                            Learn more from the SEC
-                            <ArrowNarrowRightIcon className="h-4 w-4 inline-block no-underline ml-1" />
-                          </a>
+                            Learn more.
+                          </a>{" "}
                         </p>
                         <div className="flex items-center pl-2.5">
                           <XIcon
-                            className="h-7 w-7 cursor-pointer"
+                            className="h-3 w-3 cursor-pointer"
                             onClick={() => handleShowShareWarning(false)}
                             onKeyPress={() => handleShowShareWarning(false)}
                             role="button"
@@ -288,7 +372,35 @@ const ManagerActions = (): JSX.Element => {
             ) : null}
           </div>
         </FadeIn>
-        {status !== Status.DISCONNECTED && <CreateEntityCard />}
+        {status !== Status.DISCONNECTED && (
+          <div className="flex bg-gray-syn8 duration-500 transition-all rounded-2.5xl my-6 p-4 space-y-4 items-start flex-col">
+            <div className="hover:bg-gray-syn7 rounded-xl py-2 px-4">
+              <CreateEntityCard />
+            </div>
+            {/* This button will be re-enabled. */}
+
+            {/* <button
+              className="cursor-pointer space-x-4 focus:outline-none flex w-full items-start text-base leading-6 hover:bg-gray-syn7 rounded-xl py-2 px-4"
+              onClick={handleShowMintTokens}
+              disabled={isDemoMode}
+            >
+              <div className="flex-shrink-0">
+                <img
+                  src="/images/token-gray.svg"
+                  className="mt-1"
+                  alt="ribbon"
+                />
+              </div>
+              <div className="text-base leading-6">Mint club tokens</div>
+            </button> */}
+          </div>
+        )}
+
+        {
+          <MintAndShareTokens
+            {...{ show: showMintToken, handleShow: setShowMintToken }}
+          />
+        }
       </div>
     </ErrorBoundary>
   );

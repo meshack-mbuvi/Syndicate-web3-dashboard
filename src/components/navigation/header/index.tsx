@@ -1,5 +1,6 @@
 import Link from "next/link";
 import React from "react";
+
 import { NavBarNavItem } from "./navbarItems";
 import { UserProfileWrapper } from "./UserProfileWrapper";
 import WalletComponent from "./wallet";
@@ -7,24 +8,22 @@ import WalletComponent from "./wallet";
 interface props {
   backLink: string;
   show?: boolean;
+  navItems: { navItemText: string; url?: string; isLegal?: boolean }[];
 }
 
-// links to show on the navbar
-const navbarItems = [
-  {
-    url: "/clubs",
-    urlText: "Portfolio",
-  },
-];
-const Header: React.FC<props> = ({ backLink = null, show = true }) => {
+const Header: React.FC<props> = ({
+  backLink = null,
+  show = true,
+  navItems,
+}) => {
   return (
     <nav
       className={`${
         show ? "block" : "hidden"
-      } bg-black h-20 fixed top-0 inset-x-0 align-middle bg-opacity-50 z-20 backdrop-filter backdrop-blur-xl`}
+      } bg-black h-20 fixed top-0 inset-x-0 align-middle z-30 backdrop-filter backdrop-blur-xl`}
     >
       <div className="container mx-auto flex justify-between h-full">
-        {/* This backlink is only displayed on mobile sizes */}
+        {/* This back link is only displayed on mobile sizes */}
         {backLink ? (
           <div className="md:flex-1 mr-4 md:mr-0">
             <div className="md:hidden float-left vertically-center">
@@ -46,10 +45,9 @@ const Header: React.FC<props> = ({ backLink = null, show = true }) => {
         >
           {" "}
           {/* Navbar links  */}
-          {navbarItems.map((item, index) => {
-            const { url, urlText } = item;
-            return <NavBarNavItem key={index} url={url} urlText={urlText} />;
-          })}
+          {navItems.map(({ navItemText, url, isLegal }, index) => (
+            <NavBarNavItem key={index} navItemText={navItemText} url={url} isLegal={isLegal} />
+          ))}
         </div>
         {/* logo */}
         <div className="flex-1 space-x-1 mx-auto w-fit-content flex items-center justify-center">
@@ -62,7 +60,7 @@ const Header: React.FC<props> = ({ backLink = null, show = true }) => {
 
         {/* secondary nav */}
         <div className="flex-1">
-          <div className="float-right flex items-center space-x-1 vertically-center hidden sm:block">
+          <div className="float-right flex items-center space-x-1 vertically-center sm:block">
             <UserProfileWrapper>
               <WalletComponent />
             </UserProfileWrapper>

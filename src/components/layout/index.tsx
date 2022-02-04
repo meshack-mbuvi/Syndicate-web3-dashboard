@@ -1,37 +1,57 @@
-import React, { FC } from "react";
-import { useRouter } from "next/router";
-import { useSelector } from "react-redux";
+import Footer from "@/components/navigation/footer";
 import { useCreateInvestmentClubContext } from "@/context/CreateInvestmentClubContext";
+import { useIsClubOwner } from "@/hooks/useClubOwner";
 import { AppState } from "@/state";
+import { Status } from "@/state/wallet/types";
+import { useRouter } from "next/router";
+import React, { FC, useEffect } from "react";
+import { useSelector } from "react-redux";
 import ConnectWallet from "src/components/connectWallet";
 import Header from "src/components/navigation/header";
+import DemoBanner from "../demoBanner";
 import ProgressBar from "../ProgressBar";
 import SEO from "../seo";
-import { SyndicateInBetaBanner } from "src/components/banners";
-import Footer from "@/components/navigation/footer";
 
 interface Props {
   backLink?: string;
   showNav?: boolean;
+  navItems?: { navItemText: string; url?: string; isLegal?: boolean }[];
 }
 
-const Layout: FC<Props> = ({ children, backLink = null, showNav = true }) => {
-  const router = useRouter();
+const Layout: FC<Props> = ({
+  children,
+  backLink = null,
+  showNav = true,
+  navItems = [
+    {
+      url: "/clubs",
+      navItemText: "Portfolio",
+    },
+  ],
+}) => {
   const {
     web3Reducer: {
-      web3: { account },
+      web3: { account, status },
     },
     clubERC20sReducer: { myClubERC20s, otherClubERC20s, loading },
-    erc20TokenSliceReducer: { erc20Token },
+    erc20TokenSliceReducer: {
+      erc20Token: { owner, loading: loadingClubDetails },
+    },
   } = useSelector((state: AppState) => state);
 
-  const loadingClubDetails = erc20Token?.loading;
+  const router = useRouter();
+  const {
+    pathname,
+    isReady,
+    query: { clubAddress },
+  } = router;
 
-  const showCreateProgressBar =
-    router.pathname === "/clubs/create/clubprivatebetainvite";
+  const isOwner = useIsClubOwner();
+
+  const showCreateProgressBar = router.pathname === "/clubs/create";
   const portfolioPage = router.pathname === "/clubs" || router.pathname === "/";
 
-  const { currentStep, steps, showByInvitationOnly } =
+  const { currentStep, steps, preClubCreationStep } =
     useCreateInvestmentClubContext();
 
   // get content to occupy the viewport if we are in these states.
@@ -42,6 +62,30 @@ const Layout: FC<Props> = ({ children, backLink = null, showNav = true }) => {
   const onPortfolioPage = clubsFound && fewClubs && portfolioPage;
   const pushFooter =
     onPortfolioPage || !account || loading || loadingClubDetails;
+
+  // we don't need to render the footer on the creation page.
+  const createClubPage = router.pathname === "/clubs/create";
+
+  const handleRouting = () => {
+    if (pathname.includes("/manage") && !isOwner) {
+      router.replace(`/clubs/${clubAddress}`);
+    } else if (pathname === "/clubs/[clubAddress]" && isOwner) {
+      router.replace(`/clubs/${clubAddress}/manage`);
+    }
+  };
+
+  useEffect(() => {
+    if (
+      loadingClubDetails ||
+      !clubAddress ||
+      status === Status.CONNECTING ||
+      !owner ||
+      !isReady
+    )
+      return;
+
+    handleRouting();
+  }, [owner, clubAddress, account, loadingClubDetails, status, isReady]);
 
   return (
     <div
@@ -59,20 +103,18 @@ const Layout: FC<Props> = ({ children, backLink = null, showNav = true }) => {
           ]}
           title="Home"
         />
-        <Header backLink={backLink} show={showNav} />
+        <Header backLink={backLink} show={showNav} navItems={navItems} />
+        <DemoBanner />
         <div
-          className={`sticky top-18 z-20 ${
-            showCreateProgressBar
-              ? "bg-black bg-opacity-50 z-20 backdrop-filter"
-              : ""
+          className={`sticky top-18 ${
+            showCreateProgressBar ? "bg-black backdrop-filter" : ""
           }`}
         >
-          <SyndicateInBetaBanner />
           {showCreateProgressBar && account ? (
             <div className="pt-6 bg-black">
               <ProgressBar
                 percentageWidth={
-                  showByInvitationOnly
+                  preClubCreationStep
                     ? 0
                     : ((currentStep + 1) / steps.length) * 100
                 }
@@ -82,7 +124,7 @@ const Layout: FC<Props> = ({ children, backLink = null, showNav = true }) => {
           ) : null}
         </div>
         <div
-          className={`flex w-full flex-col sm:flex-row ${
+          className={`flex w-full bg-black flex-col sm:flex-row ${
             showCreateProgressBar ? "pt-16" : "pt-24"
           } z-20 justify-center items-center my-0 mx-auto`}
         >
@@ -90,11 +132,13 @@ const Layout: FC<Props> = ({ children, backLink = null, showNav = true }) => {
         </div>
         <ConnectWallet />
       </div>
-      <div>
-        <div className="container mx-auto">
-          <Footer extraClasses="mt-24 sm:mt-24 md:mt-40 mb-12" />
+      {createClubPage ? null : (
+        <div>
+          <div className="container mx-auto">
+            <Footer extraClasses="mt-24 sm:mt-24 md:mt-40 mb-12" />
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };

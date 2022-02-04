@@ -5,4 +5,5 @@ export interface clubMember {
 
 export const initialState = {
   clubMembers: [],
+  loadingClubMembers: false
 };
