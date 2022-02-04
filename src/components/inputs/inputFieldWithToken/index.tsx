@@ -28,10 +28,10 @@ export const InputFieldWithToken = (props: {
 
     let tokenSymbol;
     let tokenIcon;
+    const { depositTokenSymbol, depositTokenLogo } = useUSDCDetails();
 
     switch (token) {
         case TokenType.USDC: {
-            const { depositTokenSymbol, depositTokenLogo } = useUSDCDetails();
             tokenSymbol = depositTokenSymbol;
             tokenIcon = depositTokenLogo
             break;
