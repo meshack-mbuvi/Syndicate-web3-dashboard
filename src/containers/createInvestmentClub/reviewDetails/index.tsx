@@ -22,9 +22,14 @@ const ReviewDetails: React.FC = () => {
   } = useSelector((state: AppState) => state.createInvestmentClubSliceReducer);
 
   const { depositTokenSymbol, depositTokenLogo } = useUSDCDetails();
-  const { currentStep, setCurrentStep } = useCreateInvestmentClubContext();
-  const { setBackBtnDisabled, setNextBtnDisabled } =
-    useCreateInvestmentClubContext();
+  const {
+    currentStep,
+    setCurrentStep,
+    setBackBtnDisabled,
+    setNextBtnDisabled,
+    setShowNextButton,
+    showNextButton,
+  } = useCreateInvestmentClubContext();
   const [inlineEditView, setInlineEditView] = useState<string>("");
   const [editClubNameSelector, setEditClubNameSelector] =
     useState<boolean>(false);
@@ -175,7 +180,11 @@ const ReviewDetails: React.FC = () => {
                   {editClubNameSelector ? (
                     <ClubNameSelector className="flex flex-col pb-6 w-full lg:w-full" />
                   ) : (
-                    <div onClick={() => setCurrentStep(0)}>
+                    <div
+                      onClick={() => {
+                        setCurrentStep(0);
+                      }}
+                    >
                       {investmentClubHeaderTransition((styles, item) =>
                         item ? (
                           <animated.p
@@ -248,7 +257,15 @@ const ReviewDetails: React.FC = () => {
                       <AmountToRaise className="w-full lg:w-full" />
                     </div>
                   ) : (
-                    <div onClick={() => setCurrentStep(1)}>
+                    <div
+                      onClick={() => {
+                        if (!showNextButton) {
+                          setShowNextButton(true);
+                        }
+                        setCurrentStep(1);
+                      }}
+                      aria-hidden={true}
+                    >
                       {tokenCapHeaderTransition((styles, item) =>
                         item ? (
                           <animated.p style={styles}>
@@ -331,7 +348,15 @@ const ReviewDetails: React.FC = () => {
                       <MintMaxDate className="w-full lg:w-full" />
                     </div>
                   ) : (
-                    <div onClick={() => setCurrentStep(2)}>
+                    <div
+                      onClick={() => {
+                        if (!showNextButton) {
+                          setShowNextButton(true);
+                        }
+                        setCurrentStep(2);
+                      }}
+                      aria-hidden={true}
+                    >
                       {mindEndTimeHeaderTransition((styles, item) =>
                         item ? (
                           <animated.p
@@ -421,7 +446,15 @@ const ReviewDetails: React.FC = () => {
                       <MembersCount />
                     </div>
                   ) : (
-                    <div onClick={() => setCurrentStep(3)}>
+                    <div
+                      onClick={() => {
+                        if (!showNextButton) {
+                          setShowNextButton(true);
+                        }
+                        setCurrentStep(3);
+                      }}
+                      aria-hidden={true}
+                    >
                       {memberCountHeaderTransition((styles, item) =>
                         item ? (
                           <animated.p

@@ -51,7 +51,7 @@ type CreateInvestmentClubProviderProps = {
   preClubCreationStep: string;
   setPreClubCreationStep: Dispatch<SetStateAction<string>>;
   resetCreationStates: () => void;
-  setCurrentStep: () => void;
+  setCurrentStep: (index: number) => void;
 };
 
 const CreateInvestmentClubContext = createContext<
