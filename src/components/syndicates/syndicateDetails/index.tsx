@@ -15,6 +15,7 @@ import { ProgressIndicator } from "../shared/progressIndicator";
 import { CopyToClipboardIcon } from "@/components/iconWrappers";
 import ReactTooltip from "react-tooltip";
 import { Status } from "@/state/wallet/types";
+import { getTextWidth } from "@/utils/getTextWidth";
 
 interface ClubDetails {
   header: string;
@@ -49,14 +50,6 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
     isOwner,
   } = erc20Token;
 
-  // Use canvas to determine text width
-  const getTextWidth = (text) => {
-    const canvas = document?.createElement("canvas");
-    const context = canvas.getContext("2d");
-    context.font = getComputedStyle(document.body).font;
-    return context.measureText(text).width;
-  };
-
   const router = useRouter();
   const [details, setDetails] = useState<ClubDetails[]>([]);
 
@@ -83,7 +76,7 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
   const [showActionIcons, setShowActionIcons] = useState<boolean>(false);
 
   const [divWidth, setDivWidth] = useState(0);
-  const [nameWidth , setNameWidth] = useState(0);
+  const [nameWidth, setNameWidth] = useState(0);
 
   // get and set current token details
   useEffect(() => {
@@ -96,9 +89,9 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
   }, [depositERC20Address, web3]);
 
   // perform size checks
-  useEffect( () => {
-    setDivWidth(document?.getElementById('club-name')?.offsetWidth)
-    setNameWidth(getTextWidth(name))
+  useEffect(() => {
+    setDivWidth(document?.getElementById("club-name")?.offsetWidth);
+    setNameWidth(getTextWidth(name));
   }, [name]);
 
   // set syndicate cumulative values
@@ -259,16 +252,24 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
                       />
                     </div>
                   ) : (
-                    <div className={`flex flex-wrap items-center w-fit-content`}>
+                    <div
+                      className={`flex flex-wrap items-center w-fit-content`}
+                    >
                       <div
                         id="club-name"
-                        className={`2xl:text-4.5xl leading-10 lg:text-4xl md:text-xl sm:text-4xl text-lg font-normal ${(nameWidth) >= divWidth ? `line-clamp-2 mb-2` : `flex mr-6`}`}
+                        className={`2xl:text-4.5xl leading-10 lg:text-4xl md:text-xl sm:text-4xl text-lg font-normal ${
+                          nameWidth >= divWidth
+                            ? `line-clamp-2 mb-2`
+                            : `flex mr-6`
+                        }`}
                       >
                         {name}
                       </div>
                       <div className="flex flex-wrap">
                         <div className="font-whyte-light text-gray-syn4 flex items-center justify-center">
-                          <span className={`2xl:text-4.5xl leading-10 lg:text-4xl md:text-xl sm:text-4xl text-lg`}>
+                          <span
+                            className={`2xl:text-4.5xl leading-10 lg:text-4xl md:text-xl sm:text-4xl text-lg`}
+                          >
                             {symbol}
                           </span>
                         </div>
