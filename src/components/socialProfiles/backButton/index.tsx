@@ -30,7 +30,7 @@ const BackButton: React.FC<{
         className={`relative hidden sm:block -left-9 sm:-left-14 xl:-left-20 -bottom-6 cursor-pointer w-14 h-14 rounded-full py-4 lg:hover:bg-gray-9 lg:active:bg-white lg:active:bg-opacity-20 transition-all duration-300 ${
           isSticky && "top-11"
         }`}
-        style={{ transform: "translateY(-50%)" }}
+        style={{ transform }}
       >
         <Link href="/clubs">
           <a className={hiddenClass}>

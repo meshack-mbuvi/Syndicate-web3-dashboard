@@ -8,6 +8,7 @@ import { AppState } from "@/state";
 import { Status } from "@/state/wallet/types";
 import { epochTimeToDateFormat, getCountDownDays } from "@/utils/dateUtils";
 import { floatedNumberWithCommas } from "@/utils/formattedNumbers";
+import { getTextWidth } from "@/utils/getTextWidth";
 import abi from "human-standard-token-abi";
 import { useRouter } from "next/router";
 import React, { FC, useEffect, useState } from "react";

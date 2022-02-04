@@ -28,6 +28,7 @@ import {
 } from "@/state/erc20token/slice";
 import { clearMyTransactions } from "@/state/erc20transactions";
 import { Status } from "@/state/wallet/types";
+import { getTextWidth } from "@/utils/getTextWidth";
 import {
   mockActiveERC20Token,
   mockDepositERC20Token,
@@ -204,8 +205,8 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
     router.pathname.endsWith("[clubAddress]") && !isDemoMode;
 
   const transform = useMemo(
-    () => (getTextWidth(erc20Token.name) > 590 ? "translateY(0%)" : null),
-    [erc20Token.name],
+    () => (getTextWidth(name) > 590 ? "translateY(0%)" : null),
+    [name],
   );
 
   // get static text from constants
