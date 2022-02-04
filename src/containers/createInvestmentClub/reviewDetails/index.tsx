@@ -22,7 +22,7 @@ const ReviewDetails: React.FC = () => {
   } = useSelector((state: AppState) => state.createInvestmentClubSliceReducer);
 
   const { depositTokenSymbol, depositTokenLogo } = useUSDCDetails();
-  const { currentStep } = useCreateInvestmentClubContext();
+  const { currentStep, setCurrentStep } = useCreateInvestmentClubContext();
   const { setBackBtnDisabled, setNextBtnDisabled } =
     useCreateInvestmentClubContext();
   const [inlineEditView, setInlineEditView] = useState<string>("");
@@ -175,7 +175,7 @@ const ReviewDetails: React.FC = () => {
                   {editClubNameSelector ? (
                     <ClubNameSelector className="flex flex-col pb-6 w-full lg:w-full" />
                   ) : (
-                    <>
+                    <div onClick={() => setCurrentStep(0)}>
                       {investmentClubHeaderTransition((styles, item) =>
                         item ? (
                           <animated.p
@@ -192,7 +192,7 @@ const ReviewDetails: React.FC = () => {
                           Club token ✺{investmentClubSymbol}
                         </p>
                       </div>
-                    </>
+                    </div>
                   )}
                 </animated.div>
                 {inlineEditView === "investmentClub" && currentStep == 4 ? (
@@ -248,7 +248,7 @@ const ReviewDetails: React.FC = () => {
                       <AmountToRaise className="w-full lg:w-full" />
                     </div>
                   ) : (
-                    <>
+                    <div onClick={() => setCurrentStep(1)}>
                       {tokenCapHeaderTransition((styles, item) =>
                         item ? (
                           <animated.p style={styles}>
@@ -278,7 +278,7 @@ const ReviewDetails: React.FC = () => {
                           ) : null,
                         )}
                       </div>
-                    </>
+                    </div>
                   )}
                 </animated.div>
                 {inlineEditView === "tokenCap" && currentStep == 4 ? (
@@ -331,7 +331,7 @@ const ReviewDetails: React.FC = () => {
                       <MintMaxDate className="w-full lg:w-full" />
                     </div>
                   ) : (
-                    <>
+                    <div onClick={() => setCurrentStep(2)}>
                       {mindEndTimeHeaderTransition((styles, item) =>
                         item ? (
                           <animated.p
@@ -362,7 +362,7 @@ const ReviewDetails: React.FC = () => {
                           )}
                         </p>
                       </div>
-                    </>
+                    </div>
                   )}
                 </animated.div>
                 {inlineEditView === "mindEnd" && currentStep == 4 ? (
@@ -421,7 +421,7 @@ const ReviewDetails: React.FC = () => {
                       <MembersCount />
                     </div>
                   ) : (
-                    <>
+                    <div onClick={() => setCurrentStep(3)}>
                       {memberCountHeaderTransition((styles, item) =>
                         item ? (
                           <animated.p
@@ -435,7 +435,7 @@ const ReviewDetails: React.FC = () => {
                       <div className="flex mt-2 text-base">
                         <p className="text-white">{membersCount}</p>
                       </div>
-                    </>
+                    </div>
                   )}
                 </animated.div>
                 {inlineEditView === "memberCount" && currentStep == 4 ? (
