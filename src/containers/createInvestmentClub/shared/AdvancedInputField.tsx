@@ -7,7 +7,7 @@ import { useState } from "react";
  * @param {*} props
  */
 export const AdvancedInputField = (props: {
-  label?: string;
+  title?: string;
   name?: string;
   id?: string;
   onChange?;
@@ -27,10 +27,11 @@ export const AdvancedInputField = (props: {
   className?: string;
 }): JSX.Element => {
   const {
-    label,
+    title,
     name,
     id,
     onChange,
+    placeholder,
     error,
     value,
     disabled = false,
@@ -51,8 +52,8 @@ export const AdvancedInputField = (props: {
   return (
     <div className={className}>
       <div className="flex justify-between">
-        <label htmlFor={label} className="h3 pb-6">
-          {label}
+        <label htmlFor={title} className="h3 pb-6">
+          {title}
         </label>
       </div>
       <div
@@ -73,6 +74,7 @@ export const AdvancedInputField = (props: {
               type={type}
               name={name}
               id={id}
+              placeholder={placeholder}
               onFocus={() => setFocused(true)}
               onBlur={() => setFocused(false)}
               onMouseEnter={() => setHover(true)}

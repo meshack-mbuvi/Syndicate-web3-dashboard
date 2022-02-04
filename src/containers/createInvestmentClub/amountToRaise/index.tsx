@@ -109,7 +109,7 @@ const AmountToRaise: React.FC<{
                     amount.replace(/^0{2,}/, "0").replace(/^0/, ""),
                   )
                 : numberWithCommas(""),
-              label: "How much are you raising?",
+              title: "How much are you raising?",
               onChange: handleChange,
               error: error,
               hasError: Boolean(error),

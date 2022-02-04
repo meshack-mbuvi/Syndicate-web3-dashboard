@@ -59,7 +59,7 @@ export const Wallet: React.FC = () => {
 
   const DemoConnectButton = () => (
     <div
-      className={`bg-green-electric-lime bg-opacity-5 border border-green-electric-lime border-opacity-30 flex relative rounded-full px-4 py-1 items-center h-9`}
+      className={`bg-green-volt bg-opacity-5 border border-green-volt border-opacity-30 flex relative rounded-full px-4 py-1 items-center h-9`}
     >
       <img
         src={"/images/status/gamecontroller.svg"}

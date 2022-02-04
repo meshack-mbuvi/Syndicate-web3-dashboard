@@ -963,7 +963,7 @@ const DepositSyndicate: React.FC = () => {
                       {isDemoMode ? (
                         <Floater
                           content={
-                            <div className="text-green-electric-lime text-sm">
+                            <div className="text-green-volt text-sm">
                               <p>
                                 Approve and sign transactions directly via your
                                 wallet.

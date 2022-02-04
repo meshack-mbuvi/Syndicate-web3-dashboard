@@ -107,6 +107,10 @@
   .main-title {
     @apply text-xl sm:text-2xl lg:text-3xl my-3;
   }
+
+  .bg-black-monolith {
+    background: linear-gradient(206.57deg, #0E1C21 0%, #02070A 83.33%);
+  }
 }
 
 @layer components {
@@ -178,24 +182,24 @@
 
   /* Button CTAs */
 
-  .CTA-base {
-    @apply px-8 py-3.5 rounded-lg focus:outline-none border-none whitespace-nowrap font-medium;
+  .base-CTA {
+    @apply px-8 py-3.5 rounded-lg focus:outline-none border-none whitespace-nowrap font-medium transition-all;
   }
 
   .primary-CTA {
-    @apply CTA-base bg-white text-black duration-300 transition-all hover:bg-opacity-85;
+    @apply base-CTA bg-white text-black transition-all hover:bg-opacity-90;
   }
 
   .green-CTA {
-    @apply CTA-base bg-green text-black transition-all hover:bg-green-shine duration-300;
+    @apply base-CTA bg-green text-black transition-all hover:bg-green-shine;
   }
 
   .primary-CTA-disabled {
-    @apply CTA-base cursor-not-allowed bg-gray-steelGrey text-gray-manatee;
+    @apply base-CTA cursor-not-allowed bg-gray-syn6 text-gray-syn4 hover:bg-opacity-100;
   }
 
   .secondary-CTA {
-    @apply CTA-base bg-gray-manatee bg-opacity-30 text-white;
+    @apply base-CTA bg-gray-6 bg-opacity-30 text-white;
   }
 
   /* The tagline above the syndicate name on the social profile */

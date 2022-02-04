@@ -69,6 +69,7 @@ module.exports = {
     },
     extend: {
       opacity: {
+        25: ".25",
         85: ".85",
       },
       zIndex: {
@@ -165,7 +166,20 @@ module.exports = {
         "twitter-blue": "#1DA1F2",
         "discord-purple": "#7289DA",
         "telegram-blue": "#37AEE2",
-        cyan: colors.cyan,
+        cyan: {
+          ...colors.cyan,
+          cherenkov: "#00FFFF",
+          verdigris: "#43B3AE",
+        },
+        purple: {
+          ...colors.purple,
+          ultraviolet: "#5551FF",
+          neon: "#7000FF",
+        },
+        pink: {
+          ...colors.pink,
+          millenium: "#FF94FF"
+        },
         gray: {
           ...colors.coolGray,
           syn1: "#F1F3F7",
@@ -214,10 +228,15 @@ module.exports = {
           lightSlate: "#808F9C",
           spindle: "#B8BDC7",
           shuttle: "#646871",
+          mineral: "#BEC8CF"
         },
         red: {
           ...colors.red,
           error: "#F14D4D",
+          "nasa-worm": "#CB0020",
+          "f1-turbo": "#F10000",
+          hal: "#76151D",
+          penny: "#AC6048",
         },
         green: {
           ...colors.green,
@@ -229,10 +248,15 @@ module.exports = {
           dark: "#0E2833",
           darker: "#0E3425",
           success: "#0D3325",
+          midnight: "#091703",
+          biomass: "#355104",
           "light-dark": "#01A979",
           "light-darker": "#02504B",
           "phthalo-green": "#082B1E",
-          "electric-lime": "#CCFF00",
+          "volt": "#CCFF00",
+          "money": "#00F252",
+          "mint": "#CCFFCC",
+          "standard-issue-od": "#191E12",
         },
         blue: {
           ...colors.blue,
@@ -242,7 +266,7 @@ module.exports = {
           deepAzure: "#0C1F30",
           dark: "#2F53B3",
           darker: "#0E1834",
-          neon: "#0029FF",
+          "nasa-flight-cobalt": "#0029FF",
           "light-dark": "#237EFF",
           "light-darker": "#000AFF",
           navy: "#4376FF",
@@ -252,6 +276,10 @@ module.exports = {
           darkGunMetal: "#232529",
           midnightExpress: "#0D1833",
           oxfordBlue: "#0D1833",
+          neptune: "#4376FF",
+          tycho: "#29647E",
+          liquidity: "#1FBBEC",
+          stratosphere: "#A4DEFF",
         },
         yellow: {
           ...colors.yellow,
@@ -266,9 +294,16 @@ module.exports = {
           ...colors.orange,
           light: "#E7AC3A",
           dark: "#E78B3A",
+          utopia: "#FFB80D",
+          bullion: "#D28B01",
+          "aces-rescue-orange": "#FF4E21",
+          terra: "#D96E0B",
+
         },
         brown: {
+          ...colors.brown,
           dark: "#261909",
+          clay: "#AFA07F",
         },
       },
       borderWidth: {
