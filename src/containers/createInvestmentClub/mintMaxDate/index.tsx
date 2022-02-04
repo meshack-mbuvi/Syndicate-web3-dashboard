@@ -132,6 +132,14 @@ const MintMaxDate: FC<{ className?: string }> = ({ className }) => {
     duration: 100,
   });
 
+  useEffect(() => {
+    if (mintEndTime.mintTime === "Custom") {
+      setShowCustomDatePicker(true);
+      setShowNextButton(true);
+      setActiveDateCard(3);
+    }
+  }, []);
+
   return (
     <Fade delay={500}>
       <div className={className}>
