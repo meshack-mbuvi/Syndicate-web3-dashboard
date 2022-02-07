@@ -28,6 +28,7 @@ import {
 } from "@/state/erc20token/slice";
 import { clearMyTransactions } from "@/state/erc20transactions";
 import { Status } from "@/state/wallet/types";
+import { getTextWidth } from "@/utils/getTextWidth";
 import {
   mockActiveERC20Token,
   mockDepositERC20Token,
@@ -36,12 +37,12 @@ import {
 } from "@/utils/mockdata";
 import window from "global";
 import { useRouter } from "next/router";
-import React, { FC, useEffect, useRef, useState } from "react";
+import React, { FC, useEffect, useMemo, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { syndicateActionConstants } from "src/components/syndicates/shared/Constants";
 import ClubTokenMembers from "../managerActions/clubTokenMembers";
 import ActivityView from "./activity";
-import Assets from './assets';
+import Assets from "./assets";
 import TabButton from "./TabButton";
 
 const LayoutWithSyndicateDetails: FC = ({ children }) => {
@@ -96,6 +97,7 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
   const [scrollTop, setScrollTop] = useState(0);
   const [showNav, setShowNav] = useState(true);
   const [isSubNavStuck, setIsSubNavStuck] = useState(true);
+  // const [customTransform, setCustomTransform] = useState(undefined);
   const subNav = useRef(null);
   const {
     query: { status: isOpenForDeposits },
@@ -113,7 +115,10 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
 
   // Change sub-nav and nav styles when stuck
   useEffect(() => {
-    if (subNav.current && parseInt(subNav.current.getBoundingClientRect().top) <= 0) {
+    if (
+      subNav.current &&
+      parseInt(subNav.current.getBoundingClientRect().top) <= 0
+    ) {
       setIsSubNavStuck(true);
       setShowNav(false);
     } else {
@@ -199,6 +204,11 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
   const showOnboardingIfNeeded =
     router.pathname.endsWith("[clubAddress]") && !isDemoMode;
 
+  const transform = useMemo(
+    () => (getTextWidth(name) > 590 ? "translateY(0%)" : "translateY(-50%)"),
+    [name],
+  );
+
   // get static text from constants
   const { noTokenTitleText } = syndicateActionConstants;
 
@@ -257,6 +267,7 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
                   {/* Two Columns (Syndicate Details + Widget Cards) */}
                   <BackButton
                     topOffset={isSubNavStuck ? "-0.68rem" : "-0.25rem"}
+                    transform={transform}
                     isHidden={isDemoMode}
                   />
                   <div className="grid grid-cols-12 gap-5">
