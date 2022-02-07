@@ -205,7 +205,7 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
     router.pathname.endsWith("[clubAddress]") && !isDemoMode;
 
   const transform = useMemo(
-    () => (getTextWidth(name) > 590 ? "translateY(0%)" : null),
+    () => (getTextWidth(name) > 590 ? "translateY(0%)" : "translateY(-50%)"),
     [name],
   );
 
