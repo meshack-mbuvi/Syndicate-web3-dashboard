@@ -40,13 +40,18 @@ const Header: React.FC<props> = ({
         ) : null}
 
         <div
-          className="md:flex-1 flex items-center"
+          className="flex-1 items-center"
           style={{ maxWidth: `${(1 / 3) * 100}%` }}
         >
           {" "}
           {/* Navbar links  */}
           {navItems.map(({ navItemText, url, isLegal }, index) => (
-            <NavBarNavItem key={index} navItemText={navItemText} url={url} isLegal={isLegal} />
+            <NavBarNavItem
+              key={index}
+              navItemText={navItemText}
+              url={url}
+              isLegal={isLegal}
+            />
           ))}
         </div>
         {/* logo */}
