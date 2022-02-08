@@ -35,14 +35,14 @@ export const Wallet: React.FC = () => {
   const NotConnectedButton = () => (
     <button
       onClick={connectWallet}
-      className={`bg-white bg-opacity-5 border border-gray-500 border-opacity-30 flex relative rounded-full px-4 py-1 items-center h-9`}
+      className={`bg-white bg-opacity-5 border border-gray-500 border-opacity-30 flex relative rounded-full px-4 py-1 items-center h-11 sm:h-9`}
     >
       <img
         src={"/images/walletDisconnected.svg"}
         className={`w-3 h-2.5 mr-3 ${connectedWalletIconStyles}`}
         alt="wallet-icon"
       />
-      <span className="focus:outline-none mr-1 text-sm font-whyte-regular leading-4">
+      <span className="focus:outline-none ml-1 sm:ml-0 mr-3 sm:mr-1 text-base leading-5.5 sm:py-0 sm:text-sm font-whyte-regular sm:leading-4">
         Connect Wallet
       </span>
       <div className="flex items-center ml-2">
@@ -59,7 +59,7 @@ export const Wallet: React.FC = () => {
 
   const DemoConnectButton = () => (
     <div
-      className={`bg-green-volt bg-opacity-5 border border-green-volt border-opacity-30 flex relative rounded-full px-4 py-1 items-center h-9`}
+      className={`bg-green-volt bg-opacity-5 border border-green-volt border-opacity-30 flex relative rounded-full px-4 py-1 items-center h-11 sm:h-9`}
     >
       <img
         src={"/images/status/gamecontroller.svg"}
@@ -67,7 +67,7 @@ export const Wallet: React.FC = () => {
         alt="demo icon"
         className="mr-2"
       />
-      <span className="focus:outline-none mr-1 text-sm font-whyte-regular">
+      <span className="focus:outline-none ml-1 sm:ml-0 mr-3 sm:mr-1 text-base leading-5.5 sm:text-sm font-whyte-regular">
         <span className="text-gray-syn4">
           {formattedDemoAddress.slice(0, 2)}
         </span>
@@ -84,10 +84,10 @@ export const Wallet: React.FC = () => {
   }
 
   return (
-    <div className="flex justify-between rounded-full bg-gray-shark bg-opacity-50 items-center">
+    <div className="flex justify-between py-7 w-full sm:py-0 rounded-full sm:bg-gray-shark sm:bg-opacity-50 items-center">
       <>
         {/* hide wallet on signin page */}
-        <div className="wallet-connect flex relative justify-center">
+        <div className="wallet-connect w-full flex justify-center">
           {status === Status.CONNECTED ? (
             <AddressMenuDropDown web3={web3} />
           ) : (

@@ -206,6 +206,7 @@ module.exports = {
           93: "#EDEDED",
           99: "#fcfcfc",
           102: "#141518",
+          border: "#494949",
           cod: "#131313",
           dark: "#272727",
           light: "#E5E5E5",

@@ -257,7 +257,7 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
       {router.isReady && !isDemoMode && !web3.utils.isAddress(clubAddress) ? (
         <NotFoundPage />
       ) : (
-        <Layout showNav={showNav}>
+        <Layout showNav={showNav} showBackButton={true}>
           <Head title={name || "Club"} />
           <ErrorBoundary>
             {showOnboardingIfNeeded && <OnboardingModal />}
