@@ -60,11 +60,19 @@
     src: url(/fonts/Whyte/ABCWhyte-Bold.woff) format("woff");
   }
 
+  /* fixes an issue where it is sometimes not possible to scroll */
+  html {
+    overflow: visible!important;
+    padding: 0!important;
+    margin: 0!important;
+  }
+
   body {
     background-color: #000000;
     font-family: "Whyte Regular", "Helvetica", "Arial", "sans-serif";
     color: white;
     font-style: normal;
+    overflow-x: hidden;
     @apply antialiased;
   }
 
