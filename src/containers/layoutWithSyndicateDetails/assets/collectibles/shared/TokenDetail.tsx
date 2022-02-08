@@ -13,12 +13,13 @@ const TokenDetail: React.FC<{ title: string; value: any; symbol?: any }> = ({
     assetsSliceReducer: { ethereumTokenPrice },
   } = useSelector((state: AppState) => state);
 
+  const blankValue = <span className="text-gray-syn4">-</span>;
   let floorPriceFormattedTotalValue, purchasePriceFormattedTotalValue;
   let clubBalance, balanceValue;
   if (title === "Floor price") {
     const floorPriceValue = value * ethereumTokenPrice;
 
-    floorPriceFormattedTotalValue = (
+    floorPriceFormattedTotalValue = floorPriceValue ? (
       <div className="flex flex-col items-end">
         {" "}
         <PriceContainer numberValue={value} ethValue={true} />
@@ -26,19 +27,23 @@ const TokenDetail: React.FC<{ title: string; value: any; symbol?: any }> = ({
           {floatedNumberWithCommas(floorPriceValue)} USD
         </div>
       </div>
+    ) : (
+      blankValue
     );
   }
 
   if (title === "Last purchase price") {
     const { lastPurchasePriceUSD, lastPurchasePriceETH } = value;
 
-    purchasePriceFormattedTotalValue = (
+    purchasePriceFormattedTotalValue = lastPurchasePriceUSD ? (
       <div className="flex flex-col items-end">
         <PriceContainer numberValue={lastPurchasePriceETH} ethValue={true} />
         <div className="text-gray-syn4">
           {floatedNumberWithCommas(lastPurchasePriceUSD)} USD
         </div>
       </div>
+    ) : (
+      blankValue
     );
   }
 
@@ -72,7 +77,9 @@ const TokenDetail: React.FC<{ title: string; value: any; symbol?: any }> = ({
           ? purchasePriceFormattedTotalValue
           : floorPriceFormattedTotalValue
           ? floorPriceFormattedTotalValue
-          : clubBalance || balanceValue || value}
+          : clubBalance || balanceValue || value
+          ? value
+          : blankValue}
       </div>
     </div>
   );

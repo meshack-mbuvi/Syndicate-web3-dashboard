@@ -6,6 +6,7 @@ import {
   setOverlayCollectibleDetails,
   setShowFullScreen,
 } from "@/state/assets/collectibles/slice";
+import FutureCollectiblePill from "@/containers/layoutWithSyndicateDetails/assets/collectibles/shared/FutureCollectiblePill";
 
 interface ICollectibleMedia {
   showCollectibles: boolean;
@@ -21,6 +22,7 @@ interface ICollectibleMedia {
     collection: any;
     floorPrice: string;
     lastPurchasePrice: string;
+    futureNft?: boolean;
   };
 }
 
@@ -91,7 +93,7 @@ const CollectibleMedia: FC<ICollectibleMedia> = ({
     };
     mediaType: string;
     moreDetails: {
-      "Token ID": string;
+      "Token ID": string | React.ReactElement;
       "Token collection": any;
       "Floor price": any;
       "Last purchase price": any;
@@ -140,7 +142,7 @@ const CollectibleMedia: FC<ICollectibleMedia> = ({
           collectible,
           mediaType,
           moreDetails: {
-            "Token ID": id,
+            "Token ID": collectible?.futureNft ? "" : id,
             "Token collection": collection.name,
             "Floor price": floorPrice,
             "Last purchase price": lastPurchasePrice,
@@ -430,6 +432,27 @@ const CollectibleMedia: FC<ICollectibleMedia> = ({
                   </div>
                 </>
               ) : null}
+
+              {/* Future collectible pill  */}
+              {showCollectibles && collectible.futureNft && (
+                <div
+                  className="absolute top-4 left-4"
+                  onClick={() => {
+                    setActiveCollectibleDetails({
+                      collectible,
+                      mediaType,
+                      moreDetails: {
+                        "Token ID": collectible?.futureNft ? "" : id,
+                        "Token collection": collection.name,
+                        "Floor price": floorPrice,
+                        "Last purchase price": lastPurchasePrice,
+                      },
+                    });
+                  }}
+                >
+                  <FutureCollectiblePill />
+                </div>
+              )}
             </>
           )}
         </div>
