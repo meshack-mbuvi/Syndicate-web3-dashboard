@@ -46,7 +46,7 @@ export const EtherscanLink: React.FC<LinkProp> = (props) => {
     <a
       href={`${etherscanLink}${etherscanInfo}`}
       target="_blank"
-      className={`text-blue hover:opacity-90 flex items-center ${
+      className={`text-blue hover:opacity-90 flex items-center focus:outline-none ${
         customStyles && customStyles
       }`}
       rel="noreferrer"

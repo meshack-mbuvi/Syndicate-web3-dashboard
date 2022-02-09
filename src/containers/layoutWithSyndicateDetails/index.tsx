@@ -180,7 +180,7 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
       dispatch(
         setERC20Token(
           clubERC20tokenContract,
-          syndicateContracts.DepositTokenMintModule,
+          syndicateContracts?.DepositTokenMintModule,
         ),
       );
 

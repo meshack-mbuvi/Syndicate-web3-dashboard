@@ -3,7 +3,15 @@
  * @returns formatted number as a string
  * */
 export const numberWithCommas = (number: string | number): string => {
-  return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  if (!number) return "0";
+
+  // Don't group decimal part
+  const [wholePart, decimalPart] = number.toString().split(".");
+
+  return (
+    wholePart.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+    `${decimalPart ? `.${decimalPart}` : ""}`
+  );
 };
 
 // add two decimal places
@@ -27,7 +35,7 @@ export const floatedNumberWithCommas = (number): string => {
     // avoid rounding up the number when converting to 2 decimal places
     const numberTo2decimalsWithoutRoundingUp = number
       .toString()
-      .match(/^-?\d+(?:\.\d{0,2})?/)[0];
+      .match(/^-?\d+(?:\.\d{0,4})?/)[0];
     return numberWithCommas(numberTo2decimalsWithoutRoundingUp).replace(
       ".00",
       "",

@@ -300,6 +300,13 @@
     "type": "function"
   },
   {
+    "inputs": [],
+    "name": "removeAdmin",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
     "inputs": [
       {
         "internalType": "bytes32",

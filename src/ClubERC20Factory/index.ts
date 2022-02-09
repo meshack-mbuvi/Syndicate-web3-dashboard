@@ -1,13 +1,16 @@
 import { ISyndicateContracts } from "@/state/contracts";
+import { ClubERC20Contract } from "./clubERC20";
 import { ClubERC20Factory } from "./clubERC20Factory";
+import { DepositTokenMintModuleContract } from "./depositTokenMintModule";
 import { MerkleDistributorModuleContract } from "./merkleDistributorModule";
 import { MerkleDistributorModuleERC721Contract } from "./merkleDistributorModuleERC721";
-import { MintPolicyContract } from "./policyMintERC20";
 import { ERC721MintPolicyContract } from "./mintPolicyERC721";
+import { MintPolicyContract } from "./policyMintERC20";
 import { publicMintWithFeeModuleContract } from "./publicMintWithFeeModule";
 import { PublicOnePerAddressModuleContract } from "./publicOnePerAddressModule";
+import { RugERC20ClaimModule } from "./RugRadio/RugERC20ClaimModule";
+import { RugUtilityProperties } from "./RugRadio/RugUtilityProperties";
 import { RugUtilityMintModuleContract } from "./rugUtilityMintModule";
-import { DepositTokenMintModuleContract } from "./depositTokenMintModule";
 
 // Contract addresses for new contracts
 const CLUB_ERC20_FACTORY_ADDRESS = process.env.NEXT_PUBLIC_CLUB_ERC20_FACTORY;
@@ -27,6 +30,12 @@ const PUBLIC_ERC721_MINT_POLICY = process.env.NEXT_PUBLIC_ERC721_MINT_POLICY;
 const PUBLIC_RUG_UTILITY_MINT_MODULE =
   process.env.NEXT_PUBLIC_RUG_UTILITY_MINT_MODULE;
 const PUBLIC_UTILITY_MINT_MODULE = process.env.NEXT_PUBLIC_UTILITY_MINT_MODULE;
+
+// Contract addresses for Rug Radio
+const RUG_TOKEN = process.env.NEXT_PUBLIC_RUG_TOKEN;
+const GENESIS_NFT = process.env.NEXT_PUBLIC_GenesisNFT;
+const RUG_PROPERTIES = process.env.NEXT_PUBLIC_PROPERTIES;
+const RUG_CLAIM_MODULE = process.env.NEXT_PUBLIC_RUG_CLAIM_MODULE;
 
 export const getSyndicateContracts = async (
   web3: Web3,
@@ -86,6 +95,18 @@ export const getSyndicateContracts = async (
     web3,
   );
 
+  const RugClaimModule = new RugERC20ClaimModule(
+    RUG_CLAIM_MODULE,
+    RUG_TOKEN,
+    GENESIS_NFT,
+    RUG_PROPERTIES,
+    web3,
+  );
+
+  const RugUtilityProperty = new RugUtilityProperties(RUG_PROPERTIES, web3);
+
+  const RugToken = new ClubERC20Contract(RUG_TOKEN, web3);
+
   // return all initialized contracts
   return {
     clubERC20Factory,
@@ -99,5 +120,8 @@ export const getSyndicateContracts = async (
     mintPolicyERC721,
     RugUtilityMintModule,
     PublicMintWithFeeModule,
+    RugClaimModule,
+    RugUtilityProperty,
+    RugToken,
   };
 };

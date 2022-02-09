@@ -3,7 +3,7 @@
     "inputs": [
       {
         "internalType": "address",
-        "name": "requestedBy",
+        "name": "operator",
         "type": "address"
       },
       {
@@ -18,7 +18,7 @@
       },
       {
         "internalType": "uint256",
-        "name": "amount",
+        "name": "value",
         "type": "uint256"
       }
     ],
@@ -26,7 +26,7 @@
     "outputs": [
       {
         "internalType": "bool",
-        "name": "isAllowed",
+        "name": "",
         "type": "bool"
       }
     ],

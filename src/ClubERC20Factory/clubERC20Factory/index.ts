@@ -1,4 +1,4 @@
-import CLUB_ERC20_FACTORY_ABI from "src/contracts/ClubERC20FactoryDeposit.json";
+import CLUB_ERC20_FACTORY_ABI from "src/contracts/ERC20ClubFactoryDepositToken.json";
 import { getGnosisTxnInfo } from "../shared/gnosisTransactionInfo";
 
 export class ClubERC20Factory {

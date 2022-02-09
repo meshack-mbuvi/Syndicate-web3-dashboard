@@ -12,22 +12,22 @@
         "components": [
           {
             "internalType": "bool",
-            "name": "recipientAnyone",
+            "name": "allowAnyNonOwnerRecipient",
             "type": "bool"
           },
           {
             "internalType": "bool",
-            "name": "recipientMember",
+            "name": "allowExistingMemberRecipient",
             "type": "bool"
           },
           {
             "internalType": "bool",
-            "name": "senderOrRecipientOwner",
+            "name": "disallowOwnerSenderOrRecipient",
             "type": "bool"
           }
         ],
         "indexed": false,
-        "internalType": "struct TransferPolicy.Config",
+        "internalType": "struct PolicyTransferERC20.Config",
         "name": "config",
         "type": "tuple"
       }
@@ -41,7 +41,7 @@
       {
         "indexed": true,
         "internalType": "address",
-        "name": "club",
+        "name": "token",
         "type": "address"
       }
     ],
@@ -60,17 +60,17 @@
     "outputs": [
       {
         "internalType": "bool",
-        "name": "recipientAnyone",
+        "name": "allowAnyNonOwnerRecipient",
         "type": "bool"
       },
       {
         "internalType": "bool",
-        "name": "recipientMember",
+        "name": "allowExistingMemberRecipient",
         "type": "bool"
       },
       {
         "internalType": "bool",
-        "name": "senderOrRecipientOwner",
+        "name": "disallowOwnerSenderOrRecipient",
         "type": "bool"
       }
     ],
@@ -100,7 +100,7 @@
     "inputs": [
       {
         "internalType": "address",
-        "name": "requestedBy",
+        "name": "operator",
         "type": "address"
       },
       {
@@ -134,7 +134,7 @@
     "inputs": [
       {
         "internalType": "address",
-        "name": "club",
+        "name": "token",
         "type": "address"
       }
     ],
@@ -154,21 +154,21 @@
         "components": [
           {
             "internalType": "bool",
-            "name": "recipientAnyone",
+            "name": "allowAnyNonOwnerRecipient",
             "type": "bool"
           },
           {
             "internalType": "bool",
-            "name": "recipientMember",
+            "name": "allowExistingMemberRecipient",
             "type": "bool"
           },
           {
             "internalType": "bool",
-            "name": "senderOrRecipientOwner",
+            "name": "disallowOwnerSenderOrRecipient",
             "type": "bool"
           }
         ],
-        "internalType": "struct TransferPolicy.Config",
+        "internalType": "struct PolicyTransferERC20.Config",
         "name": "newConfig",
         "type": "tuple"
       }

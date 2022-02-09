@@ -1,6 +1,8 @@
 import { isEmpty } from "lodash";
-import React, { useState } from "react";
+import Image from "next/image";
+import React, { useEffect, useState } from "react";
 import { useController } from "react-hook-form";
+import ClearIcon from "/public/images/close-circle.svg";
 
 interface IProps {
   label?: string;
@@ -24,6 +26,7 @@ interface IProps {
   autoFocus?: boolean;
   showWarning?: boolean;
   warningText?: string;
+  showClearIcon?: boolean;
 }
 /**
  * An input component with label and icon at the right end
@@ -49,6 +52,7 @@ export const TextField: React.FC<IProps> = ({
   autoFocus = false,
   showWarning = false,
   warningText = "",
+  showClearIcon = false,
 }) => {
   const {
     field: { value, ...fieldAttributes },
@@ -69,6 +73,16 @@ export const TextField: React.FC<IProps> = ({
   const handleOnBlur = () => {
     setShowValidation(true);
   };
+
+  const handleClear = () => {
+    fieldAttributes.onChange("");
+  };
+
+  useEffect(() => {
+    return () => {
+      fieldAttributes.onChange("");
+    };
+  }, []);
 
   return (
     <div
@@ -124,6 +138,16 @@ export const TextField: React.FC<IProps> = ({
             </span>
           </div>
         )}
+
+        {showClearIcon && value ? (
+          <div
+            className={`absolute inset-y-0 right-0 pr-4 py-4 flex items-center `}
+          >
+            <button onClick={handleClear}>
+              <Image src={ClearIcon} height={16} width={16} />
+            </button>
+          </div>
+        ) : undefined}
       </div>
 
       {showValidation &&

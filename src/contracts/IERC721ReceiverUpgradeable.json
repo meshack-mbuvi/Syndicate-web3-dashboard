@@ -3,34 +3,34 @@
     "inputs": [
       {
         "internalType": "address",
-        "name": "requestedBy",
+        "name": "operator",
         "type": "address"
       },
       {
         "internalType": "address",
-        "name": "sender",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "",
+        "name": "from",
         "type": "address"
       },
       {
         "internalType": "uint256",
-        "name": "amount",
+        "name": "tokenId",
         "type": "uint256"
+      },
+      {
+        "internalType": "bytes",
+        "name": "data",
+        "type": "bytes"
       }
     ],
-    "name": "isAllowed",
+    "name": "onERC721Received",
     "outputs": [
       {
-        "internalType": "bool",
+        "internalType": "bytes4",
         "name": "",
-        "type": "bool"
+        "type": "bytes4"
       }
     ],
-    "stateMutability": "view",
+    "stateMutability": "nonpayable",
     "type": "function"
   }
 ]
