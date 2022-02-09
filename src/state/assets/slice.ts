@@ -1,6 +1,6 @@
 import { getEthereumTokenPrice } from "@/helpers/ethereumTokenDetails";
 import { isDev } from "@/utils/environment";
-import { mockCollectiblesResult } from "@/utils/mockdata";
+import { mockCollectiblesResult, mockTokensResult } from "@/utils/mockdata";
 import { web3 } from "@/utils/web3Utils";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
@@ -8,7 +8,6 @@ import abi from "human-standard-token-abi";
 import { getWeiAmount } from "src/utils/conversions";
 import { AbiItem } from "web3-utils";
 import { initialState } from "./types";
-import { morseCodeNftsDetails } from "@/containers/layoutWithSyndicateDetails/assets/collectibles/shared/morseCodeNfts";
 
 const baseURL = isDev
   ? "https://api-rinkeby.etherscan.io/api"
@@ -136,13 +135,12 @@ export const fetchTokenTransactions = createAsyncThunk(
 interface CollectiblesFetchParams {
   account: string;
   offset: string;
-  maxTotalDeposits?: Number;
 }
 
 export const fetchCollectiblesTransactions = createAsyncThunk(
   "assets/fetchCollectiblesTransactions",
   async (params: CollectiblesFetchParams) => {
-    const { account, offset, maxTotalDeposits } = params;
+    const { account, offset } = params;
 
     const response = await axios.get(`${openSeaBaseURL}/assets`, {
       headers: { "x-api-key": isDev ? "" : openSeaAPIKey },
@@ -194,7 +192,7 @@ export const fetchCollectiblesTransactions = createAsyncThunk(
       lastPurchasePrice.lastPurchasePriceETH = eth_price;
     }
 
-    const allAssets = assets.map((asset) => ({
+    return assets.map((asset) => ({
       name: asset.name,
       image: asset.image_url,
       animation: asset.animation_url,
@@ -207,8 +205,6 @@ export const fetchCollectiblesTransactions = createAsyncThunk(
       ).floorPrice,
       lastPurchasePrice,
     }));
-
-    return { allAssets, maxTotalDeposits };
   },
 );
 
@@ -248,27 +244,6 @@ const fetchTokenBalances = (tokensList: any[], account: string) => {
     tokenCopy["tokenBalance"] = tokenBalance;
     return tokenCopy;
   });
-};
-
-// function to check whether "gift" morse code nft
-// should be displayed based on club max total deposits.
-const checkDisplayCriteria = (
-  displayCriteria: any,
-  maxTotalDeposits: Number,
-) => {
-  const { minTotalDeposit, maxTotalDeposit } =
-    displayCriteria.clubDepositAmount;
-
-  if (
-    +maxTotalDeposits >= minTotalDeposit &&
-    +maxTotalDeposits <= maxTotalDeposit
-  ) {
-    return true;
-  } else if (!maxTotalDeposit && +maxTotalDeposits >= minTotalDeposit) {
-    return true;
-  } else {
-    return false;
-  }
 };
 
 const assetsSlice = createSlice({
@@ -318,40 +293,14 @@ const assetsSlice = createSlice({
         state.loadingCollectibles = true;
       })
       .addCase(fetchCollectiblesTransactions.fulfilled, (state, action) => {
-        let result;
-        if (action.payload.allAssets.length < 20) {
+        if (action.payload.length < 20) {
           state.allCollectiblesFetched = true;
-
-          const morseCodeNfts = morseCodeNftsDetails.map((detail, index) => ({
-            name: "",
-            image: `/images/morseCodeNfts/${detail.image}`,
-            animation: "",
-            permalink: "",
-            id: index,
-            collection: { name: "" },
-            description: "",
-            floorPrice: "",
-            lastPurchasePrice: "",
-            display: checkDisplayCriteria(
-              detail.displayCriteria,
-              action.payload.maxTotalDeposits,
-            ),
-            futureNft: true,
-          }));
-
-          // adding morse code nfts when we get to the
-          // end of the list.
-          result = [
-            ...state.collectiblesResult,
-            ...action.payload.allAssets,
-            ...morseCodeNfts.filter((nft) => nft.display === true),
-          ];
         } else {
           state.allCollectiblesFetched = false;
-          result = [...state.collectiblesResult, ...action.payload.allAssets];
         }
 
         // unique values only
+        const result = [...state.collectiblesResult, ...action.payload];
         const flag = {};
         const uniqueNfts = [];
         result.forEach((item) => {
@@ -377,7 +326,9 @@ const assetsSlice = createSlice({
   },
 });
 
-export const { setMockTokensResult, setMockCollectiblesResult } =
-  assetsSlice.actions;
+export const {
+  setMockTokensResult,
+  setMockCollectiblesResult,
+} = assetsSlice.actions;
 
 export default assetsSlice.reducer;

@@ -53,7 +53,7 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
       web3: { account, web3, status },
     },
     erc20TokenSliceReducer: {
-      erc20Token: { owner, loading, name, depositsEnabled, maxTotalDeposits },
+      erc20Token: { owner, loading, name, depositsEnabled },
     },
   } = useSelector((state: AppState) => state);
 
@@ -87,7 +87,6 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
       // solves an issue with previous transactions being loaded
       // when a switch is made to another club with a different owner.
       dispatch(clearMyTransactions());
-      dispatch(clearCollectiblesTransactions());
     };
   }, []);
 
@@ -136,7 +135,6 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
       fetchCollectiblesTransactions({
         account: owner,
         offset: "0",
-        maxTotalDeposits
       }),
     );
   };
@@ -152,14 +150,14 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
 
       dispatch(setMockCollectiblesResult(depositsEnabled));
     }
-  }, [owner, clubAddress, depositsEnabled, maxTotalDeposits]);
+  }, [owner, clubAddress, depositsEnabled]);
 
   useEffect(() => {
     // clear collectibles on account switch
     if (account && !isDemoMode) {
       dispatch(clearCollectiblesTransactions());
     }
-  }, [account, clubAddress, dispatch, isDemoMode, maxTotalDeposits]);
+  }, [account, clubAddress, dispatch, isDemoMode]);
 
   /**
    * Fetch club details

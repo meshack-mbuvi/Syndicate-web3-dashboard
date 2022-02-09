@@ -27,8 +27,6 @@ const CollectibleDetailsModal: React.FC = () => {
     );
   }
 
-  const blankValue = <span className="text-gray-syn4">-</span>;
-
   return (
     <>
       <Modal
@@ -63,17 +61,19 @@ const CollectibleDetailsModal: React.FC = () => {
               />
             </div>
             <span className={`line-clamp-2 text-lg md:text-xl break-words`}>
-              {collectible?.name ? collectible?.name : blankValue}
+              {collectible?.name}
             </span>
           </div>
 
           <div className="flex flex-col p-10">
-            <div className="mb-10">
-              <span>Description</span>
-              <p className="mt-4 text-gray-syn4 break-words">
-                {descriptionValue ? descriptionValue : blankValue}
-              </p>
-            </div>
+            {descriptionValue && (
+              <div className="mb-10">
+                <span>Description</span>
+                <p className="mt-4 text-gray-syn4 break-words">
+                  {descriptionValue}
+                </p>
+              </div>
+            )}
 
             <div>
               <p>Details</p>
