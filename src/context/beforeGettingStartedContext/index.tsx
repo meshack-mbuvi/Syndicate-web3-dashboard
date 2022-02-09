@@ -6,6 +6,8 @@ import {
   useEffect,
   useState,
 } from "react";
+import { useDemoMode } from "@/hooks/useDemoMode";
+
 
 type BeforeGettingStartedProps = {
   showBeforeGettingStarted: boolean;
@@ -37,13 +39,14 @@ const BeforeGettingStartedProvider: React.FC<{ children: ReactNode }> = ({
   const {
     query: { clubAddress },
   } = useRouter();
+  const isDemoMode = useDemoMode();
 
   useEffect(() => {
     setButtonDisabled(!agreementChecked);
   }, [agreementChecked]);
 
   useEffect(() => {
-    if (!clubAddress) return;
+    if (!clubAddress || isDemoMode) return;
 
     const { showBeforeGettingStarted } =
       JSON.parse(localStorage.getItem(clubAddress as string)) || {};
