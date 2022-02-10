@@ -1,4 +1,5 @@
 import { getEthereumTokenPrice } from "@/helpers/ethereumTokenDetails";
+import { getOpenseaTokens } from "@/utils/api/opensea";
 import { isDev } from "@/utils/environment";
 import { mockCollectiblesResult } from "@/utils/mockdata";
 import { web3 } from "@/utils/web3Utils";
@@ -133,10 +134,11 @@ export const fetchTokenTransactions = createAsyncThunk(
 
 // collectibles assets
 interface CollectiblesFetchParams {
-  account: string;
+  account?: string;
   offset: string;
   contractAddress?: string;
   tokenId?: string;
+  limit?: string;
 }
 
 export const fetchCollectibleById = async (
@@ -144,54 +146,26 @@ export const fetchCollectibleById = async (
 ): Promise<any> => {
   const { account, offset, contractAddress, tokenId } = params;
 
-  const queryParams = {
-    owner: account,
-    limit: "20", // in case OpenSea changes the default limit
-    offset,
-    asset_contract_address: contractAddress ?? "",
-    token_ids: tokenId,
-  };
+  try {
+    const { assets } = await getOpenseaTokens(account, contractAddress, offset);
 
-  if (!contractAddress) delete queryParams.asset_contract_address;
-
-  const response = await axios.get(`${openSeaBaseURL}/assets`, {
-    headers: { "x-api-key": isDev ? "" : openSeaAPIKey },
-    params: {
-      // test account on mainnet: 0x6eb534ed1329e991842b55be375abc63fe7c0e2b,
-      // test account on rinkeby: 0xf4c2c3e12b61d44e6b228c43987158ac510426fb
-      ...queryParams,
-    },
-  });
-
-  const { assets } = response.data;
-  const [nftData] = assets;
-  return nftData;
+    return assets.filter((asset) => asset.token_id === tokenId)[0];
+  } catch (error) {
+    return null;
+  }
 };
 
 export const fetchCollectiblesTransactions = createAsyncThunk(
   "assets/fetchCollectiblesTransactions",
   async (params: CollectiblesFetchParams) => {
-    const { account, offset, contractAddress } = params;
+    const { account, offset, contractAddress, limit = "20" } = params;
 
-    const queryParams = {
-      owner: account,
-      limit: "20", // in case OpenSea changes the default limit
+    const { assets } = await getOpenseaTokens(
+      account,
+      contractAddress,
       offset,
-      asset_contract_address: contractAddress ?? "",
-    };
-
-    if (!contractAddress) delete queryParams.asset_contract_address;
-
-    const response = await axios.get(`${openSeaBaseURL}/assets`, {
-      headers: { "x-api-key": isDev ? "" : openSeaAPIKey },
-      params: {
-        // test account on mainnet: 0x6eb534ed1329e991842b55be375abc63fe7c0e2b,
-        // test account on rinkeby: 0xf4c2c3e12b61d44e6b228c43987158ac510426fb
-        ...queryParams,
-      },
-    });
-
-    const { assets } = response.data;
+      limit,
+    );
 
     const collections = [
       ...new Set(assets.map((asset) => asset.collection.slug)),

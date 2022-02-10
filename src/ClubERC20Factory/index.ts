@@ -3,6 +3,7 @@ import { ClubERC20Contract } from "./clubERC20";
 import { ClubERC20Factory } from "./clubERC20Factory";
 import { ClubERC20FactoryEth } from "./clubERC20FactoryEth";
 import { DepositTokenMintModuleContract } from "./depositTokenMintModule";
+import { ERC721Contract } from "./ERC721Membership";
 import { MerkleDistributorModuleContract } from "./merkleDistributorModule";
 import { MerkleDistributorModuleERC721Contract } from "./merkleDistributorModuleERC721";
 import { ERC721MintPolicyContract } from "./mintPolicyERC721";
@@ -118,6 +119,8 @@ export const getSyndicateContracts = async (
 
   const RugToken = new ClubERC20Contract(RUG_TOKEN, web3);
 
+  const GenesisNFTContract = new ERC721Contract(GENESIS_NFT, web3);
+
   // return all initialized contracts
   return {
     clubERC20Factory,
@@ -136,5 +139,6 @@ export const getSyndicateContracts = async (
     RugClaimModule,
     RugUtilityProperty,
     RugToken,
+    GenesisNFTContract,
   };
 };
