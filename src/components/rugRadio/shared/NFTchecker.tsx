@@ -63,6 +63,7 @@ export const NFTChecker: React.FC = () => {
 
   const getTokenProperties = async (tokenId) => {
     setLoading(true);
+
     try {
       const tokenDetails = await fetchCollectibleById({
         offset: "0",
