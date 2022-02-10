@@ -134,7 +134,7 @@ export const fetchTokenTransactions = createAsyncThunk(
 
 // collectibles assets
 interface CollectiblesFetchParams {
-  account: string;
+  account?: string;
   offset: string;
   contractAddress?: string;
   tokenId?: string;
@@ -149,7 +149,7 @@ export const fetchCollectibleById = async (
   try {
     const { assets } = await getOpenseaTokens(account, contractAddress, offset);
 
-    return assets.filter((asset) => asset.token_id === tokenId)[0];
+    return assets.filter((asset) => +asset.token_id === +tokenId)[0];
   } catch (error) {
     return null;
   }
