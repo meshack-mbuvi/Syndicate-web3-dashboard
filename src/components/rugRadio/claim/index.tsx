@@ -19,7 +19,11 @@ import checkMark from "/public/images/rugRadio/circleWithGreenCheckMark.svg";
 export const ClaimComponent: React.FC = () => {
   const {
     web3Reducer: {
-      web3: { status, account },
+      web3: {
+        status,
+        account,
+        ethereumNetwork: {  invalidEthereumNetwork },
+      },
     },
   } = useSelector((state: AppState) => state);
 
@@ -92,11 +96,14 @@ export const ClaimComponent: React.FC = () => {
                   <div className="space-y-4">
                     <p className="h4 text-center">claim tokens</p>
                     <p className="h1 text-center">Rug Token Claim Dash</p>
-                    {claimEnabled == false && status == Status.CONNECTED && (
-                      <p className="h3 text-center text-gray-syn4 font-whyte">
-                        Starts in {getCountDownDays(`${claimStartTime * 1000}`)}
-                      </p>
-                    )}
+                    {claimEnabled == false &&
+                      status == Status.CONNECTED &&
+                      !invalidEthereumNetwork && (
+                        <p className="h3 text-center text-gray-syn4 font-whyte">
+                          Starts in{" "}
+                          {getCountDownDays(`${claimStartTime * 1000}`)}
+                        </p>
+                      )}
                   </div>
                   <div className="rounded-2.5xl">
                     <div className="px-8 py-6 bg-gray-syn8 border-b border-gray-syn7 rounded-t-2.5xl">
