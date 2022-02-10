@@ -150,7 +150,7 @@ export const NFTChecker: React.FC = () => {
 
           {loading ? <Spinner height="h-6" width="w-6" /> : null}
 
-          {nftFound ? (
+          {nftFound && !showError && !loading && !invalidEthereumNetwork ? (
             <div className="space-y-4">
               <div className="space-y-1">
                 <p className="text-center leading-6">
