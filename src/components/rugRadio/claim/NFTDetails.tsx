@@ -128,6 +128,7 @@ export const NFTDetails: React.FC = () => {
     event.preventDefault();
 
     const tokenIds = collectibles.map((collectible) => collectible.id);
+
     if (!tokenIds.length) return;
 
     setConfirm(true);
@@ -240,9 +241,8 @@ export const NFTDetails: React.FC = () => {
         <div className="space-y-4 font-whyte">
           <p className="text-center text-xl">RUG claimed</p>
           <p className="text-gray-syn4 text-center text-base leading-6">
-            You just claimed{" "}
-            <NumberTreatment numberValue={totalAvailableToClaim} /> RUG
-            successfully. It’s in your wallet.
+            {`You just claimed ${numberWithCommas(totalAvailableToClaim)} RUG
+            successfully. It’s in your wallet.`}
           </p>
           <div className="text-base flex justify-center items-center hover:opacity-80">
             <EtherscanLink
@@ -496,9 +496,13 @@ export const NFTDetails: React.FC = () => {
               dataLength={collectiblesResult.length}
               next={fetchMoreCollectibles}
               hasMore={!allCollectiblesFetched}
-              loader={<div className="mt-4">{loaderContent}</div>}
+              loader={
+                <div className="mt-4 grid grid-cols-12 gap-4">
+                  {loaderContent}
+                </div>
+              }
             >
-              <div className="grid grid-cols-12 gap-4 ">
+              <div className="grid grid-cols-12 gap-4">
                 {!loading && collectibles.length > 0 ? (
                   collectibles.map((collectible, index) => {
                     const { id, image, animation } = collectible;
