@@ -22,9 +22,6 @@ const schema = () =>
 
 export const NFTChecker: React.FC = () => {
   const {
-    web3Reducer: {
-      web3: { account },
-    },
     initializeContractsReducer: {
       syndicateContracts: { RugClaimModule, RugUtilityProperty },
     },
@@ -68,7 +65,6 @@ export const NFTChecker: React.FC = () => {
     setLoading(true);
     try {
       const tokenDetails = await fetchCollectibleById({
-        account,
         offset: "0",
         contractAddress: genesisNFTContractAddress,
         tokenId: genesisNFT_ID,
@@ -123,7 +119,7 @@ export const NFTChecker: React.FC = () => {
 
           {showError == true && (
             <p className="text-red-error font-whyte text-sm mt-2">
-              This NFT ID does not exist.
+              This NFT ID does not exist or Opensea currently is rate limited.
             </p>
           )}
 
@@ -150,7 +146,6 @@ export const NFTChecker: React.FC = () => {
                 </p>
               </div>
 
-              {/* Some tokens don't exist in opensea */}
               {permalink ? (
                 <a
                   href={permalink}

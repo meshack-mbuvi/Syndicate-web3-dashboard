@@ -27,6 +27,7 @@ export interface ISyndicateContracts {
   RugClaimModule: RugERC20ClaimModule;
   RugUtilityProperty: RugUtilityProperties;
   RugToken: ClubERC20Contract;
+  GenesisNFTContract;
 }
 
 interface InitialState {
@@ -49,6 +50,7 @@ const initialState: InitialState = {
     RugClaimModule: null,
     RugUtilityProperty: null,
     RugToken: null,
+    GenesisNFTContract: null,
   },
 };
 
