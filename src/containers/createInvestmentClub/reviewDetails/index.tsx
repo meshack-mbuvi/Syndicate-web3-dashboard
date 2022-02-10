@@ -182,6 +182,9 @@ const ReviewDetails: React.FC = () => {
                   ) : (
                     <div
                       onClick={() => {
+                        if (!showNextButton) {
+                          setShowNextButton(true);
+                        }
                         setCurrentStep(0);
                       }}
                     >
