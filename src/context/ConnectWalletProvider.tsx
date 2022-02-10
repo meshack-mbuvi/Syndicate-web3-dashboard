@@ -8,6 +8,19 @@ import {
 import { web3InstantiationErrorText } from "@/components/syndicates/shared/Constants";
 import { AppState } from "@/state";
 import { setContracts } from "@/state/contracts";
+import {
+  hideErrorModal,
+  hideWalletModal,
+  logout,
+  setConnected,
+  setConnectedProviderName,
+  setConnecting,
+  setDisConnected,
+  setLibrary,
+  showErrorModal,
+  storeCurrentEthNetwork,
+  storeEthereumNetwork,
+} from "@/state/wallet/actions";
 import { SafeAppWeb3Modal } from "@gnosis.pm/safe-apps-web3modal";
 import WalletConnectProvider from "@walletconnect/web3-provider";
 import { providers } from "ethers";
@@ -22,19 +35,6 @@ import React, {
   useState,
 } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  hideErrorModal,
-  hideWalletModal,
-  logout,
-  setConnected,
-  setConnectedProviderName,
-  setConnecting,
-  setDisConnected,
-  setLibrary,
-  showErrorModal,
-  storeCurrentEthNetwork,
-  storeEthereumNetwork,
-} from "src/state/wallet/actions";
 
 const Web3 = require("web3");
 const debugging = process.env.NEXT_PUBLIC_DEBUG;
