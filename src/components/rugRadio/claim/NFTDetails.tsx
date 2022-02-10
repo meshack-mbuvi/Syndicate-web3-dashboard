@@ -1,3 +1,4 @@
+import InfiniteScroll from "react-infinite-scroll-component";
 import { CtaButton } from "@/components/CTAButton";
 import Modal, { ModalStyle } from "@/components/modal";
 import NumberTreatment from "@/components/NumberTreatment";
@@ -25,7 +26,7 @@ export const NFTDetails: React.FC = () => {
     initializeContractsReducer: {
       syndicateContracts: { RugClaimModule },
     },
-    assetsSliceReducer: { collectiblesResult },
+    assetsSliceReducer: { collectiblesResult, allCollectiblesFetched },
   } = useSelector((state: AppState) => state);
 
   const [showNFTchecker, setShowNFTchecker] = useState(false);
@@ -41,6 +42,7 @@ export const NFTDetails: React.FC = () => {
   const [transactionRejected, setTransactionRejected] = useState(false);
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [collectibles, setCollectibles] = useState([]);
+  const [pageOffSet, setPageOffSet] = useState<number>(20);
 
   // Get both claimed and unclaimed tokens for all Genesis NFTs
   const {
@@ -159,6 +161,17 @@ export const NFTDetails: React.FC = () => {
       fetchCollectiblesTransactions({
         account,
         offset: "0",
+        contractAddress: genesisNFTContractAddress,
+      }),
+    );
+  };
+
+  const fetchMoreCollectibles = () => {
+    setPageOffSet(pageOffSet + 20);
+    dispatch(
+      fetchCollectiblesTransactions({
+        account,
+        offset: pageOffSet.toString(),
         contractAddress: genesisNFTContractAddress,
       }),
     );
@@ -428,112 +441,118 @@ export const NFTDetails: React.FC = () => {
                 <TabComponent tabContents={tabContents} />
               )}
             </div>
+            <InfiniteScroll
+              dataLength={collectiblesResult.length}
+              next={fetchMoreCollectibles}
+              hasMore={!allCollectiblesFetched}
+              loader={<div className="mt-4">Loading...</div>}
+            >
+              <div className="grid grid-cols-12 gap-4 ">
+                {!loading && collectibles.length > 0 ? (
+                  collectibles.map((collectible, index) => {
+                    const { id, image, animation } = collectible;
 
-            <div className="grid grid-cols-12 gap-4 ">
-              {!loading && collectibles.length > 0 ? (
-                collectibles.map((collectible, index) => {
-                  const { id, image, animation } = collectible;
+                    let mediaType;
 
-                  let mediaType;
+                    if (image && !animation) {
+                      mediaType = "imageOnlyNFT";
+                    } else if (animation) {
+                      // animation could be a .mov or .mp4 video
+                      const movAnimation = animation.match(/\.mov$/) != null;
+                      const mp4Animation = animation.match(/\.mp4$/) != null;
 
-                  if (image && !animation) {
-                    mediaType = "imageOnlyNFT";
-                  } else if (animation) {
-                    // animation could be a .mov or .mp4 video
-                    const movAnimation = animation.match(/\.mov$/) != null;
-                    const mp4Animation = animation.match(/\.mp4$/) != null;
+                      if (movAnimation || mp4Animation) {
+                        mediaType = "videoNFT";
+                      }
 
-                    if (movAnimation || mp4Animation) {
-                      mediaType = "videoNFT";
+                      // https://litwtf.mypinata.cloud/ipfs/QmVjgAD5gaNQ1cLpgKLeuXDPX8R1yeajtWUhM6nV7VAe6e/4.mp4
+                      // details for the nft with id below are not returned correctly and hence does not render
+                      // The animation link is a .html which is not captured.
+                      // Until we find a better way to handle this, let's have the fix below
+                      if (animation.match(/\.html$/) != null && id == "3216") {
+                        mediaType = "htmlNFT";
+                      }
+
+                      // animation could be a gif
+                      if (animation.match(/\.gif$/) != null) {
+                        mediaType = "animatedNFT";
+                      }
+
+                      // add support for .wav and .mp3 files
+                      const wavAnimation = animation.match(/\.wav$/) != null;
+                      const mp3Animation = animation.match(/\.mp3$/) != null;
+                      const soundtrack = wavAnimation || mp3Animation;
+
+                      if (soundtrack) {
+                        mediaType = "soundtrackNFT";
+                      }
                     }
-
-                    // https://litwtf.mypinata.cloud/ipfs/QmVjgAD5gaNQ1cLpgKLeuXDPX8R1yeajtWUhM6nV7VAe6e/4.mp4
-                    // details for the nft with id below are not returned correctly and hence does not render
-                    // The animation link is a .html which is not captured.
-                    // Until we find a better way to handle this, let's have the fix below
-                    if (animation.match(/\.html$/) != null && id == "3216") {
-                      mediaType = "htmlNFT";
-                    }
-
-                    // animation could be a gif
-                    if (animation.match(/\.gif$/) != null) {
-                      mediaType = "animatedNFT";
-                    }
-
-                    // add support for .wav and .mp3 files
-                    const wavAnimation = animation.match(/\.wav$/) != null;
-                    const mp3Animation = animation.match(/\.mp3$/) != null;
-                    const soundtrack = wavAnimation || mp3Animation;
-
-                    if (soundtrack) {
-                      mediaType = "soundtrackNFT";
-                    }
-                  }
-                  return (
-                    <NFTComponent
-                      {...{
-                        ...{
-                          collectible,
-                          mediaType,
-                          showCollectibles: true,
-                          refresh: processed,
-                        },
-                      }}
-                      key={index}
-                    />
-                  );
-                })
-              ) : (
-                <>
-                  {[...Array(4)].map((_, idx) => (
-                    <div
-                      key={idx}
-                      className="col-span-12 md:col-span-6 lg:col-span-6 2xl:w-88 w-full max-w-480 h-full"
-                    >
-                      <>
-                        <div className="w-full">
-                          <SkeletonLoader
-                            borderRadius="rounded-t-2.5xl"
-                            width="full"
-                            height="full"
-                            customClass="border-r-1 border-l-1 border-t-1 border-gray-syn6 perfect-square-box"
-                            margin="m-0"
-                            animate={true}
-                          />
-                          <div className="rounded-b-2.5xl w-full p-7 border-b-1 border-r-1 border-l-1 border-gray-syn6">
-                            <div className="pb-4">
-                              <SkeletonLoader
-                                width="full"
-                                height="6"
-                                margin="m-0"
-                                borderRadius="rounded-lg"
-                                animate={true}
-                              />
-                            </div>
+                    return (
+                      <NFTComponent
+                        {...{
+                          ...{
+                            collectible,
+                            mediaType,
+                            showCollectibles: true,
+                            refresh: processed,
+                          },
+                        }}
+                        key={index}
+                      />
+                    );
+                  })
+                ) : (
+                  <>
+                    {[...Array(4)].map((_, idx) => (
+                      <div
+                        key={idx}
+                        className="col-span-12 md:col-span-6 lg:col-span-6 2xl:w-88 w-full max-w-480 h-full"
+                      >
+                        <>
+                          <div className="w-full">
                             <SkeletonLoader
-                              width="16"
-                              height="4"
+                              borderRadius="rounded-t-2.5xl"
+                              width="full"
+                              height="full"
+                              customClass="border-r-1 border-l-1 border-t-1 border-gray-syn6 perfect-square-box"
                               margin="m-0"
-                              borderRadius="rounded-lg"
                               animate={true}
                             />
-                            <div className="pt-2">
+                            <div className="rounded-b-2.5xl w-full p-7 border-b-1 border-r-1 border-l-1 border-gray-syn6">
+                              <div className="pb-4">
+                                <SkeletonLoader
+                                  width="full"
+                                  height="6"
+                                  margin="m-0"
+                                  borderRadius="rounded-lg"
+                                  animate={true}
+                                />
+                              </div>
                               <SkeletonLoader
-                                width="32"
-                                height="5"
+                                width="16"
+                                height="4"
                                 margin="m-0"
                                 borderRadius="rounded-lg"
                                 animate={true}
                               />
+                              <div className="pt-2">
+                                <SkeletonLoader
+                                  width="32"
+                                  height="5"
+                                  margin="m-0"
+                                  borderRadius="rounded-lg"
+                                  animate={true}
+                                />
+                              </div>
                             </div>
                           </div>
-                        </div>
-                      </>
-                    </div>
-                  ))}
-                </>
-              )}
-            </div>
+                        </>
+                      </div>
+                    ))}
+                  </>
+                )}
+              </div>
+            </InfiniteScroll>
 
             <div className="max-w-480 w-full ml-4 hidden lg:block">
               {loading ? (
