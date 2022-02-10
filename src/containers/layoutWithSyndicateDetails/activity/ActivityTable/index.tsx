@@ -49,6 +49,9 @@ const ActivityTable: React.FC = () => {
   const [activeTransactionHashes, setActiveTransactionHashes] = useState([]);
   const [uncategorisedIcon, setUncategorisedIcon] = useState<string>("");
   const [searchWidth, setSearchWidth] = useState<number>(48);
+  const [mockTransactionsData, setMockTransactionsData] = useState(
+    mockActivityTransactionsData,
+  );
 
   useEffect(() => {
     // clearing selection to fix an issue with loader state
@@ -185,9 +188,13 @@ const ActivityTable: React.FC = () => {
       description =
         "There are currently no uncategorised transactions in this club’s activity.";
     } else {
-      if (!searchValue) {
+      if (!searchValue && filter) {
         title = `No transactions categorised as “${cleanedFilter}”`;
         description = `There are currently no transactions categorised as "${cleanedFilter}" in this club’s activity.`;
+      } else if (!searchValue && !filter) {
+        title = "No activity yet";
+        description =
+          "Once assets start moving in and out of this club, you will see what’s happening here.";
       }
     }
 
@@ -219,8 +226,12 @@ const ActivityTable: React.FC = () => {
   }, [filter]);
 
   useEffect(() => {
-    refetchTransactions();
-  }, [pageOffset, filter]);
+    if (isDemoMode) {
+      filterMockTransactions();
+    } else {
+      refetchTransactions();
+    }
+  }, [pageOffset, filter, isDemoMode, searchValue]);
 
   useEffect(() => {
     if (transactionsData?.Financial_recentTransactions) {
@@ -238,11 +249,13 @@ const ActivityTable: React.FC = () => {
         setCanNextPage(true);
       }
     } else if (isDemoMode) {
-      processERC20Transactions(mockActivityTransactionsData);
+      processERC20Transactions(mockTransactionsData);
     }
   }, [
     JSON.stringify(transactionsData?.Financial_recentTransactions),
     clubAddress,
+    mockTransactionsData,
+    totalTransactionsCount,
   ]);
 
   const processERC20Transactions = async (txns) => {
@@ -256,6 +269,53 @@ const ActivityTable: React.FC = () => {
   // stuff to filter transactions with in the search input
   const handleSearchOnChange = (e) => {
     setSearchValue(e.target.value);
+  };
+
+  // filter function for mock transaction data
+  const manualMockDataFilter = (searchParam: string): Boolean => {
+    const searchTerm = searchValue.toLowerCase();
+
+    // using indexOf here instead of includes because the former has more support browsers-wise.
+    return searchParam.toLowerCase().indexOf(searchTerm) > -1;
+  };
+  const filterMockTransactions = () => {
+    let filteredData;
+    if (filter && filter !== "everything") {
+      filteredData = mockActivityTransactionsData.edges.filter(
+        (transaction) =>
+          transaction.metadata.transactionCategory === filter.toUpperCase(),
+      );
+    }
+
+    if (searchValue) {
+      filteredData = mockActivityTransactionsData.edges.filter(
+        (transaction) => {
+          const { hash, fromAddress, toAddress, tokenName, tokenSymbol } =
+            transaction;
+
+          return (
+            manualMockDataFilter(hash) ||
+            manualMockDataFilter(fromAddress) ||
+            manualMockDataFilter(toAddress) ||
+            manualMockDataFilter(tokenName) ||
+            manualMockDataFilter(tokenSymbol)
+          );
+        },
+      );
+    }
+
+    setMockTransactionsData({
+      edges: filteredData,
+      totalCount: filteredData?.length,
+    });
+
+    // reset filters
+    if (
+      (filter === "everything" && !searchValue) ||
+      (!searchValue && !filter)
+    ) {
+      setMockTransactionsData(mockActivityTransactionsData);
+    }
   };
 
   // pagination functions
@@ -373,7 +433,8 @@ const ActivityTable: React.FC = () => {
                 !transactionsLoading &&
                 !transactionsData?.Financial_recentTransactions?.edges
                   ?.length &&
-                !searchValue,
+                !searchValue &&
+                !mockTransactionsData.edges.length,
               width: searchWidth,
             }}
           />

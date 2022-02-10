@@ -3,10 +3,12 @@ import { SkeletonLoader } from "@/components/skeletonLoader";
 import { useAccountTokens } from "@/hooks/useAccountTokens";
 import { useClubDepositsAndSupply } from "@/hooks/useClubDepositsAndSupply";
 import { useIsClubOwner } from "@/hooks/useClubOwner";
+import { useDemoMode } from "@/hooks/useDemoMode";
 import { AppState } from "@/state";
 import { Status } from "@/state/wallet/types";
 import { epochTimeToDateFormat, getCountDownDays } from "@/utils/dateUtils";
 import { floatedNumberWithCommas } from "@/utils/formattedNumbers";
+import { getTextWidth } from "@/utils/getTextWidth";
 import abi from "human-standard-token-abi";
 import { useRouter } from "next/router";
 import React, { FC, useEffect, useState } from "react";
@@ -35,6 +37,8 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
       web3: { web3, status, account },
     },
   } = useSelector((state: AppState) => state);
+
+  const isDemoMode = useDemoMode();
 
   const { accountTokens } = useAccountTokens();
 
@@ -82,6 +86,9 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
   const depositERC20Address = depositToken;
   const [showActionIcons, setShowActionIcons] = useState<boolean>(false);
 
+  const [divWidth, setDivWidth] = useState(0);
+  const [nameWidth, setNameWidth] = useState(0);
+
   // get and set current token details
   useEffect(() => {
     if (depositERC20Address && web3) {
@@ -91,6 +98,12 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
       setDepositTokenContract(tokenContract);
     }
   }, [depositERC20Address, web3]);
+
+  // perform size checks
+  useEffect(() => {
+    setDivWidth(document?.getElementById("club-name")?.offsetWidth);
+    setNameWidth(getTextWidth(name));
+  }, [name]);
 
   // set syndicate cumulative values
   useEffect(() => {
@@ -185,14 +198,6 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
                 content: <div>{memberCount}</div>,
                 tooltip: "",
               },
-              // {
-              //   header: "Created",
-              //   content: `${epochTimeToDateFormat(
-              //     new Date(startTime * 1000),
-              //     "LLL dd, yyyy",
-              //   )}`,
-              //   tooltip: "",
-              // },
             ]
           : [
               {
@@ -288,20 +293,29 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
                       />
                     </div>
                   ) : (
-                    <div className="flex items-center w-fit-content">
+                    <div
+                      className={`flex flex-wrap items-center w-fit-content`}
+                    >
                       <div
-                        className={`mr-6 2xl:text-4.5xl leading-10 lg:text-4xl md:text-xl sm:text-4xl text-lg font-normal line-clamp-2 w-48 xl:w-64`}
+                        id="club-name"
+                        className={`2xl:text-4.5xl leading-10 lg:text-4xl md:text-xl sm:text-4xl text-lg font-normal ${
+                          nameWidth >= divWidth
+                            ? `line-clamp-2 mb-2`
+                            : `flex mr-6`
+                        }`}
                       >
                         {name}
                       </div>
                       <div className="flex flex-wrap">
                         <div className="font-whyte-light text-gray-syn4 flex items-center justify-center">
-                          <span className="2xl:text-4.5xl leading-10 lg:text-4xl md:text-xl sm:text-4xl text-lg">
+                          <span
+                            className={`2xl:text-4.5xl leading-10 lg:text-4xl md:text-xl sm:text-4xl text-lg`}
+                          >
                             {symbol}
                           </span>
                         </div>
                       </div>
-                      <div className="flex items-center ml-6 space-x-8 pr-2">
+                      <div className="inline-flex items-center ml-6 space-x-8 pr-2">
                         {showActionIcons ? (
                           <div className="flex space-x-6">
                             <CopyToClipboard text={erc20Token.owner as string}>
@@ -375,18 +389,19 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
         )}
 
         {/* This component should be shown when we have details about user deposits */}
-        {status !== Status.DISCONNECTED &&
-          (loading || !(isActive && !isOwnerOrMember)) && (
-            <div className="overflow-hidden mt-6 relative">
-              <DetailsCard
-                title="Details"
-                sections={details}
-                customStyles={"w-full pt-4"}
-                customInnerWidth="w-full grid xl:grid-cols-3 lg:grid-cols-3
+        {(status !== Status.DISCONNECTED &&
+          (loading || !(isActive && !isOwnerOrMember))) ||
+        isDemoMode ? (
+          <div className="overflow-hidden mt-6 relative">
+            <DetailsCard
+              title="Details"
+              sections={details}
+              customStyles={"w-full pt-4"}
+              customInnerWidth="w-full grid xl:grid-cols-3 lg:grid-cols-3
             grid-cols-3 xl:gap-8 gap-6s gap-y-8"
-              />
-            </div>
-          )}
+            />
+          </div>
+        ) : null}
       </div>
       {/* Syndicate details */}
       {/* details rendered on small devices only. render right column components on the left column in small devices */}

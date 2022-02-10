@@ -18,8 +18,8 @@ import {
   clearCollectiblesTransactions,
   fetchCollectiblesTransactions,
   fetchTokenTransactions,
-  setMockTokensResult,
   setMockCollectiblesResult,
+  setMockTokensResult,
 } from "@/state/assets/slice";
 import { setClubMembers } from "@/state/clubMembers";
 import {
@@ -28,6 +28,7 @@ import {
 } from "@/state/erc20token/slice";
 import { clearMyTransactions } from "@/state/erc20transactions";
 import { Status } from "@/state/wallet/types";
+import { getTextWidth } from "@/utils/getTextWidth";
 import {
   mockActiveERC20Token,
   mockDepositERC20Token,
@@ -36,7 +37,7 @@ import {
 } from "@/utils/mockdata";
 import window from "global";
 import { useRouter } from "next/router";
-import React, { FC, useEffect, useRef, useState } from "react";
+import React, { FC, useEffect, useMemo, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { syndicateActionConstants } from "src/components/syndicates/shared/Constants";
 import ClubTokenMembers from "../managerActions/clubTokenMembers";
@@ -96,6 +97,7 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
   const [scrollTop, setScrollTop] = useState(0);
   const [showNav, setShowNav] = useState(true);
   const [isSubNavStuck, setIsSubNavStuck] = useState(true);
+  // const [customTransform, setCustomTransform] = useState(undefined);
   const subNav = useRef(null);
   const {
     query: { status: isOpenForDeposits },
@@ -113,7 +115,10 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
 
   // Change sub-nav and nav styles when stuck
   useEffect(() => {
-    if (subNav.current && subNav.current.getBoundingClientRect().top === 0) {
+    if (
+      subNav.current &&
+      parseInt(subNav.current.getBoundingClientRect().top) <= 0
+    ) {
       setIsSubNavStuck(true);
       setShowNav(false);
     } else {
@@ -175,7 +180,7 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
       dispatch(
         setERC20Token(
           clubERC20tokenContract,
-          syndicateContracts.DepositTokenMintModule,
+          syndicateContracts?.DepositTokenMintModule,
         ),
       );
 
@@ -183,11 +188,8 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
         dispatch(setClubMembers([]));
       };
     } else if (isDemoMode) {
-      const mockData =
-        isOpenForDeposits === "open"
-          ? mockDepositERC20Token
-          : mockActiveERC20Token;
-      dispatch(setERC20TokenDetails(mockData));
+      // using "Open to deposits" as the default view here in all cases.
+      dispatch(setERC20TokenDetails(mockDepositERC20Token));
     }
   }, [
     clubAddress,
@@ -196,7 +198,13 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
     syndicateContracts?.DepositTokenMintModule,
   ]);
 
-  const showOnboardingIfNeeded = router.pathname.endsWith("[clubAddress]");
+  const showOnboardingIfNeeded =
+    router.pathname.endsWith("[clubAddress]") && !isDemoMode;
+
+  const transform = useMemo(
+    () => (getTextWidth(name) > 590 ? "translateY(0%)" : "translateY(-50%)"),
+    [name],
+  );
 
   // get static text from constants
   const { noTokenTitleText } = syndicateActionConstants;
@@ -244,7 +252,7 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
       {router.isReady && !isDemoMode && !web3.utils.isAddress(clubAddress) ? (
         <NotFoundPage />
       ) : (
-        <Layout showNav={showNav}>
+        <Layout showNav={showNav} showBackButton={true}>
           <Head title={name || "Club"} />
           <ErrorBoundary>
             {showOnboardingIfNeeded && <OnboardingModal />}
@@ -256,6 +264,7 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
                   {/* Two Columns (Syndicate Details + Widget Cards) */}
                   <BackButton
                     topOffset={isSubNavStuck ? "-0.68rem" : "-0.25rem"}
+                    transform={transform}
                     isHidden={isDemoMode}
                   />
                   <div className="grid grid-cols-12 gap-5">
@@ -294,7 +303,7 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
                           >
                             Assets
                           </button>
-                          {renderOnDisconnect && (
+                          {(renderOnDisconnect || isDemoMode) && (
                             <button
                               key="members"
                               onClick={() => setActiveTab("members")}
@@ -307,7 +316,7 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
                               Members
                             </button>
                           )}
-                          {renderOnDisconnect && (
+                          {(renderOnDisconnect || isDemoMode) && (
                             <TabButton
                               active={activeTab === "activity"}
                               label="Activity"
@@ -325,12 +334,14 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
                       <div className="text-base grid grid-cols-12 gap-y-5">
                         <div className="col-span-12">
                           {activeTab == "assets" && <Assets />}
-                          {activeTab == "members" && renderOnDisconnect && (
-                            <ClubTokenMembers />
-                          )}
-                          {activeTab == "activity" && renderOnDisconnect && (
-                            <ActivityView />
-                          )}
+                          {activeTab == "members" &&
+                            (renderOnDisconnect || isDemoMode) && (
+                              <ClubTokenMembers />
+                            )}
+                          {activeTab == "activity" &&
+                            (renderOnDisconnect || isDemoMode) && (
+                              <ActivityView />
+                            )}
                         </div>
                       </div>
                     </div>

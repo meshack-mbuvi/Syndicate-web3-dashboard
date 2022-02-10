@@ -4,7 +4,6 @@ import { Spinner } from "@/components/shared/spinner";
 import { EtherscanLink } from "@/components/syndicates/shared/EtherscanLink";
 import Head from "@/components/syndicates/shared/HeaderTitle";
 import WalletNotConnected from "@/components/walletNotConnected";
-import { MainContent } from "@/containers/create/shared";
 import InvestmentClubCTAs from "@/containers/create/shared/controls/investmentClubCTAs";
 import ByInvitationOnly from "@/containers/createInvestmentClub/byInvitationOnly";
 import GettingStarted from "@/containers/createInvestmentClub/gettingStarted";
@@ -67,19 +66,16 @@ const CreateInvestmentClub: React.FC = () => {
               Create an investment club
             </div>
             <div className="flex justify-center w-full ">
-              <div className="hidden lg:block flex-1 w-1/4" />
-              <div className="w-full lg:w-3/4">
-                <MainContent>
-                  <div className="flex-grow flex overflow-y-auto justify-between h-full no-scroll-bar px-1">
-                    <div className="flex flex-col w-full" ref={parentRef}>
-                      <ReviewDetails />
-                      {steps[currentStep].component}
-                      <div className="w-full lg:w-2/3">
-                        <InvestmentClubCTAs key={currentStep} />
-                      </div>
+              <div className="w-full h-full overflow-y-scroll">
+                <div className="flex-grow flex overflow-y-auto overflow-x-hidden justify-between max-w-480 mx-auto h-full no-scroll-bar">
+                  <div className="flex flex-col w-full" ref={parentRef}>
+                    <ReviewDetails />
+                    {steps[currentStep].component}
+                    <div className="w-full">
+                      <InvestmentClubCTAs key={currentStep} />
                     </div>
                   </div>
-                </MainContent>
+                </div>
               </div>
             </div>
           </div>

@@ -7,20 +7,20 @@ import { useRouter } from "next/router";
 import React, { FC, useEffect } from "react";
 import { useSelector } from "react-redux";
 import ConnectWallet from "src/components/connectWallet";
-import Header from "src/components/navigation/header";
+import Header from "@/components/navigation/header/Header";
 import DemoBanner from "../demoBanner";
 import ProgressBar from "../ProgressBar";
 import SEO from "../seo";
 
 interface Props {
-  backLink?: string;
+  showBackButton?: boolean;
   showNav?: boolean;
   navItems?: { navItemText: string; url?: string; isLegal?: boolean }[];
 }
 
 const Layout: FC<Props> = ({
   children,
-  backLink = null,
+  showBackButton = false,
   showNav = true,
   navItems = [
     {
@@ -89,7 +89,9 @@ const Layout: FC<Props> = ({
 
   return (
     <div
-      className={`flex flex-col justify-between ${pushFooter && "h-screen"}`}
+      className={`flex flex-col justify-between ${
+        pushFooter ? "h-screen" : ""
+      }`}
     >
       <div>
         <SEO
@@ -103,7 +105,11 @@ const Layout: FC<Props> = ({
           ]}
           title="Home"
         />
-        <Header backLink={backLink} show={showNav} navItems={navItems} />
+        <Header
+          showBackButton={showBackButton}
+          showNav={showNav}
+          navItems={navItems}
+        />
         <DemoBanner />
         <div
           className={`sticky top-18 ${

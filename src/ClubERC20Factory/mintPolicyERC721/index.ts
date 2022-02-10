@@ -1,4 +1,4 @@
-import MintPolicyABI from "src/contracts/MintPolicy.json";
+import MintPolicyABI from "src/contracts/PolicyMintERC721.json";
 
 export class ERC721MintPolicyContract {
   web3;

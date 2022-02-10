@@ -1,13 +1,43 @@
-import React, { Dispatch, SetStateAction } from "react";
+import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { EmailSupport } from "@/components/emailSupport";
 import { DiscordLink } from "@/components/DiscordLink";
+import useWindowSize from "@/hooks/useWindowSize";
 
 const GettingStarted: React.FC<{
   setClubStep: Dispatch<SetStateAction<string>>;
 }> = ({ setClubStep }) => {
+  const { width } = useWindowSize();
+
+  const [firstLineHeight, setFirstLineHeight] = useState(0);
+  const [secondLineHeight, setSecondLineHeight] = useState(0);
+  const [thirdLineHeight, setThirdLineHeight] = useState(0);
+
+  useEffect(() => {
+    const firstStep = document.getElementById("first-step");
+    const secondStep = document.getElementById("second-step");
+    const thirdStep = document.getElementById("third-step");
+    const fourthStep = document.getElementById("fourth-step");
+
+    // Handle the first line height
+    const firstBottomOffset = firstStep.getBoundingClientRect().bottom;
+    const secondTopOffset = secondStep.getBoundingClientRect().top;
+    setFirstLineHeight(secondTopOffset - firstBottomOffset);
+
+    // handle the second line height
+    const secondBottomOffset = secondStep.getBoundingClientRect().bottom;
+    const thirdTopOffset = thirdStep.getBoundingClientRect().top;
+    setSecondLineHeight(thirdTopOffset - secondBottomOffset);
+
+    // handle the third line height
+    const thirdBottomOffset = thirdStep.getBoundingClientRect().bottom;
+    const fourthTopOffset = fourthStep.getBoundingClientRect().top;
+    console.log(fourthTopOffset);
+    setThirdLineHeight(fourthTopOffset - thirdBottomOffset);
+  }, [width]);
+
   return (
     <div
-      className="pt-8 pb-6 px-5 rounded-2-half bg-gray-syn8 w-100"
+      className="pt-8 pb-6 px-5 rounded-2-half bg-gray-syn8 w-11/12 sm:w-100"
       style={{ marginTop: "78px" }}
     >
       <div>
@@ -21,7 +51,11 @@ const GettingStarted: React.FC<{
                 <div
                   className={`ml-px absolute mt-3 top-2 left-2 w-0.5 bg-gray-syn6
                 `}
-                  style={{ height: "74px" }}
+                  style={
+                    width < 500
+                      ? { height: `${firstLineHeight + 4}px` }
+                      : { height: "74px" }
+                  }
                   aria-hidden="true"
                 />
 
@@ -30,6 +64,7 @@ const GettingStarted: React.FC<{
                     <span
                       className={`relative z-5 w-5 h-5 flex items-center justify-center border-2 rounded-full border-blue
                    `}
+                      id="first-step"
                     >
                       <span className="h-full w-full rounded-full" />
                     </span>
@@ -50,7 +85,11 @@ const GettingStarted: React.FC<{
                   className={`ml-px absolute mt-3 top-2 left-2 w-0.5 bg-gray-syn6
                 `}
                   aria-hidden="true"
-                  style={{ height: "31px" }}
+                  style={
+                    width < 500
+                      ? { height: `${secondLineHeight + 4}px` }
+                      : { height: "31px" }
+                  }
                 />
 
                 <div className="relative flex items-start group">
@@ -58,6 +97,7 @@ const GettingStarted: React.FC<{
                     <span
                       className={`relative z-5 w-5 h-5 flex items-center justify-center border-2 rounded-full border-gray-syn6
                    `}
+                      id="second-step"
                     >
                       <span className="h-full w-full rounded-full" />
                     </span>
@@ -73,7 +113,11 @@ const GettingStarted: React.FC<{
                   className={`ml-px absolute mt-3 top-2 left-2 w-0.5 bg-gray-syn6
                 `}
                   aria-hidden="true"
-                  style={{ height: "31px" }}
+                  style={
+                    width < 500
+                      ? { height: `${thirdLineHeight + 4}px` }
+                      : { height: "31px" }
+                  }
                 />
 
                 <div className="relative flex items-start group">
@@ -81,6 +125,7 @@ const GettingStarted: React.FC<{
                     <span
                       className={`relative z-5 w-5 h-5 flex items-center justify-center border-2 rounded-full border-gray-syn6
                    `}
+                      id="third-step"
                     >
                       <span className="h-full w-full rounded-full" />
                     </span>
@@ -97,6 +142,7 @@ const GettingStarted: React.FC<{
                     <span
                       className={`relative z-5 w-5 h-5 flex items-center justify-center border-2 rounded-full border-gray-syn6
                    `}
+                      id="fourth-step"
                     >
                       <span className="h-full w-full rounded-full" />
                     </span>

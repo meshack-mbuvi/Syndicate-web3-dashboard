@@ -1,19 +1,18 @@
-import { ERC721_MERKLE_AIRDROP_CREATED } from "@/graphql/queries";
 import { AppState } from "@/state";
-import { useDispatch, useSelector } from "react-redux";
-import { useEffect, useState } from "react";
 import {
-  setLoadingERC721AirdropInfo,
-  setERC721AirdropInfo,
   clearERC721AirdropInfo,
+  setERC721AirdropInfo,
+  setLoadingERC721AirdropInfo,
 } from "@/state/erc721AirdropInfo/slice";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 
 const useFetchAirdropInfo: any = () => {
   const dispatch = useDispatch();
 
   const {
     web3Reducer: {
-      web3: { account, web3, currentEthereumNetwork },
+      web3: { account, currentEthereumNetwork },
     },
     erc721MerkleProofSliceReducer: { erc721MerkleProof },
     erc721TokenSliceReducer: {
@@ -26,21 +25,6 @@ const useFetchAirdropInfo: any = () => {
     initializeContractsReducer: { syndicateContracts },
   } = useSelector((state: AppState) => state);
 
-  //   // Fetch existing airdops from the graph
-  //   const {
-  //     loading,
-  //     data: airdropData = {},
-  //     refetch,
-  //   } = useQuery(ERC721_MERKLE_AIRDROP_CREATED, {
-  //     variables: {
-  //       where: {
-  //         club: nftAddress.toLowerCase(),
-  //         treeIndex: 0,
-  //       },
-  //     },
-  //     skip: !account || skipQuery,
-  //     context: { clientName: "graph" },
-  //   });
   const [loading, setLoading] = useState(false);
   const [airdropData, setAirdropData] = useState([]);
 

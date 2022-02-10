@@ -1,21 +1,20 @@
-import React, { useEffect, useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
 import TabsButton from "@/components/TabsButton";
-import Collectibles from "@/containers/layoutWithSyndicateDetails/assets/collectibles";
-import InvestmentsView from "@/containers/layoutWithSyndicateDetails/assets/InvestmentsView";
 import { tokenTableColumns } from "@/containers/layoutWithSyndicateDetails/assets/constants";
+import InvestmentsView from "@/containers/layoutWithSyndicateDetails/assets/InvestmentsView";
 import TokenTable from "@/containers/layoutWithSyndicateDetails/assets/tokens/TokenTable";
+import { useDemoMode } from "@/hooks/useDemoMode";
+import { useFetchRecentTransactions } from "@/hooks/useFetchRecentTransactions";
 import { AppState } from "@/state";
 import {
-  setLoadingTransactions,
   setInvestmentTransactions,
+  setLoadingTransactions,
   setTotalInvestmentTransactionsCount,
 } from "@/state/erc20transactions";
-import { useFetchRecentTransactions } from "@/hooks/useFetchRecentTransactions";
 import { mockOffChainTransactionsData } from "@/utils/mockdata";
 import { useRouter } from "next/router";
-import { useDemoMode } from "@/hooks/useDemoMode";
-
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import Collectibles from "./collectibles";
 
 const Assets: React.FC = () => {
   const {
@@ -189,7 +188,6 @@ const Assets: React.FC = () => {
             <div className="mt-16">
               <Collectibles />
             </div>
-            
           </>
         )}
       </div>

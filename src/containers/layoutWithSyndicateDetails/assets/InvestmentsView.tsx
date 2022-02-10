@@ -15,6 +15,7 @@ import ActivityModal from "../activity/shared/ActivityModal";
 import useModal from "@/hooks/useModal";
 import { TransactionCategory } from "@/state/erc20transactions/types";
 import { useIsClubOwner, useIsClubMember } from "@/hooks/useClubOwner";
+import { useDemoMode } from "@/hooks/useDemoMode";
 
 interface InvestmentsViewProps {
   pageOffset: number;
@@ -45,6 +46,8 @@ const InvestmentsView: FC<InvestmentsViewProps> = ({
     useModal();
   const [showNote, setShowNote] = useState(false);
 
+  const isDemoMode = useDemoMode();
+
   const investmentsTableRef = useRef(null);
 
   const dispatch = useDispatch();
@@ -69,19 +72,23 @@ const InvestmentsView: FC<InvestmentsViewProps> = ({
   );
 
   // loading/empty state for investments table.
-  const LoaderContent: React.FC<{ animate: boolean }> = ({ animate }) => {
+  const LoaderContent: React.FC<{
+    animate: boolean;
+    titleText?: string;
+    subText?: string;
+  }> = ({
+    animate,
+    titleText = "This club has no off-chain investments yet.",
+    subText = "Any off-chain investments added will appear here.",
+  }) => {
     return (
       <div>
         {invesmentsTitle}
         <div className="relative">
           {!animate && (
             <div className="absolute flex flex-col justify-center items-center top-1/3 w-full z-10">
-              <span className="text-white mb-4 text-xl">
-                This club has no off-chain investments yet.
-              </span>
-              <span className="text-gray-syn4">
-                Any off-chain investments added will appear here.
-              </span>
+              <span className="text-white mb-4 text-xl">{titleText}</span>
+              <span className="text-gray-syn4">{subText}</span>
             </div>
           )}
           <div className={!animate && `filter grayscale blur-md`}>
@@ -160,6 +167,17 @@ const InvestmentsView: FC<InvestmentsViewProps> = ({
 
   if (transactionsLoading && !currentTransaction.hash) {
     return <LoaderContent animate={true} />;
+  }
+
+  // show empty state if account is not a member or the admin
+  if (!isMember && !isOwner && !isDemoMode) {
+    return (
+      <LoaderContent
+        animate={false}
+        titleText="Off-chain investments are only visible to members."
+        subText="If you're a member of this club, connect the same wallet you used to deposit."
+      />
+    );
   }
 
   const viewInvestmentDetails = (investmentData) => {
@@ -296,7 +314,7 @@ const InvestmentsView: FC<InvestmentsViewProps> = ({
                     dashForMissingValue
                   )}
                 </div>
-                {(isMember || isOwner) && (
+                {(isMember || isOwner || isDemoMode) && (
                   <div className="text-base flex col-span-2 items-center justify-end">
                     <div className="cursor-pointer flex items-center">
                       <div className="mr-2 flex items-center">

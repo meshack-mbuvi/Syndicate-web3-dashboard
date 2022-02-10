@@ -1,16 +1,6 @@
-import "nprogress/nprogress.css"; //styles of nprogress
-/**
- * datepicker component requires these in-built styles, so we import them
- * from here to make them available globally
- */
-import "react-datepicker/dist/react-datepicker.css";
-
-import "../styles/animation.css";
-import "../styles/custom-datepicker.css";
-import "../styles/global.css";
-
 import { useAmplitude } from "@/components/amplitude";
 import FontsPreloader from "@/components/fonts";
+import BeforeGettingStartedProvider from "@/context/beforeGettingStartedContext";
 import ConnectWalletProvider from "@/context/ConnectWalletProvider";
 import CreateInvestmentClubProvider from "@/context/CreateInvestmentClubContext";
 import OnboardingProvider from "@/context/OnboardingContext";
@@ -22,19 +12,26 @@ import {
   HttpLink,
   InMemoryCache,
 } from "@apollo/client";
-import { RetryLink } from '@apollo/client/link/retry';
+import { RetryLink } from "@apollo/client/link/retry";
 import withApollo from "next-with-apollo";
 import Head from "next/head";
 import Router from "next/router";
 import NProgress from "nprogress";
+import "nprogress/nprogress.css"; //styles of nprogress
 import React from "react";
+/**
+ * datepicker component requires these in-built styles, so we import them
+ * from here to make them available globally
+ */
+import "react-datepicker/dist/react-datepicker.css";
+import "../styles/animation.css";
+import "../styles/custom-datepicker.css";
+import "../styles/global.css";
 
 //Binding events.
 Router.events.on("routeChangeStart", () => NProgress.start());
 Router.events.on("routeChangeComplete", () => NProgress.done());
 Router.events.on("routeChangeError", () => NProgress.done());
-
-// Initialize Amplitude Services.
 
 const App = ({ Component, pageProps, apollo }) => {
   useAmplitude();
@@ -42,22 +39,24 @@ const App = ({ Component, pageProps, apollo }) => {
   return (
     <ApolloProvider client={apollo}>
       <OnboardingProvider>
-        <ConnectWalletProvider>
-          <CreateInvestmentClubProvider>
-            <Head>
-              <title>Home | Syndicate Dashboard</title>
-              <link rel="shortcut icon" href="/images/logo.svg" />
+        <BeforeGettingStartedProvider>
+          <ConnectWalletProvider>
+            <CreateInvestmentClubProvider>
+              <Head>
+                <title>Home | Syndicate Dashboard</title>
+                <link rel="shortcut icon" href="/images/logo.svg" />
 
-              <FontsPreloader />
+                <FontsPreloader />
 
-              <meta
-                name="viewport"
-                content="width=device-width, initial-scale=1, shrink-to-fit=no"
-              />
-            </Head>
-            <Component {...pageProps} />
-          </CreateInvestmentClubProvider>
-        </ConnectWalletProvider>
+                <meta
+                  name="viewport"
+                  content="width=device-width, initial-scale=1, shrink-to-fit=no"
+                />
+              </Head>
+              <Component {...pageProps} />
+            </CreateInvestmentClubProvider>
+          </ConnectWalletProvider>
+        </BeforeGettingStartedProvider>
       </OnboardingProvider>
     </ApolloProvider>
   );

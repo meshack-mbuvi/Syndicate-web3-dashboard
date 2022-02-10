@@ -1,5 +1,5 @@
-import { MintPolicyContract } from "@/ClubERC20Factory/policyMintERC20";
 import { DepositTokenMintModuleContract } from "@/ClubERC20Factory/depositTokenMintModule";
+import { MintPolicyContract } from "@/ClubERC20Factory/policyMintERC20";
 import { AppState } from "@/state";
 import {
   setERC20TokenContract,
@@ -7,8 +7,8 @@ import {
   setLoadingClub,
 } from "@/state/erc20token/slice";
 import { ERC20Token } from "@/state/erc20token/types";
-import { getWeiAmount } from "@/utils/conversions";
 import { isZeroAddress } from "@/utils";
+import { getWeiAmount } from "@/utils/conversions";
 
 export const ERC20TokenDefaultState = {
   name: "",
@@ -165,6 +165,7 @@ export const setERC20Token =
         },
       },
     } = getState();
+  
 
     dispatch(setERC20TokenContract(ERC20tokenContract));
     dispatch(setLoadingClub(true));
@@ -176,6 +177,7 @@ export const setERC20Token =
         policyMintERC20,
         mintPolicy,
       );
+
       dispatch(setERC20TokenDetails(erc20Token));
       dispatch(setLoadingClub(false));
     } catch (error) {

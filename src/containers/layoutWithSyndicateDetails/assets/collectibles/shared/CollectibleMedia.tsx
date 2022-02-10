@@ -1,11 +1,11 @@
-import { FC, useState, useRef } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import Tooltip from "react-tooltip-lite";
 import { AppState } from "@/state";
 import {
   setOverlayCollectibleDetails,
   setShowFullScreen,
 } from "@/state/assets/collectibles/slice";
+import { FC, useRef, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import Tooltip from "react-tooltip-lite";
 
 interface ICollectibleMedia {
   showCollectibles: boolean;
@@ -123,6 +123,7 @@ const CollectibleMedia: FC<ICollectibleMedia> = ({
             <img
               src="/images/actionIcons/openSeaIcon.svg"
               className="h-8 w-8"
+              alt="Opensea icon"
             />
           </Tooltip>
         </a>

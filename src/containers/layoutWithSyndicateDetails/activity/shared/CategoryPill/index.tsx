@@ -178,9 +178,13 @@ export const CategoryPill: React.FC<ICategoryPill> = ({
       specificOptions = categoryPillOptions.slice(2);
     }
     setDropdownOptions(
-      specificOptions
-        .concat(commonPillOptions)
-        .filter((option) => option.value !== selectedCategory),
+      specificOptions.concat(commonPillOptions).filter((option) => {
+        if (selectedCategory === "OFF_CHAIN_INVESTMENT") {
+          return option.value !== "INVESTMENT";
+        } else {
+          return option.value !== selectedCategory;
+        }
+      }),
     );
   }, [outgoing, selectedCategory]);
 

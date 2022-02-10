@@ -1,0 +1,306 @@
+import { Meta } from '@storybook/addon-docs';
+
+
+<Meta title="Quarks/Colors" />
+
+<style>{`
+
+    * { color: black }
+
+  .subheading {
+    --mediumdark: '#999999';
+    font-weight: 900;
+    font-size: 13px;
+    color: #999;
+    letter-spacing: 6px;
+    line-height: 24px;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+    margin-top: 40px;
+  }
+
+  .link-list {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr 1fr;
+    row-gap: 10px;
+  }
+
+  @media (min-width: 620px) {
+    .link-list {
+      row-gap: 20px;
+      column-gap: 20px;
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  @media all and (-ms-high-contrast:none) {
+  .link-list {
+      display: -ms-grid;
+      -ms-grid-columns: 1fr 1fr;
+      -ms-grid-rows: 1fr 1fr;
+    }
+  }
+
+  .link-item {
+    display: block;
+    padding: 20px 30px 20px 15px;
+    border: 1px solid #00000010;
+    border-radius: 5px;
+    transition: background 150ms ease-out, border 150ms ease-out, transform 150ms ease-out;
+    color: #333333;
+    display: flex;
+    align-items: flex-start;
+  }
+
+  .link-item:hover {
+    border-color: #1EA7FD50;
+    transform: translate3d(0, -3px, 0);
+    box-shadow: rgba(0, 0, 0, 0.08) 0 3px 10px 0;
+  }
+
+  .link-item:active {
+    border-color: #1EA7FD;
+    transform: translate3d(0, 0, 0);
+  }
+
+  .link-item strong {
+    font-weight: 700;
+    display: block;
+    margin-bottom: 2px;
+  }
+  
+  .link-item img {
+    height: 40px;
+    width: 40px;
+    margin-right: 15px;
+    flex: none;
+  }
+
+  .link-item span {
+    font-size: 14px;
+    line-height: 20px;
+  }
+
+  .tip {
+    display: inline-block;
+    border-radius: 1em;
+    font-size: 11px;
+    line-height: 12px;
+    font-weight: 700;
+    background: #E7FDD8;
+    color: #66BF3C;
+    padding: 4px 12px;
+    margin-right: 10px;
+    vertical-align: top;
+  }
+
+  .tip-wrapper {
+    font-size: 13px;
+    line-height: 20px;
+    margin-top: 40px;
+    margin-bottom: 40px;
+  }
+
+  .tip-wrapper code {
+    font-size: 12px;
+    display: inline-block;
+  }
+
+  
+`}</style>
+
+# Colors
+
+**Usage**: `{token}-{color}` <br/>
+**Example**: `text-blue-tycho`, `bg-orange-bullion`, etc
+
+<div className="subheading">Brand Primary</div>
+
+<div className="grid grid-cols-3 gap-x-4" style={{height: "12rem"}}>
+    <div className="border border-gray-syn2 p-2 rounded-md flex flex-col">
+        <div className="bg-white rounded-sm flex-grow p-4 text-black border">white</div>
+        <div className="flex-grow-0 pt-2 pb-1">Starlight</div>
+    </div>
+    <div className="border border-gray-syn2 p-2 rounded-md flex flex-col">
+        <div className="bg-black rounded-sm flex-grow p-4 text-white">black</div>
+        <div className="flex-grow-0 pt-2 pb-1">Void</div>
+    </div>
+</div>
+
+<div className="subheading">Semantic</div>
+
+<div className="grid grid-cols-3 gap-x-4" style={{height: "12rem"}}>
+    <div className="border border-gray-syn2 p-2 rounded-md flex flex-col">
+        <div className="bg-green-semantic rounded-sm flex-grow p-4 text-black">green-semantic</div>
+        <div className="flex-grow-0 pt-2 pb-1">Success</div>
+    </div>
+    <div className="border border-gray-syn2 p-2 rounded-md flex flex-col">
+        <div className="bg-yellow-warning rounded-sm flex-grow p-4 text-black">yellow-warning</div>
+        <div className="flex-grow-0 pt-2 pb-1">Warning</div>
+    </div>
+    <div className="border border-gray-syn2 p-2 rounded-md flex flex-col">
+        <div className="bg-red-error rounded-sm flex-grow p-4 text-white">red-error</div>
+        <div className="flex-grow-0 pt-2 pb-1">Error</div>
+    </div>
+</div>
+
+<div className="subheading">Gray</div>
+
+<div className="grid grid-cols-3 grid-rows-3 gap-4" style={{height: "36rem"}}>
+    <div className="border border-gray-syn2 p-2 rounded-md flex flex-col">
+        <div className="bg-gray-syn1 rounded-sm flex-grow p-4 text-black">gray-syn1</div>
+        <div className="flex-grow-0 pt-2 pb-1">Gray 1</div>
+    </div>
+    <div className="border border-gray-syn2 p-2 rounded-md flex flex-col">
+        <div className="bg-gray-syn2 rounded-sm flex-grow p-4 text-black">gray-syn2</div>
+        <div className="flex-grow-0 pt-2 pb-1">Gray 2</div>
+    </div>
+    <div className="border border-gray-syn2 p-2 rounded-md flex flex-col">
+        <div className="bg-gray-syn3 rounded-sm flex-grow p-4 text-black">gray-syn3</div>
+        <div className="flex-grow-0 pt-2 pb-1">Gray 3</div>
+    </div>
+    <div className="border border-gray-syn2 p-2 rounded-md flex flex-col">
+        <div className="bg-gray-syn4 rounded-sm flex-grow p-4 text-white">gray-syn4</div>
+        <div className="flex-grow-0 pt-2 pb-1">Gray 4</div>
+    </div>
+    <div className="border border-gray-syn2 p-2 rounded-md flex flex-col">
+        <div className="bg-gray-syn5 rounded-sm flex-grow p-4 text-white">gray-syn5</div>
+        <div className="flex-grow-0 pt-2 pb-1">Gray 5</div>
+    </div>
+    <div className="border border-gray-syn2 p-2 rounded-md flex flex-col">
+        <div className="bg-gray-syn6 rounded-sm flex-grow p-4 text-white">gray-syn6</div>
+        <div className="flex-grow-0 pt-2 pb-1">Gray 6</div>
+    </div>
+    <div className="border border-gray-syn2 p-2 rounded-md flex flex-col">
+        <div className="bg-gray-syn7 rounded-sm flex-grow p-4 text-white">gray-syn7</div>
+        <div className="flex-grow-0 pt-2 pb-1">Gray 7</div>
+    </div>
+    <div className="border border-gray-syn2 p-2 rounded-md flex flex-col">
+        <div className="bg-gray-syn8 rounded-sm flex-grow p-4 text-white">gray-syn8</div>
+        <div className="flex-grow-0 pt-2 pb-1">Gray 8</div>
+    </div>
+    <div className="border border-gray-syn2 p-2 rounded-md flex flex-col">
+        <div className="bg-gray-syn9 rounded-sm flex-grow p-4 text-white">gray-syn9</div>
+        <div className="flex-grow-0 pt-2 pb-1">Gray 9</div>
+    </div>
+</div>
+
+<div className="subheading">Brand Secondary</div>
+
+<div className="grid grid-cols-4 grid-rows-7 gap-4">
+    <div className="border border-gray-syn2 p-2 rounded-md flex flex-col h-40">
+        <div className="bg-blue-neptune rounded-sm flex-grow p-4 text-white">blue-neptune</div>
+        <div className="flex-grow-0 pt-2 pb-1">Neptune</div>
+    </div>
+    <div className="border border-gray-syn2 p-2 rounded-md flex flex-col h-40">
+        <div className="bg-red-nasa-worm rounded-sm flex-grow p-4 text-white">red-nasa-worm</div>
+        <div className="flex-grow-0 pt-2 pb-1">NASA Worm</div>
+    </div>
+    <div className="border border-gray-syn2 p-2 rounded-md flex flex-col h-40">
+        <div className="bg-red-f1-turbo rounded-sm flex-grow p-4 text-white">red-f1-turbo</div>
+        <div className="flex-grow-0 pt-2 pb-1">F1 Turbo</div>
+    </div>
+    <div className="border border-gray-syn2 p-2 rounded-md flex flex-col h-40">
+        <div className="bg-red-hal rounded-sm flex-grow p-4 text-white">red-hal</div>
+        <div className="flex-grow-0 pt-2 pb-1">HAL</div>
+    </div>
+    <div className="border border-gray-syn2 p-2 rounded-md flex flex-col h-40">
+        <div className="bg-green-volt rounded-sm flex-grow p-4 text-black">green-volt</div>
+        <div className="flex-grow-0 pt-2 pb-1">Volt</div>
+    </div>
+    <div className="border border-gray-syn2 p-2 rounded-md flex flex-col h-40">
+        <div className="bg-green-money rounded-sm flex-grow p-4 text-black">green-money</div>
+        <div className="flex-grow-0 pt-2 pb-1">Money</div>
+    </div>
+    <div className="border border-gray-syn2 p-2 rounded-md flex flex-col h-40">
+        <div className="bg-green-mint rounded-sm flex-grow p-4 text-black">green-mint</div>
+        <div className="flex-grow-0 pt-2 pb-1">Mint</div>
+    </div>
+    <div className="border border-gray-syn2 p-2 rounded-md flex flex-col h-40">
+        <div className="bg-orange-utopia rounded-sm flex-grow p-4 text-black">orange-uptopia</div>
+        <div className="flex-grow-0 pt-2 pb-1">Utopia</div>
+    </div>
+    <div className="border border-gray-syn2 p-2 rounded-md flex flex-col h-40">
+        <div className="bg-orange-bullion rounded-sm flex-grow p-4 text-white">orange-bullion</div>
+        <div className="flex-grow-0 pt-2 pb-1">Bullion</div>
+    </div>
+    <div className="border border-gray-syn2 p-2 rounded-md flex flex-col h-40">
+        <div className="bg-blue-tycho rounded-sm flex-grow p-4 text-white">blue-tycho</div>
+        <div className="flex-grow-0 pt-2 pb-1">Tycho</div>
+    </div>
+    <div className="border border-gray-syn2 p-2 rounded-md flex flex-col h-40">
+        <div className="bg-blue-liquidity rounded-sm flex-grow p-4 text-white">blue-liquidity</div>
+        <div className="flex-grow-0 pt-2 pb-1">Liquidity</div>
+    </div>
+    <div className="border border-gray-syn2 p-2 rounded-md flex flex-col h-40">
+        <div className="bg-cyan-cherenkov rounded-sm flex-grow p-4 text-black">cyan-cherenkov</div>
+        <div className="flex-grow-0 pt-2 pb-1">Cherenkov</div>
+    </div>
+    <div className="border border-gray-syn2 p-2 rounded-md flex flex-col h-40">
+        <div className="bg-cyan-verdigris rounded-sm flex-grow p-4 text-white">cyan-verdigris</div>
+        <div className="flex-grow-0 pt-2 pb-1">Verdigris</div>
+    </div>
+    <div className="border border-gray-syn2 p-2 rounded-md flex flex-col h-40">
+        <div className="bg-blue-stratosphere rounded-sm flex-grow p-4 text-black">blue-stratosphere</div>
+        <div className="flex-grow-0 pt-2 pb-1">Stratosphere</div>
+    </div>
+    <div className="border border-gray-syn2 p-2 rounded-md flex flex-col h-40">
+        <div className="bg-purple-ultraviolet rounded-sm flex-grow p-4 text-white">purple-ultraviolet</div>
+        <div className="flex-grow-0 pt-2 pb-1">Ultraviolet</div>
+    </div>
+    <div className="border border-gray-syn2 p-2 rounded-md flex flex-col h-40">
+        <div className="bg-purple-neon rounded-sm flex-grow p-4 text-white">purple-neon</div>
+        <div className="flex-grow-0 pt-2 pb-1">Neon</div>
+    </div>
+    <div className="border border-gray-syn2 p-2 rounded-md flex flex-col h-40">
+        <div className="bg-pink-millenium rounded-sm flex-grow p-4 text-white">pink-millenium</div>
+        <div className="flex-grow-0 pt-2 pb-1">Millenium</div>
+    </div>
+    <div className="border border-gray-syn2 p-2 rounded-md flex flex-col h-40">
+        <div className="bg-blue-nasa-flight-cobalt rounded-sm flex-grow p-4 text-white">blue-nasa-flight-cobalt</div>
+        <div className="flex-grow-0 pt-2 pb-1">NASA Flight Cobalt</div>
+    </div>
+    <div className="border border-gray-syn2 p-2 rounded-md flex flex-col h-40">
+        <div className="bg-orange-aces-rescue-orange rounded-sm flex-grow p-4 text-white">orange-aces-rescue-orange</div>
+        <div className="flex-grow-0 pt-2 pb-1">ACES Rescue Orange</div>
+    </div>
+    <div className="border border-gray-syn2 p-2 rounded-md flex flex-col h-40">
+        <div className="bg-green-biomass rounded-sm flex-grow p-4 text-white">green-biomass</div>
+        <div className="flex-grow-0 pt-2 pb-1">Biomass</div>
+    </div>
+    <div className="border border-gray-syn2 p-2 rounded-md flex flex-col h-40">
+        <div className="bg-orange-terra rounded-sm flex-grow p-4 text-white">orange-terra</div>
+        <div className="flex-grow-0 pt-2 pb-1">Terra</div>
+    </div>
+    <div className="border border-gray-syn2 p-2 rounded-md flex flex-col h-40">
+        <div className="bg-red-penny rounded-sm flex-grow p-4 text-white">red-penny</div>
+        <div className="flex-grow-0 pt-2 pb-1">Penny</div>
+    </div>
+    <div className="border border-gray-syn2 p-2 rounded-md flex flex-col h-40">
+        <div className="bg-brown-clay rounded-sm flex-grow p-4 text-white">brown-clay</div>
+        <div className="flex-grow-0 pt-2 pb-1">Clay</div>
+    </div>
+    <div className="border border-gray-syn2 p-2 rounded-md flex flex-col h-40">
+        <div className="bg-gray-mineral rounded-sm flex-grow p-4 text-black">gray-mineral</div>
+        <div className="flex-grow-0 pt-2 pb-1">Mineral</div>
+    </div>
+    <div className="border border-gray-syn2 p-2 rounded-md flex flex-col h-40">
+        <div className="bg-green-standard-issue-od rounded-sm flex-grow p-4 text-white">green-standard-issue-od</div>
+        <div className="flex-grow-0 pt-2 pb-1">Standard Issue OD</div>
+    </div>
+    <div className="border border-gray-syn2 p-2 rounded-md flex flex-col h-40">
+        <div className="bg-green-midnight rounded-sm flex-grow p-4 text-white">green-midnight</div>
+        <div className="flex-grow-0 pt-2 pb-1">Midnight</div>
+    </div>
+    
+</div>
+
+<div className="subheading">Brand Tertiary</div>
+
+<div className="grid grid-cols-3 gap-x-4" style={{height: "12rem"}}>
+    <div className="border border-gray-syn2 p-2 rounded-md flex flex-col">
+        <div className="bg-black-monolith rounded-sm flex-grow p-4 text-white">bg-black-monolith</div>
+        <div className="flex-grow-0 pt-2 pb-1">Monolith</div>
+    </div>
+</div>

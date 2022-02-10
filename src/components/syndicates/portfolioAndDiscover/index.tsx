@@ -100,7 +100,7 @@ const PortfolioAndDiscover: React.FC = () => {
         <>
           {myClubERC20s.length || otherClubERC20s.length ? (
             <div>
-              <div className="flex justify-between items-center w-full mt-14 mb-16">
+              <div className="flex flex-col sm:flex-row justify-between sm:items-center w-full mt-14 mb-16">
                 <p className="text-3xl">Portfolio</p>
                 <CreateClubButton />
               </div>

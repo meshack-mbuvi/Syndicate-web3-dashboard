@@ -1,3 +1,5 @@
+/* eslint-disable jsx-a11y/no-static-element-interactions */
+/* eslint-disable jsx-a11y/click-events-have-key-events */
 import { SkeletonLoader } from "@/components/skeletonLoader";
 import GradientAvatar from "@/components/syndicates/portfolioAndDiscover/portfolio/GradientAvatar";
 import useModal from "@/hooks/useModal";
@@ -146,11 +148,11 @@ const TokenTable: FC<Props> = ({ columns, tableData }) => {
           <div className="flex flex-col pt-8">
             {/* scroll to top of table with this button when pagination is clicked  */}
             <button ref={tokensTableRef} />
-            <div className="grid grid-cols-3 md:grid-cols-12 pb-3 text-gray-lightManatee">
+            <div className="grid grid-cols-3 md:grid-cols-12 md:gap-5 pb-3 text-gray-lightManatee">
               {columns?.map((col, idx) => (
                 <div
                   key={`token-table-header-${idx}`}
-                  className="text-sm md:col-span-3 text-center md:text-left"
+                  className="text-sm md:col-span-3 md:text-left"
                 >
                   {col}
                 </div>
@@ -202,13 +204,13 @@ const TokenTable: FC<Props> = ({ columns, tableData }) => {
                         </span>
                       </div>
                     </div>
-                    <div className="text-center md:text-left md:col-span-3">
+                    <div className="md:col-span-3">
                       <PriceContainer
                         numberValue={tokenBalance}
                         customSymbol={tokenSymbol}
                       />
                     </div>
-                    <div className="text-right md:text-left md:col-span-3">
+                    <div className="md:col-span-3">
                       <PriceContainer
                         numberValue={`${tokenValue || ""}`}
                         noUSDValue={!price?.usd && !price}
