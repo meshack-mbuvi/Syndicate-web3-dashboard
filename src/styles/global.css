@@ -60,11 +60,19 @@
     src: url(/fonts/Whyte/ABCWhyte-Bold.woff) format("woff");
   }
 
+  /* fixes an issue where it is sometimes not possible to scroll */
+  html {
+    overflow: visible !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
   body {
     background-color: #000000;
     font-family: "Whyte Regular", "Helvetica", "Arial", "sans-serif";
     color: white;
     font-style: normal;
+    overflow-x: hidden;
     @apply antialiased;
   }
 
@@ -106,6 +114,10 @@
 
   .main-title {
     @apply text-xl sm:text-2xl lg:text-3xl my-3;
+  }
+
+  .bg-black-monolith {
+    background: linear-gradient(206.57deg, #0e1c21 0%, #02070a 83.33%);
   }
 }
 
@@ -178,24 +190,24 @@
 
   /* Button CTAs */
 
-  .CTA-base {
-    @apply px-8 py-3.5 rounded-lg focus:outline-none border-none whitespace-nowrap font-medium;
+  .base-CTA {
+    @apply px-8 py-3.5 rounded-lg focus:outline-none border-none whitespace-nowrap font-medium transition-all;
   }
 
   .primary-CTA {
-    @apply CTA-base bg-white text-black duration-300 transition-all hover:bg-opacity-85;
+    @apply base-CTA bg-white text-black transition-all hover:bg-opacity-90;
   }
 
   .green-CTA {
-    @apply CTA-base bg-green text-black transition-all hover:bg-green-shine duration-300;
+    @apply base-CTA bg-green text-black transition-all hover:bg-green-shine;
   }
 
   .primary-CTA-disabled {
-    @apply CTA-base cursor-not-allowed bg-gray-steelGrey text-gray-manatee;
+    @apply base-CTA cursor-not-allowed bg-gray-syn6 text-gray-syn4 hover:bg-opacity-100;
   }
 
   .secondary-CTA {
-    @apply CTA-base bg-gray-manatee bg-opacity-30 text-white;
+    @apply base-CTA bg-gray-6 bg-opacity-30 text-white;
   }
 
   /* The tagline above the syndicate name on the social profile */
@@ -232,7 +244,15 @@
   }
 
   .h1 {
-    @apply block text-white text-5xl;
+    @apply block text-white text-4.5xl leading-11.5;
+  }
+
+  .h4 {
+    @apply font-whyte-medium text-sm uppercase leading-5 tracking-px;
+  }
+
+  .small-body {
+    @apply text-sm leading-5 font-whyte;
   }
 
   .bottom-triangle-blue::after {
@@ -789,16 +809,6 @@ input[type="checkbox"] {
   opacity: 1 !important;
 }
 
-.h4 {
-  font-family: Whyte Regular;
-  font-style: normal;
-  font-weight: bold;
-  font-size: 14px;
-  line-height: 20px;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-}
-
 .beta {
   font-family: Whyte Regular;
   font-style: normal;
@@ -833,7 +843,7 @@ input[type="checkbox"] {
 /* scrollbar styling on Firefox */
 * {
   scrollbar-width: thin;
-  scrollbar-color: #3F4147 #000000;
+  scrollbar-color: #3f4147 #000000;
 }
 
 /* scrollbar styling on Chrome, Edge, and Safari */
@@ -846,6 +856,6 @@ input[type="checkbox"] {
 }
 
 *::-webkit-scrollbar-thumb {
-  background-color: #3F4147;
+  background-color: #3f4147;
   border-radius: 4px;
 }

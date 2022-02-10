@@ -1,6 +1,6 @@
 import { getEthereumTokenPrice } from "@/helpers/ethereumTokenDetails";
 import { isDev } from "@/utils/environment";
-import { mockCollectiblesResult, mockTokensResult } from "@/utils/mockdata";
+import { mockCollectiblesResult } from "@/utils/mockdata";
 import { web3 } from "@/utils/web3Utils";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
@@ -135,21 +135,59 @@ export const fetchTokenTransactions = createAsyncThunk(
 interface CollectiblesFetchParams {
   account: string;
   offset: string;
+  contractAddress?: string;
+  tokenId?: string;
 }
+
+export const fetchCollectibleById = async (
+  params: CollectiblesFetchParams,
+): Promise<any> => {
+  const { account, offset, contractAddress, tokenId } = params;
+
+  const queryParams = {
+    owner: account,
+    limit: "20", // in case OpenSea changes the default limit
+    offset,
+    asset_contract_address: contractAddress ?? "",
+    token_ids: tokenId,
+  };
+
+  if (!contractAddress) delete queryParams.asset_contract_address;
+
+  const response = await axios.get(`${openSeaBaseURL}/assets`, {
+    headers: { "x-api-key": isDev ? "" : openSeaAPIKey },
+    params: {
+      // test account on mainnet: 0x6eb534ed1329e991842b55be375abc63fe7c0e2b,
+      // test account on rinkeby: 0xf4c2c3e12b61d44e6b228c43987158ac510426fb
+      ...queryParams,
+    },
+  });
+
+  const { assets } = response.data;
+  const [nftData] = assets;
+  return nftData;
+};
 
 export const fetchCollectiblesTransactions = createAsyncThunk(
   "assets/fetchCollectiblesTransactions",
   async (params: CollectiblesFetchParams) => {
-    const { account, offset } = params;
+    const { account, offset, contractAddress } = params;
+
+    const queryParams = {
+      owner: account,
+      limit: "20", // in case OpenSea changes the default limit
+      offset,
+      asset_contract_address: contractAddress ?? "",
+    };
+
+    if (!contractAddress) delete queryParams.asset_contract_address;
 
     const response = await axios.get(`${openSeaBaseURL}/assets`, {
       headers: { "x-api-key": isDev ? "" : openSeaAPIKey },
       params: {
         // test account on mainnet: 0x6eb534ed1329e991842b55be375abc63fe7c0e2b,
         // test account on rinkeby: 0xf4c2c3e12b61d44e6b228c43987158ac510426fb
-        owner: account,
-        limit: "20", // in case OpenSea changes the default limit
-        offset,
+        ...queryParams,
       },
     });
 
@@ -177,7 +215,7 @@ export const fetchCollectiblesTransactions = createAsyncThunk(
 
     // get last purchase price.
     const lastSale = assets.last_sale;
-    let lastPurchasePrice = {
+    const lastPurchasePrice = {
       lastPurchasePriceUSD: 0,
       lastPurchasePriceETH: 0,
     };
@@ -326,9 +364,7 @@ const assetsSlice = createSlice({
   },
 });
 
-export const {
-  setMockTokensResult,
-  setMockCollectiblesResult,
-} = assetsSlice.actions;
+export const { setMockTokensResult, setMockCollectiblesResult } =
+  assetsSlice.actions;
 
 export default assetsSlice.reducer;

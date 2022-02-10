@@ -16,4 +16,12 @@ export const testCoinsList = [
     decimal: 18,
     default: true,
   },
+  {
+    symbol: "eth",
+    name: "ETH",
+    contractAddress: "",
+    icon: "/images/ethereum-logo.png",
+    decimal: 18,
+    default: true,
+  },
 ];

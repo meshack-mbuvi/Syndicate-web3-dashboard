@@ -5,7 +5,6 @@ import {
 } from "@/components/amplitude/eventNames";
 import { metamaskConstants } from "@/components/syndicates/shared/Constants";
 import { getMetamaskError } from "@/helpers";
-import useUSDCDetails from "@/hooks/useUSDCDetails";
 import { AppState } from "@/state";
 import {
   resetClubCreationReduxState,
@@ -68,7 +67,7 @@ const CreateInvestmentClubProvider: React.FC = ({ children }) => {
       web3: { account },
     },
     initializeContractsReducer: {
-      syndicateContracts: { clubERC20Factory },
+      syndicateContracts: { clubERC20Factory, clubERC20FactoryEth },
     },
     createInvestmentClubSliceReducer: {
       investmentClubName,
@@ -76,12 +75,12 @@ const CreateInvestmentClubProvider: React.FC = ({ children }) => {
       tokenCap,
       mintEndTime: { value: endMintTime },
       membersCount,
+      tokenDetails: { depositTokenAddress, depositTokenSymbol },
     },
   } = useSelector((state: AppState) => state);
 
   const router = useRouter();
 
-  const { depositTokenAddress } = useUSDCDetails();
   const dispatch = useDispatch();
 
   const [currentStep, setCurrentStep] = useState(0);
@@ -176,20 +175,37 @@ const CreateInvestmentClubProvider: React.FC = ({ children }) => {
         transactionModal: false,
         errorModal: false,
       }));
-      const _tokenCap = getWeiAmount(tokenCap, 18, true);
+      const isEthDeposit = depositTokenSymbol == "ETH";
+      const _tokenCap = isEthDeposit
+        ? getWeiAmount((+tokenCap * 10000).toString(), 18, true)
+        : getWeiAmount(tokenCap, 18, true);
       const startTime = parseInt((new Date().getTime() / 1000).toString()); // convert to seconds
-      await clubERC20Factory.createERC20(
-        account,
-        investmentClubName,
-        investmentClubSymbol,
-        depositTokenAddress,
-        startTime,
-        endMintTime,
-        _tokenCap,
-        +membersCount,
-        onTxConfirm,
-        onTxReceipt,
-      );
+      if (isEthDeposit) {
+        await clubERC20FactoryEth.createERC20(
+          account,
+          investmentClubName,
+          investmentClubSymbol,
+          startTime,
+          endMintTime,
+          _tokenCap,
+          +membersCount,
+          onTxConfirm,
+          onTxReceipt,
+        );
+      } else {
+        await clubERC20Factory.createERC20(
+          account,
+          investmentClubName,
+          investmentClubSymbol,
+          depositTokenAddress,
+          startTime,
+          endMintTime,
+          _tokenCap,
+          +membersCount,
+          onTxConfirm,
+          onTxReceipt,
+        );
+      }
       amplitudeLogger(CREATE_INVESTMENT_CLUB, {
         flow: Flow.CLUB_CREATION,
       });

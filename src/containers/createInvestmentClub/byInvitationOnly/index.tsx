@@ -31,7 +31,7 @@ const ByInvitationOnly: React.FC<{
 
   return (
     <div
-      className="py-8 px-10 rounded-2-half bg-gray-syn8 w-100"
+      className="py-8 px-10 rounded-2-half bg-gray-syn8 w-11/12 sm:w-100"
       style={{ marginTop: "179px" }}
     >
       {loading ? (

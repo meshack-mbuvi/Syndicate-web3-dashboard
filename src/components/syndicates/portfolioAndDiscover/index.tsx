@@ -58,8 +58,6 @@ const PortfolioAndDiscover: React.FC = () => {
   return (
     <div className="-mt-8">
       {loading && account ? (
-        // show some animations during loading process
-        // skeleton loader
         <div>
           <div className="flex justify-between items-center w-full mt-14 mb-16">
             <SkeletonLoader width="32" height="8" borderRadius="rounded-lg" />
@@ -100,7 +98,7 @@ const PortfolioAndDiscover: React.FC = () => {
         <>
           {myClubERC20s.length || otherClubERC20s.length ? (
             <div>
-              <div className="flex justify-between items-center w-full mt-14 mb-16">
+              <div className="flex flex-col sm:flex-row justify-between sm:items-center w-full mt-14 mb-16">
                 <p className="text-3xl">Portfolio</p>
                 <CreateClubButton />
               </div>
@@ -115,7 +113,6 @@ const PortfolioAndDiscover: React.FC = () => {
                   />
                 </div>
               ) : null}
-
               {otherClubERC20s.length ? (
                 <div className="mt-16">
                   <p className="text-xl font-whyte mb-8">Member</p>
@@ -128,7 +125,6 @@ const PortfolioAndDiscover: React.FC = () => {
               ) : null}
             </div>
           ) : account && !myClubERC20s.length && !invalidEthereumNetwork ? (
-            // if connected, then it means no syndicates for this wallet
             <PortfolioEmptyState />
           ) : !account ? (
             <WalletNotConnected />

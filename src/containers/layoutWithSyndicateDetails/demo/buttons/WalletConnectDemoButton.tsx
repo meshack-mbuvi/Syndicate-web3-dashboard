@@ -17,7 +17,7 @@ const WalletConnectDemoButton: React.FC<IWalletConnectDemoButton> = ({
   return (
     <a href="/clubs/demo/manage" target="_blank">
       <span
-        className={`text-green-electric-lime bg-green-electric-lime bg-opacity-10 p-4 rounded-custom flex ${alignment} items-center w-full cursor-pointer`}
+        className={`text-green-volt bg-green-volt bg-opacity-10 p-4 rounded-custom flex ${alignment} items-center w-full cursor-pointer`}
       >
         <span className="mr-2">{buttonText}</span>
         <img src="/images/status/gamecontroller.svg" alt="demo icon" />

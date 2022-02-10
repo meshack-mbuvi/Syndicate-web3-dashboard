@@ -27,6 +27,7 @@ export function useAccountTokens(): {
     },
     erc20TokenSliceReducer: {
       erc20Token: { address, totalSupply, tokenDecimals, totalDeposits },
+      depositDetails: { depositTokenDecimals, ethDepositToken },
     },
   } = useSelector((state: AppState) => state);
   const [accountTokens, setAccountTokens] = useState<string>("0");
@@ -92,7 +93,9 @@ export function useAccountTokens(): {
         } = clubMemberData;
 
         setAccountTokens(getWeiAmount(tokens, tokenDecimals, false));
-        setMemberDeposits(getWeiAmount(depositAmount, 6, false));
+        setMemberDeposits(
+          getWeiAmount(depositAmount, depositTokenDecimals, false),
+        );
         setMemberOwnership(`${+ownershipShare / 10000}`);
       } else {
         resetMemberStats();
@@ -116,7 +119,9 @@ export function useAccountTokens(): {
     loadingMemberOwnership: loading,
     accountTokens,
     memberPercentShare: memberOwnership,
-    memberDeposits,
+    memberDeposits: ethDepositToken
+      ? parseFloat((Number(memberDeposits) * 10000).toString())
+      : memberDeposits,
     memberOwnership,
     refetchMemberData: refetch,
     startPolling,

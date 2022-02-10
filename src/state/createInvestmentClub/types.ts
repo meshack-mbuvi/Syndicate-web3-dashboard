@@ -3,6 +3,14 @@ export type mintEndTime = {
   value: number;
 };
 
+export type tokenDetails = {
+  depositTokenAddress: string;
+  depositTokenSymbol: string;
+  depositTokenLogo: any;
+  depositTokenName: string;
+  depositTokenDecimals: number;
+};
+
 export interface InitialState {
   investmentClubName: string;
   investmentClubSymbol: string;
@@ -17,6 +25,13 @@ export interface InitialState {
           token: string;
         }
       | any;
+  };
+  tokenDetails: {
+    depositTokenAddress: string;
+    depositTokenSymbol: string;
+    depositTokenLogo: any;
+    depositTokenName: string;
+    depositTokenDecimals: number;
   };
 }
 
@@ -35,5 +50,12 @@ export const initialState: InitialState = {
     creationReceipt: {
       token: "",
     },
+  },
+  tokenDetails: {
+    depositTokenAddress: "",
+    depositTokenSymbol: "",
+    depositTokenLogo: "",
+    depositTokenName: "",
+    depositTokenDecimals: 0
   },
 };

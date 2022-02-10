@@ -42,7 +42,6 @@ const noTokenMessageText =
 const syndicateAddressInvalidTitleText = "Invalid syndicate address";
 const syndicateAddressInvalidMessageText =
   "Check to ensure you have the correct address.";
-const backLinkText = "Back To My Investments Clubs";
 const notSyndicateYetTitleText = "isn't a club yet";
 const invalidTokenAddress = "is not a valid Ethereum address";
 const notSyndicateYetMessageText =
@@ -64,7 +63,6 @@ export const syndicateActionConstants = {
   noTokenMessageText,
   syndicateAddressInvalidMessageText,
   syndicateAddressInvalidTitleText,
-  backLinkText,
   notSyndicateYetTitleText,
   notSyndicateYetMessageText,
   creatingSyndicateForManagerTitle,

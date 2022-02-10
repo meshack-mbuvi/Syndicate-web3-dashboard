@@ -4,7 +4,6 @@ import Modal, { ModalStyle } from "@/components/modal";
 import { Spinner } from "@/components/shared/spinner";
 import { EtherscanLink } from "@/components/syndicates/shared/EtherscanLink";
 import { setERC20Token } from "@/helpers/erc20TokenDetails";
-import { useDemoMode } from "@/hooks/useDemoMode";
 import { AppState } from "@/state";
 import { getWeiAmount } from "@/utils/conversions";
 import { formatAddress } from "@/utils/formatAddress";
@@ -69,7 +68,6 @@ const DetailContent = ({ label, value, symbol }) => (
 
 export const MintAndShareTokens: React.FC<Props> = (props) => {
   const {
-    initializeContractsReducer: { syndicateContracts },
     erc20TokenSliceReducer: {
       erc20Token: { symbol, owner, maxTotalSupply, totalSupply, tokenDecimals },
       erc20TokenContract,
@@ -123,13 +121,7 @@ export const MintAndShareTokens: React.FC<Props> = (props) => {
 
   const [showProcessingMint, setShowProcessingMint] = useState(false);
 
-  const refreshClubDetails = () =>
-    dispatch(
-      setERC20Token(
-        erc20TokenContract,
-        syndicateContracts.DepositTokenMintModule,
-      ),
-    );
+  const refreshClubDetails = () => dispatch(setERC20Token(erc20TokenContract));
 
   const handleCloseSuccessModal = () => {
     setConfirm(false);

@@ -19,7 +19,7 @@ const CollectibleDetailsModal: React.FC = () => {
   const { collectible, moreDetails, mediaType } = collectibleModalDetails;
 
   // description can sometimes be a html string
-  let htmlRegex = new RegExp(/<\/?[a-z][\s\S]*>/i);
+  const htmlRegex = new RegExp(/<\/?[a-z][\s\S]*>/i);
   let descriptionValue = collectible?.description;
   if (htmlRegex.test(collectible?.description)) {
     descriptionValue = (

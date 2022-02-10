@@ -3,9 +3,8 @@ import Modal, { ModalStyle } from "@/components/modal";
 import { Spinner } from "@/components/shared/spinner";
 import { SET_MEMBER_SIGN_STATUS } from "@/graphql/mutations";
 import { MEMBER_SIGNED_QUERY } from "@/graphql/queries";
-import { useIsClubOwner } from '@/hooks/useClubOwner';
+import { useIsClubOwner } from "@/hooks/useClubOwner";
 import { useDemoMode } from "@/hooks/useDemoMode";
-import useUSDCDetails from "@/hooks/useUSDCDetails";
 import { AppState } from "@/state";
 import { formatAddress } from "@/utils/formatAddress";
 import { floatedNumberWithCommas } from "@/utils/formattedNumbers";
@@ -29,6 +28,7 @@ const MembersTable = ({
   const {
     erc20TokenSliceReducer: {
       erc20Token: { symbol },
+      depositDetails: { depositTokenSymbol },
     },
     web3Reducer: {
       web3: { account },
@@ -36,8 +36,6 @@ const MembersTable = ({
   } = useSelector((state: AppState) => state);
 
   const isOwner = useIsClubOwner();
-
-  const { depositTokenSymbol } = useUSDCDetails();
 
   const {
     getTableProps,
@@ -160,7 +158,6 @@ const MembersTable = ({
     <div className=" overflow-y-hidden ">
       <div className="flex my-11 col-span-12 space-x-8 justify-between items-center">
         {
-          // no point showing the search form if there is just one member.
           page.length > 1 || searchAddress ? (
             <SearchForm
               {...{
@@ -170,7 +167,6 @@ const MembersTable = ({
               }}
             />
           ) : (
-            // adding this empty div to maintain button placements to the right
             <div></div>
           )
         }
@@ -184,19 +180,15 @@ const MembersTable = ({
       >
         <thead className="w-full">
           {
-            // Loop over the header rows if table data exists.
             page.length
               ? headerGroups.map((headerGroup, index) => (
-                  // Apply the header row props
                   <tr
                     {...headerGroup.getHeaderGroupProps()}
                     key={index}
                     className="text-gray-sun4 text-sm grid grid-cols-12 gap-5 leading-6"
                   >
                     {
-                      // Loop over the headers in each row
                       headerGroup.headers.map((column, index) => {
-                        // Apply the header cell props
 
                         return (
                           <th
@@ -205,7 +197,6 @@ const MembersTable = ({
                             className="flex align-middle rounded-md col-span-3 text-left text-sm font-whyte-light text-gray-syn4"
                           >
                             {
-                              // Render the header
                               column.render("Header")
                             }
                           </th>
@@ -223,14 +214,11 @@ const MembersTable = ({
           {...getTableBodyProps()}
         >
           {
-            // Loop over the table rows
             page.map((row: any, index) => {
-              // Prepare the row for display
 
               prepareRow(row);
 
               return (
-                // Apply the row props
                 <tr
                   {...row.getRowProps()}
                   key={index}
@@ -240,19 +228,14 @@ const MembersTable = ({
                   }}
                 >
                   {
-                    // Loop over the rows cells
                     row.cells.map((cell, cellIndex) => {
-                      // Apply the cell props
-                      // Show more options when row is hovered, otherwise hide them
                       return (
-                        // eslint-disable-next-line jsx-a11y/click-events-have-key-events
                         <td
                           {...cell.getCellProps()}
                           key={cellIndex}
                           className={`m-0 col-span-3 text-base py-5 text-white`}
                         >
                           {
-                            // Render the cell contents
                             cell.render("Cell")
                           }
                         </td>

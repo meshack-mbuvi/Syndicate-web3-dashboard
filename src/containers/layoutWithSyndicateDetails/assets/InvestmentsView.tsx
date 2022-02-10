@@ -170,7 +170,7 @@ const InvestmentsView: FC<InvestmentsViewProps> = ({
   }
 
   // show empty state if account is not a member or the admin
-  if (!isMember && !isOwner) {
+  if (!isMember && !isOwner && !isDemoMode) {
     return (
       <LoaderContent
         animate={false}

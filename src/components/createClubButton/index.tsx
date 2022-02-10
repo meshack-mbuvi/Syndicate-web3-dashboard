@@ -6,7 +6,7 @@ const CreateClubButton: React.FC = () => {
 
   return (
     <button
-      className="flex items-center bg-white text-black rounded-xl py-4 px-8"
+      className="flex justify-center items-center bg-white text-black rounded-xl py-4 px-8 w-full sm:w-auto"
       onClick={() => {
         router.push(`/clubs/create`);
       }}

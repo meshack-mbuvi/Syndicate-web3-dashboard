@@ -26,7 +26,6 @@ const GettingStarted: React.FC = () => {
   const dispatch = useDispatch();
 
   const {
-    initializeContractsReducer: { syndicateContracts },
     web3Reducer: {
       web3: { account, web3 },
     },
@@ -47,12 +46,7 @@ const GettingStarted: React.FC = () => {
         web3,
       );
 
-      dispatch(
-        setERC20Token(
-          clubERC20tokenContract,
-          syndicateContracts.DepositTokenMintModule,
-        ),
-      );
+      dispatch(setERC20Token(clubERC20tokenContract));
 
       return () => {
         dispatch(setERC20TokenDetails(ERC20TokenDefaultState));

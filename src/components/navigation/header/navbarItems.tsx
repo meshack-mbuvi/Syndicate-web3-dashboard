@@ -19,18 +19,18 @@ export const NavBarNavItem: React.FC<IProps> = ({
       {url ? (
         <ActiveLink
           href={url}
-          customActive="border-b-1 hover:border-opacity-100"
+          customActive="border-b-1 sm:hover:border-opacity-100"
         >
-          <div className="h-full mr-3 md:mr-6 lg:mr-9 border-b-1 border-opacity-0 hover:border-opacity-50 cursor-pointer">
+          <div className="py-5 sm:py-4 h-full sm:mr-3 md:mr-6 lg:mr-9 border-b-1 border-opacity-0 sm:hover:border-opacity-50 cursor-pointer">
             <a
-              className={`${customClasses} text-sm sm:text-base sm:leading-4.75 text-white vertically-center inline-block transition-all`}
+              className={`${customClasses} text-lg leading-5.5 sm:text-base sm:leading-4.75 text-white vertically-center sm:inline-block transition-all`}
             >
               {navItemText}
             </a>
           </div>
         </ActiveLink>
       ) : (
-        <div className="hidden sm:block md:ml-4 lg:ml-6 leading-4.75">
+        <div className="hidden sm:block md:ml-4 lg:ml-6 leading-4.75 items-center">
           {navItemText}
           {isLegal ? (
             <div className="flex pt-1 text-gray-syn3 items-center">

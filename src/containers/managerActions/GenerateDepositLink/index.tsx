@@ -67,7 +67,7 @@ const GenerateDepositLink: FC<ILinK> = ({
           {isDemoMode ? (
             <Floater
               content={
-                <div className="text-green-electric-lime text-sm">
+                <div className="text-green-volt text-sm">
                   <p>
                     Generate a deposit invite link with the option to include
                     default legal agreements for members to sign.

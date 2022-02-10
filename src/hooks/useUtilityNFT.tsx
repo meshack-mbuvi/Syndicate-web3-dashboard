@@ -94,7 +94,7 @@ const useUtilityNFT: any = () => {
       tokenIds.add(el.tokenID);
     });
 
-    let _memberships = new Array();
+    let _memberships = [];
 
     if (tokenIds.size > 0) {
       await Promise.all(

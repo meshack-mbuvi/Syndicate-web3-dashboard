@@ -86,14 +86,14 @@ export class ClubERC20Contract {
     }
   }
 
-  async balanceOf(account: string): Promise<string | number> {
+  async balanceOf(account: string): Promise<string> {
     if (!account) return "0";
     try {
       return this.clubERC20Contract.methods
         .balanceOf(account.toString())
         .call({ from: account });
     } catch (error) {
-      return 0;
+      return "0";
     }
   }
 

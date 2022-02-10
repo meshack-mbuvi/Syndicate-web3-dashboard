@@ -15,7 +15,10 @@ const useClubTokenMembers = () => {
 
   const {
     web3Reducer: { web3 },
-    erc20TokenSliceReducer: { erc20Token },
+    erc20TokenSliceReducer: {
+      erc20Token: { symbol, tokenDecimals, totalSupply },
+      depositDetails: { depositTokenDecimals },
+    },
   } = useSelector((state: AppState) => state);
 
   const router = useRouter();
@@ -43,8 +46,6 @@ const useClubTokenMembers = () => {
       return;
     }
 
-    const { symbol, tokenDecimals } = erc20Token;
-
     const clubMembers = members.map(
       ({
         depositAmount,
@@ -57,8 +58,12 @@ const useClubTokenMembers = () => {
           ownershipShare: parseInt(ownershipShare) / 10000,
           symbol,
           clubTokens: getWeiAmount(tokens, tokenDecimals, false),
-          totalSupply: erc20Token.totalSupply,
-          depositAmount: getWeiAmount(depositAmount, 6, false),
+          totalSupply: totalSupply,
+          depositAmount: getWeiAmount(
+            depositAmount,
+            depositTokenDecimals,
+            false,
+          ),
         };
       },
     );
@@ -70,13 +75,7 @@ const useClubTokenMembers = () => {
     if (router.isReady) {
       refetch();
     }
-  }, [
-    router.isReady,
-    account,
-    currentEthereumNetwork,
-    JSON.stringify(erc20Token),
-    erc20Token.totalSupply,
-  ]);
+  }, [router.isReady, account, currentEthereumNetwork, totalSupply]);
 
   useEffect(() => {
     if (loadingClubMembers) {
@@ -86,7 +85,7 @@ const useClubTokenMembers = () => {
     } else {
       // remove mock data from the redux store
       dispatch(clearClubMembers());
-      
+
       processMembers(data?.syndicateDAOs?.[0]?.members);
       dispatch(setLoadingClubMembers(false));
     }
