@@ -1,4 +1,3 @@
-import InfiniteScroll from "react-infinite-scroll-component";
 import { CtaButton } from "@/components/CTAButton";
 import Modal, { ModalStyle } from "@/components/modal";
 import NumberTreatment from "@/components/NumberTreatment";
@@ -12,6 +11,7 @@ import { getCountDownDays } from "@/utils/dateUtils";
 import { numberWithCommas } from "@/utils/formattedNumbers";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
+import InfiniteScroll from "react-infinite-scroll-component";
 import { useDispatch, useSelector } from "react-redux";
 import Tooltip from "react-tooltip-lite";
 import { NFTChecker } from "../shared/NFTchecker";
@@ -352,6 +352,57 @@ export const NFTDetails: React.FC = () => {
       content: <>To be implemented</>,
     },
   };
+
+  const loaderContent = (
+    <>
+      {[...Array(4)].map((_, idx) => (
+        <div
+          key={idx}
+          className="col-span-12 md:col-span-6 lg:col-span-6 2xl:w-88 w-full max-w-480 h-full"
+        >
+          <>
+            <div className="w-full">
+              <SkeletonLoader
+                borderRadius="rounded-t-2.5xl"
+                width="full"
+                height="full"
+                customClass="border-r-1 border-l-1 border-t-1 border-gray-syn6 perfect-square-box"
+                margin="m-0"
+                animate={true}
+              />
+              <div className="rounded-b-2.5xl w-full p-7 border-b-1 border-r-1 border-l-1 border-gray-syn6">
+                <div className="pb-4">
+                  <SkeletonLoader
+                    width="full"
+                    height="6"
+                    margin="m-0"
+                    borderRadius="rounded-lg"
+                    animate={true}
+                  />
+                </div>
+                <SkeletonLoader
+                  width="16"
+                  height="4"
+                  margin="m-0"
+                  borderRadius="rounded-lg"
+                  animate={true}
+                />
+                <div className="pt-2">
+                  <SkeletonLoader
+                    width="32"
+                    height="5"
+                    margin="m-0"
+                    borderRadius="rounded-lg"
+                    animate={true}
+                  />
+                </div>
+              </div>
+            </div>
+          </>
+        </div>
+      ))}
+    </>
+  );
   return (
     <>
       <div className="w-full">
@@ -445,7 +496,7 @@ export const NFTDetails: React.FC = () => {
               dataLength={collectiblesResult.length}
               next={fetchMoreCollectibles}
               hasMore={!allCollectiblesFetched}
-              loader={<div className="mt-4">Loading...</div>}
+              loader={<div className="mt-4">{loaderContent}</div>}
             >
               <div className="grid grid-cols-12 gap-4 ">
                 {!loading && collectibles.length > 0 ? (
@@ -502,54 +553,7 @@ export const NFTDetails: React.FC = () => {
                     );
                   })
                 ) : (
-                  <>
-                    {[...Array(4)].map((_, idx) => (
-                      <div
-                        key={idx}
-                        className="col-span-12 md:col-span-6 lg:col-span-6 2xl:w-88 w-full max-w-480 h-full"
-                      >
-                        <>
-                          <div className="w-full">
-                            <SkeletonLoader
-                              borderRadius="rounded-t-2.5xl"
-                              width="full"
-                              height="full"
-                              customClass="border-r-1 border-l-1 border-t-1 border-gray-syn6 perfect-square-box"
-                              margin="m-0"
-                              animate={true}
-                            />
-                            <div className="rounded-b-2.5xl w-full p-7 border-b-1 border-r-1 border-l-1 border-gray-syn6">
-                              <div className="pb-4">
-                                <SkeletonLoader
-                                  width="full"
-                                  height="6"
-                                  margin="m-0"
-                                  borderRadius="rounded-lg"
-                                  animate={true}
-                                />
-                              </div>
-                              <SkeletonLoader
-                                width="16"
-                                height="4"
-                                margin="m-0"
-                                borderRadius="rounded-lg"
-                                animate={true}
-                              />
-                              <div className="pt-2">
-                                <SkeletonLoader
-                                  width="32"
-                                  height="5"
-                                  margin="m-0"
-                                  borderRadius="rounded-lg"
-                                  animate={true}
-                                />
-                              </div>
-                            </div>
-                          </div>
-                        </>
-                      </div>
-                    ))}
-                  </>
+                  <>{loaderContent}</>
                 )}
               </div>
             </InfiniteScroll>

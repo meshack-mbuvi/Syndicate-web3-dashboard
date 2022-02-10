@@ -138,6 +138,7 @@ interface CollectiblesFetchParams {
   offset: string;
   contractAddress?: string;
   tokenId?: string;
+  limit?: string;
 }
 
 export const fetchCollectibleById = async (
@@ -157,18 +158,14 @@ export const fetchCollectibleById = async (
 export const fetchCollectiblesTransactions = createAsyncThunk(
   "assets/fetchCollectiblesTransactions",
   async (params: CollectiblesFetchParams) => {
-    const { account, offset, contractAddress } = params;
+    const { account, offset, contractAddress, limit = "20" } = params;
 
-    const queryParams = {
-      owner: account,
-      limit: "20", // in case OpenSea changes the default limit
+    const { assets } = await getOpenseaTokens(
+      account,
+      contractAddress,
       offset,
-      asset_contract_address: contractAddress ?? "",
-    };
-
-    if (!contractAddress) delete queryParams.asset_contract_address;
-
-    const { assets } = await getOpenseaTokens(account, contractAddress);
+      limit,
+    );
 
     const collections = [
       ...new Set(assets.map((asset) => asset.collection.slug)),
