@@ -4,7 +4,6 @@ import NumberTreatment from "@/components/NumberTreatment";
 import { Spinner } from "@/components/shared/spinner";
 import { AppState } from "@/state";
 import { fetchCollectibleById } from "@/state/assets/slice";
-import { getWeiAmount } from "@/utils/conversions";
 import { yupResolver } from "@hookform/resolvers/yup";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
@@ -16,12 +15,9 @@ interface FormInputs {
   genesisNFT_ID: string;
 }
 
-const schema = (currentSupply) =>
+const schema = () =>
   yup.object({
-    genesisNFT_ID: yup
-      .number()
-      .required("Genesis NFT id is required")
-      .max(currentSupply, "This NFT ID does not exist."),
+    genesisNFT_ID: yup.string().required("Genesis NFT id is required"),
   });
 
 export const NFTChecker: React.FC = () => {
@@ -30,13 +26,13 @@ export const NFTChecker: React.FC = () => {
       web3: { account },
     },
     initializeContractsReducer: {
-      syndicateContracts: { RugClaimModule, RugUtilityProperty, RugToken },
+      syndicateContracts: { RugClaimModule, RugUtilityProperty },
     },
   } = useSelector((state: AppState) => state);
 
   const [loading, setLoading] = useState(false);
-  const [showDetails, setShowDetails] = useState(false);
-  const [currentSupply, setCurrentSupply] = useState(0);
+  const [nftFound, setNftFound] = useState(false);
+  const [showError, setShowError] = useState(false);
 
   const [{ tokenBalance, tokenProduction, permalink }, setTokenProperties] =
     useState({
@@ -51,33 +47,18 @@ export const NFTChecker: React.FC = () => {
     watch,
     formState: { isValid },
   } = useForm<FormInputs>({
-    resolver: yupResolver(schema(currentSupply)),
+    resolver: yupResolver(schema()),
     mode: "onChange",
   });
 
   const { genesisNFT_ID } = watch();
 
   useEffect(() => {
-    if (!RugToken) return;
-
-    RugToken.totalSupply().then(async (totalSupply) =>
-      setCurrentSupply(
-        +getWeiAmount(totalSupply, parseInt(await RugToken.decimals()), false),
-      ),
-    );
+    setNftFound(false);
+    setShowError(false);
 
     return () => {
-      setCurrentSupply(0);
-    };
-  }, [RugToken]);
-  console.log({ currentSupply });
-  useEffect(() => {
-    if (!genesisNFT_ID || +genesisNFT_ID > currentSupply) {
-      setShowDetails(false);
-    }
-
-    return () => {
-      setShowDetails(false);
+      setNftFound(false);
     };
   }, [genesisNFT_ID]);
 
@@ -85,23 +66,33 @@ export const NFTChecker: React.FC = () => {
 
   const getTokenProperties = async (tokenId) => {
     setLoading(true);
+    try {
+      const tokenDetails = await fetchCollectibleById({
+        account,
+        offset: "0",
+        contractAddress: genesisNFTContractAddress,
+        tokenId: genesisNFT_ID,
+      });
 
-    const tokenBalance = await RugClaimModule.getClaimAmount(tokenId);
-    const tokenProduction = await RugUtilityProperty.getProduction(tokenId);
-    const tokenDetails = await fetchCollectibleById({
-      account,
-      offset: "0",
-      contractAddress: genesisNFTContractAddress,
-      tokenId: genesisNFT_ID,
-    });
+      if (tokenDetails) {
+        const tokenBalance = await RugClaimModule.getClaimAmount(tokenId);
+        const tokenProduction = await RugUtilityProperty.getProduction(tokenId);
 
-    setTokenProperties({
-      tokenBalance,
-      tokenProduction,
-      permalink: tokenDetails?.permalink,
-    });
-    setLoading(false);
-    setShowDetails(true);
+        setTokenProperties({
+          tokenBalance,
+          tokenProduction,
+          permalink: tokenDetails?.permalink,
+        });
+        setNftFound(true);
+        setShowError(false);
+      } else {
+        setShowError(true);
+      }
+
+      setLoading(false);
+    } catch (error) {
+      console.log({ error });
+    }
   };
 
   const onSubmit = (values) => {
@@ -130,7 +121,13 @@ export const NFTChecker: React.FC = () => {
             showClearIcon={true}
           />
 
-          {showDetails == false && !loading && (
+          {showError == true && (
+            <p className="text-red-error font-whyte text-sm mt-2">
+              This NFT ID does not exist.
+            </p>
+          )}
+
+          {nftFound == false && !loading && (
             <CtaButton type="submit" disabled={!isValid || loading}>
               Check
             </CtaButton>
@@ -138,8 +135,7 @@ export const NFTChecker: React.FC = () => {
 
           {loading ? <Spinner height="h-6" width="w-6" /> : null}
 
-          {/* Show this section when check is done */}
-          {showDetails ? (
+          {nftFound ? (
             <div className="space-y-4">
               <div className="space-y-1">
                 <p className="text-center leading-6">

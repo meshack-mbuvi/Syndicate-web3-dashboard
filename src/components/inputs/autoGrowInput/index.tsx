@@ -33,6 +33,8 @@ const AutoGrowInputField: React.FC<AutoGrowInputField> = ({
       `${dynamicFontSize}px 'ABC Whyte Regular', Helvetica, Arial, sans-serif`,
     );
 
+    if (!textWidth) return;
+
     const diff = dynamicFontSize < 37 ? 5 : 10;
     setExtraWidth(span.current.offsetWidth - (textWidth - diff) - 16); // Only God knows whats happening here
   }, [dynamicFontSize, placeholder, setWidth, value, width]);
