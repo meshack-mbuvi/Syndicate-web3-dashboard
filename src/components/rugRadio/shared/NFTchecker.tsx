@@ -97,7 +97,7 @@ export const NFTChecker: React.FC = () => {
 
     if (!genesisNFT_ID) return;
 
-    getTokenProperties(genesisNFT_ID);
+    getTokenProperties(genesisNFT_ID.trim());
   };
 
   return (
