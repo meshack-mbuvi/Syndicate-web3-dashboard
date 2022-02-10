@@ -60,17 +60,25 @@ export const NFTChecker: React.FC = () => {
   useEffect(() => {
     if (!RugToken) return;
 
-    RugToken.totalSupply().then(async (totalSupply) =>
-      setCurrentSupply(
-        +getWeiAmount(totalSupply, parseInt(await RugToken.decimals()), false),
-      ),
-    );
+    try {
+      RugToken.totalSupply().then(async (totalSupply) =>
+        setCurrentSupply(
+          +getWeiAmount(
+            totalSupply,
+            parseInt(await RugToken.decimals()),
+            false,
+          ),
+        ),
+      );
+    } catch (error) {
+      console.log({ error });
+    }
 
     return () => {
       setCurrentSupply(0);
     };
   }, [RugToken]);
-  console.log({ currentSupply });
+
   useEffect(() => {
     if (!genesisNFT_ID || +genesisNFT_ID > currentSupply) {
       setShowDetails(false);
@@ -85,23 +93,26 @@ export const NFTChecker: React.FC = () => {
 
   const getTokenProperties = async (tokenId) => {
     setLoading(true);
+    try {
+      const tokenBalance = await RugClaimModule.getClaimAmount(tokenId);
+      const tokenProduction = await RugUtilityProperty.getProduction(tokenId);
+      const tokenDetails = await fetchCollectibleById({
+        account,
+        offset: "0",
+        contractAddress: genesisNFTContractAddress,
+        tokenId: genesisNFT_ID,
+      });
 
-    const tokenBalance = await RugClaimModule.getClaimAmount(tokenId);
-    const tokenProduction = await RugUtilityProperty.getProduction(tokenId);
-    const tokenDetails = await fetchCollectibleById({
-      account,
-      offset: "0",
-      contractAddress: genesisNFTContractAddress,
-      tokenId: genesisNFT_ID,
-    });
-
-    setTokenProperties({
-      tokenBalance,
-      tokenProduction,
-      permalink: tokenDetails?.permalink,
-    });
-    setLoading(false);
-    setShowDetails(true);
+      setTokenProperties({
+        tokenBalance,
+        tokenProduction,
+        permalink: tokenDetails?.permalink,
+      });
+      setLoading(false);
+      setShowDetails(true);
+    } catch (error) {
+      console.log({ error });
+    }
   };
 
   const onSubmit = (values) => {
