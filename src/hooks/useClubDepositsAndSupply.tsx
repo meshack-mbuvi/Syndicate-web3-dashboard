@@ -22,8 +22,13 @@ export function useClubDepositsAndSupply(contractAddress: string): {
   loadingClubDeposits;
 } {
   const {
-    erc20TokenSliceReducer: { erc20Token },
+    erc20TokenSliceReducer: {
+      erc20Token,
+      depositDetails: { depositTokenDecimals },
+    },
   } = useSelector((state: AppState) => state);
+
+  const { tokenDecimals } = erc20Token;
 
   const [totalDeposits, setTotalDeposits] = useState("");
   const [totalSupply, setTotalSupply] = useState("0");
@@ -43,8 +48,6 @@ export function useClubDepositsAndSupply(contractAddress: string): {
     skip: !contractAddress || isDemoMode,
   });
 
-  const { tokenDecimals } = erc20Token;
-  
   const { memberDeposits, accountTokens } = useAccountTokens();
 
   /**
@@ -69,7 +72,7 @@ export function useClubDepositsAndSupply(contractAddress: string): {
     const { totalDeposits, totalSupply } = syndicateDAO || {};
 
     setTotalSupply(getWeiAmount(totalSupply, tokenDecimals || 18, false));
-    setTotalDeposits(getWeiAmount(totalDeposits, 6, false));
+    setTotalDeposits(getWeiAmount(totalDeposits, depositTokenDecimals, false));
     setLoadingClubDeposits(false);
   }, [
     data,

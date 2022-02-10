@@ -114,7 +114,7 @@ export const AdvancedInputField = (props: {
           </div>
           <div
             className={cn(
-              "relative border-l-1 inline-flex items-center bg-black space-x-2 pl-5 pr-7 py-2",
+              "relative border-l-1 inline-flex items-center bg-black space-x-2",
               {
                 "border-blue-navy ring-0": focused && !error,
                 "border-gray-24": !focused,

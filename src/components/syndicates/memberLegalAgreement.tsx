@@ -5,7 +5,6 @@ import {
   ERC20TokenDefaultState,
   setERC20Token,
 } from "@/helpers/erc20TokenDetails";
-import useUSDCDetails from "@/hooks/useUSDCDetails";
 import { AppState } from "@/state";
 import { setClubMembers } from "@/state/clubMembers";
 import { setERC20TokenDetails } from "@/state/erc20token/slice";
@@ -56,14 +55,17 @@ const LegalAgreement: React.FC = () => {
   const dispatch = useDispatch();
 
   const {
-    initializeContractsReducer: { syndicateContracts },
     legalInfoReducer: {
       clubInfo: { adminName },
     },
     web3Reducer: {
       web3: { account, web3 },
     },
-    erc20TokenSliceReducer: { erc20Token },
+    erc20TokenSliceReducer: {
+      erc20Token,
+      // TODO: I think this should be in USD
+      depositDetails: { depositTokenSymbol },
+    },
   } = useSelector((state: AppState) => state);
 
   useEffect(() => {
@@ -73,12 +75,7 @@ const LegalAgreement: React.FC = () => {
         web3,
       );
 
-      dispatch(
-        setERC20Token(
-          clubERC20tokenContract,
-          syndicateContracts.DepositTokenMintModule,
-        ),
-      );
+      dispatch(setERC20Token(clubERC20tokenContract));
 
       return () => {
         dispatch(setERC20TokenDetails(ERC20TokenDefaultState));
@@ -86,8 +83,6 @@ const LegalAgreement: React.FC = () => {
       };
     }
   }, [clubAddress, account, router.isReady]);
-
-  const { depositTokenSymbol } = useUSDCDetails();
 
   const {
     control,

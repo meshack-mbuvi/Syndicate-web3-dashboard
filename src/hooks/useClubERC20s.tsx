@@ -158,12 +158,25 @@ const useClubERC20s = () => {
               );
           }
 
-          let depositERC20TokenSymbol = "USDC";
+          let depositERC20TokenSymbol = "ETH";
+          let depositERC20TokenDecimals = "18";
+          /**
+           * We are hardcoding these values because we have two deposit tokens.
+           * Eth and USDC. When scaling we can use the TOKEN mapping for hard coded
+           * values or coingecko to get the logos, or better yet the graph.
+           */
+          let depositTokenLogo = "/images/ethereum-logo.png";
           if (!isZeroAddress(depositToken)) {
-            depositERC20TokenSymbol = await new ClubERC20Contract(
+            const depositERC20Token = new ClubERC20Contract(
               depositToken,
               web3.web3,
-            ).symbol();
+            );
+            depositERC20TokenSymbol = await depositERC20Token.symbol();
+            depositERC20TokenDecimals = await depositERC20Token.decimals();
+            depositTokenLogo =
+              depositERC20TokenSymbol === "USDC"
+                ? "/images/TestnetTokenLogos/usdcIcon.svg"
+                : "";
           }
 
           const depositsEnabled = !pastDate(new Date(+endTime * 1000));
@@ -174,9 +187,20 @@ const useClubERC20s = () => {
           }
 
           //  calculate ownership share
-          const memberDeposits = getWeiAmount(depositAmount, 6, false);
+          const memberDeposits = getWeiAmount(
+            depositAmount,
+            depositERC20TokenDecimals
+              ? parseInt(depositERC20TokenDecimals)
+              : 18,
+            false,
+          );
 
-          const ownershipShare = (+memberDeposits * 100) / +totalDeposits;
+          const ownershipShare =
+            (+memberDeposits * 100) /
+            (depositERC20TokenSymbol === "ETH"
+              ? +totalDeposits / 10000
+              : +totalDeposits);
+
           const maxTotalSupplyInWei = getWeiAmount(
             maxTotalSupply,
             +decimals,
@@ -196,6 +220,7 @@ const useClubERC20s = () => {
             depositsEnabled,
             endTime,
             depositERC20TokenSymbol,
+            depositTokenLogo,
             maxMemberCount,
             maxTotalSupply: maxTotalSupplyInWei,
             requiredToken,

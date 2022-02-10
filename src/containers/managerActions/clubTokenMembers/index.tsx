@@ -18,7 +18,10 @@ const ClubTokenMembers = (): JSX.Element => {
   // retrieve state variables
   const {
     clubMembersSliceReducer: { clubMembers, loadingClubMembers },
-    erc20TokenSliceReducer: { erc20Token },
+    erc20TokenSliceReducer: {
+      erc20Token: { symbol },
+      depositDetails: { depositTokenSymbol },
+    },
     legalInfoReducer: {
       depositReadyInfo: { adminSigned },
       walletSignature: { signature },
@@ -122,7 +125,7 @@ const ClubTokenMembers = (): JSX.Element => {
         Header: `Deposit amount`,
         accessor: function depositAmount({
           depositAmount,
-          depositSymbol = "USDC",
+          depositSymbol = depositTokenSymbol,
         }) {
           return (
             <p className="flex text-white text-base my-1 leading-6">

@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { initialState, mintEndTime } from "./types";
+import { initialState, mintEndTime, tokenDetails } from "./types";
 
 const createInvestmentClubSlice = createSlice({
   name: "createInvestmentClub",
@@ -48,6 +48,9 @@ const createInvestmentClubSlice = createSlice({
         },
       };
     },
+    setDepositTokenDetails(state, action: PayloadAction<tokenDetails>) {
+      state.tokenDetails = action.payload;
+    },
   },
 });
 
@@ -60,5 +63,6 @@ export const {
   setTransactionHash,
   setClubCreationReceipt,
   resetClubCreationReduxState,
+  setDepositTokenDetails,
 } = createInvestmentClubSlice.actions;
 export default createInvestmentClubSlice.reducer;

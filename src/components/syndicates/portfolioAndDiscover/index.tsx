@@ -113,7 +113,6 @@ const PortfolioAndDiscover: React.FC = () => {
                   />
                 </div>
               ) : null}
-
               {otherClubERC20s.length ? (
                 <div className="mt-16">
                   <p className="text-xl font-whyte mb-8">Member</p>

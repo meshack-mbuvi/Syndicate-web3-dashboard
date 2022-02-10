@@ -1,7 +1,6 @@
 import { useCreateInvestmentClubContext } from "@/context/CreateInvestmentClubContext";
-import useUSDCDetails from "@/hooks/useUSDCDetails";
-import { AppState } from "@/state";
 import { floatedNumberWithCommas } from "@/utils/formattedNumbers";
+import { AppState } from "@/state";
 import { format } from "date-fns";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
@@ -19,9 +18,9 @@ const ReviewDetails: React.FC = () => {
     membersCount,
     mintEndTime,
     tokenCap,
+    tokenDetails: { depositTokenSymbol, depositTokenLogo },
   } = useSelector((state: AppState) => state.createInvestmentClubSliceReducer);
 
-  const { depositTokenSymbol, depositTokenLogo } = useUSDCDetails();
   const { currentStep } = useCreateInvestmentClubContext();
   const { setBackBtnDisabled, setNextBtnDisabled } =
     useCreateInvestmentClubContext();

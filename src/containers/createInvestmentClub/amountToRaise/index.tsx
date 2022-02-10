@@ -1,9 +1,11 @@
 import Fade from "@/components/Fade";
 import Modal, { ModalStyle } from "@/components/modal";
 import { useCreateInvestmentClubContext } from "@/context/CreateInvestmentClubContext";
-import useUSDCDetails from "@/hooks/useUSDCDetails";
 import { AppState } from "@/state";
-import { setTokenCap } from "@/state/createInvestmentClub/slice";
+import {
+  setTokenCap,
+  setDepositTokenDetails,
+} from "@/state/createInvestmentClub/slice";
 import {
   numberInputRemoveCommas,
   numberWithCommas,
@@ -12,13 +14,20 @@ import Image from "next/image";
 import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AdvancedInputField } from "../shared/AdvancedInputField";
+import TokenSelectModal from "@/containers/createInvestmentClub/shared/TokenSelectModal";
+import useModal from "@/hooks/useModal";
+import { defaultTokenDetails } from "@/containers/createInvestmentClub/shared/ClubTokenDetailConstants";
 
 const AmountToRaise: React.FC<{
   className?: string;
   editButtonClicked?: boolean;
 }> = ({ className, editButtonClicked }) => {
   const {
-    createInvestmentClubSliceReducer: { tokenCap, investmentClubSymbol },
+    createInvestmentClubSliceReducer: {
+      tokenCap,
+      tokenDetails: { depositTokenLogo, depositTokenSymbol },
+      investmentClubSymbol,
+    },
   } = useSelector((state: AppState) => state);
 
   const [error, setError] = useState<string | React.ReactNode>("");
@@ -27,21 +36,34 @@ const AmountToRaise: React.FC<{
 
   const dispatch = useDispatch();
 
-  const { depositTokenSymbol, depositTokenLogo } = useUSDCDetails();
-
   const { setNextBtnDisabled } = useCreateInvestmentClubContext();
 
   const usdcRef = useRef(null);
 
+  const [showTokenSelectModal, setShowTokenSelectModal] = useState(false);
+
   const extraAddonContent = (
-    <div className="flex justify-center items-center" ref={usdcRef}>
+    <button
+      className="flex justify-center items-center cursor-pointer pl-5 pr-4 py-2"
+      ref={usdcRef}
+      onClick={() => setShowTokenSelectModal(true)}
+    >
       <div className="mr-2 flex items-center justify-center">
-        <Image src={depositTokenLogo} width={20} height={20} />
+        <Image
+          src={depositTokenLogo || defaultTokenDetails.depositTokenLogo}
+          width={20}
+          height={20}
+        />
       </div>
       <div className="uppercase">
-        <span>{depositTokenSymbol}</span>
+        <span>
+          {depositTokenSymbol || defaultTokenDetails.depositTokenSymbol}
+        </span>
       </div>
-    </div>
+      <div className="inline-flex ml-4">
+        <img className="w-5 h-5" src="/images/double-chevron.svg" alt="" />
+      </div>
+    </button>
   );
 
   // get input value
@@ -63,6 +85,12 @@ const AmountToRaise: React.FC<{
     }
     amount ? dispatch(setTokenCap(amount)) : dispatch(setTokenCap("0"));
   }, [amount, dispatch, editButtonClicked, setNextBtnDisabled]);
+
+  useEffect(() => {
+    if (depositTokenSymbol == "") {
+      dispatch(setDepositTokenDetails(defaultTokenDetails));
+    }
+  }, [depositTokenSymbol, defaultTokenDetails, dispatch]);
 
   return (
     <>
@@ -122,7 +150,9 @@ const AmountToRaise: React.FC<{
               moreInfo: (
                 <div>
                   Members will receive 1 ✺{investmentClubSymbol} club token for
-                  every 1 USDC deposited.
+                  every{" "}
+                  {depositTokenSymbol === "ETH" ? "0.00001 ETH" : "1 USDC"}{" "}
+                  deposited.
                 </div>
               ),
               className: className,
@@ -130,6 +160,10 @@ const AmountToRaise: React.FC<{
           />
         </div>
       </Fade>
+      <TokenSelectModal
+        showModal={showTokenSelectModal}
+        closeModal={() => setShowTokenSelectModal(false)}
+      />
     </>
   );
 };
