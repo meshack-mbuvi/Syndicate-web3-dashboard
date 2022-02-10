@@ -841,8 +841,6 @@ const DepositSyndicate: React.FC = () => {
                   }}
                 />
               ) : showDepositProcessingModal && depositFailed ? (
-                // /* Using the same component above for the failure state to avoid mixing up the conditions.
-                // NOTE: Added showDepositProcessingModal to the condition below because it does not flip to false even after the modal is closed. */
                 <SuccessOrFailureContent
                   {...{
                     closeCard: closeSuccessModal,
@@ -1537,8 +1535,6 @@ const DepositSyndicate: React.FC = () => {
                     } else {
                       handleAllowanceApproval(e);
                     }
-
-                    // clear transaction status
                     setTransactionRejected(false);
                     setTransactionFailed(false);
                   }}
