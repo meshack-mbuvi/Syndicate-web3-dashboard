@@ -245,7 +245,6 @@ const SignAgreement: React.FC<ISignAgreementProps> = ({
   }, [currentField]);
 
   return (
-    // temp fix: uses negative mt to offset layout pt
     <div className="flex flex-col md:flex-row -mt-4 px-0 sm:px-10 mx-auto w-full md:space-x-28">
       <div className="flex flex-col w-full md:w-1/4 text-right md:sticky md:h-full top-20">
         <div className="md:pt-20">

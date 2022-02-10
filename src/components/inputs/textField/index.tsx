@@ -157,7 +157,6 @@ export const TextField: React.FC<IProps> = ({
             {errors?.[`${name}`]?.message}
           </p>
         ) : showWarning && warningText ? (
-          // show warning
           <p className="text-sm text-yellow-semantic mt-2">{warningText}</p>
         ) : undefined
       ) : (
