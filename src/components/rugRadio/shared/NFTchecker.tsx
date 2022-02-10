@@ -3,7 +3,7 @@ import { TextField } from "@/components/inputs";
 import NumberTreatment from "@/components/NumberTreatment";
 import { Spinner } from "@/components/shared/spinner";
 import { AppState } from "@/state";
-import { fetchCollectibleById } from "@/state/assets/slice";
+import { isDev } from "@/utils/environment";
 import { yupResolver } from "@hookform/resolvers/yup";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
@@ -21,22 +21,36 @@ const schema = () =>
   });
 
 export const NFTChecker: React.FC = () => {
+  const genesisNFTContractAddress = process.env.NEXT_PUBLIC_GenesisNFT;
+
   const {
+    web3Reducer: {
+      web3: {
+        ethereumNetwork: { invalidEthereumNetwork },
+      },
+    },
     initializeContractsReducer: {
-      syndicateContracts: { RugClaimModule, RugUtilityProperty },
+      syndicateContracts: {
+        RugClaimModule,
+        RugUtilityProperty,
+        GenesisNFTContract,
+      },
     },
   } = useSelector((state: AppState) => state);
 
   const [loading, setLoading] = useState(false);
   const [nftFound, setNftFound] = useState(false);
   const [showError, setShowError] = useState(false);
+  const [currentSupply, setCurrentSupply] = useState(0);
 
-  const [{ tokenBalance, tokenProduction, permalink }, setTokenProperties] =
-    useState({
-      tokenBalance: "0",
-      tokenProduction: "0",
-      permalink: "",
-    });
+  const openseaAssetBaseUrl = isDev
+    ? `https://testnets.opensea.io/${genesisNFTContractAddress}`
+    : `https://opensea.io/assets/${genesisNFTContractAddress}`;
+
+  const [{ tokenBalance, tokenProduction }, setTokenProperties] = useState({
+    tokenBalance: "0",
+    tokenProduction: "0",
+  });
 
   const {
     control,
@@ -51,6 +65,17 @@ export const NFTChecker: React.FC = () => {
   const { genesisNFT_ID } = watch();
 
   useEffect(() => {
+    if (!GenesisNFTContract) return;
+
+    GenesisNFTContract.currentSupply().then((supply) =>
+      setCurrentSupply(+supply),
+    );
+    return () => {
+      setCurrentSupply(0);
+    };
+  }, [GenesisNFTContract]);
+
+  useEffect(() => {
     setNftFound(false);
     setShowError(false);
 
@@ -59,32 +84,25 @@ export const NFTChecker: React.FC = () => {
     };
   }, [genesisNFT_ID]);
 
-  const genesisNFTContractAddress = process.env.NEXT_PUBLIC_GenesisNFT;
-
   const getTokenProperties = async (tokenId) => {
+    if (tokenId > +currentSupply || tokenId == 0) {
+      setNftFound(false);
+    } else {
+      setNftFound(true);
+    }
+
     setLoading(true);
 
     try {
-      const tokenDetails = await fetchCollectibleById({
-        offset: "0",
-        contractAddress: genesisNFTContractAddress,
-        tokenId: genesisNFT_ID,
+      const tokenBalance = await RugClaimModule.getClaimAmount(tokenId);
+      const tokenProduction = await RugUtilityProperty.getProduction(tokenId);
+
+      setTokenProperties({
+        tokenBalance,
+        tokenProduction,
       });
-
-      if (tokenDetails) {
-        const tokenBalance = await RugClaimModule.getClaimAmount(tokenId);
-        const tokenProduction = await RugUtilityProperty.getProduction(tokenId);
-
-        setTokenProperties({
-          tokenBalance,
-          tokenProduction,
-          permalink: tokenDetails?.permalink,
-        });
-        setNftFound(true);
-        setShowError(false);
-      } else {
-        setShowError(true);
-      }
+      setNftFound(true);
+      setShowError(false);
 
       setLoading(false);
     } catch (error) {
@@ -97,7 +115,7 @@ export const NFTChecker: React.FC = () => {
 
     if (!genesisNFT_ID) return;
 
-    getTokenProperties(genesisNFT_ID.trim());
+    getTokenProperties(+genesisNFT_ID.trim());
   };
 
   return (
@@ -147,9 +165,13 @@ export const NFTChecker: React.FC = () => {
                 </p>
               </div>
 
-              {permalink ? (
+              {genesisNFT_ID &&
+              nftFound &&
+              !showError &&
+              !loading &&
+              !invalidEthereumNetwork ? (
                 <a
-                  href={permalink}
+                  href={`${openseaAssetBaseUrl}/${genesisNFT_ID}`}
                   className="flex justify-center border cursor-pointer text-center w-full px-8 py-3.5 rounded-lg focus:outline-none bg-white text-black"
                   target="_blank"
                   rel="noreferrer"

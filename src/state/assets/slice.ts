@@ -148,7 +148,6 @@ export const fetchCollectibleById = async (
 
   try {
     const { assets } = await getOpenseaTokens(account, contractAddress, offset);
-    console.log({ ...assets });
 
     return assets.filter((asset) => asset.token_id === tokenId)[0];
   } catch (error) {
