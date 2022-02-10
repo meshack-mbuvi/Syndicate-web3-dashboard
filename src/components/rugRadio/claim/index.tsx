@@ -22,7 +22,7 @@ export const ClaimComponent: React.FC = () => {
       web3: {
         status,
         account,
-        ethereumNetwork: {  invalidEthereumNetwork },
+        ethereumNetwork: { invalidEthereumNetwork },
       },
     },
   } = useSelector((state: AppState) => state);
@@ -42,6 +42,7 @@ export const ClaimComponent: React.FC = () => {
       setShowClaimComponent(false);
       return;
     }
+
     const showClaim = localStorage.getItem("showClaim");
 
     if (!showClaim) {
@@ -98,7 +99,8 @@ export const ClaimComponent: React.FC = () => {
                     <p className="h1 text-center">Rug Token Claim Dash</p>
                     {claimEnabled == false &&
                       status == Status.CONNECTED &&
-                      !invalidEthereumNetwork && (
+                      !invalidEthereumNetwork &&
+                      !loading && (
                         <p className="h3 text-center text-gray-syn4 font-whyte">
                           Starts in{" "}
                           {getCountDownDays(`${claimStartTime * 1000}`)}
@@ -184,7 +186,6 @@ export const ClaimComponent: React.FC = () => {
         </div>
       </div>
 
-      {/* NFT checker component */}
       <Modal
         {...{
           show: showNFTchecker,
