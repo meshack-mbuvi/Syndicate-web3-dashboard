@@ -55,6 +55,11 @@ export const numberInputRemoveCommas = (
   if (afterDecimal && afterDecimal.length > 2) {
     newVal = beforeDecimal + "." + afterDecimal.slice(0, 2);
   }
+
+  // check and remove leading zeroes if not followed by a decimal point
+  if ( newVal.length > 1 && newVal.charAt(0) === "0" && newVal.charAt(1) !== "."){
+    newVal = newVal.slice(1)
+  }
   // remove commas from big numbers before we set state
   return newVal.replace(/,/g, "");
 };
