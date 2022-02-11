@@ -437,6 +437,9 @@ const CollectibleMedia: FC<ICollectibleMedia> = ({
       </div>
     );
   }
+  // If we don't return a React node, the app crashes with
+  // Error: Minified React error #152; visit https://reactjs.org/docs/error-decoder.html?invariant=152&args[]=L
+  return <></>;
 };
 
 export default CollectibleMedia;
