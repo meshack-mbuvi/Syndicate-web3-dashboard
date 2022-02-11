@@ -87,6 +87,7 @@ module.exports = {
         100: "30rem",
         104: "26rem",
         202: "50.5rem",
+        '2screen': "200vh",
       }),
       width: () => ({
         "fit-content": "fit-content",
@@ -110,6 +111,7 @@ module.exports = {
         104: "26rem",
         480: "30rem",
         816: "50.5rem",
+        '2screen': "200vh",
       },
       backgroundOpacity: {
         15: "0.15",

@@ -72,6 +72,6 @@
 }
 
 .react-datepicker__input-container > input {
-  @apply block text-white bg-black border
-  border-gray-24 rounded-md shadow-sm font-whyte h-14 relative w-full focus:outline-none focus:ring-0;
+  @apply block text-white bg-black bg-opacity-0 border
+  rounded-md shadow-sm font-whyte h-14 relative w-full focus:outline-none focus:ring-0;
 }

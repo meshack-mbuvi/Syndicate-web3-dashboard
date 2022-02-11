@@ -9,13 +9,15 @@ export const InputFieldWithDate = (props: {
     selectedDate?: Date,
     placeholderLabel?: string,
     infoLabel?: string,
+    isInErrorState?: boolean,
     extraClasses?: string,
     onChange: (date: Date | null) => void,
 }) => {
     const {
         selectedDate, 
-        placeholderLabel = "Choose date", 
+        placeholderLabel = "Select a date", 
         infoLabel, 
+        isInErrorState = false,
         extraClasses = "", 
         onChange
     } = props;
@@ -37,11 +39,11 @@ export const InputFieldWithDate = (props: {
                     showPopperArrow={false}
                     dropdownMode="select"
                     placeholderText={placeholderLabel}
-                    className={`focus:border-blue-navy hover:border-gray-syn3 border-gray-24 transition-all ${extraClasses}`}
+                    className={`focus:border-blue-navy hover:border-gray-syn3 ${isInErrorState ? "border-red-error" : "border-gray-24"} transition-all ${extraClasses}`}
                 />
             </div>
             {infoLabel && 
-                <div className={`text-sm mt-2 text-gray-syn2`}>{infoLabel}</div>
+                <div className={`text-sm mt-2 ${isInErrorState ? "text-red-error" : "text-gray-syn2"}`}>{infoLabel}</div>
             }
         </>
     );

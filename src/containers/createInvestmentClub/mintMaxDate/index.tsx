@@ -190,7 +190,7 @@ const MintMaxDate: FC<{ className?: string }> = ({ className }) => {
                   formatWeekDay={(nameOfDay) => nameOfDay.substr(0, 1)}
                   showPopperArrow={false}
                   dropdownMode="select"
-                  className="focus:border-blue-navy hover:border-gray-syn3"
+                  className="focus:border-blue-navy hover:border-gray-syn3 border-gray-24"
                 />
               </div>
               {warning && (

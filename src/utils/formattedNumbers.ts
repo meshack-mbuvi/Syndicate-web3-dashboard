@@ -64,6 +64,19 @@ export const numberInputRemoveCommas = (
   return newVal.replace(/,/g, "");
 };
 
+export const numberStringInputRemoveCommas = (
+  input: string,
+) => {
+  let newVal;
+  newVal = input;
+  const [beforeDecimal, afterDecimal] = input.split(".");
+  if (afterDecimal && afterDecimal.length > 2) {
+    newVal = beforeDecimal + "." + afterDecimal.slice(0, 2);
+  }
+  // remove commas from big numbers before we set state
+  return newVal.replace(/,/g, "");
+};
+
 export const truncateDecimals = (
   inputNumber: number,
   digits: number,

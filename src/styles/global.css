@@ -518,7 +518,7 @@ input {
 
 /* react-datepicker wrapper */
 .react-datepicker-wrapper {
-  display: flex;
+  display: flex !important;
   flex-grow: 1;
 }
 
