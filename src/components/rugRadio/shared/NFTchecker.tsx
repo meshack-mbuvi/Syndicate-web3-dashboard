@@ -34,6 +34,7 @@ export const NFTChecker: React.FC = () => {
         RugClaimModule,
         RugUtilityProperty,
         GenesisNFTContract,
+        rugBonusClaimModule,
       },
     },
   } = useSelector((state: AppState) => state);
@@ -47,10 +48,12 @@ export const NFTChecker: React.FC = () => {
     ? `https://testnets.opensea.io/${genesisNFTContractAddress}`
     : `https://opensea.io/assets/${genesisNFTContractAddress}`;
 
-  const [{ tokenBalance, tokenProduction }, setTokenProperties] = useState({
-    tokenBalance: "0",
-    tokenProduction: "0",
-  });
+  const [{ tokenBalance, tokenProduction, tokenBonus }, setTokenProperties] =
+    useState({
+      tokenBalance: "0",
+      tokenProduction: "0",
+      tokenBonus: "0",
+    });
 
   const {
     control,
@@ -96,10 +99,12 @@ export const NFTChecker: React.FC = () => {
     try {
       const tokenBalance = await RugClaimModule.getClaimAmount(tokenId);
       const tokenProduction = await RugUtilityProperty.getProduction(tokenId);
+      const tokenBonus = await rugBonusClaimModule.getClaimAmount(tokenId);
 
       setTokenProperties({
         tokenBalance,
         tokenProduction,
+        tokenBonus,
       });
       setNftFound(true);
       setShowError(false);
@@ -152,10 +157,15 @@ export const NFTChecker: React.FC = () => {
 
           {nftFound && !showError && !loading && !invalidEthereumNetwork ? (
             <div className="space-y-4">
-              <div className="space-y-1">
+              <div className="space-y-2">
                 <p className="text-center leading-6">
-                  <NumberTreatment numberValue={tokenBalance} /> unclaimed RUG
-                  tokens, generating {tokenProduction} RUG per day.
+                  <NumberTreatment
+                    numberValue={`${
+                      parseInt(tokenBalance) + parseInt(tokenBonus)
+                    }`}
+                  />
+                  {` unclaimed RUG tokens (including a ${tokenBonus} RUG bonus),
+                  generating ${tokenProduction} RUG per day.`}
                 </p>
 
                 <p className="text-gray-syn4 small-body text-center leading-5.5">
