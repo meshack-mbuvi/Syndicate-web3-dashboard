@@ -607,7 +607,7 @@ export const NFTDetails: React.FC = () => {
                     );
                   })
                 ) : (
-                  <>{loaderContent}</>
+                  null
                 )}
               </div>
             </InfiniteScroll>
