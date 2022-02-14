@@ -49,6 +49,7 @@ import { AbiItem } from "web3-utils";
 import BeforeGettingStarted from "../../beforeGettingStarted";
 import ConnectWalletAction from "../shared/connectWalletAction";
 import axios from "axios";
+import { useIsClubMember } from "@/hooks/useClubOwner";
 
 const DepositSyndicate: React.FC = () => {
   // HOOK DECLARATIONS
@@ -127,6 +128,7 @@ const DepositSyndicate: React.FC = () => {
   const [claimBalanceDecimalValue, setClaimBalanceDecimalValue] = useState("");
   const [invalidClaim, setInvalidClaim] = useState<boolean>(false);
   const [transactionTooLong, setTransactionTooLong] = useState<boolean>(false);
+  const [checkSuccess, setCheckSuccess] = useState(false);
 
   // Deposit token value Price in USD
   const [depositTokenPriceInUSDState, setDepositTokenPriceInUSDState] =
@@ -158,7 +160,7 @@ const DepositSyndicate: React.FC = () => {
 
   useEffect(() => {
     // calculate member ownership for the intended deposits
-    if (totalSupply) {
+    if (totalSupply && !checkSuccess) {
       const memberTokens = ethDepositToken
         ? +depositAmountFinalized * 10000
         : +depositAmountFinalized;
@@ -250,36 +252,39 @@ const DepositSyndicate: React.FC = () => {
 
   const onTxReceipt = () => {
     startPolling(1000); // start polling for member stakes
-
     setMetamaskConfirmPending(false);
-    setSubmitting(false);
     if (claimEnabled) {
+      setSubmitting(false);
       setSuccessfulClaim(true);
+      dispatch(setERC20Token(erc20TokenContract));
     } else {
-      setSuccessfulDeposit(true);
+      setCheckSuccess(true);
     }
 
-    /**
-     * Removing this because we are currently fetching the ownership share from the graph
-     */
-
-    // setNewMemberTokens(+accountTokens + +memberTokens);
-
-    // // Bug fix: setting new ownership share to an addition of memberOwnership and ownershipShare
-    // // leads to a situation where the total percentage ownership on the success modal exceeds 100% if the club has only 1 member.
-    // // see this screenshot: https://drive.google.com/file/d/1l0kS3hVKqG_VoM6pf7UpX93DnKSTyRMU/view?usp=sharing
-    // if (+memberOwnership === 100) {
-    //   setNewOwnershipShare(100);
-    // } else {
-    //   // % member ownership after successful deposit.
-    //   setNewOwnershipShare(memberOwnership);
-    // }
-
-    dispatch(setERC20Token(erc20TokenContract));
-
-    // Refetch after a second
     setTimeout(() => refetchMemberData(), 4000);
   };
+
+  const [, setpreviousAccountTokens] = useState(accountTokens);
+  const isMember = useIsClubMember();
+
+  // since the subgraph might give us old data on refetch,
+  // we need to compare old and new data as we continue to poll.
+  useEffect(() => {
+    if (!checkSuccess) return;
+    setpreviousAccountTokens((prevState) => {
+      if (
+        (isMember && +prevState > 0 && +prevState < +accountTokens) ||
+        (!isMember && +prevState < +accountTokens)
+      ) {
+        setSuccessfulDeposit(true);
+        setCheckSuccess(false);
+        setSubmitting(false);
+
+        dispatch(setERC20Token(erc20TokenContract));
+      }
+      return accountTokens;
+    });
+  }, [accountTokens, checkSuccess]);
 
   const [transactionRejected, setTransactionRejected] = useState(false);
   const [transactionFailed, setTransactionFailed] = useState(false);
@@ -890,6 +895,7 @@ const DepositSyndicate: React.FC = () => {
           />
 
           {status !== Status.DISCONNECTED &&
+          !checkSuccess &&
           (loading || merkleLoading || claimLoading || airdropInfoLoading) ? (
             <div className="h-fit-content rounded-2-half pt-6 px-8 pb-16">
               <SkeletonLoader
@@ -1720,9 +1726,10 @@ const DepositSyndicate: React.FC = () => {
                   );
                 })}
             </div>
-            {metamaskConfirmPending ||
-            submitting ||
-            submittingAllowanceApproval ? (
+            {(metamaskConfirmPending ||
+              submitting ||
+              submittingAllowanceApproval) &&
+            !successfulDeposit ? (
               <div
                 className={`mt-6 rounded-custom flex flex-col items-center ${
                   metamaskConfirmPending
