@@ -39,7 +39,7 @@ export const floatedNumberWithCommas = (number): string => {
 
     // performs a negative look ahead. Finds .00 which does not have a digit (0-9) after it
     return numberWithCommas(numberTo2decimalsWithoutRoundingUp).replace(
-      /.00(?!\d)/i,
+      /\.00(?!\d)/g,
       "",
     );
   } catch (error) {
