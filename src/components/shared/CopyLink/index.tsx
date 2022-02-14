@@ -34,12 +34,14 @@ const CopyLink: FC<Props> = ({
           <LockIcon color="text-gray-syn7" />
         </div>
 
-        <div className="overflow-hidden bg-gray-syn7 rounded-lg h-4.5 w-60"></div>
+        <div className="overflow-hidden bg-gray-syn7 rounded-lg h-4.5 sm:w-60 w-1/2"></div>
         <div
           className={`flex-grow-1 px-3 bg-gray-syn6 h-10 flex justify-center items-center rounded`}
         >
           <CopyLinkIcon color="text-gray-syn4" />
-          <span className="ml-3 font-whyte-medium text-gray-syn4">Copy</span>
+          <span className="ml-3 font-whyte-medium text-gray-syn4 sm:text-base text-sm">
+            Copy
+          </span>
         </div>
       </div>
     </div>
@@ -80,7 +82,7 @@ const CopyLink: FC<Props> = ({
             >
               {showCopiedState ? <CopiedLinkIcon /> : <CopyLinkIcon />}
               <span
-                className={`ml-3 font-whyte-medium ${
+                className={`ml-3 font-whyte-medium sm:text-base text-sm ${
                   showCopiedState && "text-green"
                 }`}
               >
