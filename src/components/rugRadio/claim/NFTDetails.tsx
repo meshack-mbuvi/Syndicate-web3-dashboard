@@ -533,7 +533,7 @@ export const NFTDetails: React.FC = () => {
               ) : (
                 <>
                   <TabComponent tabContents={tabContents} />
-                  {+totalBonusToClaim == 0 ? (
+                  {+totalBonusToClaim > 0 ? (
                     <BonusTokenClaim
                       handleClaimBonus={handleClaimBonus}
                       bonusAmount={totalBonusToClaim}
@@ -607,7 +607,7 @@ export const NFTDetails: React.FC = () => {
                     );
                   })
                 ) : (
-                  <>{loaderContent}</>
+                  null
                 )}
               </div>
             </InfiniteScroll>
