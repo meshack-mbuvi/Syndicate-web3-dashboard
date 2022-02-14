@@ -7,6 +7,7 @@ import { ERC721MintPolicyContract } from "@/ClubERC20Factory/mintPolicyERC721";
 import { MintPolicyContract } from "@/ClubERC20Factory/policyMintERC20";
 import { publicMintWithFeeModuleContract } from "@/ClubERC20Factory/publicMintWithFeeModule";
 import { PublicOnePerAddressModuleContract } from "@/ClubERC20Factory/publicOnePerAddressModule";
+import { RugBonusTokenModule } from "@/ClubERC20Factory/RugRadio/RugBonusTokenModule";
 import { RugERC20ClaimModule } from "@/ClubERC20Factory/RugRadio/RugERC20ClaimModule";
 import { RugUtilityProperties } from "@/ClubERC20Factory/RugRadio/RugUtilityProperties";
 import { RugUtilityMintModuleContract } from "@/ClubERC20Factory/rugUtilityMintModule";
@@ -32,6 +33,7 @@ export interface ISyndicateContracts {
   RugUtilityProperty: RugUtilityProperties;
   RugToken: ClubERC20Contract;
   GenesisNFTContract;
+  rugBonusClaimModule: RugBonusTokenModule;
 }
 
 interface InitialState {
@@ -57,6 +59,7 @@ const initialState: InitialState = {
     RugUtilityProperty: null,
     RugToken: null,
     GenesisNFTContract: null,
+    rugBonusClaimModule: null,
   },
 };
 
