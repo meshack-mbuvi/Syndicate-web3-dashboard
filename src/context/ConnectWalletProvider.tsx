@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { getSyndicateContracts } from "@/ClubERC20Factory";
-import { amplitudeLogger, Flow } from "@/components/amplitude";
+import { Flow, amplitudeLogger } from "@/components/amplitude";
 import {
   ERROR_WALLET_CONNECTION,
   SUCCESSFUL_WALLET_CONNECT,
@@ -28,8 +28,8 @@ import { parse, stringify } from "flatted";
 import { isEmpty } from "lodash";
 import router from "next/router";
 import React, {
-  createContext,
   ReactNode,
+  createContext,
   useContext,
   useEffect,
   useState,
@@ -103,6 +103,7 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
         rpc: {
           1: `${process.env.NEXT_PUBLIC_ALCHEMY_MAINNET}`,
           4: `${process.env.NEXT_PUBLIC_ALCHEMY_RINKEBY}`,
+          137: `${process.env.NEXT_PUBLIC_ALCHMEY_POLYGON}`,
         },
       },
     },
