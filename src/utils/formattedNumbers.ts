@@ -36,8 +36,10 @@ export const floatedNumberWithCommas = (number): string => {
     const numberTo2decimalsWithoutRoundingUp = number
       .toString()
       .match(/^-?\d+(?:\.\d{0,4})?/)[0];
+
+    // performs a negative look ahead. Finds .00 which does not have a digit (0-9) after it
     return numberWithCommas(numberTo2decimalsWithoutRoundingUp).replace(
-      ".00",
+      /.00(?!\d)/i,
       "",
     );
   } catch (error) {
@@ -57,16 +59,18 @@ export const numberInputRemoveCommas = (
   }
 
   // check and remove leading zeroes if not followed by a decimal point
-  if ( newVal.length > 1 && newVal.charAt(0) === "0" && newVal.charAt(1) !== "."){
-    newVal = newVal.slice(1)
+  if (
+    newVal.length > 1 &&
+    newVal.charAt(0) === "0" &&
+    newVal.charAt(1) !== "."
+  ) {
+    newVal = newVal.slice(1);
   }
   // remove commas from big numbers before we set state
   return newVal.replace(/,/g, "");
 };
 
-export const numberStringInputRemoveCommas = (
-  input: string,
-) => {
+export const numberStringInputRemoveCommas = (input: string) => {
   let newVal;
   newVal = input;
   const [beforeDecimal, afterDecimal] = input.split(".");
