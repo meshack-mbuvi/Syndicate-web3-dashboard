@@ -400,7 +400,7 @@ export const NFTDetails: React.FC = () => {
       {[...Array(4)].map((_, idx) => (
         <div
           key={idx}
-          className="col-span-12 md:col-span-6 lg:col-span-6 2xl:w-88 w-full max-w-480 h-full"
+          className="col-span-12 lg:col-span-6 2xl:w-88 w-full max-w-480 h-full"
         >
           <>
             <div className="w-full">
@@ -486,7 +486,7 @@ export const NFTDetails: React.FC = () => {
             )}
           </div>
           <div className="flex flex-col lg:flex-row w-full mx-auto justify-center space-y-5 space-x-5">
-            <div className="max-w-480 mx-4 md:mx-auto w-full lg:hidden">
+            <div className="max-w-480 mx-4 md:mx-auto w-full lg:hidden space-y-6">
               {loading ? (
                 <div className="p-8 pt-6 space-y-8 bg-gray-syn8 rounded-2.5xl">
                   <div className="w-full flex space-x-6 leading-4">
@@ -531,7 +531,15 @@ export const NFTDetails: React.FC = () => {
                   </div>
                 </div>
               ) : (
-                <TabComponent tabContents={tabContents} />
+                <>
+                  <TabComponent tabContents={tabContents} />
+                  {+totalBonusToClaim == 0 ? (
+                    <BonusTokenClaim
+                      handleClaimBonus={handleClaimBonus}
+                      bonusAmount={totalBonusToClaim}
+                    />
+                  ) : null}
+                </>
               )}
             </div>
             <InfiniteScroll
