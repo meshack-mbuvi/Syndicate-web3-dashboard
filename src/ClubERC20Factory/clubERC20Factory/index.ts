@@ -1,3 +1,4 @@
+import { isDev } from "@/utils/environment";
 import CLUB_ERC20_FACTORY_ABI from "src/contracts/ERC20ClubFactoryDepositToken.json";
 import { getGnosisTxnInfo } from "../shared/gnosisTransactionInfo";
 
@@ -115,5 +116,52 @@ export class ClubERC20Factory {
         throw "Transaction Failed";
       }
     }
+  }
+
+  /**
+   * gets gas estimate
+   * @param account string
+   * @param onResponse called on success
+   * 
+   * createWithMintParams arguments are hardcoded because;
+   * 1. The gasEstimate function will always return same value, it doesn't matter whether you mint 50 or 5million.
+   * 2. The gas estimate feature is at the first step of create flow, therefore, we can't use data from redux because it's empty.
+   */
+  public async getEstimateGas(
+    account: string,
+    onResponse: (gas?: number) => void,
+  ): Promise<void> {
+    const clubTokenName = "Alpha DAO";
+    const tokenSymbol = "ALDA";
+    const startTime = parseInt((new Date().getTime() / 1000).toString());
+    const endTime = 1688849940;
+    const maxMembers = 99;
+    const tokenCap = BigInt(5000 * 10 ** 18);
+    const usdcAddress = isDev
+      ? "0xeb8f08a975Ab53E34D8a0330E0D34de942C95926"
+      : "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48";
+
+    await new Promise(() => {
+      this.clubERC20Factory.methods
+        .createWithMintParams(
+          clubTokenName,
+          tokenSymbol,
+          startTime,
+          endTime,
+          maxMembers,
+          tokenCap,
+          "0x0000000000000000000000000000000000000000",
+          0,
+          usdcAddress,
+        )
+        .estimateGas(
+          {
+            from: account,
+          },
+          (_error, gasAmount) => {
+            if (gasAmount) onResponse(gasAmount);
+          },
+        );
+    });
   }
 }

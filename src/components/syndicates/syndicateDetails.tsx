@@ -263,7 +263,7 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
           <div>
             <div className="flex justify-center items-center">
               <div className="mr-8">
-                {loading || loadingClubDeposits || totalDeposits == "" ? (
+                {loading || loadingClubDeposits || totalDeposits === "" ? (
                   <SkeletonLoader
                     height="20"
                     width="20"

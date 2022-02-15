@@ -93,6 +93,8 @@ module.exports = {
         "fit-content": "fit-content",
         "2/1": "200%",
         "5.21/12": "43.47826%",
+        7.5: "1.875rem",
+        62: "15.5rem",
         88: "22rem",
         100: "30rem",
         104: "26rem",
@@ -364,6 +366,7 @@ module.exports = {
       },
       margin: {
         0.5: "0.15rem",
+        18: "4.875rem",
         24.5: "6.5rem",
         25.5: "6.25rem",
         27: "6.875rem",

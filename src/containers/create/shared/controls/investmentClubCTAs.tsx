@@ -1,24 +1,48 @@
 import { useCreateInvestmentClubContext } from "@/context/CreateInvestmentClubContext";
 import { useSpring, animated } from "react-spring";
+import { AppState } from "@/state";
+import { setDispatchCreateFlow, showWalletModal } from "@/state/wallet/actions";
+import { useDispatch, useSelector } from "react-redux";
 
 const InvestmentClubCTAs: React.FC = () => {
   const {
     reviewStep,
-    lastStep,
     firstStep,
     handleBack,
     handleNext,
     backBtnDisabled,
     nextBtnDisabled,
-    handleCreateInvestmentClub,
+    setShowModal,
     showNextButton,
+    handleCreateInvestmentClub,
+    isWalletConfrimed,
   } = useCreateInvestmentClubContext();
+
+  const {
+    web3Reducer: { web3 },
+  } = useSelector((state: AppState) => state);
+
+  const dispatch = useDispatch();
+
+  const connectWallet = () => {
+    dispatch(showWalletModal());
+    dispatch(setDispatchCreateFlow(true));
+  };
+
+  const confirmWallet = () => {
+    setShowModal((prev) => ({
+      ...prev,
+      warningModal: true,
+    }));
+  };
 
   const styles = useSpring({
     to: { y: 0 },
     from: { y: -50 },
     delay: 500,
   });
+
+  const { account } = web3;
 
   return (
     <animated.div
@@ -55,13 +79,23 @@ const InvestmentClubCTAs: React.FC = () => {
                 ? "green-CTA transition-all"
                 : "primary-CTA"
             }`}
-            onClick={reviewStep ? handleCreateInvestmentClub : handleNext}
+            onClick={
+              reviewStep
+                ? !account
+                  ? connectWallet
+                  : isWalletConfrimed
+                  ? handleCreateInvestmentClub
+                  : confirmWallet
+                : handleNext
+            }
             disabled={nextBtnDisabled}
           >
             {reviewStep
-              ? "Create investment club"
-              : lastStep
-              ? "Review"
+              ? !account
+                ? "Connect wallet to create"
+                : isWalletConfrimed
+                ? "Create investment club"
+                : "Confirm wallet"
               : "Next"}
           </button>
         )}

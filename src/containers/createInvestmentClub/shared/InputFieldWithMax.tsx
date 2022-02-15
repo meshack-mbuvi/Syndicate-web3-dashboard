@@ -20,7 +20,7 @@ export const InputFieldWithMax = (props: {
   extraAddon?: any;
   isNumber?: boolean;
   hasError?: boolean;
-  moreInfo?: string;
+  moreInfo?: string | React.ReactNode;
   addSettingDisclaimer?: boolean;
   customClass?: { addon?: string; input?: string };
   className?: string;
@@ -45,13 +45,14 @@ export const InputFieldWithMax = (props: {
   return (
     <div className={className}>
       <div className="flex justify-between">
-        <label htmlFor={label} className="h3 pb-6">
+        <label htmlFor={label} className="h3 pb-1">
           {label}
         </label>
       </div>
+      <span className="text-sm text-gray-syn4">{moreInfo}</span>
       <div className="flex">
         <div
-          className="mt-1 mb-2 flex rounded-md shadow-sm w-full lg:w-full"
+          className="mt-4 mb-2 flex rounded-md shadow-sm w-full lg:w-full"
           data-tip
           data-for="disclaimer-tip"
         >
@@ -109,9 +110,6 @@ export const InputFieldWithMax = (props: {
           >
             {(error || warning) && !disabled ? error || warning : ""}
           </p>
-        )}
-        {moreInfo && !(error || warning) && (
-          <span className="text-sm text-gray-3 pt-2">{moreInfo}</span>
         )}
       </div>
     </div>
