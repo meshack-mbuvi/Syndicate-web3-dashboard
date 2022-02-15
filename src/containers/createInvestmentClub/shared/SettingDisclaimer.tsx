@@ -11,7 +11,7 @@ export const SettingsDisclaimerTooltip: React.FC<{
       place="right"
       effect="solid"
       className="actionsTooltip"
-      arrowColor="transparent"
+      arrowColor="#222529"
       backgroundColor="#222529"
     >
       {tip}

@@ -15,14 +15,19 @@ export const numberWithCommas = (number: string | number): string => {
 };
 
 // add two decimal places
-export const floatedNumberWithCommas = (number): string => {
+export const floatedNumberWithCommas = (number, ethValue = false): string => {
   if (!number || number === "NaN") {
     return "0";
   }
 
   // return this for values smaller than 0.01 since we use 2dp
+  // 0.01 is significant for ETH deposits. Adding an extra check here.
   if (number < 0.01 && number > 0) {
-    return "< 0.01";
+    if (!ethValue) {
+      return "< 0.01";
+    } else {
+      return number.toString().match(/^-?\d+(?:\.\d{0,4})?/)[0];
+    }
   }
 
   // do not show decimal points if there are only zeros after the decimal point.
@@ -36,8 +41,10 @@ export const floatedNumberWithCommas = (number): string => {
     const numberTo2decimalsWithoutRoundingUp = number
       .toString()
       .match(/^-?\d+(?:\.\d{0,4})?/)[0];
+
+    // performs a negative look ahead. Finds .00 which does not have a digit (0-9) after it
     return numberWithCommas(numberTo2decimalsWithoutRoundingUp).replace(
-      ".00",
+      /\.00(?!\d)/g,
       "",
     );
   } catch (error) {
@@ -52,6 +59,26 @@ export const numberInputRemoveCommas = (
   const { value } = event.target;
   newVal = value;
   const [beforeDecimal, afterDecimal] = value.split(".");
+  if (afterDecimal && afterDecimal.length > 2) {
+    newVal = beforeDecimal + "." + afterDecimal.slice(0, 2);
+  }
+
+  // check and remove leading zeroes if not followed by a decimal point
+  if (
+    newVal.length > 1 &&
+    newVal.charAt(0) === "0" &&
+    newVal.charAt(1) !== "."
+  ) {
+    newVal = newVal.slice(1);
+  }
+  // remove commas from big numbers before we set state
+  return newVal.replace(/,/g, "");
+};
+
+export const numberStringInputRemoveCommas = (input: string) => {
+  let newVal;
+  newVal = input;
+  const [beforeDecimal, afterDecimal] = input.split(".");
   if (afterDecimal && afterDecimal.length > 2) {
     newVal = beforeDecimal + "." + afterDecimal.slice(0, 2);
   }

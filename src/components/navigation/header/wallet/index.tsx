@@ -46,7 +46,11 @@ export const Wallet: React.FC = () => {
         Connect Wallet
       </span>
       <div className="flex items-center ml-2">
-        <img src="/images/chevron-down.svg" alt="down-arrow" />
+        <img
+          src="/images/chevron-right.svg"
+          alt="right-arrow"
+          className="w-4 h-3"
+        />
       </div>
     </button>
   );

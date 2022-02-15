@@ -106,7 +106,7 @@ const GenerateDepositLink: FC<ILinK> = ({
               }}
             >
               <button
-                className={`bg-green rounded-custom w-full flex items-center justify-center py-4 mb-4 ${
+                className={`bg-green rounded-custom w-full flex items-center justify-center mb-4 ${
                   isDemoMode ? "cursor-pointer" : ""
                 }`}
                 onMouseEnter={() => setOpen(true)}
@@ -115,7 +115,7 @@ const GenerateDepositLink: FC<ILinK> = ({
                 <div className="flex-grow-1 mr-3">
                   <CopyLinkIcon color="text-black" />
                 </div>
-                <p className="text-black pr-1 whitespace-nowrap font-whyte-medium">
+                <p className="text-black pr-1 whitespace-nowrap font-whyte-medium sm:text-base text-sm">
                   Generate link to invite members
                 </p>
               </button>
@@ -138,7 +138,9 @@ const GenerateDepositLink: FC<ILinK> = ({
                 />
               </div>
               <p
-                className={"pr-1 whitespace-nowrap font-whyte-medium"}
+                className={
+                  "pr-1 whitespace-nowrap font-whyte-medium sm:text-base text-sm"
+                }
                 style={{ color: !agreementChecked ? "#90949E" : "black" }}
               >
                 Generate link to invite members
@@ -316,7 +318,7 @@ const DepositLinkModal: FC<ILinkModal> = ({
           Help me{" "}
           <a
             className="text-blue cursor-pointer"
-            href="https://syndicatedao.gitbook.io/syndicate-wiki/web3-investment-clubs/create-a-legal-entity/form-your-legal-entity"
+            href="https://syndicatedao.gitbook.io/syndicate-guide/web3-investment-clubs/create-a-legal-entity"
             target="_blank"
             rel="noopener noreferrer"
             onClick={() => {

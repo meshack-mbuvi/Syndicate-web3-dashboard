@@ -14,9 +14,11 @@ import React, { useEffect, useState } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { useDispatch, useSelector } from "react-redux";
 import Tooltip from "react-tooltip-lite";
+import { BonusTokenClaim } from "../shared/bonusToken";
 import { NFTChecker } from "../shared/NFTchecker";
 import NFTComponent from "../shared/nftComponent";
 import { TabComponent } from "../shared/tabComponent";
+import RugRadioTokenWhiteIcon from "/public/images/rugRadio/rugradioToken-white.svg";
 
 export const NFTDetails: React.FC = () => {
   const {
@@ -24,7 +26,7 @@ export const NFTDetails: React.FC = () => {
       web3: { account },
     },
     initializeContractsReducer: {
-      syndicateContracts: { RugClaimModule },
+      syndicateContracts: { RugClaimModule, rugBonusClaimModule },
     },
     assetsSliceReducer: { collectiblesResult, allCollectiblesFetched },
   } = useSelector((state: AppState) => state);
@@ -43,13 +45,16 @@ export const NFTDetails: React.FC = () => {
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [collectibles, setCollectibles] = useState([]);
   const [pageOffSet, setPageOffSet] = useState<number>(20);
+  const [claimBonus, setClaimBonus] = useState(false);
 
   // Get both claimed and unclaimed tokens for all Genesis NFTs
   const {
+    totalYieldTokens,
     totalAvailableToClaim,
     totalGeneratedTokens,
     loading,
     nextClaimTime,
+    totalBonusToClaim,
   } = useRugRadioTokenCount(collectibles, processed);
 
   const handleClose = () => {
@@ -102,6 +107,7 @@ export const NFTDetails: React.FC = () => {
 
   const onTxFail = (error) => {
     const { code } = error;
+    setClaimBonus(false);
 
     if (code == 4001) {
       setTransactionRejected(true);
@@ -119,6 +125,7 @@ export const NFTDetails: React.FC = () => {
   const handleCloseErrorModal = () => {
     setShowErrorModal(false);
     setShowModal(false);
+    setClaimBonus(false);
   };
 
   /**
@@ -126,8 +133,10 @@ export const NFTDetails: React.FC = () => {
    */
   const handleClaimAll = async (event) => {
     event.preventDefault();
+    setClaimBonus(false);
 
     const tokenIds = collectibles.map((collectible) => collectible.id);
+
     if (!tokenIds.length) return;
 
     setConfirm(true);
@@ -143,10 +152,33 @@ export const NFTDetails: React.FC = () => {
     );
   };
 
+  const handleClaimBonus = async (event) => {
+    // claim bonus
+    setClaimBonus(true);
+    event.preventDefault();
+
+    const tokenIds = collectibles.map((collectible) => collectible.id);
+
+    if (!tokenIds.length) return;
+
+    setConfirm(true);
+    setShowModal(true);
+
+    await rugBonusClaimModule.bulkClaimTokens(
+      tokenIds,
+      account,
+      onTxConfirm,
+      onTxReceipt,
+      onTxFail,
+      setTransactionHash,
+    );
+  };
+
   /**
    * Function to close transaction modal
    */
   const handleCloseSuccessModal = () => {
+    setClaimBonus(false);
     setConfirm(false);
     setProcessing(false);
     modalContent = <></>;
@@ -215,7 +247,9 @@ export const NFTDetails: React.FC = () => {
           <Spinner width="w-10" height="h-10" margin="m-0" />
         </div>
         <div className="space-y-4 font-whyte">
-          <p className="text-center text-xl">Claiming RUG</p>
+          <p className="text-center text-xl">
+            Claiming {`${claimBonus ? "bonus RUG" : "RUG"}`}
+          </p>
 
           <div className="text-base flex justify-center items-center hover:opacity-80">
             <EtherscanLink
@@ -238,11 +272,14 @@ export const NFTDetails: React.FC = () => {
           />
         </div>
         <div className="space-y-4 font-whyte">
-          <p className="text-center text-xl">RUG claimed</p>
+          <p className="text-center text-xl">{`${
+            claimBonus ? "Bonus " : ""
+          }RUG claimed`}</p>
           <p className="text-gray-syn4 text-center text-base leading-6">
-            You just claimed{" "}
-            <NumberTreatment numberValue={totalAvailableToClaim} /> RUG
-            successfully. It’s in your wallet.
+            {`You just claimed ${numberWithCommas(
+              claimBonus ? totalBonusToClaim : totalYieldTokens,
+            )} RUG
+            successfully. It’s in your wallet.`}
           </p>
           <div className="text-base flex justify-center items-center hover:opacity-80">
             <EtherscanLink
@@ -301,27 +338,32 @@ export const NFTDetails: React.FC = () => {
       title: "Claim",
       content: (
         <>
+          <p className="flex text-xl font-whyte">
+            <span className="mr-2 flex">
+              <Image
+                src={RugRadioTokenWhiteIcon}
+                width={16}
+                height={16}
+                alt="token icon"
+              />{" "}
+            </span>
+            {numberWithCommas(totalYieldTokens)} RUG
+          </p>
           <CtaButton
             onClick={handleClaimAll}
             greenCta={true}
-            disabled={totalAvailableToClaim == 0}
+            disabled={totalYieldTokens == 0}
           >
-            {totalAvailableToClaim > 0
-              ? "Claim all"
+            {totalYieldTokens > 0
+              ? "Claim yield"
               : `Next claim in ${getCountDownDays(`${nextClaimTime}`)}`}
           </CtaButton>
 
-          <div>
+          {totalAvailableToClaim == 0 && (
             <p className="small-body text-center text-gray-syn5 leading-5">
-              {`Available: ${numberWithCommas(totalAvailableToClaim)} RUG across
-            ${collectibles.length} NFTs`}
+              You must wait at least 24 hours between RUG claims.
             </p>
-            {totalAvailableToClaim == 0 && (
-              <p className="small-body text-center text-gray-syn5 leading-5">
-                You must wait at least 24 hours between RUG claims.
-              </p>
-            )}
-          </div>
+          )}
         </>
       ),
     },
@@ -338,7 +380,7 @@ export const NFTDetails: React.FC = () => {
           </span>
 
           <Tooltip
-            content={<div>Coming Feb 12</div>}
+            content={<div>Coming soon</div>}
             arrow={false}
             tipContentClassName="actionsTooltip"
             background="#232529"
@@ -358,7 +400,7 @@ export const NFTDetails: React.FC = () => {
       {[...Array(4)].map((_, idx) => (
         <div
           key={idx}
-          className="col-span-12 md:col-span-6 lg:col-span-6 2xl:w-88 w-full max-w-480 h-full"
+          className="col-span-12 lg:col-span-6 2xl:w-88 w-full max-w-480 h-full"
         >
           <>
             <div className="w-full">
@@ -444,7 +486,7 @@ export const NFTDetails: React.FC = () => {
             )}
           </div>
           <div className="flex flex-col lg:flex-row w-full mx-auto justify-center space-y-5 space-x-5">
-            <div className="max-w-480 mx-4 md:mx-auto w-full lg:hidden">
+            <div className="max-w-480 mx-4 md:mx-auto w-full lg:hidden space-y-6">
               {loading ? (
                 <div className="p-8 pt-6 space-y-8 bg-gray-syn8 rounded-2.5xl">
                   <div className="w-full flex space-x-6 leading-4">
@@ -489,16 +531,28 @@ export const NFTDetails: React.FC = () => {
                   </div>
                 </div>
               ) : (
-                <TabComponent tabContents={tabContents} />
+                <>
+                  <TabComponent tabContents={tabContents} />
+                  {+totalBonusToClaim > 0 ? (
+                    <BonusTokenClaim
+                      handleClaimBonus={handleClaimBonus}
+                      bonusAmount={totalBonusToClaim}
+                    />
+                  ) : null}
+                </>
               )}
             </div>
             <InfiniteScroll
               dataLength={collectiblesResult.length}
               next={fetchMoreCollectibles}
               hasMore={!allCollectiblesFetched}
-              loader={<div className="mt-4">{loaderContent}</div>}
+              loader={
+                <div className="mt-4 grid grid-cols-12 gap-4">
+                  {loaderContent}
+                </div>
+              }
             >
-              <div className="grid grid-cols-12 gap-4 ">
+              <div className="grid grid-cols-12 gap-4">
                 {!loading && collectibles.length > 0 ? (
                   collectibles.map((collectible, index) => {
                     const { id, image, animation } = collectible;
@@ -553,57 +607,72 @@ export const NFTDetails: React.FC = () => {
                     );
                   })
                 ) : (
-                  <>{loaderContent}</>
+                  null
                 )}
               </div>
             </InfiniteScroll>
 
-            <div className="max-w-480 w-full ml-4 hidden lg:block">
+            <div className="max-w-480 xl:w-full w-min ml-4 space-y-5 hidden lg:block">
               {loading ? (
-                <div className="p-8 pt-6 space-y-8 bg-gray-syn8 rounded-2.5xl">
-                  <div className="w-full flex space-x-6 leading-4">
-                    <SkeletonLoader
-                      width="full"
-                      height="8"
-                      margin="m-0"
-                      borderRadius="rounded-lg"
-                      animate={true}
-                    />
-                  </div>
-                  <div
-                    className={`block border-b-1 border-gray-syn7 -mx-8`}
-                  ></div>
+                <>
+                  {[1, 2].map((key, index) => (
+                    <div
+                      key={index}
+                      className="p-8 pt-6 space-y-8 bg-gray-syn8 rounded-2.5xl"
+                    >
+                      <div className="w-full flex space-x-6 leading-4">
+                        <SkeletonLoader
+                          width="full"
+                          height="8"
+                          margin="m-0"
+                          borderRadius="rounded-lg"
+                          animate={true}
+                        />
+                      </div>
+                      <div
+                        className={`block border-b-1 border-gray-syn7 -mx-8`}
+                      ></div>
 
-                  <div>
-                    <SkeletonLoader
-                      width="full"
-                      height="4"
-                      margin="m-0"
-                      borderRadius="rounded-lg"
-                      animate={true}
-                    />
-                    <div className="pt-2">
-                      <SkeletonLoader
-                        width="32"
-                        height="5"
-                        margin="m-0"
-                        borderRadius="rounded-lg"
-                        animate={true}
-                      />
+                      <div>
+                        <SkeletonLoader
+                          width="full"
+                          height="4"
+                          margin="m-0"
+                          borderRadius="rounded-lg"
+                          animate={true}
+                        />
+                        <div className="pt-2">
+                          <SkeletonLoader
+                            width="32"
+                            height="5"
+                            margin="m-0"
+                            borderRadius="rounded-lg"
+                            animate={true}
+                          />
+                        </div>
+                        <div className="pt-2">
+                          <SkeletonLoader
+                            width="1/2"
+                            height="5"
+                            margin="m-0"
+                            borderRadius="rounded-lg"
+                            animate={true}
+                          />
+                        </div>
+                      </div>
                     </div>
-                    <div className="pt-2">
-                      <SkeletonLoader
-                        width="1/2"
-                        height="5"
-                        margin="m-0"
-                        borderRadius="rounded-lg"
-                        animate={true}
-                      />
-                    </div>
-                  </div>
-                </div>
+                  ))}
+                </>
               ) : (
-                <TabComponent tabContents={tabContents} />
+                <>
+                  <TabComponent tabContents={tabContents} />
+                  {+totalBonusToClaim > 0 ? (
+                    <BonusTokenClaim
+                      handleClaimBonus={handleClaimBonus}
+                      bonusAmount={totalBonusToClaim}
+                    />
+                  ) : null}
+                </>
               )}
             </div>
           </div>

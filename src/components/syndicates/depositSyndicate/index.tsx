@@ -49,6 +49,7 @@ import { AbiItem } from "web3-utils";
 import BeforeGettingStarted from "../../beforeGettingStarted";
 import ConnectWalletAction from "../shared/connectWalletAction";
 import axios from "axios";
+import { useIsClubMember } from "@/hooks/useClubOwner";
 
 const DepositSyndicate: React.FC = () => {
   // HOOK DECLARATIONS
@@ -81,8 +82,6 @@ const DepositSyndicate: React.FC = () => {
     loading,
     maxMemberCount,
   } = erc20Token;
-
-  // const { totalDeposits } = useClubDepositsAndSupply(address);
 
   const { loading: merkleLoading } = useFetchMerkleProof();
   const { loading: claimLoading } = useFetchTokenClaim();
@@ -127,6 +126,7 @@ const DepositSyndicate: React.FC = () => {
   const [claimBalanceDecimalValue, setClaimBalanceDecimalValue] = useState("");
   const [invalidClaim, setInvalidClaim] = useState<boolean>(false);
   const [transactionTooLong, setTransactionTooLong] = useState<boolean>(false);
+  const [checkSuccess, setCheckSuccess] = useState(false);
 
   // Deposit token value Price in USD
   const [depositTokenPriceInUSDState, setDepositTokenPriceInUSDState] =
@@ -158,9 +158,13 @@ const DepositSyndicate: React.FC = () => {
 
   useEffect(() => {
     // calculate member ownership for the intended deposits
-    if (totalSupply) {
+    if (totalSupply && !checkSuccess) {
+      // converting to Wei here to multiply because of a weird js precision issue when multiplying.
+      // for instance, 0.0003 * 10000 returns 2.9999 instead of 3.
       const memberTokens = ethDepositToken
-        ? +depositAmountFinalized * 10000
+        ? (getWeiAmount(depositAmountFinalized, depositTokenDecimals, true) *
+            10000) /
+          10 ** depositTokenDecimals
         : +depositAmountFinalized;
       const newTotalSupply = +totalSupply + +memberTokens;
       const memberPercentShare = memberTokens / newTotalSupply;
@@ -250,36 +254,39 @@ const DepositSyndicate: React.FC = () => {
 
   const onTxReceipt = () => {
     startPolling(1000); // start polling for member stakes
-
     setMetamaskConfirmPending(false);
-    setSubmitting(false);
     if (claimEnabled) {
+      setSubmitting(false);
       setSuccessfulClaim(true);
+      dispatch(setERC20Token(erc20TokenContract));
     } else {
-      setSuccessfulDeposit(true);
+      setCheckSuccess(true);
     }
 
-    /**
-     * Removing this because we are currently fetching the ownership share from the graph
-     */
-
-    // setNewMemberTokens(+accountTokens + +memberTokens);
-
-    // // Bug fix: setting new ownership share to an addition of memberOwnership and ownershipShare
-    // // leads to a situation where the total percentage ownership on the success modal exceeds 100% if the club has only 1 member.
-    // // see this screenshot: https://drive.google.com/file/d/1l0kS3hVKqG_VoM6pf7UpX93DnKSTyRMU/view?usp=sharing
-    // if (+memberOwnership === 100) {
-    //   setNewOwnershipShare(100);
-    // } else {
-    //   // % member ownership after successful deposit.
-    //   setNewOwnershipShare(memberOwnership);
-    // }
-
-    dispatch(setERC20Token(erc20TokenContract));
-
-    // Refetch after a second
     setTimeout(() => refetchMemberData(), 4000);
   };
+
+  const [, setpreviousAccountTokens] = useState(accountTokens);
+  const isMember = useIsClubMember();
+
+  // since the subgraph might give us old data on refetch,
+  // we need to compare old and new data as we continue to poll.
+  useEffect(() => {
+    if (!checkSuccess) return;
+    setpreviousAccountTokens((prevState) => {
+      if (
+        (isMember && +prevState > 0 && +prevState < +accountTokens) ||
+        (!isMember && +prevState < +accountTokens)
+      ) {
+        setSuccessfulDeposit(true);
+        setCheckSuccess(false);
+        setSubmitting(false);
+
+        dispatch(setERC20Token(erc20TokenContract));
+      }
+      return accountTokens;
+    });
+  }, [accountTokens, checkSuccess]);
 
   const [transactionRejected, setTransactionRejected] = useState(false);
   const [transactionFailed, setTransactionFailed] = useState(false);
@@ -332,6 +339,8 @@ const DepositSyndicate: React.FC = () => {
   const SINGLE_TOKEN_MINT_MODULE_ADDR =
     process.env.NEXT_PUBLIC_SINGLE_TOKEN_MINT_MODULE;
   const ETH_MINT_MODULE = process.env.NEXT_PUBLIC_ETH_MINT_MODULE;
+  const DEPOSIT_TOKEN_MINT_MODULE =
+    process.env.NEXT_PUBLIC_DEPOSIT_TOKEN_MINT_MODULE;
 
   /**
    * This methods is used to invest in LP(syndicate)
@@ -366,18 +375,17 @@ const DepositSyndicate: React.FC = () => {
           onTxReceipt,
           onTxFail,
           setTransactionHash,
-        );
-        /* : */
-        /* check this, could be wrong because ETH is not an ERC-20 token */
-        /* await syndicateContracts.SingleTokenMintModule?.deposit(
-          getWeiAmount(amount, depositETHTokenDecimals, true),
+        )
+      } else if(mintModule === DEPOSIT_TOKEN_MINT_MODULE) {
+        await syndicateContracts.DepositTokenMintModule?.deposit(
+          getWeiAmount(amount, depositTokenDecimals, true),
           erc20TokenContract.clubERC20Contract._address,
           account,
           onTxConfirm,
           onTxReceipt,
           onTxFail,
           setTransactionHash,
-        ) */
+        )
       }
 
       if (approved) {
@@ -890,6 +898,7 @@ const DepositSyndicate: React.FC = () => {
           />
 
           {status !== Status.DISCONNECTED &&
+          !checkSuccess &&
           (loading || merkleLoading || claimLoading || airdropInfoLoading) ? (
             <div className="h-fit-content rounded-2-half pt-6 px-8 pb-16">
               <SkeletonLoader
@@ -944,6 +953,7 @@ const DepositSyndicate: React.FC = () => {
                   <div className="pb-6">
                     <span className="text-2xl">{`Depositing ${floatedNumberWithCommas(
                       depositAmountFinalized,
+                      ethDepositToken ?? false,
                     )} ${depositTokenSymbol}`}</span>
                   </div>
                   {transactionHash && (
@@ -1136,6 +1146,7 @@ const DepositSyndicate: React.FC = () => {
                       ~{" "}
                       {floatedNumberWithCommas(
                         parseFloat(depositAmount) / depositTokenPriceInUSDState,
+                        ethDepositToken ?? false,
                       )}{" "}
                       {depositTokenSymbol}
                     </p>
@@ -1144,6 +1155,7 @@ const DepositSyndicate: React.FC = () => {
                       ~{" "}
                       {floatedNumberWithCommas(
                         parseFloat(depositAmount) * depositTokenPriceInUSDState,
+                        ethDepositToken ?? false,
                       )}{" "}
                       USD
                     </p>
@@ -1269,23 +1281,24 @@ const DepositSyndicate: React.FC = () => {
                               handleAllowanceApproval(e);
                             } else {
                               if (depositTokenSwitched) {
-                                investInSyndicate(
-                                  (
-                                    Math.floor(
-                                      (parseFloat(depositAmount) /
+                                const switchedAmount = ethDepositToken
+                                  ? truncateDecimals(
+                                      ((parseFloat(depositAmount) /
                                         depositTokenPriceInUSDState) *
+                                        100) /
                                         100,
-                                    ) / 100
-                                  ).toString(),
-                                );
+                                      4,
+                                    )
+                                  : (
+                                      Math.floor(
+                                        (parseFloat(depositAmount) /
+                                          depositTokenPriceInUSDState) *
+                                          100,
+                                      ) / 100
+                                    ).toString();
+                                investInSyndicate(switchedAmount.toString());
                                 setDepositAmountFinalized(
-                                  (
-                                    Math.floor(
-                                      (parseFloat(depositAmount) /
-                                        depositTokenPriceInUSDState) *
-                                        100,
-                                    ) / 100
-                                  ).toString(),
+                                  switchedAmount.toString(),
                                 );
                               } else {
                                 investInSyndicate(depositAmount);
@@ -1319,7 +1332,7 @@ const DepositSyndicate: React.FC = () => {
                       <p className="text-sm text-gray-syn5">
                         Your wallet balance:{" "}
                         {ethDepositToken ? (
-                          <>{floatedNumberWithCommas(etherBalance)} </>
+                          <>{floatedNumberWithCommas(etherBalance, true)} </>
                         ) : (
                           <>{floatedNumberWithCommas(erc20Balance)} </>
                         )}
@@ -1329,6 +1342,7 @@ const DepositSyndicate: React.FC = () => {
                             (~{" "}
                             {floatedNumberWithCommas(
                               etherBalance * depositTokenPriceInUSDState,
+                              true,
                             )}{" "}
                             USD)
                           </>
@@ -1506,7 +1520,7 @@ const DepositSyndicate: React.FC = () => {
           modalStyle: successfulDeposit ? ModalStyle.SUCCESS : ModalStyle.DARK,
           show: showDepositProcessingModal && !depositFailed,
           closeModal: () => handleCloseSuccessModal(),
-          customWidth: "w-100",
+          customWidth: "w-11/12 sm:w-100",
           customClassName: "pt-8 px-5 pb-5",
           showCloseButton: true,
           outsideOnClick: !metamaskConfirmPending,
@@ -1523,7 +1537,10 @@ const DepositSyndicate: React.FC = () => {
             <div className="pt-8">
               <span className="text-2xl">
                 Deposited{" "}
-                {floatedNumberWithCommas(parseFloat(depositAmountFinalized))}{" "}
+                {floatedNumberWithCommas(
+                  parseFloat(depositAmountFinalized),
+                  ethDepositToken ?? false,
+                )}{" "}
                 {depositTokenSymbol}
               </span>
             </div>
@@ -1585,8 +1602,8 @@ const DepositSyndicate: React.FC = () => {
                     <p>
                       {addGrayToDecimalInput(
                         floatedNumberWithCommas(
-                          /* (parseFloat( */ depositAmountFinalized /* ) / depositTokenPriceInUSDState) */
-                            .toString(),
+                          depositAmountFinalized.toString(),
+                          ethDepositToken ?? false,
                         ),
                       )}
                     </p>
@@ -1720,9 +1737,10 @@ const DepositSyndicate: React.FC = () => {
                   );
                 })}
             </div>
-            {metamaskConfirmPending ||
-            submitting ||
-            submittingAllowanceApproval ? (
+            {(metamaskConfirmPending ||
+              submitting ||
+              submittingAllowanceApproval) &&
+            !successfulDeposit ? (
               <div
                 className={`mt-6 rounded-custom flex flex-col items-center ${
                   metamaskConfirmPending
@@ -1750,6 +1768,7 @@ const DepositSyndicate: React.FC = () => {
                     : submitting
                     ? `Depositing ${floatedNumberWithCommas(
                         depositAmountFinalized,
+                        ethDepositToken ?? false,
                       )} ${depositTokenSymbol}`
                     : null}
                 </span>

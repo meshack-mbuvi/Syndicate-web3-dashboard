@@ -4,7 +4,7 @@ export const InputField = (props: {
     infoLabel?: string,
     isInErrorState?: boolean,
     extraClasses?: string,
-    onChange?: () => void,
+    onChange?: (e) => void,
 }) => {
     const {
         value, 

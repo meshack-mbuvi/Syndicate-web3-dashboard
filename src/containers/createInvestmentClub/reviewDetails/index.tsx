@@ -251,7 +251,7 @@ const ReviewDetails: React.FC = () => {
                       {tokenCapHeaderTransition((styles, item) =>
                         item ? (
                           <animated.p style={styles}>
-                            How much are you raising?
+                            What’s the upper limit of the club’s raise?
                           </animated.p>
                         ) : null,
                       )}
@@ -337,7 +337,7 @@ const ReviewDetails: React.FC = () => {
                             style={styles}
                             className="text-sm text-gray-syn4"
                           >
-                            How long will deposits be accepted?
+                            When will deposits close?
                           </animated.p>
                         ) : null,
                       )}
@@ -427,7 +427,7 @@ const ReviewDetails: React.FC = () => {
                             style={styles}
                             className="text-sm text-gray-syn4"
                           >
-                            How many members can join?
+                            What’s the maximum number of members?
                           </animated.p>
                         ) : null,
                       )}

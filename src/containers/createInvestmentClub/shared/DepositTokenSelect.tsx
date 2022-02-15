@@ -87,9 +87,8 @@ export const DepositTokenSelect = (props: {
   return (
     <div
       className="flex flex-col p-8 rounded-2xl bg-gray-darkBackground border-6 border-gray-darkBackground focus:outline-none"
-      onMouseLeave={() => props.toggleTokenSelect()}
     >
-      <div className="mb-4 text-base font-whyte text-white">Select a token</div>
+      <div className="mb-4 font-whyte text-xl text-white">Select a token</div>
       {/* This will be used when we move to more than just 2 tokens */}
       {/* <TokenSearchBar setSearchTerm={setSearchTerm} /> */}
 

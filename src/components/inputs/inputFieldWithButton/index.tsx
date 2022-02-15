@@ -4,12 +4,13 @@ import { InputField } from "../inputField";
 export const InputFieldWithButton = (props: {
     value?: string,
     placeholderLabel?: string,
-    infoLabel?: string,
+    infoLabel?: string | any,
     isInErrorState?: boolean,
     extraClasses?: string,
     buttonLabel: string | any,
     isButtonActive?: boolean,
-    onChange: () => void
+    buttonOnClick?: () => void,
+    onChange: (e) => void
 }) => {
     const {
         value, 
@@ -19,6 +20,7 @@ export const InputFieldWithButton = (props: {
         extraClasses = "", 
         buttonLabel, 
         isButtonActive = false, 
+        buttonOnClick,
         onChange,
         ...rest
     } = props;
@@ -40,13 +42,14 @@ export const InputFieldWithButton = (props: {
                 >
                     <PillButton 
                         isActive={isButtonActive}
+                        onClick={buttonOnClick}
                     >
                         {buttonLabel}
                     </PillButton>
                 </div>
             </div>
             {infoLabel && 
-                <div className={`text-sm mt-2 ${isInErrorState ? "text-red-error" : "text-gray-syn2"}`}>{infoLabel}</div>
+                <div className={`text-sm mt-2 ${isInErrorState ? "text-red-error" : "text-gray-syn4"}`}>{infoLabel}</div>
             }
         </>
     );

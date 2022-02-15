@@ -9,13 +9,15 @@ const useRugRadioTokenCount: any = (collectiblesResult, refresh) => {
       web3: { account },
     },
     initializeContractsReducer: {
-      syndicateContracts: { RugClaimModule, RugToken },
+      syndicateContracts: { RugClaimModule, RugToken, rugBonusClaimModule },
     },
   } = useSelector((state: AppState) => state);
 
   const [tokenCount, setTokenCount] = useState({
+    totalYieldTokens: 0,
     nextClaimTime: 0,
     totalAvailableToClaim: 0,
+    totalBonusToClaim: 0,
     totalClaimedTokens: 0,
     totalGeneratedTokens: 0,
   });
@@ -30,19 +32,25 @@ const useRugRadioTokenCount: any = (collectiblesResult, refresh) => {
       false,
     );
 
-    let totalAvailableToClaim = 0;
+
+    let totalBonusToClaim = 0;
+    let totalYieldTokens = 0;
 
     await await Promise.all([
       ...collectiblesResult.map(async (collectible) => {
         try {
-          const tokenBalance =
-            (await RugClaimModule.getClaimAmount(collectible.id)) || 0;
+          const tokenBalance = await RugClaimModule.getClaimAmount(
+            collectible.id,
+          );
+          const tokenBonus = await rugBonusClaimModule.getClaimAmount(
+            collectible.id,
+          );
 
-          totalAvailableToClaim += +tokenBalance;
+          totalYieldTokens += +tokenBalance;
+          totalBonusToClaim += +tokenBonus;
         } catch (error) {
           console.log({ error });
         }
-        return totalAvailableToClaim;
       }),
     ]);
 
@@ -59,10 +67,13 @@ const useRugRadioTokenCount: any = (collectiblesResult, refresh) => {
     const nextClaimTime = Math.max(...lastClaims) * 1000 + 24 * 60 * 60 * 1000;
 
     setTokenCount({
+      totalYieldTokens,
       nextClaimTime,
       totalClaimedTokens,
-      totalAvailableToClaim: totalAvailableToClaim ?? 0,
-      totalGeneratedTokens: +totalAvailableToClaim + +totalClaimedTokens,
+      totalBonusToClaim,
+      totalAvailableToClaim: totalYieldTokens + totalBonusToClaim,
+      totalGeneratedTokens:
+        totalYieldTokens + totalClaimedTokens + totalBonusToClaim,
     });
     setLoading(false);
   };
