@@ -257,7 +257,7 @@ const ReviewDetails: React.FC = () => {
                       )}
                       <div className="flex mt-2 text-base">
                         <p className="text-white">
-                          {floatedNumberWithCommas(tokenCap)}
+                          {floatedNumberWithCommas(tokenCap, true)}
                         </p>
                         {usdcTransition((styles, item) =>
                           item ? (

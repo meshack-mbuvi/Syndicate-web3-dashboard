@@ -132,7 +132,8 @@ const AmountToRaise: React.FC<{
             {...{
               value: amount
                 ? numberWithCommas(
-                    amount.replace(/^0{2,}/, "0").replace(/^0/, ""),
+                    // Checks if there are unnecessary zeros in the amount
+                    amount.replace(/^0{2,}/, "0").replace(/^0(?!\.)/, ""),
                   )
                 : numberWithCommas(""),
               title: "What’s the upper limit of the club’s raise?",
