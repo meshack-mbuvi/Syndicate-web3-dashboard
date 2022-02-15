@@ -7,7 +7,7 @@ interface ConnectModalProps {
   children: JSX.Element;
   closeModal: () => void;
   title?: string;
-  subtext?: string;
+  subtext?: string | React.ReactNode;
   showCloseButton?: boolean;
   height?: string;
 }
