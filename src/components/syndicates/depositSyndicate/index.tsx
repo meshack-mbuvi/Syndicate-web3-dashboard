@@ -337,6 +337,8 @@ const DepositSyndicate: React.FC = () => {
   const SINGLE_TOKEN_MINT_MODULE_ADDR =
     process.env.NEXT_PUBLIC_SINGLE_TOKEN_MINT_MODULE;
   const ETH_MINT_MODULE = process.env.NEXT_PUBLIC_ETH_MINT_MODULE;
+  const DEPOSIT_TOKEN_MINT_MODULE =
+    process.env.NEXT_PUBLIC_DEPOSIT_TOKEN_MINT_MODULE;
 
   /**
    * This methods is used to invest in LP(syndicate)
@@ -371,18 +373,17 @@ const DepositSyndicate: React.FC = () => {
           onTxReceipt,
           onTxFail,
           setTransactionHash,
-        );
-        /* : */
-        /* check this, could be wrong because ETH is not an ERC-20 token */
-        /* await syndicateContracts.SingleTokenMintModule?.deposit(
-          getWeiAmount(amount, depositETHTokenDecimals, true),
+        )
+      } else if(mintModule === DEPOSIT_TOKEN_MINT_MODULE) {
+        await syndicateContracts.DepositTokenMintModule?.deposit(
+          getWeiAmount(amount, depositTokenDecimals, true),
           erc20TokenContract.clubERC20Contract._address,
           account,
           onTxConfirm,
           onTxReceipt,
           onTxFail,
           setTransactionHash,
-        ) */
+        )
       }
 
       if (approved) {
