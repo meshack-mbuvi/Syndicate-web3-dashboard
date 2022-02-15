@@ -10,7 +10,13 @@ export const numberWithCommas = (number: string | number): string => {
 
   return (
     wholePart.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
-    `${decimalPart ? `.${decimalPart}` : ""}`
+    `${
+      decimalPart
+        ? `.${decimalPart}`
+        : number.toString().indexOf(".") > -1
+        ? "."
+        : ""
+    }`
   );
 };
 
@@ -53,9 +59,10 @@ export const numberInputRemoveCommas = (
   let newVal;
   const { value } = event.target;
   newVal = value;
+
   const [beforeDecimal, afterDecimal] = value.split(".");
-  if (afterDecimal && afterDecimal.length > 2) {
-    newVal = beforeDecimal + "." + afterDecimal.slice(0, 2);
+  if (afterDecimal && afterDecimal.length > 5) {
+    newVal = beforeDecimal + "." + afterDecimal.slice(0, 5);
   }
 
   // check and remove leading zeroes if not followed by a decimal point
@@ -66,6 +73,7 @@ export const numberInputRemoveCommas = (
   ) {
     newVal = newVal.slice(1);
   }
+
   // remove commas from big numbers before we set state
   return newVal.replace(/,/g, "");
 };

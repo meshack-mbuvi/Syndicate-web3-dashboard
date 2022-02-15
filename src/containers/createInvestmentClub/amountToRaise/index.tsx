@@ -15,7 +15,6 @@ import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AdvancedInputField } from "../shared/AdvancedInputField";
 import TokenSelectModal from "@/containers/createInvestmentClub/shared/TokenSelectModal";
-import useModal from "@/hooks/useModal";
 import { defaultTokenDetails } from "@/containers/createInvestmentClub/shared/ClubTokenDetailConstants";
 
 const AmountToRaise: React.FC<{
@@ -134,7 +133,8 @@ const AmountToRaise: React.FC<{
             {...{
               value: amount
                 ? numberWithCommas(
-                    amount.replace(/^0{2,}/, "0").replace(/^0/, ""),
+                    // Checks if there are unnecessary zeros in the amount
+                    amount.replace(/^0{2,}/, "0").replace(/^0(?!\.)/, ""),
                   )
                 : numberWithCommas(""),
               title: "How much are you raising?",

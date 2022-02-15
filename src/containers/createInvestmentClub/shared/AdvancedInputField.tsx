@@ -43,7 +43,7 @@ export const AdvancedInputField = (props: {
     extraAddon,
     moreInfo,
     addSettingDisclaimer,
-    className
+    className,
   } = props;
 
   const [focused, setFocused] = useState(false);
