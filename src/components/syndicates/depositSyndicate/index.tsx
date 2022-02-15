@@ -1520,7 +1520,7 @@ const DepositSyndicate: React.FC = () => {
           modalStyle: successfulDeposit ? ModalStyle.SUCCESS : ModalStyle.DARK,
           show: showDepositProcessingModal && !depositFailed,
           closeModal: () => handleCloseSuccessModal(),
-          customWidth: "w-100",
+          customWidth: "w-11/12 sm:w-100",
           customClassName: "pt-8 px-5 pb-5",
           showCloseButton: true,
           outsideOnClick: !metamaskConfirmPending,
