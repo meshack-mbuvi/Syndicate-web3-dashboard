@@ -226,10 +226,7 @@ const ClubTokenMembers = (): JSX.Element => {
                     {membersTabInstruction}
                   </p>
                   {isOwner && (
-                    <div
-                      style={{ width: "416px" }}
-                      className="flex justify-center flex-col"
-                    >
+                    <div className="flex justify-center flex-col sm:w-104">
                       {!adminSigned && (
                         <div className="flex space-between mb-6">
                           <input
