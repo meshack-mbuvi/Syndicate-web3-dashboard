@@ -51,6 +51,7 @@ type CreateInvestmentClubProviderProps = {
   preClubCreationStep: string;
   setPreClubCreationStep: Dispatch<SetStateAction<string>>;
   resetCreationStates: () => void;
+  setCurrentStep: (index: number) => void;
   isWalletConfrimed: boolean;
   setConfirmWallet: Dispatch<SetStateAction<boolean>>;
 };
@@ -281,6 +282,7 @@ const CreateInvestmentClubProvider: React.FC = ({ children }) => {
         preClubCreationStep,
         setPreClubCreationStep,
         resetCreationStates,
+        setCurrentStep,
         isWalletConfrimed,
         setConfirmWallet,
       }}
