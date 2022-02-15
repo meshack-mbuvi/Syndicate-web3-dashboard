@@ -25,7 +25,6 @@ const AmountToRaise: React.FC<{
     createInvestmentClubSliceReducer: {
       tokenCap,
       tokenDetails: { depositTokenLogo, depositTokenSymbol },
-      investmentClubSymbol,
     },
   } = useSelector((state: AppState) => state);
 
@@ -137,7 +136,7 @@ const AmountToRaise: React.FC<{
                     amount.replace(/^0{2,}/, "0").replace(/^0(?!\.)/, ""),
                   )
                 : numberWithCommas(""),
-              title: "How much are you raising?",
+              title: "What’s the upper limit of the club’s raise?",
               onChange: handleChange,
               error: error,
               hasError: Boolean(error),
@@ -145,14 +144,12 @@ const AmountToRaise: React.FC<{
               type: "text",
               isNumber: true,
               focus,
-              addSettingDisclaimer: false,
+              addSettingDisclaimer: true,
               extraAddon: extraAddonContent,
               moreInfo: (
                 <div>
-                  Members will receive 1 ✺{investmentClubSymbol} club token for
-                  every{" "}
-                  {depositTokenSymbol === "ETH" ? "0.00001 ETH" : "1 USDC"}{" "}
-                  deposited.
+                  Accepting deposits beyond this amount will require an on-chain
+                  transaction with gas, so aim high.
                 </div>
               ),
               className: className,

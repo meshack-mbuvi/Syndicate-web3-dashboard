@@ -14,3 +14,4 @@ export const hideErrorModal = createAction("wallet/hideErrorModal");
 export const storeEthereumNetwork = createAction<IEthereumNetwork>("wallet/storeEthereumNetwork");
 export const storeCurrentEthNetwork = createAction<string>("wallet/storeCurrentEthNetwork");
 export const logout = createAction("wallet/logout");
+export const setDispatchCreateFlow = createAction<boolean>("wallet/setDispatchCreateFlow");

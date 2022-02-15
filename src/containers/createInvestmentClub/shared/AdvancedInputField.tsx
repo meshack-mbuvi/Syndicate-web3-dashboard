@@ -1,6 +1,8 @@
 import { SettingsDisclaimerTooltip } from "@/containers/createInvestmentClub/shared/SettingDisclaimer";
 import cn from "classnames";
 import { useState } from "react";
+import { AppState } from "@/state";
+import { useDispatch, useSelector } from "react-redux";
 
 /**
  * An input component with label, component to the right, and an icon to the furthest right.
@@ -46,18 +48,23 @@ export const AdvancedInputField = (props: {
     className,
   } = props;
 
+  const {
+    createInvestmentClubSliceReducer: { tokenCap, investmentClubSymbol },
+  } = useSelector((state: AppState) => state);
+
   const [focused, setFocused] = useState(false);
   const [hover, setHover] = useState(false);
 
   return (
     <div className={className}>
       <div className="flex justify-between">
-        <label htmlFor={title} className="h3 pb-6">
+        <label htmlFor={title} className="h3 pb-1">
           {title}
         </label>
       </div>
+      <span className="text-sm text-gray-syn4 font-whyte">{moreInfo}</span>
       <div
-        className={cn("mt-1 mb-2 flex border rounded-md overflow-hidden", {
+        className={cn("mt-4 mb-2 flex border rounded-md overflow-hidden", {
           "border-blue-navy ring-0": focused && !error,
           "border-gray-24": !focused,
           "border-red-error": error,
@@ -131,9 +138,12 @@ export const AdvancedInputField = (props: {
             <SettingsDisclaimerTooltip
               id="disclaimer-tip"
               tip={
-                <span>
-                  Can be modified later via an on-chain <br /> transaction with
-                  gas
+                <span className=" text-white font-whyte text-sm">
+                  Deposits collected in USDC. Members
+                  <br />
+                  will receive 1 ✺{investmentClubSymbol} club token for every 1
+                  <br />
+                  USDC deposited.
                 </span>
               }
             />
@@ -146,9 +156,6 @@ export const AdvancedInputField = (props: {
           <p className="text-red-500 text-sm mb-1">
             {error && !disabled ? error : ""}
           </p>
-        )}
-        {moreInfo && !error && (
-          <span className="text-sm text-gray-3 pt-2">{moreInfo}</span>
         )}
       </div>
     </div>

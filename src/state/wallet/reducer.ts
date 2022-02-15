@@ -1,4 +1,4 @@
-import { createReducer } from "@reduxjs/toolkit";
+import { createReducer, PayloadAction } from "@reduxjs/toolkit";
 import {
   hideErrorModal,
   hideWalletModal,
@@ -8,6 +8,7 @@ import {
   setConnectedProviderName,
   setConnecting,
   setDisConnected,
+  setDispatchCreateFlow,
   setLibrary,
   showErrorModal,
   showWalletModal,
@@ -108,6 +109,12 @@ export default createReducer(initialState, (builder) => {
       return {
         ...state,
         web3: initialState.web3,
+      };
+    })
+    .addCase(setDispatchCreateFlow, (state, action: PayloadAction<boolean>) => {
+      return {
+        ...state,
+        dispatchCreateFlow: action.payload,
       };
     });
 });

@@ -21,14 +21,19 @@ export const numberWithCommas = (number: string | number): string => {
 };
 
 // add two decimal places
-export const floatedNumberWithCommas = (number): string => {
+export const floatedNumberWithCommas = (number, ethValue = false): string => {
   if (!number || number === "NaN") {
     return "0";
   }
 
   // return this for values smaller than 0.01 since we use 2dp
+  // 0.01 is significant for ETH deposits. Adding an extra check here.
   if (number < 0.01 && number > 0) {
-    return "< 0.01";
+    if (!ethValue) {
+      return "< 0.01";
+    } else {
+      return number.toString().match(/^-?\d+(?:\.\d{0,4})?/)[0];
+    }
   }
 
   // do not show decimal points if there are only zeros after the decimal point.
