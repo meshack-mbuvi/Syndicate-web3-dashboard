@@ -97,11 +97,17 @@ export const getERC20TokenDetails = async (
       const totalSupply = await ERC20tokenContract.totalSupply().then((wei) =>
         getWeiAmount(wei, tokenDecimals, false),
       );
-
-      const claimEnabled = await policyMintERC20.isModuleAllowed(
+      
+      // Check both mint policies 
+      const claimEnabledPolicyMintERC20 = await policyMintERC20.isModuleAllowed(
         ERC20tokenContract.clubERC20Contract._address,
         MERKLE_DISTRIBUTOR_MODULE,
       );
+      const claimEnabledMintPolicy = await mintPolicy.isModuleAllowed(
+        ERC20tokenContract.clubERC20Contract._address,
+        MERKLE_DISTRIBUTOR_MODULE,
+      );
+      const claimEnabled = claimEnabledPolicyMintERC20 || claimEnabledMintPolicy;
 
       let depositsEnabled = false;
       if (!claimEnabled) {
