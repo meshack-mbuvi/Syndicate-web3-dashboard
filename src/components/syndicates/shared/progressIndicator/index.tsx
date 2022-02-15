@@ -132,7 +132,7 @@ export const ProgressIndicator = (props: IProgressIndicator): JSX.Element => {
               <p className="text-gray-syn4 leading-6 pb-2">Remaining</p>
               <p className="xl:text-2xl lg:text-xl text-sm text-white leading-loose">
                 {remainingDeposits > 0 ? (
-                  <NumberTreatment numberValue={`${remainingDeposits || ""}`} />
+                  <NumberTreatment numberValue={`${remainingDeposits || ""}`} ethDepositToken={ethDepositToken} />
                 ) : (
                   0
                 )}
@@ -143,6 +143,7 @@ export const ProgressIndicator = (props: IProgressIndicator): JSX.Element => {
                 {floatedNumberWithCommas(
                   parseFloat(remainingDeposits.toString()) *
                     depositTokenPriceInUSDState,
+                  ethDepositToken ?? false,
                 )}{" "}
                 USD
               </p>
