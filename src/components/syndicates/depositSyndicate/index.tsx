@@ -1487,7 +1487,7 @@ const DepositSyndicate: React.FC = () => {
                   /** We are using 10000 because of the conversion */
                   <HoldingsInfo
                     title="Amount deposited"
-                    amount={floatedNumberWithCommas(memberDeposits / 10000)}
+                    amount={floatedNumberWithCommas((memberDeposits / 10000), true)}
                     tokenName={"ETH"}
                     amountInUSD={
                       (memberDeposits / 10000) * depositTokenPriceInUSDState

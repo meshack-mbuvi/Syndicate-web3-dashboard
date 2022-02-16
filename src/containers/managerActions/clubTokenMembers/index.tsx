@@ -20,7 +20,7 @@ const ClubTokenMembers = (): JSX.Element => {
     clubMembersSliceReducer: { clubMembers, loadingClubMembers },
     erc20TokenSliceReducer: {
       erc20Token: { symbol },
-      depositDetails: { depositTokenSymbol },
+      depositDetails: { depositTokenSymbol, ethDepositToken },
     },
     legalInfoReducer: {
       depositReadyInfo: { adminSigned },
@@ -129,7 +129,7 @@ const ClubTokenMembers = (): JSX.Element => {
         }) {
           return (
             <p className="flex text-white text-base my-1 leading-6">
-              {`${floatedNumberWithCommas(depositAmount)} ${depositSymbol}`}
+              {`${floatedNumberWithCommas(depositAmount, ethDepositToken ?? false)} ${depositSymbol}`}
             </p>
           );
         },

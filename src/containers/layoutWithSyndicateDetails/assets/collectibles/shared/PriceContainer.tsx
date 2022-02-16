@@ -6,11 +6,12 @@ const PriceContainer: React.FC<{
   ethValue?: boolean;
   customSymbol?: any;
   noUSDValue?: boolean;
-}> = ({ numberValue, noUSDValue, ethValue = false, customSymbol = "USD" }) => {
+  ethDepositToken?: boolean;
+}> = ({ numberValue, noUSDValue, ethValue = false, customSymbol = "USD", ethDepositToken }) => {
   return (
     <div className="text-base md:items-center flex flex-col md:flex-row">
       <div>
-        <NumberTreatment numberValue={numberValue} noUSDValue={noUSDValue} />
+        <NumberTreatment numberValue={numberValue} noUSDValue={noUSDValue} ethDepositToken={ethDepositToken} />
       </div>
       &nbsp;
       {ethValue ? "ETH" : `${noUSDValue ? "" : customSymbol}`}

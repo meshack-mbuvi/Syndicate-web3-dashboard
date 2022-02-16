@@ -103,7 +103,7 @@ export const ProgressIndicator = (props: IProgressIndicator): JSX.Element => {
               <p className="text-gray-syn4 leading-6 pb-2">Deposits</p>
               <div className="flex">
                 <p className="leading-loose xl:text-2xl lg:text-xl text-base">
-                  <NumberTreatment numberValue={`${totalDeposits || ""}`} />
+                  <NumberTreatment numberValue={`${totalDeposits || ""}`} ethDepositToken={ethDepositToken} />
                   &nbsp;
                   {depositERC20TokenSymbol}
                 </p>
