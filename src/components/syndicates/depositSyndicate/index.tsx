@@ -1278,6 +1278,7 @@ const DepositSyndicate: React.FC = () => {
                               return;
                             }
                             if (!sufficientAllowanceSet) {
+                              setDepositAmountFinalized(depositAmount);
                               handleAllowanceApproval(e);
                             } else {
                               if (depositTokenSwitched) {
