@@ -68,7 +68,7 @@ export const mockDepositModeTokens = [
     tokenName: "USD Coin",
     tokenValue: 0,
   },
-]
+];
 
 export const mockTokensResult = [
   ...mockDepositModeTokens,
@@ -143,7 +143,8 @@ export const mockCollectiblesResult = [
       slug: "cryptopunks",
     },
     slug: "cryptopunks",
-    description: "CryptoPunks launched as a fixed set of 10,000 items in mid-2017 and became one of the inspirations for the ERC-721 standard. They have been featured in places like The New York Times, Christie’s of London, Art|Basel Miami, and The PBS NewsHour.",
+    description:
+      "CryptoPunks launched as a fixed set of 10,000 items in mid-2017 and became one of the inspirations for the ERC-721 standard. They have been featured in places like The New York Times, Christie’s of London, Art|Basel Miami, and The PBS NewsHour.",
     floorPrice: 2.5,
     lastPurchasePrice: {
       lastPurchasePriceUSD: 8498,
@@ -315,7 +316,7 @@ export const mockCollectiblesResult = [
       "Cool Cats is a collection of 9,999 randomly generated and stylistically curated NFTs that exist on the Ethereum Blockchain. Cool Cat holders can participate in exclusive events such as NFT claims, raffles, community giveaways, and more. Remember, all cats are cool, but some are cooler than others. Visit [www.coolcatsnft.com](https://www.coolcatsnft.com/) to learn more.",
     floorPrice: 11.89,
     lastPurchasePrice: {
-      lastPurchasePriceUSD: 25008.40,
+      lastPurchasePriceUSD: 25008.4,
       lastPurchasePriceETH: 10.3,
     },
   },
@@ -363,11 +364,11 @@ export const mockOffChainTransactionsData = {
         companyName: "Syndicate Demo Inc.",
         roundCategory: "Seed",
         postMoneyValuation: "50000",
-        memo: "Learn more at syndicate.io and https://twitter.com/SyndicateDAO",
-        fullyDilutedOwnershipStake: "5",
+        memo: "As discussed over Telegram, we've decided to allocate 50,000 USD towards Syndicate Demo Inc. in exchange for 1% share of their governance token.",
+        fullyDilutedOwnershipStake: "1",
         preMoneyValuation: "50000",
-        numberShares: "50000",
-        numberTokens: "0",
+        numberShares: "",
+        numberTokens: "100000",
 
         __typename: "Financial_TransactionAnnotation",
         annotationMetadata: {},
@@ -389,7 +390,7 @@ export const mockOffChainTransactionsData = {
     },
     {
       blockNumber: 9737712,
-      blockTimestamp: 1638349139,
+      blockTimestamp: 1581848807,
       contractAddress: "0xeb8f08a975ab53e34d8a0330e0d34de942c95926",
       cumulativeGasUsed: 6875298,
       events: [],
@@ -401,15 +402,15 @@ export const mockOffChainTransactionsData = {
       isError: false,
       isOutgoingTransaction: true,
       metadata: {
-        acquisitionDate: "2021-10-28T00:00:00.000Z",
+        acquisitionDate: "2021-10-20T00:00:00.000Z",
         companyName: "Metaverse Company",
         roundCategory: "Series B",
         postMoneyValuation: "100000",
-        memo: "The future of the metaverse is decentralized and will be enabled by web3, NFT, and DAO technologies and protocols.",
-        fullyDilutedOwnershipStake: "5",
+        memo: "",
+        fullyDilutedOwnershipStake: "1.2",
         preMoneyValuation: "2000000",
-        numberShares: "60000",
-        numberTokens: "6000000",
+        numberShares: "23456",
+        numberTokens: "",
 
         __typename: "Financial_TransactionAnnotation",
         annotationMetadata: {},
@@ -430,8 +431,8 @@ export const mockOffChainTransactionsData = {
       value: "2000000000",
     },
     {
-      blockNumber: 9567623,
-      blockTimestamp: 1635774709,
+      blockNumber: 9567323,
+      blockTimestamp: 1579170407,
       contractAddress: "",
       cumulativeGasUsed: 10150476,
       events: [],
@@ -443,15 +444,15 @@ export const mockOffChainTransactionsData = {
       isError: false,
       isOutgoingTransaction: true,
       metadata: {
-        acquisitionDate: "2022-01-01T00:00:00.000Z",
+        acquisitionDate: "2021-01-05T00:00:00.000Z",
         companyName: "NFT DAO",
         roundCategory: "Pre-Seed",
         postMoneyValuation: "10000",
-        memo: "NFTs are internet media assets that are owned by users, not platforms. This DAO focuses on NFTs and building a global community of NFT collectors.",
-        fullyDilutedOwnershipStake: "5",
+        memo: "",
+        fullyDilutedOwnershipStake: "8.9",
         preMoneyValuation: "1000000",
-        numberShares: "0",
-        numberTokens: "50000",
+        numberShares: "",
+        numberTokens: "546789.0123",
 
         __typename: "Financial_TransactionAnnotation",
         annotationMetadata: {},
@@ -526,7 +527,7 @@ export const mockClubMembers = [
   },
 ];
 
-export const mockActivityTransactionsData = {
+export const mockActivityDepositTransactionsData = {
   edges: [
     {
       blockNumber: 9973048,
@@ -824,4 +825,13 @@ export const mockActivityTransactionsData = {
     },
   ],
   totalCount: 6,
+};
+
+const combinedActivityTransactions = [
+  ...mockActivityDepositTransactionsData.edges,
+  ...mockOffChainTransactionsData.edges,
+];
+export const mockActivityTransactionsData = {
+  edges: combinedActivityTransactions,
+  totalCount: combinedActivityTransactions.length,
 };
