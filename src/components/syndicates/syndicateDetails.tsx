@@ -31,7 +31,10 @@ interface ClubDetails {
 // we should have an isChildVisible prop here of type boolean
 const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
   const {
-    erc20TokenSliceReducer: { erc20Token },
+    erc20TokenSliceReducer: {
+      erc20Token,
+      depositDetails: { depositTokenSymbol, depositToken, ethDepositToken },
+    },
     merkleProofSliceReducer: { myMerkleProof },
     web3Reducer: {
       web3: { web3, status, account },
@@ -46,7 +49,6 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
     address,
     loading,
     maxTotalDeposits,
-    depositToken,
     memberCount,
     startTime,
     endTime,
@@ -82,8 +84,6 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
   // get syndicate address from the url
   const { clubAddress } = router.query;
 
-  const depositERC20TokenSymbol = "USDC"; // TODO: Update to support multiple tokens
-  const depositERC20Address = depositToken;
   const [showActionIcons, setShowActionIcons] = useState<boolean>(false);
 
   const [divWidth, setDivWidth] = useState(0);
@@ -91,13 +91,13 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
 
   // get and set current token details
   useEffect(() => {
-    if (depositERC20Address && web3) {
+    if (!ethDepositToken && depositToken && web3) {
       // set up token contract
-      const tokenContract = new web3.eth.Contract(abi, depositERC20Address);
+      const tokenContract = new web3.eth.Contract(abi, depositToken);
 
       setDepositTokenContract(tokenContract);
     }
-  }, [depositERC20Address, web3]);
+  }, [depositToken, web3]);
 
   // perform size checks
   useEffect(() => {
@@ -113,7 +113,7 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
           header: "Deposits",
           subText: `${floatedNumberWithCommas(
             totalDeposits,
-          )} ${depositERC20TokenSymbol} (${memberCount} ${
+          )} ${depositTokenSymbol} (${memberCount} ${
             memberCount === 1 ? "depositor" : "depositors"
           })`,
         },
@@ -205,7 +205,7 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
                 content: (
                   <span>
                     <NumberTreatment numberValue={totalDeposits} />{" "}
-                    {depositERC20TokenSymbol}
+                    {depositTokenSymbol}
                   </span>
                 ),
                 tooltip: "",
@@ -263,7 +263,7 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
           <div>
             <div className="flex justify-center items-center">
               <div className="mr-8">
-                {loading || loadingClubDeposits || totalDeposits == "" ? (
+                {loading || loadingClubDeposits || totalDeposits === "" ? (
                   <SkeletonLoader
                     height="20"
                     width="20"
@@ -380,10 +380,11 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
             <ProgressIndicator
               totalDeposits={totalDeposits}
               depositTotalMax={maxTotalDeposits.toString()}
-              depositERC20TokenSymbol={depositERC20TokenSymbol}
+              depositERC20TokenSymbol={depositTokenSymbol}
               openDate={startTime.toString()}
               closeDate={endTime.toString()}
               loading={loading || loadingClubDeposits}
+              ethDepositToken={ethDepositToken}
             />
           </div>
         )}

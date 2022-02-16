@@ -142,9 +142,15 @@ const MintMaxDate: FC<{ className?: string }> = ({ className }) => {
 
   return (
     <Fade delay={500}>
-      <div className={className}>
-        <div className="ml-5">
-          <div className="h3 pb-6">How long will deposits be accepted?</div>
+      <div className="ml-5">
+        <div className={className}>
+          <div className="h3 pb-1">When will deposits close?</div>
+          <div className="text-sm text-gray-syn4 pb-4">
+            {" "}
+            Extending the close date will require an on-chain transaction with
+            gas, so aim for further in the future to leave ample time for
+            collection. You can close deposits early if needed.
+          </div>
           <div className="pb-6">
             <div
               className="flex justify-between items-center border content-center border-gray-24 rounded-md w-full h-14"
@@ -169,37 +175,37 @@ const MintMaxDate: FC<{ className?: string }> = ({ className }) => {
                 </button>
               ))}
             </div>
-          </div>
 
-          {showCustomDatePicker && (
-            <animated.div style={styles} className="pb-6">
-              <div className="pb-2">Close date</div>
-              <div className="">
-                <DatePicker
-                  minDate={new Date()}
-                  popperProps={{
-                    positionFixed: true, // use this to make the popper position: fixed
-                  }}
-                  closeOnScroll={(e) => e.target === document}
-                  selected={new Date(mintEndTime?.value * 1000)}
-                  onChange={(date: Date | null) =>
-                    handleDateChange(+date as any)
-                  }
-                  todayButton="Go to Today"
-                  dateFormat="P"
-                  formatWeekDay={(nameOfDay) => nameOfDay.substr(0, 1)}
-                  showPopperArrow={false}
-                  dropdownMode="select"
-                  className="focus:border-blue-navy hover:border-gray-syn3"
-                />
-              </div>
-              {warning && (
-                <div className="text-yellow-warning pt-2 text-sm">
-                  {warning}
+            {showCustomDatePicker && (
+              <animated.div style={styles} className="pb-6">
+                <div className="pb-2">Close date</div>
+                <div className="">
+                  <DatePicker
+                    minDate={new Date()}
+                    popperProps={{
+                      positionFixed: true, // use this to make the popper position: fixed
+                    }}
+                    closeOnScroll={(e) => e.target === document}
+                    selected={new Date(mintEndTime?.value * 1000)}
+                    onChange={(date: Date | null) =>
+                      handleDateChange(+date as any)
+                    }
+                    todayButton="Go to Today"
+                    dateFormat="P"
+                    formatWeekDay={(nameOfDay) => nameOfDay.substr(0, 1)}
+                    showPopperArrow={false}
+                    dropdownMode="select"
+                    className="focus:border-blue-navy hover:border-gray-syn3"
+                  />
                 </div>
-              )}
-            </animated.div>
-          )}
+                {warning && (
+                  <div className="text-yellow-warning pt-2 text-sm">
+                    {warning}
+                  </div>
+                )}
+              </animated.div>
+            )}
+          </div>
         </div>
       </div>
     </Fade>

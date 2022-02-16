@@ -5,8 +5,9 @@ export enum LinkType {
 export const LinkButton = (props: {
     type: LinkType,
     extraClasses?: string,
+    onClick: () => void
 }) => {
-    const {type, extraClasses = "", ...rest} = props;
+    const {type, extraClasses = "", onClick, ...rest} = props;
 
     let icon;
     let label;
@@ -20,6 +21,7 @@ export const LinkButton = (props: {
     return (
         <button 
             className={`text-blue flex inline-flex items-center space-x-2 ${extraClasses}`} 
+            onClick={onClick}
             {...rest}
         >
             <img

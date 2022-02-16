@@ -18,6 +18,9 @@ interface Props {
 const TokenTable: FC<Props> = ({ columns, tableData }) => {
   const {
     assetsSliceReducer: { loading },
+    erc20TokenSliceReducer: {
+      depositDetails: { ethDepositToken },
+    },
   } = useSelector((state: AppState) => state);
 
   // pagination
@@ -208,6 +211,7 @@ const TokenTable: FC<Props> = ({ columns, tableData }) => {
                       <PriceContainer
                         numberValue={tokenBalance}
                         customSymbol={tokenSymbol}
+                        ethDepositToken={ethDepositToken}
                       />
                     </div>
                     <div className="md:col-span-3">

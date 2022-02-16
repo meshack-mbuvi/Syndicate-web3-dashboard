@@ -1,4 +1,3 @@
-import WalletNotConnected from "@/components/walletNotConnected";
 import useClubERC20s from "@/hooks/useClubERC20s";
 import { AppState } from "@/state";
 import React from "react";
@@ -113,7 +112,6 @@ const PortfolioAndDiscover: React.FC = () => {
                   />
                 </div>
               ) : null}
-
               {otherClubERC20s.length ? (
                 <div className="mt-16">
                   <p className="text-xl font-whyte mb-8">Member</p>
@@ -125,10 +123,8 @@ const PortfolioAndDiscover: React.FC = () => {
                 </div>
               ) : null}
             </div>
-          ) : account && !myClubERC20s.length && !invalidEthereumNetwork ? (
+          ) : !myClubERC20s.length && !invalidEthereumNetwork ? (
             <PortfolioEmptyState />
-          ) : !account ? (
-            <WalletNotConnected />
           ) : null}
         </>
       )}

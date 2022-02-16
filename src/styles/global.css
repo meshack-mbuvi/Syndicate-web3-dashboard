@@ -518,7 +518,7 @@ input {
 
 /* react-datepicker wrapper */
 .react-datepicker-wrapper {
-  display: flex;
+  display: flex !important;
   flex-grow: 1;
 }
 
@@ -858,4 +858,42 @@ input[type="checkbox"] {
 *::-webkit-scrollbar-thumb {
   background-color: #3f4147;
   border-radius: 4px;
+}
+
+.react-add-to-calendar {
+  @apply relative inline-block text-center;
+}
+
+.react-add-to-calendar__wrapper {
+  cursor: pointer;
+}
+
+.react-add-to-calendar__dropdown {
+  @apply w-60 mt-2 absolute z-20 top-5 -right-1/2 transition-all duration-500 ease-in-out;
+}
+
+.react-add-to-calendar__dropdown ul {
+  @apply rounded bg-gray-syn7 py-1;
+}
+
+.react-add-to-calendar__dropdown ul li a {
+  @apply flex justify-center hover:bg-gray-syn6 py-3 w-full text-white text-sm;
+}
+
+.react-add-to-calendar__dropdown ul li a::before {
+  display: block;
+  content: " ";
+  background-size: 18px 18px;
+  background-repeat: no-repeat;
+  height: 18px;
+  width: 18px;
+  padding-right: 24px;
+}
+
+.react-add-to-calendar__dropdown ul li:nth-child(1) a::before {
+  background-image: url("/images/social/google.svg");
+}
+
+.react-add-to-calendar__dropdown ul li:nth-child(2) a::before {
+  background-image: url("/images/social/apple.svg");
 }

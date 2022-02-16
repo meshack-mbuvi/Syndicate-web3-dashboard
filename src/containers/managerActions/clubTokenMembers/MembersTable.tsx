@@ -3,9 +3,8 @@ import Modal, { ModalStyle } from "@/components/modal";
 import { Spinner } from "@/components/shared/spinner";
 import { SET_MEMBER_SIGN_STATUS } from "@/graphql/mutations";
 import { MEMBER_SIGNED_QUERY } from "@/graphql/queries";
-import { useIsClubOwner } from '@/hooks/useClubOwner';
+import { useIsClubOwner } from "@/hooks/useClubOwner";
 import { useDemoMode } from "@/hooks/useDemoMode";
-import useUSDCDetails from "@/hooks/useUSDCDetails";
 import { AppState } from "@/state";
 import { formatAddress } from "@/utils/formatAddress";
 import { floatedNumberWithCommas } from "@/utils/formattedNumbers";
@@ -29,6 +28,7 @@ const MembersTable = ({
   const {
     erc20TokenSliceReducer: {
       erc20Token: { symbol },
+      depositDetails: { depositTokenSymbol },
     },
     web3Reducer: {
       web3: { account },
@@ -36,8 +36,6 @@ const MembersTable = ({
   } = useSelector((state: AppState) => state);
 
   const isOwner = useIsClubOwner();
-
-  const { depositTokenSymbol } = useUSDCDetails();
 
   const {
     getTableProps,

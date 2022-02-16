@@ -4,6 +4,8 @@ import { floatedNumberWithCommas } from "@/utils/formattedNumbers";
 import Image from "next/image";
 import React from "react";
 import { CopyToClipboard } from "react-copy-to-clipboard";
+import { AppState } from "@/state";
+import { useSelector } from "react-redux";
 
 export const SuccessOrFailureContent: React.FC<{
   closeCard: () => void;
@@ -30,6 +32,11 @@ export const SuccessOrFailureContent: React.FC<{
   accountClubTokens,
   memberPercentShare,
 }) => {
+  const {
+    erc20TokenSliceReducer: {
+      depositDetails: { depositTokenSymbol, ethDepositToken },
+    },
+  } = useSelector((state: AppState) => state);
   return (
     <div className="h-fit-content text-center relative">
       <div className="absolute right-0 top-0">
@@ -65,7 +72,10 @@ export const SuccessOrFailureContent: React.FC<{
       >
         <span className="text-2xl">
           {successfulDeposit
-            ? `Deposited ${floatedNumberWithCommas(depositAmount)} USDC`
+            ? `Deposited ${floatedNumberWithCommas(
+                depositAmount,
+                ethDepositToken ?? false,
+              )} ${depositTokenSymbol}`
             : successfulClaim
             ? "Claim successfull"
             : claimFailed

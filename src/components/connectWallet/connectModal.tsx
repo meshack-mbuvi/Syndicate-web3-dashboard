@@ -1,13 +1,14 @@
 import { Fragment, useRef } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { XIcon } from "@heroicons/react/outline";
+import { useDisableBgScrollOnModal } from "@/hooks/useDisableBgScrollOnModal";
 
 interface ConnectModalProps {
   show: boolean;
   children: JSX.Element;
   closeModal: () => void;
   title?: string;
-  subtext?: string;
+  subtext?: string | React.ReactNode;
   showCloseButton?: boolean;
   height?: string;
 }
@@ -22,6 +23,8 @@ export const ConnectModal: React.FC<ConnectModalProps> = (props) => {
     showCloseButton = true,
     height,
   } = props;
+
+  useDisableBgScrollOnModal(show);
 
   const refDiv = useRef(null);
 

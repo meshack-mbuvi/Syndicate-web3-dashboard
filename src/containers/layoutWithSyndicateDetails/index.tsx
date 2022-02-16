@@ -177,12 +177,7 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
 
       dispatch(setERC20TokenContract(clubERC20tokenContract));
 
-      dispatch(
-        setERC20Token(
-          clubERC20tokenContract,
-          syndicateContracts?.DepositTokenMintModule,
-        ),
-      );
+      dispatch(setERC20Token(clubERC20tokenContract));
 
       return () => {
         dispatch(setClubMembers([]));
@@ -307,10 +302,10 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
                             <button
                               key="members"
                               onClick={() => setActiveTab("members")}
-                              className={`whitespace-nowrap h4 py-6 transition-all border-b-1 focus:ring-0 font-whyte text-sm cursor-pointer ${
+                              className={`whitespace-nowrap h4 w-fit-content py-6 transition-all border-b-1 focus:ring-0 font-whyte text-sm cursor-pointer ${
                                 activeTab == "members"
                                   ? "border-white text-white"
-                                  : "border-transparent text-gray-syn4 hover:text-gray-400 "
+                                  : "border-transparent text-gray-syn4 hover:text-gray-40"
                               }`}
                             >
                               Members

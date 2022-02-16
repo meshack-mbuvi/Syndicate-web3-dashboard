@@ -5,7 +5,6 @@ import {
 } from "@/components/amplitude/eventNames";
 import { metamaskConstants } from "@/components/syndicates/shared/Constants";
 import { getMetamaskError } from "@/helpers";
-import useUSDCDetails from "@/hooks/useUSDCDetails";
 import { AppState } from "@/state";
 import {
   resetClubCreationReduxState,
@@ -44,6 +43,7 @@ type CreateInvestmentClubProviderProps = {
   waitingConfirmationModal: boolean;
   transactionModal: boolean;
   errorModal: boolean;
+  warningModal: boolean;
   setShowModal: Dispatch<SetStateAction<Record<string, boolean>>>;
   processingModalTitle: string;
   processingModalDescription: string;
@@ -51,6 +51,9 @@ type CreateInvestmentClubProviderProps = {
   preClubCreationStep: string;
   setPreClubCreationStep: Dispatch<SetStateAction<string>>;
   resetCreationStates: () => void;
+  setCurrentStep: (index: number) => void;
+  isWalletConfrimed: boolean;
+  setConfirmWallet: Dispatch<SetStateAction<boolean>>;
 };
 
 const CreateInvestmentClubContext = createContext<
@@ -67,7 +70,7 @@ const CreateInvestmentClubProvider: React.FC = ({ children }) => {
       web3: { account },
     },
     initializeContractsReducer: {
-      syndicateContracts: { clubERC20Factory },
+      syndicateContracts: { clubERC20Factory, clubERC20FactoryEth },
     },
     createInvestmentClubSliceReducer: {
       investmentClubName,
@@ -75,18 +78,19 @@ const CreateInvestmentClubProvider: React.FC = ({ children }) => {
       tokenCap,
       mintEndTime: { value: endMintTime },
       membersCount,
+      tokenDetails: { depositTokenAddress, depositTokenSymbol },
     },
   } = useSelector((state: AppState) => state);
 
   const router = useRouter();
 
-  const { depositTokenAddress } = useUSDCDetails();
   const dispatch = useDispatch();
 
   const [currentStep, setCurrentStep] = useState(0);
   const [backBtnDisabled, setBackBtnDisabled] = useState(false);
   const [nextBtnDisabled, setNextBtnDisabled] = useState(false);
   const [showNextButton, setShowNextButton] = useState(true);
+  const [isWalletConfrimed, setConfirmWallet] = useState(false);
 
   const [processingModalTitle, setProcessingTitle] = useState("");
   const [processingModalDescription, setProcessingDescription] = useState("");
@@ -96,12 +100,13 @@ const CreateInvestmentClubProvider: React.FC = ({ children }) => {
     useState<string>("invite");
 
   const [
-    { waitingConfirmationModal, transactionModal, errorModal },
+    { waitingConfirmationModal, transactionModal, errorModal, warningModal },
     setShowModal,
   ] = useState({
     waitingConfirmationModal: false,
     transactionModal: false,
     errorModal: false,
+    warningModal: false,
   });
 
   const resetCreationStates = () => {
@@ -112,6 +117,7 @@ const CreateInvestmentClubProvider: React.FC = ({ children }) => {
       waitingConfirmationModal: false,
       transactionModal: false,
       errorModal: false,
+      warningModal: false,
     }));
   };
 
@@ -161,7 +167,9 @@ const CreateInvestmentClubProvider: React.FC = ({ children }) => {
       waitingConfirmationModal: false,
       transactionModal: true,
       errorModal: false,
+      warningModal: false,
     }));
+    setConfirmWallet(false);
   };
 
   const handleCreateInvestmentClub = async () => {
@@ -174,21 +182,39 @@ const CreateInvestmentClubProvider: React.FC = ({ children }) => {
         waitingConfirmationModal: true,
         transactionModal: false,
         errorModal: false,
+        warningModal: false,
       }));
-      const _tokenCap = getWeiAmount(tokenCap, 18, true);
+      const isEthDeposit = depositTokenSymbol == "ETH";
+      const _tokenCap = isEthDeposit
+        ? getWeiAmount((+tokenCap * 10000).toString(), 18, true)
+        : getWeiAmount(tokenCap, 18, true);
       const startTime = parseInt((new Date().getTime() / 1000).toString()); // convert to seconds
-      await clubERC20Factory.createERC20(
-        account,
-        investmentClubName,
-        investmentClubSymbol,
-        depositTokenAddress,
-        startTime,
-        endMintTime,
-        _tokenCap,
-        +membersCount,
-        onTxConfirm,
-        onTxReceipt,
-      );
+      if (isEthDeposit) {
+        await clubERC20FactoryEth.createERC20(
+          account,
+          investmentClubName,
+          investmentClubSymbol,
+          startTime,
+          endMintTime,
+          _tokenCap,
+          +membersCount,
+          onTxConfirm,
+          onTxReceipt,
+        );
+      } else {
+        await clubERC20Factory.createERC20(
+          account,
+          investmentClubName,
+          investmentClubSymbol,
+          depositTokenAddress,
+          startTime,
+          endMintTime,
+          _tokenCap,
+          +membersCount,
+          onTxConfirm,
+          onTxReceipt,
+        );
+      }
       amplitudeLogger(CREATE_INVESTMENT_CLUB, {
         flow: Flow.CLUB_CREATION,
       });
@@ -204,7 +230,8 @@ const CreateInvestmentClubProvider: React.FC = ({ children }) => {
       setShowModal(() => ({
         waitingConfirmationModal: false,
         transactionModal: false,
-        errorModal: true,
+        errorModal: false,
+        warningModal: false,
       }));
       amplitudeLogger(ERROR_INVESTMENT_CLUB_CREATION, {
         flow: Flow.CLUB_CREATION,
@@ -247,6 +274,7 @@ const CreateInvestmentClubProvider: React.FC = ({ children }) => {
         waitingConfirmationModal,
         transactionModal,
         errorModal,
+        warningModal,
         setShowModal,
         processingModalTitle,
         processingModalDescription,
@@ -254,6 +282,9 @@ const CreateInvestmentClubProvider: React.FC = ({ children }) => {
         preClubCreationStep,
         setPreClubCreationStep,
         resetCreationStates,
+        setCurrentStep,
+        isWalletConfrimed,
+        setConfirmWallet,
       }}
     >
       {children}

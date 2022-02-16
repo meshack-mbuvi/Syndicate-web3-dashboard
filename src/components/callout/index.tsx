@@ -1,5 +1,5 @@
 export const Callout = (props: {
-    extraClasses: string,
+    extraClasses?: string,
     children: any
 }) => {
     const {extraClasses = "", children} = props;

@@ -82,7 +82,7 @@ const ActivityDatePicker: React.FC<Props> = ({
             formatWeekDay={(nameOfDay) => nameOfDay.substr(0, 1)}
             showPopperArrow={false}
             dropdownMode="select"
-            className={`border-none text-base text-gray-syn4 inherit ${textAlignment}`}
+            className={`border-none text-base text-gray-syn4 border-gray-24 inherit ${textAlignment}`}
             customInput={<CustomInput />}
           />
         )}

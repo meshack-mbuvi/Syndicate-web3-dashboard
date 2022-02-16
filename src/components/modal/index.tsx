@@ -1,3 +1,4 @@
+import { useDisableBgScrollOnModal } from "@/hooks/useDisableBgScrollOnModal";
 import { Dialog, Transition } from "@headlessui/react";
 import Image from "next/image";
 import React, { Fragment } from "react";
@@ -85,6 +86,8 @@ const Modal = (props: ModalProps): JSX.Element => {
     modalStyle === ModalStyle.DARK && "text-white"
   }`;
 
+  useDisableBgScrollOnModal(show);
+
   const handleClose = () => {
     if (closeModal) {
       closeModal();
@@ -103,7 +106,7 @@ const Modal = (props: ModalProps): JSX.Element => {
         open={show}
       >
         <div
-          className={`flex items-center my-auto justify-center text-center ${textColor} sm:px-4 text-center sm:block sm:p-0`}
+          className={`flex items-center h-screen my-auto justify-center text-center ${textColor} sm:px-4 text-center sm:block sm:p-0`}
         >
           <Transition.Child
             as={Fragment}

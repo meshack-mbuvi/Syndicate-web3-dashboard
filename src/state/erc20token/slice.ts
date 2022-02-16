@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { isEqual } from "lodash";
-import { ERC20Token, initialState } from "./types";
+import { ERC20Token, DepositDetails, initialState } from "./types";
 
 const erc20TokenSlice = createSlice({
   name: "erc20token",
@@ -10,6 +10,12 @@ const erc20TokenSlice = createSlice({
       const erc20Token = action.payload;
       if (!isEqual(erc20Token, state.erc20Token)) {
         state.erc20Token = erc20Token;
+      }
+    },
+    setERC20TokenDespositDetails(state, action: PayloadAction<DepositDetails>) {
+      const depositDetails = action.payload;
+      if (!isEqual(depositDetails, state.depositDetails)) {
+        state.depositDetails = depositDetails;
       }
     },
     setERC20TokenContract(state, action: PayloadAction<any>) {
@@ -29,6 +35,7 @@ const erc20TokenSlice = createSlice({
 
 export const {
   setERC20TokenDetails,
+  setERC20TokenDespositDetails,
   setERC20TokenContract,
   setLoadingClub,
   setTotalDeposits,

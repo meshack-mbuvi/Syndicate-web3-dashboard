@@ -13,7 +13,10 @@ import {
   setTotalTransactionsCount,
 } from "@/state/erc20transactions";
 import { TransactionCategory } from "@/state/erc20transactions/types";
-import { mockActivityTransactionsData } from "@/utils/mockdata";
+import {
+  mockActivityTransactionsData,
+  mockActivityDepositTransactionsData,
+} from "@/utils/mockdata";
 import { NetworkStatus, useMutation } from "@apollo/client";
 import { capitalize } from "lodash";
 import Image from "next/image";
@@ -26,6 +29,9 @@ const ActivityTable: React.FC = () => {
   const dispatch = useDispatch();
   const {
     transactionsReducer: { totalTransactionsCount },
+    erc20TokenSliceReducer: {
+      erc20Token: { depositsEnabled: isOpenForDeposits },
+    },
   } = useSelector((state: AppState) => state);
   const isManager = useIsClubOwner();
   const router = useRouter();
@@ -49,9 +55,15 @@ const ActivityTable: React.FC = () => {
   const [activeTransactionHashes, setActiveTransactionHashes] = useState([]);
   const [uncategorisedIcon, setUncategorisedIcon] = useState<string>("");
   const [searchWidth, setSearchWidth] = useState<number>(48);
-  const [mockTransactionsData, setMockTransactionsData] = useState(
-    mockActivityTransactionsData,
-  );
+  const [mockTransactionsData, setMockTransactionsData] = useState<any>(mockActivityDepositTransactionsData);
+
+  useEffect(() => {
+    if (isOpenForDeposits) {
+      setMockTransactionsData(mockActivityDepositTransactionsData);
+    } else {
+      setMockTransactionsData(mockActivityTransactionsData);
+    }
+  }, [isOpenForDeposits]);
 
   useEffect(() => {
     // clearing selection to fix an issue with loader state
@@ -279,29 +291,30 @@ const ActivityTable: React.FC = () => {
     return searchParam.toLowerCase().indexOf(searchTerm) > -1;
   };
   const filterMockTransactions = () => {
+    const data = isOpenForDeposits
+      ? mockActivityDepositTransactionsData
+      : mockActivityTransactionsData;
     let filteredData;
     if (filter && filter !== "everything") {
-      filteredData = mockActivityTransactionsData.edges.filter(
+      filteredData = data.edges.filter(
         (transaction) =>
           transaction.metadata.transactionCategory === filter.toUpperCase(),
       );
     }
 
     if (searchValue) {
-      filteredData = mockActivityTransactionsData.edges.filter(
-        (transaction) => {
-          const { hash, fromAddress, toAddress, tokenName, tokenSymbol } =
-            transaction;
+      filteredData = data.edges.filter((transaction) => {
+        const { hash, fromAddress, toAddress, tokenName, tokenSymbol } =
+          transaction;
 
-          return (
-            manualMockDataFilter(hash) ||
-            manualMockDataFilter(fromAddress) ||
-            manualMockDataFilter(toAddress) ||
-            manualMockDataFilter(tokenName) ||
-            manualMockDataFilter(tokenSymbol)
-          );
-        },
-      );
+        return (
+          manualMockDataFilter(hash) ||
+          manualMockDataFilter(fromAddress) ||
+          manualMockDataFilter(toAddress) ||
+          manualMockDataFilter(tokenName) ||
+          manualMockDataFilter(tokenSymbol)
+        );
+      });
     }
 
     setMockTransactionsData({
@@ -314,7 +327,7 @@ const ActivityTable: React.FC = () => {
       (filter === "everything" && !searchValue) ||
       (!searchValue && !filter)
     ) {
-      setMockTransactionsData(mockActivityTransactionsData);
+      setMockTransactionsData(data);
     }
   };
 

@@ -11,6 +11,7 @@ import Header from "@/components/navigation/header/Header";
 import DemoBanner from "../demoBanner";
 import ProgressBar from "../ProgressBar";
 import SEO from "../seo";
+import { useDemoMode } from "@/hooks/useDemoMode";
 
 interface Props {
   showBackButton?: boolean;
@@ -40,6 +41,8 @@ const Layout: FC<Props> = ({
   } = useSelector((state: AppState) => state);
 
   const router = useRouter();
+  const isDemoMode = useDemoMode();
+
   const {
     pathname,
     isReady,
@@ -131,7 +134,7 @@ const Layout: FC<Props> = ({
         </div>
         <div
           className={`flex w-full bg-black flex-col sm:flex-row ${
-            showCreateProgressBar ? "pt-16" : "pt-24"
+            showCreateProgressBar ? "pt-16" : isDemoMode ? "pt-48" : "pt-24"
           } z-20 justify-center items-center my-0 mx-auto`}
         >
           {children}

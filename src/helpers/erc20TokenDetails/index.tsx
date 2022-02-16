@@ -4,18 +4,22 @@ import { AppState } from "@/state";
 import {
   setERC20TokenContract,
   setERC20TokenDetails,
+  setERC20TokenDespositDetails,
   setLoadingClub,
 } from "@/state/erc20token/slice";
-import { ERC20Token } from "@/state/erc20token/types";
+import { ERC20Token, DepositDetails } from "@/state/erc20token/types";
+import { isDev } from "@/utils/environment";
 import { isZeroAddress } from "@/utils";
 import { getWeiAmount } from "@/utils/conversions";
 
+const ETH_MINT_MODULE = process.env.NEXT_PUBLIC_ETH_MINT_MODULE;
 export const ERC20TokenDefaultState = {
   name: "",
   owner: "",
   address: "",
   depositToken: "",
   mintModule: "",
+  ethDepositToken: false,
   depositsEnabled: false,
   claimEnabled: false,
   totalSupply: 0,
@@ -33,14 +37,47 @@ export const ERC20TokenDefaultState = {
   requiredToken: "",
   requiredTokenMinBalance: "",
 };
+const depositTokenMapping = {
+  rinkeby: {
+    usdc: {
+      depositToken: "0xeb8f08a975Ab53E34D8a0330E0D34de942C95926",
+      depositTokenSymbol: "USDC",
+      depositTokenLogo: "/images/TestnetTokenLogos/usdcIcon.svg",
+      depositTokenName: "Testnet USDC",
+      depositTokenDecimals: 6,
+    },
+    ether: {
+      depositToken: "",
+      depositTokenSymbol: "ETH",
+      depositTokenLogo: "/images/ethereum-logo.png",
+      depositTokenName: "Testnet Ethereum",
+      depositTokenDecimals: 18,
+    },
+  },
+  mainnet: {
+    usdc: {
+      depositToken: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+      depositTokenSymbol: "USDC",
+      depositTokenLogo: "/images/prodTokenLogos/usd-coin-usdc.svg",
+      depositTokenName: "USD Coin",
+      depositTokenDecimals: 6,
+    },
+    ether: {
+      depositToken: "",
+      depositTokenSymbol: "ETH",
+      depositTokenLogo: "/images/ethereum-logo.png",
+      depositTokenName: "Ethereum",
+      depositTokenDecimals: 18,
+    },
+  },
+}[isDev ? "rinkeby" : "mainnet"];
+
 /**
  * Retrieves details for an erc20 token for a particular
  * tokenAddress(initially called syndicateAddress)
  */
 export const getERC20TokenDetails = async (
   ERC20tokenContract,
-  DepositTokenMintModule: DepositTokenMintModuleContract,
-  SingleTokenMintModule: DepositTokenMintModuleContract,
   policyMintERC20: MintPolicyContract,
   mintPolicy: MintPolicyContract,
 ): Promise<ERC20Token> => {
@@ -69,20 +106,6 @@ export const getERC20TokenDetails = async (
         } = await mintPolicy?.getSyndicateValues(address));
       }
 
-      let mintModule = DepositTokenMintModule.address;
-
-      let depositToken = await DepositTokenMintModule?.depositToken(
-        ERC20tokenContract.clubERC20Contract._address,
-      );
-
-      if (isZeroAddress(depositToken)) {
-        depositToken = await SingleTokenMintModule?.depositToken(
-          ERC20tokenContract.clubERC20Contract._address,
-        );
-        mintModule = SingleTokenMintModule.address;
-      }
-
-      // TODO: Multicall :-)
       const [name, owner, tokenDecimals, symbol, memberCount] =
         await Promise.all([
           ERC20tokenContract.name(),
@@ -122,8 +145,6 @@ export const getERC20TokenDetails = async (
         name,
         owner,
         tokenDecimals,
-        depositToken,
-        mintModule,
         symbol,
         memberCount,
         loading: false,
@@ -143,6 +164,39 @@ export const getERC20TokenDetails = async (
   }
 };
 
+export const getDespositDetails = async (
+  ERC20tokenContract,
+  DepositTokenMintModule: DepositTokenMintModuleContract,
+  SingleTokenMintModule: DepositTokenMintModuleContract,
+): Promise<DepositDetails> => {
+  let mintModule = DepositTokenMintModule.address;
+  let ethDepositToken = false;
+
+  let depositToken = await DepositTokenMintModule?.depositToken(
+    ERC20tokenContract.clubERC20Contract._address,
+  );
+
+  if (isZeroAddress(depositToken)) {
+    depositToken = await SingleTokenMintModule?.depositToken(
+      ERC20tokenContract.clubERC20Contract._address,
+    );
+
+    if (isZeroAddress(depositToken)) {
+      depositToken = "";
+      mintModule = ETH_MINT_MODULE;
+      ethDepositToken = true;
+    } else {
+      mintModule = SingleTokenMintModule.address;
+    }
+  }
+
+  return {
+    mintModule,
+    ethDepositToken,
+    ...depositTokenMapping[ethDepositToken ? "ether" : "usdc"],
+  };
+};
+
 /**
  * This function retrieves limited club details. The details retrieved here are
  * missing club totalDeposits.
@@ -157,10 +211,7 @@ export const getERC20TokenDetails = async (
  * @returns
  */
 export const setERC20Token =
-  (
-    ERC20tokenContract,
-    DepositTokenMintModule: DepositTokenMintModuleContract,
-  ) =>
+  (ERC20tokenContract) =>
   async (dispatch, getState: () => AppState): Promise<void> => {
     const {
       initializeContractsReducer: {
@@ -168,6 +219,7 @@ export const setERC20Token =
           policyMintERC20,
           mintPolicy,
           SingleTokenMintModule,
+          DepositTokenMintModule,
         },
       },
     } = getState();
@@ -178,13 +230,30 @@ export const setERC20Token =
     try {
       const erc20Token = await getERC20TokenDetails(
         ERC20tokenContract,
-        DepositTokenMintModule,
-        SingleTokenMintModule,
         policyMintERC20,
         mintPolicy,
       );
+      const depositDetails = await getDespositDetails(
+        ERC20tokenContract,
+        DepositTokenMintModule,
+        SingleTokenMintModule,
+      );
 
-      dispatch(setERC20TokenDetails(erc20Token));
+      const { ethDepositToken } = depositDetails;
+      dispatch(
+        setERC20TokenDetails({
+          ...erc20Token,
+          /**
+           * If we are using eth as the deposit token, the ratio
+           * is 1: 100000 erc20 tokens. For other erc20 tokens,
+           * the ratio is 1:1
+           */
+          maxTotalDeposits: ethDepositToken
+            ? Number(erc20Token.maxTotalDeposits) / 10000
+            : erc20Token.maxTotalDeposits,
+        }),
+      );
+      dispatch(setERC20TokenDespositDetails(depositDetails));
       dispatch(setLoadingClub(false));
     } catch (error) {
       return dispatch(setERC20TokenDetails(ERC20TokenDefaultState));

@@ -87,13 +87,17 @@ module.exports = {
         100: "30rem",
         104: "26rem",
         202: "50.5rem",
+        "2screen": "200vh",
       }),
       width: () => ({
         "fit-content": "fit-content",
         "2/1": "200%",
         "5.21/12": "43.47826%",
+        7.5: "1.875rem",
+        62: "15.5rem",
         88: "22rem",
         100: "30rem",
+        104: "26rem",
         "slightly-over-100": "30.25rem",
         564: "35.25rem",
         730: "45.625rem",
@@ -110,6 +114,7 @@ module.exports = {
         104: "26rem",
         480: "30rem",
         816: "50.5rem",
+        "2screen": "200vh",
       },
       backgroundOpacity: {
         15: "0.15",
@@ -178,7 +183,7 @@ module.exports = {
         },
         pink: {
           ...colors.pink,
-          millenium: "#FF94FF"
+          millenium: "#FF94FF",
         },
         gray: {
           ...colors.coolGray,
@@ -229,7 +234,7 @@ module.exports = {
           lightSlate: "#808F9C",
           spindle: "#B8BDC7",
           shuttle: "#646871",
-          mineral: "#BEC8CF"
+          mineral: "#BEC8CF",
         },
         red: {
           ...colors.red,
@@ -254,9 +259,9 @@ module.exports = {
           "light-dark": "#01A979",
           "light-darker": "#02504B",
           "phthalo-green": "#082B1E",
-          "volt": "#CCFF00",
-          "money": "#00F252",
-          "mint": "#CCFFCC",
+          volt: "#CCFF00",
+          money: "#00F252",
+          mint: "#CCFFCC",
           "standard-issue-od": "#191E12",
         },
         blue: {
@@ -299,7 +304,6 @@ module.exports = {
           bullion: "#D28B01",
           "aces-rescue-orange": "#FF4E21",
           terra: "#D96E0B",
-
         },
         brown: {
           ...colors.brown,
@@ -362,6 +366,7 @@ module.exports = {
       },
       margin: {
         0.5: "0.15rem",
+        18: "4.875rem",
         24.5: "6.5rem",
         25.5: "6.25rem",
         27: "6.875rem",

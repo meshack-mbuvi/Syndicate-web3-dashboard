@@ -93,7 +93,7 @@ const MembersCount: React.FC<{
             value: membersNumCount
               ? parseInt(membersNumCount.replace(/^0+/, ""))
               : parseInt(""),
-            label: "How many members can join?",
+            label: "What’s the maximum number of members?",
             addOn: <MaxButton handleClick={() => handleSetMax()} />,
             onChange: handleSetMembersCount,
             error: memberCountError,
@@ -101,8 +101,21 @@ const MembersCount: React.FC<{
             hasError: Boolean(isInputError),
             type: "number",
             addSettingDisclaimer: false,
-            moreInfo: "You can invite up to 99 members",
-            className: className,
+            moreInfo: (
+              <div>
+                Investment clubs may have up to 99 members{" "}
+                <a
+                  className="cursor-pointer underline"
+                  href="https://www.sec.gov/reportspubs/investor-publications/investorpubsinvclubhtm.html"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  according to the SEC.
+                </a>{" "}
+                Syndicate encourages all users to consult with their own legal
+                and tax counsel.
+              </div>
+            ),
           }}
         />
       </div>

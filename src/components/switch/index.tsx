@@ -7,7 +7,7 @@ export enum SwitchType {
 export const Switch = (props: {
     isOn: boolean,
     type?: SwitchType,
-    extraClasses: string,
+    extraClasses?: string,
     onClick: () => void
 }) => {
     const {

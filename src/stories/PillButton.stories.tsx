@@ -3,7 +3,7 @@ import React from 'react';
 
 
 export default {
-  title: 'Atoms/Buttons/Pill Button',
+  title: 'Atoms/Buttons/Pill Button/Regular',
   component: PillButton,
   argTypes: {
       isActive: {
@@ -16,8 +16,8 @@ export default {
 
 const Template = (args) => <PillButton {...args}></PillButton>;
 
-export const Primary = Template.bind({});
-Primary.args = {
+export const Default = Template.bind({});
+Default.args = {
   children: "Label"
 };
 

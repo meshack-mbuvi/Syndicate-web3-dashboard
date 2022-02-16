@@ -1,7 +1,6 @@
 import { useCreateInvestmentClubContext } from "@/context/CreateInvestmentClubContext";
-import useUSDCDetails from "@/hooks/useUSDCDetails";
-import { AppState } from "@/state";
 import { floatedNumberWithCommas } from "@/utils/formattedNumbers";
+import { AppState } from "@/state";
 import { format } from "date-fns";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
@@ -19,12 +18,12 @@ const ReviewDetails: React.FC = () => {
     membersCount,
     mintEndTime,
     tokenCap,
+    tokenDetails: { depositTokenSymbol, depositTokenLogo },
   } = useSelector((state: AppState) => state.createInvestmentClubSliceReducer);
 
-  const { depositTokenSymbol, depositTokenLogo } = useUSDCDetails();
-  const { currentStep } = useCreateInvestmentClubContext();
-  const { setBackBtnDisabled, setNextBtnDisabled } =
+  const { currentStep, setBackBtnDisabled, setNextBtnDisabled } =
     useCreateInvestmentClubContext();
+
   const [inlineEditView, setInlineEditView] = useState<string>("");
   const [editClubNameSelector, setEditClubNameSelector] =
     useState<boolean>(false);
@@ -142,7 +141,7 @@ const ReviewDetails: React.FC = () => {
     <>
       <div className="w-full mb-8 sm:mb-16">
         {editClubNameSelector ? (
-          <animated.div className="relative w-full mb-2 pt-2 pb-2 pl-5 pr-5">
+          <animated.div className="relative w-full mb-2 pt-2 pb-2">
             <ClubNameSelector editButtonClicked={editClubNameSelector} />
             {investmentClubName ? (
               <animated.div
@@ -160,7 +159,7 @@ const ReviewDetails: React.FC = () => {
               <animated.div
                 className="flex justify-between px-5 py-4"
                 style={
-                  inlineEditView === "investmentClub" && currentStep == 4
+                  inlineEditView === "investmentClub"
                     ? {
                         backgroundColor: "#131416",
                         borderRadius: "10px",
@@ -175,7 +174,7 @@ const ReviewDetails: React.FC = () => {
                   {editClubNameSelector ? (
                     <ClubNameSelector className="flex flex-col pb-6 w-full lg:w-full" />
                   ) : (
-                    <>
+                    <div>
                       {investmentClubHeaderTransition((styles, item) =>
                         item ? (
                           <animated.p
@@ -192,10 +191,10 @@ const ReviewDetails: React.FC = () => {
                           Club token ✺{investmentClubSymbol}
                         </p>
                       </div>
-                    </>
+                    </div>
                   )}
                 </animated.div>
-                {inlineEditView === "investmentClub" && currentStep == 4 ? (
+                {inlineEditView === "investmentClub" ? (
                   <animated.div
                     className="flex items-center"
                     onClick={() =>
@@ -231,7 +230,7 @@ const ReviewDetails: React.FC = () => {
               <animated.div
                 className="flex justify-between px-5 py-4"
                 style={
-                  inlineEditView === "tokenCap" && currentStep == 4
+                  inlineEditView === "tokenCap"
                     ? {
                         backgroundColor: "#131416",
                         borderRadius: "10px",
@@ -248,17 +247,17 @@ const ReviewDetails: React.FC = () => {
                       <AmountToRaise className="w-full lg:w-full" />
                     </div>
                   ) : (
-                    <>
+                    <div>
                       {tokenCapHeaderTransition((styles, item) =>
                         item ? (
                           <animated.p style={styles}>
-                            How much are you raising?
+                            What’s the upper limit of the club’s raise?
                           </animated.p>
                         ) : null,
                       )}
                       <div className="flex mt-2 text-base">
                         <p className="text-white">
-                          {floatedNumberWithCommas(tokenCap)}
+                          {floatedNumberWithCommas(tokenCap, true)}
                         </p>
                         {usdcTransition((styles, item) =>
                           item ? (
@@ -278,10 +277,10 @@ const ReviewDetails: React.FC = () => {
                           ) : null,
                         )}
                       </div>
-                    </>
+                    </div>
                   )}
                 </animated.div>
-                {inlineEditView === "tokenCap" && currentStep == 4 ? (
+                {inlineEditView === "tokenCap" ? (
                   <animated.div
                     className="flex items-center"
                     onClick={() => setEditAmountToRaise(!editAmountToRaise)}
@@ -314,7 +313,7 @@ const ReviewDetails: React.FC = () => {
               <animated.div
                 className="flex justify-between px-5 py-4"
                 style={
-                  inlineEditView === "mindEnd" && currentStep == 4
+                  inlineEditView === "mindEnd"
                     ? {
                         backgroundColor: "#131416",
                         borderRadius: "10px",
@@ -331,14 +330,14 @@ const ReviewDetails: React.FC = () => {
                       <MintMaxDate className="w-full lg:w-full" />
                     </div>
                   ) : (
-                    <>
+                    <div>
                       {mindEndTimeHeaderTransition((styles, item) =>
                         item ? (
                           <animated.p
                             style={styles}
                             className="text-sm text-gray-syn4"
                           >
-                            How long will deposits be accepted?
+                            When will deposits close?
                           </animated.p>
                         ) : null,
                       )}
@@ -362,10 +361,10 @@ const ReviewDetails: React.FC = () => {
                           )}
                         </p>
                       </div>
-                    </>
+                    </div>
                   )}
                 </animated.div>
-                {inlineEditView === "mindEnd" && currentStep == 4 ? (
+                {inlineEditView === "mindEnd" ? (
                   <animated.div
                     className="flex items-center"
                     onClick={() => setEditMintMaxDate(!editMintMaxDate)}
@@ -404,7 +403,7 @@ const ReviewDetails: React.FC = () => {
               <animated.div
                 className="flex justify-between px-5 py-4"
                 style={
-                  inlineEditView === "memberCount" && currentStep == 4
+                  inlineEditView === "memberCount"
                     ? {
                         backgroundColor: "#131416",
                         borderRadius: "10px",
@@ -421,24 +420,24 @@ const ReviewDetails: React.FC = () => {
                       <MembersCount />
                     </div>
                   ) : (
-                    <>
+                    <div>
                       {memberCountHeaderTransition((styles, item) =>
                         item ? (
                           <animated.p
                             style={styles}
                             className="text-sm text-gray-syn4"
                           >
-                            How many members can join?
+                            What’s the maximum number of members?
                           </animated.p>
                         ) : null,
                       )}
                       <div className="flex mt-2 text-base">
                         <p className="text-white">{membersCount}</p>
                       </div>
-                    </>
+                    </div>
                   )}
                 </animated.div>
-                {inlineEditView === "memberCount" && currentStep == 4 ? (
+                {inlineEditView === "memberCount" ? (
                   <animated.div
                     className="flex items-center"
                     onClick={() => setEditMembersCount(!editMembersCount)}

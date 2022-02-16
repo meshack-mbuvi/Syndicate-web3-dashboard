@@ -1,7 +1,9 @@
 import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { EmailSupport } from "@/components/emailSupport";
 import { DiscordLink } from "@/components/DiscordLink";
+import { ExternalLinkIcon } from "src/components/iconWrappers";
 import useWindowSize from "@/hooks/useWindowSize";
+import EstimateGas from "./estimateGas";
 
 const GettingStarted: React.FC<{
   setClubStep: Dispatch<SetStateAction<string>>;
@@ -31,21 +33,17 @@ const GettingStarted: React.FC<{
     // handle the third line height
     const thirdBottomOffset = thirdStep.getBoundingClientRect().bottom;
     const fourthTopOffset = fourthStep.getBoundingClientRect().top;
-    console.log(fourthTopOffset);
     setThirdLineHeight(fourthTopOffset - thirdBottomOffset);
   }, [width]);
 
   return (
-    <div
-      className="pt-8 pb-6 px-5 rounded-2-half bg-gray-syn8 w-11/12 sm:w-100"
-      style={{ marginTop: "78px" }}
-    >
+    <div className="pt-8 pb-6 px-5 rounded-2-half bg-gray-syn8 w-11/12 sm:w-100 mt-8 sm:mt-18">
       <div>
         <div className="mx-5">
           <p className="uppercase text-sm leading-4 tracking-px text-white mb-8 font-bold">
-            Getting Started
+            Create an investment club
           </p>
-          <div style={{ marginBottom: 72 }}>
+          <div style={{ marginBottom: 32 }}>
             <ol className="space-y-6 overflow-hidden xs:hidden" role="menu">
               <div className="relative">
                 <div
@@ -54,7 +52,7 @@ const GettingStarted: React.FC<{
                   style={
                     width < 500
                       ? { height: `${firstLineHeight + 4}px` }
-                      : { height: "74px" }
+                      : { height: "122px" }
                   }
                   aria-hidden="true"
                 />
@@ -70,13 +68,16 @@ const GettingStarted: React.FC<{
                     </span>
                   </span>
                   <span className="ml-4 min-w-0 flex flex-col">
-                    <span className="text-white text-base leading-6 font-light transition-all">
-                      Create your on-chain investment club
+                    <span className="text-white text-base leading-6 font-whyte transition-all">
+                      Create on-chain club
                     </span>
                     <p className="text-gray-syn4 text-sm mt-1 leading-5.5">
-                      Define the name &#38; rules around your fundraise that
-                      will enable the on-chain cap table
+                      Define the name &#38; rules around your raise that will
+                      enable the on-chain cap table
                     </p>
+                    <div className="text-blue text-xs mt-3 font-whyte">
+                      <EstimateGas />
+                    </div>
                   </span>
                 </div>
               </div>
@@ -102,7 +103,7 @@ const GettingStarted: React.FC<{
                       <span className="h-full w-full rounded-full" />
                     </span>
                   </span>
-                  <span className="ml-4 min-w-0 flex justify-between w-full text-gray-syn5 text-base leading-6 font-light transition-all">
+                  <span className="ml-4 min-w-0 flex justify-between w-full text-gray-syn5 text-base leading-6 font-whyte transition-all">
                     <span>Form a legal entity</span>
                     <span>Optional</span>
                   </span>
@@ -130,7 +131,7 @@ const GettingStarted: React.FC<{
                       <span className="h-full w-full rounded-full" />
                     </span>
                   </span>
-                  <span className="ml-4 min-w-0 flex justify-between w-full text-gray-syn5 text-base leading-6 font-light transition-all">
+                  <span className="ml-4 min-w-0 flex justify-between w-full text-gray-syn5 text-base leading-6 font-whyte transition-all">
                     <span>Distribute &#38; sign legal agreements</span>
                     <span>Optional</span>
                   </span>
@@ -148,7 +149,7 @@ const GettingStarted: React.FC<{
                     </span>
                   </span>
                   <span className="ml-4 min-w-0 flex flex-col">
-                    <span className="text-gray-syn5 text-base leading-6 font-light transition-all">
+                    <span className="text-gray-syn5 text-base leading-6 font-whyte transition-all">
                       Collect funds &#38; invest together!
                     </span>
                   </span>
@@ -156,17 +157,27 @@ const GettingStarted: React.FC<{
               </div>
             </ol>
           </div>
+          <div className="text-sm mb-6 flex flex-row items-center justify-center">
+            <a
+              href="https://www.notion.so/syndicateprotocol/Syndicate-Terms-of-Service-04674deec934472e88261e861cdcbc7c"
+              className="text-gray-syn4 cursor-pointer"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <span>By clicking below, you agree to our Terms of Service </span>
+              <ExternalLinkIcon
+                grayIcon
+                className={`ml-1 mb-1.5 text-gray-syn4 hover:text-blue w-3.5 h-3.5 inline`}
+              />
+            </a>
+          </div>
           <button
             className="bg-green rounded-custom w-full flex items-center justify-center py-4"
             onClick={() => setClubStep("")}
           >
             <p className="text-black pr-1 whitespace-nowrap font-semibold">
-              Create an investment club
+              Create on-chain club
             </p>
-            <img
-              src="/images/actionIcons/arrowRightBlack.svg"
-              alt="arrow-right"
-            />
           </button>
         </div>
         <div className="mt-10 mb-6 h-px bg-gray-syn6"></div>

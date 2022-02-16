@@ -34,6 +34,16 @@ const ClubERC20Table: FC<Props> = ({ columns, tableData }) => {
     [tableData.length, currentPage, dataLimit],
   );
 
+  const processTotalDeposits = (rawTotalDeposits, depositERC20TokenSymbol) => {
+    const totalDeposits =
+      depositERC20TokenSymbol == "ETH"
+        ? rawTotalDeposits / 10000
+        : rawTotalDeposits;
+    return hasDecimals(totalDeposits)
+      ? floatedNumberWithCommas(parseFloat(totalDeposits),depositERC20TokenSymbol == "ETH" ? true : false)
+      : numberWithCommas(totalDeposits);
+  };
+
   useEffect(() => {
     const startIndex = currentPage * dataLimit - dataLimit;
     const endIndex = startIndex + dataLimit;
@@ -67,6 +77,7 @@ const ClubERC20Table: FC<Props> = ({ columns, tableData }) => {
                 status,
                 ownershipShare,
                 depositERC20TokenSymbol,
+                depositTokenLogo,
                 membersCount,
                 totalDeposits,
                 memberDeposits,
@@ -91,9 +102,13 @@ const ClubERC20Table: FC<Props> = ({ columns, tableData }) => {
                   </div>
                   <div className="flex text-base items-center">{status}</div>
                   <div className="flex text-base items-center">
-                    {hasDecimals(totalDeposits)
-                      ? floatedNumberWithCommas(parseFloat(totalDeposits))
-                      : numberWithCommas(totalDeposits)}{" "}
+                    <div className="flex items-center mr-2">
+                      <Image src={depositTokenLogo} width={20} height={20} />
+                    </div>
+                    {processTotalDeposits(
+                      totalDeposits,
+                      depositERC20TokenSymbol,
+                    )}{" "}
                     {depositERC20TokenSymbol}
                   </div>
                   <div className="flex text-base items-center">
@@ -103,7 +118,14 @@ const ClubERC20Table: FC<Props> = ({ columns, tableData }) => {
                   {!isOwner && (
                     <>
                       <div className="flex text-base items-center justify-end">
-                        {floatedNumberWithCommas(memberDeposits)}{" "}
+                        <div className="flex items-center mr-2">
+                          <Image
+                            src={depositTokenLogo}
+                            width={20}
+                            height={20}
+                          />
+                        </div>
+                        {floatedNumberWithCommas(memberDeposits, depositERC20TokenSymbol == "ETH" ? true : false )}{" "}
                         {depositERC20TokenSymbol}
                       </div>
                       <div className="flex text-base items-center justify-end">
