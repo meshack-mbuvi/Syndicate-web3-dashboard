@@ -1,5 +1,5 @@
 import { useOnboardingContext } from "@/context/OnboardingContext";
-import PrimaryButton from "../buttons";
+import PrimaryButton from "../buttons/PrimaryButton";
 import Modal, { ModalStyle } from "../modal";
 
 const OnboardingModal: React.FC = () => {

@@ -1,6 +1,6 @@
 import { EtherscanLink } from "@/components/syndicates/shared/EtherscanLink";
 import React from "react";
-import Button from "src/components/buttons";
+import Button from "@/components/buttons/PrimaryButton";
 import TransactionStateModal from "../shared";
 
 interface Props {

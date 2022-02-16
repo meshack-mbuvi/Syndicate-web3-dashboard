@@ -2,7 +2,7 @@ import { ClubERC20Contract } from "@/ClubERC20Factory/clubERC20";
 import ErrorBoundary from "@/components/errorBoundary";
 import Layout from "@/components/layout";
 import OnboardingModal from "@/components/onboarding";
-import BackButton from "@/components/socialProfiles/backButton";
+import BackButton from "@/components/buttons/BackButton";
 import { EtherscanLink } from "@/components/syndicates/shared/EtherscanLink";
 import Head from "@/components/syndicates/shared/HeaderTitle";
 import SyndicateDetails from "@/components/syndicates/syndicateDetails";
@@ -30,7 +30,6 @@ import { clearMyTransactions } from "@/state/erc20transactions";
 import { Status } from "@/state/wallet/types";
 import { getTextWidth } from "@/utils/getTextWidth";
 import {
-  mockActiveERC20Token,
   mockDepositERC20Token,
   mockDepositModeTokens,
   mockTokensResult,
@@ -235,6 +234,8 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
     isOwner || +accountTokens || myMerkleProof?.account === account;
   const renderOnDisconnect =
     status !== Status.DISCONNECTED && !(isActive && !isOwnerOrMember);
+  const isBackButtonByNameHidden = isDemoMode || isSubNavStuck;
+  const isStickyBackButtonHidden = isDemoMode || !isSubNavStuck;
 
   useEffect(() => {
     if (!renderOnDisconnect) {
@@ -255,93 +256,97 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
               {router.isReady && !name && !loading && !isDemoMode ? (
                 syndicateEmptyState
               ) : (
-                <div className="container mx-auto ">
-                  {/* Two Columns (Syndicate Details + Widget Cards) */}
-                  <BackButton
-                    topOffset={isSubNavStuck ? "-0.68rem" : "-0.25rem"}
-                    transform={transform}
-                    isHidden={isDemoMode}
-                  />
-                  <div className="grid grid-cols-12 gap-5">
-                    {/* Left Column */}
-                    <div className="md:col-start-1 md:col-end-7 col-span-12">
-                      {/* its used as an identifier for ref in small devices */}
-                      {/*
-                  we should have an isChildVisible child here,
-                  but it's not working as expected
-                  */}
-                      <SyndicateDetails accountIsManager={isOwner}>
-                        <div className="w-full md:hidden mt-5">{children}</div>
-                      </SyndicateDetails>
+                <>
+                  <div className="container mx-auto">
+                    {/* Two Columns (Syndicate Details + Widget Cards) */}
+                    <BackButton
+                      isHidden={isBackButtonByNameHidden}
+                      transform={transform}
+                    />
+                    <div className="grid grid-cols-12 gap-5">
+                      {/* Left Column */}
+                      <div className="md:col-start-1 md:col-end-7 col-span-12">
+                        <SyndicateDetails accountIsManager={isOwner}>
+                          <div className="w-full md:hidden mt-5">
+                            {children}
+                          </div>
+                        </SyndicateDetails>
+                      </div>
+                      {/* Right Column */}
+                      <div className="md:col-end-13 md:col-span-5 col-span-12 hidden md:flex justify-end items-start pt-0 h-full">
+                        <div className="sticky top-33 w-100">{children}</div>
+                      </div>
                     </div>
-                    {/* Right Column */}
-                    <div className="md:col-end-13 md:col-span-5 col-span-12 hidden md:flex justify-end items-start pt-0 h-full">
-                      <div className="sticky top-33 w-100">{children}</div>
-                    </div>
-
-                    <div className="mt-16 col-span-12">
-                      <div
-                        ref={subNav}
-                        className={`${
-                          isSubNavStuck ? "bg-gray-syn8" : "bg-black"
-                        } sticky top-0 z-15 transition-all edge-to-edge-with-left-inset`}
-                      >
-                        <nav className="flex space-x-10" aria-label="Tabs">
+                  </div>
+                  {/* SubNav */}
+                  <div
+                    ref={subNav}
+                    className={`${
+                      isSubNavStuck ? "bg-gray-syn8" : "bg-black"
+                    } sticky z-15 mt-16 top-0 transition-all w-full`}
+                  >
+                    <div className="container mx-auto ">
+                      <BackButton
+                        transform={transform}
+                        isSticky
+                        isHidden={isStickyBackButtonHidden}
+                      />
+                      <nav className="flex space-x-10" aria-label="Tabs">
+                        <button
+                          key="assets"
+                          onClick={() => setActiveTab("assets")}
+                          className={`whitespace-nowrap h4 w-fit-content py-6 transition-all border-b-1 focus:ring-0 font-whyte text-sm cursor-pointer ${
+                            activeTab == "assets"
+                              ? "border-white text-white"
+                              : "border-transparent text-gray-syn4 hover:text-gray-40"
+                          }`}
+                        >
+                          Assets
+                        </button>
+                        {(renderOnDisconnect || isDemoMode) && (
                           <button
-                            key="assets"
-                            onClick={() => setActiveTab("assets")}
+                            key="members"
+                            onClick={() => setActiveTab("members")}
                             className={`whitespace-nowrap h4 w-fit-content py-6 transition-all border-b-1 focus:ring-0 font-whyte text-sm cursor-pointer ${
-                              activeTab == "assets"
+                              activeTab == "members"
                                 ? "border-white text-white"
                                 : "border-transparent text-gray-syn4 hover:text-gray-40"
                             }`}
                           >
-                            Assets
+                            Members
                           </button>
-                          {(renderOnDisconnect || isDemoMode) && (
-                            <button
-                              key="members"
-                              onClick={() => setActiveTab("members")}
-                              className={`whitespace-nowrap h4 w-fit-content py-6 transition-all border-b-1 focus:ring-0 font-whyte text-sm cursor-pointer ${
-                                activeTab == "members"
-                                  ? "border-white text-white"
-                                  : "border-transparent text-gray-syn4 hover:text-gray-40"
-                              }`}
-                            >
-                              Members
-                            </button>
+                        )}
+                        {(renderOnDisconnect || isDemoMode) && (
+                          <TabButton
+                            active={activeTab === "activity"}
+                            label="Activity"
+                            onClick={() => setActiveTab("activity")}
+                          />
+                        )}
+                      </nav>
+                    </div>
+                    <div
+                      className={`${
+                        isSubNavStuck ? "hidden" : "block fixed"
+                      } border-b-1 border-gray-syn7 absolute w-full`}
+                    ></div>
+                  </div>
+                  <div className="container mx-auto ">
+                    <div className="text-base grid grid-cols-12 gap-y-5">
+                      <div className="col-span-12">
+                        {activeTab == "assets" && <Assets />}
+                        {activeTab == "members" &&
+                          (renderOnDisconnect || isDemoMode) && (
+                            <ClubTokenMembers />
                           )}
-                          {(renderOnDisconnect || isDemoMode) && (
-                            <TabButton
-                              active={activeTab === "activity"}
-                              label="Activity"
-                              onClick={() => setActiveTab("activity")}
-                            />
+                        {activeTab == "activity" &&
+                          (renderOnDisconnect || isDemoMode) && (
+                            <ActivityView />
                           )}
-                        </nav>
-                        <div
-                          className={`${
-                            isSubNavStuck ? "hidden" : "block"
-                          } border-b-1 border-gray-syn7 absolute w-screen right-0`}
-                        ></div>
-                      </div>
-
-                      <div className="text-base grid grid-cols-12 gap-y-5">
-                        <div className="col-span-12">
-                          {activeTab == "assets" && <Assets />}
-                          {activeTab == "members" &&
-                            (renderOnDisconnect || isDemoMode) && (
-                              <ClubTokenMembers />
-                            )}
-                          {activeTab == "activity" &&
-                            (renderOnDisconnect || isDemoMode) && (
-                              <ActivityView />
-                            )}
-                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
+                </>
               )}
             </div>
           </ErrorBoundary>
