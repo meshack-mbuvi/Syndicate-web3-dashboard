@@ -140,7 +140,6 @@ export const AdvancedInputField = (props: {
               tip={
                 <span className=" text-white font-whyte text-sm">
                   Deposits collected in {depositTokenSymbol}. Members
-                  <br />
                   will receive 1 ✺{investmentClubSymbol} club token for every{" "}
                   {depositTokenSymbol === "ETH" ? "0.00001 ETH" : "1 USDC"}{" "}
                   deposited.
