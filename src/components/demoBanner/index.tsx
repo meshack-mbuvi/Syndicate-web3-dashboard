@@ -35,8 +35,8 @@ const DemoBanner: React.FC = () => {
 
   if (isDemoMode) {
     return (
-      <div className="container mx-auto sticky top-0 pt-1 z-20">
-        <div className="bg-green-volt md:h-13 space-y-0 md:space-x-2 max-h-full rounded-4xl mt-24 flex justify-between text-black text-sm">
+      <div className="container mx-auto sticky top-24 pt-1 z-20">
+        <div className="bg-green-volt md:h-13 space-y-0 md:space-x-2 max-h-full rounded-4xl flex justify-between text-black text-sm">
           <div className="flex items-center self-center">
             <button
               className="border border-black rounded-4xl ml-2 my-2 flex items-center px-4 py-2"
