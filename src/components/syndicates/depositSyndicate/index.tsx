@@ -519,7 +519,7 @@ const DepositSyndicate: React.FC = () => {
   useEffect(() => {
     if (depositAmount) {
       if (
-        parseInt(currentMemberAllowance) > parseInt(depositAmount) ||
+        parseInt(currentMemberAllowance) >= parseInt(depositAmount) ||
         ethDepositToken
       ) {
         // allowance already exists. Proceed with deposit
