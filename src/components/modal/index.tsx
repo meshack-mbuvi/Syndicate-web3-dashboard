@@ -1,3 +1,4 @@
+import { useDisableBgScrollOnModal } from "@/hooks/useDisableBgScrollOnModal";
 import { Dialog, Transition } from "@headlessui/react";
 import Image from "next/image";
 import React, { Fragment } from "react";
@@ -84,6 +85,8 @@ const Modal = (props: ModalProps): JSX.Element => {
   const textColor = `${modalStyle === ModalStyle.LIGHT && "text-black"} ${
     modalStyle === ModalStyle.DARK && "text-white"
   }`;
+
+  useDisableBgScrollOnModal(show);
 
   const handleClose = () => {
     if (closeModal) {
