@@ -49,7 +49,7 @@ export const AdvancedInputField = (props: {
   } = props;
 
   const {
-    createInvestmentClubSliceReducer: { tokenCap, investmentClubSymbol },
+    createInvestmentClubSliceReducer: { tokenCap, investmentClubSymbol, tokenDetails: { depositTokenSymbol } },
   } = useSelector((state: AppState) => state);
 
   const [focused, setFocused] = useState(false);
@@ -139,11 +139,11 @@ export const AdvancedInputField = (props: {
               id="disclaimer-tip"
               tip={
                 <span className=" text-white font-whyte text-sm">
-                  Deposits collected in USDC. Members
+                  Deposits collected in {depositTokenSymbol}. Members
                   <br />
-                  will receive 1 ✺{investmentClubSymbol} club token for every 1
-                  <br />
-                  USDC deposited.
+                  will receive 1 ✺{investmentClubSymbol} club token for every{" "}
+                  {depositTokenSymbol === "ETH" ? "0.00001 ETH" : "1 USDC"}{" "}
+                  deposited.
                 </span>
               }
             />
