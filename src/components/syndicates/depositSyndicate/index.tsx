@@ -50,6 +50,7 @@ import BeforeGettingStarted from "../../beforeGettingStarted";
 import ConnectWalletAction from "../shared/connectWalletAction";
 import axios from "axios";
 import { useIsClubMember } from "@/hooks/useClubOwner";
+import { useClubDepositsAndSupply } from "@/hooks/useClubDepositsAndSupply";
 
 const DepositSyndicate: React.FC = () => {
   // HOOK DECLARATIONS
@@ -73,7 +74,6 @@ const DepositSyndicate: React.FC = () => {
   const {
     address,
     maxTotalDeposits,
-    totalDeposits,
     memberCount,
     depositsEnabled,
     claimEnabled,
@@ -82,6 +82,9 @@ const DepositSyndicate: React.FC = () => {
     loading,
     maxMemberCount,
   } = erc20Token;
+
+  const { totalDeposits } =
+    useClubDepositsAndSupply(address);
 
   const { loading: merkleLoading } = useFetchMerkleProof();
   const { loading: claimLoading } = useFetchTokenClaim();
@@ -838,7 +841,7 @@ const DepositSyndicate: React.FC = () => {
     let message;
 
     if (depositTokenSwitched) {
-      if (+value * depositTokenPriceInUSDState > remainingErc20Balance) {
+      if (+value / depositTokenPriceInUSDState > remainingErc20Balance ) {
         message = (
           <>
             <span>The amount you entered is too high. This club is </span>
