@@ -141,10 +141,12 @@ export const AdvancedInputField = (props: {
                 <span className=" text-white font-whyte text-sm">
                   Deposits collected in {depositTokenSymbol}. Members
                   <br />
-                  will receive
-                  {depositTokenSymbol === "ETH" ? "10,000" : "1"} ✺{investmentClubSymbol}
-                  club token{depositTokenSymbol === "ETH" && "s"} for every<br />
-                  {depositTokenSymbol === "ETH" ? "1 ETH" : "1 USDC"}{" "} deposited.
+                  will receive {" "}
+                  {depositTokenSymbol === "ETH" ? "10,000" : "1"} {" "}
+                  ✺{investmentClubSymbol} club token{depositTokenSymbol === "ETH" && "s"} {" "}
+                  <br />for every {" "}
+                  {depositTokenSymbol === "ETH" ? "1 ETH" : "1 USDC"}{" "}
+                  deposited.
                 </span>
               }
             />
