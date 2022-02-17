@@ -10,6 +10,7 @@ module.exports = {
     "@storybook/addon-links",
     "@storybook/addon-essentials"
   ],
+  staticDirs: ['../public'],
   "framework": "@storybook/react",
   webpackFinal: async (config, { configType }) => {
     config.resolve.alias = {

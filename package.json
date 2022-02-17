@@ -129,7 +129,7 @@
     "lambda-serve": "netlify-lambda serve functions/src",
     "lambda-build": "netlify-lambda build functions/src",
     "generate-types": "typechain --target=truffle-v5 'src/contracts/*.json' --out-dir='src/@types/contracts'",
-    "storybook": "start-storybook -p 6006 -s ./public",
+    "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook"
   },
   "devDependencies": {
