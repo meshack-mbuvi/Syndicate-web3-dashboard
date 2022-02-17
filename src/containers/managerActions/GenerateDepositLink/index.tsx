@@ -106,7 +106,7 @@ const GenerateDepositLink: FC<ILinK> = ({
               }}
             >
               <button
-                className={`bg-green rounded-custom w-full flex items-center justify-center mb-4 ${
+                className={`bg-green rounded-custom w-full flex items-center justify-center py-4 mb-4 ${
                   isDemoMode ? "cursor-pointer" : ""
                 }`}
                 onMouseEnter={() => setOpen(true)}
