@@ -83,8 +83,7 @@ const DepositSyndicate: React.FC = () => {
     maxMemberCount,
   } = erc20Token;
 
-  const { totalDeposits } =
-    useClubDepositsAndSupply(address);
+  const { totalDeposits } = useClubDepositsAndSupply(address);
 
   const { loading: merkleLoading } = useFetchMerkleProof();
   const { loading: claimLoading } = useFetchTokenClaim();
@@ -378,8 +377,8 @@ const DepositSyndicate: React.FC = () => {
           onTxReceipt,
           onTxFail,
           setTransactionHash,
-        )
-      } else if(mintModule === DEPOSIT_TOKEN_MINT_MODULE) {
+        );
+      } else if (mintModule === DEPOSIT_TOKEN_MINT_MODULE) {
         await syndicateContracts.DepositTokenMintModule?.deposit(
           getWeiAmount(amount, depositTokenDecimals, true),
           erc20TokenContract.clubERC20Contract._address,
@@ -388,7 +387,7 @@ const DepositSyndicate: React.FC = () => {
           onTxReceipt,
           onTxFail,
           setTransactionHash,
-        )
+        );
       }
 
       if (approved) {
@@ -841,7 +840,7 @@ const DepositSyndicate: React.FC = () => {
     let message;
 
     if (depositTokenSwitched) {
-      if (+value / depositTokenPriceInUSDState > remainingErc20Balance ) {
+      if (+value / depositTokenPriceInUSDState > remainingErc20Balance) {
         message = (
           <>
             <span>The amount you entered is too high. This club is </span>
@@ -996,7 +995,7 @@ const DepositSyndicate: React.FC = () => {
                     accountClubTokens: accountTokens.toString(),
                   }}
                 />
-              ) : status === Status.DISCONNECTED ? (
+              ) : status === Status.DISCONNECTED && !isDemoMode ? (
                 <div className="py-6 px-8">
                   <ConnectWalletAction />
                 </div>
@@ -1490,7 +1489,10 @@ const DepositSyndicate: React.FC = () => {
                   /** We are using 10000 because of the conversion */
                   <HoldingsInfo
                     title="Amount deposited"
-                    amount={floatedNumberWithCommas((memberDeposits / 10000), true)}
+                    amount={floatedNumberWithCommas(
+                      memberDeposits / 10000,
+                      true,
+                    )}
                     tokenName={"ETH"}
                     amountInUSD={
                       (memberDeposits / 10000) * depositTokenPriceInUSDState
