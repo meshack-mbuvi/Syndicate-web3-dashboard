@@ -15,12 +15,14 @@ import { useDemoMode } from "@/hooks/useDemoMode";
 
 interface Props {
   showBackButton?: boolean;
+  managerSettingsOpen?: boolean;
   showNav?: boolean;
   navItems?: { navItemText: string; url?: string; isLegal?: boolean }[];
 }
 
 const Layout: FC<Props> = ({
   children,
+  managerSettingsOpen = false,
   showBackButton = false,
   showNav = true,
   navItems = [
@@ -141,7 +143,7 @@ const Layout: FC<Props> = ({
         </div>
         <ConnectWallet />
       </div>
-      {createClubPage ? null : (
+      {createClubPage || managerSettingsOpen ? null : (
         <div>
           <div className="container mx-auto">
             <Footer extraClasses="mt-24 sm:mt-24 md:mt-40 mb-12" />

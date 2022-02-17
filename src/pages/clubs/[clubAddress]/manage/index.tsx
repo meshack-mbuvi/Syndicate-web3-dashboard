@@ -6,7 +6,7 @@ import ManagerActions from "@/containers/managerActions";
  */
 const ManageSyndicatePage: React.FC = () => {
   return (
-    <LayoutWithSyndicateDetails>
+    <LayoutWithSyndicateDetails managerSettingsOpen={false} >
       <ManagerActions />
     </LayoutWithSyndicateDetails>
   );

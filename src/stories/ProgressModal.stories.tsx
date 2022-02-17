@@ -4,7 +4,7 @@ export default {
   title: "Molecules/Modify Club Settings/Progress Modal",
   argTypes: {
     state: {
-      options: [ProgressModalState.FAILURE, ProgressModalState.PENDING, ProgressModalState.SUCCESS],
+      options: [ProgressModalState.FAILURE, ProgressModalState.PENDING, ProgressModalState.SUCCESS, ProgressModalState.CONFIRM],
       control: { type: 'select' },
     },
   },
@@ -17,7 +17,7 @@ ConfirmInWallet.args = {
     isVisible: true,
     title: "Confirm in wallet",
     description: "Confirm the modification of club settings in your wallet",
-    state: ProgressModalState.PENDING
+    state: ProgressModalState.CONFIRM
 };
 
 export const Pending = Template.bind({});

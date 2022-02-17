@@ -1,55 +1,125 @@
 import { Switch, SwitchType } from '@/components/switch'
-import { floatedNumberWithCommas, numberInputRemoveCommas, numberStringInputRemoveCommas } from '@/utils/formattedNumbers';
+import { numberInputRemoveCommas, numberStringInputRemoveCommas } from '@/utils/formattedNumbers';
 import { useEffect, useState } from 'react';
 import { Callout } from '../callout';
 import { InputFieldWithButton } from '../inputs/inputFieldWithButton';
 import { InputFieldWithDate } from '../inputs/inputFieldWithDate';
-import { InputFieldWithToken, TokenType } from '../inputs/inputFieldWithToken';
+import { InputFieldWithToken } from '../inputs/inputFieldWithToken';
 import { PillButtonLarge } from '../pillButtonsLarge';
+import { useSelector, useDispatch } from 'react-redux';
+import { AppState } from "@/state";
+import { useRouter } from "next/router";
+import { ProgressModal, ProgressModalState } from "@/components/progressModal";
+import { getMetamaskError } from "@/helpers";
+import { metamaskConstants } from "@/components/syndicates/shared/Constants";
+import { setExistingNumberOfMembers, setExistingMaxNumberOfMembers, setExistingAmountRaised,
+    setExistingMaxAmountRaising, setExistingOpenToDepositsUntil } from "@/state/modifyClubSettings/slice";
+import { setTransactionHash, setClubCreationReceipt } from "@/state/createInvestmentClub/slice";
+import { getWeiAmount } from "@/utils/conversions";
 
-
-export const ModifyClubSettings = (props: {
-    isVisible: boolean,
-    handleClose: () => void
+export const ModifyClubSettings = (props: { 
+    isVisible: boolean, 
 }) => {
     const {
         isVisible,
-        handleClose,
     } = props;
 
-    // Existing settings
-    // These should be replaced with the real values. They are placeholder for now
-    const existingIsOpenToDeposits = true
-    const existingOpenToDepositsUntil = new Date(2022, 12, 30, 23, 59, 0, 0);
-    const existingAmountRaised = 50000
-    const existingMaxAmountRaising = 60000
-    const existingMaxNumberOfMembers = 20
-    const existingNumberOfMembers = 10
+    const dispatch = useDispatch();
 
-    // Proposed settings
-    const [isOpenToDeposits, setIsOpenToDeposits] = useState(existingIsOpenToDeposits)
-    const [openToDepositsUntil, setOpenToDepositsUntil] = useState(existingOpenToDepositsUntil)
-    const [maxAmountRaising, setMaxAmountRaising] = useState(floatedNumberWithCommas(String(existingMaxAmountRaising)))
-    const [maxNumberOfMembers, setMaxNumberOfMembers] = useState(existingMaxNumberOfMembers)
+    const {
+        modifyClubSettingsReducer: { 
+            existingIsOpenToDeposits, existingOpenToDepositsUntil, existingAmountRaised,
+            existingMaxAmountRaising, existingMaxNumberOfMembers, existingNumberOfMembers
+        },
+        erc20TokenSliceReducer: {
+            erc20Token,
+            depositDetails
+        },
+        web3Reducer: {
+            web3: { account },
+        },
+        initializeContractsReducer: {
+            syndicateContracts: { policyMintERC20 },
+        },
+    } = useSelector((state: AppState) => state);
+
+    const {
+        address,
+        memberCount,
+        totalSupply,
+        endTime,
+        maxMemberCount,
+        maxTotalSupply,
+    } = erc20Token;
+
+    const {
+        depositTokenSymbol
+    } = depositDetails
+
+    // True is ETH, False is USDC
+    const [depositTokenType, setDepositTokenType] = useState(true);
+    const [isOpenToDeposits, setIsOpenToDeposits] = useState<boolean>(existingIsOpenToDeposits)
+    const [openToDepositsUntil, setOpenToDepositsUntil] = useState<Date>(new Date(endTime))
+    const [maxAmountRaising, setMaxAmountRaising] = useState<number>(maxTotalSupply)
+    const [maxNumberOfMembers, setMaxNumberOfMembers] = useState<number>(maxMemberCount)
+    const [, setTotalDepositsAmount] = useState(0);
 
     // Errors
     const [maxAmountRaisingError, setMaxAmountRaisingError] = useState(null)
     const [maxNumberOfMembersError, setMaxNumberOfMembersError] = useState(null)
     
     // Settings change
-    const [areClubChangesAvailable, setAreClubChangesAvailable] = useState(false)
+    const [areClubChangesAvailable, setAreClubChangesAvailable] = useState<boolean>(false)
     const areClubChangesPending = false
+
+    const [progressState, setProgressState] = useState<string>("");
 
     const MAX_MEMBERS_ALLOWED = 99
 
+    const router = useRouter();
+    const { clubAddress } = router.query;
+
+    const handleExit = () => {
+        router.push(`/clubs/${clubAddress}/manage`)
+    }
+ 
+    // makes sure that current settings render when content is available
+    useEffect(() => {
+        if (erc20Token && depositDetails) {
+            if (existingOpenToDepositsUntil.toUTCString() === new Date(0).toUTCString()) {
+                setOpenToDepositsUntil(new Date(endTime))
+                dispatch(setExistingOpenToDepositsUntil(new Date(endTime)))
+            } 
+            if (existingMaxAmountRaising === 0 && depositTokenSymbol) {
+                if (depositTokenSymbol === "ETH") {
+                    setMaxAmountRaising(maxTotalSupply / 10000)
+                    setTotalDepositsAmount(totalSupply / 10000)
+                    dispatch(setExistingMaxAmountRaising(maxTotalSupply / 10000))
+                    dispatch(setExistingAmountRaised(totalSupply / 10000))
+                } else {
+                    setMaxAmountRaising(maxTotalSupply)
+                    setTotalDepositsAmount(totalSupply)
+                    dispatch(setExistingMaxAmountRaising(maxTotalSupply))
+                    dispatch(setExistingAmountRaised(totalSupply))
+                }
+            }
+            if (existingMaxNumberOfMembers === 0) {
+                setMaxNumberOfMembers(maxMemberCount)
+                dispatch(setExistingMaxNumberOfMembers(maxMemberCount))
+            }
+            setDepositTokenType(depositTokenSymbol === "ETH")
+            dispatch(setExistingNumberOfMembers(memberCount))
+        }
+    }, [erc20Token, depositDetails, maxTotalSupply, totalSupply, depositTokenSymbol, endTime
+    , maxMemberCount, memberCount, dispatch])
 
     useEffect(() => {
         // Make sure there's a settings change and that there are no errors
         if ((   // Check if settings changed           
-                existingIsOpenToDeposits !== isOpenToDeposits ||
-                existingOpenToDepositsUntil.getTime() !== openToDepositsUntil.getTime() ||
-                existingMaxAmountRaising !== Number(numberStringInputRemoveCommas(String(maxAmountRaising))) ||
-                existingMaxNumberOfMembers !== Number(maxNumberOfMembers)
+            existingIsOpenToDeposits !== isOpenToDeposits ||
+            Number(existingOpenToDepositsUntil.getTime()) !== openToDepositsUntil.getTime() ||
+            Number(existingMaxAmountRaising) !== Number(numberStringInputRemoveCommas(String(maxAmountRaising))) ||
+            Number(existingMaxNumberOfMembers) !== Number(maxNumberOfMembers)
             ) && (
                 // Check if there are no errors
                 maxAmountRaisingError === null && maxNumberOfMembersError === null
@@ -61,7 +131,125 @@ export const ModifyClubSettings = (props: {
             setAreClubChangesAvailable(false)
         }
 
-    }, [isOpenToDeposits, openToDepositsUntil, maxAmountRaising, maxNumberOfMembers]);
+    }, [isOpenToDeposits, openToDepositsUntil, maxAmountRaising, maxNumberOfMembers, 
+        existingIsOpenToDeposits, existingMaxNumberOfMembers, 
+        existingMaxAmountRaising, existingOpenToDepositsUntil, 
+        maxAmountRaisingError, maxNumberOfMembersError]);
+
+    const handleTransaction = async () => {
+        setProgressState("confirm")
+        try {
+            const startTime = parseInt((new Date().getTime() / 1000).toString());
+            const updatedEndTime = new Date(openToDepositsUntil);
+            const _tokenCap = depositTokenType
+            ? getWeiAmount((maxAmountRaising * 10000).toString(), 18, true)
+            : getWeiAmount(String(maxAmountRaising), 18, true);
+            const onTxConfirm = (transactionHash: string) => {
+                dispatch(setTransactionHash(transactionHash));
+            };
+            const onTxReceipt = (receipt) => {
+                dispatch(
+                    setClubCreationReceipt(receipt.events.ConfigUpdated.returnValues),
+                );
+                dispatch(setTransactionHash(""));
+            };
+            if (depositTokenType) {
+                  await policyMintERC20.modifyERC20(
+                    account,
+                    address,
+                    startTime,
+                    updatedEndTime.getTime() / 1000,
+                    +maxNumberOfMembers,
+                    _tokenCap,
+                    onTxConfirm,
+                    onTxReceipt,
+                  );
+            } else {
+                await policyMintERC20.modifyERC20(
+                    account,
+                    address,
+                    startTime,
+                    updatedEndTime.getTime() / 1000,
+                    +maxNumberOfMembers,
+                    _tokenCap,
+                    onTxConfirm,
+                    onTxReceipt,
+                  );
+            }
+            dispatch(setExistingOpenToDepositsUntil(openToDepositsUntil))
+            dispatch(setExistingMaxAmountRaising(maxAmountRaising))
+            dispatch(setExistingMaxNumberOfMembers(maxNumberOfMembers))
+            setProgressState("success")
+        } catch (error) {
+          const { code } = error;
+          console.log(error)
+          if (code) {
+            const errorMessage = getMetamaskError(code, "Club creation");
+            console.log("errorMessage: ", errorMessage);
+          } else {
+            // alert any other contract error
+            console.log("errorMessage: ", metamaskConstants.metamaskUnknownErrorMessage);
+          }
+          setProgressState("failure")
+        }
+      };
+
+    const ProgressStates = () => {
+        if (progressState === "success") {
+            return (
+                <ProgressModal 
+                    {...{
+                        isVisible: true,
+                        title: "Settings successfully modified",
+                        description: "",
+                        buttonLabel: "Back to club dashboard",
+                        buttonOnClick: handleExit,
+                        state: ProgressModalState.SUCCESS
+                    }} 
+                />
+            )
+        } else if (progressState === "pending") {
+            return (
+                <ProgressModal
+                    {...{
+                        isVisible: true,
+                        title: "Pending confirmation",
+                        description: "This could take up to a few minutes depending on network congestion and the gas fees you set. Feel free to leave this screen.",
+                        etherscanLink: "#",
+                        buttonLabel: "Back to club dashboard",
+                        buttonOnClick: handleExit,
+                        state: ProgressModalState.PENDING,
+                    }}
+                />
+            )
+        } else if (progressState === "failure") {
+            return (
+                <ProgressModal
+                    {...{
+                        isVisible: true,
+                        title: "Transaction failed",
+                        description: "Please try again and let us know if the issue persists.",
+                        buttonLabel: "Try again",
+                        buttonOnClick: () => setProgressState(""),
+                        state: ProgressModalState.FAILURE
+                    }}
+                />
+            )
+        } else if (progressState === "confirm") {
+            return (
+                <ProgressModal
+                    {...{
+                        isVisible: true,
+                        title: "Confirm in wallet",
+                        description: "Confirm the modification of club settings in your wallet",
+                        state: ProgressModalState.CONFIRM
+                    }}
+                />
+            )
+        } else {
+            return null
+        }
+    }
 
     return (
         <div className={`${isVisible ? "block" : "hidden"}`}>
@@ -79,16 +267,16 @@ export const ModifyClubSettings = (props: {
                     <div className='text-sm text-gray-syn4'>Submit multiple changes in one on-chain transaction to save on gas fees</div>
                 </div>
                 <PillButtonLarge
-                    onClick={handleClose}
+                    onClick={handleExit}
                     extraClasses='flex-shrink-0'
                 >
-                    <div>{areClubChangesAvailable ? "Discard changes" : "Exit"}</div>
+                    <div>{areClubChangesAvailable && isOpenToDeposits ? "Discard & Exit" : "Exit"}</div>
                     <img src="/images/xmark-gray.svg" className='w-4' alt="cancel" />
                 </PillButtonLarge>
             </div>
 
             {/* Modal */}
-            <div className={`bg-gray-syn8 p-6 pb-7 transition-all`} style={{borderRadius: "10px"}}>
+            <div className={`bg-gray-syn8 p-6 pb-7 transition-all`} style={{ borderRadius: "10px" }}>
 
                 {/* Open to deposits */}
                 <div className="flex justify-between items-center">
@@ -129,21 +317,20 @@ export const ModifyClubSettings = (props: {
                             <div className='mb-4 xl:mb-0'>Max amount raising</div>
                             <div className="xl:w-76 mr-6 xl:mr-0">
                                 <InputFieldWithToken
-                                    token={TokenType.USDC}
-                                    value={maxAmountRaising}
+                                    depositToken={depositTokenType}
+                                    value={String(maxAmountRaising)}
                                     onChange={(e) => {
-                                        const amount = Number(numberInputRemoveCommas(e))
-                                        console.log(`amount: ${amount}`)
-                                        if (amount < existingAmountRaised && amount > 0) {
-                                            setMaxAmountRaisingError("Below the current amount raised of 50,000 USDC. Please withdraw funds first before setting a lower limit.")
+                                        const amount = numberInputRemoveCommas(e)
+                                        if (Number(amount) < existingAmountRaised && Number(amount) >= 0) {
+                                            setMaxAmountRaisingError("Below the current amount raised. Please withdraw funds first before setting a lower limit.")
                                         }
-                                        else if (amount <= 0 || isNaN(amount) ) {
+                                        else if (amount < 0 || isNaN(amount) ) {
                                             setMaxAmountRaisingError("Max amount is required")
                                         }
                                         else {
                                             setMaxAmountRaisingError(null)
                                         }
-                                        setMaxAmountRaising(`${amount > 0 ? floatedNumberWithCommas(amount) : ""}`)
+                                        setMaxAmountRaising((amount >= 0) ? amount : 0)
                                     }}
                                     isInErrorState={maxAmountRaisingError}
                                     infoLabel={maxAmountRaisingError ? maxAmountRaisingError : "Upper limit of the club’s raise, corresponding to a club token supply of 1,000,000 ✺ABC."}
@@ -167,7 +354,7 @@ export const ModifyClubSettings = (props: {
                                         if (Number(numberOfMembers) < 0) {
                                             setMaxNumberOfMembersError(`Number can't be negative`)
                                         }
-                                        else if (isNaN(numberOfMembers)) {
+                                        else if (isNaN(numberOfMembers) || Number(numberOfMembers) == 0) {
                                             setMaxNumberOfMembersError(`Please enter a number between 1 and 99`)
                                         }
                                         else if (Number(numberOfMembers) < existingNumberOfMembers) {
@@ -215,7 +402,7 @@ export const ModifyClubSettings = (props: {
                     <div className="flex-grow">
                         <div className={`${areClubChangesAvailable ? "max-h-2screen" : "max-h-0"} transition-all duration-700`}>
                             <div className={`${areClubChangesAvailable ? "opacity-100" : "opacity-0"} transition-opacity duration-700`}>
-                                <Callout>
+                                <Callout extraClasses="">
                                     <div className='flex justify-between'>
                                         <div className='flex space-x-3'>
                                             <img src="/images/fuel-pump-blue.svg" className='w-4' alt="cancel" />
@@ -229,11 +416,15 @@ export const ModifyClubSettings = (props: {
                     </div>
                     
                     {/* Submit button */}
-                    <button className={`${areClubChangesAvailable ? "primary-CTA" : "primary-CTA-disabled"} transition-all duration-700 w-full lg:w-auto`}>
+                    <button 
+                        onClick={areClubChangesAvailable ? handleTransaction : null}
+                        className={`${areClubChangesAvailable ? "primary-CTA" : "primary-CTA-disabled"} transition-all duration-700 w-full lg:w-auto`}>
                         Submit changes
                     </button>
                 </div>
             </div>
+
+            <ProgressStates />
         </div>
     );
 }

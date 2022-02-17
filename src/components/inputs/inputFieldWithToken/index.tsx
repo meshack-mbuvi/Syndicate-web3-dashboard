@@ -1,8 +1,9 @@
-import useUSDCDetails from "@/hooks/useUSDCDetails";
+import useTokenDetails from "@/hooks/useTokenDetails";
 import { InputField } from "../inputField";
 
 export enum TokenType {
   USDC = "USDC",
+  ETH = "ETH"
 }
 
 export const InputFieldWithToken = (props: {
@@ -10,7 +11,7 @@ export const InputFieldWithToken = (props: {
     placeholderLabel?: string,
     infoLabel?: string,
     isInErrorState?: boolean,
-    token?: TokenType,
+    depositToken?: boolean,
     extraClasses?: string,
     onChange: (e) => void
 }) => {
@@ -19,24 +20,16 @@ export const InputFieldWithToken = (props: {
         placeholderLabel = "Unlimited", 
         infoLabel, 
         isInErrorState = false,
-        token = TokenType.USDC,
+        depositToken,
         extraClasses = "", 
         onChange,
         ...rest
     } = props;
 
-  let tokenSymbol;
-  let tokenIcon;
+  const { depositTokenSymbol, depositTokenLogo } = useTokenDetails(depositToken);
 
-  const { depositTokenSymbol, depositTokenLogo } = useUSDCDetails();
-
-  switch (token) {
-    case TokenType.USDC: {
-      tokenSymbol = depositTokenSymbol;
-      tokenIcon = depositTokenLogo;
-      break;
-    }
-  }
+  const tokenSymbol = depositTokenSymbol;
+  const tokenIcon = depositTokenLogo;
 
   const TokenSymbolandIcon = () => {
     return (

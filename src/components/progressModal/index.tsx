@@ -5,7 +5,8 @@ import { Spinner } from "../shared/spinner";
 export enum ProgressModalState {
     PENDING = "PENDING",
     SUCCESS = "SUCCESS",
-    FAILURE = "FAILURE"
+    FAILURE = "FAILURE",
+    CONFIRM = "CONFIRM"
 }
 
 export const ProgressModal = (props: {
@@ -29,6 +30,9 @@ export const ProgressModal = (props: {
 
     let icon;
     switch (state) {
+        case ProgressModalState.CONFIRM:
+            icon = (<Spinner height="h-16" width="w-16" margin="" />)
+            break;
         case ProgressModalState.PENDING:
             icon = (<Spinner height="h-16" width="w-16" margin="" />)
             break;
