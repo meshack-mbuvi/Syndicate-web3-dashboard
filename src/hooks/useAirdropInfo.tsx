@@ -47,7 +47,10 @@ const useFetchAirdropInfo: any = (skipQuery) => {
   useEffect(() => {
     dispatch(setLoadingAirdropInfo(true));
     if (airdropData.merkleAirdropCreatedERC20S?.length) {
-      const airdropObj = airdropData.merkleAirdropCreatedERC20S[0];
+      const airdropObj =
+        airdropData.merkleAirdropCreatedERC20S[
+          airdropData.merkleAirdropCreatedERC20S.length - 1
+        ];
       dispatch(
         setAirdropInfo({
           ...airdropObj,
