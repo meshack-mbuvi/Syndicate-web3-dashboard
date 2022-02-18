@@ -43,7 +43,7 @@ export const InputFieldWithDate = (props: {
                 />
             </div>
             {infoLabel && 
-                <div className={`text-sm mt-2 ${isInErrorState ? "text-red-error" : "text-gray-syn2"}`}>{infoLabel}</div>
+                <div className={`text-sm mt-2 ${isInErrorState ? "text-red-error" : "text-gray-syn4"}`}>{infoLabel}</div>
             }
         </>
     );

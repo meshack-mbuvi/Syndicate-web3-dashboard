@@ -16,6 +16,7 @@ import { setExistingNumberOfMembers, setExistingMaxNumberOfMembers, setExistingA
     setExistingMaxAmountRaising, setExistingOpenToDepositsUntil } from "@/state/modifyClubSettings/slice";
 import { setTransactionHash, setClubCreationReceipt } from "@/state/createInvestmentClub/slice";
 import { getWeiAmount } from "@/utils/conversions";
+import { SettingsDisclaimerTooltip } from '@/containers/createInvestmentClub/shared/SettingDisclaimer';
 
 export const ModifyClubSettings = (props: { 
     isVisible: boolean, 
@@ -65,6 +66,7 @@ export const ModifyClubSettings = (props: {
     const [, setTotalDepositsAmount] = useState(0);
 
     // Errors
+    const [openToDepositsUntilWarning, setOpenToDepositsUntilWarning] = useState(null)
     const [maxAmountRaisingError, setMaxAmountRaisingError] = useState(null)
     const [maxNumberOfMembersError, setMaxNumberOfMembersError] = useState(null)
     
@@ -88,6 +90,14 @@ export const ModifyClubSettings = (props: {
         if (erc20Token && depositDetails) {
             if (existingOpenToDepositsUntil.toUTCString() === new Date(0).toUTCString()) {
                 setOpenToDepositsUntil(new Date(endTime))
+                const eodToday = new Date(new Date().setHours(23, 59, 0, 0))
+                if (new Date(endTime).getTime() < eodToday.getTime() ) {
+                    setIsOpenToDeposits(false)
+                }
+                else {
+                    setOpenToDepositsUntilWarning(null)
+                    setIsOpenToDeposits(true)
+                }
                 dispatch(setExistingOpenToDepositsUntil(new Date(endTime)))
             } 
             if (existingMaxAmountRaising === 0 && depositTokenSymbol) {
@@ -114,6 +124,17 @@ export const ModifyClubSettings = (props: {
     , maxMemberCount, memberCount, dispatch])
 
     useEffect(() => {
+
+        // Check that the existing date for when it's open to deposits until,
+        // and make sure it's not earlier than today's date
+        const eodToday = new Date(new Date().setHours(23, 59, 0, 0))
+        if (existingOpenToDepositsUntil < eodToday && openToDepositsUntil < eodToday ) {
+            setOpenToDepositsUntilWarning("You'll need a new date to reopen for deposits")
+        }
+        else {
+            setOpenToDepositsUntilWarning(null)
+        }
+        
         // Make sure there's a settings change and that there are no errors
         if ((   // Check if settings changed           
             existingIsOpenToDeposits !== isOpenToDeposits ||
@@ -122,7 +143,7 @@ export const ModifyClubSettings = (props: {
             Number(existingMaxNumberOfMembers) !== Number(maxNumberOfMembers)
             ) && (
                 // Check if there are no errors
-                maxAmountRaisingError === null && maxNumberOfMembersError === null
+                maxAmountRaisingError === null && maxNumberOfMembersError === null && openToDepositsUntilWarning === null
             ) 
         ) {
             setAreClubChangesAvailable(true)
@@ -279,12 +300,24 @@ export const ModifyClubSettings = (props: {
             <div className={`bg-gray-syn8 p-6 pb-7 transition-all`} style={{ borderRadius: "10px" }}>
 
                 {/* Open to deposits */}
-                <div className="flex justify-between items-center">
+                <div className="flex justify-between items-center" data-tip data-for="deposits-switch">
                     <div>Open to deposits</div>
                     <Switch
                         isOn={isOpenToDeposits}
                         type={SwitchType.EXPLICIT}
                         onClick={() => {setIsOpenToDeposits(!isOpenToDeposits)}}
+                    />
+                    
+                </div>
+
+                <div className={`absolute ${!isOpenToDeposits && "opacity-100"} opacity-0`}>
+                    <SettingsDisclaimerTooltip
+                        id="deposits-switch"
+                        tip={
+                        <span data-tip>
+                            To modify settings, the club <br/> must be open for deposits.
+                        </span>
+                        }
                     />
                 </div>
     
@@ -296,13 +329,14 @@ export const ModifyClubSettings = (props: {
                             <div className='mb-4 xl:mb-0'>Until</div>
                             <div className="xl:w-76 mr-6 xl:mr-0">
                                 <InputFieldWithDate
-                                    selectedDate={openToDepositsUntil}
+                                    selectedDate={openToDepositsUntilWarning ? null : openToDepositsUntil}
                                     onChange={(targetDate) => {
-                                        console.log(`attempted date: ${targetDate}`)
                                         const eodToday = new Date(new Date().setHours(23, 59, 0, 0)).getTime()
                                         const dateToSet = (targetDate as any) < eodToday ? eodToday : targetDate
                                         setOpenToDepositsUntil(new Date(dateToSet))
+                                        setOpenToDepositsUntilWarning(null) // clear error if any
                                     }}
+                                    infoLabel={openToDepositsUntilWarning && openToDepositsUntilWarning}
                                 />
                                 {/* <LinkButton
                                     type={LinkType.CALENDAR}
