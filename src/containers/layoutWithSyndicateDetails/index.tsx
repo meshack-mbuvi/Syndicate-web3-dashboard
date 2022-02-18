@@ -183,8 +183,8 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
         dispatch(setClubMembers([]));
       };
     } else if (isDemoMode) {
-      // using "Open to deposits" as the default view here in all cases.
-      dispatch(setERC20TokenDetails(mockDepositERC20Token));
+      // using "Active" as the default view.
+      dispatch(setERC20TokenDetails(mockActiveERC20Token));
     }
   }, [
     clubAddress,
