@@ -57,7 +57,7 @@ const ClubERC20Table: FC<Props> = ({ columns, tableData }) => {
     <>
       {tableData.length ? (
         <div className="">
-          <div className="flex flex-col w-full overflow-x-scroll">
+          <div className="flex flex-col w-full overflow-x-scroll no-scroll-bar">
             {/* scroll to top of table with this button when pagination is clicked  */}
             <button ref={tokensTableRef} />
             <div
@@ -96,11 +96,11 @@ const ClubERC20Table: FC<Props> = ({ columns, tableData }) => {
                 key={`token-table-row-${index}`}
                 href={`/clubs/${address}/${isOwner ? "manage" : ""}`}
               >
-                <div className="w-full sm:w-auto overflow-x-scroll sm:overflow-x-auto">
+                <div className="w-full sm:w-auto overflow-x-scroll sm:overflow-x-auto no-scroll-bar">
                   <div
                     className={`grid gap-2 ${
                       isOwner ? "grid-cols-4" : "grid-cols-6"
-                    } md:grid-cols-6 border-b-1 border-gray-steelGrey py-5 cursor-pointer overflow-x-scroll sm:w-full w-500`}
+                    } md:grid-cols-6 border-b-1 border-gray-steelGrey py-5 cursor-pointer overflow-x-scroll no-scroll-bar sm:overflow-x-auto sm:w-full w-500`}
                   >
                     <div className="flex flex-row items-center">
                       <div className="flex flex-shrink-0">
