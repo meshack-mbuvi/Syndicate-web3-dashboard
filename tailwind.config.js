@@ -99,6 +99,7 @@ module.exports = {
         100: "30rem",
         104: "26rem",
         "slightly-over-100": "30.25rem",
+        500: "31.25rem",
         564: "35.25rem",
         730: "45.625rem",
       }),

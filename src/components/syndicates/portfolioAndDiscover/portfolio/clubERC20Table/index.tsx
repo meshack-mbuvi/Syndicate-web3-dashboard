@@ -40,7 +40,10 @@ const ClubERC20Table: FC<Props> = ({ columns, tableData }) => {
         ? rawTotalDeposits / 10000
         : rawTotalDeposits;
     return hasDecimals(totalDeposits)
-      ? floatedNumberWithCommas(parseFloat(totalDeposits),depositERC20TokenSymbol == "ETH" ? true : false)
+      ? floatedNumberWithCommas(
+          parseFloat(totalDeposits),
+          depositERC20TokenSymbol == "ETH" ? true : false,
+        )
       : numberWithCommas(totalDeposits);
   };
 
@@ -53,15 +56,19 @@ const ClubERC20Table: FC<Props> = ({ columns, tableData }) => {
   return (
     <>
       {tableData.length ? (
-        <div>
-          <div className="flex flex-col">
+        <div className="">
+          <div className="flex flex-col w-full overflow-x-scroll">
             {/* scroll to top of table with this button when pagination is clicked  */}
             <button ref={tokensTableRef} />
-            <div className="grid grid-cols-4 md:grid-cols-6 pb-3 text-gray-syn4 font-whyte text-sm">
+            <div
+              className={`grid ${
+                columns.length > 4 ? "grid-cols-6" : "grid-cols-4"
+              } md:grid-cols-6 pb-3 text-gray-syn4 font-whyte text-sm w-500 sm:w-full`}
+            >
               {columns?.map((col, idx) => (
                 <div
                   key={`token-table-header-${idx}`}
-                  className={`text-sm ${idx > 3 ? "text-right" : ""}`}
+                  className={`text-sm ${idx > 3 ? "sm:text-right" : ""}`}
                 >
                   {col}
                 </div>
@@ -89,54 +96,63 @@ const ClubERC20Table: FC<Props> = ({ columns, tableData }) => {
                 key={`token-table-row-${index}`}
                 href={`/clubs/${address}/${isOwner ? "manage" : ""}`}
               >
-                <div className="grid gap-2 grid-cols-4 md:grid-cols-6 border-b-1 w-full border-gray-steelGrey py-5 cursor-pointer">
-                  <div className="flex flex-row items-center">
-                    <div className="flex flex-shrink-0">
-                      <div className="hidden sm:block sm:mr-4">
-                        <GradientAvatar name={clubName} size="h-8 w-8" />
+                <div className="w-full sm:w-auto overflow-x-scroll sm:overflow-x-auto">
+                  <div
+                    className={`grid gap-2 ${
+                      isOwner ? "grid-cols-4" : "grid-cols-6"
+                    } md:grid-cols-6 border-b-1 border-gray-steelGrey py-5 cursor-pointer overflow-x-scroll sm:w-full w-500`}
+                  >
+                    <div className="flex flex-row items-center">
+                      <div className="flex flex-shrink-0">
+                        <div className="hidden sm:block sm:mr-4">
+                          <GradientAvatar name={clubName} size="h-8 w-8" />
+                        </div>
                       </div>
+                      <div className="flex text-base items-center">
+                        {clubName}
+                      </div>
+                    </div>
+                    <div className="flex text-base items-center">{status}</div>
+                    <div className="flex text-base items-center">
+                      <div className="flex items-center mr-2 h-full">
+                        <Image src={depositTokenLogo} width={20} height={20} />
+                      </div>
+                      {processTotalDeposits(
+                        totalDeposits,
+                        depositERC20TokenSymbol,
+                      )}{" "}
+                      {depositERC20TokenSymbol}
                     </div>
                     <div className="flex text-base items-center">
-                      {clubName}
+                      {membersCount}
                     </div>
-                  </div>
-                  <div className="flex text-base items-center">{status}</div>
-                  <div className="flex text-base items-center">
-                    <div className="flex items-center mr-2">
-                      <Image src={depositTokenLogo} width={20} height={20} />
-                    </div>
-                    {processTotalDeposits(
-                      totalDeposits,
-                      depositERC20TokenSymbol,
-                    )}{" "}
-                    {depositERC20TokenSymbol}
-                  </div>
-                  <div className="flex text-base items-center">
-                    {membersCount}
-                  </div>
 
-                  {!isOwner && (
-                    <>
-                      <div className="flex text-base items-center justify-end">
-                        <div className="flex items-center mr-2">
-                          <Image
-                            src={depositTokenLogo}
-                            width={20}
-                            height={20}
-                          />
+                    {!isOwner && (
+                      <>
+                        <div className="flex text-base items-center justify-end">
+                          <div className="flex items-center mr-2">
+                            <Image
+                              src={depositTokenLogo}
+                              width={20}
+                              height={20}
+                            />
+                          </div>
+                          {floatedNumberWithCommas(
+                            memberDeposits,
+                            depositERC20TokenSymbol == "ETH" ? true : false,
+                          )}{" "}
+                          {depositERC20TokenSymbol}
                         </div>
-                        {floatedNumberWithCommas(memberDeposits, depositERC20TokenSymbol == "ETH" ? true : false )}{" "}
-                        {depositERC20TokenSymbol}
-                      </div>
-                      <div className="flex text-base items-center justify-end">
-                        {`${
-                          hasDecimals(ownershipShare)
-                            ? ownershipShare.toFixed(2)
-                            : ownershipShare
-                        }%`}
-                      </div>
-                    </>
-                  )}
+                        <div className="flex text-base items-center justify-end">
+                          {`${
+                            hasDecimals(ownershipShare)
+                              ? ownershipShare.toFixed(2)
+                              : ownershipShare
+                          }%`}
+                        </div>
+                      </>
+                    )}
+                  </div>
                 </div>
               </Link>
             ),
