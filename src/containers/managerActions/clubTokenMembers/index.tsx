@@ -129,7 +129,10 @@ const ClubTokenMembers = (): JSX.Element => {
         }) {
           return (
             <p className="flex text-white text-base my-1 leading-6">
-              {`${floatedNumberWithCommas(depositAmount, ethDepositToken ?? false)} ${depositSymbol}`}
+              {`${floatedNumberWithCommas(
+                depositAmount,
+                ethDepositToken ?? false,
+              )} ${depositSymbol}`}
             </p>
           );
         },
@@ -162,7 +165,7 @@ const ClubTokenMembers = (): JSX.Element => {
 
   return (
     <div className="w-full rounded-md h-full max-w-1480">
-      <div className="w-full px-2 sm:px-0 col-span-12">
+      <div className="w-full px-2 sm:px-0 col-span-12 overflow-x-scroll no-scroll-bar sm:overflow-x-auto -mr-6 sm:mr-auto">
         {loadingClubMembers ? (
           <>
             <div className="mb-8 mt-10">
@@ -209,12 +212,14 @@ const ClubTokenMembers = (): JSX.Element => {
             </>
           </>
         ) : tableData.length || filteredAddress ? (
-          <MembersTable
-            columns={columns}
-            data={tableData}
-            filterAddressOnChangeHandler={filterAddressOnChangeHandler}
-            searchAddress={filteredAddress}
-          />
+          <div className="w-max sm:w-auto">
+            <MembersTable
+              columns={columns}
+              data={tableData}
+              filterAddressOnChangeHandler={filterAddressOnChangeHandler}
+              searchAddress={filteredAddress}
+            />
+          </div>
         ) : (
           <div className="flex justify-center">
             <div className="my-24.5">
