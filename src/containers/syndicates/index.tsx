@@ -1,6 +1,7 @@
 import ErrorBoundary from "@/components/errorBoundary";
 import Layout from "@/components/layout";
 import PortfolioAndDiscover from "@/components/syndicates/portfolioAndDiscover";
+import useWindowSize from "@/hooks/useWindowSize";
 import React, { FC } from "react";
 import Head from "src/components/syndicates/shared/HeaderTitle";
 
@@ -10,6 +11,7 @@ import Head from "src/components/syndicates/shared/HeaderTitle";
  *
  */
 const SyndicatesComponent: FC = () => {
+  const { width } = useWindowSize();
   return (
     <Layout>
       <Head title="My Investment Clubs" />
@@ -28,7 +30,10 @@ const SyndicatesComponent: FC = () => {
       <ErrorBoundary>
         <div className="w-full">
           {/* show my clubs */}
-          <div className="container mx-auto">
+          <div
+            className="container mx-auto"
+            style={width < 480 ? { paddingRight: "0" } : null}
+          >
             <PortfolioAndDiscover />
           </div>
         </div>

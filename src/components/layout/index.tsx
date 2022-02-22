@@ -12,7 +12,6 @@ import DemoBanner from "../demoBanner";
 import ProgressBar from "../ProgressBar";
 import SEO from "../seo";
 import { useDemoMode } from "@/hooks/useDemoMode";
-
 interface Props {
   showBackButton?: boolean;
   managerSettingsOpen?: boolean;

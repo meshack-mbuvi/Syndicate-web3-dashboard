@@ -10,6 +10,7 @@ import {
 } from "./portfolio/clubERC20Table/constants";
 import PortfolioEmptyState from "@/components/syndicates/portfolioAndDiscover/portfolio/portfolioEmptyState";
 import CreateClubButton from "@/components/createClubButton";
+import useWindowSize from "@/hooks/useWindowSize";
 
 /**
  * My Syndicates: IF their wallet (a) is leading a syndicate or
@@ -54,6 +55,8 @@ const PortfolioAndDiscover: React.FC = () => {
     return skeletonsWrapper;
   };
 
+  const { width } = useWindowSize();
+
   return (
     <div className="-mt-8">
       {loading && account ? (
@@ -97,7 +100,10 @@ const PortfolioAndDiscover: React.FC = () => {
         <>
           {myClubERC20s.length || otherClubERC20s.length ? (
             <div>
-              <div className="flex flex-col sm:flex-row justify-between sm:items-center w-full mt-14 mb-16">
+              <div
+                className="flex flex-col sm:flex-row justify-between sm:items-center w-full mt-14 mb-16"
+                style={width < 480 ? { paddingRight: "6%" } : null}
+              >
                 <p className="text-3xl">Portfolio</p>
                 <CreateClubButton />
               </div>
