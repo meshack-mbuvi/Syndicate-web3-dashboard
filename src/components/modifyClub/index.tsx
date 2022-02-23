@@ -28,6 +28,7 @@ import {
 } from "@/state/createInvestmentClub/slice";
 import { getWeiAmount } from "@/utils/conversions";
 import { SettingsDisclaimerTooltip } from "@/containers/createInvestmentClub/shared/SettingDisclaimer";
+import EstimateGas from "@/containers/createInvestmentClub/gettingStarted/estimateGas";
 import { useIsClubOwner } from "@/hooks/useClubOwner";
 import { Status } from "@/state/wallet/types";
 
@@ -612,17 +613,7 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
                 } transition-opacity duration-700`}
               >
                 <Callout extraClasses="">
-                  <div className="flex justify-between">
-                    <div className="flex space-x-3">
-                      <img
-                        src="/images/fuel-pump-blue.svg"
-                        className="w-4"
-                        alt="cancel"
-                      />
-                      <div>Estimated gas</div>
-                    </div>
-                    <div>0.05 ETH (~$121.77)</div>
-                  </div>
+                  <EstimateGas customClasses="bg-opacity-20 rounded-custom w-full flex cursor-default items-center" />
                 </Callout>
               </div>
             </div>
