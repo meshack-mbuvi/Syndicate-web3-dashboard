@@ -383,20 +383,27 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
         style={{ borderRadius: "10px" }}
       >
         {/* Open to deposits */}
-        <div
-          className="flex justify-between items-center"
-          data-tip
-          data-for="deposits-switch"
-        >
-          <div>Open to deposits</div>
-          <Switch
-            isOn={isOpenToDeposits}
-            type={SwitchType.EXPLICIT}
-            onClick={() => {
-              setIsOpenToDeposits(!isOpenToDeposits);
-            }}
-          />
-        </div>
+        {
+          !isOpenToDeposits || existingOpenToDepositsUntil.getTime() < new Date(new Date().setHours(23, 59, 0, 0)).getTime()
+          ?
+            <div
+              className="flex justify-between items-center"
+              data-tip
+              data-for="deposits-switch"
+            >
+              <div>Open to deposits</div>
+              <Switch
+                isOn={isOpenToDeposits}
+                type={SwitchType.EXPLICIT}
+                onClick={() => {
+                  setIsOpenToDeposits(!isOpenToDeposits);
+                }}
+              />
+            </div>
+          :
+            null
+        }
+       
 
         <div
           className={`absolute ${!isOpenToDeposits && "opacity-100"} opacity-0`}
@@ -422,7 +429,8 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
             } transition-opacity`}
           >
             {/* Open until */}
-            <div className="xl:flex xl:justify-between ml-6 mt-10">
+            <div className={`xl:flex xl:justify-between 
+              ${isOpenToDeposits && existingOpenToDepositsUntil.getTime() < new Date(new Date().setHours(23, 59, 0, 0)).getTime() ? `ml-0 mt-10` : `ml-0 mt-0` }`}>
               <div className="mb-4 xl:mb-0">Until</div>
               <div className="xl:w-76 mr-6 xl:mr-0">
                 <InputFieldWithDate
@@ -451,7 +459,7 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
             </div>
 
             {/* Max amount raising */}
-            <div className="xl:flex xl:justify-between ml-6 mt-10">
+            <div className={`xl:flex xl:justify-between mt-10 ${isOpenToDeposits ? `ml-0` : `ml-6` }`}>
               <div className="mb-4 xl:mb-0">Max amount raising</div>
               <div className="xl:w-76 mr-6 xl:mr-0">
                 <InputFieldWithToken
@@ -484,7 +492,7 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
             </div>
 
             {/* Max number of members */}
-            <div className="xl:flex xl:justify-between ml-6 mt-10">
+            <div className={`xl:flex xl:justify-between mt-10 ${isOpenToDeposits ? `ml-0` : `ml-6` }`}>
               <div className="mb-4 xl:mb-0">Max number of members</div>
               <div className="xl:w-76 mr-6 xl:mr-0">
                 <InputFieldWithButton
@@ -581,12 +589,12 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
         {/* Disclaimer */}
         <div
           className={`${
-            areClubChangesAvailable ? "max-h-2screen" : "max-h-0"
+            areClubChangesAvailable && isOpenToDeposits ? "max-h-2screen" : "max-h-0"
           } transition-all duration-700`}
         >
           <div
             className={`${
-              areClubChangesAvailable ? "opacity-100" : "opacity-0"
+              areClubChangesAvailable && isOpenToDeposits ? "opacity-100" : "opacity-0"
             } transition-opacity duration-700`}
           >
             <div className="text-xs text-gray-syn4">
@@ -604,12 +612,12 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
           <div className="flex-grow">
             <div
               className={`${
-                areClubChangesAvailable ? "max-h-2screen" : "max-h-0"
+                areClubChangesAvailable && isOpenToDeposits ? "max-h-2screen" : "max-h-0"
               } transition-all duration-700`}
             >
               <div
                 className={`${
-                  areClubChangesAvailable ? "opacity-100" : "opacity-0"
+                  areClubChangesAvailable && isOpenToDeposits ? "opacity-100" : "opacity-0"
                 } transition-opacity duration-700`}
               >
                 <Callout extraClasses="">
@@ -621,9 +629,9 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
 
           {/* Submit button */}
           <button
-            onClick={areClubChangesAvailable ? handleTransaction : null}
+            onClick={areClubChangesAvailable && isOpenToDeposits ? handleTransaction : null}
             className={`${
-              areClubChangesAvailable ? "primary-CTA" : "primary-CTA-disabled"
+              areClubChangesAvailable && isOpenToDeposits ? "primary-CTA" : "primary-CTA-disabled"
             } transition-all duration-700 w-full lg:w-auto`}
           >
             Submit changes
