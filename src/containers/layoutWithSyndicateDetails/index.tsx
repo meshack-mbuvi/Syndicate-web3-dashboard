@@ -30,7 +30,7 @@ import { clearMyTransactions } from "@/state/erc20transactions";
 import { Status } from "@/state/wallet/types";
 import { getTextWidth } from "@/utils/getTextWidth";
 import {
-  mockDepositERC20Token,
+  mockActiveERC20Token,
   mockDepositModeTokens,
   mockTokensResult,
 } from "@/utils/mockdata";
@@ -44,7 +44,10 @@ import ActivityView from "./activity";
 import Assets from "./assets";
 import TabButton from "./TabButton";
 
-const LayoutWithSyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({ managerSettingsOpen, children }) => {
+const LayoutWithSyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
+  managerSettingsOpen,
+  children,
+}) => {
   const {
     initializeContractsReducer: { syndicateContracts },
     merkleProofSliceReducer: { myMerkleProof },
@@ -182,8 +185,8 @@ const LayoutWithSyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({ mana
         dispatch(setClubMembers([]));
       };
     } else if (isDemoMode) {
-      // using "Open to deposits" as the default view here in all cases.
-      dispatch(setERC20TokenDetails(mockDepositERC20Token));
+      // using "Active" as the default view.
+      dispatch(setERC20TokenDetails(mockActiveERC20Token));
     }
   }, [
     clubAddress,
@@ -248,7 +251,11 @@ const LayoutWithSyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({ mana
       {router.isReady && !isDemoMode && !web3.utils.isAddress(clubAddress) ? (
         <NotFoundPage />
       ) : (
-        <Layout managerSettingsOpen={managerSettingsOpen} showNav={showNav} showBackButton={true}>
+        <Layout
+          managerSettingsOpen={managerSettingsOpen}
+          showNav={showNav}
+          showBackButton={true}
+        >
           <Head title={name || "Club"} />
           <ErrorBoundary>
             {showOnboardingIfNeeded && <OnboardingModal />}
@@ -259,13 +266,12 @@ const LayoutWithSyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({ mana
                 <div className="container mx-auto ">
                   {/* Two Columns (Syndicate Details + Widget Cards) */}
                   {!managerSettingsOpen && (
-                      <BackButton
-                        /* topOffset={isSubNavStuck ? "-0.68rem" : "-0.25rem"} */
-                        transform={transform}
-                        isHidden={isDemoMode}
-                      />
-                    )
-                  }
+                    <BackButton
+                      /* topOffset={isSubNavStuck ? "-0.68rem" : "-0.25rem"} */
+                      transform={transform}
+                      isHidden={isDemoMode}
+                    />
+                  )}
                   <div className="grid grid-cols-12 gap-5">
                     {/* Left Column */}
                     <div className="md:col-start-1 md:col-end-7 col-span-12">
@@ -274,7 +280,9 @@ const LayoutWithSyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({ mana
                   we should have an isChildVisible child here,
                   but it's not working as expected
                   */}
-                      <SyndicateDetails managerSettingsOpen={managerSettingsOpen}>
+                      <SyndicateDetails
+                        managerSettingsOpen={managerSettingsOpen}
+                      >
                         <div className="w-full md:hidden mt-5">{children}</div>
                       </SyndicateDetails>
                     </div>

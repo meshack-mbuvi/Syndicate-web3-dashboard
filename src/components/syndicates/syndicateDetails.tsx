@@ -29,7 +29,10 @@ interface ClubDetails {
 }
 
 // we should have an isChildVisible prop here of type boolean
-const SyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({ managerSettingsOpen, children }) => {
+const SyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
+  managerSettingsOpen,
+  children,
+}) => {
   const {
     erc20TokenSliceReducer: {
       erc20Token,
@@ -60,7 +63,6 @@ const SyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({ managerSetting
     depositsEnabled,
     claimEnabled,
   } = erc20Token;
-  
 
   const router = useRouter();
   const [details, setDetails] = useState<ClubDetails[]>([]);
@@ -248,7 +250,6 @@ const SyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({ managerSetting
     }
   }, [JSON.stringify(erc20Token), totalDeposits]);
 
-
   // show message to the user when address has been copied.
   const updateAddressCopyState = () => {
     setShowAddressCopyState(true);
@@ -258,7 +259,7 @@ const SyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({ managerSetting
   const isActive = !depositsEnabled || claimEnabled;
   const isOwnerOrMember =
     isOwner || +accountTokens || myMerkleProof?.account === account;
-  
+
   return (
     <div className="flex flex-col relative">
       <div className="h-fit-content rounded-custom">
@@ -266,8 +267,8 @@ const SyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({ managerSetting
           <div>
             <div className="flex justify-center items-center">
               <div className="mr-8">
-                {(loading || loadingClubDeposits || totalDeposits == "") 
-                && !managerSettingsOpen ? (
+                {(loading || loadingClubDeposits || totalDeposits == "") &&
+                !managerSettingsOpen ? (
                   <SkeletonLoader
                     height="20"
                     width="20"
@@ -379,25 +380,27 @@ const SyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({ managerSetting
           </div>
         </div>
 
-        {status !== Status.DISCONNECTED && depositsEnabled 
-        && !managerSettingsOpen && (
-          <div className="h-fit-content flex w-full justify-start mt-16">
-            <ProgressIndicator
-              totalDeposits={totalDeposits}
-              depositTotalMax={maxTotalDeposits.toString()}
-              depositERC20TokenSymbol={depositTokenSymbol}
-              openDate={startTime.toString()}
-              closeDate={endTime.toString()}
-              loading={loading || loadingClubDeposits}
-              ethDepositToken={ethDepositToken}
-            />
-          </div>
-        )}
+        {status !== Status.DISCONNECTED &&
+          depositsEnabled &&
+          !managerSettingsOpen && (
+            <div className="h-fit-content flex w-full justify-start mt-16">
+              <ProgressIndicator
+                totalDeposits={totalDeposits}
+                depositTotalMax={maxTotalDeposits.toString()}
+                depositERC20TokenSymbol={depositTokenSymbol}
+                openDate={startTime.toString()}
+                closeDate={endTime.toString()}
+                loading={loading || loadingClubDeposits}
+                ethDepositToken={ethDepositToken}
+              />
+            </div>
+          )}
 
         {/* This component should be shown when we have details about user deposits */}
         {(status !== Status.DISCONNECTED &&
           (loading || !(isActive && !isOwnerOrMember))) ||
-        isDemoMode || !managerSettingsOpen ? (
+        isDemoMode ||
+        !managerSettingsOpen ? (
           <div className="overflow-hidden mt-6 relative">
             <DetailsCard
               title="Details"

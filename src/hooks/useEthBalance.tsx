@@ -41,6 +41,6 @@ export const useEthBalance = (account: string): number => {
     return () => {
       subscription.unsubscribe();
     };
-  }, [account]);
+  }, [account, router.isReady]);
   return useMemo(() => ethBalance, [ethBalance]);
 };
