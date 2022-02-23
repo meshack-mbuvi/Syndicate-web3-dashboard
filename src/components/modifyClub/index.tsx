@@ -28,6 +28,8 @@ import {
 } from "@/state/createInvestmentClub/slice";
 import { getWeiAmount } from "@/utils/conversions";
 import { SettingsDisclaimerTooltip } from "@/containers/createInvestmentClub/shared/SettingDisclaimer";
+import { useIsClubOwner } from "@/hooks/useClubOwner";
+import { Status } from "@/state/wallet/types";
 
 export const ModifyClubSettings = (props: { isVisible: boolean }) => {
   const { isVisible } = props;
@@ -45,7 +47,7 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
     },
     erc20TokenSliceReducer: { erc20Token, depositDetails },
     web3Reducer: {
-      web3: { account },
+      web3: { account, status },
     },
     initializeContractsReducer: {
       syndicateContracts: { policyMintERC20 },
@@ -57,8 +59,10 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
     memberCount,
     totalSupply,
     endTime,
+    owner,
     maxMemberCount,
     maxTotalSupply,
+    loading: loadingClubDetails
   } = erc20Token;
 
   const { depositTokenSymbol } = depositDetails;
@@ -93,11 +97,33 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
   const MAX_MEMBERS_ALLOWED = 99;
 
   const router = useRouter();
-  const { clubAddress } = router.query;
+  
+  const {
+    pathname,
+    isReady,
+    query: { clubAddress },
+  } = router;
+
+  const isOwner = useIsClubOwner();
 
   const handleExit = () => {
     router && router.push(`/clubs/${clubAddress}/manage`);
   };
+
+  useEffect(() => {
+    if (
+      loadingClubDetails ||
+      !clubAddress ||
+      status === Status.CONNECTING ||
+      !owner ||
+      !isReady
+    )
+      return;
+
+    if (pathname.includes("/modify") && !isOwner) {
+      router.replace(`/clubs/${clubAddress}`);
+    } 
+  }, [owner, clubAddress, account, loadingClubDetails, status, isReady, isOwner]);
 
   // makes sure that current settings render when content is available
   useEffect(() => {
