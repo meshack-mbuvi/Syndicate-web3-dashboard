@@ -171,7 +171,7 @@ const LegalAgreement: React.FC = () => {
               </div>
               <div className="flex">
                 <a
-                  href="https://docs.google.com/document/d/1Ss33epTFkcHAWaV7XtinVAiQMzYLkPYU/edit"
+                  href="https://docs.google.com/document/d/1OdXXdaX5eJZCc_xKQsrC6NrX-XrBFQbu/edit#"
                   className="text-blue cursor-pointer"
                   target="_blank"
                   rel="noopener noreferrer"

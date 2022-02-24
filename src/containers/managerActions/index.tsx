@@ -3,6 +3,7 @@ import { CLICK_COPY_DEPOSIT_LINK_TO_SHARE } from "@/components/amplitude/eventNa
 import ErrorBoundary from "@/components/errorBoundary";
 import FadeIn from "@/components/fadeIn/FadeIn";
 import CreateEntityCard from "@/components/shared/createEntityCard";
+import ModifyClubSettingsCard from "@/components/shared/modifyClubSettingsCard";
 import { SkeletonLoader } from "@/components/skeletonLoader";
 import StatusBadge from "@/components/syndicateDetails/statusBadge";
 import ConnectWalletAction from "@/components/syndicates/shared/connectWalletAction";
@@ -374,8 +375,11 @@ const ManagerActions = (): JSX.Element => {
         </FadeIn>
         {status !== Status.DISCONNECTED && (
           <div className="flex bg-gray-syn8 duration-500 transition-all rounded-2.5xl my-6 p-4 space-y-4 items-start flex-col">
-            <div className="hover:bg-gray-syn7 rounded-xl py-2 px-4">
+            <div className="hover:bg-gray-syn7 rounded-xl py-2 px-4 w-full">
               <CreateEntityCard />
+            </div>
+            <div className="hover:bg-gray-syn7 rounded-xl py-2 px-4 w-full">
+              <ModifyClubSettingsCard />
             </div>
             {/* This button will be re-enabled. */}
 

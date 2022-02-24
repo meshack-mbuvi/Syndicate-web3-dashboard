@@ -10,7 +10,9 @@ const baseURL = isDev
   ? "https://api-rinkeby.etherscan.io/api"
   : "https://api.etherscan.io/api";
 
-const EstimateGas: React.FC = () => {
+const EstimateGas = (props: {
+  customClasses?: string
+}) => {
   const {
     web3Reducer: {
       web3: { account },
@@ -19,6 +21,8 @@ const EstimateGas: React.FC = () => {
       syndicateContracts: { clubERC20Factory },
     },
   } = useSelector((state: AppState) => state);
+
+  const { customClasses = "" } = props;
 
   const [gas, setGas] = useState(0); // 0.05 ETH (~$121.77)
   const [gasUnits, setGasUnits] = useState(0);
@@ -60,7 +64,7 @@ const EstimateGas: React.FC = () => {
   }, [gasUnits, gasBaseFee]);
 
   return (
-    <button className="bg-blue-navy bg-opacity-20 rounded-custom w-full flex py-2.5 cursor-default items-center">
+    <button className={!customClasses ? `bg-blue-navy bg-opacity-20 rounded-custom w-full flex py-2.5 cursor-default items-center` : `${customClasses}`}>
       <img src="/images/gasIcon.svg" className="inline w-4 h-4.5 mx-3" alt="" />
       <span className="flex justify-between w-full">
         <span>Estimated gas</span>

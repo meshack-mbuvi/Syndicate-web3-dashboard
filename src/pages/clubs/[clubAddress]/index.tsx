@@ -4,7 +4,7 @@ import React from "react";
 
 const SyndicateDepositView: React.FC = () => {
   return (
-    <LayoutWithSyndicateDetails>
+    <LayoutWithSyndicateDetails managerSettingsOpen={false} >
       <DepositSyndicate />
     </LayoutWithSyndicateDetails>
   );

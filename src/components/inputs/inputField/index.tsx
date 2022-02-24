@@ -24,6 +24,7 @@ export const InputField = (props: {
                 value={value}
                 onChange={onChange}
                 {...rest}
+                
             />
             {infoLabel && 
                 <div className={`text-sm mt-2 ${isInErrorState ? "text-red-error" : "text-gray-syn2"}`}>

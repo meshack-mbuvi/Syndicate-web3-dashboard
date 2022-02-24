@@ -29,7 +29,10 @@ interface ClubDetails {
 }
 
 // we should have an isChildVisible prop here of type boolean
-const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
+const SyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
+  managerSettingsOpen,
+  children,
+}) => {
   const {
     erc20TokenSliceReducer: {
       erc20Token,
@@ -54,6 +57,7 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
     endTime,
     maxMemberCount,
     name,
+    owner,
     symbol,
     maxTotalSupply,
     depositsEnabled,
@@ -122,7 +126,7 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
   }, [totalDeposits, memberCount]);
 
   useEffect(() => {
-    if (erc20Token) {
+    if (erc20Token && !managerSettingsOpen) {
       setDetails([
         ...(depositsEnabled
           ? [
@@ -263,7 +267,8 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
           <div>
             <div className="flex justify-center items-center">
               <div className="mr-8">
-                {loading || loadingClubDeposits || totalDeposits === "" ? (
+                {(loading || loadingClubDeposits || totalDeposits == "") &&
+                !managerSettingsOpen ? (
                   <SkeletonLoader
                     height="20"
                     width="20"
@@ -318,7 +323,7 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
                       <div className="inline-flex items-center ml-6 space-x-8 pr-2">
                         {showActionIcons ? (
                           <div className="flex space-x-6">
-                            <CopyToClipboard text={erc20Token.owner as string}>
+                            <CopyToClipboard text={owner as string}>
                               <button
                                 className="flex items-center relative w-4 h-4 cursor-pointer"
                                 onClick={updateAddressCopyState}
@@ -349,7 +354,7 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
                             <div data-for="view-on-etherscan" data-tip>
                               <EtherscanLink
                                 customStyles="w-4 h-4"
-                                etherscanInfo={erc20Token.owner}
+                                etherscanInfo={owner}
                                 grouped
                                 iconOnly
                               />
@@ -375,24 +380,27 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
           </div>
         </div>
 
-        {status !== Status.DISCONNECTED && depositsEnabled && (
-          <div className="h-fit-content flex w-full justify-start mt-16">
-            <ProgressIndicator
-              totalDeposits={totalDeposits}
-              depositTotalMax={maxTotalDeposits.toString()}
-              depositERC20TokenSymbol={depositTokenSymbol}
-              openDate={startTime.toString()}
-              closeDate={endTime.toString()}
-              loading={loading || loadingClubDeposits}
-              ethDepositToken={ethDepositToken}
-            />
-          </div>
-        )}
+        {status !== Status.DISCONNECTED &&
+          depositsEnabled &&
+          !managerSettingsOpen && (
+            <div className="h-fit-content flex w-full justify-start mt-16">
+              <ProgressIndicator
+                totalDeposits={totalDeposits}
+                depositTotalMax={maxTotalDeposits.toString()}
+                depositERC20TokenSymbol={depositTokenSymbol}
+                openDate={startTime.toString()}
+                closeDate={endTime.toString()}
+                loading={loading || loadingClubDeposits}
+                ethDepositToken={ethDepositToken}
+              />
+            </div>
+          )}
 
         {/* This component should be shown when we have details about user deposits */}
         {(status !== Status.DISCONNECTED &&
           (loading || !(isActive && !isOwnerOrMember))) ||
-        isDemoMode ? (
+        isDemoMode ||
+        !managerSettingsOpen ? (
           <div className="overflow-hidden mt-6 relative">
             <DetailsCard
               title="Details"
@@ -406,7 +414,7 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
       </div>
       {/* Syndicate details */}
       {/* details rendered on small devices only. render right column components on the left column in small devices */}
-      {props.children}
+      {children}
     </div>
   );
 };

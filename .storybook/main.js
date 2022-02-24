@@ -8,8 +8,10 @@ module.exports = {
   ],
   "addons": [
     "@storybook/addon-links",
-    "@storybook/addon-essentials"
+    "@storybook/addon-essentials",
+    "storybook-addon-next-router",
   ],
+  staticDirs: ['../public'],
   "framework": "@storybook/react",
   webpackFinal: async (config, { configType }) => {
     config.resolve.alias = {
