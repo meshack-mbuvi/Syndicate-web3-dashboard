@@ -2,6 +2,7 @@ import { Switch, SwitchType } from "@/components/switch";
 import {
   numberInputRemoveCommas,
   numberStringInputRemoveCommas,
+  floatedNumberWithCommas
 } from "@/utils/formattedNumbers";
 import { useEffect, useState } from "react";
 import { Callout } from "../callout";
@@ -63,6 +64,7 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
     owner,
     maxMemberCount,
     maxTotalSupply,
+    symbol,
     loading: loadingClubDetails
   } = erc20Token;
 
@@ -485,7 +487,7 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
                   infoLabel={
                     maxAmountRaisingError
                       ? maxAmountRaisingError
-                      : "Upper limit of the club’s raise, corresponding to a club token supply of 1,000,000 ✺ABC."
+                      : `Upper limit of the club’s raise, corresponding to a club token supply of ${(depositTokenSymbol === "ETH") ? floatedNumberWithCommas(maxAmountRaising*10000) : floatedNumberWithCommas(maxAmountRaising)} ${symbol}.`
                   }
                 />
               </div>
