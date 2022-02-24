@@ -32,11 +32,14 @@ import { SettingsDisclaimerTooltip } from "@/containers/createInvestmentClub/sha
 import EstimateGas from "@/containers/createInvestmentClub/gettingStarted/estimateGas";
 import { useIsClubOwner } from "@/hooks/useClubOwner";
 import { Status } from "@/state/wallet/types";
+import { useDemoMode } from "@/hooks/useDemoMode";
+import { SkeletonLoader } from "src/components/skeletonLoader";
 
 export const ModifyClubSettings = (props: { isVisible: boolean }) => {
   const { isVisible } = props;
 
   const dispatch = useDispatch();
+  const isDemoMode = useDemoMode();
 
   const {
     modifyClubSettingsReducer: {
@@ -65,7 +68,7 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
     maxMemberCount,
     maxTotalSupply,
     symbol,
-    loading: loadingClubDetails
+    loading
   } = erc20Token;
 
   const { depositTokenSymbol } = depositDetails;
@@ -90,6 +93,9 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
   const [maxAmountRaisingError, setMaxAmountRaisingError] = useState(null);
   const [maxNumberOfMembersError, setMaxNumberOfMembersError] = useState(null);
 
+  // Loading
+  const [loadingState, setLoadingState] = useState<boolean>(true);
+
   // Settings change
   const [areClubChangesAvailable, setAreClubChangesAvailable] =
     useState<boolean>(false);
@@ -113,9 +119,14 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
     router && router.push(`/clubs/${clubAddress}/manage`);
   };
 
+  // Checks load state for skeleton loaders
+  useEffect(() => {
+    (!loading) ? setLoadingState(false) : setLoadingState(true)
+  }, [loading]);
+
   useEffect(() => {
     if (
-      loadingClubDetails ||
+      loading ||
       !clubAddress ||
       status === Status.CONNECTING ||
       !owner ||
@@ -123,10 +134,10 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
     )
       return;
 
-    if (pathname.includes("/modify") && !isOwner) {
+    if ((pathname.includes("/modify") && !isOwner) || isDemoMode) {
       router.replace(`/clubs/${clubAddress}`);
     } 
-  }, [owner, clubAddress, account, loadingClubDetails, status, isReady, isOwner]);
+  }, [owner, clubAddress, account, loading, status, isReady, isOwner]);
 
   // makes sure that current settings render when content is available
   useEffect(() => {
@@ -435,28 +446,38 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
               ${isOpenToDeposits && existingOpenToDepositsUntil.getTime() < new Date(new Date().setHours(23, 59, 0, 0)).getTime() ? `ml-0 mt-10` : `ml-0 mt-0` }`}>
               <div className="mb-4 xl:mb-0">Until</div>
               <div className="xl:w-76 mr-6 xl:mr-0">
-                <InputFieldWithDate
-                  selectedDate={
-                    openToDepositsUntilWarning ? null : openToDepositsUntil
-                  }
-                  onChange={(targetDate) => {
-                    const eodToday = new Date(
-                      new Date().setHours(23, 59, 0, 0),
-                    ).getTime();
-                    const dateToSet =
-                      (targetDate as any) < eodToday ? eodToday : targetDate;
-                    setOpenToDepositsUntil(new Date(dateToSet));
-                    setOpenToDepositsUntilWarning(null); // clear error if any
-                  }}
-                  infoLabel={
-                    openToDepositsUntilWarning && openToDepositsUntilWarning
-                  }
-                />
-                {/* <LinkButton
-                                    type={LinkType.CALENDAR}
-                                    extraClasses='mt-5'
-                                    onClick={null}
-                                /> */}
+                {
+                  loadingState 
+                  ?
+                    <SkeletonLoader
+                      width="100%"
+                      height="10"
+                      borderRadius="rounded-1.5lg"
+                    />
+                  :
+                    <InputFieldWithDate
+                      selectedDate={
+                        openToDepositsUntilWarning ? null : openToDepositsUntil
+                      }
+                      onChange={(targetDate) => {
+                        const eodToday = new Date(
+                          new Date().setHours(23, 59, 0, 0),
+                        ).getTime();
+                        const dateToSet =
+                          (targetDate as any) < eodToday ? eodToday : targetDate;
+                        setOpenToDepositsUntil(new Date(dateToSet));
+                        setOpenToDepositsUntilWarning(null); // clear error if any
+                      }}
+                      infoLabel={
+                        openToDepositsUntilWarning && openToDepositsUntilWarning
+                      }
+                    />
+                    /* <LinkButton
+                            type={LinkType.CALENDAR}
+                            extraClasses='mt-5'
+                            onClick={null}
+                        /> */
+                }
               </div>
             </div>
 
@@ -464,32 +485,42 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
             <div className={`xl:flex xl:justify-between mt-10 ${isOpenToDeposits ? `ml-0` : `ml-6` }`}>
               <div className="mb-4 xl:mb-0">Max amount raising</div>
               <div className="xl:w-76 mr-6 xl:mr-0">
-                <InputFieldWithToken
-                  depositToken={depositTokenType}
-                  value={String(maxAmountRaising)}
-                  onChange={(e) => {
-                    const amount = numberInputRemoveCommas(e);
-                    if (
-                      Number(amount) < existingAmountRaised &&
-                      Number(amount) >= 0
-                    ) {
-                      setMaxAmountRaisingError(
-                        "Below the current amount raised. Please withdraw funds first before setting a lower limit.",
-                      );
-                    } else if (amount < 0 || isNaN(amount)) {
-                      setMaxAmountRaisingError("Max amount is required");
-                    } else {
-                      setMaxAmountRaisingError(null);
-                    }
-                    setMaxAmountRaising(amount >= 0 ? amount : 0);
-                  }}
-                  isInErrorState={maxAmountRaisingError}
-                  infoLabel={
-                    maxAmountRaisingError
-                      ? maxAmountRaisingError
-                      : `Upper limit of the club’s raise, corresponding to a club token supply of ${(depositTokenSymbol === "ETH") ? floatedNumberWithCommas(maxAmountRaising*10000) : floatedNumberWithCommas(maxAmountRaising)} ${symbol}.`
-                  }
-                />
+                {
+                  loadingState 
+                  ?
+                    <SkeletonLoader
+                      width="100%"
+                      height="10"
+                      borderRadius="rounded-1.5lg"
+                    />
+                  :
+                    <InputFieldWithToken
+                      depositToken={depositTokenType}
+                      value={String(maxAmountRaising)}
+                      onChange={(e) => {
+                        const amount = numberInputRemoveCommas(e);
+                        if (
+                          Number(amount) < existingAmountRaised &&
+                          Number(amount) >= 0
+                        ) {
+                          setMaxAmountRaisingError(
+                            "Below the current amount raised. Please withdraw funds first before setting a lower limit.",
+                          );
+                        } else if (amount < 0 || isNaN(amount)) {
+                          setMaxAmountRaisingError("Max amount is required");
+                        } else {
+                          setMaxAmountRaisingError(null);
+                        }
+                        setMaxAmountRaising(amount >= 0 ? amount : 0);
+                      }}
+                      isInErrorState={maxAmountRaisingError}
+                      infoLabel={
+                        maxAmountRaisingError
+                          ? maxAmountRaisingError
+                          : `Upper limit of the club’s raise, corresponding to a club token supply of ${(depositTokenSymbol === "ETH") ? floatedNumberWithCommas(maxAmountRaising*10000) : floatedNumberWithCommas(maxAmountRaising)} ${symbol}.`
+                      }
+                    />
+                }
               </div>
             </div>
 
@@ -497,76 +528,86 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
             <div className={`xl:flex xl:justify-between mt-10 ${isOpenToDeposits ? `ml-0` : `ml-6` }`}>
               <div className="mb-4 xl:mb-0">Max number of members</div>
               <div className="xl:w-76 mr-6 xl:mr-0">
-                <InputFieldWithButton
-                  value={String(maxNumberOfMembers)}
-                  buttonLabel="Max"
-                  buttonOnClick={() => {
-                    setMaxNumberOfMembers(99);
-                    setMaxNumberOfMembersError(null);
-                  }}
-                  onChange={(e) => {
-                    const numberOfMembers = e.target.value;
-                    if (Number(numberOfMembers) < 0) {
-                      setMaxNumberOfMembersError(`Number can't be negative`);
-                    } else if (
-                      isNaN(numberOfMembers) ||
-                      Number(numberOfMembers) == 0
-                    ) {
-                      setMaxNumberOfMembersError(
-                        `Please enter a number between 1 and 99`,
-                      );
-                    } else if (
-                      Number(numberOfMembers) < existingNumberOfMembers
-                    ) {
-                      setMaxNumberOfMembersError(
-                        `Club already has ${existingNumberOfMembers} members`,
-                      );
-                    } else if (Number(numberOfMembers) > MAX_MEMBERS_ALLOWED) {
-                      setMaxNumberOfMembersError(
-                        <div>
-                          Between 1 and 99 accepted to maintain investment club
-                          status. Reach out to us at{" "}
-                          <a
-                            href="mailto:hello@syndicate.io"
-                            className="text-blue-neptune"
-                          >
-                            hello@syndicate.io
-                          </a>{" "}
-                          if you’re looking to involve more members.
-                        </div>,
-                      );
-                    } else {
-                      setMaxNumberOfMembersError(null);
-                    }
-                    setMaxNumberOfMembers(
-                      Number(
-                        `${
-                          numberOfMembers > 0 && !isNaN(numberOfMembers)
-                            ? numberOfMembers
-                            : ""
-                        }`,
-                      ),
-                    );
-                  }}
-                  isInErrorState={maxNumberOfMembersError}
-                  infoLabel={
-                    maxNumberOfMembersError ? (
-                      maxNumberOfMembersError
-                    ) : (
-                      <div>
-                        Investment clubs may have up to 99 members{" "}
-                        <a
-                          href="https://www.sec.gov/reportspubs/investor-publications/investorpubsinvclubhtm.html"
-                          className="underline"
-                        >
-                          according to the SEC
-                        </a>
-                        . Syndicate encourages all users to consult with their
-                        own legal and tax counsel.
-                      </div>
-                    )
+                {
+                  loadingState 
+                  ?
+                    <SkeletonLoader
+                      width="100%"
+                      height="10"
+                      borderRadius="rounded-1.5lg"
+                    />
+                  :
+                    <InputFieldWithButton
+                      value={String(maxNumberOfMembers)}
+                      buttonLabel="Max"
+                      buttonOnClick={() => {
+                        setMaxNumberOfMembers(99);
+                        setMaxNumberOfMembersError(null);
+                      }}
+                      onChange={(e) => {
+                        const numberOfMembers = e.target.value;
+                        if (Number(numberOfMembers) < 0) {
+                          setMaxNumberOfMembersError(`Number can't be negative`);
+                        } else if (
+                          isNaN(numberOfMembers) ||
+                          Number(numberOfMembers) == 0
+                        ) {
+                          setMaxNumberOfMembersError(
+                            `Please enter a number between 1 and 99`,
+                          );
+                        } else if (
+                          Number(numberOfMembers) < existingNumberOfMembers
+                        ) {
+                          setMaxNumberOfMembersError(
+                            `Club already has ${existingNumberOfMembers} members`,
+                          );
+                        } else if (Number(numberOfMembers) > MAX_MEMBERS_ALLOWED) {
+                          setMaxNumberOfMembersError(
+                            <div>
+                              Between 1 and 99 accepted to maintain investment club
+                              status. Reach out to us at{" "}
+                              <a
+                                href="mailto:hello@syndicate.io"
+                                className="text-blue-neptune"
+                              >
+                                hello@syndicate.io
+                              </a>{" "}
+                              if you’re looking to involve more members.
+                            </div>,
+                          );
+                        } else {
+                          setMaxNumberOfMembersError(null);
+                        }
+                        setMaxNumberOfMembers(
+                          Number(
+                            `${
+                              numberOfMembers > 0 && !isNaN(numberOfMembers)
+                                ? numberOfMembers
+                                : ""
+                            }`,
+                          ),
+                        );
+                      }}
+                      isInErrorState={maxNumberOfMembersError}
+                      infoLabel={
+                        maxNumberOfMembersError ? (
+                          maxNumberOfMembersError
+                        ) : (
+                          <div>
+                            Investment clubs may have up to 99 members{" "}
+                            <a
+                              href="https://www.sec.gov/reportspubs/investor-publications/investorpubsinvclubhtm.html"
+                              className="underline"
+                            >
+                              according to the SEC
+                            </a>
+                            . Syndicate encourages all users to consult with their
+                            own legal and tax counsel.
+                          </div>
+                        )
+                      }
+                    />
                   }
-                />
               </div>
             </div>
           </div>
