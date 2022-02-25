@@ -7,12 +7,14 @@ import { setWalletSignature } from "@/state/legalInfo";
 import { IClubInfo, IMemberInfo } from "@/state/legalInfo/types";
 import { formatAddress } from "@/utils/formatAddress";
 import { getTemplates } from "@/utils/templates";
+import Modal, { ModalStyle } from "@/components/modal";
 import {
   ArrowLeftIcon,
   ArrowRightIcon,
   ChevronDownIcon,
   ChevronUpIcon,
 } from "@heroicons/react/outline";
+
 import mapValues from "lodash/mapValues";
 import moment from "moment";
 import { useRouter } from "next/router";
@@ -86,6 +88,7 @@ const SignAgreement: React.FC<ISignAgreementProps> = ({
   const [currentField, setCurrentField] = useState(1);
   const [documentFields, setDocumentFields] = useState([]);
   const [fieldError, setFieldError] = useState(false);
+  const [showManualSignModal, setShowManualSignModal] = useState(false);
 
   const operatingAgTitleRef = useRef(null);
   const subscriptionAgTitleRef = useRef(null);
@@ -135,6 +138,20 @@ const SignAgreement: React.FC<ISignAgreementProps> = ({
         memberSignature: signature ? signedBadge : "SIGN HERE",
         memberSignDate: moment().format("LL"),
       };
+
+  useEffect(() => {
+    if (signature) {
+      const signatureElement = document.querySelector(
+        "span[data-item='signature']",
+      );
+
+      signatureElement.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+        inline: "end",
+      });
+    }
+  }, [signature]);
 
   const { compiledOp, compiledSub } = getTemplates(fieldInfo["isSeriesLLC"]);
 
@@ -198,29 +215,30 @@ const SignAgreement: React.FC<ISignAgreementProps> = ({
   const handlePreviousField = () =>
     setCurrentField((prev) => (currentField === 1 ? 1 : prev - 1));
 
+  const isGnosisSafe =
+    web3._provider.wc?._peerMeta.name === "Gnosis Safe Multisig";
+
   const handleWalletSignature = async () => {
     const name = isManager
       ? (fieldInfo as IClubInfo).adminName
       : (fieldInfo as IMemberInfo).memberName;
 
-    const signature = await web3.eth.personal.sign(
-      `Please sign your name: ${name}`,
-      account,
-      null,
-    );
+    let signature: string;
+
+    if (isGnosisSafe) {
+      signature = account;
+      setShowManualSignModal(false);
+    } else {
+      signature = await web3.eth.personal.sign(
+        `Please sign your name: ${name}`,
+        account,
+        null,
+      );
+    }
 
     if (!signature) return;
 
     dispatch(setWalletSignature({ signature, timeSigned: new Date() }));
-
-    const signatureElement = document.querySelector(
-      "span[data-item='signature']",
-    );
-    signatureElement.scrollIntoView({
-      behavior: "smooth",
-      block: "center",
-      inline: "end",
-    });
 
     if (isManager) {
       const legal = {
@@ -326,6 +344,8 @@ const SignAgreement: React.FC<ISignAgreementProps> = ({
                   signature,
                   handleSignatureSuccess,
                   handleWalletSignature,
+                  isGnosisSafe,
+                  setShowManualSignModal,
                 }}
               />
             </div>
@@ -337,6 +357,8 @@ const SignAgreement: React.FC<ISignAgreementProps> = ({
                 signature,
                 handleSignatureSuccess,
                 handleWalletSignature,
+                isGnosisSafe,
+                setShowManualSignModal,
               }}
             />
           </div>
@@ -387,6 +409,14 @@ const SignAgreement: React.FC<ISignAgreementProps> = ({
           </div>
         </div>
       </div>
+      <ManualSign
+        {...{
+          showManualSignModal,
+          setShowManualSignModal,
+          account,
+          handleWalletSignature,
+        }}
+      />
     </div>
   );
 };
@@ -454,6 +484,8 @@ const CTAs = ({
   signature,
   handleSignatureSuccess,
   handleWalletSignature,
+  isGnosisSafe,
+  setShowManualSignModal,
 }) => {
   return (
     <div>
@@ -464,6 +496,20 @@ const CTAs = ({
         >
           <span>{isManager ? "Send for signatures" : "Finish"}</span>
           <ArrowRightIcon className="w-5 h-5" />
+        </button>
+      ) : isGnosisSafe ? (
+        <button
+          className="py-4 px-8 rounded-md bg-green text-black flex flex-row items-center font-whyte-medium space-x-2  w-full justify-center"
+          onClick={() => {
+            setShowManualSignModal(true);
+          }}
+        >
+          Sign
+          <img
+            className="pl-2"
+            src="/images/pencil.and.outline.svg"
+            alt="sign"
+          />
         </button>
       ) : (
         <button
@@ -478,6 +524,73 @@ const CTAs = ({
           />
         </button>
       )}
+    </div>
+  );
+};
+
+const ManualSign = ({
+  showManualSignModal,
+  setShowManualSignModal,
+  account,
+  handleWalletSignature,
+}) => {
+  return (
+    <div>
+      <Modal
+        {...{
+          modalStyle: ModalStyle.DARK,
+          show: showManualSignModal,
+          closeModal: () => {
+            setShowManualSignModal(false);
+          },
+          customWidth: "w-100",
+          customClassName: "pt-8 px-5 pb-5",
+          showCloseButton: false,
+          outsideOnClick: true,
+          showHeader: false,
+          alignment: "align-top",
+          margin: "mt-48",
+        }}
+      >
+        <>
+          <div className=" px-5 -mb-1">
+            <div className=" text-sm font-medium">
+              SIGN WITH CURRENT WALLET ADDRESS
+            </div>
+            <div className=" text-base text-gray-syn4 mt-8">
+              Confirm you are signing on on behalf of this address.
+            </div>
+            <div className=" mt-1 text-lg w-full break-words px-2 py-4 bg-gray-syn7 rounded-custom bg-opacity-60">
+              {account}
+            </div>
+            <div className="text-sm mt-6 text-gray-syn4">
+              I agree to be legally bound by this document and the Syndicate{" "}
+              <a
+                href="https://docs.google.com/document/d/1U5D6AtmZXrxmgBeobyvHaXTs7p7_wq6V/edit"
+                className="text-blue"
+                target="_blank"
+                rel="noreferrer"
+              >
+                Terms of Service
+              </a>
+              .
+            </div>
+            <div className=" mt-2">
+              <button
+                className=" bg-white rounded-custom w-full flex flex-row items-center justify-center py-4 mb-4 text-black"
+                onClick={handleWalletSignature}
+              >
+                Confirm and Sign{" "}
+                <img
+                  className="pl-2"
+                  src="/images/pencil.and.outline.svg"
+                  alt="sign"
+                />
+              </button>
+            </div>
+          </div>
+        </>
+      </Modal>
     </div>
   );
 };
