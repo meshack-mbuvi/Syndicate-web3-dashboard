@@ -20,6 +20,7 @@ import NumberTreatment from "../NumberTreatment";
 // utils
 import GradientAvatar from "./portfolioAndDiscover/portfolio/GradientAvatar";
 import { DetailsCard, ProgressIndicator } from "./shared";
+import DuplicateClubWarning from "@/components/syndicates/shared/DuplicateClubWarning";
 
 interface ClubDetails {
   header: string;
@@ -260,6 +261,36 @@ const SyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
   const isOwnerOrMember =
     isOwner || +accountTokens || myMerkleProof?.account === account;
 
+  const [showDuplicateClubWarning, setShowDuplicateClubWarning] =
+    useState(false);
+  const [duplicateClubWarningExists, setDuplicateClubWarningExists] =
+    useState(false);
+
+  useEffect(() => {
+    const duplicateWarningCookieSet = document.cookie
+      .split("; ")
+      .find((row) => row.startsWith("showedDuplicateClubWarning"));
+    setDuplicateClubWarningExists(Boolean(duplicateWarningCookieSet));
+
+    if (duplicateWarningCookieSet) {
+      setShowDuplicateClubWarning(false);
+    } else if (
+      !duplicateWarningCookieSet &&
+      !loading
+    ) {
+      setShowDuplicateClubWarning(true);
+    }
+  }, [router.isReady, account, loading]);
+
+  const dismissDuplicateClubWarning = () => {
+    if (!duplicateClubWarningExists) {
+      // set cookie to expire in a very long time.
+      document.cookie =
+        "showedDuplicateClubWarning=true; expires=Fri, 31 Dec 9999 23:59:59 GMT; SameSite=None; Secure";
+    }
+    setShowDuplicateClubWarning(false);
+  };
+
   return (
     <div className="flex flex-col relative">
       <div className="h-fit-content rounded-custom">
@@ -379,22 +410,27 @@ const SyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
             </div>
           </div>
         </div>
+        {showDuplicateClubWarning && !isDemoMode && (
+          <div className="mt-6">
+            <DuplicateClubWarning
+              dismissDuplicateClubWarning={dismissDuplicateClubWarning}
+            />
+          </div>
+        )}
 
-        {status !== Status.DISCONNECTED &&
-          depositsEnabled &&
-          !managerSettingsOpen && (
-            <div className="h-fit-content flex w-full justify-start mt-16">
-              <ProgressIndicator
-                totalDeposits={totalDeposits}
-                depositTotalMax={maxTotalDeposits.toString()}
-                depositERC20TokenSymbol={depositTokenSymbol}
-                openDate={startTime.toString()}
-                closeDate={endTime.toString()}
-                loading={loading || loadingClubDeposits}
-                ethDepositToken={ethDepositToken}
-              />
-            </div>
-          )}
+        {status !== Status.DISCONNECTED && depositsEnabled && (
+          <div className="h-fit-content flex w-full justify-start mt-14">
+            <ProgressIndicator
+              totalDeposits={totalDeposits}
+              depositTotalMax={maxTotalDeposits.toString()}
+              depositERC20TokenSymbol={depositTokenSymbol}
+              openDate={startTime.toString()}
+              closeDate={endTime.toString()}
+              loading={loading || loadingClubDeposits}
+              ethDepositToken={ethDepositToken}
+            />
+          </div>
+        )}
 
         {/* This component should be shown when we have details about user deposits */}
         {(status !== Status.DISCONNECTED &&
