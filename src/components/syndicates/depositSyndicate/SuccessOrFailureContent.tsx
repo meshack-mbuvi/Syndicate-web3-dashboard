@@ -1,10 +1,10 @@
-import { EtherscanLink } from "@/components/syndicates/shared/EtherscanLink";
+import { BlockExplorerLink } from "@/components/syndicates/shared/BlockExplorerLink";
+import { AppState } from "@/state";
 import { isDev } from "@/utils/environment";
 import { floatedNumberWithCommas } from "@/utils/formattedNumbers";
 import Image from "next/image";
 import React from "react";
 import { CopyToClipboard } from "react-copy-to-clipboard";
-import { AppState } from "@/state";
 import { useSelector } from "react-redux";
 
 export const SuccessOrFailureContent: React.FC<{
@@ -122,9 +122,9 @@ export const SuccessOrFailureContent: React.FC<{
             </CopyToClipboard>
           ) : (
             <div className="pb-6 text-base flex justify-center items-center hover:opacity-80">
-              <EtherscanLink
-                etherscanInfo={transactionHash}
-                type="transaction"
+              <BlockExplorerLink
+                resourceId={transactionHash}
+                resource="transaction"
                 text="View on Etherscan"
               />
             </div>
@@ -132,7 +132,10 @@ export const SuccessOrFailureContent: React.FC<{
         </>
       ) : (
         <div className="pb-6 text-base flex justify-center items-center hover:opacity-80">
-          <EtherscanLink etherscanInfo={transactionHash} type="transaction" />
+          <BlockExplorerLink
+            resourceId={transactionHash}
+            resource="transaction"
+          />
         </div>
       )}
     </div>

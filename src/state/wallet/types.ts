@@ -38,6 +38,7 @@ export interface InitialState {
     isErrorModalOpen: boolean;
     error: IModalErrors | any;
     web3: IWeb3;
+    chainId: number;
     account: string;
     providerName: string;
     currentEthereumNetwork: string;
@@ -58,6 +59,7 @@ export const initialState: InitialState = {
     error: null,
     web3: initialWeb3,
     account: "",
+    chainId: 0,
     providerName: "",
     currentEthereumNetwork: "",
     ethereumNetwork: {
@@ -66,4 +68,4 @@ export const initialState: InitialState = {
     },
   },
   showWalletModal: false,
-}
+};

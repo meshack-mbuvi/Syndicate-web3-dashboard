@@ -1,4 +1,5 @@
 import { BanIcon, CancelIcon } from "@/components/shared/Icons";
+import WalletConnectDemoButton from "@/containers/layoutWithSyndicateDetails/demo/buttons/WalletConnectDemoButton";
 // set up smart contract and pass it as context
 // actions
 import { useConnectWalletContext } from "@/context/ConnectWalletProvider";
@@ -9,7 +10,6 @@ import { useDispatch, useSelector } from "react-redux";
 
 import { SpinnerWithImage } from "../shared/spinner/spinnerWithImage";
 import { ConnectModal } from "./connectModal";
-import WalletConnectDemoButton from "@/containers/layoutWithSyndicateDetails/demo/buttons/WalletConnectDemoButton";
 
 /**
  * The component shows a modal with buttons to connect to different
@@ -108,7 +108,7 @@ const ConnectWallet: React.FC = () => {
    * The provider for metamask is named injected
    */
   const activateInjected = async () => {
-    await connectWallet("Injected");
+    connectWallet("Injected");
   };
 
   /**
@@ -116,7 +116,7 @@ const ConnectWallet: React.FC = () => {
    * It calls activateProvider passing WalletConnect as the parameters.
    */
   const activateWalletConnect = async () => {
-    await connectWallet("WalletConnect");
+    connectWallet("WalletConnect");
   };
 
   /**
@@ -126,7 +126,7 @@ const ConnectWallet: React.FC = () => {
    * Ticket reference: SYN-49
    */
   const activateGnosisSafe = async () => {
-    await connectWallet("GnosisSafe");
+    connectWallet("GnosisSafe");
   };
 
   // showConnectWalletModal
@@ -138,11 +138,9 @@ const ConnectWallet: React.FC = () => {
       case "Gnosis Safe":
         gradientColor = "to-green-light-darker from-green-light-dark ";
         break;
-
       case "Wallet Connect":
         gradientColor = "from-blue-light-dark to-blue-light-darker";
         break;
-
       default:
         gradientColor = "from-orange-dark to-orange-light";
     }
@@ -206,13 +204,10 @@ const ConnectWallet: React.FC = () => {
   return (
     <div>
       <ConnectModal
-        {...{
-          show: showWalletModal,
-          closeModal: closeWalletModal,
-          title: "Connect crypto wallet",
-          subtext:
-            "By connecting your wallet, you agree to our Terms of Service and Privacy Policy",
-        }}
+        show={showWalletModal}
+        closeModal={closeWalletModal}
+        title="Connect crypto wallet"
+        subtext="By connecting your wallet ,you agree to our Terms of Service and Privacy Policy"
       >
         <>
           {/* show wallet providers */}
@@ -244,11 +239,9 @@ const ConnectWallet: React.FC = () => {
 
       {/* Loading modal */}
       <ConnectModal
-        {...{
-          show: walletConnecting,
-          closeModal: cancelWalletConnection,
-          height: "h-80",
-        }}
+        show={walletConnecting}
+        closeModal={cancelWalletConnection}
+        height="h-80"
       >
         <div>
           <div className="mb-4">
@@ -273,12 +266,10 @@ const ConnectWallet: React.FC = () => {
 
       {/* success modal */}
       <ConnectModal
-        {...{
-          show: showSuccessModal && !walletConnecting,
-          showCloseButton: false,
-          height: "h-80",
-          closeModal: () => setShowSuccessModal(false),
-        }}
+        show={showSuccessModal && !walletConnecting}
+        showCloseButton={false}
+        height="h-80"
+        closeModal={() => setShowSuccessModal(false)}
       >
         <div className="flex flex-col items-center justify-center h-full">
           <div className="rounded-full h-28 w-28 border-4 border-green-light flex items-center justify-center">
@@ -296,14 +287,12 @@ const ConnectWallet: React.FC = () => {
       </ConnectModal>
 
       {/* wrong network modal */}
-      {invalidEthereumNetwork && !walletConnecting && account ? (
+      {invalidEthereumNetwork && !walletConnecting && account && (
         <ConnectModal
-          {...{
-            show: invalidEthereumNetwork,
-            closeModal: closeWalletModal,
-            showCloseButton: false,
-            type: "error",
-          }}
+          show={invalidEthereumNetwork}
+          closeModal={closeWalletModal}
+          showCloseButton={false}
+          type="error"
         >
           <div className="flex flex-col justify-center m-auto">
             <div className="flex align-center justify-center">
@@ -318,7 +307,7 @@ const ConnectWallet: React.FC = () => {
                 </p>
                 <p className="text-sm font-whyte-light">
                   Your wallet is connected to a different network. Please switch
-                  to the Ethereum {correctEthereumNetwork} to continue.
+                  to {correctEthereumNetwork} to continue.
                 </p>
                 <div className="w-full flex justify-center">
                   <button
@@ -336,28 +325,24 @@ const ConnectWallet: React.FC = () => {
                 className="flex justify-center items-center px-6 py-3 text-base font-medium rounded-lg bg-gray-dark w-full"
               >
                 <SpinnerWithImage
-                  {...{
-                    icon: null,
-                    height: "h-8",
-                    width: "w-8",
-                    strokeWidth: "10",
-                  }}
+                  icon={null}
+                  height="h-8"
+                  width="w-8"
+                  strokeWidth="10"
                 />
               </button>
             </div>
           </div>
         </ConnectModal>
-      ) : null}
+      )}
 
       {/* Error modal  */}
       <ConnectModal
-        {...{
-          show: isErrorModalOpen,
-          showCloseButton: metamaskNotInstalledError ? true : false,
-          height: error?.type === "web3InstantionError" ? "h-auto" : "h-72",
-          closeModal: () => dispatch(hideErrorModal()),
-          type: "error",
-        }}
+        show={isErrorModalOpen}
+        showCloseButton={!!metamaskNotInstalledError}
+        height={error?.type === "web3InstantionError" ? "h-auto" : "h-72"}
+        closeModal={() => dispatch(hideErrorModal())}
+        type="error"
       >
         <div className="flex flex-col justify-between m-auto">
           <div className="flex align-center justify-center">
@@ -366,9 +351,7 @@ const ConnectWallet: React.FC = () => {
             </div>
           </div>
           <div className="mx-6 text-center">
-            {error?.title ? (
-              <p className="text-lg mb-2">{error.title}</p>
-            ) : null}
+            {!!error?.title && <p className="text-lg mb-2">{error.title}</p>}
             <p className="text-base font-whyte-light mx-4 sm:mx-6 mb-6">
               {error?.message}
             </p>

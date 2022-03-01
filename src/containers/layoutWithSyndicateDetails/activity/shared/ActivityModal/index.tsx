@@ -15,6 +15,7 @@ import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { OpenExternalLinkIcon } from "src/components/iconWrappers";
+
 import TransactionDetails from "../TransactionDetails";
 import ActivityNote from "./ActivityNote";
 
@@ -82,7 +83,6 @@ const ActivityModal: React.FC<IActivityModal> = ({
       address: from,
     },
     skip: !address || !from,
-    context: { clientName: "backend" },
   });
 
   useEffect(() => {

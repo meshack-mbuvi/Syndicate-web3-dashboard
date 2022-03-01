@@ -1,26 +1,29 @@
+import { useConnectWalletContext } from "@/context/ConnectWalletProvider";
 import { MERKLE_AIRDROP_CREATED } from "@/graphql/queries";
 import { AppState } from "@/state";
-import { useQuery } from "@apollo/client";
-import { useDispatch, useSelector } from "react-redux";
-import { useEffect } from "react";
 import {
-  setLoadingAirdropInfo,
-  setAirdropInfo,
   clearAirdropInfo,
+  setAirdropInfo,
+  setLoadingAirdropInfo,
 } from "@/state/airdropInfo/slice";
+import { useQuery } from "@apollo/client";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 
 const useFetchAirdropInfo: any = (skipQuery) => {
   const dispatch = useDispatch();
 
   const {
     web3Reducer: {
-      web3: { account, },
+      web3: { account },
     },
     merkleProofSliceReducer: { myMerkleProof },
     erc20TokenSliceReducer: {
       erc20Token: { address: clubAddress },
     },
   } = useSelector((state: AppState) => state);
+
+  const { chainId } = useConnectWalletContext();
 
   // Fetch existing claims
   const {
@@ -35,7 +38,7 @@ const useFetchAirdropInfo: any = (skipQuery) => {
       },
     },
     skip: !account || skipQuery,
-    context: { clientName: "graph" },
+    context: { chainId },
   });
 
   useEffect(() => {

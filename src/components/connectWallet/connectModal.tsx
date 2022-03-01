@@ -1,6 +1,6 @@
-import { Fragment, useRef } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { XIcon } from "@heroicons/react/outline";
+import { Fragment, useRef } from "react";
 
 interface ConnectModalProps {
   show: boolean;
@@ -10,6 +10,7 @@ interface ConnectModalProps {
   subtext?: string;
   showCloseButton?: boolean;
   height?: string;
+  type?: string;
 }
 
 export const ConnectModal: React.FC<ConnectModalProps> = (props) => {

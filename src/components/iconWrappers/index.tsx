@@ -42,12 +42,13 @@ export const InfoIcon = (props: {
 };
 
 /**Shows an icon for external links */
-export const ExternalLinkIcon: React.FC<any> = (props) =>
-  !(props as any).grayIcon ? (
-    <img src="/images/externalLink.svg" {...props} alt="extenal-link" />
-  ) : (
-    <img src="/images/externalLinkGray.svg" {...props} alt="extenal-link" />
-  );
+export const ExternalLinkIcon: React.FC<any> = ({ grayIcon, ...props }) => (
+  <img
+    src={`/images/externalLink${grayIcon ? "Gray" : ""}.svg`}
+    {...props}
+    alt="extenal-link"
+  />
+);
 
 export const CopyLinkIcon = (props: {
   color?: string;

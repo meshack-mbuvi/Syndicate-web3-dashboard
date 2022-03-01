@@ -1,5 +1,6 @@
 import { CopyToClipboardIcon } from "@/components/iconWrappers";
 import { SkeletonLoader } from "@/components/skeletonLoader";
+import { BlockExplorerLink } from "@/components/syndicates/shared/BlockExplorerLink";
 import { useAccountTokens } from "@/hooks/useAccountTokens";
 import { useClubDepositsAndSupply } from "@/hooks/useClubDepositsAndSupply";
 import { useIsClubOwner } from "@/hooks/useClubOwner";
@@ -15,7 +16,7 @@ import React, { FC, useEffect, useState } from "react";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import { useSelector } from "react-redux";
 import ReactTooltip from "react-tooltip";
-import { EtherscanLink } from "src/components/syndicates/shared/EtherscanLink";
+
 import NumberTreatment from "../NumberTreatment";
 // utils
 import GradientAvatar from "./portfolioAndDiscover/portfolio/GradientAvatar";
@@ -37,7 +38,7 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
     },
     merkleProofSliceReducer: { myMerkleProof },
     web3Reducer: {
-      web3: { web3, status, account },
+      web3: { web3, status, account, chainId },
     },
   } = useSelector((state: AppState) => state);
 
@@ -263,7 +264,7 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
           <div>
             <div className="flex justify-center items-center">
               <div className="mr-8">
-                {loading || loadingClubDeposits || totalDeposits == "" ? (
+                {loading || loadingClubDeposits || totalDeposits === "" ? (
                   <SkeletonLoader
                     height="20"
                     width="20"
@@ -318,7 +319,7 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
                       <div className="inline-flex items-center ml-6 space-x-8 pr-2">
                         {showActionIcons ? (
                           <div className="flex space-x-6">
-                            <CopyToClipboard text={erc20Token.owner as string}>
+                            <CopyToClipboard text={erc20Token.owner}>
                               <button
                                 className="flex items-center relative w-4 h-4 cursor-pointer"
                                 onClick={updateAddressCopyState}
@@ -347,9 +348,9 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
                             </CopyToClipboard>
 
                             <div data-for="view-on-etherscan" data-tip>
-                              <EtherscanLink
+                              <BlockExplorerLink
                                 customStyles="w-4 h-4"
-                                etherscanInfo={erc20Token.owner}
+                                resourceId={erc20Token.owner}
                                 grouped
                                 iconOnly
                               />
@@ -361,7 +362,8 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
                                 arrowColor="transparent"
                                 backgroundColor="#131416"
                               >
-                                View on Etherscan
+                                View on{" "}
+                                {chainId === 137 ? "Polygonscan" : "Etherscan"}
                               </ReactTooltip>
                             </div>
                           </div>

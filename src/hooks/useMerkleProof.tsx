@@ -1,15 +1,15 @@
 import { INDEX_AND_PROOF } from "@/graphql/merkleDistributor";
 import { AppState } from "@/state";
-import { useQuery } from "@apollo/client";
-import { useDispatch, useSelector } from "react-redux";
-import { useRouter } from "next/router";
-import { useEffect } from "react";
 import {
+  clearMerkleProof,
   setLoadingMerkleProof,
   setMerkleProof,
-  clearMerkleProof,
 } from "@/state/merkleProofs/slice";
 import { getWeiAmount } from "@/utils/conversions";
+import { useQuery } from "@apollo/client";
+import { useRouter } from "next/router";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 
 const useFetchMerkleProof: any = (skipQuery = false) => {
   const dispatch = useDispatch();
@@ -32,12 +32,11 @@ const useFetchMerkleProof: any = (skipQuery = false) => {
   } = useQuery(INDEX_AND_PROOF, {
     variables: { clubAddress, address },
     skip: !address || skipQuery,
-    context: { clientName: "backend" },
   });
 
   const processMerkleProofData = async (merkleObj) => {
     dispatch(setLoadingMerkleProof(true));
-    await dispatch(
+    dispatch(
       setMerkleProof({
         ...merkleObj,
         account: address,

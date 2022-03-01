@@ -1,10 +1,11 @@
-import Tooltip from "react-tooltip-lite";
 import { MEMBER_SIGNED_QUERY } from "@/graphql/queries";
 import { formatAddress } from "@/utils/formatAddress";
 import { useQuery } from "@apollo/client";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import React, { useEffect } from "react";
+import Tooltip from "react-tooltip-lite";
+
 import { SignedIcon } from "../shared/signedIcon";
 
 export const MemberAddressComponent = (row) => {
@@ -20,7 +21,6 @@ export const MemberAddressComponent = (row) => {
       address: memberAddress,
     },
     skip: !clubAddress || !memberAddress,
-    context: { clientName: "backend" },
   });
 
   useEffect(() => {

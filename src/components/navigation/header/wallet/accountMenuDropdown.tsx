@@ -1,20 +1,20 @@
-import React, { useState, useEffect, FC } from "react";
-import { CopyToClipboard } from "react-copy-to-clipboard";
-import { Menu, Transition } from "@headlessui/react";
-import { EtherscanLink } from "@/components/syndicates/shared/EtherscanLink";
-import { formatAddress } from "@/utils/formatAddress";
-import { useConnectWalletContext } from "@/context/ConnectWalletProvider";
 import { WalletIcon } from "@/components/iconWrappers";
+import { BlockExplorerLink } from "@/components/syndicates/shared/BlockExplorerLink";
 import WalletConnectDemoButton from "@/containers/layoutWithSyndicateDetails/demo/buttons/WalletConnectDemoButton";
+import { useConnectWalletContext } from "@/context/ConnectWalletProvider";
+import { formatAddress } from "@/utils/formatAddress";
+import { Menu, Transition } from "@headlessui/react";
+import React, { FC, useEffect, useState } from "react";
+import { CopyToClipboard } from "react-copy-to-clipboard";
 
 interface IAddressMenuDropDown {
   web3: any;
 }
 
-const AddressMenuDropDown: FC<IAddressMenuDropDown> = ({ web3 }) => {
-  const { disconnectWallet } = useConnectWalletContext();
-
-  const { account, providerName, web3: web3Instance } = web3;
+const AddressMenuDropDown: FC<IAddressMenuDropDown> = ({
+  web3: { account, providerName, web3 },
+}) => {
+  const { chainToken, disconnectWallet } = useConnectWalletContext();
 
   const [showCopyState, setShowCopyState] = useState(false);
   const [ethBalance, setEthBalance] = useState("");
@@ -24,70 +24,24 @@ const AddressMenuDropDown: FC<IAddressMenuDropDown> = ({ web3 }) => {
     setTimeout(() => setShowCopyState(false), 1000);
   };
 
-  const getEthBalance = async (address: string, isMounted: boolean) => {
-    try {
-      const balance = await web3Instance.eth.getBalance(address);
-      const ethBalance = await web3Instance.utils.fromWei(balance, "ether");
-      if (isMounted) {
-        setEthBalance(ethBalance);
-      }
-    } catch (error) {
-      console.log({ error });
-    }
-  };
-
   useEffect(() => {
-    let isMounted = true;
     if (account && !ethBalance) {
-      getEthBalance(account, isMounted);
+      web3.eth
+        .getBalance(account)
+        .then((balance) => web3.utils.fromWei(balance, "ether"))
+        .then(setEthBalance);
     }
-    return () => {
-      isMounted = false;
-    };
   }, [account, ethBalance]);
-
-  const renderConnectedWith = (providerName) => {
-    let currentProvider;
-    let imageLink;
-
-    switch (providerName) {
-      case "Injected":
-        currentProvider = "Metamask";
-        imageLink = "/images/metamaskIcon.svg";
-        break;
-      case "WalletConnect":
-        currentProvider = "WalletConnect";
-        imageLink = "/images/walletConnect.svg";
-        break;
-      case "GnosisSafe":
-        currentProvider = "Gnosis Safe";
-        imageLink = "/images/gnosisSafe.png";
-        break;
-      default:
-        currentProvider = "Metamask";
-        imageLink = "/images/metamaskIcon.svg";
-        break;
-    }
-    return (
-      <>
-        <p className="text-sm text-gray-300">
-          Connected with {currentProvider}
-        </p>
-        <img alt="icon" src={imageLink} className="inline h-5" />
-      </>
-    );
-  };
 
   const formattedAddress = formatAddress(account, 7, 6);
 
-  const connectedWalletIconStyles = "fill-current text-green-500";
   return (
     <Menu as="div" className="relative">
       {({ open }) => (
         <>
           <Menu.Button className="flex rounded-full px-4 py-3 sm:py-1 items-center bg-green-500 bg-opacity-5 sm:bg-opacity-10 border border-green-500 border-opacity-20 h-11 sm:h-9">
             <WalletIcon
-              className={`text-green w-3 h-2.5 ${connectedWalletIconStyles}`}
+              className={`text-green w-3 h-2.5 fill-current text-green-500`}
             />
 
             <span className="block focus:outline-none ml-3 mr-4 sm:mr-1 text-base leading-5.5 py-3 sm:text-sm font-whyte-regular">
@@ -121,7 +75,7 @@ const AddressMenuDropDown: FC<IAddressMenuDropDown> = ({ web3 }) => {
             >
               <div>
                 <p className="text-2xl leading-5">
-                  {(+ethBalance).toFixed(3)} ETH
+                  {(+ethBalance).toFixed(3)} {chainToken}
                 </p>
                 <div className="flex items-center mt-2">
                   <p className="text-sm text-gray-300 ">
@@ -146,8 +100,8 @@ const AddressMenuDropDown: FC<IAddressMenuDropDown> = ({ web3 }) => {
                   </CopyToClipboard>
                 </div>
 
-                <EtherscanLink
-                  etherscanInfo={account}
+                <BlockExplorerLink
+                  resourceId={account}
                   customStyles="mt-4 text-base"
                 />
                 <div className="flex justify-between mt-4">
@@ -184,6 +138,36 @@ const AddressMenuDropDown: FC<IAddressMenuDropDown> = ({ web3 }) => {
         </>
       )}
     </Menu>
+  );
+};
+
+const renderConnectedWith = (providerName: string) => {
+  let currentProvider;
+  let imageLink;
+
+  switch (providerName) {
+    // case "Injected":
+    //   currentProvider = "Metamask";
+    //   imageLink = "/images/metamaskIcon.svg";
+    //   break;
+    case "WalletConnect":
+      currentProvider = "WalletConnect";
+      imageLink = "/images/walletConnect.svg";
+      break;
+    case "GnosisSafe":
+      currentProvider = "Gnosis Safe";
+      imageLink = "/images/gnosisSafe.png";
+      break;
+    default:
+      currentProvider = "Metamask";
+      imageLink = "/images/metamaskIcon.svg";
+      break;
+  }
+  return (
+    <>
+      <p className="text-sm text-gray-300">Connected with {currentProvider}</p>
+      <img alt="icon" src={imageLink} className="inline h-5" />
+    </>
   );
 };
 

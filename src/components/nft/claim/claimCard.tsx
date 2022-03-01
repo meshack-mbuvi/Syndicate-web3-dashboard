@@ -1,16 +1,16 @@
-import React, { useEffect, useState } from "react";
 import { Spinner } from "@/components/shared/spinner";
-import { EtherscanLink } from "@/components/syndicates/shared/EtherscanLink";
-import { useSelector, useDispatch } from "react-redux";
+import { BlockExplorerLink } from "@/components/syndicates/shared/BlockExplorerLink";
 import { AppState } from "@/state";
 import { clearERC721Claimed } from "@/state/claimedERC721/slice";
-import { Status } from "@/state/wallet/types";
-import { formatAddress } from "@/utils/formatAddress";
-import moment from "moment";
-import { PlusCircleIcon, MinusCircleIcon } from "@heroicons/react/outline";
-import { BigNumber } from "bignumber.js";
-import { getWeiAmount } from "@/utils/conversions";
 import { showWalletModal } from "@/state/wallet/actions";
+import { Status } from "@/state/wallet/types";
+import { getWeiAmount } from "@/utils/conversions";
+import { formatAddress } from "@/utils/formatAddress";
+import { MinusCircleIcon, PlusCircleIcon } from "@heroicons/react/outline";
+import { BigNumber } from "bignumber.js";
+import moment from "moment";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 
 const ClaimCard: React.FC<{
   handleMintUpdate?: (amount) => void;
@@ -308,9 +308,9 @@ const ClaimCard: React.FC<{
           </button>
           {transactionHash && (
             <div className="pb-8 text-base flex justify-center items-center hover:opacity-80">
-              <EtherscanLink
-                etherscanInfo={transactionHash}
-                type="transaction"
+              <BlockExplorerLink
+                resourceId={transactionHash}
+                resource="transaction"
                 text="Etherscan transaction"
               />
             </div>
@@ -326,9 +326,9 @@ const ClaimCard: React.FC<{
           } NFT${claimAmount > 1 ? "s" : ""}`}</div>
           {transactionHash && (
             <div className="pb-8 text-base flex justify-center items-center hover:opacity-80">
-              <EtherscanLink
-                etherscanInfo={transactionHash}
-                type="transaction"
+              <BlockExplorerLink
+                resourceId={transactionHash}
+                resource="transaction"
                 text="Etherscan transaction"
               />
             </div>

@@ -1,16 +1,34 @@
+import CreateClubButton from "@/components/createClubButton";
+import PortfolioEmptyState from "@/components/syndicates/portfolioAndDiscover/portfolio/portfolioEmptyState";
 import WalletNotConnected from "@/components/walletNotConnected";
 import useClubERC20s from "@/hooks/useClubERC20s";
 import { AppState } from "@/state";
 import React from "react";
 import { useSelector } from "react-redux";
 import { SkeletonLoader } from "src/components/skeletonLoader";
+
 import ClubERC20Table from "./portfolio/clubERC20Table";
 import {
-  clubERCTableColumns,
   MyClubERC20TableColumns,
+  clubERCTableColumns,
 } from "./portfolio/clubERC20Table/constants";
-import PortfolioEmptyState from "@/components/syndicates/portfolioAndDiscover/portfolio/portfolioEmptyState";
-import CreateClubButton from "@/components/createClubButton";
+
+// generate multiple skeleton loader components
+const generateSkeletons = (
+  num: number,
+  width: string,
+  height: string,
+  borderRadius?: string,
+) =>
+  Array(num).map((_, i) => (
+    <div className="px-2 w-full" key={i}>
+      <SkeletonLoader
+        width={width}
+        height={height}
+        borderRadius={borderRadius}
+      />
+    </div>
+  ));
 
 /**
  * My Syndicates: IF their wallet (a) is leading a syndicate or
@@ -32,28 +50,6 @@ const PortfolioAndDiscover: React.FC = () => {
   } = web3;
 
   useClubERC20s();
-
-  // generate multiple skeleton loader components
-  const generateSkeletons = (
-    num: number,
-    width: string,
-    height: string,
-    borderRadius?: string,
-  ) => {
-    const skeletonsWrapper = [];
-    for (let i = 0; i < num; i++) {
-      skeletonsWrapper.push(
-        <div className="px-2 w-full" key={i}>
-          <SkeletonLoader
-            width={width}
-            height={height}
-            borderRadius={borderRadius}
-          ></SkeletonLoader>
-        </div>,
-      );
-    }
-    return skeletonsWrapper;
-  };
 
   return (
     <div className="-mt-8">
@@ -103,7 +99,7 @@ const PortfolioAndDiscover: React.FC = () => {
                 <CreateClubButton />
               </div>
               {/* show active clubsERC20s here */}
-              {myClubERC20s.length ? (
+              {myClubERC20s.length !== 0 && (
                 <div className="">
                   <p className="text-xl font-whyte mb-8">Admin</p>
                   {/* show active clubsERC20s here */}
@@ -112,8 +108,8 @@ const PortfolioAndDiscover: React.FC = () => {
                     columns={MyClubERC20TableColumns}
                   />
                 </div>
-              ) : null}
-              {otherClubERC20s.length ? (
+              )}
+              {otherClubERC20s.length !== 0 && (
                 <div className="mt-16">
                   <p className="text-xl font-whyte mb-8">Member</p>
                   {/* show active clubsERC20s here */}
@@ -122,7 +118,7 @@ const PortfolioAndDiscover: React.FC = () => {
                     columns={clubERCTableColumns}
                   />
                 </div>
-              ) : null}
+              )}
             </div>
           ) : account && !myClubERC20s.length && !invalidEthereumNetwork ? (
             <PortfolioEmptyState />

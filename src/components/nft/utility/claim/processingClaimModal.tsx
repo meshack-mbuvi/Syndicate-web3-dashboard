@@ -1,7 +1,7 @@
 import Modal, { ModalStyle } from "@/components/modal";
-import React from "react";
-import { EtherscanLink } from "@/components/syndicates/shared/EtherscanLink";
 import { Spinner } from "@/components/shared/spinner";
+import { BlockExplorerLink } from "@/components/syndicates/shared/BlockExplorerLink";
+import React from "react";
 
 interface IProcessingClaimModal {
   showModal: boolean;
@@ -49,9 +49,9 @@ const ProcessingClaimModal: React.FC<IProcessingClaimModal> = ({
             </div>
             {transactionHash && (
               <div className="pb-8 text-base flex justify-center items-center hover:opacity-80">
-                <EtherscanLink
-                  etherscanInfo={transactionHash}
-                  type="transaction"
+                <BlockExplorerLink
+                  resourceId={transactionHash}
+                  resource="transaction"
                   text="Etherscan transaction"
                 />
               </div>
@@ -93,9 +93,9 @@ const ProcessingClaimModal: React.FC<IProcessingClaimModal> = ({
             </button>
             {transactionHash && (
               <div className="pb-8 text-base flex justify-center items-center hover:opacity-80">
-                <EtherscanLink
-                  etherscanInfo={transactionHash}
-                  type="transaction"
+                <BlockExplorerLink
+                  resourceId={transactionHash}
+                  resource="transaction"
                   text="Etherscan transaction"
                 />
               </div>

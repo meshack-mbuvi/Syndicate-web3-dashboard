@@ -2,7 +2,7 @@ import ArrowDown from "@/components/icons/arrowDown";
 import { NumberField, TextField } from "@/components/inputs";
 import Modal, { ModalStyle } from "@/components/modal";
 import { Spinner } from "@/components/shared/spinner";
-import { EtherscanLink } from "@/components/syndicates/shared/EtherscanLink";
+import { BlockExplorerLink } from "@/components/syndicates/shared/BlockExplorerLink";
 import { setERC20Token } from "@/helpers/erc20TokenDetails";
 import { AppState } from "@/state";
 import { getWeiAmount } from "@/utils/conversions";
@@ -180,9 +180,9 @@ export const MintAndShareTokens: React.FC<Props> = (props) => {
             while you wait.
           </p>
           <div className="text-base flex justify-center items-center hover:opacity-80">
-            <EtherscanLink
-              etherscanInfo={transactionHash}
-              type="transaction"
+            <BlockExplorerLink
+              resourceId={transactionHash}
+              resource="transaction"
               grayIcon
             />
           </div>
@@ -211,9 +211,9 @@ export const MintAndShareTokens: React.FC<Props> = (props) => {
             )}.`}
           </p>
           <div className="text-base flex justify-center items-center hover:opacity-80">
-            <EtherscanLink
-              etherscanInfo={transactionHash}
-              type="transaction"
+            <BlockExplorerLink
+              resourceId={transactionHash}
+              resource="transaction"
               grayIcon
             />
           </div>
@@ -241,9 +241,9 @@ export const MintAndShareTokens: React.FC<Props> = (props) => {
           <p className="text-center text-xl">Tokens minting failed.</p>
           {!userRejectedMint ? (
             <div className="text-base flex justify-center items-center hover:opacity-80">
-              <EtherscanLink
-                etherscanInfo={transactionHash}
-                type="transaction"
+              <BlockExplorerLink
+                resourceId={transactionHash}
+                resource="transaction"
                 grayIcon
               />
             </div>

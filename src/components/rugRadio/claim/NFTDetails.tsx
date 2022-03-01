@@ -3,22 +3,23 @@ import Modal, { ModalStyle } from "@/components/modal";
 import NumberTreatment from "@/components/NumberTreatment";
 import { Spinner } from "@/components/shared/spinner";
 import { SkeletonLoader } from "@/components/skeletonLoader";
-import { EtherscanLink } from "@/components/syndicates/shared/EtherscanLink";
+import { BlockExplorerLink } from "@/components/syndicates/shared/BlockExplorerLink";
 import useRugRadioTokenCount from "@/hooks/useRugRadioTokens";
 import { AppState } from "@/state";
 import { fetchCollectiblesTransactions } from "@/state/assets/slice";
 import { getCountDownDays } from "@/utils/dateUtils";
 import { numberWithCommas } from "@/utils/formattedNumbers";
+import RugRadioTokenWhiteIcon from "/public/images/rugRadio/rugradioToken-white.svg";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { useDispatch, useSelector } from "react-redux";
 import Tooltip from "react-tooltip-lite";
+
 import { BonusTokenClaim } from "../shared/bonusToken";
 import { NFTChecker } from "../shared/NFTchecker";
 import NFTComponent from "../shared/nftComponent";
 import { TabComponent } from "../shared/tabComponent";
-import RugRadioTokenWhiteIcon from "/public/images/rugRadio/rugradioToken-white.svg";
 
 export const NFTDetails: React.FC = () => {
   const {
@@ -252,9 +253,9 @@ export const NFTDetails: React.FC = () => {
           </p>
 
           <div className="text-base flex justify-center items-center hover:opacity-80">
-            <EtherscanLink
-              etherscanInfo={transactionHash}
-              type="transaction"
+            <BlockExplorerLink
+              resourceId={transactionHash}
+              resource="transaction"
               text="Etherscan transaction"
             />
           </div>
@@ -282,9 +283,9 @@ export const NFTDetails: React.FC = () => {
             successfully. It’s in your wallet.`}
           </p>
           <div className="text-base flex justify-center items-center hover:opacity-80">
-            <EtherscanLink
-              etherscanInfo={transactionHash}
-              type="transaction"
+            <BlockExplorerLink
+              resourceId={transactionHash}
+              resource="transaction"
               text="Etherscan transaction"
             />
           </div>
@@ -312,9 +313,9 @@ export const NFTDetails: React.FC = () => {
           <p className="text-center text-xl">Tokens minting failed.</p>
           {!userRejectedTransaction ? (
             <div className="text-base flex justify-center items-center hover:opacity-80">
-              <EtherscanLink
-                etherscanInfo={transactionHash}
-                type="transaction"
+              <BlockExplorerLink
+                resourceId={transactionHash}
+                resource="transaction"
                 grayIcon
               />
             </div>
@@ -553,62 +554,63 @@ export const NFTDetails: React.FC = () => {
               }
             >
               <div className="grid grid-cols-12 gap-4">
-                {!loading && collectibles.length > 0 ? (
-                  collectibles.map((collectible, index) => {
-                    const { id, image, animation } = collectible;
+                {!loading && collectibles.length > 0
+                  ? collectibles.map((collectible, index) => {
+                      const { id, image, animation } = collectible;
 
-                    let mediaType;
+                      let mediaType;
 
-                    if (image && !animation) {
-                      mediaType = "imageOnlyNFT";
-                    } else if (animation) {
-                      // animation could be a .mov or .mp4 video
-                      const movAnimation = animation.match(/\.mov$/) != null;
-                      const mp4Animation = animation.match(/\.mp4$/) != null;
+                      if (image && !animation) {
+                        mediaType = "imageOnlyNFT";
+                      } else if (animation) {
+                        // animation could be a .mov or .mp4 video
+                        const movAnimation = animation.match(/\.mov$/) != null;
+                        const mp4Animation = animation.match(/\.mp4$/) != null;
 
-                      if (movAnimation || mp4Animation) {
-                        mediaType = "videoNFT";
+                        if (movAnimation || mp4Animation) {
+                          mediaType = "videoNFT";
+                        }
+
+                        // https://litwtf.mypinata.cloud/ipfs/QmVjgAD5gaNQ1cLpgKLeuXDPX8R1yeajtWUhM6nV7VAe6e/4.mp4
+                        // details for the nft with id below are not returned correctly and hence does not render
+                        // The animation link is a .html which is not captured.
+                        // Until we find a better way to handle this, let's have the fix below
+                        if (
+                          animation.match(/\.html$/) != null &&
+                          id == "3216"
+                        ) {
+                          mediaType = "htmlNFT";
+                        }
+
+                        // animation could be a gif
+                        if (animation.match(/\.gif$/) != null) {
+                          mediaType = "animatedNFT";
+                        }
+
+                        // add support for .wav and .mp3 files
+                        const wavAnimation = animation.match(/\.wav$/) != null;
+                        const mp3Animation = animation.match(/\.mp3$/) != null;
+                        const soundtrack = wavAnimation || mp3Animation;
+
+                        if (soundtrack) {
+                          mediaType = "soundtrackNFT";
+                        }
                       }
-
-                      // https://litwtf.mypinata.cloud/ipfs/QmVjgAD5gaNQ1cLpgKLeuXDPX8R1yeajtWUhM6nV7VAe6e/4.mp4
-                      // details for the nft with id below are not returned correctly and hence does not render
-                      // The animation link is a .html which is not captured.
-                      // Until we find a better way to handle this, let's have the fix below
-                      if (animation.match(/\.html$/) != null && id == "3216") {
-                        mediaType = "htmlNFT";
-                      }
-
-                      // animation could be a gif
-                      if (animation.match(/\.gif$/) != null) {
-                        mediaType = "animatedNFT";
-                      }
-
-                      // add support for .wav and .mp3 files
-                      const wavAnimation = animation.match(/\.wav$/) != null;
-                      const mp3Animation = animation.match(/\.mp3$/) != null;
-                      const soundtrack = wavAnimation || mp3Animation;
-
-                      if (soundtrack) {
-                        mediaType = "soundtrackNFT";
-                      }
-                    }
-                    return (
-                      <NFTComponent
-                        {...{
-                          ...{
-                            collectible,
-                            mediaType,
-                            showCollectibles: true,
-                            refresh: processed,
-                          },
-                        }}
-                        key={index}
-                      />
-                    );
-                  })
-                ) : (
-                  null
-                )}
+                      return (
+                        <NFTComponent
+                          {...{
+                            ...{
+                              collectible,
+                              mediaType,
+                              showCollectibles: true,
+                              refresh: processed,
+                            },
+                          }}
+                          key={index}
+                        />
+                      );
+                    })
+                  : null}
               </div>
             </InfiniteScroll>
 

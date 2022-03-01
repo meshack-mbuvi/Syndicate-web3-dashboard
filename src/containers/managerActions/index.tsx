@@ -1,12 +1,12 @@
-import { amplitudeLogger, Flow } from "@/components/amplitude";
+import { Flow, amplitudeLogger } from "@/components/amplitude";
 import { CLICK_COPY_DEPOSIT_LINK_TO_SHARE } from "@/components/amplitude/eventNames";
 import ErrorBoundary from "@/components/errorBoundary";
 import FadeIn from "@/components/fadeIn/FadeIn";
 import CreateEntityCard from "@/components/shared/createEntityCard";
 import { SkeletonLoader } from "@/components/skeletonLoader";
 import StatusBadge from "@/components/syndicateDetails/statusBadge";
+import { BlockExplorerLink } from "@/components/syndicates/shared/BlockExplorerLink";
 import ConnectWalletAction from "@/components/syndicates/shared/connectWalletAction";
-import { EtherscanLink } from "@/components/syndicates/shared/EtherscanLink";
 import { SuccessCard } from "@/containers/managerActions/successCard";
 import { useCreateInvestmentClubContext } from "@/context/CreateInvestmentClubContext";
 import { useDemoMode } from "@/hooks/useDemoMode";
@@ -19,6 +19,7 @@ import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { animated } from "react-spring";
+
 import GenerateDepositLink from "./GenerateDepositLink";
 import { MintAndShareTokens } from "./mintAndShareTokens";
 
@@ -281,10 +282,10 @@ const ManagerActions = (): JSX.Element => {
                           existence. Once the transaction is complete, you’ll
                           see your club’s deposit link below.
                         </p>
-                        <EtherscanLink
-                          etherscanInfo={transactionHash}
+                        <BlockExplorerLink
+                          resourceId={transactionHash}
                           text="View progress on Etherscan"
-                          type="transaction"
+                          resource="transaction"
                         />
                       </div>
                     )}
@@ -302,10 +303,9 @@ const ManagerActions = (): JSX.Element => {
                           </a>{" "}
                           if the issue persists.
                         </p>
-                        <EtherscanLink
-                          etherscanInfo={transactionHash}
-                          text="View on Etherscan"
-                          type="transaction"
+                        <BlockExplorerLink
+                          resourceId={transactionHash}
+                          resource="transaction"
                         />
                       </div>
                     )}

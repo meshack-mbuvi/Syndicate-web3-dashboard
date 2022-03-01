@@ -1,4 +1,4 @@
-import { amplitudeLogger, Flow } from "@/components/amplitude";
+import { Flow, amplitudeLogger } from "@/components/amplitude";
 import {
   CREATE_INVESTMENT_CLUB,
   ERROR_INVESTMENT_CLUB_CREATION,
@@ -14,14 +14,15 @@ import {
 import { getWeiAmount } from "@/utils/conversions";
 import { useRouter } from "next/router";
 import React, {
-  createContext,
   Dispatch,
   SetStateAction,
+  createContext,
   useContext,
   useEffect,
   useState,
 } from "react";
 import { useDispatch, useSelector } from "react-redux";
+
 import steps from "./steps";
 
 type CreateInvestmentClubProviderProps = {
@@ -217,11 +218,11 @@ const CreateInvestmentClubProvider: React.FC = ({ children }) => {
         // alert any other contract error
         setErrorModalMessage(metamaskConstants.metamaskUnknownErrorMessage);
       }
-      setShowModal(() => ({
+      setShowModal({
         waitingConfirmationModal: false,
         transactionModal: false,
         errorModal: true,
-      }));
+      });
       amplitudeLogger(ERROR_INVESTMENT_CLUB_CREATION, {
         flow: Flow.CLUB_CREATION,
         error,

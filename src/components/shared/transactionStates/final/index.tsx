@@ -1,6 +1,7 @@
-import { EtherscanLink } from "@/components/syndicates/shared/EtherscanLink";
+import { BlockExplorerLink } from "@/components/syndicates/shared/BlockExplorerLink";
 import React from "react";
 import Button from "src/components/buttons";
+
 import TransactionStateModal from "../shared";
 
 interface Props {
@@ -33,7 +34,7 @@ export const FinalStateModal: React.FC<Props> = (props) => {
   } = props;
 
   return (
-    <TransactionStateModal {...rest} modalStyle={modalStyle} >
+    <TransactionStateModal {...rest} modalStyle={modalStyle}>
       <>
         <div className="flex flex-col justify-center m-auto mb-4">
           <div className="flex justify-center my-5">
@@ -54,7 +55,7 @@ export const FinalStateModal: React.FC<Props> = (props) => {
 
           {address ? (
             <div className="flex justify-center">
-              <EtherscanLink etherscanInfo={address} />
+              <BlockExplorerLink resourceId={address} />
             </div>
           ) : (
             ""
@@ -62,7 +63,9 @@ export const FinalStateModal: React.FC<Props> = (props) => {
 
           <div className="flex justify-center my-5">
             <Button
-              customClasses={buttonClasses ? buttonClasses: "bg-blue w-40 p-2 rounded-full"}
+              customClasses={
+                buttonClasses ? buttonClasses : "bg-blue w-40 p-2 rounded-full"
+              }
               textColor={buttonClasses}
               onClick={() => handleCloseModal()}
             >

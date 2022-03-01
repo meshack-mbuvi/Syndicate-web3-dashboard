@@ -1,6 +1,7 @@
 import publicMintWithFeeModule_ABI from "src/contracts/publicMintWithFeeModule.json";
+
 import { getGnosisTxnInfo } from "../shared/gnosisTransactionInfo";
-export class publicMintWithFeeModuleContract {
+export class PublicMintWithFeeModuleContract {
   isGnosisSafe: boolean;
   contract;
 

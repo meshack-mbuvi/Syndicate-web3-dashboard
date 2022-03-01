@@ -1,3 +1,4 @@
+import { useConnectWalletContext } from "@/context/ConnectWalletProvider";
 import { CLAIMED_TOKEN } from "@/graphql/queries";
 import { AppState } from "@/state";
 import {
@@ -22,6 +23,8 @@ const useFetchTokenClaim: any = (skipQuery) => {
     },
   } = useSelector((state: AppState) => state);
 
+  const { chainId } = useConnectWalletContext();
+
   // Fetch existing claims
   const {
     loading,
@@ -37,7 +40,7 @@ const useFetchTokenClaim: any = (skipQuery) => {
       },
     },
     skip: !account || skipQuery,
-    context: { clientName: "graph" },
+    context: { chainId },
   });
 
   useEffect(() => {

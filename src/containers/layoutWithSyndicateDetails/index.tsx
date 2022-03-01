@@ -3,7 +3,7 @@ import ErrorBoundary from "@/components/errorBoundary";
 import Layout from "@/components/layout";
 import OnboardingModal from "@/components/onboarding";
 import BackButton from "@/components/socialProfiles/backButton";
-import { EtherscanLink } from "@/components/syndicates/shared/EtherscanLink";
+import { BlockExplorerLink } from "@/components/syndicates/shared/BlockExplorerLink";
 import Head from "@/components/syndicates/shared/HeaderTitle";
 import SyndicateDetails from "@/components/syndicates/syndicateDetails";
 import { setERC20Token } from "@/helpers/erc20TokenDetails";
@@ -40,6 +40,7 @@ import { useRouter } from "next/router";
 import React, { FC, useEffect, useMemo, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { syndicateActionConstants } from "src/components/syndicates/shared/Constants";
+
 import ClubTokenMembers from "../managerActions/clubTokenMembers";
 import ActivityView from "./activity";
 import Assets from "./assets";
@@ -223,7 +224,7 @@ const LayoutWithSyndicateDetails: FC = ({ children }) => {
         <p className="text-lg md:text-2xl text-center mb-3">
           {noTokenTitleText}
         </p>
-        <EtherscanLink etherscanInfo={clubAddress} />
+        <BlockExplorerLink resourceId={clubAddress} />
       </div>
     </div>
   );

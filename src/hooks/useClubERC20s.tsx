@@ -10,7 +10,7 @@ import { formatDate, isZeroAddress, pastDate } from "@/utils";
 import { getWeiAmount } from "@/utils/conversions";
 import { useQuery } from "@apollo/client";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 const useClubERC20s = () => {
@@ -26,13 +26,12 @@ const useClubERC20s = () => {
   const router = useRouter();
 
   const { account, currentEthereumNetwork } = web3;
+  const accountAddress = useMemo(() => account.toLocaleLowerCase(), [account]);
 
   // Retrieve syndicates that I manage
   const { loading, refetch, data } = useQuery(MY_CLUBS_QUERY, {
     variables: {
-      where: {
-        ownerAddress: account.toLocaleLowerCase(),
-      },
+      where: { ownerAddress: accountAddress },
     },
     // Avoid unnecessary calls when account is not defined
     skip: !account,
@@ -45,7 +44,7 @@ const useClubERC20s = () => {
   } = useQuery(CLUBS_HAVE_INVESTED, {
     variables: {
       where: {
-        memberAddress: account.toLocaleLowerCase(),
+        memberAddress: accountAddress,
       },
     },
     // Avoid unnecessary calls when account is not defined
@@ -53,19 +52,15 @@ const useClubERC20s = () => {
   });
 
   useEffect(() => {
-    if (account && router.isReady) {
+    if (accountAddress && router.isReady) {
       refetch({
-        where: {
-          ownerAddress: account.toLocaleLowerCase(),
-        },
+        where: { ownerAddress: accountAddress },
       });
       refetchMyClubs({
-        where: {
-          memberAddress: account.toLocaleLowerCase(),
-        },
+        where: { memberAddress: accountAddress },
       });
     }
-  }, [router.isReady, account]);
+  }, [router.isReady, accountAddress]);
 
   const [clubIAmMember, setClubIamMember] = useState([]);
   const [myClubs, setMyClubs] = useState([]);

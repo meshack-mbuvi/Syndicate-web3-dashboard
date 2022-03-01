@@ -1,4 +1,4 @@
-import { amplitudeLogger, Flow } from "@/components/amplitude";
+import { Flow, amplitudeLogger } from "@/components/amplitude";
 import {
   APPROVE_DEPOSIT_ALLOWANCE,
   ERROR_APPROVE_ALLOWANCE,
@@ -14,16 +14,17 @@ import { Spinner } from "@/components/shared/spinner";
 import StatusBadge from "@/components/syndicateDetails/statusBadge";
 import HoldingsInfo from "@/components/syndicates/depositSyndicate/HoldingsInfo";
 import { SuccessOrFailureContent } from "@/components/syndicates/depositSyndicate/SuccessOrFailureContent";
-import { EtherscanLink } from "@/components/syndicates/shared/EtherscanLink";
+import { BlockExplorerLink } from "@/components/syndicates/shared/BlockExplorerLink";
 import { setERC20Token } from "@/helpers/erc20TokenDetails";
 import useSyndicateClubInfo from "@/hooks/deposit/useSyndicateClubInfo";
 import { useAccountTokens } from "@/hooks/useAccountTokens";
 import useFetchAirdropInfo from "@/hooks/useAirdropInfo";
+import { useIsClubMember } from "@/hooks/useClubOwner";
 import { useDemoMode } from "@/hooks/useDemoMode";
+import { useEthBalance } from "@/hooks/useEthBalance";
 import useFetchMerkleProof from "@/hooks/useMerkleProof";
 import useModal from "@/hooks/useModal";
 import { useERC20TokenBalance } from "@/hooks/useTokenBalance";
-import { useEthBalance } from "@/hooks/useEthBalance";
 import useFetchTokenClaim from "@/hooks/useTokenClaim";
 import useTokenDetails from "@/hooks/useTokenDetails";
 import useWindowSize from "@/hooks/useWindowSize";
@@ -36,6 +37,7 @@ import {
   truncateDecimals,
 } from "@/utils/formattedNumbers";
 import { CheckIcon } from "@heroicons/react/solid";
+import axios from "axios";
 import Image from "next/image";
 import React, { useCallback, useEffect, useState } from "react";
 import { CopyToClipboard } from "react-copy-to-clipboard";
@@ -46,10 +48,9 @@ import { InfoIcon } from "src/components/iconWrappers";
 import { SkeletonLoader } from "src/components/skeletonLoader";
 import ERC20ABI from "src/utils/abi/erc20";
 import { AbiItem } from "web3-utils";
+
 import BeforeGettingStarted from "../../beforeGettingStarted";
 import ConnectWalletAction from "../shared/connectWalletAction";
-import axios from "axios";
-import { useIsClubMember } from "@/hooks/useClubOwner";
 
 const DepositSyndicate: React.FC = () => {
   // HOOK DECLARATIONS
@@ -954,9 +955,9 @@ const DepositSyndicate: React.FC = () => {
                   </div>
                   {transactionHash && (
                     <div className="pb-8 text-base flex justify-center items-center hover:opacity-80">
-                      <EtherscanLink
-                        etherscanInfo={transactionHash}
-                        type="transaction"
+                      <BlockExplorerLink
+                        resourceId={transactionHash}
+                        resource="transaction"
                       />
                     </div>
                   )}
@@ -1373,9 +1374,9 @@ const DepositSyndicate: React.FC = () => {
                   </div>
                   {transactionHash && (
                     <div className="pb-8 text-base flex justify-center items-center hover:opacity-80">
-                      <EtherscanLink
-                        etherscanInfo={transactionHash}
-                        type="transaction"
+                      <BlockExplorerLink
+                        resourceId={transactionHash}
+                        resource="transaction"
                         text="View on Etherscan"
                       />
                     </div>
@@ -1780,9 +1781,9 @@ const DepositSyndicate: React.FC = () => {
                 </span>
                 {submitting && transactionHash ? (
                   <div className="pb-4 text-base flex justify-center items-center hover:opacity-80">
-                    <EtherscanLink
-                      etherscanInfo={transactionHash}
-                      type="transaction"
+                    <BlockExplorerLink
+                      resourceId={transactionHash}
+                      resource="transaction"
                     />
                   </div>
                 ) : null}

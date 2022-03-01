@@ -15,6 +15,7 @@ import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { usePagination, useTable } from "react-table";
+
 import { NotSignedIcon } from "../shared/notSignedIcon";
 import { SignedIcon } from "../shared/signedIcon";
 import SignerMenu from "./signerMenu";
@@ -114,7 +115,6 @@ const MembersTable = ({
       address: memberAddress,
     },
     skip: !clubAddress || !memberAddress,
-    context: { clientName: "backend" },
   });
 
   useEffect(() => {
@@ -157,19 +157,17 @@ const MembersTable = ({
   return (
     <div className=" overflow-y-hidden ">
       <div className="flex my-11 col-span-12 space-x-8 justify-between items-center">
-        {
-          page.length > 1 || searchAddress ? (
-            <SearchForm
-              {...{
-                onChangeHandler: filterAddressOnChangeHandler,
-                searchValue: searchAddress,
-                itemsCount: data.length,
-              }}
-            />
-          ) : (
-            <div></div>
-          )
-        }
+        {page.length > 1 || searchAddress ? (
+          <SearchForm
+            {...{
+              onChangeHandler: filterAddressOnChangeHandler,
+              searchValue: searchAddress,
+              itemsCount: data.length,
+            }}
+          />
+        ) : (
+          <div></div>
+        )}
       </div>
 
       <table
@@ -179,73 +177,59 @@ const MembersTable = ({
         } border-gray-syn6`}
       >
         <thead className="w-full">
-          {
-            page.length
-              ? headerGroups.map((headerGroup, index) => (
-                  <tr
-                    {...headerGroup.getHeaderGroupProps()}
-                    key={index}
-                    className="text-gray-sun4 text-sm grid grid-cols-12 gap-5 leading-6"
-                  >
-                    {
-                      headerGroup.headers.map((column, index) => {
-
-                        return (
-                          <th
-                            {...column.getHeaderProps()}
-                            key={index}
-                            className="flex align-middle rounded-md col-span-3 text-left text-sm font-whyte-light text-gray-syn4"
-                          >
-                            {
-                              column.render("Header")
-                            }
-                          </th>
-                        );
-                      })
-                    }
-                  </tr>
-                ))
-              : null
-          }
+          {page.length
+            ? headerGroups.map((headerGroup, index) => (
+                <tr
+                  {...headerGroup.getHeaderGroupProps()}
+                  key={index}
+                  className="text-gray-sun4 text-sm grid grid-cols-12 gap-5 leading-6"
+                >
+                  {headerGroup.headers.map((column, index) => {
+                    return (
+                      <th
+                        {...column.getHeaderProps()}
+                        key={index}
+                        className="flex align-middle rounded-md col-span-3 text-left text-sm font-whyte-light text-gray-syn4"
+                      >
+                        {column.render("Header")}
+                      </th>
+                    );
+                  })}
+                </tr>
+              ))
+            : null}
         </thead>
 
         <tbody
           className="w-full divide-y divide-gray-syn6 overflow-y-scroll"
           {...getTableBodyProps()}
         >
-          {
-            page.map((row: any, index) => {
+          {page.map((row: any, index) => {
+            prepareRow(row);
 
-              prepareRow(row);
-
-              return (
-                <tr
-                  {...row.getRowProps()}
-                  key={index}
-                  className={`w-full text-base grid grid-cols-12 gap-5 cursor-pointer border-gray-syn6 text-left`}
-                  onClick={() => {
-                    handleClick(row.original);
-                  }}
-                >
-                  {
-                    row.cells.map((cell, cellIndex) => {
-                      return (
-                        <td
-                          {...cell.getCellProps()}
-                          key={cellIndex}
-                          className={`m-0 col-span-3 text-base py-5 text-white`}
-                        >
-                          {
-                            cell.render("Cell")
-                          }
-                        </td>
-                      );
-                    })
-                  }
-                </tr>
-              );
-            })
-          }
+            return (
+              <tr
+                {...row.getRowProps()}
+                key={index}
+                className={`w-full text-base grid grid-cols-12 gap-5 cursor-pointer border-gray-syn6 text-left`}
+                onClick={() => {
+                  handleClick(row.original);
+                }}
+              >
+                {row.cells.map((cell, cellIndex) => {
+                  return (
+                    <td
+                      {...cell.getCellProps()}
+                      key={cellIndex}
+                      className={`m-0 col-span-3 text-base py-5 text-white`}
+                    >
+                      {cell.render("Cell")}
+                    </td>
+                  );
+                })}
+              </tr>
+            );
+          })}
           {searchAddress && !page.length && (
             <div className="flex flex-col justify-center w-full h-full items-center">
               <ExclamationCircleIcon className="h-10 w-10 mb-2 text-gray-lightManatee" />
