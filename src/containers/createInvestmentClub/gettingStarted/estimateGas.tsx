@@ -1,4 +1,4 @@
-import { getEthereumTokenPrice } from "@/helpers/ethereumTokenDetails";
+import { getEthereumTokenPrice } from "@/utils/api/etherscan";
 import { AppState } from "@/state";
 import { getWeiAmount } from "@/utils/conversions";
 import { isDev } from "@/utils/environment";
@@ -47,7 +47,7 @@ const EstimateGas = (props: {
         .then((res) => processBaseFee(res.data))
         .catch(() => 0),
       getEthereumTokenPrice()
-        .then((res) => setEthTokenPrice(res.data.ethereum.usd))
+        .then((res) => setEthTokenPrice(res))
         .catch(() => 0),
     ]);
   }, [account, clubERC20Factory]);
