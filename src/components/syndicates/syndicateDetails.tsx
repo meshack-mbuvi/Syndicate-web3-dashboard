@@ -418,7 +418,7 @@ const SyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
           </div>
         )}
 
-        {status !== Status.DISCONNECTED && depositsEnabled && (
+        {status !== Status.DISCONNECTED && depositsEnabled && !managerSettingsOpen && (
           <div className="h-fit-content flex w-full justify-start mt-14">
             <ProgressIndicator
               totalDeposits={totalDeposits}

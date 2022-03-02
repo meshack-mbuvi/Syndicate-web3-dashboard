@@ -101,9 +101,6 @@ const LayoutWithSyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
   const [isSubNavStuck, setIsSubNavStuck] = useState(true);
   // const [customTransform, setCustomTransform] = useState(undefined);
   const subNav = useRef(null);
-  const {
-    query: { status: isOpenForDeposits },
-  } = router;
 
   // Listen to page scrolling
   useEffect(() => {
@@ -237,8 +234,6 @@ const LayoutWithSyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
     isOwner || +accountTokens || myMerkleProof?.account === account;
   const renderOnDisconnect =
     status !== Status.DISCONNECTED && !(isActive && !isOwnerOrMember);
-  const isBackButtonByNameHidden = isDemoMode || isSubNavStuck;
-  const isStickyBackButtonHidden = isDemoMode || !isSubNavStuck;
 
   useEffect(() => {
     if (!renderOnDisconnect) {
@@ -274,7 +269,11 @@ const LayoutWithSyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
                   )}
                   <div className="grid grid-cols-12 gap-5">
                     {/* Left Column */}
-                    <div className="md:col-start-1 md:col-end-7 col-span-12">
+                    <div
+                      className={`md:col-start-1 ${
+                        managerSettingsOpen ? "md:col-end-8" : "md:col-end-7"
+                      } col-span-12`}
+                    >
                       {/* its used as an identifier for ref in small devices */}
                       {/*
                   we should have an isChildVisible child here,
