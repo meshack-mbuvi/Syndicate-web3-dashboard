@@ -172,6 +172,8 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
     if (cacheWallet) {
       const parseCacheWallet = parse(cacheWallet);
       setCachedWalletData(parseCacheWallet);
+    } else {
+      initializeWeb3();
     }
   }, []);
 
@@ -182,29 +184,28 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
       if (providerName === "Injected" || providerName === "WalletConnect") {
         activateProvider(providerName);
       }
-    } else {
-      initializeWeb3().then(() => {
-        dispatch(setConnected());
-        setWalletConnecting(false);
-        setShowSuccessModal(true);
-      });
     }
   }, [cachedWalletData]);
 
   // provider is connected, this stops the loader modal
   // and sets up connected state
   useEffect(() => {
-    if (account && activeProvider) {
+    if (account && activeProvider && chainId) {
       dispatch(setConnecting());
+      initializeWeb3().then(() => {
+        dispatch(setConnected());
+        setWalletConnecting(false);
+        setShowSuccessModal(true);
+      });
     }
-  }, [account, activeProvider]);
+  }, [account, activeProvider, chainId]);
 
   // provider events
   // allows us to listed for account and chain changes
   useEffect(() => {
     if (activeProvider?.on) {
       const handleAccountsChanged = async () => {
-        const address = await getProviderAccount(activeProvider);
+        const { address } = await getProviderAccountAndNetwork(activeProvider);
         setAccount(address);
       };
 
@@ -239,12 +240,18 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
    * We plug the initial `provider` into ethers.js and get back
    * a Web3Provider. This will add on methods from ethers.js and
    * event listeners such as `.on()` will be different.
-   * It also makes it easier to immediately get the connected account.
+   * It also makes it easier to immediately get the connected account,
+   * and the networkID.
    */
-  const getProviderAccount = async (provider) => {
-    const web3Provider = new providers.Web3Provider(provider);
-    const signer = web3Provider.getSigner();
-    return await signer.getAddress();
+  const getProviderAccountAndNetwork = async (provider) => {
+    const ethersProvider = new providers.Web3Provider(provider);
+    const signer = ethersProvider.getSigner();
+    const [account, network] = await Promise.all([
+      await signer.getAddress(),
+      await ethersProvider.getNetwork(),
+    ]);
+
+    return { address: account, network };
   };
 
   /**
@@ -269,7 +276,7 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
       }
     }
 
-    const address = await getProviderAccount(provider);
+    const { address, network } = await getProviderAccountAndNetwork(provider);
     setAccount(address);
 
     const newWeb3 = new Web3(provider);
@@ -280,7 +287,7 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
 
     setWeb3(newWeb3);
     setActiveProvider(provider);
-    setChainId(Number(provider.chainId));
+    setChainId(Number(network.chainId));
   };
 
   // This handles closing the modal after user selects a provider to activate
@@ -315,7 +322,9 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
   // otherwise it has to be connected to mainnet.
   useEffect(() => {
     if (chainId && providerName === "Injected") {
-      if ((isDev && chainId === 4) || (isProd && [1, 137].includes(chainId))) {
+      // --------- changed this for easy testing -------------
+      // if ((isDev && chainId === 4) || (isProd && [1, 137].includes(chainId))) {
+      if ([1, 4, 137].includes(chainId)) {
         dispatch(
           storeEthereumNetwork({
             invalidEthereumNetwork: false,
