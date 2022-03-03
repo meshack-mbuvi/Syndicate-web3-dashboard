@@ -7,7 +7,8 @@ module.exports = {
   },
   variants: {
     extend: {
-      padding: ["last"],
+      padding: ["last", "hover"],
+      margin: ["hover"],
       backgroundColor: ["active"],
       backgroundOpacity: ["active"],
       borderRadius: ["first", "last"],
@@ -102,6 +103,9 @@ module.exports = {
         564: "35.25rem",
         730: "45.625rem",
       }),
+      minWidth: {
+        50: "12.5rem",
+      },
       maxWidth: {
         480: "30rem",
         564: "35.25rem",
@@ -114,6 +118,7 @@ module.exports = {
         104: "26rem",
         480: "30rem",
         816: "50.5rem",
+        "screen": "100vh",
         "2screen": "200vh",
       },
       backgroundOpacity: {
@@ -142,6 +147,7 @@ module.exports = {
           "Arial",
           "sans-serif",
         ],
+        "mono": ["Whyte Semi-Mono"]
       },
       fontSize: {
         subtext: ["0.75rem", "0.875rem"],

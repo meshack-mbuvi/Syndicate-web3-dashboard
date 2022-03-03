@@ -1,4 +1,5 @@
 import ArrowDown from "@/components/icons/arrowDown";
+import { ExternalLinkColor } from "@/components/iconWrappers";
 import { NumberField, TextField } from "@/components/inputs";
 import Modal, { ModalStyle } from "@/components/modal";
 import { Spinner } from "@/components/shared/spinner";
@@ -183,7 +184,7 @@ export const MintAndShareTokens: React.FC<Props> = (props) => {
             <EtherscanLink
               etherscanInfo={transactionHash}
               type="transaction"
-              grayIcon
+              iconColor={ExternalLinkColor.GRAY}
             />
           </div>
         </div>
@@ -214,7 +215,7 @@ export const MintAndShareTokens: React.FC<Props> = (props) => {
             <EtherscanLink
               etherscanInfo={transactionHash}
               type="transaction"
-              grayIcon
+              iconColor={ExternalLinkColor.GRAY}
             />
           </div>
         </div>
@@ -244,7 +245,7 @@ export const MintAndShareTokens: React.FC<Props> = (props) => {
               <EtherscanLink
                 etherscanInfo={transactionHash}
                 type="transaction"
-                grayIcon
+                iconColor={ExternalLinkColor.GRAY}
               />
             </div>
           ) : (

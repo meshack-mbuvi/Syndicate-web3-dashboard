@@ -41,13 +41,31 @@ export const InfoIcon = (props: {
   );
 };
 
+export enum ExternalLinkColor {
+  GRAY = "GRAY",
+  BLUE = "BLUE",
+  WHITE = "WHITE"
+}
+
 /**Shows an icon for external links */
-export const ExternalLinkIcon: React.FC<any> = (props) =>
-  !(props as any).grayIcon ? (
-    <img src="/images/externalLink.svg" {...props} alt="extenal-link" />
-  ) : (
-    <img src="/images/externalLinkGray.svg" {...props} alt="extenal-link" />
-  );
+export const ExternalLinkIcon = (props) => {
+  let icon;
+  switch (props.iconColor) {
+    case ExternalLinkColor.GRAY:
+      icon = "/images/externalLinkGray.svg"
+      break;
+    case ExternalLinkColor.BLUE:
+      icon = "/images/externalLink.svg"
+      break;
+    case ExternalLinkColor.WHITE:
+      icon = "/images/externalLinkWhite.svg"
+      break;
+    default:
+      icon = "/images/externalLink.svg"
+      break;
+  }
+  return <img src={icon} {...props} alt="extenal-link" />
+}
 
 export const CopyLinkIcon = (props: {
   color?: string;

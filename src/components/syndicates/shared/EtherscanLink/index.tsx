@@ -1,6 +1,7 @@
 import { isDev } from "@/utils/environment";
 import React from "react";
 import {
+  ExternalLinkColor,
   ExternalLinkIcon,
   OpenExternalLinkIcon,
 } from "src/components/iconWrappers";
@@ -12,7 +13,7 @@ interface LinkProp {
   iconOnly?: boolean;
   text?: string;
   grouped?: boolean;
-  grayIcon?: boolean;
+  iconColor?: ExternalLinkColor;
 }
 
 /** Link used to redirect the user to the Etherscan
@@ -25,9 +26,9 @@ export const EtherscanLink: React.FC<LinkProp> = (props) => {
     customStyles,
     type = "address",
     iconOnly,
-    text = "Etherscan",
+    text = "View on Etherscan",
     grouped,
-    grayIcon = false,
+    iconColor = ExternalLinkColor.BLUE,
   } = props;
 
   // get debug mode from the .env
@@ -46,7 +47,7 @@ export const EtherscanLink: React.FC<LinkProp> = (props) => {
     <a
       href={`${etherscanLink}${etherscanInfo}`}
       target="_blank"
-      className={`text-blue hover:opacity-90 flex items-center focus:outline-none ${
+      className={`text-sm hover:opacity-90 flex items-center focus:outline-none ${
         customStyles && customStyles
       }`}
       rel="noreferrer"
@@ -55,13 +56,13 @@ export const EtherscanLink: React.FC<LinkProp> = (props) => {
         <OpenExternalLinkIcon className="text-gray-syn5 hover:text-gray-syn4" />
       )}
       {!iconOnly ? (
-        <p className="flex items-center">
-          {text}{" "}
+        <div className="flex justify-between items-center w-full">
+          <div>{text}</div>
           <ExternalLinkIcon
             className={`ml-2 w-4 text-blue`}
-            grayIcon={grayIcon}
+            iconColor={iconColor}
           />
-        </p>
+        </div>
       ) : !grouped ? (
         <ExternalLinkIcon grayIcon className={`ml-2 w-4 text-blue`} />
       ) : null}

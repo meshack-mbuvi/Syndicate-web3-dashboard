@@ -26,6 +26,12 @@ export const parameters = {
       },
     ],
   },
-  // backgrounds: [{ name: 'dark', value: '#33354C', default: true }],
-
 }
+
+export const decorators = [
+  (Story) => (
+    <div className='text-white'>
+      <Story />
+    </div>
+  ),
+];
