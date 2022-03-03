@@ -209,9 +209,10 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
         setAccount(address);
       };
 
-      const handleChainChanged = ({ chainId }) => {
+      const handleChainChanged = async () => {
         getCurrentEthNetwork();
-        setChainId(chainId as number);
+        const { network } = await getProviderAccountAndNetwork(activeProvider);
+        setChainId(network.chainId);
       };
 
       const handleDisconnect = () => {
