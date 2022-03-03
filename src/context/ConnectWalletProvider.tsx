@@ -245,14 +245,12 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
    * and the networkID.
    */
   const getProviderAccountAndNetwork = async (provider) => {
-    const ethersProvider = new providers.Web3Provider(provider);
-    const signer = ethersProvider.getSigner();
-    const [account, network] = await Promise.all([
-      await signer.getAddress(),
-      await ethersProvider.getNetwork(),
+    const p = new providers.Web3Provider(provider);
+    const [address, network] = await Promise.all([
+      p.getSigner().getAddress(),
+      p.getNetwork(),
     ]);
-
-    return { address: account, network };
+    return { address, network };
   };
 
   /**
