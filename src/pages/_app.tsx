@@ -74,10 +74,20 @@ export default withApollo(({ initialState }) => {
       : process.env.NEXT_PUBLIC_GRAPHQL_MAINNET_ENDPOINT,
   });
 
+  const uniswapLink = new HttpLink({
+    uri: process.env.NEXT_PUBLIC_GRAPHQL_UNISWAP
+  })
+
+  const uniswapDirectionalLink = new RetryLink().split(
+    (operation) => operation.getContext().clientName === "uniswap",
+    uniswapLink,
+    graphHttpLink,
+  )
+
   const directionalLink = new RetryLink().split(
     (operation) => operation.getContext().clientName === "backend",
     backendHttpLink,
-    graphHttpLink,
+    uniswapDirectionalLink,
   );
 
   return new ApolloClient({

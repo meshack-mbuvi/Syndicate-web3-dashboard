@@ -56,7 +56,7 @@ const TokenDetails = (props: TokenProps) => {
       onClick={() => storeDepositTokenDetails({ ...props })}
     >
       <div className="flex justify-start items-center">
-        <Image src={logoURI} width={24} height={24} />
+        <Image src={logoURI || "/images/token-gray-4.svg"} width={24} height={24} />
         <p className="text-white text-base sm:text-base ml-3">{name}</p>
         <div className="inline-flex pl-6">
           <p className="text-gray-3 text-base sm:text-base uppercase">

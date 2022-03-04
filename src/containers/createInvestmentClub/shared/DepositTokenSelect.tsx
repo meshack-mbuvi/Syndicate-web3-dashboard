@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { coinList } from "@/containers/createInvestmentClub/shared/ClubTokenDetailConstants";
+import { coinList as defaultTokenList } from "@/containers/createInvestmentClub/shared/ClubTokenDetailConstants";
 import { TokenSearchBar } from "@/containers/createInvestmentClub/shared/TokenSearchInput";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -7,6 +7,8 @@ import { setDepositTokenDetails } from "@/state/createInvestmentClub/slice";
 import { AppState } from "@/state";
 import TokenDetails from "@/containers/createInvestmentClub/shared/TokenDetails";
 import CryptoAssetModal from "@/containers/createInvestmentClub/shared/AboutCryptoModal";
+import useSearchToken from "@/hooks/useTokenSearch";
+import { useDebounce } from "@/hooks/useDebounce";
 
 export const DepositTokenSelect = (props: {
   toggleTokenSelect: () => void;
@@ -24,30 +26,48 @@ export const DepositTokenSelect = (props: {
     createInvestmentClubSliceReducer: { tokenDetails },
   } = useSelector((state: AppState) => state);
 
+  // TODO
+  // confirm whether also searching by symbol?
+  const debouncedSearchTerm = useDebounce(searchTerm, 200);
+  const { data, loading } = useSearchToken(debouncedSearchTerm);
+
   // handle token search
   useEffect(() => {
-    if (searchTerm) {
-      const searchKeyword = searchTerm.toLowerCase().trim();
-      // users are allowed to search by name or symbol
-      const searchResults = coinList.filter(
-        (token) =>
-          token.symbol.toLowerCase().includes(searchKeyword) ||
-          token.name.toLowerCase().includes(searchKeyword) ||
-          token.address.toLowerCase() === searchKeyword,
-      );
-      if (searchResults.length) {
-        setTokenList(searchResults);
-        setNoTokenFound(false);
+    if (debouncedSearchTerm) {
+      let matchedTokens = []
+      defaultTokenList.map((defaultToken) => {
+        if (defaultToken.symbol.includes(debouncedSearchTerm.toUpperCase()) 
+        || defaultToken.address === debouncedSearchTerm) {
+          matchedTokens.push(defaultToken)
+        }
+      })
+      if (matchedTokens.length == 0) {
+        setTokenList([])
+        setNoTokenFound(true);
       } else {
+        setTokenList(matchedTokens)
+        setNoTokenFound(false);
+      }
+      /* if (!loading) {
         setTokenList([]);
         setNoTokenFound(true);
-      }
+      } */
+      /* if (data?.tokens?.length) {
+        setTokenList(data.tokens);
+        setNoTokenFound(false);
+      } else { */
+        // when there are no tokens and not loading
+        /* if (!loading) {
+          setTokenList([]);
+          setNoTokenFound(true);
+        }
+      } */
     } else {
       // populate the list with default tokens if there's no search term
-      const defaultTokens = coinList.filter((token) => token.name);
+      const defaultTokens = defaultTokenList.filter((token) => token.name);
       setTokenList(defaultTokens);
     }
-  }, [searchTerm, coinList]);
+  }, [debouncedSearchTerm, data, loading]);
 
   useEffect(() => {
     const recentTokens = localStorage.getItem("recentTokens");
@@ -63,7 +83,7 @@ export const DepositTokenSelect = (props: {
         depositTokenName: token.name,
         depositTokenSymbol: token.symbol,
         depositTokenLogo: token.logoURI,
-        depositTokenDecimals: token.decimal,
+        depositTokenDecimals: token.decimals,
       }),
     );
     const recentTokens = localStorage.getItem("recentTokens");
@@ -84,6 +104,10 @@ export const DepositTokenSelect = (props: {
     } else {
       localStorage.setItem("recentTokens", JSON.stringify([token]));
     }
+  };
+
+  const handleTokenSearch = (e) => {
+    setSearchTerm(e.target.value);
   };
 
   return (
@@ -107,7 +131,7 @@ export const DepositTokenSelect = (props: {
         </div>
       </div>
       {/* This will be used when we move to more than just 2 tokens */}
-      {/* <TokenSearchBar setSearchTerm={setSearchTerm} /> */}
+      <TokenSearchBar handleSearchInput={handleTokenSearch} />
 
       {/* hide recent token section if we are currently performing a search */}
       {/* {!searchTerm.length ? (
@@ -133,14 +157,14 @@ export const DepositTokenSelect = (props: {
                 />
               );
             })}
-          </div>
+
         </div>
       ) : null} */}
-      {/* {searchTerm ? null : (
+      {searchTerm ? null : (
         <p className="text-xs sm:text-sm text-gray-3 uppercase mb-5 tracking-wider">
           Common tokens
         </p>
-      )} */}
+      )}
       <div className="my-2 overflow-y-auto">
         {tokensList.length ? (
           tokensList

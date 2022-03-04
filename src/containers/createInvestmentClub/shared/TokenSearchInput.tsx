@@ -2,14 +2,8 @@ import { SearchIcon } from "@heroicons/react/solid";
 import { useRef, useEffect } from "react";
 
 // component implements serach bar for token dropdown
-export const TokenSearchBar = (props: { setSearchTerm: Function }) => {
-  const { setSearchTerm } = props;
+export const TokenSearchBar = ({ handleSearchInput }) => {
   const searchInput = useRef(null);
-
-  const handleSearchInput = (event) => {
-    const searchTerm = event.target.value;
-    setSearchTerm(searchTerm);
-  };
 
   // shift focus to the search input
   useEffect(() => {
