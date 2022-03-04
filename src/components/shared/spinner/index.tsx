@@ -5,6 +5,7 @@ interface ISpinner {
   width?: string;
   margin?: string;
   color?: string;
+  strokeWidth?: string;
 }
 
 export const Spinner: React.FC<ISpinner> = (props) => {
@@ -13,6 +14,7 @@ export const Spinner: React.FC<ISpinner> = (props) => {
     height = "h-10",
     width = "w-10",
     color = "text-blue",
+    strokeWidth = "7"
   } = props;
   return (
     <div
@@ -26,7 +28,7 @@ export const Spinner: React.FC<ISpinner> = (props) => {
           xmlns="http://www.w3.org/2000/svg"
           className={`spinner stroke-current ${color}`}
         >
-          <circle cx="50" cy="50" r="45" strokeWidth="7" />
+          <circle cx="50" cy="50" r="45" strokeWidth={strokeWidth} className={`${color}`} />
         </svg>
       </span>
     </div>

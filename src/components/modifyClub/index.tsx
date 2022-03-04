@@ -316,7 +316,6 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
             title: "Pending confirmation",
             description:
               "This could take up to a few minutes depending on network congestion and the gas fees you set. Feel free to leave this screen.",
-            etherscanLink: "#",
             buttonLabel: "Back to club dashboard",
             buttonOnClick: handleExit,
             state: ProgressModalState.PENDING,

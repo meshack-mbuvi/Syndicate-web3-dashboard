@@ -39,7 +39,7 @@ import { useRouter } from "next/router";
 import React, { FC, useEffect, useMemo, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { syndicateActionConstants } from "src/components/syndicates/shared/Constants";
-import ClubTokenMembers from "../managerActions/clubTokenMembers";
+import ClubTokenMembers from "../managerActions/clubTokenMembers/index";
 import ActivityView from "./activity";
 import Assets from "./assets";
 import TabButton from "./TabButton";

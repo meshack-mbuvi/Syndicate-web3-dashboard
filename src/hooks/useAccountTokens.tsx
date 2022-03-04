@@ -76,30 +76,36 @@ export function useAccountTokens(): {
       resetMemberStats();
     }
 
-    const {
-      members: [member],
-    } = data;
-
-    if (member) {
+    if (data.members.length) {
       const {
-        syndicateDAOs: [clubMemberData],
-      } = member;
+        members: [member],
+      } = data;
 
-      if (clubMemberData) {
+      if (member) {
         const {
-          depositAmount = 0,
-          ownershipShare = 0,
-          tokens = 0,
-        } = clubMemberData;
+          syndicateDAOs: [clubMemberData],
+        } = member;
 
-        setAccountTokens(getWeiAmount(tokens, tokenDecimals, false));
-        setMemberDeposits(
-          getWeiAmount(depositAmount, depositTokenDecimals, false),
-        );
-        setMemberOwnership(`${+ownershipShare / 10000}`);
-      } else {
-        resetMemberStats();
+        if (clubMemberData) {
+          const {
+            depositAmount = 0,
+            ownershipShare = 0,
+            tokens = 0,
+          } = clubMemberData;
+
+          setAccountTokens(getWeiAmount(tokens, tokenDecimals, false));
+          setMemberDeposits(
+            getWeiAmount(depositAmount, depositTokenDecimals, false),
+          );
+          setMemberOwnership(`${+ownershipShare / 10000}`);
+        } else {
+          resetMemberStats();
+        }
       }
+    } else {
+      setAccountTokens("0");
+      setMemberDeposits("0");
+      setMemberOwnership("0");
     }
   }, [
     account,

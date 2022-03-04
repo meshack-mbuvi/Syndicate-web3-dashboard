@@ -1,3 +1,5 @@
+import CreateClubButton from "@/components/createClubButton";
+import PortfolioEmptyState from "@/components/syndicates/portfolioAndDiscover/portfolio/portfolioEmptyState";
 import useClubERC20s from "@/hooks/useClubERC20s";
 import { AppState } from "@/state";
 import React from "react";
@@ -8,9 +10,6 @@ import {
   clubERCTableColumns,
   MyClubERC20TableColumns,
 } from "./portfolio/clubERC20Table/constants";
-import PortfolioEmptyState from "@/components/syndicates/portfolioAndDiscover/portfolio/portfolioEmptyState";
-import CreateClubButton from "@/components/createClubButton";
-
 /**
  * My Syndicates: IF their wallet (a) is leading a syndicate or
  * (b) has deposited into a syndicate, the syndicates shows up on

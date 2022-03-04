@@ -47,7 +47,7 @@ export const EtherscanLink: React.FC<LinkProp> = (props) => {
     <a
       href={`${etherscanLink}${etherscanInfo}`}
       target="_blank"
-      className={`text-sm hover:opacity-90 flex items-center focus:outline-none ${
+      className={`hover:opacity-90 flex items-center focus:outline-none ${
         customStyles && customStyles
       }`}
       rel="noreferrer"
@@ -57,7 +57,7 @@ export const EtherscanLink: React.FC<LinkProp> = (props) => {
       )}
       {!iconOnly ? (
         <div className="flex justify-between items-center w-full">
-          <div>{text}</div>
+          <div className="text-blue">{text}</div>
           <ExternalLinkIcon
             className={`ml-2 w-4 text-blue`}
             iconColor={iconColor}
