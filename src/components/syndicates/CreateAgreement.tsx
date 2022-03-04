@@ -1,3 +1,5 @@
+import { amplitudeLogger, Flow } from "@/components/amplitude";
+import { CLICKED_HELP_FORM_LEGAL_ENTITY } from "@/components/amplitude/eventNames";
 import ErrorBoundary from "@/components/errorBoundary";
 import { Checkbox } from "@/components/inputs/checkbox";
 import { TextArea } from "@/components/inputs/textArea";
@@ -11,8 +13,6 @@ import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
 import * as yup from "yup";
-import { amplitudeLogger, Flow } from "@/components/amplitude";
-import { CLICKED_HELP_FORM_LEGAL_ENTITY } from "@/components/amplitude/eventNames";
 
 interface FormInputs {
   legalEntityName: string;

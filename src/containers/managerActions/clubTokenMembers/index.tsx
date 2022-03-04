@@ -1,26 +1,31 @@
-import CopyLink from "@/components/shared/CopyLink";
 import { SkeletonLoader } from "@/components/skeletonLoader";
 import { useIsClubOwner } from "@/hooks/useClubOwner";
+import useModal from "@/hooks/useModal";
 import { AppState } from "@/state";
+import { setMemberToUpdate } from "@/state/modifyCapTable/slice";
 import { floatedNumberWithCommas } from "@/utils/formattedNumbers";
+import Image from "next/image";
 import React, { useEffect, useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { MemberAddressComponent } from "./memberAddress";
 import MembersTable from "./MembersTable";
+import ModifyCapTable from "../modifyMemberAllocation";
+import MoreOptions from "./moreOptions";
 import GenerateDepositLink from "../GenerateDepositLink";
 import { setDepositReadyInfo } from "@/state/legalInfo";
 import { useRouter } from "next/router";
 import { generateMemberSignURL } from "@/utils/generateMemberSignURL";
 import useClubTokenMembers from "@/hooks/useClubTokenMembers";
 import { animated } from "react-spring";
+import AddMemberModal from "@/containers/managerActions/mintAndShareTokens/AddMemberModal";
+import { MintAndShareTokens } from "@/containers/managerActions/mintAndShareTokens";
 
 const ClubTokenMembers = (): JSX.Element => {
   // retrieve state variables
   const {
     clubMembersSliceReducer: { clubMembers, loadingClubMembers },
     erc20TokenSliceReducer: {
-      erc20Token: { symbol },
-      depositDetails: { depositTokenSymbol },
+      depositDetails: { depositTokenSymbol, ethDepositToken },
     },
     legalInfoReducer: {
       depositReadyInfo: { adminSigned },
@@ -39,6 +44,8 @@ const ClubTokenMembers = (): JSX.Element => {
   const [showGenerateLinkModal, setShowGenerateLinkModal] = useState(false);
   const [linkShareAgreementChecked, setLinkShareAgreementChecked] =
     useState(false);
+  const [showAddMemberModal, toggleAddMemberModal] = useModal();
+  const [showMintTokensModal, toggleMintTokensModal] = useState(false);
 
   const setClubDepositLink = (clubDepositLink: string) => {
     dispatch(
@@ -86,7 +93,10 @@ const ClubTokenMembers = (): JSX.Element => {
   };
 
   const [syndicateMembersToShow, setSynMembersToShow] = useState(clubMembers);
-
+  const [showMemberOptions, setShowMemberOptions] = useState({
+    show: false,
+    memberAddress: "",
+  });
   const [tableData, setTableData] = useState([]);
 
   const generateTableData = () => {
@@ -113,12 +123,36 @@ const ClubTokenMembers = (): JSX.Element => {
     setTableData(syndicateMembersToShow);
   }, [JSON.stringify(syndicateMembersToShow)]);
 
+  const [selectedMember, setSelectedMember] = useState<any>();
+  const [showModifyCapTable, setShowModifyCapTable] = useModal();
+  const moreOptionItems = (
+    <div className="space-x-2 flex">
+      <p className="flex my-auto">
+        <Image src="/images/edit.svg" alt="" height={16} width={16} />
+      </p>
+      <p className="font-whyte text-base leading-6">
+        Modify club token allocation
+      </p>
+    </div>
+  );
+
+  const handleMenuItemClick = (member) => {
+    dispatch(setMemberToUpdate(member));
+    setShowModifyCapTable();
+    
+  };
+
   const columns = React.useMemo(
     () => [
       {
         Header: "Member",
         accessor: function memberAddress(row: { memberAddress: string }) {
-          return <MemberAddressComponent {...row} />;
+          return (
+            <MemberAddressComponent
+              {...row}
+              setSelectedMember={() => setSelectedMember(row)}
+            />
+          );
         },
       },
       {
@@ -128,8 +162,11 @@ const ClubTokenMembers = (): JSX.Element => {
           depositSymbol = depositTokenSymbol,
         }) {
           return (
-            <p className="flex text-white text-base my-1 leading-6">
-              {`${floatedNumberWithCommas(depositAmount)} ${depositSymbol}`}
+            <p className="flex text-white text-base leading-6">
+              {`${floatedNumberWithCommas(
+                depositAmount,
+                ethDepositToken ?? false,
+              )} ${depositSymbol}`}
             </p>
           );
         },
@@ -142,7 +179,7 @@ const ClubTokenMembers = (): JSX.Element => {
           symbol,
         }) {
           return (
-            <p className="my-1">
+            <p>
               {`${floatedNumberWithCommas(clubTokens)} ${symbol}`}
               <span className="ml-1 text-gray-syn4">
                 {`(${floatedNumberWithCommas(ownershipShare)}%)`}
@@ -151,8 +188,33 @@ const ClubTokenMembers = (): JSX.Element => {
           );
         },
       },
+      {
+        Header: ` `,
+        accessor: function distributionShare(club) {
+          // Only show this option for club owners.
+          // and only on hover
+          const { memberAddress } = club;
+          if (
+            isOwner &&
+            showMemberOptions.show &&
+            showMemberOptions.memberAddress === memberAddress
+          ) {
+            return (
+              <div className="text-base leading-6 flex justify-end py-1 w-full">
+                <MoreOptions
+                  {...{
+                    club,
+                    moreOptionItems,
+                    handleMenuItemClick: () => handleMenuItemClick(club),
+                  }}
+                />
+              </div>
+            );
+          }
+        },
+      },
     ],
-    [clubMembers],
+    [clubMembers, showMemberOptions, isOwner],
   );
 
   const membersTabInstruction = isOwner
@@ -209,12 +271,22 @@ const ClubTokenMembers = (): JSX.Element => {
             </>
           </>
         ) : tableData.length || filteredAddress ? (
-          <MembersTable
-            columns={columns}
-            data={tableData}
-            filterAddressOnChangeHandler={filterAddressOnChangeHandler}
-            searchAddress={filteredAddress}
-          />
+          <>
+            <MembersTable
+              columns={columns}
+              data={tableData}
+              filterAddressOnChangeHandler={filterAddressOnChangeHandler}
+              searchAddress={filteredAddress}
+              selectedMember={selectedMember}
+              setSelectedMember={() => setSelectedMember(undefined)}
+              toggleAddMemberModal={toggleAddMemberModal}
+              setShowMemberOptions={setShowMemberOptions}
+            />
+            <ModifyCapTable
+              showModifyCapTable={showModifyCapTable}
+              setShowModifyCapTable={setShowModifyCapTable}
+            />
+          </>
         ) : (
           <div className="flex justify-center">
             <div className="my-24.5">
@@ -226,10 +298,7 @@ const ClubTokenMembers = (): JSX.Element => {
                     {membersTabInstruction}
                   </p>
                   {isOwner && (
-                    <div
-                      style={{ width: "416px" }}
-                      className="flex justify-center flex-col"
-                    >
+                    <div className="flex justify-center flex-col sm:w-104">
                       {!adminSigned && (
                         <div className="flex space-between mb-6">
                           <input
@@ -265,6 +334,35 @@ const ClubTokenMembers = (): JSX.Element => {
                         showDepositLinkCopyState={showDepositLinkCopyState}
                         agreementChecked={linkShareAgreementChecked}
                       />
+
+                      <div className="space-y-2 mt-4">
+                        <div className="py-3 flex text-gray-syn4 items-center">
+                          <div className="border-b-1 w-1/2 border-gray-syn6 mr-1"></div>
+                          <p className="text-gray-syn4 text-sm">or</p>
+                          <div className="border-b-1 w-1/2 border-gray-syn6 ml-1"></div>
+                        </div>
+                        <div>
+                          <p className="text-base leading-4 text-white pb-2">
+                            Manually add member
+                          </p>
+                          <p className="text-sm text-gray-syn4 pb-2 leading-5 mt-2">
+                            Add a member to this club without requiring them to
+                            deposit first. You can also mint club tokens to
+                            them.
+                          </p>
+                        </div>
+
+                        <button
+                          className="bg-white rounded-custom w-full flex items-center justify-center py-4 px-8"
+                          onClick={() => {
+                            toggleMintTokensModal(true);
+                          }}
+                        >
+                          <p className="text-black whitespace-nowrap text-base font-whyte font-bold">
+                            Add member manually
+                          </p>
+                        </button>
+                      </div>
                     </div>
                   )}
                 </div>
@@ -273,6 +371,20 @@ const ClubTokenMembers = (): JSX.Element => {
           </div>
         )}
       </div>
+      <AddMemberModal
+        showModal={showAddMemberModal}
+        closeModal={() => toggleAddMemberModal()}
+        mintTokens={toggleMintTokensModal}
+      />
+
+      <MintAndShareTokens
+        {...{
+          show: showMintTokensModal,
+          handleShow: toggleMintTokensModal,
+          closeAddMemberModal: toggleAddMemberModal,
+          existingMembers: tableData,
+        }}
+      />
     </div>
   );
 };

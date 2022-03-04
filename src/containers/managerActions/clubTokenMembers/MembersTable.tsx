@@ -19,12 +19,17 @@ import { usePagination, useTable } from "react-table";
 import { NotSignedIcon } from "../shared/notSignedIcon";
 import { SignedIcon } from "../shared/signedIcon";
 import SignerMenu from "./signerMenu";
+import { LinkButton, LinkType } from "@/components/linkButtons";
 
 const MembersTable = ({
   columns,
   data,
   filterAddressOnChangeHandler,
   searchAddress,
+  selectedMember,
+  setSelectedMember,
+  toggleAddMemberModal,
+  setShowMemberOptions,
 }): JSX.Element => {
   const {
     erc20TokenSliceReducer: {
@@ -71,6 +76,23 @@ const MembersTable = ({
     "Club tokens": string;
     "Ownership share": string;
   }>();
+
+  useEffect(() => {
+    if (selectedMember) {
+      const { clubTokens, depositAmount, memberAddress, ownershipShare } =
+        selectedMember;
+
+      setMemberInfo({
+        "Wallet address": memberAddress,
+        "Deposit amount": `${floatedNumberWithCommas(
+          depositAmount,
+        )} ${depositTokenSymbol}`,
+        "Club tokens": `${floatedNumberWithCommas(clubTokens)} ${symbol}`,
+        "Ownership share": `${floatedNumberWithCommas(ownershipShare)}%`,
+      });
+      setShowMemberDetailsModal(true);
+    }
+  }, [selectedMember]);
 
   const menuItems = [
     {
@@ -142,6 +164,7 @@ const MembersTable = ({
 
   const closeMemberDetailsModal = () => {
     setShowMemberDetailsModal(false);
+    setSelectedMember(undefined);
   };
 
   const handleSetSelected = async (index: number) => {
@@ -155,7 +178,7 @@ const MembersTable = ({
   const hasMemberSigned = memberSignedData?.Financial_memberSigned;
 
   return (
-    <div className=" overflow-y-hidden ">
+    <div>
       <div className="flex my-11 col-span-12 space-x-8 justify-between items-center">
         {page.length > 1 || searchAddress ? (
           <SearchForm
@@ -167,6 +190,17 @@ const MembersTable = ({
           />
         ) : (
           <div></div>
+        )}
+
+        {isOwner && (
+          <div className="inline-flex items-right">
+            <LinkButton
+              type={LinkType.MEMBER}
+              onClick={() => {
+                toggleAddMemberModal();
+              }}
+            />
+          </div>
         )}
       </div>
 
@@ -182,14 +216,14 @@ const MembersTable = ({
                 <tr
                   {...headerGroup.getHeaderGroupProps()}
                   key={index}
-                  className="text-gray-sun4 text-sm grid grid-cols-12 gap-5 leading-6"
+                  className="text-gray-syn4 text-sm grid grid-cols-12 gap-5 leading-6"
                 >
                   {headerGroup.headers.map((column, index) => {
                     return (
                       <th
                         {...column.getHeaderProps()}
                         key={index}
-                        className="flex align-middle rounded-md col-span-3 text-left text-sm font-whyte-light text-gray-syn4"
+                        className="flex align-middle rounded-md col-span-3 text-left text-sm font-whyte-light text-gray-syn4 pb-2"
                       >
                         {column.render("Header")}
                       </th>
@@ -215,13 +249,29 @@ const MembersTable = ({
                 onClick={() => {
                   handleClick(row.original);
                 }}
+                onMouseEnter={() =>
+                  isOwner
+                    ? setShowMemberOptions({
+                        show: true,
+                        memberAddress: row.original.memberAddress,
+                      })
+                    : null
+                }
+                onMouseLeave={() =>
+                  isOwner
+                    ? setShowMemberOptions({
+                        show: false,
+                        memberAddress: "",
+                      })
+                    : null
+                }
               >
                 {row.cells.map((cell, cellIndex) => {
                   return (
                     <td
                       {...cell.getCellProps()}
                       key={cellIndex}
-                      className={`m-0 col-span-3 text-base py-5 text-white`}
+                      className={`m-0 col-span-3 text-base py-4 text-white flex items-center`}
                     >
                       {cell.render("Cell")}
                     </td>

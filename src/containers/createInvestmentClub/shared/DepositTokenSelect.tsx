@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { setDepositTokenDetails } from "@/state/createInvestmentClub/slice";
 import { AppState } from "@/state";
 import TokenDetails from "@/containers/createInvestmentClub/shared/TokenDetails";
+import CryptoAssetModal from "@/containers/createInvestmentClub/shared/AboutCryptoModal";
 
 export const DepositTokenSelect = (props: {
   toggleTokenSelect: () => void;
@@ -15,6 +16,7 @@ export const DepositTokenSelect = (props: {
   const [noTokenFound, setNoTokenFound] = useState(false);
 
   const [recentlyUsedTokens, setRecentlyUsedTokens] = useState([]);
+  const [showCryptoAssetModal, setShowCryptoAssetModal] = useState(false);
 
   const dispatch = useDispatch();
 
@@ -85,10 +87,25 @@ export const DepositTokenSelect = (props: {
   };
 
   return (
-    <div
-      className="flex flex-col p-8 rounded-2xl bg-gray-darkBackground border-6 border-gray-darkBackground focus:outline-none"
-    >
-      <div className="mb-4 font-whyte text-xl text-white">Select a token</div>
+    <div className="flex flex-col p-8 rounded-2xl bg-gray-darkBackground border-6 border-gray-darkBackground focus:outline-none">
+      <div className="mb-4 flex items-center">
+        <div className="font-whyte text-xl text-white">Select a token</div>
+        <div className="inline-flex pl-20 text-xl font-whyte text-gray-syn10 float-right">
+          <div className="text-sm">
+            Each crypto asset is different.
+            <button
+              className="pl-1 text-blue"
+              onClick={() => setShowCryptoAssetModal(true)}
+            >
+              Learn more.
+            </button>
+            <CryptoAssetModal
+              showModal={showCryptoAssetModal}
+              closeModal={() => setShowCryptoAssetModal(false)}
+            />
+          </div>
+        </div>
+      </div>
       {/* This will be used when we move to more than just 2 tokens */}
       {/* <TokenSearchBar setSearchTerm={setSearchTerm} /> */}
 

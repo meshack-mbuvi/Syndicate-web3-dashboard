@@ -1,4 +1,4 @@
-import PrimaryButton from "@/components/buttons";
+import PrimaryButton from "@/components/buttons/PrimaryButton";
 import Router from "next/router";
 import React from "react";
 import Layout from "src/components/layout";

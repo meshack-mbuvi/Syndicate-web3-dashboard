@@ -127,6 +127,7 @@ const useClubERC20s = () => {
           let clubERC20Contract;
           let decimals = 0;
           let clubName = "";
+          let clubSymbol = "";
 
           try {
             clubERC20Contract = new ClubERC20Contract(
@@ -136,6 +137,7 @@ const useClubERC20s = () => {
 
             decimals = await clubERC20Contract.decimals();
             clubName = await clubERC20Contract.name();
+            clubSymbol = await clubERC20Contract.symbol();
           } catch (error) {
             // error is thrown for clubs that were used in claim flow.
             return;
@@ -211,6 +213,7 @@ const useClubERC20s = () => {
 
           return {
             clubName,
+            clubSymbol,
             ownershipShare,
             depositsEnabled,
             endTime,

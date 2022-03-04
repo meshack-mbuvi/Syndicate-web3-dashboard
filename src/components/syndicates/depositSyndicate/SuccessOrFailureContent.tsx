@@ -34,7 +34,7 @@ export const SuccessOrFailureContent: React.FC<{
 }) => {
   const {
     erc20TokenSliceReducer: {
-      depositDetails: { depositTokenSymbol },
+      depositDetails: { depositTokenSymbol, ethDepositToken },
     },
   } = useSelector((state: AppState) => state);
   return (
@@ -74,6 +74,7 @@ export const SuccessOrFailureContent: React.FC<{
           {successfulDeposit
             ? `Deposited ${floatedNumberWithCommas(
                 depositAmount,
+                ethDepositToken ?? false,
               )} ${depositTokenSymbol}`
             : successfulClaim
             ? "Claim successfull"

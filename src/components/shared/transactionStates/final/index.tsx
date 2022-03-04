@@ -1,7 +1,6 @@
 import { BlockExplorerLink } from "@/components/syndicates/shared/BlockExplorerLink";
 import React from "react";
-import Button from "src/components/buttons";
-
+import Button from "@/components/buttons/PrimaryButton";
 import TransactionStateModal from "../shared";
 
 interface Props {

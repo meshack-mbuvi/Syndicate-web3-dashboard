@@ -40,7 +40,7 @@ const ClubERC20Table: FC<Props> = ({ columns, tableData }) => {
         ? rawTotalDeposits / 10000
         : rawTotalDeposits;
     return hasDecimals(totalDeposits)
-      ? floatedNumberWithCommas(parseFloat(totalDeposits))
+      ? floatedNumberWithCommas(parseFloat(totalDeposits),depositERC20TokenSymbol == "ETH" ? true : false)
       : numberWithCommas(totalDeposits);
   };
 
@@ -103,7 +103,7 @@ const ClubERC20Table: FC<Props> = ({ columns, tableData }) => {
                   <div className="flex text-base items-center">{status}</div>
                   <div className="flex text-base items-center">
                     <div className="flex items-center mr-2">
-                      <Image src={depositTokenLogo} width={20} height={20} />
+                      <Image src={depositTokenLogo || "/images/token-gray-4.svg"} width={20} height={20} />
                     </div>
                     {processTotalDeposits(
                       totalDeposits,
@@ -125,7 +125,7 @@ const ClubERC20Table: FC<Props> = ({ columns, tableData }) => {
                             height={20}
                           />
                         </div>
-                        {floatedNumberWithCommas(memberDeposits)}{" "}
+                        {floatedNumberWithCommas(memberDeposits, depositERC20TokenSymbol == "ETH" ? true : false )}{" "}
                         {depositERC20TokenSymbol}
                       </div>
                       <div className="flex text-base items-center justify-end">

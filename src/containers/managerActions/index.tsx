@@ -3,6 +3,7 @@ import { CLICK_COPY_DEPOSIT_LINK_TO_SHARE } from "@/components/amplitude/eventNa
 import ErrorBoundary from "@/components/errorBoundary";
 import FadeIn from "@/components/fadeIn/FadeIn";
 import CreateEntityCard from "@/components/shared/createEntityCard";
+import ModifyClubSettingsCard from "@/components/shared/modifyClubSettingsCard";
 import { SkeletonLoader } from "@/components/skeletonLoader";
 import StatusBadge from "@/components/syndicateDetails/statusBadge";
 import { BlockExplorerLink } from "@/components/syndicates/shared/BlockExplorerLink";
@@ -14,14 +15,13 @@ import { AppState } from "@/state";
 import { setDepositReadyInfo } from "@/state/legalInfo";
 import { Status } from "@/state/wallet/types";
 import { generateMemberSignURL } from "@/utils/generateMemberSignURL";
-import { ArrowNarrowRightIcon, XIcon } from "@heroicons/react/solid";
+import { XIcon } from "@heroicons/react/solid";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { animated } from "react-spring";
 
 import GenerateDepositLink from "./GenerateDepositLink";
-import { MintAndShareTokens } from "./mintAndShareTokens";
 
 const useShowShareWarning = () => {
   const router = useRouter();
@@ -87,7 +87,6 @@ const ManagerActions = (): JSX.Element => {
   const [showGenerateLinkModal, setShowGenerateLinkModal] = useState(false);
 
   const [hasAgreements, setHasAgreememnts] = useState(false);
-  const [showMintToken, setShowMintToken] = useState(false);
 
   const setClubDepositLink = (clubDepositLink: string) => {
     dispatch(
@@ -163,14 +162,6 @@ const ManagerActions = (): JSX.Element => {
       flow: Flow.POST_CLUB_CREATION,
     });
   };
-
-  /**
-   * TODO: Uncomment this function after enabling mint tokens button.
-   */
-  // const handleShowMintTokens = (event) => {
-  //   event.stopPropagation();
-  //   setShowMintToken(true);
-  // };
 
   const [linkShareAgreementChecked, setLinkShareAgreementChecked] =
     useState(false);
@@ -374,33 +365,14 @@ const ManagerActions = (): JSX.Element => {
         </FadeIn>
         {status !== Status.DISCONNECTED && (
           <div className="flex bg-gray-syn8 duration-500 transition-all rounded-2.5xl my-6 p-4 space-y-4 items-start flex-col">
-            <div className="hover:bg-gray-syn7 rounded-xl py-2 px-4">
+            <div className="hover:bg-gray-syn7 rounded-xl py-2 px-4 w-full">
               <CreateEntityCard />
             </div>
-            {/* This button will be re-enabled. */}
-
-            {/* <button
-              className="cursor-pointer space-x-4 focus:outline-none flex w-full items-start text-base leading-6 hover:bg-gray-syn7 rounded-xl py-2 px-4"
-              onClick={handleShowMintTokens}
-              disabled={isDemoMode}
-            >
-              <div className="flex-shrink-0">
-                <img
-                  src="/images/token-gray.svg"
-                  className="mt-1"
-                  alt="ribbon"
-                />
-              </div>
-              <div className="text-base leading-6">Mint club tokens</div>
-            </button> */}
+            <div className="hover:bg-gray-syn7 rounded-xl py-2 px-4 w-full">
+              <ModifyClubSettingsCard />
+            </div>
           </div>
         )}
-
-        {
-          <MintAndShareTokens
-            {...{ show: showMintToken, handleShow: setShowMintToken }}
-          />
-        }
       </div>
     </ErrorBoundary>
   );

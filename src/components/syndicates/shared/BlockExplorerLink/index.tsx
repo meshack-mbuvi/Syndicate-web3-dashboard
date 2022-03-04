@@ -1,6 +1,7 @@
 import { isDev } from "@/utils/environment";
 import React, { useMemo } from "react";
 import {
+  ExternalLinkColor,
   ExternalLinkIcon,
   OpenExternalLinkIcon,
 } from "src/components/iconWrappers";
@@ -14,7 +15,7 @@ interface LinkProp {
   iconOnly?: boolean;
   text?: string;
   grouped?: boolean;
-  grayIcon?: boolean;
+  iconColor?: ExternalLinkColor;
 }
 
 /** Link used to redirect the user to the Etherscan
@@ -27,13 +28,14 @@ export const BlockExplorerLink: React.FC<LinkProp> = (props) => {
     customStyles,
     resource: type = "address",
     iconOnly,
+    text = "View on ",
     grouped,
-    grayIcon = false,
+    iconColor = ExternalLinkColor.BLUE,
   } = props;
 
   const { chainId } = useConnectWalletContext();
 
-  const text = useMemo(
+  const explorer = useMemo(
     () => ({ 1: "Etherscan", 4: "Etherscan", 137: "Polygonscan" }[chainId]),
     [chainId],
   );
@@ -52,7 +54,7 @@ export const BlockExplorerLink: React.FC<LinkProp> = (props) => {
     <a
       href={url}
       target="_blank"
-      className={`text-blue hover:opacity-90 flex items-center focus:outline-none ${
+      className={`hover:opacity-90 flex items-center focus:outline-none ${
         customStyles && customStyles
       }`}
       rel="noreferrer"
@@ -61,13 +63,13 @@ export const BlockExplorerLink: React.FC<LinkProp> = (props) => {
         <OpenExternalLinkIcon className="text-gray-syn5 hover:text-gray-syn4" />
       )}
       {!iconOnly ? (
-        <p className="flex items-center">
-          {text}{" "}
+        <div className="flex justify-between items-center w-full">
+          <div className="text-blue">{text}{explorer}</div>
           <ExternalLinkIcon
-            className="ml-2 w-4 text-blue`"
-            grayIcon={grayIcon}
+            className={`ml-2 w-4 text-blue`}
+            iconColor={iconColor}
           />
-        </p>
+        </div>
       ) : !grouped ? (
         <ExternalLinkIcon grayIcon className="ml-2 w-4 text-blue`" />
       ) : null}

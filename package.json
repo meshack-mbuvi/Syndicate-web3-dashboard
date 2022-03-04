@@ -92,6 +92,7 @@
     "redux-thunk": "^2.3.0",
     "request": "^2.88.2",
     "retry-request": "^4.2.2",
+    "storybook-addon-next-router": "^3.1.1",
     "stream-browserify": "^2.0.2",
     "stream-http": "^2.8.3",
     "typechain": "^5.2.0",
@@ -129,7 +130,7 @@
     "lambda-serve": "netlify-lambda serve functions/src",
     "lambda-build": "netlify-lambda build functions/src",
     "generate-types": "typechain --target=truffle-v5 'src/contracts/*.json' --out-dir='src/@types/contracts'",
-    "storybook": "start-storybook -p 6006 -s ./public",
+    "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook"
   },
   "devDependencies": {

@@ -40,7 +40,7 @@ const TokenModal: React.FC<ITokenModal> = ({
       modalStyle={ModalStyle.DARK}
       show={showModal}
       closeModal={() => closeModal()}
-      customWidth="w-564"
+      customWidth="sm:w-564 w-full"
       customClassName="p-0"
       showCloseButton={false}
       outsideOnClick={true}

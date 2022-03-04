@@ -4,7 +4,11 @@ import WalletConnectDemoButton from "@/containers/layoutWithSyndicateDetails/dem
 // actions
 import { useConnectWalletContext } from "@/context/ConnectWalletProvider";
 import { AppState } from "@/state";
-import { hideErrorModal, hideWalletModal } from "@/state/wallet/actions";
+import {
+  hideErrorModal,
+  hideWalletModal,
+  setDispatchCreateFlow,
+} from "@/state/wallet/actions";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -33,6 +37,7 @@ const ConnectWallet: React.FC = () => {
         ethereumNetwork: { correctEthereumNetwork, invalidEthereumNetwork },
       },
       showWalletModal,
+      dispatchCreateFlow,
     },
   } = useSelector((state: AppState) => state);
 
@@ -76,6 +81,9 @@ const ConnectWallet: React.FC = () => {
   // This handles closing the modal after user selects a provider to activate
   const closeWalletModal = () => {
     dispatch(hideWalletModal());
+    if (dispatchCreateFlow) {
+      dispatch(setDispatchCreateFlow(false));
+    }
   };
 
   // activate method handles connection to any wallet account while library will
@@ -204,10 +212,31 @@ const ConnectWallet: React.FC = () => {
   return (
     <div>
       <ConnectModal
-        show={showWalletModal}
-        closeModal={closeWalletModal}
-        title="Connect crypto wallet"
-        subtext="By connecting your wallet ,you agree to our Terms of Service and Privacy Policy"
+        {...{
+          show: showWalletModal,
+          closeModal: closeWalletModal,
+          title: "Connect crypto wallet",
+          subtext: (
+            <span>
+              By connecting your wallet, you agree to our&nbsp;
+              <a
+                href="https://www.notion.so/syndicateprotocol/Syndicate-Terms-of-Service-04674deec934472e88261e861cdcbc7c"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Terms of Service
+              </a>
+              &nbsp;and&nbsp;
+              <a
+                href="https://docs.google.com/document/d/1yATB2hQHjCHKaUvBIzEaO65Xa0xHq-nLOEEJlJngg90/"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Privacy Policy
+              </a>
+            </span>
+          ),
+        }}
       >
         <>
           {/* show wallet providers */}

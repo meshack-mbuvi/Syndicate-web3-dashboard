@@ -21,6 +21,7 @@ import NumberTreatment from "../NumberTreatment";
 // utils
 import GradientAvatar from "./portfolioAndDiscover/portfolio/GradientAvatar";
 import { DetailsCard, ProgressIndicator } from "./shared";
+import DuplicateClubWarning from "@/components/syndicates/shared/DuplicateClubWarning";
 
 interface ClubDetails {
   header: string;
@@ -30,7 +31,10 @@ interface ClubDetails {
 }
 
 // we should have an isChildVisible prop here of type boolean
-const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
+const SyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
+  managerSettingsOpen,
+  children,
+}) => {
   const {
     erc20TokenSliceReducer: {
       erc20Token,
@@ -55,6 +59,7 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
     endTime,
     maxMemberCount,
     name,
+    owner,
     symbol,
     maxTotalSupply,
     depositsEnabled,
@@ -123,7 +128,7 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
   }, [totalDeposits, memberCount]);
 
   useEffect(() => {
-    if (erc20Token) {
+    if (erc20Token && !managerSettingsOpen) {
       setDetails([
         ...(depositsEnabled
           ? [
@@ -257,6 +262,36 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
   const isOwnerOrMember =
     isOwner || +accountTokens || myMerkleProof?.account === account;
 
+  const [showDuplicateClubWarning, setShowDuplicateClubWarning] =
+    useState(false);
+  const [duplicateClubWarningExists, setDuplicateClubWarningExists] =
+    useState(false);
+
+  useEffect(() => {
+    const duplicateWarningCookieSet = document.cookie
+      .split("; ")
+      .find((row) => row.startsWith("showedDuplicateClubWarning"));
+    setDuplicateClubWarningExists(Boolean(duplicateWarningCookieSet));
+
+    if (duplicateWarningCookieSet) {
+      setShowDuplicateClubWarning(false);
+    } else if (
+      !duplicateWarningCookieSet &&
+      !loading
+    ) {
+      setShowDuplicateClubWarning(true);
+    }
+  }, [router.isReady, account, loading]);
+
+  const dismissDuplicateClubWarning = () => {
+    if (!duplicateClubWarningExists) {
+      // set cookie to expire in a very long time.
+      document.cookie =
+        "showedDuplicateClubWarning=true; expires=Fri, 31 Dec 9999 23:59:59 GMT; SameSite=None; Secure";
+    }
+    setShowDuplicateClubWarning(false);
+  };
+
   return (
     <div className="flex flex-col relative">
       <div className="h-fit-content rounded-custom">
@@ -264,7 +299,8 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
           <div>
             <div className="flex justify-center items-center">
               <div className="mr-8">
-                {loading || loadingClubDeposits || totalDeposits === "" ? (
+                {(loading || loadingClubDeposits || totalDeposits == "") &&
+                !managerSettingsOpen ? (
                   <SkeletonLoader
                     height="20"
                     width="20"
@@ -319,7 +355,7 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
                       <div className="inline-flex items-center ml-6 space-x-8 pr-2">
                         {showActionIcons ? (
                           <div className="flex space-x-6">
-                            <CopyToClipboard text={erc20Token.owner}>
+                            <CopyToClipboard text={owner as string}>
                               <button
                                 className="flex items-center relative w-4 h-4 cursor-pointer"
                                 onClick={updateAddressCopyState}
@@ -376,9 +412,16 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
             </div>
           </div>
         </div>
+        {showDuplicateClubWarning && !isDemoMode && (
+          <div className="mt-6">
+            <DuplicateClubWarning
+              dismissDuplicateClubWarning={dismissDuplicateClubWarning}
+            />
+          </div>
+        )}
 
-        {status !== Status.DISCONNECTED && depositsEnabled && (
-          <div className="h-fit-content flex w-full justify-start mt-16">
+        {status !== Status.DISCONNECTED && depositsEnabled && !managerSettingsOpen && (
+          <div className="h-fit-content flex w-full justify-start mt-14">
             <ProgressIndicator
               totalDeposits={totalDeposits}
               depositTotalMax={maxTotalDeposits.toString()}
@@ -394,7 +437,8 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
         {/* This component should be shown when we have details about user deposits */}
         {(status !== Status.DISCONNECTED &&
           (loading || !(isActive && !isOwnerOrMember))) ||
-        isDemoMode ? (
+        isDemoMode ||
+        !managerSettingsOpen ? (
           <div className="overflow-hidden mt-6 relative">
             <DetailsCard
               title="Details"
@@ -408,7 +452,7 @@ const SyndicateDetails: FC<{ accountIsManager: boolean }> = (props) => {
       </div>
       {/* Syndicate details */}
       {/* details rendered on small devices only. render right column components on the left column in small devices */}
-      {props.children}
+      {children}
     </div>
   );
 };

@@ -120,10 +120,8 @@ const PortfolioAndDiscover: React.FC = () => {
                 </div>
               )}
             </div>
-          ) : account && !myClubERC20s.length && !invalidEthereumNetwork ? (
+          ) : !myClubERC20s.length && !invalidEthereumNetwork ? (
             <PortfolioEmptyState />
-          ) : !account ? (
-            <WalletNotConnected />
           ) : null}
         </>
       )}

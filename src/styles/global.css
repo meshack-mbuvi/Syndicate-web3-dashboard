@@ -60,6 +60,11 @@
     src: url(/fonts/Whyte/ABCWhyte-Bold.woff) format("woff");
   }
 
+  @font-face {
+    font-family: Whyte Semi-Mono;
+    src: url(/fonts/Whyte_Semi_Mono/ABCWhyteSemi-Mono-Regular.woff) format("woff");
+  }
+
   /* fixes an issue where it is sometimes not possible to scroll */
   html {
     overflow: visible !important;
@@ -72,7 +77,6 @@
     font-family: "Whyte Regular", "Helvetica", "Arial", "sans-serif";
     color: white;
     font-style: normal;
-    overflow-x: hidden;
     @apply antialiased;
   }
 
@@ -239,20 +243,28 @@
     @apply text-gray-placeholder;
   }
 
-  .h3 {
-    @apply block text-white text-lg lg:text-xl;
-  }
-
   .h1 {
     @apply block text-white text-4.5xl leading-11.5;
   }
 
+  .h2 {
+    @apply block text-white text-2xl leading-9;
+  }
+
+  .h3 {
+    @apply block text-white text-lg lg:text-xl leading-7.5;
+  }
+
   .h4 {
-    @apply font-whyte-medium text-sm uppercase leading-5 tracking-px;
+    @apply font-whyte-medium text-sm uppercase leading-4 tracking-px;
+  }
+
+  .body {
+    @apply text-base leading-6 font-whyte;
   }
 
   .small-body {
-    @apply text-sm leading-5 font-whyte;
+    @apply text-sm leading-5.75 font-whyte;
   }
 
   .bottom-triangle-blue::after {
@@ -858,4 +870,42 @@ input[type="checkbox"] {
 *::-webkit-scrollbar-thumb {
   background-color: #3f4147;
   border-radius: 4px;
+}
+
+.react-add-to-calendar {
+  @apply relative inline-block text-center;
+}
+
+.react-add-to-calendar__wrapper {
+  cursor: pointer;
+}
+
+.react-add-to-calendar__dropdown {
+  @apply w-60 mt-2 absolute z-20 top-5 -right-1/2 transition-all duration-500 ease-in-out;
+}
+
+.react-add-to-calendar__dropdown ul {
+  @apply rounded bg-gray-syn7 py-1;
+}
+
+.react-add-to-calendar__dropdown ul li a {
+  @apply flex justify-center hover:bg-gray-syn6 py-3 w-full text-white text-sm;
+}
+
+.react-add-to-calendar__dropdown ul li a::before {
+  display: block;
+  content: " ";
+  background-size: 18px 18px;
+  background-repeat: no-repeat;
+  height: 18px;
+  width: 18px;
+  padding-right: 24px;
+}
+
+.react-add-to-calendar__dropdown ul li:nth-child(1) a::before {
+  background-image: url("/images/social/google.svg");
+}
+
+.react-add-to-calendar__dropdown ul li:nth-child(2) a::before {
+  background-image: url("/images/social/apple.svg");
 }

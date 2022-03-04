@@ -10,6 +10,7 @@ import { EthMintModuleContract } from "./ethMintModule";
 import { MerkleDistributorModuleContract } from "./merkleDistributorModule";
 import { MerkleDistributorModuleERC721Contract } from "./merkleDistributorModuleERC721";
 import { ERC721MintPolicyContract } from "./mintPolicyERC721";
+import { OwnerMintModuleContract } from "./ownerMintModule";
 import { MintPolicyContract } from "./policyMintERC20";
 import { PublicMintWithFeeModuleContract } from "./publicMintWithFeeModule";
 import { PublicOnePerAddressModuleContract } from "./publicOnePerAddressModule";
@@ -33,6 +34,7 @@ const CONTRACT_ADDRESSES = Object.freeze({
     PublicOnePerAddress: "0x4eD3fEDAaaBE0Da0D4a772A2210D0BfE5e475f91",
     SingleTokenMintModule: "0x0449F65a5e09F0f30Aa504B8474D1D4d0e10B8B8",
     UtilityMintModule: "0x56b8A2A1e7F37C5E66daF14DB28D1dc38e176Fb8",
+    OwnerMintModule: ""
   },
   // Rinkeby
   4: {
@@ -48,6 +50,7 @@ const CONTRACT_ADDRESSES = Object.freeze({
     PublicOnePerAddress: "0xce6E260226639F1dD446dc19F21bd66cbE613d0D",
     SingleTokenMintModule: "0x7f450D0B82f4785881736bcd7635bbDd0cbA7648",
     UtilityMintModule: "0xD193Cfbc267f23127E024A025233A8483b29C66e",
+    OwnerMintModule: "0x60bfff0B6e064673B61f3eB9dEA5ED0f3BbB5471"
   },
   // Matic
   137: {
@@ -59,6 +62,7 @@ const CONTRACT_ADDRESSES = Object.freeze({
     MerkleDistributorModuleERC721: "0x1D73B78249363c6B5Cb6A0AdD6a1Cf21D5390eF2",
     policyMintERC20: "0x945B46289483aB88ACE4E41646eEC12B3B702dda",
     PublicOnePerAddress: "0x0E580f047a6553ec066fedA7D5DA6CbB327D670b",
+    OwnerMintModule: ""
   },
 });
 
@@ -165,6 +169,11 @@ export const getSyndicateContracts = async (
     web3,
   );
 
+  const OwnerMintModule = new OwnerMintModuleContract(
+    addresses.OwnerMintModule,
+    web3,
+  );
+
   // return all initialized contracts
   return {
     clubERC20Factory,
@@ -185,5 +194,6 @@ export const getSyndicateContracts = async (
     RugToken,
     GenesisNFTContract,
     rugBonusClaimModule,
+    OwnerMintModule,
   };
 };

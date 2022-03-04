@@ -48,6 +48,7 @@ export interface InitialState {
     };
   };
   showWalletModal: boolean;
+  dispatchCreateFlow: boolean;
 }
 
 export const initialState: InitialState = {
@@ -68,4 +69,5 @@ export const initialState: InitialState = {
     },
   },
   showWalletModal: false,
-};
+  dispatchCreateFlow: false,
+}

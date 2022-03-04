@@ -3,17 +3,19 @@ import Modal, { ModalStyle } from "@/components/modal";
 import { Spinner } from "@/components/shared/spinner";
 import { BlockExplorerLink } from "@/components/syndicates/shared/BlockExplorerLink";
 import Head from "@/components/syndicates/shared/HeaderTitle";
-import WalletNotConnected from "@/components/walletNotConnected";
 import InvestmentClubCTAs from "@/containers/create/shared/controls/investmentClubCTAs";
-import ByInvitationOnly from "@/containers/createInvestmentClub/byInvitationOnly";
+import WalletWarnings from "@/containers/createInvestmentClub/walletWarnings";
 import GettingStarted from "@/containers/createInvestmentClub/gettingStarted";
 import ReviewDetails from "@/containers/createInvestmentClub/reviewDetails";
 import { useCreateInvestmentClubContext } from "@/context/CreateInvestmentClubContext";
 import { AppState } from "@/state";
 import Image from "next/image";
 import Link from "next/link";
-import { useRef } from "react";
-import { useSelector } from "react-redux";
+import { useEffect, useRef } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import moment from "moment";
+import AddToCalendar from "@/components/addToCalendar";
+import { setDispatchCreateFlow } from "@/state/wallet/actions";
 
 const CreateInvestmentClub: React.FC = () => {
   const {
@@ -24,6 +26,7 @@ const CreateInvestmentClub: React.FC = () => {
     processingModalTitle,
     processingModalDescription,
     errorModal,
+    warningModal,
     setShowModal,
     handleCreateInvestmentClub,
     preClubCreationStep,
@@ -33,29 +36,51 @@ const CreateInvestmentClub: React.FC = () => {
   const parentRef = useRef(null);
 
   const {
-    web3Reducer: { web3 },
     createInvestmentClubSliceReducer: {
+      investmentClubName,
+      mintEndTime: { value: endMintTime },
       clubCreationStatus: {
         creationReceipt: { tokenAddress },
         transactionHash,
       },
     },
+    web3Reducer: {
+      dispatchCreateFlow,
+      web3: { account },
+    },
   } = useSelector((state: AppState) => state);
 
-  const { account } = web3;
+  const dispatch = useDispatch();
+
+  const formattedDate = moment(endMintTime * 1000).format(
+    "dddd, MMM Do YYYY, h:mm A",
+  );
+
+  const calEvent = {
+    title: `${investmentClubName} closes to deposits on Syndicate`,
+    description: "",
+    startTime: endMintTime * 1000,
+    endTime: moment(endMintTime * 1000)
+      .add(1, "days")
+      .valueOf(),
+    location: "",
+  };
+
+  useEffect(() => {
+    if (dispatchCreateFlow && account) {
+      setShowModal((prev) => ({
+        ...prev,
+        warningModal: true,
+      }));
+    }
+  }, [dispatchCreateFlow, account]);
 
   return (
     <Layout>
       <Head title="Create Investment Club" />
       <>
-        {!account ? (
-          <WalletNotConnected />
-        ) : preClubCreationStep ? (
-          preClubCreationStep === "invite" ? (
-            <ByInvitationOnly setClubStep={setPreClubCreationStep} />
-          ) : (
-            <GettingStarted setClubStep={setPreClubCreationStep} />
-          )
+        {preClubCreationStep ? (
+          <GettingStarted setClubStep={setPreClubCreationStep} />
         ) : (
           <div className="container mx-auto w-full">
             <div
@@ -133,9 +158,15 @@ const CreateInvestmentClub: React.FC = () => {
               src="/images/checkCircleGreen.svg"
               alt=""
             />
-            <p className="text-xl text-center mt-10 mb-6 leading-4 text-white font-whyte">
-              Club Successfully Created
+            <p className="text-xl text-center mt-8 mb-2 leading-4 text-white font-whyte">
+              Welcome on-chain, {investmentClubName}
             </p>
+            <p className="text-sm text-center mb-6 text-white font-whyte">
+              Accepting deposits until {formattedDate}
+            </p>
+            <div className="flex justify-center mb-6 text-sm text-center leading-4 text-blue-navy font-whyte ml-2">
+              <AddToCalendar calEvent={calEvent} />
+            </div>
           </div>
           <div className="self-center pt-6 pb-3">
             <Link href={`/clubs/${tokenAddress}/manage?source=create`}>
@@ -156,6 +187,7 @@ const CreateInvestmentClub: React.FC = () => {
             waitingConfirmationModal: false,
             transactionModal: false,
             errorModal: false,
+            warningModal: false,
           }))
         }
         showCloseButton={false}
@@ -178,10 +210,10 @@ const CreateInvestmentClub: React.FC = () => {
           </div>
           <div className="h-fit-content rounded-2-half flex justify-center items-center flex-col mt-6">
             <div>
-              <p className="text-gray-syn4">
+              <p className="text-gray-syn4 px-6-percent md:px-0 text-center md:text-left">
                 Please try again and{" "}
                 <a
-                  className="text-blue"
+                  className="text-blue outline-none"
                   href="mailto:support@syndicate.io"
                   target="_blank"
                   rel="noreferrer"
@@ -210,6 +242,28 @@ const CreateInvestmentClub: React.FC = () => {
             </div>
           </div>
         </div>
+      </Modal>
+
+      {/* Wallet warning modals */}
+      <Modal
+        show={warningModal}
+        modalStyle={ModalStyle.DARK}
+        closeModal={() => {
+          setShowModal(() => ({
+            waitingConfirmationModal: false,
+            transactionModal: false,
+            errorModal: false,
+            warningModal: false,
+          }));
+          dispatch(setDispatchCreateFlow(false));
+        }}
+        showCloseButton={false}
+        outsideOnClick={true}
+        customWidth="w-11/12 sm:w-100 md:w-1/2 lg:w-100"
+        customClassName="py-8 px-10"
+        showHeader={false}
+      >
+        <WalletWarnings />
       </Modal>
     </Layout>
   );

@@ -11,15 +11,18 @@ import Header from "@/components/navigation/header/Header";
 import DemoBanner from "../demoBanner";
 import ProgressBar from "../ProgressBar";
 import SEO from "../seo";
+import { useDemoMode } from "@/hooks/useDemoMode";
 
 interface Props {
   showBackButton?: boolean;
+  managerSettingsOpen?: boolean;
   showNav?: boolean;
   navItems?: { navItemText: string; url?: string; isLegal?: boolean }[];
 }
 
 const Layout: FC<Props> = ({
   children,
+  managerSettingsOpen = false,
   showBackButton = false,
   showNav = true,
   navItems = [
@@ -40,6 +43,8 @@ const Layout: FC<Props> = ({
   } = useSelector((state: AppState) => state);
 
   const router = useRouter();
+  const isDemoMode = useDemoMode();
+
   const {
     pathname,
     isReady,
@@ -61,7 +66,10 @@ const Layout: FC<Props> = ({
   const fewClubs = myClubERC20s.length + otherClubERC20s.length < 4;
   const onPortfolioPage = clubsFound && fewClubs && portfolioPage;
   const pushFooter =
-    onPortfolioPage || !account || loading || loadingClubDetails;
+    onPortfolioPage ||
+    !account ||
+    (loading && !managerSettingsOpen) ||
+    loadingClubDetails;
 
   // we don't need to render the footer on the creation page.
   const createClubPage = router.pathname === "/clubs/create";
@@ -131,14 +139,14 @@ const Layout: FC<Props> = ({
         </div>
         <div
           className={`flex w-full bg-black flex-col sm:flex-row ${
-            showCreateProgressBar ? "pt-16" : "pt-24"
+            showCreateProgressBar ? "pt-16" : isDemoMode ? "pt-48" : "pt-24"
           } z-20 justify-center items-center my-0 mx-auto`}
         >
           {children}
         </div>
         <ConnectWallet />
       </div>
-      {createClubPage ? null : (
+      {createClubPage || managerSettingsOpen ? null : (
         <div>
           <div className="container mx-auto">
             <Footer extraClasses="mt-24 sm:mt-24 md:mt-40 mb-12" />

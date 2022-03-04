@@ -1,4 +1,5 @@
 import '../src/styles/global.css'
+import { RouterContext } from "next/dist/shared/lib/router-context";
 
 
 export const parameters = {
@@ -8,6 +9,9 @@ export const parameters = {
       color: /(background|color)$/i,
       date: /Date$/,
     },
+  },
+  nextRouter: {
+    Provider: RouterContext.Provider,
   },
   backgrounds: {
     default: 'black',
@@ -22,6 +26,12 @@ export const parameters = {
       },
     ],
   },
-  // backgrounds: [{ name: 'dark', value: '#33354C', default: true }],
-
 }
+
+export const decorators = [
+  (Story) => (
+    <div className='text-white'>
+      <Story />
+    </div>
+  ),
+];

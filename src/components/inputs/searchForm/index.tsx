@@ -22,6 +22,8 @@ export const SearchForm = (props: {
   searchItem?: string;
   clearSearchValue?: (event) => void;
   width?: number;
+  parentBackground?: string;
+  padding?: string;
 }): JSX.Element => {
   const {
     error,
@@ -35,19 +37,23 @@ export const SearchForm = (props: {
     column = false,
     searchItem = "members",
     width,
+    parentBackground = "bg-gray-8",
+    padding = "py-2.5 pl-1",
   } = props;
 
   return (
     <div
       className={`flex ${
         column ? `flex-col mr-2 sm:mr-4` : `flex-row`
-      } justify-center ${full ? `w-full` : ``}`}
+      } justify-center ${full ? `w-full` : ``} `}
     >
       <div className={`w-5/6 flex-grow flex flex-col justify-between`}>
         {/* input field */}
         <div className="flex justify-start items-center">
           <div className="relative flex items-center justify-start w-full">
-            <div className="relative bg-gray-8 pl-1 flex items-stretch flex-grow focus-within:z-10">
+            <div
+              className={`relative rounded ${padding} flex items-stretch flex-grow focus-within:z-10 ${parentBackground}`}
+            >
               <div
                 className={`absolute my-auto align-middle inset-y-0 pt-0.5 h-full z-8 flex items-center justify-center pr-2 ${
                   disabled ? "opacity-40" : ""
@@ -78,24 +84,24 @@ export const SearchForm = (props: {
                   width: searchValue && width ? width : "auto",
                 }}
               />
-            </div>
-            {searchValue.trim() !== "" && clearSearchValue !== undefined && (
-              <button
-                className="flex items-center pr-2 cursor-pointer text-gray-syn5"
-                onClick={clearSearchValue}
-              >
-                <div className="flex-shrink-0 flex items-center">
-                  <Image
-                    src="/images/close-circle.svg"
-                    height="16"
-                    width="16"
-                    alt="Selector Icon"
-                  />
-                </div>
+              {searchValue.trim() !== "" && clearSearchValue !== undefined && (
+                <button
+                  className="flex items-center pr-2 cursor-pointer text-gray-syn5"
+                  onClick={clearSearchValue}
+                >
+                  <div className="flex-shrink-0 flex items-center">
+                    <Image
+                      src="/images/close-circle.svg"
+                      height="16"
+                      width="16"
+                      alt="Selector Icon"
+                    />
+                  </div>
 
-                <p className="ml-2">Clear</p>
-              </button>
-            )}
+                  {/* <p className="ml-2">Clear</p> */}
+                </button>
+              )}
+            </div>
           </div>
         </div>
         {error && (

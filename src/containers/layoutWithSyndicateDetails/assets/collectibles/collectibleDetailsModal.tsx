@@ -35,7 +35,7 @@ const CollectibleDetailsModal: React.FC = () => {
         closeModal={() => {
           dispatch(setShowCollectibleModal(false));
         }}
-        customWidth="w-564"
+        customWidth="sm:w-564 w-full"
         customClassName="p-0"
         showCloseButton={false}
         outsideOnClick={!showFullScreen}

@@ -10,19 +10,30 @@ export const numberWithCommas = (number: string | number): string => {
 
   return (
     wholePart.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
-    `${decimalPart ? `.${decimalPart}` : ""}`
+    `${
+      decimalPart
+        ? `.${decimalPart}`
+        : number.toString().indexOf(".") > -1
+        ? "."
+        : ""
+    }`
   );
 };
 
 // add two decimal places
-export const floatedNumberWithCommas = (number): string => {
+export const floatedNumberWithCommas = (number, ethValue = false): string => {
   if (!number || number === "NaN") {
     return "0";
   }
 
   // return this for values smaller than 0.01 since we use 2dp
+  // 0.01 is significant for ETH deposits. Adding an extra check here.
   if (number < 0.01 && number > 0) {
-    return "< 0.01";
+    if (!ethValue) {
+      return "< 0.01";
+    } else {
+      return number.toString().match(/^-?\d+(?:\.\d{0,4})?/)[0];
+    }
   }
 
   // do not show decimal points if there are only zeros after the decimal point.
@@ -33,9 +44,17 @@ export const floatedNumberWithCommas = (number): string => {
 
   try {
     // avoid rounding up the number when converting to 2 decimal places
-    const numberTo2decimalsWithoutRoundingUp = number
-      .toString()
-      .match(/^-?\d+(?:\.\d{0,4})?/)[0];
+    // show 4 decimal places for ETH values only.
+    let numberTo2decimalsWithoutRoundingUp;
+    if (ethValue) {
+      numberTo2decimalsWithoutRoundingUp = number
+        .toString()
+        .match(/^-?\d+(?:\.\d{0,4})?/)[0];
+    } else {
+      numberTo2decimalsWithoutRoundingUp = number
+        .toString()
+        .match(/^-?\d+(?:\.\d{0,2})?/)[0];
+    }
 
     // performs a negative look ahead. Finds .00 which does not have a digit (0-9) after it
     return numberWithCommas(numberTo2decimalsWithoutRoundingUp).replace(
@@ -53,9 +72,10 @@ export const numberInputRemoveCommas = (
   let newVal;
   const { value } = event.target;
   newVal = value;
+
   const [beforeDecimal, afterDecimal] = value.split(".");
-  if (afterDecimal && afterDecimal.length > 2) {
-    newVal = beforeDecimal + "." + afterDecimal.slice(0, 2);
+  if (afterDecimal && afterDecimal.length > 5) {
+    newVal = beforeDecimal + "." + afterDecimal.slice(0, 5);
   }
 
   // check and remove leading zeroes if not followed by a decimal point
@@ -66,6 +86,7 @@ export const numberInputRemoveCommas = (
   ) {
     newVal = newVal.slice(1);
   }
+
   // remove commas from big numbers before we set state
   return newVal.replace(/,/g, "");
 };
