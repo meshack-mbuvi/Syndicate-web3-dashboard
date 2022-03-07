@@ -20,26 +20,20 @@ const NetworkMenuDropDown: FC<IAddressMenuDropDown> = ({ web3 }) => {
 
   const [ethBalance, setEthBalance] = useState("");
 
-  const getEthBalance = async (address: string, isMounted: boolean) => {
+  const getEthBalance = async (address: string) => {
     try {
       const balance = await web3Instance.eth.getBalance(address);
-      const ethBalance = await web3Instance.utils.fromWei(balance, "ether");
-      if (isMounted) {
-        setEthBalance(ethBalance);
-      }
+      const ethBalance = web3Instance.utils.fromWei(balance, "ether");
+      setEthBalance(ethBalance);
     } catch (error) {
       console.log({ error });
     }
   };
 
   useEffect(() => {
-    let isMounted = true;
     if (account && !ethBalance) {
-      getEthBalance(account, isMounted);
+      getEthBalance(account);
     }
-    return () => {
-      isMounted = false;
-    };
   }, [account, ethBalance]);
 
   return (
