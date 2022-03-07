@@ -4,7 +4,7 @@ import { DataStorageToolTip } from "./DataStorageToolTip";
 
 export const DataStorageInfo: React.FC = () => {
   const toolTipMessage =
-    "Syndicate stores this data. It is not publicly viewable on-chain.<br /><br />Only members of this club can view the data entered in this field.";
+    "Data entered here is obfuscated but publicly viewable off-chain.<br /><br />Do not store PII here until additional privacy options are available.";
 
   return (
     <div>
@@ -16,7 +16,7 @@ export const DataStorageInfo: React.FC = () => {
             width={14}
           />
           <div className="pl-1 inline-flex font-whyte text-sm text-gray-syn5">
-            How is this data stored?
+            Who can see this data?
           </div>
         </div>
       </div>
