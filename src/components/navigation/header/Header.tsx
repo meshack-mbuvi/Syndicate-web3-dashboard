@@ -5,6 +5,7 @@ import { useRouter } from "next/router";
 import { NavBarNavItem } from "./navbarItems";
 import WalletComponent from "./wallet";
 import { MoreMenu } from "./moreMenu";
+import NetworkComponent from "./network";
 
 interface props {
   navItems: { navItemText: string; url?: string; isLegal?: boolean }[];
@@ -78,9 +79,9 @@ const Header: React.FC<props> = ({
         <div className="fixed sm:hidden h-screen w-full bg-gray-syn8 opacity-50 z-40" />
       ) : null}
       <nav
-        className={`${
-          showNav ? "block" : "hidden"
-        } ${showMobileNav ? "bg-gray-syn8 bg-opacity-100" : "bg-black"} sm:bg-black h-20 sm:bg-opacity-50 fixed top-0 inset-x-0 align-middle z-40 backdrop-filter backdrop-blur-xl`}
+        className={`${showNav ? "block" : "hidden"} ${
+          showMobileNav ? "bg-gray-syn8 bg-opacity-100" : "bg-black"
+        } sm:bg-black h-20 sm:bg-opacity-50 fixed top-0 inset-x-0 align-middle z-40 backdrop-filter backdrop-blur-xl`}
         ref={navRef}
       >
         {showMobileNav ? (
@@ -96,10 +97,11 @@ const Header: React.FC<props> = ({
                   />
                 </div>
                 <div className="pl-6-percent">
-                  <div className="border-b-1 border-gray-border"/>
+                  <div className="border-b-1 border-gray-border" />
                 </div>
               </>
             ))}
+            <NetworkComponent />
             <WalletComponent />
           </div>
         ) : null}
@@ -161,6 +163,7 @@ const Header: React.FC<props> = ({
             </button>
           </div>
           <div className="relative hidden sm:flex sm:space-x-3 flex-1 justify-end items-center">
+            <NetworkComponent />
             <WalletComponent />
             <MoreMenu />
           </div>

@@ -6,11 +6,45 @@ export interface IWeb3 extends Web3 {
   _provider?: any;
   utils: any;
 }
+export interface IblockExplorer {
+  name: string;
+  baseUrl: string;
+  transaction: string;
+  address: string;
+}
+
+export interface INativeToken {
+  symbol: string;
+  name: string;
+  decimals: string;
+}
+
+export interface IMetadata {
+  colors: {
+    background: string;
+  };
+}
+
+export interface IActiveNetwork {
+  name: string;
+  displayName: string;
+  shortName: string;
+  network: string;
+  chainId: number;
+  networkId: number;
+  rpcUrl: string;
+  publicRPC: string;
+  logo: string;
+  blockExplorer: IblockExplorer;
+  nativeToken: INativeToken;
+  metadata: IMetadata;
+}
 
 export interface IWeb3Library {
   account: string;
   web3: IWeb3;
   providerName: string;
+  activeNetwork: IActiveNetwork;
 }
 
 export interface IEthereumNetwork {
@@ -41,6 +75,7 @@ export interface InitialState {
     chainId: number;
     account: string;
     providerName: string;
+    activeNetwork: IActiveNetwork;
     currentEthereumNetwork: string;
     ethereumNetwork: {
       correctEthereumNetwork: string;
@@ -67,7 +102,34 @@ export const initialState: InitialState = {
       correctEthereumNetwork: "",
       invalidEthereumNetwork: false,
     },
+    activeNetwork: {
+      name: "",
+      displayName: "",
+      shortName: "",
+      network: "",
+      chainId: null,
+      networkId: null,
+      rpcUrl: "",
+      publicRPC: "",
+      logo: "",
+      blockExplorer: {
+        name: "",
+        baseUrl: "",
+        transaction: "",
+        address: "",
+      },
+      nativeToken: {
+        symbol: "",
+        name: "",
+        decimals: "",
+      },
+      metadata: {
+        colors: {
+          background: "",
+        },
+      },
+    },
   },
   showWalletModal: false,
   dispatchCreateFlow: false,
-}
+};
