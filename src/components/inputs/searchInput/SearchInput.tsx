@@ -8,7 +8,7 @@ import React from "react";
  *  small text is rendered.
  * @param {*} props
  */
-export const SearchForm = (props: {
+export const SearchInput = (props: {
   name?: string;
   id?: string;
   onChangeHandler;

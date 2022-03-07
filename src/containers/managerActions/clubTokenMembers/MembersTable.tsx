@@ -1,4 +1,4 @@
-import { SearchForm } from "@/components/inputs/searchForm";
+import { SearchInput } from "@/components/inputs";
 import Modal, { ModalStyle } from "@/components/modal";
 import { Spinner } from "@/components/shared/spinner";
 import { SET_MEMBER_SIGN_STATUS } from "@/graphql/mutations";
@@ -181,11 +181,11 @@ const MembersTable = ({
     <div>
       <div className="flex my-11 col-span-12 space-x-8 justify-between items-center">
         {page.length > 1 || searchAddress ? (
-          <SearchForm
-            {...{
-              onChangeHandler: filterAddressOnChangeHandler,
-              searchValue: searchAddress,
-              itemsCount: data.length,
+          <SearchInput
+          {...{
+            onChangeHandler: filterAddressOnChangeHandler,
+            searchValue: searchAddress,
+            itemsCount: data.length,
             }}
           />
         ) : (
