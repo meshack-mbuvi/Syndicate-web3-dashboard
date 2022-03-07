@@ -86,6 +86,7 @@ export const MintAndShareTokens: React.FC<Props> = ({
 
     if (!addressValue.trim()) {
       setMemberAddressError("Member address is required.");
+      setMemberAddress("");
     } else if (addressValue && !web3.utils.isAddress(addressValue)) {
       setMemberAddressError("Please provide a valid Ethereum address.");
     } else if (addressValue.toLocaleLowerCase() === owner.toLocaleLowerCase()) {
@@ -119,6 +120,8 @@ export const MintAndShareTokens: React.FC<Props> = ({
           </button>
         </span>,
       );
+    } else if (!amount || +amount <= 0) {
+      setAmountToMintError("Amount is required.");
     } else {
       setAmountToMintError("");
     }
@@ -134,6 +137,8 @@ export const MintAndShareTokens: React.FC<Props> = ({
     setMemberAddressError("");
     setAmountToMintError("");
     setAmountToMint("0");
+    setMemberAddress("");
+    setRawMemberAddress("");
   };
 
   useEffect(() => {
@@ -153,6 +158,9 @@ export const MintAndShareTokens: React.FC<Props> = ({
     setMinting(false);
     setMintFailed(false);
     refreshClubDetails();
+
+    // clear modal states
+    clearFieldErrors();
   };
 
   if (confirm) {

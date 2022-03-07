@@ -77,8 +77,8 @@ const MemberDetailsModal: React.FC<IMemberDetails> = ({
           manually add member
         </h1>
         <p className="text-gray-syn4 text-base font-whyte leading-6">
-          To manually add a member, enter their wallet address and optionally
-          the amount of club tokens to mint.
+          To manually add a member, enter their wallet address and the amount of
+          club tokens to mint.
         </p>
 
         <div className="space-y-6">
@@ -121,7 +121,9 @@ const MemberDetailsModal: React.FC<IMemberDetails> = ({
             disabled={
               Boolean(amountToMintError) ||
               Boolean(memberAddressError) ||
-              !memberAddress
+              !memberAddress ||
+              !amountToMint ||
+              +amountToMint <= 0
             }
             onClick={(e) => {
               handleShow(false);
