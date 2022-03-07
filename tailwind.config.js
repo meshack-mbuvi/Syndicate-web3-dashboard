@@ -294,6 +294,9 @@ module.exports = {
           tycho: "#29647E",
           liquidity: "#1FBBEC",
           stratosphere: "#A4DEFF",
+          cornflowerBlue: "#627EEA",
+          blueViolet: "#8247E5",
+          carolinaBlue: "#28A0F0",
         },
         yellow: {
           ...colors.yellow,

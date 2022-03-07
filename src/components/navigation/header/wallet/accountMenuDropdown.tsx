@@ -13,9 +13,9 @@ interface IAddressMenuDropDown {
 }
 
 const AddressMenuDropDown: FC<IAddressMenuDropDown> = ({
-  web3: { account, providerName, web3 },
+  web3: { account, providerName, web3, activeChain },
 }) => {
-  const { chainToken, disconnectWallet } = useConnectWalletContext();
+  const { disconnectWallet } = useConnectWalletContext();
 
   const [showCopyState, setShowCopyState] = useState(false);
   const [ethBalance, setEthBalance] = useState("");
@@ -40,7 +40,11 @@ const AddressMenuDropDown: FC<IAddressMenuDropDown> = ({
     <Menu as="div" className="relative">
       {({ open }) => (
         <>
-          <Menu.Button className={`flex rounded-full pl-5 pr-4 py-3 sm:py-1 items-center ${open ? "bg-gray-syn7" : "bg-gray-syn8"} h-10 hover:bg-gray-syn7`}>
+          <Menu.Button
+            className={`flex rounded-full pl-5 pr-4 py-3 sm:py-1 items-center ${
+              open ? "bg-gray-syn7" : "bg-gray-syn8"
+            } h-10 hover:bg-gray-syn7`}
+          >
             <span className="block focus:outline-none mr-4 sm:mr-1 text-base leading-5.5 py-3 sm:text-sm font-whyte-regular">
               <span className="text-gray-syn4">
                 {formattedAddress.slice(0, 2)}
@@ -70,11 +74,13 @@ const AddressMenuDropDown: FC<IAddressMenuDropDown> = ({
               as="ul"
               className="absolute right-0 w-80 mt-2 origin-top-right bg-black rounded-2xl border border-gray-syn7 shadow-lg outline-none p-2"
             >
-              <div style={{borderRadius: "0.625rem"}}>
+              <div style={{ borderRadius: "0.625rem" }}>
                 <div className="bg-gray-syn8 p-4 rounded-t-1.5lg rounded-b-none">
                   <div className="flex items-center">
                     <p className="">
-                      <span className="text-gray-syn5">{account.substring(0,2)}</span>
+                      <span className="text-gray-syn5">
+                        {account.substring(0, 2)}
+                      </span>
                       {formatAddress(account.substring(2), 6, 6)}
                     </p>
                   </div>
@@ -84,8 +90,10 @@ const AddressMenuDropDown: FC<IAddressMenuDropDown> = ({
                   </div>
                 </div>
 
-                <div className="bg-gray-syn8 p-4 rounded-b-1.5lg rounded-t-none" style={{marginTop: "1px"}}>
-
+                <div
+                  className="bg-gray-syn8 p-4 rounded-b-1.5lg rounded-t-none"
+                  style={{ marginTop: "1px" }}
+                >
                   {/* Copy address */}
                   <CopyToClipboard
                     text={account}
@@ -95,7 +103,11 @@ const AddressMenuDropDown: FC<IAddressMenuDropDown> = ({
                       <div className="flex justify-between hover:bg-gray-syn7 hover:p-2 hover:-m-2 rounded-lg">
                         <div>Copy address</div>
                         <div className="ml-4 flex items-center ml-0 relative lg:active:bg-opacity-20">
-                          <span className={`${showCopyState ? "opacity-100" : "opacity-0"} transition-opacity absolute text-xs -left-11 text-gray-syn4`}>
+                          <span
+                            className={`${
+                              showCopyState ? "opacity-100" : "opacity-0"
+                            } transition-opacity absolute text-xs -left-11 text-gray-syn4`}
+                          >
                             copied
                           </span>
                           <img
@@ -127,7 +139,6 @@ const AddressMenuDropDown: FC<IAddressMenuDropDown> = ({
                     </button>
                   </div>
                 </div>
-
               </div>
               <div>
                 <div className="w-full mt-2">
