@@ -1,3 +1,4 @@
+import { EtherscanLink } from "@/components/syndicates/shared/EtherscanLink";
 import Modal, { ModalStyle } from "../modal";
 import { Spinner } from "../shared/spinner";
 
@@ -11,12 +12,13 @@ export enum ProgressModalState {
 export const ProgressModal = (props: {
   isVisible: boolean;
   title: string;
-  description?: string;
+  description?: any;
   state: ProgressModalState;
   buttonLabel?: string;
   buttonOnClick?: () => void;
   etherscanLink?: string;
-}) => {
+  etherscanLinkText?: string;
+}): JSX.Element => {
   const {
     title,
     description,
@@ -25,6 +27,7 @@ export const ProgressModal = (props: {
     buttonOnClick,
     etherscanLink,
     isVisible = false,
+    etherscanLinkText = "Etherscan",
   } = props;
 
   let icon;
@@ -32,9 +35,11 @@ export const ProgressModal = (props: {
     case ProgressModalState.CONFIRM:
       icon = <Spinner height="h-16" width="w-16" margin="" />;
       break;
+
     case ProgressModalState.PENDING:
       icon = <Spinner height="h-16" width="w-16" margin="" />;
       break;
+
     case ProgressModalState.SUCCESS:
       icon = (
         <img
@@ -46,6 +51,7 @@ export const ProgressModal = (props: {
         />
       );
       break;
+
     case ProgressModalState.FAILURE:
       icon = (
         <img
@@ -70,32 +76,35 @@ export const ProgressModal = (props: {
     >
       {/* -mx-4 is used to revert the mx-4 set on parent div on the modal */}
       <div className="py-10 -mx-4 px-8">
-        {/* passing empty margin to remove the default margin set on spinner */}
-        {icon}
-        <p className="text-xl text-center mt-10  leading-4 text-white font-whyte">
-          {title}
-        </p>
-        {description && (
-          <div className="font-whyte text-center mt-4 leading-5 text-base text-gray-lightManatee">
-            {description}
-          </div>
-        )}
-        {etherscanLink && (
-          <a
-            href={etherscanLink}
-            className="text-blue-neptune flex items-center space-x-2 justify-center mt-4 focus:outline-none"
-            target="_blank"
-            rel="noreferrer"
-          >
-            <div>View on Etherscan</div>
-            <img src="images/externalLinkGray.svg" alt="view on etherscan" />
-          </a>
-        )}
+        <div className="mb-8">
+          {/* passing empty margin to remove the default margin set on spinner */}
+          {icon}
+        </div>
+        <div className="space-y-4">
+          <p className="text-xl text-center mt-10 leading-4 text-white font-whyte">
+            {title}
+          </p>
+          {description && (
+            <div className="font-whyte text-center leading-5 text-base text-gray-syn4">
+              {description}
+            </div>
+          )}
+          {etherscanLink && (
+            <div className="flex justify-center">
+              <EtherscanLink
+                etherscanInfo={etherscanLink}
+                type="transaction"
+                text={etherscanLinkText}
+                grayIcon={true}
+              />
+            </div>
+          )}
+        </div>
 
         {buttonLabel && (
           <button
             onClick={buttonOnClick}
-            className="primary-CTA flex-shrink block mx-auto mt-8"
+            className="primary-CTA flex-shrink block mx-auto mt-6"
           >
             {buttonLabel}
           </button>

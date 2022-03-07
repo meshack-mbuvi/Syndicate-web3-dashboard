@@ -19,11 +19,13 @@ import { setERC20Token } from "@/helpers/erc20TokenDetails";
 import useSyndicateClubInfo from "@/hooks/deposit/useSyndicateClubInfo";
 import { useAccountTokens } from "@/hooks/useAccountTokens";
 import useFetchAirdropInfo from "@/hooks/useAirdropInfo";
+import { useClubDepositsAndSupply } from "@/hooks/useClubDepositsAndSupply";
+import { useIsClubMember } from "@/hooks/useClubOwner";
 import { useDemoMode } from "@/hooks/useDemoMode";
+import { useEthBalance } from "@/hooks/useEthBalance";
 import useFetchMerkleProof from "@/hooks/useMerkleProof";
 import useModal from "@/hooks/useModal";
 import { useERC20TokenBalance } from "@/hooks/useTokenBalance";
-import { useEthBalance } from "@/hooks/useEthBalance";
 import useFetchTokenClaim from "@/hooks/useTokenClaim";
 import useTokenDetails from "@/hooks/useTokenDetails";
 import useWindowSize from "@/hooks/useWindowSize";
@@ -36,6 +38,7 @@ import {
   truncateDecimals,
 } from "@/utils/formattedNumbers";
 import { CheckIcon } from "@heroicons/react/solid";
+import axios from "axios";
 import Image from "next/image";
 import React, { useCallback, useEffect, useState } from "react";
 import { CopyToClipboard } from "react-copy-to-clipboard";
@@ -48,9 +51,6 @@ import ERC20ABI from "src/utils/abi/erc20";
 import { AbiItem } from "web3-utils";
 import BeforeGettingStarted from "../../beforeGettingStarted";
 import ConnectWalletAction from "../shared/connectWalletAction";
-import axios from "axios";
-import { useIsClubMember } from "@/hooks/useClubOwner";
-import { useClubDepositsAndSupply } from "@/hooks/useClubDepositsAndSupply";
 
 const DepositSyndicate: React.FC = () => {
   // HOOK DECLARATIONS
@@ -219,7 +219,12 @@ const DepositSyndicate: React.FC = () => {
   }, [isTokenClaimed, airdropInfo]);
 
   useEffect(() => {
-    if (syndicateContracts && erc20Token && depositToken && !ethDepositToken) {
+    if (
+      syndicateContracts &&
+      erc20Token?.name &&
+      depositToken &&
+      !ethDepositToken
+    ) {
       // set up current deposit ERC20Contract and
       // and save it to the local state
       const ERC20Contract = new web3.eth.Contract(
@@ -230,12 +235,7 @@ const DepositSyndicate: React.FC = () => {
 
       checkClubWideErrors();
     }
-  }, [
-    depositToken,
-    JSON.stringify(erc20Token),
-    syndicateContracts,
-    ethDepositToken,
-  ]);
+  }, [depositToken, erc20Token?.name, syndicateContracts, ethDepositToken]);
 
   useEffect(() => {
     async function getTokenPrice(tokenName) {
@@ -582,6 +582,7 @@ const DepositSyndicate: React.FC = () => {
 
     try {
       let gnosisTxHash;
+
       await new Promise((resolve, reject) => {
         depositTokenContract.methods
           .approve(mintModule, amountToApprove)
@@ -812,7 +813,7 @@ const DepositSyndicate: React.FC = () => {
 
   useEffect(() => {
     checkClubWideErrors();
-  }, [JSON.stringify(erc20Token), account]);
+  }, [totalDeposits, maxTotalDeposits, memberDeposits, account]);
 
   const checkClubWideErrors = () => {
     let message;

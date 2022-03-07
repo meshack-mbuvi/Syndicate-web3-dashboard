@@ -2,6 +2,7 @@ export interface ERC20Token {
   name: string;
   owner: string;
   address: string;
+  currentMintPolicy;
   totalSupply?: number;
   tokenDecimals: number;
   totalDeposits?: number;
@@ -38,6 +39,7 @@ export const initialState: {
     name: "",
     owner: "",
     address: "",
+    currentMintPolicy: "",
     depositsEnabled: false,
     claimEnabled: false,
     totalSupply: 0,
