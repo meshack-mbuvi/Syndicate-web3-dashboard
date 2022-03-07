@@ -8,11 +8,9 @@ export const Network: React.FC = () => {
   } = useSelector((state: AppState) => state);
 
   return (
-    <>
-      <div className="wallet-connect">
-        <NetworkMenuDropDown web3={web3} />
-      </div>
-    </>
+    <div className="wallet-connect">
+      <NetworkMenuDropDown web3={web3} />
+    </div>
   );
 };
 
