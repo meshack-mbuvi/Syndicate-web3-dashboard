@@ -96,7 +96,7 @@ const MintMaxDate: FC<{ className?: string }> = ({ className }) => {
           value: parseInt((value / 1000).toString()), // convert to seconds.
         }),
       );
-      setDisableButtons(true);
+
       if (currentStep == 2) {
         setTimeout(() => {
           handleNext();
@@ -156,7 +156,8 @@ const MintMaxDate: FC<{ className?: string }> = ({ className }) => {
                 <button
                   className="flex items-center w-full h-full"
                   key={index}
-                  onClick={() => {
+                  onClick={(e) => {
+                    e.preventDefault();
                     handleSetMintTime(index, { mintTime, value });
                   }}
                   disabled={disableButtons}
