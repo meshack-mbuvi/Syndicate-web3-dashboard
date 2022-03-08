@@ -31,6 +31,43 @@ import { InputFieldWithDate } from "../inputs/inputFieldWithDate";
 import { InputFieldWithToken } from "../inputs/inputFieldWithToken";
 import { PillButtonLarge } from "../pillButtonsLarge";
 
+const progressModalStates = {
+  confirm: {
+    title: "Confirm in wallet",
+    description: "Confirm the modification of club settings in your wallet",
+    state: ProgressModalState.CONFIRM,
+    buttonLabel: "",
+  },
+  success: {
+    title: "Settings successfully modified",
+    description: "",
+    state: ProgressModalState.SUCCESS,
+    buttonLabel: "Back to club dashboard",
+  },
+  pending: {
+    title: "Pending confirmation",
+    description:
+      "This could take up to a few minutes depending on network congestion and the gas fees you set. Feel free to leave this screen.",
+    state: ProgressModalState.PENDING,
+    buttonLabel: "Back to club dashboard",
+  },
+  failure: {
+    title: "Transaction failed",
+    description: (
+      <span>
+        Please try again and
+        <EmailSupport
+          linkText="let us know"
+          className="text-blue focus:outline-none mx-1"
+        />
+        if the issue persists.
+      </span>
+    ),
+    state: ProgressModalState.FAILURE,
+    buttonLabel: "Try again",
+  },
+};
+
 export const ModifyClubSettings = (props: { isVisible: boolean }) => {
   const { isVisible } = props;
 
@@ -237,6 +274,7 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
   const onTxConfirm = (transactionHash: string) => {
     setTransactionHash(transactionHash);
     setProgressState("pending");
+    console.log("pending");
   };
 
   const onTxReceipt = (receipt) => {
@@ -274,60 +312,22 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
   };
 
   const ProgressStates = () => {
-    let title = "Confirm in wallet";
-    let description: any =
-      "Confirm the modification of club settings in your wallet";
-    let state = ProgressModalState.CONFIRM;
-    let buttonLabel = "";
+    if (!progressState) return null;
 
-    if (progressState === "success") {
-      title = "Settings successfully modified";
-      description = "";
-      state = ProgressModalState.SUCCESS;
-      buttonLabel = "Back to club dashboard";
+    if (progressState === "success" || progressState === "failure") {
       setTransactionHash("");
-    } else if (progressState === "pending") {
-      title = "Pending confirmation";
-      description =
-        "This could take up to a few minutes depending on network congestion and the gas fees you set. Feel free to leave this screen.";
-      state = ProgressModalState.PENDING;
-      buttonLabel = "Back to club dashboard";
-    } else if (progressState === "failure") {
-      title = "Transaction failed";
-      description = (
-        <span>
-          Please try again and
-          <EmailSupport
-            linkText="let us know"
-            className="text-blue focus:outline-none mx-1"
-          />
-          if the issue persists.
-        </span>
-      );
-      state = ProgressModalState.FAILURE;
-      buttonLabel = "Try again";
-
-      setTransactionHash("");
-    } else if (progressState === "confirm") {
-      title = "Confirm in wallet";
-      description = "Confirm the modification of club settings in your wallet";
-      state = ProgressModalState.CONFIRM;
-      buttonLabel = "";
-    } else return null;
+    }
 
     return (
       <ProgressModal
         {...{
+          ...progressModalStates[progressState],
           isVisible: true,
-          title,
-          description,
-          buttonLabel,
           etherscanLink: transactionHash,
           buttonOnClick:
-            buttonLabel == "Try again"
+            progressModalStates[progressState].buttonLabel == "Try again"
               ? () => setProgressState("")
               : handleExit,
-          state,
           etherscanLinkText: "View on Etherscan",
         }}
       />
@@ -432,40 +432,31 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
             >
               <div className="mb-4 xl:mb-0">Until</div>
               <div className="xl:w-76 mr-6 xl:mr-0">
-                {
-                  loading ? (
-                    <SkeletonLoader
-                      width="100%"
-                      height="10"
-                      borderRadius="rounded-1.5lg"
-                    />
-                  ) : (
-                    <InputFieldWithDate
-                      selectedDate={
-                        openToDepositsUntilWarning ? null : openToDepositsUntil
-                      }
-                      onChange={(targetDate) => {
-                        const eodToday = new Date(
-                          new Date().setHours(23, 59, 0, 0),
-                        ).getTime();
-                        const dateToSet =
-                          (targetDate as any) < eodToday
-                            ? eodToday
-                            : targetDate;
-                        setOpenToDepositsUntil(new Date(dateToSet));
-                        setOpenToDepositsUntilWarning(null); // clear error if any
-                      }}
-                      infoLabel={
-                        openToDepositsUntilWarning && openToDepositsUntilWarning
-                      }
-                    />
-                  )
-                  /* <LinkButton
-                            type={LinkType.CALENDAR}
-                            extraClasses='mt-5'
-                            onClick={null}
-                        /> */
-                }
+                {loading ? (
+                  <SkeletonLoader
+                    width="100%"
+                    height="10"
+                    borderRadius="rounded-1.5lg"
+                  />
+                ) : (
+                  <InputFieldWithDate
+                    selectedDate={
+                      openToDepositsUntilWarning ? null : openToDepositsUntil
+                    }
+                    onChange={(targetDate) => {
+                      const eodToday = new Date(
+                        new Date().setHours(23, 59, 0, 0),
+                      ).getTime();
+                      const dateToSet =
+                        (targetDate as any) < eodToday ? eodToday : targetDate;
+                      setOpenToDepositsUntil(new Date(dateToSet));
+                      setOpenToDepositsUntilWarning(null); // clear error if any
+                    }}
+                    infoLabel={
+                      openToDepositsUntilWarning && openToDepositsUntilWarning
+                    }
+                  />
+                )}
               </div>
             </div>
 
