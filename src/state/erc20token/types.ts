@@ -1,11 +1,10 @@
-import { MintPolicyContract } from "@/ClubERC20Factory/policyMintERC20";
 import { ERC20TokenDefaultState } from "@/helpers/erc20TokenDetails";
 
 export interface ERC20Token {
   name: string;
   owner: string;
   address: string;
-  currentMintPolicy?: MintPolicyContract;
+  currentMintPolicyAddress?: string;
   totalSupply?: number;
   tokenDecimals: number;
   totalDeposits?: number;

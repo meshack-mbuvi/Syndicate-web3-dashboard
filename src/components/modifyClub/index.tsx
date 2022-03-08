@@ -1,3 +1,4 @@
+import { MintPolicyContract } from "@/ClubERC20Factory/policyMintERC20";
 import { ProgressModal, ProgressModalState } from "@/components/progressModal";
 import { Switch, SwitchType } from "@/components/switch";
 import EstimateGas from "@/containers/createInvestmentClub/gettingStarted/estimateGas";
@@ -85,11 +86,12 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
     },
     erc20TokenSliceReducer: { erc20Token, depositDetails },
     web3Reducer: {
-      web3: { account, status },
+      web3: { account, status, web3 },
     },
   } = useSelector((state: AppState) => state);
 
   const {
+    name,
     address,
     memberCount,
     totalSupply,
@@ -99,7 +101,7 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
     maxTotalSupply,
     symbol,
     loading,
-    currentMintPolicy,
+    currentMintPolicyAddress,
   } = erc20Token;
 
   const { depositTokenSymbol } = depositDetails;
@@ -174,7 +176,7 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
 
   // makes sure that current settings render when content is available
   useEffect(() => {
-    if (erc20Token?.name && depositDetails) {
+    if (name && depositDetails) {
       if (
         existingOpenToDepositsUntil.toUTCString() === new Date(0).toUTCString()
       ) {
@@ -209,8 +211,8 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
       dispatch(setExistingNumberOfMembers(memberCount));
     }
   }, [
-    erc20Token?.name,
-    erc20Token?.currentMintPolicy,
+    name,
+    currentMintPolicyAddress,
     depositDetails,
     maxTotalSupply,
     totalSupply,
@@ -274,7 +276,6 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
   const onTxConfirm = (transactionHash: string) => {
     setTransactionHash(transactionHash);
     setProgressState("pending");
-    console.log("pending");
   };
 
   const onTxReceipt = (receipt) => {
@@ -291,7 +292,9 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
         ? getWeiAmount((maxAmountRaising * 10000).toString(), 18, true)
         : getWeiAmount(String(maxAmountRaising), 18, true);
 
-      await currentMintPolicy.modifyERC20(
+      const mintPolicy = new MintPolicyContract(currentMintPolicyAddress, web3);
+
+      await mintPolicy.modifyERC20(
         account,
         address,
         startTime,
@@ -338,24 +341,23 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
     <div className={`${isVisible ? "block" : "hidden"}`}>
       {/* Titles and close button */}
       <div className={`flex justify-between items-center mb-10 space-x-3`}>
-        <div className="space-y-2 sm:w-7/12">
-          <div className="flex items-center space-x-6">
-            {loading ? (
-              <div className="flex w-full flex-col">
-                <SkeletonLoader width={"full"} height={"6"} />
-                <SkeletonLoader width={"full"} height={"8"} />
-              </div>
-            ) : (
-              <>
-                <div className="text-xl">Modify settings</div>
-                <div className="text-sm text-gray-syn4">
-                  Submit multiple changes in one on-chain transaction to save on
-                  gas fees
-                </div>
-              </>
-            )}
+        {loading ? (
+          <div className="flex w-full flex-col">
+            <SkeletonLoader width={"full"} height={"6"} />
+            <SkeletonLoader width={"full"} height={"8"} />
           </div>
-        </div>
+        ) : (
+          <div className="space-y-2 sm:w-7/12">
+            <div className="flex items-center space-x-6">
+              <div className="text-xl">Modify settings</div>
+            </div>
+            <div className="text-sm text-gray-syn4">
+              Submit multiple changes in one on-chain transaction to save on gas
+              fees
+            </div>
+          </div>
+        )}
+
         {loading == false && (
           <PillButtonLarge onClick={handleExit} extraClasses="flex-shrink-0">
             <div>

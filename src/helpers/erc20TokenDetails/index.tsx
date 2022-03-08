@@ -36,7 +36,7 @@ export const ERC20TokenDefaultState = {
   maxTotalSupply: 0,
   requiredToken: "",
   requiredTokenMinBalance: "",
-  currentMintPolicy: undefined,
+  currentMintPolicyAddress: undefined,
 };
 
 const depositTokenMapping = {
@@ -87,7 +87,8 @@ export const getERC20TokenDetails = async (
     try {
       // ERC20tokenContract is initialized with the contract address
       const { address } = ERC20tokenContract;
-      let currentMintPolicy = policyMintERC20;
+
+      let currentMintPolicyAddress = policyMintERC20.address;
 
       let {
         endTime,
@@ -109,7 +110,7 @@ export const getERC20TokenDetails = async (
         } = await mintPolicy?.getSyndicateValues(address));
 
         // Change current mint policy
-        currentMintPolicy = mintPolicy;
+        currentMintPolicyAddress = mintPolicy.address;
       }
 
       const [name, owner, tokenDecimals, symbol, memberCount] =
@@ -147,7 +148,7 @@ export const getERC20TokenDetails = async (
       }
 
       return {
-        currentMintPolicy,
+        currentMintPolicyAddress,
         totalSupply,
         address,
         name,
