@@ -147,7 +147,8 @@ module.exports = {
           "Arial",
           "sans-serif",
         ],
-        "mono": ["Whyte Semi-Mono"]
+        "mono": ["Whyte Semi-Mono"],
+        "bold": ["Whyte Bold"]
       },
       fontSize: {
         subtext: ["0.75rem", "0.875rem"],
@@ -373,6 +374,7 @@ module.exports = {
         71: "17.3rem",
       },
       margin: {
+        4.5: "1.125rem",
         0.5: "0.15rem",
         18: "4.875rem",
         24.5: "6.5rem",

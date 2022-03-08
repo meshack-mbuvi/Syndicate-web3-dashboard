@@ -57,7 +57,7 @@ export const EtherscanLink: React.FC<LinkProp> = (props) => {
       )}
       {!iconOnly ? (
         <div className="flex justify-between items-center w-full">
-          <div className="text-blue">{text}</div>
+          <div className={`${iconColor === ExternalLinkColor.BLUE ? "text-blue" : "text-white"}`}>{text}</div>
           <ExternalLinkIcon
             className={`ml-2 w-4 text-blue`}
             iconColor={iconColor}

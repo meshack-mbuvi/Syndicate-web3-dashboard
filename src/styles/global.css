@@ -113,7 +113,7 @@
   }
 
   .font-bold {
-    font-family: "Whyte Bold";
+    font-weight: inherit !important; /* to override 700 weight */
   }
 
   .main-title {
