@@ -36,7 +36,7 @@ export const ERC20TokenDefaultState = {
   maxTotalSupply: 0,
   requiredToken: "",
   requiredTokenMinBalance: "",
-  currentMintPolicy: "",
+  currentMintPolicy: undefined,
 };
 
 const depositTokenMapping = {

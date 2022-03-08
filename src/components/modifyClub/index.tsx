@@ -136,7 +136,7 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
 
   // makes sure that current settings render when content is available
   useEffect(() => {
-    if (erc20Token && depositDetails) {
+    if (erc20Token?.name && depositDetails) {
       if (
         existingOpenToDepositsUntil.toUTCString() === new Date(0).toUTCString()
       ) {
@@ -171,7 +171,7 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
       dispatch(setExistingNumberOfMembers(memberCount));
     }
   }, [
-    erc20Token,
+    erc20Token?.name,
     depositDetails,
     maxTotalSupply,
     totalSupply,
@@ -180,6 +180,9 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
     maxMemberCount,
     memberCount,
     dispatch,
+    existingOpenToDepositsUntil,
+    existingMaxAmountRaising,
+    existingMaxNumberOfMembers,
   ]);
 
   useEffect(() => {
@@ -226,6 +229,7 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
     existingOpenToDepositsUntil,
     maxAmountRaisingError,
     maxNumberOfMembersError,
+    openToDepositsUntilWarning,
   ]);
 
   const onTxConfirm = (transactionHash: string) => {
@@ -236,6 +240,7 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
   const onTxReceipt = (receipt) => {
     dispatch(setClubCreationReceipt(receipt.events.ConfigUpdated.returnValues));
   };
+
   const handleTransaction = async () => {
     setProgressState("confirm");
     try {
