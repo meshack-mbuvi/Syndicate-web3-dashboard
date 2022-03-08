@@ -91,6 +91,7 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
   } = useSelector((state: AppState) => state);
 
   const {
+    startTime,
     name,
     address,
     memberCount,
@@ -285,7 +286,6 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
   const handleTransaction = async () => {
     setProgressState("confirm");
     try {
-      const startTime = parseInt((new Date().getTime() / 1000).toString());
       const updatedEndTime = new Date(openToDepositsUntil);
 
       const _tokenCap = depositTokenType
@@ -297,7 +297,7 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
       await mintPolicy.modifyERC20(
         account,
         address,
-        startTime,
+        startTime / 1000,
         updatedEndTime.getTime() / 1000,
         +maxNumberOfMembers,
         _tokenCap,
