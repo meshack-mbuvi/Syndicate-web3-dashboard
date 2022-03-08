@@ -28,7 +28,7 @@ export const ProgressIndicator = (props: IProgressIndicator): JSX.Element => {
   const { depositTokenName } = useTokenDetails(ethDepositToken);
 
   const [depositTokenPriceInUSDState, setDepositTokenPriceInUSDState] =
-    useState(null);
+    useState<number>(0);
 
   useEffect(() => {
     async function getTokenPrice(tokenName) {
@@ -36,7 +36,7 @@ export const ProgressIndicator = (props: IProgressIndicator): JSX.Element => {
         `https://api.coingecko.com/api/v3/simple/price?ids=${tokenName}&vs_currencies=usd`,
       );
       setDepositTokenPriceInUSDState(
-        result.data?.[tokenName.toLowerCase()]?.usd,
+        parseFloat(result.data?.[tokenName.toLowerCase()]?.usd?.toFixed(2)),
       );
     }
     getTokenPrice(depositTokenName);
