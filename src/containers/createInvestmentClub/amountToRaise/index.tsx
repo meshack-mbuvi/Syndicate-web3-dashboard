@@ -14,7 +14,7 @@ import Image from "next/image";
 import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AdvancedInputField } from "../shared/AdvancedInputField";
-import TokenSelectModal from "@/components/tokenSelect/TokenSelectModal";
+import TokenSelectModal from "@/containers/createInvestmentClub/shared/TokenSelectModal";
 import { defaultTokenDetails } from "@/containers/createInvestmentClub/shared/ClubTokenDetailConstants";
 
 const AmountToRaise: React.FC<{

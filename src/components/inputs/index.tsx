@@ -5,4 +5,3 @@ export { NumberField } from "./numberField";
 export { TextArea } from "./textArea";
 export { TextField } from "./textField";
 export { Toggle } from "./toggle";
-export { SearchInput } from "./searchInput/SearchInput";

@@ -1,13 +1,6 @@
-import "../src/styles/global.css";
+import '../src/styles/global.css'
 import { RouterContext } from "next/dist/shared/lib/router-context";
-import * as NextImage from "next/image";
 
-const OriginalNextImage = NextImage.default;
-
-Object.defineProperty(NextImage, "default", {
-  configurable: true,
-  value: (props) => <OriginalNextImage {...props} unoptimized />,
-});
 
 export const parameters = {
   actions: { argTypesRegex: "^on[A-Z].*" },
@@ -21,24 +14,23 @@ export const parameters = {
     Provider: RouterContext.Provider,
   },
   backgrounds: {
-    default: "black",
+    default: 'black',
     values: [
       {
-        name: "black",
-        value: "black",
+        name: 'black',
+        value: 'black',
       },
       {
-        name: "white",
-        value: "white",
+        name: 'white',
+        value: 'white',
       },
     ],
   },
-  // backgrounds: [{ name: 'dark', value: '#33354C', default: true }],
-};
+}
 
 export const decorators = [
   (Story) => (
-    <div className="text-white">
+    <div className='text-white'>
       <Story />
     </div>
   ),

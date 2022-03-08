@@ -209,23 +209,3 @@ export const SINGLE_CLUB_DETAILS = gql`
     }
   }
 `;
-
-export const TOKENS_BY_NAME = gql`
-  query getTokensByName($where: Token_filter) {
-    tokens(where: $where) {
-      name
-      symbol
-      id
-    }
-  }
-`;
-
-export const TOKENS_BY_ID = gql`
-  query getTokenById($tokenId: ID!) {
-    token(id: $tokenId) {
-      name
-      id
-      symbol
-    }
-  }
-`;
