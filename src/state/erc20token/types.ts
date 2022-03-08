@@ -2,7 +2,7 @@ export interface ERC20Token {
   name: string;
   owner: string;
   address: string;
-  currentMintPolicy;
+  currentMintPolicy?;
   totalSupply?: number;
   tokenDecimals: number;
   totalDeposits?: number;

@@ -262,8 +262,6 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
       dispatch(setExistingMaxNumberOfMembers(maxNumberOfMembers));
       setProgressState("success");
     } catch (error) {
-      const { code } = error;
-
       setProgressState("failure");
     }
   };
