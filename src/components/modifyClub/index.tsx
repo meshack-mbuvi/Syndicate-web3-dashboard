@@ -88,13 +88,9 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
   const [maxAmountRaisingError, setMaxAmountRaisingError] = useState(null);
   const [maxNumberOfMembersError, setMaxNumberOfMembersError] = useState(null);
 
-  // Loading
-  const [loadingState, setLoadingState] = useState<boolean>(true);
-
   // Settings change
   const [areClubChangesAvailable, setAreClubChangesAvailable] =
     useState<boolean>(false);
-  const areClubChangesPending = false;
 
   const [progressState, setProgressState] = useState<string>("");
 
@@ -114,11 +110,6 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
     router && router.push(`/clubs/${clubAddress}/manage`);
   };
 
-  // Checks load state for skeleton loaders
-  useEffect(() => {
-    !loading ? setLoadingState(false) : setLoadingState(true);
-  }, [loading]);
-
   useEffect(() => {
     if (
       loading ||
@@ -132,7 +123,17 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
     if ((pathname.includes("/modify") && !isOwner) || isDemoMode) {
       router.replace(`/clubs/${clubAddress}`);
     }
-  }, [owner, clubAddress, account, loading, status, isReady, isOwner]);
+  }, [
+    owner,
+    clubAddress,
+    account,
+    loading,
+    status,
+    isReady,
+    isOwner,
+    pathname,
+    isDemoMode,
+  ]);
 
   // makes sure that current settings render when content is available
   useEffect(() => {
@@ -172,6 +173,7 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
     }
   }, [
     erc20Token?.name,
+    erc20Token?.currentMintPolicy,
     depositDetails,
     maxTotalSupply,
     totalSupply,
@@ -338,34 +340,32 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
       <div className={`flex justify-between items-center mb-10 space-x-3`}>
         <div className="space-y-2 sm:w-7/12">
           <div className="flex items-center space-x-6">
-            <div className="text-xl">Modify settings</div>
-            <div
-              className={`text-sm text-gray-syn4 flex items-center space-x-2 ${
-                areClubChangesPending ? "block" : "hidden"
-              } transition-opacity`}
-            >
-              <img
-                src="images/spinner-blue.svg"
-                className="animate-spin"
-                alt="pending"
-              />
-              <div>Modification pending</div>
-              <img src="images/externalLinkGray.svg" alt="view on etherscan" />
-            </div>
-          </div>
-          <div className="text-sm text-gray-syn4">
-            Submit multiple changes in one on-chain transaction to save on gas
-            fees
+            {loading ? (
+              <div className="flex w-full flex-col">
+                <SkeletonLoader width={"full"} height={"6"} />
+                <SkeletonLoader width={"full"} height={"8"} />
+              </div>
+            ) : (
+              <>
+                <div className="text-xl">Modify settings</div>
+                <div className="text-sm text-gray-syn4">
+                  Submit multiple changes in one on-chain transaction to save on
+                  gas fees
+                </div>
+              </>
+            )}
           </div>
         </div>
-        <PillButtonLarge onClick={handleExit} extraClasses="flex-shrink-0">
-          <div>
-            {areClubChangesAvailable && isOpenToDeposits
-              ? "Discard & Exit"
-              : "Exit"}
-          </div>
-          <img src="/images/xmark-gray.svg" className="w-4" alt="cancel" />
-        </PillButtonLarge>
+        {loading == false && (
+          <PillButtonLarge onClick={handleExit} extraClasses="flex-shrink-0">
+            <div>
+              {areClubChangesAvailable && isOpenToDeposits
+                ? "Discard & Exit"
+                : "Exit"}
+            </div>
+            <img src="/images/xmark-gray.svg" className="w-4" alt="cancel" />
+          </PillButtonLarge>
+        )}
       </div>
 
       {/* Modal */}
@@ -374,9 +374,10 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
         style={{ borderRadius: "10px" }}
       >
         {/* Open to deposits */}
-        {!isOpenToDeposits ||
-        existingOpenToDepositsUntil.getTime() <
-          new Date(new Date().setHours(23, 59, 0, 0)).getTime() ? (
+        {!loading &&
+        (!isOpenToDeposits ||
+          existingOpenToDepositsUntil.getTime() <
+            new Date(new Date().setHours(23, 59, 0, 0)).getTime()) ? (
           <div
             className="flex justify-between items-center"
             data-tip
@@ -432,7 +433,7 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
               <div className="mb-4 xl:mb-0">Until</div>
               <div className="xl:w-76 mr-6 xl:mr-0">
                 {
-                  loadingState ? (
+                  loading ? (
                     <SkeletonLoader
                       width="100%"
                       height="10"
@@ -476,7 +477,7 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
             >
               <div className="mb-4 xl:mb-0">Max amount raising</div>
               <div className="xl:w-76 mr-6 xl:mr-0">
-                {loadingState ? (
+                {loading ? (
                   <SkeletonLoader
                     width="100%"
                     height="10"
@@ -527,7 +528,7 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
             >
               <div className="mb-4 xl:mb-0">Max number of members</div>
               <div className="xl:w-76 mr-6 xl:mr-0">
-                {loadingState ? (
+                {loading ? (
                   <SkeletonLoader
                     width="100%"
                     height="10"
