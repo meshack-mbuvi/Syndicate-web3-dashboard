@@ -15,7 +15,7 @@ const useFetchMerkleProof: any = (skipQuery = false) => {
 
   const {
     web3Reducer: {
-      web3: { account: address, web3 },
+      web3: { account: address, web3, activeNetwork },
     },
     erc721TokenSliceReducer: {
       erc721Token: { address: nftAddress },
@@ -31,6 +31,7 @@ const useFetchMerkleProof: any = (skipQuery = false) => {
   } = useQuery(ERC721_INDEX_AND_PROOF, {
     variables: { clubAddress: nftAddress, address },
     skip: !address || skipQuery,
+    context: { clientName: "backend", chainId: activeNetwork.chainId },
   });
 
   const processMerkleProofData = async (merkleObj) => {
@@ -45,10 +46,14 @@ const useFetchMerkleProof: any = (skipQuery = false) => {
   };
 
   useEffect(() => {
-    if (router.isReady && web3.utils.isAddress(nftAddress)) {
+    if (
+      router.isReady &&
+      web3.utils.isAddress(nftAddress) &&
+      activeNetwork.chainId
+    ) {
       refetchMerkle();
     }
-  }, [nftAddress, address, router.isReady]);
+  }, [nftAddress, address, router.isReady, activeNetwork.chainId]);
 
   useEffect(() => {
     dispatch(setLoadingERC721MerkleProof(true));

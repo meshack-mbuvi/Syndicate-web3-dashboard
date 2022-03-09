@@ -25,7 +25,7 @@ const useClubTokenMembers = () => {
   const { clubAddress } = router.query;
   const isDemoMode = useDemoMode();
 
-  const { account, currentEthereumNetwork } = web3;
+  const { account, activeNetwork } = web3;
 
   // Retrieve syndicates that I manage
   const {
@@ -38,6 +38,7 @@ const useClubTokenMembers = () => {
         contractAddress: clubAddress?.toString().toLocaleLowerCase(),
       },
     },
+    context: { clientName: "theGraph", chainId: activeNetwork.chainId },
     skip: !clubAddress || isDemoMode,
   });
 
@@ -72,10 +73,10 @@ const useClubTokenMembers = () => {
   };
 
   useEffect(() => {
-    if (router.isReady) {
+    if (router.isReady && activeNetwork.chainId) {
       refetch();
     }
-  }, [router.isReady, account, currentEthereumNetwork, totalSupply]);
+  }, [router.isReady, account, activeNetwork.chainId, totalSupply]);
 
   useEffect(() => {
     if (loadingClubMembers) {

@@ -38,7 +38,7 @@ import React, {
 } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Web3 from "web3";
-import { networks } from "@/Networks";
+import { NETWORKS } from "@/Networks/networks";
 import { IActiveNetwork } from "@/state/wallet/types";
 
 type AuthProviderProps = {
@@ -84,9 +84,9 @@ const web3Modal: SafeAppWeb3Modal = isSSR()
           package: WalletConnectProvider, // required
           options: {
             rpc: {
-              1: `${networks[1].rpcUrl}`,
-              4: `${networks[4].rpcUrl}`,
-              137: `${networks[137].rpcUrl}`,
+              1: `${NETWORKS[1].rpcUrl}`,
+              4: `${NETWORKS[4].rpcUrl}`,
+              137: `${NETWORKS[137].rpcUrl}`,
             },
           },
         },
@@ -111,12 +111,12 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
   const [activeProvider, setActiveProvider] = useState(null);
   const [account, setAccount] = useState("");
   const [loadedAsSafeApp, setLoadedAsSafeApp] = useState(false);
-  const [web3, setWeb3] = useState(new Web3(`${networks[1].rpcUrl}`)); // Default to an Ethereum mainnet
+  const [web3, setWeb3] = useState(new Web3(`${NETWORKS[1].rpcUrl}`)); // Default to an Ethereum mainnet
 
   const dispatch = useDispatch();
 
   const activeNetwork: IActiveNetwork = useMemo(
-    () => networks[chainId] ?? networks[1],
+    () => NETWORKS[chainId] ?? NETWORKS[1],
     [chainId],
   );
 
@@ -140,7 +140,7 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
    */
   const initializeWeb3 = async () => {
     // initialize contract now
-    const contracts = await getSyndicateContracts(web3);
+    const contracts = await getSyndicateContracts(web3, activeNetwork);
 
     dispatch(setContracts(contracts));
     try {
@@ -165,7 +165,7 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
         return dispatch(
           setLibrary({
             account,
-            web3: new Web3(`${networks[chainId].rpcUrl}`),
+            web3: new Web3(`${NETWORKS[chainId].rpcUrl}`),
             providerName,
             activeNetwork,
           }),
@@ -333,7 +333,7 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
     } catch (error) {
       if (error.code === 4902) {
         try {
-          const activeNetwork = networks[_chainId];
+          const activeNetwork = NETWORKS[_chainId];
           await activeProvider?.request({
             method: "wallet_addEthereumChain",
             params: [

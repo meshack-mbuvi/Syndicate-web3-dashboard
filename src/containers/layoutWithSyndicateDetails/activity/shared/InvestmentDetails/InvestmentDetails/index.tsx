@@ -49,6 +49,9 @@ const InvestmentDetailsModal: React.FC<IInvestmentDetailsModal> = ({
   const [hover, setHover] = useState<boolean>(false);
 
   const {
+    web3Reducer: {
+      web3: { activeNetwork },
+    },
     transactionsReducer: {
       currentTransaction: { blockTimestamp },
     },
@@ -122,7 +125,7 @@ const InvestmentDetailsModal: React.FC<IInvestmentDetailsModal> = ({
       variables: {
         transactionAnnotationList: [{ ...detailsAnnotationData }],
       },
-      context: { clientName: "backend" },
+      context: { clientName: "backend", chainId: activeNetwork.chainId },
     });
     setStoredInvestmentDetails(values);
     reset(values, {

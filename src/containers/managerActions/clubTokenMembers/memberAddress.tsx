@@ -5,6 +5,8 @@ import Image from "next/image";
 import { useRouter } from "next/router";
 import React, { useEffect } from "react";
 import Tooltip from "react-tooltip-lite";
+import { useSelector } from "react-redux";
+import { AppState } from "@/state";
 
 import { SignedIcon } from "../shared/signedIcon";
 
@@ -14,6 +16,11 @@ interface IProps {
 }
 export const MemberAddressComponent: React.FC<IProps> = (props) => {
   const { memberAddress, setSelectedMember, ...rest } = props;
+  const {
+    web3Reducer: {
+      web3: { activeNetwork },
+    },
+  } = useSelector((state: AppState) => state);
 
   const {
     query: { clubAddress },
@@ -24,14 +31,15 @@ export const MemberAddressComponent: React.FC<IProps> = (props) => {
       clubAddress,
       address: memberAddress,
     },
+    context: { clientName: "backend", chainId: activeNetwork.chainId },
     skip: !clubAddress || !memberAddress,
   });
 
   useEffect(() => {
-    if (memberAddress) {
+    if (memberAddress && activeNetwork.chainId) {
       refetch();
     }
-  }, [memberAddress]);
+  }, [memberAddress, activeNetwork.chainId]);
 
   return (
     <button

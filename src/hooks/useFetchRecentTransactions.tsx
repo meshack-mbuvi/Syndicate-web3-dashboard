@@ -23,7 +23,7 @@ export const useFetchRecentTransactions: any = (
 ) => {
   const {
     web3Reducer: {
-      web3: { account },
+      web3: { account, activeNetwork },
     },
     erc20TokenSliceReducer: { erc20Token },
   } = useSelector((state: AppState) => state);
@@ -40,5 +40,6 @@ export const useFetchRecentTransactions: any = (
     // set notification to true to receive loading state
     notifyOnNetworkStatusChange: true,
     skip: !account || skipQuery || isDemoMode,
+    context: { clientName: "backend", chainId: activeNetwork.chainId },
   });
 };

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, FC } from "react";
 import { Menu, Transition } from "@headlessui/react";
 import { useConnectWalletContext } from "@/context/ConnectWalletProvider";
-import { networks } from "@/Networks";
+import { NETWORKS } from "@/Networks";
 
 interface IAddressMenuDropDown {
   web3: any;
@@ -73,7 +73,7 @@ const NetworkMenuDropDown: FC<IAddressMenuDropDown> = ({ web3 }) => {
               as="ul"
               className="absolute right-0 w-80 mt-2 origin-top-right bg-black rounded-2xl border border-gray-syn7 shadow-lg outline-none p-2 space-y-1"
             >
-              {Object.entries(networks).map(([key, value]) => (
+              {Object.entries(NETWORKS).map(([key, value]) => (
                 <button
                   className="w-full cursor-default"
                   key={value.chainId}

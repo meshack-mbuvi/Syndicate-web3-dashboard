@@ -16,7 +16,7 @@ const useFetchMerkleProof: any = (skipQuery = false) => {
 
   const {
     web3Reducer: {
-      web3: { account: address, web3 },
+      web3: { account: address, web3, activeNetwork },
     },
     erc20TokenSliceReducer: {
       erc20Token: { address: clubAddress, tokenDecimals },
@@ -32,6 +32,7 @@ const useFetchMerkleProof: any = (skipQuery = false) => {
   } = useQuery(INDEX_AND_PROOF, {
     variables: { clubAddress, address },
     skip: !address || skipQuery,
+    context: { clientName: "backend", chainId: activeNetwork.chainId },
   });
 
   const processMerkleProofData = async (merkleObj) => {
@@ -47,10 +48,14 @@ const useFetchMerkleProof: any = (skipQuery = false) => {
   };
 
   useEffect(() => {
-    if (router.isReady && web3.utils.isAddress(clubAddress)) {
+    if (
+      router.isReady &&
+      web3.utils.isAddress(clubAddress) &&
+      activeNetwork.chainId
+    ) {
       refetchMerkle();
     }
-  }, [clubAddress, address, router.isReady]);
+  }, [clubAddress, address, router.isReady, activeNetwork.chainId]);
 
   useEffect(() => {
     dispatch(setLoadingMerkleProof(true));

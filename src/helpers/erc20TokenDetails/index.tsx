@@ -1,5 +1,6 @@
 import { DepositTokenMintModuleContract } from "@/ClubERC20Factory/depositTokenMintModule";
 import { MintPolicyContract } from "@/ClubERC20Factory/policyMintERC20";
+import { MerkleDistributorModuleContract } from "@/ClubERC20Factory/merkleDistributorModule";
 import { AppState } from "@/state";
 import {
   setERC20TokenContract,
@@ -80,6 +81,7 @@ export const getERC20TokenDetails = async (
   ERC20tokenContract,
   policyMintERC20: MintPolicyContract,
   mintPolicy: MintPolicyContract,
+  MerkleDistributorModule: MerkleDistributorModuleContract,
 ): Promise<ERC20Token> => {
   if (ERC20tokenContract) {
     try {
@@ -114,23 +116,24 @@ export const getERC20TokenDetails = async (
           ERC20tokenContract.symbol(),
           ERC20tokenContract.memberCount(),
         ]);
-      const MERKLE_DISTRIBUTOR_MODULE =
-        process.env.NEXT_PUBLIC_MERKLE_DISTRIBUTOR_MODULE;
 
       const totalSupply = await ERC20tokenContract.totalSupply().then((wei) =>
         getWeiAmount(wei, tokenDecimals, false),
       );
-      
-      // Check both mint policies 
+
+      // Check both mint policies
       const claimEnabledPolicyMintERC20 = await policyMintERC20.isModuleAllowed(
-        ERC20tokenContract.clubERC20Contract._address,
-        MERKLE_DISTRIBUTOR_MODULE,
+        address,
+        MerkleDistributorModule.contract._address,
       );
+
       const claimEnabledMintPolicy = await mintPolicy.isModuleAllowed(
-        ERC20tokenContract.clubERC20Contract._address,
-        MERKLE_DISTRIBUTOR_MODULE,
+        address,
+        MerkleDistributorModule.contract._address,
       );
-      const claimEnabled = claimEnabledPolicyMintERC20 || claimEnabledMintPolicy;
+
+      const claimEnabled =
+        claimEnabledPolicyMintERC20 || claimEnabledMintPolicy;
 
       let depositsEnabled = false;
       if (!claimEnabled) {
@@ -220,10 +223,10 @@ export const setERC20Token =
           mintPolicy,
           SingleTokenMintModule,
           DepositTokenMintModule,
+          MerkleDistributorModule,
         },
       },
     } = getState();
-  
 
     dispatch(setERC20TokenContract(ERC20tokenContract));
     dispatch(setLoadingClub(true));
@@ -232,6 +235,7 @@ export const setERC20Token =
         ERC20tokenContract,
         policyMintERC20,
         mintPolicy,
+        MerkleDistributorModule,
       );
       const depositDetails = await getDespositDetails(
         ERC20tokenContract,
@@ -240,6 +244,7 @@ export const setERC20Token =
       );
 
       const { ethDepositToken } = depositDetails;
+
       dispatch(
         setERC20TokenDetails({
           ...erc20Token,
@@ -256,6 +261,7 @@ export const setERC20Token =
       dispatch(setERC20TokenDespositDetails(depositDetails));
       dispatch(setLoadingClub(false));
     } catch (error) {
+      console.log({ error });
       return dispatch(setERC20TokenDetails(ERC20TokenDefaultState));
     }
   };

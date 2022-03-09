@@ -1,4 +1,3 @@
-import { CLAIMED_ERC721 } from "@/graphql/queries";
 import { AppState } from "@/state";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";

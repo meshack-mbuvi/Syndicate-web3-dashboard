@@ -4,8 +4,6 @@ import { getWeiAmount } from "@/utils/conversions";
 import { useQuery } from "@apollo/client";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-
-import { useConnectWalletContext } from "../context/ConnectWalletProvider";
 import { useDemoMode } from "./useDemoMode";
 
 /**
@@ -25,7 +23,7 @@ export function useAccountTokens(): {
 } {
   const {
     web3Reducer: {
-      web3: { account },
+      web3: { account, activeNetwork },
     },
     erc20TokenSliceReducer: {
       erc20Token: { address, totalSupply, tokenDecimals, totalDeposits },
@@ -35,14 +33,13 @@ export function useAccountTokens(): {
   const [accountTokens, setAccountTokens] = useState<string>("0");
   const [memberDeposits, setMemberDeposits] = useState<string>("0");
   const [memberOwnership, setMemberOwnership] = useState<string>("0");
-  const { chainId } = useConnectWalletContext();
 
   const isDemoMode = useDemoMode();
 
   const { loading, data, refetch, startPolling, stopPolling } = useQuery(
     CLUB_MEMBER_QUERY,
     {
-      context: { chainId },
+      context: { clientName: "theGraph", chainId: activeNetwork.chainId },
       // Avoid unnecessary calls when account/clubAddress is not defined
       skip: !account || !address || isDemoMode,
       variables: {
@@ -123,7 +120,7 @@ export function useAccountTokens(): {
 
   useEffect(() => {
     refetch();
-  }, [totalSupply, totalDeposits, account]);
+  }, [totalSupply, totalDeposits, account, activeNetwork.chainId]);
 
   return {
     loadingMemberOwnership: loading,

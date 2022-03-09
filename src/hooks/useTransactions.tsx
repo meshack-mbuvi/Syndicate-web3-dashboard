@@ -17,7 +17,7 @@ const useTransactions = (skip: number = 0) => {
 
   const router = useRouter();
 
-  const { account, currentEthereumNetwork } = web3;
+  const { account, activeNetwork } = web3;
 
   // Refresh and get latest transactions of club owner from backend
   const {
@@ -48,7 +48,7 @@ const useTransactions = (skip: number = 0) => {
     }
   }, [
     account,
-    currentEthereumNetwork,
+    activeNetwork,
     transactionsLoading,
     JSON.stringify(transactionsData),
   ]);

@@ -26,6 +26,9 @@ export function useClubDepositsAndSupply(contractAddress: string): {
       erc20Token,
       depositDetails: { depositTokenDecimals },
     },
+    web3Reducer: {
+      web3: { activeNetwork },
+    },
   } = useSelector((state: AppState) => state);
 
   const { tokenDecimals } = erc20Token;
@@ -44,6 +47,7 @@ export function useClubDepositsAndSupply(contractAddress: string): {
         contractAddress: contractAddress?.toLocaleLowerCase() || "",
       },
     },
+    context: { clientName: "theGraph", chainId: activeNetwork.chainId },
     // Avoid unnecessary calls when contractAddress is not defined or in demo mode
     skip: !contractAddress || isDemoMode,
   });

@@ -12,7 +12,7 @@ const useFetchAirdropInfo: any = () => {
 
   const {
     web3Reducer: {
-      web3: { account, currentEthereumNetwork },
+      web3: { account, activeNetwork },
     },
     erc721MerkleProofSliceReducer: { erc721MerkleProof },
     erc721TokenSliceReducer: {
@@ -63,12 +63,7 @@ const useFetchAirdropInfo: any = () => {
     } else if (account && nftAddress) {
       getAirdropInfo(false);
     }
-  }, [
-    erc721MerkleProof.accountIndex,
-    account,
-    nftAddress,
-    currentEthereumNetwork,
-  ]);
+  }, [erc721MerkleProof.accountIndex, account, nftAddress, activeNetwork]);
 
   useEffect(() => {
     dispatch(setLoadingERC721AirdropInfo(true));

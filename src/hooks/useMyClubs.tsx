@@ -20,7 +20,7 @@ export const useMyClubs = (): IProps => {
   const {
     web3Reducer: { web3 },
   } = useSelector((state: AppState) => state);
-  const { account } = web3;
+  const { account, activeNetwork } = web3;
 
   const [myClubs, setMyClubs] = useState([]);
   const [loading, setIsLoading] = useState(true);
@@ -31,6 +31,7 @@ export const useMyClubs = (): IProps => {
         ownerAddress: account.toLocaleLowerCase(),
       },
     },
+    context: { clientName: "theGraph", chainId: activeNetwork.chainId },
     skip: !account,
   });
 
