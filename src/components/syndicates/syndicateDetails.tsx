@@ -274,10 +274,7 @@ const SyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
 
     if (duplicateWarningCookieSet) {
       setShowDuplicateClubWarning(false);
-    } else if (
-      !duplicateWarningCookieSet &&
-      !loading
-    ) {
+    } else if (!duplicateWarningCookieSet && !loading) {
       setShowDuplicateClubWarning(true);
     }
   }, [router.isReady, account, loading]);
@@ -418,19 +415,21 @@ const SyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
           </div>
         )}
 
-        {status !== Status.DISCONNECTED && depositsEnabled && !managerSettingsOpen && (
-          <div className="h-fit-content flex w-full justify-start mt-14">
-            <ProgressIndicator
-              totalDeposits={totalDeposits}
-              depositTotalMax={maxTotalDeposits.toString()}
-              depositERC20TokenSymbol={depositTokenSymbol}
-              openDate={startTime.toString()}
-              closeDate={endTime.toString()}
-              loading={loading || loadingClubDeposits}
-              ethDepositToken={ethDepositToken}
-            />
-          </div>
-        )}
+        {status !== Status.DISCONNECTED &&
+          depositsEnabled &&
+          !managerSettingsOpen && (
+            <div className="h-fit-content flex w-full justify-start mt-14">
+              <ProgressIndicator
+                totalDeposits={totalDeposits}
+                depositTotalMax={maxTotalDeposits.toString()}
+                depositERC20TokenSymbol={depositTokenSymbol}
+                openDate={startTime.toString()}
+                closeDate={endTime.toString()}
+                loading={loading || loadingClubDeposits}
+                ethDepositToken={ethDepositToken}
+              />
+            </div>
+          )}
 
         {/* This component should be shown when we have details about user deposits */}
         {(status !== Status.DISCONNECTED &&

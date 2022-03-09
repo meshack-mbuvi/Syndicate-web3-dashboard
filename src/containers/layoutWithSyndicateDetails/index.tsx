@@ -234,6 +234,8 @@ const LayoutWithSyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
     isOwner || +accountTokens || myMerkleProof?.account === account;
   const renderOnDisconnect =
     status !== Status.DISCONNECTED && !(isActive && !isOwnerOrMember);
+  const isBackButtonByNameHidden = isDemoMode || isSubNavStuck;
+  const isStickyBackButtonHidden = isDemoMode || !isSubNavStuck;
 
   useEffect(() => {
     if (!renderOnDisconnect) {
