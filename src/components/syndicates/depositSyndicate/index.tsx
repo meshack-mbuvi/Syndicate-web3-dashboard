@@ -709,34 +709,6 @@ const DepositSyndicate: React.FC = () => {
 
   /** ===========METHODS END ================== */
 
-  // set deposit button text based on current step.
-  let depositButtonText;
-  if (submittingAllowanceApproval && depositAmount) {
-    depositButtonText = (
-      <div className="flex justify-center items-center">
-        <div className="mr-2">
-          <Spinner
-            width="w-4"
-            height="h-4"
-            margin="m-0"
-            color="text-gray-syn4"
-          />
-        </div>
-        <span>{`Approving ${depositTokenSymbol}`}</span>
-      </div>
-    );
-  } else if (sufficientAllowanceSet && depositAmount) {
-    depositButtonText = "Continue";
-  } else if (!depositAmount) {
-    depositButtonText = "Enter an amount to deposit";
-  } else if (
-    !sufficientAllowanceSet &&
-    !submittingAllowanceApproval &&
-    depositAmount
-  ) {
-    depositButtonText = "Continue";
-  }
-
   // check member account balance for deposit token.
   // we'll disable the continue button and style the input field accordingly
   // if the deposit amount is less than the account balance
@@ -888,6 +860,34 @@ const DepositSyndicate: React.FC = () => {
     +memberDeposits >= 10000 && ((width > 868 && width < 1536) || width < 500);
 
   const isDemoMode = useDemoMode();
+
+  // set deposit button text based on current step.
+  let depositButtonText;
+  if (submittingAllowanceApproval && depositAmount) {
+    depositButtonText = (
+      <div className="flex justify-center items-center">
+        <div className="mr-2">
+          <Spinner
+            width="w-4"
+            height="h-4"
+            margin="m-0"
+            color="text-gray-syn4"
+          />
+        </div>
+        <span>{`Approving ${depositTokenSymbol}`}</span>
+      </div>
+    );
+  } else if (sufficientAllowanceSet && depositAmount) {
+    depositButtonText = "Continue";
+  } else if (!depositAmount) {
+    depositButtonText = "Enter an amount to deposit";
+  } else if (
+    !sufficientAllowanceSet &&
+    !submittingAllowanceApproval &&
+    depositAmount
+  ) {
+    depositButtonText = "Continue";
+  }
 
   return (
     <ErrorBoundary>

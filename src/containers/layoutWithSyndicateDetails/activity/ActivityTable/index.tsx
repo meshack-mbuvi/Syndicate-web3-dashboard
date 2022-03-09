@@ -290,7 +290,7 @@ const ActivityTable: React.FC = () => {
   };
 
   // filter function for mock transaction data
-  const manualMockDataFilter = (searchParam: string): Boolean => {
+  const manualMockDataFilter = (searchParam: string): boolean => {
     const searchTerm = searchValue.toLowerCase();
 
     // using indexOf here instead of includes because the former has more support browsers-wise.
