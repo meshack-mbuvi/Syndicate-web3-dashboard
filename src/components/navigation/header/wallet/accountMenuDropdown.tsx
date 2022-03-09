@@ -1,4 +1,3 @@
-import { WalletIcon } from "@/components/iconWrappers";
 import { BlockExplorerLink } from "@/components/syndicates/shared/BlockExplorerLink";
 import React, { FC, useEffect, useState } from "react";
 import { CopyToClipboard } from "react-copy-to-clipboard";
@@ -13,7 +12,7 @@ interface IAddressMenuDropDown {
 }
 
 const AddressMenuDropDown: FC<IAddressMenuDropDown> = ({
-  web3: { account, providerName, web3, activeChain },
+  web3: { account, providerName, web3 },
 }) => {
   const { disconnectWallet } = useConnectWalletContext();
 

@@ -31,7 +31,6 @@ import useWindowSize from "@/hooks/useWindowSize";
 import { AppState } from "@/state";
 import { Status } from "@/state/wallet/types";
 import { getWeiAmount } from "@/utils/conversions";
-import { isDev } from "@/utils/environment";
 import {
   floatedNumberWithCommas,
   truncateDecimals,

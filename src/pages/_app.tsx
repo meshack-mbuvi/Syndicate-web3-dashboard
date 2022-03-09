@@ -85,10 +85,10 @@ const App = (props) => {
 
 // Construct dynamic httpLinks from available networks and graphs
 const constructGraphLinks = () => {
-  let links = {};
+  const links = {};
   Object.entries(BACKEND_LINKS).map(([networkId, backendInfo]) => {
-    let graphs = Object.keys(backendInfo.graphs);
-    let httplinks = {};
+    const graphs = Object.keys(backendInfo.graphs);
+    const httplinks = {};
     graphs.forEach((value) => {
       httplinks[value] = new HttpLink({
         uri: backendInfo.graphs[value],

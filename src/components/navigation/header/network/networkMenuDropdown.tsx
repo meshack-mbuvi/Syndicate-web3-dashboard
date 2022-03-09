@@ -76,7 +76,7 @@ const NetworkMenuDropDown: FC<IAddressMenuDropDown> = ({ web3 }) => {
               {Object.entries(NETWORKS).map(([key, value]) => (
                 <button
                   className="w-full cursor-default"
-                  key={value.chainId}
+                  key={key}
                   onClick={
                     value.chainId !== activeNetwork.chainId
                       ? () => {

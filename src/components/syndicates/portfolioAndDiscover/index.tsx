@@ -1,6 +1,5 @@
 import CreateClubButton from "@/components/createClubButton";
 import PortfolioEmptyState from "@/components/syndicates/portfolioAndDiscover/portfolio/portfolioEmptyState";
-import WalletNotConnected from "@/components/walletNotConnected";
 import useClubERC20s from "@/hooks/useClubERC20s";
 import { AppState } from "@/state";
 import React from "react";
