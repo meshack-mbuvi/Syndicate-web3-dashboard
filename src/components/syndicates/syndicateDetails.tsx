@@ -42,7 +42,7 @@ const SyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
     },
     merkleProofSliceReducer: { myMerkleProof },
     web3Reducer: {
-      web3: { web3, status, account, chainId },
+      web3: { web3, status, account, activeNetwork },
     },
   } = useSelector((state: AppState) => state);
 
@@ -275,10 +275,7 @@ const SyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
 
     if (duplicateWarningCookieSet) {
       setShowDuplicateClubWarning(false);
-    } else if (
-      !duplicateWarningCookieSet &&
-      !loading
-    ) {
+    } else if (!duplicateWarningCookieSet && !loading) {
       setShowDuplicateClubWarning(true);
     }
   }, [router.isReady, account, loading]);
@@ -383,7 +380,7 @@ const SyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
                               </button>
                             </CopyToClipboard>
 
-                            <div data-for="view-on-etherscan" data-tip>
+                            <div data-for="view-on-block-explorer" data-tip>
                               <BlockExplorerLink
                                 customStyles="w-4 h-4"
                                 resourceId={erc20Token.owner}
@@ -391,15 +388,14 @@ const SyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
                                 iconOnly
                               />
                               <ReactTooltip
-                                id="view-on-etherscan"
+                                id="view-on-block-explorer"
                                 place="top"
                                 effect="solid"
                                 className="actionsTooltip"
                                 arrowColor="transparent"
                                 backgroundColor="#131416"
                               >
-                                View on{" "}
-                                {chainId === 137 ? "Polygonscan" : "Etherscan"}
+                                View on {activeNetwork.blockExplorer.name}
                               </ReactTooltip>
                             </div>
                           </div>
@@ -420,19 +416,21 @@ const SyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
           </div>
         )}
 
-        {status !== Status.DISCONNECTED && depositsEnabled && !managerSettingsOpen && (
-          <div className="h-fit-content flex w-full justify-start mt-14">
-            <ProgressIndicator
-              totalDeposits={totalDeposits}
-              depositTotalMax={maxTotalDeposits.toString()}
-              depositERC20TokenSymbol={depositTokenSymbol}
-              openDate={startTime.toString()}
-              closeDate={endTime.toString()}
-              loading={loading || loadingClubDeposits}
-              ethDepositToken={ethDepositToken}
-            />
-          </div>
-        )}
+        {status !== Status.DISCONNECTED &&
+          depositsEnabled &&
+          !managerSettingsOpen && (
+            <div className="h-fit-content flex w-full justify-start mt-14">
+              <ProgressIndicator
+                totalDeposits={totalDeposits}
+                depositTotalMax={maxTotalDeposits.toString()}
+                depositERC20TokenSymbol={depositTokenSymbol}
+                openDate={startTime.toString()}
+                closeDate={endTime.toString()}
+                loading={loading || loadingClubDeposits}
+                ethDepositToken={ethDepositToken}
+              />
+            </div>
+          )}
 
         {/* This component should be shown when we have details about user deposits */}
         {(status !== Status.DISCONNECTED &&

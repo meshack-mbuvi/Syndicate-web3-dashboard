@@ -6,14 +6,19 @@ export interface IWeb3 extends Web3 {
   _provider?: any;
   utils: any;
 }
-export interface IblockExplorer {
-  name: string;
-  baseUrl: string;
+
+export interface IBlockResources {
   transaction: string;
   address: string;
 }
+export interface IblockExplorer {
+  name: string;
+  baseUrl: string;
+  api: string;
+  resources: IBlockResources;
+}
 
-export interface INativeToken {
+export interface INativeCurrency {
   symbol: string;
   name: string;
   decimals: string;
@@ -36,7 +41,7 @@ export interface IActiveNetwork {
   publicRPC: string;
   logo: string;
   blockExplorer: IblockExplorer;
-  nativeToken: INativeToken;
+  nativeCurrency: INativeCurrency;
   metadata: IMetadata;
 }
 
@@ -115,10 +120,13 @@ export const initialState: InitialState = {
       blockExplorer: {
         name: "",
         baseUrl: "",
-        transaction: "",
-        address: "",
+        api: "",
+        resources: {
+          transaction: "",
+          address: "",
+        },
       },
-      nativeToken: {
+      nativeCurrency: {
         symbol: "",
         name: "",
         decimals: "",

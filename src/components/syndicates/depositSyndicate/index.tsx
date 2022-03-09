@@ -63,7 +63,7 @@ const DepositSyndicate: React.FC = () => {
     airdopInfoSliceReducer: { airdropInfo },
     tokenClaimedSliceReducer: { isTokenClaimed },
     web3Reducer: {
-      web3: { account, web3, status },
+      web3: { account, web3, status, activeNetwork },
     },
     erc20TokenSliceReducer: {
       erc20Token,
@@ -1386,7 +1386,7 @@ const DepositSyndicate: React.FC = () => {
                       <BlockExplorerLink
                         resourceId={transactionHash}
                         resource="transaction"
-                        text="View on Etherscan"
+                        prefix="View on "
                       />
                     </div>
                   )}
@@ -1557,9 +1557,7 @@ const DepositSyndicate: React.FC = () => {
               </span>
             </div>
             <CopyToClipboard
-              text={`https://${
-                isDev ? "rinkeby." : ""
-              }etherscan.io/tx/${transactionHash}`}
+              text={`${activeNetwork.blockExplorer.baseUrl}/${activeNetwork.blockExplorer.resources.transaction}/${transactionHash}`}
               onCopy={handleOnCopy}
             >
               <div className="relative py-8 w-fit-content">

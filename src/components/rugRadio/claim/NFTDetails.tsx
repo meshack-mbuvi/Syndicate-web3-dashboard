@@ -257,7 +257,7 @@ export const NFTDetails: React.FC = () => {
             <BlockExplorerLink
               resourceId={transactionHash}
               resource="transaction"
-              text="Etherscan transaction"
+              suffix=" transaction"
             />
           </div>
         </div>
@@ -287,7 +287,7 @@ export const NFTDetails: React.FC = () => {
             <BlockExplorerLink
               resourceId={transactionHash}
               resource="transaction"
-              text="Etherscan transaction"
+              suffix=" transaction"
             />
           </div>
         </div>

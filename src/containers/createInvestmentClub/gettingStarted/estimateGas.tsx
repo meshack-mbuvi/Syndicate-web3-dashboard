@@ -6,16 +6,10 @@ import axios from "axios";
 import React, { useCallback, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 
-const baseURL = isDev
-  ? "https://api-rinkeby.etherscan.io/api"
-  : "https://api.etherscan.io/api";
-
-const EstimateGas = (props: {
-  customClasses?: string
-}) => {
+const EstimateGas = (props: { customClasses?: string }) => {
   const {
     web3Reducer: {
-      web3: { account },
+      web3: { account, activeNetwork },
     },
     initializeContractsReducer: {
       syndicateContracts: { clubERC20Factory },
@@ -43,7 +37,9 @@ const EstimateGas = (props: {
         ? setGasUnits(380000)
         : clubERC20Factory.getEstimateGas(account, setGasUnits),
       axios
-        .get(`${baseURL}?module=proxy&action=eth_gasPrice`)
+        .get(
+          `${activeNetwork.blockExplorer.api}/api?module=proxy&action=eth_gasPrice`,
+        )
         .then((res) => processBaseFee(res.data))
         .catch(() => 0),
       getEthereumTokenPrice()
@@ -64,18 +60,24 @@ const EstimateGas = (props: {
   }, [gasUnits, gasBaseFee]);
 
   return (
-    <button className={!customClasses ? `bg-blue-navy bg-opacity-20 rounded-custom w-full flex py-2.5 cursor-default items-center` : `${customClasses}`}>
+    <button
+      className={
+        !customClasses
+          ? `bg-blue-navy bg-opacity-20 rounded-custom w-full flex py-2.5 cursor-default items-center`
+          : `${customClasses}`
+      }
+    >
       <img src="/images/gasIcon.svg" className="inline w-4 h-4.5 mx-3" alt="" />
       <span className="flex justify-between w-full">
         <span className="text-blue">Estimated gas</span>
         <span className="mr-3 text-blue">
           {gas
-            ? `${gas.toFixed(6)} ETH ${
+            ? `${gas.toFixed(6)} ${activeNetwork.nativeCurrency.symbol} ${
                 ethTokenPrice
                   ? "(~$" + (gas * ethTokenPrice).toFixed(2) + ")"
                   : ""
               }`
-            : "- ETH"}
+            : `- ${activeNetwork.nativeCurrency.symbol}`}
         </span>
       </span>
     </button>

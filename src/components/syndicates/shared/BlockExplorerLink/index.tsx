@@ -13,42 +13,38 @@ interface LinkProp {
   customStyles?: string;
   resource?: string;
   iconOnly?: boolean;
-  text?: string;
+  prefix?: string;
+  suffix?: string;
   grouped?: boolean;
   iconColor?: ExternalLinkColor;
 }
 
-/** Link used to redirect the user to the Etherscan
+/** Link used to redirect the user to the Block Explorer
  * This could point to either the syndicate contract
  * or the token contract when token transactions are involved.
  */
 export const BlockExplorerLink: React.FC<LinkProp> = (props) => {
   const {
-    resourceId: etherscanInfo,
+    resourceId: explorerInfo,
     customStyles,
     resource: type = "address",
     iconOnly,
-    text = "View on ",
+    prefix = "View on ",
+    suffix = "",
     grouped,
     iconColor = ExternalLinkColor.BLUE,
   } = props;
 
-  const { chainId } = useConnectWalletContext();
-
-  const explorer = useMemo(
-    () => ({ 1: "Etherscan", 4: "Etherscan", 137: "Polygonscan" }[chainId]),
-    [chainId],
-  );
+  const { activeNetwork } = useConnectWalletContext();
 
   const url = useMemo(() => {
-    const baseURL = {
-      1: `https://etherscan.io`,
-      4: `https://rinkeby.etherscan.io`,
-      137: `https://polygonscan.com`,
-    }[chainId];
-    const resource = type === "transaction" ? "tx" : "address";
-    return [baseURL, resource, etherscanInfo].join("/");
-  }, [chainId, type, etherscanInfo]);
+    const baseURL = activeNetwork.blockExplorer.baseUrl;
+    const resource =
+      type === "transaction"
+        ? activeNetwork.blockExplorer.resources.transaction
+        : activeNetwork.blockExplorer.resources.address;
+    return [baseURL, resource, explorerInfo].join("/");
+  }, [activeNetwork, type, explorerInfo]);
 
   return (
     <a
@@ -64,7 +60,9 @@ export const BlockExplorerLink: React.FC<LinkProp> = (props) => {
       )}
       {!iconOnly ? (
         <div className="flex justify-between items-center w-full">
-          <div className="text-blue">{text}{explorer}</div>
+          <div className="text-blue">
+            {prefix} {activeNetwork.blockExplorer.name} {suffix}
+          </div>
           <ExternalLinkIcon
             className={`ml-2 w-4 text-blue`}
             iconColor={iconColor}

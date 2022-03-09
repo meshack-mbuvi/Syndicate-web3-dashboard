@@ -179,7 +179,7 @@ export const MintAndShareTokens: React.FC<Props> = ({
           title: "Adding member",
           description:
             "This could take anywhere from seconds to hours depending on network congestion and the gas fees you set. You can safely leave this page while you wait.",
-          etherscanHash: transactionHash,
+          transactionHash: transactionHash,
           transactionType: "transaction",
           state: ProgressModalState.PENDING,
         }}
@@ -200,7 +200,7 @@ export const MintAndShareTokens: React.FC<Props> = ({
           buttonOnClick: handleCloseSuccessModal,
           buttonFullWidth: true,
           state: ProgressModalState.SUCCESS,
-          etherscanHash: transactionHash,
+          transactionHash: transactionHash,
           transactionType: "transaction",
         }}
       />
@@ -216,7 +216,7 @@ export const MintAndShareTokens: React.FC<Props> = ({
           buttonOnClick: handleCloseSuccessModal,
           buttonFullWidth: true,
           state: ProgressModalState.FAILURE,
-          etherscanHash: userRejectedMint ? null : transactionHash,
+          transactionHash: userRejectedMint ? null : transactionHash,
           transactionType: "transaction",
         }}
       />

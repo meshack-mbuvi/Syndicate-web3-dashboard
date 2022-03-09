@@ -289,7 +289,7 @@ const ModifyClubTokens: React.FC<{
           title: "Updating cap table",
           description:
             "This could take anywhere from seconds to hours depending on network congestion and the gas fees you set. You can safely leave this page while you wait.",
-          etherscanHash: transactionHash,
+          transactionHash: transactionHash,
           transactionType: "transaction",
           state: ProgressModalState.PENDING,
         }}
@@ -313,7 +313,7 @@ const ModifyClubTokens: React.FC<{
           buttonOnClick: handleCloseSuccessModal,
           buttonFullWidth: true,
           state: ProgressModalState.SUCCESS,
-          etherscanHash: transactionHash,
+          transactionHash: transactionHash,
           transactionType: "transaction",
         }}
       />
@@ -329,7 +329,7 @@ const ModifyClubTokens: React.FC<{
           buttonOnClick: handleCloseSuccessModal,
           buttonFullWidth: true,
           state: ProgressModalState.FAILURE,
-          etherscanHash: userRejectedUpdate ? null : transactionHash,
+          transactionHash: userRejectedUpdate ? null : transactionHash,
           transactionType: "transaction",
         }}
       />

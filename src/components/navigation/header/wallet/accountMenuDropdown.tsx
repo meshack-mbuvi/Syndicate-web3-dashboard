@@ -120,7 +120,7 @@ const AddressMenuDropDown: FC<IAddressMenuDropDown> = ({
                     </div>
                   </CopyToClipboard>
 
-                  {/* View on Etherscan */}
+                  {/* View on Block Explorer */}
                   <div className="mb-4">
                     <BlockExplorerLink
                       resource={account}

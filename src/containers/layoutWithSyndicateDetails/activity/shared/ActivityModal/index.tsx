@@ -42,6 +42,9 @@ const ActivityModal: React.FC<IActivityModal> = ({
   setShowNote,
 }) => {
   const {
+    web3Reducer: {
+      web3: { activeNetwork },
+    },
     transactionsReducer: {
       currentTransaction: {
         category,
@@ -64,9 +67,6 @@ const ActivityModal: React.FC<IActivityModal> = ({
   } = useSelector((state: AppState) => state);
 
   const isManager = useIsClubOwner();
-  const etherScanBaseUrl = isDev
-    ? "https://rinkeby.etherscan.io/tx"
-    : "https://etherscan.io/tx";
 
   const isDemoMode = useDemoMode();
 
@@ -92,7 +92,7 @@ const ActivityModal: React.FC<IActivityModal> = ({
   }, [address, from, loading]);
 
   const [adaptiveBackground, setAdaptiveBackground] = useState<string>("");
-  const [etherscanLink, setEtherscanLink] = useState<string>("");
+  const [blockExplorerLink, setblockExplorerLink] = useState<string>("");
   const [selectedCategory, setSelectedCategory] = useState<string>("");
   const [showTransactionDetails, setShowTransactionDetails] =
     useState<boolean>(false);
@@ -130,7 +130,9 @@ const ActivityModal: React.FC<IActivityModal> = ({
   }, [metadata, blockTimestamp]);
 
   useEffect(() => {
-    setEtherscanLink(`${etherScanBaseUrl}/${transactionInfo?.transactionHash}`);
+    setblockExplorerLink(
+      `${activeNetwork.blockExplorer.baseUrl}/${transactionInfo?.transactionHash}`,
+    );
   }, [transactionInfo?.transactionHash]);
 
   // text and icon to show based on category
@@ -320,7 +322,7 @@ const ActivityModal: React.FC<IActivityModal> = ({
               <div className="text-gray-lightManatee text-sm mt-6 flex items-center justify-center">
                 <a
                   className="flex cursor-pointer items-center"
-                  href={`${etherscanLink}`}
+                  href={`${blockExplorerLink}`}
                   target="_blank"
                   rel="noreferrer"
                 >

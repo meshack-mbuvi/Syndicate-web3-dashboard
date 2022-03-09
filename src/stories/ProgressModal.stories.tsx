@@ -31,7 +31,7 @@ Pending.args = {
   title: "Pending confirmation",
   description:
     "This could take up to a few minutes depending on network congestion and the gas fees you set. Feel free to leave this screen.",
-  etherscanLink: "#",
+  blockExplorerLink: "#",
   buttonLabel: "Back to club dashboard",
   state: ProgressModalState.PENDING,
 };

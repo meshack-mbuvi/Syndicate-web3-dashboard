@@ -52,7 +52,7 @@ const ProcessingClaimModal: React.FC<IProcessingClaimModal> = ({
                 <BlockExplorerLink
                   resourceId={transactionHash}
                   resource="transaction"
-                  text="Etherscan transaction"
+                  suffix=" transaction"
                 />
               </div>
             )}
@@ -96,7 +96,7 @@ const ProcessingClaimModal: React.FC<IProcessingClaimModal> = ({
                 <BlockExplorerLink
                   resourceId={transactionHash}
                   resource="transaction"
-                  text="Etherscan transaction"
+                  suffix=" transaction"
                 />
               </div>
             )}

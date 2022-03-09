@@ -311,7 +311,7 @@ const ClaimCard: React.FC<{
               <BlockExplorerLink
                 resourceId={transactionHash}
                 resource="transaction"
-                text="Etherscan transaction"
+                suffix=" transaction"
               />
             </div>
           )}
@@ -329,7 +329,7 @@ const ClaimCard: React.FC<{
               <BlockExplorerLink
                 resourceId={transactionHash}
                 resource="transaction"
-                text="Etherscan transaction"
+                suffix="transaction"
               />
             </div>
           )}

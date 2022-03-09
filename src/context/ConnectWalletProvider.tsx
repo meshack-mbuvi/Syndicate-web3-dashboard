@@ -43,7 +43,7 @@ import { IActiveNetwork } from "@/state/wallet/types";
 
 type AuthProviderProps = {
   connectWallet: (providerName: string) => void;
-  chainId: number;
+  activeNetwork: any;
   chainToken: string;
   showSuccessModal: boolean;
   walletConnecting: boolean;
@@ -462,7 +462,7 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
     <ConnectWalletContext.Provider
       value={{
         connectWallet,
-        chainId,
+        activeNetwork,
         walletConnecting,
         showSuccessModal,
         providerName,

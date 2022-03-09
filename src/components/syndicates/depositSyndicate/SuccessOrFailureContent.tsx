@@ -36,6 +36,9 @@ export const SuccessOrFailureContent: React.FC<{
     erc20TokenSliceReducer: {
       depositDetails: { depositTokenSymbol, ethDepositToken },
     },
+    web3Reducer: {
+      web3: { activeNetwork },
+    },
   } = useSelector((state: AppState) => state);
   return (
     <div className="h-fit-content text-center relative">
@@ -96,9 +99,7 @@ export const SuccessOrFailureContent: React.FC<{
           </div>
           {successfulDeposit ? (
             <CopyToClipboard
-              text={`${
-                isDev ? "https://rinkeby.etherscan.io" : "https://etherscan.io"
-              }/tx/${transactionHash}`}
+              text={`${activeNetwork.blockExplorer.baseUrl}/${activeNetwork.blockExplorer.resources.transaction}/${transactionHash}`}
               onCopy={handleOnCopy}
             >
               <div className="relative pb-8  w-full">
@@ -126,7 +127,7 @@ export const SuccessOrFailureContent: React.FC<{
               <BlockExplorerLink
                 resourceId={transactionHash}
                 resource="transaction"
-                text="View on Etherscan"
+                prefix="View on "
               />
             </div>
           )}

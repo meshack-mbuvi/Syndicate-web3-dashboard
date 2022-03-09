@@ -275,7 +275,7 @@ const ManagerActions = (): JSX.Element => {
                         </p>
                         <BlockExplorerLink
                           resourceId={transactionHash}
-                          text="View progress on Etherscan"
+                          prefix="View progress on "
                           resource="transaction"
                         />
                       </div>

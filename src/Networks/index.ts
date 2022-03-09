@@ -11,9 +11,12 @@ export const networks = {
     logo: "/images/chains/ethereum.svg",
     blockExplorer: {
       name: "Etherscan",
-      baseUrl: "https://etherscan.io/",
-      transaction: "tx/",
-      address: "address/",
+      baseUrl: "https://etherscan.io",
+      api: "https://api.etherscan.io",
+      resources: {
+        transaction: "tx",
+        address: "address",
+      },
     },
     nativeCurrency: {
       symbol: "ETH",
@@ -40,9 +43,12 @@ export const networks = {
     logo: "/images/chains/polygon.svg",
     blockExplorer: {
       name: "Polygonscan",
-      baseUrl: "https://polygonscan.com/",
-      transaction: "tx/",
-      address: "address/",
+      baseUrl: "https://polygonscan.com",
+      api: "https://api.polygonscan.com",
+      resources: {
+        transaction: "tx",
+        address: "address",
+      },
     },
     nativeCurrency: {
       symbol: "MATIC",
@@ -68,9 +74,12 @@ export const networks = {
     logo: "/images/chains/rinkeby.svg",
     blockExplorer: {
       name: "Etherscan",
-      baseUrl: "https://rinkeby.etherscan.io/",
-      transaction: "tx/",
-      address: "address/",
+      baseUrl: "https://rinkeby.etherscan.io",
+      api: "https://rinkeby.etherscan.io",
+      resources: {
+        transaction: "tx",
+        address: "address",
+      },
     },
     nativeCurrency: {
       symbol: "ETH",
