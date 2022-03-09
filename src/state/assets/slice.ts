@@ -18,14 +18,15 @@ import {
 // ERC20 transactions
 export const fetchTokenTransactions = createAsyncThunk(
   "assets/fetchTokenTransactions",
-  async (account: string) => {
+  async (params: any) => {
+    const { account, chainId } = params;
     const response = await Promise.all([
       // ERC20 tokens transactions
-      await getEtherscanTokenTransactions(account),
+      await getEtherscanTokenTransactions(account, chainId),
       // ETH balance for owner address
-      await getEthBalance(account),
+      await getEthBalance(account, chainId),
       // ETH price
-      await getEthereumTokenPrice(),
+      await getEthereumTokenPrice(chainId),
     ])
       .then((result) => result)
       .catch(() => []);
@@ -116,15 +117,21 @@ interface CollectiblesFetchParams {
   contractAddress?: string;
   tokenId?: string;
   limit?: string;
+  chainId: number;
 }
 
 export const fetchCollectibleById = async (
   params: CollectiblesFetchParams,
 ): Promise<any> => {
-  const { account, offset, contractAddress, tokenId } = params;
+  const { account, offset, contractAddress, tokenId, chainId } = params;
 
   try {
-    const { assets } = await getOpenseaTokens(account, contractAddress, offset);
+    const { assets } = await getOpenseaTokens(
+      account,
+      contractAddress,
+      chainId,
+      offset,
+    );
 
     return assets.filter((asset) => asset.token_id === tokenId)[0];
   } catch (error) {
@@ -135,11 +142,12 @@ export const fetchCollectibleById = async (
 export const fetchCollectiblesTransactions = createAsyncThunk(
   "assets/fetchCollectiblesTransactions",
   async (params: CollectiblesFetchParams) => {
-    const { account, offset, contractAddress, limit = "20" } = params;
+    const { account, offset, contractAddress, chainId, limit = "20" } = params;
 
     const { assets } = await getOpenseaTokens(
       account,
       contractAddress,
+      chainId,
       offset,
       limit,
     );
@@ -147,10 +155,9 @@ export const fetchCollectiblesTransactions = createAsyncThunk(
     const collections = [
       ...new Set(assets.map((asset) => asset.collection.slug)),
     ];
-
     const floorPrices = await Promise.all(
       collections.map(async (slug: string) => {
-        return await getOpenseaFloorPrices(slug);
+        return await getOpenseaFloorPrices(slug, chainId);
       }),
     )
       .then((result) => result)

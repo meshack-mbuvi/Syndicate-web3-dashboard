@@ -25,7 +25,7 @@ import { TabComponent } from "../shared/tabComponent";
 export const NFTDetails: React.FC = () => {
   const {
     web3Reducer: {
-      web3: { account },
+      web3: { account, activeNetwork },
     },
     initializeContractsReducer: {
       syndicateContracts: { RugClaimModule, rugBonusClaimModule },
@@ -74,6 +74,7 @@ export const NFTDetails: React.FC = () => {
         account,
         offset: "0",
         contractAddress: genesisNFTContractAddress,
+        chainId: activeNetwork.chainId,
       }),
     );
   }, [account, genesisNFTContractAddress]);
@@ -103,6 +104,7 @@ export const NFTDetails: React.FC = () => {
         account,
         offset: "0",
         contractAddress: genesisNFTContractAddress,
+        chainId: activeNetwork.chainId,
       }),
     );
   };
@@ -196,6 +198,7 @@ export const NFTDetails: React.FC = () => {
         account,
         offset: "0",
         contractAddress: genesisNFTContractAddress,
+        chainId: activeNetwork.chainId,
       }),
     );
   };
@@ -207,6 +210,7 @@ export const NFTDetails: React.FC = () => {
         account,
         offset: pageOffSet.toString(),
         contractAddress: genesisNFTContractAddress,
+        chainId: activeNetwork.chainId,
       }),
     );
   };

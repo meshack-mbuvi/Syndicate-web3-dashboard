@@ -24,6 +24,9 @@ const Collectibles: FC = () => {
       ethereumTokenPrice,
       loading,
     },
+    web3Reducer: {
+      web3: { activeNetwork },
+    },
     erc20TokenSliceReducer: { erc20Token },
   } = useSelector((state: AppState) => state);
   const isDemoMode = useDemoMode();
@@ -113,6 +116,7 @@ const Collectibles: FC = () => {
       fetchCollectiblesTransactions({
         account: erc20Token.owner,
         offset: pageOffSet.toString(),
+        chainId: activeNetwork.chainId,
       }),
     );
   };

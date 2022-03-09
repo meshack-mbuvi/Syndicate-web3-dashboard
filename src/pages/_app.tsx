@@ -100,8 +100,6 @@ const constructGraphLinks = () => {
   return links;
 };
 
-console.log(constructGraphLinks());
-
 const httpsLinks = Object.freeze(constructGraphLinks());
 
 const apolloInitializer = ({ initialState }) => {
