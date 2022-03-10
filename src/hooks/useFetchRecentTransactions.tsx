@@ -39,7 +39,7 @@ export const useFetchRecentTransactions: any = (
     },
     // set notification to true to receive loading state
     notifyOnNetworkStatusChange: true,
-    skip: !account || skipQuery || isDemoMode,
+    skip: !account || !activeNetwork.chainId || skipQuery || isDemoMode,
     context: { clientName: "backend", chainId: activeNetwork.chainId },
   });
 };

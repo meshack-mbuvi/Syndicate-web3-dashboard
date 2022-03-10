@@ -30,7 +30,7 @@ const useFetchMerkleProof: any = (skipQuery = false) => {
     refetch: refetchMerkle,
   } = useQuery(ERC721_INDEX_AND_PROOF, {
     variables: { clubAddress: nftAddress, address },
-    skip: !address || skipQuery,
+    skip: !address || skipQuery || !activeNetwork.chainId,
     context: { clientName: "backend", chainId: activeNetwork.chainId },
   });
 

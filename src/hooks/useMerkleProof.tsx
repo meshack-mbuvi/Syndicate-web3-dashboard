@@ -31,7 +31,7 @@ const useFetchMerkleProof: any = (skipQuery = false) => {
     refetch: refetchMerkle,
   } = useQuery(INDEX_AND_PROOF, {
     variables: { clubAddress, address },
-    skip: !address || skipQuery,
+    skip: !address || skipQuery || !activeNetwork.chainId,
     context: { clientName: "backend", chainId: activeNetwork.chainId },
   });
 

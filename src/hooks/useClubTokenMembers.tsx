@@ -38,7 +38,7 @@ const useClubTokenMembers = () => {
       },
     },
     context: { clientName: "theGraph", chainId: activeNetwork.chainId },
-    skip: !clubAddress || isDemoMode,
+    skip: !clubAddress || isDemoMode || !activeNetwork.chainId,
   });
 
   const processMembers = (members) => {

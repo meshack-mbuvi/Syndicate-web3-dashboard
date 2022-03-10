@@ -35,7 +35,7 @@ const useClubERC20s = () => {
     },
     context: { clientName: "theGraph", chainId: activeNetwork.chainId },
     // Avoid unnecessary calls when account is not defined
-    skip: !account,
+    skip: !account || !activeNetwork.chainId,
   });
 
   const {
@@ -50,7 +50,7 @@ const useClubERC20s = () => {
     },
     context: { clientName: "theGraph", chainId: activeNetwork.chainId },
     // Avoid unnecessary calls when account is not defined
-    skip: !account,
+    skip: !account || !activeNetwork.chainId,
   });
 
   useEffect(() => {

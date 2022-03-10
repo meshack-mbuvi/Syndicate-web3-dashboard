@@ -40,8 +40,6 @@ export function useAccountTokens(): {
     CLUB_MEMBER_QUERY,
     {
       context: { clientName: "theGraph", chainId: activeNetwork.chainId },
-      // Avoid unnecessary calls when account/clubAddress is not defined
-      skip: !account || !address || isDemoMode,
       variables: {
         where: {
           memberAddress: account.toLocaleLowerCase(),
@@ -50,6 +48,8 @@ export function useAccountTokens(): {
           syndicateDAO: address.toLowerCase(),
         },
       },
+      // Avoid unnecessary calls when account/clubAddress is not defined
+      skip: !account || !activeNetwork.chainId || !address || isDemoMode,
     },
   );
 
@@ -119,7 +119,9 @@ export function useAccountTokens(): {
   ]);
 
   useEffect(() => {
-    refetch();
+    if (activeNetwork.chainId) {
+      refetch();
+    }
   }, [totalSupply, totalDeposits, account, activeNetwork.chainId]);
 
   return {

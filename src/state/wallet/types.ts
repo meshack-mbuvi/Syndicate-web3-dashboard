@@ -112,7 +112,7 @@ export const initialState: InitialState = {
       displayName: "",
       shortName: "",
       network: "",
-      chainId: null,
+      chainId: 0,
       networkId: null,
       rpcUrl: "",
       publicRPC: "",

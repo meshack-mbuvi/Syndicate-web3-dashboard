@@ -17,6 +17,7 @@ const useHasMemberSigned = (props: {
   return useQuery(MEMBER_SIGNED_QUERY, {
     context: { clientName: "backend", chainId: activeNetwork.chainId },
     variables: { clubAddress, memberAddress },
+    skip: !activeNetwork.chainId || !clubAddress || !memberAddress,
   });
 };
 

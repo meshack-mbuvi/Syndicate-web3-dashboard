@@ -49,7 +49,7 @@ export function useClubDepositsAndSupply(contractAddress: string): {
     },
     context: { clientName: "theGraph", chainId: activeNetwork.chainId },
     // Avoid unnecessary calls when contractAddress is not defined or in demo mode
-    skip: !contractAddress || isDemoMode,
+    skip: !contractAddress || !activeNetwork.chainId || isDemoMode,
   });
 
   const { memberDeposits, accountTokens } = useAccountTokens();

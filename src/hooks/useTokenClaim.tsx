@@ -36,7 +36,7 @@ const useFetchTokenClaim: any = (skipQuery) => {
         treeIndex: myMerkleProof.treeIndex,
       },
     },
-    skip: !account || skipQuery,
+    skip: !account || skipQuery || !activeNetwork.chainId,
     context: { clientName: "theGraph", chainId: activeNetwork.chainId },
   });
 

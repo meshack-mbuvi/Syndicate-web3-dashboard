@@ -105,7 +105,6 @@ const httpsLinks = Object.freeze(constructGraphLinks());
 const apolloInitializer = ({ initialState }) => {
   const graphLink = new ApolloLink((operation) => {
     const { clientName = "backend", chainId = 1 } = operation.getContext();
-    console.log({ clientName, chainId }); // Findout why chainId is sometimes blank
     return httpsLinks[chainId][clientName].request(operation);
   });
   return new ApolloClient({

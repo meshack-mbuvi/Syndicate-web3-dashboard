@@ -83,7 +83,7 @@ const ActivityModal: React.FC<IActivityModal> = ({
       address: from,
     },
     context: { clientName: "backend", chainId: activeNetwork.chainId },
-    skip: !address || !from,
+    skip: !address || !from || !activeNetwork.chainId,
   });
 
   useEffect(() => {

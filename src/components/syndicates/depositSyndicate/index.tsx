@@ -264,7 +264,6 @@ const DepositSyndicate: React.FC = () => {
     } else {
       setCheckSuccess(true);
     }
-
     setTimeout(() => refetchMemberData(), 4000);
   };
 
@@ -404,7 +403,9 @@ const DepositSyndicate: React.FC = () => {
       }
 
       // refetch member stats
-      refetchMemberData();
+      if (activeNetwork.chainId) {
+        refetchMemberData();
+      }
 
       // Amplitude logger: Deposit funds
       amplitudeLogger(SUCCESSFUL_DEPOSIT, {
@@ -683,7 +684,9 @@ const DepositSyndicate: React.FC = () => {
       toggleDepositProcessingModal();
     }
     stopPolling();
-    refetchMemberData();
+    if (activeNetwork.chainId) {
+      refetchMemberData();
+    }
   };
 
   const closeClaimCard = () => {

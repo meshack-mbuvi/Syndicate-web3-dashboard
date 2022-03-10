@@ -34,12 +34,17 @@ const useFetchAirdropInfo: any = (skipQuery) => {
         treeIndex: myMerkleProof.treeIndex,
       },
     },
-    skip: !account || skipQuery,
+    skip: !account || !activeNetwork.chainId || skipQuery,
     context: { clientName: "theGraph", chainId: activeNetwork.chainId },
   });
 
   useEffect(() => {
-    if (myMerkleProof.amount && account && clubAddress) {
+    if (
+      myMerkleProof.amount &&
+      account &&
+      clubAddress &&
+      activeNetwork.chainId
+    ) {
       refetch();
     }
   }, [myMerkleProof.amount, account, clubAddress, activeNetwork.chainId]);

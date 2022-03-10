@@ -32,7 +32,7 @@ export const useMyClubs = (): IProps => {
       },
     },
     context: { clientName: "theGraph", chainId: activeNetwork.chainId },
-    skip: !account,
+    skip: !account || !activeNetwork.chainId,
   });
 
   useEffect(() => {

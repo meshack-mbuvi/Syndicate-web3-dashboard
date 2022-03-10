@@ -32,7 +32,7 @@ export const MemberAddressComponent: React.FC<IProps> = (props) => {
       address: memberAddress,
     },
     context: { clientName: "backend", chainId: activeNetwork.chainId },
-    skip: !clubAddress || !memberAddress,
+    skip: !clubAddress || !memberAddress || !activeNetwork.chainId,
   });
 
   useEffect(() => {
