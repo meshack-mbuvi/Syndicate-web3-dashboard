@@ -1,7 +1,8 @@
 import axios from "axios";
+import { BACKEND_LINKS } from "@/Networks/backendLinks";
 
-export const proxyGet = async (path: string, params: any) => {
-    return await axios.get(`${process.env.NEXT_PUBLIC_API_SERVER_URL}/${path}`, {
-        params,
-      });
+export const proxyGet = async (chainId: number, path: string, params: any) => {
+  return await axios.get(`${BACKEND_LINKS[chainId].apiServer}/${path}`, {
+    params,
+  });
 };

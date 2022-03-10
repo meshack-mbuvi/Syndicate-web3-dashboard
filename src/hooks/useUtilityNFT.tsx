@@ -16,7 +16,7 @@ const useUtilityNFT: any = () => {
 
   const {
     web3Reducer: {
-      web3: { account: address, web3 },
+      web3: { account: address, web3, activeNetwork },
     },
     utilityNFTSliceReducer,
     initializeContractsReducer: { syndicateContracts },
@@ -70,7 +70,7 @@ const useUtilityNFT: any = () => {
   const getEthPrice = async () => {
     const response = await Promise.all([
       RugUtilityMintModule.ethPrice(),
-      getEthereumTokenPrice(),
+      getEthereumTokenPrice(activeNetwork.chainId),
     ])
       .then((result) => result)
       .catch(() => []);
@@ -87,6 +87,7 @@ const useUtilityNFT: any = () => {
     const result = await getEtherscanTransactionHistory(
       address,
       redemptionToken,
+      activeNetwork.chainId,
     );
 
     const tokenIds = new Set<string>();

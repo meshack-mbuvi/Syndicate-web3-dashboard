@@ -1,19 +1,20 @@
 import { proxyGet } from ".";
 
-export const getEthereumTokenPrice = async () => {
-    const result = await proxyGet('etherscan/api', {
-        action: "ethprice",
-        module: "stats",
-    });
+export const getEthereumTokenPrice = async (chainId: number) => {
+  const result = await proxyGet(chainId, "etherscan/api", {
+    action: "ethprice",
+    module: "stats",
+  });
 
-    return result.data.result.ethusd;
-}
+  return result.data.result.ethusd;
+};
 
 export const getEtherscanTransactionHistory = async (
   address: string,
   contractaddress: string,
+  chainId: number,
 ) => {
-  const result = await proxyGet("etherscan/api", {
+  const result = await proxyGet(chainId, "etherscan/api", {
     module: "account",
     action: "tokennfttx",
     address,
@@ -23,8 +24,11 @@ export const getEtherscanTransactionHistory = async (
   return result.data.result;
 };
 
-export const getEtherscanTokenTransactions = async (address: string) => {
-  const result = await proxyGet("etherscan/api", {
+export const getEtherscanTokenTransactions = async (
+  address: string,
+  chainId: number,
+) => {
+  const result = await proxyGet(chainId, "etherscan/api", {
     module: "account",
     action: "tokentx",
     address,
@@ -33,8 +37,8 @@ export const getEtherscanTokenTransactions = async (address: string) => {
   return result.data.result;
 };
 
-export const getEthBalance = async (address: string) => {
-  const result = await proxyGet("etherscan/api", {
+export const getEthBalance = async (address: string, chainId: number) => {
+  const result = await proxyGet(chainId, "etherscan/api", {
     module: "account",
     action: "balance",
     tag: "latest",

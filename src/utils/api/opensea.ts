@@ -5,6 +5,7 @@ const openSeaBaseURL = "opensea/api/v1";
 export const getOpenseaTokens = async (
   address: string,
   contractAddress: string,
+  chainId: number,
   offset?: string,
   limit?: string,
 ): Promise<any> => {
@@ -18,17 +19,21 @@ export const getOpenseaTokens = async (
   // This will retrieve all assets regardless of the owner.
   if (!address) delete params.owner;
 
-  const result = await proxyGet("opensea/api/v1/assets", params);
+  const result = await proxyGet(chainId, "opensea/api/v1/assets", params);
 
   return result.data;
 };
 
-export const getOpenseaFloorPrices = async (slug: string): Promise<any> => {
+export const getOpenseaFloorPrices = async (
+  slug: string,
+  chainId: number,
+): Promise<any> => {
   const params = {};
 
   let floor_price;
   try {
     const result = await proxyGet(
+      chainId,
       `${openSeaBaseURL}/collection/${slug}/stats`,
       params,
     );

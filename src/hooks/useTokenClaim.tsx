@@ -1,4 +1,3 @@
-import { useConnectWalletContext } from "@/context/ConnectWalletProvider";
 import { CLAIMED_TOKEN } from "@/graphql/queries";
 import { AppState } from "@/state";
 import {
@@ -15,15 +14,13 @@ const useFetchTokenClaim: any = (skipQuery) => {
 
   const {
     web3Reducer: {
-      web3: { account },
+      web3: { account, activeNetwork },
     },
     merkleProofSliceReducer: { myMerkleProof },
     erc20TokenSliceReducer: {
       erc20Token: { address: clubAddress },
     },
   } = useSelector((state: AppState) => state);
-
-  const { chainId } = useConnectWalletContext();
 
   // Fetch existing claims
   const {
@@ -39,15 +36,20 @@ const useFetchTokenClaim: any = (skipQuery) => {
         treeIndex: myMerkleProof.treeIndex,
       },
     },
-    skip: !account || skipQuery,
-    context: { chainId },
+    skip: !account || skipQuery || !activeNetwork.chainId,
+    context: { clientName: "theGraph", chainId: activeNetwork.chainId },
   });
 
   useEffect(() => {
-    if (myMerkleProof.amount && account && clubAddress) {
+    if (
+      myMerkleProof.amount &&
+      account &&
+      clubAddress &&
+      activeNetwork.chainId
+    ) {
       refetch();
     }
-  }, [myMerkleProof.amount, account, clubAddress]);
+  }, [myMerkleProof.amount, account, clubAddress, activeNetwork.chainId]);
 
   useEffect(() => {
     dispatch(setLoadingTokenClaimed(true));

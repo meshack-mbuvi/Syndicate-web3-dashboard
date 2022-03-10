@@ -1,4 +1,3 @@
-import { useConnectWalletContext } from "@/context/ConnectWalletProvider";
 import { MERKLE_AIRDROP_CREATED } from "@/graphql/queries";
 import { AppState } from "@/state";
 import {
@@ -15,15 +14,13 @@ const useFetchAirdropInfo: any = (skipQuery) => {
 
   const {
     web3Reducer: {
-      web3: { account },
+      web3: { account, activeNetwork },
     },
     merkleProofSliceReducer: { myMerkleProof },
     erc20TokenSliceReducer: {
       erc20Token: { address: clubAddress },
     },
   } = useSelector((state: AppState) => state);
-
-  const { chainId } = useConnectWalletContext();
 
   // Fetch existing claims
   const {
@@ -37,15 +34,20 @@ const useFetchAirdropInfo: any = (skipQuery) => {
         treeIndex: myMerkleProof.treeIndex,
       },
     },
-    skip: !account || skipQuery,
-    context: { chainId },
+    skip: !account || !activeNetwork.chainId || skipQuery,
+    context: { clientName: "theGraph", chainId: activeNetwork.chainId },
   });
 
   useEffect(() => {
-    if (myMerkleProof.amount && account && clubAddress) {
+    if (
+      myMerkleProof.amount &&
+      account &&
+      clubAddress &&
+      activeNetwork.chainId
+    ) {
       refetch();
     }
-  }, [myMerkleProof.amount, account, clubAddress]);
+  }, [myMerkleProof.amount, account, clubAddress, activeNetwork.chainId]);
 
   useEffect(() => {
     dispatch(setLoadingAirdropInfo(true));

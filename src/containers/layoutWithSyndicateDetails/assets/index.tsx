@@ -20,7 +20,7 @@ const Assets: React.FC = () => {
   const {
     assetsSliceReducer: { tokensResult },
     web3Reducer: {
-      web3: { account },
+      web3: { account, activeNetwork },
     },
     transactionsReducer: { totalInvestmentTransactionsCount },
     erc20TokenSliceReducer: {
@@ -63,8 +63,10 @@ const Assets: React.FC = () => {
   };
 
   useEffect(() => {
-    refetchTransactions();
-  }, [pageOffset]);
+    if (activeNetwork.chainId) {
+      refetchTransactions();
+    }
+  }, [pageOffset, activeNetwork.chainId]);
 
   const investmentsTransactionsData = JSON.stringify(
     transactionsData?.Financial_recentTransactions,

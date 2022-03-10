@@ -52,7 +52,7 @@ const LayoutWithSyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
     initializeContractsReducer: { syndicateContracts },
     merkleProofSliceReducer: { myMerkleProof },
     web3Reducer: {
-      web3: { account, web3, status },
+      web3: { account, web3, status, activeNetwork },
     },
     erc20TokenSliceReducer: {
       erc20Token: { owner, loading, name, depositsEnabled },
@@ -128,12 +128,18 @@ const LayoutWithSyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
 
   const fetchAssets = () => {
     // fetch token transactions for the connected account.
-    dispatch(fetchTokenTransactions(owner));
+    dispatch(
+      fetchTokenTransactions({
+        account: owner,
+        chainId: activeNetwork.chainId,
+      }),
+    );
     // test nft account: 0xf4c2c3e12b61d44e6b228c43987158ac510426fb
     dispatch(
       fetchCollectiblesTransactions({
         account: owner,
         offset: "0",
+        chainId: activeNetwork.chainId,
       }),
     );
   };

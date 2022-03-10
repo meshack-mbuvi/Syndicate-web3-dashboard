@@ -1,6 +1,6 @@
 import { CLUB_TOKEN_MEMBERS } from "@/graphql/queries";
 import { AppState } from "@/state";
-import { setClubMembers, setLoadingClubMembers } from "@/state/clubMembers";
+import { setClubMembers, setLoadingClubMembers , clearClubMembers } from "@/state/clubMembers";
 import { getWeiAmount } from "@/utils/conversions";
 import { mockClubMembers } from "@/utils/mockdata";
 import { useQuery } from "@apollo/client";
@@ -8,7 +8,6 @@ import { useRouter } from "next/router";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useDemoMode } from "./useDemoMode";
-import { clearClubMembers } from "@/state/clubMembers";
 
 const useClubTokenMembers = () => {
   const dispatch = useDispatch();
@@ -25,7 +24,7 @@ const useClubTokenMembers = () => {
   const { clubAddress } = router.query;
   const isDemoMode = useDemoMode();
 
-  const { account, currentEthereumNetwork } = web3;
+  const { account, activeNetwork } = web3;
 
   // Retrieve syndicates that I manage
   const {
@@ -38,7 +37,8 @@ const useClubTokenMembers = () => {
         contractAddress: clubAddress?.toString().toLocaleLowerCase(),
       },
     },
-    skip: !clubAddress || isDemoMode,
+    context: { clientName: "theGraph", chainId: activeNetwork.chainId },
+    skip: !clubAddress || isDemoMode || !activeNetwork.chainId,
   });
 
   const processMembers = (members) => {
@@ -72,10 +72,10 @@ const useClubTokenMembers = () => {
   };
 
   useEffect(() => {
-    if (router.isReady) {
+    if (router.isReady && activeNetwork.chainId) {
       refetch();
     }
-  }, [router.isReady, account, currentEthereumNetwork, totalSupply]);
+  }, [router.isReady, account, activeNetwork.chainId, totalSupply]);
 
   useEffect(() => {
     if (loadingClubMembers) {

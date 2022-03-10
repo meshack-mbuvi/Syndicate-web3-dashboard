@@ -42,7 +42,7 @@ const EstimateGas = (props: { customClasses?: string }) => {
         )
         .then((res) => processBaseFee(res.data))
         .catch(() => 0),
-      getEthereumTokenPrice()
+      getEthereumTokenPrice(activeNetwork.chainId)
         .then((res) => setEthTokenPrice(res))
         .catch(() => 0),
     ]);

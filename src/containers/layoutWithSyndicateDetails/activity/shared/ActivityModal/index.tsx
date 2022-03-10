@@ -71,7 +71,7 @@ const ActivityModal: React.FC<IActivityModal> = ({
   const isDemoMode = useDemoMode();
 
   const [setMemberHasSigned] = useMutation(SET_MEMBER_SIGN_STATUS, {
-    context: { clientName: "backend" },
+    context: { clientName: "backend", chainId: activeNetwork.chainId },
   });
 
   const { from } = transactionInfo;
@@ -82,14 +82,15 @@ const ActivityModal: React.FC<IActivityModal> = ({
       clubAddress: address,
       address: from,
     },
-    skip: !address || !from,
+    context: { clientName: "backend", chainId: activeNetwork.chainId },
+    skip: !address || !from || !activeNetwork.chainId,
   });
 
   useEffect(() => {
-    if (address && from) {
+    if (address && from && activeNetwork.chainId) {
       refetch();
     }
-  }, [address, from, loading]);
+  }, [address, from, loading, activeNetwork.chainId]);
 
   const [adaptiveBackground, setAdaptiveBackground] = useState<string>("");
   const [blockExplorerLink, setblockExplorerLink] = useState<string>("");
@@ -210,7 +211,7 @@ const ActivityModal: React.FC<IActivityModal> = ({
       variables: {
         transactionAnnotationList: inlineAnnotationData,
       },
-      context: { clientName: "backend" },
+      context: { clientName: "backend", chainId: activeNetwork.chainId },
     });
     if (!loadingNoteAnnotation) {
       refetchTransactions();

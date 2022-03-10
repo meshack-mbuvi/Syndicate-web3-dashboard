@@ -30,7 +30,7 @@ const ClaimNFT: React.FC = () => {
   const {
     initializeContractsReducer: { syndicateContracts },
     web3Reducer: {
-      web3: { account, web3 },
+      web3: { account, web3, activeNetwork },
     },
     erc721TokenSliceReducer: { erc721Token },
   } = useSelector((state: AppState) => state);
@@ -138,7 +138,7 @@ const ClaimNFT: React.FC = () => {
     const PUBLIC_UTILITY_MINT_MODULE =
       process.env.NEXT_PUBLIC_UTILITY_MINT_MODULE;
 
-    const tokenPrice = await getEthereumTokenPrice();
+    const tokenPrice = await getEthereumTokenPrice(activeNetwork.chainId);
     let publicUtilityClaimEnabled = false;
     let publicSingleClaimEnabled = false;
     let merkleClaimEnabled = true;

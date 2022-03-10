@@ -32,6 +32,9 @@ const ActivityTable: React.FC = () => {
     erc20TokenSliceReducer: {
       erc20Token: { depositsEnabled: isOpenForDeposits },
     },
+    web3Reducer: {
+      web3: { activeNetwork },
+    },
   } = useSelector((state: AppState) => state);
   const isManager = useIsClubOwner();
   const router = useRouter();
@@ -55,7 +58,9 @@ const ActivityTable: React.FC = () => {
   const [activeTransactionHashes, setActiveTransactionHashes] = useState([]);
   const [uncategorisedIcon, setUncategorisedIcon] = useState<string>("");
   const [searchWidth, setSearchWidth] = useState<number>(48);
-  const [mockTransactionsData, setMockTransactionsData] = useState<any>(mockActivityDepositTransactionsData);
+  const [mockTransactionsData, setMockTransactionsData] = useState<any>(
+    mockActivityDepositTransactionsData,
+  );
 
   useEffect(() => {
     if (isOpenForDeposits) {
@@ -244,7 +249,7 @@ const ActivityTable: React.FC = () => {
     } else {
       refetchTransactions();
     }
-  }, [pageOffset, filter, isDemoMode, searchValue]);
+  }, [pageOffset, filter, isDemoMode, searchValue, activeNetwork.chainId]);
 
   useEffect(() => {
     if (transactionsData?.Financial_recentTransactions) {
@@ -285,7 +290,7 @@ const ActivityTable: React.FC = () => {
   };
 
   // filter function for mock transaction data
-  const manualMockDataFilter = (searchParam: string): Boolean => {
+  const manualMockDataFilter = (searchParam: string): boolean => {
     const searchTerm = searchValue.toLowerCase();
 
     // using indexOf here instead of includes because the former has more support browsers-wise.
@@ -374,7 +379,7 @@ const ActivityTable: React.FC = () => {
       variables: {
         transactionAnnotationList: txnAnnotationListData,
       },
-      context: { clientName: "backend" },
+      context: { clientName: "backend", chainId: activeNetwork.chainId },
     });
 
     if (!annotationLoading) {

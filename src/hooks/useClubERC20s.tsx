@@ -25,7 +25,7 @@ const useClubERC20s = () => {
 
   const router = useRouter();
 
-  const { account, currentEthereumNetwork } = web3;
+  const { account, activeNetwork } = web3;
   const accountAddress = useMemo(() => account.toLocaleLowerCase(), [account]);
 
   // Retrieve syndicates that I manage
@@ -33,8 +33,9 @@ const useClubERC20s = () => {
     variables: {
       where: { ownerAddress: accountAddress },
     },
+    context: { clientName: "theGraph", chainId: activeNetwork.chainId },
     // Avoid unnecessary calls when account is not defined
-    skip: !account,
+    skip: !account || !activeNetwork.chainId,
   });
 
   const {
@@ -47,12 +48,13 @@ const useClubERC20s = () => {
         memberAddress: accountAddress,
       },
     },
+    context: { clientName: "theGraph", chainId: activeNetwork.chainId },
     // Avoid unnecessary calls when account is not defined
-    skip: !account,
+    skip: !account || !activeNetwork.chainId,
   });
 
   useEffect(() => {
-    if (accountAddress && router.isReady) {
+    if (accountAddress && router.isReady && activeNetwork.chainId) {
       refetch({
         where: { ownerAddress: accountAddress },
       });
@@ -60,7 +62,7 @@ const useClubERC20s = () => {
         where: { memberAddress: accountAddress },
       });
     }
-  }, [router.isReady, accountAddress]);
+  }, [router.isReady, accountAddress, activeNetwork.chainId]);
 
   const [clubIAmMember, setClubIamMember] = useState([]);
   const [myClubs, setMyClubs] = useState([]);
@@ -301,7 +303,7 @@ const useClubERC20s = () => {
   }, [
     account,
     memberClubLoading,
-    currentEthereumNetwork,
+    activeNetwork,
     memberClubData?.members?.length,
   ]);
 
@@ -319,12 +321,7 @@ const useClubERC20s = () => {
       }
       setMyClubs(data.syndicateDAOs);
     }
-  }, [
-    account,
-    currentEthereumNetwork,
-    loading,
-    JSON.stringify(data?.syndicateDAOs),
-  ]);
+  }, [account, activeNetwork, loading, JSON.stringify(data?.syndicateDAOs)]);
 
   return { loading, memberClubLoading, accountHasClubs };
 };

@@ -31,6 +31,7 @@ import Head from "next/head";
 import Router from "next/router";
 import NProgress from "nprogress";
 import React from "react";
+import { BACKEND_LINKS } from "@/Networks/backendLinks";
 
 //Binding events.
 Router.events.on("routeChangeStart", () => NProgress.start());
@@ -82,29 +83,30 @@ const App = (props) => {
   );
 };
 
-const httpsLinks = Object.freeze({
-  backend: new HttpLink({
-    uri: isDev
-      ? `${process.env.NEXT_PUBLIC_BACKEND_GRAPHQL_ENDPOINT_STAGING}`
-      : `${process.env.NEXT_PUBLIC_BACKEND_GRAPHQL_ENDPOINT_PROD}`,
-  }),
-  1: new HttpLink({
-    uri: `${process.env.NEXT_PUBLIC_GRAPHQL_MAINNET_ENDPOINT}`,
-  }),
-  4: new HttpLink({
-    uri: `${process.env.NEXT_PUBLIC_GRAPHQL_ENDPOINT}`,
-  }),
-  137: new HttpLink({
-    uri: `${process.env.NEXT_PUBLIC_GRAPHQL_MATIC_ENDPOINT}`,
-  }),
-} as const);
+// Construct dynamic httpLinks from available networks and graphs
+const constructGraphLinks = () => {
+  const links = {};
+  Object.entries(BACKEND_LINKS).map(([networkId, backendInfo]) => {
+    const graphs = Object.keys(backendInfo.graphs);
+    const httplinks = {};
+    graphs.forEach((value) => {
+      httplinks[value] = new HttpLink({
+        uri: backendInfo.graphs[value],
+      });
+    });
+    links[networkId] = httplinks;
+  });
+
+  return links;
+};
+
+const httpsLinks = Object.freeze(constructGraphLinks());
 
 const apolloInitializer = ({ initialState }) => {
   const graphLink = new ApolloLink((operation) => {
-    const { chainId = "backend" } = operation.getContext();
-    return httpsLinks[chainId].request(operation);
+    const { clientName = "backend", chainId = 1 } = operation.getContext();
+    return httpsLinks[chainId][clientName].request(operation);
   });
-
   return new ApolloClient({
     ssrMode: isSSR(),
     link: new RetryLink().concat(graphLink),

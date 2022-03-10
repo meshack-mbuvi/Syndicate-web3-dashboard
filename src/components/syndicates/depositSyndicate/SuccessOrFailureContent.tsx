@@ -1,6 +1,5 @@
 import { BlockExplorerLink } from "@/components/syndicates/shared/BlockExplorerLink";
 import { AppState } from "@/state";
-import { isDev } from "@/utils/environment";
 import { floatedNumberWithCommas } from "@/utils/formattedNumbers";
 import Image from "next/image";
 import React from "react";
