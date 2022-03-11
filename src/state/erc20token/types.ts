@@ -1,7 +1,10 @@
+import { ERC20TokenDefaultState } from "@/helpers/erc20TokenDetails";
+
 export interface ERC20Token {
   name: string;
   owner: string;
   address: string;
+  currentMintPolicyAddress?: string;
   totalSupply?: number;
   tokenDecimals: number;
   totalDeposits?: number;
@@ -17,6 +20,8 @@ export interface ERC20Token {
   maxTotalSupply: number;
   requiredToken;
   requiredTokenMinBalance;
+  depositToken?: string;
+  mintModule?: string;
 }
 
 export interface DepositDetails {
@@ -34,26 +39,7 @@ export const initialState: {
   depositDetails: DepositDetails;
   erc20TokenContract: any;
 } = {
-  erc20Token: {
-    name: "",
-    owner: "",
-    address: "",
-    depositsEnabled: false,
-    claimEnabled: false,
-    totalSupply: 0,
-    tokenDecimals: 18, //default to 18
-    totalDeposits: 0,
-    symbol: "",
-    startTime: 0,
-    endTime: 0,
-    memberCount: 0,
-    maxTotalDeposits: 25000000,
-    loading: false,
-    maxMemberCount: 0,
-    maxTotalSupply: 0,
-    requiredToken: "",
-    requiredTokenMinBalance: "",
-  },
+  erc20Token: ERC20TokenDefaultState,
   depositDetails: {
     mintModule: "",
     ethDepositToken: false,

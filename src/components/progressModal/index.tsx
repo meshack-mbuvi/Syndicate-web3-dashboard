@@ -12,13 +12,15 @@ export enum ProgressModalState {
 export const ProgressModal = (props: {
   isVisible: boolean;
   title: string;
-  description?: string;
+  description?: any;
   state: ProgressModalState;
   buttonLabel?: string;
   buttonFullWidth?: boolean;
   buttonOnClick?: () => void;
   etherscanHash?: string;
   transactionType?: string;
+  etherscanLinkText?: string;
+  grayIcon?: boolean;
 }): React.ReactElement => {
   const {
     title,
@@ -30,6 +32,8 @@ export const ProgressModal = (props: {
     transactionType,
     isVisible = false,
     buttonFullWidth = false,
+    etherscanLinkText = "View on Etherscan",
+    grayIcon = false,
   } = props;
 
   let icon;
@@ -37,9 +41,11 @@ export const ProgressModal = (props: {
     case ProgressModalState.CONFIRM:
       icon = <Spinner height="h-16" width="w-16" margin="" strokeWidth="5" />;
       break;
+
     case ProgressModalState.PENDING:
       icon = <Spinner height="h-16" width="w-16" margin="" strokeWidth="5" />;
       break;
+
     case ProgressModalState.SUCCESS:
       icon = (
         <img
@@ -51,6 +57,7 @@ export const ProgressModal = (props: {
         />
       );
       break;
+
     case ProgressModalState.FAILURE:
       icon = (
         <img
@@ -86,9 +93,10 @@ export const ProgressModal = (props: {
         {etherscanHash && (
           <div className="mt-4 w-full flex justify-center items-center">
             <EtherscanLink
-              text="View on Etherscan"
               etherscanInfo={etherscanHash}
               type={transactionType}
+              text={etherscanLinkText}
+              grayIcon={grayIcon}
             />
           </div>
         )}
