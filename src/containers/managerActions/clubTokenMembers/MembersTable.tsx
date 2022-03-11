@@ -1,4 +1,5 @@
 import { SearchForm } from "@/components/inputs/searchForm";
+import { LinkButton, LinkType } from "@/components/linkButtons";
 import Modal, { ModalStyle } from "@/components/modal";
 import { Spinner } from "@/components/shared/spinner";
 import { SET_MEMBER_SIGN_STATUS } from "@/graphql/mutations";
@@ -24,6 +25,10 @@ const MembersTable = ({
   data,
   filterAddressOnChangeHandler,
   searchAddress,
+  selectedMember,
+  setSelectedMember,
+  toggleAddMemberModal,
+  setShowMemberOptions,
 }): JSX.Element => {
   const {
     erc20TokenSliceReducer: {
@@ -70,6 +75,23 @@ const MembersTable = ({
     "Club tokens": string;
     "Ownership share": string;
   }>();
+
+  useEffect(() => {
+    if (selectedMember) {
+      const { clubTokens, depositAmount, memberAddress, ownershipShare } =
+        selectedMember;
+
+      setMemberInfo({
+        "Wallet address": memberAddress,
+        "Deposit amount": `${floatedNumberWithCommas(
+          depositAmount,
+        )} ${depositTokenSymbol}`,
+        "Club tokens": `${floatedNumberWithCommas(clubTokens)} ${symbol}`,
+        "Ownership share": `${floatedNumberWithCommas(ownershipShare)}%`,
+      });
+      setShowMemberDetailsModal(true);
+    }
+  }, [selectedMember]);
 
   const menuItems = [
     {
@@ -142,6 +164,7 @@ const MembersTable = ({
 
   const closeMemberDetailsModal = () => {
     setShowMemberDetailsModal(false);
+    setSelectedMember(undefined);
   };
 
   const handleSetSelected = async (index: number) => {
@@ -167,6 +190,17 @@ const MembersTable = ({
           />
         ) : (
           <div></div>
+        )}
+
+        {isOwner && (
+          <div className="inline-flex items-right">
+            <LinkButton
+              type={LinkType.MEMBER}
+              onClick={() => {
+                toggleAddMemberModal();
+              }}
+            />
+          </div>
         )}
       </div>
 
@@ -215,13 +249,29 @@ const MembersTable = ({
                 onClick={() => {
                   handleClick(row.original);
                 }}
+                onMouseEnter={() =>
+                  isOwner
+                    ? setShowMemberOptions({
+                        show: true,
+                        memberAddress: row.original.memberAddress,
+                      })
+                    : null
+                }
+                onMouseLeave={() =>
+                  isOwner
+                    ? setShowMemberOptions({
+                        show: false,
+                        memberAddress: "",
+                      })
+                    : null
+                }
               >
                 {row.cells.map((cell, cellIndex) => {
                   return (
                     <td
                       {...cell.getCellProps()}
                       key={cellIndex}
-                      className={`m-0 col-span-3 text-base py-5 text-white`}
+                      className={`m-0 col-span-3 text-base py-4 text-white flex items-center`}
                     >
                       {cell.render("Cell")}
                     </td>

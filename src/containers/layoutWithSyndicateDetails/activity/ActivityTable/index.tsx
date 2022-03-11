@@ -143,8 +143,9 @@ const ActivityTable: React.FC = () => {
   }, [transactionsChecked]);
 
   // mutation to bulk categorise
-  const [annotationMutation, { loading: annotationLoading, error: err }] =
-    useMutation(ANNOTATE_TRANSACTIONS);
+  const [annotationMutation, { loading: annotationLoading }] = useMutation(
+    ANNOTATE_TRANSACTIONS,
+  );
 
   // pagination
   const DATA_LIMIT = 10; // number of items to show on each page.

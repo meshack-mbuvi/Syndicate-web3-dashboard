@@ -1157,7 +1157,6 @@ const DepositSyndicate: React.FC = () => {
                       ~{" "}
                       {floatedNumberWithCommas(
                         parseFloat(depositAmount) * depositTokenPriceInUSDState,
-                        ethDepositToken ?? false,
                       )}{" "}
                       USD
                     </p>
@@ -1345,7 +1344,6 @@ const DepositSyndicate: React.FC = () => {
                             (~{" "}
                             {floatedNumberWithCommas(
                               etherBalance * depositTokenPriceInUSDState,
-                              true,
                             )}{" "}
                             USD)
                           </>

@@ -41,13 +41,31 @@ export const InfoIcon = (props: {
   );
 };
 
+export enum ExternalLinkColor {
+  GRAY = "GRAY",
+  BLUE = "BLUE",
+  WHITE = "WHITE"
+}
+
 /**Shows an icon for external links */
-export const ExternalLinkIcon: React.FC<any> = (props) =>
-  !(props as any).grayIcon ? (
-    <img src="/images/externalLink.svg" {...props} alt="extenal-link" />
-  ) : (
-    <img src="/images/externalLinkGray.svg" {...props} alt="extenal-link" />
-  );
+export const ExternalLinkIcon = (props) => {
+  let icon;
+  switch (props.iconColor) {
+    case ExternalLinkColor.GRAY:
+      icon = "/images/externalLinkGray.svg"
+      break;
+    case ExternalLinkColor.BLUE:
+      icon = "/images/externalLink.svg"
+      break;
+    case ExternalLinkColor.WHITE:
+      icon = "/images/externalLinkWhite.svg"
+      break;
+    default:
+      icon = "/images/externalLink.svg"
+      break;
+  }
+  return <img src={icon} {...props} alt="extenal-link" />
+}
 
 export const CopyLinkIcon = (props: {
   color?: string;
@@ -119,7 +137,7 @@ export const CopiedLinkIcon = ({
     >
       <path
         d="M5.3125 13.8125C5.72656 13.8125 6.04688 13.6406 6.27344 13.3047L13.6172 1.86719C13.7812 1.60938 13.8516 1.39062 13.8516 1.17969C13.8516 0.625 13.4609 0.242188 12.8984 0.242188C12.5156 0.242188 12.2812 0.382812 12.0469 0.75L5.27344 11.4922L1.79688 7.03125C1.5625 6.72656 1.32031 6.60156 0.976562 6.60156C0.414062 6.60156 0.0078125 7 0.0078125 7.54688C0.0078125 7.78906 0.09375 8.02344 0.296875 8.26562L4.34375 13.3125C4.61719 13.6562 4.90625 13.8125 5.3125 13.8125Z"
-        className="fill-current"
+        className={`fill-current ${color}`}
       />
     </svg>
   );
@@ -141,7 +159,7 @@ export const LockIcon = ({
     >
       <path
         d="M2.08084 16H9.91916C10.9813 16 11.5 15.4751 11.5 14.327V8.30753C11.5 7.27422 11.0719 6.74116 10.1909 6.65095V4.58432C10.1909 1.49257 8.15719 0 6 0C3.84281 0 1.80913 1.49257 1.80913 4.58432V6.69195C1.00225 6.81497 0.5 7.33983 0.5 8.30753V14.327C0.5 15.4751 1.01871 16 2.08084 16ZM3.13473 4.4121C3.13473 2.35366 4.46033 1.26294 6 1.26294C7.53967 1.26294 8.86527 2.35366 8.86527 4.4121V6.64275L3.13473 6.65095V4.4121Z"
-        className="fill-current"
+        className={`fill-current ${color}`}
       />
     </svg>
   );

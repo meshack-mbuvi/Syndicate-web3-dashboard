@@ -13,11 +13,12 @@ import { RugUtilityProperties } from "@/ClubERC20Factory/RugRadio/RugUtilityProp
 import { RugUtilityMintModuleContract } from "@/ClubERC20Factory/rugUtilityMintModule";
 import { DepositTokenMintModuleContract } from "@/ClubERC20Factory/depositTokenMintModule";
 import { EthMintModuleContract } from "@/ClubERC20Factory/ethMintModule";
+import { OwnerMintModuleContract } from "@/ClubERC20Factory/ownerMintModule";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 export interface ISyndicateContracts {
   clubERC20Factory: ClubERC20Factory;
-  clubERC20FactoryEth: ClubERC20FactoryEth
+  clubERC20FactoryEth: ClubERC20FactoryEth;
   policyMintERC20: MintPolicyContract;
   mintPolicy: MintPolicyContract;
   DepositTokenMintModule: DepositTokenMintModuleContract;
@@ -34,6 +35,7 @@ export interface ISyndicateContracts {
   RugToken: ClubERC20Contract;
   GenesisNFTContract;
   rugBonusClaimModule: RugBonusTokenModule;
+  OwnerMintModule: OwnerMintModuleContract;
 }
 
 interface InitialState {
@@ -60,6 +62,7 @@ const initialState: InitialState = {
     RugToken: null,
     GenesisNFTContract: null,
     rugBonusClaimModule: null,
+    OwnerMintModule: null,
   },
 };
 

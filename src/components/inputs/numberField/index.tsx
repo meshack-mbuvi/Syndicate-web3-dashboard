@@ -105,7 +105,7 @@ export const NumberField: React.FC<IProps> = ({
           decimalScale={2}
         />
 
-        <div className={`absolute inset-y-0 right-0 py-4 flex items-center `}>
+        <div className={`absolute inset-y-0 right-0 py-4 flex items-center`}>
           <div className="flex space-x-4">
             {maxButtonEnabled === true && (
               <button

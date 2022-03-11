@@ -84,7 +84,7 @@ const InvestmentDetailsModal: React.FC<IInvestmentDetailsModal> = ({
   useEffect(() => {
     if (!storedInvestmentDetails?.investmentDate) {
       //  Set the date to the current block timestamp
-      setValue("investmentDate", new Date(null).toISOString());
+      setValue("investmentDate", new Date().toISOString());
     }
   }, [blockTimestamp, storedInvestmentDetails?.investmentDate]);
 

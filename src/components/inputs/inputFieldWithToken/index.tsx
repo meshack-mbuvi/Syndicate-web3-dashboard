@@ -3,30 +3,35 @@ import { InputField } from "../inputField";
 
 export enum TokenType {
   USDC = "USDC",
-  ETH = "ETH"
+  ETH = "ETH",
 }
 
 export const InputFieldWithToken = (props: {
-    value?: string,
-    placeholderLabel?: string,
-    infoLabel?: string,
-    isInErrorState?: boolean,
-    depositToken?: boolean,
-    extraClasses?: string,
-    onChange: (e) => void
-}) => {
-    const {
-        value, 
-        placeholderLabel = "Unlimited", 
-        infoLabel, 
-        isInErrorState = false,
-        depositToken,
-        extraClasses = "", 
-        onChange,
-        ...rest
-    } = props;
+  value?: string;
+  placeholderLabel?: string;
+  infoLabel?: string | React.ReactElement;
+  isInErrorState?: boolean;
+  depositToken?: boolean;
+  extraClasses?: string;
+  onChange: (e) => void;
+  showClubSymbol?: boolean;
+  symbol?: string;
+}): React.ReactElement => {
+  const {
+    value,
+    placeholderLabel = "Unlimited",
+    infoLabel,
+    isInErrorState = false,
+    depositToken,
+    extraClasses = "",
+    onChange,
+    showClubSymbol,
+    symbol,
+    ...rest
+  } = props;
 
-  const { depositTokenSymbol, depositTokenLogo } = useTokenDetails(depositToken);
+  const { depositTokenSymbol, depositTokenLogo } =
+    useTokenDetails(depositToken);
 
   const tokenSymbol = depositTokenSymbol;
   const tokenIcon = depositTokenLogo;
@@ -46,25 +51,31 @@ export const InputFieldWithToken = (props: {
 
   return (
     <>
-    <div className="relative">
+      <div className="relative">
         <InputField
-            value={value}
-            placeholderLabel={placeholderLabel}
-            isInErrorState={isInErrorState}
-            extraClasses={extraClasses}
-            onChange={onChange}
-            {...rest}
+          value={value}
+          placeholderLabel={placeholderLabel}
+          isInErrorState={isInErrorState}
+          extraClasses={extraClasses}
+          onChange={onChange}
+          {...rest}
         />
-        <div 
-            className="inline absolute top-1/2 right-4" 
-            style={{transform: "translateY(-50%)"}}
+        <div
+          className="inline absolute top-1/2 right-4"
+          style={{ transform: "translateY(-50%)" }}
         >
-            <TokenSymbolandIcon/>
+          {showClubSymbol ? symbol : <TokenSymbolandIcon />}
         </div>
-    </div>
-    {infoLabel && 
-        <div className={`text-sm mt-2 ${isInErrorState ? "text-red-error" : "text-gray-syn4"}`}>{infoLabel}</div>
-    }
-</>
+      </div>
+      {infoLabel && (
+        <div
+          className={`text-sm mt-2 ${
+            isInErrorState ? "text-red-error" : "text-gray-syn4"
+          }`}
+        >
+          {infoLabel}
+        </div>
+      )}
+    </>
   );
 };

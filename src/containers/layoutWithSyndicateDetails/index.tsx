@@ -30,7 +30,7 @@ import { clearMyTransactions } from "@/state/erc20transactions";
 import { Status } from "@/state/wallet/types";
 import { getTextWidth } from "@/utils/getTextWidth";
 import {
-  mockDepositERC20Token,
+  mockActiveERC20Token,
   mockDepositModeTokens,
   mockTokensResult,
 } from "@/utils/mockdata";
@@ -39,7 +39,7 @@ import { useRouter } from "next/router";
 import React, { FC, useEffect, useMemo, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { syndicateActionConstants } from "src/components/syndicates/shared/Constants";
-import ClubTokenMembers from "../managerActions/clubTokenMembers";
+import ClubTokenMembers from "../managerActions/clubTokenMembers/index";
 import ActivityView from "./activity";
 import Assets from "./assets";
 import TabButton from "./TabButton";
@@ -101,9 +101,6 @@ const LayoutWithSyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
   const [isSubNavStuck, setIsSubNavStuck] = useState(true);
   // const [customTransform, setCustomTransform] = useState(undefined);
   const subNav = useRef(null);
-  const {
-    query: { status: isOpenForDeposits },
-  } = router;
 
   // Listen to page scrolling
   useEffect(() => {
@@ -185,8 +182,8 @@ const LayoutWithSyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
         dispatch(setClubMembers([]));
       };
     } else if (isDemoMode) {
-      // using "Open to deposits" as the default view here in all cases.
-      dispatch(setERC20TokenDetails(mockDepositERC20Token));
+      // using "Active" as the default view.
+      dispatch(setERC20TokenDetails(mockActiveERC20Token));
     }
   }, [
     clubAddress,
@@ -274,7 +271,11 @@ const LayoutWithSyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
                   )}
                   <div className="grid grid-cols-12 gap-5">
                     {/* Left Column */}
-                    <div className="md:col-start-1 md:col-end-7 col-span-12">
+                    <div
+                      className={`md:col-start-1 ${
+                        managerSettingsOpen ? "md:col-end-8" : "md:col-end-7"
+                      } col-span-12`}
+                    >
                       {/* its used as an identifier for ref in small devices */}
                       {/*
                   we should have an isChildVisible child here,

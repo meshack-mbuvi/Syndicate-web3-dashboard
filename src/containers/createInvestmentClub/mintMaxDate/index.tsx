@@ -96,7 +96,7 @@ const MintMaxDate: FC<{ className?: string }> = ({ className }) => {
           value: parseInt((value / 1000).toString()), // convert to seconds.
         }),
       );
-      setDisableButtons(true);
+
       if (currentStep == 2) {
         setTimeout(() => {
           handleNext();
@@ -104,12 +104,7 @@ const MintMaxDate: FC<{ className?: string }> = ({ className }) => {
         }, 400);
       }
     } else {
-      // execute a dispatch because we know default date
-      const date = new Date(new Date().setHours(23, 59, 0, 0)).getTime();
-      const dateToSet = date
-        ? parseInt((date / 1000).toString())
-        : parseInt((new Date().getTime() / 1000 + DAY_IN_SECONDS).toString());
-      dispatch(setMintEndTime({ mintTime: "Custom", value: dateToSet }));
+      // Show custom date picker
       setNextBtnDisabled(false);
       setShowNextButton(true);
       setShowCustomDatePicker(true);
@@ -161,7 +156,8 @@ const MintMaxDate: FC<{ className?: string }> = ({ className }) => {
                 <button
                   className="flex items-center w-full h-full"
                   key={index}
-                  onClick={() => {
+                  onClick={(e) => {
+                    e.preventDefault();
                     handleSetMintTime(index, { mintTime, value });
                   }}
                   disabled={disableButtons}

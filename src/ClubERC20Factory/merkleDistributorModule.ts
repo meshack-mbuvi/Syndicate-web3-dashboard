@@ -1,4 +1,4 @@
-import merkleDistributorModule_ABI from "src/contracts/MerkleDistributorModule.json";
+import merkleDistributorModule_ABI from "src/contracts/MerkleDistributorModuleERC20.json";
 
 import { getGnosisTxnInfo } from "./shared/gnosisTransactionInfo";
 

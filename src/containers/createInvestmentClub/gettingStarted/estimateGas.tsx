@@ -1,4 +1,4 @@
-import { getEthereumTokenPrice } from "@/helpers/ethereumTokenDetails";
+import { getEthereumTokenPrice } from "@/utils/api/etherscan";
 import { AppState } from "@/state";
 import { getWeiAmount } from "@/utils/conversions";
 import { isDev } from "@/utils/environment";
@@ -10,7 +10,9 @@ const baseURL = isDev
   ? "https://api-rinkeby.etherscan.io/api"
   : "https://api.etherscan.io/api";
 
-const EstimateGas: React.FC = () => {
+const EstimateGas = (props: {
+  customClasses?: string
+}) => {
   const {
     web3Reducer: {
       web3: { account },
@@ -19,6 +21,8 @@ const EstimateGas: React.FC = () => {
       syndicateContracts: { clubERC20Factory },
     },
   } = useSelector((state: AppState) => state);
+
+  const { customClasses = "" } = props;
 
   const [gas, setGas] = useState(0); // 0.05 ETH (~$121.77)
   const [gasUnits, setGasUnits] = useState(0);
@@ -43,7 +47,7 @@ const EstimateGas: React.FC = () => {
         .then((res) => processBaseFee(res.data))
         .catch(() => 0),
       getEthereumTokenPrice()
-        .then((res) => setEthTokenPrice(res.data.ethereum.usd))
+        .then((res) => setEthTokenPrice(res))
         .catch(() => 0),
     ]);
   }, [account, clubERC20Factory]);
@@ -60,11 +64,11 @@ const EstimateGas: React.FC = () => {
   }, [gasUnits, gasBaseFee]);
 
   return (
-    <button className="bg-blue-navy bg-opacity-20 rounded-custom w-full flex py-2.5 cursor-default items-center">
+    <button className={!customClasses ? `bg-blue-navy bg-opacity-20 rounded-custom w-full flex py-2.5 cursor-default items-center` : `${customClasses}`}>
       <img src="/images/gasIcon.svg" className="inline w-4 h-4.5 mx-3" alt="" />
       <span className="flex justify-between w-full">
-        <span>Estimated gas</span>
-        <span className="mr-3">
+        <span className="text-blue">Estimated gas</span>
+        <span className="mr-3 text-blue">
           {gas
             ? `${gas.toFixed(6)} ETH ${
                 ethTokenPrice

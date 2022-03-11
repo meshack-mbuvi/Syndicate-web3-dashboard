@@ -1,21 +1,21 @@
-import { FC, useRef, Dispatch, SetStateAction, useState } from "react";
-import Image from "next/image";
-import { useDispatch, useSelector } from "react-redux";
 import { SkeletonLoader } from "@/components/skeletonLoader";
+import { useIsClubMember, useIsClubOwner } from "@/hooks/useClubOwner";
+import { useDemoMode } from "@/hooks/useDemoMode";
+import useModal from "@/hooks/useModal";
 import { AppState } from "@/state";
-import { floatedNumberWithCommas } from "@/utils/formattedNumbers";
 import {
   clearCurrentTransaction,
   setCurrentTransaction,
 } from "@/state/erc20transactions";
-import { getWeiAmount } from "@/utils/conversions";
-
-import moment from "moment";
-import ActivityModal from "../activity/shared/ActivityModal";
-import useModal from "@/hooks/useModal";
 import { TransactionCategory } from "@/state/erc20transactions/types";
-import { useIsClubOwner, useIsClubMember } from "@/hooks/useClubOwner";
-import { useDemoMode } from "@/hooks/useDemoMode";
+import { getWeiAmount } from "@/utils/conversions";
+import { floatedNumberWithCommas } from "@/utils/formattedNumbers";
+import moment from "moment";
+import Image from "next/image";
+import { Dispatch, FC, SetStateAction, useRef, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import ActivityModal from "../activity/shared/ActivityModal";
+import { ArrowRightIcon } from "@heroicons/react/outline";
 
 interface InvestmentsViewProps {
   pageOffset: number;
@@ -91,7 +91,8 @@ const InvestmentsView: FC<InvestmentsViewProps> = ({
               <span className="text-gray-syn4">{subText}</span>
             </div>
           )}
-          <div className={!animate && `filter grayscale blur-md`}>
+
+          <div className={!animate ? `filter grayscale blur-md` : undefined}>
             {[...Array(4).keys()].map((_, index) => {
               return (
                 <div
@@ -253,14 +254,41 @@ const InvestmentsView: FC<InvestmentsViewProps> = ({
               roundCategory,
               preMoneyValuation,
               postMoneyValuation,
-              memo,
             } = metadata;
+            const showAddMemo =
+              !companyName ||
+              !roundCategory ||
+              !postMoneyValuation ||
+              !preMoneyValuation;
             const [costBasisUSD, costBasisDecimalValue] =
               floatedNumberWithCommas(postMoneyValuation).split(".");
             const [investmentValueUSD, investmentDecimalValue] =
               floatedNumberWithCommas(preMoneyValuation).split(".");
             const dashForMissingValue = (
               <span className="text-gray-syn4">-</span>
+            );
+            const defaultCompanyName = (
+              <span className="text-gray-syn4">No company name added</span>
+            );
+            const investmentDataValue = getWeiAmount(
+              investmentData.value,
+              investmentData.tokenDecimal,
+              false,
+            );
+            const [defaultCostBasisUSD, defaultCostBasisDecimalValue] =
+              floatedNumberWithCommas(investmentDataValue).split(".");
+
+            const defaultCostBasis = (
+              <span>
+                {defaultCostBasisUSD}
+                {defaultCostBasisDecimalValue && (
+                  <span className="text-gray-lightManatee">
+                    .{defaultCostBasisDecimalValue}
+                  </span>
+                )}
+                &nbsp;
+                {investmentData.tokenSymbol}
+              </span>
             );
 
             return (
@@ -273,7 +301,7 @@ const InvestmentsView: FC<InvestmentsViewProps> = ({
               >
                 <div className="flex flex-row col-span-3 items-center">
                   <div className="text-base flex items-center">
-                    {companyName ? companyName : dashForMissingValue}
+                    {companyName ? companyName : defaultCompanyName}
                   </div>
                 </div>
 
@@ -294,7 +322,7 @@ const InvestmentsView: FC<InvestmentsViewProps> = ({
                       {"USD"}
                     </span>
                   ) : (
-                    dashForMissingValue
+                    defaultCostBasis
                   )}
                 </div>
 
@@ -316,22 +344,34 @@ const InvestmentsView: FC<InvestmentsViewProps> = ({
                 </div>
                 {(isMember || isOwner || isDemoMode) && (
                   <div className="text-base flex col-span-2 items-center justify-end">
-                    <div className="cursor-pointer flex items-center">
-                      <div className="mr-2 flex items-center">
-                        <Image
-                          width="16"
-                          height="16"
-                          src="/images/assets/memo.svg"
-                        />
+                    {isOwner && showAddMemo ? (
+                      <div className="cursor-pointer flex items-center text-blue">
+                        <span
+                          aria-hidden={true}
+                          onClick={() => viewInvestmentDetails(investmentData)}
+                        >
+                          Add memo
+                        </span>
+                        <ArrowRightIcon className="w-5 h-5 ml-2" />
                       </div>
-                      <span
-                        className="text-gray-syn4"
-                        aria-hidden={true}
-                        onClick={() => viewInvestmentDetails(investmentData)}
-                      >
-                        View memo
-                      </span>
-                    </div>
+                    ) : (
+                      <div className="cursor-pointer flex items-center">
+                        <div className="mr-2 flex items-center">
+                          <Image
+                            width="16"
+                            height="16"
+                            src="/images/assets/memo.svg"
+                          />
+                        </div>
+                        <span
+                          className="text-gray-syn4"
+                          aria-hidden={true}
+                          onClick={() => viewInvestmentDetails(investmentData)}
+                        >
+                          View memo
+                        </span>
+                      </div>
+                    )}
                   </div>
                 )}
               </div>
