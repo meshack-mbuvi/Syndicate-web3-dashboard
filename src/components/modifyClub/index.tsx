@@ -680,7 +680,7 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
                     : "opacity-0"
                 } transition-opacity duration-700`}
               >
-                <Callout extraClasses="">
+                <Callout>
                   <EstimateGas customClasses="bg-opacity-20 rounded-custom w-full flex cursor-default items-center" />
                 </Callout>
               </div>
