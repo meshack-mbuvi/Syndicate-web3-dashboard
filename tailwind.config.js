@@ -347,6 +347,7 @@ module.exports = {
       animation: {
         fade_in: "fade_in 0.5s ease-out 1",
         fade_in_bg: "fade_in_bg 6s ease-out 1",
+        "grow-shrink": "grow-shrink 3.6s ease-in-out infinite"
       },
       keyframes: {
         fade_in: {
@@ -363,6 +364,20 @@ module.exports = {
           },
           "100%": {
             opacity: "1",
+          },
+        },
+        "grow-shrink": {
+          "0%": {
+            transform: "scale(1)",
+            opacity: "1"
+          },
+          "50%": {
+            transform: "scale(1.12)",
+            opacity: "0.5"
+          },
+          "100%": {
+            transform: "scale(1)",
+            opacity: "1"
           },
         },
       },
