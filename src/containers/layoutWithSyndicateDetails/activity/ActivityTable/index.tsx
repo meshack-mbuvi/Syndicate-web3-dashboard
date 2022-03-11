@@ -14,8 +14,8 @@ import {
 } from "@/state/erc20transactions";
 import { TransactionCategory } from "@/state/erc20transactions/types";
 import {
-  mockActivityTransactionsData,
   mockActivityDepositTransactionsData,
+  mockActivityTransactionsData,
 } from "@/utils/mockdata";
 import { NetworkStatus, useMutation } from "@apollo/client";
 import { capitalize } from "lodash";
@@ -287,7 +287,7 @@ const ActivityTable: React.FC = () => {
   };
 
   // filter function for mock transaction data
-  const manualMockDataFilter = (searchParam: string): Boolean => {
+  const manualMockDataFilter = (searchParam: string): boolean => {
     const searchTerm = searchValue.toLowerCase();
 
     // using indexOf here instead of includes because the former has more support browsers-wise.
@@ -434,7 +434,7 @@ const ActivityTable: React.FC = () => {
   return (
     <div className="mt-2 w-full -z-10">
       <div className="py-14 flex justify-between items-center">
-        <div className="flex flex-col justify-start sm:items-center">
+        <div className="flex flex-col sm:flex-row justify-start sm:items-center">
           <div className="pr-8">
             <FilterPill setFilter={(filter) => setFilter(filter)} />
           </div>
