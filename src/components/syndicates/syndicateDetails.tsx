@@ -407,13 +407,16 @@ const SyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
             </div>
           </div>
         </div>
-        {showDuplicateClubWarning && !isDemoMode && (
-          <div className="mt-6">
-            <DuplicateClubWarning
-              dismissDuplicateClubWarning={dismissDuplicateClubWarning}
-            />
-          </div>
-        )}
+        {showDuplicateClubWarning &&
+          !isDemoMode &&
+          !isOwner &&
+          status !== Status.DISCONNECTED && (
+            <div className="mt-6">
+              <DuplicateClubWarning
+                dismissDuplicateClubWarning={dismissDuplicateClubWarning}
+              />
+            </div>
+          )}
 
         {status !== Status.DISCONNECTED &&
           depositsEnabled &&
