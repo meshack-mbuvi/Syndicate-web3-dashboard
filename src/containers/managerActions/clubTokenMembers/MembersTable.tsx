@@ -216,7 +216,7 @@ const MembersTable = ({
                 <tr
                   {...headerGroup.getHeaderGroupProps()}
                   key={index}
-                  className="text-gray-sun4 text-sm grid grid-cols-12 gap-5 leading-6"
+                  className="text-gray-syn4 text-sm grid grid-cols-12 gap-5 leading-6"
                 >
                   {headerGroup.headers.map((column, index) => {
                     return (
