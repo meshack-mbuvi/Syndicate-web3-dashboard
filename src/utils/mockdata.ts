@@ -1,9 +1,10 @@
+import { ERC20Token } from "@/state/erc20token/types";
 import moment from "moment";
 
 export const MOCK_TOTALDEPOSITS = "12044.45";
 export const MOCK_TOTALSUPPLY = "12044.45";
 
-export const mockERC20Token = {
+export const mockERC20Token: ERC20Token = {
   totalSupply: 12044.45,
   address: "demo",
   name: "Alpha Beta Club",
@@ -12,7 +13,6 @@ export const mockERC20Token = {
   depositToken: "0xeb8f08a975Ab53E34D8a0330E0D34de942C95926",
   mintModule: "0x36d367884b5088465C0Ea2EaF52224a922DC71E6",
   symbol: "✺ABC",
-  ethDepositToken: false,
   memberCount: 6,
   loading: false,
   maxMemberCount: 30,
@@ -31,6 +31,7 @@ const futureDate = moment(currentDate).add(3, "M");
 
 export const mockDepositERC20Token = {
   ...mockERC20Token,
+  ethDepositToken: false,
   depositsEnabled: true,
   claimEnabled: false,
   startTime: currentDate.valueOf(),
@@ -39,6 +40,7 @@ export const mockDepositERC20Token = {
 
 export const mockActiveERC20Token = {
   ...mockERC20Token,
+  ethDepositToken: false,
   depositsEnabled: false,
   claimEnabled: false,
   startTime: 1637317202000,

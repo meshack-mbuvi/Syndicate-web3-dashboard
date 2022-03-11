@@ -126,7 +126,7 @@ const SyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
   }, [totalDeposits, memberCount]);
 
   useEffect(() => {
-    if (erc20Token && !managerSettingsOpen) {
+    if (name && !managerSettingsOpen) {
       setDetails([
         ...(depositsEnabled
           ? [
@@ -248,7 +248,20 @@ const SyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
             ]),
       ]);
     }
-  }, [JSON.stringify(erc20Token), totalDeposits]);
+  }, [
+    name,
+    depositsEnabled,
+    maxTotalSupply,
+    totalSupply,
+    maxMemberCount,
+    symbol,
+    startTime,
+    endTime,
+    loading,
+    maxTotalDeposits,
+    memberCount,
+    totalDeposits,
+  ]);
 
   // show message to the user when address has been copied.
   const updateAddressCopyState = () => {
