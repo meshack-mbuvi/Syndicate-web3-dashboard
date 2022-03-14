@@ -14,7 +14,7 @@ interface IAddressMenuDropDown {
 const AddressMenuDropDown: FC<IAddressMenuDropDown> = ({ web3 }) => {
   const { disconnectWallet } = useConnectWalletContext();
 
-  const { account, providerName, web3: web3Instance } = web3;
+  const { account, web3: web3Instance } = web3;
 
   const [showCopyState, setShowCopyState] = useState(false);
   const [ethBalance, setEthBalance] = useState("");
@@ -45,32 +45,6 @@ const AddressMenuDropDown: FC<IAddressMenuDropDown> = ({ web3 }) => {
       isMounted = false;
     };
   }, [account, ethBalance]);
-
-  const renderConnectedWith = (providerName) => {
-    let currentProvider;
-
-    switch (providerName) {
-      case "Injected":
-        currentProvider = "Metamask";
-        break;
-      case "WalletConnect":
-        currentProvider = "WalletConnect";
-        break;
-      case "GnosisSafe":
-        currentProvider = "Gnosis Safe";
-        break;
-      default:
-        currentProvider = "Metamask";
-        break;
-    }
-    return (
-      <>
-        <p className="text-xs text-gray-syn4 font-mono uppercase">
-          Connected with {currentProvider}
-        </p>
-      </>
-    );
-  };
 
   const formattedAddress = formatAddress(account, 7, 6);
 
@@ -115,10 +89,6 @@ const AddressMenuDropDown: FC<IAddressMenuDropDown> = ({ web3 }) => {
                       <span className="text-gray-syn5">{account.substring(0,2)}</span>
                       {formatAddress(account.substring(2), 6, 6)}
                     </p>
-                  </div>
-
-                  <div className="flex justify-between mt-2">
-                    {renderConnectedWith(providerName)}
                   </div>
                 </div>
 

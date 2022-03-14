@@ -53,6 +53,7 @@ const ConnectWallet: React.FC = () => {
 
   //loader text
   const [walletConnectingText, setWalletConnectingText] = useState<string>("");
+  const [walletConnectingHelperText, setWalletConnectingHelperText] = useState<string>("");
   const [showHelpLink, setShowHelpLink] = useState<boolean>(false);
   const [helpLink, setHelpLink] = useState<string>("#");
 
@@ -61,20 +62,27 @@ const ConnectWallet: React.FC = () => {
   useEffect(() => {
     if (providerName) {
       const name = providerName === "Injected" ? "Metamask" : providerName;
-      setWalletConnectingText(`Sign in using the ${name} pop-up to continue.`);
-      const timeoutId = setTimeout(() => {
-        setWalletConnectingText(`Waiting for ${name}...`);
-
-        // set help link based on provider
-        // These links should be updated once we have our own help center
-        if (providerName === "Injected") {
-          setHelpLink("https://metamask.zendesk.com/hc/en-us");
-        } else if (providerName === "WalletConnect") {
-          setHelpLink("https://walletconnect.org/support");
-        }
-        setShowHelpLink(true);
-      }, 10000);
-      return () => clearTimeout(timeoutId);
+      if (name === "Metamask") {
+        setWalletConnectingText(`Unlock wallet`)
+        setWalletConnectingHelperText(`You may need to click the extension`)
+      }
+      else {
+        setWalletConnectingText(`Sign in using the ${name} pop-up to continue.`);
+        const timeoutId = setTimeout(() => {
+          setWalletConnectingText(`Waiting for ${name}...`);
+  
+          // set help link based on provider
+          // These links should be updated once we have our own help center
+          if (providerName === "Injected") {
+            setHelpLink("https://metamask.zendesk.com/hc/en-us");
+            setShowHelpLink(false);
+          } else if (providerName === "WalletConnect") {
+            setHelpLink("https://walletconnect.org/support");
+            setShowHelpLink(true);
+          }
+        }, 10000);
+        return () => clearTimeout(timeoutId);  
+      }
     }
   }, [providerName]);
 
@@ -107,6 +115,12 @@ const ConnectWallet: React.FC = () => {
       name: "Wallet Connect",
       icon: "/images/walletConnect.svg",
       providerToActivate: () => activateWalletConnect(),
+      hidden: loadedAsSafeApp,
+    },
+    {
+      name: "Coinbase Wallet",
+      icon: "/images/coinbase-wallet.svg",
+      providerToActivate: () => activateInjected(),
       hidden: loadedAsSafeApp,
     },
   ];
@@ -149,7 +163,7 @@ const ConnectWallet: React.FC = () => {
             onClick={() => providerToActivate()}
           >
             <span className="text-white text-sm sm:text-base">{name}</span>
-            <img alt="icon" src={icon} className="inline mw-6 sm:w-10" />
+            <img alt="icon" src={icon} className="inline mw-6 sm:w-10 max-h-7" />
           </button>
         </div>
       );
@@ -186,7 +200,7 @@ const ConnectWallet: React.FC = () => {
   // provider icon to display on loading state modals
   let providerIcon;
   if (providerName === "Injected") {
-    providerIcon = "/images/metamaskIcon.svg";
+    providerIcon = "/images/wallet.svg"; // could be Metamask or Coinbase Wallet
   } else if (providerName === "WalletConnect") {
     providerIcon = "/images/walletConnect.svg";
   } else if (providerName === "GnosisSafe") {
@@ -290,17 +304,21 @@ const ConnectWallet: React.FC = () => {
         }}
       >
         <div>
-          <div className="mb-4">
-            <SpinnerWithImage icon={providerIcon} />
+          <div className="relative">
+            <div className="border-4 border-gray-syn7 animate-grow-shrink rounded-full mx-auto p-6 w-28 h-28"></div>
+            <img src={providerIcon} className="absolute w-12 top-1/2 left-1/2" style={{transform: "translate(-50%, -50%)"}} alt="Provider Icon"/>
           </div>
 
-          <p className="mx-5 text-lg font-whyte-light text-center">
+          <p className="mx-5 mt-9 text-sm uppercase font-bold tracking-wide text-center">
             {walletConnectingText}
+          </p>
+          <p className="mx-5 text-sm text-gray-syn4 text-center mt-3">
+            {walletConnectingHelperText}
           </p>
           {showHelpLink ? (
             <div className="w-full flex justify-center">
               <button
-                className="mt-4 mb-4 text-base text-blue hover:underline text-center w-fit-content cursor-pointer"
+                className="mt-4 mb-4 text-sm text-blue hover:underline text-center w-fit-content cursor-pointer"
                 onClick={() => openExternalLink(helpLink)}
               >
                 Help
@@ -319,16 +337,13 @@ const ConnectWallet: React.FC = () => {
           closeModal: () => setShowSuccessModal(false),
         }}
       >
-        <div className="flex flex-col items-center justify-center h-full">
-          <div className="rounded-full h-28 w-28 border-4 border-green-light flex items-center justify-center">
-            <img
-              src={providerIcon}
-              className="inline w-6 sm:w-10"
-              alt="provider-icon"
-            />
+         <div className="mt-14">
+          <div className="relative">
+            <div className="border-4 border-green-light rounded-full mx-auto p-6 w-28 h-28"></div>
+            <img src={providerIcon} className="absolute w-12 top-1/2 left-1/2" style={{transform: "translate(-50%, -50%)"}} alt="Provider Icon"/>
           </div>
 
-          <p className="mx-5 mt-4 text-sm sm:text-lg font-whyte-light text-center">
+          <p className="mx-5 mt-9 text-sm uppercase font-bold tracking-wide text-center">
             Connected
           </p>
         </div>
