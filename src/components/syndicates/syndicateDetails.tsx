@@ -423,6 +423,7 @@ const SyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
         {showDuplicateClubWarning &&
           !isDemoMode &&
           !isOwner &&
+          !loading &&
           status !== Status.DISCONNECTED && (
             <div className="mt-6">
               <DuplicateClubWarning

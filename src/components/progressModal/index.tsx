@@ -1,6 +1,8 @@
 import { EtherscanLink } from "@/components/syndicates/shared/EtherscanLink";
 import Modal, { ModalStyle } from "../modal";
 import { Spinner } from "../shared/spinner";
+import {
+  ExternalLinkColor} from "src/components/iconWrappers";
 
 export enum ProgressModalState {
   PENDING = "PENDING",
@@ -20,7 +22,7 @@ export const ProgressModal = (props: {
   etherscanHash?: string;
   transactionType?: string;
   etherscanLinkText?: string;
-  grayIcon?: boolean;
+  iconColor?: ExternalLinkColor
 }): React.ReactElement => {
   const {
     title,
@@ -33,7 +35,7 @@ export const ProgressModal = (props: {
     isVisible = false,
     buttonFullWidth = false,
     etherscanLinkText = "View on Etherscan",
-    grayIcon = false,
+    iconColor = ExternalLinkColor.BLUE,
   } = props;
 
   let icon;
@@ -96,7 +98,7 @@ export const ProgressModal = (props: {
               etherscanInfo={etherscanHash}
               type={transactionType}
               text={etherscanLinkText}
-              grayIcon={grayIcon}
+              iconColor={iconColor}
             />
           </div>
         )}
