@@ -24,7 +24,11 @@ const Collectibles: FC = () => {
       ethereumTokenPrice,
       loading,
     },
-    erc20TokenSliceReducer: { erc20Token },
+    erc20TokenSliceReducer: {
+      erc20Token,
+      depositDetails: { ethDepositToken },
+      depositTokenPriceInUSD,
+    },
   } = useSelector((state: AppState) => state);
   const isDemoMode = useDemoMode();
 
@@ -37,6 +41,8 @@ const Collectibles: FC = () => {
       <div className="text-xl">Collectibles</div>
     </div>
   );
+
+  const { maxTotalDeposits } = erc20Token;
 
   // loading/empty state for collectibles
   const LoaderContent: React.FC<{ animate: boolean }> = ({ animate }) => (
@@ -113,6 +119,9 @@ const Collectibles: FC = () => {
       fetchCollectiblesTransactions({
         account: erc20Token.owner,
         offset: pageOffSet.toString(),
+        maxTotalDeposits: ethDepositToken
+          ? parseInt((depositTokenPriceInUSD * maxTotalDeposits).toString())
+          : maxTotalDeposits,
       }),
     );
   };
@@ -180,6 +189,7 @@ const Collectibles: FC = () => {
                   floorPrice,
                   lastPurchasePrice,
                   collection,
+                  futureNft,
                 } = collectible;
 
                 let mediaType;
@@ -222,8 +232,9 @@ const Collectibles: FC = () => {
                 // we need to break this to fit onto the collectible card
                 const isNameEthereumAddress = web3.utils.isAddress(name);
 
-                // nft should have a name at least
-                if (name && mediaType) {
+                const blankValue = <span className="text-gray-syn4">-</span>;
+
+                if (mediaType) {
                   return (
                     <div
                       className="col-span-12 sm:col-span-6 md:col-span-4 xl:col-span-3 cursor-pointer"
@@ -246,7 +257,7 @@ const Collectibles: FC = () => {
                             collectible,
                             mediaType,
                             moreDetails: {
-                              "Token ID": id,
+                              "Token ID": futureNft ? "" : id,
                               "Token collection": collection.name,
                               "Floor price": floorPrice,
                               "Last purchase price": lastPurchasePrice,
@@ -262,20 +273,24 @@ const Collectibles: FC = () => {
                                 : "break-words"
                             }`}
                           >
-                            {name}
+                            {name ? name : blankValue}
                           </span>
                           <span className="text-gray-syn4 text-sm pt-4">
                             Floor price
                           </span>
                           <div className="space-x-2 pt-1 h-1/3 overflow-y-scroll no-scroll-bar">
-                            <span className="">{floorPrice ?? 0} ETH</span>
-                            <span className="text-gray-syn4">
-                              (
-                              {floatedNumberWithCommas(
-                                floorPrice * ethereumTokenPrice,
-                              )}{" "}
-                              USD)
+                            <span className="">
+                              {floorPrice ? `${floorPrice} ETH` : blankValue}
                             </span>
+                            {floorPrice > 0 && (
+                              <span className="text-gray-syn4">
+                                (
+                                {floatedNumberWithCommas(
+                                  floorPrice * ethereumTokenPrice,
+                                )}{" "}
+                                USD)
+                              </span>
+                            )}
                           </div>
                         </div>
                       </div>

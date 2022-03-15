@@ -60,6 +60,11 @@
     src: url(/fonts/Whyte/ABCWhyte-Bold.woff) format("woff");
   }
 
+  @font-face {
+    font-family: Whyte Semi-Mono;
+    src: url(/fonts/Whyte_Semi_Mono/ABCWhyteSemi-Mono-Regular.woff) format("woff");
+  }
+
   /* fixes an issue where it is sometimes not possible to scroll */
   html {
     overflow: visible !important;
@@ -108,7 +113,7 @@
   }
 
   .font-bold {
-    font-family: "Whyte Bold";
+    font-weight: inherit !important; /* to override 700 weight */
   }
 
   .main-title {
@@ -238,20 +243,28 @@
     @apply text-gray-placeholder;
   }
 
-  .h3 {
-    @apply block text-white text-lg lg:text-xl;
-  }
-
   .h1 {
     @apply block text-white text-4.5xl leading-11.5;
   }
 
+  .h2 {
+    @apply block text-white text-2xl leading-9;
+  }
+
+  .h3 {
+    @apply block text-white text-lg lg:text-xl leading-7.5;
+  }
+
   .h4 {
-    @apply font-whyte-medium text-sm uppercase leading-5 tracking-px;
+    @apply font-whyte-medium text-sm uppercase leading-4 tracking-px;
+  }
+
+  .body {
+    @apply text-base leading-6 font-whyte;
   }
 
   .small-body {
-    @apply text-sm leading-5 font-whyte;
+    @apply text-sm leading-5.75 font-whyte;
   }
 
   .bottom-triangle-blue::after {

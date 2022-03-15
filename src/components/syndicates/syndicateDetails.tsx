@@ -1,5 +1,6 @@
 import { CopyToClipboardIcon } from "@/components/iconWrappers";
 import { SkeletonLoader } from "@/components/skeletonLoader";
+import DuplicateClubWarning from "@/components/syndicates/shared/DuplicateClubWarning";
 import { useAccountTokens } from "@/hooks/useAccountTokens";
 import { useClubDepositsAndSupply } from "@/hooks/useClubDepositsAndSupply";
 import { useIsClubOwner } from "@/hooks/useClubOwner";
@@ -273,6 +274,33 @@ const SyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
   const isOwnerOrMember =
     isOwner || +accountTokens || myMerkleProof?.account === account;
 
+  const [showDuplicateClubWarning, setShowDuplicateClubWarning] =
+    useState(false);
+  const [duplicateClubWarningExists, setDuplicateClubWarningExists] =
+    useState(false);
+
+  useEffect(() => {
+    const duplicateWarningCookieSet = document.cookie
+      .split("; ")
+      .find((row) => row.startsWith("showedDuplicateClubWarning"));
+    setDuplicateClubWarningExists(Boolean(duplicateWarningCookieSet));
+
+    if (duplicateWarningCookieSet) {
+      setShowDuplicateClubWarning(false);
+    } else if (!duplicateWarningCookieSet && !loading) {
+      setShowDuplicateClubWarning(true);
+    }
+  }, [router.isReady, account, loading]);
+
+  const dismissDuplicateClubWarning = () => {
+    if (!duplicateClubWarningExists) {
+      // set cookie to expire in a very long time.
+      document.cookie =
+        "showedDuplicateClubWarning=true; expires=Fri, 31 Dec 9999 23:59:59 GMT; SameSite=None; Secure";
+    }
+    setShowDuplicateClubWarning(false);
+  };
+
   return (
     <div className="flex flex-col relative">
       <div className="h-fit-content rounded-custom">
@@ -392,11 +420,22 @@ const SyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
             </div>
           </div>
         </div>
+        {showDuplicateClubWarning &&
+          !isDemoMode &&
+          !isOwner &&
+          !loading &&
+          status !== Status.DISCONNECTED && (
+            <div className="mt-6">
+              <DuplicateClubWarning
+                dismissDuplicateClubWarning={dismissDuplicateClubWarning}
+              />
+            </div>
+          )}
 
         {status !== Status.DISCONNECTED &&
           depositsEnabled &&
           !managerSettingsOpen && (
-            <div className="h-fit-content flex w-full justify-start mt-16">
+            <div className="h-fit-content flex w-full justify-start mt-14">
               <ProgressIndicator
                 totalDeposits={totalDeposits}
                 depositTotalMax={maxTotalDeposits.toString()}
@@ -420,7 +459,7 @@ const SyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
               sections={details}
               customStyles={"w-full pt-4"}
               customInnerWidth="w-full grid xl:grid-cols-3 lg:grid-cols-3
-            grid-cols-3 xl:gap-8 gap-6s gap-y-8"
+            grid-cols-3 xl:gap-8 gap-2 xl:gap-5 gap-y-8"
             />
           </div>
         ) : null}

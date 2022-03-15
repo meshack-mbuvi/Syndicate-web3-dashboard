@@ -12,7 +12,6 @@ import DemoBanner from "../demoBanner";
 import ProgressBar from "../ProgressBar";
 import SEO from "../seo";
 import { useDemoMode } from "@/hooks/useDemoMode";
-
 interface Props {
   showBackButton?: boolean;
   managerSettingsOpen?: boolean;
@@ -66,7 +65,10 @@ const Layout: FC<Props> = ({
   const fewClubs = myClubERC20s.length + otherClubERC20s.length < 4;
   const onPortfolioPage = clubsFound && fewClubs && portfolioPage;
   const pushFooter =
-    onPortfolioPage || !account || loading || loadingClubDetails;
+    onPortfolioPage ||
+    !account ||
+    (loading && !managerSettingsOpen) ||
+    loadingClubDetails;
 
   // we don't need to render the footer on the creation page.
   const createClubPage = router.pathname === "/clubs/create";

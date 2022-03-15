@@ -3,8 +3,8 @@ import React, { useEffect, useRef } from "react";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { NavBarNavItem } from "./navbarItems";
-import { UserProfileWrapper } from "./UserProfileWrapper";
 import WalletComponent from "./wallet";
+import { MoreMenu } from "./moreMenu";
 
 interface props {
   navItems: { navItemText: string; url?: string; isLegal?: boolean }[];
@@ -80,7 +80,7 @@ const Header: React.FC<props> = ({
       <nav
         className={`${
           showNav ? "block" : "hidden"
-        } ${showMobileNav ?"bg-gray-syn8" : "bg-black"} sm:bg-black h-20 fixed top-0 inset-x-0 align-middle z-40 backdrop-filter backdrop-blur-xl`}
+        } ${showMobileNav ? "bg-gray-syn8 bg-opacity-100" : "bg-black"} sm:bg-black h-20 sm:bg-opacity-50 fixed top-0 inset-x-0 align-middle z-40 backdrop-filter backdrop-blur-xl`}
         ref={navRef}
       >
         {showMobileNav ? (
@@ -160,10 +160,9 @@ const Header: React.FC<props> = ({
               )}
             </button>
           </div>
-          <div className="hidden sm:flex flex-1 justify-end items-center ">
-            <UserProfileWrapper>
-              <WalletComponent />
-            </UserProfileWrapper>
+          <div className="relative hidden sm:flex sm:space-x-3 flex-1 justify-end items-center">
+            <WalletComponent />
+            <MoreMenu />
           </div>
         </div>
       </nav>

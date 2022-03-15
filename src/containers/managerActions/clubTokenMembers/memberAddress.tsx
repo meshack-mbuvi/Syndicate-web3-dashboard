@@ -7,8 +7,12 @@ import { useRouter } from "next/router";
 import React, { useEffect } from "react";
 import { SignedIcon } from "../shared/signedIcon";
 
-export const MemberAddressComponent = (row) => {
-  const { memberAddress } = row;
+interface IProps {
+  memberAddress: string;
+  setSelectedMember;
+}
+export const MemberAddressComponent: React.FC<IProps> = (props) => {
+  const { memberAddress, setSelectedMember, ...rest } = props;
 
   const {
     query: { clubAddress },
@@ -30,7 +34,10 @@ export const MemberAddressComponent = (row) => {
   }, [memberAddress]);
 
   return (
-    <div className="flex space-x-3 align-center text-base leading-6">
+    <button
+      className="flex space-x-3 align-center text-base leading-6"
+      onClick={() => setSelectedMember({ memberAddress, ...rest })}
+    >
       <Image width="32" height="32" src={"/images/user.svg"} alt="user" />
       <p className="flex my-1 items-center ">
         <span className="mr-2">{formatAddress(memberAddress, 6, 4)}</span>
@@ -50,6 +57,6 @@ export const MemberAddressComponent = (row) => {
           {data?.Financial_memberSigned == true && <SignedIcon />}
         </Tooltip>
       </p>
-    </div>
+    </button>
   );
 };

@@ -27,6 +27,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { SkeletonLoader } from "src/components/skeletonLoader";
 import { Callout } from "../callout";
 import { EmailSupport } from "../emailSupport";
+import { ExternalLinkColor } from "../iconWrappers";
 import { InputFieldWithButton } from "../inputs/inputFieldWithButton";
 import { InputFieldWithDate } from "../inputs/inputFieldWithDate";
 import { InputFieldWithToken } from "../inputs/inputFieldWithToken";
@@ -326,12 +327,14 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
         {...{
           ...progressModalStates[progressState],
           isVisible: true,
-          etherscanLink: transactionHash,
+          etherscanHash: transactionHash,
           buttonOnClick:
             progressModalStates[progressState].buttonLabel == "Try again"
               ? () => setProgressState("")
               : handleExit,
           etherscanLinkText: "View on Etherscan",
+          iconColor: ExternalLinkColor.BLUE,
+          transactionType: "transaction"
         }}
       />
     );
@@ -664,7 +667,7 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
                     : "opacity-0"
                 } transition-opacity duration-700`}
               >
-                <Callout extraClasses="">
+                <Callout>
                   <EstimateGas customClasses="bg-opacity-20 rounded-custom w-full flex cursor-default items-center" />
                 </Callout>
               </div>
@@ -688,7 +691,6 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
           </button>
         </div>
       </div>
-
       <ProgressStates />
     </div>
   );

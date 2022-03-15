@@ -12,8 +12,8 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 import { SpinnerWithImage } from "../shared/spinner/spinnerWithImage";
-import { ConnectModal } from "./connectModal";
-import WalletConnectDemoButton from "@/containers/layoutWithSyndicateDetails/demo/buttons/WalletConnectDemoButton";
+import { ConnectModal, ConnectModalStyle } from "./connectModal";
+import WalletConnectDemoButton, { DemoButtonType } from "@/containers/layoutWithSyndicateDetails/demo/buttons/WalletConnectDemoButton";
 
 /**
  * The component shows a modal with buttons to connect to different
@@ -53,6 +53,7 @@ const ConnectWallet: React.FC = () => {
 
   //loader text
   const [walletConnectingText, setWalletConnectingText] = useState<string>("");
+  const [walletConnectingHelperText, setWalletConnectingHelperText] = useState<string>("");
   const [showHelpLink, setShowHelpLink] = useState<boolean>(false);
   const [helpLink, setHelpLink] = useState<string>("#");
 
@@ -61,20 +62,27 @@ const ConnectWallet: React.FC = () => {
   useEffect(() => {
     if (providerName) {
       const name = providerName === "Injected" ? "Metamask" : providerName;
-      setWalletConnectingText(`Sign in using the ${name} pop-up to continue.`);
-      const timeoutId = setTimeout(() => {
-        setWalletConnectingText(`Waiting for ${name}...`);
-
-        // set help link based on provider
-        // These links should be updated once we have our own help center
-        if (providerName === "Injected") {
-          setHelpLink("https://metamask.zendesk.com/hc/en-us");
-        } else if (providerName === "WalletConnect") {
-          setHelpLink("https://walletconnect.org/support");
-        }
-        setShowHelpLink(true);
-      }, 10000);
-      return () => clearTimeout(timeoutId);
+      if (name === "Metamask") {
+        setWalletConnectingText(`Unlock wallet`)
+        setWalletConnectingHelperText(`You may need to click the extension`)
+      }
+      else {
+        setWalletConnectingText(`Sign in using the ${name} pop-up to continue.`);
+        const timeoutId = setTimeout(() => {
+          setWalletConnectingText(`Waiting for ${name}...`);
+  
+          // set help link based on provider
+          // These links should be updated once we have our own help center
+          if (providerName === "Injected") {
+            setHelpLink("https://metamask.zendesk.com/hc/en-us");
+            setShowHelpLink(false);
+          } else if (providerName === "WalletConnect") {
+            setHelpLink("https://walletconnect.org/support");
+            setShowHelpLink(true);
+          }
+        }, 10000);
+        return () => clearTimeout(timeoutId);  
+      }
     }
   }, [providerName]);
 
@@ -109,6 +117,12 @@ const ConnectWallet: React.FC = () => {
       providerToActivate: () => activateWalletConnect(),
       hidden: loadedAsSafeApp,
     },
+    {
+      name: "Coinbase Wallet",
+      icon: "/images/coinbase-wallet.svg",
+      providerToActivate: () => activateInjected(),
+      hidden: loadedAsSafeApp,
+    },
   ];
 
   /**
@@ -141,28 +155,15 @@ const ConnectWallet: React.FC = () => {
 
   // button for each provider
   const ProviderButton = ({ name, icon, providerToActivate, hidden }) => {
-    let gradientColor;
-    switch (name) {
-      case "Gnosis Safe":
-        gradientColor = "to-green-light-darker from-green-light-dark ";
-        break;
-
-      case "Wallet Connect":
-        gradientColor = "from-blue-light-dark to-blue-light-darker";
-        break;
-
-      default:
-        gradientColor = "from-orange-dark to-orange-light";
-    }
     if (!hidden) {
       return (
-        <div className="flex justify-center items-center m-auto mb-3">
+        <div className="flex justify-center items-center m-auto">
           <button
-            className={`w-full p-4 rounded-lg flex items-center justify-between border border-gray-blackRussian hover:border-gray-3 focus:outline-none focus:border-gray-3 focus:border-1 bg-gradient-to-r ${gradientColor} `}
+            className={`w-full py-4.5 px-6 rounded-custom flex items-center justify-between focus:outline-none focus:border-gray-3 focus:border-1 bg-gradient-to-r bg-gray-syn7 hover:bg-gray-syn6`}
             onClick={() => providerToActivate()}
           >
             <span className="text-white text-sm sm:text-base">{name}</span>
-            <img alt="icon" src={icon} className="inline mw-6 sm:w-10" />
+            <img alt="icon" src={icon} className="inline mw-6 sm:w-10 max-h-7" />
           </button>
         </div>
       );
@@ -199,7 +200,7 @@ const ConnectWallet: React.FC = () => {
   // provider icon to display on loading state modals
   let providerIcon;
   if (providerName === "Injected") {
-    providerIcon = "/images/metamaskIcon.svg";
+    providerIcon = "/images/wallet.svg"; // could be Metamask or Coinbase Wallet
   } else if (providerName === "WalletConnect") {
     providerIcon = "/images/walletConnect.svg";
   } else if (providerName === "GnosisSafe") {
@@ -217,54 +218,80 @@ const ConnectWallet: React.FC = () => {
         {...{
           show: showWalletModal,
           closeModal: closeWalletModal,
-          title: "Connect crypto wallet",
-          subtext: (
-            <span>
-              By connecting your wallet, you agree to our&nbsp;
-              <a
-                href="https://www.notion.so/syndicateprotocol/Syndicate-Terms-of-Service-04674deec934472e88261e861cdcbc7c"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Terms of Service
-              </a>
-              &nbsp;and&nbsp;
-              <a
-                href="https://docs.google.com/document/d/1yATB2hQHjCHKaUvBIzEaO65Xa0xHq-nLOEEJlJngg90/"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Privacy Policy
-              </a>
-            </span>
-          ),
+          modalStyle: ConnectModalStyle.BARE
         }}
       >
         <>
-          {/* show wallet providers */}
-          {providers.map((provider, i) => (
-            <ProviderButton {...provider} key={i} />
-          ))}
+          <div className="rounded-2xl bg-gray-syn8 px-4.5 pt-6">
 
-          <p className="mt-5 text-sm text-center">New to Ethereum?</p>
-          <div className="w-full flex justify-center">
-            <button
-              className="mt-2 mb-4 text-sm text-blue hover:underline text-center w-fit-content cursor-pointer"
-              onClick={() =>
-                openExternalLink(
-                  "https://en.wikipedia.org/wiki/Cryptocurrency_wallet",
-                )
-              }
-            >
-              Learn more about crypto wallets
-            </button>
+            {/* Titles */}
+            <h4 className="text-white text-sm uppercase font-bold tracking-wide">
+              Connect a wallet
+            </h4>
+            <p className="text-xs text-gray-syn5 mb-6 mt-2">
+              <span>
+                By connecting your wallet, you agree to Syndicate&apos;s&nbsp;
+                <a
+                  href="https://www.notion.so/syndicateprotocol/Syndicate-Terms-of-Service-04674deec934472e88261e861cdcbc7c"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="underline"
+                >
+                  Terms
+                </a>
+                ,{" "}
+                <a
+                  href="https://docs.google.com/document/d/1yATB2hQHjCHKaUvBIzEaO65Xa0xHq-nLOEEJlJngg90/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="underline"
+                >
+                  Privacy Policy
+                </a>
+                ,{" "}and{" "}
+                <a
+                  href="https://docs.google.com/document/d/1yATB2hQHjCHKaUvBIzEaO65Xa0xHq-nLOEEJlJngg90/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="underline"
+                >
+                  Community Standards
+                </a>
+              </span>
+            </p>
+
+            {/* Connect wallet */}
+            {/* show wallet providers */}
+            <div className="space-y-4 my-6">
+              {providers.map((provider, i) => (
+                <ProviderButton {...provider} key={i} />
+              ))}
+            </div>
+
+
+            <div className="flex items-center justify-center space-x-2 pb-6">
+              <p className="text-sm text-center">New to crypto?</p>
+              <button
+                className="text-sm text-blue hover:underline cursor-pointer"
+                onClick={() =>
+                  openExternalLink(
+                    "https://en.wikipedia.org/wiki/Cryptocurrency_wallet",
+                  )
+                }
+              >
+                Learn more about wallets
+              </button>
+            </div>
+            
           </div>
-          <div className="pt-12 pb-4">
-            <WalletConnectDemoButton
-              buttonText="Try demo mode"
-              alignment="justify-between"
-            />
-          </div>
+
+          {/* Demo mode */}
+          <WalletConnectDemoButton
+            buttonText="Try demo mode"
+            alignment="justify-between"
+            buttonType={DemoButtonType.ROUND}
+            extraClasses="mt-4 block"
+          />
         </>
       </ConnectModal>
 
@@ -277,17 +304,21 @@ const ConnectWallet: React.FC = () => {
         }}
       >
         <div>
-          <div className="mb-4">
-            <SpinnerWithImage icon={providerIcon} />
+          <div className="relative">
+            <div className="border-4 border-gray-syn7 animate-grow-shrink rounded-full mx-auto p-6 w-28 h-28"></div>
+            <img src={providerIcon} className="absolute w-12 top-1/2 left-1/2" style={{transform: "translate(-50%, -50%)"}} alt="Provider Icon"/>
           </div>
 
-          <p className="mx-5 text-lg font-whyte-light text-center">
+          <p className="mx-5 mt-9 text-sm uppercase font-bold tracking-wide text-center">
             {walletConnectingText}
+          </p>
+          <p className="mx-5 text-sm text-gray-syn4 text-center mt-3">
+            {walletConnectingHelperText}
           </p>
           {showHelpLink ? (
             <div className="w-full flex justify-center">
               <button
-                className="mt-4 mb-4 text-base text-blue hover:underline text-center w-fit-content cursor-pointer"
+                className="mt-4 mb-4 text-sm text-blue hover:underline text-center w-fit-content cursor-pointer"
                 onClick={() => openExternalLink(helpLink)}
               >
                 Help
@@ -306,16 +337,13 @@ const ConnectWallet: React.FC = () => {
           closeModal: () => setShowSuccessModal(false),
         }}
       >
-        <div className="flex flex-col items-center justify-center h-full">
-          <div className="rounded-full h-28 w-28 border-4 border-green-light flex items-center justify-center">
-            <img
-              src={providerIcon}
-              className="inline w-6 sm:w-10"
-              alt="provider-icon"
-            />
+         <div className="mt-14">
+          <div className="relative">
+            <div className="border-4 border-green-light rounded-full mx-auto p-6 w-28 h-28"></div>
+            <img src={providerIcon} className="absolute w-12 top-1/2 left-1/2" style={{transform: "translate(-50%, -50%)"}} alt="Provider Icon"/>
           </div>
 
-          <p className="mx-5 mt-4 text-sm sm:text-lg font-whyte-light text-center">
+          <p className="mx-5 mt-9 text-sm uppercase font-bold tracking-wide text-center">
             Connected
           </p>
         </div>
@@ -401,7 +429,7 @@ const ConnectWallet: React.FC = () => {
           </div>
           <button
             type="button"
-            className="flex cursor-pointer justify-center font-whyte-light items-center px-6 py-3 text-sm text-black font-medium rounded-lg bg-white hover:bg-gray-3 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue w-full"
+            className="primary-CTA flex cursor-pointer justify-center items-center focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue w-full"
             onClick={handleErrorButtonAction}
           >
             {errorButtonText}

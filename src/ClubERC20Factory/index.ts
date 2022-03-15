@@ -15,6 +15,7 @@ import { RugERC20ClaimModule } from "./RugRadio/RugERC20ClaimModule";
 import { RugUtilityProperties } from "./RugRadio/RugUtilityProperties";
 import { RugUtilityMintModuleContract } from "./rugUtilityMintModule";
 import { EthMintModuleContract } from "./ethMintModule";
+import { OwnerMintModuleContract } from "./ownerMintModule";
 
 // Contract addresses for new contracts
 const CLUB_ERC20_FACTORY_ADDRESS = process.env.NEXT_PUBLIC_CLUB_ERC20_FACTORY;
@@ -37,6 +38,7 @@ const PUBLIC_ERC721_MINT_POLICY = process.env.NEXT_PUBLIC_ERC721_MINT_POLICY;
 const PUBLIC_RUG_UTILITY_MINT_MODULE =
   process.env.NEXT_PUBLIC_RUG_UTILITY_MINT_MODULE;
 const PUBLIC_UTILITY_MINT_MODULE = process.env.NEXT_PUBLIC_UTILITY_MINT_MODULE;
+const PUBLIC_OWNER_MINT_MODULE = process.env.NEXT_PUBLIC_OWNER_MINT_MODULE;
 
 // Contract addresses for Rug Radio
 const RUG_TOKEN = process.env.NEXT_PUBLIC_RUG_TOKEN;
@@ -131,6 +133,11 @@ export const getSyndicateContracts = async (
     web3,
   );
 
+  const OwnerMintModule = new OwnerMintModuleContract(
+    PUBLIC_OWNER_MINT_MODULE,
+    web3,
+  );
+
   // return all initialized contracts
   return {
     clubERC20Factory,
@@ -151,5 +158,6 @@ export const getSyndicateContracts = async (
     RugToken,
     GenesisNFTContract,
     rugBonusClaimModule,
+    OwnerMintModule,
   };
 };

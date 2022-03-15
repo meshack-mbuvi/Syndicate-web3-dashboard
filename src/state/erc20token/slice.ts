@@ -30,6 +30,9 @@ const erc20TokenSlice = createSlice({
     setTotalSupply(state, action: PayloadAction<number>) {
       state.erc20Token.totalSupply = action.payload;
     },
+    setDepositTokenUSDPrice(state, action: PayloadAction<number>) {
+      state.depositTokenPriceInUSD = action.payload;
+    },
   },
 });
 
@@ -40,6 +43,7 @@ export const {
   setLoadingClub,
   setTotalDeposits,
   setTotalSupply,
+  setDepositTokenUSDPrice,
 } = erc20TokenSlice.actions;
 
 export default erc20TokenSlice.reducer;

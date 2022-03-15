@@ -148,83 +148,92 @@ const TokenTable: FC<Props> = ({ columns, tableData }) => {
       {!loading && tableData.length > 0 ? (
         <div className="mt-16">
           {tokensTitle}
-          <div className="flex flex-col pt-8">
-            {/* scroll to top of table with this button when pagination is clicked  */}
-            <button ref={tokensTableRef} />
-            <div className="grid grid-cols-3 md:grid-cols-12 md:gap-5 pb-3 text-gray-lightManatee">
-              {columns?.map((col, idx) => (
-                <div
-                  key={`token-table-header-${idx}`}
-                  className="text-sm md:col-span-3 md:text-left"
-                >
-                  {col}
+          <div className="overflow-x-scroll no-scroll-bar -mr-6 sm:mr-auto">
+            <div className="w-max sm:w-full">
+              <div className="flex flex-col pt-8">
+                {/* scroll to top of table with this button when pagination is clicked  */}
+                <button ref={tokensTableRef} />
+                <div className="grid grid-cols-3 md:grid-cols-12 gap-8 md:gap-5 pb-3 text-gray-lightManatee">
+                  {columns?.map((col, idx) => (
+                    <div
+                      key={`token-table-header-${idx}`}
+                      className="text-sm md:col-span-3 md:text-left"
+                    >
+                      {col}
+                    </div>
+                  ))}
                 </div>
-              ))}
+              </div>
+              {loading || skeletonState ? (
+                <LoaderContent animate={true} />
+              ) : (
+                paginatedData.map(
+                  (
+                    { tokenBalance, tokenName, tokenSymbol, price, logo },
+                    index,
+                  ) => {
+                    const tokenValue =
+                      parseFloat(Number(price) ? price : price?.usd ?? 0) *
+                      parseFloat(tokenBalance);
+                    return (
+                      <div
+                        key={`token-table-row-${index}`}
+                        className="grid grid-cols-3 md:grid-cols-12 gap-8 md:gap-5 border-b-1 border-gray-syn7 py-5 cursor-pointer"
+                        onClick={() => {
+                          setShowTokenModal();
+                          setTokenDetails({
+                            tokenBalance,
+                            tokenName,
+                            tokenSymbol,
+                            value: tokenValue,
+                            logo,
+                          });
+                        }}
+                      >
+                        <div className="flex flex-row md:col-span-3 items-center">
+                          <div className="hidden sm:flex flex-shrink-0 pr-4">
+                            {logo ? (
+                              <img
+                                alt="token-icon"
+                                src={logo}
+                                className="w-8 h-8"
+                              />
+                            ) : (
+                              <GradientAvatar
+                                name={tokenName}
+                                size={"w-8 h-8"}
+                              />
+                            )}
+                          </div>
+                          <div className="text-base flex md:flex-row md:items-center">
+                            <span>{tokenName}&nbsp;</span>
+                            <span className="text-gray-lightManatee">
+                              ({tokenSymbol})
+                            </span>
+                          </div>
+                        </div>
+                        <div className="md:col-span-3">
+                          <PriceContainer
+                            numberValue={tokenBalance}
+                            customSymbol={tokenSymbol}
+                            ethDepositToken={ethDepositToken}
+                            flexColumn={false}
+                          />
+                        </div>
+                        <div className="md:col-span-3">
+                          <PriceContainer
+                            numberValue={`${tokenValue || ""}`}
+                            noUSDValue={!price?.usd && !price}
+                            flexColumn={false}
+                          />
+                        </div>
+                      </div>
+                    );
+                  },
+                )
+              )}
             </div>
           </div>
-          {loading || skeletonState ? (
-            <LoaderContent animate={true} />
-          ) : (
-            paginatedData.map(
-              (
-                { tokenBalance, tokenName, tokenSymbol, price, logo },
-                index,
-              ) => {
-                const tokenValue =
-                  parseFloat(Number(price) ? price : price?.usd ?? 0) *
-                  parseFloat(tokenBalance);
-                return (
-                  <div
-                    key={`token-table-row-${index}`}
-                    className="grid grid-cols-3 md:grid-cols-12 md:gap-5 border-b-1 border-gray-syn7 py-5 cursor-pointer"
-                    onClick={() => {
-                      setShowTokenModal();
-                      setTokenDetails({
-                        tokenBalance,
-                        tokenName,
-                        tokenSymbol,
-                        value: tokenValue,
-                        logo,
-                      });
-                    }}
-                  >
-                    <div className="flex flex-row md:col-span-3 items-center">
-                      <div className="hidden sm:flex flex-shrink-0 pr-4">
-                        {logo ? (
-                          <img
-                            alt="token-icon"
-                            src={logo}
-                            className="w-8 h-8"
-                          />
-                        ) : (
-                          <GradientAvatar name={tokenName} size={"w-8 h-8"} />
-                        )}
-                      </div>
-                      <div className="text-base flex flex-col md:flex-row md:items-center">
-                        <span>{tokenName}&nbsp;</span>
-                        <span className="text-gray-lightManatee">
-                          ({tokenSymbol})
-                        </span>
-                      </div>
-                    </div>
-                    <div className="md:col-span-3">
-                      <PriceContainer
-                        numberValue={tokenBalance}
-                        customSymbol={tokenSymbol}
-                        ethDepositToken={ethDepositToken}
-                      />
-                    </div>
-                    <div className="md:col-span-3">
-                      <PriceContainer
-                        numberValue={`${tokenValue || ""}`}
-                        noUSDValue={!price?.usd && !price}
-                      />
-                    </div>
-                  </div>
-                );
-              },
-            )
-          )}
         </div>
       ) : (
         <div className="mt-16">

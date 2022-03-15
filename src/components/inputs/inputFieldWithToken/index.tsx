@@ -9,12 +9,14 @@ export enum TokenType {
 export const InputFieldWithToken = (props: {
   value?: string;
   placeholderLabel?: string;
-  infoLabel?: string;
+  infoLabel?: string | React.ReactElement;
   isInErrorState?: boolean;
   depositToken?: boolean;
   extraClasses?: string;
   onChange: (e) => void;
-}) => {
+  showClubSymbol?: boolean;
+  symbol?: string;
+}): React.ReactElement => {
   const {
     value,
     placeholderLabel = "Unlimited",
@@ -23,6 +25,8 @@ export const InputFieldWithToken = (props: {
     depositToken,
     extraClasses = "",
     onChange,
+    showClubSymbol,
+    symbol,
     ...rest
   } = props;
 
@@ -60,7 +64,7 @@ export const InputFieldWithToken = (props: {
           className="inline absolute top-1/2 right-4"
           style={{ transform: "translateY(-50%)" }}
         >
-          <TokenSymbolandIcon />
+          {showClubSymbol ? symbol : <TokenSymbolandIcon />}
         </div>
       </div>
       {infoLabel && (

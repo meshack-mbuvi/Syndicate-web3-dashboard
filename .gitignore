@@ -1,5 +1,6 @@
 # Remove .env file
 .env
+.env.production
 
 .DS_Store
 

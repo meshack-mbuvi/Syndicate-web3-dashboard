@@ -1,6 +1,5 @@
 import { useDisableBgScrollOnModal } from "@/hooks/useDisableBgScrollOnModal";
 import { Dialog, Transition } from "@headlessui/react";
-import Image from "next/image";
 import React, { Fragment } from "react";
 
 interface ModalProps {
@@ -150,7 +149,7 @@ const Modal = (props: ModalProps): JSX.Element => {
               aria-labelledby="modal-headline"
             >
               <div className="hidden sm:block absolute p-4 top-0 left-0">
-                {/* close button at the right top of the modal */}
+                {/* back button at the left top of the modal */}
                 {showBackButton ? (
                   <button
                     type="button"
@@ -168,7 +167,7 @@ const Modal = (props: ModalProps): JSX.Element => {
               </div>
 
               {/* close button */}
-              <div className="absolute top-8 right-10">
+              <div className="absolute top-9 right-10">
                 {/* close button at the right top of the modal */}
                 {showCloseButton ? (
                   <button
@@ -179,7 +178,7 @@ const Modal = (props: ModalProps): JSX.Element => {
                     onClick={() => closeModal()}
                   >
                     <span className="sr-only">Close</span>
-                    <Image
+                    <img
                       src="/images/close-gray-5.svg"
                       width="16"
                       height="16"

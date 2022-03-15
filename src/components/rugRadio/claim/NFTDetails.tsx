@@ -1,4 +1,5 @@
 import { CtaButton } from "@/components/CTAButton";
+import { ExternalLinkColor } from "@/components/iconWrappers";
 import Modal, { ModalStyle } from "@/components/modal";
 import NumberTreatment from "@/components/NumberTreatment";
 import { Spinner } from "@/components/shared/spinner";
@@ -315,7 +316,7 @@ export const NFTDetails: React.FC = () => {
               <EtherscanLink
                 etherscanInfo={transactionHash}
                 type="transaction"
-                grayIcon
+                iconColor={ExternalLinkColor.GRAY}
               />
             </div>
           ) : (

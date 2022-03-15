@@ -1,4 +1,5 @@
 import { SearchForm } from "@/components/inputs/searchForm";
+import { LinkButton, LinkType } from "@/components/linkButtons";
 import Modal, { ModalStyle } from "@/components/modal";
 import { Spinner } from "@/components/shared/spinner";
 import { SET_MEMBER_SIGN_STATUS } from "@/graphql/mutations";
@@ -24,6 +25,10 @@ const MembersTable = ({
   data,
   filterAddressOnChangeHandler,
   searchAddress,
+  selectedMember,
+  setSelectedMember,
+  toggleAddMemberModal,
+  setShowMemberOptions,
 }): JSX.Element => {
   const {
     erc20TokenSliceReducer: {
@@ -70,6 +75,23 @@ const MembersTable = ({
     "Club tokens": string;
     "Ownership share": string;
   }>();
+
+  useEffect(() => {
+    if (selectedMember) {
+      const { clubTokens, depositAmount, memberAddress, ownershipShare } =
+        selectedMember;
+
+      setMemberInfo({
+        "Wallet address": memberAddress,
+        "Deposit amount": `${floatedNumberWithCommas(
+          depositAmount,
+        )} ${depositTokenSymbol}`,
+        "Club tokens": `${floatedNumberWithCommas(clubTokens)} ${symbol}`,
+        "Ownership share": `${floatedNumberWithCommas(ownershipShare)}%`,
+      });
+      setShowMemberDetailsModal(true);
+    }
+  }, [selectedMember]);
 
   const menuItems = [
     {
@@ -142,6 +164,7 @@ const MembersTable = ({
 
   const closeMemberDetailsModal = () => {
     setShowMemberDetailsModal(false);
+    setSelectedMember(undefined);
   };
 
   const handleSetSelected = async (index: number) => {
@@ -154,22 +177,34 @@ const MembersTable = ({
 
   const hasMemberSigned = memberSignedData?.Financial_memberSigned;
 
+  //TODO: remove this to re-enable cap table.
+  const capTableEnabled = false
+
   return (
-    <div className=" overflow-y-hidden ">
+    <div className="overflow-y-hidden ">
       <div className="flex my-11 col-span-12 space-x-8 justify-between items-center">
-        {
-          page.length > 1 || searchAddress ? (
-            <SearchForm
-              {...{
-                onChangeHandler: filterAddressOnChangeHandler,
-                searchValue: searchAddress,
-                itemsCount: data.length,
+        {page.length > 1 || searchAddress ? (
+          <SearchForm
+            {...{
+              onChangeHandler: filterAddressOnChangeHandler,
+              searchValue: searchAddress,
+              itemsCount: data.length,
+            }}
+          />
+        ) : (
+          <div></div>
+        )}
+
+        {isOwner && capTableEnabled && (
+          <div className="inline-flex items-right">
+            <LinkButton
+              type={LinkType.MEMBER}
+              onClick={() => {
+                toggleAddMemberModal();
               }}
             />
-          ) : (
-            <div></div>
-          )
-        }
+          </div>
+        )}
       </div>
 
       <table
@@ -179,73 +214,75 @@ const MembersTable = ({
         } border-gray-syn6`}
       >
         <thead className="w-full">
-          {
-            page.length
-              ? headerGroups.map((headerGroup, index) => (
-                  <tr
-                    {...headerGroup.getHeaderGroupProps()}
-                    key={index}
-                    className="text-gray-sun4 text-sm grid grid-cols-12 gap-5 leading-6"
-                  >
-                    {
-                      headerGroup.headers.map((column, index) => {
-
-                        return (
-                          <th
-                            {...column.getHeaderProps()}
-                            key={index}
-                            className="flex align-middle rounded-md col-span-3 text-left text-sm font-whyte-light text-gray-syn4"
-                          >
-                            {
-                              column.render("Header")
-                            }
-                          </th>
-                        );
-                      })
-                    }
-                  </tr>
-                ))
-              : null
-          }
+          {page.length
+            ? headerGroups.map((headerGroup, index) => (
+                <tr
+                  {...headerGroup.getHeaderGroupProps()}
+                  key={index}
+                  className="text-gray-syn4 text-sm grid grid-cols-12 gap-5 leading-6"
+                >
+                  {headerGroup.headers.map((column, index) => {
+                    return (
+                      <th
+                        {...column.getHeaderProps()}
+                        key={index}
+                        className="flex align-middle rounded-md col-span-3 text-left text-sm font-whyte-light text-gray-syn4"
+                      >
+                        {column.render("Header")}
+                      </th>
+                    );
+                  })}
+                </tr>
+              ))
+            : null}
         </thead>
 
         <tbody
           className="w-full divide-y divide-gray-syn6 overflow-y-scroll"
           {...getTableBodyProps()}
         >
-          {
-            page.map((row: any, index) => {
+          {page.map((row: any, index) => {
+            prepareRow(row);
 
-              prepareRow(row);
-
-              return (
-                <tr
-                  {...row.getRowProps()}
-                  key={index}
-                  className={`w-full text-base grid grid-cols-12 gap-5 cursor-pointer border-gray-syn6 text-left`}
-                  onClick={() => {
-                    handleClick(row.original);
-                  }}
-                >
-                  {
-                    row.cells.map((cell, cellIndex) => {
-                      return (
-                        <td
-                          {...cell.getCellProps()}
-                          key={cellIndex}
-                          className={`m-0 col-span-3 text-base py-5 text-white`}
-                        >
-                          {
-                            cell.render("Cell")
-                          }
-                        </td>
-                      );
-                    })
-                  }
-                </tr>
-              );
-            })
-          }
+            return (
+              <tr
+                {...row.getRowProps()}
+                key={index}
+                className={`w-full text-base grid grid-cols-12 gap-5 cursor-pointer border-gray-syn6 text-left`}
+                onClick={() => {
+                  handleClick(row.original);
+                }}
+                onMouseEnter={() =>
+                  isOwner && capTableEnabled
+                    ? setShowMemberOptions({
+                        show: true,
+                        memberAddress: row.original.memberAddress,
+                      })
+                    : null
+                }
+                onMouseLeave={() =>
+                  isOwner && capTableEnabled
+                    ? setShowMemberOptions({
+                        show: false,
+                        memberAddress: "",
+                      })
+                    : null
+                }
+              >
+                {row.cells.map((cell, cellIndex) => {
+                  return (
+                    <td
+                      {...cell.getCellProps()}
+                      key={cellIndex}
+                      className={`m-0 col-span-3 text-base py-4 text-white flex items-center`}
+                    >
+                      {cell.render("Cell")}
+                    </td>
+                  );
+                })}
+              </tr>
+            );
+          })}
           {searchAddress && !page.length && (
             <div className="flex flex-col justify-center w-full h-full items-center">
               <ExclamationCircleIcon className="h-10 w-10 mb-2 text-gray-lightManatee" />

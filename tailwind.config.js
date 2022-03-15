@@ -7,7 +7,8 @@ module.exports = {
   },
   variants: {
     extend: {
-      padding: ["last"],
+      padding: ["last", "hover"],
+      margin: ["hover"],
       backgroundColor: ["active"],
       backgroundOpacity: ["active"],
       borderRadius: ["first", "last"],
@@ -99,9 +100,13 @@ module.exports = {
         100: "30rem",
         104: "26rem",
         "slightly-over-100": "30.25rem",
+        500: "31.25rem",
         564: "35.25rem",
         730: "45.625rem",
       }),
+      minWidth: {
+        50: "12.5rem",
+      },
       maxWidth: {
         480: "30rem",
         564: "35.25rem",
@@ -114,6 +119,7 @@ module.exports = {
         104: "26rem",
         480: "30rem",
         816: "50.5rem",
+        "screen": "100vh",
         "2screen": "200vh",
       },
       backgroundOpacity: {
@@ -142,6 +148,8 @@ module.exports = {
           "Arial",
           "sans-serif",
         ],
+        "mono": ["Whyte Semi-Mono"],
+        "bold": ["Whyte Bold"]
       },
       fontSize: {
         subtext: ["0.75rem", "0.875rem"],
@@ -158,10 +166,12 @@ module.exports = {
       lineHeight: {
         4.5: "1.125rem",
         4.75: "1.1875rem",
+        5.5: "1.3125rem",
+        5.75: "1.375",
+        7.5: "1.875rem",
         9: "2.25rem",
         11.5: "2.875rem",
         17: "4.25rem",
-        5.5: "1.3125rem",
       },
       letterSpacing: {
         px: "0.0625rem",
@@ -338,6 +348,7 @@ module.exports = {
       animation: {
         fade_in: "fade_in 0.5s ease-out 1",
         fade_in_bg: "fade_in_bg 6s ease-out 1",
+        "grow-shrink": "grow-shrink 3.6s ease-in-out infinite"
       },
       keyframes: {
         fade_in: {
@@ -356,6 +367,20 @@ module.exports = {
             opacity: "1",
           },
         },
+        "grow-shrink": {
+          "0%": {
+            transform: "scale(1)",
+            opacity: "1"
+          },
+          "50%": {
+            transform: "scale(1.12)",
+            opacity: "0.5"
+          },
+          "100%": {
+            transform: "scale(1)",
+            opacity: "1"
+          },
+        },
       },
       inset: {
         84: "22rem",
@@ -365,6 +390,7 @@ module.exports = {
         71: "17.3rem",
       },
       margin: {
+        4.5: "1.125rem",
         0.5: "0.15rem",
         18: "4.875rem",
         24.5: "6.5rem",

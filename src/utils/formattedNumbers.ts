@@ -44,9 +44,17 @@ export const floatedNumberWithCommas = (number, ethValue = false): string => {
 
   try {
     // avoid rounding up the number when converting to 2 decimal places
-    const numberTo2decimalsWithoutRoundingUp = number
-      .toString()
-      .match(/^-?\d+(?:\.\d{0,4})?/)[0];
+    // show 4 decimal places for ETH values only.
+    let numberTo2decimalsWithoutRoundingUp;
+    if (ethValue) {
+      numberTo2decimalsWithoutRoundingUp = number
+        .toString()
+        .match(/^-?\d+(?:\.\d{0,4})?/)[0];
+    } else {
+      numberTo2decimalsWithoutRoundingUp = number
+        .toString()
+        .match(/^-?\d+(?:\.\d{0,2})?/)[0];
+    }
 
     // performs a negative look ahead. Finds .00 which does not have a digit (0-9) after it
     return numberWithCommas(numberTo2decimalsWithoutRoundingUp).replace(

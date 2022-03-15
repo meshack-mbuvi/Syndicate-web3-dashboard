@@ -3,6 +3,7 @@ import {
   setOverlayCollectibleDetails,
   setShowFullScreen,
 } from "@/state/assets/collectibles/slice";
+import FutureCollectiblePill from "@/containers/layoutWithSyndicateDetails/assets/collectibles/shared/FutureCollectiblePill";
 import { FC, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Tooltip from "react-tooltip-lite";
@@ -21,6 +22,7 @@ interface ICollectibleMedia {
     collection: any;
     floorPrice: string;
     lastPurchasePrice: string;
+    futureNft?: boolean;
   };
 }
 
@@ -91,7 +93,7 @@ const CollectibleMedia: FC<ICollectibleMedia> = ({
     };
     mediaType: string;
     moreDetails: {
-      "Token ID": string;
+      "Token ID": string | React.ReactElement;
       "Token collection": any;
       "Floor price": any;
       "Last purchase price": any;
@@ -141,7 +143,7 @@ const CollectibleMedia: FC<ICollectibleMedia> = ({
           collectible,
           mediaType,
           moreDetails: {
-            "Token ID": id,
+            "Token ID": collectible?.futureNft ? "" : id,
             "Token collection": collection.name,
             "Floor price": floorPrice,
             "Last purchase price": lastPurchasePrice,
@@ -281,8 +283,7 @@ const CollectibleMedia: FC<ICollectibleMedia> = ({
               mediaType === "soundtrackNFT" ||
               mediaType === "htmlNFT" ? (
                 <div className="mr-4 z-10">
-                  <div
-                    className="cursor-pointer"
+                  <button
                     onClick={() => {
                       if (mediaType === "videoNFT" || mediaType === "htmlNFT") {
                         videoMute();
@@ -325,13 +326,13 @@ const CollectibleMedia: FC<ICollectibleMedia> = ({
                         )}
                       </div>
                     ) : null}
-                  </div>
+                  </button>
                 </div>
               ) : null}
 
               {/* close full screen button  */}
               <button
-                className="mr-4 cursor-pointer z-10"
+                className="mr-4 z-10"
                 onClick={() => {
                   dispatch(setShowFullScreen(false));
                 }}
@@ -356,8 +357,7 @@ const CollectibleMedia: FC<ICollectibleMedia> = ({
                     showCollectibles ? "right-4" : "right-14"
                   } flex items-center space-x-4 select-none`}
                 >
-                  <div
-                    className="cursor-pointer"
+                  <button
                     onClick={() => {
                       if (mediaType === "videoNFT" || mediaType === "htmlNFT") {
                         videoMute();
@@ -400,7 +400,7 @@ const CollectibleMedia: FC<ICollectibleMedia> = ({
                         )}
                       </>
                     ) : null}
-                  </div>
+                  </button>
                 </div>
               ) : null}
               {!showCollectibles ? (
@@ -409,7 +409,7 @@ const CollectibleMedia: FC<ICollectibleMedia> = ({
                     {OpenSeaLink}
                   </div>
                   <div className="absolute bottom-4 right-4 flex items-center space-x-4 select-none z-10 cursor-pointer">
-                    <div
+                    <button
                       className=""
                       onClick={() => {
                         muteBackgroundMedia();
@@ -427,10 +427,31 @@ const CollectibleMedia: FC<ICollectibleMedia> = ({
                         className="w-8 h-8"
                         alt="open full screen"
                       />
-                    </div>
+                    </button>
                   </div>
                 </>
               ) : null}
+
+              {/* Future collectible pill  */}
+              {showCollectibles && collectible.futureNft && (
+                <button
+                  className="absolute top-4 left-4"
+                  onClick={() => {
+                    setActiveCollectibleDetails({
+                      collectible,
+                      mediaType,
+                      moreDetails: {
+                        "Token ID": collectible?.futureNft ? "" : id,
+                        "Token collection": collection.name,
+                        "Floor price": floorPrice,
+                        "Last purchase price": lastPurchasePrice,
+                      },
+                    });
+                  }}
+                >
+                  <FutureCollectiblePill />
+                </button>
+              )}
             </>
           )}
         </div>
