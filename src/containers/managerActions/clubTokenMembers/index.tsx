@@ -221,6 +221,9 @@ const ClubTokenMembers = (): JSX.Element => {
                     They’ll show up here once they deposit."
     : "Members will show up here once they deposit funds into this club.";
 
+  //TODO: Remove this to re-enable cap table
+  const capTableEnabled = false;
+
   return (
     <div className="w-full rounded-md h-full max-w-1480">
       <div className="w-full px-2 sm:px-0 col-span-12 overflow-x-scroll no-scroll-bar sm:overflow-x-auto -mr-6 sm:mr-auto">
@@ -281,10 +284,12 @@ const ClubTokenMembers = (): JSX.Element => {
               toggleAddMemberModal={toggleAddMemberModal}
               setShowMemberOptions={setShowMemberOptions}
             />
-            <ModifyCapTable
-              showModifyCapTable={showModifyCapTable}
-              setShowModifyCapTable={setShowModifyCapTable}
-            />
+            {capTableEnabled ? (
+              <ModifyCapTable
+                showModifyCapTable={showModifyCapTable}
+                setShowModifyCapTable={setShowModifyCapTable}
+              />
+            ) : null}
           </div>
         ) : (
           <div className="flex justify-center">
@@ -334,34 +339,36 @@ const ClubTokenMembers = (): JSX.Element => {
                         agreementChecked={linkShareAgreementChecked}
                       />
 
-                      <div className="space-y-2 mt-4">
-                        <div className="py-3 flex text-gray-syn4 items-center">
-                          <div className="border-b-1 w-1/2 border-gray-syn6 mr-1"></div>
-                          <p className="text-gray-syn4 text-sm">or</p>
-                          <div className="border-b-1 w-1/2 border-gray-syn6 ml-1"></div>
-                        </div>
-                        <div>
-                          <p className="text-base leading-4 text-white pb-2">
-                            Manually add member
-                          </p>
-                          <p className="text-sm text-gray-syn4 pb-2 leading-5 mt-2">
-                            Add a member to this club without requiring them to
-                            deposit first. You can also mint club tokens to
-                            them.
-                          </p>
-                        </div>
+                      {capTableEnabled ? (
+                        <div className="space-y-2 mt-4">
+                          <div className="py-3 flex text-gray-syn4 items-center">
+                            <div className="border-b-1 w-1/2 border-gray-syn6 mr-1"></div>
+                            <p className="text-gray-syn4 text-sm">or</p>
+                            <div className="border-b-1 w-1/2 border-gray-syn6 ml-1"></div>
+                          </div>
+                          <div>
+                            <p className="text-base leading-4 text-white pb-2">
+                              Manually add member
+                            </p>
+                            <p className="text-sm text-gray-syn4 pb-2 leading-5 mt-2">
+                              Add a member to this club without requiring them
+                              to deposit first. You can also mint club tokens to
+                              them.
+                            </p>
+                          </div>
 
-                        <button
-                          className="bg-white rounded-custom w-full flex items-center justify-center py-4 px-8"
-                          onClick={() => {
-                            toggleMintTokensModal(true);
-                          }}
-                        >
-                          <p className="text-black whitespace-nowrap text-base font-whyte font-bold">
-                            Add member manually
-                          </p>
-                        </button>
-                      </div>
+                          <button
+                            className="bg-white rounded-custom w-full flex items-center justify-center py-4 px-8"
+                            onClick={() => {
+                              toggleMintTokensModal(true);
+                            }}
+                          >
+                            <p className="text-black whitespace-nowrap text-base font-whyte font-bold">
+                              Add member manually
+                            </p>
+                          </button>
+                        </div>
+                      ) : null}
                     </div>
                   )}
                 </div>
@@ -370,20 +377,24 @@ const ClubTokenMembers = (): JSX.Element => {
           </div>
         )}
       </div>
-      <AddMemberModal
-        showModal={showAddMemberModal}
-        closeModal={() => toggleAddMemberModal()}
-        mintTokens={toggleMintTokensModal}
-      />
+      {capTableEnabled ? (
+        <>
+          <AddMemberModal
+            showModal={showAddMemberModal}
+            closeModal={() => toggleAddMemberModal()}
+            mintTokens={toggleMintTokensModal}
+          />
 
-      <MintAndShareTokens
-        {...{
-          show: showMintTokensModal,
-          handleShow: toggleMintTokensModal,
-          closeAddMemberModal: toggleAddMemberModal,
-          existingMembers: tableData,
-        }}
-      />
+          <MintAndShareTokens
+            {...{
+              show: showMintTokensModal,
+              handleShow: toggleMintTokensModal,
+              closeAddMemberModal: toggleAddMemberModal,
+              existingMembers: tableData,
+            }}
+          />
+        </>
+      ) : null}
     </div>
   );
 };

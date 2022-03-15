@@ -177,6 +177,9 @@ const MembersTable = ({
 
   const hasMemberSigned = memberSignedData?.Financial_memberSigned;
 
+  //TODO: remove this to re-enable cap table.
+  const capTableEnabled = false
+
   return (
     <div className="overflow-y-hidden ">
       <div className="flex my-11 col-span-12 space-x-8 justify-between items-center">
@@ -192,7 +195,7 @@ const MembersTable = ({
           <div></div>
         )}
 
-        {isOwner && (
+        {isOwner && capTableEnabled && (
           <div className="inline-flex items-right">
             <LinkButton
               type={LinkType.MEMBER}
@@ -250,7 +253,7 @@ const MembersTable = ({
                   handleClick(row.original);
                 }}
                 onMouseEnter={() =>
-                  isOwner
+                  isOwner && capTableEnabled
                     ? setShowMemberOptions({
                         show: true,
                         memberAddress: row.original.memberAddress,
@@ -258,7 +261,7 @@ const MembersTable = ({
                     : null
                 }
                 onMouseLeave={() =>
-                  isOwner
+                  isOwner && capTableEnabled
                     ? setShowMemberOptions({
                         show: false,
                         memberAddress: "",
