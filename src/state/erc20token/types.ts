@@ -38,6 +38,7 @@ export const initialState: {
   erc20Token: ERC20Token;
   depositDetails: DepositDetails;
   erc20TokenContract: any;
+  depositTokenPriceInUSD?: number;
 } = {
   erc20Token: ERC20TokenDefaultState,
   depositDetails: {
@@ -51,4 +52,5 @@ export const initialState: {
     depositTokenDecimals: 6,
   },
   erc20TokenContract: null,
+  depositTokenPriceInUSD: 0
 };
