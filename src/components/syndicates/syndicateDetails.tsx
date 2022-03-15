@@ -1,5 +1,6 @@
 import { CopyToClipboardIcon } from "@/components/iconWrappers";
 import { SkeletonLoader } from "@/components/skeletonLoader";
+import DuplicateClubWarning from "@/components/syndicates/shared/DuplicateClubWarning";
 import { useAccountTokens } from "@/hooks/useAccountTokens";
 import { useClubDepositsAndSupply } from "@/hooks/useClubDepositsAndSupply";
 import { useIsClubOwner } from "@/hooks/useClubOwner";
@@ -20,7 +21,6 @@ import NumberTreatment from "../NumberTreatment";
 // utils
 import GradientAvatar from "./portfolioAndDiscover/portfolio/GradientAvatar";
 import { DetailsCard, ProgressIndicator } from "./shared";
-import DuplicateClubWarning from "@/components/syndicates/shared/DuplicateClubWarning";
 
 interface ClubDetails {
   header: string;
@@ -459,7 +459,7 @@ const SyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
               sections={details}
               customStyles={"w-full pt-4"}
               customInnerWidth="w-full grid xl:grid-cols-3 lg:grid-cols-3
-            grid-cols-3 xl:gap-8 gap-6s gap-y-8"
+            grid-cols-3 xl:gap-8 gap-2 xl:gap-5 gap-y-8"
             />
           </div>
         ) : null}

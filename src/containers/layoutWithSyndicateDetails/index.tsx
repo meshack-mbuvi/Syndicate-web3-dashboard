@@ -345,7 +345,9 @@ const LayoutWithSyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
                             {activeTab == "assets" && <Assets />}
                             {activeTab == "members" &&
                               (renderOnDisconnect || isDemoMode) && (
-                                <ClubTokenMembers />
+                                <div className="-mr-6 sm:mr-auto">
+                                  <ClubTokenMembers />
+                                </div>
                               )}
                             {activeTab == "activity" &&
                               (renderOnDisconnect || isDemoMode) && (

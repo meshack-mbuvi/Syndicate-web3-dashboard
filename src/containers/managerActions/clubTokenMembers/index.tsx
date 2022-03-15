@@ -1,24 +1,24 @@
 import { SkeletonLoader } from "@/components/skeletonLoader";
+import { MintAndShareTokens } from "@/containers/managerActions/mintAndShareTokens";
+import AddMemberModal from "@/containers/managerActions/mintAndShareTokens/AddMemberModal";
 import { useIsClubOwner } from "@/hooks/useClubOwner";
+import useClubTokenMembers from "@/hooks/useClubTokenMembers";
 import useModal from "@/hooks/useModal";
 import { AppState } from "@/state";
+import { setDepositReadyInfo } from "@/state/legalInfo";
 import { setMemberToUpdate } from "@/state/modifyCapTable/slice";
 import { floatedNumberWithCommas } from "@/utils/formattedNumbers";
+import { generateMemberSignURL } from "@/utils/generateMemberSignURL";
 import Image from "next/image";
+import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { animated } from "react-spring";
+import GenerateDepositLink from "../GenerateDepositLink";
+import ModifyCapTable from "../modifyMemberAllocation";
 import { MemberAddressComponent } from "./memberAddress";
 import MembersTable from "./MembersTable";
-import ModifyCapTable from "../modifyMemberAllocation";
 import MoreOptions from "./moreOptions";
-import GenerateDepositLink from "../GenerateDepositLink";
-import { setDepositReadyInfo } from "@/state/legalInfo";
-import { useRouter } from "next/router";
-import { generateMemberSignURL } from "@/utils/generateMemberSignURL";
-import useClubTokenMembers from "@/hooks/useClubTokenMembers";
-import { animated } from "react-spring";
-import AddMemberModal from "@/containers/managerActions/mintAndShareTokens/AddMemberModal";
-import { MintAndShareTokens } from "@/containers/managerActions/mintAndShareTokens";
 
 const ClubTokenMembers = (): JSX.Element => {
   // retrieve state variables
@@ -139,7 +139,6 @@ const ClubTokenMembers = (): JSX.Element => {
   const handleMenuItemClick = (member) => {
     dispatch(setMemberToUpdate(member));
     setShowModifyCapTable();
-    
   };
 
   const columns = React.useMemo(
@@ -224,7 +223,7 @@ const ClubTokenMembers = (): JSX.Element => {
 
   return (
     <div className="w-full rounded-md h-full max-w-1480">
-      <div className="w-full px-2 sm:px-0 col-span-12">
+      <div className="w-full px-2 sm:px-0 col-span-12 overflow-x-scroll no-scroll-bar sm:overflow-x-auto -mr-6 sm:mr-auto">
         {loadingClubMembers ? (
           <>
             <div className="mb-8 mt-10">
@@ -271,7 +270,7 @@ const ClubTokenMembers = (): JSX.Element => {
             </>
           </>
         ) : tableData.length || filteredAddress ? (
-          <>
+          <div className="w-max sm:w-auto">
             <MembersTable
               columns={columns}
               data={tableData}
@@ -286,7 +285,7 @@ const ClubTokenMembers = (): JSX.Element => {
               showModifyCapTable={showModifyCapTable}
               setShowModifyCapTable={setShowModifyCapTable}
             />
-          </>
+          </div>
         ) : (
           <div className="flex justify-center">
             <div className="my-24.5">

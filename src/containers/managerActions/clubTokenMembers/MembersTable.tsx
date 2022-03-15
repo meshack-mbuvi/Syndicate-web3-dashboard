@@ -1,4 +1,5 @@
 import { SearchForm } from "@/components/inputs/searchForm";
+import { LinkButton, LinkType } from "@/components/linkButtons";
 import Modal, { ModalStyle } from "@/components/modal";
 import { Spinner } from "@/components/shared/spinner";
 import { SET_MEMBER_SIGN_STATUS } from "@/graphql/mutations";
@@ -18,7 +19,6 @@ import { usePagination, useTable } from "react-table";
 import { NotSignedIcon } from "../shared/notSignedIcon";
 import { SignedIcon } from "../shared/signedIcon";
 import SignerMenu from "./signerMenu";
-import { LinkButton, LinkType } from "@/components/linkButtons";
 
 const MembersTable = ({
   columns,
@@ -178,7 +178,7 @@ const MembersTable = ({
   const hasMemberSigned = memberSignedData?.Financial_memberSigned;
 
   return (
-    <div>
+    <div className="overflow-y-hidden ">
       <div className="flex my-11 col-span-12 space-x-8 justify-between items-center">
         {page.length > 1 || searchAddress ? (
           <SearchForm
@@ -223,7 +223,7 @@ const MembersTable = ({
                       <th
                         {...column.getHeaderProps()}
                         key={index}
-                        className="flex align-middle rounded-md col-span-3 text-left text-sm font-whyte-light text-gray-syn4 pb-2"
+                        className="flex align-middle rounded-md col-span-3 text-left text-sm font-whyte-light text-gray-syn4"
                       >
                         {column.render("Header")}
                       </th>
