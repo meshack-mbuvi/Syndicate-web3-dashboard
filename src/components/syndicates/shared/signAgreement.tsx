@@ -2,6 +2,7 @@ import { amplitudeLogger, Flow } from "@/components/amplitude";
 import { MGR_SIGN_LEGAL_DOC } from "@/components/amplitude/eventNames";
 import { DiscordLink } from "@/components/DiscordLink";
 import { EmailSupport } from "@/components/emailSupport";
+import useTokenDetails from "@/hooks/useTokenDetails";
 import { AppState } from "@/state";
 import { setWalletSignature } from "@/state/legalInfo";
 import { IClubInfo, IMemberInfo } from "@/state/legalInfo/types";
@@ -81,6 +82,9 @@ const SignAgreement: React.FC<ISignAgreementProps> = ({
     legalInfoReducer: {
       walletSignature: { signature, timeSigned },
     },
+    erc20TokenSliceReducer: {
+      depositDetails: { ethDepositToken },
+    },
   } = useSelector((state: AppState) => state);
 
   const [currentField, setCurrentField] = useState(1);
@@ -93,6 +97,8 @@ const SignAgreement: React.FC<ISignAgreementProps> = ({
   const subscriptionAgRef = useRef(null);
   const isOperatingAgVisible = useIsVisible(operatingAgRef);
   const isSubscriptionAgVisible = useIsVisible(subscriptionAgRef);
+
+  const { depositTokenSymbol } = useTokenDetails(ethDepositToken);
 
   const signedBadge = `<span
     class="flex flex-row items-center border border-gray-syn5 rounded-full px-6 py-2 mb-10 w-max text-sm text-gray-syn5 bg-gray-syn6 bg-opacity-5 mx-auto"
@@ -158,6 +164,10 @@ const SignAgreement: React.FC<ISignAgreementProps> = ({
         (value: string, key) =>
           nonHighlightFields.has(key) || (!isManager && !memberFields.has(key))
             ? value
+            : key === "depositAmount"
+            ? `${
+                depositTokenSymbol === "ETH" ? depositTokenSymbol : "$"
+              } <span class="font-semibold" data-field="${key}">${value}</span>`
             : `<span class="font-semibold" data-field="${key}">${
                 key === "generalPurposeStatement" ? value.toLowerCase() : value
               }</span>`, // general purpose should be in lowercase

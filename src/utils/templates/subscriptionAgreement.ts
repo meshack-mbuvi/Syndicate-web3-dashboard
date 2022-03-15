@@ -120,7 +120,7 @@ INDIVIDUALS
 IN WITNESS WHEREOF, the Subscriber hereby executes this Agreement as of the date set forth below.
 
 Date: [[memberSignDate]]
-Subscription Amount: $[[depositAmount]]
+Subscription Amount: [[depositAmount]]
 
 Subscriber:
 [[memberSignature]]
