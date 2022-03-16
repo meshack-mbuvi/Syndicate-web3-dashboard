@@ -564,7 +564,11 @@ const DepositSyndicate: React.FC = () => {
       let gnosisTxHash;
 
       await new Promise((resolve, reject) => {
-        depositTokenContract.methods
+        const _depositTokenContract = new web3.eth.Contract(
+          ERC20ABI as AbiItem[],
+          depositToken,
+        );
+        _depositTokenContract.methods
           .approve(mintModule, amountToApprove)
           .send({ from: account })
           .on("transactionHash", (transactionHash) => {
