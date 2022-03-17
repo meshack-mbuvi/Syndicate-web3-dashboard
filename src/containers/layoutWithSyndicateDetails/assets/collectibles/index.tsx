@@ -1,20 +1,19 @@
-import { FC, useState } from "react";
-import { web3 } from "@/utils/web3Utils";
-import InfiniteScroll from "react-infinite-scroll-component";
-import { useDispatch, useSelector } from "react-redux";
 import { SkeletonLoader } from "@/components/skeletonLoader";
-import { AppState } from "@/state";
-import { fetchCollectiblesTransactions } from "@/state/assets/slice";
 import CollectibleDetailsModal from "@/containers/layoutWithSyndicateDetails/assets/collectibles/collectibleDetailsModal";
-
 import CollectibleMedia from "@/containers/layoutWithSyndicateDetails/assets/collectibles/shared/CollectibleMedia";
-import { floatedNumberWithCommas } from "@/utils/formattedNumbers";
+import FullScreenOverlay from "@/containers/layoutWithSyndicateDetails/assets/collectibles/shared/FullscreenOverlay";
+import { useDemoMode } from "@/hooks/useDemoMode";
+import { AppState } from "@/state";
 import {
   setCollectibleModalDetails,
   setShowCollectibleModal,
 } from "@/state/assets/collectibles/slice";
-import { useDemoMode } from "@/hooks/useDemoMode";
-import FullScreenOverlay from "@/containers/layoutWithSyndicateDetails/assets/collectibles/shared/FullscreenOverlay";
+import { fetchCollectiblesTransactions } from "@/state/assets/slice";
+import { floatedNumberWithCommas } from "@/utils/formattedNumbers";
+import { web3 } from "@/utils/web3Utils";
+import { FC, useState } from "react";
+import InfiniteScroll from "react-infinite-scroll-component";
+import { useDispatch, useSelector } from "react-redux";
 
 const Collectibles: FC = () => {
   const {
@@ -46,7 +45,7 @@ const Collectibles: FC = () => {
 
   // loading/empty state for collectibles
   const LoaderContent: React.FC<{ animate: boolean }> = ({ animate }) => (
-    <div className={`${collectiblesResult.length > 0 && "pt-6"}`}>
+    <div className={`${collectiblesResult.length > 0 ? "pt-6" : ""}`}>
       <div className="relative">
         {!animate && (
           <div className="absolute flex flex-col justify-center items-center top-1/3 w-full z-10">
@@ -226,8 +225,12 @@ const Collectibles: FC = () => {
                   if (soundtrack) {
                     mediaType = "soundtrackNFT";
                   }
-                }
 
+                  // Still media type not set?
+                  if (!mediaType) {
+                    mediaType === "animatedNFT";
+                  }
+                }
                 // sometimes the NFT name is an Ethereum address
                 // we need to break this to fit onto the collectible card
                 const isNameEthereumAddress = web3.utils.isAddress(name);

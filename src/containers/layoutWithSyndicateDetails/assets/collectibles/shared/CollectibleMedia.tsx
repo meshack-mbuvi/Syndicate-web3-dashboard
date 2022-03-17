@@ -1,9 +1,9 @@
+import FutureCollectiblePill from "@/containers/layoutWithSyndicateDetails/assets/collectibles/shared/FutureCollectiblePill";
 import { AppState } from "@/state";
 import {
   setOverlayCollectibleDetails,
   setShowFullScreen,
 } from "@/state/assets/collectibles/slice";
-import FutureCollectiblePill from "@/containers/layoutWithSyndicateDetails/assets/collectibles/shared/FutureCollectiblePill";
 import { FC, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Tooltip from "react-tooltip-lite";
