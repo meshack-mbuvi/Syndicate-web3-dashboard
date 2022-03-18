@@ -259,6 +259,7 @@ const CollectibleMedia: FC<ICollectibleMedia> = ({
           }`}
         >
           {media}
+
           {showFullScreen ? (
             <div className="absolute right-14 bottom-14 flex items-center z-10">
               {permalink && (

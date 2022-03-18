@@ -226,9 +226,9 @@ const Collectibles: FC = () => {
                     mediaType = "soundtrackNFT";
                   }
 
-                  // Still media type not set?
+                  // Still media type not set? Default to imageOnlyNFT
                   if (!mediaType) {
-                    mediaType === "animatedNFT";
+                    mediaType = "imageOnlyNFT";
                   }
                 }
                 // sometimes the NFT name is an Ethereum address
