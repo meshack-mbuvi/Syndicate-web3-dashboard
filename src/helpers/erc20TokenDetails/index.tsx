@@ -4,14 +4,14 @@ import { MerkleDistributorModuleContract } from "@/ClubERC20Factory/merkleDistri
 import { AppState } from "@/state";
 import {
   setERC20TokenContract,
-  setERC20TokenDetails,
   setERC20TokenDespositDetails,
+  setERC20TokenDetails,
   setLoadingClub,
 } from "@/state/erc20token/slice";
-import { ERC20Token, DepositDetails } from "@/state/erc20token/types";
-import { isDev } from "@/utils/environment";
+import { DepositDetails, ERC20Token } from "@/state/erc20token/types";
 import { isZeroAddress } from "@/utils";
 import { getWeiAmount } from "@/utils/conversions";
+import { isDev } from "@/utils/environment";
 
 const ETH_MINT_MODULE = process.env.NEXT_PUBLIC_ETH_MINT_MODULE;
 export const ERC20TokenDefaultState = {
@@ -37,21 +37,23 @@ export const ERC20TokenDefaultState = {
   maxTotalSupply: 0,
   requiredToken: "",
   requiredTokenMinBalance: "",
+  currentMintPolicyAddress: undefined,
 };
+
 const depositTokenMapping = {
   rinkeby: {
     usdc: {
       depositToken: "0xeb8f08a975Ab53E34D8a0330E0D34de942C95926",
       depositTokenSymbol: "USDC",
       depositTokenLogo: "/images/TestnetTokenLogos/usdcIcon.svg",
-      depositTokenName: "Testnet USDC",
+      depositTokenName: "USD-Coin",
       depositTokenDecimals: 6,
     },
     ether: {
       depositToken: "",
       depositTokenSymbol: "ETH",
       depositTokenLogo: "/images/ethereum-logo.png",
-      depositTokenName: "Testnet Ethereum",
+      depositTokenName: "Ethereum",
       depositTokenDecimals: 18,
     },
   },
@@ -60,7 +62,7 @@ const depositTokenMapping = {
       depositToken: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
       depositTokenSymbol: "USDC",
       depositTokenLogo: "/images/prodTokenLogos/usd-coin-usdc.svg",
-      depositTokenName: "USD Coin",
+      depositTokenName: "USD-Coin",
       depositTokenDecimals: 6,
     },
     ether: {
@@ -88,6 +90,8 @@ export const getERC20TokenDetails = async (
       // ERC20tokenContract is initialized with the contract address
       const { address } = ERC20tokenContract;
 
+      let currentMintPolicyAddress = policyMintERC20.address;
+
       let {
         endTime,
         maxMemberCount,
@@ -106,6 +110,9 @@ export const getERC20TokenDetails = async (
           requiredTokenMinBalance,
           startTime,
         } = await mintPolicy?.getSyndicateValues(address));
+
+        // Change current mint policy
+        currentMintPolicyAddress = mintPolicy.address;
       }
 
       const [name, owner, tokenDecimals, symbol, memberCount] =
@@ -131,7 +138,6 @@ export const getERC20TokenDetails = async (
         address,
         MerkleDistributorModule.contract._address,
       );
-
       const claimEnabled =
         claimEnabledPolicyMintERC20 || claimEnabledMintPolicy;
 
@@ -143,6 +149,7 @@ export const getERC20TokenDetails = async (
       }
 
       return {
+        currentMintPolicyAddress,
         totalSupply,
         address,
         name,

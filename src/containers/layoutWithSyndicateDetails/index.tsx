@@ -25,6 +25,8 @@ import { setClubMembers } from "@/state/clubMembers";
 import {
   setERC20TokenContract,
   setERC20TokenDetails,
+  setDepositTokenUSDPrice,
+  setERC20TokenDespositDetails,
 } from "@/state/erc20token/slice";
 import { clearMyTransactions } from "@/state/erc20transactions";
 import { Status } from "@/state/wallet/types";
@@ -43,6 +45,8 @@ import ClubTokenMembers from "../managerActions/clubTokenMembers/index";
 import ActivityView from "./activity";
 import Assets from "./assets";
 import TabButton from "./TabButton";
+import { useGetTokenPrice } from "@/hooks/useGetTokenPrice";
+import { useClubDepositsAndSupply } from "@/hooks/useClubDepositsAndSupply";
 
 const LayoutWithSyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
   managerSettingsOpen,
@@ -55,7 +59,16 @@ const LayoutWithSyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
       web3: { account, web3, status, activeNetwork },
     },
     erc20TokenSliceReducer: {
-      erc20Token: { owner, loading, name, depositsEnabled },
+      erc20Token: {
+        owner,
+        loading,
+        name,
+        depositsEnabled,
+        maxTotalDeposits,
+        address,
+      },
+      depositDetails: { ethDepositToken },
+      depositTokenPriceInUSD,
     },
   } = useSelector((state: AppState) => state);
 
@@ -65,6 +78,9 @@ const LayoutWithSyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
   const clubAddress = window?.location?.pathname.split("/")[2];
 
   const isDemoMode = useDemoMode(clubAddress);
+  // dispatch the price of the deposit token for use in other
+  // components
+  useGetTokenPrice();
   const zeroAddress = "0x0000000000000000000000000000000000000000";
 
   useEffect(() => {
@@ -77,11 +93,16 @@ const LayoutWithSyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
   //  tokens for the connected wallet account
   const { accountTokens } = useAccountTokens();
 
+  const { loadingClubDeposits } = useClubDepositsAndSupply(address);
+
   // fetch club transactions
   useTransactions();
 
   // fetch club members
   useClubTokenMembers();
+
+  const router = useRouter();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     return () => {
@@ -89,13 +110,26 @@ const LayoutWithSyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
       // solves an issue with previous transactions being loaded
       // when a switch is made to another club with a different owner.
       dispatch(clearMyTransactions());
+      dispatch(clearCollectiblesTransactions());
+
+      // also clearing token details when switching between clubs
+      dispatch(setDepositTokenUSDPrice(0));
+
+      dispatch(
+        setERC20TokenDespositDetails({
+          mintModule: "",
+          ethDepositToken: false,
+          depositToken: "",
+          depositTokenSymbol: "",
+          depositTokenLogo: "/images/usdcicon.png",
+          depositTokenName: "",
+          depositTokenDecimals: 6,
+        }),
+      );
     };
-  }, []);
+  }, [dispatch]);
 
   const isOwner = useIsClubOwner();
-
-  const router = useRouter();
-  const dispatch = useDispatch();
   const [scrollTop, setScrollTop] = useState(0);
   const [showNav, setShowNav] = useState(true);
   const [isSubNavStuck, setIsSubNavStuck] = useState(true);
@@ -140,12 +174,15 @@ const LayoutWithSyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
         account: owner,
         offset: "0",
         chainId: activeNetwork.chainId,
+        maxTotalDeposits: ethDepositToken
+          ? parseInt((depositTokenPriceInUSD * maxTotalDeposits).toString())
+          : maxTotalDeposits,
       }),
     );
   };
 
   useEffect(() => {
-    if (owner) {
+    if (owner && depositTokenPriceInUSD && !loadingClubDeposits && !isDemoMode) {
       fetchAssets();
     } else if (isDemoMode) {
       const mockTokens = depositsEnabled
@@ -155,14 +192,22 @@ const LayoutWithSyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
 
       dispatch(setMockCollectiblesResult(depositsEnabled));
     }
-  }, [owner, clubAddress, depositsEnabled]);
+  }, [
+    owner,
+    clubAddress,
+    depositsEnabled,
+    maxTotalDeposits,
+    depositTokenPriceInUSD,
+    loadingClubDeposits,
+    ethDepositToken,
+  ]);
 
   useEffect(() => {
     // clear collectibles on account switch
     if (account && !isDemoMode) {
       dispatch(clearCollectiblesTransactions());
     }
-  }, [account, clubAddress, dispatch, isDemoMode]);
+  }, [account, clubAddress, dispatch, isDemoMode, maxTotalDeposits]);
 
   /**
    * Fetch club details
@@ -240,6 +285,8 @@ const LayoutWithSyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
     isOwner || +accountTokens || myMerkleProof?.account === account;
   const renderOnDisconnect =
     status !== Status.DISCONNECTED && !(isActive && !isOwnerOrMember);
+  const isBackButtonByNameHidden = isDemoMode || isSubNavStuck;
+  const isStickyBackButtonHidden = isDemoMode || !isSubNavStuck;
 
   useEffect(() => {
     if (!renderOnDisconnect) {
@@ -349,7 +396,9 @@ const LayoutWithSyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
                             {activeTab == "assets" && <Assets />}
                             {activeTab == "members" &&
                               (renderOnDisconnect || isDemoMode) && (
-                                <ClubTokenMembers />
+                                <div className="-mr-6 sm:mr-auto">
+                                  <ClubTokenMembers />
+                                </div>
                               )}
                             {activeTab == "activity" &&
                               (renderOnDisconnect || isDemoMode) && (

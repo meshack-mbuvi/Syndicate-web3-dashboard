@@ -19,6 +19,7 @@ import { setERC20Token } from "@/helpers/erc20TokenDetails";
 import useSyndicateClubInfo from "@/hooks/deposit/useSyndicateClubInfo";
 import { useAccountTokens } from "@/hooks/useAccountTokens";
 import useFetchAirdropInfo from "@/hooks/useAirdropInfo";
+import { useClubDepositsAndSupply } from "@/hooks/useClubDepositsAndSupply";
 import { useIsClubMember } from "@/hooks/useClubOwner";
 import { useDemoMode } from "@/hooks/useDemoMode";
 import { useEthBalance } from "@/hooks/useEthBalance";
@@ -50,7 +51,6 @@ import { AbiItem } from "web3-utils";
 
 import BeforeGettingStarted from "../../beforeGettingStarted";
 import ConnectWalletAction from "../shared/connectWalletAction";
-import { useClubDepositsAndSupply } from "@/hooks/useClubDepositsAndSupply";
 
 const DepositSyndicate: React.FC = () => {
   // HOOK DECLARATIONS
@@ -68,6 +68,7 @@ const DepositSyndicate: React.FC = () => {
       erc20Token,
       depositDetails: { depositToken, mintModule, ethDepositToken },
       erc20TokenContract,
+      depositTokenPriceInUSD,
     },
   } = useSelector((state: AppState) => state);
 
@@ -130,10 +131,6 @@ const DepositSyndicate: React.FC = () => {
   const [transactionTooLong, setTransactionTooLong] = useState<boolean>(false);
   const [checkSuccess, setCheckSuccess] = useState(false);
 
-  // Deposit token value Price in USD
-  const [depositTokenPriceInUSDState, setDepositTokenPriceInUSDState] =
-    useState(null);
-
   // Checks if Deposit Token/USD is switched in the deposit card
   const [depositTokenSwitched, setDepositTokenSwitched] = useState(false);
   const [isDemoTooltipOpen, setIsDemoTooltipOpen] = useState(false);
@@ -151,12 +148,8 @@ const DepositSyndicate: React.FC = () => {
     stopPolling,
   } = useAccountTokens();
 
-  const {
-    depositTokenSymbol,
-    depositTokenLogo,
-    depositTokenDecimals,
-    depositTokenName,
-  } = useTokenDetails(ethDepositToken);
+  const { depositTokenSymbol, depositTokenLogo, depositTokenDecimals } =
+    useTokenDetails(ethDepositToken);
 
   useEffect(() => {
     // calculate member ownership for the intended deposits
@@ -183,7 +176,7 @@ const DepositSyndicate: React.FC = () => {
     totalSupply,
     depositAmountFinalized,
     depositTokenSwitched,
-    depositTokenPriceInUSDState,
+    depositTokenPriceInUSD,
   ]);
 
   useEffect(() => {
@@ -219,7 +212,12 @@ const DepositSyndicate: React.FC = () => {
   }, [isTokenClaimed, airdropInfo]);
 
   useEffect(() => {
-    if (syndicateContracts && erc20Token && depositToken && !ethDepositToken) {
+    if (
+      syndicateContracts &&
+      erc20Token?.name &&
+      depositToken &&
+      !ethDepositToken
+    ) {
       // set up current deposit ERC20Contract and
       // and save it to the local state
       const ERC20Contract = new web3.eth.Contract(
@@ -230,24 +228,7 @@ const DepositSyndicate: React.FC = () => {
 
       checkClubWideErrors();
     }
-  }, [
-    depositToken,
-    JSON.stringify(erc20Token),
-    syndicateContracts,
-    ethDepositToken,
-  ]);
-
-  useEffect(() => {
-    async function getTokenPrice(tokenName) {
-      const result = await axios.get(
-        `https://api.coingecko.com/api/v3/simple/price?ids=${tokenName}&vs_currencies=usd`,
-      );
-      setDepositTokenPriceInUSDState(
-        result.data?.[tokenName.toLowerCase()]?.usd,
-      );
-    }
-    getTokenPrice(depositTokenName);
-  }, [depositTokenName]);
+  }, [depositToken, erc20Token?.name, syndicateContracts, ethDepositToken]);
 
   const onTxConfirm = () => {
     setMetamaskConfirmPending(false);
@@ -478,7 +459,7 @@ const DepositSyndicate: React.FC = () => {
       if (depositTokenSwitched) {
         const maxDepositAmountAdjustedToUSD = Math.min(
           erc20Balance,
-          erc20Balance * depositTokenPriceInUSDState,
+          erc20Balance * depositTokenPriceInUSD,
         );
         setDepositAmount(maxDepositAmountAdjustedToUSD.toString());
       } else {
@@ -583,8 +564,13 @@ const DepositSyndicate: React.FC = () => {
 
     try {
       let gnosisTxHash;
+
       await new Promise((resolve, reject) => {
-        depositTokenContract.methods
+        const _depositTokenContract = new web3.eth.Contract(
+          ERC20ABI as AbiItem[],
+          depositToken,
+        );
+        _depositTokenContract.methods
           .approve(mintModule, amountToApprove)
           .send({ from: account })
           .on("transactionHash", (transactionHash) => {
@@ -735,7 +721,7 @@ const DepositSyndicate: React.FC = () => {
     try {
       if (depositTokenSwitched) {
         if (
-          +etherBalance * depositTokenPriceInUSDState < +depositAmount ||
+          +etherBalance * depositTokenPriceInUSD < +depositAmount ||
           etherBalance === 0
         ) {
           setInsufficientBalance(true);
@@ -763,7 +749,7 @@ const DepositSyndicate: React.FC = () => {
     try {
       if (depositTokenSwitched) {
         if (
-          +erc20Balance * depositTokenPriceInUSDState < +depositAmount ||
+          +erc20Balance * depositTokenPriceInUSD < +depositAmount ||
           erc20Balance === 0
         ) {
           setInsufficientBalance(true);
@@ -787,7 +773,7 @@ const DepositSyndicate: React.FC = () => {
 
   useEffect(() => {
     checkClubWideErrors();
-  }, [JSON.stringify(erc20Token), account]);
+  }, [totalDeposits, maxTotalDeposits, memberDeposits, account]);
 
   const checkClubWideErrors = () => {
     let message;
@@ -815,7 +801,7 @@ const DepositSyndicate: React.FC = () => {
     let message;
 
     if (depositTokenSwitched) {
-      if (+value / depositTokenPriceInUSDState > remainingErc20Balance) {
+      if (+value / depositTokenPriceInUSD > remainingErc20Balance) {
         message = (
           <>
             <span>The amount you entered is too high. This club is </span>
@@ -1150,7 +1136,7 @@ const DepositSyndicate: React.FC = () => {
                     <p className="text-gray-syn4">
                       ~{" "}
                       {floatedNumberWithCommas(
-                        parseFloat(depositAmount) / depositTokenPriceInUSDState,
+                        parseFloat(depositAmount) / depositTokenPriceInUSD,
                         ethDepositToken ?? false,
                       )}{" "}
                       {depositTokenSymbol}
@@ -1159,7 +1145,7 @@ const DepositSyndicate: React.FC = () => {
                     <p className="text-gray-syn4">
                       ~{" "}
                       {floatedNumberWithCommas(
-                        parseFloat(depositAmount) * depositTokenPriceInUSDState,
+                        parseFloat(depositAmount) * depositTokenPriceInUSD,
                       )}{" "}
                       USD
                     </p>
@@ -1289,7 +1275,7 @@ const DepositSyndicate: React.FC = () => {
                                 const switchedAmount = ethDepositToken
                                   ? truncateDecimals(
                                       ((parseFloat(depositAmount) /
-                                        depositTokenPriceInUSDState) *
+                                        depositTokenPriceInUSD) *
                                         100) /
                                         100,
                                       4,
@@ -1297,7 +1283,7 @@ const DepositSyndicate: React.FC = () => {
                                   : (
                                       Math.floor(
                                         (parseFloat(depositAmount) /
-                                          depositTokenPriceInUSDState) *
+                                          depositTokenPriceInUSD) *
                                           100,
                                       ) / 100
                                     ).toString();
@@ -1346,7 +1332,7 @@ const DepositSyndicate: React.FC = () => {
                           <>
                             (~{" "}
                             {floatedNumberWithCommas(
-                              etherBalance * depositTokenPriceInUSDState,
+                              etherBalance * depositTokenPriceInUSD,
                             )}{" "}
                             USD)
                           </>
@@ -1354,7 +1340,7 @@ const DepositSyndicate: React.FC = () => {
                           <>
                             (~{" "}
                             {floatedNumberWithCommas(
-                              erc20Balance * depositTokenPriceInUSDState,
+                              erc20Balance * depositTokenPriceInUSD,
                             )}{" "}
                             USD)
                           </>
@@ -1496,7 +1482,7 @@ const DepositSyndicate: React.FC = () => {
                     )}
                     tokenName={"ETH"}
                     amountInUSD={
-                      (memberDeposits / 10000) * depositTokenPriceInUSDState
+                      (memberDeposits / 10000) * depositTokenPriceInUSD
                     }
                   />
                 ) : (
@@ -1504,7 +1490,7 @@ const DepositSyndicate: React.FC = () => {
                     title="Amount deposited"
                     amount={floatedNumberWithCommas(memberDeposits)}
                     tokenName={"USDC"}
-                    amountInUSD={memberDeposits * depositTokenPriceInUSDState}
+                    amountInUSD={memberDeposits * depositTokenPriceInUSD}
                   />
                 )}
               </div>

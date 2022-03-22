@@ -242,8 +242,8 @@ const ModifyClubTokens: React.FC<{
   const handleAmountChange = (e) => {
     const amount = numberInputRemoveCommas(e);
     if (amount < 0 || !amount) {
-      setMemberAllocation("0");
-      return;
+      setMemberAllocationError("Amount is required.");
+      setContinueButtonDisabled(true);
     } else if (+amount > +currentClubTokenSupply) {
       setMemberAllocationError(
         <span>

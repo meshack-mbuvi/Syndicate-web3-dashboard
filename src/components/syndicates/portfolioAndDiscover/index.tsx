@@ -1,6 +1,7 @@
 import CreateClubButton from "@/components/createClubButton";
 import PortfolioEmptyState from "@/components/syndicates/portfolioAndDiscover/portfolio/portfolioEmptyState";
 import useClubERC20s from "@/hooks/useClubERC20s";
+import useWindowSize from "@/hooks/useWindowSize";
 import { AppState } from "@/state";
 import React from "react";
 import { useSelector } from "react-redux";
@@ -50,6 +51,30 @@ const PortfolioAndDiscover: React.FC = () => {
 
   useClubERC20s();
 
+  // generate multiple skeleton loader components
+  const generateSkeletons = (
+    num: number,
+    width: string,
+    height: string,
+    borderRadius?: string,
+  ) => {
+    const skeletonsWrapper = [];
+    for (let i = 0; i < num; i++) {
+      skeletonsWrapper.push(
+        <div className="px-2 w-full" key={i}>
+          <SkeletonLoader
+            width={width}
+            height={height}
+            borderRadius={borderRadius}
+          ></SkeletonLoader>
+        </div>,
+      );
+    }
+    return skeletonsWrapper;
+  };
+
+  const { width } = useWindowSize();
+
   return (
     <div className="-mt-8">
       {loading && account ? (
@@ -93,7 +118,10 @@ const PortfolioAndDiscover: React.FC = () => {
         <>
           {myClubERC20s.length || otherClubERC20s.length ? (
             <div>
-              <div className="flex flex-col sm:flex-row justify-between sm:items-center w-full mt-14 mb-16">
+              <div
+                className="flex flex-col sm:flex-row justify-between sm:items-center w-full mt-14 mb-16"
+                style={width < 480 ? { paddingRight: "6%" } : null}
+              >
                 <p className="text-3xl">Portfolio</p>
                 <CreateClubButton />
               </div>

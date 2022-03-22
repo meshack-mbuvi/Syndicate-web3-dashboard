@@ -30,7 +30,6 @@ export const InputFieldWithToken = (props: {
     ...rest
   } = props;
 
-
   const { depositTokenSymbol, depositTokenLogo } =
     useTokenDetails(depositToken);
 

@@ -1,6 +1,8 @@
 import { BlockExplorerLink } from "@/components/syndicates/shared/BlockExplorerLink";
 import Modal, { ModalStyle } from "../modal";
 import { Spinner } from "../shared/spinner";
+import {
+  ExternalLinkColor} from "src/components/iconWrappers";
 
 export enum ProgressModalState {
   PENDING = "PENDING",
@@ -12,13 +14,15 @@ export enum ProgressModalState {
 export const ProgressModal = (props: {
   isVisible: boolean;
   title: string;
-  description?: string;
+  description?: any;
   state: ProgressModalState;
   buttonLabel?: string;
   buttonFullWidth?: boolean;
   buttonOnClick?: () => void;
   transactionHash?: string;
   transactionType?: string;
+  etherscanLinkText?: string;
+  iconColor?: ExternalLinkColor
 }): React.ReactElement => {
   const {
     title,
@@ -30,6 +34,8 @@ export const ProgressModal = (props: {
     transactionType,
     isVisible = false,
     buttonFullWidth = false,
+    etherscanLinkText = "View on Etherscan",
+    iconColor = ExternalLinkColor.BLUE,
   } = props;
 
   let icon;
@@ -37,9 +43,11 @@ export const ProgressModal = (props: {
     case ProgressModalState.CONFIRM:
       icon = <Spinner height="h-16" width="w-16" margin="" strokeWidth="5" />;
       break;
+
     case ProgressModalState.PENDING:
       icon = <Spinner height="h-16" width="w-16" margin="" strokeWidth="5" />;
       break;
+
     case ProgressModalState.SUCCESS:
       icon = (
         <img
@@ -51,6 +59,7 @@ export const ProgressModal = (props: {
         />
       );
       break;
+
     case ProgressModalState.FAILURE:
       icon = (
         <img
@@ -89,6 +98,7 @@ export const ProgressModal = (props: {
               prefix="View on "
               resourceId={transactionHash}
               resource={transactionType}
+              iconColor={iconColor}
             />
           </div>
         )}

@@ -14,8 +14,8 @@ import {
 } from "@/state/erc20transactions";
 import { TransactionCategory } from "@/state/erc20transactions/types";
 import {
-  mockActivityTransactionsData,
   mockActivityDepositTransactionsData,
+  mockActivityTransactionsData,
 } from "@/utils/mockdata";
 import { NetworkStatus, useMutation } from "@apollo/client";
 import { capitalize } from "lodash";
@@ -437,26 +437,28 @@ const ActivityTable: React.FC = () => {
   return (
     <div className="mt-2 w-full -z-10">
       <div className="py-14 flex justify-between items-center">
-        <div className="flex justify-start items-center">
+        <div className="flex flex-col sm:flex-row justify-start sm:items-center">
           <div className="pr-8">
             <FilterPill setFilter={(filter) => setFilter(filter)} />
           </div>
-          <SearchForm
-            {...{
-              onChangeHandler: handleSearchOnChange,
-              searchValue,
-              searchItem: "activity",
-              clearSearchValue: () => setSearchValue(""),
-              disabled:
-                filter &&
-                !transactionsLoading &&
-                !transactionsData?.Financial_recentTransactions?.edges
-                  ?.length &&
-                !searchValue &&
-                !mockTransactionsData.edges.length,
-              width: searchWidth,
-            }}
-          />
+          <div className="mt-4 sm:mt-auto">
+            <SearchForm
+              {...{
+                onChangeHandler: handleSearchOnChange,
+                searchValue,
+                searchItem: "activity",
+                clearSearchValue: () => setSearchValue(""),
+                disabled:
+                  filter &&
+                  !transactionsLoading &&
+                  !transactionsData?.Financial_recentTransactions?.edges
+                    ?.length &&
+                  !searchValue &&
+                  !mockTransactionsData.edges.length,
+                width: searchWidth,
+              }}
+            />
+          </div>
         </div>
         {transactionsChecked.length > 0 && transactionDataLength ? (
           <div className="flex justify-between items-center space-x-8">
@@ -484,23 +486,25 @@ const ActivityTable: React.FC = () => {
           </div>
         ) : null}
       </div>
-      <TransactionsTable
-        canNextPage={canNextPage}
-        dataLimit={DATA_LIMIT}
-        pageOffset={pageOffset}
-        refetchTransactions={refetchTransactions}
-        goToPreviousPage={goToPreviousPage}
-        goToNextPage={goToNextPage}
-        transactionsLoading={
-          transactionsLoading || networkStatus === NetworkStatus.refetch
-        }
-        emptyState={generateEmptyStates(filter, memoizedSearchTerm)}
-        toggleRowCheckbox={toggleRowCheckbox}
-        handleCheckboxSelect={handleSelect}
-        rowCheckboxActiveData={rowCheckboxActiveData}
-        activeTransactionHashes={activeTransactionHashes}
-        setActiveTransactionHashes={setActiveTransactionHashes}
-      />
+      <div className="overflow-x-scroll no-scroll-bar">
+        <TransactionsTable
+          canNextPage={canNextPage}
+          dataLimit={DATA_LIMIT}
+          pageOffset={pageOffset}
+          refetchTransactions={refetchTransactions}
+          goToPreviousPage={goToPreviousPage}
+          goToNextPage={goToNextPage}
+          transactionsLoading={
+            transactionsLoading || networkStatus === NetworkStatus.refetch
+          }
+          emptyState={generateEmptyStates(filter, memoizedSearchTerm)}
+          toggleRowCheckbox={toggleRowCheckbox}
+          handleCheckboxSelect={handleSelect}
+          rowCheckboxActiveData={rowCheckboxActiveData}
+          activeTransactionHashes={activeTransactionHashes}
+          setActiveTransactionHashes={setActiveTransactionHashes}
+        />
+      </div>
     </div>
   );
 };

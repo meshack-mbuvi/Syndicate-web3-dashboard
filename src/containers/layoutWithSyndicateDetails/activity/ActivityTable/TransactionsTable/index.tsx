@@ -138,7 +138,7 @@ const TransactionsTable: FC<ITransactionsTableProps> = ({
   }
 
   return (
-    <>
+    <div className="w-max sm:w-full">
       {myTransactions?.[pageOffset]?.length ? (
         <div>
           {myTransactions[pageOffset].map(
@@ -364,7 +364,7 @@ const TransactionsTable: FC<ITransactionsTableProps> = ({
           setShowNote={setShowNote}
         />
       </div>
-    </>
+    </div>
   );
 };
 

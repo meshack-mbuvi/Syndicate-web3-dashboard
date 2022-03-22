@@ -100,6 +100,7 @@ module.exports = {
         100: "30rem",
         104: "26rem",
         "slightly-over-100": "30.25rem",
+        500: "31.25rem",
         564: "35.25rem",
         730: "45.625rem",
       }),
@@ -147,7 +148,8 @@ module.exports = {
           "Arial",
           "sans-serif",
         ],
-        "mono": ["Whyte Semi-Mono"]
+        "mono": ["Whyte Semi-Mono"],
+        "bold": ["Whyte Bold"]
       },
       fontSize: {
         subtext: ["0.75rem", "0.875rem"],
@@ -349,6 +351,7 @@ module.exports = {
       animation: {
         fade_in: "fade_in 0.5s ease-out 1",
         fade_in_bg: "fade_in_bg 6s ease-out 1",
+        "grow-shrink": "grow-shrink 3.6s ease-in-out infinite"
       },
       keyframes: {
         fade_in: {
@@ -367,6 +370,20 @@ module.exports = {
             opacity: "1",
           },
         },
+        "grow-shrink": {
+          "0%": {
+            transform: "scale(1)",
+            opacity: "1"
+          },
+          "50%": {
+            transform: "scale(1.12)",
+            opacity: "0.5"
+          },
+          "100%": {
+            transform: "scale(1)",
+            opacity: "1"
+          },
+        },
       },
       inset: {
         84: "22rem",
@@ -376,6 +393,7 @@ module.exports = {
         71: "17.3rem",
       },
       margin: {
+        4.5: "1.125rem",
         0.5: "0.15rem",
         18: "4.875rem",
         24.5: "6.5rem",

@@ -12,6 +12,12 @@ interface ConnectModalProps {
   showCloseButton?: boolean;
   height?: string;
   type?: string;
+  modalStyle?: ConnectModalStyle
+}
+
+export enum ConnectModalStyle {
+  DARK = "DARK",
+  BARE = "BARE" // transparent + minimal styling
 }
 
 export const ConnectModal: React.FC<ConnectModalProps> = (props) => {
@@ -23,6 +29,7 @@ export const ConnectModal: React.FC<ConnectModalProps> = (props) => {
     subtext,
     showCloseButton = true,
     height,
+    modalStyle = ConnectModalStyle.DARK
   } = props;
 
   useDisableBgScrollOnModal(show);
@@ -40,19 +47,17 @@ export const ConnectModal: React.FC<ConnectModalProps> = (props) => {
         onClose={closeModal}
       >
         <div
-          className="flex items-end justify-center min-h-screen  pt-4 px-4 pb-20 text-center sm:block sm:p-0"
+          className="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0"
           ref={refDiv}
         >
           <Transition.Child
             as={Fragment}
-            enter="ease-out duration-300"
             enterFrom="opacity-0"
             enterTo="opacity-100"
-            leave="ease-in duration-200"
             leaveFrom="opacity-100"
             leaveTo="opacity-0"
           >
-            <Dialog.Overlay className="fixed inset-0 transition-opacity" />
+            <Dialog.Overlay className="fixed inset-0 transition-opacity bg-black bg-opacity-60" />
           </Transition.Child>
 
           {/* This element is to trick the browser into centering the modal contents. */}
@@ -72,13 +77,13 @@ export const ConnectModal: React.FC<ConnectModalProps> = (props) => {
             leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
           >
             <div
-              className={`inline-block align-bottom bg-white rounded-2xl px-5 ${
-                showCloseButton ? "pt-10" : ""
-              } pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg w-full sm:w-96 bg-gray-102 ${
+              className={`inline-block align-bottom ${modalStyle !== ConnectModalStyle.BARE && "bg-white rounded-2xl px-5"} ${
+                showCloseButton ? `${modalStyle !== ConnectModalStyle.BARE ? "pt-10" : "pt-0"}` : ""
+              } text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg w-full sm:w-96 ${modalStyle !== ConnectModalStyle.BARE && "pb-4 bg-gray-102"} ${
                 height ? height : "h-auto"
               }`}
             >
-              <button className="h-0 w-0 overflow-hidden" />
+              {modalStyle !== ConnectModalStyle.BARE && <button className="h-0 w-0 overflow-hidden" />}
               {showCloseButton ? (
                 <div className="hidden sm:block absolute top-0 right-0 pt-4 pr-4">
                   <button
@@ -94,14 +99,14 @@ export const ConnectModal: React.FC<ConnectModalProps> = (props) => {
               {title ? (
                 <Dialog.Title
                   as="h3"
-                  className="text-white text-lg sm:text-xl text-center font-whyte leading-6 font-medium"
+                  className="text-white text-sm uppercase font-bold tracking-wide px-4.5"
                 >
                   {title}
                 </Dialog.Title>
               ) : null}
               {subtext ? (
-                <div className="m-8 mt-2 mb-6">
-                  <p className="text-sm text-center font-whyte-light font-bold text-gray-3">
+                <div className="mt-2 mb-6 px-4.5 bg-blue-500">
+                  <p className="text-xs text-gray-syn5">
                     {subtext}
                   </p>
                 </div>

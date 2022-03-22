@@ -1,6 +1,7 @@
 import { CopyToClipboardIcon } from "@/components/iconWrappers";
 import { SkeletonLoader } from "@/components/skeletonLoader";
 import { BlockExplorerLink } from "@/components/syndicates/shared/BlockExplorerLink";
+import DuplicateClubWarning from "@/components/syndicates/shared/DuplicateClubWarning";
 import { useAccountTokens } from "@/hooks/useAccountTokens";
 import { useClubDepositsAndSupply } from "@/hooks/useClubDepositsAndSupply";
 import { useIsClubOwner } from "@/hooks/useClubOwner";
@@ -21,7 +22,6 @@ import NumberTreatment from "../NumberTreatment";
 // utils
 import GradientAvatar from "./portfolioAndDiscover/portfolio/GradientAvatar";
 import { DetailsCard, ProgressIndicator } from "./shared";
-import DuplicateClubWarning from "@/components/syndicates/shared/DuplicateClubWarning";
 
 interface ClubDetails {
   header: string;
@@ -128,7 +128,7 @@ const SyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
   }, [totalDeposits, memberCount]);
 
   useEffect(() => {
-    if (erc20Token && !managerSettingsOpen) {
+    if (name && !managerSettingsOpen) {
       setDetails([
         ...(depositsEnabled
           ? [
@@ -250,7 +250,20 @@ const SyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
             ]),
       ]);
     }
-  }, [JSON.stringify(erc20Token), totalDeposits]);
+  }, [
+    name,
+    depositsEnabled,
+    maxTotalSupply,
+    totalSupply,
+    maxMemberCount,
+    symbol,
+    startTime,
+    endTime,
+    loading,
+    maxTotalDeposits,
+    memberCount,
+    totalDeposits,
+  ]);
 
   // show message to the user when address has been copied.
   const updateAddressCopyState = () => {
@@ -408,13 +421,17 @@ const SyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
             </div>
           </div>
         </div>
-        {showDuplicateClubWarning && !isDemoMode && (
-          <div className="mt-6">
-            <DuplicateClubWarning
-              dismissDuplicateClubWarning={dismissDuplicateClubWarning}
-            />
-          </div>
-        )}
+        {showDuplicateClubWarning &&
+          !isDemoMode &&
+          !isOwner &&
+          !loading &&
+          status !== Status.DISCONNECTED && (
+            <div className="mt-6">
+              <DuplicateClubWarning
+                dismissDuplicateClubWarning={dismissDuplicateClubWarning}
+              />
+            </div>
+          )}
 
         {status !== Status.DISCONNECTED &&
           depositsEnabled &&
@@ -443,7 +460,7 @@ const SyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
               sections={details}
               customStyles={"w-full pt-4"}
               customInnerWidth="w-full grid xl:grid-cols-3 lg:grid-cols-3
-            grid-cols-3 xl:gap-8 gap-6s gap-y-8"
+            grid-cols-3 xl:gap-8 gap-2 xl:gap-5 gap-y-8"
             />
           </div>
         ) : null}
