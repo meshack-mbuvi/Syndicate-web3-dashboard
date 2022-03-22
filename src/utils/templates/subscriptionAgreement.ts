@@ -130,7 +130,7 @@ Subscriber:
 
 ACCEPTANCE OF SUBSCRIPTION
 (to be filled out only by the Vehicle)
-By signing below, the Administrative Member and the Vehicle hereby accept Subscriber’s Subscription for Interests in the Vehicle with a Subscription Amount of $[[depositAmount]], admit the Subscriber as a Member of the Vehicle as of the date set forth below in accordance with the terms of the Subscription Agreement and the Operating Agreement, and authorize this signature page to be attached to the Subscription Agreement related to the Vehicle. 
+By signing below, the Administrative Member and the Vehicle hereby accept Subscriber’s Subscription for Interests in the Vehicle with a Subscription Amount of [[depositAmount]], admit the Subscriber as a Member of the Vehicle as of the date set forth below in accordance with the terms of the Subscription Agreement and the Operating Agreement, and authorize this signature page to be attached to the Subscription Agreement related to the Vehicle. 
 [[adminName]], in its capacity as Administrative Member, and for and on behalf of [[legalEntityName]]
 
 By: _____________________
