@@ -83,6 +83,9 @@ const AddressMenuDropDown: FC<IAddressMenuDropDown> = ({
                       {formatAddress(account.substring(2), 6, 6)}
                     </p>
                   </div>
+                  <div className="flex justify-between mt-2">
+                    {renderConnectedWith(providerName)}
+                  </div>
                 </div>
 
                 <div
