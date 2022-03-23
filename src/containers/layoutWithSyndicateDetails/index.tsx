@@ -1,16 +1,18 @@
 import { ClubERC20Contract } from "@/ClubERC20Factory/clubERC20";
+import BackButton from "@/components/buttons/BackButton";
 import ErrorBoundary from "@/components/errorBoundary";
 import Layout from "@/components/layout";
 import OnboardingModal from "@/components/onboarding";
-import BackButton from "@/components/buttons/BackButton";
 import { EtherscanLink } from "@/components/syndicates/shared/EtherscanLink";
 import Head from "@/components/syndicates/shared/HeaderTitle";
 import SyndicateDetails from "@/components/syndicates/syndicateDetails";
 import { setERC20Token } from "@/helpers/erc20TokenDetails";
 import { useAccountTokens } from "@/hooks/useAccountTokens";
+import { useClubDepositsAndSupply } from "@/hooks/useClubDepositsAndSupply";
 import { useIsClubOwner } from "@/hooks/useClubOwner";
 import useClubTokenMembers from "@/hooks/useClubTokenMembers";
 import { useDemoMode } from "@/hooks/useDemoMode";
+import { useGetTokenPrice } from "@/hooks/useGetTokenPrice";
 import useTransactions from "@/hooks/useTransactions";
 import NotFoundPage from "@/pages/404";
 import { AppState } from "@/state";
@@ -23,10 +25,10 @@ import {
 } from "@/state/assets/slice";
 import { setClubMembers } from "@/state/clubMembers";
 import {
-  setERC20TokenContract,
-  setERC20TokenDetails,
   setDepositTokenUSDPrice,
+  setERC20TokenContract,
   setERC20TokenDespositDetails,
+  setERC20TokenDetails,
 } from "@/state/erc20token/slice";
 import { clearMyTransactions } from "@/state/erc20transactions";
 import { Status } from "@/state/wallet/types";
@@ -45,8 +47,6 @@ import ClubTokenMembers from "../managerActions/clubTokenMembers/index";
 import ActivityView from "./activity";
 import Assets from "./assets";
 import TabButton from "./TabButton";
-import { useGetTokenPrice } from "@/hooks/useGetTokenPrice";
-import { useClubDepositsAndSupply } from "@/hooks/useClubDepositsAndSupply";
 
 const LayoutWithSyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
   managerSettingsOpen,
@@ -176,7 +176,12 @@ const LayoutWithSyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
   };
 
   useEffect(() => {
-    if (owner && depositTokenPriceInUSD && !loadingClubDeposits && !isDemoMode) {
+    if (
+      owner &&
+      depositTokenPriceInUSD &&
+      !loadingClubDeposits &&
+      !isDemoMode
+    ) {
       fetchAssets();
     } else if (isDemoMode) {
       const mockTokens = depositsEnabled
@@ -279,8 +284,6 @@ const LayoutWithSyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
     isOwner || +accountTokens || myMerkleProof?.account === account;
   const renderOnDisconnect =
     status !== Status.DISCONNECTED && !(isActive && !isOwnerOrMember);
-  const isBackButtonByNameHidden = isDemoMode || isSubNavStuck;
-  const isStickyBackButtonHidden = isDemoMode || !isSubNavStuck;
 
   useEffect(() => {
     if (!renderOnDisconnect) {

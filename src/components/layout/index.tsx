@@ -1,17 +1,17 @@
 import Footer from "@/components/navigation/footer";
+import Header from "@/components/navigation/header/Header";
 import { useCreateInvestmentClubContext } from "@/context/CreateInvestmentClubContext";
 import { useIsClubOwner } from "@/hooks/useClubOwner";
+import { useDemoMode } from "@/hooks/useDemoMode";
 import { AppState } from "@/state";
 import { Status } from "@/state/wallet/types";
 import { useRouter } from "next/router";
 import React, { FC, useEffect } from "react";
 import { useSelector } from "react-redux";
 import ConnectWallet from "src/components/connectWallet";
-import Header from "@/components/navigation/header/Header";
 import DemoBanner from "../demoBanner";
 import ProgressBar from "../ProgressBar";
 import SEO from "../seo";
-import { useDemoMode } from "@/hooks/useDemoMode";
 interface Props {
   showBackButton?: boolean;
   managerSettingsOpen?: boolean;
@@ -76,7 +76,10 @@ const Layout: FC<Props> = ({
   const handleRouting = () => {
     if (pathname.includes("/manage") && !isOwner) {
       router.replace(`/clubs/${clubAddress}`);
-    } else if (pathname === "/clubs/[clubAddress]" && isOwner) {
+    } else if (
+      (pathname === "/clubs/[clubAddress]" || pathname.includes("/member")) &&
+      isOwner
+    ) {
       router.replace(`/clubs/${clubAddress}/manage`);
     }
   };
@@ -92,7 +95,15 @@ const Layout: FC<Props> = ({
       return;
 
     handleRouting();
-  }, [owner, clubAddress, account, loadingClubDetails, status, isReady]);
+  }, [
+    owner,
+    clubAddress,
+    account,
+    loadingClubDetails,
+    status,
+    isReady,
+    isOwner,
+  ]);
 
   return (
     <div
