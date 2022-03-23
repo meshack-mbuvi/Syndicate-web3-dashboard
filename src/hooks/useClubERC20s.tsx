@@ -25,7 +25,11 @@ const useClubERC20s = () => {
 
   const router = useRouter();
 
-  const { account, currentEthereumNetwork } = web3;
+  const {
+    account,
+    currentEthereumNetwork,
+    ethereumNetwork: { invalidEthereumNetwork },
+  } = web3;
 
   // Retrieve syndicates that I manage
   const { loading, refetch, data } = useQuery(MY_CLUBS_QUERY, {
@@ -35,7 +39,7 @@ const useClubERC20s = () => {
       },
     },
     // Avoid unnecessary calls when account is not defined
-    skip: !account,
+    skip: !account || !router.isReady,
   });
 
   const {
@@ -49,7 +53,7 @@ const useClubERC20s = () => {
       },
     },
     // Avoid unnecessary calls when account is not defined
-    skip: !account,
+    skip: !account || !router.isReady,
   });
 
   useEffect(() => {
@@ -65,7 +69,7 @@ const useClubERC20s = () => {
         },
       });
     }
-  }, [router.isReady, account]);
+  }, [router.isReady, account, currentEthereumNetwork]);
 
   const [clubIAmMember, setClubIamMember] = useState([]);
   const [myClubs, setMyClubs] = useState([]);
@@ -74,16 +78,17 @@ const useClubERC20s = () => {
     processClubERC20Tokens(clubIAmMember).then((data) => {
       dispatch(setOtherClubERC20s(data));
     });
-  }, [JSON.stringify(clubIAmMember)]);
+  }, [JSON.stringify(clubIAmMember), currentEthereumNetwork]);
 
   useEffect(() => {
     processClubERC20Tokens(myClubs).then((data) => {
       dispatch(setMyClubERC20s(data));
     });
-  }, [JSON.stringify(myClubs)]);
+  }, [JSON.stringify(myClubs), currentEthereumNetwork]);
 
   const processClubERC20Tokens = async (tokens) => {
     dispatch(setLoadingClubERC20s(false));
+
     if (!tokens || !tokens?.length) {
       return [];
     }
@@ -99,24 +104,15 @@ const useClubERC20s = () => {
           totalSupply,
           depositAmount,
         }) => {
-          // get clubERC20 configs
-          let {
-            endTime,
-            maxMemberCount,
-            maxTotalSupply,
-            requiredToken,
-            requiredTokenMinBalance,
-            startTime,
-          } = await syndicateContracts?.policyMintERC20?.getSyndicateValues(
-            contractAddress,
-          );
+          let endTime;
+          let maxMemberCount;
+          let maxTotalSupply;
+          let requiredToken;
+          let requiredTokenMinBalance;
+          let startTime;
 
-          if (
-            !+endTime &&
-            !+maxMemberCount &&
-            !+maxTotalSupply &&
-            !+startTime
-          ) {
+          try {
+            // get clubERC20 configs
             ({
               endTime,
               maxMemberCount,
@@ -124,9 +120,29 @@ const useClubERC20s = () => {
               requiredToken,
               requiredTokenMinBalance,
               startTime,
-            } = await syndicateContracts?.mintPolicy?.getSyndicateValues(
+            } = await syndicateContracts?.policyMintERC20?.getSyndicateValues(
               contractAddress,
             ));
+
+            if (
+              !+endTime &&
+              !+maxMemberCount &&
+              !+maxTotalSupply &&
+              !+startTime
+            ) {
+              ({
+                endTime,
+                maxMemberCount,
+                maxTotalSupply,
+                requiredToken,
+                requiredTokenMinBalance,
+                startTime,
+              } = await syndicateContracts?.mintPolicy?.getSyndicateValues(
+                contractAddress,
+              ));
+            }
+          } catch (error) {
+            return;
           }
 
           let clubERC20Contract;
@@ -250,11 +266,8 @@ const useClubERC20s = () => {
    * We need to be sure syndicateContracts is initialized before retrieving events.
    */
   useEffect(() => {
-    // This will reset syndicate details when we are on portfolio page.
-    // The currentEthereumNetwork has been added as a dependency to trigger a re-fetch
-    // whenever the Ethereum network is changed.
-    dispatch(setLoadingClubERC20s(true));
     if (account && !memberClubLoading) {
+      dispatch(setLoadingClubERC20s(true));
       const clubTokens = [];
       // get clubs connected account has invested in
       if (memberClubData?.members?.length) {
@@ -302,12 +315,12 @@ const useClubERC20s = () => {
 
       setClubIamMember(clubTokens);
     }
-    dispatch(setLoadingClubERC20s(false));
   }, [
     account,
     memberClubLoading,
     currentEthereumNetwork,
     memberClubData?.members?.length,
+    invalidEthereumNetwork,
   ]);
 
   useEffect(() => {

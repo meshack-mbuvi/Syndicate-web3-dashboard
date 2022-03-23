@@ -62,7 +62,8 @@
 
   @font-face {
     font-family: Whyte Semi-Mono;
-    src: url(/fonts/Whyte_Semi_Mono/ABCWhyteSemi-Mono-Regular.woff) format("woff");
+    src: url(/fonts/Whyte_Semi_Mono/ABCWhyteSemi-Mono-Regular.woff)
+      format("woff");
   }
 
   /* fixes an issue where it is sometimes not possible to scroll */

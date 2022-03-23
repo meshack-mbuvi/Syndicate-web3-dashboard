@@ -1,4 +1,7 @@
 import { BanIcon, CancelIcon } from "@/components/shared/Icons";
+import WalletConnectDemoButton, {
+  DemoButtonType,
+} from "@/containers/layoutWithSyndicateDetails/demo/buttons/WalletConnectDemoButton";
 // set up smart contract and pass it as context
 // actions
 import { useConnectWalletContext } from "@/context/ConnectWalletProvider";
@@ -10,10 +13,8 @@ import {
 } from "@/state/wallet/actions";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-
 import { SpinnerWithImage } from "../shared/spinner/spinnerWithImage";
 import { ConnectModal, ConnectModalStyle } from "./connectModal";
-import WalletConnectDemoButton, { DemoButtonType } from "@/containers/layoutWithSyndicateDetails/demo/buttons/WalletConnectDemoButton";
 
 /**
  * The component shows a modal with buttons to connect to different
@@ -53,7 +54,8 @@ const ConnectWallet: React.FC = () => {
 
   //loader text
   const [walletConnectingText, setWalletConnectingText] = useState<string>("");
-  const [walletConnectingHelperText, setWalletConnectingHelperText] = useState<string>("");
+  const [walletConnectingHelperText, setWalletConnectingHelperText] =
+    useState<string>("");
   const [showHelpLink, setShowHelpLink] = useState<boolean>(false);
   const [helpLink, setHelpLink] = useState<string>("#");
 
@@ -63,14 +65,15 @@ const ConnectWallet: React.FC = () => {
     if (providerName) {
       const name = providerName === "Injected" ? "Metamask" : providerName;
       if (name === "Metamask") {
-        setWalletConnectingText(`Unlock wallet`)
-        setWalletConnectingHelperText(`You may need to click the extension`)
-      }
-      else {
-        setWalletConnectingText(`Sign in using the ${name} pop-up to continue.`);
+        setWalletConnectingText(`Unlock wallet`);
+        setWalletConnectingHelperText(`You may need to click the extension`);
+      } else {
+        setWalletConnectingText(
+          `Sign in using the ${name} pop-up to continue.`,
+        );
         const timeoutId = setTimeout(() => {
           setWalletConnectingText(`Waiting for ${name}...`);
-  
+
           // set help link based on provider
           // These links should be updated once we have our own help center
           if (providerName === "Injected") {
@@ -81,7 +84,7 @@ const ConnectWallet: React.FC = () => {
             setShowHelpLink(true);
           }
         }, 10000);
-        return () => clearTimeout(timeoutId);  
+        return () => clearTimeout(timeoutId);
       }
     }
   }, [providerName]);
@@ -163,7 +166,11 @@ const ConnectWallet: React.FC = () => {
             onClick={() => providerToActivate()}
           >
             <span className="text-white text-sm sm:text-base">{name}</span>
-            <img alt="icon" src={icon} className="inline mw-6 sm:w-10 max-h-7" />
+            <img
+              alt="icon"
+              src={icon}
+              className="inline mw-6 sm:w-10 max-h-7"
+            />
           </button>
         </div>
       );
@@ -218,12 +225,11 @@ const ConnectWallet: React.FC = () => {
         {...{
           show: showWalletModal,
           closeModal: closeWalletModal,
-          modalStyle: ConnectModalStyle.BARE
+          modalStyle: ConnectModalStyle.BARE,
         }}
       >
         <>
           <div className="rounded-2xl bg-gray-syn8 px-4.5 pt-6">
-
             {/* Titles */}
             <h4 className="text-white text-sm uppercase font-bold tracking-wide">
               Connect a wallet
@@ -248,7 +254,7 @@ const ConnectWallet: React.FC = () => {
                 >
                   Privacy Policy
                 </a>
-                ,{" "}and{" "}
+                , and{" "}
                 <a
                   href="https://docs.google.com/document/d/1yATB2hQHjCHKaUvBIzEaO65Xa0xHq-nLOEEJlJngg90/"
                   target="_blank"
@@ -268,7 +274,6 @@ const ConnectWallet: React.FC = () => {
               ))}
             </div>
 
-
             <div className="flex items-center justify-center space-x-2 pb-6">
               <p className="text-sm text-center">New to crypto?</p>
               <button
@@ -282,7 +287,6 @@ const ConnectWallet: React.FC = () => {
                 Learn more about wallets
               </button>
             </div>
-            
           </div>
 
           {/* Demo mode */}
@@ -306,7 +310,12 @@ const ConnectWallet: React.FC = () => {
         <div>
           <div className="relative">
             <div className="border-4 border-gray-syn7 animate-grow-shrink rounded-full mx-auto p-6 w-28 h-28"></div>
-            <img src={providerIcon} className="absolute w-12 top-1/2 left-1/2" style={{transform: "translate(-50%, -50%)"}} alt="Provider Icon"/>
+            <img
+              src={providerIcon}
+              className="absolute w-12 top-1/2 left-1/2"
+              style={{ transform: "translate(-50%, -50%)" }}
+              alt="Provider Icon"
+            />
           </div>
 
           <p className="mx-5 mt-9 text-sm uppercase font-bold tracking-wide text-center">
@@ -337,10 +346,15 @@ const ConnectWallet: React.FC = () => {
           closeModal: () => setShowSuccessModal(false),
         }}
       >
-         <div className="mt-14">
+        <div className="mt-14">
           <div className="relative">
             <div className="border-4 border-green-light rounded-full mx-auto p-6 w-28 h-28"></div>
-            <img src={providerIcon} className="absolute w-12 top-1/2 left-1/2" style={{transform: "translate(-50%, -50%)"}} alt="Provider Icon"/>
+            <img
+              src={providerIcon}
+              className="absolute w-12 top-1/2 left-1/2"
+              style={{ transform: "translate(-50%, -50%)" }}
+              alt="Provider Icon"
+            />
           </div>
 
           <p className="mx-5 mt-9 text-sm uppercase font-bold tracking-wide text-center">
