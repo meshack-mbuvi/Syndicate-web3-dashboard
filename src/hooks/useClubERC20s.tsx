@@ -83,7 +83,7 @@ const useClubERC20s = () => {
   useEffect(() => {
     processClubERC20Tokens(myClubs).then((data) => {
       dispatch(setMyClubERC20s(data));
-    });
+    })
   }, [JSON.stringify(myClubs), currentEthereumNetwork]);
 
   const processClubERC20Tokens = async (tokens) => {
@@ -185,16 +185,20 @@ const useClubERC20s = () => {
            */
           let depositTokenLogo = "/images/ethereum-logo.png";
           if (!isZeroAddress(depositToken)) {
-            const depositERC20Token = new ClubERC20Contract(
-              depositToken,
-              web3.web3,
-            );
-            depositERC20TokenSymbol = await depositERC20Token.symbol();
-            depositERC20TokenDecimals = await depositERC20Token.decimals();
-            depositTokenLogo =
-              depositERC20TokenSymbol === "USDC"
-                ? "/images/TestnetTokenLogos/usdcIcon.svg"
-                : "";
+            try {
+              const depositERC20Token = new ClubERC20Contract(
+                depositToken,
+                web3.web3,
+              );
+              depositERC20TokenSymbol = await depositERC20Token.symbol();
+              depositERC20TokenDecimals = await depositERC20Token.decimals();
+              depositTokenLogo =
+                depositERC20TokenSymbol === "USDC"
+                  ? "/images/TestnetTokenLogos/usdcIcon.svg"
+                  : "";
+            } catch (error) {
+              return;
+            }
           }
 
           const depositsEnabled = !pastDate(new Date(+endTime * 1000));
