@@ -81,6 +81,16 @@
     @apply antialiased;
   }
 
+  ::selection {
+    color: black;
+    background: white;
+  }
+
+  .legal-doc-sign::selection {
+    color: white;
+    background: black;
+  }
+
   h1 {
     font-family: "ABC Whyte Inktrap Regular";
   }
