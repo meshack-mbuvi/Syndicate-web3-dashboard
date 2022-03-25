@@ -266,8 +266,9 @@ const useClubERC20s = () => {
    * We need to be sure syndicateContracts is initialized before retrieving events.
    */
   useEffect(() => {
+    dispatch(setLoadingClubERC20s(true));
+
     if (account && !memberClubLoading) {
-      dispatch(setLoadingClubERC20s(true));
       const clubTokens = [];
       // get clubs connected account has invested in
       if (memberClubData?.members?.length) {
@@ -287,7 +288,6 @@ const useClubERC20s = () => {
               clubIndex++
             ) {
               const syndicateDAO = syndicateDAOs[clubIndex];
-              // get club details
               const {
                 depositAmount,
                 syndicateDAO: {
@@ -299,7 +299,6 @@ const useClubERC20s = () => {
                 },
               } = syndicateDAO;
 
-              // add the club to club tokens array
               clubTokens.push({
                 depositAmount,
                 contractAddress,
@@ -312,6 +311,7 @@ const useClubERC20s = () => {
           }
         }
       }
+      dispatch(setLoadingClubERC20s(false));
 
       setClubIamMember(clubTokens);
     }
