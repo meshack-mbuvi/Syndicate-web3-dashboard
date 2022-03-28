@@ -1,8 +1,9 @@
-import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
-import { EmailSupport } from "@/components/emailSupport";
+import { AnimatedText } from "@/components/animatedText";
 import { DiscordLink } from "@/components/DiscordLink";
-import { ExternalLinkIcon } from "src/components/iconWrappers";
+import { EmailSupport } from "@/components/emailSupport";
 import useWindowSize from "@/hooks/useWindowSize";
+import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { ExternalLinkIcon } from "src/components/iconWrappers";
 import EstimateGas from "./estimateGas";
 
 const GettingStarted: React.FC<{
@@ -52,7 +53,7 @@ const GettingStarted: React.FC<{
                   style={
                     width < 500
                       ? { height: `${firstLineHeight + 4}px` }
-                      : { height: "122px" }
+                      : { height: "147px" }
                   }
                   aria-hidden="true"
                 />
@@ -77,6 +78,10 @@ const GettingStarted: React.FC<{
                     </p>
                     <div className="text-blue text-xs mt-3 font-whyte">
                       <EstimateGas />
+                    </div>
+                    <div className="mt-2 text-gray-syn4 text-xs font-whyte font-normal">
+                      Create <AnimatedText text={"unlimited clubs for free"} />{" "}
+                      on Syndicate. Just pay gas.
                     </div>
                   </span>
                 </div>

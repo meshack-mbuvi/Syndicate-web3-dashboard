@@ -378,11 +378,11 @@ const SignAgreement: React.FC<ISignAgreementProps> = ({
             <div className="container mx-auto flex flex-col py-12">
               {/* Text Document Content. Change code below */}
               <span ref={operatingAgRef}>
-                <span className="text-center py-5" ref={operatingAgTitleRef}>
+                <span className="text-center py-5 legal-doc-sign" ref={operatingAgTitleRef}>
                   Operating Agreement
                 </span>
                 <span
-                  className="leading-6 text-base"
+                  className="leading-6 text-base legal-doc-sign"
                   style={{ whiteSpace: "pre-wrap" }}
                   dangerouslySetInnerHTML={{
                     __html: compiledOp({ ...fieldValues, ...fillers }),
@@ -394,11 +394,11 @@ const SignAgreement: React.FC<ISignAgreementProps> = ({
           <div className="bg-white rounded-none text-black h-full overflow-x-hidden">
             <div className="container mx-auto flex flex-col py-12">
               <span ref={subscriptionAgRef}>
-                <span className="text-center py-5" ref={subscriptionAgTitleRef}>
+                <span className="text-center py-5 legal-doc-sign" ref={subscriptionAgTitleRef}>
                   Subscription Agreement
                 </span>
                 <span
-                  className="leading-6 text-base"
+                  className="leading-6 text-base legal-doc-sign"
                   style={{ whiteSpace: "pre-wrap" }}
                   dangerouslySetInnerHTML={{
                     __html: compiledSub({ ...fieldValues, ...fillers }),

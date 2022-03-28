@@ -1,12 +1,12 @@
+import Document, { Head, Html, Main, NextScript } from "next/document";
 import React, { ReactElement } from "react";
-import Document, { Html, Head, Main, NextScript } from "next/document";
 
 export default class MyDocument extends Document {
   render(): ReactElement {
     return (
       <Html>
         <Head />
-        <body className="relative">
+        <body className="relative overflow-x-hidden">
           <Main />
           <NextScript />
         </body>
