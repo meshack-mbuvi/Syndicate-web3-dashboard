@@ -47,6 +47,7 @@ import Assets from "./assets";
 import TabButton from "./TabButton";
 import { useGetTokenPrice } from "@/hooks/useGetTokenPrice";
 import { useClubDepositsAndSupply } from "@/hooks/useClubDepositsAndSupply";
+import { isEmpty } from "lodash";
 
 const LayoutWithSyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
   managerSettingsOpen,
@@ -182,7 +183,12 @@ const LayoutWithSyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
   };
 
   useEffect(() => {
-    if (owner && depositTokenPriceInUSD && !loadingClubDeposits && !isDemoMode) {
+    if (
+      owner &&
+      depositTokenPriceInUSD &&
+      !loadingClubDeposits &&
+      !isDemoMode
+    ) {
       fetchAssets();
     } else if (isDemoMode) {
       const mockTokens = depositsEnabled
@@ -213,7 +219,7 @@ const LayoutWithSyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
    * Fetch club details
    */
   useEffect(() => {
-    if (!clubAddress || status == Status.CONNECTING) return;
+    if (!clubAddress || status == Status.CONNECTING || isEmpty(web3)) return;
 
     if (
       clubAddress !== zeroAddress &&
@@ -236,12 +242,7 @@ const LayoutWithSyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
       // using "Active" as the default view.
       dispatch(setERC20TokenDetails(mockActiveERC20Token));
     }
-  }, [
-    clubAddress,
-    account,
-    status,
-    syndicateContracts?.DepositTokenMintModule,
-  ]);
+  }, [web3?._provider, clubAddress, account, status]);
 
   const showOnboardingIfNeeded =
     router.pathname.endsWith("[clubAddress]") && !isDemoMode;
@@ -296,7 +297,7 @@ const LayoutWithSyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
 
   return (
     <>
-      {router.isReady && !isDemoMode && !web3.utils.isAddress(clubAddress) ? (
+      {router.isReady && !isDemoMode && !web3?.utils?.isAddress(clubAddress) ? (
         <NotFoundPage />
       ) : (
         <Layout

@@ -34,7 +34,6 @@ export const ProgressModal = (props: {
     transactionType,
     isVisible = false,
     buttonFullWidth = false,
-    etherscanLinkText = "View on Etherscan",
     iconColor = ExternalLinkColor.BLUE,
   } = props;
 

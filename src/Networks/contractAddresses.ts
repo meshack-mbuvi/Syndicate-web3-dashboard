@@ -1,18 +1,18 @@
 export const CONTRACT_ADDRESSES = Object.freeze({
   // Ethereum Mainnet
   1: {
-    clubERC20Factory: "0x01C0E2E70336EDB2C1459960AD16AB3D27508699",
+    clubERC20Factory: "0x99116a5641DC89A7cb43a9A82694177538aa0391",
     clubERC20FactoryEth: "0x2372fd8d69da29b4b328b518c6d7e84f3aa25dc3",
-    DepositTokenMintModule: "0x9cAf7337F9fe05469FaaA3b388C479C6E8393276",
+    DepositTokenMintModule: "0x0449F65a5e09F0f30Aa504B8474D1D4d0e10B8B8",
     ERC721MintPolicy: "0x543B8a295a485b50bA0db1D686Ab806656D7D542",
     EthMintModule: "0x960fd5cfa6c36e9db131824ddf07df6322a053de",
     MerkleDistributorModule: "0x90543E032A7c8db9087Ab30F2a04929592700134",
     MerkleDistributorModuleERC721: "0xCaeE041fFa50165ba009EF2d7b00C1D2b0874a44",
     mintPolicy: "0x1CC6E7eD55538F77E13C057E9521de5D2f3000dd",
-    policyMintERC20: "0x543B8a295a485b50bA0db1D686Ab806656D7D542",
+    policyMintERC20: "0xc92836BC3201F2784fae26875Ac1C1d5acA0aef2",
     PublicOnePerAddress: "0x4eD3fEDAaaBE0Da0D4a772A2210D0BfE5e475f91",
-    SingleTokenMintModule: "0x0449F65a5e09F0f30Aa504B8474D1D4d0e10B8B8",
-    UtilityMintModule: "0x56b8A2A1e7F37C5E66daF14DB28D1dc38e176Fb8",
+    SingleTokenMintModule: "0x81257650059f1bfB401797CBF9989C1F0a13a2b3",
+    UtilityMintModule: "0x7D9cd3C538E8b1937a5056E74dA59E82226aB187",
     OwnerMintModule: "",
   },
   // Rinkeby

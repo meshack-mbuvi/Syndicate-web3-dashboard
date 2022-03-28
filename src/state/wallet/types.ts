@@ -1,6 +1,6 @@
 import Web3 from "web3";
 
-const initialWeb3 = new Web3(process.env.NEXT_PUBLIC_ALCHEMY);
+const initialWeb3 = {};
 
 export interface IWeb3 extends Web3 {
   _provider?: any;
@@ -76,7 +76,7 @@ export interface InitialState {
     showConnectionModal: boolean;
     isErrorModalOpen: boolean;
     error: IModalErrors | any;
-    web3: IWeb3;
+    web3: any;
     chainId: number;
     account: string;
     providerName: string;

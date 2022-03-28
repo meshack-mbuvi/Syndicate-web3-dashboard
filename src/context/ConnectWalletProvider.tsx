@@ -38,8 +38,9 @@ import React, {
 } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Web3 from "web3";
-import { NETWORKS } from "@/Networks/networks";
+import { NETWORKS } from "@/Networks";
 import { IActiveNetwork } from "@/state/wallet/types";
+import { setERC20TokenContract } from "@/state/erc20token/slice";
 
 type AuthProviderProps = {
   connectWallet: (providerName: string) => void;
@@ -165,7 +166,7 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
         return dispatch(
           setLibrary({
             account,
-            web3: new Web3(`${NETWORKS[chainId].rpcUrl}`),
+            web3: web3,
             providerName,
             activeNetwork,
           }),
@@ -214,6 +215,8 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
         setWalletConnecting(false);
         setShowSuccessModal(true);
       });
+    } else if (activeNetwork && !account) {
+      initializeWeb3();
     }
   }, [account, activeProvider, activeNetwork]);
 
@@ -321,39 +324,44 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
   };
 
   const switchNetworks = async (_chainId) => {
-    try {
-      /*
+    if (account) {
+      try {
+        /*
       TODO: walletConnect variant for wallet switching
             https://github.com/gnosis/safe-react/blob/aad9469e33d3abc7cf0dd8e0e389029f8c9eaa4a/src/logic/wallets/utils/network.ts#L21
       */
-      await activeProvider?.request({
-        method: "wallet_switchEthereumChain",
-        params: [{ chainId: web3.utils.toHex(_chainId) }],
-      });
-    } catch (error) {
-      if (error.code === 4902) {
-        try {
-          const activeNetwork = NETWORKS[_chainId];
-          await activeProvider?.request({
-            method: "wallet_addEthereumChain",
-            params: [
-              {
-                chainId: web3.utils.toHex(activeNetwork.chainId),
-                chainName: activeNetwork.name,
-                rpcUrls: [activeNetwork.publicRPC], // use public rpc here -> this is visible to the user on metamask
-                nativeCurrency: {
-                  name: activeNetwork.nativeCurrency.name,
-                  symbol: activeNetwork.nativeCurrency.symbol,
-                  decimals: +activeNetwork.nativeCurrency.decimals,
+        await activeProvider?.request({
+          method: "wallet_switchEthereumChain",
+          params: [{ chainId: web3.utils.toHex(_chainId) }],
+        });
+      } catch (error) {
+        if (error.code === 4902) {
+          try {
+            const activeNetwork = NETWORKS[_chainId];
+            await activeProvider?.request({
+              method: "wallet_addEthereumChain",
+              params: [
+                {
+                  chainId: web3.utils.toHex(activeNetwork.chainId),
+                  chainName: activeNetwork.name,
+                  rpcUrls: [activeNetwork.publicRPC], // use public rpc here -> this is visible to the user on metamask
+                  nativeCurrency: {
+                    name: activeNetwork.nativeCurrency.name,
+                    symbol: activeNetwork.nativeCurrency.symbol,
+                    decimals: +activeNetwork.nativeCurrency.decimals,
+                  },
+                  blockExplorerUrls: [activeNetwork.blockExplorer.baseUrl],
                 },
-                blockExplorerUrls: [activeNetwork.blockExplorer.baseUrl],
-              },
-            ],
-          });
-        } catch (error) {
-          console.log(error.message);
+              ],
+            });
+          } catch (error) {
+            console.log(error.message);
+          }
         }
       }
+    } else {
+      setChainId(_chainId);
+      setWeb3(new Web3(`${NETWORKS[_chainId].rpcUrl}`));
     }
   };
 
@@ -452,7 +460,6 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
     setWalletConnecting(false);
     setShowSuccessModal(false);
     setAccount("");
-
     dispatch(logout());
     localStorage.removeItem("cache");
     localStorage.removeItem("walletconnect");

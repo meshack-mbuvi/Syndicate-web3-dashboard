@@ -155,17 +155,6 @@ const ConnectWallet: React.FC = () => {
 
   // button for each provider
   const ProviderButton = ({ name, icon, providerToActivate, hidden }) => {
-    let gradientColor;
-    switch (name) {
-      case "Gnosis Safe":
-        gradientColor = "to-green-light-darker from-green-light-dark ";
-        break;
-      case "Wallet Connect":
-        gradientColor = "from-blue-light-dark to-blue-light-darker";
-        break;
-      default:
-        gradientColor = "from-orange-dark to-orange-light";
-    }
     if (!hidden) {
       return (
         <div className="flex justify-center items-center m-auto">
@@ -174,7 +163,11 @@ const ConnectWallet: React.FC = () => {
             onClick={() => providerToActivate()}
           >
             <span className="text-white text-sm sm:text-base">{name}</span>
-            <img alt="icon" src={icon} className="inline mw-6 sm:w-10 max-h-7" />
+            <img
+              alt="icon"
+              src={icon}
+              className="inline mw-6 sm:w-10 max-h-7"
+            />
           </button>
         </div>
       );

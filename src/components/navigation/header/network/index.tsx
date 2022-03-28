@@ -7,9 +7,11 @@ export const Network: React.FC = () => {
     web3Reducer: { web3 },
   } = useSelector((state: AppState) => state);
 
+  const { activeNetwork } = web3;
+
   return (
     <div className="wallet-connect">
-      <NetworkMenuDropDown web3={web3} />
+      {activeNetwork.chainId ? <NetworkMenuDropDown web3={web3} /> : null}
     </div>
   );
 };

@@ -3,6 +3,7 @@ import { getWeiAmount } from "@/utils/conversions";
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/router";
 import { useSelector } from "react-redux";
+import { isEmpty } from "lodash";
 
 export const useEthBalance = (account: string): number => {
   const [ethBalance, setEthBalance] = useState(null);
@@ -16,7 +17,7 @@ export const useEthBalance = (account: string): number => {
   const router = useRouter();
 
   const fetchBalance = () => {
-    if (router.isReady && account) {
+    if (router.isReady && account && !isEmpty(web3)) {
       web3.eth
         .getBalance(account)
         .then((balance) => {
@@ -29,6 +30,8 @@ export const useEthBalance = (account: string): number => {
   };
 
   useEffect(() => {
+    if (isEmpty(web3)) return;
+
     const subscription = web3.eth.subscribe("newBlockHeaders");
     subscription
       .on("connected", () => {
@@ -41,6 +44,7 @@ export const useEthBalance = (account: string): number => {
     return () => {
       subscription.unsubscribe();
     };
-  }, [account, router.isReady]);
+  }, [web3?._provider, , account, router.isReady]);
+
   return useMemo(() => ethBalance, [ethBalance]);
 };

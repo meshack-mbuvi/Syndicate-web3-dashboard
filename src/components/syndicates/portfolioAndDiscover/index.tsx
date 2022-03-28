@@ -51,28 +51,6 @@ const PortfolioAndDiscover: React.FC = () => {
 
   useClubERC20s();
 
-  // generate multiple skeleton loader components
-  const generateSkeletons = (
-    num: number,
-    width: string,
-    height: string,
-    borderRadius?: string,
-  ) => {
-    const skeletonsWrapper = [];
-    for (let i = 0; i < num; i++) {
-      skeletonsWrapper.push(
-        <div className="px-2 w-full" key={i}>
-          <SkeletonLoader
-            width={width}
-            height={height}
-            borderRadius={borderRadius}
-          ></SkeletonLoader>
-        </div>,
-      );
-    }
-    return skeletonsWrapper;
-  };
-
   const { width } = useWindowSize();
 
   return (

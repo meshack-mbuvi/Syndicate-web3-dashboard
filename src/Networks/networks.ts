@@ -34,7 +34,7 @@ export const NETWORKS = Object.freeze({
   4: {
     name: "Ethereum Rinkeby",
     displayName: "Rinkeby",
-    shortName: "eth",
+    shortName: "rin",
     network: "rinkeby",
     chainId: 4,
     networkId: 4,
@@ -66,12 +66,12 @@ export const NETWORKS = Object.freeze({
   137: {
     name: "Polygon",
     displayName: "Polygon",
-    shortName: "eth",
+    shortName: "poly",
     network: "polygon",
     chainId: 137,
     networkId: 137,
     testNetwork: false,
-    rpcUrl: process.env.NEXT_PUBLIC_ALCHMEY_MATIC,
+    rpcUrl: process.env.NEXT_PUBLIC_ALCHEMY_MATIC,
     publicRPC:
       "https://polygon-mainnet.infura.io/v3/295cce92179b4be498665b1b16dfee34",
     logo: "/images/chains/polygon.svg",

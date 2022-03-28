@@ -2,6 +2,7 @@ import React, { useState, useEffect, FC } from "react";
 import { Menu, Transition } from "@headlessui/react";
 import { useConnectWalletContext } from "@/context/ConnectWalletProvider";
 import { NETWORKS } from "@/Networks";
+import { useRouter } from "next/router";
 
 interface IAddressMenuDropDown {
   web3: any;
@@ -19,6 +20,16 @@ const NetworkMenuDropDown: FC<IAddressMenuDropDown> = ({ web3 }) => {
   const { account, web3: web3Instance, activeNetwork } = web3;
 
   const [ethBalance, setEthBalance] = useState("");
+
+  // Switch networks based on URL param
+  const router = useRouter();
+  const { network } = router.query;
+
+  useEffect(() => {
+    if (network) {
+      switchNetworks(+network);
+    }
+  }, [network]);
 
   const getEthBalance = async (address: string) => {
     try {

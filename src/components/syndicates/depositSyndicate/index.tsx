@@ -37,7 +37,6 @@ import {
   truncateDecimals,
 } from "@/utils/formattedNumbers";
 import { CheckIcon } from "@heroicons/react/solid";
-import axios from "axios";
 import Image from "next/image";
 import React, { useCallback, useEffect, useState } from "react";
 import { CopyToClipboard } from "react-copy-to-clipboard";
@@ -48,6 +47,7 @@ import { InfoIcon } from "src/components/iconWrappers";
 import { SkeletonLoader } from "src/components/skeletonLoader";
 import ERC20ABI from "src/utils/abi/erc20";
 import { AbiItem } from "web3-utils";
+import { isEmpty } from "lodash";
 
 import BeforeGettingStarted from "../../beforeGettingStarted";
 import ConnectWalletAction from "../shared/connectWalletAction";
@@ -216,7 +216,8 @@ const DepositSyndicate: React.FC = () => {
       syndicateContracts &&
       erc20Token?.name &&
       depositToken &&
-      !ethDepositToken
+      !ethDepositToken &&
+      web3
     ) {
       // set up current deposit ERC20Contract and
       // and save it to the local state
@@ -228,7 +229,13 @@ const DepositSyndicate: React.FC = () => {
 
       checkClubWideErrors();
     }
-  }, [depositToken, erc20Token?.name, syndicateContracts, ethDepositToken]);
+  }, [
+    depositToken,
+    erc20Token?.name,
+    syndicateContracts,
+    ethDepositToken,
+    web3,
+  ]);
 
   const onTxConfirm = () => {
     setMetamaskConfirmPending(false);
@@ -426,7 +433,9 @@ const DepositSyndicate: React.FC = () => {
    */
   const erc20Balance = useERC20TokenBalance(
     account,
-    new web3.eth.Contract(ERC20ABI as AbiItem[], depositToken),
+    !isEmpty(web3)
+      ? new web3.eth.Contract(ERC20ABI as AbiItem[], depositToken)
+      : null,
     depositTokenDecimals,
   );
 

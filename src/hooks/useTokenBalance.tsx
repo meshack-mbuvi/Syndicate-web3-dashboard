@@ -3,6 +3,7 @@ import { getWeiAmount } from "@/utils/conversions";
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/router";
 import { useSelector } from "react-redux";
+import { isEmpty } from "lodash";
 
 export const useERC20TokenBalance = (
   account: string | number,
@@ -34,6 +35,8 @@ export const useERC20TokenBalance = (
   };
 
   useEffect(() => {
+    if (isEmpty(web3)) return;
+
     const subscription = web3.eth.subscribe("newBlockHeaders");
     subscription
       .on("connected", () => {
@@ -46,6 +49,6 @@ export const useERC20TokenBalance = (
     return () => {
       subscription.unsubscribe();
     };
-  }, [account, depositTokenContract._address]);
+  }, [web3?._provider, account, depositTokenContract?._address]);
   return useMemo(() => erc20Balance, [erc20Balance]);
 };
