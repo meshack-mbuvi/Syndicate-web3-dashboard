@@ -10,6 +10,10 @@ export const MY_CLUBS_QUERY = gql`
         depositAmount
       }
       totalSupply
+      startTime
+      maxMemberCount
+      requiredToken
+      requiredTokenMinBalance
     }
   }
 `;
@@ -206,6 +210,8 @@ export const SINGLE_CLUB_DETAILS = gql`
       totalSupply
       createdAt
       totalDeposits
+      startTime
+      endTime
     }
   }
 `;

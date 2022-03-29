@@ -97,38 +97,13 @@ const useClubERC20s = () => {
           members,
           ownerAddress,
           totalSupply,
+          startTime,
+          endTime,
+          maxMemberCount,
+          requiredToken,
+          requiredTokenMinBalance,
           depositAmount,
         }) => {
-          // get clubERC20 configs
-          let {
-            endTime,
-            maxMemberCount,
-            maxTotalSupply,
-            requiredToken,
-            requiredTokenMinBalance,
-            startTime,
-          } = await syndicateContracts?.policyMintERC20?.getSyndicateValues(
-            contractAddress,
-          );
-
-          if (
-            !+endTime &&
-            !+maxMemberCount &&
-            !+maxTotalSupply &&
-            !+startTime
-          ) {
-            ({
-              endTime,
-              maxMemberCount,
-              maxTotalSupply,
-              requiredToken,
-              requiredTokenMinBalance,
-              startTime,
-            } = await syndicateContracts?.mintPolicy?.getSyndicateValues(
-              contractAddress,
-            ));
-          }
-
           let clubERC20Contract;
           let decimals = 0;
           let clubName = "";
@@ -204,7 +179,7 @@ const useClubERC20s = () => {
               : +totalDeposits);
 
           const maxTotalSupplyInWei = getWeiAmount(
-            maxTotalSupply,
+            totalSupply,
             +decimals,
             false,
           );

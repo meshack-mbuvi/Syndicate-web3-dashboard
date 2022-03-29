@@ -1,6 +1,7 @@
 import { SINGLE_CLUB_DETAILS } from "@/graphql/queries";
 import { AppState } from "@/state";
 import { getWeiAmount } from "@/utils/conversions";
+import { formatDate } from "@/utils";
 import { MOCK_TOTALDEPOSITS, MOCK_TOTALSUPPLY } from "@/utils/mockdata";
 import { useQuery } from "@apollo/client";
 import { useRouter } from "next/router";
@@ -19,6 +20,8 @@ export function useClubDepositsAndSupply(contractAddress: string): {
   refetch;
   totalDeposits;
   totalSupply;
+  startTime;
+  endTime;
   loadingClubDeposits;
 } {
   const {
@@ -32,6 +35,8 @@ export function useClubDepositsAndSupply(contractAddress: string): {
 
   const [totalDeposits, setTotalDeposits] = useState("");
   const [totalSupply, setTotalSupply] = useState("0");
+  const [startTime, setStartTime] = useState(0);
+  const [endTime, setEndTime] = useState(0);
   const [loadingClubDeposits, setLoadingClubDeposits] = useState(true);
 
   const { isReady } = useRouter();
@@ -69,10 +74,11 @@ export function useClubDepositsAndSupply(contractAddress: string): {
       syndicateDAOs: [syndicateDAO],
     } = data || {};
 
-    const { totalDeposits, totalSupply } = syndicateDAO || {};
-
+    const { totalDeposits, totalSupply, startTime, endTime } = syndicateDAO || {};
     setTotalSupply(getWeiAmount(totalSupply, tokenDecimals || 18, false));
     setTotalDeposits(getWeiAmount(totalDeposits, depositTokenDecimals, false));
+    setStartTime(+startTime * 1000);
+    setEndTime(+endTime * 1000);
     setLoadingClubDeposits(false);
   }, [
     data,
@@ -87,6 +93,8 @@ export function useClubDepositsAndSupply(contractAddress: string): {
   return {
     totalDeposits,
     totalSupply,
+    startTime,
+    endTime,
     loadingClubDeposits: loading || loadingClubDeposits,
     refetch,
   };

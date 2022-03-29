@@ -54,8 +54,6 @@ const SyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
     loading,
     maxTotalDeposits,
     memberCount,
-    startTime,
-    endTime,
     maxMemberCount,
     name,
     owner,
@@ -68,7 +66,7 @@ const SyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
   const router = useRouter();
   const [details, setDetails] = useState<ClubDetails[]>([]);
 
-  const { totalDeposits, totalSupply, loadingClubDeposits } =
+  const { totalDeposits, totalSupply, loadingClubDeposits, startTime, endTime } =
     useClubDepositsAndSupply(address);
 
   // state to handle copying of the syndicate address to clipboard.

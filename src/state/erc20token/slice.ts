@@ -30,6 +30,12 @@ const erc20TokenSlice = createSlice({
     setTotalSupply(state, action: PayloadAction<number>) {
       state.erc20Token.totalSupply = action.payload;
     },
+    setStartTime(state, action: PayloadAction<number>) {
+      state.erc20Token.startTime = action.payload;
+    },
+    setEndTime(state, action: PayloadAction<number>) {
+      state.erc20Token.endTime = action.payload;
+    },
     setDepositTokenUSDPrice(state, action: PayloadAction<number>) {
       state.depositTokenPriceInUSD = action.payload;
     },
