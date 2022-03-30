@@ -1,12 +1,12 @@
-import { AppState } from "@/state";
+import FutureCollectiblePill from '@/containers/layoutWithSyndicateDetails/assets/collectibles/shared/FutureCollectiblePill';
+import { AppState } from '@/state';
 import {
   setOverlayCollectibleDetails,
-  setShowFullScreen,
-} from "@/state/assets/collectibles/slice";
-import FutureCollectiblePill from "@/containers/layoutWithSyndicateDetails/assets/collectibles/shared/FutureCollectiblePill";
-import { FC, useRef, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import Tooltip from "react-tooltip-lite";
+  setShowFullScreen
+} from '@/state/assets/collectibles/slice';
+import { FC, useRef, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import Tooltip from 'react-tooltip-lite';
 
 interface ICollectibleMedia {
   showCollectibles: boolean;
@@ -30,10 +30,10 @@ const CollectibleMedia: FC<ICollectibleMedia> = ({
   collectible,
   mediaType,
   showCollectibles,
-  setDetailsOfSelectedCollectible,
+  setDetailsOfSelectedCollectible
 }) => {
   const {
-    setCollectibleDetailsSliceReducer: { showFullScreen, showCollectibleModal },
+    setCollectibleDetailsSliceReducer: { showFullScreen, showCollectibleModal }
   } = useSelector((state: AppState) => state);
 
   const dispatch = useDispatch();
@@ -44,7 +44,7 @@ const CollectibleMedia: FC<ICollectibleMedia> = ({
     permalink,
     collection,
     floorPrice,
-    lastPurchasePrice,
+    lastPurchasePrice
   } = collectible;
 
   const videoRef = useRef(null);
@@ -72,10 +72,10 @@ const CollectibleMedia: FC<ICollectibleMedia> = ({
   const muteBackgroundMedia = () => {
     // mute media that is already playing when the same media is opened
     // inside the modal or full-screen overlay.
-    if (mediaType === "videoNFT") {
+    if (mediaType === 'videoNFT') {
       videoRef.current.muted = true;
       setMuteVideo(true);
-    } else if (mediaType === "soundtrackNFT") {
+    } else if (mediaType === 'soundtrackNFT') {
       audioRef.current.muted = true;
       setMuteAudio(true);
     }
@@ -93,10 +93,10 @@ const CollectibleMedia: FC<ICollectibleMedia> = ({
     };
     mediaType: string;
     moreDetails: {
-      "Token ID": string | React.ReactElement;
-      "Token collection": any;
-      "Floor price": any;
-      "Last purchase price": any;
+      'Token ID': string | React.ReactElement;
+      'Token collection': any;
+      'Floor price': any;
+      'Last purchase price': any;
     };
   }) => {
     setDetailsOfSelectedCollectible(details);
@@ -143,49 +143,49 @@ const CollectibleMedia: FC<ICollectibleMedia> = ({
           collectible,
           mediaType,
           moreDetails: {
-            "Token ID": collectible?.futureNft ? "" : id,
-            "Token collection": collection.name,
-            "Floor price": floorPrice,
-            "Last purchase price": lastPurchasePrice,
-          },
+            'Token ID': collectible?.futureNft ? '' : id,
+            'Token collection': collection.name,
+            'Floor price': floorPrice,
+            'Last purchase price': lastPurchasePrice
+          }
         });
       }}
     ></button>
   ) : null;
-  if (mediaType === "imageOnlyNFT") {
+  if (mediaType === 'imageOnlyNFT') {
     media = (
       <div
         style={{
           backgroundImage: `url('${image}')`,
-          backgroundSize: "cover",
-          backgroundRepeat: "no-repeat",
-          backgroundPosition: "center 20%",
+          backgroundSize: 'cover',
+          backgroundRepeat: 'no-repeat',
+          backgroundPosition: 'center 20%'
         }}
         className={`${
-          showFullScreen ? "h-full" : "perfect-square-box"
+          showFullScreen ? 'h-full' : 'perfect-square-box'
         } w-full relative`}
       >
         {mediaClickButton}
       </div>
     );
-  } else if (mediaType === "animatedNFT") {
+  } else if (mediaType === 'animatedNFT') {
     media = (
-      <div className={`${showFullScreen ? "w-full" : ""} relative h-full`}>
+      <div className={`${showFullScreen ? 'w-full' : ''} relative h-full`}>
         <img
           src={animation}
           alt="animated nft"
-          className={`${showFullScreen ? "w-full" : ""} h-full`}
+          className={`${showFullScreen ? 'w-full' : ''} h-full`}
         />
         <div className="absolute inset-0">{mediaClickButton}</div>
       </div>
     );
-  } else if (mediaType === "videoNFT" || mediaType === "htmlNFT") {
+  } else if (mediaType === 'videoNFT' || mediaType === 'htmlNFT') {
     media = (
       <div
         className={`relative ${
           showFullScreen
-            ? "flex justify-center items-center"
-            : "perfect-square-box"
+            ? 'flex justify-center items-center'
+            : 'perfect-square-box'
         }`}
       >
         <div className="absolute inset-0 z-8">{mediaClickButton}</div>
@@ -193,14 +193,14 @@ const CollectibleMedia: FC<ICollectibleMedia> = ({
           autoPlay
           loop
           muted
-          className={`${!showFullScreen ? "object-cover" : ""} z-10`}
+          className={`${!showFullScreen ? 'object-cover' : ''} z-10`}
           ref={videoRef}
         >
           {/* Specifying type as "video/mp4" works for both .mov and .mp4 files  */}
           <source
             src={
-              mediaType === "htmlNFT"
-                ? "https://litwtf.mypinata.cloud/ipfs/QmVjgAD5gaNQ1cLpgKLeuXDPX8R1yeajtWUhM6nV7VAe6e/4.mp4"
+              mediaType === 'htmlNFT'
+                ? 'https://litwtf.mypinata.cloud/ipfs/QmVjgAD5gaNQ1cLpgKLeuXDPX8R1yeajtWUhM6nV7VAe6e/4.mp4'
                 : animation
             }
             type="video/mp4"
@@ -208,18 +208,18 @@ const CollectibleMedia: FC<ICollectibleMedia> = ({
         </video>
       </div>
     );
-  } else if (mediaType === "soundtrackNFT") {
+  } else if (mediaType === 'soundtrackNFT') {
     const mp3Animation = animation.match(/\.mp3$/) != null;
     media = (
       <div
         style={{
           backgroundImage: `url('${image}')`,
-          backgroundSize: "cover",
-          backgroundRepeat: "no-repeat",
-          backgroundPosition: "center center",
+          backgroundSize: 'cover',
+          backgroundRepeat: 'no-repeat',
+          backgroundPosition: 'center center'
         }}
         className={`flex flex-col w-full justify-end items-center ${
-          showFullScreen ? "h-full" : "perfect-square-box"
+          showFullScreen ? 'h-full' : 'perfect-square-box'
         } relative border-0`}
       >
         <div className="w-full h-full flex justify-center">
@@ -246,19 +246,20 @@ const CollectibleMedia: FC<ICollectibleMedia> = ({
     return (
       <div
         className={`col-span-5 md:col-span-4 xl:col-span-3 ${
-          showCollectibleModal ? "w-full" : ""
-        } ${showFullScreen ? "h-full" : ""}`}
+          showCollectibleModal ? 'w-full' : ''
+        } ${showFullScreen ? 'h-full' : ''}`}
       >
         <div
           className={`${
             showCollectibles
-              ? "border-r-1 border-l-1 border-t-1 border-gray-syn6 rounded-t-2.5xl perfect-square-box"
-              : ""
+              ? 'border-r-1 border-l-1 border-t-1 border-gray-syn6 rounded-t-2.5xl perfect-square-box'
+              : ''
           }  bg-gray-syn7 overflow-hidden ${
-            showFullScreen ? "h-full" : "relative"
+            showFullScreen ? 'h-full' : 'relative'
           }`}
         >
           {media}
+
           {showFullScreen ? (
             <div className="absolute right-14 bottom-14 flex items-center z-10">
               {permalink && (
@@ -279,20 +280,20 @@ const CollectibleMedia: FC<ICollectibleMedia> = ({
               )}
 
               {/* mute/unmute icon  */}
-              {mediaType === "videoNFT" ||
-              mediaType === "soundtrackNFT" ||
-              mediaType === "htmlNFT" ? (
+              {mediaType === 'videoNFT' ||
+              mediaType === 'soundtrackNFT' ||
+              mediaType === 'htmlNFT' ? (
                 <div className="mr-4 z-10">
                   <button
                     onClick={() => {
-                      if (mediaType === "videoNFT" || mediaType === "htmlNFT") {
+                      if (mediaType === 'videoNFT' || mediaType === 'htmlNFT') {
                         videoMute();
                       } else {
                         audioMute();
                       }
                     }}
                   >
-                    {mediaType === "videoNFT" || mediaType === "htmlNFT" ? (
+                    {mediaType === 'videoNFT' || mediaType === 'htmlNFT' ? (
                       <div className="bg-white rounded-full w-8 h-8 flex items-center justify-center">
                         {muteVideo ? (
                           <img
@@ -309,7 +310,7 @@ const CollectibleMedia: FC<ICollectibleMedia> = ({
                         )}
                       </div>
                     ) : null}
-                    {mediaType === "soundtrackNFT" ? (
+                    {mediaType === 'soundtrackNFT' ? (
                       <div className="bg-white rounded-full w-8 h-8 flex items-center justify-center">
                         {muteAudio ? (
                           <img
@@ -348,25 +349,25 @@ const CollectibleMedia: FC<ICollectibleMedia> = ({
             </div>
           ) : (
             <>
-              {mediaType === "videoNFT" ||
-              mediaType === "soundtrackNFT" ||
-              mediaType === "htmlNFT" ? (
+              {mediaType === 'videoNFT' ||
+              mediaType === 'soundtrackNFT' ||
+              mediaType === 'htmlNFT' ? (
                 <div
                   id="controls"
                   className={`absolute bottom-4 z-10 ${
-                    showCollectibles ? "right-4" : "right-14"
+                    showCollectibles ? 'right-4' : 'right-14'
                   } flex items-center space-x-4 select-none`}
                 >
                   <button
                     onClick={() => {
-                      if (mediaType === "videoNFT" || mediaType === "htmlNFT") {
+                      if (mediaType === 'videoNFT' || mediaType === 'htmlNFT') {
                         videoMute();
                       } else {
                         audioMute();
                       }
                     }}
                   >
-                    {mediaType === "videoNFT" || mediaType === "htmlNFT" ? (
+                    {mediaType === 'videoNFT' || mediaType === 'htmlNFT' ? (
                       <>
                         {muteVideo ? (
                           <img
@@ -383,7 +384,7 @@ const CollectibleMedia: FC<ICollectibleMedia> = ({
                         )}
                       </>
                     ) : null}
-                    {mediaType === "soundtrackNFT" ? (
+                    {mediaType === 'soundtrackNFT' ? (
                       <>
                         {muteAudio ? (
                           <img
@@ -416,8 +417,8 @@ const CollectibleMedia: FC<ICollectibleMedia> = ({
                         dispatch(
                           setOverlayCollectibleDetails({
                             collectible,
-                            mediaType,
-                          }),
+                            mediaType
+                          })
                         );
                         dispatch(setShowFullScreen(true));
                       }}
@@ -441,11 +442,11 @@ const CollectibleMedia: FC<ICollectibleMedia> = ({
                       collectible,
                       mediaType,
                       moreDetails: {
-                        "Token ID": collectible?.futureNft ? "" : id,
-                        "Token collection": collection.name,
-                        "Floor price": floorPrice,
-                        "Last purchase price": lastPurchasePrice,
-                      },
+                        'Token ID': collectible?.futureNft ? '' : id,
+                        'Token collection': collection.name,
+                        'Floor price': floorPrice,
+                        'Last purchase price': lastPurchasePrice
+                      }
                     });
                   }}
                 >

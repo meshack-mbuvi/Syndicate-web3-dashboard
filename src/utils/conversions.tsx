@@ -39,7 +39,7 @@ export const getWeiAmount = (
   amount: string,
   tokenDecimals: number,
   multiplication: boolean,
-) => {
+): any => {
   if (!amount) return 0;
 
   // get unit mappings from web3
@@ -52,6 +52,14 @@ export const getWeiAmount = (
   const tokenUnit = Object.keys(unitMappings).find(
     (key) => unitMappings[key] === tokenFactor.toString(),
   );
+
+  if (!tokenUnit) {
+    // We are doing manual conversion for the following reasons:
+    // Example: For a token with 8 decimals, eg GALA, tokenUnit is undefined
+    // and thus fromWei defaults to 18 decimals.
+    // web3.utils.unitMap does not have any unit supporting 8 decimals
+    return etherToNumber(amount, tokenFactor.toString());
+  }
 
   if (multiplication) {
     return web3.utils.toWei(amount.toString(), tokenUnit);

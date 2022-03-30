@@ -1,4 +1,5 @@
 import { IClubInfo } from "@/state/legalInfo/types";
+import { encode } from "js-base64";
 
 export const generateMemberSignURL = (
   clubAddress: string,
@@ -6,7 +7,7 @@ export const generateMemberSignURL = (
   adminSignature: string,
 ): string => {
   const formData = new URLSearchParams({
-    form: btoa(JSON.stringify({ ...clubInfo, adminSignature })),
+    form: encode(JSON.stringify({ ...clubInfo, adminSignature })),
   }).toString();
 
   return encodeURI(
