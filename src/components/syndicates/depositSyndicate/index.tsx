@@ -3,7 +3,7 @@ import {
   APPROVE_DEPOSIT_ALLOWANCE,
   ERROR_APPROVE_ALLOWANCE,
   ERROR_DEPOSIT,
-  SUCCESSFUL_DEPOSIT,
+  SUCCESSFUL_DEPOSIT
 } from "@/components/amplitude/eventNames";
 import ErrorBoundary from "@/components/errorBoundary";
 import FadeIn from "@/components/fadeIn/FadeIn";
@@ -35,7 +35,7 @@ import { getWeiAmount } from "@/utils/conversions";
 import { isDev } from "@/utils/environment";
 import {
   floatedNumberWithCommas,
-  truncateDecimals,
+  truncateDecimals
 } from "@/utils/formattedNumbers";
 import { CheckIcon } from "@heroicons/react/solid";
 import Image from "next/image";
@@ -536,7 +536,7 @@ const DepositSyndicate: React.FC = () => {
         setSufficientAllowanceSet(false);
       }
     }
-  }, [syndicateContracts, account, depositTokenContract]);
+  }, [syndicateContracts, account, depositTokenContract,successfulDeposit]);
 
   // check current member token allowance
   useEffect(() => {
