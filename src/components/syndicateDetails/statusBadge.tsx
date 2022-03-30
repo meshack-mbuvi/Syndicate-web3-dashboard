@@ -96,7 +96,7 @@ const StatusBadge = (props: Props): JSX.Element => {
             ) : (
               <div className="m-0">{badgeIcon}</div>
             )}
-            <p className="h3 sm:text-xl leading-snug ml-4">{titleText}</p>
+            <h3 className="ml-4">{titleText}</h3>
           </div>
         )}
       </div>

@@ -1450,9 +1450,9 @@ const DepositSyndicate: React.FC = () => {
         depositsEnabled) ||
         isDemoMode) && (
         <div className="bg-gray-syn8 rounded-2xl mt-6 px-8 py-6">
-          <div className="pb-5 text-sm font-bold uppercase tracking-widest">
+          <h4 className="pb-5">
             Your Holdings
-          </div>
+          </h4>
           {loading ? (
             <SkeletonLoader height="9" width="full" borderRadius="rounded-md" />
           ) : (

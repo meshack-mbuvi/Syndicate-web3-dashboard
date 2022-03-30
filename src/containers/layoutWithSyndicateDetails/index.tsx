@@ -352,7 +352,7 @@ const LayoutWithSyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
                             <button
                               key="assets"
                               onClick={() => setActiveTab('assets')}
-                              className={`whitespace-nowrap h4 w-fit-content py-6 transition-all border-b-1 focus:ring-0 font-whyte text-sm cursor-pointer ${
+                              className={`whitespace-nowrap h4 w-fit-content py-6 transition-all border-b-1 focus:ring-0 cursor-pointer ${
                                 activeTab == 'assets'
                                   ? 'border-white text-white'
                                   : 'border-transparent text-gray-syn4 hover:text-gray-40'
@@ -364,7 +364,7 @@ const LayoutWithSyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
                               <button
                                 key="members"
                                 onClick={() => setActiveTab('members')}
-                                className={`whitespace-nowrap h4 py-6 transition-all border-b-1 focus:ring-0 font-whyte text-sm cursor-pointer ${
+                                className={`whitespace-nowrap h4 py-6 transition-all border-b-1 focus:ring-0 cursor-pointer ${
                                   activeTab == 'members'
                                     ? 'border-white text-white'
                                     : 'border-transparent text-gray-syn4 hover:text-gray-400 '

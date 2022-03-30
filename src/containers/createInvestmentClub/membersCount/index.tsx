@@ -87,13 +87,13 @@ const MembersCount: React.FC<{
 
   return (
     <Fade>
+      <h3 className="ml-5">What’s the maximum number of members?</h3>
       <div className="flex pb-6 ml-5">
         <InputFieldWithMax
           {...{
             value: membersNumCount
               ? parseInt(membersNumCount.replace(/^0+/, ""))
               : parseInt(""),
-            label: "What’s the maximum number of members?",
             addOn: <MaxButton handleClick={() => handleSetMax()} />,
             onChange: handleSetMembersCount,
             error: memberCountError,

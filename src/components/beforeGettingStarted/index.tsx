@@ -29,9 +29,9 @@ const BeforeGettingStartedModal: React.FC = () => {
       }}
     >
       <div className="space-y-6">
-        <h1 className="uppercase font-whyte text-sm leading-4 tracking-px text-white">
-          before getting started
-        </h1>
+        <h4>
+          Before getting started
+        </h4>
         <div className="flex items-center space-between pl-1">
           <input
             className={`bg-transparent rounded focus:ring-offset-0 cursor-pointer ${

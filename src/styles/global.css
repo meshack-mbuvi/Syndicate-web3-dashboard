@@ -92,19 +92,23 @@
   }
 
   h1 {
-    font-family: 'ABC Whyte Inktrap Regular';
+    @apply text-2xl sm:text-4.5xl;
+    line-height: normal;
   }
 
   h2 {
-    font-family: 'Whyte Regular';
+    @apply text-5.75xl sm:text-2xl;
+    line-height: 150%;
   }
 
   h3 {
-    font-family: 'Whyte Medium';
+    @apply text-lg sm:text-xl leading-6;
+    line-height: 150%;
   }
 
   h4 {
-    font-family: 'Whyte Medium';
+    @apply text-sm uppercase font-bold tracking-px;
+    line-height: normal;
   }
 
   .font-thin {
@@ -217,6 +221,10 @@
     @apply base-CTA bg-green text-black transition-all hover:bg-green-shine;
   }
 
+  .orange-CTA {
+    @apply base-CTA bg-yellow-warning text-black transition-all
+  }
+
   .primary-CTA-disabled {
     @apply base-CTA cursor-not-allowed bg-gray-syn6 text-gray-syn4 hover:bg-opacity-100;
   }
@@ -255,19 +263,23 @@
   }
 
   .h1 {
-    @apply block text-white text-4.5xl leading-11.5;
+    @apply text-2xl sm:text-4.5xl;
+    line-height: normal;
   }
 
   .h2 {
-    @apply block text-white text-2xl leading-9;
+    @apply text-5.75xl sm:text-2xl leading-6;
+    line-height: 150%;
   }
 
   .h3 {
-    @apply block text-white text-lg lg:text-xl leading-7.5;
+    @apply text-lg sm:text-xl leading-6;
+    line-height: 150%;
   }
 
   .h4 {
-    @apply font-whyte-medium text-sm uppercase leading-4 tracking-px;
+    @apply text-sm uppercase font-bold tracking-px;
+    line-height: normal;
   }
 
   .body {

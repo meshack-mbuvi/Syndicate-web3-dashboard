@@ -139,7 +139,7 @@ const MintMaxDate: FC<{ className?: string }> = ({ className }) => {
     <Fade delay={500}>
       <div className="ml-5">
         <div className={className}>
-          <div className="h3 pb-1">When will deposits close?</div>
+          <h3 className="pb-1">When will deposits close?</h3>
           <div className="text-sm text-gray-syn4 pb-4">
             {" "}
             Extending the close date will require an on-chain transaction with

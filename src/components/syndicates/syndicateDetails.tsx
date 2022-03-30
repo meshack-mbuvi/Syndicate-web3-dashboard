@@ -321,7 +321,7 @@ const SyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
                 ) : null}
               </div>
 
-              <div className="flex-shrink main-title flex-wrap break-normal m-0">
+              <div className="flex-shrink flex-wrap break-normal m-0">
                 {/* Syndicate name, symbol and action buttons  */}
                 <div
                   className="flex justify-start items-center"
@@ -340,25 +340,19 @@ const SyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
                     <div
                       className={`flex flex-wrap items-center w-fit-content`}
                     >
-                      <div
+                      <h1
                         id="club-name"
-                        className={`2xl:text-4.5xl leading-10 lg:text-4xl md:text-xl sm:text-4xl text-lg font-normal ${
+                        className={`${
                           nameWidth >= divWidth
                             ? `line-clamp-2 mb-2`
                             : `flex mr-6`
                         }`}
                       >
                         {name}
-                      </div>
-                      <div className="flex flex-wrap">
-                        <div className="font-whyte-light text-gray-syn4 flex items-center justify-center">
-                          <span
-                            className={`2xl:text-4.5xl leading-10 lg:text-4xl md:text-xl sm:text-4xl text-lg`}
-                          >
-                            {symbol}
-                          </span>
-                        </div>
-                      </div>
+                      </h1>
+                      <h1 className="font-light flex flex-wrap text-gray-syn4 items-center justify-center">
+                        {symbol}
+                      </h1>
                       <div className="inline-flex items-center ml-6 space-x-8 pr-2">
                         {showActionIcons ? (
                           <div className="flex space-x-6">

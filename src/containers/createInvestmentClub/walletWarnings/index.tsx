@@ -80,11 +80,11 @@ const WalletWarnings: React.FC = () => {
               alt="warning"
             />
           )}
-          <p className="uppercase text-sm leading-4 tracking-px text-white font-bold">
+          <h4>
             {hasExistingClubs
               ? getWarningText()
               : "Use wallet as permanent club wallet?"}
-          </p>
+          </h4>
           {hasExistingClubs ? (
             <p className="text-gray-syn3 text-sm pb-9 pt-4">
               <span>
@@ -113,8 +113,8 @@ const WalletWarnings: React.FC = () => {
           )}
           <button
             className={`${
-              hasExistingClubs ? "bg-yellow-warning" : "bg-green"
-            } flex-wrap space-x-1 rounded-custom w-full flex items-center justify-center py-4 text-black font-semibold`}
+              hasExistingClubs ? "orange-CTA" : "green-CTA"
+            } w-full flex items-center justify-center space-x-2`}
             onClick={handleCreateInvestmentClub}
           >
             <span>

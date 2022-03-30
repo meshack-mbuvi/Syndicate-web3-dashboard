@@ -41,9 +41,9 @@ const GettingStarted: React.FC<{
     <div className="pt-8 pb-6 px-5 rounded-2-half bg-gray-syn8 w-11/12 sm:w-100 mt-8 sm:mt-18">
       <div>
         <div className="mx-5">
-          <p className="uppercase text-sm leading-4 tracking-px text-white mb-8 font-bold">
+          <h4 className="mb-8">
             Create an investment club
-          </p>
+          </h4>
           <div style={{ marginBottom: 32 }}>
             <ol className="space-y-6 overflow-hidden xs:hidden" role="menu">
               <div className="relative">
@@ -177,12 +177,10 @@ const GettingStarted: React.FC<{
             </a>
           </div>
           <button
-            className="bg-green rounded-custom w-full flex items-center justify-center py-4"
+            className="green-CTA w-full"
             onClick={() => setClubStep("")}
           >
-            <p className="text-black pr-1 whitespace-nowrap font-semibold">
-              Create on-chain club
-            </p>
+            Create on-chain club
           </button>
         </div>
         <div className="mt-10 mb-6 h-px bg-gray-syn6"></div>

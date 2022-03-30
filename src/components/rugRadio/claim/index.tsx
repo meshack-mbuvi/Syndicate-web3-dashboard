@@ -110,7 +110,7 @@ export const ClaimComponent: React.FC = () => {
                   <div className="rounded-2.5xl">
                     <div className="px-8 py-6 bg-gray-syn8 border-b border-gray-syn7 rounded-t-2.5xl">
                       <div className="space-y-6">
-                        <span className="h4">Requirements</span>
+                        <h4>Requirements</h4>
                         <div className="flex space-x-4">
                           <Image
                             src={

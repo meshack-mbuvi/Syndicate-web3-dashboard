@@ -123,9 +123,9 @@ const ClubNameSelector: React.FC<{
     <Fade>
       <div className="ml-5">
         <div className={className}>
-          <div className={`h3 pb-6 ${editButtonClicked ? "w-80" : "w-100"}`}>
+          <h3 className={`pb-6 ${editButtonClicked ? "w-80" : "w-100"}`}>
             What should we call this investment club?
-          </div>
+          </h3>
           <div>
             <div className="relative" data-tip data-for="change-settings-tip">
               <input
@@ -160,7 +160,7 @@ const ClubNameSelector: React.FC<{
               </div>
             </div>
           </div>
-          <div className="h3 pb-6 pt-6">a.k.a.</div>
+          <h3 className="pb-6 pt-6">a.k.a.</h3>
           <div>
             <div className="relative mb-2">
               <span

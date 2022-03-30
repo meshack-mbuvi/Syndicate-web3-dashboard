@@ -101,8 +101,8 @@ export const ProgressIndicator = (props: IProgressIndicator): JSX.Element => {
           <div className="flex justify-between mt-6">
             <div className="text-left">
               <p className="text-gray-syn4 leading-6 pb-2">Deposits</p>
-              <div className="flex">
-                <p className="leading-loose xl:text-2xl lg:text-xl text-base">
+              <h2 className="flex">
+                <p>
                   <NumberTreatment
                     numberValue={`${totalDeposits || ""}`}
                     ethDepositToken={ethDepositToken}
@@ -110,7 +110,7 @@ export const ProgressIndicator = (props: IProgressIndicator): JSX.Element => {
                   &nbsp;
                   {depositERC20TokenSymbol}
                 </p>
-                <p className="xl:text-2xl lg:text-xl text-gray-lightManatee leading-loose ml-4 font-whyte-light">
+                <p className="text-gray-lightManatee ml-4 font-light">
                   {floatedNumberWithCommas(depositsPercentage)}
                   {/* Temporary fix to add font weight to symbol  */}
                   <span
@@ -122,8 +122,8 @@ export const ProgressIndicator = (props: IProgressIndicator): JSX.Element => {
                     %
                   </span>
                 </p>
-              </div>
-              <p className="text-gray-syn4 mt-2">
+              </h2>
+              <p className="text-sm text-gray-syn4 mt-2">
                 {floatedNumberWithCommas(
                   parseFloat(totalDeposits.toString()) *
                     depositTokenPriceInUSDState,
@@ -133,7 +133,7 @@ export const ProgressIndicator = (props: IProgressIndicator): JSX.Element => {
             </div>
             <div className="text-right">
               <p className="text-gray-syn4 leading-6 pb-2">Remaining</p>
-              <p className="xl:text-2xl lg:text-xl text-sm text-white leading-loose">
+              <h2>
                 {remainingDeposits > 0 ? (
                   <NumberTreatment
                     numberValue={`${remainingDeposits || ""}`}
@@ -144,8 +144,8 @@ export const ProgressIndicator = (props: IProgressIndicator): JSX.Element => {
                 )}
                 &nbsp;
                 {depositERC20TokenSymbol}
-              </p>
-              <p className="text-gray-syn4 mt-2">
+              </h2>
+              <p className="text-sm text-gray-syn4 mt-2">
                 {floatedNumberWithCommas(
                   parseFloat(remainingDeposits.toString()) *
                     depositTokenPriceInUSDState,

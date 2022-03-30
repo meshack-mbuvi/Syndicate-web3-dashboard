@@ -2,7 +2,7 @@ import { AnimatedText } from "@/components/animatedText";
 import React from "react";
 
 export default {
-  title: "Atoms/AnimatedText",
+  title: "Quarks/Animated Text",
   component: AnimatedText,
 };
 

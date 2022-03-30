@@ -67,7 +67,7 @@ const InvestmentsView: FC<InvestmentsViewProps> = ({
   const invesmentsTitle = (
     <div className="flex items-center justify-start pb-8">
       <img src="/images/investments-title-icon.svg" alt="Invesments title" />
-      <div className="text-xl pl-3">Off-chain investments</div>
+      <h3 className="pl-3">Off-chain investments</h3>
     </div>
   );
 
@@ -87,7 +87,7 @@ const InvestmentsView: FC<InvestmentsViewProps> = ({
         <div className="relative">
           {!animate && (
             <div className="absolute flex flex-col justify-center items-center top-1/3 w-full z-10">
-              <span className="text-white mb-4 text-xl">{titleText}</span>
+              <h3 className="text-white mb-4">{titleText}</h3>
               <span className="text-gray-syn4">{subText}</span>
             </div>
           )}
