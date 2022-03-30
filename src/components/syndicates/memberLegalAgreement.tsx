@@ -13,6 +13,7 @@ import { numberWithCommas } from "@/utils/formattedNumbers";
 // See this issue to find out why yup is imported this way
 // https://github.com/react-hook-form/resolvers/issues/271
 import { yupResolver } from "@hookform/resolvers/yup";
+import { decode } from "js-base64";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import React, { useEffect } from "react";
@@ -110,7 +111,7 @@ const LegalAgreement: React.FC = () => {
       try {
         dispatch(
           setClubLegalInfo(
-            JSON.parse(atob(decodeURIComponent(form as string))),
+            JSON.parse(decode(decodeURIComponent(form as string))),
           ),
         );
       } catch (e) {

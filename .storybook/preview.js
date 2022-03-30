@@ -26,11 +26,11 @@ export const parameters = {
       },
     ],
   },
-};
+}
 
 export const decorators = [
   (Story) => (
-    <div className="text-white">
+    <div className='text-white'>
       <Story />
     </div>
   ),

@@ -1,20 +1,20 @@
-import { BanIcon, CancelIcon } from "@/components/shared/Icons";
+import { BanIcon, CancelIcon } from '@/components/shared/Icons';
 import WalletConnectDemoButton, {
-  DemoButtonType,
-} from "@/containers/layoutWithSyndicateDetails/demo/buttons/WalletConnectDemoButton";
+  DemoButtonType
+} from '@/containers/layoutWithSyndicateDetails/demo/buttons/WalletConnectDemoButton';
 // set up smart contract and pass it as context
 // actions
-import { useConnectWalletContext } from "@/context/ConnectWalletProvider";
-import { AppState } from "@/state";
+import { useConnectWalletContext } from '@/context/ConnectWalletProvider';
+import { AppState } from '@/state';
 import {
   hideErrorModal,
   hideWalletModal,
-  setDispatchCreateFlow,
-} from "@/state/wallet/actions";
-import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { SpinnerWithImage } from "../shared/spinner/spinnerWithImage";
-import { ConnectModal, ConnectModalStyle } from "./connectModal";
+  setDispatchCreateFlow
+} from '@/state/wallet/actions';
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { SpinnerWithImage } from '../shared/spinner/spinnerWithImage';
+import { ConnectModal, ConnectModalStyle } from './connectModal';
 
 /**
  * The component shows a modal with buttons to connect to different
@@ -35,11 +35,11 @@ const ConnectWallet: React.FC = () => {
         isErrorModalOpen,
         error,
         account,
-        ethereumNetwork: { correctEthereumNetwork, invalidEthereumNetwork },
+        ethereumNetwork: { correctEthereumNetwork, invalidEthereumNetwork }
       },
       showWalletModal,
-      dispatchCreateFlow,
-    },
+      dispatchCreateFlow
+    }
   } = useSelector((state: AppState) => state);
 
   const {
@@ -49,38 +49,38 @@ const ConnectWallet: React.FC = () => {
     setShowSuccessModal,
     providerName,
     cancelWalletConnection,
-    loadedAsSafeApp,
+    loadedAsSafeApp
   } = useConnectWalletContext();
 
   //loader text
-  const [walletConnectingText, setWalletConnectingText] = useState<string>("");
+  const [walletConnectingText, setWalletConnectingText] = useState<string>('');
   const [walletConnectingHelperText, setWalletConnectingHelperText] =
-    useState<string>("");
+    useState<string>('');
   const [showHelpLink, setShowHelpLink] = useState<boolean>(false);
-  const [helpLink, setHelpLink] = useState<string>("#");
+  const [helpLink, setHelpLink] = useState<string>('#');
 
   // set the correct text for the loading modal
   // After 10 seconds, we switch the wallet connect message, showing a help link.
   useEffect(() => {
     if (providerName) {
-      const name = providerName === "Injected" ? "Metamask" : providerName;
-      if (name === "Metamask") {
+      const name = providerName === 'Injected' ? 'Metamask' : providerName;
+      if (name === 'Metamask') {
         setWalletConnectingText(`Unlock wallet`);
         setWalletConnectingHelperText(`You may need to click the extension`);
       } else {
         setWalletConnectingText(
-          `Sign in using the ${name} pop-up to continue.`,
+          `Sign in using the ${name} pop-up to continue.`
         );
         const timeoutId = setTimeout(() => {
           setWalletConnectingText(`Waiting for ${name}...`);
 
           // set help link based on provider
           // These links should be updated once we have our own help center
-          if (providerName === "Injected") {
-            setHelpLink("https://metamask.zendesk.com/hc/en-us");
+          if (providerName === 'Injected') {
+            setHelpLink('https://metamask.zendesk.com/hc/en-us');
             setShowHelpLink(false);
-          } else if (providerName === "WalletConnect") {
-            setHelpLink("https://walletconnect.org/support");
+          } else if (providerName === 'WalletConnect') {
+            setHelpLink('https://walletconnect.org/support');
             setShowHelpLink(true);
           }
         }, 10000);
@@ -103,29 +103,29 @@ const ConnectWallet: React.FC = () => {
   // The providers supported are listed in here with their custom details
   const providers = [
     {
-      name: "Metamask",
-      icon: "/images/metamaskIcon.svg",
+      name: 'Metamask',
+      icon: '/images/metamaskIcon.svg',
       providerToActivate: () => activateInjected(),
-      hidden: loadedAsSafeApp,
+      hidden: loadedAsSafeApp
     },
     {
-      name: "Gnosis Safe",
-      icon: "/images/gnosisSafe.png",
+      name: 'Gnosis Safe',
+      icon: '/images/gnosisSafe.png',
       providerToActivate: () => activateGnosisSafe(),
-      hidden: !loadedAsSafeApp,
+      hidden: !loadedAsSafeApp
     },
     {
-      name: "Wallet Connect",
-      icon: "/images/walletConnect.svg",
+      name: 'Wallet Connect',
+      icon: '/images/walletConnect.svg',
       providerToActivate: () => activateWalletConnect(),
-      hidden: loadedAsSafeApp,
+      hidden: loadedAsSafeApp
     },
     {
-      name: "Coinbase Wallet",
-      icon: "/images/coinbase-wallet.svg",
+      name: 'Coinbase Wallet',
+      icon: '/images/coinbase-wallet.svg',
       providerToActivate: () => activateInjected(),
-      hidden: loadedAsSafeApp,
-    },
+      hidden: loadedAsSafeApp
+    }
   ];
 
   /**
@@ -133,7 +133,7 @@ const ConnectWallet: React.FC = () => {
    * The provider for metamask is named injected
    */
   const activateInjected = async () => {
-    await connectWallet("Injected");
+    await connectWallet('Injected');
   };
 
   /**
@@ -141,7 +141,7 @@ const ConnectWallet: React.FC = () => {
    * It calls activateProvider passing WalletConnect as the parameters.
    */
   const activateWalletConnect = async () => {
-    await connectWallet("WalletConnect");
+    await connectWallet('WalletConnect');
   };
 
   /**
@@ -151,7 +151,7 @@ const ConnectWallet: React.FC = () => {
    * Ticket reference: SYN-49
    */
   const activateGnosisSafe = async () => {
-    await connectWallet("GnosisSafe");
+    await connectWallet('GnosisSafe');
   };
 
   // showConnectWalletModal
@@ -180,9 +180,9 @@ const ConnectWallet: React.FC = () => {
 
   let errorButtonText, errorIcon;
   const metamaskNotInstalledError =
-    error && error.type === "NoEthereumProviderError";
+    error && error.type === 'NoEthereumProviderError';
   if (metamaskNotInstalledError) {
-    errorButtonText = "Go to Metamask’s website";
+    errorButtonText = 'Go to Metamask’s website';
     errorIcon = (
       <img
         src="/images/metamaskIcon.svg"
@@ -191,14 +191,14 @@ const ConnectWallet: React.FC = () => {
       ></img>
     );
   } else {
-    errorButtonText = "Close";
+    errorButtonText = 'Close';
     errorIcon = <CancelIcon height="h-12" width="w-12" />;
   }
 
   // function to handle error CTA button being clicked
   const handleErrorButtonAction = () => {
     if (metamaskNotInstalledError) {
-      window.open("https://metamask.io/");
+      window.open('https://metamask.io/');
     } else {
       dispatch(hideErrorModal());
     }
@@ -206,17 +206,17 @@ const ConnectWallet: React.FC = () => {
 
   // provider icon to display on loading state modals
   let providerIcon;
-  if (providerName === "Injected") {
-    providerIcon = "/images/wallet.svg"; // could be Metamask or Coinbase Wallet
-  } else if (providerName === "WalletConnect") {
-    providerIcon = "/images/walletConnect.svg";
-  } else if (providerName === "GnosisSafe") {
-    providerIcon = "/images/gnosisSafe.png";
+  if (providerName === 'Injected') {
+    providerIcon = '/images/wallet.svg'; // could be Metamask or Coinbase Wallet
+  } else if (providerName === 'WalletConnect') {
+    providerIcon = '/images/walletConnect.svg';
+  } else if (providerName === 'GnosisSafe') {
+    providerIcon = '/images/gnosisSafe.png';
   }
 
   // open external help links
   const openExternalLink = (link: string) => {
-    window.open(link, "_blank", "noopener");
+    window.open(link, '_blank', 'noopener');
   };
 
   return (
@@ -225,7 +225,7 @@ const ConnectWallet: React.FC = () => {
         {...{
           show: showWalletModal,
           closeModal: closeWalletModal,
-          modalStyle: ConnectModalStyle.BARE,
+          modalStyle: ConnectModalStyle.BARE
         }}
       >
         <>
@@ -245,7 +245,7 @@ const ConnectWallet: React.FC = () => {
                 >
                   Terms
                 </a>
-                ,{" "}
+                ,{' '}
                 <a
                   href="https://docs.google.com/document/d/1yATB2hQHjCHKaUvBIzEaO65Xa0xHq-nLOEEJlJngg90/"
                   target="_blank"
@@ -254,7 +254,7 @@ const ConnectWallet: React.FC = () => {
                 >
                   Privacy Policy
                 </a>
-                , and{" "}
+                , and{' '}
                 <a
                   href="https://docs.google.com/document/d/1yATB2hQHjCHKaUvBIzEaO65Xa0xHq-nLOEEJlJngg90/"
                   target="_blank"
@@ -280,7 +280,7 @@ const ConnectWallet: React.FC = () => {
                 className="text-sm text-blue hover:underline cursor-pointer"
                 onClick={() =>
                   openExternalLink(
-                    "https://en.wikipedia.org/wiki/Cryptocurrency_wallet",
+                    'https://en.wikipedia.org/wiki/Cryptocurrency_wallet'
                   )
                 }
               >
@@ -304,7 +304,7 @@ const ConnectWallet: React.FC = () => {
         {...{
           show: walletConnecting,
           closeModal: cancelWalletConnection,
-          height: "h-80",
+          height: 'h-80'
         }}
       >
         <div>
@@ -313,7 +313,7 @@ const ConnectWallet: React.FC = () => {
             <img
               src={providerIcon}
               className="absolute w-12 top-1/2 left-1/2"
-              style={{ transform: "translate(-50%, -50%)" }}
+              style={{ transform: 'translate(-50%, -50%)' }}
               alt="Provider Icon"
             />
           </div>
@@ -342,8 +342,8 @@ const ConnectWallet: React.FC = () => {
         {...{
           show: showSuccessModal && !walletConnecting,
           showCloseButton: false,
-          height: "h-80",
-          closeModal: () => setShowSuccessModal(false),
+          height: 'h-80',
+          closeModal: () => setShowSuccessModal(false)
         }}
       >
         <div className="mt-14">
@@ -352,7 +352,7 @@ const ConnectWallet: React.FC = () => {
             <img
               src={providerIcon}
               className="absolute w-12 top-1/2 left-1/2"
-              style={{ transform: "translate(-50%, -50%)" }}
+              style={{ transform: 'translate(-50%, -50%)' }}
               alt="Provider Icon"
             />
           </div>
@@ -370,7 +370,7 @@ const ConnectWallet: React.FC = () => {
             show: invalidEthereumNetwork,
             closeModal: closeWalletModal,
             showCloseButton: false,
-            type: "error",
+            type: 'error'
           }}
         >
           <div className="flex flex-col justify-center m-auto">
@@ -392,7 +392,7 @@ const ConnectWallet: React.FC = () => {
                   <button
                     className="my-6 text-base text-blue font-whyte-light hover:underline text-center w-fit-content cursor-pointer"
                     onClick={() =>
-                      openExternalLink("https://metamask.zendesk.com/hc/en-us")
+                      openExternalLink('https://metamask.zendesk.com/hc/en-us')
                     }
                   >
                     Show me how
@@ -406,9 +406,9 @@ const ConnectWallet: React.FC = () => {
                 <SpinnerWithImage
                   {...{
                     icon: null,
-                    height: "h-8",
-                    width: "w-8",
-                    strokeWidth: "10",
+                    height: 'h-8',
+                    width: 'w-8',
+                    strokeWidth: '10'
                   }}
                 />
               </button>
@@ -422,9 +422,9 @@ const ConnectWallet: React.FC = () => {
         {...{
           show: isErrorModalOpen,
           showCloseButton: metamaskNotInstalledError ? true : false,
-          height: error?.type === "web3InstantionError" ? "h-auto" : "h-72",
+          height: error?.type === 'web3InstantionError' ? 'h-auto' : 'h-72',
           closeModal: () => dispatch(hideErrorModal()),
-          type: "error",
+          type: 'error'
         }}
       >
         <div className="flex flex-col justify-between m-auto">
