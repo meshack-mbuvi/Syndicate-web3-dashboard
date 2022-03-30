@@ -12,6 +12,7 @@ export const MY_CLUBS_QUERY = gql`
       totalSupply
       totalDeposits
       maxTotalSupply
+      endTime
       startTime
       maxMemberCount
       requiredToken
@@ -39,6 +40,8 @@ export const CLUBS_HAVE_INVESTED = gql`
           }
           totalSupply
           totalDeposits
+          startTime
+          endTime
           createdAt
           contractAddress
           maxTotalSupply
@@ -62,6 +65,8 @@ export const CLUB_TOKEN_MEMBERS = gql`
       totalSupply
       totalDeposits
       contractAddress
+      startTime
+      endTime
     }
   }
 `;

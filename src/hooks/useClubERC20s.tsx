@@ -289,7 +289,9 @@ const useClubERC20s = () => {
                   totalSupply,
                   totalDeposits,
                   maxTotalSupply,
-                  members
+                  members,
+                  endTime,
+                  startTime
                 }
               } = syndicateDAO;
 
@@ -301,7 +303,9 @@ const useClubERC20s = () => {
                 totalSupply,
                 totalDeposits,
                 maxTotalSupply,
-                members
+                members,
+                endTime,
+                startTime
               });
             }
           }
