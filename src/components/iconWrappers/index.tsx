@@ -1,5 +1,5 @@
-import { useDemoMode } from "@/hooks/useDemoMode";
-import React from "react";
+import { useDemoMode } from '@/hooks/useDemoMode';
+import React from 'react';
 
 /**
  * This icon wrapper contains an inverted exclamation mark sourced from the
@@ -13,7 +13,7 @@ export const InfoIcon = (props: {
   iconSize?: string;
   src?: string;
 }): JSX.Element => {
-  const { tooltip, side, iconSize, src = "/images/info.svg" } = props;
+  const { tooltip, side, iconSize, src = '/images/info.svg' } = props;
   return (
     <div className="flex-shrink-0 flex items-center justify-center">
       <div className="tooltip pl-2">
@@ -24,10 +24,10 @@ export const InfoIcon = (props: {
           alt=""
         />
         {tooltip ? (
-          typeof tooltip === "string" ? (
+          typeof tooltip === 'string' ? (
             <p
               className={`${
-                side === "left" ? "left" : ""
+                side === 'left' ? 'left' : ''
               } text-sm font-light tooltiptext w-fit-content bg-gray-9 p-4 mt-1`}
             >
               {tooltip}
@@ -42,9 +42,9 @@ export const InfoIcon = (props: {
 };
 
 export enum ExternalLinkColor {
-  GRAY = "GRAY",
-  BLUE = "BLUE",
-  WHITE = "WHITE"
+  GRAY = 'GRAY',
+  BLUE = 'BLUE',
+  WHITE = 'WHITE'
 }
 
 /**Shows an icon for external links */
@@ -52,27 +52,27 @@ export const ExternalLinkIcon = (props) => {
   let icon;
   switch (props.iconColor) {
     case ExternalLinkColor.GRAY:
-      icon = "/images/externalLinkGray.svg"
+      icon = '/images/externalLinkGray.svg';
       break;
     case ExternalLinkColor.BLUE:
-      icon = "/images/externalLink.svg"
+      icon = '/images/externalLink.svg';
       break;
     case ExternalLinkColor.WHITE:
-      icon = "/images/externalLinkWhite.svg"
+      icon = '/images/externalLinkWhite.svg';
       break;
     default:
-      icon = "/images/externalLink.svg"
+      icon = '/images/externalLink.svg';
       break;
   }
-  return <img src={icon} {...props} alt="extenal-link" />
-}
+  return <img src={icon} {...props} alt="extenal-link" />;
+};
 
 export const CopyLinkIcon = (props: {
   color?: string;
   width?: string;
   height?: string;
 }): JSX.Element => {
-  const { color = "#000", width = "16", height = "16" } = props;
+  const { color = '#000', width = '16', height = '16' } = props;
   return (
     <svg
       width={width}
@@ -95,7 +95,7 @@ export const CopyToClipboardIcon = (props: {
   width?: string;
   height?: string;
 }): JSX.Element => {
-  const { color = "#000", width = "16", height = "16" } = props;
+  const { color = '#000', width = '16', height = '16' } = props;
   return (
     <svg
       width={width}
@@ -122,9 +122,9 @@ export const CopyToClipboardIcon = (props: {
 };
 
 export const CopiedLinkIcon = ({
-  color = "text-green",
-  width = "16",
-  height = "16",
+  color = 'text-green',
+  width = '16',
+  height = '16'
 }): JSX.Element => {
   return (
     <svg
@@ -144,9 +144,9 @@ export const CopiedLinkIcon = ({
 };
 
 export const LockIcon = ({
-  color = "text-green",
-  width = "16",
-  height = "16",
+  color = 'text-green',
+  width = '16',
+  height = '16'
 }): JSX.Element => {
   return (
     <svg
@@ -170,7 +170,7 @@ export const OpenExternalLinkIcon = (props: {
   width?: string;
   height?: string;
 }): JSX.Element => {
-  const { className = "text-black", width = "16", height = "16" } = props;
+  const { className = 'text-black', width = '16', height = '16' } = props;
   return (
     <svg
       width={width}
@@ -201,7 +201,7 @@ export const RightArrow = (props: {
   width?: string;
   height?: string;
 }): JSX.Element => {
-  const { className, width = "16", height = "14" } = props;
+  const { className, width = '16', height = '14' } = props;
   return (
     <svg
       width={width}
@@ -224,7 +224,7 @@ export const WalletIcon = (props: {
   width?: string;
   height?: string;
 }): JSX.Element => {
-  const { className = "text-green", width = "13", height = "10" } = props;
+  const { className = 'text-green', width = '13', height = '10' } = props;
 
   const isDemoMode = useDemoMode();
 
@@ -263,7 +263,7 @@ export const RibbonIcon = (props: {
   width?: string;
   height?: string;
 }): JSX.Element => {
-  const { className, width = "16", height = "16" } = props;
+  const { className, width = '16', height = '16' } = props;
   return (
     <svg
       width={width}

@@ -1,15 +1,15 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice } from '@reduxjs/toolkit';
 
 export interface ModalsState {
   isChangeSyndicateSettinsModalOpen: boolean;
 }
 
 const initialState: ModalsState = {
-  isChangeSyndicateSettinsModalOpen: false,
+  isChangeSyndicateSettinsModalOpen: false
 };
 
 export const Modals = createSlice({
-  name: "modals",
+  name: 'modals',
   initialState,
   reducers: {
     openChangeSyndicateSettingsModal: (state) => {
@@ -17,8 +17,8 @@ export const Modals = createSlice({
     },
     closeModals: (state) => {
       state.isChangeSyndicateSettinsModalOpen = false;
-    },
-  },
+    }
+  }
 });
 
 // Action creators are generated for each case reducer function

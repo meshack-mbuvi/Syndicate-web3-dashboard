@@ -1,8 +1,8 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { TokenClaimed, initialState } from "./types";
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { TokenClaimed, initialState } from './types';
 
 const setTokenClaimedSlice = createSlice({
-  name: "tokenClaimed",
+  name: 'tokenClaimed',
   initialState,
   reducers: {
     setTokenClaimed(state, action: PayloadAction<TokenClaimed>) {
@@ -14,8 +14,8 @@ const setTokenClaimedSlice = createSlice({
     },
     clearTokenClaimed(state, action: PayloadAction<boolean>) {
       state.isTokenClaimed = initialState.isTokenClaimed;
-    },
-  },
+    }
+  }
 });
 
 export const { setTokenClaimed, setLoadingTokenClaimed, clearTokenClaimed } =

@@ -1,19 +1,19 @@
-import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { setERC20Token } from "@/helpers/erc20TokenDetails";
-import { AppState } from "@/state";
-import { getWeiAmount } from "@/utils/conversions";
-import { formatAddress } from "@/utils/formatAddress";
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { setERC20Token } from '@/helpers/erc20TokenDetails';
+import { AppState } from '@/state';
+import { getWeiAmount } from '@/utils/conversions';
+import { formatAddress } from '@/utils/formatAddress';
 import {
   numberInputRemoveCommas,
-  numberWithCommas,
-} from "@/utils/formattedNumbers";
-import { useClubDepositsAndSupply } from "@/hooks/useClubDepositsAndSupply";
-import { ProgressModal, ProgressModalState } from "@/components/progressModal";
-import MemberDetailsModal from "@/containers/managerActions/mintAndShareTokens/MemberDetailsModal";
-import ConfirmMemberDetailsModal from "@/containers/managerActions/mintAndShareTokens/ConfirmMemberDetailsModal";
-import { OldClubERC20Contract } from "@/ClubERC20Factory/clubERC20/oldClubERC20";
-import { isDev } from "@/utils/environment";
+  numberWithCommas
+} from '@/utils/formattedNumbers';
+import { useClubDepositsAndSupply } from '@/hooks/useClubDepositsAndSupply';
+import { ProgressModal, ProgressModalState } from '@/components/progressModal';
+import MemberDetailsModal from '@/containers/managerActions/mintAndShareTokens/MemberDetailsModal';
+import ConfirmMemberDetailsModal from '@/containers/managerActions/mintAndShareTokens/ConfirmMemberDetailsModal';
+import { OldClubERC20Contract } from '@/ClubERC20Factory/clubERC20/oldClubERC20';
+import { isDev } from '@/utils/environment';
 
 interface Props {
   show: boolean;
@@ -24,17 +24,17 @@ interface Props {
 export const MintAndShareTokens: React.FC<Props> = ({
   show,
   handleShow,
-  existingMembers,
+  existingMembers
 }) => {
   const {
     erc20TokenSliceReducer: {
       erc20Token: { symbol, owner, maxTotalSupply, tokenDecimals, address },
-      erc20TokenContract,
+      erc20TokenContract
     },
     web3Reducer: {
-      web3: { web3 },
+      web3: { web3 }
     },
-    initializeContractsReducer: { syndicateContracts },
+    initializeContractsReducer: { syndicateContracts }
   } = useSelector((state: AppState) => state);
   const dispatch = useDispatch();
 
@@ -43,16 +43,16 @@ export const MintAndShareTokens: React.FC<Props> = ({
   const [minted, setMinted] = useState(false);
   const [preview, setPreview] = useState(false);
   const [mintFailed, setMintFailed] = useState(false);
-  const [transactionHash, setTransactionHash] = useState("");
+  const [transactionHash, setTransactionHash] = useState('');
   const [userRejectedMint, setUserRejectedMint] = useState(false);
 
-  const [memberAddress, setMemberAddress] = useState("");
-  const [rawMemberAddress, setRawMemberAddress] = useState("");
-  const [memberAddressError, setMemberAddressError] = useState("");
-  const [amountToMint, setAmountToMint] = useState("0");
+  const [memberAddress, setMemberAddress] = useState('');
+  const [rawMemberAddress, setRawMemberAddress] = useState('');
+  const [memberAddressError, setMemberAddressError] = useState('');
+  const [amountToMint, setAmountToMint] = useState('0');
   const [amountToMintError, setAmountToMintError] = useState<
     string | React.ReactElement
-  >("");
+  >('');
   const [totalSupplyPostMint, setTotalSupplyPostMint] = useState(0);
   const [ownershipShare, setOwnershipShare] = useState(0);
 
@@ -79,27 +79,27 @@ export const MintAndShareTokens: React.FC<Props> = ({
     const addressValue = e.target.value;
     if (rawMemberAddress) {
       setMemberAddress(rawMemberAddress.slice(0, 41));
-      setRawMemberAddress("");
+      setRawMemberAddress('');
     } else {
       setMemberAddress(addressValue);
     }
 
     if (!addressValue.trim()) {
-      setMemberAddressError("Member address is required.");
-      setMemberAddress("");
+      setMemberAddressError('Member address is required.');
+      setMemberAddress('');
     } else if (addressValue && !web3.utils.isAddress(addressValue)) {
-      setMemberAddressError("Please provide a valid Ethereum address.");
+      setMemberAddressError('Please provide a valid Ethereum address.');
     } else if (addressValue.toLocaleLowerCase() === owner.toLocaleLowerCase()) {
-      setMemberAddressError("Club owner cannot be a member.");
+      setMemberAddressError('Club owner cannot be a member.');
     } else if (
       web3.utils.isAddress(addressValue) &&
       existingMembers.filter(
-        (member) => member.memberAddress === addressValue.toLocaleLowerCase(),
+        (member) => member.memberAddress === addressValue.toLocaleLowerCase()
       ).length > 0
     ) {
-      setMemberAddressError("Address is already a member.");
+      setMemberAddressError('Address is already a member.');
     } else {
-      setMemberAddressError("");
+      setMemberAddressError('');
     }
   };
 
@@ -108,7 +108,7 @@ export const MintAndShareTokens: React.FC<Props> = ({
     if (+amount > +currentClubTokenSupply) {
       setAmountToMintError(
         <span>
-          Amount exceeds available club token supply of{" "}
+          Amount exceeds available club token supply of{' '}
           <button
             onClick={() => {
               setMaxRemainingSupply();
@@ -118,14 +118,14 @@ export const MintAndShareTokens: React.FC<Props> = ({
               {numberWithCommas(currentClubTokenSupply)} {symbol}
             </u>
           </button>
-        </span>,
+        </span>
       );
     } else if (!amount || +amount <= 0) {
-      setAmountToMintError("Amount is required.");
+      setAmountToMintError('Amount is required.');
     } else {
-      setAmountToMintError("");
+      setAmountToMintError('');
     }
-    setAmountToMint(amount >= 0 ? amount : "");
+    setAmountToMint(amount >= 0 ? amount : '');
   };
 
   const handleSubmit = (e) => {
@@ -134,11 +134,11 @@ export const MintAndShareTokens: React.FC<Props> = ({
   };
 
   const clearFieldErrors = () => {
-    setMemberAddressError("");
-    setAmountToMintError("");
-    setAmountToMint("0");
-    setMemberAddress("");
-    setRawMemberAddress("");
+    setMemberAddressError('');
+    setAmountToMintError('');
+    setAmountToMint('0');
+    setMemberAddress('');
+    setRawMemberAddress('');
   };
 
   useEffect(() => {
@@ -168,9 +168,9 @@ export const MintAndShareTokens: React.FC<Props> = ({
       <ProgressModal
         {...{
           isVisible: true,
-          title: "Confirm in wallet",
-          description: "Please confirm the club token mint in your wallet.",
-          state: ProgressModalState.CONFIRM,
+          title: 'Confirm in wallet',
+          description: 'Please confirm the club token mint in your wallet.',
+          state: ProgressModalState.CONFIRM
         }}
       />
     );
@@ -179,12 +179,12 @@ export const MintAndShareTokens: React.FC<Props> = ({
       <ProgressModal
         {...{
           isVisible: true,
-          title: "Adding member",
+          title: 'Adding member',
           description:
-            "This could take anywhere from seconds to hours depending on network congestion and the gas fees you set. You can safely leave this page while you wait.",
+            'This could take anywhere from seconds to hours depending on network congestion and the gas fees you set. You can safely leave this page while you wait.',
           etherscanHash: transactionHash,
-          transactionType: "transaction",
-          state: ProgressModalState.PENDING,
+          transactionType: 'transaction',
+          state: ProgressModalState.PENDING
         }}
       />
     );
@@ -193,18 +193,18 @@ export const MintAndShareTokens: React.FC<Props> = ({
       <ProgressModal
         {...{
           isVisible: true,
-          title: "Member added successfully",
+          title: 'Member added successfully',
           description: `${formatAddress(
             memberAddress,
             6,
-            4,
+            4
           )} has been added as a member of this club.`,
-          buttonLabel: "Done",
+          buttonLabel: 'Done',
           buttonOnClick: handleCloseSuccessModal,
           buttonFullWidth: true,
           state: ProgressModalState.SUCCESS,
           etherscanHash: transactionHash,
-          transactionType: "transaction",
+          transactionType: 'transaction'
         }}
       />
     );
@@ -213,14 +213,14 @@ export const MintAndShareTokens: React.FC<Props> = ({
       <ProgressModal
         {...{
           isVisible: true,
-          title: "Member addition failed",
-          description: "",
-          buttonLabel: "Close",
+          title: 'Member addition failed',
+          description: '',
+          buttonLabel: 'Close',
           buttonOnClick: handleCloseSuccessModal,
           buttonFullWidth: true,
           state: ProgressModalState.FAILURE,
           etherscanHash: userRejectedMint ? null : transactionHash,
-          transactionType: "transaction",
+          transactionType: 'transaction'
         }}
       />
     );
@@ -256,7 +256,7 @@ export const MintAndShareTokens: React.FC<Props> = ({
     const useOwnerMintModule =
       await syndicateContracts.policyMintERC20.isModuleAllowed(
         erc20TokenContract.address,
-        OWNER_MINT_MODULE,
+        OWNER_MINT_MODULE
       );
 
     if (useOwnerMintModule) {
@@ -268,7 +268,7 @@ export const MintAndShareTokens: React.FC<Props> = ({
         onTxConfirm,
         onTxReceipt,
         onTxFail,
-        setTransactionHash,
+        setTransactionHash
       );
     } else {
       if (isDev) {
@@ -279,12 +279,12 @@ export const MintAndShareTokens: React.FC<Props> = ({
           onTxConfirm,
           onTxReceipt,
           onTxFail,
-          setTransactionHash,
+          setTransactionHash
         );
       } else {
         const oldErc20TokenContract = new OldClubERC20Contract(
           erc20TokenContract.address,
-          web3,
+          web3
         );
 
         await oldErc20TokenContract.controllerMint(
@@ -294,14 +294,14 @@ export const MintAndShareTokens: React.FC<Props> = ({
           onTxConfirm,
           onTxReceipt,
           onTxFail,
-          setTransactionHash,
+          setTransactionHash
         );
       }
     }
   };
 
   const setMaxRemainingSupply = () => {
-    setAmountToMintError("");
+    setAmountToMintError('');
     setAmountToMint(currentClubTokenSupply.toString());
   };
 
@@ -320,7 +320,7 @@ export const MintAndShareTokens: React.FC<Props> = ({
           handleAddressChange,
           handleSubmit,
           handleAmountChange,
-          setMaxRemainingSupply,
+          setMaxRemainingSupply
         }}
       />
 
@@ -335,7 +335,7 @@ export const MintAndShareTokens: React.FC<Props> = ({
           totalSupplyPostMint,
           handleShow,
           setPreview,
-          handleMinting,
+          handleMinting
         }}
       />
     </div>

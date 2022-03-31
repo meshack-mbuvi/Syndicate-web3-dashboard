@@ -1,7 +1,7 @@
-import { Spinner } from "@/components/shared/spinner";
-import { confirmWalletText } from "@/components/syndicates/shared/Constants";
-import React from "react";
-import TransactionStateModal from "../shared";
+import { Spinner } from '@/components/shared/spinner';
+import { confirmWalletText } from '@/components/syndicates/shared/Constants';
+import React from 'react';
+import TransactionStateModal from '../shared';
 
 interface Props {
   show: boolean;

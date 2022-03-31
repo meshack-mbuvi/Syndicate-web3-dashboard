@@ -1,18 +1,18 @@
-import { FC, useState } from "react";
-import moment from "moment";
-import Image from "next/image";
-import { useSelector, useDispatch } from "react-redux";
-import { AppState } from "@/state";
-import { SkeletonLoader } from "@/components/skeletonLoader";
-import { CategoryPill } from "@/containers/layoutWithSyndicateDetails/activity/shared/CategoryPill";
-import useModal from "@/hooks/useModal";
-import ActivityModal from "@/containers/layoutWithSyndicateDetails/activity/shared/ActivityModal";
-import TransactionDetails from "@/containers/layoutWithSyndicateDetails/activity/shared/TransactionDetails";
-import { getWeiAmount } from "@/utils/conversions";
+import { FC, useState } from 'react';
+import moment from 'moment';
+import Image from 'next/image';
+import { useSelector, useDispatch } from 'react-redux';
+import { AppState } from '@/state';
+import { SkeletonLoader } from '@/components/skeletonLoader';
+import { CategoryPill } from '@/containers/layoutWithSyndicateDetails/activity/shared/CategoryPill';
+import useModal from '@/hooks/useModal';
+import ActivityModal from '@/containers/layoutWithSyndicateDetails/activity/shared/ActivityModal';
+import TransactionDetails from '@/containers/layoutWithSyndicateDetails/activity/shared/TransactionDetails';
+import { getWeiAmount } from '@/utils/conversions';
 import {
   setCurrentTransaction,
-  clearCurrentTransaction,
-} from "@/state/erc20transactions";
+  clearCurrentTransaction
+} from '@/state/erc20transactions';
 
 interface ITransactionsTableProps {
   canNextPage: boolean;
@@ -43,18 +43,18 @@ const TransactionsTable: FC<ITransactionsTableProps> = ({
   handleCheckboxSelect,
   rowCheckboxActiveData,
   activeTransactionHashes,
-  setActiveTransactionHashes,
+  setActiveTransactionHashes
 }) => {
   const {
     transactionsReducer: {
       myTransactions,
       currentTransaction,
-      totalTransactionsCount,
+      totalTransactionsCount
     },
     erc20TokenSliceReducer: { erc20Token },
     web3Reducer: {
-      web3: { account },
-    },
+      web3: { account }
+    }
   } = useSelector((state: AppState) => state);
 
   const dispatch = useDispatch();
@@ -113,16 +113,16 @@ const TransactionsTable: FC<ITransactionsTableProps> = ({
   // flip the category pill to drop-down on mouse hover
   const toggleCategoryPillReadOnly = (
     pillIndex: number,
-    categoryReadonlyState: boolean,
+    categoryReadonlyState: boolean
   ) => {
     if (!isManager) return;
     const data = myTransactions[pageOffset].map((item) => {
       return {
         ...item,
-        categoryIsReadonly: true,
+        categoryIsReadonly: true
       };
     });
-    data[pillIndex]["categoryIsReadonly"] = categoryReadonlyState;
+    data[pillIndex]['categoryIsReadonly'] = categoryReadonlyState;
     setPillHover(data);
   };
 
@@ -154,16 +154,16 @@ const TransactionsTable: FC<ITransactionsTableProps> = ({
                 tokenDecimal,
                 value,
                 metadata,
-                tokenLogo,
+                tokenLogo
               },
-              index,
+              index
             ) => {
               const timeSinceTransaction = moment(
-                blockTimestamp * 1000,
+                blockTimestamp * 1000
               ).fromNow();
 
               const formattedBlockTime = moment(blockTimestamp * 1000).format(
-                "dddd, MMM Do YYYY, h:mm A",
+                'dddd, MMM Do YYYY, h:mm A'
               );
 
               const category = metadata?.transactionCategory ?? null;
@@ -180,23 +180,23 @@ const TransactionsTable: FC<ITransactionsTableProps> = ({
                     ) {
                       const selectedTransactionData = {
                         category: category,
-                        note: metadata ? metadata.memo : "",
+                        note: metadata ? metadata.memo : '',
                         hash,
                         transactionInfo: {
                           transactionHash: hash,
                           from: fromAddress,
                           to: toAddress,
-                          isOutgoingTransaction: isOutgoingTransaction,
+                          isOutgoingTransaction: isOutgoingTransaction
                         },
                         amount: getWeiAmount(value, tokenDecimal, false),
                         tokenSymbol,
                         tokenLogo,
                         tokenName,
-                        readOnly: category === "DEPOSIT" ? true : false,
+                        readOnly: category === 'DEPOSIT' ? true : false,
                         timestamp: formattedBlockTime,
                         transactionId: metadata?.transactionId,
                         metadata,
-                        blockTimestamp,
+                        blockTimestamp
                       };
                       dispatch(setCurrentTransaction(selectedTransactionData));
                       toggleShowAnnotationsModal();
@@ -207,20 +207,20 @@ const TransactionsTable: FC<ITransactionsTableProps> = ({
                   }}
                   aria-hidden={true}
                   onMouseEnter={() => {
-                    if (category !== "DEPOSIT") toggleRowCheckbox(index, true);
+                    if (category !== 'DEPOSIT') toggleRowCheckbox(index, true);
                   }}
                   onMouseLeave={() => {
-                    if (category !== "DEPOSIT") toggleRowCheckbox(index, false);
+                    if (category !== 'DEPOSIT') toggleRowCheckbox(index, false);
                   }}
                 >
                   <div
                     className="absolute -left-12 flex items-center pr-10 pl-4 h-full"
                     onMouseEnter={() => {
-                      if (category !== "DEPOSIT")
+                      if (category !== 'DEPOSIT')
                         toggleRowCheckbox(index, true);
                     }}
                     onMouseLeave={() => {
-                      if (category !== "DEPOSIT")
+                      if (category !== 'DEPOSIT')
                         toggleRowCheckbox(index, false);
                     }}
                   >
@@ -258,7 +258,7 @@ const TransactionsTable: FC<ITransactionsTableProps> = ({
                         setInlineCategorising={setInlineCategorising}
                         readonly={
                           pillHover[index]?.categoryIsReadonly === undefined ||
-                          category === "DEPOSIT"
+                          category === 'DEPOSIT'
                             ? true
                             : pillHover[index]?.categoryIsReadonly
                         }
@@ -280,7 +280,7 @@ const TransactionsTable: FC<ITransactionsTableProps> = ({
                       tokenSymbol={tokenSymbol}
                       tokenName={tokenName}
                       transactionType={
-                        isOutgoingTransaction ? "outgoing" : "incoming"
+                        isOutgoingTransaction ? 'outgoing' : 'incoming'
                       }
                       isTransactionAnnotated={metadata ? true : false}
                       amount={getWeiAmount(value, tokenDecimal, false)}
@@ -298,7 +298,7 @@ const TransactionsTable: FC<ITransactionsTableProps> = ({
                   </div>
                 </div>
               );
-            },
+            }
           )}
           {/* Pagination  */}
           {showPagination && (
@@ -306,21 +306,21 @@ const TransactionsTable: FC<ITransactionsTableProps> = ({
               <button
                 className={`pt-1 ${
                   pageOffset === 0
-                    ? "opacity-50 cursor-not-allowed"
-                    : "hover:opacity-90"
+                    ? 'opacity-50 cursor-not-allowed'
+                    : 'hover:opacity-90'
                 }`}
                 onClick={() => goToPreviousPage()}
                 disabled={pageOffset === 0}
               >
                 <Image
-                  src={"/images/arrowBack.svg"}
+                  src={'/images/arrowBack.svg'}
                   height="16"
                   width="16"
                   alt="Previous"
                 />
               </button>
               <p className="">
-                {pageOffset === 0 ? "1" : pageOffset} -{" "}
+                {pageOffset === 0 ? '1' : pageOffset} -{' '}
                 {myTransactions?.[pageOffset]?.length < dataLimit
                   ? pageOffset + myTransactions[pageOffset].length
                   : pageOffset + dataLimit}
@@ -330,14 +330,14 @@ const TransactionsTable: FC<ITransactionsTableProps> = ({
               <button
                 className={`pt-1 ${
                   !canNextPage
-                    ? "opacity-50 cursor-not-allowed"
-                    : "hover:opacity-90"
+                    ? 'opacity-50 cursor-not-allowed'
+                    : 'hover:opacity-90'
                 }`}
                 onClick={() => goToNextPage()}
                 disabled={!canNextPage}
               >
                 <Image
-                  src={"/images/arrowNext.svg"}
+                  src={'/images/arrowNext.svg'}
                   height="16"
                   width="16"
                   alt="Next"

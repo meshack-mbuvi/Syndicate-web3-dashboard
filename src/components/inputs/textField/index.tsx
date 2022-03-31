@@ -1,8 +1,8 @@
-import { isEmpty } from "lodash";
-import Image from "next/image";
-import React, { useEffect, useState } from "react";
-import { useController } from "react-hook-form";
-import ClearIcon from "/public/images/close-circle.svg";
+import { isEmpty } from 'lodash';
+import Image from 'next/image';
+import React, { useEffect, useState } from 'react';
+import { useController } from 'react-hook-form';
+import ClearIcon from '/public/images/close-circle.svg';
 
 interface IProps {
   label?: string;
@@ -41,27 +41,27 @@ export const TextField: React.FC<IProps> = ({
   info,
   addOn,
   cornerHint,
-  borderStyles = "",
+  borderStyles = '',
   column = false,
-  label = "",
+  label = '',
   borderOutline = true,
-  textAlignment = "",
-  paddingStyles = "p-4",
+  textAlignment = '',
+  paddingStyles = 'p-4',
   disabled = false,
   required = true,
   autoFocus = false,
   showWarning = false,
-  warningText = "",
-  showClearIcon = false,
+  warningText = '',
+  showClearIcon = false
 }) => {
   const {
     field: { value, ...fieldAttributes },
-    formState: { errors },
+    formState: { errors }
   } = useController({
     name,
     control,
     rules: { required },
-    defaultValue: "",
+    defaultValue: ''
   });
 
   const [showValidation, setShowValidation] = useState(false);
@@ -75,28 +75,28 @@ export const TextField: React.FC<IProps> = ({
   };
 
   const handleClear = () => {
-    fieldAttributes.onChange("");
+    fieldAttributes.onChange('');
   };
 
   useEffect(() => {
     return () => {
-      fieldAttributes.onChange("");
+      fieldAttributes.onChange('');
     };
   }, []);
 
   return (
     <div
       className={`flex ${borderStyles} ${
-        column ? "flex-row justify-between" : "flex-col justify-center"
+        column ? 'flex-row justify-between' : 'flex-col justify-center'
       } w-full`}
     >
       <div
-        className={`flex justify-between ${column ? "w-2/5 my-auto" : "mb-2"}`}
+        className={`flex justify-between ${column ? 'w-2/5 my-auto' : 'mb-2'}`}
       >
         {label ? <div className="leading-5">{label}</div> : null}
         {!isEmpty(cornerHint) ? (
           <div
-            className={`${cornerHint?.textColor || "text-gray-syn10"} text-sm`}
+            className={`${cornerHint?.textColor || 'text-gray-syn10'} text-sm`}
           >
             {cornerHint.text}
           </div>
@@ -106,11 +106,11 @@ export const TextField: React.FC<IProps> = ({
         <input
           className={`block font-whyte text-base ${textAlignment} bg-transparent ${paddingStyles} rounded-md w-full ${
             errors?.[`${name}`]?.message
-              ? "border-red-error"
+              ? 'border-red-error'
               : `${
                   borderOutline
-                    ? "border-1 border-gray-24 hover:border-gray-syn3"
-                    : "border-0 focus:outline-none focus:ring-0 outline-none hover:border-0 ring-0"
+                    ? 'border-1 border-gray-24 hover:border-gray-syn3'
+                    : 'border-0 focus:outline-none focus:ring-0 outline-none hover:border-0 ring-0'
                 }`
           }  text-white placeholder-gray-syn5`}
           name={name}
@@ -130,7 +130,7 @@ export const TextField: React.FC<IProps> = ({
           >
             <span
               className={`font-whyte text-base ${
-                value ? "text-white" : "text-gray-syn5"
+                value ? 'text-white' : 'text-gray-syn5'
               }`}
               id="price-currency"
             >

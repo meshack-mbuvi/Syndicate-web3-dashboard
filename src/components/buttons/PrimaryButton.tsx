@@ -14,10 +14,10 @@ const PrimaryButton: React.FC<{
 }> = (props) => {
   const {
     children,
-    customClasses = "bg-light-green",
+    customClasses = 'bg-light-green',
     approved = false,
     createSyndicate = false,
-    textColor = "text-white",
+    textColor = 'text-white',
     icon,
     ...rest
   } = props;
@@ -38,7 +38,7 @@ const PrimaryButton: React.FC<{
         <img
           className="inline w-4 mr-4"
           src={`/images/${
-            textColor === "text-white" ? "plus-circle-white" : "plus-circle"
+            textColor === 'text-white' ? 'plus-circle-white' : 'plus-circle'
           }.svg`}
           alt=""
         />

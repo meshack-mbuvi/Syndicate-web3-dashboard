@@ -2,16 +2,16 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import BN from "bn.js";
-import { EventData, PastEventOptions } from "web3-eth-contract";
+import BN from 'bn.js';
+import { EventData, PastEventOptions } from 'web3-eth-contract';
 
 export interface SynERC721FactoryContract
   extends Truffle.Contract<SynERC721FactoryInstance> {
-  "new"(meta?: Truffle.TransactionDetails): Promise<SynERC721FactoryInstance>;
+  'new'(meta?: Truffle.TransactionDetails): Promise<SynERC721FactoryInstance>;
 }
 
 export interface OwnershipTransferred {
-  name: "OwnershipTransferred";
+  name: 'OwnershipTransferred';
   args: {
     previousOwner: string;
     newOwner: string;
@@ -21,7 +21,7 @@ export interface OwnershipTransferred {
 }
 
 export interface Paused {
-  name: "Paused";
+  name: 'Paused';
   args: {
     account: string;
     0: string;
@@ -29,7 +29,7 @@ export interface Paused {
 }
 
 export interface SynERC721Created {
-  name: "SynERC721Created";
+  name: 'SynERC721Created';
   args: {
     owner: string;
     tokenAddress: string;
@@ -43,7 +43,7 @@ export interface SynERC721Created {
 }
 
 export interface SyndicateTreasuryAddressUpdated {
-  name: "SyndicateTreasuryAddressUpdated";
+  name: 'SyndicateTreasuryAddressUpdated';
   args: {
     syndicateTreasuryAddress: string;
     0: string;
@@ -51,7 +51,7 @@ export interface SyndicateTreasuryAddressUpdated {
 }
 
 export interface Unpaused {
-  name: "Unpaused";
+  name: 'Unpaused';
   args: {
     account: string;
     0: string;

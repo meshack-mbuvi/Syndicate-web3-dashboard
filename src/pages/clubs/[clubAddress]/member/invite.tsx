@@ -1,8 +1,8 @@
-import Layout from "@/components/layout";
-import GettingStarted from "@/components/syndicates/depositSyndicate/gettingStarted";
-import Head from "@/components/syndicates/shared/HeaderTitle";
-import { NextPage } from "next";
-import React from "react";
+import Layout from '@/components/layout';
+import GettingStarted from '@/components/syndicates/depositSyndicate/gettingStarted';
+import Head from '@/components/syndicates/shared/HeaderTitle';
+import { NextPage } from 'next';
+import React from 'react';
 
 const ClubInvitePage: NextPage = () => (
   <Layout>

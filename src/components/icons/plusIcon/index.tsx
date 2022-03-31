@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 
 interface IIconPlus {
   height?: number;
@@ -9,7 +9,7 @@ interface IIconPlus {
 const IconPlus: React.FC<IIconPlus> = ({
   height = 16,
   width = 16,
-  fill = "#4376FF",
+  fill = '#4376FF'
 }) => {
   return (
     <svg

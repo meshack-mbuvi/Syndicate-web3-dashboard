@@ -3,13 +3,13 @@
  * that was passed. These parameters are obtained from user interaction with
  *  metamask when confirming or rejecting transactions
  */
-import { metamaskConstants } from "src/components/syndicates/shared/Constants";
+import { metamaskConstants } from 'src/components/syndicates/shared/Constants';
 const {
   metamaskRejectByUserMessage,
   metamaskInvalidParamsMessage,
   metamaskInternalErrorMessage,
   metamaskUnknownErrorMessage,
-  metamaskInvalidAddressMessage,
+  metamaskInvalidAddressMessage
 } = metamaskConstants;
 
 /**
@@ -36,7 +36,7 @@ export const getMetamaskError = (
     case -32603:
       return `${metamaskInternalErrorMessage}`;
 
-    case "INVALID_ARGUMENT":
+    case 'INVALID_ARGUMENT':
       return `${metamaskInvalidAddressMessage}`;
 
     default:

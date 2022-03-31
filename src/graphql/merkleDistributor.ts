@@ -1,4 +1,4 @@
-import gql from "graphql-tag";
+import gql from 'graphql-tag';
 
 // Queries
 
@@ -13,7 +13,6 @@ export const INDEX_AND_PROOF = gql`
     }
   }
 `;
-
 
 // ERC721 merkle
 export const ERC721_INDEX_AND_PROOF = gql`

@@ -1,27 +1,27 @@
-import React from "react";
-import { AppState } from "@/state";
-import { useSelector } from "react-redux";
-import { floatedNumberWithCommas } from "@/utils/formattedNumbers";
-import PriceContainer from "./PriceContainer";
+import React from 'react';
+import { AppState } from '@/state';
+import { useSelector } from 'react-redux';
+import { floatedNumberWithCommas } from '@/utils/formattedNumbers';
+import PriceContainer from './PriceContainer';
 
 const TokenDetail: React.FC<{ title: string; value: any; symbol?: any }> = ({
   title,
   value,
-  symbol,
+  symbol
 }) => {
   const {
-    assetsSliceReducer: { ethereumTokenPrice },
+    assetsSliceReducer: { ethereumTokenPrice }
   } = useSelector((state: AppState) => state);
 
   const blankValue = <span className="text-gray-syn4">-</span>;
   let floorPriceFormattedTotalValue, purchasePriceFormattedTotalValue;
   let clubBalance, balanceValue;
-  if (title === "Floor price") {
+  if (title === 'Floor price') {
     const floorPriceValue = value * ethereumTokenPrice;
 
     floorPriceFormattedTotalValue = floorPriceValue ? (
       <div className="flex flex-col items-end">
-        {" "}
+        {' '}
         <PriceContainer numberValue={value} ethValue={true} />
         <div className="text-gray-syn4">
           {floatedNumberWithCommas(floorPriceValue)} USD
@@ -32,7 +32,7 @@ const TokenDetail: React.FC<{ title: string; value: any; symbol?: any }> = ({
     );
   }
 
-  if (title === "Last purchase price") {
+  if (title === 'Last purchase price') {
     const { lastPurchasePriceUSD, lastPurchasePriceETH } = value;
 
     purchasePriceFormattedTotalValue = lastPurchasePriceUSD ? (
@@ -47,7 +47,7 @@ const TokenDetail: React.FC<{ title: string; value: any; symbol?: any }> = ({
     );
   }
 
-  if (title === "Club balance") {
+  if (title === 'Club balance') {
     balanceValue = (
       <div className="flex flex-col items-end">
         <PriceContainer numberValue={value} customSymbol={symbol} />
@@ -55,7 +55,7 @@ const TokenDetail: React.FC<{ title: string; value: any; symbol?: any }> = ({
     );
   }
 
-  if (title === "Value") {
+  if (title === 'Value') {
     clubBalance = (
       <div className="flex flex-col items-end">
         <PriceContainer

@@ -1,5 +1,5 @@
-import React from "react";
-import { InfoIcon } from "src/components/iconWrappers";
+import React from 'react';
+import { InfoIcon } from 'src/components/iconWrappers';
 
 export const Toggle: React.FC<{
   enabled: boolean;
@@ -8,12 +8,12 @@ export const Toggle: React.FC<{
   tooltip?: string;
 }> = (props) => {
   const { toggleEnabled, label, tooltip, enabled = false } = props;
-  let translateClass = "translate-x-0";
-  let backgroundClass = "bg-gray-light";
+  let translateClass = 'translate-x-0';
+  let backgroundClass = 'bg-gray-light';
 
   if (enabled) {
-    backgroundClass = "bg-blue";
-    translateClass = "translate-x-5";
+    backgroundClass = 'bg-blue';
+    translateClass = 'translate-x-5';
   }
 
   return (
@@ -44,7 +44,7 @@ export const Toggle: React.FC<{
         </button>
 
         {/* <!-- allow optional tooltip --> */}
-        {tooltip !== "" && (
+        {tooltip !== '' && (
           <div className="mt-1 flex mr-auto">
             <InfoIcon tooltip={tooltip} />
           </div>

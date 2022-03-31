@@ -1,5 +1,5 @@
-import React from "react";
-import { useController } from "react-hook-form";
+import React from 'react';
+import { useController } from 'react-hook-form';
 
 interface IProps {
   label?: string;
@@ -11,7 +11,7 @@ export const Checkbox: React.FC<IProps> = ({ control, name, label }) => {
   const { field } = useController({
     name,
     control,
-    defaultValue: false,
+    defaultValue: false
   });
 
   return (

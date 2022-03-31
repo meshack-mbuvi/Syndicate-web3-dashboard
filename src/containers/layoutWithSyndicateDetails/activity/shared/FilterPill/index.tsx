@@ -1,6 +1,6 @@
-import React, { useEffect, useState, useRef } from "react";
-import PillDropDown from "@/containers/layoutWithSyndicateDetails/activity/shared/CategoryPill/CategoryPillDropdown";
-import { DropDownOptions } from "@/containers/layoutWithSyndicateDetails/activity/shared/FilterPill/dropDownOptions";
+import React, { useEffect, useState, useRef } from 'react';
+import PillDropDown from '@/containers/layoutWithSyndicateDetails/activity/shared/CategoryPill/CategoryPillDropdown';
+import { DropDownOptions } from '@/containers/layoutWithSyndicateDetails/activity/shared/FilterPill/dropDownOptions';
 
 interface FilterPillProps {
   setFilter: (filter: string) => void;
@@ -16,7 +16,7 @@ const FilterPill: React.FC<FilterPillProps> = ({ setFilter }) => {
   // drop down
   const [showDropdown, setShowDropdown] = useState<boolean>(false);
   const [selectedCategory, setSelectedCategory] = useState<any>(
-    DropDownOptions[0],
+    DropDownOptions[0]
   );
 
   const toggleDropdown = () => {
@@ -35,17 +35,17 @@ const FilterPill: React.FC<FilterPillProps> = ({ setFilter }) => {
     };
 
     if (showDropdown) {
-      window.addEventListener("click", onPageClickEvent);
+      window.addEventListener('click', onPageClickEvent);
     }
 
     return () => {
-      window.removeEventListener("click", onPageClickEvent);
+      window.removeEventListener('click', onPageClickEvent);
     };
   }, [showDropdown]);
 
   const handleSelect = (category) => {
     setSelectedCategory(
-      DropDownOptions.find((option) => option.value === category),
+      DropDownOptions.find((option) => option.value === category)
     );
     setFilter(category);
   };

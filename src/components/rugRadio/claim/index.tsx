@@ -1,20 +1,20 @@
-import { CtaButton } from "@/components/CTAButton";
-import Layout from "@/components/layout";
-import Modal, { ModalStyle } from "@/components/modal";
-import { Spinner } from "@/components/shared/spinner";
-import useOwnsGenesisNFT from "@/hooks/useOwnsGenesisNFT";
-import { AppState } from "@/state";
-import { showWalletModal } from "@/state/wallet/actions";
-import { Status } from "@/state/wallet/types";
-import { getCountDownDays } from "@/utils/dateUtils";
-import Image from "next/image";
-import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { NFTChecker } from "../shared/NFTchecker";
-import { NFTDetails } from "./NFTDetails";
-import arrowRight from "/public/images/arrowRight-blue.svg";
-import emptyCheck from "/public/images/empty-check.svg";
-import checkMark from "/public/images/rugRadio/circleWithGreenCheckMark.svg";
+import { CtaButton } from '@/components/CTAButton';
+import Layout from '@/components/layout';
+import Modal, { ModalStyle } from '@/components/modal';
+import { Spinner } from '@/components/shared/spinner';
+import useOwnsGenesisNFT from '@/hooks/useOwnsGenesisNFT';
+import { AppState } from '@/state';
+import { showWalletModal } from '@/state/wallet/actions';
+import { Status } from '@/state/wallet/types';
+import { getCountDownDays } from '@/utils/dateUtils';
+import Image from 'next/image';
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { NFTChecker } from '../shared/NFTchecker';
+import { NFTDetails } from './NFTDetails';
+import arrowRight from '/public/images/arrowRight-blue.svg';
+import emptyCheck from '/public/images/empty-check.svg';
+import checkMark from '/public/images/rugRadio/circleWithGreenCheckMark.svg';
 
 export const ClaimComponent: React.FC = () => {
   const {
@@ -22,9 +22,9 @@ export const ClaimComponent: React.FC = () => {
       web3: {
         status,
         account,
-        ethereumNetwork: { invalidEthereumNetwork },
-      },
-    },
+        ethereumNetwork: { invalidEthereumNetwork }
+      }
+    }
   } = useSelector((state: AppState) => state);
 
   const dispatch = useDispatch();
@@ -43,12 +43,12 @@ export const ClaimComponent: React.FC = () => {
       return;
     }
 
-    const showClaim = localStorage.getItem("showClaim");
+    const showClaim = localStorage.getItem('showClaim');
 
     if (!showClaim) {
       localStorage.setItem(
-        "showClaim",
-        JSON.stringify({ account, showClaimScreen: false }),
+        'showClaim',
+        JSON.stringify({ account, showClaimScreen: false })
       );
     } else {
       const { account: wallet, showClaimScreen } = JSON.parse(showClaim);
@@ -75,8 +75,8 @@ export const ClaimComponent: React.FC = () => {
     setShowClaimComponent(true);
 
     localStorage.setItem(
-      "showClaim",
-      JSON.stringify({ account, showClaimScreen: true }),
+      'showClaim',
+      JSON.stringify({ account, showClaimScreen: true })
     );
   };
 
@@ -102,7 +102,7 @@ export const ClaimComponent: React.FC = () => {
                       !invalidEthereumNetwork &&
                       !loading && (
                         <p className="h3 text-center text-gray-syn4 font-whyte">
-                          Starts in{" "}
+                          Starts in{' '}
                           {getCountDownDays(`${claimStartTime * 1000}`)}
                         </p>
                       )}
@@ -144,9 +144,9 @@ export const ClaimComponent: React.FC = () => {
                           >
                             {hasGenesisNFT
                               ? claimEnabled
-                                ? "Continue"
-                                : "Claiming available soon"
-                              : "Requirements not met"}
+                                ? 'Continue'
+                                : 'Claiming available soon'
+                              : 'Requirements not met'}
                           </CtaButton>
                         )}
 
@@ -173,7 +173,7 @@ export const ClaimComponent: React.FC = () => {
                   >
                     <span className="mr-2">
                       Check how much RUG is available to claim for any Genesis
-                      NFT{" "}
+                      NFT{' '}
                     </span>
                     <span className="flex h-full">
                       <Image src={arrowRight} width={16} height={16} />
@@ -191,13 +191,13 @@ export const ClaimComponent: React.FC = () => {
           show: showNFTchecker,
           modalStyle: ModalStyle.DARK,
           showCloseButton: false,
-          customWidth: "w-full max-w-480",
+          customWidth: 'w-full max-w-480',
           outsideOnClick: true,
           showHeader: false,
           closeModal: () => handleClose(),
           overflowYScroll: false,
-          customClassName: "p-8 pt-6",
-          overflow: "overflow-visible",
+          customClassName: 'p-8 pt-6',
+          overflow: 'overflow-visible'
         }}
       >
         <NFTChecker />

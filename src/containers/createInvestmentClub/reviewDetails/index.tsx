@@ -1,15 +1,15 @@
-import { useCreateInvestmentClubContext } from "@/context/CreateInvestmentClubContext";
-import { floatedNumberWithCommas } from "@/utils/formattedNumbers";
-import { AppState } from "@/state";
-import { format } from "date-fns";
-import Image from "next/image";
-import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
-import { animated, useTransition } from "react-spring";
-import AmountToRaise from "../amountToRaise";
-import ClubNameSelector from "../clubNameSelector";
-import MembersCount from "../membersCount";
-import MintMaxDate from "../mintMaxDate";
+import { useCreateInvestmentClubContext } from '@/context/CreateInvestmentClubContext';
+import { floatedNumberWithCommas } from '@/utils/formattedNumbers';
+import { AppState } from '@/state';
+import { format } from 'date-fns';
+import Image from 'next/image';
+import React, { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
+import { animated, useTransition } from 'react-spring';
+import AmountToRaise from '../amountToRaise';
+import ClubNameSelector from '../clubNameSelector';
+import MembersCount from '../membersCount';
+import MintMaxDate from '../mintMaxDate';
 
 const ReviewDetails: React.FC = () => {
   const {
@@ -18,13 +18,13 @@ const ReviewDetails: React.FC = () => {
     membersCount,
     mintEndTime,
     tokenCap,
-    tokenDetails: { depositTokenSymbol, depositTokenLogo },
+    tokenDetails: { depositTokenSymbol, depositTokenLogo }
   } = useSelector((state: AppState) => state.createInvestmentClubSliceReducer);
 
   const { currentStep, setBackBtnDisabled, setNextBtnDisabled } =
     useCreateInvestmentClubContext();
 
-  const [inlineEditView, setInlineEditView] = useState<string>("");
+  const [inlineEditView, setInlineEditView] = useState<string>('');
   const [editClubNameSelector, setEditClubNameSelector] =
     useState<boolean>(false);
   const [editAmountToRaise, setEditAmountToRaise] = useState<boolean>(false);
@@ -50,7 +50,7 @@ const ReviewDetails: React.FC = () => {
     editAmountToRaise,
     editMintMaxDate,
     editMembersCount,
-    setBackBtnDisabled,
+    setBackBtnDisabled
   ]);
 
   useEffect(() => {
@@ -78,7 +78,7 @@ const ReviewDetails: React.FC = () => {
     editMembersCount,
     currentStep,
     setNextBtnDisabled,
-    agreementFirstChecked,
+    agreementFirstChecked
   ]);
 
   const showInvestmentName = investmentClubName && currentStep >= 1;
@@ -87,54 +87,54 @@ const ReviewDetails: React.FC = () => {
   const showMemberCount = membersCount && currentStep >= 4;
 
   const headerTransitionStyles = {
-    from: { opacity: 1, fontSize: "20px", color: "#ffffff", y: 40 },
-    enter: { opacity: 1, fontSize: "14px", color: "#90949E", y: 0 },
-    config: { duration: 200 },
+    from: { opacity: 1, fontSize: '20px', color: '#ffffff', y: 40 },
+    enter: { opacity: 1, fontSize: '14px', color: '#90949E', y: 0 },
+    config: { duration: 200 }
   };
 
   const sectionTransitionStyles = {
     from: { y: 40 },
     enter: { y: 0 },
-    delay: 400,
+    delay: 400
   };
 
   const investmentClubHeaderTransition = useTransition(showInvestmentName, {
-    ...headerTransitionStyles,
+    ...headerTransitionStyles
   });
 
   const investmentClubTransition = useTransition(showInvestmentName, {
-    ...sectionTransitionStyles,
+    ...sectionTransitionStyles
   });
 
   const tokenCapHeaderTransition = useTransition(showTokenCap, {
-    ...headerTransitionStyles,
+    ...headerTransitionStyles
   });
 
   const tokenCapTransition = useTransition(showTokenCap, {
-    ...sectionTransitionStyles,
+    ...sectionTransitionStyles
   });
 
   const mindEndTimeHeaderTransition = useTransition(showMintDate, {
-    ...headerTransitionStyles,
+    ...headerTransitionStyles
   });
 
   const mindEndTimeTransition = useTransition(showMintDate, {
-    ...sectionTransitionStyles,
+    ...sectionTransitionStyles
   });
 
   const memberCountHeaderTransition = useTransition(showMemberCount, {
-    ...headerTransitionStyles,
+    ...headerTransitionStyles
   });
 
   const memberCountTransition = useTransition(showMemberCount, {
-    ...sectionTransitionStyles,
+    ...sectionTransitionStyles
   });
 
   const usdcTransition = useTransition(showTokenCap, {
     from: { x: 150 },
     enter: { x: 0 },
     config: { duration: 400 },
-    delay: 100,
+    delay: 100
   });
 
   return (
@@ -147,9 +147,9 @@ const ReviewDetails: React.FC = () => {
               <animated.div
                 className="flex items-center absolute top-3 right-5"
                 onClick={() => setEditClubNameSelector(!editClubNameSelector)}
-                style={{ color: "#4376FF", cursor: "pointer" }}
+                style={{ color: '#4376FF', cursor: 'pointer' }}
               >
-                {"Save"}
+                {'Save'}
               </animated.div>
             ) : null}
           </animated.div>
@@ -159,16 +159,16 @@ const ReviewDetails: React.FC = () => {
               <animated.div
                 className="flex justify-between px-5 py-4"
                 style={
-                  inlineEditView === "investmentClub"
+                  inlineEditView === 'investmentClub'
                     ? {
-                        backgroundColor: "#131416",
-                        borderRadius: "10px",
-                        cursor: "pointer",
+                        backgroundColor: '#131416',
+                        borderRadius: '10px',
+                        cursor: 'pointer'
                       }
-                    : { display: "inherit" }
+                    : { display: 'inherit' }
                 }
-                onMouseEnter={() => setInlineEditView("investmentClub")}
-                onMouseLeave={() => setInlineEditView("")}
+                onMouseEnter={() => setInlineEditView('investmentClub')}
+                onMouseLeave={() => setInlineEditView('')}
               >
                 <animated.div style={styles}>
                   {editClubNameSelector ? (
@@ -183,7 +183,7 @@ const ReviewDetails: React.FC = () => {
                           >
                             What should we call this investment club?
                           </animated.p>
-                        ) : null,
+                        ) : null
                       )}
                       <div className="flex mt-2 text-base">
                         <p className="text-white">{investmentClubName}</p>
@@ -194,19 +194,19 @@ const ReviewDetails: React.FC = () => {
                     </div>
                   )}
                 </animated.div>
-                {inlineEditView === "investmentClub" ? (
+                {inlineEditView === 'investmentClub' ? (
                   <animated.div
                     className="flex items-center"
                     onClick={() =>
                       setEditClubNameSelector(!editClubNameSelector)
                     }
-                    style={{ color: "#4376FF", cursor: "pointer" }}
+                    style={{ color: '#4376FF', cursor: 'pointer' }}
                   >
-                    {"Edit"}
+                    {'Edit'}
                   </animated.div>
                 ) : null}
               </animated.div>
-            ) : null,
+            ) : null
           )
         )}
 
@@ -219,9 +219,9 @@ const ReviewDetails: React.FC = () => {
             <animated.div
               className="flex items-center absolute top-3 right-5"
               onClick={() => setEditAmountToRaise(!editAmountToRaise)}
-              style={{ color: "#4376FF", cursor: "pointer" }}
+              style={{ color: '#4376FF', cursor: 'pointer' }}
             >
-              {"Save"}
+              {'Save'}
             </animated.div>
           </animated.div>
         ) : (
@@ -230,16 +230,16 @@ const ReviewDetails: React.FC = () => {
               <animated.div
                 className="flex justify-between px-5 py-4"
                 style={
-                  inlineEditView === "tokenCap"
+                  inlineEditView === 'tokenCap'
                     ? {
-                        backgroundColor: "#131416",
-                        borderRadius: "10px",
-                        cursor: "pointer",
+                        backgroundColor: '#131416',
+                        borderRadius: '10px',
+                        cursor: 'pointer'
                       }
-                    : { display: "inherit" }
+                    : { display: 'inherit' }
                 }
-                onMouseEnter={() => setInlineEditView("tokenCap")}
-                onMouseLeave={() => setInlineEditView("")}
+                onMouseEnter={() => setInlineEditView('tokenCap')}
+                onMouseLeave={() => setInlineEditView('')}
               >
                 <animated.div style={styles}>
                   {editAmountToRaise ? (
@@ -253,7 +253,7 @@ const ReviewDetails: React.FC = () => {
                           <animated.p style={styles}>
                             What’s the upper limit of the club’s raise?
                           </animated.p>
-                        ) : null,
+                        ) : null
                       )}
                       <div className="flex mt-2 text-base">
                         <p className="text-white">
@@ -274,23 +274,23 @@ const ReviewDetails: React.FC = () => {
                                 {depositTokenSymbol}
                               </p>
                             </animated.div>
-                          ) : null,
+                          ) : null
                         )}
                       </div>
                     </div>
                   )}
                 </animated.div>
-                {inlineEditView === "tokenCap" ? (
+                {inlineEditView === 'tokenCap' ? (
                   <animated.div
                     className="flex items-center"
                     onClick={() => setEditAmountToRaise(!editAmountToRaise)}
-                    style={{ color: "#4376FF", cursor: "pointer" }}
+                    style={{ color: '#4376FF', cursor: 'pointer' }}
                   >
-                    {"Edit"}
+                    {'Edit'}
                   </animated.div>
                 ) : null}
               </animated.div>
-            ) : null,
+            ) : null
           )
         )}
 
@@ -302,9 +302,9 @@ const ReviewDetails: React.FC = () => {
             <animated.div
               className="flex items-center absolute top-3 right-5"
               onClick={() => setEditMintMaxDate(!editMintMaxDate)}
-              style={{ color: "#4376FF", cursor: "pointer" }}
+              style={{ color: '#4376FF', cursor: 'pointer' }}
             >
-              {"Save"}
+              {'Save'}
             </animated.div>
           </animated.div>
         ) : (
@@ -313,16 +313,16 @@ const ReviewDetails: React.FC = () => {
               <animated.div
                 className="flex justify-between px-5 py-4"
                 style={
-                  inlineEditView === "mindEnd"
+                  inlineEditView === 'mindEnd'
                     ? {
-                        backgroundColor: "#131416",
-                        borderRadius: "10px",
-                        cursor: "pointer",
+                        backgroundColor: '#131416',
+                        borderRadius: '10px',
+                        cursor: 'pointer'
                       }
-                    : { display: "inherit" }
+                    : { display: 'inherit' }
                 }
-                onMouseEnter={() => setInlineEditView("mindEnd")}
-                onMouseLeave={() => setInlineEditView("")}
+                onMouseEnter={() => setInlineEditView('mindEnd')}
+                onMouseLeave={() => setInlineEditView('')}
               >
                 <animated.div style={styles}>
                   {editMintMaxDate ? (
@@ -339,11 +339,11 @@ const ReviewDetails: React.FC = () => {
                           >
                             When will deposits close?
                           </animated.p>
-                        ) : null,
+                        ) : null
                       )}
                       <div className="flex mt-2 text-base">
                         {!mintEndTime?.mintTime ||
-                        mintEndTime?.mintTime === "Custom" ? (
+                        mintEndTime?.mintTime === 'Custom' ? (
                           <></>
                         ) : (
                           <p className="text-white mr-4">
@@ -355,26 +355,26 @@ const ReviewDetails: React.FC = () => {
                             new Date(
                               mintEndTime?.value
                                 ? mintEndTime?.value * 1000
-                                : new Date(),
+                                : new Date()
                             ),
-                            "MMM dd, yyyy, hh:mm b",
+                            'MMM dd, yyyy, hh:mm b'
                           )}
                         </p>
                       </div>
                     </div>
                   )}
                 </animated.div>
-                {inlineEditView === "mindEnd" ? (
+                {inlineEditView === 'mindEnd' ? (
                   <animated.div
                     className="flex items-center"
                     onClick={() => setEditMintMaxDate(!editMintMaxDate)}
-                    style={{ color: "#4376FF", cursor: "pointer" }}
+                    style={{ color: '#4376FF', cursor: 'pointer' }}
                   >
-                    {"Edit"}
+                    {'Edit'}
                   </animated.div>
                 ) : null}
               </animated.div>
-            ) : null,
+            ) : null
           )
         )}
 
@@ -391,9 +391,9 @@ const ReviewDetails: React.FC = () => {
               <animated.div
                 className="flex items-center absolute top-3 right-5"
                 onClick={() => setEditMembersCount(!editMembersCount)}
-                style={{ color: "#4376FF", cursor: "pointer" }}
+                style={{ color: '#4376FF', cursor: 'pointer' }}
               >
-                {"Save"}
+                {'Save'}
               </animated.div>
             ) : null}
           </animated.div>
@@ -403,16 +403,16 @@ const ReviewDetails: React.FC = () => {
               <animated.div
                 className="flex justify-between px-5 py-4"
                 style={
-                  inlineEditView === "memberCount"
+                  inlineEditView === 'memberCount'
                     ? {
-                        backgroundColor: "#131416",
-                        borderRadius: "10px",
-                        cursor: "pointer",
+                        backgroundColor: '#131416',
+                        borderRadius: '10px',
+                        cursor: 'pointer'
                       }
-                    : { display: "inherit" }
+                    : { display: 'inherit' }
                 }
-                onMouseEnter={() => setInlineEditView("memberCount")}
-                onMouseLeave={() => setInlineEditView("")}
+                onMouseEnter={() => setInlineEditView('memberCount')}
+                onMouseLeave={() => setInlineEditView('')}
               >
                 <animated.div style={styles}>
                   {editMembersCount ? (
@@ -429,7 +429,7 @@ const ReviewDetails: React.FC = () => {
                           >
                             What’s the maximum number of members?
                           </animated.p>
-                        ) : null,
+                        ) : null
                       )}
                       <div className="flex mt-2 text-base">
                         <p className="text-white">{membersCount}</p>
@@ -437,17 +437,17 @@ const ReviewDetails: React.FC = () => {
                     </div>
                   )}
                 </animated.div>
-                {inlineEditView === "memberCount" ? (
+                {inlineEditView === 'memberCount' ? (
                   <animated.div
                     className="flex items-center"
                     onClick={() => setEditMembersCount(!editMembersCount)}
-                    style={{ color: "#4376FF", cursor: "pointer" }}
+                    style={{ color: '#4376FF', cursor: 'pointer' }}
                   >
-                    {"Edit"}
+                    {'Edit'}
                   </animated.div>
                 ) : null}
               </animated.div>
-            ) : null,
+            ) : null
           )
         )}
       </div>

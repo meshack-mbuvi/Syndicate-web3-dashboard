@@ -1,12 +1,12 @@
-import React, { Dispatch, SetStateAction } from "react";
-import Modal, { ModalStyle } from "@/components/modal";
+import React, { Dispatch, SetStateAction } from 'react';
+import Modal, { ModalStyle } from '@/components/modal';
 import {
   floatedNumberWithCommas,
-  numberWithCommas,
-} from "@/utils/formattedNumbers";
-import { formatAddress } from "@/utils/formatAddress";
-import EstimateGas from "@/containers/createInvestmentClub/gettingStarted/estimateGas";
-import { Callout } from "@/components/callout";
+  numberWithCommas
+} from '@/utils/formattedNumbers';
+import { formatAddress } from '@/utils/formatAddress';
+import EstimateGas from '@/containers/createInvestmentClub/gettingStarted/estimateGas';
+import { Callout } from '@/components/callout';
 
 interface IConfirmMemberAllocations {
   preview: boolean;
@@ -35,7 +35,7 @@ const ConfirmMemberAllocations: React.FC<IConfirmMemberAllocations> = ({
   handleUpdatingCapTable,
   symbol,
   totalSupply,
-  memberToUpdate,
+  memberToUpdate
 }): React.ReactElement => {
   const DetailContent = ({ label, value, symbol }) => (
     <div className="flex justify-between">
@@ -53,16 +53,16 @@ const ConfirmMemberAllocations: React.FC<IConfirmMemberAllocations> = ({
         show: preview,
         modalStyle: ModalStyle.DARK,
         showCloseButton: true,
-        customWidth: "w-full max-w-480",
+        customWidth: 'w-full max-w-480',
         outsideOnClick: true,
         closeModal: () => {
           setShowModifyCapTable(false);
           setPreview(false);
         },
-        customClassName: "pt-8 pb-10 px-5",
+        customClassName: 'pt-8 pb-10 px-5',
         showHeader: false,
         overflowYScroll: false,
-        overflow: "overflow-visible",
+        overflow: 'overflow-visible'
       }}
     >
       <div className="space-y-6">
@@ -78,7 +78,7 @@ const ConfirmMemberAllocations: React.FC<IConfirmMemberAllocations> = ({
             <div className="flex items-center justify-between mt-2 space-y-1">
               <span className="flex items-center">
                 <img
-                  src={"/images/user.svg"}
+                  src={'/images/user.svg'}
                   alt=""
                   className="flex-shrink-0 h-6 w-6 rounded-full"
                 />
@@ -95,12 +95,14 @@ const ConfirmMemberAllocations: React.FC<IConfirmMemberAllocations> = ({
               </p>
             </div>
             <div className="flex items-center justify-between mt-1">
-              <p className="text-2xl text-white">{numberWithCommas(memberAllocation)}</p>
+              <p className="text-2xl text-white">
+                {numberWithCommas(memberAllocation)}
+              </p>
               <p className="text-base text-white leading-6">{symbol}</p>
             </div>
             <div className="flex items-center justify-between mt-1">
               <p className="text-sm text-gray-syn4">
-                <span className="text-gray-syn4">Ownership share change:</span>{" "}
+                <span className="text-gray-syn4">Ownership share change:</span>{' '}
                 <span className="text-gray-syn4">
                   {floatedNumberWithCommas(memberToUpdate?.ownershipShare)}%
                 </span>
@@ -109,7 +111,9 @@ const ConfirmMemberAllocations: React.FC<IConfirmMemberAllocations> = ({
                   alt=""
                   className="px-2 inline w-7"
                 ></img>
-                <span className="text-gray-syn4">{floatedNumberWithCommas(newOwnership)}%</span>
+                <span className="text-gray-syn4">
+                  {floatedNumberWithCommas(newOwnership)}%
+                </span>
               </p>
             </div>
           </div>
@@ -123,9 +127,9 @@ const ConfirmMemberAllocations: React.FC<IConfirmMemberAllocations> = ({
               symbol={symbol}
             />
             <DetailContent
-              label={`Club tokens to be ${mintOrBurn? "minted": "burnt"}`}
-              value={`${mintOrBurn ? "+ " : "- "}${floatedNumberWithCommas(
-                tokensToMintOrBurn,
+              label={`Club tokens to be ${mintOrBurn ? 'minted' : 'burnt'}`}
+              value={`${mintOrBurn ? '+ ' : '- '}${floatedNumberWithCommas(
+                tokensToMintOrBurn
               )}`}
               symbol={symbol}
             />

@@ -1,5 +1,5 @@
-import { showWalletModal } from "@/state/wallet/actions";
-import { useDispatch } from "react-redux";
+import { showWalletModal } from '@/state/wallet/actions';
+import { useDispatch } from 'react-redux';
 
 const ConnectWalletAction: React.FC = () => {
   const dispatch = useDispatch();

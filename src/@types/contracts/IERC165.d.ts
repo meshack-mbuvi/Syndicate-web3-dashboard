@@ -2,11 +2,11 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import BN from "bn.js";
-import { EventData, PastEventOptions } from "web3-eth-contract";
+import BN from 'bn.js';
+import { EventData, PastEventOptions } from 'web3-eth-contract';
 
 export interface IERC165Contract extends Truffle.Contract<IERC165Instance> {
-  "new"(meta?: Truffle.TransactionDetails): Promise<IERC165Instance>;
+  'new'(meta?: Truffle.TransactionDetails): Promise<IERC165Instance>;
 }
 
 type AllEvents = never;

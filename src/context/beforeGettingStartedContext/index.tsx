@@ -1,13 +1,12 @@
-import { useRouter } from "next/router";
+import { useRouter } from 'next/router';
 import {
   createContext,
   ReactNode,
   useContext,
   useEffect,
-  useState,
-} from "react";
-import { useDemoMode } from "@/hooks/useDemoMode";
-
+  useState
+} from 'react';
+import { useDemoMode } from '@/hooks/useDemoMode';
 
 type BeforeGettingStartedProps = {
   showBeforeGettingStarted: boolean;
@@ -28,7 +27,7 @@ export const useBeforeGettingStartedContext =
     useContext(BeforeGettingStartedContext);
 
 const BeforeGettingStartedProvider: React.FC<{ children: ReactNode }> = ({
-  children,
+  children
 }) => {
   const [agreementChecked, setAgreementChecked] = useState(false);
   const [buttonDisabled, setButtonDisabled] = useState(true);
@@ -37,7 +36,7 @@ const BeforeGettingStartedProvider: React.FC<{ children: ReactNode }> = ({
     useState(false);
 
   const {
-    query: { clubAddress },
+    query: { clubAddress }
   } = useRouter();
   const isDemoMode = useDemoMode();
 
@@ -55,7 +54,7 @@ const BeforeGettingStartedProvider: React.FC<{ children: ReactNode }> = ({
       setShowBeforeGettingStarted(true);
       localStorage.setItem(
         clubAddress as string,
-        JSON.stringify({ showBeforeGettingStarted: true }),
+        JSON.stringify({ showBeforeGettingStarted: true })
       );
     } else if (showBeforeGettingStarted === true) {
       setShowBeforeGettingStarted(true);
@@ -73,7 +72,7 @@ const BeforeGettingStartedProvider: React.FC<{ children: ReactNode }> = ({
     setShowBeforeGettingStarted(false);
     localStorage.setItem(
       clubAddress as string,
-      JSON.stringify({ showBeforeGettingStarted: false }),
+      JSON.stringify({ showBeforeGettingStarted: false })
     );
   };
 
@@ -97,7 +96,7 @@ const BeforeGettingStartedProvider: React.FC<{ children: ReactNode }> = ({
         error,
         handleClickOutside,
         handleChange,
-        buttonDisabled,
+        buttonDisabled
       }}
     >
       {children}

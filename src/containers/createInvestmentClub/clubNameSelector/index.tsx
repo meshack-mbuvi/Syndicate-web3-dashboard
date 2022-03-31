@@ -1,17 +1,17 @@
-import Fade from "@/components/Fade";
-import { useCreateInvestmentClubContext } from "@/context/CreateInvestmentClubContext";
-import { useDebounce } from "@/hooks/useDebounce";
-import { AppState } from "@/state";
+import Fade from '@/components/Fade';
+import { useCreateInvestmentClubContext } from '@/context/CreateInvestmentClubContext';
+import { useDebounce } from '@/hooks/useDebounce';
+import { AppState } from '@/state';
 import {
   setInvestmentClubName,
-  setInvestmentClubSymbolPlaceHolder,
-} from "@/state/createInvestmentClub/slice";
-import { acronymGenerator } from "@/utils/acronymGenerator";
-import { symbolValidation } from "@/utils/validators";
-import { generateSlug } from "random-word-slugs";
-import { useEffect, useRef, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import useOnClickOutside from "../shared/useOnClickOutside";
+  setInvestmentClubSymbolPlaceHolder
+} from '@/state/createInvestmentClub/slice';
+import { acronymGenerator } from '@/utils/acronymGenerator';
+import { symbolValidation } from '@/utils/validators';
+import { generateSlug } from 'random-word-slugs';
+import { useEffect, useRef, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import useOnClickOutside from '../shared/useOnClickOutside';
 
 const ClubNameSelector: React.FC<{
   className?: string;
@@ -22,14 +22,14 @@ const ClubNameSelector: React.FC<{
   const {
     createInvestmentClubSliceReducer: {
       investmentClubName,
-      investmentClubSymbolPlaceHolder,
-    },
+      investmentClubSymbolPlaceHolder
+    }
   } = useSelector((state: AppState) => state);
 
   const dispatch = useDispatch();
   const { setNextBtnDisabled } = useCreateInvestmentClubContext();
 
-  const [errors, setErrors] = useState("");
+  const [errors, setErrors] = useState('');
   const [hasSymbolBeenEdited, setSymbolEditState] = useState(false);
   const [isButtonActive, setIsButtonActive] = useState(false);
 
@@ -40,10 +40,10 @@ const ClubNameSelector: React.FC<{
   useEffect(() => {
     if (debouncedSymbol && !hasSymbolBeenEdited) {
       dispatch(
-        setInvestmentClubSymbolPlaceHolder(acronymGenerator(debouncedSymbol)),
+        setInvestmentClubSymbolPlaceHolder(acronymGenerator(debouncedSymbol))
       );
     } else if (!debouncedSymbol && !hasSymbolBeenEdited) {
-      dispatch(setInvestmentClubSymbolPlaceHolder(""));
+      dispatch(setInvestmentClubSymbolPlaceHolder(''));
     }
   }, [debouncedSymbol, dispatch, hasSymbolBeenEdited]);
 
@@ -51,7 +51,7 @@ const ClubNameSelector: React.FC<{
     // Dismiss error message after 1 second
     if (errors) {
       setTimeout(() => {
-        setErrors("");
+        setErrors('');
       }, 2000);
     }
   }, [errors]);
@@ -70,7 +70,7 @@ const ClubNameSelector: React.FC<{
     investmentClubName,
     investmentClubSymbolPlaceHolder,
     editButtonClicked,
-    setNextBtnDisabled,
+    setNextBtnDisabled
   ]);
 
   const handleSymbolChange = (e) => {
@@ -90,40 +90,40 @@ const ClubNameSelector: React.FC<{
     e.preventDefault();
     setIsButtonActive(true);
     const slug = generateSlug(2, {
-      format: "title",
+      format: 'title',
       categories: {
         noun: [
-          "media",
-          "science",
-          "sports",
-          "technology",
-          "thing",
-          "time",
-          "transportation",
-          "animals",
+          'media',
+          'science',
+          'sports',
+          'technology',
+          'thing',
+          'time',
+          'transportation',
+          'animals'
         ],
         adjective: [
-          "appearance",
-          "color",
-          "quantity",
-          "shapes",
-          "size",
-          "sounds",
-          "taste",
-          "touch",
-        ],
-      },
+          'appearance',
+          'color',
+          'quantity',
+          'shapes',
+          'size',
+          'sounds',
+          'taste',
+          'touch'
+        ]
+      }
     });
     dispatch(setInvestmentClubName(slug));
   };
 
-  const activeClasses = "ring-1 ring-blue-navy";
+  const activeClasses = 'ring-1 ring-blue-navy';
 
   return (
     <Fade>
       <div className="ml-5">
         <div className={className}>
-          <h3 className={`pb-6 ${editButtonClicked ? "w-80" : "w-100"}`}>
+          <h3 className={`pb-6 ${editButtonClicked ? 'w-80' : 'w-100'}`}>
             What should we call this investment club?
           </h3>
           <div>
@@ -165,7 +165,7 @@ const ClubNameSelector: React.FC<{
             <div className="relative mb-2">
               <span
                 className="absolute inset-y-0 left-0 text-3xl pl-4"
-                style={{ marginTop: "11.5px" }}
+                style={{ marginTop: '11.5px' }}
               >
                 ✺
               </span>

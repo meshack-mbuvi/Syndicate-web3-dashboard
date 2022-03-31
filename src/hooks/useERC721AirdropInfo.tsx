@@ -1,28 +1,28 @@
-import { AppState } from "@/state";
+import { AppState } from '@/state';
 import {
   clearERC721AirdropInfo,
   setERC721AirdropInfo,
-  setLoadingERC721AirdropInfo,
-} from "@/state/erc721AirdropInfo/slice";
-import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+  setLoadingERC721AirdropInfo
+} from '@/state/erc721AirdropInfo/slice';
+import { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
 const useFetchAirdropInfo: any = () => {
   const dispatch = useDispatch();
 
   const {
     web3Reducer: {
-      web3: { account, currentEthereumNetwork },
+      web3: { account, currentEthereumNetwork }
     },
     erc721MerkleProofSliceReducer: { erc721MerkleProof },
     erc721TokenSliceReducer: {
       erc721Token: {
         address: nftAddress,
         publicSingleClaimEnabled,
-        publicUtilityClaimEnabled,
-      },
+        publicUtilityClaimEnabled
+      }
     },
-    initializeContractsReducer: { syndicateContracts },
+    initializeContractsReducer: { syndicateContracts }
   } = useSelector((state: AppState) => state);
 
   const [loading, setLoading] = useState(false);
@@ -34,20 +34,20 @@ const useFetchAirdropInfo: any = () => {
     let events;
     if (merkleExists) {
       events = await MerkleDistributorModuleERC721?.getPastEvents(
-        "MerkleAirdropCreated",
+        'MerkleAirdropCreated',
         {
           token: nftAddress,
-          treeIndex: erc721MerkleProof.treeIndex.toString(),
-        },
+          treeIndex: erc721MerkleProof.treeIndex.toString()
+        }
       );
       setAirdropData(events);
     } else {
       // alternative to get info when the user has no claim.
       events = await MerkleDistributorModuleERC721?.getPastEvents(
-        "MerkleAirdropCreated",
+        'MerkleAirdropCreated',
         {
-          token: nftAddress,
-        },
+          token: nftAddress
+        }
       );
       if (events.length) {
         setAirdropData([events[events.length - 1]]);
@@ -67,7 +67,7 @@ const useFetchAirdropInfo: any = () => {
     erc721MerkleProof.accountIndex,
     account,
     nftAddress,
-    currentEthereumNetwork,
+    currentEthereumNetwork
   ]);
 
   useEffect(() => {
@@ -82,8 +82,8 @@ const useFetchAirdropInfo: any = () => {
         setERC721AirdropInfo({
           ...airdropObj,
           endTime: parseInt(airdropObj.endTime),
-          startTime: parseInt(airdropObj.startTime),
-        }),
+          startTime: parseInt(airdropObj.startTime)
+        })
       );
       dispatch(setLoadingERC721AirdropInfo(false));
     } else {
@@ -93,7 +93,7 @@ const useFetchAirdropInfo: any = () => {
     loading,
     airdropData,
     publicSingleClaimEnabled,
-    publicUtilityClaimEnabled,
+    publicUtilityClaimEnabled
   ]);
 
   return { loading };

@@ -1,5 +1,5 @@
-import { PillButton } from "@/components/pillButtons";
-import { InputField } from "../inputField";
+import { PillButton } from '@/components/pillButtons';
+import { InputField } from '../inputField';
 
 export const InputFieldWithButton = (props: {
   value?: string;
@@ -18,7 +18,7 @@ export const InputFieldWithButton = (props: {
     placeholderLabel,
     infoLabel,
     isInErrorState = false,
-    extraClasses = "",
+    extraClasses = '',
     buttonLabel,
     isButtonActive = false,
     buttonOnClick,
@@ -40,7 +40,7 @@ export const InputFieldWithButton = (props: {
         />
         <div
           className="inline-flex items-center space-x-4 absolute top-1/2 right-4"
-          style={{ transform: "translateY(-50%)" }}
+          style={{ transform: 'translateY(-50%)' }}
         >
           <PillButton isActive={isButtonActive} onClick={buttonOnClick}>
             {buttonLabel}
@@ -51,7 +51,7 @@ export const InputFieldWithButton = (props: {
       {infoLabel && (
         <div
           className={`text-sm mt-2 ${
-            isInErrorState ? "text-red-error" : "text-gray-syn4"
+            isInErrorState ? 'text-red-error' : 'text-gray-syn4'
           }`}
         >
           {infoLabel}

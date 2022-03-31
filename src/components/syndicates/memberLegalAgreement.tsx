@@ -1,26 +1,26 @@
-import { ClubERC20Contract } from "@/ClubERC20Factory/clubERC20";
-import { NumberField } from "@/components/inputs/numberField";
-import { TextField } from "@/components/inputs/textField";
+import { ClubERC20Contract } from '@/ClubERC20Factory/clubERC20';
+import { NumberField } from '@/components/inputs/numberField';
+import { TextField } from '@/components/inputs/textField';
 import {
   ERC20TokenDefaultState,
-  setERC20Token,
-} from "@/helpers/erc20TokenDetails";
-import { AppState } from "@/state";
-import { setClubMembers } from "@/state/clubMembers";
-import { setERC20TokenDetails } from "@/state/erc20token/slice";
-import { setClubLegalInfo, setMemberLegalInfo } from "@/state/legalInfo";
-import { numberWithCommas } from "@/utils/formattedNumbers";
+  setERC20Token
+} from '@/helpers/erc20TokenDetails';
+import { AppState } from '@/state';
+import { setClubMembers } from '@/state/clubMembers';
+import { setERC20TokenDetails } from '@/state/erc20token/slice';
+import { setClubLegalInfo, setMemberLegalInfo } from '@/state/legalInfo';
+import { numberWithCommas } from '@/utils/formattedNumbers';
 // See this issue to find out why yup is imported this way
 // https://github.com/react-hook-form/resolvers/issues/271
-import { yupResolver } from "@hookform/resolvers/yup";
-import { decode } from "js-base64";
-import Image from "next/image";
-import { useRouter } from "next/router";
-import React, { useEffect } from "react";
-import { useForm } from "react-hook-form";
-import { useDispatch, useSelector } from "react-redux";
-import * as yup from "yup";
-import ArrowDown from "/public/images/arrowDown.svg";
+import { yupResolver } from '@hookform/resolvers/yup';
+import { decode } from 'js-base64';
+import Image from 'next/image';
+import { useRouter } from 'next/router';
+import React, { useEffect } from 'react';
+import { useForm } from 'react-hook-form';
+import { useDispatch, useSelector } from 'react-redux';
+import * as yup from 'yup';
+import ArrowDown from '/public/images/arrowDown.svg';
 
 interface FormInputs {
   memberName: string;
@@ -30,22 +30,22 @@ interface FormInputs {
 
 const schema = (maxDeposit: number) => {
   const depositRangeError = `Greater than the maximum deposit amount of ${numberWithCommas(
-    maxDeposit,
+    maxDeposit
   )} set by the club admin`;
 
   return yup.object({
     memberName: yup.string().required("Member's full name is required."),
     depositAmount: yup
       .number()
-      .required("Subscription amount is required.")
-      .moreThan(0, "Subscription amount is required.")
+      .required('Subscription amount is required.')
+      .moreThan(0, 'Subscription amount is required.')
       .max(+maxDeposit, depositRangeError)
-      .required("Subscription amount is required.")
-      .typeError("Invalid amount"),
+      .required('Subscription amount is required.')
+      .typeError('Invalid amount'),
     emailAddress: yup
       .string()
-      .email("Email address must be a valid email.")
-      .required("Email address is required."),
+      .email('Email address must be a valid email.')
+      .required('Email address is required.')
   });
 };
 
@@ -57,23 +57,23 @@ const LegalAgreement: React.FC = () => {
 
   const {
     legalInfoReducer: {
-      clubInfo: { adminName },
+      clubInfo: { adminName }
     },
     web3Reducer: {
-      web3: { account, web3 },
+      web3: { account, web3 }
     },
     erc20TokenSliceReducer: {
       erc20Token,
       // TODO: I think this should be in USD
-      depositDetails: { depositTokenSymbol },
-    },
+      depositDetails: { depositTokenSymbol }
+    }
   } = useSelector((state: AppState) => state);
 
   useEffect(() => {
     if (router.isReady && web3.utils.isAddress(clubAddress as string)) {
       const clubERC20tokenContract = new ClubERC20Contract(
         clubAddress as string,
-        web3,
+        web3
       );
 
       dispatch(setERC20Token(clubERC20tokenContract));
@@ -89,19 +89,19 @@ const LegalAgreement: React.FC = () => {
     control,
     handleSubmit,
     watch,
-    formState: { isValid },
+    formState: { isValid }
   } = useForm<FormInputs>({
-    mode: "onChange",
-    resolver: yupResolver(schema(erc20Token.maxTotalDeposits)),
+    mode: 'onChange',
+    resolver: yupResolver(schema(erc20Token.maxTotalDeposits))
   });
 
-  const { memberName = "" } = watch();
+  const { memberName = '' } = watch();
 
   const { form } = router.query;
   // Check whether form query param exist when page has loaded
   useEffect(() => {
     if (router.isReady && !form) {
-      router.push("/clubs");
+      router.push('/clubs');
     }
   }, [router, form]);
 
@@ -111,11 +111,11 @@ const LegalAgreement: React.FC = () => {
       try {
         dispatch(
           setClubLegalInfo(
-            JSON.parse(decode(decodeURIComponent(form as string))),
-          ),
+            JSON.parse(decode(decodeURIComponent(form as string)))
+          )
         );
       } catch (e) {
-        router.push("/clubs");
+        router.push('/clubs');
       }
     }
   }, [router.isReady, form]);
@@ -139,7 +139,7 @@ const LegalAgreement: React.FC = () => {
               control={control}
               placeholder="Member’s full name"
               showWarning={
-                memberName && memberName?.trim().split(" ").length < 2
+                memberName && memberName?.trim().split(' ').length < 2
               }
               warningText="Member name should have first and last names"
             />
@@ -201,8 +201,8 @@ const LegalAgreement: React.FC = () => {
               <button
                 className={`${
                   !isValid
-                    ? "primary-CTA-disabled text-gray-lightManatee"
-                    : "primary-CTA hover:opacity-90 transition-all"
+                    ? 'primary-CTA-disabled text-gray-lightManatee'
+                    : 'primary-CTA hover:opacity-90 transition-all'
                 }`}
                 type="submit"
               >

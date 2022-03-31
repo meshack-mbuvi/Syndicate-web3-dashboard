@@ -2,12 +2,12 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import BN from "bn.js";
-import { EventData, PastEventOptions } from "web3-eth-contract";
+import BN from 'bn.js';
+import { EventData, PastEventOptions } from 'web3-eth-contract';
 
 export interface ERC721HolderContract
   extends Truffle.Contract<ERC721HolderInstance> {
-  "new"(meta?: Truffle.TransactionDetails): Promise<ERC721HolderInstance>;
+  'new'(meta?: Truffle.TransactionDetails): Promise<ERC721HolderInstance>;
 }
 
 type AllEvents = never;

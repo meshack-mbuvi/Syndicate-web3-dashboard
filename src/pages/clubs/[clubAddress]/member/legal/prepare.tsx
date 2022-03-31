@@ -1,16 +1,16 @@
-import Layout from "@/components/layout";
-import MemberLegalAgreement from "@/components/syndicates/memberLegalAgreement";
-import Head from "@/components/syndicates/shared/HeaderTitle";
-import WalletNotConnected from "@/components/walletNotConnected";
-import { AppState } from "@/state";
-import { NextPage } from "next";
-import { useRouter } from "next/router";
-import React from "react";
-import { useSelector } from "react-redux";
+import Layout from '@/components/layout';
+import MemberLegalAgreement from '@/components/syndicates/memberLegalAgreement';
+import Head from '@/components/syndicates/shared/HeaderTitle';
+import WalletNotConnected from '@/components/walletNotConnected';
+import { AppState } from '@/state';
+import { NextPage } from 'next';
+import { useRouter } from 'next/router';
+import React from 'react';
+import { useSelector } from 'react-redux';
 
 const SignMemberLegalAgreement: NextPage = () => {
   const account = useSelector(
-    (state: AppState) => state.web3Reducer.web3.account,
+    (state: AppState) => state.web3Reducer.web3.account
   );
   const router = useRouter();
   const { clubAddress } = router.query;
@@ -18,12 +18,12 @@ const SignMemberLegalAgreement: NextPage = () => {
   const navItems = [
     {
       url: `/clubs/${clubAddress}`,
-      navItemText: "Exit",
+      navItemText: 'Exit'
     },
     {
-      navItemText: "Sign legal agreements",
-      isLegal: true,
-    },
+      navItemText: 'Sign legal agreements',
+      isLegal: true
+    }
   ];
 
   return (

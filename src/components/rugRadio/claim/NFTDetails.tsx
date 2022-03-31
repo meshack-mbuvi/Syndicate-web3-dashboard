@@ -1,42 +1,42 @@
-import { CtaButton } from "@/components/CTAButton";
-import { ExternalLinkColor } from "@/components/iconWrappers";
-import Modal, { ModalStyle } from "@/components/modal";
-import NumberTreatment from "@/components/NumberTreatment";
-import { Spinner } from "@/components/shared/spinner";
-import { SkeletonLoader } from "@/components/skeletonLoader";
-import { EtherscanLink } from "@/components/syndicates/shared/EtherscanLink";
-import useRugRadioTokenCount from "@/hooks/useRugRadioTokens";
-import { AppState } from "@/state";
-import { fetchCollectiblesTransactions } from "@/state/assets/slice";
-import { getCountDownDays } from "@/utils/dateUtils";
-import { numberWithCommas } from "@/utils/formattedNumbers";
-import Image from "next/image";
-import React, { useEffect, useState } from "react";
-import InfiniteScroll from "react-infinite-scroll-component";
-import { useDispatch, useSelector } from "react-redux";
-import Tooltip from "react-tooltip-lite";
-import { BonusTokenClaim } from "../shared/bonusToken";
-import { NFTChecker } from "../shared/NFTchecker";
-import NFTComponent from "../shared/nftComponent";
-import { TabComponent } from "../shared/tabComponent";
-import RugRadioTokenWhiteIcon from "/public/images/rugRadio/rugradioToken-white.svg";
+import { CtaButton } from '@/components/CTAButton';
+import { ExternalLinkColor } from '@/components/iconWrappers';
+import Modal, { ModalStyle } from '@/components/modal';
+import NumberTreatment from '@/components/NumberTreatment';
+import { Spinner } from '@/components/shared/spinner';
+import { SkeletonLoader } from '@/components/skeletonLoader';
+import { EtherscanLink } from '@/components/syndicates/shared/EtherscanLink';
+import useRugRadioTokenCount from '@/hooks/useRugRadioTokens';
+import { AppState } from '@/state';
+import { fetchCollectiblesTransactions } from '@/state/assets/slice';
+import { getCountDownDays } from '@/utils/dateUtils';
+import { numberWithCommas } from '@/utils/formattedNumbers';
+import Image from 'next/image';
+import React, { useEffect, useState } from 'react';
+import InfiniteScroll from 'react-infinite-scroll-component';
+import { useDispatch, useSelector } from 'react-redux';
+import Tooltip from 'react-tooltip-lite';
+import { BonusTokenClaim } from '../shared/bonusToken';
+import { NFTChecker } from '../shared/NFTchecker';
+import NFTComponent from '../shared/nftComponent';
+import { TabComponent } from '../shared/tabComponent';
+import RugRadioTokenWhiteIcon from '/public/images/rugRadio/rugradioToken-white.svg';
 
 export const NFTDetails: React.FC = () => {
   const {
     web3Reducer: {
-      web3: { account },
+      web3: { account }
     },
     initializeContractsReducer: {
-      syndicateContracts: { RugClaimModule, rugBonusClaimModule },
+      syndicateContracts: { RugClaimModule, rugBonusClaimModule }
     },
-    assetsSliceReducer: { collectiblesResult, allCollectiblesFetched },
+    assetsSliceReducer: { collectiblesResult, allCollectiblesFetched }
   } = useSelector((state: AppState) => state);
 
   const [showNFTchecker, setShowNFTchecker] = useState(false);
 
   // utility modal state functions
   const [confirm, setConfirm] = useState(false);
-  const [transactionHash, setTransactionHash] = useState("");
+  const [transactionHash, setTransactionHash] = useState('');
   const [userRejectedTransaction] = useState(false);
   const [processing, setProcessing] = useState(false);
   const [processed, setProcessed] = useState(true);
@@ -55,7 +55,7 @@ export const NFTDetails: React.FC = () => {
     totalGeneratedTokens,
     loading,
     nextClaimTime,
-    totalBonusToClaim,
+    totalBonusToClaim
   } = useRugRadioTokenCount(collectibles, processed);
 
   const handleClose = () => {
@@ -71,9 +71,9 @@ export const NFTDetails: React.FC = () => {
     dispatch(
       fetchCollectiblesTransactions({
         account,
-        offset: "0",
-        contractAddress: genesisNFTContractAddress,
-      }),
+        offset: '0',
+        contractAddress: genesisNFTContractAddress
+      })
     );
   }, [account, genesisNFTContractAddress]);
 
@@ -100,9 +100,9 @@ export const NFTDetails: React.FC = () => {
     dispatch(
       fetchCollectiblesTransactions({
         account,
-        offset: "0",
-        contractAddress: genesisNFTContractAddress,
-      }),
+        offset: '0',
+        contractAddress: genesisNFTContractAddress
+      })
     );
   };
 
@@ -149,7 +149,7 @@ export const NFTDetails: React.FC = () => {
       onTxConfirm,
       onTxReceipt,
       onTxFail,
-      setTransactionHash,
+      setTransactionHash
     );
   };
 
@@ -171,7 +171,7 @@ export const NFTDetails: React.FC = () => {
       onTxConfirm,
       onTxReceipt,
       onTxFail,
-      setTransactionHash,
+      setTransactionHash
     );
   };
 
@@ -193,9 +193,9 @@ export const NFTDetails: React.FC = () => {
     dispatch(
       fetchCollectiblesTransactions({
         account,
-        offset: "0",
-        contractAddress: genesisNFTContractAddress,
-      }),
+        offset: '0',
+        contractAddress: genesisNFTContractAddress
+      })
     );
   };
 
@@ -205,8 +205,8 @@ export const NFTDetails: React.FC = () => {
       fetchCollectiblesTransactions({
         account,
         offset: pageOffSet.toString(),
-        contractAddress: genesisNFTContractAddress,
-      }),
+        contractAddress: genesisNFTContractAddress
+      })
     );
   };
 
@@ -249,7 +249,7 @@ export const NFTDetails: React.FC = () => {
         </div>
         <div className="space-y-4 font-whyte">
           <p className="text-center text-xl">
-            Claiming {`${claimBonus ? "bonus RUG" : "RUG"}`}
+            Claiming {`${claimBonus ? 'bonus RUG' : 'RUG'}`}
           </p>
 
           <div className="text-base flex justify-center items-center hover:opacity-80">
@@ -274,11 +274,11 @@ export const NFTDetails: React.FC = () => {
         </div>
         <div className="space-y-4 font-whyte">
           <p className="text-center text-xl">{`${
-            claimBonus ? "Bonus " : ""
+            claimBonus ? 'Bonus ' : ''
           }RUG claimed`}</p>
           <p className="text-gray-syn4 text-center text-base leading-6">
             {`You just claimed ${numberWithCommas(
-              claimBonus ? totalBonusToClaim : totalYieldTokens,
+              claimBonus ? totalBonusToClaim : totalYieldTokens
             )} RUG
             successfully. It’s in your wallet.`}
           </p>
@@ -320,7 +320,7 @@ export const NFTDetails: React.FC = () => {
               />
             </div>
           ) : (
-            ""
+            ''
           )}
         </div>
         <button
@@ -336,7 +336,7 @@ export const NFTDetails: React.FC = () => {
 
   const tabContents = {
     claim: {
-      title: "Claim",
+      title: 'Claim',
       content: (
         <>
           <p className="flex text-xl font-whyte">
@@ -346,7 +346,7 @@ export const NFTDetails: React.FC = () => {
                 width={16}
                 height={16}
                 alt="token icon"
-              />{" "}
+              />{' '}
             </span>
             {numberWithCommas(totalYieldTokens)} RUG
           </p>
@@ -356,7 +356,7 @@ export const NFTDetails: React.FC = () => {
             disabled={totalYieldTokens == 0}
           >
             {totalYieldTokens > 0
-              ? "Claim yield"
+              ? 'Claim yield'
               : `Next claim in ${getCountDownDays(`${nextClaimTime}`)}`}
           </CtaButton>
 
@@ -366,7 +366,7 @@ export const NFTDetails: React.FC = () => {
             </p>
           )}
         </>
-      ),
+      )
     },
     convert: {
       title: (
@@ -392,8 +392,8 @@ export const NFTDetails: React.FC = () => {
           </Tooltip>
         </>
       ),
-      content: <>To be implemented</>,
-    },
+      content: <>To be implemented</>
+    }
   };
 
   const loaderContent = (
@@ -480,7 +480,7 @@ export const NFTDetails: React.FC = () => {
                   available to claim
                 </p>
                 <p className="h3 text-center text-gray-syn4 leading-7">
-                  Your RugRadio Genesis NFTs have generated a total of{" "}
+                  Your RugRadio Genesis NFTs have generated a total of{' '}
                   <NumberTreatment numberValue={totalGeneratedTokens} /> RUG.
                 </p>
               </>
@@ -554,62 +554,63 @@ export const NFTDetails: React.FC = () => {
               }
             >
               <div className="grid grid-cols-12 gap-4">
-                {!loading && collectibles.length > 0 ? (
-                  collectibles.map((collectible, index) => {
-                    const { id, image, animation } = collectible;
+                {!loading && collectibles.length > 0
+                  ? collectibles.map((collectible, index) => {
+                      const { id, image, animation } = collectible;
 
-                    let mediaType;
+                      let mediaType;
 
-                    if (image && !animation) {
-                      mediaType = "imageOnlyNFT";
-                    } else if (animation) {
-                      // animation could be a .mov or .mp4 video
-                      const movAnimation = animation.match(/\.mov$/) != null;
-                      const mp4Animation = animation.match(/\.mp4$/) != null;
+                      if (image && !animation) {
+                        mediaType = 'imageOnlyNFT';
+                      } else if (animation) {
+                        // animation could be a .mov or .mp4 video
+                        const movAnimation = animation.match(/\.mov$/) != null;
+                        const mp4Animation = animation.match(/\.mp4$/) != null;
 
-                      if (movAnimation || mp4Animation) {
-                        mediaType = "videoNFT";
+                        if (movAnimation || mp4Animation) {
+                          mediaType = 'videoNFT';
+                        }
+
+                        // https://litwtf.mypinata.cloud/ipfs/QmVjgAD5gaNQ1cLpgKLeuXDPX8R1yeajtWUhM6nV7VAe6e/4.mp4
+                        // details for the nft with id below are not returned correctly and hence does not render
+                        // The animation link is a .html which is not captured.
+                        // Until we find a better way to handle this, let's have the fix below
+                        if (
+                          animation.match(/\.html$/) != null &&
+                          id == '3216'
+                        ) {
+                          mediaType = 'htmlNFT';
+                        }
+
+                        // animation could be a gif
+                        if (animation.match(/\.gif$/) != null) {
+                          mediaType = 'animatedNFT';
+                        }
+
+                        // add support for .wav and .mp3 files
+                        const wavAnimation = animation.match(/\.wav$/) != null;
+                        const mp3Animation = animation.match(/\.mp3$/) != null;
+                        const soundtrack = wavAnimation || mp3Animation;
+
+                        if (soundtrack) {
+                          mediaType = 'soundtrackNFT';
+                        }
                       }
-
-                      // https://litwtf.mypinata.cloud/ipfs/QmVjgAD5gaNQ1cLpgKLeuXDPX8R1yeajtWUhM6nV7VAe6e/4.mp4
-                      // details for the nft with id below are not returned correctly and hence does not render
-                      // The animation link is a .html which is not captured.
-                      // Until we find a better way to handle this, let's have the fix below
-                      if (animation.match(/\.html$/) != null && id == "3216") {
-                        mediaType = "htmlNFT";
-                      }
-
-                      // animation could be a gif
-                      if (animation.match(/\.gif$/) != null) {
-                        mediaType = "animatedNFT";
-                      }
-
-                      // add support for .wav and .mp3 files
-                      const wavAnimation = animation.match(/\.wav$/) != null;
-                      const mp3Animation = animation.match(/\.mp3$/) != null;
-                      const soundtrack = wavAnimation || mp3Animation;
-
-                      if (soundtrack) {
-                        mediaType = "soundtrackNFT";
-                      }
-                    }
-                    return (
-                      <NFTComponent
-                        {...{
-                          ...{
-                            collectible,
-                            mediaType,
-                            showCollectibles: true,
-                            refresh: processed,
-                          },
-                        }}
-                        key={index}
-                      />
-                    );
-                  })
-                ) : (
-                  null
-                )}
+                      return (
+                        <NFTComponent
+                          {...{
+                            ...{
+                              collectible,
+                              mediaType,
+                              showCollectibles: true,
+                              refresh: processed
+                            }
+                          }}
+                          key={index}
+                        />
+                      );
+                    })
+                  : null}
               </div>
             </InfiniteScroll>
 
@@ -686,12 +687,12 @@ export const NFTDetails: React.FC = () => {
           show: showErrorModal,
           modalStyle: ModalStyle.DARK,
           showCloseButton: false,
-          customWidth: "w-full max-w-480",
+          customWidth: 'w-full max-w-480',
           outsideOnClick: false,
-          customClassName: "p-10",
+          customClassName: 'p-10',
           showHeader: false,
           overflowYScroll: false,
-          overflow: "overflow-visible",
+          overflow: 'overflow-visible'
         }}
       >
         <div
@@ -701,13 +702,13 @@ export const NFTDetails: React.FC = () => {
             <Image
               width={48}
               height={48}
-              src={"/images/syndicateStatusIcons/transactionFailed.svg"}
+              src={'/images/syndicateStatusIcons/transactionFailed.svg'}
               alt="failed"
             />
           </div>
           <div className={`mt-4 mb-6 text-center`}>
             <span className="text-base">{`${`Transaction ${
-              transactionRejected ? "rejected" : "failed"
+              transactionRejected ? 'rejected' : 'failed'
             }`}`}</span>
           </div>
           <button
@@ -724,12 +725,12 @@ export const NFTDetails: React.FC = () => {
           show: showModal,
           modalStyle: ModalStyle.DARK,
           showCloseButton: false,
-          customWidth: "w-full max-w-480",
+          customWidth: 'w-full max-w-480',
           outsideOnClick: false,
-          customClassName: "p-10",
+          customClassName: 'p-10',
           showHeader: false,
           overflowYScroll: false,
-          overflow: "overflow-visible",
+          overflow: 'overflow-visible'
         }}
       >
         {modalContent}
@@ -741,13 +742,13 @@ export const NFTDetails: React.FC = () => {
           show: showNFTchecker,
           modalStyle: ModalStyle.DARK,
           showCloseButton: false,
-          customWidth: "w-full max-w-480",
+          customWidth: 'w-full max-w-480',
           outsideOnClick: true,
           showHeader: false,
           closeModal: () => handleClose(),
           overflowYScroll: false,
-          customClassName: "p-8 pt-6",
-          overflow: "overflow-visible",
+          customClassName: 'p-8 pt-6',
+          overflow: 'overflow-visible'
         }}
       >
         <NFTChecker />

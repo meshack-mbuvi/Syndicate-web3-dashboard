@@ -1,8 +1,8 @@
-import React, { useState } from "react";
-import { NFTChecker } from "./NFTchecker";
+import React, { useState } from 'react';
+import { NFTChecker } from './NFTchecker';
 
 export const TabComponent: React.FC<{ tabContents }> = ({ tabContents }) => {
-  const [activeTab, setActiveTab] = useState("claim");
+  const [activeTab, setActiveTab] = useState('claim');
 
   return (
     <div className="p-8 pt-6 space-y-8 bg-gray-syn8 rounded-2.5xl">
@@ -15,21 +15,21 @@ export const TabComponent: React.FC<{ tabContents }> = ({ tabContents }) => {
                 onClick={() => setActiveTab(key.toLowerCase())}
                 className={`flex whitespace-nowrap h4 -mb-0.4 pb-6 w-fit-content transition-all focus:ring-0 font-whyte text-sm cursor-pointer ${
                   activeTab == key
-                    ? "border-b-1 border-white text-white"
-                    : "border-transparent text-gray-syn4 hover:text-gray-40"
+                    ? 'border-b-1 border-white text-white'
+                    : 'border-transparent text-gray-syn4 hover:text-gray-40'
                 }`}
-                disabled={key.toLowerCase() === "convert"}
+                disabled={key.toLowerCase() === 'convert'}
               >
                 {tabContents[key].title}
               </button>
             ))}
           </nav>
           <button
-            onClick={() => setActiveTab("check nft")}
+            onClick={() => setActiveTab('check nft')}
             className={`flex whitespace-nowrap h4 -mb-0.4 pb-6 w-fit-content transition-all focus:ring-0 font-whyte text-sm cursor-pointer ${
-              activeTab == "check nft"
-                ? "border-b-1 border-white text-white"
-                : "border-transparent text-gray-syn4 hover:text-gray-40"
+              activeTab == 'check nft'
+                ? 'border-b-1 border-white text-white'
+                : 'border-transparent text-gray-syn4 hover:text-gray-40'
             }`}
           >
             check nft

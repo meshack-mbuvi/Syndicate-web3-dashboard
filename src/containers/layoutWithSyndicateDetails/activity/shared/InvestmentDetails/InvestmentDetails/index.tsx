@@ -1,16 +1,16 @@
-import { NumberField, TextField } from "@/components/inputs";
-import ActivityDatePicker from "@/containers/layoutWithSyndicateDetails/activity/shared/ActivityDatePicker";
-import { DataStorageInfo } from "@/containers/layoutWithSyndicateDetails/activity/shared/DataStorageInfo";
-import RoundDropDown from "@/containers/layoutWithSyndicateDetails/activity/shared/InvestmentDetails/InvestmentDetails/RoundDropDown";
-import PiiWarning from "@/containers/layoutWithSyndicateDetails/activity/shared/PiiWarning";
-import { ANNOTATE_TRANSACTIONS } from "@/graphql/mutations";
-import { AppState } from "@/state";
-import { useMutation } from "@apollo/client";
-import { isEmpty } from "lodash";
-import Image from "next/image";
-import React, { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
-import { useSelector } from "react-redux";
+import { NumberField, TextField } from '@/components/inputs';
+import ActivityDatePicker from '@/containers/layoutWithSyndicateDetails/activity/shared/ActivityDatePicker';
+import { DataStorageInfo } from '@/containers/layoutWithSyndicateDetails/activity/shared/DataStorageInfo';
+import RoundDropDown from '@/containers/layoutWithSyndicateDetails/activity/shared/InvestmentDetails/InvestmentDetails/RoundDropDown';
+import PiiWarning from '@/containers/layoutWithSyndicateDetails/activity/shared/PiiWarning';
+import { ANNOTATE_TRANSACTIONS } from '@/graphql/mutations';
+import { AppState } from '@/state';
+import { useMutation } from '@apollo/client';
+import { isEmpty } from 'lodash';
+import Image from 'next/image';
+import React, { useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { useSelector } from 'react-redux';
 
 interface Details {
   companyName: string;
@@ -43,15 +43,15 @@ const InvestmentDetailsModal: React.FC<IInvestmentDetailsModal> = ({
   transactionId,
   setStoredInvestmentDetails,
   isManager,
-  onSuccessfulAnnotation,
+  onSuccessfulAnnotation
 }) => {
   const disabled = !editMode;
   const [hover, setHover] = useState<boolean>(false);
 
   const {
     transactionsReducer: {
-      currentTransaction: { blockTimestamp },
-    },
+      currentTransaction: { blockTimestamp }
+    }
   } = useSelector((state: AppState) => state);
 
   const setHoverState = (over) => {
@@ -68,10 +68,10 @@ const InvestmentDetailsModal: React.FC<IInvestmentDetailsModal> = ({
     reset,
     getValues,
     setValue,
-    formState: { isDirty, dirtyFields },
+    formState: { isDirty, dirtyFields }
   } = useForm<Details>({
-    mode: "onChange",
-    defaultValues: storedInvestmentDetails,
+    mode: 'onChange',
+    defaultValues: storedInvestmentDetails
   });
 
   useEffect(() => {
@@ -84,7 +84,7 @@ const InvestmentDetailsModal: React.FC<IInvestmentDetailsModal> = ({
   useEffect(() => {
     if (!storedInvestmentDetails?.investmentDate) {
       //  Set the date to the current block timestamp
-      setValue("investmentDate", new Date().toISOString());
+      setValue('investmentDate', new Date().toISOString());
     }
   }, [blockTimestamp, storedInvestmentDetails?.investmentDate]);
 
@@ -100,7 +100,7 @@ const InvestmentDetailsModal: React.FC<IInvestmentDetailsModal> = ({
     investmentRound,
     fullyDilutedOwnershipStake,
     numberShares,
-    numberTokens,
+    numberTokens
   } = formValues;
 
   const onSubmit = (values) => {
@@ -115,38 +115,38 @@ const InvestmentDetailsModal: React.FC<IInvestmentDetailsModal> = ({
       equityStake: values?.fullyDilutedOwnershipStake,
       tokenAmount: values?.numberTokens,
       sharesAmount: values?.numberShares,
-      roundCategory: values?.investmentRound,
+      roundCategory: values?.investmentRound
     };
 
     annotationMutation({
       variables: {
-        transactionAnnotationList: [{ ...detailsAnnotationData }],
+        transactionAnnotationList: [{ ...detailsAnnotationData }]
       },
-      context: { clientName: "backend" },
+      context: { clientName: 'backend' }
     });
     setStoredInvestmentDetails(values);
     reset(values, {
-      keepValues: true,
+      keepValues: true
     });
     onClick(values);
     onSuccessfulAnnotation();
   };
 
   const borderStyles =
-    "border-b-1 border-gray-syn6 border-collapse text-gray-syn4";
+    'border-b-1 border-gray-syn6 border-collapse text-gray-syn4';
   const dateBorderStyles = `w-full flex-row ${borderStyles}`;
   const details = Object.values(formValues);
 
   return (
     <>
-      {editMode || details.join("").length ? (
+      {editMode || details.join('').length ? (
         <div
           className={`border border-none px-5 pb-6 pt-4 rounded-lg ${
-            editMode ? `bg-black` : isManager ? `hover:bg-black` : ""
+            editMode ? `bg-black` : isManager ? `hover:bg-black` : ''
           }`}
           onMouseOver={() => setHoverState(true)}
           onMouseLeave={() => setHoverState(false)}
-          onFocus={() => ""}
+          onFocus={() => ''}
         >
           <div className="w-full flex justify-between mb-4">
             <div className="flex">Details</div>
@@ -194,7 +194,7 @@ const InvestmentDetailsModal: React.FC<IInvestmentDetailsModal> = ({
                     borderStyles={borderStyles}
                     disabled={disabled}
                     resetRound={() =>
-                      setValue("investmentRound", "", { shouldDirty: true })
+                      setValue('investmentRound', '', { shouldDirty: true })
                     }
                   />
                 ) : null}
@@ -244,7 +244,7 @@ const InvestmentDetailsModal: React.FC<IInvestmentDetailsModal> = ({
                 {editMode || investmentDate ? (
                   <ActivityDatePicker
                     control={control}
-                    name={"investmentDate"}
+                    name={'investmentDate'}
                     disabled={disabled}
                     borderStyles={dateBorderStyles}
                     label="Investment date"

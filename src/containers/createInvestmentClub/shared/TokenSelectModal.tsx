@@ -1,6 +1,6 @@
-import React from "react";
-import Modal, { ModalStyle } from "@/components/modal";
-import { DepositTokenSelect } from "@/containers/createInvestmentClub/shared/DepositTokenSelect";
+import React from 'react';
+import Modal, { ModalStyle } from '@/components/modal';
+import { DepositTokenSelect } from '@/containers/createInvestmentClub/shared/DepositTokenSelect';
 
 interface ITokenModal {
   showModal: boolean;

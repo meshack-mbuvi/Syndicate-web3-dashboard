@@ -1,4 +1,4 @@
 // feeds page.
-import Feed from "src/containers/feed";
+import Feed from 'src/containers/feed';
 
 export default Feed;

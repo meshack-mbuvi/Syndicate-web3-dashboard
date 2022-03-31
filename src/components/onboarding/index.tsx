@@ -1,6 +1,6 @@
-import { useOnboardingContext } from "@/context/OnboardingContext";
-import PrimaryButton from "../buttons/PrimaryButton";
-import Modal, { ModalStyle } from "../modal";
+import { useOnboardingContext } from '@/context/OnboardingContext';
+import PrimaryButton from '../buttons/PrimaryButton';
+import Modal, { ModalStyle } from '../modal';
 
 const OnboardingModal: React.FC = () => {
   const { showInvestorOnboarding, hideInvestorOnboarding } =
@@ -15,8 +15,9 @@ const OnboardingModal: React.FC = () => {
     >
       <>
         <p className="mb-6 text-gray-2 font-whyte-light">
-          Syndicate gives you more than any other investing tool, as Syndicate&apos;s
-          smart contracts automate a wide range of functions, including:
+          Syndicate gives you more than any other investing tool, as
+          Syndicate&apos;s smart contracts automate a wide range of functions,
+          including:
         </p>
 
         <div className="border-t border-b border-gray-24 fade-b-dark-modal">

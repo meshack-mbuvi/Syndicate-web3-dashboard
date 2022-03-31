@@ -1,5 +1,5 @@
 enum GraphEventType {
-  MEMBER_MINTED,
+  MEMBER_MINTED
 }
 
 export interface GraphEvent {
@@ -9,16 +9,16 @@ export interface GraphEvent {
 }
 
 export type TransactionCategory =
-  | "INVESTMENT"
-  | "INVESTMENT_TOKEN"
-  | "EXPENSE"
-  | "DEPOSIT"
-  | "OTHER"
-  | "UNCATEGORISED"
-  | "SELECT_CATEGORY"
-  | "TOKEN"
-  | "COLLECTIBLE"
-  | "OFF_CHAIN_INVESTMENT";
+  | 'INVESTMENT'
+  | 'INVESTMENT_TOKEN'
+  | 'EXPENSE'
+  | 'DEPOSIT'
+  | 'OTHER'
+  | 'UNCATEGORISED'
+  | 'SELECT_CATEGORY'
+  | 'TOKEN'
+  | 'COLLECTIBLE'
+  | 'OFF_CHAIN_INVESTMENT';
 
 export enum RoundCategory {
   SEED,
@@ -29,7 +29,7 @@ export enum RoundCategory {
   SERIES_E,
   PUBLIC,
   ICO,
-  OTHER,
+  OTHER
 }
 
 export interface TransactionAnnotation {
@@ -118,21 +118,21 @@ interface InitialState {
 }
 
 export const emptyCurrentTransaction: CurrentTransaction = {
-  category: "UNCATEGORISED",
-  note: "",
-  hash: "",
+  category: 'UNCATEGORISED',
+  note: '',
+  hash: '',
   transactionInfo: {
-    transactionHash: "",
-    from: "",
-    to: "",
-    isOutgoingTransaction: false,
+    transactionHash: '',
+    from: '',
+    to: '',
+    isOutgoingTransaction: false
   },
-  amount: "",
-  tokenSymbol: "",
-  tokenLogo: "",
-  tokenName: "",
+  amount: '',
+  tokenSymbol: '',
+  tokenLogo: '',
+  tokenName: '',
   readOnly: true,
-  timestamp: "",
+  timestamp: ''
 };
 
 export const initialState: InitialState = {
@@ -141,5 +141,5 @@ export const initialState: InitialState = {
   totalTransactionsCount: 0,
   loading: true,
   investmentTransactions: {},
-  totalInvestmentTransactionsCount: 0,
+  totalInvestmentTransactionsCount: 0
 };

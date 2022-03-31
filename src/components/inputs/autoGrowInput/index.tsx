@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from "react";
-import NumberFormat, { NumberFormatProps } from "react-number-format";
+import { useEffect, useRef, useState } from 'react';
+import NumberFormat, { NumberFormatProps } from 'react-number-format';
 
 interface AutoGrowInputField extends NumberFormatProps {
   value: string;
@@ -21,8 +21,8 @@ const AutoGrowInputField: React.FC<AutoGrowInputField> = ({
 
   // Use canvas to determine text width
   const getTextWidth = (text, font) => {
-    const canvas = document.createElement("canvas");
-    const context = canvas.getContext("2d");
+    const canvas = document.createElement('canvas');
+    const context = canvas.getContext('2d');
     context.font = font || getComputedStyle(document.body).font;
     return context.measureText(text).width;
   };
@@ -30,7 +30,7 @@ const AutoGrowInputField: React.FC<AutoGrowInputField> = ({
   useEffect(() => {
     const textWidth = getTextWidth(
       value || placeholder,
-      `${dynamicFontSize}px 'ABC Whyte Regular', Helvetica, Arial, sans-serif`,
+      `${dynamicFontSize}px 'ABC Whyte Regular', Helvetica, Arial, sans-serif`
     );
 
     if (!textWidth) return;
@@ -73,11 +73,11 @@ const AutoGrowInputField: React.FC<AutoGrowInputField> = ({
         value={value}
         thousandSeparator={true}
         className={`bg-transparent border-none outline-none h-full p-0 text-5xl font-whyte-light focus:outline-none focus:border-none focus:ring-0 ${
-          hasError ? "text-red-error" : ""
-        } ${value ? "text-white" : "text-gray-syn4"}`}
+          hasError ? 'text-red-error' : ''
+        } ${value ? 'text-white' : 'text-gray-syn4'}`}
         style={{
           width: width - extraWidth,
-          fontSize: dynamicFontSize,
+          fontSize: dynamicFontSize
         }}
         placeholder={placeholder}
         onValueChange={(values) => {

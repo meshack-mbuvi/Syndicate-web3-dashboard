@@ -1,8 +1,8 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { IAirdropInfo, initialState } from "./types";
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { IAirdropInfo, initialState } from './types';
 
 const setAirdropInfoSlice = createSlice({
-  name: "AirdropInfo",
+  name: 'AirdropInfo',
   initialState,
   reducers: {
     setAirdropInfo(state, action: PayloadAction<IAirdropInfo>) {
@@ -14,8 +14,8 @@ const setAirdropInfoSlice = createSlice({
     },
     clearAirdropInfo(state, action: PayloadAction<boolean>) {
       state.airdropInfo = initialState.airdropInfo;
-    },
-  },
+    }
+  }
 });
 
 export const { setAirdropInfo, setLoadingAirdropInfo, clearAirdropInfo } =

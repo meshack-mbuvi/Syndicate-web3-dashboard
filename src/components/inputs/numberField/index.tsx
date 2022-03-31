@@ -1,6 +1,6 @@
-import React from "react";
-import { useController } from "react-hook-form";
-import NumberFormat from "react-number-format";
+import React from 'react';
+import { useController } from 'react-hook-form';
+import NumberFormat from 'react-number-format';
 
 interface IProps {
   label?: string;
@@ -34,26 +34,26 @@ export const NumberField: React.FC<IProps> = ({
   placeholder,
   info,
   addOn,
-  addOnStyles = "pr-20",
-  borderStyles = "",
+  addOnStyles = 'pr-20',
+  borderStyles = '',
   column = false,
-  label = "",
+  label = '',
   borderOutline = true,
-  textAlignment = "",
-  paddingStyles = "p-4",
+  textAlignment = '',
+  paddingStyles = 'p-4',
   disabled = false,
-  defaultValue = "",
+  defaultValue = '',
   maximumValue = 0,
   maxButtonEnabled = false,
-  thousandSeparator = true,
+  thousandSeparator = true
 }) => {
   const {
     field: { onChange, ...rest },
-    formState: { errors },
+    formState: { errors }
   } = useController({
     name,
     control,
-    defaultValue,
+    defaultValue
   });
 
   const handleSetMax = () => {
@@ -65,11 +65,11 @@ export const NumberField: React.FC<IProps> = ({
   return (
     <div
       className={`flex w-full ${borderStyles} ${
-        column ? "flex-row justify-between" : "flex-col justify-center"
+        column ? 'flex-row justify-between' : 'flex-col justify-center'
       }`}
     >
       {label ? (
-        <div className={`${column ? "my-auto w-3/5" : "mb-2"} leading-5`}>
+        <div className={`${column ? 'my-auto w-3/5' : 'mb-2'} leading-5`}>
           {label}
         </div>
       ) : null}
@@ -82,25 +82,25 @@ export const NumberField: React.FC<IProps> = ({
           allowNegative={false}
           className={`block font-whyte text-base ${textAlignment} bg-transparent ${paddingStyles} rounded-md w-full autocomplete-off ${
             errors?.[`${name}`]?.message
-              ? "border-red-error"
+              ? 'border-red-error'
               : `${
                   borderOutline
-                    ? "border-1 border-gray-24 hover:border-gray-syn3"
-                    : "border-0 focus:border-0 focus:ring-0 outline-none hover:border-0 ring-0"
+                    ? 'border-1 border-gray-24 hover:border-gray-syn3'
+                    : 'border-0 focus:border-0 focus:ring-0 outline-none hover:border-0 ring-0'
                 }`
           }  text-white placeholder-gray-syn5 ${
             addOn && maxButtonEnabled
-              ? "pr-40"
+              ? 'pr-40'
               : addOn
               ? addOnStyles
               : paddingStyles
-              ? "pr-0"
-              : "pr-4"
+              ? 'pr-0'
+              : 'pr-4'
           }`}
           placeholder={placeholder}
           onChange={(event) => {
             const { value } = event.target;
-            onChange(value.replaceAll(",", ""));
+            onChange(value.replaceAll(',', ''));
           }}
           decimalScale={2}
         />
@@ -110,7 +110,7 @@ export const NumberField: React.FC<IProps> = ({
             {maxButtonEnabled === true && (
               <button
                 className={`px-4 py-1.5 my-3 text-gray-syn4 bg-gray-syn7 rounded-2xl ${
-                  disableMax ? "cursor-not-allowed" : ""
+                  disableMax ? 'cursor-not-allowed' : ''
                 }`}
                 onClick={handleSetMax}
                 disabled={maximumValue === rest.value ? true : false}
@@ -122,12 +122,12 @@ export const NumberField: React.FC<IProps> = ({
             {addOn && (
               <div
                 className={`${
-                  addOnStyles ? "pr-0" : `pr-4`
+                  addOnStyles ? 'pr-0' : `pr-4`
                 } py-4 flex items-center `}
               >
                 <span
                   className={`font-whyte text-base ${
-                    rest.value ? "text-white" : "text-gray-syn5"
+                    rest.value ? 'text-white' : 'text-gray-syn5'
                   }`}
                   id="price-currency"
                 >

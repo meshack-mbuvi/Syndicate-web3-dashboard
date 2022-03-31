@@ -1,27 +1,27 @@
-import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { AppState } from "@/state";
-import ClaimCard from "./claimCard";
-import NFTCard from "./nftCard";
-import { ERC721Token } from "@/state/erc721token/types";
-import { ERC721Contract } from "@/ClubERC20Factory/ERC721Membership";
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { AppState } from '@/state';
+import ClaimCard from './claimCard';
+import NFTCard from './nftCard';
+import { ERC721Token } from '@/state/erc721token/types';
+import { ERC721Contract } from '@/ClubERC20Factory/ERC721Membership';
 import {
   setERC721TokenDetails,
   setERC721TokenContract,
   setERC721Loading,
-  clearERC721TokenDetails,
-} from "@/state/erc721token/slice";
-import useFetchERC721MerkleProof from "@/hooks/useERC721MerkleProof";
-import useFetchERC721Claim from "@/hooks/useClaimedERC721";
-import useFetchERC721PublicClaim from "@/hooks/usePublicClaimedERC721";
-import useFetchAirdropInfo from "@/hooks/useERC721AirdropInfo";
-import { SkeletonLoader } from "src/components/skeletonLoader";
-import { useRouter } from "next/router";
-import Tooltip from "react-tooltip-lite";
-import { isDev } from "@/utils/environment";
-import { numberWithCommas } from "@/utils/formattedNumbers";
-import { getWeiAmount } from "@/utils/conversions";
-import { getEthereumTokenPrice } from "@/utils/api/etherscan";
+  clearERC721TokenDetails
+} from '@/state/erc721token/slice';
+import useFetchERC721MerkleProof from '@/hooks/useERC721MerkleProof';
+import useFetchERC721Claim from '@/hooks/useClaimedERC721';
+import useFetchERC721PublicClaim from '@/hooks/usePublicClaimedERC721';
+import useFetchAirdropInfo from '@/hooks/useERC721AirdropInfo';
+import { SkeletonLoader } from 'src/components/skeletonLoader';
+import { useRouter } from 'next/router';
+import Tooltip from 'react-tooltip-lite';
+import { isDev } from '@/utils/environment';
+import { numberWithCommas } from '@/utils/formattedNumbers';
+import { getWeiAmount } from '@/utils/conversions';
+import { getEthereumTokenPrice } from '@/utils/api/etherscan';
 
 const ClaimNFT: React.FC = () => {
   const router = useRouter();
@@ -30,9 +30,9 @@ const ClaimNFT: React.FC = () => {
   const {
     initializeContractsReducer: { syndicateContracts },
     web3Reducer: {
-      web3: { account, web3 },
+      web3: { account, web3 }
     },
-    erc721TokenSliceReducer: { erc721Token },
+    erc721TokenSliceReducer: { erc721Token }
   } = useSelector((state: AppState) => state);
 
   const { loading: merkleLoading } = useFetchERC721MerkleProof();
@@ -41,14 +41,14 @@ const ClaimNFT: React.FC = () => {
   const { loading: claimedPublicLoading } = useFetchERC721PublicClaim();
   const { loading: erc721Loading } = erc721Token;
 
-  const [openseaLink, setOpenseaLink] = useState<string>("");
-  const [etherScanLink, setEtherscanLink] = useState<string>("");
+  const [openseaLink, setOpenseaLink] = useState<string>('');
+  const [etherScanLink, setEtherscanLink] = useState<string>('');
   const [unMinted, setUnMinted] = useState<number>(0);
 
-  const [ethBalance, setEthBalance] = useState("");
-  const [rawEthBalance, setRawEthBalance] = useState("");
+  const [ethBalance, setEthBalance] = useState('');
+  const [rawEthBalance, setRawEthBalance] = useState('');
   const [startTime, setStartTime] = useState<number>(0);
-  const [currentAccount, setCurrentAccount] = useState<string>(" ");
+  const [currentAccount, setCurrentAccount] = useState<string>(' ');
   const [loading, setLoading] = useState<boolean>(true);
   const [loading721, setLoading721] = useState<boolean>(true);
 
@@ -77,7 +77,7 @@ const ClaimNFT: React.FC = () => {
     claimedLoading,
     erc721Loading,
     claimedPublicLoading,
-    loading721,
+    loading721
   ]);
 
   useEffect(() => {
@@ -86,17 +86,17 @@ const ClaimNFT: React.FC = () => {
       nftAddress &&
       erc721Token.publicUtilityClaimEnabled
     ) {
-      let collection = "rug-radio-membership-pass";
+      let collection = 'rug-radio-membership-pass';
 
       if (erc721Token.publicUtilityClaimEnabled) {
-        collection = "ruggenesis-nft";
+        collection = 'ruggenesis-nft';
       }
 
       if (isDev) {
         setEtherscanLink(
-          `https://rinkeby.etherscan.io/address/${erc721Token.address}`,
+          `https://rinkeby.etherscan.io/address/${erc721Token.address}`
         );
-        setOpenseaLink("");
+        setOpenseaLink('');
         // setOpenseaLink(`https://testnets.opensea.io/collection/${collection}`);
       } else {
         setEtherscanLink(`https://etherscan.io/address/${erc721Token.address}`);
@@ -109,7 +109,7 @@ const ClaimNFT: React.FC = () => {
   const getEthBalance = async () => {
     if (account) {
       const balance = await web3.eth.getBalance(account);
-      const ethBalance = await web3.utils.fromWei(balance, "ether");
+      const ethBalance = await web3.utils.fromWei(balance, 'ether');
       setEthBalance(ethBalance);
       setRawEthBalance(balance);
     }
@@ -129,7 +129,7 @@ const ClaimNFT: React.FC = () => {
         ERC721tokenContract.owner(),
         ERC721tokenContract.symbol(),
         ERC721tokenContract.rendererAddr(),
-        ERC721tokenContract.currentSupply(),
+        ERC721tokenContract.currentSupply()
       ]);
 
     const PUBLIC_ONE_PER_ADDRESS_MODULE =
@@ -143,25 +143,25 @@ const ClaimNFT: React.FC = () => {
     let publicSingleClaimEnabled = false;
     let merkleClaimEnabled = true;
     let publicSupply = 0;
-    let ethPrice = "0";
+    let ethPrice = '0';
     let maxPerAddress = 0;
-    let defaultImage = " ";
+    let defaultImage = ' ';
     let amountMinted = 0;
     let _startTime;
     if (address) {
       publicSingleClaimEnabled = await mintPolicyERC721.isModuleAllowed(
         address,
-        PUBLIC_ONE_PER_ADDRESS_MODULE,
+        PUBLIC_ONE_PER_ADDRESS_MODULE
       );
 
       // publicUtilityClaimEnabled = true;
       publicUtilityClaimEnabled = await mintPolicyERC721.isModuleAllowed(
         address,
-        PUBLIC_UTILITY_MINT_MODULE,
+        PUBLIC_UTILITY_MINT_MODULE
       );
 
       defaultImage =
-        "https://daiakrtkievq7ofrm5xaoecjyjfmsybdd2nxxdm5ey74a4ku6ama.arweave.net/GBAFRmpBKw-4sWduBxBJwkrJYCMem3uNnSY_wHFU8Bg";
+        'https://daiakrtkievq7ofrm5xaoecjyjfmsybdd2nxxdm5ey74a4ku6ama.arweave.net/GBAFRmpBKw-4sWduBxBJwkrJYCMem3uNnSY_wHFU8Bg';
 
       publicSupply = 19000;
 
@@ -175,15 +175,15 @@ const ClaimNFT: React.FC = () => {
             Number(await PublicMintWithFeeModule.publicSupply(address)),
             await PublicMintWithFeeModule.ethPrice(address),
             Number(
-              await PublicMintWithFeeModule.amountMinted(address, account),
+              await PublicMintWithFeeModule.amountMinted(address, account)
             ),
             Number(await PublicMintWithFeeModule.maxPerAddress(address)),
-            Number(await PublicMintWithFeeModule.startTime(address)),
+            Number(await PublicMintWithFeeModule.startTime(address))
           ]);
 
         setStartTime(_startTime);
         defaultImage =
-          "https://gateway.pinata.cloud/ipfs/Qma5cZH8yBaSYtqAYW5TUbGdm4YrfZ1YXQUnNeFeYVKjsB";
+          'https://gateway.pinata.cloud/ipfs/Qma5cZH8yBaSYtqAYW5TUbGdm4YrfZ1YXQUnNeFeYVKjsB';
       } else if (publicSingleClaimEnabled) {
         merkleClaimEnabled = false;
       }
@@ -208,11 +208,11 @@ const ClaimNFT: React.FC = () => {
         (
           parseFloat(String(tokenPrice)) *
           parseFloat(String(getWeiAmount(ethPrice, 18, false)))
-        ).toFixed(2),
+        ).toFixed(2)
       ),
       maxPerAddress,
       defaultImage,
-      amountMinted,
+      amountMinted
     };
     dispatch(setERC721TokenDetails(erc721));
     dispatch(setERC721Loading(false));
@@ -230,7 +230,7 @@ const ClaimNFT: React.FC = () => {
     ) {
       const ERC721tokenContract = new ERC721Contract(
         nftAddress as string,
-        web3,
+        web3
       );
       setCurrentAccount(account);
       dispatch(setERC721TokenContract(ERC721tokenContract));
@@ -257,7 +257,7 @@ const ClaimNFT: React.FC = () => {
     router.isReady,
     syndicateContracts?.MerkleDistributorModuleERC721,
     syndicateContracts?.mintPolicyERC721?.mintPolicyERC721Contract._address,
-    syndicateContracts?.PublicMintWithFeeModule,
+    syndicateContracts?.PublicMintWithFeeModule
   ]);
 
   useEffect(() => {
@@ -373,7 +373,7 @@ const ClaimNFT: React.FC = () => {
                   <div className="text-gray-lightManatee text-2xl">
                     <span className="text-white">
                       {numberWithCommas(unMinted)}
-                    </span>{" "}
+                    </span>{' '}
                     of {numberWithCommas(erc721Token.maxSupply)}
                   </div>
                 </div>
@@ -405,7 +405,7 @@ const ClaimNFT: React.FC = () => {
                   },
                   openseaLink,
                   rawEthBalance,
-                  startTime,
+                  startTime
                 }}
               ></ClaimCard>
             </div>

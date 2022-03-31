@@ -1,26 +1,26 @@
-import { INDEX_AND_PROOF } from "@/graphql/merkleDistributor";
-import { AppState } from "@/state";
-import { useQuery } from "@apollo/client";
-import { useDispatch, useSelector } from "react-redux";
-import { useRouter } from "next/router";
-import { useEffect } from "react";
+import { INDEX_AND_PROOF } from '@/graphql/merkleDistributor';
+import { AppState } from '@/state';
+import { useQuery } from '@apollo/client';
+import { useDispatch, useSelector } from 'react-redux';
+import { useRouter } from 'next/router';
+import { useEffect } from 'react';
 import {
   setLoadingMerkleProof,
   setMerkleProof,
-  clearMerkleProof,
-} from "@/state/merkleProofs/slice";
-import { getWeiAmount } from "@/utils/conversions";
+  clearMerkleProof
+} from '@/state/merkleProofs/slice';
+import { getWeiAmount } from '@/utils/conversions';
 
 const useFetchMerkleProof: any = (skipQuery = false) => {
   const dispatch = useDispatch();
 
   const {
     web3Reducer: {
-      web3: { account: address, web3 },
+      web3: { account: address, web3 }
     },
     erc20TokenSliceReducer: {
-      erc20Token: { address: clubAddress, tokenDecimals },
-    },
+      erc20Token: { address: clubAddress, tokenDecimals }
+    }
   } = useSelector((state: AppState) => state);
 
   const router = useRouter();
@@ -28,11 +28,11 @@ const useFetchMerkleProof: any = (skipQuery = false) => {
   const {
     loading,
     data: merkleData = {},
-    refetch: refetchMerkle,
+    refetch: refetchMerkle
   } = useQuery(INDEX_AND_PROOF, {
     variables: { clubAddress, address },
     skip: !address || skipQuery,
-    context: { clientName: "backend" },
+    context: { clientName: 'backend' }
   });
 
   const processMerkleProofData = async (merkleObj) => {
@@ -41,8 +41,8 @@ const useFetchMerkleProof: any = (skipQuery = false) => {
       setMerkleProof({
         ...merkleObj,
         account: address,
-        _amount: getWeiAmount(merkleObj?.amount, tokenDecimals, false),
-      }),
+        _amount: getWeiAmount(merkleObj?.amount, tokenDecimals, false)
+      })
     );
     dispatch(setLoadingMerkleProof(false));
   };

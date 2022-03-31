@@ -1,9 +1,9 @@
-import { useEffect, useState, SetStateAction, Dispatch } from "react";
-import { useDispatch } from "react-redux";
-import { SearchInput } from "@/containers/managerActions/shared/searchInput";
-import { formatAddress } from "src/utils/formatAddress";
-import { floatedNumberWithCommas } from "@/utils/formattedNumbers";
-import { setMemberToUpdate } from "@/state/modifyCapTable/slice";
+import { useEffect, useState, SetStateAction, Dispatch } from 'react';
+import { useDispatch } from 'react-redux';
+import { SearchInput } from '@/containers/managerActions/shared/searchInput';
+import { formatAddress } from 'src/utils/formatAddress';
+import { floatedNumberWithCommas } from '@/utils/formattedNumbers';
+import { setMemberToUpdate } from '@/state/modifyCapTable/slice';
 
 export interface IMember {
   clubTokens: string;
@@ -23,10 +23,10 @@ interface IMemberSelectDropdown {
 export const MemberSelectDropdown: React.FC<IMemberSelectDropdown> = ({
   membersData,
   setMemberAddress,
-  setShowMembersList,
+  setShowMembersList
 }) => {
   const [membersList, setMembersList] = useState([]);
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState('');
   const [noMemberFound, setNoMemberFound] = useState(false);
   const dispatch = useDispatch();
 
@@ -61,7 +61,7 @@ export const MemberSelectDropdown: React.FC<IMemberSelectDropdown> = ({
   return (
     <div
       className="flex flex-col p-4 rounded-1.5lg bg-black border-6 focus:outline-none"
-      style={{ height: "312px", width: "400px" }}
+      style={{ height: '312px', width: '400px' }}
     >
       <SearchInput setSearchTerm={setSearchTerm} searchTerm={searchTerm} />
 
@@ -73,7 +73,7 @@ export const MemberSelectDropdown: React.FC<IMemberSelectDropdown> = ({
       )}
       <div
         className={`mt-3 space-y-4 px-2 overflow-y-scroll h-full ${
-          membersList.length <= 5 ? "no-scroll-bar" : ""
+          membersList.length <= 5 ? 'no-scroll-bar' : ''
         }`}
       >
         {membersList.length ? (
@@ -94,7 +94,7 @@ export const MemberSelectDropdown: React.FC<IMemberSelectDropdown> = ({
                     {floatedNumberWithCommas(clubTokens)}
                   </span>
                   <span className="text-gray-syn4">{`(${floatedNumberWithCommas(
-                    ownershipShare,
+                    ownershipShare
                   )}%)`}</span>
                 </div>
               </button>

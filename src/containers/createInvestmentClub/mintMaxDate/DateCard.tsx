@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { FC } from 'react';
 
 interface IDateCardProps {
   mintTime: string;
@@ -10,7 +10,7 @@ const DateCard: FC<IDateCardProps> = ({
   mintTime,
   isLastItem,
   index,
-  activeIndex,
+  activeIndex
 }: IDateCardProps) => {
   return (
     <div
@@ -20,7 +20,7 @@ const DateCard: FC<IDateCardProps> = ({
     >
       <div
         className={`text-center w-full h-7 ${
-          isLastItem ? "border-0" : "border-r border-gray-24"
+          isLastItem ? 'border-0' : 'border-r border-gray-24'
         }`}
       >
         {mintTime}

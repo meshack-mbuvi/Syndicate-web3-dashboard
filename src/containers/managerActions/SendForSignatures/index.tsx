@@ -1,19 +1,19 @@
-import { amplitudeLogger, Flow } from "@/components/amplitude";
-import { COPY_SEND_FOR_SIGNATURES_LINK } from "@/components/amplitude/eventNames";
-import Modal, { ModalStyle } from "@/components/modal";
-import CopyLink from "@/components/shared/CopyLink";
-import { AppState } from "@/state";
-import { generateMemberSignURL } from "@/utils/generateMemberSignURL";
-import { ArrowNarrowRightIcon } from "@heroicons/react/outline";
-import { useRouter } from "next/router";
+import { amplitudeLogger, Flow } from '@/components/amplitude';
+import { COPY_SEND_FOR_SIGNATURES_LINK } from '@/components/amplitude/eventNames';
+import Modal, { ModalStyle } from '@/components/modal';
+import CopyLink from '@/components/shared/CopyLink';
+import { AppState } from '@/state';
+import { generateMemberSignURL } from '@/utils/generateMemberSignURL';
+import { ArrowNarrowRightIcon } from '@heroicons/react/outline';
+import { useRouter } from 'next/router';
 import React, {
   Dispatch,
   FC,
   SetStateAction,
   useEffect,
-  useState,
-} from "react";
-import { useSelector } from "react-redux";
+  useState
+} from 'react';
+import { useSelector } from 'react-redux';
 
 interface ILinkModal {
   showSendForSignaturesModal: boolean;
@@ -22,7 +22,7 @@ interface ILinkModal {
 
 const SendForSignatures: FC<ILinkModal> = ({
   showSendForSignaturesModal,
-  setShowSendForSignaturesModal,
+  setShowSendForSignaturesModal
 }) => {
   const router = useRouter();
   const { clubAddress } = router.query;
@@ -30,16 +30,16 @@ const SendForSignatures: FC<ILinkModal> = ({
   const {
     legalInfoReducer: {
       clubInfo,
-      walletSignature: { signature },
-    },
+      walletSignature: { signature }
+    }
   } = useSelector((state: AppState) => state);
 
   const [clubLegalAgreementSignageLink, setClubLegalAgreementSignageLink] =
-    useState("");
+    useState('');
 
   const [
     showLegalAgreementSignageLinkCopyState,
-    setShowLegalAgreementSignageCopyState,
+    setShowLegalAgreementSignageCopyState
   ] = useState(false);
 
   const handleClick = () => {
@@ -50,7 +50,7 @@ const SendForSignatures: FC<ILinkModal> = ({
     setShowLegalAgreementSignageCopyState(true);
     setTimeout(() => setShowLegalAgreementSignageCopyState(false), 1000);
     amplitudeLogger(COPY_SEND_FOR_SIGNATURES_LINK, {
-      flow: Flow.LEGAL_ENTITY_FLOW,
+      flow: Flow.LEGAL_ENTITY_FLOW
     });
   };
 
@@ -58,7 +58,7 @@ const SendForSignatures: FC<ILinkModal> = ({
     const memberSignURL = generateMemberSignURL(
       clubAddress as string,
       clubInfo,
-      signature,
+      signature
     );
     setClubLegalAgreementSignageLink(memberSignURL);
   }, [signature, clubAddress, clubInfo]);
@@ -71,13 +71,13 @@ const SendForSignatures: FC<ILinkModal> = ({
         closeModal: () => {
           setShowSendForSignaturesModal(false);
         },
-        customWidth: "w-100",
-        customClassName: "pt-8 px-5 pb-5",
+        customWidth: 'w-100',
+        customClassName: 'pt-8 px-5 pb-5',
         showCloseButton: false,
         outsideOnClick: true,
         showHeader: false,
-        alignment: "align-top",
-        margin: "mt-48",
+        alignment: 'align-top',
+        margin: 'mt-48'
       }}
     >
       <>
@@ -91,7 +91,7 @@ const SendForSignatures: FC<ILinkModal> = ({
             <div className=" py-2 pr-2 flex">
               <div
                 className="flex items-center justify-between w-full"
-                style={{ width: "400px" }}
+                style={{ width: '400px' }}
               >
                 <CopyLink
                   link={clubLegalAgreementSignageLink}

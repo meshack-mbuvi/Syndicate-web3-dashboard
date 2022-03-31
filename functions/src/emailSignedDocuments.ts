@@ -1,20 +1,20 @@
-import template from "lodash/template";
-import { NextApiRequest } from "next";
-import * as yup from "yup";
+import template from 'lodash/template';
+import { NextApiRequest } from 'next';
+import * as yup from 'yup';
 
-import * as mailgun from "./utils/mailgun";
+import * as mailgun from './utils/mailgun';
 
 const requestBody = yup.object().shape({
-  legalEntityName: yup.string().required("legalEntityName is required"),
-  clubAddress: yup.string().required("clubAddress is required"),
-  operatingAgreement: yup.string().required("Operating agreement is required"),
+  legalEntityName: yup.string().required('legalEntityName is required'),
+  clubAddress: yup.string().required('clubAddress is required'),
+  operatingAgreement: yup.string().required('Operating agreement is required'),
   subscriptionAgreement: yup
     .string()
-    .required("Subscription agreement is required"),
-  managerName: yup.string().required("Manager name is required"),
-  managerEmail: yup.string().email().required("Manager email is required"),
-  memberName: yup.string().required("Member name is required"),
-  memberEmail: yup.string().email().required("Member email is required"),
+    .required('Subscription agreement is required'),
+  managerName: yup.string().required('Manager name is required'),
+  managerEmail: yup.string().email().required('Manager email is required'),
+  memberName: yup.string().required('Member name is required'),
+  memberEmail: yup.string().email().required('Member email is required')
 });
 
 export const handler = async (request: NextApiRequest) => {
@@ -26,7 +26,7 @@ export const handler = async (request: NextApiRequest) => {
     memberName,
     memberEmail,
     managerName,
-    managerEmail,
+    managerEmail
   } = await requestBody.validate(request.body);
 
   const messageHTML = emailTemplate({
@@ -36,7 +36,7 @@ export const handler = async (request: NextApiRequest) => {
     memberEmail,
     managerName,
     managerEmail,
-    currentWeekday: today(),
+    currentWeekday: today()
   });
 
   await mailgun.sendEmail({
@@ -46,13 +46,13 @@ export const handler = async (request: NextApiRequest) => {
     attachment: [
       {
         filename: `${legalEntityName} x ${memberName} Operating Agreement.txt`,
-        data: operatingAgreement,
+        data: operatingAgreement
       },
       {
         filename: `${legalEntityName} x ${memberName} Subscription Agreement.txt`,
-        data: subscriptionAgreement,
-      },
-    ],
+        data: subscriptionAgreement
+      }
+    ]
   });
 
   return { statusCode: 201 };
@@ -60,13 +60,13 @@ export const handler = async (request: NextApiRequest) => {
 
 const today = () =>
   [
-    "Sunday",
-    "Monday",
-    "Tuesday",
-    "Wednesday",
-    "Thursday",
-    "Friday",
-    "Saturday",
+    'Sunday',
+    'Monday',
+    'Tuesday',
+    'Wednesday',
+    'Thursday',
+    'Friday',
+    'Saturday'
   ][new Date().getDay()];
 
 const emailTemplate = template(`

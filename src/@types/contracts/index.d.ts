@@ -2,98 +2,98 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import { ERC165Contract } from "./ERC165";
-import { ERC20Contract } from "./ERC20";
-import { ERC721Contract } from "./ERC721";
-import { ERC721EnumerableContract } from "./ERC721Enumerable";
-import { ERC721HolderContract } from "./ERC721Holder";
-import { IERC165Contract } from "./IERC165";
-import { IERC20Contract } from "./IERC20";
-import { IERC20MetadataContract } from "./IERC20Metadata";
-import { IERC721Contract } from "./IERC721";
-import { IERC721EnumerableContract } from "./IERC721Enumerable";
-import { IERC721MetadataContract } from "./IERC721Metadata";
-import { IERC721ReceiverContract } from "./IERC721Receiver";
-import { OwnableContract } from "./Ownable";
-import { PausableContract } from "./Pausable";
-import { SyndicateDAOContract } from "./SyndicateDAO";
-import { SynERC20Contract } from "./SynERC20";
-import { SynERC20FactoryContract } from "./SynERC20Factory";
-import { SynERC721Contract } from "./SynERC721";
-import { SynERC721FactoryContract } from "./SynERC721Factory";
-import { SynTokenContract } from "./SynToken";
-import { SynTokenFactoryContract } from "./SynTokenFactory";
+import { ERC165Contract } from './ERC165';
+import { ERC20Contract } from './ERC20';
+import { ERC721Contract } from './ERC721';
+import { ERC721EnumerableContract } from './ERC721Enumerable';
+import { ERC721HolderContract } from './ERC721Holder';
+import { IERC165Contract } from './IERC165';
+import { IERC20Contract } from './IERC20';
+import { IERC20MetadataContract } from './IERC20Metadata';
+import { IERC721Contract } from './IERC721';
+import { IERC721EnumerableContract } from './IERC721Enumerable';
+import { IERC721MetadataContract } from './IERC721Metadata';
+import { IERC721ReceiverContract } from './IERC721Receiver';
+import { OwnableContract } from './Ownable';
+import { PausableContract } from './Pausable';
+import { SyndicateDAOContract } from './SyndicateDAO';
+import { SynERC20Contract } from './SynERC20';
+import { SynERC20FactoryContract } from './SynERC20Factory';
+import { SynERC721Contract } from './SynERC721';
+import { SynERC721FactoryContract } from './SynERC721Factory';
+import { SynTokenContract } from './SynToken';
+import { SynTokenFactoryContract } from './SynTokenFactory';
 
 declare global {
   namespace Truffle {
     interface Artifacts {
-      require(name: "ERC165"): ERC165Contract;
-      require(name: "ERC20"): ERC20Contract;
-      require(name: "ERC721"): ERC721Contract;
-      require(name: "ERC721Enumerable"): ERC721EnumerableContract;
-      require(name: "ERC721Holder"): ERC721HolderContract;
-      require(name: "IERC165"): IERC165Contract;
-      require(name: "IERC20"): IERC20Contract;
-      require(name: "IERC20Metadata"): IERC20MetadataContract;
-      require(name: "IERC721"): IERC721Contract;
-      require(name: "IERC721Enumerable"): IERC721EnumerableContract;
-      require(name: "IERC721Metadata"): IERC721MetadataContract;
-      require(name: "IERC721Receiver"): IERC721ReceiverContract;
-      require(name: "Ownable"): OwnableContract;
-      require(name: "Pausable"): PausableContract;
-      require(name: "SyndicateDAO"): SyndicateDAOContract;
-      require(name: "SynERC20"): SynERC20Contract;
-      require(name: "SynERC20Factory"): SynERC20FactoryContract;
-      require(name: "SynERC721"): SynERC721Contract;
-      require(name: "SynERC721Factory"): SynERC721FactoryContract;
-      require(name: "SynToken"): SynTokenContract;
-      require(name: "SynTokenFactory"): SynTokenFactoryContract;
+      require(name: 'ERC165'): ERC165Contract;
+      require(name: 'ERC20'): ERC20Contract;
+      require(name: 'ERC721'): ERC721Contract;
+      require(name: 'ERC721Enumerable'): ERC721EnumerableContract;
+      require(name: 'ERC721Holder'): ERC721HolderContract;
+      require(name: 'IERC165'): IERC165Contract;
+      require(name: 'IERC20'): IERC20Contract;
+      require(name: 'IERC20Metadata'): IERC20MetadataContract;
+      require(name: 'IERC721'): IERC721Contract;
+      require(name: 'IERC721Enumerable'): IERC721EnumerableContract;
+      require(name: 'IERC721Metadata'): IERC721MetadataContract;
+      require(name: 'IERC721Receiver'): IERC721ReceiverContract;
+      require(name: 'Ownable'): OwnableContract;
+      require(name: 'Pausable'): PausableContract;
+      require(name: 'SyndicateDAO'): SyndicateDAOContract;
+      require(name: 'SynERC20'): SynERC20Contract;
+      require(name: 'SynERC20Factory'): SynERC20FactoryContract;
+      require(name: 'SynERC721'): SynERC721Contract;
+      require(name: 'SynERC721Factory'): SynERC721FactoryContract;
+      require(name: 'SynToken'): SynTokenContract;
+      require(name: 'SynTokenFactory'): SynTokenFactoryContract;
     }
   }
 }
 
-export { ERC165Contract, ERC165Instance } from "./ERC165";
-export { ERC20Contract, ERC20Instance } from "./ERC20";
-export { ERC721Contract, ERC721Instance } from "./ERC721";
+export { ERC165Contract, ERC165Instance } from './ERC165';
+export { ERC20Contract, ERC20Instance } from './ERC20';
+export { ERC721Contract, ERC721Instance } from './ERC721';
 export {
   ERC721EnumerableContract,
-  ERC721EnumerableInstance,
-} from "./ERC721Enumerable";
-export { ERC721HolderContract, ERC721HolderInstance } from "./ERC721Holder";
-export { IERC165Contract, IERC165Instance } from "./IERC165";
-export { IERC20Contract, IERC20Instance } from "./IERC20";
+  ERC721EnumerableInstance
+} from './ERC721Enumerable';
+export { ERC721HolderContract, ERC721HolderInstance } from './ERC721Holder';
+export { IERC165Contract, IERC165Instance } from './IERC165';
+export { IERC20Contract, IERC20Instance } from './IERC20';
 export {
   IERC20MetadataContract,
-  IERC20MetadataInstance,
-} from "./IERC20Metadata";
-export { IERC721Contract, IERC721Instance } from "./IERC721";
+  IERC20MetadataInstance
+} from './IERC20Metadata';
+export { IERC721Contract, IERC721Instance } from './IERC721';
 export {
   IERC721EnumerableContract,
-  IERC721EnumerableInstance,
-} from "./IERC721Enumerable";
+  IERC721EnumerableInstance
+} from './IERC721Enumerable';
 export {
   IERC721MetadataContract,
-  IERC721MetadataInstance,
-} from "./IERC721Metadata";
+  IERC721MetadataInstance
+} from './IERC721Metadata';
 export {
   IERC721ReceiverContract,
-  IERC721ReceiverInstance,
-} from "./IERC721Receiver";
-export { OwnableContract, OwnableInstance } from "./Ownable";
-export { PausableContract, PausableInstance } from "./Pausable";
-export { SyndicateDAOContract, SyndicateDAOInstance } from "./SyndicateDAO";
-export { SynERC20Contract, SynERC20Instance } from "./SynERC20";
+  IERC721ReceiverInstance
+} from './IERC721Receiver';
+export { OwnableContract, OwnableInstance } from './Ownable';
+export { PausableContract, PausableInstance } from './Pausable';
+export { SyndicateDAOContract, SyndicateDAOInstance } from './SyndicateDAO';
+export { SynERC20Contract, SynERC20Instance } from './SynERC20';
 export {
   SynERC20FactoryContract,
-  SynERC20FactoryInstance,
-} from "./SynERC20Factory";
-export { SynERC721Contract, SynERC721Instance } from "./SynERC721";
+  SynERC20FactoryInstance
+} from './SynERC20Factory';
+export { SynERC721Contract, SynERC721Instance } from './SynERC721';
 export {
   SynERC721FactoryContract,
-  SynERC721FactoryInstance,
-} from "./SynERC721Factory";
-export { SynTokenContract, SynTokenInstance } from "./SynToken";
+  SynERC721FactoryInstance
+} from './SynERC721Factory';
+export { SynTokenContract, SynTokenInstance } from './SynToken';
 export {
   SynTokenFactoryContract,
-  SynTokenFactoryInstance,
-} from "./SynTokenFactory";
+  SynTokenFactoryInstance
+} from './SynTokenFactory';

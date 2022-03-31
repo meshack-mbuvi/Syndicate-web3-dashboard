@@ -1,5 +1,5 @@
-import React from "react";
-import NumberTreatment from "@/components/NumberTreatment";
+import React from 'react';
+import NumberTreatment from '@/components/NumberTreatment';
 
 const PriceContainer: React.FC<{
   numberValue: string;
@@ -12,14 +12,14 @@ const PriceContainer: React.FC<{
   numberValue,
   noUSDValue,
   ethValue = false,
-  customSymbol = "USD",
+  customSymbol = 'USD',
   ethDepositToken,
-  flexColumn = "true",
+  flexColumn = 'true'
 }) => {
   return (
     <div
       className={`text-base md:items-center ${
-        flexColumn ? "flex-col" : null
+        flexColumn ? 'flex-col' : null
       } flex md:flex-row`}
     >
       <div>
@@ -30,7 +30,7 @@ const PriceContainer: React.FC<{
         />
       </div>
       &nbsp;
-      {ethValue ? "ETH" : `${noUSDValue ? "" : customSymbol}`}
+      {ethValue ? 'ETH' : `${noUSDValue ? '' : customSymbol}`}
     </div>
   );
 };

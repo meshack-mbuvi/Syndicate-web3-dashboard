@@ -1,14 +1,14 @@
-import { CLUB_TOKEN_MEMBERS } from "@/graphql/queries";
-import { AppState } from "@/state";
-import { setClubMembers, setLoadingClubMembers } from "@/state/clubMembers";
-import { getWeiAmount } from "@/utils/conversions";
-import { mockClubMembers } from "@/utils/mockdata";
-import { useQuery } from "@apollo/client";
-import { useRouter } from "next/router";
-import { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { useDemoMode } from "./useDemoMode";
-import { clearClubMembers } from "@/state/clubMembers";
+import { CLUB_TOKEN_MEMBERS } from '@/graphql/queries';
+import { AppState } from '@/state';
+import { setClubMembers, setLoadingClubMembers } from '@/state/clubMembers';
+import { getWeiAmount } from '@/utils/conversions';
+import { mockClubMembers } from '@/utils/mockdata';
+import { useQuery } from '@apollo/client';
+import { useRouter } from 'next/router';
+import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { useDemoMode } from './useDemoMode';
+import { clearClubMembers } from '@/state/clubMembers';
 
 const useClubTokenMembers = () => {
   const dispatch = useDispatch();
@@ -17,8 +17,8 @@ const useClubTokenMembers = () => {
     web3Reducer: { web3 },
     erc20TokenSliceReducer: {
       erc20Token: { symbol, tokenDecimals, totalSupply },
-      depositDetails: { depositTokenDecimals },
-    },
+      depositDetails: { depositTokenDecimals }
+    }
   } = useSelector((state: AppState) => state);
 
   const router = useRouter();
@@ -31,14 +31,14 @@ const useClubTokenMembers = () => {
   const {
     loading: loadingClubMembers,
     refetch,
-    data,
+    data
   } = useQuery(CLUB_TOKEN_MEMBERS, {
     variables: {
       where: {
-        contractAddress: clubAddress?.toString().toLocaleLowerCase(),
-      },
+        contractAddress: clubAddress?.toString().toLocaleLowerCase()
+      }
     },
-    skip: !clubAddress || isDemoMode,
+    skip: !clubAddress || isDemoMode
   });
 
   const processMembers = (members) => {
@@ -51,7 +51,7 @@ const useClubTokenMembers = () => {
         depositAmount,
         ownershipShare,
         tokens,
-        member: { memberAddress },
+        member: { memberAddress }
       }) => {
         return {
           memberAddress,
@@ -62,10 +62,10 @@ const useClubTokenMembers = () => {
           depositAmount: getWeiAmount(
             depositAmount,
             depositTokenDecimals,
-            false,
-          ),
+            false
+          )
         };
-      },
+      }
     );
 
     dispatch(setClubMembers(clubMembers));
@@ -93,7 +93,7 @@ const useClubTokenMembers = () => {
     JSON.stringify(data?.syndicateDAOs?.[0]?.members),
     loadingClubMembers,
     clubAddress,
-    account,
+    account
   ]);
 };
 

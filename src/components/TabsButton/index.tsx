@@ -1,3 +1,3 @@
-import TabsButton from "./TabsButton";
+import TabsButton from './TabsButton';
 
 export default TabsButton;

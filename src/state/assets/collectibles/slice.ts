@@ -1,8 +1,8 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { initialState } from "./types";
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { initialState } from './types';
 
 const setCollectibleDetailsSlice = createSlice({
-  name: "collectibles",
+  name: 'collectibles',
   initialState,
   reducers: {
     setShowFullScreen(state, action: PayloadAction<boolean>) {
@@ -16,15 +16,15 @@ const setCollectibleDetailsSlice = createSlice({
     },
     setCollectibleModalDetails(state, action: PayloadAction<any>) {
       state.collectibleModalDetails = action.payload;
-    },
-  },
+    }
+  }
 });
 
 export const {
   setOverlayCollectibleDetails,
   setShowFullScreen,
   setShowCollectibleModal,
-  setCollectibleModalDetails,
+  setCollectibleModalDetails
 } = setCollectibleDetailsSlice.actions;
 
 export default setCollectibleDetailsSlice.reducer;

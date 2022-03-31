@@ -1,5 +1,5 @@
-import React from "react";
-import Tooltip from "react-tooltip-lite";
+import React from 'react';
+import Tooltip from 'react-tooltip-lite';
 
 const FutureCollectiblePill: React.FC = () => {
   return (
@@ -14,7 +14,11 @@ const FutureCollectiblePill: React.FC = () => {
         distance={10}
         className="cursor-default"
       >
-        <img src="/images/morseCodeNfts/Info-exclamation.svg" alt="info" className="w-4 h-4" />
+        <img
+          src="/images/morseCodeNfts/Info-exclamation.svg"
+          alt="info"
+          className="w-4 h-4"
+        />
       </Tooltip>
     </div>
   );

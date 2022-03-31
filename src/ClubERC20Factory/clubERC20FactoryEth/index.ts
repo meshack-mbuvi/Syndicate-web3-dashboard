@@ -1,5 +1,5 @@
-import CLUB_ERC20_FACTORY_ETH_ABI from "src/contracts/ClubERC20FactoryEth.json";
-import { getGnosisTxnInfo } from "../shared/gnosisTransactionInfo";
+import CLUB_ERC20_FACTORY_ETH_ABI from 'src/contracts/ClubERC20FactoryEth.json';
+import { getGnosisTxnInfo } from '../shared/gnosisTransactionInfo';
 
 export class ClubERC20FactoryEth {
   web3;
@@ -17,7 +17,7 @@ export class ClubERC20FactoryEth {
     try {
       this.clubERC20FactoryEth = new this.web3.eth.Contract(
         CLUB_ERC20_FACTORY_ETH_ABI,
-        this.address,
+        this.address
       );
     } catch (error) {
       this.clubERC20FactoryEth = null;
@@ -48,7 +48,7 @@ export class ClubERC20FactoryEth {
     tokenCap: string,
     maxMembers: number,
     onTxConfirm: (transactionHash?) => void,
-    onTxReceipt: (receipt?) => void,
+    onTxReceipt: (receipt?) => void
   ): Promise<void> {
     let gnosisTxHash;
 
@@ -65,26 +65,26 @@ export class ClubERC20FactoryEth {
           endTime, // 1637834620, // mint end - close date
           maxMembers,
           tokenCap, // BigInt(5000 * 10 ** 18), // token CAP
-          "0x0000000000000000000000000000000000000000",
-          0,
+          '0x0000000000000000000000000000000000000000',
+          0
         )
         .send({ from: account })
-        .on("transactionHash", (transactionHash) => {
+        .on('transactionHash', (transactionHash) => {
           if (
-            this.web3._provider.wc?._peerMeta.name === "Gnosis Safe Multisig"
+            this.web3._provider.wc?._peerMeta.name === 'Gnosis Safe Multisig'
           ) {
             gnosisTxHash = transactionHash;
             resolve(transactionHash);
-            onTxConfirm("");
+            onTxConfirm('');
           } else {
             onTxConfirm(transactionHash);
           }
         })
-        .on("receipt", (receipt) => {
+        .on('receipt', (receipt) => {
           onTxReceipt(receipt);
           resolve(receipt);
         })
-        .on("error", (error) => {
+        .on('error', (error) => {
           reject(error);
         });
     });
@@ -95,21 +95,21 @@ export class ClubERC20FactoryEth {
       onTxConfirm(receipt.transactionHash);
 
       const createEvents = await this.clubERC20FactoryEth.getPastEvents(
-        "ClubERC20Created",
+        'ClubERC20Created',
         {
           filter: { transactionHash: receipt.transactionHash },
           fromBlock: receipt.blockNumber,
-          toBlock: receipt.blockNumber,
-        },
+          toBlock: receipt.blockNumber
+        }
       );
 
       if (receipt.isSuccessful) {
         onTxReceipt({
           ...receipt,
-          events: { ClubERC20Created: createEvents[0] },
+          events: { ClubERC20Created: createEvents[0] }
         });
       } else {
-        throw "Transaction Failed";
+        throw 'Transaction Failed';
       }
     }
   }

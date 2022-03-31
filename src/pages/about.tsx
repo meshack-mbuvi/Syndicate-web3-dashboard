@@ -1,7 +1,7 @@
-import React from "react";
-import Head from "src/components/syndicates/shared/HeaderTitle";
-import Layout from "src/components/layout";
-import SEO from "src/components/seo";
+import React from 'react';
+import Head from 'src/components/syndicates/shared/HeaderTitle';
+import Layout from 'src/components/layout';
+import SEO from 'src/components/seo';
 
 const AboutPage: React.FC = () => {
   return (
@@ -31,6 +31,6 @@ const AboutPage: React.FC = () => {
       </section>
     </Layout>
   );
-}
+};
 
 export default AboutPage;

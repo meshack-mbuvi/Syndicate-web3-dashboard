@@ -1,11 +1,11 @@
-import { Spinner } from "@/components/shared/spinner";
-import { SkeletonLoader } from "@/components/skeletonLoader";
-import { AppState } from "@/state";
-import React from "react";
-import { useSelector } from "react-redux";
-import useFetchMerkleProof from "@/hooks/useMerkleProof";
-import useFetchTokenClaim from "@/hooks/useTokenClaim";
-import { useDemoMode } from "@/hooks/useDemoMode";
+import { Spinner } from '@/components/shared/spinner';
+import { SkeletonLoader } from '@/components/skeletonLoader';
+import { AppState } from '@/state';
+import React from 'react';
+import { useSelector } from 'react-redux';
+import useFetchMerkleProof from '@/hooks/useMerkleProof';
+import useFetchTokenClaim from '@/hooks/useTokenClaim';
+import { useDemoMode } from '@/hooks/useDemoMode';
 
 interface Props {
   isManager?: boolean;
@@ -28,13 +28,13 @@ const StatusBadge = (props: Props): JSX.Element => {
     creatingSyndicate,
     syndicateSuccessfullyCreated,
     syndicateCreationFailed,
-    showConfettiSuccess,
+    showConfettiSuccess
   } = props;
 
   const {
     erc20TokenSliceReducer: {
-      erc20Token: { loading },
-    },
+      erc20Token: { loading }
+    }
   } = useSelector((state: AppState) => state);
 
   const isDemoMode = useDemoMode();
@@ -42,38 +42,38 @@ const StatusBadge = (props: Props): JSX.Element => {
   const { loading: merkleLoading } = useFetchMerkleProof(isDemoMode);
   const { loading: claimLoading } = useFetchTokenClaim(isDemoMode);
 
-  let badgeBackgroundColor = "bg-blue-darker";
-  let badgeIcon: string | React.ReactNode = "depositIcon.svg";
-  let titleText = "Open to deposits";
+  let badgeBackgroundColor = 'bg-blue-darker';
+  let badgeIcon: string | React.ReactNode = 'depositIcon.svg';
+  let titleText = 'Open to deposits';
   if (claimEnabled) {
-    badgeBackgroundColor = "bg-green-phthalo-green";
-    badgeIcon = "claimToken.svg";
-    titleText = isManager ? "Airdrop Enabled" : "Claim club tokens";
+    badgeBackgroundColor = 'bg-green-phthalo-green';
+    badgeIcon = 'claimToken.svg';
+    titleText = isManager ? 'Airdrop Enabled' : 'Claim club tokens';
   } else if (!depositsEnabled) {
-    badgeBackgroundColor = "bg-green-dark";
-    badgeIcon = "active.svg";
-    titleText = "Active";
+    badgeBackgroundColor = 'bg-green-dark';
+    badgeIcon = 'active.svg';
+    titleText = 'Active';
   } else if (depositExceedTotal) {
-    badgeBackgroundColor = "bg-blue-darker";
-    badgeIcon = "depositReachedIcon.svg";
-    titleText = "Fully deposited";
+    badgeBackgroundColor = 'bg-blue-darker';
+    badgeIcon = 'depositReachedIcon.svg';
+    titleText = 'Fully deposited';
   } else if (depositsEnabled) {
-    badgeBackgroundColor = "bg-blue-midnightExpress";
+    badgeBackgroundColor = 'bg-blue-midnightExpress';
   }
 
   // states to track club creating process
   if (creatingSyndicate) {
-    badgeBackgroundColor = "bg-gray-syn8";
+    badgeBackgroundColor = 'bg-gray-syn8';
     badgeIcon = <Spinner width="w-6" height="h-6" margin="m-0" />;
-    titleText = "Creating investment club";
+    titleText = 'Creating investment club';
   } else if (syndicateSuccessfullyCreated && showConfettiSuccess) {
-    badgeBackgroundColor = "bg-green bg-opacity-10";
-    badgeIcon = "logo.svg";
-    titleText = "Club successfully created";
+    badgeBackgroundColor = 'bg-green bg-opacity-10';
+    badgeIcon = 'logo.svg';
+    titleText = 'Club successfully created';
   } else if (syndicateCreationFailed) {
-    badgeBackgroundColor = "bg-red-error bg-opacity-10";
-    badgeIcon = "warning-triangle.svg";
-    titleText = "Club creation failed";
+    badgeBackgroundColor = 'bg-red-error bg-opacity-10';
+    badgeIcon = 'warning-triangle.svg';
+    titleText = 'Club creation failed';
   }
 
   return (
@@ -85,12 +85,12 @@ const StatusBadge = (props: Props): JSX.Element => {
           <SkeletonLoader width="2/3" height="7" borderRadius="rounded-full" />
         ) : (
           <div className="flex items-center space-x-4">
-            {typeof badgeIcon === "string" ? (
+            {typeof badgeIcon === 'string' ? (
               <div className="w-6 h-6">
                 <img
                   src={`/images/syndicateStatusIcons/${badgeIcon}`}
                   alt={titleText}
-                  style={{ height: "100%", width: "100%" }}
+                  style={{ height: '100%', width: '100%' }}
                 />
               </div>
             ) : (

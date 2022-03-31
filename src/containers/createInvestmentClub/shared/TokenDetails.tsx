@@ -1,9 +1,9 @@
-import React from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { AppState } from "@/state";
-import Image from "next/image";
+import React from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { AppState } from '@/state';
+import Image from 'next/image';
 
-import { setDepositTokenDetails } from "@/state/createInvestmentClub/slice";
+import { setDepositTokenDetails } from '@/state/createInvestmentClub/slice';
 interface TokenProps {
   symbol: string;
   name: string;
@@ -14,7 +14,7 @@ interface TokenProps {
   onClick: () => void;
 }
 
-const abi = require("human-standard-token-abi");
+const abi = require('human-standard-token-abi');
 
 // render each token item inside the token select drop-down
 const TokenDetails = (props: TokenProps) => {
@@ -24,11 +24,11 @@ const TokenDetails = (props: TokenProps) => {
   const {
     initializeContractsReducer: { syndicateContracts },
     web3Reducer: {
-      web3: { account, web3, status },
+      web3: { account, web3, status }
     },
     erc20TokenSliceReducer: {
-      erc20Token: { owner, loading, name: clubName, depositsEnabled },
-    },
+      erc20Token: { owner, loading, name: clubName, depositsEnabled }
+    }
   } = useSelector((state: AppState) => state);
 
   const dispatch = useDispatch();
@@ -43,8 +43,8 @@ const TokenDetails = (props: TokenProps) => {
         depositTokenSymbol: symbol,
         depositTokenLogo: logoURI,
         depositTokenName: name,
-        depositTokenDecimals: +decimals,
-      }),
+        depositTokenDecimals: +decimals
+      })
     );
     // close the token select menu after a token is clicked
     // toggleTokenSelect();
@@ -71,7 +71,7 @@ const TokenDetails = (props: TokenProps) => {
             className="text-gray-3 text-sm sm:text-base uppercase"
             width={16}
             height={15}
-            src={"/images/check-mark-grayscale.svg"}
+            src={'/images/check-mark-grayscale.svg'}
           ></img>
         </div>
       ) : null}

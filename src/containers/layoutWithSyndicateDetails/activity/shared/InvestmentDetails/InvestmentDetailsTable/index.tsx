@@ -1,11 +1,11 @@
-import React from "react";
+import React from 'react';
 
 // our table is inverted, column names show vertically
 const InvestmentDetailsTable = ({
   columns,
   data,
   editMode,
-  hover,
+  hover
 }): JSX.Element => {
   const borderStyles = `border-b-1 border-gray-syn6 border-collapse text-gray-syn4`;
   return (
@@ -16,7 +16,7 @@ const InvestmentDetailsTable = ({
             <tr key={index}>
               <th
                 className={`text-left text-base ${
-                  column.Header === "Details" ? `text-white` : borderStyles
+                  column.Header === 'Details' ? `text-white` : borderStyles
                 }`}
               >
                 {column.Header}

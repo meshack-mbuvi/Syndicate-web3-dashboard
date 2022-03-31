@@ -2,16 +2,16 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import BN from "bn.js";
-import { EventData, PastEventOptions } from "web3-eth-contract";
+import BN from 'bn.js';
+import { EventData, PastEventOptions } from 'web3-eth-contract';
 
 export interface IERC721MetadataContract
   extends Truffle.Contract<IERC721MetadataInstance> {
-  "new"(meta?: Truffle.TransactionDetails): Promise<IERC721MetadataInstance>;
+  'new'(meta?: Truffle.TransactionDetails): Promise<IERC721MetadataInstance>;
 }
 
 export interface Approval {
-  name: "Approval";
+  name: 'Approval';
   args: {
     owner: string;
     approved: string;
@@ -23,7 +23,7 @@ export interface Approval {
 }
 
 export interface ApprovalForAll {
-  name: "ApprovalForAll";
+  name: 'ApprovalForAll';
   args: {
     owner: string;
     operator: string;
@@ -35,7 +35,7 @@ export interface ApprovalForAll {
 }
 
 export interface Transfer {
-  name: "Transfer";
+  name: 'Transfer';
   args: {
     from: string;
     to: string;
@@ -263,7 +263,7 @@ export interface IERC721MetadataInstance extends Truffle.ContractInstance {
       ): Promise<number>;
     };
 
-    "safeTransferFrom(address,address,uint256)": {
+    'safeTransferFrom(address,address,uint256)': {
       (
         from: string,
         to: string,
@@ -290,7 +290,7 @@ export interface IERC721MetadataInstance extends Truffle.ContractInstance {
       ): Promise<number>;
     };
 
-    "safeTransferFrom(address,address,uint256,bytes)": {
+    'safeTransferFrom(address,address,uint256,bytes)': {
       (
         from: string,
         to: string,

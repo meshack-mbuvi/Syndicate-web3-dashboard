@@ -1,11 +1,11 @@
-import { EtherscanLink } from "@/components/syndicates/shared/EtherscanLink";
-import { isDev } from "@/utils/environment";
-import { floatedNumberWithCommas } from "@/utils/formattedNumbers";
-import Image from "next/image";
-import React from "react";
-import { CopyToClipboard } from "react-copy-to-clipboard";
-import { AppState } from "@/state";
-import { useSelector } from "react-redux";
+import { EtherscanLink } from '@/components/syndicates/shared/EtherscanLink';
+import { isDev } from '@/utils/environment';
+import { floatedNumberWithCommas } from '@/utils/formattedNumbers';
+import Image from 'next/image';
+import React from 'react';
+import { CopyToClipboard } from 'react-copy-to-clipboard';
+import { AppState } from '@/state';
+import { useSelector } from 'react-redux';
 
 export const SuccessOrFailureContent: React.FC<{
   closeCard: () => void;
@@ -30,12 +30,12 @@ export const SuccessOrFailureContent: React.FC<{
   copied,
   clubTokenSymbol,
   accountClubTokens,
-  memberPercentShare,
+  memberPercentShare
 }) => {
   const {
     erc20TokenSliceReducer: {
-      depositDetails: { depositTokenSymbol, ethDepositToken },
-    },
+      depositDetails: { depositTokenSymbol, ethDepositToken }
+    }
   } = useSelector((state: AppState) => state);
   return (
     <div className="h-fit-content text-center relative">
@@ -59,27 +59,27 @@ export const SuccessOrFailureContent: React.FC<{
           className="h-16 w-16"
           src={
             successfulDeposit || successfulClaim
-              ? "/images/syndicateStatusIcons/checkCircleGreen.svg"
-              : "/images/syndicateStatusIcons/transactionFailed.svg"
+              ? '/images/syndicateStatusIcons/checkCircleGreen.svg'
+              : '/images/syndicateStatusIcons/transactionFailed.svg'
           }
           alt="checkmark"
         />
       </div>
       <div
         className={`pt-8 ${
-          successfulDeposit || successfulClaim ? "pb-4" : "pb-6"
+          successfulDeposit || successfulClaim ? 'pb-4' : 'pb-6'
         }`}
       >
         <span className="text-2xl">
           {successfulDeposit
             ? `Deposited ${floatedNumberWithCommas(
                 depositAmount,
-                ethDepositToken ?? false,
+                ethDepositToken ?? false
               )} ${depositTokenSymbol}`
             : successfulClaim
-            ? "Claim successfull"
+            ? 'Claim successfull'
             : claimFailed
-            ? "Claim failed"
+            ? 'Claim failed'
             : `Deposit failed`}
         </span>
       </div>
@@ -88,16 +88,16 @@ export const SuccessOrFailureContent: React.FC<{
         <>
           <div className="pb-6 px-8 text-gray-lightManatee">
             {`You now have ${floatedNumberWithCommas(
-              accountClubTokens,
+              accountClubTokens
             )} ${clubTokenSymbol}, which represents a ${floatedNumberWithCommas(
-              memberPercentShare,
+              memberPercentShare
             )}% ownership
                 share of this club.`}
           </div>
           {successfulDeposit ? (
             <CopyToClipboard
               text={`${
-                isDev ? "https://rinkeby.etherscan.io" : "https://etherscan.io"
+                isDev ? 'https://rinkeby.etherscan.io' : 'https://etherscan.io'
               }/tx/${transactionHash}`}
               onCopy={handleOnCopy}
             >

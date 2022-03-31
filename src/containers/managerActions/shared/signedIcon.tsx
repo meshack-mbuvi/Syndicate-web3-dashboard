@@ -1,5 +1,5 @@
 export const SignedIcon: React.FC<{ fillColor?: string }> = (props) => {
-  const { fillColor = "#646871" } = props;
+  const { fillColor = '#646871' } = props;
   return (
     <svg
       width="16"

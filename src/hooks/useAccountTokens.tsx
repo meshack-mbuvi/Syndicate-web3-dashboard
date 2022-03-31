@@ -1,10 +1,10 @@
-import { CLUB_MEMBER_QUERY } from "@/graphql/queries";
-import { AppState } from "@/state";
-import { getWeiAmount } from "@/utils/conversions";
-import { useQuery } from "@apollo/client";
-import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
-import { useDemoMode } from "./useDemoMode";
+import { CLUB_MEMBER_QUERY } from '@/graphql/queries';
+import { AppState } from '@/state';
+import { getWeiAmount } from '@/utils/conversions';
+import { useQuery } from '@apollo/client';
+import { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
+import { useDemoMode } from './useDemoMode';
 
 /**
  * Used to retrieve member ownership details for a given member address
@@ -23,16 +23,16 @@ export function useAccountTokens(): {
 } {
   const {
     web3Reducer: {
-      web3: { account },
+      web3: { account }
     },
     erc20TokenSliceReducer: {
       erc20Token: { address, totalSupply, tokenDecimals, totalDeposits },
-      depositDetails: { depositTokenDecimals, ethDepositToken },
-    },
+      depositDetails: { depositTokenDecimals, ethDepositToken }
+    }
   } = useSelector((state: AppState) => state);
-  const [accountTokens, setAccountTokens] = useState<string>("0");
-  const [memberDeposits, setMemberDeposits] = useState<string>("0");
-  const [memberOwnership, setMemberOwnership] = useState<string>("0");
+  const [accountTokens, setAccountTokens] = useState<string>('0');
+  const [memberDeposits, setMemberDeposits] = useState<string>('0');
+  const [memberOwnership, setMemberOwnership] = useState<string>('0');
 
   const isDemoMode = useDemoMode();
 
@@ -41,23 +41,23 @@ export function useAccountTokens(): {
     {
       variables: {
         where: {
-          memberAddress: account.toLocaleLowerCase(),
+          memberAddress: account.toLocaleLowerCase()
         },
         syndicateDaOsWhere2: {
-          syndicateDAO: address.toLowerCase(),
-        },
+          syndicateDAO: address.toLowerCase()
+        }
       },
       // Avoid unnecessary calls when account/clubAddress is not defined
-      skip: !account || !address || isDemoMode,
-    },
+      skip: !account || !address || isDemoMode
+    }
   );
 
   const stringifiedData = JSON.stringify(data);
   useEffect(() => {
     if (isDemoMode) {
-      setAccountTokens("3812");
-      setMemberDeposits("3812");
-      setMemberOwnership("31.6494");
+      setAccountTokens('3812');
+      setMemberDeposits('3812');
+      setMemberOwnership('31.6494');
       return;
     }
 
@@ -67,9 +67,9 @@ export function useAccountTokens(): {
     // fixes an issue where member deposit data is not updated when switching from a member
     // with deposits to one with zero deposits.
     const resetMemberStats = () => {
-      setAccountTokens("0");
-      setMemberDeposits("0");
-      setMemberOwnership("0");
+      setAccountTokens('0');
+      setMemberDeposits('0');
+      setMemberOwnership('0');
     };
 
     if (!data.members.length) {
@@ -78,24 +78,24 @@ export function useAccountTokens(): {
 
     if (data.members.length) {
       const {
-        members: [member],
+        members: [member]
       } = data;
 
       if (member) {
         const {
-          syndicateDAOs: [clubMemberData],
+          syndicateDAOs: [clubMemberData]
         } = member;
 
         if (clubMemberData) {
           const {
             depositAmount = 0,
             ownershipShare = 0,
-            tokens = 0,
+            tokens = 0
           } = clubMemberData;
 
           setAccountTokens(getWeiAmount(tokens, tokenDecimals, false));
           setMemberDeposits(
-            getWeiAmount(depositAmount, depositTokenDecimals, false),
+            getWeiAmount(depositAmount, depositTokenDecimals, false)
           );
           setMemberOwnership(`${+ownershipShare / 10000}`);
         } else {
@@ -103,9 +103,9 @@ export function useAccountTokens(): {
         }
       }
     } else {
-      setAccountTokens("0");
-      setMemberDeposits("0");
-      setMemberOwnership("0");
+      setAccountTokens('0');
+      setMemberDeposits('0');
+      setMemberOwnership('0');
     }
   }, [
     account,
@@ -114,7 +114,7 @@ export function useAccountTokens(): {
     address,
     totalSupply,
     totalDeposits,
-    stringifiedData,
+    stringifiedData
   ]);
 
   useEffect(() => {
@@ -131,6 +131,6 @@ export function useAccountTokens(): {
     memberOwnership,
     refetchMemberData: refetch,
     startPolling,
-    stopPolling,
+    stopPolling
   };
 }

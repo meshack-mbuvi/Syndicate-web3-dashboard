@@ -1,8 +1,8 @@
-import React, { FC, useState } from "react";
-import { useForm, useFormState, Controller } from "react-hook-form";
-import { floatedNumberWithCommas } from "@/utils/formattedNumbers";
-import { formatAddress } from "src/utils/formatAddress";
-import { isUnlimited } from "src/utils/conversions";
+import React, { FC, useState } from 'react';
+import { useForm, useFormState, Controller } from 'react-hook-form';
+import { floatedNumberWithCommas } from '@/utils/formattedNumbers';
+import { formatAddress } from 'src/utils/formatAddress';
+import { isUnlimited } from 'src/utils/conversions';
 
 /**
  * An editable form component
@@ -27,7 +27,9 @@ interface Props {
   handleChange?: (value) => void;
   display: boolean;
 }
-type StringKeys<objType extends Record<string, any>> = Array<Extract<keyof objType, string>>;
+type StringKeys<objType extends Record<string, any>> = Array<
+  Extract<keyof objType, string>
+>;
 
 export const EditableInput: FC<Props> = (props: Props) => {
   const {
@@ -42,11 +44,11 @@ export const EditableInput: FC<Props> = (props: Props) => {
     depositERC20TokenSymbol,
     handler,
     address,
-    type = "text",
-    step = "",
-    placeholder = "",
+    type = 'text',
+    step = '',
+    placeholder = '',
     handleChange = (value) => value,
-    display = true,
+    display = true
   } = props;
 
   const getPercentMargin = (value: string | number) => {
@@ -58,8 +60,8 @@ export const EditableInput: FC<Props> = (props: Props) => {
   };
 
   const formatCurrency = (value) => {
-    if (isUnlimited(value) || value.toLowerCase() === "unlimited") {
-      return "Unlimited";
+    if (isUnlimited(value) || value.toLowerCase() === 'unlimited') {
+      return 'Unlimited';
     } else {
       return floatedNumberWithCommas(value);
     }
@@ -83,14 +85,14 @@ export const EditableInput: FC<Props> = (props: Props) => {
     handleSubmit,
     formState: { errors },
     watch,
-    reset,
+    reset
   } = useForm({
-    mode: "onChange",
-    defaultValues: { ...defaults },
+    mode: 'onChange',
+    defaultValues: { ...defaults }
   });
 
   const { dirtyFields } = useFormState({
-    control,
+    control
   });
 
   const watchAllFields = watch();
@@ -165,7 +167,7 @@ export const EditableInput: FC<Props> = (props: Props) => {
                     <span
                       className="flex flex-1 absolute py-2  z-10 text-gray-500 text-sm"
                       style={{
-                        marginLeft: `${percentMargin}ch`,
+                        marginLeft: `${percentMargin}ch`
                       }}
                     >
                       %
@@ -194,7 +196,7 @@ export const EditableInput: FC<Props> = (props: Props) => {
                 <button
                   type="submit"
                   className={`ml-4 rounded-md bg-blue w-auto px-4 py-2 text-white ${
-                    dirtyFields[`${fieldName}`] ? "" : "opacity-50"
+                    dirtyFields[`${fieldName}`] ? '' : 'opacity-50'
                   }`}
                 >
                   Save
@@ -203,8 +205,8 @@ export const EditableInput: FC<Props> = (props: Props) => {
             </div>
             <p className="text-red-500 text-xs mt-1 mb-1">
               {index === showInputIndex
-                ? errors[`${fieldName}`] && errors[`${fieldName}`]["message"]
-                : ""}
+                ? errors[`${fieldName}`] && errors[`${fieldName}`]['message']
+                : ''}
             </p>
           </div>
         </form>

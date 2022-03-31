@@ -1,11 +1,11 @@
-import React from "react";
-import ReactTooltip from "react-tooltip";
-import { MoreInfoIcon } from "@/components/shared/Icons/index";
-import { floatedNumberWithCommas } from "@/utils/formattedNumbers";
-import { SkeletonLoader } from "@/components/skeletonLoader";
+import React from 'react';
+import ReactTooltip from 'react-tooltip';
+import { MoreInfoIcon } from '@/components/shared/Icons/index';
+import { floatedNumberWithCommas } from '@/utils/formattedNumbers';
+import { SkeletonLoader } from '@/components/skeletonLoader';
 
 const NetAssets: React.FC<{ totalAssetsValue: string }> = ({
-  totalAssetsValue,
+  totalAssetsValue
 }) => {
   return (
     <>
@@ -26,7 +26,7 @@ const NetAssets: React.FC<{ totalAssetsValue: string }> = ({
           arrowColor="transparent"
           backgroundColor="#222529"
         >
-          Estimated based on available <br /> pricing data. Collectibles are{" "}
+          Estimated based on available <br /> pricing data. Collectibles are{' '}
           <br /> not included.
         </ReactTooltip>
       </div>
@@ -35,7 +35,7 @@ const NetAssets: React.FC<{ totalAssetsValue: string }> = ({
           {floatedNumberWithCommas(totalAssetsValue)} USD
         </p>
       ) : (
-        <SkeletonLoader height={"8"} width={"44"} />
+        <SkeletonLoader height={'8'} width={'44'} />
       )}
     </>
   );

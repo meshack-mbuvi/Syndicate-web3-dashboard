@@ -2,15 +2,15 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import BN from "bn.js";
-import { EventData, PastEventOptions } from "web3-eth-contract";
+import BN from 'bn.js';
+import { EventData, PastEventOptions } from 'web3-eth-contract';
 
 export interface PausableContract extends Truffle.Contract<PausableInstance> {
-  "new"(meta?: Truffle.TransactionDetails): Promise<PausableInstance>;
+  'new'(meta?: Truffle.TransactionDetails): Promise<PausableInstance>;
 }
 
 export interface Paused {
-  name: "Paused";
+  name: 'Paused';
   args: {
     account: string;
     0: string;
@@ -18,7 +18,7 @@ export interface Paused {
 }
 
 export interface Unpaused {
-  name: "Unpaused";
+  name: 'Unpaused';
   args: {
     account: string;
     0: string;

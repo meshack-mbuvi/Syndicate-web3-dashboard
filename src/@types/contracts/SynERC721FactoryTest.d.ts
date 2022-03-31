@@ -2,53 +2,53 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import BN from "bn.js";
-import { EventData, PastEventOptions } from "web3-eth-contract";
+import BN from 'bn.js';
+import { EventData, PastEventOptions } from 'web3-eth-contract';
 
 export interface SynERC721FactoryTestContract
   extends Truffle.Contract<SynERC721FactoryTestInstance> {
-  "new"(
+  'new'(
     meta?: Truffle.TransactionDetails
   ): Promise<SynERC721FactoryTestInstance>;
 }
 
 export interface log {
-  name: "log";
+  name: 'log';
   args: {
     0: string;
   };
 }
 
 export interface log_address {
-  name: "log_address";
+  name: 'log_address';
   args: {
     0: string;
   };
 }
 
 export interface log_bytes {
-  name: "log_bytes";
+  name: 'log_bytes';
   args: {
     0: string;
   };
 }
 
 export interface log_bytes32 {
-  name: "log_bytes32";
+  name: 'log_bytes32';
   args: {
     0: string;
   };
 }
 
 export interface log_int {
-  name: "log_int";
+  name: 'log_int';
   args: {
     0: BN;
   };
 }
 
 export interface log_named_address {
-  name: "log_named_address";
+  name: 'log_named_address';
   args: {
     key: string;
     val: string;
@@ -58,7 +58,7 @@ export interface log_named_address {
 }
 
 export interface log_named_bytes {
-  name: "log_named_bytes";
+  name: 'log_named_bytes';
   args: {
     key: string;
     val: string;
@@ -68,7 +68,7 @@ export interface log_named_bytes {
 }
 
 export interface log_named_bytes32 {
-  name: "log_named_bytes32";
+  name: 'log_named_bytes32';
   args: {
     key: string;
     val: string;
@@ -78,7 +78,7 @@ export interface log_named_bytes32 {
 }
 
 export interface log_named_decimal_int {
-  name: "log_named_decimal_int";
+  name: 'log_named_decimal_int';
   args: {
     key: string;
     val: BN;
@@ -90,7 +90,7 @@ export interface log_named_decimal_int {
 }
 
 export interface log_named_decimal_uint {
-  name: "log_named_decimal_uint";
+  name: 'log_named_decimal_uint';
   args: {
     key: string;
     val: BN;
@@ -102,7 +102,7 @@ export interface log_named_decimal_uint {
 }
 
 export interface log_named_int {
-  name: "log_named_int";
+  name: 'log_named_int';
   args: {
     key: string;
     val: BN;
@@ -112,7 +112,7 @@ export interface log_named_int {
 }
 
 export interface log_named_string {
-  name: "log_named_string";
+  name: 'log_named_string';
   args: {
     key: string;
     val: string;
@@ -122,7 +122,7 @@ export interface log_named_string {
 }
 
 export interface log_named_uint {
-  name: "log_named_uint";
+  name: 'log_named_uint';
   args: {
     key: string;
     val: BN;
@@ -132,21 +132,21 @@ export interface log_named_uint {
 }
 
 export interface log_string {
-  name: "log_string";
+  name: 'log_string';
   args: {
     0: string;
   };
 }
 
 export interface log_uint {
-  name: "log_uint";
+  name: 'log_uint';
   args: {
     0: BN;
   };
 }
 
 export interface logs {
-  name: "logs";
+  name: 'logs';
   args: {
     0: string;
   };

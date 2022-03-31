@@ -1,21 +1,21 @@
-import Fade from "@/components/Fade";
-import Modal, { ModalStyle } from "@/components/modal";
-import { useCreateInvestmentClubContext } from "@/context/CreateInvestmentClubContext";
-import { AppState } from "@/state";
+import Fade from '@/components/Fade';
+import Modal, { ModalStyle } from '@/components/modal';
+import { useCreateInvestmentClubContext } from '@/context/CreateInvestmentClubContext';
+import { AppState } from '@/state';
 import {
   setTokenCap,
-  setDepositTokenDetails,
-} from "@/state/createInvestmentClub/slice";
+  setDepositTokenDetails
+} from '@/state/createInvestmentClub/slice';
 import {
   numberInputRemoveCommas,
-  numberWithCommas,
-} from "@/utils/formattedNumbers";
-import Image from "next/image";
-import React, { useEffect, useRef, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { AdvancedInputField } from "../shared/AdvancedInputField";
-import TokenSelectModal from "@/containers/createInvestmentClub/shared/TokenSelectModal";
-import { defaultTokenDetails } from "@/containers/createInvestmentClub/shared/ClubTokenDetailConstants";
+  numberWithCommas
+} from '@/utils/formattedNumbers';
+import Image from 'next/image';
+import React, { useEffect, useRef, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { AdvancedInputField } from '../shared/AdvancedInputField';
+import TokenSelectModal from '@/containers/createInvestmentClub/shared/TokenSelectModal';
+import { defaultTokenDetails } from '@/containers/createInvestmentClub/shared/ClubTokenDetailConstants';
 
 const AmountToRaise: React.FC<{
   className?: string;
@@ -24,11 +24,11 @@ const AmountToRaise: React.FC<{
   const {
     createInvestmentClubSliceReducer: {
       tokenCap,
-      tokenDetails: { depositTokenLogo, depositTokenSymbol },
-    },
+      tokenDetails: { depositTokenLogo, depositTokenSymbol }
+    }
   } = useSelector((state: AppState) => state);
 
-  const [error, setError] = useState<string | React.ReactNode>("");
+  const [error, setError] = useState<string | React.ReactNode>('');
   const [amount, setAmount] = useState<string>(tokenCap);
   const [showDisclaimerModal, setShowDisclaimerModal] = useState(false);
 
@@ -78,14 +78,14 @@ const AmountToRaise: React.FC<{
     if (!amount || +amount === 0 || editButtonClicked) {
       setNextBtnDisabled(true);
     } else {
-      setError("");
+      setError('');
       setNextBtnDisabled(false);
     }
-    amount ? dispatch(setTokenCap(amount)) : dispatch(setTokenCap("0"));
+    amount ? dispatch(setTokenCap(amount)) : dispatch(setTokenCap('0'));
   }, [amount, dispatch, editButtonClicked, setNextBtnDisabled]);
 
   useEffect(() => {
-    if (depositTokenSymbol == "") {
+    if (depositTokenSymbol == '') {
       dispatch(setDepositTokenDetails(defaultTokenDetails));
     }
   }, [depositTokenSymbol, defaultTokenDetails, dispatch]);
@@ -99,13 +99,13 @@ const AmountToRaise: React.FC<{
           closeModal: () => {
             setShowDisclaimerModal(false);
           },
-          customWidth: "w-100",
-          customClassName: "p-8",
+          customWidth: 'w-100',
+          customClassName: 'p-8',
           showCloseButton: false,
           outsideOnClick: true,
           showHeader: false,
-          alignment: "align-top",
-          margin: "mt-48",
+          alignment: 'align-top',
+          margin: 'mt-48'
         }}
       >
         <div className="space-y-6">
@@ -127,21 +127,23 @@ const AmountToRaise: React.FC<{
         </div>
       </Modal>
       <Fade delay={500}>
-        <h3 className="ml-5 mb-6">What’s the upper limit of the club’s raise?</h3>
+        <h3 className="ml-5 mb-6">
+          What’s the upper limit of the club’s raise?
+        </h3>
         <div className="flex pb-6 ml-5">
           <AdvancedInputField
             {...{
               value: amount
                 ? numberWithCommas(
                     // Checks if there are unnecessary zeros in the amount
-                    amount.replace(/^0{2,}/, "0").replace(/^0(?!\.)/, ""),
+                    amount.replace(/^0{2,}/, '0').replace(/^0(?!\.)/, '')
                   )
-                : numberWithCommas(""),
+                : numberWithCommas(''),
               onChange: handleChange,
               error: error,
               hasError: Boolean(error),
-              placeholder: "Unlimited",
-              type: "text",
+              placeholder: 'Unlimited',
+              type: 'text',
               isNumber: true,
               focus,
               addSettingDisclaimer: true,
@@ -152,7 +154,7 @@ const AmountToRaise: React.FC<{
                   transaction with gas, so aim high.
                 </div>
               ),
-              className: className,
+              className: className
             }}
           />
         </div>

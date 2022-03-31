@@ -1,10 +1,10 @@
-import { isDev } from "@/utils/environment";
-import React from "react";
+import { isDev } from '@/utils/environment';
+import React from 'react';
 import {
   ExternalLinkColor,
   ExternalLinkIcon,
-  OpenExternalLinkIcon,
-} from "src/components/iconWrappers";
+  OpenExternalLinkIcon
+} from 'src/components/iconWrappers';
 
 interface LinkProp {
   etherscanInfo: string | string[];
@@ -24,22 +24,22 @@ export const EtherscanLink: React.FC<LinkProp> = (props) => {
   const {
     etherscanInfo,
     customStyles,
-    type = "address",
+    type = 'address',
     iconOnly,
-    text = "View on Etherscan",
+    text = 'View on Etherscan',
     grouped,
-    iconColor = ExternalLinkColor.BLUE,
+    iconColor = ExternalLinkColor.BLUE
   } = props;
 
   // get debug mode from the .env
   // If we're in debug mode, we'll use the rinkeby testnet.
   let etherscanLink = `https://etherscan.io/${
-    type === "transaction" ? "tx" : "address"
+    type === 'transaction' ? 'tx' : 'address'
   }/`;
 
   if (isDev) {
     etherscanLink = `https://rinkeby.etherscan.io/${
-      type === "transaction" ? "tx" : "address"
+      type === 'transaction' ? 'tx' : 'address'
     }/`;
   }
 
@@ -57,7 +57,13 @@ export const EtherscanLink: React.FC<LinkProp> = (props) => {
       )}
       {!iconOnly ? (
         <div className="flex justify-between items-center w-full">
-          <div className={`${iconColor === ExternalLinkColor.BLUE ? "text-blue" : "text-white"}`}>{text}</div>
+          <div
+            className={`${
+              iconColor === ExternalLinkColor.BLUE ? 'text-blue' : 'text-white'
+            }`}
+          >
+            {text}
+          </div>
           <ExternalLinkIcon
             className={`ml-2 w-4 text-blue`}
             iconColor={iconColor}

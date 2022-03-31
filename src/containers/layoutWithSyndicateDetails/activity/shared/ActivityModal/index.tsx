@@ -1,22 +1,22 @@
-import Modal, { ModalStyle } from "@/components/modal";
-import { CategoryPill } from "@/containers/layoutWithSyndicateDetails/activity/shared/CategoryPill";
-import InvestmentDetailsModal from "@/containers/layoutWithSyndicateDetails/activity/shared/InvestmentDetails/InvestmentDetails";
+import Modal, { ModalStyle } from '@/components/modal';
+import { CategoryPill } from '@/containers/layoutWithSyndicateDetails/activity/shared/CategoryPill';
+import InvestmentDetailsModal from '@/containers/layoutWithSyndicateDetails/activity/shared/InvestmentDetails/InvestmentDetails';
 import {
   ANNOTATE_TRANSACTIONS,
-  SET_MEMBER_SIGN_STATUS,
-} from "@/graphql/mutations";
-import { MEMBER_SIGNED_QUERY } from "@/graphql/queries";
-import { useIsClubOwner } from "@/hooks/useClubOwner";
-import { useDemoMode } from "@/hooks/useDemoMode";
-import { AppState } from "@/state";
-import { isDev } from "@/utils/environment";
-import { useMutation, useQuery } from "@apollo/client";
-import Image from "next/image";
-import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
-import { OpenExternalLinkIcon } from "src/components/iconWrappers";
-import TransactionDetails from "../TransactionDetails";
-import ActivityNote from "./ActivityNote";
+  SET_MEMBER_SIGN_STATUS
+} from '@/graphql/mutations';
+import { MEMBER_SIGNED_QUERY } from '@/graphql/queries';
+import { useIsClubOwner } from '@/hooks/useClubOwner';
+import { useDemoMode } from '@/hooks/useDemoMode';
+import { AppState } from '@/state';
+import { isDev } from '@/utils/environment';
+import { useMutation, useQuery } from '@apollo/client';
+import Image from 'next/image';
+import React, { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
+import { OpenExternalLinkIcon } from 'src/components/iconWrappers';
+import TransactionDetails from '../TransactionDetails';
+import ActivityNote from './ActivityNote';
 
 interface IActivityModal {
   showModal: boolean;
@@ -38,7 +38,7 @@ const ActivityModal: React.FC<IActivityModal> = ({
   closeModal,
   refetchTransactions,
   showNote,
-  setShowNote,
+  setShowNote
 }) => {
   const {
     transactionsReducer: {
@@ -54,23 +54,23 @@ const ActivityModal: React.FC<IActivityModal> = ({
         tokenName,
         hash,
         metadata,
-        blockTimestamp,
-      },
+        blockTimestamp
+      }
     },
     erc20TokenSliceReducer: {
-      erc20Token: { address },
-    },
+      erc20Token: { address }
+    }
   } = useSelector((state: AppState) => state);
 
   const isManager = useIsClubOwner();
   const etherScanBaseUrl = isDev
-    ? "https://rinkeby.etherscan.io/tx"
-    : "https://etherscan.io/tx";
+    ? 'https://rinkeby.etherscan.io/tx'
+    : 'https://etherscan.io/tx';
 
   const isDemoMode = useDemoMode();
 
   const [setMemberHasSigned] = useMutation(SET_MEMBER_SIGN_STATUS, {
-    context: { clientName: "backend" },
+    context: { clientName: 'backend' }
   });
 
   const { from } = transactionInfo;
@@ -79,10 +79,10 @@ const ActivityModal: React.FC<IActivityModal> = ({
   const { loading, data, refetch } = useQuery(MEMBER_SIGNED_QUERY, {
     variables: {
       clubAddress: address,
-      address: from,
+      address: from
     },
     skip: !address || !from,
-    context: { clientName: "backend" },
+    context: { clientName: 'backend' }
   });
 
   useEffect(() => {
@@ -91,9 +91,9 @@ const ActivityModal: React.FC<IActivityModal> = ({
     }
   }, [address, from, loading]);
 
-  const [adaptiveBackground, setAdaptiveBackground] = useState<string>("");
-  const [etherscanLink, setEtherscanLink] = useState<string>("");
-  const [selectedCategory, setSelectedCategory] = useState<string>("");
+  const [adaptiveBackground, setAdaptiveBackground] = useState<string>('');
+  const [etherscanLink, setEtherscanLink] = useState<string>('');
+  const [selectedCategory, setSelectedCategory] = useState<string>('');
   const [showTransactionDetails, setShowTransactionDetails] =
     useState<boolean>(false);
   const [showDetailSection, setShowDetailSection] = useState(false);
@@ -125,7 +125,7 @@ const ActivityModal: React.FC<IActivityModal> = ({
         ? new Date(metadata?.acquisitionDate).toISOString()
         : null,
       currentInvestmentValue: metadata?.preMoneyValuation,
-      costBasis: metadata?.postMoneyValuation,
+      costBasis: metadata?.postMoneyValuation
     });
   }, [metadata, blockTimestamp]);
 
@@ -136,28 +136,28 @@ const ActivityModal: React.FC<IActivityModal> = ({
   // text and icon to show based on category
   useEffect(() => {
     switch (selectedCategory) {
-      case "EXPENSE":
-        setAdaptiveBackground("bg-blue-darkGunMetal");
+      case 'EXPENSE':
+        setAdaptiveBackground('bg-blue-darkGunMetal');
         break;
-      case "INVESTMENT":
-        setAdaptiveBackground("bg-blue-gunMetal");
+      case 'INVESTMENT':
+        setAdaptiveBackground('bg-blue-gunMetal');
         setShowTransactionDetails(true);
         break;
-      case "DEPOSIT":
-        setAdaptiveBackground("bg-blue-oxfordBlue");
+      case 'DEPOSIT':
+        setAdaptiveBackground('bg-blue-oxfordBlue');
         break;
-      case "INVESTMENT_TOKEN":
-        setAdaptiveBackground("bg-blue-darkGunMetal");
+      case 'INVESTMENT_TOKEN':
+        setAdaptiveBackground('bg-blue-darkGunMetal');
         break;
-      case "OFF_CHAIN_INVESTMENT":
-        setAdaptiveBackground("bg-blue-darkGunMetal");
+      case 'OFF_CHAIN_INVESTMENT':
+        setAdaptiveBackground('bg-blue-darkGunMetal');
         setShowTransactionDetails(true);
         break;
-      case "OTHER":
-        setAdaptiveBackground("bg-blue-darkGunMetal");
+      case 'OTHER':
+        setAdaptiveBackground('bg-blue-darkGunMetal');
         break;
       default:
-        setAdaptiveBackground("");
+        setAdaptiveBackground('');
         break;
     }
   }, [selectedCategory]);
@@ -183,7 +183,7 @@ const ActivityModal: React.FC<IActivityModal> = ({
         }
         return acc;
       },
-      false as boolean,
+      false as boolean
     );
     if (detailsHaveValues) {
       setShowDetailSection(true);
@@ -193,7 +193,7 @@ const ActivityModal: React.FC<IActivityModal> = ({
   }, [storedInvestmentDetails]);
 
   const [annotationMutation, { loading: loadingNoteAnnotation }] = useMutation(
-    ANNOTATE_TRANSACTIONS,
+    ANNOTATE_TRANSACTIONS
   );
 
   // save note/memo for a given transaction
@@ -201,14 +201,14 @@ const ActivityModal: React.FC<IActivityModal> = ({
     const inlineAnnotationData = [
       {
         memo: noteValue,
-        transactionId: hash,
-      },
+        transactionId: hash
+      }
     ];
     annotationMutation({
       variables: {
-        transactionAnnotationList: inlineAnnotationData,
+        transactionAnnotationList: inlineAnnotationData
       },
-      context: { clientName: "backend" },
+      context: { clientName: 'backend' }
     });
     if (!loadingNoteAnnotation) {
       refetchTransactions();
@@ -222,8 +222,8 @@ const ActivityModal: React.FC<IActivityModal> = ({
       variables: {
         clubAddress: address,
         address: from,
-        hasSigned: true,
-      },
+        hasSigned: true
+      }
     });
 
     if (data) {
@@ -286,21 +286,21 @@ const ActivityModal: React.FC<IActivityModal> = ({
               <TransactionDetails
                 tokenLogo={tokenLogo}
                 tokenSymbol={
-                  category === "INVESTMENT" ||
-                  category === "OFF_CHAIN_INVESTMENT"
-                    ? "USD"
+                  category === 'INVESTMENT' ||
+                  category === 'OFF_CHAIN_INVESTMENT'
+                    ? 'USD'
                     : tokenSymbol
                 }
                 tokenName={tokenName}
                 transactionType={
                   transactionInfo.isOutgoingTransaction
-                    ? "outgoing"
-                    : "incoming"
+                    ? 'outgoing'
+                    : 'incoming'
                 }
                 isTransactionAnnotated={false}
                 amount={
-                  category === "INVESTMENT" ||
-                  category === "OFF_CHAIN_INVESTMENT"
+                  category === 'INVESTMENT' ||
+                  category === 'OFF_CHAIN_INVESTMENT'
                     ? metadata?.postMoneyValuation
                     : amount
                 }
@@ -316,7 +316,7 @@ const ActivityModal: React.FC<IActivityModal> = ({
               />
             )}
 
-            {category !== "OFF_CHAIN_INVESTMENT" ? (
+            {category !== 'OFF_CHAIN_INVESTMENT' ? (
               <div className="text-gray-lightManatee text-sm mt-6 flex items-center justify-center">
                 <a
                   className="flex cursor-pointer items-center"
@@ -328,7 +328,7 @@ const ActivityModal: React.FC<IActivityModal> = ({
                     className="pr-2"
                     src={`/images/actionIcons/checkMark.svg`}
                     alt=""
-                  />{" "}
+                  />{' '}
                   Completed on {timestamp}
                   <OpenExternalLinkIcon className="text-gray-syn4 ml-2 w-3 h-3" />
                 </a>
@@ -343,7 +343,7 @@ const ActivityModal: React.FC<IActivityModal> = ({
 
         {!data?.Financial_memberSigned &&
           !loading &&
-          category === "DEPOSIT" &&
+          category === 'DEPOSIT' &&
           isManager && (
             <div className="flex flex-col space-y-6 py-6 px-5">
               <div className="bg-gray-syn7 px-5 py-4 space-y-2 rounded-xl">
@@ -361,8 +361,8 @@ const ActivityModal: React.FC<IActivityModal> = ({
           )}
 
         {/* Note and details section */}
-        {category === "DEPOSIT" ||
-        category === "UNCATEGORISED" ||
+        {category === 'DEPOSIT' ||
+        category === 'UNCATEGORISED' ||
         category === null ||
         (!isManager && !note && !showDetailSection) ? null : (
           <div className="flex flex-col space-y-6 py-6 px-5">
@@ -391,8 +391,8 @@ const ActivityModal: React.FC<IActivityModal> = ({
             )}
 
             {/* details */}
-            {(category === "INVESTMENT" ||
-              category === "OFF_CHAIN_INVESTMENT") && (
+            {(category === 'INVESTMENT' ||
+              category === 'OFF_CHAIN_INVESTMENT') && (
               <div>
                 {/* Checks if the stored investment details has empty values */}
                 {!showDetailSection && !editMode && isManager && (

@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { FC } from 'react';
 
 interface Option {
   label: string;
@@ -15,7 +15,7 @@ interface Props {
 const TabsButton: FC<Props> = ({
   options = [],
   onChange = () => false,
-  activeAssetTab,
+  activeAssetTab
 }) => {
   const handleChange = (val: string) => {
     onChange(val);
@@ -35,8 +35,8 @@ const TabsButton: FC<Props> = ({
             tabIndex={0}
             className={`border-1 px-3 py-1.5 rounded-3xl cursor-pointer box-border ${
               val === activeAssetTab
-                ? "border-gray-white text-white"
-                : "border-transparent text-gray-lightManatee hover:text-white"
+                ? 'border-gray-white text-white'
+                : 'border-transparent text-gray-lightManatee hover:text-white'
             }`}
           >
             {label}

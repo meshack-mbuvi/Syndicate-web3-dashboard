@@ -1,13 +1,13 @@
-import { Callout } from "@/components/callout";
-import ArrowDown from "@/components/icons/arrowDown";
-import Modal, { ModalStyle } from "@/components/modal";
-import EstimateGas from "@/containers/createInvestmentClub/gettingStarted/estimateGas";
-import { formatAddress } from "@/utils/formatAddress";
+import { Callout } from '@/components/callout';
+import ArrowDown from '@/components/icons/arrowDown';
+import Modal, { ModalStyle } from '@/components/modal';
+import EstimateGas from '@/containers/createInvestmentClub/gettingStarted/estimateGas';
+import { formatAddress } from '@/utils/formatAddress';
 import {
   floatedNumberWithCommas,
-  numberWithCommas,
-} from "@/utils/formattedNumbers";
-import React, { Dispatch, SetStateAction } from "react";
+  numberWithCommas
+} from '@/utils/formattedNumbers';
+import React, { Dispatch, SetStateAction } from 'react';
 
 interface IConfirmMemberDetailsModal {
   preview: boolean;
@@ -32,7 +32,7 @@ const ConfirmMemberDetailsModal: React.FC<IConfirmMemberDetailsModal> = ({
   totalSupplyPostMint,
   handleShow,
   setPreview,
-  handleMinting,
+  handleMinting
 }): React.ReactElement => {
   const DetailContent = ({ label, value, symbol, showPlusSign = false }) => (
     <div className="flex justify-between">
@@ -52,16 +52,16 @@ const ConfirmMemberDetailsModal: React.FC<IConfirmMemberDetailsModal> = ({
         show: preview,
         modalStyle: ModalStyle.DARK,
         showCloseButton: true,
-        customWidth: "w-full max-w-480",
+        customWidth: 'w-full max-w-480',
         outsideOnClick: true,
         closeModal: () => {
           handleShow(true);
           setPreview(false);
         },
-        customClassName: "pt-8 pb-10 px-5",
+        customClassName: 'pt-8 pb-10 px-5',
         showHeader: false,
         overflowYScroll: false,
-        overflow: "overflow-visible",
+        overflow: 'overflow-visible'
       }}
     >
       <div className="space-y-8">
@@ -84,16 +84,16 @@ const ConfirmMemberDetailsModal: React.FC<IConfirmMemberDetailsModal> = ({
 
               <div className="flex items-center justify-between mt-1">
                 <p className="text-sm text-gray-syn4">
-                  {floatedNumberWithCommas(ownershipShare) === "< 0.01"
+                  {floatedNumberWithCommas(ownershipShare) === '< 0.01'
                     ? null
-                    : "= "}
+                    : '= '}
                   {floatedNumberWithCommas(ownershipShare)}% ownership share
                 </p>
               </div>
             </div>
             <div
               className={`absolute p-2 bg-gray-syn8 border-gray-syn6 border rounded-lg`}
-              style={{ top: "calc(50% - 2px)", left: "calc(50% - 12px)" }}
+              style={{ top: 'calc(50% - 2px)', left: 'calc(50% - 12px)' }}
             >
               <ArrowDown />
             </div>

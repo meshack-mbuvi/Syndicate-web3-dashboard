@@ -1,11 +1,11 @@
-import { PayloadAction, createSlice } from "@reduxjs/toolkit";
+import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 
 import {
   IClubInfo,
   IMemberInfo,
   IWalletSignature,
-  IDepositReadyInfo,
-} from "./types";
+  IDepositReadyInfo
+} from './types';
 
 export interface IState {
   memberInfo: IMemberInfo;
@@ -16,42 +16,42 @@ export interface IState {
 
 const initialState: IState = {
   memberInfo: {
-    memberName: "",
-    depositAmount: "",
-    emailAddress: "",
+    memberName: '',
+    depositAmount: '',
+    emailAddress: ''
   },
   clubInfo: {
-    legalEntityName: "",
+    legalEntityName: '',
     isSeriesLLC: false,
-    masterLLC: "",
-    seriesLLC: "",
-    adminName: "",
+    masterLLC: '',
+    seriesLLC: '',
+    adminName: '',
     hasCounsel: false,
-    counselName: "",
-    counselEmail: "",
-    location: "",
-    managerEmail: "",
-    generalPurposeStatement: "",
-    dueDate: "",
-    adminSignDate: "",
-    adminSignature: "SIGN HERE",
+    counselName: '',
+    counselEmail: '',
+    location: '',
+    managerEmail: '',
+    generalPurposeStatement: '',
+    dueDate: '',
+    adminSignDate: '',
+    adminSignature: 'SIGN HERE',
     percentLoss: 20,
-    blockNumber: "ten",
+    blockNumber: 'ten',
     daysNotice: 3,
-    adminRemovalThreshold: "Majority in interest",
-    taxPercentage: 10,
+    adminRemovalThreshold: 'Majority in interest',
+    taxPercentage: 10
   },
   walletSignature: {
-    signature: "",
-    timeSigned: new Date(),
+    signature: '',
+    timeSigned: new Date()
   },
   depositReadyInfo: {
-    depositLink: "",
-    adminSigned: false,
-  },
+    depositLink: '',
+    adminSigned: false
+  }
 };
 
-const clubInfoModifier = (clubInfo: IState["clubInfo"]) => {
+const clubInfoModifier = (clubInfo: IState['clubInfo']) => {
   clubInfo.hasCounsel = clubInfo.hasCounsel || !!clubInfo.counselName;
   if (!clubInfo.isSeriesLLC || clubInfo.seriesLLC) return clubInfo;
 
@@ -62,7 +62,7 @@ const clubInfoModifier = (clubInfo: IState["clubInfo"]) => {
 };
 
 export const LegalInfo = createSlice({
-  name: "legalInfo",
+  name: 'legalInfo',
   initialState,
   reducers: {
     setMemberLegalInfo(state, action: PayloadAction<IMemberInfo>) {
@@ -79,15 +79,15 @@ export const LegalInfo = createSlice({
     },
     setDepositReadyInfo(state, action: PayloadAction<IDepositReadyInfo>) {
       state.depositReadyInfo = action.payload;
-    },
-  },
+    }
+  }
 });
 
 export const {
   setMemberLegalInfo,
   setClubLegalInfo,
   setWalletSignature,
-  setDepositReadyInfo,
+  setDepositReadyInfo
 } = LegalInfo.actions;
 
 export default LegalInfo.reducer;

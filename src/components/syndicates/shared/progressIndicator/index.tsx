@@ -1,11 +1,11 @@
 // component to show syndicate deposits progress
-import { divideIfNotByZero } from "@/utils/conversions";
-import { floatedNumberWithCommas } from "@/utils/formattedNumbers";
-import { SkeletonLoader } from "src/components/skeletonLoader";
-import useTokenDetails from "@/hooks/useTokenDetails";
-import { useEffect, useState } from "react";
-import axios from "axios";
-import NumberTreatment from "@/components/NumberTreatment";
+import { divideIfNotByZero } from '@/utils/conversions';
+import { floatedNumberWithCommas } from '@/utils/formattedNumbers';
+import { SkeletonLoader } from 'src/components/skeletonLoader';
+import useTokenDetails from '@/hooks/useTokenDetails';
+import { useEffect, useState } from 'react';
+import axios from 'axios';
+import NumberTreatment from '@/components/NumberTreatment';
 
 interface IProgressIndicator {
   totalDeposits: number;
@@ -22,7 +22,7 @@ export const ProgressIndicator = (props: IProgressIndicator): JSX.Element => {
     depositTotalMax,
     depositERC20TokenSymbol,
     loading = false,
-    ethDepositToken = false,
+    ethDepositToken = false
   } = props;
 
   const { depositTokenName } = useTokenDetails(ethDepositToken);
@@ -33,10 +33,10 @@ export const ProgressIndicator = (props: IProgressIndicator): JSX.Element => {
   useEffect(() => {
     async function getTokenPrice(tokenName) {
       const result = await axios.get(
-        `https://api.coingecko.com/api/v3/simple/price?ids=${tokenName}&vs_currencies=usd`,
+        `https://api.coingecko.com/api/v3/simple/price?ids=${tokenName}&vs_currencies=usd`
       );
       setDepositTokenPriceInUSDState(
-        parseFloat(result.data?.[tokenName.toLowerCase()]?.usd?.toFixed(2)),
+        parseFloat(result.data?.[tokenName.toLowerCase()]?.usd?.toFixed(2))
       );
     }
     getTokenPrice(depositTokenName);
@@ -93,7 +93,7 @@ export const ProgressIndicator = (props: IProgressIndicator): JSX.Element => {
           <div className="h-5 overflow-hidden mb-4 text-sm flex rounded-full bg-gray-syn7">
             <div
               style={{
-                width: `${floatedNumberWithCommas(depositsPercentage)}%`,
+                width: `${floatedNumberWithCommas(depositsPercentage)}%`
               }}
               className="shadow-none flex flex-col transition-all text-center whitespace-nowrap text-white justify-center bg-blue"
             ></div>
@@ -104,7 +104,7 @@ export const ProgressIndicator = (props: IProgressIndicator): JSX.Element => {
               <h2 className="flex">
                 <p>
                   <NumberTreatment
-                    numberValue={`${totalDeposits || ""}`}
+                    numberValue={`${totalDeposits || ''}`}
                     ethDepositToken={ethDepositToken}
                   />
                   &nbsp;
@@ -115,8 +115,8 @@ export const ProgressIndicator = (props: IProgressIndicator): JSX.Element => {
                   {/* Temporary fix to add font weight to symbol  */}
                   <span
                     style={{
-                      fontFamily: "Arial",
-                      fontWeight: 300,
+                      fontFamily: 'Arial',
+                      fontWeight: 300
                     }}
                   >
                     %
@@ -126,8 +126,8 @@ export const ProgressIndicator = (props: IProgressIndicator): JSX.Element => {
               <p className="text-sm text-gray-syn4 mt-2">
                 {floatedNumberWithCommas(
                   parseFloat(totalDeposits.toString()) *
-                    depositTokenPriceInUSDState,
-                )}{" "}
+                    depositTokenPriceInUSDState
+                )}{' '}
                 USD
               </p>
             </div>
@@ -136,7 +136,7 @@ export const ProgressIndicator = (props: IProgressIndicator): JSX.Element => {
               <h2>
                 {remainingDeposits > 0 ? (
                   <NumberTreatment
-                    numberValue={`${remainingDeposits || ""}`}
+                    numberValue={`${remainingDeposits || ''}`}
                     ethDepositToken={ethDepositToken}
                   />
                 ) : (
@@ -148,8 +148,8 @@ export const ProgressIndicator = (props: IProgressIndicator): JSX.Element => {
               <p className="text-sm text-gray-syn4 mt-2">
                 {floatedNumberWithCommas(
                   parseFloat(remainingDeposits.toString()) *
-                    depositTokenPriceInUSDState,
-                )}{" "}
+                    depositTokenPriceInUSDState
+                )}{' '}
                 USD
               </p>
             </div>

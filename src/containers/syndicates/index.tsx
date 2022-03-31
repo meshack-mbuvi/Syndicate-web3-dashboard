@@ -1,9 +1,9 @@
-import ErrorBoundary from "@/components/errorBoundary";
-import Layout from "@/components/layout";
-import PortfolioAndDiscover from "@/components/syndicates/portfolioAndDiscover";
-import useWindowSize from "@/hooks/useWindowSize";
-import React, { FC } from "react";
-import Head from "src/components/syndicates/shared/HeaderTitle";
+import ErrorBoundary from '@/components/errorBoundary';
+import Layout from '@/components/layout';
+import PortfolioAndDiscover from '@/components/syndicates/portfolioAndDiscover';
+import useWindowSize from '@/hooks/useWindowSize';
+import React, { FC } from 'react';
+import Head from 'src/components/syndicates/shared/HeaderTitle';
 
 /**
  * Diplays all clubs.
@@ -32,7 +32,7 @@ const SyndicatesComponent: FC = () => {
           {/* show my clubs */}
           <div
             className="container mx-auto"
-            style={width < 480 ? { paddingRight: "0" } : null}
+            style={width < 480 ? { paddingRight: '0' } : null}
           >
             <PortfolioAndDiscover />
           </div>

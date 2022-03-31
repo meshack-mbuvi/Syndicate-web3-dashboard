@@ -1,8 +1,8 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { ERC721laimed, initialState } from "./types";
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { ERC721laimed, initialState } from './types';
 
 const setClaimedERC721Slice = createSlice({
-  name: "claimedERC721",
+  name: 'claimedERC721',
   initialState,
   reducers: {
     setERC721Claimed(state, action: PayloadAction<ERC721laimed>) {
@@ -14,8 +14,8 @@ const setClaimedERC721Slice = createSlice({
     },
     clearERC721Claimed(state, action: PayloadAction<boolean>) {
       state.erc721Claimed = initialState.erc721Claimed;
-    },
-  },
+    }
+  }
 });
 
 export const { setERC721Claimed, setLoadingERC721Claimed, clearERC721Claimed } =

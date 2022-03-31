@@ -1,12 +1,12 @@
 /* This example requires Tailwind CSS v2.0+ */
-import { formatAddress } from "@/utils/formatAddress";
-import { floatedNumberWithCommas } from "@/utils/formattedNumbers";
-import { Listbox, Transition } from "@headlessui/react";
-import Image from "next/image";
-import { SearchForm } from "../searchForm";
+import { formatAddress } from '@/utils/formatAddress';
+import { floatedNumberWithCommas } from '@/utils/formattedNumbers';
+import { Listbox, Transition } from '@headlessui/react';
+import Image from 'next/image';
+import { SearchForm } from '../searchForm';
 
 function classNames(...classes) {
-  return classes.filter(Boolean).join(" ");
+  return classes.filter(Boolean).join(' ');
 }
 
 /**
@@ -37,7 +37,7 @@ export const SelectField: React.FC<{
     selected,
     handleSelected,
     searchHandler,
-    searchValue,
+    searchValue
   } = props;
 
   const handleSearch = (event) => {
@@ -50,7 +50,7 @@ export const SelectField: React.FC<{
       value={selected}
       onChange={(selected) => {
         const [selectedMember] = memberItems.filter(
-          (member) => member.memberAddress === selected,
+          (member) => member.memberAddress === selected
         );
         handleSelected(selectedMember);
       }}
@@ -67,7 +67,7 @@ export const SelectField: React.FC<{
                 <>
                   <p className="flex items-center text-base leading-5">
                     <img
-                      src={"/images/user.svg"}
+                      src={'/images/user.svg'}
                       alt=""
                       className="flex-shrink-0 h-6 w-6 rounded-full"
                     />
@@ -105,7 +105,7 @@ export const SelectField: React.FC<{
 
             <Transition
               show={open}
-              as={"div"}
+              as={'div'}
               leave="transition ease-in duration-100"
               leaveFrom="opacity-100"
               leaveTo="opacity-0"
@@ -115,10 +115,10 @@ export const SelectField: React.FC<{
                   searchValue={searchValue}
                   onChangeHandler={handleSearch}
                   full
-                  customClass={"bg-gray-4  rounded-md"}
+                  customClass={'bg-gray-4  rounded-md'}
                   parentBackground="bg-gray-4"
                   padding="py-2 pl-3"
-                  clearSearchValue={() => searchHandler("")}
+                  clearSearchValue={() => searchHandler('')}
                 />
 
                 <div className="overflow-scroll space-y-3">
@@ -138,7 +138,7 @@ export const SelectField: React.FC<{
                             key={member.memberAddress}
                             className={() =>
                               classNames(
-                                "cursor-pointer select-none relative text-white",
+                                'cursor-pointer select-none relative text-white'
                               )
                             }
                             value={member?.memberAddress}
@@ -148,22 +148,22 @@ export const SelectField: React.FC<{
                                 <div className="flex justify-between">
                                   <div className="flex space-x-3">
                                     <img
-                                      src={"/images/user.svg"}
+                                      src={'/images/user.svg'}
                                       alt=""
                                       className="flex-shrink-0 h-6 w-6 rounded-full"
                                     />
                                     <span
                                       className={classNames(
                                         selected
-                                          ? "bg-opacity-90"
-                                          : "font-normal",
-                                        "leading-6 text-base font-whyte",
+                                          ? 'bg-opacity-90'
+                                          : 'font-normal',
+                                        'leading-6 text-base font-whyte'
                                       )}
                                     >
                                       {formatAddress(
                                         member.memberAddress,
                                         6,
-                                        6,
+                                        6
                                       )}
                                     </span>
                                   </div>
@@ -172,26 +172,26 @@ export const SelectField: React.FC<{
                                     <div
                                       className={classNames(
                                         selected
-                                          ? "bg-opacity-90"
-                                          : "font-normal",
-                                        "flex-shrink-0 text-right",
+                                          ? 'bg-opacity-90'
+                                          : 'font-normal',
+                                        'flex-shrink-0 text-right'
                                       )}
                                     >
                                       {floatedNumberWithCommas(
-                                        member?.clubTokens || "0",
+                                        member?.clubTokens || '0'
                                       )}
                                     </div>
                                     <div
                                       className={classNames(
                                         selected
-                                          ? "bg-opacity-90"
-                                          : "font-normal",
-                                        "block text-right truncate flex-1 text-gray-syn4 w-16",
+                                          ? 'bg-opacity-90'
+                                          : 'font-normal',
+                                        'block text-right truncate flex-1 text-gray-syn4 w-16'
                                       )}
                                     >
                                       {`(${
                                         floatedNumberWithCommas(
-                                          member?.ownershipShare,
+                                          member?.ownershipShare
                                         ) || 0
                                       }%)`}
                                     </div>

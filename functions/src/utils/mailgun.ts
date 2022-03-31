@@ -1,9 +1,9 @@
-import FormData from "form-data";
-import Mailgun from "mailgun.js";
+import FormData from 'form-data';
+import Mailgun from 'mailgun.js';
 
 export const client = new Mailgun(FormData).client({
-  username: "api",
-  key: process.env.NEXT_PUBLIC_MAILGUN_PRIVATE_KEY,
+  username: 'api',
+  key: process.env.NEXT_PUBLIC_MAILGUN_PRIVATE_KEY
 });
 
 export interface SendEmailParams {
@@ -17,7 +17,7 @@ export interface SendEmailParams {
 }
 
 export const sendEmail = async (params: SendEmailParams) =>
-  client.messages.create("mail.syndicate.io", {
-    from: "The Syndicate Concierge <concierge@syndicate.io>",
-    ...params,
+  client.messages.create('mail.syndicate.io', {
+    from: 'The Syndicate Concierge <concierge@syndicate.io>',
+    ...params
   });

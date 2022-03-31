@@ -1,9 +1,9 @@
-import { AnimatedText } from "@/components/animatedText";
-import React from "react";
+import { AnimatedText } from '@/components/animatedText';
+import React from 'react';
 
 export default {
-  title: "Quarks/Animated Text",
-  component: AnimatedText,
+  title: 'Quarks/Animated Text',
+  component: AnimatedText
 };
 
 const Template = (args) => (

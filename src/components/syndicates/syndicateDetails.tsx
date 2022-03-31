@@ -1,26 +1,26 @@
-import { CopyToClipboardIcon } from "@/components/iconWrappers";
-import { SkeletonLoader } from "@/components/skeletonLoader";
-import DuplicateClubWarning from "@/components/syndicates/shared/DuplicateClubWarning";
-import { useAccountTokens } from "@/hooks/useAccountTokens";
-import { useClubDepositsAndSupply } from "@/hooks/useClubDepositsAndSupply";
-import { useIsClubOwner } from "@/hooks/useClubOwner";
-import { useDemoMode } from "@/hooks/useDemoMode";
-import { AppState } from "@/state";
-import { Status } from "@/state/wallet/types";
-import { epochTimeToDateFormat, getCountDownDays } from "@/utils/dateUtils";
-import { floatedNumberWithCommas } from "@/utils/formattedNumbers";
-import { getTextWidth } from "@/utils/getTextWidth";
-import abi from "human-standard-token-abi";
-import { useRouter } from "next/router";
-import React, { FC, useEffect, useState } from "react";
-import { CopyToClipboard } from "react-copy-to-clipboard";
-import { useSelector } from "react-redux";
-import ReactTooltip from "react-tooltip";
-import { EtherscanLink } from "src/components/syndicates/shared/EtherscanLink";
-import NumberTreatment from "../NumberTreatment";
+import { CopyToClipboardIcon } from '@/components/iconWrappers';
+import { SkeletonLoader } from '@/components/skeletonLoader';
+import DuplicateClubWarning from '@/components/syndicates/shared/DuplicateClubWarning';
+import { useAccountTokens } from '@/hooks/useAccountTokens';
+import { useClubDepositsAndSupply } from '@/hooks/useClubDepositsAndSupply';
+import { useIsClubOwner } from '@/hooks/useClubOwner';
+import { useDemoMode } from '@/hooks/useDemoMode';
+import { AppState } from '@/state';
+import { Status } from '@/state/wallet/types';
+import { epochTimeToDateFormat, getCountDownDays } from '@/utils/dateUtils';
+import { floatedNumberWithCommas } from '@/utils/formattedNumbers';
+import { getTextWidth } from '@/utils/getTextWidth';
+import abi from 'human-standard-token-abi';
+import { useRouter } from 'next/router';
+import React, { FC, useEffect, useState } from 'react';
+import { CopyToClipboard } from 'react-copy-to-clipboard';
+import { useSelector } from 'react-redux';
+import ReactTooltip from 'react-tooltip';
+import { EtherscanLink } from 'src/components/syndicates/shared/EtherscanLink';
+import NumberTreatment from '../NumberTreatment';
 // utils
-import GradientAvatar from "./portfolioAndDiscover/portfolio/GradientAvatar";
-import { DetailsCard, ProgressIndicator } from "./shared";
+import GradientAvatar from './portfolioAndDiscover/portfolio/GradientAvatar';
+import { DetailsCard, ProgressIndicator } from './shared';
 
 interface ClubDetails {
   header: string;
@@ -32,17 +32,17 @@ interface ClubDetails {
 // we should have an isChildVisible prop here of type boolean
 const SyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
   managerSettingsOpen,
-  children,
+  children
 }) => {
   const {
     erc20TokenSliceReducer: {
       erc20Token,
-      depositDetails: { depositTokenSymbol, depositToken, ethDepositToken },
+      depositDetails: { depositTokenSymbol, depositToken, ethDepositToken }
     },
     merkleProofSliceReducer: { myMerkleProof },
     web3Reducer: {
-      web3: { web3, status, account },
-    },
+      web3: { web3, status, account }
+    }
   } = useSelector((state: AppState) => state);
 
   const isDemoMode = useDemoMode();
@@ -60,28 +60,33 @@ const SyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
     symbol,
     maxTotalSupply,
     depositsEnabled,
-    claimEnabled,
+    claimEnabled
   } = erc20Token;
 
   const router = useRouter();
   const [details, setDetails] = useState<ClubDetails[]>([]);
 
-  const { totalDeposits, totalSupply, loadingClubDeposits, startTime, endTime } =
-    useClubDepositsAndSupply(address);
+  const {
+    totalDeposits,
+    totalSupply,
+    loadingClubDeposits,
+    startTime,
+    endTime
+  } = useClubDepositsAndSupply(address);
 
   // state to handle copying of the syndicate address to clipboard.
   const [showAddressCopyState, setShowAddressCopyState] =
     useState<boolean>(false);
 
   // state to handle details about the current deposit ERC20 token
-  const [, setDepositTokenContract] = useState<any>("");
+  const [, setDepositTokenContract] = useState<any>('');
 
   // states to show general syndicate details
   const [, setSyndicateCumulativeDetails] = useState([
     {
-      header: "Deposits",
-      subText: "",
-    },
+      header: 'Deposits',
+      subText: ''
+    }
   ]);
 
   // get syndicate address from the url
@@ -104,7 +109,7 @@ const SyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
 
   // perform size checks
   useEffect(() => {
-    setDivWidth(document?.getElementById("club-name")?.offsetWidth);
+    setDivWidth(document?.getElementById('club-name')?.offsetWidth);
     setNameWidth(getTextWidth(name));
   }, [name]);
 
@@ -113,13 +118,13 @@ const SyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
     if (totalDeposits) {
       setSyndicateCumulativeDetails([
         {
-          header: "Deposits",
+          header: 'Deposits',
           subText: `${floatedNumberWithCommas(
-            totalDeposits,
+            totalDeposits
           )} ${depositTokenSymbol} (${memberCount} ${
-            memberCount === 1 ? "depositor" : "depositors"
-          })`,
-        },
+            memberCount === 1 ? 'depositor' : 'depositors'
+          })`
+        }
       ]);
     }
   }, [totalDeposits, memberCount]);
@@ -130,121 +135,121 @@ const SyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
         ...(depositsEnabled
           ? [
               {
-                header: "Club token max supply",
+                header: 'Club token max supply',
                 content: (
                   <span>
-                    <NumberTreatment numberValue={`${maxTotalSupply || ""} `} />
+                    <NumberTreatment numberValue={`${maxTotalSupply || ''} `} />
                     &nbsp;
                     {symbol}
                   </span>
                 ),
-                tooltip: "",
+                tooltip: ''
               },
               {
-                header: "Club tokens minted",
+                header: 'Club tokens minted',
                 content: (
                   <span>
                     <NumberTreatment numberValue={totalSupply} />
                     &nbsp;{symbol}
                   </span>
                 ),
-                tooltip: "",
+                tooltip: ''
               },
               {
                 header: `Members (max)`,
                 content: (
                   <div>
-                    {memberCount}{" "}
+                    {memberCount}{' '}
                     <span className="text-gray-syn4">({maxMemberCount})</span>
                   </div>
                 ),
-                tooltip: "",
+                tooltip: ''
               },
               {
-                header: "Created",
+                header: 'Created',
                 content: `${epochTimeToDateFormat(
                   new Date(startTime),
-                  "LLL dd, yyyy",
+                  'LLL dd, yyyy'
                 )}`,
-                tooltip: "",
+                tooltip: ''
               },
 
               {
-                header: "Closing in",
+                header: 'Closing in',
                 content: getCountDownDays(endTime.toString()),
-                tooltip: "",
-              },
+                tooltip: ''
+              }
             ]
           : claimEnabled
           ? [
               {
-                header: "Club token max supply",
+                header: 'Club token max supply',
                 content: (
                   <span>
-                    <NumberTreatment numberValue={`${maxTotalSupply || ""}`} />
+                    <NumberTreatment numberValue={`${maxTotalSupply || ''}`} />
                   </span>
                 ),
-                tooltip: "",
+                tooltip: ''
               },
               {
-                header: "Club tokens minted",
+                header: 'Club tokens minted',
                 content: (
                   <span>
                     <NumberTreatment numberValue={totalDeposits} />
                     &nbsp;{symbol}
                   </span>
                 ),
-                tooltip: "",
+                tooltip: ''
               },
               {
-                header: "Members",
+                header: 'Members',
                 content: <div>{memberCount}</div>,
-                tooltip: "",
-              },
+                tooltip: ''
+              }
             ]
           : [
               {
-                header: "Total deposited",
+                header: 'Total deposited',
                 content: (
                   <span>
-                    <NumberTreatment numberValue={totalDeposits} />{" "}
+                    <NumberTreatment numberValue={totalDeposits} />{' '}
                     {depositTokenSymbol}
                   </span>
                 ),
-                tooltip: "",
+                tooltip: ''
               },
               {
-                header: "Club tokens minted",
+                header: 'Club tokens minted',
                 content: (
                   <span>
                     <NumberTreatment numberValue={totalDeposits} /> {symbol}
                   </span>
                 ),
-                tooltip: "",
+                tooltip: ''
               },
               {
-                header: "Members",
+                header: 'Members',
                 content: <div>{memberCount}</div>,
-                tooltip: "",
+                tooltip: ''
               },
               {
-                header: "Created",
+                header: 'Created',
                 content: `${epochTimeToDateFormat(
                   new Date(startTime),
-                  "LLL dd, yyyy",
+                  'LLL dd, yyyy'
                 )}`,
-                tooltip: "",
+                tooltip: ''
               },
 
               {
-                header: "Closed",
+                header: 'Closed',
                 content: `${epochTimeToDateFormat(
                   new Date(endTime),
-                  "LLL dd, yyyy",
+                  'LLL dd, yyyy'
                 )}`,
-                tooltip: "",
-              },
-            ]),
+                tooltip: ''
+              }
+            ])
       ]);
     }
   }, [
@@ -259,7 +264,7 @@ const SyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
     loading,
     maxTotalDeposits,
     memberCount,
-    totalDeposits,
+    totalDeposits
   ]);
 
   // show message to the user when address has been copied.
@@ -279,8 +284,8 @@ const SyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
 
   useEffect(() => {
     const duplicateWarningCookieSet = document.cookie
-      .split("; ")
-      .find((row) => row.startsWith("showedDuplicateClubWarning"));
+      .split('; ')
+      .find((row) => row.startsWith('showedDuplicateClubWarning'));
     setDuplicateClubWarningExists(Boolean(duplicateWarningCookieSet));
 
     if (duplicateWarningCookieSet) {
@@ -294,7 +299,7 @@ const SyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
     if (!duplicateClubWarningExists) {
       // set cookie to expire in a very long time.
       document.cookie =
-        "showedDuplicateClubWarning=true; expires=Fri, 31 Dec 9999 23:59:59 GMT; SameSite=None; Secure";
+        'showedDuplicateClubWarning=true; expires=Fri, 31 Dec 9999 23:59:59 GMT; SameSite=None; Secure';
     }
     setShowDuplicateClubWarning(false);
   };
@@ -306,7 +311,7 @@ const SyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
           <div>
             <div className="flex justify-center items-center">
               <div className="mr-8">
-                {(loading || loadingClubDeposits || totalDeposits == "") &&
+                {(loading || loadingClubDeposits || totalDeposits == '') &&
                 !managerSettingsOpen ? (
                   <SkeletonLoader
                     height="20"
@@ -449,7 +454,7 @@ const SyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
             <DetailsCard
               title="Details"
               sections={details}
-              customStyles={"w-full pt-4"}
+              customStyles={'w-full pt-4'}
               customInnerWidth="w-full grid xl:grid-cols-3 lg:grid-cols-3
             grid-cols-3 xl:gap-8 gap-2 xl:gap-5 gap-y-8"
             />

@@ -1,28 +1,28 @@
-import { AppState } from "@/state";
+import { AppState } from '@/state';
 import {
   clearERC721Claimed,
   setERC721Claimed,
-  setLoadingERC721Claimed,
-} from "@/state/claimedERC721/slice";
-import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+  setLoadingERC721Claimed
+} from '@/state/claimedERC721/slice';
+import { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
 const useFetchERC721Claim: any = () => {
   const dispatch = useDispatch();
 
   const {
     web3Reducer: {
-      web3: { account },
+      web3: { account }
     },
     erc721MerkleProofSliceReducer: { erc721MerkleProof },
     erc721TokenSliceReducer: {
       erc721Token: {
         address: nftAddress,
         publicSingleClaimEnabled,
-        publicUtilityClaimEnabled,
-      },
+        publicUtilityClaimEnabled
+      }
     },
-    initializeContractsReducer: { syndicateContracts },
+    initializeContractsReducer: { syndicateContracts }
   } = useSelector((state: AppState) => state);
 
   const [loading, setLoading] = useState(false);
@@ -32,11 +32,11 @@ const useFetchERC721Claim: any = () => {
     setLoading(true);
     const { MerkleDistributorModuleERC721 } = syndicateContracts;
     const events = await MerkleDistributorModuleERC721.getPastEvents(
-      "TokensClaimed",
+      'TokensClaimed',
       {
         token: nftAddress.toLowerCase(),
-        claimant: account.toLowerCase(),
-      },
+        claimant: account.toLowerCase()
+      }
     );
     setClaimData(events);
     setLoading(false);
@@ -59,7 +59,7 @@ const useFetchERC721Claim: any = () => {
       const claim = claimData.filter(
         (_claim) =>
           _claim.returnValues?.treeIndex ===
-          erc721MerkleProof?.treeIndex?.toString(),
+          erc721MerkleProof?.treeIndex?.toString()
       );
 
       if (claim.length) {
@@ -70,9 +70,9 @@ const useFetchERC721Claim: any = () => {
             token,
             index,
             treeIndex,
-            id: "",
-            claimed: true,
-          }),
+            id: '',
+            claimed: true
+          })
         );
       } else {
         dispatch(clearERC721Claimed());

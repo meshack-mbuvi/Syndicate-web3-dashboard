@@ -1,4 +1,4 @@
-import { ERC20TokenDefaultState } from "@/helpers/erc20TokenDetails";
+import { ERC20TokenDefaultState } from '@/helpers/erc20TokenDetails';
 
 export interface ERC20Token {
   name: string;
@@ -42,14 +42,14 @@ export const initialState: {
 } = {
   erc20Token: ERC20TokenDefaultState,
   depositDetails: {
-    mintModule: "",
+    mintModule: '',
     ethDepositToken: false,
-    depositToken: "",
-    depositTokenSymbol: "",
+    depositToken: '',
+    depositTokenSymbol: '',
     // default to USDC token to avoid error being thrown while loading the token
-    depositTokenLogo: "/images/usdcicon.png",
-    depositTokenName: "",
-    depositTokenDecimals: 6,
+    depositTokenLogo: '/images/usdcicon.png',
+    depositTokenName: '',
+    depositTokenDecimals: 6
   },
   erc20TokenContract: null,
   depositTokenPriceInUSD: 0
