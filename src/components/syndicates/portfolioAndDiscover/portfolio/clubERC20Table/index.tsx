@@ -34,11 +34,7 @@ const ClubERC20Table: FC<Props> = ({ columns, tableData }) => {
     [tableData.length, currentPage, dataLimit],
   );
 
-  const processTotalDeposits = (rawTotalDeposits, depositERC20TokenSymbol) => {
-    const totalDeposits =
-      depositERC20TokenSymbol == "ETH"
-        ? rawTotalDeposits / 10000
-        : rawTotalDeposits;
+  const processTotalDeposits = (totalDeposits, depositERC20TokenSymbol) => {
     return hasDecimals(totalDeposits)
       ? floatedNumberWithCommas(
           parseFloat(totalDeposits),

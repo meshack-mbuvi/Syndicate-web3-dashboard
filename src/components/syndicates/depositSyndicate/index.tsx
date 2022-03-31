@@ -536,7 +536,7 @@ const DepositSyndicate: React.FC = () => {
         setSufficientAllowanceSet(false);
       }
     }
-  }, [syndicateContracts, account, depositTokenContract]);
+  }, [syndicateContracts, account, depositTokenContract, successfulDeposit]);
 
   // check current member token allowance
   useEffect(() => {

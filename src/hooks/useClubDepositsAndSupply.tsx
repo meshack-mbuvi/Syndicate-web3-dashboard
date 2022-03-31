@@ -1,7 +1,6 @@
 import { SINGLE_CLUB_DETAILS } from "@/graphql/queries";
 import { AppState } from "@/state";
 import { getWeiAmount } from "@/utils/conversions";
-import { formatDate } from "@/utils";
 import { MOCK_TOTALDEPOSITS, MOCK_TOTALSUPPLY } from "@/utils/mockdata";
 import { useQuery } from "@apollo/client";
 import { useRouter } from "next/router";
@@ -74,7 +73,8 @@ export function useClubDepositsAndSupply(contractAddress: string): {
       syndicateDAOs: [syndicateDAO],
     } = data || {};
 
-    const { totalDeposits, totalSupply, startTime, endTime } = syndicateDAO || {};
+    const { totalDeposits, totalSupply, startTime, endTime } =
+      syndicateDAO || {};
     setTotalSupply(getWeiAmount(totalSupply, tokenDecimals || 18, false));
     setTotalDeposits(getWeiAmount(totalDeposits, depositTokenDecimals, false));
     setStartTime(+startTime * 1000);

@@ -7,7 +7,7 @@ import {
   setOtherClubERC20s,
 } from "@/state/clubERC20";
 import { formatDate, isZeroAddress, pastDate } from "@/utils";
-import { getWeiAmount } from "@/utils/conversions";
+import { divideIfNotByZero, getWeiAmount } from "@/utils/conversions";
 import { useQuery } from "@apollo/client";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
@@ -25,7 +25,11 @@ const useClubERC20s = () => {
 
   const router = useRouter();
 
-  const { account, currentEthereumNetwork } = web3;
+  const {
+    account,
+    currentEthereumNetwork,
+    ethereumNetwork: { invalidEthereumNetwork },
+  } = web3;
 
   // Retrieve syndicates that I manage
   const { loading, refetch, data } = useQuery(MY_CLUBS_QUERY, {
@@ -35,7 +39,7 @@ const useClubERC20s = () => {
       },
     },
     // Avoid unnecessary calls when account is not defined
-    skip: !account,
+    skip: !account || !router.isReady,
   });
 
   const {
@@ -49,7 +53,7 @@ const useClubERC20s = () => {
       },
     },
     // Avoid unnecessary calls when account is not defined
-    skip: !account,
+    skip: !account || !router.isReady,
   });
 
   useEffect(() => {
@@ -65,7 +69,7 @@ const useClubERC20s = () => {
         },
       });
     }
-  }, [router.isReady, account]);
+  }, [router.isReady, account, currentEthereumNetwork]);
 
   const [clubIAmMember, setClubIamMember] = useState([]);
   const [myClubs, setMyClubs] = useState([]);
@@ -74,16 +78,17 @@ const useClubERC20s = () => {
     processClubERC20Tokens(clubIAmMember).then((data) => {
       dispatch(setOtherClubERC20s(data));
     });
-  }, [JSON.stringify(clubIAmMember)]);
+  }, [JSON.stringify(clubIAmMember), currentEthereumNetwork]);
 
   useEffect(() => {
     processClubERC20Tokens(myClubs).then((data) => {
       dispatch(setMyClubERC20s(data));
     });
-  }, [JSON.stringify(myClubs)]);
+  }, [JSON.stringify(myClubs), currentEthereumNetwork]);
 
   const processClubERC20Tokens = async (tokens) => {
     dispatch(setLoadingClubERC20s(false));
+
     if (!tokens || !tokens?.length) {
       return [];
     }
@@ -97,12 +102,14 @@ const useClubERC20s = () => {
           members,
           ownerAddress,
           totalSupply,
+          totalDeposits,
           startTime,
           endTime,
           maxMemberCount,
           requiredToken,
           requiredTokenMinBalance,
           depositAmount,
+          maxTotalSupply,
         }) => {
           let clubERC20Contract;
           let decimals = 0;
@@ -123,6 +130,14 @@ const useClubERC20s = () => {
             return;
           }
 
+          const maxTotalSupplyFromWei = getWeiAmount(
+            maxTotalSupply,
+            +decimals,
+            false,
+          );
+
+          const totalSupplyFromWei = getWeiAmount(totalSupply, decimals, false);
+
           let depositToken =
             await syndicateContracts?.DepositTokenMintModule?.depositToken(
               contractAddress,
@@ -137,6 +152,7 @@ const useClubERC20s = () => {
 
           let depositERC20TokenSymbol = "ETH";
           let depositERC20TokenDecimals = "18";
+          let maxTotalDeposits = +maxTotalSupplyFromWei / 10000;
           /**
            * We are hardcoding these values because we have two deposit tokens.
            * Eth and USDC. When scaling we can use the TOKEN mapping for hard coded
@@ -144,24 +160,25 @@ const useClubERC20s = () => {
            */
           let depositTokenLogo = "/images/ethereum-logo.png";
           if (!isZeroAddress(depositToken)) {
-            const depositERC20Token = new ClubERC20Contract(
-              depositToken,
-              web3.web3,
-            );
-            depositERC20TokenSymbol = await depositERC20Token.symbol();
-            depositERC20TokenDecimals = await depositERC20Token.decimals();
-            depositTokenLogo =
-              depositERC20TokenSymbol === "USDC"
-                ? "/images/TestnetTokenLogos/usdcIcon.svg"
-                : "";
+            try {
+              const depositERC20Token = new ClubERC20Contract(
+                depositToken,
+                web3.web3,
+              );
+              depositERC20TokenSymbol = await depositERC20Token.symbol();
+              depositERC20TokenDecimals = await depositERC20Token.decimals();
+              depositTokenLogo =
+                depositERC20TokenSymbol === "USDC"
+                  ? "/images/TestnetTokenLogos/usdcIcon.svg"
+                  : "";
+              maxTotalDeposits = +maxTotalSupplyFromWei;
+            } catch (error) {
+              return;
+            }
           }
 
           const depositsEnabled = !pastDate(new Date(+endTime * 1000));
-
-          let totalDeposits = totalSupply;
-          if (decimals) {
-            totalDeposits = getWeiAmount(totalSupply, +decimals, false);
-          }
+          
 
           //  calculate ownership share
           const memberDeposits = getWeiAmount(
@@ -172,22 +189,39 @@ const useClubERC20s = () => {
             false,
           );
 
-          const ownershipShare =
-            (+memberDeposits * 100) /
-            (depositERC20TokenSymbol === "ETH"
-              ? +totalDeposits / 10000
-              : +totalDeposits);
+          let clubTotalDeposits = 0;
+          if (depositERC20TokenDecimals) {
+            clubTotalDeposits = getWeiAmount(
+              totalDeposits,
+              +depositERC20TokenDecimals,
+              false,
+            );
+          }
 
-          const maxTotalSupplyInWei = getWeiAmount(
+          // calculate ownership share
+          // we need to filter to get club tokens amount for this specific member
+          // this is not ideal.
+          // we should be able to get this value straight from the graph, similar to depositAmount.
+          const [member] = members?.filter(
+            (currentMember) =>
+              currentMember?.member?.memberAddress.toLowerCase() ===
+              account.toLowerCase(),
+          );
+          const memberTokens = member?.tokens || 0;
+
+          const ownershipShare = divideIfNotByZero(
+            +memberTokens * 100,
             totalSupply,
-            +decimals,
-            false,
           );
 
           let status = "Open to deposits";
+
           if (!depositsEnabled) {
             status = "Active";
-          } else if (+totalDeposits === +maxTotalSupplyInWei) {
+          } else if (
+            +totalSupplyFromWei === +maxTotalSupplyFromWei ||
+            +clubTotalDeposits === +maxTotalDeposits
+          ) {
             status = "Fully deposited";
           }
 
@@ -200,12 +234,12 @@ const useClubERC20s = () => {
             depositERC20TokenSymbol,
             depositTokenLogo,
             maxMemberCount,
-            maxTotalSupply: maxTotalSupplyInWei,
+            maxTotalSupply: maxTotalSupplyFromWei,
             requiredToken,
             requiredTokenMinBalance,
             address: contractAddress,
             ownerAddress,
-            totalDeposits,
+            totalDeposits: clubTotalDeposits,
             membersCount: members.length,
             memberDeposits,
             status,
@@ -225,10 +259,8 @@ const useClubERC20s = () => {
    * We need to be sure syndicateContracts is initialized before retrieving events.
    */
   useEffect(() => {
-    // This will reset syndicate details when we are on portfolio page.
-    // The currentEthereumNetwork has been added as a dependency to trigger a re-fetch
-    // whenever the Ethereum network is changed.
     dispatch(setLoadingClubERC20s(true));
+
     if (account && !memberClubLoading) {
       const clubTokens = [];
       // get clubs connected account has invested in
@@ -249,40 +281,45 @@ const useClubERC20s = () => {
               clubIndex++
             ) {
               const syndicateDAO = syndicateDAOs[clubIndex];
-              // get club details
               const {
                 depositAmount,
                 syndicateDAO: {
                   contractAddress,
-                  createdAt,
+                  endTime,
+                  startTime,
                   ownerAddress,
                   totalSupply,
+                  totalDeposits,
+                  maxTotalSupply,
                   members,
                 },
               } = syndicateDAO;
 
-              // add the club to club tokens array
               clubTokens.push({
                 depositAmount,
                 contractAddress,
-                createdAt,
+                endTime,
+                startTime,
                 ownerAddress,
                 totalSupply,
+                totalDeposits,
+                maxTotalSupply,
                 members,
               });
             }
           }
         }
       }
+      dispatch(setLoadingClubERC20s(false));
 
       setClubIamMember(clubTokens);
     }
-    dispatch(setLoadingClubERC20s(false));
   }, [
     account,
     memberClubLoading,
     currentEthereumNetwork,
     memberClubData?.members?.length,
+    invalidEthereumNetwork,
   ]);
 
   useEffect(() => {

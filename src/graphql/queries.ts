@@ -10,7 +10,10 @@ export const MY_CLUBS_QUERY = gql`
         depositAmount
       }
       totalSupply
+      totalDeposits
+      maxTotalSupply
       startTime
+      endTime
       maxMemberCount
       requiredToken
       requiredTokenMinBalance
@@ -30,10 +33,17 @@ export const CLUBS_HAVE_INVESTED = gql`
           members {
             ownershipShare
             depositAmount
+            tokens
+            member {
+              memberAddress
+            }
           }
           totalSupply
-          createdAt
+          totalDeposits
+          endTime
+          startTime
           contractAddress
+          maxTotalSupply
         }
       }
     }
@@ -52,6 +62,9 @@ export const CLUB_TOKEN_MEMBERS = gql`
         }
       }
       totalSupply
+      totalDeposits
+      endTime
+      startTime
       contractAddress
     }
   }
