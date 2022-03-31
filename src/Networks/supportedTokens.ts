@@ -15,7 +15,7 @@ export const SUPPORTED_TOKENS = Object.freeze({
       name: 'Ethereum',
       address: '',
       logoURI: '/images/chains/ethereum.svg',
-      decimal: 18,
+      decimals: 18,
       default: false
     }
   ],
@@ -35,7 +35,7 @@ export const SUPPORTED_TOKENS = Object.freeze({
       name: 'Ethereum',
       address: '',
       logoURI: '/images/chains/rinkeby.svg',
-      decimal: 18,
+      decimals: 18,
       default: false
     }
   ],
@@ -46,7 +46,7 @@ export const SUPPORTED_TOKENS = Object.freeze({
       name: 'Polygon',
       address: '',
       logoURI: '/images/chains/polygon.svg',
-      decimal: 18,
+      decimals: 18,
       default: true
     }
   ]

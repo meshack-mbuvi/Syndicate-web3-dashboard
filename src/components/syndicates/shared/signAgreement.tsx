@@ -79,14 +79,14 @@ const SignAgreement: React.FC<ISignAgreementProps> = ({
 
   const {
     web3Reducer: {
-      web3: { web3, account },
+      web3: { web3, account, activeNetwork }
     },
     legalInfoReducer: {
-      walletSignature: { signature, timeSigned },
+      walletSignature: { signature, timeSigned }
     },
     erc20TokenSliceReducer: {
-      depositDetails: { ethDepositToken },
-    },
+      depositDetails: { nativeDepositToken }
+    }
   } = useSelector((state: AppState) => state);
 
   const [currentField, setCurrentField] = useState(1);
@@ -101,7 +101,7 @@ const SignAgreement: React.FC<ISignAgreementProps> = ({
   const isOperatingAgVisible = useIsVisible(operatingAgRef);
   const isSubscriptionAgVisible = useIsVisible(subscriptionAgRef);
 
-  const { depositTokenSymbol } = useTokenDetails(ethDepositToken);
+  const { depositTokenSymbol } = useTokenDetails(nativeDepositToken);
 
   const signedBadge = `<span
     class="flex flex-row items-center border border-gray-syn5 rounded-full px-6 py-2 mb-10 w-max text-sm text-gray-syn5 bg-gray-syn6 bg-opacity-5 mx-auto"
@@ -117,7 +117,7 @@ const SignAgreement: React.FC<ISignAgreementProps> = ({
       <span>
         Signed
         <span classe="text-black">
-          &nbsp;${moment(timeSigned).format("lll")}
+          &nbsp;${moment(timeSigned).format('lll')}
         </span>
       </span>
       <span>
@@ -130,44 +130,44 @@ const SignAgreement: React.FC<ISignAgreementProps> = ({
     </span>`;
   const fillers = isManager
     ? {
-        adminSignature: signature ? signedBadge : "SIGN HERE",
-        adminSignDate: moment().format("LL"),
+        adminSignature: signature ? signedBadge : 'SIGN HERE',
+        adminSignDate: moment().format('LL'),
         clubTokenAddress: clubAddress,
-        emailAddress: "",
-        depositAmount: "",
-        memberName: "",
-        memberSignDate: "",
-        memberSignature: "",
+        emailAddress: '',
+        depositAmount: '',
+        memberName: '',
+        memberSignDate: '',
+        memberSignature: ''
       }
     : {
         clubTokenAddress: clubAddress,
-        memberSignature: signature ? signedBadge : "SIGN HERE",
-        memberSignDate: moment().format("LL"),
+        memberSignature: signature ? signedBadge : 'SIGN HERE',
+        memberSignDate: moment().format('LL')
       };
 
   useEffect(() => {
     if (signature) {
       const signatureElement = document.querySelector(
-        "span[data-item='signature']",
+        "span[data-item='signature']"
       );
 
       signatureElement.scrollIntoView({
-        behavior: "smooth",
-        block: "center",
-        inline: "end",
+        behavior: 'smooth',
+        block: 'center',
+        inline: 'end'
       });
     }
   }, [signature]);
 
-  const { compiledOp, compiledSub } = getTemplates(fieldInfo["isSeriesLLC"]);
+  const { compiledOp, compiledSub } = getTemplates(fieldInfo['isSeriesLLC']);
 
   useEffect(() => {
     const isFieldInfoEmpty = Object.keys(fieldInfo).some(
-      (key) => !fieldInfo[key] && !optionalFields.has(key),
+      (key) => !fieldInfo[key] && !optionalFields.has(key)
     );
 
     if (router.isReady && isFieldInfoEmpty) {
-      const path = router.pathname.includes("manage")
+      const path = router.pathname.includes('manage')
         ? `/clubs/${clubAddress}/manage/legal/prepare`
         : `/clubs/${clubAddress}`;
       router.push(path);
@@ -181,15 +181,17 @@ const SignAgreement: React.FC<ISignAgreementProps> = ({
         (value: string, key) =>
           nonHighlightFields.has(key) || (!isManager && !memberFields.has(key))
             ? value
-            : key === "depositAmount"
+            : key === 'depositAmount'
             ? `${
-                depositTokenSymbol === "ETH" ? depositTokenSymbol : "$"
+                depositTokenSymbol === activeNetwork.nativeCurrency.symbol
+                  ? depositTokenSymbol
+                  : '$'
               } <span class="font-semibold" data-field="${key}">${value}</span>`
             : `<span class="font-semibold" data-field="${key}">${
-                key === "generalPurposeStatement" ? value.toLowerCase() : value
-              }</span>`, // general purpose should be in lowercase
+                key === 'generalPurposeStatement' ? value.toLowerCase() : value
+              }</span>` // general purpose should be in lowercase
       ),
-    [fieldInfo, isManager],
+    [fieldInfo, isManager]
   );
 
   useLayoutEffect(() => {

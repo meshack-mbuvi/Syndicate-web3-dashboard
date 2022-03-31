@@ -111,7 +111,7 @@ const AmountToRaise: React.FC<{
         depositTokenName: defaultTokenDetails.name,
         depositTokenSymbol: defaultTokenDetails.symbol,
         depositTokenLogo: defaultTokenDetails.logoURI,
-        depositTokenDecimals: defaultTokenDetails.decimal
+        depositTokenDecimals: defaultTokenDetails.decimals
       })
     );
   }, [defaultTokenDetails]);
