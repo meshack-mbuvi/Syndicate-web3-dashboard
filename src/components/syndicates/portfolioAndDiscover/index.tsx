@@ -100,13 +100,13 @@ const PortfolioAndDiscover: React.FC = () => {
                 className="flex flex-col sm:flex-row justify-between sm:items-center w-full mt-14 mb-16"
                 style={width < 480 ? { paddingRight: "6%" } : null}
               >
-                <p className="text-3xl">Portfolio</p>
+                <h1>Portfolio</h1>
                 <CreateClubButton />
               </div>
               {/* show active clubsERC20s here */}
               {myClubERC20s.length !== 0 && (
                 <div className="">
-                  <p className="text-xl font-whyte mb-8">Admin</p>
+                  <h3 className="mb-8">Admin</h3>
                   {/* show active clubsERC20s here */}
                   <ClubERC20Table
                     tableData={myClubERC20s}
@@ -116,7 +116,7 @@ const PortfolioAndDiscover: React.FC = () => {
               )}
               {otherClubERC20s.length !== 0 && (
                 <div className="mt-16">
-                  <p className="text-xl font-whyte mb-8">Member</p>
+                  <h3 className="mb-8">Member</h3>
                   {/* show active clubsERC20s here */}
                   <ClubERC20Table
                     tableData={otherClubERC20s}

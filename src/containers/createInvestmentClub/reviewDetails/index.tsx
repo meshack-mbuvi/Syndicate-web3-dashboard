@@ -139,7 +139,7 @@ const ReviewDetails: React.FC = () => {
 
   return (
     <>
-      <div className="w-full mb-8 sm:mb-16">
+      <div className="w-full mb-8 sm:mb-12">
         {editClubNameSelector ? (
           <animated.div className="relative w-full mb-2 pt-2 pb-2">
             <ClubNameSelector editButtonClicked={editClubNameSelector} />

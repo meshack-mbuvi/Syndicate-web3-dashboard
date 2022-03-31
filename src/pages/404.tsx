@@ -21,8 +21,8 @@ const NotFoundPage: React.FC = () => {
       <div className="w-full" style={{ height: "calc(100vh - 300px)" }}>
         <div className="vertically-center container mx-auto">
           <div className="w-full sm:w-8/12 lg:w-5/12">
-            <h2 className="tagline mb-4">404 / Not Found</h2>
-            <h1 className="font-whyte text-3xl mb-3">
+            <div className="tagline mb-4">404 / Not Found</div>
+            <h1 className="my-6">
               There&apos;s nothing here yet
             </h1>
             <p className="mb-3 text-gray-3">

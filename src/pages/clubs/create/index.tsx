@@ -83,13 +83,13 @@ const CreateInvestmentClub: React.FC = () => {
           <GettingStarted setClubStep={setPreClubCreationStep} />
         ) : (
           <div className="container mx-auto w-full">
-            <div
-              className={`h4 text-center ${
+            <h4
+              className={`text-center ${
                 currentStep === 0 ? "" : "pb-11"
               } pt-11`}
             >
               Create an investment club
-            </div>
+            </h4>
             <div className="flex justify-center w-full ">
               <div className="w-full h-full overflow-y-scroll">
                 <div className="flex-grow flex overflow-y-auto overflow-x-hidden justify-between max-w-480 mx-auto h-full no-scroll-bar">

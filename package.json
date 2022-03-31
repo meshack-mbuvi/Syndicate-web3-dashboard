@@ -50,6 +50,7 @@
     "https-browserify": "^1.0.0",
     "human-standard-token-abi": "^2.0.0",
     "joi": "^17.4.0",
+    "js-base64": "^3.7.2",
     "linkify-react": "^3.0.4",
     "linkifyjs": "^3.0.4",
     "lodash": "^4.17.21",

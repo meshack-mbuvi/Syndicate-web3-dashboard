@@ -23,6 +23,12 @@ Advance.args = {
   label: "Button"
 };
 
+export const Warning = Template.bind({});
+Warning.args = {
+  className: 'orange-CTA',
+  label: "Button"
+};
+
 export const Disabled = Template.bind({});
 Disabled.args = {
   className: 'primary-CTA-disabled',
@@ -38,6 +44,12 @@ Primary.parameters = {
 Advance.parameters = {
   docs: {
     storyDescription: 'Use class `green-CTA`.',
+  },
+};
+
+Warning.parameters = {
+  docs: {
+    storyDescription: 'Use class `orange-CTA`.',
   },
 };
 

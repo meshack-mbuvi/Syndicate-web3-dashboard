@@ -3,13 +3,13 @@ import Head from "@/components/syndicates/shared/HeaderTitle";
 import SignAgreement from "@/components/syndicates/shared/signAgreement";
 import WalletNotConnected from "@/components/walletNotConnected";
 import { AppState } from "@/state";
+import { getTemplates } from "@/utils/templates";
+import axios from "axios";
+import moment from "moment";
 import { NextPage } from "next";
 import { useRouter } from "next/router";
 import React from "react";
 import { useSelector } from "react-redux";
-import moment from "moment";
-import { getTemplates } from "@/utils/templates";
-import axios from "axios";
 
 const MemberAgreementPage: NextPage = () => {
   const router = useRouter();

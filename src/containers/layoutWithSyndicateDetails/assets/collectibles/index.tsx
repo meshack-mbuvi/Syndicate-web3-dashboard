@@ -1,20 +1,19 @@
-import { FC, useState } from "react";
-import { web3 } from "@/utils/web3Utils";
-import InfiniteScroll from "react-infinite-scroll-component";
-import { useDispatch, useSelector } from "react-redux";
 import { SkeletonLoader } from "@/components/skeletonLoader";
-import { AppState } from "@/state";
-import { fetchCollectiblesTransactions } from "@/state/assets/slice";
 import CollectibleDetailsModal from "@/containers/layoutWithSyndicateDetails/assets/collectibles/collectibleDetailsModal";
-
 import CollectibleMedia from "@/containers/layoutWithSyndicateDetails/assets/collectibles/shared/CollectibleMedia";
-import { floatedNumberWithCommas } from "@/utils/formattedNumbers";
+import FullScreenOverlay from "@/containers/layoutWithSyndicateDetails/assets/collectibles/shared/FullscreenOverlay";
+import { useDemoMode } from "@/hooks/useDemoMode";
+import { AppState } from "@/state";
 import {
   setCollectibleModalDetails,
   setShowCollectibleModal,
 } from "@/state/assets/collectibles/slice";
-import { useDemoMode } from "@/hooks/useDemoMode";
-import FullScreenOverlay from "@/containers/layoutWithSyndicateDetails/assets/collectibles/shared/FullscreenOverlay";
+import { fetchCollectiblesTransactions } from "@/state/assets/slice";
+import { floatedNumberWithCommas } from "@/utils/formattedNumbers";
+import { web3 } from "@/utils/web3Utils";
+import { FC, useState } from "react";
+import InfiniteScroll from "react-infinite-scroll-component";
+import { useDispatch, useSelector } from "react-redux";
 
 const Collectibles: FC = () => {
   const {
@@ -41,7 +40,7 @@ const Collectibles: FC = () => {
   const collectiblesTitle = (
     <div className="flex items-center space-x-4 pb-8">
       <img src="/images/collectibles.svg" alt="Collectibles" />
-      <div className="text-xl">Collectibles</div>
+      <h3>Collectibles</h3>
     </div>
   );
 
@@ -53,9 +52,9 @@ const Collectibles: FC = () => {
       <div className="relative">
         {!animate && (
           <div className="absolute flex flex-col justify-center items-center top-1/3 w-full z-10">
-            <span className="text-white mb-4 text-xl">
+            <h3 className="text-white mb-4">
               This club has no collectibles yet.
-            </span>
+            </h3>
             <span className="text-gray-syn4">
               Any NFTs held in this club’s wallet will appear here.
             </span>
@@ -230,8 +229,12 @@ const Collectibles: FC = () => {
                   if (soundtrack) {
                     mediaType = 'soundtrackNFT';
                   }
-                }
 
+                  // Still media type not set? Default to imageOnlyNFT
+                  if (!mediaType) {
+                    mediaType = "imageOnlyNFT";
+                  }
+                }
                 // sometimes the NFT name is an Ethereum address
                 // we need to break this to fit onto the collectible card
                 const isNameEthereumAddress = web3.utils.isAddress(name);
@@ -270,15 +273,15 @@ const Collectibles: FC = () => {
                         }}
                       >
                         <div className="mx-8 flex flex-col">
-                          <span
-                            className={`line-clamp-1 text-xl ${
+                          <h3
+                            className={`line-clamp-1 ${
                               isNameEthereumAddress
                                 ? 'break-all'
                                 : 'break-words'
                             }`}
                           >
                             {name ? name : blankValue}
-                          </span>
+                          </h3>
                           <span className="text-gray-syn4 text-sm pt-4">
                             Floor price
                           </span>

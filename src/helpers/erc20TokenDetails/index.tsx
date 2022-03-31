@@ -9,7 +9,7 @@ import {
   setLoadingClub,
 } from "@/state/erc20token/slice";
 import { DepositDetails, ERC20Token } from "@/state/erc20token/types";
-import { isZeroAddress } from "@/utils";
+import {isZeroAddress } from "@/utils";
 import { getWeiAmount } from "@/utils/conversions";
 import { SUPPORTED_TOKENS } from '@/Networks';
 

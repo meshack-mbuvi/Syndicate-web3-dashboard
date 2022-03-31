@@ -3,7 +3,7 @@ import {
   APPROVE_DEPOSIT_ALLOWANCE,
   ERROR_APPROVE_ALLOWANCE,
   ERROR_DEPOSIT,
-  SUCCESSFUL_DEPOSIT,
+  SUCCESSFUL_DEPOSIT
 } from "@/components/amplitude/eventNames";
 import ErrorBoundary from "@/components/errorBoundary";
 import FadeIn from "@/components/fadeIn/FadeIn";
@@ -554,7 +554,7 @@ const DepositSyndicate: React.FC = () => {
         setSufficientAllowanceSet(false);
       }
     }
-  }, [syndicateContracts, account, depositTokenContract]);
+  }, [syndicateContracts, account, depositTokenContract,successfulDeposit]);
 
   // check current member token allowance
   useEffect(() => {
@@ -1472,9 +1472,9 @@ const DepositSyndicate: React.FC = () => {
         depositsEnabled) ||
         isDemoMode) && (
         <div className="bg-gray-syn8 rounded-2xl mt-6 px-8 py-6">
-          <div className="pb-5 text-sm font-bold uppercase tracking-widest">
+          <h4 className="pb-5">
             Your Holdings
-          </div>
+          </h4>
           {loading ? (
             <SkeletonLoader height="9" width="full" borderRadius="rounded-md" />
           ) : (

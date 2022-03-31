@@ -213,9 +213,9 @@ const ManagerActions = (): JSX.Element => {
                       !creatingSyndicate &&
                       !showConfettiSuccess && (
                         <div className="flex flex-col items-start mb-6">
-                          <p className="pb-2 uppercase text-white text-sm font-whyte-medium">
+                          <h4 className="pb-2">
                             Invite to {claimEnabled ? "claim" : "deposit"}
-                          </p>
+                          </h4>
                           <div className="text-gray-syn4">
                             <p>
                               Invite members by sharing your club’s{" "}

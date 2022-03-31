@@ -153,6 +153,7 @@ const AmountToRaise: React.FC<{
         </div>
       </Modal>
       <Fade delay={500}>
+        <h3 className="ml-5 mb-6">What’s the upper limit of the club’s raise?</h3>
         <div className="flex pb-6 ml-5">
           <AdvancedInputField
             {...{
@@ -161,8 +162,7 @@ const AmountToRaise: React.FC<{
                     // Checks if there are unnecessary zeros in the amount
                     amount.replace(/^0{2,}/, '0').replace(/^0(?!\.)/, '')
                   )
-                : numberWithCommas(''),
-              title: 'What’s the upper limit of the club’s raise?',
+                : numberWithCommas(""),
               onChange: handleChange,
               error: error,
               hasError: Boolean(error),

@@ -73,9 +73,9 @@ const TokenTable: FC<Props> = ({ columns, tableData }) => {
     <div className="relative">
       {!animate && (
         <div className="absolute flex flex-col justify-center items-center top-1/3 w-full z-10">
-          <span className="text-white mb-4 text-xl">
+          <h3 className="text-white mb-4">
             This club has no tokens yet.
-          </span>
+          </h3>
           <span className="text-gray-syn4">
             Any tokens held in this club’s wallet will appear here, including
             member deposits.
@@ -130,7 +130,7 @@ const TokenTable: FC<Props> = ({ columns, tableData }) => {
   const tokensTitle = (
     <div className="flex text-base items-center">
       <img alt="token" src="/images/token.svg" />
-      <div className="pl-3 text-xl">Tokens</div>
+      <h3 className="pl-3">Tokens</h3>
     </div>
   );
 

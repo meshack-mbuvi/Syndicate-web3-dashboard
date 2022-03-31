@@ -42,17 +42,11 @@ const ClubERC20Table: FC<Props> = ({ columns, tableData }) => {
     [tableData.length, currentPage, dataLimit]
   );
 
-  const processTotalDeposits = (rawTotalDeposits, depositERC20TokenSymbol) => {
-    const totalDeposits =
-      depositERC20TokenSymbol == activeNetwork.nativeCurrency.symbol
-        ? rawTotalDeposits / 10000
-        : rawTotalDeposits;
+  const processTotalDeposits = (totalDeposits, depositERC20TokenSymbol) => {
     return hasDecimals(totalDeposits)
       ? floatedNumberWithCommas(
           parseFloat(totalDeposits),
-          depositERC20TokenSymbol == activeNetwork.nativeCurrency.symbol
-            ? true
-            : false
+          depositERC20TokenSymbol == activeNetwork.nativeCurrency.symbol ? true : false
         )
       : numberWithCommas(totalDeposits);
   };
@@ -156,10 +150,7 @@ const ClubERC20Table: FC<Props> = ({ columns, tableData }) => {
                           </div>
                           {floatedNumberWithCommas(
                             memberDeposits,
-                            depositERC20TokenSymbol ==
-                              activeNetwork.nativeCurrency.symbol
-                              ? true
-                              : false
+                            depositERC20TokenSymbol == activeNetwork.nativeCurrency.symbol ? true : false
                           )}{' '}
                           {depositERC20TokenSymbol}
                         </div>

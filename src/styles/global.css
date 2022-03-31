@@ -8,62 +8,62 @@
   @font-face {
     font-family: ABC Whyte Inktrap Extralight;
     src: url(/fonts/ABC_Whyte_Inktrap/ABCWhyteInktrap-Extralight-Trial.woff)
-      format("woff");
+      format('woff');
   }
 
   @font-face {
     font-family: ABC Whyte Inktrap Light;
     src: url(/fonts/ABC_Whyte_Inktrap/ABCWhyteInktrap-Light-Trial.woff)
-      format("woff");
+      format('woff');
   }
 
   @font-face {
     font-family: ABC Whyte Inktrap Regular;
-    src: url(/fonts/Whyte\ Inktrap/ABCWhyteInktrap-Regular.woff) format("woff");
+    src: url(/fonts/Whyte\ Inktrap/ABCWhyteInktrap-Regular.woff) format('woff');
   }
 
   @font-face {
     font-family: ABC Whyte Inktrap Medium;
-    src: url(/fonts/Whyte\ Inktrap/ABCWhyteInktrap-Medium.woff) format("woff");
+    src: url(/fonts/Whyte\ Inktrap/ABCWhyteInktrap-Medium.woff) format('woff');
   }
 
   @font-face {
     font-family: ABC Whyte Inktrap Thin;
     src: url(/fonts/ABC_Whyte_Inktrap/ABCWhyteInktrap-Thin-Trial.woff)
-      format("woff");
+      format('woff');
   }
 
   /* Whyte */
 
   @font-face {
     font-family: Whyte Thin Trial;
-    src: url(/fonts/ABC_Whyte/ABCWhyte-Thin-Trial.woff) format("woff");
+    src: url(/fonts/ABC_Whyte/ABCWhyte-Thin-Trial.woff) format('woff');
   }
 
   @font-face {
     font-family: Whyte Light Trial;
-    src: url(/fonts/ABC_Whyte/ABCWhyte-Light-Trial.woff) format("woff");
+    src: url(/fonts/ABC_Whyte/ABCWhyte-Light-Trial.woff) format('woff');
   }
 
   @font-face {
     font-family: Whyte Regular;
-    src: url(/fonts/Whyte/ABCWhyte-Regular.woff) format("woff");
+    src: url(/fonts/Whyte/ABCWhyte-Regular.woff) format('woff');
   }
 
   @font-face {
     font-family: Whyte Medium;
-    src: url(/fonts/Whyte/ABCWhyte-Medium.woff) format("woff");
+    src: url(/fonts/Whyte/ABCWhyte-Medium.woff) format('woff');
   }
 
   @font-face {
     font-family: Whyte Bold;
-    src: url(/fonts/Whyte/ABCWhyte-Bold.woff) format("woff");
+    src: url(/fonts/Whyte/ABCWhyte-Bold.woff) format('woff');
   }
 
   @font-face {
     font-family: Whyte Semi-Mono;
     src: url(/fonts/Whyte_Semi_Mono/ABCWhyteSemi-Mono-Regular.woff)
-      format("woff");
+      format('woff');
   }
 
   /* fixes an issue where it is sometimes not possible to scroll */
@@ -75,7 +75,7 @@
 
   body {
     background-color: #000000;
-    font-family: "Whyte Regular", "Helvetica", "Arial", "sans-serif";
+    font-family: 'Whyte Regular', 'Helvetica', 'Arial', 'sans-serif';
     color: white;
     font-style: normal;
     @apply antialiased;
@@ -92,35 +92,39 @@
   }
 
   h1 {
-    font-family: "ABC Whyte Inktrap Regular";
+    @apply text-2xl sm:text-4.5xl;
+    line-height: normal;
   }
 
   h2 {
-    font-family: "Whyte Regular";
+    @apply text-5.75xl sm:text-2xl;
+    line-height: 150%;
   }
 
   h3 {
-    font-family: "Whyte Medium";
+    @apply text-lg sm:text-xl leading-6;
+    line-height: 150%;
   }
 
   h4 {
-    font-family: "Whyte Medium";
+    @apply text-sm uppercase font-bold tracking-px;
+    line-height: normal;
   }
 
   .font-thin {
-    font-family: "Whyte Thin Trial";
+    font-family: 'Whyte Thin Trial';
   }
 
   .font-light {
-    font-family: "Whyte Light Trial";
+    font-family: 'Whyte Light Trial';
   }
 
   .font-normal {
-    font-family: "Whyte Regular";
+    font-family: 'Whyte Regular';
   }
 
   .font-medium {
-    font-family: "Whyte Medium";
+    font-family: 'Whyte Medium';
   }
 
   .font-bold {
@@ -217,6 +221,10 @@
     @apply base-CTA bg-green text-black transition-all hover:bg-green-shine;
   }
 
+  .orange-CTA {
+    @apply base-CTA bg-yellow-warning text-black transition-all
+  }
+
   .primary-CTA-disabled {
     @apply base-CTA cursor-not-allowed bg-gray-syn6 text-gray-syn4 hover:bg-opacity-100;
   }
@@ -255,19 +263,23 @@
   }
 
   .h1 {
-    @apply block text-white text-4.5xl leading-11.5;
+    @apply text-2xl sm:text-4.5xl;
+    line-height: normal;
   }
 
   .h2 {
-    @apply block text-white text-2xl leading-9;
+    @apply text-5.75xl sm:text-2xl leading-6;
+    line-height: 150%;
   }
 
   .h3 {
-    @apply block text-white text-lg lg:text-xl leading-7.5;
+    @apply text-lg sm:text-xl leading-6;
+    line-height: 150%;
   }
 
   .h4 {
-    @apply font-whyte-medium text-sm uppercase leading-4 tracking-px;
+    @apply text-sm uppercase font-bold tracking-px;
+    line-height: normal;
   }
 
   .body {
@@ -284,7 +296,7 @@
     border-top: 1rem solid #4376ff;
     left: calc(50% - 1rem);
     top: calc(100% - 0.5rem);
-    content: "";
+    content: '';
     width: 0;
     height: 0;
     position: absolute;
@@ -328,7 +340,7 @@
     }
 
     .perfect-square::after {
-      content: "";
+      content: '';
       display: block;
       padding-bottom: 100%;
     }
@@ -464,7 +476,7 @@
     }
 
     .fade-r-black:after {
-      content: "";
+      content: '';
       position: absolute;
       z-index: 1;
       bottom: 0;
@@ -484,7 +496,7 @@
     }
 
     .fade-b-dark-modal:after {
-      content: "";
+      content: '';
       position: absolute;
       z-index: 1;
       bottom: 0;
@@ -678,7 +690,7 @@ input {
 }
 
 .tooltip .tooltiptext::after {
-  content: "";
+  content: '';
   position: absolute;
   width: 0;
   height: 0;
@@ -706,7 +718,7 @@ input::-webkit-inner-spin-button {
 }
 
 /* Firefox */
-input[type="number"] {
+input[type='number'] {
   -moz-appearance: textfield;
 }
 
@@ -777,7 +789,7 @@ select:-webkit-autofill:focus {
 }
 
 .borderLeft:not(:first-child)::before {
-  content: "";
+  content: '';
   background: #3d3d3d;
   position: absolute;
   bottom: 25%;
@@ -793,7 +805,7 @@ select:-webkit-autofill:focus {
 tr:hover .checkbox {
   display: block !important;
 }
-input[type="checkbox"] {
+input[type='checkbox'] {
   box-shadow: none;
 }
 
@@ -905,7 +917,7 @@ input[type="checkbox"] {
 
 .react-add-to-calendar__dropdown ul li a::before {
   display: block;
-  content: " ";
+  content: ' ';
   background-size: 18px 18px;
   background-repeat: no-repeat;
   height: 18px;
@@ -914,9 +926,9 @@ input[type="checkbox"] {
 }
 
 .react-add-to-calendar__dropdown ul li:nth-child(1) a::before {
-  background-image: url("/images/social/google.svg");
+  background-image: url('/images/social/google.svg');
 }
 
 .react-add-to-calendar__dropdown ul li:nth-child(2) a::before {
-  background-image: url("/images/social/apple.svg");
+  background-image: url('/images/social/apple.svg');
 }
