@@ -21,8 +21,8 @@ export const ProgressModal = (props: {
   buttonOnClick?: () => void;
   transactionHash?: string;
   transactionType?: string;
-  etherscanLinkText?: string;
-  iconColor?: ExternalLinkColor
+  explorerLinkText?: string;
+  iconColor?: ExternalLinkColor;
 }): React.ReactElement => {
   const {
     title,
@@ -34,7 +34,7 @@ export const ProgressModal = (props: {
     transactionType,
     isVisible = false,
     buttonFullWidth = false,
-    iconColor = ExternalLinkColor.BLUE,
+    iconColor = ExternalLinkColor.BLUE
   } = props;
 
   let icon;
@@ -106,7 +106,7 @@ export const ProgressModal = (props: {
           <button
             onClick={buttonOnClick}
             className={`primary-CTA flex-shrink block mx-auto mt-8 ${
-              buttonFullWidth ? "w-full" : ""
+              buttonFullWidth ? 'w-full' : ''
             }`}
           >
             {buttonLabel}

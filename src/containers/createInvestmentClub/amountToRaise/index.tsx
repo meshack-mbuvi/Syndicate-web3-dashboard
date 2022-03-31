@@ -11,11 +11,12 @@ import {
   numberWithCommas,
 } from "@/utils/formattedNumbers";
 import Image from "next/image";
-import React, { useEffect, useRef, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { AdvancedInputField } from "../shared/AdvancedInputField";
-import TokenSelectModal from "@/containers/createInvestmentClub/shared/TokenSelectModal";
-import { defaultTokenDetails } from "@/containers/createInvestmentClub/shared/ClubTokenDetailConstants";
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { AdvancedInputField } from '../shared/AdvancedInputField';
+import TokenSelectModal from '@/containers/createInvestmentClub/shared/TokenSelectModal';
+// import { defaultTokenDetails } from '@/containers/createInvestmentClub/shared/ClubTokenDetailConstants';
+import { SUPPORTED_TOKENS } from '@/Networks';
 
 const AmountToRaise: React.FC<{
   className?: string;
@@ -24,13 +25,19 @@ const AmountToRaise: React.FC<{
   const {
     createInvestmentClubSliceReducer: {
       tokenCap,
-      tokenDetails: { depositTokenLogo, depositTokenSymbol },
+      tokenDetails: { depositTokenLogo, depositTokenSymbol }
     },
+    web3Reducer: {
+      web3: { activeNetwork }
+    }
   } = useSelector((state: AppState) => state);
 
-  const [error, setError] = useState<string | React.ReactNode>("");
+  const [error, setError] = useState<string | React.ReactNode>('');
   const [amount, setAmount] = useState<string>(tokenCap);
   const [showDisclaimerModal, setShowDisclaimerModal] = useState(false);
+  const [defaultTokenDetails, setdefaultTokenDetails] = useState(
+    SUPPORTED_TOKENS[1].filter((coin) => coin.default)[0]
+  );
 
   const dispatch = useDispatch();
 
@@ -40,6 +47,20 @@ const AmountToRaise: React.FC<{
 
   const [showTokenSelectModal, setShowTokenSelectModal] = useState(false);
 
+  const coinList = useMemo(
+    () => SUPPORTED_TOKENS[activeNetwork.chainId] ?? SUPPORTED_TOKENS[1],
+    [activeNetwork.chainId]
+  );
+
+  useEffect(() => {
+    let [_defaultTokenDetails] = coinList.filter((coin) => coin.default);
+    setdefaultTokenDetails(_defaultTokenDetails);
+  }, [coinList, activeNetwork]);
+
+  // let [defaultTokenDetails] = coinList.filter((coin) => coin.default);
+
+  console.log(depositTokenLogo, defaultTokenDetails);
+
   const extraAddonContent = (
     <button
       className="flex justify-center items-center cursor-pointer pl-5 pr-4 py-2"
@@ -48,15 +69,13 @@ const AmountToRaise: React.FC<{
     >
       <div className="mr-2 flex items-center justify-center">
         <Image
-          src={depositTokenLogo || defaultTokenDetails.depositTokenLogo}
+          src={depositTokenLogo || defaultTokenDetails.logoURI}
           width={20}
           height={20}
         />
       </div>
       <div className="uppercase">
-        <span>
-          {depositTokenSymbol || defaultTokenDetails.depositTokenSymbol}
-        </span>
+        <span>{depositTokenSymbol || defaultTokenDetails.symbol}</span>
       </div>
       <div className="inline-flex ml-4">
         <img className="w-5 h-5" src="/images/double-chevron.svg" alt="" />
@@ -78,17 +97,24 @@ const AmountToRaise: React.FC<{
     if (!amount || +amount === 0 || editButtonClicked) {
       setNextBtnDisabled(true);
     } else {
-      setError("");
+      setError('');
       setNextBtnDisabled(false);
     }
-    amount ? dispatch(setTokenCap(amount)) : dispatch(setTokenCap("0"));
+    amount ? dispatch(setTokenCap(amount)) : dispatch(setTokenCap('0'));
   }, [amount, dispatch, editButtonClicked, setNextBtnDisabled]);
 
   useEffect(() => {
-    if (depositTokenSymbol == "") {
-      dispatch(setDepositTokenDetails(defaultTokenDetails));
-    }
-  }, [depositTokenSymbol, defaultTokenDetails, dispatch]);
+    console.log({ depositTokenSymbol, defaultTokenDetails });
+    dispatch(
+      setDepositTokenDetails({
+        depositTokenAddress: defaultTokenDetails.address,
+        depositTokenName: defaultTokenDetails.name,
+        depositTokenSymbol: defaultTokenDetails.symbol,
+        depositTokenLogo: defaultTokenDetails.logoURI,
+        depositTokenDecimals: defaultTokenDetails.decimal
+      })
+    );
+  }, [defaultTokenDetails]);
 
   return (
     <>
@@ -99,13 +125,13 @@ const AmountToRaise: React.FC<{
           closeModal: () => {
             setShowDisclaimerModal(false);
           },
-          customWidth: "w-100",
-          customClassName: "p-8",
+          customWidth: 'w-100',
+          customClassName: 'p-8',
           showCloseButton: false,
           outsideOnClick: true,
           showHeader: false,
-          alignment: "align-top",
-          margin: "mt-48",
+          alignment: 'align-top',
+          margin: 'mt-48'
         }}
       >
         <div className="space-y-6">
@@ -133,15 +159,15 @@ const AmountToRaise: React.FC<{
               value: amount
                 ? numberWithCommas(
                     // Checks if there are unnecessary zeros in the amount
-                    amount.replace(/^0{2,}/, "0").replace(/^0(?!\.)/, ""),
+                    amount.replace(/^0{2,}/, '0').replace(/^0(?!\.)/, '')
                   )
-                : numberWithCommas(""),
-              title: "What’s the upper limit of the club’s raise?",
+                : numberWithCommas(''),
+              title: 'What’s the upper limit of the club’s raise?',
               onChange: handleChange,
               error: error,
               hasError: Boolean(error),
-              placeholder: "Unlimited",
-              type: "text",
+              placeholder: 'Unlimited',
+              type: 'text',
               isNumber: true,
               focus,
               addSettingDisclaimer: true,
@@ -152,7 +178,7 @@ const AmountToRaise: React.FC<{
                   transaction with gas, so aim high.
                 </div>
               ),
-              className: className,
+              className: className
             }}
           />
         </div>

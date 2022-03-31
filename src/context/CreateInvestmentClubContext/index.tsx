@@ -68,10 +68,10 @@ export const useCreateInvestmentClubContext =
 const CreateInvestmentClubProvider: React.FC = ({ children }) => {
   const {
     web3Reducer: {
-      web3: { account },
+      web3: { account, activeNetwork }
     },
     initializeContractsReducer: {
-      syndicateContracts: { clubERC20Factory, clubERC20FactoryEth },
+      syndicateContracts: { clubERC20Factory, clubERC20FactoryEth }
     },
     createInvestmentClubSliceReducer: {
       investmentClubName,
@@ -79,8 +79,8 @@ const CreateInvestmentClubProvider: React.FC = ({ children }) => {
       tokenCap,
       mintEndTime: { value: endMintTime },
       membersCount,
-      tokenDetails: { depositTokenAddress, depositTokenSymbol },
-    },
+      tokenDetails: { depositTokenAddress, depositTokenSymbol }
+    }
   } = useSelector((state: AppState) => state);
 
   const router = useRouter();
@@ -93,32 +93,32 @@ const CreateInvestmentClubProvider: React.FC = ({ children }) => {
   const [showNextButton, setShowNextButton] = useState(true);
   const [isWalletConfrimed, setConfirmWallet] = useState(false);
 
-  const [processingModalTitle, setProcessingTitle] = useState("");
-  const [processingModalDescription, setProcessingDescription] = useState("");
-  const [errorModalMessage, setErrorModalMessage] = useState("");
+  const [processingModalTitle, setProcessingTitle] = useState('');
+  const [processingModalDescription, setProcessingDescription] = useState('');
+  const [errorModalMessage, setErrorModalMessage] = useState('');
   // show initial steps in create flow
   const [preClubCreationStep, setPreClubCreationStep] =
-    useState<string>("invite");
+    useState<string>('invite');
 
   const [
     { waitingConfirmationModal, transactionModal, errorModal, warningModal },
-    setShowModal,
+    setShowModal
   ] = useState({
     waitingConfirmationModal: false,
     transactionModal: false,
     errorModal: false,
-    warningModal: false,
+    warningModal: false
   });
 
   const resetCreationStates = () => {
     dispatch(resetClubCreationReduxState());
     setCurrentStep(0);
-    setPreClubCreationStep("invite");
+    setPreClubCreationStep('invite');
     setShowModal(() => ({
       waitingConfirmationModal: false,
       transactionModal: false,
       errorModal: false,
-      warningModal: false,
+      warningModal: false
     }));
   };
 
@@ -128,9 +128,9 @@ const CreateInvestmentClubProvider: React.FC = ({ children }) => {
 
   useEffect(() => {
     if (!nextBtnDisabled) {
-      document.addEventListener("keypress", keyPressEnter);
+      document.addEventListener('keypress', keyPressEnter);
       return () => {
-        document.removeEventListener("keypress", keyPressEnter);
+        document.removeEventListener('keypress', keyPressEnter);
       };
     }
   });
@@ -152,45 +152,46 @@ const CreateInvestmentClubProvider: React.FC = ({ children }) => {
 
   const onTxConfirm = (transactionHash: string) => {
     // Change modal title and description after confirming tx
-    setProcessingTitle("Pending confirmation");
+    setProcessingTitle('Pending confirmation');
     setProcessingDescription(
-      "This could take up to a few minutes depending on network congestion and the gas fees you set.",
+      'This could take up to a few minutes depending on network congestion and the gas fees you set.'
     );
     dispatch(setTransactionHash(transactionHash));
   };
 
   const onTxReceipt = (receipt) => {
     dispatch(
-      setClubCreationReceipt(receipt.events.ERC20ClubCreated.returnValues),
+      setClubCreationReceipt(receipt.events.ERC20ClubCreated.returnValues)
     );
-    dispatch(setTransactionHash(""));
+    dispatch(setTransactionHash(''));
     setShowModal(() => ({
       waitingConfirmationModal: false,
       transactionModal: true,
       errorModal: false,
-      warningModal: false,
+      warningModal: false
     }));
     setConfirmWallet(false);
   };
 
   const handleCreateInvestmentClub = async () => {
     try {
-      setProcessingTitle("Confirm in wallet");
+      setProcessingTitle('Confirm in wallet');
       setProcessingDescription(
-        "Confirm the creation of this investment club in your wallet.",
+        'Confirm the creation of this investment club in your wallet.'
       );
       setShowModal(() => ({
         waitingConfirmationModal: true,
         transactionModal: false,
         errorModal: false,
-        warningModal: false,
+        warningModal: false
       }));
-      const isEthDeposit = depositTokenSymbol == "ETH";
-      const _tokenCap = isEthDeposit
+      const isNativeDeposit =
+        depositTokenSymbol == activeNetwork.nativeCurrency.symbol;
+      const _tokenCap = isNativeDeposit
         ? getWeiAmount((+tokenCap * 10000).toString(), 18, true)
         : getWeiAmount(tokenCap, 18, true);
       const startTime = parseInt((new Date().getTime() / 1000).toString()); // convert to seconds
-      if (isEthDeposit) {
+      if (isNativeDeposit) {
         await clubERC20FactoryEth.createERC20(
           account,
           investmentClubName,
@@ -200,7 +201,7 @@ const CreateInvestmentClubProvider: React.FC = ({ children }) => {
           _tokenCap,
           +membersCount,
           onTxConfirm,
-          onTxReceipt,
+          onTxReceipt
         );
       } else {
         await clubERC20Factory.createERC20(
@@ -213,16 +214,16 @@ const CreateInvestmentClubProvider: React.FC = ({ children }) => {
           _tokenCap,
           +membersCount,
           onTxConfirm,
-          onTxReceipt,
+          onTxReceipt
         );
       }
       amplitudeLogger(CREATE_INVESTMENT_CLUB, {
-        flow: Flow.CLUB_CREATION,
+        flow: Flow.CLUB_CREATION
       });
     } catch (error) {
       const { code } = error;
       if (code) {
-        const errorMessage = getMetamaskError(code, "Club creation");
+        const errorMessage = getMetamaskError(code, 'Club creation');
         setErrorModalMessage(errorMessage);
       } else {
         // alert any other contract error
@@ -232,11 +233,11 @@ const CreateInvestmentClubProvider: React.FC = ({ children }) => {
         waitingConfirmationModal: false,
         transactionModal: false,
         errorModal: false,
-        warningModal: false,
+        warningModal: false
       });
       amplitudeLogger(ERROR_INVESTMENT_CLUB_CREATION, {
         flow: Flow.CLUB_CREATION,
-        error,
+        error
       });
     }
   };

@@ -57,7 +57,7 @@ const LayoutWithSyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
     initializeContractsReducer: { syndicateContracts },
     merkleProofSliceReducer: { myMerkleProof },
     web3Reducer: {
-      web3: { account, web3, status, activeNetwork },
+      web3: { account, web3, status, activeNetwork }
     },
     erc20TokenSliceReducer: {
       erc20Token: {
@@ -66,28 +66,28 @@ const LayoutWithSyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
         name,
         depositsEnabled,
         maxTotalDeposits,
-        address,
+        address
       },
-      depositDetails: { ethDepositToken },
-      depositTokenPriceInUSD,
-    },
+      depositDetails: { nativeDepositToken },
+      depositTokenPriceInUSD
+    }
   } = useSelector((state: AppState) => state);
 
   // Get clubAddress from window.location object since during page load, router is not ready
   // hence clubAddress is undefined.
   // We need to have access to clubAddress as early as possible.
-  const clubAddress = window?.location?.pathname.split("/")[2];
+  const clubAddress = window?.location?.pathname.split('/')[2];
 
   const isDemoMode = useDemoMode(clubAddress);
   // dispatch the price of the deposit token for use in other
   // components
   useGetTokenPrice();
-  const zeroAddress = "0x0000000000000000000000000000000000000000";
+  const zeroAddress = '0x0000000000000000000000000000000000000000';
 
   useEffect(() => {
     // Demo mode
     if (clubAddress === zeroAddress) {
-      router.push("/clubs/demo/manage");
+      router.push('/clubs/demo/manage');
     }
   });
 
@@ -118,14 +118,14 @@ const LayoutWithSyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
 
       dispatch(
         setERC20TokenDespositDetails({
-          mintModule: "",
-          ethDepositToken: false,
-          depositToken: "",
-          depositTokenSymbol: "",
-          depositTokenLogo: "/images/usdcicon.png",
-          depositTokenName: "",
-          depositTokenDecimals: 6,
-        }),
+          mintModule: '',
+          nativeDepositToken: false,
+          depositToken: '',
+          depositTokenSymbol: '',
+          depositTokenLogo: '/images/usdcicon.png',
+          depositTokenName: '',
+          depositTokenDecimals: 6
+        })
       );
     };
   }, [dispatch]);
@@ -142,9 +142,9 @@ const LayoutWithSyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
     const onScroll = (e) => {
       setScrollTop(e.target.documentElement.scrollTop);
     };
-    window.addEventListener("scroll", onScroll);
+    window.addEventListener('scroll', onScroll);
 
-    return () => window.removeEventListener("scroll", onScroll);
+    return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
   // Change sub-nav and nav styles when stuck
@@ -166,19 +166,19 @@ const LayoutWithSyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
     dispatch(
       fetchTokenTransactions({
         account: owner,
-        chainId: activeNetwork.chainId,
-      }),
+        activeNetwork: activeNetwork
+      })
     );
     // test nft account: 0xf4c2c3e12b61d44e6b228c43987158ac510426fb
     dispatch(
       fetchCollectiblesTransactions({
         account: owner,
-        offset: "0",
+        offset: '0',
         chainId: activeNetwork.chainId,
-        maxTotalDeposits: ethDepositToken
+        maxTotalDeposits: nativeDepositToken
           ? parseInt((depositTokenPriceInUSD * maxTotalDeposits).toString())
-          : maxTotalDeposits,
-      }),
+          : maxTotalDeposits
+      })
     );
   };
 
@@ -205,7 +205,7 @@ const LayoutWithSyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
     maxTotalDeposits,
     depositTokenPriceInUSD,
     loadingClubDeposits,
-    ethDepositToken,
+    nativeDepositToken
   ]);
 
   useEffect(() => {

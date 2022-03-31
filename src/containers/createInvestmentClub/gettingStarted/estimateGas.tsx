@@ -1,31 +1,32 @@
-import { getEthereumTokenPrice } from "@/utils/api/etherscan";
-import { AppState } from "@/state";
-import { getWeiAmount } from "@/utils/conversions";
-import { isDev } from "@/utils/environment";
-import axios from "axios";
-import React, { useCallback, useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { getNativeTokenPrice } from '@/utils/api/etherscan';
+import { AppState } from '@/state';
+import { getWeiAmount } from '@/utils/conversions';
+import { isDev } from '@/utils/environment';
+import axios from 'axios';
+import React, { useCallback, useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 
 const EstimateGas = (props: { customClasses?: string }) => {
   const {
     web3Reducer: {
-      web3: { account, activeNetwork },
+      web3: { account, activeNetwork }
     },
     initializeContractsReducer: {
-      syndicateContracts: { clubERC20Factory },
-    },
+      syndicateContracts: { clubERC20Factory }
+    }
   } = useSelector((state: AppState) => state);
 
-  const { customClasses = "" } = props;
+  const { customClasses = '' } = props;
 
   const [gas, setGas] = useState(0); // 0.05 ETH (~$121.77)
   const [gasUnits, setGasUnits] = useState(0);
   const [gasBaseFee, setGasBaseFee] = useState(0);
-  const [ethTokenPrice, setEthTokenPrice] = useState();
+  const [nativeTokenPrice, setNativeTokenPrice] = useState();
 
   const processBaseFee = async (result) => {
     const baseFee = result.result;
     const baseFeeInDecimal = parseInt(baseFee, 16);
+    console.log({ baseFeeInDecimal });
     setGasBaseFee(baseFeeInDecimal);
   };
 
@@ -38,13 +39,13 @@ const EstimateGas = (props: { customClasses?: string }) => {
         : clubERC20Factory.getEstimateGas(account, setGasUnits),
       axios
         .get(
-          `${activeNetwork.blockExplorer.api}/api?module=proxy&action=eth_gasPrice`,
+          `${activeNetwork.blockExplorer.api}/api?module=proxy&action=eth_gasPrice`
         )
         .then((res) => processBaseFee(res.data))
         .catch(() => 0),
-      getEthereumTokenPrice(activeNetwork.chainId)
-        .then((res) => setEthTokenPrice(res))
-        .catch(() => 0),
+      getNativeTokenPrice(activeNetwork.chainId)
+        .then((res) => setNativeTokenPrice(res))
+        .catch(() => 0)
     ]);
   }, [account, clubERC20Factory]);
 
@@ -58,6 +59,8 @@ const EstimateGas = (props: { customClasses?: string }) => {
     const estimatedGas = getWeiAmount(estimatedGasInWei.toString(), 18, false);
     setGas(+estimatedGas);
   }, [gasUnits, gasBaseFee]);
+
+  console.log({ gas, gasUnits, gasBaseFee });
 
   return (
     <button
@@ -73,9 +76,9 @@ const EstimateGas = (props: { customClasses?: string }) => {
         <span className="mr-3 text-blue">
           {gas
             ? `${gas.toFixed(6)} ${activeNetwork.nativeCurrency.symbol} ${
-                ethTokenPrice
-                  ? "(~$" + (gas * ethTokenPrice).toFixed(2) + ")"
-                  : ""
+                nativeTokenPrice
+                  ? '(~$' + (gas * nativeTokenPrice).toFixed(2) + ')'
+                  : ''
               }`
             : `- ${activeNetwork.nativeCurrency.symbol}`}
         </span>

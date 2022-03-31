@@ -31,20 +31,20 @@ const futureDate = moment(currentDate).add(3, "M");
 
 export const mockDepositERC20Token = {
   ...mockERC20Token,
-  ethDepositToken: false,
+  nativeDepositToken: false,
   depositsEnabled: true,
   claimEnabled: false,
   startTime: currentDate.valueOf(),
-  endTime: futureDate.valueOf(),
+  endTime: futureDate.valueOf()
 };
 
 export const mockActiveERC20Token = {
   ...mockERC20Token,
-  ethDepositToken: false,
+  nativeDepositToken: false,
   depositsEnabled: false,
   claimEnabled: false,
   startTime: 1637317202000,
-  endTime: 1637921991000,
+  endTime: 1637921991000
 };
 
 export const mockDepositModeTokens = [

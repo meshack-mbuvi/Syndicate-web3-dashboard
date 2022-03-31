@@ -49,7 +49,14 @@ export const AdvancedInputField = (props: {
   } = props;
 
   const {
-    createInvestmentClubSliceReducer: { tokenCap, investmentClubSymbol, tokenDetails: { depositTokenSymbol } },
+    createInvestmentClubSliceReducer: {
+      tokenCap,
+      investmentClubSymbol,
+      tokenDetails: { depositTokenSymbol }
+    },
+    web3Reducer: {
+      web3: { activeNetwork }
+    }
   } = useSelector((state: AppState) => state);
 
   const [focused, setFocused] = useState(false);
@@ -64,11 +71,11 @@ export const AdvancedInputField = (props: {
       </div>
       <span className="text-sm text-gray-syn4 font-whyte">{moreInfo}</span>
       <div
-        className={cn("mt-4 mb-2 flex border rounded-md overflow-hidden", {
-          "border-blue-navy ring-0": focused && !error,
-          "border-gray-24": !focused,
-          "border-red-error": error,
-          "border-gray-syn3": hover,
+        className={cn('mt-4 mb-2 flex border rounded-md overflow-hidden', {
+          'border-blue-navy ring-0': focused && !error,
+          'border-gray-24': !focused,
+          'border-red-error': error,
+          'border-gray-syn3': hover
         })}
       >
         <div
@@ -89,17 +96,17 @@ export const AdvancedInputField = (props: {
               onChange={(e) => {
                 if (
                   isNumber &&
-                  isNaN(e.target.value.replace(/,/g, "") as any)
+                  isNaN(e.target.value.replace(/,/g, '') as any)
                 ) {
                   return;
                 }
                 onChange(e);
               }}
               className={`flex w-full border-none min-w-0 align-middle text-base font-whyte focus:ring-0 ${
-                hasError ? "border border-red-500 focus:border-red-500" : ""
+                hasError ? 'border border-red-500 focus:border-red-500' : ''
               } flex-grow rounded-l-md dark-input-field-advanced ${
-                addOn ? "pr-4" : ""
-              } ${disabled ? "cursor-not-allowed" : ""}
+                addOn ? 'pr-4' : ''
+              } ${disabled ? 'cursor-not-allowed' : ''}
             `}
               disabled={disabled}
               value={value}
@@ -121,13 +128,13 @@ export const AdvancedInputField = (props: {
           </div>
           <div
             className={cn(
-              "relative border-l-1 inline-flex items-center bg-black space-x-2",
+              'relative border-l-1 inline-flex items-center bg-black space-x-2',
               {
-                "border-blue-navy ring-0": focused && !error,
-                "border-gray-24": !focused,
-                "border-red-error": error,
-                "border-gray-syn3": hover,
-              },
+                'border-blue-navy ring-0': focused && !error,
+                'border-gray-24': !focused,
+                'border-red-error': error,
+                'border-gray-syn3': hover
+              }
             )}
           >
             {extraAddon}
@@ -141,11 +148,18 @@ export const AdvancedInputField = (props: {
                 <span className=" text-white font-whyte text-sm">
                   Deposits collected in {depositTokenSymbol}. Members
                   <br />
-                  will receive {" "}
-                  {depositTokenSymbol === "ETH" ? "10,000" : "1"} {" "}
-                  ✺{investmentClubSymbol} club token{depositTokenSymbol === "ETH" && "s"} {" "}
-                  <br />for every {" "}
-                  {depositTokenSymbol === "ETH" ? "1 ETH" : "1 USDC"}{" "}
+                  will receive{' '}
+                  {depositTokenSymbol === activeNetwork.nativeCurrency.symbol
+                    ? '10,000'
+                    : '1'}{' '}
+                  ✺{investmentClubSymbol} club token
+                  {depositTokenSymbol === activeNetwork.nativeCurrency.symbol &&
+                    's'}{' '}
+                  <br />
+                  for every{' '}
+                  {depositTokenSymbol === activeNetwork.nativeCurrency.symbol
+                    ? `1 ${activeNetwork.nativeCurrency.symbol}`
+                    : '1 USDC'}{' '}
                   deposited.
                 </span>
               }
@@ -157,7 +171,7 @@ export const AdvancedInputField = (props: {
       <div className="w-full">
         {error && (
           <p className="text-red-500 text-sm mb-1">
-            {error && !disabled ? error : ""}
+            {error && !disabled ? error : ''}
           </p>
         )}
       </div>

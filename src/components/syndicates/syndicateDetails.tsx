@@ -38,12 +38,12 @@ const SyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
   const {
     erc20TokenSliceReducer: {
       erc20Token,
-      depositDetails: { depositTokenSymbol, depositToken, ethDepositToken },
+      depositDetails: { depositTokenSymbol, depositToken, nativeDepositToken }
     },
     merkleProofSliceReducer: { myMerkleProof },
     web3Reducer: {
-      web3: { web3, status, account, activeNetwork },
-    },
+      web3: { web3, status, account, activeNetwork }
+    }
   } = useSelector((state: AppState) => state);
 
   const isDemoMode = useDemoMode();
@@ -63,7 +63,7 @@ const SyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
     symbol,
     maxTotalSupply,
     depositsEnabled,
-    claimEnabled,
+    claimEnabled
   } = erc20Token;
 
   const router = useRouter();
@@ -77,14 +77,14 @@ const SyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
     useState<boolean>(false);
 
   // state to handle details about the current deposit ERC20 token
-  const [, setDepositTokenContract] = useState<any>("");
+  const [, setDepositTokenContract] = useState<any>('');
 
   // states to show general syndicate details
   const [, setSyndicateCumulativeDetails] = useState([
     {
-      header: "Deposits",
-      subText: "",
-    },
+      header: 'Deposits',
+      subText: ''
+    }
   ]);
 
   // get syndicate address from the url
@@ -97,7 +97,7 @@ const SyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
 
   // get and set current token details
   useEffect(() => {
-    if (!ethDepositToken && depositToken && web3) {
+    if (!nativeDepositToken && depositToken && web3) {
       // set up token contract
       const tokenContract = new web3.eth.Contract(abi, depositToken);
 
@@ -107,7 +107,7 @@ const SyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
 
   // perform size checks
   useEffect(() => {
-    setDivWidth(document?.getElementById("club-name")?.offsetWidth);
+    setDivWidth(document?.getElementById('club-name')?.offsetWidth);
     setNameWidth(getTextWidth(name));
   }, [name]);
 
@@ -116,13 +116,13 @@ const SyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
     if (totalDeposits) {
       setSyndicateCumulativeDetails([
         {
-          header: "Deposits",
+          header: 'Deposits',
           subText: `${floatedNumberWithCommas(
-            totalDeposits,
+            totalDeposits
           )} ${depositTokenSymbol} (${memberCount} ${
-            memberCount === 1 ? "depositor" : "depositors"
-          })`,
-        },
+            memberCount === 1 ? 'depositor' : 'depositors'
+          })`
+        }
       ]);
     }
   }, [totalDeposits, memberCount]);
@@ -133,121 +133,121 @@ const SyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
         ...(depositsEnabled
           ? [
               {
-                header: "Club token max supply",
+                header: 'Club token max supply',
                 content: (
                   <span>
-                    <NumberTreatment numberValue={`${maxTotalSupply || ""} `} />
+                    <NumberTreatment numberValue={`${maxTotalSupply || ''} `} />
                     &nbsp;
                     {symbol}
                   </span>
                 ),
-                tooltip: "",
+                tooltip: ''
               },
               {
-                header: "Club tokens minted",
+                header: 'Club tokens minted',
                 content: (
                   <span>
                     <NumberTreatment numberValue={totalSupply} />
                     &nbsp;{symbol}
                   </span>
                 ),
-                tooltip: "",
+                tooltip: ''
               },
               {
                 header: `Members (max)`,
                 content: (
                   <div>
-                    {memberCount}{" "}
+                    {memberCount}{' '}
                     <span className="text-gray-syn4">({maxMemberCount})</span>
                   </div>
                 ),
-                tooltip: "",
+                tooltip: ''
               },
               {
-                header: "Created",
+                header: 'Created',
                 content: `${epochTimeToDateFormat(
                   new Date(startTime),
-                  "LLL dd, yyyy",
+                  'LLL dd, yyyy'
                 )}`,
-                tooltip: "",
+                tooltip: ''
               },
 
               {
-                header: "Closing in",
+                header: 'Closing in',
                 content: getCountDownDays(endTime.toString()),
-                tooltip: "",
-              },
+                tooltip: ''
+              }
             ]
           : claimEnabled
           ? [
               {
-                header: "Club token max supply",
+                header: 'Club token max supply',
                 content: (
                   <span>
-                    <NumberTreatment numberValue={`${maxTotalSupply || ""}`} />
+                    <NumberTreatment numberValue={`${maxTotalSupply || ''}`} />
                   </span>
                 ),
-                tooltip: "",
+                tooltip: ''
               },
               {
-                header: "Club tokens minted",
+                header: 'Club tokens minted',
                 content: (
                   <span>
                     <NumberTreatment numberValue={totalDeposits} />
                     &nbsp;{symbol}
                   </span>
                 ),
-                tooltip: "",
+                tooltip: ''
               },
               {
-                header: "Members",
+                header: 'Members',
                 content: <div>{memberCount}</div>,
-                tooltip: "",
-              },
+                tooltip: ''
+              }
             ]
           : [
               {
-                header: "Total deposited",
+                header: 'Total deposited',
                 content: (
                   <span>
-                    <NumberTreatment numberValue={totalDeposits} />{" "}
+                    <NumberTreatment numberValue={totalDeposits} />{' '}
                     {depositTokenSymbol}
                   </span>
                 ),
-                tooltip: "",
+                tooltip: ''
               },
               {
-                header: "Club tokens minted",
+                header: 'Club tokens minted',
                 content: (
                   <span>
                     <NumberTreatment numberValue={totalDeposits} /> {symbol}
                   </span>
                 ),
-                tooltip: "",
+                tooltip: ''
               },
               {
-                header: "Members",
+                header: 'Members',
                 content: <div>{memberCount}</div>,
-                tooltip: "",
+                tooltip: ''
               },
               {
-                header: "Created",
+                header: 'Created',
                 content: `${epochTimeToDateFormat(
                   new Date(startTime),
-                  "LLL dd, yyyy",
+                  'LLL dd, yyyy'
                 )}`,
-                tooltip: "",
+                tooltip: ''
               },
 
               {
-                header: "Closed",
+                header: 'Closed',
                 content: `${epochTimeToDateFormat(
                   new Date(endTime),
-                  "LLL dd, yyyy",
+                  'LLL dd, yyyy'
                 )}`,
-                tooltip: "",
-              },
-            ]),
+                tooltip: ''
+              }
+            ])
       ]);
     }
   }, [
@@ -262,7 +262,7 @@ const SyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
     loading,
     maxTotalDeposits,
     memberCount,
-    totalDeposits,
+    totalDeposits
   ]);
 
   // show message to the user when address has been copied.
@@ -282,8 +282,8 @@ const SyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
 
   useEffect(() => {
     const duplicateWarningCookieSet = document.cookie
-      .split("; ")
-      .find((row) => row.startsWith("showedDuplicateClubWarning"));
+      .split('; ')
+      .find((row) => row.startsWith('showedDuplicateClubWarning'));
     setDuplicateClubWarningExists(Boolean(duplicateWarningCookieSet));
 
     if (duplicateWarningCookieSet) {
@@ -297,7 +297,7 @@ const SyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
     if (!duplicateClubWarningExists) {
       // set cookie to expire in a very long time.
       document.cookie =
-        "showedDuplicateClubWarning=true; expires=Fri, 31 Dec 9999 23:59:59 GMT; SameSite=None; Secure";
+        'showedDuplicateClubWarning=true; expires=Fri, 31 Dec 9999 23:59:59 GMT; SameSite=None; Secure';
     }
     setShowDuplicateClubWarning(false);
   };
@@ -309,7 +309,7 @@ const SyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
           <div>
             <div className="flex justify-center items-center">
               <div className="mr-8">
-                {(loading || loadingClubDeposits || totalDeposits == "") &&
+                {(loading || loadingClubDeposits || totalDeposits == '') &&
                 !managerSettingsOpen ? (
                   <SkeletonLoader
                     height="20"
@@ -444,7 +444,7 @@ const SyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
                 openDate={startTime.toString()}
                 closeDate={endTime.toString()}
                 loading={loading || loadingClubDeposits}
-                ethDepositToken={ethDepositToken}
+                nativeDepositToken={nativeDepositToken}
               />
             </div>
           )}
@@ -458,7 +458,7 @@ const SyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
             <DetailsCard
               title="Details"
               sections={details}
-              customStyles={"w-full pt-4"}
+              customStyles={'w-full pt-4'}
               customInnerWidth="w-full grid xl:grid-cols-3 lg:grid-cols-3
             grid-cols-3 xl:gap-8 gap-2 xl:gap-5 gap-y-8"
             />

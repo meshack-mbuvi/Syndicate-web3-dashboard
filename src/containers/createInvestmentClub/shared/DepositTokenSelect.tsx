@@ -1,18 +1,19 @@
-import { useEffect, useState } from "react";
-import { coinList } from "@/containers/createInvestmentClub/shared/ClubTokenDetailConstants";
-import { TokenSearchBar } from "@/containers/createInvestmentClub/shared/TokenSearchInput";
-import { useDispatch, useSelector } from "react-redux";
+import { useEffect, useMemo, useState } from 'react';
+// import { coinList } from "@/containers/createInvestmentClub/shared/ClubTokenDetailConstants";
+import { TokenSearchBar } from '@/containers/createInvestmentClub/shared/TokenSearchInput';
+import { useDispatch, useSelector } from 'react-redux';
 
-import { setDepositTokenDetails } from "@/state/createInvestmentClub/slice";
-import { AppState } from "@/state";
-import TokenDetails from "@/containers/createInvestmentClub/shared/TokenDetails";
-import CryptoAssetModal from "@/containers/createInvestmentClub/shared/AboutCryptoModal";
+import { setDepositTokenDetails } from '@/state/createInvestmentClub/slice';
+import { AppState } from '@/state';
+import TokenDetails from '@/containers/createInvestmentClub/shared/TokenDetails';
+import CryptoAssetModal from '@/containers/createInvestmentClub/shared/AboutCryptoModal';
+import { SUPPORTED_TOKENS } from '@/Networks';
 
 export const DepositTokenSelect = (props: {
   toggleTokenSelect: () => void;
 }) => {
   const [tokensList, setTokenList] = useState([]);
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState('');
   const [noTokenFound, setNoTokenFound] = useState(false);
 
   const [recentlyUsedTokens, setRecentlyUsedTokens] = useState([]);
@@ -22,7 +23,15 @@ export const DepositTokenSelect = (props: {
 
   const {
     createInvestmentClubSliceReducer: { tokenDetails },
+    web3Reducer: {
+      web3: { activeNetwork }
+    }
   } = useSelector((state: AppState) => state);
+
+  const coinList = useMemo(
+    () => SUPPORTED_TOKENS[activeNetwork.chainId] ?? SUPPORTED_TOKENS[1],
+    [activeNetwork.chainId]
+  );
 
   // handle token search
   useEffect(() => {
@@ -33,7 +42,7 @@ export const DepositTokenSelect = (props: {
         (token) =>
           token.symbol.toLowerCase().includes(searchKeyword) ||
           token.name.toLowerCase().includes(searchKeyword) ||
-          token.address.toLowerCase() === searchKeyword,
+          token.address.toLowerCase() === searchKeyword
       );
       if (searchResults.length) {
         setTokenList(searchResults);
@@ -50,7 +59,7 @@ export const DepositTokenSelect = (props: {
   }, [searchTerm, coinList]);
 
   useEffect(() => {
-    const recentTokens = localStorage.getItem("recentTokens");
+    const recentTokens = localStorage.getItem('recentTokens');
     if (recentTokens) {
       setRecentlyUsedTokens(JSON.parse(recentTokens));
     }
@@ -63,10 +72,10 @@ export const DepositTokenSelect = (props: {
         depositTokenName: token.name,
         depositTokenSymbol: token.symbol,
         depositTokenLogo: token.logoURI,
-        depositTokenDecimals: token.decimal,
-      }),
+        depositTokenDecimals: token.decimal
+      })
     );
-    const recentTokens = localStorage.getItem("recentTokens");
+    const recentTokens = localStorage.getItem('recentTokens');
     // Checks if the recent token and adds to a list if it's not already there
     if (recentTokens) {
       const parsedRecentTokens = JSON.parse(recentTokens);
@@ -75,14 +84,14 @@ export const DepositTokenSelect = (props: {
       const uniqueTokens = [
         ...new Map(
           parsedRecentTokens.map((recentToken) => [
-            recentToken["symbol"],
-            recentToken,
-          ]),
-        ).values(),
+            recentToken['symbol'],
+            recentToken
+          ])
+        ).values()
       ];
-      localStorage.setItem("recentTokens", JSON.stringify(uniqueTokens));
+      localStorage.setItem('recentTokens', JSON.stringify(uniqueTokens));
     } else {
-      localStorage.setItem("recentTokens", JSON.stringify([token]));
+      localStorage.setItem('recentTokens', JSON.stringify([token]));
     }
   };
 
@@ -166,8 +175,8 @@ export const DepositTokenSelect = (props: {
                   toggleTokenSelect={props.toggleTokenSelect}
                   showCheckMark={
                     symbol === tokenDetails.depositTokenSymbol ||
-                    (tokenDetails.depositTokenSymbol === "" &&
-                      symbol === "USDC")
+                    (tokenDetails.depositTokenSymbol === '' &&
+                      symbol === 'USDC')
                   }
                   onClick={() => handleTokenClick(token)}
                 />

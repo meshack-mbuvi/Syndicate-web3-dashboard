@@ -19,8 +19,8 @@ const TokenTable: FC<Props> = ({ columns, tableData }) => {
   const {
     assetsSliceReducer: { loading },
     erc20TokenSliceReducer: {
-      depositDetails: { ethDepositToken },
-    },
+      depositDetails: { nativeDepositToken }
+    }
   } = useSelector((state: AppState) => state);
 
   // pagination
@@ -170,7 +170,7 @@ const TokenTable: FC<Props> = ({ columns, tableData }) => {
                 paginatedData.map(
                   (
                     { tokenBalance, tokenName, tokenSymbol, price, logo },
-                    index,
+                    index
                   ) => {
                     const tokenValue =
                       parseFloat(Number(price) ? price : price?.usd ?? 0) *
@@ -186,7 +186,7 @@ const TokenTable: FC<Props> = ({ columns, tableData }) => {
                             tokenName,
                             tokenSymbol,
                             value: tokenValue,
-                            logo,
+                            logo
                           });
                         }}
                       >
@@ -201,7 +201,7 @@ const TokenTable: FC<Props> = ({ columns, tableData }) => {
                             ) : (
                               <GradientAvatar
                                 name={tokenName}
-                                size={"w-8 h-8"}
+                                size={'w-8 h-8'}
                               />
                             )}
                           </div>
@@ -216,20 +216,20 @@ const TokenTable: FC<Props> = ({ columns, tableData }) => {
                           <PriceContainer
                             numberValue={tokenBalance}
                             customSymbol={tokenSymbol}
-                            ethDepositToken={ethDepositToken}
+                            nativeDepositToken={nativeDepositToken}
                             flexColumn={false}
                           />
                         </div>
                         <div className="md:col-span-3">
                           <PriceContainer
-                            numberValue={`${tokenValue || ""}`}
+                            numberValue={`${tokenValue || ''}`}
                             noUSDValue={!price?.usd && !price}
                             flexColumn={false}
                           />
                         </div>
                       </div>
                     );
-                  },
+                  }
                 )
               )}
             </div>
@@ -248,8 +248,8 @@ const TokenTable: FC<Props> = ({ columns, tableData }) => {
             <button
               className={`pt-1 ${
                 !canPreviousPage
-                  ? "opacity-50 cursor-not-allowed"
-                  : "hover:opacity-90"
+                  ? 'opacity-50 cursor-not-allowed'
+                  : 'hover:opacity-90'
               }`}
               onClick={goToPreviousPage}
               disabled={!canPreviousPage}
@@ -262,7 +262,7 @@ const TokenTable: FC<Props> = ({ columns, tableData }) => {
               />
             </button>
             <p className="">
-              {currentPage === 1 ? "1" : (currentPage - 1) * dataLimit} -{" "}
+              {currentPage === 1 ? '1' : (currentPage - 1) * dataLimit} -{' '}
               {(currentPage - 1) * dataLimit + paginatedData.length}
               {` of `} {tableData.length}
             </p>
@@ -270,8 +270,8 @@ const TokenTable: FC<Props> = ({ columns, tableData }) => {
             <button
               className={`pt-1 ${
                 !canNextPage
-                  ? "opacity-50 cursor-not-allowed"
-                  : "hover:opacity-90"
+                  ? 'opacity-50 cursor-not-allowed'
+                  : 'hover:opacity-90'
               }`}
               onClick={goToNextPage}
               disabled={!canNextPage}
@@ -285,7 +285,7 @@ const TokenTable: FC<Props> = ({ columns, tableData }) => {
             </button>
           </div>
         ) : (
-          ""
+          ''
         )}
         <div>
           <TokenModal

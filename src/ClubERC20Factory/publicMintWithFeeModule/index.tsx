@@ -8,10 +8,10 @@ export class PublicMintWithFeeModuleContract {
   constructor(contractAddress: string, web3: any) {
     this.contract = new web3.eth.Contract(
       publicMintWithFeeModule_ABI,
-      contractAddress,
+      contractAddress
     );
     this.isGnosisSafe =
-      web3._provider.wc?._peerMeta.name === "Gnosis Safe Multisig";
+      web3._provider.wc?._peerMeta.name === 'Gnosis Safe Multisig';
   }
 
   mint = async (
@@ -22,29 +22,29 @@ export class PublicMintWithFeeModuleContract {
     onTxConfirm: (transactionHash?) => void,
     onTxReceipt: (receipt?) => void,
     onTxFail: (error?) => void,
-    setTransactionHash,
+    setTransactionHash
   ): Promise<string> =>
     new Promise((resolve, reject) =>
       this.contract.methods
         .mint(tokenAddress, amount)
         .send({ from: forAddress, value })
-        .on("receipt", onTxReceipt)
-        .on("error", onTxFail)
-        .on("transactionHash", async (transactionHash: string) => {
+        .on('receipt', onTxReceipt)
+        .on('error', onTxFail)
+        .on('transactionHash', async (transactionHash: string) => {
           onTxConfirm(transactionHash);
           if (!this.isGnosisSafe) {
             setTransactionHash(transactionHash);
           } else {
-            setTransactionHash("");
+            setTransactionHash('');
             // Stop waiting if we are connected to gnosis safe via walletConnect
             const receipt = await getGnosisTxnInfo(transactionHash);
             if (!(receipt as { isSuccessful: boolean }).isSuccessful) {
-              return reject("Receipt failed");
+              return reject('Receipt failed');
             }
 
             onTxReceipt(receipt);
           }
-        }),
+        })
     );
 
   async amountMinted(nftAddress, account): Promise<number> {
@@ -55,11 +55,11 @@ export class PublicMintWithFeeModuleContract {
     }
   }
 
-  async ethPrice(nftAddress): Promise<string> {
+  async nativePrice(nftAddress): Promise<string> {
     try {
       return this.contract.methods.ethPrice(nftAddress).call();
     } catch (error) {
-      return "";
+      return '';
     }
   }
 
@@ -67,7 +67,7 @@ export class PublicMintWithFeeModuleContract {
     try {
       return this.contract.methods.startTime(nftAddress).call();
     } catch (error) {
-      return "";
+      return '';
     }
   }
 
@@ -92,8 +92,8 @@ export class PublicMintWithFeeModuleContract {
     try {
       const events = await this.contract.getPastEvents(distEvent, {
         filter,
-        fromBlock: "earliest",
-        toBlock: "latest",
+        fromBlock: 'earliest',
+        toBlock: 'latest'
       });
 
       return events;

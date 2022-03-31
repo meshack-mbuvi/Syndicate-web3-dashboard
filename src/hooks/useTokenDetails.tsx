@@ -44,13 +44,13 @@ const TOKEN_MAPPING: Record<string, Record<string, TokenDetails>> = {
   },
 };
 
-const useTokenDetails = (ethDepositToken: boolean): TokenDetails => {
-  const token = ethDepositToken ? "ether" : "usdc";
+const useTokenDetails = (nativeDepositToken: boolean): TokenDetails => {
+  const token = nativeDepositToken ? 'ether' : 'usdc';
 
   return useMemo(
     () =>
-      isDev ? TOKEN_MAPPING["rinkeby"][token] : TOKEN_MAPPING["mainnet"][token],
-    [token],
+      isDev ? TOKEN_MAPPING['rinkeby'][token] : TOKEN_MAPPING['mainnet'][token],
+    [token]
   );
 };
 

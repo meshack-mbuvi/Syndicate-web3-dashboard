@@ -21,16 +21,19 @@ export const numberWithCommas = (number: string | number): string => {
 };
 
 // add two decimal places
-export const floatedNumberWithCommas = (number, ethValue = false): string => {
-  if (!number || number === "NaN") {
-    return "0";
+export const floatedNumberWithCommas = (
+  number,
+  nativeValue = false
+): string => {
+  if (!number || number === 'NaN') {
+    return '0';
   }
 
   // return this for values smaller than 0.01 since we use 2dp
-  // 0.01 is significant for ETH deposits. Adding an extra check here.
+  // 0.01 is significant for Native deposits. Adding an extra check here.
   if (number < 0.01 && number > 0) {
-    if (!ethValue) {
-      return "< 0.01";
+    if (!nativeValue) {
+      return '< 0.01';
     } else {
       return number.toString().match(/^-?\d+(?:\.\d{0,4})?/)[0];
     }
@@ -38,15 +41,15 @@ export const floatedNumberWithCommas = (number, ethValue = false): string => {
 
   // do not show decimal points if there are only zeros after the decimal point.
   // applying this across the app following this ticket: https://linear.app/syndicate/issue/ENG-2288/implement-header-section-updates
-  if (number.toString().indexOf(".") < 0) {
+  if (number.toString().indexOf('.') < 0) {
     return numberWithCommas(number.toString());
   }
 
   try {
     // avoid rounding up the number when converting to 2 decimal places
-    // show 4 decimal places for ETH values only.
+    // show 4 decimal places for Native values only.
     let numberTo2decimalsWithoutRoundingUp;
-    if (ethValue) {
+    if (nativeValue) {
       numberTo2decimalsWithoutRoundingUp = number
         .toString()
         .match(/^-?\d+(?:\.\d{0,4})?/)[0];
@@ -59,10 +62,10 @@ export const floatedNumberWithCommas = (number, ethValue = false): string => {
     // performs a negative look ahead. Finds .00 which does not have a digit (0-9) after it
     return numberWithCommas(numberTo2decimalsWithoutRoundingUp).replace(
       /\.00(?!\d)/g,
-      "",
+      ''
     );
   } catch (error) {
-    return "0";
+    return '0';
   }
 };
 

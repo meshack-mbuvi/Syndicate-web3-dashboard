@@ -26,7 +26,7 @@ export interface ERC20Token {
 
 export interface DepositDetails {
   mintModule: string;
-  ethDepositToken: boolean;
+  nativeDepositToken: boolean;
   depositToken: string;
   depositTokenSymbol: string;
   depositTokenLogo: string;
@@ -42,14 +42,14 @@ export const initialState: {
 } = {
   erc20Token: ERC20TokenDefaultState,
   depositDetails: {
-    mintModule: "",
-    ethDepositToken: false,
-    depositToken: "",
-    depositTokenSymbol: "",
+    mintModule: '',
+    nativeDepositToken: false,
+    depositToken: '',
+    depositTokenSymbol: '',
     // default to USDC token to avoid error being thrown while loading the token
-    depositTokenLogo: "/images/usdcicon.png",
-    depositTokenName: "",
-    depositTokenDecimals: 6,
+    depositTokenLogo: '/images/usdcicon.png',
+    depositTokenName: '',
+    depositTokenDecimals: 6
   },
   erc20TokenContract: null,
   depositTokenPriceInUSD: 0

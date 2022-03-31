@@ -12,7 +12,7 @@ export interface ERC721Token {
   merkleClaimEnabled: boolean;
   publicSingleClaimEnabled: boolean;
   publicUtilityClaimEnabled: boolean;
-  ethPrice: string;
+  nativePrice: string;
   priceUSD: number;
   maxPerAddress: number;
   defaultImage: string;
@@ -24,24 +24,24 @@ export const initialState: {
   erc721TokenContract: any;
 } = {
   erc721Token: {
-    name: "",
-    owner: "",
-    symbol: "",
-    address: "",
+    name: '',
+    owner: '',
+    symbol: '',
+    address: '',
     currentSupply: 0,
     maxSupply: 0,
     publicSupply: 0,
-    rendererAddr: "",
+    rendererAddr: '',
     loading: false,
     mintPrice: 0,
     merkleClaimEnabled: false,
     publicSingleClaimEnabled: false,
     publicUtilityClaimEnabled: false,
-    ethPrice: "",
+    nativePrice: '',
     priceUSD: 0,
     maxPerAddress: 0,
-    defaultImage: "",
-    amountMinted: 0,
+    defaultImage: '',
+    amountMinted: 0
   },
-  erc721TokenContract: null,
+  erc721TokenContract: null
 };

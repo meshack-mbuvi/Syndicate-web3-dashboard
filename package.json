@@ -115,7 +115,7 @@
   ],
   "license": "UNLICENSED",
   "scripts": {
-    "analyze:lint": "eslint --ext .jsx --ext .js .",
+    "analyze:lint": "eslint --ext .tsx --ext .jsx --ext .js .",
     "analyze:prettier": "prettier --list-different \"**/*.{css,js,jsx,json,md}\"",
     "analyze": "npm run analyze:lint && npm run analyze:prettier",
     "cypress": "cypress run",

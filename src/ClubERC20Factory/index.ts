@@ -16,7 +16,7 @@ import { RugBonusTokenModule } from "./RugRadio/RugBonusTokenModule";
 import { RugERC20ClaimModule } from "./RugRadio/RugERC20ClaimModule";
 import { RugUtilityProperties } from "./RugRadio/RugUtilityProperties";
 import { RugUtilityMintModuleContract } from "./rugUtilityMintModule";
-import { CONTRACT_ADDRESSES } from "@/Networks/contractAddresses";
+import { CONTRACT_ADDRESSES } from '@/Networks';
 
 // Contract addresses for Rug Radio
 const PUBLIC_RUG_UTILITY_MINT_MODULE =

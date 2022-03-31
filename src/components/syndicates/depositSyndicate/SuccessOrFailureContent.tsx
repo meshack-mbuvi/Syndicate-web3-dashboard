@@ -33,11 +33,11 @@ export const SuccessOrFailureContent: React.FC<{
 }) => {
   const {
     erc20TokenSliceReducer: {
-      depositDetails: { depositTokenSymbol, ethDepositToken },
+      depositDetails: { depositTokenSymbol, nativeDepositToken }
     },
     web3Reducer: {
-      web3: { activeNetwork },
-    },
+      web3: { activeNetwork }
+    }
   } = useSelector((state: AppState) => state);
   return (
     <div className="h-fit-content text-center relative">
@@ -61,27 +61,27 @@ export const SuccessOrFailureContent: React.FC<{
           className="h-16 w-16"
           src={
             successfulDeposit || successfulClaim
-              ? "/images/syndicateStatusIcons/checkCircleGreen.svg"
-              : "/images/syndicateStatusIcons/transactionFailed.svg"
+              ? '/images/syndicateStatusIcons/checkCircleGreen.svg'
+              : '/images/syndicateStatusIcons/transactionFailed.svg'
           }
           alt="checkmark"
         />
       </div>
       <div
         className={`pt-8 ${
-          successfulDeposit || successfulClaim ? "pb-4" : "pb-6"
+          successfulDeposit || successfulClaim ? 'pb-4' : 'pb-6'
         }`}
       >
         <span className="text-2xl">
           {successfulDeposit
             ? `Deposited ${floatedNumberWithCommas(
                 depositAmount,
-                ethDepositToken ?? false,
+                nativeDepositToken ?? false
               )} ${depositTokenSymbol}`
             : successfulClaim
-            ? "Claim successfull"
+            ? 'Claim successfull'
             : claimFailed
-            ? "Claim failed"
+            ? 'Claim failed'
             : `Deposit failed`}
         </span>
       </div>
@@ -90,9 +90,9 @@ export const SuccessOrFailureContent: React.FC<{
         <>
           <div className="pb-6 px-8 text-gray-lightManatee">
             {`You now have ${floatedNumberWithCommas(
-              accountClubTokens,
+              accountClubTokens
             )} ${clubTokenSymbol}, which represents a ${floatedNumberWithCommas(
-              memberPercentShare,
+              memberPercentShare
             )}% ownership
                 share of this club.`}
           </div>

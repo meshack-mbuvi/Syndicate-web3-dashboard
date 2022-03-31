@@ -23,42 +23,42 @@ export function useAccountTokens(): {
 } {
   const {
     web3Reducer: {
-      web3: { account, activeNetwork },
+      web3: { account, activeNetwork }
     },
     erc20TokenSliceReducer: {
       erc20Token: { address, totalSupply, tokenDecimals, totalDeposits },
-      depositDetails: { depositTokenDecimals, ethDepositToken },
-    },
+      depositDetails: { depositTokenDecimals, nativeDepositToken }
+    }
   } = useSelector((state: AppState) => state);
-  const [accountTokens, setAccountTokens] = useState<string>("0");
-  const [memberDeposits, setMemberDeposits] = useState<string>("0");
-  const [memberOwnership, setMemberOwnership] = useState<string>("0");
+  const [accountTokens, setAccountTokens] = useState<string>('0');
+  const [memberDeposits, setMemberDeposits] = useState<string>('0');
+  const [memberOwnership, setMemberOwnership] = useState<string>('0');
 
   const isDemoMode = useDemoMode();
 
   const { loading, data, refetch, startPolling, stopPolling } = useQuery(
     CLUB_MEMBER_QUERY,
     {
-      context: { clientName: "theGraph", chainId: activeNetwork.chainId },
+      context: { clientName: 'theGraph', chainId: activeNetwork.chainId },
       variables: {
         where: {
-          memberAddress: account.toLocaleLowerCase(),
+          memberAddress: account.toLocaleLowerCase()
         },
         syndicateDaOsWhere2: {
-          syndicateDAO: address.toLowerCase(),
-        },
+          syndicateDAO: address.toLowerCase()
+        }
       },
       // Avoid unnecessary calls when account/clubAddress is not defined
-      skip: !account || !activeNetwork.chainId || !address || isDemoMode,
-    },
+      skip: !account || !activeNetwork.chainId || !address || isDemoMode
+    }
   );
 
   const stringifiedData = JSON.stringify(data);
   useEffect(() => {
     if (isDemoMode) {
-      setAccountTokens("3812");
-      setMemberDeposits("3812");
-      setMemberOwnership("31.6494");
+      setAccountTokens('3812');
+      setMemberDeposits('3812');
+      setMemberOwnership('31.6494');
       return;
     }
 
@@ -68,9 +68,9 @@ export function useAccountTokens(): {
     // fixes an issue where member deposit data is not updated when switching from a member
     // with deposits to one with zero deposits.
     const resetMemberStats = () => {
-      setAccountTokens("0");
-      setMemberDeposits("0");
-      setMemberOwnership("0");
+      setAccountTokens('0');
+      setMemberDeposits('0');
+      setMemberOwnership('0');
     };
 
     if (!data.members.length) {
@@ -79,24 +79,24 @@ export function useAccountTokens(): {
 
     if (data.members.length) {
       const {
-        members: [member],
+        members: [member]
       } = data;
 
       if (member) {
         const {
-          syndicateDAOs: [clubMemberData],
+          syndicateDAOs: [clubMemberData]
         } = member;
 
         if (clubMemberData) {
           const {
             depositAmount = 0,
             ownershipShare = 0,
-            tokens = 0,
+            tokens = 0
           } = clubMemberData;
 
           setAccountTokens(getWeiAmount(tokens, tokenDecimals, false));
           setMemberDeposits(
-            getWeiAmount(depositAmount, depositTokenDecimals, false),
+            getWeiAmount(depositAmount, depositTokenDecimals, false)
           );
           setMemberOwnership(`${+ownershipShare / 10000}`);
         } else {
@@ -104,9 +104,9 @@ export function useAccountTokens(): {
         }
       }
     } else {
-      setAccountTokens("0");
-      setMemberDeposits("0");
-      setMemberOwnership("0");
+      setAccountTokens('0');
+      setMemberDeposits('0');
+      setMemberOwnership('0');
     }
   }, [
     account,
@@ -115,7 +115,7 @@ export function useAccountTokens(): {
     address,
     totalSupply,
     totalDeposits,
-    stringifiedData,
+    stringifiedData
   ]);
 
   useEffect(() => {
@@ -128,12 +128,12 @@ export function useAccountTokens(): {
     loadingMemberOwnership: loading,
     accountTokens,
     memberPercentShare: memberOwnership,
-    memberDeposits: ethDepositToken
+    memberDeposits: nativeDepositToken
       ? parseFloat((Number(memberDeposits) * 10000).toString())
       : memberDeposits,
     memberOwnership,
     refetchMemberData: refetch,
     startPolling,
-    stopPolling,
+    stopPolling
   };
 }

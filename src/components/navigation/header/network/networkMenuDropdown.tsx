@@ -19,7 +19,7 @@ const NetworkMenuDropDown: FC<IAddressMenuDropDown> = ({ web3 }) => {
 
   const { account, web3: web3Instance, activeNetwork } = web3;
 
-  const [ethBalance, setEthBalance] = useState("");
+  const [nativeBalance, setNativeBalance] = useState('');
 
   // Switch networks based on URL param
   const router = useRouter();
@@ -31,21 +31,21 @@ const NetworkMenuDropDown: FC<IAddressMenuDropDown> = ({ web3 }) => {
     }
   }, [network]);
 
-  const getEthBalance = async (address: string) => {
+  const getNativeBalance = async (address: string) => {
     try {
       const balance = await web3Instance.eth.getBalance(address);
-      const ethBalance = web3Instance.utils.fromWei(balance, "ether");
-      setEthBalance(ethBalance);
+      const nativeBalance = web3Instance.utils.fromWei(balance, 'ether');
+      setNativeBalance(nativeBalance);
     } catch (error) {
       console.log({ error });
     }
   };
 
   useEffect(() => {
-    if (account && !ethBalance) {
-      getEthBalance(account);
+    if (account && !nativeBalance) {
+      getNativeBalance(account);
     }
-  }, [account, ethBalance]);
+  }, [account, nativeBalance]);
 
   return (
     <Menu as="div" className="relative">

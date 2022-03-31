@@ -38,9 +38,8 @@ import React, {
 } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Web3 from "web3";
-import { NETWORKS } from "@/Networks";
-import { IActiveNetwork } from "@/state/wallet/types";
-import { setERC20TokenContract } from "@/state/erc20token/slice";
+import { NETWORKS } from '@/Networks';
+import { IActiveNetwork } from '@/state/wallet/types';
 
 type AuthProviderProps = {
   connectWallet: (providerName: string) => void;

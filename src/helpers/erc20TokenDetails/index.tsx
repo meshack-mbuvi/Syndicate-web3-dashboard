@@ -11,22 +11,22 @@ import {
 import { DepositDetails, ERC20Token } from "@/state/erc20token/types";
 import { isZeroAddress } from "@/utils";
 import { getWeiAmount } from "@/utils/conversions";
-import { isDev } from "@/utils/environment";
+import { SUPPORTED_TOKENS } from '@/Networks';
 
 const ETH_MINT_MODULE = process.env.NEXT_PUBLIC_ETH_MINT_MODULE;
 export const ERC20TokenDefaultState = {
-  name: "",
-  owner: "",
-  address: "",
-  depositToken: "",
-  mintModule: "",
-  ethDepositToken: false,
+  name: '',
+  owner: '',
+  address: '',
+  depositToken: '',
+  mintModule: '',
+  nativeDepositToken: false,
   depositsEnabled: false,
   claimEnabled: false,
   totalSupply: 0,
   tokenDecimals: 18, //default to 18
   totalDeposits: 0,
-  symbol: "",
+  symbol: '',
   startTime: 0,
   endTime: 0,
   memberCount: 0,
@@ -35,45 +35,10 @@ export const ERC20TokenDefaultState = {
   loading: false,
   maxMemberCount: 0,
   maxTotalSupply: 0,
-  requiredToken: "",
-  requiredTokenMinBalance: "",
-  currentMintPolicyAddress: undefined,
+  requiredToken: '',
+  requiredTokenMinBalance: '',
+  currentMintPolicyAddress: undefined
 };
-
-const depositTokenMapping = {
-  rinkeby: {
-    usdc: {
-      depositToken: "0xeb8f08a975Ab53E34D8a0330E0D34de942C95926",
-      depositTokenSymbol: "USDC",
-      depositTokenLogo: "/images/TestnetTokenLogos/usdcIcon.svg",
-      depositTokenName: "USD-Coin",
-      depositTokenDecimals: 6,
-    },
-    ether: {
-      depositToken: "",
-      depositTokenSymbol: "ETH",
-      depositTokenLogo: "/images/ethereum-logo.png",
-      depositTokenName: "Ethereum",
-      depositTokenDecimals: 18,
-    },
-  },
-  mainnet: {
-    usdc: {
-      depositToken: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
-      depositTokenSymbol: "USDC",
-      depositTokenLogo: "/images/prodTokenLogos/usd-coin-usdc.svg",
-      depositTokenName: "USD-Coin",
-      depositTokenDecimals: 6,
-    },
-    ether: {
-      depositToken: "",
-      depositTokenSymbol: "ETH",
-      depositTokenLogo: "/images/ethereum-logo.png",
-      depositTokenName: "Ethereum",
-      depositTokenDecimals: 18,
-    },
-  },
-}[isDev ? "rinkeby" : "mainnet"];
 
 /**
  * Retrieves details for an erc20 token for a particular
@@ -83,7 +48,7 @@ export const getERC20TokenDetails = async (
   ERC20tokenContract,
   policyMintERC20: MintPolicyContract,
   mintPolicy: MintPolicyContract,
-  MerkleDistributorModule: MerkleDistributorModuleContract,
+  MerkleDistributorModule: MerkleDistributorModuleContract
 ): Promise<ERC20Token> => {
   if (ERC20tokenContract) {
     try {
@@ -98,7 +63,7 @@ export const getERC20TokenDetails = async (
         maxTotalSupply,
         requiredToken,
         requiredTokenMinBalance,
-        startTime,
+        startTime
       } = await policyMintERC20?.getSyndicateValues(address);
 
       if (!+endTime && !+maxMemberCount && !+maxTotalSupply && !+startTime) {
@@ -108,7 +73,7 @@ export const getERC20TokenDetails = async (
           maxTotalSupply,
           requiredToken,
           requiredTokenMinBalance,
-          startTime,
+          startTime
         } = await mintPolicy?.getSyndicateValues(address));
 
         // Change current mint policy
@@ -121,22 +86,22 @@ export const getERC20TokenDetails = async (
           ERC20tokenContract.owner(),
           ERC20tokenContract.decimals(),
           ERC20tokenContract.symbol(),
-          ERC20tokenContract.memberCount(),
+          ERC20tokenContract.memberCount()
         ]);
 
       const totalSupply = await ERC20tokenContract.totalSupply().then((wei) =>
-        getWeiAmount(wei, tokenDecimals, false),
+        getWeiAmount(wei, tokenDecimals, false)
       );
 
       // Check both mint policies
       const claimEnabledPolicyMintERC20 = await policyMintERC20.isModuleAllowed(
         address,
-        MerkleDistributorModule.contract._address,
+        MerkleDistributorModule.contract._address
       );
 
       const claimEnabledMintPolicy = await mintPolicy.isModuleAllowed(
         address,
-        MerkleDistributorModule.contract._address,
+        MerkleDistributorModule.contract._address
       );
       const claimEnabled =
         claimEnabledPolicyMintERC20 || claimEnabledMintPolicy;
@@ -166,7 +131,7 @@ export const getERC20TokenDetails = async (
         requiredTokenMinBalance,
         maxTotalDeposits: getWeiAmount(maxTotalSupply, tokenDecimals, false), //should be updated if token prices is not 1:1
         startTime: parseInt(startTime, 10) * 1000, // time is in seconds. need to change to milliseconds
-        endTime: parseInt(endTime, 10) * 1000, // time is in seconds. need to change to milliseconds
+        endTime: parseInt(endTime, 10) * 1000 // time is in seconds. need to change to milliseconds
       };
     } catch (error) {
       return ERC20TokenDefaultState;
@@ -178,32 +143,39 @@ export const getDespositDetails = async (
   ERC20tokenContract,
   DepositTokenMintModule: DepositTokenMintModuleContract,
   SingleTokenMintModule: DepositTokenMintModuleContract,
+  activeNetwork
 ): Promise<DepositDetails> => {
+  const depositTokenMapping = SUPPORTED_TOKENS[activeNetwork.chainId];
+
   let mintModule = DepositTokenMintModule.address;
-  let ethDepositToken = false;
+  let nativeDepositToken = false;
 
   let depositToken = await DepositTokenMintModule?.depositToken(
-    ERC20tokenContract.clubERC20Contract._address,
+    ERC20tokenContract.clubERC20Contract._address
   );
 
   if (isZeroAddress(depositToken)) {
     depositToken = await SingleTokenMintModule?.depositToken(
-      ERC20tokenContract.clubERC20Contract._address,
+      ERC20tokenContract.clubERC20Contract._address
     );
 
     if (isZeroAddress(depositToken)) {
-      depositToken = "";
+      depositToken = '';
       mintModule = ETH_MINT_MODULE;
-      ethDepositToken = true;
+      nativeDepositToken = true;
     } else {
       mintModule = SingleTokenMintModule.address;
     }
   }
+  const [depositTokenInfo] = depositTokenMapping.filter(
+    (token) => token.address === depositToken
+  );
+  console.log({ depositTokenInfo });
 
   return {
     mintModule,
-    ethDepositToken,
-    ...depositTokenMapping[ethDepositToken ? "ether" : "usdc"],
+    nativeDepositToken,
+    ...depositTokenInfo
   };
 };
 
@@ -230,9 +202,12 @@ export const setERC20Token =
           mintPolicy,
           SingleTokenMintModule,
           DepositTokenMintModule,
-          MerkleDistributorModule,
-        },
+          MerkleDistributorModule
+        }
       },
+      web3Reducer: {
+        web3: { activeNetwork }
+      }
     } = getState();
 
     dispatch(setERC20TokenContract(ERC20tokenContract));
@@ -242,15 +217,16 @@ export const setERC20Token =
         ERC20tokenContract,
         policyMintERC20,
         mintPolicy,
-        MerkleDistributorModule,
+        MerkleDistributorModule
       );
-      const depositDetails = await getDespositDetails(
+      const depositDetails: any = await getDespositDetails(
         ERC20tokenContract,
         DepositTokenMintModule,
         SingleTokenMintModule,
+        activeNetwork
       );
 
-      const { ethDepositToken } = depositDetails;
+      const { nativeDepositToken } = depositDetails;
 
       dispatch(
         setERC20TokenDetails({
@@ -260,12 +236,22 @@ export const setERC20Token =
            * is 1: 100000 erc20 tokens. For other erc20 tokens,
            * the ratio is 1:1
            */
-          maxTotalDeposits: ethDepositToken
+          maxTotalDeposits: nativeDepositToken
             ? Number(erc20Token.maxTotalDeposits) / 10000
-            : erc20Token.maxTotalDeposits,
-        }),
+            : erc20Token.maxTotalDeposits
+        })
       );
-      dispatch(setERC20TokenDespositDetails(depositDetails));
+      dispatch(
+        setERC20TokenDespositDetails({
+          mintModule: depositDetails.mintModule,
+          nativeDepositToken: depositDetails.nativeDepositToken,
+          depositToken: depositDetails.address,
+          depositTokenSymbol: depositDetails.symbol,
+          depositTokenLogo: depositDetails.logoURI,
+          depositTokenName: depositDetails.name,
+          depositTokenDecimals: depositDetails.decimals
+        })
+      );
       dispatch(setLoadingClub(false));
     } catch (error) {
       console.log({ error });

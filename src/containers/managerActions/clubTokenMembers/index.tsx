@@ -25,19 +25,19 @@ const ClubTokenMembers = (): JSX.Element => {
   const {
     clubMembersSliceReducer: { clubMembers, loadingClubMembers },
     erc20TokenSliceReducer: {
-      depositDetails: { depositTokenSymbol, ethDepositToken },
+      depositDetails: { depositTokenSymbol, nativeDepositToken }
     },
     legalInfoReducer: {
       depositReadyInfo: { adminSigned },
-      walletSignature: { signature },
-    },
+      walletSignature: { signature }
+    }
   } = useSelector((state: AppState) => state);
   const dispatch = useDispatch();
   const isOwner = useIsClubOwner();
   const router = useRouter();
   const { clubAddress } = router.query;
 
-  const [filteredAddress, setFilteredAddress] = useState("");
+  const [filteredAddress, setFilteredAddress] = useState('');
 
   const [showDepositLinkCopyState, setShowDepositLinkCopyState] =
     useState(false);
@@ -49,7 +49,7 @@ const ClubTokenMembers = (): JSX.Element => {
 
   const setClubDepositLink = (clubDepositLink: string) => {
     dispatch(
-      setDepositReadyInfo({ adminSigned, depositLink: clubDepositLink }),
+      setDepositReadyInfo({ adminSigned, depositLink: clubDepositLink })
     );
   };
 
@@ -58,11 +58,11 @@ const ClubTokenMembers = (): JSX.Element => {
 
   // club deposit link
   useEffect(() => {
-    const legal = JSON.parse(localStorage.getItem("legal") || "{}");
+    const legal = JSON.parse(localStorage.getItem('legal') || '{}');
     const clubLegalData = legal[clubAddress as string];
     if (!clubLegalData?.signaturesNeeded) {
       return setClubDepositLink(
-        `${window.location.origin}/clubs/${clubAddress}`,
+        `${window.location.origin}/clubs/${clubAddress}`
       );
     }
     if (
@@ -72,7 +72,7 @@ const ClubTokenMembers = (): JSX.Element => {
       const memberSignURL = generateMemberSignURL(
         clubAddress as string,
         clubLegalData.clubData,
-        clubLegalData.clubData.adminSignature,
+        clubLegalData.clubData.adminSignature
       );
       setClubDepositLink(memberSignURL);
     }
@@ -95,7 +95,7 @@ const ClubTokenMembers = (): JSX.Element => {
   const [syndicateMembersToShow, setSynMembersToShow] = useState(clubMembers);
   const [showMemberOptions, setShowMemberOptions] = useState({
     show: false,
-    memberAddress: "",
+    memberAddress: ''
   });
   const [tableData, setTableData] = useState([]);
 
@@ -107,7 +107,7 @@ const ClubTokenMembers = (): JSX.Element => {
       const filteredMembers = allMembers.filter((member) =>
         member.memberAddress
           .toLowerCase()
-          .includes(filteredAddress.toLowerCase()),
+          .includes(filteredAddress.toLowerCase())
       );
       setSynMembersToShow(filteredMembers);
     } else {
@@ -144,7 +144,7 @@ const ClubTokenMembers = (): JSX.Element => {
   const columns = React.useMemo(
     () => [
       {
-        Header: "Member",
+        Header: 'Member',
         accessor: function memberAddress(row: { memberAddress: string }) {
           return (
             <MemberAddressComponent
@@ -152,30 +152,30 @@ const ClubTokenMembers = (): JSX.Element => {
               setSelectedMember={() => setSelectedMember(row)}
             />
           );
-        },
+        }
       },
       {
         Header: `Deposit amount`,
         accessor: function depositAmount({
           depositAmount,
-          depositSymbol = depositTokenSymbol,
+          depositSymbol = depositTokenSymbol
         }) {
           return (
             <p className="flex text-white text-base leading-6">
               {`${floatedNumberWithCommas(
                 depositAmount,
-                ethDepositToken ?? false,
+                nativeDepositToken ?? false
               )} ${depositSymbol}`}
             </p>
           );
-        },
+        }
       },
       {
         Header: `Club tokens (ownership share)`,
         accessor: function distributionShare({
           ownershipShare,
           clubTokens,
-          symbol,
+          symbol
         }) {
           return (
             <p>
@@ -185,7 +185,7 @@ const ClubTokenMembers = (): JSX.Element => {
               </span>
             </p>
           );
-        },
+        }
       },
       {
         Header: ` `,
@@ -204,16 +204,16 @@ const ClubTokenMembers = (): JSX.Element => {
                   {...{
                     club,
                     moreOptionItems,
-                    handleMenuItemClick: () => handleMenuItemClick(club),
+                    handleMenuItemClick: () => handleMenuItemClick(club)
                   }}
                 />
               </div>
             );
           }
-        },
-      },
+        }
+      }
     ],
-    [clubMembers, showMemberOptions, isOwner],
+    [clubMembers, showMemberOptions, isOwner]
   );
 
   const membersTabInstruction = isOwner

@@ -6,7 +6,7 @@ export interface InitialState {
   tokensFetchError: boolean;
   collectiblesFetchError: boolean;
   allCollectiblesFetched: boolean;
-  ethereumTokenPrice: number;
+  nativeTokenPrice: number;
 }
 
 export const initialState: InitialState = {
@@ -17,5 +17,5 @@ export const initialState: InitialState = {
   tokensFetchError: false,
   collectiblesFetchError: false,
   allCollectiblesFetched: false,
-  ethereumTokenPrice: 0,
+  nativeTokenPrice: 0
 };

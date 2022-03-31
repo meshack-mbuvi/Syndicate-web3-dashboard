@@ -115,11 +115,11 @@ const ClaimUtilityNFT: React.FC = () => {
       await RugUtilityMintModule.redeemMany(
         account,
         NFTsToClaim,
-        String(new BigNumber(utilityNFT.ethPrice).times(NFTsToClaim.length)),
+        String(new BigNumber(utilityNFT.nativePrice).times(NFTsToClaim.length)),
         onTxConfirm,
         onTxReceipt,
         onTxFail,
-        setTransactionHash,
+        setTransactionHash
       );
       setTransactionHash(transactionHash);
     } catch (error) {

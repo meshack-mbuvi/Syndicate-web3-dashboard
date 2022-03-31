@@ -97,7 +97,7 @@ const Layout: FC<Props> = ({
   return (
     <div
       className={`flex flex-col justify-between ${
-        pushFooter ? "h-screen" : ""
+        pushFooter ? 'h-screen' : ''
       }`}
     >
       <div>
@@ -109,6 +109,9 @@ const Layout: FC<Props> = ({
             `fund`,
             `social`,
             `ethereum`,
+            `ETH`,
+            `polygon`,
+            `MATIC`
           ]}
           title="Home"
         />
@@ -120,7 +123,7 @@ const Layout: FC<Props> = ({
         <DemoBanner />
         <div
           className={`sticky top-18 ${
-            showCreateProgressBar ? "bg-black backdrop-filter" : ""
+            showCreateProgressBar ? 'bg-black backdrop-filter' : ''
           }`}
         >
           {showCreateProgressBar && account ? (
@@ -138,7 +141,7 @@ const Layout: FC<Props> = ({
         </div>
         <div
           className={`flex w-full bg-black flex-col sm:flex-row ${
-            showCreateProgressBar ? "pt-16" : isDemoMode ? "pt-48" : "pt-24"
+            showCreateProgressBar ? 'pt-16' : isDemoMode ? 'pt-48' : 'pt-24'
           } z-20 justify-center items-center my-0 mx-auto`}
         >
           {children}

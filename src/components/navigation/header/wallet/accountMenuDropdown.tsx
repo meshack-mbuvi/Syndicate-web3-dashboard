@@ -17,7 +17,7 @@ const AddressMenuDropDown: FC<IAddressMenuDropDown> = ({
   const { disconnectWallet } = useConnectWalletContext();
 
   const [showCopyState, setShowCopyState] = useState(false);
-  const [ethBalance, setEthBalance] = useState("");
+  const [nativeBalance, setNativeBalance] = useState('');
 
   const updateAddressCopyState = () => {
     setShowCopyState(true);
@@ -25,13 +25,13 @@ const AddressMenuDropDown: FC<IAddressMenuDropDown> = ({
   };
 
   useEffect(() => {
-    if (account && !ethBalance) {
+    if (account && !nativeBalance) {
       web3.eth
         .getBalance(account)
-        .then((balance) => web3.utils.fromWei(balance, "ether"))
-        .then(setEthBalance);
+        .then((balance) => web3.utils.fromWei(balance, 'ether'))
+        .then(setNativeBalance);
     }
-  }, [account, ethBalance]);
+  }, [account, nativeBalance]);
 
   const formattedAddress = formatAddress(account, 7, 6);
 

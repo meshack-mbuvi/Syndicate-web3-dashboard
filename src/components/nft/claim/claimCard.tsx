@@ -15,9 +15,9 @@ import { useDispatch, useSelector } from "react-redux";
 const ClaimCard: React.FC<{
   handleMintUpdate?: (amount) => void;
   openseaLink: string;
-  rawEthBalance: string;
+  rawNativeBalance: string;
   startTime: number;
-}> = ({ handleMintUpdate, openseaLink, rawEthBalance, startTime }) => {
+}> = ({ handleMintUpdate, openseaLink, rawNativeBalance, startTime }) => {
   const dispatch = useDispatch();
 
   const {
@@ -26,9 +26,9 @@ const ClaimCard: React.FC<{
     erc721AirdropInfoSliceReducer: { erc721AirdropInfo },
     claimedERC721SliceReducer: { erc721Claimed },
     web3Reducer: {
-      web3: { account, status },
+      web3: { account, status, activeNetwork }
     },
-    erc721TokenSliceReducer: { erc721Token },
+    erc721TokenSliceReducer: { erc721Token }
   } = useSelector((state: AppState) => state);
 
   const [claimAvailable, setClaimAvailable] = useState(false);
@@ -39,12 +39,12 @@ const ClaimCard: React.FC<{
   const [claimStarted, setClaimStarted] = useState<boolean>(false);
   const [claimEnded, setClaimEnded] = useState<boolean>(false);
   const [claimAmount, setClaimAmount] = useState<number>(1);
-  const [claimError, setClaimError] = useState<string>("");
-  const [claimETHValue, setClaimETHValue] = useState<string>(
-    erc721Token.ethPrice,
+  const [claimError, setClaimError] = useState<string>('');
+  const [claimNativeValue, setClaimNativeValue] = useState<string>(
+    erc721Token.nativePrice
   );
-  const [claimValue, setClaimValue] = useState<string>(erc721Token.ethPrice);
-  const [timeLeft, setTimeLeft] = useState<string>("soon");
+  const [claimValue, setClaimValue] = useState<string>(erc721Token.nativePrice);
+  const [timeLeft, setTimeLeft] = useState<string>('soon');
   const [fullyClaimed, setFullyClaimed] = useState<boolean>(false);
 
   useEffect(() => {
@@ -62,7 +62,7 @@ const ClaimCard: React.FC<{
   };
 
   const viewCollection = () => {
-    window.open(openseaLink, "_blank");
+    window.open(openseaLink, '_blank');
   };
 
   const updateClaimAmount = (increase) => {
@@ -74,14 +74,14 @@ const ClaimCard: React.FC<{
   };
 
   useEffect(() => {
-    if (erc721Token.ethPrice && claimAmount) {
+    if (erc721Token.nativePrice && claimAmount) {
       const amount = String(
-        new BigNumber(erc721Token.ethPrice).times(claimAmount),
+        new BigNumber(erc721Token.nativePrice).times(claimAmount)
       );
-      setClaimETHValue(amount);
+      setClaimNativeValue(amount);
       setClaimValue(getWeiAmount(amount, 18, false));
     }
-  }, [erc721Token.ethPrice, claimAmount, rawEthBalance]);
+  }, [erc721Token.nativePrice, claimAmount, rawNativeBalance]);
 
   useEffect(() => {
     if (erc721Token.maxPerAddress - erc721Token.amountMinted === 0) {
@@ -90,20 +90,20 @@ const ClaimCard: React.FC<{
       claimAmount > erc721Token.maxSupply - erc721Token.currentSupply ||
       claimAmount > erc721Token.maxPerAddress
     ) {
-      setClaimError("Max Claim Exceeded");
-    } else if (claimValue > getWeiAmount(rawEthBalance, 18, false)) {
-      setClaimError("Insufficient ETH balance");
+      setClaimError('Max Claim Exceeded');
+    } else if (claimValue > getWeiAmount(rawNativeBalance, 18, false)) {
+      setClaimError(`Insufficient ${activeNetwork.nativeCurrency.symbol} balance`);
     } else {
-      setClaimError("");
+      setClaimError('');
     }
   }, [
     claimAmount,
-    claimETHValue,
+    claimNativeValue,
     claimValue,
-    rawEthBalance,
+    rawNativeBalance,
     erc721Token.amountMinted,
     erc721Token.maxPerAddress,
-    erc721Token.maxSupply,
+    erc721Token.maxSupply
   ]);
 
   useEffect(() => {
@@ -156,7 +156,7 @@ const ClaimCard: React.FC<{
     erc721Token.publicSupply,
     erc721Token.currentSupply,
     startTime,
-    timeLeft,
+    timeLeft
   ]);
 
   useEffect(() => {
@@ -200,7 +200,7 @@ const ClaimCard: React.FC<{
       const {
         MerkleDistributorModuleERC721,
         PublicOnePerAddressModule,
-        PublicMintWithFeeModule,
+        PublicMintWithFeeModule
       } = syndicateContracts;
       if (erc721Token.merkleClaimEnabled) {
         await MerkleDistributorModuleERC721.claim(
@@ -212,7 +212,7 @@ const ClaimCard: React.FC<{
           onTxConfirm,
           onTxReceipt,
           onTxFail,
-          setTransactionHash,
+          setTransactionHash
         );
       } else if (erc721Token.publicSingleClaimEnabled) {
         await PublicOnePerAddressModule.mint(
@@ -221,18 +221,18 @@ const ClaimCard: React.FC<{
           onTxConfirm,
           onTxReceipt,
           onTxFail,
-          setTransactionHash,
+          setTransactionHash
         );
       } else if (erc721Token.publicUtilityClaimEnabled) {
         await PublicMintWithFeeModule.mint(
           account,
           erc721Token.address,
-          claimETHValue,
+          claimNativeValue,
           claimAmount,
           onTxConfirm,
           onTxReceipt,
           onTxFail,
-          setTransactionHash,
+          setTransactionHash
         );
       }
 
@@ -257,19 +257,19 @@ const ClaimCard: React.FC<{
               className="h-16 w-16"
               src={
                 successfulClaim || erc721Claimed.claimed || fullyClaimed
-                  ? "/images/syndicateStatusIcons/checkCircleGreen.svg"
-                  : "/images/syndicateStatusIcons/transactionFailed.svg"
+                  ? '/images/syndicateStatusIcons/checkCircleGreen.svg'
+                  : '/images/syndicateStatusIcons/transactionFailed.svg'
               }
               alt="checkmark"
             />
           </div>
           <div className="mb-4 text-2xl">
             {successfulClaim || erc721Claimed.claimed || fullyClaimed
-              ? ` ${claimAmount > 1 ? claimAmount : ""} NFT${
-                  claimAmount > 1 ? "s" : ""
+              ? ` ${claimAmount > 1 ? claimAmount : ''} NFT${
+                  claimAmount > 1 ? 's' : ''
                 } claimed`
               : claimFailed
-              ? "Claim failed"
+              ? 'Claim failed'
               : null}
           </div>
           {successfulClaim && (
@@ -281,8 +281,8 @@ const ClaimCard: React.FC<{
           <button
             className={`flex items-center justify-center w-full rounded-lg text-base text-black px-8 py-4 mb-6 text-black font-medium ${
               !openseaLink && !claimFailed
-                ? "bg-gray-syn7 text-white cursor-default"
-                : "bg-white"
+                ? 'bg-gray-syn7 text-white cursor-default'
+                : 'bg-white'
             }`}
             onClick={
               claimFailed ? tryAgain : openseaLink ? viewCollection : null
@@ -303,7 +303,7 @@ const ClaimCard: React.FC<{
                 />
               </span>
             ) : (
-              "Try Again"
+              'Try Again'
             )}
           </button>
           {transactionHash && (
@@ -322,8 +322,8 @@ const ClaimCard: React.FC<{
             <Spinner width="w-16" height="h-16" margin="m-0" />
           </div>
           <div className="pb-6 text-2xl">{`Claiming ${
-            claimAmount > 1 ? claimAmount : ""
-          } NFT${claimAmount > 1 ? "s" : ""}`}</div>
+            claimAmount > 1 ? claimAmount : ''
+          } NFT${claimAmount > 1 ? 's' : ''}`}</div>
           {transactionHash && (
             <div className="pb-8 text-base flex justify-center items-center hover:opacity-80">
               <BlockExplorerLink
@@ -354,13 +354,13 @@ const ClaimCard: React.FC<{
                           <MinusCircleIcon
                             className={`h-4 w-4  ${
                               claimAmount > 1
-                                ? "text-gray-syn4"
-                                : "text-gray-syn6"
+                                ? 'text-gray-syn4'
+                                : 'text-gray-syn6'
                             }`}
                           ></MinusCircleIcon>
                         </button>
                         <div
-                          className={`h1 ${claimError ? "text-red-error" : ""}`}
+                          className={`h1 ${claimError ? 'text-red-error' : ''}`}
                         >
                           {claimAmount}
                         </div>
@@ -385,14 +385,14 @@ const ClaimCard: React.FC<{
                   <button
                     className={`w-full rounded-lg text-base text-black px-8 py-4 mb-4 font-medium ${
                       claimError
-                        ? "bg-gray-syn6 text-gray-syn4 cursor-default"
-                        : "bg-green"
+                        ? 'bg-gray-syn6 text-gray-syn4 cursor-default'
+                        : 'bg-green'
                     }`}
                     onClick={claimError ? null : claimNFT}
                     disabled={claimError ? true : false}
                   >
                     {!claimError
-                      ? `Claim ${claimAmount} NFT${claimAmount > 1 ? "s" : ""}`
+                      ? `Claim ${claimAmount} NFT${claimAmount > 1 ? 's' : ''}`
                       : claimError}
                   </button>
                 </div>
@@ -400,22 +400,22 @@ const ClaimCard: React.FC<{
                 <div>
                   <div className="text-lg text-center mb-8">
                     {status == Status.DISCONNECTED
-                      ? "Connect your wallet to claim this NFT"
+                      ? 'Connect your wallet to claim this NFT'
                       : !claimAvailable
                       ? `Your connected wallet (${formatAddress(
                           account,
                           6,
-                          4,
+                          4
                         )}) isn’t eligible to claim this NFT`
-                      : "Your wallet is eligible to claim this NFT"}
+                      : 'Your wallet is eligible to claim this NFT'}
                   </div>
                   <button
                     className={`w-full rounded-lg text-base text-black px-8 py-4 mb-4 font-medium ${
                       status == Status.DISCONNECTED
-                        ? "bg-white"
+                        ? 'bg-white'
                         : !claimAvailable
-                        ? "bg-gray-syn7 text-white cursor-default"
-                        : "bg-green"
+                        ? 'bg-gray-syn7 text-white cursor-default'
+                        : 'bg-green'
                     }`}
                     onClick={
                       status == Status.DISCONNECTED
@@ -427,10 +427,10 @@ const ClaimCard: React.FC<{
                     disabled={!claimAvailable}
                   >
                     {status == Status.DISCONNECTED
-                      ? "Connect wallet"
+                      ? 'Connect wallet'
                       : !claimAvailable
-                      ? "Connect a different wallet"
-                      : "Claim"}
+                      ? 'Connect a different wallet'
+                      : 'Claim'}
                   </button>
                 </div>
               )}
@@ -446,7 +446,7 @@ const ClaimCard: React.FC<{
             <div>
               {erc721AirdropInfo.startTime ? (
                 <div className="text-lg text-center mb-6">
-                  Claim starts{" "}
+                  Claim starts{' '}
                   {moment(erc721AirdropInfo.startTime * 1000).fromNow()}
                 </div>
               ) : startTime ? (
@@ -460,16 +460,16 @@ const ClaimCard: React.FC<{
               <div className="text-lg text-center mb-8">
                 {`Claim ended ${
                   moment(erc721AirdropInfo.endTime * 1000).fromNow() !=
-                  "Invalid date"
+                  'Invalid date'
                     ? moment(erc721AirdropInfo.endTime * 1000).fromNow()
-                    : ""
+                    : ''
                 }`}
               </div>
               <button
                 className={`flex items-center justify-center w-full rounded-lg text-base text-black px-8 py-4 mb-6 text-black font-medium ${
                   !openseaLink
-                    ? "bg-gray-syn7 text-white cursor-default"
-                    : "bg-white"
+                    ? 'bg-gray-syn7 text-white cursor-default'
+                    : 'bg-white'
                 }`}
                 onClick={openseaLink ? viewCollection : null}
                 disabled={!openseaLink}

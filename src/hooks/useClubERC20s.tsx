@@ -169,26 +169,26 @@ const useClubERC20s = () => {
               );
           }
 
-          let depositERC20TokenSymbol = "ETH";
-          let depositERC20TokenDecimals = "18";
+          let depositERC20TokenSymbol = activeNetwork.nativeCurrency.symbol;
+          let depositERC20TokenDecimals = activeNetwork.nativeCurrency.decimals;
           /**
            * We are hardcoding these values because we have two deposit tokens.
            * Eth and USDC. When scaling we can use the TOKEN mapping for hard coded
            * values or coingecko to get the logos, or better yet the graph.
            */
-          let depositTokenLogo = "/images/ethereum-logo.png";
+          let depositTokenLogo = activeNetwork.logo;
           if (!isZeroAddress(depositToken)) {
             try {
               const depositERC20Token = new ClubERC20Contract(
                 depositToken,
-                web3.web3,
+                web3.web3
               );
               depositERC20TokenSymbol = await depositERC20Token.symbol();
               depositERC20TokenDecimals = await depositERC20Token.decimals();
               depositTokenLogo =
-                depositERC20TokenSymbol === "USDC"
-                  ? "/images/TestnetTokenLogos/usdcIcon.svg"
-                  : "";
+                depositERC20TokenSymbol === 'USDC'
+                  ? '/images/TestnetTokenLogos/usdcIcon.svg'
+                  : '';
             } catch (error) {
               return;
             }
@@ -207,12 +207,12 @@ const useClubERC20s = () => {
             depositERC20TokenDecimals
               ? parseInt(depositERC20TokenDecimals)
               : 18,
-            false,
+            false
           );
 
           const ownershipShare =
             (+memberDeposits * 100) /
-            (depositERC20TokenSymbol === "ETH"
+            (depositERC20TokenSymbol === activeNetwork.nativeCurrency.symbol
               ? +totalDeposits / 10000
               : +totalDeposits);
 

@@ -10,6 +10,9 @@ import { useRouter } from "next/router";
 const UtilityNFT: React.FC = () => {
   const {
     utilityNFTSliceReducer: { utilityNFT },
+    web3Reducer: {
+      web3: { activeNetwork }
+    }
   } = useSelector((state: AppState) => state);
 
   const { loading: utilityLoading } = useUtilityNFT();
@@ -62,7 +65,9 @@ const UtilityNFT: React.FC = () => {
               </div>
             ) : (
               <div className=" text-2xl flex space-x-4">
-                <div className="text-white">{utilityNFT.price} ETH</div>
+                <div className="text-white">
+                  {utilityNFT.price} {activeNetwork.nativeCurrency.symbol}
+                </div>
                 <div className="text-gray-lightManatee">
                   ${utilityNFT.priceUSD}
                 </div>

@@ -7,31 +7,31 @@ import { ERC721Contract } from "@/ClubERC20Factory/ERC721Membership";
 import { MembershipPass, Utility } from "@/state/UtilityNFT/types";
 import { getWeiAmount } from "@/utils/conversions";
 import {
-  getEthereumTokenPrice,
-  getEtherscanTransactionHistory,
-} from "@/utils/api/etherscan";
+  getNativeTokenPrice,
+  getExplorerTransactionHistory
+} from '@/utils/api/etherscan';
 
 const useUtilityNFT: any = () => {
   const dispatch = useDispatch();
 
   const {
     web3Reducer: {
-      web3: { account: address, web3, activeNetwork },
+      web3: { account: address, web3, activeNetwork }
     },
     utilityNFTSliceReducer,
-    initializeContractsReducer: { syndicateContracts },
+    initializeContractsReducer: { syndicateContracts }
   } = useSelector((state: AppState) => state);
 
   const { RugUtilityMintModule } = syndicateContracts;
 
   const router = useRouter();
-  const [redemptionToken, setRedemptionToken] = useState<string>("");
+  const [redemptionToken, setRedemptionToken] = useState<string>('');
   const [balance, setMembershipBalance] = useState<number>(0);
   const [memberships, setMembership] = useState<MembershipPass[]>([]);
   const [claimAvailable, setClaimAvailable] = useState<boolean>(false);
-  const [ethPrice, setEthPRice] = useState<string>("0");
+  const [nativePrice, setNativePRice] = useState<string>('0');
   const [tokenPrice, setTokenPRice] = useState<number>(0);
-  const [membershipToken, setMembershipToken] = useState<string>("");
+  const [membershipToken, setMembershipToken] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(true);
   const [loadingBasic, setLoadingBasic] = useState<boolean>(false);
   const [loadingBalance, setLoadingBalance] = useState<boolean>(false);
@@ -39,7 +39,7 @@ const useUtilityNFT: any = () => {
     useState<boolean>(false);
 
   const getRedemptionToken = async () => {
-    setRedemptionToken("");
+    setRedemptionToken('');
     const response = await RugUtilityMintModule.redemptionToken();
     setRedemptionToken(response);
     return response;
@@ -54,7 +54,7 @@ const useUtilityNFT: any = () => {
   const checkTokenOwnership = async (
     owner: string,
     contract: string,
-    tokenId: string,
+    tokenId: string
   ) => {
     const ERC721tokenContract = new ERC721Contract(contract as string, web3);
 
@@ -67,27 +67,27 @@ const useUtilityNFT: any = () => {
     return response;
   };
 
-  const getEthPrice = async () => {
+  const getNativePrice = async () => {
     const response = await Promise.all([
-      RugUtilityMintModule.ethPrice(),
-      getEthereumTokenPrice(activeNetwork.chainId),
+      RugUtilityMintModule.nativePrice(),
+      getNativeTokenPrice(activeNetwork.chainId)
     ])
       .then((result) => result)
       .catch(() => []);
 
-    const [priceResponse, eth_response] = response;
+    const [priceResponse, native_response] = response;
 
-    setEthPRice(priceResponse);
-    setTokenPRice(eth_response);
+    setNativePRice(priceResponse);
+    setTokenPRice(native_response);
 
     return priceResponse;
   };
 
   const getMembershipTokens = async () => {
-    const result = await getEtherscanTransactionHistory(
+    const result = await getExplorerTransactionHistory(
       address,
       redemptionToken,
-      activeNetwork.chainId,
+      activeNetwork.chainId
     );
 
     const tokenIds = new Set<string>();
@@ -111,18 +111,18 @@ const useUtilityNFT: any = () => {
           }
 
           //TODO: get utility info
-          const utility: Utility = { image: "", role: "" };
+          const utility: Utility = { image: '', role: '' };
 
           const membership = {
             token_id: tokenId,
             claimed,
-            utility,
+            utility
           };
 
           _memberships = [..._memberships, membership];
 
           setMembership(_memberships);
-        }),
+        })
       );
     }
     setMambershipTokens(false);
@@ -133,7 +133,7 @@ const useUtilityNFT: any = () => {
       setMembershipBalance(0);
       const ERC721tokenContract = new ERC721Contract(
         redemptionToken as string,
-        web3,
+        web3
       );
 
       const balance = parseInt(await ERC721tokenContract.balanceOf(address));
@@ -145,7 +145,7 @@ const useUtilityNFT: any = () => {
   const fetchBasicDetails = async () => {
     await getRedemptionToken();
     await getMembershipToken();
-    await getEthPrice();
+    await getNativePrice();
     setLoadingBasic(false);
   };
 
@@ -184,16 +184,16 @@ const useUtilityNFT: any = () => {
         redemptionToken,
         membershipToken,
         totalClaims: balance,
-        ethPrice,
-        price: getWeiAmount(ethPrice, 18, false),
+        nativePrice,
+        price: getWeiAmount(nativePrice, 18, false),
         priceUSD: parseFloat(
           (
             parseFloat(String(tokenPrice)) *
-            parseFloat(String(getWeiAmount(ethPrice, 18, false)))
-          ).toFixed(2),
+            parseFloat(String(getWeiAmount(nativePrice, 18, false)))
+          ).toFixed(2)
         ),
-        membershipPasses: memberships,
-      }),
+        membershipPasses: memberships
+      })
     );
   };
 
@@ -206,7 +206,7 @@ const useUtilityNFT: any = () => {
   }, [loadingBasic, loadingBalance, loadingMambershipTokens]);
 
   useEffect(() => {
-    if (ethPrice && tokenPrice && membershipToken) {
+    if (nativePrice && tokenPrice && membershipToken) {
       processClaimData();
     }
   }, [
@@ -215,9 +215,9 @@ const useUtilityNFT: any = () => {
     redemptionToken,
     balance,
     memberships,
-    ethPrice,
+    nativePrice,
     tokenPrice,
-    membershipToken,
+    membershipToken
   ]);
 
   return { loading };

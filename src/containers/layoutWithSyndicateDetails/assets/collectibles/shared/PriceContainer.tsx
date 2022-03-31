@@ -1,36 +1,45 @@
 import React from "react";
 import NumberTreatment from "@/components/NumberTreatment";
+import { AppState } from '@/state';
+import { useSelector } from 'react-redux';
 
 const PriceContainer: React.FC<{
   numberValue: string;
-  ethValue?: boolean;
+  nativeValue?: boolean;
   customSymbol?: any;
   noUSDValue?: boolean;
-  ethDepositToken?: boolean;
+  nativeDepositToken?: boolean;
   flexColumn?: boolean;
 }> = ({
   numberValue,
   noUSDValue,
-  ethValue = false,
-  customSymbol = "USD",
-  ethDepositToken,
-  flexColumn = "true",
+  nativeValue = false,
+  customSymbol = 'USD',
+  nativeDepositToken,
+  flexColumn = 'true'
 }) => {
+  const {
+    web3Reducer: {
+      web3: { activeNetwork }
+    }
+  } = useSelector((state: AppState) => state);
   return (
     <div
       className={`text-base md:items-center ${
-        flexColumn ? "flex-col" : null
+        flexColumn ? 'flex-col' : null
       } flex md:flex-row`}
     >
       <div>
         <NumberTreatment
           numberValue={numberValue}
           noUSDValue={noUSDValue}
-          ethDepositToken={ethDepositToken}
+          nativeDepositToken={nativeDepositToken}
         />
       </div>
       &nbsp;
-      {ethValue ? "ETH" : `${noUSDValue ? "" : customSymbol}`}
+      {nativeValue
+        ? activeNetwork.nativeCurrency.symbol
+        : `${noUSDValue ? '' : customSymbol}`}
     </div>
   );
 };
