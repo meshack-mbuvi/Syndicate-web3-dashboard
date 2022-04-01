@@ -1,4 +1,4 @@
-import { getEthereumTokenPrice } from '@/utils/api/etherscan';
+import { getEthereumTokenPrice } from '@/utils/api/transactions';
 import { AppState } from '@/state';
 import { getWeiAmount } from '@/utils/conversions';
 import { isDev } from '@/utils/environment';

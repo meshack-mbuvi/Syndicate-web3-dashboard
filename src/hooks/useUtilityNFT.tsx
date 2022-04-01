@@ -9,7 +9,7 @@ import { getWeiAmount } from '@/utils/conversions';
 import {
   getEthereumTokenPrice,
   getEtherscanTransactionHistory
-} from '@/utils/api/etherscan';
+} from '@/utils/api/transactions';
 
 const useUtilityNFT: any = () => {
   const dispatch = useDispatch();

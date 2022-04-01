@@ -21,7 +21,7 @@ import Tooltip from 'react-tooltip-lite';
 import { isDev } from '@/utils/environment';
 import { numberWithCommas } from '@/utils/formattedNumbers';
 import { getWeiAmount } from '@/utils/conversions';
-import { getEthereumTokenPrice } from '@/utils/api/etherscan';
+import { getEthereumTokenPrice } from '@/utils/api/transactions';
 
 const ClaimNFT: React.FC = () => {
   const router = useRouter();

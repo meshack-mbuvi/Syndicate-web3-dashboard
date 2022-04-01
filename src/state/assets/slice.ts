@@ -16,7 +16,7 @@ import {
   getEthereumTokenPrice,
   getEtherscanTokenTransactions,
   getEthBalance
-} from '@/utils/api/etherscan';
+} from '@/utils/api/transactions';
 
 /** Async thunks */
 // ERC20 transactions

@@ -1,4 +1,11 @@
 import { proxyGet } from '.';
+import { isDev } from '@/utils/environment';
+
+enum ChainEnum {
+  ETHEREUM = 1,
+  RINKEBY = 4
+}
+const chainId = isDev ? ChainEnum.RINKEBY : ChainEnum.ETHEREUM;
 
 export const getEthereumTokenPrice = async () => {
   const result = await proxyGet('etherscan/api', {
@@ -13,24 +20,22 @@ export const getEtherscanTransactionHistory = async (
   address: string,
   contractaddress: string
 ) => {
-  const result = await proxyGet('etherscan/api', {
-    module: 'account',
-    action: 'tokennfttx',
+  const result = await proxyGet('transaction/nfts', {
     address,
-    contractaddress
+    contractaddress,
+    chainId
   });
 
-  return result.data.result;
+  return result.data;
 };
 
 export const getEtherscanTokenTransactions = async (address: string) => {
-  const result = await proxyGet('etherscan/api', {
-    module: 'account',
-    action: 'tokentx',
-    address
+  const result = await proxyGet('transaction/tokens', {
+    address,
+    chainId
   });
 
-  return result.data.result;
+  return result.data;
 };
 
 export const getEthBalance = async (address: string) => {
