@@ -1,6 +1,6 @@
 import { CLUB_TOKEN_MEMBERS } from '@/graphql/queries';
 import { AppState } from '@/state';
-import { setClubMembers, setLoadingClubMembers } from '@/state/clubMembers';
+import { setClubMembers, setLoadingClubMembers , clearClubMembers } from '@/state/clubMembers';
 import { getWeiAmount } from '@/utils/conversions';
 import { mockClubMembers } from '@/utils/mockdata';
 import { useQuery } from '@apollo/client';
@@ -8,7 +8,6 @@ import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useDemoMode } from './useDemoMode';
-import { clearClubMembers } from '@/state/clubMembers';
 
 const useClubTokenMembers = () => {
   const dispatch = useDispatch();

@@ -1,13 +1,8 @@
 ## `Syndicate`
 
-
-
-
-
 ### `onlyManager(address syndicateAddress)`
 
 Only proceed if the msg.sender is the current manager
-
 
 "A" refers to "ERR_SENDER_NOT_CURRENT_MNGR"
 
@@ -15,38 +10,29 @@ Only proceed if the msg.sender is the current manager
 
 Only proceed if the msg.sender is not the current manager
 
-
 "B" refers to "ERR_MNGR_CANT_BE_MEMBR"
 
 ### `onlyBeforeDateClose(address syndicateAddress)`
 
 Only proceed if the Syndicate is allowing deposits
 
-
-
 ### `onlyOpen(address syndicateAddress)`
 
 Only proceed if the Syndicate is not closed
-
-
 
 ### `onlyClosed(address syndicateAddress)`
 
 Only proceed if the Syndicate is closed
 
-
-
 ### `onlyAllowlistEnabled(address syndicateAddress)`
 
 Only proceed if the allowlist is enabled
-
 
 "E" refers to "ERR_ALLOWLIST_NOT_IN_USE"
 
 ### `onlyAllowlistDisabled(address syndicateAddress)`
 
 Only proceed if the allowlist is disabled
-
 
 "F" refers to "ERR_ALLOWLIST_IN_USE"
 
@@ -55,14 +41,14 @@ Only proceed if the allowlist is disabled
 Only proceed if the Syndicate manager is allowed to modify
 deposits and claimed distributions for members
 
-
 "G" refers to "ERR_ALLOWLIST_IN_USE"
 
-
 ### `constructor()` (public)
+
 Used to initialize the Syndicate contract.
 
 ### `managerCreateSyndicate(uint256 managerManagementFeeBasisPoints, uint256 managerPerformanceFeeBasisPoints, uint256 syndicateProfitShareBasisPoints, uint256 numMembersMax, address depositERC20Address, uint256 depositMinMember, uint256 depositMaxMember, uint256 depositMaxTotal, uint256 dateClose, bool allowlistEnabled, bool modifiable)` (public)
+
 Used to create a Syndicate with the address of `msg.sender` and
 initialize `msg.sender` as the Syndicate manager.
 The `msg.sender` address calling `managerCreateSyndicate()`
@@ -91,7 +77,7 @@ on the Create Syndicate page.
 the Syndicate treasury. All fees are entered in basis points, or
 fractional units of the BASIS_POINTS_DENOMINATOR (set to 10000). For
 example, the minimum profit share of 0.50% should be passed in as 50
-basis points (since it is 0.50% * 10000). This means that the max
+basis points (since it is 0.50% \* 10000). This means that the max
 precision is 0.01% (1 basis point).
 
 **numMembersMax**: The max number of members that the Syndicate can
@@ -136,16 +122,17 @@ False is recommended for large Syndicates where the members may desire
 more transparency, or if a smart contract is being used in place of a
 manager's wallet and trustless operation is desired.
 
-*"H" refers to "ERR_SYN_ALREADY_EXISTS"
+_"H" refers to "ERR_SYN_ALREADY_EXISTS"
 "I" refers to "ERR_MSG_SENDER_ALREADY_MANAGES_ONE_SYN"
 "J" refers to "ERR_SYN_PROFIT_SHARE_MUST_BE_GREATER_THAN_OR_EQUAL_TO_50_BASIS_POINTS"
 "K" refers to "ERR_MNGR_PROFIT_SHARE_EXCEEDS_AVAILABLE_BASIS_POINTS"
 "L" refers to "ERR_INVALID_DPST_ERC20_ADDRESS"
 "M" refers to "ERR_MEMBR_MIN_DPST_CANT_EXCEED_MEMBR_MAX_DPST"
 "N" refers to "ERR_MEMBR_MAX_DPST_CANT_EXCEED_TOTAL_MAX_DPST"
-"O" refers to "ERR_CLOSE_DATE_MUST_BE_AFTER_BLOCK_TIMESTAMP"*
+"O" refers to "ERR_CLOSE_DATE_MUST_BE_AFTER_BLOCK_TIMESTAMP"_
 
 ### `managerSetManagerPending(address syndicateAddress, address managerPendingAddress)` (public)
+
 Used by the current manager to nominate a new manager
 The new manager will be pending until they call
 `managerPendingConfirm()`. This ensures that they have control over
@@ -161,11 +148,12 @@ addresses.
 
 **managerPendingAddress**: The address of the new manager
 
-*"P" refers to "ERR_PENDING_MNGR_IS_ALREADY_CURRENT_MNGR"
+_"P" refers to "ERR_PENDING_MNGR_IS_ALREADY_CURRENT_MNGR"
 "Q" refers to "ERR_PENDING_MNGR_ALREADY_MANAGES_ONE_SYN"
-"R" refers to "ERR_PENDING_MNGR_CANT_BE_MNGR_FEE_ADDRESS"*
+"R" refers to "ERR_PENDING_MNGR_CANT_BE_MNGR_FEE_ADDRESS"_
 
 ### `managerPendingConfirmAndSetManagerFeeAddress(address syndicateAddress, address managerFeeAddress)` (public)
+
 This is a helper function that can be used by a pending manager
 to simultaneously confirm management of a Syndicate and update the
 manager fee address. This ensures that there is no gap in setting a new
@@ -176,6 +164,7 @@ fee address after taking ownership of a Syndicate.
 **managerFeeAddress**: The address where manager fees should be sent.
 
 ### `managerPendingConfirm(address syndicateAddress)` (public)
+
 Used by the pending manager to claim current manager status
 The pending manager is identified by `msg.sender`, which proves
 that they have control over their address
@@ -185,12 +174,13 @@ identifier.
 
 **syndicateAddress**: The address of the Syndicate
 
-*"S" refers to "ERR_MSG_SENDER_IS_NOT_PENDING_MNGR"
+_"S" refers to "ERR_MSG_SENDER_IS_NOT_PENDING_MNGR"
 "T" refers to "ERR_NEW_MNGR_ALREADY_MANAGES_ONE_SYN"
 "U" refers to "ERR_NEW_MNGR_CANT_BE_MNGR_FEE_ADDRESS"
-"V" refers to "ERR_MUST_WITHDRAW_ALL_DPSTS_BEFORE_BECOMING_MNGR"*
+"V" refers to "ERR_MUST_WITHDRAW_ALL_DPSTS_BEFORE_BECOMING_MNGR"_
 
 ### `managerSetManagerFeeAddress(address syndicateAddress, address managerFeeAddress)` (public)
+
 Used by a manager to set the address where fees should be sent
 
 **syndicateAddress**: The address of the Syndicate
@@ -198,9 +188,10 @@ Used by a manager to set the address where fees should be sent
 **managerFeeAddress**: The address where manager fees should be sent.
 This cannot be the current or pending Syndicate manager
 
-*"W" refers to "ERR_MNGR_FEE_ADDRESS_CANT_BE_0_OR_CURRENT_OR_PENDING_MNGR"*
+_"W" refers to "ERR_MNGR_FEE_ADDRESS_CANT_BE_0_OR_CURRENT_OR_PENDING_MNGR"_
 
 ### `managerSetManagerFees(address syndicateAddress, uint256 managerManagementFeeBasisPoints, uint256 managerPerformanceFeeBasisPoints)` (public)
+
 Used by a manager to set their management and performance fees
 
 **syndicateAddress**: The address of the Syndicate to set fees for
@@ -215,7 +206,7 @@ Syndicate manager, received when a member makes a withdrawal (e.g. 20%
 percent per distribution upon withdrawal, which would be passed in as
 2000 basis points)
 
-*Manager fee INCREASES are only accepted while the Syndicate is
+_Manager fee INCREASES are only accepted while the Syndicate is
 open; after the Syndicate is closed, fees can only be decreased. This
 is to prevent managers from changing fees on members without giving
 them recourse to act on those fee changes (i.e. the opportunity to
@@ -231,9 +222,10 @@ the future, the management fee will be automatically assessed yearly
 `managerManagementFeeBasisPoints` once we support asset management via
 smart contracts.
 "K" refers to "ERR_MNGR_PROFIT_SHARE_EXCEEDS_AVAILABLE_BASIS_POINTS"
-"X" refers to "ERR_FEES_CAN_ONLY_BE_LOWERED_SYN_MUST_BE_OPEN_TO_RAISE_FEES"*
+"X" refers to "ERR_FEES_CAN_ONLY_BE_LOWERED_SYN_MUST_BE_OPEN_TO_RAISE_FEES"_
 
 ### `managerSetSyndicateProfitShare(address syndicateAddress, uint256 syndicateProfitShareBasisPoints)` (public)
+
 Used by a manager to set the profit share that goes to Syndicate
 The Syndicate profit share must be at least 0.50% (50 basis
 points) and at most 100% (10000 basis points) - the manager's
@@ -245,13 +237,14 @@ performance fee.
 the Syndicate treasury. All fees are entered in basis points, or
 fractional units of the BASIS_POINTS_DENOMINATOR (set to 10000). For
 example, the minimum profit share of 0.50% should be passed in as 50
-basis points (since it is 0.50% * 10000). This means that the max
+basis points (since it is 0.50% \* 10000). This means that the max
 precision is 0.01% (1 basis point).
 
-*"J" refers to "ERR_SYN_PROFIT_SHARE_MUST_BE_GREATER_THAN_OR_EQUAL_TO_50_BASIS_POINTS"
-"Y" refers to "ERR_SYN_PROFIT_SHARE_EXCEEDS_AVAILABLE_BASIS_POINTS"*
+_"J" refers to "ERR_SYN_PROFIT_SHARE_MUST_BE_GREATER_THAN_OR_EQUAL_TO_50_BASIS_POINTS"
+"Y" refers to "ERR_SYN_PROFIT_SHARE_EXCEEDS_AVAILABLE_BASIS_POINTS"_
 
 ### `managerAssessManagementFee(address syndicateAddress, address feeERC20Address, uint256 amount)` (public)
+
 Used by a manager to assess a management fee. This can be used
 to compensate a manager (in addition to the performance fee, which is
 triggered automatically) or to pay expenses for a Syndicate.
@@ -262,7 +255,7 @@ triggered automatically) or to pay expenses for a Syndicate.
 from the Syndicate's holdings of the specified token. Note that this
 management fee is a specific amount, not a percentage.
 
-*This function is purely for transparency. A manager could also
+_This function is purely for transparency. A manager could also
 assess a management fee by transferring assets directly from the
 manager's wallet to the management fee address, but that can be seen as
 less transparent because no event is emitted via the Syndicate contract.
@@ -275,9 +268,10 @@ every year (or other specified time interval).
 Assessed management fees are not stored in the contract and should
 instead be reconstructed from the events
 "Z" refers to "ERR_ASSESSED_MANAGEMENT_FEE_MUST_BE_NONZERO"
-"a" refers to "ERR_MNGR_FEE_ADDRESS_NOT_SET"*
+"a" refers to "ERR_MNGR_FEE_ADDRESS_NOT_SET"_
 
 ### `managerSetNumMembersMax(address syndicateAddress, uint256 numMembersMax)` (public)
+
 Set the maximum members that can contribute to the Syndicate
 
 **syndicateAddress**: The address of the Syndicate
@@ -285,6 +279,7 @@ Set the maximum members that can contribute to the Syndicate
 **numMembersMax**: The maximum number of members
 
 ### `managerSetNumMembersMaxToCurrent(address syndicateAddress)` (public)
+
 This is a helper function that can be used by a manager to
 freeze deposits from new members (allowing only supplemental deposits
 from current members) while allowing replacements if existing members
@@ -293,6 +288,7 @@ drop out.
 **syndicateAddress**: The address of the Syndicate
 
 ### `managerSetDepositMinMember(address syndicateAddress, uint256 depositMinMember)` (public)
+
 Set the minimum deposit per wallet address. This is the minimum
 that a single member can contribute to the Syndicate
 
@@ -301,9 +297,10 @@ that a single member can contribute to the Syndicate
 **depositMinMember**: The minimum deposit amount per member. Must not
 exceed the current `depositMaxMember`.
 
-*"b" refers to "ERR_MIN_MEMBR_DPST_MUST_NOT_EXCEED_MAX_MEMBR_DPST"*
+_"b" refers to "ERR_MIN_MEMBR_DPST_MUST_NOT_EXCEED_MAX_MEMBR_DPST"_
 
 ### `managerSetDepositMaxMember(address syndicateAddress, uint256 depositMaxMember)` (public)
+
 Set the maximum deposit per wallet address. This is the maximum
 that a single member can contribute to the Syndicate
 
@@ -313,10 +310,11 @@ that a single member can contribute to the Syndicate
 least the current `depositMinMember`, and cannot exceed the current
 `depositMaxTotal`.
 
-*"c" refers to "ERR_MAX_MEMBR_DPST_MUST_BE_AT_LEAST_MIN_MEMBR_DPST"
-"d" refers to "ERR_MAX_MEMBR_DPST_CANT_EXCEED_MAX_TOTAL_DPST"*
+_"c" refers to "ERR_MAX_MEMBR_DPST_MUST_BE_AT_LEAST_MIN_MEMBR_DPST"
+"d" refers to "ERR_MAX_MEMBR_DPST_CANT_EXCEED_MAX_TOTAL_DPST"_
 
 ### `managerSetDepositMaxTotal(address syndicateAddress, uint256 depositMaxTotal)` (public)
+
 Set the maximum total deposit amount. This is the maximum
 that all members combined can contribute to the Syndicate
 `depositMaxTotal` is not required to be at least `depositTotal`.
@@ -329,9 +327,10 @@ large.
 **depositMaxTotal**: The maximum total number of deposits. Must be
 at least the current `depositMaxMember`.
 
-*"e" refers to "ERR_MAX_TOTAL_DPST_MUST_BE_AT_LEAST_MAX_MEMBR_DPST"*
+_"e" refers to "ERR_MAX_TOTAL_DPST_MUST_BE_AT_LEAST_MAX_MEMBR_DPST"_
 
 ### `managerSetDepositForMembers(address syndicateAddress, address[] memberAddresses, uint256[] amounts)` (public)
+
 Used by a manager to manually adjust the deposit amount for
 multiple member address (e.g. in response to off-chain transactions).
 This function **does not** enforce constraints on `depositMinMember`,
@@ -356,9 +355,10 @@ index in the memberAddresses array. These arrays must be the same
 length. Note that the new amount completely replaces the prior deposit
 amount for the member. It does not add or subtract from it.
 
-*"4" refers to "MEMBER_ADDRESS_LENGTH_DOES_NOT_MATCH_AMOUNT_LENGTH"*
+_"4" refers to "MEMBER_ADDRESS_LENGTH_DOES_NOT_MATCH_AMOUNT_LENGTH"_
 
 ### `managerRejectDepositForMembers(address syndicateAddress, address[] memberAddresses)` (public)
+
 Used by a manager to reject a member deposit
 
 **syndicateAddress**: The Syndicate that the member deposited in
@@ -366,15 +366,16 @@ Used by a manager to reject a member deposit
 **memberAddresses**: The members whose WHOLE contribution is being
 returned
 
-*This function does not call `_processWithdrawal()` because
+_This function does not call `_processWithdrawal()` because
 `_processWithdrawal()` transfers the amount to `msg.sender` (which in
 this case is the manager, not the member).
 This function returns error code "j" if a manager passes in a
 member address that has no deposit.
 The `onlyManager()` modifier must be listed first for it to be
-marked as `virtual` by the Certora Prover harness script*
+marked as `virtual` by the Certora Prover harness script_
 
 ### `managerSetDateClose(address syndicateAddress, uint256 dateClose)` (public)
+
 Used by a manager to change the close date of a Syndicate.
 After `dateClose`, member deposits and withdrawals are
 disabled, but the manager can still reject member deposits or override
@@ -391,12 +392,13 @@ deposits and withdrawals.
 
 **dateClose**: The new close date, which must be in the future.
 
-*"O" refers to "ERR_CLOSE_DATE_MUST_BE_AFTER_BLOCK_TIMESTAMP"*
+_"O" refers to "ERR_CLOSE_DATE_MUST_BE_AFTER_BLOCK_TIMESTAMP"_
 
 ### `managerCloseSyndicate(address syndicateAddress)` (public)
+
 Used by a manager to close a Syndicate, finalizing all deposit
 values.
- After `dateClose`, member deposits and withdrawals are
+After `dateClose`, member deposits and withdrawals are
 disabled, but the manager can still reject member deposits, override
 member deposits (in the case of a modifiable Syndicate), or even
 reenable deposits by changing `dateClose`. However, all deposit values
@@ -413,11 +415,12 @@ Syndicates to close while the contract is paused.
 
 **syndicateAddress**: The address of the Syndicate
 
-*Closing a Syndicate updates the dateClose to `block.timestamp`.
+_Closing a Syndicate updates the dateClose to `block.timestamp`.
 This can be used for calculating management fees or determining how
-long the Syndicate has been in distribution.*
+long the Syndicate has been in distribution._
 
 ### `managerSetDistributions(address syndicateAddress, address[] distributionERC20Addresses, uint256[] amounts)` (public)
+
 Used by a manager to initialize or increase the available
 distributions for multiple ERC20 tokens.
 If this function is called before distributions are enabled, it
@@ -438,9 +441,10 @@ the deposit token.
 of each ERC20 token indexed in `distributionERC20Addresses`. This array
 must have the same length as `distributionERC20Addresses`.
 
-*"f" refers to "DISTRIBUTION_ERC20_LENGTH_DOES_NOT_MATCH_AMOUNT_LENGTH"*
+_"f" refers to "DISTRIBUTION_ERC20_LENGTH_DOES_NOT_MATCH_AMOUNT_LENGTH"_
 
 ### `managerSetDistributionClaimedForMembers(address syndicateAddress, address[] memberAddresses, address[] distributionERC20Addresses, uint256[] amounts)` (public)
+
 Used by a manager to modify the claimed distribution amount for
 a given member address
 This function can only be called if the Syndicate is modifiable.
@@ -473,10 +477,11 @@ distribution.
 corresponding index in memberAddresses. All paramter arrays must match
 exactly in length.
 
-*"f" refers to "DISTRIBUTION_ERC20_LENGTH_DOES_NOT_MATCH_AMOUNT_LENGTH"
-"4" refers to "MEMBER_ADDRESS_LENGTH_DOES_NOT_MATCH_AMOUNT_LENGTH"*
+_"f" refers to "DISTRIBUTION_ERC20_LENGTH_DOES_NOT_MATCH_AMOUNT_LENGTH"
+"4" refers to "MEMBER_ADDRESS_LENGTH_DOES_NOT_MATCH_AMOUNT_LENGTH"_
 
 ### `managerSetAllowlistEnabled(address syndicateAddress, bool allowlistEnabled)` (public)
+
 Used by a manager to turn the allowlist on or off
 This setter can only be called when the Syndicate is open, as
 it only limits future deposits. To retroactively remove deposits that
@@ -488,8 +493,8 @@ manager should use `managerRejectDepositForMembers()`.
 from allowed addresses. False if any (accredited) member can make a
 deposit.
 
-
 ### `managerAllowAddresses(address syndicateAddress, address[] memberAddresses)` (public)
+
 Used by a manager to add an array of member addresses to the
 allowlist and emit an event to allow for easy searching.
 This function is only relevant when the manager has turned the
@@ -503,14 +508,15 @@ allowedAdresses
 **memberAddresses**: An array of addresses to be allowed by the
 Syndicate
 
-*Allowing a single address costs 31527 in gas without an array and
+_Allowing a single address costs 31527 in gas without an array and
 32445 in gas with an array. This is a difference in cost of $0.17 at
 current gas prices, which is a worthwhile trade off considering that (a)
 allowing only one address will be less common than allowing multiple
 addresses and (b) having two different allowAddress functions poses a
-security risk if we forget to reconcile changes between them*
+security risk if we forget to reconcile changes between them_
 
 ### `managerBlockAddresses(address syndicateAddress, address[] memberAddresses)` (public)
+
 Used by a manager to remove a previously-allowed member address
 from the allowlist
 This function only proceeds when the allowlist is enabled, as
@@ -525,8 +531,8 @@ allowlist
 
 **memberAddresses**: The array of member addresses to remove.
 
-
 ### `managerSetMetadata(address syndicateAddress, string[] metadataKeys, string[] metadataValues)` (public)
+
 Used by a manager to store values within the struct
 The index of each key must be the same as the index of each
 value
@@ -535,9 +541,10 @@ value
 
 **metadataValues**: The arrays of values for metadata to be set
 
-*"5" refers to "METADATAKEYS_LENGTH_DOES_NOT_MATCH_VALUE_LENGTH"*
+_"5" refers to "METADATAKEYS_LENGTH_DOES_NOT_MATCH_VALUE_LENGTH"_
 
 ### `managerEmitMemo(address syndicateAddress, bytes32 blake2b328HashPartOne, bytes32 blake2b328HashPartTwo)` (public)
+
 Emit an event that references a memo stored as 64 byte hash.
 IPFS is recommended. If an IPFS hash is used, it must be
 `blake2b-328` so that it can be stored in 64 bytes.
@@ -552,10 +559,11 @@ verify the proper use of funds.
 
 **blake2b328HashPartTwo**: The second 32 bytes of the hash
 
-*For more on the recommendation to use `blake2b-328` hashes, see
-https://medium.com/temporal-cloud/efficient-usable-and-cheap-storage-of-ipfs-hashes-in-solidity-smart-contracts-eb3bef129eba*
+_For more on the recommendation to use `blake2b-328` hashes, see
+https://medium.com/temporal-cloud/efficient-usable-and-cheap-storage-of-ipfs-hashes-in-solidity-smart-contracts-eb3bef129eba_
 
 ### `memberDeposit(address syndicateAddress, uint256 amount)` (public)
+
 Used by a member to make a deposit to an open Syndicate.
 If a manager is issuing a Syndicate under SEC Rule 506(b) of
 Regulation D, a manager should only add a member's address(es) to the
@@ -585,7 +593,7 @@ hello[at]syndicateprotocol.org.
 **amount**: The amount of the deposit (note that this is calculated
 using the Syndicate's primary ERC20 token)
 
-*The member's deposit is associated to the address of `msg.sender`.
+_The member's deposit is associated to the address of `msg.sender`.
 Functionality to transfer member balances to new owners will likely be
 added in the future.
 "j" refers to "ERR_DPST_MUST_BE_GREATER_THAN_ZERO"
@@ -593,9 +601,10 @@ added in the future.
 "l" refers to "ERR_MAX_TOTAL_DPST_REACHED_FOR_SYN"
 "m" refers to "ERR_MAX_NUM_MEMBRS_REACHED"
 "n" refers to "ERR_AMOUNT_LESS_THAN_MIN_MEMBR_DPST"
-"o" refers to "ERR_MAX_MEMBR_DPST_REACHED"*
+"o" refers to "ERR_MAX_MEMBR_DPST_REACHED"_
 
 ### `memberWithdraw(address syndicateAddress, address ERC20Address, uint256 amount)` (public)
+
 Used by a member to withdraw a deposit from an open Syndicate
 or a distribution from a closed Syndicate.
 The member is identified via `msg.sender`. This call must be
@@ -617,7 +626,7 @@ Syndicate, this **must** match the Syndicate's `depositERC20Address`.
 **amount**: The amount of tokens (of type specified by
 `ERC20Address`) to be withdrawn
 
-*Withdrawals are restricted to the primary or secondary ERC20
+_Withdrawals are restricted to the primary or secondary ERC20
 contract addresses. If we allowed any arbitrary ERC20 address, we would
 also need to track ownership percentages across all arbitrary ERC20
 addresses. This is significantly outside of the scope of the Syndicate
@@ -632,9 +641,10 @@ memberWithdraw() follows the Checks-Effects-Interactions pattern
 "s" refers to "ERR_WITHDRAWAL_AMOUNT_EXCEEDS_BALANCE"
 "t" refers to "ERR_FINAL_BALANCE_MUST_BE_0_OR_ABOVE_MIN"
 "u" refers to "ERR_WITHDRAWAL_AMOUNT_GREATER_THAN_ELIGIBLE"
-"v" refers to "ERR_SYN_CLOSED_BUT_DISTRIBUTIONS_NOT_ENABLED"*
+"v" refers to "ERR_SYN_CLOSED_BUT_DISTRIBUTIONS_NOT_ENABLED"_
 
 ### `_setDeposit(address syndicateAddress, address memberAddress, uint256 amount)` (internal)
+
 Set the deposit amount for a single member.
 
 **syndicateAddress**: The address of the Syndicate
@@ -643,14 +653,15 @@ Set the deposit amount for a single member.
 
 **amount**: The new deposit amount to set for the member.
 
-*This function makes setting a large number of deposit amounts
+_This function makes setting a large number of deposit amounts
 slightly more gas efficient by calling each of the parent function's.
 modifiers only once. Importantly, that means the parent is responsible
 for enforcing these contraints and CANNOT rely on this helper function
 to do so.
-"B" refers to ERR_MNGR_CANT_BE_MEMBR*
+"B" refers to ERR_MNGR_CANT_BE_MEMBR_
 
 ### `_setDistribution(address syndicateAddress, address distributionERC20Address, uint256 amount)` (internal)
+
 Initalize or increase a distribution for a Syndicate
 Syndicate and Manager fees are assessed when a distribution is
 set by a manager, not when a distribution is claimed by a user. This
@@ -670,7 +681,7 @@ distribution
 **amount**: The amount by which the available distribution should be
 increased.
 
-*Note that distribution amount available to users is after Syndicate
+_Note that distribution amount available to users is after Syndicate
 and manager fees are assessed. For example, if a manager sets a
 distribution of 1000 DAI and the profit share to Syndicate is 0.50% (50
 basis points) and the manager's performance fee is 2.00% (200 basis
@@ -680,9 +691,10 @@ This function makes setting large number of distributions slightly
 more gas efficient by creating an internal setDistribution function that
 skips the modifier check.
 "z" refers to "ERR_NO_NEW_BALANCE_AVAILABLE"
-"1" refers to "ERR_DISTRIBUTION_EXCEEDS_ALLOWANCE"*
+"1" refers to "ERR_DISTRIBUTION_EXCEEDS_ALLOWANCE"_
 
 ### `_setDistributionClaimedForMember(address syndicateAddress, address memberAddress, address distributionERC20Address, uint256 amount)` (internal)
+
 Used by a manager to modify the claimed distribution amount for
 a given member address
 This function makes setting large number of distributions
@@ -705,10 +717,11 @@ distribution
 
 **amount**: The amount to increase a member's claimed distributions.
 
-*"h" refers to "ERR_ERC20_NOT_SET_FOR_DISTRIBUTION"
-"i" refers to "ERR_NEW_CLAIMED_DISTRIBUTION_GREATER_THAN_ELIGIBLE"*
+_"h" refers to "ERR_ERC20_NOT_SET_FOR_DISTRIBUTION"
+"i" refers to "ERR_NEW_CLAIMED_DISTRIBUTION_GREATER_THAN_ELIGIBLE"_
 
 ### `_processDeposit(address syndicateAddress, uint256 amount)` (internal)
+
 Process a deposit to a Syndicate.
 
 **syndicateAddress**: The address of the Syndicate
@@ -716,7 +729,7 @@ Process a deposit to a Syndicate.
 **amount**: The amount that the `msg.sender` is depositing, in the
 token defined by the Syndicate's depositERC20Address
 
-*All methods that call this internal function should implement the
+_All methods that call this internal function should implement the
 onlyBeforeDateClose modifier AND perform all appropriate checks (e.g.
 staying under the member's max deposit and Syndicate max total deposit)
 on the passed-in parameters.
@@ -726,21 +739,23 @@ deposits are not properly tracked, a user could withdraw more than their
 allocated share of the distributions.
 We check the difference between balances to determine the after-fee
 amount of a deposit.
-"y" refers to "ERR_NEW_BAL_MUST_BE_GREATER_THAN_OLD_BAL"*
+"y" refers to "ERR_NEW_BAL_MUST_BE_GREATER_THAN_OLD_BAL"_
 
 ### `_processWithdrawalOpen(address syndicateAddress, uint256 amount)` (internal)
+
 Withdraws deposits from an open fund in primary tokens.
 
 **syndicateAddress**: The address of the Syndicate
 
 **amount**: Amount in primary distribution tokens to be withdrawn
 
-*This function is high risk. If the `.transferFrom` line can be
+_This function is high risk. If the `.transferFrom` line can be
 redirected elsewhere, withdrawals could be stolen. In addition, if the
 withdrawals are not properly tracked, a user could withdraw more than
-their allocated share of the distributions.*
+their allocated share of the distributions._
 
 ### `_processWithdrawalClosed(address syndicateAddress, address distributionERC20Address, uint256 amount)` (internal)
+
 Withdraws distributions from a closed fund in primary or
 secondary tokens.
 
@@ -752,12 +767,13 @@ distribution (i.e. in primary or secondary tokens) being withdrawn.
 
 **amount**: Amount to be withdrawn in ERC20 tokens specified.
 
-*This function is high risk. If the `.transferFrom` line can be
+_This function is high risk. If the `.transferFrom` line can be
 redirected elsewhere, withdrawals could be stolen. In addition, if the
 withdrawals are not properly tracked, a user could withdraw more than
-their allocated share of the distributions.*
+their allocated share of the distributions._
 
 ### `_checkBookkeeping(uint256 oldTotal, uint256 amount, uint256 newTotal, bool add)` (internal)
+
 Confirm that amounts for a specific member are in sync with
 their corresponding total values. Any revert from this function will
 result in ALL effects of the transaction being reverted.
@@ -771,16 +787,17 @@ result in ALL effects of the transaction being reverted.
 **add**: True will add. Calculate oldTotal + amount = newTotal
 False will subtract. Calculate oldTotal - amount = newTotal
 
-*See SYN-141 for more details on this bookkeeping function
+_See SYN-141 for more details on this bookkeeping function
 Subtraction also checks to confirm that the value has not gone
 negative, since our contract should not have negative values anywhere
 We do not use `pure` here because Solidity can run into issues by
 not reverting on view/pure functions.
 See https://github.com/ethereum/solidity/issues/4840
 "w" refers to "ERR_BOOKKEEPING_ADDITION_OUT_OF_SYNC"
-"x" refers to "ERR_BOOKKEEPING_SUBTRACTION_OUT_OF_SYNC"*
+"x" refers to "ERR_BOOKKEEPING_SUBTRACTION_OUT_OF_SYNC"_
 
 ### `calculateEligibleWithdrawal(uint256 depositMember, uint256 totalContributions, uint256 distributionClaimedMember, uint256 distributionTotal) → uint256` (public)
+
 Calculates the maximum value in distribution tokens (in either
 primary or secondary ERC20) that a member can withdraw based on their
 percentage ownership at the moment that the fund closed and the
@@ -791,20 +808,21 @@ distributions that they have already received.
 **totalContributions**: Total contributions (from anyone) to the fund
 
 **distributionClaimedMember**: Value in distributions that user has
-withdrawn from the fund already.  Make sure this matches the token type
+withdrawn from the fund already. Make sure this matches the token type
 (primary or secondary) passed in for distributionTotal.
 
 **distributionTotal**: Total distributions available from the fund,
-claimed or not.  Make sure this matches the token type (primary or
+claimed or not. Make sure this matches the token type (primary or
 secondary) passed in for distributionClaimedMember.
 
 _**Value**_: in distributions that user is eligible to withdraw
 
-*HIGH RISK: If this calculation is incorrect, a user could withdraw
+_HIGH RISK: If this calculation is incorrect, a user could withdraw
 more or less than they are entitled to.
-"2" refers to "ERR_NO_ELIGIBLE_WITHDRAWAL"*
+"2" refers to "ERR_NO_ELIGIBLE_WITHDRAWAL"_
 
 ### `calculateProfitShare(uint256 amount, uint256 syndicateProfitShareBasisPoints, uint256 managerProfitShareBasisPoints) → uint256, uint256, uint256` (public)
+
 Calculates the fees to be deducted upon the withdrawal of a
 distribution from a closed Syndicate.
 
@@ -819,21 +837,23 @@ manager in basis points (i.e. as a fraction divided by 10000)
 _**Tuple**_: of the amounts (toUser, toSyndicate, toManager) that will
 be transferred, together adding up to the passed amount.
 
-*"3" refers to "ERR_WITHDRAWAL_FEES_MISCALCULATED"*
+_"3" refers to "ERR_WITHDRAWAL_FEES_MISCALCULATED"_
 
 ### `getSyndicateValues(address syndicateAddress) → struct Syndicate.SyndicateValues` (public)
+
 Get the values for a Syndicate
 
 **syndicateAddress**: The address of the Syndicate
 
 _**SyndicateValues**_: struct
 
-*This function **must** be kept up to date with the web3 UI when
+_This function **must** be kept up to date with the web3 UI when
 making changes. All PRs that change this function or the
 SyndicateValues struct **must** be coordinated with an engineer on the
-Web3 Dashboard.*
+Web3 Dashboard._
 
 ### `getMemberInfo(address syndicateAddress, address memberAddress) → uint256, uint256, bool` (public)
+
 Get the member info for a Syndicate
 To get the claimed distributions for another ERC20, use
 `getDistributionClaimedMember()`
@@ -844,14 +864,15 @@ To get the claimed distributions for another ERC20, use
 queried
 
 _**Tuple**_: of: (1) member's deposits into a Syndicate, (2) member's
-claimed distributions (withdrawals) from the *primary* ERC20, (3)
+claimed distributions (withdrawals) from the _primary_ ERC20, (3)
 whether member is on the allowlist for the Syndicate
 
-*This function **must** be kept up to date with the Web3 UI when
+_This function **must** be kept up to date with the Web3 UI when
 making changes. All PRs that change this function **must** be
-coordinated with an engineer on the Web3 Dashboard.*
+coordinated with an engineer on the Web3 Dashboard._
 
 ### `getDistributionTotal(address syndicateAddress, address distributionERC20Address) → uint256` (public)
+
 Get a Syndicate's total distributions for a given ERC20
 
 **syndicateAddress**: The address of the Syndicate
@@ -862,6 +883,7 @@ distributions are being queried
 _**The**_: `distributionTotal` for a given `distributionERC20Address`
 
 ### `getDistributionClaimedMember(address syndicateAddress, address memberAddress, address distributionERC20Address) → uint256` (public)
+
 Get a member's claimed distributions for a given ERC20
 
 **syndicateAddress**: The address of the Syndicate
@@ -876,6 +898,7 @@ _**The**_: distribution claimed by a member for a given
 `distributionERC20Address`
 
 ### `getDistributionUnclaimedMember(address syndicateAddress, address memberAddress, address distributionERC20Address) → uint256` (public)
+
 Get a member's unclaimed distribution for a given ERC20
 
 **syndicateAddress**: The address of the Syndicate
@@ -890,6 +913,7 @@ _**The**_: unclaimed distribution for a member for a given
 `distributionERC20Address`
 
 ### `getDistributionClaimedTotal(address syndicateAddress, address distributionERC20Address) → uint256` (public)
+
 Get a Syndicate's total claimed distributions for a given ERC20
 
 **syndicateAddress**: The address of the Syndicate
@@ -900,6 +924,7 @@ distributions are being queried
 _**The**_: `distributionTotal` for a given `distributionERC20Address`
 
 ### `getMetadata(address syndicateAddress, string metadataKey) → string` (public)
+
 Get the metadata for a given key within a Syndicate
 
 **syndicateAddress**: The address of the Syndicate
@@ -909,45 +934,46 @@ Get the metadata for a given key within a Syndicate
 _**metadataValue**_: as a string
 
 ### `ownerPauseContract()` (public)
+
 Emergency pause function that can only be triggered by the
 contract owner
 Its purpose is to pause deposits and withdrawals. All other
 functions will work when paused
 
 ### `ownerUnpauseContract()` (public)
+
 Emergency unpause function that can only be triggered by the
 contract owner
 Its purpose is to unpause deposits and withdrawals. All other
 functions will work when paused
 
 ### `ownerTransferOwnership(address newOwner)` (public)
+
 Transfers ownership to the provided address.
 
 **newOwner**: The new owner's address.
 
 ### `ownerRenounceOwnership()` (public)
+
 Renounce ownership of the contract
 If necessary, unpauses the contract before ownership is
 renounced to ensure that deposits/withdrawals are not locked
 
 ### `ownerSetContractFeeAddress(address feeAddress)` (public)
+
 set a new fee address for the contract function that can only
 be triggered by the contract owner.
 
 **feeAddress**: The owner's new contract fee address
-
 
 ### `ownerSetterContractFeeAddress(address contractFeeAddress, uint256 timestamp)`
 
 Emit an event when the owner of the contract sets a new
 contract fee address
 
-
-
 ### `managerCreatedSyndicate(address syndicateAddress, uint256 managerManagementFeeBasisPoints, uint256 managerPerformanceFeeBasisPoints, uint256 syndicateProfitShareBasisPoints, uint256 numMembersMax, address depositERC20Address, uint256 depositMinMember, uint256 depositMaxMember, uint256 depositMaxTotal, uint256 dateCreation, uint256 dateClose, bool allowlistEnabled, bool modifiable)`
 
 Emit an event when a manager creates a Syndicate
-
 
 This event can be used to list all Syndicates on the platform
 
@@ -955,79 +981,57 @@ This event can be used to list all Syndicates on the platform
 
 Emit an event when a manager sets a new pending manager
 
-
-
 ### `managerPendingConfirmed(address syndicateAddress, address oldManager, address newManager)`
 
 Emit an event when a pending manager confirms management of a
 Syndicate
 
-
-
 ### `managerSetterManagerFeeAddress(address syndicateAddress, address managerFeeAddress)`
 
 Emit an event when a manager sets a new fee address
-
-
 
 ### `managerSetterManagerFees(address syndicateAddress, uint256 managerManagementFeeBasisPoints, uint256 managerPerformanceFeeBasisPoints)`
 
 Emit an event when a manager sets new manager fees
 
-
-
 ### `managerAssessedManagementFee(address syndicateAddress, uint256 managementFeeAmount, uint256 timestamp)`
 
 Emit an event when a manager assesses a management fee
 
-
-
 ### `managerSetterSyndicateProfitShare(address syndicateAddress, uint256 syndicateProfitShareBasisPoints)`
 
 Emit an event when a manager sets a new Syndicate profit share
-
-
 
 ### `managerSetterNumMembersMax(address syndicateAddress, uint256 numMembersMax, uint256 numMembersCurrent)`
 
 Emit an event when a manager sets a new maximum number of
 allowed members
 
-
-
 ### `managerSetterDepositMinMember(address syndicateAddress, uint256 depositMinMember)`
 
 Emit an event when a manager sets a new minimum deposit amount
 per wallet address
-
-
 
 ### `managerSetterDepositMaxMember(address syndicateAddress, uint256 depositMaxMember)`
 
 Emit an event when a manager sets a new maximum deposit amount
 per wallet address
 
-
-
 ### `managerSetterDepositMaxTotal(address syndicateAddress, uint256 depositMaxTotal)`
 
 Emit an event when a manager sets a new maximum total deposit
 amount
-
-
 
 ### `managerSetterDepositForMember(address syndicateAddress, address memberAddress, uint256 depositMember, uint256 timestamp)`
 
 Emit an event when a manager overrides a member's balance
 with a new value. Applicable to `modifiable` Syndicates only.
 
-
 The balance emitted is the new value, not the change in value
 
 ### `memberDeposited(address syndicateAddress, address memberAddress, uint256 amountDeposited, uint256 timestamp)`
 
 Emit an event when a member deposits to a Syndicate
-
 
 This is the only way to search for a member's Syndicates. The
 Syndicates on chain rely on a mapping, so they are not iterable.
@@ -1043,26 +1047,19 @@ Emit an event when a member withdraws a deposit from a
 Syndicate. If a member withdraws the full amount that they originally
 deposited, then they no longer have any holdings in that Syndicate.
 
-
 A different event is emitted for withdrawing distributions
 
 ### `managerSetterDateClose(address syndicateAddress, uint256 dateclose)`
 
 Emit an event when a manager changes the close date
 
-
-
 ### `managerClosedSyndicate(address syndicateAddress, uint256 timestamp)`
 
 Emit an event when a manager closes a Syndicate
 
-
-
 ### `managerSetterDistribution(address syndicateAddress, address distributionERC20Address, uint256 amountToMembers, uint256 amountToSyndicate, uint256 amountToManager)`
 
 Emit an event when a manager sets a distribution
-
-
 
 ### `managerSetterDistributionERC20Address(address syndicateAddress, address distributionERC20Address)`
 
@@ -1070,13 +1067,10 @@ Emit an event when a manager sets a distribution for a new
 ERC20 address. This is called by `managerSetDistributions()` the first
 time a distribution is set for a particular ERC20 address.
 
-
-
 ### `managerSetterDistributionClaimedForMember(address syndicateAddress, address memberAddress, address distributionERC20Address, uint256 distributionClaimedMember, uint256 timestamp)`
 
 Emit an event when a manager overrides a member's claimed
 distributions. Applicable to `modifiable` Syndicates only.
-
 
 The balance emitted is the new value, not the change in
 value--reconcile with `memberWithdrewDistribution` events accordingly
@@ -1085,14 +1079,12 @@ value--reconcile with `memberWithdrewDistribution` events accordingly
 
 Emit an event when a member withdraws a distribution
 
-
 A different event is emitted for withdrawing deposits
 
 ### `managerAllowedAddresses(address syndicateAddress, address memberAddress)`
 
 Emit an event when a manager adds a member's wallet address to
 the allowlist
-
 
 These events can be used to notify a member off-chain that their
 address is now allowed
@@ -1106,7 +1098,6 @@ can be pulled by evaluating the block that an event was contained in
 Emit an event when a manager removes a member's wallet address
 from the allowlist
 
-
 These events can be used to notify a member off-chain that their
 address is now blocked (e.g. removed from the allowlist)
 
@@ -1114,14 +1105,10 @@ address is now blocked (e.g. removed from the allowlist)
 
 Emit an event when a manager sets metadata for a Syndicate
 
-
-
 ### `managerEmittedMemo(address syndicateAddress, address managerCurrent, bytes32 blake2b328HashPartOne, bytes32 blake2b328HashPartTwo, uint256 timestamp)`
 
 Emit an event when a manager associates a memo with a Syndicate
 
-
 Memos emitted via this event are not stored in the Syndicate.
 Values that need to be stored should instead be passed to
 `managerSetMetadata()`, which also emits the metadata as an event.
-
