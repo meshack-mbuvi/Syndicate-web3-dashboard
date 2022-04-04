@@ -222,7 +222,7 @@
   }
 
   .orange-CTA {
-    @apply base-CTA bg-yellow-warning text-black transition-all
+    @apply base-CTA bg-yellow-warning text-black transition-all;
   }
 
   .primary-CTA-disabled {

@@ -8,7 +8,7 @@ import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useFetchRecentTransactions } from './useFetchRecentTransactions';
 
-const useTransactions = (skip: number = 0) => {
+const useTransactions = (skip = 0) => {
   const dispatch = useDispatch();
 
   const {

@@ -9,14 +9,12 @@ import React, {
   useState
 } from 'react';
 import Floater from 'react-floater';
-import { RibbonIcon, RightArrow } from 'src/components/iconWrappers';
-import { setWalletSignature } from '@/state/legalInfo';
+import { RibbonIcon, RightArrow , CopyLinkIcon } from 'src/components/iconWrappers';
+import { setWalletSignature , setDepositReadyInfo } from '@/state/legalInfo';
 import { useDispatch, useSelector } from 'react-redux';
 import CopyLink from '@/components/shared/CopyLink';
-import { CopyLinkIcon } from 'src/components/iconWrappers';
 import ArrowDown from '@/components/icons/arrowDown';
 import { AppState } from '@/state';
-import { setDepositReadyInfo } from '@/state/legalInfo';
 import { amplitudeLogger, Flow } from '@/components/amplitude';
 import { CLICKED_HELP_FORM_LEGAL_ENTITY } from '@/components/amplitude/eventNames';
 import { useDemoMode } from '@/hooks/useDemoMode';
