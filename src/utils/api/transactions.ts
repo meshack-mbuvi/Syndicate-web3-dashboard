@@ -8,16 +8,13 @@ enum ChainEnum {
 }
 const chainId = isDev ? ChainEnum.RINKEBY : ChainEnum.ETHEREUM;
 
-/**
- * @deprecated The method should not be used, use coingecko endpoint instead.
- */
+
 export async function getNativeTokenPrice(): Promise<number> {
-  const result: AxiosResponse<{result: {ethusd: number}}> = await proxyGet('etherscan/api', {
-    action: 'ethprice',
-    module: 'stats'
+  const result: AxiosResponse<number> = await proxyGet('tokens/native_price_usd', {
+    chainId
   });
 
-  return result.data.result.ethusd;
+  return result.data;
 }
 
 export async function getNftTransactionHistory(address: string,
