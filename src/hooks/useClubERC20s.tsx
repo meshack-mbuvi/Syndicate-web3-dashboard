@@ -177,8 +177,14 @@ const useClubERC20s = () => {
             }
           }
 
-          const depositsEnabled = !pastDate(new Date(+endTime * 1000));
-          
+          let depositsEnabled = !pastDate(new Date(+endTime * 1000));
+          // temporary fix for 0x563014c0aa72cdf877d2b9b963b55d8859bff411
+          if (
+            contractAddress?.toLowerCase() ===
+            "0x563014c0aa72cdf877d2b9b963b55d8859bff411"
+          ) {
+            depositsEnabled = true;
+          }
 
           //  calculate ownership share
           const memberDeposits = getWeiAmount(

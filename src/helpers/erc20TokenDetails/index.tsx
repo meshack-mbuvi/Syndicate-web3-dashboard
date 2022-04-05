@@ -8,7 +8,7 @@ import {
   setLoadingClub,
 } from "@/state/erc20token/slice";
 import { DepositDetails, ERC20Token } from "@/state/erc20token/types";
-import {isZeroAddress } from "@/utils";
+import { isZeroAddress } from "@/utils";
 import { getWeiAmount } from "@/utils/conversions";
 import { isDev } from "@/utils/environment";
 
@@ -143,8 +143,14 @@ export const getERC20TokenDetails = async (
       let depositsEnabled = false;
       if (!claimEnabled) {
         const endDateInFuture = +endTime * 1000 > new Date().getTime();
-
         depositsEnabled = endDateInFuture;
+      }
+
+      // temporary fix for 0x563014c0aa72cdf877d2b9b963b55d8859bff411
+      if (
+        address.toLowerCase() === "0x563014c0aa72cdf877d2b9b963b55d8859bff411"
+      ) {
+        depositsEnabled = true;
       }
 
       return {
