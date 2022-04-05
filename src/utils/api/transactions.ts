@@ -1,5 +1,6 @@
 import { proxyGet } from '.';
 import { isDev } from '@/utils/environment';
+import { AxiosResponse } from 'axios';
 
 enum ChainEnum {
   ETHEREUM = 1,
@@ -11,7 +12,7 @@ const chainId = isDev ? ChainEnum.RINKEBY : ChainEnum.ETHEREUM;
  * @deprecated The method should not be used, use coingecko endpoint instead.
  */
 export async function getNativeTokenPrice(): Promise<number> {
-  const result = await proxyGet('etherscan/api', {
+  const result: AxiosResponse<{result: {ethusd: number}}> = await proxyGet('etherscan/api', {
     action: 'ethprice',
     module: 'stats'
   });
@@ -21,7 +22,7 @@ export async function getNativeTokenPrice(): Promise<number> {
 
 export async function getNftTransactionHistory(address: string,
   contractAddress: string): Promise<ERC721Transaction[]> {
-  const result = await proxyGet('transaction/nfts', {
+  const result: AxiosResponse<ERC721Transaction[]> = await proxyGet('transaction/nfts', {
     address,
     contractAddress,
     chainId
@@ -31,7 +32,7 @@ export async function getNftTransactionHistory(address: string,
 }
 
 export async function getTokenTransactionHistory(address: string): Promise<ERC20Transaction[]> {
-  const result = await proxyGet('transaction/tokens', {
+  const result: AxiosResponse<ERC20Transaction[]> = await proxyGet('transaction/tokens', {
     address,
     chainId
   });
@@ -40,7 +41,7 @@ export async function getTokenTransactionHistory(address: string): Promise<ERC20
 }
 
 export async function getNativeTokenBalance(address: string): Promise<number> {
-  const result = await proxyGet('balance/native', {
+  const result: AxiosResponse<number> = await proxyGet('balance/native', {
     address,
     chainId
   });
