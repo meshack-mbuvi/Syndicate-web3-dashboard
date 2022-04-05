@@ -13,7 +13,7 @@ export const getGnosisTxnInfo = async (txHash) => {
       await sleep(10000);
       await axios
         .get(
-          `${process.env.NEXT_PUBLIC_GNOSIS_API}multisig-transactions/${txHash}`,
+          `${process.env.NEXT_PUBLIC_GNOSIS_API}multisig-transactions/${txHash}`
         )
         .then(
           async (response) => {
@@ -24,7 +24,7 @@ export const getGnosisTxnInfo = async (txHash) => {
           },
           async (error) => {
             console.log(error);
-          },
+          }
         );
     }
 

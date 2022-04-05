@@ -1,32 +1,32 @@
-import EthMintModule_ABI from "src/contracts/EthMintModule.json";
+import NativeMintModule_ABI from 'src/contracts/EthMintModule.json';
+import { getGnosisTxnInfo } from '../shared/gnosisTransactionInfo';
+import { estimateGas } from '../shared/getGasEstimate';
 
-import { getGnosisTxnInfo } from "../shared/gnosisTransactionInfo";
-
-export class EthMintModuleContract {
+export class NativeMintModuleContract {
   web3;
   address;
 
   // This will be used to call other functions. eg mint
-  EthMintModuleContract;
+  NativeMintModuleContract;
 
   // initialize a contract instance
-  constructor(EthMintModuleContractAddress: string, web3) {
+  constructor(NativeMintModuleContractAddress: string, web3) {
     this.web3 = web3;
-    this.address = EthMintModuleContractAddress;
+    this.address = NativeMintModuleContractAddress;
     this.init();
   }
 
   async init(): Promise<void> {
-    if (!EthMintModule_ABI) {
+    if (!NativeMintModule_ABI) {
       return;
     }
     try {
-      this.EthMintModuleContract = new this.web3.eth.Contract(
-        EthMintModule_ABI,
-        this.address,
+      this.NativeMintModuleContract = new this.web3.eth.Contract(
+        NativeMintModule_ABI,
+        this.address
       );
     } catch (error) {
-      this.EthMintModuleContract = null;
+      this.NativeMintModuleContract = null;
     }
   }
 
@@ -49,37 +49,38 @@ export class EthMintModuleContract {
     onTxConfirm: (transactionHash?) => void,
     onTxReceipt: (receipt?) => void,
     onTxFail: (error?) => void,
-    setTransactionHash,
+    setTransactionHash
   ): Promise<void> {
-    if (!this.EthMintModuleContract) {
+    if (!this.NativeMintModuleContract) {
       this.init();
     }
 
     let gnosisTxHash;
+    const gasEstimate = await estimateGas(this.web3);
 
     await new Promise((resolve, reject) => {
-      this.EthMintModuleContract.methods
+      this.NativeMintModuleContract.methods
         .mint(clubAddress)
-        .send({ from: ownerAddress, value: amount })
-        .on("transactionHash", (transactionHash) => {
+        .send({ from: ownerAddress, value: amount, gasPrice: gasEstimate })
+        .on('transactionHash', (transactionHash) => {
           onTxConfirm(transactionHash);
 
           // Stop waiting if we are connected to gnosis safe via walletConnect
           if (
-            this.web3._provider.wc?._peerMeta.name === "Gnosis Safe Multisig"
+            this.web3._provider.wc?._peerMeta.name === 'Gnosis Safe Multisig'
           ) {
-            setTransactionHash("");
+            setTransactionHash('');
             gnosisTxHash = transactionHash;
             resolve(transactionHash);
           } else {
             setTransactionHash(transactionHash);
           }
         })
-        .on("receipt", (receipt) => {
+        .on('receipt', (receipt) => {
           onTxReceipt(receipt);
           resolve(receipt);
         })
-        .on("error", (error) => {
+        .on('error', (error) => {
           onTxFail(error);
           reject(error);
         });
@@ -92,7 +93,7 @@ export class EthMintModuleContract {
       if (receipt.isSuccessful) {
         onTxReceipt(receipt);
       } else {
-        onTxFail("Transaction failed");
+        onTxFail('Transaction failed');
       }
     }
   }

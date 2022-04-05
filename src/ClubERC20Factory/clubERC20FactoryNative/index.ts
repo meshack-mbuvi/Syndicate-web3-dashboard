@@ -1,26 +1,27 @@
-import CLUB_ERC20_FACTORY_ETH_ABI from "src/contracts/ClubERC20FactoryEth.json";
-import { getGnosisTxnInfo } from "../shared/gnosisTransactionInfo";
+import CLUB_ERC20_FACTORY_NATIVE_ABI from 'src/contracts/ClubERC20FactoryEth.json';
+import { getGnosisTxnInfo } from '../shared/gnosisTransactionInfo';
+import { estimateGas } from '../shared/getGasEstimate';
 
-export class ClubERC20FactoryEth {
+export class ClubERC20FactoryNative {
   web3;
   address;
-  clubERC20FactoryEth;
+  clubERC20FactoryNative;
 
-  // initialize new instance of clubERC20FactoryEthAddress
-  constructor(clubERC20FactoryEthAddress: string, web3: any) {
+  // initialize new instance of clubERC20FactoryNativeAddress
+  constructor(clubERC20FactoryNativeAddress: string, web3: any) {
     this.web3 = web3;
-    this.address = clubERC20FactoryEthAddress;
+    this.address = clubERC20FactoryNativeAddress;
     this.init();
   }
 
   init(): void {
     try {
-      this.clubERC20FactoryEth = new this.web3.eth.Contract(
-        CLUB_ERC20_FACTORY_ETH_ABI,
-        this.address,
+      this.clubERC20FactoryNative = new this.web3.eth.Contract(
+        CLUB_ERC20_FACTORY_NATIVE_ABI,
+        this.address
       );
     } catch (error) {
-      this.clubERC20FactoryEth = null;
+      this.clubERC20FactoryNative = null;
     }
   }
 
@@ -48,16 +49,18 @@ export class ClubERC20FactoryEth {
     tokenCap: string,
     maxMembers: number,
     onTxConfirm: (transactionHash?) => void,
-    onTxReceipt: (receipt?) => void,
+    onTxReceipt: (receipt?) => void
   ): Promise<void> {
     let gnosisTxHash;
 
-    if (!this.clubERC20FactoryEth) {
+    if (!this.clubERC20FactoryNative) {
       await this.init();
     }
 
+    const gasEstimate = await estimateGas(this.web3);
+
     await new Promise((resolve, reject) => {
-      this.clubERC20FactoryEth.methods
+      this.clubERC20FactoryNative.methods
         .createWithMintParams(
           clubTokenName, // name of club token
           tokenSymbol, // symbol
@@ -65,26 +68,26 @@ export class ClubERC20FactoryEth {
           endTime, // 1637834620, // mint end - close date
           maxMembers,
           tokenCap, // BigInt(5000 * 10 ** 18), // token CAP
-          "0x0000000000000000000000000000000000000000",
-          0,
+          '0x0000000000000000000000000000000000000000',
+          0
         )
-        .send({ from: account })
-        .on("transactionHash", (transactionHash) => {
+        .send({ from: account, gasPrice: gasEstimate })
+        .on('transactionHash', (transactionHash) => {
           if (
-            this.web3._provider.wc?._peerMeta.name === "Gnosis Safe Multisig"
+            this.web3._provider.wc?._peerMeta.name === 'Gnosis Safe Multisig'
           ) {
             gnosisTxHash = transactionHash;
             resolve(transactionHash);
-            onTxConfirm("");
+            onTxConfirm('');
           } else {
             onTxConfirm(transactionHash);
           }
         })
-        .on("receipt", (receipt) => {
+        .on('receipt', (receipt) => {
           onTxReceipt(receipt);
           resolve(receipt);
         })
-        .on("error", (error) => {
+        .on('error', (error) => {
           reject(error);
         });
     });
@@ -94,22 +97,22 @@ export class ClubERC20FactoryEth {
       const receipt: any = await getGnosisTxnInfo(gnosisTxHash);
       onTxConfirm(receipt.transactionHash);
 
-      const createEvents = await this.clubERC20FactoryEth.getPastEvents(
-        "ClubERC20Created",
+      const createEvents = await this.clubERC20FactoryNative.getPastEvents(
+        'ClubERC20Created',
         {
           filter: { transactionHash: receipt.transactionHash },
           fromBlock: receipt.blockNumber,
-          toBlock: receipt.blockNumber,
-        },
+          toBlock: receipt.blockNumber
+        }
       );
 
       if (receipt.isSuccessful) {
         onTxReceipt({
           ...receipt,
-          events: { ClubERC20Created: createEvents[0] },
+          events: { ClubERC20Created: createEvents[0] }
         });
       } else {
-        throw "Transaction Failed";
+        throw 'Transaction Failed';
       }
     }
   }

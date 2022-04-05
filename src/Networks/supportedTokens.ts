@@ -25,7 +25,7 @@ export const SUPPORTED_TOKENS = Object.freeze({
       symbol: 'USDC',
       name: 'Testnet USDC',
       address: '0xeb8f08a975Ab53E34D8a0330E0D34de942C95926',
-      decimals: 18,
+      decimals: 6,
       chainId: 4,
       logoURI: '/images/TestnetTokenLogos/usdcIcon.svg',
       default: true

@@ -1,5 +1,6 @@
 import DepositTokenMintModule_ABI from "src/contracts/DepositTokenMintModule.json";
 import { getGnosisTxnInfo } from "../shared/gnosisTransactionInfo";
+import { estimateGas } from '../shared/getGasEstimate';
 
 export class DepositTokenMintModuleContract {
   web3;
@@ -22,7 +23,7 @@ export class DepositTokenMintModuleContract {
     try {
       this.DepositTokenMintModuleContract = new this.web3.eth.Contract(
         DepositTokenMintModule_ABI,
-        this.address,
+        this.address
       );
     } catch (error) {
       this.DepositTokenMintModuleContract = null;
@@ -35,7 +36,7 @@ export class DepositTokenMintModuleContract {
         .depositToken(clubAddress)
         .call();
     } catch (error) {
-      return "";
+      return '';
     }
   }
 
@@ -58,37 +59,38 @@ export class DepositTokenMintModuleContract {
     onTxConfirm: (transactionHash?) => void,
     onTxReceipt: (receipt?) => void,
     onTxFail: (error?) => void,
-    setTransactionHash,
+    setTransactionHash
   ): Promise<void> {
     if (!this.DepositTokenMintModuleContract) {
       this.init();
     }
 
     let gnosisTxHash;
+    const gasEstimate = await estimateGas(this.web3);
 
     await new Promise((resolve, reject) => {
       this.DepositTokenMintModuleContract.methods
         .mint(clubAddress, amount)
-        .send({ from: ownerAddress })
-        .on("transactionHash", (transactionHash) => {
+        .send({ from: ownerAddress, gasPrice: gasEstimate })
+        .on('transactionHash', (transactionHash) => {
           onTxConfirm(transactionHash);
 
           // Stop waiting if we are connected to gnosis safe via walletConnect
           if (
-            this.web3._provider.wc?._peerMeta.name === "Gnosis Safe Multisig"
+            this.web3._provider.wc?._peerMeta.name === 'Gnosis Safe Multisig'
           ) {
-            setTransactionHash("");
+            setTransactionHash('');
             gnosisTxHash = transactionHash;
             resolve(transactionHash);
           } else {
             setTransactionHash(transactionHash);
           }
         })
-        .on("receipt", (receipt) => {
+        .on('receipt', (receipt) => {
           onTxReceipt(receipt);
           resolve(receipt);
         })
-        .on("error", (error) => {
+        .on('error', (error) => {
           onTxFail(error);
           reject(error);
         });
@@ -101,7 +103,7 @@ export class DepositTokenMintModuleContract {
       if (receipt.isSuccessful) {
         onTxReceipt(receipt);
       } else {
-        onTxFail("Transaction failed");
+        onTxFail('Transaction failed');
       }
     }
   }

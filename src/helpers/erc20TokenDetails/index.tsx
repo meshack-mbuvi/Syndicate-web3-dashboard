@@ -11,9 +11,8 @@ import {
 import { DepositDetails, ERC20Token } from "@/state/erc20token/types";
 import {isZeroAddress } from "@/utils";
 import { getWeiAmount } from "@/utils/conversions";
-import { SUPPORTED_TOKENS } from '@/Networks';
+import { CONTRACT_ADDRESSES, SUPPORTED_TOKENS } from '@/Networks';
 
-const ETH_MINT_MODULE = process.env.NEXT_PUBLIC_ETH_MINT_MODULE;
 export const ERC20TokenDefaultState = {
   name: '',
   owner: '',
@@ -154,6 +153,9 @@ export const getDespositDetails = async (
     ERC20tokenContract.clubERC20Contract._address
   );
 
+  const NATIVE_MINT_MODULE =
+    CONTRACT_ADDRESSES[activeNetwork.chainId]?.nativeMintModule;
+
   if (isZeroAddress(depositToken)) {
     depositToken = await SingleTokenMintModule?.depositToken(
       ERC20tokenContract.clubERC20Contract._address
@@ -161,7 +163,7 @@ export const getDespositDetails = async (
 
     if (isZeroAddress(depositToken)) {
       depositToken = '';
-      mintModule = ETH_MINT_MODULE;
+      mintModule = NATIVE_MINT_MODULE;
       nativeDepositToken = true;
     } else {
       mintModule = SingleTokenMintModule.address;
@@ -170,7 +172,6 @@ export const getDespositDetails = async (
   const [depositTokenInfo] = depositTokenMapping.filter(
     (token) => token.address === depositToken
   );
-  console.log({ depositTokenInfo });
 
   return {
     mintModule,

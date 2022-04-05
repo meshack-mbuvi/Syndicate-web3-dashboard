@@ -50,6 +50,7 @@ import { isEmpty } from 'lodash';
 
 import BeforeGettingStarted from '../../beforeGettingStarted';
 import ConnectWalletAction from '../shared/connectWalletAction';
+import { CONTRACT_ADDRESSES } from '@/Networks';
 
 const DepositSyndicate: React.FC = () => {
   // HOOK DECLARATIONS
@@ -329,10 +330,11 @@ const DepositSyndicate: React.FC = () => {
   };
 
   const SINGLE_TOKEN_MINT_MODULE_ADDR =
-    process.env.NEXT_PUBLIC_SINGLE_TOKEN_MINT_MODULE;
-  const ETH_MINT_MODULE = process.env.NEXT_PUBLIC_ETH_MINT_MODULE;
+    CONTRACT_ADDRESSES[activeNetwork.chainId]?.SingleTokenMintModule;
+  const ETH_MINT_MODULE =
+    CONTRACT_ADDRESSES[activeNetwork.chainId]?.OwnerMintModule;
   const DEPOSIT_TOKEN_MINT_MODULE =
-    process.env.NEXT_PUBLIC_DEPOSIT_TOKEN_MINT_MODULE;
+    CONTRACT_ADDRESSES[activeNetwork.chainId]?.DepositTokenMintModule;
 
   /**
    * This methods is used to invest in LP(syndicate)
@@ -349,7 +351,7 @@ const DepositSyndicate: React.FC = () => {
 
     try {
       if (mintModule === ETH_MINT_MODULE) {
-        await syndicateContracts.EthMintModule?.deposit(
+        await syndicateContracts.NativeMintModule?.deposit(
           getWeiAmount(amount, depositTokenDecimals, true),
           erc20TokenContract.clubERC20Contract._address,
           account,
@@ -554,7 +556,7 @@ const DepositSyndicate: React.FC = () => {
         setSufficientAllowanceSet(false);
       }
     }
-  }, [syndicateContracts, account, depositTokenContract,successfulDeposit]);
+  }, [syndicateContracts, account, depositTokenContract, successfulDeposit]);
 
   // check current member token allowance
   useEffect(() => {
@@ -1472,9 +1474,7 @@ const DepositSyndicate: React.FC = () => {
         depositsEnabled) ||
         isDemoMode) && (
         <div className="bg-gray-syn8 rounded-2xl mt-6 px-8 py-6">
-          <h4 className="pb-5">
-            Your Holdings
-          </h4>
+          <h4 className="pb-5">Your Holdings</h4>
           {loading ? (
             <SkeletonLoader height="9" width="full" borderRadius="rounded-md" />
           ) : (

@@ -1,5 +1,6 @@
 import ClubERC20 from "src/contracts/ERC20Club.json";
 import { getGnosisTxnInfo } from "../shared/gnosisTransactionInfo";
+import { estimateGas } from '../shared/getGasEstimate';
 
 export class ClubERC20Contract {
   web3;
@@ -22,7 +23,7 @@ export class ClubERC20Contract {
     try {
       this.clubERC20Contract = new this.web3.eth.Contract(
         ClubERC20,
-        this.address,
+        this.address
       );
     } catch (error) {
       this.clubERC20Contract = null;
@@ -33,7 +34,7 @@ export class ClubERC20Contract {
     try {
       return this.clubERC20Contract.methods.name().call();
     } catch (error) {
-      return "";
+      return '';
     }
   }
 
@@ -41,7 +42,7 @@ export class ClubERC20Contract {
     try {
       return this.clubERC20Contract.methods.symbol().call();
     } catch (error) {
-      return "";
+      return '';
     }
   }
 
@@ -49,7 +50,7 @@ export class ClubERC20Contract {
     try {
       return this.clubERC20Contract.methods.owner().call();
     } catch (error) {
-      return "";
+      return '';
     }
   }
 
@@ -57,7 +58,7 @@ export class ClubERC20Contract {
     try {
       return this.clubERC20Contract.methods.decimals().call();
     } catch (error) {
-      return "";
+      return '';
     }
   }
 
@@ -65,7 +66,7 @@ export class ClubERC20Contract {
     try {
       return this.clubERC20Contract.methods.totalSupply().call();
     } catch (error) {
-      return "";
+      return '';
     }
   }
 
@@ -74,7 +75,7 @@ export class ClubERC20Contract {
     try {
       return this.clubERC20Contract.methods.endMint().call();
     } catch (error) {
-      return "";
+      return '';
     }
   }
 
@@ -87,13 +88,13 @@ export class ClubERC20Contract {
   }
 
   async balanceOf(account: string): Promise<string> {
-    if (!account) return "0";
+    if (!account) return '0';
     try {
       return this.clubERC20Contract.methods
         .balanceOf(account.toString())
         .call({ from: account });
     } catch (error) {
-      return "0";
+      return '0';
     }
   }
 
@@ -104,33 +105,34 @@ export class ClubERC20Contract {
     onTxConfirm: (transactionHash?) => void,
     onTxReceipt: (receipt?) => void,
     onTxFail: (error?) => void,
-    setTransactionHash: (txHas) => void,
+    setTransactionHash: (txHas) => void
   ): Promise<void> {
     let gnosisTxHash;
+    const gasEstimate = await estimateGas(this.web3);
 
     await new Promise((resolve, reject) => {
       this.clubERC20Contract.methods
         .mintTo(recipientAddress, amount)
-        .send({ from: ownerAddress })
-        .on("transactionHash", (transactionHash) => {
+        .send({ from: ownerAddress, gasPrice: gasEstimate })
+        .on('transactionHash', (transactionHash) => {
           onTxConfirm(transactionHash);
 
           // Stop waiting if we are connected to gnosis safe via walletConnect
           if (
-            this.web3._provider.wc?._peerMeta.name === "Gnosis Safe Multisig"
+            this.web3._provider.wc?._peerMeta.name === 'Gnosis Safe Multisig'
           ) {
-            setTransactionHash("");
+            setTransactionHash('');
             gnosisTxHash = transactionHash;
             resolve(transactionHash);
           } else {
             setTransactionHash(transactionHash);
           }
         })
-        .on("receipt", (receipt) => {
+        .on('receipt', (receipt) => {
           onTxReceipt(receipt);
           resolve(receipt);
         })
-        .on("error", (error) => {
+        .on('error', (error) => {
           onTxFail(error);
           reject(error);
         });
@@ -143,7 +145,7 @@ export class ClubERC20Contract {
       if (receipt.isSuccessful) {
         onTxReceipt(receipt);
       } else {
-        onTxFail("Transaction failed");
+        onTxFail('Transaction failed');
       }
     }
   }
@@ -155,33 +157,34 @@ export class ClubERC20Contract {
     onTxConfirm: (transactionHash?) => void,
     onTxReceipt: (receipt?) => void,
     onTxFail: (error?) => void,
-    setTransactionHash: (txHas) => void,
+    setTransactionHash: (txHas) => void
   ): Promise<void> {
     let gnosisTxHash;
+    const gasEstimate = await estimateGas(this.web3);
 
     await new Promise((resolve, reject) => {
       this.clubERC20Contract.methods
         .controllerRedeem(memberAddress, amount)
-        .send({ from: ownerAddress })
-        .on("transactionHash", (transactionHash) => {
+        .send({ from: ownerAddress, gasPrice: gasEstimate })
+        .on('transactionHash', (transactionHash) => {
           onTxConfirm(transactionHash);
 
           // Stop waiting if we are connected to gnosis safe via walletConnect
           if (
-            this.web3._provider.wc?._peerMeta.name === "Gnosis Safe Multisig"
+            this.web3._provider.wc?._peerMeta.name === 'Gnosis Safe Multisig'
           ) {
-            setTransactionHash("");
+            setTransactionHash('');
             gnosisTxHash = transactionHash;
             resolve(transactionHash);
           } else {
             setTransactionHash(transactionHash);
           }
         })
-        .on("receipt", (receipt) => {
+        .on('receipt', (receipt) => {
           onTxReceipt(receipt);
           resolve(receipt);
         })
-        .on("error", (error) => {
+        .on('error', (error) => {
           onTxFail(error);
           reject(error);
         });
@@ -194,7 +197,7 @@ export class ClubERC20Contract {
       if (receipt.isSuccessful) {
         onTxReceipt(receipt);
       } else {
-        onTxFail("Transaction failed");
+        onTxFail('Transaction failed');
       }
     }
   }

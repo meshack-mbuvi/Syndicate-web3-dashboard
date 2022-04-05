@@ -21,6 +21,7 @@ import Tooltip from 'react-tooltip-lite';
 import { numberWithCommas } from "@/utils/formattedNumbers";
 import { getWeiAmount } from "@/utils/conversions";
 import { getNativeTokenPrice } from '@/utils/api/etherscan';
+import { CONTRACT_ADDRESSES } from '@/Networks';
 
 const ClaimNFT: React.FC = () => {
   const router = useRouter();
@@ -125,10 +126,10 @@ const ClaimNFT: React.FC = () => {
       ]);
 
     const PUBLIC_ONE_PER_ADDRESS_MODULE =
-      process.env.NEXT_PUBLIC_ONE_PER_ADDRESS_MODULE;
+      CONTRACT_ADDRESSES[activeNetwork.chainId]?.OnePerAddressMintModule;
 
     const PUBLIC_UTILITY_MINT_MODULE =
-      process.env.NEXT_PUBLIC_UTILITY_MINT_MODULE;
+      CONTRACT_ADDRESSES[activeNetwork.chainId]?.UtilityMintModule;
 
     const tokenPrice = await getNativeTokenPrice(activeNetwork.chainId);
     let publicUtilityClaimEnabled = false;
@@ -339,7 +340,11 @@ const ClaimNFT: React.FC = () => {
                   )}
                   <a href={explorerLink} target="_blank" rel="noreferrer">
                     <Tooltip
-                      content={<div>View contract on {activeNetwork.blockExplorer.name}</div>}
+                      content={
+                        <div>
+                          View contract on {activeNetwork.blockExplorer.name}
+                        </div>
+                      }
                       arrow={false}
                       tipContentClassName="actionsTooltip"
                       background="#232529"

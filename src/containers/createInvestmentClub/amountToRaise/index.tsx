@@ -59,8 +59,6 @@ const AmountToRaise: React.FC<{
 
   // let [defaultTokenDetails] = coinList.filter((coin) => coin.default);
 
-  console.log(depositTokenLogo, defaultTokenDetails);
-
   const extraAddonContent = (
     <button
       className="flex justify-center items-center cursor-pointer pl-5 pr-4 py-2"
@@ -104,7 +102,6 @@ const AmountToRaise: React.FC<{
   }, [amount, dispatch, editButtonClicked, setNextBtnDisabled]);
 
   useEffect(() => {
-    console.log({ depositTokenSymbol, defaultTokenDetails });
     dispatch(
       setDepositTokenDetails({
         depositTokenAddress: defaultTokenDetails.address,

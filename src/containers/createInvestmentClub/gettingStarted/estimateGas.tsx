@@ -26,7 +26,6 @@ const EstimateGas = (props: { customClasses?: string }) => {
   const processBaseFee = async (result) => {
     const baseFee = result.result;
     const baseFeeInDecimal = parseInt(baseFee, 16);
-    console.log({ baseFeeInDecimal });
     setGasBaseFee(baseFeeInDecimal);
   };
 
@@ -59,8 +58,6 @@ const EstimateGas = (props: { customClasses?: string }) => {
     const estimatedGas = getWeiAmount(estimatedGasInWei.toString(), 18, false);
     setGas(+estimatedGas);
   }, [gasUnits, gasBaseFee]);
-
-  console.log({ gas, gasUnits, gasBaseFee });
 
   return (
     <button
