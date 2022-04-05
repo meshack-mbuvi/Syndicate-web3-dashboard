@@ -1,4 +1,4 @@
-import ERC721Membership_ABI from "src/contracts/ERC721Membership.json";
+import ERC721Membership_ABI from 'src/contracts/ERC721Membership.json';
 
 export class ERC721Contract {
   web3;
@@ -21,7 +21,7 @@ export class ERC721Contract {
     try {
       this.erc721Contract = new this.web3.eth.Contract(
         ERC721Membership_ABI,
-        this.address,
+        this.address
       );
     } catch (error) {
       this.erc721Contract = null;
@@ -32,7 +32,7 @@ export class ERC721Contract {
     try {
       return this.erc721Contract.methods.name().call();
     } catch (error) {
-      return "";
+      return '';
     }
   }
 
@@ -40,7 +40,7 @@ export class ERC721Contract {
     try {
       return this.erc721Contract.methods.symbol().call();
     } catch (error) {
-      return "";
+      return '';
     }
   }
 
@@ -48,7 +48,7 @@ export class ERC721Contract {
     try {
       return this.erc721Contract.methods.owner().call();
     } catch (error) {
-      return "";
+      return '';
     }
   }
 
@@ -56,7 +56,7 @@ export class ERC721Contract {
     try {
       return this.erc721Contract.methods.maxSupply().call();
     } catch (error) {
-      return "";
+      return '';
     }
   }
 
@@ -64,7 +64,7 @@ export class ERC721Contract {
     try {
       return this.erc721Contract.methods.currentSupply().call();
     } catch (error) {
-      return "";
+      return '';
     }
   }
 
@@ -72,7 +72,7 @@ export class ERC721Contract {
     try {
       return this.erc721Contract.methods.rendererAddr().call();
     } catch (error) {
-      return "";
+      return '';
     }
   }
 
@@ -80,7 +80,7 @@ export class ERC721Contract {
     try {
       return this.erc721Contract.methods.balanceOf(address).call();
     } catch (error) {
-      return "";
+      return '';
     }
   }
 
@@ -88,7 +88,7 @@ export class ERC721Contract {
     try {
       return this.erc721Contract.methods.ownerOf(tokenId).call();
     } catch (error) {
-      return "";
+      return '';
     }
   }
 }

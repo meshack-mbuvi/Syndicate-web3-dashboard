@@ -1,11 +1,11 @@
-import { AppState } from "@/state";
-import { useDispatch, useSelector } from "react-redux";
-import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
-import { setUtilityNFT, clearUtilityNFT } from "@/state/UtilityNFT/slice";
-import { ERC721Contract } from "@/ClubERC20Factory/ERC721Membership";
-import { MembershipPass, Utility } from "@/state/UtilityNFT/types";
-import { getWeiAmount } from "@/utils/conversions";
+import { AppState } from '@/state';
+import { useDispatch, useSelector } from 'react-redux';
+import { useRouter } from 'next/router';
+import { useEffect, useState } from 'react';
+import { setUtilityNFT, clearUtilityNFT } from '@/state/UtilityNFT/slice';
+import { ERC721Contract } from '@/ClubERC20Factory/ERC721Membership';
+import { MembershipPass, Utility } from '@/state/UtilityNFT/types';
+import { getWeiAmount } from '@/utils/conversions';
 import {
   getNativeTokenPrice,
   getExplorerTransactionHistory

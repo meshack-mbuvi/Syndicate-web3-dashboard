@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction } from "react";
+import React, { Dispatch, SetStateAction } from 'react';
 
 interface IOptions {
   text: string;
@@ -22,7 +22,7 @@ interface ICategoryPillDropDown {
 const CategoryPillDropDown: React.FC<ICategoryPillDropDown> = ({
   options,
   onSelect,
-  customTextStyles,
+  customTextStyles
 }) => {
   return (
     <div className="rounded-custom bg-gray-syn9 py-5 px-2 space-y-3">
@@ -41,7 +41,7 @@ const CategoryPillDropDown: React.FC<ICategoryPillDropDown> = ({
               {icon && (
                 <div
                   className={`flex-shrink-0 icon mr-2 ${
-                    icon !== "plus-sign.svg" ? `h-8 w-8` : ``
+                    icon !== 'plus-sign.svg' ? `h-8 w-8` : ``
                   }`}
                 >
                   <img src={`/images/activity/${icon}`} alt="option-icon" />
@@ -49,7 +49,7 @@ const CategoryPillDropDown: React.FC<ICategoryPillDropDown> = ({
               )}
               <p
                 className={`whitespace-nowrap ${
-                  text === "Custom" && "text-gray-syn4"
+                  text === 'Custom' && 'text-gray-syn4'
                 }`}
               >
                 {text}

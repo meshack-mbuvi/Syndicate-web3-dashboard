@@ -2,11 +2,11 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import BN from "bn.js";
-import { EventData, PastEventOptions } from "web3-eth-contract";
+import BN from 'bn.js';
+import { EventData, PastEventOptions } from 'web3-eth-contract';
 
 export interface HevmContract extends Truffle.Contract<HevmInstance> {
-  "new"(meta?: Truffle.TransactionDetails): Promise<HevmInstance>;
+  'new'(meta?: Truffle.TransactionDetails): Promise<HevmInstance>;
 }
 
 type AllEvents = never;

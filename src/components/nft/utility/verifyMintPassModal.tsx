@@ -1,12 +1,12 @@
-import Modal, { ModalStyle } from "@/components/modal";
-import { AppState } from "@/state";
-import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
-import { useForm } from "react-hook-form";
-import { NumberField } from "@/components/inputs/numberField";
-import { yupResolver } from "@hookform/resolvers/yup";
-import * as yup from "yup";
-import { isDev } from "@/utils/environment";
+import Modal, { ModalStyle } from '@/components/modal';
+import { AppState } from '@/state';
+import React, { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
+import { useForm } from 'react-hook-form';
+import { NumberField } from '@/components/inputs/numberField';
+import { yupResolver } from '@hookform/resolvers/yup';
+import * as yup from 'yup';
+import { isDev } from '@/utils/environment';
 
 interface IVerifyMintPassModal {
   showModal: boolean;
@@ -19,41 +19,41 @@ interface FormInputs {
 
 const schema = () => {
   return yup.object({
-    depositAmount: yup.number(),
+    depositAmount: yup.number()
   });
 };
 
 const VerifyMintPassModal: React.FC<IVerifyMintPassModal> = ({
   showModal,
-  closeModal,
+  closeModal
 }) => {
   const {
     utilityNFTSliceReducer: { utilityNFT },
-    initializeContractsReducer: { syndicateContracts },
+    initializeContractsReducer: { syndicateContracts }
   } = useSelector((state: AppState) => state);
 
   const { RugUtilityMintModule } = syndicateContracts;
 
   const [mintPassClaimed, setMintPassClaimed] = useState<boolean>(false);
   const [mintChecked, setMintChecked] = useState<boolean>(false);
-  const [openseaLink, setOpenseaLink] = useState<string>("s");
-  const [mintPassID, setMintPasssID] = useState<string>("");
+  const [openseaLink, setOpenseaLink] = useState<string>('s');
+  const [mintPassID, setMintPasssID] = useState<string>('');
 
   const { control, handleSubmit } = useForm<FormInputs>({
-    mode: "onChange",
-    resolver: yupResolver(schema()),
+    mode: 'onChange',
+    resolver: yupResolver(schema())
   });
 
   const onSubmit = async (values) => {
     if (values.mintPassID) {
       setMintPasssID(values.mintPassID);
       const response = await RugUtilityMintModule.tokenRedeemed(
-        values.mintPassID,
+        values.mintPassID
       );
       setMintChecked(true);
       setMintPassClaimed(response);
     } else {
-      setMintPasssID("");
+      setMintPasssID('');
       setMintChecked(false);
       setMintPassClaimed(false);
     }
@@ -65,13 +65,13 @@ const VerifyMintPassModal: React.FC<IVerifyMintPassModal> = ({
         className="h-4 w-4"
         src={
           mintPassClaimed
-            ? "/images/syndicateStatusIcons/transactionFailed.svg"
-            : "/images/syndicateStatusIcons/checkCircleGreen.svg"
+            ? '/images/syndicateStatusIcons/transactionFailed.svg'
+            : '/images/syndicateStatusIcons/checkCircleGreen.svg'
         }
         alt="checkmark"
       />
     ) : (
-      ""
+      ''
     );
   };
 
@@ -79,20 +79,20 @@ const VerifyMintPassModal: React.FC<IVerifyMintPassModal> = ({
     if (mintPassID && utilityNFT.redemptionToken) {
       if (isDev) {
         setOpenseaLink(
-          `https://testnets.opensea.io/assets/${utilityNFT.redemptionToken}/${mintPassID}`,
+          `https://testnets.opensea.io/assets/${utilityNFT.redemptionToken}/${mintPassID}`
         );
       } else {
         setOpenseaLink(
-          `https://opensea.io/assets/${utilityNFT.redemptionToken}/${mintPassID}`,
+          `https://opensea.io/assets/${utilityNFT.redemptionToken}/${mintPassID}`
         );
       }
     } else {
-      setOpenseaLink("");
+      setOpenseaLink('');
     }
   }, [mintPassID, utilityNFT.redemptionToken]);
 
   const viewNFT = () => {
-    window.open(openseaLink, "_blank");
+    window.open(openseaLink, '_blank');
   };
 
   return (
@@ -114,9 +114,7 @@ const VerifyMintPassModal: React.FC<IVerifyMintPassModal> = ({
       <div className="mx--4">
         <div className="uppercase h4 mb-8">verify mint pass</div>
         <form onSubmit={handleSubmit(onSubmit)} className="w-full">
-          {
-            !mintChecked 
-            ?         
+          {!mintChecked ? (
             <>
               <NumberField
                 label="Enter mint pass ID"
@@ -129,36 +127,33 @@ const VerifyMintPassModal: React.FC<IVerifyMintPassModal> = ({
                 addOnStyles=""
                 thousandSeparator={false}
               />
-              <button
-                className="rounded-lg text-base text-black px-4 py-2 mb-2 mt-3 font-medium bg-green"
-              >
-                {"Verify"}
+              <button className="rounded-lg text-base text-black px-4 py-2 mb-2 mt-3 font-medium bg-green">
+                {'Verify'}
               </button>
-            </>  
-            : null
-          }
+            </>
+          ) : null}
         </form>
         <div className="text-center mt-6">
           {!mintPassClaimed && mintChecked
-            ? "This mint pass is unused and available to purchase on the secondary market."
+            ? 'This mint pass is unused and available to purchase on the secondary market.'
             : !mintPassClaimed && !mintChecked
             ? null
             : mintPassClaimed && !mintChecked
             ? null
-            : "This mint pass has already been used to claim an NFT."}
+            : 'This mint pass has already been used to claim an NFT.'}
         </div>
         {!mintPassClaimed && mintChecked ? (
           <div>
             <div className="mt-2 text-center text-sm text-gray-syn4">
-              &#9888; If purchased on the secondary market, this mint pass could still
-              be minted by the owner prior to the purchase completing.
+              &#9888; If purchased on the secondary market, this mint pass could
+              still be minted by the owner prior to the purchase completing.
             </div>
 
             <button
               className={`flex items-center justify-center w-full rounded-lg text-base text-black px-8 py-4 mt-6 text-black font-medium ${
                 !openseaLink
-                  ? "bg-gray-syn7 text-white cursor-default"
-                  : "bg-white"
+                  ? 'bg-gray-syn7 text-white cursor-default'
+                  : 'bg-white'
               }`}
               onClick={openseaLink ? viewNFT : null}
             >
@@ -175,17 +170,16 @@ const VerifyMintPassModal: React.FC<IVerifyMintPassModal> = ({
             </button>
           </div>
         ) : null}
-        {
-          mintChecked 
-          ?
-            <button
-              onClick={() => {setMintChecked(!mintChecked)}}
-              className="w-full rounded-lg text-base text-black px-4 py-2 mb-2 mt-4 font-medium bg-green"
-            >
-              {"Try another mint pass ID"}
-            </button>
-          : null
-        }
+        {mintChecked ? (
+          <button
+            onClick={() => {
+              setMintChecked(!mintChecked);
+            }}
+            className="w-full rounded-lg text-base text-black px-4 py-2 mb-2 mt-4 font-medium bg-green"
+          >
+            {'Try another mint pass ID'}
+          </button>
+        ) : null}
       </div>
     </Modal>
   );

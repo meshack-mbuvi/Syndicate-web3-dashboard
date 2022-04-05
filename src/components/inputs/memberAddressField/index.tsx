@@ -1,9 +1,9 @@
-import { FC, useState, SetStateAction, Dispatch } from "react";
-import { formatAddress } from "@/utils/formatAddress";
+import { FC, useState, SetStateAction, Dispatch } from 'react';
+import { formatAddress } from '@/utils/formatAddress';
 import {
   MemberSelectDropdown,
-  IMember,
-} from "@/containers/managerActions/shared/memberSelectDropdown";
+  IMember
+} from '@/containers/managerActions/shared/memberSelectDropdown';
 interface IMemberField {
   memberAddress: string;
   className?: string;
@@ -15,7 +15,7 @@ export const MemberAddressField: FC<IMemberField> = ({
   memberAddress,
   className,
   memberList,
-  setMemberAddress,
+  setMemberAddress
 }) => {
   const [showMemberList, setShowMemberList] = useState(false);
 
@@ -27,7 +27,9 @@ export const MemberAddressField: FC<IMemberField> = ({
       >
         <div className="flex">
           <img className="w-6 h-6" src="/images/user.svg" alt="user" />
-          <span className="ml-2 text-white">{formatAddress(memberAddress, 6, 4)}</span>
+          <span className="ml-2 text-white">
+            {formatAddress(memberAddress, 6, 4)}
+          </span>
         </div>
         <div>
           <img className="w-4 h-4" src="/images/double-chevron.svg" alt="" />

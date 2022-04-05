@@ -1,21 +1,21 @@
-import { setERC20Token } from "@/helpers/erc20TokenDetails";
-import useModal from "@/hooks/useModal";
-import { AppState } from "@/state";
-import { getWeiAmount } from "@/utils/conversions";
-import { formatAddress } from "@/utils/formatAddress";
+import { setERC20Token } from '@/helpers/erc20TokenDetails';
+import useModal from '@/hooks/useModal';
+import { AppState } from '@/state';
+import { getWeiAmount } from '@/utils/conversions';
+import { formatAddress } from '@/utils/formatAddress';
 import {
   floatedNumberWithCommas,
   numberInputRemoveCommas,
-  numberWithCommas,
-} from "@/utils/formattedNumbers";
-import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { useClubDepositsAndSupply } from "@/hooks/useClubDepositsAndSupply";
-import { ProgressModal, ProgressModalState } from "@/components/progressModal";
-import ModifyMemberClubTokens from "@/containers/managerActions/modifyMemberAllocation/ModifyMemberClubTokens";
-import ConfirmMemberAllocations from "@/containers/managerActions/modifyMemberAllocation/ConfirmMemberAllocations";
-import { OldClubERC20Contract } from "@/ClubERC20Factory/clubERC20/oldClubERC20";
-import { isDev } from "@/utils/environment";
+  numberWithCommas
+} from '@/utils/formattedNumbers';
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { useClubDepositsAndSupply } from '@/hooks/useClubDepositsAndSupply';
+import { ProgressModal, ProgressModalState } from '@/components/progressModal';
+import ModifyMemberClubTokens from '@/containers/managerActions/modifyMemberAllocation/ModifyMemberClubTokens';
+import ConfirmMemberAllocations from '@/containers/managerActions/modifyMemberAllocation/ConfirmMemberAllocations';
+import { OldClubERC20Contract } from '@/ClubERC20Factory/clubERC20/oldClubERC20';
+import { isDev } from '@/utils/environment';
 import { CONTRACT_ADDRESSES } from '@/Networks';
 
 const ModifyClubTokens: React.FC<{

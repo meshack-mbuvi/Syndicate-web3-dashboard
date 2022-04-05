@@ -1,10 +1,10 @@
-import { BlockExplorerLink } from "@/components/syndicates/shared/BlockExplorerLink";
-import { AppState } from "@/state";
-import { floatedNumberWithCommas } from "@/utils/formattedNumbers";
-import Image from "next/image";
-import React from "react";
-import { CopyToClipboard } from "react-copy-to-clipboard";
-import { useSelector } from "react-redux";
+import { BlockExplorerLink } from '@/components/syndicates/shared/BlockExplorerLink';
+import { AppState } from '@/state';
+import { floatedNumberWithCommas } from '@/utils/formattedNumbers';
+import Image from 'next/image';
+import React from 'react';
+import { CopyToClipboard } from 'react-copy-to-clipboard';
+import { useSelector } from 'react-redux';
 
 export const SuccessOrFailureContent: React.FC<{
   closeCard: () => void;
@@ -29,7 +29,7 @@ export const SuccessOrFailureContent: React.FC<{
   copied,
   clubTokenSymbol,
   accountClubTokens,
-  memberPercentShare,
+  memberPercentShare
 }) => {
   const {
     erc20TokenSliceReducer: {

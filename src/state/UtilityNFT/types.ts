@@ -38,5 +38,5 @@ export const initialState = {
   utilityNFT: emptyUtilityNFT,
   MembershipPass: [],
   Utility: {},
-  loading: true,
+  loading: true
 };

@@ -1,4 +1,4 @@
-import { proxyGet } from ".";
+import { proxyGet } from '.';
 
 // TODO:  Rename all transactions that point to only etherscan to dynamically use current chain explorer
 export const getNativeTokenPrice = async (chainId: number) => {

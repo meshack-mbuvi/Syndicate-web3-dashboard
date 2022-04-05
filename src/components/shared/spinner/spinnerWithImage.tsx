@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 
 interface ISpinner {
   height?: string;
@@ -7,17 +7,17 @@ interface ISpinner {
   icon?: string;
 }
 
-/**svg spinner with image/icon at the center. 
+/**svg spinner with image/icon at the center.
  * @param height height of the spinner
  * @param width width of the spinner
  * @param strokeWidth how thick the circle element of the svg should be
  * @param icon the url of the icon. Set this to null if you don't want to display an icon */
 export const SpinnerWithImage: React.FC<ISpinner> = (props) => {
   const {
-    height = "h-28",
-    width = "w-28",
-    strokeWidth = "4",
-    icon = "/images/metamaskIcon.svg",
+    height = 'h-28',
+    width = 'w-28',
+    strokeWidth = '4',
+    icon = '/images/metamaskIcon.svg'
   } = props;
   return (
     <div className="flex justify-center">

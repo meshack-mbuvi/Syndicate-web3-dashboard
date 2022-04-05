@@ -1,9 +1,9 @@
-const Web3 = require("web3");
+const Web3 = require('web3');
 const web3 = new Web3(`${process.env.NEXT_PUBLIC_ALCHEMY}`);
-const CoinGecko = require("coingecko-api");
-const abi = require("human-standard-token-abi");
+const CoinGecko = require('coingecko-api');
+const abi = require('human-standard-token-abi');
 
-import { TokenMappings } from "./tokenMappings";
+import { TokenMappings } from './tokenMappings';
 
 const CoinGeckoClient = new CoinGecko();
 const debugging = process.env.NEXT_PUBLIC_DEBUG;
@@ -24,18 +24,18 @@ export async function getCoinFromContractAddress(contractAddress) {
    */
 
   const emptyTokenDetails = {
-    name: "",
-    symbol: "",
-    price: "",
-    logo: "",
-    decimals: "18",
+    name: '',
+    symbol: '',
+    price: '',
+    logo: '',
+    decimals: '18'
   };
 
   try {
     // CoinGecko can only return token details on the main network.
-    if (debugging !== "true") {
+    if (debugging !== 'true') {
       const coinInfo = await CoinGeckoClient.coins.fetchCoinContractInfo(
-        contractAddress,
+        contractAddress
       );
 
       if (coinInfo.success) {
@@ -49,7 +49,7 @@ export async function getCoinFromContractAddress(contractAddress) {
           percentageChange:
             coinInfo.data.market_data.price_change_percentage_24h,
           logo: coinInfo.data.image.large,
-          decimals,
+          decimals
         };
       } else {
         return emptyTokenDetails;
@@ -75,7 +75,7 @@ export async function getCoinFromContractAddress(contractAddress) {
           symbol,
           price,
           logo,
-          decimals,
+          decimals
         };
       } else {
         return emptyTokenDetails;
@@ -92,7 +92,7 @@ const getCoinPricesFromCoinGecko = async (contractAddresses) => {
   try {
     const { data } = await CoinGeckoClient.simple.fetchTokenPrice({
       contract_addresses: contractAddresses,
-      vs_currencies: "usd",
+      vs_currencies: 'usd'
     });
 
     for (const tokenAddress of contractAddresses) {
@@ -116,6 +116,6 @@ const getCoinPricesFromTokenMappings = async (contractAddresses) => {
 };
 
 export const getCoinPrices =
-  debugging === "true"
+  debugging === 'true'
     ? getCoinPricesFromTokenMappings
     : getCoinPricesFromCoinGecko;

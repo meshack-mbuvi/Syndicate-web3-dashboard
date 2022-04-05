@@ -1,15 +1,15 @@
 /**
  * https://developers.amplitude.com/docs/how-amplitude-works
  */
-import amplitude from "amplitude-js";
-import { useEffect } from "react";
+import amplitude from 'amplitude-js';
+import { useEffect } from 'react';
 
 const isAmplitudeEnabled = () => {
   const isDeployPreview =
-    window?.location?.hostname.indexOf("deploy-preview") > -1;
+    window?.location?.hostname.indexOf('deploy-preview') > -1;
   return (
     window !== undefined &&
-    process.env.NODE_ENV === "production" &&
+    process.env.NODE_ENV === 'production' &&
     !isDeployPreview
   );
 };
@@ -27,16 +27,16 @@ export function useAmplitude(): void {
 }
 
 export enum Flow {
-  MBR_DEP = "MBR_DEP", // member deposit
-  MGR_CREATE_SYN = "MGR_CREATE_SYN", // manager create syndicate
-  MGR_SET_DIST = "MGR_SET_DIST", //manager set distributions
-  MBR_WITHDRAW_DIST = "MBR_WITHDRAW_DIST", // member withdraw distribution
-  MBR_WITHDRAW_DEP = "MBR_WITHDRAW_DEP", // member withdraw deposit
+  MBR_DEP = 'MBR_DEP', // member deposit
+  MGR_CREATE_SYN = 'MGR_CREATE_SYN', // manager create syndicate
+  MGR_SET_DIST = 'MGR_SET_DIST', //manager set distributions
+  MBR_WITHDRAW_DIST = 'MBR_WITHDRAW_DIST', // member withdraw distribution
+  MBR_WITHDRAW_DEP = 'MBR_WITHDRAW_DEP', // member withdraw deposit
 
-  CLUB_CREATION = "CREATE_INVESTMENT_CLUB", // SET CLUB DETAILS IE name, members, etc and create club
-  POST_CLUB_CREATION = "POST_CLUB_CREATION", // copy deposit link
-  LEGAL_ENTITY_FLOW = "LEGAL_ENTITY_FLOW", // Manager legal flow
-  WALLET_CONNECT = "WALLET_CONNECT", // wallet connection
+  CLUB_CREATION = 'CREATE_INVESTMENT_CLUB', // SET CLUB DETAILS IE name, members, etc and create club
+  POST_CLUB_CREATION = 'POST_CLUB_CREATION', // copy deposit link
+  LEGAL_ENTITY_FLOW = 'LEGAL_ENTITY_FLOW', // Manager legal flow
+  WALLET_CONNECT = 'WALLET_CONNECT' // wallet connection
 }
 
 type EventProperty = {
@@ -50,7 +50,7 @@ type EventProperty = {
 
 export const amplitudeLogger = (
   eventName: string,
-  eventProperties: EventProperty,
+  eventProperties: EventProperty
 ): Promise<boolean> => {
   // TODO: Implementation of checking environment can be improved using netlify-plugin-contextual-env
 
@@ -58,12 +58,12 @@ export const amplitudeLogger = (
     return new Promise((resolve, reject) =>
       amplitude
         .getInstance()
-        .logEvent(eventName, { ...eventProperties }, resolve, reject),
+        .logEvent(eventName, { ...eventProperties }, resolve, reject)
     );
   }
 
-  console.log("[Amplitude]", eventName, {
-    ...eventProperties,
+  console.log('[Amplitude]', eventName, {
+    ...eventProperties
   });
 
   return Promise.resolve(true);

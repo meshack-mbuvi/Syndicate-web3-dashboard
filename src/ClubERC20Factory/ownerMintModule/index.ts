@@ -1,5 +1,5 @@
-import OwnerMintModule_ABI from "src/contracts/OwnerMintModule.json";
-import { getGnosisTxnInfo } from "../shared/gnosisTransactionInfo";
+import OwnerMintModule_ABI from 'src/contracts/OwnerMintModule.json';
+import { getGnosisTxnInfo } from '../shared/gnosisTransactionInfo';
 import { estimateGas } from '../shared/getGasEstimate';
 
 export class OwnerMintModuleContract {

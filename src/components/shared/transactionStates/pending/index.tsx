@@ -1,6 +1,6 @@
-import { Spinner } from "@/components/shared/spinner";
-import React from "react";
-import TransactionStateModal from "../shared";
+import { Spinner } from '@/components/shared/spinner';
+import React from 'react';
+import TransactionStateModal from '../shared';
 
 interface Props {
   show: boolean;

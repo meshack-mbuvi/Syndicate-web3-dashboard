@@ -1,10 +1,10 @@
-import { CLUB_MEMBER_QUERY } from "@/graphql/queries";
-import { AppState } from "@/state";
-import { getWeiAmount } from "@/utils/conversions";
-import { useQuery } from "@apollo/client";
-import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
-import { useDemoMode } from "./useDemoMode";
+import { CLUB_MEMBER_QUERY } from '@/graphql/queries';
+import { AppState } from '@/state';
+import { getWeiAmount } from '@/utils/conversions';
+import { useQuery } from '@apollo/client';
+import { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
+import { useDemoMode } from './useDemoMode';
 
 /**
  * Used to retrieve member ownership details for a given member address

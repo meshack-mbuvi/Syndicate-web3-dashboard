@@ -1,13 +1,16 @@
-import { getOpenseaTokens, getOpenseaFloorPrices } from "@/utils/api/opensea";
-import { mockCollectiblesResult } from "@/utils/mockdata";
-import { web3 } from "@/utils/web3Utils";
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import axios from "axios";
-import abi from "human-standard-token-abi";
-import { getWeiAmount } from "src/utils/conversions";
-import { AbiItem } from "web3-utils";
-import { initialState } from "./types";
-import { morseCodeNftsDetails, DisplayCriteria } from "@/containers/layoutWithSyndicateDetails/assets/collectibles/shared/morseCodeNfts";
+import { getOpenseaTokens, getOpenseaFloorPrices } from '@/utils/api/opensea';
+import { mockCollectiblesResult } from '@/utils/mockdata';
+import { web3 } from '@/utils/web3Utils';
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import axios from 'axios';
+import abi from 'human-standard-token-abi';
+import { getWeiAmount } from 'src/utils/conversions';
+import { AbiItem } from 'web3-utils';
+import { initialState } from './types';
+import {
+  morseCodeNftsDetails,
+  DisplayCriteria
+} from '@/containers/layoutWithSyndicateDetails/assets/collectibles/shared/morseCodeNfts';
 
 import {
   getNativeTokenPrice,

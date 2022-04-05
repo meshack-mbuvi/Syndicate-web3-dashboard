@@ -1,16 +1,16 @@
-import { DepositTokenMintModuleContract } from "@/ClubERC20Factory/depositTokenMintModule";
-import { MintPolicyContract } from "@/ClubERC20Factory/policyMintERC20";
-import { MerkleDistributorModuleContract } from "@/ClubERC20Factory/merkleDistributorModule";
-import { AppState } from "@/state";
+import { DepositTokenMintModuleContract } from '@/ClubERC20Factory/depositTokenMintModule';
+import { MintPolicyContract } from '@/ClubERC20Factory/policyMintERC20';
+import { MerkleDistributorModuleContract } from '@/ClubERC20Factory/merkleDistributorModule';
+import { AppState } from '@/state';
 import {
   setERC20TokenContract,
   setERC20TokenDespositDetails,
   setERC20TokenDetails,
-  setLoadingClub,
-} from "@/state/erc20token/slice";
-import { DepositDetails, ERC20Token } from "@/state/erc20token/types";
-import {isZeroAddress } from "@/utils";
-import { getWeiAmount } from "@/utils/conversions";
+  setLoadingClub
+} from '@/state/erc20token/slice';
+import { DepositDetails, ERC20Token } from '@/state/erc20token/types';
+import { isZeroAddress } from '@/utils';
+import { getWeiAmount } from '@/utils/conversions';
 import { CONTRACT_ADDRESSES, SUPPORTED_TOKENS } from '@/Networks';
 
 export const ERC20TokenDefaultState = {

@@ -20,5 +20,5 @@ export interface clubERC20 {
 export const initialState = {
   otherClubERC20s: [],
   myClubERC20s: [],
-  loading: true,
+  loading: true
 };

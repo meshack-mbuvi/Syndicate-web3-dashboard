@@ -1,24 +1,24 @@
-import ArrowDown from "@/components/icons/arrowDown";
-import { NumberField, TextField } from "@/components/inputs";
-import Modal, { ModalStyle } from "@/components/modal";
-import { Spinner } from "@/components/shared/spinner";
-import { BlockExplorerLink } from "@/components/syndicates/shared/BlockExplorerLink";
-import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { setERC20Token } from "@/helpers/erc20TokenDetails";
-import { AppState } from "@/state";
-import { getWeiAmount } from "@/utils/conversions";
-import { formatAddress } from "@/utils/formatAddress";
+import ArrowDown from '@/components/icons/arrowDown';
+import { NumberField, TextField } from '@/components/inputs';
+import Modal, { ModalStyle } from '@/components/modal';
+import { Spinner } from '@/components/shared/spinner';
+import { BlockExplorerLink } from '@/components/syndicates/shared/BlockExplorerLink';
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { setERC20Token } from '@/helpers/erc20TokenDetails';
+import { AppState } from '@/state';
+import { getWeiAmount } from '@/utils/conversions';
+import { formatAddress } from '@/utils/formatAddress';
 import {
   numberInputRemoveCommas,
-  numberWithCommas,
-} from "@/utils/formattedNumbers";
-import { useClubDepositsAndSupply } from "@/hooks/useClubDepositsAndSupply";
-import { ProgressModal, ProgressModalState } from "@/components/progressModal";
-import MemberDetailsModal from "@/containers/managerActions/mintAndShareTokens/MemberDetailsModal";
-import ConfirmMemberDetailsModal from "@/containers/managerActions/mintAndShareTokens/ConfirmMemberDetailsModal";
-import { OldClubERC20Contract } from "@/ClubERC20Factory/clubERC20/oldClubERC20";
-import { isDev } from "@/utils/environment";
+  numberWithCommas
+} from '@/utils/formattedNumbers';
+import { useClubDepositsAndSupply } from '@/hooks/useClubDepositsAndSupply';
+import { ProgressModal, ProgressModalState } from '@/components/progressModal';
+import MemberDetailsModal from '@/containers/managerActions/mintAndShareTokens/MemberDetailsModal';
+import ConfirmMemberDetailsModal from '@/containers/managerActions/mintAndShareTokens/ConfirmMemberDetailsModal';
+import { OldClubERC20Contract } from '@/ClubERC20Factory/clubERC20/oldClubERC20';
+import { isDev } from '@/utils/environment';
 import { CONTRACT_ADDRESSES } from '@/Networks';
 
 interface Props {

@@ -1,24 +1,24 @@
-import CreateClubButton from "@/components/createClubButton";
-import PortfolioEmptyState from "@/components/syndicates/portfolioAndDiscover/portfolio/portfolioEmptyState";
-import useClubERC20s from "@/hooks/useClubERC20s";
-import useWindowSize from "@/hooks/useWindowSize";
-import { AppState } from "@/state";
-import React from "react";
-import { useSelector } from "react-redux";
-import { SkeletonLoader } from "src/components/skeletonLoader";
+import CreateClubButton from '@/components/createClubButton';
+import PortfolioEmptyState from '@/components/syndicates/portfolioAndDiscover/portfolio/portfolioEmptyState';
+import useClubERC20s from '@/hooks/useClubERC20s';
+import useWindowSize from '@/hooks/useWindowSize';
+import { AppState } from '@/state';
+import React from 'react';
+import { useSelector } from 'react-redux';
+import { SkeletonLoader } from 'src/components/skeletonLoader';
 
-import ClubERC20Table from "./portfolio/clubERC20Table";
+import ClubERC20Table from './portfolio/clubERC20Table';
 import {
   MyClubERC20TableColumns,
-  clubERCTableColumns,
-} from "./portfolio/clubERC20Table/constants";
+  clubERCTableColumns
+} from './portfolio/clubERC20Table/constants';
 
 // generate multiple skeleton loader components
 const generateSkeletons = (
   num: number,
   width: string,
   height: string,
-  borderRadius?: string,
+  borderRadius?: string
 ) =>
   Array(num).map((_, i) => (
     <div className="px-2 w-full" key={i}>
@@ -41,12 +41,12 @@ const generateSkeletons = (
 const PortfolioAndDiscover: React.FC = () => {
   const {
     web3Reducer: { web3 },
-    clubERC20sReducer: { myClubERC20s, otherClubERC20s, loading },
+    clubERC20sReducer: { myClubERC20s, otherClubERC20s, loading }
   } = useSelector((state: AppState) => state);
 
   const {
     account,
-    ethereumNetwork: { invalidEthereumNetwork },
+    ethereumNetwork: { invalidEthereumNetwork }
   } = web3;
 
   useClubERC20s();
@@ -66,7 +66,7 @@ const PortfolioAndDiscover: React.FC = () => {
           </div>
           <div className="">
             <div className="grid grid-cols-6 -mx-2">
-              {generateSkeletons(6, "28", "5", "rounded-md")}
+              {generateSkeletons(6, '28', '5', 'rounded-md')}
             </div>
             <div className="mt-6 border-b-1 w-full border-gray-steelGrey">
               {[1, 2].map((index) => {
@@ -84,8 +84,8 @@ const PortfolioAndDiscover: React.FC = () => {
                         borderRadius="rounded-md"
                       />
                     </div>
-                    {generateSkeletons(4, "30", "7", "rounded-md")}
-                    {generateSkeletons(1, "30", "7", "rounded-full")}
+                    {generateSkeletons(4, '30', '7', 'rounded-md')}
+                    {generateSkeletons(1, '30', '7', 'rounded-full')}
                   </div>
                 );
               })}
@@ -98,7 +98,7 @@ const PortfolioAndDiscover: React.FC = () => {
             <div>
               <div
                 className="flex flex-col sm:flex-row justify-between sm:items-center w-full mt-14 mb-16"
-                style={width < 480 ? { paddingRight: "6%" } : null}
+                style={width < 480 ? { paddingRight: '6%' } : null}
               >
                 <h1>Portfolio</h1>
                 <CreateClubButton />

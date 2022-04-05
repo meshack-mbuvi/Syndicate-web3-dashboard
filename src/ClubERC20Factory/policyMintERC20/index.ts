@@ -1,5 +1,5 @@
-import MintPolicyABI from "src/contracts/PolicyMintERC20.json";
-import { getGnosisTxnInfo } from "../shared/gnosisTransactionInfo";
+import MintPolicyABI from 'src/contracts/PolicyMintERC20.json';
+import { getGnosisTxnInfo } from '../shared/gnosisTransactionInfo';
 import { estimateGas } from '../shared/getGasEstimate';
 
 export class MintPolicyContract {

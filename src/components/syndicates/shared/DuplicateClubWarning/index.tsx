@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 
 const DuplicateClubWarning: React.FC<{
   dismissDuplicateClubWarning: () => void;
@@ -15,11 +15,13 @@ const DuplicateClubWarning: React.FC<{
         </div>
 
         <div>
-          <p className="pb-2 text-white">Heads up: different clubs may look similar</p>
+          <p className="pb-2 text-white">
+            Heads up: different clubs may look similar
+          </p>
           <p className="text-sm text-gray-syn3">
-            A club&apos;s name, gradient, and token name aren&apos;t unique, so different
-            clubs can look similar. Make sure that you&apos;re on the right club by double checking
-            that the sender is legitimate.
+            A club&apos;s name, gradient, and token name aren&apos;t unique, so
+            different clubs can look similar. Make sure that you&apos;re on the
+            right club by double checking that the sender is legitimate.
           </p>
         </div>
       </div>
@@ -27,7 +29,6 @@ const DuplicateClubWarning: React.FC<{
       <button
         className="flex justify-start pt-1 flex-shrink-0 h-4"
         onClick={() => dismissDuplicateClubWarning()}
-        
       >
         <img
           src="/images/close-gray-5.svg"
@@ -43,11 +44,11 @@ const DuplicateClubWarning: React.FC<{
             className="bg-gray-syn7 absolute"
             id="arrow"
             style={{
-              top: "10px",
-              width: "48px",
-              height: "48px",
-              transform: "scale(1.5,1) rotate(45deg)",
-              borderRadius: "4px",
+              top: '10px',
+              width: '48px',
+              height: '48px',
+              transform: 'scale(1.5,1) rotate(45deg)',
+              borderRadius: '4px'
             }}
           ></div>
         </div>

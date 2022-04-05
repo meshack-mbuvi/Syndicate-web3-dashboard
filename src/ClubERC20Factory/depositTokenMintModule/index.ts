@@ -1,5 +1,5 @@
-import DepositTokenMintModule_ABI from "src/contracts/DepositTokenMintModule.json";
-import { getGnosisTxnInfo } from "../shared/gnosisTransactionInfo";
+import DepositTokenMintModule_ABI from 'src/contracts/DepositTokenMintModule.json';
+import { getGnosisTxnInfo } from '../shared/gnosisTransactionInfo';
 import { estimateGas } from '../shared/getGasEstimate';
 
 export class DepositTokenMintModuleContract {

@@ -1,5 +1,5 @@
-import React from "react";
-import { useController } from "react-hook-form";
+import React from 'react';
+import { useController } from 'react-hook-form';
 
 /**
  * An textarea component with label and icon at the right end
@@ -33,22 +33,22 @@ export const TextArea: React.FC<ITextAreaProps> = (props) => {
     customHoverBorder,
     control,
     disabled = false,
-    classOverride = "",
+    classOverride = '',
     ...rest
   } = props;
 
   const {
     field,
-    formState: { errors },
+    formState: { errors }
   } = useController({
     name,
     control,
-    defaultValue: "",
+    defaultValue: ''
   });
 
   const disabledClasses = disabled
-    ? "text-gray-500 border-0"
-    : "text-black border-gray-24";
+    ? 'text-gray-500 border-0'
+    : 'text-black border-gray-24';
 
   return (
     <div className="w-full">
@@ -62,7 +62,7 @@ export const TextArea: React.FC<ITextAreaProps> = (props) => {
         className={`text-input-placeholder text-white font-whyte border border-gray-french rounded-lg w-full py-3 px-4 focus:border-blue bg-transparent ${
           customHoverBorder
             ? customHoverBorder
-            : "hover:border-white hover:border-opacity-70"
+            : 'hover:border-white hover:border-opacity-70'
         } ${disabledClasses} ${classOverride}`}
         {...rest}
         rows={rows}

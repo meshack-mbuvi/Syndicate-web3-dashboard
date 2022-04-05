@@ -1,9 +1,9 @@
-import NumberTreatment from "@/components/NumberTreatment";
-import { Spinner } from "@/components/shared/spinner";
-import useAvailableToClaim from "@/hooks/useRugUtility";
-import Image from "next/image";
-import { FC, useRef } from "react";
-import RugRadioTokenIcon from "/public/images/rugRadio/tokenIcon.svg";
+import NumberTreatment from '@/components/NumberTreatment';
+import { Spinner } from '@/components/shared/spinner';
+import useAvailableToClaim from '@/hooks/useRugUtility';
+import Image from 'next/image';
+import { FC, useRef } from 'react';
+import RugRadioTokenIcon from '/public/images/rugRadio/tokenIcon.svg';
 
 interface INFTComponentProps {
   showCollectibles: boolean;
@@ -26,13 +26,13 @@ const NFTComponent: FC<INFTComponentProps> = ({
   collectible,
   mediaType,
   showCollectibles,
-  refresh,
+  refresh
 }) => {
   const { image, animation } = collectible;
 
   const { tokenBalance, tokenProduction, loading } = useAvailableToClaim(
     collectible?.id,
-    refresh,
+    refresh
   );
 
   const videoRef = useRef(null);
@@ -41,25 +41,25 @@ const NFTComponent: FC<INFTComponentProps> = ({
   // NFT media
   let media;
 
-  if (mediaType === "imageOnlyNFT") {
+  if (mediaType === 'imageOnlyNFT') {
     media = (
       <div
         style={{
           backgroundImage: `url('${image}')`,
-          backgroundSize: "cover",
-          backgroundRepeat: "no-repeat",
-          backgroundPosition: "center 20%",
+          backgroundSize: 'cover',
+          backgroundRepeat: 'no-repeat',
+          backgroundPosition: 'center 20%'
         }}
         className={`perfect-square-box w-full relative`}
       ></div>
     );
-  } else if (mediaType === "animatedNFT") {
+  } else if (mediaType === 'animatedNFT') {
     media = (
       <div className={`relative h-full`}>
         <img src={animation} alt="animated nft" className={`h-full`} />
       </div>
     );
-  } else if (mediaType === "videoNFT" || mediaType === "htmlNFT") {
+  } else if (mediaType === 'videoNFT' || mediaType === 'htmlNFT') {
     media = (
       <div
         className={`relative "perfect-square-box"
@@ -75,8 +75,8 @@ const NFTComponent: FC<INFTComponentProps> = ({
           {/* Specifying type as "video/mp4" works for both .mov and .mp4 files  */}
           <source
             src={
-              mediaType === "htmlNFT"
-                ? "https://litwtf.mypinata.cloud/ipfs/QmVjgAD5gaNQ1cLpgKLeuXDPX8R1yeajtWUhM6nV7VAe6e/4.mp4"
+              mediaType === 'htmlNFT'
+                ? 'https://litwtf.mypinata.cloud/ipfs/QmVjgAD5gaNQ1cLpgKLeuXDPX8R1yeajtWUhM6nV7VAe6e/4.mp4'
                 : animation
             }
             type="video/mp4"
@@ -84,15 +84,15 @@ const NFTComponent: FC<INFTComponentProps> = ({
         </video>
       </div>
     );
-  } else if (mediaType === "soundtrackNFT") {
+  } else if (mediaType === 'soundtrackNFT') {
     const mp3Animation = animation.match(/\.mp3$/) != null;
     media = (
       <div
         style={{
           backgroundImage: `url('${image}')`,
-          backgroundSize: "cover",
-          backgroundRepeat: "no-repeat",
-          backgroundPosition: "center center",
+          backgroundSize: 'cover',
+          backgroundRepeat: 'no-repeat',
+          backgroundPosition: 'center center'
         }}
         className={`flex flex-col w-full justify-end items-center perfect-square-box relative border-0`}
       >
@@ -122,7 +122,7 @@ const NFTComponent: FC<INFTComponentProps> = ({
       >
         <div
           className={`flex flex-col ${
-            showCollectibles ? "border-t-1 border-gray-syn6 rounded-2.5xl" : ""
+            showCollectibles ? 'border-t-1 border-gray-syn6 rounded-2.5xl' : ''
           }  bg-gray-syn7 overflow-hidden relative`}
         >
           <div className="w-full lg:h-88 lg:w-88 max-w-480 border-r-1 border-l-1 border-t-1 border-gray-syn6 rounded-t-2.5xl">
@@ -142,7 +142,7 @@ const NFTComponent: FC<INFTComponentProps> = ({
                       width={16}
                       height={16}
                       alt="token icon"
-                    />{" "}
+                    />{' '}
                   </span>
                   Generating {tokenProduction} RUG per day
                 </p>

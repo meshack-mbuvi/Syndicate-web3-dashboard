@@ -1,9 +1,9 @@
-import { AppState } from "@/state";
-import { getWeiAmount } from "@/utils/conversions";
-import { useEffect, useMemo, useState } from "react";
-import { useRouter } from "next/router";
-import { useSelector } from "react-redux";
-import { isEmpty } from "lodash";
+import { AppState } from '@/state';
+import { getWeiAmount } from '@/utils/conversions';
+import { useEffect, useMemo, useState } from 'react';
+import { useRouter } from 'next/router';
+import { useSelector } from 'react-redux';
+import { isEmpty } from 'lodash';
 
 export const useNativeBalance = (account: string): number => {
   const [nativeBalance, setNativeBalance] = useState(null);

@@ -1,4 +1,4 @@
-import Image from "next/image";
+import Image from 'next/image';
 
 export const InputWithTrailingIcon = (props: {
   label: string;
@@ -18,7 +18,7 @@ export const InputWithTrailingIcon = (props: {
     value,
     name,
     handleIconClick,
-    onChangeHandler,
+    onChangeHandler
   } = props;
   return (
     <div>
@@ -44,7 +44,7 @@ export const InputWithTrailingIcon = (props: {
           <Image src={`${icon}`} height="19" width="16" alt="Selector Icon" />
         </button>
       </div>
-      <p className="text-red-500 text-xs mt-1 mb-1">{error ? error : ""}</p>
+      <p className="text-red-500 text-xs mt-1 mb-1">{error ? error : ''}</p>
     </div>
   );
 };

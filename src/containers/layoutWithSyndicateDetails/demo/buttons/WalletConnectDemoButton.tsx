@@ -1,5 +1,5 @@
-import React from "react";
-import { useDemoMode } from "@/hooks/useDemoMode";
+import React from 'react';
+import { useDemoMode } from '@/hooks/useDemoMode';
 
 interface IWalletConnectDemoButton {
   buttonText: string;
@@ -9,15 +9,15 @@ interface IWalletConnectDemoButton {
 }
 
 export enum DemoButtonType {
-  RECTANGLE = "RECTANGLE",
-  ROUND = "ROUND"
+  RECTANGLE = 'RECTANGLE',
+  ROUND = 'ROUND'
 }
 
 const WalletConnectDemoButton: React.FC<IWalletConnectDemoButton> = ({
   buttonText,
-  alignment = "justify-center",
+  alignment = 'justify-center',
   buttonType = DemoButtonType.RECTANGLE,
-  extraClasses = ""
+  extraClasses = ''
 }) => {
   const isDemoMode = useDemoMode();
 
@@ -34,8 +34,7 @@ const WalletConnectDemoButton: React.FC<IWalletConnectDemoButton> = ({
         </span>
       </a>
     );
-  }
-  else {
+  } else {
     return (
       <a href="/clubs/demo/manage" className={extraClasses}>
         <span
@@ -50,7 +49,6 @@ const WalletConnectDemoButton: React.FC<IWalletConnectDemoButton> = ({
       </a>
     );
   }
-
 };
 
 export default WalletConnectDemoButton;

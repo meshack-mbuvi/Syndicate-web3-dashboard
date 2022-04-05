@@ -1,14 +1,13 @@
-import { BlockExplorerLink } from "@/components/syndicates/shared/BlockExplorerLink";
-import Modal, { ModalStyle } from "../modal";
-import { Spinner } from "../shared/spinner";
-import {
-  ExternalLinkColor} from "src/components/iconWrappers";
+import { BlockExplorerLink } from '@/components/syndicates/shared/BlockExplorerLink';
+import Modal, { ModalStyle } from '../modal';
+import { Spinner } from '../shared/spinner';
+import { ExternalLinkColor } from 'src/components/iconWrappers';
 
 export enum ProgressModalState {
-  PENDING = "PENDING",
-  SUCCESS = "SUCCESS",
-  FAILURE = "FAILURE",
-  CONFIRM = "CONFIRM",
+  PENDING = 'PENDING',
+  SUCCESS = 'SUCCESS',
+  FAILURE = 'FAILURE',
+  CONFIRM = 'CONFIRM'
 }
 
 export const ProgressModal = (props: {

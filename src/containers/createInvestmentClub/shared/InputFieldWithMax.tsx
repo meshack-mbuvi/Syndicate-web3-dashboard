@@ -1,4 +1,4 @@
-import { SettingsDisclaimerTooltip } from "@/containers/createInvestmentClub/shared/SettingDisclaimer";
+import { SettingsDisclaimerTooltip } from '@/containers/createInvestmentClub/shared/SettingDisclaimer';
 
 /**
  * An input component with label, component to the right, and an icon to the furthest right.
@@ -34,12 +34,12 @@ export const InputFieldWithMax = (props: {
     warning,
     value,
     disabled = false,
-    type = "number",
+    type = 'number',
     addOn,
     customClass,
     moreInfo,
     addSettingDisclaimer,
-    className,
+    className
   } = props;
 
   return (
@@ -60,10 +60,10 @@ export const InputFieldWithMax = (props: {
             <input
               className={`block font-whyte text-base bg-transparent p-4 rounded-md border w-full outline-none text-white ${
                 error
-                  ? "border-red-500 focus:border-red-500 focus:ring-0"
+                  ? 'border-red-500 focus:border-red-500 focus:ring-0'
                   : warning
-                  ? "border-yellow-saffron focus:border-yellow-saffron focus:ring-0"
-                  : "border-gray-24 focus:border-blue-navy hover:border-gray-syn3"
+                  ? 'border-yellow-saffron focus:border-yellow-saffron focus:ring-0'
+                  : 'border-gray-24 focus:border-blue-navy hover:border-gray-syn3'
               }`}
               type={type}
               name={name}
@@ -104,11 +104,11 @@ export const InputFieldWithMax = (props: {
       <div className="w-full lg:w-full">
         {(error || warning) && (
           <p
-            className={`text-sm ${warning && "text-yellow-saffron"} ${
-              error && "text-red-500"
+            className={`text-sm ${warning && 'text-yellow-saffron'} ${
+              error && 'text-red-500'
             } pt-2`}
           >
-            {(error || warning) && !disabled ? error || warning : ""}
+            {(error || warning) && !disabled ? error || warning : ''}
           </p>
         )}
       </div>

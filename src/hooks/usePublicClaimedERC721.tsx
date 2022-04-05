@@ -1,22 +1,22 @@
-import { AppState } from "@/state";
-import { useDispatch, useSelector } from "react-redux";
-import { useEffect, useState } from "react";
+import { AppState } from '@/state';
+import { useDispatch, useSelector } from 'react-redux';
+import { useEffect, useState } from 'react';
 import {
   setLoadingERC721Claimed,
   setERC721Claimed,
-  clearERC721Claimed,
-} from "@/state/claimedERC721/slice";
-import { ERC721Contract } from "@/ClubERC20Factory/ERC721Membership";
+  clearERC721Claimed
+} from '@/state/claimedERC721/slice';
+import { ERC721Contract } from '@/ClubERC20Factory/ERC721Membership';
 
 const useFetchERC721PublicClaim: any = () => {
   const dispatch = useDispatch();
 
   const {
     web3Reducer: {
-      web3: { account, web3 },
+      web3: { account, web3 }
     },
     erc721TokenSliceReducer: { erc721Token },
-    initializeContractsReducer: { syndicateContracts },
+    initializeContractsReducer: { syndicateContracts }
   } = useSelector((state: AppState) => state);
 
   const { address: nftAddress, publicUtilityClaimEnabled } = erc721Token;
@@ -30,12 +30,12 @@ const useFetchERC721PublicClaim: any = () => {
     const { PublicOnePerAddressModule } = syndicateContracts;
     let _hasMinted = await PublicOnePerAddressModule.hasMinted(
       nftAddress,
-      account,
+      account
     );
     if (!_hasMinted) {
       const ERC721tokenContract = new ERC721Contract(
         nftAddress as string,
-        web3,
+        web3
       );
       _hasMinted = parseInt(await ERC721tokenContract.balanceOf(account)) > 0;
     }
@@ -59,9 +59,9 @@ const useFetchERC721PublicClaim: any = () => {
           token: nftAddress,
           index: null,
           treeIndex: null,
-          id: "",
-          claimed: true,
-        }),
+          id: '',
+          claimed: true
+        })
       );
     } else {
       dispatch(clearERC721Claimed());

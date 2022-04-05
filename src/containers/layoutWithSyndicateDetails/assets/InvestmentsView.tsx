@@ -1,21 +1,21 @@
-import { SkeletonLoader } from "@/components/skeletonLoader";
-import { useIsClubMember, useIsClubOwner } from "@/hooks/useClubOwner";
-import { useDemoMode } from "@/hooks/useDemoMode";
-import useModal from "@/hooks/useModal";
-import { AppState } from "@/state";
+import { SkeletonLoader } from '@/components/skeletonLoader';
+import { useIsClubMember, useIsClubOwner } from '@/hooks/useClubOwner';
+import { useDemoMode } from '@/hooks/useDemoMode';
+import useModal from '@/hooks/useModal';
+import { AppState } from '@/state';
 import {
   clearCurrentTransaction,
-  setCurrentTransaction,
-} from "@/state/erc20transactions";
-import { TransactionCategory } from "@/state/erc20transactions/types";
-import { getWeiAmount } from "@/utils/conversions";
-import { floatedNumberWithCommas } from "@/utils/formattedNumbers";
-import moment from "moment";
-import Image from "next/image";
-import { Dispatch, FC, SetStateAction, useRef, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import ActivityModal from "../activity/shared/ActivityModal";
-import { ArrowRightIcon } from "@heroicons/react/outline";
+  setCurrentTransaction
+} from '@/state/erc20transactions';
+import { TransactionCategory } from '@/state/erc20transactions/types';
+import { getWeiAmount } from '@/utils/conversions';
+import { floatedNumberWithCommas } from '@/utils/formattedNumbers';
+import moment from 'moment';
+import Image from 'next/image';
+import { Dispatch, FC, SetStateAction, useRef, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import ActivityModal from '../activity/shared/ActivityModal';
+import { ArrowRightIcon } from '@heroicons/react/outline';
 
 interface InvestmentsViewProps {
   pageOffset: number;
@@ -32,14 +32,14 @@ const InvestmentsView: FC<InvestmentsViewProps> = ({
   canNextPage,
   transactionsLoading,
   dataLimit,
-  refetchTransactions,
+  refetchTransactions
 }) => {
   const {
     transactionsReducer: {
       totalInvestmentTransactionsCount,
       investmentTransactions,
-      currentTransaction,
-    },
+      currentTransaction
+    }
   } = useSelector((state: AppState) => state);
 
   const [showOffChainInvestmentsModal, toggleShowOffChainInvestmentsModal] =
@@ -78,8 +78,8 @@ const InvestmentsView: FC<InvestmentsViewProps> = ({
     subText?: string;
   }> = ({
     animate,
-    titleText = "This club has no off-chain investments yet.",
-    subText = "Any off-chain investments added will appear here.",
+    titleText = 'This club has no off-chain investments yet.',
+    subText = 'Any off-chain investments added will appear here.'
   }) => {
     return (
       <div>
@@ -97,7 +97,7 @@ const InvestmentsView: FC<InvestmentsViewProps> = ({
               return (
                 <div
                   className={`grid grid-cols-12 gap-5 border-b-1 border-gray-syn6 ${
-                    index === 0 ? "pb-3" : "py-3"
+                    index === 0 ? 'pb-3' : 'py-3'
                   }`}
                   key={index}
                 >
@@ -156,11 +156,11 @@ const InvestmentsView: FC<InvestmentsViewProps> = ({
   };
 
   const columns = [
-    "Company",
-    "Round",
-    "Cost basis",
-    "Current investment value",
-    "",
+    'Company',
+    'Round',
+    'Cost basis',
+    'Current investment value',
+    ''
   ];
 
   // when to show pagination
@@ -194,24 +194,24 @@ const InvestmentsView: FC<InvestmentsViewProps> = ({
       tokenDecimal,
       value,
       tokenLogo,
-      metadata,
+      metadata
     } = investmentData;
     const { memo } = metadata;
     const formattedBlockTime = moment(blockTimestamp * 1000).format(
-      "dddd, MMM Do YYYY, h:mm A",
+      'dddd, MMM Do YYYY, h:mm A'
     );
 
-    const category = "OFF_CHAIN_INVESTMENT" as TransactionCategory;
+    const category = 'OFF_CHAIN_INVESTMENT' as TransactionCategory;
 
     const selectedTransactionData = {
       category,
-      note: memo ?? "",
+      note: memo ?? '',
       hash,
       transactionInfo: {
         transactionHash: hash,
         from: fromAddress,
         to: toAddress,
-        isOutgoingTransaction: isOutgoingTransaction,
+        isOutgoingTransaction: isOutgoingTransaction
       },
       amount: getWeiAmount(value, tokenDecimal, false),
       tokenSymbol,
@@ -221,7 +221,7 @@ const InvestmentsView: FC<InvestmentsViewProps> = ({
       timestamp: formattedBlockTime,
       transactionId: metadata?.transactionId,
       metadata,
-      blockTimestamp,
+      blockTimestamp
     };
     dispatch(setCurrentTransaction(selectedTransactionData));
     toggleShowOffChainInvestmentsModal();
@@ -239,7 +239,7 @@ const InvestmentsView: FC<InvestmentsViewProps> = ({
               {columns?.map((col, idx) => (
                 <div
                   key={`token-table-header-${idx}`}
-                  className={`text-sm ${idx < 2 ? "col-span-3" : "col-span-2"}`}
+                  className={`text-sm ${idx < 2 ? 'col-span-3' : 'col-span-2'}`}
                 >
                   <span className="text-gray-syn4 text-sm">{col}</span>
                 </div>
@@ -253,7 +253,7 @@ const InvestmentsView: FC<InvestmentsViewProps> = ({
               companyName,
               roundCategory,
               preMoneyValuation,
-              postMoneyValuation,
+              postMoneyValuation
             } = metadata;
             const showAddMemo =
               !companyName ||
@@ -261,9 +261,9 @@ const InvestmentsView: FC<InvestmentsViewProps> = ({
               !postMoneyValuation ||
               !preMoneyValuation;
             const [costBasisUSD, costBasisDecimalValue] =
-              floatedNumberWithCommas(postMoneyValuation).split(".");
+              floatedNumberWithCommas(postMoneyValuation).split('.');
             const [investmentValueUSD, investmentDecimalValue] =
-              floatedNumberWithCommas(preMoneyValuation).split(".");
+              floatedNumberWithCommas(preMoneyValuation).split('.');
             const dashForMissingValue = (
               <span className="text-gray-syn4">-</span>
             );
@@ -273,10 +273,10 @@ const InvestmentsView: FC<InvestmentsViewProps> = ({
             const investmentDataValue = getWeiAmount(
               investmentData.value,
               investmentData.tokenDecimal,
-              false,
+              false
             );
             const [defaultCostBasisUSD, defaultCostBasisDecimalValue] =
-              floatedNumberWithCommas(investmentDataValue).split(".");
+              floatedNumberWithCommas(investmentDataValue).split('.');
 
             const defaultCostBasis = (
               <span>
@@ -295,7 +295,7 @@ const InvestmentsView: FC<InvestmentsViewProps> = ({
               <div
                 key={`token-table-row-${index}`}
                 className={`grid grid-cols-12 gap-5 border-b-1 border-gray-syn7 py-5 ${
-                  isMember || isOwner ? "cursor-pointer" : ""
+                  isMember || isOwner ? 'cursor-pointer' : ''
                 }`}
                 onClick={() => viewInvestmentDetails(investmentData)}
               >
@@ -319,7 +319,7 @@ const InvestmentsView: FC<InvestmentsViewProps> = ({
                         </span>
                       )}
                       &nbsp;
-                      {"USD"}
+                      {'USD'}
                     </span>
                   ) : (
                     defaultCostBasis
@@ -336,7 +336,7 @@ const InvestmentsView: FC<InvestmentsViewProps> = ({
                         </span>
                       )}
                       &nbsp;
-                      {"USD"}
+                      {'USD'}
                     </span>
                   ) : (
                     dashForMissingValue
@@ -388,21 +388,21 @@ const InvestmentsView: FC<InvestmentsViewProps> = ({
             <button
               className={`pt-1 ${
                 pageOffset === 0
-                  ? "opacity-50 cursor-not-allowed"
-                  : "hover:opacity-90"
+                  ? 'opacity-50 cursor-not-allowed'
+                  : 'hover:opacity-90'
               }`}
               onClick={() => goToPreviousPage()}
               disabled={pageOffset === 0}
             >
               <Image
-                src={"/images/arrowBack.svg"}
+                src={'/images/arrowBack.svg'}
                 height="16"
                 width="16"
                 alt="Previous"
               />
             </button>
             <p className="">
-              {pageOffset === 0 ? "1" : pageOffset} -{" "}
+              {pageOffset === 0 ? '1' : pageOffset} -{' '}
               {investmentTransactions?.[pageOffset]?.length < dataLimit
                 ? pageOffset + investmentTransactions[pageOffset].length
                 : pageOffset + dataLimit}
@@ -412,14 +412,14 @@ const InvestmentsView: FC<InvestmentsViewProps> = ({
             <button
               className={`pt-1 ${
                 !canNextPage
-                  ? "opacity-50 cursor-not-allowed"
-                  : "hover:opacity-90"
+                  ? 'opacity-50 cursor-not-allowed'
+                  : 'hover:opacity-90'
               }`}
               onClick={() => goToNextPage()}
               disabled={!canNextPage}
             >
               <Image
-                src={"/images/arrowNext.svg"}
+                src={'/images/arrowNext.svg'}
                 height="16"
                 width="16"
                 alt="Next"

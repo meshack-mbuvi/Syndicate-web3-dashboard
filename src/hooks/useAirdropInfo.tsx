@@ -1,41 +1,41 @@
-import { MERKLE_AIRDROP_CREATED } from "@/graphql/queries";
-import { AppState } from "@/state";
+import { MERKLE_AIRDROP_CREATED } from '@/graphql/queries';
+import { AppState } from '@/state';
 import {
   clearAirdropInfo,
   setAirdropInfo,
-  setLoadingAirdropInfo,
-} from "@/state/airdropInfo/slice";
-import { useQuery } from "@apollo/client";
-import { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+  setLoadingAirdropInfo
+} from '@/state/airdropInfo/slice';
+import { useQuery } from '@apollo/client';
+import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
 const useFetchAirdropInfo: any = (skipQuery) => {
   const dispatch = useDispatch();
 
   const {
     web3Reducer: {
-      web3: { account, activeNetwork },
+      web3: { account, activeNetwork }
     },
     merkleProofSliceReducer: { myMerkleProof },
     erc20TokenSliceReducer: {
-      erc20Token: { address: clubAddress },
-    },
+      erc20Token: { address: clubAddress }
+    }
   } = useSelector((state: AppState) => state);
 
   // Fetch existing claims
   const {
     loading,
     data: airdropData = {},
-    refetch,
+    refetch
   } = useQuery(MERKLE_AIRDROP_CREATED, {
     variables: {
       where: {
         club: clubAddress.toLowerCase(),
-        treeIndex: myMerkleProof.treeIndex,
-      },
+        treeIndex: myMerkleProof.treeIndex
+      }
     },
     skip: !account || !activeNetwork.chainId || skipQuery,
-    context: { clientName: "theGraph", chainId: activeNetwork.chainId },
+    context: { clientName: 'theGraph', chainId: activeNetwork.chainId }
   });
 
   useEffect(() => {
@@ -60,8 +60,8 @@ const useFetchAirdropInfo: any = (skipQuery) => {
         setAirdropInfo({
           ...airdropObj,
           endTime: parseInt(airdropObj.endTime),
-          startTime: parseInt(airdropObj.startTime),
-        }),
+          startTime: parseInt(airdropObj.startTime)
+        })
       );
       dispatch(setLoadingAirdropInfo(false));
     } else {

@@ -1,23 +1,23 @@
-import { ModifyClubSettings } from "@/components/modifyClub";
-import { Provider } from "react-redux";
-import { store } from "@/state/index";
+import { ModifyClubSettings } from '@/components/modifyClub';
+import { Provider } from 'react-redux';
+import { store } from '@/state/index';
 
 export default {
-  title: "Molecules/Modify Club Settings/Settings Modal",
+  title: 'Molecules/Modify Club Settings/Settings Modal',
   parameters: {
     nextRouter: {
       query: {
-        clubAddress: "clubAddress",
-      },
-    },
+        clubAddress: 'clubAddress'
+      }
+    }
   },
   decorators: [
     (Story) => (
       <Provider store={store}>
         <Story />
       </Provider>
-    ),
-  ],
+    )
+  ]
 };
 
 const Template = (args) => (
@@ -30,5 +30,5 @@ const Template = (args) => (
 
 export const Default = Template.bind({});
 Default.args = {
-  isVisible: true,
+  isVisible: true
 };

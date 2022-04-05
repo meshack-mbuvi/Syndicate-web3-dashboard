@@ -1,5 +1,5 @@
-import ClubERC20 from "src/contracts/ERC20Club.json";
-import { getGnosisTxnInfo } from "../shared/gnosisTransactionInfo";
+import ClubERC20 from 'src/contracts/ERC20Club.json';
+import { getGnosisTxnInfo } from '../shared/gnosisTransactionInfo';
 import { estimateGas } from '../shared/getGasEstimate';
 
 export class ClubERC20Contract {

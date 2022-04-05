@@ -1,7 +1,7 @@
-import { BlockExplorerLink } from "@/components/syndicates/shared/BlockExplorerLink";
-import React from "react";
-import Button from "@/components/buttons/PrimaryButton";
-import TransactionStateModal from "../shared";
+import { BlockExplorerLink } from '@/components/syndicates/shared/BlockExplorerLink';
+import React from 'react';
+import Button from '@/components/buttons/PrimaryButton';
+import TransactionStateModal from '../shared';
 
 interface Props {
   show: boolean;
@@ -57,13 +57,13 @@ export const FinalStateModal: React.FC<Props> = (props) => {
               <BlockExplorerLink resourceId={address} />
             </div>
           ) : (
-            ""
+            ''
           )}
 
           <div className="flex justify-center my-5">
             <Button
               customClasses={
-                buttonClasses ? buttonClasses : "bg-blue w-40 p-2 rounded-full"
+                buttonClasses ? buttonClasses : 'bg-blue w-40 p-2 rounded-full'
               }
               textColor={buttonClasses}
               onClick={() => handleCloseModal()}

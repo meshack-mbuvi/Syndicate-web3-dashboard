@@ -1,25 +1,25 @@
-import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { AppState } from "@/state";
-import ClaimCard from "./claimCard";
-import NFTCard from "./nftCard";
-import { ERC721Token } from "@/state/erc721token/types";
-import { ERC721Contract } from "@/ClubERC20Factory/ERC721Membership";
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { AppState } from '@/state';
+import ClaimCard from './claimCard';
+import NFTCard from './nftCard';
+import { ERC721Token } from '@/state/erc721token/types';
+import { ERC721Contract } from '@/ClubERC20Factory/ERC721Membership';
 import {
   setERC721TokenDetails,
   setERC721TokenContract,
   setERC721Loading,
-  clearERC721TokenDetails,
-} from "@/state/erc721token/slice";
-import useFetchERC721MerkleProof from "@/hooks/useERC721MerkleProof";
-import useFetchERC721Claim from "@/hooks/useClaimedERC721";
-import useFetchERC721PublicClaim from "@/hooks/usePublicClaimedERC721";
-import useFetchAirdropInfo from "@/hooks/useERC721AirdropInfo";
-import { SkeletonLoader } from "src/components/skeletonLoader";
-import { useRouter } from "next/router";
+  clearERC721TokenDetails
+} from '@/state/erc721token/slice';
+import useFetchERC721MerkleProof from '@/hooks/useERC721MerkleProof';
+import useFetchERC721Claim from '@/hooks/useClaimedERC721';
+import useFetchERC721PublicClaim from '@/hooks/usePublicClaimedERC721';
+import useFetchAirdropInfo from '@/hooks/useERC721AirdropInfo';
+import { SkeletonLoader } from 'src/components/skeletonLoader';
+import { useRouter } from 'next/router';
 import Tooltip from 'react-tooltip-lite';
-import { numberWithCommas } from "@/utils/formattedNumbers";
-import { getWeiAmount } from "@/utils/conversions";
+import { numberWithCommas } from '@/utils/formattedNumbers';
+import { getWeiAmount } from '@/utils/conversions';
 import { getNativeTokenPrice } from '@/utils/api/etherscan';
 import { CONTRACT_ADDRESSES } from '@/Networks';
 

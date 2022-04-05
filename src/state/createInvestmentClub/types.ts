@@ -36,26 +36,28 @@ export interface InitialState {
 }
 
 export const initialState: InitialState = {
-  investmentClubName: "",
-  investmentClubSymbol: "",
-  investmentClubSymbolPlaceHolder: "", // Don't send this to backend. use investmentClubSymbol above
-  tokenCap: "", // How much are you raising?
+  investmentClubName: '',
+  investmentClubSymbol: '',
+  investmentClubSymbolPlaceHolder: '', // Don't send this to backend. use investmentClubSymbol above
+  tokenCap: '', // How much are you raising?
   mintEndTime: {
-    mintTime: "",
-    value: parseInt((new Date(new Date().setHours(23, 59, 0, 0)).getTime() / 1000).toString()),
+    mintTime: '',
+    value: parseInt(
+      (new Date(new Date().setHours(23, 59, 0, 0)).getTime() / 1000).toString()
+    )
   }, // How long will deposits be accepted?
-  membersCount: "", // How many members can join?
+  membersCount: '', // How many members can join?
   clubCreationStatus: {
-    transactionHash: "",
+    transactionHash: '',
     creationReceipt: {
-      token: "",
-    },
+      token: ''
+    }
   },
   tokenDetails: {
-    depositTokenAddress: "",
-    depositTokenSymbol: "",
-    depositTokenLogo: "",
-    depositTokenName: "",
+    depositTokenAddress: '',
+    depositTokenSymbol: '',
+    depositTokenLogo: '',
+    depositTokenName: '',
     depositTokenDecimals: 0
-  },
+  }
 };

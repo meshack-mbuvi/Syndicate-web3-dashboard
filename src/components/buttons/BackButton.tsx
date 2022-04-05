@@ -1,4 +1,4 @@
-import Link from "next/link";
+import Link from 'next/link';
 
 const BackButton: React.FC<{
   isSticky?: boolean;
@@ -7,24 +7,26 @@ const BackButton: React.FC<{
   isHidden?: boolean;
 }> = ({
   isSticky = false,
-  customClasses = "",
-  transform = "translateY(-50%)",
-  isHidden = false,
+  customClasses = '',
+  transform = 'translateY(-50%)',
+  isHidden = false
 }) => {
   return (
     <div
-      className={`${isHidden ? "hidden" : ""} sticky ${customClasses} w-0 h-full z-30 transition-all`}
+      className={`${
+        isHidden ? 'hidden' : ''
+      } sticky ${customClasses} w-0 h-full z-30 transition-all`}
     >
       <div
         className={`absolute hidden sm:block -left-9 sm:-left-14 xl:-left-20 cursor-pointer w-14 h-14 rounded-full py-4 lg:hover:bg-gray-9 lg:active:bg-white lg:active:bg-opacity-20 transition-all duration-300 ${
-          isSticky ? "top-9" : "sm:top-5 lg:top-11"
+          isSticky ? 'top-9' : 'sm:top-5 lg:top-11'
         }`}
         style={{ transform }}
       >
         <Link href="/clubs">
           <a>
             <svg
-              style={{ left: "-1px" }}
+              style={{ left: '-1px' }}
               className="relative mx-auto vertically-center fill-current text-gray-syn5"
               width="13"
               height="23"

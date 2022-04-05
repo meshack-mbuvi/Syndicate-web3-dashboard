@@ -6,8 +6,8 @@ export interface SelectedMember {
 
 export const initialState: { memberToUpdate: SelectedMember } = {
   memberToUpdate: {
-    memberAddress: "",
-    clubTokens: "",
-    ownershipShare: "",
-  },
+    memberAddress: '',
+    clubTokens: '',
+    ownershipShare: ''
+  }
 };

@@ -1,16 +1,16 @@
-import { AppState } from "@/state";
-import { getWeiAmount } from "@/utils/conversions";
-import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { AppState } from '@/state';
+import { getWeiAmount } from '@/utils/conversions';
+import { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 
 const useRugRadioTokenCount: any = (collectiblesResult, refresh) => {
   const {
     web3Reducer: {
-      web3: { account },
+      web3: { account }
     },
     initializeContractsReducer: {
-      syndicateContracts: { RugClaimModule, RugToken, rugBonusClaimModule },
-    },
+      syndicateContracts: { RugClaimModule, RugToken, rugBonusClaimModule }
+    }
   } = useSelector((state: AppState) => state);
 
   const [tokenCount, setTokenCount] = useState({
@@ -19,7 +19,7 @@ const useRugRadioTokenCount: any = (collectiblesResult, refresh) => {
     totalAvailableToClaim: 0,
     totalBonusToClaim: 0,
     totalClaimedTokens: 0,
-    totalGeneratedTokens: 0,
+    totalGeneratedTokens: 0
   });
   const [loading, setLoading] = useState(true);
 
@@ -29,9 +29,8 @@ const useRugRadioTokenCount: any = (collectiblesResult, refresh) => {
     const totalClaimedTokens = +getWeiAmount(
       await RugToken.balanceOf(account),
       parseInt(await RugToken.decimals()),
-      false,
+      false
     );
-
 
     let totalBonusToClaim = 0;
     let totalYieldTokens = 0;
@@ -40,10 +39,10 @@ const useRugRadioTokenCount: any = (collectiblesResult, refresh) => {
       ...collectiblesResult.map(async (collectible) => {
         try {
           const tokenBalance = await RugClaimModule.getClaimAmount(
-            collectible.id,
+            collectible.id
           );
           const tokenBonus = await rugBonusClaimModule.getClaimAmount(
-            collectible.id,
+            collectible.id
           );
 
           totalYieldTokens += +tokenBalance;
@@ -51,7 +50,7 @@ const useRugRadioTokenCount: any = (collectiblesResult, refresh) => {
         } catch (error) {
           console.log({ error });
         }
-      }),
+      })
     ]);
 
     /**
@@ -59,8 +58,8 @@ const useRugRadioTokenCount: any = (collectiblesResult, refresh) => {
      */
     const lastClaims = await await Promise.all([
       ...collectiblesResult.map(async (collectible) =>
-        parseInt(await RugClaimModule.getLastClaimTime(collectible.id)),
-      ),
+        parseInt(await RugClaimModule.getLastClaimTime(collectible.id))
+      )
     ]);
 
     // Add 24 hours to last claim time
@@ -73,7 +72,7 @@ const useRugRadioTokenCount: any = (collectiblesResult, refresh) => {
       totalBonusToClaim,
       totalAvailableToClaim: totalYieldTokens + totalBonusToClaim,
       totalGeneratedTokens:
-        totalYieldTokens + totalClaimedTokens + totalBonusToClaim,
+        totalYieldTokens + totalClaimedTokens + totalBonusToClaim
     });
     setLoading(false);
   };
@@ -86,7 +85,7 @@ const useRugRadioTokenCount: any = (collectiblesResult, refresh) => {
 
   return {
     loading,
-    ...tokenCount,
+    ...tokenCount
   };
 };
 

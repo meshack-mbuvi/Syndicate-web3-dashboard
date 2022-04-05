@@ -1,20 +1,20 @@
-import { useDispatch, useSelector } from "react-redux";
-import AccountPill from "@/components/shared/accountPill";
-import { SkeletonLoader } from "src/components/skeletonLoader";
-import { ArrowRightIcon } from "@heroicons/react/outline";
-import { useConnectWalletContext } from "@/context/ConnectWalletProvider";
-import { useCreateInvestmentClubContext } from "@/context/CreateInvestmentClubContext";
-import { showWalletModal } from "@/state/wallet/actions";
-import { useMyClubs } from "@/hooks/useMyClubs";
-import { useEffect } from "react";
-import { AppState } from "@/state";
+import { useDispatch, useSelector } from 'react-redux';
+import AccountPill from '@/components/shared/accountPill';
+import { SkeletonLoader } from 'src/components/skeletonLoader';
+import { ArrowRightIcon } from '@heroicons/react/outline';
+import { useConnectWalletContext } from '@/context/ConnectWalletProvider';
+import { useCreateInvestmentClubContext } from '@/context/CreateInvestmentClubContext';
+import { showWalletModal } from '@/state/wallet/actions';
+import { useMyClubs } from '@/hooks/useMyClubs';
+import { useEffect } from 'react';
+import { AppState } from '@/state';
 
 const WalletWarnings: React.FC = () => {
   const dispatch = useDispatch();
   const {
     web3Reducer: {
-      web3: { activeNetwork },
-    },
+      web3: { activeNetwork }
+    }
   } = useSelector((state: AppState) => state);
 
   const { myClubs, refetch, loading, isFetched, totalClubs } = useMyClubs();
@@ -45,7 +45,7 @@ const WalletWarnings: React.FC = () => {
     disconnectWallet();
     setShowModal((prev) => ({
       ...prev,
-      warningModal: false,
+      warningModal: false
     }));
     dispatch(showWalletModal());
   };
@@ -89,7 +89,7 @@ const WalletWarnings: React.FC = () => {
           <h4>
             {hasExistingClubs
               ? getWarningText()
-              : "Use wallet as permanent club wallet?"}
+              : 'Use wallet as permanent club wallet?'}
           </h4>
           {hasExistingClubs ? (
             <p className="text-gray-syn3 text-sm pb-9 pt-4">
@@ -119,12 +119,12 @@ const WalletWarnings: React.FC = () => {
           )}
           <button
             className={`${
-              hasExistingClubs ? "orange-CTA" : "green-CTA"
+              hasExistingClubs ? 'orange-CTA' : 'green-CTA'
             } w-full flex items-center justify-center space-x-2`}
             onClick={handleCreateInvestmentClub}
           >
             <span>
-              {hasExistingClubs ? "C" : "Yes, c"}ontinue with this wallet
+              {hasExistingClubs ? 'C' : 'Yes, c'}ontinue with this wallet
             </span>
             <ArrowRightIcon className="w-5 h-5" />
           </button>

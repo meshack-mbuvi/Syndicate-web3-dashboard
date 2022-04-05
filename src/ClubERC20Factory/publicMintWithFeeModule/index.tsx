@@ -1,5 +1,5 @@
-import publicMintWithFeeModule_ABI from "src/contracts/PublicMintWithFeeModule.json";
-import { getGnosisTxnInfo } from "../shared/gnosisTransactionInfo";
+import publicMintWithFeeModule_ABI from 'src/contracts/PublicMintWithFeeModule.json';
+import { getGnosisTxnInfo } from '../shared/gnosisTransactionInfo';
 import { estimateGas } from '../shared/getGasEstimate';
 export class PublicMintWithFeeModuleContract {
   isGnosisSafe: boolean;

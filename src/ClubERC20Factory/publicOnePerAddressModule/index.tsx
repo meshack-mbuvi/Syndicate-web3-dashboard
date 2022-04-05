@@ -1,5 +1,5 @@
-import publicOnePerAddressModule_ABI from "src/contracts/PublicOnePerAddressModule.json";
-import { getGnosisTxnInfo } from "../shared/gnosisTransactionInfo";
+import publicOnePerAddressModule_ABI from 'src/contracts/PublicOnePerAddressModule.json';
+import { getGnosisTxnInfo } from '../shared/gnosisTransactionInfo';
 import { estimateGas } from '../shared/getGasEstimate';
 export class PublicOnePerAddressModuleContract {
   isGnosisSafe: boolean;

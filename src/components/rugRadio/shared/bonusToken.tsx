@@ -1,8 +1,8 @@
-import { CtaButton } from "@/components/CTAButton";
-import { numberWithCommas } from "@/utils/formattedNumbers";
-import Image from "next/image";
-import React from "react";
-import RugRadioTokenWhiteIcon from "/public/images/rugRadio/rugradioToken-white.svg";
+import { CtaButton } from '@/components/CTAButton';
+import { numberWithCommas } from '@/utils/formattedNumbers';
+import Image from 'next/image';
+import React from 'react';
+import RugRadioTokenWhiteIcon from '/public/images/rugRadio/rugradioToken-white.svg';
 
 type bonusClaimProps = {
   handleClaimBonus;
@@ -11,7 +11,7 @@ type bonusClaimProps = {
 
 export const BonusTokenClaim: React.FC<bonusClaimProps> = ({
   handleClaimBonus,
-  bonusAmount = "0",
+  bonusAmount = '0'
 }) => {
   const disabled = +bonusAmount == 0;
   return (
@@ -26,7 +26,7 @@ export const BonusTokenClaim: React.FC<bonusClaimProps> = ({
                 width={16}
                 height={16}
                 alt="token icon"
-              />{" "}
+              />{' '}
             </span>
             {`${numberWithCommas(bonusAmount)} RUG`}
           </p>

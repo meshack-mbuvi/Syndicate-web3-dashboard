@@ -1,42 +1,42 @@
-import "nprogress/nprogress.css"; //styles of nprogress
+import 'nprogress/nprogress.css'; //styles of nprogress
 /**
  * datepicker component requires these in-built styles, so we import them
  * from here to make them available globally
  */
-import "react-datepicker/dist/react-datepicker.css";
+import 'react-datepicker/dist/react-datepicker.css';
 
-import "../styles/animation.css";
-import "../styles/custom-datepicker.css";
-import "../styles/global.css";
+import '../styles/animation.css';
+import '../styles/custom-datepicker.css';
+import '../styles/global.css';
 
-import { useAmplitude } from "@/components/amplitude";
-import FontsPreloader from "@/components/fonts";
-import BeforeGettingStartedProvider from "@/context/beforeGettingStartedContext";
-import ConnectWalletProvider from "@/context/ConnectWalletProvider";
-import CreateInvestmentClubProvider from "@/context/CreateInvestmentClubContext";
-import OnboardingProvider from "@/context/OnboardingContext";
-import { wrapper } from "@/state";
-import { isDev, isSSR } from "@/utils/environment";
+import { useAmplitude } from '@/components/amplitude';
+import FontsPreloader from '@/components/fonts';
+import BeforeGettingStartedProvider from '@/context/beforeGettingStartedContext';
+import ConnectWalletProvider from '@/context/ConnectWalletProvider';
+import CreateInvestmentClubProvider from '@/context/CreateInvestmentClubContext';
+import OnboardingProvider from '@/context/OnboardingContext';
+import { wrapper } from '@/state';
+import { isDev, isSSR } from '@/utils/environment';
 import {
   ApolloClient,
   ApolloLink,
   ApolloProvider,
   HttpLink,
-  InMemoryCache,
-} from "@apollo/client";
-import { RetryLink } from "@apollo/client/link/retry";
-import withApollo from "next-with-apollo";
-import { AppProps } from "next/app";
-import Head from "next/head";
-import Router from "next/router";
-import NProgress from "nprogress";
-import React from "react";
-import { BACKEND_LINKS } from "@/Networks/backendLinks";
+  InMemoryCache
+} from '@apollo/client';
+import { RetryLink } from '@apollo/client/link/retry';
+import withApollo from 'next-with-apollo';
+import { AppProps } from 'next/app';
+import Head from 'next/head';
+import Router from 'next/router';
+import NProgress from 'nprogress';
+import React from 'react';
+import { BACKEND_LINKS } from '@/Networks/backendLinks';
 
 //Binding events.
-Router.events.on("routeChangeStart", () => NProgress.start());
-Router.events.on("routeChangeComplete", () => NProgress.done());
-Router.events.on("routeChangeError", () => NProgress.done());
+Router.events.on('routeChangeStart', () => NProgress.start());
+Router.events.on('routeChangeComplete', () => NProgress.done());
+Router.events.on('routeChangeError', () => NProgress.done());
 
 const StateProviders: React.FC = ({ children }) => (
   <OnboardingProvider>
@@ -49,7 +49,7 @@ const StateProviders: React.FC = ({ children }) => (
 const Body: React.FC<AppProps & { apollo: ApolloClient<unknown> }> = ({
   Component,
   pageProps,
-  apollo,
+  apollo
 }) => {
   return (
     <>
@@ -91,7 +91,7 @@ const constructGraphLinks = () => {
     const httplinks = {};
     graphs.forEach((value) => {
       httplinks[value] = new HttpLink({
-        uri: backendInfo.graphs[value],
+        uri: backendInfo.graphs[value]
       });
     });
     links[networkId] = httplinks;
@@ -104,14 +104,14 @@ const httpsLinks = Object.freeze(constructGraphLinks());
 
 const apolloInitializer = ({ initialState }) => {
   const graphLink = new ApolloLink((operation) => {
-    const { clientName = "backend", chainId = 1 } = operation.getContext();
+    const { clientName = 'backend', chainId = 1 } = operation.getContext();
     return httpsLinks[chainId][clientName].request(operation);
   });
   return new ApolloClient({
     ssrMode: isSSR(),
     link: new RetryLink().concat(graphLink),
     cache: new InMemoryCache().restore(initialState || {}),
-    connectToDevTools: isDev,
+    connectToDevTools: isDev
   });
 };
 

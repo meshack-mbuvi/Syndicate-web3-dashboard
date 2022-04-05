@@ -1,60 +1,60 @@
-import { MintPolicyContract } from "@/ClubERC20Factory/policyMintERC20";
-import { ProgressModal, ProgressModalState } from "@/components/progressModal";
-import { Switch, SwitchType } from "@/components/switch";
-import EstimateGas from "@/containers/createInvestmentClub/gettingStarted/estimateGas";
-import { SettingsDisclaimerTooltip } from "@/containers/createInvestmentClub/shared/SettingDisclaimer";
-import { useIsClubOwner } from "@/hooks/useClubOwner";
-import { useDemoMode } from "@/hooks/useDemoMode";
-import { AppState } from "@/state";
-import { setClubCreationReceipt } from "@/state/createInvestmentClub/slice";
+import { MintPolicyContract } from '@/ClubERC20Factory/policyMintERC20';
+import { ProgressModal, ProgressModalState } from '@/components/progressModal';
+import { Switch, SwitchType } from '@/components/switch';
+import EstimateGas from '@/containers/createInvestmentClub/gettingStarted/estimateGas';
+import { SettingsDisclaimerTooltip } from '@/containers/createInvestmentClub/shared/SettingDisclaimer';
+import { useIsClubOwner } from '@/hooks/useClubOwner';
+import { useDemoMode } from '@/hooks/useDemoMode';
+import { AppState } from '@/state';
+import { setClubCreationReceipt } from '@/state/createInvestmentClub/slice';
 import {
   setExistingAmountRaised,
   setExistingMaxAmountRaising,
   setExistingMaxNumberOfMembers,
   setExistingNumberOfMembers,
-  setExistingOpenToDepositsUntil,
-} from "@/state/modifyClubSettings/slice";
-import { Status } from "@/state/wallet/types";
-import { getWeiAmount } from "@/utils/conversions";
+  setExistingOpenToDepositsUntil
+} from '@/state/modifyClubSettings/slice';
+import { Status } from '@/state/wallet/types';
+import { getWeiAmount } from '@/utils/conversions';
 import {
   floatedNumberWithCommas,
   numberInputRemoveCommas,
-  numberStringInputRemoveCommas,
-} from "@/utils/formattedNumbers";
-import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { SkeletonLoader } from "src/components/skeletonLoader";
-import { Callout } from "../callout";
-import { EmailSupport } from "../emailSupport";
-import { ExternalLinkColor } from "../iconWrappers";
-import { InputFieldWithButton } from "../inputs/inputFieldWithButton";
-import { InputFieldWithDate } from "../inputs/inputFieldWithDate";
-import { InputFieldWithToken } from "../inputs/inputFieldWithToken";
-import { PillButtonLarge } from "../pillButtonsLarge";
+  numberStringInputRemoveCommas
+} from '@/utils/formattedNumbers';
+import { useRouter } from 'next/router';
+import { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { SkeletonLoader } from 'src/components/skeletonLoader';
+import { Callout } from '../callout';
+import { EmailSupport } from '../emailSupport';
+import { ExternalLinkColor } from '../iconWrappers';
+import { InputFieldWithButton } from '../inputs/inputFieldWithButton';
+import { InputFieldWithDate } from '../inputs/inputFieldWithDate';
+import { InputFieldWithToken } from '../inputs/inputFieldWithToken';
+import { PillButtonLarge } from '../pillButtonsLarge';
 
 const progressModalStates = {
   confirm: {
-    title: "Confirm in wallet",
-    description: "Confirm the modification of club settings in your wallet",
+    title: 'Confirm in wallet',
+    description: 'Confirm the modification of club settings in your wallet',
     state: ProgressModalState.CONFIRM,
-    buttonLabel: "",
+    buttonLabel: ''
   },
   success: {
-    title: "Settings successfully modified",
-    description: "",
+    title: 'Settings successfully modified',
+    description: '',
     state: ProgressModalState.SUCCESS,
-    buttonLabel: "Back to club dashboard",
+    buttonLabel: 'Back to club dashboard'
   },
   pending: {
-    title: "Pending confirmation",
+    title: 'Pending confirmation',
     description:
-      "This could take up to a few minutes depending on network congestion and the gas fees you set. Feel free to leave this screen.",
+      'This could take up to a few minutes depending on network congestion and the gas fees you set. Feel free to leave this screen.',
     state: ProgressModalState.PENDING,
-    buttonLabel: "Back to club dashboard",
+    buttonLabel: 'Back to club dashboard'
   },
   failure: {
-    title: "Transaction failed",
+    title: 'Transaction failed',
     description: (
       <span>
         Please try again and
@@ -66,8 +66,8 @@ const progressModalStates = {
       </span>
     ),
     state: ProgressModalState.FAILURE,
-    buttonLabel: "Try again",
-  },
+    buttonLabel: 'Try again'
+  }
 };
 
 export const ModifyClubSettings = (props: { isVisible: boolean }) => {
@@ -209,7 +209,9 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
         setMaxNumberOfMembers(maxMemberCount);
         dispatch(setExistingMaxNumberOfMembers(maxMemberCount));
       }
-      setDepositTokenType(depositTokenSymbol === activeNetwork.nativeCurrency.symbol);
+      setDepositTokenType(
+        depositTokenSymbol === activeNetwork.nativeCurrency.symbol
+      );
       dispatch(setExistingNumberOfMembers(memberCount));
     }
   }, [

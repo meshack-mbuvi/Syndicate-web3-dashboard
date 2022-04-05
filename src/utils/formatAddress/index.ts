@@ -13,5 +13,5 @@ export const formatAddress = (
       address.length - end
     )}`;
   }
-  return "";
+  return '';
 };

@@ -8,15 +8,13 @@ import React from 'react';
  * @param props
  * @returns ReactChild
  */
-const FadeIn: React.FC<{
-  duration: number;
-  delay: number;
-} | any> = ({
-  duration = 300,
-  delay = 0,
-  children,
-  ...delegated
-}) => {
+const FadeIn: React.FC<
+  | {
+      duration: number;
+      delay: number;
+    }
+  | any
+> = ({ duration = 300, delay = 0, children, ...delegated }) => {
   return (
     <div
       {...delegated}

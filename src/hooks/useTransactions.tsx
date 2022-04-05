@@ -1,18 +1,18 @@
-import { AppState } from "@/state";
+import { AppState } from '@/state';
 import {
   setMyTransactions,
-  setLoadingTransactions,
-} from "@/state/erc20transactions";
-import { useRouter } from "next/router";
-import { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { useFetchRecentTransactions } from "./useFetchRecentTransactions";
+  setLoadingTransactions
+} from '@/state/erc20transactions';
+import { useRouter } from 'next/router';
+import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { useFetchRecentTransactions } from './useFetchRecentTransactions';
 
-const useTransactions = (skip: number = 0) => {
+const useTransactions = (skip = 0) => {
   const dispatch = useDispatch();
 
   const {
-    web3Reducer: { web3 },
+    web3Reducer: { web3 }
   } = useSelector((state: AppState) => state);
 
   const router = useRouter();
@@ -23,7 +23,7 @@ const useTransactions = (skip: number = 0) => {
   const {
     loading: transactionsLoading,
     data: transactionsData,
-    refetch: refetchTransactions,
+    refetch: refetchTransactions
   } = useFetchRecentTransactions();
 
   useEffect(() => {
@@ -43,14 +43,14 @@ const useTransactions = (skip: number = 0) => {
 
     if (transactionsData?.Financial_recentTransactions?.edges) {
       processERC20Transactions(
-        transactionsData.Financial_recentTransactions.edges,
+        transactionsData.Financial_recentTransactions.edges
       );
     }
   }, [
     account,
     activeNetwork,
     transactionsLoading,
-    JSON.stringify(transactionsData),
+    JSON.stringify(transactionsData)
   ]);
 
   return { transactionsLoading };

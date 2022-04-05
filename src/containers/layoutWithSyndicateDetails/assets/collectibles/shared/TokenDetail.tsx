@@ -1,13 +1,13 @@
-import React from "react";
-import { AppState } from "@/state";
-import { useSelector } from "react-redux";
-import { floatedNumberWithCommas } from "@/utils/formattedNumbers";
-import PriceContainer from "./PriceContainer";
+import React from 'react';
+import { AppState } from '@/state';
+import { useSelector } from 'react-redux';
+import { floatedNumberWithCommas } from '@/utils/formattedNumbers';
+import PriceContainer from './PriceContainer';
 
 const TokenDetail: React.FC<{ title: string; value: any; symbol?: any }> = ({
   title,
   value,
-  symbol,
+  symbol
 }) => {
   const {
     assetsSliceReducer: { nativeTokenPrice }

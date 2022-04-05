@@ -1,9 +1,9 @@
-import React from "react";
-import Modal, { ModalStyle } from "@/components/modal";
-import { CategoryPill } from "../../../activity/shared/CategoryPill";
-import GradientAvatar from "@/components/syndicates/portfolioAndDiscover/portfolio/GradientAvatar";
-import { floatedNumberWithCommas } from "@/utils/formattedNumbers";
-import TokenDetail from "../../collectibles/shared/TokenDetail";
+import React from 'react';
+import Modal, { ModalStyle } from '@/components/modal';
+import { CategoryPill } from '../../../activity/shared/CategoryPill';
+import GradientAvatar from '@/components/syndicates/portfolioAndDiscover/portfolio/GradientAvatar';
+import { floatedNumberWithCommas } from '@/utils/formattedNumbers';
+import TokenDetail from '../../collectibles/shared/TokenDetail';
 
 interface ITokenModal {
   showModal: boolean;
@@ -14,14 +14,14 @@ interface ITokenModal {
 const TokenModal: React.FC<ITokenModal> = ({
   showModal,
   closeModal,
-  tokenDetails,
+  tokenDetails
 }) => {
   const clubBalance = floatedNumberWithCommas(tokenDetails.tokenBalance);
   const addGrayToDecimalInput = (str) => {
-    if (typeof str !== "string") {
+    if (typeof str !== 'string') {
       str.toString();
     }
-    const [wholeNumber, decimalPart] = str.split(".");
+    const [wholeNumber, decimalPart] = str.split('.');
     return (
       <div className="flex">
         {wholeNumber ? <p className="text-white">{wholeNumber}</p> : null}
@@ -31,9 +31,9 @@ const TokenModal: React.FC<ITokenModal> = ({
   };
 
   const additionaDetails = {
-    "Token name": tokenDetails.tokenName,
-    "Club balance": tokenDetails.tokenBalance,
-    Value: tokenDetails.value,
+    'Token name': tokenDetails.tokenName,
+    'Club balance': tokenDetails.tokenBalance,
+    Value: tokenDetails.value
   };
   return (
     <Modal
@@ -62,7 +62,7 @@ const TokenModal: React.FC<ITokenModal> = ({
                 className="w-6 h-6"
               />
             ) : (
-              <GradientAvatar name={tokenDetails.tokenName} size={"w-6 h-6"} />
+              <GradientAvatar name={tokenDetails.tokenName} size={'w-6 h-6'} />
             )}
             <div className="inline-flex pl-2 text-xl">
               {tokenDetails.tokenSymbol}
@@ -70,7 +70,7 @@ const TokenModal: React.FC<ITokenModal> = ({
           </div>
           <div className="mt-4 text-4.5xl">
             {addGrayToDecimalInput(
-              floatedNumberWithCommas(tokenDetails?.tokenBalance),
+              floatedNumberWithCommas(tokenDetails?.tokenBalance)
             )}
           </div>
         </div>

@@ -1,8 +1,8 @@
-import { SettingsDisclaimerTooltip } from "@/containers/createInvestmentClub/shared/SettingDisclaimer";
-import cn from "classnames";
-import { useState } from "react";
-import { AppState } from "@/state";
-import { useDispatch, useSelector } from "react-redux";
+import { SettingsDisclaimerTooltip } from '@/containers/createInvestmentClub/shared/SettingDisclaimer';
+import cn from 'classnames';
+import { useState } from 'react';
+import { AppState } from '@/state';
+import { useDispatch, useSelector } from 'react-redux';
 
 /**
  * An input component with label, component to the right, and an icon to the furthest right.
@@ -37,7 +37,7 @@ export const AdvancedInputField = (props: {
     error,
     value,
     disabled = false,
-    type = "text",
+    type = 'text',
     addOn,
     isNumber,
     customClass,
@@ -45,7 +45,7 @@ export const AdvancedInputField = (props: {
     extraAddon,
     moreInfo,
     addSettingDisclaimer,
-    className,
+    className
   } = props;
 
   const {

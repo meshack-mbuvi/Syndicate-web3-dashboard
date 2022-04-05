@@ -1,6 +1,6 @@
-import { ISyndicateContracts } from "@/state/contracts";
-import { ClubERC20Contract } from "./clubERC20";
-import { ClubERC20Factory } from "./clubERC20Factory";
+import { ISyndicateContracts } from '@/state/contracts';
+import { ClubERC20Contract } from './clubERC20';
+import { ClubERC20Factory } from './clubERC20Factory';
 import { ClubERC20FactoryNative } from './clubERC20FactoryNative';
 import { DepositTokenMintModuleContract } from './depositTokenMintModule';
 import { ERC721Contract } from './ERC721Membership';

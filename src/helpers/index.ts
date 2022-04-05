@@ -1,1 +1,1 @@
-export { getMetamaskError } from "./metamaskError";
+export { getMetamaskError } from './metamaskError';

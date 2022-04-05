@@ -1,11 +1,11 @@
 // component to show syndicate deposits progress
-import { divideIfNotByZero } from "@/utils/conversions";
-import { floatedNumberWithCommas } from "@/utils/formattedNumbers";
-import { SkeletonLoader } from "src/components/skeletonLoader";
-import useTokenDetails from "@/hooks/useTokenDetails";
-import { useEffect, useState } from "react";
-import axios from "axios";
-import NumberTreatment from "@/components/NumberTreatment";
+import { divideIfNotByZero } from '@/utils/conversions';
+import { floatedNumberWithCommas } from '@/utils/formattedNumbers';
+import { SkeletonLoader } from 'src/components/skeletonLoader';
+import useTokenDetails from '@/hooks/useTokenDetails';
+import { useEffect, useState } from 'react';
+import axios from 'axios';
+import NumberTreatment from '@/components/NumberTreatment';
 
 interface IProgressIndicator {
   totalDeposits: number;

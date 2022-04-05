@@ -1,27 +1,27 @@
-import { Flow, amplitudeLogger } from "@/components/amplitude";
+import { Flow, amplitudeLogger } from '@/components/amplitude';
 import {
   APPROVE_DEPOSIT_ALLOWANCE,
   ERROR_APPROVE_ALLOWANCE,
   ERROR_DEPOSIT,
   SUCCESSFUL_DEPOSIT
-} from "@/components/amplitude/eventNames";
-import ErrorBoundary from "@/components/errorBoundary";
-import FadeIn from "@/components/fadeIn/FadeIn";
-import ArrowDown from "@/components/icons/arrowDown";
-import AutoGrowInputField from "@/components/inputs/autoGrowInput";
-import Modal, { ModalStyle } from "@/components/modal";
-import { Spinner } from "@/components/shared/spinner";
-import StatusBadge from "@/components/syndicateDetails/statusBadge";
-import HoldingsInfo from "@/components/syndicates/depositSyndicate/HoldingsInfo";
-import { SuccessOrFailureContent } from "@/components/syndicates/depositSyndicate/SuccessOrFailureContent";
-import { BlockExplorerLink } from "@/components/syndicates/shared/BlockExplorerLink";
-import { setERC20Token } from "@/helpers/erc20TokenDetails";
-import useSyndicateClubInfo from "@/hooks/deposit/useSyndicateClubInfo";
-import { useAccountTokens } from "@/hooks/useAccountTokens";
-import useFetchAirdropInfo from "@/hooks/useAirdropInfo";
-import { useClubDepositsAndSupply } from "@/hooks/useClubDepositsAndSupply";
-import { useIsClubMember } from "@/hooks/useClubOwner";
-import { useDemoMode } from "@/hooks/useDemoMode";
+} from '@/components/amplitude/eventNames';
+import ErrorBoundary from '@/components/errorBoundary';
+import FadeIn from '@/components/fadeIn/FadeIn';
+import ArrowDown from '@/components/icons/arrowDown';
+import AutoGrowInputField from '@/components/inputs/autoGrowInput';
+import Modal, { ModalStyle } from '@/components/modal';
+import { Spinner } from '@/components/shared/spinner';
+import StatusBadge from '@/components/syndicateDetails/statusBadge';
+import HoldingsInfo from '@/components/syndicates/depositSyndicate/HoldingsInfo';
+import { SuccessOrFailureContent } from '@/components/syndicates/depositSyndicate/SuccessOrFailureContent';
+import { BlockExplorerLink } from '@/components/syndicates/shared/BlockExplorerLink';
+import { setERC20Token } from '@/helpers/erc20TokenDetails';
+import useSyndicateClubInfo from '@/hooks/deposit/useSyndicateClubInfo';
+import { useAccountTokens } from '@/hooks/useAccountTokens';
+import useFetchAirdropInfo from '@/hooks/useAirdropInfo';
+import { useClubDepositsAndSupply } from '@/hooks/useClubDepositsAndSupply';
+import { useIsClubMember } from '@/hooks/useClubOwner';
+import { useDemoMode } from '@/hooks/useDemoMode';
 import { useNativeBalance } from '@/hooks/useNativeBalance';
 import useFetchMerkleProof from '@/hooks/useMerkleProof';
 import useModal from '@/hooks/useModal';

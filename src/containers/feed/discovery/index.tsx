@@ -1,6 +1,6 @@
-import React from "react";
-import PageHeader from "src/components/pageHeader";
-import { DiscoverAnimatedLoader } from "./discoverAnimatedLoader";
+import React from 'react';
+import PageHeader from 'src/components/pageHeader';
+import { DiscoverAnimatedLoader } from './discoverAnimatedLoader';
 
 const Discovery: React.FC = () => {
   return (

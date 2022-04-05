@@ -1,15 +1,15 @@
-import CopyLink from "@/components/shared/CopyLink";
-import StatusBadge from "@/components/syndicateDetails/statusBadge";
-import { AppState } from "@/state";
-import { useRouter } from "next/router";
-import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import CopyLink from '@/components/shared/CopyLink';
+import StatusBadge from '@/components/syndicateDetails/statusBadge';
+import { AppState } from '@/state';
+import { useRouter } from 'next/router';
+import React, { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 
 const ShareModal: React.FC = () => {
   const {
     erc20TokenSliceReducer: {
-      erc20Token: { depositsEnabled },
-    },
+      erc20Token: { depositsEnabled }
+    }
   } = useSelector((state: AppState) => state);
 
   const router = useRouter();
@@ -23,7 +23,7 @@ const ShareModal: React.FC = () => {
   };
 
   // club deposit link
-  const [clubDepositLink, setClubDepositLink] = useState<string>("");
+  const [clubDepositLink, setClubDepositLink] = useState<string>('');
   useEffect(() => {
     setClubDepositLink(`${window.location.origin}/clubs/${clubAddress}/`);
   }, [clubAddress]);

@@ -1,5 +1,5 @@
-import React from "react";
-import ActivityTable from "./ActivityTable";
+import React from 'react';
+import ActivityTable from './ActivityTable';
 
 const ActivityView: React.FC = () => {
   return (

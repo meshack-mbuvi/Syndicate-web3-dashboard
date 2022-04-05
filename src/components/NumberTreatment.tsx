@@ -1,5 +1,5 @@
-import React from "react";
-import { floatedNumberWithCommas } from "@/utils/formattedNumbers";
+import React from 'react';
+import { floatedNumberWithCommas } from '@/utils/formattedNumbers';
 
 const NumberTreatment: React.FC<{
   numberValue: string;

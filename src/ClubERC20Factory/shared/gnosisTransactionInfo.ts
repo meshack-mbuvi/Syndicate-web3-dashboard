@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios from 'axios';
 
 export const getGnosisTxnInfo = async (txHash) => {
   const transactionInfo = await new Promise(async (resolve, reject) => {

@@ -1,65 +1,65 @@
-import { Flow, amplitudeLogger } from "@/components/amplitude";
-import { CLICK_COPY_DEPOSIT_LINK_TO_SHARE } from "@/components/amplitude/eventNames";
-import ErrorBoundary from "@/components/errorBoundary";
-import FadeIn from "@/components/fadeIn/FadeIn";
-import CreateEntityCard from "@/components/shared/createEntityCard";
-import ModifyClubSettingsCard from "@/components/shared/modifyClubSettingsCard";
-import { SkeletonLoader } from "@/components/skeletonLoader";
-import StatusBadge from "@/components/syndicateDetails/statusBadge";
-import { BlockExplorerLink } from "@/components/syndicates/shared/BlockExplorerLink";
-import ConnectWalletAction from "@/components/syndicates/shared/connectWalletAction";
-import { SuccessCard } from "@/containers/managerActions/successCard";
-import { useCreateInvestmentClubContext } from "@/context/CreateInvestmentClubContext";
-import { useDemoMode } from "@/hooks/useDemoMode";
-import { AppState } from "@/state";
-import { setDepositReadyInfo } from "@/state/legalInfo";
-import { Status } from "@/state/wallet/types";
-import { generateMemberSignURL } from "@/utils/generateMemberSignURL";
-import { XIcon } from "@heroicons/react/solid";
-import { useRouter } from "next/router";
-import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { animated } from "react-spring";
+import { Flow, amplitudeLogger } from '@/components/amplitude';
+import { CLICK_COPY_DEPOSIT_LINK_TO_SHARE } from '@/components/amplitude/eventNames';
+import ErrorBoundary from '@/components/errorBoundary';
+import FadeIn from '@/components/fadeIn/FadeIn';
+import CreateEntityCard from '@/components/shared/createEntityCard';
+import ModifyClubSettingsCard from '@/components/shared/modifyClubSettingsCard';
+import { SkeletonLoader } from '@/components/skeletonLoader';
+import StatusBadge from '@/components/syndicateDetails/statusBadge';
+import { BlockExplorerLink } from '@/components/syndicates/shared/BlockExplorerLink';
+import ConnectWalletAction from '@/components/syndicates/shared/connectWalletAction';
+import { SuccessCard } from '@/containers/managerActions/successCard';
+import { useCreateInvestmentClubContext } from '@/context/CreateInvestmentClubContext';
+import { useDemoMode } from '@/hooks/useDemoMode';
+import { AppState } from '@/state';
+import { setDepositReadyInfo } from '@/state/legalInfo';
+import { Status } from '@/state/wallet/types';
+import { generateMemberSignURL } from '@/utils/generateMemberSignURL';
+import { XIcon } from '@heroicons/react/solid';
+import { useRouter } from 'next/router';
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { animated } from 'react-spring';
 
-import GenerateDepositLink from "./GenerateDepositLink";
+import GenerateDepositLink from './GenerateDepositLink';
 
 const useShowShareWarning = () => {
   const router = useRouter();
   const initialChoice = () => {
     let previousChoice;
     if (router.isReady) {
-      previousChoice = window.localStorage.getItem("ShareWarning") || null;
+      previousChoice = window.localStorage.getItem('ShareWarning') || null;
     }
-    return previousChoice === "true" || previousChoice === null;
+    return previousChoice === 'true' || previousChoice === null;
   }; // TODO: Use Redux persist to save user preferences
 
   const [showShareWarning, setshowShareWarning] = useState(initialChoice);
   const handleShowShareWarning = (val: boolean) => {
-    localStorage.setItem("showShareWarning", val.toString());
+    localStorage.setItem('showShareWarning', val.toString());
     setshowShareWarning(val);
   };
   return {
     showShareWarning,
     setshowShareWarning,
-    handleShowShareWarning,
+    handleShowShareWarning
   };
 };
 
 const ManagerActions = (): JSX.Element => {
   const {
     web3Reducer: {
-      web3: { status },
+      web3: { status }
     },
     erc20TokenSliceReducer: { erc20Token },
     createInvestmentClubSliceReducer: {
       clubCreationStatus: {
-        transactionHash, // TODO: this will be empty after reload
-      },
+        transactionHash // TODO: this will be empty after reload
+      }
     },
     legalInfoReducer: {
       walletSignature: { signature },
-      depositReadyInfo: { depositLink, adminSigned },
-    },
+      depositReadyInfo: { depositLink, adminSigned }
+    }
   } = useSelector((state: AppState) => state);
 
   const { resetCreationStates } = useCreateInvestmentClubContext();
@@ -71,7 +71,7 @@ const ManagerActions = (): JSX.Element => {
     depositsEnabled,
     claimEnabled,
     totalDeposits,
-    maxTotalDeposits,
+    maxTotalDeposits
   } = erc20Token;
 
   const { clubAddress, source } = router.query;
@@ -90,7 +90,7 @@ const ManagerActions = (): JSX.Element => {
 
   const setClubDepositLink = (clubDepositLink: string) => {
     dispatch(
-      setDepositReadyInfo({ adminSigned, depositLink: clubDepositLink }),
+      setDepositReadyInfo({ adminSigned, depositLink: clubDepositLink })
     );
   };
 
@@ -106,12 +106,12 @@ const ManagerActions = (): JSX.Element => {
 
   // club deposit link
   useEffect(() => {
-    const legal = JSON.parse(localStorage.getItem("legal") || "{}");
+    const legal = JSON.parse(localStorage.getItem('legal') || '{}');
     const clubLegalData = legal[clubAddress as string];
     setHasAgreememnts(clubLegalData?.signaturesNeeded || false);
     if (!clubLegalData?.signaturesNeeded) {
       return setClubDepositLink(
-        `${window.location.origin}/clubs/${clubAddress}`,
+        `${window.location.origin}/clubs/${clubAddress}`
       );
     }
     if (
@@ -121,7 +121,7 @@ const ManagerActions = (): JSX.Element => {
       const memberSignURL = generateMemberSignURL(
         clubAddress as string,
         clubLegalData.clubData,
-        clubLegalData.clubData.adminSignature,
+        clubLegalData.clubData.adminSignature
       );
       setClubDepositLink(memberSignURL);
     }
@@ -131,7 +131,7 @@ const ManagerActions = (): JSX.Element => {
   useEffect(() => {
     if (!clubAddress) return;
 
-    if (source && source === "create") {
+    if (source && source === 'create') {
       // reset creation context states
       resetCreationStates();
       setSyndicateSuccessfullyCreated(true);
@@ -159,7 +159,7 @@ const ManagerActions = (): JSX.Element => {
     setShowDepositLinkCopyState(true);
     setTimeout(() => setShowDepositLinkCopyState(false), 1000);
     amplitudeLogger(CLICK_COPY_DEPOSIT_LINK_TO_SHARE, {
-      flow: Flow.POST_CLUB_CREATION,
+      flow: Flow.POST_CLUB_CREATION
     });
   };
 
@@ -178,7 +178,7 @@ const ManagerActions = (): JSX.Element => {
                 creatingSyndicate,
                 syndicateSuccessfullyCreated,
                 syndicateCreationFailed,
-                showConfettiSuccess,
+                showConfettiSuccess
               }}
               isManager
               depositExceedTotal={+totalDeposits === +maxTotalDeposits}
@@ -201,8 +201,8 @@ const ManagerActions = (): JSX.Element => {
               <div
                 className={`h-fit-content relative ${
                   showConfettiSuccess
-                    ? "p-0"
-                    : `pt-6 ${showShareWarning ? "pb-6" : "pb-10"} px-8`
+                    ? 'p-0'
+                    : `pt-6 ${showShareWarning ? 'pb-6' : 'pb-10'} px-8`
                 } flex justify-center items-start flex-col w-full`}
               >
                 {status === Status.DISCONNECTED && !isDemoMode ? (
@@ -214,12 +214,12 @@ const ManagerActions = (): JSX.Element => {
                       !showConfettiSuccess && (
                         <div className="flex flex-col items-start mb-6">
                           <h4 className="pb-2">
-                            Invite to {claimEnabled ? "claim" : "deposit"}
+                            Invite to {claimEnabled ? 'claim' : 'deposit'}
                           </h4>
                           <div className="text-gray-syn4">
                             <p>
-                              Invite members by sharing your club’s{" "}
-                              {claimEnabled ? "claim" : "deposit"} link
+                              Invite members by sharing your club’s{' '}
+                              {claimEnabled ? 'claim' : 'deposit'} link
                             </p>
                             {!adminSigned && (
                               <div className="flex space-between mt-3">
@@ -227,7 +227,7 @@ const ManagerActions = (): JSX.Element => {
                                   className="bg-transparent rounded mt-1 focus:ring-offset-0 cursor-pointer"
                                   onChange={() =>
                                     setLinkShareAgreementChecked(
-                                      !linkShareAgreementChecked,
+                                      !linkShareAgreementChecked
                                     )
                                   }
                                   type="checkbox"
@@ -240,20 +240,20 @@ const ManagerActions = (): JSX.Element => {
                                   violate securities laws. <br></br>
                                   <a
                                     target="_blank"
-                                    style={{ color: "#4376ff" }}
+                                    style={{ color: '#4376ff' }}
                                     href="https://www.sec.gov/reportspubs/investor-publications/investorpubsinvclubhtm.html"
                                     rel="noopener noreferrer"
                                   >
                                     Learn more.
-                                  </a>{" "}
+                                  </a>{' '}
                                 </animated.p>
                               </div>
                             )}
                             {adminSigned && (
                               <p>
                                 {hasAgreements
-                                  ? "Contains legal agreements"
-                                  : "Bypasses legal agreements"}{" "}
+                                  ? 'Contains legal agreements'
+                                  : 'Bypasses legal agreements'}{' '}
                                 <button
                                   className="text-blue-navy cursor-pointer"
                                   onClick={() => setShowGenerateLinkModal(true)}
@@ -284,14 +284,14 @@ const ManagerActions = (): JSX.Element => {
                     {syndicateCreationFailed && (
                       <div className="flex flex-col items-center pb-6">
                         <p className="text-gray-syn4 pb-6">
-                          Please try again and{" "}
+                          Please try again and{' '}
                           <a
                             href="#"
                             className="text-blue hover:opacity-90"
                             target="_blank"
                           >
                             let us know
-                          </a>{" "}
+                          </a>{' '}
                           if the issue persists.
                         </p>
                         <BlockExplorerLink
@@ -310,7 +310,7 @@ const ManagerActions = (): JSX.Element => {
                             showDepositLinkCopyState,
                             clubDepositLink: depositLink,
                             showConfettiSuccess,
-                            setShowConfettiSuccess,
+                            setShowConfettiSuccess
                           }}
                         />
                       </div>
@@ -336,15 +336,15 @@ const ManagerActions = (): JSX.Element => {
                         <p className="text-sm">
                           I agree to only share this link privately. I
                           understand that publicly sharing this link may violate
-                          securities laws.{" "}
+                          securities laws.{' '}
                           <a
                             target="_blank"
-                            style={{ color: "#4376ff" }}
+                            style={{ color: '#4376ff' }}
                             href="https://www.sec.gov/reportspubs/investor-publications/investorpubsinvclubhtm.html"
                             rel="noopener noreferrer"
                           >
                             Learn more.
-                          </a>{" "}
+                          </a>{' '}
                         </p>
                         <div className="flex items-center pl-2.5">
                           <XIcon

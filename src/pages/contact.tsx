@@ -1,6 +1,6 @@
-import React from "react";
-import Layout from "src/components/layout";
-import Head from "src/components/syndicates/shared/HeaderTitle";
+import React from 'react';
+import Layout from 'src/components/layout';
+import Head from 'src/components/syndicates/shared/HeaderTitle';
 
 const ContactPage: React.FC = () => {
   return (
@@ -71,6 +71,6 @@ const ContactPage: React.FC = () => {
       </section>
     </Layout>
   );
-}
+};
 
 export default ContactPage;

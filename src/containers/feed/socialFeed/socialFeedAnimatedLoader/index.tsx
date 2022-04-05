@@ -1,5 +1,5 @@
-import React from "react";
-import { showLoader } from "src/helpers/syndicate/index";
+import React from 'react';
+import { showLoader } from 'src/helpers/syndicate/index';
 
 /**
  * Renders an animated loader for social feed

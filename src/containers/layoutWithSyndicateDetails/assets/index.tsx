@@ -1,57 +1,57 @@
-import TabsButton from "@/components/TabsButton";
-import { tokenTableColumns } from "@/containers/layoutWithSyndicateDetails/assets/constants";
-import InvestmentsView from "@/containers/layoutWithSyndicateDetails/assets/InvestmentsView";
-import TokenTable from "@/containers/layoutWithSyndicateDetails/assets/tokens/TokenTable";
-import { useDemoMode } from "@/hooks/useDemoMode";
-import { useFetchRecentTransactions } from "@/hooks/useFetchRecentTransactions";
-import { AppState } from "@/state";
+import TabsButton from '@/components/TabsButton';
+import { tokenTableColumns } from '@/containers/layoutWithSyndicateDetails/assets/constants';
+import InvestmentsView from '@/containers/layoutWithSyndicateDetails/assets/InvestmentsView';
+import TokenTable from '@/containers/layoutWithSyndicateDetails/assets/tokens/TokenTable';
+import { useDemoMode } from '@/hooks/useDemoMode';
+import { useFetchRecentTransactions } from '@/hooks/useFetchRecentTransactions';
+import { AppState } from '@/state';
 import {
   setInvestmentTransactions,
   setLoadingTransactions,
-  setTotalInvestmentTransactionsCount,
-} from "@/state/erc20transactions";
-import { mockOffChainTransactionsData } from "@/utils/mockdata";
-import { useRouter } from "next/router";
-import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import Collectibles from "./collectibles";
+  setTotalInvestmentTransactionsCount
+} from '@/state/erc20transactions';
+import { mockOffChainTransactionsData } from '@/utils/mockdata';
+import { useRouter } from 'next/router';
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import Collectibles from './collectibles';
 
 const Assets: React.FC = () => {
   const {
     assetsSliceReducer: { tokensResult },
     web3Reducer: {
-      web3: { account, activeNetwork },
+      web3: { account, activeNetwork }
     },
     transactionsReducer: { totalInvestmentTransactionsCount },
     erc20TokenSliceReducer: {
-      erc20Token: { depositsEnabled },
-    },
+      erc20Token: { depositsEnabled }
+    }
   } = useSelector((state: AppState) => state);
 
   const router = useRouter();
   const {
-    query: { clubAddress },
+    query: { clubAddress }
   } = router;
   const isDemoMode = useDemoMode();
 
   const dispatch = useDispatch();
   const DATA_LIMIT = 10;
 
-  const [activeAssetTab, setActiveAssetTab] = useState<string>("all");
+  const [activeAssetTab, setActiveAssetTab] = useState<string>('all');
   const [pageOffset, setPageOffset] = useState<number>(0);
   const [canNextPage, setCanNextPage] = useState<boolean>(true);
 
   useEffect(() => {
-    setActiveAssetTab("all");
+    setActiveAssetTab('all');
   }, [account]);
 
   // fetch off-chain investment transactions
   const {
     loading: transactionsLoading,
     data: transactionsData,
-    refetch: refetchTransactions,
+    refetch: refetchTransactions
   } = useFetchRecentTransactions(pageOffset, false, {
-    metadata: { transactionCategory: "INVESTMENT" },
+    metadata: { transactionCategory: 'INVESTMENT' }
   });
 
   const processERC20Transactions = async (txns) => {
@@ -69,7 +69,7 @@ const Assets: React.FC = () => {
   }, [pageOffset, activeNetwork.chainId]);
 
   const investmentsTransactionsData = JSON.stringify(
-    transactionsData?.Financial_recentTransactions,
+    transactionsData?.Financial_recentTransactions
   );
   useEffect(() => {
     if (transactionsData?.Financial_recentTransactions) {
@@ -91,21 +91,21 @@ const Assets: React.FC = () => {
         dispatch(
           setInvestmentTransactions({
             txns: [],
-            skip: 0,
-          }),
+            skip: 0
+          })
         );
         dispatch(setTotalInvestmentTransactionsCount(0));
       } else {
         dispatch(
           setInvestmentTransactions({
             txns: mockOffChainTransactionsData.edges as any,
-            skip: pageOffset,
-          }),
+            skip: pageOffset
+          })
         );
         dispatch(
           setTotalInvestmentTransactionsCount(
-            mockOffChainTransactionsData.totalCount,
-          ),
+            mockOffChainTransactionsData.totalCount
+          )
         );
       }
     }
@@ -113,21 +113,21 @@ const Assets: React.FC = () => {
 
   const assetsFilterOptions = [
     {
-      label: "All Assets",
-      value: "all",
+      label: 'All Assets',
+      value: 'all'
     },
     {
-      label: "Tokens",
-      value: "tokens",
+      label: 'Tokens',
+      value: 'tokens'
     },
     {
-      label: "Investments",
-      value: "investments",
+      label: 'Investments',
+      value: 'investments'
     },
     {
-      label: "Collectibles",
-      value: "collectibles",
-    },
+      label: 'Collectibles',
+      value: 'collectibles'
+    }
   ];
 
   return (
@@ -139,7 +139,7 @@ const Assets: React.FC = () => {
           onChange={(val) => setActiveAssetTab(val)}
           activeAssetTab={activeAssetTab}
         />
-        {activeAssetTab === "tokens" && (
+        {activeAssetTab === 'tokens' && (
           <TokenTable
             columns={tokenTableColumns}
             tableData={tokensResult}
@@ -147,13 +147,13 @@ const Assets: React.FC = () => {
           />
         )}
 
-        {activeAssetTab === "collectibles" && (
+        {activeAssetTab === 'collectibles' && (
           <div className="mt-16">
             <Collectibles />
           </div>
         )}
 
-        {activeAssetTab === "investments" && (
+        {activeAssetTab === 'investments' && (
           <div className="mt-16">
             <InvestmentsView
               {...{
@@ -162,13 +162,13 @@ const Assets: React.FC = () => {
                 canNextPage,
                 transactionsLoading,
                 dataLimit: DATA_LIMIT,
-                refetchTransactions: () => refetchTransactions(),
+                refetchTransactions: () => refetchTransactions()
               }}
             />
           </div>
         )}
 
-        {activeAssetTab === "all" && (
+        {activeAssetTab === 'all' && (
           <>
             <TokenTable
               columns={tokenTableColumns}
@@ -183,7 +183,7 @@ const Assets: React.FC = () => {
                   canNextPage,
                   transactionsLoading,
                   dataLimit: DATA_LIMIT,
-                  refetchTransactions: () => refetchTransactions(),
+                  refetchTransactions: () => refetchTransactions()
                 }}
               />
             </div>

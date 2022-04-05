@@ -1,8 +1,8 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { IERC721MerkleProof, initialState } from "./types";
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { IERC721MerkleProof, initialState } from './types';
 
 const setERC721MerkleProofSlice = createSlice({
-  name: "erc721MerkleProof",
+  name: 'erc721MerkleProof',
   initialState,
   reducers: {
     setERC721MerkleProof(state, action: PayloadAction<IERC721MerkleProof>) {
@@ -14,14 +14,14 @@ const setERC721MerkleProofSlice = createSlice({
     },
     clearERC721MerkleProof(state, action: PayloadAction<boolean>) {
       state.erc721MerkleProof = initialState.erc721MerkleProof;
-    },
-  },
+    }
+  }
 });
 
 export const {
   setERC721MerkleProof,
   setLoadingERC721MerkleProof,
-  clearERC721MerkleProof,
+  clearERC721MerkleProof
 } = setERC721MerkleProofSlice.actions;
 
 export default setERC721MerkleProofSlice.reducer;

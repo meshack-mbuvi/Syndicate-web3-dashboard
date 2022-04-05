@@ -1,29 +1,29 @@
-import { Flow, amplitudeLogger } from "@/components/amplitude";
+import { Flow, amplitudeLogger } from '@/components/amplitude';
 import {
   CREATE_INVESTMENT_CLUB,
-  ERROR_INVESTMENT_CLUB_CREATION,
-} from "@/components/amplitude/eventNames";
-import { metamaskConstants } from "@/components/syndicates/shared/Constants";
-import { getMetamaskError } from "@/helpers";
-import { AppState } from "@/state";
+  ERROR_INVESTMENT_CLUB_CREATION
+} from '@/components/amplitude/eventNames';
+import { metamaskConstants } from '@/components/syndicates/shared/Constants';
+import { getMetamaskError } from '@/helpers';
+import { AppState } from '@/state';
 import {
   resetClubCreationReduxState,
   setClubCreationReceipt,
-  setTransactionHash,
-} from "@/state/createInvestmentClub/slice";
-import { getWeiAmount } from "@/utils/conversions";
-import { useRouter } from "next/router";
+  setTransactionHash
+} from '@/state/createInvestmentClub/slice';
+import { getWeiAmount } from '@/utils/conversions';
+import { useRouter } from 'next/router';
 import React, {
   Dispatch,
   SetStateAction,
   createContext,
   useContext,
   useEffect,
-  useState,
-} from "react";
-import { useDispatch, useSelector } from "react-redux";
+  useState
+} from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
-import steps from "./steps";
+import steps from './steps';
 
 type CreateInvestmentClubProviderProps = {
   handleNext: () => void;
@@ -244,7 +244,7 @@ const CreateInvestmentClubProvider: React.FC = ({ children }) => {
 
   const keyPressEnter = (e) => {
     // This should work only when in create IC(Investment club)
-    if (!router.pathname.endsWith("clubprivatebetainvite")) return;
+    if (!router.pathname.endsWith('clubprivatebetainvite')) return;
 
     // it triggers by pressing the enter key
     if ((nextBtnDisabled || showNextButton) && e.keyCode === 13) {
@@ -286,7 +286,7 @@ const CreateInvestmentClubProvider: React.FC = ({ children }) => {
         resetCreationStates,
         setCurrentStep,
         isWalletConfrimed,
-        setConfirmWallet,
+        setConfirmWallet
       }}
     >
       {children}

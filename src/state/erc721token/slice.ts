@@ -1,8 +1,8 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { ERC721Token, initialState } from "./types";
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { ERC721Token, initialState } from './types';
 
 const erc721TokenSlice = createSlice({
-  name: "erc721token",
+  name: 'erc721token',
   initialState,
   reducers: {
     setERC721TokenDetails(state, action: PayloadAction<ERC721Token>) {
@@ -17,15 +17,15 @@ const erc721TokenSlice = createSlice({
     },
     clearERC721TokenDetails(state) {
       state.erc721Token = initialState.erc721Token;
-    },
-  },
+    }
+  }
 });
 
 export const {
   setERC721TokenDetails,
   setERC721TokenContract,
   setERC721Loading,
-  clearERC721TokenDetails,
+  clearERC721TokenDetails
 } = erc721TokenSlice.actions;
 
 export default erc721TokenSlice.reducer;

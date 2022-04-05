@@ -1,25 +1,25 @@
-import { SearchForm } from "@/components/inputs/searchForm";
-import { LinkButton, LinkType } from "@/components/linkButtons";
-import Modal, { ModalStyle } from "@/components/modal";
-import { Spinner } from "@/components/shared/spinner";
-import { SET_MEMBER_SIGN_STATUS } from "@/graphql/mutations";
-import { MEMBER_SIGNED_QUERY } from "@/graphql/queries";
-import { useIsClubOwner } from "@/hooks/useClubOwner";
-import { useDemoMode } from "@/hooks/useDemoMode";
-import { AppState } from "@/state";
-import { formatAddress } from "@/utils/formatAddress";
-import { floatedNumberWithCommas } from "@/utils/formattedNumbers";
-import { useMutation, useQuery } from "@apollo/client";
-import { ExclamationCircleIcon } from "@heroicons/react/solid";
-import Image from "next/image";
-import { useRouter } from "next/router";
-import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
-import { usePagination, useTable } from "react-table";
+import { SearchForm } from '@/components/inputs/searchForm';
+import { LinkButton, LinkType } from '@/components/linkButtons';
+import Modal, { ModalStyle } from '@/components/modal';
+import { Spinner } from '@/components/shared/spinner';
+import { SET_MEMBER_SIGN_STATUS } from '@/graphql/mutations';
+import { MEMBER_SIGNED_QUERY } from '@/graphql/queries';
+import { useIsClubOwner } from '@/hooks/useClubOwner';
+import { useDemoMode } from '@/hooks/useDemoMode';
+import { AppState } from '@/state';
+import { formatAddress } from '@/utils/formatAddress';
+import { floatedNumberWithCommas } from '@/utils/formattedNumbers';
+import { useMutation, useQuery } from '@apollo/client';
+import { ExclamationCircleIcon } from '@heroicons/react/solid';
+import Image from 'next/image';
+import { useRouter } from 'next/router';
+import React, { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
+import { usePagination, useTable } from 'react-table';
 
-import { NotSignedIcon } from "../shared/notSignedIcon";
-import { SignedIcon } from "../shared/signedIcon";
-import SignerMenu from "./signerMenu";
+import { NotSignedIcon } from '../shared/notSignedIcon';
+import { SignedIcon } from '../shared/signedIcon';
+import SignerMenu from './signerMenu';
 
 const MembersTable = ({
   columns,
@@ -29,16 +29,16 @@ const MembersTable = ({
   selectedMember,
   setSelectedMember,
   toggleAddMemberModal,
-  setShowMemberOptions,
+  setShowMemberOptions
 }): JSX.Element => {
   const {
     erc20TokenSliceReducer: {
       erc20Token: { symbol },
-      depositDetails: { depositTokenSymbol },
+      depositDetails: { depositTokenSymbol }
     },
     web3Reducer: {
-      web3: { account, activeNetwork },
-    },
+      web3: { account, activeNetwork }
+    }
   } = useSelector((state: AppState) => state);
 
   const isOwner = useIsClubOwner();
@@ -53,28 +53,28 @@ const MembersTable = ({
     canNextPage,
     nextPage,
     previousPage,
-    state: { pageSize, pageIndex },
+    state: { pageSize, pageIndex }
   } = useTable(
     {
       columns,
       data,
       initialState: {
-        pageSize: 10,
-      },
+        pageSize: 10
+      }
     },
-    usePagination,
+    usePagination
   );
   const [showMemberDetailsModal, setShowMemberDetailsModal] = useState(false);
 
   const {
-    query: { clubAddress },
+    query: { clubAddress }
   } = useRouter();
 
   const [memberInfo, setMemberInfo] = useState<{
-    "Wallet address": string;
-    "Deposit amount": string;
-    "Club tokens": string;
-    "Ownership share": string;
+    'Wallet address': string;
+    'Deposit amount': string;
+    'Club tokens': string;
+    'Ownership share': string;
   }>();
 
   useEffect(() => {
@@ -83,12 +83,12 @@ const MembersTable = ({
         selectedMember;
 
       setMemberInfo({
-        "Wallet address": memberAddress,
-        "Deposit amount": `${floatedNumberWithCommas(
-          depositAmount,
+        'Wallet address': memberAddress,
+        'Deposit amount': `${floatedNumberWithCommas(
+          depositAmount
         )} ${depositTokenSymbol}`,
-        "Club tokens": `${floatedNumberWithCommas(clubTokens)} ${symbol}`,
-        "Ownership share": `${floatedNumberWithCommas(ownershipShare)}%`,
+        'Club tokens': `${floatedNumberWithCommas(clubTokens)} ${symbol}`,
+        'Ownership share': `${floatedNumberWithCommas(ownershipShare)}%`
       });
       setShowMemberDetailsModal(true);
     }
@@ -96,17 +96,17 @@ const MembersTable = ({
 
   const menuItems = [
     {
-      menuText: "Signed",
-      menuIcon: <SignedIcon fillColor="#FFFFFF" />,
+      menuText: 'Signed',
+      menuIcon: <SignedIcon fillColor="#FFFFFF" />
     },
     {
-      menuText: "Not signed",
-      menuIcon: <NotSignedIcon />,
-    },
+      menuText: 'Not signed',
+      menuIcon: <NotSignedIcon />
+    }
   ];
 
   // show first and last page for pagination
-  const firstPage = pageIndex === 0 ? "1" : pageIndex * pageSize;
+  const firstPage = pageIndex === 0 ? '1' : pageIndex * pageSize;
   let lastPage;
   if (pageIndex > 0) {
     lastPage =
@@ -120,24 +120,24 @@ const MembersTable = ({
         : (pageIndex + 1) * pageSize;
   }
 
-  const memberAddress = memberInfo?.["Wallet address"];
+  const memberAddress = memberInfo?.['Wallet address'];
 
   const [setMemberHasSigned, { loading }] = useMutation(
     SET_MEMBER_SIGN_STATUS,
-    { context: { clientName: "backend", chainId: activeNetwork.chainId } },
+    { context: { clientName: 'backend', chainId: activeNetwork.chainId } }
   );
 
   const {
     loading: memberDocSignLoading,
     data: memberSignedData,
-    refetch: refetchMemberStatus,
+    refetch: refetchMemberStatus
   } = useQuery(MEMBER_SIGNED_QUERY, {
     variables: {
       clubAddress,
-      address: memberAddress,
+      address: memberAddress
     },
-    context: { clientName: "backend", chainId: activeNetwork.chainId },
-    skip: !clubAddress || !memberAddress || !activeNetwork.chainId,
+    context: { clientName: 'backend', chainId: activeNetwork.chainId },
+    skip: !clubAddress || !memberAddress || !activeNetwork.chainId
   });
 
   useEffect(() => {
@@ -153,12 +153,12 @@ const MembersTable = ({
       memberData;
 
     setMemberInfo({
-      "Wallet address": memberAddress,
-      "Deposit amount": `${floatedNumberWithCommas(
-        depositAmount,
+      'Wallet address': memberAddress,
+      'Deposit amount': `${floatedNumberWithCommas(
+        depositAmount
       )} ${depositTokenSymbol}`,
-      "Club tokens": `${floatedNumberWithCommas(clubTokens)} ${symbol}`,
-      "Ownership share": `${floatedNumberWithCommas(ownershipShare)}%`,
+      'Club tokens': `${floatedNumberWithCommas(clubTokens)} ${symbol}`,
+      'Ownership share': `${floatedNumberWithCommas(ownershipShare)}%`
     });
     setShowMemberDetailsModal(true);
   };
@@ -169,17 +169,17 @@ const MembersTable = ({
   };
 
   const handleSetSelected = async (index: number) => {
-    const hasSigned = menuItems[index].menuText === "Signed";
+    const hasSigned = menuItems[index].menuText === 'Signed';
 
     setMemberHasSigned({
-      variables: { clubAddress, address: memberAddress, hasSigned },
+      variables: { clubAddress, address: memberAddress, hasSigned }
     });
   };
 
   const hasMemberSigned = memberSignedData?.Financial_memberSigned;
 
   //TODO: remove this to re-enable cap table.
-  const capTableEnabled = false
+  const capTableEnabled = false;
 
   return (
     <div className="overflow-y-hidden ">
@@ -189,7 +189,7 @@ const MembersTable = ({
             {...{
               onChangeHandler: filterAddressOnChangeHandler,
               searchValue: searchAddress,
-              itemsCount: data.length,
+              itemsCount: data.length
             }}
           />
         ) : (
@@ -211,7 +211,7 @@ const MembersTable = ({
       <table
         {...getTableProps()}
         className={`w-full ${
-          page.length ? "border-b-1" : "border-b-0"
+          page.length ? 'border-b-1' : 'border-b-0'
         } border-gray-syn6`}
       >
         <thead className="w-full">
@@ -229,7 +229,7 @@ const MembersTable = ({
                         key={index}
                         className="flex align-middle rounded-md col-span-3 text-left text-sm font-whyte-light text-gray-syn4"
                       >
-                        {column.render("Header")}
+                        {column.render('Header')}
                       </th>
                     );
                   })}
@@ -257,7 +257,7 @@ const MembersTable = ({
                   isOwner && capTableEnabled
                     ? setShowMemberOptions({
                         show: true,
-                        memberAddress: row.original.memberAddress,
+                        memberAddress: row.original.memberAddress
                       })
                     : null
                 }
@@ -265,7 +265,7 @@ const MembersTable = ({
                   isOwner && capTableEnabled
                     ? setShowMemberOptions({
                         show: false,
-                        memberAddress: "",
+                        memberAddress: ''
                       })
                     : null
                 }
@@ -277,7 +277,7 @@ const MembersTable = ({
                       key={cellIndex}
                       className={`m-0 col-span-3 text-base py-4 text-white flex items-center`}
                     >
-                      {cell.render("Cell")}
+                      {cell.render('Cell')}
                     </td>
                   );
                 })}
@@ -299,14 +299,14 @@ const MembersTable = ({
           <button
             className={`pt-1 ${
               !canPreviousPage
-                ? "opacity-50 cursor-not-allowed"
-                : "hover:opacity-90"
+                ? 'opacity-50 cursor-not-allowed'
+                : 'hover:opacity-90'
             }`}
             onClick={() => previousPage()}
             disabled={!canPreviousPage}
           >
             <Image
-              src={"/images/arrowBack.svg"}
+              src={'/images/arrowBack.svg'}
               height="16"
               width="16"
               alt="Previous"
@@ -320,14 +320,14 @@ const MembersTable = ({
           <button
             className={`pt-1 ${
               !canNextPage
-                ? "opacity-50 cursor-not-allowed"
-                : "hover:opacity-90"
+                ? 'opacity-50 cursor-not-allowed'
+                : 'hover:opacity-90'
             }`}
             onClick={() => nextPage()}
             disabled={!canNextPage}
           >
             <Image
-              src={"/images/arrowNext.svg"}
+              src={'/images/arrowNext.svg'}
               height="16"
               width="16"
               alt="Next"
@@ -335,7 +335,7 @@ const MembersTable = ({
           </button>
         </div>
       ) : (
-        ""
+        ''
       )}
 
       {account || isDemoMode ? (
@@ -344,14 +344,14 @@ const MembersTable = ({
             show: showMemberDetailsModal,
             modalStyle: ModalStyle.DARK,
             showCloseButton: false,
-            customWidth: "w-730",
+            customWidth: 'w-730',
             outsideOnClick: true,
             closeModal: closeMemberDetailsModal,
-            customClassName: "py-8",
+            customClassName: 'py-8',
             showHeader: false,
             overflowYScroll: false,
             overflowXScroll: false,
-            overflow: "overflow-visible",
+            overflow: 'overflow-visible'
           }}
         >
           <div className="relative">
@@ -359,12 +359,12 @@ const MembersTable = ({
               <Image
                 width="64"
                 height="64"
-                src={"/images/user.svg"}
+                src={'/images/user.svg'}
                 alt="user"
               />
               <div className="flex flex-grow space-x-4">
                 <p className="text-2xl my-auto align-middle">
-                  {formatAddress(memberInfo?.["Wallet address"], 6, 4)}
+                  {formatAddress(memberInfo?.['Wallet address'], 6, 4)}
                 </p>
                 {hasMemberSigned == true && (
                   <span className="my-auto">
@@ -425,7 +425,7 @@ const MembersTable = ({
           </div>
         </Modal>
       ) : (
-        ""
+        ''
       )}
     </div>
   );

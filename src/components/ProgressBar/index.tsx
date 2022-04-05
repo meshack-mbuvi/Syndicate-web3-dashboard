@@ -5,7 +5,7 @@ interface ProgressBarProps {
 
 const ProgressBar: React.FC<ProgressBarProps> = ({
   percentageWidth,
-  tailwindColor,
+  tailwindColor
 }) => (
   <div className="relative h-1">
     <div className={`absolute ${tailwindColor} opacity-20 w-full h-full`} />

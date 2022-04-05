@@ -1,5 +1,5 @@
-import React from "react";
-import NumberTreatment from "@/components/NumberTreatment";
+import React from 'react';
+import NumberTreatment from '@/components/NumberTreatment';
 import { AppState } from '@/state';
 import { useSelector } from 'react-redux';
 

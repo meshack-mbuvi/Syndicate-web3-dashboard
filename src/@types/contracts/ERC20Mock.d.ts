@@ -2,11 +2,11 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import BN from "bn.js";
-import { EventData, PastEventOptions } from "web3-eth-contract";
+import BN from 'bn.js';
+import { EventData, PastEventOptions } from 'web3-eth-contract';
 
 export interface ERC20MockContract extends Truffle.Contract<ERC20MockInstance> {
-  "new"(
+  'new'(
     name: string,
     symbol: string,
     initialAccount: string,
@@ -16,7 +16,7 @@ export interface ERC20MockContract extends Truffle.Contract<ERC20MockInstance> {
 }
 
 export interface Approval {
-  name: "Approval";
+  name: 'Approval';
   args: {
     owner: string;
     spender: string;
@@ -28,7 +28,7 @@ export interface Approval {
 }
 
 export interface Transfer {
-  name: "Transfer";
+  name: 'Transfer';
   args: {
     from: string;
     to: string;

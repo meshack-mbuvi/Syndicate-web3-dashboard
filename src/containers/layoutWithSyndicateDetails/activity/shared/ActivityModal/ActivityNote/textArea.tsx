@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useRef } from 'react';
 
 /**
  * An textarea component with label and icon at the right end
@@ -33,12 +33,12 @@ export const TextArea: React.FC<ITextAreaProps> = (props) => {
   const linesWithoutNewLines = Math.floor(value.trim().length / 60);
   const totalLines =
     value.trim().length < 60 ? lines : lines + linesWithoutNewLines;
-  const textAreaHeight = totalLines <= 4 ? `${totalLines * 1.5}rem` : "6rem";
+  const textAreaHeight = totalLines <= 4 ? `${totalLines * 1.5}rem` : '6rem';
 
   const autoGrow = () => {
-    noteTextArea.current.style.height = "5px";
+    noteTextArea.current.style.height = '5px';
     noteTextArea.current.style.height =
-      noteTextArea.current.scrollHeight + "px";
+      noteTextArea.current.scrollHeight + 'px';
   };
 
   return (

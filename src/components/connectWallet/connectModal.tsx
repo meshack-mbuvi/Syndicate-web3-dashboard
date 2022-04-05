@@ -1,7 +1,7 @@
-import { Dialog, Transition } from "@headlessui/react";
-import { XIcon } from "@heroicons/react/outline";
-import { Fragment, useRef } from "react";
-import { useDisableBgScrollOnModal } from "@/hooks/useDisableBgScrollOnModal";
+import { Dialog, Transition } from '@headlessui/react';
+import { XIcon } from '@heroicons/react/outline';
+import { Fragment, useRef } from 'react';
+import { useDisableBgScrollOnModal } from '@/hooks/useDisableBgScrollOnModal';
 
 interface ConnectModalProps {
   show: boolean;
@@ -12,12 +12,12 @@ interface ConnectModalProps {
   showCloseButton?: boolean;
   height?: string;
   type?: string;
-  modalStyle?: ConnectModalStyle
+  modalStyle?: ConnectModalStyle;
 }
 
 export enum ConnectModalStyle {
-  DARK = "DARK",
-  BARE = "BARE" // transparent + minimal styling
+  DARK = 'DARK',
+  BARE = 'BARE' // transparent + minimal styling
 }
 
 export const ConnectModal: React.FC<ConnectModalProps> = (props) => {
@@ -77,13 +77,22 @@ export const ConnectModal: React.FC<ConnectModalProps> = (props) => {
             leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
           >
             <div
-              className={`inline-block align-bottom ${modalStyle !== ConnectModalStyle.BARE && "bg-white rounded-2xl px-5"} ${
-                showCloseButton ? `${modalStyle !== ConnectModalStyle.BARE ? "pt-10" : "pt-0"}` : ""
-              } text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg w-full sm:w-96 ${modalStyle !== ConnectModalStyle.BARE && "pb-4 bg-gray-102"} ${
-                height ? height : "h-auto"
-              }`}
+              className={`inline-block align-bottom ${
+                modalStyle !== ConnectModalStyle.BARE &&
+                'bg-white rounded-2xl px-5'
+              } ${
+                showCloseButton
+                  ? `${
+                      modalStyle !== ConnectModalStyle.BARE ? 'pt-10' : 'pt-0'
+                    }`
+                  : ''
+              } text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg w-full sm:w-96 ${
+                modalStyle !== ConnectModalStyle.BARE && 'pb-4 bg-gray-102'
+              } ${height ? height : 'h-auto'}`}
             >
-              {modalStyle !== ConnectModalStyle.BARE && <button className="h-0 w-0 overflow-hidden" />}
+              {modalStyle !== ConnectModalStyle.BARE && (
+                <button className="h-0 w-0 overflow-hidden" />
+              )}
               {showCloseButton ? (
                 <div className="hidden sm:block absolute top-0 right-0 pt-4 pr-4">
                   <button
@@ -106,9 +115,7 @@ export const ConnectModal: React.FC<ConnectModalProps> = (props) => {
               ) : null}
               {subtext ? (
                 <div className="mt-2 mb-6 px-4.5 bg-blue-500">
-                  <p className="text-xs text-gray-syn5">
-                    {subtext}
-                  </p>
+                  <p className="text-xs text-gray-syn5">{subtext}</p>
                 </div>
               ) : null}
 

@@ -1,9 +1,9 @@
-import React, { Fragment } from "react";
-import { Dialog, Transition } from "@headlessui/react";
+import React, { Fragment } from 'react';
+import { Dialog, Transition } from '@headlessui/react';
 
 export enum ModalStyle {
-  DARK = "dark",
-  LIGHT = "light",
+  DARK = 'dark',
+  LIGHT = 'light'
 }
 interface Props {
   show: boolean;
@@ -18,14 +18,14 @@ export const StateModal: React.FC<Props> = (props) => {
   const {
     children,
     show,
-    width = "w-1/3",
-    modalStyle = ModalStyle.LIGHT,
+    width = 'w-1/3',
+    modalStyle = ModalStyle.LIGHT
   } = props;
-  const bgColor = `${modalStyle === ModalStyle.LIGHT && "bg-white"} ${
-    modalStyle === ModalStyle.DARK && "bg-gray-4"
+  const bgColor = `${modalStyle === ModalStyle.LIGHT && 'bg-white'} ${
+    modalStyle === ModalStyle.DARK && 'bg-gray-4'
   }`;
-  const textColor = `${modalStyle === ModalStyle.LIGHT && "text-black"} ${
-    modalStyle === ModalStyle.DARK && "text-white"
+  const textColor = `${modalStyle === ModalStyle.LIGHT && 'text-black'} ${
+    modalStyle === ModalStyle.DARK && 'text-white'
   }`;
 
   return (
@@ -88,7 +88,7 @@ export const StateModal: React.FC<Props> = (props) => {
             >
               <div
                 className={`overflow-y-scroll no-scroll-bar md:my-14 align-middle mx-auto inline-block max-h-screen ${
-                  bgColor ? bgColor : ""
+                  bgColor ? bgColor : ''
                 } rounded-2xl text-left shadow-xl transform transition-all max-w-868 ${width}`}
                 role="dialog"
                 aria-modal="true"

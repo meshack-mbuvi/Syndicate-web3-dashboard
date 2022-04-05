@@ -1,11 +1,11 @@
-import React, { useMemo } from "react";
+import React, { useMemo } from 'react';
 import {
   ExternalLinkColor,
   ExternalLinkIcon,
-  OpenExternalLinkIcon,
-} from "src/components/iconWrappers";
+  OpenExternalLinkIcon
+} from 'src/components/iconWrappers';
 
-import { useConnectWalletContext } from "../../../../context/ConnectWalletProvider";
+import { useConnectWalletContext } from '../../../../context/ConnectWalletProvider';
 
 interface LinkProp {
   resourceId: string | string[];
@@ -26,12 +26,12 @@ export const BlockExplorerLink: React.FC<LinkProp> = (props) => {
   const {
     resourceId: explorerInfo,
     customStyles,
-    resource: type = "address",
+    resource: type = 'address',
     iconOnly,
-    prefix = "View on ",
-    suffix = "",
+    prefix = 'View on ',
+    suffix = '',
     grouped,
-    iconColor = ExternalLinkColor.BLUE,
+    iconColor = ExternalLinkColor.BLUE
   } = props;
 
   const { activeNetwork } = useConnectWalletContext();
@@ -39,10 +39,10 @@ export const BlockExplorerLink: React.FC<LinkProp> = (props) => {
   const url = useMemo(() => {
     const baseURL = activeNetwork.blockExplorer.baseUrl;
     const resource =
-      type === "transaction"
+      type === 'transaction'
         ? activeNetwork.blockExplorer.resources.transaction
         : activeNetwork.blockExplorer.resources.address;
-    return [baseURL, resource, explorerInfo].join("/");
+    return [baseURL, resource, explorerInfo].join('/');
   }, [activeNetwork, type, explorerInfo]);
 
   return (
@@ -59,7 +59,13 @@ export const BlockExplorerLink: React.FC<LinkProp> = (props) => {
       )}
       {!iconOnly ? (
         <div className="flex justify-between items-center w-full">
-          <div className={`${iconColor === ExternalLinkColor.BLUE ? "text-blue" : "text-white"}`}>{prefix} {activeNetwork.blockExplorer.name} {suffix}</div>
+          <div
+            className={`${
+              iconColor === ExternalLinkColor.BLUE ? 'text-blue' : 'text-white'
+            }`}
+          >
+            {prefix} {activeNetwork.blockExplorer.name} {suffix}
+          </div>
           <ExternalLinkIcon
             className={`ml-2 w-4 text-blue`}
             iconColor={iconColor}

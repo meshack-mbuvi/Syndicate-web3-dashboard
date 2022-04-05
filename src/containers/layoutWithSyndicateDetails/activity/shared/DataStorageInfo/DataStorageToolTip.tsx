@@ -1,10 +1,10 @@
-import React from "react";
-import ReactTooltip from "react-tooltip";
+import React from 'react';
+import ReactTooltip from 'react-tooltip';
 
 export const DataStorageToolTip: React.FC<{
   id: string;
   tip: string | React.ReactNode;
-}> = ({ id, tip}) => {
+}> = ({ id, tip }) => {
   return (
     <ReactTooltip
       id={id}

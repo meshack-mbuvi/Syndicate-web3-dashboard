@@ -1,4 +1,4 @@
-import Web3 from "web3";
+import Web3 from 'web3';
 
 const initialWeb3 = {};
 
@@ -64,9 +64,9 @@ export interface IModalErrors {
 }
 
 export enum Status {
-  CONNECTED = "connected",
-  CONNECTING = "connecting",
-  DISCONNECTED = "disconnected",
+  CONNECTED = 'connected',
+  CONNECTING = 'connecting',
+  DISCONNECTED = 'disconnected'
 }
 
 export interface InitialState {
@@ -99,45 +99,45 @@ export const initialState: InitialState = {
     isErrorModalOpen: false,
     error: null,
     web3: initialWeb3,
-    account: "",
+    account: '',
     chainId: 0,
-    providerName: "",
-    currentEthereumNetwork: "",
+    providerName: '',
+    currentEthereumNetwork: '',
     ethereumNetwork: {
-      correctEthereumNetwork: "",
-      invalidEthereumNetwork: false,
+      correctEthereumNetwork: '',
+      invalidEthereumNetwork: false
     },
     activeNetwork: {
-      name: "",
-      displayName: "",
-      shortName: "",
-      network: "",
+      name: '',
+      displayName: '',
+      shortName: '',
+      network: '',
       chainId: 0,
       networkId: null,
-      rpcUrl: "",
-      publicRPC: "",
-      logo: "",
+      rpcUrl: '',
+      publicRPC: '',
+      logo: '',
       blockExplorer: {
-        name: "",
-        baseUrl: "",
-        api: "",
+        name: '',
+        baseUrl: '',
+        api: '',
         resources: {
-          transaction: "",
-          address: "",
-        },
+          transaction: '',
+          address: ''
+        }
       },
       nativeCurrency: {
-        symbol: "",
-        name: "",
-        decimals: "",
+        symbol: '',
+        name: '',
+        decimals: ''
       },
       metadata: {
         colors: {
-          background: "",
-        },
-      },
-    },
+          background: ''
+        }
+      }
+    }
   },
   showWalletModal: false,
-  dispatchCreateFlow: false,
+  dispatchCreateFlow: false
 };

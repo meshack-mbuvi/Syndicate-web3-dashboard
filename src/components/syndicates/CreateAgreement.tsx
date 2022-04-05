@@ -1,18 +1,18 @@
-import { amplitudeLogger, Flow } from "@/components/amplitude";
-import { CLICKED_HELP_FORM_LEGAL_ENTITY } from "@/components/amplitude/eventNames";
-import ErrorBoundary from "@/components/errorBoundary";
-import { Checkbox } from "@/components/inputs/checkbox";
-import { TextArea } from "@/components/inputs/textArea";
-import { TextField } from "@/components/inputs/textField";
-import Head from "@/components/syndicates/shared/HeaderTitle";
-import { setClubLegalInfo } from "@/state/legalInfo";
-import { yupResolver } from "@hookform/resolvers/yup";
-import moment from "moment";
-import { useRouter } from "next/router";
-import React, { useEffect } from "react";
-import { useForm } from "react-hook-form";
-import { useDispatch } from "react-redux";
-import * as yup from "yup";
+import { amplitudeLogger, Flow } from '@/components/amplitude';
+import { CLICKED_HELP_FORM_LEGAL_ENTITY } from '@/components/amplitude/eventNames';
+import ErrorBoundary from '@/components/errorBoundary';
+import { Checkbox } from '@/components/inputs/checkbox';
+import { TextArea } from '@/components/inputs/textArea';
+import { TextField } from '@/components/inputs/textField';
+import Head from '@/components/syndicates/shared/HeaderTitle';
+import { setClubLegalInfo } from '@/state/legalInfo';
+import { yupResolver } from '@hookform/resolvers/yup';
+import moment from 'moment';
+import { useRouter } from 'next/router';
+import React, { useEffect } from 'react';
+import { useForm } from 'react-hook-form';
+import { useDispatch } from 'react-redux';
+import * as yup from 'yup';
 
 interface FormInputs {
   legalEntityName: string;
@@ -27,32 +27,32 @@ interface FormInputs {
 }
 
 const schema = yup.object({
-  legalEntityName: yup.string().required("Legal entity name is required"),
+  legalEntityName: yup.string().required('Legal entity name is required'),
   isSeriesLLC: yup.boolean(),
-  adminName: yup.string().required("Admin name is required"),
+  adminName: yup.string().required('Admin name is required'),
   counselName: yup.string().trim(),
   counselEmail: yup
     .string()
-    .email("Invalid email address")
-    .when("counselName", {
+    .email('Invalid email address')
+    .when('counselName', {
       is: (counselName) => counselName?.trim().length > 0,
       then: yup
         .string()
-        .email("Invalid email address")
-        .required("Email is required"),
+        .email('Invalid email address')
+        .required('Email is required')
     }),
-  location: yup.string().required("Location is required"),
+  location: yup.string().required('Location is required'),
   managerEmail: yup
     .string()
-    .email("Invalid email address")
-    .required("Email is required"),
-  masterLLC: yup.string().when("isSeriesLLC", {
+    .email('Invalid email address')
+    .required('Email is required'),
+  masterLLC: yup.string().when('isSeriesLLC', {
     is: true,
-    then: yup.string().required("Master LLC is required"),
+    then: yup.string().required('Master LLC is required')
   }),
   generalPurposeStatement: yup
     .string()
-    .required("General purpose statement is required"),
+    .required('General purpose statement is required')
 });
 
 /**
@@ -64,10 +64,10 @@ const CreateAgreementComponent: React.FC = () => {
     handleSubmit,
     watch,
     formState: { isValid },
-    setValue,
+    setValue
   } = useForm<FormInputs>({
     resolver: yupResolver(schema),
-    mode: "onChange",
+    mode: 'onChange'
   });
 
   const { isSeriesLLC, adminName, location, counselName } = watch();
@@ -78,9 +78,9 @@ const CreateAgreementComponent: React.FC = () => {
 
   const setFormValues = (clubData) => {
     for (const [key, value] of Object.entries(clubData)) {
-      if (key === "legalEntityName" && clubData.isSeriesLLC) {
-        setValue("legalEntityName", clubData.seriesLLC, {
-          shouldValidate: true,
+      if (key === 'legalEntityName' && clubData.isSeriesLLC) {
+        setValue('legalEntityName', clubData.seriesLLC, {
+          shouldValidate: true
         });
       } else {
         setValue(key as any, value, { shouldValidate: true });
@@ -89,7 +89,7 @@ const CreateAgreementComponent: React.FC = () => {
   };
 
   useEffect(() => {
-    const legal = JSON.parse(localStorage.getItem("legal") || "{}");
+    const legal = JSON.parse(localStorage.getItem('legal') || '{}');
     const clubLegalData = legal[clubAddress as string];
     const clubData = clubLegalData?.clubData;
     if (clubData && clubLegalData?.signaturesNeeded) {
@@ -101,9 +101,9 @@ const CreateAgreementComponent: React.FC = () => {
     dispatch(
       setClubLegalInfo({
         ...values,
-        dueDate: moment().add(30, "days").format("LL"),
-        adminSignDate: moment().format("LL"),
-      }),
+        dueDate: moment().add(30, 'days').format('LL'),
+        adminSignDate: moment().format('LL')
+      })
     );
     router.push(`/clubs/${clubAddress}/manage/legal/sign`);
   };
@@ -130,17 +130,17 @@ const CreateAgreementComponent: React.FC = () => {
                         href="https://syndicatedao.gitbook.io/syndicate-guide/web3-investment-clubs/create-a-legal-entity"
                         target="_blank"
                         rel="noreferrer"
-                        style={{ float: "right" }}
+                        style={{ float: 'right' }}
                         onClick={() => {
                           amplitudeLogger(CLICKED_HELP_FORM_LEGAL_ENTITY, {
-                            flow: Flow.LEGAL_ENTITY_FLOW,
+                            flow: Flow.LEGAL_ENTITY_FLOW
                           });
                         }}
                       >
                         Help me form one first
                       </a>
                     ),
-                    textColor: "text-blue",
+                    textColor: 'text-blue'
                   }}
                   control={control}
                   placeholder="Name of existing LLC"
@@ -149,7 +149,7 @@ const CreateAgreementComponent: React.FC = () => {
                 <Checkbox
                   control={control}
                   name="isSeriesLLC"
-                  label={"This is a series of a master LLC"}
+                  label={'This is a series of a master LLC'}
                 />
 
                 {isSeriesLLC && (
@@ -171,7 +171,7 @@ const CreateAgreementComponent: React.FC = () => {
                 info="This is the person who will pay expenses and perform admin
                     functions for the club, such as reviewing member
                     documentation and coordinating tax reporting."
-                showWarning={adminName?.trim().split(" ").length < 2}
+                showWarning={adminName?.trim().split(' ').length < 2}
                 warningText="Admin name should have first and last names"
               />
 
@@ -188,7 +188,7 @@ const CreateAgreementComponent: React.FC = () => {
                     comfortable with.
                   </span>
                 }
-                showWarning={location?.trim().split(",").length < 2}
+                showWarning={location?.trim().split(',').length < 2}
                 warningText="Location should be formatted as City, State"
               />
 
@@ -203,10 +203,10 @@ const CreateAgreementComponent: React.FC = () => {
                 <TextField
                   label="Outside counsel"
                   name="counselName"
-                  cornerHint={{ text: "If applicable" }}
+                  cornerHint={{ text: 'If applicable' }}
                   control={control}
                   placeholder="Name of counsel"
-                  showWarning={counselName?.trim().split(" ").length < 2}
+                  showWarning={counselName?.trim().split(' ').length < 2}
                   warningText="Counsel name should have first and last names"
                 />
 
@@ -238,8 +238,8 @@ const CreateAgreementComponent: React.FC = () => {
                     <button
                       className={`${
                         !isValid
-                          ? "primary-CTA-disabled text-gray-lightManatee"
-                          : "primary-CTA hover:opacity-90 transition-all"
+                          ? 'primary-CTA-disabled text-gray-lightManatee'
+                          : 'primary-CTA hover:opacity-90 transition-all'
                       }`}
                       type="submit"
                       disabled={!isValid}

@@ -3,19 +3,19 @@
  * @returns formatted number as a string
  * */
 export const numberWithCommas = (number: string | number): string => {
-  if (!number) return "0";
+  if (!number) return '0';
 
   // Don't group decimal part
-  const [wholePart, decimalPart] = number.toString().split(".");
+  const [wholePart, decimalPart] = number.toString().split('.');
 
   return (
-    wholePart.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+    wholePart.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') +
     `${
       decimalPart
         ? `.${decimalPart}`
-        : number.toString().indexOf(".") > -1
-        ? "."
-        : ""
+        : number.toString().indexOf('.') > -1
+        ? '.'
+        : ''
     }`
   );
 };
@@ -70,44 +70,44 @@ export const floatedNumberWithCommas = (
 };
 
 export const numberInputRemoveCommas = (
-  event: React.ChangeEvent<HTMLInputElement>,
+  event: React.ChangeEvent<HTMLInputElement>
 ) => {
   let newVal;
   const { value } = event.target;
   newVal = value;
 
-  const [beforeDecimal, afterDecimal] = value.split(".");
+  const [beforeDecimal, afterDecimal] = value.split('.');
   if (afterDecimal && afterDecimal.length > 5) {
-    newVal = beforeDecimal + "." + afterDecimal.slice(0, 5);
+    newVal = beforeDecimal + '.' + afterDecimal.slice(0, 5);
   }
 
   // check and remove leading zeroes if not followed by a decimal point
   if (
     newVal.length > 1 &&
-    newVal.charAt(0) === "0" &&
-    newVal.charAt(1) !== "."
+    newVal.charAt(0) === '0' &&
+    newVal.charAt(1) !== '.'
   ) {
     newVal = newVal.slice(1);
   }
 
   // remove commas from big numbers before we set state
-  return newVal.replace(/,/g, "");
+  return newVal.replace(/,/g, '');
 };
 
 export const numberStringInputRemoveCommas = (input: string) => {
   let newVal;
   newVal = input;
-  const [beforeDecimal, afterDecimal] = input.split(".");
+  const [beforeDecimal, afterDecimal] = input.split('.');
   if (afterDecimal && afterDecimal.length > 2) {
-    newVal = beforeDecimal + "." + afterDecimal.slice(0, 2);
+    newVal = beforeDecimal + '.' + afterDecimal.slice(0, 2);
   }
   // remove commas from big numbers before we set state
-  return newVal.replace(/,/g, "");
+  return newVal.replace(/,/g, '');
 };
 
 export const truncateDecimals = (
   inputNumber: number,
-  digits: number,
+  digits: number
 ): number => {
   const fact = 10 ** digits;
   return Math.floor(inputNumber * fact) / fact;

@@ -1,8 +1,8 @@
-import { AppState } from "@/state";
-import { format } from "date-fns";
-import React, { useEffect, useState } from "react";
-import DatePicker from "react-datepicker";
-import { useController } from "react-hook-form";
+import { AppState } from '@/state';
+import { format } from 'date-fns';
+import React, { useEffect, useState } from 'react';
+import DatePicker from 'react-datepicker';
+import { useController } from 'react-hook-form';
 
 interface Props {
   disabled: boolean;
@@ -17,16 +17,16 @@ const ActivityDatePicker: React.FC<Props> = ({
   disabled,
   name,
   control,
-  label = "",
-  borderStyles = "",
-  textAlignment = "",
+  label = '',
+  borderStyles = '',
+  textAlignment = ''
 }) => {
   const {
-    field: { onChange, value },
+    field: { onChange, value }
   } = useController({
     name,
     control,
-    defaultValue: "",
+    defaultValue: ''
   });
 
   const [transactionDate, setTransactionDate] = useState<Date>(new Date());
@@ -70,7 +70,7 @@ const ActivityDatePicker: React.FC<Props> = ({
       <div className="flex">
         {disabled ? (
           <div className="text-base py-4 my-auto text-white">
-            {format(transactionDate, "LLL d, yyyy")}
+            {format(transactionDate, 'LLL d, yyyy')}
           </div>
         ) : (
           <DatePicker

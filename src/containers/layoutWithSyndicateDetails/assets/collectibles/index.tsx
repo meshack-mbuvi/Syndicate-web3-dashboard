@@ -1,19 +1,19 @@
-import { SkeletonLoader } from "@/components/skeletonLoader";
-import CollectibleDetailsModal from "@/containers/layoutWithSyndicateDetails/assets/collectibles/collectibleDetailsModal";
-import CollectibleMedia from "@/containers/layoutWithSyndicateDetails/assets/collectibles/shared/CollectibleMedia";
-import FullScreenOverlay from "@/containers/layoutWithSyndicateDetails/assets/collectibles/shared/FullscreenOverlay";
-import { useDemoMode } from "@/hooks/useDemoMode";
-import { AppState } from "@/state";
+import { SkeletonLoader } from '@/components/skeletonLoader';
+import CollectibleDetailsModal from '@/containers/layoutWithSyndicateDetails/assets/collectibles/collectibleDetailsModal';
+import CollectibleMedia from '@/containers/layoutWithSyndicateDetails/assets/collectibles/shared/CollectibleMedia';
+import FullScreenOverlay from '@/containers/layoutWithSyndicateDetails/assets/collectibles/shared/FullscreenOverlay';
+import { useDemoMode } from '@/hooks/useDemoMode';
+import { AppState } from '@/state';
 import {
   setCollectibleModalDetails,
-  setShowCollectibleModal,
-} from "@/state/assets/collectibles/slice";
-import { fetchCollectiblesTransactions } from "@/state/assets/slice";
-import { floatedNumberWithCommas } from "@/utils/formattedNumbers";
-import { web3 } from "@/utils/web3Utils";
-import { FC, useState } from "react";
-import InfiniteScroll from "react-infinite-scroll-component";
-import { useDispatch, useSelector } from "react-redux";
+  setShowCollectibleModal
+} from '@/state/assets/collectibles/slice';
+import { fetchCollectiblesTransactions } from '@/state/assets/slice';
+import { floatedNumberWithCommas } from '@/utils/formattedNumbers';
+import { web3 } from '@/utils/web3Utils';
+import { FC, useState } from 'react';
+import InfiniteScroll from 'react-infinite-scroll-component';
+import { useDispatch, useSelector } from 'react-redux';
 
 const Collectibles: FC = () => {
   const {
@@ -232,7 +232,7 @@ const Collectibles: FC = () => {
 
                   // Still media type not set? Default to imageOnlyNFT
                   if (!mediaType) {
-                    mediaType = "imageOnlyNFT";
+                    mediaType = 'imageOnlyNFT';
                   }
                 }
                 // sometimes the NFT name is an Ethereum address

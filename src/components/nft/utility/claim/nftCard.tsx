@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from "react";
-import { ArrowNarrowRightIcon, ExternalLinkIcon } from "@heroicons/react/solid";
-import { AppState } from "@/state";
-import { useSelector } from "react-redux";
-import ProcessingClaimModal from "./processingClaimModal";
+import React, { useEffect, useState } from 'react';
+import { ArrowNarrowRightIcon, ExternalLinkIcon } from '@heroicons/react/solid';
+import { AppState } from '@/state';
+import { useSelector } from 'react-redux';
+import ProcessingClaimModal from './processingClaimModal';
 
 const NFTCard: React.FC<{
   collectible: any;
@@ -17,14 +17,14 @@ const NFTCard: React.FC<{
   collectibleSelected,
   handleClaimedCollectible,
   claiming,
-  claimed,
+  claimed
 }) => {
   const {
     web3Reducer: {
-      web3: { account },
+      web3: { account }
     },
     utilityNFTSliceReducer: { utilityNFT },
-    initializeContractsReducer: { syndicateContracts },
+    initializeContractsReducer: { syndicateContracts }
   } = useSelector((state: AppState) => state);
 
   const [hoverState, setHoverState] = useState<boolean>(false);
@@ -101,7 +101,7 @@ const NFTCard: React.FC<{
       {claimed || successfulClaim ? (
         <div className="absolute w-full top-4 px-4">
           <div className="px-3 py-2 bg-white bg-opacity-30 rounded-4xl flex justify-between align-middle items-center">
-            <span>Claimed with mint pass #{collectible.token_id}</span>{" "}
+            <span>Claimed with mint pass #{collectible.token_id}</span>{' '}
             <ExternalLinkIcon className="w-5 h-5 text-white inline"></ExternalLinkIcon>
           </div>
         </div>
@@ -114,24 +114,24 @@ const NFTCard: React.FC<{
             type="checkbox"
             className="bg-transparent rounded focus:ring-offset-0 border-white ring-white h-4 w-4"
             checked={collectibleSelected}
-            style={{ pointerEvents: "none" }}
+            style={{ pointerEvents: 'none' }}
             readOnly
-          />{" "}
-          <span>{collectibleSelected ? "Selected" : "Select"}</span>
+          />{' '}
+          <span>{collectibleSelected ? 'Selected' : 'Select'}</span>
         </button>
       ) : null}
 
       <div
         style={{
-          backgroundColor: "#232529",
+          backgroundColor: '#232529',
           backgroundImage: `url('${
             collectible.image
               ? collectible.image
-              : "https://gateway.pinata.cloud/ipfs/Qma5cZH8yBaSYtqAYW5TUbGdm4YrfZ1YXQUnNeFeYVKjsB"
+              : 'https://gateway.pinata.cloud/ipfs/Qma5cZH8yBaSYtqAYW5TUbGdm4YrfZ1YXQUnNeFeYVKjsB'
           }')`,
-          backgroundSize: "cover",
-          backgroundRepeat: "no-repeat",
-          backgroundPosition: "center center",
+          backgroundSize: 'cover',
+          backgroundRepeat: 'no-repeat',
+          backgroundPosition: 'center center'
         }}
         className="rounded-t-1.5lg h-88 w-88 bg-gray-syn6"
       ></div>
@@ -161,14 +161,14 @@ const NFTCard: React.FC<{
             <button
               className={`w-full rounded-lg text-base text-black px-8 py-4 font-medium ${
                 !submitting
-                  ? "bg-green"
-                  : "bg-gray-syn7 text-white cursor-default"
+                  ? 'bg-green'
+                  : 'bg-gray-syn7 text-white cursor-default'
               } align-baseline`}
               onClick={!submitting ? claimNFT : null}
               disabled={submitting}
             >
-              {!submitting ? "Claim with mint pass #" : "Claiming with pass #"}
-              {collectible.token_id}{" "}
+              {!submitting ? 'Claim with mint pass #' : 'Claiming with pass #'}
+              {collectible.token_id}{' '}
               {!submitting ? (
                 <ArrowNarrowRightIcon className="w-6 h-6 text-black inline" />
               ) : null}

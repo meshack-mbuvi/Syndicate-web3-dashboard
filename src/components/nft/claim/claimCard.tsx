@@ -1,16 +1,16 @@
-import { Spinner } from "@/components/shared/spinner";
-import { BlockExplorerLink } from "@/components/syndicates/shared/BlockExplorerLink";
-import { AppState } from "@/state";
-import { clearERC721Claimed } from "@/state/claimedERC721/slice";
-import { showWalletModal } from "@/state/wallet/actions";
-import { Status } from "@/state/wallet/types";
-import { getWeiAmount } from "@/utils/conversions";
-import { formatAddress } from "@/utils/formatAddress";
-import { MinusCircleIcon, PlusCircleIcon } from "@heroicons/react/outline";
-import { BigNumber } from "bignumber.js";
-import moment from "moment";
-import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { Spinner } from '@/components/shared/spinner';
+import { BlockExplorerLink } from '@/components/syndicates/shared/BlockExplorerLink';
+import { AppState } from '@/state';
+import { clearERC721Claimed } from '@/state/claimedERC721/slice';
+import { showWalletModal } from '@/state/wallet/actions';
+import { Status } from '@/state/wallet/types';
+import { getWeiAmount } from '@/utils/conversions';
+import { formatAddress } from '@/utils/formatAddress';
+import { MinusCircleIcon, PlusCircleIcon } from '@heroicons/react/outline';
+import { BigNumber } from 'bignumber.js';
+import moment from 'moment';
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
 const ClaimCard: React.FC<{
   handleMintUpdate?: (amount) => void;
@@ -92,7 +92,9 @@ const ClaimCard: React.FC<{
     ) {
       setClaimError('Max Claim Exceeded');
     } else if (claimValue > getWeiAmount(rawNativeBalance, 18, false)) {
-      setClaimError(`Insufficient ${activeNetwork.nativeCurrency.symbol} balance`);
+      setClaimError(
+        `Insufficient ${activeNetwork.nativeCurrency.symbol} balance`
+      );
     } else {
       setClaimError('');
     }

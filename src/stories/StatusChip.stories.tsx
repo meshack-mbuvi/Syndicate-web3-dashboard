@@ -1,19 +1,22 @@
 import { StatusChip, ChipState } from '@/components/statusChip';
 import React from 'react';
 
-
 export default {
   title: 'Atoms/Status Chip',
   component: StatusChip,
   argTypes: {
     status: {
-      options: [ChipState.SUCCESS, ChipState.PENDING, ChipState.ACTION_REQUIRED],
-      control: { type: 'select' },
-    },
-  },
+      options: [
+        ChipState.SUCCESS,
+        ChipState.PENDING,
+        ChipState.ACTION_REQUIRED
+      ],
+      control: { type: 'select' }
+    }
+  }
 };
 
-const Template = (args) => <StatusChip {...args}/>;
+const Template = (args) => <StatusChip {...args} />;
 
 export const Success = Template.bind({});
 Success.args = {

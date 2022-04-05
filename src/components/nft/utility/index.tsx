@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
-import { AppState } from "@/state";
-import AvailabilityCard from "./availabilityCard";
-import VerifyMintPassModal from "./verifyMintPassModal";
-import useUtilityNFT from "@/hooks/useUtilityNFT";
-import { SkeletonLoader } from "@/components/skeletonLoader";
-import { useRouter } from "next/router";
+import React, { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
+import { AppState } from '@/state';
+import AvailabilityCard from './availabilityCard';
+import VerifyMintPassModal from './verifyMintPassModal';
+import useUtilityNFT from '@/hooks/useUtilityNFT';
+import { SkeletonLoader } from '@/components/skeletonLoader';
+import { useRouter } from 'next/router';
 
 const UtilityNFT: React.FC = () => {
   const {

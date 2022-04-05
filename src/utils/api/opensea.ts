@@ -1,32 +1,32 @@
-import { proxyGet } from ".";
+import { proxyGet } from '.';
 
-const openSeaBaseURL = "opensea/api/v1";
+const openSeaBaseURL = 'opensea/api/v1';
 
 export const getOpenseaTokens = async (
   address: string,
   contractAddress: string,
   chainId: number,
   offset?: string,
-  limit?: string,
+  limit?: string
 ): Promise<any> => {
   const params = {
     owner: address,
     asset_contract_address: contractAddress,
-    limit: limit || "50", // in case OpenSea changes the default limit
-    offset: offset || 0,
+    limit: limit || '50', // in case OpenSea changes the default limit
+    offset: offset || 0
   };
 
   // This will retrieve all assets regardless of the owner.
   if (!address) delete params.owner;
 
-  const result = await proxyGet(chainId, "opensea/api/v1/assets", params);
+  const result = await proxyGet(chainId, 'opensea/api/v1/assets', params);
 
   return result.data;
 };
 
 export const getOpenseaFloorPrices = async (
   slug: string,
-  chainId: number,
+  chainId: number
 ): Promise<any> => {
   const params = {};
 
@@ -35,7 +35,7 @@ export const getOpenseaFloorPrices = async (
     const result = await proxyGet(
       chainId,
       `${openSeaBaseURL}/collection/${slug}/stats`,
-      params,
+      params
     );
     floor_price = result.data.stats.floor_price;
   } catch {
@@ -44,6 +44,6 @@ export const getOpenseaFloorPrices = async (
 
   return {
     floorPrice: floor_price || 0,
-    slug,
+    slug
   };
 };

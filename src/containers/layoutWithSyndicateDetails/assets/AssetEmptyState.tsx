@@ -1,8 +1,8 @@
-import Image from "next/image";
-import React from "react";
+import Image from 'next/image';
+import React from 'react';
 
 const AssetEmptyState: React.FC<{ activeAssetTab: string }> = ({
-  activeAssetTab,
+  activeAssetTab
 }) => {
   return (
     <div className="flex justify-center">
@@ -23,7 +23,7 @@ const AssetEmptyState: React.FC<{ activeAssetTab: string }> = ({
             No assets yet
           </div>
 
-          {activeAssetTab === "all" && (
+          {activeAssetTab === 'all' && (
             <p className="text-center text-gray-syn3 text-base m-3.5">
               Deposits, investments, and collectibles will appear here
             </p>

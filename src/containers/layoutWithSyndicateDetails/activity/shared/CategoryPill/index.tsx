@@ -1,19 +1,19 @@
-import { SkeletonLoader } from "@/components/skeletonLoader";
-import { ANNOTATE_TRANSACTIONS } from "@/graphql/mutations";
-import { useIsClubOwner } from "@/hooks/useClubOwner";
-import { AppState } from "@/state";
-import { setCurrentTransaction } from "@/state/erc20transactions";
-import { TransactionCategory } from "@/state/erc20transactions/types";
-import { useMutation } from "@apollo/client";
+import { SkeletonLoader } from '@/components/skeletonLoader';
+import { ANNOTATE_TRANSACTIONS } from '@/graphql/mutations';
+import { useIsClubOwner } from '@/hooks/useClubOwner';
+import { AppState } from '@/state';
+import { setCurrentTransaction } from '@/state/erc20transactions';
+import { TransactionCategory } from '@/state/erc20transactions/types';
+import { useMutation } from '@apollo/client';
 import React, {
   Dispatch,
   SetStateAction,
   useEffect,
   useRef,
-  useState,
-} from "react";
-import { useDispatch, useSelector } from "react-redux";
-import CategoryPillDropDown from "./CategoryPillDropdown";
+  useState
+} from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import CategoryPillDropDown from './CategoryPillDropdown';
 interface ICategoryPill {
   outgoing?: boolean;
   category?: TransactionCategory;
@@ -53,60 +53,60 @@ export const CategoryPill: React.FC<ICategoryPill> = ({
   showLoader = false,
   setActiveTransactionHash,
   uncategorisedIcon,
-  disableDropDown,
+  disableDropDown
 }) => {
   const dispatch = useDispatch();
   const {
     transactionsReducer: { currentTransaction },
     web3Reducer: {
-      web3: { activeNetwork },
-    },
+      web3: { activeNetwork }
+    }
   } = useSelector((state: AppState) => state);
 
   const isManager = useIsClubOwner();
   const categorySelect = useRef(null);
-  const [pillIcon, setPillIcon] = useState<string>("");
-  const [pillText, setPillText] = useState<string>("");
+  const [pillIcon, setPillIcon] = useState<string>('');
+  const [pillText, setPillText] = useState<string>('');
 
   // drop down
   const [showDropdown, setShowDropdown] = useState<boolean>(false);
-  const [selectedCategory, setSelectedCategory] = useState<any>("");
+  const [selectedCategory, setSelectedCategory] = useState<any>('');
   const [dropDownOptions, setDropdownOptions] = useState<any[]>([]);
 
   // all category pill dropdown options
   const commonPillOptions = [
     {
-      text: "Other",
-      value: "OTHER",
-      icon: "other-transaction.svg",
+      text: 'Other',
+      value: 'OTHER',
+      icon: 'other-transaction.svg'
     },
     {
-      text: "Uncategorised",
+      text: 'Uncategorised',
       value: null,
       icon: uncategorisedIcon
         ? uncategorisedIcon
         : outgoing
-        ? "outgoing-transaction.svg"
-        : "incoming-transaction.svg",
-    },
+        ? 'outgoing-transaction.svg'
+        : 'incoming-transaction.svg'
+    }
   ];
   const categoryPillOptions = [
     {
-      text: "Investment",
-      value: "INVESTMENT",
-      icon: "investment-transaction.svg",
+      text: 'Investment',
+      value: 'INVESTMENT',
+      icon: 'investment-transaction.svg'
     },
     {
-      text: "Expense",
-      value: "EXPENSE",
-      icon: "expense-transaction.svg",
+      text: 'Expense',
+      value: 'EXPENSE',
+      icon: 'expense-transaction.svg'
     },
 
     {
-      text: "Investment tokens",
-      value: "INVESTMENT_TOKEN",
-      icon: "investment-tokens.svg",
-    },
+      text: 'Investment tokens',
+      value: 'INVESTMENT_TOKEN',
+      icon: 'investment-tokens.svg'
+    }
   ];
 
   // initial selected category
@@ -122,51 +122,51 @@ export const CategoryPill: React.FC<ICategoryPill> = ({
     }
 
     switch (selectedCategory) {
-      case "EXPENSE":
-        setPillIcon("expense-transaction.svg");
-        setPillText("Expense");
+      case 'EXPENSE':
+        setPillIcon('expense-transaction.svg');
+        setPillText('Expense');
         break;
-      case "INVESTMENT":
-        setPillIcon("investment-transaction.svg");
-        setPillText("Investment");
+      case 'INVESTMENT':
+        setPillIcon('investment-transaction.svg');
+        setPillText('Investment');
         break;
-      case "DEPOSIT":
-        setPillIcon("deposit-transaction.svg");
-        setPillText("Deposit");
+      case 'DEPOSIT':
+        setPillIcon('deposit-transaction.svg');
+        setPillText('Deposit');
         break;
-      case "INVESTMENT_TOKEN":
-        setPillIcon("investment-tokens.svg");
-        setPillText("Investment token");
+      case 'INVESTMENT_TOKEN':
+        setPillIcon('investment-tokens.svg');
+        setPillText('Investment token');
         break;
-      case "OFF_CHAIN_INVESTMENT":
-        setPillIcon("offchain-investment.svg");
-        setPillText("Off-chain investment");
+      case 'OFF_CHAIN_INVESTMENT':
+        setPillIcon('offchain-investment.svg');
+        setPillText('Off-chain investment');
         break;
-      case "OTHER":
-        setPillIcon("other-transaction.svg");
-        setPillText("Other");
+      case 'OTHER':
+        setPillIcon('other-transaction.svg');
+        setPillText('Other');
         break;
-      case "SELECT_CATEGORY":
-        setPillIcon("select-category.svg");
-        setPillText("Select category");
+      case 'SELECT_CATEGORY':
+        setPillIcon('select-category.svg');
+        setPillText('Select category');
         break;
-      case "TOKEN":
-        setPillIcon("token.svg");
-        setPillText("Token");
+      case 'TOKEN':
+        setPillIcon('token.svg');
+        setPillText('Token');
         break;
-      case "COLLECTIBLE":
-        setPillIcon("collectibleIcon.svg");
-        setPillText("Collectible");
+      case 'COLLECTIBLE':
+        setPillIcon('collectibleIcon.svg');
+        setPillText('Collectible');
         break;
       default:
         if (bulkCategoriseTransactions) {
-          setPillIcon("select-category.svg");
-          setPillText("Select category");
+          setPillIcon('select-category.svg');
+          setPillText('Select category');
         } else {
           setPillIcon(
-            outgoing ? "outgoing-transaction.svg" : "incoming-transaction.svg",
+            outgoing ? 'outgoing-transaction.svg' : 'incoming-transaction.svg'
           );
-          setPillText("Uncategorised");
+          setPillText('Uncategorised');
         }
 
         break;
@@ -182,12 +182,12 @@ export const CategoryPill: React.FC<ICategoryPill> = ({
     }
     setDropdownOptions(
       specificOptions.concat(commonPillOptions).filter((option) => {
-        if (selectedCategory === "OFF_CHAIN_INVESTMENT") {
-          return option.value !== "INVESTMENT";
+        if (selectedCategory === 'OFF_CHAIN_INVESTMENT') {
+          return option.value !== 'INVESTMENT';
         } else {
           return option.value !== selectedCategory;
         }
-      }),
+      })
     );
   }, [outgoing, selectedCategory]);
 
@@ -208,11 +208,11 @@ export const CategoryPill: React.FC<ICategoryPill> = ({
     };
 
     if (showDropdown) {
-      window.addEventListener("click", onPageClickEvent);
+      window.addEventListener('click', onPageClickEvent);
     }
 
     return () => {
-      window.removeEventListener("click", onPageClickEvent);
+      window.removeEventListener('click', onPageClickEvent);
     };
   }, [showDropdown]);
 
@@ -230,7 +230,7 @@ export const CategoryPill: React.FC<ICategoryPill> = ({
   const handleSelect = (value: TransactionCategory) => {
     if (Object.keys(currentTransaction).length) {
       dispatch(
-        setCurrentTransaction({ ...currentTransaction, category: value }),
+        setCurrentTransaction({ ...currentTransaction, category: value })
       );
     }
     setSelectedCategory(value);
@@ -241,14 +241,14 @@ export const CategoryPill: React.FC<ICategoryPill> = ({
       const inlineAnnotationData = [
         {
           transactionCategory: value,
-          transactionId: transactionHash,
-        },
+          transactionId: transactionHash
+        }
       ];
       annotationMutation({
         variables: {
-          transactionAnnotationList: inlineAnnotationData,
+          transactionAnnotationList: inlineAnnotationData
         },
-        context: { clientName: "backend", chainId: activeNetwork.chainId },
+        context: { clientName: 'backend', chainId: activeNetwork.chainId }
       });
       if (setActiveTransactionHash) setActiveTransactionHash([transactionHash]);
       refetchTransactions();
@@ -278,7 +278,7 @@ export const CategoryPill: React.FC<ICategoryPill> = ({
   return (
     <div
       className={`relative flex justify-between items-center rounded-full border-1 border-gray-syn6 ${
-        !readonly && isManager ? "cursor-pointer" : "cursor-default"
+        !readonly && isManager ? 'cursor-pointer' : 'cursor-default'
       }`}
       onClick={() => (readonly ? null : toggleDropdown())}
       ref={categorySelect}
@@ -301,7 +301,7 @@ export const CategoryPill: React.FC<ICategoryPill> = ({
           </div>
         )}
         {!showLoader ? (
-          <div className={`whitespace-nowrap py-2 ${readonly && "pr-3"}`}>
+          <div className={`whitespace-nowrap py-2 ${readonly && 'pr-3'}`}>
             <span className="text-base">{pillText}</span>
           </div>
         ) : (

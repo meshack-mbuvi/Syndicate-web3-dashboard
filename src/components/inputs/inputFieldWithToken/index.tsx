@@ -1,9 +1,9 @@
-import useTokenDetails from "@/hooks/useTokenDetails";
-import { InputField } from "../inputField";
+import useTokenDetails from '@/hooks/useTokenDetails';
+import { InputField } from '../inputField';
 
 export enum TokenType {
-  USDC = "USDC",
-  ETH = "ETH",
+  USDC = 'USDC',
+  ETH = 'ETH'
 }
 
 export const InputFieldWithToken = (props: {
@@ -19,11 +19,11 @@ export const InputFieldWithToken = (props: {
 }): React.ReactElement => {
   const {
     value,
-    placeholderLabel = "Unlimited",
+    placeholderLabel = 'Unlimited',
     infoLabel,
     isInErrorState = false,
     depositToken,
-    extraClasses = "",
+    extraClasses = '',
     onChange,
     showClubSymbol,
     symbol,
@@ -62,7 +62,7 @@ export const InputFieldWithToken = (props: {
         />
         <div
           className="inline absolute top-1/2 right-4"
-          style={{ transform: "translateY(-50%)" }}
+          style={{ transform: 'translateY(-50%)' }}
         >
           {showClubSymbol ? symbol : <TokenSymbolandIcon />}
         </div>
@@ -70,7 +70,7 @@ export const InputFieldWithToken = (props: {
       {infoLabel && (
         <div
           className={`text-sm mt-2 ${
-            isInErrorState ? "text-red-error" : "text-gray-syn4"
+            isInErrorState ? 'text-red-error' : 'text-gray-syn4'
           }`}
         >
           {infoLabel}

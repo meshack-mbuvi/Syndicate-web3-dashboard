@@ -1,20 +1,20 @@
-import { AppState } from "@/state";
-import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { AppState } from '@/state';
+import { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 
 const useRugUtility: any = (tokenId, refresh) => {
   const {
     web3Reducer: {
-      web3: { account },
+      web3: { account }
     },
     initializeContractsReducer: {
-      syndicateContracts: { RugClaimModule, RugUtilityProperty },
-    },
+      syndicateContracts: { RugClaimModule, RugUtilityProperty }
+    }
   } = useSelector((state: AppState) => state);
 
   const [tokenProperties, setTokenProperties] = useState({
-    tokenBalance: "0",
-    tokenProduction: "0",
+    tokenBalance: '0',
+    tokenProduction: '0'
   });
   const [loading, setLoading] = useState(true);
 
@@ -36,7 +36,7 @@ const useRugUtility: any = (tokenId, refresh) => {
 
   return {
     loading,
-    ...tokenProperties,
+    ...tokenProperties
   };
 };
 

@@ -1,25 +1,25 @@
-import { ERC721_INDEX_AND_PROOF } from "@/graphql/merkleDistributor";
-import { AppState } from "@/state";
+import { ERC721_INDEX_AND_PROOF } from '@/graphql/merkleDistributor';
+import { AppState } from '@/state';
 import {
   clearERC721MerkleProof,
   setERC721MerkleProof,
-  setLoadingERC721MerkleProof,
-} from "@/state/erc721MerkleProofs/slice";
-import { useQuery } from "@apollo/client";
-import { useRouter } from "next/router";
-import { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+  setLoadingERC721MerkleProof
+} from '@/state/erc721MerkleProofs/slice';
+import { useQuery } from '@apollo/client';
+import { useRouter } from 'next/router';
+import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
 const useFetchMerkleProof: any = (skipQuery = false) => {
   const dispatch = useDispatch();
 
   const {
     web3Reducer: {
-      web3: { account: address, web3, activeNetwork },
+      web3: { account: address, web3, activeNetwork }
     },
     erc721TokenSliceReducer: {
-      erc721Token: { address: nftAddress },
-    },
+      erc721Token: { address: nftAddress }
+    }
   } = useSelector((state: AppState) => state);
 
   const router = useRouter();
@@ -27,11 +27,11 @@ const useFetchMerkleProof: any = (skipQuery = false) => {
   const {
     loading,
     data: merkleData = {},
-    refetch: refetchMerkle,
+    refetch: refetchMerkle
   } = useQuery(ERC721_INDEX_AND_PROOF, {
     variables: { clubAddress: nftAddress, address },
     skip: !address || skipQuery || !activeNetwork.chainId,
-    context: { clientName: "backend", chainId: activeNetwork.chainId },
+    context: { clientName: 'backend', chainId: activeNetwork.chainId }
   });
 
   const processMerkleProofData = async (merkleObj) => {
@@ -39,8 +39,8 @@ const useFetchMerkleProof: any = (skipQuery = false) => {
     await dispatch(
       setERC721MerkleProof({
         ...merkleObj,
-        account: address,
-      }),
+        account: address
+      })
     );
     dispatch(setLoadingERC721MerkleProof(false));
   };

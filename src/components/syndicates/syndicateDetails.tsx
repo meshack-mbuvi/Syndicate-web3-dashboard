@@ -1,27 +1,27 @@
-import { CopyToClipboardIcon } from "@/components/iconWrappers";
-import { SkeletonLoader } from "@/components/skeletonLoader";
-import { BlockExplorerLink } from "@/components/syndicates/shared/BlockExplorerLink";
-import DuplicateClubWarning from "@/components/syndicates/shared/DuplicateClubWarning";
-import { useAccountTokens } from "@/hooks/useAccountTokens";
-import { useClubDepositsAndSupply } from "@/hooks/useClubDepositsAndSupply";
-import { useIsClubOwner } from "@/hooks/useClubOwner";
-import { useDemoMode } from "@/hooks/useDemoMode";
-import { AppState } from "@/state";
-import { Status } from "@/state/wallet/types";
-import { epochTimeToDateFormat, getCountDownDays } from "@/utils/dateUtils";
-import { floatedNumberWithCommas } from "@/utils/formattedNumbers";
-import { getTextWidth } from "@/utils/getTextWidth";
-import abi from "human-standard-token-abi";
-import { useRouter } from "next/router";
-import React, { FC, useEffect, useState } from "react";
-import { CopyToClipboard } from "react-copy-to-clipboard";
-import { useSelector } from "react-redux";
-import ReactTooltip from "react-tooltip";
+import { CopyToClipboardIcon } from '@/components/iconWrappers';
+import { SkeletonLoader } from '@/components/skeletonLoader';
+import { BlockExplorerLink } from '@/components/syndicates/shared/BlockExplorerLink';
+import DuplicateClubWarning from '@/components/syndicates/shared/DuplicateClubWarning';
+import { useAccountTokens } from '@/hooks/useAccountTokens';
+import { useClubDepositsAndSupply } from '@/hooks/useClubDepositsAndSupply';
+import { useIsClubOwner } from '@/hooks/useClubOwner';
+import { useDemoMode } from '@/hooks/useDemoMode';
+import { AppState } from '@/state';
+import { Status } from '@/state/wallet/types';
+import { epochTimeToDateFormat, getCountDownDays } from '@/utils/dateUtils';
+import { floatedNumberWithCommas } from '@/utils/formattedNumbers';
+import { getTextWidth } from '@/utils/getTextWidth';
+import abi from 'human-standard-token-abi';
+import { useRouter } from 'next/router';
+import React, { FC, useEffect, useState } from 'react';
+import { CopyToClipboard } from 'react-copy-to-clipboard';
+import { useSelector } from 'react-redux';
+import ReactTooltip from 'react-tooltip';
 
-import NumberTreatment from "../NumberTreatment";
+import NumberTreatment from '../NumberTreatment';
 // utils
-import GradientAvatar from "./portfolioAndDiscover/portfolio/GradientAvatar";
-import { DetailsCard, ProgressIndicator } from "./shared";
+import GradientAvatar from './portfolioAndDiscover/portfolio/GradientAvatar';
+import { DetailsCard, ProgressIndicator } from './shared';
 
 interface ClubDetails {
   header: string;
@@ -33,7 +33,7 @@ interface ClubDetails {
 // we should have an isChildVisible prop here of type boolean
 const SyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
   managerSettingsOpen,
-  children,
+  children
 }) => {
   const {
     erc20TokenSliceReducer: {
@@ -67,8 +67,13 @@ const SyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
   const router = useRouter();
   const [details, setDetails] = useState<ClubDetails[]>([]);
 
-  const { totalDeposits, totalSupply, loadingClubDeposits, startTime, endTime } =
-    useClubDepositsAndSupply(address);
+  const {
+    totalDeposits,
+    totalSupply,
+    loadingClubDeposits,
+    startTime,
+    endTime
+  } = useClubDepositsAndSupply(address);
 
   // state to handle copying of the syndicate address to clipboard.
   const [showAddressCopyState, setShowAddressCopyState] =

@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from "react";
-import Image from "next/image";
-import { DataStorageToolTip } from "./DataStorageToolTip";
+import React, { useEffect, useState } from 'react';
+import Image from 'next/image';
+import { DataStorageToolTip } from './DataStorageToolTip';
 
 export const DataStorageInfo: React.FC = () => {
   const toolTipMessage =
-    "Data entered here is obfuscated but publicly viewable off-chain.<br /><br />Do not store PII here until additional privacy options are available.";
+    'Data entered here is obfuscated but publicly viewable off-chain.<br /><br />Do not store PII here until additional privacy options are available.';
 
   return (
     <div>

@@ -9,5 +9,5 @@ export interface MerkleProof {
 
 export const initialState = {
   myMerkleProof: <MerkleProof>{},
-  loading: true,
+  loading: true
 };

@@ -1,12 +1,12 @@
-import React from "react";
-import { AppState } from "@/state";
-import { useSelector } from "react-redux";
-import { numberWithCommas } from "@/utils/formattedNumbers";
-import { CtaButton } from "@/components/CTAButton";
-import Modal, { ModalStyle } from "@/components/modal";
-import { InputField } from "@/components/inputs/inputField";
-import { InputFieldWithButton } from "@/components/inputs/inputFieldWithButton";
-import { formatAddress } from "@/utils/formatAddress";
+import React from 'react';
+import { AppState } from '@/state';
+import { useSelector } from 'react-redux';
+import { numberWithCommas } from '@/utils/formattedNumbers';
+import { CtaButton } from '@/components/CTAButton';
+import Modal, { ModalStyle } from '@/components/modal';
+import { InputField } from '@/components/inputs/inputField';
+import { InputFieldWithButton } from '@/components/inputs/inputFieldWithButton';
+import { formatAddress } from '@/utils/formatAddress';
 
 interface IMemberDetails {
   show: boolean;
@@ -35,12 +35,12 @@ const MemberDetailsModal: React.FC<IMemberDetails> = ({
   handleAddressChange,
   handleAmountChange,
   handleSubmit,
-  setMaxRemainingSupply,
+  setMaxRemainingSupply
 }): React.ReactElement => {
   const {
     web3Reducer: {
-      web3: { web3 },
-    },
+      web3: { web3 }
+    }
   } = useSelector((state: AppState) => state);
 
   // address format points
@@ -60,16 +60,16 @@ const MemberDetailsModal: React.FC<IMemberDetails> = ({
         show,
         modalStyle: ModalStyle.DARK,
         showCloseButton: true,
-        customWidth: "w-full max-w-480",
+        customWidth: 'w-full max-w-480',
         outsideOnClick: true,
         closeModal: () => {
           clearFieldErrors();
           handleShow(false);
         },
-        customClassName: "pt-8 pb-10 px-10",
+        customClassName: 'pt-8 pb-10 px-10',
         showHeader: false,
         overflowYScroll: false,
-        overflow: "overflow-visible",
+        overflow: 'overflow-visible'
       }}
     >
       <div className="space-y-6">
@@ -89,7 +89,7 @@ const MemberDetailsModal: React.FC<IMemberDetails> = ({
               placeholderLabel="0x..."
               onChange={handleAddressChange}
               isInErrorState={Boolean(memberAddressError)}
-              infoLabel={memberAddressError ? memberAddressError : ""}
+              infoLabel={memberAddressError ? memberAddressError : ''}
               extraClasses="border-gray-syn6"
             />
           </div>
@@ -102,15 +102,15 @@ const MemberDetailsModal: React.FC<IMemberDetails> = ({
                   ? numberWithCommas(
                       // Checks if there are unnecessary zeros in the amount
                       amountToMint
-                        .replace(/^0{2,}/, "0")
-                        .replace(/^0(?!\.)/, ""),
+                        .replace(/^0{2,}/, '0')
+                        .replace(/^0(?!\.)/, '')
                     )
-                  : numberWithCommas("")
+                  : numberWithCommas('')
               }
               placeholderLabel="0"
               onChange={handleAmountChange}
               isInErrorState={Boolean(amountToMintError)}
-              infoLabel={amountToMintError ? amountToMintError : ""}
+              infoLabel={amountToMintError ? amountToMintError : ''}
               extraClasses="border-gray-syn6"
               symbol={symbol}
               buttonOnClick={setMaxRemainingSupply}

@@ -9,5 +9,5 @@ export interface IERC721AirdropInfo {
 
 export const initialState = {
   erc721AirdropInfo: <IERC721AirdropInfo>{},
-  loading: true,
+  loading: true
 };

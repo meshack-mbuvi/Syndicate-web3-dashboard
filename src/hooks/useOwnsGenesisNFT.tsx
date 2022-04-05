@@ -1,18 +1,18 @@
-import { ERC721Contract } from "@/ClubERC20Factory/ERC721Membership";
-import { AppState } from "@/state";
-import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { ERC721Contract } from '@/ClubERC20Factory/ERC721Membership';
+import { AppState } from '@/state';
+import { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 
 const useOwnsGenesisNFT: any = () => {
   const GENESIS_NFT = process.env.NEXT_PUBLIC_GenesisNFT;
 
   const {
     web3Reducer: {
-      web3: { account, web3 },
+      web3: { account, web3 }
     },
     initializeContractsReducer: {
-      syndicateContracts: { RugClaimModule },
-    },
+      syndicateContracts: { RugClaimModule }
+    }
   } = useSelector((state: AppState) => state);
 
   const [genesisNFTBalance, setGenesisNFTBalance] = useState(0);
@@ -25,7 +25,7 @@ const useOwnsGenesisNFT: any = () => {
     try {
       const ERC721tokenContract = new ERC721Contract(
         GENESIS_NFT as string,
-        web3,
+        web3
       );
 
       const balance = parseInt(await ERC721tokenContract.balanceOf(account));
@@ -68,7 +68,7 @@ const useOwnsGenesisNFT: any = () => {
     claimEnabled,
     genesisNFTBalance,
     loading: checkingGenesis,
-    hasGenesisNFT: genesisNFTBalance > 0,
+    hasGenesisNFT: genesisNFTBalance > 0
   };
 };
 

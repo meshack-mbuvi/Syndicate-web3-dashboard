@@ -1,5 +1,5 @@
-import { ClubERC20Contract } from "@/ClubERC20Factory/clubERC20";
-import { ClubERC20Factory } from "@/ClubERC20Factory/clubERC20Factory";
+import { ClubERC20Contract } from '@/ClubERC20Factory/clubERC20';
+import { ClubERC20Factory } from '@/ClubERC20Factory/clubERC20Factory';
 import { ClubERC20FactoryNative } from '@/ClubERC20Factory/clubERC20FactoryNative';
 import { DepositTokenMintModuleContract } from '@/ClubERC20Factory/depositTokenMintModule';
 import { NativeMintModuleContract } from '@/ClubERC20Factory/nativeMintModule';
@@ -67,13 +67,13 @@ const initialState: InitialState = {
 };
 
 const initializeContractsSlice = createSlice({
-  name: "Initialize Contracts",
+  name: 'Initialize Contracts',
   initialState,
   reducers: {
     setContracts(state, action: PayloadAction<ISyndicateContracts>) {
       state.syndicateContracts = action.payload;
-    },
-  },
+    }
+  }
 });
 
 export const { setContracts } = initializeContractsSlice.actions;

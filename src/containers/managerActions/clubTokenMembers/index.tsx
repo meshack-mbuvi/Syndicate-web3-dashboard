@@ -1,24 +1,24 @@
-import { SkeletonLoader } from "@/components/skeletonLoader";
-import { MintAndShareTokens } from "@/containers/managerActions/mintAndShareTokens";
-import AddMemberModal from "@/containers/managerActions/mintAndShareTokens/AddMemberModal";
-import { useIsClubOwner } from "@/hooks/useClubOwner";
-import useClubTokenMembers from "@/hooks/useClubTokenMembers";
-import useModal from "@/hooks/useModal";
-import { AppState } from "@/state";
-import { setDepositReadyInfo } from "@/state/legalInfo";
-import { setMemberToUpdate } from "@/state/modifyCapTable/slice";
-import { floatedNumberWithCommas } from "@/utils/formattedNumbers";
-import { generateMemberSignURL } from "@/utils/generateMemberSignURL";
-import Image from "next/image";
-import { useRouter } from "next/router";
-import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { animated } from "react-spring";
-import GenerateDepositLink from "../GenerateDepositLink";
-import ModifyCapTable from "../modifyMemberAllocation";
-import { MemberAddressComponent } from "./memberAddress";
-import MembersTable from "./MembersTable";
-import MoreOptions from "./moreOptions";
+import { SkeletonLoader } from '@/components/skeletonLoader';
+import { MintAndShareTokens } from '@/containers/managerActions/mintAndShareTokens';
+import AddMemberModal from '@/containers/managerActions/mintAndShareTokens/AddMemberModal';
+import { useIsClubOwner } from '@/hooks/useClubOwner';
+import useClubTokenMembers from '@/hooks/useClubTokenMembers';
+import useModal from '@/hooks/useModal';
+import { AppState } from '@/state';
+import { setDepositReadyInfo } from '@/state/legalInfo';
+import { setMemberToUpdate } from '@/state/modifyCapTable/slice';
+import { floatedNumberWithCommas } from '@/utils/formattedNumbers';
+import { generateMemberSignURL } from '@/utils/generateMemberSignURL';
+import Image from 'next/image';
+import { useRouter } from 'next/router';
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { animated } from 'react-spring';
+import GenerateDepositLink from '../GenerateDepositLink';
+import ModifyCapTable from '../modifyMemberAllocation';
+import { MemberAddressComponent } from './memberAddress';
+import MembersTable from './MembersTable';
+import MoreOptions from './moreOptions';
 
 const ClubTokenMembers = (): JSX.Element => {
   // retrieve state variables
@@ -219,7 +219,7 @@ const ClubTokenMembers = (): JSX.Element => {
   const membersTabInstruction = isOwner
     ? "Invite members by sharing your club's deposit link.\
                     They’ll show up here once they deposit."
-    : "Members will show up here once they deposit funds into this club.";
+    : 'Members will show up here once they deposit funds into this club.';
 
   //TODO: Remove this to re-enable cap table
   const capTableEnabled = false;
@@ -309,7 +309,7 @@ const ClubTokenMembers = (): JSX.Element => {
                             className="bg-transparent rounded mt-1 focus:ring-offset-0 cursor-pointer"
                             onChange={() =>
                               setLinkShareAgreementChecked(
-                                !linkShareAgreementChecked,
+                                !linkShareAgreementChecked
                               )
                             }
                             type="checkbox"
@@ -322,12 +322,12 @@ const ClubTokenMembers = (): JSX.Element => {
                             violate securities laws. <br></br>
                             <a
                               target="_blank"
-                              style={{ color: "#4376ff" }}
+                              style={{ color: '#4376ff' }}
                               href="https://www.sec.gov/reportspubs/investor-publications/investorpubsinvclubhtm.html"
                               rel="noopener noreferrer"
                             >
                               Learn more.
-                            </a>{" "}
+                            </a>{' '}
                           </animated.p>
                         </div>
                       )}
@@ -390,7 +390,7 @@ const ClubTokenMembers = (): JSX.Element => {
               show: showMintTokensModal,
               handleShow: toggleMintTokensModal,
               closeAddMemberModal: toggleAddMemberModal,
-              existingMembers: tableData,
+              existingMembers: tableData
             }}
           />
         </>

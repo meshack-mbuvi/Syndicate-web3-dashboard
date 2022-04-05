@@ -1,17 +1,17 @@
-import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { useRouter } from "next/router";
-import { showWalletModal } from "@/state/wallet/actions";
-import { AppState } from "@/state";
-import { Status } from "@/state/wallet/types";
-import { CheckIcon } from "@heroicons/react/solid";
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { useRouter } from 'next/router';
+import { showWalletModal } from '@/state/wallet/actions';
+import { AppState } from '@/state';
+import { Status } from '@/state/wallet/types';
+import { CheckIcon } from '@heroicons/react/solid';
 
 const AvailabilityCard: React.FC = () => {
   const dispatch = useDispatch();
   const router = useRouter();
   const {
     web3Reducer: { web3 },
-    utilityNFTSliceReducer: { utilityNFT },
+    utilityNFTSliceReducer: { utilityNFT }
   } = useSelector((state: AppState) => state);
 
   const [unclaimedNFTs, setUnclaimedNFTs] = useState<number>(0);
@@ -66,19 +66,19 @@ const AvailabilityCard: React.FC = () => {
               className="w-full rounded-lg text-base text-black px-8 py-4 mb-4 font-medium bg-white"
               onClick={connectWallet}
             >
-              {"Connect wallet"}
+              {'Connect wallet'}
             </button>
           ) : utilityNFT.claimAvailable ? (
             <div>
               <div className="mb-8 text-center h3">
                 You’re eligible to claim {unclaimedNFTs} NFT
-                {unclaimedNFTs > 1 && "s"}
+                {unclaimedNFTs > 1 && 's'}
               </div>
               <button
                 className="w-full rounded-lg text-base text-black px-8 py-4 mb-4 font-medium bg-green"
                 onClick={goToClaim}
               >
-                {"Continue"}
+                {'Continue'}
               </button>
             </div>
           ) : (
@@ -89,8 +89,8 @@ const AvailabilityCard: React.FC = () => {
                   className=" w-full text-base mt-4 text-gray-syn3 underline"
                   onClick={goToClaim}
                 >
-                  {" "}
-                  View Claimed{" "}
+                  {' '}
+                  View Claimed{' '}
                 </button>
               ) : null}
             </div>

@@ -1,8 +1,8 @@
-import { useCreateInvestmentClubContext } from "@/context/CreateInvestmentClubContext";
-import { useSpring, animated } from "react-spring";
-import { AppState } from "@/state";
-import { setDispatchCreateFlow, showWalletModal } from "@/state/wallet/actions";
-import { useDispatch, useSelector } from "react-redux";
+import { useCreateInvestmentClubContext } from '@/context/CreateInvestmentClubContext';
+import { useSpring, animated } from 'react-spring';
+import { AppState } from '@/state';
+import { setDispatchCreateFlow, showWalletModal } from '@/state/wallet/actions';
+import { useDispatch, useSelector } from 'react-redux';
 
 const InvestmentClubCTAs: React.FC = () => {
   const {
@@ -15,11 +15,11 @@ const InvestmentClubCTAs: React.FC = () => {
     setShowModal,
     showNextButton,
     handleCreateInvestmentClub,
-    isWalletConfrimed,
+    isWalletConfrimed
   } = useCreateInvestmentClubContext();
 
   const {
-    web3Reducer: { web3 },
+    web3Reducer: { web3 }
   } = useSelector((state: AppState) => state);
 
   const dispatch = useDispatch();
@@ -32,14 +32,14 @@ const InvestmentClubCTAs: React.FC = () => {
   const confirmWallet = () => {
     setShowModal((prev) => ({
       ...prev,
-      warningModal: true,
+      warningModal: true
     }));
   };
 
   const styles = useSpring({
     to: { y: 0 },
     from: { y: -50 },
-    delay: 500,
+    delay: 500
   });
 
   const { account } = web3;
@@ -47,21 +47,21 @@ const InvestmentClubCTAs: React.FC = () => {
   return (
     <animated.div
       className={`bg-black flex-none flex flex-col sm:items-center ${
-        reviewStep ? "fixed w-full left-0 bottom-0 h-32 px-10 " : ""
+        reviewStep ? 'fixed w-full left-0 bottom-0 h-32 px-10 ' : ''
       }`}
       style={styles}
     >
       <div
         className={`flex flex-col-reverse items-center pt-4 sm:w-full sm:flex-row sm:max-w-480 sm:h-full sm:pt-0 sm:ml-0 ml-5 ${
-          firstStep ? "justify-end" : "justify-between"
+          firstStep ? 'justify-end' : 'justify-between'
         }
-          ${reviewStep ? "sm:border-t border-gray-syn4" : ""}
+          ${reviewStep ? 'sm:border-t border-gray-syn4' : ''}
         }`}
       >
         {!firstStep && (
           <button
             className={`flex items-center mt-6 sm:mt-0 text-gray-syn4 text-base opacity-80 hover:opacity-100 focus:outline-none sm:ml-5 ml-0 ${
-              backBtnDisabled ? "cursor-not-allowed" : ""
+              backBtnDisabled ? 'cursor-not-allowed' : ''
             }`}
             onClick={handleBack}
             disabled={backBtnDisabled}
@@ -74,10 +74,10 @@ const InvestmentClubCTAs: React.FC = () => {
           <button
             className={`w-full sm:w-auto ${
               nextBtnDisabled
-                ? "primary-CTA-disabled text-gray-syn4"
+                ? 'primary-CTA-disabled text-gray-syn4'
                 : reviewStep
-                ? "green-CTA transition-all"
-                : "primary-CTA"
+                ? 'green-CTA transition-all'
+                : 'primary-CTA'
             }`}
             onClick={
               reviewStep
@@ -92,11 +92,11 @@ const InvestmentClubCTAs: React.FC = () => {
           >
             {reviewStep
               ? !account
-                ? "Connect wallet to create"
+                ? 'Connect wallet to create'
                 : isWalletConfrimed
-                ? "Create investment club"
-                : "Confirm wallet"
-              : "Next"}
+                ? 'Create investment club'
+                : 'Confirm wallet'
+              : 'Next'}
           </button>
         )}
       </div>

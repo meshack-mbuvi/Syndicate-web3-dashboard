@@ -1,5 +1,5 @@
-import merkleDistributorModuleERC721_ABI from "src/contracts/MerkleDistributorModuleERC721.json";
-import { getGnosisTxnInfo } from "../shared/gnosisTransactionInfo";
+import merkleDistributorModuleERC721_ABI from 'src/contracts/MerkleDistributorModuleERC721.json';
+import { getGnosisTxnInfo } from '../shared/gnosisTransactionInfo';
 import { estimateGas } from '../shared/getGasEstimate';
 export class MerkleDistributorModuleERC721Contract {
   isGnosisSafe: boolean;

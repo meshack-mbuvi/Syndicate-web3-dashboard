@@ -1,6 +1,6 @@
-import { useDisableBgScrollOnModal } from "@/hooks/useDisableBgScrollOnModal";
-import { Dialog, Transition } from "@headlessui/react";
-import React, { Fragment } from "react";
+import { useDisableBgScrollOnModal } from '@/hooks/useDisableBgScrollOnModal';
+import { Dialog, Transition } from '@headlessui/react';
+import React, { Fragment } from 'react';
 
 interface ModalProps {
   title?: string;
@@ -30,9 +30,9 @@ interface ModalProps {
 }
 
 export enum ModalStyle {
-  DARK = "dark",
-  LIGHT = "light",
-  SUCCESS = "success",
+  DARK = 'dark',
+  LIGHT = 'light',
+  SUCCESS = 'success'
 }
 
 /**
@@ -57,32 +57,32 @@ const Modal = (props: ModalProps): JSX.Element => {
     children,
     show,
     closeModal,
-    customWidth = "w-11/12 md:w-1/2 lg:w-2/5",
+    customWidth = 'w-11/12 md:w-1/2 lg:w-2/5',
     titleFontSize,
     showCloseButton = true,
-    customClassName = "p-2 sm:p-6",
+    customClassName = 'p-2 sm:p-6',
     closeButtonClassName,
     outsideOnClick,
     titleMarginClassName,
     titleAlignment,
-    overflow = "overflow-hidden",
+    overflow = 'overflow-hidden',
     showBackButton = false,
     modalStyle = ModalStyle.LIGHT,
     showHeader = true,
     overflowYScroll = true,
     overflowXScroll = true,
     isMaxHeightScreen = true,
-    alignment = "align-middle",
-    margin = "md:my-14",
-    maxHeight = true,
+    alignment = 'align-middle',
+    margin = 'md:my-14',
+    maxHeight = true
   } = props;
 
-  const bgColor = `${modalStyle === ModalStyle.LIGHT && "bg-white"} ${
-    modalStyle === ModalStyle.DARK && "bg-gray-syn8"
-  } ${modalStyle === ModalStyle.SUCCESS && "bg-green-success"}`;
+  const bgColor = `${modalStyle === ModalStyle.LIGHT && 'bg-white'} ${
+    modalStyle === ModalStyle.DARK && 'bg-gray-syn8'
+  } ${modalStyle === ModalStyle.SUCCESS && 'bg-green-success'}`;
 
-  const textColor = `${modalStyle === ModalStyle.LIGHT && "text-black"} ${
-    modalStyle === ModalStyle.DARK && "text-white"
+  const textColor = `${modalStyle === ModalStyle.LIGHT && 'text-black'} ${
+    modalStyle === ModalStyle.DARK && 'text-white'
   }`;
 
   useDisableBgScrollOnModal(show);
@@ -138,12 +138,12 @@ const Modal = (props: ModalProps): JSX.Element => {
               className={`${
                 overflowYScroll ? `overflow-y-scroll` : ``
               } no-scroll-bar ${margin} ${alignment} mx-auto inline-block ${
-                isMaxHeightScreen ? "max-h-screen" : ""
+                isMaxHeightScreen ? 'max-h-screen' : ''
               } ${
-                bgColor ? bgColor : ""
+                bgColor ? bgColor : ''
               } rounded-2xl text-left shadow-xl transform transition-all ${
-                customWidth || ""
-              } ${overflow || ""} ${customClassName || ""}`}
+                customWidth || ''
+              } ${overflow || ''} ${customClassName || ''}`}
               role="dialog"
               aria-modal="true"
               aria-labelledby="modal-headline"
@@ -191,10 +191,10 @@ const Modal = (props: ModalProps): JSX.Element => {
               {title ? (
                 <div
                   className={`modal-header ${
-                    titleMarginClassName ? titleMarginClassName : "mb-6 mt-4"
+                    titleMarginClassName ? titleMarginClassName : 'mb-6 mt-4'
                   }
                   ${textColor} font-whyte ${
-                    titleAlignment ? titleAlignment : "sm:text-center"
+                    titleAlignment ? titleAlignment : 'sm:text-center'
                   } leading-8 pl-4 pr-12 sm:pr-0 ${
                     titleFontSize ? `text-modalTitle` : `text-modalSubTitle`
                   }`}
@@ -205,9 +205,9 @@ const Modal = (props: ModalProps): JSX.Element => {
               {/* end of modal title */}
 
               <div
-                className={`${maxHeight && "max-h-modal"} ${
-                  overflowXScroll ? "overflow-x-scroll" : ""
-                } no-scroll-bar ${showHeader ? "mx-4 align-middle" : ""}`}
+                className={`${maxHeight && 'max-h-modal'} ${
+                  overflowXScroll ? 'overflow-x-scroll' : ''
+                } no-scroll-bar ${showHeader ? 'mx-4 align-middle' : ''}`}
               >
                 {children}
               </div>

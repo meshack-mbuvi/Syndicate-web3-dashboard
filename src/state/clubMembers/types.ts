@@ -4,6 +4,6 @@ export interface clubMember {
 }
 
 export const initialState = {
-  clubMembers: [{ memberAddress: "" }],
-  loadingClubMembers: false,
+  clubMembers: [{ memberAddress: '' }],
+  loadingClubMembers: false
 };

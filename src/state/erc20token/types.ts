@@ -1,4 +1,4 @@
-import { ERC20TokenDefaultState } from "@/helpers/erc20TokenDetails";
+import { ERC20TokenDefaultState } from '@/helpers/erc20TokenDetails';
 
 export interface ERC20Token {
   name: string;

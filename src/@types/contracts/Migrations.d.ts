@@ -2,12 +2,12 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import BN from "bn.js";
-import { EventData, PastEventOptions } from "web3-eth-contract";
+import BN from 'bn.js';
+import { EventData, PastEventOptions } from 'web3-eth-contract';
 
 export interface MigrationsContract
   extends Truffle.Contract<MigrationsInstance> {
-  "new"(meta?: Truffle.TransactionDetails): Promise<MigrationsInstance>;
+  'new'(meta?: Truffle.TransactionDetails): Promise<MigrationsInstance>;
 }
 
 type AllEvents = never;

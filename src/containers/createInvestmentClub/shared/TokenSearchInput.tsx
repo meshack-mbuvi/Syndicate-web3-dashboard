@@ -1,5 +1,5 @@
-import { SearchIcon } from "@heroicons/react/solid";
-import { useRef, useEffect } from "react";
+import { SearchIcon } from '@heroicons/react/solid';
+import { useRef, useEffect } from 'react';
 
 // component implements serach bar for token dropdown
 export const TokenSearchBar = (props: { setSearchTerm: Function }) => {

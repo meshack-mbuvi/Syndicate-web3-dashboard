@@ -1,7 +1,7 @@
-import React, { useState } from "react";
-import PageHeader from "src/components/pageHeader";
+import React, { useState } from 'react';
+import PageHeader from 'src/components/pageHeader';
 
-import { SocialFeedAnimatedLoader } from "./socialFeedAnimatedLoader";
+import { SocialFeedAnimatedLoader } from './socialFeedAnimatedLoader';
 
 /**
  * Renders feeds on socialPage. During loading, loading animation is
@@ -15,7 +15,7 @@ const SocialFeed: React.FC = () => {
       {isLoading ? (
         <SocialFeedAnimatedLoader />
       ) : (
-        "We show the loaded contents here"
+        'We show the loaded contents here'
       )}
     </div>
   );

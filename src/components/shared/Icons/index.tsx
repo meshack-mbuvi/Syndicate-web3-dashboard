@@ -31,7 +31,7 @@ export const BanIcon: React.FC<IBan> = (props) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      className={`h-10 w-10 ${color ? color : "text-yellow-dark"}`}
+      className={`h-10 w-10 ${color ? color : 'text-yellow-dark'}`}
       fill="none"
       viewBox="0 0 24 24"
       stroke="currentColor"
@@ -52,7 +52,7 @@ interface ICancelIcon {
   color?: string;
 }
 export const CancelIcon: React.FC<ICancelIcon> = (props) => {
-  const { height = "h-10", width = "w-10", color = "text-red-500" } = props;
+  const { height = 'h-10', width = 'w-10', color = 'text-red-500' } = props;
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -77,7 +77,7 @@ interface ISearchIcon {
   color?: string;
 }
 export const SearchIcon: React.FC<ISearchIcon> = (props) => {
-  const { height = "h-4", width = "w-4", color = "text-gray-3" } = props;
+  const { height = 'h-4', width = 'w-4', color = 'text-gray-3' } = props;
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"

@@ -1,5 +1,5 @@
-import rugUtilityMintModule_ABI from "src/contracts/RugUtilityMintModule.json";
-import { getGnosisTxnInfo } from "../shared/gnosisTransactionInfo";
+import rugUtilityMintModule_ABI from 'src/contracts/RugUtilityMintModule.json';
+import { getGnosisTxnInfo } from '../shared/gnosisTransactionInfo';
 import { estimateGas } from '../shared/getGasEstimate';
 export class RugUtilityMintModuleContract {
   isGnosisSafe: boolean;

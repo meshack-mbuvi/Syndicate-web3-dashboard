@@ -1,19 +1,19 @@
-import React from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { AppState } from "@/state";
-import Modal, { ModalStyle } from "@/components/modal";
-import { CategoryPill } from "@/containers/layoutWithSyndicateDetails/activity/shared/CategoryPill";
-import TokenDetail from "@/containers/layoutWithSyndicateDetails/assets/collectibles/shared/TokenDetail";
-import { setShowCollectibleModal } from "@/state/assets/collectibles/slice";
-import CollectibleMedia from "@/containers/layoutWithSyndicateDetails/assets/collectibles/shared/CollectibleMedia";
+import React from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { AppState } from '@/state';
+import Modal, { ModalStyle } from '@/components/modal';
+import { CategoryPill } from '@/containers/layoutWithSyndicateDetails/activity/shared/CategoryPill';
+import TokenDetail from '@/containers/layoutWithSyndicateDetails/assets/collectibles/shared/TokenDetail';
+import { setShowCollectibleModal } from '@/state/assets/collectibles/slice';
+import CollectibleMedia from '@/containers/layoutWithSyndicateDetails/assets/collectibles/shared/CollectibleMedia';
 
 const CollectibleDetailsModal: React.FC = () => {
   const {
     setCollectibleDetailsSliceReducer: {
       showCollectibleModal,
       collectibleModalDetails,
-      showFullScreen,
-    },
+      showFullScreen
+    }
   } = useSelector((state: AppState) => state);
   const dispatch = useDispatch();
   const { collectible, moreDetails, mediaType } = collectibleModalDetails;
@@ -58,7 +58,7 @@ const CollectibleDetailsModal: React.FC = () => {
                 {...{
                   collectible,
                   mediaType,
-                  showCollectibles: false,
+                  showCollectibles: false
                 }}
               />
             </div>

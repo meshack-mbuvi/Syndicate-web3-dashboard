@@ -2,11 +2,11 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import BN from "bn.js";
-import { EventData, PastEventOptions } from "web3-eth-contract";
+import BN from 'bn.js';
+import { EventData, PastEventOptions } from 'web3-eth-contract';
 
 export interface UserContract extends Truffle.Contract<UserInstance> {
-  "new"(
+  'new'(
     _synERC20: string,
     meta?: Truffle.TransactionDetails
   ): Promise<UserInstance>;
@@ -372,7 +372,7 @@ export interface UserInstance extends Truffle.ContractInstance {
       ): Promise<number>;
     };
 
-    "mint(uint256,uint256)": {
+    'mint(uint256,uint256)': {
       (
         amount: number | BN | string,
         minimumTokens: number | BN | string,
@@ -395,7 +395,7 @@ export interface UserInstance extends Truffle.ContractInstance {
       ): Promise<number>;
     };
 
-    "mint(uint256)": {
+    'mint(uint256)': {
       (
         amount: number | BN | string,
         txDetails?: Truffle.TransactionDetails

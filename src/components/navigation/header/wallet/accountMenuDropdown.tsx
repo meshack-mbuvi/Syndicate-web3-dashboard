@@ -1,18 +1,18 @@
-import { BlockExplorerLink } from "@/components/syndicates/shared/BlockExplorerLink";
-import React, { FC, useEffect, useState } from "react";
-import { CopyToClipboard } from "react-copy-to-clipboard";
-import { Menu, Transition } from "@headlessui/react";
-import { formatAddress } from "@/utils/formatAddress";
-import { useConnectWalletContext } from "@/context/ConnectWalletProvider";
-import { ExternalLinkColor } from "@/components/iconWrappers";
-import WalletConnectDemoButton from "@/containers/layoutWithSyndicateDetails/demo/buttons/WalletConnectDemoButton";
+import { BlockExplorerLink } from '@/components/syndicates/shared/BlockExplorerLink';
+import React, { FC, useEffect, useState } from 'react';
+import { CopyToClipboard } from 'react-copy-to-clipboard';
+import { Menu, Transition } from '@headlessui/react';
+import { formatAddress } from '@/utils/formatAddress';
+import { useConnectWalletContext } from '@/context/ConnectWalletProvider';
+import { ExternalLinkColor } from '@/components/iconWrappers';
+import WalletConnectDemoButton from '@/containers/layoutWithSyndicateDetails/demo/buttons/WalletConnectDemoButton';
 
 interface IAddressMenuDropDown {
   web3: any;
 }
 
 const AddressMenuDropDown: FC<IAddressMenuDropDown> = ({
-  web3: { account, providerName, web3 },
+  web3: { account, providerName, web3 }
 }) => {
   const { disconnectWallet } = useConnectWalletContext();
 
@@ -41,7 +41,7 @@ const AddressMenuDropDown: FC<IAddressMenuDropDown> = ({
         <>
           <Menu.Button
             className={`flex rounded-full pl-5 pr-4 py-3 sm:py-1 items-center ${
-              open ? "bg-gray-syn7" : "bg-gray-syn8"
+              open ? 'bg-gray-syn7' : 'bg-gray-syn8'
             } h-10 hover:bg-gray-syn7`}
           >
             <span className="block focus:outline-none mr-4 sm:mr-1 text-base leading-5.5 py-3 sm:text-sm font-whyte-regular">
@@ -73,7 +73,7 @@ const AddressMenuDropDown: FC<IAddressMenuDropDown> = ({
               as="ul"
               className="absolute right-0 w-80 mt-2 origin-top-right bg-black rounded-2xl border border-gray-syn7 shadow-lg outline-none p-2"
             >
-              <div style={{ borderRadius: "0.625rem" }}>
+              <div style={{ borderRadius: '0.625rem' }}>
                 <div className="bg-gray-syn8 p-4 rounded-t-1.5lg rounded-b-none">
                   <div className="flex items-center">
                     <p className="">
@@ -90,7 +90,7 @@ const AddressMenuDropDown: FC<IAddressMenuDropDown> = ({
 
                 <div
                   className="bg-gray-syn8 p-4 rounded-b-1.5lg rounded-t-none"
-                  style={{ marginTop: "1px" }}
+                  style={{ marginTop: '1px' }}
                 >
                   {/* Copy address */}
                   <CopyToClipboard
@@ -103,7 +103,7 @@ const AddressMenuDropDown: FC<IAddressMenuDropDown> = ({
                         <div className="ml-4 flex items-center ml-0 relative lg:active:bg-opacity-20">
                           <span
                             className={`${
-                              showCopyState ? "opacity-100" : "opacity-0"
+                              showCopyState ? 'opacity-100' : 'opacity-0'
                             } transition-opacity absolute text-xs -left-11 text-gray-syn4`}
                           >
                             copied
@@ -121,7 +121,7 @@ const AddressMenuDropDown: FC<IAddressMenuDropDown> = ({
                   {/* View on Block Explorer */}
                   <div className="mb-4">
                     <BlockExplorerLink
-                      resource={"address"}
+                      resource={'address'}
                       resourceId={account}
                       customStyles="text-sm hover:bg-gray-syn7 hover:p-2 hover:-m-2 rounded-lg"
                       iconColor={ExternalLinkColor.WHITE}
@@ -160,17 +160,17 @@ const renderConnectedWith = (providerName: string) => {
     //   currentProvider = "Metamask";
     //   imageLink = "/images/metamaskIcon.svg";
     //   break;
-    case "WalletConnect":
-      currentProvider = "WalletConnect";
-      imageLink = "/images/walletConnect.svg";
+    case 'WalletConnect':
+      currentProvider = 'WalletConnect';
+      imageLink = '/images/walletConnect.svg';
       break;
-    case "GnosisSafe":
-      currentProvider = "Gnosis Safe";
-      imageLink = "/images/gnosisSafe.png";
+    case 'GnosisSafe':
+      currentProvider = 'Gnosis Safe';
+      imageLink = '/images/gnosisSafe.png';
       break;
     default:
-      currentProvider = "Metamask";
-      imageLink = "/images/metamaskIcon.svg";
+      currentProvider = 'Metamask';
+      imageLink = '/images/metamaskIcon.svg';
       break;
   }
   return (

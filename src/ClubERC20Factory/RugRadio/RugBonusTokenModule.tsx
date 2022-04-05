@@ -1,5 +1,5 @@
-import RugBonusTokenModule_ABI from "src/contracts/RugBonusTokenModule.json";
-import { getGnosisTxnInfo } from "../shared/gnosisTransactionInfo";
+import RugBonusTokenModule_ABI from 'src/contracts/RugBonusTokenModule.json';
+import { getGnosisTxnInfo } from '../shared/gnosisTransactionInfo';
 import { estimateGas } from '../shared/getGasEstimate';
 
 export class RugBonusTokenModule {

@@ -1,21 +1,21 @@
-import { AppState } from "@/state";
-import { getWeiAmount } from "@/utils/conversions";
-import { useEffect, useMemo, useState } from "react";
-import { useRouter } from "next/router";
-import { useSelector } from "react-redux";
-import { isEmpty } from "lodash";
+import { AppState } from '@/state';
+import { getWeiAmount } from '@/utils/conversions';
+import { useEffect, useMemo, useState } from 'react';
+import { useRouter } from 'next/router';
+import { useSelector } from 'react-redux';
+import { isEmpty } from 'lodash';
 
 export const useERC20TokenBalance = (
   account: string | number,
   depositTokenContract: any,
-  depositTokenDecimals: number,
+  depositTokenDecimals: number
 ): number => {
   const [erc20Balance, setErc20Balance] = useState(null);
 
   const {
     web3Reducer: {
-      web3: { web3 },
-    },
+      web3: { web3 }
+    }
   } = useSelector((state: AppState) => state);
 
   const router = useRouter();
@@ -37,12 +37,12 @@ export const useERC20TokenBalance = (
   useEffect(() => {
     if (isEmpty(web3)) return;
 
-    const subscription = web3.eth.subscribe("newBlockHeaders");
+    const subscription = web3.eth.subscribe('newBlockHeaders');
     subscription
-      .on("connected", () => {
+      .on('connected', () => {
         fetchBalance(); // Hack for first time the page renders
       })
-      .on("data", () => {
+      .on('data', () => {
         fetchBalance();
       });
 

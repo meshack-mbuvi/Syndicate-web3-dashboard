@@ -1,14 +1,14 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
-import { SkeletonLoader } from "@/components/skeletonLoader";
-import GradientAvatar from "@/components/syndicates/portfolioAndDiscover/portfolio/GradientAvatar";
-import useModal from "@/hooks/useModal";
-import { AppState } from "@/state";
-import Image from "next/image";
-import { FC, useEffect, useRef, useState } from "react";
-import { useSelector } from "react-redux";
-import PriceContainer from "../collectibles/shared/PriceContainer";
-import TokenModal from "./TokenModal";
+import { SkeletonLoader } from '@/components/skeletonLoader';
+import GradientAvatar from '@/components/syndicates/portfolioAndDiscover/portfolio/GradientAvatar';
+import useModal from '@/hooks/useModal';
+import { AppState } from '@/state';
+import Image from 'next/image';
+import { FC, useEffect, useRef, useState } from 'react';
+import { useSelector } from 'react-redux';
+import PriceContainer from '../collectibles/shared/PriceContainer';
+import TokenModal from './TokenModal';
 interface Props {
   columns: string[];
   tableData: any[];
@@ -73,9 +73,7 @@ const TokenTable: FC<Props> = ({ columns, tableData }) => {
     <div className="relative">
       {!animate && (
         <div className="absolute flex flex-col justify-center items-center top-1/3 w-full z-10">
-          <h3 className="text-white mb-4">
-            This club has no tokens yet.
-          </h3>
+          <h3 className="text-white mb-4">This club has no tokens yet.</h3>
           <span className="text-gray-syn4">
             Any tokens held in this club’s wallet will appear here, including
             member deposits.

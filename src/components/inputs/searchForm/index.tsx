@@ -1,6 +1,6 @@
-import { SearchIcon } from "@/components/shared/Icons";
-import Image from "next/image";
-import React from "react";
+import { SearchIcon } from '@/components/shared/Icons';
+import Image from 'next/image';
+import React from 'react';
 
 /**
  * An input component with label and icon at the right end
@@ -32,13 +32,13 @@ export const SearchForm = (props: {
     itemsCount,
     full,
     clearSearchValue,
-    customClass = "bg-black",
+    customClass = 'bg-black',
     disabled = false,
     column = false,
-    searchItem = "members",
+    searchItem = 'members',
     width,
-    parentBackground = "bg-gray-8",
-    padding = "py-2.5 pl-1",
+    parentBackground = 'bg-gray-8',
+    padding = 'py-2.5 pl-1'
   } = props;
 
   return (
@@ -56,11 +56,11 @@ export const SearchForm = (props: {
             >
               <div
                 className={`absolute my-auto align-middle inset-y-0 pt-0.5 h-full z-8 flex items-center justify-center pr-2 ${
-                  disabled ? "opacity-40" : ""
+                  disabled ? 'opacity-40' : ''
                 }`}
               >
                 <SearchIcon
-                  color={searchValue ? "text-white" : "text-gray-syn4"}
+                  color={searchValue ? 'text-white' : 'text-gray-syn4'}
                   width="w-4"
                   height="h-4"
                 />
@@ -71,20 +71,20 @@ export const SearchForm = (props: {
                 name="search"
                 id="search"
                 className={`focus:ring-0 ${customClass} relative border-0 font-whyte text-white leading-6 text-lg block w-full rounded-md pl-5 pr-5 sm:text-sm ${
-                  disabled ? "opacity-40" : ""
+                  disabled ? 'opacity-40' : ''
                 }`}
                 placeholder={`Search ${
-                  itemsCount ? itemsCount : ""
+                  itemsCount ? itemsCount : ''
                 } ${searchItem}`}
                 onChange={onChangeHandler}
                 value={searchValue}
                 disabled={disabled ? true : false}
                 autoComplete="off"
                 style={{
-                  width: searchValue && width ? width : "auto",
+                  width: searchValue && width ? width : 'auto'
                 }}
               />
-              {searchValue.trim() !== "" && clearSearchValue !== undefined && (
+              {searchValue.trim() !== '' && clearSearchValue !== undefined && (
                 <button
                   className="flex items-center pr-2 cursor-pointer text-gray-syn5"
                   onClick={clearSearchValue}

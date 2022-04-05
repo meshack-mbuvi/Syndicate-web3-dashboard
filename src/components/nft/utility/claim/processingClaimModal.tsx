@@ -1,7 +1,7 @@
-import Modal, { ModalStyle } from "@/components/modal";
-import { Spinner } from "@/components/shared/spinner";
-import { BlockExplorerLink } from "@/components/syndicates/shared/BlockExplorerLink";
-import React from "react";
+import Modal, { ModalStyle } from '@/components/modal';
+import { Spinner } from '@/components/shared/spinner';
+import { BlockExplorerLink } from '@/components/syndicates/shared/BlockExplorerLink';
+import React from 'react';
 
 interface IProcessingClaimModal {
   showModal: boolean;
@@ -20,7 +20,7 @@ const ProcessingClaimModal: React.FC<IProcessingClaimModal> = ({
   transactionHash,
   claimFailed,
   submitting,
-  claimMany,
+  claimMany
 }) => {
   return (
     <Modal
@@ -45,7 +45,7 @@ const ProcessingClaimModal: React.FC<IProcessingClaimModal> = ({
               <Spinner width="w-16" height="h-16" margin="m-0" />
             </div>
             <div className="pb-6 text-2xl">
-              {claimMany ? `Claiming ${claimMany} NFTs` : "Claiming NFT"}
+              {claimMany ? `Claiming ${claimMany} NFTs` : 'Claiming NFT'}
             </div>
             {transactionHash && (
               <div className="pb-8 text-base flex justify-center items-center hover:opacity-80">
@@ -64,8 +64,8 @@ const ProcessingClaimModal: React.FC<IProcessingClaimModal> = ({
                 className="h-16 w-16"
                 src={
                   successfulClaim
-                    ? "/images/syndicateStatusIcons/checkCircleGreen.svg"
-                    : "/images/syndicateStatusIcons/transactionFailed.svg"
+                    ? '/images/syndicateStatusIcons/checkCircleGreen.svg'
+                    : '/images/syndicateStatusIcons/transactionFailed.svg'
                 }
                 alt="checkmark"
               />
@@ -74,9 +74,9 @@ const ProcessingClaimModal: React.FC<IProcessingClaimModal> = ({
               {successfulClaim
                 ? claimMany
                   ? `${claimMany} NFTs claimed`
-                  : "NFT claimed"
+                  : 'NFT claimed'
                 : claimFailed
-                ? "Claim failed"
+                ? 'Claim failed'
                 : null}
             </div>
             {successfulClaim && (

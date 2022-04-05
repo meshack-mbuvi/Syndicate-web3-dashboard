@@ -1,19 +1,21 @@
-import React, { useEffect, useState } from "react";
-import CopyLink from "@/components/shared/CopyLink";
-import Confetti from "react-confetti";
+import React, { useEffect, useState } from 'react';
+import CopyLink from '@/components/shared/CopyLink';
+import Confetti from 'react-confetti';
 
 export const SuccessCard: React.FC<{
   syndicateSuccessfullyCreated: boolean;
   clubDepositLink: string;
   updateDepositLinkCopyState: () => void;
   showDepositLinkCopyState: boolean;
-  showConfettiSuccess: any, setShowConfettiSuccess: any
+  showConfettiSuccess: any;
+  setShowConfettiSuccess: any;
 }> = ({
   syndicateSuccessfullyCreated,
   clubDepositLink,
   updateDepositLinkCopyState,
   showDepositLinkCopyState,
-  showConfettiSuccess, setShowConfettiSuccess
+  showConfettiSuccess,
+  setShowConfettiSuccess
 }) => {
   return (
     <div className="w-full -mt-15">
@@ -21,12 +23,12 @@ export const SuccessCard: React.FC<{
         width={460}
         height={200}
         style={{
-          pointerEvents: "none",
-          position: "absolute",
+          pointerEvents: 'none',
+          position: 'absolute',
           zIndex: 0,
-          borderBottomLeftRadius: "20px",
-          borderBottomRightRadius: "20px",
-          margin: "0 auto",
+          borderBottomLeftRadius: '20px',
+          borderBottomRightRadius: '20px',
+          margin: '0 auto'
         }}
         numberOfPieces={showConfettiSuccess ? 1000 : 0}
         recycle={false}

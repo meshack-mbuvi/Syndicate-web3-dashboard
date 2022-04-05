@@ -1,6 +1,6 @@
-import { isDev } from "@/utils/environment";
-import CLUB_ERC20_FACTORY_ABI from "src/contracts/ERC20ClubFactoryDepositToken.json";
-import { getGnosisTxnInfo } from "../shared/gnosisTransactionInfo";
+import { isDev } from '@/utils/environment';
+import CLUB_ERC20_FACTORY_ABI from 'src/contracts/ERC20ClubFactoryDepositToken.json';
+import { getGnosisTxnInfo } from '../shared/gnosisTransactionInfo';
 import { estimateGas } from '../shared/getGasEstimate';
 
 export class ClubERC20Factory {

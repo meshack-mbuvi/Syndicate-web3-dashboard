@@ -1,6 +1,6 @@
-import React from "react";
-import Modal, { ModalStyle } from "@/components/modal";
-import Image from "next/image";
+import React from 'react';
+import Modal, { ModalStyle } from '@/components/modal';
+import Image from 'next/image';
 
 interface ICryptoAssetModal {
   showModal: boolean;
@@ -9,7 +9,7 @@ interface ICryptoAssetModal {
 
 const AssetInfoModal: React.FC<ICryptoAssetModal> = ({
   showModal,
-  closeModal,
+  closeModal
 }) => {
   return (
     <Modal
@@ -17,19 +17,19 @@ const AssetInfoModal: React.FC<ICryptoAssetModal> = ({
         modalStyle: ModalStyle.DARK,
         show: showModal,
         closeModal: () => closeModal(),
-        customWidth: "w-100",
-        customClassName: "p-8",
+        customWidth: 'w-100',
+        customClassName: 'p-8',
         showCloseButton: false,
         outsideOnClick: true,
         showHeader: false,
-        alignment: "align-top",
-        margin: "mt-48",
+        alignment: 'align-top',
+        margin: 'mt-48'
       }}
     >
       <div className="space-y-4">
         <div className="flex">
           <button className="mr-4 items-center" onClick={() => closeModal()}>
-            <Image src={"/images/arrowBackWhite.svg"} width={16} height={16} />
+            <Image src={'/images/arrowBackWhite.svg'} width={16} height={16} />
           </button>
           <div className="inline-flex">
             <p className="text-xl leading-4 tracking-px text-white">
