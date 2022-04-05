@@ -7,44 +7,88 @@ enum ChainEnum {
 }
 const chainId = isDev ? ChainEnum.RINKEBY : ChainEnum.ETHEREUM;
 
-export const getEthereumTokenPrice = async () => {
+/**
+ * @deprecated The method should not be used, use coingecko endpoint instead.
+ */
+export async function getNativeTokenPrice(): Promise<number> {
   const result = await proxyGet('etherscan/api', {
     action: 'ethprice',
     module: 'stats'
   });
 
   return result.data.result.ethusd;
-};
+}
 
-export const getEtherscanTransactionHistory = async (
-  address: string,
-  contractaddress: string
-) => {
+export async function getNftTransactionHistory(address: string,
+  contractAddress: string): Promise<ERC721Transaction[]> {
   const result = await proxyGet('transaction/nfts', {
     address,
-    contractaddress,
+    contractAddress,
     chainId
   });
 
   return result.data;
-};
+}
 
-export const getEtherscanTokenTransactions = async (address: string) => {
+export async function getTokenTransactionHistory(address: string): Promise<ERC20Transaction[]> {
   const result = await proxyGet('transaction/tokens', {
     address,
     chainId
   });
 
   return result.data;
-};
+}
 
-export const getEthBalance = async (address: string) => {
-  const result = await proxyGet('etherscan/api', {
-    module: 'account',
-    action: 'balance',
-    tag: 'latest',
-    address
+export async function getNativeTokenBalance(address: string): Promise<number> {
+  const result = await proxyGet('balance/native', {
+    address,
+    chainId
   });
 
-  return result.data.result;
-};
+  return result.data;
+}
+
+export interface ERC20Transaction {
+  blockNumber: string;
+  timeStamp: string;
+  hash: string;
+  transactinHash: string;
+  nonce: string;
+  blockHash: string;
+  from: string;
+  contractAddress: string;
+  to: string;
+  value: string;
+  tokenName: string;
+  tokenSymbol: string;
+  tokenDecimal: string;
+  transactionIndex: string;
+  gas: string;
+  gasPrice: string;
+  gasUsed: string;
+  cumulativeGasUsed: string;
+  input: string;
+  confirmations: string;
+}
+
+export interface ERC721Transaction {
+  blocknumber: string;
+  timestamp: string;
+  hash: string;
+  nonce: string;
+  blockhash: string;
+  from: string;
+  contractaddress: string;
+  to: string;
+  tokenID: string;
+  tokenName: string;
+  tokenSymbol: string;
+  tokenDecimal: string;
+  transactionIndex: string;
+  gas: string;
+  gasPrice: string;
+  gasUsed: string;
+  cumulativeGasUsed: string;
+  input: string;
+  confirmations: string;
+}

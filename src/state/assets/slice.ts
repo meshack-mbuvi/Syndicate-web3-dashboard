@@ -13,9 +13,9 @@ import {
 } from '@/containers/layoutWithSyndicateDetails/assets/collectibles/shared/morseCodeNfts';
 
 import {
-  getEthereumTokenPrice,
-  getEtherscanTokenTransactions,
-  getEthBalance
+  getNativeTokenPrice,
+  getTokenTransactionHistory,
+  getNativeTokenBalance
 } from '@/utils/api/transactions';
 
 /** Async thunks */
@@ -25,11 +25,11 @@ export const fetchTokenTransactions = createAsyncThunk(
   async (account: string) => {
     const response = await Promise.all([
       // ERC20 tokens transactions
-      await getEtherscanTokenTransactions(account),
+      await getTokenTransactionHistory(account),
       // ETH balance for owner address
-      await getEthBalance(account),
+      await getNativeTokenBalance(account),
       // ETH price
-      await getEthereumTokenPrice()
+      await getNativeTokenPrice()
     ])
       .then((result) => result)
       .catch(() => []);

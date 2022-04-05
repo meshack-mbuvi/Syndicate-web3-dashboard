@@ -21,7 +21,7 @@ import Tooltip from 'react-tooltip-lite';
 import { isDev } from '@/utils/environment';
 import { numberWithCommas } from '@/utils/formattedNumbers';
 import { getWeiAmount } from '@/utils/conversions';
-import { getEthereumTokenPrice } from '@/utils/api/transactions';
+import { getNativeTokenPrice } from '@/utils/api/transactions';
 
 const ClaimNFT: React.FC = () => {
   const router = useRouter();
@@ -138,7 +138,7 @@ const ClaimNFT: React.FC = () => {
     const PUBLIC_UTILITY_MINT_MODULE =
       process.env.NEXT_PUBLIC_UTILITY_MINT_MODULE;
 
-    const tokenPrice = await getEthereumTokenPrice();
+    const tokenPrice = await getNativeTokenPrice();
     let publicUtilityClaimEnabled = false;
     let publicSingleClaimEnabled = false;
     let merkleClaimEnabled = true;

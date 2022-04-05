@@ -1,4 +1,4 @@
-import { getEthereumTokenPrice } from '@/utils/api/transactions';
+import { getNativeTokenPrice } from '@/utils/api/transactions';
 import { AppState } from '@/state';
 import { getWeiAmount } from '@/utils/conversions';
 import { isDev } from '@/utils/environment';
@@ -44,7 +44,7 @@ const EstimateGas = (props: { customClasses?: string }) => {
         .get(`${baseURL}?module=proxy&action=eth_gasPrice`)
         .then((res) => processBaseFee(res.data))
         .catch(() => 0),
-      getEthereumTokenPrice()
+      getNativeTokenPrice()
         .then((res) => setEthTokenPrice(res))
         .catch(() => 0)
     ]);
