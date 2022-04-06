@@ -435,7 +435,7 @@ LIMITED LIABILITY COMPANY
 This Certificate of Registered Series is being filed pursuant to Section 18-218 of the Delaware Limited Liability Company Act, 6 Del. C. §§ 18-101 et seq. (the “Act”), to form a registered series of a limited liability company pursuant to the Act. 
 The undersigned, being duly authorized to execute and file this Certificate of Registered Series, does hereby certify as follows:
       1. The name of the limited liability company is [[masterLLC]].
-      2. The name of the registered series is [masterLLC] – [[seriesLLC]].
+      2. The name of the registered series is [[legalEntityName]].
 
 (Signature Follows)
 IN WITNESS WHEREOF, the undersigned has duly executed this Certificate of Registered Series.
