@@ -1,7 +1,7 @@
 import React from 'react';
 
 export default {
-  title: 'Atoms/Buttons/Main Button',
+  title: 'Atoms/Buttons/CTA Button',
   component: null,
   argTypes: {
     backgroundColor: { control: 'color' }

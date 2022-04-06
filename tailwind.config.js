@@ -81,9 +81,12 @@ module.exports = {
       height: () => ({
         'fit-content': 'fit-content',
         4.5: '1.125rem',
+        12.5: '3.125rem',
         13: '3.25rem',
         17.5: '4.375rem',
         18: '4.5rem',
+        23: '5.75rem',
+        25: '6.25rem',
         88: '22rem',
         100: '30rem',
         104: '26rem',
@@ -95,6 +98,7 @@ module.exports = {
         '2/1': '200%',
         '5.21/12': '43.47826%',
         7.5: '1.875rem',
+        12.5: '3.125rem',
         62: '15.5rem',
         88: '22rem',
         100: '30rem',
@@ -155,7 +159,11 @@ module.exports = {
         subtext: ['0.75rem', '0.875rem'],
         modalTitle: '2.1875rem',
         modalSubTitle: '1.5rem',
+        '0.5xl': '0.375rem',
+        '0.75xl': '0.4375rem',
+        '1.25xl': '1.3125rem',
         '1.5xl': '1.375rem',
+        '1.75xl': '1.4375rem',
         '2.5xl': '1.75rem',
         '4xl': ['2.25rem', '2.75rem'],
         '4.5xl': '2.5rem',
@@ -330,6 +338,7 @@ module.exports = {
       },
       spacing: {
         '1px': '1px',
+        3.5: '0.875rem',
         7.5: '1.875rem',
         33: '8.5rem',
         50: '12.5rem',
@@ -406,6 +415,7 @@ module.exports = {
         '6-percent': '6%'
       },
       borderRadius: {
+        '1.25lg': '0.3125',
         '1.5lg': '0.625rem',
         '2.5xl': '1.25rem',
         '4xl': '2rem'

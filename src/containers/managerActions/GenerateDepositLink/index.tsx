@@ -9,8 +9,12 @@ import React, {
   useState
 } from 'react';
 import Floater from 'react-floater';
-import { RibbonIcon, RightArrow , CopyLinkIcon } from 'src/components/iconWrappers';
-import { setWalletSignature , setDepositReadyInfo } from '@/state/legalInfo';
+import {
+  RibbonIcon,
+  RightArrow,
+  CopyLinkIcon
+} from 'src/components/iconWrappers';
+import { setWalletSignature, setDepositReadyInfo } from '@/state/legalInfo';
 import { useDispatch, useSelector } from 'react-redux';
 import CopyLink from '@/components/shared/CopyLink';
 import ArrowDown from '@/components/icons/arrowDown';

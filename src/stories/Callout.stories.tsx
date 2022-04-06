@@ -1,4 +1,4 @@
-import { Callout } from '@/components/callout';
+import { Callout, CalloutType } from '@/components/callout';
 import React from 'react';
 
 export default {
@@ -29,6 +29,13 @@ const Template = (args) => <Callout {...args}></Callout>;
 
 export const Default = Template.bind({});
 Default.args = {
+  children:
+    'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'
+};
+
+export const Warning = Template.bind({});
+Warning.args = {
+  type: CalloutType.WARNING,
   children:
     'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'
 };

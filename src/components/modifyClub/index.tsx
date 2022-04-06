@@ -31,7 +31,7 @@ import { ExternalLinkColor } from '../iconWrappers';
 import { InputFieldWithButton } from '../inputs/inputFieldWithButton';
 import { InputFieldWithDate } from '../inputs/inputFieldWithDate';
 import { InputFieldWithToken } from '../inputs/inputFieldWithToken';
-import { PillButtonLarge } from '../pillButtonsLarge';
+import { PillButtonLarge } from '../pillButtons/pillButtonsLarge';
 
 const progressModalStates = {
   confirm: {

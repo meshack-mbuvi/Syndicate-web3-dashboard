@@ -3,7 +3,9 @@ export const InputField = (props: {
   placeholderLabel?: string;
   infoLabel?: string;
   isInErrorState?: boolean;
+  type?: string;
   extraClasses?: string;
+  stylingOverride?: string;
   onChange?: (e) => void;
 }): React.ReactElement => {
   const {
@@ -11,7 +13,9 @@ export const InputField = (props: {
     placeholderLabel,
     infoLabel,
     isInErrorState = false,
+    type = 'text',
     extraClasses = '',
+    stylingOverride,
     onChange,
     ...rest
   } = props;
@@ -19,11 +23,16 @@ export const InputField = (props: {
   return (
     <>
       <input
-        className={`block font-whyte text-base bg-transparent p-4 rounded-md border-1 w-full ${
+        className={`block font-whyte text-base bg-transparent w-full ${
           isInErrorState ? 'border-red-error' : 'border-gray-24'
-        } focus:border-blue-navy outline-none text-white hover:border-gray-syn3 ${extraClasses}`}
+        } ${
+          stylingOverride
+            ? stylingOverride
+            : 'p-4 focus:border-blue-navy rounded-md border-1 outline-none text-white hover:border-gray-syn3'
+        } ${extraClasses}`}
         placeholder={placeholderLabel}
         value={value}
+        type={type}
         onChange={onChange}
         {...rest}
       />
