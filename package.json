@@ -123,6 +123,7 @@
     "cypress:interactive": "cypress open",
     "fix:lint": "eslint --ext .ts,.tsx . --fix",
     "fix:prettier": "prettier --write \"**/*.{css,js,jsx,ts,tsx,json,md}\"",
+    "prepare": "husky install",
     "fix": "npm run fix:lint && npm run fix:prettier",
     "dev": "next dev",
     "build": "NODE_OPTIONS='--trace-warnings --max_old_space_size=8192' && CI=false && next build",
@@ -191,10 +192,10 @@
     "url": "https://github.com/vercel/next.js/issues"
   },
   "lint-staged": {
-    "src/**/*.{js,jsx,json,css,md}": [
+    "**/*.{js,jsx,json,css,md}": [
       "prettier --write"
     ],
-    "src/**/*.{ts,tsx}": [
+    "**/*.{ts,tsx}": [
       "prettier --write"
     ]
   }
