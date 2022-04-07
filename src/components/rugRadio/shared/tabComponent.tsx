@@ -18,7 +18,6 @@ export const TabComponent: React.FC<{ tabContents }> = ({ tabContents }) => {
                     ? "border-b-1 border-white text-white"
                     : "border-transparent text-gray-syn4 hover:text-gray-40"
                 }`}
-                disabled={key.toLowerCase() === "convert"}
               >
                 {tabContents[key].title}
               </button>

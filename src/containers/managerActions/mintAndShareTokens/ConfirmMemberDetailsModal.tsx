@@ -14,7 +14,7 @@ interface IConfirmMemberDetailsModal {
   symbol: string;
   amountToMint: string;
   ownershipShare: number;
-  totalSupply: string;
+  totalSupply: string | number;
   totalSupplyPostMint: number;
   memberAddress;
   handleShow: (show: boolean) => void;

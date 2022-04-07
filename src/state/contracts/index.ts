@@ -1,19 +1,20 @@
 import { ClubERC20Contract } from "@/ClubERC20Factory/clubERC20";
 import { ClubERC20Factory } from "@/ClubERC20Factory/clubERC20Factory";
 import { ClubERC20FactoryEth } from "@/ClubERC20Factory/clubERC20FactoryEth";
+import { DepositTokenMintModuleContract } from "@/ClubERC20Factory/depositTokenMintModule";
+import { EthMintModuleContract } from "@/ClubERC20Factory/ethMintModule";
 import { MerkleDistributorModuleContract } from "@/ClubERC20Factory/merkleDistributorModule";
 import { MerkleDistributorModuleERC721Contract } from "@/ClubERC20Factory/merkleDistributorModuleERC721";
 import { ERC721MintPolicyContract } from "@/ClubERC20Factory/mintPolicyERC721";
+import { OwnerMintModuleContract } from "@/ClubERC20Factory/ownerMintModule";
 import { MintPolicyContract } from "@/ClubERC20Factory/policyMintERC20";
 import { publicMintWithFeeModuleContract } from "@/ClubERC20Factory/publicMintWithFeeModule";
 import { PublicOnePerAddressModuleContract } from "@/ClubERC20Factory/publicOnePerAddressModule";
+import { DepositExchangeMintModule } from "@/ClubERC20Factory/RugRadio/DepositExchangeTokenMintModule";
 import { RugBonusTokenModule } from "@/ClubERC20Factory/RugRadio/RugBonusTokenModule";
 import { RugERC20ClaimModule } from "@/ClubERC20Factory/RugRadio/RugERC20ClaimModule";
 import { RugUtilityProperties } from "@/ClubERC20Factory/RugRadio/RugUtilityProperties";
 import { RugUtilityMintModuleContract } from "@/ClubERC20Factory/rugUtilityMintModule";
-import { DepositTokenMintModuleContract } from "@/ClubERC20Factory/depositTokenMintModule";
-import { EthMintModuleContract } from "@/ClubERC20Factory/ethMintModule";
-import { OwnerMintModuleContract } from "@/ClubERC20Factory/ownerMintModule";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 export interface ISyndicateContracts {
@@ -36,6 +37,7 @@ export interface ISyndicateContracts {
   GenesisNFTContract;
   rugBonusClaimModule: RugBonusTokenModule;
   OwnerMintModule: OwnerMintModuleContract;
+  depositExchangeMintModule: DepositExchangeMintModule;
 }
 
 interface InitialState {
@@ -63,6 +65,7 @@ const initialState: InitialState = {
     GenesisNFTContract: null,
     rugBonusClaimModule: null,
     OwnerMintModule: null,
+    depositExchangeMintModule: null,
   },
 };
 

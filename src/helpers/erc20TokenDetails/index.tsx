@@ -3,7 +3,7 @@ import { MintPolicyContract } from "@/ClubERC20Factory/policyMintERC20";
 import { AppState } from "@/state";
 import {
   setERC20TokenContract,
-  setERC20TokenDespositDetails,
+  setERC20TokenDepositDetails,
   setERC20TokenDetails,
   setLoadingClub,
 } from "@/state/erc20token/slice";
@@ -267,7 +267,7 @@ export const setERC20Token =
             : erc20Token.maxTotalDeposits,
         }),
       );
-      dispatch(setERC20TokenDespositDetails(depositDetails));
+      dispatch(setERC20TokenDepositDetails(depositDetails));
       dispatch(setLoadingClub(false));
     } catch (error) {
       return dispatch(setERC20TokenDetails(ERC20TokenDefaultState));

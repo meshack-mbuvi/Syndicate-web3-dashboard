@@ -85,7 +85,7 @@ const ManagerActions = (): JSX.Element => {
     useState(false);
   const [showGenerateLinkModal, setShowGenerateLinkModal] = useState(false);
 
-  const [hasAgreements, setHasAgreememnts] = useState(false);
+  const [hasAgreements, setHasAgreements] = useState(false);
 
   const setClubDepositLink = (clubDepositLink: string) => {
     dispatch(
@@ -107,12 +107,14 @@ const ManagerActions = (): JSX.Element => {
   useEffect(() => {
     const legal = JSON.parse(localStorage.getItem("legal") || "{}");
     const clubLegalData = legal[clubAddress as string];
-    setHasAgreememnts(clubLegalData?.signaturesNeeded || false);
+    setHasAgreements(clubLegalData?.signaturesNeeded || false);
+
     if (!clubLegalData?.signaturesNeeded) {
       return setClubDepositLink(
         `${window.location.origin}/clubs/${clubAddress}`,
       );
     }
+
     if (
       clubLegalData?.clubData.adminSignature &&
       clubLegalData.signaturesNeeded

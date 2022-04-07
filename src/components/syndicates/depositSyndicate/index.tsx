@@ -1653,7 +1653,7 @@ const DepositSyndicate: React.FC = () => {
                         height={24}
                         width={24}
                       />
-                      <p className="ml-2 text-base">{symbol.slice(1)}</p>
+                      <p className="ml-2 text-base">{symbol?.slice(1)}</p>
                     </div>
                   </div>
                 </div>

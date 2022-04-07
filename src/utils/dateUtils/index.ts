@@ -28,6 +28,7 @@ export const epochTimeToDateFormat = (
   // get timezone from browser
   const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
   const formattedDate = utcToZonedTime(date, timezone);
+  
   return format(formattedDate, dateFormat, {
     timeZone: timezone,
   });

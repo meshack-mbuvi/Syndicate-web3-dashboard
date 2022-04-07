@@ -1,9 +1,8 @@
-import React from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { AppState } from "@/state";
-import Image from "next/image";
-
 import { setDepositTokenDetails } from "@/state/createInvestmentClub/slice";
+import Image from "next/image";
+import React from "react";
+import { useDispatch } from "react-redux";
+
 interface TokenProps {
   symbol: string;
   name: string;
@@ -18,18 +17,7 @@ const abi = require("human-standard-token-abi");
 
 // render each token item inside the token select drop-down
 const TokenDetails = (props: TokenProps) => {
-  const { symbol, name, logoURI, toggleTokenSelect, showCheckMark, onClick } =
-    props;
-
-  const {
-    initializeContractsReducer: { syndicateContracts },
-    web3Reducer: {
-      web3: { account, web3, status },
-    },
-    erc20TokenSliceReducer: {
-      erc20Token: { owner, loading, name: clubName, depositsEnabled },
-    },
-  } = useSelector((state: AppState) => state);
+  const { symbol, name, logoURI, showCheckMark, onClick } = props;
 
   const dispatch = useDispatch();
 
@@ -72,6 +60,7 @@ const TokenDetails = (props: TokenProps) => {
             width={16}
             height={15}
             src={"/images/check-mark-grayscale.svg"}
+            alt=""
           ></img>
         </div>
       ) : null}

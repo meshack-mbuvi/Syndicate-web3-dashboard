@@ -27,7 +27,7 @@ import { setClubMembers } from "@/state/clubMembers";
 import {
   setDepositTokenUSDPrice,
   setERC20TokenContract,
-  setERC20TokenDespositDetails,
+  setERC20TokenDepositDetails,
   setERC20TokenDetails,
 } from "@/state/erc20token/slice";
 import { clearMyTransactions } from "@/state/erc20transactions";
@@ -116,7 +116,7 @@ const LayoutWithSyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
       dispatch(setDepositTokenUSDPrice(0));
 
       dispatch(
-        setERC20TokenDespositDetails({
+        setERC20TokenDepositDetails({
           mintModule: "",
           ethDepositToken: false,
           depositToken: "",

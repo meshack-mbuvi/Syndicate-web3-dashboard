@@ -14,7 +14,7 @@ import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { useDispatch, useSelector } from "react-redux";
-import Tooltip from "react-tooltip-lite";
+import RedeemRug from "../redeemRug";
 import { BonusTokenClaim } from "../shared/bonusToken";
 import { NFTChecker } from "../shared/NFTchecker";
 import NFTComponent from "../shared/nftComponent";
@@ -368,31 +368,9 @@ export const NFTDetails: React.FC = () => {
         </>
       ),
     },
-    convert: {
-      title: (
-        <>
-          <span className="mr-1.5">
-            <Image
-              src="/images/rugRadio/locked.svg"
-              height={14}
-              width={16}
-              alt="Locked"
-            />
-          </span>
-
-          <Tooltip
-            content={<div>Coming soon</div>}
-            arrow={false}
-            tipContentClassName="actionsTooltip"
-            background="#232529"
-            padding="12px 16px"
-            distance={13}
-          >
-            Convert
-          </Tooltip>
-        </>
-      ),
-      content: <>To be implemented</>,
+    redeem: {
+      title: <p>redeem</p>,
+      content: <RedeemRug />,
     },
   };
 
@@ -554,62 +532,63 @@ export const NFTDetails: React.FC = () => {
               }
             >
               <div className="grid grid-cols-12 gap-4">
-                {!loading && collectibles.length > 0 ? (
-                  collectibles.map((collectible, index) => {
-                    const { id, image, animation } = collectible;
+                {!loading && collectibles.length > 0
+                  ? collectibles.map((collectible, index) => {
+                      const { id, image, animation } = collectible;
 
-                    let mediaType;
+                      let mediaType;
 
-                    if (image && !animation) {
-                      mediaType = "imageOnlyNFT";
-                    } else if (animation) {
-                      // animation could be a .mov or .mp4 video
-                      const movAnimation = animation.match(/\.mov$/) != null;
-                      const mp4Animation = animation.match(/\.mp4$/) != null;
+                      if (image && !animation) {
+                        mediaType = "imageOnlyNFT";
+                      } else if (animation) {
+                        // animation could be a .mov or .mp4 video
+                        const movAnimation = animation.match(/\.mov$/) != null;
+                        const mp4Animation = animation.match(/\.mp4$/) != null;
 
-                      if (movAnimation || mp4Animation) {
-                        mediaType = "videoNFT";
+                        if (movAnimation || mp4Animation) {
+                          mediaType = "videoNFT";
+                        }
+
+                        // https://litwtf.mypinata.cloud/ipfs/QmVjgAD5gaNQ1cLpgKLeuXDPX8R1yeajtWUhM6nV7VAe6e/4.mp4
+                        // details for the nft with id below are not returned correctly and hence does not render
+                        // The animation link is a .html which is not captured.
+                        // Until we find a better way to handle this, let's have the fix below
+                        if (
+                          animation.match(/\.html$/) != null &&
+                          id == "3216"
+                        ) {
+                          mediaType = "htmlNFT";
+                        }
+
+                        // animation could be a gif
+                        if (animation.match(/\.gif$/) != null) {
+                          mediaType = "animatedNFT";
+                        }
+
+                        // add support for .wav and .mp3 files
+                        const wavAnimation = animation.match(/\.wav$/) != null;
+                        const mp3Animation = animation.match(/\.mp3$/) != null;
+                        const soundtrack = wavAnimation || mp3Animation;
+
+                        if (soundtrack) {
+                          mediaType = "soundtrackNFT";
+                        }
                       }
-
-                      // https://litwtf.mypinata.cloud/ipfs/QmVjgAD5gaNQ1cLpgKLeuXDPX8R1yeajtWUhM6nV7VAe6e/4.mp4
-                      // details for the nft with id below are not returned correctly and hence does not render
-                      // The animation link is a .html which is not captured.
-                      // Until we find a better way to handle this, let's have the fix below
-                      if (animation.match(/\.html$/) != null && id == "3216") {
-                        mediaType = "htmlNFT";
-                      }
-
-                      // animation could be a gif
-                      if (animation.match(/\.gif$/) != null) {
-                        mediaType = "animatedNFT";
-                      }
-
-                      // add support for .wav and .mp3 files
-                      const wavAnimation = animation.match(/\.wav$/) != null;
-                      const mp3Animation = animation.match(/\.mp3$/) != null;
-                      const soundtrack = wavAnimation || mp3Animation;
-
-                      if (soundtrack) {
-                        mediaType = "soundtrackNFT";
-                      }
-                    }
-                    return (
-                      <NFTComponent
-                        {...{
-                          ...{
-                            collectible,
-                            mediaType,
-                            showCollectibles: true,
-                            refresh: processed,
-                          },
-                        }}
-                        key={index}
-                      />
-                    );
-                  })
-                ) : (
-                  null
-                )}
+                      return (
+                        <NFTComponent
+                          {...{
+                            ...{
+                              collectible,
+                              mediaType,
+                              showCollectibles: true,
+                              refresh: processed,
+                            },
+                          }}
+                          key={index}
+                        />
+                      );
+                    })
+                  : null}
               </div>
             </InfiniteScroll>
 
