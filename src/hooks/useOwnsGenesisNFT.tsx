@@ -1,7 +1,9 @@
 import { ERC721Contract } from "@/ClubERC20Factory/ERC721Membership";
 import { AppState } from "@/state";
+import { getWeiAmount } from "@/utils/conversions";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
+import ERC20ABI from "src/utils/abi/erc20";
 
 const useOwnsGenesisNFT: any = () => {
   const GENESIS_NFT = process.env.NEXT_PUBLIC_GenesisNFT;
@@ -37,6 +39,27 @@ const useOwnsGenesisNFT: any = () => {
     }
   };
 
+  const rugTokenAddress = process.env.NEXT_PUBLIC_RUG_TOKEN;
+
+  // account has tokens
+  const [accountRugTokens, setAccountRugTokens] = useState(0);
+
+  const rugRadioContract = new web3.eth.Contract(
+    ERC20ABI as AbiItem[],
+    rugTokenAddress,
+  );
+
+  // check whether user has RUG tokens
+  const availableRugTokens = async () => {
+    try {
+      const tokens = await rugRadioContract?.methods.balanceOf(account).call();
+      const decimals = await rugRadioContract?.methods.decimals().call();
+      setAccountRugTokens(getWeiAmount(tokens, decimals, false));
+    } catch (error) {
+      setAccountRugTokens(0);
+    }
+  };
+
   /**
    * Compare claimStartTime with current timestamp.
    *
@@ -57,10 +80,11 @@ const useOwnsGenesisNFT: any = () => {
   };
 
   useEffect(() => {
-    if (!account || !GENESIS_NFT) return;
+    if (!account || !GENESIS_NFT) return setAccountRugTokens(0);
 
     checkTokenBalance();
     getClaimEnabled();
+    availableRugTokens();
   }, [account, GENESIS_NFT]);
 
   return {
@@ -68,7 +92,8 @@ const useOwnsGenesisNFT: any = () => {
     claimEnabled,
     genesisNFTBalance,
     loading: checkingGenesis,
-    hasGenesisNFT: true, // genesisNFTBalance > 0,
+    hasGenesisNFT: genesisNFTBalance > 0,
+    hasRugTokens: accountRugTokens > 0,
   };
 };
 

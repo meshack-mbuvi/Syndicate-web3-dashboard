@@ -32,7 +32,7 @@ export const ClaimComponent: React.FC = () => {
   const [showNFTchecker, setShowNFTchecker] = useState(false);
   const [showClaimComponent, setShowClaimComponent] = useState(false);
 
-  const { loading, hasGenesisNFT, claimEnabled, claimStartTime } =
+  const { loading, hasGenesisNFT, claimEnabled, claimStartTime, hasRugTokens } =
     useOwnsGenesisNFT();
 
   useEffect(() => {
@@ -88,7 +88,7 @@ export const ClaimComponent: React.FC = () => {
     <Layout>
       <div className="w-full">
         <div className="container mx-auto">
-          {showClaimComponent && hasGenesisNFT ? (
+          {showClaimComponent && (hasGenesisNFT || hasRugTokens) ? (
             <NFTDetails />
           ) : (
             <div className="w-full">
@@ -142,7 +142,7 @@ export const ClaimComponent: React.FC = () => {
                             greenCta={hasGenesisNFT && claimEnabled}
                             disabled={!hasGenesisNFT && claimEnabled}
                           >
-                            {hasGenesisNFT
+                            {hasGenesisNFT || hasRugTokens
                               ? claimEnabled
                                 ? "Continue"
                                 : "Claiming available soon"

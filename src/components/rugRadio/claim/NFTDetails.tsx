@@ -5,6 +5,7 @@ import NumberTreatment from "@/components/NumberTreatment";
 import { Spinner } from "@/components/shared/spinner";
 import { SkeletonLoader } from "@/components/skeletonLoader";
 import { EtherscanLink } from "@/components/syndicates/shared/EtherscanLink";
+import useOwnsGenesisNFT from "@/hooks/useOwnsGenesisNFT";
 import useRugRadioTokenCount from "@/hooks/useRugRadioTokens";
 import { AppState } from "@/state";
 import { fetchCollectiblesTransactions } from "@/state/assets/slice";
@@ -57,7 +58,7 @@ export const NFTDetails: React.FC = () => {
     nextClaimTime,
     totalBonusToClaim,
   } = useRugRadioTokenCount(collectibles, processed);
-
+  const { hasGenesisNFT } = useOwnsGenesisNFT();
   const handleClose = () => {
     setShowNFTchecker(false);
   };
@@ -339,30 +340,39 @@ export const NFTDetails: React.FC = () => {
       title: "Claim",
       content: (
         <>
-          <p className="flex text-xl font-whyte">
-            <span className="mr-2 flex">
-              <Image
-                src={RugRadioTokenWhiteIcon}
-                width={16}
-                height={16}
-                alt="token icon"
-              />{" "}
-            </span>
-            {numberWithCommas(totalYieldTokens)} RUG
-          </p>
-          <CtaButton
-            onClick={handleClaimAll}
-            greenCta={true}
-            disabled={totalYieldTokens == 0}
-          >
-            {totalYieldTokens > 0
-              ? "Claim yield"
-              : `Next claim in ${getCountDownDays(`${nextClaimTime}`)}`}
-          </CtaButton>
+          {hasGenesisNFT && (
+            <>
+              <p className="flex text-xl font-whyte">
+                <span className="mr-2 flex">
+                  <Image
+                    src={RugRadioTokenWhiteIcon}
+                    width={16}
+                    height={16}
+                    alt="token icon"
+                  />{" "}
+                </span>
+                {numberWithCommas(totalYieldTokens)} RUG
+              </p>
+              <CtaButton
+                onClick={handleClaimAll}
+                greenCta={true}
+                disabled={totalYieldTokens == 0}
+              >
+                {totalYieldTokens > 0
+                  ? "Claim yield"
+                  : `Next claim in ${getCountDownDays(`${nextClaimTime}`)}`}
+              </CtaButton>
+            </>
+          )}
 
-          {totalAvailableToClaim == 0 && (
+          {totalAvailableToClaim == 0 && hasGenesisNFT ? (
             <p className="small-body text-center text-gray-syn5 leading-5">
               You must wait at least 24 hours between RUG claims.
+            </p>
+          ) : (
+            <p className="small-body text-center text-gray-syn5 leading-5">
+              {`You must hold a Genesis NFT to claim. Click "Redeem" to redeem
+              your $RDAO tokens`}
             </p>
           )}
         </>
@@ -376,7 +386,7 @@ export const NFTDetails: React.FC = () => {
 
   const loaderContent = (
     <>
-      {[...Array(4)].map((_, idx) => (
+      {[...Array(6)].map((_, idx) => (
         <div
           key={idx}
           className="col-span-12 lg:col-span-6 2xl:w-88 w-full max-w-480 h-full"
@@ -424,6 +434,7 @@ export const NFTDetails: React.FC = () => {
       ))}
     </>
   );
+
   return (
     <>
       <div className="w-full">
@@ -521,78 +532,83 @@ export const NFTDetails: React.FC = () => {
                 </>
               )}
             </div>
-            <InfiniteScroll
-              dataLength={collectiblesResult.length}
-              next={fetchMoreCollectibles}
-              hasMore={!allCollectiblesFetched}
-              loader={
-                <div className="mt-4 grid grid-cols-12 gap-4">
-                  {loaderContent}
+            {hasGenesisNFT && (
+              <InfiniteScroll
+                dataLength={collectiblesResult.length}
+                next={fetchMoreCollectibles}
+                hasMore={!allCollectiblesFetched}
+                loader={
+                  <div className="mt-4 grid grid-cols-12 gap-4">
+                    {loaderContent}
+                  </div>
+                }
+              >
+                <div className="grid grid-cols-12 gap-4">
+                  {!loading && collectibles.length > 0
+                    ? collectibles.map((collectible, index) => {
+                        const { id, image, animation } = collectible;
+
+                        let mediaType;
+
+                        if (image && !animation) {
+                          mediaType = "imageOnlyNFT";
+                        } else if (animation) {
+                          // animation could be a .mov or .mp4 video
+                          const movAnimation =
+                            animation.match(/\.mov$/) != null;
+                          const mp4Animation =
+                            animation.match(/\.mp4$/) != null;
+
+                          if (movAnimation || mp4Animation) {
+                            mediaType = "videoNFT";
+                          }
+
+                          // https://litwtf.mypinata.cloud/ipfs/QmVjgAD5gaNQ1cLpgKLeuXDPX8R1yeajtWUhM6nV7VAe6e/4.mp4
+                          // details for the nft with id below are not returned correctly and hence does not render
+                          // The animation link is a .html which is not captured.
+                          // Until we find a better way to handle this, let's have the fix below
+                          if (
+                            animation.match(/\.html$/) != null &&
+                            id == "3216"
+                          ) {
+                            mediaType = "htmlNFT";
+                          }
+
+                          // animation could be a gif
+                          if (animation.match(/\.gif$/) != null) {
+                            mediaType = "animatedNFT";
+                          }
+
+                          // add support for .wav and .mp3 files
+                          const wavAnimation =
+                            animation.match(/\.wav$/) != null;
+                          const mp3Animation =
+                            animation.match(/\.mp3$/) != null;
+                          const soundtrack = wavAnimation || mp3Animation;
+
+                          if (soundtrack) {
+                            mediaType = "soundtrackNFT";
+                          }
+                        }
+                        return (
+                          <NFTComponent
+                            {...{
+                              ...{
+                                collectible,
+                                mediaType,
+                                showCollectibles: true,
+                                refresh: processed,
+                              },
+                            }}
+                            key={index}
+                          />
+                        );
+                      })
+                    : null}
                 </div>
-              }
-            >
-              <div className="grid grid-cols-12 gap-4">
-                {!loading && collectibles.length > 0
-                  ? collectibles.map((collectible, index) => {
-                      const { id, image, animation } = collectible;
-
-                      let mediaType;
-
-                      if (image && !animation) {
-                        mediaType = "imageOnlyNFT";
-                      } else if (animation) {
-                        // animation could be a .mov or .mp4 video
-                        const movAnimation = animation.match(/\.mov$/) != null;
-                        const mp4Animation = animation.match(/\.mp4$/) != null;
-
-                        if (movAnimation || mp4Animation) {
-                          mediaType = "videoNFT";
-                        }
-
-                        // https://litwtf.mypinata.cloud/ipfs/QmVjgAD5gaNQ1cLpgKLeuXDPX8R1yeajtWUhM6nV7VAe6e/4.mp4
-                        // details for the nft with id below are not returned correctly and hence does not render
-                        // The animation link is a .html which is not captured.
-                        // Until we find a better way to handle this, let's have the fix below
-                        if (
-                          animation.match(/\.html$/) != null &&
-                          id == "3216"
-                        ) {
-                          mediaType = "htmlNFT";
-                        }
-
-                        // animation could be a gif
-                        if (animation.match(/\.gif$/) != null) {
-                          mediaType = "animatedNFT";
-                        }
-
-                        // add support for .wav and .mp3 files
-                        const wavAnimation = animation.match(/\.wav$/) != null;
-                        const mp3Animation = animation.match(/\.mp3$/) != null;
-                        const soundtrack = wavAnimation || mp3Animation;
-
-                        if (soundtrack) {
-                          mediaType = "soundtrackNFT";
-                        }
-                      }
-                      return (
-                        <NFTComponent
-                          {...{
-                            ...{
-                              collectible,
-                              mediaType,
-                              showCollectibles: true,
-                              refresh: processed,
-                            },
-                          }}
-                          key={index}
-                        />
-                      );
-                    })
-                  : null}
-              </div>
-            </InfiniteScroll>
-
-            <div className="max-w-480 xl:w-full w-min ml-4 space-y-5 hidden lg:block">
+              </InfiniteScroll>
+            )}
+            <div className="max-w-480 xl:w-full w-min ml-4s space-y-5 hidden lg:block">
               {loading ? (
                 <>
                   {[1, 2].map((key, index) => (
