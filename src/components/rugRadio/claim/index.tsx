@@ -114,7 +114,8 @@ export const ClaimComponent: React.FC = () => {
                         <div className="flex space-x-4">
                           <Image
                             src={
-                              status === Status.DISCONNECTED || !hasGenesisNFT
+                              status === Status.DISCONNECTED ||
+                              !((hasGenesisNFT && claimEnabled) || hasRugTokens)
                                 ? emptyCheck
                                 : checkMark
                             }
@@ -139,8 +140,12 @@ export const ClaimComponent: React.FC = () => {
                         ) : (
                           <CtaButton
                             onClick={handleContinue}
-                            greenCta={hasGenesisNFT && claimEnabled}
-                            disabled={!hasGenesisNFT && claimEnabled}
+                            greenCta={
+                              (hasGenesisNFT && claimEnabled) || hasRugTokens
+                            }
+                            disabled={
+                              !((hasGenesisNFT && claimEnabled) || hasRugTokens)
+                            }
                           >
                             {hasGenesisNFT || hasRugTokens
                               ? claimEnabled
