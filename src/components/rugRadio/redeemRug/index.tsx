@@ -62,6 +62,7 @@ const RedeemRug: React.FC = () => {
   const [maxRDao, setMaxRDao] = useState(+availableTokens / ratio);
   const [rDaoToRedeem, setRDaoToRedeem] = useState("");
   const [transactionFailed, setTransactionFailed] = useState(false);
+  const [maximumWithdrawable, setMaximumWithdrawable] = useState(0);
 
   const [redeemError, setRedeemError] = useState("");
 
@@ -78,8 +79,8 @@ const RedeemRug: React.FC = () => {
 
   useEffect(() => {
     if (
-      (tokenSwitched && +amountToRedeem == +maxRDao) ||
-      (!tokenSwitched && +amountToRedeem == +availableTokens)
+      Math.floor(+amountToRedeem) == Math.floor(maximumWithdrawable) ||
+      Math.abs(+maximumWithdrawable - +amountToRedeem) < 0.009
     ) {
       setDisableMaxButton(true);
     } else {
@@ -88,6 +89,16 @@ const RedeemRug: React.FC = () => {
     checkCurrentAllowance();
     availableRugTokens();
   }, [amountToRedeem, maxRDao, rDaoToRedeem]);
+
+  useEffect(() => {
+    setMaximumWithdrawable(
+      tokenSwitched ? +availableTokens / ratio : availableTokens,
+    );
+
+    return () => {
+      setMaximumWithdrawable(0);
+    };
+  }, [tokenSwitched, availableTokens]);
 
   const availableRugTokens = async () => {
     try {
@@ -146,7 +157,7 @@ const RedeemRug: React.FC = () => {
     return () => {
       setHasError(false);
     };
-  }, [amountToRedeem, availableTokens, rDaoToRedeem]);
+  }, [amountToRedeem, availableTokens, rDaoToRedeem, maxRDao, tokenSwitched]);
 
   // This is displayed on the card to show user the approximate amount they
   // are redeeming either in RDAOs or in RUG.
@@ -159,7 +170,10 @@ const RedeemRug: React.FC = () => {
   }, [tokenSwitched, amountToRedeem]);
 
   const handleSetMax = () => {
-    const maximumWithdrawable = tokenSwitched ? maxRDao : availableTokens;
+    const maximumWithdrawable = tokenSwitched
+      ? +availableTokens / ratio
+      : availableTokens;
+
     setAmountToRedeem(maximumWithdrawable.toString());
   };
 
@@ -356,6 +370,7 @@ const RedeemRug: React.FC = () => {
                 disableMaxButton ? "cursor-not-allowed" : ""
               }`}
               onClick={handleSetMax}
+              disabled={disableMaxButton}
             >
               Max
             </button>
