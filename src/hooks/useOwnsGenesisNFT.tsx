@@ -68,7 +68,7 @@ const useOwnsGenesisNFT: any = () => {
     claimEnabled,
     genesisNFTBalance,
     loading: checkingGenesis,
-    hasGenesisNFT: genesisNFTBalance > 0,
+    hasGenesisNFT: true, // genesisNFTBalance > 0,
   };
 };
 

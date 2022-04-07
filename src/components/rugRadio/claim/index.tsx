@@ -123,7 +123,7 @@ export const ClaimComponent: React.FC = () => {
                             width={32}
                           />
                           <span className="flex items-center">
-                            Own a RugRadio Genesis NFT
+                            Own a RugRadio Genesis NFT or $RUG tokens
                           </span>
                         </div>
                       </div>
