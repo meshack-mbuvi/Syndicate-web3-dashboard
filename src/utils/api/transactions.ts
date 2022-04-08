@@ -8,31 +8,43 @@ enum ChainEnum {
 }
 const chainId = isDev ? ChainEnum.RINKEBY : ChainEnum.ETHEREUM;
 
-
 export async function getNativeTokenPrice(): Promise<number> {
-  const result: AxiosResponse<number> = await proxyGet('tokens/native_price_usd', {
-    chainId
-  });
+  const result: AxiosResponse<number> = await proxyGet(
+    'token/native_price_usd',
+    {
+      chainId
+    }
+  );
 
   return result.data;
 }
 
-export async function getNftTransactionHistory(address: string,
-  contractAddress: string): Promise<ERC721Transaction[]> {
-  const result: AxiosResponse<ERC721Transaction[]> = await proxyGet('transaction/nfts', {
-    address,
-    contractAddress,
-    chainId
-  });
+export async function getNftTransactionHistory(
+  address: string,
+  contractAddress: string
+): Promise<ERC721Transaction[]> {
+  const result: AxiosResponse<ERC721Transaction[]> = await proxyGet(
+    'transaction/nfts',
+    {
+      address,
+      contractAddress,
+      chainId
+    }
+  );
 
   return result.data;
 }
 
-export async function getTokenTransactionHistory(address: string): Promise<ERC20Transaction[]> {
-  const result: AxiosResponse<ERC20Transaction[]> = await proxyGet('transaction/tokens', {
-    address,
-    chainId
-  });
+export async function getTokenTransactionHistory(
+  address: string
+): Promise<ERC20Transaction[]> {
+  const result: AxiosResponse<ERC20Transaction[]> = await proxyGet(
+    'transaction/tokens',
+    {
+      address,
+      chainId
+    }
+  );
 
   return result.data;
 }
