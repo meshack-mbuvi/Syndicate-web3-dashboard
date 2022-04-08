@@ -32,7 +32,7 @@ export const getOpenseaFloorPrices = async (slug: string): Promise<any> => {
       `${openSeaBaseURL}/collection/${slug}/stats`,
       params
     );
-    floor_price = result.data?.stats.floor_price;
+    floor_price = result.data.stats.floor_price;
   } catch {
     floor_price = 0;
   }
