@@ -35,6 +35,7 @@ export interface IActiveNetwork {
   displayName: string;
   shortName: string;
   network: string;
+  testnet: boolean;
   chainId: number;
   networkId: number;
   rpcUrl: string;
@@ -112,6 +113,7 @@ export const initialState: InitialState = {
       displayName: '',
       shortName: '',
       network: '',
+      testnet: false,
       chainId: 0,
       networkId: null,
       rpcUrl: '',

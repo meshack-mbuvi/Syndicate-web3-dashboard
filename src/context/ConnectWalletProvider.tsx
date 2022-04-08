@@ -111,7 +111,8 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
   const [activeProvider, setActiveProvider] = useState(null);
   const [account, setAccount] = useState('');
   const [loadedAsSafeApp, setLoadedAsSafeApp] = useState(false);
-  const [web3, setWeb3] = useState(new Web3(`${NETWORKS[1].rpcUrl}`)); // Default to an Ethereum mainnet
+  const [web3, setWeb3] = useState<any>(new Web3(`${NETWORKS[1].rpcUrl}`)); // Default to an Ethereum mainnet
+  const [loading, setLoading] = useState<boolean>(true);
 
   const dispatch = useDispatch();
 
@@ -156,7 +157,7 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
         return dispatch(
           setLibrary({
             account,
-            web3,
+            web3: web3,
             providerName,
             activeNetwork
           })
@@ -189,6 +190,7 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
       const parseCacheWallet = parse(cacheWallet);
       setCachedWalletData(parseCacheWallet);
     } else {
+      setLoading(false);
       initializeWeb3();
     }
   }, []);
@@ -207,17 +209,17 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
   // provider is connected, this stops the loader modal
   // and sets up connected state
   useEffect(() => {
-    if (account && activeProvider && activeNetwork) {
+    if (!loading && account && activeProvider && activeNetwork) {
       dispatch(setConnecting());
       initializeWeb3().then(() => {
         dispatch(setConnected());
         setWalletConnecting(false);
         setShowSuccessModal(true);
       });
-    } else if (activeNetwork && !account) {
+    } else if (!loading && activeNetwork && !account) {
       initializeWeb3();
     }
-  }, [account, activeProvider, activeNetwork]);
+  }, [loading, account, activeProvider, activeNetwork]);
 
   // provider events
   // allows us to listed for account and chain changes
@@ -230,6 +232,7 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
 
       const handleChainChanged = async () => {
         getCurrentEthNetwork();
+        await newWeb3Instance(activeProvider);
         const { network } = await getProviderAccountAndNetwork(activeProvider);
         setChainId(network.chainId);
       };
@@ -272,6 +275,16 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
     return { address, network };
   };
 
+  const newWeb3Instance = async (provider) => {
+    const newWeb3 = new Web3(provider);
+    // hot fix
+    // increase default timeout to 48hrs (172800 seconds)
+    // this stops transactions from being marked as failed on the UI while still pending on-chain.
+    newWeb3.eth.transactionPollingTimeout = 172800;
+
+    setWeb3(newWeb3);
+  };
+
   /**
    * This activate any provide passed to the function where
    * provider can be injected provider, walletConnect or gnosis wallet provider
@@ -295,17 +308,13 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
     }
 
     const { address, network } = await getProviderAccountAndNetwork(provider);
+
+    await newWeb3Instance(provider);
+
     setAccount(address);
-
-    const newWeb3 = new Web3(provider);
-    // hot fix
-    // increase default timeout to 48hrs (172800 seconds)
-    // this stops transactions from being marked as failed on the UI while still pending on-chain.
-    newWeb3.eth.transactionPollingTimeout = 172800;
-
-    setWeb3(newWeb3);
     setActiveProvider(provider);
     setChainId(Number(network.chainId));
+    setLoading(false);
   };
 
   // This handles closing the modal after user selects a provider to activate

@@ -3,23 +3,24 @@ import { Menu, Transition } from "@headlessui/react";
 import { useConnectWalletContext } from "@/context/ConnectWalletProvider";
 import { NETWORKS } from "@/Networks";
 import { useRouter } from "next/router";
+import IconGas from '@/components/icons/Gas';
+import { useSelector } from 'react-redux';
+import { AppState } from '@/state';
 
-interface IAddressMenuDropDown {
-  web3: any;
-}
 
-const NetworkMenuDropDown: FC<IAddressMenuDropDown> = ({ web3 }) => {
-  /* ------------------------------------------------------------------------------------------------->
-   * TODO: add  loading  states and detailed error states similar to what uniswap does
-   *       add live gas prices
-   *       add current block
-   */
+// TODO: hide testnets if isDev false.  activeNetwork object contrains a [testnet] boolean
+const NetworkMenuDropDown: FC = () => {
+  const {
+    web3Reducer: {
+      web3: { web3: web3Instance, account, activeNetwork }
+    }
+  } = useSelector((state: AppState) => state);
 
   const { switchNetworks } = useConnectWalletContext();
 
-  const { account, web3: web3Instance, activeNetwork } = web3;
-
   const [nativeBalance, setNativeBalance] = useState('');
+  const [blockNumber, setblockNumber] = useState('');
+  const [gas, setGas] = useState('');
 
   // Switch networks based on URL param
   const router = useRouter();
@@ -41,11 +42,37 @@ const NetworkMenuDropDown: FC<IAddressMenuDropDown> = ({ web3 }) => {
     }
   };
 
+  const getGasAndBlock = async () => {
+    // block number of latest mined block
+    await web3Instance.eth.getBlockNumber().then((data) => {
+      setblockNumber(data);
+    });
+    await web3Instance.eth.getGasPrice().then((value) => {
+      const _gas = +web3Instance.utils.fromWei(value, 'gwei');
+      setGas(String(Math.ceil(_gas)));
+    });
+  };
+
+  useEffect(() => {
+    getGasAndBlock();
+  }, [web3Instance]);
+
   useEffect(() => {
     if (account && !nativeBalance) {
       getNativeBalance(account);
     }
   }, [account, nativeBalance]);
+
+  useEffect(() => {
+    const gasAndBlockInterval = setInterval(() => {
+      getGasAndBlock();
+    }, 3000);
+    return () => {
+      setblockNumber('--');
+      setGas('--');
+      clearInterval(gasAndBlockInterval);
+    };
+  }, [activeNetwork]);
 
   return (
     <Menu as="div" className="relative">
@@ -53,7 +80,7 @@ const NetworkMenuDropDown: FC<IAddressMenuDropDown> = ({ web3 }) => {
         <>
           <Menu.Button
             className={`flex rounded-full pl-3 pr-3 py-2 sm:py-1 items-center ${
-              open ? "bg-gray-syn7" : "bg-gray-syn8"
+              open ? 'bg-gray-syn7' : 'bg-gray-syn8'
             } h-10 hover:bg-gray-syn7`}
           >
             <img
@@ -97,40 +124,56 @@ const NetworkMenuDropDown: FC<IAddressMenuDropDown> = ({ web3 }) => {
                   }
                 >
                   <div
-                    className={` p-3  flex justify-between rounded-t-1.5lg hover:bg-${
+                    className={`p-3 flex justify-between rounded-t-1.5lg hover:bg-${
                       value.metadata.colors.background
                     } hover:bg-opacity-15 ${
                       value.chainId === activeNetwork.chainId
-                        ? `bg-${value.metadata.colors.background} bg-opacity-15`
-                        : "rounded-b-1.5lg cursor-pointer"
+                        ? `bg-${value.metadata.colors.background} bg-opacity-15 `
+                        : 'rounded-b-1.5lg cursor-pointer'
                     }`}
                   >
                     <span>{value.displayName}</span>
                     <span>
-                      <img
-                        width={20}
-                        height={20}
-                        src={value.logo}
-                        alt="chain logo"
-                      />
+                      <img width={20} height={20} src={value.logo} alt="" />
                     </span>
                   </div>
+
                   {value.chainId === activeNetwork.chainId && (
-                    <a
-                      className={`flex justify-between items-center text-sm p-3 border-t border-black bg-${value.metadata.colors.background}  bg-opacity-15 rounded-b-1.5lg cursor-pointer`}
-                      href={value.blockExplorer.baseUrl}
-                      target="_blank"
-                      rel="noreferrer"
-                    >
-                      <span>{value.blockExplorer.name}</span>
-                      <span>
-                        <img
-                          className={`ml-2 w-4 text-white`}
-                          src="/images/externalLinkGray.svg"
-                          alt="extenal-link"
-                        />
-                      </span>
-                    </a>
+                    <div>
+                      <div
+                        className={`flex flex-col justify-between text-left px-3  pb-3 text-sm ${
+                          value.chainId === activeNetwork.chainId
+                            ? `bg-${value.metadata.colors.background} bg-opacity-15`
+                            : 'rounded-b-1.5lg cursor-pointer'
+                        }`}
+                      >
+                        <div className="text-green h-5 mb-1 flex items-center space-x-2">
+                          <span className=" flex items-center justify-center h-2 w-2">
+                            <span className="bg-green h-1.5 w-1.5 block rounded-full"></span>
+                          </span>
+                          <span>BLOCK {blockNumber}</span>
+                        </div>
+                        <div className="flex items-center text-gray-syn4 h-5 space-x-2">
+                          <IconGas width={8} height={8} />
+                          <span>{gas + ' GWEI < 30 secs'}</span>
+                        </div>
+                      </div>
+                      <a
+                        className={`flex justify-between items-center text-sm p-3 border-t border-black bg-${value.metadata.colors.background}  bg-opacity-15 rounded-b-1.5lg cursor-pointer`}
+                        href={value.blockExplorer.baseUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        <span>{value.blockExplorer.name}</span>
+                        <span>
+                          <img
+                            className={`ml-2 w-4 text-white`}
+                            src="/images/externalLinkGray.svg"
+                            alt="extenal-link"
+                          />
+                        </span>
+                      </a>
+                    </div>
                   )}
                 </button>
               ))}
