@@ -17,10 +17,10 @@ const FullScreenOverlay: React.FC = () => {
 
   return (
     <>
-      {showFullScreen && (
+      {showFullScreen ? (
         <div
-          className={`fixed w-screen h-screen z-60 no-scroll-bar inset-0 overflow-hidden bg-black flex items-center justify-center cursor-default ${
-            videoNft ? '' : 'p-14'
+          className={`fixed w-full h-full z-60 no-scroll-bar inset-0 bg-black flex items-center justify-center cursor-default ${
+            videoNft ? '' : ''
           }`}
         >
           <div
@@ -28,7 +28,7 @@ const FullScreenOverlay: React.FC = () => {
               height: !videoNft ? '609px' : 'auto',
               width: !videoNft ? '609px' : 'auto'
             }}
-            className="flex items-center justify-center"
+            className={'bg-black flex items-center justify-center'}
           >
             <CollectibleMedia
               {...{
@@ -39,7 +39,7 @@ const FullScreenOverlay: React.FC = () => {
             />
           </div>
         </div>
-      )}
+      ) : null}
     </>
   );
 };

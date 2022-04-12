@@ -6,13 +6,15 @@ import { CategoryPill } from '@/containers/layoutWithSyndicateDetails/activity/s
 import TokenDetail from '@/containers/layoutWithSyndicateDetails/assets/collectibles/shared/TokenDetail';
 import { setShowCollectibleModal } from '@/state/assets/collectibles/slice';
 import CollectibleMedia from '@/containers/layoutWithSyndicateDetails/assets/collectibles/shared/CollectibleMedia';
+import FullScreenOverlay from './shared/FullscreenOverlay';
 
 const CollectibleDetailsModal: React.FC = () => {
   const {
     setCollectibleDetailsSliceReducer: {
       showCollectibleModal,
       collectibleModalDetails,
-      showFullScreen
+      showFullScreen,
+      overlayCollectibleDetails
     }
   } = useSelector((state: AppState) => state);
   const dispatch = useDispatch();
@@ -37,8 +39,9 @@ const CollectibleDetailsModal: React.FC = () => {
         closeModal={() => {
           dispatch(setShowCollectibleModal(false));
         }}
-        customWidth="sm:w-564 w-full"
+        customWidth="w-full sm:w-564"
         customClassName="p-0"
+        opacity={showFullScreen ? 'bg-opacity-100' : 'bg-opacity-60'}
         showCloseButton={false}
         outsideOnClick={!showFullScreen}
         showHeader={false}
@@ -46,9 +49,9 @@ const CollectibleDetailsModal: React.FC = () => {
         overflowYScroll={false}
         isMaxHeightScreen={false}
       >
-        <div>
+        <>
           <div
-            className={`flex rounded-t-2xl items-center flex-col relative py-10 px-5 bg-gray-syn7 last:rounded-b-2xl`}
+            className={`flex h-full rounded-t-2xl items-center flex-col relative py-10 px-5 bg-gray-syn7 last:rounded-b-2xl`}
           >
             <div className="mb-8">
               <CategoryPill category="COLLECTIBLE" readonly={true} />
@@ -87,8 +90,12 @@ const CollectibleDetailsModal: React.FC = () => {
                 })}
             </div>
           </div>
-        </div>
+        </>
       </Modal>
+      {showFullScreen &&
+      collectible.id === overlayCollectibleDetails.collectible.id ? (
+        <FullScreenOverlay />
+      ) : null}
     </>
   );
 };

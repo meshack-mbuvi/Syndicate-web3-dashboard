@@ -1,7 +1,6 @@
 import { SkeletonLoader } from '@/components/skeletonLoader';
 import CollectibleDetailsModal from '@/containers/layoutWithSyndicateDetails/assets/collectibles/collectibleDetailsModal';
 import CollectibleMedia from '@/containers/layoutWithSyndicateDetails/assets/collectibles/shared/CollectibleMedia';
-import FullScreenOverlay from '@/containers/layoutWithSyndicateDetails/assets/collectibles/shared/FullscreenOverlay';
 import { useDemoMode } from '@/hooks/useDemoMode';
 import { AppState } from '@/state';
 import {
@@ -27,7 +26,8 @@ const Collectibles: FC = () => {
       erc20Token,
       depositDetails: { ethDepositToken },
       depositTokenPriceInUSD
-    }
+    },
+    setCollectibleDetailsSliceReducer: { showFullScreen }
   } = useSelector((state: AppState) => state);
   const isDemoMode = useDemoMode();
 
@@ -243,16 +243,16 @@ const Collectibles: FC = () => {
                       className="col-span-12 sm:col-span-6 md:col-span-4 xl:col-span-3 cursor-pointer"
                       key={index}
                     >
-                      <CollectibleMedia
-                        {...{
-                          collectible,
-                          mediaType,
-                          setDetailsOfSelectedCollectible,
-                          showCollectibles: true
-                        }}
-                      />
-
-                      <FullScreenOverlay />
+                      {!showFullScreen ? (
+                        <CollectibleMedia
+                          {...{
+                            collectible,
+                            mediaType,
+                            setDetailsOfSelectedCollectible,
+                            showCollectibles: true
+                          }}
+                        />
+                      ) : null}
                       <div
                         className="flex rounded-b-2.5xl py-6 border-b-1 border-r-1 border-l-1 border-gray-syn6 h-36"
                         onClick={() => {
