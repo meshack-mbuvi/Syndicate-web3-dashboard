@@ -7,9 +7,9 @@ import { ERC721Contract } from '@/ClubERC20Factory/ERC721Membership';
 import { MembershipPass, Utility } from '@/state/UtilityNFT/types';
 import { getWeiAmount } from '@/utils/conversions';
 import {
-  getEthereumTokenPrice,
-  getEtherscanTransactionHistory
-} from '@/utils/api/etherscan';
+  getNativeTokenPrice,
+  getNftTransactionHistory
+} from '@/utils/api/transactions';
 
 const useUtilityNFT: any = () => {
   const dispatch = useDispatch();
@@ -70,7 +70,7 @@ const useUtilityNFT: any = () => {
   const getEthPrice = async () => {
     const response = await Promise.all([
       RugUtilityMintModule.ethPrice(),
-      getEthereumTokenPrice()
+      getNativeTokenPrice()
     ])
       .then((result) => result)
       .catch(() => []);
@@ -84,7 +84,7 @@ const useUtilityNFT: any = () => {
   };
 
   const getMembershipTokens = async () => {
-    const result = await getEtherscanTransactionHistory(
+    const result = await getNftTransactionHistory(
       address,
       redemptionToken
     );
