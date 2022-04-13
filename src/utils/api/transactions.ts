@@ -22,8 +22,8 @@ export async function getNativeTokenPrice(): Promise<number> {
 export const getTokenPrice = async (
   tokenAddresses: string,
   chainId: number
-): Promise<PriceResponse> => {
-  const result: AxiosResponse<PriceResponse> = await proxyGet(
+): Promise<ContractPriceResponse> => {
+  const result: AxiosResponse<ContractPriceResponse> = await proxyGet(
     'token/price_usd',
     {
       tokenAddresses: tokenAddresses,
@@ -73,12 +73,11 @@ export async function getNativeTokenBalance(address: string): Promise<number> {
   return result.data;
 }
 
-export interface PriceResponse {
-  [key: string]: CoingeckoPrice;
+export interface SimplePriceResponse {
+  [key: string]: number | undefined;
 }
-
-interface CoingeckoPrice {
-  ['usd']: number;
+export interface ContractPriceResponse {
+  [key: string]: { [key: string]: number | undefined };
 }
 
 export interface ERC20Transaction {
