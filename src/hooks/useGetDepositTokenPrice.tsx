@@ -4,10 +4,9 @@ import { useRouter } from 'next/router';
 import { AppState } from '@/state';
 import { useDispatch, useSelector } from 'react-redux';
 import { setDepositTokenUSDPrice } from '@/state/erc20token/slice';
+import { getNativeTokenPrice } from '@/utils/api/transactions';
 
-export const useGetDepositTokenPrice = (
-  chainId: number
-) => {
+export const useGetDepositTokenPrice = (chainId: number) => {
   const {
     erc20TokenSliceReducer: {
       depositDetails: { depositToken, loading: detailsLoading }
@@ -17,17 +16,21 @@ export const useGetDepositTokenPrice = (
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const router = useRouter();
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
 
   useEffect(() => {
     if (router.isReady && !detailsLoading) {
-      getTokenPrice(depositToken, chainId)
-      .then((res) => {
-        setTokenPriceInUSDState(res.data[depositToken]['usd']);
-        dispatch(setDepositTokenUSDPrice(res.data[depositToken]['usd']))
-        setLoading(false);
-      })
-      .catch((error) => setError(error));
+      const pricePromise =
+        depositToken === ''
+          ? getNativeTokenPrice()
+          : getTokenPrice(depositToken, chainId);
+      pricePromise
+        .then((price) => {
+          setTokenPriceInUSDState(price);
+          dispatch(setDepositTokenUSDPrice(price));
+          setLoading(false);
+        })
+        .catch((error) => setError(error));
     }
   }, [depositToken, chainId, router.isReady, detailsLoading]);
   return [tokenPriceInUSDState, loading, error];
