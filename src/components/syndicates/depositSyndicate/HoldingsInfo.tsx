@@ -39,11 +39,11 @@ const HoldingsInfo: FC<IHoldingsInfoProps> = ({
           <div className="text-gray-syn4 ">{`(${percentValue}%)`}</div>
         )}
       </div>
-      {amountInUSD && (
+      {amountInUSD ? (
         <p className="text-gray-syn4">
           ~ {floatedNumberWithCommas(amountInUSD)} USD
         </p>
-      )}
+      ) : null}
     </div>
   );
 };
