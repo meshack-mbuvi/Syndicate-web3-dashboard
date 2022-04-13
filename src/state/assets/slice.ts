@@ -13,7 +13,7 @@ import {
 
 import {
   getNativeTokenPrice,
-  getMultipleTokenPrice,
+  getTokenPrice,
   getTokenTransactionHistory,
   getNativeTokenBalance
 } from '@/utils/api/transactions';
@@ -50,18 +50,16 @@ export const fetchTokenTransactions = createAsyncThunk(
     const uniqueTokens = filterByUniqueContractAddress(tokenValues);
 
     // check if account has token balance
-    const uniqueTokenBalances = await (
-      await Promise.all(fetchTokenBalances(uniqueTokens, account))
+    const uniqueTokenBalances = (
+      await fetchTokenBalances(uniqueTokens, account)
     ).filter((token) => +token.tokenBalance > 0);
 
     const chainId = isDev ? ChainEnum.RINKEBY : ChainEnum.ETHEREUM;
 
-    const uniqueTokenPrices = await getMultipleTokenPrice(
+    const uniqueTokenPrices = await getTokenPrice(
       uniqueTokenBalances.map((t) => t.contractAddress).join(),
       chainId
     );
-
-    console.log('uniquetokenprices2: ', uniqueTokenPrices);
 
     // get token logo and price from CoinGecko API
     const completeTokensDetails = await Promise.all(
@@ -74,13 +72,12 @@ export const fetchTokenTransactions = createAsyncThunk(
           tokenName,
           tokenValue = 0
         } = value;
-
         const { logo } = await getTokenDetails(contractAddress, chainId)
           .then((res) => res.data)
           .catch(() => ({ logo: '' }));
 
         return {
-          price: uniqueTokenPrices[contractAddress]['usd'],
+          price: uniqueTokenPrices[contractAddress],
           logo,
           tokenDecimal,
           tokenSymbol,
@@ -105,6 +102,7 @@ export const fetchTokenTransactions = createAsyncThunk(
 
     // add eth details as the first item.
     completeTokensDetails.unshift(ethDetails);
+    console.log('completeTokensDetails', completeTokensDetails);
 
     return { completeTokensDetails, ethereumTokenPrice: ethPriceResponse };
   }
@@ -217,24 +215,25 @@ const filterByUniqueContractAddress = (tokensList: any[]) => {
 };
 
 const fetchTokenBalances = (tokensList: any[], account: string) => {
-  return tokensList.map(async (token) => {
-    const tokenCopy = { ...token };
-    const { contractAddress, tokenDecimal } = token;
+  return Promise.all(
+    tokensList.map(async (token) => {
+      const tokenCopy = { ...token };
+      const { contractAddress, tokenDecimal } = token;
 
-    const tokenContractInstance = new web3.eth.Contract(
-      abi as AbiItem[],
-      contractAddress
-    );
+      const tokenContractInstance = new web3.eth.Contract(
+        abi as AbiItem[],
+        contractAddress
+      );
+      const accountBalance = await tokenContractInstance.methods
+        .balanceOf(account)
+        .call();
 
-    const accountBalance = await tokenContractInstance.methods
-      .balanceOf(account)
-      .call();
+      const tokenBalance = getWeiAmount(accountBalance, tokenDecimal, false);
 
-    const tokenBalance = getWeiAmount(accountBalance, tokenDecimal, false);
-
-    tokenCopy['tokenBalance'] = tokenBalance;
-    return tokenCopy;
-  });
+      tokenCopy['tokenBalance'] = tokenBalance;
+      return tokenCopy;
+    })
+  );
 };
 
 // function to check whether "gift" morse code nft
@@ -283,7 +282,7 @@ const assetsSlice = createSlice({
           (token) => {
             const tokenCopy = token;
             tokenCopy['tokenValue'] =
-              parseFloat(tokenCopy.price?.usd ?? 0) *
+              parseFloat((tokenCopy.price?.usd ?? 0).toString()) *
               parseFloat(tokenCopy.tokenBalance);
             return tokenCopy;
           }

@@ -21,22 +21,10 @@ export async function getNativeTokenPrice(): Promise<number> {
 }
 
 export const getTokenPrice = async (
-  tokenAddress: string,
-  chainId: number
-): Promise<number> => {
-  const result: AxiosResponse<number> = await proxyGet('token/price_usd', {
-    tokenAddresses: tokenAddress,
-    chainId: chainId
-  });
-
-  return result.data[tokenAddress]['usd'];
-};
-
-export const getMultipleTokenPrice = async (
   tokenAddresses: string,
   chainId: number
-): Promise<CoingeckoMultiplePrice> => {
-  const result: AxiosResponse<CoingeckoMultiplePrice> = await proxyGet(
+): Promise<PriceResponse> => {
+  const result: AxiosResponse<PriceResponse> = await proxyGet(
     'token/price_usd',
     {
       tokenAddresses: tokenAddresses,
@@ -86,7 +74,7 @@ export async function getNativeTokenBalance(address: string): Promise<number> {
   return result.data;
 }
 
-export interface CoingeckoMultiplePrice {
+export interface PriceResponse {
   [key: string]: CoingeckoPrice;
 }
 
