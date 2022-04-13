@@ -266,7 +266,9 @@ const ReviewDetails: React.FC = () => {
                               className="ml-4 text-gray-syn4 flex"
                             >
                               <Image
-                                src={depositTokenLogo}
+                                src={
+                                  depositTokenLogo || '/images/token-gray-4.svg'
+                                }
                                 height={24}
                                 width={24}
                               />

@@ -122,9 +122,13 @@ module.exports = {
         25: '6.125',
         104: '26rem',
         480: '30rem',
+        141: '35.25rem',
         816: '50.5rem',
         screen: '100vh',
         '2screen': '200vh'
+      },
+      minHeight: {
+        363: '22.688rem'
       },
       backgroundOpacity: {
         15: '0.15'
@@ -338,6 +342,7 @@ module.exports = {
       },
       spacing: {
         '1px': '1px',
+        '9px': '9px',
         3.5: '0.875rem',
         7.5: '1.875rem',
         33: '8.5rem',

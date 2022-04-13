@@ -2,7 +2,7 @@ import { SettingsDisclaimerTooltip } from '@/containers/createInvestmentClub/sha
 import cn from 'classnames';
 import { useState } from 'react';
 import { AppState } from '@/state';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 
 /**
  * An input component with label, component to the right, and an icon to the furthest right.
@@ -50,7 +50,6 @@ export const AdvancedInputField = (props: {
 
   const {
     createInvestmentClubSliceReducer: {
-      tokenCap,
       investmentClubSymbol,
       tokenDetails: { depositTokenSymbol }
     }
@@ -148,9 +147,7 @@ export const AdvancedInputField = (props: {
                   will receive {depositTokenSymbol === 'ETH' ? '10,000' : '1'} ✺
                   {investmentClubSymbol} club token
                   {depositTokenSymbol === 'ETH' && 's'} <br />
-                  for every {depositTokenSymbol === 'ETH'
-                    ? '1 ETH'
-                    : '1 USDC'}{' '}
+                  for every {`1 ${depositTokenSymbol} `}
                   deposited.
                 </span>
               }

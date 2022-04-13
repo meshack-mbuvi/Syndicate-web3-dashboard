@@ -27,7 +27,7 @@ export function useAccountTokens(): {
     },
     erc20TokenSliceReducer: {
       erc20Token: { address, totalSupply, tokenDecimals, totalDeposits },
-      depositDetails: { depositTokenDecimals, ethDepositToken }
+      depositDetails: { ethDepositToken, depositTokenDecimals }
     }
   } = useSelector((state: AppState) => state);
   const [accountTokens, setAccountTokens] = useState<string>('0');
@@ -52,7 +52,6 @@ export function useAccountTokens(): {
     }
   );
 
-  const stringifiedData = JSON.stringify(data);
   useEffect(() => {
     if (isDemoMode) {
       setAccountTokens('3812');
@@ -114,7 +113,8 @@ export function useAccountTokens(): {
     address,
     totalSupply,
     totalDeposits,
-    stringifiedData
+    depositTokenDecimals,
+    JSON.stringify(data)
   ]);
 
   useEffect(() => {

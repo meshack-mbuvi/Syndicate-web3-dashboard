@@ -1,8 +1,8 @@
 import { ClubERC20Contract } from '@/ClubERC20Factory/clubERC20';
-import BackButton from '@/components/buttons/BackButton';
 import ErrorBoundary from '@/components/errorBoundary';
 import Layout from '@/components/layout';
 import OnboardingModal from '@/components/onboarding';
+import BackButton from '@/components/buttons/BackButton';
 import { EtherscanLink } from '@/components/syndicates/shared/EtherscanLink';
 import Head from '@/components/syndicates/shared/HeaderTitle';
 import SyndicateDetails from '@/components/syndicates/syndicateDetails';
@@ -12,7 +12,6 @@ import { useClubDepositsAndSupply } from '@/hooks/useClubDepositsAndSupply';
 import { useIsClubOwner } from '@/hooks/useClubOwner';
 import useClubTokenMembers from '@/hooks/useClubTokenMembers';
 import { useDemoMode } from '@/hooks/useDemoMode';
-import { useGetTokenPrice } from '@/hooks/useGetTokenPrice';
 import useTransactions from '@/hooks/useTransactions';
 import NotFoundPage from '@/pages/404';
 import { AppState } from '@/state';
@@ -26,8 +25,8 @@ import {
 import { setClubMembers } from '@/state/clubMembers';
 import {
   setDepositTokenUSDPrice,
+  setERC20TokenDepositDetails,
   setERC20TokenContract,
-  setERC20TokenDespositDetails,
   setERC20TokenDetails
 } from '@/state/erc20token/slice';
 import { clearMyTransactions } from '@/state/erc20transactions';
@@ -38,6 +37,7 @@ import {
   mockDepositModeTokens,
   mockTokensResult
 } from '@/utils/mockdata';
+import { ERC20TokenDefaultState } from '@/helpers/erc20TokenDetails';
 import window from 'global';
 import { useRouter } from 'next/router';
 import React, { FC, useEffect, useMemo, useRef, useState } from 'react';
@@ -47,6 +47,9 @@ import ClubTokenMembers from '../managerActions/clubTokenMembers/index';
 import ActivityView from './activity';
 import Assets from './assets';
 import TabButton from './TabButton';
+import { ChainEnum } from '@/utils/api/ChainTypes';
+import { isDev } from '@/utils/environment';
+import { useGetDepositTokenPrice } from '@/hooks/useGetDepositTokenPrice';
 
 const LayoutWithSyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
   managerSettingsOpen,
@@ -59,18 +62,20 @@ const LayoutWithSyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
       web3: { account, web3, status }
     },
     erc20TokenSliceReducer: {
-      erc20Token: {
-        owner,
-        loading,
-        name,
-        depositsEnabled,
-        maxTotalDeposits,
-        address
-      },
-      depositDetails: { ethDepositToken },
+      erc20Token,
+      depositDetails: { ethDepositToken, chainId },
       depositTokenPriceInUSD
     }
   } = useSelector((state: AppState) => state);
+
+  const {
+    owner,
+    loading,
+    name,
+    depositsEnabled,
+    maxTotalDeposits,
+    address
+  } = erc20Token;
 
   // Get clubAddress from window.location object since during page load, router is not ready
   // hence clubAddress is undefined.
@@ -80,7 +85,7 @@ const LayoutWithSyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
   const isDemoMode = useDemoMode(clubAddress);
   // dispatch the price of the deposit token for use in other
   // components
-  useGetTokenPrice();
+  useGetDepositTokenPrice(chainId);
   const zeroAddress = '0x0000000000000000000000000000000000000000';
 
   useEffect(() => {
@@ -103,6 +108,7 @@ const LayoutWithSyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
 
   const router = useRouter();
   const dispatch = useDispatch();
+  
 
   useEffect(() => {
     return () => {
@@ -115,15 +121,18 @@ const LayoutWithSyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
       // also clearing token details when switching between clubs
       dispatch(setDepositTokenUSDPrice(0));
 
+      dispatch(setERC20TokenDetails(ERC20TokenDefaultState))
       dispatch(
-        setERC20TokenDespositDetails({
+        setERC20TokenDepositDetails({
           mintModule: '',
           ethDepositToken: false,
+          chainId: isDev ? ChainEnum.RINKEBY : ChainEnum.ETHEREUM,
           depositToken: '',
           depositTokenSymbol: '',
           depositTokenLogo: '/images/usdcicon.png',
           depositTokenName: '',
-          depositTokenDecimals: 6
+          depositTokenDecimals: 6,
+          loading: true
         })
       );
     };
@@ -238,6 +247,7 @@ const LayoutWithSyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
   }, [
     clubAddress,
     account,
+    ethDepositToken,
     status,
     syndicateContracts?.DepositTokenMintModule
   ]);

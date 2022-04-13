@@ -27,7 +27,6 @@ import useFetchMerkleProof from '@/hooks/useMerkleProof';
 import useModal from '@/hooks/useModal';
 import { useERC20TokenBalance } from '@/hooks/useTokenBalance';
 import useFetchTokenClaim from '@/hooks/useTokenClaim';
-import useTokenDetails from '@/hooks/useTokenDetails';
 import useWindowSize from '@/hooks/useWindowSize';
 import { AppState } from '@/state';
 import { Status } from '@/state/wallet/types';
@@ -65,9 +64,16 @@ const DepositSyndicate: React.FC = () => {
     },
     erc20TokenSliceReducer: {
       erc20Token,
-      depositDetails: { depositToken, mintModule, ethDepositToken },
-      erc20TokenContract,
-      depositTokenPriceInUSD
+      depositDetails: {
+        mintModule,
+        ethDepositToken,
+        depositToken,
+        depositTokenDecimals,
+        depositTokenLogo,
+        depositTokenSymbol
+      },
+      depositTokenPriceInUSD,
+      erc20TokenContract
     }
   } = useSelector((state: AppState) => state);
 
@@ -146,9 +152,6 @@ const DepositSyndicate: React.FC = () => {
     startPolling,
     stopPolling
   } = useAccountTokens();
-
-  const { depositTokenSymbol, depositTokenLogo, depositTokenDecimals } =
-    useTokenDetails(ethDepositToken);
 
   useEffect(() => {
     // calculate member ownership for the intended deposits
@@ -268,7 +271,7 @@ const DepositSyndicate: React.FC = () => {
       }
       return accountTokens;
     });
-  }, [accountTokens, checkSuccess]);
+  }, [accountTokens, checkSuccess, ethDepositToken]);
 
   const [transactionRejected, setTransactionRejected] = useState(false);
   const [transactionFailed, setTransactionFailed] = useState(false);
@@ -1051,7 +1054,7 @@ const DepositSyndicate: React.FC = () => {
                             ) : (
                               <>
                                 <Image
-                                  src={depositTokenLogo}
+                                  src={depositTokenLogo || '/images/token-gray-4.svg'}
                                   height={24}
                                   width={24}
                                   className="filter grayscale opacity-40"
@@ -1096,7 +1099,7 @@ const DepositSyndicate: React.FC = () => {
                             ) : (
                               <>
                                 <Image
-                                  src={depositTokenLogo}
+                                  src={depositTokenLogo || '/images/token-gray-4.svg'}
                                   height={24}
                                   width={24}
                                 />
@@ -1483,7 +1486,7 @@ const DepositSyndicate: React.FC = () => {
                   <HoldingsInfo
                     title="Amount deposited"
                     amount={floatedNumberWithCommas(memberDeposits)}
-                    tokenName={'USDC'}
+                    tokenName={depositTokenSymbol}
                     amountInUSD={memberDeposits * depositTokenPriceInUSD}
                   />
                 )}
@@ -1598,7 +1601,7 @@ const DepositSyndicate: React.FC = () => {
                   <div className="flex flex-col items-end">
                     <div className="flex items-center p-0 h-6">
                       <Image
-                        src={depositTokenLogo || ''}
+                        src={depositTokenLogo || '/images/token-gray-4.svg'}
                         height={24}
                         width={24}
                       />

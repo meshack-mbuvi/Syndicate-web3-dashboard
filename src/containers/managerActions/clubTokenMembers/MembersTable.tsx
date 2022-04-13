@@ -1,4 +1,4 @@
-import { SearchForm } from '@/components/inputs/searchForm';
+import { SearchInput } from '@/components/inputs';
 import { LinkButton, LinkType } from '@/components/linkButtons';
 import Modal, { ModalStyle } from '@/components/modal';
 import { Spinner } from '@/components/shared/spinner';
@@ -184,7 +184,7 @@ const MembersTable = ({
     <div className="overflow-y-hidden ">
       <div className="flex my-11 col-span-12 space-x-8 justify-between items-center">
         {page.length > 1 || searchAddress ? (
-          <SearchForm
+          <SearchInput
             {...{
               onChangeHandler: filterAddressOnChangeHandler,
               searchValue: searchAddress,

@@ -133,7 +133,7 @@ const AddressMenuDropDown: FC<IAddressMenuDropDown> = ({ web3 }) => {
                     <EtherscanLink
                       etherscanInfo={account}
                       customStyles="text-sm hover:bg-gray-syn7 hover:p-2 hover:-m-2 rounded-lg"
-                      iconColor={ExternalLinkColor.WHITE}
+                      iconcolor={ExternalLinkColor.WHITE}
                     />
                   </div>
 

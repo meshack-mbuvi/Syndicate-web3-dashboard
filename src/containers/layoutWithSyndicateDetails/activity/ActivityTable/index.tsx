@@ -1,4 +1,4 @@
-import { SearchForm } from '@/components/inputs/searchForm';
+import { SearchInput } from '@/components/inputs';
 import TransactionsTable from '@/containers/layoutWithSyndicateDetails/activity/ActivityTable/TransactionsTable';
 import { CategoryPill } from '@/containers/layoutWithSyndicateDetails/activity/shared/CategoryPill';
 import { ANNOTATE_TRANSACTIONS } from '@/graphql/mutations';
@@ -439,7 +439,7 @@ const ActivityTable: React.FC = () => {
             <FilterPill setFilter={(filter) => setFilter(filter)} />
           </div>
           <div className="mt-4 sm:mt-auto">
-            <SearchForm
+            <SearchInput
               {...{
                 onChangeHandler: handleSearchOnChange,
                 searchValue,

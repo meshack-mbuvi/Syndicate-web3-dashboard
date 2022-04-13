@@ -14,7 +14,7 @@ import Image from 'next/image';
 import React, { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { AdvancedInputField } from '../shared/AdvancedInputField';
-import TokenSelectModal from '@/containers/createInvestmentClub/shared/TokenSelectModal';
+import TokenSelectModal from '@/components/tokenSelect/TokenSelectModal';
 import { defaultTokenDetails } from '@/containers/createInvestmentClub/shared/ClubTokenDetailConstants';
 
 const AmountToRaise: React.FC<{
@@ -55,7 +55,9 @@ const AmountToRaise: React.FC<{
       </div>
       <div className="uppercase">
         <span>
-          {depositTokenSymbol || defaultTokenDetails.depositTokenSymbol}
+          {
+            depositTokenSymbol
+          }
         </span>
       </div>
       <div className="inline-flex ml-4">

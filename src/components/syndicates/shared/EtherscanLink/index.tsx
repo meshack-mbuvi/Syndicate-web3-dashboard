@@ -13,7 +13,7 @@ interface LinkProp {
   iconOnly?: boolean;
   text?: string;
   grouped?: boolean;
-  iconColor?: ExternalLinkColor;
+  iconcolor?: ExternalLinkColor;
 }
 
 /** Link used to redirect the user to the Etherscan
@@ -28,7 +28,7 @@ export const EtherscanLink: React.FC<LinkProp> = (props) => {
     iconOnly,
     text = 'View on Etherscan',
     grouped,
-    iconColor = ExternalLinkColor.BLUE
+    iconcolor = ExternalLinkColor.BLUE
   } = props;
 
   // get debug mode from the .env
@@ -59,14 +59,14 @@ export const EtherscanLink: React.FC<LinkProp> = (props) => {
         <div className="flex justify-between items-center w-full">
           <div
             className={`${
-              iconColor === ExternalLinkColor.BLUE ? 'text-blue' : 'text-white'
+              iconcolor === ExternalLinkColor.BLUE ? 'text-blue' : 'text-white'
             }`}
           >
             {text}
           </div>
           <ExternalLinkIcon
             className={`ml-2 w-4 text-blue`}
-            iconColor={iconColor}
+            iconcolor={iconcolor}
           />
         </div>
       ) : !grouped ? (

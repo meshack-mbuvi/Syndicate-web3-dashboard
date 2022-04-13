@@ -74,7 +74,6 @@ const ModifyMemberClubTokens: React.FC<IModifyMemberClubTokens> = ({
               <div className="mt-6">
                 <div className="mb-2 text-white">Club token allocation</div>
                 <InputFieldWithToken
-                  depositToken={true}
                   value={numberWithCommas(memberAllocation)}
                   onChange={(e) => handleAmountChange(e)}
                   isInErrorState={Boolean(memberAllocationError)}

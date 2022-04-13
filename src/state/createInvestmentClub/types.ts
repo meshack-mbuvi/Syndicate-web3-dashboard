@@ -4,7 +4,7 @@ export type mintEndTime = {
 };
 
 export type tokenDetails = {
-  depositTokenAddress: string;
+  depositToken: string;
   depositTokenSymbol: string;
   depositTokenLogo: any;
   depositTokenName: string;
@@ -27,7 +27,7 @@ export interface InitialState {
       | any;
   };
   tokenDetails: {
-    depositTokenAddress: string;
+    depositToken: string;
     depositTokenSymbol: string;
     depositTokenLogo: any;
     depositTokenName: string;
@@ -54,7 +54,7 @@ export const initialState: InitialState = {
     }
   },
   tokenDetails: {
-    depositTokenAddress: '',
+    depositToken: '',
     depositTokenSymbol: '',
     depositTokenLogo: '',
     depositTokenName: '',

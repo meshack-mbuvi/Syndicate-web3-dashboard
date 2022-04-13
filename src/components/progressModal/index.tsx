@@ -97,7 +97,7 @@ export const ProgressModal = (props: {
               etherscanInfo={etherscanHash}
               type={transactionType}
               text={etherscanLinkText}
-              iconColor={iconColor}
+              iconcolor={iconColor}
             />
           </div>
         )}

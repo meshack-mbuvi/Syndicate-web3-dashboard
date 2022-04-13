@@ -12,13 +12,17 @@ import { useQuery } from '@apollo/client';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { getTokenDetails } from '@/utils/api';
 
 const useClubERC20s = () => {
   const dispatch = useDispatch();
 
   const {
     initializeContractsReducer: { syndicateContracts },
-    web3Reducer: { web3 }
+    web3Reducer: { web3 },
+    erc20TokenSliceReducer: {
+      depositDetails: { chainId }
+    }
   } = useSelector((state: AppState) => state);
 
   const [accountHasClubs, setAccountHasClubs] = useState(false);
@@ -152,13 +156,10 @@ const useClubERC20s = () => {
 
           let depositERC20TokenSymbol = 'ETH';
           let depositERC20TokenDecimals = '18';
-          let maxTotalDeposits = +maxTotalSupplyFromWei / 10000;
-          /**
-           * We are hardcoding these values because we have two deposit tokens.
-           * Eth and USDC. When scaling we can use the TOKEN mapping for hard coded
-           * values or coingecko to get the logos, or better yet the graph.
-           */
           let depositTokenLogo = '/images/ethereum-logo.png';
+
+          // checks if depositToken is ETH or not
+          const maxTotalDeposits = +maxTotalSupplyFromWei / 10000;
           if (!isZeroAddress(depositToken)) {
             try {
               const depositERC20Token = new ClubERC20Contract(
@@ -167,11 +168,10 @@ const useClubERC20s = () => {
               );
               depositERC20TokenSymbol = await depositERC20Token.symbol();
               depositERC20TokenDecimals = await depositERC20Token.decimals();
-              depositTokenLogo =
-                depositERC20TokenSymbol === 'USDC'
-                  ? '/images/TestnetTokenLogos/usdcIcon.svg'
-                  : '';
-              maxTotalDeposits = +maxTotalSupplyFromWei;
+              // getTokenDetails takes in a deposit token address and a chainId (1 is mainnet, 4 is Rinkeby)
+              depositTokenLogo = await getTokenDetails(depositToken, chainId)
+                .then((res) => res.data.logo)
+                .catch(() => null);
             } catch (error) {
               return;
             }

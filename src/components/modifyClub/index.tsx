@@ -85,7 +85,10 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
       existingMaxNumberOfMembers,
       existingNumberOfMembers
     },
-    erc20TokenSliceReducer: { erc20Token, depositDetails },
+    erc20TokenSliceReducer: {
+      erc20Token,
+      depositDetails: { depositTokenLogo, depositTokenSymbol }
+    },
     web3Reducer: {
       web3: { account, status, web3 }
     }
@@ -105,8 +108,6 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
     loading,
     currentMintPolicyAddress
   } = erc20Token;
-
-  const { depositTokenSymbol } = depositDetails;
 
   // True is ETH, False is USDC
   const [depositTokenType, setDepositTokenType] = useState(true);
@@ -178,7 +179,7 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
 
   // makes sure that current settings render when content is available
   useEffect(() => {
-    if (name && depositDetails) {
+    if (name && depositTokenLogo) {
       if (
         existingOpenToDepositsUntil.toUTCString() === new Date(0).toUTCString()
       ) {
@@ -215,7 +216,8 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
   }, [
     name,
     currentMintPolicyAddress,
-    depositDetails,
+    depositTokenLogo,
+    depositTokenSymbol,
     maxTotalSupply,
     totalSupply,
     depositTokenSymbol,
@@ -481,7 +483,8 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
                   />
                 ) : (
                   <InputFieldWithToken
-                    depositToken={depositTokenType}
+                    depositTokenSymbol={depositTokenSymbol}
+                    depositTokenLogo={depositTokenLogo}
                     value={String(maxAmountRaising)}
                     onChange={(e) => {
                       const amount = numberInputRemoveCommas(e);

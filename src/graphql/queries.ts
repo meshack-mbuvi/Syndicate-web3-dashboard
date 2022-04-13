@@ -229,3 +229,12 @@ export const SINGLE_CLUB_DETAILS = gql`
     }
   }
 `;
+
+export const CLUB_TOKEN_QUERY = gql`
+  query Query($syndicateDaoId: ID!) {
+    syndicateDAO(id: $syndicateDaoId) {
+      id
+      depositToken
+    }
+  }
+`;

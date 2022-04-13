@@ -2,48 +2,30 @@
 import { divideIfNotByZero } from '@/utils/conversions';
 import { floatedNumberWithCommas } from '@/utils/formattedNumbers';
 import { SkeletonLoader } from 'src/components/skeletonLoader';
-import useTokenDetails from '@/hooks/useTokenDetails';
-import { useEffect, useState } from 'react';
-import axios from 'axios';
 import NumberTreatment from '@/components/NumberTreatment';
-
+import { TokenDetails } from '@/hooks/useGetDepositTokenDetails';
 interface IProgressIndicator {
   totalDeposits: number;
   depositTotalMax: string;
-  depositERC20TokenSymbol: string;
   openDate: string;
   closeDate: string;
   loading?: boolean;
   ethDepositToken: boolean;
+  depositTokenPriceInUSD: string;
+  tokenDetails: TokenDetails;
 }
+
 export const ProgressIndicator = (props: IProgressIndicator): JSX.Element => {
   const {
     totalDeposits = 0,
     depositTotalMax,
-    depositERC20TokenSymbol,
     loading = false,
-    ethDepositToken = false
+    ethDepositToken = false,
+    depositTokenPriceInUSD,
+    tokenDetails,
   } = props;
 
-  const { depositTokenName } = useTokenDetails(ethDepositToken);
-
-  const [depositTokenPriceInUSDState, setDepositTokenPriceInUSDState] =
-    useState<number>(0);
-
-  useEffect(() => {
-    async function getTokenPrice(tokenName) {
-      const result = await axios.get(
-        `https://api.coingecko.com/api/v3/simple/price?ids=${tokenName}&vs_currencies=usd`
-      );
-      setDepositTokenPriceInUSDState(
-        parseFloat(result.data?.[tokenName.toLowerCase()]?.usd?.toFixed(2))
-      );
-    }
-    getTokenPrice(depositTokenName);
-  }, [depositTokenName]);
-
   // get percentage of deposits made to the syndicate
-
   const depositsPercentage =
     divideIfNotByZero(totalDeposits, depositTotalMax) * 100;
 
@@ -108,7 +90,7 @@ export const ProgressIndicator = (props: IProgressIndicator): JSX.Element => {
                     ethDepositToken={ethDepositToken}
                   />
                   &nbsp;
-                  {depositERC20TokenSymbol}
+                  {ethDepositToken ? 'ETH' : tokenDetails.symbol}
                 </p>
                 <p className="text-gray-lightManatee ml-4 font-light">
                   {floatedNumberWithCommas(depositsPercentage)}
@@ -126,7 +108,7 @@ export const ProgressIndicator = (props: IProgressIndicator): JSX.Element => {
               <p className="text-sm text-gray-syn4 mt-2">
                 {floatedNumberWithCommas(
                   parseFloat(totalDeposits.toString()) *
-                    depositTokenPriceInUSDState
+                    parseFloat(depositTokenPriceInUSD)
                 )}{' '}
                 USD
               </p>
@@ -143,12 +125,12 @@ export const ProgressIndicator = (props: IProgressIndicator): JSX.Element => {
                   0
                 )}
                 &nbsp;
-                {depositERC20TokenSymbol}
+                {ethDepositToken ? 'ETH' : tokenDetails.symbol}
               </h2>
               <p className="text-sm text-gray-syn4 mt-2">
                 {floatedNumberWithCommas(
                   parseFloat(remainingDeposits.toString()) *
-                    depositTokenPriceInUSDState
+                    parseFloat(depositTokenPriceInUSD)
                 )}{' '}
                 USD
               </p>

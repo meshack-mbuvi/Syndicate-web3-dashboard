@@ -316,7 +316,7 @@ export const NFTDetails: React.FC = () => {
               <EtherscanLink
                 etherscanInfo={transactionHash}
                 type="transaction"
-                iconColor={ExternalLinkColor.GRAY}
+                iconcolor={ExternalLinkColor.GRAY}
               />
             </div>
           ) : (

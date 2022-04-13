@@ -78,7 +78,7 @@ const CreateInvestmentClubProvider: React.FC = ({ children }) => {
       tokenCap,
       mintEndTime: { value: endMintTime },
       membersCount,
-      tokenDetails: { depositTokenAddress, depositTokenSymbol }
+      tokenDetails: { depositToken, depositTokenSymbol }
     }
   } = useSelector((state: AppState) => state);
 
@@ -206,7 +206,7 @@ const CreateInvestmentClubProvider: React.FC = ({ children }) => {
           account,
           investmentClubName,
           investmentClubSymbol,
-          depositTokenAddress,
+          /* depositDetails.depositToken */ depositToken,
           startTime,
           endMintTime,
           _tokenCap,

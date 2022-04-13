@@ -26,9 +26,12 @@ const AssetInfoModal: React.FC<ICryptoAssetModal> = ({
         margin: 'mt-48'
       }}
     >
-      <div className="space-y-4">
+      <div className="">
         <div className="flex">
-          <button className="mr-4 items-center" onClick={() => closeModal()}>
+          <button
+            className="mr-4 items-center focus:outline-none"
+            onClick={() => closeModal()}
+          >
             <Image src={'/images/arrowBackWhite.svg'} width={16} height={16} />
           </button>
           <div className="inline-flex">
@@ -37,7 +40,7 @@ const AssetInfoModal: React.FC<ICryptoAssetModal> = ({
             </p>
           </div>
         </div>
-        <p className="text-sm text-gray-syn4 leading-5">
+        <p className="text-sm text-gray-syn4 leading-5 mt-4">
           Crypto is a new asset class and is subject to many risks including
           frequent price changes. All crypto assets are different. Each one has
           its own set of features and risks that could affect its value and how
@@ -46,7 +49,7 @@ const AssetInfoModal: React.FC<ICryptoAssetModal> = ({
           their legal and tax advisors prior to launch.
         </p>
         <button
-          className="bg-white rounded-custom w-full flex items-center justify-center py-4 px-8"
+          className="bg-white rounded-custom w-full flex items-center justify-center py-4 px-8 mt-10"
           onClick={() => closeModal()}
         >
           <p className="text-black whitespace-nowrap text-base font-whyte font-bold">
