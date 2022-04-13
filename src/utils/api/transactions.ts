@@ -1,6 +1,7 @@
 import { proxyGet } from '.';
 import { isDev } from '@/utils/environment';
 import { AxiosResponse } from 'axios';
+import { AnyArray } from 'immer/dist/internal';
 
 enum ChainEnum {
   ETHEREUM = 1,
@@ -29,6 +30,21 @@ export const getTokenPrice = async (
   });
 
   return result.data[tokenAddress]['usd'];
+};
+
+export const getMultipleTokenPrice = async (
+  tokenAddresses: string,
+  chainId: number
+): Promise<CoingeckoMultiplePrice> => {
+  const result: AxiosResponse<CoingeckoMultiplePrice> = await proxyGet(
+    'token/price_usd',
+    {
+      tokenAddresses: tokenAddresses,
+      chainId: chainId
+    }
+  );
+
+  return result.data;
 };
 
 export async function getNftTransactionHistory(
@@ -68,6 +84,14 @@ export async function getNativeTokenBalance(address: string): Promise<number> {
   });
 
   return result.data;
+}
+
+export interface CoingeckoMultiplePrice {
+  [key: string]: CoingeckoPrice;
+}
+
+interface CoingeckoPrice {
+  ['usd']: number;
 }
 
 export interface ERC20Transaction {

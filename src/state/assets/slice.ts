@@ -2,7 +2,6 @@ import { getOpenseaTokens, getOpenseaFloorPrices } from '@/utils/api/opensea';
 import { mockCollectiblesResult } from '@/utils/mockdata';
 import { web3 } from '@/utils/web3Utils';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import axios from 'axios';
 import abi from 'human-standard-token-abi';
 import { getWeiAmount } from 'src/utils/conversions';
 import { AbiItem } from 'web3-utils';
@@ -14,9 +13,13 @@ import {
 
 import {
   getNativeTokenPrice,
+  getMultipleTokenPrice,
   getTokenTransactionHistory,
   getNativeTokenBalance
 } from '@/utils/api/transactions';
+import { ChainEnum } from '@/utils/api/ChainTypes';
+import { getTokenDetails } from '@/utils/api';
+import { isDev } from '@/utils/environment';
 
 /** Async thunks */
 // ERC20 transactions
@@ -44,24 +47,21 @@ export const fetchTokenTransactions = createAsyncThunk(
     }, []);
 
     // get unique token contracts
-    const uniquesTokens = filterByUniqueContractAddress(tokenValues);
+    const uniqueTokens = filterByUniqueContractAddress(tokenValues);
 
     // check if account has token balance
     const uniqueTokenBalances = await (
-      await Promise.all(fetchTokenBalances(uniquesTokens, account))
+      await Promise.all(fetchTokenBalances(uniqueTokens, account))
     ).filter((token) => +token.tokenBalance > 0);
 
-    // Batch fetch prices from CoinGecko
-    const uniqueTokenPrices = await axios
-      .get('/.netlify/functions/getCoinPriceByContractAddress', {
-        params: {
-          contractAddresses: uniqueTokenBalances
-            .map((t) => t.contractAddress)
-            .join()
-        }
-      })
-      .then((res) => res.data.data)
-      .catch(() => []);
+    const chainId = isDev ? ChainEnum.RINKEBY : ChainEnum.ETHEREUM;
+
+    const uniqueTokenPrices = await getMultipleTokenPrice(
+      uniqueTokenBalances.map((t) => t.contractAddress).join(),
+      chainId
+    );
+
+    console.log('uniquetokenprices2: ', uniqueTokenPrices);
 
     // get token logo and price from CoinGecko API
     const completeTokensDetails = await Promise.all(
@@ -75,15 +75,12 @@ export const fetchTokenTransactions = createAsyncThunk(
           tokenValue = 0
         } = value;
 
-        const { logo } = await axios
-          .get(
-            `/.netlify/functions/getCoinInfoByContractAddress/?contractAddress=${contractAddress}`
-          )
-          .then((res) => res.data.data)
+        const { logo } = await getTokenDetails(contractAddress, chainId)
+          .then((res) => res.data)
           .catch(() => ({ logo: '' }));
 
         return {
-          price: uniqueTokenPrices[contractAddress],
+          price: uniqueTokenPrices[contractAddress]['usd'],
           logo,
           tokenDecimal,
           tokenSymbol,
