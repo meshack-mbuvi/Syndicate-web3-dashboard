@@ -19,6 +19,18 @@ export async function getNativeTokenPrice(): Promise<number> {
   return result.data;
 }
 
+export const getTokenPrice = async (
+  tokenAddress: string,
+  chainId: number
+): Promise<number> => {
+  const result: AxiosResponse<number> = await proxyGet('token/price_usd', {
+    tokenAddresses: tokenAddress,
+    chainId: chainId
+  });
+
+  return result.data[tokenAddress]['usd'];
+};
+
 export async function getNftTransactionHistory(
   address: string,
   contractAddress: string

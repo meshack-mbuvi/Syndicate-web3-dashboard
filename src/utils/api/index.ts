@@ -13,14 +13,6 @@ export const proxyGet = async <R>(
   );
 };
 
-// Queries the web2-backend endpoint 'token/price_usd'
-export const getTokenPrice = (tokenAddress: string, chainId: number) => {
-  return proxyGet('token/price_usd', {
-    tokenAddresses: tokenAddress,
-    chainId: chainId
-  });
-};
-
 // Queries the web2-backend endpoint 'token/details' OR 'token/native_token_details' for native tokens with no contract address
 export const getTokenDetails = (
   tokenAddress: string,
@@ -34,4 +26,4 @@ export const getTokenDetails = (
     tokenAddress: tokenAddress,
     chainId: chainId
   });
-}
+};
