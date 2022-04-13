@@ -1,14 +1,19 @@
 import { CopyToClipboardIcon } from '@/components/iconWrappers';
 import { SkeletonLoader } from '@/components/skeletonLoader';
+import DuplicateClubWarning from '@/components/syndicates/shared/DuplicateClubWarning';
+import { CLUB_TOKEN_QUERY } from '@/graphql/queries';
+import { getDepositDetails } from '@/helpers/erc20TokenDetails/index';
 import { useAccountTokens } from '@/hooks/useAccountTokens';
 import { useClubDepositsAndSupply } from '@/hooks/useClubDepositsAndSupply';
 import { useIsClubOwner } from '@/hooks/useClubOwner';
 import { useDemoMode } from '@/hooks/useDemoMode';
 import { AppState } from '@/state';
+import { setERC20TokenDepositDetails } from '@/state/erc20token/slice';
 import { Status } from '@/state/wallet/types';
 import { epochTimeToDateFormat, getCountDownDays } from '@/utils/dateUtils';
 import { floatedNumberWithCommas } from '@/utils/formattedNumbers';
 import { getTextWidth } from '@/utils/getTextWidth';
+import { useQuery } from '@apollo/client';
 import abi from 'human-standard-token-abi';
 import { useRouter } from 'next/router';
 import React, { FC, useEffect, useState } from 'react';
@@ -20,13 +25,6 @@ import NumberTreatment from '../NumberTreatment';
 // utils
 import GradientAvatar from './portfolioAndDiscover/portfolio/GradientAvatar';
 import { DetailsCard, ProgressIndicator } from './shared';
-import DuplicateClubWarning from '@/components/syndicates/shared/DuplicateClubWarning';
-import { CLUB_TOKEN_QUERY } from '@/graphql/queries';
-import { useQuery } from '@apollo/client';
-import {
-  setERC20TokenDepositDetails
-} from '@/state/erc20token/slice';
-import { getDepositDetails } from "@/helpers/erc20TokenDetails/index"
 interface ClubDetails {
   header: string;
   content: React.ReactNode;
@@ -41,10 +39,7 @@ const SyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
 }) => {
   const {
     initializeContractsReducer: {
-      syndicateContracts: {
-        SingleTokenMintModule,
-        DepositTokenMintModule,
-      }
+      syndicateContracts: { SingleTokenMintModule, DepositTokenMintModule }
     },
     erc20TokenSliceReducer: {
       erc20Token,
@@ -69,7 +64,7 @@ const SyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
     symbol,
     maxTotalSupply,
     depositsEnabled,
-    claimEnabled,
+    claimEnabled
   } = erc20Token;
 
   const {
@@ -94,7 +89,7 @@ const SyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
     },
     onCompleted: async (data) => {
       const depositDetails = await getDepositDetails(
-        data.syndicateDAO.depositToken,
+        data?.syndicateDAO?.depositToken,
         erc20TokenContract,
         DepositTokenMintModule,
         SingleTokenMintModule

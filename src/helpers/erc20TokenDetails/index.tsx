@@ -146,9 +146,9 @@ export const getDepositDetails = async (
   SingleTokenMintModule: DepositTokenMintModuleContract
 ): Promise<DepositDetails> => {
   let mintModule = DepositTokenMintModule.address;
-  let ethDepositToken = false; 
+  let ethDepositToken = false;
 
-  if (!depositToken) {
+  if (!depositToken && ERC20tokenContract) {
     depositToken = await SingleTokenMintModule?.depositToken(
       ERC20tokenContract.clubERC20Contract._address
     );
@@ -183,7 +183,8 @@ export const getDepositDetails = async (
 export const isEthDepositToken = async (
   ERC20tokenContract,
   DepositTokenMintModule: DepositTokenMintModuleContract,
-  SingleTokenMintModule: DepositTokenMintModuleContract) => {
+  SingleTokenMintModule: DepositTokenMintModuleContract
+) => {
   let _ethDepositToken = false;
 
   let depositToken = await DepositTokenMintModule?.depositToken(
@@ -200,8 +201,8 @@ export const isEthDepositToken = async (
       _ethDepositToken = true;
     }
   }
-  return { _ethDepositToken } 
-} 
+  return { _ethDepositToken };
+};
 
 /**
  * This function retrieves limited club details. The details retrieved here are
@@ -227,7 +228,7 @@ export const setERC20Token =
           SingleTokenMintModule,
           DepositTokenMintModule
         }
-      },
+      }
     } = getState();
 
     dispatch(setERC20TokenContract(ERC20tokenContract));
@@ -243,8 +244,8 @@ export const setERC20Token =
         ERC20tokenContract,
         DepositTokenMintModule,
         SingleTokenMintModule
-      )
-  
+      );
+
       dispatch(
         setERC20TokenDetails({
           ...erc20Token,
