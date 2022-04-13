@@ -1,7 +1,6 @@
 import { proxyGet } from '.';
 import { isDev } from '@/utils/environment';
 import { AxiosResponse } from 'axios';
-import { AnyArray } from 'immer/dist/internal';
 
 enum ChainEnum {
   ETHEREUM = 1,

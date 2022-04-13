@@ -102,7 +102,6 @@ export const fetchTokenTransactions = createAsyncThunk(
 
     // add eth details as the first item.
     completeTokensDetails.unshift(ethDetails);
-    console.log('completeTokensDetails', completeTokensDetails);
 
     return { completeTokensDetails, ethereumTokenPrice: ethPriceResponse };
   }
