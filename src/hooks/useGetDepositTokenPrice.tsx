@@ -1,10 +1,9 @@
 import { useEffect, useState } from 'react';
-import { getTokenPrice } from '@/utils/api';
 import { useRouter } from 'next/router';
 import { AppState } from '@/state';
 import { useDispatch, useSelector } from 'react-redux';
 import { setDepositTokenUSDPrice } from '@/state/erc20token/slice';
-import { getNativeTokenPrice } from '@/utils/api/transactions';
+import { getNativeTokenPrice, getTokenPrice } from '@/utils/api/transactions';
 
 export const useGetDepositTokenPrice = (chainId: number) => {
   const {

@@ -13,19 +13,6 @@ export const proxyGet = async <R>(
   );
 };
 
-// Queries the web2-backend endpoint 'token/price_usd'
-export const getTokenPrice = async (
-  tokenAddress: string,
-  chainId: number
-): Promise<number> => {
-  const result: AxiosResponse<number> = await proxyGet('token/price_usd', {
-    tokenAddresses: tokenAddress,
-    chainId: chainId
-  });
-
-  return result.data[tokenAddress]['usd'];
-};
-
 // Queries the web2-backend endpoint 'token/details' OR 'token/native_token_details' for native tokens with no contract address
 export const getTokenDetails = (
   tokenAddress: string,
