@@ -3,6 +3,8 @@ import moment from 'moment';
 
 export const MOCK_TOTALDEPOSITS = '12044.45';
 export const MOCK_TOTALSUPPLY = '12044.45';
+export const MOCK_START_TIME = 1642429321762;
+export const MOCK_END_TIME = 1647526921762;
 
 export const mockERC20Token: ERC20Token = {
   totalSupply: 12044.45,
@@ -35,7 +37,8 @@ export const mockDepositERC20Token = {
   depositsEnabled: true,
   claimEnabled: false,
   startTime: currentDate.valueOf(),
-  endTime: futureDate.valueOf()
+  endTime: futureDate.valueOf(),
+  depositTokenSymbol: 'USDC'
 };
 
 export const mockActiveERC20Token = {

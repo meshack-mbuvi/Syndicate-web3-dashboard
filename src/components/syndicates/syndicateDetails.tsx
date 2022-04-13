@@ -13,6 +13,7 @@ import { Status } from '@/state/wallet/types';
 import { epochTimeToDateFormat, getCountDownDays } from '@/utils/dateUtils';
 import { floatedNumberWithCommas } from '@/utils/formattedNumbers';
 import { getTextWidth } from '@/utils/getTextWidth';
+import { mockDepositERC20Token } from '@/utils/mockdata';
 import { useQuery } from '@apollo/client';
 import abi from 'human-standard-token-abi';
 import { useRouter } from 'next/router';
@@ -88,12 +89,17 @@ const SyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
       syndicateDaoId: address.toLocaleLowerCase()
     },
     onCompleted: async (data) => {
-      const depositDetails = await getDepositDetails(
-        data?.syndicateDAO?.depositToken,
-        erc20TokenContract,
-        DepositTokenMintModule,
-        SingleTokenMintModule
-      );
+      let depositDetails;
+      if (isDemoMode) {
+        depositDetails = mockDepositERC20Token;
+      } else {
+        depositDetails = await getDepositDetails(
+          data?.syndicateDAO?.depositToken,
+          erc20TokenContract,
+          DepositTokenMintModule,
+          SingleTokenMintModule
+        );
+      }
 
       dispatch(
         setERC20TokenDepositDetails({
