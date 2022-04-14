@@ -50,7 +50,7 @@ export function useClubDepositsAndSupply(contractAddress: string): {
   const { loading, data, refetch } = useQuery(SINGLE_CLUB_DETAILS, {
     variables: {
       where: {
-        contractAddress: contractAddress?.toLocaleLowerCase() || ''
+        contractAddress: contractAddress?.toLocaleLowerCase()
       }
     },
     // Avoid unnecessary calls when contractAddress is not defined or in demo mode
@@ -74,7 +74,7 @@ export function useClubDepositsAndSupply(contractAddress: string): {
       return;
     }
 
-    if (loading || !data || erc20Token?.loading) return;
+    if (loading || !data || erc20Token?.loading || data.syndicateDAOs.length == 0) return;
 
     const {
       syndicateDAOs: [syndicateDAO]

@@ -9,12 +9,12 @@ import { useIsClubOwner } from '@/hooks/useClubOwner';
 import { useDemoMode } from '@/hooks/useDemoMode';
 import { AppState } from '@/state';
 import { setERC20TokenDepositDetails } from '@/state/erc20token/slice';
+import { mockDepositERC20Token } from '@/utils/mockdata';
 import { Status } from '@/state/wallet/types';
 import { epochTimeToDateFormat, getCountDownDays } from '@/utils/dateUtils';
 import { floatedNumberWithCommas } from '@/utils/formattedNumbers';
 import { getTextWidth } from '@/utils/getTextWidth';
-import { mockDepositERC20Token } from '@/utils/mockdata';
-import { useQuery } from '@apollo/client';
+import { useQuery, NetworkStatus } from '@apollo/client';
 import abi from 'human-standard-token-abi';
 import { useRouter } from 'next/router';
 import React, { FC, useEffect, useState } from 'react';
@@ -84,17 +84,70 @@ const SyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
   const router = useRouter();
   const dispatch = useDispatch();
 
-  useQuery(CLUB_TOKEN_QUERY, {
+  const {
+    totalDeposits,
+    totalSupply,
+    loadingClubDeposits,
+    startTime,
+    endTime,
+    refetch: refetchSingleClubDetails
+  } = useClubDepositsAndSupply(address);
+
+  const {
+    loading: queryLoading,
+    data,
+    networkStatus,
+    startPolling,
+    stopPolling
+  } = useQuery(CLUB_TOKEN_QUERY, {
     variables: {
       syndicateDaoId: address.toLocaleLowerCase()
     },
-    onCompleted: async (data) => {
+    notifyOnNetworkStatusChange: true,
+    skip: !address || loading,
+    fetchPolicy: 'no-cache'
+  });
+
+  useEffect(() => {
+    // we want to refetch every 2 seconds until the correct data is fetched
+    if (address || !loading) {
+      startPolling(2000);
+    }
+    return;
+  }, [address, loading]);
+
+  useEffect(() => {
+    // check for demo mode to make sure correct things render
+    if (!isDemoMode) {
+      // check for network status as ready after query is over
+      if (networkStatus !== NetworkStatus.ready) {
+        return;
+      }
+      // check for query loading and data being non-null
+      if (!data?.syndicateDAO && !queryLoading) {
+        return;
+      }
+      stopPolling();
+      // fallback for if single club details query doesn't initally work
+      if (!totalDeposits) {
+        refetchSingleClubDetails();
+        return;
+      }
+    } else {
+      if (!data) {
+        return;
+      }
+    }
+
+    const { depositToken } = data.syndicateDAO || {};
+    async function fetchDepositDetails() {
       let depositDetails;
+
       if (isDemoMode) {
         depositDetails = mockDepositERC20Token;
       } else {
         depositDetails = await getDepositDetails(
-          data?.syndicateDAO?.depositToken,
+          depositToken,
           erc20TokenContract,
           DepositTokenMintModule,
           SingleTokenMintModule
@@ -107,19 +160,20 @@ const SyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
           loading: false
         })
       );
-    },
-    skip: !address || loading
-  });
+    }
+    fetchDepositDetails();
+  }, [
+    data,
+    data?.syndicateDAO,
+    loading,
+    erc20Token.loading,
+    router.isReady,
+    queryLoading,
+    networkStatus,
+    totalDeposits
+  ]);
 
   const [details, setDetails] = useState<ClubDetails[]>([]);
-
-  const {
-    totalDeposits,
-    totalSupply,
-    loadingClubDeposits,
-    startTime,
-    endTime
-  } = useClubDepositsAndSupply(address);
 
   // state to handle copying of the syndicate address to clipboard.
   const [showAddressCopyState, setShowAddressCopyState] =
