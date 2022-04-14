@@ -15,7 +15,7 @@ interface LinkProp {
   prefix?: string;
   suffix?: string;
   grouped?: boolean;
-  iconColor?: ExternalLinkColor;
+  iconcolor?: ExternalLinkColor;
 }
 
 /** Link used to redirect the user to the Block Explorer
@@ -31,7 +31,7 @@ export const BlockExplorerLink: React.FC<LinkProp> = (props) => {
     prefix = 'View on ',
     suffix = '',
     grouped,
-    iconColor = ExternalLinkColor.BLUE
+    iconcolor = ExternalLinkColor.BLUE
   } = props;
 
   const { activeNetwork } = useConnectWalletContext();
@@ -61,14 +61,14 @@ export const BlockExplorerLink: React.FC<LinkProp> = (props) => {
         <div className="flex justify-between items-center w-full">
           <div
             className={`${
-              iconColor === ExternalLinkColor.BLUE ? 'text-blue' : 'text-white'
+              iconcolor === ExternalLinkColor.BLUE ? 'text-blue' : 'text-white'
             }`}
           >
             {prefix} {activeNetwork.blockExplorer.name} {suffix}
           </div>
           <ExternalLinkIcon
             className={`ml-2 w-4 text-blue`}
-            iconColor={iconColor}
+            iconcolor={iconcolor}
           />
         </div>
       ) : !grouped ? (

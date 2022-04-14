@@ -2,27 +2,31 @@ import { CopyToClipboardIcon } from '@/components/iconWrappers';
 import { SkeletonLoader } from '@/components/skeletonLoader';
 import { BlockExplorerLink } from '@/components/syndicates/shared/BlockExplorerLink';
 import DuplicateClubWarning from '@/components/syndicates/shared/DuplicateClubWarning';
+import { CLUB_TOKEN_QUERY } from '@/graphql/queries';
+import { getDepositDetails } from '@/helpers/erc20TokenDetails/index';
 import { useAccountTokens } from '@/hooks/useAccountTokens';
 import { useClubDepositsAndSupply } from '@/hooks/useClubDepositsAndSupply';
 import { useIsClubOwner } from '@/hooks/useClubOwner';
 import { useDemoMode } from '@/hooks/useDemoMode';
 import { AppState } from '@/state';
+import { setERC20TokenDepositDetails } from '@/state/erc20token/slice';
 import { Status } from '@/state/wallet/types';
 import { epochTimeToDateFormat, getCountDownDays } from '@/utils/dateUtils';
 import { floatedNumberWithCommas } from '@/utils/formattedNumbers';
 import { getTextWidth } from '@/utils/getTextWidth';
+import { mockDepositERC20Token } from '@/utils/mockdata';
+import { useQuery } from '@apollo/client';
 import abi from 'human-standard-token-abi';
 import { useRouter } from 'next/router';
 import React, { FC, useEffect, useState } from 'react';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import ReactTooltip from 'react-tooltip';
 
 import NumberTreatment from '../NumberTreatment';
 // utils
 import GradientAvatar from './portfolioAndDiscover/portfolio/GradientAvatar';
 import { DetailsCard, ProgressIndicator } from './shared';
-
 interface ClubDetails {
   header: string;
   content: React.ReactNode;
@@ -36,19 +40,20 @@ const SyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
   children
 }) => {
   const {
+    initializeContractsReducer: {
+      syndicateContracts: { SingleTokenMintModule, DepositTokenMintModule }
+    },
     erc20TokenSliceReducer: {
       erc20Token,
-      depositDetails: { depositTokenSymbol, depositToken, nativeDepositToken }
+      depositDetails,
+      depositTokenPriceInUSD,
+      erc20TokenContract
     },
     merkleProofSliceReducer: { myMerkleProof },
     web3Reducer: {
       web3: { web3, status, account, activeNetwork }
     }
   } = useSelector((state: AppState) => state);
-
-  const isDemoMode = useDemoMode();
-
-  const { accountTokens } = useAccountTokens();
 
   const {
     address,
@@ -64,7 +69,50 @@ const SyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
     claimEnabled
   } = erc20Token;
 
+  const {
+    depositTokenSymbol,
+    depositToken,
+    depositTokenLogo,
+    depositTokenName,
+    depositTokenDecimals,
+    nativeDepositToken
+  } = depositDetails;
+
+  const isDemoMode = useDemoMode();
+
+  const { accountTokens } = useAccountTokens();
+
   const router = useRouter();
+  const dispatch = useDispatch();
+
+  useQuery(CLUB_TOKEN_QUERY, {
+    variables: {
+      syndicateDaoId: address.toLocaleLowerCase()
+    },
+    onCompleted: async (data) => {
+      let depositDetails;
+      if (isDemoMode) {
+        depositDetails = mockDepositERC20Token;
+      } else {
+        depositDetails = await getDepositDetails(
+          data?.syndicateDAO?.depositToken,
+          erc20TokenContract,
+          DepositTokenMintModule,
+          SingleTokenMintModule,
+          activeNetwork
+        );
+      }
+
+      dispatch(
+        setERC20TokenDepositDetails({
+          ...depositDetails,
+          loading: false
+        })
+      );
+    },
+    skip: !address || loading
+  });
+
   const [details, setDetails] = useState<ClubDetails[]>([]);
 
   const {
@@ -103,7 +151,6 @@ const SyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
     if (!nativeDepositToken && depositToken && web3) {
       // set up token contract
       const tokenContract = new web3.eth.Contract(abi, depositToken);
-
       setDepositTokenContract(tokenContract);
     }
   }, [depositToken, web3]);
@@ -188,6 +235,8 @@ const SyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
                 content: (
                   <span>
                     <NumberTreatment numberValue={`${maxTotalSupply || ''}`} />
+                    &nbsp;
+                    {symbol}
                   </span>
                 ),
                 tooltip: ''
@@ -265,7 +314,8 @@ const SyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
     loading,
     maxTotalDeposits,
     memberCount,
-    totalDeposits
+    totalDeposits,
+    depositTokenSymbol
   ]);
 
   // show message to the user when address has been copied.
@@ -437,11 +487,18 @@ const SyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
               <ProgressIndicator
                 totalDeposits={totalDeposits}
                 depositTotalMax={maxTotalDeposits.toString()}
-                depositERC20TokenSymbol={depositTokenSymbol}
                 openDate={startTime.toString()}
                 closeDate={endTime.toString()}
                 loading={loading || loadingClubDeposits}
                 nativeDepositToken={nativeDepositToken}
+                depositTokenPriceInUSD={depositTokenPriceInUSD.toString()}
+                tokenDetails={{
+                  symbol: depositTokenSymbol,
+                  contractAddress: depositToken,
+                  logo: depositTokenLogo,
+                  name: depositTokenName,
+                  decimals: depositTokenDecimals
+                }}
               />
             </div>
           )}

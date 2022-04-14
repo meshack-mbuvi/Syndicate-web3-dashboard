@@ -4,7 +4,7 @@ import {
   setOverlayCollectibleDetails,
   setShowFullScreen
 } from '@/state/assets/collectibles/slice';
-import { FC, useRef, useState } from 'react';
+import { FC, useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Tooltip from 'react-tooltip-lite';
 
@@ -33,7 +33,11 @@ const CollectibleMedia: FC<ICollectibleMedia> = ({
   setDetailsOfSelectedCollectible
 }) => {
   const {
-    setCollectibleDetailsSliceReducer: { showFullScreen, showCollectibleModal }
+    setCollectibleDetailsSliceReducer: {
+      showFullScreen,
+      showCollectibleModal,
+      overlayCollectibleDetails
+    }
   } = useSelector((state: AppState) => state);
 
   const dispatch = useDispatch();
@@ -80,6 +84,23 @@ const CollectibleMedia: FC<ICollectibleMedia> = ({
       setMuteAudio(true);
     }
   };
+
+  const handleMobileFullScreenExit = () => {
+    dispatch(setShowFullScreen(false));
+  };
+
+  useEffect(() => {
+    if (videoRef && videoRef.current) {
+      const video = videoRef.current;
+      video.addEventListener('webkitendfullscreen', handleMobileFullScreenExit);
+      return () => {
+        video.removeEventListener(
+          'webkitendfullscreen',
+          handleMobileFullScreenExit
+        );
+      };
+    }
+  }, []);
 
   const setActiveCollectibleDetails = (details: {
     collectible: {
@@ -157,11 +178,11 @@ const CollectibleMedia: FC<ICollectibleMedia> = ({
       <div
         style={{
           backgroundImage: `url('${image}')`,
-          backgroundSize: 'cover',
+          backgroundSize: `${showFullScreen ? 'contain' : 'cover'}`,
           backgroundRepeat: 'no-repeat',
-          backgroundPosition: 'center 20%'
+          backgroundPosition: 'center'
         }}
-        className={`${
+        className={` bg-black ${
           showFullScreen ? 'h-full' : 'perfect-square-box'
         } w-full relative`}
       >
@@ -191,9 +212,15 @@ const CollectibleMedia: FC<ICollectibleMedia> = ({
         <div className="absolute inset-0 z-8">{mediaClickButton}</div>
         <video
           autoPlay
+          playsInline={
+            showFullScreen &&
+            collectible.id === overlayCollectibleDetails?.collectible?.id
+              ? false
+              : true
+          }
           loop
           muted
-          className={`${!showFullScreen ? 'object-cover' : ''} z-10`}
+          className={`${showFullScreen ? 'object-cover' : ''} z-10`}
           ref={videoRef}
         >
           {/* Specifying type as "video/mp4" works for both .mov and .mp4 files  */}
@@ -254,8 +281,8 @@ const CollectibleMedia: FC<ICollectibleMedia> = ({
             showCollectibles
               ? 'border-r-1 border-l-1 border-t-1 border-gray-syn6 rounded-t-2.5xl perfect-square-box'
               : ''
-          }  bg-gray-syn7 overflow-hidden ${
-            showFullScreen ? 'h-full' : 'relative'
+          }  ${
+            showFullScreen ? 'h-full' : 'relative bg-gray-syn7 overflow-hidden'
           }`}
         >
           {media}

@@ -541,8 +541,13 @@ input {
   border-radius: 1.25rem;
 }
 
+.rounded-l-custom {
+  border-top-left-radius: 0.625rem;
+  border-bottom-left-radius: 0.625rem;
+}
+
 .rounded-t-custom {
-  border-top-right-radius: 0.625rem;
+  border-bottom-left-radius: 0.625rem;
   border-top-left-radius: 0.625rem;
 }
 

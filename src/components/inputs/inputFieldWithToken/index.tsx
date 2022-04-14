@@ -1,4 +1,3 @@
-import useTokenDetails from '@/hooks/useTokenDetails';
 import { InputField } from '../inputField';
 
 export enum TokenType {
@@ -11,7 +10,8 @@ export const InputFieldWithToken = (props: {
   placeholderLabel?: string;
   infoLabel?: string | React.ReactElement;
   isInErrorState?: boolean;
-  depositToken?: boolean;
+  depositTokenLogo?: string;
+  depositTokenSymbol?: string;
   extraClasses?: string;
   onChange: (e) => void;
   showClubSymbol?: boolean;
@@ -22,7 +22,8 @@ export const InputFieldWithToken = (props: {
     placeholderLabel = 'Unlimited',
     infoLabel,
     isInErrorState = false,
-    depositToken,
+    depositTokenLogo = '',
+    depositTokenSymbol = '',
     extraClasses = '',
     onChange,
     showClubSymbol,
@@ -30,20 +31,14 @@ export const InputFieldWithToken = (props: {
     ...rest
   } = props;
 
-  const { depositTokenSymbol, depositTokenLogo } =
-    useTokenDetails(depositToken);
-
-  const tokenSymbol = depositTokenSymbol;
-  const tokenIcon = depositTokenLogo;
-
   const TokenSymbolandIcon = () => {
     return (
       <div className="flex justify-center items-center">
         <div className="mr-2 flex items-center justify-center">
-          <img src={tokenIcon} width={20} height={20} alt="token icon" />
+          <img src={depositTokenLogo} width={20} height={20} alt="token icon" />
         </div>
         <div className="uppercase text-gray-syn3">
-          <span>{tokenSymbol}</span>
+          <span>{depositTokenSymbol}</span>
         </div>
       </div>
     );

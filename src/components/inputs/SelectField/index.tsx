@@ -3,7 +3,8 @@ import { formatAddress } from '@/utils/formatAddress';
 import { floatedNumberWithCommas } from '@/utils/formattedNumbers';
 import { Listbox, Transition } from '@headlessui/react';
 import Image from 'next/image';
-import { SearchForm } from '../searchForm';
+import { SearchInput } from '@/components/inputs';
+// import { SearchForm } from '../searchForm';
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ');
@@ -111,7 +112,7 @@ export const SelectField: React.FC<{
               leaveTo="opacity-0"
             >
               <Listbox.Options className="absolute z-50 mt-1 w-full bg-black p-4 space-y-3 shadow-lg max-h-56 rounded-md text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm">
-                <SearchForm
+                <SearchInput
                   searchValue={searchValue}
                   onChangeHandler={handleSearch}
                   full

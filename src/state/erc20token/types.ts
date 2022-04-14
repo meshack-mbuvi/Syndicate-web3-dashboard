@@ -1,4 +1,6 @@
 import { ERC20TokenDefaultState } from '@/helpers/erc20TokenDetails';
+import { ChainEnum } from '@/utils/api/ChainTypes';
+import { isDev } from '@/utils/environment';
 
 export interface ERC20Token {
   name: string;
@@ -32,6 +34,7 @@ export interface DepositDetails {
   depositTokenLogo: string;
   depositTokenName: string;
   depositTokenDecimals: number;
+  loading: boolean;
 }
 
 export const initialState: {
@@ -49,7 +52,8 @@ export const initialState: {
     // default to USDC token to avoid error being thrown while loading the token
     depositTokenLogo: '/images/usdcicon.png',
     depositTokenName: '',
-    depositTokenDecimals: 6
+    depositTokenDecimals: 6,
+    loading: true
   },
   erc20TokenContract: null,
   depositTokenPriceInUSD: 0

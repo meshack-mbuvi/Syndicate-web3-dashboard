@@ -65,7 +65,7 @@ const LegalAgreement: React.FC = () => {
     erc20TokenSliceReducer: {
       erc20Token,
       // TODO: I think this should be in USD
-      depositDetails: { depositTokenSymbol }
+      depositDetails: { depositTokenSymbol, ethDepositToken }
     }
   } = useSelector((state: AppState) => state);
 
@@ -83,7 +83,7 @@ const LegalAgreement: React.FC = () => {
         dispatch(setClubMembers([]));
       };
     }
-  }, [clubAddress, account, router.isReady]);
+  }, [clubAddress, account, router.isReady, ethDepositToken]);
 
   const {
     control,

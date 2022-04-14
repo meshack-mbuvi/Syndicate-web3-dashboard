@@ -14,9 +14,9 @@ import {
 
 import {
   getNativeTokenPrice,
-  getExplorerTokenTransactions,
-  getNativeBalance
-} from '@/utils/api/etherscan';
+  getTokenTransactionHistory,
+  getNativeTokenBalance
+} from '@/utils/api/transactions';
 
 /** Async thunks */
 // ERC20 transactions
@@ -26,10 +26,10 @@ export const fetchTokenTransactions = createAsyncThunk(
     const { account, activeNetwork } = params;
     const response = await Promise.all([
       // ERC20 tokens transactions
-      await getExplorerTokenTransactions(account, activeNetwork.chainId),
-      // Native balance for owner address
-      await getNativeBalance(account, activeNetwork.chainId),
-      // Native price
+      await getTokenTransactionHistory(account, activeNetwork.chainId),
+      // ETH balance for owner address
+      await getNativeTokenBalance(account, activeNetwork.chainId),
+      // ETH price
       await getNativeTokenPrice(activeNetwork.chainId)
     ])
       .then((result) => result)

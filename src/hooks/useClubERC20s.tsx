@@ -12,13 +12,14 @@ import { useQuery } from '@apollo/client';
 import { useRouter } from 'next/router';
 import { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { getTokenDetails } from '@/utils/api';
 
 const useClubERC20s = () => {
   const dispatch = useDispatch();
 
   const {
     initializeContractsReducer: { syndicateContracts },
-    web3Reducer: { web3 }
+    web3Reducer: { web3 },
   } = useSelector((state: AppState) => state);
 
   const [accountHasClubs, setAccountHasClubs] = useState(false);
@@ -145,13 +146,10 @@ const useClubERC20s = () => {
 
           let depositERC20TokenSymbol = activeNetwork.nativeCurrency.symbol;
           let depositERC20TokenDecimals = activeNetwork.nativeCurrency.decimals;
-          let maxTotalDeposits = +maxTotalSupplyFromWei / 10000;
-          /**
-           * We are hardcoding these values because we have two deposit tokens.
-           * Eth and USDC. When scaling we can use the TOKEN mapping for hard coded
-           * values or coingecko to get the logos, or better yet the graph.
-           */
           let depositTokenLogo = activeNetwork.logo;
+
+          // checks if depositToken is ETH or not
+          let maxTotalDeposits = +maxTotalSupplyFromWei / 10000;
           if (!isZeroAddress(depositToken)) {
             try {
               const depositERC20Token = new ClubERC20Contract(
@@ -160,11 +158,9 @@ const useClubERC20s = () => {
               );
               depositERC20TokenSymbol = await depositERC20Token.symbol();
               depositERC20TokenDecimals = await depositERC20Token.decimals();
-              depositTokenLogo =
-                depositERC20TokenSymbol === 'USDC'
-                  ? '/images/TestnetTokenLogos/usdcIcon.svg'
-                  : '';
-              maxTotalDeposits = +maxTotalSupplyFromWei;
+              depositTokenLogo = await getTokenDetails(depositToken, activeNetwork.chainId)
+                .then((res) => res.data.logo)
+                .catch(() => null);
             } catch (error) {
               return;
             }

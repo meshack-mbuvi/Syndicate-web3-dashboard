@@ -1,8 +1,12 @@
 import { SINGLE_CLUB_DETAILS } from '@/graphql/queries';
 import { AppState } from '@/state';
 import { getWeiAmount } from '@/utils/conversions';
-import { formatDate } from '@/utils';
-import { MOCK_TOTALDEPOSITS, MOCK_TOTALSUPPLY } from '@/utils/mockdata';
+import {
+  MOCK_END_TIME,
+  MOCK_START_TIME,
+  MOCK_TOTALDEPOSITS,
+  MOCK_TOTALSUPPLY
+} from '@/utils/mockdata';
 import { useQuery } from '@apollo/client';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
@@ -68,6 +72,8 @@ export function useClubDepositsAndSupply(contractAddress: string): {
     if (isDemoMode) {
       setTotalSupply(MOCK_TOTALSUPPLY);
       setTotalDeposits(MOCK_TOTALDEPOSITS);
+      setStartTime(MOCK_START_TIME);
+      setEndTime(MOCK_END_TIME);
       setLoadingClubDeposits(false);
       return;
     }
@@ -80,6 +86,7 @@ export function useClubDepositsAndSupply(contractAddress: string): {
 
     const { totalDeposits, totalSupply, startTime, endTime } =
       syndicateDAO || {};
+
     setTotalSupply(getWeiAmount(totalSupply, tokenDecimals || 18, false));
     setTotalDeposits(getWeiAmount(totalDeposits, depositTokenDecimals, false));
     setStartTime(+startTime * 1000);
@@ -92,7 +99,8 @@ export function useClubDepositsAndSupply(contractAddress: string): {
     erc20Token.loading,
     isReady,
     memberDeposits,
-    accountTokens
+    accountTokens,
+    depositTokenDecimals
   ]);
 
   return {

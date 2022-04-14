@@ -18,6 +18,7 @@ interface ModalProps {
   showBackButton?: boolean;
   closeButtonClassName?: string;
   modalStyle?: ModalStyle;
+  opacity?: string;
   titleMarginClassName?: string;
   titleAlignment?: string;
   showHeader?: boolean;
@@ -68,6 +69,7 @@ const Modal = (props: ModalProps): JSX.Element => {
     overflow = 'overflow-hidden',
     showBackButton = false,
     modalStyle = ModalStyle.LIGHT,
+    opacity = 'bg-opacity-60',
     showHeader = true,
     overflowYScroll = true,
     overflowXScroll = true,
@@ -116,7 +118,9 @@ const Modal = (props: ModalProps): JSX.Element => {
             leaveFrom="opacity-100"
             leaveTo="opacity-0"
           >
-            <Dialog.Overlay className="fixed inset-0 bg-black bg-opacity-60 transition-opacity" />
+            <Dialog.Overlay
+              className={`fixed inset-0 bg-black ${opacity} transition-opacity`}
+            />
           </Transition.Child>
           {/* This element is to trick the browser into centering the modal contents. */}
           <span

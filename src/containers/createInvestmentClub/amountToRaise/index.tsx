@@ -14,7 +14,7 @@ import Image from 'next/image';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { AdvancedInputField } from '../shared/AdvancedInputField';
-import TokenSelectModal from '@/containers/createInvestmentClub/shared/TokenSelectModal';
+import TokenSelectModal from '@/components/tokenSelect/TokenSelectModal';
 // import { defaultTokenDetails } from '@/containers/createInvestmentClub/shared/ClubTokenDetailConstants';
 import { SUPPORTED_TOKENS } from '@/Networks';
 
@@ -73,7 +73,11 @@ const AmountToRaise: React.FC<{
         />
       </div>
       <div className="uppercase">
-        <span>{depositTokenSymbol || defaultTokenDetails.symbol}</span>
+        <span>
+          {
+            depositTokenSymbol
+          }
+        </span>
       </div>
       <div className="inline-flex ml-4">
         <img className="w-5 h-5" src="/images/double-chevron.svg" alt="" />
@@ -104,7 +108,7 @@ const AmountToRaise: React.FC<{
   useEffect(() => {
     dispatch(
       setDepositTokenDetails({
-        depositTokenAddress: defaultTokenDetails.address,
+        depositToken: defaultTokenDetails.address,
         depositTokenName: defaultTokenDetails.name,
         depositTokenSymbol: defaultTokenDetails.symbol,
         depositTokenLogo: defaultTokenDetails.logoURI,

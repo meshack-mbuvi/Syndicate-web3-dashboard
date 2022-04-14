@@ -4,12 +4,12 @@ import { MerkleDistributorModuleContract } from '@/ClubERC20Factory/merkleDistri
 import { AppState } from '@/state';
 import {
   setERC20TokenContract,
-  setERC20TokenDespositDetails,
   setERC20TokenDetails,
   setLoadingClub
 } from '@/state/erc20token/slice';
 import { DepositDetails, ERC20Token } from '@/state/erc20token/types';
 import { isZeroAddress } from '@/utils';
+import { getTokenDetails } from '@/utils/api';
 import { getWeiAmount } from '@/utils/conversions';
 import { CONTRACT_ADDRESSES, SUPPORTED_TOKENS } from '@/Networks';
 
@@ -138,7 +138,8 @@ export const getERC20TokenDetails = async (
   }
 };
 
-export const getDespositDetails = async (
+export const getDepositDetails = async (
+  depositToken,
   ERC20tokenContract,
   DepositTokenMintModule: DepositTokenMintModuleContract,
   SingleTokenMintModule: DepositTokenMintModuleContract,
@@ -149,14 +150,10 @@ export const getDespositDetails = async (
   let mintModule = DepositTokenMintModule.address;
   let nativeDepositToken = false;
 
-  let depositToken = await DepositTokenMintModule?.depositToken(
-    ERC20tokenContract.clubERC20Contract._address
-  );
-
   const NATIVE_MINT_MODULE =
     CONTRACT_ADDRESSES[activeNetwork.chainId]?.nativeMintModule;
 
-  if (isZeroAddress(depositToken)) {
+  if (!depositToken && ERC20tokenContract) {
     depositToken = await SingleTokenMintModule?.depositToken(
       ERC20tokenContract.clubERC20Contract._address
     );
@@ -172,12 +169,45 @@ export const getDespositDetails = async (
   const [depositTokenInfo] = depositTokenMapping.filter(
     (token) => token.address === depositToken
   );
+  const tokenDetails = await getTokenDetails(depositToken, activeNetwork.chainId).then(
+    (res) => res.data
+  );
 
   return {
     mintModule,
     nativeDepositToken,
-    ...depositTokenInfo
+    depositTokenLogo: tokenDetails.logo,
+    depositTokenSymbol: tokenDetails.symbol,
+    depositTokenName: tokenDetails.name,
+    depositTokenDecimals: tokenDetails.decimals,
+    depositToken,
+    loading: true
   };
+};
+
+export const isNativeDepositToken = async (
+  ERC20tokenContract,
+  DepositTokenMintModule: DepositTokenMintModuleContract,
+  SingleTokenMintModule: DepositTokenMintModuleContract,
+  activeNetwork
+) => {
+  let _nativeDepositToken = false;
+
+  let depositToken = await DepositTokenMintModule?.depositToken(
+    ERC20tokenContract.clubERC20Contract._address
+  );
+
+  if (isZeroAddress(depositToken)) {
+    depositToken = await SingleTokenMintModule?.depositToken(
+      ERC20tokenContract.clubERC20Contract._address
+    );
+
+    if (isZeroAddress(depositToken)) {
+      depositToken = '';
+      _nativeDepositToken = true;
+    }
+  }
+  return { _nativeDepositToken };
 };
 
 /**
@@ -220,14 +250,13 @@ export const setERC20Token =
         mintPolicy,
         MerkleDistributorModule
       );
-      const depositDetails: any = await getDespositDetails(
+
+      const { _nativeDepositToken } = await isNativeDepositToken(
         ERC20tokenContract,
         DepositTokenMintModule,
         SingleTokenMintModule,
         activeNetwork
       );
-
-      const { nativeDepositToken } = depositDetails;
 
       dispatch(
         setERC20TokenDetails({
@@ -237,20 +266,9 @@ export const setERC20Token =
            * is 1: 100000 erc20 tokens. For other erc20 tokens,
            * the ratio is 1:1
            */
-          maxTotalDeposits: nativeDepositToken
+          maxTotalDeposits: _nativeDepositToken
             ? Number(erc20Token.maxTotalDeposits) / 10000
             : erc20Token.maxTotalDeposits
-        })
-      );
-      dispatch(
-        setERC20TokenDespositDetails({
-          mintModule: depositDetails.mintModule,
-          nativeDepositToken: depositDetails.nativeDepositToken,
-          depositToken: depositDetails.address,
-          depositTokenSymbol: depositDetails.symbol,
-          depositTokenLogo: depositDetails.logoURI,
-          depositTokenName: depositDetails.name,
-          depositTokenDecimals: depositDetails.decimals
         })
       );
       dispatch(setLoadingClub(false));

@@ -20,7 +20,7 @@ import { useRouter } from 'next/router';
 import Tooltip from 'react-tooltip-lite';
 import { numberWithCommas } from '@/utils/formattedNumbers';
 import { getWeiAmount } from '@/utils/conversions';
-import { getNativeTokenPrice } from '@/utils/api/etherscan';
+import { getNativeTokenPrice } from '@/utils/api/transactions';
 import { CONTRACT_ADDRESSES } from '@/Networks';
 
 const ClaimNFT: React.FC = () => {

@@ -1,4 +1,4 @@
-import { getNativeTokenPrice } from '@/utils/api/etherscan';
+import { getNativeTokenPrice } from '@/utils/api/transactions';
 import { AppState } from '@/state';
 import { getWeiAmount } from '@/utils/conversions';
 import { isDev } from '@/utils/environment';
@@ -21,7 +21,7 @@ const EstimateGas = (props: { customClasses?: string }) => {
   const [gas, setGas] = useState(0); // 0.05 ETH (~$121.77)
   const [gasUnits, setGasUnits] = useState(0);
   const [gasBaseFee, setGasBaseFee] = useState(0);
-  const [nativeTokenPrice, setNativeTokenPrice] = useState();
+  const [nativeTokenPrice, setNativeTokenPrice] = useState<number | undefined>();
 
   const processBaseFee = async (result) => {
     const baseFee = result.result;

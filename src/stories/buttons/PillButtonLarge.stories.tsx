@@ -1,5 +1,5 @@
 import { PillButton } from '@/components/pillButtons';
-import { PillButtonLarge } from '@/components/pillButtonsLarge';
+import { PillButtonLarge } from '@/components/pillButtons/pillButtonsLarge';
 import React from 'react';
 
 export default {

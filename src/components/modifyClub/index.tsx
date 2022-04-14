@@ -31,7 +31,7 @@ import { ExternalLinkColor } from '../iconWrappers';
 import { InputFieldWithButton } from '../inputs/inputFieldWithButton';
 import { InputFieldWithDate } from '../inputs/inputFieldWithDate';
 import { InputFieldWithToken } from '../inputs/inputFieldWithToken';
-import { PillButtonLarge } from '../pillButtonsLarge';
+import { PillButtonLarge } from '../pillButtons/pillButtonsLarge';
 
 const progressModalStates = {
   confirm: {
@@ -85,7 +85,10 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
       existingMaxNumberOfMembers,
       existingNumberOfMembers
     },
-    erc20TokenSliceReducer: { erc20Token, depositDetails },
+    erc20TokenSliceReducer: {
+      erc20Token,
+      depositDetails: { depositTokenLogo, depositTokenSymbol }
+    },
     web3Reducer: {
       web3: { account, status, web3, activeNetwork }
     }
@@ -106,9 +109,7 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
     currentMintPolicyAddress
   } = erc20Token;
 
-  const { depositTokenSymbol } = depositDetails;
-
-  // True is Network main currenct, False is USDC
+  // True is ETH, False is USDC
   const [depositTokenType, setDepositTokenType] = useState(true);
   const [isOpenToDeposits, setIsOpenToDeposits] = useState<boolean>(
     existingIsOpenToDeposits
@@ -178,7 +179,7 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
 
   // makes sure that current settings render when content is available
   useEffect(() => {
-    if (name && depositDetails) {
+    if (name && depositTokenLogo) {
       if (
         existingOpenToDepositsUntil.toUTCString() === new Date(0).toUTCString()
       ) {
@@ -217,7 +218,8 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
   }, [
     name,
     currentMintPolicyAddress,
-    depositDetails,
+    depositTokenLogo,
+    depositTokenSymbol,
     maxTotalSupply,
     totalSupply,
     depositTokenSymbol,
@@ -483,7 +485,8 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
                   />
                 ) : (
                   <InputFieldWithToken
-                    depositToken={depositTokenType}
+                    depositTokenSymbol={depositTokenSymbol}
+                    depositTokenLogo={depositTokenLogo}
                     value={String(maxAmountRaising)}
                     onChange={(e) => {
                       const amount = numberInputRemoveCommas(e);

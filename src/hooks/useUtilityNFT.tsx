@@ -8,8 +8,8 @@ import { MembershipPass, Utility } from '@/state/UtilityNFT/types';
 import { getWeiAmount } from '@/utils/conversions';
 import {
   getNativeTokenPrice,
-  getExplorerTransactionHistory
-} from '@/utils/api/etherscan';
+  getNftTransactionHistory
+} from '@/utils/api/transactions';
 
 const useUtilityNFT: any = () => {
   const dispatch = useDispatch();
@@ -69,7 +69,7 @@ const useUtilityNFT: any = () => {
 
   const getNativePrice = async () => {
     const response = await Promise.all([
-      RugUtilityMintModule.nativePrice(),
+      RugUtilityMintModule.ethPrice(),
       getNativeTokenPrice(activeNetwork.chainId)
     ])
       .then((result) => result)
@@ -84,7 +84,7 @@ const useUtilityNFT: any = () => {
   };
 
   const getMembershipTokens = async () => {
-    const result = await getExplorerTransactionHistory(
+    const result = await getNftTransactionHistory(
       address,
       redemptionToken,
       activeNetwork.chainId
