@@ -10,20 +10,27 @@ interface Props {
 const PillTabs: FC<Props> = ({ tabs, activeIndex, handleTabChange }) => {
   const { width } = useWindowSize();
   const [tabHighlightDimensions, setTabHighlightDimensions] = useState({
-    left: 0,
+    x: 0,
     width: 10
   });
-  const [tabHighlightAnimationStyles, setTabHighlightAnimationStyles] =
-    useState('');
+  const [tabHighlightAnimationStyles, setTabHighlightAnimationStyles] = useState('');
+  const tabContainer = useRef(null);
+
+  const calculateHighlightDimensions = (index: number) => {
+
+    // Calculate position and width of tab
+    const tabX = tabRefs.current[index].getBoundingClientRect().x;
+    const tabWidth = tabRefs.current[index].getBoundingClientRect().width;
+    
+    // Calculate position of tab container
+    const containerX = tabContainer ? tabContainer.current.getBoundingClientRect().x : 0;
+    return {x: tabX - containerX, width: tabWidth}
+  }
 
   useEffect(() => {
+
     // Calculate position and width of highlighted tab
-    const left = tabRefs.current[activeIndex].getBoundingClientRect().x;
-    const width = tabRefs.current[activeIndex].getBoundingClientRect().width;
-    setTabHighlightDimensions({
-      left: left - 32,
-      width: width
-    });
+    setTabHighlightDimensions(calculateHighlightDimensions(activeIndex));
 
     // During page resizing, initial renders, or tab changes,
     // we don't want any animation
@@ -34,6 +41,7 @@ const PillTabs: FC<Props> = ({ tabs, activeIndex, handleTabChange }) => {
   const renderedTabs = tabs.map((tab, index) => (
     <>
       <button
+        key={index}
         className={`relative z-0 py-2 px-5 rounded-full ${
           activeIndex === index ? 'text-black' : 'text-white'
         } transition-all`}
@@ -41,9 +49,7 @@ const PillTabs: FC<Props> = ({ tabs, activeIndex, handleTabChange }) => {
           handleTabChange(index);
 
           // Calculate position and width of highlighted tab
-          const left = tabRefs.current[index].getBoundingClientRect().x;
-          const width = tabRefs.current[index].getBoundingClientRect().width;
-          setTabHighlightDimensions({ left: left - 32, width: width });
+          setTabHighlightDimensions(calculateHighlightDimensions(index));
 
           // We only want an animation when changing the active tab.
           // Otherwise on resize or first render there is a distracting movement
@@ -58,7 +64,6 @@ const PillTabs: FC<Props> = ({ tabs, activeIndex, handleTabChange }) => {
             tabRefs.current.push(ref);
           }
         }}
-        key={index}
       >
         {tab.name}
       </button>
@@ -66,16 +71,21 @@ const PillTabs: FC<Props> = ({ tabs, activeIndex, handleTabChange }) => {
   ));
 
   return (
-    <div className="relative flex space-x-4 justify-center">
+    <div 
+      ref={tabContainer}
+      className="relative flex space-x-4 justify-center"
+    >
       {/* Tab buttons */}
-      <div className="relative z-10">{renderedTabs}</div>
+      <div className="relative z-10">
+        {renderedTabs}
+      </div>
 
       {/* Highligted tab */}
       <div
-        className={`absolute z-0 h-full w-8 ease-in-out rounded-full bg-white ${tabHighlightAnimationStyles}`}
+        className={`absolute z-0 h-full ease-in-out rounded-full bg-white ${tabHighlightAnimationStyles}`}
         style={{
           width: `${tabHighlightDimensions.width}px`,
-          left: `${tabHighlightDimensions.left}px`
+          left: `calc(${tabHighlightDimensions.x}px - 1rem)`
         }}
       ></div>
     </div>
