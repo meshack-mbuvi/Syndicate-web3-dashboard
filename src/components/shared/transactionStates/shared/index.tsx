@@ -28,6 +28,8 @@ export const StateModal: React.FC<Props> = (props) => {
     modalStyle === ModalStyle.DARK && 'text-white'
   }`;
 
+  const childWrapperRef = React.useRef<HTMLDivElement>(null);
+
   return (
     <>
       {show ? (
@@ -52,11 +54,13 @@ export const StateModal: React.FC<Props> = (props) => {
 
       <Transition.Root show={show} as={Fragment}>
         <Dialog
+          initialFocus={childWrapperRef}
           className={`fixed z-50 w-screen h-screen overflow-y-scroll no-scroll-bar justify-center align-middle py-auto inset-0 text-center`}
           onClose={() => null}
           open={show}
         >
           <div
+            ref={childWrapperRef}
             className={`flex items-center my-auto justify-center text-center ${textColor} sm:px-4 text-center sm:block sm:p-0`}
           >
             <Transition.Child

@@ -1,6 +1,6 @@
 import { useDisableBgScrollOnModal } from '@/hooks/useDisableBgScrollOnModal';
 import { Dialog, Transition } from '@headlessui/react';
-import React, { Fragment } from 'react';
+import React, { Fragment, useRef } from 'react';
 
 interface ModalProps {
   title?: string;
@@ -89,6 +89,8 @@ const Modal = (props: ModalProps): JSX.Element => {
 
   useDisableBgScrollOnModal(show);
 
+  const childWrapperRef = useRef<HTMLDivElement>(null);
+
   const handleClose = () => {
     if (closeModal) {
       closeModal();
@@ -98,6 +100,7 @@ const Modal = (props: ModalProps): JSX.Element => {
   return (
     <Transition.Root show={show} as={Fragment}>
       <Dialog
+        initialFocus={childWrapperRef}
         className={`fixed z-50 w-screen h-screen overflow-y-scroll no-scroll-bar justify-center align-middle py-auto inset-0 text-center`}
         onClose={() => {
           if (outsideOnClick) {
@@ -107,6 +110,7 @@ const Modal = (props: ModalProps): JSX.Element => {
         open={show}
       >
         <div
+          ref={childWrapperRef}
           className={`flex items-center h-screen my-auto justify-center text-center ${textColor} sm:px-4 text-center sm:block sm:p-0`}
         >
           <Transition.Child
