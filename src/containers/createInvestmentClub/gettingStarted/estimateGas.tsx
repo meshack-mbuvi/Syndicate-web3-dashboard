@@ -24,6 +24,7 @@ const EstimateGas = (props: { customClasses?: string }) => {
   const [nativeTokenPrice, setNativeTokenPrice] = useState<number | undefined>();
 
   const processBaseFee = async (result) => {
+    console.log(result);
     const baseFee = result.result;
     const baseFeeInDecimal = parseInt(baseFee, 16);
     setGasBaseFee(baseFeeInDecimal);
@@ -49,8 +50,10 @@ const EstimateGas = (props: { customClasses?: string }) => {
   }, [account, clubERC20Factory]);
 
   useEffect(() => {
-    void fetchGasUnitAndBaseFee();
-  }, [fetchGasUnitAndBaseFee]);
+    if (activeNetwork.chainId) {
+      void fetchGasUnitAndBaseFee();
+    }
+  }, [fetchGasUnitAndBaseFee, activeNetwork]);
 
   useEffect(() => {
     if (!gasUnits || !gasBaseFee) return;

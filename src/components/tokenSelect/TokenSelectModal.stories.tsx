@@ -23,6 +23,7 @@ const Template: Story<ITokenModal> = (args) => {
   return (
     <TokenSelectModal
       {...args}
+      chainId={1}
       closeModal={() => updateArgs({ showModal: !showModal })}
     />
   );

@@ -31,9 +31,13 @@ export const useMyClubs = (): IProps => {
         ownerAddress: account.toLocaleLowerCase()
       }
     },
+    context: { clientName: 'theGraph', chainId: activeNetwork.chainId },
     skip: !account || !activeNetwork.chainId
   });
-  useEffect(() => {}, [JSON.stringify(data?.syndicateDAOs)]);
+
+  useEffect(() => {
+    void fetchMyClubs();
+  }, [JSON.stringify(data?.syndicateDAOs)]);
 
   const fetchMyClubs = useCallback(async () => {
     if (data?.syndicateDAOs) {

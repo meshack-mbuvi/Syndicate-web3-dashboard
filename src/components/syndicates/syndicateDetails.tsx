@@ -110,6 +110,7 @@ const SyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
         })
       );
     },
+    context: { clientName: 'theGraph', chainId: activeNetwork.chainId },
     skip: !address || loading
   });
 

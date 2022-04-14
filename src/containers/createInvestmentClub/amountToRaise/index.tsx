@@ -15,7 +15,6 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { AdvancedInputField } from '../shared/AdvancedInputField';
 import TokenSelectModal from '@/components/tokenSelect/TokenSelectModal';
-// import { defaultTokenDetails } from '@/containers/createInvestmentClub/shared/ClubTokenDetailConstants';
 import { SUPPORTED_TOKENS } from '@/Networks';
 
 const AmountToRaise: React.FC<{
@@ -73,11 +72,7 @@ const AmountToRaise: React.FC<{
         />
       </div>
       <div className="uppercase">
-        <span>
-          {
-            depositTokenSymbol
-          }
-        </span>
+        <span>{depositTokenSymbol}</span>
       </div>
       <div className="inline-flex ml-4">
         <img className="w-5 h-5" src="/images/double-chevron.svg" alt="" />
@@ -189,6 +184,7 @@ const AmountToRaise: React.FC<{
       <TokenSelectModal
         showModal={showTokenSelectModal}
         closeModal={() => setShowTokenSelectModal(false)}
+        chainId={activeNetwork.chainId}
       />
     </>
   );

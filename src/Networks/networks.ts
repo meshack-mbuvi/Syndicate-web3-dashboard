@@ -47,7 +47,7 @@ export const NETWORKS = Object.freeze({
     blockExplorer: {
       name: 'Etherscan',
       baseUrl: 'https://rinkeby.etherscan.io',
-      api: 'https://rinkeby.etherscan.io',
+      api: 'https://api-rinkeby.etherscan.io/',
       resources: {
         transaction: 'tx',
         address: 'address'
