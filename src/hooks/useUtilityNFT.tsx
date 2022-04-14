@@ -69,7 +69,7 @@ const useUtilityNFT: any = () => {
 
   const getNativePrice = async () => {
     const response = await Promise.all([
-      RugUtilityMintModule.ethPrice(),
+      RugUtilityMintModule.nativePrice(),
       getNativeTokenPrice(activeNetwork.chainId)
     ])
       .then((result) => result)

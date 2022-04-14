@@ -96,7 +96,7 @@ export const ProgressModal = (props: {
               prefix="View on "
               resourceId={transactionHash}
               resource={transactionType}
-              iconColor={iconColor}
+              iconcolor={iconColor}
             />
           </div>
         )}

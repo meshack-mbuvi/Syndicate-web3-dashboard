@@ -321,7 +321,7 @@ export const NFTDetails: React.FC = () => {
               <BlockExplorerLink
                 resourceId={transactionHash}
                 resource="transaction"
-                iconColor={ExternalLinkColor.GRAY}
+                iconcolor={ExternalLinkColor.GRAY}
               />
             </div>
           ) : (
