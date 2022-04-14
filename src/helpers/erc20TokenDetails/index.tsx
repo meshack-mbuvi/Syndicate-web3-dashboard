@@ -146,13 +146,6 @@ export const getERC20TokenDetails = async (
         depositsEnabled = endDateInFuture;
       }
 
-      // temporary fix for 0x563014c0aa72cdf877d2b9b963b55d8859bff411
-      if (
-        address.toLowerCase() === "0x563014c0aa72cdf877d2b9b963b55d8859bff411"
-      ) {
-        depositsEnabled = true;
-      }
-
       return {
         currentMintPolicyAddress,
         totalSupply,
