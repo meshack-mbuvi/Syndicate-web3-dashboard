@@ -1,8 +1,15 @@
+import Image from 'next/image';
 import { InputField } from '../inputField';
 
 export enum TokenType {
   USDC = 'USDC',
   ETH = 'ETH'
+}
+
+export enum SymbolDisplay {
+  ONLY_SYMBOL = 'ONLY_SYMBOL',
+  LOGO_AND_SYMBOL = 'LOGO_AND_SYMBOL',
+  ONLY_LOGO = 'ONLY_LOGO'
 }
 
 export const InputFieldWithToken = (props: {
@@ -14,39 +21,24 @@ export const InputFieldWithToken = (props: {
   depositTokenSymbol?: string;
   extraClasses?: string;
   onChange: (e) => void;
-  showClubSymbol?: boolean;
-  symbol?: string;
+  symbolDisplayVariant?: SymbolDisplay;
 }): React.ReactElement => {
   const {
     value,
     placeholderLabel = 'Unlimited',
     infoLabel,
     isInErrorState = false,
-    depositTokenLogo = '',
+    depositTokenLogo = '/images/token-gray-4.svg',
     depositTokenSymbol = '',
     extraClasses = '',
     onChange,
-    showClubSymbol,
-    symbol,
+    symbolDisplayVariant,
     ...rest
   } = props;
 
-  const TokenSymbolandIcon = () => {
-    return (
-      <div className="flex justify-center items-center">
-        <div className="mr-2 flex items-center justify-center">
-          <img src={depositTokenLogo} width={20} height={20} alt="token icon" />
-        </div>
-        <div className="uppercase text-gray-syn3">
-          <span>{depositTokenSymbol}</span>
-        </div>
-      </div>
-    );
-  };
-
   return (
     <>
-      <div className="relative">
+      <div className="relative w-full">
         <InputField
           value={value}
           placeholderLabel={placeholderLabel}
@@ -59,7 +51,34 @@ export const InputFieldWithToken = (props: {
           className="inline absolute top-1/2 right-4"
           style={{ transform: 'translateY(-50%)' }}
         >
-          {showClubSymbol ? symbol : <TokenSymbolandIcon />}
+          {symbolDisplayVariant === SymbolDisplay.ONLY_SYMBOL ? (
+            <span>{depositTokenSymbol}</span>
+          ) : symbolDisplayVariant === SymbolDisplay.ONLY_LOGO ? (
+            <div className="relative h-5 w-5">
+              {depositTokenLogo && (
+                <Image
+                  layout="fill"
+                  src={depositTokenLogo ?? '/images/token-gray-4.svg'}
+                  alt="token icon"
+                />
+              )}
+            </div>
+          ) : symbolDisplayVariant === SymbolDisplay.LOGO_AND_SYMBOL ? (
+            <div className="flex items-center">
+              <div className="mr-2 flex items-center justify-center relative w-5 h-5">
+                {depositTokenLogo && (
+                  <Image
+                    layout="fill"
+                    src={depositTokenLogo ?? '/images/token-gray-4.svg'}
+                    alt="token icon"
+                  />
+                )}
+              </div>
+              <div className="uppercase text-gray-syn3">
+                <span>{depositTokenSymbol}</span>
+              </div>
+            </div>
+          ) : null}
         </div>
       </div>
       {infoLabel && (
