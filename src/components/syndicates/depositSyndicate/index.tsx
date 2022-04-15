@@ -492,8 +492,8 @@ const DepositSyndicate: React.FC = () => {
     info?: string;
   }[] = [
     {
-      title: 'Approve USDC',
-      info: 'Before depositing, you need to allow the protocol to use your USDC.'
+      title: `Approve ${depositTokenSymbol}`,
+      info: `Before depositing, you need to allow the protocol to use your ${depositTokenSymbol}.`
     },
     { title: 'Complete deposit' }
   ];
@@ -1054,7 +1054,10 @@ const DepositSyndicate: React.FC = () => {
                             ) : (
                               <>
                                 <Image
-                                  src={depositTokenLogo || '/images/token-gray-4.svg'}
+                                  src={
+                                    depositTokenLogo ||
+                                    '/images/token-gray-4.svg'
+                                  }
                                   height={24}
                                   width={24}
                                   className="filter grayscale opacity-40"
@@ -1099,7 +1102,10 @@ const DepositSyndicate: React.FC = () => {
                             ) : (
                               <>
                                 <Image
-                                  src={depositTokenLogo || '/images/token-gray-4.svg'}
+                                  src={
+                                    depositTokenLogo ||
+                                    '/images/token-gray-4.svg'
+                                  }
                                   height={24}
                                   width={24}
                                 />
