@@ -48,17 +48,13 @@ const AmountToRaise: React.FC<{
     >
       <div className="mr-2 flex items-center justify-center">
         <Image
-          src={depositTokenLogo || defaultTokenDetails.depositTokenLogo}
+          src={depositTokenLogo || '/images/token-gray-4.svg'}
           width={20}
           height={20}
         />
       </div>
       <div className="uppercase">
-        <span>
-          {
-            depositTokenSymbol
-          }
-        </span>
+        <span>{depositTokenSymbol}</span>
       </div>
       <div className="inline-flex ml-4">
         <img className="w-5 h-5" src="/images/double-chevron.svg" alt="" />

@@ -484,7 +484,9 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
                 ) : (
                   <InputFieldWithToken
                     depositTokenSymbol={depositTokenSymbol}
-                    depositTokenLogo={depositTokenLogo}
+                    depositTokenLogo={
+                      depositTokenLogo || '/images/token-gray-4.svg'
+                    }
                     value={String(maxAmountRaising)}
                     onChange={(e) => {
                       const amount = numberInputRemoveCommas(e);
