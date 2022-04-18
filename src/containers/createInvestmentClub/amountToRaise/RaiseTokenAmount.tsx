@@ -6,7 +6,6 @@ import {
   InputFieldWithToken,
   SymbolDisplay
 } from '@/components/inputs/inputFieldWithToken';
-import { defaultTokenDetails } from '../shared/ClubTokenDetailConstants';
 import Image from 'next/image';
 
 /**
@@ -52,7 +51,7 @@ const RaiseTokenAmount = (props: {
       <h3 className="mb-1">{title}</h3>
       <span className="text-sm text-gray-syn4 font-whyte">{moreInfo}</span>
       <label className="mt-5 block text-base text-white font-whyte leading-5 mb-2">
-        {'Select token'}
+        {'Raise in'}
       </label>
       <button
         className="flex w-full justify-center items-center cursor-pointer"
@@ -77,7 +76,7 @@ const RaiseTokenAmount = (props: {
           </div>
         </div>
       </button>
-      <p className="mt-6">Enter amount</p>
+      <p className="mt-6">Upper limit</p>
       <div
         className={cn(
           'mt-2 w-full flex border rounded-md overflow-hidden border-gray-24 hover:border-gray-syn3',
