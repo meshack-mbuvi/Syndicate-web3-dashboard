@@ -23,7 +23,7 @@ const PillTabs: FC<Props> = ({ tabs, activeIndex, handleTabChange }) => {
     const tabWidth = tabRefs.current[index].getBoundingClientRect().width;
     
     // Calculate position of tab container
-    const containerX = tabContainer ? tabContainer.current.getBoundingClientRect().x : 0;
+    const containerX = tabContainer.current ? tabContainer.current.getBoundingClientRect().x : 0;
     return {x: tabX - containerX, width: tabWidth}
   }
 
@@ -37,6 +37,12 @@ const PillTabs: FC<Props> = ({ tabs, activeIndex, handleTabChange }) => {
     setTabHighlightAnimationStyles('');
   }, [width, tabs]);
 
+  useEffect(() => {
+
+    // Calculate position and width of highlighted tab
+    setTabHighlightDimensions(calculateHighlightDimensions(activeIndex));
+  }, [activeIndex]);
+
   const tabRefs = useRef([]);
   const renderedTabs = tabs.map((tab, index) => (
     <>
@@ -48,9 +54,6 @@ const PillTabs: FC<Props> = ({ tabs, activeIndex, handleTabChange }) => {
         onClick={() => {
           handleTabChange(index);
 
-          // Calculate position and width of highlighted tab
-          setTabHighlightDimensions(calculateHighlightDimensions(index));
-
           // We only want an animation when changing the active tab.
           // Otherwise on resize or first render there is a distracting movement
           // to the initial position from the left corner
@@ -58,6 +61,7 @@ const PillTabs: FC<Props> = ({ tabs, activeIndex, handleTabChange }) => {
             'transition-all duration-300 ease-out'
           );
         }}
+
         // Add each button in a list of refs
         ref={(ref) => {
           if (ref && !tabRefs.current.includes(ref)) {
