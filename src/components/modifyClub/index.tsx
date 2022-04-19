@@ -112,6 +112,9 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
     currentMintPolicyAddress
   } = erc20Token;
 
+  const { symbol: nativeSymbol, exchangeRate: nativeEchageRate } =
+    activeNetwork.nativeCurrency;
+
   // True is ETH, False is USDC
   const [depositTokenType, setDepositTokenType] = useState(true);
   const [isOpenToDeposits, setIsOpenToDeposits] = useState<boolean>(
@@ -197,11 +200,13 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
         dispatch(setExistingOpenToDepositsUntil(new Date(endTime)));
       }
       if (existingMaxAmountRaising === 0 && depositTokenSymbol) {
-        if (depositTokenSymbol === activeNetwork.nativeCurrency.symbol) {
-          setMaxAmountRaising(maxTotalSupply / 10000);
-          setTotalDepositsAmount(totalSupply / 10000);
-          dispatch(setExistingMaxAmountRaising(maxTotalSupply / 10000));
-          dispatch(setExistingAmountRaised(totalSupply / 10000));
+        if (depositTokenSymbol === nativeSymbol) {
+          setMaxAmountRaising(maxTotalSupply / nativeEchageRate);
+          setTotalDepositsAmount(totalSupply / nativeEchageRate);
+          dispatch(
+            setExistingMaxAmountRaising(maxTotalSupply / nativeEchageRate)
+          );
+          dispatch(setExistingAmountRaised(totalSupply / nativeEchageRate));
         } else {
           setMaxAmountRaising(maxTotalSupply);
           setTotalDepositsAmount(totalSupply);
@@ -213,9 +218,7 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
         setMaxNumberOfMembers(maxMemberCount);
         dispatch(setExistingMaxNumberOfMembers(maxMemberCount));
       }
-      setDepositTokenType(
-        depositTokenSymbol === activeNetwork.nativeCurrency.symbol
-      );
+      setDepositTokenType(depositTokenSymbol === nativeSymbol);
       dispatch(setExistingNumberOfMembers(memberCount));
     }
   }, [
@@ -297,7 +300,11 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
       const updatedEndTime = new Date(openToDepositsUntil);
 
       const _tokenCap = depositTokenType
-        ? getWeiAmount((maxAmountRaising * 10000).toString(), 18, true)
+        ? getWeiAmount(
+            (maxAmountRaising * nativeEchageRate).toString(),
+            18,
+            true
+          )
         : getWeiAmount(String(maxAmountRaising), 18, true);
 
       const mintPolicy = new MintPolicyContract(currentMintPolicyAddress, web3);
@@ -515,10 +522,9 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
                       maxAmountRaisingError
                         ? maxAmountRaisingError
                         : `Upper limit of the club’s raise, corresponding to a club token supply of ${
-                            depositTokenSymbol ===
-                            activeNetwork.nativeCurrency.symbol
+                            depositTokenSymbol === nativeSymbol
                               ? floatedNumberWithCommas(
-                                  maxAmountRaising * 10000
+                                  maxAmountRaising * nativeEchageRate
                                 )
                               : floatedNumberWithCommas(maxAmountRaising)
                           } ${symbol}.`

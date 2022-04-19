@@ -3,7 +3,6 @@ import { isDev } from '@/utils/environment';
 import { AxiosResponse } from 'axios';
 
 export async function getNativeTokenPrice(chainId: number): Promise<number> {
-  console.log('>>>>>>>>>>>>>>', chainId);
   const result: AxiosResponse<number> = await proxyGet(
     'token/native_price_usd',
     {

@@ -22,6 +22,7 @@ export interface INativeCurrency {
   symbol: string;
   name: string;
   decimals: string;
+  exchangeRate: number;
 }
 
 export interface IMetadata {
@@ -131,7 +132,8 @@ export const initialState: InitialState = {
       nativeCurrency: {
         symbol: '',
         name: '',
-        decimals: ''
+        decimals: '',
+        exchangeRate: 1
       },
       metadata: {
         colors: {

@@ -188,7 +188,11 @@ const CreateInvestmentClubProvider: React.FC = ({ children }) => {
       const isNativeDeposit =
         depositTokenSymbol == activeNetwork.nativeCurrency.symbol;
       const _tokenCap = isNativeDeposit
-        ? getWeiAmount((+tokenCap * 10000).toString(), 18, true)
+        ? getWeiAmount(
+            (+tokenCap * activeNetwork.nativeCurrency.exchangeRate).toString(),
+            18,
+            true
+          )
         : getWeiAmount(tokenCap, 18, true);
       const startTime = parseInt((new Date().getTime() / 1000).toString()); // convert to seconds
       if (isNativeDeposit) {

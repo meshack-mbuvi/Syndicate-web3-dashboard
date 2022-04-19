@@ -149,7 +149,8 @@ const useClubERC20s = () => {
           let depositTokenLogo = activeNetwork.logo;
 
           // checks if depositToken is ETH or not
-          let maxTotalDeposits = +maxTotalSupplyFromWei / 10000;
+          let maxTotalDeposits =
+            +maxTotalSupplyFromWei / activeNetwork.nativeCurrency.exchangeRate;
           if (!isZeroAddress(depositToken)) {
             try {
               const depositERC20Token = new ClubERC20Contract(

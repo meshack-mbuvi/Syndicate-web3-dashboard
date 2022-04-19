@@ -59,7 +59,9 @@ const useClubTokenMembers = () => {
       }) => {
         return {
           memberAddress,
-          ownershipShare: parseInt(ownershipShare) / 10000,
+          ownershipShare:
+            parseInt(ownershipShare) /
+            activeNetwork.nativeCurrency.exchangeRate,
           symbol,
           clubTokens: getWeiAmount(tokens, tokenDecimals, false),
           totalSupply: totalSupply,

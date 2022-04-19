@@ -23,7 +23,8 @@ export const NETWORKS = Object.freeze({
     nativeCurrency: {
       symbol: 'ETH',
       name: 'Ethereum',
-      decimals: '18'
+      decimals: '18',
+      exchangeRate: 10000
     },
     metadata: {
       colors: {
@@ -56,7 +57,8 @@ export const NETWORKS = Object.freeze({
     nativeCurrency: {
       symbol: 'ETH',
       name: 'Ethereum',
-      decimals: '18'
+      decimals: '18',
+      exchangeRate: 10000
     },
     metadata: {
       colors: {
@@ -90,7 +92,8 @@ export const NETWORKS = Object.freeze({
     nativeCurrency: {
       symbol: 'MATIC',
       name: 'Polygon',
-      decimals: '18'
+      decimals: '18',
+      exchangeRate: 10
     },
     metadata: {
       colors: {

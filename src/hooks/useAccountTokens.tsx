@@ -97,6 +97,7 @@ export function useAccountTokens(): {
           setMemberDeposits(
             getWeiAmount(depositAmount, depositTokenDecimals, false)
           );
+          // this is a percentage conversion with a base of 10000, 1% == 10000
           setMemberOwnership(`${+ownershipShare / 10000}`);
         } else {
           resetMemberStats();
@@ -129,7 +130,11 @@ export function useAccountTokens(): {
     accountTokens,
     memberPercentShare: memberOwnership,
     memberDeposits: nativeDepositToken
-      ? parseFloat((Number(memberDeposits) * 10000).toString())
+      ? parseFloat(
+          (
+            Number(memberDeposits) * activeNetwork.nativeCurrency.exchangeRate
+          ).toString()
+        )
       : memberDeposits,
     memberOwnership,
     refetchMemberData: refetch,

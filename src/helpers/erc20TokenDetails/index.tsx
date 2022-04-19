@@ -267,7 +267,8 @@ export const setERC20Token =
            * the ratio is 1:1
            */
           maxTotalDeposits: _nativeDepositToken
-            ? Number(erc20Token.maxTotalDeposits) / 10000
+            ? Number(erc20Token.maxTotalDeposits) /
+              activeNetwork.nativeCurrency.exchangeRate
             : erc20Token.maxTotalDeposits
         })
       );

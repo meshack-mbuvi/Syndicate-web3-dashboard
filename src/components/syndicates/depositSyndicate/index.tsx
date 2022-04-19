@@ -331,8 +331,8 @@ const DepositSyndicate: React.FC = () => {
 
   const SINGLE_TOKEN_MINT_MODULE_ADDR =
     CONTRACT_ADDRESSES[activeNetwork.chainId]?.SingleTokenMintModule;
-  const ETH_MINT_MODULE =
-    CONTRACT_ADDRESSES[activeNetwork.chainId]?.OwnerMintModule;
+  const NATIVE_MINT_MODULE =
+    CONTRACT_ADDRESSES[activeNetwork.chainId]?.nativeMintModule;
   const DEPOSIT_TOKEN_MINT_MODULE =
     CONTRACT_ADDRESSES[activeNetwork.chainId]?.DepositTokenMintModule;
 
@@ -350,7 +350,7 @@ const DepositSyndicate: React.FC = () => {
     setTransactionFailed(false);
 
     try {
-      if (mintModule === ETH_MINT_MODULE) {
+      if (mintModule === NATIVE_MINT_MODULE) {
         await syndicateContracts.NativeMintModule?.deposit(
           getWeiAmount(amount, depositTokenDecimals, true),
           erc20TokenContract.clubERC20Contract._address,
@@ -1497,16 +1497,18 @@ const DepositSyndicate: React.FC = () => {
                 }
               >
                 {nativeDepositToken ? (
-                  /** We are using 10000 because of the conversion */
                   <HoldingsInfo
                     title="Amount deposited"
                     amount={floatedNumberWithCommas(
-                      memberDeposits / 10000,
+                      memberDeposits /
+                        activeNetwork.nativeCurrency.exchangeRate,
                       true
                     )}
                     tokenName={activeNetwork.nativeCurrency.symbol}
                     amountInUSD={
-                      (memberDeposits / 10000) * depositTokenPriceInUSD
+                      (memberDeposits /
+                        activeNetwork.nativeCurrency.exchangeRate) *
+                      depositTokenPriceInUSD
                     }
                   />
                 ) : (
