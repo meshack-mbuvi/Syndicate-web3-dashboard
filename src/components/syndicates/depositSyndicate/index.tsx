@@ -518,6 +518,32 @@ const DepositSyndicate: React.FC = () => {
     }
   }, [depositAmount, currentMemberAllowance, ethDepositToken]);
 
+  // check member account balance for deposit token.
+  // we'll disable the continue button and style the input field accordingly
+  // if the deposit amount is less than the account balance
+  useEffect(() => {
+    if (ethDepositToken) {
+      checkETHBalance();
+    } else {
+      checkERC20TokenBalance();
+    }
+  }, [
+    depositAmount,
+    erc20Token,
+    erc20TokenContract,
+    erc20Balance,
+    etherBalance,
+    ethDepositToken,
+    depositTokenSwitched
+  ]);
+
+  useEffect(() => {
+    checkClubWideErrors();
+  }, [totalDeposits, maxTotalDeposits, memberDeposits, account]);
+
+  const isDemoMode = useDemoMode();
+  const { width } = useWindowSize();
+
   /** ====== ADDITIONAL METHODS ======== */
 
   // method to check the allowance amount approved by a member.
@@ -725,25 +751,6 @@ const DepositSyndicate: React.FC = () => {
     depositButtonText = 'Continue';
   }
 
-  // check member account balance for deposit token.
-  // we'll disable the continue button and style the input field accordingly
-  // if the deposit amount is less than the account balance
-  useEffect(() => {
-    if (ethDepositToken) {
-      checkETHBalance();
-    } else {
-      checkERC20TokenBalance();
-    }
-  }, [
-    depositAmount,
-    erc20Token,
-    erc20TokenContract,
-    erc20Balance,
-    etherBalance,
-    ethDepositToken,
-    depositTokenSwitched
-  ]);
-
   const checkETHBalance = async () => {
     try {
       if (depositTokenSwitched) {
@@ -797,10 +804,6 @@ const DepositSyndicate: React.FC = () => {
       return 0;
     }
   };
-
-  useEffect(() => {
-    checkClubWideErrors();
-  }, [totalDeposits, maxTotalDeposits, memberDeposits, account]);
 
   const checkClubWideErrors = () => {
     let message;
@@ -871,11 +874,8 @@ const DepositSyndicate: React.FC = () => {
     toggleDepositProcessingModal();
   };
 
-  const { width } = useWindowSize();
   const isHoldingsCardColumn =
     +memberDeposits >= 10000 && ((width > 868 && width < 1536) || width < 500);
-
-  const isDemoMode = useDemoMode();
 
   return (
     <ErrorBoundary>
@@ -1660,7 +1660,7 @@ const DepositSyndicate: React.FC = () => {
                         height={24}
                         width={24}
                       />
-                      <p className="ml-2 text-base">{symbol.slice(1)}</p>
+                      <p className="ml-2 text-base">{symbol?.slice(1)}</p>
                     </div>
                   </div>
                 </div>

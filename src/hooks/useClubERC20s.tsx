@@ -7,12 +7,12 @@ import {
   setOtherClubERC20s
 } from '@/state/clubERC20';
 import { formatDate, isZeroAddress, pastDate } from '@/utils';
+import { getTokenDetails } from '@/utils/api';
 import { divideIfNotByZero, getWeiAmount } from '@/utils/conversions';
 import { useQuery } from '@apollo/client';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { getTokenDetails } from '@/utils/api';
 
 const useClubERC20s = () => {
   const dispatch = useDispatch();
@@ -284,33 +284,32 @@ const useClubERC20s = () => {
                 depositAmount,
                 syndicateDAO: {
                   contractAddress,
-                  createdAt,
+                  endTime,
+                  startTime,
                   ownerAddress,
                   totalSupply,
                   totalDeposits,
                   maxTotalSupply,
-                  members,
-                  endTime,
-                  startTime
+                  members
                 }
               } = syndicateDAO;
 
               clubTokens.push({
                 depositAmount,
                 contractAddress,
-                createdAt,
+                endTime,
+                startTime,
                 ownerAddress,
                 totalSupply,
                 totalDeposits,
                 maxTotalSupply,
-                members,
-                endTime,
-                startTime
+                members
               });
             }
           }
         }
       }
+
       dispatch(setLoadingClubERC20s(false));
 
       setClubIamMember(clubTokens);

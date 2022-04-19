@@ -74,7 +74,13 @@ export function useClubDepositsAndSupply(contractAddress: string): {
       return;
     }
 
-    if (loading || !data || erc20Token?.loading || data.syndicateDAOs.length == 0) return;
+    if (
+      loading ||
+      !data ||
+      erc20Token?.loading ||
+      data.syndicateDAOs.length == 0
+    )
+      return;
 
     const {
       syndicateDAOs: [syndicateDAO]

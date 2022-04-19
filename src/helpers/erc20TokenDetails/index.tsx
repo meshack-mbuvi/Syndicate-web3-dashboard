@@ -109,7 +109,6 @@ export const getERC20TokenDetails = async (
       let depositsEnabled = false;
       if (!claimEnabled) {
         const endDateInFuture = +endTime * 1000 > new Date().getTime();
-
         depositsEnabled = endDateInFuture;
       }
 
@@ -259,6 +258,7 @@ export const setERC20Token =
             : erc20Token.maxTotalDeposits
         })
       );
+
       dispatch(setLoadingClub(false));
     } catch (error) {
       return dispatch(setERC20TokenDetails(ERC20TokenDefaultState));

@@ -65,7 +65,7 @@ const LegalAgreement: React.FC = () => {
     erc20TokenSliceReducer: {
       erc20Token,
       // TODO: I think this should be in USD
-      depositDetails: { depositTokenSymbol, ethDepositToken }
+      depositDetails: { depositTokenSymbol }
     }
   } = useSelector((state: AppState) => state);
 
@@ -83,19 +83,7 @@ const LegalAgreement: React.FC = () => {
         dispatch(setClubMembers([]));
       };
     }
-  }, [clubAddress, account, router.isReady, ethDepositToken]);
-
-  const {
-    control,
-    handleSubmit,
-    watch,
-    formState: { isValid }
-  } = useForm<FormInputs>({
-    mode: 'onChange',
-    resolver: yupResolver(schema(erc20Token.maxTotalDeposits))
-  });
-
-  const { memberName = '' } = watch();
+  }, [clubAddress, account, router.isReady]);
 
   const { form } = router.query;
   // Check whether form query param exist when page has loaded
@@ -119,6 +107,18 @@ const LegalAgreement: React.FC = () => {
       }
     }
   }, [router.isReady, form]);
+
+  const {
+    control,
+    handleSubmit,
+    watch,
+    formState: { isValid }
+  } = useForm<FormInputs>({
+    mode: 'onChange',
+    resolver: yupResolver(schema(erc20Token.maxTotalDeposits))
+  });
+
+  const { memberName = '' } = watch();
 
   const onSubmit = (values) => {
     dispatch(setMemberLegalInfo(values));

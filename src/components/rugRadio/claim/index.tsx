@@ -32,7 +32,7 @@ export const ClaimComponent: React.FC = () => {
   const [showNFTchecker, setShowNFTchecker] = useState(false);
   const [showClaimComponent, setShowClaimComponent] = useState(false);
 
-  const { loading, hasGenesisNFT, claimEnabled, claimStartTime } =
+  const { loading, hasGenesisNFT, claimEnabled, claimStartTime, hasRugTokens } =
     useOwnsGenesisNFT();
 
   useEffect(() => {
@@ -88,7 +88,7 @@ export const ClaimComponent: React.FC = () => {
     <Layout>
       <div className="w-full">
         <div className="container mx-auto">
-          {showClaimComponent && hasGenesisNFT ? (
+          {showClaimComponent && (hasGenesisNFT || hasRugTokens) ? (
             <NFTDetails />
           ) : (
             <div className="w-full">
@@ -114,7 +114,8 @@ export const ClaimComponent: React.FC = () => {
                         <div className="flex space-x-4">
                           <Image
                             src={
-                              status === Status.DISCONNECTED || !hasGenesisNFT
+                              status === Status.DISCONNECTED ||
+                              !((hasGenesisNFT && claimEnabled) || hasRugTokens)
                                 ? emptyCheck
                                 : checkMark
                             }
@@ -123,7 +124,7 @@ export const ClaimComponent: React.FC = () => {
                             width={32}
                           />
                           <span className="flex items-center">
-                            Own a RugRadio Genesis NFT
+                            Own a RugRadio Genesis NFT or $RUG tokens
                           </span>
                         </div>
                       </div>
@@ -139,10 +140,14 @@ export const ClaimComponent: React.FC = () => {
                         ) : (
                           <CtaButton
                             onClick={handleContinue}
-                            greenCta={hasGenesisNFT && claimEnabled}
-                            disabled={!hasGenesisNFT && claimEnabled}
+                            greenCta={
+                              (hasGenesisNFT && claimEnabled) || hasRugTokens
+                            }
+                            disabled={
+                              !((hasGenesisNFT && claimEnabled) || hasRugTokens)
+                            }
                           >
-                            {hasGenesisNFT
+                            {hasGenesisNFT || hasRugTokens
                               ? claimEnabled
                                 ? 'Continue'
                                 : 'Claiming available soon'
