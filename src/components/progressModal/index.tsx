@@ -1,14 +1,13 @@
-import { EtherscanLink } from "@/components/syndicates/shared/EtherscanLink";
-import Modal, { ModalStyle } from "../modal";
-import { Spinner } from "../shared/spinner";
-import {
-  ExternalLinkColor} from "src/components/iconWrappers";
+import { EtherscanLink } from '@/components/syndicates/shared/EtherscanLink';
+import Modal, { ModalStyle } from '../modal';
+import { Spinner } from '../shared/spinner';
+import { ExternalLinkColor } from 'src/components/iconWrappers';
 
 export enum ProgressModalState {
-  PENDING = "PENDING",
-  SUCCESS = "SUCCESS",
-  FAILURE = "FAILURE",
-  CONFIRM = "CONFIRM",
+  PENDING = 'PENDING',
+  SUCCESS = 'SUCCESS',
+  FAILURE = 'FAILURE',
+  CONFIRM = 'CONFIRM'
 }
 
 export const ProgressModal = (props: {
@@ -22,7 +21,7 @@ export const ProgressModal = (props: {
   etherscanHash?: string;
   transactionType?: string;
   etherscanLinkText?: string;
-  iconColor?: ExternalLinkColor
+  iconColor?: ExternalLinkColor;
 }): React.ReactElement => {
   const {
     title,
@@ -34,8 +33,8 @@ export const ProgressModal = (props: {
     transactionType,
     isVisible = false,
     buttonFullWidth = false,
-    etherscanLinkText = "View on Etherscan",
-    iconColor = ExternalLinkColor.BLUE,
+    etherscanLinkText = 'View on Etherscan',
+    iconColor = ExternalLinkColor.BLUE
   } = props;
 
   let icon;
@@ -98,7 +97,7 @@ export const ProgressModal = (props: {
               etherscanInfo={etherscanHash}
               type={transactionType}
               text={etherscanLinkText}
-              iconColor={iconColor}
+              iconcolor={iconColor}
             />
           </div>
         )}
@@ -107,7 +106,7 @@ export const ProgressModal = (props: {
           <button
             onClick={buttonOnClick}
             className={`primary-CTA flex-shrink block mx-auto mt-8 ${
-              buttonFullWidth ? "w-full" : ""
+              buttonFullWidth ? 'w-full' : ''
             }`}
           >
             {buttonLabel}

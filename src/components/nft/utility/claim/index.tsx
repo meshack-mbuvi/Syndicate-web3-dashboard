@@ -1,24 +1,24 @@
-import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
-import { AppState } from "@/state";
-import { Status } from "@/state/wallet/types";
-import NFTCard from "./nftCard";
-import LoadingClaim from "./loadingState";
-import useUtilityNFT from "@/hooks/useUtilityNFT";
-import { useRouter } from "next/router";
-import Image from "next/image";
-import { EyeIcon, EyeOffIcon } from "@heroicons/react/solid";
-import { BigNumber } from "bignumber.js";
-import ProcessingClaimModal from "./processingClaimModal";
+import React, { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
+import { AppState } from '@/state';
+import { Status } from '@/state/wallet/types';
+import NFTCard from './nftCard';
+import LoadingClaim from './loadingState';
+import useUtilityNFT from '@/hooks/useUtilityNFT';
+import { useRouter } from 'next/router';
+import Image from 'next/image';
+import { EyeIcon, EyeOffIcon } from '@heroicons/react/solid';
+import { BigNumber } from 'bignumber.js';
+import ProcessingClaimModal from './processingClaimModal';
 
 const ClaimUtilityNFT: React.FC = () => {
   const {
     web3Reducer: {
-      web3: { status, account },
+      web3: { status, account }
     },
     utilityNFTSliceReducer: { utilityNFT },
 
-    initializeContractsReducer: { syndicateContracts },
+    initializeContractsReducer: { syndicateContracts }
   } = useSelector((state: AppState) => state);
 
   const router = useRouter();
@@ -44,7 +44,7 @@ const ClaimUtilityNFT: React.FC = () => {
       setSelectedNFTCards((oldArray) => [...oldArray, childData]);
     } else {
       setSelectedNFTCards(
-        selectedNFTCards.filter((item) => item !== childData),
+        selectedNFTCards.filter((item) => item !== childData)
       );
     }
   };
@@ -61,7 +61,7 @@ const ClaimUtilityNFT: React.FC = () => {
         if (!membershipPass.claimed) {
           setUnclaimedNFTs((items) => [
             ...items,
-            Number(membershipPass.token_id),
+            Number(membershipPass.token_id)
           ]);
         }
       });
@@ -92,7 +92,7 @@ const ClaimUtilityNFT: React.FC = () => {
   const onTxReceipt = async (receipt, tokenIDs) => {
     setUnclaimedNFTs(unclaimedNFTs.filter((item) => !tokenIDs.includes(item)));
     setSelectedNFTCards(
-      selectedNFTCards.filter((item) => !tokenIDs.includes(item)),
+      selectedNFTCards.filter((item) => !tokenIDs.includes(item))
     );
 
     setClaimList([]);
@@ -119,7 +119,7 @@ const ClaimUtilityNFT: React.FC = () => {
         onTxConfirm,
         onTxReceipt,
         onTxFail,
-        setTransactionHash,
+        setTransactionHash
       );
       setTransactionHash(transactionHash);
     } catch (error) {
@@ -147,7 +147,7 @@ const ClaimUtilityNFT: React.FC = () => {
             </div>
             <div className="text-4.5xl h1 leading-11.5">
               You’re eligible to claim {unclaimedNFTs.length} NFT
-              {unclaimedNFTs.length > 1 && "s"}
+              {unclaimedNFTs.length > 1 && 's'}
             </div>
             <div className="h3 text-gray-syn4 mt-4">
               Claim your NFTs in the early access member mint
@@ -164,12 +164,12 @@ const ClaimUtilityNFT: React.FC = () => {
                   >
                     {hideClaimed ? (
                       <div className="flex space-x-2 items-center">
-                        <EyeIcon className="w-4 h-4"></EyeIcon>{" "}
+                        <EyeIcon className="w-4 h-4"></EyeIcon>{' '}
                         <span>UnHide Claimed NFT</span>
                       </div>
                     ) : (
                       <div className="flex space-x-2 flex space-x-2 items-center">
-                        <EyeOffIcon className="w-4 h-4"></EyeOffIcon>{" "}
+                        <EyeOffIcon className="w-4 h-4"></EyeOffIcon>{' '}
                         <span>Hide Claimed NFTs</span>
                       </div>
                     )}
@@ -180,7 +180,7 @@ const ClaimUtilityNFT: React.FC = () => {
                     <div className="flex items-center">
                       <div className="flex space-x-8 mr-8">
                         <div>
-                          {selectedNFTCards.length} of {utilityNFT.totalClaims}{" "}
+                          {selectedNFTCards.length} of {utilityNFT.totalClaims}{' '}
                           selected:
                         </div>
                       </div>
@@ -238,20 +238,20 @@ const ClaimUtilityNFT: React.FC = () => {
                     <div key={i}>
                       <NFTCard
                         {...{
-                          collectible: membershipPass,
+                          collectible: membershipPass
                         }}
                         collectibleSelected={selectedNFTCards.includes(
-                          Number(membershipPass.token_id),
+                          Number(membershipPass.token_id)
                         )}
                         handeleSelectedCollectibleId={handleSelected}
                         handleClaimedCollectible={handleClaimed}
                         claiming={claimList.includes(
-                          Number(membershipPass.token_id),
+                          Number(membershipPass.token_id)
                         )}
                         claimed={
                           membershipPass.claimed ||
                           !unclaimedNFTs.includes(
-                            Number(membershipPass.token_id),
+                            Number(membershipPass.token_id)
                           )
                         }
                       />
@@ -261,15 +261,15 @@ const ClaimUtilityNFT: React.FC = () => {
                   <div key={i}>
                     <NFTCard
                       {...{
-                        collectible: membershipPass,
+                        collectible: membershipPass
                       }}
                       collectibleSelected={selectedNFTCards.includes(
-                        Number(membershipPass.token_id),
+                        Number(membershipPass.token_id)
                       )}
                       handeleSelectedCollectibleId={handleSelected}
                       handleClaimedCollectible={handleClaimed}
                       claiming={claimList.includes(
-                        Number(membershipPass.token_id),
+                        Number(membershipPass.token_id)
                       )}
                       claimed={
                         membershipPass.claimed ||

@@ -1,92 +1,93 @@
-import { ClubERC20Contract } from "@/ClubERC20Factory/clubERC20";
-import BackButton from "@/components/buttons/BackButton";
-import ErrorBoundary from "@/components/errorBoundary";
-import Layout from "@/components/layout";
-import OnboardingModal from "@/components/onboarding";
-import { EtherscanLink } from "@/components/syndicates/shared/EtherscanLink";
-import Head from "@/components/syndicates/shared/HeaderTitle";
-import SyndicateDetails from "@/components/syndicates/syndicateDetails";
-import { setERC20Token } from "@/helpers/erc20TokenDetails";
-import { useAccountTokens } from "@/hooks/useAccountTokens";
-import { useClubDepositsAndSupply } from "@/hooks/useClubDepositsAndSupply";
-import { useIsClubOwner } from "@/hooks/useClubOwner";
-import useClubTokenMembers from "@/hooks/useClubTokenMembers";
-import { useDemoMode } from "@/hooks/useDemoMode";
-import { useGetTokenPrice } from "@/hooks/useGetTokenPrice";
-import useTransactions from "@/hooks/useTransactions";
-import NotFoundPage from "@/pages/404";
-import { AppState } from "@/state";
+import { ClubERC20Contract } from '@/ClubERC20Factory/clubERC20';
+import BackButton from '@/components/buttons/BackButton';
+import ErrorBoundary from '@/components/errorBoundary';
+import Layout from '@/components/layout';
+import OnboardingModal from '@/components/onboarding';
+import { EtherscanLink } from '@/components/syndicates/shared/EtherscanLink';
+import Head from '@/components/syndicates/shared/HeaderTitle';
+import SyndicateDetails from '@/components/syndicates/syndicateDetails';
+import {
+  ERC20TokenDefaultState,
+  setERC20Token
+} from '@/helpers/erc20TokenDetails';
+import { useAccountTokens } from '@/hooks/useAccountTokens';
+import { useClubDepositsAndSupply } from '@/hooks/useClubDepositsAndSupply';
+import { useIsClubOwner } from '@/hooks/useClubOwner';
+import useClubTokenMembers from '@/hooks/useClubTokenMembers';
+import { useDemoMode } from '@/hooks/useDemoMode';
+import { useGetDepositTokenPrice } from '@/hooks/useGetDepositTokenPrice';
+import useTransactions from '@/hooks/useTransactions';
+import NotFoundPage from '@/pages/404';
+import { AppState } from '@/state';
 import {
   clearCollectiblesTransactions,
   fetchCollectiblesTransactions,
   fetchTokenTransactions,
   setMockCollectiblesResult,
-  setMockTokensResult,
-} from "@/state/assets/slice";
-import { setClubMembers } from "@/state/clubMembers";
+  setMockTokensResult
+} from '@/state/assets/slice';
+import { setClubMembers } from '@/state/clubMembers';
 import {
   setDepositTokenUSDPrice,
   setERC20TokenContract,
   setERC20TokenDepositDetails,
-  setERC20TokenDetails,
-} from "@/state/erc20token/slice";
-import { clearMyTransactions } from "@/state/erc20transactions";
-import { Status } from "@/state/wallet/types";
-import { getTextWidth } from "@/utils/getTextWidth";
+  setERC20TokenDetails
+} from '@/state/erc20token/slice';
+import { clearMyTransactions } from '@/state/erc20transactions';
+import { Status } from '@/state/wallet/types';
+import { ChainEnum } from '@/utils/api/ChainTypes';
+import { isDev } from '@/utils/environment';
+import { getTextWidth } from '@/utils/getTextWidth';
 import {
   mockActiveERC20Token,
   mockDepositModeTokens,
-  mockTokensResult,
-} from "@/utils/mockdata";
-import window from "global";
-import { useRouter } from "next/router";
-import React, { FC, useEffect, useMemo, useRef, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { syndicateActionConstants } from "src/components/syndicates/shared/Constants";
-import ClubTokenMembers from "../managerActions/clubTokenMembers/index";
-import ActivityView from "./activity";
-import Assets from "./assets";
-import TabButton from "./TabButton";
+  mockTokensResult
+} from '@/utils/mockdata';
+import window from 'global';
+import { useRouter } from 'next/router';
+import React, { FC, useEffect, useMemo, useRef, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { syndicateActionConstants } from 'src/components/syndicates/shared/Constants';
+import ClubTokenMembers from '../managerActions/clubTokenMembers/index';
+import ActivityView from './activity';
+import Assets from './assets';
+import TabButton from './TabButton';
 
 const LayoutWithSyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
   managerSettingsOpen,
-  children,
+  children
 }) => {
   const {
     initializeContractsReducer: { syndicateContracts },
     merkleProofSliceReducer: { myMerkleProof },
     web3Reducer: {
-      web3: { account, web3, status },
+      web3: { account, web3, status }
     },
     erc20TokenSliceReducer: {
-      erc20Token: {
-        owner,
-        loading,
-        name,
-        depositsEnabled,
-        maxTotalDeposits,
-        address,
-      },
-      depositDetails: { ethDepositToken },
-      depositTokenPriceInUSD,
-    },
+      erc20Token,
+      depositDetails: { ethDepositToken, chainId },
+      depositTokenPriceInUSD
+    }
   } = useSelector((state: AppState) => state);
+
+  const { owner, loading, name, depositsEnabled, maxTotalDeposits, address } =
+    erc20Token;
 
   // Get clubAddress from window.location object since during page load, router is not ready
   // hence clubAddress is undefined.
   // We need to have access to clubAddress as early as possible.
-  const clubAddress = window?.location?.pathname.split("/")[2];
+  const clubAddress = window?.location?.pathname.split('/')[2];
 
   const isDemoMode = useDemoMode(clubAddress);
   // dispatch the price of the deposit token for use in other
   // components
-  useGetTokenPrice();
-  const zeroAddress = "0x0000000000000000000000000000000000000000";
+  useGetDepositTokenPrice(chainId);
+  const zeroAddress = '0x0000000000000000000000000000000000000000';
 
   useEffect(() => {
     // Demo mode
     if (clubAddress === zeroAddress) {
-      router.push("/clubs/demo/manage");
+      router.push('/clubs/demo/manage');
     }
   });
 
@@ -115,16 +116,19 @@ const LayoutWithSyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
       // also clearing token details when switching between clubs
       dispatch(setDepositTokenUSDPrice(0));
 
+      dispatch(setERC20TokenDetails(ERC20TokenDefaultState));
       dispatch(
         setERC20TokenDepositDetails({
-          mintModule: "",
+          mintModule: '',
           ethDepositToken: false,
-          depositToken: "",
-          depositTokenSymbol: "",
-          depositTokenLogo: "/images/usdcicon.png",
-          depositTokenName: "",
+          chainId: isDev ? ChainEnum.RINKEBY : ChainEnum.ETHEREUM,
+          depositToken: '',
+          depositTokenSymbol: '',
+          depositTokenLogo: '/images/usdcicon.png',
+          depositTokenName: '',
           depositTokenDecimals: 6,
-        }),
+          loading: true
+        })
       );
     };
   }, [dispatch]);
@@ -141,9 +145,9 @@ const LayoutWithSyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
     const onScroll = (e) => {
       setScrollTop(e.target.documentElement.scrollTop);
     };
-    window.addEventListener("scroll", onScroll);
+    window.addEventListener('scroll', onScroll);
 
-    return () => window.removeEventListener("scroll", onScroll);
+    return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
   // Change sub-nav and nav styles when stuck
@@ -167,11 +171,11 @@ const LayoutWithSyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
     dispatch(
       fetchCollectiblesTransactions({
         account: owner,
-        offset: "0",
+        offset: '0',
         maxTotalDeposits: ethDepositToken
           ? parseInt((depositTokenPriceInUSD * maxTotalDeposits).toString())
-          : maxTotalDeposits,
-      }),
+          : maxTotalDeposits
+      })
     );
   };
 
@@ -198,7 +202,7 @@ const LayoutWithSyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
     maxTotalDeposits,
     depositTokenPriceInUSD,
     loadingClubDeposits,
-    ethDepositToken,
+    ethDepositToken
   ]);
 
   useEffect(() => {
@@ -221,7 +225,7 @@ const LayoutWithSyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
     ) {
       const clubERC20tokenContract = new ClubERC20Contract(
         clubAddress as string,
-        web3,
+        web3
       );
 
       dispatch(setERC20TokenContract(clubERC20tokenContract));
@@ -238,16 +242,17 @@ const LayoutWithSyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
   }, [
     clubAddress,
     account,
+    ethDepositToken,
     status,
-    syndicateContracts?.DepositTokenMintModule,
+    syndicateContracts?.DepositTokenMintModule
   ]);
 
   const showOnboardingIfNeeded =
-    router.pathname.endsWith("[clubAddress]") && !isDemoMode;
+    router.pathname.endsWith('[clubAddress]') && !isDemoMode;
 
   const transform = useMemo(
-    () => (getTextWidth(name) > 590 ? "translateY(0%)" : "translateY(-50%)"),
-    [name],
+    () => (getTextWidth(name) > 590 ? 'translateY(0%)' : 'translateY(-50%)'),
+    [name]
   );
 
   // get static text from constants
@@ -277,7 +282,7 @@ const LayoutWithSyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
     </div>
   );
 
-  const [activeTab, setActiveTab] = useState("assets");
+  const [activeTab, setActiveTab] = useState('assets');
 
   const isActive = !depositsEnabled;
   const isOwnerOrMember =
@@ -287,7 +292,7 @@ const LayoutWithSyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
 
   useEffect(() => {
     if (!renderOnDisconnect) {
-      setActiveTab("assets");
+      setActiveTab('assets');
     }
   }, [renderOnDisconnect]);
 
@@ -301,7 +306,7 @@ const LayoutWithSyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
           showNav={showNav}
           showBackButton={true}
         >
-          <Head title={name || "Club"} />
+          <Head title={name || 'Club'} />
           <ErrorBoundary>
             {showOnboardingIfNeeded && <OnboardingModal />}
             <div className="w-full">
@@ -321,7 +326,7 @@ const LayoutWithSyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
                     {/* Left Column */}
                     <div
                       className={`md:col-start-1 ${
-                        managerSettingsOpen ? "md:col-end-8" : "md:col-end-7"
+                        managerSettingsOpen ? 'md:col-end-8' : 'md:col-end-7'
                       } col-span-12`}
                     >
                       {/* its used as an identifier for ref in small devices */}
@@ -345,17 +350,17 @@ const LayoutWithSyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
                         <div
                           ref={subNav}
                           className={`${
-                            isSubNavStuck ? "bg-gray-syn8" : "bg-black"
+                            isSubNavStuck ? 'bg-gray-syn8' : 'bg-black'
                           } sticky top-0 z-15 transition-all edge-to-edge-with-left-inset`}
                         >
                           <nav className="flex space-x-10" aria-label="Tabs">
                             <button
                               key="assets"
-                              onClick={() => setActiveTab("assets")}
-                              className={`whitespace-nowrap h4 w-fit-content py-6 transition-all border-b-1 focus:ring-0 font-whyte text-sm cursor-pointer ${
-                                activeTab == "assets"
-                                  ? "border-white text-white"
-                                  : "border-transparent text-gray-syn4 hover:text-gray-40"
+                              onClick={() => setActiveTab('assets')}
+                              className={`whitespace-nowrap h4 w-fit-content py-6 transition-all border-b-1 focus:ring-0 cursor-pointer ${
+                                activeTab == 'assets'
+                                  ? 'border-white text-white'
+                                  : 'border-transparent text-gray-syn4 hover:text-gray-40'
                               }`}
                             >
                               Assets
@@ -363,11 +368,11 @@ const LayoutWithSyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
                             {(renderOnDisconnect || isDemoMode) && (
                               <button
                                 key="members"
-                                onClick={() => setActiveTab("members")}
-                                className={`whitespace-nowrap h4 py-6 transition-all border-b-1 focus:ring-0 font-whyte text-sm cursor-pointer ${
-                                  activeTab == "members"
-                                    ? "border-white text-white"
-                                    : "border-transparent text-gray-syn4 hover:text-gray-400 "
+                                onClick={() => setActiveTab('members')}
+                                className={`whitespace-nowrap h4 py-6 transition-all border-b-1 focus:ring-0 cursor-pointer ${
+                                  activeTab == 'members'
+                                    ? 'border-white text-white'
+                                    : 'border-transparent text-gray-syn4 hover:text-gray-400 '
                                 }`}
                               >
                                 Members
@@ -375,29 +380,29 @@ const LayoutWithSyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
                             )}
                             {(renderOnDisconnect || isDemoMode) && (
                               <TabButton
-                                active={activeTab === "activity"}
+                                active={activeTab === 'activity'}
                                 label="Activity"
-                                onClick={() => setActiveTab("activity")}
+                                onClick={() => setActiveTab('activity')}
                               />
                             )}
                           </nav>
                           <div
                             className={`${
-                              isSubNavStuck ? "hidden" : "block"
+                              isSubNavStuck ? 'hidden' : 'block'
                             } border-b-1 border-gray-syn7 absolute w-screen right-0`}
                           ></div>
                         </div>
 
                         <div className="text-base grid grid-cols-12 gap-y-5">
                           <div className="col-span-12">
-                            {activeTab == "assets" && <Assets />}
-                            {activeTab == "members" &&
+                            {activeTab == 'assets' && <Assets />}
+                            {activeTab == 'members' &&
                               (renderOnDisconnect || isDemoMode) && (
                                 <div className="-mr-6 sm:mr-auto">
                                   <ClubTokenMembers />
                                 </div>
                               )}
-                            {activeTab == "activity" &&
+                            {activeTab == 'activity' &&
                               (renderOnDisconnect || isDemoMode) && (
                                 <ActivityView />
                               )}

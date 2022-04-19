@@ -1,21 +1,21 @@
-import { useDemoMode } from "@/hooks/useDemoMode";
-import { AppState } from "@/state";
-import { setERC20TokenDetails } from "@/state/erc20token/slice";
-import { mockDepositERC20Token, mockActiveERC20Token } from "@/utils/mockdata";
-import { useRouter } from "next/router";
-import { useDispatch, useSelector } from "react-redux";
+import { useDemoMode } from '@/hooks/useDemoMode';
+import { AppState } from '@/state';
+import { setERC20TokenDetails } from '@/state/erc20token/slice';
+import { mockDepositERC20Token, mockActiveERC20Token } from '@/utils/mockdata';
+import { useRouter } from 'next/router';
+import { useDispatch, useSelector } from 'react-redux';
 
 const DemoBanner: React.FC = () => {
   const {
     erc20TokenSliceReducer: {
-      erc20Token: { depositsEnabled: isOpenForDeposits },
-    },
+      erc20Token: { depositsEnabled: isOpenForDeposits }
+    }
   } = useSelector((state: AppState) => state);
 
   const dispatch = useDispatch();
   const router = useRouter();
   const { pathname } = router;
-  const isManager = pathname === "/clubs/[clubAddress]/manage";
+  const isManager = pathname === '/clubs/[clubAddress]/manage';
 
   const isDemoMode = useDemoMode();
 
@@ -28,8 +28,8 @@ const DemoBanner: React.FC = () => {
 
   const handleSwitchClubViewing = () => {
     router.push({
-      pathname: `/clubs/demo/${isManager ? "" : "manage"}`,
-      query: { status: isOpenForDeposits ? "open" : "active" },
+      pathname: `/clubs/demo/${isManager ? '' : 'manage'}`,
+      query: { status: isOpenForDeposits ? 'open' : 'active' }
     });
   };
 
@@ -40,7 +40,7 @@ const DemoBanner: React.FC = () => {
           <div className="flex items-center self-center">
             <button
               className="border border-black rounded-4xl ml-2 my-2 flex items-center px-4 py-2"
-              onClick={() => router.push("/clubs")}
+              onClick={() => router.push('/clubs')}
             >
               <div className="flex flex-row space-x-1">
                 <img
@@ -53,7 +53,7 @@ const DemoBanner: React.FC = () => {
             </button>
             <p
               className={`flex-shrink-0 text-base ml-4 hidden ${
-                isOpenForDeposits ? "1.2lg:block" : "lg:block"
+                isOpenForDeposits ? '1.2lg:block' : 'lg:block'
               }`}
             >
               Viewing demo mode
@@ -62,19 +62,19 @@ const DemoBanner: React.FC = () => {
           <div
             className={`self-center space-x-0 flex items-center justify-center flex-col py-2 ${
               isOpenForDeposits
-                ? "md:flex-row md:py-0 md:space-x-4"
-                : "sm:flex-row sm:py-0 sm:space-x-4"
+                ? 'md:flex-row md:py-0 md:space-x-4'
+                : 'sm:flex-row sm:py-0 sm:space-x-4'
             } `}
           >
             <button
               className={`border border-black rounded-4xl px-4 py-2 flex-shrink-0 mb-2 ${
-                isOpenForDeposits ? "md:mb-0" : "sm:mb-0"
+                isOpenForDeposits ? 'md:mb-0' : 'sm:mb-0'
               }`}
               onClick={handleSwitchClubStatus}
             >
               <div className="flex items-center space-x-1">
                 <span className="text-center">
-                  Status: {isOpenForDeposits ? "Open to deposits" : "Active"}
+                  Status: {isOpenForDeposits ? 'Open to deposits' : 'Active'}
                 </span>
                 <img
                   className="h-5 w-5"
@@ -89,14 +89,14 @@ const DemoBanner: React.FC = () => {
             >
               <div className="flex items-center space-x-1">
                 <span className="text-center">
-                  Viewing as: Club {isManager ? "admin" : "member"}
+                  Viewing as: Club {isManager ? 'admin' : 'member'}
                 </span>
                 <img
                   className="h-5 w-5"
                   src={
                     isManager
-                      ? "/images/demoMode/crown.svg"
-                      : "/images/demoMode/person.svg"
+                      ? '/images/demoMode/crown.svg'
+                      : '/images/demoMode/person.svg'
                   }
                   alt=""
                 />
@@ -107,12 +107,12 @@ const DemoBanner: React.FC = () => {
             <button
               className="flex items-center text-white bg-black rounded-3xl mr-2 my-2 px-4 py-2 w-fit-content"
               onClick={() => {
-                router.push("/clubs/create");
+                router.push('/clubs/create');
               }}
             >
               <span
                 className={`hidden ${
-                  isOpenForDeposits ? "1.2lg:inline" : "lg:inline"
+                  isOpenForDeposits ? '1.2lg:inline' : 'lg:inline'
                 } mr-2 flex-shrink-0`}
               >
                 Create an investment club

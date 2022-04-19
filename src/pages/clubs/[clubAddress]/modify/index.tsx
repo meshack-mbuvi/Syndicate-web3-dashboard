@@ -1,5 +1,5 @@
-import { ModifyClubSettings } from "@/components/modifyClub";
-import LayoutWithSyndicateDetails from "@/containers/layoutWithSyndicateDetails";
+import { ModifyClubSettings } from '@/components/modifyClub';
+import LayoutWithSyndicateDetails from '@/containers/layoutWithSyndicateDetails';
 
 const Modify: React.FC = () => {
   return (

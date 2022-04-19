@@ -1,32 +1,35 @@
-import { getOpenseaTokens, getOpenseaFloorPrices } from "@/utils/api/opensea";
-import { mockCollectiblesResult } from "@/utils/mockdata";
-import { web3 } from "@/utils/web3Utils";
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import axios from "axios";
-import abi from "human-standard-token-abi";
-import { getWeiAmount } from "src/utils/conversions";
-import { AbiItem } from "web3-utils";
-import { initialState } from "./types";
-import { morseCodeNftsDetails, DisplayCriteria } from "@/containers/layoutWithSyndicateDetails/assets/collectibles/shared/morseCodeNfts";
+import { getOpenseaTokens, getOpenseaFloorPrices } from '@/utils/api/opensea';
+import { mockCollectiblesResult } from '@/utils/mockdata';
+import { web3 } from '@/utils/web3Utils';
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import axios from 'axios';
+import abi from 'human-standard-token-abi';
+import { getWeiAmount } from 'src/utils/conversions';
+import { AbiItem } from 'web3-utils';
+import { initialState } from './types';
+import {
+  morseCodeNftsDetails,
+  DisplayCriteria
+} from '@/containers/layoutWithSyndicateDetails/assets/collectibles/shared/morseCodeNfts';
 
 import {
-  getEthereumTokenPrice,
-  getEtherscanTokenTransactions,
-  getEthBalance,
-} from "@/utils/api/etherscan";
+  getNativeTokenPrice,
+  getTokenTransactionHistory,
+  getNativeTokenBalance
+} from '@/utils/api/transactions';
 
 /** Async thunks */
 // ERC20 transactions
 export const fetchTokenTransactions = createAsyncThunk(
-  "assets/fetchTokenTransactions",
+  'assets/fetchTokenTransactions',
   async (account: string) => {
     const response = await Promise.all([
       // ERC20 tokens transactions
-      await getEtherscanTokenTransactions(account),
+      await getTokenTransactionHistory(account),
       // ETH balance for owner address
-      await getEthBalance(account),
+      await getNativeTokenBalance(account),
       // ETH price
-      await getEthereumTokenPrice(),
+      await getNativeTokenPrice()
     ])
       .then((result) => result)
       .catch(() => []);
@@ -50,12 +53,12 @@ export const fetchTokenTransactions = createAsyncThunk(
 
     // Batch fetch prices from CoinGecko
     const uniqueTokenPrices = await axios
-      .get("/.netlify/functions/getCoinPriceByContractAddress", {
+      .get('/.netlify/functions/getCoinPriceByContractAddress', {
         params: {
           contractAddresses: uniqueTokenBalances
             .map((t) => t.contractAddress)
-            .join(),
-        },
+            .join()
+        }
       })
       .then((res) => res.data.data)
       .catch(() => []);
@@ -69,15 +72,15 @@ export const fetchTokenTransactions = createAsyncThunk(
           tokenSymbol,
           tokenBalance,
           tokenName,
-          tokenValue = 0,
+          tokenValue = 0
         } = value;
 
         const { logo } = await axios
           .get(
-            `/.netlify/functions/getCoinInfoByContractAddress/?contractAddress=${contractAddress}`,
+            `/.netlify/functions/getCoinInfoByContractAddress/?contractAddress=${contractAddress}`
           )
           .then((res) => res.data.data)
-          .catch(() => ({ logo: "" }));
+          .catch(() => ({ logo: '' }));
 
         return {
           price: uniqueTokenPrices[contractAddress],
@@ -86,28 +89,28 @@ export const fetchTokenTransactions = createAsyncThunk(
           tokenSymbol,
           tokenBalance,
           tokenName,
-          tokenValue,
+          tokenValue
         };
-      }),
+      })
     );
 
     // get eth details to append to token details
     const ethBalance = getWeiAmount(ethBalanceResponse, 18, false);
     const ethDetails = {
       price: { usd: ethPriceResponse },
-      logo: "/images/ethereum-logo.png",
-      tokenDecimal: "18",
-      tokenSymbol: "ETH",
+      logo: '/images/ethereum-logo.png',
+      tokenDecimal: '18',
+      tokenSymbol: 'ETH',
       tokenBalance: ethBalance,
-      tokenName: "Ethereum",
-      tokenValue: parseFloat(ethPriceResponse) * parseFloat(ethBalance),
+      tokenName: 'Ethereum',
+      tokenValue: parseFloat(ethPriceResponse) * parseFloat(ethBalance)
     };
 
     // add eth details as the first item.
     completeTokensDetails.unshift(ethDetails);
 
     return { completeTokensDetails, ethereumTokenPrice: ethPriceResponse };
-  },
+  }
 );
 
 // collectibles assets
@@ -121,7 +124,7 @@ interface CollectiblesFetchParams {
 }
 
 export const fetchCollectibleById = async (
-  params: CollectiblesFetchParams,
+  params: CollectiblesFetchParams
 ): Promise<any> => {
   const { account, offset, contractAddress, tokenId } = params;
 
@@ -135,25 +138,31 @@ export const fetchCollectibleById = async (
 };
 
 export const fetchCollectiblesTransactions = createAsyncThunk(
-  "assets/fetchCollectiblesTransactions",
+  'assets/fetchCollectiblesTransactions',
   async (params: CollectiblesFetchParams) => {
-    const { account, offset, maxTotalDeposits, contractAddress, limit = "20" } = params;
+    const {
+      account,
+      offset,
+      maxTotalDeposits,
+      contractAddress,
+      limit = '20'
+    } = params;
 
     const { assets } = await getOpenseaTokens(
       account,
       contractAddress,
       offset,
-      limit,
+      limit
     );
 
     const collections = [
-      ...new Set(assets.map((asset) => asset.collection.slug)),
+      ...new Set(assets.map((asset) => asset.collection.slug))
     ];
 
     const floorPrices = await Promise.all(
       collections.map(async (slug: string) => {
         return await getOpenseaFloorPrices(slug);
-      }),
+      })
     )
       .then((result) => result)
       .catch(() => []);
@@ -162,12 +171,12 @@ export const fetchCollectiblesTransactions = createAsyncThunk(
     const lastSale = assets.last_sale;
     const lastPurchasePrice = {
       lastPurchasePriceUSD: 0,
-      lastPurchasePriceETH: 0,
+      lastPurchasePriceETH: 0
     };
     if (lastSale) {
       const {
         payment_token: { usd_price, eth_price, decimals },
-        total_price,
+        total_price
       } = lastSale;
       const lastPurchasePriceUSD =
         +usd_price * +getWeiAmount(total_price, decimals, false);
@@ -184,27 +193,27 @@ export const fetchCollectiblesTransactions = createAsyncThunk(
       collection: asset.collection,
       description: asset.description,
       floorPrice: floorPrices.find(
-        (price) => price.slug === asset.collection.slug,
+        (price) => price.slug === asset.collection.slug
       ).floorPrice,
-      lastPurchasePrice,
+      lastPurchasePrice
     }));
 
     return { allAssets, maxTotalDeposits };
-  },
+  }
 );
 
 // collectibles needs to be cleared when account is switched.
 // this prevents duplicate renders on refetch
 export const clearCollectiblesTransactions = createAsyncThunk(
-  "assets/clearCollectiblesTransactions",
-  async () => [],
+  'assets/clearCollectiblesTransactions',
+  async () => []
 );
 
 // get unique token contracts from token transactions
 const filterByUniqueContractAddress = (tokensList: any[]) => {
-  const key = "contractAddress";
+  const key = 'contractAddress';
   const uniqueTokensByContractAddress = [
-    ...new Map(tokensList.map((item) => [item[key], item])).values(),
+    ...new Map(tokensList.map((item) => [item[key], item])).values()
   ];
 
   return uniqueTokensByContractAddress;
@@ -217,7 +226,7 @@ const fetchTokenBalances = (tokensList: any[], account: string) => {
 
     const tokenContractInstance = new web3.eth.Contract(
       abi as AbiItem[],
-      contractAddress,
+      contractAddress
     );
 
     const accountBalance = await tokenContractInstance.methods
@@ -226,7 +235,7 @@ const fetchTokenBalances = (tokensList: any[], account: string) => {
 
     const tokenBalance = getWeiAmount(accountBalance, tokenDecimal, false);
 
-    tokenCopy["tokenBalance"] = tokenBalance;
+    tokenCopy['tokenBalance'] = tokenBalance;
     return tokenCopy;
   });
 };
@@ -235,7 +244,7 @@ const fetchTokenBalances = (tokensList: any[], account: string) => {
 // should be displayed based on club max total deposits.
 const shouldDisplayNFT = (
   displayCriteria: DisplayCriteria,
-  maxTotalDeposits: number,
+  maxTotalDeposits: number
 ): boolean => {
   const { minTotalDeposit, maxTotalDeposit } =
     displayCriteria.clubDepositAmount;
@@ -253,7 +262,7 @@ const shouldDisplayNFT = (
 };
 
 const assetsSlice = createSlice({
-  name: "assets",
+  name: 'assets',
   initialState,
   reducers: {
     setMockTokensResult(state, action) {
@@ -263,7 +272,7 @@ const assetsSlice = createSlice({
       const isDepositEnabled = action.payload;
       state.collectiblesResult = isDepositEnabled ? [] : mockCollectiblesResult;
       state.ethereumTokenPrice = 2396.93;
-    },
+    }
   },
   extraReducers: (builder) => {
     builder
@@ -276,15 +285,15 @@ const assetsSlice = createSlice({
         const tokensWithValue = action.payload.completeTokensDetails.map(
           (token) => {
             const tokenCopy = token;
-            tokenCopy["tokenValue"] =
+            tokenCopy['tokenValue'] =
               parseFloat(tokenCopy.price?.usd ?? 0) *
               parseFloat(tokenCopy.tokenBalance);
             return tokenCopy;
-          },
+          }
         );
         // sort the tokens
         const sortedInDescendingOrder = tokensWithValue.sort(
-          (a, b) => b.tokenValue - a.tokenValue,
+          (a, b) => b.tokenValue - a.tokenValue
         );
         state.tokensResult = sortedInDescendingOrder;
         state.loading = false;
@@ -304,20 +313,20 @@ const assetsSlice = createSlice({
           state.allCollectiblesFetched = true;
 
           const morseCodeNfts = morseCodeNftsDetails.map((detail, index) => ({
-            name: "",
+            name: '',
             image: `/images/morseCodeNfts/${detail.image}`,
-            animation: "",
-            permalink: "",
+            animation: '',
+            permalink: '',
             id: index,
-            collection: { name: "" },
-            description: "",
-            floorPrice: "",
-            lastPurchasePrice: "",
+            collection: { name: '' },
+            description: '',
+            floorPrice: '',
+            lastPurchasePrice: '',
             display: shouldDisplayNFT(
               detail.displayCriteria,
-              action.payload.maxTotalDeposits,
+              action.payload.maxTotalDeposits
             ),
-            futureNft: true,
+            futureNft: true
           }));
 
           // adding morse code nfts when we get to the
@@ -325,7 +334,7 @@ const assetsSlice = createSlice({
           result = [
             ...state.collectiblesResult,
             ...action.payload.allAssets,
-            ...morseCodeNfts.filter((nft) => nft.display === true),
+            ...morseCodeNfts.filter((nft) => nft.display === true)
           ];
         } else {
           state.allCollectiblesFetched = false;
@@ -355,7 +364,7 @@ const assetsSlice = createSlice({
         state.loadingCollectibles = false;
         state.collectiblesFetchError = false;
       });
-  },
+  }
 });
 
 export const { setMockTokensResult, setMockCollectiblesResult } =

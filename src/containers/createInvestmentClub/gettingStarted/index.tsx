@@ -1,9 +1,10 @@
-import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
-import { EmailSupport } from "@/components/emailSupport";
-import { DiscordLink } from "@/components/DiscordLink";
-import { ExternalLinkIcon } from "src/components/iconWrappers";
-import useWindowSize from "@/hooks/useWindowSize";
-import EstimateGas from "./estimateGas";
+import { AnimatedText } from '@/components/animatedText';
+import { DiscordLink } from '@/components/DiscordLink';
+import { EmailSupport } from '@/components/emailSupport';
+import useWindowSize from '@/hooks/useWindowSize';
+import React, { Dispatch, SetStateAction, useEffect, useState } from 'react';
+import { ExternalLinkIcon } from 'src/components/iconWrappers';
+import EstimateGas from './estimateGas';
 
 const GettingStarted: React.FC<{
   setClubStep: Dispatch<SetStateAction<string>>;
@@ -15,10 +16,10 @@ const GettingStarted: React.FC<{
   const [thirdLineHeight, setThirdLineHeight] = useState(0);
 
   useEffect(() => {
-    const firstStep = document.getElementById("first-step");
-    const secondStep = document.getElementById("second-step");
-    const thirdStep = document.getElementById("third-step");
-    const fourthStep = document.getElementById("fourth-step");
+    const firstStep = document.getElementById('first-step');
+    const secondStep = document.getElementById('second-step');
+    const thirdStep = document.getElementById('third-step');
+    const fourthStep = document.getElementById('fourth-step');
 
     // Handle the first line height
     const firstBottomOffset = firstStep.getBoundingClientRect().bottom;
@@ -40,9 +41,7 @@ const GettingStarted: React.FC<{
     <div className="pt-8 pb-6 px-5 rounded-2-half bg-gray-syn8 w-11/12 sm:w-100 mt-8 sm:mt-18">
       <div>
         <div className="mx-5">
-          <p className="uppercase text-sm leading-4 tracking-px text-white mb-8 font-bold">
-            Create an investment club
-          </p>
+          <h4 className="mb-8">Create an investment club</h4>
           <div style={{ marginBottom: 32 }}>
             <ol className="space-y-6 overflow-hidden xs:hidden" role="menu">
               <div className="relative">
@@ -52,7 +51,7 @@ const GettingStarted: React.FC<{
                   style={
                     width < 500
                       ? { height: `${firstLineHeight + 4}px` }
-                      : { height: "122px" }
+                      : { height: '147px' }
                   }
                   aria-hidden="true"
                 />
@@ -78,10 +77,14 @@ const GettingStarted: React.FC<{
                     <div className="text-blue text-xs mt-3 font-whyte">
                       <EstimateGas />
                     </div>
+                    <div className="mt-2 text-gray-syn4 text-xs font-whyte font-normal">
+                      Create <AnimatedText text={'unlimited clubs for free'} />{' '}
+                      on Syndicate. Just pay gas.
+                    </div>
                   </span>
                 </div>
               </div>
-              <div className="relative" style={{ marginTop: "1.25rem" }}>
+              <div className="relative" style={{ marginTop: '1.25rem' }}>
                 <div
                   className={`ml-px absolute mt-3 top-2 left-2 w-0.5 bg-gray-syn6
                 `}
@@ -89,7 +92,7 @@ const GettingStarted: React.FC<{
                   style={
                     width < 500
                       ? { height: `${secondLineHeight + 4}px` }
-                      : { height: "31px" }
+                      : { height: '31px' }
                   }
                 />
 
@@ -117,7 +120,7 @@ const GettingStarted: React.FC<{
                   style={
                     width < 500
                       ? { height: `${thirdLineHeight + 4}px` }
-                      : { height: "31px" }
+                      : { height: '31px' }
                   }
                 />
 
@@ -171,13 +174,8 @@ const GettingStarted: React.FC<{
               />
             </a>
           </div>
-          <button
-            className="bg-green rounded-custom w-full flex items-center justify-center py-4"
-            onClick={() => setClubStep("")}
-          >
-            <p className="text-black pr-1 whitespace-nowrap font-semibold">
-              Create on-chain club
-            </p>
+          <button className="green-CTA w-full" onClick={() => setClubStep('')}>
+            Create on-chain club
           </button>
         </div>
         <div className="mt-10 mb-6 h-px bg-gray-syn6"></div>

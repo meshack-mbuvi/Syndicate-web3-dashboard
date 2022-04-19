@@ -9,5 +9,5 @@ export const initialState: InitialState = {
   overlayCollectibleDetails: {},
   showFullScreen: false,
   showCollectibleModal: false,
-  collectibleModalDetails: {},
+  collectibleModalDetails: {}
 };

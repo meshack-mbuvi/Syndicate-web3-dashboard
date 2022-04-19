@@ -1,5 +1,5 @@
-import RugBonusTokenModule_ABI from "src/contracts/RugBonusTokenModule.json";
-import { getGnosisTxnInfo } from "../shared/gnosisTransactionInfo";
+import RugBonusTokenModule_ABI from 'src/contracts/RugBonusTokenModule.json';
+import { getGnosisTxnInfo } from '../shared/gnosisTransactionInfo';
 
 export class RugBonusTokenModule {
   contract;
@@ -10,18 +10,18 @@ export class RugBonusTokenModule {
     rugToken: string,
     genesisNFT: string,
     properties: string,
-    web3,
+    web3
   ) {
     this.contract = new web3.eth.Contract(
       RugBonusTokenModule_ABI,
       contractAddress,
       rugToken,
       genesisNFT,
-      properties,
+      properties
     );
 
     this.isGnosisSafe =
-      web3._provider.wc?._peerMeta.name === "Gnosis Safe Multisig";
+      web3._provider.wc?._peerMeta.name === 'Gnosis Safe Multisig';
   }
 
   /**
@@ -45,32 +45,32 @@ export class RugBonusTokenModule {
     onTxConfirm: (transactionHash?) => void,
     onTxReceipt: (receipt?) => void,
     onTxFail: (error?) => void,
-    setTransactionHash: (transactionHash: string) => void,
+    setTransactionHash: (transactionHash: string) => void
   ): Promise<string> =>
     new Promise((resolve, reject) =>
       this.contract.methods
         .claimTokens(tokenId)
         .send({ from: fromAddress })
-        .on("receipt", onTxReceipt)
-        .on("error", onTxFail)
-        .on("transactionHash", async (transactionHash: string) => {
+        .on('receipt', onTxReceipt)
+        .on('error', onTxFail)
+        .on('transactionHash', async (transactionHash: string) => {
           onTxConfirm(transactionHash);
 
           if (!this.isGnosisSafe) {
             setTransactionHash(transactionHash);
           } else {
-            setTransactionHash("");
+            setTransactionHash('');
 
             // Stop waiting if we are connected to gnosis safe via walletConnect
             const receipt = await getGnosisTxnInfo(transactionHash);
 
             if (!(receipt as { isSuccessful: boolean }).isSuccessful) {
-              return reject("Receipt failed");
+              return reject('Receipt failed');
             }
 
             onTxReceipt(receipt);
           }
-        }),
+        })
     );
 
   /**
@@ -91,30 +91,30 @@ export class RugBonusTokenModule {
     onTxConfirm: (transactionHash?) => void,
     onTxReceipt: (receipt?) => void,
     onTxFail: (error?) => void,
-    setTransactionHash: (transactionHash: string) => void,
+    setTransactionHash: (transactionHash: string) => void
   ): Promise<boolean> =>
     new Promise((_resolve, reject) =>
       this.contract.methods
         .bulkClaimTokens(tokenIds)
         .send({ from: fromAddress })
-        .on("receipt", onTxReceipt)
-        .on("error", onTxFail)
-        .on("transactionHash", async (transactionHash: string) => {
+        .on('receipt', onTxReceipt)
+        .on('error', onTxFail)
+        .on('transactionHash', async (transactionHash: string) => {
           onTxConfirm(transactionHash);
 
           if (!this.isGnosisSafe) {
             setTransactionHash(transactionHash);
           } else {
-            setTransactionHash("");
+            setTransactionHash('');
             // Stop waiting if we are connected to gnosis safe via walletConnect
             const receipt = await getGnosisTxnInfo(transactionHash);
 
             if (!(receipt as { isSuccessful: boolean }).isSuccessful) {
-              return reject("Receipt failed");
+              return reject('Receipt failed');
             }
 
             onTxReceipt(receipt);
           }
-        }),
+        })
     );
 }

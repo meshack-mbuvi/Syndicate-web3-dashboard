@@ -1,4 +1,4 @@
-import { Menu, Transition } from "@headlessui/react";
+import { Menu, Transition } from '@headlessui/react';
 
 const Dropdown: React.FC<{
   titleIndex: number;
@@ -41,8 +41,8 @@ const Dropdown: React.FC<{
                       className={`flex group space-x-2 py-2 my-auto rounded-md items-center w-full text-sm align-middle`}
                       onClick={() => setSelectedIndex(index)}
                     >
-                      <span className="">{menuItem.menuIcon}</span>
-                      <span className="">{menuItem.menuText}</span>
+                      <span>{menuItem.menuIcon}</span>
+                      <span>{menuItem.menuText}</span>
                     </button>
                   </Menu.Item>
                 ))}

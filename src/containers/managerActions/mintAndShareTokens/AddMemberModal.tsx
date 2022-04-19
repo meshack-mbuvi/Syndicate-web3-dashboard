@@ -1,7 +1,7 @@
-import React, { useEffect, useState, SetStateAction, Dispatch } from "react";
-import Modal, { ModalStyle } from "@/components/modal";
-import CopyLink from "@/components/shared/CopyLink";
-import { useRouter } from "next/router";
+import React, { useEffect, useState, SetStateAction, Dispatch } from 'react';
+import Modal, { ModalStyle } from '@/components/modal';
+import CopyLink from '@/components/shared/CopyLink';
+import { useRouter } from 'next/router';
 
 interface IAddMemberModal {
   showModal: boolean;
@@ -12,7 +12,7 @@ interface IAddMemberModal {
 const AddMemberModal: React.FC<IAddMemberModal> = ({
   showModal,
   closeModal,
-  mintTokens,
+  mintTokens
 }) => {
   const router = useRouter();
   const { clubAddress } = router.query;
@@ -23,7 +23,7 @@ const AddMemberModal: React.FC<IAddMemberModal> = ({
     setTimeout(() => setShowDepositLinkCopyState(false), 1000);
   };
 
-  const [clubDepositLink, setClubDepositLink] = useState<string>("");
+  const [clubDepositLink, setClubDepositLink] = useState<string>('');
   useEffect(() => {
     setClubDepositLink(`${window.location.origin}/clubs/${clubAddress}/`);
   }, [clubAddress]);

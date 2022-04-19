@@ -1,55 +1,54 @@
-import { amplitudeLogger, Flow } from "@/components/amplitude";
+import { amplitudeLogger, Flow } from '@/components/amplitude';
 import {
   APPROVE_DEPOSIT_ALLOWANCE,
   ERROR_APPROVE_ALLOWANCE,
   ERROR_DEPOSIT,
-  SUCCESSFUL_DEPOSIT,
-} from "@/components/amplitude/eventNames";
-import ErrorBoundary from "@/components/errorBoundary";
-import FadeIn from "@/components/fadeIn/FadeIn";
-import ArrowDown from "@/components/icons/arrowDown";
-import AutoGrowInputField from "@/components/inputs/autoGrowInput";
-import Modal, { ModalStyle } from "@/components/modal";
-import { Spinner } from "@/components/shared/spinner";
-import StatusBadge from "@/components/syndicateDetails/statusBadge";
-import HoldingsInfo from "@/components/syndicates/depositSyndicate/HoldingsInfo";
-import { SuccessOrFailureContent } from "@/components/syndicates/depositSyndicate/SuccessOrFailureContent";
-import { EtherscanLink } from "@/components/syndicates/shared/EtherscanLink";
-import { setERC20Token } from "@/helpers/erc20TokenDetails";
-import useSyndicateClubInfo from "@/hooks/deposit/useSyndicateClubInfo";
-import { useAccountTokens } from "@/hooks/useAccountTokens";
-import useFetchAirdropInfo from "@/hooks/useAirdropInfo";
-import { useClubDepositsAndSupply } from "@/hooks/useClubDepositsAndSupply";
-import { useIsClubMember } from "@/hooks/useClubOwner";
-import { useDemoMode } from "@/hooks/useDemoMode";
-import { useEthBalance } from "@/hooks/useEthBalance";
-import useFetchMerkleProof from "@/hooks/useMerkleProof";
-import useModal from "@/hooks/useModal";
-import { useERC20TokenBalance } from "@/hooks/useTokenBalance";
-import useFetchTokenClaim from "@/hooks/useTokenClaim";
-import useTokenDetails from "@/hooks/useTokenDetails";
-import useWindowSize from "@/hooks/useWindowSize";
-import { AppState } from "@/state";
-import { Status } from "@/state/wallet/types";
-import { getWeiAmount } from "@/utils/conversions";
-import { isDev } from "@/utils/environment";
+  SUCCESSFUL_DEPOSIT
+} from '@/components/amplitude/eventNames';
+import ErrorBoundary from '@/components/errorBoundary';
+import FadeIn from '@/components/fadeIn/FadeIn';
+import ArrowDown from '@/components/icons/arrowDown';
+import AutoGrowInputField from '@/components/inputs/autoGrowInput';
+import Modal, { ModalStyle } from '@/components/modal';
+import { Spinner } from '@/components/shared/spinner';
+import StatusBadge from '@/components/syndicateDetails/statusBadge';
+import HoldingsInfo from '@/components/syndicates/depositSyndicate/HoldingsInfo';
+import { SuccessOrFailureContent } from '@/components/syndicates/depositSyndicate/SuccessOrFailureContent';
+import { EtherscanLink } from '@/components/syndicates/shared/EtherscanLink';
+import { setERC20Token } from '@/helpers/erc20TokenDetails';
+import useSyndicateClubInfo from '@/hooks/deposit/useSyndicateClubInfo';
+import { useAccountTokens } from '@/hooks/useAccountTokens';
+import useFetchAirdropInfo from '@/hooks/useAirdropInfo';
+import { useClubDepositsAndSupply } from '@/hooks/useClubDepositsAndSupply';
+import { useIsClubMember } from '@/hooks/useClubOwner';
+import { useDemoMode } from '@/hooks/useDemoMode';
+import { useEthBalance } from '@/hooks/useEthBalance';
+import useFetchMerkleProof from '@/hooks/useMerkleProof';
+import useModal from '@/hooks/useModal';
+import { useERC20TokenBalance } from '@/hooks/useTokenBalance';
+import useFetchTokenClaim from '@/hooks/useTokenClaim';
+import useWindowSize from '@/hooks/useWindowSize';
+import { AppState } from '@/state';
+import { Status } from '@/state/wallet/types';
+import { getWeiAmount } from '@/utils/conversions';
+import { isDev } from '@/utils/environment';
 import {
   floatedNumberWithCommas,
-  truncateDecimals,
-} from "@/utils/formattedNumbers";
-import { CheckIcon } from "@heroicons/react/solid";
-import Image from "next/image";
-import React, { useCallback, useEffect, useState } from "react";
-import { CopyToClipboard } from "react-copy-to-clipboard";
-import Floater from "react-floater";
-import { useDispatch, useSelector } from "react-redux";
-import Tooltip from "react-tooltip-lite";
-import { InfoIcon } from "src/components/iconWrappers";
-import { SkeletonLoader } from "src/components/skeletonLoader";
-import ERC20ABI from "src/utils/abi/erc20";
-import { AbiItem } from "web3-utils";
-import BeforeGettingStarted from "../../beforeGettingStarted";
-import ConnectWalletAction from "../shared/connectWalletAction";
+  truncateDecimals
+} from '@/utils/formattedNumbers';
+import { CheckIcon } from '@heroicons/react/solid';
+import Image from 'next/image';
+import React, { useCallback, useEffect, useState } from 'react';
+import { CopyToClipboard } from 'react-copy-to-clipboard';
+import Floater from 'react-floater';
+import { useDispatch, useSelector } from 'react-redux';
+import Tooltip from 'react-tooltip-lite';
+import { InfoIcon } from 'src/components/iconWrappers';
+import { SkeletonLoader } from 'src/components/skeletonLoader';
+import ERC20ABI from 'src/utils/abi/erc20';
+import { AbiItem } from 'web3-utils';
+import BeforeGettingStarted from '../../beforeGettingStarted';
+import ConnectWalletAction from '../shared/connectWalletAction';
 
 const DepositSyndicate: React.FC = () => {
   // HOOK DECLARATIONS
@@ -61,14 +60,21 @@ const DepositSyndicate: React.FC = () => {
     airdopInfoSliceReducer: { airdropInfo },
     tokenClaimedSliceReducer: { isTokenClaimed },
     web3Reducer: {
-      web3: { account, web3, status },
+      web3: { account, web3, status }
     },
     erc20TokenSliceReducer: {
       erc20Token,
-      depositDetails: { depositToken, mintModule, ethDepositToken },
-      erc20TokenContract,
+      depositDetails: {
+        mintModule,
+        ethDepositToken,
+        depositToken,
+        depositTokenDecimals,
+        depositTokenLogo,
+        depositTokenSymbol
+      },
       depositTokenPriceInUSD,
-    },
+      erc20TokenContract
+    }
   } = useSelector((state: AppState) => state);
 
   const {
@@ -80,7 +86,7 @@ const DepositSyndicate: React.FC = () => {
     symbol,
     totalSupply,
     loading,
-    maxMemberCount,
+    maxMemberCount
   } = erc20Token;
 
   const { totalDeposits } = useClubDepositsAndSupply(address);
@@ -94,9 +100,9 @@ const DepositSyndicate: React.FC = () => {
     useState<boolean>(false);
   const [approved, setApproved] = useState<boolean>(false);
   const [allowanceApprovalError, setAllowanceApprovalError] =
-    useState<string>("");
+    useState<string>('');
   const [approvedAllowanceAmount, setApprovedAllowanceAmount] =
-    useState<string>("0");
+    useState<string>('0');
   const [successfulDeposit, setSuccessfulDeposit] = useState<boolean>(false);
   const [successfulClaim, setSuccessfulClaim] = useState<boolean>(false);
 
@@ -107,25 +113,25 @@ const DepositSyndicate: React.FC = () => {
   const [sufficientAllowanceSet, setSufficientAllowanceSet] =
     useState<boolean>(false);
   const [currentMemberAllowance, setCurrentMemberAllowance] =
-    useState<string>("0");
+    useState<string>('0');
   const [insufficientBalance, setInsufficientBalance] =
     useState<boolean>(false);
   const [copied, setCopied] = useState(false);
-  const [transactionHash, setTransactionHash] = useState<string>("");
-  const [depositError, setDepositError] = useState("");
-  const [clubWideErrors, setClubWideErrors] = useState("");
-  const [imageSRC, setImageSRC] = useState("");
+  const [transactionHash, setTransactionHash] = useState<string>('');
+  const [depositError, setDepositError] = useState('');
+  const [clubWideErrors, setClubWideErrors] = useState('');
+  const [imageSRC, setImageSRC] = useState('');
   const [isTextRed, setIsTextRed] = useState(false);
   const [depositFailed, setDepositFailed] = useState<boolean>(false);
   const [claimFailed, setClaimFailed] = useState<boolean>(false);
   const [showDepositProcessingModal, toggleDepositProcessingModal] = useModal();
   const [ownershipShare, setOwnershipShare] = useState<number>(0);
   const [memberTokens, setMemberTokens] = useState(0);
-  const [depositAmount, setDepositAmount] = useState<string>("");
+  const [depositAmount, setDepositAmount] = useState<string>('');
   const [depositAmountFinalized, setDepositAmountFinalized] =
-    useState<string>("");
-  const [claimBalanceValue, setClaimBalanceValue] = useState("");
-  const [claimBalanceDecimalValue, setClaimBalanceDecimalValue] = useState("");
+    useState<string>('');
+  const [claimBalanceValue, setClaimBalanceValue] = useState('');
+  const [claimBalanceDecimalValue, setClaimBalanceDecimalValue] = useState('');
   const [invalidClaim, setInvalidClaim] = useState<boolean>(false);
   const [transactionTooLong, setTransactionTooLong] = useState<boolean>(false);
   const [checkSuccess, setCheckSuccess] = useState(false);
@@ -135,7 +141,7 @@ const DepositSyndicate: React.FC = () => {
   const [isDemoTooltipOpen, setIsDemoTooltipOpen] = useState(false);
 
   const TRANSACTION_TOO_LONG_MSG =
-    "This transaction is taking a while. You can speed it up by spending more gas via your wallet.";
+    'This transaction is taking a while. You can speed it up by spending more gas via your wallet.';
 
   //  tokens for the connected wallet account
   const {
@@ -144,11 +150,8 @@ const DepositSyndicate: React.FC = () => {
     memberDeposits,
     refetchMemberData,
     startPolling,
-    stopPolling,
+    stopPolling
   } = useAccountTokens();
-
-  const { depositTokenSymbol, depositTokenLogo, depositTokenDecimals } =
-    useTokenDetails(ethDepositToken);
 
   useEffect(() => {
     // calculate member ownership for the intended deposits
@@ -175,13 +178,13 @@ const DepositSyndicate: React.FC = () => {
     totalSupply,
     depositAmountFinalized,
     depositTokenSwitched,
-    depositTokenPriceInUSD,
+    depositTokenPriceInUSD
   ]);
 
   useEffect(() => {
     const [claimValue, claimDecimalValue] = floatedNumberWithCommas(
-      myMerkleProof?._amount,
-    ).split(".");
+      myMerkleProof?._amount
+    ).split('.');
 
     setClaimBalanceValue(claimValue);
     setClaimBalanceDecimalValue(claimDecimalValue);
@@ -221,7 +224,7 @@ const DepositSyndicate: React.FC = () => {
       // and save it to the local state
       const ERC20Contract = new web3.eth.Contract(
         ERC20ABI as AbiItem[],
-        depositToken,
+        depositToken
       );
       setDepositTokenContract(ERC20Contract);
 
@@ -268,7 +271,7 @@ const DepositSyndicate: React.FC = () => {
       }
       return accountTokens;
     });
-  }, [accountTokens, checkSuccess]);
+  }, [accountTokens, checkSuccess, ethDepositToken]);
 
   const [transactionRejected, setTransactionRejected] = useState(false);
   const [transactionFailed, setTransactionFailed] = useState(false);
@@ -276,7 +279,7 @@ const DepositSyndicate: React.FC = () => {
   const onTxFail = (error) => {
     // if transaction errored because of a timeout, we do not need to
     // show the error state.
-    if (error?.message.includes("Be aware that it might still be mined")) {
+    if (error?.message.includes('Be aware that it might still be mined')) {
       return;
     }
     setMetamaskConfirmPending(false);
@@ -307,7 +310,7 @@ const DepositSyndicate: React.FC = () => {
         onTxConfirm,
         onTxReceipt,
         onTxFail,
-        setTransactionHash,
+        setTransactionHash
       );
       setTransactionHash(transactionHash);
     } catch (error) {
@@ -346,7 +349,7 @@ const DepositSyndicate: React.FC = () => {
           onTxConfirm,
           onTxReceipt,
           onTxFail,
-          setTransactionHash,
+          setTransactionHash
         );
       } else if (mintModule === SINGLE_TOKEN_MINT_MODULE_ADDR) {
         await syndicateContracts.SingleTokenMintModule?.deposit(
@@ -356,7 +359,7 @@ const DepositSyndicate: React.FC = () => {
           onTxConfirm,
           onTxReceipt,
           onTxFail,
-          setTransactionHash,
+          setTransactionHash
         );
       } else if (mintModule === DEPOSIT_TOKEN_MINT_MODULE) {
         await syndicateContracts.DepositTokenMintModule?.deposit(
@@ -366,7 +369,7 @@ const DepositSyndicate: React.FC = () => {
           onTxConfirm,
           onTxReceipt,
           onTxFail,
-          setTransactionHash,
+          setTransactionHash
         );
       }
 
@@ -376,11 +379,11 @@ const DepositSyndicate: React.FC = () => {
 
       // reset allowance error
       if (allowanceApprovalError) {
-        setAllowanceApprovalError("");
+        setAllowanceApprovalError('');
       }
       // reset approval amount
       if (approvedAllowanceAmount) {
-        setApprovedAllowanceAmount("0");
+        setApprovedAllowanceAmount('0');
       }
 
       // refetch member stats
@@ -389,7 +392,7 @@ const DepositSyndicate: React.FC = () => {
       // Amplitude logger: Deposit funds
       amplitudeLogger(SUCCESSFUL_DEPOSIT, {
         flow: Flow.MBR_DEP,
-        amount,
+        amount
       });
     } catch (error) {
       const { code, message } = error;
@@ -400,7 +403,7 @@ const DepositSyndicate: React.FC = () => {
         setTransactionRejected(true);
         setSubmitting(false);
         setSuccessfulDeposit(false);
-      } else if (message.includes("Be aware that it might still be mined")) {
+      } else if (message.includes('Be aware that it might still be mined')) {
         setTransactionTooLong(true);
       } else {
         setDepositFailed(true);
@@ -413,7 +416,7 @@ const DepositSyndicate: React.FC = () => {
       amplitudeLogger(ERROR_DEPOSIT, {
         flow: Flow.MBR_DEP,
         amount,
-        error,
+        error
       });
     }
   };
@@ -425,7 +428,7 @@ const DepositSyndicate: React.FC = () => {
   const erc20Balance = useERC20TokenBalance(
     account,
     new web3.eth.Contract(ERC20ABI as AbiItem[], depositToken),
-    depositTokenDecimals,
+    depositTokenDecimals
   );
 
   const etherBalance = useEthBalance(account);
@@ -457,7 +460,7 @@ const DepositSyndicate: React.FC = () => {
       if (depositTokenSwitched) {
         const maxDepositAmountAdjustedToUSD = Math.min(
           erc20Balance,
-          erc20Balance * depositTokenPriceInUSD,
+          erc20Balance * depositTokenPriceInUSD
         );
         setDepositAmount(maxDepositAmountAdjustedToUSD.toString());
       } else {
@@ -473,7 +476,7 @@ const DepositSyndicate: React.FC = () => {
   };
 
   const addGrayToDecimalInput = (str) => {
-    const [wholeNumber, decimalPart] = str.split(".");
+    const [wholeNumber, decimalPart] = str.split('.');
     return (
       <div className="flex">
         {wholeNumber ? <p className="text-white">{wholeNumber}</p> : null}
@@ -489,10 +492,10 @@ const DepositSyndicate: React.FC = () => {
     info?: string;
   }[] = [
     {
-      title: "Approve USDC",
-      info: "Before depositing, you need to allow the protocol to use your USDC.",
+      title: `Approve ${depositTokenSymbol}`,
+      info: `Before depositing, you need to allow the protocol to use your ${depositTokenSymbol}.`
     },
-    { title: "Complete deposit" },
+    { title: 'Complete deposit' }
   ];
 
   // check if approval is required for current amount.
@@ -531,7 +534,7 @@ const DepositSyndicate: React.FC = () => {
     erc20Balance,
     etherBalance,
     ethDepositToken,
-    depositTokenSwitched,
+    depositTokenSwitched
   ]);
 
   useEffect(() => {
@@ -554,7 +557,7 @@ const DepositSyndicate: React.FC = () => {
         const currentMemberAllowanceAmount = getWeiAmount(
           memberAllowanceAmount.toString(),
           depositTokenDecimals,
-          false,
+          false
         );
 
         setCurrentMemberAllowance(currentMemberAllowanceAmount);
@@ -583,7 +586,7 @@ const DepositSyndicate: React.FC = () => {
     const amountToApprove = getWeiAmount(
       depositAmount.toString(),
       depositTokenDecimals,
-      true,
+      true
     );
 
     try {
@@ -592,24 +595,24 @@ const DepositSyndicate: React.FC = () => {
       await new Promise((resolve, reject) => {
         const _depositTokenContract = new web3.eth.Contract(
           ERC20ABI as AbiItem[],
-          depositToken,
+          depositToken
         );
         _depositTokenContract.methods
           .approve(mintModule, amountToApprove)
           .send({ from: account })
-          .on("transactionHash", (transactionHash) => {
+          .on('transactionHash', (transactionHash) => {
             // user clicked on confirm
             // show loading state
             setSubmittingAllowanceApproval(true);
             setMetamaskConfirmPending(false);
 
             // Stop waiting if we are connected to gnosis safe via walletConnect
-            if (web3._provider.wc?._peerMeta.name === "Gnosis Safe Multisig") {
+            if (web3._provider.wc?._peerMeta.name === 'Gnosis Safe Multisig') {
               gnosisTxHash = transactionHash;
               resolve(transactionHash);
             }
           })
-          .on("receipt", async (receipt) => {
+          .on('receipt', async (receipt) => {
             // sometimes the returned values from the attached event do not have
             // value key, hence the will be undefined.
             // call this function does the job of checking whether the allowance
@@ -620,21 +623,21 @@ const DepositSyndicate: React.FC = () => {
             // Amplitude logger: Approve Allowance
             amplitudeLogger(APPROVE_DEPOSIT_ALLOWANCE, {
               flow: Flow.MBR_DEP,
-              amount: amountToApprove,
+              amount: amountToApprove
             });
             resolve(receipt);
 
             // update current transaction step
             setCurrentTransaction(2);
           })
-          .on("error", (error) => {
+          .on('error', (error) => {
             // user clicked reject.
             if (error?.code === 4001) {
               setTransactionRejected(true);
               setSubmittingAllowanceApproval(false);
               setMetamaskConfirmPending(false);
             } else if (
-              error?.message.includes("Be aware that it might still be mined")
+              error?.message.includes('Be aware that it might still be mined')
             ) {
               setTransactionTooLong(true);
             } else {
@@ -647,7 +650,7 @@ const DepositSyndicate: React.FC = () => {
             amplitudeLogger(ERROR_APPROVE_ALLOWANCE, {
               flow: Flow.MBR_DEP,
               amount: amountToApprove,
-              error,
+              error
             });
             reject(error);
           });
@@ -662,7 +665,7 @@ const DepositSyndicate: React.FC = () => {
         // Amplitude logger: Approve Allowance
         amplitudeLogger(APPROVE_DEPOSIT_ALLOWANCE, {
           flow: Flow.MBR_DEP,
-          amount: amountToApprove,
+          amount: amountToApprove
         });
       }
     } catch (error) {
@@ -674,7 +677,7 @@ const DepositSyndicate: React.FC = () => {
       amplitudeLogger(ERROR_APPROVE_ALLOWANCE, {
         flow: Flow.MBR_DEP,
         amount: amountToApprove,
-        error,
+        error
       });
     }
   };
@@ -689,7 +692,7 @@ const DepositSyndicate: React.FC = () => {
     setTransactionFailed(false);
     setTransactionRejected(false);
     // clear deposit amount
-    setDepositAmount("");
+    setDepositAmount('');
     if (showDepositProcessingModal) {
       toggleDepositProcessingModal();
     }
@@ -737,15 +740,15 @@ const DepositSyndicate: React.FC = () => {
       </div>
     );
   } else if (sufficientAllowanceSet && depositAmount) {
-    depositButtonText = "Continue";
+    depositButtonText = 'Continue';
   } else if (!depositAmount) {
-    depositButtonText = "Enter an amount to deposit";
+    depositButtonText = 'Enter an amount to deposit';
   } else if (
     !sufficientAllowanceSet &&
     !submittingAllowanceApproval &&
     depositAmount
   ) {
-    depositButtonText = "Continue";
+    depositButtonText = 'Continue';
   }
 
   const checkETHBalance = async () => {
@@ -756,14 +759,14 @@ const DepositSyndicate: React.FC = () => {
           etherBalance === 0
         ) {
           setInsufficientBalance(true);
-          setDepositError("");
+          setDepositError('');
         } else {
           setInsufficientBalance(false);
         }
       } else {
         if (+etherBalance < +depositAmount || etherBalance === 0) {
           setInsufficientBalance(true);
-          setDepositError("");
+          setDepositError('');
         } else {
           setInsufficientBalance(false);
         }
@@ -784,14 +787,14 @@ const DepositSyndicate: React.FC = () => {
           erc20Balance === 0
         ) {
           setInsufficientBalance(true);
-          setDepositError("");
+          setDepositError('');
         } else {
           setInsufficientBalance(false);
         }
       } else {
         if (+erc20Balance < +depositAmount || erc20Balance === 0) {
           setInsufficientBalance(true);
-          setDepositError("");
+          setDepositError('');
         } else {
           setInsufficientBalance(false);
         }
@@ -805,18 +808,18 @@ const DepositSyndicate: React.FC = () => {
   const checkClubWideErrors = () => {
     let message;
     if (+totalDeposits === +maxTotalDeposits) {
-      message = "The maximum deposit amount for this club has been reached.";
+      message = 'The maximum deposit amount for this club has been reached.';
       setClubWideErrors(message);
-      setDepositError("");
-      setImageSRC("/images/deposit/depositReached.svg");
+      setDepositError('');
+      setImageSRC('/images/deposit/depositReached.svg');
     } else if (!(+memberDeposits > 0) && memberCount === maxMemberCount) {
       message = `The maximum amount of members (${maxMemberCount}) for this club has been reached.`;
       setClubWideErrors(message);
-      setDepositError("");
-      setImageSRC("/images/deposit/userAttention.svg");
+      setDepositError('');
+      setImageSRC('/images/deposit/userAttention.svg');
     } else {
-      setDepositError("");
-      setClubWideErrors("");
+      setDepositError('');
+      setClubWideErrors('');
     }
   };
 
@@ -839,11 +842,11 @@ const DepositSyndicate: React.FC = () => {
           </>
         );
         setDepositError(message);
-        setClubWideErrors("");
+        setClubWideErrors('');
         setIsTextRed(true);
       } else {
-        setDepositError("");
-        setClubWideErrors("");
+        setDepositError('');
+        setClubWideErrors('');
       }
     } else {
       if (+value > remainingErc20Balance) {
@@ -857,11 +860,11 @@ const DepositSyndicate: React.FC = () => {
           </>
         );
         setDepositError(message);
-        setClubWideErrors("");
+        setClubWideErrors('');
         setIsTextRed(true);
       } else {
-        setDepositError("");
-        setClubWideErrors("");
+        setDepositError('');
+        setClubWideErrors('');
       }
     }
   };
@@ -940,7 +943,7 @@ const DepositSyndicate: React.FC = () => {
                   <div className="pb-6">
                     <span className="text-2xl">{`Depositing ${floatedNumberWithCommas(
                       depositAmountFinalized,
-                      ethDepositToken ?? false,
+                      ethDepositToken ?? false
                     )} ${depositTokenSymbol}`}</span>
                   </div>
                   {transactionHash && (
@@ -963,7 +966,7 @@ const DepositSyndicate: React.FC = () => {
                     copied,
                     memberPercentShare: memberOwnership,
                     clubTokenSymbol: symbol,
-                    accountClubTokens: accountTokens.toString(),
+                    accountClubTokens: accountTokens.toString()
                   }}
                 />
               ) : showDepositProcessingModal && depositFailed ? (
@@ -977,7 +980,7 @@ const DepositSyndicate: React.FC = () => {
                     copied,
                     memberPercentShare: memberOwnership,
                     clubTokenSymbol: symbol,
-                    accountClubTokens: accountTokens.toString(),
+                    accountClubTokens: accountTokens.toString()
                   }}
                 />
               ) : status === Status.DISCONNECTED && !isDemoMode ? (
@@ -987,14 +990,14 @@ const DepositSyndicate: React.FC = () => {
               ) : (
                 <div className="h-fit-content rounded-2-half pt-6 px-8 pb-4">
                   <p className="h4 uppercase text-sm">
-                    {+memberDeposits > 0 ? "deposit more" : "join this club"}
+                    {+memberDeposits > 0 ? 'deposit more' : 'join this club'}
                   </p>
                   <div className="flex justify-between items-center mt-5 h-20 flex-wrap">
                     <div className="flex items-center">
                       <AutoGrowInputField
                         value={depositAmount}
                         onChangeHandler={(value) => handleSetDeposit(value)}
-                        placeholder={"0"}
+                        placeholder={'0'}
                         decimalSeparator="."
                         decimalScale={2}
                         hasError={isTextRed || insufficientBalance}
@@ -1013,7 +1016,7 @@ const DepositSyndicate: React.FC = () => {
                         <div>
                           <button
                             className={`px-4 py-1.5 text-gray-syn4 bg-gray-syn7 rounded-full ${
-                              disableMax ? "cursor-not-allowed" : ""
+                              disableMax ? 'cursor-not-allowed' : ''
                             }`}
                             onClick={handleSetMax}
                           >
@@ -1051,7 +1054,10 @@ const DepositSyndicate: React.FC = () => {
                             ) : (
                               <>
                                 <Image
-                                  src={depositTokenLogo}
+                                  src={
+                                    depositTokenLogo ||
+                                    '/images/token-gray-4.svg'
+                                  }
                                   height={24}
                                   width={24}
                                   className="filter grayscale opacity-40"
@@ -1096,7 +1102,10 @@ const DepositSyndicate: React.FC = () => {
                             ) : (
                               <>
                                 <Image
-                                  src={depositTokenLogo}
+                                  src={
+                                    depositTokenLogo ||
+                                    '/images/token-gray-4.svg'
+                                  }
                                   height={24}
                                   width={24}
                                 />
@@ -1130,19 +1139,19 @@ const DepositSyndicate: React.FC = () => {
                   {/* Either the USD or deposit token value is displayed below the input amount in the deposit card */}
                   {depositTokenSwitched ? (
                     <p className="text-gray-syn4">
-                      ~{" "}
+                      ~{' '}
                       {floatedNumberWithCommas(
                         parseFloat(depositAmount) / depositTokenPriceInUSD,
-                        ethDepositToken ?? false,
-                      )}{" "}
+                        ethDepositToken ?? false
+                      )}{' '}
                       {depositTokenSymbol}
                     </p>
                   ) : (
                     <p className="text-gray-syn4">
-                      ~{" "}
+                      ~{' '}
                       {floatedNumberWithCommas(
-                        parseFloat(depositAmount) * depositTokenPriceInUSD,
-                      )}{" "}
+                        parseFloat(depositAmount) * depositTokenPriceInUSD
+                      )}{' '}
                       USD
                     </p>
                   )}
@@ -1197,27 +1206,27 @@ const DepositSyndicate: React.FC = () => {
                           open={isDemoTooltipOpen}
                           styles={{
                             floater: {
-                              filter: "none",
+                              filter: 'none'
                             },
                             container: {
-                              backgroundColor: "#293300",
+                              backgroundColor: '#293300',
                               borderRadius: 5,
-                              color: "#fff",
-                              filter: "none",
-                              minHeight: "none",
+                              color: '#fff',
+                              filter: 'none',
+                              minHeight: 'none',
                               width: 310,
                               padding: 12,
-                              textAlign: "center",
+                              textAlign: 'center'
                             },
                             arrow: {
-                              color: "#293300",
+                              color: '#293300',
                               length: 8,
-                              spread: 10,
+                              spread: 10
                             },
                             options: { zIndex: 250 },
                             wrapper: {
-                              cursor: "pointer",
-                            },
+                              cursor: 'pointer'
+                            }
                           }}
                         >
                           <button
@@ -1227,11 +1236,11 @@ const DepositSyndicate: React.FC = () => {
                               submittingAllowanceApproval ||
                               submitting ||
                               insufficientBalance ||
-                              depositAmount === "0.00" ||
+                              depositAmount === '0.00' ||
                               isDemoMode
-                                ? "bg-gray-syn6 text-gray-syn4"
-                                : "bg-white text-black"
-                            } ${isDemoMode ? "cursor-pointer" : ""}`}
+                                ? 'bg-gray-syn6 text-gray-syn4'
+                                : 'bg-white text-black'
+                            } ${isDemoMode ? 'cursor-pointer' : ''}`}
                             onMouseEnter={() => setIsDemoTooltipOpen(true)}
                             onMouseLeave={() => setIsDemoTooltipOpen(false)}
                           >
@@ -1248,15 +1257,15 @@ const DepositSyndicate: React.FC = () => {
                             insufficientBalance ||
                             +depositAmount === 0 ||
                             isDemoMode
-                              ? "bg-gray-syn6 text-gray-syn4"
-                              : "bg-white text-black"
+                              ? 'bg-gray-syn6 text-gray-syn4'
+                              : 'bg-white text-black'
                           } ${
                             Boolean(depositError) ||
                             insufficientBalance ||
                             +depositAmount === 0 ||
                             !depositAmount
-                              ? "cursor-not-allowed"
-                              : "cursor-pointer"
+                              ? 'cursor-not-allowed'
+                              : 'cursor-pointer'
                           }`}
                           onClick={(e) => {
                             if (submittingAllowanceApproval) {
@@ -1274,18 +1283,18 @@ const DepositSyndicate: React.FC = () => {
                                         depositTokenPriceInUSD) *
                                         100) /
                                         100,
-                                      4,
+                                      4
                                     )
                                   : (
                                       Math.floor(
                                         (parseFloat(depositAmount) /
                                           depositTokenPriceInUSD) *
-                                          100,
+                                          100
                                       ) / 100
                                     ).toString();
                                 investInSyndicate(switchedAmount.toString());
                                 setDepositAmountFinalized(
-                                  switchedAmount.toString(),
+                                  switchedAmount.toString()
                                 );
                               } else {
                                 investInSyndicate(depositAmount);
@@ -1317,27 +1326,27 @@ const DepositSyndicate: React.FC = () => {
                   {!clubWideErrors && (
                     <div className="mt-4 flex w-full justify-center">
                       <p className="text-sm text-gray-syn5">
-                        Your wallet balance:{" "}
+                        Your wallet balance:{' '}
                         {ethDepositToken ? (
                           <>{floatedNumberWithCommas(etherBalance, true)} </>
                         ) : (
                           <>{floatedNumberWithCommas(erc20Balance)} </>
                         )}
-                        {depositTokenSymbol}{" "}
+                        {depositTokenSymbol}{' '}
                         {ethDepositToken ? (
                           <>
-                            (~{" "}
+                            (~{' '}
                             {floatedNumberWithCommas(
-                              etherBalance * depositTokenPriceInUSD,
-                            )}{" "}
+                              etherBalance * depositTokenPriceInUSD
+                            )}{' '}
                             USD)
                           </>
                         ) : (
                           <>
-                            (~{" "}
+                            (~{' '}
                             {floatedNumberWithCommas(
-                              erc20Balance * depositTokenPriceInUSD,
-                            )}{" "}
+                              erc20Balance * depositTokenPriceInUSD
+                            )}{' '}
                             USD)
                           </>
                         )}
@@ -1361,7 +1370,7 @@ const DepositSyndicate: React.FC = () => {
                         <span className="text-gray-lightManatee">
                           .{claimBalanceDecimalValue}
                         </span>
-                      )}{" "}
+                      )}{' '}
                       {symbol}
                     </span>
                   </div>
@@ -1387,7 +1396,7 @@ const DepositSyndicate: React.FC = () => {
                     copied,
                     memberPercentShare: memberOwnership,
                     clubTokenSymbol: symbol,
-                    accountClubTokens: accountTokens.toString(),
+                    accountClubTokens: accountTokens.toString()
                   }}
                 />
               ) : status === Status.DISCONNECTED ? (
@@ -1398,7 +1407,7 @@ const DepositSyndicate: React.FC = () => {
                 parseInt(claimBalanceDecimalValue) > 0 ? (
                 <div className="h-fit-content rounded-2-half pt-6 px-8 pb-4">
                   <p className="h4 uppercase text-sm">
-                    {claimEnabled && "You will receive"}
+                    {claimEnabled && 'You will receive'}
                   </p>
                   <div className="flex justify-between items-center mt-4 flex-wrap">
                     <div className="text-5xl leading-14">
@@ -1450,22 +1459,20 @@ const DepositSyndicate: React.FC = () => {
         depositsEnabled) ||
         isDemoMode) && (
         <div className="bg-gray-syn8 rounded-2xl mt-6 px-8 py-6">
-          <div className="pb-5 text-sm font-bold uppercase tracking-widest">
-            Your Holdings
-          </div>
+          <h4 className="pb-5">Your Holdings</h4>
           {loading ? (
             <SkeletonLoader height="9" width="full" borderRadius="rounded-md" />
           ) : (
-            <div className={`flex ${isHoldingsCardColumn ? "flex-col" : ""}`}>
+            <div className={`flex ${isHoldingsCardColumn ? 'flex-col' : ''}`}>
               <div
                 className={
                   isHoldingsCardColumn
-                    ? ""
+                    ? ''
                     : (width < 1380 || width < 868) &&
                       +memberDeposits >= 1000 &&
                       +memberDeposits < 10000
-                    ? "mr-6"
-                    : "mr-8"
+                    ? 'mr-6'
+                    : 'mr-8'
                 }
               >
                 {ethDepositToken ? (
@@ -1474,9 +1481,9 @@ const DepositSyndicate: React.FC = () => {
                     title="Amount deposited"
                     amount={floatedNumberWithCommas(
                       memberDeposits / 10000,
-                      true,
+                      true
                     )}
-                    tokenName={"ETH"}
+                    tokenName={'ETH'}
                     amountInUSD={
                       (memberDeposits / 10000) * depositTokenPriceInUSD
                     }
@@ -1485,12 +1492,12 @@ const DepositSyndicate: React.FC = () => {
                   <HoldingsInfo
                     title="Amount deposited"
                     amount={floatedNumberWithCommas(memberDeposits)}
-                    tokenName={"USDC"}
+                    tokenName={depositTokenSymbol}
                     amountInUSD={memberDeposits * depositTokenPriceInUSD}
                   />
                 )}
               </div>
-              <div className={isHoldingsCardColumn ? "pt-5" : ""}>
+              <div className={isHoldingsCardColumn ? 'pt-5' : ''}>
                 <HoldingsInfo
                   title="Club tokens (ownership share)"
                   amount={floatedNumberWithCommas(accountTokens)}
@@ -1509,11 +1516,11 @@ const DepositSyndicate: React.FC = () => {
           modalStyle: successfulDeposit ? ModalStyle.SUCCESS : ModalStyle.DARK,
           show: showDepositProcessingModal && !depositFailed,
           closeModal: () => handleCloseSuccessModal(),
-          customWidth: "w-11/12 sm:w-100",
-          customClassName: "pt-8 px-5 pb-5",
+          customWidth: 'w-11/12 sm:w-100',
+          customClassName: 'pt-8 px-5 pb-5',
           showCloseButton: true,
           outsideOnClick: !metamaskConfirmPending,
-          showHeader: false,
+          showHeader: false
         }}
       >
         {successfulDeposit ? (
@@ -1525,24 +1532,24 @@ const DepositSyndicate: React.FC = () => {
             />
             <div className="pt-8">
               <span className="text-2xl">
-                Deposited{" "}
+                Deposited{' '}
                 {floatedNumberWithCommas(
                   parseFloat(depositAmountFinalized),
-                  ethDepositToken ?? false,
-                )}{" "}
+                  ethDepositToken ?? false
+                )}{' '}
                 {depositTokenSymbol}
               </span>
             </div>
             <div className="pt-4 px-3 text-center">
               <span className="text-base text-gray-syn4">
-                You now have {floatedNumberWithCommas(accountTokens)} {symbol}{" "}
+                You now have {floatedNumberWithCommas(accountTokens)} {symbol}{' '}
                 which represents a {floatedNumberWithCommas(memberOwnership)}%
                 ownership share of this club.
               </span>
             </div>
             <CopyToClipboard
               text={`https://${
-                isDev ? "rinkeby." : ""
+                isDev ? 'rinkeby.' : ''
               }etherscan.io/tx/${transactionHash}`}
               onCopy={handleOnCopy}
             >
@@ -1592,15 +1599,15 @@ const DepositSyndicate: React.FC = () => {
                       {addGrayToDecimalInput(
                         floatedNumberWithCommas(
                           depositAmountFinalized.toString(),
-                          ethDepositToken ?? false,
-                        ),
+                          ethDepositToken ?? false
+                        )
                       )}
                     </p>
                   </div>
                   <div className="flex flex-col items-end">
                     <div className="flex items-center p-0 h-6">
                       <Image
-                        src={depositTokenLogo || ""}
+                        src={depositTokenLogo || '/images/token-gray-4.svg'}
                         height={24}
                         width={24}
                       />
@@ -1611,7 +1618,7 @@ const DepositSyndicate: React.FC = () => {
               </div>
               <div
                 className={`absolute p-2 bg-gray-syn8 border-gray-syn6 border rounded-lg`}
-                style={{ top: "calc(50% - 24px)", left: "calc(50% - 12px)" }}
+                style={{ top: 'calc(50% - 24px)', left: 'calc(50% - 12px)' }}
               >
                 <ArrowDown />
               </div>
@@ -1637,7 +1644,7 @@ const DepositSyndicate: React.FC = () => {
                     distance={13}
                   >
                     <InfoIcon
-                      src={"/images/deposit/info.svg"}
+                      src={'/images/deposit/info.svg'}
                       iconSize="h-3.5"
                     />
                   </Tooltip>
@@ -1659,9 +1666,9 @@ const DepositSyndicate: React.FC = () => {
                 </div>
                 <div className="flex items-center justify-between mt-1">
                   <p className="text-sm text-gray-syn4">
-                    {floatedNumberWithCommas(ownershipShare) === "< 0.01"
+                    {floatedNumberWithCommas(ownershipShare) === '< 0.01'
                       ? null
-                      : "= "}
+                      : '= '}
                     {floatedNumberWithCommas(ownershipShare)}% ownership share
                   </p>
                 </div>
@@ -1683,7 +1690,7 @@ const DepositSyndicate: React.FC = () => {
                       {stepIdx !== depositSteps?.length - 1 ? (
                         <div
                           className={`-ml-px absolute mt-0.5 top-5 left-2.5 w-0.5 h-18  ${
-                            completedStep ? "bg-blue" : "bg-gray-syn6"
+                            completedStep ? 'bg-blue' : 'bg-gray-syn6'
                           }`}
                           aria-hidden="true"
                         />
@@ -1701,8 +1708,8 @@ const DepositSyndicate: React.FC = () => {
                             <span
                               className={`relative z-5 w-5 h-5 flex items-center justify-center border-2 rounded-full ${
                                 inactiveStep
-                                  ? "border-gray-syn6"
-                                  : "border-blue"
+                                  ? 'border-gray-syn6'
+                                  : 'border-blue'
                               }`}
                             />
                           )}
@@ -1710,7 +1717,7 @@ const DepositSyndicate: React.FC = () => {
                         <span className="ml-4 min-w-0 flex flex-col">
                           <span
                             className={`text-base font-normal ${
-                              inactiveStep ? "text-gray-syn5" : "text-white"
+                              inactiveStep ? 'text-gray-syn5' : 'text-white'
                             } leading-7 font-light transition-all`}
                           >
                             {step.title}
@@ -1733,8 +1740,8 @@ const DepositSyndicate: React.FC = () => {
               <div
                 className={`mt-6 rounded-custom flex flex-col items-center ${
                   metamaskConfirmPending
-                    ? "bg-blue-midnightExpress"
-                    : "bg-gray-syn7"
+                    ? 'bg-blue-midnightExpress'
+                    : 'bg-gray-syn7'
                 }`}
               >
                 {metamaskConfirmPending ||
@@ -1750,33 +1757,33 @@ const DepositSyndicate: React.FC = () => {
                     : null}
 
                   {metamaskConfirmPending && sufficientAllowanceSet
-                    ? "Confirm deposit from your wallet"
+                    ? 'Confirm deposit from your wallet'
                     : null}
                   {submittingAllowanceApproval
                     ? `Approving ${depositTokenSymbol}`
                     : submitting
                     ? `Depositing ${floatedNumberWithCommas(
                         depositAmountFinalized,
-                        ethDepositToken ?? false,
+                        ethDepositToken ?? false
                       )} ${depositTokenSymbol}`
                     : null}
                 </span>
                 <span
                   className={`leading-snug font-whyte text-sm ${
                     transactionTooLong
-                      ? "text-yellow-semantic"
-                      : "text-gray-syn4"
+                      ? 'text-yellow-semantic'
+                      : 'text-gray-syn4'
                   } px-5 text-center pb-5`}
                 >
                   {(submittingAllowanceApproval || submitting) &&
                   !transactionTooLong
-                    ? "This could take anywhere from seconds to hours depending on network congestion and the gas fees you set. You can safely leave this page while you wait."
+                    ? 'This could take anywhere from seconds to hours depending on network congestion and the gas fees you set. You can safely leave this page while you wait.'
                     : null}
                   {(submitting || submittingAllowanceApproval) &&
                     transactionTooLong &&
                     TRANSACTION_TOO_LONG_MSG}
                   {metamaskConfirmPending && sufficientAllowanceSet
-                    ? "Deposits are irreversible."
+                    ? 'Deposits are irreversible.'
                     : null}
                 </span>
                 {submitting && transactionHash ? (
@@ -1792,8 +1799,8 @@ const DepositSyndicate: React.FC = () => {
               <div
                 className={`${
                   depositFailed || transactionFailed || transactionRejected
-                    ? "bg-red-error"
-                    : ""
+                    ? 'bg-red-error'
+                    : ''
                 }   rounded-md bg-opacity-10 mt-4 py-6 flex flex-col justify-center px-5`}
               >
                 {(depositFailed ||
@@ -1805,7 +1812,7 @@ const DepositSyndicate: React.FC = () => {
                         width={48}
                         height={48}
                         src={
-                          "/images/syndicateStatusIcons/transactionFailed.svg"
+                          '/images/syndicateStatusIcons/transactionFailed.svg'
                         }
                         alt="failed"
                       />
@@ -1813,9 +1820,9 @@ const DepositSyndicate: React.FC = () => {
                     <div className={`mt-4 mb-6 text-center`}>
                       <span className="text-base">{`${
                         depositFailed
-                          ? "Deposit failed"
+                          ? 'Deposit failed'
                           : `Transaction ${
-                              transactionRejected ? "rejected" : "failed"
+                              transactionRejected ? 'rejected' : 'failed'
                             }`
                       }`}</span>
                     </div>
@@ -1834,10 +1841,10 @@ const DepositSyndicate: React.FC = () => {
                   }}
                 >
                   {depositFailed || transactionFailed || transactionRejected
-                    ? "Try again"
+                    ? 'Try again'
                     : sufficientAllowanceSet
-                    ? "Complete deposit"
-                    : "Continue"}
+                    ? 'Complete deposit'
+                    : 'Continue'}
                 </button>
               </div>
             )}

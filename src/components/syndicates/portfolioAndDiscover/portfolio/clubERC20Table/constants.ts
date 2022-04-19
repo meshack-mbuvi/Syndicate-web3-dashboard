@@ -1,15 +1,15 @@
 export const clubERCTableColumns = [
-  "Club name",
-  "Status",
-  "Total deposited",
-  "Members",
-  "Your deposits",
-  "Ownership share",
+  'Club name',
+  'Status',
+  'Total deposited',
+  'Members',
+  'Your deposits',
+  'Ownership share'
 ];
 
 export const MyClubERC20TableColumns = [
-  "Club name",
-  "Status",
-  "Total deposited",
-  "Members",
+  'Club name',
+  'Status',
+  'Total deposited',
+  'Members'
 ];

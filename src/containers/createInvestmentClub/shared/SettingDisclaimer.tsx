@@ -1,5 +1,5 @@
-import React from "react";
-import ReactTooltip from "react-tooltip";
+import React from 'react';
+import ReactTooltip from 'react-tooltip';
 
 export const SettingsDisclaimerTooltip: React.FC<{
   id: string;

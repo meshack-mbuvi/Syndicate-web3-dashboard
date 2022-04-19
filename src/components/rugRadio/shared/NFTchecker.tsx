@@ -1,23 +1,23 @@
-import { CtaButton } from "@/components/CTAButton";
-import { TextField } from "@/components/inputs";
-import NumberTreatment from "@/components/NumberTreatment";
-import { Spinner } from "@/components/shared/spinner";
-import { AppState } from "@/state";
-import { isDev } from "@/utils/environment";
-import { yupResolver } from "@hookform/resolvers/yup";
-import Image from "next/image";
-import React, { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
-import { useSelector } from "react-redux";
-import * as yup from "yup";
-import OpenSeaLogo from "/public/images/actionIcons/opensea-seeklogo.svg";
+import { CtaButton } from '@/components/CTAButton';
+import { TextField } from '@/components/inputs';
+import NumberTreatment from '@/components/NumberTreatment';
+import { Spinner } from '@/components/shared/spinner';
+import { AppState } from '@/state';
+import { isDev } from '@/utils/environment';
+import { yupResolver } from '@hookform/resolvers/yup';
+import Image from 'next/image';
+import React, { useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { useSelector } from 'react-redux';
+import * as yup from 'yup';
+import OpenSeaLogo from '/public/images/actionIcons/opensea-seeklogo.svg';
 interface FormInputs {
   genesisNFT_ID: string;
 }
 
 const schema = () =>
   yup.object({
-    genesisNFT_ID: yup.string().required("Genesis NFT id is required"),
+    genesisNFT_ID: yup.string().required('Genesis NFT id is required')
   });
 
 export const NFTChecker: React.FC = () => {
@@ -26,17 +26,17 @@ export const NFTChecker: React.FC = () => {
   const {
     web3Reducer: {
       web3: {
-        ethereumNetwork: { invalidEthereumNetwork },
-      },
+        ethereumNetwork: { invalidEthereumNetwork }
+      }
     },
     initializeContractsReducer: {
       syndicateContracts: {
         RugClaimModule,
         RugUtilityProperty,
         GenesisNFTContract,
-        rugBonusClaimModule,
-      },
-    },
+        rugBonusClaimModule
+      }
+    }
   } = useSelector((state: AppState) => state);
 
   const [loading, setLoading] = useState(false);
@@ -50,19 +50,19 @@ export const NFTChecker: React.FC = () => {
 
   const [{ tokenBalance, tokenProduction, tokenBonus }, setTokenProperties] =
     useState({
-      tokenBalance: "0",
-      tokenProduction: "0",
-      tokenBonus: "0",
+      tokenBalance: '0',
+      tokenProduction: '0',
+      tokenBonus: '0'
     });
 
   const {
     control,
     handleSubmit,
     watch,
-    formState: { isValid },
+    formState: { isValid }
   } = useForm<FormInputs>({
     resolver: yupResolver(schema()),
-    mode: "onChange",
+    mode: 'onChange'
   });
 
   const { genesisNFT_ID } = watch();
@@ -71,7 +71,7 @@ export const NFTChecker: React.FC = () => {
     if (!GenesisNFTContract) return;
 
     GenesisNFTContract.currentSupply().then((supply) =>
-      setCurrentSupply(+supply),
+      setCurrentSupply(+supply)
     );
     return () => {
       setCurrentSupply(0);
@@ -104,7 +104,7 @@ export const NFTChecker: React.FC = () => {
       setTokenProperties({
         tokenBalance,
         tokenProduction,
-        tokenBonus,
+        tokenBonus
       });
       setNftFound(true);
       setShowError(false);
@@ -187,7 +187,7 @@ export const NFTChecker: React.FC = () => {
                   rel="noreferrer"
                 >
                   <span className="flex">
-                    View on opensea{" "}
+                    View on opensea{' '}
                     <span className="ml-1 flex">
                       <Image
                         src={OpenSeaLogo}

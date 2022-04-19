@@ -1,49 +1,31 @@
 // component to show syndicate deposits progress
-import { divideIfNotByZero } from "@/utils/conversions";
-import { floatedNumberWithCommas } from "@/utils/formattedNumbers";
-import { SkeletonLoader } from "src/components/skeletonLoader";
-import useTokenDetails from "@/hooks/useTokenDetails";
-import { useEffect, useState } from "react";
-import axios from "axios";
-import NumberTreatment from "@/components/NumberTreatment";
-
+import { divideIfNotByZero } from '@/utils/conversions';
+import { floatedNumberWithCommas } from '@/utils/formattedNumbers';
+import { SkeletonLoader } from 'src/components/skeletonLoader';
+import NumberTreatment from '@/components/NumberTreatment';
+import { TokenDetails } from '@/hooks/useGetDepositTokenDetails';
 interface IProgressIndicator {
   totalDeposits: number;
   depositTotalMax: string;
-  depositERC20TokenSymbol: string;
   openDate: string;
   closeDate: string;
   loading?: boolean;
   ethDepositToken: boolean;
+  depositTokenPriceInUSD: string;
+  tokenDetails: TokenDetails;
 }
+
 export const ProgressIndicator = (props: IProgressIndicator): JSX.Element => {
   const {
     totalDeposits = 0,
     depositTotalMax,
-    depositERC20TokenSymbol,
     loading = false,
     ethDepositToken = false,
+    depositTokenPriceInUSD,
+    tokenDetails,
   } = props;
 
-  const { depositTokenName } = useTokenDetails(ethDepositToken);
-
-  const [depositTokenPriceInUSDState, setDepositTokenPriceInUSDState] =
-    useState<number>(0);
-
-  useEffect(() => {
-    async function getTokenPrice(tokenName) {
-      const result = await axios.get(
-        `https://api.coingecko.com/api/v3/simple/price?ids=${tokenName}&vs_currencies=usd`,
-      );
-      setDepositTokenPriceInUSDState(
-        parseFloat(result.data?.[tokenName.toLowerCase()]?.usd?.toFixed(2)),
-      );
-    }
-    getTokenPrice(depositTokenName);
-  }, [depositTokenName]);
-
   // get percentage of deposits made to the syndicate
-
   const depositsPercentage =
     divideIfNotByZero(totalDeposits, depositTotalMax) * 100;
 
@@ -93,7 +75,7 @@ export const ProgressIndicator = (props: IProgressIndicator): JSX.Element => {
           <div className="h-5 overflow-hidden mb-4 text-sm flex rounded-full bg-gray-syn7">
             <div
               style={{
-                width: `${floatedNumberWithCommas(depositsPercentage)}%`,
+                width: `${floatedNumberWithCommas(depositsPercentage)}%`
               }}
               className="shadow-none flex flex-col transition-all text-center whitespace-nowrap text-white justify-center bg-blue"
             ></div>
@@ -101,55 +83,55 @@ export const ProgressIndicator = (props: IProgressIndicator): JSX.Element => {
           <div className="flex justify-between mt-6">
             <div className="text-left">
               <p className="text-gray-syn4 leading-6 pb-2">Deposits</p>
-              <div className="flex">
-                <p className="leading-loose xl:text-2xl lg:text-xl text-base">
+              <h2 className="flex">
+                <p>
                   <NumberTreatment
-                    numberValue={`${totalDeposits || ""}`}
+                    numberValue={`${totalDeposits || ''}`}
                     ethDepositToken={ethDepositToken}
                   />
                   &nbsp;
-                  {depositERC20TokenSymbol}
+                  {ethDepositToken ? 'ETH' : tokenDetails.symbol}
                 </p>
-                <p className="xl:text-2xl lg:text-xl text-gray-lightManatee leading-loose ml-4 font-whyte-light">
+                <p className="text-gray-lightManatee ml-4 font-light">
                   {floatedNumberWithCommas(depositsPercentage)}
                   {/* Temporary fix to add font weight to symbol  */}
                   <span
                     style={{
-                      fontFamily: "Arial",
-                      fontWeight: 300,
+                      fontFamily: 'Arial',
+                      fontWeight: 300
                     }}
                   >
                     %
                   </span>
                 </p>
-              </div>
-              <p className="text-gray-syn4 mt-2">
+              </h2>
+              <p className="text-sm text-gray-syn4 mt-2">
                 {floatedNumberWithCommas(
                   parseFloat(totalDeposits.toString()) *
-                    depositTokenPriceInUSDState,
-                )}{" "}
+                    parseFloat(depositTokenPriceInUSD)
+                )}{' '}
                 USD
               </p>
             </div>
             <div className="text-right">
               <p className="text-gray-syn4 leading-6 pb-2">Remaining</p>
-              <p className="xl:text-2xl lg:text-xl text-sm text-white leading-loose">
+              <h2>
                 {remainingDeposits > 0 ? (
                   <NumberTreatment
-                    numberValue={`${remainingDeposits || ""}`}
+                    numberValue={`${remainingDeposits || ''}`}
                     ethDepositToken={ethDepositToken}
                   />
                 ) : (
                   0
                 )}
                 &nbsp;
-                {depositERC20TokenSymbol}
-              </p>
-              <p className="text-gray-syn4 mt-2">
+                {ethDepositToken ? 'ETH' : tokenDetails.symbol}
+              </h2>
+              <p className="text-sm text-gray-syn4 mt-2">
                 {floatedNumberWithCommas(
                   parseFloat(remainingDeposits.toString()) *
-                    depositTokenPriceInUSDState,
-                )}{" "}
+                    parseFloat(depositTokenPriceInUSD)
+                )}{' '}
                 USD
               </p>
             </div>

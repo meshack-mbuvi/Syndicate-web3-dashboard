@@ -1,4 +1,4 @@
-import HorizontalDivider from "@/components/horizontalDivider";
+import HorizontalDivider from '@/components/horizontalDivider';
 
 /**
  * This method creates a list of loader items
@@ -21,7 +21,7 @@ export const showLoader = (count: number): Array<React.FC> => {
           <div className="card-placeholder w-16 sm:w-24 mb-2"></div>
         </div>
         <HorizontalDivider />
-      </div>,
+      </div>
     );
   }
   return animations;

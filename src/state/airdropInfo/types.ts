@@ -9,5 +9,5 @@ export interface IAirdropInfo {
 
 export const initialState = {
   airdropInfo: <IAirdropInfo>{},
-  loading: true,
+  loading: true
 };

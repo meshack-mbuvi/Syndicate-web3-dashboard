@@ -2,15 +2,15 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import BN from "bn.js";
-import { EventData, PastEventOptions } from "web3-eth-contract";
+import BN from 'bn.js';
+import { EventData, PastEventOptions } from 'web3-eth-contract';
 
 export interface SynTokenContract extends Truffle.Contract<SynTokenInstance> {
-  "new"(meta?: Truffle.TransactionDetails): Promise<SynTokenInstance>;
+  'new'(meta?: Truffle.TransactionDetails): Promise<SynTokenInstance>;
 }
 
 export interface MaxMembersSet {
-  name: "MaxMembersSet";
+  name: 'MaxMembersSet';
   args: {
     amount: BN;
     0: BN;
@@ -18,7 +18,7 @@ export interface MaxMembersSet {
 }
 
 export interface MemberJoined {
-  name: "MemberJoined";
+  name: 'MemberJoined';
   args: {
     account: string;
     0: string;
@@ -26,7 +26,7 @@ export interface MemberJoined {
 }
 
 export interface MemberLeft {
-  name: "MemberLeft";
+  name: 'MemberLeft';
   args: {
     account: string;
     0: string;
@@ -34,7 +34,7 @@ export interface MemberLeft {
 }
 
 export interface MemberTransferPermissionSet {
-  name: "MemberTransferPermissionSet";
+  name: 'MemberTransferPermissionSet';
   args: {
     memberTransferPermission: BN;
     0: BN;
@@ -42,7 +42,7 @@ export interface MemberTransferPermissionSet {
 }
 
 export interface MetadataUpdated {
-  name: "MetadataUpdated";
+  name: 'MetadataUpdated';
   args: {
     metadataKeyValues: string[][];
     0: string[][];
@@ -50,7 +50,7 @@ export interface MetadataUpdated {
 }
 
 export interface MintCurrencySet {
-  name: "MintCurrencySet";
+  name: 'MintCurrencySet';
   args: {
     mintCurrencyAddress_: string;
     0: string;
@@ -58,7 +58,7 @@ export interface MintCurrencySet {
 }
 
 export interface MintDurationSet {
-  name: "MintDurationSet";
+  name: 'MintDurationSet';
   args: {
     mintStartTime: BN;
     mintEndTime: BN;
@@ -68,7 +68,7 @@ export interface MintDurationSet {
 }
 
 export interface MintEnabledSet {
-  name: "MintEnabledSet";
+  name: 'MintEnabledSet';
   args: {
     mintEnabled: boolean;
     0: boolean;
@@ -76,7 +76,7 @@ export interface MintEnabledSet {
 }
 
 export interface MintPriceSet {
-  name: "MintPriceSet";
+  name: 'MintPriceSet';
   args: {
     mintPrice: BN;
     0: BN;
@@ -84,7 +84,7 @@ export interface MintPriceSet {
 }
 
 export interface MintProceedsRecipientSet {
-  name: "MintProceedsRecipientSet";
+  name: 'MintProceedsRecipientSet';
   args: {
     mintProceedsRecipient: string;
     0: string;
@@ -92,7 +92,7 @@ export interface MintProceedsRecipientSet {
 }
 
 export interface OwnershipTransferred {
-  name: "OwnershipTransferred";
+  name: 'OwnershipTransferred';
   args: {
     previousOwner: string;
     newOwner: string;
@@ -102,7 +102,7 @@ export interface OwnershipTransferred {
 }
 
 export interface SynContractMetadataUpdated {
-  name: "SynContractMetadataUpdated";
+  name: 'SynContractMetadataUpdated';
   args: {
     metadataKeyValues: string[][];
     0: string[][];
@@ -110,7 +110,7 @@ export interface SynContractMetadataUpdated {
 }
 
 export interface TokenCapSet {
-  name: "TokenCapSet";
+  name: 'TokenCapSet';
   args: {
     tokenCap: BN;
     0: BN;

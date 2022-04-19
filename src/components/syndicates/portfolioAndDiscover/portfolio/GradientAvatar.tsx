@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 
 interface Props {
   name: string | string[];
@@ -7,7 +7,7 @@ interface Props {
 }
 
 const GradientAvatar: React.FC<Props> = (props) => {
-  const { name, size = "h-7 w-7", customClasses } = props;
+  const { name, size = 'h-7 w-7', customClasses } = props;
 
   function djb2Hash(str) {
     const len = str.length;
@@ -25,9 +25,9 @@ const GradientAvatar: React.FC<Props> = (props) => {
 
   return (
     <div
-      className={`${size} rounded-full ${customClasses ?? ""}`}
+      className={`${size} rounded-full ${customClasses ?? ''}`}
       style={{
-        background: `linear-gradient(hsl(${hue1}deg, 100%, 50%), hsl(${hue2}deg, 30%, 70%)`,
+        background: `linear-gradient(hsl(${hue1}deg, 100%, 50%), hsl(${hue2}deg, 30%, 70%)`
       }}
     ></div>
   );

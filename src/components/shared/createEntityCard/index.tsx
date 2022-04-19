@@ -1,12 +1,12 @@
-import { useDemoMode } from "@/hooks/useDemoMode";
-import React from "react";
+import { useDemoMode } from '@/hooks/useDemoMode';
+import React from 'react';
 
 const CreateEntityCard: React.FC = () => {
   const isDemoMode = useDemoMode();
 
   return (
     <a
-      href={isDemoMode ? undefined : "https://doolahq.typeform.com/syndicate"}
+      href={isDemoMode ? undefined : 'https://doolahq.typeform.com/syndicate'}
       target="_blank"
       rel="noreferrer"
     >

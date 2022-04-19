@@ -2,15 +2,15 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import BN from "bn.js";
-import { EventData, PastEventOptions } from "web3-eth-contract";
+import BN from 'bn.js';
+import { EventData, PastEventOptions } from 'web3-eth-contract';
 
 export interface OwnableContract extends Truffle.Contract<OwnableInstance> {
-  "new"(meta?: Truffle.TransactionDetails): Promise<OwnableInstance>;
+  'new'(meta?: Truffle.TransactionDetails): Promise<OwnableInstance>;
 }
 
 export interface OwnershipTransferred {
-  name: "OwnershipTransferred";
+  name: 'OwnershipTransferred';
   args: {
     previousOwner: string;
     newOwner: string;

@@ -1,13 +1,13 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { getSyndicateContracts } from "@/ClubERC20Factory";
-import { amplitudeLogger, Flow } from "@/components/amplitude";
+import { getSyndicateContracts } from '@/ClubERC20Factory';
+import { amplitudeLogger, Flow } from '@/components/amplitude';
 import {
   ERROR_WALLET_CONNECTION,
-  SUCCESSFUL_WALLET_CONNECT,
-} from "@/components/amplitude/eventNames";
-import { web3InstantiationErrorText } from "@/components/syndicates/shared/Constants";
-import { AppState } from "@/state";
-import { setContracts } from "@/state/contracts";
+  SUCCESSFUL_WALLET_CONNECT
+} from '@/components/amplitude/eventNames';
+import { web3InstantiationErrorText } from '@/components/syndicates/shared/Constants';
+import { AppState } from '@/state';
+import { setContracts } from '@/state/contracts';
 import {
   hideErrorModal,
   hideWalletModal,
@@ -19,24 +19,24 @@ import {
   setLibrary,
   showErrorModal,
   storeCurrentEthNetwork,
-  storeEthereumNetwork,
-} from "@/state/wallet/actions";
-import { SafeAppWeb3Modal } from "@gnosis.pm/safe-apps-web3modal";
-import WalletConnectProvider from "@walletconnect/web3-provider";
-import { providers } from "ethers";
-import { parse, stringify } from "flatted";
-import { isEmpty } from "lodash";
-import router from "next/router";
+  storeEthereumNetwork
+} from '@/state/wallet/actions';
+import { SafeAppWeb3Modal } from '@gnosis.pm/safe-apps-web3modal';
+import WalletConnectProvider from '@walletconnect/web3-provider';
+import { providers } from 'ethers';
+import { parse, stringify } from 'flatted';
+import { isEmpty } from 'lodash';
+import router from 'next/router';
 import React, {
   createContext,
   ReactNode,
   useContext,
   useEffect,
-  useState,
-} from "react";
-import { useDispatch, useSelector } from "react-redux";
+  useState
+} from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
-const Web3 = require("web3");
+const Web3 = require('web3');
 const debugging = process.env.NEXT_PUBLIC_DEBUG;
 
 declare const window: any;
@@ -66,19 +66,19 @@ export const useConnectWalletContext = (): Partial<AuthProviderProps> =>
  */
 const getErrorMessage = () => {
   return {
-    title: "Connection unsuccessful",
-    message: "Please authorize this website to access your Ethereum account.",
-    type: "generalError",
+    title: 'Connection unsuccessful',
+    message: 'Please authorize this website to access your Ethereum account.',
+    type: 'generalError'
   };
 };
 
 const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
-  children,
+  children
 }) => {
   const {
     web3Reducer: {
-      web3: { currentEthereumNetwork },
-    },
+      web3: { currentEthereumNetwork }
+    }
   } = useSelector((state: AppState) => state);
 
   const initialWeb3 = new Web3(`${process.env.NEXT_PUBLIC_ALCHEMY}`);
@@ -87,9 +87,9 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [walletConnecting, setWalletConnecting] = useState(false);
   const [cachedWalletData, setCachedWalletData] = useState(null);
-  const [providerName, setProviderName] = useState("");
+  const [providerName, setProviderName] = useState('');
   const [activeProvider, setActiveProvider] = useState(null);
-  const [account, setAccount] = useState("");
+  const [account, setAccount] = useState('');
   const [loadedAsSafeApp, setLoadedAsSafeApp] = useState(false);
   const [web3, initializeWeb3] = useState(initialWeb3);
 
@@ -102,10 +102,10 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
       options: {
         rpc: {
           1: `${process.env.NEXT_PUBLIC_ALCHEMY_MAINNET}`,
-          4: `${process.env.NEXT_PUBLIC_ALCHEMY_RINKEBY}`,
-        },
-      },
-    },
+          4: `${process.env.NEXT_PUBLIC_ALCHEMY_RINKEBY}`
+        }
+      }
+    }
   };
 
   /*
@@ -120,10 +120,10 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
 
   // Initialize web3modal
   let web3Modal;
-  if (typeof window !== "undefined") {
+  if (typeof window !== 'undefined') {
     web3Modal = new SafeAppWeb3Modal({
       cacheProvider: true,
-      providerOptions, // required
+      providerOptions // required
     });
     checkGnosis(web3Modal);
   }
@@ -140,23 +140,23 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
     try {
       dispatch(hideErrorModal());
       if (account && activeProvider) {
-        localStorage.removeItem("cache");
-        localStorage.setItem("cache", stringify({ account, providerName }));
+        localStorage.removeItem('cache');
+        localStorage.setItem('cache', stringify({ account, providerName }));
       }
       return dispatch(
         setLibrary({
           account,
           web3,
-          providerName,
-        }),
+          providerName
+        })
       );
     } catch (error) {
       dispatch(setDisConnected());
       dispatch(
         showErrorModal({
           message: web3InstantiationErrorText,
-          type: "web3InstantionError",
-        }),
+          type: 'web3InstantionError'
+        })
       );
     }
   };
@@ -164,13 +164,13 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
   // Connect to safe if loaded in Gnosis.
   useEffect(() => {
     if (loadedAsSafeApp) {
-      activateProvider("GnosisSafe");
+      activateProvider('GnosisSafe');
     }
   }, [loadedAsSafeApp]);
 
   // handles setting localstorage wallet information to the state
   useEffect(() => {
-    const cacheWallet = localStorage.getItem("cache") || null;
+    const cacheWallet = localStorage.getItem('cache') || null;
     if (cacheWallet) {
       const parseCacheWallet = parse(cacheWallet);
       setCachedWalletData(parseCacheWallet);
@@ -181,7 +181,7 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
   useEffect(() => {
     if (!isEmpty(cachedWalletData)) {
       const { providerName } = cachedWalletData;
-      if (providerName === "Injected" || providerName === "WalletConnect") {
+      if (providerName === 'Injected' || providerName === 'WalletConnect') {
         activateProvider(providerName);
       }
     } else {
@@ -219,19 +219,19 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
         dispatch(setDisConnected());
       };
 
-      activeProvider.on("accountsChanged", handleAccountsChanged);
-      activeProvider.on("chainChanged", handleChainChanged);
-      activeProvider.on("disconnect", handleDisconnect);
+      activeProvider.on('accountsChanged', handleAccountsChanged);
+      activeProvider.on('chainChanged', handleChainChanged);
+      activeProvider.on('disconnect', handleDisconnect);
 
       // Subscription Cleanup
       return () => {
         if (activeProvider.removeListener) {
           activeProvider.removeListener(
-            "accountsChanged",
-            handleAccountsChanged,
+            'accountsChanged',
+            handleAccountsChanged
           );
-          activeProvider.removeListener("chainChanged", handleChainChanged);
-          activeProvider.removeListener("disconnect", handleDisconnect);
+          activeProvider.removeListener('chainChanged', handleChainChanged);
+          activeProvider.removeListener('disconnect', handleDisconnect);
         }
       };
     }
@@ -259,7 +259,7 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
     setProviderName(providerName);
 
     let provider;
-    if (providerName === "GnosisSafe") {
+    if (providerName === 'GnosisSafe') {
       provider = await web3Modal.requestProvider();
     } else {
       // connect to selected providers
@@ -267,9 +267,9 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
     }
 
     // This fixes issue with walletConnect transactions not receiving events.
-    if (providerName === "WalletConnect") {
+    if (providerName === 'WalletConnect') {
       delete provider.__proto__.request;
-      provider.hasOwnProperty("request") && delete provider.request;
+      provider.hasOwnProperty('request') && delete provider.request;
     }
 
     const address = await getProviderAccount(provider);
@@ -315,30 +315,30 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
   // if debug is set to true, the application has to be on the rinkeby network.
   // otherwise it has to be connected to mainnet.
   useEffect(() => {
-    if (currentEthereumNetwork && providerName === "Injected") {
-      if (debugging === "true" && currentEthereumNetwork !== "rinkeby") {
+    if (currentEthereumNetwork && providerName === 'Injected') {
+      if (debugging === 'true' && currentEthereumNetwork !== 'rinkeby') {
         dispatch(
           storeEthereumNetwork({
             invalidEthereumNetwork: true,
-            correctEthereumNetwork: "rinkeby network",
-          }),
+            correctEthereumNetwork: 'rinkeby network'
+          })
         );
-      } else if (debugging === "false" && currentEthereumNetwork !== "main") {
+      } else if (debugging === 'false' && currentEthereumNetwork !== 'main') {
         dispatch(
           storeEthereumNetwork({
             invalidEthereumNetwork: true,
-            correctEthereumNetwork: "mainnet",
-          }),
+            correctEthereumNetwork: 'mainnet'
+          })
         );
       } else if (
-        (debugging === "true" && currentEthereumNetwork === "rinkeby") ||
-        (debugging === "false" && currentEthereumNetwork === "main")
+        (debugging === 'true' && currentEthereumNetwork === 'rinkeby') ||
+        (debugging === 'false' && currentEthereumNetwork === 'main')
       ) {
         dispatch(
           storeEthereumNetwork({
             invalidEthereumNetwork: false,
-            correctEthereumNetwork: "",
-          }),
+            correctEthereumNetwork: ''
+          })
         );
         // show success modal when the user switches to the correct network
         if (account) {
@@ -356,18 +356,18 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
 
     try {
       if (
-        providerName === "Injected" ||
-        providerName === "WalletConnect" ||
-        providerName === "GnosisSafe"
+        providerName === 'Injected' ||
+        providerName === 'WalletConnect' ||
+        providerName === 'GnosisSafe'
       ) {
         await activateProvider(providerName);
       }
 
       setWalletConnecting(false);
       setShowSuccessModal(true);
-      if (router.pathname === "/clubs/create/clubprivatebetainvite") {
+      if (router.pathname === '/clubs/create/clubprivatebetainvite') {
         amplitudeLogger(SUCCESSFUL_WALLET_CONNECT, {
-          flow: Flow.WALLET_CONNECT,
+          flow: Flow.WALLET_CONNECT
         });
       }
     } catch (error) {
@@ -377,7 +377,7 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
       dispatch(showErrorModal(customError));
       amplitudeLogger(ERROR_WALLET_CONNECTION, {
         flow: Flow.WALLET_CONNECT,
-        error,
+        error
       });
     }
     // set loader to false after process is complete
@@ -398,8 +398,8 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
   const disconnectWallet = async () => {
     await disconnect();
     dispatch(logout());
-    localStorage.removeItem("cache");
-    localStorage.removeItem("walletconnect");
+    localStorage.removeItem('cache');
+    localStorage.removeItem('walletconnect');
   };
 
   const disconnect = async () => {
@@ -407,7 +407,7 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
     dispatch(setDisConnected());
     setWalletConnecting(false);
     setShowSuccessModal(false);
-    setAccount("");
+    setAccount('');
   };
 
   return (
@@ -421,7 +421,7 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
         setShowSuccessModal,
         cancelWalletConnection,
         disconnectWallet,
-        loadedAsSafeApp,
+        loadedAsSafeApp
       }}
     >
       {children}

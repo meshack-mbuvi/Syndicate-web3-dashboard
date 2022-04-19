@@ -7,5 +7,5 @@ export interface IERC721MerkleProof {
 
 export const initialState = {
   erc721MerkleProof: <IERC721MerkleProof>{},
-  loading: true,
+  loading: true
 };

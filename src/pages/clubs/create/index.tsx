@@ -1,21 +1,21 @@
-import Layout from "@/components/layout";
-import Modal, { ModalStyle } from "@/components/modal";
-import { Spinner } from "@/components/shared/spinner";
-import { EtherscanLink } from "@/components/syndicates/shared/EtherscanLink";
-import Head from "@/components/syndicates/shared/HeaderTitle";
-import InvestmentClubCTAs from "@/containers/create/shared/controls/investmentClubCTAs";
-import WalletWarnings from "@/containers/createInvestmentClub/walletWarnings";
-import GettingStarted from "@/containers/createInvestmentClub/gettingStarted";
-import ReviewDetails from "@/containers/createInvestmentClub/reviewDetails";
-import { useCreateInvestmentClubContext } from "@/context/CreateInvestmentClubContext";
-import { AppState } from "@/state";
-import Image from "next/image";
-import Link from "next/link";
-import { useEffect, useRef } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import moment from "moment";
-import AddToCalendar from "@/components/addToCalendar";
-import { setDispatchCreateFlow } from "@/state/wallet/actions";
+import Layout from '@/components/layout';
+import Modal, { ModalStyle } from '@/components/modal';
+import { Spinner } from '@/components/shared/spinner';
+import { EtherscanLink } from '@/components/syndicates/shared/EtherscanLink';
+import Head from '@/components/syndicates/shared/HeaderTitle';
+import InvestmentClubCTAs from '@/containers/create/shared/controls/investmentClubCTAs';
+import WalletWarnings from '@/containers/createInvestmentClub/walletWarnings';
+import GettingStarted from '@/containers/createInvestmentClub/gettingStarted';
+import ReviewDetails from '@/containers/createInvestmentClub/reviewDetails';
+import { useCreateInvestmentClubContext } from '@/context/CreateInvestmentClubContext';
+import { AppState } from '@/state';
+import Image from 'next/image';
+import Link from 'next/link';
+import { useEffect, useRef } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import moment from 'moment';
+import AddToCalendar from '@/components/addToCalendar';
+import { setDispatchCreateFlow } from '@/state/wallet/actions';
 
 const CreateInvestmentClub: React.FC = () => {
   const {
@@ -30,7 +30,7 @@ const CreateInvestmentClub: React.FC = () => {
     setShowModal,
     handleCreateInvestmentClub,
     preClubCreationStep,
-    setPreClubCreationStep,
+    setPreClubCreationStep
   } = useCreateInvestmentClubContext();
 
   const parentRef = useRef(null);
@@ -41,36 +41,36 @@ const CreateInvestmentClub: React.FC = () => {
       mintEndTime: { value: endMintTime },
       clubCreationStatus: {
         creationReceipt: { tokenAddress },
-        transactionHash,
-      },
+        transactionHash
+      }
     },
     web3Reducer: {
       dispatchCreateFlow,
-      web3: { account },
-    },
+      web3: { account }
+    }
   } = useSelector((state: AppState) => state);
 
   const dispatch = useDispatch();
 
   const formattedDate = moment(endMintTime * 1000).format(
-    "dddd, MMM Do YYYY, h:mm A",
+    'dddd, MMM Do YYYY, h:mm A'
   );
 
   const calEvent = {
     title: `${investmentClubName} closes to deposits on Syndicate`,
-    description: "",
+    description: '',
     startTime: endMintTime * 1000,
     endTime: moment(endMintTime * 1000)
-      .add(1, "days")
+      .add(1, 'days')
       .valueOf(),
-    location: "",
+    location: ''
   };
 
   useEffect(() => {
     if (dispatchCreateFlow && account) {
       setShowModal((prev) => ({
         ...prev,
-        warningModal: true,
+        warningModal: true
       }));
     }
   }, [dispatchCreateFlow, account]);
@@ -83,13 +83,13 @@ const CreateInvestmentClub: React.FC = () => {
           <GettingStarted setClubStep={setPreClubCreationStep} />
         ) : (
           <div className="container mx-auto w-full">
-            <div
-              className={`h4 text-center ${
-                currentStep === 0 ? "" : "pb-11"
+            <h4
+              className={`text-center ${
+                currentStep === 0 ? '' : 'pb-11'
               } pt-11`}
             >
               Create an investment club
-            </div>
+            </h4>
             <div className="flex justify-center w-full ">
               <div className="w-full h-full overflow-y-scroll">
                 <div className="flex-grow flex overflow-y-auto overflow-x-hidden justify-between max-w-480 mx-auto h-full no-scroll-bar">
@@ -188,7 +188,7 @@ const CreateInvestmentClub: React.FC = () => {
             waitingConfirmationModal: false,
             transactionModal: false,
             errorModal: false,
-            warningModal: false,
+            warningModal: false
           }))
         }
         showCloseButton={false}
@@ -202,7 +202,7 @@ const CreateInvestmentClub: React.FC = () => {
             <Image
               width={64}
               height={64}
-              src={"/images/syndicateStatusIcons/transactionFailed.svg"}
+              src={'/images/syndicateStatusIcons/transactionFailed.svg'}
               alt="failed"
             />
           </div>
@@ -212,7 +212,7 @@ const CreateInvestmentClub: React.FC = () => {
           <div className="h-fit-content rounded-2-half flex justify-center items-center flex-col mt-6">
             <div>
               <p className="text-gray-syn4 px-6-percent md:px-0 text-center md:text-left">
-                Please try again and{" "}
+                Please try again and{' '}
                 <a
                   className="text-blue outline-none"
                   href="mailto:support@syndicate.io"
@@ -220,7 +220,7 @@ const CreateInvestmentClub: React.FC = () => {
                   rel="noreferrer"
                 >
                   let us know
-                </a>{" "}
+                </a>{' '}
                 if the issue persists.
               </p>
             </div>
@@ -255,7 +255,7 @@ const CreateInvestmentClub: React.FC = () => {
             waitingConfirmationModal: false,
             transactionModal: false,
             errorModal: false,
-            warningModal: false,
+            warningModal: false
           }));
           dispatch(setDispatchCreateFlow(false));
         }}

@@ -2,40 +2,40 @@
 // add more nfts or more display criteria here.
 export const morseCodeNftsDetails = [
   {
-    image: "alpha.svg",
+    image: 'alpha.svg',
     displayCriteria: {
       clubDepositAmount: {
         minTotalDeposit: 1,
-        maxTotalDeposit: 10000,
-      },
-    },
+        maxTotalDeposit: 10000
+      }
+    }
   },
   {
-    image: "beta.svg",
+    image: 'beta.svg',
     displayCriteria: {
       clubDepositAmount: {
         minTotalDeposit: 10001,
-        maxTotalDeposit: 100000,
-      },
-    },
+        maxTotalDeposit: 100000
+      }
+    }
   },
   {
-    image: "gamma.svg",
+    image: 'gamma.svg',
     displayCriteria: {
       clubDepositAmount: {
         minTotalDeposit: 100001,
-        maxTotalDeposit: 1000000,
-      },
-    },
+        maxTotalDeposit: 1000000
+      }
+    }
   },
   {
-    image: "delta.svg",
+    image: 'delta.svg',
     displayCriteria: {
       clubDepositAmount: {
-        minTotalDeposit: 1000001,
-      },
-    },
-  },
+        minTotalDeposit: 1000001
+      }
+    }
+  }
 ];
 
 export type DisplayCriteria = {

@@ -3,24 +3,24 @@
 
 // syndicate details section
 const syndicateDetailsFooterText =
-  "Syndicate is currently in beta and should be used at your own risk. We take security seriously and our contracts have been thoroughly tested and formally verified but are pending audit and bugs may still exist. No materials on the Syndicate site should be construed as a solicitation or advice to buy any security.";
-const syndicateDetailsLinkText = "View the audit report here.";
-const syndicateModifiableText = "This syndicate is modifiable";
+  'Syndicate is currently in beta and should be used at your own risk. We take security seriously and our contracts have been thoroughly tested and formally verified but are pending audit and bugs may still exist. No materials on the Syndicate site should be construed as a solicitation or advice to buy any security.';
+const syndicateDetailsLinkText = 'View the audit report here.';
+const syndicateModifiableText = 'This syndicate is modifiable';
 
 export const syndicateDetailsConstants = {
   syndicateDetailsFooterText,
   syndicateDetailsLinkText,
-  syndicateModifiableText,
+  syndicateModifiableText
 };
 
 // metamask error texts
-const metamaskRejectByUserMessage = "request was rejected.";
-const metamaskInvalidParamsMessage = "Invalid parameters provided.";
-const metamaskInternalErrorMessage = "Internal server error.";
-const metamaskUnknownErrorMessage = "An error occured.";
-const metamaskErrorMessageTitleText = "Transaction rejected.";
-const metamaskTryAgainText = "Please try again.";
-const metamaskInvalidAddressMessage = "Invalid address provided.";
+const metamaskRejectByUserMessage = 'request was rejected.';
+const metamaskInvalidParamsMessage = 'Invalid parameters provided.';
+const metamaskInternalErrorMessage = 'Internal server error.';
+const metamaskUnknownErrorMessage = 'An error occured.';
+const metamaskErrorMessageTitleText = 'Transaction rejected.';
+const metamaskTryAgainText = 'Please try again.';
+const metamaskInvalidAddressMessage = 'Invalid address provided.';
 
 export const metamaskConstants = {
   metamaskRejectByUserMessage,
@@ -29,34 +29,34 @@ export const metamaskConstants = {
   metamaskUnknownErrorMessage,
   metamaskTryAgainText,
   metamaskErrorMessageTitleText,
-  metamaskInvalidAddressMessage,
+  metamaskInvalidAddressMessage
 };
 
 // Tooltips
-export const SyndicateInBetaBannerText = "BETA";
+export const SyndicateInBetaBannerText = 'BETA';
 
 // syndicate actions page
-const noTokenTitleText = "No club found at that address.";
+const noTokenTitleText = 'No club found at that address.';
 const noTokenMessageText =
-  "Check for more details on Etherscan to see if your transaction is pending or failed.";
-const syndicateAddressInvalidTitleText = "Invalid syndicate address";
+  'Check for more details on Etherscan to see if your transaction is pending or failed.';
+const syndicateAddressInvalidTitleText = 'Invalid syndicate address';
 const syndicateAddressInvalidMessageText =
-  "Check to ensure you have the correct address.";
+  'Check to ensure you have the correct address.';
 const notSyndicateYetTitleText = "isn't a club yet";
-const invalidTokenAddress = "is not a valid Ethereum address";
+const invalidTokenAddress = 'is not a valid Ethereum address';
 const notSyndicateYetMessageText =
   "This URL isn't currently associated with a syndicate. Invite someone to create a syndicate by copying the link below.";
 const notSyndicateForManagerYetMessageText =
   "This URL and the address you are connected with aren't associated with a syndicate yet.";
 const creatingSyndicateForManagerTitle =
-  "Your syndicate is being created, it will be ready soon";
+  'Your syndicate is being created, it will be ready soon';
 const creatingSyndicateTitle =
-  "This syndicate is being created, it will be ready soon";
+  'This syndicate is being created, it will be ready soon';
 
 const nonModifiableSyndicateErrorText =
-  "This syndicate is not modifable. This means you cannot modify the syndicate details.";
+  'This syndicate is not modifable. This means you cannot modify the syndicate details.';
 const enableDistributionToModifySyndicateText =
-  "Distributions must be set before modifying syndicate details.";
+  'Distributions must be set before modifying syndicate details.';
 
 export const syndicateActionConstants = {
   noTokenTitleText,
@@ -70,14 +70,14 @@ export const syndicateActionConstants = {
   notSyndicateForManagerYetMessageText,
   nonModifiableSyndicateErrorText,
   enableDistributionToModifySyndicateText,
-  invalidTokenAddress,
+  invalidTokenAddress
 };
 
 // contract transaction state constants
-export const confirmWalletText = "Waiting for confirmation";
+export const confirmWalletText = 'Waiting for confirmation';
 export const web3InstantiationErrorText =
-  "Sorry! We are unable to connect to network where the contract is deployed. Please ensure you have access to stable network and retry the connection.";
+  'Sorry! We are unable to connect to network where the contract is deployed. Please ensure you have access to stable network and retry the connection.';
 
 // indicate that only one syndicate can be created per account
 export const oneSyndicatePerAccountText =
-  "Only one syndicate can be created per wallet address. To create another syndicate, please switch to a different wallet address.";
+  'Only one syndicate can be created per wallet address. To create another syndicate, please switch to a different wallet address.';

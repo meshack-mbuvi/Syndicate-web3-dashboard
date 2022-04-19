@@ -1,6 +1,6 @@
-import { FC } from "react";
+import { FC } from 'react';
 
-import { SectionCard, SectionCardProps } from "./sectionCard";
+import { SectionCard, SectionCardProps } from './sectionCard';
 
 /**
  * @param {} props
@@ -19,16 +19,16 @@ interface Props {
 export const DetailsCard: FC<Props> = (props) => {
   const {
     sections = [],
-    title = "My Stats",
-    customStyles = "",
+    title = 'My Stats',
+    customStyles = '',
     infoIcon,
-    customInnerWidth = "",
+    customInnerWidth = ''
   } = props;
 
   return (
     <div className={`h-fit-content ${customStyles}`}>
       <div className={`flex ${customInnerWidth} justify-between`}>
-        <p className="fold-bold text-xl">{title !== "Details" ? title : ""}</p>
+        <p className="fold-bold text-xl">{title !== 'Details' ? title : ''}</p>
       </div>
 
       <div className={`${customInnerWidth}`}>

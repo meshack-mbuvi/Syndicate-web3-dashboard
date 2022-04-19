@@ -1,43 +1,43 @@
-import { SkeletonLoader } from "@/components/skeletonLoader";
-import { MintAndShareTokens } from "@/containers/managerActions/mintAndShareTokens";
-import AddMemberModal from "@/containers/managerActions/mintAndShareTokens/AddMemberModal";
-import { useIsClubOwner } from "@/hooks/useClubOwner";
-import useClubTokenMembers from "@/hooks/useClubTokenMembers";
-import useModal from "@/hooks/useModal";
-import { AppState } from "@/state";
-import { setDepositReadyInfo } from "@/state/legalInfo";
-import { setMemberToUpdate } from "@/state/modifyCapTable/slice";
-import { floatedNumberWithCommas } from "@/utils/formattedNumbers";
-import { generateMemberSignURL } from "@/utils/generateMemberSignURL";
-import Image from "next/image";
-import { useRouter } from "next/router";
-import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { animated } from "react-spring";
-import GenerateDepositLink from "../GenerateDepositLink";
-import ModifyCapTable from "../modifyMemberAllocation";
-import { MemberAddressComponent } from "./memberAddress";
-import MembersTable from "./MembersTable";
-import MoreOptions from "./moreOptions";
+import { SkeletonLoader } from '@/components/skeletonLoader';
+import { MintAndShareTokens } from '@/containers/managerActions/mintAndShareTokens';
+import AddMemberModal from '@/containers/managerActions/mintAndShareTokens/AddMemberModal';
+import { useIsClubOwner } from '@/hooks/useClubOwner';
+import useClubTokenMembers from '@/hooks/useClubTokenMembers';
+import useModal from '@/hooks/useModal';
+import { AppState } from '@/state';
+import { setDepositReadyInfo } from '@/state/legalInfo';
+import { setMemberToUpdate } from '@/state/modifyCapTable/slice';
+import { floatedNumberWithCommas } from '@/utils/formattedNumbers';
+import { generateMemberSignURL } from '@/utils/generateMemberSignURL';
+import Image from 'next/image';
+import { useRouter } from 'next/router';
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { animated } from 'react-spring';
+import GenerateDepositLink from '../GenerateDepositLink';
+import ModifyCapTable from '../modifyMemberAllocation';
+import { MemberAddressComponent } from './memberAddress';
+import MembersTable from './MembersTable';
+import MoreOptions from './moreOptions';
 
 const ClubTokenMembers = (): JSX.Element => {
   // retrieve state variables
   const {
     clubMembersSliceReducer: { clubMembers, loadingClubMembers },
     erc20TokenSliceReducer: {
-      depositDetails: { depositTokenSymbol, ethDepositToken },
+      depositDetails: { depositTokenSymbol, ethDepositToken }
     },
     legalInfoReducer: {
       depositReadyInfo: { adminSigned },
-      walletSignature: { signature },
-    },
+      walletSignature: { signature }
+    }
   } = useSelector((state: AppState) => state);
   const dispatch = useDispatch();
   const isOwner = useIsClubOwner();
   const router = useRouter();
   const { clubAddress } = router.query;
 
-  const [filteredAddress, setFilteredAddress] = useState("");
+  const [filteredAddress, setFilteredAddress] = useState('');
 
   const [showDepositLinkCopyState, setShowDepositLinkCopyState] =
     useState(false);
@@ -49,7 +49,7 @@ const ClubTokenMembers = (): JSX.Element => {
 
   const setClubDepositLink = (clubDepositLink: string) => {
     dispatch(
-      setDepositReadyInfo({ adminSigned, depositLink: clubDepositLink }),
+      setDepositReadyInfo({ adminSigned, depositLink: clubDepositLink })
     );
   };
 
@@ -58,11 +58,11 @@ const ClubTokenMembers = (): JSX.Element => {
 
   // club deposit link
   useEffect(() => {
-    const legal = JSON.parse(localStorage.getItem("legal") || "{}");
+    const legal = JSON.parse(localStorage.getItem('legal') || '{}');
     const clubLegalData = legal[clubAddress as string];
     if (!clubLegalData?.signaturesNeeded) {
       return setClubDepositLink(
-        `${window.location.origin}/clubs/${clubAddress}`,
+        `${window.location.origin}/clubs/${clubAddress}`
       );
     }
     if (
@@ -72,7 +72,7 @@ const ClubTokenMembers = (): JSX.Element => {
       const memberSignURL = generateMemberSignURL(
         clubAddress as string,
         clubLegalData.clubData,
-        clubLegalData.clubData.adminSignature,
+        clubLegalData.clubData.adminSignature
       );
       setClubDepositLink(memberSignURL);
     }
@@ -95,7 +95,7 @@ const ClubTokenMembers = (): JSX.Element => {
   const [syndicateMembersToShow, setSynMembersToShow] = useState(clubMembers);
   const [showMemberOptions, setShowMemberOptions] = useState({
     show: false,
-    memberAddress: "",
+    memberAddress: ''
   });
   const [tableData, setTableData] = useState([]);
 
@@ -107,7 +107,7 @@ const ClubTokenMembers = (): JSX.Element => {
       const filteredMembers = allMembers.filter((member) =>
         member.memberAddress
           .toLowerCase()
-          .includes(filteredAddress.toLowerCase()),
+          .includes(filteredAddress.toLowerCase())
       );
       setSynMembersToShow(filteredMembers);
     } else {
@@ -144,7 +144,7 @@ const ClubTokenMembers = (): JSX.Element => {
   const columns = React.useMemo(
     () => [
       {
-        Header: "Member",
+        Header: 'Member',
         accessor: function memberAddress(row: { memberAddress: string }) {
           return (
             <MemberAddressComponent
@@ -152,30 +152,30 @@ const ClubTokenMembers = (): JSX.Element => {
               setSelectedMember={() => setSelectedMember(row)}
             />
           );
-        },
+        }
       },
       {
         Header: `Deposit amount`,
         accessor: function depositAmount({
           depositAmount,
-          depositSymbol = depositTokenSymbol,
+          depositSymbol = depositTokenSymbol
         }) {
           return (
             <p className="flex text-white text-base leading-6">
               {`${floatedNumberWithCommas(
                 depositAmount,
-                ethDepositToken ?? false,
+                ethDepositToken ?? false
               )} ${depositSymbol}`}
             </p>
           );
-        },
+        }
       },
       {
         Header: `Club tokens (ownership share)`,
         accessor: function distributionShare({
           ownershipShare,
           clubTokens,
-          symbol,
+          symbol
         }) {
           return (
             <p>
@@ -185,7 +185,7 @@ const ClubTokenMembers = (): JSX.Element => {
               </span>
             </p>
           );
-        },
+        }
       },
       {
         Header: ` `,
@@ -204,22 +204,22 @@ const ClubTokenMembers = (): JSX.Element => {
                   {...{
                     club,
                     moreOptionItems,
-                    handleMenuItemClick: () => handleMenuItemClick(club),
+                    handleMenuItemClick: () => handleMenuItemClick(club)
                   }}
                 />
               </div>
             );
           }
-        },
-      },
+        }
+      }
     ],
-    [clubMembers, showMemberOptions, isOwner],
+    [clubMembers, showMemberOptions, isOwner]
   );
 
   const membersTabInstruction = isOwner
     ? "Invite members by sharing your club's deposit link.\
                     They’ll show up here once they deposit."
-    : "Members will show up here once they deposit funds into this club.";
+    : 'Members will show up here once they deposit funds into this club.';
 
   //TODO: Remove this to re-enable cap table
   const capTableEnabled = false;
@@ -309,7 +309,7 @@ const ClubTokenMembers = (): JSX.Element => {
                             className="bg-transparent rounded mt-1 focus:ring-offset-0 cursor-pointer"
                             onChange={() =>
                               setLinkShareAgreementChecked(
-                                !linkShareAgreementChecked,
+                                !linkShareAgreementChecked
                               )
                             }
                             type="checkbox"
@@ -322,12 +322,12 @@ const ClubTokenMembers = (): JSX.Element => {
                             violate securities laws. <br></br>
                             <a
                               target="_blank"
-                              style={{ color: "#4376ff" }}
+                              style={{ color: '#4376ff' }}
                               href="https://www.sec.gov/reportspubs/investor-publications/investorpubsinvclubhtm.html"
                               rel="noopener noreferrer"
                             >
                               Learn more.
-                            </a>{" "}
+                            </a>{' '}
                           </animated.p>
                         </div>
                       )}
@@ -390,7 +390,7 @@ const ClubTokenMembers = (): JSX.Element => {
               show: showMintTokensModal,
               handleShow: toggleMintTokensModal,
               closeAddMemberModal: toggleAddMemberModal,
-              existingMembers: tableData,
+              existingMembers: tableData
             }}
           />
         </>

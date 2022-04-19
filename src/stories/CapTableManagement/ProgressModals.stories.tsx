@@ -1,20 +1,21 @@
-import { ProgressModal, ProgressModalState } from "@/components/progressModal";
-import { formatAddress } from "@/utils/formatAddress";
-import { floatedNumberWithCommas } from "@/utils/formattedNumbers";
+import { ProgressModal, ProgressModalState } from '@/components/progressModal';
+import { formatAddress } from '@/utils/formatAddress';
+import { floatedNumberWithCommas } from '@/utils/formattedNumbers';
 
 export default {
-  title: "Molecules/Cap Table Management/Modals/Modify Member Tokens/Modify Member Progress Modals",
+  title:
+    'Molecules/Cap Table Management/Modals/Modify Member Tokens/Modify Member Progress Modals',
   argTypes: {
     state: {
       options: [
         ProgressModalState.FAILURE,
         ProgressModalState.PENDING,
         ProgressModalState.SUCCESS,
-        ProgressModalState.CONFIRM,
+        ProgressModalState.CONFIRM
       ],
-      control: { type: "select" },
-    },
-  },
+      control: { type: 'select' }
+    }
+  }
 };
 
 const Template = (args) => {
@@ -24,47 +25,47 @@ const Template = (args) => {
 export const ConfirmInWallet = Template.bind({});
 ConfirmInWallet.args = {
   isVisible: true,
-  title: "Confirm in wallet",
-  description: "Please confirm the cap table modification from your wallet.",
-  state: ProgressModalState.CONFIRM,
+  title: 'Confirm in wallet',
+  description: 'Please confirm the cap table modification from your wallet.',
+  state: ProgressModalState.CONFIRM
 };
 
 export const Pending = Template.bind({});
 Pending.args = {
   isVisible: true,
-  title: "Updating cap table",
+  title: 'Updating cap table',
   description:
-    "This could take anywhere from seconds to hours depending on network congestion and the gas fees you set. You can safely leave this page while you wait.",
-  etherscanHash: "#",
-  transactionType: "transaction",
-  state: ProgressModalState.PENDING,
+    'This could take anywhere from seconds to hours depending on network congestion and the gas fees you set. You can safely leave this page while you wait.',
+  etherscanHash: '#',
+  transactionType: 'transaction',
+  state: ProgressModalState.PENDING
 };
 
 export const Success = Template.bind({});
 Success.args = {
   isVisible: true,
-  title: "Cap table updated",
+  title: 'Cap table updated',
   description: `${formatAddress(
-    "0x2502947319f2166eF46f0a7c081D23C63f88112B",
+    '0x2502947319f2166eF46f0a7c081D23C63f88112B',
     6,
-    4,
+    4
   )}'s club token
     allocation has been changed to ${floatedNumberWithCommas(3233) || 0} ✺RACA`,
-  buttonLabel: "Done",
+  buttonLabel: 'Done',
   buttonFullWidth: true,
   state: ProgressModalState.SUCCESS,
-  etherscanHash: "#",
-  transactionType: "transaction",
+  etherscanHash: '#',
+  transactionType: 'transaction'
 };
 
 export const Failure = Template.bind({});
 Failure.args = {
   isVisible: true,
-  title: "Cap table update failed",
-  description: "",
-  buttonLabel: "Close",
+  title: 'Cap table update failed',
+  description: '',
+  buttonLabel: 'Close',
   buttonFullWidth: true,
   state: ProgressModalState.FAILURE,
-  etherscanHash: "#",
-  transactionType: "transaction",
+  etherscanHash: '#',
+  transactionType: 'transaction'
 };

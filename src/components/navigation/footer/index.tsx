@@ -1,7 +1,7 @@
-import React from "react";
-import { syndicateDetailsConstants } from "src/components/syndicates/shared/Constants";
+import React from 'react';
+import { syndicateDetailsConstants } from 'src/components/syndicates/shared/Constants';
 
-const Footer: React.FC<{ extraClasses: string }> = ({ extraClasses = "" }) => {
+const Footer: React.FC<{ extraClasses: string }> = ({ extraClasses = '' }) => {
   const { syndicateDetailsFooterText } = syndicateDetailsConstants;
 
   return (

@@ -1,2 +1,2 @@
-export { DetailsCard } from "./detailsCard";
-export { ProgressIndicator } from "./progressIndicator";
+export { DetailsCard } from './detailsCard';
+export { ProgressIndicator } from './progressIndicator';

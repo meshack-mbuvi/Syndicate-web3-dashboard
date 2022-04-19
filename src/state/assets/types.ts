@@ -17,5 +17,5 @@ export const initialState: InitialState = {
   tokensFetchError: false,
   collectiblesFetchError: false,
   allCollectiblesFetched: false,
-  ethereumTokenPrice: 0,
+  ethereumTokenPrice: 0
 };

@@ -1,9 +1,9 @@
-import Portal from "@/components/shared/Portal";
-import { SkeletonLoader } from "@/components/skeletonLoader";
-import { useClubDepositsAndSupply } from "@/hooks/useClubDepositsAndSupply";
-import { AppState } from "@/state";
-import React, { FC, useRef, useState } from "react";
-import { useSelector } from "react-redux";
+import Portal from '@/components/shared/Portal';
+import { SkeletonLoader } from '@/components/skeletonLoader';
+import { useClubDepositsAndSupply } from '@/hooks/useClubDepositsAndSupply';
+import { AppState } from '@/state';
+import React, { FC, useRef, useState } from 'react';
+import { useSelector } from 'react-redux';
 
 // Description of SectionCard props
 export interface SectionCardProps {
@@ -27,13 +27,13 @@ export interface SectionCardProps {
 export const SectionCard: FC<SectionCardProps> = (props) => {
   const { header, content, tooltip, infoIcon = true } = props;
   const greenSubtext =
-    header === "Total Withdraws / Distributions To Date" ||
-    header === "Total Distributions / Deposits";
+    header === 'Total Withdraws / Distributions To Date' ||
+    header === 'Total Distributions / Deposits';
 
   const {
     erc20TokenSliceReducer: {
-      erc20Token: { loading, address },
-    },
+      erc20Token: { loading, address }
+    }
   } = useSelector((state: AppState) => state);
 
   const { loadingClubDeposits } = useClubDepositsAndSupply(address);
@@ -57,7 +57,7 @@ export const SectionCard: FC<SectionCardProps> = (props) => {
       <Portal>
         <div
           className={`absolute z-10 pointer-events-none ${
-            open ? "visible" : "invisible"
+            open ? 'visible' : 'invisible'
           } w-56`}
           style={{ ...coord }}
         >
@@ -77,7 +77,7 @@ export const SectionCard: FC<SectionCardProps> = (props) => {
           const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
           setCoords({
             left: rect.left, // add half the width of the button for centering
-            top: `${rect.y + 60}px`, // add scrollY offset, as soon as getBountingClientRect takes on screen coords
+            top: `${rect.y + 60}px` // add scrollY offset, as soon as getBountingClientRect takes on screen coords
           });
         }}
         onMouseLeave={() => {
@@ -96,7 +96,7 @@ export const SectionCard: FC<SectionCardProps> = (props) => {
             </div>
             <div
               className={
-                greenSubtext ? "text-base text-green-screamin" : "text-base"
+                greenSubtext ? 'text-base text-green-screamin' : 'text-base'
               }
             >
               {content}

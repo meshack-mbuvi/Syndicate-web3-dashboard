@@ -1,10 +1,10 @@
-import Link from "next/link";
-import React, { useEffect, useRef } from "react";
-import Image from "next/image";
-import { useRouter } from "next/router";
-import { NavBarNavItem } from "./navbarItems";
-import WalletComponent from "./wallet";
-import { MoreMenu } from "./moreMenu";
+import Link from 'next/link';
+import React, { useEffect, useRef } from 'react';
+import Image from 'next/image';
+import { useRouter } from 'next/router';
+import { NavBarNavItem } from './navbarItems';
+import WalletComponent from './wallet';
+import { MoreMenu } from './moreMenu';
 
 interface props {
   navItems: { navItemText: string; url?: string; isLegal?: boolean }[];
@@ -15,7 +15,7 @@ interface props {
 const Header: React.FC<props> = ({
   navItems,
   showBackButton = false,
-  showNav = true,
+  showNav = true
 }) => {
   const router = useRouter();
   const navRef = useRef(null);
@@ -25,10 +25,10 @@ const Header: React.FC<props> = ({
     if (showMobileNav) {
       // ideally want to add this to the parent element however parent seems to have sibling elements
       // with overflow  -> adding to body for now
-      document.body.classList.add("overflow-y-hidden");
+      document.body.classList.add('overflow-y-hidden');
     }
     return () => {
-      document.body.classList.remove("overflow-y-hidden");
+      document.body.classList.remove('overflow-y-hidden');
     };
   }, [showMobileNav]);
 
@@ -42,11 +42,11 @@ const Header: React.FC<props> = ({
     if (showMobileNav) {
       // ideally want to add this to the parent element however parent seems to have sibling elements
       // with overflow  -> adding to body for now
-      document.addEventListener("mouseup", handleClickOutside);
+      document.addEventListener('mouseup', handleClickOutside);
     }
 
     return () => {
-      document.removeEventListener("mouseup", handleClickOutside);
+      document.removeEventListener('mouseup', handleClickOutside);
     };
   }, [navRef, showMobileNav]);
 
@@ -55,9 +55,9 @@ const Header: React.FC<props> = ({
       setShowMobileNav(false);
     };
 
-    router.events.on("routeChangeStart", closeMobileNav);
+    router.events.on('routeChangeStart', closeMobileNav);
     return () => {
-      router.events.off("routeChangeStart", closeMobileNav);
+      router.events.off('routeChangeStart', closeMobileNav);
     };
   }, [router.events]);
 
@@ -66,10 +66,10 @@ const Header: React.FC<props> = ({
   };
 
   const handleBackButton = () => {
-    const path = router.pathname.split("/");
+    const path = router.pathname.split('/');
     //assumes showBackButton only used on ...[DYNAMIC]/currentPath
-    const grandParentPath = path.slice(0, path.length - 2).join("/");
-    router.push(grandParentPath || "/");
+    const grandParentPath = path.slice(0, path.length - 2).join('/');
+    router.push(grandParentPath || '/');
   };
 
   return (
@@ -78,9 +78,9 @@ const Header: React.FC<props> = ({
         <div className="fixed sm:hidden h-screen w-full bg-gray-syn8 opacity-50 z-40" />
       ) : null}
       <nav
-        className={`${
-          showNav ? "block" : "hidden"
-        } ${showMobileNav ? "bg-gray-syn8 bg-opacity-100" : "bg-black"} sm:bg-black h-20 sm:bg-opacity-50 fixed top-0 inset-x-0 align-middle z-40 backdrop-filter backdrop-blur-xl`}
+        className={`${showNav ? 'block' : 'hidden'} ${
+          showMobileNav ? 'bg-gray-syn8 bg-opacity-100' : 'bg-black'
+        } sm:bg-black h-20 sm:bg-opacity-50 fixed top-0 inset-x-0 align-middle z-40 backdrop-filter backdrop-blur-xl`}
         ref={navRef}
       >
         {showMobileNav ? (
@@ -96,7 +96,7 @@ const Header: React.FC<props> = ({
                   />
                 </div>
                 <div className="pl-6-percent">
-                  <div className="border-b-1 border-gray-border"/>
+                  <div className="border-b-1 border-gray-border" />
                 </div>
               </>
             ))}

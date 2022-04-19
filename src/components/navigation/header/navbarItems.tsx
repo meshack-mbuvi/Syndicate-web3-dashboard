@@ -1,5 +1,5 @@
-import ActiveLink from "@/components/syndicates/shared/ActiveLink";
-import React from "react";
+import ActiveLink from '@/components/syndicates/shared/ActiveLink';
+import React from 'react';
 
 interface IProps {
   navItemText: string;
@@ -11,8 +11,8 @@ interface IProps {
 export const NavBarNavItem: React.FC<IProps> = ({
   navItemText,
   url,
-  customClasses = "",
-  isLegal = false,
+  customClasses = '',
+  isLegal = false
 }) => {
   return (
     <>

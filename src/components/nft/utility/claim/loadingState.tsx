@@ -1,5 +1,5 @@
-import { SkeletonLoader } from "@/components/skeletonLoader";
-import React from "react";
+import { SkeletonLoader } from '@/components/skeletonLoader';
+import React from 'react';
 
 const LoadingClaim: React.FC = () => {
   return (

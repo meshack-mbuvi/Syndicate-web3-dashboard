@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 
 interface Props {
   disabled?: boolean;
@@ -12,16 +12,16 @@ export const CtaButton: React.FC<Props> = ({
   children,
   greenCta,
   disabled = false,
-  type = "button",
+  type = 'button'
 }) => {
   return (
     <button
       className={`w-full py-4 ${
         disabled
-          ? "primary-CTA-disabled text-gray-syn4"
+          ? 'primary-CTA-disabled text-gray-syn4'
           : greenCta
-          ? "green-CTA"
-          : "primary-CTA"
+          ? 'green-CTA'
+          : 'primary-CTA'
       }`}
       disabled={disabled}
       onClick={onClick}

@@ -1,8 +1,8 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { initialState, MerkleProof } from "./types";
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { initialState, MerkleProof } from './types';
 
 const setMerkleProofSlice = createSlice({
-  name: "merkleProof",
+  name: 'merkleProof',
   initialState,
   reducers: {
     setMerkleProof(state, action: PayloadAction<MerkleProof>) {
@@ -14,8 +14,8 @@ const setMerkleProofSlice = createSlice({
     },
     clearMerkleProof(state) {
       state.myMerkleProof = initialState.myMerkleProof;
-    },
-  },
+    }
+  }
 });
 
 export const { setMerkleProof, setLoadingMerkleProof, clearMerkleProof } =

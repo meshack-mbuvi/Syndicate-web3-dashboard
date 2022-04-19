@@ -1,12 +1,12 @@
-import React from "react";
-import { formatAddress } from "@/utils/formatAddress";
-import { AppState } from "@/state";
-import { useSelector } from "react-redux";
-import { WalletIcon } from "@/components/iconWrappers";
+import React from 'react';
+import { formatAddress } from '@/utils/formatAddress';
+import { AppState } from '@/state';
+import { useSelector } from 'react-redux';
+import { WalletIcon } from '@/components/iconWrappers';
 
 const AccountPill = () => {
   const {
-    web3: { account },
+    web3: { account }
   } = useSelector((state: AppState) => state.web3Reducer);
   const formattedAddress = formatAddress(account, 7, 6);
   return (

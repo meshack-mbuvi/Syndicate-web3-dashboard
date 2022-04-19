@@ -1,41 +1,41 @@
-import { MERKLE_AIRDROP_CREATED } from "@/graphql/queries";
-import { AppState } from "@/state";
-import { useQuery } from "@apollo/client";
-import { useDispatch, useSelector } from "react-redux";
-import { useEffect } from "react";
+import { MERKLE_AIRDROP_CREATED } from '@/graphql/queries';
+import { AppState } from '@/state';
+import { useQuery } from '@apollo/client';
+import { useDispatch, useSelector } from 'react-redux';
+import { useEffect } from 'react';
 import {
   setLoadingAirdropInfo,
   setAirdropInfo,
-  clearAirdropInfo,
-} from "@/state/airdropInfo/slice";
+  clearAirdropInfo
+} from '@/state/airdropInfo/slice';
 
 const useFetchAirdropInfo: any = (skipQuery) => {
   const dispatch = useDispatch();
 
   const {
     web3Reducer: {
-      web3: { account, },
+      web3: { account }
     },
     merkleProofSliceReducer: { myMerkleProof },
     erc20TokenSliceReducer: {
-      erc20Token: { address: clubAddress },
-    },
+      erc20Token: { address: clubAddress }
+    }
   } = useSelector((state: AppState) => state);
 
   // Fetch existing claims
   const {
     loading,
     data: airdropData = {},
-    refetch,
+    refetch
   } = useQuery(MERKLE_AIRDROP_CREATED, {
     variables: {
       where: {
         club: clubAddress.toLowerCase(),
-        treeIndex: myMerkleProof.treeIndex,
-      },
+        treeIndex: myMerkleProof.treeIndex
+      }
     },
     skip: !account || skipQuery,
-    context: { clientName: "graph" },
+    context: { clientName: 'graph' }
   });
 
   useEffect(() => {
@@ -55,8 +55,8 @@ const useFetchAirdropInfo: any = (skipQuery) => {
         setAirdropInfo({
           ...airdropObj,
           endTime: parseInt(airdropObj.endTime),
-          startTime: parseInt(airdropObj.startTime),
-        }),
+          startTime: parseInt(airdropObj.startTime)
+        })
       );
       dispatch(setLoadingAirdropInfo(false));
     } else {

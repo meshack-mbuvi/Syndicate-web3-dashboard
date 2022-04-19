@@ -1,5 +1,5 @@
-import ClubERC20 from "src/contracts/oldERC20Club.json";
-import { getGnosisTxnInfo } from "../shared/gnosisTransactionInfo";
+import ClubERC20 from 'src/contracts/oldERC20Club.json';
+import { getGnosisTxnInfo } from '../shared/gnosisTransactionInfo';
 
 export class OldClubERC20Contract {
   web3;
@@ -22,7 +22,7 @@ export class OldClubERC20Contract {
     try {
       this.OldClubERC20Contract = new this.web3.eth.Contract(
         ClubERC20,
-        this.address,
+        this.address
       );
     } catch (error) {
       this.OldClubERC20Contract = null;
@@ -36,7 +36,7 @@ export class OldClubERC20Contract {
     onTxConfirm: (transactionHash?) => void,
     onTxReceipt: (receipt?) => void,
     onTxFail: (error?) => void,
-    setTransactionHash: (txHas) => void,
+    setTransactionHash: (txHas) => void
   ): Promise<void> {
     let gnosisTxHash;
 
@@ -44,25 +44,25 @@ export class OldClubERC20Contract {
       this.OldClubERC20Contract.methods
         .controllerMint(recipientAddress, amount)
         .send({ from: ownerAddress })
-        .on("transactionHash", (transactionHash) => {
+        .on('transactionHash', (transactionHash) => {
           onTxConfirm(transactionHash);
 
           // Stop waiting if we are connected to gnosis safe via walletConnect
           if (
-            this.web3._provider.wc?._peerMeta.name === "Gnosis Safe Multisig"
+            this.web3._provider.wc?._peerMeta.name === 'Gnosis Safe Multisig'
           ) {
-            setTransactionHash("");
+            setTransactionHash('');
             gnosisTxHash = transactionHash;
             resolve(transactionHash);
           } else {
             setTransactionHash(transactionHash);
           }
         })
-        .on("receipt", (receipt) => {
+        .on('receipt', (receipt) => {
           onTxReceipt(receipt);
           resolve(receipt);
         })
-        .on("error", (error) => {
+        .on('error', (error) => {
           console.log(error);
           onTxFail(error);
           reject(error);
@@ -76,7 +76,7 @@ export class OldClubERC20Contract {
       if (receipt.isSuccessful) {
         onTxReceipt(receipt);
       } else {
-        onTxFail("Transaction failed");
+        onTxFail('Transaction failed');
       }
     }
   }

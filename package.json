@@ -123,6 +123,7 @@
     "cypress:interactive": "cypress open",
     "fix:lint": "eslint --ext .ts,.tsx . --fix",
     "fix:prettier": "prettier --write \"**/*.{css,js,jsx,ts,tsx,json,md}\"",
+    "prepare": "husky install",
     "fix": "npm run fix:lint && npm run fix:prettier",
     "dev": "next dev",
     "build": "NODE_OPTIONS='--trace-warnings --max_old_space_size=8192' && CI=false && next build",
@@ -176,6 +177,8 @@
     "eslint-plugin-react": "^7.24.0",
     "eslint-plugin-react-hooks": "^4.2.0",
     "eslint-webpack-plugin": "^2.4.3",
+    "husky": "^7.0.4",
+    "lint-staged": "^12.3.5",
     "postcss": "^7.0.39",
     "prettier": "^2.2.1",
     "tailwindcss": "npm:@tailwindcss/postcss7-compat@^2.2.17",
@@ -187,5 +190,13 @@
   },
   "bugs": {
     "url": "https://github.com/vercel/next.js/issues"
+  },
+  "lint-staged": {
+    "**/*.{js,jsx,json,css,md}": [
+      "prettier --write"
+    ],
+    "**/*.{ts,tsx}": [
+      "prettier --write"
+    ]
   }
 }

@@ -1,9 +1,12 @@
-import React, { Dispatch, SetStateAction } from "react";
-import Modal, { ModalStyle } from "@/components/modal";
-import { MemberAddressField } from "@/components/inputs/memberAddressField";
-import { InputFieldWithToken } from "@/components/inputs/inputFieldWithToken";
-import { numberWithCommas } from "@/utils/formattedNumbers";
-import { CtaButton } from "@/components/CTAButton";
+import React, { Dispatch, SetStateAction } from 'react';
+import Modal, { ModalStyle } from '@/components/modal';
+import { MemberAddressField } from '@/components/inputs/memberAddressField';
+import {
+  InputFieldWithToken,
+  SymbolDisplay
+} from '@/components/inputs/inputFieldWithToken';
+import { numberWithCommas } from '@/utils/formattedNumbers';
+import { CtaButton } from '@/components/CTAButton';
 
 interface IModifyMemberClubTokens {
   memberList: any;
@@ -31,7 +34,7 @@ const ModifyMemberClubTokens: React.FC<IModifyMemberClubTokens> = ({
   memberAllocation,
   handleSubmit,
   symbol,
-  continueButtonDisabled,
+  continueButtonDisabled
 }): React.ReactElement => {
   return (
     <Modal
@@ -39,16 +42,16 @@ const ModifyMemberClubTokens: React.FC<IModifyMemberClubTokens> = ({
         show: showModifyCapTable,
         modalStyle: ModalStyle.DARK,
         showCloseButton: true,
-        customWidth: "w-full max-w-480",
+        customWidth: 'w-full max-w-480',
         outsideOnClick: true,
         closeModal: () => {
           clearModalFields();
           setShowModifyCapTable(false);
         },
-        customClassName: "pt-8 pb-10 px-10",
+        customClassName: 'pt-8 pb-10 px-10',
         showHeader: false,
         overflowYScroll: false,
-        overflow: "overflow-visible",
+        overflow: 'overflow-visible'
       }}
     >
       <div>
@@ -74,14 +77,13 @@ const ModifyMemberClubTokens: React.FC<IModifyMemberClubTokens> = ({
               <div className="mt-6">
                 <div className="mb-2 text-white">Club token allocation</div>
                 <InputFieldWithToken
-                  depositToken={true}
                   value={numberWithCommas(memberAllocation)}
                   onChange={(e) => handleAmountChange(e)}
                   isInErrorState={Boolean(memberAllocationError)}
-                  infoLabel={memberAllocationError ? memberAllocationError : ""}
-                  showClubSymbol={true}
+                  infoLabel={memberAllocationError ? memberAllocationError : ''}
+                  symbolDisplayVariant={SymbolDisplay.ONLY_SYMBOL}
                   placeholderLabel="0"
-                  symbol={symbol}
+                  depositTokenSymbol={symbol}
                 />
               </div>
             </div>

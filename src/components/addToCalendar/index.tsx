@@ -1,18 +1,18 @@
-import React, { useState } from "react";
-import Image from "next/image";
-import { buildUrl, isMobile } from "../../utils/calendarHelpers";
+import React, { useState } from 'react';
+import Image from 'next/image';
+import { buildUrl, isMobile } from '../../utils/calendarHelpers';
 
 const items = [
   {
-    title: "Google calendar",
-    name: "google",
-    icon: "/images/social/google.svg",
+    title: 'Google calendar',
+    name: 'google',
+    icon: '/images/social/google.svg'
   },
   {
-    title: "Apple calendar",
-    name: "apple",
-    icon: "/images/social/apple.svg",
-  },
+    title: 'Apple calendar',
+    name: 'apple',
+    icon: '/images/social/apple.svg'
+  }
 ];
 
 const AddToCalendar: React.FC<{ calEvent }> = ({ calEvent }) => {
@@ -21,25 +21,22 @@ const AddToCalendar: React.FC<{ calEvent }> = ({ calEvent }) => {
   const handleDropdownLinkClick = (type: string) => {
     const url = buildUrl(calEvent, type);
 
-    if (
-      !isMobile() &&
-      (url.startsWith("data") || url.startsWith("BEGIN"))
-    ) {
-      const filename = "download.ics";
-      const blob = new Blob([url], { type: "text/calendar;charset=utf-8" });
+    if (!isMobile() && (url.startsWith('data') || url.startsWith('BEGIN'))) {
+      const filename = 'download.ics';
+      const blob = new Blob([url], { type: 'text/calendar;charset=utf-8' });
 
-      const link = document.createElement("a");
+      const link = document.createElement('a');
       link.href = window.URL.createObjectURL(blob);
-      link.setAttribute("download", filename);
+      link.setAttribute('download', filename);
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
     } else {
-      window.open(url, "_blank");
+      window.open(url, '_blank');
     }
 
     setShowDropdown(false);
-  }
+  };
 
   return (
     <div className="relative inline-block text-center">

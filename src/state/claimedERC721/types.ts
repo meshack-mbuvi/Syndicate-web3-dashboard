@@ -9,12 +9,12 @@ export interface ERC721laimed {
 
 export const initialState: { erc721Claimed: ERC721laimed; loading: boolean } = {
   erc721Claimed: {
-    id: "",
-    claimant: "",
-    token: "",
-    treeIndex: "",
-    index: "",
-    claimed: false,
+    id: '',
+    claimant: '',
+    token: '',
+    treeIndex: '',
+    index: '',
+    claimed: false
   },
-  loading: true,
+  loading: true
 };

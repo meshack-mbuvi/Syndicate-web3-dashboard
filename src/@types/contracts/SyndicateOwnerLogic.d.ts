@@ -2,18 +2,18 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import BN from "bn.js";
-import { EventData, PastEventOptions } from "web3-eth-contract";
+import BN from 'bn.js';
+import { EventData, PastEventOptions } from 'web3-eth-contract';
 
 export interface SyndicateOwnerLogicContract
   extends Truffle.Contract<SyndicateOwnerLogicInstance> {
-  "new"(
+  'new'(
     meta?: Truffle.TransactionDetails
   ): Promise<SyndicateOwnerLogicInstance>;
 }
 
 export interface OwnershipTransferred {
-  name: "OwnershipTransferred";
+  name: 'OwnershipTransferred';
   args: {
     previousOwner: string;
     newOwner: string;
@@ -23,7 +23,7 @@ export interface OwnershipTransferred {
 }
 
 export interface SyndicateFeeAddressUpdated {
-  name: "SyndicateFeeAddressUpdated";
+  name: 'SyndicateFeeAddressUpdated';
   args: {
     contractFeeAddress: string;
     0: string;

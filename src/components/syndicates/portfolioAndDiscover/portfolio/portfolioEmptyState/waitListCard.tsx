@@ -1,10 +1,10 @@
-import React from "react";
+import React from 'react';
 
 const WaitListCard: React.FC = () => {
   return (
     <div
       className="bg-gray-syn8 rounded-2-half px-8 py-7 flex justify-between items-center space-x-8"
-      style={{ width: "730px" }}
+      style={{ width: '730px' }}
     >
       <p className="text-base text-left">
         To create an investment club, you’ll need an invite from the Syndicate

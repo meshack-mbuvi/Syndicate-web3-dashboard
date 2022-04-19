@@ -1,4 +1,4 @@
-import gql from "graphql-tag";
+import gql from 'graphql-tag';
 
 export const MY_CLUBS_QUERY = gql`
   query getClubERC20($where: SyndicateDAO_filter) {
@@ -66,6 +66,8 @@ export const CLUB_TOKEN_MEMBERS = gql`
       endTime
       startTime
       contractAddress
+      startTime
+      endTime
     }
   }
 `;
@@ -225,6 +227,15 @@ export const SINGLE_CLUB_DETAILS = gql`
       totalDeposits
       startTime
       endTime
+    }
+  }
+`;
+
+export const CLUB_TOKEN_QUERY = gql`
+  query Query($syndicateDaoId: ID!) {
+    syndicateDAO(id: $syndicateDaoId) {
+      id
+      depositToken
     }
   }
 `;

@@ -1,21 +1,21 @@
-import { setERC20Token } from "@/helpers/erc20TokenDetails";
-import useModal from "@/hooks/useModal";
-import { AppState } from "@/state";
-import { getWeiAmount } from "@/utils/conversions";
-import { formatAddress } from "@/utils/formatAddress";
+import { setERC20Token } from '@/helpers/erc20TokenDetails';
+import useModal from '@/hooks/useModal';
+import { AppState } from '@/state';
+import { getWeiAmount } from '@/utils/conversions';
+import { formatAddress } from '@/utils/formatAddress';
 import {
   floatedNumberWithCommas,
   numberInputRemoveCommas,
-  numberWithCommas,
-} from "@/utils/formattedNumbers";
-import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { useClubDepositsAndSupply } from "@/hooks/useClubDepositsAndSupply";
-import { ProgressModal, ProgressModalState } from "@/components/progressModal";
-import ModifyMemberClubTokens from "@/containers/managerActions/modifyMemberAllocation/ModifyMemberClubTokens";
-import ConfirmMemberAllocations from "@/containers/managerActions/modifyMemberAllocation/ConfirmMemberAllocations";
-import { OldClubERC20Contract } from "@/ClubERC20Factory/clubERC20/oldClubERC20";
-import { isDev } from "@/utils/environment";
+  numberWithCommas
+} from '@/utils/formattedNumbers';
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { useClubDepositsAndSupply } from '@/hooks/useClubDepositsAndSupply';
+import { ProgressModal, ProgressModalState } from '@/components/progressModal';
+import ModifyMemberClubTokens from '@/containers/managerActions/modifyMemberAllocation/ModifyMemberClubTokens';
+import ConfirmMemberAllocations from '@/containers/managerActions/modifyMemberAllocation/ConfirmMemberAllocations';
+import { OldClubERC20Contract } from '@/ClubERC20Factory/clubERC20/oldClubERC20';
+import { isDev } from '@/utils/environment';
 
 const ModifyClubTokens: React.FC<{
   showModifyCapTable;
@@ -28,13 +28,13 @@ const ModifyClubTokens: React.FC<{
     clubMembersSliceReducer: { clubMembers },
     erc20TokenSliceReducer: {
       erc20Token: { symbol, tokenDecimals, maxTotalSupply, address },
-      erc20TokenContract,
+      erc20TokenContract
     },
     modifyCapTableSlice: { memberToUpdate },
     web3Reducer: {
-      web3: { account },
+      web3: { account }
     },
-    initializeContractsReducer: { syndicateContracts },
+    initializeContractsReducer: { syndicateContracts }
   } = useSelector((state: AppState) => state);
 
   const { totalSupply } = useClubDepositsAndSupply(address);
@@ -43,17 +43,17 @@ const ModifyClubTokens: React.FC<{
   const [updatingCapTable, setUpdatingCapTable] = useState(false);
   const [updated, setUpdated] = useModal();
   const [updateFailed, setUpdateFailed] = useState(false);
-  const [transactionHash, setTransactionHash] = useState("");
+  const [transactionHash, setTransactionHash] = useState('');
   const [userRejectedUpdate, setUserRejectedUpdate] = useState(false);
   const [newTotalSupply, setNewTotalSupply] = useState(totalSupply);
   const [member, setMember] = useState(memberToUpdate.memberAddress);
   const [newOwnership, setNewOwnership] = useState(0);
   const [mintOrBurn, setMintOrBurn] = useState(false);
   const [tokensToMintOrBurn, setTokensToMintOrBurn] = useState(0);
-  const [memberAllocation, setMemberAllocation] = useState("");
+  const [memberAllocation, setMemberAllocation] = useState('');
   const [memberAllocationError, setMemberAllocationError] = useState<
     string | React.ReactElement
-  >("");
+  >('');
   const [continueButtonDisabled, setContinueButtonDisabled] = useState(false);
   const currentClubTokenSupply = +maxTotalSupply - +totalSupply;
 
@@ -111,13 +111,13 @@ const ModifyClubTokens: React.FC<{
       // mint more tokens
       setMintOrBurn(true);
       setTokensToMintOrBurn(
-        parseInt(memberAllocation || "0", 10) - +memberToUpdate.clubTokens,
+        parseInt(memberAllocation || '0', 10) - +memberToUpdate.clubTokens
       );
     } else {
       // burn excess tokens
       setMintOrBurn(false);
       setTokensToMintOrBurn(
-        +memberToUpdate.clubTokens - parseInt(memberAllocation || "0", 10),
+        +memberToUpdate.clubTokens - parseInt(memberAllocation || '0', 10)
       );
     }
   }, [memberAllocation, memberToUpdate]);
@@ -176,7 +176,7 @@ const ModifyClubTokens: React.FC<{
     const useOwnerMintModule =
       await syndicateContracts.policyMintERC20.isModuleAllowed(
         erc20TokenContract.address,
-        OWNER_MINT_MODULE,
+        OWNER_MINT_MODULE
       );
 
     try {
@@ -193,7 +193,7 @@ const ModifyClubTokens: React.FC<{
             onTxConfirm,
             onTxReceipt,
             onTxFail,
-            setTransactionHash,
+            setTransactionHash
           );
         } else {
           if (isDev) {
@@ -204,12 +204,12 @@ const ModifyClubTokens: React.FC<{
               onTxConfirm,
               onTxReceipt,
               onTxFail,
-              setTransactionHash,
+              setTransactionHash
             );
           } else {
             const oldErc20TokenContract = new OldClubERC20Contract(
               erc20TokenContract.address,
-              web3,
+              web3
             );
 
             await oldErc20TokenContract.controllerMint(
@@ -219,7 +219,7 @@ const ModifyClubTokens: React.FC<{
               onTxConfirm,
               onTxReceipt,
               onTxFail,
-              setTransactionHash,
+              setTransactionHash
             );
           }
         }
@@ -231,7 +231,7 @@ const ModifyClubTokens: React.FC<{
           onTxConfirm,
           onTxReceipt,
           onTxFail,
-          setTransactionHash,
+          setTransactionHash
         );
       }
     } catch (error) {
@@ -242,31 +242,31 @@ const ModifyClubTokens: React.FC<{
   const handleAmountChange = (e) => {
     const amount = numberInputRemoveCommas(e);
     if (amount < 0 || !amount) {
-      setMemberAllocationError("Amount is required.");
+      setMemberAllocationError('Amount is required.');
       setContinueButtonDisabled(true);
     } else if (+amount > +currentClubTokenSupply) {
       setMemberAllocationError(
         <span>
-          Amount exceeds available club token supply of{" "}
+          Amount exceeds available club token supply of{' '}
           <button
             onClick={() => {
               setMemberAllocation(currentClubTokenSupply.toString());
-              setMemberAllocationError("");
+              setMemberAllocationError('');
             }}
           >
             <u>
               {numberWithCommas(currentClubTokenSupply)} {symbol}
             </u>
           </button>
-        </span>,
+        </span>
       );
     } else if (+amount === +memberToUpdate.clubTokens) {
       setContinueButtonDisabled(true);
     } else {
-      setMemberAllocationError("");
+      setMemberAllocationError('');
       setContinueButtonDisabled(false);
     }
-    setMemberAllocation(amount >= 0 ? amount : "");
+    setMemberAllocation(amount >= 0 ? amount : '');
   };
 
   if (confirm) {
@@ -274,10 +274,10 @@ const ModifyClubTokens: React.FC<{
       <ProgressModal
         {...{
           isVisible: true,
-          title: "Confirm in wallet",
+          title: 'Confirm in wallet',
           description:
-            "Please confirm the cap table modification from your wallet.",
-          state: ProgressModalState.CONFIRM,
+            'Please confirm the cap table modification from your wallet.',
+          state: ProgressModalState.CONFIRM
         }}
       />
     );
@@ -286,12 +286,12 @@ const ModifyClubTokens: React.FC<{
       <ProgressModal
         {...{
           isVisible: true,
-          title: "Updating cap table",
+          title: 'Updating cap table',
           description:
-            "This could take anywhere from seconds to hours depending on network congestion and the gas fees you set. You can safely leave this page while you wait.",
+            'This could take anywhere from seconds to hours depending on network congestion and the gas fees you set. You can safely leave this page while you wait.',
           etherscanHash: transactionHash,
-          transactionType: "transaction",
-          state: ProgressModalState.PENDING,
+          transactionType: 'transaction',
+          state: ProgressModalState.PENDING
         }}
       />
     );
@@ -300,21 +300,21 @@ const ModifyClubTokens: React.FC<{
       <ProgressModal
         {...{
           isVisible: true,
-          title: "Cap table updated",
+          title: 'Cap table updated',
           description: `${formatAddress(
             memberToUpdate?.memberAddress,
             6,
-            4,
+            4
           )}'s club token
           allocation has been changed to ${
             floatedNumberWithCommas(memberAllocation) || 0
           } ${symbol}`,
-          buttonLabel: "Done",
+          buttonLabel: 'Done',
           buttonOnClick: handleCloseSuccessModal,
           buttonFullWidth: true,
           state: ProgressModalState.SUCCESS,
           etherscanHash: transactionHash,
-          transactionType: "transaction",
+          transactionType: 'transaction'
         }}
       />
     );
@@ -323,23 +323,23 @@ const ModifyClubTokens: React.FC<{
       <ProgressModal
         {...{
           isVisible: true,
-          title: "Cap table update failed",
-          description: "",
-          buttonLabel: "Close",
+          title: 'Cap table update failed',
+          description: '',
+          buttonLabel: 'Close',
           buttonOnClick: handleCloseSuccessModal,
           buttonFullWidth: true,
           state: ProgressModalState.FAILURE,
           etherscanHash: userRejectedUpdate ? null : transactionHash,
-          transactionType: "transaction",
+          transactionType: 'transaction'
         }}
       />
     );
   }
 
   const clearModalFields = () => {
-    setMemberAllocationError("");
-    setMember("");
-    setMemberAllocation("");
+    setMemberAllocationError('');
+    setMember('');
+    setMemberAllocation('');
   };
 
   return (
@@ -358,7 +358,7 @@ const ModifyClubTokens: React.FC<{
           member,
           setMember,
           symbol,
-          continueButtonDisabled,
+          continueButtonDisabled
         }}
       />
 
@@ -376,7 +376,7 @@ const ModifyClubTokens: React.FC<{
           handleUpdatingCapTable,
           symbol,
           totalSupply,
-          memberToUpdate,
+          memberToUpdate
         }}
       />
     </div>

@@ -1,43 +1,43 @@
-import { CLAIMED_TOKEN } from "@/graphql/queries";
-import { AppState } from "@/state";
+import { CLAIMED_TOKEN } from '@/graphql/queries';
+import { AppState } from '@/state';
 import {
   clearTokenClaimed,
   setLoadingTokenClaimed,
-  setTokenClaimed,
-} from "@/state/claimedToken/slice";
-import { useQuery } from "@apollo/client";
-import { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+  setTokenClaimed
+} from '@/state/claimedToken/slice';
+import { useQuery } from '@apollo/client';
+import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
 const useFetchTokenClaim: any = (skipQuery) => {
   const dispatch = useDispatch();
 
   const {
     web3Reducer: {
-      web3: { account },
+      web3: { account }
     },
     merkleProofSliceReducer: { myMerkleProof },
     erc20TokenSliceReducer: {
-      erc20Token: { address: clubAddress },
-    },
+      erc20Token: { address: clubAddress }
+    }
   } = useSelector((state: AppState) => state);
 
   // Fetch existing claims
   const {
     loading,
     data: claimData = {},
-    refetch,
+    refetch
   } = useQuery(CLAIMED_TOKEN, {
     variables: {
       where: {
         claimant: account.toLowerCase(),
         club: clubAddress.toLowerCase(),
         amount: myMerkleProof.amount,
-        treeIndex: myMerkleProof.treeIndex,
-      },
+        treeIndex: myMerkleProof.treeIndex
+      }
     },
     skip: !account || skipQuery,
-    context: { clientName: "graph" },
+    context: { clientName: 'graph' }
   });
 
   useEffect(() => {
@@ -52,8 +52,8 @@ const useFetchTokenClaim: any = (skipQuery) => {
       dispatch(
         setTokenClaimed({
           ...claimData.tokensClaimedERC20S[0],
-          claimed: true,
-        }),
+          claimed: true
+        })
       );
       dispatch(setLoadingTokenClaimed(false));
     } else {

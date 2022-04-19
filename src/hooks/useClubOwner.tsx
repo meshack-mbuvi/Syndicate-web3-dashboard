@@ -1,27 +1,27 @@
-import { AppState } from "@/state";
-import { useSelector } from "react-redux";
+import { AppState } from '@/state';
+import { useSelector } from 'react-redux';
 
 export function useIsClubOwner(): boolean {
   const {
     web3Reducer: {
-      web3: { account },
+      web3: { account }
     },
     erc20TokenSliceReducer: {
-      erc20Token: { owner },
-    },
+      erc20Token: { owner }
+    }
   } = useSelector((state: AppState) => state);
 
-  return account === owner && account != "" && owner != "";
+  return account === owner && account != '' && owner != '';
 }
 
 export const useIsClubMember = (): boolean => {
   const {
     clubMembersSliceReducer: { clubMembers },
     web3Reducer: {
-      web3: { account },
-    },
+      web3: { account }
+    }
   } = useSelector((state: AppState) => state);
   return clubMembers.some(
-    (member) => member.memberAddress.toLowerCase() === account.toLowerCase(),
+    (member) => member.memberAddress.toLowerCase() === account.toLowerCase()
   );
 };

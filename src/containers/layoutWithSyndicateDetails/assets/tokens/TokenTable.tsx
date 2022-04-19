@@ -1,14 +1,14 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
-import { SkeletonLoader } from "@/components/skeletonLoader";
-import GradientAvatar from "@/components/syndicates/portfolioAndDiscover/portfolio/GradientAvatar";
-import useModal from "@/hooks/useModal";
-import { AppState } from "@/state";
-import Image from "next/image";
-import { FC, useEffect, useRef, useState } from "react";
-import { useSelector } from "react-redux";
-import PriceContainer from "../collectibles/shared/PriceContainer";
-import TokenModal from "./TokenModal";
+import { SkeletonLoader } from '@/components/skeletonLoader';
+import GradientAvatar from '@/components/syndicates/portfolioAndDiscover/portfolio/GradientAvatar';
+import useModal from '@/hooks/useModal';
+import { AppState } from '@/state';
+import Image from 'next/image';
+import { FC, useEffect, useRef, useState } from 'react';
+import { useSelector } from 'react-redux';
+import PriceContainer from '../collectibles/shared/PriceContainer';
+import TokenModal from './TokenModal';
 interface Props {
   columns: string[];
   tableData: any[];
@@ -19,8 +19,8 @@ const TokenTable: FC<Props> = ({ columns, tableData }) => {
   const {
     assetsSliceReducer: { loading },
     erc20TokenSliceReducer: {
-      depositDetails: { ethDepositToken },
-    },
+      depositDetails: { ethDepositToken }
+    }
   } = useSelector((state: AppState) => state);
 
   // pagination
@@ -73,9 +73,7 @@ const TokenTable: FC<Props> = ({ columns, tableData }) => {
     <div className="relative">
       {!animate && (
         <div className="absolute flex flex-col justify-center items-center top-1/3 w-full z-10">
-          <span className="text-white mb-4 text-xl">
-            This club has no tokens yet.
-          </span>
+          <h3 className="text-white mb-4">This club has no tokens yet.</h3>
           <span className="text-gray-syn4">
             Any tokens held in this club’s wallet will appear here, including
             member deposits.
@@ -130,7 +128,7 @@ const TokenTable: FC<Props> = ({ columns, tableData }) => {
   const tokensTitle = (
     <div className="flex text-base items-center">
       <img alt="token" src="/images/token.svg" />
-      <div className="pl-3 text-xl">Tokens</div>
+      <h3 className="pl-3">Tokens</h3>
     </div>
   );
 
@@ -170,7 +168,7 @@ const TokenTable: FC<Props> = ({ columns, tableData }) => {
                 paginatedData.map(
                   (
                     { tokenBalance, tokenName, tokenSymbol, price, logo },
-                    index,
+                    index
                   ) => {
                     const tokenValue =
                       parseFloat(Number(price) ? price : price?.usd ?? 0) *
@@ -186,7 +184,7 @@ const TokenTable: FC<Props> = ({ columns, tableData }) => {
                             tokenName,
                             tokenSymbol,
                             value: tokenValue,
-                            logo,
+                            logo
                           });
                         }}
                       >
@@ -201,7 +199,7 @@ const TokenTable: FC<Props> = ({ columns, tableData }) => {
                             ) : (
                               <GradientAvatar
                                 name={tokenName}
-                                size={"w-8 h-8"}
+                                size={'w-8 h-8'}
                               />
                             )}
                           </div>
@@ -222,14 +220,14 @@ const TokenTable: FC<Props> = ({ columns, tableData }) => {
                         </div>
                         <div className="md:col-span-3">
                           <PriceContainer
-                            numberValue={`${tokenValue || ""}`}
+                            numberValue={`${tokenValue || ''}`}
                             noUSDValue={!price?.usd && !price}
                             flexColumn={false}
                           />
                         </div>
                       </div>
                     );
-                  },
+                  }
                 )
               )}
             </div>
@@ -248,8 +246,8 @@ const TokenTable: FC<Props> = ({ columns, tableData }) => {
             <button
               className={`pt-1 ${
                 !canPreviousPage
-                  ? "opacity-50 cursor-not-allowed"
-                  : "hover:opacity-90"
+                  ? 'opacity-50 cursor-not-allowed'
+                  : 'hover:opacity-90'
               }`}
               onClick={goToPreviousPage}
               disabled={!canPreviousPage}
@@ -262,7 +260,7 @@ const TokenTable: FC<Props> = ({ columns, tableData }) => {
               />
             </button>
             <p className="">
-              {currentPage === 1 ? "1" : (currentPage - 1) * dataLimit} -{" "}
+              {currentPage === 1 ? '1' : (currentPage - 1) * dataLimit} -{' '}
               {(currentPage - 1) * dataLimit + paginatedData.length}
               {` of `} {tableData.length}
             </p>
@@ -270,8 +268,8 @@ const TokenTable: FC<Props> = ({ columns, tableData }) => {
             <button
               className={`pt-1 ${
                 !canNextPage
-                  ? "opacity-50 cursor-not-allowed"
-                  : "hover:opacity-90"
+                  ? 'opacity-50 cursor-not-allowed'
+                  : 'hover:opacity-90'
               }`}
               onClick={goToNextPage}
               disabled={!canNextPage}
@@ -285,7 +283,7 @@ const TokenTable: FC<Props> = ({ columns, tableData }) => {
             </button>
           </div>
         ) : (
-          ""
+          ''
         )}
         <div>
           <TokenModal

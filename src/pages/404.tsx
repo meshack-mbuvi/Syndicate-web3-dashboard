@@ -1,8 +1,8 @@
-import PrimaryButton from "@/components/buttons/PrimaryButton";
-import Router from "next/router";
-import React from "react";
-import Layout from "src/components/layout";
-import SEO from "src/components/seo";
+import PrimaryButton from '@/components/buttons/PrimaryButton';
+import Router from 'next/router';
+import React from 'react';
+import Layout from 'src/components/layout';
+import SEO from 'src/components/seo';
 
 const NotFoundPage: React.FC = () => {
   return (
@@ -14,17 +14,15 @@ const NotFoundPage: React.FC = () => {
           `invest`,
           `fund`,
           `social`,
-          `ethereum`,
+          `ethereum`
         ]}
         title="404: Not Found"
       />
-      <div className="w-full" style={{ height: "calc(100vh - 300px)" }}>
+      <div className="w-full" style={{ height: 'calc(100vh - 300px)' }}>
         <div className="vertically-center container mx-auto">
           <div className="w-full sm:w-8/12 lg:w-5/12">
-            <h2 className="tagline mb-4">404 / Not Found</h2>
-            <h1 className="font-whyte text-3xl mb-3">
-              There&apos;s nothing here yet
-            </h1>
+            <div className="tagline mb-4">404 / Not Found</div>
+            <h1 className="my-6">There&apos;s nothing here yet</h1>
             <p className="mb-3 text-gray-3">
               Make sure you’re connected with a wallet that has permission to
               view this. If you typed the URL directly, double check for any
@@ -38,7 +36,7 @@ const NotFoundPage: React.FC = () => {
             <PrimaryButton
               customClasses="secondary-CTA"
               onClick={() => {
-                Router.push("/clubs");
+                Router.push('/clubs');
               }}
             >
               <img
@@ -53,6 +51,6 @@ const NotFoundPage: React.FC = () => {
       </div>
     </Layout>
   );
-}
+};
 
 export default NotFoundPage;

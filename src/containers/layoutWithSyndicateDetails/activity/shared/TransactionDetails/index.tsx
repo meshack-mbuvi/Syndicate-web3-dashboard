@@ -1,17 +1,17 @@
-import React from "react";
-import Image from "next/image";
-import { floatedNumberWithCommas } from "@/utils/formattedNumbers";
-import { formatAddress } from "@/utils/formatAddress";
-import { AppState } from "@/state";
-import { useSelector } from "react-redux";
-import GradientAvatar from "@/components/syndicates/portfolioAndDiscover/portfolio/GradientAvatar";
+import React from 'react';
+import Image from 'next/image';
+import { floatedNumberWithCommas } from '@/utils/formattedNumbers';
+import { formatAddress } from '@/utils/formatAddress';
+import { AppState } from '@/state';
+import { useSelector } from 'react-redux';
+import GradientAvatar from '@/components/syndicates/portfolioAndDiscover/portfolio/GradientAvatar';
 import {
   RoundCategory,
-  TransactionCategory,
-} from "@/state/erc20transactions/types";
-import useWindowSize from "@/hooks/useWindowSize";
+  TransactionCategory
+} from '@/state/erc20transactions/types';
+import useWindowSize from '@/hooks/useWindowSize';
 
-type Transaction = "outgoing" | "incoming";
+type Transaction = 'outgoing' | 'incoming';
 
 interface ITransactionDetails {
   tokenName: string;
@@ -38,33 +38,33 @@ const TransactionDetails: React.FC<ITransactionDetails> = ({
   onModal = false,
   category,
   companyName,
-  round,
+  round
 }) => {
   const {
     web3Reducer: {
-      web3: { web3 },
+      web3: { web3 }
     },
-    clubMembersSliceReducer: { clubMembers },
+    clubMembersSliceReducer: { clubMembers }
   } = useSelector((state: AppState) => state);
 
   const getTransactionText = (transactionType: string, onModal: boolean) => {
-    if (transactionType === "outgoing") {
+    if (transactionType === 'outgoing') {
       if (onModal) {
-        return "to";
+        return 'to';
       }
-      return category === "INVESTMENT" ? "invested in" : "sent to";
-    } else if (transactionType === "incoming") {
+      return category === 'INVESTMENT' ? 'invested in' : 'sent to';
+    } else if (transactionType === 'incoming') {
       if (onModal) {
-        return "from";
+        return 'from';
       }
-      return category === "DEPOSIT" ? "deposited by" : "received from";
+      return category === 'DEPOSIT' ? 'deposited by' : 'received from';
     }
   };
   const addGrayToDecimalInput = (str) => {
-    if (typeof str !== "string") {
+    if (typeof str !== 'string') {
       str.toString();
     }
-    const [wholeNumber, decimalPart] = str.split(".");
+    const [wholeNumber, decimalPart] = str.split('.');
     return (
       <div className="flex">
         {wholeNumber ? <p className="text-white">{wholeNumber}</p> : null}
@@ -76,8 +76,7 @@ const TransactionDetails: React.FC<ITransactionDetails> = ({
   const AddressIsMember = (address: string) => {
     return (
       clubMembers.filter(
-        (member) =>
-          member.memberAddress.toLowerCase() === address.toLowerCase(),
+        (member) => member.memberAddress.toLowerCase() === address.toLowerCase()
       ).length !== 0
     );
   };
@@ -85,39 +84,39 @@ const TransactionDetails: React.FC<ITransactionDetails> = ({
 
   return (
     <>
-      {category !== "OFF_CHAIN_INVESTMENT" ? (
-        <div className={`flex items-center ${width < 400 ? "flex-col" : ""}`}>
+      {category !== 'OFF_CHAIN_INVESTMENT' ? (
+        <div className={`flex items-center ${width < 400 ? 'flex-col' : ''}`}>
           <div className="flex">
-            {tokenSymbol.toLowerCase() !== "usd" && (
+            {tokenSymbol.toLowerCase() !== 'usd' && (
               <>
                 {tokenLogo ? (
                   <Image src={tokenLogo} height={24} width={24} />
                 ) : (
-                  <GradientAvatar name={tokenName} size={"w-6 h-6"} />
+                  <GradientAvatar name={tokenName} size={'w-6 h-6'} />
                 )}
               </>
             )}
             <div
               className={`flex ml-2 ${
-                onModal ? "sm:text-2xl text-base" : "text-base"
+                onModal ? 'sm:text-2xl text-base' : 'text-base'
               }`}
             >
               {addGrayToDecimalInput(floatedNumberWithCommas(amount))}&nbsp;
               {tokenSymbol}
             </div>
           </div>
-          <p className={`text-gray-syn4 ${onModal ? "mx-4" : "mx-3"}`}>
+          <p className={`text-gray-syn4 ${onModal ? 'mx-4' : 'mx-3'}`}>
             {getTransactionText(transactionType, onModal)}
           </p>
           <div className="flex">
             {!onModal &&
-            transactionType === "incoming" &&
+            transactionType === 'incoming' &&
             isTransactionAnnotated ? (
               <>
                 {AddressIsMember(address) && (
                   <div className="mx-2 flex items-center">
                     <Image
-                      src={"/images/User_Icon.svg"}
+                      src={'/images/User_Icon.svg'}
                       height={24}
                       width={24}
                     />
@@ -125,13 +124,13 @@ const TransactionDetails: React.FC<ITransactionDetails> = ({
                 )}
               </>
             ) : null}
-            {onModal && category === "DEPOSIT" ? (
+            {onModal && category === 'DEPOSIT' ? (
               <div className="mr-2 flex items-center">
-                <Image src={"/images/User_Icon.svg"} height={24} width={24} />
+                <Image src={'/images/User_Icon.svg'} height={24} width={24} />
               </div>
             ) : null}
             <div
-              className={`${onModal ? "sm:text-2xl text-base" : "text-base"}`}
+              className={`${onModal ? 'sm:text-2xl text-base' : 'text-base'}`}
             >
               {companyName
                 ? companyName

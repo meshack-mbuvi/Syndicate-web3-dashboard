@@ -1,8 +1,8 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { initialState, mintEndTime, tokenDetails } from "./types";
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { initialState, mintEndTime, tokenDetails } from './types';
 
 const createInvestmentClubSlice = createSlice({
-  name: "createInvestmentClub",
+  name: 'createInvestmentClub',
   initialState,
   reducers: {
     setInvestmentClubName(state, action: PayloadAction<string>) {
@@ -28,30 +28,30 @@ const createInvestmentClubSlice = createSlice({
       state.clubCreationStatus.creationReceipt = action.payload;
     },
     resetClubCreationReduxState(state) {
-      state.investmentClubName = "";
-      state.investmentClubSymbolPlaceHolder = "";
-      state.investmentClubSymbol = "";
-      state.membersCount = "";
-      state.tokenCap = "";
+      state.investmentClubName = '';
+      state.investmentClubSymbolPlaceHolder = '';
+      state.investmentClubSymbol = '';
+      state.membersCount = '';
+      state.tokenCap = '';
       state.mintEndTime = {
-        mintTime: "",
+        mintTime: '',
         value: parseInt(
           (
             new Date(new Date().setHours(23, 59, 0, 0)).getTime() / 1000
-          ).toString(),
-        ),
+          ).toString()
+        )
       };
       state.clubCreationStatus = {
-        transactionHash: "",
+        transactionHash: '',
         creationReceipt: {
-          token: "",
-        },
+          token: ''
+        }
       };
     },
     setDepositTokenDetails(state, action: PayloadAction<tokenDetails>) {
       state.tokenDetails = action.payload;
-    },
-  },
+    }
+  }
 });
 
 export const {
@@ -63,6 +63,6 @@ export const {
   setTransactionHash,
   setClubCreationReceipt,
   resetClubCreationReduxState,
-  setDepositTokenDetails,
+  setDepositTokenDetails
 } = createInvestmentClubSlice.actions;
 export default createInvestmentClubSlice.reducer;

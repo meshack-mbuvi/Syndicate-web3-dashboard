@@ -1,6 +1,6 @@
-import { format, utcToZonedTime } from "date-fns-tz";
-import moment from "moment";
-import "moment-precise-range-plugin";
+import { format, utcToZonedTime } from 'date-fns-tz';
+import moment from 'moment';
+import 'moment-precise-range-plugin';
 
 export const formatDate = (dateString: Date): string =>
   dateString.toLocaleDateString();
@@ -23,14 +23,14 @@ export const pastDate = (date: Date): boolean => {
 
 export const epochTimeToDateFormat = (
   date: Date,
-  dateFormat?: string,
+  dateFormat?: string
 ): string => {
   // get timezone from browser
   const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
   const formattedDate = utcToZonedTime(date, timezone);
-  
+
   return format(formattedDate, dateFormat, {
-    timeZone: timezone,
+    timeZone: timezone
   });
 };
 
@@ -41,30 +41,30 @@ export const epochTimeToDateFormat = (
  */
 export const getCountDownDays = (date: string): string => {
   const now = moment();
-  const closeDateCountdown = moment(new Date(parseInt(date)), "M/DD/YYYY");
+  const closeDateCountdown = moment(new Date(parseInt(date)), 'M/DD/YYYY');
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   //@ts-ignore
   const { years, months, days, hours, minutes, seconds } = moment.preciseDiff(
     now,
     closeDateCountdown,
-    true,
+    true
   );
-  let timeRemaining = "";
+  let timeRemaining = '';
 
   if (years) {
-    timeRemaining += `${years} ${years > 1 ? "years" : "year"} `;
+    timeRemaining += `${years} ${years > 1 ? 'years' : 'year'} `;
   }
   if (months) {
-    timeRemaining += `${months} ${months > 1 ? "months" : "month"} `;
+    timeRemaining += `${months} ${months > 1 ? 'months' : 'month'} `;
   }
   if (days) {
-    timeRemaining += `${days} ${days > 1 ? "days" : "day"} `;
+    timeRemaining += `${days} ${days > 1 ? 'days' : 'day'} `;
   }
   if (hours && days < 1) {
-    timeRemaining += `${hours} ${hours === 1 ? "hour" : "hours"} `;
+    timeRemaining += `${hours} ${hours === 1 ? 'hour' : 'hours'} `;
   }
   if (minutes && hours < 1 && days < 1) {
-    timeRemaining += `${minutes} ${minutes === 1 ? "minute" : "minutes"} `;
+    timeRemaining += `${minutes} ${minutes === 1 ? 'minute' : 'minutes'} `;
   }
   if (
     seconds &&
@@ -74,7 +74,7 @@ export const getCountDownDays = (date: string): string => {
     days <= 0 &&
     hours <= 0
   ) {
-    timeRemaining += `${seconds} ${seconds === 1 ? "second" : "seconds"} `;
+    timeRemaining += `${seconds} ${seconds === 1 ? 'second' : 'seconds'} `;
   }
   return timeRemaining;
 };

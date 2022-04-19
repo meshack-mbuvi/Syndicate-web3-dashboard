@@ -1,25 +1,25 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import {
   Transaction,
   initialState,
   CurrentTransaction,
-  emptyCurrentTransaction,
-} from "./types";
+  emptyCurrentTransaction
+} from './types';
 
 const setTransactionsSlice = createSlice({
-  name: "transaction",
+  name: 'transaction',
   initialState,
   reducers: {
     setMyTransactions(
       state,
-      action: PayloadAction<{ txns: Transaction[]; skip: number }>,
+      action: PayloadAction<{ txns: Transaction[]; skip: number }>
     ) {
       const { txns, skip } = action.payload;
       state.myTransactions[skip] = txns;
     },
     setInvestmentTransactions(
       state,
-      action: PayloadAction<{ txns: Transaction[]; skip: number }>,
+      action: PayloadAction<{ txns: Transaction[]; skip: number }>
     ) {
       const { txns, skip } = action.payload;
       state.investmentTransactions[skip] = txns;
@@ -41,8 +41,8 @@ const setTransactionsSlice = createSlice({
     },
     setTotalInvestmentTransactionsCount(state, action: PayloadAction<number>) {
       state.totalInvestmentTransactionsCount = action.payload;
-    },
-  },
+    }
+  }
 });
 
 export const {

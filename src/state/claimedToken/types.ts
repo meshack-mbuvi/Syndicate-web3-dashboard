@@ -11,5 +11,5 @@ export interface TokenClaimed {
 
 export const initialState = {
   isTokenClaimed: <TokenClaimed>{},
-  loading: true,
+  loading: true
 };

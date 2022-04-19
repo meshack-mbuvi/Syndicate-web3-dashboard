@@ -1,8 +1,8 @@
-import PillDropDown from "@/containers/layoutWithSyndicateDetails/activity/shared/CategoryPill/CategoryPillDropdown";
-import { investmentRounds } from "@/containers/layoutWithSyndicateDetails/activity/shared/InvestmentDetails/InvestmentDetailsConstants";
-import React, { useEffect, useRef, useState } from "react";
-import { useController } from "react-hook-form";
-import { TextField } from "@/components/inputs";
+import PillDropDown from '@/containers/layoutWithSyndicateDetails/activity/shared/CategoryPill/CategoryPillDropdown';
+import { investmentRounds } from '@/containers/layoutWithSyndicateDetails/activity/shared/InvestmentDetails/InvestmentDetailsConstants';
+import React, { useEffect, useRef, useState } from 'react';
+import { useController } from 'react-hook-form';
+import { TextField } from '@/components/inputs';
 
 /**
  * RoundDropDown component is used as a drop-down select for investment rounds.
@@ -26,9 +26,9 @@ const RoundDropDown: React.FC<IRoundDropDown> = ({
   name,
   label,
   control,
-  borderStyles = "border-none",
+  borderStyles = 'border-none',
   disabled = false,
-  resetRound,
+  resetRound
 }) => {
   const categorySelect = useRef(null);
   // drop down
@@ -37,11 +37,11 @@ const RoundDropDown: React.FC<IRoundDropDown> = ({
   const [showInputField, setShowInputField] = useState(false);
 
   const {
-    field: { onChange, value },
+    field: { onChange, value }
   } = useController({
     name,
     control,
-    defaultValue: "",
+    defaultValue: ''
   });
 
   const [selectedCategory, setSelectedCategory] = useState(
@@ -49,13 +49,13 @@ const RoundDropDown: React.FC<IRoundDropDown> = ({
       ? {
           ...(value
             ? { text: value, value: value }
-            : { text: "Select", value: "" }),
+            : { text: 'Select', value: '' })
         }
       : value
       ? investmentRounds.find((round) => round.text === value)
         ? investmentRounds.find((round) => round.text === value)
         : { text: value, value }
-      : investmentRounds[0],
+      : investmentRounds[0]
   );
 
   const toggleDropdown = () => {
@@ -74,11 +74,11 @@ const RoundDropDown: React.FC<IRoundDropDown> = ({
     };
 
     if (showDropdown) {
-      window.addEventListener("click", onPageClickEvent);
+      window.addEventListener('click', onPageClickEvent);
     }
 
     return () => {
-      window.removeEventListener("click", onPageClickEvent);
+      window.removeEventListener('click', onPageClickEvent);
     };
   }, [showDropdown, setShowDropdown]);
 
@@ -94,7 +94,7 @@ const RoundDropDown: React.FC<IRoundDropDown> = ({
       return;
     } else {
       const selectedCategory = investmentRounds.find(
-        (option) => option.text === round,
+        (option) => option.text === round
       );
 
       setSelectedCategory(selectedCategory);
@@ -102,12 +102,12 @@ const RoundDropDown: React.FC<IRoundDropDown> = ({
     }
   };
 
-  const customTextStyles = "text-white text-base";
+  const customTextStyles = 'text-white text-base';
 
   return (
     <div
       className={`relative flex justify-between items-center ${borderStyles} ${
-        editMode ? "cursor-pointer" : ""
+        editMode ? 'cursor-pointer' : ''
       }float-right`}
       ref={categorySelect}
       aria-hidden="true"

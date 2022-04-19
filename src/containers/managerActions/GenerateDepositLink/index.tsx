@@ -1,25 +1,27 @@
-import Modal, { ModalStyle } from "@/components/modal";
-import Link from "next/link";
-import { useRouter } from "next/router";
+import { amplitudeLogger, Flow } from '@/components/amplitude';
+import { CLICKED_HELP_FORM_LEGAL_ENTITY } from '@/components/amplitude/eventNames';
+import ArrowDown from '@/components/icons/arrowDown';
+import Modal, { ModalStyle } from '@/components/modal';
+import CopyLink from '@/components/shared/CopyLink';
+import { useDemoMode } from '@/hooks/useDemoMode';
+import { AppState } from '@/state';
+import { setDepositReadyInfo, setWalletSignature } from '@/state/legalInfo';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
 import React, {
   Dispatch,
   FC,
   SetStateAction,
   useEffect,
-  useState,
-} from "react";
-import Floater from "react-floater";
-import { RibbonIcon, RightArrow } from "src/components/iconWrappers";
-import { setWalletSignature } from "@/state/legalInfo";
-import { useDispatch, useSelector } from "react-redux";
-import CopyLink from "@/components/shared/CopyLink";
-import { CopyLinkIcon } from "src/components/iconWrappers";
-import ArrowDown from "@/components/icons/arrowDown";
-import { AppState } from "@/state";
-import { setDepositReadyInfo } from "@/state/legalInfo";
-import { amplitudeLogger, Flow } from "@/components/amplitude";
-import { CLICKED_HELP_FORM_LEGAL_ENTITY } from "@/components/amplitude/eventNames";
-import { useDemoMode } from "@/hooks/useDemoMode";
+  useState
+} from 'react';
+import Floater from 'react-floater';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  CopyLinkIcon,
+  RibbonIcon,
+  RightArrow
+} from 'src/components/iconWrappers';
 
 interface ILinK {
   setShowGenerateLinkModal: Dispatch<SetStateAction<boolean>>;
@@ -42,13 +44,13 @@ const GenerateDepositLink: FC<ILinK> = ({
   showConfettiSuccess,
   creatingSyndicate,
   syndicateSuccessfullyCreated,
-  agreementChecked,
+  agreementChecked
 }) => {
-  const [copyLinkCTA, setCopyLinkCTA] = useState("border-gray-syn6");
+  const [copyLinkCTA, setCopyLinkCTA] = useState('border-gray-syn6');
   const {
     legalInfoReducer: {
-      depositReadyInfo: { depositLink, adminSigned },
-    },
+      depositReadyInfo: { depositLink, adminSigned }
+    }
   } = useSelector((state: AppState) => state);
 
   const isDemoMode = useDemoMode();
@@ -82,32 +84,32 @@ const GenerateDepositLink: FC<ILinK> = ({
               open={open}
               styles={{
                 floater: {
-                  filter: "none",
+                  filter: 'none'
                 },
                 container: {
-                  backgroundColor: "#293300",
+                  backgroundColor: '#293300',
                   borderRadius: 5,
-                  color: "#fff",
-                  filter: "none",
-                  minHeight: "none",
+                  color: '#fff',
+                  filter: 'none',
+                  minHeight: 'none',
                   width: 310,
                   padding: 12,
-                  textAlign: "center",
+                  textAlign: 'center'
                 },
                 arrow: {
-                  color: "#293300",
+                  color: '#293300',
                   length: 8,
-                  spread: 10,
+                  spread: 10
                 },
                 options: { zIndex: 250 },
                 wrapper: {
-                  cursor: "pointer",
-                },
+                  cursor: 'pointer'
+                }
               }}
             >
               <button
                 className={`bg-green rounded-custom w-full flex items-center justify-center py-4 mb-4 ${
-                  isDemoMode ? "cursor-pointer" : ""
+                  isDemoMode ? 'cursor-pointer' : ''
                 }`}
                 onMouseEnter={() => setOpen(true)}
                 onMouseLeave={() => setOpen(false)}
@@ -123,25 +125,25 @@ const GenerateDepositLink: FC<ILinK> = ({
           ) : (
             <button
               className={
-                "rounded-custom w-full flex items-center justify-center py-4 mb-4"
+                'rounded-custom w-full flex items-center justify-center py-4 mb-4'
               }
               style={{
-                backgroundColor: !agreementChecked ? "#3F4147" : "#30E696",
-                cursor: !agreementChecked ? "auto" : "pointer",
+                backgroundColor: !agreementChecked ? '#3F4147' : '#30E696',
+                cursor: !agreementChecked ? 'auto' : 'pointer'
               }}
               onClick={() => setShowGenerateLinkModal(true)}
               disabled={isDemoMode || !agreementChecked}
             >
               <div className="flex-grow-1 mr-3">
                 <CopyLinkIcon
-                  color={!agreementChecked ? "text-gray-syn4" : "text-black"}
+                  color={!agreementChecked ? 'text-gray-syn4' : 'text-black'}
                 />
               </div>
               <p
                 className={
-                  "pr-1 whitespace-nowrap font-whyte-medium sm:text-base text-sm"
+                  'pr-1 whitespace-nowrap font-whyte-medium sm:text-base text-sm'
                 }
-                style={{ color: !agreementChecked ? "#90949E" : "black" }}
+                style={{ color: !agreementChecked ? '#90949E' : 'black' }}
               >
                 Generate link to invite members
               </p>
@@ -192,12 +194,12 @@ interface ILinkModal {
 const DepositLinkModal: FC<ILinkModal> = ({
   setShowGenerateLinkModal,
   showGenerateLinkModal,
-  setCopyLinkCTA,
+  setCopyLinkCTA
 }) => {
   const {
     legalInfoReducer: {
-      depositReadyInfo: { depositLink },
-    },
+      depositReadyInfo: { depositLink }
+    }
   } = useSelector((state: AppState) => state);
 
   const router = useRouter();
@@ -209,29 +211,29 @@ const DepositLinkModal: FC<ILinkModal> = ({
   };
 
   const startDocumentSigning = (option: string) => {
-    if (option === "no") {
-      const legal = JSON.parse(localStorage.getItem("legal") || "{}");
+    if (option === 'no') {
+      const legal = JSON.parse(localStorage.getItem('legal') || '{}');
       localStorage.setItem(
-        "legal",
+        'legal',
         JSON.stringify({
           ...legal,
-          [`${clubAddress}`]: { signaturesNeeded: false },
-        }),
+          [`${clubAddress}`]: { signaturesNeeded: false }
+        })
       );
       setShowGenerateLinkModal(false);
       setDocSigned();
       // change link component border to green momentarily as a call to action
-      setCopyLinkCTA("border-green-semantic");
+      setCopyLinkCTA('border-green-semantic');
       setTimeout(() => {
-        setCopyLinkCTA("border-gray-syn6");
+        setCopyLinkCTA('border-gray-syn6');
       }, 800);
     } else {
-      dispatch(setWalletSignature({ signature: "", timeSigned: new Date() }));
+      dispatch(setWalletSignature({ signature: '', timeSigned: new Date() }));
     }
   };
 
   useEffect(() => {
-    const legalData = JSON.parse(localStorage.getItem("legal") || "{}");
+    const legalData = JSON.parse(localStorage.getItem('legal') || '{}');
     if (legalData[clubAddress as string]) {
       setDocSigned();
     }
@@ -245,13 +247,13 @@ const DepositLinkModal: FC<ILinkModal> = ({
         closeModal: () => {
           setShowGenerateLinkModal(false);
         },
-        customWidth: "w-100",
-        customClassName: "pt-8 px-5 pb-5",
+        customWidth: 'w-100',
+        customClassName: 'pt-8 px-5 pb-5',
         showCloseButton: false,
         outsideOnClick: true,
         showHeader: false,
-        alignment: "align-top",
-        margin: "mt-48",
+        alignment: 'align-top',
+        margin: 'mt-48'
       }}
     >
       <>
@@ -261,7 +263,7 @@ const DepositLinkModal: FC<ILinkModal> = ({
             before they deposit?
           </div>
           <div className="text-sm text-gray-syn4 mt-4 mb-6">
-            To adapt these legal documents to your needs,{" "}
+            To adapt these legal documents to your needs,{' '}
             <a
               href="https://syndicatedao.gitbook.io/syndicate-wiki/web3-investment-clubs/create-a-legal-entity/template-legal-docs"
               className="text-blue cursor-pointer"
@@ -275,7 +277,7 @@ const DepositLinkModal: FC<ILinkModal> = ({
             <Link href={`/clubs/${clubAddress}/manage/legal/prepare`}>
               <div
                 className="border-1 border-gray-syn6 hover:border-blue hover:cursor-pointer rounded-1.5lg flex flex-col group"
-                onClick={() => startDocumentSigning("yes")}
+                onClick={() => startDocumentSigning('yes')}
               >
                 <div className="flex justify-between px-8 py-6 items-center leading-3.5 cursor-pointer">
                   <div>
@@ -291,8 +293,8 @@ const DepositLinkModal: FC<ILinkModal> = ({
                 <div className="flex justify-center align-middle rounded-b-1.5lg py-2.5 bg-gray-inactive group-hover:bg-blue">
                   <RibbonIcon
                     className="text-white"
-                    height={"0.75rem"}
-                    width={"0.75rem"}
+                    height={'0.75rem'}
+                    width={'0.75rem'}
                   />
                   <span className="mx-1 text-subtext ">Powered by</span>
                   <img
@@ -304,7 +306,7 @@ const DepositLinkModal: FC<ILinkModal> = ({
             </Link>
             <button
               className="border-1 w-full border-gray-syn6 hover:border-blue cursor-pointer p-8 rounded-1.5lg"
-              onClick={() => startDocumentSigning("no")}
+              onClick={() => startDocumentSigning('no')}
             >
               <p className="leading-6 text-left">No</p>
               <p className="text-sm text-left leading-4 text-gray-syn3 mt-0.5">
@@ -315,7 +317,7 @@ const DepositLinkModal: FC<ILinkModal> = ({
         </div>
         <div className="mt-14 mb-6 h-px bg-gray-syn6"></div>
         <p className="px-5 text-gray-syn4 text-sm leading-5.5 text-center pb-2">
-          Help me{" "}
+          Help me{' '}
           <a
             className="text-blue cursor-pointer"
             href="https://syndicatedao.gitbook.io/syndicate-guide/web3-investment-clubs/create-a-legal-entity"
@@ -323,12 +325,12 @@ const DepositLinkModal: FC<ILinkModal> = ({
             rel="noopener noreferrer"
             onClick={() => {
               amplitudeLogger(CLICKED_HELP_FORM_LEGAL_ENTITY, {
-                flow: Flow.LEGAL_ENTITY_FLOW,
+                flow: Flow.LEGAL_ENTITY_FLOW
               });
             }}
           >
             form a legal entity
-          </a>{" "}
+          </a>{' '}
           first
         </p>
       </>

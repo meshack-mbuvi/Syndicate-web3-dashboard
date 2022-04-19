@@ -1,15 +1,15 @@
-import Layout from "@/components/layout";
-import Head from "@/components/syndicates/shared/HeaderTitle";
-import SignAgreement from "@/components/syndicates/shared/signAgreement";
-import WalletNotConnected from "@/components/walletNotConnected";
-import { AppState } from "@/state";
-import { getTemplates } from "@/utils/templates";
-import axios from "axios";
-import moment from "moment";
-import { NextPage } from "next";
-import { useRouter } from "next/router";
-import React from "react";
-import { useSelector } from "react-redux";
+import Layout from '@/components/layout';
+import Head from '@/components/syndicates/shared/HeaderTitle';
+import SignAgreement from '@/components/syndicates/shared/signAgreement';
+import WalletNotConnected from '@/components/walletNotConnected';
+import { AppState } from '@/state';
+import { getTemplates } from '@/utils/templates';
+import axios from 'axios';
+import moment from 'moment';
+import { NextPage } from 'next';
+import { useRouter } from 'next/router';
+import React from 'react';
+import { useSelector } from 'react-redux';
 
 const MemberAgreementPage: NextPage = () => {
   const router = useRouter();
@@ -18,19 +18,19 @@ const MemberAgreementPage: NextPage = () => {
   const {
     legalInfoReducer: { memberInfo, clubInfo, walletSignature },
     web3Reducer: {
-      web3: { account },
-    },
+      web3: { account }
+    }
   } = useSelector((state: AppState) => state);
 
   const navbarItems = [
     {
       url: `/clubs/${clubAddress}`,
-      navItemText: "Exit",
+      navItemText: 'Exit'
     },
     {
-      navItemText: "Sign legal documents",
-      isLegal: true,
-    },
+      navItemText: 'Sign legal documents',
+      isLegal: true
+    }
   ];
 
   const signHandler = () => {
@@ -40,7 +40,7 @@ const MemberAgreementPage: NextPage = () => {
       ...clubInfo,
       clubTokenAddress: clubAddress,
       memberSignature: walletSignature.signature,
-      memberSignDate: moment(walletSignature.timeSigned).format("LL"),
+      memberSignDate: moment(walletSignature.timeSigned).format('LL')
     };
 
     const { compiledOp, compiledSub } = getTemplates(clubInfo.isSeriesLLC);
@@ -56,7 +56,7 @@ const MemberAgreementPage: NextPage = () => {
       managerName: clubInfo.adminName,
       managerEmail: clubInfo.managerEmail,
       memberName: memberInfo.memberName,
-      memberEmail: memberInfo.emailAddress,
+      memberEmail: memberInfo.emailAddress
     });
 
     router.push(`/clubs/${clubAddress}`);

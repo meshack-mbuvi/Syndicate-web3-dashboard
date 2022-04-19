@@ -1,60 +1,63 @@
-import { MintPolicyContract } from "@/ClubERC20Factory/policyMintERC20";
-import { ProgressModal, ProgressModalState } from "@/components/progressModal";
-import { Switch, SwitchType } from "@/components/switch";
-import EstimateGas from "@/containers/createInvestmentClub/gettingStarted/estimateGas";
-import { SettingsDisclaimerTooltip } from "@/containers/createInvestmentClub/shared/SettingDisclaimer";
-import { useIsClubOwner } from "@/hooks/useClubOwner";
-import { useDemoMode } from "@/hooks/useDemoMode";
-import { AppState } from "@/state";
-import { setClubCreationReceipt } from "@/state/createInvestmentClub/slice";
+import { MintPolicyContract } from '@/ClubERC20Factory/policyMintERC20';
+import { ProgressModal, ProgressModalState } from '@/components/progressModal';
+import { Switch, SwitchType } from '@/components/switch';
+import EstimateGas from '@/containers/createInvestmentClub/gettingStarted/estimateGas';
+import { SettingsDisclaimerTooltip } from '@/containers/createInvestmentClub/shared/SettingDisclaimer';
+import { useIsClubOwner } from '@/hooks/useClubOwner';
+import { useDemoMode } from '@/hooks/useDemoMode';
+import { AppState } from '@/state';
+import { setClubCreationReceipt } from '@/state/createInvestmentClub/slice';
 import {
   setExistingAmountRaised,
   setExistingMaxAmountRaising,
   setExistingMaxNumberOfMembers,
   setExistingNumberOfMembers,
-  setExistingOpenToDepositsUntil,
-} from "@/state/modifyClubSettings/slice";
-import { Status } from "@/state/wallet/types";
-import { getWeiAmount } from "@/utils/conversions";
+  setExistingOpenToDepositsUntil
+} from '@/state/modifyClubSettings/slice';
+import { Status } from '@/state/wallet/types';
+import { getWeiAmount } from '@/utils/conversions';
 import {
   floatedNumberWithCommas,
   numberInputRemoveCommas,
-  numberStringInputRemoveCommas,
-} from "@/utils/formattedNumbers";
-import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { SkeletonLoader } from "src/components/skeletonLoader";
-import { Callout } from "../callout";
-import { EmailSupport } from "../emailSupport";
-import { ExternalLinkColor } from "../iconWrappers";
-import { InputFieldWithButton } from "../inputs/inputFieldWithButton";
-import { InputFieldWithDate } from "../inputs/inputFieldWithDate";
-import { InputFieldWithToken } from "../inputs/inputFieldWithToken";
-import { PillButtonLarge } from "../pillButtonsLarge";
+  numberStringInputRemoveCommas
+} from '@/utils/formattedNumbers';
+import { useRouter } from 'next/router';
+import { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { SkeletonLoader } from 'src/components/skeletonLoader';
+import { Callout } from '../callout';
+import { EmailSupport } from '../emailSupport';
+import { ExternalLinkColor } from '../iconWrappers';
+import { InputFieldWithButton } from '../inputs/inputFieldWithButton';
+import { InputFieldWithDate } from '../inputs/inputFieldWithDate';
+import {
+  InputFieldWithToken,
+  SymbolDisplay
+} from '../inputs/inputFieldWithToken';
+import { PillButtonLarge } from '../pillButtons/pillButtonsLarge';
 
 const progressModalStates = {
   confirm: {
-    title: "Confirm in wallet",
-    description: "Confirm the modification of club settings in your wallet",
+    title: 'Confirm in wallet',
+    description: 'Confirm the modification of club settings in your wallet',
     state: ProgressModalState.CONFIRM,
-    buttonLabel: "",
+    buttonLabel: ''
   },
   success: {
-    title: "Settings successfully modified",
-    description: "",
+    title: 'Settings successfully modified',
+    description: '',
     state: ProgressModalState.SUCCESS,
-    buttonLabel: "Back to club dashboard",
+    buttonLabel: 'Back to club dashboard'
   },
   pending: {
-    title: "Pending confirmation",
+    title: 'Pending confirmation',
     description:
-      "This could take up to a few minutes depending on network congestion and the gas fees you set. Feel free to leave this screen.",
+      'This could take up to a few minutes depending on network congestion and the gas fees you set. Feel free to leave this screen.',
     state: ProgressModalState.PENDING,
-    buttonLabel: "Back to club dashboard",
+    buttonLabel: 'Back to club dashboard'
   },
   failure: {
-    title: "Transaction failed",
+    title: 'Transaction failed',
     description: (
       <span>
         Please try again and
@@ -66,8 +69,8 @@ const progressModalStates = {
       </span>
     ),
     state: ProgressModalState.FAILURE,
-    buttonLabel: "Try again",
-  },
+    buttonLabel: 'Try again'
+  }
 };
 
 export const ModifyClubSettings = (props: { isVisible: boolean }) => {
@@ -83,12 +86,15 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
       existingAmountRaised,
       existingMaxAmountRaising,
       existingMaxNumberOfMembers,
-      existingNumberOfMembers,
+      existingNumberOfMembers
     },
-    erc20TokenSliceReducer: { erc20Token, depositDetails },
+    erc20TokenSliceReducer: {
+      erc20Token,
+      depositDetails: { depositTokenLogo, depositTokenSymbol }
+    },
     web3Reducer: {
-      web3: { account, status, web3 },
-    },
+      web3: { account, status, web3 }
+    }
   } = useSelector((state: AppState) => state);
 
   const {
@@ -103,25 +109,23 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
     maxTotalSupply,
     symbol,
     loading,
-    currentMintPolicyAddress,
+    currentMintPolicyAddress
   } = erc20Token;
-
-  const { depositTokenSymbol } = depositDetails;
 
   // True is ETH, False is USDC
   const [depositTokenType, setDepositTokenType] = useState(true);
   const [isOpenToDeposits, setIsOpenToDeposits] = useState<boolean>(
-    existingIsOpenToDeposits,
+    existingIsOpenToDeposits
   );
   const [openToDepositsUntil, setOpenToDepositsUntil] = useState<Date>(
-    new Date(endTime),
+    new Date(endTime)
   );
   const [maxAmountRaising, setMaxAmountRaising] =
     useState<number>(maxTotalSupply);
   const [maxNumberOfMembers, setMaxNumberOfMembers] =
     useState<number>(maxMemberCount);
   const [, setTotalDepositsAmount] = useState(0);
-  const [transactionHash, setTransactionHash] = useState("");
+  const [transactionHash, setTransactionHash] = useState('');
 
   // Errors
   const [openToDepositsUntilWarning, setOpenToDepositsUntilWarning] =
@@ -133,7 +137,7 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
   const [areClubChangesAvailable, setAreClubChangesAvailable] =
     useState<boolean>(false);
 
-  const [progressState, setProgressState] = useState<string>("");
+  const [progressState, setProgressState] = useState<string>('');
 
   const MAX_MEMBERS_ALLOWED = 99;
 
@@ -142,7 +146,7 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
   const {
     pathname,
     isReady,
-    query: { clubAddress },
+    query: { clubAddress }
   } = router;
 
   const isOwner = useIsClubOwner();
@@ -161,7 +165,7 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
     )
       return;
 
-    if ((pathname.includes("/modify") && !isOwner) || isDemoMode) {
+    if ((pathname.includes('/modify') && !isOwner) || isDemoMode) {
       router.replace(`/clubs/${clubAddress}`);
     }
   }, [
@@ -173,12 +177,12 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
     isReady,
     isOwner,
     pathname,
-    isDemoMode,
+    isDemoMode
   ]);
 
   // makes sure that current settings render when content is available
   useEffect(() => {
-    if (name && depositDetails) {
+    if (name && depositTokenLogo) {
       if (
         existingOpenToDepositsUntil.toUTCString() === new Date(0).toUTCString()
       ) {
@@ -193,7 +197,7 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
         dispatch(setExistingOpenToDepositsUntil(new Date(endTime)));
       }
       if (existingMaxAmountRaising === 0 && depositTokenSymbol) {
-        if (depositTokenSymbol === "ETH") {
+        if (depositTokenSymbol === 'ETH') {
           setMaxAmountRaising(maxTotalSupply / 10000);
           setTotalDepositsAmount(totalSupply / 10000);
           dispatch(setExistingMaxAmountRaising(maxTotalSupply / 10000));
@@ -209,13 +213,14 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
         setMaxNumberOfMembers(maxMemberCount);
         dispatch(setExistingMaxNumberOfMembers(maxMemberCount));
       }
-      setDepositTokenType(depositTokenSymbol === "ETH");
+      setDepositTokenType(depositTokenSymbol === 'ETH');
       dispatch(setExistingNumberOfMembers(memberCount));
     }
   }, [
     name,
     currentMintPolicyAddress,
-    depositDetails,
+    depositTokenLogo,
+    depositTokenSymbol,
     maxTotalSupply,
     totalSupply,
     depositTokenSymbol,
@@ -225,7 +230,7 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
     dispatch,
     existingOpenToDepositsUntil,
     existingMaxAmountRaising,
-    existingMaxNumberOfMembers,
+    existingMaxNumberOfMembers
   ]);
 
   useEffect(() => {
@@ -237,7 +242,7 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
       openToDepositsUntil < eodToday
     ) {
       setOpenToDepositsUntilWarning(
-        "You'll need a new date to reopen for deposits",
+        "You'll need a new date to reopen for deposits"
       );
     } else {
       setOpenToDepositsUntilWarning(null);
@@ -272,12 +277,12 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
     existingOpenToDepositsUntil,
     maxAmountRaisingError,
     maxNumberOfMembersError,
-    openToDepositsUntilWarning,
+    openToDepositsUntilWarning
   ]);
 
   const onTxConfirm = (transactionHash: string) => {
     setTransactionHash(transactionHash);
-    setProgressState("pending");
+    setProgressState('pending');
   };
 
   const onTxReceipt = (receipt) => {
@@ -285,7 +290,7 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
   };
 
   const handleTransaction = async () => {
-    setProgressState("confirm");
+    setProgressState('confirm');
     try {
       const updatedEndTime = new Date(openToDepositsUntil);
 
@@ -303,23 +308,23 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
         +maxNumberOfMembers,
         _tokenCap,
         onTxConfirm,
-        onTxReceipt,
+        onTxReceipt
       );
 
       dispatch(setExistingOpenToDepositsUntil(openToDepositsUntil));
       dispatch(setExistingMaxAmountRaising(maxAmountRaising));
       dispatch(setExistingMaxNumberOfMembers(maxNumberOfMembers));
-      setProgressState("success");
+      setProgressState('success');
     } catch (error) {
-      setProgressState("failure");
+      setProgressState('failure');
     }
   };
 
   const ProgressStates = () => {
     if (!progressState) return null;
 
-    if (progressState === "success" || progressState === "failure") {
-      setTransactionHash("");
+    if (progressState === 'success' || progressState === 'failure') {
+      setTransactionHash('');
     }
 
     return (
@@ -329,25 +334,25 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
           isVisible: true,
           etherscanHash: transactionHash,
           buttonOnClick:
-            progressModalStates[progressState].buttonLabel == "Try again"
-              ? () => setProgressState("")
+            progressModalStates[progressState].buttonLabel == 'Try again'
+              ? () => setProgressState('')
               : handleExit,
-          etherscanLinkText: "View on Etherscan",
+          etherscanLinkText: 'View on Etherscan',
           iconColor: ExternalLinkColor.BLUE,
-          transactionType: "transaction"
+          transactionType: 'transaction'
         }}
       />
     );
   };
 
   return (
-    <div className={`${isVisible ? "block" : "hidden"}`}>
+    <div className={`${isVisible ? 'block' : 'hidden'}`}>
       {/* Titles and close button */}
       <div className={`flex justify-between items-center mb-10 space-x-3`}>
         {loading ? (
           <div className="flex w-full flex-col">
-            <SkeletonLoader width={"full"} height={"6"} />
-            <SkeletonLoader width={"full"} height={"8"} />
+            <SkeletonLoader width={'full'} height={'6'} />
+            <SkeletonLoader width={'full'} height={'8'} />
           </div>
         ) : (
           <div className="space-y-2 sm:w-7/12">
@@ -365,8 +370,8 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
           <PillButtonLarge onClick={handleExit} extraClasses="flex-shrink-0">
             <div>
               {areClubChangesAvailable && isOpenToDeposits
-                ? "Discard & Exit"
-                : "Exit"}
+                ? 'Discard & Exit'
+                : 'Exit'}
             </div>
             <img src="/images/xmark-gray.svg" className="w-4" alt="cancel" />
           </PillButtonLarge>
@@ -376,7 +381,7 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
       {/* Modal */}
       <div
         className={`bg-gray-syn8 p-6 pb-7 transition-all`}
-        style={{ borderRadius: "10px" }}
+        style={{ borderRadius: '10px' }}
       >
         {/* Open to deposits */}
         {!loading &&
@@ -401,7 +406,7 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
 
         <div
           className={`absolute ${
-            !isOpenToDeposits ? "opacity-100 " : ""
+            !isOpenToDeposits ? 'opacity-100 ' : ''
           }opacity-0`}
         >
           <SettingsDisclaimerTooltip
@@ -416,12 +421,12 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
 
         <div
           className={`${
-            isOpenToDeposits ? "max-h-2screen" : "max-h-0"
+            isOpenToDeposits ? 'max-h-2screen' : 'max-h-0'
           } overflow-hidden transition-all duration-700`}
         >
           <div
             className={`${
-              isOpenToDeposits ? "opacity-100" : "opacity-0"
+              isOpenToDeposits ? 'opacity-100' : 'opacity-0'
             } transition-opacity`}
           >
             {/* Open until */}
@@ -450,7 +455,7 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
                     }
                     onChange={(targetDate) => {
                       const eodToday = new Date(
-                        new Date().setHours(23, 59, 0, 0),
+                        new Date().setHours(23, 59, 0, 0)
                       ).getTime();
                       const dateToSet =
                         (targetDate as any) < eodToday ? eodToday : targetDate;
@@ -481,7 +486,11 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
                   />
                 ) : (
                   <InputFieldWithToken
-                    depositToken={depositTokenType}
+                    symbolDisplayVariant={SymbolDisplay.LOGO_AND_SYMBOL}
+                    depositTokenSymbol={depositTokenSymbol}
+                    depositTokenLogo={
+                      depositTokenLogo || '/images/token-gray-4.svg'
+                    }
                     value={String(maxAmountRaising)}
                     onChange={(e) => {
                       const amount = numberInputRemoveCommas(e);
@@ -490,10 +499,10 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
                         Number(amount) >= 0
                       ) {
                         setMaxAmountRaisingError(
-                          "Below the current amount raised. Please withdraw funds first before setting a lower limit.",
+                          'Below the current amount raised. Please withdraw funds first before setting a lower limit.'
                         );
                       } else if (amount < 0 || isNaN(amount)) {
-                        setMaxAmountRaisingError("Max amount is required");
+                        setMaxAmountRaisingError('Max amount is required');
                       } else {
                         setMaxAmountRaisingError(null);
                       }
@@ -504,9 +513,9 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
                       maxAmountRaisingError
                         ? maxAmountRaisingError
                         : `Upper limit of the club’s raise, corresponding to a club token supply of ${
-                            depositTokenSymbol === "ETH"
+                            depositTokenSymbol === 'ETH'
                               ? floatedNumberWithCommas(
-                                  maxAmountRaising * 10000,
+                                  maxAmountRaising * 10000
                                 )
                               : floatedNumberWithCommas(maxAmountRaising)
                           } ${symbol}.`
@@ -547,13 +556,13 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
                         Number(numberOfMembers) == 0
                       ) {
                         setMaxNumberOfMembersError(
-                          `Please enter a number between 1 and 99`,
+                          `Please enter a number between 1 and 99`
                         );
                       } else if (
                         Number(numberOfMembers) < existingNumberOfMembers
                       ) {
                         setMaxNumberOfMembersError(
-                          `Club already has ${existingNumberOfMembers} members`,
+                          `Club already has ${existingNumberOfMembers} members`
                         );
                       } else if (
                         Number(numberOfMembers) > MAX_MEMBERS_ALLOWED
@@ -561,15 +570,15 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
                         setMaxNumberOfMembersError(
                           <div>
                             Between 1 and 99 accepted to maintain investment
-                            club status. Reach out to us at{" "}
+                            club status. Reach out to us at{' '}
                             <a
                               href="mailto:hello@syndicate.io"
                               className="text-blue-neptune"
                             >
                               hello@syndicate.io
-                            </a>{" "}
+                            </a>{' '}
                             if you’re looking to involve more members.
-                          </div>,
+                          </div>
                         );
                       } else {
                         setMaxNumberOfMembersError(null);
@@ -579,9 +588,9 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
                           `${
                             numberOfMembers > 0 && !isNaN(numberOfMembers)
                               ? numberOfMembers
-                              : ""
-                          }`,
-                        ),
+                              : ''
+                          }`
+                        )
                       );
                     }}
                     isInErrorState={maxNumberOfMembersError}
@@ -590,7 +599,7 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
                         maxNumberOfMembersError
                       ) : (
                         <div>
-                          Investment clubs may have up to 99 members{" "}
+                          Investment clubs may have up to 99 members{' '}
                           <a
                             href="https://www.sec.gov/reportspubs/investor-publications/investorpubsinvclubhtm.html"
                             className="underline"
@@ -613,7 +622,7 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
       {/* Since we have the fixed disclaimer fixed at the bottom on mobile, we need some space to allow scrolling */}
       <div
         className={`${
-          areClubChangesAvailable ? "h-80 sm:h-0" : "h-0"
+          areClubChangesAvailable ? 'h-80 sm:h-0' : 'h-0'
         } transition-all`}
       ></div>
 
@@ -621,23 +630,23 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
       <div
         className={`${
           areClubChangesAvailable
-            ? "fixed bottom-0 left-0 space-y-6 p-6 pb-8 bg-black bg-opacity-100 sm:bg-opacity-0 sm:p-0 sm:pb-0 sm:mt-10 sm:static"
-            : "bg-opacity-0 p-0 pb-0 mt-10 static"
+            ? 'fixed bottom-0 left-0 space-y-6 p-6 pb-8 bg-black bg-opacity-100 sm:bg-opacity-0 sm:p-0 sm:pb-0 sm:mt-10 sm:static'
+            : 'bg-opacity-0 p-0 pb-0 mt-10 static'
         }`}
       >
         {/* Disclaimer */}
         <div
           className={`${
             areClubChangesAvailable && isOpenToDeposits
-              ? "max-h-2screen"
-              : "max-h-0"
+              ? 'max-h-2screen'
+              : 'max-h-0'
           } transition-all duration-700`}
         >
           <div
             className={`${
               areClubChangesAvailable && isOpenToDeposits
-                ? "opacity-100"
-                : "opacity-0"
+                ? 'opacity-100'
+                : 'opacity-0'
             } transition-opacity duration-700`}
           >
             <div className="text-xs text-gray-syn4">
@@ -656,15 +665,15 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
             <div
               className={`${
                 areClubChangesAvailable && isOpenToDeposits
-                  ? "max-h-2screen"
-                  : "max-h-0"
+                  ? 'max-h-2screen'
+                  : 'max-h-0'
               } transition-all duration-700`}
             >
               <div
                 className={`${
                   areClubChangesAvailable && isOpenToDeposits
-                    ? "opacity-100"
-                    : "opacity-0"
+                    ? 'opacity-100'
+                    : 'opacity-0'
                 } transition-opacity duration-700`}
               >
                 <Callout>
@@ -683,8 +692,8 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
             }
             className={`${
               areClubChangesAvailable && isOpenToDeposits
-                ? "primary-CTA"
-                : "primary-CTA-disabled"
+                ? 'primary-CTA'
+                : 'primary-CTA-disabled'
             } transition-all duration-700 w-full lg:w-auto`}
           >
             Submit changes

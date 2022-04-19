@@ -1,17 +1,18 @@
-import Footer from "@/components/navigation/footer";
-import Header from "@/components/navigation/header/Header";
-import { useCreateInvestmentClubContext } from "@/context/CreateInvestmentClubContext";
-import { useIsClubOwner } from "@/hooks/useClubOwner";
-import { useDemoMode } from "@/hooks/useDemoMode";
-import { AppState } from "@/state";
-import { Status } from "@/state/wallet/types";
-import { useRouter } from "next/router";
-import React, { FC, useEffect } from "react";
-import { useSelector } from "react-redux";
-import ConnectWallet from "src/components/connectWallet";
-import DemoBanner from "../demoBanner";
-import ProgressBar from "../ProgressBar";
-import SEO from "../seo";
+import Footer from '@/components/navigation/footer';
+import { useCreateInvestmentClubContext } from '@/context/CreateInvestmentClubContext';
+import { useIsClubOwner } from '@/hooks/useClubOwner';
+import Header from '@/components/navigation/header/Header';
+import { useDemoMode } from '@/hooks/useDemoMode';
+import { AppState } from '@/state';
+import { Status } from '@/state/wallet/types';
+import { useRouter } from 'next/router';
+import React, { FC, useEffect } from 'react';
+import { useSelector } from 'react-redux';
+import ConnectWallet from 'src/components/connectWallet';
+import DemoBanner from '../demoBanner';
+import ProgressBar from '../ProgressBar';
+import SEO from '../seo';
+
 interface Props {
   showBackButton?: boolean;
   managerSettingsOpen?: boolean;
@@ -26,19 +27,19 @@ const Layout: FC<Props> = ({
   showNav = true,
   navItems = [
     {
-      url: "/clubs",
-      navItemText: "Portfolio",
-    },
-  ],
+      url: '/clubs',
+      navItemText: 'Portfolio'
+    }
+  ]
 }) => {
   const {
     web3Reducer: {
-      web3: { account, status },
+      web3: { account, status }
     },
     clubERC20sReducer: { myClubERC20s, otherClubERC20s, loading },
     erc20TokenSliceReducer: {
-      erc20Token: { owner, loading: loadingClubDetails },
-    },
+      erc20Token: { owner, loading: loadingClubDetails }
+    }
   } = useSelector((state: AppState) => state);
 
   const router = useRouter();
@@ -47,13 +48,13 @@ const Layout: FC<Props> = ({
   const {
     pathname,
     isReady,
-    query: { clubAddress },
+    query: { clubAddress }
   } = router;
 
   const isOwner = useIsClubOwner();
 
-  const showCreateProgressBar = router.pathname === "/clubs/create";
-  const portfolioPage = router.pathname === "/clubs" || router.pathname === "/";
+  const showCreateProgressBar = router.pathname === '/clubs/create';
+  const portfolioPage = router.pathname === '/clubs' || router.pathname === '/';
 
   const { currentStep, steps, preClubCreationStep } =
     useCreateInvestmentClubContext();
@@ -71,13 +72,13 @@ const Layout: FC<Props> = ({
     loadingClubDetails;
 
   // we don't need to render the footer on the creation page.
-  const createClubPage = router.pathname === "/clubs/create";
+  const createClubPage = router.pathname === '/clubs/create';
 
   const handleRouting = () => {
-    if (pathname.includes("/manage") && !isOwner) {
+    if (pathname.includes('/manage') && !isOwner) {
       router.replace(`/clubs/${clubAddress}`);
     } else if (
-      (pathname === "/clubs/[clubAddress]" || pathname.includes("/member")) &&
+      (pathname === '/clubs/[clubAddress]' || pathname.includes('/member')) &&
       isOwner
     ) {
       router.replace(`/clubs/${clubAddress}/manage`);
@@ -102,13 +103,13 @@ const Layout: FC<Props> = ({
     loadingClubDetails,
     status,
     isReady,
-    isOwner,
+    isOwner
   ]);
 
   return (
     <div
       className={`flex flex-col justify-between ${
-        pushFooter ? "h-screen" : ""
+        pushFooter ? 'h-screen' : ''
       }`}
     >
       <div>
@@ -119,7 +120,7 @@ const Layout: FC<Props> = ({
             `invest`,
             `fund`,
             `social`,
-            `ethereum`,
+            `ethereum`
           ]}
           title="Home"
         />
@@ -131,7 +132,7 @@ const Layout: FC<Props> = ({
         <DemoBanner />
         <div
           className={`sticky top-18 ${
-            showCreateProgressBar ? "bg-black backdrop-filter" : ""
+            showCreateProgressBar ? 'bg-black backdrop-filter' : ''
           }`}
         >
           {showCreateProgressBar && account ? (
@@ -149,7 +150,7 @@ const Layout: FC<Props> = ({
         </div>
         <div
           className={`flex w-full bg-black flex-col sm:flex-row ${
-            showCreateProgressBar ? "pt-16" : isDemoMode ? "pt-48" : "pt-24"
+            showCreateProgressBar ? 'pt-16' : isDemoMode ? 'pt-48' : 'pt-24'
           } z-20 justify-center items-center my-0 mx-auto`}
         >
           {children}

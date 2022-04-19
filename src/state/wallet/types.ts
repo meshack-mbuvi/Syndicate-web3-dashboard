@@ -1,4 +1,4 @@
-import Web3 from "web3";
+import Web3 from 'web3';
 
 const initialWeb3 = new Web3(process.env.NEXT_PUBLIC_ALCHEMY);
 
@@ -25,9 +25,9 @@ export interface IModalErrors {
 }
 
 export enum Status {
-  CONNECTED = "connected",
-  CONNECTING = "connecting",
-  DISCONNECTED = "disconnected",
+  CONNECTED = 'connected',
+  CONNECTING = 'connecting',
+  DISCONNECTED = 'disconnected'
 }
 
 export interface InitialState {
@@ -58,14 +58,14 @@ export const initialState: InitialState = {
     isErrorModalOpen: false,
     error: null,
     web3: initialWeb3,
-    account: "",
-    providerName: "",
-    currentEthereumNetwork: "",
+    account: '',
+    providerName: '',
+    currentEthereumNetwork: '',
     ethereumNetwork: {
-      correctEthereumNetwork: "",
-      invalidEthereumNetwork: false,
-    },
+      correctEthereumNetwork: '',
+      invalidEthereumNetwork: false
+    }
   },
   showWalletModal: false,
-  dispatchCreateFlow: false,
-}
+  dispatchCreateFlow: false
+};

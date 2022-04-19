@@ -1,6 +1,6 @@
-import { BigNumber } from "bignumber.js";
+import { BigNumber } from 'bignumber.js';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const Web3 = require("web3");
+const Web3 = require('web3');
 const web3 = new Web3(`${process.env.NEXT_PUBLIC_ALCHEMY}`);
 
 /**
@@ -14,7 +14,7 @@ const web3 = new Web3(`${process.env.NEXT_PUBLIC_ALCHEMY}`);
  */
 export const etherToNumber = (value: string, tokenFactor?: string) =>
   new BigNumber(value)
-    .dividedBy(new BigNumber(tokenFactor ? tokenFactor : "1000000000000000000"))
+    .dividedBy(new BigNumber(tokenFactor ? tokenFactor : '1000000000000000000'))
     .toNumber();
 
 /**
@@ -38,7 +38,7 @@ export const etherToNumber = (value: string, tokenFactor?: string) =>
 export const getWeiAmount = (
   amount: string,
   tokenDecimals: number,
-  multiplication: boolean,
+  multiplication: boolean
 ): any => {
   if (!amount) return 0;
 
@@ -50,7 +50,7 @@ export const getWeiAmount = (
 
   // get unit
   const tokenUnit = Object.keys(unitMappings).find(
-    (key) => unitMappings[key] === tokenFactor.toString(),
+    (key) => unitMappings[key] === tokenFactor.toString()
   );
 
   if (!tokenUnit) {
@@ -87,7 +87,7 @@ export const isUnlimited = (value) => {
   const BN = web3.utils.BN;
   const BNValue = new BN(value.toString());
   const BNcompareValue = new BN(
-    "115792089237316195423570985008687907853269984665640564039457",
+    '115792089237316195423570985008687907853269984665640564039457'
   );
 
   // check whether value is greater than or equal to comparison value.

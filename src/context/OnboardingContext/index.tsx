@@ -3,8 +3,8 @@ import {
   ReactNode,
   useContext,
   useEffect,
-  useState,
-} from "react";
+  useState
+} from 'react';
 
 type OnboardingProps = {
   showInvestorOnboarding: boolean;
@@ -17,20 +17,20 @@ export const useOnboardingContext = (): Partial<OnboardingProps> =>
   useContext(OnboardingContext);
 
 const OnboardingProvider: React.FC<{ children: ReactNode }> = ({
-  children,
+  children
 }) => {
   const [showInvestorOnboarding, setShowInvestorOnboarding] = useState(false);
 
   useEffect(() => {
     const showInvestorOnboarding = localStorage.getItem(
-      "showInvestorOnboarding",
+      'showInvestorOnboarding'
     );
 
     // Set investor onboarding visibility
     if (showInvestorOnboarding == undefined || null) {
       setShowInvestorOnboarding(false); //SET TO TRE TO RE_ENABLE
-      localStorage.setItem("showInvestorOnboarding", "true");
-    } else if (showInvestorOnboarding === "true") {
+      localStorage.setItem('showInvestorOnboarding', 'true');
+    } else if (showInvestorOnboarding === 'true') {
       setShowInvestorOnboarding(false);
     } else {
       setShowInvestorOnboarding(false);
@@ -43,14 +43,14 @@ const OnboardingProvider: React.FC<{ children: ReactNode }> = ({
 
   const hideInvestorOnboarding = () => {
     setShowInvestorOnboarding(false);
-    localStorage.setItem("showInvestorOnboarding", "false");
+    localStorage.setItem('showInvestorOnboarding', 'false');
   };
 
   return (
     <OnboardingContext.Provider
       value={{
         showInvestorOnboarding,
-        hideInvestorOnboarding,
+        hideInvestorOnboarding
       }}
     >
       {children}

@@ -23,20 +23,20 @@ export interface UtilityNFT {
 }
 
 export const emptyUtilityNFT: UtilityNFT = {
-  account: "",
+  account: '',
   claimAvailable: false,
-  redemptionToken: "",
-  membershipToken: "",
+  redemptionToken: '',
+  membershipToken: '',
   totalClaims: 0,
-  ethPrice: "",
+  ethPrice: '',
   price: 0.0,
   priceUSD: 0,
-  membershipPasses: [],
+  membershipPasses: []
 };
 
 export const initialState = {
   utilityNFT: emptyUtilityNFT,
   MembershipPass: [],
   Utility: {},
-  loading: true,
+  loading: true
 };

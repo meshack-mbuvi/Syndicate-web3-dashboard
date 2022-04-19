@@ -1,18 +1,18 @@
-import { DataStorageInfo } from "@/containers/layoutWithSyndicateDetails/activity/shared/DataStorageInfo";
-import { useIsClubOwner } from "@/hooks/useClubOwner";
-import { AppState } from "@/state";
-import { setCurrentTransaction } from "@/state/erc20transactions";
-import Linkify from "linkify-react";
-import Image from "next/image";
+import { DataStorageInfo } from '@/containers/layoutWithSyndicateDetails/activity/shared/DataStorageInfo';
+import { useIsClubOwner } from '@/hooks/useClubOwner';
+import { AppState } from '@/state';
+import { setCurrentTransaction } from '@/state/erc20transactions';
+import Linkify from 'linkify-react';
+import Image from 'next/image';
 import React, {
   Dispatch,
   SetStateAction,
   useEffect,
   useRef,
-  useState,
-} from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { TextArea } from "./textArea";
+  useState
+} from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { TextArea } from './textArea';
 
 interface IActivityNote {
   saveTransactionNote: (noteValue: string) => void;
@@ -26,11 +26,11 @@ interface IActivityNote {
  */
 const ActivityNote: React.FC<IActivityNote> = ({
   saveTransactionNote,
-  setShowNote,
+  setShowNote
 }) => {
   const dispatch = useDispatch();
   const {
-    transactionsReducer: { currentTransaction },
+    transactionsReducer: { currentTransaction }
   } = useSelector((state: AppState) => state);
   const { note } = currentTransaction;
   const isManager = useIsClubOwner();
@@ -66,7 +66,7 @@ const ActivityNote: React.FC<IActivityNote> = ({
       setNoteValue(note);
     } else {
       setShowNote(false);
-      setNoteValue("");
+      setNoteValue('');
     }
   };
 
@@ -94,13 +94,13 @@ const ActivityNote: React.FC<IActivityNote> = ({
   return (
     <div
       className={`flex flex-col py-4 px-5 text-base leading-6 ${
-        !readOnly || (readOnly && hover) ? "bg-black rounded-1.5lg" : null
+        !readOnly || (readOnly && hover) ? 'bg-black rounded-1.5lg' : null
       }`}
       onMouseOver={() => setHoverState(true)}
       onMouseLeave={() => setHoverState(false)}
     >
       <div className="flex justify-between mb-4">
-        <span className="text-white">Note</span>{" "}
+        <span className="text-white">Note</span>{' '}
         {isManager && (
           <>
             {readOnly && noteValue ? (
@@ -129,10 +129,10 @@ const ActivityNote: React.FC<IActivityNote> = ({
             {noteValue}
           </div>
           <div
-            className={`whitespace-pre-wrap ${!noteReadMore && "line-clamp-4"}`}
+            className={`whitespace-pre-wrap ${!noteReadMore && 'line-clamp-4'}`}
           >
             <Linkify
-              options={{ className: "text-blue underline", target: "_blank" }}
+              options={{ className: 'text-blue underline', target: '_blank' }}
             >
               {noteValue}
             </Linkify>
@@ -194,7 +194,7 @@ const ActivityNote: React.FC<IActivityNote> = ({
                 type="button"
                 disabled={noteValue === note}
                 className={`w-full text-black bg-white rounded-md hover:text-gray-syn7 focus:outline-none p-2 h-12 focus:ring-0 ${
-                  noteValue === note && "cursor-not-allowed bg-gray-shuttle"
+                  noteValue === note && 'cursor-not-allowed bg-gray-shuttle'
                 }`}
                 onClick={() => saveNote()}
               >

@@ -1,8 +1,8 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { initialState, clubMember } from "./types";
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { initialState, clubMember } from './types';
 
 const clubMembersSlice = createSlice({
-  name: "club members",
+  name: 'club members',
   initialState,
   reducers: {
     setClubMembers(state, action: PayloadAction<clubMember[]>) {
@@ -13,8 +13,8 @@ const clubMembersSlice = createSlice({
     },
     clearClubMembers(state) {
       state.clubMembers = [];
-    },
-  },
+    }
+  }
 });
 
 export const { setClubMembers, setLoadingClubMembers, clearClubMembers } =

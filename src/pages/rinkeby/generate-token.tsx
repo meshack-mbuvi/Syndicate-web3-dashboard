@@ -1,24 +1,24 @@
-import { showWalletModal } from "@/state/wallet/actions";
-import { AppState } from "@/state";
-import { useRouter } from "next/router";
-import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { Toggle } from "src/components/inputs";
-import Layout from "src/components/layout";
-import SEO from "src/components/seo";
-import Head from "src/components/syndicates/shared/HeaderTitle";
-import { getWeiAmount } from "src/utils/conversions";
+import { showWalletModal } from '@/state/wallet/actions';
+import { AppState } from '@/state';
+import { useRouter } from 'next/router';
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { Toggle } from 'src/components/inputs';
+import Layout from 'src/components/layout';
+import SEO from 'src/components/seo';
+import Head from 'src/components/syndicates/shared/HeaderTitle';
+import { getWeiAmount } from 'src/utils/conversions';
 
 const GenerateDai: React.FC = () => {
-  const daiABI = require("src/utils/abi/rinkeby-dai");
-  const erc20ABI = require("src/utils/abi/erc20");
-  const daiContractAddress = "0xc3dbf84Abb494ce5199D5d4D815b10EC29529ff8";
-  const usdcContractAddress = "0xeb8f08a975ab53e34d8a0330e0d34de942c95926";
+  const daiABI = require('src/utils/abi/rinkeby-dai');
+  const erc20ABI = require('src/utils/abi/erc20');
+  const daiContractAddress = '0xc3dbf84Abb494ce5199D5d4D815b10EC29529ff8';
+  const usdcContractAddress = '0xeb8f08a975ab53e34d8a0330e0d34de942c95926';
 
-  const [amount, setAmount] = useState("");
-  const [tokenContractAddress, setTokenContractAddress] = useState("");
+  const [amount, setAmount] = useState('');
+  const [tokenContractAddress, setTokenContractAddress] = useState('');
   const [tokenContractAddressError, setTokenContractAddressError] =
-    useState("");
+    useState('');
   const [daiSelected, setDaiSelected] = useState(false);
   const [usdcSelected, setUSDCSelected] = useState(false);
   const [otherSelected, setOtherSelected] = useState(false);
@@ -27,15 +27,15 @@ const GenerateDai: React.FC = () => {
   const router = useRouter();
 
   useEffect(() => {
-    if (process.env.NEXT_PUBLIC_CONTEXT === "production") {
-      router.replace("/");
+    if (process.env.NEXT_PUBLIC_CONTEXT === 'production') {
+      router.replace('/');
     }
   }, []);
 
   const {
     web3Reducer: {
-      web3: { account, web3 },
-    },
+      web3: { account, web3 }
+    }
   } = useSelector((state: AppState) => state);
 
   const dispatch = useDispatch();
@@ -60,37 +60,37 @@ const GenerateDai: React.FC = () => {
   const toggleOTHERSelected = () => {
     toggleOff();
     setOtherSelected(true);
-    setTokenContractAddress("");
+    setTokenContractAddress('');
   };
 
   const handleCustomERC20TokenAddress = (
-    event: React.ChangeEvent<HTMLInputElement>,
+    event: React.ChangeEvent<HTMLInputElement>
   ) => {
     event.preventDefault();
     const { value } = event.target;
     setTokenContractAddress(value);
 
     if (!value.trim()) {
-      setTokenContractAddressError("Token contract Address is required");
+      setTokenContractAddressError('Token contract Address is required');
     } else if (!web3.utils.isAddress(value)) {
       setTokenContractAddressError(
-        "Token Contract Address should be a valid ERC20 address",
+        'Token Contract Address should be a valid ERC20 address'
       );
     } else {
-      setTokenContractAddressError("");
+      setTokenContractAddressError('');
     }
   };
 
   const validateAndSubmit = (event: any) => {
     event.preventDefault();
     if (
-      tokenContractAddress !== "" &&
-      tokenContractAddressError === "" &&
+      tokenContractAddress !== '' &&
+      tokenContractAddressError === '' &&
       Number(amount) > 0
     ) {
       mintToken();
     } else {
-      alert("Enter valid inputs");
+      alert('Enter valid inputs');
     }
   };
 
@@ -134,17 +134,17 @@ const GenerateDai: React.FC = () => {
 
       setIsLoading(false);
       alert(
-        "Minted " +
+        'Minted ' +
           amount +
-          " Token. Account balance is now " +
+          ' Token. Account balance is now ' +
           getWeiAmount(balance.toString(), tokenDecimals, false) +
-          "!",
+          '!'
       );
     } catch (error) {
       setIsLoading(false);
       console.log({ error });
       alert(
-        "An error occurred while sending request to mint Token. Please check the console to see the details",
+        'An error occurred while sending request to mint Token. Please check the console to see the details'
       );
     }
   };
@@ -161,7 +161,7 @@ const GenerateDai: React.FC = () => {
         <div className="md:w-2/3 md:mr-8">
           <div className="mt-6 text-l text-warm-gray-500 max-w-3xl pb-5">
             This page is used to generate ERC-20s for the Rinkeby testnet. If
-            you found this somehow, you should check out our{" "}
+            you found this somehow, you should check out our{' '}
             <a
               href="https://jobs.ashbyhq.com/syndicate"
               className="text-gray-85 underline"
@@ -254,24 +254,24 @@ const GenerateDai: React.FC = () => {
                     {...{
                       enabled: daiSelected,
                       toggleEnabled: toggleDAISelected,
-                      label: "Mint DAI:",
-                      tooltip: "",
+                      label: 'Mint DAI:',
+                      tooltip: ''
                     }}
                   />
                   <Toggle
                     {...{
                       enabled: usdcSelected,
                       toggleEnabled: toggleUSDCSelected,
-                      label: "Mint USDC:",
-                      tooltip: "",
+                      label: 'Mint USDC:',
+                      tooltip: ''
                     }}
                   />
                   <Toggle
                     {...{
                       enabled: otherSelected,
                       toggleEnabled: toggleOTHERSelected,
-                      label: "Mint ERC20:",
-                      tooltip: "",
+                      label: 'Mint ERC20:',
+                      tooltip: ''
                     }}
                   />
                 </div>
@@ -291,7 +291,7 @@ const GenerateDai: React.FC = () => {
                       required
                     />
                     <p className="text-red-500 text-xs mt-1 mb-1">
-                      {tokenContractAddressError !== "" &&
+                      {tokenContractAddressError !== '' &&
                         tokenContractAddressError}
                     </p>
                   </div>

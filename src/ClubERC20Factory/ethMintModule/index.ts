@@ -1,6 +1,6 @@
-import EthMintModule_ABI from "src/contracts/EthMintModule.json";
+import EthMintModule_ABI from 'src/contracts/EthMintModule.json';
 
-import { getGnosisTxnInfo } from "../shared/gnosisTransactionInfo";
+import { getGnosisTxnInfo } from '../shared/gnosisTransactionInfo';
 
 export class EthMintModuleContract {
   web3;
@@ -23,7 +23,7 @@ export class EthMintModuleContract {
     try {
       this.EthMintModuleContract = new this.web3.eth.Contract(
         EthMintModule_ABI,
-        this.address,
+        this.address
       );
     } catch (error) {
       this.EthMintModuleContract = null;
@@ -49,7 +49,7 @@ export class EthMintModuleContract {
     onTxConfirm: (transactionHash?) => void,
     onTxReceipt: (receipt?) => void,
     onTxFail: (error?) => void,
-    setTransactionHash,
+    setTransactionHash
   ): Promise<void> {
     if (!this.EthMintModuleContract) {
       this.init();
@@ -61,25 +61,25 @@ export class EthMintModuleContract {
       this.EthMintModuleContract.methods
         .mint(clubAddress)
         .send({ from: ownerAddress, value: amount })
-        .on("transactionHash", (transactionHash) => {
+        .on('transactionHash', (transactionHash) => {
           onTxConfirm(transactionHash);
 
           // Stop waiting if we are connected to gnosis safe via walletConnect
           if (
-            this.web3._provider.wc?._peerMeta.name === "Gnosis Safe Multisig"
+            this.web3._provider.wc?._peerMeta.name === 'Gnosis Safe Multisig'
           ) {
-            setTransactionHash("");
+            setTransactionHash('');
             gnosisTxHash = transactionHash;
             resolve(transactionHash);
           } else {
             setTransactionHash(transactionHash);
           }
         })
-        .on("receipt", (receipt) => {
+        .on('receipt', (receipt) => {
           onTxReceipt(receipt);
           resolve(receipt);
         })
-        .on("error", (error) => {
+        .on('error', (error) => {
           onTxFail(error);
           reject(error);
         });
@@ -92,7 +92,7 @@ export class EthMintModuleContract {
       if (receipt.isSuccessful) {
         onTxReceipt(receipt);
       } else {
-        onTxFail("Transaction failed");
+        onTxFail('Transaction failed');
       }
     }
   }

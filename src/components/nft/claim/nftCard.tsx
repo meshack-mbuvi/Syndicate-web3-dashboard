@@ -1,22 +1,22 @@
-import { AppState } from "@/state";
-import React, { useEffect, useState, useRef } from "react";
-import { useSelector } from "react-redux";
+import { AppState } from '@/state';
+import React, { useEffect, useState, useRef } from 'react';
+import { useSelector } from 'react-redux';
 
 const NFTCard: React.FC = () => {
   const {
-    erc721TokenSliceReducer: { erc721Token },
+    erc721TokenSliceReducer: { erc721Token }
   } = useSelector((state: AppState) => state);
 
-  const [nftType, setNftType] = useState("");
-  const [source, setSource] = useState("");
+  const [nftType, setNftType] = useState('');
+  const [source, setSource] = useState('');
   // const [mute, setMute] = useState(true);
 
   const collectible = {
     image:
-      "https://daiakrtkievq7ofrm5xaoecjyjfmsybdd2nxxdm5ey74a4ku6ama.arweave.net/GBAFRmpBKw-4sWduBxBJwkrJYCMem3uNnSY_wHFU8Bg",
-    name: "",
-    animation: "",
-    permalink: "",
+      'https://daiakrtkievq7ofrm5xaoecjyjfmsybdd2nxxdm5ey74a4ku6ama.arweave.net/GBAFRmpBKw-4sWduBxBJwkrJYCMem3uNnSY_wHFU8Bg',
+    name: '',
+    animation: '',
+    permalink: ''
   };
 
   // const collectible = {
@@ -31,7 +31,7 @@ const NFTCard: React.FC = () => {
     const { image, animation } = collectible;
 
     if (image && !animation) {
-      setNftType("image");
+      setNftType('image');
       setSource(image);
     } else if (animation) {
       // animation could be a .mov or .mp4 video
@@ -39,10 +39,10 @@ const NFTCard: React.FC = () => {
         animation.match(/\.mov$/) != null ||
         animation.match(/\.mp4$/) != null
       ) {
-        setNftType("video");
+        setNftType('video');
         setSource(animation);
       } else if (animation.match(/\.gif$/) != null) {
-        setNftType("animatedGif");
+        setNftType('animatedGif');
         setSource(animation);
       }
     }
@@ -57,22 +57,22 @@ const NFTCard: React.FC = () => {
 
   return (
     <div className="md:max-w-480 sm:w-full md:w-5.21/12 h-100 bg-gray-syn4 rounded-1.5lg">
-      {nftType === "image" ? (
+      {nftType === 'image' ? (
         <div
           style={{
-            backgroundColor: "#232529",
+            backgroundColor: '#232529',
             backgroundImage: `url('${erc721Token.defaultImage}')`,
-            backgroundSize: "cover",
-            backgroundRepeat: "no-repeat",
-            backgroundPosition: "center center",
+            backgroundSize: 'cover',
+            backgroundRepeat: 'no-repeat',
+            backgroundPosition: 'center center'
           }}
           className="h-full w-full rounded-1.5lg"
         ></div>
-      ) : nftType === "animatedGif" ? (
+      ) : nftType === 'animatedGif' ? (
         <div className="bg-gray-syn7 border-r-1 border-l-1 border-t-1 border-gray-syn6 h-80 rounded-1.5lg overflow-hidden">
           <img src={source} alt="animated nft" />
         </div>
-      ) : nftType === "video" ? (
+      ) : nftType === 'video' ? (
         <div className="h-full w-full bg-gray-syn7 overflow-hidden rounded-1.5lg relative">
           <video
             autoPlay

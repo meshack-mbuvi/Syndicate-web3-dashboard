@@ -1,17 +1,17 @@
-import { useRef, useEffect, Dispatch, SetStateAction } from "react";
-import { web3 } from "@/utils/web3Utils";
-import { formatAddress } from "src/utils/formatAddress";
+import { useRef, useEffect, Dispatch, SetStateAction } from 'react';
+import { web3 } from '@/utils/web3Utils';
+import { formatAddress } from 'src/utils/formatAddress';
 
 // component to set filter term for data.
 export const SearchInput: React.FC<{
   setSearchTerm: Dispatch<SetStateAction<string>>;
   searchTerm: string;
   placeholder?: string;
-}> = ({ setSearchTerm, searchTerm, placeholder = "Search members" }) => {
+}> = ({ setSearchTerm, searchTerm, placeholder = 'Search members' }) => {
   const searchInput = useRef(null);
 
   const clearInputField = () => {
-    setSearchTerm("");
+    setSearchTerm('');
   };
 
   useEffect(() => {
@@ -29,7 +29,7 @@ export const SearchInput: React.FC<{
           name="member-filter"
           id="member-filter"
           className="font-whyte focus:ring-gray-4 block w-full pl-9 text-base sm:text-sm text-gray-3 focus:text-white bg-gray-4 border-none"
-          style={{ borderRadius: "5px" }}
+          style={{ borderRadius: '5px' }}
           placeholder={placeholder}
           onChange={(e) => setSearchTerm(e.target.value)}
           value={

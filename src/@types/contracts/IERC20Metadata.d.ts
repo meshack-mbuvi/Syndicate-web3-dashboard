@@ -2,16 +2,16 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import BN from "bn.js";
-import { EventData, PastEventOptions } from "web3-eth-contract";
+import BN from 'bn.js';
+import { EventData, PastEventOptions } from 'web3-eth-contract';
 
 export interface IERC20MetadataContract
   extends Truffle.Contract<IERC20MetadataInstance> {
-  "new"(meta?: Truffle.TransactionDetails): Promise<IERC20MetadataInstance>;
+  'new'(meta?: Truffle.TransactionDetails): Promise<IERC20MetadataInstance>;
 }
 
 export interface Approval {
-  name: "Approval";
+  name: 'Approval';
   args: {
     owner: string;
     spender: string;
@@ -23,7 +23,7 @@ export interface Approval {
 }
 
 export interface Transfer {
-  name: "Transfer";
+  name: 'Transfer';
   args: {
     from: string;
     to: string;

@@ -1,9 +1,9 @@
-import { ClubERC20Contract } from "@/ClubERC20Factory/clubERC20";
-import { MY_CLUBS_QUERY } from "@/graphql/queries";
-import { AppState } from "@/state";
-import { useQuery } from "@apollo/client";
-import { useCallback, useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { ClubERC20Contract } from '@/ClubERC20Factory/clubERC20';
+import { MY_CLUBS_QUERY } from '@/graphql/queries';
+import { AppState } from '@/state';
+import { useQuery } from '@apollo/client';
+import { useCallback, useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 
 interface IProps {
   myClubs: {
@@ -18,7 +18,7 @@ interface IProps {
 
 export const useMyClubs = (): IProps => {
   const {
-    web3Reducer: { web3 },
+    web3Reducer: { web3 }
   } = useSelector((state: AppState) => state);
   const { account } = web3;
 
@@ -28,10 +28,10 @@ export const useMyClubs = (): IProps => {
   const { refetch, data } = useQuery(MY_CLUBS_QUERY, {
     variables: {
       where: {
-        ownerAddress: account.toLocaleLowerCase(),
-      },
+        ownerAddress: account.toLocaleLowerCase()
+      }
     },
-    skip: !account,
+    skip: !account
   });
 
   useEffect(() => {
@@ -52,8 +52,8 @@ export const useMyClubs = (): IProps => {
         const { contractAddress } = token;
 
         let clubERC20Contract;
-        let clubName = "";
-        let clubSymbol = "";
+        let clubName = '';
+        let clubSymbol = '';
 
         try {
           clubERC20Contract = new ClubERC20Contract(contractAddress, web3.web3);
@@ -66,9 +66,9 @@ export const useMyClubs = (): IProps => {
 
         return {
           clubName,
-          clubSymbol,
+          clubSymbol
         };
-      }),
+      })
     ])
       .then((res) => {
         setIsLoading(false);
@@ -85,6 +85,6 @@ export const useMyClubs = (): IProps => {
     refetch,
     loading,
     totalClubs: myClubs.length,
-    isFetched: Boolean(data?.syndicateDAOs.length),
+    isFetched: Boolean(data?.syndicateDAOs.length)
   };
 };

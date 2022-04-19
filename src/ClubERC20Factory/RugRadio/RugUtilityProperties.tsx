@@ -1,4 +1,4 @@
-import RugUtilityPropertiesABI from "src/contracts/RugUtilityProperties.json";
+import RugUtilityPropertiesABI from 'src/contracts/RugUtilityProperties.json';
 
 export class RugUtilityProperties {
   contract;
@@ -7,10 +7,10 @@ export class RugUtilityProperties {
   constructor(contractAddress: string, web3) {
     this.contract = new web3.eth.Contract(
       RugUtilityPropertiesABI,
-      contractAddress,
+      contractAddress
     );
     this.isGnosisSafe =
-      web3._provider.wc?._peerMeta.name === "Gnosis Safe Multisig";
+      web3._provider.wc?._peerMeta.name === 'Gnosis Safe Multisig';
   }
 
   /**

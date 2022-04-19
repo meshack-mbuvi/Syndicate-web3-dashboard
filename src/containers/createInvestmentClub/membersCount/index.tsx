@@ -1,12 +1,12 @@
-import { EmailSupport } from "@/components/emailSupport";
-import Fade from "@/components/Fade";
-import { useCreateInvestmentClubContext } from "@/context/CreateInvestmentClubContext";
-import { AppState } from "@/state";
-import { setMembersCount } from "@/state/createInvestmentClub/slice";
-import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { InputFieldWithMax } from "../shared/InputFieldWithMax";
-import MaxButton from "../shared/MaxButton";
+import { EmailSupport } from '@/components/emailSupport';
+import Fade from '@/components/Fade';
+import { useCreateInvestmentClubContext } from '@/context/CreateInvestmentClubContext';
+import { AppState } from '@/state';
+import { setMembersCount } from '@/state/createInvestmentClub/slice';
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { InputFieldWithMax } from '../shared/InputFieldWithMax';
+import MaxButton from '../shared/MaxButton';
 
 const ERROR_MESSAGE = (
   <span>
@@ -17,7 +17,7 @@ const ERROR_MESSAGE = (
 );
 // const MEMBER_COUNT_WARNING =
 //   "Permitting more than 99 members may create significant adverse legal and/or tax consequences. Please consult with an attorney before doing so.";
-const MAX_MEMBERS_ALLOWED = "99";
+const MAX_MEMBERS_ALLOWED = '99';
 
 const MembersCount: React.FC<{
   className?: string;
@@ -25,12 +25,12 @@ const MembersCount: React.FC<{
   setInputHasError?: (state: boolean) => void;
 }> = ({ className, editButtonClicked, setInputHasError }) => {
   const {
-    createInvestmentClubSliceReducer: { membersCount },
+    createInvestmentClubSliceReducer: { membersCount }
   } = useSelector((state: AppState) => state);
 
   const [membersNumCount, setMembersNumCount] = useState(membersCount);
   const [memberCountError, setMemberCountError] = useState(null);
-  const [memberCountWarning, setMemberCountWarning] = useState<string>("");
+  const [memberCountWarning, setMemberCountWarning] = useState<string>('');
   const [isInputError, setIsInputError] = useState(false);
   const { setNextBtnDisabled } = useCreateInvestmentClubContext();
   const dispatch = useDispatch();
@@ -46,7 +46,7 @@ const MembersCount: React.FC<{
   useEffect(() => {
     if (!membersNumCount) {
       setNextBtnDisabled(true);
-      setMemberCountError("");
+      setMemberCountError('');
       setIsInputError(false);
     } else if (+membersNumCount < 0 || +membersNumCount === 0) {
       setNextBtnDisabled(true);
@@ -59,8 +59,8 @@ const MembersCount: React.FC<{
       setMemberCountError(ERROR_MESSAGE);
       setIsInputError(true);
     } else {
-      setMemberCountError("");
-      setMemberCountWarning("");
+      setMemberCountError('');
+      setMemberCountWarning('');
       setIsInputError(false);
       if (editButtonClicked) {
         setNextBtnDisabled(true);
@@ -70,7 +70,7 @@ const MembersCount: React.FC<{
     }
     membersNumCount
       ? dispatch(setMembersCount(membersNumCount))
-      : dispatch(setMembersCount("1"));
+      : dispatch(setMembersCount('1'));
   }, [membersNumCount, dispatch, editButtonClicked, setNextBtnDisabled]);
 
   const handleSetMax = () => {
@@ -87,23 +87,23 @@ const MembersCount: React.FC<{
 
   return (
     <Fade>
+      <h3 className="ml-5">What’s the maximum number of members?</h3>
       <div className="flex pb-6 ml-5">
         <InputFieldWithMax
           {...{
             value: membersNumCount
-              ? parseInt(membersNumCount.replace(/^0+/, ""))
-              : parseInt(""),
-            label: "What’s the maximum number of members?",
+              ? parseInt(membersNumCount.replace(/^0+/, ''))
+              : parseInt(''),
             addOn: <MaxButton handleClick={() => handleSetMax()} />,
             onChange: handleSetMembersCount,
             error: memberCountError,
             warning: memberCountWarning,
             hasError: Boolean(isInputError),
-            type: "number",
+            type: 'number',
             addSettingDisclaimer: false,
             moreInfo: (
               <div>
-                Investment clubs may have up to 99 members{" "}
+                Investment clubs may have up to 99 members{' '}
                 <a
                   className="cursor-pointer underline"
                   href="https://www.sec.gov/reportspubs/investor-publications/investorpubsinvclubhtm.html"
@@ -111,11 +111,11 @@ const MembersCount: React.FC<{
                   rel="noopener noreferrer"
                 >
                   according to the SEC.
-                </a>{" "}
+                </a>{' '}
                 Syndicate encourages all users to consult with their own legal
                 and tax counsel.
               </div>
-            ),
+            )
           }}
         />
       </div>

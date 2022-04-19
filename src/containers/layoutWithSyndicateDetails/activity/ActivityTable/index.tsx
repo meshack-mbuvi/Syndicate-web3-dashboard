@@ -1,62 +1,62 @@
-import { SearchForm } from "@/components/inputs/searchForm";
-import TransactionsTable from "@/containers/layoutWithSyndicateDetails/activity/ActivityTable/TransactionsTable";
-import { CategoryPill } from "@/containers/layoutWithSyndicateDetails/activity/shared/CategoryPill";
-import { ANNOTATE_TRANSACTIONS } from "@/graphql/mutations";
-import { useIsClubOwner } from "@/hooks/useClubOwner";
-import { useDebounce } from "@/hooks/useDebounce";
-import { useDemoMode } from "@/hooks/useDemoMode";
-import { useFetchRecentTransactions } from "@/hooks/useFetchRecentTransactions";
-import { AppState } from "@/state";
+import { SearchInput } from '@/components/inputs';
+import TransactionsTable from '@/containers/layoutWithSyndicateDetails/activity/ActivityTable/TransactionsTable';
+import { CategoryPill } from '@/containers/layoutWithSyndicateDetails/activity/shared/CategoryPill';
+import { ANNOTATE_TRANSACTIONS } from '@/graphql/mutations';
+import { useIsClubOwner } from '@/hooks/useClubOwner';
+import { useDebounce } from '@/hooks/useDebounce';
+import { useDemoMode } from '@/hooks/useDemoMode';
+import { useFetchRecentTransactions } from '@/hooks/useFetchRecentTransactions';
+import { AppState } from '@/state';
 import {
   setLoadingTransactions,
   setMyTransactions,
-  setTotalTransactionsCount,
-} from "@/state/erc20transactions";
-import { TransactionCategory } from "@/state/erc20transactions/types";
+  setTotalTransactionsCount
+} from '@/state/erc20transactions';
+import { TransactionCategory } from '@/state/erc20transactions/types';
 import {
   mockActivityDepositTransactionsData,
-  mockActivityTransactionsData,
-} from "@/utils/mockdata";
-import { NetworkStatus, useMutation } from "@apollo/client";
-import { capitalize } from "lodash";
-import Image from "next/image";
-import { useRouter } from "next/router";
-import React, { useEffect, useMemo, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import FilterPill from "../shared/FilterPill";
+  mockActivityTransactionsData
+} from '@/utils/mockdata';
+import { NetworkStatus, useMutation } from '@apollo/client';
+import { capitalize } from 'lodash';
+import Image from 'next/image';
+import { useRouter } from 'next/router';
+import React, { useEffect, useMemo, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import FilterPill from '../shared/FilterPill';
 
 const ActivityTable: React.FC = () => {
   const dispatch = useDispatch();
   const {
     transactionsReducer: { totalTransactionsCount },
     erc20TokenSliceReducer: {
-      erc20Token: { depositsEnabled: isOpenForDeposits },
-    },
+      erc20Token: { depositsEnabled: isOpenForDeposits }
+    }
   } = useSelector((state: AppState) => state);
   const isManager = useIsClubOwner();
   const router = useRouter();
   const {
-    query: { clubAddress },
+    query: { clubAddress }
   } = router;
   const isDemoMode = useDemoMode();
 
-  const [filter, setFilter] = useState<string>("");
-  const [searchValue, setSearchValue] = useState<string>("");
+  const [filter, setFilter] = useState<string>('');
+  const [searchValue, setSearchValue] = useState<string>('');
   const [pageOffset, setPageOffset] = useState<number>(0);
   const [canNextPage, setCanNextPage] = useState<boolean>(true);
 
   // Bulk categorization state
   const [transactionsChecked, setTransactionsChecked] = useState<any[]>([]);
   const [groupCategory, setGroupCategory] =
-    useState<TransactionCategory>("SELECT_CATEGORY");
+    useState<TransactionCategory>('SELECT_CATEGORY');
   const [groupTransactionsDestination, setGroupTransactionsDestination] =
     useState<any>([]);
   const [rowCheckboxActiveData, setRowCheckboxActiveData] = useState<any>([]);
   const [activeTransactionHashes, setActiveTransactionHashes] = useState([]);
-  const [uncategorisedIcon, setUncategorisedIcon] = useState<string>("");
+  const [uncategorisedIcon, setUncategorisedIcon] = useState<string>('');
   const [searchWidth, setSearchWidth] = useState<number>(48);
   const [mockTransactionsData, setMockTransactionsData] = useState<any>(
-    mockActivityDepositTransactionsData,
+    mockActivityDepositTransactionsData
   );
 
   useEffect(() => {
@@ -90,7 +90,7 @@ const ActivityTable: React.FC = () => {
       const categories = new Set(
         transactionsChecked.map((transaction) => {
           return transaction.metadata?.transactionCategory ?? null;
-        }),
+        })
       );
 
       // get transactions outgoing status.
@@ -99,17 +99,17 @@ const ActivityTable: React.FC = () => {
       const outgoingStatuses = new Set(
         transactionsChecked.map((transaction) => {
           return transaction.isOutgoingTransaction;
-        }),
+        })
       );
 
       if (outgoingStatuses.size > 1) {
-        setUncategorisedIcon("select-category.svg");
+        setUncategorisedIcon('select-category.svg');
       } else if (outgoingStatuses.size === 1) {
         const selectedOutgoingStatus = Array.from(outgoingStatuses)[0];
         setUncategorisedIcon(
           selectedOutgoingStatus
-            ? "outgoing-transaction.svg"
-            : "incoming-transaction.svg",
+            ? 'outgoing-transaction.svg'
+            : 'incoming-transaction.svg'
         );
       }
 
@@ -119,7 +119,7 @@ const ActivityTable: React.FC = () => {
       // we use these to know where to place in-pill loader state
       setActiveTransactionHashes(transactionHashes);
       if (categories.size > 1) {
-        setGroupCategory("SELECT_CATEGORY");
+        setGroupCategory('SELECT_CATEGORY');
       } else if (categories.size === 1 && outgoingStatuses.size === 1) {
         setGroupCategory(Array.from(categories)[0] ?? null);
       } else if (categories.size === 1 && outgoingStatuses.size > 1) {
@@ -129,14 +129,14 @@ const ActivityTable: React.FC = () => {
       const transactionDestinations = new Set(
         transactionsChecked.map((transaction) => {
           return transaction.isOutgoingTransaction ?? null;
-        }),
+        })
       );
 
       if (transactionDestinations.size > 1) {
         setGroupTransactionsDestination(null);
       } else if (transactionDestinations.size === 1) {
         setGroupTransactionsDestination(
-          Array.from(transactionDestinations)[0] ?? null,
+          Array.from(transactionDestinations)[0] ?? null
         );
       }
     }
@@ -144,7 +144,7 @@ const ActivityTable: React.FC = () => {
 
   // mutation to bulk categorise
   const [annotationMutation, { loading: annotationLoading }] = useMutation(
-    ANNOTATE_TRANSACTIONS,
+    ANNOTATE_TRANSACTIONS
   );
 
   // pagination
@@ -155,12 +155,12 @@ const ActivityTable: React.FC = () => {
    */
   const generateSearchFilter = (filterValue, searchValue) => {
     let obj = {};
-    if (filterValue && filterValue !== "everything") {
-      filter === "uncategorised"
+    if (filterValue && filterValue !== 'everything') {
+      filter === 'uncategorised'
         ? (obj = { ...obj, metadata: null })
         : (obj = {
             ...obj,
-            metadata: { transactionCategory: `${filter?.toUpperCase()}` },
+            metadata: { transactionCategory: `${filter?.toUpperCase()}` }
           });
     }
     if (searchValue) {
@@ -168,14 +168,14 @@ const ActivityTable: React.FC = () => {
         ...obj,
         // Add more items here to be included in the search
         OR: [
-          "hash",
-          "fromAddress",
-          "toAddress",
-          "tokenName",
-          "tokenSymbol",
+          'hash',
+          'fromAddress',
+          'toAddress',
+          'tokenName',
+          'tokenSymbol'
         ].map((val) => {
-          return { [val]: { contains: searchValue, mode: "insensitive" } };
-        }),
+          return { [val]: { contains: searchValue, mode: 'insensitive' } };
+        })
       };
     }
     return obj;
@@ -188,28 +188,28 @@ const ActivityTable: React.FC = () => {
    * @returns JSX.Element
    */
   const generateEmptyStates = (filter, searchValue) => {
-    const cleanedFilter = capitalize(filter?.replaceAll("_", " "));
+    const cleanedFilter = capitalize(filter?.replaceAll('_', ' '));
 
-    let title = "";
-    let description = "";
+    let title = '';
+    let description = '';
     if (searchValue) {
       title = `No results for "${searchValue}"`;
       description = `You can search for transaction IDs, sender or recipient addresses,
       tokens and symbols, or companies.`;
     }
 
-    if (filter && !searchValue && filter === "uncategorised") {
-      title = "No uncategorised transactions";
+    if (filter && !searchValue && filter === 'uncategorised') {
+      title = 'No uncategorised transactions';
       description =
-        "There are currently no uncategorised transactions in this club’s activity.";
+        'There are currently no uncategorised transactions in this club’s activity.';
     } else {
       if (!searchValue && filter) {
         title = `No transactions categorised as “${cleanedFilter}”`;
         description = `There are currently no transactions categorised as "${cleanedFilter}" in this club’s activity.`;
       } else if (!searchValue && !filter) {
-        title = "No activity yet";
+        title = 'No activity yet';
         description =
-          "Once assets start moving in and out of this club, you will see what’s happening here.";
+          'Once assets start moving in and out of this club, you will see what’s happening here.';
       }
     }
 
@@ -224,16 +224,16 @@ const ActivityTable: React.FC = () => {
   const debouncedSearchTerm = useDebounce(searchValue, 700);
   const memoizedSearchTerm = useMemo(
     () => debouncedSearchTerm,
-    [debouncedSearchTerm],
+    [debouncedSearchTerm]
   );
 
   const {
     loading: transactionsLoading,
     data: transactionsData,
     refetch: refetchTransactions,
-    networkStatus,
+    networkStatus
   } = useFetchRecentTransactions(pageOffset, false, {
-    ...generateSearchFilter(filter, memoizedSearchTerm),
+    ...generateSearchFilter(filter, memoizedSearchTerm)
   });
 
   useEffect(() => {
@@ -270,7 +270,7 @@ const ActivityTable: React.FC = () => {
     JSON.stringify(transactionsData?.Financial_recentTransactions),
     clubAddress,
     mockTransactionsData,
-    totalTransactionsCount,
+    totalTransactionsCount
   ]);
 
   const processERC20Transactions = async (txns) => {
@@ -298,10 +298,10 @@ const ActivityTable: React.FC = () => {
       ? mockActivityDepositTransactionsData
       : mockActivityTransactionsData;
     let filteredData;
-    if (filter && filter !== "everything") {
+    if (filter && filter !== 'everything') {
       filteredData = data.edges.filter(
         (transaction) =>
-          transaction.metadata.transactionCategory === filter.toUpperCase(),
+          transaction.metadata.transactionCategory === filter.toUpperCase()
       );
     }
 
@@ -322,12 +322,12 @@ const ActivityTable: React.FC = () => {
 
     setMockTransactionsData({
       edges: filteredData,
-      totalCount: filteredData?.length,
+      totalCount: filteredData?.length
     });
 
     // reset filters
     if (
-      (filter === "everything" && !searchValue) ||
+      (filter === 'everything' && !searchValue) ||
       (!searchValue && !filter)
     ) {
       setMockTransactionsData(data);
@@ -351,32 +351,32 @@ const ActivityTable: React.FC = () => {
 
   // bulk annotate
   const bulkCategoriseTransactions = (selectedCategory: string) => {
-    const outgoingCategories = ["INVESTMENT", "EXPENSE"];
-    const incomingCategories = ["INVESTMENT_TOKEN"];
+    const outgoingCategories = ['INVESTMENT', 'EXPENSE'];
+    const incomingCategories = ['INVESTMENT_TOKEN'];
 
     let listData;
     if (outgoingCategories.indexOf(selectedCategory) > -1) {
       listData = transactionsChecked.filter(
-        (transaction) => transaction.isOutgoingTransaction === true,
+        (transaction) => transaction.isOutgoingTransaction === true
       );
     } else if (incomingCategories.indexOf(selectedCategory) > -1) {
       listData = transactionsChecked.filter(
-        (transaction) => transaction.isOutgoingTransaction === false,
+        (transaction) => transaction.isOutgoingTransaction === false
       );
-    } else if (selectedCategory === "OTHER" || selectedCategory === null) {
+    } else if (selectedCategory === 'OTHER' || selectedCategory === null) {
       listData = transactionsChecked;
     }
 
     const txnAnnotationListData = listData.map((transaction) => ({
       transactionId: transaction.hash,
-      transactionCategory: selectedCategory,
+      transactionCategory: selectedCategory
     }));
 
     annotationMutation({
       variables: {
-        transactionAnnotationList: txnAnnotationListData,
+        transactionAnnotationList: txnAnnotationListData
       },
-      context: { clientName: "backend" },
+      context: { clientName: 'backend' }
     });
 
     if (!annotationLoading) {
@@ -392,7 +392,7 @@ const ActivityTable: React.FC = () => {
   //show/hide row checkboxes
   const toggleRowCheckbox = (
     checkboxIndex: number,
-    checkboxVisible: boolean,
+    checkboxVisible: boolean
   ) => {
     if (!isManager) return;
     const data = transactionsData?.Financial_recentTransactions?.edges?.map(
@@ -401,16 +401,16 @@ const ActivityTable: React.FC = () => {
           ...item,
           checkboxVisible:
             rowCheckboxActiveData[index]?.checkboxActive ?? false,
-          checkboxActive: rowCheckboxActiveData[index]?.checkboxActive ?? false,
+          checkboxActive: rowCheckboxActiveData[index]?.checkboxActive ?? false
         };
-      },
+      }
     );
 
     if (
       !rowCheckboxActiveData[checkboxIndex]?.checkboxActive &&
       data?.[checkboxIndex]
     ) {
-      data[checkboxIndex]["checkboxVisible"] = checkboxVisible;
+      data[checkboxIndex]['checkboxVisible'] = checkboxVisible;
     }
 
     setRowCheckboxActiveData(data);
@@ -418,17 +418,17 @@ const ActivityTable: React.FC = () => {
 
   // checkbox handle check
   const handleSelect = (e, index: number) => {
-    rowCheckboxActiveData[index]["checkboxActive"] = e.target.checked;
+    rowCheckboxActiveData[index]['checkboxActive'] = e.target.checked;
 
     // track number of transactions selected.
     setTransactionsChecked(
-      rowCheckboxActiveData.filter((row) => row.checkboxActive),
+      rowCheckboxActiveData.filter((row) => row.checkboxActive)
     );
   };
 
   const transactionDataLength = useMemo(
     () => transactionsData?.Financial_recentTransactions?.edges?.length,
-    [transactionsData?.Financial_recentTransactions?.edges?.length],
+    [transactionsData?.Financial_recentTransactions?.edges?.length]
   );
 
   return (
@@ -439,12 +439,12 @@ const ActivityTable: React.FC = () => {
             <FilterPill setFilter={(filter) => setFilter(filter)} />
           </div>
           <div className="mt-4 sm:mt-auto">
-            <SearchForm
+            <SearchInput
               {...{
                 onChangeHandler: handleSearchOnChange,
                 searchValue,
-                searchItem: "activity",
-                clearSearchValue: () => setSearchValue(""),
+                searchItem: 'activity',
+                clearSearchValue: () => setSearchValue(''),
                 disabled:
                   filter &&
                   !transactionsLoading &&
@@ -452,7 +452,7 @@ const ActivityTable: React.FC = () => {
                     ?.length &&
                   !searchValue &&
                   !mockTransactionsData.edges.length,
-                width: searchWidth,
+                width: searchWidth
               }}
             />
           </div>

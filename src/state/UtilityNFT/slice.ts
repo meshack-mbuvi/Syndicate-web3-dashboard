@@ -1,8 +1,8 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { UtilityNFT, initialState } from "./types";
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { UtilityNFT, initialState } from './types';
 
 const utilityNFTSlice = createSlice({
-  name: "utilityNFT",
+  name: 'utilityNFT',
   initialState,
   reducers: {
     setUtilityNFT(state, action: PayloadAction<UtilityNFT>) {
@@ -20,15 +20,15 @@ const utilityNFTSlice = createSlice({
     },
     clearUtilityNFT(state) {
       state.utilityNFT = initialState.utilityNFT;
-    },
-  },
+    }
+  }
 });
 
 export const {
   setUtilityNFT,
   setMembershipPasses,
   setLoading,
-  clearUtilityNFT,
+  clearUtilityNFT
 } = utilityNFTSlice.actions;
 
 export default utilityNFTSlice.reducer;

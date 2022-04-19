@@ -1,19 +1,18 @@
-import { SkeletonLoader } from "@/components/skeletonLoader";
-import CollectibleDetailsModal from "@/containers/layoutWithSyndicateDetails/assets/collectibles/collectibleDetailsModal";
-import CollectibleMedia from "@/containers/layoutWithSyndicateDetails/assets/collectibles/shared/CollectibleMedia";
-import FullScreenOverlay from "@/containers/layoutWithSyndicateDetails/assets/collectibles/shared/FullscreenOverlay";
-import { useDemoMode } from "@/hooks/useDemoMode";
-import { AppState } from "@/state";
+import { FC, useState } from 'react';
+import { web3 } from '@/utils/web3Utils';
+import InfiniteScroll from 'react-infinite-scroll-component';
+import { useDispatch, useSelector } from 'react-redux';
+import { SkeletonLoader } from '@/components/skeletonLoader';
+import { AppState } from '@/state';
+import { fetchCollectiblesTransactions } from '@/state/assets/slice';
+import CollectibleDetailsModal from '@/containers/layoutWithSyndicateDetails/assets/collectibles/collectibleDetailsModal';
+import CollectibleMedia from '@/containers/layoutWithSyndicateDetails/assets/collectibles/shared/CollectibleMedia';
+import { floatedNumberWithCommas } from '@/utils/formattedNumbers';
+import { useDemoMode } from '@/hooks/useDemoMode';
 import {
   setCollectibleModalDetails,
-  setShowCollectibleModal,
-} from "@/state/assets/collectibles/slice";
-import { fetchCollectiblesTransactions } from "@/state/assets/slice";
-import { floatedNumberWithCommas } from "@/utils/formattedNumbers";
-import { web3 } from "@/utils/web3Utils";
-import { FC, useState } from "react";
-import InfiniteScroll from "react-infinite-scroll-component";
-import { useDispatch, useSelector } from "react-redux";
+  setShowCollectibleModal
+} from '@/state/assets/collectibles/slice';
 
 const Collectibles: FC = () => {
   const {
@@ -21,13 +20,14 @@ const Collectibles: FC = () => {
       collectiblesResult,
       allCollectiblesFetched,
       ethereumTokenPrice,
-      loading,
+      loading
     },
     erc20TokenSliceReducer: {
       erc20Token,
       depositDetails: { ethDepositToken },
-      depositTokenPriceInUSD,
+      depositTokenPriceInUSD
     },
+    setCollectibleDetailsSliceReducer: { showFullScreen }
   } = useSelector((state: AppState) => state);
   const isDemoMode = useDemoMode();
 
@@ -37,7 +37,7 @@ const Collectibles: FC = () => {
   const collectiblesTitle = (
     <div className="flex items-center space-x-4 pb-8">
       <img src="/images/collectibles.svg" alt="Collectibles" />
-      <div className="text-xl">Collectibles</div>
+      <h3>Collectibles</h3>
     </div>
   );
 
@@ -45,13 +45,13 @@ const Collectibles: FC = () => {
 
   // loading/empty state for collectibles
   const LoaderContent: React.FC<{ animate: boolean }> = ({ animate }) => (
-    <div className={`${collectiblesResult.length > 0 ? "pt-6" : ""}`}>
+    <div className={`${collectiblesResult.length > 0 ? 'pt-6' : ''}`}>
       <div className="relative">
         {!animate && (
           <div className="absolute flex flex-col justify-center items-center top-1/3 w-full z-10">
-            <span className="text-white mb-4 text-xl">
+            <h3 className="text-white mb-4">
               This club has no collectibles yet.
-            </span>
+            </h3>
             <span className="text-gray-syn4">
               Any NFTs held in this club’s wallet will appear here.
             </span>
@@ -120,8 +120,8 @@ const Collectibles: FC = () => {
         offset: pageOffSet.toString(),
         maxTotalDeposits: ethDepositToken
           ? parseInt((depositTokenPriceInUSD * maxTotalDeposits).toString())
-          : maxTotalDeposits,
-      }),
+          : maxTotalDeposits
+      })
     );
   };
 
@@ -157,10 +157,10 @@ const Collectibles: FC = () => {
     };
     mediaType: string;
     moreDetails: {
-      "Token ID": string;
-      "Token collection": any;
-      "Floor price": any;
-      "Last purchase price": any;
+      'Token ID': string;
+      'Token collection': any;
+      'Floor price': any;
+      'Last purchase price': any;
     };
   }): void => {
     dispatch(setCollectibleModalDetails(details));
@@ -188,33 +188,33 @@ const Collectibles: FC = () => {
                   floorPrice,
                   lastPurchasePrice,
                   collection,
-                  futureNft,
+                  futureNft
                 } = collectible;
 
                 let mediaType;
 
                 if (image && !animation) {
-                  mediaType = "imageOnlyNFT";
+                  mediaType = 'imageOnlyNFT';
                 } else if (animation) {
                   // animation could be a .mov or .mp4 video
                   const movAnimation = animation.match(/\.mov$/) != null;
                   const mp4Animation = animation.match(/\.mp4$/) != null;
 
                   if (movAnimation || mp4Animation) {
-                    mediaType = "videoNFT";
+                    mediaType = 'videoNFT';
                   }
 
                   // https://litwtf.mypinata.cloud/ipfs/QmVjgAD5gaNQ1cLpgKLeuXDPX8R1yeajtWUhM6nV7VAe6e/4.mp4
                   // details for the nft with id below are not returned correctly and hence does not render
                   // The animation link is a .html which is not captured.
                   // Until we find a better way to handle this, let's have the fix below
-                  if (animation.match(/\.html$/) != null && id == "3216") {
-                    mediaType = "htmlNFT";
+                  if (animation.match(/\.html$/) != null && id == '3216') {
+                    mediaType = 'htmlNFT';
                   }
 
                   // animation could be a gif
                   if (animation.match(/\.gif$/) != null) {
-                    mediaType = "animatedNFT";
+                    mediaType = 'animatedNFT';
                   }
 
                   // add support for .wav and .mp3 files
@@ -223,12 +223,12 @@ const Collectibles: FC = () => {
                   const soundtrack = wavAnimation || mp3Animation;
 
                   if (soundtrack) {
-                    mediaType = "soundtrackNFT";
+                    mediaType = 'soundtrackNFT';
                   }
 
                   // Still media type not set? Default to imageOnlyNFT
                   if (!mediaType) {
-                    mediaType = "imageOnlyNFT";
+                    mediaType = 'imageOnlyNFT';
                   }
                 }
                 // sometimes the NFT name is an Ethereum address
@@ -243,16 +243,16 @@ const Collectibles: FC = () => {
                       className="col-span-12 sm:col-span-6 md:col-span-4 xl:col-span-3 cursor-pointer"
                       key={index}
                     >
-                      <CollectibleMedia
-                        {...{
-                          collectible,
-                          mediaType,
-                          setDetailsOfSelectedCollectible,
-                          showCollectibles: true,
-                        }}
-                      />
-
-                      <FullScreenOverlay />
+                      {!showFullScreen ? (
+                        <CollectibleMedia
+                          {...{
+                            collectible,
+                            mediaType,
+                            setDetailsOfSelectedCollectible,
+                            showCollectibles: true
+                          }}
+                        />
+                      ) : null}
                       <div
                         className="flex rounded-b-2.5xl py-6 border-b-1 border-r-1 border-l-1 border-gray-syn6 h-36"
                         onClick={() => {
@@ -260,24 +260,24 @@ const Collectibles: FC = () => {
                             collectible,
                             mediaType,
                             moreDetails: {
-                              "Token ID": futureNft ? "" : id,
-                              "Token collection": collection.name,
-                              "Floor price": floorPrice,
-                              "Last purchase price": lastPurchasePrice,
-                            },
+                              'Token ID': futureNft ? '' : id,
+                              'Token collection': collection.name,
+                              'Floor price': floorPrice,
+                              'Last purchase price': lastPurchasePrice
+                            }
                           });
                         }}
                       >
                         <div className="mx-8 flex flex-col">
-                          <span
-                            className={`line-clamp-1 text-xl ${
+                          <h3
+                            className={`line-clamp-1 ${
                               isNameEthereumAddress
-                                ? "break-all"
-                                : "break-words"
+                                ? 'break-all'
+                                : 'break-words'
                             }`}
                           >
                             {name ? name : blankValue}
-                          </span>
+                          </h3>
                           <span className="text-gray-syn4 text-sm pt-4">
                             Floor price
                           </span>
@@ -289,8 +289,8 @@ const Collectibles: FC = () => {
                               <span className="text-gray-syn4">
                                 (
                                 {floatedNumberWithCommas(
-                                  floorPrice * ethereumTokenPrice,
-                                )}{" "}
+                                  floorPrice * ethereumTokenPrice
+                                )}{' '}
                                 USD)
                               </span>
                             )}

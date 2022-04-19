@@ -17,7 +17,7 @@ const WalletNotConnected: React.FC = () => {
         </p>
       </div>
     </div>
-  )
+  );
 };
 
 export default WalletNotConnected;

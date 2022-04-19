@@ -7,15 +7,15 @@
 /// <reference types="chai" />
 /// <reference types="mocha" />
 
-declare type EventEmitter = import("events").EventEmitter;
+declare type EventEmitter = import('events').EventEmitter;
 
-declare type BN = import("bn.js");
-declare type Web3 = import("web3").default;
-declare type AbiItem = import("web3-utils").AbiItem;
-declare type TransactionConfig = import("web3-core").TransactionConfig;
-declare type PromiEvent<T> = import("web3-core").PromiEvent<T>;
-declare type TransactionReceipt = import("web3-core").TransactionReceipt;
-declare type Web3EventOptions = import("web3-eth-contract").EventOptions;
+declare type BN = import('bn.js');
+declare type Web3 = import('web3').default;
+declare type AbiItem = import('web3-utils').AbiItem;
+declare type TransactionConfig = import('web3-core').TransactionConfig;
+declare type PromiEvent<T> = import('web3-core').PromiEvent<T>;
+declare type TransactionReceipt = import('web3-core').TransactionReceipt;
+declare type Web3EventOptions = import('web3-eth-contract').EventOptions;
 
 declare const assert: Chai.AssertStatic;
 declare const expect: Chai.ExpectStatic;
@@ -69,8 +69,8 @@ declare namespace Truffle {
 
   export interface TransactionLog<EVENTS extends AnyEvent> {
     address: string;
-    event: EVENTS["name"];
-    args: EVENTS["args"];
+    event: EVENTS['name'];
+    args: EVENTS['args'];
     blockHash: string;
     blockNumber: number;
     logIndex: number;
@@ -100,9 +100,9 @@ declare namespace Truffle {
   }
 
   interface EventOptions {
-    filter?: Web3EventOptions["filter"];
-    fromBlock?: Web3EventOptions["fromBlock"];
-    topics?: Web3EventOptions["topics"];
+    filter?: Web3EventOptions['filter'];
+    fromBlock?: Web3EventOptions['fromBlock'];
+    topics?: Web3EventOptions['topics'];
   }
 
   interface ContractInstance {
@@ -112,7 +112,7 @@ declare namespace Truffle {
     abi: AbiItem[];
     allEvents(params?: EventOptions): EventEmitter;
     send(
-      value: Required<TransactionConfig>["value"],
+      value: Required<TransactionConfig>['value'],
       txParams?: TransactionConfig
     ): PromiEvent<TransactionReceipt>;
     sendTransaction(
@@ -121,7 +121,7 @@ declare namespace Truffle {
   }
 
   interface ContractNew<ARGs extends any[]> {
-    "new"(...args: ARGs): any;
+    'new'(...args: ARGs): any;
   }
 
   interface Deployer {

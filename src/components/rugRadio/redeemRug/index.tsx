@@ -1,27 +1,27 @@
-import { amplitudeLogger, Flow } from "@/components/amplitude";
+import { amplitudeLogger, Flow } from '@/components/amplitude';
 import {
   APPROVE_DEPOSIT_ALLOWANCE,
-  ERROR_APPROVE_ALLOWANCE,
-} from "@/components/amplitude/eventNames";
-import { CtaButton } from "@/components/CTAButton";
-import ArrowDown from "@/components/icons/arrowDown";
-import AutoGrowInputField from "@/components/inputs/autoGrowInput";
-import Modal, { ModalStyle } from "@/components/modal";
-import NumberTreatment from "@/components/NumberTreatment";
-import { Spinner } from "@/components/shared/spinner";
-import { EtherscanLink } from "@/components/syndicates/shared/EtherscanLink";
-import { AppState } from "@/state";
-import { getWeiAmount } from "@/utils/conversions";
+  ERROR_APPROVE_ALLOWANCE
+} from '@/components/amplitude/eventNames';
+import { CtaButton } from '@/components/CTAButton';
+import ArrowDown from '@/components/icons/arrowDown';
+import AutoGrowInputField from '@/components/inputs/autoGrowInput';
+import Modal, { ModalStyle } from '@/components/modal';
+import NumberTreatment from '@/components/NumberTreatment';
+import { Spinner } from '@/components/shared/spinner';
+import { EtherscanLink } from '@/components/syndicates/shared/EtherscanLink';
+import { AppState } from '@/state';
+import { getWeiAmount } from '@/utils/conversions';
 import {
   floatedNumberWithCommas,
-  numberWithCommas,
-} from "@/utils/formattedNumbers";
-import { CheckIcon } from "@heroicons/react/outline";
-import Image from "next/image";
-import React, { useCallback, useEffect, useState } from "react";
-import { useSelector } from "react-redux";
-import ERC20ABI from "src/utils/abi/erc20";
-import RugRadioIcon from "/public/images/rugRadio/rugRadioIcon.svg";
+  numberWithCommas
+} from '@/utils/formattedNumbers';
+import { CheckIcon } from '@heroicons/react/outline';
+import Image from 'next/image';
+import React, { useCallback, useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
+import ERC20ABI from 'src/utils/abi/erc20';
+import RugRadioIcon from '/public/images/rugRadio/rugRadioIcon.svg';
 
 /**
  * This component contains the both the UI and link with the RUG deposit exchange
@@ -30,11 +30,11 @@ import RugRadioIcon from "/public/images/rugRadio/rugRadioIcon.svg";
 const RedeemRug: React.FC = () => {
   const {
     initializeContractsReducer: {
-      syndicateContracts: { depositExchangeMintModule },
+      syndicateContracts: { depositExchangeMintModule }
     },
     web3Reducer: {
-      web3: { account, web3 },
-    },
+      web3: { account, web3 }
+    }
   } = useSelector((state: AppState) => state);
   const ratio = 1800; // i.e 1800 RUG = 1 RDAO
 
@@ -43,9 +43,9 @@ const RedeemRug: React.FC = () => {
   const depositExchangeModuleAddress =
     process.env.NEXT_PUBLIC_DEPOSIT_EXCHANGE_MODULE;
 
-  const [amountToRedeem, setAmountToRedeem] = useState("");
+  const [amountToRedeem, setAmountToRedeem] = useState('');
   const [hasError, setHasError] = useState(false);
-  const [transactionHash, setTransactionHash] = useState("");
+  const [transactionHash, setTransactionHash] = useState('');
   const [submitting, setSubmitting] = useState<boolean>(false);
   const [submittingAllowanceApproval, setSubmittingAllowanceApproval] =
     useState(false);
@@ -60,17 +60,17 @@ const RedeemRug: React.FC = () => {
   const [availableTokens, setAvailableTokens] = useState(0);
   const [tokenSwitched, setTokenSwitched] = useState(false);
   const [maxRDao, setMaxRDao] = useState(+availableTokens / ratio);
-  const [rDaoToRedeem, setRDaoToRedeem] = useState("");
+  const [rDaoToRedeem, setRDaoToRedeem] = useState('');
   const [transactionFailed, setTransactionFailed] = useState(false);
   const [maximumWithdrawable, setMaximumWithdrawable] = useState(0);
 
-  const [redeemError, setRedeemError] = useState("");
+  const [redeemError, setRedeemError] = useState('');
 
   const [disableMaxButton, setDisableMaxButton] = useState(false);
 
   const rugRadioContract = new web3.eth.Contract(
     ERC20ABI as AbiItem[],
-    rugTokenAddress,
+    rugTokenAddress
   );
 
   const rugTokensToRedeem = tokenSwitched
@@ -92,7 +92,7 @@ const RedeemRug: React.FC = () => {
 
   useEffect(() => {
     setMaximumWithdrawable(
-      tokenSwitched ? +availableTokens / ratio : availableTokens,
+      tokenSwitched ? +availableTokens / ratio : availableTokens
     );
 
     return () => {
@@ -119,7 +119,7 @@ const RedeemRug: React.FC = () => {
       const currentAllowance = getWeiAmount(
         tokenAllowance.toString(),
         18,
-        false,
+        false
       );
 
       if (+rugTokensToRedeem <= +currentAllowance) {
@@ -145,11 +145,11 @@ const RedeemRug: React.FC = () => {
           tokenSwitched
             ? `${floatedNumberWithCommas(maxRDao)} RDAO`
             : `${floatedNumberWithCommas(availableTokens)} RUG`
-        }`,
+        }`
       );
     } else {
       setHasError(false);
-      setRedeemError("");
+      setRedeemError('');
     }
 
     setMaxRDao(availableTokens / ratio);
@@ -219,7 +219,7 @@ const RedeemRug: React.FC = () => {
     const amountToApprove = getWeiAmount(
       rugTokensToRedeem.toString(),
       18,
-      true,
+      true
     );
 
     try {
@@ -228,38 +228,38 @@ const RedeemRug: React.FC = () => {
       await new Promise((resolve, reject) => {
         const rugRadioContract = new web3.eth.Contract(
           ERC20ABI as AbiItem[],
-          rugTokenAddress,
+          rugTokenAddress
         );
         rugRadioContract.methods
           .approve(depositExchangeModuleAddress, amountToApprove)
           .send({ from: account })
-          .on("transactionHash", (transactionHash) => {
+          .on('transactionHash', (transactionHash) => {
             // user clicked on confirm
             // show loading state
             setSubmittingAllowanceApproval(true);
             setMetamaskConfirmPending(false);
 
             // Stop waiting if we are connected to gnosis safe via walletConnect
-            if (web3._provider.wc?._peerMeta.name === "Gnosis Safe Multisig") {
+            if (web3._provider.wc?._peerMeta.name === 'Gnosis Safe Multisig') {
               gnosisTxHash = transactionHash;
               resolve(transactionHash);
             }
           })
-          .on("receipt", async (receipt) => {
+          .on('receipt', async (receipt) => {
             await checkCurrentAllowance();
             setSubmittingAllowanceApproval(false);
 
             // Amplitude logger: Approve Allowance
             amplitudeLogger(APPROVE_DEPOSIT_ALLOWANCE, {
               flow: Flow.MBR_DEP,
-              amount: amountToApprove,
+              amount: amountToApprove
             });
             resolve(receipt);
 
             // update current transaction step
             setCurrentTransaction(2);
           })
-          .on("error", (error) => {
+          .on('error', (error) => {
             // user clicked reject.
             if (error?.code === 4001) {
               setTransactionRejected(true);
@@ -275,7 +275,7 @@ const RedeemRug: React.FC = () => {
             amplitudeLogger(ERROR_APPROVE_ALLOWANCE, {
               flow: Flow.MBR_DEP,
               amount: amountToApprove,
-              error,
+              error
             });
             reject(error);
           });
@@ -290,7 +290,7 @@ const RedeemRug: React.FC = () => {
         // Amplitude logger: Approve Allowance
         amplitudeLogger(APPROVE_DEPOSIT_ALLOWANCE, {
           flow: Flow.MBR_DEP,
-          amount: amountToApprove,
+          amount: amountToApprove
         });
       }
     } catch (error) {
@@ -302,7 +302,7 @@ const RedeemRug: React.FC = () => {
       amplitudeLogger(ERROR_APPROVE_ALLOWANCE, {
         flow: Flow.MBR_DEP,
         amount: amountToApprove,
-        error,
+        error
       });
     }
   };
@@ -316,7 +316,7 @@ const RedeemRug: React.FC = () => {
       onTxConfirm,
       onTxReceipt,
       onTxFail,
-      setTransactionHash,
+      setTransactionHash
     );
   };
 
@@ -328,7 +328,7 @@ const RedeemRug: React.FC = () => {
     setRedeemFailed(false);
     setTransactionRejected(false);
     // clear deposit amount
-    setAmountToRedeem("");
+    setAmountToRedeem('');
   };
 
   const [currentTransaction, setCurrentTransaction] = useState(1);
@@ -338,18 +338,18 @@ const RedeemRug: React.FC = () => {
     info?: string;
   }[] = [
     {
-      title: "Approve RUG",
-      info: "Before redeeming, you need to allow the protocol to use your RUG.",
+      title: 'Approve RUG',
+      info: 'Before redeeming, you need to allow the protocol to use your RUG.'
     },
     {
-      title: "Complete redemption",
-      info: "Redeeming RUG for RDAO cannot be reversed.",
-    },
+      title: 'Complete redemption',
+      info: 'Redeeming RUG for RDAO cannot be reversed.'
+    }
   ];
 
   const closeSuccessModal = () => {
     setShowRedeemProcessingModal(false);
-    setAmountToRedeem("");
+    setAmountToRedeem('');
   };
 
   return (
@@ -359,7 +359,7 @@ const RedeemRug: React.FC = () => {
           <AutoGrowInputField
             value={amountToRedeem.toString()}
             onChangeHandler={handleOnchange}
-            placeholder={"0"}
+            placeholder={'0'}
             decimalSeparator="."
             hasError={hasError}
             decimalScale={4}
@@ -367,7 +367,7 @@ const RedeemRug: React.FC = () => {
           <div>
             <button
               className={`px-4 py-1.5 text-gray-syn4 bg-gray-syn7 rounded-full ${
-                disableMaxButton ? "cursor-not-allowed" : ""
+                disableMaxButton ? 'cursor-not-allowed' : ''
               }`}
               onClick={handleSetMax}
               disabled={disableMaxButton}
@@ -379,7 +379,7 @@ const RedeemRug: React.FC = () => {
         <div className="flex flex-col items-end">
           <div className="flex items-center p-0 h-6 ">
             <Image src={RugRadioIcon} height={24} width={24} />
-            <p className="ml-2 text-base">{tokenSwitched ? "RDAO" : "Rug"}</p>
+            <p className="ml-2 text-base">{tokenSwitched ? 'RDAO' : 'Rug'}</p>
             <button
               className="ml-2 cursor-pointer flex items-center"
               onClick={() => setTokenSwitched(!tokenSwitched)}
@@ -423,7 +423,7 @@ const RedeemRug: React.FC = () => {
           greenCta={false}
           disabled={+amountToRedeem == 0 || hasError}
         >
-          {+amountToRedeem == 0 ? "Enter an amount to redeem" : "Continue"}
+          {+amountToRedeem == 0 ? 'Enter an amount to redeem' : 'Continue'}
         </CtaButton>
       </div>
 
@@ -437,11 +437,11 @@ const RedeemRug: React.FC = () => {
           modalStyle: ModalStyle.DARK,
           show: showRedeemProcessingModal,
           closeModal: () => handleCloseSuccessModal(),
-          customWidth: "w-11/12 sm:w-100",
-          customClassName: "pt-8 px-5 pb-5",
+          customWidth: 'w-11/12 sm:w-100',
+          customClassName: 'pt-8 px-5 pb-5',
           showCloseButton: true,
           outsideOnClick: !metamaskConfirmPending,
-          showHeader: false,
+          showHeader: false
         }}
       >
         {redeemSucceeded ? (
@@ -457,10 +457,10 @@ const RedeemRug: React.FC = () => {
             <div className="pt-4 px-3 text-center">
               <span className="text-base text-gray-syn4">
                 {`You just redeemed ${floatedNumberWithCommas(
-                  rugTokensToRedeem,
+                  rugTokensToRedeem
                 )} RUG for ${numberWithCommas(
-                  (+rugTokensToRedeem / ratio).toFixed(4),
-                )} RDAO. It's in your wallet.`}{" "}
+                  (+rugTokensToRedeem / ratio).toFixed(4)
+                )} RDAO. It's in your wallet.`}{' '}
               </span>
             </div>
 
@@ -506,7 +506,7 @@ const RedeemRug: React.FC = () => {
               </div>
               <div
                 className={`absolute p-2 bg-gray-syn8 border-gray-syn6 border rounded-lg`}
-                style={{ top: "calc(50% - 16px)", left: "calc(50% - 12px)" }}
+                style={{ top: 'calc(50% - 16px)', left: 'calc(50% - 12px)' }}
               >
                 <ArrowDown />
               </div>
@@ -548,7 +548,7 @@ const RedeemRug: React.FC = () => {
                     {stepIdx !== redeemSteps?.length - 1 ? (
                       <div
                         className={`-ml-px absolute mt-0.5 top-5 left-2.5 w-0.5 h-18  ${
-                          completedStep ? "bg-blue" : "bg-gray-syn6"
+                          completedStep ? 'bg-blue' : 'bg-gray-syn6'
                         }`}
                         aria-hidden="true"
                       />
@@ -565,14 +565,14 @@ const RedeemRug: React.FC = () => {
                         ) : (
                           <span
                             className={`relative z-5 w-5 h-5 flex items-center justify-center border-2 rounded-full ${
-                              inactiveStep ? "border-gray-syn6" : "border-blue"
+                              inactiveStep ? 'border-gray-syn6' : 'border-blue'
                             }`}
                           />
                         )}
                       </span>
                       <span className="ml-4 min-w-0 flex flex-col">
                         <span
-                          className={`text-base font-normal ${"text-white"} leading-7 font-light transition-all`}
+                          className={`text-base font-normal ${'text-white'} leading-7 font-light transition-all`}
                         >
                           {step.title}
                         </span>
@@ -594,8 +594,8 @@ const RedeemRug: React.FC = () => {
               <div
                 className={`mt-6 rounded-custom flex flex-col items-center ${
                   metamaskConfirmPending
-                    ? "bg-blue-midnightExpress"
-                    : "bg-gray-syn7"
+                    ? 'bg-blue-midnightExpress'
+                    : 'bg-gray-syn7'
                 }`}
               >
                 {metamaskConfirmPending ||
@@ -612,13 +612,13 @@ const RedeemRug: React.FC = () => {
                     : null}
 
                   {metamaskConfirmPending && sufficientAllowanceSet
-                    ? "Confirm redemption from your wallet"
+                    ? 'Confirm redemption from your wallet'
                     : null}
                   {submittingAllowanceApproval
                     ? `Approving RUG`
                     : submitting
                     ? `Redeeming ${floatedNumberWithCommas(
-                        rugTokensToRedeem,
+                        rugTokensToRedeem
                       )} RUG`
                     : null}
                 </span>
@@ -627,7 +627,7 @@ const RedeemRug: React.FC = () => {
                   className={`leading-snug font-whyte text-sm  text-gray-syn4 px-5 text-center pb-5`}
                 >
                   {(submittingAllowanceApproval || submitting) &&
-                    "This could take anywhere from seconds to hours depending on network congestion and the gas fees you set. You can safely leave this page while you wait."}
+                    'This could take anywhere from seconds to hours depending on network congestion and the gas fees you set. You can safely leave this page while you wait.'}
                 </span>
                 {submitting && transactionHash ? (
                   <div className="pb-4 text-base flex justify-center items-center hover:opacity-80">
@@ -642,8 +642,8 @@ const RedeemRug: React.FC = () => {
               <div
                 className={`${
                   redeemFailed || transactionRejected || transactionFailed
-                    ? "bg-red-error"
-                    : ""
+                    ? 'bg-red-error'
+                    : ''
                 }   rounded-md bg-opacity-10 mt-4 py-6 flex flex-col justify-center px-5`}
               >
                 {redeemFailed ||
@@ -655,7 +655,7 @@ const RedeemRug: React.FC = () => {
                           width={48}
                           height={48}
                           src={
-                            "/images/syndicateStatusIcons/transactionFailed.svg"
+                            '/images/syndicateStatusIcons/transactionFailed.svg'
                           }
                           alt="failed"
                         />
@@ -663,9 +663,9 @@ const RedeemRug: React.FC = () => {
                       <div className={`mt-4 mb-6 text-center`}>
                         <span className="text-base">{`${
                           redeemFailed
-                            ? "Redemption failed"
+                            ? 'Redemption failed'
                             : `Transaction ${
-                                transactionRejected ? "rejected" : "failed"
+                                transactionRejected ? 'rejected' : 'failed'
                               }`
                         }`}</span>
                       </div>
@@ -684,10 +684,10 @@ const RedeemRug: React.FC = () => {
                   }}
                 >
                   {redeemFailed || transactionRejected || transactionFailed
-                    ? "Try again"
+                    ? 'Try again'
                     : sufficientAllowanceSet
-                    ? "Complete redemption"
-                    : "Continue"}
+                    ? 'Complete redemption'
+                    : 'Continue'}
                 </button>
               </div>
             )}

@@ -1,5 +1,5 @@
-import React from "react";
-import HorizontalDivider from "src/components/horizontalDivider";
+import React from 'react';
+import HorizontalDivider from 'src/components/horizontalDivider';
 
 /**
  * Renders an animated loader for social feed

@@ -16,20 +16,20 @@ interface ActiveLinkProp {
   children;
 }
 
-import React from "react";
-import Link from "next/link";
-import { useRouter } from "next/router";
+import React from 'react';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
 
 const ActiveLink: React.FC<ActiveLinkProp> = (props) => {
   const { href, customActive, children } = props;
   const { pathname } = useRouter();
 
-  let className = children.props.className || "";
+  let className = children.props.className || '';
 
   // add active link class if the current link is active.
   if (pathname === href) {
     // We are passing a custom styling for navbar links to override blue styling for active links
-    className = `${className} ${customActive? customActive: "active"}`.trim();
+    className = `${className} ${customActive ? customActive : 'active'}`.trim();
   }
 
   return <Link href={href}>{React.cloneElement(children, { className })}</Link>;

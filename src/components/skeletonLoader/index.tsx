@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 
 /** skeleton loader component
  * used to show component loading states when a single component is involved.
@@ -18,17 +18,17 @@ export const SkeletonLoader: React.FC<SkeletonProps> = (props) => {
   const {
     width,
     height,
-    borderRadius = "rounded-custom",
-    margin = "my-2",
+    borderRadius = 'rounded-custom',
+    margin = 'my-2',
     customClass,
-    animate = true,
+    animate = true
   } = props;
   return (
     <div
       className={`${borderRadius} ${
-        animate ? "custom-animation" : "bg-gray-syn7"
+        animate ? 'custom-animation' : 'bg-gray-syn7'
       } w-${width} ${margin} h-${height}
-      ${customClass ? customClass : ""}`}
+      ${customClass ? customClass : ''}`}
     ></div>
   );
 };

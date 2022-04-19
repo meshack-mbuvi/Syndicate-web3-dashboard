@@ -1,5 +1,5 @@
-import { MEMBER_SIGNED_QUERY } from "@/graphql/queries";
-import { useQuery } from "@apollo/client";
+import { MEMBER_SIGNED_QUERY } from '@/graphql/queries';
+import { useQuery } from '@apollo/client';
 
 const useHasMemberSigned = (props: {
   clubAddress: string;
@@ -10,8 +10,8 @@ const useHasMemberSigned = (props: {
   return useQuery(MEMBER_SIGNED_QUERY, {
     variables: {
       clubAddress,
-      memberAddress,
-    },
+      memberAddress
+    }
   });
 };
 

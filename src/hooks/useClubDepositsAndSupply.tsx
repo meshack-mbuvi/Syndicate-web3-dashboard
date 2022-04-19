@@ -1,13 +1,18 @@
-import { SINGLE_CLUB_DETAILS } from "@/graphql/queries";
-import { AppState } from "@/state";
-import { getWeiAmount } from "@/utils/conversions";
-import { MOCK_TOTALDEPOSITS, MOCK_TOTALSUPPLY } from "@/utils/mockdata";
-import { useQuery } from "@apollo/client";
-import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
-import { useAccountTokens } from "./useAccountTokens";
-import { useDemoMode } from "./useDemoMode";
+import { SINGLE_CLUB_DETAILS } from '@/graphql/queries';
+import { AppState } from '@/state';
+import { getWeiAmount } from '@/utils/conversions';
+import {
+  MOCK_END_TIME,
+  MOCK_START_TIME,
+  MOCK_TOTALDEPOSITS,
+  MOCK_TOTALSUPPLY
+} from '@/utils/mockdata';
+import { useQuery } from '@apollo/client';
+import { useRouter } from 'next/router';
+import { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
+import { useAccountTokens } from './useAccountTokens';
+import { useDemoMode } from './useDemoMode';
 
 /**
  * Retrieves club total deposits and total supply from the thegraph.
@@ -26,14 +31,14 @@ export function useClubDepositsAndSupply(contractAddress: string): {
   const {
     erc20TokenSliceReducer: {
       erc20Token,
-      depositDetails: { depositTokenDecimals },
-    },
+      depositDetails: { depositTokenDecimals }
+    }
   } = useSelector((state: AppState) => state);
 
   const { tokenDecimals } = erc20Token;
 
-  const [totalDeposits, setTotalDeposits] = useState("");
-  const [totalSupply, setTotalSupply] = useState("0");
+  const [totalDeposits, setTotalDeposits] = useState('');
+  const [totalSupply, setTotalSupply] = useState('0');
   const [startTime, setStartTime] = useState(0);
   const [endTime, setEndTime] = useState(0);
   const [loadingClubDeposits, setLoadingClubDeposits] = useState(true);
@@ -45,11 +50,11 @@ export function useClubDepositsAndSupply(contractAddress: string): {
   const { loading, data, refetch } = useQuery(SINGLE_CLUB_DETAILS, {
     variables: {
       where: {
-        contractAddress: contractAddress?.toLocaleLowerCase() || "",
-      },
+        contractAddress: contractAddress?.toLocaleLowerCase()
+      }
     },
     // Avoid unnecessary calls when contractAddress is not defined or in demo mode
-    skip: !contractAddress || isDemoMode,
+    skip: !contractAddress || isDemoMode
   });
 
   const { memberDeposits, accountTokens } = useAccountTokens();
@@ -63,18 +68,27 @@ export function useClubDepositsAndSupply(contractAddress: string): {
     if (isDemoMode) {
       setTotalSupply(MOCK_TOTALSUPPLY);
       setTotalDeposits(MOCK_TOTALDEPOSITS);
+      setStartTime(MOCK_START_TIME);
+      setEndTime(MOCK_END_TIME);
       setLoadingClubDeposits(false);
       return;
     }
 
-    if (loading || !data || erc20Token?.loading) return;
+    if (
+      loading ||
+      !data ||
+      erc20Token?.loading ||
+      data.syndicateDAOs.length == 0
+    )
+      return;
 
     const {
-      syndicateDAOs: [syndicateDAO],
+      syndicateDAOs: [syndicateDAO]
     } = data || {};
 
     const { totalDeposits, totalSupply, startTime, endTime } =
       syndicateDAO || {};
+
     setTotalSupply(getWeiAmount(totalSupply, tokenDecimals || 18, false));
     setTotalDeposits(getWeiAmount(totalDeposits, depositTokenDecimals, false));
     setStartTime(+startTime * 1000);
@@ -88,6 +102,7 @@ export function useClubDepositsAndSupply(contractAddress: string): {
     isReady,
     memberDeposits,
     accountTokens,
+    depositTokenDecimals
   ]);
 
   return {
@@ -96,6 +111,6 @@ export function useClubDepositsAndSupply(contractAddress: string): {
     startTime,
     endTime,
     loadingClubDeposits: loading || loadingClubDeposits,
-    refetch,
+    refetch
   };
 }
