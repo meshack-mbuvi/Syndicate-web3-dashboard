@@ -30,7 +30,10 @@ import { EmailSupport } from '../emailSupport';
 import { ExternalLinkColor } from '../iconWrappers';
 import { InputFieldWithButton } from '../inputs/inputFieldWithButton';
 import { InputFieldWithDate } from '../inputs/inputFieldWithDate';
-import { InputFieldWithToken } from '../inputs/inputFieldWithToken';
+import {
+  InputFieldWithToken,
+  SymbolDisplay
+} from '../inputs/inputFieldWithToken';
 import { PillButtonLarge } from '../pillButtons/pillButtonsLarge';
 
 const progressModalStates = {
@@ -485,8 +488,11 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
                   />
                 ) : (
                   <InputFieldWithToken
+                    symbolDisplayVariant={SymbolDisplay.LOGO_AND_SYMBOL}
                     depositTokenSymbol={depositTokenSymbol}
-                    depositTokenLogo={depositTokenLogo}
+                    depositTokenLogo={
+                      depositTokenLogo || '/images/token-gray-4.svg'
+                    }
                     value={String(maxAmountRaising)}
                     onChange={(e) => {
                       const amount = numberInputRemoveCommas(e);
