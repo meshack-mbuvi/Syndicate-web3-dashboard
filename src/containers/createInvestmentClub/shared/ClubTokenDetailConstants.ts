@@ -99,7 +99,7 @@ const mainnetTokens: Token[] = [
     symbol: 'WBTC',
     decimals: 8,
     chainId: 1,
-    logoURI: '/images/prodTokenLogos/wrapped-btc.png'
+    logoURI: '/images/prodTokenLogos/wrapped-btc.svg'
   },
   {
     name: 'Dai Stablecoin',
