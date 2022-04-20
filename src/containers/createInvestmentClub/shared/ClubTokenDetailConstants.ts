@@ -30,7 +30,7 @@ const rinkebyTokens: Token[] = [
     symbol: 'ETH',
     name: 'Ethereum',
     address: '',
-    logoURI: '/images/ethereum-logo.png',
+    logoURI: '/images/ethereum-logo.svg',
     decimals: 18,
     default: true
   },
@@ -81,7 +81,7 @@ const mainnetTokens: Token[] = [
     symbol: 'ETH',
     name: 'Ethereum',
     address: '',
-    logoURI: '/images/ethereum-logo.png',
+    logoURI: '/images/ethereum-logo.svg',
     decimals: 18,
     default: true
   },

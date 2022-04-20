@@ -98,7 +98,7 @@ export const fetchTokenTransactions = createAsyncThunk(
     const ethBalance = getWeiAmount(ethBalanceResponse, 18, false);
     const ethDetails = {
       price: { usd: ethPriceResponse },
-      logo: '/images/ethereum-logo.png',
+      logo: '/images/ethereum-logo.svg',
       tokenDecimal: '18',
       tokenSymbol: 'ETH',
       tokenBalance: ethBalance,

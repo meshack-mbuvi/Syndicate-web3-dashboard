@@ -156,7 +156,7 @@ const useClubERC20s = () => {
 
           let depositERC20TokenSymbol = 'ETH';
           let depositERC20TokenDecimals = '18';
-          let depositTokenLogo = '/images/ethereum-logo.png';
+          let depositTokenLogo = '/images/ethereum-logo.svg';
 
           // checks if depositToken is ETH or not
           const maxTotalDeposits = +maxTotalSupplyFromWei / 10000;
