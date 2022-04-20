@@ -235,7 +235,7 @@ const mainnetTokens: Token[] = [
     symbol: 'LRC',
     decimals: 18,
     chainId: 1,
-    logoURI: '/images/prodTokenLogos/loopring.png'
+    logoURI: '/images/prodTokenLogos/loopring.svg'
   },
   {
     chainId: 1,
