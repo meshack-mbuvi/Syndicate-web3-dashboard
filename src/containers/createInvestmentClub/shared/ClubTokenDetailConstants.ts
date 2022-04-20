@@ -131,7 +131,7 @@ const mainnetTokens: Token[] = [
     symbol: 'ZRX',
     decimals: 18,
     chainId: 1,
-    logoURI: '/images/prodTokenLogos/0x.png'
+    logoURI: '/images/prodTokenLogos/0x.svg'
   },
   {
     name: 'Curve DAO Token',
@@ -331,7 +331,7 @@ const mainnetTokens: Token[] = [
     name: 'district0x',
     symbol: 'DNT',
     decimals: 18,
-    logoURI: '/images/prodTokenLogos/district0x.png'
+    logoURI: '/images/prodTokenLogos/district0x.svg'
   },
   {
     name: 'Storj Token',
