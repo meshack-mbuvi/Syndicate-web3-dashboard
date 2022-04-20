@@ -299,7 +299,7 @@ const mainnetTokens: Token[] = [
     symbol: 'SNX',
     decimals: 18,
     chainId: 1,
-    logoURI: '/images/prodTokenLogos/synthetix.png'
+    logoURI: '/images/prodTokenLogos/synthetix.svg'
   },
   {
     chainId: 1,
