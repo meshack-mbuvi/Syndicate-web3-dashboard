@@ -395,7 +395,7 @@ const mainnetTokens: Token[] = [
     name: 'Ethereum Name Service',
     symbol: 'ENS',
     decimals: 18,
-    logoURI: '/images/prodTokenLogos/ens.webp'
+    logoURI: '/images/prodTokenLogos/ens.svg'
   },
   {
     name: 'Synth sUSD',
