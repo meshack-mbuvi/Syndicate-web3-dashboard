@@ -355,7 +355,7 @@ const mainnetTokens: Token[] = [
     symbol: 'GNO',
     decimals: 18,
     chainId: 1,
-    logoURI: '/images/prodTokenLogos/gnosis.webp'
+    logoURI: '/images/prodTokenLogos/gnosis.svg'
   },
   {
     name: 'Aragon Network Token',
