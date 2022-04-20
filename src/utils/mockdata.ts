@@ -81,7 +81,7 @@ export const mockTokensResult = [
     price: {
       usd: 15.63
     },
-    logo: '/images/prodTokenLogos/uniswap.webp',
+    logo: '/images/prodTokenLogos/uniswap.svg',
     tokenDecimal: '6',
     tokenSymbol: 'UNI',
     tokenBalance: '116537.09788',
