@@ -64,7 +64,7 @@ const rinkebyTokens: Token[] = [
     symbol: 'UNI',
     decimals: 18,
     chainId: 4,
-    logoURI: '/images/prodTokenLogos/uniswap.png'
+    logoURI: '/images/prodTokenLogos/uniswap.svg'
   }
 ];
 
@@ -123,7 +123,7 @@ const mainnetTokens: Token[] = [
     symbol: 'UNI',
     decimals: 18,
     chainId: 1,
-    logoURI: '/images/prodTokenLogos/uniswap.png'
+    logoURI: '/images/prodTokenLogos/uniswap.svg'
   },
   {
     name: '0x Protocol Token',
