@@ -147,7 +147,7 @@ const mainnetTokens: Token[] = [
     symbol: 'USDT',
     decimals: 6,
     chainId: 1,
-    logoURI: '/images/prodTokenLogos/tether.png'
+    logoURI: '/images/prodTokenLogos/tether.svg'
   },
   {
     name: 'Orchid',
