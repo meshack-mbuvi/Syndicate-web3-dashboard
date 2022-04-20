@@ -387,7 +387,7 @@ const mainnetTokens: Token[] = [
     name: 'Enzyme',
     symbol: 'MLN',
     decimals: 18,
-    logoURI: '/images/prodTokenLogos/enzyme.webp'
+    logoURI: '/images/prodTokenLogos/enzyme.svg'
   },
   {
     chainId: 1,
