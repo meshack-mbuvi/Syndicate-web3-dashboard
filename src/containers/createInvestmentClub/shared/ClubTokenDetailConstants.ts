@@ -227,7 +227,7 @@ const mainnetTokens: Token[] = [
     symbol: 'UMA',
     decimals: 18,
     chainId: 1,
-    logoURI: '/images/prodTokenLogos/uma.png'
+    logoURI: '/images/prodTokenLogos/uma.svg'
   },
   {
     name: 'LoopringCoin V2',
