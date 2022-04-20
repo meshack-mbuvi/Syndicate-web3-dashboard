@@ -379,7 +379,7 @@ const mainnetTokens: Token[] = [
     name: 'tBTC',
     symbol: 'TBTC',
     decimals: 18,
-    logoURI: '/images/prodTokenLogos/tBTC.webp'
+    logoURI: '/images/prodTokenLogos/tBTC.svg'
   },
   {
     chainId: 1,
