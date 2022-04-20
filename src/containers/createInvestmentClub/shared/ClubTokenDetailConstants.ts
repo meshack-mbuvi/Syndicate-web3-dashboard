@@ -251,7 +251,7 @@ const mainnetTokens: Token[] = [
     symbol: 'REN',
     decimals: 18,
     chainId: 1,
-    logoURI: '/images/prodTokenLogos/republic.png'
+    logoURI: '/images/prodTokenLogos/republic.svg'
   },
   {
     name: 'Balancer',
