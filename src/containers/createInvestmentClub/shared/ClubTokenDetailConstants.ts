@@ -283,7 +283,7 @@ const mainnetTokens: Token[] = [
     name: 'The Graph',
     symbol: 'GRT',
     decimals: 18,
-    logoURI: '/images/prodTokenLogos/graph.webp'
+    logoURI: '/images/prodTokenLogos/graph.svg'
   },
   {
     name: 'Bancor Network Token',
