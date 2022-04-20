@@ -259,7 +259,7 @@ const mainnetTokens: Token[] = [
     symbol: 'BAL',
     decimals: 18,
     chainId: 1,
-    logoURI: '/images/prodTokenLogos/balancer.png'
+    logoURI: '/images/prodTokenLogos/balancer.svg'
   },
   {
     chainId: 1,
