@@ -347,7 +347,7 @@ const mainnetTokens: Token[] = [
     name: 'Amp',
     symbol: 'AMP',
     decimals: 18,
-    logoURI: '/images/prodTokenLogos/amp.webp'
+    logoURI: '/images/prodTokenLogos/amp.svg'
   },
   {
     name: 'Gnosis Token',
