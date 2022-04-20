@@ -115,7 +115,7 @@ const mainnetTokens: Token[] = [
     symbol: 'UST',
     decimals: 18,
     chainId: 1,
-    logoURI: '/images/prodTokenLogos/terra-usd.png'
+    logoURI: '/images/prodTokenLogos/terra-usd.svg'
   },
   {
     name: 'Uniswap',
