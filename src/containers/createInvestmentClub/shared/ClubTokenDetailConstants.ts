@@ -56,7 +56,7 @@ const rinkebyTokens: Token[] = [
     symbol: 'MKR',
     decimals: 18,
     chainId: 4,
-    logoURI: '/images/prodTokenLogos/maker.png'
+    logoURI: '/images/prodTokenLogos/maker.svg'
   },
   {
     name: 'Uniswap',
@@ -163,7 +163,7 @@ const mainnetTokens: Token[] = [
     symbol: 'MKR',
     decimals: 18,
     chainId: 1,
-    logoURI: '/images/prodTokenLogos/maker.png'
+    logoURI: '/images/prodTokenLogos/maker.svg'
   },
   {
     name: 'ChainLink Token',
