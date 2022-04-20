@@ -187,7 +187,7 @@ const mainnetTokens: Token[] = [
     symbol: 'REPv2',
     decimals: 18,
     chainId: 1,
-    logoURI: '/images/prodTokenLogos/augurV2.png'
+    logoURI: '/images/prodTokenLogos/augurV2.svg'
   },
   {
     name: 'Kyber Network Crystal',
