@@ -363,7 +363,7 @@ const mainnetTokens: Token[] = [
     symbol: 'ANT',
     decimals: 18,
     chainId: 1,
-    logoURI: '/images/prodTokenLogos/aragon.webp'
+    logoURI: '/images/prodTokenLogos/aragon.svg'
   },
   {
     chainId: 1,
