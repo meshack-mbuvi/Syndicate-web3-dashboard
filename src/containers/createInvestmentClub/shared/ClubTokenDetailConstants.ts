@@ -75,7 +75,7 @@ const mainnetTokens: Token[] = [
     symbol: 'USDC',
     decimals: 6,
     chainId: 1,
-    logoURI: '/images/prodTokenLogos/USDCoin.png'
+    logoURI: '/images/prodTokenLogos/USDCoin.svg'
   },
   {
     symbol: 'ETH',
