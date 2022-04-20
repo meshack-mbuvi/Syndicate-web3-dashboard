@@ -291,7 +291,7 @@ const mainnetTokens: Token[] = [
     symbol: 'BNT',
     decimals: 18,
     chainId: 1,
-    logoURI: '/images/prodTokenLogos/bancor.png'
+    logoURI: '/images/prodTokenLogos/bancor.svg'
   },
   {
     name: 'Synthetix Network Token',
