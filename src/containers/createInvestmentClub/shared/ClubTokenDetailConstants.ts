@@ -139,7 +139,7 @@ const mainnetTokens: Token[] = [
     symbol: 'CRV',
     decimals: 18,
     chainId: 1,
-    logoURI: '/images/prodTokenLogos/curve.png'
+    logoURI: '/images/prodTokenLogos/curve.svg'
   },
   {
     name: 'Tether USD',
