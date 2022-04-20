@@ -275,7 +275,7 @@ const mainnetTokens: Token[] = [
     name: 'Aave',
     symbol: 'AAVE',
     decimals: 18,
-    logoURI: '/images/prodTokenLogos/AAVE.webp'
+    logoURI: '/images/prodTokenLogos/AAVE.svg'
   },
   {
     chainId: 1,

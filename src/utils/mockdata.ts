@@ -92,7 +92,7 @@ export const mockTokensResult = [
     price: {
       usd: 213.21
     },
-    logo: '/images/prodTokenLogos/AAVE.webp',
+    logo: '/images/prodTokenLogos/AAVE.svg',
     tokenDecimal: '18',
     tokenSymbol: 'AAVE',
     tokenBalance: '5623',
