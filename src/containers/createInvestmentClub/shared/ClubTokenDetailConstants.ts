@@ -195,7 +195,7 @@ const mainnetTokens: Token[] = [
     symbol: 'KNC',
     decimals: 18,
     chainId: 1,
-    logoURI: '/images/prodTokenLogos/kyber.png'
+    logoURI: '/images/prodTokenLogos/kyber.svg'
   },
   {
     name: 'Compound',
