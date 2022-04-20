@@ -155,7 +155,7 @@ const mainnetTokens: Token[] = [
     symbol: 'OXT',
     decimals: 18,
     chainId: 1,
-    logoURI: '/images/prodTokenLogos/orchid.png'
+    logoURI: '/images/prodTokenLogos/orchid.svg'
   },
   {
     name: 'Maker',
