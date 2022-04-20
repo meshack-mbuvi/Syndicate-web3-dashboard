@@ -315,7 +315,7 @@ const mainnetTokens: Token[] = [
     symbol: 'LOOM',
     decimals: 18,
     chainId: 1,
-    logoURI: '/images/prodTokenLogos/loom.png'
+    logoURI: '/images/prodTokenLogos/loom.svg'
   },
   {
     chainId: 1,
