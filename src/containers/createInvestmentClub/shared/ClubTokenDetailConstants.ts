@@ -371,7 +371,7 @@ const mainnetTokens: Token[] = [
     name: 'Keep Network',
     symbol: 'KEEP',
     decimals: 18,
-    logoURI: '/images/prodTokenLogos/keep.webp'
+    logoURI: '/images/prodTokenLogos/keep.svg'
   },
   {
     chainId: 1,
