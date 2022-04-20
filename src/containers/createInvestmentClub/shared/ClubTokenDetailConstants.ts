@@ -211,7 +211,7 @@ const mainnetTokens: Token[] = [
     name: 'Band Protocol',
     symbol: 'BAND',
     decimals: 18,
-    logoURI: '/images/prodTokenLogos/band.webp'
+    logoURI: '/images/prodTokenLogos/band.svg'
   },
   {
     name: 'Numeraire',
