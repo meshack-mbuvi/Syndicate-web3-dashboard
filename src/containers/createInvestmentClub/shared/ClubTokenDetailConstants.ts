@@ -243,7 +243,7 @@ const mainnetTokens: Token[] = [
     name: 'yearn finance',
     symbol: 'YFI',
     decimals: 18,
-    logoURI: '/images/prodTokenLogos/yearn-finance.webp'
+    logoURI: '/images/prodTokenLogos/yearn-finance.svg'
   },
   {
     name: 'Republic Token',
