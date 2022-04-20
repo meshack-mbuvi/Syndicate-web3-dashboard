@@ -267,7 +267,7 @@ const mainnetTokens: Token[] = [
     name: 'NuCypher',
     symbol: 'NU',
     decimals: 18,
-    logoURI: '/images/prodTokenLogos/nucypher.webp'
+    logoURI: '/images/prodTokenLogos/nucypher.svg'
   },
   {
     chainId: 1,
