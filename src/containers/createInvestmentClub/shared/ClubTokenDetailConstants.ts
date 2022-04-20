@@ -307,7 +307,7 @@ const mainnetTokens: Token[] = [
     name: 'Decentraland',
     symbol: 'MANA',
     decimals: 18,
-    logoURI: '/images/prodTokenLogos/decentraland.webp'
+    logoURI: '/images/prodTokenLogos/decentraland.svg'
   },
   {
     name: 'Loom Network',
