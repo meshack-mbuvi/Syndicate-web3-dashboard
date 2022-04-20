@@ -411,7 +411,7 @@ const mainnetTokens: Token[] = [
     name: 'Polygon',
     symbol: 'MATIC',
     decimals: 18,
-    logoURI: '/images/prodTokenLogos/polygon.webp'
+    logoURI: '/images/prodTokenLogos/polygon.svg'
   }
 ];
 
