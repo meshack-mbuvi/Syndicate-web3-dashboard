@@ -339,7 +339,7 @@ const mainnetTokens: Token[] = [
     symbol: 'STORJ',
     decimals: 8,
     chainId: 1,
-    logoURI: '/images/prodTokenLogos/storj.png'
+    logoURI: '/images/prodTokenLogos/storj.svg'
   },
   {
     chainId: 1,
