@@ -171,7 +171,7 @@ const mainnetTokens: Token[] = [
     symbol: 'LINK',
     decimals: 18,
     chainId: 1,
-    logoURI: '/images/prodTokenLogos/chainlink.png'
+    logoURI: '/images/prodTokenLogos/chainlink.svg'
   },
   {
     name: 'Reputation Augur v1',
