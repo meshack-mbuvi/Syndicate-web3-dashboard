@@ -323,7 +323,7 @@ const mainnetTokens: Token[] = [
     name: 'Civic',
     symbol: 'CVC',
     decimals: 8,
-    logoURI: '/images/prodTokenLogos/civic.webp'
+    logoURI: '/images/prodTokenLogos/civic.svg'
   },
   {
     chainId: 1,
