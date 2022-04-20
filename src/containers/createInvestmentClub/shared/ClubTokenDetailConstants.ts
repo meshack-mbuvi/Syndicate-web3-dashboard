@@ -203,7 +203,7 @@ const mainnetTokens: Token[] = [
     symbol: 'COMP',
     decimals: 18,
     chainId: 1,
-    logoURI: '/images/prodTokenLogos/compound.png'
+    logoURI: '/images/prodTokenLogos/compound.svg'
   },
   {
     chainId: 1,
