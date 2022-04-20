@@ -219,7 +219,7 @@ const mainnetTokens: Token[] = [
     symbol: 'NMR',
     decimals: 18,
     chainId: 1,
-    logoURI: '/images/prodTokenLogos/numeraire.png'
+    logoURI: '/images/prodTokenLogos/numeraire.svg'
   },
   {
     name: 'UMA Voting Token v1',
