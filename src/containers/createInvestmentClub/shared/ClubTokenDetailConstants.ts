@@ -40,7 +40,7 @@ const rinkebyTokens: Token[] = [
     symbol: 'WETH',
     decimals: 18,
     chainId: 4,
-    logoURI: '/images/prodTokenLogos/wEth.png'
+    logoURI: '/images/prodTokenLogos/wEth.svg'
   },
   {
     name: 'Dai Stablecoin',
@@ -91,7 +91,7 @@ const mainnetTokens: Token[] = [
     symbol: 'WETH',
     decimals: 18,
     chainId: 1,
-    logoURI: '/images/prodTokenLogos/wEth.png'
+    logoURI: '/images/prodTokenLogos/wEth.svg'
   },
   {
     name: 'Wrapped BTC',
