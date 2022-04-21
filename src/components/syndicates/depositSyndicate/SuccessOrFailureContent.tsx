@@ -1,10 +1,10 @@
 import { EtherscanLink } from '@/components/syndicates/shared/EtherscanLink';
+import { AppState } from '@/state';
 import { isDev } from '@/utils/environment';
 import { floatedNumberWithCommas } from '@/utils/formattedNumbers';
 import Image from 'next/image';
 import React from 'react';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
-import { AppState } from '@/state';
 import { useSelector } from 'react-redux';
 
 export const SuccessOrFailureContent: React.FC<{
@@ -77,7 +77,7 @@ export const SuccessOrFailureContent: React.FC<{
                 ethDepositToken ?? false
               )} ${depositTokenSymbol}`
             : successfulClaim
-            ? 'Claim successfull'
+            ? 'Claim successful'
             : claimFailed
             ? 'Claim failed'
             : `Deposit failed`}

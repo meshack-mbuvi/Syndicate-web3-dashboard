@@ -1,7 +1,7 @@
 import Footer from '@/components/navigation/footer';
+import Header from '@/components/navigation/header/Header';
 import { useCreateInvestmentClubContext } from '@/context/CreateInvestmentClubContext';
 import { useIsClubOwner } from '@/hooks/useClubOwner';
-import Header from '@/components/navigation/header/Header';
 import { useDemoMode } from '@/hooks/useDemoMode';
 import { AppState } from '@/state';
 import { Status } from '@/state/wallet/types';
