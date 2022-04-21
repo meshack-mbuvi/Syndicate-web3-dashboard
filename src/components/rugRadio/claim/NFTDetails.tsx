@@ -16,7 +16,6 @@ import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { useDispatch, useSelector } from 'react-redux';
-import Tooltip from 'react-tooltip-lite';
 
 import RedeemRug from '../redeemRug';
 import { BonusTokenClaim } from '../shared/bonusToken';

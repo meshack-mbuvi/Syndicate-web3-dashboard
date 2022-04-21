@@ -65,7 +65,7 @@ const LegalAgreement: React.FC = () => {
     erc20TokenSliceReducer: {
       erc20Token,
       // TODO: I think this should be in USD
-      depositDetails: { depositTokenSymbol, nativeDepositToken }
+      depositDetails: { depositTokenSymbol }
     }
   } = useSelector((state: AppState) => state);
 
