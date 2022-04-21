@@ -9,7 +9,7 @@ import AutoGrowInputField from '@/components/inputs/autoGrowInput';
 import Modal, { ModalStyle } from '@/components/modal';
 import NumberTreatment from '@/components/NumberTreatment';
 import { Spinner } from '@/components/shared/spinner';
-import { EtherscanLink } from '@/components/syndicates/shared/EtherscanLink';
+import { BlockExplorerLink } from '@/components/syndicates/shared/BlockExplorerLink';
 import { AppState } from '@/state';
 import { getWeiAmount } from '@/utils/conversions';
 import {
@@ -476,9 +476,10 @@ const RedeemRug: React.FC = () => {
             </div>
 
             <div className="pb-4 text-base flex justify-center items-center hover:opacity-80">
-              <EtherscanLink
-                etherscanInfo={transactionHash}
-                type="transaction"
+              <BlockExplorerLink
+                resourceId={transactionHash}
+                resource="transaction"
+                suffix="transaction"
               />
             </div>
           </div>
@@ -631,9 +632,10 @@ const RedeemRug: React.FC = () => {
                 </span>
                 {submitting && transactionHash ? (
                   <div className="pb-4 text-base flex justify-center items-center hover:opacity-80">
-                    <EtherscanLink
-                      etherscanInfo={transactionHash}
-                      type="transaction"
+                    <BlockExplorerLink
+                      resourceId={transactionHash}
+                      resource="transaction"
+                      suffix="transaction"
                     />
                   </div>
                 ) : null}
