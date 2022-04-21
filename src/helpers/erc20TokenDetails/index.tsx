@@ -162,7 +162,7 @@ export const getDepositDetails = async (
       ERC20tokenContract.clubERC20Contract._address
     );
 
-    if (isZeroAddress(depositToken)) {
+    if (!depositToken || isZeroAddress(depositToken)) {
       depositToken = '';
       mintModule = NATIVE_MINT_MODULE;
       nativeDepositToken = true;
