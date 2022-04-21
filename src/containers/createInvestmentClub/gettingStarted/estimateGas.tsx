@@ -21,10 +21,11 @@ const EstimateGas = (props: { customClasses?: string }) => {
   const [gas, setGas] = useState(0); // 0.05 ETH (~$121.77)
   const [gasUnits, setGasUnits] = useState(0);
   const [gasBaseFee, setGasBaseFee] = useState(0);
-  const [nativeTokenPrice, setNativeTokenPrice] = useState<number | undefined>();
+  const [nativeTokenPrice, setNativeTokenPrice] = useState<
+    number | undefined
+  >();
 
   const processBaseFee = async (result) => {
-    console.log(result);
     const baseFee = result.result;
     const baseFeeInDecimal = parseInt(baseFee, 16);
     setGasBaseFee(baseFeeInDecimal);
