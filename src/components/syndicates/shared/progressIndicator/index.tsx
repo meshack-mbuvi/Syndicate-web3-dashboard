@@ -4,6 +4,7 @@ import { floatedNumberWithCommas } from '@/utils/formattedNumbers';
 import { SkeletonLoader } from 'src/components/skeletonLoader';
 import NumberTreatment from '@/components/NumberTreatment';
 import { TokenDetails } from '@/hooks/useGetDepositTokenDetails';
+import { IActiveNetwork } from '@/state/wallet/types';
 interface IProgressIndicator {
   totalDeposits: number;
   depositTotalMax: string;
@@ -13,6 +14,7 @@ interface IProgressIndicator {
   nativeDepositToken: boolean;
   depositTokenPriceInUSD: string;
   tokenDetails: TokenDetails;
+  activeNetwork: IActiveNetwork;
 }
 
 export const ProgressIndicator = (props: IProgressIndicator): JSX.Element => {
@@ -23,6 +25,7 @@ export const ProgressIndicator = (props: IProgressIndicator): JSX.Element => {
     nativeDepositToken = false,
     depositTokenPriceInUSD,
     tokenDetails,
+    activeNetwork
   } = props;
 
   // get percentage of deposits made to the syndicate
@@ -90,7 +93,9 @@ export const ProgressIndicator = (props: IProgressIndicator): JSX.Element => {
                     nativeDepositToken={nativeDepositToken}
                   />
                   &nbsp;
-                  {nativeDepositToken ? 'ETH' : tokenDetails.symbol}
+                  {nativeDepositToken
+                    ? activeNetwork.nativeCurrency.symbol
+                    : tokenDetails.symbol}
                 </p>
                 <p className="text-gray-lightManatee ml-4 font-light">
                   {floatedNumberWithCommas(depositsPercentage)}
@@ -125,7 +130,9 @@ export const ProgressIndicator = (props: IProgressIndicator): JSX.Element => {
                   0
                 )}
                 &nbsp;
-                {nativeDepositToken ? 'ETH' : tokenDetails.symbol}
+                {nativeDepositToken
+                  ? activeNetwork.nativeCurrency.symbol
+                  : tokenDetails.symbol}
               </h2>
               <p className="text-sm text-gray-syn4 mt-2">
                 {floatedNumberWithCommas(

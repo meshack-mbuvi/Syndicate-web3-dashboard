@@ -107,7 +107,7 @@ const SyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
     notifyOnNetworkStatusChange: true,
     context: { clientName: 'theGraph', chainId: activeNetwork.chainId },
     skip: !address || loading,
-    fetchPolicy: 'no-cache',
+    fetchPolicy: 'no-cache'
   });
 
   useEffect(() => {
@@ -554,6 +554,7 @@ const SyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
                   name: depositTokenName,
                   decimals: depositTokenDecimals
                 }}
+                activeNetwork={activeNetwork}
               />
             </div>
           )}
