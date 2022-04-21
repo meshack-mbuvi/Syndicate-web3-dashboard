@@ -162,7 +162,7 @@ const DepositSyndicate: React.FC = () => {
       // for instance, 0.0003 * 10000 returns 2.9999 instead of 3.
       const memberTokens = nativeDepositToken
         ? (getWeiAmount(depositAmountFinalized, depositTokenDecimals, true) *
-            10000) /
+            activeNetwork.nativeCurrency.exchangeRate) /
           10 ** depositTokenDecimals
         : +depositAmountFinalized;
       const newTotalSupply = +totalSupply + +memberTokens;
@@ -534,7 +534,6 @@ const DepositSyndicate: React.FC = () => {
       }
     }
   }, [depositAmount, currentMemberAllowance, nativeDepositToken]);
-
 
   useEffect(() => {
     checkClubWideErrors();
