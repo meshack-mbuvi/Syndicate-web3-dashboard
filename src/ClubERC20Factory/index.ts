@@ -12,6 +12,7 @@ import { OwnerMintModuleContract } from './ownerMintModule';
 import { MintPolicyContract } from './policyMintERC20';
 import { PublicMintWithFeeModuleContract } from './publicMintWithFeeModule';
 import { PublicOnePerAddressModuleContract } from './publicOnePerAddressModule';
+import { DepositExchangeMintModule } from './RugRadio/DepositExchangeTokenMintModule';
 import { RugBonusTokenModule } from './RugRadio/RugBonusTokenModule';
 import { RugERC20ClaimModule } from './RugRadio/RugERC20ClaimModule';
 import { RugUtilityProperties } from './RugRadio/RugUtilityProperties';
@@ -26,6 +27,7 @@ const GENESIS_NFT = process.env.NEXT_PUBLIC_GenesisNFT;
 const RUG_PROPERTIES = process.env.NEXT_PUBLIC_PROPERTIES;
 const RUG_CLAIM_MODULE = process.env.NEXT_PUBLIC_RUG_CLAIM_MODULE;
 const RUG_BONUS_CLAIM_MODULE = process.env.NEXT_PUBLIC_RUG_BONUS;
+const DEPOSIT_EXCHANGE_MODULE = process.env.NEXT_PUBLIC_DEPOSIT_EXCHANGE_MODULE;
 
 export const getSyndicateContracts = async (
   web3: Web3,
@@ -128,7 +130,11 @@ export const getSyndicateContracts = async (
     web3
   );
 
-  // return all initialized contracts
+  const depositExchangeMintModule = new DepositExchangeMintModule(
+    DEPOSIT_EXCHANGE_MODULE,
+    web3
+  );
+
   return {
     clubERC20Factory,
     policyMintERC20,
@@ -148,6 +154,7 @@ export const getSyndicateContracts = async (
     RugToken,
     GenesisNFTContract,
     rugBonusClaimModule,
-    OwnerMintModule
+    OwnerMintModule,
+    depositExchangeMintModule
   };
 };

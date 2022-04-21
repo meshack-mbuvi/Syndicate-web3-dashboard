@@ -535,6 +535,14 @@ const DepositSyndicate: React.FC = () => {
     }
   }, [depositAmount, currentMemberAllowance, nativeDepositToken]);
 
+
+  useEffect(() => {
+    checkClubWideErrors();
+  }, [totalDeposits, maxTotalDeposits, memberDeposits, account]);
+
+  const isDemoMode = useDemoMode();
+  const { width } = useWindowSize();
+
   /** ====== ADDITIONAL METHODS ======== */
 
   // method to check the allowance amount approved by a member.
@@ -789,10 +797,6 @@ const DepositSyndicate: React.FC = () => {
     }
   };
 
-  useEffect(() => {
-    checkClubWideErrors();
-  }, [totalDeposits, maxTotalDeposits, memberDeposits, account]);
-
   const checkClubWideErrors = () => {
     let message;
     if (+totalDeposits === +maxTotalDeposits) {
@@ -862,11 +866,8 @@ const DepositSyndicate: React.FC = () => {
     toggleDepositProcessingModal();
   };
 
-  const { width } = useWindowSize();
   const isHoldingsCardColumn =
     +memberDeposits >= 10000 && ((width > 868 && width < 1536) || width < 500);
-
-  const isDemoMode = useDemoMode();
 
   // set deposit button text based on current step.
   let depositButtonText;
@@ -1681,7 +1682,7 @@ const DepositSyndicate: React.FC = () => {
                         height={24}
                         width={24}
                       />
-                      <p className="ml-2 text-base">{symbol.slice(1)}</p>
+                      <p className="ml-2 text-base">{symbol?.slice(1)}</p>
                     </div>
                   </div>
                 </div>

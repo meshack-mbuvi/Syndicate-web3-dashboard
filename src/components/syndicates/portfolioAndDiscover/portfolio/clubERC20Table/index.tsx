@@ -143,7 +143,9 @@ const ClubERC20Table: FC<Props> = ({ columns, tableData }) => {
                         <div className="flex text-base items-center justify-end">
                           <div className="flex items-center mr-2">
                             <Image
-                              src={depositTokenLogo}
+                              src={
+                                depositTokenLogo || '/images/token-gray-4.svg'
+                              }
                               width={20}
                               height={20}
                             />
