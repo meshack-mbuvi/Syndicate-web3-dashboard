@@ -98,10 +98,15 @@ export const getERC20TokenDetails = async (
         MerkleDistributorModule.contract._address
       );
 
-      const claimEnabledMintPolicy = await mintPolicy.isModuleAllowed(
-        address,
-        MerkleDistributorModule.contract._address
-      );
+      let claimEnabledMintPolicy;
+
+      if (mintPolicy.address) {
+        claimEnabledMintPolicy = await mintPolicy.isModuleAllowed(
+          address,
+          MerkleDistributorModule.contract._address
+        );
+      }
+
       const claimEnabled =
         claimEnabledPolicyMintERC20 || claimEnabledMintPolicy;
 
@@ -168,9 +173,10 @@ export const getDepositDetails = async (
   const [depositTokenInfo] = depositTokenMapping.filter(
     (token) => token.address === depositToken
   );
-  const tokenDetails = await getTokenDetails(depositToken, activeNetwork.chainId).then(
-    (res) => res.data
-  );
+  const tokenDetails = await getTokenDetails(
+    depositToken,
+    activeNetwork.chainId
+  ).then((res) => res.data);
 
   return {
     mintModule,
