@@ -19,6 +19,7 @@ export async function getNativeTokenPrice(): Promise<number> {
   return result.data;
 }
 
+//Note: tokenAddress must be in lowerCase.
 export const getTokenPrice = async (
   tokenAddress: string,
   chainId: number
