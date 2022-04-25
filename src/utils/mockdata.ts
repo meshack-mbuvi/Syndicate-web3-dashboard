@@ -55,7 +55,7 @@ export const mockDepositModeTokens = [
     price: {
       usd: 3139.48
     },
-    logo: '/images/ethereum-logo.png',
+    logo: '/images/ethereum-logo.svg',
     tokenDecimal: '18',
     tokenSymbol: 'ETH',
     tokenBalance: '3.520994431425648643',
@@ -81,7 +81,7 @@ export const mockTokensResult = [
     price: {
       usd: 15.63
     },
-    logo: '/images/prodTokenLogos/uniswap.webp',
+    logo: '/images/prodTokenLogos/uniswap.svg',
     tokenDecimal: '6',
     tokenSymbol: 'UNI',
     tokenBalance: '116537.09788',
@@ -92,7 +92,7 @@ export const mockTokensResult = [
     price: {
       usd: 213.21
     },
-    logo: '/images/prodTokenLogos/AAVE.webp',
+    logo: '/images/prodTokenLogos/AAVE.svg',
     tokenDecimal: '18',
     tokenSymbol: 'AAVE',
     tokenBalance: '5623',
@@ -472,7 +472,7 @@ export const mockOffChainTransactionsData = {
       syndicateAddress: '0x2502947319f2166eF46f0a7c081D23C63f88112B',
       toAddress: '0x23cf727486ebc811625ae2664adb3891d2111cb2',
       tokenDecimal: 18,
-      tokenLogo: '/images/ethereum-logo.png',
+      tokenLogo: '/images/ethereum-logo.svg',
       tokenName: 'Ether',
       tokenSymbol: 'ETH',
       value: '1000000000000000000'

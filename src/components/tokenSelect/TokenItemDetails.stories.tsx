@@ -1,20 +1,20 @@
 import TokenItemDetails, {
   TokenDetailsProps
-} from "@/components/tokenSelect/TokenItemDetails";
-import { Provider } from "react-redux";
-import { store } from "@/state/index";
-import { Story } from "@storybook/react";
+} from '@/components/tokenSelect/TokenItemDetails';
+import { Provider } from 'react-redux';
+import { store } from '@/state/index';
+import { Story } from '@storybook/react';
 
 export default {
-  title: "Atoms/Token Item Details",
+  title: 'Atoms/Token Item Details',
   component: TokenItemDetails,
   decorators: [
     (Story: React.FC): React.ReactElement => (
       <Provider store={store}>
         <Story />
       </Provider>
-    ),
-  ],
+    )
+  ]
 };
 
 const Template: Story<TokenDetailsProps> = (args) => (
@@ -25,16 +25,16 @@ const Template: Story<TokenDetailsProps> = (args) => (
 
 export const Default = Template.bind({});
 Default.args = {
-  symbol: "ETH",
-  name: "Ethereum",
-  logoURI: "/images/ethereum-logo.png",
-  showCheckMark: false,
+  symbol: 'ETH',
+  name: 'Ethereum',
+  logoURI: '/images/ethereum-logo.svg',
+  showCheckMark: false
 };
 
 export const Selected = Template.bind({});
 Selected.args = {
-  symbol: "ETH",
-  name: "Ethereum",
-  logoURI: "/images/ethereum-logo.png",
-  showCheckMark: true,
+  symbol: 'ETH',
+  name: 'Ethereum',
+  logoURI: '/images/ethereum-logo.svg',
+  showCheckMark: true
 };

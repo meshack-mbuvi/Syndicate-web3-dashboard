@@ -16,7 +16,7 @@ import ConnectWalletProvider from '@/context/ConnectWalletProvider';
 import CreateInvestmentClubProvider from '@/context/CreateInvestmentClubContext';
 import OnboardingProvider from '@/context/OnboardingContext';
 import { wrapper } from '@/state';
-import { isDev, isSSR } from '@/utils/environment';
+import { isDev, isSSR, isStagingOrProd } from '@/utils/environment';
 import {
   ApolloClient,
   ApolloLink,
@@ -33,10 +33,34 @@ import NProgress from 'nprogress';
 import React from 'react';
 import { BACKEND_LINKS } from '@/Networks/backendLinks';
 
+import * as Sentry from '@sentry/react';
+import { BrowserTracing } from '@sentry/tracing';
+
+/**
+ * datepicker component requires these in-built styles, so we import them
+ * from here to make them available globally
+ */
+import 'react-datepicker/dist/react-datepicker.css';
+import '../styles/animation.css';
+import '../styles/custom-datepicker.css';
+import '../styles/global.css';
+
 //Binding events.
 Router.events.on('routeChangeStart', () => NProgress.start());
 Router.events.on('routeChangeComplete', () => NProgress.done());
 Router.events.on('routeChangeError', () => NProgress.done());
+
+Sentry.init({
+  dsn: process.env.NEXT_PUBLIC_SENTRY_DSN,
+  integrations: [new BrowserTracing()],
+
+  // Set tracesSampleRate to 1.0 to capture 100%
+  // of transactions for performance monitoring.
+  // We recommend adjusting this value in production
+  tracesSampleRate: +process.env.NEXT_PUBLIC_SENTRY_SAMPLE_RATE,
+  enabled: isStagingOrProd,
+  environment: process.env.NEXT_PUBLIC_SENTRY_ENVIRONMENT
+});
 
 const StateProviders: React.FC = ({ children }) => (
   <OnboardingProvider>
