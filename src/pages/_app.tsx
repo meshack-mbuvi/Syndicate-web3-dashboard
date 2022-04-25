@@ -38,7 +38,7 @@ Router.events.on('routeChangeComplete', () => NProgress.done());
 Router.events.on('routeChangeError', () => NProgress.done());
 
 Sentry.init({
-  dsn: 'https://e15a256eaf6a4d96910e96a287af2840@o1201499.ingest.sentry.io/6360754',
+  dsn: process.env.NEXT_PUBLIC_SENTRY_DSN,
   integrations: [new BrowserTracing()],
 
   // Set tracesSampleRate to 1.0 to capture 100%
