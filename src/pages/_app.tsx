@@ -5,7 +5,7 @@ import ConnectWalletProvider from '@/context/ConnectWalletProvider';
 import CreateInvestmentClubProvider from '@/context/CreateInvestmentClubContext';
 import OnboardingProvider from '@/context/OnboardingContext';
 import { wrapper } from '@/state';
-import { isDev, isSSR } from '@/utils/environment';
+import { isDev, isSSR, isStagingOrProd } from '@/utils/environment';
 import {
   ApolloClient,
   ApolloProvider,
@@ -19,6 +19,10 @@ import Router from 'next/router';
 import NProgress from 'nprogress';
 import 'nprogress/nprogress.css'; //styles of nprogress
 import React from 'react';
+
+import * as Sentry from '@sentry/react';
+import { BrowserTracing } from '@sentry/tracing';
+
 /**
  * datepicker component requires these in-built styles, so we import them
  * from here to make them available globally
@@ -32,6 +36,18 @@ import '../styles/global.css';
 Router.events.on('routeChangeStart', () => NProgress.start());
 Router.events.on('routeChangeComplete', () => NProgress.done());
 Router.events.on('routeChangeError', () => NProgress.done());
+
+Sentry.init({
+  dsn: 'https://e15a256eaf6a4d96910e96a287af2840@o1201499.ingest.sentry.io/6360754',
+  integrations: [new BrowserTracing()],
+
+  // Set tracesSampleRate to 1.0 to capture 100%
+  // of transactions for performance monitoring.
+  // We recommend adjusting this value in production
+  tracesSampleRate: +process.env.NEXT_PUBLIC_SENTRY_SAMPLE_RATE,
+  enabled: isStagingOrProd,
+  environment: process.env.NEXT_PUBLIC_SENTRY_ENVIRONMENT
+});
 
 const App = ({ Component, pageProps, apollo }) => {
   useAmplitude();

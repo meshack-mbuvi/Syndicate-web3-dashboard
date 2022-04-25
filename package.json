@@ -21,6 +21,8 @@
     "@netlify/functions": "^0.7.0",
     "@popperjs/core": "^2.9.2",
     "@reduxjs/toolkit": "^1.6.2",
+    "@sentry/react": "^6.19.6",
+    "@sentry/tracing": "^6.19.6",
     "@tailwindcss/line-clamp": "^0.2.1",
     "@truffle/hdwallet-provider": "^2.0.0",
     "@typechain/truffle-v5": "^5.1.0",
