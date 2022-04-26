@@ -1,6 +1,5 @@
 import { getOpenseaTokens, getOpenseaFloorPrices } from '@/utils/api/opensea';
 import { mockCollectiblesResult } from '@/utils/mockdata';
-import { web3 } from '@/utils/web3Utils';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import axios from 'axios';
 import abi from 'human-standard-token-abi';
@@ -23,7 +22,7 @@ import {
 export const fetchTokenTransactions = createAsyncThunk(
   'assets/fetchTokenTransactions',
   async (params: any) => {
-    const { account, activeNetwork } = params;
+    const { account, activeNetwork, web3 } = params;
     const response = await Promise.all([
       // ERC20 tokens transactions
       await getTokenTransactionHistory(account, activeNetwork.chainId),
@@ -50,7 +49,7 @@ export const fetchTokenTransactions = createAsyncThunk(
 
     // check if account has token balance
     const uniqueTokenBalances = await (
-      await Promise.all(fetchTokenBalances(uniquesTokens, account))
+      await Promise.all(fetchTokenBalances(uniquesTokens, account, web3))
     ).filter((token) => +token.tokenBalance > 0);
 
     // Batch fetch prices from CoinGecko
@@ -232,7 +231,7 @@ const filterByUniqueContractAddress = (tokensList: any[]) => {
   return uniqueTokensByContractAddress;
 };
 
-const fetchTokenBalances = (tokensList: any[], account: string) => {
+const fetchTokenBalances = (tokensList: any[], account: string, web3: any) => {
   return tokensList.map(async (token) => {
     const tokenCopy = { ...token };
     const { contractAddress, tokenDecimal } = token;

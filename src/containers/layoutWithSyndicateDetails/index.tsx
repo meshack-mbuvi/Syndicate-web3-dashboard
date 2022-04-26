@@ -3,7 +3,7 @@ import BackButton from '@/components/buttons/BackButton';
 import ErrorBoundary from '@/components/errorBoundary';
 import Layout from '@/components/layout';
 import OnboardingModal from '@/components/onboarding';
-import { BlockExplorerLink } from "@/components/syndicates/shared/BlockExplorerLink";
+import { BlockExplorerLink } from '@/components/syndicates/shared/BlockExplorerLink';
 import Head from '@/components/syndicates/shared/HeaderTitle';
 import SyndicateDetails from '@/components/syndicates/syndicateDetails';
 import {
@@ -52,7 +52,7 @@ import ClubTokenMembers from '../managerActions/clubTokenMembers/index';
 import ActivityView from './activity';
 import Assets from './assets';
 import TabButton from './TabButton';
-import { isEmpty } from "lodash";
+import { isEmpty } from 'lodash';
 
 const LayoutWithSyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
   managerSettingsOpen,
@@ -169,7 +169,8 @@ const LayoutWithSyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
     dispatch(
       fetchTokenTransactions({
         account: owner,
-        activeNetwork: activeNetwork
+        activeNetwork: activeNetwork,
+        web3: web3
       })
     );
     // test nft account: 0xf4c2c3e12b61d44e6b228c43987158ac510426fb

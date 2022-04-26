@@ -1,5 +1,4 @@
 import { FC, useState } from 'react';
-import { web3 } from '@/utils/web3Utils';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { useDispatch, useSelector } from 'react-redux';
 import { SkeletonLoader } from '@/components/skeletonLoader';
