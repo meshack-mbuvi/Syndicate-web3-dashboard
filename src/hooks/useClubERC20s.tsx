@@ -19,24 +19,28 @@ const useClubERC20s = () => {
 
   const {
     initializeContractsReducer: { syndicateContracts },
-    web3Reducer: { web3 },
+    web3Reducer: { web3 }
   } = useSelector((state: AppState) => state);
 
   const [accountHasClubs, setAccountHasClubs] = useState(false);
 
   const router = useRouter();
 
-  const { account, activeNetwork, ethereumNetwork: { invalidEthereumNetwork }, } = web3;
+  const {
+    account,
+    activeNetwork,
+    ethereumNetwork: { invalidEthereumNetwork }
+  } = web3;
   const accountAddress = useMemo(() => account.toLocaleLowerCase(), [account]);
 
   // Retrieve syndicates that I manage
   const { loading, refetch, data } = useQuery(MY_CLUBS_QUERY, {
     variables: {
-      where: { ownerAddress: accountAddress },
+      where: { ownerAddress: accountAddress }
     },
-    context: { clientName: "theGraph", chainId: activeNetwork.chainId },
+    context: { clientName: 'theGraph', chainId: activeNetwork.chainId },
     // Avoid unnecessary calls when account is not defined
-    skip: !account || !router.isReady || !activeNetwork.chainId,
+    skip: !account || !router.isReady || !activeNetwork.chainId
   });
 
   const {
@@ -46,21 +50,21 @@ const useClubERC20s = () => {
   } = useQuery(CLUBS_HAVE_INVESTED, {
     variables: {
       where: {
-        memberAddress: accountAddress,
-      },
+        memberAddress: accountAddress
+      }
     },
-    context: { clientName: "theGraph", chainId: activeNetwork.chainId },
+    context: { clientName: 'theGraph', chainId: activeNetwork.chainId },
     // Avoid unnecessary calls when account is not defined
-    skip: !account || !router.isReady || !activeNetwork.chainId,
+    skip: !account || !router.isReady || !activeNetwork.chainId
   });
 
   useEffect(() => {
     if (accountAddress && router.isReady && activeNetwork.chainId) {
       refetch({
-        where: { ownerAddress: accountAddress },
+        where: { ownerAddress: accountAddress }
       });
       refetchMyClubs({
-        where: { memberAddress: accountAddress },
+        where: { memberAddress: accountAddress }
       });
     }
   }, [router.isReady, account, activeNetwork.chainId]);
@@ -77,7 +81,7 @@ const useClubERC20s = () => {
   useEffect(() => {
     processClubERC20Tokens(myClubs).then((data) => {
       dispatch(setMyClubERC20s(data));
-    })
+    });
   }, [JSON.stringify(myClubs), activeNetwork]);
 
   const processClubERC20Tokens = async (tokens) => {
@@ -151,7 +155,7 @@ const useClubERC20s = () => {
           // checks if depositToken is ETH or not
           let maxTotalDeposits =
             +maxTotalSupplyFromWei / activeNetwork.nativeCurrency.exchangeRate;
-          if (!isZeroAddress(depositToken)) {
+          if (!isZeroAddress(depositToken) && depositToken) {
             try {
               const depositERC20Token = new ClubERC20Contract(
                 depositToken,
@@ -159,7 +163,10 @@ const useClubERC20s = () => {
               );
               depositERC20TokenSymbol = await depositERC20Token.symbol();
               depositERC20TokenDecimals = await depositERC20Token.decimals();
-              depositTokenLogo = await getTokenDetails(depositToken, activeNetwork.chainId)
+              depositTokenLogo = await getTokenDetails(
+                depositToken,
+                activeNetwork.chainId
+              )
                 .then((res) => res.data.logo)
                 .catch(() => null);
             } catch (error) {
