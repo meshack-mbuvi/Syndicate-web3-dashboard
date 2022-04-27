@@ -150,7 +150,7 @@ const LegalAgreement: React.FC = () => {
               type="number"
               addOn={depositTokenSymbol}
               control={control}
-              info="Total amount you intend to deposit"
+              info="Amount you intend to deposit into the investment club"
               addOnStyles=""
             />
 
