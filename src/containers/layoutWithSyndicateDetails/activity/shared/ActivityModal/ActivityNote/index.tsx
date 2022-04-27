@@ -178,9 +178,7 @@ const ActivityNote: React.FC<IActivityNote> = ({
             </div>
             <div className="border-b border-gray-steelGrey mb-6 h-0"></div>
             <div className="mb-6 text-yellow-saffron bg-yellow-saffron bg-opacity-20 py-4 px-5 rounded-1.5lg">
-              To comply with privacy regulations, please do not enter Personal
-              Identifiable Information (PII) of any individual involved in this
-              club or investment.
+              This information may be publicly visible off-chain, so we do not recommend storing sensitive information.
             </div>
             <div className="w-full flex justify-between space-x-4">
               <button
