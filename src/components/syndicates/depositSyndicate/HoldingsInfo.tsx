@@ -26,12 +26,6 @@ const HoldingsInfo: FC<IHoldingsInfoProps> = ({
       <div className="pb-2 leading-6 text-gray-syn4">{title}</div>
       <div className={`flex ${wrap}`}>
         <div>
-          {/*           <p className="mr-1.5">
-            {floatedNumberWithCommas(wholeNumberPart as string)}
-          </p>
-          <p>
-            {decimalPart ? "." + decimalPart : ""}
-          </p> */}
           <p className="mr-1.5">{amount}</p>
         </div>
         <div className="mr-2 w-min-44">{tokenName}</div>
