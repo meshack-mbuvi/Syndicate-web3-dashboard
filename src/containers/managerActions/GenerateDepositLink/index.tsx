@@ -209,6 +209,8 @@ export const DepositLinkModal: FC<ILinkModal> = ({
     }
   } = useSelector((state: AppState) => state);
 
+  const [showAdditionalStep, setShowAdditionalStep] = useState(false);
+
   const router = useRouter();
   const dispatch = useDispatch();
   const { clubAddress } = router.query;
@@ -247,9 +249,22 @@ export const DepositLinkModal: FC<ILinkModal> = ({
   }, [showGenerateLinkModal]);
 
   const legalDocuments = [
-    { documentText: 'Default Operating Agreement', documentLink: '' },
-    { documentText: 'Default Subscription Agreement', documentLink: '' }
+    {
+      documentText: 'Default Operating Agreement',
+      documentLink:
+        'https://docs.google.com/document/d/1rZRBUuUyTmOnMrTP5TwaRiEF11tHskyE'
+    },
+    {
+      documentText: 'Default Subscription Agreement',
+      documentLink:
+        'https://docs.google.com/document/d/1g2XggEVUGTmdzqHIUHgnjEA6Kld1TmJN'
+    }
   ];
+
+  const handleShowAdditionalStep = () => {
+    setShowGenerateLinkModal(true);
+    setShowAdditionalStep(true);
+  };
 
   return (
     <Modal
@@ -258,6 +273,7 @@ export const DepositLinkModal: FC<ILinkModal> = ({
         show: showGenerateLinkModal,
         closeModal: () => {
           setShowGenerateLinkModal(false);
+          setShowAdditionalStep(false);
         },
         customWidth: 'w-100',
         customClassName: 'pt-8 px-10 pb-5',
@@ -268,7 +284,7 @@ export const DepositLinkModal: FC<ILinkModal> = ({
         margin: 'mt-48'
       }}
     >
-      {depositsEnabled ? (
+      {depositsEnabled && !showAdditionalStep ? (
         <>
           <div className="-mb-1">
             <div className="leading-6">
@@ -287,36 +303,38 @@ export const DepositLinkModal: FC<ILinkModal> = ({
               </a>
             </div>
             <div className="space-y-4">
-              <Link href={`/clubs/${clubAddress}/manage/legal/prepare`}>
-                <div
-                  className="border-1 border-gray-syn6 hover:border-blue hover:cursor-pointer rounded-1.5lg flex flex-col group"
-                  onClick={() => startDocumentSigning('yes')}
-                >
-                  <div className="flex justify-between px-8 py-6 items-center leading-3.5 cursor-pointer">
-                    <div>
-                      <div className="leading-6">
-                        Yes, use default LLC agreements
-                      </div>
-                      <div className="text-sm leading-4 text-gray-syn3 mt-0.5">
-                        Requires an existing LLC
-                      </div>
+              <div
+                className="border-1 border-gray-syn6 hover:border-blue hover:cursor-pointer rounded-1.5lg flex flex-col group"
+                onClick={() => handleShowAdditionalStep()}
+                onKeyDown={() => ''}
+                role="button"
+                tabIndex={0}
+              >
+                <div className="flex justify-between px-8 py-6 items-center leading-3.5 cursor-pointer">
+                  <div>
+                    <div className="leading-6">
+                      Yes, use default LLC agreements
                     </div>
-                    <RightArrow className="text-gray-syn4 group-hover:text-blue" />
+                    <div className="text-sm leading-4 text-gray-syn3 mt-0.5">
+                      Requires an existing LLC
+                    </div>
                   </div>
-                  <div className="flex justify-center align-middle rounded-b-1.5lg py-2.5 bg-gray-inactive group-hover:bg-blue">
-                    <RibbonIcon
-                      className="text-white"
-                      height={'0.75rem'}
-                      width={'0.75rem'}
-                    />
-                    <span className="mx-1 text-subtext ">Powered by</span>
-                    <img
-                      src="/images/latham&watkinsllp.svg"
-                      alt="latham & watkins llp logo"
-                    />
-                  </div>
+                  <RightArrow className="text-gray-syn4 group-hover:text-blue" />
                 </div>
-              </Link>
+                <div className="flex justify-center align-middle rounded-b-1.5lg py-2.5 bg-gray-inactive group-hover:bg-blue">
+                  <RibbonIcon
+                    className="text-white"
+                    height={'0.75rem'}
+                    width={'0.75rem'}
+                  />
+                  <span className="mx-1 text-subtext ">Powered by</span>
+                  <img
+                    src="/images/latham&watkinsllp.svg"
+                    alt="latham & watkins llp logo"
+                  />
+                </div>
+              </div>
+              {/* <Link href={`/clubs/${clubAddress}/manage/legal/prepare`}></Link> */}
               <button
                 className="border-1 w-full border-gray-syn6 hover:border-blue cursor-pointer p-8 rounded-1.5lg"
                 onClick={() => startDocumentSigning('no')}
@@ -350,7 +368,24 @@ export const DepositLinkModal: FC<ILinkModal> = ({
       ) : (
         <>
           <div className="pb-5">
-            <div className="leading-6 body">Sign legal agreements</div>
+            <div className="leading-6 body">
+              <p className="flex space-x-4">
+                {depositsEnabled ? (
+                  <button
+                    onClick={() => {
+                      setShowAdditionalStep(false);
+                      setShowGenerateLinkModal(true);
+                    }}
+                  >
+                    <img src="/images/arrowBack.svg" alt="back" />
+                  </button>
+                ) : (
+                  ''
+                )}
+
+                <span>Sign legal agreements</span>
+              </p>
+            </div>
             <div className="text-sm flex text-gray-syn4 mt-2 mb-6">
               Takes ~5 mins and requires an existing LLC
               <a
@@ -413,7 +448,15 @@ export const DepositLinkModal: FC<ILinkModal> = ({
               </div>
 
               <Link href={`/clubs/${clubAddress}/manage/legal/prepare`}>
-                <CtaButton>Prepare legal documents</CtaButton>
+                <CtaButton
+                  onClick={() => {
+                    if (depositsEnabled) {
+                      startDocumentSigning('yes');
+                    }
+                  }}
+                >
+                  Prepare legal documents
+                </CtaButton>
               </Link>
             </div>
           </div>

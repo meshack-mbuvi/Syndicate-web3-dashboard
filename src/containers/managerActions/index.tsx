@@ -393,20 +393,36 @@ const ManagerActions = (): JSX.Element => {
             showGenerateLinkModal={showGenerateLinkModal}
           />
         </FadeIn>
+
         {status !== Status.DISCONNECTED && (
           <div className="flex bg-gray-syn8 duration-500 transition-all rounded-2.5xl my-6 p-4 space-y-4 items-start flex-col">
             <div className="hover:bg-gray-syn7 rounded-xl py-2 px-4 w-full">
-              <CreateEntityCard />
+              {loading ? (
+                <>
+                  <SkeletonLoader width="2/3" height="6" />
+                  <SkeletonLoader width="full" height="10" />
+                </>
+              ) : (
+                <CreateEntityCard />
+              )}
             </div>
 
             {!depositsEnabled ? (
               <div className="hover:bg-gray-syn7 rounded-xl py-2 px-4 w-full ">
-                <SignLegalDocumentsCard onClick={handleSignLegalDocument} />
+                {loading ? (
+                  <SkeletonLoader width="full" height="6" />
+                ) : (
+                  <SignLegalDocumentsCard onClick={handleSignLegalDocument} />
+                )}
               </div>
             ) : null}
 
             <div className="hover:bg-gray-syn7 rounded-xl py-2 px-4 w-full">
-              <ModifyClubSettingsCard />
+              {loading ? (
+                <SkeletonLoader width="full" height="6" />
+              ) : (
+                <ModifyClubSettingsCard />
+              )}
             </div>
           </div>
         )}
