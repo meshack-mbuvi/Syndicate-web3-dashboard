@@ -31,9 +31,6 @@ const SendForSignatures: FC<ILinkModal> = ({
     legalInfoReducer: {
       clubInfo,
       walletSignature: { signature }
-    },
-    erc20TokenSliceReducer: {
-      erc20Token: { depositsEnabled }
     }
   } = useSelector((state: AppState) => state);
 
@@ -105,27 +102,24 @@ const SendForSignatures: FC<ILinkModal> = ({
               </div>
             </div>
           </div>
-          {depositsEnabled ? (
-            <div className=" mt-4">
-              <div className="flex flex-row mt-4 text-yellow-warning bg-brown-dark rounded-1.5lg py-3 px-4">
-                <p className=" text-sm">
-                  Do not publicize or you may violate an investment club's
-                  regulatory requirements. Only share links with trusted &
-                  qualified people.&nbsp;
-                  <a
-                    className="underline"
-                    rel="noreferrer"
-                    href="https://www.sec.gov/reportspubs/investor-publications/investorpubsinvclubhtm.html"
-                    target="_blank"
-                  >
-                    Learn more
-                    <ArrowNarrowRightIcon className="h-4 w-4 inline-block no-underline ml-1" />
-                  </a>
-                </p>
-              </div>
+          <div className=" mt-4">
+            <div className="flex flex-row mt-4 text-yellow-warning bg-brown-dark rounded-1.5lg py-3 px-4">
+              <p className=" text-sm">
+                Do not publicize or you may violate an investment club's
+                regulatory requirements. Only share links with trusted &
+                qualified people.&nbsp;
+                <a
+                  className="underline"
+                  rel="noreferrer"
+                  href="https://www.sec.gov/reportspubs/investor-publications/investorpubsinvclubhtm.html"
+                  target="_blank"
+                >
+                  Learn more
+                  <ArrowNarrowRightIcon className="h-4 w-4 inline-block no-underline ml-1" />
+                </a>
+              </p>
             </div>
-          ) : null}
-
+          </div>
           <div className=" mt-8">
             <button
               className=" bg-white rounded-custom w-full flex items-center justify-center py-4 mb-4"

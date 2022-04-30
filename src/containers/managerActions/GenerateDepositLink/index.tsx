@@ -387,15 +387,14 @@ export const DepositLinkModal: FC<ILinkModal> = ({
               </p>
             </div>
             <div className="text-sm flex text-gray-syn4 mt-2 mb-6">
-              Takes ~5 mins and requires an
+              Takes ~5 mins and requires an existing LLC
               <a
-                href="https://syndicatedao.gitbook.io/syndicate-guide/web3-investment-clubs/create-a-legal-entity"
-                className="text-gray-syn4 cursor-pointer ml-2 flex align-middle p-0 space-x-2"
+                href="https://syndicatedao.gitbook.io/syndicate-wiki/web3-investment-clubs/create-a-legal-entity/template-legal-docs"
+                className="text-blue cursor-pointer ml-2 flex align-middle p-0"
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                <span>existing LLC</span>
-                <ExternalLinkIcon iconColor={ExternalLinkColor.GRAY4} />
+                <ExternalLinkIcon iconColor={ExternalLinkColor.GRAY} />
               </a>
             </div>
 
@@ -427,7 +426,7 @@ export const DepositLinkModal: FC<ILinkModal> = ({
                     height={'0.75rem'}
                     width={'0.75rem'}
                   />
-                  <span className="mx-1 text-subtext">Powered by</span>
+                  <span className="mx-1 text-subtext ">Powered by</span>
                   <img
                     src="/images/latham&watkinsllp.svg"
                     alt="latham & watkins llp logo"

@@ -43,7 +43,6 @@ export const InfoIcon = (props: {
 
 export enum ExternalLinkColor {
   GRAY = 'GRAY',
-  GRAY4 = 'GRAY4',
   BLUE = 'BLUE',
   WHITE = 'WHITE'
 }
@@ -55,9 +54,6 @@ export const ExternalLinkIcon = (props) => {
     case ExternalLinkColor.GRAY:
       icon = '/images/externalLinkGray.svg';
       break;
-    case ExternalLinkColor.GRAY4:
-      icon = '/images/externalLinkGray4.svg';
-      break;
     case ExternalLinkColor.BLUE:
       icon = '/images/externalLink.svg';
       break;
@@ -68,7 +64,7 @@ export const ExternalLinkIcon = (props) => {
       icon = '/images/externalLink.svg';
       break;
   }
-  return <img src={icon} {...props} alt="external-link" />;
+  return <img src={icon} {...props} alt="extenal-link" />;
 };
 
 export const CopyLinkIcon = (props: {
