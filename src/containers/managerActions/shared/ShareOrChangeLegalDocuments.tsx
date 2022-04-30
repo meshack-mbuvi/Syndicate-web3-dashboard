@@ -92,7 +92,7 @@ const ShareOrChangeLegalDocuments: FC<ILinkModal> = ({
             You’ll receive a copy via email once both parties have signed.
           </div>
           <div className="mt-4">
-            <div className=" py-2 pr-2 flex">
+            <div className="py-2 pr-2 flex">
               <div
                 className="flex items-center justify-between w-full"
                 style={{ width: '400px' }}
