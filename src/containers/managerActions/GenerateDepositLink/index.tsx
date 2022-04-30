@@ -390,7 +390,7 @@ export const DepositLinkModal: FC<ILinkModal> = ({
               Takes ~5 mins and requires an
               <a
                 href="https://syndicatedao.gitbook.io/syndicate-guide/web3-investment-clubs/create-a-legal-entity"
-                className="text-gray-syn4 cursor-pointer ml-2 flex align-middle p-0 space-x-2"
+                className="text-gray-syn4 cursor-pointer ml-1 flex align-middle p-0 space-x-2"
                 target="_blank"
                 rel="noopener noreferrer"
               >

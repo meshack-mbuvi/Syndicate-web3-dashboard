@@ -38,6 +38,8 @@ const ShareOrChangeLegalDocuments: FC<ILinkModal> = ({
   const [clubLegalAgreementSignageLink, setClubLegalAgreementSignageLink] =
     useState('');
 
+  const [adminSignDate, setAdminSignDate] = useState('');
+
   const [
     showLegalAgreementSignageLinkCopyState,
     setShowLegalAgreementSignageCopyState
@@ -57,6 +59,12 @@ const ShareOrChangeLegalDocuments: FC<ILinkModal> = ({
   };
 
   useEffect(() => {
+    const legal = JSON.parse(localStorage.getItem('legal') || '{}');
+
+    if (clubAddress && legal[`${clubAddress}`]) {
+      setAdminSignDate(legal[`${clubAddress}`]?.clubData?.adminSignDate);
+    }
+
     const memberSignURL = generateMemberSignURL(
       clubAddress as string,
       clubInfo,
@@ -85,7 +93,7 @@ const ShareOrChangeLegalDocuments: FC<ILinkModal> = ({
       <>
         <div className=" px-5 -mb-1">
           <div className="body font-medium">
-            Legal agreements prepared {clubInfo.adminSignDate}
+            Legal agreements prepared {adminSignDate}
           </div>
           <div className=" text-base text-gray-syn4 mt-2">
             Invite members to sign the legal agreements via the link below.
