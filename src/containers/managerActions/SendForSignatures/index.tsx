@@ -82,10 +82,10 @@ const SendForSignatures: FC<ILinkModal> = ({
     >
       <>
         <div className=" px-5 -mb-1">
-          <div className="body font-medium">SEND FOR SIGNATURES</div>
-          <div className=" text-base text-gray-syn4 mt-2">
-            Invite members to sign the legal agreements via the link below.
-            You’ll receive a copy via email once both parties have signed.
+          <div className=" text-sm font-medium">SEND FOR SIGNATURES</div>
+          <div className=" text-base text-gray-syn4 mt-8">
+            Invite members to sign the legal agreements and deposit via the link
+            below. Retrieve this link anytime from the club dashboard.
           </div>
           <div className=" mt-4">
             <div className=" py-2 pr-2 flex">
