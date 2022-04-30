@@ -4,6 +4,7 @@ import ErrorBoundary from '@/components/errorBoundary';
 import FadeIn from '@/components/fadeIn/FadeIn';
 import CreateEntityCard from '@/components/shared/createEntityCard';
 import ModifyClubSettingsCard from '@/components/shared/modifyClubSettingsCard';
+import SignLegalDocumentsCard from '@/components/shared/signLegalDocumentsCard';
 import { SkeletonLoader } from '@/components/skeletonLoader';
 import StatusBadge from '@/components/syndicateDetails/statusBadge';
 import ConnectWalletAction from '@/components/syndicates/shared/connectWalletAction';
@@ -20,7 +21,8 @@ import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { animated } from 'react-spring';
-import GenerateDepositLink from './GenerateDepositLink';
+import GenerateDepositLink, { DepositLinkModal } from './GenerateDepositLink';
+import ShareOrChangeLegalDocuments from './shared/ShareOrChangeLegalDocuments';
 
 const useShowShareWarning = () => {
   const router = useRouter();
@@ -106,6 +108,7 @@ const ManagerActions = (): JSX.Element => {
   // club deposit link
   useEffect(() => {
     const legal = JSON.parse(localStorage.getItem('legal') || '{}');
+
     const clubLegalData = legal[clubAddress as string];
     setHasAgreements(clubLegalData?.signaturesNeeded || false);
 
@@ -166,6 +169,27 @@ const ManagerActions = (): JSX.Element => {
 
   const [linkShareAgreementChecked, setLinkShareAgreementChecked] =
     useState(false);
+
+  const [showShareOrChangeLegalDocs, setShowShareOrChangeLegalDocs] =
+    useState(false);
+
+  const handleSignLegalDocument = () => {
+    const legal = JSON.parse(localStorage.getItem('legal') || '{}');
+
+    const clubLegalData = legal[clubAddress as string];
+    if (!clubLegalData) {
+      setShowGenerateLinkModal(true);
+      setLinkShareAgreementChecked(true);
+    } else {
+      setShowShareOrChangeLegalDocs(true);
+    }
+  };
+
+  const handleChangeLegalDocument = () => {
+    setShowGenerateLinkModal(true);
+    setLinkShareAgreementChecked(true);
+    setShowShareOrChangeLegalDocs(false);
+  };
 
   return (
     <ErrorBoundary>
@@ -364,17 +388,50 @@ const ManagerActions = (): JSX.Element => {
               </div>
             ) : null}
           </div>
+          <DepositLinkModal
+            setShowGenerateLinkModal={setShowGenerateLinkModal}
+            showGenerateLinkModal={showGenerateLinkModal}
+          />
         </FadeIn>
+
         {status !== Status.DISCONNECTED && (
           <div className="flex bg-gray-syn8 duration-500 transition-all rounded-2.5xl my-6 p-4 space-y-4 items-start flex-col">
             <div className="hover:bg-gray-syn7 rounded-xl py-2 px-4 w-full">
-              <CreateEntityCard />
+              {loading ? (
+                <>
+                  <SkeletonLoader width="2/3" height="6" />
+                  <SkeletonLoader width="full" height="10" />
+                </>
+              ) : (
+                <CreateEntityCard />
+              )}
             </div>
+
+            {!depositsEnabled ? (
+              <div className="hover:bg-gray-syn7 rounded-xl py-2 px-4 w-full ">
+                {loading ? (
+                  <SkeletonLoader width="full" height="6" />
+                ) : (
+                  <SignLegalDocumentsCard onClick={handleSignLegalDocument} />
+                )}
+              </div>
+            ) : null}
+
             <div className="hover:bg-gray-syn7 rounded-xl py-2 px-4 w-full">
-              <ModifyClubSettingsCard />
+              {loading ? (
+                <SkeletonLoader width="full" height="6" />
+              ) : (
+                <ModifyClubSettingsCard />
+              )}
             </div>
           </div>
         )}
+
+        <ShareOrChangeLegalDocuments
+          showShareOrChangeDocs={showShareOrChangeLegalDocs}
+          setShowShareOrChangeDocsModal={setShowShareOrChangeLegalDocs}
+          handleChangeLegalDocument={handleChangeLegalDocument}
+        />
       </div>
     </ErrorBoundary>
   );
