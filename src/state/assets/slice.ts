@@ -57,7 +57,9 @@ export const fetchTokenTransactions = createAsyncThunk(
     const chainId = isDev ? ChainEnum.RINKEBY : ChainEnum.ETHEREUM;
 
     const uniqueTokenPrices = await getTokenPrice(
-      uniqueTokenBalances.map((t) => t.contractAddress).join(),
+      uniqueTokenBalances
+        .map((t) => (t.contractAddress as string).toLocaleLowerCase())
+        .join(),
       chainId
     );
 
