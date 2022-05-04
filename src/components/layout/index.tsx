@@ -1,13 +1,27 @@
+import { ClubERC20Contract } from '@/ClubERC20Factory/clubERC20';
 import Footer from '@/components/navigation/footer';
 import Header from '@/components/navigation/header/Header';
 import { useCreateInvestmentClubContext } from '@/context/CreateInvestmentClubContext';
+import { CLUB_TOKEN_QUERY } from '@/graphql/queries';
+import { getDepositDetails, setERC20Token } from '@/helpers/erc20TokenDetails';
+import { useAccountTokens } from '@/hooks/useAccountTokens';
+import { useClubDepositsAndSupply } from '@/hooks/useClubDepositsAndSupply';
 import { useIsClubOwner } from '@/hooks/useClubOwner';
 import { useDemoMode } from '@/hooks/useDemoMode';
 import { AppState } from '@/state';
+import { setClubMembers } from '@/state/clubMembers';
+import {
+  setERC20TokenContract,
+  setERC20TokenDepositDetails,
+  setERC20TokenDetails
+} from '@/state/erc20token/slice';
 import { Status } from '@/state/wallet/types';
+import { isZeroAddress } from '@/utils';
+import { mockActiveERC20Token, mockDepositERC20Token } from '@/utils/mockdata';
+import { NetworkStatus, useQuery } from '@apollo/client';
 import { useRouter } from 'next/router';
 import React, { FC, useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import ConnectWallet from 'src/components/connectWallet';
 import DemoBanner from '../demoBanner';
 import ProgressBar from '../ProgressBar';
@@ -34,15 +48,21 @@ const Layout: FC<Props> = ({
 }) => {
   const {
     web3Reducer: {
-      web3: { account, status }
+      web3: { account, status, web3 }
+    },
+    initializeContractsReducer: {
+      syndicateContracts: { SingleTokenMintModule, DepositTokenMintModule }
     },
     clubERC20sReducer: { myClubERC20s, otherClubERC20s, loading },
     erc20TokenSliceReducer: {
-      erc20Token: { owner, loading: loadingClubDetails }
+      erc20TokenContract,
+      depositDetails: { ethDepositToken },
+      erc20Token: { owner, address, loading: loadingClubDetails }
     }
   } = useSelector((state: AppState) => state);
 
   const router = useRouter();
+
   const isDemoMode = useDemoMode();
 
   const {
@@ -50,6 +70,9 @@ const Layout: FC<Props> = ({
     isReady,
     query: { clubAddress }
   } = router;
+
+  // fetch member account tokens
+  useAccountTokens();
 
   const isOwner = useIsClubOwner();
 
@@ -106,6 +129,112 @@ const Layout: FC<Props> = ({
     isOwner
   ]);
 
+  // Load club details if we are on the club page
+  const dispatch = useDispatch();
+
+  const { totalDeposits, refetch: refetchSingleClubDetails } =
+    useClubDepositsAndSupply(address);
+
+  const {
+    loading: queryLoading,
+    data,
+    networkStatus,
+    stopPolling
+  } = useQuery(CLUB_TOKEN_QUERY, {
+    variables: {
+      syndicateDaoId: address.toLocaleLowerCase()
+    },
+    notifyOnNetworkStatusChange: true,
+    skip: !address || loading,
+    fetchPolicy: 'no-cache'
+  });
+
+  useEffect(() => {
+    // check for demo mode to make sure correct things render
+    if (!isDemoMode) {
+      // check for network status as ready after query is over
+      if (networkStatus !== NetworkStatus.ready) {
+        return;
+      }
+      // check for query loading and data being non-null
+      if (!data?.syndicateDAO && !queryLoading) {
+        return;
+      }
+      stopPolling();
+      // fallback for if single club details query doesn't initally work
+      if (!totalDeposits) {
+        refetchSingleClubDetails();
+        return;
+      }
+    } else {
+      if (!data) {
+        return;
+      }
+    }
+
+    const { depositToken } = data.syndicateDAO || {};
+    async function fetchDepositDetails() {
+      let depositDetails;
+
+      if (isDemoMode) {
+        depositDetails = mockDepositERC20Token;
+      } else {
+        depositDetails = await getDepositDetails(
+          depositToken,
+          erc20TokenContract,
+          DepositTokenMintModule,
+          SingleTokenMintModule
+        );
+      }
+
+      dispatch(
+        setERC20TokenDepositDetails({
+          ...depositDetails,
+          loading: false
+        })
+      );
+    }
+    fetchDepositDetails();
+  }, [
+    data,
+    data?.syndicateDAO,
+    loading,
+    router.isReady,
+    queryLoading,
+    networkStatus,
+    totalDeposits
+  ]);
+
+  /**
+   * Fetch club details
+   */
+  useEffect(() => {
+    if (!clubAddress || status == Status.CONNECTING) return;
+
+    if (
+      clubAddress &&
+      !isZeroAddress(clubAddress as string) &&
+      web3.utils.isAddress(clubAddress as string) &&
+      DepositTokenMintModule
+    ) {
+      const clubERC20tokenContract = new ClubERC20Contract(
+        clubAddress as string,
+        web3
+      );
+
+      dispatch(setERC20TokenContract(clubERC20tokenContract));
+
+      dispatch(setERC20Token(clubERC20tokenContract));
+
+      return () => {
+        dispatch(setClubMembers([]));
+      };
+    } else if (isDemoMode) {
+      // using "Active" as the default view.
+      dispatch(setERC20TokenDetails(mockActiveERC20Token));
+    }
+  }, [clubAddress, account, ethDepositToken, status, DepositTokenMintModule]);
+
   return (
     <div
       className={`flex flex-col justify-between ${
@@ -124,12 +253,14 @@ const Layout: FC<Props> = ({
           ]}
           title="Home"
         />
+
         <Header
           showBackButton={showBackButton}
           showNav={showNav}
           navItems={navItems}
         />
         <DemoBanner />
+
         <div
           className={`sticky top-18 ${
             showCreateProgressBar ? 'bg-black backdrop-filter' : ''
@@ -148,6 +279,7 @@ const Layout: FC<Props> = ({
             </div>
           ) : null}
         </div>
+
         <div
           className={`flex w-full bg-black flex-col sm:flex-row ${
             showCreateProgressBar ? 'pt-16' : isDemoMode ? 'pt-48' : 'pt-24'
@@ -157,6 +289,7 @@ const Layout: FC<Props> = ({
         </div>
         <ConnectWallet />
       </div>
+
       {createClubPage || managerSettingsOpen ? null : (
         <div>
           <div className="container mx-auto">

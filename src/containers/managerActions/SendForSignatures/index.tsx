@@ -5,6 +5,7 @@ import CopyLink from '@/components/shared/CopyLink';
 import { AppState } from '@/state';
 import { generateMemberSignURL } from '@/utils/generateMemberSignURL';
 import { ArrowNarrowRightIcon } from '@heroicons/react/outline';
+import window from 'global';
 import { useRouter } from 'next/router';
 import React, {
   Dispatch,
@@ -25,17 +26,19 @@ const SendForSignatures: FC<ILinkModal> = ({
   setShowSendForSignaturesModal
 }) => {
   const router = useRouter();
-  const { clubAddress } = router.query;
 
   const {
     legalInfoReducer: {
       clubInfo,
       walletSignature: { signature }
     },
+
     erc20TokenSliceReducer: {
       erc20Token: { depositsEnabled }
     }
   } = useSelector((state: AppState) => state);
+
+  const clubAddress = window?.location?.pathname.split('/')[2];
 
   const [clubLegalAgreementSignageLink, setClubLegalAgreementSignageLink] =
     useState('');
@@ -109,7 +112,7 @@ const SendForSignatures: FC<ILinkModal> = ({
             <div className=" mt-4">
               <div className="flex flex-row mt-4 text-yellow-warning bg-brown-dark rounded-1.5lg py-3 px-4">
                 <p className=" text-sm">
-                  Do not publicize or you may violate an investment club's
+                  Do not publicize or you may violate an investment club&rsquo;s
                   regulatory requirements. Only share links with trusted &
                   qualified people.&nbsp;
                   <a
