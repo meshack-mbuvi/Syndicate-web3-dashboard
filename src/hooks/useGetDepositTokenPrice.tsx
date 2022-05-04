@@ -11,6 +11,7 @@ export const useGetDepositTokenPrice = (chainId: number) => {
       depositDetails: { depositToken, loading: detailsLoading }
     }
   } = useSelector((state: AppState) => state);
+
   const [tokenPriceInUSDState, setTokenPriceInUSDState] = useState<number>(0);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);

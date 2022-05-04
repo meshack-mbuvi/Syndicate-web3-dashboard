@@ -29,7 +29,7 @@ export const Callout = (props: {
   return (
     <div className={`${styles} flex items-center space-x-3.5 ${extraClasses}`}>
       {icon && <img src={icon} className="w-5 h-5" alt="Icon" />}
-      <div>{children}</div>
+      <div className="w-full">{children}</div>
     </div>
   );
 };

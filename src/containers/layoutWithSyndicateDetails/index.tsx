@@ -70,8 +70,15 @@ const LayoutWithSyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
     }
   } = useSelector((state: AppState) => state);
 
-  const { owner, loading, name, depositsEnabled, maxTotalDeposits, address } =
-    erc20Token;
+  const {
+    owner,
+    loading,
+    name,
+    depositsEnabled,
+    maxTotalDeposits,
+    address,
+    memberCount
+  } = erc20Token;
 
   // Get clubAddress from window.location object since during page load, router is not ready
   // hence clubAddress is undefined.
@@ -375,7 +382,7 @@ const LayoutWithSyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
                                     : 'border-transparent text-gray-syn4 hover:text-gray-400 '
                                 }`}
                               >
-                                Members
+                                {`Members (${memberCount})`}
                               </button>
                             )}
                             {(renderOnDisconnect || isDemoMode) && (

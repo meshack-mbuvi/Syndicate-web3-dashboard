@@ -114,6 +114,8 @@ export function useAccountTokens(): {
     totalSupply,
     totalDeposits,
     depositTokenDecimals,
+    isDemoMode,
+    depositTokenDecimals,
     JSON.stringify(data)
   ]);
 

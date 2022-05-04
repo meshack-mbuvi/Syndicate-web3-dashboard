@@ -1,19 +1,22 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { OldClubERC20Contract } from '@/ClubERC20Factory/clubERC20/oldClubERC20';
+import { OwnerMintModuleContract } from '@/ClubERC20Factory/ownerMintModule';
+import { ProgressModal, ProgressModalState } from '@/components/progressModal';
+import ConfirmMemberDetailsModal from '@/containers/managerActions/mintAndShareTokens/ConfirmMemberDetailsModal';
+import MemberDetailsModal from '@/containers/managerActions/mintAndShareTokens/MemberDetailsModal';
 import { setERC20Token } from '@/helpers/erc20TokenDetails';
+import { useClubDepositsAndSupply } from '@/hooks/useClubDepositsAndSupply';
 import { AppState } from '@/state';
 import { getWeiAmount } from '@/utils/conversions';
+import { isDev } from '@/utils/environment';
 import { formatAddress } from '@/utils/formatAddress';
 import {
   numberInputRemoveCommas,
   numberWithCommas
 } from '@/utils/formattedNumbers';
-import { useClubDepositsAndSupply } from '@/hooks/useClubDepositsAndSupply';
-import { ProgressModal, ProgressModalState } from '@/components/progressModal';
-import MemberDetailsModal from '@/containers/managerActions/mintAndShareTokens/MemberDetailsModal';
-import ConfirmMemberDetailsModal from '@/containers/managerActions/mintAndShareTokens/ConfirmMemberDetailsModal';
-import { OldClubERC20Contract } from '@/ClubERC20Factory/clubERC20/oldClubERC20';
-import { isDev } from '@/utils/environment';
+import { ClubStillOpenModal } from '@/containers/managerActions/mintAndShareTokens/ClubStillOpenModal';
+import { MintPolicyContract } from '@/ClubERC20Factory/policyMintERC20';
 
 interface Props {
   show: boolean;
@@ -28,11 +31,21 @@ export const MintAndShareTokens: React.FC<Props> = ({
 }) => {
   const {
     erc20TokenSliceReducer: {
-      erc20Token: { symbol, owner, maxTotalSupply, tokenDecimals, address },
+      erc20Token: {
+        symbol,
+        owner,
+        maxTotalSupply,
+        tokenDecimals,
+        address,
+        memberCount,
+        maxMemberCount,
+        startTime,
+        currentMintPolicyAddress
+      },
       erc20TokenContract
     },
     web3Reducer: {
-      web3: { web3 }
+      web3: { web3, account }
     },
     initializeContractsReducer: { syndicateContracts }
   } = useSelector((state: AppState) => state);
@@ -47,16 +60,36 @@ export const MintAndShareTokens: React.FC<Props> = ({
   const [userRejectedMint, setUserRejectedMint] = useState(false);
 
   const [memberAddress, setMemberAddress] = useState('');
-  const [rawMemberAddress, setRawMemberAddress] = useState('');
   const [memberAddressError, setMemberAddressError] = useState('');
   const [amountToMint, setAmountToMint] = useState('0');
   const [amountToMintError, setAmountToMintError] = useState<
     string | React.ReactElement
   >('');
   const [totalSupplyPostMint, setTotalSupplyPostMint] = useState(0);
+  const [inputFieldsDisabled, setInputFieldsDisabled] = useState(false);
   const [ownershipShare, setOwnershipShare] = useState(0);
+  const [showClubStillOpenModal, setShowClubStillOpenModal] = useState(false);
 
   const { totalSupply } = useClubDepositsAndSupply(address);
+
+  // progress states for closing club post mint (after re-opening)
+  const [confirmCloseClub, setConfirmCloseClub] = useState(false);
+  const [closingClub, setClosingClub] = useState(false);
+  const [clubSuccessfullyClosed, setClubSuccessfullyClosed] = useState(false);
+  const [closeClubFailed, setCloseClubFailed] = useState(false);
+  const [closeClubRejected, setCloseClubRejected] = useState(false);
+
+  let clubReopenedForMint = false;
+  if (typeof window !== 'undefined') {
+    const mintingForClosedClubDetails = JSON.parse(
+      localStorage.getItem('mintingForClosedClub')
+    );
+
+    if (mintingForClosedClubDetails?.mintingForClosedClub) {
+      const { mintingForClosedClub, clubAddress } = mintingForClosedClubDetails;
+      clubReopenedForMint = mintingForClosedClub && clubAddress === address;
+    }
+  }
 
   useEffect(() => {
     if (totalSupply) {
@@ -68,21 +101,23 @@ export const MintAndShareTokens: React.FC<Props> = ({
 
   const currentClubTokenSupply = +maxTotalSupply - +totalSupply;
 
-  // tracking address here to be able to format address field.
+  // add check for number of members
   useEffect(() => {
-    if (web3.utils.isAddress(memberAddress)) {
-      setRawMemberAddress(memberAddress);
+    if (memberCount === maxMemberCount) {
+      setMemberAddressError(
+        `The maximum number of members (${maxMemberCount}) for this club has been reached.`
+      );
+      setInputFieldsDisabled(true);
+    } else {
+      setMemberAddressError('');
+      setInputFieldsDisabled(false);
     }
-  }, [memberAddress, web3?.utils]);
+  }, [maxMemberCount, memberCount]);
 
   const handleAddressChange = (e) => {
     const addressValue = e.target.value;
-    if (rawMemberAddress) {
-      setMemberAddress(rawMemberAddress.slice(0, 41));
-      setRawMemberAddress('');
-    } else {
-      setMemberAddress(addressValue);
-    }
+
+    setMemberAddress(addressValue);
 
     if (!addressValue.trim()) {
       setMemberAddressError('Member address is required.');
@@ -134,11 +169,12 @@ export const MintAndShareTokens: React.FC<Props> = ({
   };
 
   const clearFieldErrors = () => {
-    setMemberAddressError('');
+    if (!inputFieldsDisabled) {
+      setMemberAddressError('');
+    }
     setAmountToMintError('');
     setAmountToMint('0');
     setMemberAddress('');
-    setRawMemberAddress('');
   };
 
   useEffect(() => {
@@ -161,8 +197,134 @@ export const MintAndShareTokens: React.FC<Props> = ({
 
     // clear modal states
     clearFieldErrors();
+
+    if (clubReopenedForMint) {
+      if (!showClubStillOpenModal) {
+        setShowClubStillOpenModal(true);
+      } else {
+        setShowClubStillOpenModal(false);
+        setCloseClubFailed(false);
+        setClubSuccessfullyClosed(false);
+      }
+    }
+
+    if (clubSuccessfullyClosed) {
+      localStorage.removeItem('mintingForClosedClub');
+    }
   };
 
+  // states for closing club after re-opening it
+  // for the purpose of minting club tokens.
+  const onCloseTxConfirm = (transactionHash: string) => {
+    setConfirmCloseClub(false);
+    setTransactionHash(transactionHash);
+    setClosingClub(true);
+  };
+  const onCloseTxReceipt = () => {
+    setClosingClub(false);
+    setClubSuccessfullyClosed(true);
+    refreshClubDetails();
+  };
+
+  const handleCloseClubPostMint = async () => {
+    setConfirmCloseClub(true);
+    try {
+      // adding 30 minutes since current time will be in the past by the time
+      // the transaction is confirmed.
+      const newEndTime = new Date().getTime() + 1800000;
+
+      // set max token supply to current total supply.
+      // this prevents more deposits from new members or existing members while the club
+      // still remains open.
+      const _tokenCap = getWeiAmount(String(totalSupply), 18, true);
+      const mintPolicy = new MintPolicyContract(currentMintPolicyAddress, web3);
+
+      // using the endMint function on the mint policy
+      // will lock club settings and prevent subsequent changes to club settings.
+      await mintPolicy.modifyERC20(
+        account,
+        address,
+        startTime / 1000,
+        parseInt((newEndTime / 1000).toString()),
+        +maxMemberCount,
+        _tokenCap,
+        onCloseTxConfirm,
+        onCloseTxReceipt
+      );
+
+      setClubSuccessfullyClosed(true);
+    } catch (error) {
+      setCloseClubFailed(true);
+      setConfirmCloseClub(false);
+      setClosingClub(false);
+      const { code } = error;
+      if (code == 4001) {
+        setCloseClubRejected(true);
+      } else {
+        setCloseClubRejected(false);
+      }
+    }
+  };
+
+  // progress states for closing club
+  if (confirmCloseClub) {
+    return (
+      <ProgressModal
+        {...{
+          isVisible: true,
+          title: 'Confirm in wallet',
+          description:
+            'Confirm the modification of club settings in your wallet.',
+          state: ProgressModalState.CONFIRM
+        }}
+      />
+    );
+  } else if (closingClub) {
+    return (
+      <ProgressModal
+        {...{
+          isVisible: true,
+          title: 'Closing your club',
+          description:
+            'This could take anywhere from seconds to hours depending on network congestion and the gas fees you set. You can safely leave this page while you wait.',
+          etherscanHash: transactionHash,
+          transactionType: 'transaction',
+          state: ProgressModalState.PENDING
+        }}
+      />
+    );
+  } else if (closeClubFailed) {
+    return (
+      <ProgressModal
+        {...{
+          isVisible: true,
+          title: 'Your club could not be closed',
+          description: '',
+          buttonLabel: 'Close',
+          buttonOnClick: handleCloseSuccessModal,
+          buttonFullWidth: true,
+          state: ProgressModalState.FAILURE,
+          etherscanHash: closeClubRejected ? null : transactionHash,
+          transactionType: 'transaction'
+        }}
+      />
+    );
+  } else if (clubSuccessfullyClosed) {
+    return (
+      <ProgressModal
+        {...{
+          isVisible: true,
+          title: 'Your club is now closed to deposits',
+          buttonLabel: 'Done',
+          buttonOnClick: handleCloseSuccessModal,
+          buttonFullWidth: false,
+          state: ProgressModalState.SUCCESS
+        }}
+      />
+    );
+  }
+
+  // progress states for minting club tokens.
   if (confirm) {
     return (
       <ProgressModal
@@ -199,7 +361,7 @@ export const MintAndShareTokens: React.FC<Props> = ({
             6,
             4
           )} has been added as a member of this club.`,
-          buttonLabel: 'Done',
+          buttonLabel: clubReopenedForMint ? 'Continue' : 'Done',
           buttonOnClick: handleCloseSuccessModal,
           buttonFullWidth: true,
           state: ProgressModalState.SUCCESS,
@@ -252,15 +414,33 @@ export const MintAndShareTokens: React.FC<Props> = ({
   const handleMinting = async () => {
     setConfirm(true);
 
+    // OwnerMintModule for policyMintERC20
     const OWNER_MINT_MODULE = process.env.NEXT_PUBLIC_OWNER_MINT_MODULE;
-    const useOwnerMintModule =
+    // OwnerMintModule for mintPolicy
+    const OWNER_MINT_MODULE_2 = process.env.NEXT_PUBLIC_OWNER_MINT_MODULE_2;
+
+    const policyMintERC20MintModule =
       await syndicateContracts.policyMintERC20.isModuleAllowed(
         erc20TokenContract.address,
         OWNER_MINT_MODULE
       );
 
+    // Both ETH and USDC clubs should work with OwnerMintModule
+    const useOwnerMintModule =
+      policyMintERC20MintModule ||
+      (await syndicateContracts.mintPolicy.isModuleAllowed(
+        erc20TokenContract.address,
+        OWNER_MINT_MODULE_2
+      ));
+
     if (useOwnerMintModule) {
-      await syndicateContracts.OwnerMintModule.ownerMint(
+      // Use either OwnerMintModule for policyMintERC20 or one for mintPolicy
+      // respectively
+      const OwnerMintModule = policyMintERC20MintModule
+        ? syndicateContracts.OwnerMintModule
+        : new OwnerMintModuleContract(OWNER_MINT_MODULE_2, web3);
+
+      await OwnerMintModule.ownerMint(
         getWeiAmount(amountToMint, tokenDecimals, true),
         erc20TokenContract.address,
         memberAddress,
@@ -320,7 +500,8 @@ export const MintAndShareTokens: React.FC<Props> = ({
           handleAddressChange,
           handleSubmit,
           handleAmountChange,
-          setMaxRemainingSupply
+          setMaxRemainingSupply,
+          inputFieldsDisabled
         }}
       />
 
@@ -336,6 +517,14 @@ export const MintAndShareTokens: React.FC<Props> = ({
           handleShow,
           setPreview,
           handleMinting
+        }}
+      />
+
+      <ClubStillOpenModal
+        {...{
+          showClubStillOpenModal,
+          setShowClubStillOpenModal,
+          handleCloseClubPostMint
         }}
       />
     </div>

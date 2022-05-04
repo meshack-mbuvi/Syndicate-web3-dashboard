@@ -72,7 +72,9 @@ const ManagerActions = (): JSX.Element => {
     depositsEnabled,
     claimEnabled,
     totalDeposits,
-    maxTotalDeposits
+    maxTotalDeposits,
+    totalSupply,
+    maxTotalSupply
   } = erc20Token;
 
   const { clubAddress, source } = router.query;
@@ -169,6 +171,8 @@ const ManagerActions = (): JSX.Element => {
 
   const [linkShareAgreementChecked, setLinkShareAgreementChecked] =
     useState(false);
+  const depositExceedTotal =
+    +totalDeposits === +maxTotalDeposits || +totalSupply === +maxTotalSupply;
 
   const [showShareOrChangeLegalDocs, setShowShareOrChangeLegalDocs] =
     useState(false);
@@ -206,7 +210,7 @@ const ManagerActions = (): JSX.Element => {
                 showConfettiSuccess
               }}
               isManager
-              depositExceedTotal={+totalDeposits === +maxTotalDeposits}
+              depositExceedTotal={depositExceedTotal}
             />
             {status !== Status.DISCONNECTED && loading ? (
               <div className="h-fit-content relative py-6 px-8 flex justify-center items-start flex-col w-full">
@@ -222,7 +226,7 @@ const ManagerActions = (): JSX.Element => {
                 />
                 <SkeletonLoader width="full" height="12" />
               </div>
-            ) : depositsEnabled || claimEnabled ? (
+            ) : (depositsEnabled && !depositExceedTotal) || claimEnabled ? (
               <div
                 className={`h-fit-content relative ${
                   showConfettiSuccess

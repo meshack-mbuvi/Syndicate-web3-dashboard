@@ -11,7 +11,6 @@ import { AppState } from '@/state';
 import { setERC20TokenDepositDetails } from '@/state/erc20token/slice';
 import { mockDepositERC20Token } from '@/utils/mockdata';
 import { Status } from '@/state/wallet/types';
-import { epochTimeToDateFormat, getCountDownDays } from '@/utils/dateUtils';
 import { floatedNumberWithCommas } from '@/utils/formattedNumbers';
 import { getTextWidth } from '@/utils/getTextWidth';
 import { useQuery, NetworkStatus } from '@apollo/client';
@@ -233,53 +232,7 @@ const SyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
     if (name && !managerSettingsOpen) {
       setDetails([
         ...(depositsEnabled
-          ? [
-              {
-                header: 'Club token max supply',
-                content: (
-                  <span>
-                    <NumberTreatment numberValue={`${maxTotalSupply || ''} `} />
-                    &nbsp;
-                    {symbol}
-                  </span>
-                ),
-                tooltip: ''
-              },
-              {
-                header: 'Club tokens minted',
-                content: (
-                  <span>
-                    <NumberTreatment numberValue={totalSupply} />
-                    &nbsp;{symbol}
-                  </span>
-                ),
-                tooltip: ''
-              },
-              {
-                header: `Members (max)`,
-                content: (
-                  <div>
-                    {memberCount}{' '}
-                    <span className="text-gray-syn4">({maxMemberCount})</span>
-                  </div>
-                ),
-                tooltip: ''
-              },
-              {
-                header: 'Created',
-                content: `${epochTimeToDateFormat(
-                  new Date(startTime),
-                  'LLL dd, yyyy'
-                )}`,
-                tooltip: ''
-              },
-
-              {
-                header: 'Closing in',
-                content: getCountDownDays(endTime.toString()),
-                tooltip: ''
-              }
-            ]
+          ? []
           : claimEnabled
           ? [
               {
@@ -287,8 +240,6 @@ const SyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
                 content: (
                   <span>
                     <NumberTreatment numberValue={`${maxTotalSupply || ''}`} />
-                    &nbsp;
-                    {symbol}
                   </span>
                 ),
                 tooltip: ''
@@ -311,12 +262,27 @@ const SyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
             ]
           : [
               {
-                header: 'Total deposited',
+                header: 'Member deposits',
                 content: (
-                  <span>
-                    <NumberTreatment numberValue={totalDeposits} />{' '}
-                    {depositTokenSymbol}
-                  </span>
+                  <div className="space-y-2">
+                    <div className="flex items-center">
+                      <img
+                        src={depositTokenLogo}
+                        className="w-4 h-4 mr-2"
+                        alt="logo"
+                      />
+                      <span>
+                        <NumberTreatment numberValue={totalDeposits} />{' '}
+                        {depositTokenSymbol}
+                      </span>
+                    </div>
+                    <div className="text-gray-syn4 text-sm">
+                      {floatedNumberWithCommas(
+                        depositTokenPriceInUSD * totalDeposits
+                      )}{' '}
+                      USD
+                    </div>
+                  </div>
                 ),
                 tooltip: ''
               },
@@ -330,25 +296,13 @@ const SyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
                 tooltip: ''
               },
               {
-                header: 'Members',
-                content: <div>{memberCount}</div>,
-                tooltip: ''
-              },
-              {
-                header: 'Created',
-                content: `${epochTimeToDateFormat(
-                  new Date(startTime),
-                  'LLL dd, yyyy'
-                )}`,
-                tooltip: ''
-              },
-
-              {
-                header: 'Closed',
-                content: `${epochTimeToDateFormat(
-                  new Date(endTime),
-                  'LLL dd, yyyy'
-                )}`,
+                header: 'Club token max supply',
+                content: (
+                  <span>
+                    <NumberTreatment numberValue={`${maxTotalSupply || ''}`} />{' '}
+                    {symbol}
+                  </span>
+                ),
                 tooltip: ''
               }
             ])
@@ -367,7 +321,8 @@ const SyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
     maxTotalDeposits,
     memberCount,
     totalDeposits,
-    depositTokenSymbol
+    depositTokenSymbol,
+    depositTokenPriceInUSD
   ]);
 
   // show message to the user when address has been copied.
@@ -535,7 +490,7 @@ const SyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
         {status !== Status.DISCONNECTED &&
           depositsEnabled &&
           !managerSettingsOpen && (
-            <div className="h-fit-content flex w-full justify-start mt-14">
+            <div className="h-fit-content flex flex-col w-full justify-start mt-14">
               <ProgressIndicator
                 totalDeposits={totalDeposits}
                 depositTotalMax={maxTotalDeposits.toString()}
@@ -561,13 +516,15 @@ const SyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
         isDemoMode ||
         !managerSettingsOpen ? (
           <div className="overflow-hidden mt-6 relative">
-            <DetailsCard
-              title="Details"
-              sections={details}
-              customStyles={'w-full pt-4'}
-              customInnerWidth="w-full grid xl:grid-cols-3 lg:grid-cols-3
-            grid-cols-3 xl:gap-8 gap-2 xl:gap-5 gap-y-8"
-            />
+            {!depositsEnabled && (
+              <DetailsCard
+                title="Details"
+                sections={details}
+                customStyles={'w-full pt-4'}
+                customInnerWidth="w-full grid xl:grid-cols-3 lg:grid-cols-3
+          grid-cols-3 xl:gap-8 gap-2 xl:gap-5 gap-y-8"
+              />
+            )}
           </div>
         ) : null}
       </div>

@@ -131,9 +131,9 @@ const ConfirmMemberDetailsModal: React.FC<IConfirmMemberDetailsModal> = ({
             />
           </div>
         </div>
-        <div className="px-5 rounded-custom">
-          <Callout extraClasses="rounded-t-custom p-4 text-sm">
-            <EstimateGas customClasses="bg-blue-midnightExpress bg-opacity-30 w-full flex cursor-default items-center" />
+        <div className="mx-5 rounded-custom overflow-hidden">
+          <Callout extraClasses="p-4 text-sm">
+            <EstimateGas customClasses="bg-opacity-30 w-full flex cursor-default items-center" />
           </Callout>
           <div className="bg-blue bg-opacity-20 rounded-b-lg">
             <button
