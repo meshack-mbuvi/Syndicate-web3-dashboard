@@ -268,38 +268,44 @@ export const ProgressIndicator = (props: IProgressIndicator): JSX.Element => {
               } rounded-full h-full w-full`}
             >
               {/* mints via deposits progress  */}
-              <div
-                style={{
-                  minWidth: `${
-                    depositsPercentage < leastPercentage &&
-                    depositsPercentage > 0
-                      ? `${floatedNumberWithCommas(depositsPercentage + 1)}%`
-                      : `${floatedNumberWithCommas(depositsPercentage)}%`
-                  }`
-                }}
-                className={`shadow-none relative h-full flex flex-col transition-all text-center whitespace-nowrap text-white justify-center bg-blue hover:bg-opacity-80 rounded-l-full 
+              {depositsPercentage > 0 && (
+                <div
+                  style={{
+                    minWidth: `${
+                      depositsPercentage < leastPercentage &&
+                      depositsPercentage > 0
+                        ? `${floatedNumberWithCommas(depositsPercentage + 1)}%`
+                        : `${floatedNumberWithCommas(depositsPercentage)}%`
+                    }`
+                  }}
+                  className={`shadow-none relative h-full flex flex-col transition-all text-center whitespace-nowrap text-white justify-center bg-blue hover:bg-opacity-80 rounded-l-full 
                 ${depositsPercentage > 99.5 ? 'rounded-full' : ''}
                 ${depositsPercentage === 0 ? 'hidden' : 'block'}`}
-                onMouseEnter={() =>
-                  setCurrentToolTip(TooltipState.MINTED_VIA_DEPOSITS)
-                }
-                onMouseLeave={() => setCurrentToolTip(null)}
-                onMouseMove={(e) => handleMouseMove(e)}
-              >
-                {currentToolTip === TooltipState.MINTED_VIA_DEPOSITS && tooltip}
-              </div>
+                  onMouseEnter={() =>
+                    setCurrentToolTip(TooltipState.MINTED_VIA_DEPOSITS)
+                  }
+                  onMouseLeave={() => setCurrentToolTip(null)}
+                  onMouseMove={(e) => handleMouseMove(e)}
+                >
+                  {currentToolTip === TooltipState.MINTED_VIA_DEPOSITS &&
+                    tooltip}
+                </div>
+              )}
 
               {/* mints via manual mints progress  */}
-              <div
-                style={{
-                  minWidth: `${
-                    manualMintPercentage < leastPercentage &&
-                    manualMintPercentage > 0
-                      ? `${floatedNumberWithCommas(manualMintPercentage + 1)}%`
-                      : `${floatedNumberWithCommas(manualMintPercentage)}%`
-                  }`
-                }}
-                className={`shadow-none relative h-full flex flex-col transition-all text-center whitespace-nowrap text-white justify-center bg-gray-mineral hover:bg-opacity-80
+              {manualMintPercentage > 0 && (
+                <div
+                  style={{
+                    minWidth: `${
+                      manualMintPercentage < leastPercentage &&
+                      manualMintPercentage > 0
+                        ? `${floatedNumberWithCommas(
+                            manualMintPercentage + 1
+                          )}%`
+                        : `${floatedNumberWithCommas(manualMintPercentage)}%`
+                    }`
+                  }}
+                  className={`shadow-none relative h-full flex flex-col transition-all text-center whitespace-nowrap text-white justify-center bg-gray-mineral hover:bg-opacity-80
                 ${totalDeposits > 0 ? '' : 'rounded-l-full'}
                 ${manualMintPercentage === 0 ? 'hidden' : 'block'}
                 ${manualMintPercentage > 99.5 ? 'rounded-full' : ''}
@@ -309,14 +315,15 @@ export const ProgressIndicator = (props: IProgressIndicator): JSX.Element => {
                     : 'rounded-r-full'
                 }
                 `}
-                onMouseEnter={() =>
-                  setCurrentToolTip(TooltipState.MANUALLY_MINTED)
-                }
-                onMouseLeave={() => setCurrentToolTip(null)}
-                onMouseMove={(e) => handleMouseMove(e)}
-              >
-                {currentToolTip === TooltipState.MANUALLY_MINTED && tooltip}
-              </div>
+                  onMouseEnter={() =>
+                    setCurrentToolTip(TooltipState.MANUALLY_MINTED)
+                  }
+                  onMouseLeave={() => setCurrentToolTip(null)}
+                  onMouseMove={(e) => handleMouseMove(e)}
+                >
+                  {currentToolTip === TooltipState.MANUALLY_MINTED && tooltip}
+                </div>
+              )}
               {/* remaining mints progress  */}
               <div
                 style={{

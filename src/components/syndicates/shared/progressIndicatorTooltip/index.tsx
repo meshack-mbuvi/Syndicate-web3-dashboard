@@ -2,6 +2,7 @@ import React, { FC } from 'react';
 import { AppState } from '@/state';
 import { useSelector } from 'react-redux';
 import Tooltip from 'react-tooltip-lite';
+import Image from 'next/image';
 import { MoreInfoIcon } from '@/components/shared/Icons/index';
 import { floatedNumberWithCommas } from '@/utils/formattedNumbers';
 import { TooltipState } from '@/components/syndicates/shared/progressIndicator';
@@ -27,7 +28,7 @@ export const ProgressIndicatorTooltip: FC<IProgressIndicatorTooltip> = ({
   } = useSelector((state: AppState) => state);
 
   const { symbol, address } = erc20Token;
-  const { depositTokenLogo, depositTokenName } = depositDetails;
+  const { depositTokenLogo, depositTokenSymbol } = depositDetails;
   const { totalDeposits } = useClubDepositsAndSupply(address);
 
   // when to show color key.
@@ -101,12 +102,12 @@ export const ProgressIndicatorTooltip: FC<IProgressIndicatorTooltip> = ({
           {/* token value in USD  */}
           {currentToolTip === TooltipState.MINTED_VIA_DEPOSITS ? (
             <div className="text-white flex items-center text-base">
-              <div className="mr-1">
-                <img src={depositTokenLogo} className="h-4 w-4" alt="logo" />
+              <div className="mr-1 flex items-center justify-start">
+                <Image src={depositTokenLogo} width={16} height={16} />
               </div>
               <div>{`${floatedNumberWithCommas(
                 totalDeposits
-              )} ${depositTokenName}`}</div>
+              )} ${depositTokenSymbol}`}</div>
             </div>
           ) : null}
         </div>
