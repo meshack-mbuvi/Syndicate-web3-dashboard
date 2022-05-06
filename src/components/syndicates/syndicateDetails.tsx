@@ -9,11 +9,11 @@ import { useIsClubOwner } from '@/hooks/useClubOwner';
 import { useDemoMode } from '@/hooks/useDemoMode';
 import { AppState } from '@/state';
 import { setERC20TokenDepositDetails } from '@/state/erc20token/slice';
-import { mockDepositERC20Token } from '@/utils/mockdata';
 import { Status } from '@/state/wallet/types';
 import { floatedNumberWithCommas } from '@/utils/formattedNumbers';
 import { getTextWidth } from '@/utils/getTextWidth';
-import { useQuery, NetworkStatus } from '@apollo/client';
+import { mockDepositERC20Token } from '@/utils/mockdata';
+import { NetworkStatus, useQuery } from '@apollo/client';
 import abi from 'human-standard-token-abi';
 import { useRouter } from 'next/router';
 import React, { FC, useEffect, useState } from 'react';
@@ -362,6 +362,10 @@ const SyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
     setShowDuplicateClubWarning(false);
   };
 
+  // temporary fix for club FP NFT DAO with address 0xc7926f2611078881f61183696b1eeb9566c7c87f
+  const fpNftClub =
+    address.toLowerCase() === '0xc7926f2611078881f61183696b1eeb9566c7c87f';
+
   return (
     <div className="flex flex-col relative">
       <div className="h-fit-content rounded-custom">
@@ -492,8 +496,12 @@ const SyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
           !managerSettingsOpen && (
             <div className="h-fit-content flex flex-col w-full justify-start mt-14">
               <ProgressIndicator
-                totalDeposits={totalDeposits}
-                depositTotalMax={maxTotalDeposits.toString()}
+                totalDeposits={fpNftClub ? totalSupply : totalDeposits}
+                depositTotalMax={
+                  fpNftClub
+                    ? maxTotalSupply.toString()
+                    : maxTotalDeposits.toString()
+                }
                 openDate={startTime.toString()}
                 closeDate={endTime.toString()}
                 loading={loading || loadingClubDeposits}

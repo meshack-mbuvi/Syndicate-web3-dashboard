@@ -635,9 +635,15 @@ const DepositSyndicate: React.FC = () => {
 
     let message;
 
+    // temporary fix for club FP NFT DAO with address 0xc7926f2611078881f61183696b1eeb9566c7c87f
+    const valueToCompareWith =
+      address.toLowerCase() === '0xc7926f2611078881f61183696b1eeb9566c7c87f'
+        ? remainingClubTokensBalance
+        : remainingErc20Balance;
+
     if (depositTokenSwitched) {
       if (
-        +depositAmount / depositTokenPriceInUSD > remainingErc20Balance &&
+        +depositAmount / depositTokenPriceInUSD > valueToCompareWith &&
         !insufficientBalance
       ) {
         message = (
@@ -645,7 +651,7 @@ const DepositSyndicate: React.FC = () => {
             <span>The amount you entered is too high. This club is </span>
             <span className="underline">
               {floatedNumberWithCommas(
-                remainingErc20Balance,
+                valueToCompareWith,
                 ethDepositToken ? true : false
               )}{' '}
               {depositTokenSymbol}
@@ -661,13 +667,13 @@ const DepositSyndicate: React.FC = () => {
         setClubWideErrors('');
       }
     } else {
-      if (+depositAmount > remainingErc20Balance && !insufficientBalance) {
+      if (+depositAmount > valueToCompareWith && !insufficientBalance) {
         message = (
           <>
             <span>The amount you entered is too high. This club is </span>
             <span className="underline">
               {floatedNumberWithCommas(
-                remainingErc20Balance,
+                valueToCompareWith,
                 ethDepositToken ? true : false
               )}{' '}
               {depositTokenSymbol}
