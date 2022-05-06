@@ -20,18 +20,15 @@ export async function getNativeTokenPrice(): Promise<number> {
 }
 
 export const getTokenPrice = async (
-  tokenAddresses: string,
+  tokenAddress: string,
   chainId: number
-): Promise<ContractPriceResponse> => {
-  const result: AxiosResponse<ContractPriceResponse> = await proxyGet(
-    'token/price_usd',
-    {
-      tokenAddresses: tokenAddresses,
-      chainId: chainId
-    }
-  );
+): Promise<number> => {
+  const result: AxiosResponse<number> = await proxyGet('token/price_usd', {
+    tokenAddresses: tokenAddress,
+    chainId: chainId
+  });
 
-  return result.data;
+  return result.data[tokenAddress]['usd'];
 };
 
 export async function getNftTransactionHistory(
@@ -71,13 +68,6 @@ export async function getNativeTokenBalance(address: string): Promise<number> {
   });
 
   return result.data;
-}
-
-export interface SimplePriceResponse {
-  [key: string]: number | undefined;
-}
-export interface ContractPriceResponse {
-  [key: string]: { [key: string]: number | undefined };
 }
 
 export interface ERC20Transaction {

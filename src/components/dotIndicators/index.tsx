@@ -1,15 +1,22 @@
 import React, { useEffect, useRef, useState } from 'react';
 
+export enum DotIndicatorsOrientation {
+  VERTICAL = 'VERTICAL',
+  HORIZONTAL = 'HORIZONTAL'
+}
+
 interface Props {
   options: [string];
   activeIndex: number;
   customClasses?: string;
+  orientation?: DotIndicatorsOrientation;
 }
 
 export const DotIndicators: React.FC<Props> = ({
   options,
   activeIndex,
-  customClasses
+  customClasses,
+  orientation = DotIndicatorsOrientation.VERTICAL
 }) => {
   const containerRef = useRef(null);
   const dotRef = useRef(null);
@@ -36,7 +43,7 @@ export const DotIndicators: React.FC<Props> = ({
     }
   }, [dotsTopOffset]);
 
-  const renderedDots = options.map((option, index) => (
+  const renderedVerticalDots = options.map((option, index) => (
     <>
       {/* Dot */}
       <div
@@ -49,13 +56,32 @@ export const DotIndicators: React.FC<Props> = ({
     </>
   ));
 
+  const renderedHorizontalDots = options.map((option, index) => (
+    <>
+      {/* Dot */}
+      <div
+        key={index}
+        className={`rounded-full w-2 h-2 ${
+          index === activeIndex ? 'bg-white' : 'bg-gray-syn6'
+        } transition-all ${animationTimingStyles}`}
+      ></div>
+    </>
+  ));
+
   return (
     <div
       ref={containerRef}
-      className={`${customClasses} flex space-x-4 items-center relative`}
+      className={`flex ${
+        orientation === DotIndicatorsOrientation.VERTICAL
+          ? 'justify-start'
+          : 'justify-end'
+      } items-center relative ${customClasses}`}
     >
+      {/* Vertical dots */}
       <div
-        className={`relative space-y-4 ${
+        className={`${
+          orientation === DotIndicatorsOrientation.VERTICAL ? 'block' : 'hidden'
+        } mr-4 relative space-y-4 ${
           dotsTransitionStyles ? dotsTransitionStyles : 'opacity-0'
         }`}
         // Each label needs to have it's corresponding dot at it's vertical center
@@ -64,10 +90,23 @@ export const DotIndicators: React.FC<Props> = ({
           top: `calc(${activeIndex * -1.5}rem + ${dotsTopOffset}px)`
         }}
       >
-        {renderedDots}
+        {renderedVerticalDots}
       </div>
+
+      {/* Labels */}
       <div className="inline uppercase text-sm tracking-wide">
         {options[activeIndex]}
+      </div>
+
+      {/* Horizontal dots */}
+      <div
+        className={`${
+          orientation === DotIndicatorsOrientation.HORIZONTAL
+            ? 'visible'
+            : 'hidden'
+        } ml-4 flex space-x-4`}
+      >
+        {renderedHorizontalDots}
       </div>
     </div>
   );

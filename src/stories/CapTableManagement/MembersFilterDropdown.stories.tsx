@@ -4,7 +4,7 @@ import { store } from '@/state/index';
 import { MemberSelectDropdown } from '@/containers/managerActions/shared/memberSelectDropdown';
 
 export default {
-  title: 'Molecules/Cap Table Management/Members filter dropdown',
+  title: '4. Organisms/Cap Table Management/Members filter dropdown',
   component: MemberSelectDropdown,
   argTypes: {
     numberOfMembers: { type: 'number', defaultValue: 5 },

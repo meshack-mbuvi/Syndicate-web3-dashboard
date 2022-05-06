@@ -4,7 +4,7 @@ import { floatedNumberWithCommas } from '@/utils/formattedNumbers';
 
 export default {
   title:
-    'Molecules/Cap Table Management/Modals/Modify Member Tokens/Modify Member Progress Modals',
+    '4. Organisms/Cap Table Management/Modals/Modify Member Tokens/Modify Member Progress Modals',
   argTypes: {
     state: {
       options: [

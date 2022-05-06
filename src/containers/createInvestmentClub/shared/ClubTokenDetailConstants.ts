@@ -30,7 +30,7 @@ const rinkebyTokens: Token[] = [
     symbol: 'ETH',
     name: 'Ethereum',
     address: '',
-    logoURI: '/images/ethereum-logo.svg',
+    logoURI: '/images/ethereum-logo.png',
     decimals: 18,
     default: true
   },
@@ -40,7 +40,7 @@ const rinkebyTokens: Token[] = [
     symbol: 'WETH',
     decimals: 18,
     chainId: 4,
-    logoURI: '/images/prodTokenLogos/wEth.svg'
+    logoURI: '/images/prodTokenLogos/wEth.png'
   },
   {
     name: 'Dai Stablecoin',
@@ -56,7 +56,7 @@ const rinkebyTokens: Token[] = [
     symbol: 'MKR',
     decimals: 18,
     chainId: 4,
-    logoURI: '/images/prodTokenLogos/maker.svg'
+    logoURI: '/images/prodTokenLogos/maker.png'
   },
   {
     name: 'Uniswap',
@@ -64,7 +64,7 @@ const rinkebyTokens: Token[] = [
     symbol: 'UNI',
     decimals: 18,
     chainId: 4,
-    logoURI: '/images/prodTokenLogos/uniswap.svg'
+    logoURI: '/images/prodTokenLogos/uniswap.png'
   }
 ];
 
@@ -75,13 +75,13 @@ const mainnetTokens: Token[] = [
     symbol: 'USDC',
     decimals: 6,
     chainId: 1,
-    logoURI: '/images/prodTokenLogos/USDCoin.svg'
+    logoURI: '/images/prodTokenLogos/USDCoin.png'
   },
   {
     symbol: 'ETH',
     name: 'Ethereum',
     address: '',
-    logoURI: '/images/ethereum-logo.svg',
+    logoURI: '/images/ethereum-logo.png',
     decimals: 18,
     default: true
   },
@@ -91,7 +91,7 @@ const mainnetTokens: Token[] = [
     symbol: 'WETH',
     decimals: 18,
     chainId: 1,
-    logoURI: '/images/prodTokenLogos/wEth.svg'
+    logoURI: '/images/prodTokenLogos/wEth.png'
   },
   {
     name: 'Wrapped BTC',
@@ -99,7 +99,7 @@ const mainnetTokens: Token[] = [
     symbol: 'WBTC',
     decimals: 8,
     chainId: 1,
-    logoURI: '/images/prodTokenLogos/wrapped-btc.svg'
+    logoURI: '/images/prodTokenLogos/wrapped-btc.png'
   },
   {
     name: 'Dai Stablecoin',
@@ -115,7 +115,7 @@ const mainnetTokens: Token[] = [
     symbol: 'UST',
     decimals: 18,
     chainId: 1,
-    logoURI: '/images/prodTokenLogos/terra-usd.svg'
+    logoURI: '/images/prodTokenLogos/terra-usd.png'
   },
   {
     name: 'Uniswap',
@@ -123,7 +123,7 @@ const mainnetTokens: Token[] = [
     symbol: 'UNI',
     decimals: 18,
     chainId: 1,
-    logoURI: '/images/prodTokenLogos/uniswap.svg'
+    logoURI: '/images/prodTokenLogos/uniswap.png'
   },
   {
     name: '0x Protocol Token',
@@ -131,7 +131,7 @@ const mainnetTokens: Token[] = [
     symbol: 'ZRX',
     decimals: 18,
     chainId: 1,
-    logoURI: '/images/prodTokenLogos/0x.svg'
+    logoURI: '/images/prodTokenLogos/0x.png'
   },
   {
     name: 'Curve DAO Token',
@@ -139,7 +139,7 @@ const mainnetTokens: Token[] = [
     symbol: 'CRV',
     decimals: 18,
     chainId: 1,
-    logoURI: '/images/prodTokenLogos/curve.svg'
+    logoURI: '/images/prodTokenLogos/curve.png'
   },
   {
     name: 'Tether USD',
@@ -147,7 +147,15 @@ const mainnetTokens: Token[] = [
     symbol: 'USDT',
     decimals: 6,
     chainId: 1,
-    logoURI: '/images/prodTokenLogos/tether.svg'
+    logoURI: '/images/prodTokenLogos/tether.png'
+  },
+  {
+    name: 'USDCoin',
+    address: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
+    symbol: 'USDC',
+    decimals: 6,
+    chainId: 1,
+    logoURI: '/images/prodTokenLogos/USDCoin.png'
   },
   {
     name: 'Orchid',
@@ -155,7 +163,7 @@ const mainnetTokens: Token[] = [
     symbol: 'OXT',
     decimals: 18,
     chainId: 1,
-    logoURI: '/images/prodTokenLogos/orchid.svg'
+    logoURI: '/images/prodTokenLogos/orchid.png'
   },
   {
     name: 'Maker',
@@ -163,7 +171,7 @@ const mainnetTokens: Token[] = [
     symbol: 'MKR',
     decimals: 18,
     chainId: 1,
-    logoURI: '/images/prodTokenLogos/maker.svg'
+    logoURI: '/images/prodTokenLogos/maker.png'
   },
   {
     name: 'ChainLink Token',
@@ -171,7 +179,7 @@ const mainnetTokens: Token[] = [
     symbol: 'LINK',
     decimals: 18,
     chainId: 1,
-    logoURI: '/images/prodTokenLogos/chainlink.svg'
+    logoURI: '/images/prodTokenLogos/chainlink.png'
   },
   {
     name: 'Reputation Augur v1',
@@ -179,7 +187,7 @@ const mainnetTokens: Token[] = [
     symbol: 'REP',
     decimals: 18,
     chainId: 1,
-    logoURI: '/images/prodTokenLogos/augur.svg'
+    logoURI: '/images/prodTokenLogos/augur.png'
   },
   {
     name: 'Reputation Augur v2',
@@ -187,7 +195,7 @@ const mainnetTokens: Token[] = [
     symbol: 'REPv2',
     decimals: 18,
     chainId: 1,
-    logoURI: '/images/prodTokenLogos/augurV2.svg'
+    logoURI: '/images/prodTokenLogos/augurV2.png'
   },
   {
     name: 'Kyber Network Crystal',
@@ -195,7 +203,7 @@ const mainnetTokens: Token[] = [
     symbol: 'KNC',
     decimals: 18,
     chainId: 1,
-    logoURI: '/images/prodTokenLogos/kyber.svg'
+    logoURI: '/images/prodTokenLogos/kyber.png'
   },
   {
     name: 'Compound',
@@ -203,7 +211,7 @@ const mainnetTokens: Token[] = [
     symbol: 'COMP',
     decimals: 18,
     chainId: 1,
-    logoURI: '/images/prodTokenLogos/compound.svg'
+    logoURI: '/images/prodTokenLogos/compound.png'
   },
   {
     chainId: 1,
@@ -211,7 +219,7 @@ const mainnetTokens: Token[] = [
     name: 'Band Protocol',
     symbol: 'BAND',
     decimals: 18,
-    logoURI: '/images/prodTokenLogos/band.svg'
+    logoURI: '/images/prodTokenLogos/band.webp'
   },
   {
     name: 'Numeraire',
@@ -219,7 +227,7 @@ const mainnetTokens: Token[] = [
     symbol: 'NMR',
     decimals: 18,
     chainId: 1,
-    logoURI: '/images/prodTokenLogos/numeraire.svg'
+    logoURI: '/images/prodTokenLogos/numeraire.png'
   },
   {
     name: 'UMA Voting Token v1',
@@ -227,7 +235,7 @@ const mainnetTokens: Token[] = [
     symbol: 'UMA',
     decimals: 18,
     chainId: 1,
-    logoURI: '/images/prodTokenLogos/uma.svg'
+    logoURI: '/images/prodTokenLogos/uma.png'
   },
   {
     name: 'LoopringCoin V2',
@@ -235,7 +243,7 @@ const mainnetTokens: Token[] = [
     symbol: 'LRC',
     decimals: 18,
     chainId: 1,
-    logoURI: '/images/prodTokenLogos/loopring.svg'
+    logoURI: '/images/prodTokenLogos/loopring.png'
   },
   {
     chainId: 1,
@@ -243,7 +251,7 @@ const mainnetTokens: Token[] = [
     name: 'yearn finance',
     symbol: 'YFI',
     decimals: 18,
-    logoURI: '/images/prodTokenLogos/yearn-finance.svg'
+    logoURI: '/images/prodTokenLogos/yearn-finance.webp'
   },
   {
     name: 'Republic Token',
@@ -251,7 +259,7 @@ const mainnetTokens: Token[] = [
     symbol: 'REN',
     decimals: 18,
     chainId: 1,
-    logoURI: '/images/prodTokenLogos/republic.svg'
+    logoURI: '/images/prodTokenLogos/republic.png'
   },
   {
     name: 'Balancer',
@@ -259,7 +267,7 @@ const mainnetTokens: Token[] = [
     symbol: 'BAL',
     decimals: 18,
     chainId: 1,
-    logoURI: '/images/prodTokenLogos/balancer.svg'
+    logoURI: '/images/prodTokenLogos/balancer.png'
   },
   {
     chainId: 1,
@@ -267,7 +275,7 @@ const mainnetTokens: Token[] = [
     name: 'NuCypher',
     symbol: 'NU',
     decimals: 18,
-    logoURI: '/images/prodTokenLogos/nucypher.svg'
+    logoURI: '/images/prodTokenLogos/nucypher.webp'
   },
   {
     chainId: 1,
@@ -275,7 +283,7 @@ const mainnetTokens: Token[] = [
     name: 'Aave',
     symbol: 'AAVE',
     decimals: 18,
-    logoURI: '/images/prodTokenLogos/AAVE.svg'
+    logoURI: '/images/prodTokenLogos/AAVE.webp'
   },
   {
     chainId: 1,
@@ -283,7 +291,7 @@ const mainnetTokens: Token[] = [
     name: 'The Graph',
     symbol: 'GRT',
     decimals: 18,
-    logoURI: '/images/prodTokenLogos/graph.svg'
+    logoURI: '/images/prodTokenLogos/graph.webp'
   },
   {
     name: 'Bancor Network Token',
@@ -291,7 +299,7 @@ const mainnetTokens: Token[] = [
     symbol: 'BNT',
     decimals: 18,
     chainId: 1,
-    logoURI: '/images/prodTokenLogos/bancor.svg'
+    logoURI: '/images/prodTokenLogos/bancor.png'
   },
   {
     name: 'Synthetix Network Token',
@@ -299,7 +307,7 @@ const mainnetTokens: Token[] = [
     symbol: 'SNX',
     decimals: 18,
     chainId: 1,
-    logoURI: '/images/prodTokenLogos/synthetix.svg'
+    logoURI: '/images/prodTokenLogos/synthetix.png'
   },
   {
     chainId: 1,
@@ -307,7 +315,7 @@ const mainnetTokens: Token[] = [
     name: 'Decentraland',
     symbol: 'MANA',
     decimals: 18,
-    logoURI: '/images/prodTokenLogos/decentraland.svg'
+    logoURI: '/images/prodTokenLogos/decentraland.webp'
   },
   {
     name: 'Loom Network',
@@ -315,7 +323,7 @@ const mainnetTokens: Token[] = [
     symbol: 'LOOM',
     decimals: 18,
     chainId: 1,
-    logoURI: '/images/prodTokenLogos/loom.svg'
+    logoURI: '/images/prodTokenLogos/loom.png'
   },
   {
     chainId: 1,
@@ -323,7 +331,7 @@ const mainnetTokens: Token[] = [
     name: 'Civic',
     symbol: 'CVC',
     decimals: 8,
-    logoURI: '/images/prodTokenLogos/civic.svg'
+    logoURI: '/images/prodTokenLogos/civic.webp'
   },
   {
     chainId: 1,
@@ -331,7 +339,7 @@ const mainnetTokens: Token[] = [
     name: 'district0x',
     symbol: 'DNT',
     decimals: 18,
-    logoURI: '/images/prodTokenLogos/district0x.svg'
+    logoURI: '/images/prodTokenLogos/district0x.png'
   },
   {
     name: 'Storj Token',
@@ -339,7 +347,7 @@ const mainnetTokens: Token[] = [
     symbol: 'STORJ',
     decimals: 8,
     chainId: 1,
-    logoURI: '/images/prodTokenLogos/storj.svg'
+    logoURI: '/images/prodTokenLogos/storj.png'
   },
   {
     chainId: 1,
@@ -347,7 +355,7 @@ const mainnetTokens: Token[] = [
     name: 'Amp',
     symbol: 'AMP',
     decimals: 18,
-    logoURI: '/images/prodTokenLogos/amp.svg'
+    logoURI: '/images/prodTokenLogos/amp.webp'
   },
   {
     name: 'Gnosis Token',
@@ -355,7 +363,7 @@ const mainnetTokens: Token[] = [
     symbol: 'GNO',
     decimals: 18,
     chainId: 1,
-    logoURI: '/images/prodTokenLogos/gnosis.svg'
+    logoURI: '/images/prodTokenLogos/gnosis.webp'
   },
   {
     name: 'Aragon Network Token',
@@ -363,7 +371,7 @@ const mainnetTokens: Token[] = [
     symbol: 'ANT',
     decimals: 18,
     chainId: 1,
-    logoURI: '/images/prodTokenLogos/aragon.svg'
+    logoURI: '/images/prodTokenLogos/aragon.webp'
   },
   {
     chainId: 1,
@@ -371,7 +379,7 @@ const mainnetTokens: Token[] = [
     name: 'Keep Network',
     symbol: 'KEEP',
     decimals: 18,
-    logoURI: '/images/prodTokenLogos/keep.svg'
+    logoURI: '/images/prodTokenLogos/keep.webp'
   },
   {
     chainId: 1,
@@ -379,7 +387,7 @@ const mainnetTokens: Token[] = [
     name: 'tBTC',
     symbol: 'TBTC',
     decimals: 18,
-    logoURI: '/images/prodTokenLogos/tBTC.svg'
+    logoURI: '/images/prodTokenLogos/tBTC.webp'
   },
   {
     chainId: 1,
@@ -387,7 +395,7 @@ const mainnetTokens: Token[] = [
     name: 'Enzyme',
     symbol: 'MLN',
     decimals: 18,
-    logoURI: '/images/prodTokenLogos/enzyme.svg'
+    logoURI: '/images/prodTokenLogos/enzyme.webp'
   },
   {
     chainId: 1,
@@ -395,7 +403,7 @@ const mainnetTokens: Token[] = [
     name: 'Ethereum Name Service',
     symbol: 'ENS',
     decimals: 18,
-    logoURI: '/images/prodTokenLogos/ens.svg'
+    logoURI: '/images/prodTokenLogos/ens.webp'
   },
   {
     name: 'Synth sUSD',
@@ -411,7 +419,7 @@ const mainnetTokens: Token[] = [
     name: 'Polygon',
     symbol: 'MATIC',
     decimals: 18,
-    logoURI: '/images/prodTokenLogos/polygon.svg'
+    logoURI: '/images/prodTokenLogos/polygon.webp'
   }
 ];
 

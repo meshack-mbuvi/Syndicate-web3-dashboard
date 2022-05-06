@@ -6,7 +6,7 @@ import '/node_modules/react-datepicker/dist/react-datepicker.css';
 import '/src/styles/custom-datepicker.css';
 
 export default {
-  title: 'Atoms/Input Field/With Date',
+  title: '2. Atoms/Input Field/With Date',
   component: InputFieldWithDate
 };
 

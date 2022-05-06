@@ -1,11 +1,4 @@
-import { amplitudeLogger, Flow } from '@/components/amplitude';
-import { CLICKED_HELP_FORM_LEGAL_ENTITY } from '@/components/amplitude/eventNames';
-import ArrowDown from '@/components/icons/arrowDown';
 import Modal, { ModalStyle } from '@/components/modal';
-import CopyLink from '@/components/shared/CopyLink';
-import { useDemoMode } from '@/hooks/useDemoMode';
-import { AppState } from '@/state';
-import { setDepositReadyInfo, setWalletSignature } from '@/state/legalInfo';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React, {
@@ -16,12 +9,19 @@ import React, {
   useState
 } from 'react';
 import Floater from 'react-floater';
-import { useDispatch, useSelector } from 'react-redux';
 import {
-  CopyLinkIcon,
   RibbonIcon,
-  RightArrow
+  RightArrow,
+  CopyLinkIcon
 } from 'src/components/iconWrappers';
+import { setWalletSignature, setDepositReadyInfo } from '@/state/legalInfo';
+import { useDispatch, useSelector } from 'react-redux';
+import CopyLink from '@/components/shared/CopyLink';
+import ArrowDown from '@/components/icons/arrowDown';
+import { AppState } from '@/state';
+import { amplitudeLogger, Flow } from '@/components/amplitude';
+import { CLICKED_HELP_FORM_LEGAL_ENTITY } from '@/components/amplitude/eventNames';
+import { useDemoMode } from '@/hooks/useDemoMode';
 
 interface ILinK {
   setShowGenerateLinkModal: Dispatch<SetStateAction<boolean>>;
@@ -108,7 +108,7 @@ const GenerateDepositLink: FC<ILinK> = ({
               }}
             >
               <button
-                className={`bg-green rounded-custom w-full flex items-center justify-center py-4 mb-4 ${
+                className={`bg-green rounded-custom w-full flex items-center justify-center mb-4 ${
                   isDemoMode ? 'cursor-pointer' : ''
                 }`}
                 onMouseEnter={() => setOpen(true)}

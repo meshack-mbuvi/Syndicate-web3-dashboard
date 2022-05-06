@@ -1,10 +1,7 @@
 import React, { Dispatch, SetStateAction } from 'react';
 import Modal, { ModalStyle } from '@/components/modal';
 import { MemberAddressField } from '@/components/inputs/memberAddressField';
-import {
-  InputFieldWithToken,
-  SymbolDisplay
-} from '@/components/inputs/inputFieldWithToken';
+import { InputFieldWithToken } from '@/components/inputs/inputFieldWithToken';
 import { numberWithCommas } from '@/utils/formattedNumbers';
 import { CtaButton } from '@/components/CTAButton';
 
@@ -81,9 +78,9 @@ const ModifyMemberClubTokens: React.FC<IModifyMemberClubTokens> = ({
                   onChange={(e) => handleAmountChange(e)}
                   isInErrorState={Boolean(memberAllocationError)}
                   infoLabel={memberAllocationError ? memberAllocationError : ''}
-                  symbolDisplayVariant={SymbolDisplay.ONLY_SYMBOL}
+                  showClubSymbol={true}
                   placeholderLabel="0"
-                  depositTokenSymbol={symbol}
+                  symbol={symbol}
                 />
               </div>
             </div>

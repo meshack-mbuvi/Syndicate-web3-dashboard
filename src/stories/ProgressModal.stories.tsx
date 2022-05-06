@@ -1,7 +1,7 @@
 import { ProgressModal, ProgressModalState } from '@/components/progressModal';
 
 export default {
-  title: 'Molecules/Modify Club Settings/Progress Modal',
+  title: '4. Organisms/Modify Club Settings/Progress Modal',
   argTypes: {
     state: {
       options: [

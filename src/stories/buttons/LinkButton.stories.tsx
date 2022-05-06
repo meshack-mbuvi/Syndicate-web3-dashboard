@@ -2,7 +2,7 @@ import { LinkButton, LinkType } from '@/components/linkButtons';
 import React from 'react';
 
 export default {
-  title: 'Atoms/Buttons/Link Button',
+  title: '2. Atoms/Buttons/Link Button',
   component: LinkButton,
   argTypes: {
     type: {

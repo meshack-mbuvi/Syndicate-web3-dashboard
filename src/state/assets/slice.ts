@@ -2,6 +2,7 @@ import { getOpenseaTokens, getOpenseaFloorPrices } from '@/utils/api/opensea';
 import { mockCollectiblesResult } from '@/utils/mockdata';
 import { web3 } from '@/utils/web3Utils';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import axios from 'axios';
 import abi from 'human-standard-token-abi';
 import { getWeiAmount } from 'src/utils/conversions';
 import { AbiItem } from 'web3-utils';
@@ -13,13 +14,9 @@ import {
 
 import {
   getNativeTokenPrice,
-  getTokenPrice,
   getTokenTransactionHistory,
   getNativeTokenBalance
 } from '@/utils/api/transactions';
-import { ChainEnum } from '@/utils/api/ChainTypes';
-import { getTokenDetails } from '@/utils/api';
-import { isDev } from '@/utils/environment';
 
 /** Async thunks */
 // ERC20 transactions
@@ -47,21 +44,24 @@ export const fetchTokenTransactions = createAsyncThunk(
     }, []);
 
     // get unique token contracts
-    const uniqueTokens = filterByUniqueContractAddress(tokenValues);
+    const uniquesTokens = filterByUniqueContractAddress(tokenValues);
 
     // check if account has token balance
-    const uniqueTokenBalances = (
-      await fetchTokenBalances(uniqueTokens, account)
+    const uniqueTokenBalances = await (
+      await Promise.all(fetchTokenBalances(uniquesTokens, account))
     ).filter((token) => +token.tokenBalance > 0);
 
-    const chainId = isDev ? ChainEnum.RINKEBY : ChainEnum.ETHEREUM;
-
-    const uniqueTokenPrices = await getTokenPrice(
-      uniqueTokenBalances
-        .map((t) => (t.contractAddress as string).toLocaleLowerCase())
-        .join(),
-      chainId
-    );
+    // Batch fetch prices from CoinGecko
+    const uniqueTokenPrices = await axios
+      .get('/.netlify/functions/getCoinPriceByContractAddress', {
+        params: {
+          contractAddresses: uniqueTokenBalances
+            .map((t) => t.contractAddress)
+            .join()
+        }
+      })
+      .then((res) => res.data.data)
+      .catch(() => []);
 
     // get token logo and price from CoinGecko API
     const completeTokensDetails = await Promise.all(
@@ -74,8 +74,12 @@ export const fetchTokenTransactions = createAsyncThunk(
           tokenName,
           tokenValue = 0
         } = value;
-        const { logo } = await getTokenDetails(contractAddress, chainId)
-          .then((res) => res.data)
+
+        const { logo } = await axios
+          .get(
+            `/.netlify/functions/getCoinInfoByContractAddress/?contractAddress=${contractAddress}`
+          )
+          .then((res) => res.data.data)
           .catch(() => ({ logo: '' }));
 
         return {
@@ -94,7 +98,7 @@ export const fetchTokenTransactions = createAsyncThunk(
     const ethBalance = getWeiAmount(ethBalanceResponse, 18, false);
     const ethDetails = {
       price: { usd: ethPriceResponse },
-      logo: '/images/ethereum-logo.svg',
+      logo: '/images/ethereum-logo.png',
       tokenDecimal: '18',
       tokenSymbol: 'ETH',
       tokenBalance: ethBalance,
@@ -216,25 +220,24 @@ const filterByUniqueContractAddress = (tokensList: any[]) => {
 };
 
 const fetchTokenBalances = (tokensList: any[], account: string) => {
-  return Promise.all(
-    tokensList.map(async (token) => {
-      const tokenCopy = { ...token };
-      const { contractAddress, tokenDecimal } = token;
+  return tokensList.map(async (token) => {
+    const tokenCopy = { ...token };
+    const { contractAddress, tokenDecimal } = token;
 
-      const tokenContractInstance = new web3.eth.Contract(
-        abi as AbiItem[],
-        contractAddress
-      );
-      const accountBalance = await tokenContractInstance.methods
-        .balanceOf(account)
-        .call();
+    const tokenContractInstance = new web3.eth.Contract(
+      abi as AbiItem[],
+      contractAddress
+    );
 
-      const tokenBalance = getWeiAmount(accountBalance, tokenDecimal, false);
+    const accountBalance = await tokenContractInstance.methods
+      .balanceOf(account)
+      .call();
 
-      tokenCopy['tokenBalance'] = tokenBalance;
-      return tokenCopy;
-    })
-  );
+    const tokenBalance = getWeiAmount(accountBalance, tokenDecimal, false);
+
+    tokenCopy['tokenBalance'] = tokenBalance;
+    return tokenCopy;
+  });
 };
 
 // function to check whether "gift" morse code nft
@@ -283,7 +286,7 @@ const assetsSlice = createSlice({
           (token) => {
             const tokenCopy = token;
             tokenCopy['tokenValue'] =
-              parseFloat((tokenCopy.price?.usd ?? 0).toString()) *
+              parseFloat(tokenCopy.price?.usd ?? 0) *
               parseFloat(tokenCopy.tokenBalance);
             return tokenCopy;
           }

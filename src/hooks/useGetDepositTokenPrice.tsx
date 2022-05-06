@@ -22,10 +22,9 @@ export const useGetDepositTokenPrice = (chainId: number) => {
       const pricePromise =
         depositToken === ''
           ? getNativeTokenPrice()
-          : getTokenPrice(depositToken.toLocaleLowerCase(), chainId);
+          : getTokenPrice(depositToken, chainId);
       pricePromise
-        .then((res) => {
-          const price = res[depositToken.toLocaleLowerCase()]['usd'];
+        .then((price) => {
           setTokenPriceInUSDState(price);
           dispatch(setDepositTokenUSDPrice(price));
           setLoading(false);

@@ -7,12 +7,12 @@ import {
   setOtherClubERC20s
 } from '@/state/clubERC20';
 import { formatDate, isZeroAddress, pastDate } from '@/utils';
-import { getTokenDetails } from '@/utils/api';
 import { divideIfNotByZero, getWeiAmount } from '@/utils/conversions';
 import { useQuery } from '@apollo/client';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { getTokenDetails } from '@/utils/api';
 
 const useClubERC20s = () => {
   const dispatch = useDispatch();
@@ -156,7 +156,7 @@ const useClubERC20s = () => {
 
           let depositERC20TokenSymbol = 'ETH';
           let depositERC20TokenDecimals = '18';
-          let depositTokenLogo = '/images/ethereum-logo.svg';
+          let depositTokenLogo = '/images/ethereum-logo.png';
 
           // checks if depositToken is ETH or not
           const maxTotalDeposits = +maxTotalSupplyFromWei / 10000;
@@ -284,32 +284,33 @@ const useClubERC20s = () => {
                 depositAmount,
                 syndicateDAO: {
                   contractAddress,
-                  endTime,
-                  startTime,
+                  createdAt,
                   ownerAddress,
                   totalSupply,
                   totalDeposits,
                   maxTotalSupply,
-                  members
+                  members,
+                  endTime,
+                  startTime
                 }
               } = syndicateDAO;
 
               clubTokens.push({
                 depositAmount,
                 contractAddress,
-                endTime,
-                startTime,
+                createdAt,
                 ownerAddress,
                 totalSupply,
                 totalDeposits,
                 maxTotalSupply,
-                members
+                members,
+                endTime,
+                startTime
               });
             }
           }
         }
       }
-
       dispatch(setLoadingClubERC20s(false));
 
       setClubIamMember(clubTokens);

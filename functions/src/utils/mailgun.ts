@@ -17,8 +17,7 @@ export interface SendEmailParams {
 }
 
 export const sendEmail = async (params: SendEmailParams) =>
-  client.messages.create("mail.syndicate.io", {
-    from: "The Syndicate Concierge <concierge@mail.syndicate.io>",
-    "h:Reply-To": "support@syndicate.io",
-    ...params,
+  client.messages.create('mail.syndicate.io', {
+    from: 'The Syndicate Concierge <concierge@syndicate.io>',
+    ...params
   });

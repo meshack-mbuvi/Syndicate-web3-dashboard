@@ -178,13 +178,14 @@ const ActivityNote: React.FC<IActivityNote> = ({
             </div>
             <div className="border-b border-gray-steelGrey mb-6 h-0"></div>
             <div className="mb-6 text-yellow-saffron bg-yellow-saffron bg-opacity-20 py-4 px-5 rounded-1.5lg">
-              This information may be publicly visible off-chain, so we do not
-              recommend storing sensitive information.
+              To comply with privacy regulations, please do not enter Personal
+              Identifiable Information (PII) of any individual involved in this
+              club or investment.
             </div>
             <div className="w-full flex justify-between space-x-4">
               <button
                 type="button"
-                className={`w-full bg-gray-shuttle text-white hover:text-gray-syn1 primary-CTA`}
+                className={`w-full text-white bg-gray-shuttle rounded-md hover:text-gray-syn1 focus:outline-none p-2 h-12 focus:ring-0`}
                 onClick={() => cancelNote()}
               >
                 Cancel
@@ -192,8 +193,8 @@ const ActivityNote: React.FC<IActivityNote> = ({
               <button
                 type="button"
                 disabled={noteValue === note}
-                className={`w-full ${
-                  noteValue === note ? 'primary-CTA-disabled' : 'primary-CTA'
+                className={`w-full text-black bg-white rounded-md hover:text-gray-syn7 focus:outline-none p-2 h-12 focus:ring-0 ${
+                  noteValue === note && 'cursor-not-allowed bg-gray-shuttle'
                 }`}
                 onClick={() => saveNote()}
               >

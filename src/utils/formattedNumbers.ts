@@ -91,6 +91,23 @@ export const numberInputRemoveCommas = (
   return newVal.replace(/,/g, '');
 };
 
+export const stringNumberRemoveCommas = (value: string) => {
+  let newVal;
+  newVal = value;
+
+  // check and remove leading zeroes if not followed by a decimal point
+  if (
+    newVal.length > 1 &&
+    newVal.charAt(0) === '0' &&
+    newVal.charAt(1) !== '.'
+  ) {
+    newVal = newVal.slice(1);
+  }
+
+  // remove commas from big numbers before we set state
+  return newVal.replace(/,/g, '');
+};
+
 export const numberStringInputRemoveCommas = (input: string) => {
   let newVal;
   newVal = input;

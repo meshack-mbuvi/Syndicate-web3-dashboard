@@ -2,7 +2,7 @@ import { AddressUploader } from '@/components/uploaders/addressUploader';
 import React, { useState } from 'react';
 
 export default {
-  title: 'Organisms/Address Uploader',
+  title: '4. Organisms/Address Uploader',
   argTypes: {
     handleCancelUpload: {
       action: 'Clicked Delete'

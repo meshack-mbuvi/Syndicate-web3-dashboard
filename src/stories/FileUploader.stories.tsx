@@ -2,7 +2,7 @@ import { FileUploader } from '@/components/uploaders/fileUploader';
 import React from 'react';
 
 export default {
-  title: 'Molecules/File Uploader',
+  title: '3. Molecules/File Uploader',
   argTypes: {
     handleCancelUpload: {
       action: 'Clicked delete'

@@ -5,7 +5,7 @@ import {
 import { useState } from 'react';
 
 export default {
-  title: 'Molecules/Token Logic List'
+  title: '3. Molecules/Token Logic List'
 };
 
 const Template = (args) => {

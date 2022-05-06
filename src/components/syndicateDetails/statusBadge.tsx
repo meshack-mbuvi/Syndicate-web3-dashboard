@@ -17,6 +17,8 @@ interface Props {
   syndicateSuccessfullyCreated?: boolean;
   syndicateCreationFailed?: boolean;
   showConfettiSuccess?: boolean;
+  isDistributing?: boolean;
+  isWaitingForSelection?: boolean;
 }
 
 const StatusBadge = (props: Props): JSX.Element => {
@@ -28,7 +30,9 @@ const StatusBadge = (props: Props): JSX.Element => {
     creatingSyndicate,
     syndicateSuccessfullyCreated,
     syndicateCreationFailed,
-    showConfettiSuccess
+    showConfettiSuccess,
+    isDistributing,
+    isWaitingForSelection
   } = props;
 
   const {
@@ -49,6 +53,10 @@ const StatusBadge = (props: Props): JSX.Element => {
     badgeBackgroundColor = 'bg-green-phthalo-green';
     badgeIcon = 'claimToken.svg';
     titleText = isManager ? 'Airdrop Enabled' : 'Claim club tokens';
+  } else if (isDistributing) {
+    badgeBackgroundColor = 'bg-green-phthalo-green';
+    titleText = 'Distributing';
+    badgeIcon = 'distributeIcon.svg';
   } else if (!depositsEnabled) {
     badgeBackgroundColor = 'bg-green-dark';
     badgeIcon = 'active.svg';
@@ -74,6 +82,8 @@ const StatusBadge = (props: Props): JSX.Element => {
     badgeBackgroundColor = 'bg-red-error bg-opacity-10';
     badgeIcon = 'warning-triangle.svg';
     titleText = 'Club creation failed';
+  } else if (isDistributing && isWaitingForSelection) {
+    titleText = 'Waiting for selection...';
   }
 
   return (

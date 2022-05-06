@@ -2,7 +2,7 @@ import React from 'react';
 import IconPlus from '@/components/icons/plusIcon';
 
 export default {
-  title: 'Atoms/PlusIcon',
+  title: '2. Atoms/PlusIcon',
   component: IconPlus,
   argTypes: {
     fill: { control: 'color' },
