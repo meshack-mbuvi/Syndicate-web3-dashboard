@@ -30,6 +30,9 @@ const ClubTokenMembers = (): JSX.Element => {
     legalInfoReducer: {
       depositReadyInfo: { adminSigned },
       walletSignature: { signature }
+    },
+    web3Reducer: {
+      web3: { activeNetwork }
     }
   } = useSelector((state: AppState) => state);
   const dispatch = useDispatch();
@@ -62,7 +65,7 @@ const ClubTokenMembers = (): JSX.Element => {
     const clubLegalData = legal[clubAddress as string];
     if (!clubLegalData?.signaturesNeeded) {
       return setClubDepositLink(
-        `${window.location.origin}/clubs/${clubAddress}`
+        `${window.location.origin}/clubs/${clubAddress}?network=${activeNetwork.chainId}`
       );
     }
     if (
@@ -72,7 +75,8 @@ const ClubTokenMembers = (): JSX.Element => {
       const memberSignURL = generateMemberSignURL(
         clubAddress as string,
         clubLegalData.clubData,
-        clubLegalData.clubData.adminSignature
+        clubLegalData.clubData.adminSignature,
+        activeNetwork.chainId
       );
       setClubDepositLink(memberSignURL);
     }

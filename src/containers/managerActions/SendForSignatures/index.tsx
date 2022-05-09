@@ -31,6 +31,9 @@ const SendForSignatures: FC<ILinkModal> = ({
     legalInfoReducer: {
       clubInfo,
       walletSignature: { signature }
+    },
+    web3Reducer: {
+      web3: { activeNetwork }
     }
   } = useSelector((state: AppState) => state);
 
@@ -58,7 +61,8 @@ const SendForSignatures: FC<ILinkModal> = ({
     const memberSignURL = generateMemberSignURL(
       clubAddress as string,
       clubInfo,
-      signature
+      signature,
+      activeNetwork.chainId
     );
     setClubLegalAgreementSignageLink(memberSignURL);
   }, [signature, clubAddress, clubInfo]);

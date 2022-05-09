@@ -48,7 +48,7 @@ const useShowShareWarning = () => {
 const ManagerActions = (): JSX.Element => {
   const {
     web3Reducer: {
-      web3: { status }
+      web3: { status, activeNetwork }
     },
     erc20TokenSliceReducer: { erc20Token },
     createInvestmentClubSliceReducer: {
@@ -112,7 +112,7 @@ const ManagerActions = (): JSX.Element => {
 
     if (!clubLegalData?.signaturesNeeded) {
       return setClubDepositLink(
-        `${window.location.origin}/clubs/${clubAddress}`
+        `${window.location.origin}/clubs/${clubAddress}?network=${activeNetwork.chainId}`
       );
     }
 
@@ -123,7 +123,8 @@ const ManagerActions = (): JSX.Element => {
       const memberSignURL = generateMemberSignURL(
         clubAddress as string,
         clubLegalData.clubData,
-        clubLegalData.clubData.adminSignature
+        clubLegalData.clubData.adminSignature,
+        activeNetwork.chainId
       );
       setClubDepositLink(memberSignURL);
     }
