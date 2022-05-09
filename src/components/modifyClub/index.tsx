@@ -31,6 +31,7 @@ import { ExternalLinkColor } from '../iconWrappers';
 import { InputFieldWithButton } from '../inputs/inputFieldWithButton';
 import { InputFieldWithDate } from '../inputs/inputFieldWithDate';
 import { InputFieldWithToken } from '../inputs/inputFieldWithToken';
+import { AmountAndMembersDisclaimer } from '@/containers/managerActions/mintAndShareTokens/AmountAndMembersDisclaimer';
 import { PillButtonLarge } from '../pillButtons/pillButtonsLarge';
 
 const progressModalStates = {
@@ -106,8 +107,22 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
     maxTotalSupply,
     symbol,
     loading,
-    currentMintPolicyAddress
+    currentMintPolicyAddress,
+    depositsEnabled
   } = erc20Token;
+
+  let showMintingForClosedClubDisclaimer = false;
+  if (typeof window !== 'undefined') {
+    const mintingForClosedClubDetails = JSON.parse(
+      localStorage.getItem('mintingForClosedClub')
+    );
+
+    if (mintingForClosedClubDetails?.mintingForClosedClub) {
+      const { mintingForClosedClub, clubAddress } = mintingForClosedClubDetails;
+      showMintingForClosedClubDisclaimer =
+        mintingForClosedClub && clubAddress === address;
+    }
+  }
 
   // True is ETH, False is USDC
   const [depositTokenType, setDepositTokenType] = useState(true);
@@ -624,11 +639,38 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
       <div
         className={`${
           areClubChangesAvailable
-            ? 'fixed bottom-0 left-0 space-y-6 p-6 pb-8 bg-black bg-opacity-100 sm:bg-opacity-0 sm:p-0 sm:pb-0 sm:mt-10 sm:static'
+            ? `fixed bottom-0 left-0 space-y-6 p-6 pb-8 bg-black bg-opacity-100 sm:bg-opacity-0 sm:p-0 sm:pb-0 ${
+                depositsEnabled ? 'sm:mt-10' : 'sm:mt-6'
+              } sm:static`
             : 'bg-opacity-0 p-0 pb-0 mt-10 static'
         }`}
       >
-        {/* Disclaimer */}
+        {/* Disclaimer when re-opening club to add new member(s) */}
+        <div
+          className={`${
+            areClubChangesAvailable &&
+            isOpenToDeposits &&
+            !depositsEnabled &&
+            showMintingForClosedClubDisclaimer
+              ? 'max-h-2screen'
+              : 'max-h-0'
+          } transition-all duration-700`}
+        >
+          <div
+            className={`${
+              areClubChangesAvailable &&
+              isOpenToDeposits &&
+              !depositsEnabled &&
+              showMintingForClosedClubDisclaimer
+                ? 'opacity-100'
+                : 'opacity-0'
+            } transition-opacity duration-700`}
+          >
+            <AmountAndMembersDisclaimer />
+          </div>
+        </div>
+
+        {/* Disclaimer for submitting changes */}
         <div
           className={`${
             areClubChangesAvailable && isOpenToDeposits

@@ -2,8 +2,8 @@ import { ClubERC20Contract } from '@/ClubERC20Factory/clubERC20';
 import { NumberField } from '@/components/inputs/numberField';
 import { TextField } from '@/components/inputs/textField';
 import {
-  ERC20TokenDefaultState,
-  setERC20Token
+  setERC20Token,
+  ERC20TokenDefaultState
 } from '@/helpers/erc20TokenDetails';
 import { AppState } from '@/state';
 import { setClubMembers } from '@/state/clubMembers';
@@ -59,6 +59,9 @@ const LegalAgreement: React.FC = () => {
     legalInfoReducer: {
       clubInfo: { adminName }
     },
+    connectClubMemberReducer: {
+      connectedMember: { depositAmount }
+    },
     web3Reducer: {
       web3: { account, web3 }
     },
@@ -85,18 +88,6 @@ const LegalAgreement: React.FC = () => {
     }
   }, [clubAddress, account, router.isReady, ethDepositToken]);
 
-  const {
-    control,
-    handleSubmit,
-    watch,
-    formState: { isValid }
-  } = useForm<FormInputs>({
-    mode: 'onChange',
-    resolver: yupResolver(schema(erc20Token.maxTotalDeposits))
-  });
-
-  const { memberName = '' } = watch();
-
   const { form } = router.query;
   // Check whether form query param exist when page has loaded
   useEffect(() => {
@@ -119,6 +110,19 @@ const LegalAgreement: React.FC = () => {
       }
     }
   }, [router.isReady, form]);
+
+  const {
+    control,
+    handleSubmit,
+    watch,
+    formState: { isValid }
+  } = useForm<FormInputs>({
+    mode: 'onChange',
+    defaultValues: { depositAmount: depositAmount || '' },
+    resolver: yupResolver(schema(erc20Token.maxTotalDeposits))
+  });
+
+  const { memberName = '' } = watch();
 
   const onSubmit = (values) => {
     dispatch(setMemberLegalInfo(values));
@@ -150,8 +154,9 @@ const LegalAgreement: React.FC = () => {
               type="number"
               addOn={depositTokenSymbol}
               control={control}
-              info="Total amount you intend to deposit"
+              info="Amount you intend to deposit into the investment club"
               addOnStyles=""
+              defaultValue={depositAmount}
             />
 
             <TextField

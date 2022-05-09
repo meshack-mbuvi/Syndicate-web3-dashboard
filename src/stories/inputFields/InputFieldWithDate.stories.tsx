@@ -1,6 +1,6 @@
 import { InputField } from '@/components/inputs/inputField';
 import { InputFieldWithDate } from '@/components/inputs/inputFieldWithDate';
-import { ComponentStory, ComponentMeta } from '@storybook/react';
+import { ComponentStory } from '@storybook/react';
 import React, { useState } from 'react';
 import '/node_modules/react-datepicker/dist/react-datepicker.css';
 import '/src/styles/custom-datepicker.css';

@@ -18,6 +18,7 @@ interface InputFieldProps {
   onChange?: (e) => void;
   onKeyDown?: (e) => void;
   onClick?: (e) => void;
+  disabled?: boolean;
 }
 
 export const InputField = forwardRef<HTMLInputElement, InputFieldProps>(

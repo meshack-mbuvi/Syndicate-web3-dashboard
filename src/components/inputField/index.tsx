@@ -3,7 +3,7 @@ export const InputField = (props: {
   placeholder: string;
   extraClasses: string;
   onChange: (e) => void;
-}) => {
+}): React.ReactElement => {
   const { value, placeholder, extraClasses = '', onChange } = props;
 
   return (

@@ -77,7 +77,7 @@ export const SuccessOrFailureContent: React.FC<{
                 ethDepositToken ?? false
               )} ${depositTokenSymbol}`
             : successfulClaim
-            ? 'Claim successfull'
+            ? 'Claim successful'
             : claimFailed
             ? 'Claim failed'
             : `Deposit failed`}

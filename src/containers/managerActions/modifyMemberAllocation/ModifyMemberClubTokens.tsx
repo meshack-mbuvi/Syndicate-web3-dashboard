@@ -80,7 +80,7 @@ const ModifyMemberClubTokens: React.FC<IModifyMemberClubTokens> = ({
                   infoLabel={memberAllocationError ? memberAllocationError : ''}
                   showClubSymbol={true}
                   placeholderLabel="0"
-                  symbol={symbol}
+                  depositTokenSymbol={symbol}
                 />
               </div>
             </div>

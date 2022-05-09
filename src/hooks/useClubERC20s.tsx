@@ -105,8 +105,8 @@ const useClubERC20s = () => {
           contractAddress,
           members,
           ownerAddress,
-          totalSupply,
           totalDeposits,
+          totalSupply,
           startTime,
           endTime,
           maxMemberCount,
@@ -179,7 +179,6 @@ const useClubERC20s = () => {
 
           const depositsEnabled = !pastDate(new Date(+endTime * 1000));
 
-          //  calculate ownership share
           const memberDeposits = getWeiAmount(
             depositAmount,
             depositERC20TokenDecimals
@@ -311,6 +310,7 @@ const useClubERC20s = () => {
           }
         }
       }
+
       dispatch(setLoadingClubERC20s(false));
 
       setClubIamMember(clubTokens);

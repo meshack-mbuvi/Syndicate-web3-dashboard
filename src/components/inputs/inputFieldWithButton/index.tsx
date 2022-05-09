@@ -9,6 +9,7 @@ export const InputFieldWithButton = (props: {
   extraClasses?: string;
   buttonLabel: string | any;
   isButtonActive?: boolean;
+  disabled?: boolean;
   buttonOnClick?: () => void;
   onChange: (e) => void;
   symbol?: string;
@@ -24,6 +25,7 @@ export const InputFieldWithButton = (props: {
     buttonOnClick,
     onChange,
     symbol,
+    disabled,
     ...rest
   } = props;
 
@@ -36,6 +38,7 @@ export const InputFieldWithButton = (props: {
           isInErrorState={isInErrorState}
           extraClasses={extraClasses}
           onChange={onChange}
+          disabled={disabled}
           {...rest}
         />
         <div

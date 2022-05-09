@@ -259,6 +259,7 @@ export const setERC20Token =
             : erc20Token.maxTotalDeposits
         })
       );
+
       dispatch(setLoadingClub(false));
     } catch (error) {
       return dispatch(setERC20TokenDetails(ERC20TokenDefaultState));

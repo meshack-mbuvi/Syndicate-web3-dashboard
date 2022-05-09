@@ -1,4 +1,12 @@
+import { amplitudeLogger, Flow } from '@/components/amplitude';
+import { CLICKED_HELP_FORM_LEGAL_ENTITY } from '@/components/amplitude/eventNames';
+import { CtaButton } from '@/components/CTAButton';
+import ArrowDown from '@/components/icons/arrowDown';
 import Modal, { ModalStyle } from '@/components/modal';
+import CopyLink from '@/components/shared/CopyLink';
+import { useDemoMode } from '@/hooks/useDemoMode';
+import { AppState } from '@/state';
+import { setDepositReadyInfo, setWalletSignature } from '@/state/legalInfo';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React, {
@@ -9,19 +17,15 @@ import React, {
   useState
 } from 'react';
 import Floater from 'react-floater';
-import {
-  RibbonIcon,
-  RightArrow,
-  CopyLinkIcon
-} from 'src/components/iconWrappers';
-import { setWalletSignature, setDepositReadyInfo } from '@/state/legalInfo';
 import { useDispatch, useSelector } from 'react-redux';
-import CopyLink from '@/components/shared/CopyLink';
-import ArrowDown from '@/components/icons/arrowDown';
-import { AppState } from '@/state';
-import { amplitudeLogger, Flow } from '@/components/amplitude';
-import { CLICKED_HELP_FORM_LEGAL_ENTITY } from '@/components/amplitude/eventNames';
-import { useDemoMode } from '@/hooks/useDemoMode';
+import {
+  CopyLinkIcon,
+  ExternalLinkColor,
+  ExternalLinkIcon,
+  RibbonIcon,
+  RightArrow
+} from 'src/components/iconWrappers';
+import { LegalDocumentPreview } from '../shared/legalDocumentPreview';
 
 interface ILinK {
   setShowGenerateLinkModal: Dispatch<SetStateAction<boolean>>;
@@ -108,7 +112,7 @@ const GenerateDepositLink: FC<ILinK> = ({
               }}
             >
               <button
-                className={`bg-green rounded-custom w-full flex items-center justify-center mb-4 ${
+                className={`bg-green rounded-custom w-full flex items-center justify-center py-4 mb-4 ${
                   isDemoMode ? 'cursor-pointer' : ''
                 }`}
                 onMouseEnter={() => setOpen(true)}
@@ -188,10 +192,10 @@ const GenerateDepositLink: FC<ILinK> = ({
 interface ILinkModal {
   setShowGenerateLinkModal: Dispatch<SetStateAction<boolean>>;
   showGenerateLinkModal: boolean;
-  setCopyLinkCTA: Dispatch<SetStateAction<string>>;
+  setCopyLinkCTA?: Dispatch<SetStateAction<string>>;
 }
 
-const DepositLinkModal: FC<ILinkModal> = ({
+export const DepositLinkModal: FC<ILinkModal> = ({
   setShowGenerateLinkModal,
   showGenerateLinkModal,
   setCopyLinkCTA
@@ -199,8 +203,13 @@ const DepositLinkModal: FC<ILinkModal> = ({
   const {
     legalInfoReducer: {
       depositReadyInfo: { depositLink }
+    },
+    erc20TokenSliceReducer: {
+      erc20Token: { depositsEnabled }
     }
   } = useSelector((state: AppState) => state);
+
+  const [showAdditionalStep, setShowAdditionalStep] = useState(false);
 
   const router = useRouter();
   const dispatch = useDispatch();
@@ -239,6 +248,24 @@ const DepositLinkModal: FC<ILinkModal> = ({
     }
   }, [showGenerateLinkModal]);
 
+  const legalDocuments = [
+    {
+      documentText: 'Default Operating Agreement',
+      documentLink:
+        'https://docs.google.com/document/d/1rZRBUuUyTmOnMrTP5TwaRiEF11tHskyE'
+    },
+    {
+      documentText: 'Default Subscription Agreement',
+      documentLink:
+        'https://docs.google.com/document/d/1g2XggEVUGTmdzqHIUHgnjEA6Kld1TmJN'
+    }
+  ];
+
+  const handleShowAdditionalStep = () => {
+    setShowGenerateLinkModal(true);
+    setShowAdditionalStep(true);
+  };
+
   return (
     <Modal
       {...{
@@ -246,9 +273,10 @@ const DepositLinkModal: FC<ILinkModal> = ({
         show: showGenerateLinkModal,
         closeModal: () => {
           setShowGenerateLinkModal(false);
+          setShowAdditionalStep(false);
         },
         customWidth: 'w-100',
-        customClassName: 'pt-8 px-5 pb-5',
+        customClassName: 'pt-8 px-10 pb-5',
         showCloseButton: false,
         outsideOnClick: true,
         showHeader: false,
@@ -256,28 +284,31 @@ const DepositLinkModal: FC<ILinkModal> = ({
         margin: 'mt-48'
       }}
     >
-      <>
-        <div className="px-5 -mb-1">
-          <div className="leading-6">
-            Would you like members to sign Operating & Subscription Agreements
-            before they deposit?
-          </div>
-          <div className="text-sm text-gray-syn4 mt-4 mb-6">
-            To adapt these legal documents to your needs,{' '}
-            <a
-              href="https://syndicatedao.gitbook.io/syndicate-wiki/web3-investment-clubs/create-a-legal-entity/template-legal-docs"
-              className="text-blue cursor-pointer"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <span>make a copy</span>
-            </a>
-          </div>
-          <div className="space-y-4">
-            <Link href={`/clubs/${clubAddress}/manage/legal/prepare`}>
+      {depositsEnabled && !showAdditionalStep ? (
+        <>
+          <div className="-mb-1">
+            <div className="leading-6">
+              Would you like members to sign Operating & Subscription Agreements
+              before they deposit?
+            </div>
+            <div className="text-sm text-gray-syn4 mt-4 mb-6">
+              To adapt these legal documents to your needs,{' '}
+              <a
+                href="https://syndicatedao.gitbook.io/syndicate-wiki/web3-investment-clubs/create-a-legal-entity/template-legal-docs"
+                className="text-blue cursor-pointer"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <span>make a copy</span>
+              </a>
+            </div>
+            <div className="space-y-4">
               <div
                 className="border-1 border-gray-syn6 hover:border-blue hover:cursor-pointer rounded-1.5lg flex flex-col group"
-                onClick={() => startDocumentSigning('yes')}
+                onClick={() => handleShowAdditionalStep()}
+                onKeyDown={() => ''}
+                role="button"
+                tabIndex={0}
               >
                 <div className="flex justify-between px-8 py-6 items-center leading-3.5 cursor-pointer">
                   <div>
@@ -303,37 +334,135 @@ const DepositLinkModal: FC<ILinkModal> = ({
                   />
                 </div>
               </div>
-            </Link>
-            <button
-              className="border-1 w-full border-gray-syn6 hover:border-blue cursor-pointer p-8 rounded-1.5lg"
-              onClick={() => startDocumentSigning('no')}
-            >
-              <p className="leading-6 text-left">No</p>
-              <p className="text-sm text-left leading-4 text-gray-syn3 mt-0.5">
-                I will handle legal documents separately
-              </p>
-            </button>
+
+              <button
+                className="border-1 w-full border-gray-syn6 hover:border-blue cursor-pointer p-8 rounded-1.5lg"
+                onClick={() => startDocumentSigning('no')}
+              >
+                <p className="leading-6 text-left">No</p>
+                <p className="text-sm text-left leading-4 text-gray-syn3 mt-0.5">
+                  I will handle legal documents separately
+                </p>
+              </button>
+            </div>
           </div>
-        </div>
-        <div className="mt-14 mb-6 h-px bg-gray-syn6"></div>
-        <p className="px-5 text-gray-syn4 text-sm leading-5.5 text-center pb-2">
-          Help me{' '}
-          <a
-            className="text-blue cursor-pointer"
-            href="https://syndicatedao.gitbook.io/syndicate-guide/web3-investment-clubs/create-a-legal-entity"
-            target="_blank"
-            rel="noopener noreferrer"
-            onClick={() => {
-              amplitudeLogger(CLICKED_HELP_FORM_LEGAL_ENTITY, {
-                flow: Flow.LEGAL_ENTITY_FLOW
-              });
-            }}
-          >
-            form a legal entity
-          </a>{' '}
-          first
-        </p>
-      </>
+          <div className="mt-14 mb-6 h-px bg-gray-syn6"></div>
+          <p className="px-5 text-gray-syn4 text-sm leading-5.5 text-center pb-2">
+            Help me{' '}
+            <a
+              className="text-blue cursor-pointer"
+              href="https://syndicatedao.gitbook.io/syndicate-guide/web3-investment-clubs/create-a-legal-entity"
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={() => {
+                amplitudeLogger(CLICKED_HELP_FORM_LEGAL_ENTITY, {
+                  flow: Flow.LEGAL_ENTITY_FLOW
+                });
+              }}
+            >
+              form a legal entity
+            </a>{' '}
+            first
+          </p>
+        </>
+      ) : (
+        <>
+          <div className="pb-5">
+            <div className="leading-6 body">
+              <p className="flex space-x-4">
+                {depositsEnabled ? (
+                  <button
+                    onClick={() => {
+                      setShowAdditionalStep(false);
+                      setShowGenerateLinkModal(true);
+                    }}
+                  >
+                    <img src="/images/arrowBack.svg" alt="back" />
+                  </button>
+                ) : (
+                  ''
+                )}
+
+                <span>Sign legal agreements</span>
+              </p>
+            </div>
+            <div className="text-sm flex text-gray-syn4 mt-2 mb-6">
+              Takes ~5 mins and requires an
+              <a
+                href="https://syndicatedao.gitbook.io/syndicate-guide/web3-investment-clubs/create-a-legal-entity"
+                className="text-gray-syn4 cursor-pointer ml-1 flex align-middle p-0 space-x-2"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <span>existing LLC</span>
+                <ExternalLinkIcon iconColor={ExternalLinkColor.GRAY4} />
+              </a>
+            </div>
+
+            <div className="space-y-6">
+              <div className="border-1 border-gray-syn6 rounded-1.5lg flex flex-col group">
+                {legalDocuments.map(({ documentText, documentLink }, index) => (
+                  <>
+                    <div
+                      className="flex justify-between px-6 py-4 items-center leading-3.5"
+                      key={index}
+                    >
+                      <LegalDocumentPreview
+                        documentLink={documentLink}
+                        documentText={documentText}
+                      />
+                    </div>
+
+                    {index == legalDocuments.length - 1 ? (
+                      ''
+                    ) : (
+                      <div className="mt-2mb-6 h-px bg-gray-syn6"></div>
+                    )}
+                  </>
+                ))}
+
+                <div className="flex justify-center align-middle rounded-b-1.5lg py-2.5 bg-gray-inactive w-full">
+                  <RibbonIcon
+                    className="text-white"
+                    height={'0.75rem'}
+                    width={'0.75rem'}
+                  />
+                  <span className="mx-1 text-subtext">Powered by</span>
+                  <img
+                    src="/images/latham&watkinsllp.svg"
+                    alt="latham & watkins llp logo"
+                  />
+                </div>
+              </div>
+
+              <div className="text-sm text-gray-syn4 mt-4 mb-6">
+                To adapt these documents to your needs,{' '}
+                <a
+                  href="https://syndicatedao.gitbook.io/syndicate-wiki/web3-investment-clubs/create-a-legal-entity/template-legal-docs"
+                  className="text-blue cursor-pointer"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <span>make a copy</span>
+                </a>
+                .<div>You can always handle legal agreements separately.</div>
+              </div>
+
+              <Link href={`/clubs/${clubAddress}/manage/legal/prepare`}>
+                <CtaButton
+                  onClick={() => {
+                    if (depositsEnabled) {
+                      startDocumentSigning('yes');
+                    }
+                  }}
+                >
+                  Prepare legal documents
+                </CtaButton>
+              </Link>
+            </div>
+          </div>
+        </>
+      )}
     </Modal>
   );
 };
