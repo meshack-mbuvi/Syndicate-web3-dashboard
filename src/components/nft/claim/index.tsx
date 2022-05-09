@@ -196,11 +196,11 @@ const ClaimNFT: React.FC = () => {
       publicSingleClaimEnabled,
       publicUtilityClaimEnabled,
       nativePrice,
-      mintPrice: Number(getWeiAmount(nativePrice, 18, false)),
+      mintPrice: Number(getWeiAmount(web3, nativePrice, 18, false)),
       priceUSD: parseFloat(
         (
           parseFloat(String(tokenPrice)) *
-          parseFloat(String(getWeiAmount(nativePrice, 18, false)))
+          parseFloat(String(getWeiAmount(web3, nativePrice, 18, false)))
         ).toFixed(2)
       ),
       maxPerAddress,

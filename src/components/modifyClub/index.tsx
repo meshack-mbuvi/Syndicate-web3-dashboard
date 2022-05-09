@@ -301,11 +301,12 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
 
       const _tokenCap = depositTokenType
         ? getWeiAmount(
+            web3,
             (maxAmountRaising * nativeEchageRate).toString(),
             18,
             true
           )
-        : getWeiAmount(String(maxAmountRaising), 18, true);
+        : getWeiAmount(web3, String(maxAmountRaising), 18, true);
 
       const mintPolicy = new MintPolicyContract(currentMintPolicyAddress, web3);
 

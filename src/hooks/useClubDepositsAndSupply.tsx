@@ -34,7 +34,7 @@ export function useClubDepositsAndSupply(contractAddress: string): {
       depositDetails: { depositTokenDecimals }
     },
     web3Reducer: {
-      web3: { activeNetwork }
+      web3: { activeNetwork, web3 }
     }
   } = useSelector((state: AppState) => state);
 
@@ -93,8 +93,10 @@ export function useClubDepositsAndSupply(contractAddress: string): {
     const { totalDeposits, totalSupply, startTime, endTime } =
       syndicateDAO || {};
 
-    setTotalSupply(getWeiAmount(totalSupply, tokenDecimals || 18, false));
-    setTotalDeposits(getWeiAmount(totalDeposits, depositTokenDecimals, false));
+    setTotalSupply(getWeiAmount(web3, totalSupply, tokenDecimals || 18, false));
+    setTotalDeposits(
+      getWeiAmount(web3, totalDeposits, depositTokenDecimals, false)
+    );
     setStartTime(+startTime * 1000);
     setEndTime(+endTime * 1000);
     setLoadingClubDeposits(false);

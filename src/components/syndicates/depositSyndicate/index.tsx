@@ -161,7 +161,12 @@ const DepositSyndicate: React.FC = () => {
       // converting to Wei here to multiply because of a weird js precision issue when multiplying.
       // for instance, 0.0003 * 10000 returns 2.9999 instead of 3.
       const memberTokens = nativeDepositToken
-        ? (getWeiAmount(depositAmountFinalized, depositTokenDecimals, true) *
+        ? (getWeiAmount(
+            web3,
+            depositAmountFinalized,
+            depositTokenDecimals,
+            true
+          ) *
             activeNetwork.nativeCurrency.exchangeRate) /
           10 ** depositTokenDecimals
         : +depositAmountFinalized;
@@ -352,7 +357,7 @@ const DepositSyndicate: React.FC = () => {
     try {
       if (mintModule === NATIVE_MINT_MODULE) {
         await syndicateContracts.NativeMintModule?.deposit(
-          getWeiAmount(amount, depositTokenDecimals, true),
+          getWeiAmount(web3, amount, depositTokenDecimals, true),
           erc20TokenContract.clubERC20Contract._address,
           account,
           onTxConfirm,
@@ -362,7 +367,7 @@ const DepositSyndicate: React.FC = () => {
         );
       } else if (mintModule === SINGLE_TOKEN_MINT_MODULE_ADDR) {
         await syndicateContracts.SingleTokenMintModule?.deposit(
-          getWeiAmount(amount, depositTokenDecimals, true),
+          getWeiAmount(web3, amount, depositTokenDecimals, true),
           erc20TokenContract.clubERC20Contract._address,
           account,
           onTxConfirm,
@@ -372,7 +377,7 @@ const DepositSyndicate: React.FC = () => {
         );
       } else if (mintModule === DEPOSIT_TOKEN_MINT_MODULE) {
         await syndicateContracts.DepositTokenMintModule?.deposit(
-          getWeiAmount(amount, depositTokenDecimals, true),
+          getWeiAmount(web3, amount, depositTokenDecimals, true),
           erc20TokenContract.clubERC20Contract._address,
           account,
           onTxConfirm,
@@ -553,6 +558,7 @@ const DepositSyndicate: React.FC = () => {
           .call({ from: account });
 
         const currentMemberAllowanceAmount = getWeiAmount(
+          web3,
           memberAllowanceAmount.toString(),
           depositTokenDecimals,
           false
@@ -582,6 +588,7 @@ const DepositSyndicate: React.FC = () => {
 
     // set amount to approve.
     const amountToApprove = getWeiAmount(
+      web3,
       depositAmount.toString(),
       depositTokenDecimals,
       true

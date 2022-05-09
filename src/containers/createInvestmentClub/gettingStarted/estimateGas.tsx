@@ -9,7 +9,7 @@ import { useSelector } from 'react-redux';
 const EstimateGas = (props: { customClasses?: string }) => {
   const {
     web3Reducer: {
-      web3: { account, activeNetwork }
+      web3: { account, activeNetwork, web3 }
     },
     initializeContractsReducer: {
       syndicateContracts: { clubERC20Factory }
@@ -59,7 +59,12 @@ const EstimateGas = (props: { customClasses?: string }) => {
   useEffect(() => {
     if (!gasUnits || !gasBaseFee) return;
     const estimatedGasInWei = gasUnits * (gasBaseFee + 2);
-    const estimatedGas = getWeiAmount(estimatedGasInWei.toString(), 18, false);
+    const estimatedGas = getWeiAmount(
+      web3,
+      estimatedGasInWei.toString(),
+      18,
+      false
+    );
     setGas(+estimatedGas);
   }, [gasUnits, gasBaseFee]);
 

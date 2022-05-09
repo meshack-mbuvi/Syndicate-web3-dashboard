@@ -41,7 +41,7 @@ const useFetchMerkleProof: any = (skipQuery = false) => {
       setMerkleProof({
         ...merkleObj,
         account: address,
-        _amount: getWeiAmount(merkleObj?.amount, tokenDecimals, false)
+        _amount: getWeiAmount(web3, merkleObj?.amount, tokenDecimals, false)
       })
     );
     dispatch(setLoadingMerkleProof(false));

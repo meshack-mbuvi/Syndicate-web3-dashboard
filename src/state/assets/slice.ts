@@ -97,6 +97,7 @@ export const fetchTokenTransactions = createAsyncThunk(
 
     // get native details to append to token details
     const nativeBalance = getWeiAmount(
+      web3,
       nativeBalanceResponse,
       activeNetwork.nativeCurrency.decimals,
       false
@@ -191,7 +192,7 @@ export const fetchCollectiblesTransactions = createAsyncThunk(
         total_price
       } = lastSale;
       const lastPurchasePriceUSD =
-        +usd_price * +getWeiAmount(total_price, decimals, false);
+        +usd_price * +getWeiAmount(web3, total_price, decimals, false);
       lastPurchasePrice.lastPurchasePriceUSD = lastPurchasePriceUSD;
       lastPurchasePrice.lastPurchasePriceNative = native_price;
     }
@@ -245,7 +246,12 @@ const fetchTokenBalances = (tokensList: any[], account: string, web3: any) => {
       .balanceOf(account)
       .call();
 
-    const tokenBalance = getWeiAmount(accountBalance, tokenDecimal, false);
+    const tokenBalance = getWeiAmount(
+      web3,
+      accountBalance,
+      tokenDecimal,
+      false
+    );
 
     tokenCopy['tokenBalance'] = tokenBalance;
     return tokenCopy;

@@ -33,7 +33,7 @@ const ModifyClubTokens: React.FC<{
     },
     modifyCapTableSlice: { memberToUpdate },
     web3Reducer: {
-      web3: { account, activeNetwork }
+      web3: { account, activeNetwork, web3 }
     },
     initializeContractsReducer: { syndicateContracts }
   } = useSelector((state: AppState) => state);
@@ -188,7 +188,12 @@ const ModifyClubTokens: React.FC<{
       if (mintOrBurn) {
         if (useOwnerMintModule) {
           await syndicateContracts.OwnerMintModule.ownerMint(
-            getWeiAmount(tokensToMintOrBurn.toString(), tokenDecimals, true),
+            getWeiAmount(
+              web3,
+              tokensToMintOrBurn.toString(),
+              tokenDecimals,
+              true
+            ),
             erc20TokenContract.address,
             memberToUpdate.memberAddress,
             account,
@@ -201,7 +206,12 @@ const ModifyClubTokens: React.FC<{
           if (isDev) {
             await erc20TokenContract.mintTo(
               memberToUpdate.memberAddress,
-              getWeiAmount(tokensToMintOrBurn.toString(), tokenDecimals, true),
+              getWeiAmount(
+                web3,
+                tokensToMintOrBurn.toString(),
+                tokenDecimals,
+                true
+              ),
               account,
               onTxConfirm,
               onTxReceipt,
@@ -216,7 +226,12 @@ const ModifyClubTokens: React.FC<{
 
             await oldErc20TokenContract.controllerMint(
               memberToUpdate.memberAddress,
-              getWeiAmount(tokensToMintOrBurn.toString(), tokenDecimals, true),
+              getWeiAmount(
+                web3,
+                tokensToMintOrBurn.toString(),
+                tokenDecimals,
+                true
+              ),
               account,
               onTxConfirm,
               onTxReceipt,
@@ -228,7 +243,12 @@ const ModifyClubTokens: React.FC<{
       } else {
         await erc20TokenContract.controllerRedeem(
           memberToUpdate.memberAddress,
-          getWeiAmount(tokensToMintOrBurn.toString(), tokenDecimals, true),
+          getWeiAmount(
+            web3,
+            tokensToMintOrBurn.toString(),
+            tokenDecimals,
+            true
+          ),
           account,
           onTxConfirm,
           onTxReceipt,

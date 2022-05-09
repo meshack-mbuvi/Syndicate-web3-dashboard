@@ -21,7 +21,7 @@ export const useNativeBalance = (account: string): number => {
       web3.eth
         .getBalance(account)
         .then((balance) => {
-          setNativeBalance(getWeiAmount(balance, 18, false));
+          setNativeBalance(getWeiAmount(web3, balance, 18, false));
         })
         .catch(() => {
           setNativeBalance(0);

@@ -1,5 +1,3 @@
-const Web3 = require('web3');
-const web3 = new Web3(`${process.env.NEXT_PUBLIC_ALCHEMY}`);
 const CoinGecko = require('coingecko-api');
 const abi = require('human-standard-token-abi');
 
@@ -8,7 +6,7 @@ import { TokenMappings } from './tokenMappings';
 const CoinGeckoClient = new CoinGecko();
 const debugging = process.env.NEXT_PUBLIC_DEBUG;
 
-export async function getCoinFromContractAddress(contractAddress) {
+export async function getCoinFromContractAddress(contractAddress, web3) {
   if (!contractAddress) return;
   /**
    * This function receives the contractAddress as a parameter

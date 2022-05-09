@@ -104,7 +104,7 @@ const RedeemRug: React.FC = () => {
     try {
       const tokens = await rugRadioContract?.methods.balanceOf(account).call();
       const decimals = await rugRadioContract?.methods.decimals().call();
-      setAvailableTokens(getWeiAmount(tokens, decimals, false));
+      setAvailableTokens(getWeiAmount(web3, tokens, decimals, false));
     } catch (error) {
       setAvailableTokens(0);
     }
@@ -117,6 +117,7 @@ const RedeemRug: React.FC = () => {
         .call({ from: account });
 
       const currentAllowance = getWeiAmount(
+        web3,
         tokenAllowance.toString(),
         18,
         false
@@ -217,6 +218,7 @@ const RedeemRug: React.FC = () => {
 
     // set amount to approve.
     const amountToApprove = getWeiAmount(
+      web3,
       rugTokensToRedeem.toString(),
       18,
       true
@@ -311,7 +313,7 @@ const RedeemRug: React.FC = () => {
     setMetamaskConfirmPending(true);
     await depositExchangeMintModule.mint(
       rugDaoTokenAddress,
-      getWeiAmount(rugTokensToRedeem.toString(), 18, true),
+      getWeiAmount(web3, rugTokensToRedeem.toString(), 18, true),
       account,
       onTxConfirm,
       onTxReceipt,

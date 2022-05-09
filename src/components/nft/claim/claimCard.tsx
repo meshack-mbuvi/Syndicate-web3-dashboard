@@ -26,7 +26,7 @@ const ClaimCard: React.FC<{
     erc721AirdropInfoSliceReducer: { erc721AirdropInfo },
     claimedERC721SliceReducer: { erc721Claimed },
     web3Reducer: {
-      web3: { account, status, activeNetwork }
+      web3: { account, status, activeNetwork, web3 }
     },
     erc721TokenSliceReducer: { erc721Token }
   } = useSelector((state: AppState) => state);
@@ -79,7 +79,7 @@ const ClaimCard: React.FC<{
         new BigNumber(erc721Token.nativePrice).times(claimAmount)
       );
       setClaimNativeValue(amount);
-      setClaimValue(getWeiAmount(amount, 18, false));
+      setClaimValue(getWeiAmount(web3, amount, 18, false));
     }
   }, [erc721Token.nativePrice, claimAmount, rawNativeBalance]);
 
@@ -91,7 +91,7 @@ const ClaimCard: React.FC<{
       claimAmount > erc721Token.maxPerAddress
     ) {
       setClaimError('Max Claim Exceeded');
-    } else if (claimValue > getWeiAmount(rawNativeBalance, 18, false)) {
+    } else if (claimValue > getWeiAmount(web3, rawNativeBalance, 18, false)) {
       setClaimError(
         `Insufficient ${activeNetwork.nativeCurrency.symbol} balance`
       );

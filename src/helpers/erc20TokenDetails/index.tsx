@@ -47,7 +47,8 @@ export const getERC20TokenDetails = async (
   ERC20tokenContract,
   policyMintERC20: MintPolicyContract,
   mintPolicy: MintPolicyContract,
-  MerkleDistributorModule: MerkleDistributorModuleContract
+  MerkleDistributorModule: MerkleDistributorModuleContract,
+  web3: any
 ): Promise<ERC20Token> => {
   if (ERC20tokenContract) {
     try {
@@ -89,7 +90,7 @@ export const getERC20TokenDetails = async (
         ]);
 
       const totalSupply = await ERC20tokenContract.totalSupply().then((wei) =>
-        getWeiAmount(wei, tokenDecimals, false)
+        getWeiAmount(web3, wei, tokenDecimals, false)
       );
 
       // Check both mint policies
@@ -127,12 +128,22 @@ export const getERC20TokenDetails = async (
         memberCount,
         loading: false,
         maxMemberCount,
-        maxTotalSupply: getWeiAmount(maxTotalSupply, tokenDecimals, false),
+        maxTotalSupply: getWeiAmount(
+          web3,
+          maxTotalSupply,
+          tokenDecimals,
+          false
+        ),
         requiredToken,
         depositsEnabled,
         claimEnabled,
         requiredTokenMinBalance,
-        maxTotalDeposits: getWeiAmount(maxTotalSupply, tokenDecimals, false), //should be updated if token prices is not 1:1
+        maxTotalDeposits: getWeiAmount(
+          web3,
+          maxTotalSupply,
+          tokenDecimals,
+          false
+        ), //should be updated if token prices is not 1:1
         startTime: parseInt(startTime, 10) * 1000, // time is in seconds. need to change to milliseconds
         endTime: parseInt(endTime, 10) * 1000 // time is in seconds. need to change to milliseconds
       };
@@ -242,7 +253,7 @@ export const setERC20Token =
         }
       },
       web3Reducer: {
-        web3: { activeNetwork }
+        web3: { activeNetwork, web3 }
       }
     } = getState();
 
@@ -253,7 +264,8 @@ export const setERC20Token =
         ERC20tokenContract,
         policyMintERC20,
         mintPolicy,
-        MerkleDistributorModule
+        MerkleDistributorModule,
+        web3
       );
 
       const { _nativeDepositToken } = await isNativeDepositToken(

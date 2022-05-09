@@ -26,7 +26,9 @@ export const useERC20TokenBalance = (
         .balanceOf(account.toString())
         .call({ from: account })
         .then((balance) => {
-          setErc20Balance(getWeiAmount(balance, depositTokenDecimals, false));
+          setErc20Balance(
+            getWeiAmount(web3, balance, depositTokenDecimals, false)
+          );
         })
         .catch(() => {
           setErc20Balance(0);

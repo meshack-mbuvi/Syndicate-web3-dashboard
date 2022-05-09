@@ -268,7 +268,7 @@ export const MintAndShareTokens: React.FC<Props> = ({
 
     if (useOwnerMintModule) {
       await syndicateContracts.OwnerMintModule.ownerMint(
-        getWeiAmount(amountToMint, tokenDecimals, true),
+        getWeiAmount(web3, amountToMint, tokenDecimals, true),
         erc20TokenContract.address,
         memberAddress,
         owner,
@@ -281,7 +281,7 @@ export const MintAndShareTokens: React.FC<Props> = ({
       if (isDev) {
         await erc20TokenContract.mintTo(
           memberAddress,
-          getWeiAmount(amountToMint, tokenDecimals, true),
+          getWeiAmount(web3, amountToMint, tokenDecimals, true),
           owner,
           onTxConfirm,
           onTxReceipt,
@@ -296,7 +296,7 @@ export const MintAndShareTokens: React.FC<Props> = ({
 
         await oldErc20TokenContract.controllerMint(
           memberAddress,
-          getWeiAmount(amountToMint, tokenDecimals, true),
+          getWeiAmount(web3, amountToMint, tokenDecimals, true),
           owner,
           onTxConfirm,
           onTxReceipt,

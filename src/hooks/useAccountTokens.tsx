@@ -23,7 +23,7 @@ export function useAccountTokens(): {
 } {
   const {
     web3Reducer: {
-      web3: { account, activeNetwork }
+      web3: { account, activeNetwork, web3 }
     },
     erc20TokenSliceReducer: {
       erc20Token: { address, totalSupply, tokenDecimals, totalDeposits },
@@ -93,9 +93,9 @@ export function useAccountTokens(): {
             tokens = 0
           } = clubMemberData;
 
-          setAccountTokens(getWeiAmount(tokens, tokenDecimals, false));
+          setAccountTokens(getWeiAmount(web3, tokens, tokenDecimals, false));
           setMemberDeposits(
-            getWeiAmount(depositAmount, depositTokenDecimals, false)
+            getWeiAmount(web3, depositAmount, depositTokenDecimals, false)
           );
           // this is a percentage conversion with a base of 10000, 1% == 10000
           setMemberOwnership(`${+ownershipShare / 10000}`);

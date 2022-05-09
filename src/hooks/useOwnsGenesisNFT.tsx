@@ -58,7 +58,7 @@ const useOwnsGenesisNFT: any = () => {
     try {
       const tokens = await rugRadioContract?.methods.balanceOf(account).call();
       const decimals = await rugRadioContract?.methods.decimals().call();
-      setAccountRugTokens(getWeiAmount(tokens, decimals, false));
+      setAccountRugTokens(getWeiAmount(web3, tokens, decimals, false));
     } catch (error) {
       setAccountRugTokens(0);
     }

@@ -19,7 +19,7 @@ const useClubERC20s = () => {
 
   const {
     initializeContractsReducer: { syndicateContracts },
-    web3Reducer: { web3 }
+    web3Reducer: { web3: web3Instance }
   } = useSelector((state: AppState) => state);
 
   const [accountHasClubs, setAccountHasClubs] = useState(false);
@@ -29,8 +29,9 @@ const useClubERC20s = () => {
   const {
     account,
     activeNetwork,
-    ethereumNetwork: { invalidEthereumNetwork }
-  } = web3;
+    ethereumNetwork: { invalidEthereumNetwork },
+    web3
+  } = web3Instance;
   const accountAddress = useMemo(() => account.toLocaleLowerCase(), [account]);
 
   // Retrieve syndicates that I manage
@@ -129,12 +130,18 @@ const useClubERC20s = () => {
           }
 
           const maxTotalSupplyFromWei = getWeiAmount(
+            web3,
             maxTotalSupply,
             +decimals,
             false
           );
 
-          const totalSupplyFromWei = getWeiAmount(totalSupply, decimals, false);
+          const totalSupplyFromWei = getWeiAmount(
+            web3,
+            totalSupply,
+            decimals,
+            false
+          );
 
           let depositToken =
             await syndicateContracts?.DepositTokenMintModule?.depositToken(
@@ -178,6 +185,7 @@ const useClubERC20s = () => {
 
           //  calculate ownership share
           const memberDeposits = getWeiAmount(
+            web3,
             depositAmount,
             depositERC20TokenDecimals
               ? parseInt(depositERC20TokenDecimals)
@@ -188,6 +196,7 @@ const useClubERC20s = () => {
           let clubTotalDeposits = 0;
           if (depositERC20TokenDecimals) {
             clubTotalDeposits = getWeiAmount(
+              web3,
               totalDeposits,
               +depositERC20TokenDecimals,
               false

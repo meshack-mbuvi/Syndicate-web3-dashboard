@@ -68,7 +68,7 @@ export const useCreateInvestmentClubContext =
 const CreateInvestmentClubProvider: React.FC = ({ children }) => {
   const {
     web3Reducer: {
-      web3: { account, activeNetwork }
+      web3: { account, web3, activeNetwork }
     },
     initializeContractsReducer: {
       syndicateContracts: { clubERC20Factory, clubERC20FactoryNative }
@@ -189,11 +189,12 @@ const CreateInvestmentClubProvider: React.FC = ({ children }) => {
         depositTokenSymbol == activeNetwork.nativeCurrency.symbol;
       const _tokenCap = isNativeDeposit
         ? getWeiAmount(
+            web3,
             (+tokenCap * activeNetwork.nativeCurrency.exchangeRate).toString(),
             18,
             true
           )
-        : getWeiAmount(tokenCap, 18, true);
+        : getWeiAmount(web3, tokenCap, 18, true);
       const startTime = parseInt((new Date().getTime() / 1000).toString()); // convert to seconds
       if (isNativeDeposit) {
         await clubERC20FactoryNative.createERC20(

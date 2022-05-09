@@ -17,7 +17,7 @@ const useClubTokenMembers = () => {
   const dispatch = useDispatch();
 
   const {
-    web3Reducer: { web3 },
+    web3Reducer: { web3: web3Instance },
     erc20TokenSliceReducer: {
       erc20Token: { symbol, tokenDecimals, totalSupply },
       depositDetails: { depositTokenDecimals }
@@ -28,7 +28,7 @@ const useClubTokenMembers = () => {
   const { clubAddress } = router.query;
   const isDemoMode = useDemoMode();
 
-  const { account, activeNetwork } = web3;
+  const { account, activeNetwork, web3 } = web3Instance;
 
   // Retrieve syndicates that I manage
   const {
@@ -63,9 +63,10 @@ const useClubTokenMembers = () => {
             parseInt(ownershipShare) /
             activeNetwork.nativeCurrency.exchangeRate,
           symbol,
-          clubTokens: getWeiAmount(tokens, tokenDecimals, false),
+          clubTokens: getWeiAmount(web3, tokens, tokenDecimals, false),
           totalSupply: totalSupply,
           depositAmount: getWeiAmount(
+            web3,
             depositAmount,
             depositTokenDecimals,
             false
