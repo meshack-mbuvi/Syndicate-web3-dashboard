@@ -4,7 +4,7 @@ import { useState } from 'react';
 export default {
   title: '4. Organisms/Distribution Members Table',
   decorators: [
-    (Story) => (
+    (Story): React.ReactElement => (
       <div style={{ margin: '0rem' }}>
         <Story />
       </div>
@@ -33,7 +33,7 @@ TwoTokens.args = {
     {
       memberName: 'name.eth',
       clubTokenHolding: 1230,
-      recievingTokens: [
+      receivingTokens: [
         {
           amount: 24,
           tokenSymbol: 'ETH',
@@ -49,7 +49,7 @@ TwoTokens.args = {
     {
       memberName: 'bob.eth',
       clubTokenHolding: 1230,
-      recievingTokens: [
+      receivingTokens: [
         {
           amount: 26.4,
           tokenSymbol: 'ETH',
@@ -60,7 +60,7 @@ TwoTokens.args = {
     {
       memberName: 'alex.eth',
       clubTokenHolding: 1230,
-      recievingTokens: [
+      receivingTokens: [
         {
           amount: 24,
           tokenSymbol: 'ETH',
@@ -78,7 +78,7 @@ ThreeTokens.args = {
     {
       memberName: 'name.eth',
       clubTokenHolding: 1230,
-      recievingTokens: [
+      receivingTokens: [
         {
           amount: 24,
           tokenSymbol: 'ETH',
@@ -94,7 +94,7 @@ ThreeTokens.args = {
     {
       memberName: 'bob.eth',
       clubTokenHolding: 1230,
-      recievingTokens: [
+      receivingTokens: [
         {
           amount: 26.4,
           tokenSymbol: 'ETH',
@@ -110,7 +110,7 @@ ThreeTokens.args = {
     {
       memberName: 'alex.eth',
       clubTokenHolding: 1230,
-      recievingTokens: [
+      receivingTokens: [
         {
           amount: 24,
           tokenSymbol: 'ETH',
@@ -131,7 +131,7 @@ NoClubDetails.args = {
   membersDetails: [
     {
       memberName: 'name.eth',
-      recievingTokens: [
+      receivingTokens: [
         {
           amount: 24,
           tokenSymbol: 'ETH',
@@ -146,7 +146,7 @@ NoClubDetails.args = {
     },
     {
       memberName: 'bob.eth',
-      recievingTokens: [
+      receivingTokens: [
         {
           amount: 26.4,
           tokenSymbol: 'ETH',
@@ -156,7 +156,7 @@ NoClubDetails.args = {
     },
     {
       memberName: 'alex.eth',
-      recievingTokens: [
+      receivingTokens: [
         {
           amount: 24,
           tokenSymbol: 'ETH',

@@ -1,11 +1,11 @@
-import { Provider } from 'react-redux';
-import { store } from '@/state/index';
 import TokenSelectModal, {
   ITokenModal,
   TokenModalVariant
 } from '@/components/tokenSelect/TokenSelectModal';
+import { store } from '@/state/index';
 import { useArgs } from '@storybook/addons';
 import { Story } from '@storybook/react';
+import { Provider } from 'react-redux';
 
 export default {
   title: '4. Organisms/Token Select Modal',

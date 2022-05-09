@@ -1,30 +1,30 @@
 import { Checkbox } from '@/components/inputs/simpleCheckbox';
-import { useEffect, useState } from 'react';
 import { floatedNumberWithCommas } from '@/utils/formattedNumbers';
+import { useEffect, useState } from 'react';
 
 interface Props {
   clubName?: string;
   membersDetails: {
     memberName: string;
     clubTokenHolding?: number;
-    recievingTokens: {
+    receivingTokens: {
       amount: number;
       tokenSymbol: string;
       tokenIcon: string;
     }[];
   }[];
-  activeIndicies: Array<number>;
-  handleActiveIndiciesChange: (indecies: number[]) => void;
+  activeIndices: Array<number>;
+  handleActiveIndicesChange: (indeces: number[]) => void;
 }
 
 export const DistributionMembersTable: React.FC<Props> = ({
   clubName,
   membersDetails,
-  activeIndicies,
-  handleActiveIndiciesChange
+  activeIndices,
+  handleActiveIndicesChange: handleActiveIndicesChange
 }) => {
   const isIndexActive = (index: number) => {
-    return activeIndicies.includes(index);
+    return activeIndices.includes(index);
   };
 
   const [hoveredRow, setHoveredRow] = useState(null);
@@ -45,7 +45,7 @@ export const DistributionMembersTable: React.FC<Props> = ({
 
   // This iterates through the rows finding all unique
   // tokens to determine the table columns (e.g "Recieving {tokenSymbol}")
-  const allUniqueRecievingTokens: {
+  const allUniqueReceivingTokens: {
     tokenSymbols: string[];
     tokenIcons: string[];
   } = membersDetails.reduce(
@@ -55,9 +55,9 @@ export const DistributionMembersTable: React.FC<Props> = ({
     ) => {
       const newTokenSymbols = [];
       const newTokenIcons = [];
-      memberDetails.recievingTokens.forEach((recievingToken) => {
-        const tokenSymbol = recievingToken.tokenSymbol;
-        const tokenIcon = recievingToken.tokenIcon;
+      memberDetails.receivingTokens.forEach((receivingToken) => {
+        const tokenSymbol = receivingToken.tokenSymbol;
+        const tokenIcon = receivingToken.tokenIcon;
         if (!columns.tokenSymbols.includes(tokenSymbol)) {
           newTokenSymbols.push(tokenSymbol);
           newTokenIcons.push(tokenIcon);
@@ -75,22 +75,22 @@ export const DistributionMembersTable: React.FC<Props> = ({
 
   useEffect(() => {
     setTokenAmountTotals(
-      allUniqueRecievingTokens.tokenSymbols.map((tokenSymbol) => {
+      allUniqueReceivingTokens.tokenSymbols.map((tokenSymbol) => {
         return membersDetails.reduce((total: number, memberDetails, index) => {
           let memberTotal = 0;
-          memberDetails.recievingTokens.forEach((recievingToken) => {
+          memberDetails.receivingTokens.forEach((receivingToken) => {
             if (
-              recievingToken.tokenSymbol === tokenSymbol &&
+              receivingToken.tokenSymbol === tokenSymbol &&
               isIndexActive(index)
             ) {
-              memberTotal += recievingToken.amount;
+              memberTotal += receivingToken.amount;
             }
           });
           return total + memberTotal;
         }, 0);
       })
     );
-  }, [activeIndicies]);
+  }, [activeIndices]);
 
   // The top row with column titles
   const renderedHeader = (
@@ -101,18 +101,18 @@ export const DistributionMembersTable: React.FC<Props> = ({
         <div className={`flex items-center ${narrowCellStyles}`}>
           <Checkbox
             isActive={
-              activeIndicies.length <= membersDetails.length &&
-              activeIndicies.length > 0
+              activeIndices.length <= membersDetails.length &&
+              activeIndices.length > 0
             }
-            usePartialCheck={activeIndicies.length < membersDetails.length}
+            usePartialCheck={activeIndices.length < membersDetails.length}
             onChange={() => {
               if (
-                activeIndicies.length <= membersDetails.length &&
-                activeIndicies.length > 0
+                activeIndices.length <= membersDetails.length &&
+                activeIndices.length > 0
               ) {
-                handleActiveIndiciesChange([]);
+                handleActiveIndicesChange([]);
               } else {
-                handleActiveIndiciesChange([
+                handleActiveIndicesChange([
                   ...Array(membersDetails.length).keys()
                 ]);
               }
@@ -137,7 +137,7 @@ export const DistributionMembersTable: React.FC<Props> = ({
 
       {/* Right columns - recieving tokens */}
       <div className="flex">
-        {allUniqueRecievingTokens.tokenSymbols.map((tokenSymbol, index) => {
+        {allUniqueReceivingTokens.tokenSymbols.map((tokenSymbol, index) => {
           return (
             <>
               <div
@@ -146,7 +146,7 @@ export const DistributionMembersTable: React.FC<Props> = ({
                 <div>Recieving</div>
                 <img
                   className="w-6 h-6"
-                  src={allUniqueRecievingTokens.tokenIcons[index]}
+                  src={allUniqueReceivingTokens.tokenIcons[index]}
                   alt=""
                 />
                 <div>{tokenSymbol}</div>
@@ -166,21 +166,21 @@ export const DistributionMembersTable: React.FC<Props> = ({
           // The index was active so make it inactive
           if (isIndexActive(rowIndex)) {
             let newactiveIndices;
-            const indexToRemove = activeIndicies.indexOf(rowIndex);
+            const indexToRemove = activeIndices.indexOf(rowIndex);
             if (indexToRemove > -1) {
               const arrayWithoutIndex = (array, index) =>
                 array.filter((_, i) => i !== index);
               newactiveIndices = arrayWithoutIndex(
-                activeIndicies,
+                activeIndices,
                 indexToRemove
               );
-              handleActiveIndiciesChange(newactiveIndices);
+              handleActiveIndicesChange(newactiveIndices);
             }
           }
 
           // The index was inactive so make it active
           else {
-            handleActiveIndiciesChange([...activeIndicies, rowIndex]);
+            handleActiveIndicesChange([...activeIndices, rowIndex]);
           }
         }}
         onMouseOver={() => {
@@ -244,7 +244,7 @@ export const DistributionMembersTable: React.FC<Props> = ({
             {/* Percentage */}
             <div>
               {isIndexActive(rowIndex)
-                ? `${Math.trunc((1 / activeIndicies.length) * 100)}%`
+                ? `${Math.trunc((1 / activeIndices.length) * 100)}%`
                 : '0%'}
             </div>
 
@@ -272,7 +272,7 @@ export const DistributionMembersTable: React.FC<Props> = ({
         {/* Right columns - recieving tokens */}
         <div className={`flex`}>
           {/* Each column represents a different token a member is recieving */}
-          {allUniqueRecievingTokens.tokenSymbols.map((tokenSymbol, index) => {
+          {allUniqueReceivingTokens.tokenSymbols.map((tokenSymbol, index) => {
             return (
               // Individual column
               <div
@@ -282,11 +282,11 @@ export const DistributionMembersTable: React.FC<Props> = ({
                 key={index}
               >
                 <div>
-                  {memberDetails.recievingTokens.find((recievingToken) => {
-                    return recievingToken.tokenSymbol === tokenSymbol;
+                  {memberDetails.receivingTokens.find((receivingToken) => {
+                    return receivingToken.tokenSymbol === tokenSymbol;
                   }) && isIndexActive(rowIndex)
-                    ? memberDetails.recievingTokens.find((recievingToken) => {
-                        return recievingToken.tokenSymbol === tokenSymbol;
+                    ? memberDetails.receivingTokens.find((receivingToken) => {
+                        return receivingToken.tokenSymbol === tokenSymbol;
                       }).amount
                     : 0}
                 </div>
@@ -333,7 +333,7 @@ export const DistributionMembersTable: React.FC<Props> = ({
 
       {/* Right columns - recieving tokens */}
       <div className="flex">
-        {allUniqueRecievingTokens.tokenSymbols.map((tokenSymbol, index) => {
+        {allUniqueReceivingTokens.tokenSymbols.map((tokenSymbol, index) => {
           return (
             <>
               <div

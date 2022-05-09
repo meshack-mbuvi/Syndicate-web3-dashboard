@@ -1,19 +1,14 @@
 import { ClubERC20Contract } from '@/ClubERC20Factory/clubERC20';
-import BackButton from '@/components/buttons/BackButton';
 import ErrorBoundary from '@/components/errorBoundary';
 import Layout from '@/components/layout';
-import OnboardingModal from '@/components/onboarding';
 import { ClubHeader } from '@/components/syndicates/shared/clubHeader';
 import { EtherscanLink } from '@/components/syndicates/shared/EtherscanLink';
 import Head from '@/components/syndicates/shared/HeaderTitle';
-import SyndicateDetails from '@/components/syndicates/syndicateDetails';
 import {
   ERC20TokenDefaultState,
   setERC20Token
 } from '@/helpers/erc20TokenDetails';
-import { useAccountTokens } from '@/hooks/useAccountTokens';
 import { useClubDepositsAndSupply } from '@/hooks/useClubDepositsAndSupply';
-import { useIsClubOwner } from '@/hooks/useClubOwner';
 import useClubTokenMembers from '@/hooks/useClubTokenMembers';
 import { useDemoMode } from '@/hooks/useDemoMode';
 import { useGetDepositTokenPrice } from '@/hooks/useGetDepositTokenPrice';
@@ -22,7 +17,6 @@ import NotFoundPage from '@/pages/404';
 import { AppState } from '@/state';
 import {
   clearCollectiblesTransactions,
-  fetchCollectiblesTransactions,
   fetchTokenTransactions,
   setMockCollectiblesResult,
   setMockTokensResult
@@ -38,7 +32,6 @@ import { clearMyTransactions } from '@/state/erc20transactions';
 import { Status } from '@/state/wallet/types';
 import { ChainEnum } from '@/utils/api/ChainTypes';
 import { isDev } from '@/utils/environment';
-import { getTextWidth } from '@/utils/getTextWidth';
 import {
   mockActiveERC20Token,
   mockDepositModeTokens,
@@ -46,20 +39,17 @@ import {
 } from '@/utils/mockdata';
 import window from 'global';
 import { useRouter } from 'next/router';
-import React, { FC, useEffect, useMemo, useRef, useState } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { syndicateActionConstants } from 'src/components/syndicates/shared/Constants';
-import ClubTokenMembers from '../managerActions/clubTokenMembers/index';
-import ActivityView from './activity';
-import Assets from './assets';
-import TabButton from './TabButton';
 
-const LayoutWithSyndicateDetails: FC<{
+const TwoColumnLayout: FC<{
   managerSettingsOpen: boolean;
-}> = ({ managerSettingsOpen, children }) => {
+  leftColumnComponent;
+  rightColumnComponent;
+}> = ({ managerSettingsOpen, leftColumnComponent, rightColumnComponent }) => {
   const {
     initializeContractsReducer: { syndicateContracts },
-    merkleProofSliceReducer: { myMerkleProof },
     web3Reducer: {
       web3: { account, web3, status }
     },
@@ -77,8 +67,7 @@ const LayoutWithSyndicateDetails: FC<{
     depositsEnabled,
     maxTotalDeposits,
     address,
-    symbol,
-    memberCount
+    symbol
   } = erc20Token;
 
   // Get clubAddress from window.location object since during page load, router is not ready
@@ -98,9 +87,6 @@ const LayoutWithSyndicateDetails: FC<{
       router.push('/clubs/demo/manage');
     }
   });
-
-  //  tokens for the connected wallet account
-  const { accountTokens } = useAccountTokens();
 
   const { loadingClubDeposits, totalDeposits } =
     useClubDepositsAndSupply(address);
@@ -142,60 +128,12 @@ const LayoutWithSyndicateDetails: FC<{
     };
   }, [dispatch]);
 
-  const isOwner = useIsClubOwner();
-  const [scrollTop, setScrollTop] = useState(0);
-  const [showNav, setShowNav] = useState(true);
-  const [isSubNavStuck, setIsSubNavStuck] = useState(true);
-  // const [customTransform, setCustomTransform] = useState(undefined);
-  const subNav = useRef(null);
-
-  // Listen to page scrolling
-  useEffect(() => {
-    const onScroll = (e) => {
-      setScrollTop(e.target.documentElement.scrollTop);
-    };
-    window.addEventListener('scroll', onScroll);
-
-    return () => window.removeEventListener('scroll', onScroll);
-  }, []);
-
-  // Change sub-nav and nav styles when stuck
-  useEffect(() => {
-    if (
-      subNav.current &&
-      parseInt(subNav.current.getBoundingClientRect().top) <= 0
-    ) {
-      setIsSubNavStuck(true);
-      setShowNav(false);
-    } else {
-      setIsSubNavStuck(false);
-      setShowNav(true);
-    }
-  }, [scrollTop]);
-
-  const fetchAssets = () => {
-    // fetch token transactions for the connected account.
-    dispatch(fetchTokenTransactions(owner));
-    // test nft account: 0xf4c2c3e12b61d44e6b228c43987158ac510426fb
-    dispatch(
-      fetchCollectiblesTransactions({
-        account: owner,
-        offset: '0',
-        maxTotalDeposits: ethDepositToken
-          ? parseInt((depositTokenPriceInUSD * maxTotalDeposits).toString())
-          : maxTotalDeposits
-      })
-    );
-  };
+  const [showNav] = useState(true);
 
   useEffect(() => {
-    if (
-      owner &&
-      depositTokenPriceInUSD &&
-      !loadingClubDeposits &&
-      !isDemoMode
-    ) {
-      fetchAssets();
+    if (owner) {
+      // fetch token transactions for the connected account.
+      dispatch(fetchTokenTransactions(owner));
     } else if (isDemoMode) {
       const mockTokens = depositsEnabled
         ? mockDepositModeTokens
@@ -256,14 +194,6 @@ const LayoutWithSyndicateDetails: FC<{
     syndicateContracts?.DepositTokenMintModule
   ]);
 
-  const showOnboardingIfNeeded =
-    router.pathname.endsWith('[clubAddress]') && !isDemoMode;
-
-  const transform = useMemo(
-    () => (getTextWidth(name) > 590 ? 'translateY(0%)' : 'translateY(-50%)'),
-    [name]
-  );
-
   // get static text from constants
   const { noTokenTitleText } = syndicateActionConstants;
 
@@ -291,20 +221,6 @@ const LayoutWithSyndicateDetails: FC<{
     </div>
   );
 
-  const [activeTab, setActiveTab] = useState('assets');
-
-  const isActive = !depositsEnabled;
-  const isOwnerOrMember =
-    isOwner || +accountTokens || myMerkleProof?.account === account;
-  const renderOnDisconnect =
-    status !== Status.DISCONNECTED && !(isActive && !isOwnerOrMember);
-
-  useEffect(() => {
-    if (!renderOnDisconnect) {
-      setActiveTab('assets');
-    }
-  }, [renderOnDisconnect]);
-
   return (
     <>
       {router.isReady && !isDemoMode && !web3.utils.isAddress(clubAddress) ? (
@@ -317,20 +233,12 @@ const LayoutWithSyndicateDetails: FC<{
         >
           <Head title={name || 'Club'} />
           <ErrorBoundary>
-            {showOnboardingIfNeeded && <OnboardingModal />}
             <div className="w-full">
               {router.isReady && !name && !loading && !isDemoMode ? (
                 syndicateEmptyState
               ) : (
                 <div className="container mx-auto ">
                   {/* Two Columns (Syndicate Details + Widget Cards) */}
-                  {!managerSettingsOpen && (
-                    <BackButton
-                      /* topOffset={isSubNavStuck ? "-0.68rem" : "-0.25rem"} */
-                      transform={transform}
-                      isHidden={isDemoMode}
-                    />
-                  )}
                   <div className="grid grid-cols-12 gap-5">
                     {/* Left Column */}
                     <div
@@ -358,82 +266,19 @@ const LayoutWithSyndicateDetails: FC<{
                         </div>
                       </div>
 
-                      <SyndicateDetails
-                        managerSettingsOpen={managerSettingsOpen}
-                      >
-                        <div className="w-full md:hidden mt-5">{children}</div>
-                      </SyndicateDetails>
+                      {/* Show distribution or syndicateDetails components */}
+
+                      <div className="w-full mt-5">{leftColumnComponent}</div>
+                      <div className="w-full md:hidden mt-8">
+                        {rightColumnComponent}
+                      </div>
                     </div>
                     {/* Right Column */}
                     <div className="md:col-end-13 md:col-span-5 col-span-12 hidden md:flex justify-end items-start pt-0 h-full">
-                      <div className="sticky top-33 w-100">{children}</div>
-                    </div>
-
-                    {!managerSettingsOpen ? (
-                      <div className="mt-16 col-span-12">
-                        <div
-                          ref={subNav}
-                          className={`${
-                            isSubNavStuck ? 'bg-gray-syn8' : 'bg-black'
-                          } sticky top-0 z-15 transition-all edge-to-edge-with-left-inset`}
-                        >
-                          <nav className="flex space-x-10" aria-label="Tabs">
-                            <button
-                              key="assets"
-                              onClick={() => setActiveTab('assets')}
-                              className={`whitespace-nowrap h4 w-fit-content py-6 transition-all border-b-1 focus:ring-0 cursor-pointer ${
-                                activeTab == 'assets'
-                                  ? 'border-white text-white'
-                                  : 'border-transparent text-gray-syn4 hover:text-gray-40'
-                              }`}
-                            >
-                              Assets
-                            </button>
-                            {(renderOnDisconnect || isDemoMode) && (
-                              <button
-                                key="members"
-                                onClick={() => setActiveTab('members')}
-                                className={`whitespace-nowrap h4 py-6 transition-all border-b-1 focus:ring-0 cursor-pointer ${
-                                  activeTab == 'members'
-                                    ? 'border-white text-white'
-                                    : 'border-transparent text-gray-syn4 hover:text-gray-400 '
-                                }`}
-                              >
-                                {`Members (${memberCount})`}
-                              </button>
-                            )}
-                            {(renderOnDisconnect || isDemoMode) && (
-                              <TabButton
-                                active={activeTab === 'activity'}
-                                label="Activity"
-                                onClick={() => setActiveTab('activity')}
-                              />
-                            )}
-                          </nav>
-                          <div
-                            className={`${
-                              isSubNavStuck ? 'hidden' : 'block'
-                            } border-b-1 border-gray-syn7 absolute w-screen right-0`}
-                          ></div>
-                        </div>
-
-                        <div className="text-base grid grid-cols-12 gap-y-5">
-                          <div className="col-span-12">
-                            {activeTab == 'assets' && <Assets />}
-                            {activeTab == 'members' &&
-                              (renderOnDisconnect || isDemoMode) && (
-                                <div className="-mr-6 sm:mr-auto">
-                                  <ClubTokenMembers />
-                                </div>
-                              )}
-                            {activeTab == 'activity' &&
-                              (renderOnDisconnect || isDemoMode) && (
-                                <ActivityView />
-                              )}
-                          </div>
-                        </div>
+                      <div className="sticky top-33 w-100">
+                        {rightColumnComponent}
                       </div>
-                    ) : null}
+                    </div>
                   </div>
                 </div>
               )}
@@ -445,4 +290,4 @@ const LayoutWithSyndicateDetails: FC<{
   );
 };
 
-export default LayoutWithSyndicateDetails;
+export default TwoColumnLayout;
