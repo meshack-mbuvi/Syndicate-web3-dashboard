@@ -362,10 +362,6 @@ const SyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
     setShowDuplicateClubWarning(false);
   };
 
-  // temporary fix for club FP NFT DAO with address 0xc7926f2611078881f61183696b1eeb9566c7c87f
-  const fpNftClub =
-    address.toLowerCase() === '0xc7926f2611078881f61183696b1eeb9566c7c87f';
-
   return (
     <div className="flex flex-col relative">
       <div className="h-fit-content rounded-custom">
@@ -496,12 +492,8 @@ const SyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
           !managerSettingsOpen && (
             <div className="h-fit-content flex flex-col w-full justify-start mt-14">
               <ProgressIndicator
-                totalDeposits={fpNftClub ? totalSupply : totalDeposits}
-                depositTotalMax={
-                  fpNftClub
-                    ? maxTotalSupply.toString()
-                    : maxTotalDeposits.toString()
-                }
+                totalDeposits={totalSupply}
+                depositTotalMax={maxTotalSupply.toString()}
                 openDate={startTime.toString()}
                 closeDate={endTime.toString()}
                 loading={loading || loadingClubDeposits}
