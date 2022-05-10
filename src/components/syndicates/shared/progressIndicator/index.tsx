@@ -64,12 +64,9 @@ export const ProgressIndicator = (props: IProgressIndicator): JSX.Element => {
   const [trackMouse, setTrackMouse] = useState(true);
 
   useEffect(() => {
-    // get percentage of club tokens via token deposits
-    // const _tokensViaDeposits = ethDepositToken
-    //   ? +totalDeposits * 10000
-    //   : +totalDeposits;
-
-    /** checking members and cummulatively adding all club tokens burnt after a member
+    /**
+     * get percentage of club tokens via token deposits
+     * checking members and cummulatively adding all club tokens burnt after a member
      * makes a deposit.
      */
     let depositTokensBurnt = 0;

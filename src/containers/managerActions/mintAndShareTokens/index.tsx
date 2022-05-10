@@ -233,9 +233,9 @@ export const MintAndShareTokens: React.FC<Props> = ({
       // the transaction is confirmed.
       const newEndTime = new Date().getTime() + 1800000;
 
-      // set max token supply to current total supply.
-      // this prevents more deposits from new members or existing members while the club
-      // still remains open.
+      /* set max token supply to current total supply.
+       * this prevents more deposits from new members or existing members while the club
+       * still remains open.*/
       const _tokenCap = getWeiAmount(String(totalSupply), 18, true);
       const mintPolicy = new MintPolicyContract(currentMintPolicyAddress, web3);
 

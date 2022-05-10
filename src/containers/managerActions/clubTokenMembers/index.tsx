@@ -121,7 +121,7 @@ const ClubTokenMembers = (): JSX.Element => {
 
   useEffect(() => {
     setTableData(syndicateMembersToShow);
-  }, [JSON.stringify(syndicateMembersToShow)]);
+  }, [JSON.stringify(syndicateMembersToShow), JSON.stringify(clubMembers)]);
 
   const [selectedMember, setSelectedMember] = useState<any>();
   const [showModifyCapTable, setShowModifyCapTable] = useModal();
