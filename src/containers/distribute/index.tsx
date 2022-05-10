@@ -1,3 +1,4 @@
+import { CtaButton } from '@/components/CTAButton';
 import { BadgeWithOverview } from '@/components/distributions/badgeWithOverview';
 import { AppState } from '@/state';
 import React, { FC, useEffect, useState } from 'react';
@@ -45,14 +46,18 @@ const Distribute: FC = () => {
         </div>
       }
       rightColumnComponent={
-        <BadgeWithOverview
-          gasEstimate={{
-            tokenSymbol: 'ETH',
-            tokenAmount: null,
-            fiatAmount: null,
-            isLoading: true
-          }}
-        />
+        <div className="space-y-8">
+          <BadgeWithOverview
+            gasEstimate={{
+              tokenSymbol: 'ETH',
+              tokenAmount: null,
+              fiatAmount: null,
+              isLoading: true
+            }}
+          />
+
+          <CtaButton disabled={true}>Next, review members</CtaButton>
+        </div>
       }
     />
   );

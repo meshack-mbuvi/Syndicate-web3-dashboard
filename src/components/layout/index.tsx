@@ -237,7 +237,7 @@ const Layout: FC<Props> = ({
 
   return (
     <div
-      className={`flex flex-col justify-between ${
+      className={`flex flex-col justify-between w-full ${
         pushFooter ? 'h-screen' : ''
       }`}
     >
