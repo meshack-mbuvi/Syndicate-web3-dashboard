@@ -35,7 +35,8 @@ export const ProgressIndicator = (props: IProgressIndicator): JSX.Element => {
 
   // states
   const {
-    erc20TokenSliceReducer: { erc20Token }
+    erc20TokenSliceReducer: { erc20Token },
+    clubMembersSliceReducer: { clubMembers }
   } = useSelector((state: AppState) => state);
 
   const { maxTotalSupply, address, symbol } = erc20Token;
@@ -64,9 +65,30 @@ export const ProgressIndicator = (props: IProgressIndicator): JSX.Element => {
 
   useEffect(() => {
     // get percentage of club tokens via token deposits
-    const tokensViaDeposits = ethDepositToken
-      ? +totalDeposits * 10000
-      : +totalDeposits;
+    // const _tokensViaDeposits = ethDepositToken
+    //   ? +totalDeposits * 10000
+    //   : +totalDeposits;
+
+    /** checking members and cummulatively adding all club tokens burnt after a member
+     * makes a deposit.
+     */
+    let depositTokensBurnt = 0;
+    let _actualDepositClubTokens = 0;
+    clubMembers &&
+      clubMembers.map((member) => {
+        const { clubTokens, depositAmount } = member;
+
+        const actualDepositClubTokens = ethDepositToken
+          ? +depositAmount * 10000
+          : +depositAmount;
+        _actualDepositClubTokens += actualDepositClubTokens;
+
+        if (+depositAmount > 0 && +clubTokens < +actualDepositClubTokens) {
+          depositTokensBurnt += +actualDepositClubTokens - +clubTokens;
+        }
+      });
+    const tokensViaDeposits = _actualDepositClubTokens - depositTokensBurnt;
+
     setTokensViaDeposits(tokensViaDeposits);
     const percentageOfDeposits =
       divideIfNotByZero(+tokensViaDeposits, +maxTotalSupply) * 100;
@@ -103,7 +125,13 @@ export const ProgressIndicator = (props: IProgressIndicator): JSX.Element => {
       setDepositsPercentage(0);
       setManualMintPercentage(100);
     }
-  }, [totalDeposits, totalSupply, maxTotalSupply, ethDepositToken]);
+  }, [
+    totalDeposits,
+    totalSupply,
+    maxTotalSupply,
+    ethDepositToken,
+    JSON.stringify(clubMembers)
+  ]);
 
   const [remainingSupplyDisplayWidth, setRemainingSupplyDisplayWidth] =
     useState(0);
@@ -213,7 +241,10 @@ export const ProgressIndicator = (props: IProgressIndicator): JSX.Element => {
             currentToolTip,
             tooltipTitle,
             tooltipTokenAmount,
-            tooltipTokenPercentage
+            tooltipTokenPercentage,
+            depositTokensAmount: ethDepositToken
+              ? tokensViaDeposits / 10000
+              : tokensViaDeposits
           }}
         />
       </div>

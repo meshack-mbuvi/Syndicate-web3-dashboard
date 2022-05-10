@@ -2,7 +2,6 @@ import { SkeletonLoader } from '@/components/skeletonLoader';
 import { MintAndShareTokens } from '@/containers/managerActions/mintAndShareTokens';
 import AddMemberModal from '@/containers/managerActions/mintAndShareTokens/AddMemberModal';
 import { useIsClubOwner } from '@/hooks/useClubOwner';
-import useClubTokenMembers from '@/hooks/useClubTokenMembers';
 import useModal from '@/hooks/useModal';
 import { AppState } from '@/state';
 import { setDepositReadyInfo } from '@/state/legalInfo';
@@ -56,9 +55,6 @@ const ClubTokenMembers = (): JSX.Element => {
       setDepositReadyInfo({ adminSigned, depositLink: clubDepositLink })
     );
   };
-
-  // fetch club members
-  useClubTokenMembers();
 
   // club deposit link
   useEffect(() => {

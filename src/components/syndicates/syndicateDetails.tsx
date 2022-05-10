@@ -492,7 +492,7 @@ const SyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
           !managerSettingsOpen && (
             <div className="h-fit-content flex flex-col w-full justify-start mt-14">
               <ProgressIndicator
-                totalDeposits={totalSupply}
+                totalDeposits={totalDeposits}
                 depositTotalMax={maxTotalSupply.toString()}
                 openDate={startTime.toString()}
                 closeDate={endTime.toString()}
