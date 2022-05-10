@@ -16,6 +16,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import moment from 'moment';
 import AddToCalendar from '@/components/addToCalendar';
 import { setDispatchCreateFlow } from '@/state/wallet/actions';
+import { getFormattedDateTimeWithTZ } from 'src/utils/dateUtils';
 
 const CreateInvestmentClub: React.FC = () => {
   const {
@@ -52,9 +53,7 @@ const CreateInvestmentClub: React.FC = () => {
 
   const dispatch = useDispatch();
 
-  const formattedDate = moment(endMintTime * 1000).format(
-    'dddd, MMM Do YYYY, h:mm A'
-  );
+  const formattedDate = getFormattedDateTimeWithTZ(endMintTime * 1000);
 
   const calEvent = {
     title: `${investmentClubName} closes to deposits on Syndicate`,
