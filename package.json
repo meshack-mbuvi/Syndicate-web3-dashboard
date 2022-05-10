@@ -57,6 +57,7 @@
     "lodash": "^4.17.21",
     "mailgun.js": "^4.1.0",
     "moment-precise-range-plugin": "^1.3.0",
+    "moment-timezone": "^0.5.34",
     "netlify-lambda": "^2.0.14",
     "next": "^11.1.2",
     "next-absolute-url": "^1.2.2",
