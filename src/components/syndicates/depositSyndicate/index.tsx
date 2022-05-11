@@ -1020,10 +1020,7 @@ const DepositSyndicate: React.FC = () => {
         <div className={`rounded-2-half bg-gray-syn8`}>
           <StatusBadge
             depositsEnabled={depositsEnabled}
-            depositExceedTotal={
-              +totalDeposits === +maxTotalDeposits ||
-              +totalSupply === +maxTotalSupply
-            }
+            depositExceedTotal={+totalSupply === +maxTotalSupply}
             claimEnabled={claimEnabled && !invalidClaim ? claimEnabled : false}
           />
 

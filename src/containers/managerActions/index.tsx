@@ -71,8 +71,6 @@ const ManagerActions = (): JSX.Element => {
     loading,
     depositsEnabled,
     claimEnabled,
-    totalDeposits,
-    maxTotalDeposits,
     totalSupply,
     maxTotalSupply
   } = erc20Token;
@@ -168,8 +166,7 @@ const ManagerActions = (): JSX.Element => {
 
   const [linkShareAgreementChecked, setLinkShareAgreementChecked] =
     useState(false);
-  const depositExceedTotal =
-    +totalDeposits === +maxTotalDeposits || +totalSupply === +maxTotalSupply;
+  const depositExceedTotal = +totalSupply === +maxTotalSupply;
 
   const [showShareOrChangeLegalDocs, setShowShareOrChangeLegalDocs] =
     useState(false);

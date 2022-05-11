@@ -6,7 +6,6 @@ import Image from 'next/image';
 import { MoreInfoIcon } from '@/components/shared/Icons/index';
 import { floatedNumberWithCommas } from '@/utils/formattedNumbers';
 import { TooltipState } from '@/components/syndicates/shared/progressIndicator';
-import { useClubDepositsAndSupply } from '@/hooks/useClubDepositsAndSupply';
 
 interface IProgressIndicatorTooltip {
   show: boolean;
@@ -14,6 +13,7 @@ interface IProgressIndicatorTooltip {
   tooltipTokenAmount: number;
   tooltipTokenPercentage: number;
   currentToolTip;
+  depositTokensAmount: number;
 }
 
 export const ProgressIndicatorTooltip: FC<IProgressIndicatorTooltip> = ({
@@ -21,15 +21,15 @@ export const ProgressIndicatorTooltip: FC<IProgressIndicatorTooltip> = ({
   tooltipTitle,
   tooltipTokenAmount,
   tooltipTokenPercentage,
-  currentToolTip
+  currentToolTip,
+  depositTokensAmount
 }) => {
   const {
     erc20TokenSliceReducer: { erc20Token, depositDetails }
   } = useSelector((state: AppState) => state);
 
-  const { symbol, address } = erc20Token;
+  const { symbol } = erc20Token;
   const { depositTokenLogo, depositTokenSymbol } = depositDetails;
-  const { totalDeposits } = useClubDepositsAndSupply(address);
 
   // when to show color key.
   const showColorKeyAndInfoIcon =
@@ -106,7 +106,7 @@ export const ProgressIndicatorTooltip: FC<IProgressIndicatorTooltip> = ({
                 <Image src={depositTokenLogo} width={16} height={16} />
               </div>
               <div>{`${floatedNumberWithCommas(
-                totalDeposits
+                depositTokensAmount
               )} ${depositTokenSymbol}`}</div>
             </div>
           ) : null}
