@@ -29,8 +29,8 @@ import {
 import { setClubMembers } from '@/state/clubMembers';
 import {
   setDepositTokenUSDPrice,
-  setERC20TokenContract,
   setERC20TokenDepositDetails,
+  setERC20TokenContract,
   setERC20TokenDetails
 } from '@/state/erc20token/slice';
 import { clearMyTransactions } from '@/state/erc20transactions';
@@ -71,8 +71,15 @@ const LayoutWithSyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
     }
   } = useSelector((state: AppState) => state);
 
-  const { owner, loading, name, depositsEnabled, maxTotalDeposits, address } =
-    erc20Token;
+  const {
+    owner,
+    loading,
+    name,
+    depositsEnabled,
+    maxTotalDeposits,
+    address,
+    memberCount
+  } = erc20Token;
 
   // Get clubAddress from window.location object since during page load, router is not ready
   // hence clubAddress is undefined.
@@ -376,7 +383,7 @@ const LayoutWithSyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
                                     : 'border-transparent text-gray-syn4 hover:text-gray-400 '
                                 }`}
                               >
-                                Members
+                                {`Members (${memberCount})`}
                               </button>
                             )}
                             {(renderOnDisconnect || isDemoMode) && (

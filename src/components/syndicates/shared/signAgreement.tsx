@@ -2,19 +2,18 @@ import { amplitudeLogger, Flow } from '@/components/amplitude';
 import { MGR_SIGN_LEGAL_DOC } from '@/components/amplitude/eventNames';
 import { DiscordLink } from '@/components/DiscordLink';
 import { EmailSupport } from '@/components/emailSupport';
+import Modal, { ModalStyle } from '@/components/modal';
 import { AppState } from '@/state';
 import { setWalletSignature } from '@/state/legalInfo';
 import { IClubInfo, IMemberInfo } from '@/state/legalInfo/types';
 import { formatAddress } from '@/utils/formatAddress';
 import { getTemplates } from '@/utils/templates';
-import Modal, { ModalStyle } from '@/components/modal';
 import {
   ArrowLeftIcon,
   ArrowRightIcon,
   ChevronDownIcon,
   ChevronUpIcon
 } from '@heroicons/react/outline';
-
 import mapValues from 'lodash/mapValues';
 import moment from 'moment';
 import { useRouter } from 'next/router';
@@ -179,11 +178,7 @@ const SignAgreement: React.FC<ISignAgreementProps> = ({
           nonHighlightFields.has(key) || (!isManager && !memberFields.has(key))
             ? value
             : key === 'depositAmount'
-            ? `${
-                depositTokenSymbol === activeNetwork.nativeCurrency.symbol
-                  ? depositTokenSymbol
-                  : '$'
-              } <span class="font-semibold" data-field="${key}">${value}</span>`
+            ? `<span class="font-semibold" data-field="${key}">${value}</span> ${depositTokenSymbol}`
             : `<span class="font-semibold" data-field="${key}">${
                 key === 'generalPurposeStatement' ? value.toLowerCase() : value
               }</span>` // general purpose should be in lowercase

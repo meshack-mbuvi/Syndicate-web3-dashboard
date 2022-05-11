@@ -2,8 +2,8 @@ import { ClubERC20Contract } from '@/ClubERC20Factory/clubERC20';
 import { NumberField } from '@/components/inputs/numberField';
 import { TextField } from '@/components/inputs/textField';
 import {
-  ERC20TokenDefaultState,
-  setERC20Token
+  setERC20Token,
+  ERC20TokenDefaultState
 } from '@/helpers/erc20TokenDetails';
 import { AppState } from '@/state';
 import { setClubMembers } from '@/state/clubMembers';
@@ -59,13 +59,16 @@ const LegalAgreement: React.FC = () => {
     legalInfoReducer: {
       clubInfo: { adminName }
     },
+    connectClubMemberReducer: {
+      connectedMember: { depositAmount }
+    },
     web3Reducer: {
       web3: { account, web3 }
     },
     erc20TokenSliceReducer: {
       erc20Token,
       // TODO: I think this should be in USD
-      depositDetails: { depositTokenSymbol }
+      depositDetails: { depositTokenSymbol, ethDepositToken }
     }
   } = useSelector((state: AppState) => state);
 
@@ -83,7 +86,7 @@ const LegalAgreement: React.FC = () => {
         dispatch(setClubMembers([]));
       };
     }
-  }, [clubAddress, account, router.isReady]);
+  }, [clubAddress, account, router.isReady, ethDepositToken]);
 
   const { form } = router.query;
   // Check whether form query param exist when page has loaded
@@ -115,6 +118,7 @@ const LegalAgreement: React.FC = () => {
     formState: { isValid }
   } = useForm<FormInputs>({
     mode: 'onChange',
+    defaultValues: { depositAmount: depositAmount || '' },
     resolver: yupResolver(schema(erc20Token.maxTotalDeposits))
   });
 
@@ -150,8 +154,9 @@ const LegalAgreement: React.FC = () => {
               type="number"
               addOn={depositTokenSymbol}
               control={control}
-              info="Total amount you intend to deposit"
+              info="Amount you intend to deposit into the investment club"
               addOnStyles=""
+              defaultValue={depositAmount}
             />
 
             <TextField

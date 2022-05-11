@@ -8,7 +8,6 @@ import { NativeMintModuleContract } from './nativeMintModule';
 import { MerkleDistributorModuleContract } from './merkleDistributorModule';
 import { MerkleDistributorModuleERC721Contract } from './merkleDistributorModuleERC721';
 import { ERC721MintPolicyContract } from './mintPolicyERC721';
-import { OwnerMintModuleContract } from './ownerMintModule';
 import { MintPolicyContract } from './policyMintERC20';
 import { PublicMintWithFeeModuleContract } from './publicMintWithFeeModule';
 import { PublicOnePerAddressModuleContract } from './publicOnePerAddressModule';
@@ -17,8 +16,10 @@ import { RugBonusTokenModule } from './RugRadio/RugBonusTokenModule';
 import { RugERC20ClaimModule } from './RugRadio/RugERC20ClaimModule';
 import { RugUtilityProperties } from './RugRadio/RugUtilityProperties';
 import { RugUtilityMintModuleContract } from './rugUtilityMintModule';
+import { OwnerMintModuleContract } from './ownerMintModule';
 import { CONTRACT_ADDRESSES } from '@/Networks';
 
+const DEPOSIT_EXCHANGE_MODULE = process.env.NEXT_PUBLIC_DEPOSIT_EXCHANGE_MODULE;
 // Contract addresses for Rug Radio
 const PUBLIC_RUG_UTILITY_MINT_MODULE =
   process.env.NEXT_PUBLIC_UTILITY_MINT_MODULE;
@@ -27,7 +28,6 @@ const GENESIS_NFT = process.env.NEXT_PUBLIC_GenesisNFT;
 const RUG_PROPERTIES = process.env.NEXT_PUBLIC_PROPERTIES;
 const RUG_CLAIM_MODULE = process.env.NEXT_PUBLIC_RUG_CLAIM_MODULE;
 const RUG_BONUS_CLAIM_MODULE = process.env.NEXT_PUBLIC_RUG_BONUS;
-const DEPOSIT_EXCHANGE_MODULE = process.env.NEXT_PUBLIC_DEPOSIT_EXCHANGE_MODULE;
 
 export const getSyndicateContracts = async (
   web3: Web3,
@@ -135,6 +135,7 @@ export const getSyndicateContracts = async (
     web3
   );
 
+  // return all initialized contracts
   return {
     clubERC20Factory,
     policyMintERC20,

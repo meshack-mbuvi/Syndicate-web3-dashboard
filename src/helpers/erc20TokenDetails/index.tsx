@@ -114,6 +114,7 @@ export const getERC20TokenDetails = async (
       let depositsEnabled = false;
       if (!claimEnabled) {
         const endDateInFuture = +endTime * 1000 > new Date().getTime();
+
         depositsEnabled = endDateInFuture;
       }
 

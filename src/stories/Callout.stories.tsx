@@ -2,7 +2,7 @@ import { Callout, CalloutType } from '@/components/callout';
 import React from 'react';
 
 export default {
-  title: 'Atoms/Callout',
+  title: '2. Atoms/Callout',
   component: Callout,
   parameters: {
     componentSubtitle: 'For calling attention'

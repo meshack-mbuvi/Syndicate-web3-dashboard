@@ -2,7 +2,7 @@ import { StatusChip, ChipState } from '@/components/statusChip';
 import React from 'react';
 
 export default {
-  title: 'Atoms/Status Chip',
+  title: '2. Atoms/Status Chip',
   component: StatusChip,
   argTypes: {
     status: {

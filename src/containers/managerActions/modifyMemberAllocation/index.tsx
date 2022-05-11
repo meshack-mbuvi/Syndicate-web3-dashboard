@@ -1,7 +1,14 @@
+import { OldClubERC20Contract } from '@/ClubERC20Factory/clubERC20/oldClubERC20';
+import { OwnerMintModuleContract } from '@/ClubERC20Factory/ownerMintModule';
+import { ProgressModal, ProgressModalState } from '@/components/progressModal';
+import ConfirmMemberAllocations from '@/containers/managerActions/modifyMemberAllocation/ConfirmMemberAllocations';
+import ModifyMemberClubTokens from '@/containers/managerActions/modifyMemberAllocation/ModifyMemberClubTokens';
 import { setERC20Token } from '@/helpers/erc20TokenDetails';
+import { useClubDepositsAndSupply } from '@/hooks/useClubDepositsAndSupply';
 import useModal from '@/hooks/useModal';
 import { AppState } from '@/state';
 import { getWeiAmount } from '@/utils/conversions';
+import { isDev } from '@/utils/environment';
 import { formatAddress } from '@/utils/formatAddress';
 import {
   floatedNumberWithCommas,
@@ -10,12 +17,6 @@ import {
 } from '@/utils/formattedNumbers';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useClubDepositsAndSupply } from '@/hooks/useClubDepositsAndSupply';
-import { ProgressModal, ProgressModalState } from '@/components/progressModal';
-import ModifyMemberClubTokens from '@/containers/managerActions/modifyMemberAllocation/ModifyMemberClubTokens';
-import ConfirmMemberAllocations from '@/containers/managerActions/modifyMemberAllocation/ConfirmMemberAllocations';
-import { OldClubERC20Contract } from '@/ClubERC20Factory/clubERC20/oldClubERC20';
-import { isDev } from '@/utils/environment';
 import { CONTRACT_ADDRESSES } from '@/Networks';
 
 const ModifyClubTokens: React.FC<{
@@ -49,7 +50,7 @@ const ModifyClubTokens: React.FC<{
   const [newTotalSupply, setNewTotalSupply] = useState(totalSupply);
   const [member, setMember] = useState(memberToUpdate.memberAddress);
   const [newOwnership, setNewOwnership] = useState(0);
-  const [mintOrBurn, setMintOrBurn] = useState(false);
+  const [mintClubTokens, setMintClubTokens] = useState(false);
   const [tokensToMintOrBurn, setTokensToMintOrBurn] = useState(0);
   const [memberAllocation, setMemberAllocation] = useState('');
   const [memberAllocationError, setMemberAllocationError] = useState<
@@ -90,9 +91,9 @@ const ModifyClubTokens: React.FC<{
   useEffect(() => {
     if (!tokensToMintOrBurn || !memberAllocation) return;
     let newTokenSupply;
-    if (tokensToMintOrBurn && !mintOrBurn) {
+    if (tokensToMintOrBurn && !mintClubTokens) {
       newTokenSupply = +totalSupply - +tokensToMintOrBurn;
-    } else if (tokensToMintOrBurn && mintOrBurn) {
+    } else if (tokensToMintOrBurn && mintClubTokens) {
       newTokenSupply = +totalSupply + +tokensToMintOrBurn;
     }
 
@@ -100,7 +101,7 @@ const ModifyClubTokens: React.FC<{
 
     const ownership = (+memberAllocation * 100) / newTokenSupply;
     setNewOwnership(ownership);
-  }, [memberAllocation, totalSupply, tokensToMintOrBurn, mintOrBurn]);
+  }, [memberAllocation, totalSupply, tokensToMintOrBurn, mintClubTokens]);
 
   /**
    * Determine whether to mint or burn tokens for given member address
@@ -110,13 +111,13 @@ const ModifyClubTokens: React.FC<{
   useEffect(() => {
     if (+memberAllocation > +memberToUpdate.clubTokens) {
       // mint more tokens
-      setMintOrBurn(true);
+      setMintClubTokens(true);
       setTokensToMintOrBurn(
         parseInt(memberAllocation || '0', 10) - +memberToUpdate.clubTokens
       );
-    } else {
+    } else if (+memberAllocation < +memberToUpdate.clubTokens) {
       // burn excess tokens
-      setMintOrBurn(false);
+      setMintClubTokens(false);
       setTokensToMintOrBurn(
         +memberToUpdate.clubTokens - parseInt(memberAllocation || '0', 10)
       );
@@ -173,21 +174,39 @@ const ModifyClubTokens: React.FC<{
     setConfirm(true);
     setPreview();
 
+    // OwnerMintModule for policyMintERC20
     const OWNER_MINT_MODULE =
       CONTRACT_ADDRESSES[activeNetwork.chainId]?.OwnerMintModule;
-    const useOwnerMintModule =
+    // OwnerMintModule for mintPolicy
+    const OWNER_MINT_MODULE_2 = process.env.NEXT_PUBLIC_OWNER_MINT_MODULE_2;
+
+    const policyMintERC20MintModule =
       await syndicateContracts.policyMintERC20.isModuleAllowed(
         erc20TokenContract.address,
         OWNER_MINT_MODULE
       );
 
+    // Both ETH and USDC clubs should work with OwnerMintModule
+    const useOwnerMintModule =
+      policyMintERC20MintModule ||
+      (await syndicateContracts.mintPolicy.isModuleAllowed(
+        erc20TokenContract.address,
+        OWNER_MINT_MODULE_2
+      ));
+
     try {
       /**
        * At this point, we either burn or mint tokens for the selected wallet address
        */
-      if (mintOrBurn) {
+      if (mintClubTokens) {
         if (useOwnerMintModule) {
-          await syndicateContracts.OwnerMintModule.ownerMint(
+          // Use either OwnerMintModule for policyMintERC20 or one for mintPolicy
+          // respectively
+          const OwnerMintModule = policyMintERC20MintModule
+            ? syndicateContracts.OwnerMintModule
+            : new OwnerMintModuleContract(OWNER_MINT_MODULE_2, web3);
+
+          await OwnerMintModule.ownerMint(
             getWeiAmount(
               web3,
               tokensToMintOrBurn.toString(),
@@ -257,31 +276,59 @@ const ModifyClubTokens: React.FC<{
         );
       }
     } catch (error) {
+      console.log({ error });
       onTxFail(error);
     }
   };
 
   const handleAmountChange = (e) => {
     const amount = numberInputRemoveCommas(e);
+
+    // calculate available tokens supply since we override the
+    // current member club tokens and not add onto it.
+    let availableTokenSupply = 0;
+    if (clubMembers.length === 1) {
+      availableTokenSupply = maxTotalSupply;
+    } else if (clubMembers.length > 1) {
+      const otherClubMembersTokens =
+        +maxTotalSupply -
+        (+memberToUpdate.clubTokens + +currentClubTokenSupply);
+      availableTokenSupply = +maxTotalSupply - +otherClubMembersTokens;
+    }
+
     if (amount < 0 || !amount) {
       setMemberAllocationError('Amount is required.');
       setContinueButtonDisabled(true);
-    } else if (+amount > +currentClubTokenSupply) {
-      setMemberAllocationError(
-        <span>
-          Amount exceeds available club token supply of{' '}
-          <button
-            onClick={() => {
-              setMemberAllocation(currentClubTokenSupply.toString());
-              setMemberAllocationError('');
-            }}
-          >
-            <u>
-              {numberWithCommas(currentClubTokenSupply)} {symbol}
-            </u>
-          </button>
-        </span>
-      );
+    } else if (
+      +amount > +availableTokenSupply &&
+      +amount > +memberToUpdate.clubTokens
+    ) {
+      if (+currentClubTokenSupply === 0) {
+        setMemberAllocationError('No available club tokens to mint.');
+      } else {
+        setMemberAllocationError(
+          <span>
+            Amount exceeds available club token supply of{' '}
+            <button
+              onClick={() => {
+                setMemberAllocation(
+                  clubMembers.length > 1
+                    ? availableTokenSupply.toString()
+                    : maxTotalSupply.toString()
+                );
+                setMemberAllocationError('');
+              }}
+            >
+              <u>
+                {numberWithCommas(
+                  clubMembers.length > 1 ? availableTokenSupply : maxTotalSupply
+                )}{' '}
+                {symbol}
+              </u>
+            </button>
+          </span>
+        );
+      }
     } else if (+amount === +memberToUpdate.clubTokens) {
       setContinueButtonDisabled(true);
     } else {
@@ -391,7 +438,7 @@ const ModifyClubTokens: React.FC<{
           setPreview,
           setShowModifyCapTable,
           memberAllocation,
-          mintOrBurn,
+          mintClubTokens,
           newOwnership,
           tokensToMintOrBurn,
           newTotalSupply,

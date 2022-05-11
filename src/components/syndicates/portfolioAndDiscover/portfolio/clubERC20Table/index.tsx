@@ -1,12 +1,12 @@
 import {
   floatedNumberWithCommas,
-  numberWithCommas,
-} from "@/utils/formattedNumbers";
-import { hasDecimals } from "@/utils/hasDecimals";
-import Image from "next/image";
-import Link from "next/link";
-import React, { FC, useEffect, useMemo, useRef, useState } from "react";
-import GradientAvatar from "../GradientAvatar";
+  numberWithCommas
+} from '@/utils/formattedNumbers';
+import { hasDecimals } from '@/utils/hasDecimals';
+import Image from 'next/image';
+import Link from 'next/link';
+import React, { FC, useEffect, useMemo, useRef, useState } from 'react';
+import GradientAvatar from '../GradientAvatar';
 import { AppState } from '@/state';
 import { useSelector } from 'react-redux';
 
@@ -46,7 +46,9 @@ const ClubERC20Table: FC<Props> = ({ columns, tableData }) => {
     return hasDecimals(totalDeposits)
       ? floatedNumberWithCommas(
           parseFloat(totalDeposits),
-          depositERC20TokenSymbol == activeNetwork.nativeCurrency.symbol ? true : false
+          depositERC20TokenSymbol == activeNetwork.nativeCurrency.symbol
+            ? true
+            : false
         )
       : numberWithCommas(totalDeposits);
   };
@@ -143,16 +145,17 @@ const ClubERC20Table: FC<Props> = ({ columns, tableData }) => {
                         <div className="flex text-base items-center justify-end">
                           <div className="flex items-center mr-2">
                             <Image
-                              src={
-                                depositTokenLogo || '/images/token-gray-4.svg'
-                              }
+                              src={depositTokenLogo}
                               width={20}
                               height={20}
                             />
                           </div>
                           {floatedNumberWithCommas(
                             memberDeposits,
-                            depositERC20TokenSymbol == activeNetwork.nativeCurrency.symbol ? true : false
+                            depositERC20TokenSymbol ==
+                              activeNetwork.nativeCurrency.symbol
+                              ? true
+                              : false
                           )}{' '}
                           {depositERC20TokenSymbol}
                         </div>

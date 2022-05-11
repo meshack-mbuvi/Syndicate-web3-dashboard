@@ -2,7 +2,7 @@ import { ProgressModal, ProgressModalState } from '@/components/progressModal';
 import { formatAddress } from '@/utils/formatAddress';
 
 export default {
-  title: 'Molecules/Cap Table Management/Modals/Add Member/Progress Modals',
+  title: '4. Organisms/Cap Table Management/Modals/Add Member/Progress Modals',
   argTypes: {
     state: {
       options: [

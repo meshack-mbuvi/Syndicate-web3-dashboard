@@ -20,7 +20,7 @@ const useClubTokenMembers = () => {
     web3Reducer: { web3: web3Instance },
     erc20TokenSliceReducer: {
       erc20Token: { symbol, tokenDecimals, totalSupply },
-      depositDetails: { depositTokenDecimals }
+      depositDetails: { depositTokenDecimals, nativeDepositToken }
     }
   } = useSelector((state: AppState) => state);
 
@@ -82,7 +82,13 @@ const useClubTokenMembers = () => {
     if (router.isReady && activeNetwork.chainId) {
       refetch();
     }
-  }, [router.isReady, account, activeNetwork.chainId, totalSupply]);
+  }, [
+    router.isReady,
+    account,
+    activeNetwork.chainId,
+    totalSupply,
+    nativeDepositToken
+  ]);
 
   useEffect(() => {
     if (loadingClubMembers) {
@@ -100,7 +106,8 @@ const useClubTokenMembers = () => {
     JSON.stringify(data?.syndicateDAOs?.[0]?.members),
     loadingClubMembers,
     clubAddress,
-    account
+    account,
+    nativeDepositToken
   ]);
 };
 

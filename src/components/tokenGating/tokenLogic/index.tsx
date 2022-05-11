@@ -118,7 +118,7 @@ export const TokenLogicList: React.FC<Props> = ({
                   ...tokenRules.slice(index + 1)
                 ]);
               }}
-              stylingOverride="pl-0 p-4 rounded-md focus:ring-0 text-white"
+              classesOverride="pl-0 p-4 rounded-md focus:ring-0 text-white bg-transparent"
               extraClasses={`border-none p-0 text-${
                 String(rule.quantity).length > 7 &&
                 String(rule.quantity).length < 12

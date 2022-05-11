@@ -7,12 +7,12 @@ import {
   setOtherClubERC20s
 } from '@/state/clubERC20';
 import { formatDate, isZeroAddress, pastDate } from '@/utils';
-import { getTokenDetails } from '@/utils/api';
 import { divideIfNotByZero, getWeiAmount } from '@/utils/conversions';
 import { useQuery } from '@apollo/client';
 import { useRouter } from 'next/router';
 import { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { getTokenDetails } from '@/utils/api';
 
 const useClubERC20s = () => {
   const dispatch = useDispatch();
@@ -100,8 +100,8 @@ const useClubERC20s = () => {
           contractAddress,
           members,
           ownerAddress,
-          totalSupply,
           totalDeposits,
+          totalSupply,
           startTime,
           endTime,
           maxMemberCount,
@@ -183,7 +183,6 @@ const useClubERC20s = () => {
 
           const depositsEnabled = !pastDate(new Date(+endTime * 1000));
 
-          //  calculate ownership share
           const memberDeposits = getWeiAmount(
             web3,
             depositAmount,
@@ -290,26 +289,28 @@ const useClubERC20s = () => {
                 depositAmount,
                 syndicateDAO: {
                   contractAddress,
-                  endTime,
-                  startTime,
+                  createdAt,
                   ownerAddress,
                   totalSupply,
                   totalDeposits,
                   maxTotalSupply,
-                  members
+                  members,
+                  endTime,
+                  startTime
                 }
               } = syndicateDAO;
 
               clubTokens.push({
                 depositAmount,
                 contractAddress,
-                endTime,
-                startTime,
+                createdAt,
                 ownerAddress,
                 totalSupply,
                 totalDeposits,
                 maxTotalSupply,
-                members
+                members,
+                endTime,
+                startTime
               });
             }
           }

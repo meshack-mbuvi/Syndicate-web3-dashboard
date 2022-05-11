@@ -12,7 +12,7 @@ const client = new ApolloClient({
 
 export default {
   title:
-    'Molecules/Cap Table Management/Modals/Modify Member Tokens/Modify member allocation',
+    '4. Organisms/Cap Table Management/Modals/Modify Member Tokens/Modify member allocation',
   parameters: {
     nextRouter: {
       query: {

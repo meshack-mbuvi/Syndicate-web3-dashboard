@@ -1,13 +1,13 @@
 import { FC, useState } from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { useDispatch, useSelector } from 'react-redux';
-import { SkeletonLoader } from '@/components/skeletonLoader';
-import { AppState } from '@/state';
 import { fetchCollectiblesTransactions } from '@/state/assets/slice';
+import { floatedNumberWithCommas } from '@/utils/formattedNumbers';
+import { SkeletonLoader } from '@/components/skeletonLoader';
 import CollectibleDetailsModal from '@/containers/layoutWithSyndicateDetails/assets/collectibles/collectibleDetailsModal';
 import CollectibleMedia from '@/containers/layoutWithSyndicateDetails/assets/collectibles/shared/CollectibleMedia';
-import { floatedNumberWithCommas } from '@/utils/formattedNumbers';
 import { useDemoMode } from '@/hooks/useDemoMode';
+import { AppState } from '@/state';
 import {
   setCollectibleModalDetails,
   setShowCollectibleModal
@@ -270,6 +270,9 @@ const Collectibles: FC = () => {
                             }
                           });
                         }}
+                        onKeyDown={() => ({})}
+                        tabIndex={0}
+                        role="button"
                       >
                         <div className="mx-8 flex flex-col">
                           <h3

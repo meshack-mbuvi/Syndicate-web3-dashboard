@@ -1,4 +1,6 @@
+import { CtaButton } from '@/components/CTAButton';
 import Layout from '@/components/layout';
+import Modal, { ModalStyle } from '@/components/modal';
 import Head from '@/components/syndicates/shared/HeaderTitle';
 import SignAgreement from '@/components/syndicates/shared/signAgreement';
 import WalletNotConnected from '@/components/walletNotConnected';
@@ -7,8 +9,9 @@ import { getTemplates } from '@/utils/templates';
 import axios from 'axios';
 import moment from 'moment';
 import { NextPage } from 'next';
+import Link from 'next/link';
 import { useRouter } from 'next/router';
-import React from 'react';
+import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 
 const MemberAgreementPage: NextPage = () => {
@@ -19,6 +22,9 @@ const MemberAgreementPage: NextPage = () => {
     legalInfoReducer: { memberInfo, clubInfo, walletSignature },
     web3Reducer: {
       web3: { account }
+    },
+    erc20TokenSliceReducer: {
+      erc20Token: { depositsEnabled }
     }
   } = useSelector((state: AppState) => state);
 
@@ -32,6 +38,8 @@ const MemberAgreementPage: NextPage = () => {
       isLegal: true
     }
   ];
+
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
 
   const signHandler = () => {
     // Render Final Docs :
@@ -59,7 +67,11 @@ const MemberAgreementPage: NextPage = () => {
       memberEmail: memberInfo.emailAddress
     });
 
-    router.push(`/clubs/${clubAddress}`);
+    if (depositsEnabled) {
+      router.push(`/clubs/${clubAddress}`);
+    } else {
+      setShowSuccessModal(true);
+    }
   };
 
   return (
@@ -74,6 +86,40 @@ const MemberAgreementPage: NextPage = () => {
           handleSignatureSuccess={signHandler}
         />
       )}
+
+      <Modal
+        {...{
+          modalStyle: ModalStyle.DARK,
+          show: showSuccessModal,
+          customWidth: 'w-100',
+          customClassName: 'pt-8 px-10 pb-8',
+          showCloseButton: false,
+          outsideOnClick: true,
+          showHeader: false,
+          alignment: 'align-top',
+          margin: 'mt-48'
+        }}
+      >
+        <div className="flex flex-col items-center pb-3 space-y-10">
+          <img
+            className="h-16 w-16"
+            src="/images/syndicateStatusIcons/checkCircleGreen.svg"
+            alt="checkmark"
+          />
+          <div className="flex flex-col items-center">
+            <div className="text-xl mb-4">Signed and submitted</div>
+            <div className="body text-gray-syn4 mb-8">
+              You’ll receive a signed copy via email
+            </div>
+
+            <Link href={`/clubs/${clubAddress}`}>
+              <CtaButton onClick={() => setShowSuccessModal(false)}>
+                Back to club dashboard
+              </CtaButton>
+            </Link>
+          </div>
+        </div>
+      </Modal>
     </Layout>
   );
 };

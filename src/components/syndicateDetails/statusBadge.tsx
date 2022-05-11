@@ -6,6 +6,7 @@ import { useSelector } from 'react-redux';
 import useFetchMerkleProof from '@/hooks/useMerkleProof';
 import useFetchTokenClaim from '@/hooks/useTokenClaim';
 import { useDemoMode } from '@/hooks/useDemoMode';
+import { getCountDownDays } from '@/utils/dateUtils';
 
 interface Props {
   isManager?: boolean;
@@ -17,6 +18,8 @@ interface Props {
   syndicateSuccessfullyCreated?: boolean;
   syndicateCreationFailed?: boolean;
   showConfettiSuccess?: boolean;
+  isDistributing?: boolean;
+  isWaitingForSelection?: boolean;
 }
 
 const StatusBadge = (props: Props): JSX.Element => {
@@ -28,12 +31,14 @@ const StatusBadge = (props: Props): JSX.Element => {
     creatingSyndicate,
     syndicateSuccessfullyCreated,
     syndicateCreationFailed,
-    showConfettiSuccess
+    showConfettiSuccess,
+    isDistributing,
+    isWaitingForSelection
   } = props;
 
   const {
     erc20TokenSliceReducer: {
-      erc20Token: { loading }
+      erc20Token: { loading, endTime }
     }
   } = useSelector((state: AppState) => state);
 
@@ -49,6 +54,10 @@ const StatusBadge = (props: Props): JSX.Element => {
     badgeBackgroundColor = 'bg-green-phthalo-green';
     badgeIcon = 'claimToken.svg';
     titleText = isManager ? 'Airdrop Enabled' : 'Claim club tokens';
+  } else if (isDistributing) {
+    badgeBackgroundColor = 'bg-green-phthalo-green';
+    titleText = 'Distributing';
+    badgeIcon = 'distributeIcon.svg';
   } else if (!depositsEnabled) {
     badgeBackgroundColor = 'bg-green-dark';
     badgeIcon = 'active.svg';
@@ -74,6 +83,8 @@ const StatusBadge = (props: Props): JSX.Element => {
     badgeBackgroundColor = 'bg-red-error bg-opacity-10';
     badgeIcon = 'warning-triangle.svg';
     titleText = 'Club creation failed';
+  } else if (isDistributing && isWaitingForSelection) {
+    titleText = 'Waiting for selection...';
   }
 
   return (
@@ -84,19 +95,28 @@ const StatusBadge = (props: Props): JSX.Element => {
         {loading || merkleLoading || claimLoading ? (
           <SkeletonLoader width="2/3" height="7" borderRadius="rounded-full" />
         ) : (
-          <div className="flex items-center space-x-4">
-            {typeof badgeIcon === 'string' ? (
-              <div className="w-6 h-6">
-                <img
-                  src={`/images/syndicateStatusIcons/${badgeIcon}`}
-                  alt={titleText}
-                  style={{ height: '100%', width: '100%' }}
-                />
+          <div className="flex items-center justify-between space-x-4 w-full">
+            <div className="flex items-center space-x-4 w-full">
+              {typeof badgeIcon === 'string' ? (
+                <div className="w-6 h-6">
+                  <img
+                    src={`/images/syndicateStatusIcons/${badgeIcon}`}
+                    alt={titleText}
+                    style={{ height: '100%', width: '100%' }}
+                  />
+                </div>
+              ) : (
+                <div className="m-0">{badgeIcon}</div>
+              )}
+              <p className="h3 sm:text-xl leading-snug ml-4">{titleText}</p>
+            </div>
+            {depositsEnabled ? (
+              <div className="flex-shrink-0">
+                <span className="font-whyte-light">{`Closes in ${getCountDownDays(
+                  endTime.toString()
+                )}`}</span>
               </div>
-            ) : (
-              <div className="m-0">{badgeIcon}</div>
-            )}
-            <h3 className="ml-4">{titleText}</h3>
+            ) : null}
           </div>
         )}
       </div>

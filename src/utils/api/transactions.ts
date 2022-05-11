@@ -18,8 +18,8 @@ export const getTokenPrice = async (
   chainId: number
 ): Promise<number> => {
   const result: AxiosResponse<number> = await proxyGet('token/price_usd', {
-    tokenAddresses: tokenAddress,
-    chainId: chainId
+    chainId,
+    tokenAddresses: tokenAddress.toLowerCase()
   });
 
   return result.data[tokenAddress]['usd'];

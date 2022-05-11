@@ -86,7 +86,7 @@ const TransactionDetails: React.FC<ITransactionDetails> = ({
     <>
       {category !== 'OFF_CHAIN_INVESTMENT' ? (
         <div className={`flex items-center ${width < 400 ? 'flex-col' : ''}`}>
-          <div className="flex">
+          <div className="flex items-center">
             {tokenSymbol.toLowerCase() !== 'usd' && (
               <>
                 {tokenLogo ? (

@@ -14,6 +14,7 @@ export const useGetDepositTokenPrice = (chainId: number) => {
       web3: { activeNetwork }
     }
   } = useSelector((state: AppState) => state);
+
   const [tokenPriceInUSDState, setTokenPriceInUSDState] = useState<number>(0);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);

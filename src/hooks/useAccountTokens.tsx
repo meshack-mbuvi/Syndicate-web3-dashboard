@@ -1,9 +1,10 @@
 import { CLUB_MEMBER_QUERY } from '@/graphql/queries';
 import { AppState } from '@/state';
+import { setConnectedMember } from '@/state/connectMember';
 import { getWeiAmount } from '@/utils/conversions';
 import { useQuery } from '@apollo/client';
 import { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useDemoMode } from './useDemoMode';
 
 /**
@@ -116,6 +117,8 @@ export function useAccountTokens(): {
     totalSupply,
     totalDeposits,
     depositTokenDecimals,
+    isDemoMode,
+    depositTokenDecimals,
     JSON.stringify(data)
   ]);
 
@@ -124,6 +127,23 @@ export function useAccountTokens(): {
       refetch();
     }
   }, [totalSupply, totalDeposits, account, activeNetwork.chainId]);
+
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(
+      setConnectedMember({
+        loading,
+        depositAmount: `${
+          ethDepositToken
+            ? parseFloat((Number(memberDeposits) * 10000).toString())
+            : memberDeposits
+        }`
+      })
+    );
+    return () => {
+      dispatch(setConnectedMember({ depositAmount: '', loading: false }));
+    };
+  }, [loading, memberDeposits]);
 
   return {
     loadingMemberOwnership: loading,

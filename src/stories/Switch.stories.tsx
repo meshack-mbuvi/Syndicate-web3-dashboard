@@ -2,7 +2,7 @@ import { Switch, SwitchType } from '@/components/switch';
 import React from 'react';
 
 export default {
-  title: 'Atoms/Switch',
+  title: '2. Atoms/Switch',
   component: Switch,
   argTypes: {
     isOn: {

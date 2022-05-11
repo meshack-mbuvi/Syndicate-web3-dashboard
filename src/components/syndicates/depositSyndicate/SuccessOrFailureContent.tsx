@@ -79,7 +79,7 @@ export const SuccessOrFailureContent: React.FC<{
                 nativeDepositToken ?? false
               )} ${depositTokenSymbol}`
             : successfulClaim
-            ? 'Claim successfull'
+            ? 'Claim successful'
             : claimFailed
             ? 'Claim failed'
             : `Deposit failed`}

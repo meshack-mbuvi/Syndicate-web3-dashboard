@@ -20,7 +20,7 @@ const TokenItemDetails: React.FC<TokenDetailsProps> = ({
   isNavHighlighted,
   onClick
 }) => {
-  const ref = React.useRef<HTMLButtonElement>();
+  const ref = React.createRef<HTMLButtonElement>();
 
   useEffect(() => {
     if (isNavHighlighted && ref.current) {

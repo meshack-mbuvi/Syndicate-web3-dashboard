@@ -6,7 +6,7 @@ import { store } from '@/state/index';
 import ConnectWalletProvider from '@/context/ConnectWalletProvider';
 
 export default {
-  title: 'Molecules/Modal Connet',
+  title: '3. Molecules/Modal Connet',
   component: PillButton,
   argTypes: {
     isActive: {

@@ -3,7 +3,7 @@ import { PillButtonLarge } from '@/components/pillButtons/pillButtonsLarge';
 import React from 'react';
 
 export default {
-  title: 'Atoms/Buttons/Pill Button/Large',
+  title: '2. Atoms/Buttons/Pill Button/Large',
   component: PillButton,
   argTypes: {
     isActive: {

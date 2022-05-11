@@ -24,7 +24,7 @@ const useRugRadioTokenCount: any = (collectiblesResult, refresh) => {
   const [loading, setLoading] = useState(true);
 
   const getTokenProperties = async () => {
-    if (!collectiblesResult.length) return setLoading(false);
+    if (!collectiblesResult.length) return;
 
     const totalClaimedTokens = +getWeiAmount(
       web3,
@@ -79,7 +79,7 @@ const useRugRadioTokenCount: any = (collectiblesResult, refresh) => {
   };
 
   useEffect(() => {
-    if (!collectiblesResult.length) return setLoading(false);
+    if (!collectiblesResult.length) return;
 
     getTokenProperties();
   }, [account, refresh, JSON.stringify(collectiblesResult)]);

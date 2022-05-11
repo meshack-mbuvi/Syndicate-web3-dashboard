@@ -4,7 +4,7 @@ import { store } from '@/state/index';
 import { Story } from '@storybook/react';
 
 export default {
-  title: 'Atoms/Token Items Loading Section',
+  title: '2. Atoms/Token Items Loading Section',
   component: TokenItemsLoadingSection,
   decorators: [
     (Story: React.FC): React.ReactElement => (
@@ -25,6 +25,6 @@ export const Default = Template.bind({});
 Default.args = {
   symbol: 'ETH',
   name: 'Ethereum',
-  logoURI: '/images/ethereum-logo.svg',
+  logoURI: '/images/ethereum-logo.png',
   showCheckMark: false
 };

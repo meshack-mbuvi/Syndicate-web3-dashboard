@@ -29,11 +29,12 @@ const MembersTable = ({
   selectedMember,
   setSelectedMember,
   toggleAddMemberModal,
-  setShowMemberOptions
+  setShowMemberOptions,
+  setShowMintNavToClubSettings
 }): JSX.Element => {
   const {
     erc20TokenSliceReducer: {
-      erc20Token: { symbol },
+      erc20Token: { symbol, depositsEnabled },
       depositDetails: { depositTokenSymbol }
     },
     web3Reducer: {
@@ -178,11 +179,8 @@ const MembersTable = ({
 
   const hasMemberSigned = memberSignedData?.Financial_memberSigned;
 
-  //TODO: remove this to re-enable cap table.
-  const capTableEnabled = false;
-
   return (
-    <div className="overflow-y-hidden ">
+    <div className="overflow-y-visible">
       <div className="flex my-11 col-span-12 space-x-8 justify-between items-center">
         {page.length > 1 || searchAddress ? (
           <SearchInput
@@ -196,12 +194,16 @@ const MembersTable = ({
           <div></div>
         )}
 
-        {isOwner && capTableEnabled && (
+        {isOwner && (
           <div className="inline-flex items-right">
             <LinkButton
               type={LinkType.MEMBER}
               onClick={() => {
-                toggleAddMemberModal();
+                if (depositsEnabled) {
+                  toggleAddMemberModal();
+                } else {
+                  setShowMintNavToClubSettings(true);
+                }
               }}
             />
           </div>
@@ -254,7 +256,7 @@ const MembersTable = ({
                   handleClick(row.original);
                 }}
                 onMouseEnter={() =>
-                  isOwner && capTableEnabled
+                  isOwner && depositsEnabled
                     ? setShowMemberOptions({
                         show: true,
                         memberAddress: row.original.memberAddress
@@ -262,7 +264,7 @@ const MembersTable = ({
                     : null
                 }
                 onMouseLeave={() =>
-                  isOwner && capTableEnabled
+                  isOwner && depositsEnabled
                     ? setShowMemberOptions({
                         show: false,
                         memberAddress: ''
