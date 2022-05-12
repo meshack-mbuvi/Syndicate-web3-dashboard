@@ -78,8 +78,6 @@ const SignMemberLegalAgreement: NextPage = () => {
       }
     }
 
-    console.log('here');
-
     const { depositToken } = data.syndicateDAO || {};
     async function fetchDepositDetails() {
       let depositDetails;
