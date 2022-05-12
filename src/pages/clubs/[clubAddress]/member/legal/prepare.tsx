@@ -19,7 +19,7 @@ import { useDispatch, useSelector } from 'react-redux';
 const SignMemberLegalAgreement: NextPage = () => {
   const {
     web3Reducer: {
-      web3: { account }
+      web3: { account, activeNetwork }
     },
     initializeContractsReducer: {
       syndicateContracts: { SingleTokenMintModule, DepositTokenMintModule }
@@ -91,7 +91,8 @@ const SignMemberLegalAgreement: NextPage = () => {
           depositToken,
           erc20TokenContract,
           DepositTokenMintModule,
-          SingleTokenMintModule
+          SingleTokenMintModule,
+          activeNetwork
         );
       }
 

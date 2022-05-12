@@ -134,7 +134,7 @@ export function useAccountTokens(): {
       setConnectedMember({
         loading,
         depositAmount: `${
-          ethDepositToken
+          nativeDepositToken
             ? parseFloat((Number(memberDeposits) * 10000).toString())
             : memberDeposits
         }`

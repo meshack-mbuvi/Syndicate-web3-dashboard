@@ -48,7 +48,7 @@ const Layout: FC<Props> = ({
 }) => {
   const {
     web3Reducer: {
-      web3: { account, status, web3 }
+      web3: { account, status, web3, activeNetwork }
     },
     initializeContractsReducer: {
       syndicateContracts: { SingleTokenMintModule, DepositTokenMintModule }
@@ -56,7 +56,7 @@ const Layout: FC<Props> = ({
     clubERC20sReducer: { myClubERC20s, otherClubERC20s, loading },
     erc20TokenSliceReducer: {
       erc20TokenContract,
-      depositDetails: { ethDepositToken },
+      depositDetails: { nativeDepositToken },
       erc20Token: { owner, address, loading: loadingClubDetails }
     }
   } = useSelector((state: AppState) => state);
@@ -183,7 +183,8 @@ const Layout: FC<Props> = ({
           depositToken,
           erc20TokenContract,
           DepositTokenMintModule,
-          SingleTokenMintModule
+          SingleTokenMintModule,
+          activeNetwork
         );
       }
 
@@ -233,7 +234,13 @@ const Layout: FC<Props> = ({
       // using "Active" as the default view.
       dispatch(setERC20TokenDetails(mockActiveERC20Token));
     }
-  }, [clubAddress, account, ethDepositToken, status, DepositTokenMintModule]);
+  }, [
+    clubAddress,
+    account,
+    nativeDepositToken,
+    status,
+    DepositTokenMintModule
+  ]);
 
   return (
     <div

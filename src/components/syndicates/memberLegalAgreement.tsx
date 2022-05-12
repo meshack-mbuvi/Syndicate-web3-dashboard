@@ -68,7 +68,7 @@ const LegalAgreement: React.FC = () => {
     erc20TokenSliceReducer: {
       erc20Token,
       // TODO: I think this should be in USD
-      depositDetails: { depositTokenSymbol, ethDepositToken }
+      depositDetails: { depositTokenSymbol, nativeDepositToken }
     }
   } = useSelector((state: AppState) => state);
 
@@ -86,7 +86,7 @@ const LegalAgreement: React.FC = () => {
         dispatch(setClubMembers([]));
       };
     }
-  }, [clubAddress, account, router.isReady, ethDepositToken]);
+  }, [clubAddress, account, router.isReady, nativeDepositToken]);
 
   const { form } = router.query;
   // Check whether form query param exist when page has loaded
