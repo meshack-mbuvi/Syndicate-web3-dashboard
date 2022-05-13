@@ -2,7 +2,10 @@ import { SettingsDisclaimerTooltip } from '@/containers/createInvestmentClub/sha
 import cn from 'classnames';
 import { AppState } from '@/state';
 import { useSelector } from 'react-redux';
-import { InputFieldWithToken } from '@/components/inputs/inputFieldWithToken';
+import {
+  InputFieldWithToken,
+  SymbolDisplay
+} from '@/components/inputs/inputFieldWithToken';
 import Image from 'next/image';
 
 /**
@@ -89,6 +92,7 @@ const RaiseTokenAmount = (props: {
       >
         <InputFieldWithToken
           placeholderLabel={placeholder}
+          symbolDisplayVariant={SymbolDisplay.ONLY_LOGO}
           onChange={(e) => {
             if (isNaN(e.target.value.replace(/,/g, ''))) {
               return;

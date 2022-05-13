@@ -10,14 +10,11 @@ import {
   numberInputRemoveCommas,
   numberWithCommas
 } from '@/utils/formattedNumbers';
-import Image from 'next/image';
 import React, { useEffect, useRef, useState, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { AdvancedInputField } from '../shared/AdvancedInputField';
 import TokenSelectModal from '@/components/tokenSelect/TokenSelectModal';
 import { SUPPORTED_TOKENS } from '@/Networks';
 import RaiseTokenAmount from './RaiseTokenAmount';
-import { defaultTokenDetails } from '@/containers/createInvestmentClub/shared/ClubTokenDetailConstants';
 
 const AmountToRaise: React.FC<{
   className?: string;
@@ -33,7 +30,7 @@ const AmountToRaise: React.FC<{
     }
   } = useSelector((state: AppState) => state);
 
-  const [error, setError] = useState<string | React.ReactNode>('');
+  const [error, setError] = useState<string>('');
   const [amount, setAmount] = useState<string>(tokenCap);
   const [showDisclaimerModal, setShowDisclaimerModal] = useState(false);
   const [defaultTokenDetails, setdefaultTokenDetails] = useState(
@@ -44,40 +41,7 @@ const AmountToRaise: React.FC<{
 
   const { setNextBtnDisabled } = useCreateInvestmentClubContext();
 
-  const usdcRef = useRef(null);
-
   const [showTokenSelectModal, setShowTokenSelectModal] = useState(false);
-
-  const coinList = useMemo(
-    () => SUPPORTED_TOKENS[activeNetwork.chainId] ?? SUPPORTED_TOKENS[1],
-    [activeNetwork.chainId]
-  );
-
-  useEffect(() => {
-    let [_defaultTokenDetails] = coinList.filter((coin) => coin.default);
-    setdefaultTokenDetails(_defaultTokenDetails);
-  }, [coinList, activeNetwork]);
-  const extraAddonContent = (
-    <button
-      className="flex justify-center items-center cursor-pointer pl-5 pr-4 py-2"
-      ref={usdcRef}
-      onClick={() => setShowTokenSelectModal(true)}
-    >
-      <div className="mr-2 flex items-center justify-center">
-        <Image
-          src={depositTokenLogo || defaultTokenDetails.depositTokenLogo}
-          width={20}
-          height={20}
-        />
-      </div>
-      <div className="uppercase">
-        <span>{depositTokenSymbol}</span>
-      </div>
-      <div className="inline-flex ml-4">
-        <img className="w-5 h-5" src="/images/double-chevron.svg" alt="" />
-      </div>
-    </button>
-  );
 
   // get input value
   const handleChange = (e) => {
@@ -86,6 +50,10 @@ const AmountToRaise: React.FC<{
     setAmount(value);
     // push amount to the redux store.
     dispatch(setTokenCap(value));
+  };
+
+  const handleButtonClick = () => {
+    setShowTokenSelectModal(true);
   };
 
   // catch input field errors
@@ -97,7 +65,7 @@ const AmountToRaise: React.FC<{
       setNextBtnDisabled(false);
     }
     amount ? dispatch(setTokenCap(amount)) : dispatch(setTokenCap('0'));
-  }, [amount, dispatch, editButtonClicked, setNextBtnDisabled]);
+  }, [amount, editButtonClicked, setNextBtnDisabled]);
 
   useEffect(() => {
     dispatch(
@@ -148,35 +116,28 @@ const AmountToRaise: React.FC<{
         </div>
       </Modal>
       <Fade delay={500}>
-        <h3 className="ml-5 mb-6">
-          What’s the upper limit of the club’s raise?
-        </h3>
         <div className="flex pb-6 ml-5">
-          <AdvancedInputField
-            {...{
-              value: amount
+          <RaiseTokenAmount
+            value={
+              amount
                 ? numberWithCommas(
                     // Checks if there are unnecessary zeros in the amount
                     amount.replace(/^0{2,}/, '0').replace(/^0(?!\.)/, '')
                   )
-                : numberWithCommas(''),
-              onChange: handleChange,
-              error: error,
-              hasError: Boolean(error),
-              placeholder: 'Unlimited',
-              type: 'text',
-              isNumber: true,
-              focus,
-              addSettingDisclaimer: true,
-              extraAddon: extraAddonContent,
-              moreInfo: (
-                <div>
-                  Accepting deposits beyond this amount will require an on-chain
-                  transaction with gas, so aim high.
-                </div>
-              ),
-              className: className
-            }}
+                : ''
+            }
+            title={'What’s the upper limit of the club’s raise?'}
+            onChange={handleChange}
+            handleButtonClick={handleButtonClick}
+            error={error}
+            placeholder={'1,000,000'}
+            type={'text'}
+            depositTokenLogo={depositTokenLogo}
+            addSettingDisclaimer={true}
+            moreInfo={
+              'Accepting deposits beyond this amount will require an on-chain transaction with gas, so aim high.'
+            }
+            className={className}
           />
         </div>
       </Fade>
