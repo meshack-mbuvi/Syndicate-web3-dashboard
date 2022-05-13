@@ -210,7 +210,8 @@ const Layout: FC<Props> = ({
    * Fetch club details
    */
   useEffect(() => {
-    if (!clubAddress || status == Status.CONNECTING) return;
+    if (!activeNetwork.chainId || !clubAddress || status == Status.CONNECTING)
+      return;
 
     if (
       clubAddress &&
@@ -239,7 +240,8 @@ const Layout: FC<Props> = ({
     account,
     nativeDepositToken,
     status,
-    DepositTokenMintModule
+    DepositTokenMintModule,
+    activeNetwork.chainId
   ]);
 
   return (

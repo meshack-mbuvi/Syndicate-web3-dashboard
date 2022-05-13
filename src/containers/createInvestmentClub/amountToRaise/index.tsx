@@ -68,6 +68,12 @@ const AmountToRaise: React.FC<{
   }, [amount, editButtonClicked, setNextBtnDisabled]);
 
   useEffect(() => {
+    setdefaultTokenDetails(
+      SUPPORTED_TOKENS[activeNetwork.chainId].filter((coin) => coin.default)[0]
+    );
+  }, [activeNetwork.chainId]);
+
+  useEffect(() => {
     dispatch(
       setDepositTokenDetails({
         depositToken: defaultTokenDetails.address,
