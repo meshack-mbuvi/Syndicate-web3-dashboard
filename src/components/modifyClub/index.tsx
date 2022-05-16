@@ -319,7 +319,11 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
           )
         : getWeiAmount(web3, String(maxAmountRaising), 18, true);
 
-      const mintPolicy = new MintPolicyContract(currentMintPolicyAddress, web3);
+      const mintPolicy = new MintPolicyContract(
+        currentMintPolicyAddress,
+        web3,
+        activeNetwork
+      );
 
       await mintPolicy.modifyERC20(
         account,

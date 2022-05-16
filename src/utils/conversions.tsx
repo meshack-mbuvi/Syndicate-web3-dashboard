@@ -1,4 +1,5 @@
 import { BigNumber } from 'bignumber.js';
+import { isEmpty } from 'lodash';
 
 /**
  * Takes an ether and converts it to a javascript number.
@@ -38,7 +39,7 @@ export const getWeiAmount = (
   tokenDecimals: number,
   multiplication: boolean
 ): any => {
-  if (!amount) return 0;
+  if (!amount || isEmpty(web3)) return 0;
 
   // get unit mappings from web3
   const unitMappings = web3.utils.unitMap;

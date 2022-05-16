@@ -22,7 +22,7 @@ const Collectibles: FC = () => {
       loading
     },
     web3Reducer: {
-      web3: { activeNetwork }
+      web3: { activeNetwork, web3 }
     },
     erc20TokenSliceReducer: {
       erc20Token,
@@ -236,7 +236,7 @@ const Collectibles: FC = () => {
                 }
                 // sometimes the NFT name is an Ethereum address
                 // we need to break this to fit onto the collectible card
-                const isNameEthereumAddress = web3.utils.isAddress(name);
+                const isNameEthereumAddress = web3.utils?.isAddress(name);
 
                 const blankValue = <span className="text-gray-syn4">-</span>;
 

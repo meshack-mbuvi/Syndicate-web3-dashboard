@@ -48,11 +48,8 @@ const useFetchMerkleProof: any = (skipQuery = false) => {
   };
 
   useEffect(() => {
-    if (
-      router.isReady &&
-      web3.utils.isAddress(clubAddress) &&
-      activeNetwork.chainId
-    ) {
+    if (!activeNetwork.chainId) return;
+    if (router.isReady && web3.utils.isAddress(clubAddress)) {
       refetchMerkle();
     }
   }, [clubAddress, address, router.isReady, activeNetwork.chainId]);
