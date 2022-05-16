@@ -7,10 +7,12 @@ export class ClubERC20Factory {
   web3;
   address;
   clubERC20Factory;
+  activeNetwork;
 
   // initialize new instance of lubERC20FactoryAddress
-  constructor(clubERC20FactoryAddress: string, web3: any) {
+  constructor(clubERC20FactoryAddress: string, web3: any, activeNetwork) {
     this.web3 = web3;
+    this.activeNetwork = activeNetwork;
     this.address = clubERC20FactoryAddress;
     this.init();
   }
@@ -97,7 +99,10 @@ export class ClubERC20Factory {
 
     // fallback for gnosisSafe <> walletConnect
     if (gnosisTxHash) {
-      const receipt: any = await getGnosisTxnInfo(gnosisTxHash);
+      const receipt: any = await getGnosisTxnInfo(
+        gnosisTxHash,
+        this.activeNetwork
+      );
       onTxConfirm(receipt.transactionHash);
 
       const createEvents = await this.clubERC20Factory.getPastEvents(

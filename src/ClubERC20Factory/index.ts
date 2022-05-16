@@ -44,48 +44,61 @@ export const getSyndicateContracts = async (
   // initialize contracts here
   const clubERC20Factory = new ClubERC20Factory(
     addresses.clubERC20Factory,
-    web3
+    web3,
+    activeNetwork
   );
   const policyMintERC20 = new MintPolicyContract(
     addresses.policyMintERC20,
-    web3
+    web3,
+    activeNetwork
   );
 
   const clubERC20FactoryNative = new ClubERC20FactoryNative(
     addresses.clubERC20FactoryNative,
-    web3
+    web3,
+    activeNetwork
   );
-  const mintPolicy = new MintPolicyContract(addresses.mintPolicy, web3);
+  const mintPolicy = new MintPolicyContract(
+    addresses.mintPolicy,
+    web3,
+    activeNetwork
+  );
 
   const DepositTokenMintModule = new DepositTokenMintModuleContract(
     addresses.DepositTokenMintModule,
-    web3
+    web3,
+    activeNetwork
   );
 
   const SingleTokenMintModule = new DepositTokenMintModuleContract(
     addresses.SingleTokenMintModule,
-    web3
+    web3,
+    activeNetwork
   );
 
   const NativeMintModule = new NativeMintModuleContract(
     addresses.NativeMintModule,
-    web3
+    web3,
+    activeNetwork
   );
 
   const MerkleDistributorModule = new MerkleDistributorModuleContract(
     addresses.MerkleDistributorModule,
-    web3
+    web3,
+    activeNetwork
   );
 
   const MerkleDistributorModuleERC721 =
     new MerkleDistributorModuleERC721Contract(
       addresses.MerkleDistributorModuleERC721,
-      web3
+      web3,
+      activeNetwork
     );
 
   const PublicOnePerAddressModule = new PublicOnePerAddressModuleContract(
     addresses.PublicOnePerAddressModule,
-    web3
+    web3,
+    activeNetwork
   );
 
   const mintPolicyERC721 = new ERC721MintPolicyContract(
@@ -95,17 +108,20 @@ export const getSyndicateContracts = async (
 
   const PublicMintWithFeeModule = new PublicMintWithFeeModuleContract(
     addresses.publicUtility,
-    web3
+    web3,
+    activeNetwork
   );
 
   const OwnerMintModule = new OwnerMintModuleContract(
     addresses.OwnerMintModule,
-    web3
+    web3,
+    activeNetwork
   );
 
   const RugUtilityMintModule = new RugUtilityMintModuleContract(
     PUBLIC_RUG_UTILITY_MINT_MODULE,
-    web3
+    web3,
+    activeNetwork
   );
 
   const RugClaimModule = new RugERC20ClaimModule(
@@ -113,12 +129,13 @@ export const getSyndicateContracts = async (
     RUG_TOKEN,
     GENESIS_NFT,
     RUG_PROPERTIES,
-    web3
+    web3,
+    activeNetwork
   );
 
   const RugUtilityProperty = new RugUtilityProperties(RUG_PROPERTIES, web3);
 
-  const RugToken = new ClubERC20Contract(RUG_TOKEN, web3);
+  const RugToken = new ClubERC20Contract(RUG_TOKEN, web3, activeNetwork);
 
   const GenesisNFTContract = new ERC721Contract(GENESIS_NFT, web3);
 
@@ -127,12 +144,14 @@ export const getSyndicateContracts = async (
     RUG_TOKEN,
     GENESIS_NFT,
     RUG_PROPERTIES,
-    web3
+    web3,
+    activeNetwork
   );
 
   const depositExchangeMintModule = new DepositExchangeMintModule(
     DEPOSIT_EXCHANGE_MODULE,
-    web3
+    web3,
+    activeNetwork
   );
 
   // return all initialized contracts

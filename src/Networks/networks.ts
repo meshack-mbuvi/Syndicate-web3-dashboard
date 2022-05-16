@@ -26,6 +26,9 @@ export const NETWORKS = Object.freeze({
       decimals: '18',
       exchangeRate: 10000
     },
+    gnosis: {
+      txServiceUrl: 'https://safe-transaction.gnosis.io/api/v1/'
+    },
     metadata: {
       colors: {
         background: 'blue-cornflowerBlue'
@@ -59,6 +62,9 @@ export const NETWORKS = Object.freeze({
       name: 'Ethereum',
       decimals: '18',
       exchangeRate: 10000
+    },
+    gnosis: {
+      txServiceUrl: 'https://safe-transaction.rinkeby.gnosis.io/api/v1/'
     },
     metadata: {
       colors: {
@@ -94,6 +100,9 @@ export const NETWORKS = Object.freeze({
       name: 'Polygon',
       decimals: '18',
       exchangeRate: 10
+    },
+    gnosis: {
+      txServiceUrl: 'https://safe-transaction.polygon.gnosis.io/api/v1/'
     },
     metadata: {
       colors: {

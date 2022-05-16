@@ -7,9 +7,11 @@ export class MintPolicyContract {
   // This will be used to call other functions. eg mint
   mintPolicyContract;
   address;
+  activeNetwork;
 
-  constructor(mintPolicyAddress: string, web3: Web3) {
+  constructor(mintPolicyAddress: string, web3: Web3, activeNetwork) {
     this.web3 = web3;
+    this.activeNetwork = activeNetwork;
     this.mintPolicyContract = new this.web3.eth.Contract(
       MintPolicyABI,
       mintPolicyAddress
@@ -118,7 +120,10 @@ export class MintPolicyContract {
 
     // fallback for gnosisSafe <> walletConnect
     if (gnosisTxHash) {
-      const receipt: any = await getGnosisTxnInfo(gnosisTxHash);
+      const receipt: any = await getGnosisTxnInfo(
+        gnosisTxHash,
+        this.activeNetwork
+      );
       onTxConfirm(receipt.transactionHash);
 
       const createEvents = await this.mintPolicyContract.getPastEvents(

@@ -6,14 +6,17 @@ export class RugBonusTokenModule {
   contract;
   isGnosisSafe: boolean;
   web3;
+  activeNetwork;
 
   constructor(
     contractAddress: string,
     rugToken: string,
     genesisNFT: string,
     properties: string,
-    web3
+    web3,
+    activeNetwork
   ) {
+    this.activeNetwork = activeNetwork;
     this.contract = new web3.eth.Contract(
       RugBonusTokenModule_ABI,
       contractAddress,
@@ -67,7 +70,10 @@ export class RugBonusTokenModule {
             setTransactionHash('');
 
             // Stop waiting if we are connected to gnosis safe via walletConnect
-            const receipt = await getGnosisTxnInfo(transactionHash);
+            const receipt = await getGnosisTxnInfo(
+              transactionHash,
+              this.activeNetwork
+            );
 
             if (!(receipt as { isSuccessful: boolean }).isSuccessful) {
               return reject('Receipt failed');
@@ -115,7 +121,10 @@ export class RugBonusTokenModule {
           } else {
             setTransactionHash('');
             // Stop waiting if we are connected to gnosis safe via walletConnect
-            const receipt = await getGnosisTxnInfo(transactionHash);
+            const receipt = await getGnosisTxnInfo(
+              transactionHash,
+              this.activeNetwork
+            );
 
             if (!(receipt as { isSuccessful: boolean }).isSuccessful) {
               return reject('Receipt failed');

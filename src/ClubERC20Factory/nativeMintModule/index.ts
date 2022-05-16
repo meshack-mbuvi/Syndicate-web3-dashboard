@@ -5,13 +5,15 @@ import { estimateGas } from '../shared/getGasEstimate';
 export class NativeMintModuleContract {
   web3;
   address;
+  activeNetwork;
 
   // This will be used to call other functions. eg mint
   NativeMintModuleContract;
 
   // initialize a contract instance
-  constructor(NativeMintModuleContractAddress: string, web3) {
+  constructor(NativeMintModuleContractAddress: string, web3, activeNetwork) {
     this.web3 = web3;
+    this.activeNetwork = activeNetwork;
     this.address = NativeMintModuleContractAddress;
     this.init();
   }
@@ -88,7 +90,10 @@ export class NativeMintModuleContract {
 
     // fallback for gnosisSafe <> walletConnect
     if (gnosisTxHash) {
-      const receipt: any = await getGnosisTxnInfo(gnosisTxHash);
+      const receipt: any = await getGnosisTxnInfo(
+        gnosisTxHash,
+        this.activeNetwork
+      );
       setTransactionHash(receipt.transactionHash);
       if (receipt.isSuccessful) {
         onTxReceipt(receipt);

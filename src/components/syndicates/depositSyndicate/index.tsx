@@ -794,7 +794,7 @@ const DepositSyndicate: React.FC = () => {
 
       // fallback for gnosisSafe <> walletConnect
       if (gnosisTxHash) {
-        // await getGnosisTxnInfo(gnosisTxHash);
+        // await getGnosisTxnInfo(gnosisTxHash, this.activeNetwork);
         await checkCurrentMemberAllowance();
         setSubmittingAllowanceApproval(false);
 

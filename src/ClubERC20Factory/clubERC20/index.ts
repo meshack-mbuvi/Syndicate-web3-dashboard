@@ -5,13 +5,15 @@ import { estimateGas } from '../shared/getGasEstimate';
 export class ClubERC20Contract {
   web3;
   address;
+  activeNetwork;
 
   // This will be used to call other functions.
   clubERC20Contract;
 
   // initialize an erc20 contract instance
-  constructor(clubERC20ContractAddress: string, web3) {
+  constructor(clubERC20ContractAddress: string, web3, activeNetwork) {
     this.web3 = web3;
+    this.activeNetwork = activeNetwork;
     this.address = clubERC20ContractAddress;
     this.init();
   }
@@ -140,7 +142,10 @@ export class ClubERC20Contract {
 
     // fallback for gnosisSafe <> walletConnect
     if (gnosisTxHash) {
-      const receipt: any = await getGnosisTxnInfo(gnosisTxHash);
+      const receipt: any = await getGnosisTxnInfo(
+        gnosisTxHash,
+        this.activeNetwork
+      );
       setTransactionHash(receipt.transactionHash);
       if (receipt.isSuccessful) {
         onTxReceipt(receipt);
@@ -192,7 +197,10 @@ export class ClubERC20Contract {
 
     // fallback for gnosisSafe <> walletConnect
     if (gnosisTxHash) {
-      const receipt: any = await getGnosisTxnInfo(gnosisTxHash);
+      const receipt: any = await getGnosisTxnInfo(
+        gnosisTxHash,
+        this.activeNetwork
+      );
       setTransactionHash(receipt.transactionHash);
       if (receipt.isSuccessful) {
         onTxReceipt(receipt);

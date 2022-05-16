@@ -5,13 +5,19 @@ import { estimateGas } from '../shared/getGasEstimate';
 export class DepositTokenMintModuleContract {
   web3;
   address;
+  activeNetwork;
 
   // This will be used to call other functions. eg mint
   DepositTokenMintModuleContract;
 
   // initialize a contract instance
-  constructor(DepositTokenMintModuleContractAddress: string, web3) {
+  constructor(
+    DepositTokenMintModuleContractAddress: string,
+    web3,
+    activeNetwork
+  ) {
     this.web3 = web3;
+    this.activeNetwork = activeNetwork;
     this.address = DepositTokenMintModuleContractAddress;
     this.init();
   }
@@ -98,7 +104,10 @@ export class DepositTokenMintModuleContract {
 
     // fallback for gnosisSafe <> walletConnect
     if (gnosisTxHash) {
-      const receipt: any = await getGnosisTxnInfo(gnosisTxHash);
+      const receipt: any = await getGnosisTxnInfo(
+        gnosisTxHash,
+        this.activeNetwork
+      );
       setTransactionHash(receipt.transactionHash);
       if (receipt.isSuccessful) {
         onTxReceipt(receipt);
