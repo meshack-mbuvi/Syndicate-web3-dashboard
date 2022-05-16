@@ -30,13 +30,9 @@ export enum TooltipState {
 
 export const ProgressIndicator = (props: IProgressIndicator): JSX.Element => {
   const {
-    depositTotalMax,
     totalDeposits = 0,
     loading = false,
-    nativeDepositToken = false,
-    depositTokenPriceInUSD,
-    tokenDetails,
-    activeNetwork
+    nativeDepositToken = false
   } = props;
 
   // refs and consts

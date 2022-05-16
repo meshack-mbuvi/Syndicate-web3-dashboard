@@ -77,7 +77,7 @@ const SignAgreement: React.FC<ISignAgreementProps> = ({
 
   const {
     web3Reducer: {
-      web3: { web3, account, activeNetwork }
+      web3: { web3, account }
     },
     legalInfoReducer: {
       walletSignature: { signature, timeSigned }
