@@ -144,6 +144,7 @@ const Layout: FC<Props> = ({
     variables: {
       syndicateDaoId: address.toLocaleLowerCase()
     },
+    context: { clientName: 'theGraph', chainId: activeNetwork.chainId },
     notifyOnNetworkStatusChange: true,
     skip: !address || loading,
     fetchPolicy: 'no-cache'

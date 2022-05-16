@@ -131,7 +131,7 @@ const LayoutWithSyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
           nativeDepositToken: false,
           depositToken: '',
           depositTokenSymbol: '',
-          depositTokenLogo: '/images/usdcicon.png',
+          depositTokenLogo: '/images/usdcIcon.png',
           depositTokenName: '',
           depositTokenDecimals: 6,
           loading: true

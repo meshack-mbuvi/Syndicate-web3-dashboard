@@ -105,7 +105,7 @@ const SyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
     },
     notifyOnNetworkStatusChange: true,
     context: { clientName: 'theGraph', chainId: activeNetwork.chainId },
-    skip: !address || loading,
+    skip: !address || loading || !activeNetwork.chainId,
     fetchPolicy: 'no-cache'
   });
 

@@ -44,8 +44,9 @@ const SignMemberLegalAgreement: NextPage = () => {
     variables: {
       syndicateDaoId: clubAddress?.toLocaleLowerCase()
     },
+    context: { clientName: 'theGraph', chainId: activeNetwork.chainId },
     notifyOnNetworkStatusChange: true,
-    skip: !clubAddress || loading,
+    skip: !clubAddress || loading || !activeNetwork.chainId,
     fetchPolicy: 'no-cache'
   });
 
