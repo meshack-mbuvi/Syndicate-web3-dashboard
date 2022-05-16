@@ -110,14 +110,6 @@ const mainnetTokens: Token[] = [
     logoURI: '/images/TestnetTokenLogos/daiIcon.svg'
   },
   {
-    name: 'TerraUSD',
-    address: '0xa47c8bf37f92aBed4A126BDA807A7b7498661acD',
-    symbol: 'UST',
-    decimals: 18,
-    chainId: 1,
-    logoURI: '/images/prodTokenLogos/terra-usd.png'
-  },
-  {
     name: 'Uniswap',
     address: '0x1f9840a85d5aF5bf1D1762F925BDADdC4201F984',
     symbol: 'UNI',
