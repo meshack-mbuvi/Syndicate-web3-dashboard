@@ -116,7 +116,11 @@ const useClubERC20s = () => {
           let clubSymbol = '';
 
           try {
-            clubERC20Contract = new ClubERC20Contract(contractAddress, web3);
+            clubERC20Contract = new ClubERC20Contract(
+              contractAddress,
+              web3,
+              activeNetwork
+            );
 
             decimals = await clubERC20Contract.decimals();
             clubName = await clubERC20Contract.name();
@@ -163,7 +167,8 @@ const useClubERC20s = () => {
             try {
               const depositERC20Token = new ClubERC20Contract(
                 depositToken,
-                web3
+                web3,
+                activeNetwork
               );
               depositERC20TokenSymbol = await depositERC20Token.symbol();
               depositERC20TokenDecimals = await depositERC20Token.decimals();

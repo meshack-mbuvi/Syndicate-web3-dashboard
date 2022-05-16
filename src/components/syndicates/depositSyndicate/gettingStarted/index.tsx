@@ -27,7 +27,7 @@ const GettingStarted: React.FC = () => {
 
   const {
     web3Reducer: {
-      web3: { account, web3 }
+      web3: { account, web3, activeNetwork }
     },
     erc20TokenSliceReducer: { erc20Token }
   } = useSelector((state: AppState) => state);
@@ -43,7 +43,8 @@ const GettingStarted: React.FC = () => {
     if (router.isReady && web3.utils.isAddress(clubAddress as string)) {
       const clubERC20tokenContract = new ClubERC20Contract(
         clubAddress as string,
-        web3
+        web3,
+        activeNetwork
       );
 
       dispatch(setERC20Token(clubERC20tokenContract));

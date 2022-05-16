@@ -57,7 +57,11 @@ export const useMyClubs = (): IProps => {
         let clubSymbol = '';
 
         try {
-          clubERC20Contract = new ClubERC20Contract(contractAddress, web3);
+          clubERC20Contract = new ClubERC20Contract(
+            contractAddress,
+            web3,
+            activeNetwork
+          );
 
           clubName = await clubERC20Contract.name();
           clubSymbol = await clubERC20Contract.symbol();

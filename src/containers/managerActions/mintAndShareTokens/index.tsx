@@ -243,7 +243,11 @@ export const MintAndShareTokens: React.FC<Props> = ({
        * this prevents more deposits from new members or existing members while the club
        * still remains open.*/
       const _tokenCap = getWeiAmount(web3, String(totalSupply), 18, true);
-      const mintPolicy = new MintPolicyContract(currentMintPolicyAddress, web3);
+      const mintPolicy = new MintPolicyContract(
+        currentMintPolicyAddress,
+        web3,
+        activeNetwork
+      );
 
       // using the endMint function on the mint policy
       // will lock club settings and prevent subsequent changes to club settings.
@@ -445,7 +449,7 @@ export const MintAndShareTokens: React.FC<Props> = ({
       // respectively
       const OwnerMintModule = policyMintERC20MintModule
         ? syndicateContracts.OwnerMintModule
-        : new OwnerMintModuleContract(OWNER_MINT_MODULE_2, web3);
+        : new OwnerMintModuleContract(OWNER_MINT_MODULE_2, web3, activeNetwork);
 
       await OwnerMintModule.ownerMint(
         getWeiAmount(web3, amountToMint, tokenDecimals, true),
@@ -471,7 +475,8 @@ export const MintAndShareTokens: React.FC<Props> = ({
       } else {
         const oldErc20TokenContract = new OldClubERC20Contract(
           erc20TokenContract.address,
-          web3
+          web3,
+          activeNetwork
         );
 
         await oldErc20TokenContract.controllerMint(

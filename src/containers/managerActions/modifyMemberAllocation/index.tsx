@@ -204,7 +204,11 @@ const ModifyClubTokens: React.FC<{
           // respectively
           const OwnerMintModule = policyMintERC20MintModule
             ? syndicateContracts.OwnerMintModule
-            : new OwnerMintModuleContract(OWNER_MINT_MODULE_2, web3);
+            : new OwnerMintModuleContract(
+                OWNER_MINT_MODULE_2,
+                web3,
+                activeNetwork
+              );
 
           await OwnerMintModule.ownerMint(
             getWeiAmount(
@@ -240,7 +244,8 @@ const ModifyClubTokens: React.FC<{
           } else {
             const oldErc20TokenContract = new OldClubERC20Contract(
               erc20TokenContract.address,
-              web3
+              web3,
+              activeNetwork
             );
 
             await oldErc20TokenContract.controllerMint(
