@@ -121,6 +121,11 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
     [chainId]
   );
 
+  const supportdedNetworks: number[] = useMemo(
+    () => Object.keys(NETWORKS).map((key) => Number(key)),
+    [NETWORKS]
+  );
+
   /*
    * Allows running as a gnosis safe app
    * This checks and connects automatially in gnosis safe.
@@ -393,7 +398,7 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
     if (chainId && providerName === 'Injected') {
       // --------- changed this for easy testing -------------
       // if ((isDev && chainId === 4) || (isProd && [1, 137].includes(chainId))) {
-      if ([1, 4, 137].includes(chainId)) {
+      if (supportdedNetworks.includes(chainId)) {
         dispatch(
           storeEthereumNetwork({
             invalidEthereumNetwork: false,
@@ -409,7 +414,7 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
         dispatch(
           storeEthereumNetwork({
             invalidEthereumNetwork: true,
-            correctEthereumNetwork: 'mainnet or matic'
+            correctEthereumNetwork: 'mainnet or polygon'
           })
         );
       }

@@ -6,6 +6,9 @@ export interface IWeb3 extends Web3 {
   _provider?: any;
   utils: any;
 }
+export interface IGnosis {
+  txServiceUrl: string;
+}
 
 export interface IBlockResources {
   transaction: string;
@@ -44,6 +47,7 @@ export interface IActiveNetwork {
   logo: string;
   blockExplorer: IblockExplorer;
   nativeCurrency: INativeCurrency;
+  gnosis: IGnosis;
   metadata: IMetadata;
 }
 
@@ -134,6 +138,9 @@ export const initialState: InitialState = {
         name: '',
         decimals: '',
         exchangeRate: 1
+      },
+      gnosis: {
+        txServiceUrl: ''
       },
       metadata: {
         colors: {
