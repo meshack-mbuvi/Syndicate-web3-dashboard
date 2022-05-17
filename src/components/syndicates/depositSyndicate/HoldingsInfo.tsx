@@ -1,3 +1,4 @@
+import { isStableCoin } from '@/containers/createInvestmentClub/shared/ClubTokenDetailConstants';
 import { floatedNumberWithCommas } from '@/utils/formattedNumbers';
 import { FC } from 'react';
 
@@ -22,7 +23,7 @@ const HoldingsInfo: FC<IHoldingsInfoProps> = ({
   return (
     <div>
       <div className="pb-2 leading-6 text-gray-syn4">{title}</div>
-      <div className={`flex ${wrap}`}>
+      <div className={`flex ${wrap || ''}`}>
         <div>
           <p className="mr-1.5">{amount}</p>
         </div>
@@ -31,7 +32,7 @@ const HoldingsInfo: FC<IHoldingsInfoProps> = ({
           <div className="text-gray-syn4 ">{`(${percentValue}%)`}</div>
         )}
       </div>
-      {amountInUSD ? (
+      {amountInUSD && !isStableCoin(tokenName) ? (
         <p className="text-gray-syn4">
           ~ {floatedNumberWithCommas(amountInUSD)} USD
         </p>
