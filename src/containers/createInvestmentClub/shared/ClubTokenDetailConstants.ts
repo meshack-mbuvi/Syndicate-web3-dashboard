@@ -416,3 +416,9 @@ const mainnetTokens: Token[] = [
 ];
 
 export const coinList = isDev ? rinkebyTokens : mainnetTokens;
+
+// current stable coins symbol
+const stableCoinSymbols = ['USDC', 'DAI', 'USDT'];
+
+export const isStableCoin = (coinSymbol: string): boolean =>
+  stableCoinSymbols.includes(coinSymbol);
