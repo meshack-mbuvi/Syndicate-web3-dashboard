@@ -934,10 +934,6 @@ const DepositSyndicate: React.FC = () => {
     }
   };
 
-  useEffect(() => {
-    checkClubWideErrors();
-  }, [totalDeposits, maxTotalDeposits, memberDeposits, account]);
-
   const checkClubWideErrors = () => {
     let message;
     if (+totalDeposits === +maxTotalDeposits) {
@@ -1591,27 +1587,12 @@ const DepositSyndicate: React.FC = () => {
                     : 'mr-8'
                 }
               >
-                {ethDepositToken ? (
-                  /** We are using 10000 because of the conversion */
-                  <HoldingsInfo
-                    title="Amount deposited"
-                    amount={floatedNumberWithCommas(
-                      memberDeposits / 10000,
-                      true
-                    )}
-                    tokenName={'ETH'}
-                    amountInUSD={
-                      (memberDeposits / 10000) * depositTokenPriceInUSD
-                    }
-                  />
-                ) : (
-                  <HoldingsInfo
-                    title="Amount deposited"
-                    amount={floatedNumberWithCommas(memberDeposits)}
-                    tokenName={depositTokenSymbol}
-                    amountInUSD={memberDeposits * depositTokenPriceInUSD}
-                  />
-                )}
+                <HoldingsInfo
+                  title="Amount deposited"
+                  amount={floatedNumberWithCommas(memberDeposits)}
+                  tokenName={depositTokenSymbol}
+                  amountInUSD={memberDeposits * depositTokenPriceInUSD}
+                />
               </div>
               <div className={isHoldingsCardColumn ? 'pt-5' : ''}>
                 <HoldingsInfo

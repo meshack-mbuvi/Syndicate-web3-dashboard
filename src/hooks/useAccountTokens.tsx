@@ -28,9 +28,14 @@ export function useAccountTokens(): {
     },
     erc20TokenSliceReducer: {
       erc20Token: { address, totalSupply, tokenDecimals, totalDeposits },
-      depositDetails: { ethDepositToken, depositTokenDecimals }
+      depositDetails: {
+        depositTokenDecimals,
+        depositTokenSymbol,
+        loading: loadingDepositsDetails
+      }
     }
   } = useSelector((state: AppState) => state);
+
   const [accountTokens, setAccountTokens] = useState<string>('0');
   const [memberDeposits, setMemberDeposits] = useState<string>('0');
   const [memberOwnership, setMemberOwnership] = useState<string>('0');
@@ -116,8 +121,9 @@ export function useAccountTokens(): {
     totalDeposits,
     depositTokenDecimals,
     isDemoMode,
-    depositTokenDecimals,
-    JSON.stringify(data)
+    depositTokenSymbol,
+    JSON.stringify(data),
+    loadingDepositsDetails
   ]);
 
   useEffect(() => {
@@ -129,11 +135,7 @@ export function useAccountTokens(): {
     dispatch(
       setConnectedMember({
         loading,
-        depositAmount: `${
-          ethDepositToken
-            ? parseFloat((Number(memberDeposits) * 10000).toString())
-            : memberDeposits
-        }`
+        depositAmount: `${memberDeposits}`
       })
     );
     return () => {
@@ -142,15 +144,13 @@ export function useAccountTokens(): {
   }, [loading, memberDeposits]);
 
   return {
-    loadingMemberOwnership: loading,
+    memberDeposits,
     accountTokens,
-    memberPercentShare: memberOwnership,
-    memberDeposits: ethDepositToken
-      ? parseFloat((Number(memberDeposits) * 10000).toString())
-      : memberDeposits,
     memberOwnership,
-    refetchMemberData: refetch,
     startPolling,
-    stopPolling
+    stopPolling,
+    refetchMemberData: refetch,
+    loadingMemberOwnership: loading,
+    memberPercentShare: memberOwnership
   };
 }

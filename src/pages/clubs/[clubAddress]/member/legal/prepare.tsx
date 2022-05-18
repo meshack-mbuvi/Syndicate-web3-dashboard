@@ -13,7 +13,7 @@ import { mockDepositERC20Token } from '@/utils/mockdata';
 import { NetworkStatus, useQuery } from '@apollo/client';
 import { NextPage } from 'next';
 import { useRouter } from 'next/router';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 const SignMemberLegalAgreement: NextPage = () => {
@@ -32,6 +32,8 @@ const SignMemberLegalAgreement: NextPage = () => {
   } = useSelector((state: AppState) => state);
   const router = useRouter();
   const isDemoMode = useDemoMode();
+
+  const [dataLoading, setDataLoading] = useState(true);
 
   const clubAddress = router.query?.clubAddress?.toString();
 
@@ -99,17 +101,23 @@ const SignMemberLegalAgreement: NextPage = () => {
           loading: false
         })
       );
+      setDataLoading(false);
     }
     fetchDepositDetails();
+
+    return () => {
+      setDataLoading(true);
+    };
   }, [
     data,
-    data?.syndicateDAO,
+    data?.syndicateDAO?.depositToken,
     loading,
     router.isReady,
     queryLoading,
     networkStatus,
     totalDeposits
   ]);
+
   const navItems = [
     {
       url: `/clubs/${clubAddress}`,
@@ -126,7 +134,11 @@ const SignMemberLegalAgreement: NextPage = () => {
       <Head title="Member legal agreement" />
       {!account ? (
         <WalletNotConnected />
-      ) : loading || loadingDepositSymbol ? (
+      ) : loading ||
+        loadingDepositSymbol ||
+        queryLoading ||
+        !router.isReady ||
+        dataLoading ? (
         <div>
           <Spinner />
         </div>
