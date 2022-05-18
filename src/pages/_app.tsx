@@ -19,6 +19,7 @@ import Router from 'next/router';
 import NProgress from 'nprogress';
 import 'nprogress/nprogress.css'; //styles of nprogress
 import React from 'react';
+import { withLDProvider } from 'launchdarkly-react-client-sdk';
 /**
  * datepicker component requires these in-built styles, so we import them
  * from here to make them available globally
