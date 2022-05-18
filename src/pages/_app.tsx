@@ -53,13 +53,28 @@ const App = ({ Component, pageProps, apollo }) => {
                   content="width=device-width, initial-scale=1, shrink-to-fit=no"
                 />
               </Head>
-              <Component {...pageProps} />
+              <LDFeatureFlags>
+                <Component {...pageProps} />
+              </LDFeatureFlags>
             </CreateInvestmentClubProvider>
           </ConnectWalletProvider>
         </BeforeGettingStartedProvider>
       </OnboardingProvider>
     </ApolloProvider>
   );
+};
+
+const LDFeatureFlags: React.FC<any> = ({ children }) => {
+  const Child = () => <>{children}</>;
+  const WithLDContext = withLDProvider({
+    clientSideID: isDev
+      ? process.env.NEXT_PUBLIC_LAUNCHDARKLY_SDK_CLIENT_TEST!
+      : process.env.NEXT_PUBLIC_LAUNCHDARKLY_SDK_CLIENT_PRODUCTION!,
+    reactOptions: {
+      useCamelCaseFlagKeys: false
+    }
+  })(Child);
+  return <WithLDContext />;
 };
 
 export default withApollo(({ initialState }) => {
