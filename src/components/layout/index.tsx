@@ -145,7 +145,7 @@ const Layout: FC<Props> = ({
       syndicateDaoId: address.toLocaleLowerCase()
     },
     notifyOnNetworkStatusChange: true,
-    skip: !address,
+    skip: !address || loading,
     fetchPolicy: 'no-cache'
   });
 
