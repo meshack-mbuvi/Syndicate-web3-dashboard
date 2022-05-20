@@ -8,7 +8,6 @@ import { useSelector } from 'react-redux';
 import { AppState } from '@/state';
 import { isDev } from '@/utils/environment';
 
-// TODO: hide testnets if isDev false.  activeNetwork object contrains a [testnet] boolean
 const NetworkMenuDropDown: FC = () => {
   const {
     web3Reducer: {
