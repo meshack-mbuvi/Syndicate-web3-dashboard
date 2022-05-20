@@ -82,7 +82,7 @@ export const NETWORKS = Object.freeze({
     chainId: 137,
     networkId: 137,
     testNetwork: false,
-    rpcUrl: process.env.NEXT_PUBLIC_ALCHEMY_MATIC,
+    rpcUrl: process.env.NEXT_PUBLIC_ALCHEMY_POLYGON,
     publicRPC:
       'https://polygon-mainnet.infura.io/v3/295cce92179b4be498665b1b16dfee34',
     logo: '/images/chains/polygon.svg',
