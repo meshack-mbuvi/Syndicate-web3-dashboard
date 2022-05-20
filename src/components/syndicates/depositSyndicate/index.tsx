@@ -606,7 +606,7 @@ const DepositSyndicate: React.FC = () => {
   }, [checkCurrentMemberAllowance]);
 
   const isHoldingsCardColumn =
-    +memberDeposits >= 10000 && ((width > 868 && width < 1536) || width < 500);
+    +memberDeposits >= 10000 && ((width > 868 && width < 1025) || width < 500);
 
   useEffect(() => {
     checkClubWideErrors();
@@ -933,10 +933,6 @@ const DepositSyndicate: React.FC = () => {
       return 0;
     }
   };
-
-  useEffect(() => {
-    checkClubWideErrors();
-  }, [totalDeposits, maxTotalDeposits, memberDeposits, account]);
 
   const checkClubWideErrors = () => {
     let message;
@@ -1594,69 +1590,7 @@ const DepositSyndicate: React.FC = () => {
                 </div>
               )}
             </FadeIn>
-          ) : (
-            <FadeIn>
-              <div className="bg-gray-syn8 rounded-2xl mt-6 px-8 pb-6">
-                <h4 className="pb-5">Your Holdings</h4>
-                {loading ? (
-                  <SkeletonLoader
-                    height="9"
-                    width="full"
-                    borderRadius="rounded-md"
-                  />
-                ) : (
-                  <div
-                    className={`flex ${isHoldingsCardColumn ? 'flex-col' : ''}`}
-                  >
-                    <div
-                      className={
-                        isHoldingsCardColumn
-                          ? ''
-                          : (width < 1380 || width < 868) &&
-                            +memberDeposits >= 1000 &&
-                            +memberDeposits < 10000
-                          ? 'mr-6'
-                          : 'mr-8'
-                      }
-                    >
-                      {nativeDepositToken ? (
-                        /** We are using 10000 because of the conversion */
-                        <HoldingsInfo
-                          title="Amount deposited"
-                          amount={floatedNumberWithCommas(
-                            memberDeposits / 10000,
-                            true
-                          )}
-                          tokenName={'ETH'}
-                        />
-                      ) : (
-                        <HoldingsInfo
-                          title="Amount deposited"
-                          amount={floatedNumberWithCommas(memberDeposits)}
-                          tokenName={depositTokenSymbol}
-                        />
-                      )}
-                    </div>
-
-                    <div className={isHoldingsCardColumn ? 'pt-5' : ''}>
-                      <div>
-                        <div className="pb-2 leading-6 text-gray-syn4">
-                          Distribution Share
-                        </div>
-                        <div className={`flex flex-wrap`}>
-                          {memberOwnership && (
-                            <div className="">{`${floatedNumberWithCommas(
-                              memberOwnership
-                            )}%`}</div>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </div>
-            </FadeIn>
-          )}
+          ) : null}
         </div>
       </div>
 
@@ -1664,7 +1598,7 @@ const DepositSyndicate: React.FC = () => {
       {((status !== Status.DISCONNECTED &&
         (+memberDeposits > 0 || +accountTokens > 0) &&
         !loading &&
-        depositsEnabled) ||
+        account) ||
         isDemoMode) && (
         <div className="bg-gray-syn8 rounded-2xl mt-6 px-8 py-6">
           <h4 className="pb-5">Your Holdings</h4>
@@ -1683,29 +1617,12 @@ const DepositSyndicate: React.FC = () => {
                     : 'mr-8'
                 }
               >
-                {nativeDepositToken ? (
-                  <HoldingsInfo
-                    title="Amount deposited"
-                    amount={floatedNumberWithCommas(
-                      memberDeposits /
-                        activeNetwork.nativeCurrency.exchangeRate,
-                      true
-                    )}
-                    tokenName={activeNetwork.nativeCurrency.symbol}
-                    amountInUSD={
-                      (memberDeposits /
-                        activeNetwork.nativeCurrency.exchangeRate) *
-                      depositTokenPriceInUSD
-                    }
-                  />
-                ) : (
-                  <HoldingsInfo
-                    title="Amount deposited"
-                    amount={floatedNumberWithCommas(memberDeposits)}
-                    tokenName={depositTokenSymbol}
-                    amountInUSD={memberDeposits * depositTokenPriceInUSD}
-                  />
-                )}
+                <HoldingsInfo
+                  title="Amount deposited"
+                  amount={floatedNumberWithCommas(memberDeposits)}
+                  tokenName={depositTokenSymbol}
+                  amountInUSD={memberDeposits * depositTokenPriceInUSD}
+                />
               </div>
               <div className={isHoldingsCardColumn ? 'pt-5' : ''}>
                 <HoldingsInfo

@@ -7,12 +7,12 @@ import {
   setOtherClubERC20s
 } from '@/state/clubERC20';
 import { formatDate, isZeroAddress, pastDate } from '@/utils';
+import { getTokenDetails } from '@/utils/api';
 import { divideIfNotByZero, getWeiAmount } from '@/utils/conversions';
 import { useQuery } from '@apollo/client';
 import { useRouter } from 'next/router';
 import { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { getTokenDetails } from '@/utils/api';
 
 const useClubERC20s = () => {
   const dispatch = useDispatch();
@@ -82,6 +82,7 @@ const useClubERC20s = () => {
   useEffect(() => {
     processClubERC20Tokens(myClubs).then((data) => {
       dispatch(setMyClubERC20s(data));
+      dispatch(setLoadingClubERC20s(false));
     });
   }, [JSON.stringify(myClubs), activeNetwork]);
 
@@ -91,8 +92,6 @@ const useClubERC20s = () => {
     if (!tokens || !tokens?.length) {
       return [];
     }
-
-    dispatch(setLoadingClubERC20s(true));
 
     const processedTokens = await Promise.all([
       ...tokens.map(
@@ -265,8 +264,6 @@ const useClubERC20s = () => {
    * We need to be sure syndicateContracts is initialized before retrieving events.
    */
   useEffect(() => {
-    dispatch(setLoadingClubERC20s(true));
-
     if (account && !memberClubLoading) {
       const clubTokens = [];
       // get clubs connected account has invested in
@@ -323,6 +320,7 @@ const useClubERC20s = () => {
 
       setClubIamMember(clubTokens);
     }
+    dispatch(setLoadingClubERC20s(false));
   }, [
     account,
     memberClubLoading,
@@ -335,7 +333,6 @@ const useClubERC20s = () => {
     // This will reset syndicate details when we are on portfolio page.
     // The currentEthereumNetwork has been added as a dependency to trigger a re-fetch
     // whenever the Ethereum network is changed.
-    // dispatch(setLoadingClubERC20s(true));
     if (account && !loading && data?.syndicateDAOs) {
       // check whether connected account has clubs
       if (data.syndicateDAOs.length) {

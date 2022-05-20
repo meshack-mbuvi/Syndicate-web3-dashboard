@@ -33,6 +33,7 @@ import NProgress from 'nprogress';
 import React from 'react';
 import { BACKEND_LINKS } from '@/Networks/backendLinks';
 
+import { withLDProvider } from 'launchdarkly-react-client-sdk';
 /**
  * datepicker component requires these in-built styles, so we import them
  * from here to make them available globally
@@ -74,10 +75,25 @@ const Body: React.FC<AppProps & { apollo: ApolloClient<unknown> }> = ({
         />
       </Head>
       <ApolloProvider client={apollo}>
-        <Component {...pageProps} />
+        <LDFeatureFlags>
+          <Component {...pageProps} />
+        </LDFeatureFlags>
       </ApolloProvider>
     </>
   );
+};
+
+const LDFeatureFlags: React.FC<any> = ({ children }) => {
+  const Child = () => <>{children}</>;
+  const WithLDContext = withLDProvider({
+    clientSideID: isDev
+      ? process.env.NEXT_PUBLIC_LAUNCHDARKLY_SDK_CLIENT_TEST!
+      : process.env.NEXT_PUBLIC_LAUNCHDARKLY_SDK_CLIENT_PRODUCTION!,
+    reactOptions: {
+      useCamelCaseFlagKeys: false
+    }
+  })(Child);
+  return <WithLDContext />;
 };
 
 const App = (props) => {

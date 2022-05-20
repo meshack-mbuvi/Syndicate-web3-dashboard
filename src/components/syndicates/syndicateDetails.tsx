@@ -2,6 +2,7 @@ import { CopyToClipboardIcon } from '@/components/iconWrappers';
 import { SkeletonLoader } from '@/components/skeletonLoader';
 import { BlockExplorerLink } from '@/components/syndicates/shared/BlockExplorerLink';
 import DuplicateClubWarning from '@/components/syndicates/shared/DuplicateClubWarning';
+import { isStableCoin } from '@/containers/createInvestmentClub/shared/ClubTokenDetailConstants';
 import { CLUB_TOKEN_QUERY } from '@/graphql/queries';
 import { getDepositDetails } from '@/helpers/erc20TokenDetails/index';
 import { useAccountTokens } from '@/hooks/useAccountTokens';
@@ -279,12 +280,15 @@ const SyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
                         {depositTokenSymbol}
                       </span>
                     </div>
-                    <div className="text-gray-syn4 text-sm">
-                      {floatedNumberWithCommas(
-                        depositTokenPriceInUSD * totalDeposits
-                      )}{' '}
-                      USD
-                    </div>
+
+                    {!isStableCoin(depositTokenSymbol) ? (
+                      <div className="text-gray-syn4 text-sm">
+                        {floatedNumberWithCommas(
+                          depositTokenPriceInUSD * totalDeposits
+                        )}{' '}
+                        USD
+                      </div>
+                    ) : null}
                   </div>
                 ),
                 tooltip: ''

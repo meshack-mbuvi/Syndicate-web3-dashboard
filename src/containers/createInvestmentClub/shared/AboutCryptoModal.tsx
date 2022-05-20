@@ -1,6 +1,6 @@
-import React from 'react';
 import Modal, { ModalStyle } from '@/components/modal';
 import Image from 'next/image';
+import React from 'react';
 
 interface ICryptoAssetModal {
   showModal: boolean;
@@ -44,9 +44,9 @@ const AssetInfoModal: React.FC<ICryptoAssetModal> = ({
           Crypto is a new asset class and is subject to many risks including
           frequent price changes. All crypto assets are different. Each one has
           its own set of features and risks that could affect its value and how
-          you're able to use it. Be sure to research any asset fully before
-          selecting. Syndicate strongly encourages all groups to consult with
-          their legal and tax advisors prior to launch.
+          you&rsquo;re able to use it. Be sure to research any asset fully
+          before selecting. Syndicate strongly encourages all groups to consult
+          with their legal and tax advisors prior to launch.
         </p>
         <button
           className="bg-white rounded-custom w-full flex items-center justify-center py-4 px-8 mt-10"
