@@ -75,6 +75,13 @@ const getErrorMessage = () => {
   };
 };
 
+const getWalletconnectRPCs = () => {
+  const links = {};
+  Object.entries(NETWORKS).map(([key, value]) => (links[key] = value.rpcUrl));
+  return links;
+};
+const walletconnectRPCs = Object.freeze(getWalletconnectRPCs());
+
 const web3Modal: SafeAppWeb3Modal = isSSR()
   ? null
   : new SafeAppWeb3Modal({
@@ -83,11 +90,7 @@ const web3Modal: SafeAppWeb3Modal = isSSR()
         walletconnect: {
           package: WalletConnectProvider, // required
           options: {
-            rpc: {
-              1: `${NETWORKS[1].rpcUrl}`,
-              4: `${NETWORKS[4].rpcUrl}`,
-              137: `${NETWORKS[137].rpcUrl}`
-            }
+            rpc: walletconnectRPCs
           }
         }
       }
@@ -397,7 +400,6 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
   useEffect(() => {
     if (chainId && providerName === 'Injected') {
       // --------- changed this for easy testing -------------
-      // if ((isDev && chainId === 4) || (isProd && [1, 137].includes(chainId))) {
       if (supportdedNetworks.includes(chainId)) {
         dispatch(
           storeEthereumNetwork({
