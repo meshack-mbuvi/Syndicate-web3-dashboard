@@ -51,7 +51,9 @@ const SendForSignatures: FC<ILinkModal> = ({
   ] = useState(false);
 
   const handleClick = () => {
-    router.push(`/clubs/${clubAddress}/manage`);
+    router.push(
+      `/clubs/${clubAddress}/manage${'?network=' + activeNetwork.chainId}`
+    );
   };
 
   const updateLegalAgreementSignageLinkCopyState = () => {

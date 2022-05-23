@@ -46,7 +46,7 @@ const CreateInvestmentClub: React.FC = () => {
     },
     web3Reducer: {
       dispatchCreateFlow,
-      web3: { account }
+      web3: { account, activeNetwork }
     }
   } = useSelector((state: AppState) => state);
 
@@ -169,7 +169,11 @@ const CreateInvestmentClub: React.FC = () => {
             </div>
           </div>
           <div className="self-center pt-6 pb-3">
-            <Link href={`/clubs/${tokenAddress}/manage?source=create`}>
+            <Link
+              href={`/clubs/${tokenAddress}/manage?source=create${
+                '&network=' + activeNetwork.chainId
+              }`}
+            >
               <span className="px-8 py-4 bg-white rounded-md text-black text-center text-base cursor-pointer self-center w-1/2">
                 View club dashboard
               </span>

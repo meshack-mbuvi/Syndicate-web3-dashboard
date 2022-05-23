@@ -166,7 +166,10 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
   const isOwner = useIsClubOwner();
 
   const handleExit = () => {
-    router && router.push(`/clubs/${clubAddress}/manage`);
+    router &&
+      router.push(
+        `/clubs/${clubAddress}/manage/${'?network=' + activeNetwork.chainId}`
+      );
   };
 
   useEffect(() => {
@@ -180,7 +183,9 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
       return;
 
     if ((pathname.includes('/modify') && !isOwner) || isDemoMode) {
-      router.replace(`/clubs/${clubAddress}`);
+      router.replace(
+        `/clubs/${clubAddress}${'?network=' + activeNetwork.chainId}`
+      );
     }
   }, [
     owner,

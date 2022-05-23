@@ -101,7 +101,9 @@ const ClubERC20Table: FC<Props> = ({ columns, tableData }) => {
               ) => (
                 <Link
                   key={`token-table-row-${index}`}
-                  href={`/clubs/${address}/${isOwner ? 'manage' : ''}`}
+                  href={`/clubs/${address}/${isOwner ? 'manage' : ''}${
+                    '?network=' + activeNetwork.chainId
+                  }`}
                 >
                   <div
                     className={`grid sm:gap-2 ${

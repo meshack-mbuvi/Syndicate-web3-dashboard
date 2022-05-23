@@ -50,7 +50,9 @@ const ShareOrChangeLegalDocuments: FC<ILinkModal> = ({
   ] = useState(false);
 
   const handleClick = () => {
-    router.push(`/clubs/${clubAddress}/manage`);
+    router.push(
+      `/clubs/${clubAddress}/manage${'?network=' + activeNetwork.chainId}`
+    );
     setShowShareOrChangeDocsModal(false);
   };
 

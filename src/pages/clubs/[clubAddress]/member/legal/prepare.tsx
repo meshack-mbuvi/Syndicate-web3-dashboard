@@ -122,7 +122,7 @@ const SignMemberLegalAgreement: NextPage = () => {
 
   const navItems = [
     {
-      url: `/clubs/${clubAddress}`,
+      url: `/clubs/${clubAddress}${'?network=' + activeNetwork.chainId}`,
       navItemText: 'Exit'
     },
     {

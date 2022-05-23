@@ -138,7 +138,9 @@ const ManagerActions = (): JSX.Element => {
       resetCreationStates();
       setSyndicateSuccessfullyCreated(true);
       // truncates the query part to prevent reshowing confetti
-      router.push(`/clubs/${clubAddress}/manage`);
+      router.push(
+        `/clubs/${clubAddress}/manage${'?network=' + activeNetwork.chainId}`
+      );
     }
   }, [source, clubAddress, router]);
 

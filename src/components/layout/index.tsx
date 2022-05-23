@@ -99,12 +99,16 @@ const Layout: FC<Props> = ({
 
   const handleRouting = () => {
     if (pathname.includes('/manage') && !isOwner) {
-      router.replace(`/clubs/${clubAddress}`);
+      router.replace(
+        `/clubs/${clubAddress}${'?network=' + activeNetwork.chainId}`
+      );
     } else if (
       (pathname === '/clubs/[clubAddress]' || pathname.includes('/member')) &&
       isOwner
     ) {
-      router.replace(`/clubs/${clubAddress}/manage`);
+      router.replace(
+        `/clubs/${clubAddress}/manage${'?network=' + activeNetwork.chainId}`
+      );
     }
   };
 
