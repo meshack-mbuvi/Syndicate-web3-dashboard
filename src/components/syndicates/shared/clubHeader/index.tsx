@@ -5,7 +5,7 @@ import React, { useEffect, useState } from 'react';
 import CopyToClipboard from 'react-copy-to-clipboard';
 import ReactTooltip from 'react-tooltip';
 import GradientAvatar from '../../portfolioAndDiscover/portfolio/GradientAvatar';
-import { EtherscanLink } from '../EtherscanLink';
+import { BlockExplorerLink } from '../BlockExplorerLink';
 
 export const ClubHeader: React.FC<{
   name;
@@ -120,9 +120,10 @@ export const ClubHeader: React.FC<{
                     </CopyToClipboard>
 
                     <div data-for="view-on-etherscan" data-tip>
-                      <EtherscanLink
+                      <BlockExplorerLink
                         customStyles="w-4 h-4"
-                        etherscanInfo={owner}
+                        resource={'address'}
+                        resourceId={owner}
                         grouped
                         iconOnly
                       />

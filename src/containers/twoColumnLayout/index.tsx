@@ -2,7 +2,7 @@ import { ClubERC20Contract } from '@/ClubERC20Factory/clubERC20';
 import ErrorBoundary from '@/components/errorBoundary';
 import Layout from '@/components/layout';
 import { ClubHeader } from '@/components/syndicates/shared/clubHeader';
-import { EtherscanLink } from '@/components/syndicates/shared/EtherscanLink';
+import { BlockExplorerLink } from '@/components/syndicates/shared/BlockExplorerLink';
 import Head from '@/components/syndicates/shared/HeaderTitle';
 import {
   ERC20TokenDefaultState,
@@ -51,11 +51,11 @@ const TwoColumnLayout: FC<{
   const {
     initializeContractsReducer: { syndicateContracts },
     web3Reducer: {
-      web3: { account, web3, status }
+      web3: { account, web3, status, activeNetwork }
     },
     erc20TokenSliceReducer: {
       erc20Token,
-      depositDetails: { ethDepositToken, chainId },
+      depositDetails: { nativeDepositToken },
       depositTokenPriceInUSD
     }
   } = useSelector((state: AppState) => state);
@@ -78,7 +78,7 @@ const TwoColumnLayout: FC<{
   const isDemoMode = useDemoMode(clubAddress);
   // dispatch the price of the deposit token for use in other
   // components
-  useGetDepositTokenPrice(chainId);
+  useGetDepositTokenPrice(activeNetwork.chainId);
   const zeroAddress = '0x0000000000000000000000000000000000000000';
 
   useEffect(() => {
@@ -115,8 +115,7 @@ const TwoColumnLayout: FC<{
       dispatch(
         setERC20TokenDepositDetails({
           mintModule: '',
-          ethDepositToken: false,
-          chainId: isDev ? ChainEnum.RINKEBY : ChainEnum.ETHEREUM,
+          nativeDepositToken: false,
           depositToken: '',
           depositTokenSymbol: '',
           depositTokenLogo: '/images/usdcicon.png',
@@ -149,7 +148,7 @@ const TwoColumnLayout: FC<{
     maxTotalDeposits,
     depositTokenPriceInUSD,
     loadingClubDeposits,
-    ethDepositToken
+    nativeDepositToken
   ]);
 
   useEffect(() => {
@@ -172,7 +171,8 @@ const TwoColumnLayout: FC<{
     ) {
       const clubERC20tokenContract = new ClubERC20Contract(
         clubAddress as string,
-        web3
+        web3,
+        activeNetwork
       );
 
       dispatch(setERC20TokenContract(clubERC20tokenContract));
@@ -189,7 +189,7 @@ const TwoColumnLayout: FC<{
   }, [
     clubAddress,
     account,
-    ethDepositToken,
+    nativeDepositToken,
     status,
     syndicateContracts?.DepositTokenMintModule
   ]);
@@ -216,7 +216,7 @@ const TwoColumnLayout: FC<{
         <p className="text-lg md:text-2xl text-center mb-3">
           {noTokenTitleText}
         </p>
-        <EtherscanLink etherscanInfo={clubAddress} />
+        <BlockExplorerLink resource={'address'} resourceId={clubAddress} />
       </div>
     </div>
   );
