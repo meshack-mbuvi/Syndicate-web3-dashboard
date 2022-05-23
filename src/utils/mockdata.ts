@@ -39,6 +39,7 @@ export const mockDepositERC20Token = {
   startTime: currentDate.valueOf(),
   endTime: futureDate.valueOf(),
   depositTokenSymbol: 'USDC',
+  depositTokenDecimals: 6,
   depositTokenLogo: '/images/usdcIcon.svg'
 };
 
