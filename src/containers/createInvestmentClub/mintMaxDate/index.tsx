@@ -10,6 +10,8 @@ import DatePicker from 'react-datepicker';
 import { useDispatch, useSelector } from 'react-redux';
 import { animated, useSpring } from 'react-spring';
 import DateCard from './DateCard';
+import TimeField from '@/components/inputs/timeField';
+import cn from 'classnames';
 
 const MintMaxDate: FC<{ className?: string }> = ({ className }) => {
   const dispatch = useDispatch();
@@ -173,32 +175,52 @@ const MintMaxDate: FC<{ className?: string }> = ({ className }) => {
             </div>
 
             {showCustomDatePicker && (
-              <animated.div style={styles} className="pb-6">
-                <div className="pb-2">Close date</div>
-                <div className="">
-                  <DatePicker
-                    minDate={new Date()}
-                    popperProps={{
-                      positionFixed: true // use this to make the popper position: fixed
-                    }}
-                    closeOnScroll={(e) => e.target === document}
-                    selected={new Date(mintEndTime?.value * 1000)}
-                    onChange={(date: Date | null) =>
-                      handleDateChange(+date as any)
-                    }
-                    todayButton="Go to Today"
-                    dateFormat="P"
-                    formatWeekDay={(nameOfDay) => nameOfDay.substr(0, 1)}
-                    showPopperArrow={false}
-                    dropdownMode="select"
-                    className="focus:border-blue-navy hover:border-gray-syn3"
-                  />
-                </div>
-                {warning && (
-                  <div className="text-yellow-warning pt-2 text-sm">
-                    {warning}
+              <animated.div
+                style={styles}
+                className="pb-6 mt-6 flex items-center justify-between"
+              >
+                <div style={{ width: '48%' }}>
+                  <div className="pb-2">Close date</div>
+                  <div className="">
+                    <DatePicker
+                      minDate={new Date()}
+                      popperProps={{
+                        positionFixed: true // use this to make the popper position: fixed
+                      }}
+                      closeOnScroll={(e) => e.target === document}
+                      selected={new Date(mintEndTime?.value * 1000)}
+                      onChange={(date: Date | null) =>
+                        handleDateChange(+date as any)
+                      }
+                      todayButton="Go to Today"
+                      dateFormat="P"
+                      formatWeekDay={(nameOfDay) => nameOfDay.substr(0, 1)}
+                      showPopperArrow={false}
+                      dropdownMode="select"
+                      className="focus:border-blue-navy hover:border-gray-syn3"
+                    />
                   </div>
-                )}
+                  {warning && (
+                    <div className="text-yellow-warning pt-2 text-sm">
+                      {warning}
+                    </div>
+                  )}
+                </div>
+                <div style={{ width: '48%' }}>
+                  <div className="w-full">
+                    <div className="pb-2">Time</div>
+                    <div
+                      className={cn(
+                        'w-full h-14 flex border rounded-md overflow-hidden border-gray-24 hover:border-gray-syn3 focus:border-blue-navy',
+                        {
+                          'border-red-error': warning
+                        }
+                      )}
+                    >
+                      <TimeField />
+                    </div>
+                  </div>
+                </div>
               </animated.div>
             )}
           </div>
