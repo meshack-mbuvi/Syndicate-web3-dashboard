@@ -1,9 +1,9 @@
 import { CLUB_TOKEN_MEMBERS } from '@/graphql/queries';
 import { AppState } from '@/state';
 import {
+  clearClubMembers,
   setClubMembers,
-  setLoadingClubMembers,
-  clearClubMembers
+  setLoadingClubMembers
 } from '@/state/clubMembers';
 import { getWeiAmount } from '@/utils/conversions';
 import { mockClubMembers } from '@/utils/mockdata';

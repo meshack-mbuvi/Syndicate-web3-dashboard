@@ -3,6 +3,7 @@ import BackButton from '@/components/buttons/BackButton';
 import ErrorBoundary from '@/components/errorBoundary';
 import Layout from '@/components/layout';
 import OnboardingModal from '@/components/onboarding';
+import { ClubHeader } from '@/components/syndicates/shared/clubHeader';
 import { BlockExplorerLink } from '@/components/syndicates/shared/BlockExplorerLink';
 import Head from '@/components/syndicates/shared/HeaderTitle';
 import SyndicateDetails from '@/components/syndicates/syndicateDetails';
@@ -29,14 +30,12 @@ import {
 import { setClubMembers } from '@/state/clubMembers';
 import {
   setDepositTokenUSDPrice,
-  setERC20TokenDepositDetails,
   setERC20TokenContract,
+  setERC20TokenDepositDetails,
   setERC20TokenDetails
 } from '@/state/erc20token/slice';
 import { clearMyTransactions } from '@/state/erc20transactions';
 import { Status } from '@/state/wallet/types';
-import { ChainEnum } from '@/utils/api/ChainTypes';
-import { isDev } from '@/utils/environment';
 import { getTextWidth } from '@/utils/getTextWidth';
 import {
   mockActiveERC20Token,
@@ -54,10 +53,9 @@ import Assets from './assets';
 import TabButton from './TabButton';
 import { isEmpty } from 'lodash';
 
-const LayoutWithSyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
-  managerSettingsOpen,
-  children
-}) => {
+const LayoutWithSyndicateDetails: FC<{
+  managerSettingsOpen: boolean;
+}> = ({ managerSettingsOpen, children }) => {
   const {
     initializeContractsReducer: { syndicateContracts },
     merkleProofSliceReducer: { myMerkleProof },
@@ -78,6 +76,7 @@ const LayoutWithSyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
     depositsEnabled,
     maxTotalDeposits,
     address,
+    symbol,
     memberCount
   } = erc20Token;
 
@@ -102,7 +101,8 @@ const LayoutWithSyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
   //  tokens for the connected wallet account
   const { accountTokens } = useAccountTokens();
 
-  const { loadingClubDeposits } = useClubDepositsAndSupply(address);
+  const { loadingClubDeposits, totalDeposits } =
+    useClubDepositsAndSupply(address);
 
   // fetch club transactions
   useTransactions();
@@ -338,11 +338,26 @@ const LayoutWithSyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
                         managerSettingsOpen ? 'md:col-end-8' : 'md:col-end-7'
                       } col-span-12`}
                     >
-                      {/* its used as an identifier for ref in small devices */}
-                      {/*
-                  we should have an isChildVisible child here,
-                  but it's not working as expected
-                  */}
+                      <div className="flex items-center justify-between">
+                        <div>
+                          {/* Club header */}
+                          <div className="flex justify-center items-center">
+                            <ClubHeader
+                              {...{
+                                loading,
+                                name,
+                                symbol,
+                                owner,
+                                loadingClubDeposits,
+                                totalDeposits,
+                                managerSettingsOpen,
+                                clubAddress
+                              }}
+                            />
+                          </div>
+                        </div>
+                      </div>
+
                       <SyndicateDetails
                         managerSettingsOpen={managerSettingsOpen}
                       >
@@ -354,7 +369,7 @@ const LayoutWithSyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
                       <div className="sticky top-33 w-100">{children}</div>
                     </div>
 
-                    {!managerSettingsOpen && (
+                    {!managerSettingsOpen ? (
                       <div className="mt-16 col-span-12">
                         <div
                           ref={subNav}
@@ -418,7 +433,7 @@ const LayoutWithSyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
                           </div>
                         </div>
                       </div>
-                    )}
+                    ) : null}
                   </div>
                 </div>
               )}

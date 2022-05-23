@@ -1,7 +1,7 @@
 import { TokenItemsLoadingSection } from '@/components/tokenSelect/TokenItemDetails';
-import { Provider } from 'react-redux';
 import { store } from '@/state/index';
 import { Story } from '@storybook/react';
+import { Provider } from 'react-redux';
 
 export default {
   title: '2. Atoms/Token Items Loading Section',

@@ -29,7 +29,7 @@ export const BadgeWithOverview: React.FC<Props> = ({
   const [isTotalLoading, setIsTotalLoading] = useState(false);
 
   const fiatAmount = tokensDetails?.reduce((total, tokenDetails) => {
-    // If atleast one token that is loading, then the total cost is loading.
+    // If at least one token that is loading, then the total cost is loading.
     if (!isTotalLoading && tokenDetails.isLoading) {
       setIsTotalLoading(true);
     }
@@ -40,7 +40,7 @@ export const BadgeWithOverview: React.FC<Props> = ({
   const renderedTokenRows = tokensDetails?.map((tokenDetails) => {
     return (
       <>
-        <div className="flex justify-between items-start">
+        <div className="flex justify-between items-start w-full">
           {/* Token */}
           <div className="flex space-x-3 items-center">
             <img
@@ -89,7 +89,7 @@ export const BadgeWithOverview: React.FC<Props> = ({
   });
 
   return (
-    <div style={{ maxWidth: '30rem' }}>
+    <div className="w-full md:max-w-480">
       <div className="rounded-2-half bg-gray-syn8">
         <StatusBadge
           isDistributing={true}

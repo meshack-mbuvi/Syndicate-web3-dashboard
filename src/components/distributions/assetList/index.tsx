@@ -1,12 +1,12 @@
-import React, { useState } from 'react';
-import { PillButton } from '@/components/pillButtons';
 import { InputField } from '@/components/inputs/inputField';
 import { Checkbox } from '@/components/inputs/simpleCheckbox';
+import { PillButton } from '@/components/pillButtons';
+import { SkeletonLoader } from '@/components/skeletonLoader';
 import {
   floatedNumberWithCommas,
   stringNumberRemoveCommas
 } from '@/utils/formattedNumbers';
-import { SkeletonLoader } from '@/components/skeletonLoader';
+import React, { useState } from 'react';
 
 interface Props {
   options: {
@@ -34,7 +34,7 @@ interface Props {
       isLoading?: boolean;
     }[]
   ) => void;
-  handleactiveIndicesChange: (indecies: number[]) => void;
+  handleActiveIndicesChange: (indecies: number[]) => void;
   handleMaxOnClick: (index: number) => void;
 }
 
@@ -42,7 +42,7 @@ export const AssetList: React.FC<Props> = ({
   options,
   activeIndices,
   handleOptionsChange,
-  handleactiveIndicesChange,
+  handleActiveIndicesChange,
   handleMaxOnClick
 }) => {
   // Using this to temporarily store the input allows the user to input periods for decimal numbers.
@@ -79,22 +79,22 @@ export const AssetList: React.FC<Props> = ({
         onClick={() => {
           // The index was active so make it inactive
           if (isIndexActive(index)) {
-            let newactiveIndices;
+            let newActiveIndices;
             const indexToRemove = activeIndices.indexOf(index);
             if (indexToRemove > -1) {
               const arrayWithoutIndex = (array, index) =>
                 array.filter((_, i) => i !== index);
-              newactiveIndices = arrayWithoutIndex(
+              newActiveIndices = arrayWithoutIndex(
                 activeIndices,
                 indexToRemove
               );
-              handleactiveIndicesChange(newactiveIndices);
+              handleActiveIndicesChange(newActiveIndices);
             }
           }
 
           // The index was inactive so make it active
           else {
-            handleactiveIndicesChange([...activeIndices, index]);
+            handleActiveIndicesChange([...activeIndices, index]);
           }
         }}
         className={`w-full min-w-112 flex justify-between items-center space-x-3 ${

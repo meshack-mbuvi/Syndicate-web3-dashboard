@@ -6,7 +6,7 @@ export default {
 };
 
 const Template = (args) => {
-  const [activeIndices, setactiveIndices] = useState([]);
+  const [activeIndices, setActiveIndices] = useState([]);
   const [options, setOptions] = useState([
     {
       icon: '/images/prodTokenLogos/uniswap.png',
@@ -52,12 +52,13 @@ const Template = (args) => {
       isLoading: true
     }
   ]);
+
   return (
     <AssetList
       options={options}
       activeIndices={activeIndices}
       handleOptionsChange={setOptions}
-      handleactiveIndicesChange={setactiveIndices}
+      handleActiveIndicesChange={setActiveIndices}
       {...args}
     />
   );
