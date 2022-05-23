@@ -9,7 +9,6 @@ import {
 } from '@/state/assets/collectibles/slice';
 import { fetchCollectiblesTransactions } from '@/state/assets/slice';
 import { floatedNumberWithCommas } from '@/utils/formattedNumbers';
-import { web3 } from '@/utils/web3Utils';
 import { FC, useState } from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { useDispatch, useSelector } from 'react-redux';
