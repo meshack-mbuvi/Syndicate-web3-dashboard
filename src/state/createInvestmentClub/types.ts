@@ -17,6 +17,7 @@ export interface InitialState {
   investmentClubSymbolPlaceHolder: string;
   tokenCap: string;
   mintEndTime: mintEndTime;
+  mintSpecificEndTime: string;
   membersCount: string;
   clubCreationStatus: {
     transactionHash: string;
@@ -46,6 +47,7 @@ export const initialState: InitialState = {
       (new Date(new Date().setHours(23, 59, 0, 0)).getTime() / 1000).toString()
     )
   }, // How long will deposits be accepted?
+  mintSpecificEndTime: '23:59',
   membersCount: '', // How many members can join?
   clubCreationStatus: {
     transactionHash: '',
