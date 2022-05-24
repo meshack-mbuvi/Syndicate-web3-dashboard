@@ -1,7 +1,10 @@
 import Fade from '@/components/Fade';
 import { useCreateInvestmentClubContext } from '@/context/CreateInvestmentClubContext';
 import { AppState } from '@/state';
-import { setMintEndTime } from '@/state/createInvestmentClub/slice';
+import {
+  setMintEndTime,
+  setMintSpecificEndTime
+} from '@/state/createInvestmentClub/slice';
 import { mintEndTime } from '@/state/createInvestmentClub/types';
 import { DAY_IN_SECONDS } from '@/utils/constants';
 import moment from 'moment';
@@ -10,8 +13,7 @@ import DatePicker from 'react-datepicker';
 import { useDispatch, useSelector } from 'react-redux';
 import { animated, useSpring } from 'react-spring';
 import DateCard from './DateCard';
-import TimeField from '@/components/inputs/timeField';
-import cn from 'classnames';
+import TimeField from '@/containers/createInvestmentClub/mintMaxDate/timeField';
 
 const MintMaxDate: FC<{ className?: string }> = ({ className }) => {
   const dispatch = useDispatch();
@@ -23,9 +25,13 @@ const MintMaxDate: FC<{ className?: string }> = ({ className }) => {
   const [disableButtons, setDisableButtons] = useState(false);
 
   const {
-    createInvestmentClubSliceReducer: { mintEndTime }
+    createInvestmentClubSliceReducer: { mintEndTime, mintSpecificEndTime }
   } = useSelector((state: AppState) => state);
 
+  const [closeDate, setCloseDate] = useState(
+    new Date(mintEndTime?.value * 1000).toString()
+  );
+  const [closeTime, setCloseTime] = useState(mintSpecificEndTime);
   // hide next button
   useEffect(() => {
     if (currentStep <= 2) {
@@ -114,14 +120,34 @@ const MintMaxDate: FC<{ className?: string }> = ({ className }) => {
   };
 
   const handleDateChange = (targetDate) => {
-    // this check prevents using null date which creates date as 01/01/1970
+    setCloseDate(targetDate);
+  };
+
+  const handleTimeChange = (time) => {
+    if (time) {
+      setCloseTime(time);
+      dispatch(setMintSpecificEndTime(time));
+    }
+  };
+
+  useEffect(() => {
     const eodToday = new Date(new Date().setHours(23, 59, 0, 0)).getTime();
-    const date = targetDate < eodToday ? eodToday : targetDate;
+    let targetDate = closeDate;
+    if (closeTime && closeDate) {
+      // extract the date section and then add specific time
+      const dateString = new Date(closeDate).toDateString();
+      targetDate = moment(dateString + ' ' + closeTime)
+        .valueOf()
+        .toString();
+    }
+
+    const date = +targetDate < eodToday ? eodToday : targetDate;
     const dateToSet = date
-      ? parseInt((date / 1000).toString())
+      ? parseInt(((date as number) / 1000).toString())
       : parseInt((new Date().getTime() / 1000 + DAY_IN_SECONDS).toString());
     dispatch(setMintEndTime({ mintTime: 'Custom', value: dateToSet }));
-  };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [closeDate, closeTime]);
 
   const styles = useSpring({
     to: { y: showCustomDatePicker && 0, opacity: 1 },
@@ -210,7 +236,7 @@ const MintMaxDate: FC<{ className?: string }> = ({ className }) => {
                   <div className="w-full">
                     <div className="pb-2">Time</div>
 
-                    <TimeField />
+                    <TimeField handleTimeChange={handleTimeChange} />
                   </div>
                 </div>
               </animated.div>
