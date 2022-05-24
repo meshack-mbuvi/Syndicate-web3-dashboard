@@ -197,7 +197,7 @@ const MintMaxDate: FC<{ className?: string }> = ({ className }) => {
                       formatWeekDay={(nameOfDay) => nameOfDay.substr(0, 1)}
                       showPopperArrow={false}
                       dropdownMode="select"
-                      className="focus:border-blue-navy hover:border-gray-syn3"
+                      className="focus:border-blue-navy hover:border-gray-syn3 border-gray-24"
                     />
                   </div>
                   {warning && (
@@ -209,16 +209,8 @@ const MintMaxDate: FC<{ className?: string }> = ({ className }) => {
                 <div style={{ width: '48%' }}>
                   <div className="w-full">
                     <div className="pb-2">Time</div>
-                    <div
-                      className={cn(
-                        'w-full h-14 flex border rounded-md overflow-hidden border-gray-24 hover:border-gray-syn3 focus:border-blue-navy',
-                        {
-                          'border-red-error': warning
-                        }
-                      )}
-                    >
-                      <TimeField />
-                    </div>
+
+                    <TimeField />
                   </div>
                 </div>
               </animated.div>

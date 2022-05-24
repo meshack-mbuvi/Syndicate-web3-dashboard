@@ -33,9 +33,9 @@ const TimeField: React.FC = (): React.ReactElement => {
       onChange={(e) => {
         onChange(e);
       }}
-      extraClasses={`flex w-full border-none min-w-0 text-base font-whyte focus:ring-0 ${
+      extraClasses={`flex w-full min-w-0 text-base font-whyte ${
         error ? 'border border-red-500 focus:border-red-500' : ''
-      } flex-grow rounded-l-md dark-input-field-advanced`}
+      } flex-grow dark-input-field-advanced`}
       value={value}
       depositTokenSymbol={tz}
     />
