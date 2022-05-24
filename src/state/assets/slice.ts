@@ -78,8 +78,6 @@ export const fetchTokenTransactions = createAsyncThunk(
           .then((res) => res.data)
           .catch(() => ({ logo: '' }));
 
-        console.log('LOGO: ', logo);
-
         return {
           price: uniqueTokenPrices[contractAddress],
           logo,
