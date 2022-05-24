@@ -947,3 +947,8 @@ input[type='checkbox'] {
 .react-add-to-calendar__dropdown ul li:nth-child(2) a::before {
   background-image: url('/images/social/apple.svg');
 }
+
+input[type='time']::-webkit-calendar-picker-indicator {
+  background: none;
+  display: none;
+}
