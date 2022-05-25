@@ -1,6 +1,6 @@
 import { proxyGet } from '.';
 
-export const getOpenseaTokens = async (
+export const getNfts = async (
   address: string,
   contractAddress: string,
   chainId: number,
@@ -23,7 +23,7 @@ export const getOpenseaTokens = async (
   return result.data;
 };
 
-export const getOpenseaFloorPrices = async (
+export const getNftFloorPrices = async (
   collectionSlug: string,
   chainId: number
 ): Promise<BackendFloorPriceResponse> => {

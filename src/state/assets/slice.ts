@@ -1,4 +1,4 @@
-import { getOpenseaTokens, getOpenseaFloorPrices } from '@/utils/api/opensea';
+import { getNfts, getNftFloorPrices } from '@/utils/api/nfts';
 import { mockCollectiblesResult } from '@/utils/mockdata';
 import { web3 } from '@/utils/web3Utils';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
@@ -127,12 +127,7 @@ export const fetchCollectibleById = async (
   const chainId = isDev ? ChainEnum.RINKEBY : ChainEnum.ETHEREUM;
 
   try {
-    const { assets } = await getOpenseaTokens(
-      account,
-      contractAddress,
-      chainId,
-      offset
-    );
+    const { assets } = await getNfts(account, contractAddress, chainId, offset);
 
     return assets.filter((asset) => asset.id === tokenId)[0];
   } catch (error) {
@@ -152,7 +147,7 @@ export const fetchCollectiblesTransactions = createAsyncThunk(
     } = params;
     const chainId = isDev ? ChainEnum.RINKEBY : ChainEnum.ETHEREUM;
 
-    const { assets } = await getOpenseaTokens(
+    const { assets } = await getNfts(
       account,
       contractAddress,
       chainId,
@@ -165,9 +160,7 @@ export const fetchCollectiblesTransactions = createAsyncThunk(
     ];
 
     const floorPrices = await Promise.all(
-      collections.map(async (slug: string) =>
-        getOpenseaFloorPrices(slug, chainId)
-      )
+      collections.map(async (slug: string) => getNftFloorPrices(slug, chainId))
     )
       .then((result) => result)
       .catch(() => []);
