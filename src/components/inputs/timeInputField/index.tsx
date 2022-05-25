@@ -1,4 +1,5 @@
 import { InputField } from '../inputField';
+import { useRouter } from 'next/router';
 
 export const TimeInputField = (props: {
   value?: string;
@@ -19,6 +20,11 @@ export const TimeInputField = (props: {
     onChange,
     ...rest
   } = props;
+  const router = useRouter();
+
+  // fix to set correct background color on the timezone text
+  // to hide icon injected into the time input field in Firefox
+  const isClubCreationPage = router.pathname === '/clubs/create';
 
   return (
     <>
@@ -36,7 +42,11 @@ export const TimeInputField = (props: {
           className="inline absolute top-1/2 right-4"
           style={{ transform: 'translateY(-50%)' }}
         >
-          <span className="text-gray-syn4 bg-black z-20">
+          <span
+            className={`${
+              isClubCreationPage ? 'bg-black' : 'bg-gray-syn8'
+            }text-gray-syn4  z-20`}
+          >
             {currentTimeZone}
           </span>
         </div>

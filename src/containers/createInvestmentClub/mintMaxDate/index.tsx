@@ -14,7 +14,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { animated, useSpring } from 'react-spring';
 import DateCard from './DateCard';
 import TimeField from '@/containers/createInvestmentClub/mintMaxDate/timeField';
-
 const MintMaxDate: FC<{ className?: string }> = ({ className }) => {
   const dispatch = useDispatch();
 

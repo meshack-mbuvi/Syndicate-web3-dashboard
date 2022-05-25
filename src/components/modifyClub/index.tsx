@@ -33,6 +33,8 @@ import { InputFieldWithDate } from '../inputs/inputFieldWithDate';
 import { InputFieldWithToken } from '../inputs/inputFieldWithToken';
 import { AmountAndMembersDisclaimer } from '@/containers/managerActions/mintAndShareTokens/AmountAndMembersDisclaimer';
 import { PillButtonLarge } from '../pillButtons/pillButtonsLarge';
+import TimeField from '@/containers/createInvestmentClub/mintMaxDate/timeField';
+import moment from 'moment';
 
 const progressModalStates = {
   confirm: {
@@ -375,6 +377,32 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
     );
   };
 
+  const [closeTime, setCloseTime] = useState(moment(endTime).format('HH:mm'));
+  const [closeDate, setCloseDate] = useState(endTime);
+
+  // get specific time changes
+  const handleTimeChange = (time: string) => {
+    // dispatch new time from here.
+    setCloseTime(time);
+  };
+
+  const handleDateChange = (targetDate) => {
+    setCloseDate(targetDate);
+  };
+
+  useEffect(() => {
+    const eodToday = new Date(new Date().setHours(23, 59, 0, 0)).getTime();
+    let targetDate = closeDate;
+    if (closeTime && closeDate) {
+      // extract the date section and then add specific time
+      const dateString = new Date(closeDate).toDateString();
+      targetDate = moment(dateString + ' ' + closeTime).valueOf();
+    }
+    const dateToSet = (targetDate as any) < eodToday ? eodToday : targetDate;
+    setOpenToDepositsUntil(new Date(dateToSet));
+    setOpenToDepositsUntilWarning(null); // clear error if any
+  }, [closeDate, closeTime]);
+
   return (
     <div className={`${isVisible ? 'block' : 'hidden'}`}>
       {/* Titles and close button */}
@@ -479,23 +507,18 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
                     borderRadius="rounded-1.5lg"
                   />
                 ) : (
-                  <InputFieldWithDate
-                    selectedDate={
-                      openToDepositsUntilWarning ? null : openToDepositsUntil
-                    }
-                    onChange={(targetDate) => {
-                      const eodToday = new Date(
-                        new Date().setHours(23, 59, 0, 0)
-                      ).getTime();
-                      const dateToSet =
-                        (targetDate as any) < eodToday ? eodToday : targetDate;
-                      setOpenToDepositsUntil(new Date(dateToSet));
-                      setOpenToDepositsUntilWarning(null); // clear error if any
-                    }}
-                    infoLabel={
-                      openToDepositsUntilWarning && openToDepositsUntilWarning
-                    }
-                  />
+                  <div className="space-y-2">
+                    <InputFieldWithDate
+                      selectedDate={
+                        openToDepositsUntilWarning ? null : openToDepositsUntil
+                      }
+                      onChange={(targetDate) => handleDateChange(targetDate)}
+                      infoLabel={
+                        openToDepositsUntilWarning && openToDepositsUntilWarning
+                      }
+                    />
+                    <TimeField handleTimeChange={handleTimeChange} />
+                  </div>
                 )}
               </div>
             </div>
