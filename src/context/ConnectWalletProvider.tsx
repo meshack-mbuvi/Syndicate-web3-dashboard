@@ -21,7 +21,7 @@ import {
   storeCurrentEthNetwork,
   storeEthereumNetwork
 } from '@/state/wallet/actions';
-import { isDev, isProd, isSSR } from '@/utils/environment';
+import { isSSR } from '@/utils/environment';
 import { SafeAppWeb3Modal } from '@gnosis.pm/safe-apps-web3modal';
 import WalletConnectProvider from '@walletconnect/web3-provider';
 import { providers } from 'ethers';
@@ -40,6 +40,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import Web3 from 'web3';
 import { NETWORKS } from '@/Networks';
 import { IActiveNetwork } from '@/state/wallet/types';
+import { useFlags } from 'launchdarkly-react-client-sdk';
 
 type AuthProviderProps = {
   connectWallet: (providerName: string) => void;
@@ -118,16 +119,26 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
   const [loading, setLoading] = useState<boolean>(true);
 
   const dispatch = useDispatch();
+  const { polygon } = useFlags();
 
   const activeNetwork: IActiveNetwork = useMemo(
     () => NETWORKS[chainId] ?? NETWORKS[1],
     [chainId]
   );
 
-  const supportdedNetworks: number[] = useMemo(
-    () => Object.keys(NETWORKS).map((key) => Number(key)),
-    [NETWORKS]
-  );
+  const supportdedNetworks: number[] = useMemo(() => {
+    if (polygon !== undefined) {
+      return Object.keys(NETWORKS).map((key) => {
+        if (!polygon && Number(key) === 137) {
+          return null;
+        } else {
+          return Number(key);
+        }
+      });
+    } else {
+      return [];
+    }
+  }, [NETWORKS, polygon]);
 
   /*
    * Allows running as a gnosis safe app
@@ -394,12 +405,9 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
     }
   }, [showSuccessModal]);
 
-  // we'll check for the correct network using the debug setting from the .env file
-  // if debug is set to true, the application has to be on the rinkeby network.
-  // otherwise it has to be connected to mainnet.
+  // Checks if we are connected to the supported networks.
   useEffect(() => {
-    if (chainId && providerName === 'Injected') {
-      // --------- changed this for easy testing -------------
+    if (chainId && providerName === 'Injected' && supportdedNetworks.length) {
       if (supportdedNetworks.includes(chainId)) {
         dispatch(
           storeEthereumNetwork({
@@ -416,12 +424,12 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
         dispatch(
           storeEthereumNetwork({
             invalidEthereumNetwork: true,
-            correctEthereumNetwork: 'mainnet or polygon'
+            correctEthereumNetwork: `mainnet ${polygon ? 'or polygon' : ''}`
           })
         );
       }
     }
-  }, [chainId]);
+  }, [chainId, supportdedNetworks]);
 
   // This handles the connect for a wallet
   const connectWallet = async (providerName: string) => {

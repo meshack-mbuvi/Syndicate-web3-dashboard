@@ -51,7 +51,9 @@ Router.events.on('routeChangeError', () => NProgress.done());
 const StateProviders: React.FC = ({ children }) => (
   <OnboardingProvider>
     <BeforeGettingStartedProvider>
-      <CreateInvestmentClubProvider>{children}</CreateInvestmentClubProvider>
+      <CreateInvestmentClubProvider>
+        <LDFeatureFlags>{children}</LDFeatureFlags>
+      </CreateInvestmentClubProvider>
     </BeforeGettingStartedProvider>
   </OnboardingProvider>
 );
@@ -75,9 +77,7 @@ const Body: React.FC<AppProps & { apollo: ApolloClient<unknown> }> = ({
         />
       </Head>
       <ApolloProvider client={apollo}>
-        <LDFeatureFlags>
-          <Component {...pageProps} />
-        </LDFeatureFlags>
+        <Component {...pageProps} />
       </ApolloProvider>
     </>
   );

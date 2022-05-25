@@ -7,6 +7,7 @@ import IconGas from '@/components/icons/Gas';
 import { useSelector } from 'react-redux';
 import { AppState } from '@/state';
 import { isDev } from '@/utils/environment';
+import { useFlags } from 'launchdarkly-react-client-sdk';
 
 const NetworkMenuDropDown: FC = () => {
   const {
@@ -14,6 +15,8 @@ const NetworkMenuDropDown: FC = () => {
       web3: { web3: web3Instance, account, activeNetwork }
     }
   } = useSelector((state: AppState) => state);
+
+  const { polygon } = useFlags();
 
   const { switchNetworks } = useConnectWalletContext();
 
@@ -111,7 +114,8 @@ const NetworkMenuDropDown: FC = () => {
               className="absolute right-0 w-80 mt-2 origin-top-right bg-black rounded-2xl border border-gray-syn7 shadow-lg outline-none p-2 space-y-1"
             >
               {Object.entries(NETWORKS).map(([key, value]) =>
-                value.testNetwork && !isDev ? (
+                (value.testNetwork && !isDev) ||
+                (!polygon && Number(key) === 137) ? (
                   <></>
                 ) : (
                   <button
