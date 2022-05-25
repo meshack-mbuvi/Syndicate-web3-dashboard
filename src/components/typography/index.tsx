@@ -19,7 +19,7 @@ export const T1 = ({
         weightClassOverride
           ? weightClassOverride
           : medium
-          ? 'font-regular'
+          ? 'font-medium'
           : 'font-semibold'
       } ${weightClassOverride} ${extraClasses}`}
       {...rest}
@@ -48,7 +48,7 @@ export const T2 = ({
         weightClassOverride
           ? weightClassOverride
           : medium
-          ? 'font-regular'
+          ? 'font-medium'
           : 'font-semibold'
       } ${weightClassOverride} ${extraClasses}`}
       {...rest}
@@ -77,7 +77,7 @@ export const T3 = ({
         weightClassOverride
           ? weightClassOverride
           : medium
-          ? 'font-regular'
+          ? 'font-medium'
           : 'font-semibold'
       } ${weightClassOverride} ${extraClasses}`}
       {...rest}
@@ -106,7 +106,7 @@ export const T4 = ({
         weightClassOverride
           ? weightClassOverride
           : medium
-          ? 'font-regular'
+          ? 'font-medium'
           : 'font-semibold'
       } ${weightClassOverride} ${extraClasses}`}
       {...rest}
@@ -135,7 +135,7 @@ export const T5 = ({
         weightClassOverride
           ? weightClassOverride
           : medium
-          ? 'font-regular'
+          ? 'font-medium'
           : 'font-semibold'
       } ${weightClassOverride} ${extraClasses}`}
       {...rest}
@@ -162,7 +162,7 @@ export const H1 = ({
 }): JSX.Element => {
   return (
     <div
-      className={`text-H1 ${
+      className={`text-H1-mobile sm:text-H1 ${
         weightClassOverride
           ? weightClassOverride
           : regular
@@ -191,7 +191,7 @@ export const H2 = ({
 }): JSX.Element => {
   return (
     <div
-      className={`text-H2 ${
+      className={`text-H2-mobile sm:text-H2 ${
         weightClassOverride
           ? weightClassOverride
           : regular
@@ -220,7 +220,7 @@ export const H3 = ({
 }): JSX.Element => {
   return (
     <div
-      className={`text-H3 ${
+      className={`text-H3-mobile sm:text-H3 ${
         weightClassOverride
           ? weightClassOverride
           : regular
@@ -249,36 +249,7 @@ export const H4 = ({
 }): JSX.Element => {
   return (
     <div
-      className={`text-H4 ${
-        weightClassOverride
-          ? weightClassOverride
-          : regular
-          ? 'font-regular'
-          : 'font-medium'
-      } ${weightClassOverride} ${extraClasses}`}
-      {...rest}
-    >
-      {children}
-    </div>
-  );
-};
-
-export const H5 = ({
-  children,
-  regular,
-  weightClassOverride,
-  extraClasses,
-  ...rest
-}: {
-  children?: any;
-  regular?: boolean;
-  weightClassOverride?: string;
-  extraClasses?: string;
-  [rest: string]: any;
-}): JSX.Element => {
-  return (
-    <div
-      className={`text-H5 ${
+      className={`text-H4-mobile sm:text-H4 ${
         weightClassOverride
           ? weightClassOverride
           : regular
