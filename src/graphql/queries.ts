@@ -164,16 +164,6 @@ export const RECENT_TRANSACTIONS = gql`
   }
 `;
 
-export const TOKEN_INTERACTIONS = gql`
-  query getTokenInteractions($where: syndicateAddress_filter) {
-    Financial_tokenInteractions(where: $where) {
-      tokenName
-      tokenSymbol
-      tokenDecimal
-      contractAddress
-    }
-  }
-`;
 export const CLAIMED_ERC721 = gql`
   query checkERC721Claim($where: TokensClaimed_filter) {
     tokensClaimeds(where: $where) {
@@ -183,19 +173,6 @@ export const CLAIMED_ERC721 = gql`
       treeIndex
       amount
       index
-    }
-  }
-`;
-
-export const ERC721_MERKLE_AIRDROP_CREATED = gql`
-  query airdropERC721Created($where: MerkleAirdropCreated_filter) {
-    merkleAirdropCreateds(where: $where) {
-      id
-      club
-      treeIndex
-      endTime
-      startTime
-      root
     }
   }
 `;
