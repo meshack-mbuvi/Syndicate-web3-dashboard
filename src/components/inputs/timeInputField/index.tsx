@@ -45,7 +45,7 @@ export const TimeInputField = (props: {
           <span
             className={`${
               isClubCreationPage ? 'bg-black' : 'bg-gray-syn8'
-            }text-gray-syn4  z-20`}
+            } text-gray-syn4  z-20`}
           >
             {currentTimeZone}
           </span>

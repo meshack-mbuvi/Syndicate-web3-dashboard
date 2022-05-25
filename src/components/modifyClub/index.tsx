@@ -35,6 +35,7 @@ import { AmountAndMembersDisclaimer } from '@/containers/managerActions/mintAndS
 import { PillButtonLarge } from '../pillButtons/pillButtonsLarge';
 import TimeField from '@/containers/createInvestmentClub/mintMaxDate/timeField';
 import moment from 'moment';
+import AddToCalendar from '@/components/addToCalendar';
 
 const progressModalStates = {
   confirm: {
@@ -103,14 +104,14 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
     address,
     memberCount,
     totalSupply,
-    endTime,
     owner,
     maxMemberCount,
     maxTotalSupply,
     symbol,
     loading,
     currentMintPolicyAddress,
-    depositsEnabled
+    depositsEnabled,
+    endTime
   } = erc20Token;
 
   const { symbol: nativeSymbol, exchangeRate: nativeEchageRate } =
@@ -377,8 +378,17 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
     );
   };
 
-  const [closeTime, setCloseTime] = useState(moment(endTime).format('HH:mm'));
-  const [closeDate, setCloseDate] = useState(endTime);
+  const [closeTime, setCloseTime] = useState('');
+  const [closeDate, setCloseDate] = useState(0);
+  const calendarEvent = {
+    title: `${name} closes to deposits on Syndicate`,
+    description: '',
+    startTime: moment(openToDepositsUntil).valueOf(),
+    endTime: moment(moment(openToDepositsUntil).valueOf())
+      .add(1, 'days')
+      .valueOf(),
+    location: ''
+  };
 
   // get specific time changes
   const handleTimeChange = (time: string) => {
@@ -389,6 +399,13 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
   const handleDateChange = (targetDate) => {
     setCloseDate(targetDate);
   };
+
+  // the value of endTime gets set a few moments later.
+  // need to update closeDate and closeTime when it does.
+  useEffect(() => {
+    setCloseDate(endTime);
+    setCloseTime(moment(new Date(endTime)).format('HH:mm'));
+  }, [endTime]);
 
   useEffect(() => {
     const eodToday = new Date(new Date().setHours(23, 59, 0, 0)).getTime();
@@ -507,7 +524,7 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
                     borderRadius="rounded-1.5lg"
                   />
                 ) : (
-                  <div className="space-y-2">
+                  <div>
                     <InputFieldWithDate
                       selectedDate={
                         openToDepositsUntilWarning ? null : openToDepositsUntil
@@ -517,7 +534,12 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
                         openToDepositsUntilWarning && openToDepositsUntilWarning
                       }
                     />
-                    <TimeField handleTimeChange={handleTimeChange} />
+                    <div className="mt-2">
+                      <TimeField handleTimeChange={handleTimeChange} />
+                    </div>
+                    <div className="flex justify-start text-base leading-4 text-blue-navy font-whyte mt-4">
+                      <AddToCalendar calEvent={calendarEvent} />
+                    </div>
                   </div>
                 )}
               </div>
