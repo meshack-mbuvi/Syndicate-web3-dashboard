@@ -99,6 +99,7 @@
     color: white;
     font-style: normal;
     @apply antialiased;
+    font-variation-settings: 'slnt' 0;
   }
 
   ::selection {
