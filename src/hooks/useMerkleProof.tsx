@@ -10,6 +10,11 @@ import {
   clearMerkleProof
 } from '@/state/merkleProofs/slice';
 import { getWeiAmount } from '@/utils/conversions';
+import { ChainEnum } from '@/utils/api/ChainTypes';
+import { isDev } from '@/utils/environment';
+
+/* TODO - refactor for other chains see ENG-3310 */
+const chainId = isDev ? ChainEnum.RINKEBY : ChainEnum.ETHEREUM;
 
 const useFetchMerkleProof: any = (skipQuery = false) => {
   const dispatch = useDispatch();
@@ -30,7 +35,7 @@ const useFetchMerkleProof: any = (skipQuery = false) => {
     data: merkleData = {},
     refetch: refetchMerkle
   } = useQuery(INDEX_AND_PROOF, {
-    variables: { clubAddress, address },
+    variables: { clubAddress, address, chainId },
     skip: !address || skipQuery,
     context: { clientName: 'backend' }
   });

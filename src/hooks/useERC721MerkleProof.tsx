@@ -9,6 +9,11 @@ import {
   setERC721MerkleProof,
   clearERC721MerkleProof
 } from '@/state/erc721MerkleProofs/slice';
+import { ChainEnum } from '@/utils/api/ChainTypes';
+import { isDev } from '@/utils/environment';
+
+/* TODO - refactor for other chains see ENG-3310 */
+const chainId = isDev ? ChainEnum.RINKEBY : ChainEnum.ETHEREUM;
 
 const useFetchMerkleProof: any = (skipQuery = false) => {
   const dispatch = useDispatch();
@@ -29,7 +34,7 @@ const useFetchMerkleProof: any = (skipQuery = false) => {
     data: merkleData = {},
     refetch: refetchMerkle
   } = useQuery(ERC721_INDEX_AND_PROOF, {
-    variables: { clubAddress: nftAddress, address },
+    variables: { clubAddress: nftAddress, address, chainId },
     skip: !address || skipQuery,
     context: { clientName: 'backend' }
   });
