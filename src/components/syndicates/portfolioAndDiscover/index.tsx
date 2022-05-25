@@ -1,5 +1,6 @@
 import CreateClubButton from '@/components/createClubButton';
 import PortfolioEmptyState from '@/components/syndicates/portfolioAndDiscover/portfolio/portfolioEmptyState';
+import { H1, H4 } from '@/components/typography';
 import useClubERC20s from '@/hooks/useClubERC20s';
 import useWindowSize from '@/hooks/useWindowSize';
 import { AppState } from '@/state';
@@ -104,13 +105,13 @@ const PortfolioAndDiscover: React.FC = () => {
                 className="flex flex-col sm:flex-row justify-between sm:items-center w-full mt-14 mb-16"
                 style={width < 480 ? { paddingRight: '6%' } : null}
               >
-                <h1>Portfolio</h1>
+                <H1>Portfolio</H1>
                 <CreateClubButton />
               </div>
               {/* show active clubsERC20s here */}
               {myClubERC20s.length ? (
                 <div className="">
-                  <h3 className="mb-8">Admin</h3>
+                  <H4 extraClasses="mb-8">Admin</H4>
                   {/* show active clubsERC20s here */}
                   <ClubERC20Table
                     tableData={myClubERC20s}
@@ -120,7 +121,7 @@ const PortfolioAndDiscover: React.FC = () => {
               ) : null}
               {otherClubERC20s.length ? (
                 <div className="mt-16">
-                  <h3 className="mb-8">Member</h3>
+                  <H4 extraClasses="mb-8">Member</H4>
                   {/* show active clubsERC20s here */}
                   <ClubERC20Table
                     tableData={otherClubERC20s}

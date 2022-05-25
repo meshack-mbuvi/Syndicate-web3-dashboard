@@ -59,7 +59,7 @@ const ClubERC20Table: FC<Props> = ({ columns, tableData }) => {
             <div
               className={`grid ${
                 columns.length > 4 ? 'grid-cols-6' : 'grid-cols-4'
-              } md:grid-cols-6 gap-8 pb-3 text-gray-syn4 font-whyte text-sm`}
+              } md:grid-cols-6 gap-8 pb-3 text-gray-syn4 text-sm`}
             >
               {columns?.map((col, idx) => (
                 <div

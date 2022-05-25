@@ -357,9 +357,7 @@ const ConnectWallet: React.FC = () => {
             />
           </div>
 
-          <p className="mx-5 mt-9 text-sm uppercase font-bold tracking-wide text-center">
-            Connected
-          </p>
+          <h4>Connected</h4>
         </div>
       </ConnectModal>
 

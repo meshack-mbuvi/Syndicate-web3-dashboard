@@ -163,7 +163,6 @@ module.exports = {
         15: '0.15'
       },
       fontFamily: {
-        whyte: ['Whyte Regular', 'Helvetica', 'Arial', 'sans-serif'],
         'whyte-extralight': [
           'Whyte Thin Trial',
           'Whyte Regular',
@@ -185,8 +184,7 @@ module.exports = {
           'Arial',
           'sans-serif'
         ],
-        mono: ['Whyte Semi-Mono'],
-        bold: ['Whyte Bold']
+        mono: ['Slussen Mono Regular']
       },
       fontSize: {
         subtext: ['0.75rem', '0.875rem'],
@@ -203,7 +201,16 @@ module.exports = {
         '5xl': ['3rem', '3.5rem'],
         '5.75xl': '1.375',
         '6xl': ['3.75rem', '4.25rem'],
-        '7xl': ['4.5rem', '5.4rem']
+        '7xl': ['4.5rem', '5.4rem'],
+        T1: '5.5rem',
+        T2: ['4.5rem', '4.5rem'],
+        T3: ['4rem', '4rem'],
+        T4: ['3.5rem', '3.5rem'],
+        T5: ['3rem', '3rem'],
+        H1: '2.5rem',
+        H2: ['2rem', '150%'],
+        H3: ['1.5rem', '150%'],
+        H4: ['1.25rem', '150%']
       },
       lineHeight: {
         4.5: '1.125rem',

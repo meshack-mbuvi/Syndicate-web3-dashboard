@@ -1,7 +1,8 @@
 import React from 'react';
+import { H1 } from '../typography';
 
 const PageHeader: React.FC = ({ children }) => {
-  return <h1 className="text-white text-2xl mb-6">{children}</h1>;
+  return <H1 extraClasses="mb-6">{children}</H1>;
 };
 
 export default PageHeader;

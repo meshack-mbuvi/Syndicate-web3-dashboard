@@ -227,8 +227,8 @@ export const TokenSelectSearch: React.FC<TokenSelectSearch> = ({
   return (
     <div className="flex flex-col pt-8 pb-6 min-h-363 max-h-141 rounded-2xl bg-gray-darkBackground border-6 border-gray-darkBackground focus:outline-none">
       <div className="mb-4 sm:flex items-center justify-between px-8">
-        <div className="font-whyte text-xl text-white">Select a token</div>
-        <div className="inline-flex text-xl font-whyte text-gray-syn10 sm:pl-20 sm:float-right">
+        <div className="text-xl text-white">Select a token</div>
+        <div className="inline-flex text-xl text-gray-syn10 sm:pl-16 sm:float-right">
           <div className="text-sm">
             Each crypto asset is different.
             <button

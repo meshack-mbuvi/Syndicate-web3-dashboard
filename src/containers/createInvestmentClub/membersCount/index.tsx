@@ -7,6 +7,7 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { InputFieldWithMax } from '../shared/InputFieldWithMax';
 import MaxButton from '../shared/MaxButton';
+import { H4 } from '@/components/typography';
 
 const ERROR_MESSAGE = (
   <span>
@@ -87,7 +88,7 @@ const MembersCount: React.FC<{
 
   return (
     <Fade>
-      <h3 className="ml-5">What’s the maximum number of members?</h3>
+      <H4 extraClasses="ml-5">What’s the maximum number of members?</H4>
       <div className="flex pb-6 ml-5">
         <InputFieldWithMax
           {...{

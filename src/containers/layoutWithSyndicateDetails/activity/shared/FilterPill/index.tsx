@@ -59,7 +59,7 @@ const FilterPill: React.FC<FilterPillProps> = ({ setFilter }) => {
     >
       <div className="flex flex-shrink ml-4 justify-start items-center">
         <div className={`whitespace-nowrap py-2`}>
-          <span className="text-base font-whyte text-gray-syn4">
+          <span className="text-base text-gray-syn4">
             Show: {selectedCategory?.text}
           </span>
         </div>

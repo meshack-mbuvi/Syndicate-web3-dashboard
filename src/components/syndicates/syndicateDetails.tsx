@@ -23,6 +23,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import ReactTooltip from 'react-tooltip';
 import { EtherscanLink } from 'src/components/syndicates/shared/EtherscanLink';
 import NumberTreatment from '../NumberTreatment';
+import { H1 } from '../typography';
 // utils
 import GradientAvatar from './portfolioAndDiscover/portfolio/GradientAvatar';
 import { DetailsCard, ProgressIndicator } from './shared';
@@ -407,19 +408,22 @@ const SyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
                     <div
                       className={`flex flex-wrap items-center w-fit-content`}
                     >
-                      <h1
-                        id="club-name"
-                        className={`${
+                      <H1
+                        extraClasses={`${
                           nameWidth >= divWidth
                             ? `line-clamp-2 mb-2`
                             : `flex mr-6`
                         }`}
+                        id="club-name"
                       >
                         {name}
-                      </h1>
-                      <h1 className="font-light flex flex-wrap text-gray-syn4 items-center justify-center">
+                      </H1>
+                      <H1
+                        weightClassOverride="font-light"
+                        extraClasses="flex flex-wrap text-gray-syn4 items-center justify-center"
+                      >
                         {symbol}
-                      </h1>
+                      </H1>
                       <div className="inline-flex items-center ml-6 space-x-8 pr-2">
                         {showActionIcons ? (
                           <div className="flex space-x-6">

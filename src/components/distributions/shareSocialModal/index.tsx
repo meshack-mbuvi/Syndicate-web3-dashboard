@@ -1,5 +1,6 @@
 import Modal, { ModalStyle } from '@/components/modal';
 import { ShareCard } from '@/components/social';
+import { H4 } from '@/components/typography';
 
 interface Props {
   isModalVisible: boolean;
@@ -33,7 +34,7 @@ export const ShareSocialModal: React.FC<Props> = ({
             src="/images/checkCircleGreen.svg"
             alt="Success icon"
           />
-          <h3 className="mb-8 text-center">Share the good news</h3>
+          <H4 extraClasses="mb-8 text-center">Share the good news</H4>
           <ShareCard
             URL={socialURL}
             imageOptions={[

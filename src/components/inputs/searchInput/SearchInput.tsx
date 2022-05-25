@@ -70,11 +70,11 @@ export const SearchInput = (props: {
                 type="text"
                 name="search"
                 id="search"
-                className={`focus:ring-0 ${customClass} relative border-0 font-whyte text-white leading-6 text-lg block w-full rounded-md pl-5 pr-5 sm:text-sm ${
+                className={`focus:ring-0 ${customClass} relative border-0 text-white leading-6 text-lg block w-full rounded-md pl-5 pr-5 sm:text-sm ${
                   disabled ? 'opacity-40' : ''
                 }`}
-                placeholder={`Search ${
-                  itemsCount ? itemsCount : ''
+                placeholder={`Search${
+                  itemsCount ? ` ${itemsCount}` : ''
                 } ${searchItem}`}
                 onChange={onChangeHandler}
                 value={searchValue}

@@ -10,6 +10,7 @@ import DatePicker from 'react-datepicker';
 import { useDispatch, useSelector } from 'react-redux';
 import { animated, useSpring } from 'react-spring';
 import DateCard from './DateCard';
+import { H4 } from '@/components/typography';
 
 const MintMaxDate: FC<{ className?: string }> = ({ className }) => {
   const dispatch = useDispatch();
@@ -139,7 +140,7 @@ const MintMaxDate: FC<{ className?: string }> = ({ className }) => {
     <Fade delay={500}>
       <div className="ml-5">
         <div className={className}>
-          <h3 className="pb-1">When will deposits close?</h3>
+          <H4 extraClasses="pb-1">When will deposits close?</H4>
           <div className="text-sm text-gray-syn4 pb-4">
             {' '}
             Extending the close date will require an on-chain transaction with
@@ -173,7 +174,7 @@ const MintMaxDate: FC<{ className?: string }> = ({ className }) => {
             </div>
 
             {showCustomDatePicker && (
-              <animated.div style={styles} className="pb-6">
+              <animated.div style={styles} className="pb-6 mt-4">
                 <div className="pb-2">Close date</div>
                 <div className="">
                   <DatePicker

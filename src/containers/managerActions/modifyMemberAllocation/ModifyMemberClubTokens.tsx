@@ -7,6 +7,7 @@ import {
 } from '@/components/inputs/inputFieldWithToken';
 import { numberWithCommas } from '@/utils/formattedNumbers';
 import { CtaButton } from '@/components/CTAButton';
+import { L2 } from '@/components/typography';
 
 interface IModifyMemberClubTokens {
   memberList: any;
@@ -55,9 +56,7 @@ const ModifyMemberClubTokens: React.FC<IModifyMemberClubTokens> = ({
       }}
     >
       <div>
-        <h1 className="uppercase text-sm text-white leading-4 tracking-px font-whyte-medium pb-4">
-          modify club token allocation
-        </h1>
+        <L2 extraClasses="pb-4">modify club token allocation</L2>
         <div className="space-y-6">
           <p className="text-gray-syn4 text-base font-whyte leading-6">
             This updates your club’s cap table by either minting or burning club

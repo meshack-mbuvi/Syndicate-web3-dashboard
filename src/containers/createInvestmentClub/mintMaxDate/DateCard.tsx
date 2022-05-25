@@ -19,7 +19,7 @@ const DateCard: FC<IDateCardProps> = ({
       }`}
     >
       <div
-        className={`text-center w-full h-7 ${
+        className={`text-center w-full ${
           isLastItem ? 'border-0' : 'border-r border-gray-24'
         }`}
       >

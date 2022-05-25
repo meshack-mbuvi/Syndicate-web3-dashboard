@@ -12,6 +12,7 @@ import { generateSlug } from 'random-word-slugs';
 import { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import useOnClickOutside from '../shared/useOnClickOutside';
+import { H4 } from '@/components/typography';
 
 const ClubNameSelector: React.FC<{
   className?: string;
@@ -123,13 +124,13 @@ const ClubNameSelector: React.FC<{
     <Fade>
       <div className="ml-5">
         <div className={className}>
-          <h3 className={`pb-6 ${editButtonClicked ? 'w-80' : 'w-100'}`}>
+          <H4 extraClasses={`pb-6 ${editButtonClicked ? 'w-80' : 'w-100'}`}>
             What should we call this investment club?
-          </h3>
+          </H4>
           <div>
             <div className="relative" data-tip data-for="change-settings-tip">
               <input
-                className="block font-whyte text-base bg-transparent p-4 rounded-md border-1 w-full border-gray-24 focus:border-blue-navy outline-none text-white hover:border-gray-syn3"
+                className="block text-base bg-transparent p-4 rounded-md border-1 w-full border-gray-24 focus:border-blue-navy outline-none text-white hover:border-gray-syn3"
                 placeholder="Name (e.g. Alpha DAO)"
                 value={investmentClubName}
                 onChange={(e) =>
@@ -160,7 +161,7 @@ const ClubNameSelector: React.FC<{
               </div>
             </div>
           </div>
-          <h3 className="pb-6 pt-6">a.k.a.</h3>
+          <H4 extraClasses="pb-6 pt-6">a.k.a.</H4>
           <div>
             <div className="relative mb-2">
               <span
@@ -172,7 +173,7 @@ const ClubNameSelector: React.FC<{
               <input
                 data-tip
                 data-for="change-settings-tip"
-                className="text-base font-whyte bg-transparent leading-6 align-baseline py-4 pl-12 rounded-md border-1 w-full border-gray-24 focus:border-blue-navy outline-none text-white hover:border-gray-syn3"
+                className="text-base bg-transparent leading-6 align-baseline py-4 pl-12 rounded-md border-1 w-full border-gray-24 focus:border-blue-navy outline-none text-white hover:border-gray-syn3"
                 placeholder="(e.g. ALDA)"
                 value={investmentClubSymbolPlaceHolder}
                 onChange={handleSymbolChange}

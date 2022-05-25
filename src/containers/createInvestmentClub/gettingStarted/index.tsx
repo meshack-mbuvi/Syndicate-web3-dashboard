@@ -67,17 +67,17 @@ const GettingStarted: React.FC<{
                     </span>
                   </span>
                   <span className="ml-4 min-w-0 flex flex-col">
-                    <span className="text-white text-base leading-6 font-whyte transition-all">
+                    <span className="text-white text-base leading-6 transition-all">
                       Create on-chain club
                     </span>
                     <p className="text-gray-syn4 text-sm mt-1 leading-5.5">
                       Define the name &#38; rules around your raise that will
                       enable the on-chain cap table
                     </p>
-                    <div className="text-blue text-xs mt-3 font-whyte">
+                    <div className="text-blue text-xs mt-3">
                       <EstimateGas />
                     </div>
-                    <div className="mt-2 text-gray-syn4 text-xs font-whyte font-normal">
+                    <div className="mt-2 text-gray-syn4 text-xs">
                       Create <AnimatedText text={'unlimited clubs for free'} />{' '}
                       on Syndicate. Just pay gas.
                     </div>
@@ -106,7 +106,7 @@ const GettingStarted: React.FC<{
                       <span className="h-full w-full rounded-full" />
                     </span>
                   </span>
-                  <span className="ml-4 min-w-0 flex justify-between w-full text-gray-syn5 text-base leading-6 font-whyte transition-all">
+                  <span className="ml-4 min-w-0 flex justify-between w-full text-gray-syn5 text-base leading-6 transition-all">
                     <span>Form a legal entity</span>
                     <span>Optional</span>
                   </span>
@@ -134,7 +134,7 @@ const GettingStarted: React.FC<{
                       <span className="h-full w-full rounded-full" />
                     </span>
                   </span>
-                  <span className="ml-4 min-w-0 flex justify-between w-full text-gray-syn5 text-base leading-6 font-whyte transition-all">
+                  <span className="ml-4 min-w-0 flex justify-between w-full text-gray-syn5 text-base leading-6 transition-all">
                     <span>Distribute &#38; sign legal agreements</span>
                     <span>Optional</span>
                   </span>
@@ -152,7 +152,7 @@ const GettingStarted: React.FC<{
                     </span>
                   </span>
                   <span className="ml-4 min-w-0 flex flex-col">
-                    <span className="text-gray-syn5 text-base leading-6 font-whyte transition-all">
+                    <span className="text-gray-syn5 text-base leading-6 transition-all">
                       Collect funds &#38; invest together!
                     </span>
                   </span>

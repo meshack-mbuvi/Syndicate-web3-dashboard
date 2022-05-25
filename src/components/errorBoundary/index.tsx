@@ -1,4 +1,5 @@
 import React from 'react';
+import { H2 } from '../typography';
 
 export const ErrorBoundary = ({ children }: { children }): JSX.Element => {
   try {
@@ -8,7 +9,7 @@ export const ErrorBoundary = ({ children }: { children }): JSX.Element => {
     // An error occured in the component tree
     return (
       <div>
-        <h2>Something went wrong. Try reloading your browser.</h2>
+        <H2 regular>Something went wrong. Try reloading your browser.</H2>
         If this problem persists, please contact us for help
       </div>
     );

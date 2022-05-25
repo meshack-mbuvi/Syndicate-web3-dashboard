@@ -33,6 +33,26 @@
       format('woff');
   }
 
+  /* Slussen */
+
+  @font-face {
+    font-family: Slussen;
+    src: url(/fonts/Slussen/Slussen-Variable.woff2) format('woff2');
+    src: url(/fonts/Slussen/Slussen-Variable.woff2)
+        format('woff2 supports variations'),
+      url(/fonts/Slussen/Slussen-Variable.woff2) format('woff2-variations');
+    font-weight: 100 900;
+  }
+
+  @font-face {
+    font-family: Slussen Mono Regular;
+    src: url(/fonts/Slussen/Slussen-Mono-Regular.woff2) format('woff2');
+    src: url(/fonts/Slussen/Slussen-Mono-Regular.woff2)
+        format('woff2 supports variations'),
+      url(/fonts/Slussen/Slussen-Mono-Regular.woff2) format('woff2-variations');
+    font-weight: 100 900;
+  }
+
   /* Whyte */
 
   @font-face {
@@ -75,7 +95,7 @@
 
   body {
     background-color: #000000;
-    font-family: 'Whyte Regular', 'Helvetica', 'Arial', 'sans-serif';
+    font-family: 'Slussen', 'Helvetica', 'Arial', 'sans-serif';
     color: white;
     font-style: normal;
     @apply antialiased;
@@ -92,7 +112,7 @@
   }
 
   h1 {
-    @apply text-2xl sm:text-4.5xl;
+    @apply text-2xl sm:text-4.5xl font-medium;
     line-height: normal;
   }
 
@@ -102,7 +122,7 @@
   }
 
   h3 {
-    @apply text-lg sm:text-xl leading-6;
+    @apply text-lg sm:text-xl leading-6 font-medium;
     line-height: 150%;
   }
 
@@ -115,20 +135,8 @@
     font-family: 'Whyte Thin Trial';
   }
 
-  .font-light {
-    font-family: 'Whyte Light Trial';
-  }
-
   .font-normal {
     font-family: 'Whyte Regular';
-  }
-
-  .font-medium {
-    font-family: 'Whyte Medium';
-  }
-
-  .font-bold {
-    font-weight: inherit !important; /* to override 700 weight */
   }
 
   .main-title {
@@ -267,17 +275,17 @@
   }
 
   .h1 {
-    @apply text-2xl sm:text-4.5xl;
+    @apply text-2xl sm:text-4.5xl font-medium;
     line-height: normal;
   }
 
   .h2 {
-    @apply text-5.75xl sm:text-2xl leading-6;
+    @apply text-5.75xl sm:text-2xl;
     line-height: 150%;
   }
 
   .h3 {
-    @apply text-lg sm:text-xl leading-6;
+    @apply text-lg sm:text-xl leading-6 font-medium;
     line-height: 150%;
   }
 
@@ -287,11 +295,11 @@
   }
 
   .body {
-    @apply text-base leading-6 font-whyte;
+    @apply text-base leading-6;
   }
 
   .small-body {
-    @apply text-sm leading-5.75 font-whyte;
+    @apply text-sm leading-5.75;
   }
 
   .bottom-triangle-blue::after {
@@ -532,7 +540,6 @@
 
 /* custom styles for all inputs */
 input {
-  font-family: Whyte;
   font-style: normal;
   font-weight: normal;
   font-size: 14px;
