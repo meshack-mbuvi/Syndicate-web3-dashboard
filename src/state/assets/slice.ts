@@ -113,8 +113,8 @@ export const fetchTokenTransactions = createAsyncThunk(
 interface CollectiblesFetchParams {
   account?: string;
   offset: string;
-  maxTotalDeposits?: number;
   contractAddress?: string;
+  maxTotalDeposits?: number;
   tokenId?: string;
   limit?: string;
 }
@@ -124,10 +124,17 @@ export const fetchCollectibleById = async (
 ): Promise<any> => {
   const { account, offset, contractAddress, tokenId } = params;
 
-  try {
-    const { assets } = await getOpenseaTokens(account, contractAddress, offset);
+  const chainId = isDev ? ChainEnum.RINKEBY : ChainEnum.ETHEREUM;
 
-    return assets.filter((asset) => asset.token_id === tokenId)[0];
+  try {
+    const { assets } = await getOpenseaTokens(
+      account,
+      contractAddress,
+      chainId,
+      offset
+    );
+
+    return assets.filter((asset) => asset.id === tokenId)[0];
   } catch (error) {
     return null;
   }
@@ -139,14 +146,16 @@ export const fetchCollectiblesTransactions = createAsyncThunk(
     const {
       account,
       offset,
-      maxTotalDeposits,
       contractAddress,
+      maxTotalDeposits,
       limit = '20'
     } = params;
+    const chainId = isDev ? ChainEnum.RINKEBY : ChainEnum.ETHEREUM;
 
     const { assets } = await getOpenseaTokens(
       account,
       contractAddress,
+      chainId,
       offset,
       limit
     );
@@ -156,43 +165,43 @@ export const fetchCollectiblesTransactions = createAsyncThunk(
     ];
 
     const floorPrices = await Promise.all(
-      collections.map(async (slug: string) => {
-        return await getOpenseaFloorPrices(slug);
-      })
+      collections.map(async (slug: string) =>
+        getOpenseaFloorPrices(slug, chainId)
+      )
     )
       .then((result) => result)
       .catch(() => []);
 
-    // get last purchase price.
-    const lastSale = assets.last_sale;
-    const lastPurchasePrice = {
-      lastPurchasePriceUSD: 0,
-      lastPurchasePriceETH: 0
-    };
-    if (lastSale) {
-      const {
-        payment_token: { usd_price, eth_price, decimals },
-        total_price
-      } = lastSale;
-      const lastPurchasePriceUSD =
-        +usd_price * +getWeiAmount(total_price, decimals, false);
-      lastPurchasePrice.lastPurchasePriceUSD = lastPurchasePriceUSD;
-      lastPurchasePrice.lastPurchasePriceETH = eth_price;
-    }
-
-    const allAssets = assets.map((asset) => ({
-      name: asset.name,
-      image: asset.image_url,
-      animation: asset.animation_url,
-      permalink: asset.permalink,
-      id: asset.token_id,
-      collection: asset.collection,
-      description: asset.description,
-      floorPrice: floorPrices.find(
-        (price) => price.slug === asset.collection.slug
-      ).floorPrice,
-      lastPurchasePrice
-    }));
+    const allAssets = assets.map((asset) => {
+      const lastSale = asset.last_sale;
+      const lastPurchasePrice = {
+        lastPurchasePriceUSD: 0,
+        lastPurchasePriceETH: 0
+      };
+      if (lastSale) {
+        const {
+          payment_token: { usd_price, eth_price, decimals },
+          total_price
+        } = lastSale;
+        const lastPurchasePriceUSD =
+          +usd_price * +getWeiAmount(total_price, decimals, false);
+        lastPurchasePrice.lastPurchasePriceUSD = lastPurchasePriceUSD;
+        lastPurchasePrice.lastPurchasePriceETH = parseInt(eth_price);
+      }
+      return {
+        name: asset.name,
+        image: asset.image,
+        animation: asset.animation,
+        permalink: asset.permalink,
+        id: asset.id,
+        collection: asset.collection,
+        description: asset.description,
+        floorPrice: floorPrices.find(
+          (price) => price.slug === asset.collection.slug
+        )?.floorPrice,
+        lastPurchasePrice
+      };
+    });
 
     return { allAssets, maxTotalDeposits };
   }
