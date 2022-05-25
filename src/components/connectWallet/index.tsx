@@ -14,6 +14,7 @@ import {
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { SpinnerWithImage } from '../shared/spinner/spinnerWithImage';
+import { L2 } from '../typography';
 import { ConnectModal, ConnectModalStyle } from './connectModal';
 
 /**
@@ -231,9 +232,7 @@ const ConnectWallet: React.FC = () => {
         <>
           <div className="rounded-2xl bg-gray-syn8 px-4.5 pt-6">
             {/* Titles */}
-            <h4 className="text-white text-sm uppercase font-bold tracking-wide">
-              Connect a wallet
-            </h4>
+            <L2 extraClasses="text-white">Connect a wallet</L2>
             <p className="text-xs text-gray-syn5 mb-6 mt-2">
               <span>
                 By connecting your wallet, you agree to Syndicate&apos;s&nbsp;
@@ -357,7 +356,7 @@ const ConnectWallet: React.FC = () => {
             />
           </div>
 
-          <h4>Connected</h4>
+          <L2 extraClasses="text-center mt-9">Connected</L2>
         </div>
       </ConnectModal>
 

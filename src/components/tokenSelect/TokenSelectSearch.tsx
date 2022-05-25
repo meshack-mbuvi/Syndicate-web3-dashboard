@@ -17,6 +17,7 @@ import {
 import { getTokenDetails } from '@/utils/api';
 import { isDev } from '@/utils/environment';
 import { ChainEnum } from '@/utils/api/ChainTypes';
+import { L2 } from '../typography';
 interface TokenSelectSearch {
   toggleTokenSelect: () => void;
   defaultTokenList: Token[];
@@ -272,13 +273,13 @@ export const TokenSelectSearch: React.FC<TokenSelectSearch> = ({
           </>
         ) : null}
         {searchTerm ? null : (
-          <h4
-            className={`text-xs sm:text-sm sm:leading-4 text-white opacity-50 uppercase tracking-wider font-bold px-8 ${
+          <L2
+            extraClasses={`text-xs sm:text-sm sm:leading-4 text-white opacity-50 uppercase tracking-wider font-bold px-8 ${
               suggestionList?.length ? 'mt-3' : ''
             } `}
           >
             Common tokens
-          </h4>
+          </L2>
         )}
         {loading ? (
           <TokenItemsLoadingSection repeat={3} />

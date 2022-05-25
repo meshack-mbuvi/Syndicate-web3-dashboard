@@ -9,6 +9,7 @@ import { SkeletonLoader } from '@/components/skeletonLoader';
 import StatusBadge from '@/components/syndicateDetails/statusBadge';
 import ConnectWalletAction from '@/components/syndicates/shared/connectWalletAction';
 import { EtherscanLink } from '@/components/syndicates/shared/EtherscanLink';
+import { L2 } from '@/components/typography';
 import { SuccessCard } from '@/containers/managerActions/successCard';
 import { useCreateInvestmentClubContext } from '@/context/CreateInvestmentClubContext';
 import { useDemoMode } from '@/hooks/useDemoMode';
@@ -236,9 +237,9 @@ const ManagerActions = (): JSX.Element => {
                       !creatingSyndicate &&
                       !showConfettiSuccess && (
                         <div className="flex flex-col items-start mb-6">
-                          <h4 className="pb-2">
+                          <L2 extraClasses="pb-2">
                             Invite to {claimEnabled ? 'claim' : 'deposit'}
-                          </h4>
+                          </L2>
                           <div className="text-gray-syn4">
                             <p>
                               Invite members by sharing your club’s{' '}

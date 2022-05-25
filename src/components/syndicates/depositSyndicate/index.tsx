@@ -15,6 +15,7 @@ import StatusBadge from '@/components/syndicateDetails/statusBadge';
 import HoldingsInfo from '@/components/syndicates/depositSyndicate/HoldingsInfo';
 import { SuccessOrFailureContent } from '@/components/syndicates/depositSyndicate/SuccessOrFailureContent';
 import { EtherscanLink } from '@/components/syndicates/shared/EtherscanLink';
+import { L2 } from '@/components/typography';
 import { setERC20Token } from '@/helpers/erc20TokenDetails';
 import useSyndicateClubInfo from '@/hooks/deposit/useSyndicateClubInfo';
 import { useAccountTokens } from '@/hooks/useAccountTokens';
@@ -1571,7 +1572,7 @@ const DepositSyndicate: React.FC = () => {
         account) ||
         isDemoMode) && (
         <div className="bg-gray-syn8 rounded-2xl mt-6 px-8 py-6">
-          <h4 className="pb-5">Your Holdings</h4>
+          <L2 extraClasses="pb-5">Your Holdings</L2>
           {loading ? (
             <SkeletonLoader height="9" width="full" borderRadius="rounded-md" />
           ) : (

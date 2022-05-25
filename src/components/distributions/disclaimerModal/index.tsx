@@ -1,4 +1,5 @@
 import Modal, { ModalStyle } from '@/components/modal';
+import { L2 } from '@/components/typography';
 
 interface Props {
   isModalVisible: boolean;
@@ -21,7 +22,7 @@ export const DistributionsDisclaimerModal: React.FC<Props> = ({
       showHeader={false}
     >
       <div className="m-h-screen">
-        <h4 className="mb-4 px-10">Distributions</h4>
+        <L2 extraClasses="mb-4 px-10">Distributions</L2>
         <div className="px-10 text-gray-syn4">
           I confirm that I have reviewed the distributions and had the
           opportunity to consult with legal, financial, and other advisors for

@@ -1,6 +1,7 @@
 import { AnimatedText } from '@/components/animatedText';
 import { DiscordLink } from '@/components/DiscordLink';
 import { EmailSupport } from '@/components/emailSupport';
+import { L2 } from '@/components/typography';
 import useWindowSize from '@/hooks/useWindowSize';
 import React, { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { ExternalLinkIcon } from 'src/components/iconWrappers';
@@ -41,7 +42,7 @@ const GettingStarted: React.FC<{
     <div className="pt-8 pb-6 px-5 rounded-2-half bg-gray-syn8 w-11/12 sm:w-100 mt-8 sm:mt-18">
       <div>
         <div className="mx-5">
-          <h4 className="mb-8">Create an investment club</h4>
+          <L2 extraClasses="mb-8">Create an investment club</L2>
           <div style={{ marginBottom: 32 }}>
             <ol className="space-y-6 overflow-hidden xs:hidden" role="menu">
               <div className="relative">

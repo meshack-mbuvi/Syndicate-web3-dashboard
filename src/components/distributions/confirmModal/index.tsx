@@ -1,5 +1,6 @@
 import Modal, { ModalStyle } from '@/components/modal';
 import { StepsOutline } from '@/components/stepsOutline';
+import { L2 } from '@/components/typography';
 
 interface Props {
   steps: { title: string; description?: string; isInErrorState?: boolean }[];
@@ -26,7 +27,7 @@ export const ConfirmDistributionsModal: React.FC<Props> = ({
       showHeader={false}
     >
       <div className="m-h-screen">
-        <h4 className="mb-10 px-10">Confirm distributions</h4>
+        <L2 extraClasses="mb-10 px-10">Confirm distributions</L2>
         <StepsOutline
           steps={steps}
           activeIndex={activeStepIndex}
