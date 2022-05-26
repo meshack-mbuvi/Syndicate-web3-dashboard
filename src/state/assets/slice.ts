@@ -16,9 +16,7 @@ import {
   getTokenTransactionHistory,
   getNativeTokenBalance
 } from '@/utils/api/transactions';
-import { ChainEnum } from '@/utils/api/ChainTypes';
 import { getTokenDetails } from '@/utils/api';
-import { isDev } from '@/utils/environment';
 
 /** Async thunks */
 // ERC20 transactions
@@ -55,13 +53,11 @@ export const fetchTokenTransactions = createAsyncThunk(
       await fetchTokenBalances(uniqueTokens, account, web3)
     ).filter((token) => +token.tokenBalance > 0);
 
-    const chainId = isDev ? ChainEnum.RINKEBY : ChainEnum.ETHEREUM;
-
     const uniqueTokenPrices = await getTokenPrice(
       uniqueTokenBalances
         .map((t) => (t.contractAddress as string).toLocaleLowerCase())
         .join(),
-      chainId
+      activeNetwork.chainId
     );
 
     // get token logo and price from CoinGecko API
@@ -75,7 +71,10 @@ export const fetchTokenTransactions = createAsyncThunk(
           tokenName,
           tokenValue = 0
         } = value;
-        const { logo } = await getTokenDetails(contractAddress, chainId)
+        const { logo } = await getTokenDetails(
+          contractAddress,
+          activeNetwork.chainId
+        )
           .then((res) => res.data)
           .catch(() => ({ logo: '' }));
 

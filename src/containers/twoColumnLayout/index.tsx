@@ -30,8 +30,6 @@ import {
 } from '@/state/erc20token/slice';
 import { clearMyTransactions } from '@/state/erc20transactions';
 import { Status } from '@/state/wallet/types';
-import { ChainEnum } from '@/utils/api/ChainTypes';
-import { isDev } from '@/utils/environment';
 import {
   mockActiveERC20Token,
   mockDepositModeTokens,

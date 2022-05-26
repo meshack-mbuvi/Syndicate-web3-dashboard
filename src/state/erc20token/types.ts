@@ -1,6 +1,4 @@
 import { ERC20TokenDefaultState } from '@/helpers/erc20TokenDetails';
-import { ChainEnum } from '@/utils/api/ChainTypes';
-import { isDev } from '@/utils/environment';
 
 export interface ERC20Token {
   name: string;

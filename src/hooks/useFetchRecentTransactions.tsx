@@ -5,13 +5,8 @@ import * as CryptoJS from 'crypto-js';
 import { useSelector } from 'react-redux';
 
 import { useDemoMode } from './useDemoMode';
-import { ChainEnum } from '@/utils/api/ChainTypes';
-import { isDev } from '@/utils/environment';
 
 const GRAPHQL_HEADER = process.env.NEXT_PUBLIC_GRAPHQL_HEADER;
-
-/* TODO - refactor for other chains see ENG-3310 */
-const chainId = isDev ? ChainEnum.RINKEBY : ChainEnum.ETHEREUM;
 
 // Get input, note this is deterministic
 export const getInput: any = (address: string) => {
@@ -41,7 +36,7 @@ export const useFetchRecentTransactions: any = (
       where,
       take: 10,
       skip,
-      chainId
+      chainId: activeNetwork.chainId
     },
     // set notification to true to receive loading state
     notifyOnNetworkStatusChange: true,
