@@ -88,10 +88,7 @@ const LDFeatureFlags: React.FC<any> = ({ children }) => {
   const WithLDContext = withLDProvider({
     clientSideID: isDev
       ? process.env.NEXT_PUBLIC_LAUNCHDARKLY_SDK_CLIENT_TEST!
-      : process.env.NEXT_PUBLIC_LAUNCHDARKLY_SDK_CLIENT_PRODUCTION!,
-    reactOptions: {
-      useCamelCaseFlagKeys: false
-    }
+      : process.env.NEXT_PUBLIC_LAUNCHDARKLY_SDK_CLIENT_PRODUCTION!
   })(Child);
   return <WithLDContext />;
 };

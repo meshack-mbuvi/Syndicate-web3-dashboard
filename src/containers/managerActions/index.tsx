@@ -2,6 +2,7 @@ import { Flow, amplitudeLogger } from '@/components/amplitude';
 import { CLICK_COPY_DEPOSIT_LINK_TO_SHARE } from '@/components/amplitude/eventNames';
 import ErrorBoundary from '@/components/errorBoundary';
 import FadeIn from '@/components/fadeIn/FadeIn';
+import MakeDistributionCard from '@/components/shared/makeDistributionCard';
 import CreateEntityCard from '@/components/shared/createEntityCard';
 import ModifyClubSettingsCard from '@/components/shared/modifyClubSettingsCard';
 import SignLegalDocumentsCard from '@/components/shared/signLegalDocumentsCard';
@@ -23,6 +24,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { animated } from 'react-spring';
 import GenerateDepositLink, { DepositLinkModal } from './GenerateDepositLink';
 import ShareOrChangeLegalDocuments from './shared/ShareOrChangeLegalDocuments';
+import { useFlags } from 'launchdarkly-react-client-sdk';
 
 const useShowShareWarning = () => {
   const router = useRouter();
@@ -62,6 +64,11 @@ const ManagerActions = (): JSX.Element => {
       depositReadyInfo: { depositLink, adminSigned }
     }
   } = useSelector((state: AppState) => state);
+
+  // LaunchDarkly distribution-button (converted to camelcase) is called
+  const { distributionButton } = useFlags();
+
+  console.log('distributionButton: ', distributionButton);
 
   const { resetCreationStates } = useCreateInvestmentClubContext();
   const router = useRouter();
@@ -396,6 +403,19 @@ const ManagerActions = (): JSX.Element => {
 
         {status !== Status.DISCONNECTED && (
           <div className="flex bg-gray-syn8 duration-500 transition-all rounded-2.5xl my-6 p-4 space-y-4 items-start flex-col">
+            {distributionButton ? (
+              <div className="hover:bg-gray-syn7 rounded-xl py-2 px-4 w-full">
+                {loading ? (
+                  <>
+                    <SkeletonLoader width="2/3" height="6" />
+                    <SkeletonLoader width="full" height="10" />
+                  </>
+                ) : (
+                  <MakeDistributionCard />
+                )}
+              </div>
+            ) : null}
+
             <div className="hover:bg-gray-syn7 rounded-xl py-2 px-4 w-full">
               {loading ? (
                 <>
