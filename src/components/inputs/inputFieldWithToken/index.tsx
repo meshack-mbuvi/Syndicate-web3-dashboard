@@ -54,9 +54,7 @@ export const InputFieldWithToken = (props: {
           style={{ transform: 'translateY(-50%)' }}
         >
           {symbolDisplayVariant === SymbolDisplay.ONLY_SYMBOL ? (
-            <span className={`${symbolColor ? symbolColor : ''}`}>
-              {depositTokenSymbol}
-            </span>
+            <span className={`${symbolColor || ''}`}>{depositTokenSymbol}</span>
           ) : symbolDisplayVariant === SymbolDisplay.ONLY_LOGO ? (
             <div className="relative h-5 w-5">
               {depositTokenLogo && (

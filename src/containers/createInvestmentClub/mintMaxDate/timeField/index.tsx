@@ -8,10 +8,14 @@ import moment from 'moment';
 
 interface TimeFieldProps {
   handleTimeChange: (timeValue: string) => void;
+  isInErrorState?: boolean;
+  error?: string;
 }
 
 const TimeField: React.FC<TimeFieldProps> = ({
-  handleTimeChange
+  handleTimeChange,
+  isInErrorState = false,
+  error
 }): React.ReactElement => {
   const {
     createInvestmentClubSliceReducer: { mintSpecificEndTime },
@@ -46,6 +50,8 @@ const TimeField: React.FC<TimeFieldProps> = ({
       extraClasses={`flex w-full min-w-0 text-base font-whyte flex-grow dark-input-field-advanced`}
       value={time}
       currentTimeZone={tz}
+      isInErrorState={isInErrorState}
+      infoLabel={error}
     />
   );
 };

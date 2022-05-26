@@ -156,6 +156,12 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
 
   const [progressState, setProgressState] = useState<string>('');
 
+  // time check states
+  const [closeTime, setCloseTime] = useState('');
+  const [closeDate, setCloseDate] = useState(0);
+  const [closeTimeError, setCloseTimeError] = useState('');
+  const [currentTime, setCurrentTime] = useState(0);
+
   const MAX_MEMBERS_ALLOWED = 99;
 
   const router = useRouter();
@@ -284,7 +290,8 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
       // Check if there are no errors
       maxAmountRaisingError === null &&
       maxNumberOfMembersError === null &&
-      openToDepositsUntilWarning === null
+      openToDepositsUntilWarning === null &&
+      !closeTimeError
     ) {
       setAreClubChangesAvailable(true);
     } else {
@@ -301,7 +308,8 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
     existingOpenToDepositsUntil,
     maxAmountRaisingError,
     maxNumberOfMembersError,
-    openToDepositsUntilWarning
+    openToDepositsUntilWarning,
+    closeTimeError
   ]);
 
   const onTxConfirm = (transactionHash: string) => {
@@ -378,8 +386,6 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
     );
   };
 
-  const [closeTime, setCloseTime] = useState('');
-  const [closeDate, setCloseDate] = useState(0);
   const calendarEvent = {
     title: `${name} closes to deposits on Syndicate`,
     description: '',
@@ -409,16 +415,38 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
     }
   }, [endTime]);
 
+  // check time every 15 seconds
+  // can be adjusted depending on how accurate we would want to be.
+  const TIME_CHECK_INTERVAL = 15000;
   useEffect(() => {
-    const eodToday = new Date(new Date().setHours(23, 59, 0, 0)).getTime();
+    const timeUpdate = setInterval(() => {
+      setCurrentTime(new Date().getTime());
+    }, TIME_CHECK_INTERVAL);
+
+    return () => {
+      clearInterval(timeUpdate);
+    };
+  }, []);
+
+  // if the target date is less than the current time,
+  // introduce an error.
+  useEffect(() => {
+    if (openToDepositsUntil.getTime() < currentTime) {
+      setCloseTimeError('Close date cannot be in the past');
+    } else {
+      setCloseTimeError('');
+    }
+  }, [currentTime, openToDepositsUntil]);
+
+  // extract the date section and then add specific time
+  useEffect(() => {
     let targetDate = closeDate;
     if (closeTime && closeDate) {
-      // extract the date section and then add specific time
       const dateString = new Date(closeDate).toDateString();
       targetDate = moment(dateString + ' ' + closeTime).valueOf();
     }
-    const dateToSet = (targetDate as any) < eodToday ? eodToday : targetDate;
-    setOpenToDepositsUntil(new Date(dateToSet));
+
+    setOpenToDepositsUntil(new Date(targetDate));
     setOpenToDepositsUntilWarning(null); // clear error if any
   }, [closeDate, closeTime]);
 
@@ -537,11 +565,17 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
                       }
                     />
                     <div className="mt-2">
-                      <TimeField handleTimeChange={handleTimeChange} />
+                      <TimeField
+                        handleTimeChange={handleTimeChange}
+                        isInErrorState={Boolean(closeTimeError)}
+                        error={closeTimeError}
+                      />
                     </div>
-                    <div className="flex justify-start text-base leading-4 text-blue-navy font-whyte mt-4">
-                      <AddToCalendar calEvent={calendarEvent} />
-                    </div>
+                    {!closeTimeError && (
+                      <div className="flex justify-start text-base leading-4 text-blue-navy font-whyte mt-4">
+                        <AddToCalendar calEvent={calendarEvent} />
+                      </div>
+                    )}
                   </div>
                 )}
               </div>
