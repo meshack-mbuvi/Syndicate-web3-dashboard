@@ -403,8 +403,10 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
   // the value of endTime gets set a few moments later.
   // need to update closeDate and closeTime when it does.
   useEffect(() => {
-    setCloseDate(endTime);
-    setCloseTime(moment(new Date(endTime)).format('HH:mm'));
+    if (endTime) {
+      setCloseDate(endTime);
+      setCloseTime(moment(new Date(endTime)).format('HH:mm'));
+    }
   }, [endTime]);
 
   useEffect(() => {
