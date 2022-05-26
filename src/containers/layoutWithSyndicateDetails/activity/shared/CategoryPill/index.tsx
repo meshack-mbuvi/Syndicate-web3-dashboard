@@ -57,7 +57,10 @@ export const CategoryPill: React.FC<ICategoryPill> = ({
 }) => {
   const dispatch = useDispatch();
   const {
-    transactionsReducer: { currentTransaction }
+    transactionsReducer: { currentTransaction },
+    web3Reducer: {
+      web3: { activeNetwork }
+    }
   } = useSelector((state: AppState) => state);
 
   const isManager = useIsClubOwner();
@@ -245,7 +248,7 @@ export const CategoryPill: React.FC<ICategoryPill> = ({
         variables: {
           transactionAnnotationList: inlineAnnotationData
         },
-        context: { clientName: 'backend' }
+        context: { clientName: 'backend', chainId: activeNetwork.chainId }
       });
       if (setActiveTransactionHash) setActiveTransactionHash([transactionHash]);
       refetchTransactions();

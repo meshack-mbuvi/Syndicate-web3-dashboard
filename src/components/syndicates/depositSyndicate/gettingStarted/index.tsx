@@ -27,7 +27,7 @@ const GettingStarted: React.FC = () => {
 
   const {
     web3Reducer: {
-      web3: { account, web3 }
+      web3: { account, web3, activeNetwork }
     },
     erc20TokenSliceReducer: { erc20Token }
   } = useSelector((state: AppState) => state);
@@ -40,10 +40,12 @@ const GettingStarted: React.FC = () => {
   }, [router.isReady]);
 
   useEffect(() => {
+    if (!activeNetwork.chainId) return;
     if (router.isReady && web3.utils.isAddress(clubAddress as string)) {
       const clubERC20tokenContract = new ClubERC20Contract(
         clubAddress as string,
-        web3
+        web3,
+        activeNetwork
       );
 
       dispatch(setERC20Token(clubERC20tokenContract));
@@ -53,7 +55,7 @@ const GettingStarted: React.FC = () => {
         dispatch(setClubMembers([]));
       };
     }
-  }, [clubAddress, account, router.isReady]);
+  }, [clubAddress, account, router.isReady, activeNetwork]);
 
   const { name, loading, depositsEnabled } = erc20Token;
 

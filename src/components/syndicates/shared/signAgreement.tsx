@@ -77,7 +77,7 @@ const SignAgreement: React.FC<ISignAgreementProps> = ({
 
   const {
     web3Reducer: {
-      web3: { web3, account }
+      web3: { web3, account, activeNetwork }
     },
     legalInfoReducer: {
       walletSignature: { signature, timeSigned }
@@ -164,8 +164,10 @@ const SignAgreement: React.FC<ISignAgreementProps> = ({
 
     if (router.isReady && isFieldInfoEmpty) {
       const path = router.pathname.includes('manage')
-        ? `/clubs/${clubAddress}/manage/legal/prepare`
-        : `/clubs/${clubAddress}`;
+        ? `/clubs/${clubAddress}/manage/legal/prepare${
+            '?network=' + activeNetwork.chainId
+          }`
+        : `/clubs/${clubAddress}${'?network=' + activeNetwork.chainId}`;
       router.push(path);
     }
   }, [clubAddress, fieldInfo, router]);

@@ -25,12 +25,15 @@ const ClubTokenMembers = (): JSX.Element => {
   const {
     clubMembersSliceReducer: { clubMembers, loadingClubMembers },
     erc20TokenSliceReducer: {
-      depositDetails: { depositTokenSymbol, ethDepositToken },
+      depositDetails: { depositTokenSymbol, nativeDepositToken },
       erc20Token: { depositsEnabled }
     },
     legalInfoReducer: {
       depositReadyInfo: { adminSigned },
       walletSignature: { signature }
+    },
+    web3Reducer: {
+      web3: { activeNetwork }
     }
   } = useSelector((state: AppState) => state);
   const dispatch = useDispatch();
@@ -62,7 +65,7 @@ const ClubTokenMembers = (): JSX.Element => {
     const clubLegalData = legal[clubAddress as string];
     if (!clubLegalData?.signaturesNeeded) {
       return setClubDepositLink(
-        `${window.location.origin}/clubs/${clubAddress}`
+        `${window.location.origin}/clubs/${clubAddress}?network=${activeNetwork.chainId}`
       );
     }
     if (
@@ -72,7 +75,8 @@ const ClubTokenMembers = (): JSX.Element => {
       const memberSignURL = generateMemberSignURL(
         clubAddress as string,
         clubLegalData.clubData,
-        clubLegalData.clubData.adminSignature
+        clubLegalData.clubData.adminSignature,
+        activeNetwork.chainId
       );
       setClubDepositLink(memberSignURL);
     }
@@ -164,7 +168,7 @@ const ClubTokenMembers = (): JSX.Element => {
             <p className="flex text-white text-base leading-6">
               {`${floatedNumberWithCommas(
                 depositAmount,
-                ethDepositToken ?? false
+                nativeDepositToken ?? false
               )} ${depositSymbol}`}
             </p>
           );

@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-export const getGnosisTxnInfo = async (txHash) => {
+export const getGnosisTxnInfo = async (txHash, activeNetwork) => {
   const transactionInfo = await new Promise(async (resolve, reject) => {
     let status;
     let txnInfo;
@@ -13,7 +13,7 @@ export const getGnosisTxnInfo = async (txHash) => {
       await sleep(10000);
       await axios
         .get(
-          `${process.env.NEXT_PUBLIC_GNOSIS_API}multisig-transactions/${txHash}`
+          `${activeNetwork.gnosis.txServiceUrl}multisig-transactions/${txHash}`
         )
         .then(
           async (response) => {

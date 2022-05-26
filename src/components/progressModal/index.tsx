@@ -1,4 +1,4 @@
-import { EtherscanLink } from '@/components/syndicates/shared/EtherscanLink';
+import { BlockExplorerLink } from '@/components/syndicates/shared/BlockExplorerLink';
 import Modal, { ModalStyle } from '../modal';
 import { Spinner } from '../shared/spinner';
 import { ExternalLinkColor } from 'src/components/iconWrappers';
@@ -18,9 +18,9 @@ export const ProgressModal = (props: {
   buttonLabel?: string;
   buttonFullWidth?: boolean;
   buttonOnClick?: () => void;
-  etherscanHash?: string;
+  transactionHash?: string;
   transactionType?: string;
-  etherscanLinkText?: string;
+  explorerLinkText?: string;
   iconColor?: ExternalLinkColor;
 }): React.ReactElement => {
   const {
@@ -29,11 +29,10 @@ export const ProgressModal = (props: {
     state,
     buttonLabel,
     buttonOnClick,
-    etherscanHash,
+    transactionHash,
     transactionType,
     isVisible = false,
     buttonFullWidth = false,
-    etherscanLinkText = 'View on Etherscan',
     iconColor = ExternalLinkColor.BLUE
   } = props;
 
@@ -91,12 +90,12 @@ export const ProgressModal = (props: {
             {description}
           </div>
         )}
-        {etherscanHash && (
+        {transactionHash && (
           <div className="mt-4 w-full flex justify-center items-center">
-            <EtherscanLink
-              etherscanInfo={etherscanHash}
-              type={transactionType}
-              text={etherscanLinkText}
+            <BlockExplorerLink
+              prefix="View on "
+              resourceId={transactionHash}
+              resource={transactionType}
               iconcolor={iconColor}
             />
           </div>

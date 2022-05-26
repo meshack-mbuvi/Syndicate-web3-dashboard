@@ -1,4 +1,4 @@
-import { amplitudeLogger, Flow } from '@/components/amplitude';
+import { Flow, amplitudeLogger } from '@/components/amplitude';
 import {
   CREATE_INVESTMENT_CLUB,
   ERROR_INVESTMENT_CLUB_CREATION
@@ -14,14 +14,15 @@ import {
 import { getWeiAmount } from '@/utils/conversions';
 import { useRouter } from 'next/router';
 import React, {
-  createContext,
   Dispatch,
   SetStateAction,
+  createContext,
   useContext,
   useEffect,
   useState
 } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+
 import steps from './steps';
 
 type CreateInvestmentClubProviderProps = {
@@ -67,10 +68,10 @@ export const useCreateInvestmentClubContext =
 const CreateInvestmentClubProvider: React.FC = ({ children }) => {
   const {
     web3Reducer: {
-      web3: { account }
+      web3: { account, web3, activeNetwork }
     },
     initializeContractsReducer: {
-      syndicateContracts: { clubERC20Factory, clubERC20FactoryEth }
+      syndicateContracts: { clubERC20Factory, clubERC20FactoryNative }
     },
     createInvestmentClubSliceReducer: {
       investmentClubName,
@@ -184,13 +185,19 @@ const CreateInvestmentClubProvider: React.FC = ({ children }) => {
         errorModal: false,
         warningModal: false
       }));
-      const isEthDeposit = depositTokenSymbol == 'ETH';
-      const _tokenCap = isEthDeposit
-        ? getWeiAmount((+tokenCap * 10000).toString(), 18, true)
-        : getWeiAmount(tokenCap, 18, true);
+      const isNativeDeposit =
+        depositTokenSymbol == activeNetwork.nativeCurrency.symbol;
+      const _tokenCap = isNativeDeposit
+        ? getWeiAmount(
+            web3,
+            (+tokenCap * activeNetwork.nativeCurrency.exchangeRate).toString(),
+            18,
+            true
+          )
+        : getWeiAmount(web3, tokenCap, 18, true);
       const startTime = parseInt((new Date().getTime() / 1000).toString()); // convert to seconds
-      if (isEthDeposit) {
-        await clubERC20FactoryEth.createERC20(
+      if (isNativeDeposit) {
+        await clubERC20FactoryNative.createERC20(
           account,
           investmentClubName,
           investmentClubSymbol,
@@ -227,12 +234,12 @@ const CreateInvestmentClubProvider: React.FC = ({ children }) => {
         // alert any other contract error
         setErrorModalMessage(metamaskConstants.metamaskUnknownErrorMessage);
       }
-      setShowModal(() => ({
+      setShowModal({
         waitingConfirmationModal: false,
         transactionModal: false,
         errorModal: false,
         warningModal: false
-      }));
+      });
       amplitudeLogger(ERROR_INVESTMENT_CLUB_CREATION, {
         flow: Flow.CLUB_CREATION,
         error

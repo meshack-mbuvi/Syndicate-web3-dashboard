@@ -2,13 +2,7 @@ import { proxyGet } from '.';
 import { isDev } from '@/utils/environment';
 import { AxiosResponse } from 'axios';
 
-enum ChainEnum {
-  ETHEREUM = 1,
-  RINKEBY = 4
-}
-const chainId = isDev ? ChainEnum.RINKEBY : ChainEnum.ETHEREUM;
-
-export async function getNativeTokenPrice(): Promise<number> {
+export async function getNativeTokenPrice(chainId: number): Promise<number> {
   const result: AxiosResponse<number> = await proxyGet(
     'token/native_price_usd',
     {
@@ -33,7 +27,8 @@ export const getTokenPrice = async (
 
 export async function getNftTransactionHistory(
   address: string,
-  contractAddress: string
+  contractAddress: string,
+  chainId: number
 ): Promise<ERC721Transaction[]> {
   const result: AxiosResponse<ERC721Transaction[]> = await proxyGet(
     'transaction/nfts',
@@ -48,7 +43,8 @@ export async function getNftTransactionHistory(
 }
 
 export async function getTokenTransactionHistory(
-  address: string
+  address: string,
+  chainId: number
 ): Promise<ERC20Transaction[]> {
   const result: AxiosResponse<ERC20Transaction[]> = await proxyGet(
     'transaction/tokens',
@@ -61,7 +57,10 @@ export async function getTokenTransactionHistory(
   return result.data;
 }
 
-export async function getNativeTokenBalance(address: string): Promise<number> {
+export async function getNativeTokenBalance(
+  address: string,
+  chainId: number
+): Promise<number> {
   const result: AxiosResponse<number> = await proxyGet('balance/native', {
     address,
     chainId

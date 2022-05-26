@@ -21,15 +21,18 @@ export const numberWithCommas = (number: string | number): string => {
 };
 
 // add two decimal places
-export const floatedNumberWithCommas = (number, ethValue = false): string => {
+export const floatedNumberWithCommas = (
+  number,
+  nativeValue = false
+): string => {
   if (!number || number === 'NaN') {
     return '0';
   }
 
   // return this for values smaller than 0.01 since we use 2dp
-  // 0.01 is significant for ETH deposits. Adding an extra check here.
+  // 0.01 is significant for Native deposits. Adding an extra check here.
   if (number < 0.01 && number > 0) {
-    if (!ethValue) {
+    if (!nativeValue) {
       return '< 0.01';
     } else {
       return number.toString().match(/^-?\d+(?:\.\d{0,4})?/)[0];
@@ -44,9 +47,9 @@ export const floatedNumberWithCommas = (number, ethValue = false): string => {
 
   try {
     // avoid rounding up the number when converting to 2 decimal places
-    // show 4 decimal places for ETH values only.
+    // show 4 decimal places for Native values only.
     let numberTo2decimalsWithoutRoundingUp;
-    if (ethValue) {
+    if (nativeValue) {
       numberTo2decimalsWithoutRoundingUp = number
         .toString()
         .match(/^-?\d+(?:\.\d{0,4})?/)[0];

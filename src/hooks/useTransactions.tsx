@@ -17,7 +17,7 @@ const useTransactions = (skip = 0) => {
 
   const router = useRouter();
 
-  const { account, currentEthereumNetwork } = web3;
+  const { account, activeNetwork } = web3;
 
   // Refresh and get latest transactions of club owner from backend
   const {
@@ -27,10 +27,10 @@ const useTransactions = (skip = 0) => {
   } = useFetchRecentTransactions();
 
   useEffect(() => {
-    if (router.isReady) {
+    if (router.isReady && activeNetwork.chainId) {
       refetchTransactions();
     }
-  }, [router.isReady, account]);
+  }, [router.isReady, account, activeNetwork.chainId]);
 
   const processERC20Transactions = async (txns) => {
     dispatch(setLoadingTransactions(true));
@@ -48,7 +48,7 @@ const useTransactions = (skip = 0) => {
     }
   }, [
     account,
-    currentEthereumNetwork,
+    activeNetwork,
     transactionsLoading,
     JSON.stringify(transactionsData)
   ]);

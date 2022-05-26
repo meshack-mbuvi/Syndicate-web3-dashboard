@@ -69,7 +69,7 @@ const NFTCard: React.FC<{
       await RugUtilityMintModule.redeem(
         account,
         collectible.token_id,
-        utilityNFT.ethPrice,
+        utilityNFT.nativePrice,
         onTxConfirm,
         onTxReceipt,
         onTxFail,

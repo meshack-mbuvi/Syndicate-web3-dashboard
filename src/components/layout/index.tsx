@@ -48,7 +48,7 @@ const Layout: FC<Props> = ({
 }) => {
   const {
     web3Reducer: {
-      web3: { account, status, web3 }
+      web3: { account, status, web3, activeNetwork }
     },
     initializeContractsReducer: {
       syndicateContracts: { SingleTokenMintModule, DepositTokenMintModule }
@@ -56,7 +56,7 @@ const Layout: FC<Props> = ({
     clubERC20sReducer: { myClubERC20s, otherClubERC20s, loading },
     erc20TokenSliceReducer: {
       erc20TokenContract,
-      depositDetails: { ethDepositToken },
+      depositDetails: { nativeDepositToken },
       erc20Token: { owner, address, loading: loadingClubDetails }
     }
   } = useSelector((state: AppState) => state);
@@ -99,12 +99,16 @@ const Layout: FC<Props> = ({
 
   const handleRouting = () => {
     if (pathname.includes('/manage') && !isOwner) {
-      router.replace(`/clubs/${clubAddress}`);
+      router.replace(
+        `/clubs/${clubAddress}${'?network=' + activeNetwork.chainId}`
+      );
     } else if (
       (pathname === '/clubs/[clubAddress]' || pathname.includes('/member')) &&
       isOwner
     ) {
-      router.replace(`/clubs/${clubAddress}/manage`);
+      router.replace(
+        `/clubs/${clubAddress}/manage${'?network=' + activeNetwork.chainId}`
+      );
     }
   };
 
@@ -144,6 +148,7 @@ const Layout: FC<Props> = ({
     variables: {
       syndicateDaoId: address.toLocaleLowerCase()
     },
+    context: { clientName: 'theGraph', chainId: activeNetwork.chainId },
     notifyOnNetworkStatusChange: true,
     skip: !address || loading,
     fetchPolicy: 'no-cache'
@@ -183,7 +188,8 @@ const Layout: FC<Props> = ({
           depositToken,
           erc20TokenContract,
           DepositTokenMintModule,
-          SingleTokenMintModule
+          SingleTokenMintModule,
+          activeNetwork
         );
       }
 
@@ -209,7 +215,8 @@ const Layout: FC<Props> = ({
    * Fetch club details
    */
   useEffect(() => {
-    if (!clubAddress || status == Status.CONNECTING) return;
+    if (!activeNetwork.chainId || !clubAddress || status == Status.CONNECTING)
+      return;
 
     if (
       clubAddress &&
@@ -219,7 +226,8 @@ const Layout: FC<Props> = ({
     ) {
       const clubERC20tokenContract = new ClubERC20Contract(
         clubAddress as string,
-        web3
+        web3,
+        activeNetwork
       );
 
       dispatch(setERC20TokenContract(clubERC20tokenContract));
@@ -233,7 +241,14 @@ const Layout: FC<Props> = ({
       // using "Active" as the default view.
       dispatch(setERC20TokenDetails(mockActiveERC20Token));
     }
-  }, [clubAddress, account, ethDepositToken, status, DepositTokenMintModule]);
+  }, [
+    clubAddress,
+    account,
+    nativeDepositToken,
+    status,
+    DepositTokenMintModule,
+    activeNetwork.chainId
+  ]);
 
   return (
     <div
@@ -249,7 +264,10 @@ const Layout: FC<Props> = ({
             `invest`,
             `fund`,
             `social`,
-            `ethereum`
+            `ethereum`,
+            `ETH`,
+            `polygon`,
+            `MATIC`
           ]}
           title="Home"
         />

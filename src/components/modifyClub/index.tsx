@@ -91,7 +91,7 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
       depositDetails: { depositTokenLogo, depositTokenSymbol }
     },
     web3Reducer: {
-      web3: { account, status, web3 }
+      web3: { account, status, web3, activeNetwork }
     }
   } = useSelector((state: AppState) => state);
 
@@ -111,6 +111,8 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
     depositsEnabled
   } = erc20Token;
 
+  const { symbol: nativeSymbol, exchangeRate: nativeEchageRate } =
+    activeNetwork.nativeCurrency;
   let showMintingForClosedClubDisclaimer = false;
   if (typeof window !== 'undefined') {
     const mintingForClosedClubDetails = JSON.parse(
@@ -164,7 +166,10 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
   const isOwner = useIsClubOwner();
 
   const handleExit = () => {
-    router && router.push(`/clubs/${clubAddress}/manage`);
+    router &&
+      router.push(
+        `/clubs/${clubAddress}/manage/${'?network=' + activeNetwork.chainId}`
+      );
   };
 
   useEffect(() => {
@@ -178,7 +183,9 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
       return;
 
     if ((pathname.includes('/modify') && !isOwner) || isDemoMode) {
-      router.replace(`/clubs/${clubAddress}`);
+      router.replace(
+        `/clubs/${clubAddress}${'?network=' + activeNetwork.chainId}`
+      );
     }
   }, [
     owner,
@@ -209,11 +216,13 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
         dispatch(setExistingOpenToDepositsUntil(new Date(endTime)));
       }
       if (existingMaxAmountRaising === 0 && depositTokenSymbol) {
-        if (depositTokenSymbol === 'ETH') {
-          setMaxAmountRaising(maxTotalSupply / 10000);
-          setTotalDepositsAmount(totalSupply / 10000);
-          dispatch(setExistingMaxAmountRaising(maxTotalSupply / 10000));
-          dispatch(setExistingAmountRaised(totalSupply / 10000));
+        if (depositTokenSymbol === nativeSymbol) {
+          setMaxAmountRaising(maxTotalSupply / nativeEchageRate);
+          setTotalDepositsAmount(totalSupply / nativeEchageRate);
+          dispatch(
+            setExistingMaxAmountRaising(maxTotalSupply / nativeEchageRate)
+          );
+          dispatch(setExistingAmountRaised(totalSupply / nativeEchageRate));
         } else {
           setMaxAmountRaising(maxTotalSupply);
           setTotalDepositsAmount(totalSupply);
@@ -225,7 +234,7 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
         setMaxNumberOfMembers(maxMemberCount);
         dispatch(setExistingMaxNumberOfMembers(maxMemberCount));
       }
-      setDepositTokenType(depositTokenSymbol === 'ETH');
+      setDepositTokenType(depositTokenSymbol === nativeSymbol);
       dispatch(setExistingNumberOfMembers(memberCount));
     }
   }, [
@@ -307,10 +316,19 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
       const updatedEndTime = new Date(openToDepositsUntil);
 
       const _tokenCap = depositTokenType
-        ? getWeiAmount((maxAmountRaising * 10000).toString(), 18, true)
-        : getWeiAmount(String(maxAmountRaising), 18, true);
+        ? getWeiAmount(
+            web3,
+            (maxAmountRaising * nativeEchageRate).toString(),
+            18,
+            true
+          )
+        : getWeiAmount(web3, String(maxAmountRaising), 18, true);
 
-      const mintPolicy = new MintPolicyContract(currentMintPolicyAddress, web3);
+      const mintPolicy = new MintPolicyContract(
+        currentMintPolicyAddress,
+        web3,
+        activeNetwork
+      );
 
       await mintPolicy.modifyERC20(
         account,
@@ -344,12 +362,12 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
         {...{
           ...progressModalStates[progressState],
           isVisible: true,
-          etherscanHash: transactionHash,
+          txHash: transactionHash,
           buttonOnClick:
             progressModalStates[progressState].buttonLabel == 'Try again'
               ? () => setProgressState('')
               : handleExit,
-          etherscanLinkText: 'View on Etherscan',
+          explorerLinkText: 'View on ',
           iconColor: ExternalLinkColor.BLUE,
           transactionType: 'transaction'
         }}
@@ -522,9 +540,9 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
                       maxAmountRaisingError
                         ? maxAmountRaisingError
                         : `Upper limit of the club’s raise, corresponding to a club token supply of ${
-                            depositTokenSymbol === 'ETH'
+                            depositTokenSymbol === nativeSymbol
                               ? floatedNumberWithCommas(
-                                  maxAmountRaising * 10000
+                                  maxAmountRaising * nativeEchageRate
                                 )
                               : floatedNumberWithCommas(maxAmountRaising)
                           } ${symbol}.`

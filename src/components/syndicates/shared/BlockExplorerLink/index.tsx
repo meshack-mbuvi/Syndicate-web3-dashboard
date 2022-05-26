@@ -1,51 +1,53 @@
-import { isDev } from '@/utils/environment';
-import React from 'react';
+import React, { useMemo } from 'react';
 import {
   ExternalLinkColor,
   ExternalLinkIcon,
   OpenExternalLinkIcon
 } from 'src/components/iconWrappers';
 
+import { useConnectWalletContext } from '../../../../context/ConnectWalletProvider';
+
 interface LinkProp {
-  etherscanInfo: string | string[];
+  resourceId: string | string[];
   customStyles?: string;
-  type?: string;
+  resource?: string;
   iconOnly?: boolean;
-  text?: string;
+  prefix?: string;
+  suffix?: string;
   grouped?: boolean;
   iconcolor?: ExternalLinkColor;
 }
 
-/** Link used to redirect the user to the Etherscan
+/** Link used to redirect the user to the Block Explorer
  * This could point to either the syndicate contract
  * or the token contract when token transactions are involved.
  */
-export const EtherscanLink: React.FC<LinkProp> = (props) => {
+export const BlockExplorerLink: React.FC<LinkProp> = (props) => {
   const {
-    etherscanInfo,
+    resourceId: explorerInfo,
     customStyles,
-    type = 'address',
+    resource: type = 'address',
     iconOnly,
-    text = 'View on Etherscan',
+    prefix = 'View on ',
+    suffix = '',
     grouped,
     iconcolor = ExternalLinkColor.BLUE
   } = props;
 
-  // get debug mode from the .env
-  // If we're in debug mode, we'll use the rinkeby testnet.
-  let etherscanLink = `https://etherscan.io/${
-    type === 'transaction' ? 'tx' : 'address'
-  }/`;
+  const { activeNetwork } = useConnectWalletContext();
 
-  if (isDev) {
-    etherscanLink = `https://rinkeby.etherscan.io/${
-      type === 'transaction' ? 'tx' : 'address'
-    }/`;
-  }
+  const url = useMemo(() => {
+    const baseURL = activeNetwork.blockExplorer.baseUrl;
+    const resource =
+      type === 'transaction'
+        ? activeNetwork.blockExplorer.resources.transaction
+        : activeNetwork.blockExplorer.resources.address;
+    return [baseURL, resource, explorerInfo].join('/');
+  }, [activeNetwork, type, explorerInfo]);
 
   return (
     <a
-      href={`${etherscanLink}${etherscanInfo}`}
+      href={url}
       target="_blank"
       className={`hover:opacity-90 flex items-center focus:outline-none ${
         customStyles && customStyles
@@ -62,7 +64,7 @@ export const EtherscanLink: React.FC<LinkProp> = (props) => {
               iconcolor === ExternalLinkColor.BLUE ? 'text-blue' : 'text-white'
             }`}
           >
-            {text}
+            {prefix} {activeNetwork.blockExplorer.name} {suffix}
           </div>
           <ExternalLinkIcon
             className={`ml-2 w-4 text-blue`}
@@ -70,7 +72,7 @@ export const EtherscanLink: React.FC<LinkProp> = (props) => {
           />
         </div>
       ) : !grouped ? (
-        <ExternalLinkIcon grayIcon className={`ml-2 w-4 text-blue`} />
+        <ExternalLinkIcon grayIcon className="ml-2 w-4 text-blue`" />
       ) : null}
     </a>
   );

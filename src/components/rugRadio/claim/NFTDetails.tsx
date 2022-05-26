@@ -4,28 +4,29 @@ import Modal, { ModalStyle } from '@/components/modal';
 import NumberTreatment from '@/components/NumberTreatment';
 import { Spinner } from '@/components/shared/spinner';
 import { SkeletonLoader } from '@/components/skeletonLoader';
-import { EtherscanLink } from '@/components/syndicates/shared/EtherscanLink';
+import { BlockExplorerLink } from '@/components/syndicates/shared/BlockExplorerLink';
 import useOwnsGenesisNFT from '@/hooks/useOwnsGenesisNFT';
 import useRugRadioTokenCount from '@/hooks/useRugRadioTokens';
 import { AppState } from '@/state';
 import { fetchCollectiblesTransactions } from '@/state/assets/slice';
 import { getCountDownDays } from '@/utils/dateUtils';
 import { numberWithCommas } from '@/utils/formattedNumbers';
+import RugRadioTokenWhiteIcon from '/public/images/rugRadio/rugradioToken-white.svg';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { useDispatch, useSelector } from 'react-redux';
+
 import RedeemRug from '../redeemRug';
 import { BonusTokenClaim } from '../shared/bonusToken';
 import { NFTChecker } from '../shared/NFTchecker';
 import NFTComponent from '../shared/nftComponent';
 import { TabComponent } from '../shared/tabComponent';
-import RugRadioTokenWhiteIcon from '/public/images/rugRadio/rugradioToken-white.svg';
 
 export const NFTDetails: React.FC = () => {
   const {
     web3Reducer: {
-      web3: { account }
+      web3: { account, activeNetwork }
     },
     initializeContractsReducer: {
       syndicateContracts: { RugClaimModule, rugBonusClaimModule }
@@ -73,7 +74,8 @@ export const NFTDetails: React.FC = () => {
       fetchCollectiblesTransactions({
         account,
         offset: '0',
-        contractAddress: genesisNFTContractAddress
+        contractAddress: genesisNFTContractAddress,
+        chainId: activeNetwork.chainId
       })
     );
   }, [account, genesisNFTContractAddress]);
@@ -102,7 +104,8 @@ export const NFTDetails: React.FC = () => {
       fetchCollectiblesTransactions({
         account,
         offset: '0',
-        contractAddress: genesisNFTContractAddress
+        contractAddress: genesisNFTContractAddress,
+        chainId: activeNetwork.chainId
       })
     );
   };
@@ -195,7 +198,8 @@ export const NFTDetails: React.FC = () => {
       fetchCollectiblesTransactions({
         account,
         offset: '0',
-        contractAddress: genesisNFTContractAddress
+        contractAddress: genesisNFTContractAddress,
+        chainId: activeNetwork.chainId
       })
     );
   };
@@ -206,7 +210,8 @@ export const NFTDetails: React.FC = () => {
       fetchCollectiblesTransactions({
         account,
         offset: pageOffSet.toString(),
-        contractAddress: genesisNFTContractAddress
+        contractAddress: genesisNFTContractAddress,
+        chainId: activeNetwork.chainId
       })
     );
   };
@@ -254,10 +259,10 @@ export const NFTDetails: React.FC = () => {
           </p>
 
           <div className="text-base flex justify-center items-center hover:opacity-80">
-            <EtherscanLink
-              etherscanInfo={transactionHash}
-              type="transaction"
-              text="Etherscan transaction"
+            <BlockExplorerLink
+              resourceId={transactionHash}
+              resource="transaction"
+              suffix=" transaction"
             />
           </div>
         </div>
@@ -284,10 +289,10 @@ export const NFTDetails: React.FC = () => {
             successfully. It’s in your wallet.`}
           </p>
           <div className="text-base flex justify-center items-center hover:opacity-80">
-            <EtherscanLink
-              etherscanInfo={transactionHash}
-              type="transaction"
-              text="Etherscan transaction"
+            <BlockExplorerLink
+              resourceId={transactionHash}
+              resource="transaction"
+              suffix=" transaction"
             />
           </div>
         </div>
@@ -314,9 +319,9 @@ export const NFTDetails: React.FC = () => {
           <p className="text-center text-xl">Tokens minting failed.</p>
           {!userRejectedTransaction ? (
             <div className="text-base flex justify-center items-center hover:opacity-80">
-              <EtherscanLink
-                etherscanInfo={transactionHash}
-                type="transaction"
+              <BlockExplorerLink
+                resourceId={transactionHash}
+                resource="transaction"
                 iconcolor={ExternalLinkColor.GRAY}
               />
             </div>

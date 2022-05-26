@@ -32,6 +32,9 @@ export function useClubDepositsAndSupply(contractAddress: string): {
     erc20TokenSliceReducer: {
       erc20Token,
       depositDetails: { depositTokenDecimals }
+    },
+    web3Reducer: {
+      web3: { activeNetwork, web3 }
     }
   } = useSelector((state: AppState) => state);
 
@@ -53,8 +56,9 @@ export function useClubDepositsAndSupply(contractAddress: string): {
         contractAddress: contractAddress?.toLocaleLowerCase()
       }
     },
+    context: { clientName: 'theGraph', chainId: activeNetwork.chainId },
     // Avoid unnecessary calls when contractAddress is not defined or in demo mode
-    skip: !contractAddress || isDemoMode
+    skip: !contractAddress || !activeNetwork.chainId || isDemoMode
   });
 
   const { memberDeposits, accountTokens } = useAccountTokens();
@@ -89,8 +93,10 @@ export function useClubDepositsAndSupply(contractAddress: string): {
     const { totalDeposits, totalSupply, startTime, endTime } =
       syndicateDAO || {};
 
-    setTotalSupply(getWeiAmount(totalSupply, tokenDecimals || 18, false));
-    setTotalDeposits(getWeiAmount(totalDeposits, depositTokenDecimals, false));
+    setTotalSupply(getWeiAmount(web3, totalSupply, tokenDecimals || 18, false));
+    setTotalDeposits(
+      getWeiAmount(web3, totalDeposits, depositTokenDecimals, false)
+    );
     setStartTime(+startTime * 1000);
     setEndTime(+endTime * 1000);
     setLoadingClubDeposits(false);

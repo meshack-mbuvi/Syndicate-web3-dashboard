@@ -24,7 +24,7 @@ export function useAccountTokens(): {
 } {
   const {
     web3Reducer: {
-      web3: { account }
+      web3: { account, activeNetwork, web3 }
     },
     erc20TokenSliceReducer: {
       erc20Token: { address, totalSupply, tokenDecimals, totalDeposits },
@@ -45,6 +45,7 @@ export function useAccountTokens(): {
   const { loading, data, refetch, startPolling, stopPolling } = useQuery(
     CLUB_MEMBER_QUERY,
     {
+      context: { clientName: 'theGraph', chainId: activeNetwork.chainId },
       variables: {
         where: {
           memberAddress: account.toLocaleLowerCase()
@@ -54,7 +55,7 @@ export function useAccountTokens(): {
         }
       },
       // Avoid unnecessary calls when account/clubAddress is not defined
-      skip: !account || !address || isDemoMode
+      skip: !account || !activeNetwork.chainId || !address || isDemoMode
     }
   );
 
@@ -98,10 +99,11 @@ export function useAccountTokens(): {
             tokens = 0
           } = clubMemberData;
 
-          setAccountTokens(getWeiAmount(tokens, tokenDecimals, false));
+          setAccountTokens(getWeiAmount(web3, tokens, tokenDecimals, false));
           setMemberDeposits(
-            getWeiAmount(depositAmount, depositTokenDecimals, false)
+            getWeiAmount(web3, depositAmount, depositTokenDecimals, false)
           );
+          // this is a percentage conversion with a base of 10000, 1% == 10000
           setMemberOwnership(`${+ownershipShare / 10000}`);
         } else {
           resetMemberStats();
@@ -127,8 +129,10 @@ export function useAccountTokens(): {
   ]);
 
   useEffect(() => {
-    refetch();
-  }, [totalSupply, totalDeposits, account]);
+    if (activeNetwork.chainId) {
+      refetch();
+    }
+  }, [totalSupply, totalDeposits, account, activeNetwork.chainId]);
 
   const dispatch = useDispatch();
   useEffect(() => {

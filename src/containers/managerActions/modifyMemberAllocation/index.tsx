@@ -17,6 +17,7 @@ import {
 } from '@/utils/formattedNumbers';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { CONTRACT_ADDRESSES } from '@/Networks';
 
 const ModifyClubTokens: React.FC<{
   showModifyCapTable;
@@ -33,7 +34,7 @@ const ModifyClubTokens: React.FC<{
     },
     modifyCapTableSlice: { memberToUpdate },
     web3Reducer: {
-      web3: { account, web3 }
+      web3: { account, activeNetwork, web3 }
     },
     initializeContractsReducer: { syndicateContracts }
   } = useSelector((state: AppState) => state);
@@ -174,7 +175,8 @@ const ModifyClubTokens: React.FC<{
     setPreview();
 
     // OwnerMintModule for policyMintERC20
-    const OWNER_MINT_MODULE = process.env.NEXT_PUBLIC_OWNER_MINT_MODULE;
+    const OWNER_MINT_MODULE =
+      CONTRACT_ADDRESSES[activeNetwork.chainId]?.OwnerMintModule;
     // OwnerMintModule for mintPolicy
     const OWNER_MINT_MODULE_2 = process.env.NEXT_PUBLIC_OWNER_MINT_MODULE_2;
 
@@ -202,10 +204,19 @@ const ModifyClubTokens: React.FC<{
           // respectively
           const OwnerMintModule = policyMintERC20MintModule
             ? syndicateContracts.OwnerMintModule
-            : new OwnerMintModuleContract(OWNER_MINT_MODULE_2, web3);
+            : new OwnerMintModuleContract(
+                OWNER_MINT_MODULE_2,
+                web3,
+                activeNetwork
+              );
 
           await OwnerMintModule.ownerMint(
-            getWeiAmount(tokensToMintOrBurn.toString(), tokenDecimals, true),
+            getWeiAmount(
+              web3,
+              tokensToMintOrBurn.toString(),
+              tokenDecimals,
+              true
+            ),
             erc20TokenContract.address,
             memberToUpdate.memberAddress,
             account,
@@ -218,7 +229,12 @@ const ModifyClubTokens: React.FC<{
           if (isDev) {
             await erc20TokenContract.mintTo(
               memberToUpdate.memberAddress,
-              getWeiAmount(tokensToMintOrBurn.toString(), tokenDecimals, true),
+              getWeiAmount(
+                web3,
+                tokensToMintOrBurn.toString(),
+                tokenDecimals,
+                true
+              ),
               account,
               onTxConfirm,
               onTxReceipt,
@@ -228,12 +244,18 @@ const ModifyClubTokens: React.FC<{
           } else {
             const oldErc20TokenContract = new OldClubERC20Contract(
               erc20TokenContract.address,
-              web3
+              web3,
+              activeNetwork
             );
 
             await oldErc20TokenContract.controllerMint(
               memberToUpdate.memberAddress,
-              getWeiAmount(tokensToMintOrBurn.toString(), tokenDecimals, true),
+              getWeiAmount(
+                web3,
+                tokensToMintOrBurn.toString(),
+                tokenDecimals,
+                true
+              ),
               account,
               onTxConfirm,
               onTxReceipt,
@@ -245,7 +267,12 @@ const ModifyClubTokens: React.FC<{
       } else {
         await erc20TokenContract.controllerRedeem(
           memberToUpdate.memberAddress,
-          getWeiAmount(tokensToMintOrBurn.toString(), tokenDecimals, true),
+          getWeiAmount(
+            web3,
+            tokensToMintOrBurn.toString(),
+            tokenDecimals,
+            true
+          ),
           account,
           onTxConfirm,
           onTxReceipt,
@@ -336,7 +363,7 @@ const ModifyClubTokens: React.FC<{
           title: 'Updating cap table',
           description:
             'This could take anywhere from seconds to hours depending on network congestion and the gas fees you set. You can safely leave this page while you wait.',
-          etherscanHash: transactionHash,
+          transactionHash: transactionHash,
           transactionType: 'transaction',
           state: ProgressModalState.PENDING
         }}
@@ -360,7 +387,7 @@ const ModifyClubTokens: React.FC<{
           buttonOnClick: handleCloseSuccessModal,
           buttonFullWidth: true,
           state: ProgressModalState.SUCCESS,
-          etherscanHash: transactionHash,
+          transactionHash: transactionHash,
           transactionType: 'transaction'
         }}
       />
@@ -376,7 +403,7 @@ const ModifyClubTokens: React.FC<{
           buttonOnClick: handleCloseSuccessModal,
           buttonFullWidth: true,
           state: ProgressModalState.FAILURE,
-          etherscanHash: userRejectedUpdate ? null : transactionHash,
+          transactionHash: userRejectedUpdate ? null : transactionHash,
           transactionType: 'transaction'
         }}
       />

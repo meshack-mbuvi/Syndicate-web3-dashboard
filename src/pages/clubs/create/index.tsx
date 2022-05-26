@@ -1,7 +1,7 @@
 import Layout from '@/components/layout';
 import Modal, { ModalStyle } from '@/components/modal';
 import { Spinner } from '@/components/shared/spinner';
-import { EtherscanLink } from '@/components/syndicates/shared/EtherscanLink';
+import { BlockExplorerLink } from '@/components/syndicates/shared/BlockExplorerLink';
 import Head from '@/components/syndicates/shared/HeaderTitle';
 import InvestmentClubCTAs from '@/containers/create/shared/controls/investmentClubCTAs';
 import WalletWarnings from '@/containers/createInvestmentClub/walletWarnings';
@@ -46,7 +46,7 @@ const CreateInvestmentClub: React.FC = () => {
     },
     web3Reducer: {
       dispatchCreateFlow,
-      web3: { account }
+      web3: { account, activeNetwork }
     }
   } = useSelector((state: AppState) => state);
 
@@ -129,10 +129,9 @@ const CreateInvestmentClub: React.FC = () => {
 
           {transactionHash ? (
             <div className="flex justify-center mt-4">
-              <EtherscanLink
-                etherscanInfo={transactionHash}
-                text="View on Etherscan"
-                type="transaction"
+              <BlockExplorerLink
+                resourceId={transactionHash}
+                resource="transaction"
               />
             </div>
           ) : null}
@@ -170,7 +169,11 @@ const CreateInvestmentClub: React.FC = () => {
             </div>
           </div>
           <div className="self-center pt-6 pb-3">
-            <Link href={`/clubs/${tokenAddress}/manage?source=create`}>
+            <Link
+              href={`/clubs/${tokenAddress}/manage?source=create${
+                '&network=' + activeNetwork.chainId
+              }`}
+            >
               <span className="px-8 py-4 bg-white rounded-md text-black text-center text-base cursor-pointer self-center w-1/2">
                 View club dashboard
               </span>
@@ -226,10 +229,9 @@ const CreateInvestmentClub: React.FC = () => {
             </div>
             {transactionHash ? (
               <div className="mt-6">
-                <EtherscanLink
-                  etherscanInfo={transactionHash}
-                  text="View on Etherscan"
-                  type="transaction"
+                <BlockExplorerLink
+                  resourceId={transactionHash}
+                  resource="transaction"
                 />
               </div>
             ) : null}

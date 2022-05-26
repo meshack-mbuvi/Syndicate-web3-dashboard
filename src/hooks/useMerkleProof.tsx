@@ -1,27 +1,22 @@
 import { INDEX_AND_PROOF } from '@/graphql/merkleDistributor';
 import { AppState } from '@/state';
-import { useQuery } from '@apollo/client';
-import { useDispatch, useSelector } from 'react-redux';
-import { useRouter } from 'next/router';
-import { useEffect } from 'react';
 import {
+  clearMerkleProof,
   setLoadingMerkleProof,
-  setMerkleProof,
-  clearMerkleProof
+  setMerkleProof
 } from '@/state/merkleProofs/slice';
 import { getWeiAmount } from '@/utils/conversions';
-import { ChainEnum } from '@/utils/api/ChainTypes';
-import { isDev } from '@/utils/environment';
-
-/* TODO - refactor for other chains see ENG-3310 */
-const chainId = isDev ? ChainEnum.RINKEBY : ChainEnum.ETHEREUM;
+import { useQuery } from '@apollo/client';
+import { useRouter } from 'next/router';
+import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
 const useFetchMerkleProof: any = (skipQuery = false) => {
   const dispatch = useDispatch();
 
   const {
     web3Reducer: {
-      web3: { account: address, web3 }
+      web3: { account: address, web3, activeNetwork }
     },
     erc20TokenSliceReducer: {
       erc20Token: { address: clubAddress, tokenDecimals }
@@ -35,28 +30,29 @@ const useFetchMerkleProof: any = (skipQuery = false) => {
     data: merkleData = {},
     refetch: refetchMerkle
   } = useQuery(INDEX_AND_PROOF, {
-    variables: { clubAddress, address, chainId },
-    skip: !address || skipQuery,
-    context: { clientName: 'backend' }
+    variables: { clubAddress, address, chainId: activeNetwork.chainId },
+    skip: !address || skipQuery || !activeNetwork.chainId,
+    context: { clientName: 'backend', chainId: activeNetwork.chainId }
   });
 
   const processMerkleProofData = async (merkleObj) => {
     dispatch(setLoadingMerkleProof(true));
-    await dispatch(
+    dispatch(
       setMerkleProof({
         ...merkleObj,
         account: address,
-        _amount: getWeiAmount(merkleObj?.amount, tokenDecimals, false)
+        _amount: getWeiAmount(web3, merkleObj?.amount, tokenDecimals, false)
       })
     );
     dispatch(setLoadingMerkleProof(false));
   };
 
   useEffect(() => {
+    if (!activeNetwork.chainId) return;
     if (router.isReady && web3.utils.isAddress(clubAddress)) {
       refetchMerkle();
     }
-  }, [clubAddress, address, router.isReady]);
+  }, [clubAddress, address, router.isReady, activeNetwork.chainId]);
 
   useEffect(() => {
     dispatch(setLoadingMerkleProof(true));

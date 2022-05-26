@@ -1,4 +1,4 @@
-import { amplitudeLogger, Flow } from '@/components/amplitude';
+import { Flow, amplitudeLogger } from '@/components/amplitude';
 import { CLICK_COPY_DEPOSIT_LINK_TO_SHARE } from '@/components/amplitude/eventNames';
 import ErrorBoundary from '@/components/errorBoundary';
 import FadeIn from '@/components/fadeIn/FadeIn';
@@ -7,8 +7,8 @@ import ModifyClubSettingsCard from '@/components/shared/modifyClubSettingsCard';
 import SignLegalDocumentsCard from '@/components/shared/signLegalDocumentsCard';
 import { SkeletonLoader } from '@/components/skeletonLoader';
 import StatusBadge from '@/components/syndicateDetails/statusBadge';
+import { BlockExplorerLink } from '@/components/syndicates/shared/BlockExplorerLink';
 import ConnectWalletAction from '@/components/syndicates/shared/connectWalletAction';
-import { EtherscanLink } from '@/components/syndicates/shared/EtherscanLink';
 import { SuccessCard } from '@/containers/managerActions/successCard';
 import { useCreateInvestmentClubContext } from '@/context/CreateInvestmentClubContext';
 import { useDemoMode } from '@/hooks/useDemoMode';
@@ -49,7 +49,7 @@ const useShowShareWarning = () => {
 const ManagerActions = (): JSX.Element => {
   const {
     web3Reducer: {
-      web3: { status }
+      web3: { status, activeNetwork }
     },
     erc20TokenSliceReducer: { erc20Token },
     createInvestmentClubSliceReducer: {
@@ -112,7 +112,7 @@ const ManagerActions = (): JSX.Element => {
     setHasAgreememnts(clubLegalData?.signaturesNeeded || false);
     if (!clubLegalData?.signaturesNeeded) {
       return setClubDepositLink(
-        `${window.location.origin}/clubs/${clubAddress}`
+        `${window.location.origin}/clubs/${clubAddress}?network=${activeNetwork.chainId}`
       );
     }
     if (
@@ -122,7 +122,8 @@ const ManagerActions = (): JSX.Element => {
       const memberSignURL = generateMemberSignURL(
         clubAddress as string,
         clubLegalData.clubData,
-        clubLegalData.clubData.adminSignature
+        clubLegalData.clubData.adminSignature,
+        activeNetwork.chainId
       );
       setClubDepositLink(memberSignURL);
     }
@@ -137,7 +138,9 @@ const ManagerActions = (): JSX.Element => {
       resetCreationStates();
       setSyndicateSuccessfullyCreated(true);
       // truncates the query part to prevent reshowing confetti
-      router.push(`/clubs/${clubAddress}/manage`);
+      router.push(
+        `/clubs/${clubAddress}/manage${'?network=' + activeNetwork.chainId}`
+      );
     }
   }, [source, clubAddress, router]);
 
@@ -296,10 +299,10 @@ const ManagerActions = (): JSX.Element => {
                           existence. Once the transaction is complete, you’ll
                           see your club’s deposit link below.
                         </p>
-                        <EtherscanLink
-                          etherscanInfo={transactionHash}
-                          text="View progress on Etherscan"
-                          type="transaction"
+                        <BlockExplorerLink
+                          resourceId={transactionHash}
+                          prefix="View progress on "
+                          resource="transaction"
                         />
                       </div>
                     )}
@@ -317,10 +320,9 @@ const ManagerActions = (): JSX.Element => {
                           </a>{' '}
                           if the issue persists.
                         </p>
-                        <EtherscanLink
-                          etherscanInfo={transactionHash}
-                          text="View on Etherscan"
-                          type="transaction"
+                        <BlockExplorerLink
+                          resourceId={transactionHash}
+                          resource="transaction"
                         />
                       </div>
                     )}

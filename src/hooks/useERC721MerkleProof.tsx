@@ -1,26 +1,21 @@
 import { ERC721_INDEX_AND_PROOF } from '@/graphql/merkleDistributor';
 import { AppState } from '@/state';
+import {
+  clearERC721MerkleProof,
+  setERC721MerkleProof,
+  setLoadingERC721MerkleProof
+} from '@/state/erc721MerkleProofs/slice';
 import { useQuery } from '@apollo/client';
-import { useDispatch, useSelector } from 'react-redux';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
-import {
-  setLoadingERC721MerkleProof,
-  setERC721MerkleProof,
-  clearERC721MerkleProof
-} from '@/state/erc721MerkleProofs/slice';
-import { ChainEnum } from '@/utils/api/ChainTypes';
-import { isDev } from '@/utils/environment';
-
-/* TODO - refactor for other chains see ENG-3310 */
-const chainId = isDev ? ChainEnum.RINKEBY : ChainEnum.ETHEREUM;
+import { useDispatch, useSelector } from 'react-redux';
 
 const useFetchMerkleProof: any = (skipQuery = false) => {
   const dispatch = useDispatch();
 
   const {
     web3Reducer: {
-      web3: { account: address, web3 }
+      web3: { account: address, web3, activeNetwork }
     },
     erc721TokenSliceReducer: {
       erc721Token: { address: nftAddress }
@@ -34,9 +29,13 @@ const useFetchMerkleProof: any = (skipQuery = false) => {
     data: merkleData = {},
     refetch: refetchMerkle
   } = useQuery(ERC721_INDEX_AND_PROOF, {
-    variables: { clubAddress: nftAddress, address, chainId },
-    skip: !address || skipQuery,
-    context: { clientName: 'backend' }
+    variables: {
+      clubAddress: nftAddress,
+      address,
+      chainId: activeNetwork.chainId
+    },
+    skip: !address || skipQuery || !activeNetwork.chainId,
+    context: { clientName: 'backend', chainId: activeNetwork.chainId }
   });
 
   const processMerkleProofData = async (merkleObj) => {
@@ -51,10 +50,14 @@ const useFetchMerkleProof: any = (skipQuery = false) => {
   };
 
   useEffect(() => {
-    if (router.isReady && web3.utils.isAddress(nftAddress)) {
+    if (
+      router.isReady &&
+      web3.utils.isAddress(nftAddress) &&
+      activeNetwork.chainId
+    ) {
       refetchMerkle();
     }
-  }, [nftAddress, address, router.isReady]);
+  }, [nftAddress, address, router.isReady, activeNetwork.chainId]);
 
   useEffect(() => {
     dispatch(setLoadingERC721MerkleProof(true));

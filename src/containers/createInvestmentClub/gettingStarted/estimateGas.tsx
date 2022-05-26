@@ -6,14 +6,10 @@ import axios from 'axios';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 
-const baseURL = isDev
-  ? 'https://api-rinkeby.etherscan.io/api'
-  : 'https://api.etherscan.io/api';
-
 const EstimateGas = (props: { customClasses?: string }) => {
   const {
     web3Reducer: {
-      web3: { account }
+      web3: { account, activeNetwork, web3 }
     },
     initializeContractsReducer: {
       syndicateContracts: { clubERC20Factory }
@@ -25,7 +21,9 @@ const EstimateGas = (props: { customClasses?: string }) => {
   const [gas, setGas] = useState(0); // 0.05 ETH (~$121.77)
   const [gasUnits, setGasUnits] = useState(0);
   const [gasBaseFee, setGasBaseFee] = useState(0);
-  const [ethTokenPrice, setEthTokenPrice] = useState<number | undefined>();
+  const [nativeTokenPrice, setNativeTokenPrice] = useState<
+    number | undefined
+  >();
 
   const processBaseFee = async (result) => {
     const baseFee = result.result;
@@ -41,23 +39,32 @@ const EstimateGas = (props: { customClasses?: string }) => {
         ? setGasUnits(380000)
         : clubERC20Factory.getEstimateGas(account, setGasUnits),
       axios
-        .get(`${baseURL}?module=proxy&action=eth_gasPrice`)
+        .get(
+          `${activeNetwork.blockExplorer.api}/api?module=proxy&action=eth_gasPrice`
+        )
         .then((res) => processBaseFee(res.data))
         .catch(() => 0),
-      getNativeTokenPrice()
-        .then((res) => setEthTokenPrice(res))
+      getNativeTokenPrice(activeNetwork.chainId)
+        .then((res) => setNativeTokenPrice(res))
         .catch(() => 0)
     ]);
   }, [account, clubERC20Factory]);
 
   useEffect(() => {
-    void fetchGasUnitAndBaseFee();
-  }, [fetchGasUnitAndBaseFee]);
+    if (activeNetwork.chainId) {
+      void fetchGasUnitAndBaseFee();
+    }
+  }, [fetchGasUnitAndBaseFee, activeNetwork]);
 
   useEffect(() => {
     if (!gasUnits || !gasBaseFee) return;
     const estimatedGasInWei = gasUnits * (gasBaseFee + 2);
-    const estimatedGas = getWeiAmount(estimatedGasInWei.toString(), 18, false);
+    const estimatedGas = getWeiAmount(
+      web3,
+      estimatedGasInWei.toString(),
+      18,
+      false
+    );
     setGas(+estimatedGas);
   }, [gasUnits, gasBaseFee]);
 
@@ -74,12 +81,12 @@ const EstimateGas = (props: { customClasses?: string }) => {
         <span className="text-blue">Estimated gas</span>
         <span className="mr-3 text-blue">
           {gas
-            ? `${gas.toFixed(6)} ETH ${
-                ethTokenPrice
-                  ? '(~$' + (gas * ethTokenPrice).toFixed(2) + ')'
+            ? `${gas.toFixed(6)} ${activeNetwork.nativeCurrency.symbol} ${
+                nativeTokenPrice
+                  ? '(~$' + (gas * nativeTokenPrice).toFixed(2) + ')'
                   : ''
               }`
-            : '- ETH'}
+            : `- ${activeNetwork.nativeCurrency.symbol}`}
         </span>
       </span>
     </button>

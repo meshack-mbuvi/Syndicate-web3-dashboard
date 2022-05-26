@@ -1,20 +1,20 @@
 import { MERKLE_AIRDROP_CREATED } from '@/graphql/queries';
 import { AppState } from '@/state';
-import { useQuery } from '@apollo/client';
-import { useDispatch, useSelector } from 'react-redux';
-import { useEffect } from 'react';
 import {
-  setLoadingAirdropInfo,
+  clearAirdropInfo,
   setAirdropInfo,
-  clearAirdropInfo
+  setLoadingAirdropInfo
 } from '@/state/airdropInfo/slice';
+import { useQuery } from '@apollo/client';
+import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
 const useFetchAirdropInfo: any = (skipQuery) => {
   const dispatch = useDispatch();
 
   const {
     web3Reducer: {
-      web3: { account }
+      web3: { account, activeNetwork }
     },
     merkleProofSliceReducer: { myMerkleProof },
     erc20TokenSliceReducer: {
@@ -34,15 +34,20 @@ const useFetchAirdropInfo: any = (skipQuery) => {
         treeIndex: myMerkleProof.treeIndex
       }
     },
-    skip: !account || skipQuery,
-    context: { clientName: 'graph' }
+    skip: !account || !activeNetwork.chainId || skipQuery,
+    context: { clientName: 'theGraph', chainId: activeNetwork.chainId }
   });
 
   useEffect(() => {
-    if (myMerkleProof.amount && account && clubAddress) {
+    if (
+      myMerkleProof.amount &&
+      account &&
+      clubAddress &&
+      activeNetwork.chainId
+    ) {
       refetch();
     }
-  }, [myMerkleProof.amount, account, clubAddress]);
+  }, [myMerkleProof.amount, account, clubAddress, activeNetwork.chainId]);
 
   useEffect(() => {
     dispatch(setLoadingAirdropInfo(true));

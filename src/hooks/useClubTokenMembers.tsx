@@ -17,10 +17,10 @@ const useClubTokenMembers = () => {
   const dispatch = useDispatch();
 
   const {
-    web3Reducer: { web3 },
+    web3Reducer: { web3: web3Instance },
     erc20TokenSliceReducer: {
       erc20Token: { symbol, tokenDecimals, totalSupply },
-      depositDetails: { depositTokenDecimals, ethDepositToken }
+      depositDetails: { depositTokenDecimals, nativeDepositToken }
     }
   } = useSelector((state: AppState) => state);
 
@@ -28,7 +28,7 @@ const useClubTokenMembers = () => {
   const { clubAddress } = router.query;
   const isDemoMode = useDemoMode();
 
-  const { account, currentEthereumNetwork } = web3;
+  const { account, activeNetwork, web3 } = web3Instance;
 
   // Retrieve syndicates that I manage
   const {
@@ -41,7 +41,8 @@ const useClubTokenMembers = () => {
         contractAddress: clubAddress?.toString().toLocaleLowerCase()
       }
     },
-    skip: !clubAddress || isDemoMode
+    context: { clientName: 'theGraph', chainId: activeNetwork.chainId },
+    skip: !clubAddress || isDemoMode || !activeNetwork.chainId
   });
 
   const processMembers = (members) => {
@@ -58,11 +59,14 @@ const useClubTokenMembers = () => {
       }) => {
         return {
           memberAddress,
-          ownershipShare: parseInt(ownershipShare) / 10000,
+          ownershipShare:
+            parseInt(ownershipShare) /
+            activeNetwork.nativeCurrency.exchangeRate,
           symbol,
-          clubTokens: getWeiAmount(tokens, tokenDecimals, false),
+          clubTokens: getWeiAmount(web3, tokens, tokenDecimals, false),
           totalSupply: totalSupply,
           depositAmount: getWeiAmount(
+            web3,
             depositAmount,
             depositTokenDecimals,
             false
@@ -75,15 +79,15 @@ const useClubTokenMembers = () => {
   };
 
   useEffect(() => {
-    if (router.isReady) {
+    if (router.isReady && activeNetwork.chainId) {
       refetch();
     }
   }, [
     router.isReady,
     account,
-    currentEthereumNetwork,
+    activeNetwork.chainId,
     totalSupply,
-    ethDepositToken
+    nativeDepositToken
   ]);
 
   useEffect(() => {
@@ -103,7 +107,7 @@ const useClubTokenMembers = () => {
     loadingClubMembers,
     clubAddress,
     account,
-    ethDepositToken
+    nativeDepositToken
   ]);
 };
 

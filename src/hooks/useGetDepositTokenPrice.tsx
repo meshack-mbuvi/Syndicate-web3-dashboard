@@ -9,6 +9,9 @@ export const useGetDepositTokenPrice = (chainId: number) => {
   const {
     erc20TokenSliceReducer: {
       depositDetails: { depositToken, loading: detailsLoading }
+    },
+    web3Reducer: {
+      web3: { activeNetwork }
     }
   } = useSelector((state: AppState) => state);
 
@@ -22,7 +25,7 @@ export const useGetDepositTokenPrice = (chainId: number) => {
     if (router.isReady && !detailsLoading) {
       const pricePromise =
         depositToken === ''
-          ? getNativeTokenPrice()
+          ? getNativeTokenPrice(activeNetwork.chainId)
           : getTokenPrice(depositToken.toLowerCase(), chainId);
       pricePromise
         .then((price) => {

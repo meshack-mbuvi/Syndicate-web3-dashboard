@@ -1,6 +1,5 @@
 import { getNfts, getNftFloorPrices } from '@/utils/api/nfts';
 import { mockCollectiblesResult } from '@/utils/mockdata';
-import { web3 } from '@/utils/web3Utils';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import abi from 'human-standard-token-abi';
 import { getWeiAmount } from 'src/utils/conversions';
@@ -17,27 +16,27 @@ import {
   getTokenTransactionHistory,
   getNativeTokenBalance
 } from '@/utils/api/transactions';
-import { ChainEnum } from '@/utils/api/ChainTypes';
 import { getTokenDetails } from '@/utils/api';
-import { isDev } from '@/utils/environment';
 
 /** Async thunks */
 // ERC20 transactions
 export const fetchTokenTransactions = createAsyncThunk(
   'assets/fetchTokenTransactions',
-  async (account: string) => {
+  async (params: any) => {
+    const { account, activeNetwork, web3 } = params;
     const response = await Promise.all([
       // ERC20 tokens transactions
-      await getTokenTransactionHistory(account),
+      await getTokenTransactionHistory(account, activeNetwork.chainId),
       // ETH balance for owner address
-      await getNativeTokenBalance(account),
+      await getNativeTokenBalance(account, activeNetwork.chainId),
       // ETH price
-      await getNativeTokenPrice()
+      await getNativeTokenPrice(activeNetwork.chainId)
     ])
       .then((result) => result)
       .catch(() => []);
 
-    const [erc20TokensResult, ethBalanceResponse, ethPriceResponse] = response;
+    const [erc20TokensResult, nativeBalanceResponse, nativePriceResponse] =
+      response;
 
     // get relevant token values from each transactions
     const tokenValues = erc20TokensResult.reduce((acc, value) => {
@@ -51,16 +50,14 @@ export const fetchTokenTransactions = createAsyncThunk(
 
     // check if account has token balance
     const uniqueTokenBalances = (
-      await fetchTokenBalances(uniqueTokens, account)
+      await fetchTokenBalances(uniqueTokens, account, web3)
     ).filter((token) => +token.tokenBalance > 0);
-
-    const chainId = isDev ? ChainEnum.RINKEBY : ChainEnum.ETHEREUM;
 
     const uniqueTokenPrices = await getTokenPrice(
       uniqueTokenBalances
         .map((t) => (t.contractAddress as string).toLocaleLowerCase())
         .join(),
-      chainId
+      activeNetwork.chainId
     );
 
     // get token logo and price from CoinGecko API
@@ -74,7 +71,10 @@ export const fetchTokenTransactions = createAsyncThunk(
           tokenName,
           tokenValue = 0
         } = value;
-        const { logo } = await getTokenDetails(contractAddress, chainId)
+        const { logo } = await getTokenDetails(
+          contractAddress,
+          activeNetwork.chainId
+        )
           .then((res) => res.data)
           .catch(() => ({ logo: '' }));
 
@@ -90,22 +90,27 @@ export const fetchTokenTransactions = createAsyncThunk(
       })
     );
 
-    // get eth details to append to token details
-    const ethBalance = getWeiAmount(ethBalanceResponse, 18, false);
-    const ethDetails = {
-      price: { usd: ethPriceResponse },
-      logo: '/images/ethereum-logo.png',
-      tokenDecimal: '18',
-      tokenSymbol: 'ETH',
-      tokenBalance: ethBalance,
-      tokenName: 'Ethereum',
-      tokenValue: parseFloat(ethPriceResponse) * parseFloat(ethBalance)
+    // get native details to append to token details
+    const nativeBalance = getWeiAmount(
+      web3,
+      nativeBalanceResponse,
+      activeNetwork.nativeCurrency.decimals,
+      false
+    );
+    const nativeDetails = {
+      price: { usd: nativePriceResponse },
+      logo: activeNetwork.logo,
+      tokenDecimal: activeNetwork.nativeCurrency.decimals,
+      tokenSymbol: activeNetwork.nativeCurrency.symbol,
+      tokenBalance: nativeBalance,
+      tokenName: activeNetwork.nativeCurrency.name,
+      tokenValue: parseFloat(nativePriceResponse) * parseFloat(nativeBalance)
     };
 
-    // add eth details as the first item.
-    completeTokensDetails.unshift(ethDetails);
+    // add native token details as the first item.
+    completeTokensDetails.unshift(nativeDetails);
 
-    return { completeTokensDetails, ethereumTokenPrice: ethPriceResponse };
+    return { completeTokensDetails, nativeTokenPrice: nativePriceResponse };
   }
 );
 
@@ -117,15 +122,13 @@ interface CollectiblesFetchParams {
   maxTotalDeposits?: number;
   tokenId?: string;
   limit?: string;
+  chainId: number;
 }
 
 export const fetchCollectibleById = async (
   params: CollectiblesFetchParams
 ): Promise<any> => {
-  const { account, offset, contractAddress, tokenId } = params;
-
-  const chainId = isDev ? ChainEnum.RINKEBY : ChainEnum.ETHEREUM;
-
+  const { account, offset, contractAddress, tokenId, chainId } = params;
   try {
     const { assets } = await getNfts(account, contractAddress, chainId, offset);
 
@@ -142,10 +145,10 @@ export const fetchCollectiblesTransactions = createAsyncThunk(
       account,
       offset,
       contractAddress,
+      chainId,
       maxTotalDeposits,
       limit = '20'
     } = params;
-    const chainId = isDev ? ChainEnum.RINKEBY : ChainEnum.ETHEREUM;
 
     const { assets } = await getNfts(
       account,
@@ -158,7 +161,6 @@ export const fetchCollectiblesTransactions = createAsyncThunk(
     const collections = [
       ...new Set(assets.map((asset) => asset.collection.slug))
     ];
-
     const floorPrices = await Promise.all(
       collections.map(async (slug: string) => getNftFloorPrices(slug, chainId))
     )
@@ -177,7 +179,7 @@ export const fetchCollectiblesTransactions = createAsyncThunk(
           total_price
         } = lastSale;
         const lastPurchasePriceUSD =
-          +usd_price * +getWeiAmount(total_price, decimals, false);
+          +usd_price * +getWeiAmount(web3, total_price, decimals, false);
         lastPurchasePrice.lastPurchasePriceUSD = lastPurchasePriceUSD;
         lastPurchasePrice.lastPurchasePriceETH = parseInt(eth_price);
       }
@@ -217,7 +219,7 @@ const filterByUniqueContractAddress = (tokensList: any[]) => {
   return uniqueTokensByContractAddress;
 };
 
-const fetchTokenBalances = (tokensList: any[], account: string) => {
+const fetchTokenBalances = (tokensList: any[], account: string, web3: any) => {
   return Promise.all(
     tokensList.map(async (token) => {
       const tokenCopy = { ...token };
@@ -231,7 +233,12 @@ const fetchTokenBalances = (tokensList: any[], account: string) => {
         .balanceOf(account)
         .call();
 
-      const tokenBalance = getWeiAmount(accountBalance, tokenDecimal, false);
+      const tokenBalance = getWeiAmount(
+        web3,
+        accountBalance,
+        tokenDecimal,
+        false
+      );
 
       tokenCopy['tokenBalance'] = tokenBalance;
       return tokenCopy;
@@ -270,7 +277,7 @@ const assetsSlice = createSlice({
     setMockCollectiblesResult(state, action) {
       const isDepositEnabled = action.payload;
       state.collectiblesResult = isDepositEnabled ? [] : mockCollectiblesResult;
-      state.ethereumTokenPrice = 2396.93;
+      state.nativeTokenPrice = 2396.93;
     }
   },
   extraReducers: (builder) => {
@@ -297,7 +304,7 @@ const assetsSlice = createSlice({
         state.tokensResult = sortedInDescendingOrder;
         state.loading = false;
         state.tokensFetchError = false;
-        state.ethereumTokenPrice = action.payload.ethereumTokenPrice;
+        state.nativeTokenPrice = action.payload.nativeTokenPrice;
       })
       .addCase(fetchTokenTransactions.rejected, (state) => {
         state.loading = false;

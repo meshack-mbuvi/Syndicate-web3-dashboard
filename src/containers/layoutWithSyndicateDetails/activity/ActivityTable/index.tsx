@@ -31,6 +31,9 @@ const ActivityTable: React.FC = () => {
     transactionsReducer: { totalTransactionsCount },
     erc20TokenSliceReducer: {
       erc20Token: { depositsEnabled: isOpenForDeposits }
+    },
+    web3Reducer: {
+      web3: { activeNetwork }
     }
   } = useSelector((state: AppState) => state);
   const isManager = useIsClubOwner();
@@ -246,7 +249,7 @@ const ActivityTable: React.FC = () => {
     } else {
       refetchTransactions();
     }
-  }, [pageOffset, filter, isDemoMode, searchValue]);
+  }, [pageOffset, filter, isDemoMode, searchValue, activeNetwork.chainId]);
 
   useEffect(() => {
     if (transactionsData?.Financial_recentTransactions) {
@@ -376,7 +379,7 @@ const ActivityTable: React.FC = () => {
       variables: {
         transactionAnnotationList: txnAnnotationListData
       },
-      context: { clientName: 'backend' }
+      context: { clientName: 'backend', chainId: activeNetwork.chainId }
     });
 
     if (!annotationLoading) {

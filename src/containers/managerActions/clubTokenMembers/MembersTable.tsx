@@ -16,6 +16,7 @@ import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { usePagination, useTable } from 'react-table';
+
 import { NotSignedIcon } from '../shared/notSignedIcon';
 import { SignedIcon } from '../shared/signedIcon';
 import SignerMenu from './signerMenu';
@@ -37,7 +38,7 @@ const MembersTable = ({
       depositDetails: { depositTokenSymbol }
     },
     web3Reducer: {
-      web3: { account }
+      web3: { account, activeNetwork }
     }
   } = useSelector((state: AppState) => state);
 
@@ -124,7 +125,7 @@ const MembersTable = ({
 
   const [setMemberHasSigned, { loading }] = useMutation(
     SET_MEMBER_SIGN_STATUS,
-    { context: { clientName: 'backend' } }
+    { context: { clientName: 'backend', chainId: activeNetwork.chainId } }
   );
 
   const {
@@ -136,15 +137,15 @@ const MembersTable = ({
       clubAddress,
       address: memberAddress
     },
-    skip: !clubAddress || !memberAddress,
-    context: { clientName: 'backend' }
+    context: { clientName: 'backend', chainId: activeNetwork.chainId },
+    skip: !clubAddress || !memberAddress || !activeNetwork.chainId
   });
 
   useEffect(() => {
-    if (clubAddress && memberAddress) {
+    if (clubAddress && memberAddress && activeNetwork.chainId) {
       refetchMemberStatus();
     }
-  }, [clubAddress, memberAddress, loading]);
+  }, [clubAddress, memberAddress, loading, activeNetwork.chainId]);
 
   const isDemoMode = useDemoMode();
 

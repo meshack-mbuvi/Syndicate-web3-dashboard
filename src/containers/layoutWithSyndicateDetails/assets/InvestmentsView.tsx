@@ -39,6 +39,9 @@ const InvestmentsView: FC<InvestmentsViewProps> = ({
       totalInvestmentTransactionsCount,
       investmentTransactions,
       currentTransaction
+    },
+    web3Reducer: {
+      web3: { web3 }
     }
   } = useSelector((state: AppState) => state);
 
@@ -213,7 +216,7 @@ const InvestmentsView: FC<InvestmentsViewProps> = ({
         to: toAddress,
         isOutgoingTransaction: isOutgoingTransaction
       },
-      amount: getWeiAmount(value, tokenDecimal, false),
+      amount: getWeiAmount(web3, value, tokenDecimal, false),
       tokenSymbol,
       tokenLogo,
       tokenName,
@@ -271,6 +274,7 @@ const InvestmentsView: FC<InvestmentsViewProps> = ({
               <span className="text-gray-syn4">No company name added</span>
             );
             const investmentDataValue = getWeiAmount(
+              web3,
               investmentData.value,
               investmentData.tokenDecimal,
               false
