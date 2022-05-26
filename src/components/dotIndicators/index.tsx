@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import FadeBetweenChildren from '../fadeBetweenChildren';
 
 export enum DotIndicatorsOrientation {
   VERTICAL = 'VERTICAL',
@@ -94,9 +95,21 @@ export const DotIndicators: React.FC<Props> = ({
       </div>
 
       {/* Labels */}
-      <div className="inline uppercase text-sm tracking-wide">
-        {options[activeIndex]}
-      </div>
+      <FadeBetweenChildren
+        visibleChildIndex={activeIndex}
+        extraClasses="w-full"
+      >
+        {options.map((option, index) => {
+          return (
+            <div
+              key={activeIndex}
+              className="inline uppercase text-sm tracking-wide"
+            >
+              {option}
+            </div>
+          );
+        })}
+      </FadeBetweenChildren>
 
       {/* Horizontal dots */}
       <div
