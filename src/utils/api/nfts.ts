@@ -26,13 +26,13 @@ export const getNfts = async (
 export const getNftFloorPrices = async (
   collectionSlug: string,
   chainId: number
-): Promise<BackendFloorPriceResponse> => {
+): Promise<NftFloorPriceResponse> => {
   const params = {
     collection: collectionSlug,
     chainId
   };
 
-  const result = await proxyGet<BackendFloorPriceResponse>(
+  const result = await proxyGet<NftFloorPriceResponse>(
     `nft/floor_price`,
     params
   );
@@ -73,7 +73,7 @@ export interface Asset {
   };
 }
 
-interface BackendFloorPriceResponse {
+interface NftFloorPriceResponse {
   floorPrice: number;
   collectionSlug: string;
 }
