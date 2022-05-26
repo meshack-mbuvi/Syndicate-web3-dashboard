@@ -14,6 +14,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { animated, useSpring } from 'react-spring';
 import DateCard from './DateCard';
 import TimeField from '@/containers/createInvestmentClub/mintMaxDate/timeField';
+
 const MintMaxDate: FC<{ className?: string }> = ({ className }) => {
   const dispatch = useDispatch();
 
@@ -31,6 +32,8 @@ const MintMaxDate: FC<{ className?: string }> = ({ className }) => {
     new Date(mintEndTime?.value * 1000).toString()
   );
   const [closeTime, setCloseTime] = useState(mintSpecificEndTime);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [closeTimeError, setCloseTimeError] = useState('');
   // hide next button
   useEffect(() => {
     if (currentStep <= 2) {
@@ -40,6 +43,9 @@ const MintMaxDate: FC<{ className?: string }> = ({ className }) => {
   }, [setShowNextButton, currentStep]);
 
   useEffect(() => {
+    const inTwentyFourHours = new Date(
+      currentTime + DAY_IN_SECONDS * 1000
+    ).getTime();
     const threeMonthsAfterToday = +moment(moment(), 'MM-DD-YYYY').add(
       3,
       'months'
@@ -49,14 +55,17 @@ const MintMaxDate: FC<{ className?: string }> = ({ className }) => {
       setWarning(
         'Keeping a syndicate open for longer than 3 months could create administrative complexities in managing members and deploying funds.'
       );
-    } else if (new Date().getTime() > +mintEndTime.value * 1000) {
+    } else if (
+      +mintEndTime.value * 1000 > currentTime &&
+      +mintEndTime.value * 1000 < inTwentyFourHours
+    ) {
       setWarning(
         'Closing a Syndicate within 24 hours restricts the window to deposit for members.'
       );
     } else {
       setWarning('');
     }
-  }, [mintEndTime]);
+  }, [mintEndTime?.value, currentTime]);
 
   const startDate = moment();
   const futureWeek = +moment(startDate, 'MM-DD-YYYY').add(7, 'days');
@@ -129,8 +138,33 @@ const MintMaxDate: FC<{ className?: string }> = ({ className }) => {
     }
   };
 
+  // check time every 15 seconds
+  // can be adjusted depending on how accurate we would want to be.
+  const TIME_CHECK_INTERVAL = 15000;
   useEffect(() => {
-    const eodToday = new Date(new Date().setHours(23, 59, 0, 0)).getTime();
+    setCurrentTime(new Date().getTime());
+    const timeUpdate = setInterval(() => {
+      setCurrentTime(new Date().getTime());
+    }, TIME_CHECK_INTERVAL);
+
+    return () => {
+      clearInterval(timeUpdate);
+    };
+  }, []);
+
+  // if the target date is less than the current time,
+  // introduce an error.
+  useEffect(() => {
+    if (mintEndTime?.value * 1000 < currentTime) {
+      setCloseTimeError('Close date cannot be in the past.');
+      setNextBtnDisabled(true);
+    } else {
+      setCloseTimeError('');
+      setNextBtnDisabled(false);
+    }
+  }, [mintEndTime?.value, currentTime]);
+
+  useEffect(() => {
     let targetDate = closeDate;
     if (closeTime && closeDate) {
       // extract the date section and then add specific time
@@ -139,10 +173,8 @@ const MintMaxDate: FC<{ className?: string }> = ({ className }) => {
         .valueOf()
         .toString();
     }
-
-    const date = +targetDate < eodToday ? eodToday : targetDate;
-    const dateToSet = date
-      ? parseInt(((date as number) / 1000).toString())
+    const dateToSet = targetDate
+      ? parseInt((+targetDate / 1000).toString())
       : parseInt((new Date().getTime() / 1000 + DAY_IN_SECONDS).toString());
     dispatch(setMintEndTime({ mintTime: 'Custom', value: dateToSet }));
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -200,45 +232,54 @@ const MintMaxDate: FC<{ className?: string }> = ({ className }) => {
             </div>
 
             {showCustomDatePicker && (
-              <animated.div
-                style={styles}
-                className="pb-6 mt-6 flex items-center justify-between"
-              >
-                <div style={{ width: '48%' }}>
-                  <div className="pb-2">Close date</div>
-                  <div className="">
-                    <DatePicker
-                      minDate={new Date()}
-                      popperProps={{
-                        positionFixed: true // use this to make the popper position: fixed
-                      }}
-                      closeOnScroll={(e) => e.target === document}
-                      selected={new Date(mintEndTime?.value * 1000)}
-                      onChange={(date: Date | null) =>
-                        handleDateChange(+date as any)
-                      }
-                      todayButton="Go to Today"
-                      dateFormat="P"
-                      formatWeekDay={(nameOfDay) => nameOfDay.substr(0, 1)}
-                      showPopperArrow={false}
-                      dropdownMode="select"
-                      className="focus:border-blue-navy hover:border-gray-syn3 border-gray-24"
-                    />
-                  </div>
-                  {warning && (
-                    <div className="text-yellow-warning pt-2 text-sm">
-                      {warning}
+              <div>
+                <animated.div
+                  style={styles}
+                  className="pb-2 mt-6 flex items-center justify-between"
+                >
+                  <div style={{ width: '48%' }}>
+                    <div className="pb-2">Close date</div>
+                    <div className="">
+                      <DatePicker
+                        minDate={new Date()}
+                        popperProps={{
+                          positionFixed: true // use this to make the popper position: fixed
+                        }}
+                        closeOnScroll={(e) => e.target === document}
+                        selected={new Date(mintEndTime?.value * 1000)}
+                        onChange={(date: Date | null) =>
+                          handleDateChange(+date as any)
+                        }
+                        todayButton="Go to Today"
+                        dateFormat="P"
+                        formatWeekDay={(nameOfDay) => nameOfDay.substr(0, 1)}
+                        showPopperArrow={false}
+                        dropdownMode="select"
+                        className="focus:border-blue-navy hover:border-gray-syn3 border-gray-24"
+                      />
                     </div>
-                  )}
-                </div>
-                <div style={{ width: '48%' }}>
-                  <div className="w-full">
-                    <div className="pb-2">Time</div>
-
-                    <TimeField handleTimeChange={handleTimeChange} />
                   </div>
-                </div>
-              </animated.div>
+                  <div style={{ width: '48%' }}>
+                    <div className="w-full">
+                      <div className="pb-2">Time</div>
+
+                      <TimeField
+                        handleTimeChange={handleTimeChange}
+                        isInErrorState={Boolean(closeTimeError)}
+                      />
+                    </div>
+                  </div>
+                </animated.div>
+                {(warning || closeTimeError) && (
+                  <div
+                    className={`${
+                      warning && !closeTimeError && 'text-yellow-warning'
+                    } ${closeTimeError ? 'text-red-error' : ''} text-sm w-full`}
+                  >
+                    {closeTimeError ? closeTimeError : warning ? warning : ''}
+                  </div>
+                )}
+              </div>
             )}
           </div>
         </div>

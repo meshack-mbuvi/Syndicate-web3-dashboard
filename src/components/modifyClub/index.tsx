@@ -36,6 +36,7 @@ import { PillButtonLarge } from '../pillButtons/pillButtonsLarge';
 import TimeField from '@/containers/createInvestmentClub/mintMaxDate/timeField';
 import moment from 'moment';
 import AddToCalendar from '@/components/addToCalendar';
+import { DAY_IN_SECONDS } from '@/utils/constants';
 
 const progressModalStates = {
   confirm: {
@@ -160,6 +161,7 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
   const [closeTime, setCloseTime] = useState('');
   const [closeDate, setCloseDate] = useState(0);
   const [closeTimeError, setCloseTimeError] = useState('');
+  const [warning, setWarning] = useState('');
   const [currentTime, setCurrentTime] = useState(0);
 
   const MAX_MEMBERS_ALLOWED = 99;
@@ -450,6 +452,32 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
     setOpenToDepositsUntilWarning(null); // clear error if any
   }, [closeDate, closeTime]);
 
+  // add relevant warnings for close time.
+  useEffect(() => {
+    const inTwentyFourHours = new Date(
+      currentTime + DAY_IN_SECONDS * 1000
+    ).getTime();
+    const threeMonthsAfterToday = +moment(moment(), 'MM-DD-YYYY').add(
+      3,
+      'months'
+    );
+
+    if (+threeMonthsAfterToday < openToDepositsUntil.getTime()) {
+      setWarning(
+        'Keeping a syndicate open for longer than 3 months could create administrative complexities in managing members and deploying funds.'
+      );
+    } else if (
+      openToDepositsUntil.getTime() > currentTime &&
+      openToDepositsUntil.getTime() < inTwentyFourHours
+    ) {
+      setWarning(
+        'Closing a Syndicate within 24 hours restricts the window to deposit for members.'
+      );
+    } else {
+      setWarning('');
+    }
+  }, [openToDepositsUntil, currentTime]);
+
   return (
     <div className={`${isVisible ? 'block' : 'hidden'}`}>
       {/* Titles and close button */}
@@ -568,12 +596,27 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
                       <TimeField
                         handleTimeChange={handleTimeChange}
                         isInErrorState={Boolean(closeTimeError)}
-                        error={closeTimeError}
                       />
                     </div>
-                    {!closeTimeError && (
+                    {!closeTimeError && !warning && (
                       <div className="flex justify-start text-base leading-4 text-blue-navy font-whyte mt-4">
                         <AddToCalendar calEvent={calendarEvent} />
+                      </div>
+                    )}
+
+                    {(warning || closeTimeError) && (
+                      <div
+                        className={`${
+                          warning && !closeTimeError && 'text-yellow-warning'
+                        } ${
+                          closeTimeError ? 'text-red-error' : ''
+                        } text-sm w-full mt-2`}
+                      >
+                        {closeTimeError
+                          ? closeTimeError
+                          : warning
+                          ? warning
+                          : ''}
                       </div>
                     )}
                   </div>
