@@ -69,6 +69,9 @@ module.exports = {
       '4xl': '2500px'
     },
     extend: {
+      transitionDuration: {
+        800: '800ms'
+      },
       opacity: {
         25: '.25',
         85: '.85'
