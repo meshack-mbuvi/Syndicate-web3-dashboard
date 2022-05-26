@@ -18,8 +18,13 @@ import TimeField from '@/containers/createInvestmentClub/mintMaxDate/timeField';
 const MintMaxDate: FC<{ className?: string }> = ({ className }) => {
   const dispatch = useDispatch();
 
-  const { setShowNextButton, handleNext, currentStep, setNextBtnDisabled } =
-    useCreateInvestmentClubContext();
+  const {
+    setShowNextButton,
+    handleNext,
+    currentStep,
+    setNextBtnDisabled,
+    setShowSaveButton
+  } = useCreateInvestmentClubContext();
 
   const [warning, setWarning] = useState('');
   const [disableButtons, setDisableButtons] = useState(false);
@@ -158,10 +163,13 @@ const MintMaxDate: FC<{ className?: string }> = ({ className }) => {
     if (mintEndTime?.value * 1000 < currentTime) {
       setCloseTimeError('Close date cannot be in the past.');
       setNextBtnDisabled(true);
+      setShowSaveButton(false);
     } else {
       setCloseTimeError('');
       setNextBtnDisabled(false);
+      setShowSaveButton(true);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mintEndTime?.value, currentTime]);
 
   useEffect(() => {
