@@ -68,8 +68,6 @@ const ManagerActions = (): JSX.Element => {
   // LaunchDarkly distribution-button (converted to camelcase) is called
   const { distributionButton } = useFlags();
 
-  console.log('distributionButton: ', distributionButton);
-
   const { resetCreationStates } = useCreateInvestmentClubContext();
   const router = useRouter();
   const dispatch = useDispatch();
