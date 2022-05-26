@@ -30,7 +30,7 @@ const useFetchMerkleProof: any = (skipQuery = false) => {
     data: merkleData = {},
     refetch: refetchMerkle
   } = useQuery(INDEX_AND_PROOF, {
-    variables: { clubAddress, address },
+    variables: { clubAddress, address, chainId: activeNetwork.chainId },
     skip: !address || skipQuery || !activeNetwork.chainId,
     context: { clientName: 'backend', chainId: activeNetwork.chainId }
   });

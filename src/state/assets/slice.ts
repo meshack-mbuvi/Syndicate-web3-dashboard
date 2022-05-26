@@ -1,4 +1,4 @@
-import { getOpenseaTokens, getOpenseaFloorPrices } from '@/utils/api/opensea';
+import { getNfts, getNftFloorPrices } from '@/utils/api/nfts';
 import { mockCollectiblesResult } from '@/utils/mockdata';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import abi from 'human-standard-token-abi';
@@ -119,8 +119,8 @@ export const fetchTokenTransactions = createAsyncThunk(
 interface CollectiblesFetchParams {
   account?: string;
   offset: string;
-  maxTotalDeposits?: number;
   contractAddress?: string;
+  maxTotalDeposits?: number;
   tokenId?: string;
   limit?: string;
   chainId: number;
@@ -130,16 +130,10 @@ export const fetchCollectibleById = async (
   params: CollectiblesFetchParams
 ): Promise<any> => {
   const { account, offset, contractAddress, tokenId, chainId } = params;
-
   try {
-    const { assets } = await getOpenseaTokens(
-      account,
-      contractAddress,
-      chainId,
-      offset
-    );
+    const { assets } = await getNfts(account, contractAddress, chainId, offset);
 
-    return assets.filter((asset) => asset.token_id === tokenId)[0];
+    return assets.filter((asset) => asset.id === tokenId)[0];
   } catch (error) {
     return null;
   }
@@ -151,13 +145,13 @@ export const fetchCollectiblesTransactions = createAsyncThunk(
     const {
       account,
       offset,
-      maxTotalDeposits,
       contractAddress,
       chainId,
+      maxTotalDeposits,
       limit = '20'
     } = params;
 
-    const { assets } = await getOpenseaTokens(
+    const { assets } = await getNfts(
       account,
       contractAddress,
       chainId,
@@ -169,43 +163,41 @@ export const fetchCollectiblesTransactions = createAsyncThunk(
       ...new Set(assets.map((asset) => asset.collection.slug))
     ];
     const floorPrices = await Promise.all(
-      collections.map(async (slug: string) => {
-        return await getOpenseaFloorPrices(slug, chainId);
-      })
+      collections.map(async (slug: string) => getNftFloorPrices(slug, chainId))
     )
       .then((result) => result)
       .catch(() => []);
 
-    // get last purchase price.
-    const lastSale = assets.last_sale;
-    const lastPurchasePrice = {
-      lastPurchasePriceUSD: 0,
-      lastPurchasePriceNative: 0
-    };
-    if (lastSale) {
-      const {
-        payment_token: { usd_price, native_price, decimals },
-        total_price
-      } = lastSale;
-      const lastPurchasePriceUSD =
-        +usd_price * +getWeiAmount(web3, total_price, decimals, false);
-      lastPurchasePrice.lastPurchasePriceUSD = lastPurchasePriceUSD;
-      lastPurchasePrice.lastPurchasePriceNative = native_price;
-    }
-
-    const allAssets = assets.map((asset) => ({
-      name: asset.name,
-      image: asset.image_url,
-      animation: asset.animation_url,
-      permalink: asset.permalink,
-      id: asset.token_id,
-      collection: asset.collection,
-      description: asset.description,
-      floorPrice: floorPrices.find(
-        (price) => price.slug === asset.collection.slug
-      ).floorPrice,
-      lastPurchasePrice
-    }));
+    const allAssets = assets.map((asset) => {
+      const lastSale = asset.last_sale;
+      const lastPurchasePrice = {
+        lastPurchasePriceUSD: 0,
+        lastPurchasePriceETH: 0
+      };
+      if (lastSale) {
+        const {
+          payment_token: { usd_price, eth_price, decimals },
+          total_price
+        } = lastSale;
+        const lastPurchasePriceUSD =
+          +usd_price * +getWeiAmount(web3, total_price, decimals, false);
+        lastPurchasePrice.lastPurchasePriceUSD = lastPurchasePriceUSD;
+        lastPurchasePrice.lastPurchasePriceETH = parseInt(eth_price);
+      }
+      return {
+        name: asset.name,
+        image: asset.image,
+        animation: asset.animation,
+        permalink: asset.permalink,
+        id: asset.id,
+        collection: asset.collection,
+        description: asset.description,
+        floorPrice: floorPrices.find(
+          (price) => price.slug === asset.collection.slug
+        )?.floorPrice,
+        lastPurchasePrice
+      };
+    });
 
     return { allAssets, maxTotalDeposits };
   }
