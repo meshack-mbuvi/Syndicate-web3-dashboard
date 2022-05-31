@@ -15,6 +15,7 @@ import Image from 'next/image';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { OpenExternalLinkIcon } from 'src/components/iconWrappers';
+
 import TransactionDetails from '../TransactionDetails';
 import ActivityNote from './ActivityNote';
 
@@ -41,6 +42,9 @@ const ActivityModal: React.FC<IActivityModal> = ({
   setShowNote
 }) => {
   const {
+    web3Reducer: {
+      web3: { activeNetwork }
+    },
     transactionsReducer: {
       currentTransaction: {
         category,
@@ -63,14 +67,11 @@ const ActivityModal: React.FC<IActivityModal> = ({
   } = useSelector((state: AppState) => state);
 
   const isManager = useIsClubOwner();
-  const etherScanBaseUrl = isDev
-    ? 'https://rinkeby.etherscan.io/tx'
-    : 'https://etherscan.io/tx';
 
   const isDemoMode = useDemoMode();
 
   const [setMemberHasSigned] = useMutation(SET_MEMBER_SIGN_STATUS, {
-    context: { clientName: 'backend' }
+    context: { clientName: 'backend', chainId: activeNetwork.chainId }
   });
 
   const { from } = transactionInfo;
@@ -81,18 +82,18 @@ const ActivityModal: React.FC<IActivityModal> = ({
       clubAddress: address,
       address: from
     },
-    skip: !address || !from,
-    context: { clientName: 'backend' }
+    context: { clientName: 'backend', chainId: activeNetwork.chainId },
+    skip: !address || !from || !activeNetwork.chainId
   });
 
   useEffect(() => {
-    if (address && from) {
+    if (address && from && activeNetwork.chainId) {
       refetch();
     }
-  }, [address, from, loading]);
+  }, [address, from, loading, activeNetwork.chainId]);
 
   const [adaptiveBackground, setAdaptiveBackground] = useState<string>('');
-  const [etherscanLink, setEtherscanLink] = useState<string>('');
+  const [blockExplorerLink, setblockExplorerLink] = useState<string>('');
   const [selectedCategory, setSelectedCategory] = useState<string>('');
   const [showTransactionDetails, setShowTransactionDetails] =
     useState<boolean>(false);
@@ -130,7 +131,9 @@ const ActivityModal: React.FC<IActivityModal> = ({
   }, [metadata, blockTimestamp]);
 
   useEffect(() => {
-    setEtherscanLink(`${etherScanBaseUrl}/${transactionInfo?.transactionHash}`);
+    setblockExplorerLink(
+      `${activeNetwork.blockExplorer.baseUrl}/${transactionInfo?.transactionHash}`
+    );
   }, [transactionInfo?.transactionHash]);
 
   // text and icon to show based on category
@@ -208,7 +211,7 @@ const ActivityModal: React.FC<IActivityModal> = ({
       variables: {
         transactionAnnotationList: inlineAnnotationData
       },
-      context: { clientName: 'backend' }
+      context: { clientName: 'backend', chainId: activeNetwork.chainId }
     });
     if (!loadingNoteAnnotation) {
       refetchTransactions();
@@ -320,7 +323,7 @@ const ActivityModal: React.FC<IActivityModal> = ({
               <div className="text-gray-lightManatee text-sm mt-6 flex items-center justify-center">
                 <a
                   className="flex cursor-pointer items-center"
-                  href={`${etherscanLink}`}
+                  href={`${blockExplorerLink}`}
                   target="_blank"
                   rel="noreferrer"
                 >

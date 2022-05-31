@@ -19,7 +19,7 @@ const TokenTable: FC<Props> = ({ columns, tableData }) => {
   const {
     assetsSliceReducer: { loading },
     erc20TokenSliceReducer: {
-      depositDetails: { ethDepositToken }
+      depositDetails: { nativeDepositToken }
     }
   } = useSelector((state: AppState) => state);
 
@@ -214,7 +214,7 @@ const TokenTable: FC<Props> = ({ columns, tableData }) => {
                           <PriceContainer
                             numberValue={tokenBalance}
                             customSymbol={tokenSymbol}
-                            ethDepositToken={ethDepositToken}
+                            nativeDepositToken={nativeDepositToken}
                             flexColumn={false}
                           />
                         </div>

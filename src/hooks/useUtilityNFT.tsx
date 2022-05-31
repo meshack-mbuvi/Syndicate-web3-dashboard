@@ -16,7 +16,7 @@ const useUtilityNFT: any = () => {
 
   const {
     web3Reducer: {
-      web3: { account: address, web3 }
+      web3: { account: address, web3, activeNetwork }
     },
     utilityNFTSliceReducer,
     initializeContractsReducer: { syndicateContracts }
@@ -29,7 +29,7 @@ const useUtilityNFT: any = () => {
   const [balance, setMembershipBalance] = useState<number>(0);
   const [memberships, setMembership] = useState<MembershipPass[]>([]);
   const [claimAvailable, setClaimAvailable] = useState<boolean>(false);
-  const [ethPrice, setEthPRice] = useState<string>('0');
+  const [nativePrice, setNativePRice] = useState<string>('0');
   const [tokenPrice, setTokenPRice] = useState<number>(0);
   const [membershipToken, setMembershipToken] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(true);
@@ -67,18 +67,18 @@ const useUtilityNFT: any = () => {
     return response;
   };
 
-  const getEthPrice = async () => {
+  const getNativePrice = async () => {
     const response = await Promise.all([
-      RugUtilityMintModule.ethPrice(),
-      getNativeTokenPrice()
+      RugUtilityMintModule.nativePrice(),
+      getNativeTokenPrice(activeNetwork.chainId)
     ])
       .then((result) => result)
       .catch(() => []);
 
-    const [priceResponse, eth_response] = response;
+    const [priceResponse, native_response] = response;
 
-    setEthPRice(priceResponse);
-    setTokenPRice(eth_response);
+    setNativePRice(priceResponse);
+    setTokenPRice(native_response);
 
     return priceResponse;
   };
@@ -86,7 +86,8 @@ const useUtilityNFT: any = () => {
   const getMembershipTokens = async () => {
     const result = await getNftTransactionHistory(
       address,
-      redemptionToken
+      redemptionToken,
+      activeNetwork.chainId
     );
 
     const tokenIds = new Set<string>();
@@ -144,7 +145,7 @@ const useUtilityNFT: any = () => {
   const fetchBasicDetails = async () => {
     await getRedemptionToken();
     await getMembershipToken();
-    await getEthPrice();
+    await getNativePrice();
     setLoadingBasic(false);
   };
 
@@ -183,12 +184,12 @@ const useUtilityNFT: any = () => {
         redemptionToken,
         membershipToken,
         totalClaims: balance,
-        ethPrice,
-        price: getWeiAmount(ethPrice, 18, false),
+        nativePrice,
+        price: getWeiAmount(web3, nativePrice, 18, false),
         priceUSD: parseFloat(
           (
             parseFloat(String(tokenPrice)) *
-            parseFloat(String(getWeiAmount(ethPrice, 18, false)))
+            parseFloat(String(getWeiAmount(web3, nativePrice, 18, false)))
           ).toFixed(2)
         ),
         membershipPasses: memberships
@@ -205,7 +206,7 @@ const useUtilityNFT: any = () => {
   }, [loadingBasic, loadingBalance, loadingMambershipTokens]);
 
   useEffect(() => {
-    if (ethPrice && tokenPrice && membershipToken) {
+    if (nativePrice && tokenPrice && membershipToken) {
       processClaimData();
     }
   }, [
@@ -214,7 +215,7 @@ const useUtilityNFT: any = () => {
     redemptionToken,
     balance,
     memberships,
-    ethPrice,
+    nativePrice,
     tokenPrice,
     membershipToken
   ]);

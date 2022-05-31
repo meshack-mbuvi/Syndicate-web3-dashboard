@@ -1,23 +1,23 @@
-import React, { useEffect, useState } from 'react';
 import { Spinner } from '@/components/shared/spinner';
-import { EtherscanLink } from '@/components/syndicates/shared/EtherscanLink';
-import { useSelector, useDispatch } from 'react-redux';
+import { BlockExplorerLink } from '@/components/syndicates/shared/BlockExplorerLink';
 import { AppState } from '@/state';
 import { clearERC721Claimed } from '@/state/claimedERC721/slice';
-import { Status } from '@/state/wallet/types';
-import { formatAddress } from '@/utils/formatAddress';
-import moment from 'moment';
-import { PlusCircleIcon, MinusCircleIcon } from '@heroicons/react/outline';
-import { BigNumber } from 'bignumber.js';
-import { getWeiAmount } from '@/utils/conversions';
 import { showWalletModal } from '@/state/wallet/actions';
+import { Status } from '@/state/wallet/types';
+import { getWeiAmount } from '@/utils/conversions';
+import { formatAddress } from '@/utils/formatAddress';
+import { MinusCircleIcon, PlusCircleIcon } from '@heroicons/react/outline';
+import { BigNumber } from 'bignumber.js';
+import moment from 'moment';
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
 const ClaimCard: React.FC<{
   handleMintUpdate?: (amount) => void;
   openseaLink: string;
-  rawEthBalance: string;
+  rawNativeBalance: string;
   startTime: number;
-}> = ({ handleMintUpdate, openseaLink, rawEthBalance, startTime }) => {
+}> = ({ handleMintUpdate, openseaLink, rawNativeBalance, startTime }) => {
   const dispatch = useDispatch();
 
   const {
@@ -26,7 +26,7 @@ const ClaimCard: React.FC<{
     erc721AirdropInfoSliceReducer: { erc721AirdropInfo },
     claimedERC721SliceReducer: { erc721Claimed },
     web3Reducer: {
-      web3: { account, status }
+      web3: { account, status, activeNetwork, web3 }
     },
     erc721TokenSliceReducer: { erc721Token }
   } = useSelector((state: AppState) => state);
@@ -40,10 +40,10 @@ const ClaimCard: React.FC<{
   const [claimEnded, setClaimEnded] = useState<boolean>(false);
   const [claimAmount, setClaimAmount] = useState<number>(1);
   const [claimError, setClaimError] = useState<string>('');
-  const [claimETHValue, setClaimETHValue] = useState<string>(
-    erc721Token.ethPrice
+  const [claimNativeValue, setClaimNativeValue] = useState<string>(
+    erc721Token.nativePrice
   );
-  const [claimValue, setClaimValue] = useState<string>(erc721Token.ethPrice);
+  const [claimValue, setClaimValue] = useState<string>(erc721Token.nativePrice);
   const [timeLeft, setTimeLeft] = useState<string>('soon');
   const [fullyClaimed, setFullyClaimed] = useState<boolean>(false);
 
@@ -74,14 +74,14 @@ const ClaimCard: React.FC<{
   };
 
   useEffect(() => {
-    if (erc721Token.ethPrice && claimAmount) {
+    if (erc721Token.nativePrice && claimAmount) {
       const amount = String(
-        new BigNumber(erc721Token.ethPrice).times(claimAmount)
+        new BigNumber(erc721Token.nativePrice).times(claimAmount)
       );
-      setClaimETHValue(amount);
-      setClaimValue(getWeiAmount(amount, 18, false));
+      setClaimNativeValue(amount);
+      setClaimValue(getWeiAmount(web3, amount, 18, false));
     }
-  }, [erc721Token.ethPrice, claimAmount, rawEthBalance]);
+  }, [erc721Token.nativePrice, claimAmount, rawNativeBalance]);
 
   useEffect(() => {
     if (erc721Token.maxPerAddress - erc721Token.amountMinted === 0) {
@@ -91,16 +91,18 @@ const ClaimCard: React.FC<{
       claimAmount > erc721Token.maxPerAddress
     ) {
       setClaimError('Max Claim Exceeded');
-    } else if (claimValue > getWeiAmount(rawEthBalance, 18, false)) {
-      setClaimError('Insufficient ETH balance');
+    } else if (claimValue > getWeiAmount(web3, rawNativeBalance, 18, false)) {
+      setClaimError(
+        `Insufficient ${activeNetwork.nativeCurrency.symbol} balance`
+      );
     } else {
       setClaimError('');
     }
   }, [
     claimAmount,
-    claimETHValue,
+    claimNativeValue,
     claimValue,
-    rawEthBalance,
+    rawNativeBalance,
     erc721Token.amountMinted,
     erc721Token.maxPerAddress,
     erc721Token.maxSupply
@@ -227,7 +229,7 @@ const ClaimCard: React.FC<{
         await PublicMintWithFeeModule.mint(
           account,
           erc721Token.address,
-          claimETHValue,
+          claimNativeValue,
           claimAmount,
           onTxConfirm,
           onTxReceipt,
@@ -308,10 +310,10 @@ const ClaimCard: React.FC<{
           </button>
           {transactionHash && (
             <div className="pb-8 text-base flex justify-center items-center hover:opacity-80">
-              <EtherscanLink
-                etherscanInfo={transactionHash}
-                type="transaction"
-                text="Etherscan transaction"
+              <BlockExplorerLink
+                resourceId={transactionHash}
+                resource="transaction"
+                suffix=" transaction"
               />
             </div>
           )}
@@ -326,10 +328,10 @@ const ClaimCard: React.FC<{
           } NFT${claimAmount > 1 ? 's' : ''}`}</div>
           {transactionHash && (
             <div className="pb-8 text-base flex justify-center items-center hover:opacity-80">
-              <EtherscanLink
-                etherscanInfo={transactionHash}
-                type="transaction"
-                text="Etherscan transaction"
+              <BlockExplorerLink
+                resourceId={transactionHash}
+                resource="transaction"
+                suffix="transaction"
               />
             </div>
           )}

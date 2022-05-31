@@ -2,6 +2,8 @@ import React, { useEffect, useState, SetStateAction, Dispatch } from 'react';
 import Modal, { ModalStyle } from '@/components/modal';
 import CopyLink from '@/components/shared/CopyLink';
 import { useRouter } from 'next/router';
+import { useSelector } from 'react-redux';
+import { AppState } from '@/state';
 
 interface IAddMemberModal {
   showModal: boolean;
@@ -14,6 +16,12 @@ const AddMemberModal: React.FC<IAddMemberModal> = ({
   closeModal,
   mintTokens
 }) => {
+  const {
+    web3Reducer: {
+      web3: { activeNetwork }
+    }
+  } = useSelector((state: AppState) => state);
+
   const router = useRouter();
   const { clubAddress } = router.query;
   const [showDepositLinkCopyState, setShowDepositLinkCopyState] =
@@ -25,7 +33,9 @@ const AddMemberModal: React.FC<IAddMemberModal> = ({
 
   const [clubDepositLink, setClubDepositLink] = useState<string>('');
   useEffect(() => {
-    setClubDepositLink(`${window.location.origin}/clubs/${clubAddress}/`);
+    setClubDepositLink(
+      `${window.location.origin}/clubs/${clubAddress}?network=${activeNetwork.chainId}`
+    );
   }, [clubAddress]);
   return (
     <Modal

@@ -10,10 +10,10 @@ import {
   numberInputRemoveCommas,
   numberWithCommas
 } from '@/utils/formattedNumbers';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import TokenSelectModal from '@/components/tokenSelect/TokenSelectModal';
-import { defaultTokenDetails } from '@/containers/createInvestmentClub/shared/ClubTokenDetailConstants';
+import { SUPPORTED_TOKENS } from '@/Networks';
 import RaiseTokenAmount from './RaiseTokenAmount';
 
 const AmountToRaise: React.FC<{
@@ -24,12 +24,18 @@ const AmountToRaise: React.FC<{
     createInvestmentClubSliceReducer: {
       tokenCap,
       tokenDetails: { depositTokenLogo, depositTokenSymbol }
+    },
+    web3Reducer: {
+      web3: { activeNetwork }
     }
   } = useSelector((state: AppState) => state);
 
   const [error, setError] = useState<string>('');
   const [amount, setAmount] = useState<string>(tokenCap);
   const [showDisclaimerModal, setShowDisclaimerModal] = useState(false);
+  const [defaultTokenDetails, setdefaultTokenDetails] = useState(
+    SUPPORTED_TOKENS[1].filter((coin) => coin.default)[0]
+  );
 
   const dispatch = useDispatch();
 
@@ -62,10 +68,22 @@ const AmountToRaise: React.FC<{
   }, [amount, editButtonClicked, setNextBtnDisabled]);
 
   useEffect(() => {
-    if (depositTokenSymbol == '') {
-      dispatch(setDepositTokenDetails(defaultTokenDetails));
-    }
-  }, [depositTokenSymbol, defaultTokenDetails, dispatch]);
+    setdefaultTokenDetails(
+      SUPPORTED_TOKENS[activeNetwork.chainId].filter((coin) => coin.default)[0]
+    );
+  }, [activeNetwork.chainId]);
+
+  useEffect(() => {
+    dispatch(
+      setDepositTokenDetails({
+        depositToken: defaultTokenDetails.address,
+        depositTokenName: defaultTokenDetails.name,
+        depositTokenSymbol: defaultTokenDetails.symbol,
+        depositTokenLogo: defaultTokenDetails.logoURI,
+        depositTokenDecimals: defaultTokenDetails.decimals
+      })
+    );
+  }, [defaultTokenDetails]);
 
   return (
     <>
@@ -132,6 +150,7 @@ const AmountToRaise: React.FC<{
       <TokenSelectModal
         showModal={showTokenSelectModal}
         closeModal={() => setShowTokenSelectModal(false)}
+        chainId={activeNetwork.chainId}
       />
     </>
   );

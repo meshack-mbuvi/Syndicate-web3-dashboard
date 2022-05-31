@@ -11,7 +11,7 @@ import { getTokenDetails } from '@/utils/api';
 import { divideIfNotByZero, getWeiAmount } from '@/utils/conversions';
 import { useQuery } from '@apollo/client';
 import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 const useClubERC20s = () => {
@@ -19,10 +19,7 @@ const useClubERC20s = () => {
 
   const {
     initializeContractsReducer: { syndicateContracts },
-    web3Reducer: { web3 },
-    erc20TokenSliceReducer: {
-      depositDetails: { chainId }
-    }
+    web3Reducer: { web3: web3Instance }
   } = useSelector((state: AppState) => state);
 
   const [accountHasClubs, setAccountHasClubs] = useState(false);
@@ -31,19 +28,20 @@ const useClubERC20s = () => {
 
   const {
     account,
-    currentEthereumNetwork,
-    ethereumNetwork: { invalidEthereumNetwork }
-  } = web3;
+    activeNetwork,
+    ethereumNetwork: { invalidEthereumNetwork },
+    web3
+  } = web3Instance;
+  const accountAddress = useMemo(() => account.toLocaleLowerCase(), [account]);
 
   // Retrieve syndicates that I manage
   const { loading, refetch, data } = useQuery(MY_CLUBS_QUERY, {
     variables: {
-      where: {
-        ownerAddress: account.toLocaleLowerCase()
-      }
+      where: { ownerAddress: accountAddress }
     },
+    context: { clientName: 'theGraph', chainId: activeNetwork.chainId },
     // Avoid unnecessary calls when account is not defined
-    skip: !account || !router.isReady
+    skip: !account || !router.isReady || !activeNetwork.chainId
   });
 
   const {
@@ -53,27 +51,24 @@ const useClubERC20s = () => {
   } = useQuery(CLUBS_HAVE_INVESTED, {
     variables: {
       where: {
-        memberAddress: account.toLocaleLowerCase()
+        memberAddress: accountAddress
       }
     },
+    context: { clientName: 'theGraph', chainId: activeNetwork.chainId },
     // Avoid unnecessary calls when account is not defined
-    skip: !account || !router.isReady
+    skip: !account || !router.isReady || !activeNetwork.chainId
   });
 
   useEffect(() => {
-    if (account && router.isReady) {
+    if (accountAddress && router.isReady && activeNetwork.chainId) {
       refetch({
-        where: {
-          ownerAddress: account.toLocaleLowerCase()
-        }
+        where: { ownerAddress: accountAddress }
       });
       refetchMyClubs({
-        where: {
-          memberAddress: account.toLocaleLowerCase()
-        }
+        where: { memberAddress: accountAddress }
       });
     }
-  }, [router.isReady, account, currentEthereumNetwork]);
+  }, [router.isReady, account, activeNetwork.chainId]);
 
   const [clubIAmMember, setClubIamMember] = useState([]);
   const [myClubs, setMyClubs] = useState([]);
@@ -82,14 +77,14 @@ const useClubERC20s = () => {
     processClubERC20Tokens(clubIAmMember).then((data) => {
       dispatch(setOtherClubERC20s(data));
     });
-  }, [JSON.stringify(clubIAmMember), currentEthereumNetwork]);
+  }, [JSON.stringify(clubIAmMember), activeNetwork]);
 
   useEffect(() => {
     processClubERC20Tokens(myClubs).then((data) => {
       dispatch(setMyClubERC20s(data));
       dispatch(setLoadingClubERC20s(false));
     });
-  }, [JSON.stringify(myClubs), currentEthereumNetwork]);
+  }, [JSON.stringify(myClubs), activeNetwork]);
 
   const processClubERC20Tokens = async (tokens) => {
     dispatch(setLoadingClubERC20s(false));
@@ -122,7 +117,8 @@ const useClubERC20s = () => {
           try {
             clubERC20Contract = new ClubERC20Contract(
               contractAddress,
-              web3.web3
+              web3,
+              activeNetwork
             );
 
             decimals = await clubERC20Contract.decimals();
@@ -134,12 +130,18 @@ const useClubERC20s = () => {
           }
 
           const maxTotalSupplyFromWei = getWeiAmount(
+            web3,
             maxTotalSupply,
             +decimals,
             false
           );
 
-          const totalSupplyFromWei = getWeiAmount(totalSupply, decimals, false);
+          const totalSupplyFromWei = getWeiAmount(
+            web3,
+            totalSupply,
+            decimals,
+            false
+          );
 
           let depositToken =
             await syndicateContracts?.DepositTokenMintModule?.depositToken(
@@ -153,22 +155,26 @@ const useClubERC20s = () => {
               );
           }
 
-          let depositERC20TokenSymbol = 'ETH';
-          let depositERC20TokenDecimals = '18';
-          let depositTokenLogo = '/images/ethereum-logo.png';
+          let depositERC20TokenSymbol = activeNetwork.nativeCurrency.symbol;
+          let depositERC20TokenDecimals = activeNetwork.nativeCurrency.decimals;
+          let depositTokenLogo = activeNetwork.logo;
 
           // checks if depositToken is ETH or not
-          const maxTotalDeposits = +maxTotalSupplyFromWei / 10000;
-          if (!isZeroAddress(depositToken)) {
+          let maxTotalDeposits =
+            +maxTotalSupplyFromWei / activeNetwork.nativeCurrency.exchangeRate;
+          if (!isZeroAddress(depositToken) && depositToken) {
             try {
               const depositERC20Token = new ClubERC20Contract(
                 depositToken,
-                web3.web3
+                web3,
+                activeNetwork
               );
               depositERC20TokenSymbol = await depositERC20Token.symbol();
               depositERC20TokenDecimals = await depositERC20Token.decimals();
-              // getTokenDetails takes in a deposit token address and a chainId (1 is mainnet, 4 is Rinkeby)
-              depositTokenLogo = await getTokenDetails(depositToken, chainId)
+              depositTokenLogo = await getTokenDetails(
+                depositToken,
+                activeNetwork.chainId
+              )
                 .then((res) => res.data.logo)
                 .catch(() => null);
             } catch (error) {
@@ -179,6 +185,7 @@ const useClubERC20s = () => {
           const depositsEnabled = !pastDate(new Date(+endTime * 1000));
 
           const memberDeposits = getWeiAmount(
+            web3,
             depositAmount,
             depositERC20TokenDecimals
               ? parseInt(depositERC20TokenDecimals)
@@ -189,6 +196,7 @@ const useClubERC20s = () => {
           let clubTotalDeposits = 0;
           if (depositERC20TokenDecimals) {
             clubTotalDeposits = getWeiAmount(
+              web3,
               totalDeposits,
               +depositERC20TokenDecimals,
               false
@@ -316,7 +324,7 @@ const useClubERC20s = () => {
   }, [
     account,
     memberClubLoading,
-    currentEthereumNetwork,
+    activeNetwork,
     memberClubData?.members?.length,
     invalidEthereumNetwork
   ]);
@@ -334,12 +342,7 @@ const useClubERC20s = () => {
       }
       setMyClubs(data.syndicateDAOs);
     }
-  }, [
-    account,
-    currentEthereumNetwork,
-    loading,
-    JSON.stringify(data?.syndicateDAOs)
-  ]);
+  }, [account, activeNetwork, loading, JSON.stringify(data?.syndicateDAOs)]);
 
   return { loading, memberClubLoading, accountHasClubs };
 };

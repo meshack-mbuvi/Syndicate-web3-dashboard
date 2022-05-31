@@ -7,6 +7,8 @@ import useFetchMerkleProof from '@/hooks/useMerkleProof';
 import useFetchTokenClaim from '@/hooks/useTokenClaim';
 import { useDemoMode } from '@/hooks/useDemoMode';
 import { getCountDownDays } from '@/utils/dateUtils';
+import Tooltip from 'react-tooltip-lite';
+import { getFormattedDateTimeWithTZ } from 'src/utils/dateUtils';
 
 interface Props {
   isManager?: boolean;
@@ -110,11 +112,30 @@ const StatusBadge = (props: Props): JSX.Element => {
               )}
               <p className="h3 sm:text-xl leading-snug ml-4">{titleText}</p>
             </div>
-            {depositsEnabled ? (
-              <div className="flex-shrink-0">
-                <span className="font-whyte-light">{`Closes in ${getCountDownDays(
-                  endTime.toString()
-                )}`}</span>
+            {depositsEnabled &&
+            !syndicateCreationFailed &&
+            !showConfettiSuccess ? (
+              <div className="flex flex-shrink-0">
+                <Tooltip
+                  content={
+                    <span className="w-200 flex-shrink-0">
+                      {`Closing to deposits on ${getFormattedDateTimeWithTZ(
+                        endTime
+                      )}`}
+                    </span>
+                  }
+                  arrow={false}
+                  tipContentClassName="actionsTooltip"
+                  background="#232529"
+                  padding="12px 16px"
+                  distance={8}
+                >
+                  <div className="flex-shrink-0">
+                    <span className="font-whyte-light">{`Closes in ${getCountDownDays(
+                      endTime.toString()
+                    )}`}</span>
+                  </div>
+                </Tooltip>
               </div>
             ) : null}
           </div>

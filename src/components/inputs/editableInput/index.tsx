@@ -3,6 +3,8 @@ import { useForm, useFormState, Controller } from 'react-hook-form';
 import { floatedNumberWithCommas } from '@/utils/formattedNumbers';
 import { formatAddress } from 'src/utils/formatAddress';
 import { isUnlimited } from 'src/utils/conversions';
+import { AppState } from '@/state';
+import { useSelector } from 'react-redux';
 
 /**
  * An editable form component
@@ -33,6 +35,12 @@ type StringKeys<objType extends Record<string, any>> = Array<
 
 export const EditableInput: FC<Props> = (props: Props) => {
   const {
+    web3Reducer: {
+      web3: { web3 }
+    }
+  } = useSelector((state: AppState) => state);
+
+  const {
     label,
     defaults = {},
     currency = false,
@@ -60,7 +68,7 @@ export const EditableInput: FC<Props> = (props: Props) => {
   };
 
   const formatCurrency = (value) => {
-    if (isUnlimited(value) || value.toLowerCase() === 'unlimited') {
+    if (isUnlimited(value, web3) || value.toLowerCase() === 'unlimited') {
       return 'Unlimited';
     } else {
       return floatedNumberWithCommas(value);

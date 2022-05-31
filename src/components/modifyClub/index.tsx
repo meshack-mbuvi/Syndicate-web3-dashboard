@@ -33,6 +33,10 @@ import { InputFieldWithDate } from '../inputs/inputFieldWithDate';
 import { InputFieldWithToken } from '../inputs/inputFieldWithToken';
 import { AmountAndMembersDisclaimer } from '@/containers/managerActions/mintAndShareTokens/AmountAndMembersDisclaimer';
 import { PillButtonLarge } from '../pillButtons/pillButtonsLarge';
+import TimeField from '@/containers/createInvestmentClub/mintMaxDate/timeField';
+import moment from 'moment';
+import AddToCalendar from '@/components/addToCalendar';
+import { DAY_IN_SECONDS } from '@/utils/constants';
 
 const progressModalStates = {
   confirm: {
@@ -91,7 +95,7 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
       depositDetails: { depositTokenLogo, depositTokenSymbol }
     },
     web3Reducer: {
-      web3: { account, status, web3 }
+      web3: { account, status, web3, activeNetwork }
     }
   } = useSelector((state: AppState) => state);
 
@@ -101,16 +105,18 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
     address,
     memberCount,
     totalSupply,
-    endTime,
     owner,
     maxMemberCount,
     maxTotalSupply,
     symbol,
     loading,
     currentMintPolicyAddress,
-    depositsEnabled
+    depositsEnabled,
+    endTime
   } = erc20Token;
 
+  const { symbol: nativeSymbol, exchangeRate: nativeEchageRate } =
+    activeNetwork.nativeCurrency;
   let showMintingForClosedClubDisclaimer = false;
   if (typeof window !== 'undefined') {
     const mintingForClosedClubDetails = JSON.parse(
@@ -151,6 +157,13 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
 
   const [progressState, setProgressState] = useState<string>('');
 
+  // time check states
+  const [closeTime, setCloseTime] = useState('');
+  const [closeDate, setCloseDate] = useState(0);
+  const [closeTimeError, setCloseTimeError] = useState('');
+  const [warning, setWarning] = useState('');
+  const [currentTime, setCurrentTime] = useState(0);
+
   const MAX_MEMBERS_ALLOWED = 99;
 
   const router = useRouter();
@@ -164,7 +177,10 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
   const isOwner = useIsClubOwner();
 
   const handleExit = () => {
-    router && router.push(`/clubs/${clubAddress}/manage`);
+    router &&
+      router.push(
+        `/clubs/${clubAddress}/manage/${'?network=' + activeNetwork.chainId}`
+      );
   };
 
   useEffect(() => {
@@ -178,7 +194,9 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
       return;
 
     if ((pathname.includes('/modify') && !isOwner) || isDemoMode) {
-      router.replace(`/clubs/${clubAddress}`);
+      router.replace(
+        `/clubs/${clubAddress}${'?network=' + activeNetwork.chainId}`
+      );
     }
   }, [
     owner,
@@ -209,11 +227,13 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
         dispatch(setExistingOpenToDepositsUntil(new Date(endTime)));
       }
       if (existingMaxAmountRaising === 0 && depositTokenSymbol) {
-        if (depositTokenSymbol === 'ETH') {
-          setMaxAmountRaising(maxTotalSupply / 10000);
-          setTotalDepositsAmount(totalSupply / 10000);
-          dispatch(setExistingMaxAmountRaising(maxTotalSupply / 10000));
-          dispatch(setExistingAmountRaised(totalSupply / 10000));
+        if (depositTokenSymbol === nativeSymbol) {
+          setMaxAmountRaising(maxTotalSupply / nativeEchageRate);
+          setTotalDepositsAmount(totalSupply / nativeEchageRate);
+          dispatch(
+            setExistingMaxAmountRaising(maxTotalSupply / nativeEchageRate)
+          );
+          dispatch(setExistingAmountRaised(totalSupply / nativeEchageRate));
         } else {
           setMaxAmountRaising(maxTotalSupply);
           setTotalDepositsAmount(totalSupply);
@@ -225,7 +245,7 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
         setMaxNumberOfMembers(maxMemberCount);
         dispatch(setExistingMaxNumberOfMembers(maxMemberCount));
       }
-      setDepositTokenType(depositTokenSymbol === 'ETH');
+      setDepositTokenType(depositTokenSymbol === nativeSymbol);
       dispatch(setExistingNumberOfMembers(memberCount));
     }
   }, [
@@ -272,7 +292,8 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
       // Check if there are no errors
       maxAmountRaisingError === null &&
       maxNumberOfMembersError === null &&
-      openToDepositsUntilWarning === null
+      openToDepositsUntilWarning === null &&
+      !closeTimeError
     ) {
       setAreClubChangesAvailable(true);
     } else {
@@ -289,7 +310,8 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
     existingOpenToDepositsUntil,
     maxAmountRaisingError,
     maxNumberOfMembersError,
-    openToDepositsUntilWarning
+    openToDepositsUntilWarning,
+    closeTimeError
   ]);
 
   const onTxConfirm = (transactionHash: string) => {
@@ -307,10 +329,19 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
       const updatedEndTime = new Date(openToDepositsUntil);
 
       const _tokenCap = depositTokenType
-        ? getWeiAmount((maxAmountRaising * 10000).toString(), 18, true)
-        : getWeiAmount(String(maxAmountRaising), 18, true);
+        ? getWeiAmount(
+            web3,
+            (maxAmountRaising * nativeEchageRate).toString(),
+            18,
+            true
+          )
+        : getWeiAmount(web3, String(maxAmountRaising), 18, true);
 
-      const mintPolicy = new MintPolicyContract(currentMintPolicyAddress, web3);
+      const mintPolicy = new MintPolicyContract(
+        currentMintPolicyAddress,
+        web3,
+        activeNetwork
+      );
 
       await mintPolicy.modifyERC20(
         account,
@@ -344,18 +375,108 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
         {...{
           ...progressModalStates[progressState],
           isVisible: true,
-          etherscanHash: transactionHash,
+          txHash: transactionHash,
           buttonOnClick:
             progressModalStates[progressState].buttonLabel == 'Try again'
               ? () => setProgressState('')
               : handleExit,
-          etherscanLinkText: 'View on Etherscan',
+          explorerLinkText: 'View on ',
           iconColor: ExternalLinkColor.BLUE,
           transactionType: 'transaction'
         }}
       />
     );
   };
+
+  const calendarEvent = {
+    title: `${name} closes to deposits on Syndicate`,
+    description: '',
+    startTime: moment(openToDepositsUntil).valueOf(),
+    endTime: moment(moment(openToDepositsUntil).valueOf())
+      .add(1, 'days')
+      .valueOf(),
+    location: ''
+  };
+
+  // get specific time changes
+  const handleTimeChange = (time: string) => {
+    // dispatch new time from here.
+    setCloseTime(time);
+  };
+
+  const handleDateChange = (targetDate) => {
+    setCloseDate(targetDate);
+  };
+
+  // the value of endTime gets set a few moments later.
+  // need to update closeDate and closeTime when it does.
+  useEffect(() => {
+    if (endTime) {
+      setCloseDate(endTime);
+      setCloseTime(moment(new Date(endTime)).format('HH:mm'));
+    }
+  }, [endTime]);
+
+  // check time every 15 seconds
+  // can be adjusted depending on how accurate we would want to be.
+  const TIME_CHECK_INTERVAL = 15000;
+  useEffect(() => {
+    const timeUpdate = setInterval(() => {
+      setCurrentTime(new Date().getTime());
+    }, TIME_CHECK_INTERVAL);
+
+    return () => {
+      clearInterval(timeUpdate);
+    };
+  }, []);
+
+  // if the target date is less than the current time,
+  // introduce an error.
+  useEffect(() => {
+    if (openToDepositsUntil.getTime() < currentTime) {
+      setCloseTimeError('Close date cannot be in the past');
+    } else {
+      setCloseTimeError('');
+    }
+  }, [currentTime, openToDepositsUntil]);
+
+  // extract the date section and then add specific time
+  useEffect(() => {
+    let targetDate = closeDate;
+    if (closeTime && closeDate) {
+      const dateString = new Date(closeDate).toDateString();
+      targetDate = moment(dateString + ' ' + closeTime).valueOf();
+    }
+
+    setOpenToDepositsUntil(new Date(targetDate));
+    setOpenToDepositsUntilWarning(null); // clear error if any
+  }, [closeDate, closeTime]);
+
+  // add relevant warnings for close time.
+  useEffect(() => {
+    const inTwentyFourHours = new Date(
+      currentTime + DAY_IN_SECONDS * 1000
+    ).getTime();
+    const threeMonthsAfterToday = +moment(moment(), 'MM-DD-YYYY').add(
+      3,
+      'months'
+    );
+
+    if (+threeMonthsAfterToday < openToDepositsUntil.getTime()) {
+      setWarning(
+        'Keeping a syndicate open for longer than 3 months could create administrative complexities in managing members and deploying funds.'
+      );
+    } else if (
+      openToDepositsUntil.getTime() > currentTime &&
+      openToDepositsUntil.getTime() < inTwentyFourHours
+    ) {
+      setWarning(
+        'Closing a Syndicate within 24 hours restricts the window to deposit for members.'
+      );
+    } else {
+      setWarning('');
+    }
+  }, [openToDepositsUntil, currentTime]);
 
   return (
     <div className={`${isVisible ? 'block' : 'hidden'}`}>
@@ -461,23 +582,44 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
                     borderRadius="rounded-1.5lg"
                   />
                 ) : (
-                  <InputFieldWithDate
-                    selectedDate={
-                      openToDepositsUntilWarning ? null : openToDepositsUntil
-                    }
-                    onChange={(targetDate) => {
-                      const eodToday = new Date(
-                        new Date().setHours(23, 59, 0, 0)
-                      ).getTime();
-                      const dateToSet =
-                        (targetDate as any) < eodToday ? eodToday : targetDate;
-                      setOpenToDepositsUntil(new Date(dateToSet));
-                      setOpenToDepositsUntilWarning(null); // clear error if any
-                    }}
-                    infoLabel={
-                      openToDepositsUntilWarning && openToDepositsUntilWarning
-                    }
-                  />
+                  <div>
+                    <InputFieldWithDate
+                      selectedDate={
+                        openToDepositsUntilWarning ? null : openToDepositsUntil
+                      }
+                      onChange={(targetDate) => handleDateChange(targetDate)}
+                      infoLabel={
+                        openToDepositsUntilWarning && openToDepositsUntilWarning
+                      }
+                    />
+                    <div className="mt-2">
+                      <TimeField
+                        handleTimeChange={handleTimeChange}
+                        isInErrorState={Boolean(closeTimeError)}
+                      />
+                    </div>
+                    {!closeTimeError && !warning && (
+                      <div className="flex justify-start text-base leading-4 text-blue-navy font-whyte mt-4">
+                        <AddToCalendar calEvent={calendarEvent} />
+                      </div>
+                    )}
+
+                    {(warning || closeTimeError) && (
+                      <div
+                        className={`${
+                          warning && !closeTimeError && 'text-yellow-warning'
+                        } ${
+                          closeTimeError ? 'text-red-error' : ''
+                        } text-sm w-full mt-2`}
+                      >
+                        {closeTimeError
+                          ? closeTimeError
+                          : warning
+                          ? warning
+                          : ''}
+                      </div>
+                    )}
+                  </div>
                 )}
               </div>
             </div>
@@ -522,9 +664,9 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
                       maxAmountRaisingError
                         ? maxAmountRaisingError
                         : `Upper limit of the club’s raise, corresponding to a club token supply of ${
-                            depositTokenSymbol === 'ETH'
+                            depositTokenSymbol === nativeSymbol
                               ? floatedNumberWithCommas(
-                                  maxAmountRaising * 10000
+                                  maxAmountRaising * nativeEchageRate
                                 )
                               : floatedNumberWithCommas(maxAmountRaising)
                           } ${symbol}.`

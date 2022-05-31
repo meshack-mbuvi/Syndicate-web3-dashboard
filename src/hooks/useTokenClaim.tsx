@@ -14,7 +14,7 @@ const useFetchTokenClaim: any = (skipQuery) => {
 
   const {
     web3Reducer: {
-      web3: { account }
+      web3: { account, activeNetwork }
     },
     merkleProofSliceReducer: { myMerkleProof },
     erc20TokenSliceReducer: {
@@ -36,15 +36,20 @@ const useFetchTokenClaim: any = (skipQuery) => {
         treeIndex: myMerkleProof.treeIndex
       }
     },
-    skip: !account || skipQuery,
-    context: { clientName: 'graph' }
+    skip: !account || skipQuery || !activeNetwork.chainId,
+    context: { clientName: 'theGraph', chainId: activeNetwork.chainId }
   });
 
   useEffect(() => {
-    if (myMerkleProof.amount && account && clubAddress) {
+    if (
+      myMerkleProof.amount &&
+      account &&
+      clubAddress &&
+      activeNetwork.chainId
+    ) {
       refetch();
     }
-  }, [myMerkleProof.amount, account, clubAddress]);
+  }, [myMerkleProof.amount, account, clubAddress, activeNetwork.chainId]);
 
   useEffect(() => {
     dispatch(setLoadingTokenClaimed(true));

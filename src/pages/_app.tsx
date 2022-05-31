@@ -1,3 +1,14 @@
+import 'nprogress/nprogress.css'; //styles of nprogress
+/**
+ * datepicker component requires these in-built styles, so we import them
+ * from here to make them available globally
+ */
+import 'react-datepicker/dist/react-datepicker.css';
+
+import '../styles/animation.css';
+import '../styles/custom-datepicker.css';
+import '../styles/global.css';
+
 import { useAmplitude } from '@/components/amplitude';
 import FontsPreloader from '@/components/fonts';
 import BeforeGettingStartedProvider from '@/context/beforeGettingStartedContext';
@@ -8,17 +19,20 @@ import { wrapper } from '@/state';
 import { isDev, isSSR } from '@/utils/environment';
 import {
   ApolloClient,
+  ApolloLink,
   ApolloProvider,
   HttpLink,
   InMemoryCache
 } from '@apollo/client';
 import { RetryLink } from '@apollo/client/link/retry';
 import withApollo from 'next-with-apollo';
+import { AppProps } from 'next/app';
 import Head from 'next/head';
 import Router from 'next/router';
 import NProgress from 'nprogress';
-import 'nprogress/nprogress.css'; //styles of nprogress
 import React from 'react';
+import { BACKEND_LINKS } from '@/Networks/backendLinks';
+
 import { withLDProvider } from 'launchdarkly-react-client-sdk';
 /**
  * datepicker component requires these in-built styles, so we import them
@@ -34,34 +48,38 @@ Router.events.on('routeChangeStart', () => NProgress.start());
 Router.events.on('routeChangeComplete', () => NProgress.done());
 Router.events.on('routeChangeError', () => NProgress.done());
 
-const App = ({ Component, pageProps, apollo }) => {
-  useAmplitude();
+const StateProviders: React.FC = ({ children }) => (
+  <OnboardingProvider>
+    <BeforeGettingStartedProvider>
+      <CreateInvestmentClubProvider>
+        <LDFeatureFlags>{children}</LDFeatureFlags>
+      </CreateInvestmentClubProvider>
+    </BeforeGettingStartedProvider>
+  </OnboardingProvider>
+);
 
+const Body: React.FC<AppProps & { apollo: ApolloClient<unknown> }> = ({
+  Component,
+  pageProps,
+  apollo
+}) => {
   return (
-    <ApolloProvider client={apollo}>
-      <OnboardingProvider>
-        <BeforeGettingStartedProvider>
-          <ConnectWalletProvider>
-            <CreateInvestmentClubProvider>
-              <Head>
-                <title>Home | Syndicate Dashboard</title>
-                <link rel="shortcut icon" href="/images/logo.svg" />
+    <>
+      <Head>
+        <title>Home | Syndicate Dashboard</title>
+        <link rel="shortcut icon" href="/images/logo.svg" />
 
-                <FontsPreloader />
+        <FontsPreloader />
 
-                <meta
-                  name="viewport"
-                  content="width=device-width, initial-scale=1, shrink-to-fit=no"
-                />
-              </Head>
-              <LDFeatureFlags>
-                <Component {...pageProps} />
-              </LDFeatureFlags>
-            </CreateInvestmentClubProvider>
-          </ConnectWalletProvider>
-        </BeforeGettingStartedProvider>
-      </OnboardingProvider>
-    </ApolloProvider>
+        <meta
+          name="viewport"
+          content="width=device-width, initial-scale=1, shrink-to-fit=no"
+        />
+      </Head>
+      <ApolloProvider client={apollo}>
+        <Component {...pageProps} />
+      </ApolloProvider>
+    </>
   );
 };
 
@@ -70,36 +88,53 @@ const LDFeatureFlags: React.FC<any> = ({ children }) => {
   const WithLDContext = withLDProvider({
     clientSideID: isDev
       ? process.env.NEXT_PUBLIC_LAUNCHDARKLY_SDK_CLIENT_TEST!
-      : process.env.NEXT_PUBLIC_LAUNCHDARKLY_SDK_CLIENT_PRODUCTION!,
-    reactOptions: {
-      useCamelCaseFlagKeys: false
-    }
+      : process.env.NEXT_PUBLIC_LAUNCHDARKLY_SDK_CLIENT_PRODUCTION!
   })(Child);
   return <WithLDContext />;
 };
 
-export default withApollo(({ initialState }) => {
-  const backendHttpLink = new HttpLink({
-    uri: isDev
-      ? process.env.NEXT_PUBLIC_BACKEND_GRAPHQL_ENDPOINT_STAGING
-      : process.env.NEXT_PUBLIC_BACKEND_GRAPHQL_ENDPOINT_PROD
-  });
-  const graphHttpLink = new HttpLink({
-    uri: isDev
-      ? process.env.NEXT_PUBLIC_GRAPHQL_ENDPOINT
-      : process.env.NEXT_PUBLIC_GRAPHQL_MAINNET_ENDPOINT
-  });
+const App = (props) => {
+  useAmplitude();
 
-  const directionalLink = new RetryLink().split(
-    (operation) => operation.getContext().clientName === 'backend',
-    backendHttpLink,
-    graphHttpLink
+  return (
+    <StateProviders>
+      <ConnectWalletProvider>
+        <Body {...props} />
+      </ConnectWalletProvider>
+    </StateProviders>
   );
+};
 
+// Construct dynamic httpLinks from available networks and graphs
+const constructGraphLinks = () => {
+  const links = {};
+  Object.entries(BACKEND_LINKS).map(([networkId, backendInfo]) => {
+    const graphs = Object.keys(backendInfo.graphs);
+    const httplinks = {};
+    graphs.forEach((value) => {
+      httplinks[value] = new HttpLink({
+        uri: backendInfo.graphs[value]
+      });
+    });
+    links[networkId] = httplinks;
+  });
+
+  return links;
+};
+
+const httpsLinks = Object.freeze(constructGraphLinks());
+
+const apolloInitializer = ({ initialState }) => {
+  const graphLink = new ApolloLink((operation) => {
+    const { clientName = 'backend', chainId = 1 } = operation.getContext();
+    return httpsLinks[chainId][clientName].request(operation);
+  });
   return new ApolloClient({
     ssrMode: isSSR(),
-    link: directionalLink,
+    link: new RetryLink().concat(graphLink),
     cache: new InMemoryCache().restore(initialState || {}),
     connectToDevTools: isDev
   });
-})(wrapper.withRedux(App));
+};
+
+export default withApollo(apolloInitializer)(wrapper.withRedux(App));

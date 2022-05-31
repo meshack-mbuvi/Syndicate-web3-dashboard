@@ -4,7 +4,7 @@ import ErrorBoundary from '@/components/errorBoundary';
 import Layout from '@/components/layout';
 import OnboardingModal from '@/components/onboarding';
 import { ClubHeader } from '@/components/syndicates/shared/clubHeader';
-import { EtherscanLink } from '@/components/syndicates/shared/EtherscanLink';
+import { BlockExplorerLink } from '@/components/syndicates/shared/BlockExplorerLink';
 import Head from '@/components/syndicates/shared/HeaderTitle';
 import SyndicateDetails from '@/components/syndicates/syndicateDetails';
 import {
@@ -36,8 +36,6 @@ import {
 } from '@/state/erc20token/slice';
 import { clearMyTransactions } from '@/state/erc20transactions';
 import { Status } from '@/state/wallet/types';
-import { ChainEnum } from '@/utils/api/ChainTypes';
-import { isDev } from '@/utils/environment';
 import { getTextWidth } from '@/utils/getTextWidth';
 import {
   mockActiveERC20Token,
@@ -53,6 +51,7 @@ import ClubTokenMembers from '../managerActions/clubTokenMembers/index';
 import ActivityView from './activity';
 import Assets from './assets';
 import TabButton from './TabButton';
+import { isEmpty } from 'lodash';
 
 const LayoutWithSyndicateDetails: FC<{
   managerSettingsOpen: boolean;
@@ -61,11 +60,11 @@ const LayoutWithSyndicateDetails: FC<{
     initializeContractsReducer: { syndicateContracts },
     merkleProofSliceReducer: { myMerkleProof },
     web3Reducer: {
-      web3: { account, web3, status }
+      web3: { account, web3, status, activeNetwork }
     },
     erc20TokenSliceReducer: {
       erc20Token,
-      depositDetails: { ethDepositToken, chainId },
+      depositDetails: { nativeDepositToken },
       depositTokenPriceInUSD
     }
   } = useSelector((state: AppState) => state);
@@ -89,7 +88,7 @@ const LayoutWithSyndicateDetails: FC<{
   const isDemoMode = useDemoMode(clubAddress);
   // dispatch the price of the deposit token for use in other
   // components
-  useGetDepositTokenPrice(chainId);
+  useGetDepositTokenPrice(activeNetwork.chainId);
   const zeroAddress = '0x0000000000000000000000000000000000000000';
 
   useEffect(() => {
@@ -129,11 +128,10 @@ const LayoutWithSyndicateDetails: FC<{
       dispatch(
         setERC20TokenDepositDetails({
           mintModule: '',
-          ethDepositToken: false,
-          chainId: isDev ? ChainEnum.RINKEBY : ChainEnum.ETHEREUM,
+          nativeDepositToken: false,
           depositToken: '',
           depositTokenSymbol: '',
-          depositTokenLogo: '/images/usdcicon.png',
+          depositTokenLogo: '/images/usdcIcon.png',
           depositTokenName: '',
           depositTokenDecimals: 6,
           loading: true
@@ -175,13 +173,20 @@ const LayoutWithSyndicateDetails: FC<{
 
   const fetchAssets = () => {
     // fetch token transactions for the connected account.
-    dispatch(fetchTokenTransactions(owner));
+    dispatch(
+      fetchTokenTransactions({
+        account: owner,
+        activeNetwork: activeNetwork,
+        web3: web3
+      })
+    );
     // test nft account: 0xf4c2c3e12b61d44e6b228c43987158ac510426fb
     dispatch(
       fetchCollectiblesTransactions({
         account: owner,
         offset: '0',
-        maxTotalDeposits: ethDepositToken
+        chainId: activeNetwork.chainId,
+        maxTotalDeposits: nativeDepositToken
           ? parseInt((depositTokenPriceInUSD * maxTotalDeposits).toString())
           : maxTotalDeposits
       })
@@ -211,7 +216,7 @@ const LayoutWithSyndicateDetails: FC<{
     maxTotalDeposits,
     depositTokenPriceInUSD,
     loadingClubDeposits,
-    ethDepositToken
+    nativeDepositToken
   ]);
 
   useEffect(() => {
@@ -225,7 +230,7 @@ const LayoutWithSyndicateDetails: FC<{
    * Fetch club details
    */
   useEffect(() => {
-    if (!clubAddress || status == Status.CONNECTING) return;
+    if (!clubAddress || status == Status.CONNECTING || isEmpty(web3)) return;
 
     if (
       clubAddress !== zeroAddress &&
@@ -234,7 +239,8 @@ const LayoutWithSyndicateDetails: FC<{
     ) {
       const clubERC20tokenContract = new ClubERC20Contract(
         clubAddress as string,
-        web3
+        web3,
+        activeNetwork
       );
 
       dispatch(setERC20TokenContract(clubERC20tokenContract));
@@ -248,13 +254,7 @@ const LayoutWithSyndicateDetails: FC<{
       // using "Active" as the default view.
       dispatch(setERC20TokenDetails(mockActiveERC20Token));
     }
-  }, [
-    clubAddress,
-    account,
-    ethDepositToken,
-    status,
-    syndicateContracts?.DepositTokenMintModule
-  ]);
+  }, [web3?._provider, clubAddress, account, status]);
 
   const showOnboardingIfNeeded =
     router.pathname.endsWith('[clubAddress]') && !isDemoMode;
@@ -286,7 +286,7 @@ const LayoutWithSyndicateDetails: FC<{
         <p className="text-lg md:text-2xl text-center mb-3">
           {noTokenTitleText}
         </p>
-        <EtherscanLink etherscanInfo={clubAddress} />
+        <BlockExplorerLink resourceId={clubAddress} />
       </div>
     </div>
   );
@@ -307,7 +307,7 @@ const LayoutWithSyndicateDetails: FC<{
 
   return (
     <>
-      {router.isReady && !isDemoMode && !web3.utils.isAddress(clubAddress) ? (
+      {router.isReady && !isDemoMode && !web3?.utils?.isAddress(clubAddress) ? (
         <NotFoundPage />
       ) : (
         <Layout

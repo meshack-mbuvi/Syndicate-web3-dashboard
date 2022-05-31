@@ -22,6 +22,7 @@ export const InputFieldWithToken = (props: {
   extraClasses?: string;
   onChange: (e) => void;
   symbolDisplayVariant?: SymbolDisplay;
+  symbolColor?: string;
 }): React.ReactElement => {
   const {
     value,
@@ -33,6 +34,7 @@ export const InputFieldWithToken = (props: {
     extraClasses = '',
     onChange,
     symbolDisplayVariant,
+    symbolColor,
     ...rest
   } = props;
 
@@ -52,7 +54,7 @@ export const InputFieldWithToken = (props: {
           style={{ transform: 'translateY(-50%)' }}
         >
           {symbolDisplayVariant === SymbolDisplay.ONLY_SYMBOL ? (
-            <span>{depositTokenSymbol}</span>
+            <span className={`${symbolColor || ''}`}>{depositTokenSymbol}</span>
           ) : symbolDisplayVariant === SymbolDisplay.ONLY_LOGO ? (
             <div className="relative h-5 w-5">
               {depositTokenLogo && (

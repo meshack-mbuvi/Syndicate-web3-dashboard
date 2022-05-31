@@ -1,6 +1,4 @@
 import { ERC20TokenDefaultState } from '@/helpers/erc20TokenDetails';
-import { ChainEnum } from '@/utils/api/ChainTypes';
-import { isDev } from '@/utils/environment';
 
 export interface ERC20Token {
   name: string;
@@ -28,8 +26,7 @@ export interface ERC20Token {
 
 export interface DepositDetails {
   mintModule: string;
-  ethDepositToken: boolean; // TODO 3382: refactor the frontend to not use this boolean
-  chainId: number;
+  nativeDepositToken: boolean;
   depositToken: string;
   depositTokenSymbol: string;
   depositTokenLogo: string;
@@ -47,12 +44,11 @@ export const initialState: {
   erc20Token: ERC20TokenDefaultState,
   depositDetails: {
     mintModule: '',
-    ethDepositToken: false, // TODO 3382: refactor the frontend to not use this boolean
-    chainId: isDev ? ChainEnum.RINKEBY : ChainEnum.ETHEREUM,
+    nativeDepositToken: false,
     depositToken: '',
     depositTokenSymbol: '',
     // default to USDC token to avoid error being thrown while loading the token
-    depositTokenLogo: '/images/usdcicon.png',
+    depositTokenLogo: '/images/usdcIcon.png',
     depositTokenName: '',
     depositTokenDecimals: 6,
     loading: true

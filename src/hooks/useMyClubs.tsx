@@ -18,9 +18,9 @@ interface IProps {
 
 export const useMyClubs = (): IProps => {
   const {
-    web3Reducer: { web3 }
+    web3Reducer: { web3: web3Instance }
   } = useSelector((state: AppState) => state);
-  const { account } = web3;
+  const { account, activeNetwork, web3 } = web3Instance;
 
   const [myClubs, setMyClubs] = useState([]);
   const [loading, setIsLoading] = useState(true);
@@ -31,7 +31,8 @@ export const useMyClubs = (): IProps => {
         ownerAddress: account.toLocaleLowerCase()
       }
     },
-    skip: !account
+    context: { clientName: 'theGraph', chainId: activeNetwork.chainId },
+    skip: !account || !activeNetwork.chainId
   });
 
   useEffect(() => {
@@ -56,7 +57,11 @@ export const useMyClubs = (): IProps => {
         let clubSymbol = '';
 
         try {
-          clubERC20Contract = new ClubERC20Contract(contractAddress, web3.web3);
+          clubERC20Contract = new ClubERC20Contract(
+            contractAddress,
+            web3,
+            activeNetwork
+          );
 
           clubName = await clubERC20Contract.name();
           clubSymbol = await clubERC20Contract.symbol();

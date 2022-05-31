@@ -32,7 +32,9 @@ const SendForSignatures: FC<ILinkModal> = ({
       clubInfo,
       walletSignature: { signature }
     },
-
+    web3Reducer: {
+      web3: { activeNetwork }
+    },
     erc20TokenSliceReducer: {
       erc20Token: { depositsEnabled }
     }
@@ -49,7 +51,9 @@ const SendForSignatures: FC<ILinkModal> = ({
   ] = useState(false);
 
   const handleClick = () => {
-    router.push(`/clubs/${clubAddress}/manage`);
+    router.push(
+      `/clubs/${clubAddress}/manage${'?network=' + activeNetwork.chainId}`
+    );
   };
 
   const updateLegalAgreementSignageLinkCopyState = () => {
@@ -64,7 +68,8 @@ const SendForSignatures: FC<ILinkModal> = ({
     const memberSignURL = generateMemberSignURL(
       clubAddress as string,
       clubInfo,
-      signature
+      signature,
+      activeNetwork.chainId
     );
     setClubLegalAgreementSignageLink(memberSignURL);
   }, [signature, clubAddress, clubInfo]);

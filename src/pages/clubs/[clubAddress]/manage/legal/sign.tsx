@@ -15,8 +15,8 @@ const ManagerAgreementPage: NextPage = () => {
   const router = useRouter();
   const { clubAddress } = router.query;
 
-  const account = useSelector(
-    (state: AppState) => state.web3Reducer.web3.account
+  const { account, activeNetwork } = useSelector(
+    (state: AppState) => state.web3Reducer.web3
   );
   const clubInfo = useSelector(
     (state: AppState) => state.legalInfoReducer.clubInfo
@@ -27,7 +27,7 @@ const ManagerAgreementPage: NextPage = () => {
 
   const navbarItems = [
     {
-      url: `/clubs/${clubAddress}/manage`,
+      url: `/clubs/${clubAddress}/manage${'?network=' + activeNetwork.chainId}`,
       navItemText: 'Exit'
     },
     {

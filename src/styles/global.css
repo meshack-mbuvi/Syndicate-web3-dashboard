@@ -948,6 +948,11 @@ input[type='checkbox'] {
   background-image: url('/images/social/apple.svg');
 }
 
+input[type='time']::-webkit-calendar-picker-indicator {
+  background: none;
+  display: none;
+}
+
 /* Storybook */
 
 .sb-show-main {

@@ -1,11 +1,16 @@
 import rugUtilityMintModule_ABI from 'src/contracts/RugUtilityMintModule.json';
 import { getGnosisTxnInfo } from '../shared/gnosisTransactionInfo';
+import { estimateGas } from '../shared/getGasEstimate';
 export class RugUtilityMintModuleContract {
   isGnosisSafe: boolean;
   contract;
+  web3;
+  activeNetwork;
 
   // initialize a contract instance
-  constructor(contractAddress: string, web3: any) {
+  constructor(contractAddress: string, web3: any, activeNetwork) {
+    this.activeNetwork = activeNetwork;
+    this.web3 = web3;
     this.contract = new web3.eth.Contract(
       rugUtilityMintModule_ABI,
       contractAddress
@@ -14,7 +19,7 @@ export class RugUtilityMintModuleContract {
       web3._provider.wc?._peerMeta.name === 'Gnosis Safe Multisig';
   }
 
-  redeem = async (
+  async redeem(
     forAddress: string,
     tokenID: number,
     value: string,
@@ -22,11 +27,13 @@ export class RugUtilityMintModuleContract {
     onTxReceipt: (receipt?) => void,
     onTxFail: (error?) => void,
     setTransactionHash
-  ): Promise<string> =>
-    new Promise((resolve, reject) =>
+  ): Promise<any> {
+    const gasEstimate = await estimateGas(this.web3);
+
+    await new Promise((resolve, reject) =>
       this.contract.methods
         .redeem(tokenID)
-        .send({ from: forAddress, value })
+        .send({ from: forAddress, gasPrice: gasEstimate, value })
         .on('receipt', onTxReceipt)
         .on('error', onTxFail)
         .on('transactionHash', async (transactionHash: string) => {
@@ -36,7 +43,10 @@ export class RugUtilityMintModuleContract {
           } else {
             setTransactionHash('');
             // Stop waiting if we are connected to gnosis safe via walletConnect
-            const receipt = await getGnosisTxnInfo(transactionHash);
+            const receipt = await getGnosisTxnInfo(
+              transactionHash,
+              this.activeNetwork
+            );
             if (!(receipt as { isSuccessful: boolean }).isSuccessful) {
               return reject('Receipt failed');
             }
@@ -45,8 +55,9 @@ export class RugUtilityMintModuleContract {
           }
         })
     );
+  }
 
-  redeemMany = async (
+  async redeemMany(
     forAddress: string,
     tokenIDs: [],
     value: string,
@@ -54,11 +65,13 @@ export class RugUtilityMintModuleContract {
     onTxReceipt: (receipt, tokenIDs) => void,
     onTxFail: (error?) => void,
     setTransactionHash
-  ): Promise<string> =>
+  ): Promise<any> {
+    const gasEstimate = await estimateGas(this.web3);
+
     new Promise((resolve, reject) =>
       this.contract.methods
         .redeemMany(tokenIDs)
-        .send({ from: forAddress, value })
+        .send({ from: forAddress, gasPrice: gasEstimate, value })
         .on('receipt', async (receipt) => {
           onTxReceipt(receipt, tokenIDs);
         })
@@ -70,7 +83,10 @@ export class RugUtilityMintModuleContract {
           } else {
             setTransactionHash('');
             // Stop waiting if we are connected to gnosis safe via walletConnect
-            const receipt = await getGnosisTxnInfo(transactionHash);
+            const receipt = await getGnosisTxnInfo(
+              transactionHash,
+              this.activeNetwork
+            );
             if (!(receipt as { isSuccessful: boolean }).isSuccessful) {
               return reject('Receipt failed');
             }
@@ -79,10 +95,11 @@ export class RugUtilityMintModuleContract {
           }
         })
     );
+  }
 
-  async ethPrice(): Promise<string> {
+  async nativePrice(): Promise<string> {
     try {
-      return this.contract.methods.ethPrice().call();
+      return this.contract.methods.nativePrice().call();
     } catch (error) {
       return '';
     }

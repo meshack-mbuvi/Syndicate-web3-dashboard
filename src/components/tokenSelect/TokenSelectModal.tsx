@@ -1,18 +1,19 @@
-import React, { useEffect, useState } from "react";
-import Modal, { ModalStyle } from "@/components/modal";
-import { TokenSelectSearch } from "@/components/tokenSelect/TokenSelectSearch";
-import { coinList } from "@/containers/createInvestmentClub/shared/ClubTokenDetailConstants";
-import { Token } from "@/types/token";
+import React, { useEffect, useMemo, useState } from 'react';
+import Modal, { ModalStyle } from '@/components/modal';
+import { TokenSelectSearch } from '@/components/tokenSelect/TokenSelectSearch';
+import { Token } from '@/types/token';
+import { SUPPORTED_TOKENS } from '@/Networks';
 
 export interface ITokenModal {
   showModal: boolean;
   closeModal: () => void;
+  chainId: number;
   variant?: TokenModalVariant;
 }
 
 export enum TokenModalVariant {
   Default,
-  RecentlyUsed,
+  RecentlyUsed
 }
 
 interface OldToken {
@@ -30,14 +31,14 @@ function withRecently<P>(TokenSelectSearch: React.ComponentType<P>) {
     const [recentlyUsedTokens, setRecentlyUsedTokens] = useState<Token[]>([]);
 
     useEffect((): void => {
-      const recentTokens = localStorage.getItem("recentTokens");
+      const recentTokens = localStorage.getItem('recentTokens');
       if (recentTokens) {
         setRecentlyUsedTokens(JSON.parse(recentTokens));
       }
     }, []);
 
     const updateRecentTokens = (token: Token) => {
-      const recentTokens = localStorage.getItem("recentTokens");
+      const recentTokens = localStorage.getItem('recentTokens');
       // Checks if the recent token and adds to a list if it's not already there
       if (recentTokens) {
         const parsedRecentTokens = JSON.parse(recentTokens);
@@ -46,17 +47,17 @@ function withRecently<P>(TokenSelectSearch: React.ComponentType<P>) {
         const uniqueTokens = [
           ...new Map(
             parsedRecentTokens.map((recentToken: Token | OldToken) => {
-              if ("decimal" in recentToken) {
+              if ('decimal' in recentToken) {
                 const { decimal: decimals, ...rest } = recentToken;
                 recentToken = { ...rest, decimals };
               }
-              return [recentToken["symbol"], recentToken];
-            }),
-          ).values(),
+              return [recentToken['symbol'], recentToken];
+            })
+          ).values()
         ];
-        localStorage.setItem("recentTokens", JSON.stringify(uniqueTokens));
+        localStorage.setItem('recentTokens', JSON.stringify(uniqueTokens));
       } else {
-        localStorage.setItem("recentTokens", JSON.stringify([token]));
+        localStorage.setItem('recentTokens', JSON.stringify([token]));
       }
     };
 
@@ -80,8 +81,14 @@ function withRecently<P>(TokenSelectSearch: React.ComponentType<P>) {
 const TokenSelectModal: React.FC<ITokenModal> = ({
   showModal,
   closeModal,
-  variant = TokenModalVariant.Default,
+  chainId,
+  variant = TokenModalVariant.Default
 }) => {
+  const coinList = useMemo(
+    () => SUPPORTED_TOKENS[chainId] ?? SUPPORTED_TOKENS[1],
+    [chainId]
+  );
+
   const RecentlyUsed = withRecently(TokenSelectSearch);
 
   return (

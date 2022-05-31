@@ -1,11 +1,16 @@
 import publicMintWithFeeModule_ABI from 'src/contracts/PublicMintWithFeeModule.json';
 import { getGnosisTxnInfo } from '../shared/gnosisTransactionInfo';
-export class publicMintWithFeeModuleContract {
+import { estimateGas } from '../shared/getGasEstimate';
+export class PublicMintWithFeeModuleContract {
   isGnosisSafe: boolean;
   contract;
+  web3;
+  activeNetwork;
 
   // initialize a contract instance
-  constructor(contractAddress: string, web3: any) {
+  constructor(contractAddress: string, web3: any, activeNetwork) {
+    this.web3 = web3;
+    this.activeNetwork = activeNetwork;
     this.contract = new web3.eth.Contract(
       publicMintWithFeeModule_ABI,
       contractAddress
@@ -14,7 +19,7 @@ export class publicMintWithFeeModuleContract {
       web3._provider.wc?._peerMeta.name === 'Gnosis Safe Multisig';
   }
 
-  mint = async (
+  async mint(
     forAddress: string,
     tokenAddress: string,
     value: string,
@@ -23,11 +28,13 @@ export class publicMintWithFeeModuleContract {
     onTxReceipt: (receipt?) => void,
     onTxFail: (error?) => void,
     setTransactionHash
-  ): Promise<string> =>
-    new Promise((resolve, reject) =>
+  ): Promise<any> {
+    const gasEstimate = await estimateGas(this.web3);
+
+    await new Promise((resolve, reject) =>
       this.contract.methods
         .mint(tokenAddress, amount)
-        .send({ from: forAddress, value })
+        .send({ from: forAddress, gasPrice: gasEstimate, value })
         .on('receipt', onTxReceipt)
         .on('error', onTxFail)
         .on('transactionHash', async (transactionHash: string) => {
@@ -37,7 +44,10 @@ export class publicMintWithFeeModuleContract {
           } else {
             setTransactionHash('');
             // Stop waiting if we are connected to gnosis safe via walletConnect
-            const receipt = await getGnosisTxnInfo(transactionHash);
+            const receipt = await getGnosisTxnInfo(
+              transactionHash,
+              this.activeNetwork
+            );
             if (!(receipt as { isSuccessful: boolean }).isSuccessful) {
               return reject('Receipt failed');
             }
@@ -46,6 +56,7 @@ export class publicMintWithFeeModuleContract {
           }
         })
     );
+  }
 
   async amountMinted(nftAddress, account): Promise<number> {
     try {
@@ -55,7 +66,7 @@ export class publicMintWithFeeModuleContract {
     }
   }
 
-  async ethPrice(nftAddress): Promise<string> {
+  async nativePrice(nftAddress): Promise<string> {
     try {
       return this.contract.methods.ethPrice(nftAddress).call();
     } catch (error) {

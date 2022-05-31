@@ -68,7 +68,7 @@ export const InputField = forwardRef<HTMLInputElement, InputFieldProps>(
             </div>
           )}
           <input
-            className={`block font-whyte text-base focus:outline-none text-white ${
+            className={`block font-whyte text-base focus:outline-none focus:ring-0 text-white ${
               classesOverride ? classesOverride : inputStyles
             } ${errorStyles} ${icon && 'pl-11'} w-full ${extraClasses}`}
             placeholder={placeholderLabel}

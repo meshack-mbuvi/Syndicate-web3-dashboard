@@ -108,12 +108,14 @@ export const RECENT_TRANSACTIONS = gql`
     $take: Int
     $where: Financial_JSONObject
     $skip: Int
+    $chainId: Int!
   ) {
     Financial_recentTransactions(
       input: $input
       take: $take
       where: $where
       skip: $skip
+      chainId: $chainId
     ) {
       edges {
         blockNumber

@@ -9,7 +9,6 @@ import {
 } from '@/state/assets/collectibles/slice';
 import { fetchCollectiblesTransactions } from '@/state/assets/slice';
 import { floatedNumberWithCommas } from '@/utils/formattedNumbers';
-import { web3 } from '@/utils/web3Utils';
 import { FC, useState } from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { useDispatch, useSelector } from 'react-redux';
@@ -19,12 +18,15 @@ const Collectibles: FC = () => {
     assetsSliceReducer: {
       collectiblesResult,
       allCollectiblesFetched,
-      ethereumTokenPrice,
+      nativeTokenPrice,
       loading
+    },
+    web3Reducer: {
+      web3: { activeNetwork, web3 }
     },
     erc20TokenSliceReducer: {
       erc20Token,
-      depositDetails: { ethDepositToken },
+      depositDetails: { nativeDepositToken },
       depositTokenPriceInUSD
     },
     setCollectibleDetailsSliceReducer: { showFullScreen }
@@ -45,7 +47,7 @@ const Collectibles: FC = () => {
 
   // loading/empty state for collectibles
   const LoaderContent: React.FC<{ animate: boolean }> = ({ animate }) => (
-    <div className={`${collectiblesResult.length > 0 ? 'pt-6' : ''}`}>
+    <div className={`${collectiblesResult.length > 0 && 'pt-6'}`}>
       <div className="relative">
         {!animate && (
           <div className="absolute flex flex-col justify-center items-center top-1/3 w-full z-10">
@@ -118,7 +120,8 @@ const Collectibles: FC = () => {
       fetchCollectiblesTransactions({
         account: erc20Token.owner,
         offset: pageOffSet.toString(),
-        maxTotalDeposits: ethDepositToken
+        chainId: activeNetwork.chainId,
+        maxTotalDeposits: nativeDepositToken
           ? parseInt((depositTokenPriceInUSD * maxTotalDeposits).toString())
           : maxTotalDeposits
       })
@@ -233,7 +236,7 @@ const Collectibles: FC = () => {
                 }
                 // sometimes the NFT name is an Ethereum address
                 // we need to break this to fit onto the collectible card
-                const isNameEthereumAddress = web3.utils.isAddress(name);
+                const isNameEthereumAddress = web3.utils?.isAddress(name);
 
                 const blankValue = <span className="text-gray-syn4">-</span>;
 
@@ -286,13 +289,15 @@ const Collectibles: FC = () => {
                           </span>
                           <div className="space-x-2 pt-1 h-1/3 overflow-y-scroll no-scroll-bar">
                             <span className="">
-                              {floorPrice ? `${floorPrice} ETH` : blankValue}
+                              {floorPrice
+                                ? `${floorPrice} ${activeNetwork.nativeCurrency.symbol}`
+                                : blankValue}
                             </span>
                             {floorPrice > 0 && (
                               <span className="text-gray-syn4">
                                 (
                                 {floatedNumberWithCommas(
-                                  floorPrice * ethereumTokenPrice
+                                  floorPrice * nativeTokenPrice
                                 )}{' '}
                                 USD)
                               </span>

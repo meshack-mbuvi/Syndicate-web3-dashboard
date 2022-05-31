@@ -21,8 +21,12 @@ const ReviewDetails: React.FC = () => {
     tokenDetails: { depositTokenSymbol, depositTokenLogo }
   } = useSelector((state: AppState) => state.createInvestmentClubSliceReducer);
 
-  const { currentStep, setBackBtnDisabled, setNextBtnDisabled } =
-    useCreateInvestmentClubContext();
+  const {
+    currentStep,
+    setBackBtnDisabled,
+    setNextBtnDisabled,
+    showSaveButton
+  } = useCreateInvestmentClubContext();
 
   const [inlineEditView, setInlineEditView] = useState<string>('');
   const [editClubNameSelector, setEditClubNameSelector] =
@@ -301,13 +305,15 @@ const ReviewDetails: React.FC = () => {
             <div className="-ml-5">
               <MintMaxDate />
             </div>
-            <animated.div
-              className="flex items-center absolute top-3 right-5"
-              onClick={() => setEditMintMaxDate(!editMintMaxDate)}
-              style={{ color: '#4376FF', cursor: 'pointer' }}
-            >
-              {'Save'}
-            </animated.div>
+            {showSaveButton && (
+              <animated.div
+                className="flex items-center absolute top-3 right-5"
+                onClick={() => setEditMintMaxDate(!editMintMaxDate)}
+                style={{ color: '#4376FF', cursor: 'pointer' }}
+              >
+                {'Save'}
+              </animated.div>
+            )}
           </animated.div>
         ) : (
           mindEndTimeTransition((styles, item) =>

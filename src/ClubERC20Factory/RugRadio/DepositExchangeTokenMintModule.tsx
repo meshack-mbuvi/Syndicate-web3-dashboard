@@ -4,8 +4,10 @@ import { getGnosisTxnInfo } from '../shared/gnosisTransactionInfo';
 export class DepositExchangeMintModule {
   contract;
   isGnosisSafe: boolean;
+  activeNetwork;
 
-  constructor(contractAddress: string, web3) {
+  constructor(contractAddress: string, web3, activeNetwork) {
+    this.activeNetwork = activeNetwork;
     this.contract = new web3.eth.Contract(
       DepositExchangeMintModule_ABI,
       contractAddress
@@ -39,7 +41,10 @@ export class DepositExchangeMintModule {
             setTransactionHash('');
 
             // Stop waiting if we are connected to gnosis safe via walletConnect
-            const receipt = await getGnosisTxnInfo(transactionHash);
+            const receipt = await getGnosisTxnInfo(
+              transactionHash,
+              this.activeNetwork
+            );
 
             if (!(receipt as { isSuccessful: boolean }).isSuccessful) {
               return reject('Receipt failed');

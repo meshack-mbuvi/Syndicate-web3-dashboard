@@ -12,8 +12,8 @@ import { useSelector } from 'react-redux';
  * This page shows the manager component for a given syndicate address
  */
 const CreateAgreementPage: NextPage = () => {
-  const account = useSelector(
-    (state: AppState) => state?.web3Reducer?.web3?.account
+  const { account, activeNetwork } = useSelector(
+    (state: AppState) => state?.web3Reducer?.web3
   );
 
   const router = useRouter();
@@ -21,7 +21,7 @@ const CreateAgreementPage: NextPage = () => {
 
   const navItems = [
     {
-      url: `/clubs/${clubAddress}/manage`,
+      url: `/clubs/${clubAddress}/manage${'?network=' + activeNetwork.chainId}`,
       navItemText: 'Exit'
     },
     {

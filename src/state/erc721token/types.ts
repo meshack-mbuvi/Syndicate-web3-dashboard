@@ -12,7 +12,7 @@ export interface ERC721Token {
   merkleClaimEnabled: boolean;
   publicSingleClaimEnabled: boolean;
   publicUtilityClaimEnabled: boolean;
-  ethPrice: string;
+  nativePrice: string;
   priceUSD: number;
   maxPerAddress: number;
   defaultImage: string;
@@ -37,7 +37,7 @@ export const initialState: {
     merkleClaimEnabled: false,
     publicSingleClaimEnabled: false,
     publicUtilityClaimEnabled: false,
-    ethPrice: '',
+    nativePrice: '',
     priceUSD: 0,
     maxPerAddress: 0,
     defaultImage: '',
