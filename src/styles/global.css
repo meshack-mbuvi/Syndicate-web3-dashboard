@@ -947,3 +947,9 @@ input[type='checkbox'] {
 .react-add-to-calendar__dropdown ul li:nth-child(2) a::before {
   background-image: url('/images/social/apple.svg');
 }
+
+/* Storybook */
+
+.sb-show-main {
+  color: white;
+}
