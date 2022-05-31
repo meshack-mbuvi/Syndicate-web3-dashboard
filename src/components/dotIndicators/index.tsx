@@ -97,9 +97,13 @@ export const DotIndicators: React.FC<Props> = ({
       {/* Labels */}
       <FadeBetweenChildren
         visibleChildIndex={activeIndex}
-        extraClasses="w-full"
+        extraClasses={`w-full ${
+          orientation === DotIndicatorsOrientation.HORIZONTAL
+            ? 'text-right'
+            : 'text-left'
+        }`}
       >
-        {options.map((option, index) => {
+        {options.map((option) => {
           return (
             <div
               key={activeIndex}
