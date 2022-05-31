@@ -486,25 +486,26 @@ const ActivityTable: React.FC = () => {
           </div>
         ) : null}
       </div>
-      <div className="overflow-x-scroll no-scroll-bar">
-        <TransactionsTable
-          canNextPage={canNextPage}
-          dataLimit={DATA_LIMIT}
-          pageOffset={pageOffset}
-          refetchTransactions={refetchTransactions}
-          goToPreviousPage={goToPreviousPage}
-          goToNextPage={goToNextPage}
-          transactionsLoading={
-            transactionsLoading || networkStatus === NetworkStatus.refetch
-          }
-          emptyState={generateEmptyStates(filter, memoizedSearchTerm)}
-          toggleRowCheckbox={toggleRowCheckbox}
-          handleCheckboxSelect={handleSelect}
-          rowCheckboxActiveData={rowCheckboxActiveData}
-          activeTransactionHashes={activeTransactionHashes}
-          setActiveTransactionHashes={setActiveTransactionHashes}
-        />
-      </div>
+      {/* removed overflow settings here because the categories drop-down gets cut off
+      and requires scrolling to reveal.
+      Feel free to re-introduce if a better fix is found. */}
+      <TransactionsTable
+        canNextPage={canNextPage}
+        dataLimit={DATA_LIMIT}
+        pageOffset={pageOffset}
+        refetchTransactions={refetchTransactions}
+        goToPreviousPage={goToPreviousPage}
+        goToNextPage={goToNextPage}
+        transactionsLoading={
+          transactionsLoading || networkStatus === NetworkStatus.refetch
+        }
+        emptyState={generateEmptyStates(filter, memoizedSearchTerm)}
+        toggleRowCheckbox={toggleRowCheckbox}
+        handleCheckboxSelect={handleSelect}
+        rowCheckboxActiveData={rowCheckboxActiveData}
+        activeTransactionHashes={activeTransactionHashes}
+        setActiveTransactionHashes={setActiveTransactionHashes}
+      />
     </div>
   );
 };
