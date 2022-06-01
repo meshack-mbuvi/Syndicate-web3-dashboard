@@ -16,6 +16,7 @@ import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { usePagination, useTable } from 'react-table';
+
 import { NotSignedIcon } from '../shared/notSignedIcon';
 import { SignedIcon } from '../shared/signedIcon';
 import SignerMenu from './signerMenu';
@@ -28,15 +29,16 @@ const MembersTable = ({
   selectedMember,
   setSelectedMember,
   toggleAddMemberModal,
-  setShowMemberOptions
+  setShowMemberOptions,
+  setShowMintNavToClubSettings
 }): JSX.Element => {
   const {
     erc20TokenSliceReducer: {
-      erc20Token: { symbol },
+      erc20Token: { symbol, depositsEnabled },
       depositDetails: { depositTokenSymbol }
     },
     web3Reducer: {
-      web3: { account }
+      web3: { account, activeNetwork }
     }
   } = useSelector((state: AppState) => state);
 
@@ -123,7 +125,7 @@ const MembersTable = ({
 
   const [setMemberHasSigned, { loading }] = useMutation(
     SET_MEMBER_SIGN_STATUS,
-    { context: { clientName: 'backend' } }
+    { context: { clientName: 'backend', chainId: activeNetwork.chainId } }
   );
 
   const {
@@ -135,15 +137,15 @@ const MembersTable = ({
       clubAddress,
       address: memberAddress
     },
-    skip: !clubAddress || !memberAddress,
-    context: { clientName: 'backend' }
+    context: { clientName: 'backend', chainId: activeNetwork.chainId },
+    skip: !clubAddress || !memberAddress || !activeNetwork.chainId
   });
 
   useEffect(() => {
-    if (clubAddress && memberAddress) {
+    if (clubAddress && memberAddress && activeNetwork.chainId) {
       refetchMemberStatus();
     }
-  }, [clubAddress, memberAddress, loading]);
+  }, [clubAddress, memberAddress, loading, activeNetwork.chainId]);
 
   const isDemoMode = useDemoMode();
 
@@ -177,11 +179,8 @@ const MembersTable = ({
 
   const hasMemberSigned = memberSignedData?.Financial_memberSigned;
 
-  //TODO: remove this to re-enable cap table.
-  const capTableEnabled = false;
-
   return (
-    <div className="overflow-y-hidden ">
+    <div className="overflow-y-visible">
       <div className="flex my-11 col-span-12 space-x-8 justify-between items-center">
         {page.length > 1 || searchAddress ? (
           <SearchInput
@@ -195,12 +194,16 @@ const MembersTable = ({
           <div></div>
         )}
 
-        {isOwner && capTableEnabled && (
+        {isOwner && (
           <div className="inline-flex items-right">
             <LinkButton
               type={LinkType.MEMBER}
               onClick={() => {
-                toggleAddMemberModal();
+                if (depositsEnabled) {
+                  toggleAddMemberModal();
+                } else {
+                  setShowMintNavToClubSettings(true);
+                }
               }}
             />
           </div>
@@ -253,7 +256,7 @@ const MembersTable = ({
                   handleClick(row.original);
                 }}
                 onMouseEnter={() =>
-                  isOwner && capTableEnabled
+                  isOwner && depositsEnabled
                     ? setShowMemberOptions({
                         show: true,
                         memberAddress: row.original.memberAddress
@@ -261,7 +264,7 @@ const MembersTable = ({
                     : null
                 }
                 onMouseLeave={() =>
-                  isOwner && capTableEnabled
+                  isOwner && depositsEnabled
                     ? setShowMemberOptions({
                         show: false,
                         memberAddress: ''

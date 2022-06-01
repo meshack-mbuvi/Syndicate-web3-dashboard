@@ -13,7 +13,7 @@ interface IConfirmMemberAllocations {
   setPreview: Dispatch<SetStateAction<boolean>>;
   setShowModifyCapTable: Dispatch<SetStateAction<boolean>>;
   memberAllocation: string;
-  mintOrBurn: boolean;
+  mintClubTokens: boolean;
   newOwnership: number;
   tokensToMintOrBurn: number;
   newTotalSupply: string;
@@ -28,7 +28,7 @@ const ConfirmMemberAllocations: React.FC<IConfirmMemberAllocations> = ({
   setPreview,
   setShowModifyCapTable,
   memberAllocation,
-  mintOrBurn,
+  mintClubTokens,
   newOwnership,
   tokensToMintOrBurn,
   newTotalSupply,
@@ -127,8 +127,8 @@ const ConfirmMemberAllocations: React.FC<IConfirmMemberAllocations> = ({
               symbol={symbol}
             />
             <DetailContent
-              label={`Club tokens to be ${mintOrBurn ? 'minted' : 'burnt'}`}
-              value={`${mintOrBurn ? '+ ' : '- '}${floatedNumberWithCommas(
+              label={`Club tokens to be ${mintClubTokens ? 'minted' : 'burnt'}`}
+              value={`${mintClubTokens ? '+ ' : '- '}${floatedNumberWithCommas(
                 tokensToMintOrBurn
               )}`}
               symbol={symbol}
@@ -141,8 +141,8 @@ const ConfirmMemberAllocations: React.FC<IConfirmMemberAllocations> = ({
             />
           </div>
 
-          <div className="rounded-custom">
-            <Callout extraClasses="rounded-t-custom p-3 text-sm">
+          <div className="rounded-custom overflow-hidden">
+            <Callout extraClasses="p-3 text-sm w-full">
               <EstimateGas customClasses="bg-opacity-30 w-full flex cursor-default items-center" />
             </Callout>
             <div className="bg-blue bg-opacity-20 rounded-b-lg">

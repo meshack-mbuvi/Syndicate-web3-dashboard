@@ -23,7 +23,7 @@ export const MoreMenu: React.FC = () => {
             className="absolute w-0"
           >
             <Menu.Items
-              className={`absolute z-10 top-full bg-black text-left rounded-2xl px-5 py-4 space-y-2 min-w-50 border border-gray-syn7 transition-all duration-500 overflow-hidden mt-2`}
+              className={`absolute z-10 top-full bg-black text-left rounded-2xl px-5 py-4 space-y-4 min-w-50 border border-gray-syn7 transition-all duration-500 overflow-hidden mt-2`}
               style={{ transform: 'translateX(calc(-100% + 2.375rem))' }}
             >
               <div>
@@ -31,7 +31,7 @@ export const MoreMenu: React.FC = () => {
                   href="https://syndicate.io/"
                   target="_blank"
                   rel="noreferrer"
-                  className="block hover:bg-gray-syn8 rounded-sm px-6 -mx-6 py-2 -my-2"
+                  className="block hover:bg-gray-syn8 rounded-sm hover:px-6 hover:-mx-6 hover:py-2 hover:-my-2"
                 >
                   About
                 </a>
@@ -41,7 +41,7 @@ export const MoreMenu: React.FC = () => {
                   href="https://syndicatedao.gitbook.io/syndicate-guide/"
                   target="_blank"
                   rel="noreferrer"
-                  className="block hover:bg-gray-syn8 rounded-sm px-6 -mx-6 py-2 -my-2"
+                  className="block hover:bg-gray-syn8 rounded-sm hover:px-6 hover:-mx-6 hover:py-2 hover:-my-2"
                 >
                   Guide
                 </a>
@@ -51,7 +51,7 @@ export const MoreMenu: React.FC = () => {
                   href="https://discord.gg/aB89kn7bvV"
                   target="_blank"
                   rel="noreferrer"
-                  className="block hover:bg-gray-syn8 rounded-sm px-6 -mx-6 py-2 -my-2"
+                  className="block hover:bg-gray-syn8 rounded-sm hover:px-6 hover:-mx-6 hover:py-2 hover:-my-2"
                 >
                   Discord
                 </a>
@@ -61,7 +61,7 @@ export const MoreMenu: React.FC = () => {
                   href="https://twitter.com/SyndicateDAO"
                   target="_blank"
                   rel="noreferrer"
-                  className="block hover:bg-gray-syn8 rounded-sm px-6 -mx-6 py-2 -my-2"
+                  className="block hover:bg-gray-syn8 rounded-sm hover:px-6 hover:-mx-6 hover:py-2 hover:-my-2"
                 >
                   Twitter
                 </a>

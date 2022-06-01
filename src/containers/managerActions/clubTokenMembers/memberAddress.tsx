@@ -1,10 +1,13 @@
-import Tooltip from 'react-tooltip-lite';
 import { MEMBER_SIGNED_QUERY } from '@/graphql/queries';
 import { formatAddress } from '@/utils/formatAddress';
 import { useQuery } from '@apollo/client';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 import React, { useEffect } from 'react';
+import Tooltip from 'react-tooltip-lite';
+import { useSelector } from 'react-redux';
+import { AppState } from '@/state';
+
 import { SignedIcon } from '../shared/signedIcon';
 
 interface IProps {
@@ -13,6 +16,11 @@ interface IProps {
 }
 export const MemberAddressComponent: React.FC<IProps> = (props) => {
   const { memberAddress, setSelectedMember, ...rest } = props;
+  const {
+    web3Reducer: {
+      web3: { activeNetwork }
+    }
+  } = useSelector((state: AppState) => state);
 
   const {
     query: { clubAddress }
@@ -23,15 +31,15 @@ export const MemberAddressComponent: React.FC<IProps> = (props) => {
       clubAddress,
       address: memberAddress
     },
-    skip: !clubAddress || !memberAddress,
-    context: { clientName: 'backend' }
+    context: { clientName: 'backend', chainId: activeNetwork.chainId },
+    skip: !clubAddress || !memberAddress || !activeNetwork.chainId
   });
 
   useEffect(() => {
-    if (memberAddress) {
+    if (memberAddress && activeNetwork.chainId) {
       refetch();
     }
-  }, [memberAddress]);
+  }, [memberAddress, activeNetwork.chainId]);
 
   return (
     <button

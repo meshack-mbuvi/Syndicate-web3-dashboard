@@ -10,19 +10,19 @@ const TokenDetail: React.FC<{ title: string; value: any; symbol?: any }> = ({
   symbol
 }) => {
   const {
-    assetsSliceReducer: { ethereumTokenPrice }
+    assetsSliceReducer: { nativeTokenPrice }
   } = useSelector((state: AppState) => state);
 
   const blankValue = <span className="text-gray-syn4">-</span>;
   let floorPriceFormattedTotalValue, purchasePriceFormattedTotalValue;
   let clubBalance, balanceValue;
   if (title === 'Floor price') {
-    const floorPriceValue = value * ethereumTokenPrice;
+    const floorPriceValue = value * nativeTokenPrice;
 
     floorPriceFormattedTotalValue = floorPriceValue ? (
       <div className="flex flex-col items-end">
         {' '}
-        <PriceContainer numberValue={value} ethValue={true} />
+        <PriceContainer numberValue={value} nativeValue={true} />
         <div className="text-gray-syn4">
           {floatedNumberWithCommas(floorPriceValue)} USD
         </div>
@@ -33,11 +33,14 @@ const TokenDetail: React.FC<{ title: string; value: any; symbol?: any }> = ({
   }
 
   if (title === 'Last purchase price') {
-    const { lastPurchasePriceUSD, lastPurchasePriceETH } = value;
+    const { lastPurchasePriceUSD, lastPurchasePriceNative } = value;
 
     purchasePriceFormattedTotalValue = lastPurchasePriceUSD ? (
       <div className="flex flex-col items-end">
-        <PriceContainer numberValue={lastPurchasePriceETH} ethValue={true} />
+        <PriceContainer
+          numberValue={lastPurchasePriceNative}
+          nativeValue={true}
+        />
         <div className="text-gray-syn4">
           {floatedNumberWithCommas(lastPurchasePriceUSD)} USD
         </div>
@@ -60,7 +63,7 @@ const TokenDetail: React.FC<{ title: string; value: any; symbol?: any }> = ({
       <div className="flex flex-col items-end">
         <PriceContainer
           numberValue={value}
-          ethValue={false}
+          nativeValue={false}
           noUSDValue={+value === 0}
         />
       </div>

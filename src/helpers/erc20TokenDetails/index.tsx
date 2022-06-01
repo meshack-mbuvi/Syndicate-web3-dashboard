@@ -1,5 +1,6 @@
 import { DepositTokenMintModuleContract } from '@/ClubERC20Factory/depositTokenMintModule';
 import { MintPolicyContract } from '@/ClubERC20Factory/policyMintERC20';
+import { MerkleDistributorModuleContract } from '@/ClubERC20Factory/merkleDistributorModule';
 import { AppState } from '@/state';
 import {
   setERC20TokenContract,
@@ -9,18 +10,16 @@ import {
 import { DepositDetails, ERC20Token } from '@/state/erc20token/types';
 import { isZeroAddress } from '@/utils';
 import { getTokenDetails } from '@/utils/api';
-import { ChainEnum } from '@/utils/api/ChainTypes';
 import { getWeiAmount } from '@/utils/conversions';
-import { isDev } from '@/utils/environment';
+import { CONTRACT_ADDRESSES, SUPPORTED_TOKENS } from '@/Networks';
 
-const ETH_MINT_MODULE = process.env.NEXT_PUBLIC_ETH_MINT_MODULE;
 export const ERC20TokenDefaultState = {
   name: '',
   owner: '',
   address: '',
   depositToken: '',
   mintModule: '',
-  ethDepositToken: false,
+  nativeDepositToken: false,
   depositsEnabled: false,
   claimEnabled: false,
   totalSupply: 0,
@@ -47,7 +46,9 @@ export const ERC20TokenDefaultState = {
 export const getERC20TokenDetails = async (
   ERC20tokenContract,
   policyMintERC20: MintPolicyContract,
-  mintPolicy: MintPolicyContract
+  mintPolicy: MintPolicyContract,
+  MerkleDistributorModule: MerkleDistributorModuleContract,
+  web3: any
 ): Promise<ERC20Token> => {
   if (ERC20tokenContract) {
     try {
@@ -87,28 +88,33 @@ export const getERC20TokenDetails = async (
           ERC20tokenContract.symbol(),
           ERC20tokenContract.memberCount()
         ]);
-      const MERKLE_DISTRIBUTOR_MODULE =
-        process.env.NEXT_PUBLIC_MERKLE_DISTRIBUTOR_MODULE;
 
       const totalSupply = await ERC20tokenContract.totalSupply().then((wei) =>
-        getWeiAmount(wei, tokenDecimals, false)
+        getWeiAmount(web3, wei, tokenDecimals, false)
       );
 
       // Check both mint policies
       const claimEnabledPolicyMintERC20 = await policyMintERC20.isModuleAllowed(
-        ERC20tokenContract.clubERC20Contract._address,
-        MERKLE_DISTRIBUTOR_MODULE
+        address,
+        MerkleDistributorModule.contract._address
       );
-      const claimEnabledMintPolicy = await mintPolicy.isModuleAllowed(
-        ERC20tokenContract.clubERC20Contract._address,
-        MERKLE_DISTRIBUTOR_MODULE
-      );
+
+      let claimEnabledMintPolicy;
+
+      if (mintPolicy.address) {
+        claimEnabledMintPolicy = await mintPolicy.isModuleAllowed(
+          address,
+          MerkleDistributorModule.contract._address
+        );
+      }
+
       const claimEnabled =
         claimEnabledPolicyMintERC20 || claimEnabledMintPolicy;
 
       let depositsEnabled = false;
       if (!claimEnabled) {
         const endDateInFuture = +endTime * 1000 > new Date().getTime();
+
         depositsEnabled = endDateInFuture;
       }
 
@@ -123,12 +129,22 @@ export const getERC20TokenDetails = async (
         memberCount,
         loading: false,
         maxMemberCount,
-        maxTotalSupply: getWeiAmount(maxTotalSupply, tokenDecimals, false),
+        maxTotalSupply: getWeiAmount(
+          web3,
+          maxTotalSupply,
+          tokenDecimals,
+          false
+        ),
         requiredToken,
         depositsEnabled,
         claimEnabled,
         requiredTokenMinBalance,
-        maxTotalDeposits: getWeiAmount(maxTotalSupply, tokenDecimals, false), //should be updated if token prices is not 1:1
+        maxTotalDeposits: getWeiAmount(
+          web3,
+          maxTotalSupply,
+          tokenDecimals,
+          false
+        ), //should be updated if token prices is not 1:1
         startTime: parseInt(startTime, 10) * 1000, // time is in seconds. need to change to milliseconds
         endTime: parseInt(endTime, 10) * 1000 // time is in seconds. need to change to milliseconds
       };
@@ -142,34 +158,41 @@ export const getDepositDetails = async (
   depositToken,
   ERC20tokenContract,
   DepositTokenMintModule: DepositTokenMintModuleContract,
-  SingleTokenMintModule: DepositTokenMintModuleContract
+  SingleTokenMintModule: DepositTokenMintModuleContract,
+  activeNetwork
 ): Promise<DepositDetails> => {
+  const depositTokenMapping = SUPPORTED_TOKENS[activeNetwork.chainId];
+
   let mintModule = DepositTokenMintModule.address;
-  let ethDepositToken = false;
+  let nativeDepositToken = false;
+
+  const NATIVE_MINT_MODULE =
+    CONTRACT_ADDRESSES[activeNetwork.chainId]?.nativeMintModule;
 
   if (!depositToken && ERC20tokenContract) {
     depositToken = await SingleTokenMintModule?.depositToken(
       ERC20tokenContract.clubERC20Contract._address
     );
 
-    if (isZeroAddress(depositToken)) {
+    if (!depositToken || isZeroAddress(depositToken)) {
       depositToken = '';
-      mintModule = ETH_MINT_MODULE;
-      ethDepositToken = true;
+      mintModule = NATIVE_MINT_MODULE;
+      nativeDepositToken = true;
     } else {
       mintModule = SingleTokenMintModule.address;
     }
   }
-
-  const chainId = isDev ? ChainEnum.RINKEBY : ChainEnum.ETHEREUM;
-  const tokenDetails = await getTokenDetails(depositToken, chainId).then(
-    (res) => res.data
+  const [depositTokenInfo] = depositTokenMapping.filter(
+    (token) => token.address === depositToken
   );
+  const tokenDetails = await getTokenDetails(
+    depositToken,
+    activeNetwork.chainId
+  ).then((res) => res.data);
 
   return {
     mintModule,
-    ethDepositToken,
-    chainId,
+    nativeDepositToken,
     depositTokenLogo: tokenDetails.logo,
     depositTokenSymbol: tokenDetails.symbol,
     depositTokenName: tokenDetails.name,
@@ -179,12 +202,13 @@ export const getDepositDetails = async (
   };
 };
 
-export const isEthDepositToken = async (
+export const isNativeDepositToken = async (
   ERC20tokenContract,
   DepositTokenMintModule: DepositTokenMintModuleContract,
-  SingleTokenMintModule: DepositTokenMintModuleContract
+  SingleTokenMintModule: DepositTokenMintModuleContract,
+  activeNetwork
 ) => {
-  let _ethDepositToken = false;
+  let _nativeDepositToken = false;
 
   let depositToken = await DepositTokenMintModule?.depositToken(
     ERC20tokenContract.clubERC20Contract._address
@@ -197,10 +221,10 @@ export const isEthDepositToken = async (
 
     if (isZeroAddress(depositToken)) {
       depositToken = '';
-      _ethDepositToken = true;
+      _nativeDepositToken = true;
     }
   }
-  return { _ethDepositToken };
+  return { _nativeDepositToken };
 };
 
 /**
@@ -225,8 +249,12 @@ export const setERC20Token =
           policyMintERC20,
           mintPolicy,
           SingleTokenMintModule,
-          DepositTokenMintModule
+          DepositTokenMintModule,
+          MerkleDistributorModule
         }
+      },
+      web3Reducer: {
+        web3: { activeNetwork, web3 }
       }
     } = getState();
 
@@ -236,13 +264,16 @@ export const setERC20Token =
       const erc20Token = await getERC20TokenDetails(
         ERC20tokenContract,
         policyMintERC20,
-        mintPolicy
+        mintPolicy,
+        MerkleDistributorModule,
+        web3
       );
 
-      const { _ethDepositToken } = await isEthDepositToken(
+      const { _nativeDepositToken } = await isNativeDepositToken(
         ERC20tokenContract,
         DepositTokenMintModule,
-        SingleTokenMintModule
+        SingleTokenMintModule,
+        activeNetwork
       );
 
       dispatch(
@@ -253,14 +284,16 @@ export const setERC20Token =
            * is 1: 100000 erc20 tokens. For other erc20 tokens,
            * the ratio is 1:1
            */
-          maxTotalDeposits: _ethDepositToken
-            ? Number(erc20Token.maxTotalDeposits) / 10000
+          maxTotalDeposits: _nativeDepositToken
+            ? Number(erc20Token.maxTotalDeposits) /
+              activeNetwork.nativeCurrency.exchangeRate
             : erc20Token.maxTotalDeposits
         })
       );
 
       dispatch(setLoadingClub(false));
     } catch (error) {
+      console.log({ error });
       return dispatch(setERC20TokenDetails(ERC20TokenDefaultState));
     }
   };

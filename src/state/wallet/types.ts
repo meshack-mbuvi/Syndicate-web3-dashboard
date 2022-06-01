@@ -1,16 +1,61 @@
 import Web3 from 'web3';
 
-const initialWeb3 = new Web3(process.env.NEXT_PUBLIC_ALCHEMY);
+const initialWeb3 = {};
 
 export interface IWeb3 extends Web3 {
   _provider?: any;
   utils: any;
+}
+export interface IGnosis {
+  txServiceUrl: string;
+}
+
+export interface IBlockResources {
+  transaction: string;
+  address: string;
+}
+export interface IblockExplorer {
+  name: string;
+  baseUrl: string;
+  api: string;
+  resources: IBlockResources;
+}
+
+export interface INativeCurrency {
+  symbol: string;
+  name: string;
+  decimals: string;
+  exchangeRate: number;
+}
+
+export interface IMetadata {
+  colors: {
+    background: string;
+  };
+}
+
+export interface IActiveNetwork {
+  name: string;
+  displayName: string;
+  shortName: string;
+  network: string;
+  testnet: boolean;
+  chainId: number;
+  networkId: number;
+  rpcUrl: string;
+  publicRPC: string;
+  logo: string;
+  blockExplorer: IblockExplorer;
+  nativeCurrency: INativeCurrency;
+  gnosis: IGnosis;
+  metadata: IMetadata;
 }
 
 export interface IWeb3Library {
   account: string;
   web3: IWeb3;
   providerName: string;
+  activeNetwork: IActiveNetwork;
 }
 
 export interface IEthereumNetwork {
@@ -37,9 +82,11 @@ export interface InitialState {
     showConnectionModal: boolean;
     isErrorModalOpen: boolean;
     error: IModalErrors | any;
-    web3: IWeb3;
+    web3: any;
+    chainId: number;
     account: string;
     providerName: string;
+    activeNetwork: IActiveNetwork;
     currentEthereumNetwork: string;
     ethereumNetwork: {
       correctEthereumNetwork: string;
@@ -59,11 +106,47 @@ export const initialState: InitialState = {
     error: null,
     web3: initialWeb3,
     account: '',
+    chainId: 0,
     providerName: '',
     currentEthereumNetwork: '',
     ethereumNetwork: {
       correctEthereumNetwork: '',
       invalidEthereumNetwork: false
+    },
+    activeNetwork: {
+      name: '',
+      displayName: '',
+      shortName: '',
+      network: '',
+      testnet: false,
+      chainId: 0,
+      networkId: null,
+      rpcUrl: '',
+      publicRPC: '',
+      logo: '',
+      blockExplorer: {
+        name: '',
+        baseUrl: '',
+        api: '',
+        resources: {
+          transaction: '',
+          address: ''
+        }
+      },
+      nativeCurrency: {
+        symbol: '',
+        name: '',
+        decimals: '',
+        exchangeRate: 1
+      },
+      gnosis: {
+        txServiceUrl: ''
+      },
+      metadata: {
+        colors: {
+          background: ''
+        }
+      }
     }
   },
   showWalletModal: false,

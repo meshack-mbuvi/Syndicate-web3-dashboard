@@ -11,7 +11,7 @@ const client = new ApolloClient({
 
 export default {
   title:
-    'Molecules/Cap Table Management/Modals/Add Member/Confirm Member Details Modal',
+    '4. Organisms/Cap Table Management/Modals/Add Member/Confirm Member Details Modal',
   parameters: {
     nextRouter: {
       query: {

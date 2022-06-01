@@ -1,7 +1,7 @@
 import React from 'react';
 
 export default {
-  title: 'Quarks/Typography'
+  title: '1. Quarks/Typography'
 };
 
 const Template = (args) => (

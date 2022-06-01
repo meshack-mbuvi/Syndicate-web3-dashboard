@@ -1,10 +1,9 @@
-import { EtherscanLink } from '@/components/syndicates/shared/EtherscanLink';
-import { isDev } from '@/utils/environment';
+import { BlockExplorerLink } from '@/components/syndicates/shared/BlockExplorerLink';
+import { AppState } from '@/state';
 import { floatedNumberWithCommas } from '@/utils/formattedNumbers';
 import Image from 'next/image';
 import React from 'react';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
-import { AppState } from '@/state';
 import { useSelector } from 'react-redux';
 
 export const SuccessOrFailureContent: React.FC<{
@@ -34,7 +33,10 @@ export const SuccessOrFailureContent: React.FC<{
 }) => {
   const {
     erc20TokenSliceReducer: {
-      depositDetails: { depositTokenSymbol, ethDepositToken }
+      depositDetails: { depositTokenSymbol, nativeDepositToken }
+    },
+    web3Reducer: {
+      web3: { activeNetwork }
     }
   } = useSelector((state: AppState) => state);
   return (
@@ -74,10 +76,10 @@ export const SuccessOrFailureContent: React.FC<{
           {successfulDeposit
             ? `Deposited ${floatedNumberWithCommas(
                 depositAmount,
-                ethDepositToken ?? false
+                nativeDepositToken ?? false
               )} ${depositTokenSymbol}`
             : successfulClaim
-            ? 'Claim successfull'
+            ? 'Claim successful'
             : claimFailed
             ? 'Claim failed'
             : `Deposit failed`}
@@ -96,9 +98,7 @@ export const SuccessOrFailureContent: React.FC<{
           </div>
           {successfulDeposit ? (
             <CopyToClipboard
-              text={`${
-                isDev ? 'https://rinkeby.etherscan.io' : 'https://etherscan.io'
-              }/tx/${transactionHash}`}
+              text={`${activeNetwork.blockExplorer.baseUrl}/${activeNetwork.blockExplorer.resources.transaction}/${transactionHash}`}
               onCopy={handleOnCopy}
             >
               <div className="relative pb-8  w-full">
@@ -123,17 +123,20 @@ export const SuccessOrFailureContent: React.FC<{
             </CopyToClipboard>
           ) : (
             <div className="pb-6 text-base flex justify-center items-center hover:opacity-80">
-              <EtherscanLink
-                etherscanInfo={transactionHash}
-                type="transaction"
-                text="View on Etherscan"
+              <BlockExplorerLink
+                resourceId={transactionHash}
+                resource="transaction"
+                prefix="View on "
               />
             </div>
           )}
         </>
       ) : (
         <div className="pb-6 text-base flex justify-center items-center hover:opacity-80">
-          <EtherscanLink etherscanInfo={transactionHash} type="transaction" />
+          <BlockExplorerLink
+            resourceId={transactionHash}
+            resource="transaction"
+          />
         </div>
       )}
     </div>

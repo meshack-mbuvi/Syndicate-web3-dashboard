@@ -9,6 +9,9 @@ const ShareModal: React.FC = () => {
   const {
     erc20TokenSliceReducer: {
       erc20Token: { depositsEnabled }
+    },
+    web3Reducer: {
+      web3: { activeNetwork }
     }
   } = useSelector((state: AppState) => state);
 
@@ -25,7 +28,9 @@ const ShareModal: React.FC = () => {
   // club deposit link
   const [clubDepositLink, setClubDepositLink] = useState<string>('');
   useEffect(() => {
-    setClubDepositLink(`${window.location.origin}/clubs/${clubAddress}/`);
+    setClubDepositLink(
+      `${window.location.origin}/clubs/${clubAddress}?network=${activeNetwork.chainId}`
+    );
   }, [clubAddress]);
 
   return (

@@ -2,7 +2,7 @@ import PillTabs from '@/components/pillTabs/tabs';
 import { useState } from 'react';
 
 export default {
-  title: 'Atoms/Pill Tabs'
+  title: '2. Atoms/Pill Tabs'
 };
 
 const Template = (args) => {

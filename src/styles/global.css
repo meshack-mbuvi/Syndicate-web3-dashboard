@@ -138,6 +138,10 @@
   .bg-black-monolith {
     background: linear-gradient(206.57deg, #0e1c21 0%, #02070a 83.33%);
   }
+
+  input.partial[type='checkbox']:checked {
+    background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGxpbmUgeDE9IjQiIHkxPSI4IiB4Mj0iMTIiIHkyPSI4IiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgo8L3N2Zz4K') !important;
+  }
 }
 
 @layer components {
@@ -421,6 +425,12 @@
     .horizontally-center {
       left: 50%;
       transform: translateX(-50%);
+    }
+
+    .vertically-center.horizontally-center {
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
     }
 
     .center {
@@ -936,4 +946,9 @@ input[type='checkbox'] {
 
 .react-add-to-calendar__dropdown ul li:nth-child(2) a::before {
   background-image: url('/images/social/apple.svg');
+}
+
+input[type='time']::-webkit-calendar-picker-indicator {
+  background: none;
+  display: none;
 }

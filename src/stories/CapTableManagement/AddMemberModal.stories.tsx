@@ -3,7 +3,7 @@ import { Provider } from 'react-redux';
 import { store } from '@/state/index';
 
 export default {
-  title: 'Molecules/Cap Table Management/Modals/Add Member/Add Member Modal',
+  title: '4. Organisms/Cap Table Management/Modals/Add Member/Add Member Modal',
   parameters: {
     nextRouter: {
       query: {

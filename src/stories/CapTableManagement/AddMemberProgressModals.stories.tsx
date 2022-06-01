@@ -2,7 +2,7 @@ import { ProgressModal, ProgressModalState } from '@/components/progressModal';
 import { formatAddress } from '@/utils/formatAddress';
 
 export default {
-  title: 'Molecules/Cap Table Management/Modals/Add Member/Progress Modals',
+  title: '4. Organisms/Cap Table Management/Modals/Add Member/Progress Modals',
   argTypes: {
     state: {
       options: [
@@ -37,7 +37,7 @@ Pending.args = {
   title: 'Adding member',
   description:
     'This could take anywhere from seconds to hours depending on network congestion and the gas fees you set. You can safely leave this page while you wait.',
-  etherscanHash: dummyTransactionHash,
+  transactionHash: dummyTransactionHash,
   transactionType: 'transaction',
   state: ProgressModalState.PENDING
 };
@@ -54,7 +54,7 @@ Success.args = {
   buttonLabel: 'Done',
   buttonFullWidth: true,
   state: ProgressModalState.SUCCESS,
-  etherscanHash: dummyTransactionHash,
+  transactionHash: dummyTransactionHash,
   transactionType: 'transaction'
 };
 
@@ -66,6 +66,6 @@ Failure.args = {
   buttonLabel: 'Close',
   buttonFullWidth: true,
   state: ProgressModalState.FAILURE,
-  etherscanHash: dummyTransactionHash,
+  transactionHash: dummyTransactionHash,
   transactionType: 'transaction'
 };

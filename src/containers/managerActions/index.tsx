@@ -1,13 +1,15 @@
-import { amplitudeLogger, Flow } from '@/components/amplitude';
+import { Flow, amplitudeLogger } from '@/components/amplitude';
 import { CLICK_COPY_DEPOSIT_LINK_TO_SHARE } from '@/components/amplitude/eventNames';
 import ErrorBoundary from '@/components/errorBoundary';
 import FadeIn from '@/components/fadeIn/FadeIn';
+import MakeDistributionCard from '@/components/shared/makeDistributionCard';
 import CreateEntityCard from '@/components/shared/createEntityCard';
 import ModifyClubSettingsCard from '@/components/shared/modifyClubSettingsCard';
+import SignLegalDocumentsCard from '@/components/shared/signLegalDocumentsCard';
 import { SkeletonLoader } from '@/components/skeletonLoader';
 import StatusBadge from '@/components/syndicateDetails/statusBadge';
+import { BlockExplorerLink } from '@/components/syndicates/shared/BlockExplorerLink';
 import ConnectWalletAction from '@/components/syndicates/shared/connectWalletAction';
-import { EtherscanLink } from '@/components/syndicates/shared/EtherscanLink';
 import { SuccessCard } from '@/containers/managerActions/successCard';
 import { useCreateInvestmentClubContext } from '@/context/CreateInvestmentClubContext';
 import { useDemoMode } from '@/hooks/useDemoMode';
@@ -20,7 +22,9 @@ import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { animated } from 'react-spring';
-import GenerateDepositLink from './GenerateDepositLink';
+import GenerateDepositLink, { DepositLinkModal } from './GenerateDepositLink';
+import ShareOrChangeLegalDocuments from './shared/ShareOrChangeLegalDocuments';
+import { useFlags } from 'launchdarkly-react-client-sdk';
 
 const useShowShareWarning = () => {
   const router = useRouter();
@@ -47,7 +51,7 @@ const useShowShareWarning = () => {
 const ManagerActions = (): JSX.Element => {
   const {
     web3Reducer: {
-      web3: { status }
+      web3: { status, activeNetwork }
     },
     erc20TokenSliceReducer: { erc20Token },
     createInvestmentClubSliceReducer: {
@@ -61,6 +65,9 @@ const ManagerActions = (): JSX.Element => {
     }
   } = useSelector((state: AppState) => state);
 
+  // LaunchDarkly distribution-button (converted to camelcase) is called
+  const { distributionButton } = useFlags();
+
   const { resetCreationStates } = useCreateInvestmentClubContext();
   const router = useRouter();
   const dispatch = useDispatch();
@@ -69,8 +76,8 @@ const ManagerActions = (): JSX.Element => {
     loading,
     depositsEnabled,
     claimEnabled,
-    totalDeposits,
-    maxTotalDeposits
+    totalSupply,
+    maxTotalSupply
   } = erc20Token;
 
   const { clubAddress, source } = router.query;
@@ -85,7 +92,7 @@ const ManagerActions = (): JSX.Element => {
     useState(false);
   const [showGenerateLinkModal, setShowGenerateLinkModal] = useState(false);
 
-  const [hasAgreements, setHasAgreements] = useState(false);
+  const [hasAgreements, setHasAgreememnts] = useState(false);
 
   const setClubDepositLink = (clubDepositLink: string) => {
     dispatch(
@@ -107,14 +114,12 @@ const ManagerActions = (): JSX.Element => {
   useEffect(() => {
     const legal = JSON.parse(localStorage.getItem('legal') || '{}');
     const clubLegalData = legal[clubAddress as string];
-    setHasAgreements(clubLegalData?.signaturesNeeded || false);
-
+    setHasAgreememnts(clubLegalData?.signaturesNeeded || false);
     if (!clubLegalData?.signaturesNeeded) {
       return setClubDepositLink(
-        `${window.location.origin}/clubs/${clubAddress}`
+        `${window.location.origin}/clubs/${clubAddress}?network=${activeNetwork.chainId}`
       );
     }
-
     if (
       clubLegalData?.clubData.adminSignature &&
       clubLegalData.signaturesNeeded
@@ -122,7 +127,8 @@ const ManagerActions = (): JSX.Element => {
       const memberSignURL = generateMemberSignURL(
         clubAddress as string,
         clubLegalData.clubData,
-        clubLegalData.clubData.adminSignature
+        clubLegalData.clubData.adminSignature,
+        activeNetwork.chainId
       );
       setClubDepositLink(memberSignURL);
     }
@@ -137,7 +143,9 @@ const ManagerActions = (): JSX.Element => {
       resetCreationStates();
       setSyndicateSuccessfullyCreated(true);
       // truncates the query part to prevent reshowing confetti
-      router.push(`/clubs/${clubAddress}/manage`);
+      router.push(
+        `/clubs/${clubAddress}/manage${'?network=' + activeNetwork.chainId}`
+      );
     }
   }, [source, clubAddress, router]);
 
@@ -166,6 +174,28 @@ const ManagerActions = (): JSX.Element => {
 
   const [linkShareAgreementChecked, setLinkShareAgreementChecked] =
     useState(false);
+  const depositExceedTotal = +totalSupply === +maxTotalSupply;
+
+  const [showShareOrChangeLegalDocs, setShowShareOrChangeLegalDocs] =
+    useState(false);
+
+  const handleSignLegalDocument = () => {
+    const legal = JSON.parse(localStorage.getItem('legal') || '{}');
+
+    const clubLegalData = legal[clubAddress as string];
+    if (!clubLegalData) {
+      setShowGenerateLinkModal(true);
+      setLinkShareAgreementChecked(true);
+    } else {
+      setShowShareOrChangeLegalDocs(true);
+    }
+  };
+
+  const handleChangeLegalDocument = () => {
+    setShowGenerateLinkModal(true);
+    setLinkShareAgreementChecked(true);
+    setShowShareOrChangeLegalDocs(false);
+  };
 
   return (
     <ErrorBoundary>
@@ -182,7 +212,7 @@ const ManagerActions = (): JSX.Element => {
                 showConfettiSuccess
               }}
               isManager
-              depositExceedTotal={+totalDeposits === +maxTotalDeposits}
+              depositExceedTotal={depositExceedTotal}
             />
             {status !== Status.DISCONNECTED && loading ? (
               <div className="h-fit-content relative py-6 px-8 flex justify-center items-start flex-col w-full">
@@ -198,7 +228,7 @@ const ManagerActions = (): JSX.Element => {
                 />
                 <SkeletonLoader width="full" height="12" />
               </div>
-            ) : depositsEnabled || claimEnabled ? (
+            ) : (depositsEnabled && !depositExceedTotal) || claimEnabled ? (
               <div
                 className={`h-fit-content relative ${
                   showConfettiSuccess
@@ -274,10 +304,10 @@ const ManagerActions = (): JSX.Element => {
                           existence. Once the transaction is complete, you’ll
                           see your club’s deposit link below.
                         </p>
-                        <EtherscanLink
-                          etherscanInfo={transactionHash}
-                          text="View progress on Etherscan"
-                          type="transaction"
+                        <BlockExplorerLink
+                          resourceId={transactionHash}
+                          prefix="View progress on "
+                          resource="transaction"
                         />
                       </div>
                     )}
@@ -295,10 +325,9 @@ const ManagerActions = (): JSX.Element => {
                           </a>{' '}
                           if the issue persists.
                         </p>
-                        <EtherscanLink
-                          etherscanInfo={transactionHash}
-                          text="View on Etherscan"
-                          type="transaction"
+                        <BlockExplorerLink
+                          resourceId={transactionHash}
+                          resource="transaction"
                         />
                       </div>
                     )}
@@ -364,17 +393,63 @@ const ManagerActions = (): JSX.Element => {
               </div>
             ) : null}
           </div>
+          <DepositLinkModal
+            setShowGenerateLinkModal={setShowGenerateLinkModal}
+            showGenerateLinkModal={showGenerateLinkModal}
+          />
         </FadeIn>
+
         {status !== Status.DISCONNECTED && (
           <div className="flex bg-gray-syn8 duration-500 transition-all rounded-2.5xl my-6 p-4 space-y-4 items-start flex-col">
+            {distributionButton ? (
+              <div className="hover:bg-gray-syn7 rounded-xl py-2 px-4 w-full">
+                {loading ? (
+                  <>
+                    <SkeletonLoader width="2/3" height="6" />
+                    <SkeletonLoader width="full" height="10" />
+                  </>
+                ) : (
+                  <MakeDistributionCard />
+                )}
+              </div>
+            ) : null}
+
             <div className="hover:bg-gray-syn7 rounded-xl py-2 px-4 w-full">
-              <CreateEntityCard />
+              {loading ? (
+                <>
+                  <SkeletonLoader width="2/3" height="6" />
+                  <SkeletonLoader width="full" height="10" />
+                </>
+              ) : (
+                <CreateEntityCard />
+              )}
             </div>
+
+            {!depositsEnabled ? (
+              <div className="hover:bg-gray-syn7 rounded-xl py-2 px-4 w-full ">
+                {loading ? (
+                  <SkeletonLoader width="full" height="6" />
+                ) : (
+                  <SignLegalDocumentsCard onClick={handleSignLegalDocument} />
+                )}
+              </div>
+            ) : null}
+
             <div className="hover:bg-gray-syn7 rounded-xl py-2 px-4 w-full">
-              <ModifyClubSettingsCard />
+              {loading ? (
+                <SkeletonLoader width="full" height="6" />
+              ) : (
+                <ModifyClubSettingsCard />
+              )}
             </div>
           </div>
         )}
+
+        <ShareOrChangeLegalDocuments
+          showShareOrChangeDocs={showShareOrChangeLegalDocs}
+          setShowShareOrChangeDocsModal={setShowShareOrChangeLegalDocs}
+          handleChangeLegalDocument={handleChangeLegalDocument}
+        />
       </div>
     </ErrorBoundary>
   );

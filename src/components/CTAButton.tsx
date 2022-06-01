@@ -5,6 +5,7 @@ interface Props {
   onClick?;
   greenCta?: boolean;
   type?;
+  fullWidth?: boolean;
 }
 
 export const CtaButton: React.FC<Props> = ({
@@ -12,11 +13,12 @@ export const CtaButton: React.FC<Props> = ({
   children,
   greenCta,
   disabled = false,
-  type = 'button'
+  type = 'button',
+  fullWidth = true
 }) => {
   return (
     <button
-      className={`w-full py-4 ${
+      className={`${fullWidth ? 'w-full' : ''} py-4 ${
         disabled
           ? 'primary-CTA-disabled text-gray-syn4'
           : greenCta

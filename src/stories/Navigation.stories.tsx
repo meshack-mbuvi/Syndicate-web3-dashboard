@@ -6,7 +6,7 @@ import ConnectWalletProvider from '@/context/ConnectWalletProvider';
 import ConnectWallet from '@/components/connectWallet';
 
 export default {
-  title: 'Molecules/Nav Bar',
+  title: '3. Molecules/Nav Bar',
   component: Header,
   decorators: [
     (Story) => (

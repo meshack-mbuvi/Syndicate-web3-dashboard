@@ -1,7 +1,7 @@
-import React, { useState, useEffect, FC } from 'react';
+import { BlockExplorerLink } from '@/components/syndicates/shared/BlockExplorerLink';
+import React, { FC, useEffect, useState } from 'react';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { Menu, Transition } from '@headlessui/react';
-import { EtherscanLink } from '@/components/syndicates/shared/EtherscanLink';
 import { formatAddress } from '@/utils/formatAddress';
 import { useConnectWalletContext } from '@/context/ConnectWalletProvider';
 import { ExternalLinkColor } from '@/components/iconWrappers';
@@ -11,40 +11,27 @@ interface IAddressMenuDropDown {
   web3: any;
 }
 
-const AddressMenuDropDown: FC<IAddressMenuDropDown> = ({ web3 }) => {
+const AddressMenuDropDown: FC<IAddressMenuDropDown> = ({
+  web3: { account, providerName, web3 }
+}) => {
   const { disconnectWallet } = useConnectWalletContext();
 
-  const { account, web3: web3Instance } = web3;
-
   const [showCopyState, setShowCopyState] = useState(false);
-  const [ethBalance, setEthBalance] = useState('');
+  const [nativeBalance, setNativeBalance] = useState('');
 
   const updateAddressCopyState = () => {
     setShowCopyState(true);
     setTimeout(() => setShowCopyState(false), 1000);
   };
 
-  const getEthBalance = async (address: string, isMounted: boolean) => {
-    try {
-      const balance = await web3Instance.eth.getBalance(address);
-      const ethBalance = await web3Instance.utils.fromWei(balance, 'ether');
-      if (isMounted) {
-        setEthBalance(ethBalance);
-      }
-    } catch (error) {
-      console.log({ error });
-    }
-  };
-
   useEffect(() => {
-    let isMounted = true;
-    if (account && !ethBalance) {
-      getEthBalance(account, isMounted);
+    if (account && !nativeBalance) {
+      web3.eth
+        .getBalance(account)
+        .then((balance) => web3.utils.fromWei(balance, 'ether'))
+        .then(setNativeBalance);
     }
-    return () => {
-      isMounted = false;
-    };
-  }, [account, ethBalance]);
+  }, [account, nativeBalance]);
 
   const formattedAddress = formatAddress(account, 7, 6);
 
@@ -96,6 +83,9 @@ const AddressMenuDropDown: FC<IAddressMenuDropDown> = ({ web3 }) => {
                       {formatAddress(account.substring(2), 6, 6)}
                     </p>
                   </div>
+                  <div className="flex justify-between mt-2">
+                    {renderConnectedWith(providerName)}
+                  </div>
                 </div>
 
                 <div
@@ -128,10 +118,11 @@ const AddressMenuDropDown: FC<IAddressMenuDropDown> = ({ web3 }) => {
                     </div>
                   </CopyToClipboard>
 
-                  {/* View on Etherscan */}
+                  {/* View on Block Explorer */}
                   <div className="mb-4">
-                    <EtherscanLink
-                      etherscanInfo={account}
+                    <BlockExplorerLink
+                      resource={'address'}
+                      resourceId={account}
                       customStyles="text-sm hover:bg-gray-syn7 hover:p-2 hover:-m-2 rounded-lg"
                       iconcolor={ExternalLinkColor.WHITE}
                     />
@@ -157,6 +148,36 @@ const AddressMenuDropDown: FC<IAddressMenuDropDown> = ({ web3 }) => {
         </>
       )}
     </Menu>
+  );
+};
+
+const renderConnectedWith = (providerName: string) => {
+  let currentProvider;
+  let imageLink;
+
+  switch (providerName) {
+    // case "Injected":
+    //   currentProvider = "Metamask";
+    //   imageLink = "/images/metamaskIcon.svg";
+    //   break;
+    case 'WalletConnect':
+      currentProvider = 'WalletConnect';
+      imageLink = '/images/walletConnect.svg';
+      break;
+    case 'GnosisSafe':
+      currentProvider = 'Gnosis Safe';
+      imageLink = '/images/gnosisSafe.png';
+      break;
+    default:
+      currentProvider = 'Metamask';
+      imageLink = '/images/metamaskIcon.svg';
+      break;
+  }
+  return (
+    <>
+      <p className="text-sm text-gray-300">Connected with {currentProvider}</p>
+      <img alt="icon" src={imageLink} className="inline h-5" />
+    </>
   );
 };
 

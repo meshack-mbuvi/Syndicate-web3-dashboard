@@ -31,6 +31,9 @@ const ActivityTable: React.FC = () => {
     transactionsReducer: { totalTransactionsCount },
     erc20TokenSliceReducer: {
       erc20Token: { depositsEnabled: isOpenForDeposits }
+    },
+    web3Reducer: {
+      web3: { activeNetwork }
     }
   } = useSelector((state: AppState) => state);
   const isManager = useIsClubOwner();
@@ -246,7 +249,7 @@ const ActivityTable: React.FC = () => {
     } else {
       refetchTransactions();
     }
-  }, [pageOffset, filter, isDemoMode, searchValue]);
+  }, [pageOffset, filter, isDemoMode, searchValue, activeNetwork.chainId]);
 
   useEffect(() => {
     if (transactionsData?.Financial_recentTransactions) {
@@ -376,7 +379,7 @@ const ActivityTable: React.FC = () => {
       variables: {
         transactionAnnotationList: txnAnnotationListData
       },
-      context: { clientName: 'backend' }
+      context: { clientName: 'backend', chainId: activeNetwork.chainId }
     });
 
     if (!annotationLoading) {
@@ -483,25 +486,26 @@ const ActivityTable: React.FC = () => {
           </div>
         ) : null}
       </div>
-      <div className="overflow-x-scroll no-scroll-bar">
-        <TransactionsTable
-          canNextPage={canNextPage}
-          dataLimit={DATA_LIMIT}
-          pageOffset={pageOffset}
-          refetchTransactions={refetchTransactions}
-          goToPreviousPage={goToPreviousPage}
-          goToNextPage={goToNextPage}
-          transactionsLoading={
-            transactionsLoading || networkStatus === NetworkStatus.refetch
-          }
-          emptyState={generateEmptyStates(filter, memoizedSearchTerm)}
-          toggleRowCheckbox={toggleRowCheckbox}
-          handleCheckboxSelect={handleSelect}
-          rowCheckboxActiveData={rowCheckboxActiveData}
-          activeTransactionHashes={activeTransactionHashes}
-          setActiveTransactionHashes={setActiveTransactionHashes}
-        />
-      </div>
+      {/* removed overflow settings here because the categories drop-down gets cut off
+      and requires scrolling to reveal.
+      Feel free to re-introduce if a better fix is found. */}
+      <TransactionsTable
+        canNextPage={canNextPage}
+        dataLimit={DATA_LIMIT}
+        pageOffset={pageOffset}
+        refetchTransactions={refetchTransactions}
+        goToPreviousPage={goToPreviousPage}
+        goToNextPage={goToNextPage}
+        transactionsLoading={
+          transactionsLoading || networkStatus === NetworkStatus.refetch
+        }
+        emptyState={generateEmptyStates(filter, memoizedSearchTerm)}
+        toggleRowCheckbox={toggleRowCheckbox}
+        handleCheckboxSelect={handleSelect}
+        rowCheckboxActiveData={rowCheckboxActiveData}
+        activeTransactionHashes={activeTransactionHashes}
+        setActiveTransactionHashes={setActiveTransactionHashes}
+      />
     </div>
   );
 };

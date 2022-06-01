@@ -9,7 +9,7 @@ import AutoGrowInputField from '@/components/inputs/autoGrowInput';
 import Modal, { ModalStyle } from '@/components/modal';
 import NumberTreatment from '@/components/NumberTreatment';
 import { Spinner } from '@/components/shared/spinner';
-import { EtherscanLink } from '@/components/syndicates/shared/EtherscanLink';
+import { BlockExplorerLink } from '@/components/syndicates/shared/BlockExplorerLink';
 import { AppState } from '@/state';
 import { getWeiAmount } from '@/utils/conversions';
 import {
@@ -104,7 +104,7 @@ const RedeemRug: React.FC = () => {
     try {
       const tokens = await rugRadioContract?.methods.balanceOf(account).call();
       const decimals = await rugRadioContract?.methods.decimals().call();
-      setAvailableTokens(getWeiAmount(tokens, decimals, false));
+      setAvailableTokens(getWeiAmount(web3, tokens, decimals, false));
     } catch (error) {
       setAvailableTokens(0);
     }
@@ -117,6 +117,7 @@ const RedeemRug: React.FC = () => {
         .call({ from: account });
 
       const currentAllowance = getWeiAmount(
+        web3,
         tokenAllowance.toString(),
         18,
         false
@@ -217,6 +218,7 @@ const RedeemRug: React.FC = () => {
 
     // set amount to approve.
     const amountToApprove = getWeiAmount(
+      web3,
       rugTokensToRedeem.toString(),
       18,
       true
@@ -283,7 +285,7 @@ const RedeemRug: React.FC = () => {
 
       // fallback for gnosisSafe <> walletConnect
       if (gnosisTxHash) {
-        // await getGnosisTxnInfo(gnosisTxHash);
+        // await getGnosisTxnInfo(gnosisTxHash, this.activeNetwork);
         // await checkCurrentMemberAllowance();
         setSubmittingAllowanceApproval(false);
 
@@ -311,7 +313,7 @@ const RedeemRug: React.FC = () => {
     setMetamaskConfirmPending(true);
     await depositExchangeMintModule.mint(
       rugDaoTokenAddress,
-      getWeiAmount(rugTokensToRedeem.toString(), 18, true),
+      getWeiAmount(web3, rugTokensToRedeem.toString(), 18, true),
       account,
       onTxConfirm,
       onTxReceipt,
@@ -476,9 +478,10 @@ const RedeemRug: React.FC = () => {
             </div>
 
             <div className="pb-4 text-base flex justify-center items-center hover:opacity-80">
-              <EtherscanLink
-                etherscanInfo={transactionHash}
-                type="transaction"
+              <BlockExplorerLink
+                resourceId={transactionHash}
+                resource="transaction"
+                suffix="transaction"
               />
             </div>
           </div>
@@ -631,9 +634,10 @@ const RedeemRug: React.FC = () => {
                 </span>
                 {submitting && transactionHash ? (
                   <div className="pb-4 text-base flex justify-center items-center hover:opacity-80">
-                    <EtherscanLink
-                      etherscanInfo={transactionHash}
-                      type="transaction"
+                    <BlockExplorerLink
+                      resourceId={transactionHash}
+                      resource="transaction"
+                      suffix="transaction"
                     />
                   </div>
                 ) : null}

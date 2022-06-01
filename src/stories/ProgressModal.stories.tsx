@@ -1,7 +1,7 @@
 import { ProgressModal, ProgressModalState } from '@/components/progressModal';
 
 export default {
-  title: 'Molecules/Modify Club Settings/Progress Modal',
+  title: '4. Organisms/Modify Club Settings/Progress Modal',
   argTypes: {
     state: {
       options: [
@@ -31,7 +31,7 @@ Pending.args = {
   title: 'Pending confirmation',
   description:
     'This could take up to a few minutes depending on network congestion and the gas fees you set. Feel free to leave this screen.',
-  etherscanLink: '#',
+  blockExplorerLink: '#',
   buttonLabel: 'Back to club dashboard',
   state: ProgressModalState.PENDING
 };

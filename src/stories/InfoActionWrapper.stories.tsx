@@ -2,7 +2,7 @@ import { InfoActionWrapper } from '@/components/infoActionWrapper';
 import React from 'react';
 
 export default {
-  title: 'Molecules/Info Action Wrapper',
+  title: '3. Molecules/Info Action Wrapper',
   argTypes: {
     handleAction: {
       action: 'Action clicked'

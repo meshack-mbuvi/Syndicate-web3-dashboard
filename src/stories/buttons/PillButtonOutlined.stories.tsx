@@ -2,7 +2,7 @@ import { PillButtonOutlined } from '@/components/pillButtons/pillButtonOutlined'
 import React from 'react';
 
 export default {
-  title: 'Atoms/Buttons/Pill Button/Outlined'
+  title: '2. Atoms/Buttons/Pill Button/Outlined'
 };
 
 const Template = (args) => <PillButtonOutlined {...args}></PillButtonOutlined>;

@@ -12,8 +12,8 @@ export const MY_CLUBS_QUERY = gql`
       totalSupply
       totalDeposits
       maxTotalSupply
-      startTime
       endTime
+      startTime
       maxMemberCount
       requiredToken
       requiredTokenMinBalance
@@ -40,8 +40,9 @@ export const CLUBS_HAVE_INVESTED = gql`
           }
           totalSupply
           totalDeposits
-          endTime
           startTime
+          endTime
+          createdAt
           contractAddress
           maxTotalSupply
         }
@@ -63,8 +64,6 @@ export const CLUB_TOKEN_MEMBERS = gql`
       }
       totalSupply
       totalDeposits
-      endTime
-      startTime
       contractAddress
       startTime
       endTime
@@ -109,12 +108,14 @@ export const RECENT_TRANSACTIONS = gql`
     $take: Int
     $where: Financial_JSONObject
     $skip: Int
+    $chainId: Int!
   ) {
     Financial_recentTransactions(
       input: $input
       take: $take
       where: $where
       skip: $skip
+      chainId: $chainId
     ) {
       edges {
         blockNumber
@@ -165,16 +166,6 @@ export const RECENT_TRANSACTIONS = gql`
   }
 `;
 
-export const TOKEN_INTERACTIONS = gql`
-  query getTokenInteractions($where: syndicateAddress_filter) {
-    Financial_tokenInteractions(where: $where) {
-      tokenName
-      tokenSymbol
-      tokenDecimal
-      contractAddress
-    }
-  }
-`;
 export const CLAIMED_ERC721 = gql`
   query checkERC721Claim($where: TokensClaimed_filter) {
     tokensClaimeds(where: $where) {
@@ -184,19 +175,6 @@ export const CLAIMED_ERC721 = gql`
       treeIndex
       amount
       index
-    }
-  }
-`;
-
-export const ERC721_MERKLE_AIRDROP_CREATED = gql`
-  query airdropERC721Created($where: MerkleAirdropCreated_filter) {
-    merkleAirdropCreateds(where: $where) {
-      id
-      club
-      treeIndex
-      endTime
-      startTime
-      root
     }
   }
 `;

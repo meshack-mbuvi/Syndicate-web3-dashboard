@@ -1,6 +1,5 @@
-import { CopyToClipboardIcon } from '@/components/iconWrappers';
-import { SkeletonLoader } from '@/components/skeletonLoader';
 import DuplicateClubWarning from '@/components/syndicates/shared/DuplicateClubWarning';
+import { isStableCoin } from '@/containers/createInvestmentClub/shared/ClubTokenDetailConstants';
 import { CLUB_TOKEN_QUERY } from '@/graphql/queries';
 import { getDepositDetails } from '@/helpers/erc20TokenDetails/index';
 import { useAccountTokens } from '@/hooks/useAccountTokens';
@@ -9,22 +8,15 @@ import { useIsClubOwner } from '@/hooks/useClubOwner';
 import { useDemoMode } from '@/hooks/useDemoMode';
 import { AppState } from '@/state';
 import { setERC20TokenDepositDetails } from '@/state/erc20token/slice';
-import { mockDepositERC20Token } from '@/utils/mockdata';
 import { Status } from '@/state/wallet/types';
-import { epochTimeToDateFormat, getCountDownDays } from '@/utils/dateUtils';
 import { floatedNumberWithCommas } from '@/utils/formattedNumbers';
-import { getTextWidth } from '@/utils/getTextWidth';
-import { useQuery, NetworkStatus } from '@apollo/client';
+import { mockDepositERC20Token } from '@/utils/mockdata';
+import { NetworkStatus, useQuery } from '@apollo/client';
 import abi from 'human-standard-token-abi';
 import { useRouter } from 'next/router';
 import React, { FC, useEffect, useState } from 'react';
-import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { useDispatch, useSelector } from 'react-redux';
-import ReactTooltip from 'react-tooltip';
-import { EtherscanLink } from 'src/components/syndicates/shared/EtherscanLink';
 import NumberTreatment from '../NumberTreatment';
-// utils
-import GradientAvatar from './portfolioAndDiscover/portfolio/GradientAvatar';
 import { DetailsCard, ProgressIndicator } from './shared';
 interface ClubDetails {
   header: string;
@@ -50,7 +42,7 @@ const SyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
     },
     merkleProofSliceReducer: { myMerkleProof },
     web3Reducer: {
-      web3: { web3, status, account }
+      web3: { web3, status, account, activeNetwork }
     }
   } = useSelector((state: AppState) => state);
 
@@ -61,7 +53,6 @@ const SyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
     memberCount,
     maxMemberCount,
     name,
-    owner,
     symbol,
     maxTotalSupply,
     depositsEnabled,
@@ -74,7 +65,7 @@ const SyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
     depositTokenLogo,
     depositTokenName,
     depositTokenDecimals,
-    ethDepositToken
+    nativeDepositToken
   } = depositDetails;
 
   const isDemoMode = useDemoMode();
@@ -104,7 +95,8 @@ const SyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
       syndicateDaoId: address.toLocaleLowerCase()
     },
     notifyOnNetworkStatusChange: true,
-    skip: !address || loading,
+    context: { clientName: 'theGraph', chainId: activeNetwork.chainId },
+    skip: !address || loading || !activeNetwork.chainId,
     fetchPolicy: 'no-cache'
   });
 
@@ -150,7 +142,8 @@ const SyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
           depositToken,
           erc20TokenContract,
           DepositTokenMintModule,
-          SingleTokenMintModule
+          SingleTokenMintModule,
+          activeNetwork
         );
       }
 
@@ -175,10 +168,6 @@ const SyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
 
   const [details, setDetails] = useState<ClubDetails[]>([]);
 
-  // state to handle copying of the syndicate address to clipboard.
-  const [showAddressCopyState, setShowAddressCopyState] =
-    useState<boolean>(false);
-
   // state to handle details about the current deposit ERC20 token
   const [, setDepositTokenContract] = useState<any>('');
 
@@ -190,28 +179,14 @@ const SyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
     }
   ]);
 
-  // get syndicate address from the url
-  const { clubAddress } = router.query;
-
-  const [showActionIcons, setShowActionIcons] = useState<boolean>(false);
-
-  const [divWidth, setDivWidth] = useState(0);
-  const [nameWidth, setNameWidth] = useState(0);
-
   // get and set current token details
   useEffect(() => {
-    if (!ethDepositToken && depositToken && web3) {
+    if (!nativeDepositToken && depositToken && web3) {
       // set up token contract
       const tokenContract = new web3.eth.Contract(abi, depositToken);
       setDepositTokenContract(tokenContract);
     }
   }, [depositToken, web3]);
-
-  // perform size checks
-  useEffect(() => {
-    setDivWidth(document?.getElementById('club-name')?.offsetWidth);
-    setNameWidth(getTextWidth(name));
-  }, [name]);
 
   // set syndicate cumulative values
   useEffect(() => {
@@ -233,53 +208,7 @@ const SyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
     if (name && !managerSettingsOpen) {
       setDetails([
         ...(depositsEnabled
-          ? [
-              {
-                header: 'Club token max supply',
-                content: (
-                  <span>
-                    <NumberTreatment numberValue={`${maxTotalSupply || ''} `} />
-                    &nbsp;
-                    {symbol}
-                  </span>
-                ),
-                tooltip: ''
-              },
-              {
-                header: 'Club tokens minted',
-                content: (
-                  <span>
-                    <NumberTreatment numberValue={totalSupply} />
-                    &nbsp;{symbol}
-                  </span>
-                ),
-                tooltip: ''
-              },
-              {
-                header: `Members (max)`,
-                content: (
-                  <div>
-                    {memberCount}{' '}
-                    <span className="text-gray-syn4">({maxMemberCount})</span>
-                  </div>
-                ),
-                tooltip: ''
-              },
-              {
-                header: 'Created',
-                content: `${epochTimeToDateFormat(
-                  new Date(startTime),
-                  'LLL dd, yyyy'
-                )}`,
-                tooltip: ''
-              },
-
-              {
-                header: 'Closing in',
-                content: getCountDownDays(endTime.toString()),
-                tooltip: ''
-              }
-            ]
+          ? []
           : claimEnabled
           ? [
               {
@@ -287,8 +216,6 @@ const SyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
                 content: (
                   <span>
                     <NumberTreatment numberValue={`${maxTotalSupply || ''}`} />
-                    &nbsp;
-                    {symbol}
                   </span>
                 ),
                 tooltip: ''
@@ -311,12 +238,30 @@ const SyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
             ]
           : [
               {
-                header: 'Total deposited',
+                header: 'Member deposits',
                 content: (
-                  <span>
-                    <NumberTreatment numberValue={totalDeposits} />{' '}
-                    {depositTokenSymbol}
-                  </span>
+                  <div className="space-y-2">
+                    <div className="flex items-center">
+                      <img
+                        src={depositTokenLogo}
+                        className="w-4 h-4 mr-2"
+                        alt="logo"
+                      />
+                      <span>
+                        <NumberTreatment numberValue={totalDeposits} />{' '}
+                        {depositTokenSymbol}
+                      </span>
+                    </div>
+
+                    {!isStableCoin(depositTokenSymbol) ? (
+                      <div className="text-gray-syn4 text-sm">
+                        {floatedNumberWithCommas(
+                          depositTokenPriceInUSD * totalDeposits
+                        )}{' '}
+                        USD
+                      </div>
+                    ) : null}
+                  </div>
                 ),
                 tooltip: ''
               },
@@ -330,25 +275,13 @@ const SyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
                 tooltip: ''
               },
               {
-                header: 'Members',
-                content: <div>{memberCount}</div>,
-                tooltip: ''
-              },
-              {
-                header: 'Created',
-                content: `${epochTimeToDateFormat(
-                  new Date(startTime),
-                  'LLL dd, yyyy'
-                )}`,
-                tooltip: ''
-              },
-
-              {
-                header: 'Closed',
-                content: `${epochTimeToDateFormat(
-                  new Date(endTime),
-                  'LLL dd, yyyy'
-                )}`,
+                header: 'Club token max supply',
+                content: (
+                  <span>
+                    <NumberTreatment numberValue={`${maxTotalSupply || ''}`} />{' '}
+                    {symbol}
+                  </span>
+                ),
                 tooltip: ''
               }
             ])
@@ -367,14 +300,10 @@ const SyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
     maxTotalDeposits,
     memberCount,
     totalDeposits,
-    depositTokenSymbol
+    depositTokenSymbol,
+    depositTokenPriceInUSD
   ]);
 
-  // show message to the user when address has been copied.
-  const updateAddressCopyState = () => {
-    setShowAddressCopyState(true);
-    setTimeout(() => setShowAddressCopyState(false), 1000);
-  };
   const isOwner = useIsClubOwner();
   const isActive = !depositsEnabled || claimEnabled;
   const isOwnerOrMember =
@@ -410,116 +339,6 @@ const SyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
   return (
     <div className="flex flex-col relative">
       <div className="h-fit-content rounded-custom">
-        <div className="flex items-center justify-between">
-          <div>
-            <div className="flex justify-center items-center">
-              <div className="mr-8">
-                {(loading || loadingClubDeposits || totalDeposits == '') &&
-                !managerSettingsOpen ? (
-                  <SkeletonLoader
-                    height="20"
-                    width="20"
-                    borderRadius="rounded-full"
-                  />
-                ) : clubAddress ? (
-                  <GradientAvatar
-                    name={name}
-                    size="xl:w-20 lg:w-16 xl:h-20 lg:h-16 w-10 h-10"
-                  />
-                ) : null}
-              </div>
-
-              <div className="flex-shrink flex-wrap break-normal m-0">
-                {/* Syndicate name, symbol and action buttons  */}
-                <div
-                  className="flex justify-start items-center"
-                  onMouseEnter={() => setShowActionIcons(true)}
-                  onMouseLeave={() => setShowActionIcons(false)}
-                >
-                  {loading ? (
-                    <div className="md:w-96 w-50">
-                      <SkeletonLoader
-                        height="9"
-                        width="full"
-                        borderRadius="rounded-lg"
-                      />
-                    </div>
-                  ) : (
-                    <div
-                      className={`flex flex-wrap items-center w-fit-content`}
-                    >
-                      <h1
-                        id="club-name"
-                        className={`${
-                          nameWidth >= divWidth
-                            ? `line-clamp-2 mb-2`
-                            : `flex mr-6`
-                        }`}
-                      >
-                        {name}
-                      </h1>
-                      <h1 className="font-light flex flex-wrap text-gray-syn4 items-center justify-center">
-                        {symbol}
-                      </h1>
-                      <div className="inline-flex items-center ml-6 space-x-8 pr-2">
-                        {showActionIcons ? (
-                          <div className="flex space-x-6">
-                            <CopyToClipboard text={owner as string}>
-                              <button
-                                className="flex items-center relative w-4 h-4 cursor-pointer"
-                                onClick={updateAddressCopyState}
-                                onKeyDown={updateAddressCopyState}
-                                data-for="copy-club-address"
-                                data-tip
-                              >
-                                {showAddressCopyState ? (
-                                  <span className="absolute text-xs -bottom-5">
-                                    copied
-                                  </span>
-                                ) : null}
-                                <ReactTooltip
-                                  id="copy-club-address"
-                                  place="top"
-                                  effect="solid"
-                                  className="actionsTooltip"
-                                  arrowColor="transparent"
-                                  backgroundColor="#131416"
-                                >
-                                  Copy club wallet address
-                                </ReactTooltip>
-
-                                <CopyToClipboardIcon color="text-gray-syn5 hover:text-gray-syn4" />
-                              </button>
-                            </CopyToClipboard>
-
-                            <div data-for="view-on-etherscan" data-tip>
-                              <EtherscanLink
-                                customStyles="w-4 h-4"
-                                etherscanInfo={owner}
-                                grouped
-                                iconOnly
-                              />
-                              <ReactTooltip
-                                id="view-on-etherscan"
-                                place="top"
-                                effect="solid"
-                                className="actionsTooltip"
-                                arrowColor="transparent"
-                                backgroundColor="#131416"
-                              >
-                                View on Etherscan
-                              </ReactTooltip>
-                            </div>
-                          </div>
-                        ) : null}
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
         {showDuplicateClubWarning &&
           !isDemoMode &&
           !isOwner &&
@@ -535,14 +354,14 @@ const SyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
         {status !== Status.DISCONNECTED &&
           depositsEnabled &&
           !managerSettingsOpen && (
-            <div className="h-fit-content flex w-full justify-start mt-14">
+            <div className="h-fit-content flex flex-col w-full justify-start mt-14">
               <ProgressIndicator
                 totalDeposits={totalDeposits}
-                depositTotalMax={maxTotalDeposits.toString()}
+                depositTotalMax={maxTotalSupply.toString()}
                 openDate={startTime.toString()}
                 closeDate={endTime.toString()}
                 loading={loading || loadingClubDeposits}
-                ethDepositToken={ethDepositToken}
+                nativeDepositToken={nativeDepositToken}
                 depositTokenPriceInUSD={depositTokenPriceInUSD.toString()}
                 tokenDetails={{
                   symbol: depositTokenSymbol,
@@ -551,6 +370,7 @@ const SyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
                   name: depositTokenName,
                   decimals: depositTokenDecimals
                 }}
+                activeNetwork={activeNetwork}
               />
             </div>
           )}
@@ -561,13 +381,15 @@ const SyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
         isDemoMode ||
         !managerSettingsOpen ? (
           <div className="overflow-hidden mt-6 relative">
-            <DetailsCard
-              title="Details"
-              sections={details}
-              customStyles={'w-full pt-4'}
-              customInnerWidth="w-full grid xl:grid-cols-3 lg:grid-cols-3
-            grid-cols-3 xl:gap-8 gap-2 xl:gap-5 gap-y-8"
-            />
+            {!depositsEnabled && (
+              <DetailsCard
+                title="Details"
+                sections={details}
+                customStyles={'w-full pt-4'}
+                customInnerWidth="w-full grid xl:grid-cols-3 lg:grid-cols-3
+          grid-cols-3 xl:gap-8 gap-2 xl:gap-5 gap-y-8"
+              />
+            )}
           </div>
         ) : null}
       </div>

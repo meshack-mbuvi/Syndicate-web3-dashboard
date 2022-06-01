@@ -3,7 +3,7 @@ import { LogicalOperator } from '@/components/tokenGating/tokenLogic';
 import { useState } from 'react';
 
 export default {
-  title: 'Organisms/Token Gated Logic'
+  title: '4. Organisms/Token Gated Logic'
 };
 
 const Template = (args) => {

@@ -1,12 +1,9 @@
 import React from 'react';
-import { AppState } from '@/state';
-import { useSelector } from 'react-redux';
 import { numberWithCommas } from '@/utils/formattedNumbers';
 import { CtaButton } from '@/components/CTAButton';
 import Modal, { ModalStyle } from '@/components/modal';
 import { InputField } from '@/components/inputs/inputField';
 import { InputFieldWithButton } from '@/components/inputs/inputFieldWithButton';
-import { formatAddress } from '@/utils/formatAddress';
 
 interface IMemberDetails {
   show: boolean;
@@ -15,6 +12,7 @@ interface IMemberDetails {
   memberAddressError: string;
   amountToMintError: string | React.ReactElement;
   symbol: string;
+  inputFieldsDisabled?: boolean;
   handleShow: (show: boolean) => void;
   handleSubmit: (e) => void;
   clearFieldErrors: () => void;
@@ -30,6 +28,7 @@ const MemberDetailsModal: React.FC<IMemberDetails> = ({
   amountToMintError,
   memberAddressError,
   symbol,
+  inputFieldsDisabled,
   handleShow,
   clearFieldErrors,
   handleAddressChange,
@@ -37,23 +36,6 @@ const MemberDetailsModal: React.FC<IMemberDetails> = ({
   handleSubmit,
   setMaxRemainingSupply
 }): React.ReactElement => {
-  const {
-    web3Reducer: {
-      web3: { web3 }
-    }
-  } = useSelector((state: AppState) => state);
-
-  // address format points
-  const addressStartChars = 17;
-  const addressEndChars = 18;
-
-  const formattedAddress = () => {
-    if (web3.utils.isAddress(memberAddress)) {
-      return formatAddress(memberAddress, addressStartChars, addressEndChars);
-    } else {
-      return memberAddress;
-    }
-  };
   return (
     <Modal
       {...{
@@ -85,12 +67,13 @@ const MemberDetailsModal: React.FC<IMemberDetails> = ({
           <div className="my-6">
             <div className="mb-2 text-white">Member address</div>
             <InputField
-              value={formattedAddress()}
+              value={memberAddress}
               placeholderLabel="0x..."
               onChange={handleAddressChange}
               isInErrorState={Boolean(memberAddressError)}
               infoLabel={memberAddressError ? memberAddressError : ''}
               extraClasses="border-gray-syn6"
+              disabled={inputFieldsDisabled}
             />
           </div>
           <div className="mb-8">
@@ -114,6 +97,7 @@ const MemberDetailsModal: React.FC<IMemberDetails> = ({
               extraClasses="border-gray-syn6"
               symbol={symbol}
               buttonOnClick={setMaxRemainingSupply}
+              disabled={inputFieldsDisabled}
             />
           </div>
 

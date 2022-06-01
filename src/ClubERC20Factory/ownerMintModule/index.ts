@@ -1,16 +1,19 @@
 import OwnerMintModule_ABI from 'src/contracts/OwnerMintModule.json';
 import { getGnosisTxnInfo } from '../shared/gnosisTransactionInfo';
+import { estimateGas } from '../shared/getGasEstimate';
 
 export class OwnerMintModuleContract {
   web3;
   address;
+  activeNetwork;
 
   // This will be used to call other functions.
   OwnerMintModuleContract;
 
   // initialize a contract instance
-  constructor(OwnerMintModuleContractAddress: string, web3) {
+  constructor(OwnerMintModuleContractAddress: string, web3, activeNetwork) {
     this.web3 = web3;
+    this.activeNetwork = activeNetwork;
     this.address = OwnerMintModuleContractAddress;
     this.init();
   }
@@ -52,11 +55,12 @@ export class OwnerMintModuleContract {
     setTransactionHash: (txHas) => void
   ): Promise<void> {
     let gnosisTxHash;
+    const gasEstimate = await estimateGas(this.web3);
 
     await new Promise((resolve, reject) => {
       this.OwnerMintModuleContract.methods
         .ownerMint(clubAddress, memberAddress, amount)
-        .send({ from: ownerAddress })
+        .send({ from: ownerAddress, gasPrice: gasEstimate })
         .on('transactionHash', (transactionHash) => {
           onTxConfirm(transactionHash);
 
@@ -82,7 +86,10 @@ export class OwnerMintModuleContract {
     });
     // fallback for gnosisSafe <> walletConnect
     if (gnosisTxHash) {
-      const receipt: any = await getGnosisTxnInfo(gnosisTxHash);
+      const receipt: any = await getGnosisTxnInfo(
+        gnosisTxHash,
+        this.activeNetwork
+      );
       setTransactionHash(receipt.transactionHash);
       if (receipt.isSuccessful) {
         onTxReceipt(receipt);

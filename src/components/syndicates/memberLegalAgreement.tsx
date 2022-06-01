@@ -1,13 +1,6 @@
-import { ClubERC20Contract } from '@/ClubERC20Factory/clubERC20';
 import { NumberField } from '@/components/inputs/numberField';
 import { TextField } from '@/components/inputs/textField';
-import {
-  ERC20TokenDefaultState,
-  setERC20Token
-} from '@/helpers/erc20TokenDetails';
 import { AppState } from '@/state';
-import { setClubMembers } from '@/state/clubMembers';
-import { setERC20TokenDetails } from '@/state/erc20token/slice';
 import { setClubLegalInfo, setMemberLegalInfo } from '@/state/legalInfo';
 import { numberWithCommas } from '@/utils/formattedNumbers';
 // See this issue to find out why yup is imported this way
@@ -59,8 +52,8 @@ const LegalAgreement: React.FC = () => {
     legalInfoReducer: {
       clubInfo: { adminName }
     },
-    web3Reducer: {
-      web3: { account, web3 }
+    connectClubMemberReducer: {
+      connectedMember: { depositAmount }
     },
     erc20TokenSliceReducer: {
       erc20Token,
@@ -68,22 +61,6 @@ const LegalAgreement: React.FC = () => {
       depositDetails: { depositTokenSymbol }
     }
   } = useSelector((state: AppState) => state);
-
-  useEffect(() => {
-    if (router.isReady && web3.utils.isAddress(clubAddress as string)) {
-      const clubERC20tokenContract = new ClubERC20Contract(
-        clubAddress as string,
-        web3
-      );
-
-      dispatch(setERC20Token(clubERC20tokenContract));
-
-      return () => {
-        dispatch(setERC20TokenDetails(ERC20TokenDefaultState));
-        dispatch(setClubMembers([]));
-      };
-    }
-  }, [clubAddress, account, router.isReady]);
 
   const { form } = router.query;
   // Check whether form query param exist when page has loaded
@@ -115,6 +92,7 @@ const LegalAgreement: React.FC = () => {
     formState: { isValid }
   } = useForm<FormInputs>({
     mode: 'onChange',
+    defaultValues: { depositAmount: depositAmount || '' },
     resolver: yupResolver(schema(erc20Token.maxTotalDeposits))
   });
 
@@ -150,8 +128,9 @@ const LegalAgreement: React.FC = () => {
               type="number"
               addOn={depositTokenSymbol}
               control={control}
-              info="Total amount you intend to deposit"
+              info="Amount you intend to deposit into the investment club"
               addOnStyles=""
+              defaultValue={depositAmount}
             />
 
             <TextField

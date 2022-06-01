@@ -3,7 +3,7 @@ import { InputFieldWithToken } from '@/components/inputs/inputFieldWithToken';
 import React from 'react';
 
 export default {
-  title: 'Atoms/Input Field/With Token',
+  title: '2. Atoms/Input Field/With Token',
   component: InputFieldWithButton,
   argTypes: {
     token: {

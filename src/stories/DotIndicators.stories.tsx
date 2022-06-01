@@ -1,14 +1,34 @@
-import { DotIndicators } from '@/components/dotIndicators';
+import {
+  DotIndicators,
+  DotIndicatorsOrientation
+} from '@/components/dotIndicators';
 import React from 'react';
 
 export default {
-  title: 'Atoms/Dot Indicators'
+  title: '2. Atoms/Dot Indicators',
+  argTypes: {
+    orientation: {
+      options: [
+        DotIndicatorsOrientation.VERTICAL,
+        DotIndicatorsOrientation.HORIZONTAL
+      ],
+      control: { type: 'select' }
+    }
+  }
 };
 
 const Template = (args) => <DotIndicators {...args} />;
 
-export const Default = Template.bind({});
-Default.args = {
+export const Vertical = Template.bind({});
+Vertical.args = {
   options: ['Name & Identity', 'Select Option', 'Membership'],
-  activeIndex: 1
+  activeIndex: 1,
+  orientation: DotIndicatorsOrientation.VERTICAL
+};
+
+export const Horizontal = Template.bind({});
+Horizontal.args = {
+  options: ['Name & Identity', 'Select Option', 'Membership'],
+  activeIndex: 1,
+  orientation: DotIndicatorsOrientation.HORIZONTAL
 };

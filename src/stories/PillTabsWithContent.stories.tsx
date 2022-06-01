@@ -2,7 +2,7 @@ import PillTabsAndContent from '@/components/pillTabs/tabsAndContent';
 import { useState } from 'react';
 
 export default {
-  title: "Molecules/Pill Tabs w' Content"
+  title: "3. Molecules/Pill Tabs w' Content"
 };
 
 const Template = (args) => {

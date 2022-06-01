@@ -53,7 +53,7 @@ const TransactionsTable: FC<ITransactionsTableProps> = ({
     },
     erc20TokenSliceReducer: { erc20Token },
     web3Reducer: {
-      web3: { account }
+      web3: { account, web3 }
     }
   } = useSelector((state: AppState) => state);
 
@@ -188,7 +188,7 @@ const TransactionsTable: FC<ITransactionsTableProps> = ({
                           to: toAddress,
                           isOutgoingTransaction: isOutgoingTransaction
                         },
-                        amount: getWeiAmount(value, tokenDecimal, false),
+                        amount: getWeiAmount(web3, value, tokenDecimal, false),
                         tokenSymbol,
                         tokenLogo,
                         tokenName,
@@ -283,7 +283,7 @@ const TransactionsTable: FC<ITransactionsTableProps> = ({
                         isOutgoingTransaction ? 'outgoing' : 'incoming'
                       }
                       isTransactionAnnotated={metadata ? true : false}
-                      amount={getWeiAmount(value, tokenDecimal, false)}
+                      amount={getWeiAmount(web3, value, tokenDecimal, false)}
                       address={isOutgoingTransaction ? toAddress : fromAddress}
                       category={metadata?.transactionCategory}
                       companyName={metadata?.companyName}

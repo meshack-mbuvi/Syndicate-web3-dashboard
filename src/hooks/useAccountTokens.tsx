@@ -1,9 +1,10 @@
 import { CLUB_MEMBER_QUERY } from '@/graphql/queries';
 import { AppState } from '@/state';
+import { setConnectedMember } from '@/state/connectMember';
 import { getWeiAmount } from '@/utils/conversions';
 import { useQuery } from '@apollo/client';
 import { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useDemoMode } from './useDemoMode';
 
 /**
@@ -23,13 +24,18 @@ export function useAccountTokens(): {
 } {
   const {
     web3Reducer: {
-      web3: { account }
+      web3: { account, activeNetwork, web3 }
     },
     erc20TokenSliceReducer: {
       erc20Token: { address, totalSupply, tokenDecimals, totalDeposits },
-      depositDetails: { ethDepositToken, depositTokenDecimals }
+      depositDetails: {
+        depositTokenDecimals,
+        depositTokenSymbol,
+        loading: loadingDepositsDetails
+      }
     }
   } = useSelector((state: AppState) => state);
+
   const [accountTokens, setAccountTokens] = useState<string>('0');
   const [memberDeposits, setMemberDeposits] = useState<string>('0');
   const [memberOwnership, setMemberOwnership] = useState<string>('0');
@@ -39,6 +45,7 @@ export function useAccountTokens(): {
   const { loading, data, refetch, startPolling, stopPolling } = useQuery(
     CLUB_MEMBER_QUERY,
     {
+      context: { clientName: 'theGraph', chainId: activeNetwork.chainId },
       variables: {
         where: {
           memberAddress: account.toLocaleLowerCase()
@@ -48,7 +55,7 @@ export function useAccountTokens(): {
         }
       },
       // Avoid unnecessary calls when account/clubAddress is not defined
-      skip: !account || !address || isDemoMode
+      skip: !account || !activeNetwork.chainId || !address || isDemoMode
     }
   );
 
@@ -92,10 +99,11 @@ export function useAccountTokens(): {
             tokens = 0
           } = clubMemberData;
 
-          setAccountTokens(getWeiAmount(tokens, tokenDecimals, false));
+          setAccountTokens(getWeiAmount(web3, tokens, tokenDecimals, false));
           setMemberDeposits(
-            getWeiAmount(depositAmount, depositTokenDecimals, false)
+            getWeiAmount(web3, depositAmount, depositTokenDecimals, false)
           );
+          // this is a percentage conversion with a base of 10000, 1% == 10000
           setMemberOwnership(`${+ownershipShare / 10000}`);
         } else {
           resetMemberStats();
@@ -114,23 +122,39 @@ export function useAccountTokens(): {
     totalSupply,
     totalDeposits,
     depositTokenDecimals,
-    JSON.stringify(data)
+    isDemoMode,
+    depositTokenSymbol,
+    JSON.stringify(data),
+    loadingDepositsDetails
   ]);
 
   useEffect(() => {
-    refetch();
-  }, [totalSupply, totalDeposits, account]);
+    if (activeNetwork.chainId) {
+      refetch();
+    }
+  }, [totalSupply, totalDeposits, account, activeNetwork.chainId]);
+
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(
+      setConnectedMember({
+        loading,
+        depositAmount: `${memberDeposits}`
+      })
+    );
+    return () => {
+      dispatch(setConnectedMember({ depositAmount: '', loading: false }));
+    };
+  }, [loading, memberDeposits]);
 
   return {
-    loadingMemberOwnership: loading,
+    memberDeposits,
     accountTokens,
-    memberPercentShare: memberOwnership,
-    memberDeposits: ethDepositToken
-      ? parseFloat((Number(memberDeposits) * 10000).toString())
-      : memberDeposits,
     memberOwnership,
-    refetchMemberData: refetch,
     startPolling,
-    stopPolling
+    stopPolling,
+    refetchMemberData: refetch,
+    loadingMemberOwnership: loading,
+    memberPercentShare: memberOwnership
   };
 }

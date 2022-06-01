@@ -4,7 +4,7 @@ import { floatedNumberWithCommas } from '@/utils/formattedNumbers';
 
 export default {
   title:
-    'Molecules/Cap Table Management/Modals/Modify Member Tokens/Modify Member Progress Modals',
+    '4. Organisms/Cap Table Management/Modals/Modify Member Tokens/Modify Member Progress Modals',
   argTypes: {
     state: {
       options: [
@@ -36,7 +36,7 @@ Pending.args = {
   title: 'Updating cap table',
   description:
     'This could take anywhere from seconds to hours depending on network congestion and the gas fees you set. You can safely leave this page while you wait.',
-  etherscanHash: '#',
+  transactionHash: '#',
   transactionType: 'transaction',
   state: ProgressModalState.PENDING
 };
@@ -54,7 +54,7 @@ Success.args = {
   buttonLabel: 'Done',
   buttonFullWidth: true,
   state: ProgressModalState.SUCCESS,
-  etherscanHash: '#',
+  transactionHash: '#',
   transactionType: 'transaction'
 };
 
@@ -66,6 +66,6 @@ Failure.args = {
   buttonLabel: 'Close',
   buttonFullWidth: true,
   state: ProgressModalState.FAILURE,
-  etherscanHash: '#',
+  transactionHash: '#',
   transactionType: 'transaction'
 };

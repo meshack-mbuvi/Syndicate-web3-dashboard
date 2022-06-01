@@ -5,6 +5,7 @@ import claimedERC721SliceReducer from '@/state/claimedERC721/slice';
 import tokenClaimedSliceReducer from '@/state/claimedToken/slice';
 import clubERC20sReducer from '@/state/clubERC20';
 import clubMembersSliceReducer from '@/state/clubMembers';
+import connectClubMemberReducer from '@/state/connectMember';
 import initializeContractsReducer from '@/state/contracts';
 import createInvestmentClubSliceReducer from '@/state/createInvestmentClub/slice';
 import erc20TokenSliceReducer from '@/state/erc20token/slice';
@@ -16,8 +17,8 @@ import legalInfoReducer from '@/state/legalInfo';
 import merkleProofSliceReducer from '@/state/merkleProofs/slice';
 import modalsReducer from '@/state/modals';
 import modifyCapTableSlice from '@/state/modifyCapTable/slice';
-import utilityNFTSliceReducer from '@/state/UtilityNFT/slice';
 import modifyClubSettingsReducer from '@/state/modifyClubSettings/slice';
+import utilityNFTSliceReducer from '@/state/UtilityNFT/slice';
 import web3Reducer from '@/state/wallet/reducer';
 import { isDev } from '@/utils/environment';
 import { Action, configureStore, ThunkAction } from '@reduxjs/toolkit';
@@ -45,7 +46,8 @@ export const store = configureStore({
     modifyCapTableSlice,
     setCollectibleDetailsSliceReducer,
     utilityNFTSliceReducer,
-    modifyClubSettingsReducer
+    modifyClubSettingsReducer,
+    connectClubMemberReducer
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({ thunk: true, serializableCheck: false }),
