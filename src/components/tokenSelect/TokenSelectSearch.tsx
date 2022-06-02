@@ -270,7 +270,7 @@ export const TokenSelectSearch: React.FC<TokenSelectSearch> = ({
         ) : null}
         {searchTerm ? null : (
           <L2
-            extraClasses={`text-xs sm:text-sm sm:leading-4 text-white opacity-50 uppercase tracking-wider font-bold px-8 ${
+            extraClasses={`sm:leading-4 text-white opacity-50 px-8 ${
               suggestionList?.length ? 'mt-3' : ''
             } `}
           >
