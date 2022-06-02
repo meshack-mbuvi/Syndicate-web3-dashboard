@@ -1,13 +1,13 @@
 import { useRef, useEffect, Dispatch, SetStateAction } from 'react';
-import { web3 } from '@/utils/web3Utils';
 import { formatAddress } from 'src/utils/formatAddress';
 
 // component to set filter term for data.
 export const SearchInput: React.FC<{
   setSearchTerm: Dispatch<SetStateAction<string>>;
   searchTerm: string;
+  web3: any;
   placeholder?: string;
-}> = ({ setSearchTerm, searchTerm, placeholder = 'Search members' }) => {
+}> = ({ setSearchTerm, searchTerm, web3, placeholder = 'Search members' }) => {
   const searchInput = useRef(null);
 
   const clearInputField = () => {

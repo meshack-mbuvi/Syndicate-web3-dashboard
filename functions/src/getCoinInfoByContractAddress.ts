@@ -1,6 +1,6 @@
 import { getCoinFromContractAddress } from './utils/ethereum';
 
-const handler = async (event, _) => {
+const handler = async (web3, event, _) => {
   const contractAddress = event.queryStringParameters.contractAddress || '';
   if (event.httpMethod !== 'GET') {
     return {
@@ -19,7 +19,7 @@ const handler = async (event, _) => {
 
   let response;
   try {
-    response = await getCoinFromContractAddress(contractAddress);
+    response = await getCoinFromContractAddress(contractAddress, web3);
   } catch (error) {
     return {
       statusCode: 500,

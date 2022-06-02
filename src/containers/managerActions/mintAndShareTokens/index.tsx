@@ -1,3 +1,8 @@
+import ArrowDown from '@/components/icons/arrowDown';
+import { NumberField, TextField } from '@/components/inputs';
+import Modal, { ModalStyle } from '@/components/modal';
+import { Spinner } from '@/components/shared/spinner';
+import { BlockExplorerLink } from '@/components/syndicates/shared/BlockExplorerLink';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { OldClubERC20Contract } from '@/ClubERC20Factory/clubERC20/oldClubERC20';
@@ -17,6 +22,7 @@ import {
 } from '@/utils/formattedNumbers';
 import { ClubStillOpenModal } from '@/containers/managerActions/mintAndShareTokens/ClubStillOpenModal';
 import { MintPolicyContract } from '@/ClubERC20Factory/policyMintERC20';
+import { CONTRACT_ADDRESSES } from '@/Networks';
 
 interface Props {
   show: boolean;
@@ -45,7 +51,7 @@ export const MintAndShareTokens: React.FC<Props> = ({
       erc20TokenContract
     },
     web3Reducer: {
-      web3: { web3, account }
+      web3: { web3, account, activeNetwork }
     },
     initializeContractsReducer: { syndicateContracts }
   } = useSelector((state: AppState) => state);
@@ -236,8 +242,12 @@ export const MintAndShareTokens: React.FC<Props> = ({
       /* set max token supply to current total supply.
        * this prevents more deposits from new members or existing members while the club
        * still remains open.*/
-      const _tokenCap = getWeiAmount(String(totalSupply), 18, true);
-      const mintPolicy = new MintPolicyContract(currentMintPolicyAddress, web3);
+      const _tokenCap = getWeiAmount(web3, String(totalSupply), 18, true);
+      const mintPolicy = new MintPolicyContract(
+        currentMintPolicyAddress,
+        web3,
+        activeNetwork
+      );
 
       // using the endMint function on the mint policy
       // will lock club settings and prevent subsequent changes to club settings.
@@ -344,7 +354,7 @@ export const MintAndShareTokens: React.FC<Props> = ({
           title: 'Adding member',
           description:
             'This could take anywhere from seconds to hours depending on network congestion and the gas fees you set. You can safely leave this page while you wait.',
-          etherscanHash: transactionHash,
+          transactionHash: transactionHash,
           transactionType: 'transaction',
           state: ProgressModalState.PENDING
         }}
@@ -365,7 +375,7 @@ export const MintAndShareTokens: React.FC<Props> = ({
           buttonOnClick: handleCloseSuccessModal,
           buttonFullWidth: true,
           state: ProgressModalState.SUCCESS,
-          etherscanHash: transactionHash,
+          transactionHash: transactionHash,
           transactionType: 'transaction'
         }}
       />
@@ -381,7 +391,7 @@ export const MintAndShareTokens: React.FC<Props> = ({
           buttonOnClick: handleCloseSuccessModal,
           buttonFullWidth: true,
           state: ProgressModalState.FAILURE,
-          etherscanHash: userRejectedMint ? null : transactionHash,
+          transactionHash: userRejectedMint ? null : transactionHash,
           transactionType: 'transaction'
         }}
       />
@@ -415,7 +425,8 @@ export const MintAndShareTokens: React.FC<Props> = ({
     setConfirm(true);
 
     // OwnerMintModule for policyMintERC20
-    const OWNER_MINT_MODULE = process.env.NEXT_PUBLIC_OWNER_MINT_MODULE;
+    const OWNER_MINT_MODULE =
+      CONTRACT_ADDRESSES[activeNetwork.chainId]?.OwnerMintModule;
     // OwnerMintModule for mintPolicy
     const OWNER_MINT_MODULE_2 = process.env.NEXT_PUBLIC_OWNER_MINT_MODULE_2;
 
@@ -438,10 +449,10 @@ export const MintAndShareTokens: React.FC<Props> = ({
       // respectively
       const OwnerMintModule = policyMintERC20MintModule
         ? syndicateContracts.OwnerMintModule
-        : new OwnerMintModuleContract(OWNER_MINT_MODULE_2, web3);
+        : new OwnerMintModuleContract(OWNER_MINT_MODULE_2, web3, activeNetwork);
 
       await OwnerMintModule.ownerMint(
-        getWeiAmount(amountToMint, tokenDecimals, true),
+        getWeiAmount(web3, amountToMint, tokenDecimals, true),
         erc20TokenContract.address,
         memberAddress,
         owner,
@@ -454,7 +465,7 @@ export const MintAndShareTokens: React.FC<Props> = ({
       if (isDev) {
         await erc20TokenContract.mintTo(
           memberAddress,
-          getWeiAmount(amountToMint, tokenDecimals, true),
+          getWeiAmount(web3, amountToMint, tokenDecimals, true),
           owner,
           onTxConfirm,
           onTxReceipt,
@@ -464,12 +475,13 @@ export const MintAndShareTokens: React.FC<Props> = ({
       } else {
         const oldErc20TokenContract = new OldClubERC20Contract(
           erc20TokenContract.address,
-          web3
+          web3,
+          activeNetwork
         );
 
         await oldErc20TokenContract.controllerMint(
           memberAddress,
-          getWeiAmount(amountToMint, tokenDecimals, true),
+          getWeiAmount(web3, amountToMint, tokenDecimals, true),
           owner,
           onTxConfirm,
           onTxReceipt,

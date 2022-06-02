@@ -1,17 +1,21 @@
 import RugERC20ClaimModule_ABI from 'src/contracts/RugERC20ClaimModule.json';
 import { getGnosisTxnInfo } from '../shared/gnosisTransactionInfo';
+import { estimateGas } from '../shared/getGasEstimate';
 
 export class RugERC20ClaimModule {
   contract;
   isGnosisSafe: boolean;
+  activeNetwork;
 
   constructor(
     contractAddress: string,
     rugToken: string,
     genesisNFT: string,
     properties: string,
-    web3
+    web3,
+    activeNetwork
   ) {
+    this.activeNetwork = activeNetwork;
     this.contract = new web3.eth.Contract(
       RugERC20ClaimModule_ABI,
       contractAddress,
@@ -70,7 +74,10 @@ export class RugERC20ClaimModule {
             setTransactionHash('');
 
             // Stop waiting if we are connected to gnosis safe via walletConnect
-            const receipt = await getGnosisTxnInfo(transactionHash);
+            const receipt = await getGnosisTxnInfo(
+              transactionHash,
+              this.activeNetwork
+            );
 
             if (!(receipt as { isSuccessful: boolean }).isSuccessful) {
               return reject('Receipt failed');
@@ -113,7 +120,10 @@ export class RugERC20ClaimModule {
           } else {
             setTransactionHash('');
             // Stop waiting if we are connected to gnosis safe via walletConnect
-            const receipt = await getGnosisTxnInfo(transactionHash);
+            const receipt = await getGnosisTxnInfo(
+              transactionHash,
+              this.activeNetwork
+            );
 
             if (!(receipt as { isSuccessful: boolean }).isSuccessful) {
               return reject('Receipt failed');

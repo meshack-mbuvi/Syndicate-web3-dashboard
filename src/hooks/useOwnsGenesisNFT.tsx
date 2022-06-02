@@ -10,7 +10,7 @@ const useOwnsGenesisNFT: any = () => {
 
   const {
     web3Reducer: {
-      web3: { account, web3 }
+      web3: { account, web3, activeNetwork }
     },
     initializeContractsReducer: {
       syndicateContracts: { RugClaimModule }
@@ -43,18 +43,22 @@ const useOwnsGenesisNFT: any = () => {
 
   // account has tokens
   const [accountRugTokens, setAccountRugTokens] = useState(0);
+  const [rugRadioContract, setRugRadioContract] = useState(null);
 
-  const rugRadioContract = new web3.eth.Contract(
-    ERC20ABI as AbiItem[],
-    rugTokenAddress
-  );
+  useEffect(() => {
+    if (web3?.eth) {
+      setRugRadioContract(
+        new web3.eth.Contract(ERC20ABI as AbiItem[], rugTokenAddress)
+      );
+    }
+  }, [activeNetwork.chainId]);
 
   // check whether user has RUG tokens
   const availableRugTokens = async () => {
     try {
       const tokens = await rugRadioContract?.methods.balanceOf(account).call();
       const decimals = await rugRadioContract?.methods.decimals().call();
-      setAccountRugTokens(getWeiAmount(tokens, decimals, false));
+      setAccountRugTokens(getWeiAmount(web3, tokens, decimals, false));
     } catch (error) {
       setAccountRugTokens(0);
     }

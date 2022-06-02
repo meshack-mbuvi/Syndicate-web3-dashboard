@@ -1,7 +1,5 @@
 import { BigNumber } from 'bignumber.js';
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const Web3 = require('web3');
-const web3 = new Web3(`${process.env.NEXT_PUBLIC_ALCHEMY}`);
+import { isEmpty } from 'lodash';
 
 /**
  * Takes an ether and converts it to a javascript number.
@@ -36,11 +34,12 @@ export const etherToNumber = (value: string, tokenFactor?: string) =>
  * @returns string amount
  */
 export const getWeiAmount = (
+  web3: any,
   amount: string,
   tokenDecimals: number,
   multiplication: boolean
 ): any => {
-  if (!amount) return 0;
+  if (!amount || isEmpty(web3)) return 0;
 
   // get unit mappings from web3
   const unitMappings = web3.utils.unitMap;
@@ -82,7 +81,7 @@ export const divideIfNotByZero = (numerator, denominator) => {
   }
 };
 
-export const isUnlimited = (value) => {
+export const isUnlimited = (value, web3) => {
   if (!value) return;
   const BN = web3.utils.BN;
   const BNValue = new BN(value.toString());

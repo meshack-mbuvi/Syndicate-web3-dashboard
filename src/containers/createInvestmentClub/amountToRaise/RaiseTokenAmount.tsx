@@ -44,6 +44,9 @@ const RaiseTokenAmount = (props: {
     createInvestmentClubSliceReducer: {
       investmentClubSymbol,
       tokenDetails: { depositTokenSymbol }
+    },
+    web3Reducer: {
+      web3: { activeNetwork }
     }
   } = useSelector((state: AppState) => state);
 
@@ -112,9 +115,14 @@ const RaiseTokenAmount = (props: {
               <span className=" text-white font-whyte text-sm">
                 Deposits collected in {depositTokenSymbol}. Members
                 <br />
-                will receive {depositTokenSymbol === 'ETH' ? '10,000' : '1'} ✺
-                {investmentClubSymbol} club token
-                {depositTokenSymbol === 'ETH' && 's'} <br />
+                will receive{' '}
+                {depositTokenSymbol === activeNetwork.nativeCurrency.symbol
+                  ? '10,000'
+                  : '1'}{' '}
+                ✺{investmentClubSymbol} club token
+                {depositTokenSymbol === activeNetwork.nativeCurrency.symbol &&
+                  's'}{' '}
+                <br />
                 for every 1 {depositTokenSymbol} deposited.
               </span>
             }

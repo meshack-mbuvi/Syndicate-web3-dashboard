@@ -9,15 +9,17 @@ import { useClubDepositsAndSupply } from '@/hooks/useClubDepositsAndSupply';
 import { AppState } from '@/state';
 import { ProgressIndicatorTooltip } from '../progressIndicatorTooltip';
 import { TokenDetails } from '@/hooks/useGetDepositTokenDetails';
+import { IActiveNetwork } from '@/state/wallet/types';
 interface IProgressIndicator {
   totalDeposits: number;
   depositTotalMax: string;
   openDate: string;
   closeDate: string;
   loading?: boolean;
-  ethDepositToken: boolean;
+  nativeDepositToken: boolean;
   depositTokenPriceInUSD: string;
   tokenDetails: TokenDetails;
+  activeNetwork: IActiveNetwork;
 }
 
 export enum TooltipState {
@@ -27,7 +29,11 @@ export enum TooltipState {
 }
 
 export const ProgressIndicator = (props: IProgressIndicator): JSX.Element => {
-  const { totalDeposits = 0, loading = false, ethDepositToken = false } = props;
+  const {
+    totalDeposits = 0,
+    loading = false,
+    nativeDepositToken = false
+  } = props;
 
   // refs and consts
   const tooltipBox = useRef(null);
@@ -75,7 +81,7 @@ export const ProgressIndicator = (props: IProgressIndicator): JSX.Element => {
       clubMembers.map((member) => {
         const { clubTokens, depositAmount } = member;
 
-        const actualDepositClubTokens = ethDepositToken
+        const actualDepositClubTokens = nativeDepositToken
           ? +depositAmount * 10000
           : +depositAmount;
         _actualDepositClubTokens += actualDepositClubTokens;
@@ -126,7 +132,7 @@ export const ProgressIndicator = (props: IProgressIndicator): JSX.Element => {
     totalDeposits,
     totalSupply,
     maxTotalSupply,
-    ethDepositToken,
+    nativeDepositToken,
     JSON.stringify(clubMembers)
   ]);
 
@@ -239,7 +245,7 @@ export const ProgressIndicator = (props: IProgressIndicator): JSX.Element => {
             tooltipTitle,
             tooltipTokenAmount,
             tooltipTokenPercentage,
-            depositTokensAmount: ethDepositToken
+            depositTokensAmount: nativeDepositToken
               ? tokensViaDeposits / 10000
               : tokensViaDeposits
           }}
@@ -390,7 +396,7 @@ export const ProgressIndicator = (props: IProgressIndicator): JSX.Element => {
                 <p className="leading-loose xl:text-2xl lg:text-xl text-base">
                   <NumberTreatment
                     numberValue={`${totalSupply || ''}`}
-                    ethDepositToken={ethDepositToken}
+                    nativeDepositToken={nativeDepositToken}
                   />
                   &nbsp;
                   {symbol}
@@ -416,7 +422,7 @@ export const ProgressIndicator = (props: IProgressIndicator): JSX.Element => {
               <p className="xl:text-2xl lg:text-xl text-sm text-white leading-loose">
                 <NumberTreatment
                   numberValue={`${maxTotalSupply || ''}`}
-                  ethDepositToken={ethDepositToken}
+                  nativeDepositToken={nativeDepositToken}
                 />
                 &nbsp;
                 {symbol}

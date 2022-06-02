@@ -1,4 +1,4 @@
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import AccountPill from '@/components/shared/accountPill';
 import { SkeletonLoader } from 'src/components/skeletonLoader';
 import { ArrowRightIcon } from '@heroicons/react/outline';
@@ -8,15 +8,21 @@ import { showWalletModal } from '@/state/wallet/actions';
 import { useMyClubs } from '@/hooks/useMyClubs';
 import { useEffect } from 'react';
 import { L2 } from '@/components/typography';
+import { AppState } from '@/state';
 
 const WalletWarnings: React.FC = () => {
   const dispatch = useDispatch();
+  const {
+    web3Reducer: {
+      web3: { activeNetwork }
+    }
+  } = useSelector((state: AppState) => state);
 
   const { myClubs, refetch, loading, isFetched, totalClubs } = useMyClubs();
 
   useEffect(() => {
-    if (!isFetched) refetch();
-  });
+    if (!isFetched && activeNetwork.chainId) refetch();
+  }, [activeNetwork.chainId]);
 
   const { disconnectWallet } = useConnectWalletContext();
 

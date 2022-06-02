@@ -19,7 +19,7 @@ import { useDispatch, useSelector } from 'react-redux';
 const SignMemberLegalAgreement: NextPage = () => {
   const {
     web3Reducer: {
-      web3: { account }
+      web3: { account, activeNetwork }
     },
     initializeContractsReducer: {
       syndicateContracts: { SingleTokenMintModule, DepositTokenMintModule }
@@ -46,8 +46,9 @@ const SignMemberLegalAgreement: NextPage = () => {
     variables: {
       syndicateDaoId: clubAddress?.toLocaleLowerCase()
     },
+    context: { clientName: 'theGraph', chainId: activeNetwork.chainId },
     notifyOnNetworkStatusChange: true,
-    skip: !clubAddress || loading,
+    skip: !clubAddress || loading || !activeNetwork.chainId,
     fetchPolicy: 'no-cache'
   });
 
@@ -91,7 +92,8 @@ const SignMemberLegalAgreement: NextPage = () => {
           depositToken,
           erc20TokenContract,
           DepositTokenMintModule,
-          SingleTokenMintModule
+          SingleTokenMintModule,
+          activeNetwork
         );
       }
 
@@ -120,7 +122,7 @@ const SignMemberLegalAgreement: NextPage = () => {
 
   const navItems = [
     {
-      url: `/clubs/${clubAddress}`,
+      url: `/clubs/${clubAddress}${'?network=' + activeNetwork.chainId}`,
       navItemText: 'Exit'
     },
     {

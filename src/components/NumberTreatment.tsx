@@ -4,11 +4,11 @@ import { floatedNumberWithCommas } from '@/utils/formattedNumbers';
 const NumberTreatment: React.FC<{
   numberValue: string;
   noUSDValue?: boolean;
-  ethDepositToken?: boolean;
-}> = ({ numberValue, noUSDValue, ethDepositToken }) => {
+  nativeDepositToken?: boolean;
+}> = ({ numberValue, noUSDValue, nativeDepositToken }) => {
   const [wholeNumberValue, decimalValue] = floatedNumberWithCommas(
     numberValue,
-    ethDepositToken ?? false
+    nativeDepositToken ?? false
   ).split('.');
 
   const isColourReversed =

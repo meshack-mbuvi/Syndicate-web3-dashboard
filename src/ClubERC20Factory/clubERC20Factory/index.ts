@@ -1,15 +1,18 @@
 import { isDev } from '@/utils/environment';
 import CLUB_ERC20_FACTORY_ABI from 'src/contracts/ERC20ClubFactoryDepositToken.json';
 import { getGnosisTxnInfo } from '../shared/gnosisTransactionInfo';
+import { estimateGas } from '../shared/getGasEstimate';
 
 export class ClubERC20Factory {
   web3;
   address;
   clubERC20Factory;
+  activeNetwork;
 
   // initialize new instance of lubERC20FactoryAddress
-  constructor(clubERC20FactoryAddress: string, web3: any) {
+  constructor(clubERC20FactoryAddress: string, web3: any, activeNetwork) {
     this.web3 = web3;
+    this.activeNetwork = activeNetwork;
     this.address = clubERC20FactoryAddress;
     this.init();
   }
@@ -58,6 +61,7 @@ export class ClubERC20Factory {
     if (!this.clubERC20Factory) {
       await this.init();
     }
+    const gasEstimate = await estimateGas(this.web3);
 
     await new Promise((resolve, reject) => {
       this.clubERC20Factory.methods
@@ -72,7 +76,7 @@ export class ClubERC20Factory {
           0,
           usdcAddress // USDC
         )
-        .send({ from: account })
+        .send({ from: account, gasPrice: gasEstimate })
         .on('transactionHash', (transactionHash) => {
           if (
             this.web3._provider.wc?._peerMeta.name === 'Gnosis Safe Multisig'
@@ -95,7 +99,10 @@ export class ClubERC20Factory {
 
     // fallback for gnosisSafe <> walletConnect
     if (gnosisTxHash) {
-      const receipt: any = await getGnosisTxnInfo(gnosisTxHash);
+      const receipt: any = await getGnosisTxnInfo(
+        gnosisTxHash,
+        this.activeNetwork
+      );
       onTxConfirm(receipt.transactionHash);
 
       const createEvents = await this.clubERC20Factory.getPastEvents(

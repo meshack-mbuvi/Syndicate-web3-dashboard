@@ -9,6 +9,9 @@ const DemoBanner: React.FC = () => {
   const {
     erc20TokenSliceReducer: {
       erc20Token: { depositsEnabled: isOpenForDeposits }
+    },
+    web3Reducer: {
+      web3: { activeNetwork }
     }
   } = useSelector((state: AppState) => state);
 
@@ -29,7 +32,10 @@ const DemoBanner: React.FC = () => {
   const handleSwitchClubViewing = () => {
     router.push({
       pathname: `/clubs/demo/${isManager ? '' : 'manage'}`,
-      query: { status: isOpenForDeposits ? 'open' : 'active' }
+      query: {
+        status: isOpenForDeposits ? 'open' : 'active',
+        network: activeNetwork.chainId
+      }
     });
   };
 

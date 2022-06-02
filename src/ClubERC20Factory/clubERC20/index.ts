@@ -1,16 +1,19 @@
 import ClubERC20 from 'src/contracts/ERC20Club.json';
 import { getGnosisTxnInfo } from '../shared/gnosisTransactionInfo';
+import { estimateGas } from '../shared/getGasEstimate';
 
 export class ClubERC20Contract {
   web3;
   address;
+  activeNetwork;
 
   // This will be used to call other functions.
   clubERC20Contract;
 
   // initialize an erc20 contract instance
-  constructor(clubERC20ContractAddress: string, web3) {
+  constructor(clubERC20ContractAddress: string, web3, activeNetwork) {
     this.web3 = web3;
+    this.activeNetwork = activeNetwork;
     this.address = clubERC20ContractAddress;
     this.init();
   }
@@ -107,11 +110,12 @@ export class ClubERC20Contract {
     setTransactionHash: (txHas) => void
   ): Promise<void> {
     let gnosisTxHash;
+    const gasEstimate = await estimateGas(this.web3);
 
     await new Promise((resolve, reject) => {
       this.clubERC20Contract.methods
         .mintTo(recipientAddress, amount)
-        .send({ from: ownerAddress })
+        .send({ from: ownerAddress, gasPrice: gasEstimate })
         .on('transactionHash', (transactionHash) => {
           onTxConfirm(transactionHash);
 
@@ -138,7 +142,10 @@ export class ClubERC20Contract {
 
     // fallback for gnosisSafe <> walletConnect
     if (gnosisTxHash) {
-      const receipt: any = await getGnosisTxnInfo(gnosisTxHash);
+      const receipt: any = await getGnosisTxnInfo(
+        gnosisTxHash,
+        this.activeNetwork
+      );
       setTransactionHash(receipt.transactionHash);
       if (receipt.isSuccessful) {
         onTxReceipt(receipt);
@@ -158,11 +165,12 @@ export class ClubERC20Contract {
     setTransactionHash: (txHas) => void
   ): Promise<void> {
     let gnosisTxHash;
+    const gasEstimate = await estimateGas(this.web3);
 
     await new Promise((resolve, reject) => {
       this.clubERC20Contract.methods
         .controllerRedeem(memberAddress, amount)
-        .send({ from: ownerAddress })
+        .send({ from: ownerAddress, gasPrice: gasEstimate })
         .on('transactionHash', (transactionHash) => {
           onTxConfirm(transactionHash);
 
@@ -189,7 +197,10 @@ export class ClubERC20Contract {
 
     // fallback for gnosisSafe <> walletConnect
     if (gnosisTxHash) {
-      const receipt: any = await getGnosisTxnInfo(gnosisTxHash);
+      const receipt: any = await getGnosisTxnInfo(
+        gnosisTxHash,
+        this.activeNetwork
+      );
       setTransactionHash(receipt.transactionHash);
       if (receipt.isSuccessful) {
         onTxReceipt(receipt);

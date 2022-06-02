@@ -1,14 +1,17 @@
 import MintPolicyABI from 'src/contracts/PolicyMintERC20.json';
 import { getGnosisTxnInfo } from '../shared/gnosisTransactionInfo';
+import { estimateGas } from '../shared/getGasEstimate';
 
 export class MintPolicyContract {
   web3;
   // This will be used to call other functions. eg mint
   mintPolicyContract;
   address;
+  activeNetwork;
 
-  constructor(mintPolicyAddress: string, web3: Web3) {
+  constructor(mintPolicyAddress: string, web3: Web3, activeNetwork) {
     this.web3 = web3;
+    this.activeNetwork = activeNetwork;
     this.mintPolicyContract = new this.web3.eth.Contract(
       MintPolicyABI,
       mintPolicyAddress
@@ -82,6 +85,7 @@ export class MintPolicyContract {
     if (!this.mintPolicyContract) {
       await this.init();
     }
+    const gasEstimate = await estimateGas(this.web3);
 
     await new Promise((resolve, reject) => {
       this.mintPolicyContract.methods
@@ -93,7 +97,7 @@ export class MintPolicyContract {
           '0x0000000000000000000000000000000000000000',
           0
         ])
-        .send({ from: wallet })
+        .send({ from: wallet, gasPrice: gasEstimate })
         .on('transactionHash', (transactionHash) => {
           if (
             this.web3._provider.wc?._peerMeta.name === 'Gnosis Safe Multisig'
@@ -116,7 +120,10 @@ export class MintPolicyContract {
 
     // fallback for gnosisSafe <> walletConnect
     if (gnosisTxHash) {
-      const receipt: any = await getGnosisTxnInfo(gnosisTxHash);
+      const receipt: any = await getGnosisTxnInfo(
+        gnosisTxHash,
+        this.activeNetwork
+      );
       onTxConfirm(receipt.transactionHash);
 
       const createEvents = await this.mintPolicyContract.getPastEvents(

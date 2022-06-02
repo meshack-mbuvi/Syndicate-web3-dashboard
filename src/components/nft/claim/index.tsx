@@ -18,10 +18,10 @@ import useFetchAirdropInfo from '@/hooks/useERC721AirdropInfo';
 import { SkeletonLoader } from 'src/components/skeletonLoader';
 import { useRouter } from 'next/router';
 import Tooltip from 'react-tooltip-lite';
-import { isDev } from '@/utils/environment';
 import { numberWithCommas } from '@/utils/formattedNumbers';
 import { getWeiAmount } from '@/utils/conversions';
 import { getNativeTokenPrice } from '@/utils/api/transactions';
+import { CONTRACT_ADDRESSES } from '@/Networks';
 
 const ClaimNFT: React.FC = () => {
   const router = useRouter();
@@ -30,7 +30,7 @@ const ClaimNFT: React.FC = () => {
   const {
     initializeContractsReducer: { syndicateContracts },
     web3Reducer: {
-      web3: { account, web3 }
+      web3: { account, web3, activeNetwork }
     },
     erc721TokenSliceReducer: { erc721Token }
   } = useSelector((state: AppState) => state);
@@ -42,11 +42,11 @@ const ClaimNFT: React.FC = () => {
   const { loading: erc721Loading } = erc721Token;
 
   const [openseaLink, setOpenseaLink] = useState<string>('');
-  const [etherScanLink, setEtherscanLink] = useState<string>('');
+  const [explorerLink, setExplorerLink] = useState<string>('');
   const [unMinted, setUnMinted] = useState<number>(0);
 
-  const [ethBalance, setEthBalance] = useState('');
-  const [rawEthBalance, setRawEthBalance] = useState('');
+  const [nativeBalance, setNativeBalance] = useState('');
+  const [rawNativeBalance, setRawNativeBalance] = useState('');
   const [startTime, setStartTime] = useState<number>(0);
   const [currentAccount, setCurrentAccount] = useState<string>(' ');
   const [loading, setLoading] = useState<boolean>(true);
@@ -91,32 +91,25 @@ const ClaimNFT: React.FC = () => {
       if (erc721Token.publicUtilityClaimEnabled) {
         collection = 'ruggenesis-nft';
       }
+      setExplorerLink(
+        `${activeNetwork.blockExplorer.baseUrl}/${erc721Token.address}`
+      );
 
-      if (isDev) {
-        setEtherscanLink(
-          `https://rinkeby.etherscan.io/address/${erc721Token.address}`
-        );
-        setOpenseaLink('');
-        // setOpenseaLink(`https://testnets.opensea.io/collection/${collection}`);
-      } else {
-        setEtherscanLink(`https://etherscan.io/address/${erc721Token.address}`);
-        setOpenseaLink(`https://opensea.io/collection/${collection}`);
-        // setOpenseaLink(`https://opensea.io/collection/${erc721Token.address}`);
-      }
+      setOpenseaLink(`https://opensea.io/collection/${collection}`);
     }
   }, [erc721Token.address, nftAddress, erc721Token.publicUtilityClaimEnabled]);
 
-  const getEthBalance = async () => {
+  const getNativeBalance = async () => {
     if (account) {
       const balance = await web3.eth.getBalance(account);
-      const ethBalance = await web3.utils.fromWei(balance, 'ether');
-      setEthBalance(ethBalance);
-      setRawEthBalance(balance);
+      const nativeBalance = await web3.utils.fromWei(balance, 'ether');
+      setNativeBalance(nativeBalance);
+      setRawNativeBalance(balance);
     }
   };
 
   useEffect(() => {
-    getEthBalance();
+    getNativeBalance();
   }, [account]);
 
   const getERC721TokenDetails = async (ERC721tokenContract) => {
@@ -133,17 +126,17 @@ const ClaimNFT: React.FC = () => {
       ]);
 
     const PUBLIC_ONE_PER_ADDRESS_MODULE =
-      process.env.NEXT_PUBLIC_ONE_PER_ADDRESS_MODULE;
+      CONTRACT_ADDRESSES[activeNetwork.chainId]?.OnePerAddressMintModule;
 
     const PUBLIC_UTILITY_MINT_MODULE =
-      process.env.NEXT_PUBLIC_UTILITY_MINT_MODULE;
+      CONTRACT_ADDRESSES[activeNetwork.chainId]?.UtilityMintModule;
 
-    const tokenPrice = await getNativeTokenPrice();
+    const tokenPrice = await getNativeTokenPrice(activeNetwork.chainId);
     let publicUtilityClaimEnabled = false;
     let publicSingleClaimEnabled = false;
     let merkleClaimEnabled = true;
     let publicSupply = 0;
-    let ethPrice = '0';
+    let nativePrice = '0';
     let maxPerAddress = 0;
     let defaultImage = ' ';
     let amountMinted = 0;
@@ -170,10 +163,10 @@ const ClaimNFT: React.FC = () => {
         merkleClaimEnabled = false;
 
         // get info bout the mint
-        [publicSupply, ethPrice, amountMinted, maxPerAddress, _startTime] =
+        [publicSupply, nativePrice, amountMinted, maxPerAddress, _startTime] =
           await Promise.all([
             Number(await PublicMintWithFeeModule.publicSupply(address)),
-            await PublicMintWithFeeModule.ethPrice(address),
+            await PublicMintWithFeeModule.nativePrice(address),
             Number(
               await PublicMintWithFeeModule.amountMinted(address, account)
             ),
@@ -202,12 +195,12 @@ const ClaimNFT: React.FC = () => {
       merkleClaimEnabled,
       publicSingleClaimEnabled,
       publicUtilityClaimEnabled,
-      ethPrice,
-      mintPrice: Number(getWeiAmount(ethPrice, 18, false)),
+      nativePrice,
+      mintPrice: Number(getWeiAmount(web3, nativePrice, 18, false)),
       priceUSD: parseFloat(
         (
           parseFloat(String(tokenPrice)) *
-          parseFloat(String(getWeiAmount(ethPrice, 18, false)))
+          parseFloat(String(getWeiAmount(web3, nativePrice, 18, false)))
         ).toFixed(2)
       ),
       maxPerAddress,
@@ -345,9 +338,13 @@ const ClaimNFT: React.FC = () => {
                       </Tooltip>
                     </a>
                   )}
-                  <a href={etherScanLink} target="_blank" rel="noreferrer">
+                  <a href={explorerLink} target="_blank" rel="noreferrer">
                     <Tooltip
-                      content={<div>View contract on Etherscan</div>}
+                      content={
+                        <div>
+                          View contract on {activeNetwork.blockExplorer.name}
+                        </div>
+                      }
                       arrow={false}
                       tipContentClassName="actionsTooltip"
                       background="#232529"
@@ -384,7 +381,8 @@ const ClaimNFT: React.FC = () => {
                   {erc721Token.mintPrice ? (
                     <div className=" text-2xl flex space-x-4">
                       <div className="text-white">
-                        {erc721Token.mintPrice} ETH
+                        {erc721Token.mintPrice}{' '}
+                        {activeNetwork.nativeCurrency.symbol}
                       </div>
                       <div className="text-gray-lightManatee">
                         ${erc721Token.priceUSD}
@@ -394,7 +392,8 @@ const ClaimNFT: React.FC = () => {
                     <div className="text-2xl">Only gas</div>
                   )}
                   <div className="text-gray-syn4 text-sm">
-                    Wallet balance: {(+ethBalance).toFixed(3)} ETH
+                    Wallet balance: {(+nativeBalance).toFixed(3)}{' '}
+                    {activeNetwork.nativeCurrency.symbol}
                   </div>
                 </div>
               </div>
@@ -404,7 +403,7 @@ const ClaimNFT: React.FC = () => {
                     updateMinted(amount);
                   },
                   openseaLink,
-                  rawEthBalance,
+                  rawNativeBalance,
                   startTime
                 }}
               ></ClaimCard>

@@ -1,5 +1,6 @@
 import { format, utcToZonedTime } from 'date-fns-tz';
 import moment from 'moment';
+import { default as _moment } from 'moment-timezone';
 import 'moment-precise-range-plugin';
 
 export const formatDate = (dateString: Date): string =>
@@ -77,4 +78,13 @@ export const getCountDownDays = (date: string): string => {
     timeRemaining += `${seconds} ${seconds === 1 ? 'second' : 'seconds'} `;
   }
   return timeRemaining;
+};
+/** method to format UTC time into the sample format below
+ * Friday, May 6 at 1:46pm CET
+ * Method uses moment timezone https://momentjs.com/timezone/
+ */
+
+export const getFormattedDateTimeWithTZ = (date: number): string => {
+  const timeZoneString = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  return _moment(date).tz(timeZoneString).format('dddd, MMM D [at] h:mma zz');
 };

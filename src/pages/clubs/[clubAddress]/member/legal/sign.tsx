@@ -21,7 +21,7 @@ const MemberAgreementPage: NextPage = () => {
   const {
     legalInfoReducer: { memberInfo, clubInfo, walletSignature },
     web3Reducer: {
-      web3: { account }
+      web3: { account, activeNetwork }
     },
     erc20TokenSliceReducer: {
       erc20Token: { depositsEnabled }
@@ -30,7 +30,7 @@ const MemberAgreementPage: NextPage = () => {
 
   const navbarItems = [
     {
-      url: `/clubs/${clubAddress}`,
+      url: `/clubs/${clubAddress}${'?network=' + activeNetwork.chainId}`,
       navItemText: 'Exit'
     },
     {
@@ -68,7 +68,9 @@ const MemberAgreementPage: NextPage = () => {
     });
 
     if (depositsEnabled) {
-      router.push(`/clubs/${clubAddress}`);
+      router.push(
+        `/clubs/${clubAddress}${'?network=' + activeNetwork.chainId}`
+      );
     } else {
       setShowSuccessModal(true);
     }
@@ -112,7 +114,11 @@ const MemberAgreementPage: NextPage = () => {
               You’ll receive a signed copy via email
             </div>
 
-            <Link href={`/clubs/${clubAddress}`}>
+            <Link
+              href={`/clubs/${clubAddress}${
+                '?network=' + activeNetwork.chainId
+              }`}
+            >
               <CtaButton onClick={() => setShowSuccessModal(false)}>
                 Back to club dashboard
               </CtaButton>

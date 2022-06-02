@@ -16,7 +16,6 @@ import {
 } from '@/components/tokenSelect/indexReducer';
 import { getTokenDetails } from '@/utils/api';
 import { isDev } from '@/utils/environment';
-import { ChainEnum } from '@/utils/api/ChainTypes';
 import { L2 } from '../typography';
 interface TokenSelectSearch {
   toggleTokenSelect: () => void;
@@ -35,7 +34,7 @@ export const TokenSelectSearch: React.FC<TokenSelectSearch> = ({
 }) => {
   const {
     web3Reducer: {
-      web3: { web3 }
+      web3: { web3, activeNetwork }
     },
     createInvestmentClubSliceReducer: { tokenDetails }
   } = useSelector((state: AppState) => state);
@@ -46,9 +45,6 @@ export const TokenSelectSearch: React.FC<TokenSelectSearch> = ({
   const [showCryptoAssetModal, setShowCryptoAssetModal] = useState(false);
   const [loading, setLoading] = useState(false);
   const [hasTokenError, setHasTokenError] = useState(false);
-
-  /* TODO - refactor for other chains see ENG-3310 */
-  const chainId = isDev ? ChainEnum.RINKEBY : ChainEnum.ETHEREUM;
 
   const [activeOptions, reducerDispatch] = useReducer(indexReducer, {
     index: -1,
@@ -114,7 +110,7 @@ export const TokenSelectSearch: React.FC<TokenSelectSearch> = ({
       const matchedTokens: Token[] = [];
       // token contractAddress
       if (web3.utils.isAddress(debouncedSearchTerm)) {
-        getTokenByAddressChainId(debouncedSearchTerm, chainId)
+        getTokenByAddressChainId(debouncedSearchTerm, activeNetwork.chainId)
           .then((token) => {
             if (validateToken(token)) {
               matchedTokens.push(token);

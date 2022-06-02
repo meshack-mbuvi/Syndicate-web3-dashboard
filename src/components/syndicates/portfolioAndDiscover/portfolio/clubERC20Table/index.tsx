@@ -7,6 +7,8 @@ import Image from 'next/image';
 import Link from 'next/link';
 import React, { FC, useEffect, useMemo, useRef, useState } from 'react';
 import GradientAvatar from '../GradientAvatar';
+import { AppState } from '@/state';
+import { useSelector } from 'react-redux';
 
 interface Props {
   columns: string[];
@@ -14,6 +16,12 @@ interface Props {
 }
 
 const ClubERC20Table: FC<Props> = ({ columns, tableData }) => {
+  const {
+    web3Reducer: {
+      web3: { activeNetwork }
+    }
+  } = useSelector((state: AppState) => state);
+
   // pagination
   const dataLimit = 10; // number of items to show on each page.
   const [currentPage, setCurrentPage] = useState<number>(1);
@@ -38,7 +46,9 @@ const ClubERC20Table: FC<Props> = ({ columns, tableData }) => {
     return hasDecimals(totalDeposits)
       ? floatedNumberWithCommas(
           parseFloat(totalDeposits),
-          depositERC20TokenSymbol == 'ETH' ? true : false
+          depositERC20TokenSymbol == activeNetwork.nativeCurrency.symbol
+            ? true
+            : false
         )
       : numberWithCommas(totalDeposits);
   };
@@ -91,7 +101,9 @@ const ClubERC20Table: FC<Props> = ({ columns, tableData }) => {
               ) => (
                 <Link
                   key={`token-table-row-${index}`}
-                  href={`/clubs/${address}/${isOwner ? 'manage' : ''}`}
+                  href={`/clubs/${address}/${isOwner ? 'manage' : ''}${
+                    '?network=' + activeNetwork.chainId
+                  }`}
                 >
                   <div
                     className={`grid sm:gap-2 ${
@@ -142,7 +154,10 @@ const ClubERC20Table: FC<Props> = ({ columns, tableData }) => {
                           </div>
                           {floatedNumberWithCommas(
                             memberDeposits,
-                            depositERC20TokenSymbol == 'ETH' ? true : false
+                            depositERC20TokenSymbol ==
+                              activeNetwork.nativeCurrency.symbol
+                              ? true
+                              : false
                           )}{' '}
                           {depositERC20TokenSymbol}
                         </div>

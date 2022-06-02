@@ -21,6 +21,9 @@ const createInvestmentClubSlice = createSlice({
     setMintEndTime(state, action: PayloadAction<mintEndTime>) {
       state.mintEndTime = action.payload;
     },
+    setMintSpecificEndTime(state, action: PayloadAction<string>) {
+      state.mintSpecificEndTime = action.payload;
+    },
     setTransactionHash(state, action: PayloadAction<string>) {
       state.clubCreationStatus.transactionHash = action.payload;
     },
@@ -60,6 +63,7 @@ export const {
   setMembersCount,
   setTokenCap,
   setMintEndTime,
+  setMintSpecificEndTime,
   setTransactionHash,
   setClubCreationReceipt,
   resetClubCreationReduxState,

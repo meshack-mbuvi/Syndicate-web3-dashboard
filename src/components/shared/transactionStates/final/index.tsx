@@ -1,4 +1,4 @@
-import { EtherscanLink } from '@/components/syndicates/shared/EtherscanLink';
+import { BlockExplorerLink } from '@/components/syndicates/shared/BlockExplorerLink';
 import React from 'react';
 import Button from '@/components/buttons/PrimaryButton';
 import TransactionStateModal from '../shared';
@@ -54,7 +54,7 @@ export const FinalStateModal: React.FC<Props> = (props) => {
 
           {address ? (
             <div className="flex justify-center">
-              <EtherscanLink etherscanInfo={address} />
+              <BlockExplorerLink resourceId={address} />
             </div>
           ) : (
             ''

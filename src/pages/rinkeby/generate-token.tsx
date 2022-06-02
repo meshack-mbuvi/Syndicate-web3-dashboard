@@ -122,7 +122,7 @@ const GenerateDai: React.FC = () => {
       tokenDecimals = 18;
     }
 
-    const amountInWei = getWeiAmount(amount, tokenDecimals, true);
+    const amountInWei = getWeiAmount(web3, amount, tokenDecimals, true);
 
     try {
       await tokenContract.methods
@@ -138,7 +138,7 @@ const GenerateDai: React.FC = () => {
         'Minted ' +
           amount +
           ' Token. Account balance is now ' +
-          getWeiAmount(balance.toString(), tokenDecimals, false) +
+          getWeiAmount(web3, balance.toString(), tokenDecimals, false) +
           '!'
       );
     } catch (error) {

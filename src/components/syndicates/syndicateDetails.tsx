@@ -42,7 +42,7 @@ const SyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
     },
     merkleProofSliceReducer: { myMerkleProof },
     web3Reducer: {
-      web3: { web3, status, account }
+      web3: { web3, status, account, activeNetwork }
     }
   } = useSelector((state: AppState) => state);
 
@@ -65,7 +65,7 @@ const SyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
     depositTokenLogo,
     depositTokenName,
     depositTokenDecimals,
-    ethDepositToken
+    nativeDepositToken
   } = depositDetails;
 
   const isDemoMode = useDemoMode();
@@ -95,7 +95,8 @@ const SyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
       syndicateDaoId: address.toLocaleLowerCase()
     },
     notifyOnNetworkStatusChange: true,
-    skip: !address || loading,
+    context: { clientName: 'theGraph', chainId: activeNetwork.chainId },
+    skip: !address || loading || !activeNetwork.chainId,
     fetchPolicy: 'no-cache'
   });
 
@@ -141,7 +142,8 @@ const SyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
           depositToken,
           erc20TokenContract,
           DepositTokenMintModule,
-          SingleTokenMintModule
+          SingleTokenMintModule,
+          activeNetwork
         );
       }
 
@@ -179,7 +181,7 @@ const SyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
 
   // get and set current token details
   useEffect(() => {
-    if (!ethDepositToken && depositToken && web3) {
+    if (!nativeDepositToken && depositToken && web3) {
       // set up token contract
       const tokenContract = new web3.eth.Contract(abi, depositToken);
       setDepositTokenContract(tokenContract);
@@ -359,7 +361,7 @@ const SyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
                 openDate={startTime.toString()}
                 closeDate={endTime.toString()}
                 loading={loading || loadingClubDeposits}
-                ethDepositToken={ethDepositToken}
+                nativeDepositToken={nativeDepositToken}
                 depositTokenPriceInUSD={depositTokenPriceInUSD.toString()}
                 tokenDetails={{
                   symbol: depositTokenSymbol,
@@ -368,6 +370,7 @@ const SyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
                   name: depositTokenName,
                   decimals: depositTokenDecimals
                 }}
+                activeNetwork={activeNetwork}
               />
             </div>
           )}

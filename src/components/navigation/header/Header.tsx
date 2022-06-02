@@ -5,6 +5,7 @@ import { useRouter } from 'next/router';
 import { NavBarNavItem } from './navbarItems';
 import WalletComponent from './wallet';
 import { MoreMenu } from './moreMenu';
+import NetworkComponent from './network';
 
 interface props {
   navItems: { navItemText: string; url?: string; isLegal?: boolean }[];
@@ -100,6 +101,7 @@ const Header: React.FC<props> = ({
                 </div>
               </>
             ))}
+            <NetworkComponent />
             <WalletComponent />
           </div>
         ) : null}
@@ -161,6 +163,7 @@ const Header: React.FC<props> = ({
             </button>
           </div>
           <div className="relative hidden sm:flex sm:space-x-3 flex-1 justify-end items-center">
+            <NetworkComponent />
             <WalletComponent />
             <MoreMenu />
           </div>

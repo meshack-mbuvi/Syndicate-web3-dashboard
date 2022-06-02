@@ -41,12 +41,12 @@ const AddToCalendar: React.FC<{ calEvent }> = ({ calEvent }) => {
   return (
     <div className="relative inline-block text-center">
       <button
-        className="flex flex-row space-x-2 cursor-pointer outline-none"
+        className="flex flex-row items-center space-x-2 cursor-pointer outline-none"
         onClick={() => setShowDropdown(!showDropdown)}
       >
         <Image
-          height="15"
-          width="18"
+          height="20"
+          width="20"
           className="items-center"
           src="/images/calendar.svg"
           alt=""

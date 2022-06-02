@@ -4,6 +4,7 @@ import Modal, { ModalStyle } from '@/components/modal';
 import CopyLink from '@/components/shared/CopyLink';
 import { AppState } from '@/state';
 import { generateMemberSignURL } from '@/utils/generateMemberSignURL';
+import { chain } from 'lodash';
 import { useRouter } from 'next/router';
 import React, {
   Dispatch,
@@ -32,6 +33,9 @@ const ShareOrChangeLegalDocuments: FC<ILinkModal> = ({
     legalInfoReducer: {
       clubInfo,
       walletSignature: { signature }
+    },
+    web3Reducer: {
+      web3: { activeNetwork }
     }
   } = useSelector((state: AppState) => state);
 
@@ -46,7 +50,9 @@ const ShareOrChangeLegalDocuments: FC<ILinkModal> = ({
   ] = useState(false);
 
   const handleClick = () => {
-    router.push(`/clubs/${clubAddress}/manage`);
+    router.push(
+      `/clubs/${clubAddress}/manage${'?network=' + activeNetwork.chainId}`
+    );
     setShowShareOrChangeDocsModal(false);
   };
 
@@ -68,7 +74,8 @@ const ShareOrChangeLegalDocuments: FC<ILinkModal> = ({
     const memberSignURL = generateMemberSignURL(
       clubAddress as string,
       clubInfo,
-      signature
+      signature,
+      activeNetwork.chainId
     );
     setClubLegalAgreementSignageLink(memberSignURL);
   }, [signature, clubAddress, clubInfo, clubAddress]);
