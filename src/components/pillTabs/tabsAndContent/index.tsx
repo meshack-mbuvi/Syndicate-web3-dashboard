@@ -1,3 +1,4 @@
+import FadeBetweenChildren from '@/components/fadeBetweenChildren';
 import { FC } from 'react';
 import PillTabs from '../tabs';
 
@@ -16,19 +17,6 @@ const PillTabsAndContent: FC<Props> = ({
   handleTabChange,
   children
 }) => {
-  const renderedTabContent = children.map((child, index) => {
-    return [
-      <div
-        key={index}
-        className={`absolute top-0 left-0 w-full h-full ${
-          index === activeIndex ? 'opacity-100' : 'opacity-0'
-        } transition-all`}
-      >
-        {child}
-      </div>
-    ];
-  });
-
   return (
     <div
       className="pt-4 bg-gray-syn9 flex flex-col"
@@ -41,10 +29,12 @@ const PillTabsAndContent: FC<Props> = ({
         handleTabChange={handleTabChange}
       />
 
-      {/* Content */}
-      <div className="relative flex-grow mt-4 bg-opacity-500 w-full">
-        {renderedTabContent}
-      </div>
+      <FadeBetweenChildren
+        visibleChildIndex={activeIndex}
+        extraClasses="mt-4 w-full flex-grow"
+      >
+        {children}
+      </FadeBetweenChildren>
     </div>
   );
 };
