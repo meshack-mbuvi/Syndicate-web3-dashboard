@@ -103,12 +103,9 @@ export const DotIndicators: React.FC<Props> = ({
             : 'text-left'
         }`}
       >
-        {options.map((option) => {
+        {options.map((option, index) => {
           return (
-            <div
-              key={activeIndex}
-              className="inline uppercase text-sm tracking-wide"
-            >
+            <div key={index} className="inline uppercase text-sm tracking-wide">
               {option}
             </div>
           );
