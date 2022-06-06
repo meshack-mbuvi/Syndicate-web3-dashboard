@@ -77,7 +77,9 @@ export const ClubHeader: React.FC<{
               />
             </div>
           ) : (
-            <div className={`flex flex-wrap items-center w-fit-content`}>
+            <div
+              className={`flex flex-wrap items-center w-fit-content space-y-2`}
+            >
               <H1
                 id="club-name"
                 extraClasses={`${
