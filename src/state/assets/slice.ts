@@ -12,7 +12,7 @@ import {
 
 import {
   getNativeTokenPrice,
-  getTokenPrice,
+  getTokenPrices,
   getTokenTransactionHistory,
   getNativeTokenBalance
 } from '@/utils/api/transactions';
@@ -53,7 +53,7 @@ export const fetchTokenTransactions = createAsyncThunk(
       await fetchTokenBalances(uniqueTokens, account, web3)
     ).filter((token) => +token.tokenBalance > 0);
 
-    const uniqueTokenPrices = await getTokenPrice(
+    const uniqueTokenPrices = await getTokenPrices(
       uniqueTokenBalances
         .map((t) => (t.contractAddress as string).toLocaleLowerCase())
         .join(),
@@ -192,7 +192,7 @@ export const fetchCollectiblesTransactions = createAsyncThunk(
         collection: asset.collection,
         description: asset.description,
         floorPrice: floorPrices.find(
-          (price) => price.slug === asset.collection.slug
+          (price) => price.collectionSlug === asset.collection.slug
         )?.floorPrice,
         lastPurchasePrice
       };
