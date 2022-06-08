@@ -20,7 +20,7 @@
 }
 
 .react-datepicker__current-month {
-  @apply ml-2.5 text-sm text-white font-whyte mb-1;
+  @apply ml-2.5 text-sm text-white mb-1;
 }
 
 .react-datepicker__week {
@@ -32,7 +32,7 @@
 }
 
 .react-datepicker__day-name {
-  @apply h-8 flex items-center justify-center py-1 rounded-full text-xs font-whyte text-gray-500;
+  @apply h-8 flex items-center justify-center py-1 rounded-full text-xs text-gray-500;
 }
 
 .react-datepicker__navigation--previous {
@@ -73,5 +73,5 @@
 
 .react-datepicker__input-container > input {
   @apply block text-white bg-black bg-opacity-0 border
-  rounded-md shadow-sm font-whyte h-14 relative w-full focus:outline-none focus:ring-0;
+  rounded-md shadow-sm h-14 relative w-full focus:outline-none focus:ring-0;
 }
