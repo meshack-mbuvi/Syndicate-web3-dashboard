@@ -2,8 +2,11 @@ import { InputField } from '@/components/inputs/inputField';
 import { Checkbox } from '@/components/inputs/simpleCheckbox';
 import { PillButton } from '@/components/pillButtons';
 import { SkeletonLoader } from '@/components/skeletonLoader';
+import { useTailwindScreenWidth } from '@/helpers/layout';
+import useWindowSize from '@/hooks/useWindowSize';
 import {
   floatedNumberWithCommas,
+  numberWithCommas,
   stringNumberRemoveCommas
 } from '@/utils/formattedNumbers';
 import React, { useState } from 'react';
@@ -13,8 +16,10 @@ interface Props {
     icon: string;
     name?: string;
     symbol?: string;
+    price?: number;
     tokenAmount?: number;
     fiatAmount?: number;
+    maximumTokenAmount?: number;
     isEditingInFiat?: boolean;
     error?: string;
     warning?: string;
@@ -32,18 +37,18 @@ interface Props {
       error?: string;
       warning?: string;
       isLoading?: boolean;
+      maximumTokenAmount?: number;
+      price?: number;
     }[]
   ) => void;
-  handleActiveIndicesChange: (indecies: number[]) => void;
-  handleMaxOnClick: (index: number) => void;
+  handleActiveIndicesChange: (indices: number[]) => void;
 }
 
 export const AssetList: React.FC<Props> = ({
   options,
   activeIndices,
   handleOptionsChange,
-  handleActiveIndicesChange,
-  handleMaxOnClick
+  handleActiveIndicesChange
 }) => {
   // Using this to temporarily store the input allows the user to input periods for decimal numbers.
   // Instead of stripping the character off onChange when converting the string to a number, e.g Number("3.") -> 3
@@ -67,10 +72,60 @@ export const AssetList: React.FC<Props> = ({
     return activeIndices.includes(index);
   };
 
-  const dynamicInputFieldStyles = (index) => {
-    return `${
-      isIndexActive(index) ? 'text-5.75xl sm:text-2xl leading-6' : 'text-base'
-    } transition-transform duration-300`;
+  const dynamicInputFieldStyles = (index, amount) => {
+    const minimumDesktopSize = 'md';
+
+    // Calculates both mobile and desktop font sizes
+    const calculatedDesktopFontSize = `${minimumDesktopSize}:text-${
+      String(amount).length > 7 && String(amount).length < 15
+        ? ['1.75xl', '1.5xl', '1.25xl', 'xl', 'lg', 'base', 'base'][
+            String(amount).length - 8
+          ]
+        : String(amount).length >= 15
+        ? 'base'
+        : '2xl'
+    }`;
+    const calculatedMobileFontSize = `text-${
+      String(amount).length > 7 && String(amount).length < 15
+        ? ['lg', 'base', 'sm', 'sm', 'sm', 'sm', 'sm'][
+            String(amount).length - 8
+          ]
+        : String(amount).length >= 15
+        ? 'sm'
+        : 'sm'
+    }`;
+
+    return `transition-font-size duration-300 ${
+      isIndexActive(index)
+        ? `${calculatedDesktopFontSize} ${calculatedMobileFontSize}`
+        : `text-sm sm:text-base`
+    }`;
+  };
+
+  const windowWidth = useWindowSize().width;
+  const tailwindScreenWidthMd = useTailwindScreenWidth('xl').width;
+
+  /**
+   * Sets the input field value to the maximum value.
+   *
+   * @param index The index of the option that is being edited
+   */
+  const handleMaxOnClick = (index: number) => {
+    const { price, maximumTokenAmount } = options[index];
+
+    const tokenAmount = maximumTokenAmount;
+    const _fiatAmount =
+      parseFloat(`${maximumTokenAmount}`) * parseFloat(`${price}`);
+
+    handleOptionsChange([
+      ...options.slice(0, index),
+      {
+        ...options[index],
+        tokenAmount,
+        fiatAmount: _fiatAmount
+      },
+      ...options.slice(index + 1)
+    ]);
   };
 
   const renderedOptions = options.map((option, index) => (
@@ -88,6 +143,7 @@ export const AssetList: React.FC<Props> = ({
                 activeIndices,
                 indexToRemove
               );
+
               handleActiveIndicesChange(newActiveIndices);
             }
           }
@@ -97,91 +153,122 @@ export const AssetList: React.FC<Props> = ({
             handleActiveIndicesChange([...activeIndices, index]);
           }
         }}
-        className={`w-full min-w-112 flex justify-between items-center space-x-3 ${
+        className={`w-full md:min-w-112 text-sm sm:text-base flex items-center justify-between md:space-x-3 ${
           activeIndices.includes(index)
             ? 'py-5 bg-gray-syn8 hover:bg-gray-syn8 my-2'
             : 'py-3 hover:bg-gray-syn9'
-        } transition-all px-6 cursor-pointer rounded-custom`}
+        } transition-all px-3 sm:px-4 md:px-6 cursor-pointer rounded-custom`}
       >
-        {/* Name + info */}
-        <div className="flex-shrink-0 flex space-x-6 items items-center">
-          <Checkbox isActive={isIndexActive(index)} />
-          <div className="flex items-center">
-            <div className="mr-4 flex-shrink-0">
-              <img
-                src={option.icon ? option.icon : '/images/token-gray.svg'}
-                alt="Token icon"
-                className="w-8 h-8"
-              />
+        {/* Left column */}
+        <div className="flex space-x-4 md:space-x-4 items items-center w-full max-w-6/12">
+          <Checkbox
+            isActive={isIndexActive(index)}
+            extraClasses="flex-shrink-0"
+          />
+          <img
+            src={option.icon ? option.icon : '/images/token-gray.svg'}
+            alt="Token icon"
+            className="w-7 h-7 md:w-8 md:h-8 transition-all flex-shrink-0"
+          />
+          {/* Name */}
+          <div className="text-left flex-grow overflow-hidden md:overflow-visible">
+            {/* <div className='h-full w-full truncate'>fdvdfdvfdvfdvfdvfdvvfvdf</div> */}
+            <div className="block whitespace-nowrap md:whitespace-normal md:inline truncate">
+              {option.name}
             </div>
-            {option.isLoading ? (
-              <SkeletonLoader height="6" width="40" borderRadius="rounded-md" />
-            ) : (
-              <>
-                <div className="mr-2">{option.name}</div>
-                <div className="text-gray-syn4 flex-shrink-0">
-                  {option.symbol}
-                </div>
-              </>
-            )}
+            <div className="block whitespace-nowrap md:whitespace-normal md:inline truncate md:ml-2 text-gray-syn4 md:font-light">
+              {option.symbol}
+            </div>
           </div>
         </div>
 
-        {/* Amount */}
-        <div className="text-rigåht">
-          <div className="flex items-center space-x-2">
+        {/* Right column */}
+        <div className="text-right flex ml-7 md:ml-0 border-gray-syn7">
+          <div className="flex items-center md:space-x-2">
             {/* Max button */}
             {!option.isLoading && (
-              <PillButton
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleMaxOnClick(index);
-                }}
-                extraClasses={`${
-                  isIndexActive(index) ? 'ml-2 hidden sm:block' : 'hidden'
-                }`}
+              <div
+                className={`${
+                  isIndexActive(index)
+                    ? 'scale-100 max-w-20'
+                    : 'scale-0 max-w-0'
+                } hidden xl:block transition-all transform duration-300`}
               >
-                Max
-              </PillButton>
+                <PillButton
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleMaxOnClick(index);
+                  }}
+                  extraClasses={`${
+                    isIndexActive(index)
+                      ? 'ml-2 transition-all duration-300 opacity-0 md:opacity-100'
+                      : 'opacity-0'
+                  }`}
+                >
+                  Max
+                </PillButton>
+              </div>
             )}
 
-            <div>
-              {/* Top row */}
+            <div className="relative md:-top-1">
+              {/* Primary amount row */}
               {option.isLoading ? (
-                <SkeletonLoader
-                  height={isIndexActive(index) ? '8' : '6'}
-                  width="40"
-                  borderRadius="rounded-md"
-                  customClass="transition-all"
-                />
+                <>
+                  <SkeletonLoader
+                    height={isIndexActive(index) ? '8' : '6'}
+                    width="40"
+                    borderRadius="rounded-md"
+                    customClass="transition-all hidden sm:block"
+                  />
+                  <SkeletonLoader
+                    height={isIndexActive(index) ? '8' : '6'}
+                    width="16"
+                    borderRadius="rounded-md"
+                    customClass="transition-all sm:hidden"
+                  />
+                </>
               ) : (
                 <div className="flex items-center justify-end space-x-1.5">
                   {/* Amount */}
                   <div
-                    className={`${dynamicInputFieldStyles(index)}`}
+                    className={`${dynamicInputFieldStyles(
+                      index,
+                      String(
+                        option.isEditingInFiat
+                          ? option.fiatAmount
+                          : option.tokenAmount
+                      )
+                    )}`}
                     style={{
                       width: `${
-                        option.isEditingInFiat
-                          ? String(option.fiatAmount).length
-                          : String(option.tokenAmount).length * 1
-                      }ch`
+                        windowWidth > tailwindScreenWidthMd
+                          ? `${
+                              option.isEditingInFiat
+                                ? String(option.fiatAmount).length
+                                : String(option.tokenAmount).length
+                            }ch`
+                          : `auto`
+                      }`,
+                      maxWidth: '25ch'
                     }}
                   >
                     <InputField
                       value={
                         // Check if we have a temporary input field value to use (for incomplete decimals), otherwise use
                         // the appropriate amount
-                        !option.isEditingInFiat
-                          ? temporaryInputFieldValues[index].tokenAmount
+                        numberWithCommas(
+                          !option.isEditingInFiat
                             ? temporaryInputFieldValues[index].tokenAmount
-                            : option.tokenAmount.toLocaleString(undefined, {
+                              ? temporaryInputFieldValues[index].tokenAmount
+                              : option.tokenAmount.toLocaleString(undefined, {
+                                  maximumFractionDigits: 10
+                                })
+                            : temporaryInputFieldValues[index].fiatAmount
+                            ? temporaryInputFieldValues[index].fiatAmount
+                            : option.fiatAmount.toLocaleString(undefined, {
                                 maximumFractionDigits: 10
                               })
-                          : temporaryInputFieldValues[index].fiatAmount
-                          ? temporaryInputFieldValues[index].fiatAmount
-                          : option.fiatAmount.toLocaleString(undefined, {
-                              maximumFractionDigits: 10
-                            })
+                        )
                       }
                       onClick={(e) => {
                         // This stops the row from toggling active/unactive
@@ -215,26 +302,46 @@ export const AssetList: React.FC<Props> = ({
                             e.target.value
                           );
 
+                          let fiatAmount = option.fiatAmount;
+                          let tokenAmount = option.tokenAmount;
+
+                          /**
+                           * Whether editing in fiat or not, both amounts
+                           * needs to be updated since they refer to the same.
+                           */
+                          if (option.isEditingInFiat) {
+                            fiatAmount = strAmount ? strAmount : 0;
+                            tokenAmount =
+                              parseFloat(strAmount) /
+                              parseFloat(`${option.price}`);
+                          } else {
+                            tokenAmount = strAmount ? strAmount : 0;
+                            fiatAmount =
+                              parseFloat(strAmount) *
+                              parseFloat(`${option.price}`);
+                          }
+
+                          let error = option.error;
+                          // Check if the user is trying to send more than the maximum amount
+                          if (
+                            parseFloat(`${tokenAmount}`) >
+                            parseFloat(`${option.maximumTokenAmount}`)
+                          ) {
+                            error = 'Exceeds amount available for distribution';
+                          } else {
+                            error = '';
+                          }
+
                           handleOptionsChange([
                             ...options.slice(0, index),
                             {
-                              icon: option.icon,
-                              name: option.name,
-                              symbol: option.symbol,
-                              tokenAmount: !option.isEditingInFiat
-                                ? Number(strAmount)
-                                  ? Number(strAmount)
-                                  : 0
-                                : option.tokenAmount,
-                              fiatAmount: option.isEditingInFiat
-                                ? Number(strAmount)
-                                  ? Number(strAmount)
-                                  : 0
-                                : option.fiatAmount,
-                              isEditingInFiat: option.isEditingInFiat,
-                              error: option.error,
-                              warning: option.warning,
-                              isLoading: option.isLoading
+                              ...option,
+                              fiatAmount,
+                              tokenAmount,
+                              error:
+                                tokenAmount === 0
+                                  ? 'Enter valid amount or remove selection'
+                                  : error
                             },
                             ...options.slice(index + 1)
                           ]);
@@ -251,12 +358,17 @@ export const AssetList: React.FC<Props> = ({
                         }
                       }}
                       classesOverride={`py-1 px-0 rounded-md focus:ring-0 ${dynamicInputFieldStyles(
-                        index
+                        index,
+                        String(
+                          option.isEditingInFiat
+                            ? option.fiatAmount
+                            : option.tokenAmount
+                        )
                       )} ${
                         option.error && isIndexActive(index)
                           ? 'text-red-error'
                           : 'text-white'
-                      } transition-all`}
+                      } `}
                       extraClasses={`border-none bg-transparent p-0 text-right`}
                     />
                   </div>
@@ -265,23 +377,31 @@ export const AssetList: React.FC<Props> = ({
                   <div
                     className={`${
                       isIndexActive(index) ? 'text-gray-syn4 h2' : 'text-white'
-                    } transition-all duration-300`}
+                    } ${dynamicInputFieldStyles(
+                      index,
+                      String(
+                        option.isEditingInFiat
+                          ? option.fiatAmount
+                          : option.tokenAmount
+                      )
+                    )}`}
                   >
-                    {!option.isEditingInFiat ? option.symbol : 'USD'}
+                    {!option.isEditingInFiat ? option.symbol : `USD`}
                   </div>
                 </div>
               )}
 
-              {/* Bottom row */}
+              {/* Secondary amount row (i.e default row for fiat amount) */}
               {option.isLoading ? (
                 <SkeletonLoader
                   height="4"
                   width="40"
                   borderRadius="rounded-md"
+                  customClass="hidden md:block"
                 />
               ) : (
                 <div
-                  className={`flex text-sm text-gray-syn4 justify-end transition-all text-right ${
+                  className={`flex text-sm text-gray-syn4 justify-end transition-all text-right w-full ${
                     option.error && isIndexActive(index)
                       ? 'text-red-error'
                       : option.warning &&
@@ -297,36 +417,33 @@ export const AssetList: React.FC<Props> = ({
                     </div>
                   ) : (
                     <>
-                      <div>
-                        {option.isEditingInFiat
+                      <div className="truncate max-w-26 md:max-w-full">
+                        {!option.isEditingInFiat
                           ? `${floatedNumberWithCommas(
                               String(option.tokenAmount)
-                            )} ${option.symbol}`
+                            )}`
                           : `${floatedNumberWithCommas(
                               String(option.fiatAmount)
-                            )} USD`}
+                            )}`}
+                      </div>
+                      <div className="ml-1">
+                        {!option.isEditingInFiat ? option.symbol : 'USD'}
                       </div>
                       <button
                         onClick={(e) => {
-                          // This stops the row from toggling active/unactive
+                          // This stops the row from toggling active/inactive
                           e.stopPropagation();
 
                           handleOptionsChange([
                             ...options.slice(0, index),
                             {
-                              icon: option.icon,
-                              name: option.name,
-                              symbol: option.symbol,
-                              tokenAmount: option.tokenAmount,
-                              fiatAmount: option.fiatAmount,
-                              isEditingInFiat: !option.isEditingInFiat,
-                              error: option.error,
-                              warning: option.warning,
-                              isLoading: option.isLoading
+                              ...option,
+                              isEditingInFiat: !option.isEditingInFiat
                             },
                             ...options.slice(index + 1)
                           ]);
                         }}
+                        className="hidden md:block"
                       >
                         <svg
                           className={`${

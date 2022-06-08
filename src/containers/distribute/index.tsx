@@ -1,28 +1,30 @@
-import { CtaButton } from '@/components/CTAButton';
 import { BadgeWithOverview } from '@/components/distributions/badgeWithOverview';
+import { useIsClubOwner } from '@/hooks/useClubOwner';
+import { useDemoMode } from '@/hooks/useDemoMode';
 import { AppState } from '@/state';
+import { Status } from '@/state/wallet/types';
+import { useRouter } from 'next/router';
 import React, { FC, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import TwoColumnLayout from '../twoColumnLayout';
 import TokenSelector from './TokenSelector';
-import { useRouter } from 'next/router';
-import { Status } from '@/state/wallet/types';
-import { useIsClubOwner } from '@/hooks/useClubOwner';
-import { useDemoMode } from '@/hooks/useDemoMode';
 
 const Distribute: FC = () => {
   const {
-    assetsSliceReducer: { tokensResult },
-    erc20TokenSliceReducer: { erc20Token },
+    distributeTokensReducer: { distributionTokens, gasEstimate, eth },
+    erc20TokenSliceReducer: {
+      erc20Token: { owner, loading }
+    },
     web3Reducer: {
       web3: { account, status }
     }
   } = useSelector((state: AppState) => state);
 
-  const { owner, loading } = erc20Token;
+  const [tokensDetails, setTokensDetails] = useState([]);
+  const [ctaButtonDisabled, setCtaButtonDisabled] = useState(true);
+  const [sufficientGas, setSufficientGas] = useState(false);
 
-  const [tokens, setTokens] = useState([]);
-
+  // Prepare distributions tokens for overview badge
   const router = useRouter();
 
   const {
@@ -61,49 +63,72 @@ const Distribute: FC = () => {
   ]);
 
   useEffect(() => {
-    const tokens = tokensResult.map(
-      ({ tokenBalance, tokenName, tokenSymbol, price, logo }) => {
-        return {
-          icon: logo,
-          name: tokenName,
-          symbol: tokenSymbol,
-          tokenAmount: tokenBalance,
-          fiatAmount:
-            parseFloat(Number(price) ? price : price?.usd ?? 0) *
-            parseFloat(tokenBalance),
-          isEditingInFiat: false
-        };
-      }
-    );
-    // .filter((token) => token.fiatAmount !== 0);
+    if (distributionTokens.length) {
+      setCtaButtonDisabled(false);
 
-    setTokens(tokens);
+      setTokensDetails(
+        distributionTokens.map(({ symbol, tokenAmount, fiatAmount, icon }) => ({
+          tokenAmount,
+          fiatAmount,
+          tokenIcon: icon,
+          tokenSymbol: symbol,
+          isLoading: loading
+        }))
+      );
+    } else {
+      setCtaButtonDisabled(true);
+    }
 
     return () => {
-      setTokens([]);
+      setTokensDetails([]);
+      setCtaButtonDisabled(true);
     };
-  }, [tokensResult]);
+  }, [JSON.stringify(distributionTokens)]);
+
+  // check whether we have sufficient gas for distribution
+  useEffect(() => {
+    if (
+      eth &&
+      gasEstimate &&
+      +(parseFloat(eth.available) - parseFloat(eth.totalToDistribute)).toFixed(
+        5
+      ) >= parseFloat(gasEstimate.tokenAmount)
+    ) {
+      setSufficientGas(true);
+    } else {
+      setSufficientGas(false);
+    }
+  }, [JSON.stringify(gasEstimate), JSON.stringify(eth)]);
+
+  const rightColumnComponent = (
+    <div className="space-y-8">
+      <BadgeWithOverview
+        tokensDetails={tokensDetails}
+        gasEstimate={gasEstimate}
+        isCTADisabled={ctaButtonDisabled || !sufficientGas}
+        CTALabel={
+          sufficientGas ? 'Next, review members' : 'Insufficient gas reserves'
+        }
+      />
+    </div>
+  );
 
   return (
     <TwoColumnLayout
       managerSettingsOpen={true}
       leftColumnComponent={
-        <div>
-          <TokenSelector options={tokens} />
+        <div className="mt-10 sm:mt-12 md:mt-16">
+          <TokenSelector />
         </div>
       }
       rightColumnComponent={
-        <div className="space-y-8">
-          <BadgeWithOverview
-            gasEstimate={{
-              tokenSymbol: 'ETH',
-              tokenAmount: null,
-              fiatAmount: null,
-              isLoading: true
-            }}
-          />
-
-          <CtaButton disabled={true}>Next, review members</CtaButton>
+        <div>
+          {/* Use this to take up space when the component's position is fixed */}
+          <div className="opacity-0 md:opacity-100">{rightColumnComponent}</div>
+          {/* Mobile positioning */}
+          <div className="fixed bottom-0 left-0 w-full md:hidden">
+            {rightColumnComponent}
+          </div>
         </div>
       }
     />

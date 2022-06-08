@@ -30,12 +30,16 @@ import SEO from '../seo';
 interface Props {
   showBackButton?: boolean;
   managerSettingsOpen?: boolean;
+  dotIndicatorOptions?: string[];
+  handleExitClick?: () => void;
   showNav?: boolean;
   navItems?: { navItemText: string; url?: string; isLegal?: boolean }[];
 }
 
 const Layout: FC<Props> = ({
   children,
+  dotIndicatorOptions,
+  handleExitClick,
   managerSettingsOpen = false,
   showBackButton = false,
   showNav = true,
@@ -276,6 +280,8 @@ const Layout: FC<Props> = ({
           showBackButton={showBackButton}
           showNav={showNav}
           navItems={navItems}
+          dotIndicatorOptions={dotIndicatorOptions}
+          handleExitClick={handleExitClick}
         />
         <DemoBanner />
 

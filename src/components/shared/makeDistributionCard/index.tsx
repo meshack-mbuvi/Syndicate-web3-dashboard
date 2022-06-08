@@ -1,14 +1,28 @@
 import { useDemoMode } from '@/hooks/useDemoMode';
-import React from 'react';
+import { AppState } from '@/state';
 import { useRouter } from 'next/router';
+import React from 'react';
+import { useSelector } from 'react-redux';
 
 const MakeDistributionCard: React.FC = () => {
+  const {
+    web3Reducer: {
+      web3: { activeNetwork }
+    }
+  } = useSelector((state: AppState) => state);
+
   const isDemoMode = useDemoMode();
 
   const router = useRouter();
   const { clubAddress } = router.query;
   return (
-    <a href={isDemoMode ? undefined : `/clubs/${clubAddress}/distribute`}>
+    <a
+      href={
+        isDemoMode
+          ? undefined
+          : `/clubs/${clubAddress}/distribute?network=${activeNetwork.chainId}`
+      }
+    >
       <div className="rounded-t-2xl space-x-4 flex items-stretch">
         <div className="flex-shrink-0">
           <img src="/images/Distribute.svg" className="mt-1" alt="arrow" />

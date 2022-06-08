@@ -1,22 +1,21 @@
-import { getNfts, getNftFloorPrices } from '@/utils/api/nfts';
+import {
+  DisplayCriteria,
+  morseCodeNftsDetails
+} from '@/containers/layoutWithSyndicateDetails/assets/collectibles/shared/morseCodeNfts';
+import { getTokenDetails } from '@/utils/api';
+import { getNftFloorPrices, getNfts } from '@/utils/api/nfts';
+import {
+  getNativeTokenBalance,
+  getNativeTokenPrice,
+  getTokenPrices,
+  getTokenTransactionHistory
+} from '@/utils/api/transactions';
 import { mockCollectiblesResult } from '@/utils/mockdata';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import abi from 'human-standard-token-abi';
 import { getWeiAmount } from 'src/utils/conversions';
 import { AbiItem } from 'web3-utils';
 import { initialState } from './types';
-import {
-  morseCodeNftsDetails,
-  DisplayCriteria
-} from '@/containers/layoutWithSyndicateDetails/assets/collectibles/shared/morseCodeNfts';
-
-import {
-  getNativeTokenPrice,
-  getTokenPrices,
-  getTokenTransactionHistory,
-  getNativeTokenBalance
-} from '@/utils/api/transactions';
-import { getTokenDetails } from '@/utils/api';
 
 /** Async thunks */
 // ERC20 transactions
@@ -55,7 +54,7 @@ export const fetchTokenTransactions = createAsyncThunk(
 
     const uniqueTokenPrices = await getTokenPrices(
       uniqueTokenBalances
-        .map((t) => (t.contractAddress as string).toLocaleLowerCase())
+        .map((t) => (t.contractAddress as string).toLowerCase())
         .join(),
       activeNetwork.chainId
     );
@@ -79,13 +78,14 @@ export const fetchTokenTransactions = createAsyncThunk(
           .catch(() => ({ logo: '' }));
 
         return {
-          price: uniqueTokenPrices[contractAddress],
+          contractAddress,
           logo,
           tokenDecimal,
           tokenSymbol,
           tokenBalance,
           tokenName,
-          tokenValue
+          tokenValue,
+          price: uniqueTokenPrices[contractAddress]
         };
       })
     );
@@ -98,6 +98,7 @@ export const fetchTokenTransactions = createAsyncThunk(
       false
     );
     const nativeDetails = {
+      contractAddress: '',
       price: { usd: nativePriceResponse },
       logo: activeNetwork.logo,
       tokenDecimal: activeNetwork.nativeCurrency.decimals,

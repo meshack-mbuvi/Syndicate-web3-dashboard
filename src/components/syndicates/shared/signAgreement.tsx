@@ -112,7 +112,7 @@ const SignAgreement: React.FC<ISignAgreementProps> = ({
     <span class="flex flex-col">
       <span>
         Signed
-        <span classe="text-black">
+        <span class="text-black">
           &nbsp;${moment(timeSigned).format('lll')}
         </span>
       </span>

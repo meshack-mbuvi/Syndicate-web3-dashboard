@@ -67,6 +67,7 @@ export const InputField = forwardRef<HTMLInputElement, InputFieldProps>(
               <img src={icon} alt="icon" className="mx-auto" />
             </div>
           )}
+
           <input
             className={`block text-base focus:outline-none text-white ${
               classesOverride ? classesOverride : inputStyles
@@ -77,6 +78,10 @@ export const InputField = forwardRef<HTMLInputElement, InputFieldProps>(
             onClick={onClick}
             ref={ref}
             type={type}
+            style={{
+              textOverflow: 'ellipsis',
+              minWidth: '1ch'
+            }}
             {...rest}
           />
         </div>

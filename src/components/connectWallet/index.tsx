@@ -410,7 +410,7 @@ const ConnectWallet: React.FC = () => {
       <ConnectModal
         show={isErrorModalOpen}
         showCloseButton={!!metamaskNotInstalledError}
-        height={error?.type === "web3InstantionError" ? "h-auto" : "h-72"}
+        height={error?.type === 'web3InstantionError' ? 'h-auto' : 'h-72'}
         closeModal={() => dispatch(hideErrorModal())}
         type="error"
       >

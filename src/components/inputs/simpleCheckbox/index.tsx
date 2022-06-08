@@ -17,11 +17,13 @@ export const Checkbox: FC<Props> = ({
     <input
       className={`appearance-none bg-transparent rounded focus:ring-offset-0 cursor-pointer ${
         usePartialCheck ? 'partial' : ''
-      } ${extraClasses}`}
+      } ${extraClasses || ''}`}
       type="checkbox"
       checked={isActive}
       onChange={() => {
-        onChange(!isActive);
+        if (onChange) {
+          onChange(!isActive);
+        }
       }}
     />
   );

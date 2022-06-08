@@ -1,5 +1,5 @@
-import { useSelector } from "react-redux";
-import { AppState } from "@/state";
+import { useSelector } from 'react-redux';
+import { AppState } from '@/state';
 import NetworkMenuDropDown from './networkMenuDropdown';
 
 export const Network: React.FC = () => {

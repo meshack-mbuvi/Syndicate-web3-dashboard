@@ -1,9 +1,9 @@
-import { Flow, amplitudeLogger } from '@/components/amplitude';
+import { amplitudeLogger, Flow } from '@/components/amplitude';
 import { CLICK_COPY_DEPOSIT_LINK_TO_SHARE } from '@/components/amplitude/eventNames';
 import ErrorBoundary from '@/components/errorBoundary';
 import FadeIn from '@/components/fadeIn/FadeIn';
-import MakeDistributionCard from '@/components/shared/makeDistributionCard';
 import CreateEntityCard from '@/components/shared/createEntityCard';
+import MakeDistributionCard from '@/components/shared/makeDistributionCard';
 import ModifyClubSettingsCard from '@/components/shared/modifyClubSettingsCard';
 import SignLegalDocumentsCard from '@/components/shared/signLegalDocumentsCard';
 import { SkeletonLoader } from '@/components/skeletonLoader';
@@ -19,13 +19,13 @@ import { setDepositReadyInfo } from '@/state/legalInfo';
 import { Status } from '@/state/wallet/types';
 import { generateMemberSignURL } from '@/utils/generateMemberSignURL';
 import { XIcon } from '@heroicons/react/solid';
+import { useFlags } from 'launchdarkly-react-client-sdk';
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { animated } from 'react-spring';
 import GenerateDepositLink, { DepositLinkModal } from './GenerateDepositLink';
 import ShareOrChangeLegalDocuments from './shared/ShareOrChangeLegalDocuments';
-import { useFlags } from 'launchdarkly-react-client-sdk';
 
 const useShowShareWarning = () => {
   const router = useRouter();
@@ -427,7 +427,11 @@ const ManagerActions = (): JSX.Element => {
             </div>
 
             {!depositsEnabled ? (
-              <div className="hover:bg-gray-syn7 rounded-xl py-2 px-4 w-full ">
+              <div
+                className={`${
+                  loading ? `` : `hover:bg-gray-syn7`
+                } rounded-xl py-2 px-4 w-full`}
+              >
                 {loading ? (
                   <SkeletonLoader width="full" height="6" />
                 ) : (
@@ -436,7 +440,11 @@ const ManagerActions = (): JSX.Element => {
               </div>
             ) : null}
 
-            <div className="hover:bg-gray-syn7 rounded-xl py-2 px-4 w-full">
+            <div
+              className={`${
+                loading ? `` : `hover:bg-gray-syn7`
+              } rounded-xl py-2 px-4 w-full`}
+            >
               {loading ? (
                 <SkeletonLoader width="full" height="6" />
               ) : (

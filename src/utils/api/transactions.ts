@@ -1,6 +1,5 @@
-import { proxyGet } from '.';
-import { isDev } from '@/utils/environment';
 import { AxiosResponse } from 'axios';
+import { proxyGet } from '.';
 
 export async function getNativeTokenPrice(chainId: number): Promise<number> {
   const result: AxiosResponse<number> = await proxyGet(

@@ -88,6 +88,7 @@ export const ClubHeader: React.FC<{
               >
                 {name}
               </H1>
+
               <H1
                 weightClassOverride="font-light"
                 extraClasses="flex flex-wrap text-gray-syn4 items-center justify-center"
@@ -96,7 +97,7 @@ export const ClubHeader: React.FC<{
               </H1>
               <div className="block items-center ml-6 space-x-8 pr-2">
                 {showActionIcons ? (
-                  <div className="flex space-x-6">
+                  <div className="flex space-x-6 align-middle mt-1">
                     <CopyToClipboard text={owner as string}>
                       <button
                         className="flex items-center relative w-4 h-4 cursor-pointer"

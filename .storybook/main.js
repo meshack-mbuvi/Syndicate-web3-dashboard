@@ -14,7 +14,8 @@ module.exports = {
       ...config.resolve.alias,
       '@': path.resolve(__dirname, '..', 'src'),
       functions: path.resolve(__dirname, '..', 'functions'),
-      src: path.resolve(__dirname, '..', 'src')
+      src: path.resolve(__dirname, '..', 'src'),
+      'tailwind.config': path.resolve(__dirname, '..', 'tailwind.config.js')
     };
     return config;
   }

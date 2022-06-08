@@ -130,8 +130,14 @@ module.exports = {
         '12/12': '100%'
       },
       maxWidth: {
+        20: '5rem',
+        24: '6rem',
+        26: '6.5rem',
+        28: '7rem',
+        100: '25rem',
         104: '26rem',
         112: '28rem',
+        120: '30rem',
         480: '30rem',
         564: '35.25rem',
         868: '54rem',
@@ -202,7 +208,7 @@ module.exports = {
         '4xl': ['2.25rem', '2.75rem'],
         '4.5xl': '2.5rem',
         '5xl': ['3rem', '3.5rem'],
-        '5.75xl': '1.375',
+        '5.75xl': '1.375rem',
         '6xl': ['3.75rem', '4.25rem'],
         '7xl': ['4.5rem', '5.4rem'],
         T1: '5.5rem',
@@ -473,7 +479,8 @@ module.exports = {
         '4xl': '2rem'
       },
       transitionProperty: {
-        height: 'height'
+        height: 'height',
+        'font-size': 'fontSize, font-size'
       }
     }
   }

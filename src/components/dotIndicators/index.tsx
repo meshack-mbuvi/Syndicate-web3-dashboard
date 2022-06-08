@@ -7,7 +7,7 @@ export enum DotIndicatorsOrientation {
 }
 
 interface Props {
-  options: [string];
+  options: string[];
   activeIndex: number;
   customClasses?: string;
   orientation?: DotIndicatorsOrientation;
@@ -45,28 +45,26 @@ export const DotIndicators: React.FC<Props> = ({
   }, [dotsTopOffset]);
 
   const renderedVerticalDots = options.map((option, index) => (
-    <>
+    <React.Fragment key={index}>
       {/* Dot */}
       <div
-        key={index}
         ref={dotRef}
         className={`rounded-full w-2 h-2 ${
           index === activeIndex ? 'bg-white' : 'bg-gray-syn6'
         } transition-all ${animationTimingStyles}`}
       ></div>
-    </>
+    </React.Fragment>
   ));
 
   const renderedHorizontalDots = options.map((option, index) => (
-    <>
+    <React.Fragment key={index}>
       {/* Dot */}
       <div
-        key={index}
         className={`rounded-full w-2 h-2 ${
           index === activeIndex ? 'bg-white' : 'bg-gray-syn6'
         } transition-all ${animationTimingStyles}`}
       ></div>
-    </>
+    </React.Fragment>
   ));
 
   return (
