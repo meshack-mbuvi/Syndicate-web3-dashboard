@@ -302,6 +302,8 @@ module.exports = {
         green: {
           ...colors.green,
           DEFAULT: '#30E696',
+          moss: '#1B331F',
+          distribution: '#0B3925',
           semantic: '#30E696',
           shine: '#64ECB0',
           screamin: '#80FF75',

@@ -9,12 +9,13 @@ import { MEMBER_SIGNED_QUERY } from '@/graphql/queries';
 import { useIsClubOwner } from '@/hooks/useClubOwner';
 import { useDemoMode } from '@/hooks/useDemoMode';
 import { AppState } from '@/state';
-import { isDev } from '@/utils/environment';
 import { useMutation, useQuery } from '@apollo/client';
 import Image from 'next/image';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { OpenExternalLinkIcon } from 'src/components/iconWrappers';
+import { DistributionMembersTable } from '@/components/distributions/membersTable';
+import { SimpleTable } from '@/components/simpleTable';
 
 import TransactionDetails from '../TransactionDetails';
 import ActivityNote from './ActivityNote';
@@ -103,6 +104,8 @@ const ActivityModal: React.FC<IActivityModal> = ({
     Record<string, number | string>
   >({});
   const [disableDropDown, setDisableDropDown] = useState(false);
+  const [isDistributionTableExpanded, setIsDistributionTableExpanded] =
+    useState(false);
 
   // we use this function to determine what happens when done button is hit from investmentDetails component
   const handleClick = () => {
@@ -155,6 +158,9 @@ const ActivityModal: React.FC<IActivityModal> = ({
       case 'OFF_CHAIN_INVESTMENT':
         setAdaptiveBackground('bg-blue-darkGunMetal');
         setShowTransactionDetails(true);
+        break;
+      case 'DISTRIBUTION':
+        setAdaptiveBackground('bg-green-distribution');
         break;
       case 'OTHER':
         setAdaptiveBackground('bg-blue-darkGunMetal');
@@ -247,8 +253,10 @@ const ActivityModal: React.FC<IActivityModal> = ({
         setEditMode(false);
         setShowDetailSection(false);
       }}
-      customWidth="sm:w-564 w-full"
-      customClassName="p-0"
+      customWidth={`w-full sm:${
+        isDistributionTableExpanded ? 'w-10/12' : 'w-564'
+      }`}
+      customClassName="p-0 duration-300"
       showCloseButton={false}
       outsideOnClick={true}
       showHeader={false}
@@ -286,32 +294,35 @@ const ActivityModal: React.FC<IActivityModal> = ({
           </div>
           <div className="items-center flex flex-col">
             {transactionInfo && Object.keys(transactionInfo).length && (
+              // TODO: update this to use multiple token details when PR 3821 is merged
               <TransactionDetails
-                tokenLogo={tokenLogo}
-                tokenSymbol={
-                  category === 'INVESTMENT' ||
-                  category === 'OFF_CHAIN_INVESTMENT'
-                    ? 'USD'
-                    : tokenSymbol
-                }
-                tokenName={tokenName}
+                tokenDetails={[
+                  {
+                    name: tokenName,
+                    symbol:
+                      category === 'INVESTMENT' ||
+                      category === 'OFF_CHAIN_INVESTMENT'
+                        ? 'USD'
+                        : tokenSymbol,
+                    icon: tokenLogo,
+                    amount:
+                      category === 'INVESTMENT' ||
+                      category === 'OFF_CHAIN_INVESTMENT'
+                        ? metadata?.postMoneyValuation
+                        : amount
+                  }
+                ]}
                 transactionType={
                   transactionInfo.isOutgoingTransaction
                     ? 'outgoing'
                     : 'incoming'
                 }
                 isTransactionAnnotated={false}
-                amount={
-                  category === 'INVESTMENT' ||
-                  category === 'OFF_CHAIN_INVESTMENT'
-                    ? metadata?.postMoneyValuation
-                    : amount
-                }
-                address={
+                addresses={[
                   transactionInfo.isOutgoingTransaction
                     ? transactionInfo.to
                     : transactionInfo.from
-                }
+                ]}
                 onModal={true}
                 category={category}
                 companyName={metadata?.companyName}
@@ -430,6 +441,57 @@ const ActivityModal: React.FC<IActivityModal> = ({
               </div>
             )}
           </div>
+        )}
+
+        {/* TODO: fill table values when PR 3821 is merged */}
+        {category === 'DISTRIBUTION' && (
+          <>
+            <div
+              className={`${
+                isDistributionTableExpanded
+                  ? 'max-h-screen opacity-100 ease-in'
+                  : 'max-h-0 opacity-0 ease-out'
+              } duration-500 overflow-hidden transition-all`}
+            >
+              <DistributionMembersTable
+                membersDetails={[]}
+                activeIndices={[]}
+                handleActiveIndicesChange={null}
+                extraClasses={`pl-10 no-scroll-bar`}
+              />
+            </div>
+            <div
+              className={`${
+                !isDistributionTableExpanded
+                  ? 'max-h-screen opacity-100 ease-in'
+                  : 'max-h-0 opacity-0 ease-out'
+              } duration-500 overflow-hidden transition-all`}
+            >
+              <div className="px-10 mb-2">Tokens distributed</div>
+              <SimpleTable
+                rows={[
+                  { title: 'Title', value: 'Value', externalLink: '/' },
+                  { title: 'Title', value: 'Value', externalLink: '/' },
+                  { title: 'Title', value: 'Value', externalLink: '/' },
+                  { title: 'Title', value: 'Value', externalLink: '/' }
+                ]}
+                extraClasses="mx-10"
+              />
+            </div>
+            <button
+              className="space-x-2 flex justify-center w-full items-center px-10 text-blue-neptune pb-8"
+              onClick={() => {
+                setIsDistributionTableExpanded(!isDistributionTableExpanded);
+              }}
+            >
+              <img src={`/images/maximize-blue.svg`} alt="Resize icon" />
+              <div>
+                {isDistributionTableExpanded
+                  ? 'View summary'
+                  : 'View by members'}
+              </div>
+            </button>
+          </>
         )}
       </div>
     </Modal>

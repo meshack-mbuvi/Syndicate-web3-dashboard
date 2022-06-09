@@ -18,7 +18,7 @@ const Template = (args) => {
   return (
     <div className="h-full">
       <DistributionMembersTable
-        activeIndicies={activeIndices}
+        activeIndices={activeIndices}
         handleActiveIndiciesChange={setactiveIndices}
         {...args}
       />

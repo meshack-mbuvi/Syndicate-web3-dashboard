@@ -15,13 +15,15 @@ interface Props {
   }[];
   activeIndices: Array<number>;
   handleActiveIndicesChange: (indeces: number[]) => void;
+  extraClasses: string;
 }
 
 export const DistributionMembersTable: React.FC<Props> = ({
   clubName,
   membersDetails,
   activeIndices,
-  handleActiveIndicesChange: handleActiveIndicesChange
+  handleActiveIndicesChange: handleActiveIndicesChange,
+  extraClasses
 }) => {
   const isIndexActive = (index: number) => {
     return activeIndices.includes(index);
@@ -352,7 +354,9 @@ export const DistributionMembersTable: React.FC<Props> = ({
   );
 
   return (
-    <div className="relative overflow-scroll no-scroll-bar w-full">
+    <div
+      className={`relative overflow-scroll no-scroll-bar w-full ${extraClasses}`}
+    >
       <div className="mb-2 w-full">{renderedHeader}</div>
       <div className="w-full">{renderedTable}</div>
       <div className="w-full">{renderedFooter}</div>
