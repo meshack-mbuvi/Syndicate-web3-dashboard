@@ -16,6 +16,7 @@ import {
 } from '@/components/tokenSelect/indexReducer';
 import { getTokenDetails } from '@/utils/api';
 import { isDev } from '@/utils/environment';
+import { L2 } from '../typography';
 interface TokenSelectSearch {
   toggleTokenSelect: () => void;
   defaultTokenList: Token[];
@@ -223,8 +224,8 @@ export const TokenSelectSearch: React.FC<TokenSelectSearch> = ({
   return (
     <div className="flex flex-col pt-8 pb-6 min-h-363 max-h-141 rounded-2xl bg-gray-darkBackground border-6 border-gray-darkBackground focus:outline-none">
       <div className="mb-4 sm:flex items-center justify-between px-8">
-        <div className="font-whyte text-xl text-white">Select a token</div>
-        <div className="inline-flex text-xl font-whyte text-gray-syn10 sm:pl-20 sm:float-right">
+        <div className="text-xl text-white">Select a token</div>
+        <div className="inline-flex text-xl text-gray-syn10 sm:pl-16 sm:float-right">
           <div className="text-sm">
             Each crypto asset is different.
             <button
@@ -268,13 +269,13 @@ export const TokenSelectSearch: React.FC<TokenSelectSearch> = ({
           </>
         ) : null}
         {searchTerm ? null : (
-          <h4
-            className={`text-xs sm:text-sm sm:leading-4 text-white opacity-50 uppercase tracking-wider font-bold px-8 ${
+          <L2
+            extraClasses={`sm:leading-4 text-white opacity-50 px-8 ${
               suggestionList?.length ? 'mt-3' : ''
             } `}
           >
             Common tokens
-          </h4>
+          </L2>
         )}
         {loading ? (
           <TokenItemsLoadingSection repeat={3} />

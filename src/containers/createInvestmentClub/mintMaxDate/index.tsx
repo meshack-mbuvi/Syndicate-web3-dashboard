@@ -13,6 +13,7 @@ import DatePicker from 'react-datepicker';
 import { useDispatch, useSelector } from 'react-redux';
 import { animated, useSpring } from 'react-spring';
 import DateCard from './DateCard';
+import { H4 } from '@/components/typography';
 import TimeField from '@/containers/createInvestmentClub/mintMaxDate/timeField';
 
 const MintMaxDate: FC<{ className?: string }> = ({ className }) => {
@@ -206,7 +207,7 @@ const MintMaxDate: FC<{ className?: string }> = ({ className }) => {
     <Fade delay={500}>
       <div className="ml-5">
         <div className={className}>
-          <h3 className="pb-1">When will deposits close?</h3>
+          <H4 extraClasses="pb-1">When will deposits close?</H4>
           <div className="text-sm text-gray-syn4 pb-4">
             {' '}
             Extending the close date will require an on-chain transaction with

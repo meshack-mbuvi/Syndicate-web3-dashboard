@@ -12,6 +12,7 @@ import { floatedNumberWithCommas } from '@/utils/formattedNumbers';
 import { FC, useState } from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { useDispatch, useSelector } from 'react-redux';
+import { H4 } from '@/components/typography';
 
 const Collectibles: FC = () => {
   const {
@@ -39,7 +40,7 @@ const Collectibles: FC = () => {
   const collectiblesTitle = (
     <div className="flex items-center space-x-4 pb-8">
       <img src="/images/collectibles.svg" alt="Collectibles" />
-      <h3>Collectibles</h3>
+      <H4>Collectibles</H4>
     </div>
   );
 
@@ -51,9 +52,9 @@ const Collectibles: FC = () => {
       <div className="relative">
         {!animate && (
           <div className="absolute flex flex-col justify-center items-center top-1/3 w-full z-10">
-            <h3 className="text-white mb-4">
+            <H4 extraClasses="text-white mb-4">
               This club has no collectibles yet.
-            </h3>
+            </H4>
             <span className="text-gray-syn4">
               Any NFTs held in this club’s wallet will appear here.
             </span>
@@ -275,15 +276,15 @@ const Collectibles: FC = () => {
                         role="button"
                       >
                         <div className="mx-8 flex flex-col">
-                          <h3
-                            className={`line-clamp-1 ${
+                          <H4
+                            extraClasses={`line-clamp-1 ${
                               isNameEthereumAddress
                                 ? 'break-all'
                                 : 'break-words'
                             }`}
                           >
                             {name ? name : blankValue}
-                          </h3>
+                          </H4>
                           <span className="text-gray-syn4 text-sm pt-4">
                             Floor price
                           </span>

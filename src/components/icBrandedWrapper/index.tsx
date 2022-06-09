@@ -1,4 +1,5 @@
 import React from 'react';
+import { H4 } from '../typography';
 
 interface Props {
   bottomTitle?: string;
@@ -24,14 +25,14 @@ export const ICBrandedWrapper: React.FC<Props> = ({
       <div className="relative z-10">{children}</div>
 
       {/* Bottom title */}
-      <h3
-        className={`absolute z-10 text-green-volt  ${
+      <H4
+        extraClasses={`absolute z-10 text-green-volt  ${
           bottomTitle && 'bg-black pl-3 -ml-3'
         }`}
         style={{ bottom: '-1rem' }}
       >
         {bottomTitle}
-      </h3>
+      </H4>
 
       {/* Wire frame */}
       <div

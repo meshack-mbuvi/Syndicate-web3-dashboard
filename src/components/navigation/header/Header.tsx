@@ -1,22 +1,30 @@
-import Link from 'next/link';
-import React, { useEffect, useRef } from 'react';
+import {
+  DotIndicators,
+  DotIndicatorsOrientation
+} from '@/components/dotIndicators';
 import Image from 'next/image';
+import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { NavBarNavItem } from './navbarItems';
-import WalletComponent from './wallet';
+import React, { useEffect, useRef } from 'react';
 import { MoreMenu } from './moreMenu';
+import { NavBarNavItem } from './navbarItems';
 import NetworkComponent from './network';
+import WalletComponent from './wallet';
 
 interface props {
   navItems: { navItemText: string; url?: string; isLegal?: boolean }[];
   showBackButton?: boolean;
   showNav?: boolean;
+  dotIndicatorOptions?: string[];
+  handleExitClick?: () => void;
 }
 
 const Header: React.FC<props> = ({
   navItems,
+  handleExitClick,
   showBackButton = false,
-  showNav = true
+  showNav = true,
+  dotIndicatorOptions = []
 }) => {
   const router = useRouter();
   const navRef = useRef(null);
@@ -72,6 +80,10 @@ const Header: React.FC<props> = ({
     const grandParentPath = path.slice(0, path.length - 2).join('/');
     router.push(grandParentPath || '/');
   };
+
+  const { pathname } = router;
+
+  const hideWalletAndEllipsis = pathname.includes('/distribute');
 
   return (
     <>
@@ -163,9 +175,33 @@ const Header: React.FC<props> = ({
             </button>
           </div>
           <div className="relative hidden sm:flex sm:space-x-3 flex-1 justify-end items-center">
-            <NetworkComponent />
-            <WalletComponent />
-            <MoreMenu />
+            <div
+              className={`flex space-x-3 ${hideWalletAndEllipsis && 'hidden'}`}
+            >
+              <NetworkComponent />
+              <WalletComponent />
+              <MoreMenu />
+            </div>
+            {dotIndicatorOptions?.length ? (
+              <DotIndicators
+                options={dotIndicatorOptions}
+                activeIndex={0}
+                orientation={DotIndicatorsOrientation.HORIZONTAL}
+                customClasses="pr-5"
+              />
+            ) : null}
+            <button
+              type="button"
+              className={`flex items-center p-3 rounded-full bg-gray-syn7`}
+              onClick={handleExitClick}
+            >
+              <Image
+                src="/images/close-gray-5.svg"
+                width="16"
+                height="16"
+                alt="close navigation"
+              />
+            </button>
           </div>
         </div>
       </nav>

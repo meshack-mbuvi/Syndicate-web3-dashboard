@@ -67,8 +67,9 @@ export const InputField = forwardRef<HTMLInputElement, InputFieldProps>(
               <img src={icon} alt="icon" className="mx-auto" />
             </div>
           )}
+
           <input
-            className={`block font-whyte text-base focus:outline-none focus:ring-0 text-white ${
+            className={`block text-base focus:outline-none text-white ${
               classesOverride ? classesOverride : inputStyles
             } ${errorStyles} ${icon && 'pl-11'} w-full ${extraClasses}`}
             placeholder={placeholderLabel}
@@ -77,6 +78,10 @@ export const InputField = forwardRef<HTMLInputElement, InputFieldProps>(
             onClick={onClick}
             ref={ref}
             type={type}
+            style={{
+              textOverflow: 'ellipsis',
+              minWidth: '1ch'
+            }}
             {...rest}
           />
         </div>

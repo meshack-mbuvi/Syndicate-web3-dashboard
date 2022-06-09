@@ -7,6 +7,7 @@ import { useCreateInvestmentClubContext } from '@/context/CreateInvestmentClubCo
 import { showWalletModal } from '@/state/wallet/actions';
 import { useMyClubs } from '@/hooks/useMyClubs';
 import { useEffect } from 'react';
+import { L2 } from '@/components/typography';
 import { AppState } from '@/state';
 
 const WalletWarnings: React.FC = () => {
@@ -86,11 +87,11 @@ const WalletWarnings: React.FC = () => {
               alt="warning"
             />
           )}
-          <h4>
+          <L2>
             {hasExistingClubs
               ? getWarningText()
               : 'Use wallet as permanent club wallet?'}
-          </h4>
+          </L2>
           {hasExistingClubs ? (
             <p className="text-gray-syn3 text-sm pb-9 pt-4">
               <span>

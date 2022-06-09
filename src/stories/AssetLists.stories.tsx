@@ -23,6 +23,7 @@ const Template = (args) => {
       tokenAmount: 123,
       fiatAmount: 45678910,
       isEditingInFiat: false,
+      maximumTokenAmount: 123,
       warning: 'Consider reserving ETH to pay gas on future distributions'
     },
     {
@@ -32,6 +33,7 @@ const Template = (args) => {
       tokenAmount: 123,
       fiatAmount: 456,
       isEditingInFiat: false,
+      maximumTokenAmount: 123,
       error: 'Exceeds amount available for distribution'
     },
     {
@@ -40,7 +42,8 @@ const Template = (args) => {
       symbol: 'TOKN',
       tokenAmount: 123,
       fiatAmount: 456,
-      isEditingInFiat: false
+      isEditingInFiat: false,
+      maximumTokenAmount: 123
     },
     {
       icon: '',
@@ -49,6 +52,7 @@ const Template = (args) => {
       tokenAmount: 123,
       fiatAmount: 456,
       isEditingInFiat: false,
+      maximumTokenAmount: 123,
       isLoading: true
     }
   ]);

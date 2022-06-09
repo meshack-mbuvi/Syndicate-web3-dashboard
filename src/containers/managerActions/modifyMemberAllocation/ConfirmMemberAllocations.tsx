@@ -7,6 +7,7 @@ import {
 import { formatAddress } from '@/utils/formatAddress';
 import EstimateGas from '@/containers/createInvestmentClub/gettingStarted/estimateGas';
 import { Callout } from '@/components/callout';
+import { L2 } from '@/components/typography';
 
 interface IConfirmMemberAllocations {
   preview: boolean;
@@ -66,9 +67,7 @@ const ConfirmMemberAllocations: React.FC<IConfirmMemberAllocations> = ({
       }}
     >
       <div className="space-y-6">
-        <h1 className="uppercase mx-5 mb-8 font-whyte-medium text-sm text-white leading-4 tracking-px">
-          confirm new club token allocation
-        </h1>
+        <L2 extraClasses="mx-5 mb-8">confirm new club token allocation</L2>
 
         <div className="mt-8 rounded-lg border-gray-syn6 border relative">
           <div className="py-4 px-5 border-gray-syn6 border-b">

@@ -2,6 +2,7 @@ import { CtaButton } from '@/components/CTAButton';
 import Layout from '@/components/layout';
 import Modal, { ModalStyle } from '@/components/modal';
 import { Spinner } from '@/components/shared/spinner';
+import { L2 } from '@/components/typography';
 import useOwnsGenesisNFT from '@/hooks/useOwnsGenesisNFT';
 import { AppState } from '@/state';
 import { showWalletModal } from '@/state/wallet/actions';
@@ -110,7 +111,7 @@ export const ClaimComponent: React.FC = () => {
                   <div className="rounded-2.5xl">
                     <div className="px-8 py-6 bg-gray-syn8 border-b border-gray-syn7 rounded-t-2.5xl">
                       <div className="space-y-6">
-                        <h4>Requirements</h4>
+                        <L2>Requirements</L2>
                         <div className="flex space-x-4">
                           <Image
                             src={

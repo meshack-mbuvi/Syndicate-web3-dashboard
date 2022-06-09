@@ -1,8 +1,8 @@
 import { ClubERC20Contract } from '@/ClubERC20Factory/clubERC20';
 import ErrorBoundary from '@/components/errorBoundary';
 import Layout from '@/components/layout';
-import { ClubHeader } from '@/components/syndicates/shared/clubHeader';
 import { BlockExplorerLink } from '@/components/syndicates/shared/BlockExplorerLink';
+import { ClubHeader } from '@/components/syndicates/shared/clubHeader';
 import Head from '@/components/syndicates/shared/HeaderTitle';
 import {
   ERC20TokenDefaultState,
@@ -98,6 +98,22 @@ const TwoColumnLayout: FC<{
   const router = useRouter();
   const dispatch = useDispatch();
 
+  const fetchAssets = () => {
+    // fetch token transactions for the connected account.
+    dispatch(
+      fetchTokenTransactions({
+        account: owner,
+        activeNetwork: activeNetwork,
+        web3: web3
+      })
+    );
+  };
+
+  useEffect(() => {
+    if (!owner) return;
+    fetchAssets();
+  }, [owner, web3, activeNetwork]);
+
   useEffect(() => {
     return () => {
       // clear transactions when component unmounts
@@ -164,9 +180,11 @@ const TwoColumnLayout: FC<{
 
     if (
       clubAddress !== zeroAddress &&
-      web3.utils.isAddress(clubAddress) &&
+      web3.utils?.isAddress(clubAddress) &&
       syndicateContracts?.DepositTokenMintModule
     ) {
+      console.log('heere');
+
       const clubERC20tokenContract = new ClubERC20Contract(
         clubAddress as string,
         web3,
@@ -221,7 +239,7 @@ const TwoColumnLayout: FC<{
 
   return (
     <>
-      {router.isReady && !isDemoMode && !web3.utils.isAddress(clubAddress) ? (
+      {router.isReady && !isDemoMode && !web3.utils?.isAddress(clubAddress) ? (
         <NotFoundPage />
       ) : (
         <Layout
@@ -235,7 +253,7 @@ const TwoColumnLayout: FC<{
               {router.isReady && !name && !loading && !isDemoMode ? (
                 syndicateEmptyState
               ) : (
-                <div className="container mx-auto ">
+                <div className="container mx-auto">
                   {/* Two Columns (Syndicate Details + Widget Cards) */}
                   <div className="grid grid-cols-12 gap-5">
                     {/* Left Column */}
@@ -273,7 +291,7 @@ const TwoColumnLayout: FC<{
                     </div>
                     {/* Right Column */}
                     <div className="md:col-end-13 md:col-span-5 col-span-12 hidden md:flex justify-end items-start pt-0 h-full">
-                      <div className="sticky top-33 w-100">
+                      <div className="sticky top-33 w-full max-w-120">
                         {rightColumnComponent}
                       </div>
                     </div>

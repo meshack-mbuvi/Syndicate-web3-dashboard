@@ -16,6 +16,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import moment from 'moment';
 import AddToCalendar from '@/components/addToCalendar';
 import { setDispatchCreateFlow } from '@/state/wallet/actions';
+import { L2 } from '@/components/typography';
 import { getFormattedDateTimeWithTZ } from 'src/utils/dateUtils';
 
 const CreateInvestmentClub: React.FC = () => {
@@ -82,13 +83,13 @@ const CreateInvestmentClub: React.FC = () => {
           <GettingStarted setClubStep={setPreClubCreationStep} />
         ) : (
           <div className="container mx-auto w-full">
-            <h4
-              className={`text-center ${
+            <L2
+              extraClasses={`text-center ${
                 currentStep === 0 ? '' : 'pb-11'
               } pt-11`}
             >
               Create an investment club
-            </h4>
+            </L2>
             <div className="flex justify-center w-full ">
               <div className="w-full h-full overflow-y-scroll">
                 <div className="flex-grow flex overflow-y-auto overflow-x-hidden justify-between max-w-480 mx-auto h-full no-scroll-bar">

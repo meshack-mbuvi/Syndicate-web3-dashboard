@@ -16,6 +16,7 @@ import { Dispatch, FC, SetStateAction, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import ActivityModal from '../activity/shared/ActivityModal';
 import { ArrowRightIcon } from '@heroicons/react/outline';
+import { H4 } from '@/components/typography';
 
 interface InvestmentsViewProps {
   pageOffset: number;
@@ -70,7 +71,7 @@ const InvestmentsView: FC<InvestmentsViewProps> = ({
   const invesmentsTitle = (
     <div className="flex items-center justify-start pb-8">
       <img src="/images/investments-title-icon.svg" alt="Invesments title" />
-      <h3 className="pl-3">Off-chain investments</h3>
+      <H4 extraClasses="pl-3">Off-chain investments</H4>
     </div>
   );
 
@@ -90,7 +91,7 @@ const InvestmentsView: FC<InvestmentsViewProps> = ({
         <div className="relative">
           {!animate && (
             <div className="absolute flex flex-col justify-center items-center top-1/3 w-full z-10">
-              <h3 className="text-white mb-4">{titleText}</h3>
+              <H4 extraClasses="text-white mb-4">{titleText}</H4>
               <span className="text-gray-syn4">{subText}</span>
             </div>
           )}

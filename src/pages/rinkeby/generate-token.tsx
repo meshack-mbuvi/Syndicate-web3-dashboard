@@ -8,6 +8,7 @@ import Layout from 'src/components/layout';
 import SEO from 'src/components/seo';
 import Head from 'src/components/syndicates/shared/HeaderTitle';
 import { getWeiAmount } from 'src/utils/conversions';
+import { H4 } from '@/components/typography';
 
 const GenerateDai: React.FC = () => {
   const daiABI = require('src/utils/abi/rinkeby-dai');
@@ -239,9 +240,7 @@ const GenerateDai: React.FC = () => {
           </div>
           <div className="bg-white shadow sm:rounded-lg">
             <div className="px-4 py-5 sm:p-6">
-              <h3 className="text-lg leading-6 font-medium text-gray-900">
-                Mint new Rinkeby tokens
-              </h3>
+              <H4 extraClasses="text-gray-900">Mint new Rinkeby tokens</H4>
               <div className="mt-2 max-w-xl text-sm text-gray-500">
                 <p>
                   Enter the amount of selected token you would like to generate

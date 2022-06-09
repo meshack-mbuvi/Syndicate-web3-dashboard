@@ -7,6 +7,7 @@ import {
   SymbolDisplay
 } from '@/components/inputs/inputFieldWithToken';
 import Image from 'next/image';
+import { H4 } from '@/components/typography';
 
 /**
  * Raise token amount component with select token button and input field for amount
@@ -51,7 +52,7 @@ const RaiseTokenAmount = (props: {
 
   return (
     <div className={className}>
-      <h3 className="mb-1">{title}</h3>
+      <H4 extraClasses="mb-1">{title}</H4>
       <span className="text-sm text-gray-syn4 font-whyte">{moreInfo}</span>
       <label className="mt-5 block text-base text-white font-whyte leading-5 mb-2">
         {'Raise in'}

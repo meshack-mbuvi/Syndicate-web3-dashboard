@@ -9,6 +9,8 @@ import { FC, useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import PriceContainer from '../collectibles/shared/PriceContainer';
 import TokenModal from './TokenModal';
+import { H4 } from '@/components/typography';
+
 interface Props {
   columns: string[];
   tableData: any[];
@@ -73,7 +75,7 @@ const TokenTable: FC<Props> = ({ columns, tableData }) => {
     <div className="relative">
       {!animate && (
         <div className="absolute flex flex-col justify-center items-center top-1/3 w-full z-10">
-          <h3 className="text-white mb-4">This club has no tokens yet.</h3>
+          <H4 extraClasses="text-white mb-4">This club has no tokens yet.</H4>
           <span className="text-gray-syn4">
             Any tokens held in this club’s wallet will appear here, including
             member deposits.
@@ -128,7 +130,7 @@ const TokenTable: FC<Props> = ({ columns, tableData }) => {
   const tokensTitle = (
     <div className="flex text-base items-center">
       <img alt="token" src="/images/token.svg" />
-      <h3 className="pl-3">Tokens</h3>
+      <H4 extraClasses="pl-3">Tokens</H4>
     </div>
   );
 

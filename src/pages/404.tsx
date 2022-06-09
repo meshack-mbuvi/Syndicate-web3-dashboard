@@ -1,4 +1,5 @@
 import PrimaryButton from '@/components/buttons/PrimaryButton';
+import { H1 } from '@/components/typography';
 import Router from 'next/router';
 import React from 'react';
 import Layout from 'src/components/layout';
@@ -22,7 +23,7 @@ const NotFoundPage: React.FC = () => {
         <div className="vertically-center container mx-auto">
           <div className="w-full sm:w-8/12 lg:w-5/12">
             <div className="tagline mb-4">404 / Not Found</div>
-            <h1 className="my-6">There&apos;s nothing here yet</h1>
+            <H1 extraClasses="my-6">There&apos;s nothing here yet</H1>
             <p className="mb-3 text-gray-3">
               Make sure you’re connected with a wallet that has permission to
               view this. If you typed the URL directly, double check for any

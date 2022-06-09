@@ -1,7 +1,7 @@
 import { SettingsDisclaimerTooltip } from '@/containers/createInvestmentClub/shared/SettingDisclaimer';
+import { AppState } from '@/state';
 import cn from 'classnames';
 import { useState } from 'react';
-import { AppState } from '@/state';
 import { useSelector } from 'react-redux';
 
 /**
@@ -147,9 +147,14 @@ export const AdvancedInputField = (props: {
                 <span className=" text-white font-whyte text-sm">
                   Deposits collected in {depositTokenSymbol}. Members
                   <br />
-                  will receive {depositTokenSymbol === activeNetwork.nativeCurrency.symbol ? '10,000' : '1'} ✺
-                  {investmentClubSymbol} club token
-                  {depositTokenSymbol === activeNetwork.nativeCurrency.symbol && 's'} <br />
+                  will receive{' '}
+                  {depositTokenSymbol === activeNetwork.nativeCurrency.symbol
+                    ? '10,000'
+                    : '1'}
+                  ✺{investmentClubSymbol} club token
+                  {depositTokenSymbol === activeNetwork.nativeCurrency.symbol &&
+                    's'}
+                  <br />
                   for every {`1 ${depositTokenSymbol} `}
                   deposited.
                 </span>

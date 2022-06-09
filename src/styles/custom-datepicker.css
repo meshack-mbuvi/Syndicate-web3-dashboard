@@ -1,6 +1,7 @@
 /* React date picker */
 .react-datepicker {
   @apply bg-gray-7 text-white border-none rounded-lg;
+  font-family: Slussen;
 }
 
 .react-datepicker__triangle {

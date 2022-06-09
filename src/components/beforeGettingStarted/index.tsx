@@ -1,6 +1,7 @@
 import { useBeforeGettingStartedContext } from '@/context/beforeGettingStartedContext';
 import { animated } from 'react-spring';
 import Modal, { ModalStyle } from '../modal';
+import { L2 } from '../typography';
 
 const BeforeGettingStartedModal: React.FC = () => {
   const {
@@ -29,7 +30,7 @@ const BeforeGettingStartedModal: React.FC = () => {
       }}
     >
       <div className="space-y-6">
-        <h4>Before getting started</h4>
+        <L2>Before getting started</L2>
         <div className="flex items-center space-between pl-1">
           <input
             className={`bg-transparent rounded focus:ring-offset-0 cursor-pointer ${

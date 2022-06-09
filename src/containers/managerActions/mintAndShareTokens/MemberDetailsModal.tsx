@@ -4,6 +4,7 @@ import { CtaButton } from '@/components/CTAButton';
 import Modal, { ModalStyle } from '@/components/modal';
 import { InputField } from '@/components/inputs/inputField';
 import { InputFieldWithButton } from '@/components/inputs/inputFieldWithButton';
+import { L1, L2 } from '@/components/typography';
 
 interface IMemberDetails {
   show: boolean;
@@ -55,9 +56,7 @@ const MemberDetailsModal: React.FC<IMemberDetails> = ({
       }}
     >
       <div className="space-y-6">
-        <h1 className="uppercase font-whyte-medium text-sm leading-4 text-white tracking-px">
-          manually add member
-        </h1>
+        <L2>manually add member</L2>
         <p className="text-gray-syn4 text-base font-whyte leading-6">
           To manually add a member, enter their wallet address and the amount of
           club tokens to mint.

@@ -1,5 +1,6 @@
 import { CopyToClipboardIcon } from '@/components/iconWrappers';
 import { SkeletonLoader } from '@/components/skeletonLoader';
+import { H1 } from '@/components/typography';
 import { getTextWidth } from '@/utils/getTextWidth';
 import React, { useEffect, useState } from 'react';
 import CopyToClipboard from 'react-copy-to-clipboard';
@@ -76,21 +77,27 @@ export const ClubHeader: React.FC<{
               />
             </div>
           ) : (
-            <div className={`flex flex-wrap items-center w-fit-content`}>
-              <h1
+            <div
+              className={`flex flex-wrap items-center w-fit-content space-y-2`}
+            >
+              <H1
                 id="club-name"
-                className={`${
+                extraClasses={`${
                   nameWidth >= divWidth ? `line-clamp-2 mb-2` : `flex mr-6`
                 }`}
               >
                 {name}
-              </h1>
-              <h1 className="font-light flex flex-wrap text-gray-syn4 items-center justify-center">
+              </H1>
+
+              <H1
+                weightClassOverride="font-light"
+                extraClasses="flex flex-wrap text-gray-syn4 items-center justify-center"
+              >
                 {symbol}
-              </h1>
+              </H1>
               <div className="block items-center ml-6 space-x-8 pr-2">
                 {showActionIcons ? (
-                  <div className="flex space-x-6">
+                  <div className="flex space-x-6 align-middle mt-1">
                     <CopyToClipboard text={owner as string}>
                       <button
                         className="flex items-center relative w-4 h-4 cursor-pointer"

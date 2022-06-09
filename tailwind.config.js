@@ -130,8 +130,14 @@ module.exports = {
         '12/12': '100%'
       },
       maxWidth: {
+        20: '5rem',
+        24: '6rem',
+        26: '6.5rem',
+        28: '7rem',
+        100: '25rem',
         104: '26rem',
         112: '28rem',
+        120: '30rem',
         480: '30rem',
         564: '35.25rem',
         868: '54rem',
@@ -166,7 +172,6 @@ module.exports = {
         15: '0.15'
       },
       fontFamily: {
-        whyte: ['Whyte Regular', 'Helvetica', 'Arial', 'sans-serif'],
         'whyte-extralight': [
           'Whyte Thin Trial',
           'Whyte Regular',
@@ -188,8 +193,7 @@ module.exports = {
           'Arial',
           'sans-serif'
         ],
-        mono: ['Whyte Semi-Mono'],
-        bold: ['Whyte Bold']
+        mono: ['Slussen Mono Regular']
       },
       fontSize: {
         subtext: ['0.75rem', '0.875rem'],
@@ -204,9 +208,22 @@ module.exports = {
         '4xl': ['2.25rem', '2.75rem'],
         '4.5xl': '2.5rem',
         '5xl': ['3rem', '3.5rem'],
-        '5.75xl': '1.375',
+        '5.75xl': '1.375rem',
         '6xl': ['3.75rem', '4.25rem'],
-        '7xl': ['4.5rem', '5.4rem']
+        '7xl': ['4.5rem', '5.4rem'],
+        T1: '5.5rem',
+        T2: ['4.5rem', '4.5rem'],
+        T3: ['4rem', '4rem'],
+        T4: ['3.5rem', '3.5rem'],
+        T5: ['3rem', '3rem'],
+        'H1-mobile': ['2rem', '2rem'],
+        'H2-mobile': ['1.8125rem', '1.8125rem'],
+        'H3-mobile': ['1.375rem', '150%'],
+        'H4-mobile': ['1.125rem', '150%'],
+        H1: '2.5rem',
+        H2: ['2rem', '150%'],
+        H3: ['1.5rem', '150%'],
+        H4: ['1.25rem', '150%']
       },
       lineHeight: {
         4.5: '1.125rem',
@@ -464,7 +481,8 @@ module.exports = {
         '4xl': '2rem'
       },
       transitionProperty: {
-        height: 'height'
+        height: 'height',
+        'font-size': 'fontSize, font-size'
       }
     }
   }
