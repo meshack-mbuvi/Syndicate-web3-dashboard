@@ -25,7 +25,7 @@ const SEO: React.FC<IProps> = ({
   description = 'Invest in anything—together, and on-chain with Syndicate',
   title,
   customSecondaryTitle = null,
-  image = '/images/social/banner.png'
+  image = '/images/social/logoBanner.png'
 }) => {
   const siteTitle = config.title;
   const imageAbsolutePath = process.env.NEXT_BASE_URL + image;
