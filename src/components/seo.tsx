@@ -1,12 +1,12 @@
 import Head from 'next/head';
 
 const config = {
-  title: 'Syndicate Protocol Dashboard',
+  title: 'Syndicate',
   author: {
     name: 'Syndicate Inc.',
     summary: "Syndicate Protocol's web3 dashboard"
   },
-  description: 'Official dashboard for Syndicate Protocol',
+  description: 'Invest in anything—together, and on-chain with Syndicate.',
   social: {
     twitter: 'SyndicateDAO'
   }
@@ -22,10 +22,10 @@ interface IProps {
 
 const SEO: React.FC<IProps> = ({
   keywords,
-  description = 'Official dashboard for Syndicate Protocol',
+  description = 'Invest in anything—together, and on-chain with Syndicate',
   title,
   customSecondaryTitle = null,
-  image = '/images/social/logoBanner.png'
+  image = '/images/social/banner.png'
 }) => {
   const siteTitle = config.title;
   const imageAbsolutePath = process.env.NEXT_BASE_URL + image;
@@ -42,7 +42,7 @@ const SEO: React.FC<IProps> = ({
       <meta property="og:description" content={description} />
       <meta property="og:image" content={imageAbsolutePath} />
       <meta property="og:site_name" content={siteTitle} />
-      <meta property="twitter:card" content="summary" />
+      <meta property="twitter:card" content="summary_large_image" />
       <meta property="twitter:creator" content={config.social.twitter} />
       <meta property="twitter:title" content={title} />
       <meta property="twitter:description" content={description} />

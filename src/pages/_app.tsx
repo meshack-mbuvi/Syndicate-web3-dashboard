@@ -66,7 +66,7 @@ const Body: React.FC<AppProps & { apollo: ApolloClient<unknown> }> = ({
   return (
     <>
       <Head>
-        <title>Home | Syndicate Dashboard</title>
+        <title>Syndicate Dashboard</title>
         <link rel="shortcut icon" href="/images/logo.svg" />
 
         <FontsPreloader />

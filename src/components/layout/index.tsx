@@ -273,7 +273,7 @@ const Layout: FC<Props> = ({
             `polygon`,
             `MATIC`
           ]}
-          title="Home"
+          title="Syndicate"
         />
 
         <Header
