@@ -1,3 +1,4 @@
+import { NavButton, NavButtonType } from '@/components/buttons/navButton';
 import {
   DotIndicators,
   DotIndicatorsOrientation
@@ -15,15 +16,19 @@ interface props {
   navItems: { navItemText: string; url?: string; isLegal?: boolean }[];
   showBackButton?: boolean;
   showNav?: boolean;
+  activeIndex?: number;
   dotIndicatorOptions?: string[];
   handleExitClick?: () => void;
+  setActiveIndex?: (event) => void;
 }
 
 const Header: React.FC<props> = ({
   navItems,
   handleExitClick,
+  setActiveIndex,
   showBackButton = false,
   showNav = true,
+  activeIndex = 0,
   dotIndicatorOptions = []
 }) => {
   const router = useRouter();
@@ -182,26 +187,26 @@ const Header: React.FC<props> = ({
               <WalletComponent />
               <MoreMenu />
             </div>
+
             {dotIndicatorOptions?.length ? (
-              <DotIndicators
-                options={dotIndicatorOptions}
-                activeIndex={0}
-                orientation={DotIndicatorsOrientation.HORIZONTAL}
-                customClasses="pr-5"
-              />
+              <>
+                <DotIndicators
+                  options={dotIndicatorOptions}
+                  activeIndex={activeIndex}
+                  orientation={DotIndicatorsOrientation.HORIZONTAL}
+                  customClasses="pr-5"
+                />
+
+                {activeIndex > 0 ? (
+                  <NavButton
+                    onClick={setActiveIndex}
+                    type={NavButtonType.HORIZONTAL}
+                  />
+                ) : null}
+              </>
             ) : null}
-            <button
-              type="button"
-              className={`flex items-center p-3 rounded-full bg-gray-syn7`}
-              onClick={handleExitClick}
-            >
-              <Image
-                src="/images/close-gray-5.svg"
-                width="16"
-                height="16"
-                alt="close navigation"
-              />
-            </button>
+
+            <NavButton type={NavButtonType.CLOSE} onClick={handleExitClick} />
           </div>
         </div>
       </nav>

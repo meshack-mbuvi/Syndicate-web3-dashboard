@@ -22,14 +22,16 @@ interface Props {
   attribution?: string;
   CTALabel: string;
   isCTADisabled: boolean;
+  ctaOnclickHandler: (e) => void;
 }
 
 export const BadgeWithOverview: React.FC<Props> = ({
   tokensDetails,
   gasEstimate,
-  attribution = 'Price estimates from CoinGecko',
   CTALabel,
-  isCTADisabled
+  isCTADisabled,
+  ctaOnclickHandler,
+  attribution = 'Price estimates from CoinGecko'
 }) => {
   const [isTotalLoading, setIsTotalLoading] = useState(false);
 
@@ -193,7 +195,9 @@ export const BadgeWithOverview: React.FC<Props> = ({
                 {isTotalLoading ? 0 : floatedNumberWithCommas(totalFiatAmount)}
               </div>
             </div>
-            <CtaButton disabled={isCTADisabled}>{CTALabel}</CtaButton>
+            <CtaButton disabled={isCTADisabled} onClick={ctaOnclickHandler}>
+              {CTALabel}
+            </CtaButton>
           </>
         )}
       </div>
@@ -234,10 +238,12 @@ export const BadgeWithOverview: React.FC<Props> = ({
                 </div>
               </div>
             </Callout>
-            <CtaButton disabled={isCTADisabled}>{CTALabel}</CtaButton>
+            <CtaButton disabled={isCTADisabled} onClick={ctaOnclickHandler}>
+              {CTALabel}
+            </CtaButton>
           </>
         ) : (
-          <div className="flex items-center justify-between space-x-1.5">
+          <div className="flex items-center justify-between">
             <SkeletonLoader
               width="5/12"
               height="4"

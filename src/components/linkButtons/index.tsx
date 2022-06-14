@@ -8,7 +8,7 @@ export const LinkButton = (props: {
   type: LinkType;
   extraClasses?: string;
   onClick: () => void;
-}) => {
+}): JSX.Element => {
   const { type, extraClasses = '', onClick, ...rest } = props;
 
   let icon;
@@ -26,7 +26,7 @@ export const LinkButton = (props: {
 
   return (
     <button
-      className={`text-blue flex inline-flex items-center space-x-2 ${extraClasses}`}
+      className={`text-blue flex items-center space-x-2 ${extraClasses}`}
       onClick={onClick}
       {...rest}
     >

@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { clubMember } from '../clubMembers/types';
 
 type tokens = {
   address: string;
@@ -19,6 +20,7 @@ type gasEstimate = {
 
 const initialState = {
   distributionTokens: [],
+  distributionMembers: [],
   eth: {
     available: '0',
     totalToDistribute: '0'
@@ -51,11 +53,18 @@ const distributeTokens = createSlice({
     },
     setGasEstimates(state, action: PayloadAction<gasEstimate>) {
       state.gasEstimate = action.payload;
+    },
+    setDistributionMembers(state, action: PayloadAction<clubMember[]>) {
+      state.distributionMembers = action.payload;
     }
   }
 });
 
-export const { setDistributeTokens, setEth, setGasEstimates } =
-  distributeTokens.actions;
+export const {
+  setDistributeTokens,
+  setEth,
+  setGasEstimates,
+  setDistributionMembers
+} = distributeTokens.actions;
 
 export default distributeTokens.reducer;

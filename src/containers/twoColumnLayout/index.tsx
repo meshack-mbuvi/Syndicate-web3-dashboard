@@ -42,10 +42,16 @@ import { useDispatch, useSelector } from 'react-redux';
 import { syndicateActionConstants } from 'src/components/syndicates/shared/Constants';
 
 const TwoColumnLayout: FC<{
+  dotIndicatorOptions: string[];
   managerSettingsOpen: boolean;
   leftColumnComponent;
   rightColumnComponent;
-}> = ({ managerSettingsOpen, leftColumnComponent, rightColumnComponent }) => {
+}> = ({
+  managerSettingsOpen,
+  leftColumnComponent,
+  rightColumnComponent,
+  dotIndicatorOptions = []
+}) => {
   const {
     initializeContractsReducer: { syndicateContracts },
     web3Reducer: {
@@ -183,8 +189,6 @@ const TwoColumnLayout: FC<{
       web3.utils?.isAddress(clubAddress) &&
       syndicateContracts?.DepositTokenMintModule
     ) {
-      console.log('heere');
-
       const clubERC20tokenContract = new ClubERC20Contract(
         clubAddress as string,
         web3,
@@ -243,6 +247,7 @@ const TwoColumnLayout: FC<{
         <NotFoundPage />
       ) : (
         <Layout
+          dotIndicatorOptions={dotIndicatorOptions}
           managerSettingsOpen={managerSettingsOpen}
           showNav={showNav}
           showBackButton={true}

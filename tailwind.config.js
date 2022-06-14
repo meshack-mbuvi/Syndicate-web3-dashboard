@@ -186,6 +186,7 @@ module.exports = {
           'Arial',
           'sans-serif'
         ],
+        light: ['Slussen', 'Helvetica', 'Arial', 'sans-serif'],
         'whyte-medium': [
           'Whyte Medium',
           'Whyte Regular',

@@ -33,13 +33,17 @@ interface Props {
   dotIndicatorOptions?: string[];
   handleExitClick?: () => void;
   showNav?: boolean;
+  activeIndex?: number;
+  setActiveIndex?: (index: number) => void;
   navItems?: { navItemText: string; url?: string; isLegal?: boolean }[];
 }
 
 const Layout: FC<Props> = ({
   children,
+  activeIndex = 0,
   dotIndicatorOptions,
   handleExitClick,
+  setActiveIndex,
   managerSettingsOpen = false,
   showBackButton = false,
   showNav = true,
@@ -282,6 +286,8 @@ const Layout: FC<Props> = ({
           navItems={navItems}
           dotIndicatorOptions={dotIndicatorOptions}
           handleExitClick={handleExitClick}
+          activeIndex={activeIndex || 0}
+          setActiveIndex={setActiveIndex}
         />
         <DemoBanner />
 

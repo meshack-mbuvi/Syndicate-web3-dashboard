@@ -322,7 +322,7 @@ const LayoutWithSyndicateDetails: FC<{
               {router.isReady && !name && !loading && !isDemoMode ? (
                 syndicateEmptyState
               ) : (
-                <div className="container mx-auto ">
+                <div className="container mx-auto">
                   {/* Two Columns (Syndicate Details + Widget Cards) */}
                   {!managerSettingsOpen && (
                     <BackButton

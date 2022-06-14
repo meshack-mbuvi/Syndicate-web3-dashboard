@@ -1,4 +1,4 @@
-import { Flow, amplitudeLogger } from '@/components/amplitude';
+import { amplitudeLogger, Flow } from '@/components/amplitude';
 import {
   CREATE_INVESTMENT_CLUB,
   ERROR_INVESTMENT_CLUB_CREATION
@@ -14,15 +14,14 @@ import {
 import { getWeiAmount } from '@/utils/conversions';
 import { useRouter } from 'next/router';
 import React, {
+  createContext,
   Dispatch,
   SetStateAction,
-  createContext,
   useContext,
   useEffect,
   useState
 } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-
 import steps from './steps';
 
 type CreateInvestmentClubProviderProps = {
@@ -53,7 +52,7 @@ type CreateInvestmentClubProviderProps = {
   setPreClubCreationStep: Dispatch<SetStateAction<string>>;
   resetCreationStates: () => void;
   setCurrentStep: (index: number) => void;
-  isWalletConfrimed: boolean;
+  isWalletConfirmed: boolean;
   setConfirmWallet: Dispatch<SetStateAction<boolean>>;
   setShowSaveButton: Dispatch<SetStateAction<boolean>>;
   showSaveButton: boolean;
@@ -93,7 +92,7 @@ const CreateInvestmentClubProvider: React.FC = ({ children }) => {
   const [backBtnDisabled, setBackBtnDisabled] = useState(false);
   const [nextBtnDisabled, setNextBtnDisabled] = useState(false);
   const [showNextButton, setShowNextButton] = useState(true);
-  const [isWalletConfrimed, setConfirmWallet] = useState(false);
+  const [isWalletConfirmed, setConfirmWallet] = useState(false);
 
   const [processingModalTitle, setProcessingTitle] = useState('');
   const [processingModalDescription, setProcessingDescription] = useState('');
@@ -293,7 +292,7 @@ const CreateInvestmentClubProvider: React.FC = ({ children }) => {
         setPreClubCreationStep,
         resetCreationStates,
         setCurrentStep,
-        isWalletConfrimed,
+        isWalletConfirmed,
         setConfirmWallet,
         showSaveButton,
         setShowSaveButton

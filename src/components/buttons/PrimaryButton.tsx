@@ -5,7 +5,7 @@
 const PrimaryButton: React.FC<{
   disabled?: boolean;
   customClasses: string;
-  onClick?: () => void;
+  onClick?: (e?) => void;
   type?;
   approved?: boolean;
   createSyndicate?: boolean;
