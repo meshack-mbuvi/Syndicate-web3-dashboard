@@ -67,7 +67,6 @@ const Template = () => {
           null;
         }}
       />
-      {console.log(store.getState().transactionsReducer)}
     </div>
   );
 };
