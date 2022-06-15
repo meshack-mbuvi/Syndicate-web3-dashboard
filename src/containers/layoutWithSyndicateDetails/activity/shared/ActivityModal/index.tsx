@@ -487,7 +487,14 @@ const ActivityModal: React.FC<IActivityModal> = ({
                   setIsDistributionTableExpanded(!isDistributionTableExpanded);
                 }}
               >
-                <img src={`/images/maximize-blue.svg`} alt="Resize icon" />
+                <img
+                  src={
+                    isDistributionTableExpanded
+                      ? '/images/minimize-blue.svg'
+                      : '/images/maximize-blue.svg'
+                  }
+                  alt="Resize icon"
+                />
                 <div>
                   {isDistributionTableExpanded
                     ? 'View summary'
