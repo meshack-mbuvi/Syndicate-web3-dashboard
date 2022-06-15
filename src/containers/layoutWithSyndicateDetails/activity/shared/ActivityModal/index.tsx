@@ -455,6 +455,8 @@ const ActivityModal: React.FC<IActivityModal> = ({
                 } duration-500 overflow-hidden transition-all`}
               >
                 <DistributionMembersTable
+                  isEditing={false}
+                  hideSearch={true}
                   membersDetails={[]}
                   activeIndices={[]}
                   handleActiveIndicesChange={null}
