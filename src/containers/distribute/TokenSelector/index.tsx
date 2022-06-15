@@ -61,7 +61,9 @@ const TokenSelector: React.FC<{
             handleOptionsChange={setOptions}
             handleActiveIndicesChange={setActiveIndices}
           />
-        ) : null}
+        ) : (
+          'Club does not have tokens to distribute.'
+        )}
       </div>
     </div>
   );

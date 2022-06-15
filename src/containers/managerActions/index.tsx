@@ -402,8 +402,12 @@ const ManagerActions = (): JSX.Element => {
 
         {status !== Status.DISCONNECTED && (
           <div className="flex bg-gray-syn8 duration-500 transition-all rounded-2.5xl my-6 p-4 space-y-4 items-start flex-col">
-            {distributionButton ? (
-              <div className="hover:bg-gray-syn7 rounded-xl py-2 px-4 w-full">
+            {distributionButton && !depositsEnabled ? (
+              <div
+                className={`${
+                  loading ? `` : `hover:bg-gray-syn7`
+                } rounded-xl py-2 px-4 w-full`}
+              >
                 {loading ? (
                   <>
                     <SkeletonLoader width="2/3" height="6" />
@@ -415,7 +419,11 @@ const ManagerActions = (): JSX.Element => {
               </div>
             ) : null}
 
-            <div className="hover:bg-gray-syn7 rounded-xl py-2 px-4 w-full">
+            <div
+              className={`${
+                loading ? `` : `hover:bg-gray-syn7`
+              } rounded-xl py-2 px-4 w-full`}
+            >
               {loading ? (
                 <>
                   <SkeletonLoader width="2/3" height="6" />

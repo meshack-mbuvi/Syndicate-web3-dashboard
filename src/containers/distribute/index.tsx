@@ -28,7 +28,7 @@ const Distribute: FC = () => {
     erc20TokenSliceReducer: { erc20Token },
     assetsSliceReducer: { tokensResult, loading: loadingAssets },
     web3Reducer: {
-      web3: { account, status }
+      web3: { account, status, activeNetwork }
     }
   } = useSelector((state: AppState) => state);
 
@@ -40,7 +40,7 @@ const Distribute: FC = () => {
   const [currentStep, setCurrentStep] = useState<string>(Steps.selectTokens);
   const [activeIndex, setActiveIndex] = useState(0);
 
-  const { owner, loading } = erc20Token;
+  const { owner, loading, depositsEnabled } = erc20Token;
 
   // Prepare distributions tokens for overview badge
   const router = useRouter();
@@ -64,10 +64,21 @@ const Distribute: FC = () => {
     )
       return;
 
-    if ((pathname.includes('/distribute') && !isOwner) || isDemoMode) {
-      router.replace(`/clubs/${clubAddress}`);
+    if (pathname.includes('/distribute') || isDemoMode) {
+      if (depositsEnabled || !isOwner) {
+        if (!isOwner) {
+          router.replace(
+            `/clubs/${clubAddress}${'?network=' + activeNetwork.chainId}`
+          );
+        } else {
+          router.replace(
+            `/clubs/${clubAddress}/manage${'?network=' + activeNetwork.chainId}`
+          );
+        }
+      }
     }
   }, [
+    depositsEnabled,
     owner,
     clubAddress,
     account,
@@ -130,6 +141,7 @@ const Distribute: FC = () => {
    */
   const [activeIndices, setActiveIndices] = useState([]);
   const [_options, setOptions] = useState([]);
+  const [processingTokens, setProcessingTokens] = useState(true);
 
   useEffect(() => {
     const tokens = tokensResult.map(
@@ -157,6 +169,7 @@ const Distribute: FC = () => {
     );
 
     setOptions(tokens);
+    setProcessingTokens(false);
   }, [
     JSON.stringify(tokensResult),
     JSON.stringify(gasEstimate),
@@ -265,7 +278,10 @@ const Distribute: FC = () => {
   const dotIndicatorOptions = ['Distribute', 'Review'];
 
   // Redirect to /manage
-  const handleExitClick = () => router.replace(`/clubs/${clubAddress}/manage`);
+  const handleExitClick = () =>
+    router.replace(
+      `/clubs/${clubAddress}/manage${'?network=' + activeNetwork.chainId}`
+    );
 
   const handleSetActiveIndex = (event) => {
     event.preventDefault();
@@ -286,7 +302,7 @@ const Distribute: FC = () => {
                 activeIndices={activeIndices}
                 setOptions={setOptions}
                 setActiveIndices={setActiveIndices}
-                loading={loadingAssets}
+                loading={loadingAssets || loading || processingTokens}
               />
             </div>
           }
