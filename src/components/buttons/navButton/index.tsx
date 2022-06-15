@@ -1,22 +1,28 @@
+import Image from 'next/image';
 import React from 'react';
 
 export enum NavButtonType {
   CLOSE = 'CLOSE',
   UP = 'UP',
   DOWN = 'DOWN',
-  VERTICAL = 'VERTICAL'
+  VERTICAL = 'VERTICAL',
+  HORIZONTAL = 'HORIZONTAL'
 }
 
 interface Props {
   type?: NavButtonType;
-  onClick?: () => void;
+  onClick?: (event?) => void;
 }
 
 export const NavButton: React.FC<Props> = ({ type, onClick }) => {
   return (
     <button
       onClick={onClick}
-      className={`flex flex-col items-center justify-center space-y-5 rounded-full bg-gray-syn7 w-12.5 transition-all ${
+      className={`flex ${
+        type === NavButtonType.HORIZONTAL
+          ? 'w-24 space-x-5 align-middle py-auto'
+          : 'flex-col w-12.5 space-y-5'
+      } items-center justify-center rounded-full bg-gray-syn7 transition-all ${
         type === NavButtonType.VERTICAL ? 'h-23' : 'h-12.5'
       }`}
     >
@@ -62,6 +68,29 @@ export const NavButton: React.FC<Props> = ({ type, onClick }) => {
           >
             <path d="M10.0043 13.75C10.2202 13.75 10.4361 13.6733 10.5829 13.5276L17.2668 7.44632C17.4136 7.31595 17.5 7.14724 17.5 6.95552C17.5 6.55675 17.1632 6.25 16.7142 6.25C16.4983 6.25 16.2997 6.32669 16.1529 6.44939L10.0043 12.0322L3.84715 6.44939C3.70898 6.32669 3.51036 6.25 3.28584 6.25C2.83679 6.25 2.5 6.55675 2.5 6.95552C2.5 7.14724 2.58636 7.31595 2.73316 7.45399L9.4171 13.5276C9.58117 13.6733 9.77979 13.75 10.0043 13.75Z" />
           </svg>
+        </div>
+      )}
+
+      {/* Horizontal navigation buttons */}
+      {type === NavButtonType.HORIZONTAL && (
+        <div className="flex py-auto text-gray-syn4 hover:text-white ease-out transition-all">
+          <Image
+            src="/images/chevron-left-gray.svg"
+            width={20}
+            height={20}
+            alt=""
+          />
+        </div>
+      )}
+
+      {type === NavButtonType.HORIZONTAL && (
+        <div className="flex py-auto text-gray-syn4 hover:text-white ease-out transition-all">
+          <Image
+            src="/images/chevron-right-gray.svg"
+            width={20}
+            height={20}
+            alt=""
+          />
         </div>
       )}
     </button>

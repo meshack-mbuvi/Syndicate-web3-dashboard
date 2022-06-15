@@ -32,7 +32,10 @@ export const fetchTokenTransactions = createAsyncThunk(
       await getNativeTokenPrice(activeNetwork.chainId)
     ])
       .then((result) => result)
-      .catch(() => []);
+      .catch((error) => {
+        console.log({ error });
+        return [];
+      });
 
     const [erc20TokensResult, nativeBalanceResponse, nativePriceResponse] =
       response;
@@ -97,6 +100,7 @@ export const fetchTokenTransactions = createAsyncThunk(
       activeNetwork.nativeCurrency.decimals,
       false
     );
+
     const nativeDetails = {
       contractAddress: '',
       price: { usd: nativePriceResponse },

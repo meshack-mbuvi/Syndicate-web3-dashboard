@@ -1,8 +1,8 @@
 import { useCreateInvestmentClubContext } from '@/context/CreateInvestmentClubContext';
-import { useSpring, animated } from 'react-spring';
 import { AppState } from '@/state';
 import { setDispatchCreateFlow, showWalletModal } from '@/state/wallet/actions';
 import { useDispatch, useSelector } from 'react-redux';
+import { animated, useSpring } from 'react-spring';
 
 const InvestmentClubCTAs: React.FC = () => {
   const {
@@ -15,7 +15,7 @@ const InvestmentClubCTAs: React.FC = () => {
     setShowModal,
     showNextButton,
     handleCreateInvestmentClub,
-    isWalletConfrimed
+    isWalletConfirmed
   } = useCreateInvestmentClubContext();
 
   const {
@@ -83,7 +83,7 @@ const InvestmentClubCTAs: React.FC = () => {
               reviewStep
                 ? !account
                   ? connectWallet
-                  : isWalletConfrimed
+                  : isWalletConfirmed
                   ? handleCreateInvestmentClub
                   : confirmWallet
                 : handleNext
@@ -93,7 +93,7 @@ const InvestmentClubCTAs: React.FC = () => {
             {reviewStep
               ? !account
                 ? 'Connect wallet to create'
-                : isWalletConfrimed
+                : isWalletConfirmed
                 ? 'Create investment club'
                 : 'Confirm wallet'
               : 'Next'}

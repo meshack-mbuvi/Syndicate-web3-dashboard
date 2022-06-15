@@ -1,3 +1,4 @@
+import { AppState } from '@/state';
 import {
   floatedNumberWithCommas,
   numberWithCommas
@@ -6,9 +7,8 @@ import { hasDecimals } from '@/utils/hasDecimals';
 import Image from 'next/image';
 import Link from 'next/link';
 import React, { FC, useEffect, useMemo, useRef, useState } from 'react';
-import GradientAvatar from '../GradientAvatar';
-import { AppState } from '@/state';
 import { useSelector } from 'react-redux';
+import GradientAvatar from '../GradientAvatar';
 
 interface Props {
   columns: string[];

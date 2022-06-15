@@ -1,56 +1,160 @@
+import { ActionButton } from '@/components/actionButton';
+import { SearchInput } from '@/components/inputs';
 import { Checkbox } from '@/components/inputs/simpleCheckbox';
-import { floatedNumberWithCommas } from '@/utils/formattedNumbers';
-import { useEffect, useState } from 'react';
+import { B2, H4 } from '@/components/typography';
+import { formatAddress } from '@/utils/formatAddress';
+import { useEffect, useMemo, useState } from 'react';
 
 interface Props {
-  clubName?: string;
   membersDetails: {
     memberName: string;
     clubTokenHolding?: number;
+    distributionShare: number;
+    ownershipShare: number;
+    selected: boolean;
     receivingTokens: {
       amount: number;
       tokenSymbol: string;
       tokenIcon: string;
     }[];
   }[];
-  activeIndices: Array<number>;
-  handleActiveIndicesChange: (indeces: number[]) => void;
-  extraClasses: string;
+  tokens: { tokenAmount: string; symbol: string; icon: string }[];
+  activeAddresses: Array<string>;
+  handleActiveAddressesChange: (addresses: string[]) => void;
+  isEditing: boolean;
+  handleIsEditingChange: () => void;
+  handleSearchChange: (event) => void;
+  searchValue: string;
+  clearSearchValue: (event) => void;
 }
 
 export const DistributionMembersTable: React.FC<Props> = ({
-  clubName,
   membersDetails,
-  activeIndices,
-  handleActiveIndicesChange: handleActiveIndicesChange,
-  extraClasses
+  activeAddresses,
+  isEditing,
+  tokens,
+  handleIsEditingChange,
+  handleSearchChange,
+  searchValue,
+  clearSearchValue,
+  handleActiveAddressesChange
 }) => {
-  const isIndexActive = (index: number) => {
-    return activeIndices.includes(index);
+  const isAddressActive = (address: string) => {
+    return activeAddresses.includes(address);
   };
+
+  const dataLimit = 10;
 
   const [hoveredRow, setHoveredRow] = useState(null);
+  const [_membersDetails, setMemberDetails] = useState<
+    {
+      memberName: string;
+      clubTokenHolding?: number;
+      distributionShare: number;
+      ownershipShare: number;
+      selected: boolean;
+      receivingTokens: {
+        amount: number;
+        tokenSymbol: string;
+        tokenIcon: string;
+      }[];
+    }[]
+  >(membersDetails.slice(0, dataLimit));
+
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const canLoadMore = useMemo(
+    () => membersDetails.length - (currentPage - 1) * dataLimit > dataLimit,
+    [membersDetails.length, currentPage, dataLimit]
+  );
+
+  const handleLoadMore = () => {
+    setCurrentPage(currentPage + 1);
+  };
+
+  const [loadMoreText, setLoadMoreText] = useState(dataLimit);
+
+  useEffect(() => {
+    const remainingItems = membersDetails.length - _membersDetails.length;
+
+    if (remainingItems > dataLimit) {
+      setLoadMoreText(dataLimit);
+    } else {
+      setLoadMoreText(remainingItems);
+    }
+  }, [_membersDetails.length, currentPage, membersDetails.length]);
+
+  useEffect(() => {
+    setMemberDetails(membersDetails.slice(0, dataLimit * currentPage));
+  }, [JSON.stringify(membersDetails), currentPage]);
+
+  // We re-calculate the total token distribution for each member when
+  // a member is de-selected or selected.
+  // should execute only when activeAddresses array changes.
+  useEffect(() => {
+    if (membersDetails.length && tokens.length) {
+      const cumulativeActiveMemberOwnership = membersDetails.reduce(
+        (acc, curr) => {
+          // if member is active
+          if (activeAddresses.includes(curr.memberName)) {
+            return acc + +curr.ownershipShare;
+          } else {
+            return acc;
+          }
+        },
+        0
+      );
+
+      const memberDetails = membersDetails
+        .slice(0, currentPage * dataLimit)
+        .map(({ ownershipShare, ...rest }) => {
+          return {
+            ...rest,
+            ownershipShare,
+            distributionShare:
+              (ownershipShare * 100) / cumulativeActiveMemberOwnership,
+            receivingTokens: tokens.map(({ tokenAmount, symbol, icon }) => {
+              return {
+                amount:
+                  (ownershipShare / cumulativeActiveMemberOwnership) *
+                  +tokenAmount,
+                tokenSymbol: symbol,
+                tokenIcon: icon || '/images/token-gray.svg'
+              };
+            })
+          };
+        });
+
+      setMemberDetails(memberDetails);
+    } else {
+      setMemberDetails([]);
+    }
+
+    return () => {
+      setMemberDetails([]);
+    };
+  }, [activeAddresses]);
 
   const normalCellHeight = 'h-16';
-  const memberCellStyles = (index) => {
+  const memberCellStyles = (address) => {
     return `${
-      hoveredRow === index && 'bg-gray-syn7'
+      hoveredRow === address && 'bg-gray-syn7'
     } transition-all ease-out ${normalCellHeight} border-gray-syn6 ${
-      index === 0 ? 'border-t-0' : 'border-t-1'
-    } ${!isIndexActive(index) && 'text-gray-syn5'}`;
+      address === _membersDetails[0].memberName ? 'border-t-0' : 'border-t-1'
+    } ${!isAddressActive(address) && 'text-gray-syn5'}`;
   };
   const footerCellStyles = `${normalCellHeight} border-gray-syn6 border-t-1`;
-  const wideCellStyles = `w-52 lg:w-60`;
+  const wideCellStyles = `w-60 xl:w-72`;
   const narrowCellStyles = `w-12`;
-  const headerCellStyles = 'w-52 lg:w-60 pr-1';
+  const headerCellStyles = 'w-60 xl:w-72 pr-1';
   const amountCellStyles = 'font-mono';
 
   // This iterates through the rows finding all unique
-  // tokens to determine the table columns (e.g "Recieving {tokenSymbol}")
+  // tokens to determine the table columns (e.g "Receiving {tokenSymbol}")
   const allUniqueReceivingTokens: {
     tokenSymbols: string[];
     tokenIcons: string[];
-  } = membersDetails.reduce(
+  } = _membersDetails.reduce(
     (
       columns: { tokenSymbols: [string]; tokenIcons: [string] },
       memberDetails
@@ -60,6 +164,7 @@ export const DistributionMembersTable: React.FC<Props> = ({
       memberDetails.receivingTokens.forEach((receivingToken) => {
         const tokenSymbol = receivingToken.tokenSymbol;
         const tokenIcon = receivingToken.tokenIcon;
+
         if (!columns.tokenSymbols.includes(tokenSymbol)) {
           newTokenSymbols.push(tokenSymbol);
           newTokenIcons.push(tokenIcon);
@@ -76,23 +181,27 @@ export const DistributionMembersTable: React.FC<Props> = ({
   const [tokenAmountTotals, setTokenAmountTotals] = useState([]);
 
   useEffect(() => {
+    // Even during editing, token totals don't change so no need to re-calculate
+    // them
+    if (isEditing) return;
+
     setTokenAmountTotals(
       allUniqueReceivingTokens.tokenSymbols.map((tokenSymbol) => {
-        return membersDetails.reduce((total: number, memberDetails, index) => {
+        return _membersDetails.reduce((total: number, memberDetails) => {
           let memberTotal = 0;
           memberDetails.receivingTokens.forEach((receivingToken) => {
             if (
               receivingToken.tokenSymbol === tokenSymbol &&
-              isIndexActive(index)
+              isAddressActive(memberDetails.memberName)
             ) {
-              memberTotal += receivingToken.amount;
+              memberTotal += +receivingToken.amount;
             }
           });
-          return total + memberTotal;
+          return total + +memberTotal;
         }, 0);
       })
     );
-  }, [activeIndices]);
+  }, [activeAddresses, JSON.stringify(_membersDetails), isEditing]);
 
   // The top row with column titles
   const renderedHeader = (
@@ -100,32 +209,37 @@ export const DistributionMembersTable: React.FC<Props> = ({
       {/* Left columns - member, share */}
       <div className="flex">
         {/* Checkbox */}
-        <div className={`flex items-center ${narrowCellStyles}`}>
-          <Checkbox
-            isActive={
-              activeIndices.length <= membersDetails.length &&
-              activeIndices.length > 0
-            }
-            usePartialCheck={activeIndices.length < membersDetails.length}
-            onChange={() => {
-              if (
-                activeIndices.length <= membersDetails.length &&
-                activeIndices.length > 0
-              ) {
-                handleActiveIndicesChange([]);
-              } else {
-                handleActiveIndicesChange([
-                  ...Array(membersDetails.length).keys()
-                ]);
+        {isEditing ? (
+          <div className={`flex items-center ${narrowCellStyles}`}>
+            <Checkbox
+              isActive={
+                activeAddresses.length <= _membersDetails.length &&
+                activeAddresses.length > 0
               }
-            }}
-            extraClasses="mx-auto"
-          />
-        </div>
+              usePartialCheck={activeAddresses.length < _membersDetails.length}
+              onChange={() => {
+                if (
+                  activeAddresses.length <= _membersDetails.length &&
+                  activeAddresses.length > 0
+                ) {
+                  handleActiveAddressesChange([]);
+                } else {
+                  const activeAddresses = [];
+                  _membersDetails.forEach((member) =>
+                    activeAddresses.push(member.memberName)
+                  );
+
+                  handleActiveAddressesChange(activeAddresses);
+                }
+              }}
+              extraClasses="mx-auto"
+            />
+          </div>
+        ) : null}
 
         {/* Members */}
         <div className={`flex items-center ${headerCellStyles}`}>
-          Members ({membersDetails.length})
+          Members ({_membersDetails.length})
         </div>
 
         {/* Distribution share */}
@@ -137,88 +251,119 @@ export const DistributionMembersTable: React.FC<Props> = ({
       {/* Middle column - spacer */}
       <div className="flex-grow" />
 
-      {/* Right columns - recieving tokens */}
+      {/* Right columns - receiving tokens */}
       <div className="flex">
         {allUniqueReceivingTokens.tokenSymbols.map((tokenSymbol, index) => {
           return (
-            <>
-              <div
-                className={`flex space-x-2 items-center text-right justify-end ${headerCellStyles}`}
-              >
-                <div>Recieving</div>
-                <img
-                  className="w-6 h-6"
-                  src={allUniqueReceivingTokens.tokenIcons[index]}
-                  alt=""
-                />
-                <div>{tokenSymbol}</div>
-              </div>
-            </>
+            <div
+              key={index}
+              className={`flex space-x-2 items-center text-right justify-end ${headerCellStyles}`}
+            >
+              <div>Receiving</div>
+              <img
+                className="w-6 h-6"
+                src={allUniqueReceivingTokens.tokenIcons[index]}
+                alt=""
+              />
+              <div>{tokenSymbol}</div>
+            </div>
           );
         })}
       </div>
     </div>
   );
 
-  // The rows with individiaul member distribution data
-  const renderedTable = membersDetails.map((memberDetails, rowIndex) => {
+  const renderPagination = (
+    <div
+      className={`flex justify-center w-full border-t-1 text-blue whitespace-nowrap ${narrowCellStyles} ${footerCellStyles}`}
+    >
+      <button onClick={handleLoadMore}>Load {loadMoreText} more</button>
+    </div>
+  );
+
+  // The rows with individual member distribution data filtered by search value
+  const renderedTable = (
+    searchValue
+      ? _membersDetails.filter((member) =>
+          member.memberName.toLowerCase().includes(searchValue.toLowerCase())
+        )
+      : _membersDetails
+  ).map((memberDetails) => {
     return (
       <button
         onClick={() => {
+          if (!isEditing) return;
           // The index was active so make it inactive
-          if (isIndexActive(rowIndex)) {
+          if (isAddressActive(memberDetails.memberName)) {
             let newactiveIndices;
-            const indexToRemove = activeIndices.indexOf(rowIndex);
+            const indexToRemove = activeAddresses.indexOf(
+              memberDetails.memberName
+            );
             if (indexToRemove > -1) {
               const arrayWithoutIndex = (array, index) =>
                 array.filter((_, i) => i !== index);
               newactiveIndices = arrayWithoutIndex(
-                activeIndices,
+                activeAddresses,
                 indexToRemove
               );
-              handleActiveIndicesChange(newactiveIndices);
+              handleActiveAddressesChange(newactiveIndices);
             }
           }
 
           // The index was inactive so make it active
           else {
-            handleActiveIndicesChange([...activeIndices, rowIndex]);
+            handleActiveAddressesChange([
+              ...activeAddresses,
+              memberDetails.memberName
+            ]);
           }
         }}
         onMouseOver={() => {
-          setHoveredRow(rowIndex);
+          if (!isEditing) return;
+
+          setHoveredRow(memberDetails.memberName);
         }}
         onFocus={() => {
-          setHoveredRow(rowIndex);
+          if (!isEditing) return;
+
+          setHoveredRow(memberDetails.memberName);
         }}
         onMouseLeave={() => {
+          if (!isEditing) return;
+
           setHoveredRow(null);
         }}
-        className={`w-full block flex justify-between cursor-pointer transition-all ease-out`}
-        key={rowIndex}
+        className={`w-full flex justify-between ${
+          isEditing ? 'cursor-pointer' : ''
+        } transition-all ease-out`}
+        key={memberDetails.memberName}
       >
         {/* Left columns - member, share */}
         <div className="flex">
           {/* Checkbox */}
-          <div
-            className={`flex items-center ${narrowCellStyles} ${memberCellStyles(
-              rowIndex
-            )} {cellBorderStyles(rowIndex)}`}
-          >
-            <Checkbox
-              isActive={isIndexActive(rowIndex)}
-              extraClasses="mx-auto"
-            />
-          </div>
+          {isEditing ? (
+            <div
+              className={`flex items-center ${narrowCellStyles} ${memberCellStyles(
+                memberDetails.memberName
+              )}`}
+            >
+              <Checkbox
+                isActive={isAddressActive(memberDetails.memberName)}
+                extraClasses="mx-auto"
+              />
+            </div>
+          ) : null}
 
           {/* Member name */}
           <div
             className={`flex items-center space-x-4 ${wideCellStyles} ${memberCellStyles(
-              rowIndex
+              memberDetails.memberName
             )}`}
           >
             <svg
-              className={`${!isIndexActive(rowIndex) && 'opacity-50'}`}
+              className={`${
+                !isAddressActive(memberDetails.memberName) && 'opacity-50'
+              }`}
               width="32"
               height="32"
               viewBox="0 0 32 32"
@@ -234,67 +379,61 @@ export const DistributionMembersTable: React.FC<Props> = ({
                 fill="#90949E"
               />
             </svg>
-            <div>{memberDetails.memberName}</div>
+            <div>
+              {memberDetails.memberName?.length > 13
+                ? formatAddress(memberDetails.memberName, 6, 6)
+                : memberDetails.memberName}
+            </div>
           </div>
 
           {/* Share of holdings */}
           <div
             className={`flex space-x-3 items-center font-mono ${wideCellStyles} ${memberCellStyles(
-              rowIndex
+              memberDetails.memberName
             )}`}
           >
             {/* Percentage */}
             <div>
-              {isIndexActive(rowIndex)
-                ? `${Math.trunc((1 / activeIndices.length) * 100)}%`
-                : '0%'}
-            </div>
-
-            {/* Token holding */}
-            <div
-              className={`${
-                isIndexActive(rowIndex) ? 'text-gray-syn4' : 'text-gray-syn5'
-              } ${
-                !clubName || !memberDetails.clubTokenHolding
-                  ? 'hidden'
-                  : 'visible'
-              }`}
-            >
-              {floatedNumberWithCommas(memberDetails.clubTokenHolding)}
-              {' ✺'}
-              {clubName}
+              {isAddressActive(memberDetails.memberName)
+                ? parseFloat(`${memberDetails.distributionShare}`).toFixed(2)
+                : '0'}
+              %
             </div>
           </div>
         </div>
 
         {/* Middle column - spacer */}
         {/* This is needed to continue the borders and hover effect */}
-        <div className={`flex-grow h-16 ${memberCellStyles(rowIndex)}`} />
+        <div
+          className={`flex-grow h-16 ${memberCellStyles(
+            memberDetails.memberName
+          )}`}
+        />
 
-        {/* Right columns - recieving tokens */}
+        {/* Right columns - receiving tokens */}
         <div className={`flex`}>
-          {/* Each column represents a different token a member is recieving */}
+          {/* Each column represents a different token a member is receiving */}
           {allUniqueReceivingTokens.tokenSymbols.map((tokenSymbol, index) => {
             return (
               // Individual column
               <div
-                className={`flex space-x-1 items-center justify-end ${wideCellStyles} ${memberCellStyles(
-                  rowIndex
+                className={`flex space-x-1 items-center justify-end pl-6 lg:pl-10 xl:pl-20 ${wideCellStyles} ${memberCellStyles(
+                  memberDetails.memberName
                 )} ${amountCellStyles}`}
                 key={index}
               >
-                <div>
+                <div className="text-right truncate w-full">
                   {memberDetails.receivingTokens.find((receivingToken) => {
                     return receivingToken.tokenSymbol === tokenSymbol;
-                  }) && isIndexActive(rowIndex)
-                    ? memberDetails.receivingTokens.find((receivingToken) => {
+                  }) && isAddressActive(memberDetails.memberName)
+                    ? memberDetails.receivingTokens?.find((receivingToken) => {
                         return receivingToken.tokenSymbol === tokenSymbol;
                       }).amount
                     : 0}
                 </div>
                 <div
-                  className={`${
-                    !isIndexActive(rowIndex)
+                  className={`flex-shrink-0 ${
+                    !isAddressActive(memberDetails.memberName)
                       ? 'text-gray-syn5'
                       : 'text-gray-syn4'
                   }`}
@@ -315,7 +454,9 @@ export const DistributionMembersTable: React.FC<Props> = ({
       {/* Left columns - member, share */}
       <div className="flex">
         <div
-          className={`flex items-center whitespace-nowrap ${narrowCellStyles} ${footerCellStyles}`}
+          className={`flex items-center whitespace-nowrap ${
+            !isEditing ? 'w-0' : narrowCellStyles
+          } ${footerCellStyles}`}
         >
           Total distributed
         </div>
@@ -333,7 +474,7 @@ export const DistributionMembersTable: React.FC<Props> = ({
       {/* Middle column - spacer */}
       <div className={`flex-grow ${footerCellStyles}`} />
 
-      {/* Right columns - recieving tokens */}
+      {/* Right columns - receiving tokens */}
       <div className="flex">
         {allUniqueReceivingTokens.tokenSymbols.map((tokenSymbol, index) => {
           return (
@@ -354,12 +495,49 @@ export const DistributionMembersTable: React.FC<Props> = ({
   );
 
   return (
-    <div
-      className={`relative overflow-scroll no-scroll-bar w-full ${extraClasses}`}
-    >
-      <div className="mb-2 w-full">{renderedHeader}</div>
-      <div className="w-full">{renderedTable}</div>
-      <div className="w-full">{renderedFooter}</div>
+    <div className="relative overflow-scroll no-scroll-bar w-full">
+      <div className="flex my-11 col-span-12 space-x-8 justify-between items-center">
+        <SearchInput
+          {...{
+            onChangeHandler: handleSearchChange,
+            searchValue: searchValue || '',
+            itemsCount: _membersDetails.length,
+            clearSearchValue: clearSearchValue
+          }}
+        />
+        {!isEditing ? (
+          <div className="flex space-x-8">
+            <ActionButton
+              label="Edit distribution"
+              icon="/images/edit-circle-blue.svg"
+              onClick={handleIsEditingChange}
+            />
+          </div>
+        ) : null}
+      </div>
+
+      {searchValue &&
+      _membersDetails.filter((member) =>
+        member.memberName.toLowerCase().includes(searchValue.toLowerCase())
+      ).length === 0 ? (
+        <div className="flex flex-col justify-center">
+          <H4 className="text-xl text-center">
+            No results for {`"${searchValue}"`}
+          </H4>
+
+          <B2 className="text-gray-syn4 text-center">
+            Double check the wallet address or try another search
+          </B2>
+        </div>
+      ) : (
+        <>
+          <div className="mb-2 w-full">{renderedHeader}</div>
+          <div className="w-full">{renderedTable}</div>
+          {canLoadMore ? <div className="w-full">{renderPagination}</div> : ''}
+
+          <div className="w-full">{renderedFooter}</div>
+        </>
+      )}
     </div>
   );
 };

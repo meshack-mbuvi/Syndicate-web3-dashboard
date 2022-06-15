@@ -15,6 +15,7 @@ const MakeDistributionCard: React.FC = () => {
 
   const router = useRouter();
   const { clubAddress } = router.query;
+
   return (
     <a
       href={

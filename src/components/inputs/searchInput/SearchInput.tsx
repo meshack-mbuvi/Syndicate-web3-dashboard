@@ -98,7 +98,7 @@ export const SearchInput = (props: {
                     />
                   </div>
 
-                  {/* <p className="ml-2">Clear</p> */}
+                  <p className="ml-2">Clear</p>
                 </button>
               )}
             </div>
