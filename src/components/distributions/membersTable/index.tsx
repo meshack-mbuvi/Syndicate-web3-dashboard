@@ -23,7 +23,7 @@ interface Props {
   handleActiveAddressesChange: (addresses: string[]) => void;
   isEditing: boolean;
   handleIsEditingChange: () => void;
-  hideSearch: boolean;
+  hideSearch?: boolean;
   handleSearchChange: (event) => void;
   searchValue: string;
   clearSearchValue: (event) => void;
@@ -36,7 +36,7 @@ export const DistributionMembersTable: React.FC<Props> = ({
   isEditing,
   tokens,
   handleIsEditingChange,
-  hideSearch,
+  hideSearch = false,
   handleSearchChange,
   searchValue,
   clearSearchValue,
