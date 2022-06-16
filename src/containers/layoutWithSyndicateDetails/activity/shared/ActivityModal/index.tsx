@@ -458,8 +458,13 @@ const ActivityModal: React.FC<IActivityModal> = ({
                   isEditing={false}
                   hideSearch={true}
                   membersDetails={[]}
-                  activeIndices={[]}
-                  handleActiveIndicesChange={null}
+                  tokens={[]}
+                  handleIsEditingChange={null}
+                  handleSearchChange={null}
+                  searchValue={null}
+                  clearSearchValue={null}
+                  activeAddresses={[]}
+                  handleActiveAddressesChange={null}
                   extraClasses={`pl-10 no-scroll-bar`}
                 />
               </div>
