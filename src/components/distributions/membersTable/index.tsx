@@ -27,7 +27,7 @@ interface Props {
   handleSearchChange: (event) => void;
   searchValue: string;
   clearSearchValue: (event) => void;
-  extraClasses: string;
+  extraClasses?: string;
 }
 
 export const DistributionMembersTable: React.FC<Props> = ({
