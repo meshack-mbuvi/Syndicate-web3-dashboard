@@ -1,6 +1,7 @@
 import { CopyToClipboardIcon } from '@/components/iconWrappers';
 import { SkeletonLoader } from '@/components/skeletonLoader';
 import { H1 } from '@/components/typography';
+import { useDemoMode } from '@/hooks/useDemoMode';
 import { getTextWidth } from '@/utils/getTextWidth';
 import React, { useEffect, useState } from 'react';
 import CopyToClipboard from 'react-copy-to-clipboard';
@@ -32,6 +33,7 @@ export const ClubHeader: React.FC<{
   const [nameWidth, setNameWidth] = useState(0);
 
   const [showActionIcons, setShowActionIcons] = useState<boolean>(false);
+  const isDemoMode = useDemoMode();
 
   // state to handle copying of the syndicate address to clipboard.
   const [showAddressCopyState, setShowAddressCopyState] =
@@ -65,7 +67,7 @@ export const ClubHeader: React.FC<{
         {/* Syndicate name, symbol and action buttons  */}
         <div
           className="flex justify-start items-center"
-          onMouseEnter={() => setShowActionIcons(true)}
+          onMouseEnter={() => !isDemoMode && setShowActionIcons(true)}
           onMouseLeave={() => setShowActionIcons(false)}
         >
           {loading ? (
