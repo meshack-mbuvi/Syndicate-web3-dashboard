@@ -1,28 +1,34 @@
 import { getNativeTokenPrice } from '@/utils/api/transactions';
 import { AppState } from '@/state';
 import { getWeiAmount } from '@/utils/conversions';
+import { isDev } from '@/utils/environment';
 import axios from 'axios';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 
-const EstimateGas = (props: { customClasses?: string }) => {
+const baseURL = isDev
+  ? 'https://api-rinkeby.etherscan.io/api'
+  : 'https://api.etherscan.io/api';
+
+const EstimateDistributionsGas = (props: {
+  customClasses?: string;
+  ethDepositToken?: boolean;
+}) => {
   const {
     web3Reducer: {
       web3: { account, activeNetwork, web3 }
     },
     initializeContractsReducer: {
-      syndicateContracts: { clubERC20Factory }
+      syndicateContracts: { clubERC20Factory, clubERC20FactoryNative }
     }
   } = useSelector((state: AppState) => state);
 
-  const { customClasses = '' } = props;
+  const { customClasses = '', ethDepositToken } = props;
 
-  const [gas, setGas] = useState(0); // 0.05 ETH (~$121.77)
+  const [gas, setGas] = useState(0);
   const [gasUnits, setGasUnits] = useState(0);
   const [gasBaseFee, setGasBaseFee] = useState(0);
-  const [nativeTokenPrice, setNativeTokenPrice] = useState<
-    number | undefined
-  >();
+  const [ethTokenPrice, setEthTokenPrice] = useState<number | undefined>();
 
   const processBaseFee = async (result) => {
     const baseFee = result.result;
@@ -30,30 +36,50 @@ const EstimateGas = (props: { customClasses?: string }) => {
     setGasBaseFee(baseFeeInDecimal);
   };
 
-  const fetchGasUnitAndBaseFee = useCallback(async () => {
+  const fetchGasUnitAndBaseFeeERC20 = useCallback(async () => {
     if (!clubERC20Factory) return;
 
     await Promise.all([
       !account
         ? setGasUnits(380000)
-        : clubERC20Factory.getEstimateGas(account, setGasUnits),
+        : clubERC20Factory.getEstimateGasDistributeERC20(account, setGasUnits),
       axios
-        .get(
-          `${activeNetwork.blockExplorer.api}/api?module=proxy&action=eth_gasPrice`
-        )
+        .get(`${baseURL}?module=proxy&action=eth_gasPrice`)
         .then((res) => processBaseFee(res.data))
         .catch(() => 0),
       getNativeTokenPrice(activeNetwork.chainId)
-        .then((res) => setNativeTokenPrice(res))
+        .then((res) => setEthTokenPrice(res))
         .catch(() => 0)
     ]);
   }, [account, clubERC20Factory]);
 
+  const fetchGasUnitAndBaseFeeETH = useCallback(async () => {
+    if (!clubERC20FactoryNative) return;
+
+    await Promise.all([
+      !account
+        ? setGasUnits(380000)
+        : clubERC20FactoryNative.getEstimateGasDistributeETH(
+            account,
+            setGasUnits
+          ),
+      axios
+        .get(`${baseURL}?module=proxy&action=eth_gasPrice`)
+        .then((res) => processBaseFee(res.data))
+        .catch(() => 0),
+      getNativeTokenPrice(activeNetwork.chainId)
+        .then((res) => setEthTokenPrice(res))
+        .catch(() => 0)
+    ]);
+  }, [account, clubERC20FactoryNative]);
+
   useEffect(() => {
-    if (activeNetwork.chainId) {
-      void fetchGasUnitAndBaseFee();
+    if (!ethDepositToken) {
+      void fetchGasUnitAndBaseFeeERC20();
+    } else {
+      void fetchGasUnitAndBaseFeeETH();
     }
-  }, [fetchGasUnitAndBaseFee, activeNetwork]);
+  }, [fetchGasUnitAndBaseFeeERC20, fetchGasUnitAndBaseFeeETH, ethDepositToken]);
 
   useEffect(() => {
     if (!gasUnits || !gasBaseFee) return;
@@ -80,16 +106,16 @@ const EstimateGas = (props: { customClasses?: string }) => {
         <span className="text-blue">Estimated gas</span>
         <span className="mr-3 text-blue">
           {gas
-            ? `${gas.toFixed(6)} ${activeNetwork.nativeCurrency.symbol} ${
-                nativeTokenPrice
-                  ? '(~$' + (gas * nativeTokenPrice).toFixed(2) + ')'
+            ? `${gas.toFixed(6)} ETH ${
+                ethTokenPrice
+                  ? '(~$' + (gas * ethTokenPrice).toFixed(2) + ')'
                   : ''
               }`
-            : `- ${activeNetwork.nativeCurrency.symbol}`}
+            : '- ETH'}
         </span>
       </span>
     </button>
   );
 };
 
-export default EstimateGas;
+export default EstimateDistributionsGas;
