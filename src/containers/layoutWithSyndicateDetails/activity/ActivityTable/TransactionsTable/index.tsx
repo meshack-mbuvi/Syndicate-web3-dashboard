@@ -276,15 +276,21 @@ const TransactionsTable: FC<ITransactionsTableProps> = ({
 
                   <div className="text-base col-span-6 flex space-x-3 items-center">
                     <TransactionDetails
-                      tokenLogo={tokenLogo}
-                      tokenSymbol={tokenSymbol}
-                      tokenName={tokenName}
+                      tokenDetails={[
+                        {
+                          name: tokenName,
+                          symbol: tokenSymbol,
+                          icon: tokenLogo,
+                          amount: getWeiAmount(web3, value, tokenDecimal, false)
+                        }
+                      ]}
                       transactionType={
                         isOutgoingTransaction ? 'outgoing' : 'incoming'
                       }
                       isTransactionAnnotated={metadata ? true : false}
-                      amount={getWeiAmount(web3, value, tokenDecimal, false)}
-                      address={isOutgoingTransaction ? toAddress : fromAddress}
+                      addresses={[
+                        isOutgoingTransaction ? toAddress : fromAddress
+                      ]}
                       category={metadata?.transactionCategory}
                       companyName={metadata?.companyName}
                       round={metadata?.roundCategory}

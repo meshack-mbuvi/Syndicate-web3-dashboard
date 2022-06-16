@@ -23,9 +23,11 @@ interface Props {
   handleActiveAddressesChange: (addresses: string[]) => void;
   isEditing: boolean;
   handleIsEditingChange: () => void;
+  hideSearch?: boolean;
   handleSearchChange: (event) => void;
   searchValue: string;
   clearSearchValue: (event) => void;
+  extraClasses?: string;
 }
 
 export const DistributionMembersTable: React.FC<Props> = ({
@@ -34,10 +36,12 @@ export const DistributionMembersTable: React.FC<Props> = ({
   isEditing,
   tokens,
   handleIsEditingChange,
+  hideSearch = false,
   handleSearchChange,
   searchValue,
   clearSearchValue,
-  handleActiveAddressesChange
+  handleActiveAddressesChange,
+  extraClasses
 }) => {
   const isAddressActive = (address: string) => {
     return activeAddresses.includes(address);
@@ -495,26 +499,30 @@ export const DistributionMembersTable: React.FC<Props> = ({
   );
 
   return (
-    <div className="relative overflow-scroll no-scroll-bar w-full">
-      <div className="flex my-11 col-span-12 space-x-8 justify-between items-center">
-        <SearchInput
-          {...{
-            onChangeHandler: handleSearchChange,
-            searchValue: searchValue || '',
-            itemsCount: _membersDetails.length,
-            clearSearchValue: clearSearchValue
-          }}
-        />
-        {!isEditing ? (
-          <div className="flex space-x-8">
-            <ActionButton
-              label="Edit distribution"
-              icon="/images/edit-circle-blue.svg"
-              onClick={handleIsEditingChange}
-            />
-          </div>
-        ) : null}
-      </div>
+    <div
+      className={`relative overflow-scroll no-scroll-bar w-full ${extraClasses}`}
+    >
+      {!hideSearch && (
+        <div className="flex my-11 col-span-12 space-x-8 justify-between items-center">
+          <SearchInput
+            {...{
+              onChangeHandler: handleSearchChange,
+              searchValue: searchValue || '',
+              itemsCount: _membersDetails.length,
+              clearSearchValue: clearSearchValue
+            }}
+          />
+          {!isEditing ? (
+            <div className="flex space-x-8">
+              <ActionButton
+                label="Edit distribution"
+                icon="/images/edit-circle-blue.svg"
+                onClick={handleIsEditingChange}
+              />
+            </div>
+          ) : null}
+        </div>
+      )}
 
       {searchValue &&
       _membersDetails.filter((member) =>

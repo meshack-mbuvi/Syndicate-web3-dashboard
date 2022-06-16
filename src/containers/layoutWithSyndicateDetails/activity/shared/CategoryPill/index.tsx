@@ -158,6 +158,10 @@ export const CategoryPill: React.FC<ICategoryPill> = ({
         setPillIcon('collectibleIcon.svg');
         setPillText('Collectible');
         break;
+      case 'DISTRIBUTION':
+        setPillIcon('distribution.svg');
+        setPillText('Distribution');
+        break;
       default:
         if (bulkCategoriseTransactions) {
           setPillIcon('select-category.svg');
