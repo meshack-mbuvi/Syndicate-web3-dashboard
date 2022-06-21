@@ -225,7 +225,7 @@ const SyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
                 header: 'Club tokens minted',
                 content: (
                   <span>
-                    <NumberTreatment numberValue={totalDeposits} />
+                    <NumberTreatment numberValue={totalSupply} />
                     &nbsp;{symbol}
                   </span>
                 ),
@@ -270,7 +270,7 @@ const SyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
                 header: 'Club tokens minted',
                 content: (
                   <span>
-                    <NumberTreatment numberValue={totalDeposits} /> {symbol}
+                    <NumberTreatment numberValue={totalSupply} /> {symbol}
                   </span>
                 ),
                 tooltip: ''
