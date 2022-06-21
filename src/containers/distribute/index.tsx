@@ -295,8 +295,6 @@ const Distribute: FC = () => {
     setCurrentStep(Steps.selectTokens);
   };
 
-  console.log('gasEstimate: ', gasEstimate);
-
   return (
     <>
       {currentStep == Steps.selectTokens ? (

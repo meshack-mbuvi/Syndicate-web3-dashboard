@@ -21,6 +21,10 @@ export function EstimateDistributionsGas() {
     }
   } = useSelector((state: AppState) => state);
 
+  const { nativeCurrency } = activeNetwork;
+
+  const { symbol } = nativeCurrency;
+
   const [gas, setGas] = useState(0);
   const [gasUnits, setGasUnits] = useState(0);
   const [gasBaseFee, setGasBaseFee] = useState(0);
@@ -83,7 +87,7 @@ export function EstimateDistributionsGas() {
   ]);
 
   useEffect(() => {
-    if (!gasUnits || !gasBaseFee || !ethTokenPrice) return;
+    if (!gasUnits || !gasBaseFee || !ethTokenPrice || !web3) return;
     const estimatedGasInWei = gasUnits * (gasBaseFee + 2);
     const estimatedGas = getWeiAmount(
       web3,
@@ -92,20 +96,13 @@ export function EstimateDistributionsGas() {
       false
     );
 
-    const fiatAmount = Number(+estimatedGas * ethTokenPrice).toFixed(2);
-    console.log('fiatamount: ', fiatAmount);
-    // dispatch to gasEstimate Redux here?
-
     dispatch(
       setGasEstimates({
+        tokenSymbol: symbol,
         tokenAmount: estimatedGas,
         fiatAmount: (estimatedGas * ethTokenPrice).toFixed(2)
       })
     );
     setGas(+estimatedGas);
-  }, [gasUnits, gasBaseFee, ethTokenPrice]);
-
-  console.log('ethtokenprice: ', ethTokenPrice);
-
-  console.log('estimated gas value: ', gas);
+  }, [gasUnits, gasBaseFee, ethTokenPrice, web3]);
 }
