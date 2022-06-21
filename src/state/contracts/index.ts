@@ -3,6 +3,7 @@ import { ClubERC20Factory } from '@/ClubERC20Factory/clubERC20Factory';
 import { ClubERC20FactoryNative } from '@/ClubERC20Factory/clubERC20FactoryNative';
 import { DepositTokenMintModuleContract } from '@/ClubERC20Factory/depositTokenMintModule';
 import { DistributionsERC20 } from '@/ClubERC20Factory/distributionsERC20';
+import { DistributionsETH } from '@/ClubERC20Factory/distributionsETH';
 import { NativeMintModuleContract } from '@/ClubERC20Factory/nativeMintModule';
 import { MerkleDistributorModuleContract } from '@/ClubERC20Factory/merkleDistributorModule';
 import { MerkleDistributorModuleERC721Contract } from '@/ClubERC20Factory/merkleDistributorModuleERC721';
@@ -22,6 +23,7 @@ export interface ISyndicateContracts {
   clubERC20Factory: ClubERC20Factory;
   clubERC20FactoryNative: ClubERC20FactoryNative;
   distributionsERC20: DistributionsERC20;
+  distributionsETH: DistributionsETH;
   policyMintERC20: MintPolicyContract;
   mintPolicy: MintPolicyContract;
   DepositTokenMintModule: DepositTokenMintModuleContract;
@@ -52,6 +54,7 @@ const initialState: InitialState = {
     policyMintERC20: null,
     clubERC20FactoryNative: null,
     distributionsERC20: null,
+    distributionsETH: null,
     mintPolicy: null,
     DepositTokenMintModule: null,
     SingleTokenMintModule: null,

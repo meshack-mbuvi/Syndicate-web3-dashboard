@@ -4,6 +4,7 @@ import { ClubERC20Factory } from './clubERC20Factory';
 import { ClubERC20FactoryNative } from './clubERC20FactoryNative';
 import { DepositTokenMintModuleContract } from './depositTokenMintModule';
 import { DistributionsERC20 } from './distributionsERC20';
+import { DistributionsETH } from './distributionsETH';
 import { ERC721Contract } from './ERC721Membership';
 import { NativeMintModuleContract } from './nativeMintModule';
 import { MerkleDistributorModuleContract } from './merkleDistributorModule';
@@ -51,6 +52,12 @@ export const getSyndicateContracts = async (
 
   const distributionsERC20 = new DistributionsERC20(
     addresses.distributionERC20,
+    web3,
+    activeNetwork
+  );
+
+  const distributionsETH = new DistributionsETH(
+    addresses.distributionsETH,
     web3,
     activeNetwork
   );
@@ -166,6 +173,7 @@ export const getSyndicateContracts = async (
   return {
     clubERC20Factory,
     distributionsERC20,
+    distributionsETH,
     policyMintERC20,
     clubERC20FactoryNative,
     mintPolicy,
