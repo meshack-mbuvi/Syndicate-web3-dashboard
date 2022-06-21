@@ -56,7 +56,7 @@ const distributeTokens = createSlice({
     setEth(state, action: PayloadAction<eth>) {
       state.eth = action.payload;
     },
-    setGasEstimates(state, action: PayloadAction<gasEstimate>) {
+    setGasEstimates(state, action: PayloadAction<any>) {
       state.gasEstimate = action.payload;
     },
     setDistributionMembers(state, action: PayloadAction<clubMember[]>) {

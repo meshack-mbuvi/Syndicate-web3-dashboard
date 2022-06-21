@@ -17,7 +17,7 @@ export function EstimateDistributionsGas() {
       web3: { account, activeNetwork, web3 }
     },
     initializeContractsReducer: {
-      syndicateContracts: { clubERC20Factory, clubERC20FactoryNative }
+      syndicateContracts: { clubERC20FactoryNative, distributionsERC20 }
     }
   } = useSelector((state: AppState) => state);
 
@@ -25,7 +25,6 @@ export function EstimateDistributionsGas() {
 
   const { symbol } = nativeCurrency;
 
-  const [gas, setGas] = useState(0);
   const [gasUnits, setGasUnits] = useState(0);
   const [gasBaseFee, setGasBaseFee] = useState(0);
   const [ethTokenPrice, setEthTokenPrice] = useState<number | undefined>();
@@ -39,12 +38,15 @@ export function EstimateDistributionsGas() {
   };
 
   const fetchGasUnitAndBaseFeeERC20 = useCallback(async () => {
-    if (!clubERC20Factory) return;
+    if (!distributionsERC20) return;
 
     await Promise.all([
       !account
         ? setGasUnits(380000)
-        : clubERC20Factory.getEstimateGasDistributeERC20(account, setGasUnits),
+        : distributionsERC20.getEstimateGasDistributeERC20(
+            account,
+            setGasUnits
+          ),
       axios
         .get(`${baseURL}?module=proxy&action=eth_gasPrice`)
         .then((res) => processBaseFee(res.data))
@@ -53,7 +55,7 @@ export function EstimateDistributionsGas() {
         .then((res) => setEthTokenPrice(res))
         .catch(() => 0)
     ]);
-  }, [account, clubERC20Factory]);
+  }, [account, distributionsERC20]);
 
   const fetchGasUnitAndBaseFeeETH = useCallback(async () => {
     if (!clubERC20FactoryNative) return;
@@ -103,6 +105,5 @@ export function EstimateDistributionsGas() {
         fiatAmount: (estimatedGas * ethTokenPrice).toFixed(2)
       })
     );
-    setGas(+estimatedGas);
   }, [gasUnits, gasBaseFee, ethTokenPrice, web3]);
 }
