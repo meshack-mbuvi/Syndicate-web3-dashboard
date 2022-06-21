@@ -3,17 +3,15 @@ import { AppState } from '@/state';
 import { getWeiAmount } from '@/utils/conversions';
 import { isDev } from '@/utils/environment';
 import axios from 'axios';
-import React, { useCallback, useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useCallback, useEffect, useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { setGasEstimates } from '@/state/distributions/index';
 
 const baseURL = isDev
   ? 'https://api-rinkeby.etherscan.io/api'
   : 'https://api.etherscan.io/api';
 
-const EstimateDistributionsGas = (props: {
-  customClasses?: string;
-  ethDepositToken?: boolean;
-}) => {
+export function EstimateDistributionsGas() {
   const {
     web3Reducer: {
       web3: { account, activeNetwork, web3 }
@@ -23,12 +21,12 @@ const EstimateDistributionsGas = (props: {
     }
   } = useSelector((state: AppState) => state);
 
-  const { customClasses = '', ethDepositToken } = props;
-
   const [gas, setGas] = useState(0);
   const [gasUnits, setGasUnits] = useState(0);
   const [gasBaseFee, setGasBaseFee] = useState(0);
   const [ethTokenPrice, setEthTokenPrice] = useState<number | undefined>();
+
+  const dispatch = useDispatch();
 
   const processBaseFee = async (result) => {
     const baseFee = result.result;
@@ -74,15 +72,18 @@ const EstimateDistributionsGas = (props: {
   }, [account, clubERC20FactoryNative]);
 
   useEffect(() => {
-    if (!ethDepositToken) {
-      void fetchGasUnitAndBaseFeeERC20();
-    } else {
+    /* if (!ethDepositToken) { */
+    void fetchGasUnitAndBaseFeeERC20();
+    /* } else {
       void fetchGasUnitAndBaseFeeETH();
-    }
-  }, [fetchGasUnitAndBaseFeeERC20, fetchGasUnitAndBaseFeeETH, ethDepositToken]);
+    } */
+  }, [
+    fetchGasUnitAndBaseFeeERC20,
+    fetchGasUnitAndBaseFeeETH /* , ethDepositToken */
+  ]);
 
   useEffect(() => {
-    if (!gasUnits || !gasBaseFee) return;
+    if (!gasUnits || !gasBaseFee || !ethTokenPrice) return;
     const estimatedGasInWei = gasUnits * (gasBaseFee + 2);
     const estimatedGas = getWeiAmount(
       web3,
@@ -90,32 +91,21 @@ const EstimateDistributionsGas = (props: {
       18,
       false
     );
+
+    const fiatAmount = Number(+estimatedGas * ethTokenPrice).toFixed(2);
+    console.log('fiatamount: ', fiatAmount);
+    // dispatch to gasEstimate Redux here?
+
+    dispatch(
+      setGasEstimates({
+        tokenAmount: estimatedGas,
+        fiatAmount: (estimatedGas * ethTokenPrice).toFixed(2)
+      })
+    );
     setGas(+estimatedGas);
-  }, [gasUnits, gasBaseFee]);
+  }, [gasUnits, gasBaseFee, ethTokenPrice]);
 
-  return (
-    <button
-      className={
-        !customClasses
-          ? `bg-blue-navy bg-opacity-20 rounded-custom w-full flex py-2.5 cursor-default items-center`
-          : `${customClasses}`
-      }
-    >
-      <img src="/images/gasIcon.svg" className="inline w-4 h-4.5 mx-3" alt="" />
-      <span className="flex justify-between w-full">
-        <span className="text-blue">Estimated gas</span>
-        <span className="mr-3 text-blue">
-          {gas
-            ? `${gas.toFixed(6)} ETH ${
-                ethTokenPrice
-                  ? '(~$' + (gas * ethTokenPrice).toFixed(2) + ')'
-                  : ''
-              }`
-            : '- ETH'}
-        </span>
-      </span>
-    </button>
-  );
-};
+  console.log('ethtokenprice: ', ethTokenPrice);
 
-export default EstimateDistributionsGas;
+  console.log('estimated gas value: ', gas);
+}

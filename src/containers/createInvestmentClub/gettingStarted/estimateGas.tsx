@@ -67,6 +67,8 @@ const EstimateGas = (props: { customClasses?: string }) => {
     setGas(+estimatedGas);
   }, [gasUnits, gasBaseFee]);
 
+  console.log('estimate gas: ', gas);
+
   return (
     <button
       className={

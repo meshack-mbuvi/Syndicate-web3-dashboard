@@ -10,15 +10,20 @@ type eth = {
   available: string;
   totalToDistribute: string;
 };
-
-type gasEstimate = {
+export interface GasEstimate {
   tokenSymbol: string;
   tokenAmount: string;
-  fiatAmount: string;
+  fiatAmount: any;
   isLoading: boolean;
-};
+}
 
-const initialState = {
+const initialState: {
+  // To Do in future: more strictly define the types
+  distributionTokens: any;
+  distributionMembers: any;
+  eth: any;
+  gasEstimate: GasEstimate;
+} = {
   distributionTokens: [],
   distributionMembers: [],
   eth: {

@@ -16,6 +16,8 @@ import TwoColumnLayout from '../twoColumnLayout';
 import ReviewDistribution from './DistributionMembers';
 import TokenSelector from './TokenSelector';
 
+import { EstimateDistributionsGas } from './estimateDistributionsGas';
+
 enum Steps {
   selectTokens = 'select tokens',
   selectMembers = 'select members'
@@ -31,6 +33,9 @@ const Distribute: FC = () => {
       web3: { account, status, activeNetwork }
     }
   } = useSelector((state: AppState) => state);
+
+  // calls the estimate gas function which changes the redux state of gasEstimate
+  EstimateDistributionsGas();
 
   const dispatch = useDispatch();
 
@@ -289,6 +294,8 @@ const Distribute: FC = () => {
     setActiveIndex(activeIndex - 1);
     setCurrentStep(Steps.selectTokens);
   };
+
+  console.log('gasEstimate: ', gasEstimate);
 
   return (
     <>
