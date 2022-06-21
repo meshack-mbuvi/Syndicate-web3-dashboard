@@ -1,5 +1,8 @@
 import { InputFieldWithButton } from '@/components/inputs/inputFieldWithButton';
-import { InputFieldWithToken } from '@/components/inputs/inputFieldWithToken';
+import {
+  InputFieldWithToken,
+  SymbolDisplay
+} from '@/components/inputs/inputFieldWithToken';
 import React from 'react';
 
 export default {
@@ -16,14 +19,18 @@ const Template = (args) => <InputFieldWithToken {...args} />;
 
 export const Default = Template.bind({});
 Default.args = {
-  placeholderLabel: 'Placeholder label'
+  placeholderLabel: 'Placeholder label',
+  symbolDisplayVariant: SymbolDisplay.LOGO_AND_SYMBOL,
+  depositTokenSymbol: 'TOKN'
 };
 
 export const MoreInfo = Template.bind({});
 MoreInfo.args = {
   placeholderLabel: 'Placeholder label',
   infoLabel:
-    'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'
+    'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
+  symbolDisplayVariant: SymbolDisplay.LOGO_AND_SYMBOL,
+  depositTokenSymbol: 'TOKN'
 };
 
 export const Error = Template.bind({});
@@ -31,5 +38,7 @@ Error.args = {
   placeholderLabel: 'Placeholder label',
   infoLabel:
     'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
-  isInErrorState: true
+  isInErrorState: true,
+  symbolDisplayVariant: SymbolDisplay.LOGO_AND_SYMBOL,
+  depositTokenSymbol: 'TOKN'
 };

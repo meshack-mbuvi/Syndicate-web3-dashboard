@@ -21,6 +21,7 @@ export const InputFieldWithToken = (props: {
   depositTokenSymbol?: string;
   extraClasses?: string;
   onChange: (e) => void;
+  handleTokenClick?: () => void;
   symbolDisplayVariant?: SymbolDisplay;
   symbolColor?: string;
 }): React.ReactElement => {
@@ -33,6 +34,7 @@ export const InputFieldWithToken = (props: {
     depositTokenSymbol = '',
     extraClasses = '',
     onChange,
+    handleTokenClick,
     symbolDisplayVariant,
     symbolColor,
     ...rest
@@ -66,7 +68,12 @@ export const InputFieldWithToken = (props: {
               )}
             </div>
           ) : symbolDisplayVariant === SymbolDisplay.LOGO_AND_SYMBOL ? (
-            <div className="flex items-center">
+            <button
+              onClick={handleTokenClick}
+              className={`flex items-center ${
+                !handleTokenClick && 'cursor-text'
+              }`}
+            >
               <div className="mr-2 flex items-center justify-center relative w-5 h-5">
                 {depositTokenLogo && (
                   <Image
@@ -79,7 +86,7 @@ export const InputFieldWithToken = (props: {
               <div className="uppercase text-gray-syn3">
                 <span>{depositTokenSymbol}</span>
               </div>
-            </div>
+            </button>
           ) : null}
         </div>
       </div>

@@ -83,7 +83,9 @@ module.exports = {
       },
       height: () => ({
         'fit-content': 'fit-content',
+        2.5: '0.625rem',
         4.5: '1.125rem',
+        5.5: '1.375rem',
         12.5: '3.125rem',
         13: '3.25rem',
         17.5: '4.375rem',
@@ -100,7 +102,9 @@ module.exports = {
       width: () => ({
         'fit-content': 'fit-content',
         '2/1': '200%',
+        2.5: '0.625rem',
         4.5: '1.125rem',
+        5.5: '1.375rem',
         '5.21/12': '43.47826%',
         7.5: '1.875rem',
         12.5: '3.125rem',
@@ -248,7 +252,8 @@ module.exports = {
         cyan: {
           ...colors.cyan,
           cherenkov: '#00FFFF',
-          verdigris: '#43B3AE'
+          verdigris: '#43B3AE',
+          collective: '#003030'
         },
         purple: {
           ...colors.purple,
@@ -484,6 +489,7 @@ module.exports = {
       },
       transitionProperty: {
         height: 'height',
+        width: 'width',
         'font-size': 'fontSize, font-size'
       }
     }

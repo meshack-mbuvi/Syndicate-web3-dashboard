@@ -1,7 +1,7 @@
 export const InputField = (props: {
   value: string;
   placeholder: string;
-  extraClasses: string;
+  extraClasses?: string;
   onChange: (e) => void;
 }): React.ReactElement => {
   const { value, placeholder, extraClasses = '', onChange } = props;

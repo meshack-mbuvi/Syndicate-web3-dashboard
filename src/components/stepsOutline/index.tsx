@@ -1,11 +1,17 @@
 interface Props {
-  steps: { title: string; description?: string; isInErrorState?: boolean }[];
+  steps: {
+    title: string;
+    description?: string | any;
+    isInErrorState?: boolean;
+  }[];
+  alwaysShowDescriptions?: boolean;
   activeIndex: number;
   extraClasses: string;
 }
 
 export const StepsOutline: React.FC<Props> = ({
   steps,
+  alwaysShowDescriptions,
   activeIndex,
   extraClasses
 }) => {
@@ -45,8 +51,12 @@ export const StepsOutline: React.FC<Props> = ({
     }`;
   };
   const dynamicDescriptionStyles = (step, index) => {
-    return `text-sm text-gray-syn4 ${transitionStyles} ${
-      activeIndex >= index ? 'max-h-50 opacity-100' : 'max-h-0 opacity-0'
+    return `text-sm ${
+      activeIndex >= index ? 'text-gray-syn4' : 'text-gray-syn6'
+    } ${transitionStyles} ${
+      activeIndex >= index || alwaysShowDescriptions
+        ? 'max-h-50 opacity-100'
+        : 'max-h-0 opacity-0'
     } overflow-hidden`;
   };
 

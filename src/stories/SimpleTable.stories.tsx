@@ -1,8 +1,7 @@
 import { SimpleTable } from '@/components/simpleTable';
-import { useState } from 'react';
 
 export default {
-  title: '3. Molecules/Simple Table',
+  title: '3. Molecules/Table/Simple',
   decorators: [
     (Story): React.ReactElement => (
       <div style={{ margin: '0rem' }}>
