@@ -76,10 +76,7 @@ export function EstimateDistributionsGas() {
 
   useEffect(() => {
     void fetchGasUnitAndBaseFeeERC20();
-  }, [
-    fetchGasUnitAndBaseFeeERC20
-    /* fetchGasUnitAndBaseFeeETH */
-  ]);
+  }, [fetchGasUnitAndBaseFeeERC20]);
 
   useEffect(() => {
     if (!gasUnits || !gasBaseFee || !ethTokenPrice || !web3) return;

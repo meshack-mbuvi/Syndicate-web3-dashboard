@@ -5,6 +5,7 @@ export const CONTRACT_ADDRESSES = Object.freeze({
     clubERC20FactoryNative: '0x2372fd8d69da29b4b328b518c6d7e84f3aa25dc3', // clubERC20FactoryETH
     DepositTokenMintModule: '0x0449F65a5e09F0f30Aa504B8474D1D4d0e10B8B8',
     distributionERC20: '',
+    distributionETH: '',
     ERC721MintPolicy: '0x543B8a295a485b50bA0db1D686Ab806656D7D542',
     NativeMintModule: '0x960fd5cfa6c36e9db131824ddf07df6322a053de', // EthMintModule-
     MerkleDistributorModule: '0x90543E032A7c8db9087Ab30F2a04929592700134',
@@ -44,6 +45,7 @@ export const CONTRACT_ADDRESSES = Object.freeze({
     clubERC20FactoryNative: '0xae6328C067bddFbA4963e2A1F52BaaF11a2e2588', // clubERC20FactoryETH
     DepositTokenMintModule: '0xa052E325e112A5a6DfF7F4115B2f6DAA15eDa2F3',
     distributionERC20: '',
+    distributionETH: '',
     NativeMintModule: '0xA84443aa452DaB22467376e2BEA9e98EB20aCA1b', // EthMintModule-
     ERC721Membership: '0x43A23837a14F3FafB7cb6e4924586C970108c9Be',
     ERC721MintPolicy: '0xf9b79c55865EdD9ECed42b9C49312b5E03230d5D',
