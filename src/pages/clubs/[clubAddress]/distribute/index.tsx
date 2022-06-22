@@ -6,9 +6,9 @@ import NotFoundPage from '@/pages/404';
  * This page shows the manager container for a given syndicate address
  */
 const DistributeTokensPage: React.FC = () => {
-  // LaunchDarkly distribution-button (converted to camelcase) feature flag is called
-  const { distributionButton } = useFlags();
-  return distributionButton ? <DistributionContainer /> : <NotFoundPage />;
+  // LaunchDarkly distributions feature flag
+  const { distributions } = useFlags();
+  return distributions ? <DistributionContainer /> : <NotFoundPage />;
 };
 
 export default DistributeTokensPage;

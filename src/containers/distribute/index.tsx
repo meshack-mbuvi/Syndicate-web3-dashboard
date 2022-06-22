@@ -88,7 +88,8 @@ const Distribute: FC = () => {
     isOwner,
     pathname,
     isDemoMode,
-    router
+    router,
+    activeNetwork.chainId
   ]);
 
   // Prepare distributions tokens for overview badge

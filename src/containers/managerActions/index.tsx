@@ -66,9 +66,8 @@ const ManagerActions = (): JSX.Element => {
     }
   } = useSelector((state: AppState) => state);
 
-  // LaunchDarkly distribution-button (converted to camelcase) is called
-  const { distributionButton } = useFlags();
-
+  // LaunchDarkly distributions feature flag
+  const { distributions } = useFlags();
   const { resetCreationStates } = useCreateInvestmentClubContext();
   const router = useRouter();
   const dispatch = useDispatch();
@@ -402,7 +401,7 @@ const ManagerActions = (): JSX.Element => {
 
         {status !== Status.DISCONNECTED && (
           <div className="flex bg-gray-syn8 duration-500 transition-all rounded-2.5xl my-6 p-4 space-y-4 items-start flex-col">
-            {distributionButton && !depositsEnabled ? (
+            {distributions && !depositsEnabled ? (
               <div
                 className={`${
                   loading ? `` : `hover:bg-gray-syn7`
