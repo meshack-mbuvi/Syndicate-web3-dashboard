@@ -1,7 +1,6 @@
 import { ClubERC20Contract } from '@/ClubERC20Factory/clubERC20';
 import Footer from '@/components/navigation/footer';
 import Header from '@/components/navigation/header/Header';
-import { useCreateInvestmentClubContext } from '@/context/CreateInvestmentClubContext';
 import { CLUB_TOKEN_QUERY } from '@/graphql/queries';
 import { getDepositDetails, setERC20Token } from '@/helpers/erc20TokenDetails';
 import { useAccountTokens } from '@/hooks/useAccountTokens';
@@ -24,7 +23,6 @@ import React, { FC, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import ConnectWallet from 'src/components/connectWallet';
 import DemoBanner from '../demoBanner';
-import ProgressBar from '../ProgressBar';
 import SEO from '../seo';
 
 interface Props {
@@ -86,9 +84,6 @@ const Layout: FC<Props> = ({
 
   const showCreateProgressBar = router.pathname === '/clubs/create';
   const portfolioPage = router.pathname === '/clubs' || router.pathname === '/';
-
-  const { currentStep, steps, preClubCreationStep } =
-    useCreateInvestmentClubContext();
 
   // get content to occupy the viewport if we are in these states.
   // this will push the footer down to the bottom of the page to make it uniform
@@ -290,25 +285,6 @@ const Layout: FC<Props> = ({
           setActiveIndex={setActiveIndex}
         />
         <DemoBanner />
-
-        <div
-          className={`sticky top-18 ${
-            showCreateProgressBar ? 'bg-black backdrop-filter' : ''
-          }`}
-        >
-          {showCreateProgressBar && account ? (
-            <div className="pt-6 bg-black">
-              <ProgressBar
-                percentageWidth={
-                  preClubCreationStep
-                    ? 0
-                    : ((currentStep + 1) / steps.length) * 100
-                }
-                tailwindColor="bg-green"
-              />
-            </div>
-          ) : null}
-        </div>
 
         <div
           className={`flex w-full bg-black flex-col sm:flex-row ${

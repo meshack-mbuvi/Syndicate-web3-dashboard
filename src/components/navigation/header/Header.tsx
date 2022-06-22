@@ -3,10 +3,14 @@ import {
   DotIndicators,
   DotIndicatorsOrientation
 } from '@/components/dotIndicators';
+import ProgressBar from '@/components/ProgressBar';
+import { useCreateInvestmentClubContext } from '@/context/CreateInvestmentClubContext';
+import { AppState } from '@/state';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React, { useEffect, useRef } from 'react';
+import { useSelector } from 'react-redux';
 import { MoreMenu } from './moreMenu';
 import { NavBarNavItem } from './navbarItems';
 import NetworkComponent from './network';
@@ -34,6 +38,16 @@ const Header: React.FC<props> = ({
   const router = useRouter();
   const navRef = useRef(null);
   const [showMobileNav, setShowMobileNav] = React.useState(false);
+
+  // For progress bar
+  const {
+    web3Reducer: {
+      web3: { account }
+    }
+  } = useSelector((state: AppState) => state);
+  const { currentStep, steps, preClubCreationStep } =
+    useCreateInvestmentClubContext();
+  const showCreateProgressBar = router.pathname === '/clubs/create';
 
   useEffect(() => {
     if (showMobileNav) {
@@ -212,6 +226,15 @@ const Header: React.FC<props> = ({
             )}
           </div>
         </div>
+        {showCreateProgressBar && account && (
+          <ProgressBar
+            percentageWidth={
+              preClubCreationStep ? 0 : ((currentStep + 1) / steps.length) * 100
+            }
+            tailwindColor="bg-green"
+            extraClasses=""
+          />
+        )}
       </nav>
     </>
   );
