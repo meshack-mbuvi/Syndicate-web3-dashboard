@@ -67,7 +67,15 @@ const Body: React.FC<AppProps & { apollo: ApolloClient<unknown> }> = ({
     <>
       <Head>
         <title>Home | Syndicate Dashboard</title>
-        <link rel="shortcut icon" href="/images/logo.svg" />
+        
+        {/* Safari favicon */}
+        <link rel="icon" href="/favicon.png" sizes="any" />
+        {/* Favicon */}
+        <link
+          rel="icon"
+          href="/favicon.svg"
+          type="image/svg+xml"
+        ></link>{' '}
 
         <FontsPreloader />
 
