@@ -89,6 +89,7 @@ const Header: React.FC<props> = ({
   const { pathname } = router;
 
   const hideWalletAndEllipsis = pathname.includes('/distribute');
+  const showCloseButton = pathname.includes('/distribute');
 
   return (
     <>
@@ -206,7 +207,9 @@ const Header: React.FC<props> = ({
               </>
             ) : null}
 
-            <NavButton type={NavButtonType.CLOSE} onClick={handleExitClick} />
+            {showCloseButton && (
+              <NavButton type={NavButtonType.CLOSE} onClick={handleExitClick} />
+            )}
           </div>
         </div>
       </nav>
