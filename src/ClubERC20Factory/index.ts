@@ -51,7 +51,7 @@ export const getSyndicateContracts = async (
   );
 
   const distributionsERC20 = new DistributionsERC20(
-    addresses.distributionERC20,
+    addresses.distributionsERC20,
     web3,
     activeNetwork
   );
