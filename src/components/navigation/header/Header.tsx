@@ -232,7 +232,6 @@ const Header: React.FC<props> = ({
               preClubCreationStep ? 0 : ((currentStep + 1) / steps.length) * 100
             }
             tailwindColor="bg-green"
-            extraClasses=""
           />
         )}
       </nav>
