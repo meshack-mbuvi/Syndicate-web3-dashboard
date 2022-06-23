@@ -19,6 +19,8 @@ import { RugERC20ClaimModule } from './RugRadio/RugERC20ClaimModule';
 import { RugUtilityProperties } from './RugRadio/RugUtilityProperties';
 import { RugUtilityMintModuleContract } from './rugUtilityMintModule';
 import { OwnerMintModuleContract } from './ownerMintModule';
+import { ERC721CollectiveFactory } from './ERC721CollectiveFactory';
+import { IActiveNetwork } from '@/state/wallet/types';
 import { CONTRACT_ADDRESSES } from '@/Networks';
 
 const DEPOSIT_EXCHANGE_MODULE = process.env.NEXT_PUBLIC_DEPOSIT_EXCHANGE_MODULE;
@@ -33,7 +35,7 @@ const RUG_BONUS_CLAIM_MODULE = process.env.NEXT_PUBLIC_RUG_BONUS;
 
 export const getSyndicateContracts = async (
   web3: Web3,
-  activeNetwork
+  activeNetwork: IActiveNetwork
 ): Promise<ISyndicateContracts> => {
   // Retrieve contract from cache.
   const addresses = CONTRACT_ADDRESSES[activeNetwork.chainId];
@@ -169,6 +171,12 @@ export const getSyndicateContracts = async (
     activeNetwork
   );
 
+  const erc721CollectiveFactory = new ERC721CollectiveFactory(
+    addresses.erc721CollectiveFactory,
+    web3,
+    activeNetwork
+  );
+
   // return all initialized contracts
   return {
     clubERC20Factory,
@@ -192,6 +200,7 @@ export const getSyndicateContracts = async (
     GenesisNFTContract,
     rugBonusClaimModule,
     OwnerMintModule,
-    depositExchangeMintModule
+    depositExchangeMintModule,
+    erc721CollectiveFactory
   };
 };

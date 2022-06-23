@@ -18,6 +18,7 @@ import { RugERC20ClaimModule } from '@/ClubERC20Factory/RugRadio/RugERC20ClaimMo
 import { RugUtilityProperties } from '@/ClubERC20Factory/RugRadio/RugUtilityProperties';
 import { RugUtilityMintModuleContract } from '@/ClubERC20Factory/rugUtilityMintModule';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { ERC721CollectiveFactory } from '@/ClubERC20Factory/ERC721CollectiveFactory';
 
 export interface ISyndicateContracts {
   clubERC20Factory: ClubERC20Factory;
@@ -42,6 +43,7 @@ export interface ISyndicateContracts {
   rugBonusClaimModule: RugBonusTokenModule;
   OwnerMintModule: OwnerMintModuleContract;
   depositExchangeMintModule: DepositExchangeMintModule;
+  erc721CollectiveFactory: ERC721CollectiveFactory;
 }
 
 interface InitialState {
@@ -71,7 +73,8 @@ const initialState: InitialState = {
     GenesisNFTContract: null,
     rugBonusClaimModule: null,
     OwnerMintModule: null,
-    depositExchangeMintModule: null
+    depositExchangeMintModule: null,
+    erc721CollectiveFactory: null
   }
 };
 

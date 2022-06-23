@@ -17,7 +17,8 @@ export const CONTRACT_ADDRESSES = Object.freeze({
     UtilityMintModule: '0x7D9cd3C538E8b1937a5056E74dA59E82226aB187',
     OnePerAddressMintModule: '0x7D9cd3C538E8b1937a5056E74dA59E82226aB187',
     OwnerMintModule: '0xA7c2400CBbeafFFaF77d3080bF8Ca50f51c8afC6',
-    OwnerMintModule2: '0x06507C449B1E8EBB8247f44b715F9Fe4E51B365A'
+    OwnerMintModule2: '0x06507C449B1E8EBB8247f44b715F9Fe4E51B365A',
+    erc721CollectiveFactory: '' // TODO
   },
   // Rinkeby
   4: {
@@ -37,7 +38,8 @@ export const CONTRACT_ADDRESSES = Object.freeze({
     UtilityMintModule: '0xD193Cfbc267f23127E024A025233A8483b29C66e',
     OnePerAddressMintModule: '',
     OwnerMintModule: '0x60bfff0B6e064673B61f3eB9dEA5ED0f3BbB5471',
-    OwnerMintModule2: ''
+    OwnerMintModule2: '',
+    erc721CollectiveFactory: '' // TODO
   },
   // Matic
   137: {
@@ -57,6 +59,7 @@ export const CONTRACT_ADDRESSES = Object.freeze({
     UtilityMintModule: '',
     OnePerAddressMintModule: '',
     OwnerMintModule: '0x4dd964Bb38828789de447787B3435D519E4E7282',
-    OwnerMintModule2: ''
+    OwnerMintModule2: '',
+    erc721CollectiveFactory: '' // TODO
   }
 });
