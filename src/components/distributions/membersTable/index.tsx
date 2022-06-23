@@ -116,7 +116,7 @@ export const DistributionMembersTable: React.FC<Props> = ({
             ...rest,
             ownershipShare,
             distributionShare:
-              (ownershipShare * 100) / cumulativeActiveMemberOwnership,
+              (+ownershipShare * 100) / cumulativeActiveMemberOwnership,
             receivingTokens: tokens.map(({ tokenAmount, symbol, icon }) => {
               return {
                 amount:

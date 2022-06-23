@@ -36,7 +36,8 @@ export enum Flow {
   CLUB_CREATION = 'CREATE_INVESTMENT_CLUB', // SET CLUB DETAILS IE name, members, etc and create club
   POST_CLUB_CREATION = 'POST_CLUB_CREATION', // copy deposit link
   LEGAL_ENTITY_FLOW = 'LEGAL_ENTITY_FLOW', // Manager legal flow
-  WALLET_CONNECT = 'WALLET_CONNECT' // wallet connection
+  WALLET_CONNECT = 'WALLET_CONNECT', // wallet connection
+  MGR_DISTRIBUTION = 'MANAGER_DISTRIBUTION'
 }
 
 type EventProperty = {

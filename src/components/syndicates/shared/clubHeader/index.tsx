@@ -47,6 +47,7 @@ export const ClubHeader: React.FC<{
     setDivWidth(document?.getElementById('club-name')?.offsetWidth);
     setNameWidth(getTextWidth(name));
   }, [name]);
+
   return (
     <div className="flex justify-center items-center">
       <div className="mr-8">

@@ -7,13 +7,19 @@ interface Props {
   handleModalClose: () => void;
   etherscanURL: string;
   socialURL: string;
+  clubName: string;
+  clubSymbol: string;
+  handleViewDashboard;
 }
 
 export const ShareSocialModal: React.FC<Props> = ({
   isModalVisible,
   handleModalClose,
   etherscanURL,
-  socialURL
+  socialURL,
+  clubName,
+  clubSymbol,
+  handleViewDashboard
 }) => {
   return (
     <>
@@ -42,11 +48,18 @@ export const ShareSocialModal: React.FC<Props> = ({
               'https://media4.giphy.com/media/ZmgSpGW4p8EUspn0Uk/giphy.gif',
               'https://media.giphy.com/media/lMameLIF8voLu8HxWV/giphy.gif'
             ]}
-            description="Just made an investment distribution for Alpha Beta Club (✺ABC) on Syndicate 🎉 Check our dashboard for details on how much you will be receiving."
+            description={`Just made an investment distribution for ${clubName} (${clubSymbol}) on Syndicate 🎉 Check our dashboard for details on how much you will be receiving.`}
           />
-          <button className="primary-CTA w-full mt-8">View on dashboard</button>
+          <button
+            className="primary-CTA w-full mt-8"
+            onClick={handleViewDashboard}
+          >
+            View on dashboard
+          </button>
           <a
             href={etherscanURL}
+            target="_blank"
+            rel="noreferrer"
             className="text-center flex items-center space-x-2 justify-center w-full block text-blue mt-6 mb-8"
           >
             <div>View on Etherscan</div>

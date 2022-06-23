@@ -4,10 +4,10 @@ import { ClubERC20FactoryNative } from '@/ClubERC20Factory/clubERC20FactoryNativ
 import { DepositTokenMintModuleContract } from '@/ClubERC20Factory/depositTokenMintModule';
 import { DistributionsERC20 } from '@/ClubERC20Factory/distributionsERC20';
 import { DistributionsETH } from '@/ClubERC20Factory/distributionsETH';
-import { NativeMintModuleContract } from '@/ClubERC20Factory/nativeMintModule';
 import { MerkleDistributorModuleContract } from '@/ClubERC20Factory/merkleDistributorModule';
 import { MerkleDistributorModuleERC721Contract } from '@/ClubERC20Factory/merkleDistributorModuleERC721';
 import { ERC721MintPolicyContract } from '@/ClubERC20Factory/mintPolicyERC721';
+import { NativeMintModuleContract } from '@/ClubERC20Factory/nativeMintModule';
 import { OwnerMintModuleContract } from '@/ClubERC20Factory/ownerMintModule';
 import { MintPolicyContract } from '@/ClubERC20Factory/policyMintERC20';
 import { PublicMintWithFeeModuleContract } from '@/ClubERC20Factory/publicMintWithFeeModule';

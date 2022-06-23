@@ -46,10 +46,12 @@ const TwoColumnLayout: FC<{
   managerSettingsOpen: boolean;
   leftColumnComponent;
   rightColumnComponent;
+  handleExitClick?;
 }> = ({
   managerSettingsOpen,
   leftColumnComponent,
   rightColumnComponent,
+  handleExitClick = () => ({}),
   dotIndicatorOptions = []
 }) => {
   const {
@@ -251,6 +253,7 @@ const TwoColumnLayout: FC<{
           managerSettingsOpen={managerSettingsOpen}
           showNav={showNav}
           showBackButton={true}
+          handleExitClick={handleExitClick}
         >
           <Head title={name || 'Club'} />
           <ErrorBoundary>

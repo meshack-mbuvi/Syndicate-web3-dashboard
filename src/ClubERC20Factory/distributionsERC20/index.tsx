@@ -1,5 +1,6 @@
 import { isDev } from '@/utils/environment';
 import DISTRIBUTION_ERC20_ABI from 'src/contracts/DistributionModuleERC20.json';
+import { getGnosisTxnInfo } from '../shared/gnosisTransactionInfo';
 
 export class DistributionsERC20 {
   web3;
@@ -69,5 +70,81 @@ export class DistributionsERC20 {
           }
         );
     });
+  }
+
+  /**
+   * Interact with contract/protocol to make erc20 distributions
+   *
+   * @param account wallet address of the club admin
+   * @param club address of the club
+   * @param distributionERC20 address of the token to be distributed
+   * @param totalDistributionAmount total amount to be distributed
+   * @param members a list of member address to receive distributions
+   * @param batchIdentifier a uuid string to identify a particular distribution
+   * @param onTxConfirm a function to be called when admin confirms the transaction on metamask or gnosis
+   * @param onTxReceipt a function to be called after transaction succeeds
+   * @param onTxFail a function to be called when transaction fails
+   */
+  public async multiMemberDistribute(
+    account: string,
+    club: string,
+    distributionERC20: string,
+    totalDistributionAmount: string,
+    members: string[],
+    batchIdentifier: string,
+    onTxConfirm: (transactionHash?) => void,
+    onTxReceipt: (receipt?) => void,
+    onTxFail: (receipt?) => void
+  ): Promise<void> {
+    let gnosisTxHash;
+
+    if (!this.distributionERC20) {
+      await this.init();
+    }
+
+    await new Promise((resolve, reject) => {
+      this.distributionERC20.methods
+        .multiMemberDistribute(
+          club,
+          distributionERC20,
+          totalDistributionAmount,
+          members,
+          batchIdentifier
+        )
+        .send({ from: account })
+        .on('transactionHash', (transactionHash) => {
+          onTxConfirm(transactionHash);
+
+          // Stop waiting if we are connected to gnosis safe via walletConnect
+          if (
+            this.web3._provider.wc?._peerMeta.name === 'Gnosis Safe Multisig'
+          ) {
+            gnosisTxHash = transactionHash;
+            resolve(transactionHash);
+          }
+        })
+        .on('receipt', (receipt) => {
+          onTxReceipt(receipt);
+          resolve(receipt);
+        })
+        .on('error', (error) => {
+          onTxFail(error);
+          reject(error);
+        });
+    });
+
+    // fallback for gnosisSafe <> walletConnect
+    if (gnosisTxHash) {
+      const receipt: any = await getGnosisTxnInfo(
+        gnosisTxHash,
+        this.activeNetwork
+      );
+
+      if (receipt.isSuccessful) {
+        onTxReceipt(receipt);
+      } else {
+        onTxFail('Transaction failed');
+      }
+    }
   }
 }

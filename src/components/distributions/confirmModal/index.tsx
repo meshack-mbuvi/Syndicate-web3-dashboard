@@ -7,7 +7,7 @@ interface Props {
   activeStepIndex: number;
   children: any;
   isModalVisible: boolean;
-  handleModalClose: () => void;
+  handleModalClose: (e?) => void;
 }
 
 export const ConfirmDistributionsModal: React.FC<Props> = ({

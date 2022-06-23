@@ -427,7 +427,7 @@ export const AssetList: React.FC<Props> = ({
                             )}`}
                       </div>
                       <div className="ml-1">
-                        {!option.isEditingInFiat ? option.symbol : 'USD'}
+                        {option.isEditingInFiat ? option.symbol : 'USD'}
                       </div>
                       <button
                         onClick={(e) => {
