@@ -102,9 +102,6 @@ export const BadgeWithOverview: React.FC<Props> = ({
     );
   });
 
-  console.log('yo gasEstimate: ', gasEstimate);
-  console.log('yo isLoading: ', isLoading);
-
   return (
     <>
       <div className="hidden md:block md:max-w-480">

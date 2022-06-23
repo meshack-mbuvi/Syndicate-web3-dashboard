@@ -60,7 +60,6 @@ export const getWeiAmount = (
     return etherToNumber(amount, tokenFactor.toString());
   }
 
-  console.log('amount: ', amount);
   if (multiplication) {
     return web3.utils.toWei(amount.toString(), tokenUnit);
   } else {
