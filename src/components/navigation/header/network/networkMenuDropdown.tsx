@@ -92,7 +92,7 @@ const NetworkMenuDropDown: FC = () => {
               src={activeNetwork.logo}
               alt="chain logo"
             />
-            <span className="block focus:outline-none mr-4 sm:mr-1 text-base leading-5.5 py-3 sm:text-sm font-whyte-regular">
+            <span className="block focus:outline-none mr-4 sm:mr-1 text-base leading-5.5 py-2 sm:text-sm font-whyte-regular">
               {activeNetwork.displayName}
             </span>
             <div className="flex items-center ml-2">
