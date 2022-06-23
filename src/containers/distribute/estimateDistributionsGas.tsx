@@ -84,6 +84,7 @@ export function EstimateDistributionsGas() {
   useEffect(() => {
     if (!gasUnits || !gasBaseFee || !ethTokenPrice || !web3 || !symbol) return;
     const estimatedGasInWei = gasUnits * (gasBaseFee + 2);
+    if (isNaN(estimatedGasInWei)) return;
     const estimatedGas = getWeiAmount(
       web3,
       estimatedGasInWei.toString(),

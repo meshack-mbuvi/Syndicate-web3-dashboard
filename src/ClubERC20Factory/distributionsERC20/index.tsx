@@ -42,7 +42,7 @@ export class DistributionsERC20 {
     const distributionERC20Address = isDev
       ? '0xeb8f08a975Ab53E34D8a0330E0D34de942C95926'
       : '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48';
-    const totalDistributionAmount = 10;
+    const totalDistributionAmount = 0;
     const members = [
       '0x110bc6e5fe887beebb260028d6c95e42a2b5269c',
       '0x7ce087be0a01efd0f09ab8fd7b6e9ca34a3af39b',
