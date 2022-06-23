@@ -19,6 +19,7 @@ interface Props {
     fiatAmount?: string;
     isLoading?: boolean;
   };
+  numSelectedTokens?: number;
   attribution?: string;
   CTALabel: string;
   isCTADisabled: boolean;
@@ -28,6 +29,7 @@ interface Props {
 export const BadgeWithOverview: React.FC<Props> = ({
   tokensDetails,
   gasEstimate,
+  numSelectedTokens,
   CTALabel,
   isCTADisabled,
   ctaOnclickHandler,
@@ -43,7 +45,8 @@ export const BadgeWithOverview: React.FC<Props> = ({
     return total + tokenDetails.fiatAmount;
   }, 0);
 
-  const totalFiatAmount = fiatAmount + +gasEstimate.fiatAmount;
+  const totalFiatAmount =
+    fiatAmount + +gasEstimate.fiatAmount * numSelectedTokens;
 
   const renderedTokenRows = tokensDetails?.map((tokenDetails) => {
     return (
@@ -154,13 +157,23 @@ export const BadgeWithOverview: React.FC<Props> = ({
                         alt="Gas icon"
                       />
                     </div>
-                    <div>
-                      {gasEstimate.isLoading ? '-' : gasEstimate.tokenAmount}
+                    <div className="pl-1">
+                      {gasEstimate.isLoading
+                        ? '-'
+                        : (
+                            parseFloat(gasEstimate.tokenAmount) *
+                            numSelectedTokens
+                          ).toFixed(6)}
                     </div>
                     <div>{gasEstimate.tokenSymbol}</div>
                   </div>
                   <div>
-                    ${gasEstimate.isLoading ? ' -' : gasEstimate.fiatAmount}
+                    $
+                    {gasEstimate.isLoading
+                      ? ' -'
+                      : (
+                          parseFloat(gasEstimate.fiatAmount) * numSelectedTokens
+                        ).toFixed(2)}
                   </div>
                 </div>
               </Callout>
@@ -229,12 +242,22 @@ export const BadgeWithOverview: React.FC<Props> = ({
                     />
                   </div>
                   <div>
-                    {gasEstimate.isLoading ? '-' : gasEstimate.tokenAmount}
+                    {gasEstimate.isLoading
+                      ? '-'
+                      : (
+                          parseFloat(gasEstimate.tokenAmount) *
+                          numSelectedTokens
+                        ).toFixed(6)}
                   </div>
                   <div>{gasEstimate.tokenSymbol}</div>
                 </div>
                 <div className="">
-                  ${gasEstimate.isLoading ? ' -' : gasEstimate.fiatAmount}
+                  $
+                  {gasEstimate.isLoading
+                    ? ' -'
+                    : (
+                        parseFloat(gasEstimate.fiatAmount) * numSelectedTokens
+                      ).toFixed(2)}
                 </div>
               </div>
             </Callout>

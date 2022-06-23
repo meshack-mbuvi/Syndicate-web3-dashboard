@@ -95,5 +95,5 @@ export function EstimateDistributionsGas() {
         fiatAmount: (estimatedGas * ethTokenPrice).toFixed(2)
       })
     );
-  }, [gasUnits, gasBaseFee, ethTokenPrice, web3]);
+  }, [gasUnits, gasBaseFee, ethTokenPrice, web3, symbol]);
 }

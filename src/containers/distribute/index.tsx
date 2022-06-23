@@ -272,6 +272,7 @@ const Distribute: FC = () => {
       <BadgeWithOverview
         tokensDetails={tokensDetails}
         gasEstimate={gasEstimate}
+        numSelectedTokens={distributionTokens.length}
         isCTADisabled={ctaButtonDisabled || !sufficientGas}
         CTALabel={
           sufficientGas ? 'Next, review members' : 'Insufficient gas reserves'
