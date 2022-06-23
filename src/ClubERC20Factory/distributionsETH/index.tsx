@@ -54,7 +54,7 @@ export class DistributionsETH {
             from: account
           },
           (_error, gasAmount) => {
-            if (gasAmount) onResponse(gasAmount);
+            gasAmount ? onResponse(gasAmount) : onResponse(_error);
           }
         );
     });

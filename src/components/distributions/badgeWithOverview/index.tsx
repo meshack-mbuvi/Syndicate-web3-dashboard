@@ -17,8 +17,8 @@ interface Props {
     tokenSymbol: string;
     tokenAmount?: string;
     fiatAmount?: string;
-    isLoading?: boolean;
   };
+  isLoading: boolean;
   numSelectedTokens?: number;
   attribution?: string;
   CTALabel: string;
@@ -29,6 +29,7 @@ interface Props {
 export const BadgeWithOverview: React.FC<Props> = ({
   tokensDetails,
   gasEstimate,
+  isLoading,
   numSelectedTokens,
   CTALabel,
   isCTADisabled,
@@ -101,6 +102,9 @@ export const BadgeWithOverview: React.FC<Props> = ({
     );
   });
 
+  console.log('yo gasEstimate: ', gasEstimate);
+  console.log('yo isLoading: ', isLoading);
+
   return (
     <>
       <div className="hidden md:block md:max-w-480">
@@ -158,7 +162,7 @@ export const BadgeWithOverview: React.FC<Props> = ({
                       />
                     </div>
                     <div className="pl-1">
-                      {gasEstimate.isLoading
+                      {isLoading
                         ? '-'
                         : (
                             parseFloat(gasEstimate.tokenAmount) *
@@ -169,7 +173,7 @@ export const BadgeWithOverview: React.FC<Props> = ({
                   </div>
                   <div>
                     $
-                    {gasEstimate.isLoading
+                    {isLoading
                       ? ' -'
                       : (
                           parseFloat(gasEstimate.fiatAmount) * numSelectedTokens
@@ -242,7 +246,7 @@ export const BadgeWithOverview: React.FC<Props> = ({
                     />
                   </div>
                   <div>
-                    {gasEstimate.isLoading
+                    {isLoading
                       ? '-'
                       : (
                           parseFloat(gasEstimate.tokenAmount) *
@@ -253,7 +257,7 @@ export const BadgeWithOverview: React.FC<Props> = ({
                 </div>
                 <div className="">
                   $
-                  {gasEstimate.isLoading
+                  {isLoading
                     ? ' -'
                     : (
                         parseFloat(gasEstimate.fiatAmount) * numSelectedTokens

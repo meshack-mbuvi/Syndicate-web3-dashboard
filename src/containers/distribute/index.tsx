@@ -26,7 +26,12 @@ enum Steps {
 const Distribute: FC = () => {
   const {
     clubMembersSliceReducer: { clubMembers, loadingClubMembers },
-    distributeTokensReducer: { distributionTokens, gasEstimate, eth },
+    distributeTokensReducer: {
+      distributionTokens,
+      gasEstimate,
+      eth,
+      isLoading
+    },
     erc20TokenSliceReducer: { erc20Token },
     assetsSliceReducer: { tokensResult, loading: loadingAssets },
     web3Reducer: {
@@ -272,6 +277,7 @@ const Distribute: FC = () => {
       <BadgeWithOverview
         tokensDetails={tokensDetails}
         gasEstimate={gasEstimate}
+        isLoading={isLoading}
         numSelectedTokens={distributionTokens.length}
         isCTADisabled={ctaButtonDisabled || !sufficientGas}
         CTALabel={

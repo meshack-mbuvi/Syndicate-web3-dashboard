@@ -5,7 +5,7 @@ import { isDev } from '@/utils/environment';
 import axios from 'axios';
 import { useCallback, useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { setGasEstimates } from '@/state/distributions/index';
+import { setGasEstimates, setIsLoading } from '@/state/distributions/index';
 
 const baseURL = isDev
   ? 'https://api-rinkeby.etherscan.io/api'
@@ -29,6 +29,8 @@ export function EstimateDistributionsGas() {
   const [gasBaseFee, setGasBaseFee] = useState(0);
   const [ethTokenPrice, setEthTokenPrice] = useState<number | undefined>();
 
+  console.log('yo hit gasUnits:', gasUnits);
+
   const dispatch = useDispatch();
 
   const processBaseFee = async (result) => {
@@ -39,7 +41,7 @@ export function EstimateDistributionsGas() {
 
   const fetchGasUnitAndBaseFeeERC20 = useCallback(async () => {
     if (!distributionsERC20) return;
-
+    console.log('yo hi account: ', account);
     await Promise.all([
       !account
         ? setGasUnits(380000)
@@ -52,10 +54,12 @@ export function EstimateDistributionsGas() {
         .then((res) => processBaseFee(res.data))
         .catch(() => 0),
       getNativeTokenPrice(activeNetwork.chainId)
-        .then((res) => setEthTokenPrice(res))
+        .then((res) => {
+          setEthTokenPrice(res);
+        })
         .catch(() => 0)
     ]);
-  }, [account, distributionsERC20]);
+  }, [account, distributionsERC20, activeNetwork.chainId]);
 
   const fetchGasUnitAndBaseFeeETH = useCallback(async () => {
     if (!distributionsETH) return;
@@ -75,11 +79,34 @@ export function EstimateDistributionsGas() {
   }, [account, distributionsETH]);
 
   useEffect(() => {
+    //void fetchGasUnitAndBaseFeeETH();
     void fetchGasUnitAndBaseFeeERC20();
-  }, [fetchGasUnitAndBaseFeeERC20]);
+  }, [/* fetchGasUnitAndBaseFeeETH,  */ fetchGasUnitAndBaseFeeERC20]);
 
   useEffect(() => {
-    if (!gasUnits || !gasBaseFee || !ethTokenPrice || !web3) return;
+    console.log('yo hit?');
+    if (!gasUnits || !gasBaseFee || !ethTokenPrice || !web3 || !symbol) {
+      if (!gasUnits) {
+        console.log('yo hit gasUnits?');
+        return;
+      }
+      if (!gasBaseFee) {
+        console.log('yo hit gasBaseFee?');
+        return;
+      }
+      if (!ethTokenPrice) {
+        console.log('yo hit ethTokenPrice?');
+        return;
+      }
+      if (!web3) {
+        console.log('yo hit web3?');
+        return;
+      }
+      if (!symbol) {
+        console.log('yo hit symbol?');
+        return;
+      }
+    }
     const estimatedGasInWei = gasUnits * (gasBaseFee + 2);
     const estimatedGas = getWeiAmount(
       web3,
@@ -87,7 +114,8 @@ export function EstimateDistributionsGas() {
       18,
       false
     );
-
+    // damn sometimes this line and below doesn't even get reached
+    console.log('yo hit');
     dispatch(
       setGasEstimates({
         tokenSymbol: symbol,
@@ -95,5 +123,6 @@ export function EstimateDistributionsGas() {
         fiatAmount: (estimatedGas * ethTokenPrice).toFixed(2)
       })
     );
+    dispatch(setIsLoading(false));
   }, [gasUnits, gasBaseFee, ethTokenPrice, web3, symbol]);
 }

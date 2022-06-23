@@ -14,7 +14,6 @@ export interface GasEstimate {
   tokenSymbol: string;
   tokenAmount: string;
   fiatAmount: any;
-  isLoading: boolean;
 }
 
 const initialState: {
@@ -23,6 +22,7 @@ const initialState: {
   distributionMembers: any;
   eth: any;
   gasEstimate: GasEstimate;
+  isLoading: boolean;
 } = {
   distributionTokens: [],
   distributionMembers: [],
@@ -33,9 +33,9 @@ const initialState: {
   gasEstimate: {
     tokenSymbol: 'ETH',
     tokenAmount: '0.02',
-    fiatAmount: '100',
-    isLoading: false
-  }
+    fiatAmount: '25'
+  },
+  isLoading: true
 };
 
 /**
@@ -59,6 +59,9 @@ const distributeTokens = createSlice({
     setGasEstimates(state, action: PayloadAction<any>) {
       state.gasEstimate = action.payload;
     },
+    setIsLoading(state, action: PayloadAction<boolean>) {
+      state.isLoading = action.payload;
+    },
     setDistributionMembers(state, action: PayloadAction<clubMember[]>) {
       state.distributionMembers = action.payload;
     }
@@ -69,6 +72,7 @@ export const {
   setDistributeTokens,
   setEth,
   setGasEstimates,
+  setIsLoading,
   setDistributionMembers
 } = distributeTokens.actions;
 
