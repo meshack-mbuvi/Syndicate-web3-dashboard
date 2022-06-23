@@ -88,7 +88,7 @@ const MembersCount: React.FC<{
 
   return (
     <Fade>
-      <H4 extraClasses="ml-5">What’s the maximum number of members?</H4>
+      <H4 extraClasses="ml-5 mr-10">What’s the maximum number of members?</H4>
       <div className="flex pb-6 ml-5">
         <InputFieldWithMax
           {...{
