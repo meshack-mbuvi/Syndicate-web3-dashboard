@@ -7,9 +7,9 @@ import { useFlags } from 'launchdarkly-react-client-sdk';
  */
 const DistributeTokensPage: React.FC = () => {
   // LaunchDarkly distributions feature flag
-  const { distributionButton } = useFlags();
+  const { distributions } = useFlags();
 
-  return distributionButton ? <DistributionContainer /> : <NotFoundPage />;
+  return distributions ? <DistributionContainer /> : <NotFoundPage />;
 };
 
 export default DistributeTokensPage;
