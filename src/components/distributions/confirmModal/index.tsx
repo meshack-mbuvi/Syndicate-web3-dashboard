@@ -25,6 +25,7 @@ export const ConfirmDistributionsModal: React.FC<Props> = ({
       customWidth="w-102"
       customClassName="pt-8"
       showHeader={false}
+      outsideOnClick={true}
     >
       <div className="m-h-screen">
         <L2 extraClasses="mb-10 px-10">Confirm distributions</L2>

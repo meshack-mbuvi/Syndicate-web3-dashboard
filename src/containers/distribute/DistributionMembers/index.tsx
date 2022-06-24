@@ -222,8 +222,6 @@ const ReviewDistribution: React.FC = () => {
   useEffect(() => {
     if (!distributionTokens.length) return;
 
-    setBatchIdentifier(uuidv4());
-
     const steps = [];
     distributionTokens.forEach((token) => {
       if (token.symbol == 'ETH') {
@@ -465,6 +463,7 @@ const ReviewDistribution: React.FC = () => {
     setSteps(updatedSteps);
     setProgressDescriptorStatus(ProgressDescriptorState.PENDING);
     setProgressDescriptorTitle('');
+    setProgressDescriptorDescription('');
   };
 
   const onTxConfirm = (transactionHash) => {
@@ -486,6 +485,8 @@ const ReviewDistribution: React.FC = () => {
   };
 
   const onTxReceipt = () => {
+    setIsConfirmationModalVisible(true);
+
     if (activeIndex == steps.length - 1) {
       setProgressDescriptorStatus(ProgressDescriptorState.SUCCESS);
 
@@ -500,6 +501,8 @@ const ReviewDistribution: React.FC = () => {
   };
 
   const onTxFail = (error?) => {
+    setIsConfirmationModalVisible(true);
+
     const { tokenAmount, symbol } = steps[activeIndex];
 
     updateSteps('isInErrorState', true);
@@ -599,12 +602,15 @@ const ReviewDistribution: React.FC = () => {
 
       makeDistributions(token);
     } else {
+      clearErrorStepErrorStates();
       handleCheckAndApproveAllowance(steps[activeIndex]);
     }
   };
 
   const showDistributeDisclaimer = (e) => {
     e.preventDefault();
+    setBatchIdentifier(uuidv4());
+
     setIsModalVisible(true);
   };
 

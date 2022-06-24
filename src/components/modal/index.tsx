@@ -175,7 +175,7 @@ const Modal = (props: ModalProps): JSX.Element => {
               </div>
 
               {/* close button */}
-              <div className="absolute top-9 right-10">
+              <div className="absolute top-9 right-10 z-10">
                 {/* close button at the right top of the modal */}
                 {showCloseButton ? (
                   <button
