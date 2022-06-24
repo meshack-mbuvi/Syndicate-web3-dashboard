@@ -109,7 +109,7 @@ export const TokenSelectSearch: React.FC<TokenSelectSearch> = ({
     if (debouncedSearchTerm) {
       const matchedTokens: Token[] = [];
       // token contractAddress
-      if (web3.utils.isAddress(debouncedSearchTerm)) {
+      if (web3.utils && web3.utils.isAddress(debouncedSearchTerm)) {
         getTokenByAddressChainId(debouncedSearchTerm, activeNetwork.chainId)
           .then((token) => {
             if (validateToken(token)) {
