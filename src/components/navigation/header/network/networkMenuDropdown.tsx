@@ -46,13 +46,12 @@ const NetworkMenuDropDown: FC = () => {
 
   const getChainIdByName = (name) => {
     const network = _.find(NETWORKS, (el) => el.network === name);
-    console.log('network', network);
+
     return network?.chainId;
   };
 
   const verifyChainId = (chainId) => {
     const network = _.find(NETWORKS, (el) => el.chainId === chainId);
-    console.log('network', network);
     return network?.chainId;
   };
 
