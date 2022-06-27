@@ -224,7 +224,7 @@ export const mockCollectiblesResult = [
   {
     name: 'Bag #4765',
     image:
-      'https://storage.opensea.io/files/c9c0126abc74d13fc960eca04a9ceefe.svg',
+      'https://openseauserdata.com/files/c9c0126abc74d13fc960eca04a9ceefe.svg',
     animation: null,
     permalink:
       'https://opensea.io/assets/0xff9c1b15b16263c61d017ee9f65c50e4ae0113d7/4765',
@@ -245,7 +245,7 @@ export const mockCollectiblesResult = [
   {
     name: 'Runner #6651',
     image:
-      'https://storage.opensea.io/files/e0fee0abaae253fa23113817bfcd6bd8.svg',
+      'https://lh3.googleusercontent.com/aQ87u-dwedniQwsfK4QcDFpRYxmPXAmnGAuYOzgP0TuAhX0Z_-2sh5Ex3ulvFaQPQThnYcfNnGeFQiPKxtXypNGOMm01s4l9BQxw7Q',
     animation: null,
     permalink:
       'https://opensea.io/assets/0x97597002980134bea46250aa0510c9b90d87a587/6651',
@@ -268,7 +268,7 @@ export const mockCollectiblesResult = [
     image:
       'https://lh3.googleusercontent.com/lhMnvlo5TQxWvRw8qMORrZjIjnr-XSUssLlasAZ0HWPv0mcHCCperdBpWZtwxG6mnzEro_TQRy5GQ38WIpUHpxdwaTtiYNuYpDxmUA',
     animation:
-      'https://storage.opensea.io/files/9afe11a74bd18b52cb8b75fb7c2e84ce.mp4',
+      'https://openseauserdata.com/files/9afe11a74bd18b52cb8b75fb7c2e84ce.mp4',
     permalink:
       'https://opensea.io/assets/0xb228d7b6e099618ca71bd5522b3a8c3788a8f172/233',
     id: '233',
@@ -290,7 +290,7 @@ export const mockCollectiblesResult = [
     image:
       'https://lh3.googleusercontent.com/2Qc6cdnFPfwMkz1_iN13_hBXAM68wnaH1LlFFaJ7ScIILKlu4E9MhkBOUwll3-1T58m5ij9CT3GC6vDTGgtAaiuniZWqotePkb2A9A',
     animation:
-      'https://storage.opensea.io/files/9ae3a91e5a481bdd50a5ee2e08b08760.mp4',
+      'https://openseauserdata.com/files/9ae3a91e5a481bdd50a5ee2e08b08760.mp4',
     permalink:
       'https://opensea.io/assets/0x066f2d5ead7951f0d0038c19affd500b9f02c0e5/13469',
     id: '13469',
