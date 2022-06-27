@@ -8,6 +8,7 @@ import {
 import { useQuery } from '@apollo/client';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useDemoMode } from './useDemoMode';
 
 const useFetchAirdropInfo: any = (skipQuery) => {
   const dispatch = useDispatch();
@@ -21,6 +22,8 @@ const useFetchAirdropInfo: any = (skipQuery) => {
       erc20Token: { address: clubAddress }
     }
   } = useSelector((state: AppState) => state);
+
+  const isDemoMode = useDemoMode();
 
   // Fetch existing claims
   const {

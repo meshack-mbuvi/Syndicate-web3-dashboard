@@ -41,6 +41,7 @@ import Web3 from 'web3';
 import { NETWORKS } from '@/Networks';
 import { IActiveNetwork } from '@/state/wallet/types';
 import { useFlags } from 'launchdarkly-react-client-sdk';
+import { useDemoMode } from '@/hooks/useDemoMode';
 
 type AuthProviderProps = {
   connectWallet: (providerName: string) => void;
@@ -120,6 +121,7 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
 
   const dispatch = useDispatch();
   const { polygon } = useFlags();
+  const isDemoMode = useDemoMode();
 
   const activeNetwork: IActiveNetwork = useMemo(
     () => NETWORKS[chainId] ?? NETWORKS[1],

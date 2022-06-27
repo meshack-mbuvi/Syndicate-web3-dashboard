@@ -300,7 +300,7 @@ const DepositSyndicate: React.FC = () => {
   // since the subgraph might give us old data on refetch,
   // we need to compare old and new data as we continue to poll.
   useEffect(() => {
-    if (!checkSuccess) return;
+    if (isDemoMode || !checkSuccess) return;
     setpreviousAccountTokens((prevState) => {
       if (
         (isMember && +prevState > 0 && +prevState < +accountTokens) ||
