@@ -633,7 +633,7 @@ const ReviewDistribution: React.FC = () => {
 
   const handleViewDashboard = () => {
     router.replace(
-      `/clubs/${clubAddress}/manage${'?network=' + activeNetwork.chainId}`
+      `/clubs/${clubAddress}/manage${'?chain=' + activeNetwork.network}`
     );
   };
 

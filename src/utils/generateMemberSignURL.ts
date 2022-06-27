@@ -5,13 +5,13 @@ export const generateMemberSignURL = (
   clubAddress: string,
   clubInfo: IClubInfo,
   adminSignature: string,
-  chainId: number
+  network: string
 ): string => {
   const formData = new URLSearchParams({
     form: encode(JSON.stringify({ ...clubInfo, adminSignature }))
   }).toString();
 
   return encodeURI(
-    `${window.location.origin}/clubs/${clubAddress}/member/invite?${formData}&network=${chainId}`
+    `${window.location.origin}/clubs/${clubAddress}/member/invite?${formData}&chain=${network}`
   );
 };

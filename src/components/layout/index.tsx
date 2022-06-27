@@ -103,14 +103,14 @@ const Layout: FC<Props> = ({
   const handleRouting = () => {
     if (pathname.includes('/manage') && !isOwner) {
       router.replace(
-        `/clubs/${clubAddress}${'?network=' + activeNetwork.chainId}`
+        `/clubs/${clubAddress}${'?chain=' + activeNetwork.network}`
       );
     } else if (
       (pathname === '/clubs/[clubAddress]' || pathname.includes('/member')) &&
       isOwner
     ) {
       router.replace(
-        `/clubs/${clubAddress}/manage${'?network=' + activeNetwork.chainId}`
+        `/clubs/${clubAddress}/manage${'?chain=' + activeNetwork.network}`
       );
     }
   };

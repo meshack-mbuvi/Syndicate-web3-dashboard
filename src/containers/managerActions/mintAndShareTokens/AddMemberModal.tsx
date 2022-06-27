@@ -34,7 +34,7 @@ const AddMemberModal: React.FC<IAddMemberModal> = ({
   const [clubDepositLink, setClubDepositLink] = useState<string>('');
   useEffect(() => {
     setClubDepositLink(
-      `${window.location.origin}/clubs/${clubAddress}?network=${activeNetwork.chainId}`
+      `${window.location.origin}/clubs/${clubAddress}?chain=${activeNetwork.network}`
     );
   }, [clubAddress]);
   return (

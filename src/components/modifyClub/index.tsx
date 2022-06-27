@@ -179,7 +179,7 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
   const handleExit = () => {
     router &&
       router.push(
-        `/clubs/${clubAddress}/manage/${'?network=' + activeNetwork.chainId}`
+        `/clubs/${clubAddress}/manage/${'?chain=' + activeNetwork.network}`
       );
   };
 
@@ -195,7 +195,7 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
 
     if ((pathname.includes('/modify') && !isOwner) || isDemoMode) {
       router.replace(
-        `/clubs/${clubAddress}${'?network=' + activeNetwork.chainId}`
+        `/clubs/${clubAddress}${'?chain=' + activeNetwork.network}`
       );
     }
   }, [

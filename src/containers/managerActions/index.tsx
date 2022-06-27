@@ -117,7 +117,7 @@ const ManagerActions = (): JSX.Element => {
     setHasAgreememnts(clubLegalData?.signaturesNeeded || false);
     if (!clubLegalData?.signaturesNeeded) {
       return setClubDepositLink(
-        `${window.location.origin}/clubs/${clubAddress}?network=${activeNetwork.chainId}`
+        `${window.location.origin}/clubs/${clubAddress}?chain=${activeNetwork.network}`
       );
     }
     if (
@@ -128,7 +128,7 @@ const ManagerActions = (): JSX.Element => {
         clubAddress as string,
         clubLegalData.clubData,
         clubLegalData.clubData.adminSignature,
-        activeNetwork.chainId
+        activeNetwork.network
       );
       setClubDepositLink(memberSignURL);
     }
@@ -144,7 +144,7 @@ const ManagerActions = (): JSX.Element => {
       setSyndicateSuccessfullyCreated(true);
       // truncates the query part to prevent reshowing confetti
       router.push(
-        `/clubs/${clubAddress}/manage${'?network=' + activeNetwork.chainId}`
+        `/clubs/${clubAddress}/manage${'?chain=' + activeNetwork.network}`
       );
     }
   }, [source, clubAddress, router]);

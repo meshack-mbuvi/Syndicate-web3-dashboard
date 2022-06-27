@@ -82,11 +82,11 @@ const Distribute: FC = () => {
       if (depositsEnabled || !isOwner) {
         if (!isOwner) {
           router.replace(
-            `/clubs/${clubAddress}${'?network=' + activeNetwork.chainId}`
+            `/clubs/${clubAddress}${'?chain=' + activeNetwork.network}`
           );
         } else {
           router.replace(
-            `/clubs/${clubAddress}/manage${'?network=' + activeNetwork.chainId}`
+            `/clubs/${clubAddress}/manage${'?chain=' + activeNetwork.network}`
           );
         }
       }
@@ -322,7 +322,7 @@ const Distribute: FC = () => {
   // Redirect to /manage
   const handleExitClick = () =>
     router.replace(
-      `/clubs/${clubAddress}/manage${'?network=' + activeNetwork.chainId}`
+      `/clubs/${clubAddress}/manage${'?chain=' + activeNetwork.network}`
     );
 
   const handleSetActiveIndex = (event) => {

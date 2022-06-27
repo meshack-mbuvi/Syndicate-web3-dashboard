@@ -8,6 +8,7 @@ import { useSelector } from 'react-redux';
 import { AppState } from '@/state';
 import { isDev } from '@/utils/environment';
 import { useFlags } from 'launchdarkly-react-client-sdk';
+import _ from 'lodash';
 
 const NetworkMenuDropDown: FC = () => {
   const {
@@ -26,13 +27,34 @@ const NetworkMenuDropDown: FC = () => {
 
   // Switch networks based on URL param
   const router = useRouter();
-  const { network } = router.query;
+  const { network, chain } = router.query;
 
   useEffect(() => {
+    let chainId;
     if (network) {
-      switchNetworks(+network);
+      const _chain = verifyChainId(+network);
+      chainId = +_chain;
     }
-  }, [network]);
+    if (chain) {
+      const chainID = getChainIdByName(chain);
+      chainId = +chainID;
+    }
+    if (chainId) {
+      switchNetworks(+chainId);
+    }
+  }, [network, chain]);
+
+  const getChainIdByName = (name) => {
+    const network = _.find(NETWORKS, (el) => el.network === name);
+    console.log('network', network);
+    return network?.chainId;
+  };
+
+  const verifyChainId = (chainId) => {
+    const network = _.find(NETWORKS, (el) => el.chainId === chainId);
+    console.log('network', network);
+    return network?.chainId;
+  };
 
   const getNativeBalance = async (address: string) => {
     try {

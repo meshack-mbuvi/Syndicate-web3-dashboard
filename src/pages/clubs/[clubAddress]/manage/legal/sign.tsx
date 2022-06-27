@@ -27,7 +27,7 @@ const ManagerAgreementPage: NextPage = () => {
 
   const navbarItems = [
     {
-      url: `/clubs/${clubAddress}/manage${'?network=' + activeNetwork.chainId}`,
+      url: `/clubs/${clubAddress}/manage${'?chain=' + activeNetwork.network}`,
       navItemText: 'Exit'
     },
     {

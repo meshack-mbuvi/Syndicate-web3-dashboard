@@ -32,7 +32,7 @@ const RUG_CLAIM_MODULE = process.env.NEXT_PUBLIC_RUG_CLAIM_MODULE;
 const RUG_BONUS_CLAIM_MODULE = process.env.NEXT_PUBLIC_RUG_BONUS;
 
 export const getSyndicateContracts = async (
-  web3: Web3,
+  web3,
   activeNetwork
 ): Promise<ISyndicateContracts> => {
   // Retrieve contract from cache.

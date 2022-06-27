@@ -102,7 +102,7 @@ const ClubERC20Table: FC<Props> = ({ columns, tableData }) => {
                 <Link
                   key={`token-table-row-${index}`}
                   href={`/clubs/${address}/${isOwner ? 'manage' : ''}${
-                    '?network=' + activeNetwork.chainId
+                    '?chain=' + activeNetwork.network
                   }`}
                 >
                   <div
