@@ -128,7 +128,8 @@ const Layout: FC<Props> = ({
       !clubAddress ||
       status === Status.CONNECTING ||
       !owner ||
-      !isReady
+      !isReady ||
+      isDemoMode
     )
       return;
 
@@ -140,7 +141,8 @@ const Layout: FC<Props> = ({
     loadingClubDetails,
     status,
     isReady,
-    isOwner
+    isOwner,
+    isDemoMode
   ]);
 
   // Load club details if we are on the club page
