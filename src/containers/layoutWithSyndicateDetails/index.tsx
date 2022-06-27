@@ -69,7 +69,8 @@ const LayoutWithSyndicateDetails: FC<{
       erc20Token,
       depositDetails: { nativeDepositToken },
       depositTokenPriceInUSD
-    }
+    },
+    assetsSliceReducer: { collectiblesResult }
   } = useSelector((state: AppState) => state);
 
   const {
@@ -234,13 +235,6 @@ const LayoutWithSyndicateDetails: FC<{
       !isDemoMode
     ) {
       fetchAssets();
-    } else if (isDemoMode) {
-      const mockTokens = depositsEnabled
-        ? mockDepositModeTokens
-        : mockTokensResult;
-      dispatch(setMockTokensResult(mockTokens));
-
-      dispatch(setMockCollectiblesResult(depositsEnabled));
     }
   }, [
     owner,
@@ -251,6 +245,17 @@ const LayoutWithSyndicateDetails: FC<{
     loadingClubDeposits,
     nativeDepositToken
   ]);
+
+  useEffect(() => {
+    if (isDemoMode) {
+      const mockTokens = depositsEnabled
+        ? mockDepositModeTokens
+        : mockTokensResult;
+      dispatch(setMockTokensResult(mockTokens));
+
+      dispatch(setMockCollectiblesResult(depositsEnabled));
+    }
+  }, [isDemoMode, collectiblesResult.length]);
 
   useEffect(() => {
     // clear collectibles on account switch
