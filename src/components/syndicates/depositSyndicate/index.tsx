@@ -1,4 +1,5 @@
-import { Flow, amplitudeLogger } from '@/components/amplitude';
+import { estimateGas } from '@/ClubERC20Factory/shared/getGasEstimate';
+import { amplitudeLogger, Flow } from '@/components/amplitude';
 import {
   APPROVE_DEPOSIT_ALLOWANCE,
   ERROR_APPROVE_ALLOWANCE,
@@ -14,8 +15,8 @@ import { Spinner } from '@/components/shared/spinner';
 import StatusBadge from '@/components/syndicateDetails/statusBadge';
 import HoldingsInfo from '@/components/syndicates/depositSyndicate/HoldingsInfo';
 import { SuccessOrFailureContent } from '@/components/syndicates/depositSyndicate/SuccessOrFailureContent';
-import { L2 } from '@/components/typography';
 import { BlockExplorerLink } from '@/components/syndicates/shared/BlockExplorerLink';
+import { L2 } from '@/components/typography';
 import { setERC20Token } from '@/helpers/erc20TokenDetails';
 import useSyndicateClubInfo from '@/hooks/deposit/useSyndicateClubInfo';
 import { useAccountTokens } from '@/hooks/useAccountTokens';
@@ -23,12 +24,13 @@ import useFetchAirdropInfo from '@/hooks/useAirdropInfo';
 import { useClubDepositsAndSupply } from '@/hooks/useClubDepositsAndSupply';
 import { useIsClubMember } from '@/hooks/useClubOwner';
 import { useDemoMode } from '@/hooks/useDemoMode';
-import { useNativeBalance } from '@/hooks/useNativeBalance';
 import useFetchMerkleProof from '@/hooks/useMerkleProof';
 import useModal from '@/hooks/useModal';
+import { useNativeBalance } from '@/hooks/useNativeBalance';
 import { useERC20TokenBalance } from '@/hooks/useTokenBalance';
 import useFetchTokenClaim from '@/hooks/useTokenClaim';
 import useWindowSize from '@/hooks/useWindowSize';
+import { CONTRACT_ADDRESSES } from '@/Networks';
 import { AppState } from '@/state';
 import { Status } from '@/state/wallet/types';
 import { getWeiAmount } from '@/utils/conversions';
@@ -37,6 +39,7 @@ import {
   truncateDecimals
 } from '@/utils/formattedNumbers';
 import { CheckIcon } from '@heroicons/react/solid';
+import { isEmpty } from 'lodash';
 import Image from 'next/image';
 import React, { useCallback, useEffect, useState } from 'react';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
@@ -47,11 +50,8 @@ import { InfoIcon } from 'src/components/iconWrappers';
 import { SkeletonLoader } from 'src/components/skeletonLoader';
 import ERC20ABI from 'src/utils/abi/erc20';
 import { AbiItem } from 'web3-utils';
-import { isEmpty } from 'lodash';
-
 import BeforeGettingStarted from '../../beforeGettingStarted';
 import ConnectWalletAction from '../shared/connectWalletAction';
-import { CONTRACT_ADDRESSES } from '@/Networks';
 
 const DepositSyndicate: React.FC = () => {
   // HOOK DECLARATIONS
@@ -728,6 +728,7 @@ const DepositSyndicate: React.FC = () => {
 
     try {
       let gnosisTxHash;
+      const gasEstimate = await estimateGas(web3);
 
       await new Promise((resolve, reject) => {
         const _depositTokenContract = new web3.eth.Contract(
@@ -736,7 +737,7 @@ const DepositSyndicate: React.FC = () => {
         );
         _depositTokenContract.methods
           .approve(mintModule, amountToApprove)
-          .send({ from: account })
+          .send({ from: account, gasPrice: gasEstimate })
           .on('transactionHash', (transactionHash) => {
             // user clicked on confirm
             // show loading state

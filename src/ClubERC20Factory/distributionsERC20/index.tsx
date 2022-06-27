@@ -1,5 +1,6 @@
 import { isDev } from '@/utils/environment';
 import DISTRIBUTION_ERC20_ABI from 'src/contracts/DistributionModuleERC20.json';
+import { estimateGas } from '../shared/getGasEstimate';
 import { getGnosisTxnInfo } from '../shared/gnosisTransactionInfo';
 
 export class DistributionsERC20 {
@@ -102,6 +103,8 @@ export class DistributionsERC20 {
       await this.init();
     }
 
+    const gasEstimate = estimateGas(this.web3);
+
     await new Promise((resolve, reject) => {
       this.distributionERC20.methods
         .multiMemberDistribute(
@@ -111,7 +114,7 @@ export class DistributionsERC20 {
           members,
           batchIdentifier
         )
-        .send({ from: account })
+        .send({ from: account, gasPrice: gasEstimate })
         .on('transactionHash', (transactionHash) => {
           onTxConfirm(transactionHash);
 

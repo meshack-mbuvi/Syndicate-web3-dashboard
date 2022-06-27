@@ -1,4 +1,5 @@
 import { ClubERC20Contract } from '@/ClubERC20Factory/clubERC20';
+import { estimateGas } from '@/ClubERC20Factory/shared/getGasEstimate';
 import { amplitudeLogger, Flow } from '@/components/amplitude';
 import {
   APPROVE_DISTRIBUTION_ALLOWANCE,
@@ -344,6 +345,8 @@ const ReviewDistribution: React.FC = () => {
     try {
       let gnosisTxHash;
 
+      const gasEstimate = await estimateGas(web3);
+
       await new Promise((resolve, reject) => {
         const _tokenContract = new web3.eth.Contract(
           ERC20ABI as AbiItem[],
@@ -351,7 +354,7 @@ const ReviewDistribution: React.FC = () => {
         );
         _tokenContract.methods
           .approve(distributionERC20Address, amountToApprove)
-          .send({ from: account })
+          .send({ from: account, gasPrice: gasEstimate })
           .on('transactionHash', (transactionHash) => {
             setProgressDescriptorTitle(`Approving ${token.symbol}`);
             setProgressDescriptorDescription(
