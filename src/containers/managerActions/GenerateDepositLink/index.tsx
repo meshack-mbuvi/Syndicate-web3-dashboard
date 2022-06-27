@@ -231,11 +231,14 @@ export const DepositLinkModal: FC<ILinkModal> = ({
       );
       setShowGenerateLinkModal(false);
       setDocSigned();
-      // change link component border to green momentarily as a call to action
-      setCopyLinkCTA('border-green-semantic');
-      setTimeout(() => {
-        setCopyLinkCTA('border-gray-syn6');
-      }, 800);
+
+      if (setCopyLinkCTA) {
+        // change link component border to green momentarily as a call to action
+        setCopyLinkCTA('border-green-semantic');
+        setTimeout(() => {
+          setCopyLinkCTA('border-gray-syn6');
+        }, 800);
+      }
     } else {
       dispatch(setWalletSignature({ signature: '', timeSigned: new Date() }));
     }
