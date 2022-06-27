@@ -171,6 +171,7 @@ const Distribute: FC = () => {
               tokenSymbol,
               price,
               logo,
+              tokenValue,
               ...rest
             }) => {
               const {
@@ -196,9 +197,7 @@ const Distribute: FC = () => {
                         parseFloat(`${gasEstimate.tokenAmount}`)
                       : tokenBalance,
                   price: price?.usd ?? 0,
-                  fiatAmount:
-                    parseFloat(Number(price) ? price : price?.usd ?? 0) *
-                    parseFloat(tokenBalance),
+                  fiatAmount: tokenValue,
                   isEditingInFiat: false,
                   warning: ''
                 };

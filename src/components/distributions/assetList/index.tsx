@@ -418,7 +418,8 @@ export const AssetList: React.FC<Props> = ({
                   ) : (
                     <>
                       <div className="truncate max-w-26 md:max-w-full">
-                        {!option.isEditingInFiat
+                        {/* If top row is in FiatAmount, then bottom row should be in tokenAmount */}
+                        {option.isEditingInFiat
                           ? `${floatedNumberWithCommas(
                               String(option.tokenAmount)
                             )}`
