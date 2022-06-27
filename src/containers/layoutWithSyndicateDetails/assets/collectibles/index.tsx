@@ -294,7 +294,7 @@ const Collectibles: FC = () => {
                                 ? `${floorPrice} ${activeNetwork.nativeCurrency.symbol}`
                                 : blankValue}
                             </span>
-                            {floorPrice > 0 && (
+                            {floorPrice > 0 && nativeTokenPrice > 0 && (
                               <span className="text-gray-syn4">
                                 (
                                 {floatedNumberWithCommas(

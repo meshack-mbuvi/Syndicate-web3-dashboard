@@ -253,9 +253,14 @@ const LayoutWithSyndicateDetails: FC<{
         : mockTokensResult;
       dispatch(setMockTokensResult(mockTokens));
 
-      dispatch(setMockCollectiblesResult(depositsEnabled));
+      dispatch(
+        setMockCollectiblesResult({
+          depositsEnabled,
+          usdPrice: activeNetwork.demoMode.usdPrice
+        })
+      );
     }
-  }, [isDemoMode, collectiblesResult.length]);
+  }, [isDemoMode, collectiblesResult.length, activeNetwork.demoMode.usdPrice]);
 
   useEffect(() => {
     // clear collectibles on account switch

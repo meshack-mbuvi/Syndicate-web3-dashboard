@@ -33,6 +33,9 @@ export const NETWORKS = Object.freeze({
       colors: {
         background: 'blue-cornflowerBlue'
       }
+    },
+    demoMode: {
+      usdPrice: 2396.93
     }
   },
 
@@ -70,6 +73,9 @@ export const NETWORKS = Object.freeze({
       colors: {
         background: 'orange-light'
       }
+    },
+    demoMode: {
+      usdPrice: 1193.46
     }
   },
 
@@ -107,6 +113,9 @@ export const NETWORKS = Object.freeze({
       colors: {
         background: 'blue-blueViolet'
       }
+    },
+    demoMode: {
+      usdPrice: 0.529429
     }
   }
 });
