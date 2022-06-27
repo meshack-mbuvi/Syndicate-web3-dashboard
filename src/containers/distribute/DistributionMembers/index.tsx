@@ -219,6 +219,9 @@ const ReviewDistribution: React.FC = () => {
     useState('');
   const [link, setLink] = useState<{ URL: string; label: string }>();
 
+  // flag to check whether there is pending transaction before closing modal
+  const [isTransactionPending, setIsTransactionPending] = useState(false);
+
   useEffect(() => {
     if (!distributionTokens.length) return;
 
@@ -331,6 +334,7 @@ const ReviewDistribution: React.FC = () => {
     symbol: string;
   }) => {
     updateSteps('isInErrorState', false);
+    setIsTransactionPending(true);
 
     // set amount to approve.
     const amountToApprove = getWeiAmount(
@@ -377,8 +381,10 @@ const ReviewDistribution: React.FC = () => {
               amount: amountToApprove
             });
             resolve(receipt);
+            setIsTransactionPending(false);
           })
           .on('error', (error) => {
+            setIsTransactionPending(false);
             // user clicked reject.
             if (error?.code === 4001) {
               // break here
@@ -403,6 +409,7 @@ const ReviewDistribution: React.FC = () => {
           flow: Flow.MGR_DISTRIBUTION,
           amount: amountToApprove
         });
+        setIsTransactionPending(false);
       }
     } catch (error) {
       updateSteps('isInErrorState', true);
@@ -418,6 +425,7 @@ const ReviewDistribution: React.FC = () => {
         amount: amountToApprove,
         error
       });
+      setIsTransactionPending(false);
     }
   };
 
@@ -498,6 +506,8 @@ const ReviewDistribution: React.FC = () => {
       setProgressDescriptorTitle('');
       setActiveIndex(nextIndex);
     }
+
+    setIsTransactionPending(false);
   };
 
   const onTxFail = (error?) => {
@@ -524,9 +534,11 @@ const ReviewDistribution: React.FC = () => {
     }
 
     setProgressDescriptorStatus(ProgressDescriptorState.FAILURE);
+    setIsTransactionPending(false);
   };
 
   const handleCheckAndApproveAllowance = async (step) => {
+    setIsTransactionPending(true);
     setProgressDescriptorDescription(`Approve ${step.symbol} from your wallet`);
 
     // check allowance, and proceed if enough allowance
@@ -534,9 +546,11 @@ const ReviewDistribution: React.FC = () => {
 
     if (+allowance < +step.tokenAmount) {
       await handleAllowanceApproval(step);
+      setIsTransactionPending(false);
     } else {
       updateSteps('status', '');
       incrementActiveIndex();
+      setIsTransactionPending(false);
     }
   };
 
@@ -547,6 +561,8 @@ const ReviewDistribution: React.FC = () => {
    */
   const makeDistributions = async (token) => {
     try {
+      setIsTransactionPending(true);
+
       const amountToDistribute = getWeiAmount(
         web3,
         token.tokenAmount,
@@ -615,6 +631,9 @@ const ReviewDistribution: React.FC = () => {
   };
 
   const handleCloseConfirmModal = () => {
+    // should not close modal if there is pending transaction.
+    if (isTransactionPending) return;
+
     setIsConfirmationModalVisible(false);
     clearErrorStepErrorStates();
   };
