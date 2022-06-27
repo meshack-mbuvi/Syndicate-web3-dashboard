@@ -30,7 +30,10 @@ import { EmailSupport } from '../emailSupport';
 import { ExternalLinkColor } from '../iconWrappers';
 import { InputFieldWithButton } from '../inputs/inputFieldWithButton';
 import { InputFieldWithDate } from '../inputs/inputFieldWithDate';
-import { InputFieldWithToken } from '../inputs/inputFieldWithToken';
+import {
+  InputFieldWithToken,
+  SymbolDisplay
+} from '../inputs/inputFieldWithToken';
 import { AmountAndMembersDisclaimer } from '@/containers/managerActions/mintAndShareTokens/AmountAndMembersDisclaimer';
 import { PillButtonLarge } from '../pillButtons/pillButtonsLarge';
 import TimeField from '@/containers/createInvestmentClub/mintMaxDate/timeField';
@@ -643,6 +646,7 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
                     depositTokenSymbol={depositTokenSymbol}
                     depositTokenLogo={depositTokenLogo}
                     value={String(maxAmountRaising)}
+                    symbolDisplayVariant={SymbolDisplay.LOGO_AND_SYMBOL}
                     onChange={(e) => {
                       const amount = numberInputRemoveCommas(e);
                       if (
