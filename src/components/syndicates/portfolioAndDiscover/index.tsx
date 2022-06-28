@@ -4,14 +4,13 @@ import { H1, H4 } from '@/components/typography';
 import useClubERC20s from '@/hooks/useClubERC20s';
 import useWindowSize from '@/hooks/useWindowSize';
 import { AppState } from '@/state';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { SkeletonLoader } from 'src/components/skeletonLoader';
-
 import ClubERC20Table from './portfolio/clubERC20Table';
 import {
-  MyClubERC20TableColumns,
-  clubERCTableColumns
+  clubERCTableColumns,
+  MyClubERC20TableColumns
 } from './portfolio/clubERC20Table/constants';
 
 // generate multiple skeleton loader components
@@ -50,13 +49,24 @@ const PortfolioAndDiscover: React.FC = () => {
     ethereumNetwork: { invalidEthereumNetwork }
   } = web3;
 
-  useClubERC20s();
+  const [isPageLoading, setIsPageLoading] = useState(true);
+
+  const { loading: adminClubsLoading, memberClubLoading } = useClubERC20s();
 
   const { width } = useWindowSize();
 
+  useEffect(() => {
+    if (adminClubsLoading || memberClubLoading || loading) return;
+    setIsPageLoading(false);
+
+    return () => {
+      setIsPageLoading(true);
+    };
+  }, [loading, account, adminClubsLoading, memberClubLoading]);
+
   return (
     <div className="-mt-8">
-      {loading && account ? (
+      {isPageLoading ? (
         <div>
           <div className="flex justify-between items-center w-full mt-14 mb-16">
             <SkeletonLoader width="32" height="8" borderRadius="rounded-lg" />
