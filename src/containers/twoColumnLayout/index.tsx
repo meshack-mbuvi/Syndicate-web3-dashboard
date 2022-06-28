@@ -141,7 +141,7 @@ const TwoColumnLayout: FC<{
           nativeDepositToken: false,
           depositToken: '',
           depositTokenSymbol: '',
-          depositTokenLogo: '/images/usdcicon.png',
+          depositTokenLogo: '/images/usdcicon.svg',
           depositTokenName: '',
           depositTokenDecimals: 6,
           loading: true

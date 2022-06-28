@@ -165,7 +165,7 @@ const LayoutWithSyndicateDetails: FC<{
           nativeDepositToken: false,
           depositToken: '',
           depositTokenSymbol: '',
-          depositTokenLogo: '/images/usdcIcon.png',
+          depositTokenLogo: '/images/usdcIcon.svg',
           depositTokenName: '',
           depositTokenDecimals: 6,
           loading: true
