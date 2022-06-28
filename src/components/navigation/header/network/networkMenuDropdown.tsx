@@ -8,7 +8,7 @@ import { useSelector } from 'react-redux';
 import { AppState } from '@/state';
 import { isDev } from '@/utils/environment';
 import { useFlags } from 'launchdarkly-react-client-sdk';
-import _ from 'lodash';
+import { useGetNetworkById, useGetNetwork } from '@/hooks/web3/useGetNetwork';
 
 const NetworkMenuDropDown: FC = () => {
   const {
@@ -32,11 +32,11 @@ const NetworkMenuDropDown: FC = () => {
   useEffect(() => {
     let chainId;
     if (network) {
-      const _chain = verifyChainId(+network);
+      const _chain = VerifyChainId(+network);
       chainId = +_chain;
     }
     if (chain) {
-      const chainID = getChainIdByName(chain);
+      const chainID = GetChainIdByName(chain);
       chainId = +chainID;
     }
     if (chainId) {
@@ -44,14 +44,14 @@ const NetworkMenuDropDown: FC = () => {
     }
   }, [network, chain]);
 
-  const getChainIdByName = (name) => {
-    const network = _.find(NETWORKS, (el) => el.network === name);
+  const GetChainIdByName = (name) => {
+    const network = useGetNetwork(name);
 
     return network?.chainId;
   };
 
-  const verifyChainId = (chainId) => {
-    const network = _.find(NETWORKS, (el) => el.chainId === chainId);
+  const VerifyChainId = (chainId) => {
+    const network = useGetNetworkById(chainId);
     return network?.chainId;
   };
 

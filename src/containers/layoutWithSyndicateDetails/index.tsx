@@ -52,6 +52,8 @@ import ClubTokenMembers from '../managerActions/clubTokenMembers/index';
 import ActivityView from './activity';
 import Assets from './assets';
 import TabButton from './TabButton';
+import { useGetNetwork } from '@/hooks/web3/useGetNetwork';
+import { useConnectWalletContext } from '@/context/ConnectWalletProvider';
 
 const LayoutWithSyndicateDetails: FC<{
   managerSettingsOpen: boolean;
@@ -125,6 +127,22 @@ const LayoutWithSyndicateDetails: FC<{
 
   const router = useRouter();
   const dispatch = useDispatch();
+
+  const { switchNetworks } = useConnectWalletContext();
+  const [urlNetwork, setUrlNetwork] = useState<any>(null);
+
+  const { chain } = router.query;
+
+  useEffect(() => {
+    if (chain) {
+      getNetworkByName(chain);
+    }
+  }, [chain]);
+
+  const getNetworkByName = (name) => {
+    const network = useGetNetwork(name);
+    setUrlNetwork(network);
+  };
 
   useEffect(() => {
     return () => {
@@ -300,6 +318,26 @@ const LayoutWithSyndicateDetails: FC<{
           {noTokenTitleText}
         </p>
         <BlockExplorerLink resourceId={clubAddress} />
+        {urlNetwork && (
+          <div
+            className={`mt-5 flex justify-center flex-col w-full rounded-1.5lg p-6 bg-${urlNetwork.metadata.colors.background} bg-opacity-15`}
+          >
+            <div className="text-lg text-center mb-3">
+              This club exists on {urlNetwork.name}
+            </div>
+            <div className="flex justify-center mb-3">
+              <img width={40} height={40} src={urlNetwork.logo} alt="" />
+            </div>
+            <button
+              className="primary-CTA"
+              onClick={() => {
+                switchNetworks(urlNetwork.chainId);
+              }}
+            >
+              Switch to {urlNetwork.name}
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );
