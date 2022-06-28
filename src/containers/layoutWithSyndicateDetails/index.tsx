@@ -54,6 +54,7 @@ import Assets from './assets';
 import TabButton from './TabButton';
 import { useGetNetwork } from '@/hooks/web3/useGetNetwork';
 import { useConnectWalletContext } from '@/context/ConnectWalletProvider';
+import { useProvider } from '@/hooks/web3/useProvider';
 
 const LayoutWithSyndicateDetails: FC<{
   managerSettingsOpen: boolean;
@@ -129,6 +130,7 @@ const LayoutWithSyndicateDetails: FC<{
   const dispatch = useDispatch();
 
   const { switchNetworks } = useConnectWalletContext();
+  const { providerName } = useProvider();
   const [urlNetwork, setUrlNetwork] = useState<any>(null);
 
   const { chain } = router.query;
@@ -318,7 +320,8 @@ const LayoutWithSyndicateDetails: FC<{
           {noTokenTitleText}
         </p>
         <BlockExplorerLink resourceId={clubAddress} />
-        {urlNetwork && (
+        {urlNetwork?.chainId &&
+        urlNetwork?.chainId !== activeNetwork?.chainId ? (
           <div
             className={`mt-5 flex justify-center flex-col w-full rounded-1.5lg p-6 bg-${urlNetwork.metadata.colors.background} bg-opacity-15`}
           >
@@ -328,16 +331,23 @@ const LayoutWithSyndicateDetails: FC<{
             <div className="flex justify-center mb-3">
               <img width={40} height={40} src={urlNetwork.logo} alt="" />
             </div>
-            <button
-              className="primary-CTA"
-              onClick={() => {
-                switchNetworks(urlNetwork.chainId);
-              }}
-            >
-              Switch to {urlNetwork.name}
-            </button>
+            {providerName === 'WalletConnect' ? (
+              <div className="text-sm text-center text-gray-syn3">
+                You are connected via WalletConnect. In order to use{' '}
+                {urlNetwork.name}, you must change the network in your wallet.
+              </div>
+            ) : (
+              <button
+                className="primary-CTA"
+                onClick={() => {
+                  switchNetworks(urlNetwork.chainId);
+                }}
+              >
+                Switch to {urlNetwork.name}
+              </button>
+            )}
           </div>
-        )}
+        ) : null}
       </div>
     </div>
   );

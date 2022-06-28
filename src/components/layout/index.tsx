@@ -7,6 +7,7 @@ import { useAccountTokens } from '@/hooks/useAccountTokens';
 import { useClubDepositsAndSupply } from '@/hooks/useClubDepositsAndSupply';
 import { useIsClubOwner } from '@/hooks/useClubOwner';
 import { useDemoMode } from '@/hooks/useDemoMode';
+import { useGetNetwork } from '@/hooks/web3/useGetNetwork';
 import { AppState } from '@/state';
 import { setClubMembers } from '@/state/clubMembers';
 import {
@@ -68,6 +69,8 @@ const Layout: FC<Props> = ({
   } = useSelector((state: AppState) => state);
 
   const router = useRouter();
+  const { chain } = router.query;
+  const urlNetwork = useGetNetwork(chain);
 
   const isDemoMode = useDemoMode();
 
@@ -103,14 +106,18 @@ const Layout: FC<Props> = ({
   const handleRouting = () => {
     if (pathname.includes('/manage') && !isOwner) {
       router.replace(
-        `/clubs/${clubAddress}${'?chain=' + activeNetwork.network}`
+        `/clubs/${clubAddress}${
+          '?chain=' + urlNetwork?.network || activeNetwork.network
+        }`
       );
     } else if (
       (pathname === '/clubs/[clubAddress]' || pathname.includes('/member')) &&
       isOwner
     ) {
       router.replace(
-        `/clubs/${clubAddress}/manage${'?chain=' + activeNetwork.network}`
+        `/clubs/${clubAddress}/manage${
+          '?chain=' + urlNetwork?.network || activeNetwork.network
+        }`
       );
     }
   };
