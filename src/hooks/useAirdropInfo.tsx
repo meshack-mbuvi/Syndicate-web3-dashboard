@@ -37,7 +37,7 @@ const useFetchAirdropInfo: any = (skipQuery) => {
         treeIndex: myMerkleProof.treeIndex
       }
     },
-    skip: !account || !activeNetwork.chainId || skipQuery,
+    skip: !account || !activeNetwork.chainId || skipQuery || isDemoMode,
     context: { clientName: 'theGraph', chainId: activeNetwork.chainId }
   });
 
