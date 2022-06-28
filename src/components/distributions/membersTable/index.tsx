@@ -482,16 +482,15 @@ export const DistributionMembersTable: React.FC<Props> = ({
       <div className="flex">
         {allUniqueReceivingTokens.tokenSymbols.map((tokenSymbol, index) => {
           return (
-            <>
-              <div
-                className={`flex space-x-2 items-center justify-end ${wideCellStyles} ${footerCellStyles} ${amountCellStyles}`}
-              >
-                <div>
-                  {tokenAmountTotals[index]}{' '}
-                  <span className={`text-gray-syn4`}>{tokenSymbol}</span>
-                </div>
+            <div
+              className={`flex space-x-2 items-center justify-end ${wideCellStyles} ${footerCellStyles} ${amountCellStyles}`}
+              key={index}
+            >
+              <div>
+                {tokenAmountTotals[index]}{' '}
+                <span className={`text-gray-syn4`}>{tokenSymbol}</span>
               </div>
-            </>
+            </div>
           );
         })}
       </div>
