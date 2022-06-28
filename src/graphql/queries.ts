@@ -217,3 +217,11 @@ export const CLUB_TOKEN_QUERY = gql`
     }
   }
 `;
+
+export const GetSynToken = gql`
+  query GetSynToken($chainId: Int, $where: SyndicateDAO_filter) {
+    syndicateDAOs(chainId: $chainId, where: $where) {
+      contractAddress
+    }
+  }
+`;

@@ -62,7 +62,7 @@ const TokenSelector: React.FC<{
             handleActiveIndicesChange={setActiveIndices}
           />
         ) : (
-          'Club does not have tokens to distribute.'
+          ''
         )}
       </div>
     </div>

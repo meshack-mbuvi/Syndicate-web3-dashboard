@@ -46,7 +46,7 @@ export const InputField = forwardRef<HTMLInputElement, InputFieldProps>(
         errorStyles = `${
           isInErrorState ? 'border-red-error' : 'border-gray-24'
         }`;
-        inputStyles = `bg-transparent p-4 rounded-md border-1 focus:border-blue-navy outline-none text-white hover:border-gray-syn3`;
+        inputStyles = `bg-transparent p-4 rounded-md border-1 focus:border-blue-navy outline-none text-white hover:border-gray-syn3 transition-all ease-out`;
         break;
       case InputFieldStyle.MODAL:
         errorStyles = `${
@@ -85,15 +85,19 @@ export const InputField = forwardRef<HTMLInputElement, InputFieldProps>(
             {...rest}
           />
         </div>
-        {infoLabel && (
-          <div
-            className={`text-sm mt-2 ${
-              isInErrorState ? 'text-red-error' : 'text-gray-syn2'
-            }`}
-          >
+        <div
+          className={`${
+            infoLabel ? 'max-h-8 opacity-100 mt-2' : 'max-h-0 opacity-0 mt-0'
+          } overflow-hidden transition-all duration-500 text-sm ${
+            isInErrorState ? 'text-red-error' : 'text-gray-syn2'
+          }`}
+        >
+          <div className="h-5">
+            {' '}
+            {/* this helps avoid jerky a transition when the infoLabel is removed */}
             {infoLabel}
           </div>
-        )}
+        </div>
       </>
     );
   }

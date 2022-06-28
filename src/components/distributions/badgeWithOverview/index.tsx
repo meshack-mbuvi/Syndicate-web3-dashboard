@@ -17,8 +17,9 @@ interface Props {
     tokenSymbol: string;
     tokenAmount?: string;
     fiatAmount?: string;
-    isLoading?: boolean;
   };
+  isLoading: boolean;
+  numSelectedTokens?: number;
   attribution?: string;
   CTALabel: string;
   isCTADisabled: boolean;
@@ -28,6 +29,8 @@ interface Props {
 export const BadgeWithOverview: React.FC<Props> = ({
   tokensDetails,
   gasEstimate,
+  isLoading,
+  numSelectedTokens,
   CTALabel,
   isCTADisabled,
   ctaOnclickHandler,
@@ -43,58 +46,60 @@ export const BadgeWithOverview: React.FC<Props> = ({
     return total + tokenDetails.fiatAmount;
   }, 0);
 
-  const totalFiatAmount = fiatAmount + +gasEstimate.fiatAmount;
+  const totalFiatAmount =
+    fiatAmount + +gasEstimate.fiatAmount * numSelectedTokens;
 
-  const renderedTokenRows = tokensDetails?.map((tokenDetails) => {
+  const renderedTokenRows = tokensDetails?.map((tokenDetails, index) => {
     return (
-      <>
-        <div className="flex justify-between items-start w-full space-x-4">
-          {/* Token */}
-          <div className="flex items-center w-1/2 truncate">
-            <img
-              src={tokenDetails.tokenIcon || '/images/token-gray.svg'}
-              alt="Token icon"
-              className="w-6 h-6 mr-3"
-            />
+      <div
+        className="flex justify-between items-start w-full space-x-4"
+        key={index}
+      >
+        {/* Token */}
+        <div className="flex items-center w-1/2 truncate">
+          <img
+            src={tokenDetails.tokenIcon || '/images/token-gray.svg'}
+            alt="Token icon"
+            className="w-6 h-6 mr-3"
+          />
 
-            {/* Token amount */}
-            {tokenDetails.isLoading ? (
-              <SkeletonLoader
-                width="40"
-                height="6"
-                borderRadius="rounded-md"
-                margin="m-0"
-                customClass="opacity-60"
-              />
-            ) : (
-              <>
-                <div className="truncate mr-1">
-                  {floatedNumberWithCommas(tokenDetails.tokenAmount)}
-                </div>
-                <div>{tokenDetails.tokenSymbol}</div>
-              </>
-            )}
-          </div>
-
-          {/* Fiat */}
+          {/* Token amount */}
           {tokenDetails.isLoading ? (
             <SkeletonLoader
-              width="20"
+              width="40"
               height="6"
-              margin="0"
               borderRadius="rounded-md"
+              margin="m-0"
               customClass="opacity-60"
             />
           ) : (
-            <div className="font-mono text-gray-syn4 text-right w-1/2 truncate">
-              {Intl.NumberFormat('en-US', {
-                style: 'currency',
-                currency: 'USD'
-              }).format(tokenDetails.fiatAmount)}
-            </div>
+            <>
+              <div className="truncate mr-1">
+                {floatedNumberWithCommas(tokenDetails.tokenAmount)}
+              </div>
+              <div>{tokenDetails.tokenSymbol}</div>
+            </>
           )}
         </div>
-      </>
+
+        {/* Fiat */}
+        {tokenDetails.isLoading ? (
+          <SkeletonLoader
+            width="20"
+            height="6"
+            margin="0"
+            borderRadius="rounded-md"
+            customClass="opacity-60"
+          />
+        ) : (
+          <div className="font-mono text-gray-syn4 text-right w-1/2 truncate">
+            {Intl.NumberFormat('en-US', {
+              style: 'currency',
+              currency: 'USD'
+            }).format(tokenDetails.fiatAmount)}
+          </div>
+        )}
+      </div>
     );
   });
 
@@ -154,13 +159,23 @@ export const BadgeWithOverview: React.FC<Props> = ({
                         alt="Gas icon"
                       />
                     </div>
-                    <div>
-                      {gasEstimate.isLoading ? '-' : gasEstimate.tokenAmount}
+                    <div className="pl-1">
+                      {isLoading
+                        ? '-'
+                        : (
+                            parseFloat(gasEstimate.tokenAmount) *
+                            numSelectedTokens
+                          ).toFixed(6)}
                     </div>
                     <div>{gasEstimate.tokenSymbol}</div>
                   </div>
                   <div>
-                    ${gasEstimate.isLoading ? ' -' : gasEstimate.fiatAmount}
+                    $
+                    {isLoading
+                      ? ' -'
+                      : (
+                          parseFloat(gasEstimate.fiatAmount) * numSelectedTokens
+                        ).toFixed(2)}
                   </div>
                 </div>
               </Callout>
@@ -229,12 +244,22 @@ export const BadgeWithOverview: React.FC<Props> = ({
                     />
                   </div>
                   <div>
-                    {gasEstimate.isLoading ? '-' : gasEstimate.tokenAmount}
+                    {isLoading
+                      ? '-'
+                      : (
+                          parseFloat(gasEstimate.tokenAmount) *
+                          numSelectedTokens
+                        ).toFixed(6)}
                   </div>
                   <div>{gasEstimate.tokenSymbol}</div>
                 </div>
                 <div className="">
-                  ${gasEstimate.isLoading ? ' -' : gasEstimate.fiatAmount}
+                  $
+                  {isLoading
+                    ? ' -'
+                    : (
+                        parseFloat(gasEstimate.fiatAmount) * numSelectedTokens
+                      ).toFixed(2)}
                 </div>
               </div>
             </Callout>

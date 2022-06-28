@@ -1,3 +1,4 @@
+import { CONTRACT_ADDRESSES } from '@/Networks';
 import { ISyndicateContracts } from '@/state/contracts';
 import { ClubERC20Contract } from './clubERC20';
 import { ClubERC20Factory } from './clubERC20Factory';
@@ -6,10 +7,11 @@ import { DepositTokenMintModuleContract } from './depositTokenMintModule';
 import { DistributionsERC20 } from './distributionsERC20';
 import { DistributionsETH } from './distributionsETH';
 import { ERC721Contract } from './ERC721Membership';
-import { NativeMintModuleContract } from './nativeMintModule';
 import { MerkleDistributorModuleContract } from './merkleDistributorModule';
 import { MerkleDistributorModuleERC721Contract } from './merkleDistributorModuleERC721';
 import { ERC721MintPolicyContract } from './mintPolicyERC721';
+import { NativeMintModuleContract } from './nativeMintModule';
+import { OwnerMintModuleContract } from './ownerMintModule';
 import { MintPolicyContract } from './policyMintERC20';
 import { PublicMintWithFeeModuleContract } from './publicMintWithFeeModule';
 import { PublicOnePerAddressModuleContract } from './publicOnePerAddressModule';
@@ -18,10 +20,8 @@ import { RugBonusTokenModule } from './RugRadio/RugBonusTokenModule';
 import { RugERC20ClaimModule } from './RugRadio/RugERC20ClaimModule';
 import { RugUtilityProperties } from './RugRadio/RugUtilityProperties';
 import { RugUtilityMintModuleContract } from './rugUtilityMintModule';
-import { OwnerMintModuleContract } from './ownerMintModule';
 import { ERC721CollectiveFactory } from './ERC721CollectiveFactory';
 import { IActiveNetwork } from '@/state/wallet/types';
-import { CONTRACT_ADDRESSES } from '@/Networks';
 
 const DEPOSIT_EXCHANGE_MODULE = process.env.NEXT_PUBLIC_DEPOSIT_EXCHANGE_MODULE;
 // Contract addresses for Rug Radio
@@ -53,7 +53,7 @@ export const getSyndicateContracts = async (
   );
 
   const distributionsERC20 = new DistributionsERC20(
-    addresses.distributionERC20,
+    addresses.distributionsERC20,
     web3,
     activeNetwork
   );

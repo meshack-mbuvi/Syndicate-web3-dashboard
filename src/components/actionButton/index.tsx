@@ -6,6 +6,7 @@ export const ActionButton = (props: {
   icon?: string;
   width?: number;
   height?: number;
+  disabled?: boolean;
   onClick: () => void;
 }): JSX.Element => {
   const {

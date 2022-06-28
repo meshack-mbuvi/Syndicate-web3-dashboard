@@ -76,15 +76,14 @@ export const NETWORKS = Object.freeze({
   137: {
     name: 'Polygon',
     displayName: 'Polygon',
-    shortName: 'poly',
+    shortName: 'MATIC',
     network: 'polygon',
     testnet: false,
     chainId: 137,
     networkId: 137,
     testNetwork: false,
     rpcUrl: process.env.NEXT_PUBLIC_ALCHEMY_POLYGON,
-    publicRPC:
-      'https://polygon-mainnet.infura.io/v3/295cce92179b4be498665b1b16dfee34',
+    publicRPC: 'https://polygon-rpc.com/',
     logo: '/images/chains/polygon.svg',
     blockExplorer: {
       name: 'Polygonscan',

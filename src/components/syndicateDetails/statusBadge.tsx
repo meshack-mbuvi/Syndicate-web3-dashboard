@@ -15,6 +15,10 @@ interface Props {
   depositsEnabled?: boolean;
   depositExceedTotal?: boolean;
   claimEnabled?: boolean;
+  // collectives
+  isCollective?: boolean;
+  numberOfMembers?: number;
+  isOpenToNewMembers?: boolean;
   // investment club creation loading states
   creatingSyndicate?: boolean;
   syndicateSuccessfullyCreated?: boolean;
@@ -30,6 +34,8 @@ const StatusBadge = (props: Props): JSX.Element => {
     depositExceedTotal,
     isManager = false,
     claimEnabled,
+    isCollective,
+    numberOfMembers,
     creatingSyndicate,
     syndicateSuccessfullyCreated,
     syndicateCreationFailed,
@@ -60,6 +66,12 @@ const StatusBadge = (props: Props): JSX.Element => {
     badgeBackgroundColor = 'bg-green-phthalo-green';
     titleText = 'Distributing';
     badgeIcon = 'distributeIcon.svg';
+  } else if (isCollective) {
+    badgeBackgroundColor = 'bg-cyan-collective';
+    titleText = numberOfMembers
+      ? `${numberOfMembers} member${numberOfMembers > 1 && 's'}`
+      : 'Members';
+    badgeIcon = 'collectiveIcon.svg';
   } else if (!depositsEnabled) {
     badgeBackgroundColor = 'bg-green-dark';
     badgeIcon = 'active.svg';

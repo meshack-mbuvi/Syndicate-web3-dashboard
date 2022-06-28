@@ -31,3 +31,52 @@ Default.args = {
     }
   ]
 };
+
+export const DisabledOptions = Template.bind({});
+DisabledOptions.args = {
+  activeIndex: 2,
+  disabledIndices: [0, 1],
+  options: [
+    {
+      icon: '/images/managerActions/allow-gray-4.svg',
+      title: 'Only specific addresses',
+      subTitle: 'Allowlist coming soon'
+    },
+    {
+      icon: '/images/token-gray.svg',
+      title: 'Owners of certain tokens',
+      subTitle: 'Token-gating coming soon'
+    },
+    {
+      icon: '/images/link-chain-gray.svg',
+      title: 'Anyone with the link',
+      subTitle: 'Unrestricted'
+    }
+  ]
+};
+
+export const NoIcon = Template.bind({});
+NoIcon.args = {
+  options: [
+    {
+      title: 'Holders of certain NFTs/tokens',
+      subTitle: 'Token-gated'
+    },
+    {
+      title: 'Anyone with the link',
+      subTitle: 'Unrestricted'
+    }
+  ]
+};
+
+export const OnlyTitle = Template.bind({});
+OnlyTitle.args = {
+  options: [
+    {
+      title: 'Holders of certain NFTs/tokens'
+    },
+    {
+      title: 'Anyone with the link'
+    }
+  ]
+};

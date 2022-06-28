@@ -6,6 +6,7 @@ interface Props {
   greenCta?: boolean;
   type?;
   fullWidth?: boolean;
+  extraClasses?: string;
 }
 
 export const CtaButton: React.FC<Props> = ({
@@ -14,7 +15,8 @@ export const CtaButton: React.FC<Props> = ({
   greenCta,
   disabled = false,
   type = 'button',
-  fullWidth = true
+  fullWidth = true,
+  extraClasses
 }) => {
   return (
     <button
@@ -24,7 +26,7 @@ export const CtaButton: React.FC<Props> = ({
           : greenCta
           ? 'green-CTA'
           : 'primary-CTA'
-      }`}
+      } ${extraClasses}`}
       disabled={disabled}
       onClick={onClick}
       type={type}

@@ -2,6 +2,7 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 import { SkeletonLoader } from '@/components/skeletonLoader';
 import GradientAvatar from '@/components/syndicates/portfolioAndDiscover/portfolio/GradientAvatar';
+import { H4 } from '@/components/typography';
 import useModal from '@/hooks/useModal';
 import { AppState } from '@/state';
 import Image from 'next/image';
@@ -9,7 +10,6 @@ import { FC, useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import PriceContainer from '../collectibles/shared/PriceContainer';
 import TokenModal from './TokenModal';
-import { H4 } from '@/components/typography';
 
 interface Props {
   columns: string[];
@@ -82,7 +82,7 @@ const TokenTable: FC<Props> = ({ columns, tableData }) => {
           </span>
         </div>
       )}
-      <div className={!animate && `filter grayscale blur-md`}>
+      <div className={!animate ? `filter grayscale blur-md` : ''}>
         {[...Array(4).keys()].map((_, index) => {
           return (
             <div

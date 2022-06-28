@@ -234,6 +234,10 @@
     @apply base-CTA bg-green text-black transition-all hover:bg-green-shine;
   }
 
+  .cyan-CTA {
+    @apply base-CTA bg-cyan-cherenkov text-black transition-all;
+  }
+
   .orange-CTA {
     @apply base-CTA bg-yellow-warning text-black transition-all;
   }

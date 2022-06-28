@@ -65,7 +65,7 @@ const ClubTokenMembers = (): JSX.Element => {
     const clubLegalData = legal[clubAddress as string];
     if (!clubLegalData?.signaturesNeeded) {
       return setClubDepositLink(
-        `${window.location.origin}/clubs/${clubAddress}?network=${activeNetwork.chainId}`
+        `${window.location.origin}/clubs/${clubAddress}?chain=${activeNetwork.network}`
       );
     }
     if (
@@ -76,7 +76,7 @@ const ClubTokenMembers = (): JSX.Element => {
         clubAddress as string,
         clubLegalData.clubData,
         clubLegalData.clubData.adminSignature,
-        activeNetwork.chainId
+        activeNetwork.network
       );
       setClubDepositLink(memberSignURL);
     }

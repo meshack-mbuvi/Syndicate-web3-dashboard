@@ -1,6 +1,7 @@
 import { BadgeWithOverview } from '@/components/distributions/badgeWithOverview';
 import Layout from '@/components/layout';
 import { useIsClubOwner } from '@/hooks/useClubOwner';
+import useClubTokenMembers from '@/hooks/useClubTokenMembers';
 import { useDemoMode } from '@/hooks/useDemoMode';
 import { AppState } from '@/state';
 import {
@@ -9,14 +10,14 @@ import {
   setEth
 } from '@/state/distributions';
 import { Status } from '@/state/wallet/types';
+import { getSynToken } from '@/utils/api';
 import { useRouter } from 'next/router';
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import TwoColumnLayout from '../twoColumnLayout';
 import ReviewDistribution from './DistributionMembers';
-import TokenSelector from './TokenSelector';
-
 import { EstimateDistributionsGas } from './estimateDistributionsGas';
+import TokenSelector from './TokenSelector';
 
 enum Steps {
   selectTokens = 'select tokens',
@@ -26,7 +27,12 @@ enum Steps {
 const Distribute: FC = () => {
   const {
     clubMembersSliceReducer: { clubMembers, loadingClubMembers },
-    distributeTokensReducer: { distributionTokens, gasEstimate, eth },
+    distributeTokensReducer: {
+      distributionTokens,
+      gasEstimate,
+      eth,
+      isLoading
+    },
     erc20TokenSliceReducer: { erc20Token },
     assetsSliceReducer: { tokensResult, loading: loadingAssets },
     web3Reducer: {
@@ -36,6 +42,9 @@ const Distribute: FC = () => {
 
   // calls the estimate gas function which changes the redux state of gasEstimate
   EstimateDistributionsGas();
+
+  // fetch club members
+  useClubTokenMembers();
 
   const dispatch = useDispatch();
 
@@ -73,11 +82,11 @@ const Distribute: FC = () => {
       if (depositsEnabled || !isOwner) {
         if (!isOwner) {
           router.replace(
-            `/clubs/${clubAddress}${'?network=' + activeNetwork.chainId}`
+            `/clubs/${clubAddress}${'?chain=' + activeNetwork.network}`
           );
         } else {
           router.replace(
-            `/clubs/${clubAddress}/manage${'?network=' + activeNetwork.chainId}`
+            `/clubs/${clubAddress}/manage${'?chain=' + activeNetwork.network}`
           );
         }
       }
@@ -149,39 +158,64 @@ const Distribute: FC = () => {
   const [_options, setOptions] = useState([]);
   const [processingTokens, setProcessingTokens] = useState(true);
 
-  useEffect(() => {
-    const tokens = tokensResult.map(
-      ({ tokenBalance, tokenName, tokenSymbol, price, logo, ...rest }) => {
-        return {
-          ...rest,
-          logo,
-          icon: logo,
-          name: tokenName,
-          symbol: tokenSymbol,
-          tokenAmount: tokenBalance,
-          maximumTokenAmount:
-            tokenSymbol == 'ETH' && gasEstimate?.tokenAmount
-              ? parseFloat(`${tokenBalance}`) -
-                parseFloat(`${gasEstimate.tokenAmount}`)
-              : tokenBalance,
-          price: price?.usd ?? 0,
-          fiatAmount:
-            parseFloat(Number(price) ? price : price?.usd ?? 0) *
-            parseFloat(tokenBalance),
-          isEditingInFiat: false,
-          warning: ''
-        };
-      }
-    );
+  const getTransferableTokens = useCallback(async () => {
+    if (_options.length) {
+      setOptions(_options);
+    } else {
+      const tokens = await await (
+        await Promise.all([
+          ...tokensResult.map(
+            async ({
+              tokenBalance,
+              tokenName,
+              tokenSymbol,
+              price,
+              logo,
+              tokenValue,
+              ...rest
+            }) => {
+              const {
+                data: {
+                  data: { syndicateDAOs }
+                }
+              } = await getSynToken(
+                rest.contractAddress,
+                activeNetwork.chainId
+              );
 
-    setOptions(tokens);
-    setProcessingTokens(false);
-  }, [
-    JSON.stringify(tokensResult),
-    JSON.stringify(gasEstimate),
-    loadingAssets,
-    loadingAssets
-  ]);
+              if (!syndicateDAOs.length && +tokenBalance > 0) {
+                return {
+                  ...rest,
+                  logo,
+                  icon: logo,
+                  name: tokenName,
+                  symbol: tokenSymbol,
+                  tokenAmount: tokenBalance,
+                  maximumTokenAmount:
+                    tokenSymbol == activeNetwork.nativeCurrency.symbol &&
+                    gasEstimate?.tokenAmount
+                      ? parseFloat(`${tokenBalance}`) -
+                        parseFloat(`${gasEstimate.tokenAmount}`)
+                      : tokenBalance,
+                  price: price?.usd ?? 0,
+                  fiatAmount: tokenValue,
+                  isEditingInFiat: false,
+                  warning: ''
+                };
+              }
+            }
+          )
+        ])
+      ).filter((token) => (token = token !== undefined));
+
+      setOptions(tokens);
+      setProcessingTokens(false);
+    }
+  }, [tokensResult, activeNetwork.chainId, gasEstimate.tokenAmount]);
+
+  useEffect(() => {
+    getTransferableTokens();
+  }, [getTransferableTokens, tokensResult]);
 
   // Add all selected tokens to store
   useEffect(() => {
@@ -209,12 +243,14 @@ const Distribute: FC = () => {
     };
 
     if (tokensResult.length) {
-      const [ETH] = tokensResult.filter((token) => token.tokenSymbol === 'ETH');
+      const [ETH] = tokensResult.filter(
+        (token) => token.tokenSymbol === activeNetwork.nativeCurrency.symbol
+      );
       eth.available = ETH?.tokenBalance || '0';
     }
 
     const [ethToken] = distributionTokens.filter(
-      (token) => token.symbol == 'ETH'
+      (token) => token.symbol == activeNetwork.nativeCurrency.symbol
     );
 
     // update total selected amount
@@ -239,7 +275,9 @@ const Distribute: FC = () => {
       }
 
       // find index of ETH token on _options
-      const ethIndex = _options.findIndex((option) => option.symbol == 'ETH');
+      const ethIndex = _options.findIndex(
+        (option) => option.symbol == activeNetwork.nativeCurrency.symbol
+      );
 
       if (ethIndex > -1) {
         // update warning on ETH token
@@ -272,6 +310,8 @@ const Distribute: FC = () => {
       <BadgeWithOverview
         tokensDetails={tokensDetails}
         gasEstimate={gasEstimate}
+        isLoading={isLoading}
+        numSelectedTokens={distributionTokens.length}
         isCTADisabled={ctaButtonDisabled || !sufficientGas}
         CTALabel={
           sufficientGas ? 'Next, review members' : 'Insufficient gas reserves'
@@ -286,7 +326,7 @@ const Distribute: FC = () => {
   // Redirect to /manage
   const handleExitClick = () =>
     router.replace(
-      `/clubs/${clubAddress}/manage${'?network=' + activeNetwork.chainId}`
+      `/clubs/${clubAddress}/manage${'?chain=' + activeNetwork.network}`
     );
 
   const handleSetActiveIndex = (event) => {
@@ -301,6 +341,7 @@ const Distribute: FC = () => {
         <TwoColumnLayout
           managerSettingsOpen={true}
           dotIndicatorOptions={dotIndicatorOptions}
+          handleExitClick={handleExitClick}
           leftColumnComponent={
             <div>
               <TokenSelector

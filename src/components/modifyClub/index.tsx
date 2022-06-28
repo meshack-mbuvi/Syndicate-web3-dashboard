@@ -30,7 +30,10 @@ import { EmailSupport } from '../emailSupport';
 import { ExternalLinkColor } from '../iconWrappers';
 import { InputFieldWithButton } from '../inputs/inputFieldWithButton';
 import { InputFieldWithDate } from '../inputs/inputFieldWithDate';
-import { InputFieldWithToken } from '../inputs/inputFieldWithToken';
+import {
+  InputFieldWithToken,
+  SymbolDisplay
+} from '../inputs/inputFieldWithToken';
 import { AmountAndMembersDisclaimer } from '@/containers/managerActions/mintAndShareTokens/AmountAndMembersDisclaimer';
 import { PillButtonLarge } from '../pillButtons/pillButtonsLarge';
 import TimeField from '@/containers/createInvestmentClub/mintMaxDate/timeField';
@@ -179,7 +182,7 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
   const handleExit = () => {
     router &&
       router.push(
-        `/clubs/${clubAddress}/manage/${'?network=' + activeNetwork.chainId}`
+        `/clubs/${clubAddress}/manage/${'?chain=' + activeNetwork.network}`
       );
   };
 
@@ -195,7 +198,7 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
 
     if ((pathname.includes('/modify') && !isOwner) || isDemoMode) {
       router.replace(
-        `/clubs/${clubAddress}${'?network=' + activeNetwork.chainId}`
+        `/clubs/${clubAddress}${'?chain=' + activeNetwork.network}`
       );
     }
   }, [
@@ -643,6 +646,7 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
                     depositTokenSymbol={depositTokenSymbol}
                     depositTokenLogo={depositTokenLogo}
                     value={String(maxAmountRaising)}
+                    symbolDisplayVariant={SymbolDisplay.LOGO_AND_SYMBOL}
                     onChange={(e) => {
                       const amount = numberInputRemoveCommas(e);
                       if (

@@ -1,5 +1,5 @@
 import merkleDistributorModule_ABI from 'src/contracts/MerkleDistributorModuleERC20.json';
-
+import { estimateGas } from './shared/getGasEstimate';
 import { getGnosisTxnInfo } from './shared/gnosisTransactionInfo';
 
 export class MerkleDistributorModuleContract {
@@ -7,9 +7,11 @@ export class MerkleDistributorModuleContract {
   // This will be used to call other functions. eg mint
   contract;
   activeNetwork;
+  web3;
 
   // initialize a contract instance
   constructor(contractAddress: string, web3: any, activeNetwork) {
+    this.web3 = web3;
     this.activeNetwork = activeNetwork;
     this.contract = new web3.eth.Contract(
       merkleDistributorModule_ABI,
@@ -42,11 +44,13 @@ export class MerkleDistributorModuleContract {
     onTxReceipt: (receipt?) => void,
     onTxFail: (error?) => void,
     setTransactionHash
-  ): Promise<string> =>
-    new Promise((resolve, reject) =>
+  ): Promise<string> => {
+    const gasEstimate = estimateGas(this.web3);
+
+    return new Promise((resolve, reject) =>
       this.contract.methods
         .claim(clubAddress, treeIndex, amount, index, merkleProof)
-        .send({ from: forAddress })
+        .send({ from: forAddress, gasPrice: gasEstimate })
         .on('receipt', onTxReceipt)
         .on('error', onTxFail)
         .on('transactionHash', async (transactionHash: string) => {
@@ -68,4 +72,5 @@ export class MerkleDistributorModuleContract {
           }
         })
     );
+  };
 }

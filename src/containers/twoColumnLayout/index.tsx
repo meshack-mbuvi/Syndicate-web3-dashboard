@@ -46,10 +46,12 @@ const TwoColumnLayout: FC<{
   managerSettingsOpen: boolean;
   leftColumnComponent;
   rightColumnComponent;
+  handleExitClick?;
 }> = ({
   managerSettingsOpen,
   leftColumnComponent,
   rightColumnComponent,
+  handleExitClick = () => ({}),
   dotIndicatorOptions = []
 }) => {
   const {
@@ -61,7 +63,8 @@ const TwoColumnLayout: FC<{
       erc20Token,
       depositDetails: { nativeDepositToken },
       depositTokenPriceInUSD
-    }
+    },
+    assetsSliceReducer: { collectiblesResult }
   } = useSelector((state: AppState) => state);
 
   const {
@@ -138,7 +141,7 @@ const TwoColumnLayout: FC<{
           nativeDepositToken: false,
           depositToken: '',
           depositTokenSymbol: '',
-          depositTokenLogo: '/images/usdcicon.png',
+          depositTokenLogo: '/images/usdcicon.svg',
           depositTokenName: '',
           depositTokenDecimals: 6,
           loading: true
@@ -153,13 +156,6 @@ const TwoColumnLayout: FC<{
     if (owner) {
       // fetch token transactions for the connected account.
       dispatch(fetchTokenTransactions(owner));
-    } else if (isDemoMode) {
-      const mockTokens = depositsEnabled
-        ? mockDepositModeTokens
-        : mockTokensResult;
-      dispatch(setMockTokensResult(mockTokens));
-
-      dispatch(setMockCollectiblesResult(depositsEnabled));
     }
   }, [
     owner,
@@ -170,6 +166,17 @@ const TwoColumnLayout: FC<{
     loadingClubDeposits,
     nativeDepositToken
   ]);
+
+  useEffect(() => {
+    if (isDemoMode) {
+      const mockTokens = depositsEnabled
+        ? mockDepositModeTokens
+        : mockTokensResult;
+      dispatch(setMockTokensResult(mockTokens));
+
+      dispatch(setMockCollectiblesResult(depositsEnabled));
+    }
+  }, [isDemoMode, collectiblesResult.length]);
 
   useEffect(() => {
     // clear collectibles on account switch
@@ -251,6 +258,7 @@ const TwoColumnLayout: FC<{
           managerSettingsOpen={managerSettingsOpen}
           showNav={showNav}
           showBackButton={true}
+          handleExitClick={handleExitClick}
         >
           <Head title={name || 'Club'} />
           <ErrorBoundary>

@@ -1,6 +1,8 @@
 import { CopyToClipboardIcon } from '@/components/iconWrappers';
 import { SkeletonLoader } from '@/components/skeletonLoader';
 import { H1 } from '@/components/typography';
+import { AppState } from '@/state';
+import { useSelector } from 'react-redux';
 import { getTextWidth } from '@/utils/getTextWidth';
 import React, { useEffect, useState } from 'react';
 import CopyToClipboard from 'react-copy-to-clipboard';
@@ -28,6 +30,11 @@ export const ClubHeader: React.FC<{
     loadingClubDeposits,
     managerSettingsOpen
   } = props;
+  const {
+    web3Reducer: {
+      web3: { activeNetwork }
+    }
+  } = useSelector((state: AppState) => state);
   const [divWidth, setDivWidth] = useState(0);
   const [nameWidth, setNameWidth] = useState(0);
 
@@ -47,6 +54,7 @@ export const ClubHeader: React.FC<{
     setDivWidth(document?.getElementById('club-name')?.offsetWidth);
     setNameWidth(getTextWidth(name));
   }, [name]);
+
   return (
     <div className="flex justify-center items-center">
       <div className="mr-8">
@@ -142,7 +150,7 @@ export const ClubHeader: React.FC<{
                         arrowColor="transparent"
                         backgroundColor="#131416"
                       >
-                        View on Etherscan
+                        View on {activeNetwork.blockExplorer.name}
                       </ReactTooltip>
                     </div>
                   </div>

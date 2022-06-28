@@ -32,37 +32,33 @@ const PillTabs: FC<Props> = ({ tabs, activeIndex, handleTabChange }) => {
 
   const tabRefs = useRef([]);
   const renderedTabs = tabs.map((tab, index) => (
-    <>
-      <button
-        className={`relative z-0 py-2 px-5 rounded-full ${
-          activeIndex === index ? 'text-black' : 'text-white'
-        } transition-all`}
-        onClick={() => {
-          handleTabChange(index);
+    <button
+      className={`relative z-0 py-2 px-5 rounded-full ${
+        activeIndex === index ? 'text-black' : 'text-white'
+      } transition-all`}
+      onClick={() => {
+        handleTabChange(index);
 
-          // Calculate position and width of highlighted tab
-          const left = tabRefs.current[index].getBoundingClientRect().x;
-          const width = tabRefs.current[index].getBoundingClientRect().width;
-          setTabHighlightDimensions({ left: left - 32, width: width });
+        // Calculate position and width of highlighted tab
+        const left = tabRefs.current[index].getBoundingClientRect().x;
+        const width = tabRefs.current[index].getBoundingClientRect().width;
+        setTabHighlightDimensions({ left: left - 32, width: width });
 
-          // We only want an animation when changing the active tab.
-          // Otherwise on resize or first render there is a distracting movement
-          // to the initial position from the left corner
-          setTabHighlightAnimationStyles(
-            'transition-all duration-300 ease-out'
-          );
-        }}
-        // Add each button in a list of refs
-        ref={(ref) => {
-          if (ref && !tabRefs.current.includes(ref)) {
-            tabRefs.current.push(ref);
-          }
-        }}
-        key={index}
-      >
-        {tab.name}
-      </button>
-    </>
+        // We only want an animation when changing the active tab.
+        // Otherwise on resize or first render there is a distracting movement
+        // to the initial position from the left corner
+        setTabHighlightAnimationStyles('transition-all duration-300 ease-out');
+      }}
+      // Add each button in a list of refs
+      ref={(ref) => {
+        if (ref && !tabRefs.current.includes(ref)) {
+          tabRefs.current.push(ref);
+        }
+      }}
+      key={index}
+    >
+      {tab.name}
+    </button>
   ));
 
   return (

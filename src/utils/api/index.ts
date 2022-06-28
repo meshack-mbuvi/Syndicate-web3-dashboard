@@ -1,3 +1,4 @@
+import { BACKEND_LINKS } from '@/Networks';
 import { TokenDetails } from '@/types/token';
 import axios, { AxiosResponse } from 'axios';
 
@@ -26,4 +27,35 @@ export const getTokenDetails = (
     tokenAddress: tokenAddress,
     chainId: chainId
   });
+};
+
+/**
+ * A token will return something
+ *
+ * @param tokenAddress
+ * @param chainId
+ * @returns
+ */
+export const getSynToken = async (
+  tokenAddress: string,
+  chainId: number
+): Promise<AxiosResponse> => {
+  const query = `query GetSynToken($chainId: Int, $where: SyndicateDAO_filter) {
+    syndicateDAOs(chainId: $chainId, where: $where) {
+      contractAddress
+    }
+  }`;
+
+  try {
+    return await axios({
+      url: BACKEND_LINKS[chainId].graphs.theGraph,
+      method: 'POST',
+      data: JSON.stringify({
+        query,
+        variables: { chainId, where: { contractAddress: tokenAddress } }
+      })
+    });
+  } catch (error) {
+    return;
+  }
 };

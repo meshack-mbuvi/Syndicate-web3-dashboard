@@ -11,7 +11,7 @@ import {
   getTokenTransactionHistory
 } from '@/utils/api/transactions';
 import { mockCollectiblesResult } from '@/utils/mockdata';
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import abi from 'human-standard-token-abi';
 import { getWeiAmount } from 'src/utils/conversions';
 import { AbiItem } from 'web3-utils';
@@ -279,9 +279,9 @@ const assetsSlice = createSlice({
     setMockTokensResult(state, action) {
       state.tokensResult = action.payload;
     },
-    setMockCollectiblesResult(state, action) {
-      const isDepositEnabled = action.payload;
-      state.collectiblesResult = isDepositEnabled ? [] : mockCollectiblesResult;
+    setMockCollectiblesResult(state, action: PayloadAction<boolean>) {
+      const depositsEnabled = action.payload;
+      state.collectiblesResult = depositsEnabled ? [] : mockCollectiblesResult;
       state.nativeTokenPrice = 2396.93;
     }
   },

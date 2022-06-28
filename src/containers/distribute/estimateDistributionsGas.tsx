@@ -1,11 +1,11 @@
-import { getNativeTokenPrice } from '@/utils/api/transactions';
 import { AppState } from '@/state';
+import { setGasEstimates, setIsLoading } from '@/state/distributions/index';
+import { getNativeTokenPrice } from '@/utils/api/transactions';
 import { getWeiAmount } from '@/utils/conversions';
 import { isDev } from '@/utils/environment';
 import axios from 'axios';
 import { useCallback, useEffect, useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { setGasEstimates } from '@/state/distributions/index';
+import { useDispatch, useSelector } from 'react-redux';
 
 const baseURL = isDev
   ? 'https://api-rinkeby.etherscan.io/api'
@@ -18,7 +18,8 @@ export function EstimateDistributionsGas() {
     },
     initializeContractsReducer: {
       syndicateContracts: { distributionsERC20, distributionsETH }
-    }
+    },
+    assetsSliceReducer: { tokensResult }
   } = useSelector((state: AppState) => state);
 
   const { nativeCurrency } = activeNetwork;
@@ -38,7 +39,7 @@ export function EstimateDistributionsGas() {
   };
 
   const fetchGasUnitAndBaseFeeERC20 = useCallback(async () => {
-    if (!distributionsERC20) return;
+    if (!distributionsERC20 || !tokensResult.length) return;
 
     await Promise.all([
       !account
@@ -55,7 +56,7 @@ export function EstimateDistributionsGas() {
         .then((res) => setEthTokenPrice(res))
         .catch(() => 0)
     ]);
-  }, [account, distributionsERC20]);
+  }, [distributionsERC20, tokensResult.length, account, activeNetwork.chainId]);
 
   const fetchGasUnitAndBaseFeeETH = useCallback(async () => {
     if (!distributionsETH) return;
@@ -75,12 +76,15 @@ export function EstimateDistributionsGas() {
   }, [account, distributionsETH]);
 
   useEffect(() => {
+    if (tokensResult.length == 0) return;
+
     void fetchGasUnitAndBaseFeeERC20();
-  }, [fetchGasUnitAndBaseFeeERC20]);
+  }, [tokensResult.length]);
 
   useEffect(() => {
-    if (!gasUnits || !gasBaseFee || !ethTokenPrice || !web3) return;
+    if (!gasUnits || !gasBaseFee || !ethTokenPrice || !web3 || !symbol) return;
     const estimatedGasInWei = gasUnits * (gasBaseFee + 2);
+    if (isNaN(estimatedGasInWei)) return;
     const estimatedGas = getWeiAmount(
       web3,
       estimatedGasInWei.toString(),
@@ -95,5 +99,6 @@ export function EstimateDistributionsGas() {
         fiatAmount: (estimatedGas * ethTokenPrice).toFixed(2)
       })
     );
-  }, [gasUnits, gasBaseFee, ethTokenPrice, web3]);
+    dispatch(setIsLoading(false));
+  }, [gasUnits, gasBaseFee, ethTokenPrice, web3, symbol]);
 }

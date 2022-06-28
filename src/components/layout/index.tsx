@@ -1,13 +1,13 @@
 import { ClubERC20Contract } from '@/ClubERC20Factory/clubERC20';
 import Footer from '@/components/navigation/footer';
 import Header from '@/components/navigation/header/Header';
-import { useCreateInvestmentClubContext } from '@/context/CreateInvestmentClubContext';
 import { CLUB_TOKEN_QUERY } from '@/graphql/queries';
 import { getDepositDetails, setERC20Token } from '@/helpers/erc20TokenDetails';
 import { useAccountTokens } from '@/hooks/useAccountTokens';
 import { useClubDepositsAndSupply } from '@/hooks/useClubDepositsAndSupply';
 import { useIsClubOwner } from '@/hooks/useClubOwner';
 import { useDemoMode } from '@/hooks/useDemoMode';
+import { useGetNetwork } from '@/hooks/web3/useGetNetwork';
 import { AppState } from '@/state';
 import { setClubMembers } from '@/state/clubMembers';
 import {
@@ -24,7 +24,6 @@ import React, { FC, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import ConnectWallet from 'src/components/connectWallet';
 import DemoBanner from '../demoBanner';
-import ProgressBar from '../ProgressBar';
 import SEO from '../seo';
 
 interface Props {
@@ -70,6 +69,8 @@ const Layout: FC<Props> = ({
   } = useSelector((state: AppState) => state);
 
   const router = useRouter();
+  const { chain } = router.query;
+  const urlNetwork = useGetNetwork(chain);
 
   const isDemoMode = useDemoMode();
 
@@ -86,9 +87,6 @@ const Layout: FC<Props> = ({
 
   const showCreateProgressBar = router.pathname === '/clubs/create';
   const portfolioPage = router.pathname === '/clubs' || router.pathname === '/';
-
-  const { currentStep, steps, preClubCreationStep } =
-    useCreateInvestmentClubContext();
 
   // get content to occupy the viewport if we are in these states.
   // this will push the footer down to the bottom of the page to make it uniform
@@ -108,14 +106,18 @@ const Layout: FC<Props> = ({
   const handleRouting = () => {
     if (pathname.includes('/manage') && !isOwner) {
       router.replace(
-        `/clubs/${clubAddress}${'?network=' + activeNetwork.chainId}`
+        `/clubs/${clubAddress}${
+          '?chain=' + urlNetwork?.network || activeNetwork.network
+        }`
       );
     } else if (
       (pathname === '/clubs/[clubAddress]' || pathname.includes('/member')) &&
       isOwner
     ) {
       router.replace(
-        `/clubs/${clubAddress}/manage${'?network=' + activeNetwork.chainId}`
+        `/clubs/${clubAddress}/manage${
+          '?chain=' + urlNetwork?.network || activeNetwork.network
+        }`
       );
     }
   };
@@ -126,7 +128,8 @@ const Layout: FC<Props> = ({
       !clubAddress ||
       status === Status.CONNECTING ||
       !owner ||
-      !isReady
+      !isReady ||
+      isDemoMode
     )
       return;
 
@@ -138,7 +141,8 @@ const Layout: FC<Props> = ({
     loadingClubDetails,
     status,
     isReady,
-    isOwner
+    isOwner,
+    isDemoMode
   ]);
 
   // Load club details if we are on the club page
@@ -158,7 +162,7 @@ const Layout: FC<Props> = ({
     },
     context: { clientName: 'theGraph', chainId: activeNetwork.chainId },
     notifyOnNetworkStatusChange: true,
-    skip: !address || loading,
+    skip: !address || loading || !activeNetwork.chainId,
     fetchPolicy: 'no-cache'
   });
 
@@ -277,7 +281,7 @@ const Layout: FC<Props> = ({
             `polygon`,
             `MATIC`
           ]}
-          title="Home"
+          title="Syndicate"
         />
 
         <Header
@@ -290,25 +294,6 @@ const Layout: FC<Props> = ({
           setActiveIndex={setActiveIndex}
         />
         <DemoBanner />
-
-        <div
-          className={`sticky top-18 ${
-            showCreateProgressBar ? 'bg-black backdrop-filter' : ''
-          }`}
-        >
-          {showCreateProgressBar && account ? (
-            <div className="pt-6 bg-black">
-              <ProgressBar
-                percentageWidth={
-                  preClubCreationStep
-                    ? 0
-                    : ((currentStep + 1) / steps.length) * 100
-                }
-                tailwindColor="bg-green"
-              />
-            </div>
-          ) : null}
-        </div>
 
         <div
           className={`flex w-full bg-black flex-col sm:flex-row ${

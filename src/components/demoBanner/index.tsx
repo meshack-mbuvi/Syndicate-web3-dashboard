@@ -34,7 +34,7 @@ const DemoBanner: React.FC = () => {
       pathname: `/clubs/demo/${isManager ? '' : 'manage'}`,
       query: {
         status: isOpenForDeposits ? 'open' : 'active',
-        network: activeNetwork.chainId
+        chain: activeNetwork.network
       }
     });
   };

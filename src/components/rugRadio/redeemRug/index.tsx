@@ -1,3 +1,4 @@
+import { estimateGas } from '@/ClubERC20Factory/shared/getGasEstimate';
 import { amplitudeLogger, Flow } from '@/components/amplitude';
 import {
   APPROVE_DEPOSIT_ALLOWANCE,
@@ -227,6 +228,8 @@ const RedeemRug: React.FC = () => {
     try {
       let gnosisTxHash;
 
+      const gasEstimate = await estimateGas(web3);
+
       await new Promise((resolve, reject) => {
         const rugRadioContract = new web3.eth.Contract(
           ERC20ABI as AbiItem[],
@@ -234,7 +237,7 @@ const RedeemRug: React.FC = () => {
         );
         rugRadioContract.methods
           .approve(depositExchangeModuleAddress, amountToApprove)
-          .send({ from: account })
+          .send({ from: account, gasPrice: gasEstimate })
           .on('transactionHash', (transactionHash) => {
             // user clicked on confirm
             // show loading state

@@ -127,7 +127,7 @@ export class MintPolicyContract {
       onTxConfirm(receipt.transactionHash);
 
       const createEvents = await this.mintPolicyContract.getPastEvents(
-        'configUpdated',
+        'ConfigUpdated',
         {
           filter: { transactionHash: receipt.transactionHash },
           fromBlock: receipt.blockNumber,

@@ -231,11 +231,14 @@ export const DepositLinkModal: FC<ILinkModal> = ({
       );
       setShowGenerateLinkModal(false);
       setDocSigned();
-      // change link component border to green momentarily as a call to action
-      setCopyLinkCTA('border-green-semantic');
-      setTimeout(() => {
-        setCopyLinkCTA('border-gray-syn6');
-      }, 800);
+
+      if (setCopyLinkCTA) {
+        // change link component border to green momentarily as a call to action
+        setCopyLinkCTA('border-green-semantic');
+        setTimeout(() => {
+          setCopyLinkCTA('border-gray-syn6');
+        }, 800);
+      }
     } else {
       dispatch(setWalletSignature({ signature: '', timeSigned: new Date() }));
     }
@@ -402,11 +405,8 @@ export const DepositLinkModal: FC<ILinkModal> = ({
             <div className="space-y-6">
               <div className="border-1 border-gray-syn6 rounded-1.5lg flex flex-col group">
                 {legalDocuments.map(({ documentText, documentLink }, index) => (
-                  <>
-                    <div
-                      className="flex justify-between px-6 py-4 items-center leading-3.5"
-                      key={index}
-                    >
+                  <React.Fragment key={index}>
+                    <div className="flex justify-between px-6 py-4 items-center leading-3.5">
                       <LegalDocumentPreview
                         documentLink={documentLink}
                         documentText={documentText}
@@ -418,7 +418,7 @@ export const DepositLinkModal: FC<ILinkModal> = ({
                     ) : (
                       <div className="mt-2mb-6 h-px bg-gray-syn6"></div>
                     )}
-                  </>
+                  </React.Fragment>
                 ))}
 
                 <div className="flex justify-center align-middle rounded-b-1.5lg py-2.5 bg-gray-inactive w-full">

@@ -14,6 +14,8 @@ interface Props {
   syndicateSuccessfullyCreated?: boolean;
   showConfettiSuccess?: boolean;
   borderColor?: string;
+  accentColor?: string;
+  copyButtonText?: string;
 }
 const CopyLink: FC<Props> = ({
   link,
@@ -22,7 +24,9 @@ const CopyLink: FC<Props> = ({
   creatingSyndicate = false,
   syndicateSuccessfullyCreated = false,
   showConfettiSuccess = false,
-  borderColor = 'border-gray-syn6'
+  borderColor = 'border-gray-syn6',
+  accentColor = 'green',
+  copyButtonText = 'Copy'
 }) => {
   // show greyed out content when syndicate is being created.
   const creatingSyndicateContent = (
@@ -62,14 +66,14 @@ const CopyLink: FC<Props> = ({
           onClick={updateCopyState}
         >
           <div className="flex-grow-1 mr-2">
-            <LockIcon />
+            <LockIcon color={`text-${accentColor}`} />
           </div>
 
           <span
             className={`line-clamp-1 overflow-hidden flex-grow-1 text-left text-sm ${
               syndicateSuccessfullyCreated && showConfettiSuccess
-                ? 'text-green'
-                : 'text-transparent bg-clip-text bg-gradient-to-r from-green'
+                ? `text-${accentColor}`
+                : `text-transparent bg-clip-text bg-gradient-to-r from-${accentColor}`
             }`}
           >
             {link}
@@ -77,16 +81,20 @@ const CopyLink: FC<Props> = ({
           {!(syndicateSuccessfullyCreated && showConfettiSuccess) && (
             <div
               className={`flex-grow-1 px-3 ${
-                showCopiedState ? 'border-transparent' : 'bg-green'
+                showCopiedState ? 'border-transparent' : `bg-${accentColor}`
               } text-black flex h-10 justify-center items-center rounded`}
             >
-              {showCopiedState ? <CopiedLinkIcon /> : <CopyLinkIcon />}
+              {showCopiedState ? (
+                <CopiedLinkIcon color={`text-${accentColor}`} />
+              ) : (
+                <CopyLinkIcon />
+              )}
               <span
-                className={`ml-3 font-whyte-medium sm:text-base text-sm ${
-                  showCopiedState && 'text-green'
+                className={`ml-3 font-whyte-medium sm:text-base text-sm whitespace-nowrap ${
+                  showCopiedState && `text-${accentColor}`
                 }`}
               >
-                {showCopiedState ? 'Copied' : 'Copy'}
+                {showCopiedState ? 'Copied' : copyButtonText}
               </span>
             </div>
           )}

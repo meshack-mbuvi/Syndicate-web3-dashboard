@@ -21,7 +21,7 @@ const CreateAgreementPage: NextPage = () => {
 
   const navItems = [
     {
-      url: `/clubs/${clubAddress}/manage${'?network=' + activeNetwork.chainId}`,
+      url: `/clubs/${clubAddress}/manage${'?chain=' + activeNetwork.network}`,
       navItemText: 'Exit'
     },
     {

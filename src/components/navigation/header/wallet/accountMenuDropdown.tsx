@@ -8,11 +8,11 @@ import { ExternalLinkColor } from '@/components/iconWrappers';
 import WalletConnectDemoButton from '@/containers/layoutWithSyndicateDetails/demo/buttons/WalletConnectDemoButton';
 
 interface IAddressMenuDropDown {
-  web3: any;
+  Web3: any;
 }
 
 const AddressMenuDropDown: FC<IAddressMenuDropDown> = ({
-  web3: { account, providerName, web3 }
+  Web3: { account, providerName, web3 }
 }) => {
   const { disconnectWallet } = useConnectWalletContext();
 

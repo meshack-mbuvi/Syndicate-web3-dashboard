@@ -3,10 +3,14 @@ import {
   DotIndicators,
   DotIndicatorsOrientation
 } from '@/components/dotIndicators';
+import ProgressBar from '@/components/ProgressBar';
+import { useCreateInvestmentClubContext } from '@/context/CreateInvestmentClubContext';
+import { AppState } from '@/state';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React, { useEffect, useRef } from 'react';
+import { useSelector } from 'react-redux';
 import { MoreMenu } from './moreMenu';
 import { NavBarNavItem } from './navbarItems';
 import NetworkComponent from './network';
@@ -34,6 +38,16 @@ const Header: React.FC<props> = ({
   const router = useRouter();
   const navRef = useRef(null);
   const [showMobileNav, setShowMobileNav] = React.useState(false);
+
+  // For progress bar
+  const {
+    web3Reducer: {
+      web3: { account }
+    }
+  } = useSelector((state: AppState) => state);
+  const { currentStep, steps, preClubCreationStep } =
+    useCreateInvestmentClubContext();
+  const showCreateProgressBar = router.pathname === '/clubs/create';
 
   useEffect(() => {
     if (showMobileNav) {
@@ -105,10 +119,9 @@ const Header: React.FC<props> = ({
         {showMobileNav ? (
           <div className="fixed sm:hidden w-full flex-col mt-20 py-2 bg-gray-syn8 justify-center shadow-xl">
             {navItems.map(({ navItemText, url, isLegal }, index) => (
-              <>
+              <React.Fragment key={index}>
                 <div className="container mx-auto items-center">
                   <NavBarNavItem
-                    key={index}
                     navItemText={navItemText}
                     url={url}
                     isLegal={isLegal}
@@ -117,7 +130,7 @@ const Header: React.FC<props> = ({
                 <div className="pl-6-percent">
                   <div className="border-b-1 border-gray-border" />
                 </div>
-              </>
+              </React.Fragment>
             ))}
             <NetworkComponent />
             <WalletComponent />
@@ -212,6 +225,14 @@ const Header: React.FC<props> = ({
             )}
           </div>
         </div>
+        {showCreateProgressBar && account && (
+          <ProgressBar
+            percentageWidth={
+              preClubCreationStep ? 0 : ((currentStep + 1) / steps.length) * 100
+            }
+            tailwindColor="bg-green"
+          />
+        )}
       </nav>
     </>
   );

@@ -4,8 +4,8 @@ export const CONTRACT_ADDRESSES = Object.freeze({
     clubERC20Factory: '0x99116a5641DC89A7cb43a9A82694177538aa0391',
     clubERC20FactoryNative: '0x2372fd8d69da29b4b328b518c6d7e84f3aa25dc3', // clubERC20FactoryETH
     DepositTokenMintModule: '0x0449F65a5e09F0f30Aa504B8474D1D4d0e10B8B8',
-    distributionERC20: '',
-    distributionETH: '',
+    distributionsERC20: '0x493742eb36d12bb0ff5a146782af6dd69de7b7c3',
+    distributionsETH: '0x3bbf7d441db87968ab891b724ee3cc00de3d850b',
     ERC721MintPolicy: '0x543B8a295a485b50bA0db1D686Ab806656D7D542',
     NativeMintModule: '0x960fd5cfa6c36e9db131824ddf07df6322a053de', // EthMintModule-
     MerkleDistributorModule: '0x90543E032A7c8db9087Ab30F2a04929592700134',
@@ -25,8 +25,8 @@ export const CONTRACT_ADDRESSES = Object.freeze({
     clubERC20Factory: '0xBaE7eaA8317B3652dad3886caF454Da0706F53Ca',
     clubERC20FactoryNative: '0x04A8A99C80cC19E7a56342Fef2d8DAC6cd5f8dD4', // clubERC20FactoryETH
     DepositTokenMintModule: '0x9cAf7337F9fe05469FaaA3b388C479C6E8393276',
-    distributionERC20: '0x1f4c8eaee6dd0bfb71ff8e7bc8f52c1007025144',
-    distributionETH: '0xc8b57ba4baee9242fa583284480b6ca555b0b01b',
+    distributionsERC20: '0x1f4c8eaee6dd0bfb71ff8e7bc8f52c1007025144',
+    distributionsETH: '0xc8b57ba4baee9242fa583284480b6ca555b0b01b',
     ERC721MintPolicy: '0xbBca348239b6D620D0F9c21C1b641f36f62988D6',
     NativeMintModule: '0x15780803d56d0f574B9DB6f46c5dBA692c646ab6', // EthMintModule-
     MerkleDistributorModule: '0x72B7817075AC3263783296f33c8F053e848594a3',
@@ -46,8 +46,8 @@ export const CONTRACT_ADDRESSES = Object.freeze({
     clubERC20Factory: '0x3902AB762a94b8088b71eE5c84bC3C7d2075646B',
     clubERC20FactoryNative: '0xae6328C067bddFbA4963e2A1F52BaaF11a2e2588', // clubERC20FactoryETH
     DepositTokenMintModule: '0xa052E325e112A5a6DfF7F4115B2f6DAA15eDa2F3',
-    distributionERC20: '',
-    distributionETH: '',
+    distributionsERC20: '',
+    distributionsETH: '',
     NativeMintModule: '0xA84443aa452DaB22467376e2BEA9e98EB20aCA1b', // EthMintModule-
     ERC721Membership: '0x43A23837a14F3FafB7cb6e4924586C970108c9Be',
     ERC721MintPolicy: '0xf9b79c55865EdD9ECed42b9C49312b5E03230d5D',

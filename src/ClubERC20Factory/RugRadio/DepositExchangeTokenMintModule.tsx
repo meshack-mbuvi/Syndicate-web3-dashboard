@@ -1,10 +1,12 @@
 import DepositExchangeMintModule_ABI from 'src/contracts/DepositExchangeTokenMintModule.json';
+import { estimateGas } from '../shared/getGasEstimate';
 import { getGnosisTxnInfo } from '../shared/gnosisTransactionInfo';
 
 export class DepositExchangeMintModule {
   contract;
   isGnosisSafe: boolean;
   activeNetwork;
+  web3;
 
   constructor(contractAddress: string, web3, activeNetwork) {
     this.activeNetwork = activeNetwork;
@@ -26,10 +28,12 @@ export class DepositExchangeMintModule {
     onTxFail: (error?) => void,
     setTransactionHash: (transactionHash: string) => void
   ): Promise<string> => {
+    const gasEstimate = await estimateGas(this.web3);
+
     return new Promise((resolve, reject) =>
       this.contract.methods
         .mint(address, depositAmount)
-        .send({ from: account })
+        .send({ from: account, gasPrice: gasEstimate })
         .on('receipt', onTxReceipt)
         .on('error', onTxFail)
         .on('transactionHash', async (transactionHash: string) => {

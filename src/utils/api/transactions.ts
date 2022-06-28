@@ -23,6 +23,7 @@ export const getTokenPrices = async (
       chainId: chainId
     }
   );
+
   return result.data;
 };
 
