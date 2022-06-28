@@ -970,3 +970,8 @@ input[type='time']::-webkit-calendar-picker-indicator {
 .sb-show-main {
   color: white;
 }
+
+#particles-js {
+  height: 100%;
+  width: 100%;
+}
