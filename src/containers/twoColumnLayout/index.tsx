@@ -174,14 +174,9 @@ const TwoColumnLayout: FC<{
         : mockTokensResult;
       dispatch(setMockTokensResult(mockTokens));
 
-      dispatch(
-        setMockCollectiblesResult({
-          depositsEnabled,
-          usdPrice: activeNetwork.demoMode.usdPrice
-        })
-      );
+      dispatch(setMockCollectiblesResult(depositsEnabled));
     }
-  }, [isDemoMode, collectiblesResult.length, activeNetwork.demoMode.usdPrice]);
+  }, [isDemoMode, collectiblesResult.length]);
 
   useEffect(() => {
     // clear collectibles on account switch

@@ -34,10 +34,6 @@ export interface IMetadata {
   };
 }
 
-export interface IDemoModeData {
-  usdPrice: number;
-}
-
 export interface IActiveNetwork {
   name: string;
   displayName: string;
@@ -53,7 +49,6 @@ export interface IActiveNetwork {
   nativeCurrency: INativeCurrency;
   gnosis: IGnosis;
   metadata: IMetadata;
-  demoMode: IDemoModeData;
 }
 
 export interface IWeb3Library {
@@ -151,9 +146,6 @@ export const initialState: InitialState = {
         colors: {
           background: ''
         }
-      },
-      demoMode: {
-        usdPrice: 0
       }
     }
   },

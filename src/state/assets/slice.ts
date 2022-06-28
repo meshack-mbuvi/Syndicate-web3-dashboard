@@ -279,16 +279,10 @@ const assetsSlice = createSlice({
     setMockTokensResult(state, action) {
       state.tokensResult = action.payload;
     },
-    setMockCollectiblesResult(
-      state,
-      action: PayloadAction<{
-        depositsEnabled: boolean;
-        usdPrice: number;
-      }>
-    ) {
-      const { depositsEnabled, usdPrice } = action.payload;
+    setMockCollectiblesResult(state, action: PayloadAction<boolean>) {
+      const depositsEnabled = action.payload;
       state.collectiblesResult = depositsEnabled ? [] : mockCollectiblesResult;
-      state.nativeTokenPrice = usdPrice;
+      state.nativeTokenPrice = 2396.93;
     }
   },
   extraReducers: (builder) => {

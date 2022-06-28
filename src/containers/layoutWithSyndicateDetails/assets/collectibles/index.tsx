@@ -291,10 +291,14 @@ const Collectibles: FC = () => {
                           <div className="space-x-2 pt-1 h-1/3 overflow-y-scroll no-scroll-bar">
                             <span className="">
                               {floorPrice
-                                ? `${floorPrice} ${activeNetwork.nativeCurrency.symbol}`
+                                ? `${floorPrice} ${
+                                    isDemoMode
+                                      ? 'ETH'
+                                      : activeNetwork.nativeCurrency.symbol
+                                  }`
                                 : blankValue}
                             </span>
-                            {floorPrice > 0 && nativeTokenPrice > 0 && (
+                            {floorPrice > 0 && (
                               <span className="text-gray-syn4">
                                 (
                                 {floatedNumberWithCommas(
