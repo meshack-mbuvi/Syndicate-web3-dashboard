@@ -8,6 +8,7 @@ import { useSelector } from 'react-redux';
 import { AppState } from '@/state';
 import { isDev } from '@/utils/environment';
 import { useFlags } from 'launchdarkly-react-client-sdk';
+import _ from 'lodash';
 
 const NetworkMenuDropDown: FC = () => {
   const {
@@ -26,13 +27,33 @@ const NetworkMenuDropDown: FC = () => {
 
   // Switch networks based on URL param
   const router = useRouter();
-  const { network } = router.query;
+  const { network, chain } = router.query;
 
   useEffect(() => {
+    let chainId;
     if (network) {
-      switchNetworks(+network);
+      const _chain = verifyChainId(+network);
+      chainId = +_chain;
     }
-  }, [network]);
+    if (chain) {
+      const chainID = getChainIdByName(chain);
+      chainId = +chainID;
+    }
+    if (chainId) {
+      switchNetworks(+chainId);
+    }
+  }, [network, chain]);
+
+  const getChainIdByName = (name) => {
+    const network = _.find(NETWORKS, (el) => el.network === name);
+
+    return network?.chainId;
+  };
+
+  const verifyChainId = (chainId) => {
+    const network = _.find(NETWORKS, (el) => el.chainId === chainId);
+    return network?.chainId;
+  };
 
   const getNativeBalance = async (address: string) => {
     try {
@@ -92,7 +113,7 @@ const NetworkMenuDropDown: FC = () => {
               src={activeNetwork.logo}
               alt="chain logo"
             />
-            <span className="block focus:outline-none mr-4 sm:mr-1 text-base leading-5.5 py-3 sm:text-sm font-whyte-regular">
+            <span className="block focus:outline-none mr-4 sm:mr-1 text-base leading-5.5 py-2 sm:text-sm font-whyte-regular">
               {activeNetwork.displayName}
             </span>
             <div className="flex items-center ml-2">

@@ -3,8 +3,8 @@ import BackButton from '@/components/buttons/BackButton';
 import ErrorBoundary from '@/components/errorBoundary';
 import Layout from '@/components/layout';
 import OnboardingModal from '@/components/onboarding';
-import { ClubHeader } from '@/components/syndicates/shared/clubHeader';
 import { BlockExplorerLink } from '@/components/syndicates/shared/BlockExplorerLink';
+import { ClubHeader } from '@/components/syndicates/shared/clubHeader';
 import Head from '@/components/syndicates/shared/HeaderTitle';
 import SyndicateDetails from '@/components/syndicates/syndicateDetails';
 import {
@@ -43,6 +43,7 @@ import {
   mockTokensResult
 } from '@/utils/mockdata';
 import window from 'global';
+import { isEmpty } from 'lodash';
 import { useRouter } from 'next/router';
 import React, { FC, useEffect, useMemo, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -51,7 +52,6 @@ import ClubTokenMembers from '../managerActions/clubTokenMembers/index';
 import ActivityView from './activity';
 import Assets from './assets';
 import TabButton from './TabButton';
-import { isEmpty } from 'lodash';
 
 const LayoutWithSyndicateDetails: FC<{
   managerSettingsOpen: boolean;
@@ -80,6 +80,9 @@ const LayoutWithSyndicateDetails: FC<{
     memberCount
   } = erc20Token;
 
+  // Prevents incorrect data display when page data has not been loaded yet.
+  const [pageLoading, setPageLoading] = useState(true);
+
   // Get clubAddress from window.location object since during page load, router is not ready
   // hence clubAddress is undefined.
   // We need to have access to clubAddress as early as possible.
@@ -97,6 +100,16 @@ const LayoutWithSyndicateDetails: FC<{
       router.push('/clubs/demo/manage');
     }
   });
+
+  useEffect(() => {
+    if (isEmpty(web3)) return;
+
+    setPageLoading(false);
+
+    return () => {
+      setPageLoading(true);
+    };
+  }, [web3]);
 
   //  tokens for the connected wallet account
   const { accountTokens } = useAccountTokens();
@@ -307,7 +320,11 @@ const LayoutWithSyndicateDetails: FC<{
 
   return (
     <>
-      {router.isReady && !isDemoMode && !web3?.utils?.isAddress(clubAddress) ? (
+      {!pageLoading &&
+      router.isReady &&
+      !isDemoMode &&
+      !isEmpty(web3) &&
+      !web3?.utils?.isAddress(clubAddress) ? (
         <NotFoundPage />
       ) : (
         <Layout
@@ -319,10 +336,14 @@ const LayoutWithSyndicateDetails: FC<{
           <ErrorBoundary>
             {showOnboardingIfNeeded && <OnboardingModal />}
             <div className="w-full">
-              {router.isReady && !name && !loading && !isDemoMode ? (
+              {!pageLoading &&
+              router.isReady &&
+              !name &&
+              !loading &&
+              !isDemoMode ? (
                 syndicateEmptyState
               ) : (
-                <div className="container mx-auto ">
+                <div className="container mx-auto">
                   {/* Two Columns (Syndicate Details + Widget Cards) */}
                   {!managerSettingsOpen && (
                     <BackButton

@@ -10,7 +10,7 @@ export const mockERC20Token: ERC20Token = {
   totalSupply: 12044.45,
   address: 'demo',
   name: 'Alpha Beta Club',
-  owner: '',
+  owner: '0x9c6ce69f349430D31a2Bfbe5A052fc3e48AD28cf',
   tokenDecimals: 18,
   depositToken: '0xeb8f08a975Ab53E34D8a0330E0D34de942C95926',
   mintModule: '0x36d367884b5088465C0Ea2EaF52224a922DC71E6',

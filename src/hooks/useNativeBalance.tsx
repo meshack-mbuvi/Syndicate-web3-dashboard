@@ -3,7 +3,7 @@ import { getWeiAmount } from '@/utils/conversions';
 import { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/router';
 import { useSelector } from 'react-redux';
-import { isEmpty } from 'lodash';
+import { debounce, isEmpty } from 'lodash';
 
 export const useNativeBalance = (account: string): number => {
   const [nativeBalance, setNativeBalance] = useState(null);
@@ -16,7 +16,7 @@ export const useNativeBalance = (account: string): number => {
 
   const router = useRouter();
 
-  const fetchBalance = () => {
+  const fetchBalance = debounce((initial) => {
     if (router.isReady && account && !isEmpty(web3)) {
       web3.eth
         .getBalance(account)
@@ -24,27 +24,29 @@ export const useNativeBalance = (account: string): number => {
           setNativeBalance(getWeiAmount(web3, balance, 18, false));
         })
         .catch(() => {
-          setNativeBalance(0);
+          initial ? setNativeBalance(0) : null;
         });
     }
-  };
+  }, 4500);
 
   useEffect(() => {
-    if (isEmpty(web3)) return;
+    if (isEmpty(web3) || !account) return;
 
+    web3.eth.clearSubscriptions();
+    console.log('subscribing to balance');
     const subscription = web3.eth.subscribe('newBlockHeaders');
     subscription
       .on('connected', () => {
-        fetchBalance(); // Hack for first time the page renders
+        fetchBalance(true); // Hack for first time the page renders;
       })
       .on('data', () => {
-        fetchBalance();
+        fetchBalance(false);
       });
 
     return () => {
       subscription.unsubscribe();
     };
-  }, [web3?._provider, , account, router.isReady]);
+  }, [web3?._provider, account, router.isReady]);
 
   return useMemo(() => nativeBalance, [nativeBalance]);
 };

@@ -1,11 +1,16 @@
+import { NavButton, NavButtonType } from '@/components/buttons/navButton';
 import {
   DotIndicators,
   DotIndicatorsOrientation
 } from '@/components/dotIndicators';
+import ProgressBar from '@/components/ProgressBar';
+import { useCreateInvestmentClubContext } from '@/context/CreateInvestmentClubContext';
+import { AppState } from '@/state';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React, { useEffect, useRef } from 'react';
+import { useSelector } from 'react-redux';
 import { MoreMenu } from './moreMenu';
 import { NavBarNavItem } from './navbarItems';
 import NetworkComponent from './network';
@@ -15,20 +20,34 @@ interface props {
   navItems: { navItemText: string; url?: string; isLegal?: boolean }[];
   showBackButton?: boolean;
   showNav?: boolean;
+  activeIndex?: number;
   dotIndicatorOptions?: string[];
   handleExitClick?: () => void;
+  setActiveIndex?: (event) => void;
 }
 
 const Header: React.FC<props> = ({
   navItems,
   handleExitClick,
+  setActiveIndex,
   showBackButton = false,
   showNav = true,
+  activeIndex = 0,
   dotIndicatorOptions = []
 }) => {
   const router = useRouter();
   const navRef = useRef(null);
   const [showMobileNav, setShowMobileNav] = React.useState(false);
+
+  // For progress bar
+  const {
+    web3Reducer: {
+      web3: { account }
+    }
+  } = useSelector((state: AppState) => state);
+  const { currentStep, steps, preClubCreationStep } =
+    useCreateInvestmentClubContext();
+  const showCreateProgressBar = router.pathname === '/clubs/create';
 
   useEffect(() => {
     if (showMobileNav) {
@@ -84,6 +103,7 @@ const Header: React.FC<props> = ({
   const { pathname } = router;
 
   const hideWalletAndEllipsis = pathname.includes('/distribute');
+  const showCloseButton = pathname.includes('/distribute');
 
   return (
     <>
@@ -99,10 +119,9 @@ const Header: React.FC<props> = ({
         {showMobileNav ? (
           <div className="fixed sm:hidden w-full flex-col mt-20 py-2 bg-gray-syn8 justify-center shadow-xl">
             {navItems.map(({ navItemText, url, isLegal }, index) => (
-              <>
+              <React.Fragment key={index}>
                 <div className="container mx-auto items-center">
                   <NavBarNavItem
-                    key={index}
                     navItemText={navItemText}
                     url={url}
                     isLegal={isLegal}
@@ -111,7 +130,7 @@ const Header: React.FC<props> = ({
                 <div className="pl-6-percent">
                   <div className="border-b-1 border-gray-border" />
                 </div>
-              </>
+              </React.Fragment>
             ))}
             <NetworkComponent />
             <WalletComponent />
@@ -182,28 +201,38 @@ const Header: React.FC<props> = ({
               <WalletComponent />
               <MoreMenu />
             </div>
+
             {dotIndicatorOptions?.length ? (
-              <DotIndicators
-                options={dotIndicatorOptions}
-                activeIndex={0}
-                orientation={DotIndicatorsOrientation.HORIZONTAL}
-                customClasses="pr-5"
-              />
+              <>
+                <DotIndicators
+                  options={dotIndicatorOptions}
+                  activeIndex={activeIndex}
+                  orientation={DotIndicatorsOrientation.HORIZONTAL}
+                  customClasses="pr-5"
+                />
+
+                {activeIndex > 0 ? (
+                  <NavButton
+                    onClick={setActiveIndex}
+                    type={NavButtonType.HORIZONTAL}
+                  />
+                ) : null}
+              </>
             ) : null}
-            <button
-              type="button"
-              className={`flex items-center p-3 rounded-full bg-gray-syn7`}
-              onClick={handleExitClick}
-            >
-              <Image
-                src="/images/close-gray-5.svg"
-                width="16"
-                height="16"
-                alt="close navigation"
-              />
-            </button>
+
+            {showCloseButton && (
+              <NavButton type={NavButtonType.CLOSE} onClick={handleExitClick} />
+            )}
           </div>
         </div>
+        {showCreateProgressBar && account && (
+          <ProgressBar
+            percentageWidth={
+              preClubCreationStep ? 0 : ((currentStep + 1) / steps.length) * 100
+            }
+            tailwindColor="bg-green"
+          />
+        )}
       </nav>
     </>
   );

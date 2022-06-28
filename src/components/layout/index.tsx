@@ -1,7 +1,6 @@
 import { ClubERC20Contract } from '@/ClubERC20Factory/clubERC20';
 import Footer from '@/components/navigation/footer';
 import Header from '@/components/navigation/header/Header';
-import { useCreateInvestmentClubContext } from '@/context/CreateInvestmentClubContext';
 import { CLUB_TOKEN_QUERY } from '@/graphql/queries';
 import { getDepositDetails, setERC20Token } from '@/helpers/erc20TokenDetails';
 import { useAccountTokens } from '@/hooks/useAccountTokens';
@@ -24,7 +23,6 @@ import React, { FC, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import ConnectWallet from 'src/components/connectWallet';
 import DemoBanner from '../demoBanner';
-import ProgressBar from '../ProgressBar';
 import SEO from '../seo';
 
 interface Props {
@@ -33,13 +31,17 @@ interface Props {
   dotIndicatorOptions?: string[];
   handleExitClick?: () => void;
   showNav?: boolean;
+  activeIndex?: number;
+  setActiveIndex?: (index: number) => void;
   navItems?: { navItemText: string; url?: string; isLegal?: boolean }[];
 }
 
 const Layout: FC<Props> = ({
   children,
+  activeIndex = 0,
   dotIndicatorOptions,
   handleExitClick,
+  setActiveIndex,
   managerSettingsOpen = false,
   showBackButton = false,
   showNav = true,
@@ -83,9 +85,6 @@ const Layout: FC<Props> = ({
   const showCreateProgressBar = router.pathname === '/clubs/create';
   const portfolioPage = router.pathname === '/clubs' || router.pathname === '/';
 
-  const { currentStep, steps, preClubCreationStep } =
-    useCreateInvestmentClubContext();
-
   // get content to occupy the viewport if we are in these states.
   // this will push the footer down to the bottom of the page to make it uniform
   // across the app
@@ -104,14 +103,14 @@ const Layout: FC<Props> = ({
   const handleRouting = () => {
     if (pathname.includes('/manage') && !isOwner) {
       router.replace(
-        `/clubs/${clubAddress}${'?network=' + activeNetwork.chainId}`
+        `/clubs/${clubAddress}${'?chain=' + activeNetwork.network}`
       );
     } else if (
       (pathname === '/clubs/[clubAddress]' || pathname.includes('/member')) &&
       isOwner
     ) {
       router.replace(
-        `/clubs/${clubAddress}/manage${'?network=' + activeNetwork.chainId}`
+        `/clubs/${clubAddress}/manage${'?chain=' + activeNetwork.network}`
       );
     }
   };
@@ -154,7 +153,7 @@ const Layout: FC<Props> = ({
     },
     context: { clientName: 'theGraph', chainId: activeNetwork.chainId },
     notifyOnNetworkStatusChange: true,
-    skip: !address || loading,
+    skip: !address || loading || !activeNetwork.chainId,
     fetchPolicy: 'no-cache'
   });
 
@@ -282,27 +281,10 @@ const Layout: FC<Props> = ({
           navItems={navItems}
           dotIndicatorOptions={dotIndicatorOptions}
           handleExitClick={handleExitClick}
+          activeIndex={activeIndex || 0}
+          setActiveIndex={setActiveIndex}
         />
         <DemoBanner />
-
-        <div
-          className={`sticky top-18 ${
-            showCreateProgressBar ? 'bg-black backdrop-filter' : ''
-          }`}
-        >
-          {showCreateProgressBar && account ? (
-            <div className="pt-6 bg-black">
-              <ProgressBar
-                percentageWidth={
-                  preClubCreationStep
-                    ? 0
-                    : ((currentStep + 1) / steps.length) * 100
-                }
-                tailwindColor="bg-green"
-              />
-            </div>
-          ) : null}
-        </div>
 
         <div
           className={`flex w-full bg-black flex-col sm:flex-row ${

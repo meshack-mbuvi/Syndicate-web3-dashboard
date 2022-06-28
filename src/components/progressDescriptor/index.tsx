@@ -3,7 +3,8 @@ import { Spinner } from '../shared/spinner';
 export enum ProgressDescriptorState {
   PENDING = 'PENDING',
   SUCCESS = 'SUCCESS',
-  FAILURE = 'FAILURE'
+  FAILURE = 'FAILURE',
+  PROGRESSING = 'PROGRESSING'
 }
 
 interface Props {
@@ -63,10 +64,12 @@ export const ProgressDescriptor: React.FC<Props> = ({
       {description && (
         <div className="text-sm text-gray-syn4 mt-2">{description}</div>
       )}
-      {link && (
+      {link?.URL && (
         <a
           href={link.URL}
           className="block mt-4 text-blue-neptune flex justify-center space-x-2"
+          target="_blank"
+          rel="noreferrer"
         >
           <div>{link.label}</div>
           <img src="/images/externalLink.svg" alt="External link icon" />

@@ -38,7 +38,7 @@ const useClubTokenMembers = () => {
   } = useQuery(CLUB_TOKEN_MEMBERS, {
     variables: {
       where: {
-        contractAddress: clubAddress?.toString().toLocaleLowerCase()
+        contractAddress: clubAddress?.toString().toLowerCase()
       }
     },
     context: { clientName: 'theGraph', chainId: activeNetwork.chainId },

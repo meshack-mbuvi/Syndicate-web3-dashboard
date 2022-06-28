@@ -6,7 +6,7 @@ export const SUPPORTED_TOKENS = Object.freeze({
       address: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
       symbol: 'USDC',
       decimals: 6,
-      default: true,
+      default: false,
       logoURI: '/images/prodTokenLogos/USDCoin.png'
     },
     {
@@ -353,14 +353,14 @@ export const SUPPORTED_TOKENS = Object.freeze({
       name: 'Testnet USDC',
       address: '0xeb8f08a975Ab53E34D8a0330E0D34de942C95926',
       decimals: 6,
-      default: true,
+      default: false,
       logoURI: '/images/TestnetTokenLogos/usdcIcon.svg'
     },
     {
       symbol: 'ETH',
       name: 'Ethereum',
       address: '',
-      logoURI: '/images/ethereum-logo.png',
+      logoURI: '/images/chains/rinkeby.svg',
       decimals: 18,
       default: true
     },

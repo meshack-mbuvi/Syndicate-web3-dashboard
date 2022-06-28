@@ -22,6 +22,11 @@ export default {
 
 const Template = (args) => <NavButton {...args} />;
 
+export const Horizontal = Template.bind({});
+Horizontal.args = {
+  type: NavButtonType.HORIZONTAL
+};
+
 export const Vertical = Template.bind({});
 Vertical.args = {
   type: NavButtonType.VERTICAL

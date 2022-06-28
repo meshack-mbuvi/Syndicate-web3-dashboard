@@ -1,9 +1,9 @@
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/router';
 import { AppState } from '@/state';
-import { useDispatch, useSelector } from 'react-redux';
 import { setDepositTokenUSDPrice } from '@/state/erc20token/slice';
 import { getNativeTokenPrice, getTokenPrices } from '@/utils/api/transactions';
+import { useRouter } from 'next/router';
+import { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
 export const useGetDepositTokenPrice = (chainId: number) => {
   const {
@@ -29,7 +29,9 @@ export const useGetDepositTokenPrice = (chainId: number) => {
           : getTokenPrices(depositToken.toLowerCase(), chainId);
       pricePromise
         .then((res) => {
-          const price = res[depositToken.toLowerCase()]['usd'];
+          const price = depositToken
+            ? res[depositToken.toLowerCase()]['usd']
+            : res;
           setTokenPriceInUSDState(price);
           dispatch(setDepositTokenUSDPrice(price));
           setLoading(false);

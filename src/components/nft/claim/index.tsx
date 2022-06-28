@@ -216,6 +216,7 @@ const ClaimNFT: React.FC = () => {
     if (
       account !== currentAccount &&
       router.isReady &&
+      web3.utils &&
       web3.utils.isAddress(nftAddress) &&
       syndicateContracts?.MerkleDistributorModuleERC721 &&
       syndicateContracts?.mintPolicyERC721?.mintPolicyERC721Contract._address &&
@@ -250,7 +251,8 @@ const ClaimNFT: React.FC = () => {
     router.isReady,
     syndicateContracts?.MerkleDistributorModuleERC721,
     syndicateContracts?.mintPolicyERC721?.mintPolicyERC721Contract._address,
-    syndicateContracts?.PublicMintWithFeeModule
+    syndicateContracts?.PublicMintWithFeeModule,
+    web3.utils
   ]);
 
   useEffect(() => {

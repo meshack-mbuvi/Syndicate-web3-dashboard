@@ -18,7 +18,8 @@ export type TransactionCategory =
   | 'SELECT_CATEGORY'
   | 'TOKEN'
   | 'COLLECTIBLE'
-  | 'OFF_CHAIN_INVESTMENT';
+  | 'OFF_CHAIN_INVESTMENT'
+  | 'DISTRIBUTION';
 
 export enum RoundCategory {
   SEED,

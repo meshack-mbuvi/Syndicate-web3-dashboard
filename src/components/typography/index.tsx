@@ -15,7 +15,7 @@ export const T1 = ({
 }): JSX.Element => {
   return (
     <div
-      className={`text-T1 ${
+      className={`text-T1 transform transition-font-size ${
         weightClassOverride
           ? weightClassOverride
           : medium
@@ -44,7 +44,7 @@ export const T2 = ({
 }): JSX.Element => {
   return (
     <div
-      className={`text-T2 ${
+      className={`text-T2 transform transition-font-size ${
         weightClassOverride
           ? weightClassOverride
           : medium
@@ -73,7 +73,7 @@ export const T3 = ({
 }): JSX.Element => {
   return (
     <div
-      className={`text-T3 ${
+      className={`text-T3 transform transition-font-size ${
         weightClassOverride
           ? weightClassOverride
           : medium
@@ -102,7 +102,7 @@ export const T4 = ({
 }): JSX.Element => {
   return (
     <div
-      className={`text-T4 ${
+      className={`text-T4 transform transition-font-size ${
         weightClassOverride
           ? weightClassOverride
           : medium
@@ -131,7 +131,7 @@ export const T5 = ({
 }): JSX.Element => {
   return (
     <div
-      className={`text-T5 ${
+      className={`text-T5 transform transition-font-size ${
         weightClassOverride
           ? weightClassOverride
           : medium
@@ -162,7 +162,7 @@ export const H1 = ({
 }): JSX.Element => {
   return (
     <div
-      className={`text-H1-mobile sm:text-H1 ${
+      className={`text-H1-mobile sm:text-H1 transform transition-font-size ${
         weightClassOverride
           ? weightClassOverride
           : regular
@@ -191,7 +191,7 @@ export const H2 = ({
 }): JSX.Element => {
   return (
     <div
-      className={`text-H2-mobile sm:text-H2 ${
+      className={`text-H2-mobile sm:text-H2 transform transition-font-size ${
         weightClassOverride
           ? weightClassOverride
           : regular
@@ -220,7 +220,7 @@ export const H3 = ({
 }): JSX.Element => {
   return (
     <div
-      className={`text-H3-mobile sm:text-H3 ${
+      className={`text-H3-mobile sm:text-H3 transform transition-font-size ${
         weightClassOverride
           ? weightClassOverride
           : regular
@@ -249,7 +249,7 @@ export const H4 = ({
 }): JSX.Element => {
   return (
     <div
-      className={`text-H4-mobile sm:text-H4 ${
+      className={`text-H4-mobile sm:text-H4 transform transition-font-size ${
         weightClassOverride
           ? weightClassOverride
           : regular
@@ -278,7 +278,7 @@ export const L1 = ({
 }): JSX.Element => {
   return (
     <div
-      className={`text-base uppercase tracking-px ${
+      className={`text-base uppercase tracking-px transform transition-font-size ${
         weightClassOverride ? weightClassOverride : 'font-bold'
       } ${weightClassOverride} ${extraClasses}`}
       {...rest}
@@ -301,7 +301,7 @@ export const L2 = ({
 }): JSX.Element => {
   return (
     <div
-      className={`text-sm uppercase tracking-px ${
+      className={`text-sm uppercase tracking-px transform transition-font-size ${
         weightClassOverride ? weightClassOverride : 'font-bold'
       } ${weightClassOverride} ${extraClasses}`}
       {...rest}
@@ -326,7 +326,7 @@ export const E1 = ({
 }): JSX.Element => {
   return (
     <div
-      className={`font-mono uppercase ${
+      className={`font-mono uppercase transform transition-font-size ${
         weightClassOverride && weightClassOverride
       } ${extraClasses}`}
       {...rest}
@@ -349,7 +349,7 @@ export const E2 = ({
 }): JSX.Element => {
   return (
     <div
-      className={`font-mono text-sm uppercase ${
+      className={`font-mono text-sm uppercase transform transition-font-size ${
         weightClassOverride && weightClassOverride
       } ${extraClasses}`}
       {...rest}
@@ -374,7 +374,7 @@ export const B1 = ({
 }): JSX.Element => {
   return (
     <div
-      className={`text-lg ${
+      className={`text-lg transform transition-font-size ${
         weightClassOverride && weightClassOverride
       } ${extraClasses}`}
       {...rest}
@@ -397,7 +397,7 @@ export const B2 = ({
 }): JSX.Element => {
   return (
     <div
-      className={`text-base ${
+      className={`text-base transform transition-font-size ${
         weightClassOverride && weightClassOverride
       } ${extraClasses}`}
       {...rest}
@@ -420,7 +420,7 @@ export const B3 = ({
 }): JSX.Element => {
   return (
     <div
-      className={`text-sm ${
+      className={`text-sm transform transition-font-size ${
         weightClassOverride && weightClassOverride
       } ${extraClasses}`}
       {...rest}
@@ -443,7 +443,7 @@ export const B4 = ({
 }): JSX.Element => {
   return (
     <div
-      className={`text-xs ${
+      className={`text-xs transform transition-font-size ${
         weightClassOverride && weightClassOverride
       } ${extraClasses}`}
       {...rest}
@@ -468,7 +468,7 @@ export const M1 = ({
 }): JSX.Element => {
   return (
     <div
-      className={`text-base font-mono ${
+      className={`text-base font-mono transform transition-font-size ${
         weightClassOverride && weightClassOverride
       } ${extraClasses}`}
       {...rest}
@@ -491,7 +491,7 @@ export const M2 = ({
 }): JSX.Element => {
   return (
     <div
-      className={`text-sm font-mono ${
+      className={`text-sm font-mono transform transition-font-size ${
         weightClassOverride && weightClassOverride
       } ${extraClasses}`}
       {...rest}
@@ -516,7 +516,7 @@ export const D1 = ({
 }): JSX.Element => {
   return (
     <div
-      className={`text-base font-mono ${
+      className={`text-base font-mono transform transition-font-size ${
         weightClassOverride && weightClassOverride
       } ${extraClasses}`}
       {...rest}
@@ -539,7 +539,7 @@ export const D2 = ({
 }): JSX.Element => {
   return (
     <div
-      className={`text-sm font-mono ${
+      className={`text-sm font-mono transform transition-font-size ${
         weightClassOverride && weightClassOverride
       } ${extraClasses}`}
       {...rest}

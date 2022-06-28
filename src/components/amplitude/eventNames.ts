@@ -65,3 +65,8 @@ export const SEND_FOR_SIGNATURES = 'Clicked on send for signatures';
 export const COPY_SEND_FOR_SIGNATURES_LINK =
   'Clicked on copy link to send for signatures';
 export const MGR_SIGN_LEGAL_DOC = 'Manager signs legal documents';
+
+// Distribution events
+export const MGR_MAKE_DISTRIBUTE_EVENT = 'Manager make distribution';
+export const ERROR_MGR_DISTRIBUTION = 'Error in distribution';
+export const APPROVE_DISTRIBUTION_ALLOWANCE = 'Approve distribution allowance';

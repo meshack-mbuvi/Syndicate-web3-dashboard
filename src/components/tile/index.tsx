@@ -11,16 +11,19 @@ export enum TileState {
 }
 
 export const Tile = (props: {
-  action: TileAction;
-  state: TileState;
+  action?: TileAction;
+  state?: TileState;
+  handleClick: (newState: TileState) => void;
+  leftAddon?: any;
   title: string;
   subTitle?: string;
   extraClasses?: string;
-  children: any;
 }) => {
   const {
     action = TileAction.SELECT,
     state = TileState.UNSELECTED,
+    handleClick,
+    leftAddon,
     title,
     subTitle,
     extraClasses
@@ -30,28 +33,43 @@ export const Tile = (props: {
     state === TileState.SELECTED
       ? 'border-blue-neptune'
       : 'border-inactive hover:border-white'
-  } border`;
+  } border focus:outline-none`;
 
   return (
-    <div
-      className={`cursor-pointer rounded-lg text-base p-7 ${borderStyles} ${extraClasses} transition-all`}
+    <button
+      onClick={() => {
+        if (state === TileState.UNSELECTED) {
+          handleClick(TileState.SELECTED);
+        } else if (state === TileState.SELECTED) {
+          handleClick(TileState.UNSELECTED);
+        }
+      }}
+      className={`w-full text-left cursor-pointer rounded-lg text-base py-5 px-7 ${borderStyles} ${extraClasses} transition-all`}
     >
-      <div className="flex items-center space-x-4">
+      <div
+        className={`flex items-center ${
+          action !== TileAction.SELECT && 'space-x-4'
+        }`}
+      >
         {/* Icon */}
         <div className={`${action !== TileAction.SELECT ? 'block' : 'hidden'}`}>
-          <img
-            className="inline"
-            src={`/images/${
-              action === TileAction.CREATE
-                ? 'tile/circle-plus'
-                : action === TileAction.RADIO && state === TileState.SELECTED
-                ? 'tile/circle-check'
-                : action === TileAction.RADIO
-                ? 'tile/circle'
-                : ''
-            }.svg`}
-            alt="Icon"
-          />
+          {!leftAddon ? (
+            <img
+              className="inline"
+              src={`/images/${
+                action === TileAction.CREATE
+                  ? 'tile/circle-plus'
+                  : action === TileAction.RADIO && state === TileState.SELECTED
+                  ? 'tile/circle-check'
+                  : action === TileAction.RADIO
+                  ? 'tile/circle'
+                  : ''
+              }.svg`}
+              alt="Icon"
+            />
+          ) : (
+            leftAddon
+          )}
         </div>
 
         {/* Titles */}
@@ -64,14 +82,12 @@ export const Tile = (props: {
             {title}
           </div>
           <div
-            className={`text-sm text-gray-3 ${
-              action === TileAction.RADIO ? 'block' : 'hidden'
-            } `}
+            className={`text-sm text-gray-3 ${subTitle ? 'block' : 'hidden'} `}
           >
             {subTitle}
           </div>
         </div>
       </div>
-    </div>
+    </button>
   );
 };

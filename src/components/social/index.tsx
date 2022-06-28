@@ -76,7 +76,11 @@ export const ShareCard: React.FC<Props> = ({
             <span className="hidden sm:visible">Share via</span>
 
             {/* Telegram */}
-            <a href={`https://t.me/share/url?url=${URL}&text=${description}`}>
+            <a
+              href={`https://t.me/share/url?url=${URL}&text=${description}`}
+              target="_blank"
+              rel="noreferrer"
+            >
               <img
                 src="/images/social/telegram-gray3.svg"
                 alt="Telegram icon"
@@ -85,7 +89,11 @@ export const ShareCard: React.FC<Props> = ({
             </a>
 
             {/* Twitter */}
-            <a href={`https://twitter.com/intent/tweet?text=${description}`}>
+            <a
+              href={`https://twitter.com/intent/tweet?text=${description}`}
+              target="_blank"
+              rel="noreferrer"
+            >
               <img
                 src="/images/social/twitter-gray3.svg"
                 alt="Twitter icon"

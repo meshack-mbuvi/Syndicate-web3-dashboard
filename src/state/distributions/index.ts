@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { clubMember } from '../clubMembers/types';
 
 type tokens = {
   address: string;
@@ -9,16 +10,22 @@ type eth = {
   available: string;
   totalToDistribute: string;
 };
-
-type gasEstimate = {
+export interface GasEstimate {
   tokenSymbol: string;
   tokenAmount: string;
-  fiatAmount: string;
-  isLoading: boolean;
-};
+  fiatAmount: any;
+}
 
-const initialState = {
+const initialState: {
+  // To Do in future: more strictly define the types
+  distributionTokens: any;
+  distributionMembers: any;
+  eth: any;
+  gasEstimate: GasEstimate;
+  isLoading: boolean;
+} = {
   distributionTokens: [],
+  distributionMembers: [],
   eth: {
     available: '0',
     totalToDistribute: '0'
@@ -26,9 +33,9 @@ const initialState = {
   gasEstimate: {
     tokenSymbol: 'ETH',
     tokenAmount: '0.02',
-    fiatAmount: '100',
-    isLoading: false
-  }
+    fiatAmount: '25'
+  },
+  isLoading: true
 };
 
 /**
@@ -49,13 +56,24 @@ const distributeTokens = createSlice({
     setEth(state, action: PayloadAction<eth>) {
       state.eth = action.payload;
     },
-    setGasEstimates(state, action: PayloadAction<gasEstimate>) {
+    setGasEstimates(state, action: PayloadAction<any>) {
       state.gasEstimate = action.payload;
+    },
+    setIsLoading(state, action: PayloadAction<boolean>) {
+      state.isLoading = action.payload;
+    },
+    setDistributionMembers(state, action: PayloadAction<clubMember[]>) {
+      state.distributionMembers = action.payload;
     }
   }
 });
 
-export const { setDistributeTokens, setEth, setGasEstimates } =
-  distributeTokens.actions;
+export const {
+  setDistributeTokens,
+  setEth,
+  setGasEstimates,
+  setIsLoading,
+  setDistributionMembers
+} = distributeTokens.actions;
 
 export default distributeTokens.reducer;

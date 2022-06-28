@@ -50,7 +50,6 @@ Default.args = {
     },
     {
       title: 'Distribute 40.0000 UNI',
-      description: 'Lorum ipsum dolor lorum ipsum dolor',
       isInErrorState: false
     },
     {

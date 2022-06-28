@@ -1,6 +1,7 @@
 import { SkeletonLoader } from '@/components/skeletonLoader';
 import { MintAndShareTokens } from '@/containers/managerActions/mintAndShareTokens';
 import AddMemberModal from '@/containers/managerActions/mintAndShareTokens/AddMemberModal';
+import NavToClubSettingsModal from '@/containers/managerActions/mintAndShareTokens/NavToClubSettingsModal';
 import { useIsClubOwner } from '@/hooks/useClubOwner';
 import useModal from '@/hooks/useModal';
 import { AppState } from '@/state';
@@ -18,7 +19,6 @@ import ModifyCapTable from '../modifyMemberAllocation';
 import { MemberAddressComponent } from './memberAddress';
 import MembersTable from './MembersTable';
 import MoreOptions from './moreOptions';
-import NavToClubSettingsModal from '@/containers/managerActions/mintAndShareTokens/NavToClubSettingsModal';
 
 const ClubTokenMembers = (): JSX.Element => {
   // retrieve state variables
@@ -65,7 +65,7 @@ const ClubTokenMembers = (): JSX.Element => {
     const clubLegalData = legal[clubAddress as string];
     if (!clubLegalData?.signaturesNeeded) {
       return setClubDepositLink(
-        `${window.location.origin}/clubs/${clubAddress}?network=${activeNetwork.chainId}`
+        `${window.location.origin}/clubs/${clubAddress}?chain=${activeNetwork.network}`
       );
     }
     if (
@@ -76,7 +76,7 @@ const ClubTokenMembers = (): JSX.Element => {
         clubAddress as string,
         clubLegalData.clubData,
         clubLegalData.clubData.adminSignature,
-        activeNetwork.chainId
+        activeNetwork.network
       );
       setClubDepositLink(memberSignURL);
     }
@@ -89,7 +89,7 @@ const ClubTokenMembers = (): JSX.Element => {
 
   const filterAddressOnChangeHandler = (event: {
     preventDefault: () => void;
-    target: { value: any };
+    target: { value: string };
   }) => {
     event.preventDefault();
     const { value } = event.target;

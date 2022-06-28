@@ -171,7 +171,7 @@ const CreateInvestmentClub: React.FC = () => {
           <div className="self-center pt-6 pb-3">
             <Link
               href={`/clubs/${tokenAddress}/manage?source=create${
-                '&network=' + activeNetwork.chainId
+                '&chain=' + activeNetwork.network
               }`}
             >
               <span className="px-8 py-4 bg-white rounded-md text-black text-center text-base cursor-pointer self-center w-1/2">

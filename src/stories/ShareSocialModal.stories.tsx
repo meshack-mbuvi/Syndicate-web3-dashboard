@@ -11,7 +11,10 @@ const Template = (args) => {
 export const Default = Template.bind({});
 Default.args = {
   isModalVisible: true,
+  handleViewDashboard: () => null,
   handleModalClose: () => null,
   etherscanURL: 'http://etherscan.io',
-  socialURL: 'http://syndicate.io'
+  socialURL: 'http://syndicate.io',
+  clubName: 'Alpha Beta Club',
+  clubSymbol: '✺ABC'
 };

@@ -83,13 +83,16 @@ module.exports = {
       },
       height: () => ({
         'fit-content': 'fit-content',
+        2.5: '0.625rem',
         4.5: '1.125rem',
+        5.5: '1.375rem',
         12.5: '3.125rem',
         13: '3.25rem',
         17.5: '4.375rem',
         18: '4.5rem',
         23: '5.75rem',
         25: '6.25rem',
+        54: '13.5rem',
         88: '22rem',
         100: '30rem',
         104: '26rem',
@@ -99,7 +102,9 @@ module.exports = {
       width: () => ({
         'fit-content': 'fit-content',
         '2/1': '200%',
+        2.5: '0.625rem',
         4.5: '1.125rem',
+        5.5: '1.375rem',
         '5.21/12': '43.47826%',
         7.5: '1.875rem',
         12.5: '3.125rem',
@@ -186,6 +191,7 @@ module.exports = {
           'Arial',
           'sans-serif'
         ],
+        light: ['Slussen', 'Helvetica', 'Arial', 'sans-serif'],
         'whyte-medium': [
           'Whyte Medium',
           'Whyte Regular',
@@ -246,7 +252,8 @@ module.exports = {
         cyan: {
           ...colors.cyan,
           cherenkov: '#00FFFF',
-          verdigris: '#43B3AE'
+          verdigris: '#43B3AE',
+          collective: '#003030'
         },
         purple: {
           ...colors.purple,
@@ -319,6 +326,8 @@ module.exports = {
         green: {
           ...colors.green,
           DEFAULT: '#30E696',
+          moss: '#1B331F',
+          distribution: '#0B3925',
           semantic: '#30E696',
           shine: '#64ECB0',
           screamin: '#80FF75',
@@ -480,6 +489,7 @@ module.exports = {
       },
       transitionProperty: {
         height: 'height',
+        width: 'width',
         'font-size': 'fontSize, font-size'
       }
     }

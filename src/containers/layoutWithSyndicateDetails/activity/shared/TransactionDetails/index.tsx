@@ -10,17 +10,20 @@ import {
   TransactionCategory
 } from '@/state/erc20transactions/types';
 import useWindowSize from '@/hooks/useWindowSize';
+import { TokenCollection } from '@/components/distributions/tokenCollection';
 
 type Transaction = 'outgoing' | 'incoming';
 
 interface ITransactionDetails {
-  tokenName: string;
-  tokenLogo: string;
-  tokenSymbol: string;
+  tokenDetails: {
+    name: string;
+    symbol: string;
+    icon?: string;
+    amount: string;
+  }[];
   transactionType: Transaction;
   isTransactionAnnotated: boolean;
-  amount: string;
-  address: string;
+  addresses: string | string[];
   onModal?: boolean;
   category: TransactionCategory;
   companyName?: string;
@@ -28,13 +31,10 @@ interface ITransactionDetails {
 }
 
 const TransactionDetails: React.FC<ITransactionDetails> = ({
-  tokenName,
-  tokenLogo,
-  tokenSymbol,
+  tokenDetails,
   transactionType,
   isTransactionAnnotated,
-  amount,
-  address,
+  addresses,
   onModal = false,
   category,
   companyName,
@@ -86,58 +86,89 @@ const TransactionDetails: React.FC<ITransactionDetails> = ({
     <>
       {category !== 'OFF_CHAIN_INVESTMENT' ? (
         <div className={`flex items-center ${width < 400 ? 'flex-col' : ''}`}>
+          {/* Outgoing token(s) */}
           <div className="flex items-center">
-            {tokenSymbol.toLowerCase() !== 'usd' && (
+            {tokenDetails.length === 1 ? ( // a distribution can have more token details
               <>
-                {tokenLogo ? (
-                  <Image src={tokenLogo} height={24} width={24} />
-                ) : (
-                  <GradientAvatar name={tokenName} size={'w-6 h-6'} />
+                {tokenDetails[0].symbol.toLowerCase() !== 'usd' && (
+                  <>
+                    {tokenDetails[0].icon ? (
+                      <Image
+                        src={tokenDetails[0].icon}
+                        height={24}
+                        width={24}
+                      />
+                    ) : (
+                      <GradientAvatar
+                        name={tokenDetails[0].name}
+                        size={'w-6 h-6'}
+                      />
+                    )}
+                  </>
                 )}
+                <div
+                  className={`flex ml-2 ${
+                    onModal ? 'sm:text-2xl text-base' : 'text-base'
+                  }`}
+                >
+                  {addGrayToDecimalInput(
+                    floatedNumberWithCommas(tokenDetails[0].amount)
+                  )}
+                  &nbsp;
+                  {tokenDetails[0].symbol}
+                </div>
               </>
+            ) : (
+              <TokenCollection numberVisible={3} tokenDetails={tokenDetails} />
             )}
-            <div
-              className={`flex ml-2 ${
-                onModal ? 'sm:text-2xl text-base' : 'text-base'
-              }`}
-            >
-              {addGrayToDecimalInput(floatedNumberWithCommas(amount))}&nbsp;
-              {tokenSymbol}
-            </div>
           </div>
+          {/* Transaction direction: e.g "invested in", "to", "from" ... */}
           <p className={`text-gray-syn4 ${onModal ? 'mx-4' : 'mx-3'}`}>
             {getTransactionText(transactionType, onModal)}
           </p>
+          {/* Destination */}
           <div className="flex">
-            {!onModal &&
-            transactionType === 'incoming' &&
-            isTransactionAnnotated ? (
+            {addresses.length === 1 ? ( // a distribution can have multiple destination addresses
               <>
-                {AddressIsMember(address) && (
-                  <div className="mx-2 flex items-center">
+                {!onModal &&
+                transactionType === 'incoming' &&
+                isTransactionAnnotated ? (
+                  <>
+                    {AddressIsMember(addresses[0]) && (
+                      <div className="mx-2 flex items-center">
+                        <Image
+                          src={'/images/User_Icon.svg'}
+                          height={24}
+                          width={24}
+                        />
+                      </div>
+                    )}
+                  </>
+                ) : null}
+                {onModal && category === 'DEPOSIT' ? (
+                  <div className="mr-2 flex items-center">
                     <Image
                       src={'/images/User_Icon.svg'}
                       height={24}
                       width={24}
                     />
                   </div>
-                )}
+                ) : null}
+                <div
+                  className={`${
+                    onModal ? 'sm:text-2xl text-base' : 'text-base'
+                  }`}
+                >
+                  {companyName
+                    ? companyName
+                    : !web3.utils.isAddress(addresses[0])
+                    ? addresses[0]
+                    : formatAddress(addresses[0], 6, 4)}
+                </div>
               </>
-            ) : null}
-            {onModal && category === 'DEPOSIT' ? (
-              <div className="mr-2 flex items-center">
-                <Image src={'/images/User_Icon.svg'} height={24} width={24} />
-              </div>
-            ) : null}
-            <div
-              className={`${onModal ? 'sm:text-2xl text-base' : 'text-base'}`}
-            >
-              {companyName
-                ? companyName
-                : !web3.utils.isAddress(address)
-                ? address
-                : formatAddress(address, 6, 4)}
-            </div>
+            ) : (
+              <h2>{addresses.length} Members</h2>
+            )}
           </div>
         </div>
       ) : (
@@ -146,15 +177,18 @@ const TransactionDetails: React.FC<ITransactionDetails> = ({
             <p className="text-xl">
               {companyName
                 ? companyName
-                : !web3.utils.isAddress(address)
-                ? address
-                : formatAddress(address, 6, 4)}
+                : !web3.utils.isAddress(addresses[0])
+                ? addresses[0]
+                : formatAddress(addresses[0], 6, 4)}
             </p>
             <p className="text-gray-syn4 text-xl ml-2">{round}</p>
           </div>
           <div className={`flex mt-4 text-4.5xl`}>
-            {addGrayToDecimalInput(floatedNumberWithCommas(amount))}&nbsp;
-            {tokenSymbol}
+            {addGrayToDecimalInput(
+              floatedNumberWithCommas(tokenDetails[0].amount)
+            )}
+            &nbsp;
+            {tokenDetails[0].symbol}
           </div>
         </div>
       )}

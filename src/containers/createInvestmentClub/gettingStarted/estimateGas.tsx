@@ -1,7 +1,6 @@
 import { getNativeTokenPrice } from '@/utils/api/transactions';
 import { AppState } from '@/state';
 import { getWeiAmount } from '@/utils/conversions';
-import { isDev } from '@/utils/environment';
 import axios from 'axios';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';

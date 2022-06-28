@@ -76,7 +76,7 @@ export const Wallet: React.FC = () => {
       {/* hide wallet on signin page */}
       <div className="wallet-connect">
         {status === Status.CONNECTED ? (
-          <AddressMenuDropDown web3={web3} />
+          <AddressMenuDropDown Web3={web3} />
         ) : (
           <NotConnectedButton />
         )}

@@ -10,6 +10,7 @@ import { formatDate, isZeroAddress, pastDate } from '@/utils';
 import { getTokenDetails } from '@/utils/api';
 import { divideIfNotByZero, getWeiAmount } from '@/utils/conversions';
 import { useQuery } from '@apollo/client';
+import { isEmpty } from 'lodash';
 import { useRouter } from 'next/router';
 import { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -33,6 +34,7 @@ const useClubERC20s = () => {
     web3
   } = web3Instance;
   const accountAddress = useMemo(() => account.toLocaleLowerCase(), [account]);
+  const [isLoading, setIsLoading] = useState(true);
 
   // Retrieve syndicates that I manage
   const { loading, refetch, data } = useQuery(MY_CLUBS_QUERY, {
@@ -68,203 +70,222 @@ const useClubERC20s = () => {
         where: { memberAddress: accountAddress }
       });
     }
-  }, [router.isReady, account, activeNetwork.chainId]);
+  }, [
+    router.isReady,
+    activeNetwork.chainId,
+    accountAddress,
+    refetch,
+    refetchMyClubs
+  ]);
 
   const [clubIAmMember, setClubIamMember] = useState([]);
   const [myClubs, setMyClubs] = useState([]);
 
+  // process clubs a given wallet has invested into
   useEffect(() => {
+    if (memberClubLoading) return;
+
     processClubERC20Tokens(clubIAmMember).then((data) => {
       dispatch(setOtherClubERC20s(data));
     });
-  }, [JSON.stringify(clubIAmMember), activeNetwork]);
+  }, [activeNetwork, clubIAmMember, memberClubLoading]);
 
+  // Process clubs a given wallet manages
   useEffect(() => {
+    if (loading || isEmpty(web3)) return;
+
     processClubERC20Tokens(myClubs).then((data) => {
       dispatch(setMyClubERC20s(data));
       dispatch(setLoadingClubERC20s(false));
     });
-  }, [JSON.stringify(myClubs), activeNetwork]);
+  }, [JSON.stringify(myClubs), activeNetwork, loading]);
 
   const processClubERC20Tokens = async (tokens) => {
-    dispatch(setLoadingClubERC20s(false));
-
     if (!tokens || !tokens?.length) {
       return [];
     }
 
-    const processedTokens = await Promise.all([
-      ...tokens.map(
-        async ({
-          contractAddress,
-          members,
-          ownerAddress,
-          totalDeposits,
-          totalSupply,
-          startTime,
-          endTime,
-          maxMemberCount,
-          requiredToken,
-          requiredTokenMinBalance,
-          depositAmount,
-          maxTotalSupply
-        }) => {
-          let clubERC20Contract;
-          let decimals = 0;
-          let clubName = '';
-          let clubSymbol = '';
+    setIsLoading(true);
 
-          try {
-            clubERC20Contract = new ClubERC20Contract(
-              contractAddress,
-              web3,
-              activeNetwork
-            );
-
-            decimals = await clubERC20Contract.decimals();
-            clubName = await clubERC20Contract.name();
-            clubSymbol = await clubERC20Contract.symbol();
-          } catch (error) {
-            // error is thrown for clubs that were used in claim flow.
-            return;
-          }
-
-          const maxTotalSupplyFromWei = getWeiAmount(
-            web3,
-            maxTotalSupply,
-            +decimals,
-            false
-          );
-
-          const totalSupplyFromWei = getWeiAmount(
-            web3,
+    const processedTokens = await (
+      await Promise.all([
+        ...tokens.map(
+          async ({
+            contractAddress,
+            members,
+            ownerAddress,
+            totalDeposits,
             totalSupply,
-            decimals,
-            false
-          );
+            startTime,
+            endTime,
+            maxMemberCount,
+            requiredToken,
+            requiredTokenMinBalance,
+            depositAmount,
+            maxTotalSupply
+          }) => {
+            let clubERC20Contract;
+            let decimals = 0;
+            let clubName = '';
+            let clubSymbol = '';
 
-          let depositToken =
-            await syndicateContracts?.DepositTokenMintModule?.depositToken(
-              contractAddress
-            );
-
-          if (isZeroAddress(depositToken)) {
-            depositToken =
-              await syndicateContracts?.SingleTokenMintModule?.depositToken(
-                contractAddress
-              );
-          }
-
-          let depositERC20TokenSymbol = activeNetwork.nativeCurrency.symbol;
-          let depositERC20TokenDecimals = activeNetwork.nativeCurrency.decimals;
-          let depositTokenLogo = activeNetwork.logo;
-
-          // checks if depositToken is ETH or not
-          let maxTotalDeposits =
-            +maxTotalSupplyFromWei / activeNetwork.nativeCurrency.exchangeRate;
-          if (!isZeroAddress(depositToken) && depositToken) {
             try {
-              const depositERC20Token = new ClubERC20Contract(
-                depositToken,
+              clubERC20Contract = new ClubERC20Contract(
+                contractAddress,
                 web3,
                 activeNetwork
               );
-              depositERC20TokenSymbol = await depositERC20Token.symbol();
-              depositERC20TokenDecimals = await depositERC20Token.decimals();
-              depositTokenLogo = await getTokenDetails(
-                depositToken,
-                activeNetwork.chainId
-              )
-                .then((res) => res.data.logo)
-                .catch(() => null);
+
+              decimals = await clubERC20Contract.decimals();
+              clubName = await clubERC20Contract.name();
+              clubSymbol = await clubERC20Contract.symbol();
             } catch (error) {
+              // error is thrown for clubs that were used in claim flow.
               return;
             }
-          }
 
-          const depositsEnabled = !pastDate(new Date(+endTime * 1000));
-
-          const memberDeposits = getWeiAmount(
-            web3,
-            depositAmount,
-            depositERC20TokenDecimals
-              ? parseInt(depositERC20TokenDecimals)
-              : 18,
-            false
-          );
-
-          let clubTotalDeposits = 0;
-          if (depositERC20TokenDecimals) {
-            clubTotalDeposits = getWeiAmount(
+            const maxTotalSupplyFromWei = getWeiAmount(
               web3,
-              totalDeposits,
-              +depositERC20TokenDecimals,
+              maxTotalSupply,
+              +decimals,
               false
             );
+
+            const totalSupplyFromWei = getWeiAmount(
+              web3,
+              totalSupply,
+              decimals,
+              false
+            );
+
+            let depositToken =
+              await syndicateContracts?.DepositTokenMintModule?.depositToken(
+                contractAddress
+              );
+
+            if (isZeroAddress(depositToken)) {
+              depositToken =
+                await syndicateContracts?.SingleTokenMintModule?.depositToken(
+                  contractAddress
+                );
+            }
+
+            let depositERC20TokenSymbol = activeNetwork.nativeCurrency.symbol;
+            let depositERC20TokenDecimals =
+              activeNetwork.nativeCurrency.decimals;
+            let depositTokenLogo = activeNetwork.logo;
+
+            // checks if depositToken is ETH or not
+            const maxTotalDeposits =
+              +maxTotalSupplyFromWei /
+              activeNetwork.nativeCurrency.exchangeRate;
+            if (!isZeroAddress(depositToken) && depositToken) {
+              try {
+                const depositERC20Token = new ClubERC20Contract(
+                  depositToken,
+                  web3,
+                  activeNetwork
+                );
+                depositERC20TokenSymbol = await depositERC20Token.symbol();
+                depositERC20TokenDecimals = await depositERC20Token.decimals();
+                depositTokenLogo = await getTokenDetails(
+                  depositToken,
+                  activeNetwork.chainId
+                )
+                  .then((res) => res.data.logo)
+                  .catch(() => null);
+              } catch (error) {
+                return;
+              }
+            }
+
+            const depositsEnabled = !pastDate(new Date(+endTime * 1000));
+
+            const memberDeposits = getWeiAmount(
+              web3,
+              depositAmount,
+              depositERC20TokenDecimals
+                ? parseInt(depositERC20TokenDecimals)
+                : 18,
+              false
+            );
+
+            let clubTotalDeposits = 0;
+            if (depositERC20TokenDecimals) {
+              clubTotalDeposits = getWeiAmount(
+                web3,
+                totalDeposits,
+                +depositERC20TokenDecimals,
+                false
+              );
+            }
+
+            // calculate ownership share
+            // we need to filter to get club tokens amount for this specific member
+            // this is not ideal.
+            // we should be able to get this value straight from the graph, similar to depositAmount.
+            const [member] = members?.filter(
+              (currentMember) =>
+                currentMember?.member?.memberAddress.toLowerCase() ===
+                account.toLowerCase()
+            );
+            const memberTokens = member?.tokens || 0;
+
+            const ownershipShare = divideIfNotByZero(
+              +memberTokens * 100,
+              totalSupply
+            );
+
+            let status = 'Open to deposits';
+
+            if (!depositsEnabled) {
+              status = 'Active';
+            } else if (
+              +totalSupplyFromWei === +maxTotalSupplyFromWei ||
+              +clubTotalDeposits === +maxTotalDeposits
+            ) {
+              status = 'Fully deposited';
+            }
+
+            return {
+              clubName,
+              clubSymbol,
+              ownershipShare,
+              depositsEnabled,
+              endTime,
+              depositERC20TokenSymbol,
+              depositTokenLogo,
+              maxMemberCount,
+              maxTotalSupply: maxTotalSupplyFromWei,
+              requiredToken,
+              requiredTokenMinBalance,
+              address: contractAddress,
+              ownerAddress,
+              totalDeposits: clubTotalDeposits,
+              membersCount: members.length,
+              memberDeposits,
+              status,
+              startTime: formatDate(new Date(+startTime * 1000)),
+              isOwner:
+                ownerAddress.toLocaleLowerCase() == account.toLocaleLowerCase()
+            };
           }
-
-          // calculate ownership share
-          // we need to filter to get club tokens amount for this specific member
-          // this is not ideal.
-          // we should be able to get this value straight from the graph, similar to depositAmount.
-          const [member] = members?.filter(
-            (currentMember) =>
-              currentMember?.member?.memberAddress.toLowerCase() ===
-              account.toLowerCase()
-          );
-          const memberTokens = member?.tokens || 0;
-
-          const ownershipShare = divideIfNotByZero(
-            +memberTokens * 100,
-            totalSupply
-          );
-
-          let status = 'Open to deposits';
-
-          if (!depositsEnabled) {
-            status = 'Active';
-          } else if (
-            +totalSupplyFromWei === +maxTotalSupplyFromWei ||
-            +clubTotalDeposits === +maxTotalDeposits
-          ) {
-            status = 'Fully deposited';
-          }
-
-          return {
-            clubName,
-            clubSymbol,
-            ownershipShare,
-            depositsEnabled,
-            endTime,
-            depositERC20TokenSymbol,
-            depositTokenLogo,
-            maxMemberCount,
-            maxTotalSupply: maxTotalSupplyFromWei,
-            requiredToken,
-            requiredTokenMinBalance,
-            address: contractAddress,
-            ownerAddress,
-            totalDeposits: clubTotalDeposits,
-            membersCount: members.length,
-            memberDeposits,
-            status,
-            startTime: formatDate(new Date(+startTime * 1000)),
-            isOwner:
-              ownerAddress.toLocaleLowerCase() == account.toLocaleLowerCase()
-          };
-        }
-      )
-    ]);
+        )
+      ])
+    ).filter((club) => club !== undefined);
 
     dispatch(setLoadingClubERC20s(false));
-    return processedTokens.filter((club) => club !== undefined);
+    setIsLoading(false);
+    return processedTokens;
   };
 
   /**
    * We need to be sure syndicateContracts is initialized before retrieving events.
    */
   useEffect(() => {
-    if (account && !memberClubLoading) {
+    if (isEmpty(web3) || memberClubLoading) return;
+
+    if (account) {
       const clubTokens = [];
       // get clubs connected account has invested in
       if (memberClubData?.members?.length) {
@@ -316,20 +337,24 @@ const useClubERC20s = () => {
         }
       }
 
-      dispatch(setLoadingClubERC20s(false));
-
       setClubIamMember(clubTokens);
+      setIsLoading(false);
+    } else {
+      dispatch(setLoadingClubERC20s(false));
+      setIsLoading(false);
     }
-    dispatch(setLoadingClubERC20s(false));
   }, [
     account,
     memberClubLoading,
     activeNetwork,
-    memberClubData?.members?.length,
-    invalidEthereumNetwork
+    memberClubData?.members,
+    invalidEthereumNetwork,
+    web3,
+    dispatch
   ]);
 
   useEffect(() => {
+    if (isEmpty(web3)) return;
     // This will reset syndicate details when we are on portfolio page.
     // The currentEthereumNetwork has been added as a dependency to trigger a re-fetch
     // whenever the Ethereum network is changed.
@@ -340,11 +365,14 @@ const useClubERC20s = () => {
       } else {
         setAccountHasClubs(false);
       }
-      setMyClubs(data.syndicateDAOs);
-    }
-  }, [account, activeNetwork, loading, JSON.stringify(data?.syndicateDAOs)]);
 
-  return { loading, memberClubLoading, accountHasClubs };
+      setMyClubs(data.syndicateDAOs);
+    } else {
+      setIsLoading(false);
+    }
+  }, [account, activeNetwork, data?.syndicateDAOs, loading]);
+
+  return { loading: isLoading, memberClubLoading, accountHasClubs };
 };
 
 export default useClubERC20s;

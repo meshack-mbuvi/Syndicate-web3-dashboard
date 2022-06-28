@@ -52,7 +52,7 @@ const SendForSignatures: FC<ILinkModal> = ({
 
   const handleClick = () => {
     router.push(
-      `/clubs/${clubAddress}/manage${'?network=' + activeNetwork.chainId}`
+      `/clubs/${clubAddress}/manage${'?chain=' + activeNetwork.network}`
     );
   };
 
@@ -69,7 +69,7 @@ const SendForSignatures: FC<ILinkModal> = ({
       clubAddress as string,
       clubInfo,
       signature,
-      activeNetwork.chainId
+      activeNetwork.network
     );
     setClubLegalAgreementSignageLink(memberSignURL);
   }, [signature, clubAddress, clubInfo]);
