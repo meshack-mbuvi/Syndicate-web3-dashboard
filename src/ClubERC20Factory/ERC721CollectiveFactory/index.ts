@@ -120,7 +120,7 @@ export class ERC721CollectiveFactory {
   ): Promise<void> {
     const collectiveName = 'Alpha Beta Punks';
     const collectiveSymbol = 'ABP';
-    const salt = web3.utils.randomHex(32);
+    const salt = this.web3.utils.randomHex(32);
     const contractAddresses = [];
     const encodedFunctions = [];
 

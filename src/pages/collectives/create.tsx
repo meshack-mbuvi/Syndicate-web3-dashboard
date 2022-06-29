@@ -1,11 +1,13 @@
 /**
  * TODO: This file is for test purposes only
  */
+import axios from 'axios';
 import PrimaryButton from '@/components/buttons/PrimaryButton';
 import { InputField } from '@/components/inputs/inputField';
 import { AppState } from '@/state';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
+import { getWeiAmount } from '@/utils/conversions';
 
 const CollectivesView: React.FC = () => {
   const {
@@ -13,7 +15,7 @@ const CollectivesView: React.FC = () => {
       syndicateContracts: { erc721CollectiveFactory }
     },
     web3Reducer: {
-      web3: { account, web3, activeNetwork }
+      web3: { account, web3 }
     }
   } = useSelector((state: AppState) => state);
 
@@ -21,10 +23,11 @@ const CollectivesView: React.FC = () => {
     useState<string>('Alpha Beta Punks');
   const [collectiveSymbol, setCollectiveSymbol] = useState<string>('ABP');
   const [salt, setSalt] = useState<number>();
-  const [contractAddresses, setContractAddresses] = useState<string[]>();
-  const [encodedFunctions, setEncodedFunctions] = useState<string[]>();
+  const [contractAddresses, setContractAddresses] = useState<string[]>([]);
+  const [encodedFunctions, setEncodedFunctions] = useState<string[]>([]);
   const [predictedAddress, setPredictedAddress] = useState<string>();
-  const [gasPrice, setGasPrice] = useState<number>(0);
+
+  const { gasPrice, getEstimateGas } = useGasEstimate();
 
   const generateSalt = () => {
     const _salt = web3.utils.randomHex(32);
@@ -53,6 +56,9 @@ const CollectivesView: React.FC = () => {
       encodedFunctions
     });
 
+    setContractAddresses([]);
+    setEncodedFunctions([]);
+
     erc721CollectiveFactory.createERC721Collective(
       account,
       collectiveName,
@@ -64,10 +70,6 @@ const CollectivesView: React.FC = () => {
       onTxReceipt,
       onTxFail
     );
-  };
-
-  const getEstimateGas = () => {
-    erc721CollectiveFactory.getEstimateGas(account, setGasPrice);
   };
 
   const onTxConfirm = (txn: unknown) => {
@@ -219,3 +221,51 @@ const CollectivesView: React.FC = () => {
 };
 
 export default CollectivesView;
+
+const useGasEstimate = (): { gasPrice: number; getEstimateGas: () => void } => {
+  const {
+    initializeContractsReducer: {
+      syndicateContracts: { erc721CollectiveFactory }
+    },
+    web3Reducer: {
+      web3: { account, web3, activeNetwork }
+    }
+  } = useSelector((state: AppState) => state);
+
+  const [gasPrice, setGasPrice] = useState<number>(0);
+  const [gasBaseFee, setGasBaseFee] = useState<number>(0);
+  const [gasUnits, setGasUnits] = useState(0);
+
+  useEffect(() => {
+    if (!gasUnits || !gasBaseFee) return;
+    const estimatedGasInWei = gasUnits * (gasBaseFee + 2);
+    const estimatedGas = getWeiAmount(
+      web3,
+      estimatedGasInWei.toString(),
+      18,
+      false
+    );
+    setGasPrice(+estimatedGas);
+  }, [gasUnits, gasBaseFee]);
+
+  const getEstimateGas = async () => {
+    await Promise.all([
+      erc721CollectiveFactory.getEstimateGas(account, setGasUnits),
+      await axios
+        .get(
+          `${activeNetwork.blockExplorer.api}/api?module=proxy&action=eth_gasPrice`
+        )
+        .then((res) => {
+          const baseFee = res.data.result;
+          const baseFeeInDecimal = parseInt(baseFee, 16);
+          setGasBaseFee(baseFeeInDecimal);
+        })
+        .catch(() => 0)
+    ]);
+  };
+
+  return {
+    gasPrice,
+    getEstimateGas
+  };
+};

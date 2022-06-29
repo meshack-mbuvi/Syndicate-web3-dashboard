@@ -39,7 +39,7 @@ export const CONTRACT_ADDRESSES = Object.freeze({
     OnePerAddressMintModule: '',
     OwnerMintModule: '0x60bfff0B6e064673B61f3eB9dEA5ED0f3BbB5471',
     OwnerMintModule2: '',
-    erc721CollectiveFactory: '' // TODO
+    erc721CollectiveFactory: '0xe16d032f1cf5974cf8d1985278b464ed91220733'
   },
   // Matic
   137: {
