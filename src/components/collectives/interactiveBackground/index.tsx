@@ -19,7 +19,9 @@ export const CollectivesInteractiveBackground: React.FC<Props> = ({
   };
 
   return (
-    <div className={`relative ${heightClass} ${widthClass} overflow-hidden`}>
+    <div
+      className={`relative ${heightClass} ${widthClass} overflow-hidden select-none`}
+    >
       <Particles
         id="particles-js"
         init={particlesInit}
@@ -141,7 +143,7 @@ export const CollectivesInteractiveBackground: React.FC<Props> = ({
             <img
               src={floatingIcon}
               alt="Collective icon"
-              className="w-20 h-20 bg-gray-syn7"
+              className="w-20 h-20 bg-gray-syn7 select-none"
             />
           </div>
         </div>
