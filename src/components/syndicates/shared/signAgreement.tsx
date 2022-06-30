@@ -165,9 +165,9 @@ const SignAgreement: React.FC<ISignAgreementProps> = ({
     if (router.isReady && isFieldInfoEmpty) {
       const path = router.pathname.includes('manage')
         ? `/clubs/${clubAddress}/manage/legal/prepare${
-            '?network=' + activeNetwork.chainId
+            '?chain=' + activeNetwork.network
           }`
-        : `/clubs/${clubAddress}${'?network=' + activeNetwork.chainId}`;
+        : `/clubs/${clubAddress}${'?chain=' + activeNetwork.network}`;
       router.push(path);
     }
   }, [clubAddress, fieldInfo, router]);

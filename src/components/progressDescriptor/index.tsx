@@ -1,4 +1,5 @@
 import { Spinner } from '../shared/spinner';
+import { BlockExplorerLink } from '../syndicates/shared/BlockExplorerLink';
 
 export enum ProgressDescriptorState {
   PENDING = 'PENDING',
@@ -10,7 +11,7 @@ export enum ProgressDescriptorState {
 interface Props {
   title: string;
   description?: string;
-  link?: { label: string; URL: string };
+  transactionHash?: string;
   state: ProgressDescriptorState;
   requiresUserAction?: boolean;
 }
@@ -18,7 +19,7 @@ interface Props {
 export const ProgressDescriptor: React.FC<Props> = ({
   title,
   description,
-  link,
+  transactionHash,
   state,
   requiresUserAction = false
 }) => {
@@ -64,17 +65,16 @@ export const ProgressDescriptor: React.FC<Props> = ({
       {description && (
         <div className="text-sm text-gray-syn4 mt-2">{description}</div>
       )}
-      {link?.URL && (
-        <a
-          href={link.URL}
-          className="block mt-4 text-blue-neptune flex justify-center space-x-2"
-          target="_blank"
-          rel="noreferrer"
-        >
-          <div>{link.label}</div>
-          <img src="/images/externalLink.svg" alt="External link icon" />
-        </a>
-      )}
+      {transactionHash ? (
+        <div className="flex justify-center mt-4">
+          <div className="w-fit-content">
+            <BlockExplorerLink
+              resourceId={transactionHash}
+              resource="transaction"
+            />
+          </div>
+        </div>
+      ) : null}
     </div>
   );
 };

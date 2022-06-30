@@ -59,9 +59,8 @@ const useClubTokenMembers = () => {
       }) => {
         return {
           memberAddress,
-          ownershipShare:
-            parseInt(ownershipShare) /
-            activeNetwork.nativeCurrency.exchangeRate,
+          // this is a percentage conversion with a base of 10000, 1% == 10000
+          ownershipShare: parseInt(ownershipShare) / 10000,
           symbol,
           clubTokens: getWeiAmount(web3, tokens, tokenDecimals, false),
           totalSupply: totalSupply,

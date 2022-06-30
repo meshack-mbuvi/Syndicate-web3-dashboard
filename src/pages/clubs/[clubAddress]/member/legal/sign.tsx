@@ -30,7 +30,7 @@ const MemberAgreementPage: NextPage = () => {
 
   const navbarItems = [
     {
-      url: `/clubs/${clubAddress}${'?network=' + activeNetwork.chainId}`,
+      url: `/clubs/${clubAddress}${'?chain=' + activeNetwork.network}`,
       navItemText: 'Exit'
     },
     {
@@ -68,9 +68,7 @@ const MemberAgreementPage: NextPage = () => {
     });
 
     if (depositsEnabled) {
-      router.push(
-        `/clubs/${clubAddress}${'?network=' + activeNetwork.chainId}`
-      );
+      router.push(`/clubs/${clubAddress}${'?chain=' + activeNetwork.network}`);
     } else {
       setShowSuccessModal(true);
     }
@@ -115,9 +113,7 @@ const MemberAgreementPage: NextPage = () => {
             </div>
 
             <Link
-              href={`/clubs/${clubAddress}${
-                '?network=' + activeNetwork.chainId
-              }`}
+              href={`/clubs/${clubAddress}${'?chain=' + activeNetwork.network}`}
             >
               <CtaButton onClick={() => setShowSuccessModal(false)}>
                 Back to club dashboard

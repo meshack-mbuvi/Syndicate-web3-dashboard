@@ -21,7 +21,7 @@ const MakeDistributionCard: React.FC = () => {
       href={
         isDemoMode
           ? undefined
-          : `/clubs/${clubAddress}/distribute?network=${activeNetwork.chainId}`
+          : `/clubs/${clubAddress}/distribute?chain=${activeNetwork.network}`
       }
     >
       <div className="rounded-t-2xl space-x-4 flex items-stretch">

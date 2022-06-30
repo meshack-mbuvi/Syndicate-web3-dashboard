@@ -1,8 +1,3 @@
-import ArrowDown from '@/components/icons/arrowDown';
-import { NumberField, TextField } from '@/components/inputs';
-import Modal, { ModalStyle } from '@/components/modal';
-import { Spinner } from '@/components/shared/spinner';
-import { BlockExplorerLink } from '@/components/syndicates/shared/BlockExplorerLink';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { OldClubERC20Contract } from '@/ClubERC20Factory/clubERC20/oldClubERC20';
@@ -192,6 +187,13 @@ export const MintAndShareTokens: React.FC<Props> = ({
   }, [amountToMint, totalSupply]);
 
   const refreshClubDetails = () => dispatch(setERC20Token(erc20TokenContract));
+
+  // refresh club details whenever a change in member count
+  // is detected.
+  useEffect(() => {
+    refreshClubDetails();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [memberCount]);
 
   const handleCloseSuccessModal = () => {
     setConfirm(false);
@@ -410,8 +412,15 @@ export const MintAndShareTokens: React.FC<Props> = ({
   };
 
   const onTxFail = (error) => {
-    setMinting(false);
-    setMintFailed(true);
+    const { message } = error;
+    // this error is triggered on Polygon after transaction success.
+    // we don't need to show the failure modal.
+    if (message.indexOf('Transaction was not mined within 50 blocks') > -1) {
+      setMintFailed(false);
+    } else {
+      setMintFailed(true);
+      setMinting(false);
+    }
     setConfirm(false);
     const { code } = error;
     if (code == 4001) {

@@ -10,6 +10,7 @@ import { useQuery } from '@apollo/client';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useDemoMode } from './useDemoMode';
 
 const useFetchMerkleProof: any = (skipQuery = false) => {
   const dispatch = useDispatch();
@@ -23,6 +24,8 @@ const useFetchMerkleProof: any = (skipQuery = false) => {
     }
   } = useSelector((state: AppState) => state);
 
+  const isDemoMode = useDemoMode();
+
   const router = useRouter();
 
   const {
@@ -31,7 +34,7 @@ const useFetchMerkleProof: any = (skipQuery = false) => {
     refetch: refetchMerkle
   } = useQuery(INDEX_AND_PROOF, {
     variables: { clubAddress, address, chainId: activeNetwork.chainId },
-    skip: !address || skipQuery || !activeNetwork.chainId,
+    skip: !address || skipQuery || !activeNetwork.chainId || isDemoMode,
     context: { clientName: 'backend', chainId: activeNetwork.chainId }
   });
 

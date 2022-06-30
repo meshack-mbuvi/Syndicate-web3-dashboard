@@ -8,6 +8,7 @@ import {
 import { useQuery } from '@apollo/client';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useDemoMode } from './useDemoMode';
 
 const useFetchAirdropInfo: any = (skipQuery) => {
   const dispatch = useDispatch();
@@ -22,6 +23,8 @@ const useFetchAirdropInfo: any = (skipQuery) => {
     }
   } = useSelector((state: AppState) => state);
 
+  const isDemoMode = useDemoMode();
+
   // Fetch existing claims
   const {
     loading,
@@ -34,7 +37,7 @@ const useFetchAirdropInfo: any = (skipQuery) => {
         treeIndex: myMerkleProof.treeIndex
       }
     },
-    skip: !account || !activeNetwork.chainId || skipQuery,
+    skip: !account || !activeNetwork.chainId || skipQuery || isDemoMode,
     context: { clientName: 'theGraph', chainId: activeNetwork.chainId }
   });
 

@@ -1,5 +1,7 @@
-import { showWalletModal } from '@/state/wallet/actions';
+import { estimateGas } from '@/ClubERC20Factory/shared/getGasEstimate';
+import { H4 } from '@/components/typography';
 import { AppState } from '@/state';
+import { showWalletModal } from '@/state/wallet/actions';
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -8,7 +10,6 @@ import Layout from 'src/components/layout';
 import SEO from 'src/components/seo';
 import Head from 'src/components/syndicates/shared/HeaderTitle';
 import { getWeiAmount } from 'src/utils/conversions';
-import { H4 } from '@/components/typography';
 
 const GenerateDai: React.FC = () => {
   const daiABI = require('src/utils/abi/rinkeby-dai');
@@ -125,9 +126,11 @@ const GenerateDai: React.FC = () => {
     const amountInWei = getWeiAmount(web3, amount, tokenDecimals, true);
 
     try {
+      const gasEstimate = await estimateGas(web3);
+
       await tokenContract.methods
         .mint(account, amountInWei)
-        .send({ from: account });
+        .send({ from: account, gasPrice: gasEstimate });
 
       const balance = await tokenContract.methods
         .balanceOf(account)

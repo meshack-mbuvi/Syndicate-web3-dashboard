@@ -7,6 +7,7 @@ import { useAccountTokens } from '@/hooks/useAccountTokens';
 import { useClubDepositsAndSupply } from '@/hooks/useClubDepositsAndSupply';
 import { useIsClubOwner } from '@/hooks/useClubOwner';
 import { useDemoMode } from '@/hooks/useDemoMode';
+import { useGetNetwork } from '@/hooks/web3/useGetNetwork';
 import { AppState } from '@/state';
 import { setClubMembers } from '@/state/clubMembers';
 import {
@@ -68,6 +69,8 @@ const Layout: FC<Props> = ({
   } = useSelector((state: AppState) => state);
 
   const router = useRouter();
+  const { chain } = router.query;
+  const urlNetwork = useGetNetwork(chain);
 
   const isDemoMode = useDemoMode();
 
@@ -103,14 +106,18 @@ const Layout: FC<Props> = ({
   const handleRouting = () => {
     if (pathname.includes('/manage') && !isOwner) {
       router.replace(
-        `/clubs/${clubAddress}${'?network=' + activeNetwork.chainId}`
+        `/clubs/${clubAddress}${
+          '?chain=' + urlNetwork?.network || activeNetwork.network
+        }`
       );
     } else if (
       (pathname === '/clubs/[clubAddress]' || pathname.includes('/member')) &&
       isOwner
     ) {
       router.replace(
-        `/clubs/${clubAddress}/manage${'?network=' + activeNetwork.chainId}`
+        `/clubs/${clubAddress}/manage${
+          '?chain=' + urlNetwork?.network || activeNetwork.network
+        }`
       );
     }
   };
@@ -121,7 +128,8 @@ const Layout: FC<Props> = ({
       !clubAddress ||
       status === Status.CONNECTING ||
       !owner ||
-      !isReady
+      !isReady ||
+      isDemoMode
     )
       return;
 
@@ -133,7 +141,8 @@ const Layout: FC<Props> = ({
     loadingClubDetails,
     status,
     isReady,
-    isOwner
+    isOwner,
+    isDemoMode
   ]);
 
   // Load club details if we are on the club page
@@ -153,7 +162,7 @@ const Layout: FC<Props> = ({
     },
     context: { clientName: 'theGraph', chainId: activeNetwork.chainId },
     notifyOnNetworkStatusChange: true,
-    skip: !address || loading,
+    skip: !address || loading || !activeNetwork.chainId,
     fetchPolicy: 'no-cache'
   });
 
@@ -272,7 +281,7 @@ const Layout: FC<Props> = ({
             `polygon`,
             `MATIC`
           ]}
-          title="Home"
+          title="Syndicate"
         />
 
         <Header

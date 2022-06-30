@@ -8,6 +8,8 @@ import { useSelector } from 'react-redux';
 import { AppState } from '@/state';
 import { isDev } from '@/utils/environment';
 import { useFlags } from 'launchdarkly-react-client-sdk';
+import { useGetNetworkById, useGetNetwork } from '@/hooks/web3/useGetNetwork';
+import { useProvider } from '@/hooks/web3/useProvider';
 
 const NetworkMenuDropDown: FC = () => {
   const {
@@ -19,20 +21,42 @@ const NetworkMenuDropDown: FC = () => {
   const { polygon } = useFlags();
 
   const { switchNetworks } = useConnectWalletContext();
+  const { providerName } = useProvider();
 
   const [nativeBalance, setNativeBalance] = useState('');
   const [blockNumber, setblockNumber] = useState('');
   const [gas, setGas] = useState('');
+  const [showInfo, setShowInfo] = useState<number>(0);
 
   // Switch networks based on URL param
   const router = useRouter();
-  const { network } = router.query;
+  const { network, chain } = router.query;
 
   useEffect(() => {
+    let chainId;
     if (network) {
-      switchNetworks(+network);
+      const _chain = VerifyChainId(+network);
+      chainId = +_chain;
     }
-  }, [network]);
+    if (chain) {
+      const chainID = GetChainIdByName(chain);
+      chainId = +chainID;
+    }
+    if (chainId) {
+      switchNetworks(+chainId);
+    }
+  }, [network, chain]);
+
+  const GetChainIdByName = (name) => {
+    const network = useGetNetwork(name);
+
+    return network?.chainId;
+  };
+
+  const VerifyChainId = (chainId) => {
+    const network = useGetNetworkById(chainId);
+    return network?.chainId;
+  };
 
   const getNativeBalance = async (address: string) => {
     try {
@@ -75,6 +99,20 @@ const NetworkMenuDropDown: FC = () => {
       clearInterval(gasAndBlockInterval);
     };
   }, [activeNetwork]);
+
+  useEffect(() => {
+    if (showInfo !== 0) {
+      setTimeout(() => {
+        setShowInfo(0);
+      }, 10000);
+    }
+  }, [showInfo]);
+
+  const networkSwitchAction = (chainId) => {
+    providerName !== 'WalletConnect'
+      ? switchNetworks(chainId)
+      : setShowInfo(chainId);
+  };
 
   return (
     <Menu as="div" className="relative">
@@ -124,7 +162,7 @@ const NetworkMenuDropDown: FC = () => {
                     onClick={
                       value.chainId !== activeNetwork.chainId
                         ? () => {
-                            switchNetworks(value.chainId);
+                            networkSwitchAction(value.chainId);
                           }
                         : null
                     }
@@ -144,7 +182,7 @@ const NetworkMenuDropDown: FC = () => {
                       </span>
                     </div>
 
-                    {value.chainId === activeNetwork.chainId && (
+                    {value.chainId === activeNetwork.chainId ? (
                       <div>
                         <div
                           className={`flex flex-col justify-between text-left px-3  pb-3 text-sm ${
@@ -180,6 +218,14 @@ const NetworkMenuDropDown: FC = () => {
                           </span>
                         </a>
                       </div>
+                    ) : (
+                      showInfo === value.chainId && (
+                        <div className="text-xs text-gray-syn3 mt-1">
+                          You are connected via WalletConnect. In order to use{' '}
+                          {value.name}, you must change the network in your
+                          wallet.
+                        </div>
+                      )
                     )}
                   </button>
                 )

@@ -51,7 +51,7 @@ const ShareOrChangeLegalDocuments: FC<ILinkModal> = ({
 
   const handleClick = () => {
     router.push(
-      `/clubs/${clubAddress}/manage${'?network=' + activeNetwork.chainId}`
+      `/clubs/${clubAddress}/manage${'?chain=' + activeNetwork.network}`
     );
     setShowShareOrChangeDocsModal(false);
   };
@@ -75,7 +75,7 @@ const ShareOrChangeLegalDocuments: FC<ILinkModal> = ({
       clubAddress as string,
       clubInfo,
       signature,
-      activeNetwork.chainId
+      activeNetwork.network
     );
     setClubLegalAgreementSignageLink(memberSignURL);
   }, [signature, clubAddress, clubInfo, clubAddress]);

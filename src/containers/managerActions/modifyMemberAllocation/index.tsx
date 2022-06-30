@@ -154,8 +154,15 @@ const ModifyClubTokens: React.FC<{
   };
 
   const onTxFail = (error) => {
-    setUpdateFailed(true);
-    setUpdatingCapTable(false);
+    const { message } = error;
+    // this error is triggered on Polygon after transaction success.
+    // we don't need to show the failure modal.
+    if (message.indexOf('Transaction was not mined within 50 blocks') > -1) {
+      setUpdateFailed(false);
+    } else {
+      setUpdateFailed(true);
+      setUpdatingCapTable(false);
+    }
     setConfirm(false);
 
     const { code } = error;

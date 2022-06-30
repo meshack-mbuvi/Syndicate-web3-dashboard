@@ -112,7 +112,7 @@ export class ClubERC20FactoryNative {
       onTxConfirm(receipt.transactionHash);
 
       const createEvents = await this.clubERC20FactoryNative.getPastEvents(
-        'ClubERC20Created',
+        'ERC20ClubCreated',
         {
           filter: { transactionHash: receipt.transactionHash },
           fromBlock: receipt.blockNumber,
@@ -123,7 +123,7 @@ export class ClubERC20FactoryNative {
       if (receipt.isSuccessful) {
         onTxReceipt({
           ...receipt,
-          events: { ClubERC20Created: createEvents[0] }
+          events: { ERC20ClubCreated: createEvents[0] }
         });
       } else {
         throw 'Transaction Failed';

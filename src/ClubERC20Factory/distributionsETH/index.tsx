@@ -1,4 +1,5 @@
 import DISTRIBUTION_ETH_ABI from 'src/contracts/DistributionModuleEth.json';
+import { estimateGas } from '../shared/getGasEstimate';
 import { getGnosisTxnInfo } from '../shared/gnosisTransactionInfo';
 
 export class DistributionsETH {
@@ -88,12 +89,15 @@ export class DistributionsETH {
       await this.init();
     }
 
+    const gasEstimate = await estimateGas(this.web3);
+
     await new Promise((resolve, reject) => {
       this.distributionETH.methods
         .multiMemberDistribute(club, members, batchIdentifier)
         .send({
           from: account,
-          value: totalDistributionAmount
+          value: totalDistributionAmount,
+          gasPrice: gasEstimate
         })
         .on('transactionHash', (transactionHash) => {
           onTxConfirm(transactionHash);

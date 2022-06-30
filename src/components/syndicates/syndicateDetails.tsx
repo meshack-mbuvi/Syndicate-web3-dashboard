@@ -13,6 +13,7 @@ import { floatedNumberWithCommas } from '@/utils/formattedNumbers';
 import { mockDepositERC20Token } from '@/utils/mockdata';
 import { NetworkStatus, useQuery } from '@apollo/client';
 import abi from 'human-standard-token-abi';
+import { isEmpty } from 'lodash';
 import { useRouter } from 'next/router';
 import React, { FC, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -96,7 +97,7 @@ const SyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
     },
     notifyOnNetworkStatusChange: true,
     context: { clientName: 'theGraph', chainId: activeNetwork.chainId },
-    skip: !address || loading || !activeNetwork.chainId,
+    skip: !address || loading || !activeNetwork.chainId || isDemoMode,
     fetchPolicy: 'no-cache'
   });
 
@@ -181,7 +182,7 @@ const SyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
 
   // get and set current token details
   useEffect(() => {
-    if (!nativeDepositToken && depositToken && web3) {
+    if (!nativeDepositToken && depositToken && !isEmpty(web3)) {
       // set up token contract
       const tokenContract = new web3.eth.Contract(abi, depositToken);
       setDepositTokenContract(tokenContract);
@@ -224,7 +225,7 @@ const SyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
                 header: 'Club tokens minted',
                 content: (
                   <span>
-                    <NumberTreatment numberValue={totalDeposits} />
+                    <NumberTreatment numberValue={totalSupply} />
                     &nbsp;{symbol}
                   </span>
                 ),
@@ -269,7 +270,7 @@ const SyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
                 header: 'Club tokens minted',
                 content: (
                   <span>
-                    <NumberTreatment numberValue={totalDeposits} /> {symbol}
+                    <NumberTreatment numberValue={totalSupply} /> {symbol}
                   </span>
                 ),
                 tooltip: ''

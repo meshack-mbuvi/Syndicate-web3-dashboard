@@ -81,7 +81,7 @@ export const DetailedTile: React.FC<Props> = ({
   }, [options, width]);
 
   const renderedButtons = options.map((option, index) => (
-    <>
+    <React.Fragment key={index}>
       <button
         className={`h-full transition-opacity border-gray-syn6 inline-block text-center ${
           disabledIndices?.includes(index) && 'cursor-not-allowed'
@@ -121,7 +121,7 @@ export const DetailedTile: React.FC<Props> = ({
           <div className="text-xs text-gray-syn4">{option.subTitle}</div>
         )}
       </button>
-    </>
+    </React.Fragment>
   ));
 
   return (

@@ -44,7 +44,7 @@ export const TokenLogicList: React.FC<Props> = ({
   }
 
   const renderedTokenOptions = tokenRules.map((rule, index) => (
-    <>
+    <React.Fragment key={index}>
       {/* And / Or switch */}
       {index === 1 && (
         <div className="border-none relative">
@@ -201,7 +201,7 @@ export const TokenLogicList: React.FC<Props> = ({
           </button>
         </div>
       </div>
-    </>
+    </React.Fragment>
   ));
 
   return (

@@ -119,10 +119,9 @@ const Header: React.FC<props> = ({
         {showMobileNav ? (
           <div className="fixed sm:hidden w-full flex-col mt-20 py-2 bg-gray-syn8 justify-center shadow-xl">
             {navItems.map(({ navItemText, url, isLegal }, index) => (
-              <>
+              <React.Fragment key={index}>
                 <div className="container mx-auto items-center">
                   <NavBarNavItem
-                    key={index}
                     navItemText={navItemText}
                     url={url}
                     isLegal={isLegal}
@@ -131,7 +130,7 @@ const Header: React.FC<props> = ({
                 <div className="pl-6-percent">
                   <div className="border-b-1 border-gray-border" />
                 </div>
-              </>
+              </React.Fragment>
             ))}
             <NetworkComponent />
             <WalletComponent />

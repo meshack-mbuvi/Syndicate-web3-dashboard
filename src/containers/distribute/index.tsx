@@ -82,11 +82,11 @@ const Distribute: FC = () => {
       if (depositsEnabled || !isOwner) {
         if (!isOwner) {
           router.replace(
-            `/clubs/${clubAddress}${'?network=' + activeNetwork.chainId}`
+            `/clubs/${clubAddress}${'?chain=' + activeNetwork.network}`
           );
         } else {
           router.replace(
-            `/clubs/${clubAddress}/manage${'?network=' + activeNetwork.chainId}`
+            `/clubs/${clubAddress}/manage${'?chain=' + activeNetwork.network}`
           );
         }
       }
@@ -171,6 +171,7 @@ const Distribute: FC = () => {
               tokenSymbol,
               price,
               logo,
+              tokenValue,
               ...rest
             }) => {
               const {
@@ -191,14 +192,13 @@ const Distribute: FC = () => {
                   symbol: tokenSymbol,
                   tokenAmount: tokenBalance,
                   maximumTokenAmount:
-                    tokenSymbol == 'ETH' && gasEstimate?.tokenAmount
+                    tokenSymbol == activeNetwork.nativeCurrency.symbol &&
+                    gasEstimate?.tokenAmount
                       ? parseFloat(`${tokenBalance}`) -
                         parseFloat(`${gasEstimate.tokenAmount}`)
                       : tokenBalance,
                   price: price?.usd ?? 0,
-                  fiatAmount:
-                    parseFloat(Number(price) ? price : price?.usd ?? 0) *
-                    parseFloat(tokenBalance),
+                  fiatAmount: tokenValue,
                   isEditingInFiat: false,
                   warning: ''
                 };
@@ -243,12 +243,14 @@ const Distribute: FC = () => {
     };
 
     if (tokensResult.length) {
-      const [ETH] = tokensResult.filter((token) => token.tokenSymbol === 'ETH');
+      const [ETH] = tokensResult.filter(
+        (token) => token.tokenSymbol === activeNetwork.nativeCurrency.symbol
+      );
       eth.available = ETH?.tokenBalance || '0';
     }
 
     const [ethToken] = distributionTokens.filter(
-      (token) => token.symbol == 'ETH'
+      (token) => token.symbol == activeNetwork.nativeCurrency.symbol
     );
 
     // update total selected amount
@@ -273,7 +275,9 @@ const Distribute: FC = () => {
       }
 
       // find index of ETH token on _options
-      const ethIndex = _options.findIndex((option) => option.symbol == 'ETH');
+      const ethIndex = _options.findIndex(
+        (option) => option.symbol == activeNetwork.nativeCurrency.symbol
+      );
 
       if (ethIndex > -1) {
         // update warning on ETH token
@@ -322,7 +326,7 @@ const Distribute: FC = () => {
   // Redirect to /manage
   const handleExitClick = () =>
     router.replace(
-      `/clubs/${clubAddress}/manage${'?network=' + activeNetwork.chainId}`
+      `/clubs/${clubAddress}/manage${'?chain=' + activeNetwork.network}`
     );
 
   const handleSetActiveIndex = (event) => {
