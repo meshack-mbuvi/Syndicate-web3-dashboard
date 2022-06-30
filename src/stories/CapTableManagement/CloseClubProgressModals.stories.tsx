@@ -1,4 +1,5 @@
-import { ProgressModal, ProgressModalState } from '@/components/progressModal';
+import { ProgressState } from '@/components/progressCard';
+import { ProgressModal } from '@/components/progressModal';
 
 export default {
   title:
@@ -6,10 +7,10 @@ export default {
   argTypes: {
     state: {
       options: [
-        ProgressModalState.FAILURE,
-        ProgressModalState.PENDING,
-        ProgressModalState.SUCCESS,
-        ProgressModalState.CONFIRM
+        ProgressState.FAILURE,
+        ProgressState.PENDING,
+        ProgressState.SUCCESS,
+        ProgressState.CONFIRM
       ],
       control: { type: 'select' }
     }
@@ -28,7 +29,7 @@ ConfirmInWallet.args = {
   isVisible: true,
   title: 'Confirm in wallet',
   description: 'Confirm the modification of club settings in your wallet.',
-  state: ProgressModalState.CONFIRM
+  state: ProgressState.CONFIRM
 };
 
 export const Pending = Template.bind({});
@@ -39,7 +40,7 @@ Pending.args = {
     'This could take anywhere from seconds to hours depending on network congestion and the gas fees you set. You can safely leave this page while you wait.',
   etherscanHash: dummyTransactionHash,
   transactionType: 'transaction',
-  state: ProgressModalState.PENDING
+  state: ProgressState.PENDING
 };
 
 export const Success = Template.bind({});
@@ -51,7 +52,7 @@ Success.args = {
     return;
   },
   buttonFullWidth: false,
-  state: ProgressModalState.SUCCESS
+  state: ProgressState.SUCCESS
 };
 
 export const Failure = Template.bind({});
@@ -64,7 +65,7 @@ Failure.args = {
     return;
   },
   buttonFullWidth: true,
-  state: ProgressModalState.FAILURE,
+  state: ProgressState.FAILURE,
   etherscanHash: dummyTransactionHash,
   transactionType: 'transaction'
 };
