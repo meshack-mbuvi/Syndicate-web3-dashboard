@@ -214,12 +214,12 @@ export const isNativeDepositToken = async (
     ERC20tokenContract.clubERC20Contract._address
   );
 
-  if (isZeroAddress(depositToken)) {
+  if (!depositToken || isZeroAddress(depositToken)) {
     depositToken = await SingleTokenMintModule?.depositToken(
       ERC20tokenContract.clubERC20Contract._address
     );
 
-    if (isZeroAddress(depositToken)) {
+    if (!depositToken || isZeroAddress(depositToken)) {
       depositToken = '';
       _nativeDepositToken = true;
     }

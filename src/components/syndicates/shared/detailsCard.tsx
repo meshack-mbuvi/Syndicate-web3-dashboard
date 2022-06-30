@@ -32,9 +32,11 @@ export const DetailsCard: FC<Props> = (props) => {
       </div>
 
       <div className={`${customInnerWidth}`}>
-        {sections.map((section, index) => (
+        {sections.map((section, index, arr) => (
           <div
-            className={`flex justify-start visibility-container target-l-12 relative`}
+            className={`flex justify-start visibility-container target-l-12 relative ${
+              index < arr.length - 1 ? 'mr-4' : ''
+            }`}
             key={index}
           >
             <div className="flex justify-between items-start sm:my-3 my-3 w-full">
