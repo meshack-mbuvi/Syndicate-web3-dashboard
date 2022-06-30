@@ -56,6 +56,8 @@ type CreateInvestmentClubProviderProps = {
   setConfirmWallet: Dispatch<SetStateAction<boolean>>;
   setShowSaveButton: Dispatch<SetStateAction<boolean>>;
   showSaveButton: boolean;
+  editMintMaxDate: boolean;
+  setEditMintMaxDate: Dispatch<SetStateAction<boolean>>;
 };
 
 const CreateInvestmentClubContext = createContext<
@@ -98,6 +100,7 @@ const CreateInvestmentClubProvider: React.FC = ({ children }) => {
   const [processingModalDescription, setProcessingDescription] = useState('');
   const [errorModalMessage, setErrorModalMessage] = useState('');
   const [showSaveButton, setShowSaveButton] = useState(true);
+  const [editMintMaxDate, setEditMintMaxDate] = useState<boolean>(false);
   // show initial steps in create flow
   const [preClubCreationStep, setPreClubCreationStep] =
     useState<string>('invite');
@@ -295,7 +298,9 @@ const CreateInvestmentClubProvider: React.FC = ({ children }) => {
         isWalletConfirmed,
         setConfirmWallet,
         showSaveButton,
-        setShowSaveButton
+        setShowSaveButton,
+        editMintMaxDate,
+        setEditMintMaxDate
       }}
     >
       {children}
