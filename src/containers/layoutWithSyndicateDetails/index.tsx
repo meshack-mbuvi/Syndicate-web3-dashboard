@@ -410,26 +410,26 @@ const LayoutWithSyndicateDetails: FC<{
                     <div
                       className={`md:col-start-1 ${
                         managerSettingsOpen ? 'md:col-end-8' : 'md:col-end-7'
-                      } col-span-12`}
+                      }`}
                     >
-                      <div className="flex items-center justify-between">
-                        <div>
-                          {/* Club header */}
-                          <div className="flex justify-center items-center">
-                            <ClubHeader
-                              {...{
-                                loading,
-                                name,
-                                symbol,
-                                owner,
-                                loadingClubDeposits,
-                                totalDeposits,
-                                managerSettingsOpen,
-                                clubAddress
-                              }}
-                            />
-                          </div>
-                        </div>
+                      <div
+                        className={`flex items-center justify-between col-end-6 flex-wrap md:col-start-1 ${
+                          managerSettingsOpen ? 'md:col-end-8' : 'md:col-end-7'
+                        }`}
+                      >
+                        {/* Club header */}
+                        <ClubHeader
+                          {...{
+                            loading,
+                            name,
+                            symbol,
+                            owner,
+                            loadingClubDeposits,
+                            totalDeposits,
+                            managerSettingsOpen,
+                            clubAddress
+                          }}
+                        />
                       </div>
 
                       <SyndicateDetails
