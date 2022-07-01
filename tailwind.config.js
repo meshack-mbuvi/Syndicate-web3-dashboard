@@ -426,9 +426,27 @@ module.exports = {
       animation: {
         fade_in: 'fade_in 0.5s ease-out 1',
         fade_in_bg: 'fade_in_bg 6s ease-out 1',
-        'grow-shrink': 'grow-shrink 3.6s ease-in-out infinite'
+        'grow-shrink': 'grow-shrink 3.6s ease-in-out infinite',
+        float: 'float 8s ease-in-out infinite'
       },
       keyframes: {
+        float: {
+          '0%': {
+            transform: 'translate(0%, 0%)'
+          },
+          '25%': {
+            transform: 'translate(5%, 12%)'
+          },
+          '50%': {
+            transform: 'translate(0%, 0%)'
+          },
+          '75%': {
+            transform: 'translate(-5%, 12%)'
+          },
+          '100%': {
+            transform: 'translate(0%, 0%)'
+          }
+        },
         fade_in: {
           '0%': {
             opacity: '0'
