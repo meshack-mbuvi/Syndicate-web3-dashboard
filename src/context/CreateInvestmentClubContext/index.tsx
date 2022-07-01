@@ -5,6 +5,7 @@ import {
 } from '@/components/amplitude/eventNames';
 import { metamaskConstants } from '@/components/syndicates/shared/Constants';
 import { getMetamaskError } from '@/helpers';
+import { useLocalStorage } from '@/hooks/utils/useLocalStorage';
 import { AppState } from '@/state';
 import {
   resetClubCreationReduxState,
@@ -23,7 +24,6 @@ import React, {
 } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import steps from './steps';
-
 type CreateInvestmentClubProviderProps = {
   handleNext: () => void;
   handleBack: () => void;
@@ -164,7 +164,14 @@ const CreateInvestmentClubProvider: React.FC = ({ children }) => {
     dispatch(setTransactionHash(transactionHash));
   };
 
+  const [, saveNewClub] = useLocalStorage('newlyCreatedClub');
   const onTxReceipt = (receipt) => {
+    const { tokenAddress, name, symbol } =
+      receipt.events.ERC20ClubCreated.returnValues;
+
+    // save to local storage
+    saveNewClub({ tokenAddress, name, symbol });
+
     dispatch(
       setClubCreationReceipt(receipt.events.ERC20ClubCreated.returnValues)
     );
@@ -200,7 +207,9 @@ const CreateInvestmentClubProvider: React.FC = ({ children }) => {
             true
           )
         : getWeiAmount(web3, tokenCap, 18, true);
+
       const startTime = parseInt((new Date().getTime() / 1000).toString()); // convert to seconds
+
       if (isNativeDeposit) {
         await clubERC20FactoryNative.createERC20(
           account,

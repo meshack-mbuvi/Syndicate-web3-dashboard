@@ -1,15 +1,15 @@
-import React, { useState, useEffect, FC } from 'react';
-import { Menu, Transition } from '@headlessui/react';
-import { useConnectWalletContext } from '@/context/ConnectWalletProvider';
-import { NETWORKS } from '@/Networks';
-import { useRouter } from 'next/router';
 import IconGas from '@/components/icons/Gas';
-import { useSelector } from 'react-redux';
+import { useConnectWalletContext } from '@/context/ConnectWalletProvider';
+import { useGetNetwork, useGetNetworkById } from '@/hooks/web3/useGetNetwork';
+import { useProvider } from '@/hooks/web3/useProvider';
+import { NETWORKS } from '@/Networks';
 import { AppState } from '@/state';
 import { isDev } from '@/utils/environment';
+import { Menu, Transition } from '@headlessui/react';
 import { useFlags } from 'launchdarkly-react-client-sdk';
-import { useGetNetworkById, useGetNetwork } from '@/hooks/web3/useGetNetwork';
-import { useProvider } from '@/hooks/web3/useProvider';
+import { useRouter } from 'next/router';
+import React, { FC, useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 
 const NetworkMenuDropDown: FC = () => {
   const {
@@ -154,7 +154,7 @@ const NetworkMenuDropDown: FC = () => {
               {Object.entries(NETWORKS).map(([key, value]) =>
                 (value.testNetwork && !isDev) ||
                 (!polygon && Number(key) === 137) ? (
-                  <></>
+                  <React.Fragment key={key}></React.Fragment>
                 ) : (
                   <button
                     className="w-full cursor-default"
