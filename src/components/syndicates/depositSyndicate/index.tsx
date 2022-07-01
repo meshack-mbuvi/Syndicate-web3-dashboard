@@ -259,7 +259,7 @@ const DepositSyndicate: React.FC = () => {
       erc20Token?.name &&
       depositToken &&
       !nativeDepositToken &&
-      web3
+      !isEmpty(web3)
     ) {
       // set up current deposit ERC20Contract and
       // and save it to the local state

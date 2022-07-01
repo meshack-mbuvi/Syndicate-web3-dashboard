@@ -7,6 +7,7 @@ import { BlockExplorerLink } from '@/components/syndicates/shared/BlockExplorerL
 import { ClubHeader } from '@/components/syndicates/shared/clubHeader';
 import Head from '@/components/syndicates/shared/HeaderTitle';
 import SyndicateDetails from '@/components/syndicates/syndicateDetails';
+import { useConnectWalletContext } from '@/context/ConnectWalletProvider';
 import {
   ERC20TokenDefaultState,
   setERC20Token
@@ -18,6 +19,8 @@ import useClubTokenMembers from '@/hooks/useClubTokenMembers';
 import { useDemoMode } from '@/hooks/useDemoMode';
 import { useGetDepositTokenPrice } from '@/hooks/useGetDepositTokenPrice';
 import useTransactions from '@/hooks/useTransactions';
+import { useGetNetwork } from '@/hooks/web3/useGetNetwork';
+import { useProvider } from '@/hooks/web3/useProvider';
 import NotFoundPage from '@/pages/404';
 import { AppState } from '@/state';
 import {
@@ -52,9 +55,6 @@ import ClubTokenMembers from '../managerActions/clubTokenMembers/index';
 import ActivityView from './activity';
 import Assets from './assets';
 import TabButton from './TabButton';
-import { useGetNetwork } from '@/hooks/web3/useGetNetwork';
-import { useConnectWalletContext } from '@/context/ConnectWalletProvider';
-import { useProvider } from '@/hooks/web3/useProvider';
 
 const LayoutWithSyndicateDetails: FC<{
   managerSettingsOpen: boolean;
@@ -138,11 +138,11 @@ const LayoutWithSyndicateDetails: FC<{
 
   useEffect(() => {
     if (chain) {
-      getNetworkByName(chain);
+      GetNetworkByName(chain);
     }
   }, [chain]);
 
-  const getNetworkByName = (name) => {
+  const GetNetworkByName = (name) => {
     const network = useGetNetwork(name);
     setUrlNetwork(network);
   };
