@@ -408,7 +408,7 @@ const LayoutWithSyndicateDetails: FC<{
                   <div className="grid grid-cols-12 gap-5">
                     {/* Left Column */}
                     <div
-                      className={`md:col-start-1 ${
+                      className={`col-start-1 col-end-12 ${
                         managerSettingsOpen ? 'md:col-end-8' : 'md:col-end-7'
                       }`}
                     >
