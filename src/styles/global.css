@@ -970,3 +970,10 @@ input[type='time']::-webkit-calendar-picker-indicator {
 .sb-show-main {
   color: white;
 }
+
+/* WalletConnect */
+
+#walletconnect-qrcode-text,
+.walletconnect-modal__mobile__toggle {
+  @apply text-black;
+}
