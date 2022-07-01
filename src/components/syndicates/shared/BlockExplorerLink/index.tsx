@@ -37,7 +37,7 @@ export const BlockExplorerLink: React.FC<LinkProp> = (props) => {
   const { activeNetwork } = useConnectWalletContext();
 
   const url = useMemo(() => {
-    const baseURL = activeNetwork.blockExplorer.baseUrl;
+    const baseURL = activeNetwork?.blockExplorer?.baseUrl;
     const resource =
       type === 'transaction'
         ? activeNetwork.blockExplorer.resources.transaction
@@ -68,7 +68,7 @@ export const BlockExplorerLink: React.FC<LinkProp> = (props) => {
           </div>
           <ExternalLinkIcon
             className={`ml-2 w-4 text-blue`}
-            iconcolor={iconcolor}
+            iconColor={iconcolor}
           />
         </div>
       ) : !grouped ? (

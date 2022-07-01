@@ -24,7 +24,9 @@ const MintMaxDate: FC<{ className?: string }> = ({ className }) => {
     handleNext,
     currentStep,
     setNextBtnDisabled,
-    setShowSaveButton
+    setShowSaveButton,
+    setEditMintMaxDate,
+    editMintMaxDate
   } = useCreateInvestmentClubContext();
 
   const [warning, setWarning] = useState('');
@@ -110,7 +112,6 @@ const MintMaxDate: FC<{ className?: string }> = ({ className }) => {
     setActiveDateCard(index);
     if (value) {
       setShowCustomDatePicker(false);
-      // setShowNextButton(false);
       // push amount to the redux store.
       dispatch(
         setMintEndTime({
@@ -118,6 +119,14 @@ const MintMaxDate: FC<{ className?: string }> = ({ className }) => {
           value: parseInt((value / 1000).toString()) // convert to seconds.
         })
       );
+
+      // auto-proceed to the next step when selecting any of the
+      // pre-defined close times when editing the field.
+      if (editMintMaxDate) {
+        setTimeout(() => {
+          setEditMintMaxDate(!editMintMaxDate);
+        }, 400);
+      }
 
       if (currentStep == 2) {
         setTimeout(() => {

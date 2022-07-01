@@ -477,6 +477,7 @@ const ConnectWalletProvider: React.FC<{ children: ReactNode }> = ({
   // Logout section. Handles disconnecting and deletes cache
   const disconnectWallet = () => {
     web3Modal.clearCachedProvider();
+    setProviderName('');
 
     dispatch(setDisConnected());
 

@@ -68,6 +68,9 @@ const AmountToRaise: React.FC<{
   }, [amount, editButtonClicked, setNextBtnDisabled]);
 
   useEffect(() => {
+    // hotfix to bypass error when metamask is Unlocked
+    if (!activeNetwork.chainId) return;
+
     setdefaultTokenDetails(
       SUPPORTED_TOKENS[activeNetwork.chainId].filter((coin) => coin.default)[0]
     );

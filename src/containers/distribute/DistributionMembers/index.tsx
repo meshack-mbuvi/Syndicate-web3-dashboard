@@ -68,9 +68,6 @@ const ReviewDistribution: React.FC = () => {
     clubMembersSliceReducer: { clubMembers, loadingClubMembers }
   } = useSelector((state: AppState) => state);
 
-  const baseURL = activeNetwork.blockExplorer.baseUrl;
-  const resource = activeNetwork.blockExplorer.resources.transaction;
-
   const [activeAddresses, setActiveAddresses] = useState([]);
   const [memberDetails, setMemberDetails] = useState([]);
   const [searchValue, setSearchValue] = useState('');
@@ -78,6 +75,7 @@ const ReviewDistribution: React.FC = () => {
   const [batchIdentifier, setBatchIdentifier] = useState('');
   const [isConfirmationModalVisible, setIsConfirmationModalVisible] =
     useState(false);
+  const [transactionHash, setTransactionHash] = useState('');
 
   const [shareDistributionNews, setShareDistributionNews] = useState(false);
 
@@ -217,7 +215,6 @@ const ReviewDistribution: React.FC = () => {
     useState<ProgressDescriptorState>(ProgressDescriptorState.PENDING);
   const [progressDescriptorDescription, setProgressDescriptorDescription] =
     useState('');
-  const [link, setLink] = useState<{ URL: string; label: string }>();
 
   // flag to check whether there is pending transaction before closing modal
   const [isTransactionPending, setIsTransactionPending] = useState(false);
@@ -227,7 +224,7 @@ const ReviewDistribution: React.FC = () => {
 
     const steps = [];
     distributionTokens.forEach((token) => {
-      if (token.symbol == 'ETH') {
+      if (token.symbol == activeNetwork.nativeCurrency.symbol) {
         steps.push({
           ...token,
           title: `Distribute ${numberWithCommas(token.tokenAmount)} ${
@@ -293,7 +290,7 @@ const ReviewDistribution: React.FC = () => {
       handleAllowanceApproval(steps[activeIndex]).then(() => {
         updateSteps('status', '');
       });
-      setLink({ URL: '', label: '' });
+      setTransactionHash('');
     } else {
       updateSteps('status', '');
     }
@@ -363,12 +360,7 @@ const ReviewDistribution: React.FC = () => {
               'This could take anywhere from seconds to hours depending on network congestion and the gas fees you set. '
             );
 
-            if (transactionHash) {
-              const URL = [baseURL, resource, transactionHash].join('/');
-              setLink({ URL, label: 'Etherscan' });
-            } else {
-              setLink({ URL: '', label: '' });
-            }
+            setTransactionHash(transactionHash);
           })
           .on('receipt', async (receipt) => {
             await checkTokenAllowance(token);
@@ -484,12 +476,8 @@ const ReviewDistribution: React.FC = () => {
       `This could take anywhere from seconds to hours depending on network congestion and the gas fees you set.`
     );
     updateSteps('status', ProgressDescriptorState.PENDING);
-    if (transactionHash) {
-      const URL = [baseURL, resource, transactionHash].join('/');
-      setLink({ URL, label: 'Etherscan' });
-    } else {
-      setLink({ URL: '', label: '' });
-    }
+
+    setTransactionHash(transactionHash);
   };
 
   const onTxReceipt = () => {
@@ -522,15 +510,21 @@ const ReviewDistribution: React.FC = () => {
     setProgressDescriptorTitle(
       `Error distributing ${numberWithCommas(tokenAmount)} ${symbol}`
     );
-    setProgressDescriptorDescription(
-      'This could be due to an error approving on the blockchain or gathering approvals if you are using a Gnosis Safe wallet.'
-    );
-
-    if (error && error?.code !== 4001) {
-      const URL = [baseURL, resource, error].join('/');
-      setLink({ URL, label: 'Etherscan' });
+    if (
+      error?.message?.indexOf('Transaction was not mined within 50 blocks') > -1
+    ) {
+      setProgressDescriptorDescription(
+        'This could take anywhere from seconds to hours depending on network congestion and the gas fees you set. You can safely leave this page while you wait.'
+      );
     } else {
-      setLink({ URL: '', label: '' });
+      setProgressDescriptorDescription(
+        'This could be due to an error approving on the blockchain or gathering approvals if you are using a Gnosis Safe wallet.'
+      );
+    }
+
+    // User rejected transaction does not have transactionHash
+    if (error.code == 4001) {
+      setTransactionHash('');
     }
 
     setProgressDescriptorStatus(ProgressDescriptorState.FAILURE);
@@ -570,7 +564,7 @@ const ReviewDistribution: React.FC = () => {
         true
       );
 
-      if (token.symbol === 'ETH') {
+      if (token.symbol === activeNetwork.nativeCurrency.symbol) {
         await syndicateContracts.distributionsETH.multiMemberDistribute(
           account,
           address,
@@ -595,7 +589,7 @@ const ReviewDistribution: React.FC = () => {
         );
       }
     } catch (error) {
-      onTxFail();
+      onTxFail(error);
     }
   };
 
@@ -613,7 +607,7 @@ const ReviewDistribution: React.FC = () => {
         `Confirm ${token.symbol} distribution from your wallet`
       );
       setProgressDescriptorDescription('Distributions are irreversible');
-      setLink({ URL: '', label: '' });
+      setTransactionHash('');
       updateSteps('status', ProgressDescriptorState.PENDING);
 
       makeDistributions(token);
@@ -753,7 +747,7 @@ const ReviewDistribution: React.FC = () => {
               title={progressDescriptorTitle}
               description={progressDescriptorDescription}
               state={progressDescriptorStatus}
-              link={link}
+              transactionHash={transactionHash}
             />
           )}
 
@@ -773,7 +767,7 @@ const ReviewDistribution: React.FC = () => {
       <ShareSocialModal
         isModalVisible={shareDistributionNews}
         handleModalClose={() => setShareDistributionNews(false)}
-        etherscanURL={link?.URL}
+        transactionHash={transactionHash}
         socialURL={''}
         clubName={name}
         clubSymbol={symbol}

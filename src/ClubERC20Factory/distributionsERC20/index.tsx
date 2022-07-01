@@ -103,7 +103,7 @@ export class DistributionsERC20 {
       await this.init();
     }
 
-    const gasEstimate = estimateGas(this.web3);
+    const gasEstimate = await estimateGas(this.web3);
 
     await new Promise((resolve, reject) => {
       this.distributionERC20.methods

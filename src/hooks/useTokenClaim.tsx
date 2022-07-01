@@ -8,6 +8,7 @@ import {
 import { useQuery } from '@apollo/client';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useDemoMode } from './useDemoMode';
 
 const useFetchTokenClaim: any = (skipQuery) => {
   const dispatch = useDispatch();
@@ -21,6 +22,8 @@ const useFetchTokenClaim: any = (skipQuery) => {
       erc20Token: { address: clubAddress }
     }
   } = useSelector((state: AppState) => state);
+
+  const isDemoMode = useDemoMode();
 
   // Fetch existing claims
   const {
@@ -36,7 +39,7 @@ const useFetchTokenClaim: any = (skipQuery) => {
         treeIndex: myMerkleProof.treeIndex
       }
     },
-    skip: !account || skipQuery || !activeNetwork.chainId,
+    skip: !account || skipQuery || !activeNetwork.chainId || isDemoMode,
     context: { clientName: 'theGraph', chainId: activeNetwork.chainId }
   });
 

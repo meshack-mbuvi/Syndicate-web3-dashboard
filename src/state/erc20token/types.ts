@@ -48,7 +48,7 @@ export const initialState: {
     depositToken: '',
     depositTokenSymbol: '',
     // default to USDC token to avoid error being thrown while loading the token
-    depositTokenLogo: '/images/usdcIcon.png',
+    depositTokenLogo: '/images/usdcIcon.svg',
     depositTokenName: '',
     depositTokenDecimals: 6,
     loading: true

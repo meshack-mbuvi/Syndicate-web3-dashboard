@@ -132,6 +132,7 @@ const DepositSyndicate: React.FC = () => {
   const [claimFailed, setClaimFailed] = useState<boolean>(false);
   const [showDepositProcessingModal, toggleDepositProcessingModal] = useModal();
   const [ownershipShare, setOwnershipShare] = useState<number>(0);
+  const [fullyDilutedShare, setFullyDilutedShare] = useState<number>(0);
   const [memberTokens, setMemberTokens] = useState(0);
   const [depositAmount, setDepositAmount] = useState<string>('');
   const [depositAmountFinalized, setDepositAmountFinalized] =
@@ -178,8 +179,10 @@ const DepositSyndicate: React.FC = () => {
         : +depositAmountFinalized;
       const newTotalSupply = +totalSupply + +memberTokens;
       const memberPercentShare = memberTokens / newTotalSupply;
+      const memberDilutedShare = memberTokens / maxTotalSupply;
 
       setOwnershipShare(+memberPercentShare * 100);
+      setFullyDilutedShare(memberDilutedShare * 100);
       setNewClubTokensSupply(newTotalSupply);
       setMemberTokens(memberTokens);
     }
@@ -256,7 +259,7 @@ const DepositSyndicate: React.FC = () => {
       erc20Token?.name &&
       depositToken &&
       !nativeDepositToken &&
-      web3
+      !isEmpty(web3)
     ) {
       // set up current deposit ERC20Contract and
       // and save it to the local state
@@ -300,7 +303,7 @@ const DepositSyndicate: React.FC = () => {
   // since the subgraph might give us old data on refetch,
   // we need to compare old and new data as we continue to poll.
   useEffect(() => {
-    if (!checkSuccess) return;
+    if (isDemoMode || !checkSuccess) return;
     setpreviousAccountTokens((prevState) => {
       if (
         (isMember && +prevState > 0 && +prevState < +accountTokens) ||
@@ -1754,10 +1757,9 @@ const DepositSyndicate: React.FC = () => {
                   <p className="text-base text-gray-syn4">
                     Receiving club tokens
                   </p>
-
                   <Tooltip
                     content={
-                      <div>
+                      <div className="text-sm">
                         When you deposit into this club, you <br />
                         receive club tokens in return that
                         <br /> represent your ownership share of the
@@ -1791,13 +1793,43 @@ const DepositSyndicate: React.FC = () => {
                     </div>
                   </div>
                 </div>
-                <div className="flex items-center justify-between mt-1">
+                <div className="flex items-center justify-start mt-1">
                   <p className="text-sm text-gray-syn4">
                     {floatedNumberWithCommas(ownershipShare) === '< 0.01'
                       ? null
                       : '= '}
-                    {floatedNumberWithCommas(ownershipShare)}% ownership share
+                    {floatedNumberWithCommas(ownershipShare)}% ownership share (
+                    {floatedNumberWithCommas(fullyDilutedShare)}% fully diluted)
                   </p>
+                  <Tooltip
+                    content={
+                      <div className="flex flex-col space-y-2 text-sm">
+                        <span>
+                          Currently, this deposit would represent a <br />
+                          {floatedNumberWithCommas(ownershipShare)}% ownership
+                          share in this club.
+                        </span>
+
+                        <span>
+                          Fully diluted (all available club tokens have
+                          <br /> been minted), this deposit will represent a
+                          <br />
+                          {floatedNumberWithCommas(fullyDilutedShare)}%
+                          ownership share in this club.
+                        </span>
+                      </div>
+                    }
+                    arrow={false}
+                    tipContentClassName="actionsTooltip"
+                    background="#232529"
+                    padding="12px 16px"
+                    distance={13}
+                  >
+                    <InfoIcon
+                      src={'/images/deposit/info.svg'}
+                      iconSize="h-3.5"
+                    />
+                  </Tooltip>
                 </div>
               </div>
             </div>

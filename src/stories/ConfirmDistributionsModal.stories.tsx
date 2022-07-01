@@ -1,11 +1,34 @@
+import ConnectWallet from '@/components/connectWallet';
 import { ConfirmDistributionsModal } from '@/components/distributions/confirmModal';
 import {
   ProgressDescriptor,
   ProgressDescriptorState
 } from '@/components/progressDescriptor';
+import ConnectWalletProvider from '@/context/ConnectWalletProvider';
+import { store } from '@/state';
+import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client';
+import { Provider } from 'react-redux';
+
+const client = new ApolloClient({
+  uri: '#',
+  cache: new InMemoryCache()
+});
 
 export default {
-  title: '4. Organisms/Confirm Distributions Modal'
+  title: '4. Organisms/Confirm Distributions Modal',
+
+  decorators: [
+    (Story) => (
+      <ApolloProvider client={client}>
+        <Provider store={store}>
+          <ConnectWalletProvider>
+            <Story />
+            <ConnectWallet />
+          </ConnectWalletProvider>
+        </Provider>
+      </ApolloProvider>
+    )
+  ]
 };
 
 const Template = (args) => {
@@ -16,19 +39,32 @@ const Template = (args) => {
       description="This could take anywhere from seconds to hours depending on network congestion and the gas fees you set. "
       state={ProgressDescriptorState.PENDING}
       key={0}
+      transactionHash={''}
     />,
     <ProgressDescriptor
-      title="Confirm ETH distribution from your wallet"
+      title="Confirm UNI distribution from your wallet"
       description="Distributions are irreversible"
       state={ProgressDescriptorState.PENDING}
       requiresUserAction={true}
       key={0}
+      transactionHash={''}
+    />,
+    <ProgressDescriptor
+      title="Confirming UNI distribution from your wallet"
+      description="Distributions are irreversible"
+      state={ProgressDescriptorState.PENDING}
+      requiresUserAction={true}
+      key={0}
+      transactionHash={
+        '0xc582c527f87bb3e7e2346f1c361260099ee76d84d7183e5966724b4ef4da8f93'
+      }
     />,
     <ProgressDescriptor
       title="Approve ETH from your wallet"
       state={ProgressDescriptorState.PENDING}
       requiresUserAction={true}
       key={0}
+      transactionHash={''}
     />
   ];
 

@@ -1,14 +1,17 @@
-import React, { useState, useEffect, FC } from 'react';
-import { Menu, Transition } from '@headlessui/react';
-import { useConnectWalletContext } from '@/context/ConnectWalletProvider';
-import { NETWORKS } from '@/Networks';
-import { useRouter } from 'next/router';
 import IconGas from '@/components/icons/Gas';
-import { useSelector } from 'react-redux';
+import IconWalletConnect from '@/components/icons/walletConnect';
+import IconInfo from '@/components/icons/info';
+import { useConnectWalletContext } from '@/context/ConnectWalletProvider';
+import { useGetNetwork, useGetNetworkById } from '@/hooks/web3/useGetNetwork';
+import { useProvider } from '@/hooks/web3/useProvider';
+import { NETWORKS } from '@/Networks';
 import { AppState } from '@/state';
 import { isDev } from '@/utils/environment';
+import { Menu, Transition } from '@headlessui/react';
 import { useFlags } from 'launchdarkly-react-client-sdk';
-import _ from 'lodash';
+import { useRouter } from 'next/router';
+import React, { FC, useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 
 const NetworkMenuDropDown: FC = () => {
   const {
@@ -20,6 +23,7 @@ const NetworkMenuDropDown: FC = () => {
   const { polygon } = useFlags();
 
   const { switchNetworks } = useConnectWalletContext();
+  const { providerName } = useProvider();
 
   const [nativeBalance, setNativeBalance] = useState('');
   const [blockNumber, setblockNumber] = useState('');
@@ -32,11 +36,11 @@ const NetworkMenuDropDown: FC = () => {
   useEffect(() => {
     let chainId;
     if (network) {
-      const _chain = verifyChainId(+network);
+      const _chain = VerifyChainId(+network);
       chainId = +_chain;
     }
     if (chain) {
-      const chainID = getChainIdByName(chain);
+      const chainID = GetChainIdByName(chain);
       chainId = +chainID;
     }
     if (chainId) {
@@ -44,14 +48,14 @@ const NetworkMenuDropDown: FC = () => {
     }
   }, [network, chain]);
 
-  const getChainIdByName = (name) => {
-    const network = _.find(NETWORKS, (el) => el.network === name);
+  const GetChainIdByName = (name) => {
+    const network = useGetNetwork(name);
 
     return network?.chainId;
   };
 
-  const verifyChainId = (chainId) => {
-    const network = _.find(NETWORKS, (el) => el.chainId === chainId);
+  const VerifyChainId = (chainId) => {
+    const network = useGetNetworkById(chainId);
     return network?.chainId;
   };
 
@@ -97,6 +101,10 @@ const NetworkMenuDropDown: FC = () => {
     };
   }, [activeNetwork]);
 
+  const networkSwitchAction = (chainId) => {
+    providerName !== 'WalletConnect' ? switchNetworks(chainId) : null;
+  };
+
   return (
     <Menu as="div" className="relative">
       {({ open }) => (
@@ -132,12 +140,12 @@ const NetworkMenuDropDown: FC = () => {
           >
             <Menu.Items
               as="ul"
-              className="absolute right-0 w-80 mt-2 origin-top-right bg-black rounded-2xl border border-gray-syn7 shadow-lg outline-none p-2 space-y-1"
+              className="absolute right-0 w-64 mt-2 origin-top-right bg-black rounded-2xl border border-gray-syn7 shadow-lg outline-none p-2 space-y-1"
             >
               {Object.entries(NETWORKS).map(([key, value]) =>
                 (value.testNetwork && !isDev) ||
                 (!polygon && Number(key) === 137) ? (
-                  <></>
+                  <React.Fragment key={key}></React.Fragment>
                 ) : (
                   <button
                     className="w-full cursor-default"
@@ -145,18 +153,20 @@ const NetworkMenuDropDown: FC = () => {
                     onClick={
                       value.chainId !== activeNetwork.chainId
                         ? () => {
-                            switchNetworks(value.chainId);
+                            networkSwitchAction(value.chainId);
                           }
                         : null
                     }
                   >
                     <div
-                      className={`p-3 flex justify-between rounded-t-1.5lg hover:bg-${
-                        value.metadata.colors.background
-                      } hover:bg-opacity-15 ${
+                      className={`p-3 flex justify-between rounded-t-1.5lg ${
                         value.chainId === activeNetwork.chainId
                           ? `bg-${value.metadata.colors.background} bg-opacity-15 `
-                          : 'rounded-b-1.5lg cursor-pointer'
+                          : `rounded-b-1.5lg ${
+                              providerName === 'WalletConnect'
+                                ? `cursor-not-allowed opacity-30`
+                                : `cursor-pointer  hover:bg-${value.metadata.colors.background} hover:bg-opacity-15`
+                            }`
                       }`}
                     >
                       <span>{value.displayName}</span>
@@ -195,7 +205,7 @@ const NetworkMenuDropDown: FC = () => {
                           <span>
                             <img
                               className={`ml-2 w-4 text-white`}
-                              src="/images/externalLinkGray.svg"
+                              src="/images/externalLinkWhite.svg"
                               alt="extenal-link"
                             />
                           </span>
@@ -204,6 +214,24 @@ const NetworkMenuDropDown: FC = () => {
                     )}
                   </button>
                 )
+              )}
+              {providerName === 'WalletConnect' && (
+                <div className="text-sm p-3 pt-4 pb-4 border-t border-gray-syn7">
+                  <IconWalletConnect width={24} height={24} />
+                  <div className="pt-1">
+                    You&#39;re using WalletConnect. To switch networks,
+                    you&#39;ll need to do so directly in your wallet.
+                  </div>
+                  <a
+                    className="pt-3 flex space-x-2 items-center text-gray-syn4"
+                    href="https://guide.syndicate.io/frequently-asked-questions/wallet#wallet-support-guides"
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    <span> Learn more </span>{' '}
+                    <IconInfo width={16} height={16} fill={'#90949E'} />
+                  </a>
+                </div>
               )}
             </Menu.Items>
           </Transition>

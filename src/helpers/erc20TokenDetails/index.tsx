@@ -1,6 +1,7 @@
 import { DepositTokenMintModuleContract } from '@/ClubERC20Factory/depositTokenMintModule';
-import { MintPolicyContract } from '@/ClubERC20Factory/policyMintERC20';
 import { MerkleDistributorModuleContract } from '@/ClubERC20Factory/merkleDistributorModule';
+import { MintPolicyContract } from '@/ClubERC20Factory/policyMintERC20';
+import { CONTRACT_ADDRESSES } from '@/Networks';
 import { AppState } from '@/state';
 import {
   setERC20TokenContract,
@@ -11,7 +12,6 @@ import { DepositDetails, ERC20Token } from '@/state/erc20token/types';
 import { isZeroAddress } from '@/utils';
 import { getTokenDetails } from '@/utils/api';
 import { getWeiAmount } from '@/utils/conversions';
-import { CONTRACT_ADDRESSES, SUPPORTED_TOKENS } from '@/Networks';
 
 export const ERC20TokenDefaultState = {
   name: '',
@@ -161,8 +161,6 @@ export const getDepositDetails = async (
   SingleTokenMintModule: DepositTokenMintModuleContract,
   activeNetwork
 ): Promise<DepositDetails> => {
-  const depositTokenMapping = SUPPORTED_TOKENS[activeNetwork.chainId];
-
   let mintModule = DepositTokenMintModule.address;
   let nativeDepositToken = false;
 
@@ -182,9 +180,7 @@ export const getDepositDetails = async (
       mintModule = SingleTokenMintModule.address;
     }
   }
-  const [depositTokenInfo] = depositTokenMapping.filter(
-    (token) => token.address === depositToken
-  );
+
   const tokenDetails = await getTokenDetails(
     depositToken,
     activeNetwork.chainId
@@ -205,8 +201,7 @@ export const getDepositDetails = async (
 export const isNativeDepositToken = async (
   ERC20tokenContract,
   DepositTokenMintModule: DepositTokenMintModuleContract,
-  SingleTokenMintModule: DepositTokenMintModuleContract,
-  activeNetwork
+  SingleTokenMintModule: DepositTokenMintModuleContract
 ) => {
   let _nativeDepositToken = false;
 
@@ -214,12 +209,12 @@ export const isNativeDepositToken = async (
     ERC20tokenContract.clubERC20Contract._address
   );
 
-  if (isZeroAddress(depositToken)) {
+  if (!depositToken || isZeroAddress(depositToken)) {
     depositToken = await SingleTokenMintModule?.depositToken(
       ERC20tokenContract.clubERC20Contract._address
     );
 
-    if (isZeroAddress(depositToken)) {
+    if (!depositToken || isZeroAddress(depositToken)) {
       depositToken = '';
       _nativeDepositToken = true;
     }
@@ -272,8 +267,7 @@ export const setERC20Token =
       const { _nativeDepositToken } = await isNativeDepositToken(
         ERC20tokenContract,
         DepositTokenMintModule,
-        SingleTokenMintModule,
-        activeNetwork
+        SingleTokenMintModule
       );
 
       dispatch(

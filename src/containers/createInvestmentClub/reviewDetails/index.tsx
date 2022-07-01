@@ -25,14 +25,15 @@ const ReviewDetails: React.FC = () => {
     currentStep,
     setBackBtnDisabled,
     setNextBtnDisabled,
-    showSaveButton
+    showSaveButton,
+    editMintMaxDate,
+    setEditMintMaxDate
   } = useCreateInvestmentClubContext();
 
   const [inlineEditView, setInlineEditView] = useState<string>('');
   const [editClubNameSelector, setEditClubNameSelector] =
     useState<boolean>(false);
   const [editAmountToRaise, setEditAmountToRaise] = useState<boolean>(false);
-  const [editMintMaxDate, setEditMintMaxDate] = useState<boolean>(false);
   const [editMembersCount, setEditMembersCount] = useState<boolean>(false);
   const [memberCountHasError, setMemberCountHasError] = useState(false);
   const [agreementFirstChecked, setAgreementFirstChecked] =

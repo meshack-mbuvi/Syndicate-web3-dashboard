@@ -1,5 +1,11 @@
 // component to show syndicate deposits progress
-import React, { useEffect, useRef, useState } from 'react';
+import React, {
+  Dispatch,
+  SetStateAction,
+  useEffect,
+  useRef,
+  useState
+} from 'react';
 import { divideIfNotByZero } from '@/utils/conversions';
 import { floatedNumberWithCommas } from '@/utils/formattedNumbers';
 import { SkeletonLoader } from 'src/components/skeletonLoader';
@@ -20,6 +26,9 @@ interface IProgressIndicator {
   depositTokenPriceInUSD: string;
   tokenDetails: TokenDetails;
   activeNetwork: IActiveNetwork;
+  depositsEnabled: boolean;
+  setTokensViaDeposits: Dispatch<SetStateAction<number>>;
+  tokensViaDeposits: number;
 }
 
 export enum TooltipState {
@@ -32,7 +41,11 @@ export const ProgressIndicator = (props: IProgressIndicator): JSX.Element => {
   const {
     totalDeposits = 0,
     loading = false,
-    nativeDepositToken = false
+    nativeDepositToken = false,
+    depositsEnabled,
+    tokensViaDeposits,
+    setTokensViaDeposits,
+    activeNetwork
   } = props;
 
   // refs and consts
@@ -60,7 +73,6 @@ export const ProgressIndicator = (props: IProgressIndicator): JSX.Element => {
   const [tooltipTokenPercentage, setToolTipTokenPercentage] = useState(0);
 
   // amount states
-  const [tokensViaDeposits, setTokensViaDeposits] = useState(0);
   const [tokensViaManualMints, setTokensViaManualMints] = useState(0);
   const [remainingSupply, setRemainingSupply] = useState(0);
 
@@ -82,7 +94,7 @@ export const ProgressIndicator = (props: IProgressIndicator): JSX.Element => {
         const { clubTokens, depositAmount } = member;
 
         const actualDepositClubTokens = nativeDepositToken
-          ? +depositAmount * 10000
+          ? +depositAmount * activeNetwork.nativeCurrency.exchangeRate
           : +depositAmount;
         _actualDepositClubTokens += actualDepositClubTokens;
 
@@ -246,7 +258,7 @@ export const ProgressIndicator = (props: IProgressIndicator): JSX.Element => {
             tooltipTokenAmount,
             tooltipTokenPercentage,
             depositTokensAmount: nativeDepositToken
-              ? tokensViaDeposits / 10000
+              ? tokensViaDeposits / activeNetwork.nativeCurrency.exchangeRate
               : tokensViaDeposits
           }}
         />
@@ -255,7 +267,11 @@ export const ProgressIndicator = (props: IProgressIndicator): JSX.Element => {
   );
 
   return (
-    <div className="w-full xl:pb-14 pb-10">
+    <div
+      className={`w-full pb-6 ${
+        depositsEnabled ? 'border-b-1 border-gray-syn6' : ''
+      }`}
+    >
       {loading ? (
         <div>
           <div className="mb-4">
@@ -340,7 +356,7 @@ export const ProgressIndicator = (props: IProgressIndicator): JSX.Element => {
                     }`
                   }}
                   className={`shadow-none relative h-full flex flex-col transition-all text-center whitespace-nowrap text-white justify-center bg-gray-mineral hover:bg-opacity-80
-                ${totalDeposits > 0 ? '' : 'rounded-l-full'}
+                ${tokensViaDeposits > 0 ? '' : 'rounded-l-full'}
                 ${manualMintPercentage === 0 ? 'hidden' : 'block'}
                 ${manualMintPercentage > 99.5 ? 'rounded-full' : ''}
                 ${

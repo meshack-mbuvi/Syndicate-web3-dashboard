@@ -974,4 +974,10 @@ input[type='time']::-webkit-calendar-picker-indicator {
 #particles-js {
   height: 100%;
   width: 100%;
+
+/* WalletConnect */
+
+#walletconnect-qrcode-text,
+.walletconnect-modal__mobile__toggle {
+  @apply text-black;
 }

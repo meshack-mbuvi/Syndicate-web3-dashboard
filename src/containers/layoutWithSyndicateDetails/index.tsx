@@ -3,10 +3,11 @@ import BackButton from '@/components/buttons/BackButton';
 import ErrorBoundary from '@/components/errorBoundary';
 import Layout from '@/components/layout';
 import OnboardingModal from '@/components/onboarding';
-import { ClubHeader } from '@/components/syndicates/shared/clubHeader';
 import { BlockExplorerLink } from '@/components/syndicates/shared/BlockExplorerLink';
+import { ClubHeader } from '@/components/syndicates/shared/clubHeader';
 import Head from '@/components/syndicates/shared/HeaderTitle';
 import SyndicateDetails from '@/components/syndicates/syndicateDetails';
+import { useConnectWalletContext } from '@/context/ConnectWalletProvider';
 import {
   ERC20TokenDefaultState,
   setERC20Token
@@ -18,6 +19,8 @@ import useClubTokenMembers from '@/hooks/useClubTokenMembers';
 import { useDemoMode } from '@/hooks/useDemoMode';
 import { useGetDepositTokenPrice } from '@/hooks/useGetDepositTokenPrice';
 import useTransactions from '@/hooks/useTransactions';
+import { useGetNetwork } from '@/hooks/web3/useGetNetwork';
+import { useProvider } from '@/hooks/web3/useProvider';
 import NotFoundPage from '@/pages/404';
 import { AppState } from '@/state';
 import {
@@ -43,6 +46,7 @@ import {
   mockTokensResult
 } from '@/utils/mockdata';
 import window from 'global';
+import { isEmpty } from 'lodash';
 import { useRouter } from 'next/router';
 import React, { FC, useEffect, useMemo, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -51,7 +55,6 @@ import ClubTokenMembers from '../managerActions/clubTokenMembers/index';
 import ActivityView from './activity';
 import Assets from './assets';
 import TabButton from './TabButton';
-import { isEmpty } from 'lodash';
 
 const LayoutWithSyndicateDetails: FC<{
   managerSettingsOpen: boolean;
@@ -66,7 +69,8 @@ const LayoutWithSyndicateDetails: FC<{
       erc20Token,
       depositDetails: { nativeDepositToken },
       depositTokenPriceInUSD
-    }
+    },
+    assetsSliceReducer: { collectiblesResult }
   } = useSelector((state: AppState) => state);
 
   const {
@@ -79,6 +83,9 @@ const LayoutWithSyndicateDetails: FC<{
     symbol,
     memberCount
   } = erc20Token;
+
+  // Prevents incorrect data display when page data has not been loaded yet.
+  const [pageLoading, setPageLoading] = useState(true);
 
   // Get clubAddress from window.location object since during page load, router is not ready
   // hence clubAddress is undefined.
@@ -98,6 +105,16 @@ const LayoutWithSyndicateDetails: FC<{
     }
   });
 
+  useEffect(() => {
+    if (isEmpty(web3)) return;
+
+    setPageLoading(false);
+
+    return () => {
+      setPageLoading(true);
+    };
+  }, [web3]);
+
   //  tokens for the connected wallet account
   const { accountTokens } = useAccountTokens();
 
@@ -112,6 +129,23 @@ const LayoutWithSyndicateDetails: FC<{
 
   const router = useRouter();
   const dispatch = useDispatch();
+
+  const { switchNetworks } = useConnectWalletContext();
+  const { providerName } = useProvider();
+  const [urlNetwork, setUrlNetwork] = useState<any>(null);
+
+  const { chain } = router.query;
+
+  useEffect(() => {
+    if (chain) {
+      GetNetworkByName(chain);
+    }
+  }, [chain]);
+
+  const GetNetworkByName = (name) => {
+    const network = useGetNetwork(name);
+    setUrlNetwork(network);
+  };
 
   useEffect(() => {
     return () => {
@@ -131,7 +165,7 @@ const LayoutWithSyndicateDetails: FC<{
           nativeDepositToken: false,
           depositToken: '',
           depositTokenSymbol: '',
-          depositTokenLogo: '/images/usdcIcon.png',
+          depositTokenLogo: '/images/usdcIcon.svg',
           depositTokenName: '',
           depositTokenDecimals: 6,
           loading: true
@@ -201,13 +235,6 @@ const LayoutWithSyndicateDetails: FC<{
       !isDemoMode
     ) {
       fetchAssets();
-    } else if (isDemoMode) {
-      const mockTokens = depositsEnabled
-        ? mockDepositModeTokens
-        : mockTokensResult;
-      dispatch(setMockTokensResult(mockTokens));
-
-      dispatch(setMockCollectiblesResult(depositsEnabled));
     }
   }, [
     owner,
@@ -218,6 +245,17 @@ const LayoutWithSyndicateDetails: FC<{
     loadingClubDeposits,
     nativeDepositToken
   ]);
+
+  useEffect(() => {
+    if (isDemoMode) {
+      const mockTokens = depositsEnabled
+        ? mockDepositModeTokens
+        : mockTokensResult;
+      dispatch(setMockTokensResult(mockTokens));
+
+      dispatch(setMockCollectiblesResult(depositsEnabled));
+    }
+  }, [isDemoMode, collectiblesResult.length]);
 
   useEffect(() => {
     // clear collectibles on account switch
@@ -287,6 +325,34 @@ const LayoutWithSyndicateDetails: FC<{
           {noTokenTitleText}
         </p>
         <BlockExplorerLink resourceId={clubAddress} />
+        {urlNetwork?.chainId &&
+        urlNetwork?.chainId !== activeNetwork?.chainId ? (
+          <div
+            className={`mt-5 flex justify-center flex-col w-full rounded-1.5lg p-6 bg-${urlNetwork.metadata.colors.background} bg-opacity-15`}
+          >
+            <div className="text-lg text-center mb-3">
+              This club exists on {urlNetwork.name}
+            </div>
+            <div className="flex justify-center mb-3">
+              <img width={40} height={40} src={urlNetwork.logo} alt="" />
+            </div>
+            {providerName === 'WalletConnect' ? (
+              <div className="text-sm text-center text-gray-syn3">
+                You&#39;re using WalletConnect. To switch networks, you&#39;ll
+                need to do so directly in your wallet.
+              </div>
+            ) : (
+              <button
+                className="primary-CTA"
+                onClick={() => {
+                  switchNetworks(urlNetwork.chainId);
+                }}
+              >
+                Switch to {urlNetwork.name}
+              </button>
+            )}
+          </div>
+        ) : null}
       </div>
     </div>
   );
@@ -307,7 +373,11 @@ const LayoutWithSyndicateDetails: FC<{
 
   return (
     <>
-      {router.isReady && !isDemoMode && !web3?.utils?.isAddress(clubAddress) ? (
+      {!pageLoading &&
+      router.isReady &&
+      !isDemoMode &&
+      !isEmpty(web3) &&
+      !web3?.utils?.isAddress(clubAddress) ? (
         <NotFoundPage />
       ) : (
         <Layout
@@ -319,7 +389,11 @@ const LayoutWithSyndicateDetails: FC<{
           <ErrorBoundary>
             {showOnboardingIfNeeded && <OnboardingModal />}
             <div className="w-full">
-              {router.isReady && !name && !loading && !isDemoMode ? (
+              {!pageLoading &&
+              router.isReady &&
+              !name &&
+              !loading &&
+              !isDemoMode ? (
                 syndicateEmptyState
               ) : (
                 <div className="container mx-auto">
@@ -336,26 +410,26 @@ const LayoutWithSyndicateDetails: FC<{
                     <div
                       className={`md:col-start-1 ${
                         managerSettingsOpen ? 'md:col-end-8' : 'md:col-end-7'
-                      } col-span-12`}
+                      }`}
                     >
-                      <div className="flex items-center justify-between">
-                        <div>
-                          {/* Club header */}
-                          <div className="flex justify-center items-center">
-                            <ClubHeader
-                              {...{
-                                loading,
-                                name,
-                                symbol,
-                                owner,
-                                loadingClubDeposits,
-                                totalDeposits,
-                                managerSettingsOpen,
-                                clubAddress
-                              }}
-                            />
-                          </div>
-                        </div>
+                      <div
+                        className={`flex items-center justify-between col-end-6 flex-wrap md:col-start-1 ${
+                          managerSettingsOpen ? 'md:col-end-8' : 'md:col-end-7'
+                        }`}
+                      >
+                        {/* Club header */}
+                        <ClubHeader
+                          {...{
+                            loading,
+                            name,
+                            symbol,
+                            owner,
+                            loadingClubDeposits,
+                            totalDeposits,
+                            managerSettingsOpen,
+                            clubAddress
+                          }}
+                        />
                       </div>
 
                       <SyndicateDetails

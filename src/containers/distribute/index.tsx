@@ -192,7 +192,8 @@ const Distribute: FC = () => {
                   symbol: tokenSymbol,
                   tokenAmount: tokenBalance,
                   maximumTokenAmount:
-                    tokenSymbol == 'ETH' && gasEstimate?.tokenAmount
+                    tokenSymbol == activeNetwork.nativeCurrency.symbol &&
+                    gasEstimate?.tokenAmount
                       ? parseFloat(`${tokenBalance}`) -
                         parseFloat(`${gasEstimate.tokenAmount}`)
                       : tokenBalance,
@@ -242,12 +243,14 @@ const Distribute: FC = () => {
     };
 
     if (tokensResult.length) {
-      const [ETH] = tokensResult.filter((token) => token.tokenSymbol === 'ETH');
+      const [ETH] = tokensResult.filter(
+        (token) => token.tokenSymbol === activeNetwork.nativeCurrency.symbol
+      );
       eth.available = ETH?.tokenBalance || '0';
     }
 
     const [ethToken] = distributionTokens.filter(
-      (token) => token.symbol == 'ETH'
+      (token) => token.symbol == activeNetwork.nativeCurrency.symbol
     );
 
     // update total selected amount
@@ -272,7 +275,9 @@ const Distribute: FC = () => {
       }
 
       // find index of ETH token on _options
-      const ethIndex = _options.findIndex((option) => option.symbol == 'ETH');
+      const ethIndex = _options.findIndex(
+        (option) => option.symbol == activeNetwork.nativeCurrency.symbol
+      );
 
       if (ethIndex > -1) {
         // update warning on ETH token

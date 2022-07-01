@@ -33,7 +33,6 @@ export const useNativeBalance = (account: string): number => {
     if (isEmpty(web3) || !account) return;
 
     web3.eth.clearSubscriptions();
-    console.log('subscribing to balance');
     const subscription = web3.eth.subscribe('newBlockHeaders');
     subscription
       .on('connected', () => {
