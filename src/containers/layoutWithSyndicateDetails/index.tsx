@@ -338,8 +338,8 @@ const LayoutWithSyndicateDetails: FC<{
             </div>
             {providerName === 'WalletConnect' ? (
               <div className="text-sm text-center text-gray-syn3">
-                You are connected via WalletConnect. In order to use{' '}
-                {urlNetwork.name}, you must change the network in your wallet.
+                You&#39;re using WalletConnect. To switch networks, you&#39;ll
+                need to do so directly in your wallet.
               </div>
             ) : (
               <button

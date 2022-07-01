@@ -1,4 +1,6 @@
 import IconGas from '@/components/icons/Gas';
+import IconWalletConnect from '@/components/icons/walletConnect';
+import IconInfo from '@/components/icons/info';
 import { useConnectWalletContext } from '@/context/ConnectWalletProvider';
 import { useGetNetwork, useGetNetworkById } from '@/hooks/web3/useGetNetwork';
 import { useProvider } from '@/hooks/web3/useProvider';
@@ -26,7 +28,6 @@ const NetworkMenuDropDown: FC = () => {
   const [nativeBalance, setNativeBalance] = useState('');
   const [blockNumber, setblockNumber] = useState('');
   const [gas, setGas] = useState('');
-  const [showInfo, setShowInfo] = useState<number>(0);
 
   // Switch networks based on URL param
   const router = useRouter();
@@ -100,18 +101,8 @@ const NetworkMenuDropDown: FC = () => {
     };
   }, [activeNetwork]);
 
-  useEffect(() => {
-    if (showInfo !== 0) {
-      setTimeout(() => {
-        setShowInfo(0);
-      }, 10000);
-    }
-  }, [showInfo]);
-
   const networkSwitchAction = (chainId) => {
-    providerName !== 'WalletConnect'
-      ? switchNetworks(chainId)
-      : setShowInfo(chainId);
+    providerName !== 'WalletConnect' ? switchNetworks(chainId) : null;
   };
 
   return (
@@ -149,7 +140,7 @@ const NetworkMenuDropDown: FC = () => {
           >
             <Menu.Items
               as="ul"
-              className="absolute right-0 w-80 mt-2 origin-top-right bg-black rounded-2xl border border-gray-syn7 shadow-lg outline-none p-2 space-y-1"
+              className="absolute right-0 w-64 mt-2 origin-top-right bg-black rounded-2xl border border-gray-syn7 shadow-lg outline-none p-2 space-y-1"
             >
               {Object.entries(NETWORKS).map(([key, value]) =>
                 (value.testNetwork && !isDev) ||
@@ -168,12 +159,14 @@ const NetworkMenuDropDown: FC = () => {
                     }
                   >
                     <div
-                      className={`p-3 flex justify-between rounded-t-1.5lg hover:bg-${
-                        value.metadata.colors.background
-                      } hover:bg-opacity-15 ${
+                      className={`p-3 flex justify-between rounded-t-1.5lg ${
                         value.chainId === activeNetwork.chainId
                           ? `bg-${value.metadata.colors.background} bg-opacity-15 `
-                          : 'rounded-b-1.5lg cursor-pointer'
+                          : `rounded-b-1.5lg ${
+                              providerName === 'WalletConnect'
+                                ? `cursor-not-allowed opacity-30`
+                                : `cursor-pointer  hover:bg-${value.metadata.colors.background} hover:bg-opacity-15`
+                            }`
                       }`}
                     >
                       <span>{value.displayName}</span>
@@ -182,7 +175,7 @@ const NetworkMenuDropDown: FC = () => {
                       </span>
                     </div>
 
-                    {value.chainId === activeNetwork.chainId ? (
+                    {value.chainId === activeNetwork.chainId && (
                       <div>
                         <div
                           className={`flex flex-col justify-between text-left px-3  pb-3 text-sm ${
@@ -212,23 +205,33 @@ const NetworkMenuDropDown: FC = () => {
                           <span>
                             <img
                               className={`ml-2 w-4 text-white`}
-                              src="/images/externalLinkGray.svg"
+                              src="/images/externalLinkWhite.svg"
                               alt="extenal-link"
                             />
                           </span>
                         </a>
                       </div>
-                    ) : (
-                      showInfo === value.chainId && (
-                        <div className="text-xs text-gray-syn3 mt-1">
-                          You are connected via WalletConnect. In order to use{' '}
-                          {value.name}, you must change the network in your
-                          wallet.
-                        </div>
-                      )
                     )}
                   </button>
                 )
+              )}
+              {providerName === 'WalletConnect' && (
+                <div className="text-sm p-3 pt-4 pb-4 border-t border-gray-syn7">
+                  <IconWalletConnect width={24} height={24} />
+                  <div className="pt-1">
+                    You&#39;re using WalletConnect. To switch networks,
+                    you&#39;ll need to do so directly in your wallet.
+                  </div>
+                  <a
+                    className="pt-3 flex space-x-2 items-center text-gray-syn4"
+                    href="https://guide.syndicate.io/frequently-asked-questions/wallet#wallet-support-guides"
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    <span> Learn more </span>{' '}
+                    <IconInfo width={16} height={16} fill={'#90949E'} />
+                  </a>
+                </div>
               )}
             </Menu.Items>
           </Transition>
