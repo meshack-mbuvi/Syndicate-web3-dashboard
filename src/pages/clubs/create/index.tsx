@@ -32,7 +32,8 @@ const CreateInvestmentClub: React.FC = () => {
     setShowModal,
     handleCreateInvestmentClub,
     preClubCreationStep,
-    setPreClubCreationStep
+    setPreClubCreationStep,
+    isEditStep
   } = useCreateInvestmentClubContext();
 
   const parentRef = useRef(null);
@@ -94,7 +95,7 @@ const CreateInvestmentClub: React.FC = () => {
               <div className="w-full h-full overflow-y-scroll">
                 <div className="flex-grow flex overflow-y-auto overflow-x-hidden justify-between max-w-480 mx-auto h-full no-scroll-bar">
                   <div className="flex flex-col w-full" ref={parentRef}>
-                    <ReviewDetails />
+                    {!isEditStep && <ReviewDetails />}
                     {steps[currentStep].component}
                     <div className="w-full">
                       <InvestmentClubCTAs key={currentStep} />
@@ -158,7 +159,7 @@ const CreateInvestmentClub: React.FC = () => {
               src="/images/checkCircleGreen.svg"
               alt=""
             />
-            <p className="text-xl text-center mt-8 mb-2 leading-4 text-white font-whyte">
+            <p className="text-xl text-center mt-8 mb-2 text-white font-whyte leading-8">
               Welcome on-chain, {investmentClubName}
             </p>
             <p className="text-sm text-center mb-6 text-white font-whyte">

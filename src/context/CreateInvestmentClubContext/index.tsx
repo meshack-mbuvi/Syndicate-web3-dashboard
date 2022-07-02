@@ -58,6 +58,8 @@ type CreateInvestmentClubProviderProps = {
   showSaveButton: boolean;
   editMintMaxDate: boolean;
   setEditMintMaxDate: Dispatch<SetStateAction<boolean>>;
+  isEditStep: boolean;
+  setIsEditStep: Dispatch<SetStateAction<boolean>>;
 };
 
 const CreateInvestmentClubContext = createContext<
@@ -80,7 +82,7 @@ const CreateInvestmentClubProvider: React.FC = ({ children }) => {
       investmentClubName,
       investmentClubSymbol,
       tokenCap,
-      mintEndTime: { value: endMintTime },
+      mintEndTime: { value: endMintTime, mintTime },
       membersCount,
       tokenDetails: { depositToken, depositTokenSymbol }
     }
@@ -101,6 +103,7 @@ const CreateInvestmentClubProvider: React.FC = ({ children }) => {
   const [errorModalMessage, setErrorModalMessage] = useState('');
   const [showSaveButton, setShowSaveButton] = useState(true);
   const [editMintMaxDate, setEditMintMaxDate] = useState<boolean>(false);
+  const [isEditStep, setIsEditStep] = useState(false);
   // show initial steps in create flow
   const [preClubCreationStep, setPreClubCreationStep] =
     useState<string>('invite');
@@ -141,7 +144,12 @@ const CreateInvestmentClubProvider: React.FC = ({ children }) => {
   });
 
   const handleNext = () => {
-    setShowNextButton(true);
+    if (isEditStep && mintTime !== 'Custom') {
+      setShowNextButton(false);
+    } else {
+      setShowNextButton(true);
+    }
+
     if (currentStep < 4) {
       setCurrentStep((prev) => prev + 1);
     }
@@ -309,7 +317,9 @@ const CreateInvestmentClubProvider: React.FC = ({ children }) => {
         showSaveButton,
         setShowSaveButton,
         editMintMaxDate,
-        setEditMintMaxDate
+        setEditMintMaxDate,
+        isEditStep,
+        setIsEditStep
       }}
     >
       {children}
