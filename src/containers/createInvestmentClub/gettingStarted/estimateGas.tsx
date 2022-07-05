@@ -83,11 +83,7 @@ const EstimateGas = (props: { customClasses?: string }) => {
 
         <span className="mr-3 text-blue">
           {gas
-            ? `${gas.toFixed(6)} ${activeNetwork.nativeCurrency.symbol} ${
-                nativeTokenPrice
-                  ? '(~$' + (gas * nativeTokenPrice).toFixed(2) + ')'
-                  : ''
-              }`
+            ? `${gas.toFixed(6)} ${activeNetwork.nativeCurrency.symbol}`
             : `- ${activeNetwork.nativeCurrency.symbol}`}
         </span>
       </span>
