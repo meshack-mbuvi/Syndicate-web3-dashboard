@@ -1,10 +1,13 @@
 import { CtaButton } from '@/components/CTAButton';
 import { B2, B3, B4, H1, H2, H3, H4, L2 } from '@/components/typography';
+import { useDispatch } from 'react-redux';
+import { showWalletModal } from '@/state/wallet/actions';
 
 export enum WalletState {
   NOT_CONNECTED = 'NOT_CONNECTED',
   WRONG_WALLET = 'WRONG_WALLET',
-  CONNECTED = 'CONNECTED'
+  CONNECTED = 'CONNECTED',
+  MAX_PASSES_REACHED = 'MAX_PASSES_REACHED'
 }
 
 interface Props {
@@ -38,6 +41,8 @@ export const ClaimCollectivePass: React.FC<Props> = ({
   walletState,
   gasEstimate
 }) => {
+  const dispatch = useDispatch();
+
   const created = (
     <>
       {/* Desktop */}
@@ -75,6 +80,8 @@ export const ClaimCollectivePass: React.FC<Props> = ({
       ? `Your connected wallet is not eligible to claim this NFT`
       : walletState === WalletState.NOT_CONNECTED
       ? 'Connect your wallet to claim a pass'
+      : walletState === WalletState.MAX_PASSES_REACHED
+      ? 'You have reached the maximum number of passes per wallet'
       : null;
   const walletLabel = (
     <div>
@@ -91,7 +98,8 @@ export const ClaimCollectivePass: React.FC<Props> = ({
   const walletButtonText =
     walletState === WalletState.CONNECTED
       ? 'Claim'
-      : walletState === WalletState.WRONG_WALLET
+      : walletState === WalletState.WRONG_WALLET ||
+        walletState === WalletState.MAX_PASSES_REACHED
       ? `Connect a different wallet`
       : walletState === WalletState.NOT_CONNECTED
       ? 'Connect wallet'
@@ -144,7 +152,10 @@ export const ClaimCollectivePass: React.FC<Props> = ({
   return (
     <div className="space-y-6 sm:space-y-10 max-w-120">
       <div className="sm:space-y-4">
-        <L2 extraClasses="mb-2">Join {numberOfExistingMembers} members of</L2>
+        <L2 extraClasses="mb-2">
+          Join {numberOfExistingMembers > 0 ? numberOfExistingMembers : 'the'}{' '}
+          members of
+        </L2>
         <div className="mb-4 sm:mb-0 sm:flex items-center space-y-2 sm:space-y-0 sm:space-x-4">
           {title}
           {links && (
@@ -179,7 +190,21 @@ export const ClaimCollectivePass: React.FC<Props> = ({
 
       <div className="fixed sm:relative bottom-0 left-0 py-6 sm:py-auto px-4 w-full sm:p-8 bg-gray-syn8 space-y-4 sm:space-y-10 text-center sm:rounded-2.5xl">
         {walletLabel}
-        <CtaButton greenCta={walletState === WalletState.CONNECTED}>
+        <CtaButton
+          greenCta={walletState === WalletState.CONNECTED}
+          onClick={() => {
+            if (
+              walletState === WalletState.NOT_CONNECTED ||
+              walletState === WalletState.WRONG_WALLET ||
+              walletState === WalletState.MAX_PASSES_REACHED
+            ) {
+              dispatch(showWalletModal());
+            } else if (walletState === WalletState.CONNECTED) {
+              // TODO: add trigger for claiming here
+              return;
+            }
+          }}
+        >
           {walletButtonText}
         </CtaButton>
         {walletState === WalletState.CONNECTED && gasEstimate && (
