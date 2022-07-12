@@ -397,8 +397,8 @@ export const ProgressIndicator = (props: IProgressIndicator): JSX.Element => {
           </div>
 
           {/* Details content  */}
-          <div className="flex flex-col md:flex-row justify-start md:justify-between mt-6">
-            <div className="text-left mb-6 md:mb-0 flex-shrink-0">
+          <div className="flex justify-between mt-6">
+            <div className="text-left">
               <p className="text-gray-syn4 leading-6 pb-2">
                 Club tokens minted
               </p>
@@ -417,7 +417,7 @@ export const ProgressIndicator = (props: IProgressIndicator): JSX.Element => {
                   &nbsp;
                   {symbol}
                 </p>
-                <p className="text-gray-lightManatee font-light xl:text-2xl lg:text-xl text-base">
+                <p className="text-gray-lightManatee font-light text-2xl">
                   {floatedNumberWithCommas(totalPercentageDeposits)}
                   {/* Temporary fix to add font weight to symbol  */}
                   <span
@@ -425,18 +425,17 @@ export const ProgressIndicator = (props: IProgressIndicator): JSX.Element => {
                       fontFamily: 'Arial',
                       fontWeight: 300
                     }}
-                    className="leading-loose xl:text-2xl lg:text-xl text-base"
                   >
                     %
                   </span>
                 </p>
               </div>
             </div>
-            <div className="text-left md:text-right flex-shrink-0">
+            <div className="text-right">
               <p className="text-gray-syn4 leading-6 pb-2">
                 Club token max supply
               </p>
-              <p className="xl:text-2xl lg:text-xl text-base text-white leading-loose">
+              <p className="xl:text-2xl lg:text-xl text-sm text-white leading-loose">
                 <NumberTreatment
                   numberValue={`${maxTotalSupply || ''}`}
                   nativeDepositToken={nativeDepositToken}

@@ -5,7 +5,6 @@ import NotFoundPage from '@/pages/404';
 import { AppState } from '@/state';
 import { useFlags } from 'launchdarkly-react-client-sdk';
 import { isEmpty } from 'lodash';
-import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 
@@ -20,16 +19,12 @@ const DistributeTokensPage: React.FC = () => {
   } = useSelector((state: AppState) => state);
   const [pageIsLoading, setPageIsLoading] = useState(true);
 
-  const router = useRouter();
-
-  const { isReady } = router;
-
   // LaunchDarkly distributions feature flag
   const { distributions } = useFlags();
 
   useEffect(() => {
     // distributions is undefined on page load
-    if (distributions == undefined || isEmpty(web3) || !isReady) return;
+    if (distributions == undefined || isEmpty(web3)) return;
 
     setPageIsLoading(false);
     return () => {

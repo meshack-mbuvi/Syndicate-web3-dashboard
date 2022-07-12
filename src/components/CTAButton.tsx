@@ -4,8 +4,6 @@ interface Props {
   disabled?: boolean;
   onClick?;
   greenCta?: boolean;
-  voltCta?: boolean;
-  cherenkovCta?: boolean;
   type?;
   fullWidth?: boolean;
   extraClasses?: string;
@@ -15,8 +13,6 @@ export const CtaButton: React.FC<Props> = ({
   onClick,
   children,
   greenCta,
-  voltCta,
-  cherenkovCta,
   disabled = false,
   type = 'button',
   fullWidth = true,
@@ -29,10 +25,6 @@ export const CtaButton: React.FC<Props> = ({
           ? 'primary-CTA-disabled text-gray-syn4'
           : greenCta
           ? 'green-CTA'
-          : voltCta
-          ? 'volt-CTA'
-          : cherenkovCta
-          ? 'cherenkov-CTA'
           : 'primary-CTA'
       } ${extraClasses}`}
       disabled={disabled}

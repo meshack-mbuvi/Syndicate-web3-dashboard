@@ -281,7 +281,7 @@ export const DepositLinkModal: FC<ILinkModal> = ({
         customWidth: 'w-100',
         customClassName: 'pt-8 px-10 pb-5',
         showCloseButton: false,
-        outsideOnClick: false,
+        outsideOnClick: true,
         showHeader: false,
         alignment: 'align-top',
         margin: 'mt-48'

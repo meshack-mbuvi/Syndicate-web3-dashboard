@@ -7,13 +7,13 @@ export const SUPPORTED_TOKENS = Object.freeze({
       symbol: 'USDC',
       decimals: 6,
       default: false,
-      logoURI: '/images/prodTokenLogos/USDCoin.svg'
+      logoURI: '/images/prodTokenLogos/USDCoin.png'
     },
     {
       symbol: 'ETH',
       name: 'Ethereum',
       address: '',
-      logoURI: '/images/ethereum-logo.svg',
+      logoURI: '/images/ethereum-logo.png',
       decimals: 18,
       default: true
     },
@@ -23,7 +23,7 @@ export const SUPPORTED_TOKENS = Object.freeze({
       symbol: 'WETH',
       decimals: 18,
       default: false,
-      logoURI: '/images/prodTokenLogos/wEth.svg'
+      logoURI: '/images/prodTokenLogos/wEth.png'
     },
     {
       name: 'Wrapped BTC',
@@ -31,7 +31,7 @@ export const SUPPORTED_TOKENS = Object.freeze({
       symbol: 'WBTC',
       decimals: 8,
       default: false,
-      logoURI: '/images/prodTokenLogos/wrapped-btc.svg'
+      logoURI: '/images/prodTokenLogos/wrapped-btc.png'
     },
     {
       name: 'Dai Stablecoin',
@@ -47,7 +47,7 @@ export const SUPPORTED_TOKENS = Object.freeze({
       symbol: 'UNI',
       decimals: 18,
       default: false,
-      logoURI: '/images/prodTokenLogos/uniswap.svg'
+      logoURI: '/images/prodTokenLogos/uniswap.png'
     },
     {
       name: '0x Protocol Token',
@@ -55,7 +55,7 @@ export const SUPPORTED_TOKENS = Object.freeze({
       symbol: 'ZRX',
       decimals: 18,
       default: false,
-      logoURI: '/images/prodTokenLogos/0x.svg'
+      logoURI: '/images/prodTokenLogos/0x.png'
     },
     {
       name: 'Curve DAO Token',
@@ -63,7 +63,7 @@ export const SUPPORTED_TOKENS = Object.freeze({
       symbol: 'CRV',
       decimals: 18,
       default: false,
-      logoURI: '/images/prodTokenLogos/curve.svg'
+      logoURI: '/images/prodTokenLogos/curve.png'
     },
     {
       name: 'Tether USD',
@@ -71,7 +71,7 @@ export const SUPPORTED_TOKENS = Object.freeze({
       symbol: 'USDT',
       decimals: 6,
       default: false,
-      logoURI: '/images/prodTokenLogos/tether.svg'
+      logoURI: '/images/prodTokenLogos/tether.png'
     },
     {
       name: 'USDCoin',
@@ -79,7 +79,7 @@ export const SUPPORTED_TOKENS = Object.freeze({
       symbol: 'USDC',
       decimals: 6,
       default: false,
-      logoURI: '/images/prodTokenLogos/USDCoin.svg'
+      logoURI: '/images/prodTokenLogos/USDCoin.png'
     },
     {
       name: 'Orchid',
@@ -87,7 +87,7 @@ export const SUPPORTED_TOKENS = Object.freeze({
       symbol: 'OXT',
       decimals: 18,
       default: false,
-      logoURI: '/images/prodTokenLogos/orchid.svg'
+      logoURI: '/images/prodTokenLogos/orchid.png'
     },
     {
       name: 'Maker',
@@ -95,7 +95,7 @@ export const SUPPORTED_TOKENS = Object.freeze({
       symbol: 'MKR',
       decimals: 18,
       default: false,
-      logoURI: '/images/prodTokenLogos/maker.svg'
+      logoURI: '/images/prodTokenLogos/maker.png'
     },
     {
       name: 'ChainLink Token',
@@ -103,7 +103,7 @@ export const SUPPORTED_TOKENS = Object.freeze({
       symbol: 'LINK',
       decimals: 18,
       default: false,
-      logoURI: '/images/prodTokenLogos/chainlink.svg'
+      logoURI: '/images/prodTokenLogos/chainlink.png'
     },
     {
       name: 'Reputation Augur v1',
@@ -111,7 +111,7 @@ export const SUPPORTED_TOKENS = Object.freeze({
       symbol: 'REP',
       decimals: 18,
       default: false,
-      logoURI: '/images/prodTokenLogos/augur.svg'
+      logoURI: '/images/prodTokenLogos/augur.png'
     },
     {
       name: 'Reputation Augur v2',
@@ -119,7 +119,7 @@ export const SUPPORTED_TOKENS = Object.freeze({
       symbol: 'REPv2',
       decimals: 18,
       default: false,
-      logoURI: '/images/prodTokenLogos/augurV2.svg'
+      logoURI: '/images/prodTokenLogos/augurV2.png'
     },
     {
       name: 'Kyber Network Crystal',
@@ -127,7 +127,7 @@ export const SUPPORTED_TOKENS = Object.freeze({
       symbol: 'KNC',
       decimals: 18,
       default: false,
-      logoURI: '/images/prodTokenLogos/kyber.svg'
+      logoURI: '/images/prodTokenLogos/kyber.png'
     },
     {
       name: 'Compound',
@@ -135,7 +135,7 @@ export const SUPPORTED_TOKENS = Object.freeze({
       symbol: 'COMP',
       decimals: 18,
       default: false,
-      logoURI: '/images/prodTokenLogos/compound.svg'
+      logoURI: '/images/prodTokenLogos/compound.png'
     },
     {
       default: false,
@@ -143,7 +143,7 @@ export const SUPPORTED_TOKENS = Object.freeze({
       name: 'Band Protocol',
       symbol: 'BAND',
       decimals: 18,
-      logoURI: '/images/prodTokenLogos/band.svg'
+      logoURI: '/images/prodTokenLogos/band.webp'
     },
     {
       name: 'Numeraire',
@@ -151,7 +151,7 @@ export const SUPPORTED_TOKENS = Object.freeze({
       symbol: 'NMR',
       decimals: 18,
       default: false,
-      logoURI: '/images/prodTokenLogos/numeraire.svg'
+      logoURI: '/images/prodTokenLogos/numeraire.png'
     },
     {
       name: 'UMA Voting Token v1',
@@ -159,7 +159,7 @@ export const SUPPORTED_TOKENS = Object.freeze({
       symbol: 'UMA',
       decimals: 18,
       default: false,
-      logoURI: '/images/prodTokenLogos/uma.svg'
+      logoURI: '/images/prodTokenLogos/uma.png'
     },
     {
       name: 'LoopringCoin V2',
@@ -167,7 +167,7 @@ export const SUPPORTED_TOKENS = Object.freeze({
       symbol: 'LRC',
       decimals: 18,
       default: false,
-      logoURI: '/images/prodTokenLogos/loopring.svg'
+      logoURI: '/images/prodTokenLogos/loopring.png'
     },
     {
       default: false,
@@ -175,7 +175,7 @@ export const SUPPORTED_TOKENS = Object.freeze({
       name: 'yearn finance',
       symbol: 'YFI',
       decimals: 18,
-      logoURI: '/images/prodTokenLogos/yearn-finance.svg'
+      logoURI: '/images/prodTokenLogos/yearn-finance.webp'
     },
     {
       name: 'Republic Token',
@@ -183,7 +183,7 @@ export const SUPPORTED_TOKENS = Object.freeze({
       symbol: 'REN',
       decimals: 18,
       default: false,
-      logoURI: '/images/prodTokenLogos/republic.svg'
+      logoURI: '/images/prodTokenLogos/republic.png'
     },
     {
       name: 'Balancer',
@@ -191,7 +191,7 @@ export const SUPPORTED_TOKENS = Object.freeze({
       symbol: 'BAL',
       decimals: 18,
       default: false,
-      logoURI: '/images/prodTokenLogos/balancer.svg'
+      logoURI: '/images/prodTokenLogos/balancer.png'
     },
     {
       default: false,
@@ -199,7 +199,7 @@ export const SUPPORTED_TOKENS = Object.freeze({
       name: 'NuCypher',
       symbol: 'NU',
       decimals: 18,
-      logoURI: '/images/prodTokenLogos/nucypher.svg'
+      logoURI: '/images/prodTokenLogos/nucypher.webp'
     },
     {
       default: false,
@@ -207,7 +207,7 @@ export const SUPPORTED_TOKENS = Object.freeze({
       name: 'Aave',
       symbol: 'AAVE',
       decimals: 18,
-      logoURI: '/images/prodTokenLogos/AAVE.svg'
+      logoURI: '/images/prodTokenLogos/AAVE.webp'
     },
     {
       default: false,
@@ -215,7 +215,7 @@ export const SUPPORTED_TOKENS = Object.freeze({
       name: 'The Graph',
       symbol: 'GRT',
       decimals: 18,
-      logoURI: '/images/prodTokenLogos/graph.svg'
+      logoURI: '/images/prodTokenLogos/graph.webp'
     },
     {
       name: 'Bancor Network Token',
@@ -223,7 +223,7 @@ export const SUPPORTED_TOKENS = Object.freeze({
       symbol: 'BNT',
       decimals: 18,
       default: false,
-      logoURI: '/images/prodTokenLogos/bancor.svg'
+      logoURI: '/images/prodTokenLogos/bancor.png'
     },
     {
       name: 'Synthetix Network Token',
@@ -231,7 +231,7 @@ export const SUPPORTED_TOKENS = Object.freeze({
       symbol: 'SNX',
       decimals: 18,
       default: false,
-      logoURI: '/images/prodTokenLogos/synthetix.svg'
+      logoURI: '/images/prodTokenLogos/synthetix.png'
     },
     {
       default: false,
@@ -239,7 +239,7 @@ export const SUPPORTED_TOKENS = Object.freeze({
       name: 'Decentraland',
       symbol: 'MANA',
       decimals: 18,
-      logoURI: '/images/prodTokenLogos/decentraland.svg'
+      logoURI: '/images/prodTokenLogos/decentraland.webp'
     },
     {
       name: 'Loom Network',
@@ -247,7 +247,7 @@ export const SUPPORTED_TOKENS = Object.freeze({
       symbol: 'LOOM',
       decimals: 18,
       default: false,
-      logoURI: '/images/prodTokenLogos/loom.svg'
+      logoURI: '/images/prodTokenLogos/loom.png'
     },
     {
       default: false,
@@ -255,7 +255,7 @@ export const SUPPORTED_TOKENS = Object.freeze({
       name: 'Civic',
       symbol: 'CVC',
       decimals: 8,
-      logoURI: '/images/prodTokenLogos/civic.svg'
+      logoURI: '/images/prodTokenLogos/civic.webp'
     },
     {
       default: false,
@@ -263,7 +263,7 @@ export const SUPPORTED_TOKENS = Object.freeze({
       name: 'district0x',
       symbol: 'DNT',
       decimals: 18,
-      logoURI: '/images/prodTokenLogos/district0x.svg'
+      logoURI: '/images/prodTokenLogos/district0x.png'
     },
     {
       name: 'Storj Token',
@@ -271,7 +271,7 @@ export const SUPPORTED_TOKENS = Object.freeze({
       symbol: 'STORJ',
       decimals: 8,
       default: false,
-      logoURI: '/images/prodTokenLogos/storj.svg'
+      logoURI: '/images/prodTokenLogos/storj.png'
     },
     {
       default: false,
@@ -279,7 +279,7 @@ export const SUPPORTED_TOKENS = Object.freeze({
       name: 'Amp',
       symbol: 'AMP',
       decimals: 18,
-      logoURI: '/images/prodTokenLogos/amp.svg'
+      logoURI: '/images/prodTokenLogos/amp.webp'
     },
     {
       name: 'Gnosis Token',
@@ -287,7 +287,7 @@ export const SUPPORTED_TOKENS = Object.freeze({
       symbol: 'GNO',
       decimals: 18,
       default: false,
-      logoURI: '/images/prodTokenLogos/gnosis.svg'
+      logoURI: '/images/prodTokenLogos/gnosis.webp'
     },
     {
       name: 'Aragon Network Token',
@@ -295,7 +295,7 @@ export const SUPPORTED_TOKENS = Object.freeze({
       symbol: 'ANT',
       decimals: 18,
       default: false,
-      logoURI: '/images/prodTokenLogos/aragon.svg'
+      logoURI: '/images/prodTokenLogos/aragon.webp'
     },
     {
       default: false,
@@ -303,7 +303,7 @@ export const SUPPORTED_TOKENS = Object.freeze({
       name: 'Keep Network',
       symbol: 'KEEP',
       decimals: 18,
-      logoURI: '/images/prodTokenLogos/keep.svg'
+      logoURI: '/images/prodTokenLogos/keep.webp'
     },
     {
       default: false,
@@ -311,7 +311,7 @@ export const SUPPORTED_TOKENS = Object.freeze({
       name: 'tBTC',
       symbol: 'TBTC',
       decimals: 18,
-      logoURI: '/images/prodTokenLogos/tBTC.svg'
+      logoURI: '/images/prodTokenLogos/tBTC.webp'
     },
     {
       default: false,
@@ -319,7 +319,7 @@ export const SUPPORTED_TOKENS = Object.freeze({
       name: 'Enzyme',
       symbol: 'MLN',
       decimals: 18,
-      logoURI: '/images/prodTokenLogos/enzyme.svg'
+      logoURI: '/images/prodTokenLogos/enzyme.webp'
     },
     {
       default: false,
@@ -327,7 +327,7 @@ export const SUPPORTED_TOKENS = Object.freeze({
       name: 'Ethereum Name Service',
       symbol: 'ENS',
       decimals: 18,
-      logoURI: '/images/prodTokenLogos/ens.svg'
+      logoURI: '/images/prodTokenLogos/ens.webp'
     },
     {
       name: 'Synth sUSD',
@@ -343,7 +343,7 @@ export const SUPPORTED_TOKENS = Object.freeze({
       name: 'Polygon',
       symbol: 'MATIC',
       decimals: 18,
-      logoURI: '/images/prodTokenLogos/polygon.svg'
+      logoURI: '/images/prodTokenLogos/polygon.webp'
     }
   ],
   // Rinkeby
@@ -370,7 +370,7 @@ export const SUPPORTED_TOKENS = Object.freeze({
       symbol: 'WETH',
       decimals: 18,
       default: false,
-      logoURI: '/images/prodTokenLogos/wEth.svg'
+      logoURI: '/images/prodTokenLogos/wEth.png'
     },
     {
       name: 'Dai Stablecoin',
@@ -386,7 +386,7 @@ export const SUPPORTED_TOKENS = Object.freeze({
       symbol: 'MKR',
       decimals: 18,
       default: false,
-      logoURI: '/images/prodTokenLogos/maker.svg'
+      logoURI: '/images/prodTokenLogos/maker.png'
     },
     {
       name: 'Uniswap',
@@ -394,7 +394,7 @@ export const SUPPORTED_TOKENS = Object.freeze({
       symbol: 'UNI',
       decimals: 18,
       default: false,
-      logoURI: '/images/prodTokenLogos/uniswap.svg'
+      logoURI: '/images/prodTokenLogos/uniswap.png'
     }
   ],
   // Matic
@@ -413,7 +413,7 @@ export const SUPPORTED_TOKENS = Object.freeze({
       symbol: 'USDC',
       decimals: 6,
       default: false,
-      logoURI: '/images/prodTokenLogos/USDCoin.svg'
+      logoURI: '/images/prodTokenLogos/USDCoin.png'
     },
     {
       name: 'Wrapped Ether',
@@ -421,7 +421,7 @@ export const SUPPORTED_TOKENS = Object.freeze({
       symbol: 'WETH',
       decimals: 18,
       default: false,
-      logoURI: '/images/prodTokenLogos/wEth.svg'
+      logoURI: '/images/prodTokenLogos/wEth.png'
     },
     {
       name: 'Dai Stablecoin',
@@ -437,7 +437,7 @@ export const SUPPORTED_TOKENS = Object.freeze({
       symbol: 'ZRX',
       decimals: 18,
       default: false,
-      logoURI: '/images/prodTokenLogos/0x.svg'
+      logoURI: '/images/prodTokenLogos/0x.png'
     },
     {
       name: 'Curve DAO Token',
@@ -445,7 +445,7 @@ export const SUPPORTED_TOKENS = Object.freeze({
       symbol: 'CRV',
       decimals: 18,
       default: false,
-      logoURI: '/images/prodTokenLogos/curve.svg'
+      logoURI: '/images/prodTokenLogos/curve.png'
     },
     {
       name: 'Uniswap',
@@ -453,7 +453,7 @@ export const SUPPORTED_TOKENS = Object.freeze({
       symbol: 'UNI',
       decimals: 18,
       default: false,
-      logoURI: '/images/prodTokenLogos/uniswap.svg'
+      logoURI: '/images/prodTokenLogos/uniswap.png'
     },
     {
       name: 'Tether USD',
@@ -461,7 +461,7 @@ export const SUPPORTED_TOKENS = Object.freeze({
       symbol: 'USDT',
       decimals: 6,
       default: false,
-      logoURI: '/images/prodTokenLogos/tether.svg'
+      logoURI: '/images/prodTokenLogos/tether.png'
     },
     {
       name: 'Orchid',
@@ -469,7 +469,7 @@ export const SUPPORTED_TOKENS = Object.freeze({
       symbol: 'OXT',
       decimals: 18,
       default: false,
-      logoURI: '/images/prodTokenLogos/orchid.svg'
+      logoURI: '/images/prodTokenLogos/orchid.png'
     },
     {
       name: 'Maker',
@@ -477,7 +477,7 @@ export const SUPPORTED_TOKENS = Object.freeze({
       symbol: 'MKR',
       decimals: 18,
       default: false,
-      logoURI: '/images/prodTokenLogos/maker.svg'
+      logoURI: '/images/prodTokenLogos/maker.png'
     },
     {
       name: 'ChainLink Token',
@@ -485,7 +485,7 @@ export const SUPPORTED_TOKENS = Object.freeze({
       symbol: 'LINK',
       decimals: 18,
       default: false,
-      logoURI: '/images/prodTokenLogos/chainlink.svg'
+      logoURI: '/images/prodTokenLogos/chainlink.png'
     },
     {
       name: 'Reputation Augur v2',
@@ -493,7 +493,7 @@ export const SUPPORTED_TOKENS = Object.freeze({
       symbol: 'REPv2',
       decimals: 18,
       default: false,
-      logoURI: '/images/prodTokenLogos/augurV2.svg'
+      logoURI: '/images/prodTokenLogos/augurV2.png'
     },
     {
       name: 'Kyber Network Crystal',
@@ -501,7 +501,7 @@ export const SUPPORTED_TOKENS = Object.freeze({
       symbol: 'KNC',
       decimals: 18,
       default: false,
-      logoURI: '/images/prodTokenLogos/kyber.svg'
+      logoURI: '/images/prodTokenLogos/kyber.png'
     },
     {
       name: 'Compound',
@@ -509,7 +509,7 @@ export const SUPPORTED_TOKENS = Object.freeze({
       symbol: 'COMP',
       decimals: 18,
       default: false,
-      logoURI: '/images/prodTokenLogos/compound.svg'
+      logoURI: '/images/prodTokenLogos/compound.png'
     },
     {
       default: false,
@@ -517,7 +517,7 @@ export const SUPPORTED_TOKENS = Object.freeze({
       name: 'Band Protocol',
       symbol: 'BAND',
       decimals: 18,
-      logoURI: '/images/prodTokenLogos/band.svg'
+      logoURI: '/images/prodTokenLogos/band.webp'
     },
     {
       name: 'Numeraire',
@@ -525,7 +525,7 @@ export const SUPPORTED_TOKENS = Object.freeze({
       symbol: 'NMR',
       decimals: 18,
       default: false,
-      logoURI: '/images/prodTokenLogos/numeraire.svg'
+      logoURI: '/images/prodTokenLogos/numeraire.png'
     },
     {
       name: 'UMA Voting Token v1',
@@ -533,7 +533,7 @@ export const SUPPORTED_TOKENS = Object.freeze({
       symbol: 'UMA',
       decimals: 18,
       default: false,
-      logoURI: '/images/prodTokenLogos/uma.svg'
+      logoURI: '/images/prodTokenLogos/uma.png'
     },
     {
       name: 'LoopringCoin V2',
@@ -541,7 +541,7 @@ export const SUPPORTED_TOKENS = Object.freeze({
       symbol: 'LRC',
       decimals: 18,
       default: false,
-      logoURI: '/images/prodTokenLogos/loopring.svg'
+      logoURI: '/images/prodTokenLogos/loopring.png'
     },
     {
       default: false,
@@ -549,7 +549,7 @@ export const SUPPORTED_TOKENS = Object.freeze({
       name: 'yearn finance',
       symbol: 'YFI',
       decimals: 18,
-      logoURI: '/images/prodTokenLogos/yearn-finance.svg'
+      logoURI: '/images/prodTokenLogos/yearn-finance.webp'
     },
     {
       name: 'Republic Token',
@@ -557,7 +557,7 @@ export const SUPPORTED_TOKENS = Object.freeze({
       symbol: 'REN',
       decimals: 18,
       default: false,
-      logoURI: '/images/prodTokenLogos/republic.svg'
+      logoURI: '/images/prodTokenLogos/republic.png'
     },
     {
       name: 'Wrapped BTC',
@@ -565,7 +565,7 @@ export const SUPPORTED_TOKENS = Object.freeze({
       symbol: 'WBTC',
       decimals: 8,
       default: false,
-      logoURI: '/images/prodTokenLogos/wrapped-btc.svg'
+      logoURI: '/images/prodTokenLogos/wrapped-btc.png'
     },
     {
       name: 'Balancer',
@@ -573,7 +573,7 @@ export const SUPPORTED_TOKENS = Object.freeze({
       symbol: 'BAL',
       decimals: 18,
       default: false,
-      logoURI: '/images/prodTokenLogos/balancer.svg'
+      logoURI: '/images/prodTokenLogos/balancer.png'
     },
     {
       default: false,
@@ -581,7 +581,7 @@ export const SUPPORTED_TOKENS = Object.freeze({
       name: 'Aave',
       symbol: 'AAVE',
       decimals: 18,
-      logoURI: '/images/prodTokenLogos/AAVE.svg'
+      logoURI: '/images/prodTokenLogos/AAVE.webp'
     },
     {
       default: false,
@@ -589,7 +589,7 @@ export const SUPPORTED_TOKENS = Object.freeze({
       name: 'The Graph',
       symbol: 'GRT',
       decimals: 18,
-      logoURI: '/images/prodTokenLogos/graph.svg'
+      logoURI: '/images/prodTokenLogos/graph.webp'
     },
     {
       name: 'Bancor Network Token',
@@ -597,7 +597,7 @@ export const SUPPORTED_TOKENS = Object.freeze({
       symbol: 'BNT',
       decimals: 18,
       default: false,
-      logoURI: '/images/prodTokenLogos/bancor.svg'
+      logoURI: '/images/prodTokenLogos/bancor.png'
     },
     {
       name: 'Synthetix Network Token',
@@ -605,7 +605,7 @@ export const SUPPORTED_TOKENS = Object.freeze({
       symbol: 'SNX',
       decimals: 18,
       default: false,
-      logoURI: '/images/prodTokenLogos/synthetix.svg'
+      logoURI: '/images/prodTokenLogos/synthetix.png'
     },
     {
       default: false,
@@ -613,7 +613,7 @@ export const SUPPORTED_TOKENS = Object.freeze({
       name: 'Decentraland',
       symbol: 'MANA',
       decimals: 18,
-      logoURI: '/images/prodTokenLogos/decentraland.svg'
+      logoURI: '/images/prodTokenLogos/decentraland.webp'
     },
     {
       name: 'Loom Network',
@@ -621,7 +621,7 @@ export const SUPPORTED_TOKENS = Object.freeze({
       symbol: 'LOOM',
       decimals: 18,
       default: false,
-      logoURI: '/images/prodTokenLogos/loom.svg'
+      logoURI: '/images/prodTokenLogos/loom.png'
     },
     {
       default: false,
@@ -629,7 +629,7 @@ export const SUPPORTED_TOKENS = Object.freeze({
       name: 'Civic',
       symbol: 'CVC',
       decimals: 8,
-      logoURI: '/images/prodTokenLogos/civic.svg'
+      logoURI: '/images/prodTokenLogos/civic.webp'
     },
     {
       name: 'Storj Token',
@@ -637,7 +637,7 @@ export const SUPPORTED_TOKENS = Object.freeze({
       symbol: 'STORJ',
       decimals: 8,
       default: false,
-      logoURI: '/images/prodTokenLogos/storj.svg'
+      logoURI: '/images/prodTokenLogos/storj.png'
     },
     {
       default: false,
@@ -645,7 +645,7 @@ export const SUPPORTED_TOKENS = Object.freeze({
       name: 'Amp',
       symbol: 'AMP',
       decimals: 18,
-      logoURI: '/images/prodTokenLogos/amp.svg'
+      logoURI: '/images/prodTokenLogos/amp.webp'
     },
     {
       name: 'Gnosis Token',
@@ -653,7 +653,7 @@ export const SUPPORTED_TOKENS = Object.freeze({
       symbol: 'GNO',
       decimals: 18,
       default: false,
-      logoURI: '/images/prodTokenLogos/gnosis.svg'
+      logoURI: '/images/prodTokenLogos/gnosis.webp'
     },
     {
       default: false,
@@ -661,7 +661,7 @@ export const SUPPORTED_TOKENS = Object.freeze({
       name: 'Keep Network',
       symbol: 'KEEP',
       decimals: 18,
-      logoURI: '/images/prodTokenLogos/keep.svg'
+      logoURI: '/images/prodTokenLogos/keep.webp'
     },
     {
       default: false,
@@ -669,7 +669,7 @@ export const SUPPORTED_TOKENS = Object.freeze({
       name: 'tBTC',
       symbol: 'TBTC',
       decimals: 18,
-      logoURI: '/images/prodTokenLogos/tBTC.svg'
+      logoURI: '/images/prodTokenLogos/tBTC.webp'
     },
     {
       default: false,
@@ -677,7 +677,7 @@ export const SUPPORTED_TOKENS = Object.freeze({
       name: 'Ethereum Name Service',
       symbol: 'ENS',
       decimals: 18,
-      logoURI: '/images/prodTokenLogos/ens.svg'
+      logoURI: '/images/prodTokenLogos/ens.webp'
     },
     {
       name: 'Synth sUSD',
@@ -693,7 +693,7 @@ export const SUPPORTED_TOKENS = Object.freeze({
       symbol: 'WMATIC',
       decimals: 18,
       default: false,
-      logoURI: '/images/prodTokenLogos/polygon.svg'
+      logoURI: '/images/prodTokenLogos/polygon.webp'
     }
   ]
 });

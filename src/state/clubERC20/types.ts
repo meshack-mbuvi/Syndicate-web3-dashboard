@@ -1,5 +1,5 @@
 export interface clubERC20 {
-  createdAt?;
+  createdAt;
   endTime: number;
   maxMemberCount: number;
   maxTotalSupply: string;
@@ -7,7 +7,6 @@ export interface clubERC20 {
   requiredTokenMinBalance;
   startTime;
   contractAddress;
-  address?;
   ownerAddress;
   depositAmount: string;
   totalDeposits: string;
@@ -21,6 +20,5 @@ export interface clubERC20 {
 export const initialState = {
   otherClubERC20s: [],
   myClubERC20s: [],
-  newClub: null,
   loading: true
 };

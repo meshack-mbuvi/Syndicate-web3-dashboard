@@ -9,7 +9,7 @@ const Template = (args) => {
   const [activeIndices, setActiveIndices] = useState([]);
   const [options, setOptions] = useState([
     {
-      icon: '/images/prodTokenLogos/uniswap.svg',
+      icon: '/images/prodTokenLogos/uniswap.png',
       name: 'Uniswap',
       symbol: 'UNI',
       tokenAmount: 123,
@@ -17,7 +17,7 @@ const Template = (args) => {
       isEditingInFiat: false
     },
     {
-      icon: '/images/ethereum-logo.svg',
+      icon: '/images/ethereum-logo.png',
       name: 'Ethereum',
       symbol: 'ETH',
       tokenAmount: 123,
@@ -27,7 +27,7 @@ const Template = (args) => {
       warning: 'Consider reserving ETH to pay gas on future distributions'
     },
     {
-      icon: '/images/prodTokenLogos/USDCoin.svg',
+      icon: '/images/prodTokenLogos/USDCoin.png',
       name: 'USD Coin',
       symbol: 'USDC',
       tokenAmount: 123,

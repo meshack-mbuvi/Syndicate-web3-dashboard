@@ -23,7 +23,6 @@ export const fetchTokenTransactions = createAsyncThunk(
   'assets/fetchTokenTransactions',
   async (params: any) => {
     const { account, activeNetwork, web3 } = params;
-
     const response = await Promise.all([
       // ERC20 tokens transactions
       await getTokenTransactionHistory(account, activeNetwork.chainId),
@@ -51,7 +50,6 @@ export const fetchTokenTransactions = createAsyncThunk(
     // get unique token contracts
     const uniqueTokens = filterByUniqueContractAddress(tokenValues);
 
-    console.log({ web3 });
     // check if account has token balance
     const uniqueTokenBalances = (
       await fetchTokenBalances(uniqueTokens, account, web3)
@@ -313,9 +311,7 @@ const assetsSlice = createSlice({
         state.tokensFetchError = false;
         state.nativeTokenPrice = action.payload.nativeTokenPrice;
       })
-      .addCase(fetchTokenTransactions.rejected, (state, action) => {
-        console.log({ action });
-
+      .addCase(fetchTokenTransactions.rejected, (state) => {
         state.loading = false;
         state.tokensFetchError = true;
       })

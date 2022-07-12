@@ -1,5 +1,5 @@
 import { MintPolicyContract } from '@/ClubERC20Factory/policyMintERC20';
-import { ProgressModal, ProgressModalState } from '@/components/progressModal';
+import { ProgressModal } from '@/components/progressModal';
 import { Switch, SwitchType } from '@/components/switch';
 import EstimateGas from '@/containers/createInvestmentClub/gettingStarted/estimateGas';
 import { SettingsDisclaimerTooltip } from '@/containers/createInvestmentClub/shared/SettingDisclaimer';
@@ -40,25 +40,26 @@ import TimeField from '@/containers/createInvestmentClub/mintMaxDate/timeField';
 import moment from 'moment';
 import AddToCalendar from '@/components/addToCalendar';
 import { DAY_IN_SECONDS } from '@/utils/constants';
+import { ProgressState } from '../progressCard';
 
 const progressModalStates = {
   confirm: {
     title: 'Confirm in wallet',
     description: 'Confirm the modification of club settings in your wallet',
-    state: ProgressModalState.CONFIRM,
+    state: ProgressState.CONFIRM,
     buttonLabel: ''
   },
   success: {
     title: 'Settings successfully modified',
     description: '',
-    state: ProgressModalState.SUCCESS,
+    state: ProgressState.SUCCESS,
     buttonLabel: 'Back to club dashboard'
   },
   pending: {
     title: 'Pending confirmation',
     description:
       'This could take up to a few minutes depending on network congestion and the gas fees you set. Feel free to leave this screen.',
-    state: ProgressModalState.PENDING,
+    state: ProgressState.PENDING,
     buttonLabel: 'Back to club dashboard'
   },
   failure: {
@@ -73,7 +74,7 @@ const progressModalStates = {
         if the issue persists.
       </span>
     ),
-    state: ProgressModalState.FAILURE,
+    state: ProgressState.FAILURE,
     buttonLabel: 'Try again'
   }
 };
@@ -841,7 +842,7 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
           </div>
         </div>
 
-        <div className="flex flex-col xl:flex-row space-x-0 xl:space-x-6 space-y-6 xl:space-y-0">
+        <div className="space-y-6 lg:flex lg:space-x-6 lg:space-y-0">
           {/* Gas fees */}
           <div className="flex-grow">
             <div

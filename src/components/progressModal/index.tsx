@@ -1,20 +1,12 @@
-import { BlockExplorerLink } from '@/components/syndicates/shared/BlockExplorerLink';
 import Modal, { ModalStyle } from '../modal';
-import { Spinner } from '../shared/spinner';
 import { ExternalLinkColor } from 'src/components/iconWrappers';
-
-export enum ProgressModalState {
-  PENDING = 'PENDING',
-  SUCCESS = 'SUCCESS',
-  FAILURE = 'FAILURE',
-  CONFIRM = 'CONFIRM'
-}
+import { ProgressCard, ProgressState } from '../progressCard';
 
 export const ProgressModal = (props: {
   isVisible: boolean;
   title: string;
   description?: any;
-  state: ProgressModalState;
+  state: ProgressState;
   buttonLabel?: string;
   buttonFullWidth?: boolean;
   buttonOnClick?: () => void;
@@ -36,41 +28,6 @@ export const ProgressModal = (props: {
     iconColor = ExternalLinkColor.BLUE
   } = props;
 
-  let icon;
-  switch (state) {
-    case ProgressModalState.CONFIRM:
-      icon = <Spinner height="h-16" width="w-16" margin="" strokeWidth="5" />;
-      break;
-
-    case ProgressModalState.PENDING:
-      icon = <Spinner height="h-16" width="w-16" margin="" strokeWidth="5" />;
-      break;
-
-    case ProgressModalState.SUCCESS:
-      icon = (
-        <img
-          height="64"
-          width="64"
-          className="m-auto"
-          src="/images/checkCircleGreen.svg"
-          alt=""
-        />
-      );
-      break;
-
-    case ProgressModalState.FAILURE:
-      icon = (
-        <img
-          height="64"
-          width="64"
-          className="m-auto"
-          src="/images/syndicateStatusIcons/transactionFailed.svg"
-          alt=""
-        />
-      );
-      break;
-  }
-
   return (
     <Modal
       show={isVisible}
@@ -80,37 +37,19 @@ export const ProgressModal = (props: {
       // passing empty string to remove default classes
       customClassName=""
     >
-      {/* -mx-4 is used to revert the mx-4 set on parent div on the modal */}
-      <div className="p-10 -mx-4">
-        {/* passing empty margin to remove the default margin set on spinner */}
-        {icon}
-        <p className="text-center mt-10 h3 text-white font-whyte">{title}</p>
-        {description && (
-          <div className="font-whyte text-center mt-4 leading-5 text-base text-gray-syn4">
-            {description}
-          </div>
-        )}
-        {transactionHash && (
-          <div className="mt-4 w-full flex justify-center items-center">
-            <BlockExplorerLink
-              prefix="View on "
-              resourceId={transactionHash}
-              resource={transactionType}
-              iconcolor={iconColor}
-            />
-          </div>
-        )}
-
-        {buttonLabel && (
-          <button
-            onClick={buttonOnClick}
-            className={`primary-CTA flex-shrink block mx-auto mt-8 ${
-              buttonFullWidth ? 'w-full' : ''
-            }`}
-          >
-            {buttonLabel}
-          </button>
-        )}
+      <div className="-mx-4">
+        {/* -mx-4 is used to revert the mx-4 set on parent div on the modal */}
+        <ProgressCard
+          title={title}
+          description={description}
+          buttonLabel={buttonLabel}
+          buttonOnClick={buttonOnClick}
+          iconColor={iconColor}
+          transactionHash={transactionHash}
+          transactionType={transactionType}
+          buttonFullWidth={buttonFullWidth}
+          state={state}
+        />
       </div>
     </Modal>
   );

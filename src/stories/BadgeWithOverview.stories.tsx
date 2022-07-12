@@ -31,13 +31,13 @@ Default.args = {
     {
       tokenSymbol: 'ETH',
       tokenAmount: 40.0,
-      tokenIcon: '/images/ethereum-logo.svg',
+      tokenIcon: '/images/ethereum-logo.png',
       fiatAmount: 104136.51
     },
     {
       tokenSymbol: 'USDC',
       tokenAmount: 12342,
-      tokenIcon: '/images/prodTokenLogos/USDCoin.svg',
+      tokenIcon: '/images/prodTokenLogos/USDCoin.png',
       fiatAmount: 12321
     }
   ],
@@ -50,14 +50,14 @@ Loading.args = {
     {
       tokenSymbol: 'ETH',
       tokenAmount: 40.0,
-      tokenIcon: '/images/ethereum-logo.svg',
+      tokenIcon: '/images/ethereum-logo.png',
       fiatAmount: 104136.51,
       isLoading: false
     },
     {
       tokenSymbol: 'USDC',
       tokenAmount: 12342,
-      tokenIcon: '/images/prodTokenLogos/USDCoin.svg',
+      tokenIcon: '/images/prodTokenLogos/USDCoin.png',
       fiatAmount: null,
       isLoading: true
     }
