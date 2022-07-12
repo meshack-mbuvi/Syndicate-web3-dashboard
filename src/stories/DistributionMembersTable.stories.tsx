@@ -131,12 +131,12 @@ TwoTokens.args = {
         {
           amount: 24,
           tokenSymbol: 'ETH',
-          tokenIcon: '/images/ethereum-logo.png'
+          tokenIcon: '/images/ethereum-logo.svg'
         },
         {
           amount: 24,
           tokenSymbol: 'USDC',
-          tokenIcon: '/images/prodTokenLogos/USDCoin.png'
+          tokenIcon: '/images/prodTokenLogos/USDCoin.svg'
         }
       ]
     },
@@ -149,7 +149,7 @@ TwoTokens.args = {
         {
           amount: 26.4,
           tokenSymbol: 'ETH',
-          tokenIcon: '/images/ethereum-logo.png'
+          tokenIcon: '/images/ethereum-logo.svg'
         }
       ]
     },
@@ -162,7 +162,7 @@ TwoTokens.args = {
         {
           amount: 24,
           tokenSymbol: 'ETH',
-          tokenIcon: '/images/ethereum-logo.png'
+          tokenIcon: '/images/ethereum-logo.svg'
         }
       ]
     }
@@ -183,12 +183,12 @@ ThreeTokens.args = {
         {
           amount: 24,
           tokenSymbol: 'ETH',
-          tokenIcon: '/images/ethereum-logo.png'
+          tokenIcon: '/images/ethereum-logo.svg'
         },
         {
           amount: 24,
           tokenSymbol: 'USDC',
-          tokenIcon: '/images/prodTokenLogos/USDCoin.png'
+          tokenIcon: '/images/prodTokenLogos/USDCoin.svg'
         }
       ]
     },
@@ -201,12 +201,12 @@ ThreeTokens.args = {
         {
           amount: 26.4,
           tokenSymbol: 'ETH',
-          tokenIcon: '/images/ethereum-logo.png'
+          tokenIcon: '/images/ethereum-logo.svg'
         },
         {
           amount: 24,
           tokenSymbol: 'UNI',
-          tokenIcon: '/images/prodTokenLogos/uniswap.png'
+          tokenIcon: '/images/prodTokenLogos/uniswap.svg'
         }
       ]
     },
@@ -219,12 +219,12 @@ ThreeTokens.args = {
         {
           amount: 24,
           tokenSymbol: 'ETH',
-          tokenIcon: '/images/ethereum-logo.png'
+          tokenIcon: '/images/ethereum-logo.svg'
         },
         {
           amount: 24,
           tokenSymbol: 'UNI',
-          tokenIcon: '/images/prodTokenLogos/uniswap.png'
+          tokenIcon: '/images/prodTokenLogos/uniswap.svg'
         }
       ]
     }
@@ -244,12 +244,12 @@ NoClubDetails.args = {
         {
           amount: 24,
           tokenSymbol: 'ETH',
-          tokenIcon: '/images/ethereum-logo.png'
+          tokenIcon: '/images/ethereum-logo.svg'
         },
         {
           amount: 24,
           tokenSymbol: 'USDC',
-          tokenIcon: '/images/prodTokenLogos/USDCoin.png'
+          tokenIcon: '/images/prodTokenLogos/USDCoin.svg'
         }
       ]
     },
@@ -262,7 +262,7 @@ NoClubDetails.args = {
         {
           amount: 26.4,
           tokenSymbol: 'ETH',
-          tokenIcon: '/images/ethereum-logo.png'
+          tokenIcon: '/images/ethereum-logo.svg'
         }
       ]
     },
@@ -275,7 +275,7 @@ NoClubDetails.args = {
         {
           amount: 24,
           tokenSymbol: 'ETH',
-          tokenIcon: '/images/ethereum-logo.png'
+          tokenIcon: '/images/ethereum-logo.svg'
         }
       ]
     }

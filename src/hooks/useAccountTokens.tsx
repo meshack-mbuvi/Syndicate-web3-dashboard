@@ -1,6 +1,7 @@
 import { CLUB_MEMBER_QUERY } from '@/graphql/queries';
 import { AppState } from '@/state';
 import { setConnectedMember } from '@/state/connectMember';
+import { Status } from '@/state/wallet/types';
 import { getWeiAmount } from '@/utils/conversions';
 import { useQuery } from '@apollo/client';
 import { useEffect, useState } from 'react';
@@ -24,7 +25,7 @@ export function useAccountTokens(): {
 } {
   const {
     web3Reducer: {
-      web3: { account, activeNetwork, web3 }
+      web3: { account, activeNetwork, web3, status }
     },
     erc20TokenSliceReducer: {
       erc20Token: { address, totalSupply, tokenDecimals, totalDeposits },
@@ -55,7 +56,12 @@ export function useAccountTokens(): {
         }
       },
       // Avoid unnecessary calls when account/clubAddress is not defined
-      skip: !account || !activeNetwork.chainId || !address || isDemoMode
+      skip:
+        !account ||
+        !activeNetwork.chainId ||
+        !address ||
+        isDemoMode ||
+        status !== Status.CONNECTED
     }
   );
 
@@ -129,10 +135,10 @@ export function useAccountTokens(): {
   ]);
 
   useEffect(() => {
-    if (activeNetwork.chainId) {
+    if (activeNetwork.chainId && status === Status.CONNECTED) {
       refetch();
     }
-  }, [totalSupply, totalDeposits, account, activeNetwork.chainId]);
+  }, [totalSupply, totalDeposits, account, activeNetwork.chainId, status]);
 
   const dispatch = useDispatch();
   useEffect(() => {

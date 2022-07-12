@@ -842,7 +842,7 @@ export const ModifyClubSettings = (props: { isVisible: boolean }) => {
           </div>
         </div>
 
-        <div className="space-y-6 lg:flex lg:space-x-6 lg:space-y-0">
+        <div className="flex flex-col xl:flex-row space-x-0 xl:space-x-6 space-y-6 xl:space-y-0">
           {/* Gas fees */}
           <div className="flex-grow">
             <div
