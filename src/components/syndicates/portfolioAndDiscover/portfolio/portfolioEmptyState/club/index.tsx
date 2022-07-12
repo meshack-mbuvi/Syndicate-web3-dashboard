@@ -1,5 +1,4 @@
 import CreateClubButton from '@/components/createClubButton';
-import FadeBetweenChildren from '@/components/fadeBetweenChildren';
 import { AppState } from '@/state';
 import { showWalletModal } from '@/state/wallet/actions';
 import { Status } from '@/state/wallet/types';
@@ -26,7 +25,6 @@ const PortfolioEmptyState: React.FC = () => {
   } = useSelector((state: AppState) => state);
 
   const [emptyState, setEmptyState] = useState(walletNoClubs);
-  const [showHoverStateIndex, setShowHoverStateIndex] = useState(0);
 
   useEffect(() => {
     const cacheWallet = Boolean(localStorage.getItem('cache'));
