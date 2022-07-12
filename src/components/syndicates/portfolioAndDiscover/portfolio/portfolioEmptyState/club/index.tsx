@@ -46,33 +46,12 @@ const PortfolioEmptyState: React.FC = () => {
 
   return (
     <div className="text-center flex-col" style={{ marginTop: '196px' }}>
-      <div
-        className="flex flex-col justify-start items-center mt-20"
-        onMouseOver={() => {
-          setShowHoverStateIndex(1);
-        }}
-        onMouseOut={() => {
-          setShowHoverStateIndex(0);
-        }}
-        onBlur={() => {
-          null;
-        }}
-        onFocus={() => {
-          null;
-        }}
-      >
-        <FadeBetweenChildren visibleChildIndex={showHoverStateIndex}>
-          <img
-            style={{ marginBottom: '30.42px' }}
-            src="images/syndicateStatusIcons/newPortfolioEmptyIcon2.svg"
-            alt="empty icon"
-          />
-          <img
-            style={{ marginBottom: '30.42px' }}
-            src="images/syndicateStatusIcons/newPortfolioEmptyIcon.svg"
-            alt="empty icon"
-          />
-        </FadeBetweenChildren>
+      <div className="flex flex-col justify-start items-center mt-20">
+        <img
+          style={{ marginBottom: '30.42px' }}
+          src="images/syndicateStatusIcons/newPortfolioEmptyIcon.svg"
+          alt="empty icon"
+        />
         <span className="text-lg md:text-2xl">{emptyState.noun}</span>
         <p className="text-gray-syn4 pt-2.5">{emptyState.verb}</p>
         <div className="mt-6">
