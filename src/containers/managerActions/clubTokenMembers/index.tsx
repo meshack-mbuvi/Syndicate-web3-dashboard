@@ -307,14 +307,7 @@ const ClubTokenMembers = (): JSX.Element => {
                   {isOwner && (
                     <div className="flex justify-center flex-col sm:w-104">
                       {!adminSigned && (
-                        <button
-                          className="flex space-between mb-6"
-                          onClick={() =>
-                            setLinkShareAgreementChecked(
-                              !linkShareAgreementChecked
-                            )
-                          }
-                        >
+                        <div className="flex space-between mb-6">
                           <input
                             className="bg-transparent rounded mt-1 focus:ring-offset-0 cursor-pointer"
                             onChange={() =>
@@ -324,7 +317,6 @@ const ClubTokenMembers = (): JSX.Element => {
                             }
                             type="checkbox"
                             id="linkShareAgreement"
-                            checked={linkShareAgreementChecked}
                             name="linkShareAgreement"
                           />
                           <animated.p className="text-sm text-gray-syn4 ml-3 text-left">
@@ -340,7 +332,7 @@ const ClubTokenMembers = (): JSX.Element => {
                               Learn more.
                             </a>{' '}
                           </animated.p>
-                        </button>
+                        </div>
                       )}
                       <GenerateDepositLink
                         showGenerateLinkModal={showGenerateLinkModal}

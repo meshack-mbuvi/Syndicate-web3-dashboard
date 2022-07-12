@@ -5,7 +5,6 @@ import {
 } from '@/components/amplitude/eventNames';
 import { metamaskConstants } from '@/components/syndicates/shared/Constants';
 import { getMetamaskError } from '@/helpers';
-import { useLocalStorage } from '@/hooks/utils/useLocalStorage';
 import { AppState } from '@/state';
 import {
   resetClubCreationReduxState,
@@ -24,6 +23,7 @@ import React, {
 } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import steps from './steps';
+
 type CreateInvestmentClubProviderProps = {
   handleNext: () => void;
   handleBack: () => void;
@@ -58,8 +58,6 @@ type CreateInvestmentClubProviderProps = {
   showSaveButton: boolean;
   editMintMaxDate: boolean;
   setEditMintMaxDate: Dispatch<SetStateAction<boolean>>;
-  isEditStep: boolean;
-  setIsEditStep: Dispatch<SetStateAction<boolean>>;
 };
 
 const CreateInvestmentClubContext = createContext<
@@ -82,7 +80,7 @@ const CreateInvestmentClubProvider: React.FC = ({ children }) => {
       investmentClubName,
       investmentClubSymbol,
       tokenCap,
-      mintEndTime: { value: endMintTime, mintTime },
+      mintEndTime: { value: endMintTime },
       membersCount,
       tokenDetails: { depositToken, depositTokenSymbol }
     }
@@ -103,7 +101,6 @@ const CreateInvestmentClubProvider: React.FC = ({ children }) => {
   const [errorModalMessage, setErrorModalMessage] = useState('');
   const [showSaveButton, setShowSaveButton] = useState(true);
   const [editMintMaxDate, setEditMintMaxDate] = useState<boolean>(false);
-  const [isEditStep, setIsEditStep] = useState(false);
   // show initial steps in create flow
   const [preClubCreationStep, setPreClubCreationStep] =
     useState<string>('invite');
@@ -144,12 +141,7 @@ const CreateInvestmentClubProvider: React.FC = ({ children }) => {
   });
 
   const handleNext = () => {
-    if (isEditStep && mintTime !== 'Custom') {
-      setShowNextButton(false);
-    } else {
-      setShowNextButton(true);
-    }
-
+    setShowNextButton(true);
     if (currentStep < 4) {
       setCurrentStep((prev) => prev + 1);
     }
@@ -172,14 +164,7 @@ const CreateInvestmentClubProvider: React.FC = ({ children }) => {
     dispatch(setTransactionHash(transactionHash));
   };
 
-  const [, saveNewClub] = useLocalStorage('newlyCreatedClub');
   const onTxReceipt = (receipt) => {
-    const { tokenAddress, name, symbol } =
-      receipt.events.ERC20ClubCreated.returnValues;
-
-    // save to local storage
-    saveNewClub({ tokenAddress, name, symbol });
-
     dispatch(
       setClubCreationReceipt(receipt.events.ERC20ClubCreated.returnValues)
     );
@@ -215,9 +200,7 @@ const CreateInvestmentClubProvider: React.FC = ({ children }) => {
             true
           )
         : getWeiAmount(web3, tokenCap, 18, true);
-
       const startTime = parseInt((new Date().getTime() / 1000).toString()); // convert to seconds
-
       if (isNativeDeposit) {
         await clubERC20FactoryNative.createERC20(
           account,
@@ -317,9 +300,7 @@ const CreateInvestmentClubProvider: React.FC = ({ children }) => {
         showSaveButton,
         setShowSaveButton,
         editMintMaxDate,
-        setEditMintMaxDate,
-        isEditStep,
-        setIsEditStep
+        setEditMintMaxDate
       }}
     >
       {children}

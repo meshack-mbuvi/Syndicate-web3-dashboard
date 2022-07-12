@@ -3,23 +3,10 @@ import {
   ClaimCollectivePass,
   WalletState
 } from '@/components/collectives/claimCollectivePass';
-import { useSelector } from 'react-redux';
-import { AppState } from '@/state';
 
 const NftClaimAndInfoCard: React.FC = () => {
-  const {
-    web3Reducer: {
-      web3: { account }
-    }
-  } = useSelector((state: AppState) => state);
   // TODO: to fetch loading state from redux store
   const loading = false;
-
-  // TODO: check wallet account eligibility here
-  const isAccountEligible = false;
-
-  // TODO: add check for whether account has reached max passes
-  const hasAccountReachedMaxPasses = false;
   return (
     <div className="flex items-center justify-start w-full sm:w-6/12">
       <div className="w-full">
@@ -79,15 +66,7 @@ const NftClaimAndInfoCard: React.FC = () => {
               tokenSymbol: 'ETH'
             }}
             remainingPasses={2000}
-            walletState={
-              !account
-                ? WalletState.NOT_CONNECTED
-                : !isAccountEligible
-                ? WalletState.WRONG_WALLET
-                : hasAccountReachedMaxPasses
-                ? WalletState.MAX_PASSES_REACHED
-                : WalletState.CONNECTED
-            }
+            walletState={WalletState.NOT_CONNECTED}
           />
         )}
       </div>

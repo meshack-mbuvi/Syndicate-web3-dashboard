@@ -1,5 +1,5 @@
 import CreateClubButton from '@/components/createClubButton';
-import PortfolioEmptyState from './portfolio/portfolioEmptyState/club';
+import PortfolioEmptyState from '@/components/syndicates/portfolioAndDiscover/portfolio/portfolioEmptyState';
 import { H1, H4 } from '@/components/typography';
 import useClubERC20s from '@/hooks/useClubERC20s';
 import useWindowSize from '@/hooks/useWindowSize';

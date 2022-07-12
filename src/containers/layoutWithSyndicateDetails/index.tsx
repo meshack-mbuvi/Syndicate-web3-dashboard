@@ -7,7 +7,6 @@ import { BlockExplorerLink } from '@/components/syndicates/shared/BlockExplorerL
 import { ClubHeader } from '@/components/syndicates/shared/clubHeader';
 import Head from '@/components/syndicates/shared/HeaderTitle';
 import SyndicateDetails from '@/components/syndicates/syndicateDetails';
-import { useConnectWalletContext } from '@/context/ConnectWalletProvider';
 import {
   ERC20TokenDefaultState,
   setERC20Token
@@ -19,8 +18,6 @@ import useClubTokenMembers from '@/hooks/useClubTokenMembers';
 import { useDemoMode } from '@/hooks/useDemoMode';
 import { useGetDepositTokenPrice } from '@/hooks/useGetDepositTokenPrice';
 import useTransactions from '@/hooks/useTransactions';
-import { useGetNetwork } from '@/hooks/web3/useGetNetwork';
-import { useProvider } from '@/hooks/web3/useProvider';
 import NotFoundPage from '@/pages/404';
 import { AppState } from '@/state';
 import {
@@ -55,6 +52,9 @@ import ClubTokenMembers from '../managerActions/clubTokenMembers/index';
 import ActivityView from './activity';
 import Assets from './assets';
 import TabButton from './TabButton';
+import { useGetNetwork } from '@/hooks/web3/useGetNetwork';
+import { useConnectWalletContext } from '@/context/ConnectWalletProvider';
+import { useProvider } from '@/hooks/web3/useProvider';
 
 const LayoutWithSyndicateDetails: FC<{
   managerSettingsOpen: boolean;
@@ -138,11 +138,11 @@ const LayoutWithSyndicateDetails: FC<{
 
   useEffect(() => {
     if (chain) {
-      GetNetworkByName(chain);
+      getNetworkByName(chain);
     }
   }, [chain]);
 
-  const GetNetworkByName = (name) => {
+  const getNetworkByName = (name) => {
     const network = useGetNetwork(name);
     setUrlNetwork(network);
   };
@@ -338,8 +338,8 @@ const LayoutWithSyndicateDetails: FC<{
             </div>
             {providerName === 'WalletConnect' ? (
               <div className="text-sm text-center text-gray-syn3">
-                You&#39;re using WalletConnect. To switch networks, you&#39;ll
-                need to do so directly in your wallet.
+                You are connected via WalletConnect. In order to use{' '}
+                {urlNetwork.name}, you must change the network in your wallet.
               </div>
             ) : (
               <button
@@ -408,7 +408,7 @@ const LayoutWithSyndicateDetails: FC<{
                   <div className="grid grid-cols-12 gap-5">
                     {/* Left Column */}
                     <div
-                      className={`col-start-1 col-end-12 ${
+                      className={`md:col-start-1 ${
                         managerSettingsOpen ? 'md:col-end-8' : 'md:col-end-7'
                       }`}
                     >

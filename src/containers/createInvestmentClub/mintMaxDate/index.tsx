@@ -26,10 +26,7 @@ const MintMaxDate: FC<{ className?: string }> = ({ className }) => {
     setNextBtnDisabled,
     setShowSaveButton,
     setEditMintMaxDate,
-    editMintMaxDate,
-    isEditStep,
-    setIsEditStep,
-    setCurrentStep
+    editMintMaxDate
   } = useCreateInvestmentClubContext();
 
   const [warning, setWarning] = useState('');
@@ -133,12 +130,7 @@ const MintMaxDate: FC<{ className?: string }> = ({ className }) => {
 
       if (currentStep == 2) {
         setTimeout(() => {
-          if (isEditStep) {
-            setCurrentStep(4);
-            setIsEditStep(false);
-          } else {
-            handleNext();
-          }
+          handleNext();
           setShowNextButton(true);
         }, 400);
       }

@@ -17,7 +17,7 @@ export async function getCoinFromContractAddress(contractAddress, web3) {
    *    "price": 1.95,
    *    "percentageChange": -0.42862,
    *    "decimals": "18",
-   *    "logo":"https://assets.coingecko.com/coins/images/863/large/0x.svg?1547034672"
+   *    "logo":"https://assets.coingecko.com/coins/images/863/large/0x.png?1547034672"
    * }
    */
 

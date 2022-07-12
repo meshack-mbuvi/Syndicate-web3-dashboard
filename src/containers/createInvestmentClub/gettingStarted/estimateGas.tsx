@@ -75,15 +75,16 @@ const EstimateGas = (props: { customClasses?: string }) => {
           : `${customClasses}`
       }
     >
-      <span className="flex flex-col lg:flex-row space-x-0 lg:space-x-6 space-y-6 lg:space-y-0 justify-center lg:justify-between w-full px-3">
-        <div className="flex items-center space-x-3 justify-center lg:justify-start">
-          <img src="/images/gasIcon.svg" className="inline w-4 h-4.5" alt="" />
-          <span className="text-blue ">Estimated gas</span>
-        </div>
-
+      <img src="/images/gasIcon.svg" className="inline w-4 h-4.5 mx-3" alt="" />
+      <span className="flex justify-between w-full">
+        <span className="text-blue">Estimated gas</span>
         <span className="mr-3 text-blue">
           {gas
-            ? `${gas.toFixed(6)} ${activeNetwork.nativeCurrency.symbol}`
+            ? `${gas.toFixed(6)} ${activeNetwork.nativeCurrency.symbol} ${
+                nativeTokenPrice
+                  ? '(~$' + (gas * nativeTokenPrice).toFixed(2) + ')'
+                  : ''
+              }`
             : `- ${activeNetwork.nativeCurrency.symbol}`}
         </span>
       </span>

@@ -6,18 +6,14 @@ import {
   setMyClubERC20s,
   setOtherClubERC20s
 } from '@/state/clubERC20';
-import { Status } from '@/state/wallet/types';
 import { formatDate, isZeroAddress, pastDate } from '@/utils';
 import { getTokenDetails } from '@/utils/api';
-import { getDepositToken } from '@/utils/contracts/depositToken';
-import { getClubDataFromContract } from '@/utils/contracts/getClubDataFromContract';
 import { divideIfNotByZero, getWeiAmount } from '@/utils/conversions';
 import { useQuery } from '@apollo/client';
 import { isEmpty } from 'lodash';
 import { useRouter } from 'next/router';
 import { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useLocalStorage } from './utils/useLocalStorage';
 
 const useClubERC20s = () => {
   const dispatch = useDispatch();
@@ -35,8 +31,7 @@ const useClubERC20s = () => {
     account,
     activeNetwork,
     ethereumNetwork: { invalidEthereumNetwork },
-    web3,
-    status
+    web3
   } = web3Instance;
   const accountAddress = useMemo(() => account.toLocaleLowerCase(), [account]);
   const [isLoading, setIsLoading] = useState(true);
@@ -48,11 +43,7 @@ const useClubERC20s = () => {
     },
     context: { clientName: 'theGraph', chainId: activeNetwork.chainId },
     // Avoid unnecessary calls when account is not defined
-    skip:
-      !accountAddress ||
-      !router.isReady ||
-      !activeNetwork.chainId ||
-      status !== Status.CONNECTED
+    skip: !account || !router.isReady || !activeNetwork.chainId
   });
 
   const {
@@ -67,29 +58,11 @@ const useClubERC20s = () => {
     },
     context: { clientName: 'theGraph', chainId: activeNetwork.chainId },
     // Avoid unnecessary calls when account is not defined
-    skip:
-      !accountAddress ||
-      !router.isReady ||
-      !activeNetwork.chainId ||
-      status !== Status.CONNECTED
+    skip: !account || !router.isReady || !activeNetwork.chainId
   });
 
   useEffect(() => {
-    if (status === Status.DISCONNECTED && router.isReady) {
-      // clear clubs
-      dispatch(setOtherClubERC20s([]));
-
-      dispatch(setMyClubERC20s([]));
-      dispatch(setOtherClubERC20s([]));
-      return;
-    }
-
-    if (
-      accountAddress &&
-      router.isReady &&
-      activeNetwork.chainId &&
-      status == Status.CONNECTED
-    ) {
+    if (accountAddress && router.isReady && activeNetwork.chainId) {
       refetch({
         where: { ownerAddress: accountAddress }
       });
@@ -102,8 +75,7 @@ const useClubERC20s = () => {
     activeNetwork.chainId,
     accountAddress,
     refetch,
-    refetchMyClubs,
-    status
+    refetchMyClubs
   ]);
 
   const [clubIAmMember, setClubIamMember] = useState([]);
@@ -111,63 +83,22 @@ const useClubERC20s = () => {
 
   // process clubs a given wallet has invested into
   useEffect(() => {
-    if (memberClubLoading || status == Status.DISCONNECTED || !accountAddress)
-      return;
+    if (memberClubLoading) return;
 
     processClubERC20Tokens(clubIAmMember).then((data) => {
       dispatch(setOtherClubERC20s(data));
     });
-  }, [activeNetwork, clubIAmMember, memberClubLoading, status, accountAddress]);
-
-  const [newlyCreatedClub, , remove] = useLocalStorage('newlyCreatedClub');
+  }, [activeNetwork, clubIAmMember, memberClubLoading]);
 
   // Process clubs a given wallet manages
   useEffect(() => {
-    if (
-      loading ||
-      isEmpty(web3) ||
-      status == Status.DISCONNECTED ||
-      !accountAddress
-    )
-      return;
+    if (loading || isEmpty(web3)) return;
 
     processClubERC20Tokens(myClubs).then((data) => {
-      const clubsIAdmin = data;
-
-      if (newlyCreatedClub && web3) {
-        getClubDataFromContract({
-          ...newlyCreatedClub,
-          state: { activeNetwork, account, syndicateContracts, web3 }
-        }).then((club) => {
-          // add new club at the top and filter incase the club has been loaded
-          // from the graph
-          // Generate a map entry of [[key, item],...]
-          // Pass the list of entries into map which eliminates duplicate keys
-          const filteredClubs = [
-            ...new Map(
-              [club, ...data]
-                .filter((club) => club != undefined)
-                .map((item) => [
-                  `${item['contractAddress'].toLowerCase()}`,
-                  item
-                ])
-            ).values()
-          ];
-
-          // if club data exist in the graph, delete newly created club from storage
-          if (filteredClubs.length == data.length) {
-            remove();
-          }
-
-          dispatch(setMyClubERC20s(filteredClubs));
-          dispatch(setLoadingClubERC20s(false));
-        });
-      } else {
-        dispatch(setMyClubERC20s(clubsIAdmin));
-        dispatch(setLoadingClubERC20s(false));
-      }
+      dispatch(setMyClubERC20s(data));
+      dispatch(setLoadingClubERC20s(false));
     });
-  }, [JSON.stringify(myClubs), activeNetwork, loading, status]);
+  }, [JSON.stringify(myClubs), activeNetwork, loading]);
 
   const processClubERC20Tokens = async (tokens) => {
     if (!tokens || !tokens?.length) {
@@ -227,10 +158,17 @@ const useClubERC20s = () => {
               false
             );
 
-            const depositToken = await getDepositToken(
-              contractAddress,
-              syndicateContracts
-            );
+            let depositToken =
+              await syndicateContracts?.DepositTokenMintModule?.depositToken(
+                contractAddress
+              );
+
+            if (isZeroAddress(depositToken)) {
+              depositToken =
+                await syndicateContracts?.SingleTokenMintModule?.depositToken(
+                  contractAddress
+                );
+            }
 
             let depositERC20TokenSymbol = activeNetwork.nativeCurrency.symbol;
             let depositERC20TokenDecimals =
@@ -313,7 +251,6 @@ const useClubERC20s = () => {
               clubName,
               clubSymbol,
               ownershipShare,
-              contractAddress,
               depositsEnabled,
               endTime,
               depositERC20TokenSymbol,
@@ -348,7 +285,7 @@ const useClubERC20s = () => {
   useEffect(() => {
     if (isEmpty(web3) || memberClubLoading) return;
 
-    if (accountAddress) {
+    if (account) {
       const clubTokens = [];
       // get clubs connected account has invested in
       if (memberClubData?.members?.length) {
@@ -407,7 +344,7 @@ const useClubERC20s = () => {
       setIsLoading(false);
     }
   }, [
-    accountAddress,
+    account,
     memberClubLoading,
     activeNetwork,
     memberClubData?.members,
