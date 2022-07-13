@@ -139,6 +139,7 @@ module.exports = {
         24: '6rem',
         26: '6.5rem',
         28: '7rem',
+        88: '22rem',
         100: '25rem',
         104: '26rem',
         112: '28rem',
@@ -253,6 +254,7 @@ module.exports = {
         cyan: {
           ...colors.cyan,
           cherenkov: '#00FFFF',
+          'cherenkov-shine': '#66FFFF',
           verdigris: '#43B3AE',
           collective: '#003030'
         },
@@ -342,6 +344,7 @@ module.exports = {
           'light-darker': '#02504B',
           'phthalo-green': '#082B1E',
           volt: '#CCFF00',
+          'volt-shine': '#E0FF66',
           money: '#00F252',
           mint: '#CCFFCC',
           'standard-issue-od': '#191E12'
@@ -426,9 +429,27 @@ module.exports = {
       animation: {
         fade_in: 'fade_in 0.5s ease-out 1',
         fade_in_bg: 'fade_in_bg 6s ease-out 1',
-        'grow-shrink': 'grow-shrink 3.6s ease-in-out infinite'
+        'grow-shrink': 'grow-shrink 3.6s ease-in-out infinite',
+        float: 'float 8s ease-in-out infinite'
       },
       keyframes: {
+        float: {
+          '0%': {
+            transform: 'translate(0%, 0%)'
+          },
+          '25%': {
+            transform: 'translate(5%, 12%)'
+          },
+          '50%': {
+            transform: 'translate(0%, 0%)'
+          },
+          '75%': {
+            transform: 'translate(-5%, 12%)'
+          },
+          '100%': {
+            transform: 'translate(0%, 0%)'
+          }
+        },
         fade_in: {
           '0%': {
             opacity: '0'

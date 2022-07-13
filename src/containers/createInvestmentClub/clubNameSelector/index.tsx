@@ -28,7 +28,7 @@ const ClubNameSelector: React.FC<{
   } = useSelector((state: AppState) => state);
 
   const dispatch = useDispatch();
-  const { setNextBtnDisabled } = useCreateInvestmentClubContext();
+  const { setNextBtnDisabled, isEditStep } = useCreateInvestmentClubContext();
 
   const [errors, setErrors] = useState('');
   const [hasSymbolBeenEdited, setSymbolEditState] = useState(false);
@@ -122,7 +122,7 @@ const ClubNameSelector: React.FC<{
 
   return (
     <Fade>
-      <div className="ml-5">
+      <div className={`ml-5 ${isEditStep ? 'pt-11' : ''}`}>
         <div className={className}>
           <H4 extraClasses={`pb-6 ${editButtonClicked ? 'w-80' : 'w-100'}`}>
             What should we call this investment club?

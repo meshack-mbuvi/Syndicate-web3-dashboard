@@ -25,6 +25,6 @@ export const Default = Template.bind({});
 Default.args = {
   symbol: 'ETH',
   name: 'Ethereum',
-  logoURI: '/images/ethereum-logo.png',
+  logoURI: '/images/ethereum-logo.svg',
   showCheckMark: false
 };

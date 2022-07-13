@@ -35,6 +35,8 @@ interface Props {
   activeIndex?: number;
   setActiveIndex?: (index: number) => void;
   navItems?: { navItemText: string; url?: string; isLegal?: boolean }[];
+  hideWalletAndEllipsis?: boolean;
+  showCloseButton?: boolean;
 }
 
 const Layout: FC<Props> = ({
@@ -46,6 +48,8 @@ const Layout: FC<Props> = ({
   managerSettingsOpen = false,
   showBackButton = false,
   showNav = true,
+  hideWalletAndEllipsis = false,
+  showCloseButton = false,
   navItems = [
     {
       url: '/clubs',
@@ -292,6 +296,8 @@ const Layout: FC<Props> = ({
           handleExitClick={handleExitClick}
           activeIndex={activeIndex || 0}
           setActiveIndex={setActiveIndex}
+          hideWalletAndEllipsis={hideWalletAndEllipsis}
+          showCloseButton={showCloseButton}
         />
         <DemoBanner />
 

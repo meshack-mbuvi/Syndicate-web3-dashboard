@@ -112,7 +112,7 @@ const images = [
   '/images/edit-deposit.svg',
   '/images/edit-deposits-blue.svg',
   '/images/errorClose.svg',
-  '/images/ethereum-logo.png',
+  '/images/ethereum-logo.svg',
   '/images/exclamation-triangle.svg',
   '/images/exclamation.svg',
   '/images/exclamationDiagonal.svg',
