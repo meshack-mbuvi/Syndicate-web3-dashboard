@@ -1,4 +1,5 @@
-import { ProgressModal, ProgressModalState } from '@/components/progressModal';
+import { ProgressState } from '@/components/progressCard';
+import { ProgressModal } from '@/components/progressModal';
 import { formatAddress } from '@/utils/formatAddress';
 
 export default {
@@ -6,10 +7,10 @@ export default {
   argTypes: {
     state: {
       options: [
-        ProgressModalState.FAILURE,
-        ProgressModalState.PENDING,
-        ProgressModalState.SUCCESS,
-        ProgressModalState.CONFIRM
+        ProgressState.FAILURE,
+        ProgressState.PENDING,
+        ProgressState.SUCCESS,
+        ProgressState.CONFIRM
       ],
       control: { type: 'select' }
     }
@@ -28,7 +29,7 @@ ConfirmInWallet.args = {
   isVisible: true,
   title: 'Confirm in wallet',
   description: 'Please confirm the club token mint in your wallet.',
-  state: ProgressModalState.CONFIRM
+  state: ProgressState.CONFIRM
 };
 
 export const Pending = Template.bind({});
@@ -39,7 +40,7 @@ Pending.args = {
     'This could take anywhere from seconds to hours depending on network congestion and the gas fees you set. You can safely leave this page while you wait.',
   transactionHash: dummyTransactionHash,
   transactionType: 'transaction',
-  state: ProgressModalState.PENDING
+  state: ProgressState.PENDING
 };
 
 export const Success = Template.bind({});
@@ -53,7 +54,7 @@ Success.args = {
   )} has been added as a member of this club.`,
   buttonLabel: 'Done',
   buttonFullWidth: true,
-  state: ProgressModalState.SUCCESS,
+  state: ProgressState.SUCCESS,
   transactionHash: dummyTransactionHash,
   transactionType: 'transaction'
 };
@@ -65,7 +66,7 @@ Failure.args = {
   description: '',
   buttonLabel: 'Close',
   buttonFullWidth: true,
-  state: ProgressModalState.FAILURE,
+  state: ProgressState.FAILURE,
   transactionHash: dummyTransactionHash,
   transactionType: 'transaction'
 };

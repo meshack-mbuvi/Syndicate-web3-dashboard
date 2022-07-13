@@ -19,6 +19,9 @@ import React, { FC, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import NumberTreatment from '../NumberTreatment';
 import { DetailsCard, ProgressIndicator } from './shared';
+import { B1, B3 } from '@/components/typography';
+import { divideIfNotByZero } from '@/utils/conversions';
+
 interface ClubDetails {
   header: string;
   content: React.ReactNode;
@@ -171,6 +174,7 @@ const SyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
 
   // state to handle details about the current deposit ERC20 token
   const [, setDepositTokenContract] = useState<any>('');
+  const [tokensViaDeposits, setTokensViaDeposits] = useState(0);
 
   // states to show general syndicate details
   const [, setSyndicateCumulativeDetails] = useState([
@@ -206,10 +210,121 @@ const SyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
   }, [totalDeposits, memberCount]);
 
   useEffect(() => {
+    // depending on whether the admin burns tokens or not,
+    // we need to calculate the amount raised based on
+    // the total circulating supply of club tokens
+    const amountRaised = nativeDepositToken
+      ? +totalSupply / activeNetwork.nativeCurrency.exchangeRate
+      : +totalSupply;
+
     if (name && !managerSettingsOpen) {
       setDetails([
         ...(depositsEnabled
-          ? []
+          ? [
+              {
+                header: 'Fundraising goal',
+                content: (
+                  <div className="space-y-2">
+                    <div className="flex items-center">
+                      <img
+                        src={depositTokenLogo}
+                        className="w-4 h-4 mr-2"
+                        alt="logo"
+                      />
+                      <B1 extraClasses="flex-shrink-0">
+                        {floatedNumberWithCommas(maxTotalDeposits)}{' '}
+                        {depositTokenSymbol}
+                      </B1>
+                    </div>
+
+                    {!isStableCoin(depositTokenSymbol) ? (
+                      <B3 extraClasses="text-gray-syn3">
+                        {floatedNumberWithCommas(
+                          depositTokenPriceInUSD * maxTotalDeposits
+                        )}{' '}
+                        USD
+                      </B3>
+                    ) : null}
+                  </div>
+                ),
+                tooltip: ''
+              },
+              {
+                header: 'Amount raised',
+                content: (
+                  <div className="space-y-2">
+                    <div className="flex items-center space-x-2">
+                      <img
+                        src={depositTokenLogo}
+                        className="w-4 h-4"
+                        alt="logo"
+                      />
+                      <B1 extraClasses="flex-shrink-0">
+                        {floatedNumberWithCommas(amountRaised)}{' '}
+                        {depositTokenSymbol}
+                      </B1>
+                      <B1 extraClasses="text-gray-syn3 flex-shrink-0">
+                        {floatedNumberWithCommas(
+                          divideIfNotByZero(amountRaised, maxTotalDeposits) *
+                            100
+                        )}{' '}
+                        %
+                      </B1>
+                    </div>
+
+                    {!isStableCoin(depositTokenSymbol) ? (
+                      <B3 className="text-gray-syn3 text-sm">
+                        {floatedNumberWithCommas(
+                          depositTokenPriceInUSD * amountRaised
+                        )}{' '}
+                        USD
+                      </B3>
+                    ) : null}
+                  </div>
+                ),
+                tooltip: ''
+              },
+              {
+                header: 'Amount remaining',
+                content: (
+                  <div className="space-y-2">
+                    <div className="flex items-center space-x-2">
+                      <img
+                        src={depositTokenLogo}
+                        className="w-4 h-4"
+                        alt="logo"
+                      />
+                      <B1 extraClasses="flex-shrink-0">
+                        {floatedNumberWithCommas(
+                          +maxTotalDeposits - +amountRaised
+                        )}{' '}
+                        {depositTokenSymbol}
+                      </B1>
+                      <B1 extraClasses="text-gray-syn3 flex-shrink-0">
+                        {floatedNumberWithCommas(
+                          divideIfNotByZero(
+                            +maxTotalDeposits - +amountRaised,
+                            maxTotalDeposits
+                          ) * 100
+                        )}{' '}
+                        %
+                      </B1>
+                    </div>
+
+                    {!isStableCoin(depositTokenSymbol) ? (
+                      <B3 extraClasses="text-gray-syn3">
+                        {floatedNumberWithCommas(
+                          depositTokenPriceInUSD *
+                            (+maxTotalDeposits - +amountRaised)
+                        )}{' '}
+                        USD
+                      </B3>
+                    ) : null}
+                  </div>
+                ),
+                tooltip: ''
+              }
+            ]
           : claimEnabled
           ? [
               {
@@ -225,7 +340,7 @@ const SyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
                 header: 'Club tokens minted',
                 content: (
                   <span>
-                    <NumberTreatment numberValue={totalDeposits} />
+                    <NumberTreatment numberValue={totalSupply} />
                     &nbsp;{symbol}
                   </span>
                 ),
@@ -270,7 +385,7 @@ const SyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
                 header: 'Club tokens minted',
                 content: (
                   <span>
-                    <NumberTreatment numberValue={totalDeposits} /> {symbol}
+                    <NumberTreatment numberValue={totalSupply} /> {symbol}
                   </span>
                 ),
                 tooltip: ''
@@ -372,6 +487,9 @@ const SyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
                   decimals: depositTokenDecimals
                 }}
                 activeNetwork={activeNetwork}
+                depositsEnabled={depositsEnabled}
+                setTokensViaDeposits={setTokensViaDeposits}
+                tokensViaDeposits={tokensViaDeposits}
               />
             </div>
           )}
@@ -381,16 +499,13 @@ const SyndicateDetails: FC<{ managerSettingsOpen: boolean }> = ({
           (loading || !(isActive && !isOwnerOrMember))) ||
         isDemoMode ||
         !managerSettingsOpen ? (
-          <div className="overflow-hidden mt-6 relative">
-            {!depositsEnabled && (
-              <DetailsCard
-                title="Details"
-                sections={details}
-                customStyles={'w-full pt-4'}
-                customInnerWidth="w-full grid xl:grid-cols-3 lg:grid-cols-3
-          grid-cols-3 xl:gap-8 gap-2 xl:gap-5 gap-y-8"
-              />
-            )}
+          <div className="relative">
+            <DetailsCard
+              title="Details"
+              sections={details}
+              customStyles={'w-full pt-4'}
+              customInnerWidth="w-full justify-between flex-wrap flex"
+            />
           </div>
         ) : null}
       </div>

@@ -234,6 +234,14 @@
     @apply base-CTA bg-green text-black transition-all hover:bg-green-shine;
   }
 
+  .volt-CTA {
+    @apply base-CTA bg-green-volt text-black transition-all hover:bg-green-volt-shine;
+  }
+
+  .cherenkov-CTA {
+    @apply base-CTA bg-cyan-cherenkov text-black transition-all hover:bg-cyan-cherenkov-shine;
+  }
+
   .cyan-CTA {
     @apply base-CTA bg-cyan-cherenkov text-black transition-all;
   }
@@ -969,4 +977,16 @@ input[type='time']::-webkit-calendar-picker-indicator {
 
 .sb-show-main {
   color: white;
+}
+
+#particles-js {
+  height: 100%;
+  width: 100%;
+}
+
+/* WalletConnect */
+
+#walletconnect-qrcode-text,
+.walletconnect-modal__mobile__toggle {
+  @apply text-black;
 }

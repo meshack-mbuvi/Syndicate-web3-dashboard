@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { Provider } from 'react-redux';
 import { store } from '@/state/index';
-import { ProgressModalState } from '@/components/progressModal';
 import { ApolloProvider, ApolloClient, InMemoryCache } from '@apollo/client';
 import ModifyMemberClubTokens from '@/containers/managerActions/modifyMemberAllocation/ModifyMemberClubTokens';
+import { ProgressState } from '@/components/progressCard';
 
 const client = new ApolloClient({
   uri: '#',
@@ -32,10 +32,10 @@ export default {
   argTypes: {
     state: {
       options: [
-        ProgressModalState.FAILURE,
-        ProgressModalState.PENDING,
-        ProgressModalState.SUCCESS,
-        ProgressModalState.CONFIRM
+        ProgressState.FAILURE,
+        ProgressState.PENDING,
+        ProgressState.SUCCESS,
+        ProgressState.CONFIRM
       ],
       control: { type: 'select' }
     }

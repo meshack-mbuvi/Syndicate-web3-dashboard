@@ -232,7 +232,7 @@ const ConnectWallet: React.FC = () => {
         <>
           <div className="rounded-2xl bg-gray-syn8 px-4.5 pt-6">
             {/* Titles */}
-            <L2 extraClasses="text-white">Connect a wallet</L2>
+            <L2 extraClasses="text-white w-fit-content">Connect a wallet</L2>
             <p className="text-xs text-gray-syn5 mb-6 mt-2">
               <span>
                 By connecting your wallet, you agree to Syndicate&apos;s&nbsp;

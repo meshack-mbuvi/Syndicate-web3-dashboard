@@ -767,11 +767,11 @@ const ReviewDistribution: React.FC = () => {
       <ShareSocialModal
         isModalVisible={shareDistributionNews}
         handleModalClose={() => setShareDistributionNews(false)}
+        socialURL={`https://app.syndicate.io/clubs/${clubAddress}`}
         transactionHash={transactionHash}
-        socialURL={''}
-        clubName={name}
-        clubSymbol={symbol}
-        handleViewDashboard={handleViewDashboard}
+        description={`Just made an investment distribution for ${name} (${symbol}) on Syndicate 🎉 Check our dashboard for details on how much you will be receiving.`}
+        handleClick={handleViewDashboard}
+        buttonLabel="View on dashboard"
       />
     </div>
   );

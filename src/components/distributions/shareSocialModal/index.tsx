@@ -1,3 +1,4 @@
+import { ExternalLinkColor } from '@/components/iconWrappers';
 import Modal, { ModalStyle } from '@/components/modal';
 import { ShareCard } from '@/components/social';
 import { BlockExplorerLink } from '@/components/syndicates/shared/BlockExplorerLink';
@@ -7,20 +8,30 @@ interface Props {
   isModalVisible: boolean;
   handleModalClose: () => void;
   transactionHash: string;
+  title?: string;
   socialURL: string;
-  clubName: string;
-  clubSymbol: string;
-  handleViewDashboard;
+  description: string;
+  handleClick;
+  buttonLabel: string | any;
+  imageOptions?: string[];
+  customVisual?: any;
 }
 
 export const ShareSocialModal: React.FC<Props> = ({
   isModalVisible,
   handleModalClose,
   transactionHash,
+  title = 'Share the good news',
   socialURL,
-  clubName,
-  clubSymbol,
-  handleViewDashboard
+  description,
+  handleClick,
+  buttonLabel,
+  imageOptions = [
+    'https://media3.giphy.com/media/nV92wySC3iMGhAmR71/giphy.gif',
+    'https://media4.giphy.com/media/ZmgSpGW4p8EUspn0Uk/giphy.gif',
+    'https://media.giphy.com/media/lMameLIF8voLu8HxWV/giphy.gif'
+  ],
+  customVisual
 }) => {
   return (
     <>
@@ -41,21 +52,18 @@ export const ShareSocialModal: React.FC<Props> = ({
             src="/images/checkCircleGreen.svg"
             alt="Success icon"
           />
-          <H4 extraClasses="mb-8 text-center">Share the good news</H4>
+          <H4 extraClasses="mb-8 text-center">{title}</H4>
           <ShareCard
             URL={socialURL}
-            imageOptions={[
-              'https://media3.giphy.com/media/nV92wySC3iMGhAmR71/giphy.gif',
-              'https://media4.giphy.com/media/ZmgSpGW4p8EUspn0Uk/giphy.gif',
-              'https://media.giphy.com/media/lMameLIF8voLu8HxWV/giphy.gif'
-            ]}
-            description={`Just made an investment distribution for ${clubName} (${clubSymbol}) on Syndicate 🎉 Check our dashboard for details on how much you will be receiving.`}
+            imageOptions={imageOptions}
+            customVisual={customVisual}
+            description={description}
           />
           <button
-            className="primary-CTA w-full mt-8"
-            onClick={handleViewDashboard}
+            className={`primary-CTA w-full mt-8 ${!transactionHash && 'mb-6'}`}
+            onClick={handleClick}
           >
-            View on dashboard
+            {buttonLabel}
           </button>
           {transactionHash ? (
             <div className="flex justify-center mt-6 mb-8">
@@ -63,6 +71,7 @@ export const ShareSocialModal: React.FC<Props> = ({
                 <BlockExplorerLink
                   resourceId={transactionHash}
                   resource="transaction"
+                  iconcolor={ExternalLinkColor.WHITE}
                 />
               </div>
             </div>

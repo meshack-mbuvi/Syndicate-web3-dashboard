@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { OldClubERC20Contract } from '@/ClubERC20Factory/clubERC20/oldClubERC20';
 import { OwnerMintModuleContract } from '@/ClubERC20Factory/ownerMintModule';
-import { ProgressModal, ProgressModalState } from '@/components/progressModal';
+import { ProgressModal } from '@/components/progressModal';
 import ConfirmMemberDetailsModal from '@/containers/managerActions/mintAndShareTokens/ConfirmMemberDetailsModal';
 import MemberDetailsModal from '@/containers/managerActions/mintAndShareTokens/MemberDetailsModal';
 import { setERC20Token } from '@/helpers/erc20TokenDetails';
@@ -18,6 +18,7 @@ import {
 import { ClubStillOpenModal } from '@/containers/managerActions/mintAndShareTokens/ClubStillOpenModal';
 import { MintPolicyContract } from '@/ClubERC20Factory/policyMintERC20';
 import { CONTRACT_ADDRESSES } from '@/Networks';
+import { ProgressState } from '@/components/progressCard';
 
 interface Props {
   show: boolean;
@@ -287,7 +288,7 @@ export const MintAndShareTokens: React.FC<Props> = ({
           title: 'Confirm in wallet',
           description:
             'Confirm the modification of club settings in your wallet.',
-          state: ProgressModalState.CONFIRM
+          state: ProgressState.CONFIRM
         }}
       />
     );
@@ -301,7 +302,7 @@ export const MintAndShareTokens: React.FC<Props> = ({
             'This could take anywhere from seconds to hours depending on network congestion and the gas fees you set. You can safely leave this page while you wait.',
           etherscanHash: transactionHash,
           transactionType: 'transaction',
-          state: ProgressModalState.PENDING
+          state: ProgressState.PENDING
         }}
       />
     );
@@ -315,7 +316,7 @@ export const MintAndShareTokens: React.FC<Props> = ({
           buttonLabel: 'Close',
           buttonOnClick: handleCloseSuccessModal,
           buttonFullWidth: true,
-          state: ProgressModalState.FAILURE,
+          state: ProgressState.FAILURE,
           etherscanHash: closeClubRejected ? null : transactionHash,
           transactionType: 'transaction'
         }}
@@ -330,7 +331,7 @@ export const MintAndShareTokens: React.FC<Props> = ({
           buttonLabel: 'Done',
           buttonOnClick: handleCloseSuccessModal,
           buttonFullWidth: false,
-          state: ProgressModalState.SUCCESS
+          state: ProgressState.SUCCESS
         }}
       />
     );
@@ -344,7 +345,7 @@ export const MintAndShareTokens: React.FC<Props> = ({
           isVisible: true,
           title: 'Confirm in wallet',
           description: 'Please confirm the club token mint in your wallet.',
-          state: ProgressModalState.CONFIRM
+          state: ProgressState.CONFIRM
         }}
       />
     );
@@ -358,7 +359,7 @@ export const MintAndShareTokens: React.FC<Props> = ({
             'This could take anywhere from seconds to hours depending on network congestion and the gas fees you set. You can safely leave this page while you wait.',
           transactionHash: transactionHash,
           transactionType: 'transaction',
-          state: ProgressModalState.PENDING
+          state: ProgressState.PENDING
         }}
       />
     );
@@ -376,7 +377,7 @@ export const MintAndShareTokens: React.FC<Props> = ({
           buttonLabel: clubReopenedForMint ? 'Continue' : 'Done',
           buttonOnClick: handleCloseSuccessModal,
           buttonFullWidth: true,
-          state: ProgressModalState.SUCCESS,
+          state: ProgressState.SUCCESS,
           transactionHash: transactionHash,
           transactionType: 'transaction'
         }}
@@ -392,7 +393,7 @@ export const MintAndShareTokens: React.FC<Props> = ({
           buttonLabel: 'Close',
           buttonOnClick: handleCloseSuccessModal,
           buttonFullWidth: true,
-          state: ProgressModalState.FAILURE,
+          state: ProgressState.FAILURE,
           transactionHash: userRejectedMint ? null : transactionHash,
           transactionType: 'transaction'
         }}

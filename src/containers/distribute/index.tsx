@@ -1,16 +1,39 @@
+import { ClubERC20Contract } from '@/ClubERC20Factory/clubERC20';
 import { BadgeWithOverview } from '@/components/distributions/badgeWithOverview';
 import Layout from '@/components/layout';
+import { ClubHeader } from '@/components/syndicates/shared/clubHeader';
+import { setERC20Token } from '@/helpers/erc20TokenDetails';
+import { useClubDepositsAndSupply } from '@/hooks/useClubDepositsAndSupply';
 import { useIsClubOwner } from '@/hooks/useClubOwner';
 import useClubTokenMembers from '@/hooks/useClubTokenMembers';
 import { useDemoMode } from '@/hooks/useDemoMode';
+import { useGetDepositTokenPrice } from '@/hooks/useGetDepositTokenPrice';
+import NotFoundPage from '@/pages/404';
 import { AppState } from '@/state';
+import {
+  clearCollectiblesTransactions,
+  fetchTokenTransactions,
+  setMockCollectiblesResult,
+  setMockTokensResult
+} from '@/state/assets/slice';
+import { setClubMembers } from '@/state/clubMembers';
 import {
   setDistributeTokens,
   setDistributionMembers,
   setEth
 } from '@/state/distributions';
+import {
+  setERC20TokenContract,
+  setERC20TokenDetails
+} from '@/state/erc20token/slice';
 import { Status } from '@/state/wallet/types';
 import { getSynToken } from '@/utils/api';
+import {
+  mockActiveERC20Token,
+  mockDepositModeTokens,
+  mockTokensResult
+} from '@/utils/mockdata';
+import { isEmpty } from 'lodash';
 import { useRouter } from 'next/router';
 import React, { FC, useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -26,6 +49,9 @@ enum Steps {
 
 const Distribute: FC = () => {
   const {
+    initializeContractsReducer: {
+      syndicateContracts: { DepositTokenMintModule }
+    },
     clubMembersSliceReducer: { clubMembers, loadingClubMembers },
     distributeTokensReducer: {
       distributionTokens,
@@ -33,10 +59,17 @@ const Distribute: FC = () => {
       eth,
       isLoading
     },
-    erc20TokenSliceReducer: { erc20Token },
-    assetsSliceReducer: { tokensResult, loading: loadingAssets },
+    erc20TokenSliceReducer: {
+      erc20Token,
+      depositDetails: { nativeDepositToken }
+    },
+    assetsSliceReducer: {
+      tokensResult,
+      collectiblesResult,
+      loading: loadingAssets
+    },
     web3Reducer: {
-      web3: { account, status, activeNetwork }
+      web3: { account, status, activeNetwork, web3 }
     }
   } = useSelector((state: AppState) => state);
 
@@ -54,7 +87,17 @@ const Distribute: FC = () => {
   const [currentStep, setCurrentStep] = useState<string>(Steps.selectTokens);
   const [activeIndex, setActiveIndex] = useState(0);
 
-  const { owner, loading, depositsEnabled } = erc20Token;
+  const [isClubFound, setIsClubFound] = useState(false);
+
+  const {
+    owner,
+    loading,
+    depositsEnabled,
+    name,
+    maxTotalDeposits,
+    address,
+    symbol
+  } = erc20Token;
 
   // Prepare distributions tokens for overview badge
   const router = useRouter();
@@ -66,7 +109,15 @@ const Distribute: FC = () => {
   } = router;
 
   const isOwner = useIsClubOwner();
-  const isDemoMode = useDemoMode();
+  const isDemoMode = useDemoMode(clubAddress as string);
+
+  useEffect(() => {
+    if (!isReady || isEmpty(web3)) return;
+
+    if (web3.utils?.isAddress(clubAddress as string) && !isDemoMode) {
+      setIsClubFound(true);
+    }
+  }, [isReady, clubAddress, isDemoMode, web3]);
 
   useEffect(() => {
     if (
@@ -230,6 +281,88 @@ const Distribute: FC = () => {
     }
   }, [_options, activeIndices, dispatch]);
 
+  // dispatch the price of the deposit token for use in other
+  // components
+  useGetDepositTokenPrice(activeNetwork.chainId);
+  const zeroAddress = '0x0000000000000000000000000000000000000000';
+
+  const { loadingClubDeposits, totalDeposits } =
+    useClubDepositsAndSupply(address);
+
+  useEffect(() => {
+    // Demo mode
+    if (clubAddress === zeroAddress) {
+      router.push('/clubs/demo/manage');
+    }
+  });
+
+  useEffect(() => {
+    if (owner && activeNetwork.chainId && !isEmpty(web3)) {
+      // fetch token transactions for the connected account.
+      dispatch(
+        fetchTokenTransactions({
+          account: owner,
+          activeNetwork: activeNetwork,
+          web3: web3
+        })
+      );
+    }
+  }, [activeNetwork, dispatch, owner]);
+
+  useEffect(() => {
+    if (isDemoMode) {
+      const mockTokens = depositsEnabled
+        ? mockDepositModeTokens
+        : mockTokensResult;
+      dispatch(setMockTokensResult(mockTokens));
+
+      dispatch(setMockCollectiblesResult(depositsEnabled));
+    }
+  }, [isDemoMode, collectiblesResult.length]);
+
+  useEffect(() => {
+    // clear collectibles on account switch
+    if (account && !isDemoMode) {
+      dispatch(clearCollectiblesTransactions());
+    }
+  }, [account, clubAddress, dispatch, isDemoMode, maxTotalDeposits]);
+
+  /**
+   * Fetch club details
+   */
+  useEffect(() => {
+    if (!clubAddress || status == Status.CONNECTING) return;
+
+    if (
+      clubAddress !== zeroAddress &&
+      web3.utils?.isAddress(clubAddress as string) &&
+      DepositTokenMintModule
+    ) {
+      const clubERC20tokenContract = new ClubERC20Contract(
+        clubAddress as string,
+        web3,
+        activeNetwork
+      );
+
+      dispatch(setERC20TokenContract(clubERC20tokenContract));
+
+      dispatch(setERC20Token(clubERC20tokenContract));
+
+      return () => {
+        dispatch(setClubMembers([]));
+      };
+    } else if (isDemoMode) {
+      // using "Active" as the default view.
+      dispatch(setERC20TokenDetails(mockActiveERC20Token));
+    }
+  }, [
+    clubAddress,
+    account,
+    nativeDepositToken,
+    status,
+    DepositTokenMintModule
+  ]);
+
   /**
    * if max ETH is selected and other tokens are available but not selected,
    * show warning message asking the admin to reserve some ETH for other token
@@ -321,6 +454,28 @@ const Distribute: FC = () => {
     </div>
   );
 
+  const headerComponent = (
+    <div className="flex items-center justify-between">
+      <div>
+        {/* Club header */}
+        <div className="flex justify-center items-center">
+          <ClubHeader
+            {...{
+              loading,
+              name,
+              symbol,
+              owner,
+              loadingClubDeposits,
+              totalDeposits,
+              managerSettingsOpen: true,
+              clubAddress
+            }}
+          />
+        </div>
+      </div>
+    </div>
+  );
+
   const dotIndicatorOptions = ['Distribute', 'Review'];
 
   // Redirect to /manage
@@ -337,51 +492,63 @@ const Distribute: FC = () => {
 
   return (
     <>
-      {currentStep == Steps.selectTokens ? (
-        <TwoColumnLayout
-          managerSettingsOpen={true}
-          dotIndicatorOptions={dotIndicatorOptions}
-          handleExitClick={handleExitClick}
-          leftColumnComponent={
-            <div>
-              <TokenSelector
-                options={_options}
-                activeIndices={activeIndices}
-                setOptions={setOptions}
-                setActiveIndices={setActiveIndices}
-                loading={loadingAssets || loading || processingTokens}
-              />
-            </div>
-          }
-          rightColumnComponent={
-            <div>
-              {/* Use this to take up space when the component's position is fixed */}
-              <div className="opacity-0 md:opacity-100">
-                {rightColumnComponent}
-              </div>
-              {/* Mobile positioning */}
-              <div className="fixed bottom-0 left-0 w-full md:hidden">
-                {rightColumnComponent}
-              </div>
-            </div>
-          }
-        />
-      ) : null}
+      {!isClubFound ? (
+        <NotFoundPage />
+      ) : (
+        <>
+          {currentStep == Steps.selectTokens ? (
+            <TwoColumnLayout
+              activeIndex={activeIndex}
+              setActiveIndex={handleSetActiveIndex}
+              hideWalletAndEllipsis={true}
+              showCloseButton={true}
+              headerComponent={headerComponent}
+              headerTitle={name}
+              managerSettingsOpen={true}
+              dotIndicatorOptions={dotIndicatorOptions}
+              handleExitClick={handleExitClick}
+              leftColumnComponent={
+                <div>
+                  <TokenSelector
+                    options={_options}
+                    activeIndices={activeIndices}
+                    setOptions={setOptions}
+                    setActiveIndices={setActiveIndices}
+                    loading={loadingAssets || loading || processingTokens}
+                  />
+                </div>
+              }
+              rightColumnComponent={
+                <div>
+                  {/* Use this to take up space when the component's position is fixed */}
+                  <div className="opacity-0 md:opacity-100">
+                    {rightColumnComponent}
+                  </div>
+                  {/* Mobile positioning */}
+                  <div className="fixed bottom-0 left-0 w-full md:hidden">
+                    {rightColumnComponent}
+                  </div>
+                </div>
+              }
+            />
+          ) : null}
 
-      {/* show component to select members here */}
-      {currentStep == Steps.selectMembers ? (
-        <Layout
-          managerSettingsOpen={false}
-          showNav={true}
-          showBackButton={true}
-          dotIndicatorOptions={dotIndicatorOptions}
-          handleExitClick={handleExitClick}
-          activeIndex={activeIndex}
-          setActiveIndex={handleSetActiveIndex}
-        >
-          <ReviewDistribution />
-        </Layout>
-      ) : null}
+          {/* show component to select members here */}
+          {currentStep == Steps.selectMembers ? (
+            <Layout
+              managerSettingsOpen={false}
+              showNav={true}
+              showBackButton={true}
+              dotIndicatorOptions={dotIndicatorOptions}
+              handleExitClick={handleExitClick}
+              activeIndex={activeIndex}
+              setActiveIndex={handleSetActiveIndex}
+            >
+              <ReviewDistribution />
+            </Layout>
+          ) : null}
+        </>
+      )}
     </>
   );
 };

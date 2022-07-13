@@ -3,8 +3,7 @@ import { SkeletonLoader } from '@/components/skeletonLoader';
 import { H1 } from '@/components/typography';
 import { AppState } from '@/state';
 import { useSelector } from 'react-redux';
-import { getTextWidth } from '@/utils/getTextWidth';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import CopyToClipboard from 'react-copy-to-clipboard';
 import ReactTooltip from 'react-tooltip';
 import GradientAvatar from '../../portfolioAndDiscover/portfolio/GradientAvatar';
@@ -35,10 +34,6 @@ export const ClubHeader: React.FC<{
       web3: { activeNetwork }
     }
   } = useSelector((state: AppState) => state);
-  const [divWidth, setDivWidth] = useState(0);
-  const [nameWidth, setNameWidth] = useState(0);
-
-  const [showActionIcons, setShowActionIcons] = useState<boolean>(false);
 
   // state to handle copying of the syndicate address to clipboard.
   const [showAddressCopyState, setShowAddressCopyState] =
@@ -49,15 +44,9 @@ export const ClubHeader: React.FC<{
     setTimeout(() => setShowAddressCopyState(false), 1000);
   };
 
-  // perform size checks
-  useEffect(() => {
-    setDivWidth(document?.getElementById('club-name')?.offsetWidth);
-    setNameWidth(getTextWidth(name));
-  }, [name]);
-
   return (
-    <div className="flex justify-center items-center">
-      <div className="mr-8">
+    <div className="grid col-span-12">
+      <div className="mr-8 col-start-1 col-end-3 flex items-center pb-3">
         {(loading || loadingClubDeposits || totalDeposits == '') &&
         !managerSettingsOpen ? (
           <SkeletonLoader height="20" width="20" borderRadius="rounded-full" />
@@ -69,13 +58,9 @@ export const ClubHeader: React.FC<{
         ) : null}
       </div>
 
-      <div className="flex-shrink flex-wrap break-normal m-0 w-full">
+      <div className="flex-shrink flex-wrap break-normal col-start-4 col-end-10 flex items-center">
         {/* Syndicate name, symbol and action buttons  */}
-        <div
-          className="flex justify-start items-center"
-          onMouseEnter={() => setShowActionIcons(true)}
-          onMouseLeave={() => setShowActionIcons(false)}
-        >
+        <div className="flex justify-start items-center group">
           {loading ? (
             <div className="md:w-96 w-50">
               <SkeletonLoader
@@ -86,26 +71,24 @@ export const ClubHeader: React.FC<{
             </div>
           ) : (
             <div
-              className={`flex flex-wrap items-center w-fit-content space-y-2`}
+              className={`flex flex-wrap items-center justify-start w-fit-content space-y-2`}
             >
-              <H1
-                id="club-name"
-                extraClasses={`${
-                  nameWidth >= divWidth ? `line-clamp-2 mb-2` : `flex mr-6`
-                }`}
-              >
-                {name}
-              </H1>
+              <div className="flex justify-start items-center flex-wrap ">
+                <H1
+                  id="club-name"
+                  extraClasses={`leading-13 line-clamp-2 mr-2`}
+                >
+                  {name}
+                </H1>
+                <div className="flex items-center">
+                  <H1
+                    weightClassOverride="font-light"
+                    extraClasses="flex flex-wrap text-gray-syn4 items-center justify-center mr-8 leading-13"
+                  >
+                    {symbol}
+                  </H1>
 
-              <H1
-                weightClassOverride="font-light"
-                extraClasses="flex flex-wrap text-gray-syn4 items-center justify-center"
-              >
-                {symbol}
-              </H1>
-              <div className="block items-center ml-6 space-x-8 pr-2">
-                {showActionIcons ? (
-                  <div className="flex space-x-6 align-middle mt-1">
+                  <div className="flex space-x-6 align-middle transition-opacity duration-200 opacity-100 sm:opacity-0 group-hover:opacity-100">
                     <CopyToClipboard text={owner as string}>
                       <button
                         className="flex items-center relative w-4 h-4 cursor-pointer"
@@ -154,7 +137,7 @@ export const ClubHeader: React.FC<{
                       </ReactTooltip>
                     </div>
                   </div>
-                ) : null}
+                </div>
               </div>
             </div>
           )}
