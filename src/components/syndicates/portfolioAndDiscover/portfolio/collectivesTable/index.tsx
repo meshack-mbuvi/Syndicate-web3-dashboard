@@ -1,3 +1,4 @@
+import { B2 } from '@/components/typography';
 import { AppState } from '@/state';
 import {
   floatedNumberWithCommas,
@@ -8,14 +9,15 @@ import Image from 'next/image';
 import Link from 'next/link';
 import React, { FC, useEffect, useMemo, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
-import GradientAvatar from '../GradientAvatar';
+import { CopyToClipboard } from 'react-copy-to-clipboard';
+import { CopiedLinkIcon, CopyLinkIcon } from '@/components/iconWrappers';
 
 interface Props {
   columns: string[];
   tableData: any[];
 }
 
-const ClubERC20Table: FC<Props> = ({ columns, tableData }) => {
+const CollectivesTable: FC<Props> = ({ columns, tableData }) => {
   const {
     web3Reducer: {
       web3: { activeNetwork }
@@ -26,7 +28,15 @@ const ClubERC20Table: FC<Props> = ({ columns, tableData }) => {
   const dataLimit = 10; // number of items to show on each page.
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [paginatedData, setPaginatedData] = useState<any[]>([]);
-  const scrollRef = useRef(null);
+
+  // copy invite link
+  const [copied, setCopied] = useState(false);
+  const collectivesTableRef = useRef(null);
+
+  const updateInviteLinkCopyState = () => {
+    setCopied(true);
+    setTimeout(() => setCopied(false), 500);
+  };
 
   function goToNextPage() {
     setCurrentPage((page) => page + 1);
@@ -42,15 +52,10 @@ const ClubERC20Table: FC<Props> = ({ columns, tableData }) => {
     [tableData.length, currentPage, dataLimit]
   );
 
-  const processTotalDeposits = (totalDeposits, depositERC20TokenSymbol) => {
-    return hasDecimals(totalDeposits)
-      ? floatedNumberWithCommas(
-          parseFloat(totalDeposits),
-          depositERC20TokenSymbol == activeNetwork.nativeCurrency.symbol
-            ? true
-            : false
-        )
-      : numberWithCommas(totalDeposits);
+  const formatAmount = (amount) => {
+    return hasDecimals(amount)
+      ? floatedNumberWithCommas(parseFloat(amount))
+      : numberWithCommas(amount);
   };
 
   useEffect(() => {
@@ -65,11 +70,9 @@ const ClubERC20Table: FC<Props> = ({ columns, tableData }) => {
         <div className="w-max sm:w-full">
           <div className="flex flex-col">
             {/* scroll to top of table with this button when pagination is clicked  */}
-            <button ref={scrollRef} />
+            <button ref={collectivesTableRef} />
             <div
-              className={`grid ${
-                columns.length > 4 ? 'grid-cols-7' : 'grid-cols-4'
-              } md:grid-cols-7 gap-8 sm:gap-2 pb-3 text-gray-syn4 text-sm`}
+              className={`grid grid-cols-6 md:grid-cols-6 gap-8 sm:gap-2 pb-3 text-gray-syn4 text-sm`}
             >
               {columns?.map((col, idx) => (
                 <div
@@ -89,95 +92,94 @@ const ClubERC20Table: FC<Props> = ({ columns, tableData }) => {
               (
                 {
                   address,
-                  clubName,
-                  status,
-                  ownershipShare,
-                  depositERC20TokenSymbol,
-                  depositTokenLogo,
-                  membersCount,
-                  totalDeposits,
-                  memberDeposits,
                   isOwner,
-                  clubSymbol
+                  tokenName,
+                  tokenSymbol,
+                  tokenImage,
+                  totalUnclaimed,
+                  maxTotalSupply,
+                  totalClaimed,
+                  pricePerNft,
+                  inviteLink
                 },
                 index
               ) => (
                 <Link
                   key={`token-table-row-${index}`}
-                  href={`/clubs/${address}/${isOwner ? 'manage' : ''}${
-                    '?chain=' + activeNetwork.network
+                  href={`/collectives/${address}/${isOwner ? 'manage' : ''}${
+                    '?network=' + activeNetwork.chainId
                   }`}
                 >
                   <div
                     className={`grid sm:gap-2 ${
-                      isOwner ? 'grid-cols-4' : 'grid-cols-7'
-                    } auto-cols-fr md:grid-cols-7 gap-8 border-b-1 border-gray-steelGrey py-5 cursor-pointer overflow-x-scroll no-scroll-bar sm:overflow-x-auto`}
+                      isOwner ? 'grid-cols-4' : 'grid-cols-6'
+                    } auto-cols-fr md:grid-cols-6 gap-8 border-b-1 border-gray-steelGrey py-5 cursor-pointer overflow-x-scroll no-scroll-bar sm:overflow-x-auto group`}
                   >
                     <div className="flex flex-shrink-0 flex-nowrap flex-row items-center col-span-2">
                       <div className="flex flex-shrink-0">
                         <div className="hidden sm:block sm:mr-4">
-                          <GradientAvatar name={clubName} size="h-8 w-8" />
+                          <img
+                            src={tokenImage}
+                            height={45}
+                            width={45}
+                            alt=""
+                            className="rounded-xl"
+                          />
                         </div>
                       </div>
-                      <div className="flex text-base items-center mr-2">
-                        {clubName}
-                      </div>
-                      <div className="flex text-base items-center text-gray-syn4">
-                        {clubSymbol}
+                      <div className="flex text-base items-center">
+                        <B2 extraClasses="mr-2">{tokenName}</B2>
+                        <B2 extraClasses="text-gray-syn4">{tokenSymbol}</B2>
                       </div>
                     </div>
-                    <div className="flex text-base items-center">{status}</div>
+                    <div className="flex text-base items-center space-x-2">
+                      <B2>{formatAmount(totalUnclaimed)}</B2>
+                      <B2 extraClasses="text-gray-syn4">
+                        of {formatAmount(maxTotalSupply)}
+                      </B2>
+                    </div>
+                    <div className="flex text-base items-center space-x-2">
+                      <B2>{formatAmount(totalClaimed)}</B2>
+                    </div>
                     <div className="flex text-base items-center">
                       <div className="flex items-center mr-2 flex-shrink-0">
                         <Image
-                          src={depositTokenLogo || '/images/token-gray-4.svg'}
+                          src={'/images/ethereum-logo.svg'}
                           width={20}
                           height={20}
                           objectFit="contain"
                         />
                       </div>
-                      <div>
-                        {processTotalDeposits(
-                          totalDeposits,
-                          depositERC20TokenSymbol
-                        )}{' '}
-                        {depositERC20TokenSymbol}
-                      </div>
-                    </div>
-                    <div className={`flex text-base items-center`}>
-                      {membersCount}
+                      <div>{formatAmount(pricePerNft)} ETH</div>
                     </div>
 
-                    {!isOwner && (
-                      <>
-                        <div className="flex text-base items-center justify-end">
+                    <div className="flex text-base items-center justify-end opacity-100 sm:opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                      <CopyToClipboard
+                        text={inviteLink}
+                        onCopy={updateInviteLinkCopyState}
+                      >
+                        <button
+                          onClick={(e) => e.stopPropagation()}
+                          className="flex items-center"
+                        >
                           <div className="flex items-center mr-2">
-                            <Image
-                              src={
-                                depositTokenLogo || '/images/token-gray-4.svg'
-                              }
-                              width={20}
-                              height={20}
-                            />
+                            {copied ? (
+                              <CopiedLinkIcon />
+                            ) : (
+                              <CopyLinkIcon color="text-gray-syn4" />
+                            )}
                           </div>
-                          {floatedNumberWithCommas(
-                            memberDeposits,
-                            depositERC20TokenSymbol ==
-                              activeNetwork.nativeCurrency.symbol
-                              ? true
-                              : false
-                          )}{' '}
-                          {depositERC20TokenSymbol}
-                        </div>
-                        <div className="flex text-base items-center justify-end">
-                          {`${
-                            hasDecimals(ownershipShare)
-                              ? ownershipShare.toFixed(2)
-                              : ownershipShare
-                          }%`}
-                        </div>
-                      </>
-                    )}
+
+                          <B2
+                            extraClasses={` ${
+                              copied ? 'text-green' : 'text-gray-syn4'
+                            }`}
+                          >
+                            {copied ? 'Link copied' : 'Copy invite link'}
+                          </B2>
+                        </button>
+                      </CopyToClipboard>
+                    </div>
                   </div>
                 </Link>
               )
@@ -236,4 +238,4 @@ const ClubERC20Table: FC<Props> = ({ columns, tableData }) => {
   );
 };
 
-export default ClubERC20Table;
+export default CollectivesTable;
