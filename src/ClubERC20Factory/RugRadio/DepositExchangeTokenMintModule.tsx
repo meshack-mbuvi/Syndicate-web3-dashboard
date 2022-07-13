@@ -9,6 +9,7 @@ export class DepositExchangeMintModule {
   web3;
 
   constructor(contractAddress: string, web3, activeNetwork) {
+    this.web3 = web3;
     this.activeNetwork = activeNetwork;
     this.contract = new web3.eth.Contract(
       DepositExchangeMintModule_ABI,
