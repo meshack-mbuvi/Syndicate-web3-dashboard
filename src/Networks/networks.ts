@@ -24,7 +24,8 @@ export const NETWORKS = Object.freeze({
       symbol: 'ETH',
       name: 'Ethereum',
       decimals: '18',
-      exchangeRate: 10000
+      exchangeRate: 10000,
+      logo: '/images/ethereum-logo.svg'
     },
     gnosis: {
       txServiceUrl: 'https://safe-transaction.gnosis.io/api/v1/'
@@ -61,7 +62,8 @@ export const NETWORKS = Object.freeze({
       symbol: 'ETH',
       name: 'Ethereum',
       decimals: '18',
-      exchangeRate: 10000
+      exchangeRate: 10000,
+      logo: '/images/chains/rinkeby.svg'
     },
     gnosis: {
       txServiceUrl: 'https://safe-transaction.rinkeby.gnosis.io/api/v1/'
@@ -98,7 +100,8 @@ export const NETWORKS = Object.freeze({
       symbol: 'MATIC',
       name: 'Polygon',
       decimals: '18',
-      exchangeRate: 10
+      exchangeRate: 10,
+      logo: '/images/chains/polygon.svg'
     },
     gnosis: {
       txServiceUrl: 'https://safe-transaction.polygon.gnosis.io/api/v1/'

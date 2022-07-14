@@ -64,7 +64,12 @@ export const DistributionsDisclaimerModal: React.FC<Props> = ({
                 onChange={() => setIsActive(!isActive)}
               />
             </B2>
-            <B2>I understand that distributions are irreversible.</B2>
+            <B2
+              extraClasses="cursor-pointer"
+              onClick={() => setIsActive(!isActive)}
+            >
+              I understand that distributions are irreversible.
+            </B2>
           </div>
           <button
             onClick={onClick}

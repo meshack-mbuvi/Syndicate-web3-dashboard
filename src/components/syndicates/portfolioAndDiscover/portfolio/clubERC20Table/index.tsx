@@ -26,7 +26,7 @@ const ClubERC20Table: FC<Props> = ({ columns, tableData }) => {
   const dataLimit = 10; // number of items to show on each page.
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [paginatedData, setPaginatedData] = useState<any[]>([]);
-  const tokensTableRef = useRef(null);
+  const scrollRef = useRef(null);
 
   function goToNextPage() {
     setCurrentPage((page) => page + 1);
@@ -65,16 +65,18 @@ const ClubERC20Table: FC<Props> = ({ columns, tableData }) => {
         <div className="w-max sm:w-full">
           <div className="flex flex-col">
             {/* scroll to top of table with this button when pagination is clicked  */}
-            <button ref={tokensTableRef} />
+            <button ref={scrollRef} />
             <div
               className={`grid ${
-                columns.length > 4 ? 'grid-cols-6' : 'grid-cols-4'
-              } md:grid-cols-6 gap-8 pb-3 text-gray-syn4 text-sm`}
+                columns.length > 4 ? 'grid-cols-7' : 'grid-cols-4'
+              } md:grid-cols-7 gap-8 sm:gap-2 pb-3 text-gray-syn4 text-sm`}
             >
               {columns?.map((col, idx) => (
                 <div
                   key={`token-table-header-${idx}`}
-                  className={`text-sm ${idx > 3 ? 'text-right' : ''}`}
+                  className={`text-sm ${idx > 3 ? 'text-right' : ''} ${
+                    idx === 0 ? 'col-span-2' : ''
+                  }`}
                 >
                   {col}
                 </div>
@@ -95,7 +97,8 @@ const ClubERC20Table: FC<Props> = ({ columns, tableData }) => {
                   membersCount,
                   totalDeposits,
                   memberDeposits,
-                  isOwner
+                  isOwner,
+                  clubSymbol
                 },
                 index
               ) => (
@@ -107,17 +110,20 @@ const ClubERC20Table: FC<Props> = ({ columns, tableData }) => {
                 >
                   <div
                     className={`grid sm:gap-2 ${
-                      isOwner ? 'grid-cols-4' : 'grid-cols-6'
-                    } auto-cols-fr md:grid-cols-6 gap-8 border-b-1 border-gray-steelGrey py-5 cursor-pointer overflow-x-scroll no-scroll-bar sm:overflow-x-auto`}
+                      isOwner ? 'grid-cols-4' : 'grid-cols-7'
+                    } auto-cols-fr md:grid-cols-7 gap-8 border-b-1 border-gray-steelGrey py-5 cursor-pointer overflow-x-scroll no-scroll-bar sm:overflow-x-auto`}
                   >
-                    <div className="flex flex-shrink-0 flex-nowrap flex-row items-center">
+                    <div className="flex flex-shrink-0 flex-nowrap flex-row items-center col-span-2">
                       <div className="flex flex-shrink-0">
                         <div className="hidden sm:block sm:mr-4">
                           <GradientAvatar name={clubName} size="h-8 w-8" />
                         </div>
                       </div>
-                      <div className="flex text-base items-center">
+                      <div className="flex text-base items-center mr-2">
                         {clubName}
+                      </div>
+                      <div className="flex text-base items-center text-gray-syn4">
+                        {clubSymbol}
                       </div>
                     </div>
                     <div className="flex text-base items-center">{status}</div>

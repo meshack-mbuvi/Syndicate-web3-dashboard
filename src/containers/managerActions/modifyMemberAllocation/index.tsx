@@ -1,6 +1,6 @@
 import { OldClubERC20Contract } from '@/ClubERC20Factory/clubERC20/oldClubERC20';
 import { OwnerMintModuleContract } from '@/ClubERC20Factory/ownerMintModule';
-import { ProgressModal, ProgressModalState } from '@/components/progressModal';
+import { ProgressModal } from '@/components/progressModal';
 import ConfirmMemberAllocations from '@/containers/managerActions/modifyMemberAllocation/ConfirmMemberAllocations';
 import ModifyMemberClubTokens from '@/containers/managerActions/modifyMemberAllocation/ModifyMemberClubTokens';
 import { setERC20Token } from '@/helpers/erc20TokenDetails';
@@ -18,6 +18,7 @@ import {
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { CONTRACT_ADDRESSES } from '@/Networks';
+import { ProgressState } from '@/components/progressCard';
 
 const ModifyClubTokens: React.FC<{
   showModifyCapTable;
@@ -358,7 +359,7 @@ const ModifyClubTokens: React.FC<{
           title: 'Confirm in wallet',
           description:
             'Please confirm the cap table modification from your wallet.',
-          state: ProgressModalState.CONFIRM
+          state: ProgressState.CONFIRM
         }}
       />
     );
@@ -372,7 +373,7 @@ const ModifyClubTokens: React.FC<{
             'This could take anywhere from seconds to hours depending on network congestion and the gas fees you set. You can safely leave this page while you wait.',
           transactionHash: transactionHash,
           transactionType: 'transaction',
-          state: ProgressModalState.PENDING
+          state: ProgressState.PENDING
         }}
       />
     );
@@ -393,7 +394,7 @@ const ModifyClubTokens: React.FC<{
           buttonLabel: 'Done',
           buttonOnClick: handleCloseSuccessModal,
           buttonFullWidth: true,
-          state: ProgressModalState.SUCCESS,
+          state: ProgressState.SUCCESS,
           transactionHash: transactionHash,
           transactionType: 'transaction'
         }}
@@ -409,7 +410,7 @@ const ModifyClubTokens: React.FC<{
           buttonLabel: 'Close',
           buttonOnClick: handleCloseSuccessModal,
           buttonFullWidth: true,
-          state: ProgressModalState.FAILURE,
+          state: ProgressState.FAILURE,
           transactionHash: userRejectedUpdate ? null : transactionHash,
           transactionType: 'transaction'
         }}

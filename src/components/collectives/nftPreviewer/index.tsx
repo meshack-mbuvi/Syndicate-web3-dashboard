@@ -169,7 +169,6 @@ export const NFTPreviewer: React.FC<Props> = ({
 
       {/* Name and description */}
       <div className="px-10 pb-10 pt-8 space-y-3.5">
-        {console.log(loading)}
         <div>
           <div
             className={`${

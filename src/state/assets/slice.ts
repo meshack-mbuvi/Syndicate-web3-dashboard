@@ -23,6 +23,7 @@ export const fetchTokenTransactions = createAsyncThunk(
   'assets/fetchTokenTransactions',
   async (params: any) => {
     const { account, activeNetwork, web3 } = params;
+
     const response = await Promise.all([
       // ERC20 tokens transactions
       await getTokenTransactionHistory(account, activeNetwork.chainId),

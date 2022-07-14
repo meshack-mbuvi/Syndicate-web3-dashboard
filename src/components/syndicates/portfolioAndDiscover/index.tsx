@@ -1,17 +1,21 @@
 import CreateClubButton from '@/components/createClubButton';
-import PortfolioEmptyState from '@/components/syndicates/portfolioAndDiscover/portfolio/portfolioEmptyState';
-import { H1, H4 } from '@/components/typography';
+import PortfolioEmptyState from '@/components/syndicates/portfolioAndDiscover/portfolio/portfolioEmptyState/club';
+import { H3 } from '@/components/typography';
 import useClubERC20s from '@/hooks/useClubERC20s';
 import useWindowSize from '@/hooks/useWindowSize';
 import { AppState } from '@/state';
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { SkeletonLoader } from 'src/components/skeletonLoader';
 import ClubERC20Table from './portfolio/clubERC20Table';
+import CollectivesTable from './portfolio/collectivesTable';
 import {
+  MyClubERC20TableColumns,
   clubERCTableColumns,
-  MyClubERC20TableColumns
+  collectivesTableColumns
 } from './portfolio/clubERC20Table/constants';
+import TabsButton from '@/components/TabsButton';
+import { useFlags } from 'launchdarkly-react-client-sdk';
 
 // generate multiple skeleton loader components
 const generateSkeletons = (
@@ -29,6 +33,28 @@ const generateSkeletons = (
       />
     </div>
   ));
+
+// empty state for an individual tab (collectives and clubs)
+const EmptyState: React.FC<{
+  title: string;
+  subTitle: string;
+  showCreateButton: boolean;
+  creatingClub?: boolean;
+}> = ({ title, subTitle, showCreateButton, creatingClub }) => {
+  return (
+    <div className="mt-10 w-full h-48 flex justify-center items-center">
+      <div className="text-center">
+        <span className="text-lg md:text-2xl">{title}</span>
+        <p className="text-gray-syn4 pt-2.5 max-w-112">{subTitle}</p>
+        {showCreateButton && (
+          <div className="mt-6 flex justify-center">
+            <CreateClubButton {...{ creatingClub }} />
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
 
 /**
  * My Syndicates: IF their wallet (a) is leading a syndicate or
@@ -50,10 +76,228 @@ const PortfolioAndDiscover: React.FC = () => {
   } = web3;
 
   const [isPageLoading, setIsPageLoading] = useState(true);
+  const { collectives } = useFlags();
 
   const { loading: adminClubsLoading, memberClubLoading } = useClubERC20s();
 
   const { width } = useWindowSize();
+  enum TabsType {
+    ADMIN = 'ADMIN',
+    MEMBER = 'MEMBER'
+  }
+  const [activeClubsTab, setActiveClubsTab] = useState<TabsType | string>(
+    TabsType.ADMIN
+  );
+  const [activeCollectivesTab, setActiveCollectivesTab] = useState<
+    TabsType | string
+  >(TabsType.ADMIN);
+
+  const filterOptions = [
+    {
+      label: 'Admin',
+      value: TabsType.ADMIN
+    },
+    {
+      label: 'Member',
+      value: TabsType.MEMBER
+    }
+  ];
+
+  // TODO: Placeholder content for collectives.
+  // get collectives from Redux/graph
+  // commented these out for now since we're done checking placeholders.
+  const adminCollectives = [
+    // {
+    //   address: '0x15b179F4A1173EcDB00a434BBc06054201bB7eA2',
+    //   tokenName: 'Alpha Beta Punks',
+    //   tokenSymbol: '✺ABP',
+    //   tokenImage: '/images/placeholderCollectiveThumbnail.svg',
+    //   totalUnclaimed: 1800,
+    //   maxTotalSupply: 4000,
+    //   totalClaimed: 3200,
+    //   pricePerNft: 0.5,
+    //   inviteLink: 'http://localhost:3000/'
+    // },
+    // {
+    //   address: '0x15b179F4A1173EcDB00a434BBc06054201bB7eA2',
+    //   tokenName: 'Alpha Beta Punks',
+    //   tokenSymbol: '✺ABP',
+    //   tokenImage: '/images/placeholderCollectiveThumbnail.svg',
+    //   totalUnclaimed: 1800,
+    //   maxTotalSupply: 4000,
+    //   totalClaimed: 3200,
+    //   pricePerNft: 0.35,
+    //   inviteLink: 'http://localhost:3000/'
+    // },
+    // {
+    //   address: '0x15b179F4A1173EcDB00a434BBc06054201bB7eA2',
+    //   tokenName: 'Alpha Beta Punks',
+    //   tokenSymbol: '✺ABP',
+    //   tokenImage: '/images/placeholderCollectiveThumbnail.svg',
+    //   totalUnclaimed: 1800,
+    //   maxTotalSupply: 4000,
+    //   totalClaimed: 3200,
+    //   pricePerNft: 0.15,
+    //   inviteLink: 'http://localhost:3000/'
+    // }
+  ];
+  const memberCollectives = [
+    // {
+    //   address: '0x15b179F4A1173EcDB00a434BBc06054201bB7eA2',
+    //   tokenName: 'Omega Gamma Punks',
+    //   tokenSymbol: '✺OGP',
+    //   tokenImage: '/images/placeholderCollectiveThumbnail2.svg',
+    //   totalUnclaimed: 1900,
+    //   maxTotalSupply: 4000,
+    //   totalClaimed: 3100,
+    //   pricePerNft: 0.05,
+    //   inviteLink: 'http://localhost:3000/'
+    // },
+    // {
+    //   address: '0x15b179F4A1173EcDB00a434BBc06054201bB7eA2',
+    //   tokenName: 'Omega Gamma Punks',
+    //   tokenSymbol: '✺OGP',
+    //   tokenImage: '/images/placeholderCollectiveThumbnail2.svg',
+    //   totalUnclaimed: 1900,
+    //   maxTotalSupply: 4000,
+    //   totalClaimed: 3100,
+    //   pricePerNft: 0.55,
+    //   inviteLink: 'http://localhost:3000/'
+    // },
+    // {
+    //   address: '0x15b179F4A1173EcDB00a434BBc06054201bB7eA2',
+    //   tokenName: 'Omega Gamma Punks',
+    //   tokenSymbol: '✺OGP',
+    //   tokenImage: '/images/placeholderCollectiveThumbnail2.svg',
+    //   totalUnclaimed: 1900,
+    //   maxTotalSupply: 4000,
+    //   totalClaimed: 3100,
+    //   pricePerNft: 0.25,
+    //   inviteLink: 'http://localhost:3000/'
+    // },
+    // {
+    //   address: '0x15b179F4A1173EcDB00a434BBc06054201bB7eA2',
+    //   tokenName: 'Omega Gamma Punks',
+    //   tokenSymbol: '✺OGP',
+    //   tokenImage: '/images/placeholderCollectiveThumbnail2.svg',
+    //   totalUnclaimed: 1900,
+    //   maxTotalSupply: 4000,
+    //   totalClaimed: 3100,
+    //   pricePerNft: 0.05,
+    //   inviteLink: 'http://localhost:3000/'
+    // },
+    // {
+    //   address: '0x15b179F4A1173EcDB00a434BBc06054201bB7eA2',
+    //   tokenName: 'Omega Gamma Punks',
+    //   tokenSymbol: '✺OGP',
+    //   tokenImage: '/images/placeholderCollectiveThumbnail2.svg',
+    //   totalUnclaimed: 1900,
+    //   maxTotalSupply: 4000,
+    //   totalClaimed: 3100,
+    //   pricePerNft: 0.55,
+    //   inviteLink: 'http://localhost:3000/'
+    // },
+    // {
+    //   address: '0x15b179F4A1173EcDB00a434BBc06054201bB7eA2',
+    //   tokenName: 'Omega Gamma Punks',
+    //   tokenSymbol: '✺OGP',
+    //   tokenImage: '/images/placeholderCollectiveThumbnail2.svg',
+    //   totalUnclaimed: 1900,
+    //   maxTotalSupply: 4000,
+    //   totalClaimed: 3100,
+    //   pricePerNft: 0.25,
+    //   inviteLink: 'http://localhost:3000/'
+    // },
+    // {
+    //   address: '0x15b179F4A1173EcDB00a434BBc06054201bB7eA2',
+    //   tokenName: 'Omega Gamma Punks',
+    //   tokenSymbol: '✺OGP',
+    //   tokenImage: '/images/placeholderCollectiveThumbnail2.svg',
+    //   totalUnclaimed: 1900,
+    //   maxTotalSupply: 4000,
+    //   totalClaimed: 3100,
+    //   pricePerNft: 0.05,
+    //   inviteLink: 'http://localhost:3000/'
+    // },
+    // {
+    //   address: '0x15b179F4A1173EcDB00a434BBc06054201bB7eA2',
+    //   tokenName: 'Omega Gamma Punks',
+    //   tokenSymbol: '✺OGP',
+    //   tokenImage: '/images/placeholderCollectiveThumbnail2.svg',
+    //   totalUnclaimed: 1900,
+    //   maxTotalSupply: 4000,
+    //   totalClaimed: 3100,
+    //   pricePerNft: 0.55,
+    //   inviteLink: 'http://localhost:3000/'
+    // },
+    // {
+    //   address: '0x15b179F4A1173EcDB00a434BBc06054201bB7eA2',
+    //   tokenName: 'Omega Gamma Punks',
+    //   tokenSymbol: '✺OGP',
+    //   tokenImage: '/images/placeholderCollectiveThumbnail2.svg',
+    //   totalUnclaimed: 1900,
+    //   maxTotalSupply: 4000,
+    //   totalClaimed: 3100,
+    //   pricePerNft: 0.25,
+    //   inviteLink: 'http://localhost:3000/'
+    // },
+    // {
+    //   address: '0x15b179F4A1173EcDB00a434BBc06054201bB7eA2',
+    //   tokenName: 'Omega Gamma Punks',
+    //   tokenSymbol: '✺OGP',
+    //   tokenImage: '/images/placeholderCollectiveThumbnail2.svg',
+    //   totalUnclaimed: 1900,
+    //   maxTotalSupply: 4000,
+    //   totalClaimed: 3100,
+    //   pricePerNft: 0.05,
+    //   inviteLink: 'http://localhost:3000/'
+    // },
+    // {
+    //   address: '0x15b179F4A1173EcDB00a434BBc06054201bB7eA2',
+    //   tokenName: 'Omega Gamma Punks',
+    //   tokenSymbol: '✺OGP',
+    //   tokenImage: '/images/placeholderCollectiveThumbnail2.svg',
+    //   totalUnclaimed: 1900,
+    //   maxTotalSupply: 4000,
+    //   totalClaimed: 3100,
+    //   pricePerNft: 0.55,
+    //   inviteLink: 'http://localhost:3000/'
+    // },
+    // {
+    //   address: '0x15b179F4A1173EcDB00a434BBc06054201bB7eA2',
+    //   tokenName: 'Omega Gamma Punks',
+    //   tokenSymbol: '✺OGP',
+    //   tokenImage: '/images/placeholderCollectiveThumbnail2.svg',
+    //   totalUnclaimed: 1900,
+    //   maxTotalSupply: 4000,
+    //   totalClaimed: 3100,
+    //   pricePerNft: 0.25,
+    //   inviteLink: 'http://localhost:3000/'
+    // }
+  ];
+
+  // show only the available section when there's either
+  // only admin or member clubs/collectives to show
+  useEffect(() => {
+    //clubs
+    if (otherClubERC20s.length === 0 && myClubERC20s.length !== 0) {
+      setActiveClubsTab(TabsType.ADMIN);
+    } else if (otherClubERC20s.length !== 0 && myClubERC20s.length === 0) {
+      setActiveClubsTab(TabsType.MEMBER);
+    }
+
+    // collectives
+    if (memberCollectives.length === 0 && adminCollectives.length !== 0) {
+      setActiveCollectivesTab(TabsType.ADMIN);
+    } else if (
+      memberCollectives.length !== 0 &&
+      adminCollectives.length === 0
+    ) {
+      setActiveCollectivesTab(TabsType.MEMBER);
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [adminCollectives.length, memberCollectives.length]);
 
   useEffect(() => {
     if (adminClubsLoading || memberClubLoading || loading) return;
@@ -104,41 +348,127 @@ const PortfolioAndDiscover: React.FC = () => {
           </div>
         </div>
       ) : (
+        // Investment clubs
         <>
+          <div
+            className="flex flex-col sm:flex-row justify-between sm:items-center w-full mt-14"
+            style={width < 480 ? { paddingRight: '6%' } : null}
+          >
+            <H3>Clubs</H3>
+            {otherClubERC20s.length !== 0 || myClubERC20s.length !== 0 ? (
+              <CreateClubButton />
+            ) : null}
+          </div>
           {myClubERC20s.length || otherClubERC20s.length ? (
-            <div>
-              <div
-                className="flex flex-col sm:flex-row justify-between sm:items-center w-full mt-14 mb-16"
-                style={width < 480 ? { paddingRight: '6%' } : null}
-              >
-                <H1>Portfolio</H1>
-                <CreateClubButton />
-              </div>
-              {/* show active clubsERC20s here */}
-              {myClubERC20s.length !== 0 && (
-                <div className="">
-                  <H4 extraClasses="mb-8">Admin</H4>
-                  {/* show active clubsERC20s here */}
+            <div className="mt-6">
+              {otherClubERC20s.length !== 0 && myClubERC20s.length !== 0 && (
+                <TabsButton
+                  options={filterOptions}
+                  value={TabsType.ADMIN}
+                  onChange={(val) => setActiveClubsTab(val)}
+                  activeTab={activeClubsTab}
+                />
+              )}
+              <div className="mt-6 grid">
+                <div
+                  className={`${
+                    activeClubsTab === TabsType.ADMIN
+                      ? 'opacity-100 z-10'
+                      : 'opacity-0 z-0'
+                  } transition-all duration-700 row-start-1 col-start-1 `}
+                >
                   <ClubERC20Table
                     tableData={myClubERC20s}
                     columns={MyClubERC20TableColumns}
                   />
                 </div>
-              )}
-              {otherClubERC20s.length !== 0 && (
-                <div className="mt-16">
-                  <H4 extraClasses="mb-8">Member</H4>
-                  {/* show active clubsERC20s here */}
+
+                <div
+                  className={`${
+                    activeClubsTab === TabsType.MEMBER
+                      ? 'opacity-100 z-10'
+                      : 'opacity-0 z-0'
+                  } transition-opacity duration-700 row-start-1 col-start-1`}
+                >
                   <ClubERC20Table
                     tableData={otherClubERC20s}
                     columns={clubERCTableColumns}
                   />
                 </div>
-              )}
+              </div>
             </div>
           ) : !myClubERC20s.length && !invalidEthereumNetwork ? (
             <PortfolioEmptyState />
           ) : null}
+
+          {/* Collectives  */}
+          {collectives && (
+            <div className="mt-24">
+              <div
+                className="flex flex-col sm:flex-row justify-between sm:items-center w-full mt-14 mb-6"
+                style={width < 480 ? { paddingRight: '6%' } : null}
+              >
+                <H3>Collectives</H3>
+                {memberCollectives.length !== 0 ||
+                adminCollectives.length !== 0 ? (
+                  <CreateClubButton creatingClub={false} />
+                ) : null}
+              </div>
+              {memberCollectives.length !== 0 ||
+              adminCollectives.length !== 0 ? (
+                <div className="mt-6">
+                  {memberCollectives.length !== 0 &&
+                    adminCollectives.length !== 0 && (
+                      <TabsButton
+                        options={filterOptions}
+                        value={TabsType.ADMIN}
+                        onChange={(val) => setActiveCollectivesTab(val)}
+                        activeTab={activeCollectivesTab}
+                      />
+                    )}
+                  <div className="mt-6 grid">
+                    <div
+                      className={`${
+                        activeCollectivesTab === TabsType.ADMIN
+                          ? 'opacity-100 z-10'
+                          : 'opacity-0 z-0'
+                      } transition-opacity duration-700 row-start-1 col-start-1`}
+                    >
+                      <CollectivesTable
+                        tableData={adminCollectives}
+                        columns={collectivesTableColumns}
+                      />
+                    </div>
+
+                    <div
+                      className={`${
+                        activeCollectivesTab === TabsType.MEMBER
+                          ? 'opacity-100 z-10'
+                          : 'opacity-0 z-0'
+                      } transition-opacity duration-700 row-start-1 col-start-1`}
+                    >
+                      {activeCollectivesTab === TabsType.MEMBER && (
+                        <CollectivesTable
+                          tableData={memberCollectives}
+                          columns={collectivesTableColumns}
+                        />
+                      )}
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <EmptyState
+                  {...{
+                    title: 'You’re not in any collectives yet.',
+                    subTitle:
+                      'Organize your purpose-driven community and customize social experiences across web3',
+                    showCreateButton: true,
+                    creatingClub: false
+                  }}
+                />
+              )}
+            </div>
+          )}
         </>
       )}
     </div>

@@ -137,7 +137,7 @@ const Assets: React.FC = () => {
           options={assetsFilterOptions}
           value="all"
           onChange={(val) => setActiveAssetTab(val)}
-          activeAssetTab={activeAssetTab}
+          activeTab={activeAssetTab}
         />
         {activeAssetTab === 'tokens' && (
           <TokenTable

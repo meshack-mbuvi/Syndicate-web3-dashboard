@@ -13,3 +13,10 @@ export const MyClubERC20TableColumns = [
   'Total deposited',
   'Members'
 ];
+
+export const collectivesTableColumns = [
+  'Collective name',
+  'Available NFTs',
+  'Claimed NFTs',
+  'Price per NFT'
+];

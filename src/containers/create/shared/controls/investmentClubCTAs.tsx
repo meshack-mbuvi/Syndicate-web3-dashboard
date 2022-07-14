@@ -15,7 +15,10 @@ const InvestmentClubCTAs: React.FC = () => {
     setShowModal,
     showNextButton,
     handleCreateInvestmentClub,
-    isWalletConfirmed
+    isWalletConfirmed,
+    isEditStep,
+    setIsEditStep,
+    setCurrentStep
   } = useCreateInvestmentClubContext();
 
   const {
@@ -53,12 +56,12 @@ const InvestmentClubCTAs: React.FC = () => {
     >
       <div
         className={`flex flex-col-reverse items-center pt-4 sm:w-full sm:flex-row sm:max-w-480 sm:h-full sm:pt-0 sm:ml-0 ml-5 ${
-          firstStep ? 'justify-end' : 'justify-between'
+          firstStep || isEditStep ? 'justify-end' : 'justify-between'
         }
           ${reviewStep ? 'sm:border-t border-gray-syn4' : ''}
         }`}
       >
-        {!firstStep && (
+        {!firstStep && !isEditStep && (
           <button
             className={`flex items-center mt-6 sm:mt-0 text-gray-syn4 text-base opacity-80 hover:opacity-100 focus:outline-none sm:ml-5 ml-0 ${
               backBtnDisabled ? 'cursor-not-allowed' : ''
@@ -86,6 +89,11 @@ const InvestmentClubCTAs: React.FC = () => {
                   : isWalletConfirmed
                   ? handleCreateInvestmentClub
                   : confirmWallet
+                : isEditStep
+                ? () => {
+                    setIsEditStep(false);
+                    setCurrentStep(4);
+                  }
                 : handleNext
             }
             disabled={nextBtnDisabled}
@@ -96,6 +104,8 @@ const InvestmentClubCTAs: React.FC = () => {
                 : isWalletConfirmed
                 ? 'Create investment club'
                 : 'Confirm wallet'
+              : isEditStep
+              ? 'Done'
               : 'Next'}
           </button>
         )}

@@ -24,6 +24,8 @@ interface props {
   dotIndicatorOptions?: string[];
   handleExitClick?: () => void;
   setActiveIndex?: (event) => void;
+  hideWalletAndEllipsis?: boolean;
+  showCloseButton?: boolean;
 }
 
 const Header: React.FC<props> = ({
@@ -33,6 +35,8 @@ const Header: React.FC<props> = ({
   showBackButton = false,
   showNav = true,
   activeIndex = 0,
+  hideWalletAndEllipsis = false,
+  showCloseButton = false,
   dotIndicatorOptions = []
 }) => {
   const router = useRouter();
@@ -99,11 +103,6 @@ const Header: React.FC<props> = ({
     const grandParentPath = path.slice(0, path.length - 2).join('/');
     router.push(grandParentPath || '/');
   };
-
-  const { pathname } = router;
-
-  const hideWalletAndEllipsis = pathname.includes('/distribute');
-  const showCloseButton = pathname.includes('/distribute');
 
   return (
     <>

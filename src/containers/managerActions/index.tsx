@@ -253,7 +253,14 @@ const ManagerActions = (): JSX.Element => {
                               {claimEnabled ? 'claim' : 'deposit'} link
                             </p>
                             {!adminSigned && (
-                              <div className="flex space-between mt-3">
+                              <button
+                                className="flex space-between mt-3"
+                                onClick={() =>
+                                  setLinkShareAgreementChecked(
+                                    !linkShareAgreementChecked
+                                  )
+                                }
+                              >
                                 <input
                                   className="bg-transparent rounded mt-1 focus:ring-offset-0 cursor-pointer"
                                   onChange={() =>
@@ -264,8 +271,9 @@ const ManagerActions = (): JSX.Element => {
                                   type="checkbox"
                                   id="linkShareAgreement"
                                   name="linkShareAgreement"
+                                  checked={linkShareAgreementChecked}
                                 />
-                                <animated.p className="text-sm text-gray-syn4 ml-3">
+                                <animated.p className="text-sm text-gray-syn4 ml-3 text-left">
                                   I agree to only share this link privately. I
                                   understand that publicly sharing this link may
                                   violate securities laws. <br></br>
@@ -278,7 +286,7 @@ const ManagerActions = (): JSX.Element => {
                                     Learn more.
                                   </a>{' '}
                                 </animated.p>
-                              </div>
+                              </button>
                             )}
                             {adminSigned && (
                               <p>

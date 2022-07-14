@@ -21,7 +21,6 @@ export const InputFieldWithTime = (props: {
   return (
     <>
       <div className="relative w-full">
-        {console.log(`value: ${value}`)}
         <InputField
           value={value}
           placeholderLabel={placeholderLabel}
