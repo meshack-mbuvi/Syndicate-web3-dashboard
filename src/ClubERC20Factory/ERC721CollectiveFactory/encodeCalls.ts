@@ -205,4 +205,28 @@ export abstract class EncodeCalls {
       [token, mixins] as string[]
     );
   }
+
+  public updateTokenURI(token: string, uri: string): string {
+    return this.web3.eth.abi.encodeFunctionCall(
+      {
+        inputs: [
+          {
+            internalType: 'address',
+            name: 'collective',
+            type: 'address'
+          },
+          {
+            internalType: 'string',
+            name: 'uri',
+            type: 'string'
+          }
+        ],
+        name: 'updateTokenURI',
+        outputs: [],
+        stateMutability: 'nonpayable',
+        type: 'function'
+      },
+      [token, uri]
+    );
+  }
 }

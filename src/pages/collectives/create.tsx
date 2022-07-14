@@ -13,6 +13,9 @@ import Layout from '@/components/layout';
 // Factory
 // const factoryAddress = '0xe16d032f1cf5974cf8d1985278b464ed91220733';
 
+// Fixed Renderer
+const fixedRenderer = '0x6c4f220416751503e81e38deee9899082a803275';
+
 // Guard
 const mintGuard = '0xe868fa053925fe8bce31fc7d5272c4b4aa82477b';
 
@@ -78,7 +81,8 @@ const CollectivesView: React.FC = () => {
       maxPerWalletMixin,
       mintGuard,
       mintGuard,
-      ethPriceModule
+      ethPriceModule,
+      fixedRenderer
     ];
 
     const _encodedFunctions = [
@@ -97,7 +101,8 @@ const CollectivesView: React.FC = () => {
       erc721CollectiveFactory.updateEthPrice(
         predictedAddress,
         web3.utils.toWei('0.5')
-      )
+      ),
+      erc721CollectiveFactory.updateTokenURI(predictedAddress, 'ipfs://hash')
     ];
 
     setContractAddresses(_contractAddresses);
