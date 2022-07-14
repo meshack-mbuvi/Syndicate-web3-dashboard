@@ -740,6 +740,7 @@ const ReviewDistribution: React.FC = () => {
         isModalVisible={isConfirmationModalVisible}
         steps={steps}
         handleModalClose={handleCloseConfirmModal}
+        showCloseButton={!isTransactionPending}
       >
         <>
           {steps?.[activeIndex].status !== '' && (

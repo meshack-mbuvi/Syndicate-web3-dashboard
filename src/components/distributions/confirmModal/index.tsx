@@ -8,6 +8,7 @@ interface Props {
   children: any;
   isModalVisible: boolean;
   handleModalClose: (e?) => void;
+  showCloseButton?: boolean;
 }
 
 export const ConfirmDistributionsModal: React.FC<Props> = ({
@@ -15,7 +16,8 @@ export const ConfirmDistributionsModal: React.FC<Props> = ({
   activeStepIndex,
   children,
   isModalVisible,
-  handleModalClose
+  handleModalClose,
+  showCloseButton = false
 }) => {
   return (
     <Modal
@@ -26,6 +28,7 @@ export const ConfirmDistributionsModal: React.FC<Props> = ({
       customClassName="pt-8"
       showHeader={false}
       outsideOnClick={true}
+      showCloseButton={showCloseButton}
     >
       <div className="m-h-screen">
         <L2 extraClasses="mb-10 px-10">Confirm distributions</L2>
