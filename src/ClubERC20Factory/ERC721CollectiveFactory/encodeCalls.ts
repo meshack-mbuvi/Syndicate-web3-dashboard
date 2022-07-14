@@ -1,5 +1,5 @@
 export abstract class EncodeCalls {
-  web3;
+  web3: Web3;
 
   constructor(web3: Web3) {
     this.web3 = web3;
@@ -30,7 +30,7 @@ export abstract class EncodeCalls {
         stateMutability: 'nonpayable',
         type: 'function'
       },
-      [token, module, true]
+      [token, module, true] as string[]
     );
   }
 
@@ -54,7 +54,7 @@ export abstract class EncodeCalls {
         stateMutability: 'nonpayable',
         type: 'function'
       },
-      [token, number]
+      [token, number] as string[]
     );
   }
 
@@ -94,7 +94,7 @@ export abstract class EncodeCalls {
         stateMutability: 'nonpayable',
         type: 'function'
       },
-      [token, { startTime: start, endTime: end }]
+      [token, { startTime: start, endTime: end }] as string[]
     );
   }
 
@@ -121,7 +121,7 @@ export abstract class EncodeCalls {
         stateMutability: 'nonpayable',
         type: 'function'
       },
-      [token, maxPerMember]
+      [token, maxPerMember] as string[]
     );
   }
 
@@ -178,7 +178,7 @@ export abstract class EncodeCalls {
         stateMutability: 'nonpayable',
         type: 'function'
       },
-      [token, module, mixins]
+      [token, module, mixins] as string[]
     );
   }
 
@@ -202,7 +202,7 @@ export abstract class EncodeCalls {
         stateMutability: 'nonpayable',
         type: 'function'
       },
-      [token, mixins]
+      [token, mixins] as string[]
     );
   }
 }

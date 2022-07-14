@@ -11,14 +11,14 @@ import { getWeiAmount } from '@/utils/conversions';
 import Layout from '@/components/layout';
 
 // Factory
-const factoryAddress = '0xe16d032f1cf5974cf8d1985278b464ed91220733';
+// const factoryAddress = '0xe16d032f1cf5974cf8d1985278b464ed91220733';
 
 // Guard
 const mintGuard = '0xe868fa053925fe8bce31fc7d5272c4b4aa82477b';
 
 // Modules
 const ethPriceModule = '0x89583ad6aba72c7c6de70ee9a290884abc4000c3';
-const ownerMintModule = '0x60bfff0B6e064673B61f3eB9dEA5ED0f3BbB5471';
+// const ownerMintModule = '0x60bfff0B6e064673B61f3eB9dEA5ED0f3BbB5471';
 
 // Mixins
 const timeMixin = '0x723541996f751ea24608e9de75488746a067d61b';
