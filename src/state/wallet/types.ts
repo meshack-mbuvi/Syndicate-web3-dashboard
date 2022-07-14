@@ -26,6 +26,7 @@ export interface INativeCurrency {
   name: string;
   decimals: string;
   exchangeRate: number;
+  logo: string;
 }
 
 export interface IMetadata {
@@ -137,7 +138,8 @@ export const initialState: InitialState = {
         symbol: '',
         name: '',
         decimals: '',
-        exchangeRate: 1
+        exchangeRate: 1,
+        logo: ''
       },
       gnosis: {
         txServiceUrl: ''

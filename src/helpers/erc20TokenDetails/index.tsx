@@ -189,7 +189,9 @@ export const getDepositDetails = async (
   return {
     mintModule,
     nativeDepositToken,
-    depositTokenLogo: tokenDetails.logo,
+    depositTokenLogo: nativeDepositToken
+      ? activeNetwork.nativeCurrency.logo
+      : tokenDetails.logo,
     depositTokenSymbol: tokenDetails.symbol,
     depositTokenName: tokenDetails.name,
     depositTokenDecimals: tokenDetails.decimals,

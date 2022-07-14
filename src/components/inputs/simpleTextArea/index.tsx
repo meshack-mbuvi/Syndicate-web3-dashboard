@@ -31,7 +31,6 @@ export const TextArea: React.FC<Props> = ({
         rows={heightRows}
         value={value}
         onChange={(e) => {
-          console.log(e.target.value);
           handleValueChange(e.target.value);
         }}
         placeholder={placeholderLabel}
