@@ -15,6 +15,7 @@ import {
   collectivesTableColumns
 } from './portfolio/clubERC20Table/constants';
 import TabsButton from '@/components/TabsButton';
+import { useFlags } from 'launchdarkly-react-client-sdk';
 
 // generate multiple skeleton loader components
 const generateSkeletons = (
@@ -75,6 +76,7 @@ const PortfolioAndDiscover: React.FC = () => {
   } = web3;
 
   const [isPageLoading, setIsPageLoading] = useState(true);
+  const { collectives } = useFlags();
 
   const { loading: adminClubsLoading, memberClubLoading } = useClubERC20s();
 
@@ -400,70 +402,73 @@ const PortfolioAndDiscover: React.FC = () => {
           ) : null}
 
           {/* Collectives  */}
-          <div className="mt-24">
-            <div
-              className="flex flex-col sm:flex-row justify-between sm:items-center w-full mt-14 mb-6"
-              style={width < 480 ? { paddingRight: '6%' } : null}
-            >
-              <H3>Collectives</H3>
+          {collectives && (
+            <div className="mt-24">
+              <div
+                className="flex flex-col sm:flex-row justify-between sm:items-center w-full mt-14 mb-6"
+                style={width < 480 ? { paddingRight: '6%' } : null}
+              >
+                <H3>Collectives</H3>
+                {memberCollectives.length !== 0 ||
+                adminCollectives.length !== 0 ? (
+                  <CreateClubButton creatingClub={false} />
+                ) : null}
+              </div>
               {memberCollectives.length !== 0 ||
               adminCollectives.length !== 0 ? (
-                <CreateClubButton creatingClub={false} />
-              ) : null}
-            </div>
-            {memberCollectives.length !== 0 || adminCollectives.length !== 0 ? (
-              <div className="mt-6">
-                {memberCollectives.length !== 0 &&
-                  adminCollectives.length !== 0 && (
-                    <TabsButton
-                      options={filterOptions}
-                      value={TabsType.ADMIN}
-                      onChange={(val) => setActiveCollectivesTab(val)}
-                      activeTab={activeCollectivesTab}
-                    />
-                  )}
-                <div className="mt-6 grid">
-                  <div
-                    className={`${
-                      activeCollectivesTab === TabsType.ADMIN
-                        ? 'opacity-100 z-10'
-                        : 'opacity-0 z-0'
-                    } transition-opacity duration-700 row-start-1 col-start-1`}
-                  >
-                    <CollectivesTable
-                      tableData={adminCollectives}
-                      columns={collectivesTableColumns}
-                    />
-                  </div>
-
-                  <div
-                    className={`${
-                      activeCollectivesTab === TabsType.MEMBER
-                        ? 'opacity-100 z-10'
-                        : 'opacity-0 z-0'
-                    } transition-opacity duration-700 row-start-1 col-start-1`}
-                  >
-                    {activeCollectivesTab === TabsType.MEMBER && (
-                      <CollectivesTable
-                        tableData={memberCollectives}
-                        columns={collectivesTableColumns}
+                <div className="mt-6">
+                  {memberCollectives.length !== 0 &&
+                    adminCollectives.length !== 0 && (
+                      <TabsButton
+                        options={filterOptions}
+                        value={TabsType.ADMIN}
+                        onChange={(val) => setActiveCollectivesTab(val)}
+                        activeTab={activeCollectivesTab}
                       />
                     )}
+                  <div className="mt-6 grid">
+                    <div
+                      className={`${
+                        activeCollectivesTab === TabsType.ADMIN
+                          ? 'opacity-100 z-10'
+                          : 'opacity-0 z-0'
+                      } transition-opacity duration-700 row-start-1 col-start-1`}
+                    >
+                      <CollectivesTable
+                        tableData={adminCollectives}
+                        columns={collectivesTableColumns}
+                      />
+                    </div>
+
+                    <div
+                      className={`${
+                        activeCollectivesTab === TabsType.MEMBER
+                          ? 'opacity-100 z-10'
+                          : 'opacity-0 z-0'
+                      } transition-opacity duration-700 row-start-1 col-start-1`}
+                    >
+                      {activeCollectivesTab === TabsType.MEMBER && (
+                        <CollectivesTable
+                          tableData={memberCollectives}
+                          columns={collectivesTableColumns}
+                        />
+                      )}
+                    </div>
                   </div>
                 </div>
-              </div>
-            ) : (
-              <EmptyState
-                {...{
-                  title: 'You’re not in any collectives yet.',
-                  subTitle:
-                    'Organize your purpose-driven community and customize social experiences across web3',
-                  showCreateButton: true,
-                  creatingClub: false
-                }}
-              />
-            )}
-          </div>
+              ) : (
+                <EmptyState
+                  {...{
+                    title: 'You’re not in any collectives yet.',
+                    subTitle:
+                      'Organize your purpose-driven community and customize social experiences across web3',
+                    showCreateButton: true,
+                    creatingClub: false
+                  }}
+                />
+              )}
+            </div>
+          )}
         </>
       )}
     </div>
