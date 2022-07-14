@@ -1,8 +1,8 @@
 import { CtaButton } from '@/components/CTAButton';
 import { ProgressCard, ProgressState } from '@/components/progressCard';
 import { B2, B3, B4, H1, H2, H3, H4, L2 } from '@/components/typography';
-import { useDispatch } from 'react-redux';
 import { showWalletModal } from '@/state/wallet/actions';
+import { useDispatch } from 'react-redux';
 
 export enum WalletState {
   NOT_CONNECTED = 'NOT_CONNECTED',
@@ -90,6 +90,7 @@ export const ClaimCollectivePass: React.FC<Props> = ({
       : walletState === WalletState.MAX_PASSES_REACHED
       ? 'You have reached the maximum number of passes per wallet'
       : null;
+
   const walletLabel = (
     <div>
       {/* Desktop */}
@@ -102,6 +103,7 @@ export const ClaimCollectivePass: React.FC<Props> = ({
       </div>
     </div>
   );
+
   const walletButtonText =
     walletState === WalletState.CONNECTED
       ? 'Claim'
@@ -195,12 +197,25 @@ export const ClaimCollectivePass: React.FC<Props> = ({
 
       {passes}
 
-      {progressState && progressState === ProgressState.PENDING ? (
+      {progressState &&
+      progressState === ProgressState.PENDING &&
+      walletState === WalletState.CONNECTED ? (
         <div className="fixed sm:relative bottom-0 left-0 sm:py-auto w-full bg-gray-syn8 text-center sm:rounded-2.5xl">
           <ProgressCard
             title="Claiming NFT"
             state={progressState}
             transactionHash={transactionHash}
+            transactionType={transactionType}
+          />
+        </div>
+      ) : progressState &&
+        progressState === ProgressState.CONFIRM &&
+        walletState === WalletState.CONNECTED ? (
+        <div className="fixed sm:relative bottom-0 left-0 sm:py-auto w-full bg-gray-syn8 text-center sm:rounded-2.5xl">
+          <ProgressCard
+            title="Approve transaction from your wallet"
+            state={progressState}
+            transactionHash={''}
             transactionType={transactionType}
           />
         </div>
