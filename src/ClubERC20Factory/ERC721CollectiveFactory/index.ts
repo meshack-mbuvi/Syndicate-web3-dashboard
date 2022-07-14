@@ -2,8 +2,9 @@ import ERC721_Collective_Factory_ABI from 'src/contracts/ERC721CollectiveFactory
 import { IActiveNetwork } from '@/state/wallet/types';
 import { estimateGas } from '../shared/getGasEstimate';
 import { getGnosisTxnInfo } from '../shared/gnosisTransactionInfo';
+import { EncodeCalls } from './encodeCalls';
 
-export class ERC721CollectiveFactory {
+export class ERC721CollectiveFactory extends EncodeCalls {
   web3;
   address;
   activeNetwork;
@@ -15,6 +16,7 @@ export class ERC721CollectiveFactory {
     web3: Web3,
     activeNetwork: IActiveNetwork
   ) {
+    super(web3);
     this.web3 = web3;
     this.activeNetwork = activeNetwork;
     this.address = erc721CollectiveFactoryAddress;
@@ -120,9 +122,24 @@ export class ERC721CollectiveFactory {
   ): Promise<void> {
     const collectiveName = 'Alpha Beta Punks';
     const collectiveSymbol = 'ABP';
-    const salt = this.web3.utils.randomHex(32);
-    const contractAddresses = [];
-    const encodedFunctions = [];
+    const salt =
+      '0xb87d621eb35f7ee2f702fd362177cf483ce8342cf16ed9b8e376660f72a835c8';
+    const contractAddresses = [
+      '0x723541996f751ea24608e9de75488746a067d61b',
+      '0x50ab2de08f81522fffe1156af22374d37222e14f',
+      '0x487e27ae8b6f68719eb64d46b5fe81bb04e28c46',
+      '0xe868fa053925fe8bce31fc7d5272c4b4aa82477b',
+      '0xe868fa053925fe8bce31fc7d5272c4b4aa82477b',
+      '0x89583ad6aba72c7c6de70ee9a290884abc4000c3'
+    ];
+    const encodedFunctions = [
+      '0x185deab80000000000000000000000000efaf73b55aadd3b946ac4fe164d8b70e794e3ea000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000646e55cd',
+      '0x941a112c0000000000000000000000000efaf73b55aadd3b946ac4fe164d8b70e794e3ea0000000000000000000000000000000000000000000000000000000000002710',
+      '0x941a112c0000000000000000000000000efaf73b55aadd3b946ac4fe164d8b70e794e3ea0000000000000000000000000000000000000000000000000000000000000003',
+      '0x32ec22950000000000000000000000000efaf73b55aadd3b946ac4fe164d8b70e794e3ea00000000000000000000000000000000000000000000000000000000000000400000000000000000000000000000000000000000000000000000000000000003000000000000000000000000723541996f751ea24608e9de75488746a067d61b000000000000000000000000487e27ae8b6f68719eb64d46b5fe81bb04e28c4600000000000000000000000050ab2de08f81522fffe1156af22374d37222e14f',
+      '0xe31b8f3b0000000000000000000000000efaf73b55aadd3b946ac4fe164d8b70e794e3ea00000000000000000000000089583ad6aba72c7c6de70ee9a290884abc4000c30000000000000000000000000000000000000000000000000000000000000001',
+      '0x2f24b6f80000000000000000000000000efaf73b55aadd3b946ac4fe164d8b70e794e3ea00000000000000000000000000000000000000000000000006f05b59d3b20000'
+    ];
 
     await new Promise(() => {
       this.erc721CollectiveFactory.methods
