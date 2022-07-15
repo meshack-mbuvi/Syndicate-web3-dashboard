@@ -122,7 +122,8 @@ export const AssetList: React.FC<Props> = ({
       {
         ...options[index],
         tokenAmount,
-        fiatAmount: _fiatAmount
+        fiatAmount: _fiatAmount,
+        error: ''
       },
       ...options.slice(index + 1)
     ]);
@@ -217,7 +218,7 @@ export const AssetList: React.FC<Props> = ({
             <div
               className={`${
                 isIndexActive(index) ? 'scale-100 max-w-20' : 'scale-0 max-w-0'
-              } hidden xl:block transition-all transform duration-300`}
+              } hidden xl:block transition-all transform duration-300 -mt-6`}
             >
               <PillButton
                 onClick={(e) => {
@@ -226,7 +227,7 @@ export const AssetList: React.FC<Props> = ({
                 }}
                 extraClasses={`${
                   isIndexActive(index)
-                    ? 'ml-2 transition-all duration-300 opacity-0 md:opacity-100'
+                    ? 'ml-2 mr-4 transition-all duration-300 opacity-0 md:opacity-100'
                     : 'opacity-0'
                 }`}
               >
@@ -298,15 +299,20 @@ export const AssetList: React.FC<Props> = ({
                       )
                     }
                     onClick={(e) => {
-                      // This stops the row from toggling active/unactive
+                      // This stops the row from toggling active/inactive
                       e.stopPropagation();
                     }}
                     onChange={(e) => {
                       const input = e.target.value;
                       const strNumber = stringNumberRemoveCommas(input);
+                      const validChars = /^[0-9]+\.?[0-9]*$/;
 
-                      // Check if the user is typing a "." for a decimal
+                      // Don't proceed if input contains invalid characters
+                      if (!validChars.test(strNumber) && strNumber !== '')
+                        return;
+
                       if (isStringIncompleteDecimalNumber(strNumber)) {
+                        // Check if the user is typing a "." for a decimal
                         // Use temporary input field values to wait for the user to type a complete decimal number.
                         // Before returning new options to handleOptionsChange.
                         setTemporaryInputFieldValues([
