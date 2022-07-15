@@ -1,6 +1,7 @@
 import { SkeletonLoader } from '@/components/skeletonLoader';
 import { ANNOTATE_TRANSACTIONS } from '@/graphql/mutations';
 import { useIsClubOwner } from '@/hooks/useClubOwner';
+import { getInput } from '@/hooks/useFetchRecentTransactions';
 import { AppState } from '@/state';
 import { setCurrentTransaction } from '@/state/erc20transactions';
 import { TransactionCategory } from '@/state/erc20transactions/types';
@@ -59,8 +60,9 @@ export const CategoryPill: React.FC<ICategoryPill> = ({
   const {
     transactionsReducer: { currentTransaction },
     web3Reducer: {
-      web3: { activeNetwork }
-    }
+      web3: { activeNetwork, account }
+    },
+    erc20TokenSliceReducer: { erc20Token }
   } = useSelector((state: AppState) => state);
 
   const isManager = useIsClubOwner();
@@ -252,7 +254,7 @@ export const CategoryPill: React.FC<ICategoryPill> = ({
         variables: {
           transactionAnnotationList: inlineAnnotationData,
           chainId: activeNetwork.chainId,
-          input: '' // TODO(this): Fill input
+          input: getInput(`${erc20Token.address}:${account}`)
         },
         context: { clientName: 'backend', chainId: activeNetwork.chainId }
       });

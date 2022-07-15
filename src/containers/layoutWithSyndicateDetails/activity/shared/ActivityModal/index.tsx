@@ -19,6 +19,7 @@ import { SimpleTable } from '@/components/simpleTable';
 
 import TransactionDetails from '../TransactionDetails';
 import ActivityNote from './ActivityNote';
+import { getInput } from '@/hooks/useFetchRecentTransactions';
 
 interface IActivityModal {
   showModal: boolean;
@@ -44,8 +45,9 @@ const ActivityModal: React.FC<IActivityModal> = ({
 }) => {
   const {
     web3Reducer: {
-      web3: { activeNetwork }
+      web3: { activeNetwork, account }
     },
+    erc20TokenSliceReducer: { erc20Token },
     transactionsReducer: {
       currentTransaction: {
         category,
@@ -217,7 +219,7 @@ const ActivityModal: React.FC<IActivityModal> = ({
       variables: {
         transactionAnnotationList: inlineAnnotationData,
         chainId: activeNetwork.chainId,
-        input: '' // TODO(this): Fill input
+        input: getInput(`${erc20Token.address}:${account}`)
       },
       context: { clientName: 'backend', chainId: activeNetwork.chainId }
     });

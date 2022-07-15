@@ -4,6 +4,7 @@ import { DataStorageInfo } from '@/containers/layoutWithSyndicateDetails/activit
 import RoundDropDown from '@/containers/layoutWithSyndicateDetails/activity/shared/InvestmentDetails/InvestmentDetails/RoundDropDown';
 import PiiWarning from '@/containers/layoutWithSyndicateDetails/activity/shared/PiiWarning';
 import { ANNOTATE_TRANSACTIONS } from '@/graphql/mutations';
+import { getInput } from '@/hooks/useFetchRecentTransactions';
 import { AppState } from '@/state';
 import { useMutation } from '@apollo/client';
 import { isEmpty } from 'lodash';
@@ -50,8 +51,9 @@ const InvestmentDetailsModal: React.FC<IInvestmentDetailsModal> = ({
 
   const {
     web3Reducer: {
-      web3: { activeNetwork }
+      web3: { activeNetwork, account }
     },
+    erc20TokenSliceReducer: { erc20Token },
     transactionsReducer: {
       currentTransaction: { blockTimestamp }
     }
@@ -125,7 +127,7 @@ const InvestmentDetailsModal: React.FC<IInvestmentDetailsModal> = ({
       variables: {
         transactionAnnotationList: [{ ...detailsAnnotationData }],
         chainId: activeNetwork.chainId,
-        input: '' // TODO(this): fill input
+        input: getInput(`${erc20Token.address}:${account}`)
       },
       context: { clientName: 'backend', chainId: activeNetwork.chainId }
     });
