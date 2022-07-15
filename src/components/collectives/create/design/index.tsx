@@ -16,7 +16,11 @@ interface Props {
   isContinueButtonActive: boolean;
   handleContinue: (e) => void;
   handleUpload: (e) => void;
+  uploadSuccessText?: string;
   handleCancelUpload: () => void;
+  progressPercentage?: number;
+  fileName?: string;
+  acceptFileTypes?: string;
 }
 
 export const CollectiveFormDesign: React.FC<Props> = ({
@@ -29,7 +33,11 @@ export const CollectiveFormDesign: React.FC<Props> = ({
   isContinueButtonActive,
   handleContinue,
   handleUpload,
-  handleCancelUpload
+  uploadSuccessText,
+  handleCancelUpload,
+  progressPercentage = 0,
+  fileName = 'FILENAME',
+  acceptFileTypes
 }) => {
   return (
     <>
@@ -43,14 +51,15 @@ export const CollectiveFormDesign: React.FC<Props> = ({
           />
           <div>
             <FileUploader
-              progressPercent={0}
-              fileName="FILENAME"
-              successText="SUCCESS TEXT"
+              progressPercent={progressPercentage}
+              fileName={fileName}
+              successText={uploadSuccessText}
               promptTitle="Upload artwork"
               promptSubtitle="PNG or MP4 allowed"
               progressDisplayType={UploaderProgressType.SPINNER}
               handleUpload={handleUpload}
               handleCancelUpload={handleCancelUpload}
+              accept={acceptFileTypes}
             />
             <div className="text-sm text-gray-syn4 mt-2">
               This file will live in IPFS and Pinata, and the metadata will
