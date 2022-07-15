@@ -22,6 +22,12 @@ import { RugUtilityProperties } from './RugRadio/RugUtilityProperties';
 import { RugUtilityMintModuleContract } from './rugUtilityMintModule';
 import { ERC721CollectiveFactory } from './ERC721CollectiveFactory';
 import { IActiveNetwork } from '@/state/wallet/types';
+import { TimeRequirements } from './TimeRequirements';
+import { EthPriceMintModule } from './EthPriceMintModule';
+import { FixedRenderer } from './FixedRenderer';
+import { GuardMixinManager } from './GuardMixinManager';
+import { MaxPerMemberERC721 } from './MaxPerMemberERC721';
+import { MaxTotalSupplyERC721 } from './MaxTotalSupplyERC721';
 
 const DEPOSIT_EXCHANGE_MODULE = process.env.NEXT_PUBLIC_DEPOSIT_EXCHANGE_MODULE;
 // Contract addresses for Rug Radio
@@ -177,6 +183,42 @@ export const getSyndicateContracts = async (
     activeNetwork
   );
 
+  const ethPriceMintModule = new EthPriceMintModule(
+    addresses.ERC721CollectiveFactory,
+    web3,
+    activeNetwork
+  );
+
+  const fixedRenderer = new FixedRenderer(
+    addresses.ERC721CollectiveFactory,
+    web3,
+    activeNetwork
+  );
+
+  const guardMixinManager = new GuardMixinManager(
+    addresses.ERC721CollectiveFactory,
+    web3,
+    activeNetwork
+  );
+
+  const maxPerMemberERC721 = new MaxPerMemberERC721(
+    addresses.ERC721CollectiveFactory,
+    web3,
+    activeNetwork
+  );
+
+  const maxTotalSupplyERC721 = new MaxTotalSupplyERC721(
+    addresses.ERC721CollectiveFactory,
+    web3,
+    activeNetwork
+  );
+
+  const timeRequirements = new TimeRequirements(
+    addresses.ERC721CollectiveFactory,
+    web3,
+    activeNetwork
+  );
+
   // return all initialized contracts
   return {
     clubERC20Factory,
@@ -201,6 +243,12 @@ export const getSyndicateContracts = async (
     rugBonusClaimModule,
     OwnerMintModule,
     depositExchangeMintModule,
-    erc721CollectiveFactory
+    erc721CollectiveFactory,
+    ethPriceMintModule,
+    fixedRenderer,
+    guardMixinManager,
+    maxPerMemberERC721,
+    maxTotalSupplyERC721,
+    timeRequirements
   };
 };

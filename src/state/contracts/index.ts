@@ -19,6 +19,12 @@ import { RugUtilityProperties } from '@/ClubERC20Factory/RugRadio/RugUtilityProp
 import { RugUtilityMintModuleContract } from '@/ClubERC20Factory/rugUtilityMintModule';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { ERC721CollectiveFactory } from '@/ClubERC20Factory/ERC721CollectiveFactory';
+import { EthPriceMintModule } from '@/ClubERC20Factory/EthPriceMintModule';
+import { FixedRenderer } from '@/ClubERC20Factory/FixedRenderer';
+import { GuardMixinManager } from '@/ClubERC20Factory/GuardMixinManager';
+import { MaxPerMemberERC721 } from '@/ClubERC20Factory/MaxPerMemberERC721';
+import { MaxTotalSupplyERC721 } from '@/ClubERC20Factory/MaxTotalSupplyERC721';
+import { TimeRequirements } from '@/ClubERC20Factory/TimeRequirements';
 
 export interface ISyndicateContracts {
   clubERC20Factory: ClubERC20Factory;
@@ -44,6 +50,12 @@ export interface ISyndicateContracts {
   OwnerMintModule: OwnerMintModuleContract;
   depositExchangeMintModule: DepositExchangeMintModule;
   erc721CollectiveFactory: ERC721CollectiveFactory;
+  ethPriceMintModule: EthPriceMintModule;
+  fixedRenderer: FixedRenderer;
+  guardMixinManager: GuardMixinManager;
+  maxPerMemberERC721: MaxPerMemberERC721;
+  maxTotalSupplyERC721: MaxTotalSupplyERC721;
+  timeRequirements: TimeRequirements;
 }
 
 interface InitialState {
@@ -74,7 +86,13 @@ const initialState: InitialState = {
     rugBonusClaimModule: null,
     OwnerMintModule: null,
     depositExchangeMintModule: null,
-    erc721CollectiveFactory: null
+    erc721CollectiveFactory: null,
+    ethPriceMintModule: null,
+    fixedRenderer: null,
+    guardMixinManager: null,
+    maxPerMemberERC721: null,
+    maxTotalSupplyERC721: null,
+    timeRequirements: null
   }
 };
 
