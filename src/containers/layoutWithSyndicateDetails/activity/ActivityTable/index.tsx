@@ -372,8 +372,6 @@ const ActivityTable: React.FC = () => {
 
     const txnAnnotationListData = listData.map((transaction) => ({
       transactionId: transaction.hash,
-      chainId: activeNetwork.chainId,
-      syndicateAddress: transaction.syndicateAddress,
       transactionCategory: selectedCategory
     }));
 

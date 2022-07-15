@@ -210,9 +210,7 @@ const ActivityModal: React.FC<IActivityModal> = ({
     const inlineAnnotationData = [
       {
         memo: noteValue,
-        transactionId: hash,
-        chainId: activeNetwork.chainId,
-        syndicateAddress: address // is this the right address for the club wallet?
+        transactionId: hash
       }
     ];
     annotationMutation({
