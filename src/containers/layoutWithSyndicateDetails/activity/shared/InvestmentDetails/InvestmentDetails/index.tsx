@@ -123,7 +123,9 @@ const InvestmentDetailsModal: React.FC<IInvestmentDetailsModal> = ({
 
     annotationMutation({
       variables: {
-        transactionAnnotationList: [{ ...detailsAnnotationData }]
+        transactionAnnotationList: [{ ...detailsAnnotationData }],
+        chainId: activeNetwork.chainId,
+        input: '' // TODO(this): fill input
       },
       context: { clientName: 'backend', chainId: activeNetwork.chainId }
     });

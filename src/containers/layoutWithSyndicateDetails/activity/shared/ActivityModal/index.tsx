@@ -210,12 +210,16 @@ const ActivityModal: React.FC<IActivityModal> = ({
     const inlineAnnotationData = [
       {
         memo: noteValue,
-        transactionId: hash
+        transactionId: hash,
+        chainId: activeNetwork.chainId,
+        syndicateAddress: address // is this the right address for the club wallet?
       }
     ];
     annotationMutation({
       variables: {
-        transactionAnnotationList: inlineAnnotationData
+        transactionAnnotationList: inlineAnnotationData,
+        chainId: activeNetwork.chainId,
+        input: '' // TODO(this): Fill input
       },
       context: { clientName: 'backend', chainId: activeNetwork.chainId }
     });

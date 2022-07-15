@@ -250,7 +250,9 @@ export const CategoryPill: React.FC<ICategoryPill> = ({
       ];
       annotationMutation({
         variables: {
-          transactionAnnotationList: inlineAnnotationData
+          transactionAnnotationList: inlineAnnotationData,
+          chainId: activeNetwork.chainId,
+          input: '' // TODO(this): Fill input
         },
         context: { clientName: 'backend', chainId: activeNetwork.chainId }
       });

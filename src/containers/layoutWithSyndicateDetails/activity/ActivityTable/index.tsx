@@ -372,12 +372,16 @@ const ActivityTable: React.FC = () => {
 
     const txnAnnotationListData = listData.map((transaction) => ({
       transactionId: transaction.hash,
+      chainId: activeNetwork.chainId,
+      syndicateAddress: transaction.syndicateAddress,
       transactionCategory: selectedCategory
     }));
 
     annotationMutation({
       variables: {
-        transactionAnnotationList: txnAnnotationListData
+        transactionAnnotationList: txnAnnotationListData,
+        chainId: activeNetwork.chainId,
+        input: '' // TODO(this): Fill input
       },
       context: { clientName: 'backend', chainId: activeNetwork.chainId }
     });
