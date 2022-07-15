@@ -1,6 +1,12 @@
 import ERC721_COLLECTIVE_FACTORY_ABI from 'src/contracts/ERC721CollectiveFactory.json';
 import { IActiveNetwork } from '@/state/wallet/types';
-import { EncodeCalls } from './encodeCalls';
+import { ContractBase } from '../ContractBase';
+import { TimeRequirements } from '../TimeRequirements';
+import { EthPriceMintModule } from '../EthPriceMintModule';
+import { FixedRenderer } from '../FixedRenderer';
+import { GuardMixinManager } from '../GuardMixinManager';
+import { MaxPerMemberERC721 } from '../MaxPerMemberERC721';
+import { MaxTotalSupplyERC721 } from '../MaxTotalSupplyERC721';
 
 interface ICollectiveParams {
   collectiveName: string;
@@ -13,7 +19,7 @@ interface ICollectiveParams {
   endTime: string;
 }
 
-export class ERC721CollectiveFactory extends EncodeCalls {
+export class ERC721CollectiveFactory extends ContractBase {
   constructor(address: string, web3: Web3, activeNetwork: IActiveNetwork) {
     super(
       address,
@@ -21,6 +27,123 @@ export class ERC721CollectiveFactory extends EncodeCalls {
       activeNetwork,
       ERC721_COLLECTIVE_FACTORY_ABI as AbiItem[]
     );
+  }
+
+  private setupContract() {
+    return {
+      timeMixin: new TimeRequirements(
+        this.addresses.TimeRequirements,
+        this.web3,
+        this.activeNetwork
+      ),
+
+      totalSupplyMixin: new MaxTotalSupplyERC721(
+        this.addresses.MaxTotalSupplyERC721,
+        this.web3,
+        this.activeNetwork
+      ),
+
+      maxPerWalletMixin: new MaxPerMemberERC721(
+        this.addresses.MaxPerMemberERC721,
+        this.web3,
+        this.activeNetwork
+      ),
+
+      mintGuard: new GuardMixinManager(
+        this.addresses.GuardMixinManager,
+        this.web3,
+        this.activeNetwork
+      ),
+
+      ethPriceModule: new EthPriceMintModule(
+        this.addresses.EthPriceMintModule,
+        this.web3,
+        this.activeNetwork
+      ),
+
+      fixedRenderer: new FixedRenderer(
+        this.addresses.FixedRenderer,
+        this.web3,
+        this.activeNetwork
+      )
+    };
+  }
+
+  /**
+   * Create Setup Params
+   * @param account  address
+   * @param collectiveParams
+   * @returns {Promise}
+   */
+  private async createSetupParams(
+    account: string,
+    collectiveParams: ICollectiveParams
+  ): Promise<{
+    salt: string;
+    contractAddresses: string[];
+    encodedFunctions: string[];
+  }> {
+    const {
+      totalSupply,
+      maxPerMember,
+      ethPrice,
+      tokenURI,
+      startTime,
+      endTime
+    } = collectiveParams;
+
+    const {
+      timeMixin,
+      totalSupplyMixin,
+      maxPerWalletMixin,
+      mintGuard,
+      ethPriceModule,
+      fixedRenderer
+    } = this.setupContract();
+
+    const salt = this.web3.utils.randomHex(32);
+
+    const predictedAddress = await this.predictAddress(account, salt);
+    const mixins = [
+      this.addresses.TimeRequirements,
+      this.addresses.MaxPerMemberERC721,
+      this.addresses.MaxTotalSupplyERC721
+    ];
+
+    const contractAddresses = [
+      this.addresses.TimeRequirements,
+      this.addresses.MaxTotalSupplyERC721,
+      this.addresses.MaxPerMemberERC721,
+      this.addresses.GuardMixinManager,
+      this.addresses.GuardMixinManager,
+      this.addresses.EthPriceMintModule,
+      this.addresses.FixedRenderer
+    ];
+
+    const encodedFunctions = [
+      timeMixin.setTimeRequirements(predictedAddress, startTime, endTime),
+      totalSupplyMixin.setTotalSupplyRequirements(
+        predictedAddress,
+        totalSupply
+      ),
+      maxPerWalletMixin.setMaxPerMemberRequirements(
+        predictedAddress,
+        maxPerMember
+      ),
+      mintGuard.updateDefaultMixins(predictedAddress, mixins),
+      mintGuard.allowModule(
+        predictedAddress,
+        this.addresses.EthPriceMintModule
+      ),
+      ethPriceModule.updateEthPrice(predictedAddress, ethPrice),
+      fixedRenderer.updateTokenURI(predictedAddress, tokenURI)
+    ];
+
+    return {
+      salt,
+      contractAddresses,
+      encodedFunctions
+    };
   }
 
   /**
@@ -67,65 +190,6 @@ export class ERC721CollectiveFactory extends EncodeCalls {
    */
   public async predictAddress(account: string, salt: string): Promise<string> {
     return this.contract.methods.predictAddress(salt).call({ from: account });
-  }
-
-  /**
-   * Create Setup Params
-   * @param account  address
-   * @param collectiveParams
-   * @returns {Promise}
-   */
-  public async createSetupParams(
-    account: string,
-    collectiveParams: ICollectiveParams
-  ): Promise<{
-    salt: string;
-    contractAddresses: string[];
-    encodedFunctions: string[];
-  }> {
-    const {
-      totalSupply,
-      maxPerMember,
-      ethPrice,
-      tokenURI,
-      startTime,
-      endTime
-    } = collectiveParams;
-
-    const salt = this.web3.utils.randomHex(32);
-
-    const predictedAddress = await this.predictAddress(account, salt);
-    const mixins = [
-      this.addresses.TimeRequirements,
-      this.addresses.MaxPerMemberERC721,
-      this.addresses.MaxTotalSupplyERC721
-    ];
-
-    const contractAddresses = [
-      this.addresses.TimeRequirements,
-      this.addresses.MaxTotalSupplyERC721,
-      this.addresses.MaxPerMemberERC721,
-      this.addresses.GuardMixinManager,
-      this.addresses.GuardMixinManager,
-      this.addresses.EthPriceMintModule,
-      this.addresses.FixedRenderer
-    ];
-
-    const encodedFunctions = [
-      this.setTimeRequirements(predictedAddress, startTime, endTime),
-      this.setTotalSupplyRequirements(predictedAddress, totalSupply),
-      this.setMaxPerMemberRequirements(predictedAddress, maxPerMember),
-      this.updateDefaultMixins(predictedAddress, mixins),
-      this.allowModule(predictedAddress, this.addresses.EthPriceMintModule),
-      this.updateEthPrice(predictedAddress, ethPrice),
-      this.updateTokenURI(predictedAddress, tokenURI)
-    ];
-
-    return {
-      salt,
-      contractAddresses,
-      encodedFunctions
-    };
   }
 
   /**

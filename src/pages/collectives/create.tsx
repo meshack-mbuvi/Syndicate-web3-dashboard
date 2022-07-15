@@ -9,7 +9,6 @@ import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { getWeiAmount } from '@/utils/conversions';
 import Layout from '@/components/layout';
-import { CONTRACT_ADDRESSES } from '@/Networks';
 
 const CollectivesView: React.FC = () => {
   const {
@@ -17,11 +16,9 @@ const CollectivesView: React.FC = () => {
       syndicateContracts: { erc721CollectiveFactory }
     },
     web3Reducer: {
-      web3: { account, web3, activeNetwork }
+      web3: { account, web3 }
     }
   } = useSelector((state: AppState) => state);
-
-  const addresses = CONTRACT_ADDRESSES[activeNetwork.chainId];
 
   const _name = Math.random().toString(36).slice(2, 7);
   const _symbol = Math.random().toString(36).slice(2, 5);
@@ -33,79 +30,13 @@ const CollectivesView: React.FC = () => {
     _symbol.toUpperCase()
   );
 
-  const [salt, setSalt] = useState<string>();
-  const [contractAddresses, setContractAddresses] = useState<string[]>([]);
-  const [encodedFunctions, setEncodedFunctions] = useState<string[]>([]);
-  const [predictedAddress, setPredictedAddress] = useState<string>();
   const [txn, setTxn] = useState<string>();
-
   const { gasPrice, getEstimateGas } = useGasEstimate();
 
   const totalSupply = 10000;
   const maxPerMember = 3;
   const ethPrice = getWeiAmount(web3, '0.5', 18, true);
   const tokenURI = 'ipfs://hash';
-
-  const generateSalt = async () => {
-    const _salt = web3.utils.randomHex(32);
-    setSalt(_salt);
-  };
-
-  const predictAddress = async () => {
-    if (!salt) {
-      generateSalt();
-    }
-
-    const nextToken = await erc721CollectiveFactory.predictAddress(
-      account,
-      salt
-    );
-    setPredictedAddress(nextToken);
-  };
-
-  const createSetupParams = async () => {
-    const mixins = [
-      addresses.TimeRequirements,
-      addresses.MaxPerMemberERC721,
-      addresses.MaxTotalSupplyERC721
-    ];
-
-    const _contractAddresses = [
-      addresses.TimeRequirements,
-      addresses.MaxTotalSupplyERC721,
-      addresses.MaxPerMemberERC721,
-      addresses.GuardMixinManager,
-      addresses.GuardMixinManager,
-      addresses.EthPriceMintModule,
-      addresses.FixedRenderer
-    ];
-
-    const _encodedFunctions = [
-      erc721CollectiveFactory.setTimeRequirements(
-        predictedAddress,
-        '0',
-        '1684952525'
-      ),
-      erc721CollectiveFactory.setTotalSupplyRequirements(
-        predictedAddress,
-        totalSupply
-      ),
-      erc721CollectiveFactory.setMaxPerMemberRequirements(
-        predictedAddress,
-        maxPerMember
-      ),
-      erc721CollectiveFactory.updateDefaultMixins(predictedAddress, mixins),
-      erc721CollectiveFactory.allowModule(
-        predictedAddress,
-        addresses.EthPriceMintModule
-      ),
-      erc721CollectiveFactory.updateEthPrice(predictedAddress, ethPrice),
-      erc721CollectiveFactory.updateTokenURI(predictedAddress, tokenURI)
-    ];
-
-    setContractAddresses(_contractAddresses);
-    setEncodedFunctions(_encodedFunctions);
-  };
 
   const createCollective = async () => {
     const collectiveParams = {
@@ -155,7 +86,7 @@ const CollectivesView: React.FC = () => {
               <div className="w-full flex justify-between">
                 <InputField
                   value={collectiveName}
-                  onChange={setCollectiveName}
+                  onChange={(e) => setCollectiveName(e.target.value)}
                 />
               </div>
             </div>
@@ -170,93 +101,13 @@ const CollectivesView: React.FC = () => {
               <div className="w-full flex justify-between">
                 <InputField
                   value={collectiveSymbol}
-                  onChange={setCollectiveSymbol}
+                  onChange={(e) => setCollectiveSymbol(e.target.value)}
                 />
               </div>
             </div>
           </div>
 
           <hr className="border-gray-syn7" />
-
-          {/* Salt */}
-          <div className="grid grid-cols-12 gap-5 group relative  items-center">
-            <div className="col-span-4">
-              <div className="text-base text-gray-syn4">Salt</div>
-            </div>
-            <div className="col-span-8">
-              <div className="w-full flex justify-between">
-                <span>{salt || 'null'}</span>
-                <div className="static top-0 right-0">
-                  <button
-                    className="flex items-center cursor-pointer text-blue-navy"
-                    onClick={generateSalt}
-                  >
-                    Generate Salt
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* predictAddress */}
-          <div className="grid grid-cols-12 gap-5 group relative  items-center">
-            <div className="col-span-4">
-              <div className="text-base text-gray-syn4">Predicted Address</div>
-            </div>
-            <div className="col-span-8">
-              <div className="w-full flex justify-between">
-                <span>{predictedAddress || 'null'}</span>
-                <div className="static top-0 right-0">
-                  <button
-                    className="flex items-center cursor-pointer text-blue-navy"
-                    onClick={predictAddress}
-                  >
-                    Predict Address
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* setupContracts */}
-          <div className="grid grid-cols-12 gap-5 group relative items-center">
-            <div className="col-span-4">
-              <div className="text-base text-gray-syn4">Contract Addresses</div>
-            </div>
-            <div className="col-span-8">
-              <div className="w-full flex justify-between">
-                <span className="w-full flex flex-col justify-between">
-                  {contractAddresses
-                    ? contractAddresses.map((address, i) => (
-                        <div key={i}>{address}</div>
-                      ))
-                    : 'null'}
-                </span>
-                <div className="static top-0 right-0">
-                  <button
-                    className="flex items-center cursor-pointer text-blue-navy text-right"
-                    onClick={createSetupParams}
-                  >
-                    Create Setup Params
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* data */}
-          <div className="grid grid-cols-12 gap-5 group relative  items-center">
-            <div className="col-span-4">
-              <div className="text-base text-gray-syn4">Encoded Functions</div>
-            </div>
-            <div className="col-span-8">
-              <div className="w-full flex flex-col justify-between overflow-auto">
-                {encodedFunctions
-                  ? encodedFunctions.map((fxn, i) => <div key={i}>{fxn}</div>)
-                  : 'null'}
-              </div>
-            </div>
-          </div>
 
           {/* Estimate Gas Price */}
           <div className="grid grid-cols-12 gap-5 group relative  items-center">
